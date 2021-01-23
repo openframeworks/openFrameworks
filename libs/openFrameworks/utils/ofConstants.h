@@ -378,14 +378,12 @@ typedef TESSindex ofIndexType;
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX)
+  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
   	#define OF_SOUND_PLAYER_OPENAL
   #elif defined(TARGET_EMSCRIPTEN)
 	#define OF_SOUND_PLAYER_EMSCRIPTEN
   #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
   	#define OF_SOUND_PLAYER_FMOD
-  #elif defined(TARGET_LINUX)
-  	#define OF_SOUND_PLAYER_OPENAL
   #endif
 #endif
 
