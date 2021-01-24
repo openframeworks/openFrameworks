@@ -230,24 +230,24 @@ all:
 
 $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_CORE_OBJ_OUTPUT_PATH)
-	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@ 2>/dev/null))" ]; then echo "Compiler flags have changed, recompiling"; echo "Old: $(strip $$(cat $@ 2>/dev/null))"; echo "New $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))"; echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))> $@; fi
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat "$@" 2>/dev/null))" ]; then echo "Compiler flags have changed, recompiling"; echo "Old: $(strip $$(cat "$@" 2>/dev/null))"; echo "New $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))"; echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))> "$@"; fi
 
 
 #This rule does the compilation
 $(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.cpp $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.mm $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.m $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 # this target does the linking of the library
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the
@@ -255,17 +255,17 @@ $(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.m $(OF_CORE_OBJ_OUTPUT_PATH).compile
 ifeq ($(SHAREDCORE),1)
 $(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Creating library " $(TARGET)
-	@mkdir -p $(@D)
-	$(CC) -shared $(OF_CORE_OBJ_FILES) -o $@
+	@mkdir -p $(call esp-@D)
+	$(CC) -shared $(OF_CORE_OBJ_FILES) -o "$@"
 else ifeq ($(BYTECODECORE),1)
 $(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Creating library " $(TARGET)
-	@mkdir -p $(@D)
-	$(CC) $(OF_CORE_OBJ_FILES) -o $@
+	@mkdir -p $(call esp-@D)
+	$(CC) $(OF_CORE_OBJ_FILES) -o "$@"
 else
 $(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Creating library " $(TARGET)
-	@mkdir -p $(@D)
+	@mkdir -p $(call esp-@D)
 	$(AR) ${ARFLAGS} "$@" $(OF_CORE_OBJ_FILES)
 endif
 -include $(OF_CORE_DEPENDENCY_FILES)
