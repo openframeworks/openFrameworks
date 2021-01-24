@@ -11,6 +11,8 @@
 ################################################################################
 # convert spaces ' ' to its escaped equivalent '\ '
 sp2esp = $(shell echo $1 | sed 's/ /\\ /g')
+# convert spaces ' ' to its escaped equivalent '\ '
+sp2_ = $(shell echo $1 | sed 's/ /_/g')
 # convert space replacement character to escaped space '\ '
 c2esp = $(subst +,\ ,$1)
 esp2c = $(subst \ ,+,$1)

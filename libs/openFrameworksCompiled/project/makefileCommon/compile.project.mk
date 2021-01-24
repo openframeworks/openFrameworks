@@ -5,8 +5,10 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
-	APPNAME = $(shell basename `pwd`)
+	APPNAME = $(shell basename "`pwd`")
 endif
+#replace spaces by underscore in APPNAME to have 'no space targets'
+APPNAME:=$(call sp2_,$(APPNAME))
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
