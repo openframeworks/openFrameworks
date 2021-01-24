@@ -134,7 +134,7 @@ ifndef PLATFORM_LIB_SUBPATH
 		else ifeq ($(PLATFORM_ARCH),i686)
 			PLATFORM_LIB_SUBPATH=linux
 		else
-			$(error This makefile does not support your architecture $(PLATFORM_ARCH))
+            $(error This makefile does not support your architecture $(PLATFORM_ARCH))
 		endif
 		SHARED_LIB_EXTENSION=so
 	else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
@@ -156,7 +156,7 @@ ifndef PLATFORM_LIB_SUBPATH
 		PLATFORM_LIB_SUBPATH=emscripten
 		SHARED_LIB_EXTENSION=so
 	else
-		$(error This makefile does not support your operating system)
+        $(error This makefile does not support your operating system)
 	endif
 endif
 
@@ -230,7 +230,7 @@ endif
 ifdef OF_LIBS_OF_COMPILED_PROJECT_PATH
 	OF_PLATFORM_MAKEFILES=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)
 else
-	$(error OF_LIBS_OF_COMPILED_PATH is not defined)
+    $(error OF_LIBS_OF_COMPILED_PATH is not defined)
 endif
 
 ifndef OF_CORE_LIB_PATH
@@ -264,7 +264,7 @@ AVAILABLE_PLATFORM_VARIANTS+=default
 
 # check to see if we have a file for the desired variant.  if not, quit and list the variants.
 ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
-	$(error Platform Variant "$(PLATFORM_VARIANT)" is not valid. Valid variants include [$(strip $(AVAILABLE_PLATFORM_VARIANTS))])
+    $(error Platform Variant "$(PLATFORM_VARIANT)" is not valid. Valid variants include [$(strip $(AVAILABLE_PLATFORM_VARIANTS))])
 endif
 
 # include the platform specific user and platform configuration files
@@ -283,11 +283,11 @@ PLATFORM_PKG_CONFIG ?= pkg-config
 # define the location of the core path
 #TODO: make sure all of the right checks are here.
 ifndef PLATFORM_CORE_EXCLUSIONS
-	$(error PLATFORM_CORE_EXCLUSIONS not defined)
+    $(error PLATFORM_CORE_EXCLUSIONS not defined)
 endif
 
 ifndef OF_LIBS_OPENFRAMEWORKS_PATH
-	$(error OF_LIBS_OPENFRAMEWORKS_PATH not defined)
+    $(error OF_LIBS_OPENFRAMEWORKS_PATH not defined)
 endif
 
 ################################################################################
@@ -392,20 +392,20 @@ OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_S
 ifdef MAKEFILE_DEBUG
     $(info ========================= config.mk flags ========================)
     $(info ---OF_CORE_DEFINES_CFLAGS---)
-    $(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
+    $(call esp-foreach-info,$(OF_CORE_DEFINES_CFLAGS))
 
     $(info ---OF_CORE_INCLUDES_CFLAGS---)
-    $(foreach v, $(OF_CORE_INCLUDES_CFLAGS),$(info $(v)))
+    $(call esp-foreach-info,$(OF_CORE_INCLUDES_CFLAGS))
 
     $(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
-    $(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
+    $(call esp-foreach-info,$(OF_CORE_FRAMEWORKS_CFLAGS))
 
     $(info ---OF_CORE_SOURCE_FILES---)
-    $(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
+    $(call esp-foreach-info,$(OF_CORE_SOURCE_FILES))
 
     $(info ---OF_CORE_HEADER_FILES---)
-    $(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
+    $(call esp-foreach-info,$(OF_CORE_HEADER_FILES))
 
     $(info ---PLATFORM_CORE_EXCLUSIONS---)
-    $(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
+    $(call esp-foreach-info,$(PLATFORM_CORE_EXCLUSIONS))
 endif
