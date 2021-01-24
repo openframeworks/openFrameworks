@@ -167,14 +167,14 @@ endif
 #  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
 # 2. Add the OF_CORE_OBJ_OUTPUT_PATH as a prefix
 #  $(addprefix $(OF_CORE_OBJ_OUTPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUTPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(patsubst $(OF_ROOT)/%.mm,%.d,$(patsubst $(OF_ROOT)/%.m,%.d,$(OF_CORE_SOURCE_FILES)))))
+OF_CORE_DEPENDENCY_FILES = $(call esp-addprefix,$(OF_CORE_OBJ_OUTPUT_PATH),$(call esp-patsubst,$(OF_ROOT)/%.cpp,%.d, $(call esp-patsubst,$(OF_ROOT)/%.mm,%.d, $(call esp-patsubst,$(OF_ROOT)/%.m,%.d,$(OF_CORE_SOURCE_FILES)))))
 
 # create a named list of object files
 # 1. create a list of object files based on the current list of
 #   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
 # 2. Add the OF_CORE_OBJ_OUTPUT_PATH as a prefix
 #	$(addprefix $(OF_CORE_OBJ_OUTPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUTPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(patsubst $(OF_ROOT)/%.mm,%.o,$(patsubst $(OF_ROOT)/%.m,%.o,$(OF_CORE_SOURCE_FILES)))))
+OF_CORE_OBJ_FILES = $(call esp-addprefix,$(OF_CORE_OBJ_OUTPUT_PATH),$(call esp-patsubst,$(OF_ROOT)/%.cpp,%.o, $(call esp-patsubst,$(OF_ROOT)/%.mm,%.o, $(call esp-patsubst,$(OF_ROOT)/%.m,%.o,$(OF_CORE_SOURCE_FILES)))))
 
 
 ################################################################################
@@ -185,10 +185,10 @@ ifdef MAKEFILE_DEBUG
     $(info OF_CORE_OBJ_OUTPUT_PATH=$(OF_CORE_OBJ_OUTPUT_PATH))
 
     $(info ---OF_CORE_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
+    $(call esp-foreach-info,$(OF_CORE_DEPENDENCY_FILES))
 
     $(info ---OF_CORE_OBJ_FILES---)
-    $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
+    $(call esp-foreach-info,$(OF_CORE_OBJ_FILES))
 endif
 
 

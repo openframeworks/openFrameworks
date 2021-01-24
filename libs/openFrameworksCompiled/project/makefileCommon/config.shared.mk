@@ -47,6 +47,9 @@ esp-exist = $(foreach f,$(call esp2c,$1),$(if $(wildcard $(call c2esp,$f)),$(cal
 # get @D from escaped $@ as @D do not return an escaped parent directory 
 esp-@D = $(dir $(call sp2esp,$@))
 
+revspace-func = $(shell echo $1 | tr '+' ' ')
+quote-path-func = $(if $(findstring +,$1),"$(call revspace-func,$1)",$1)
+
 # #####################  PLATFORM DETECTION ###################################
 # determine the platform's architecture, os and form the platform-specific libarary subpath
 #   If they haven't already been defined, this file will generate the following
@@ -61,6 +64,9 @@ esp-@D = $(dir $(call sp2esp,$@))
 
 SHELL ?= /bin/sh
 OF_ROOT ?=  $(realpath ../../..)
+# escape spaces in OF_ROOT 
+OF_ROOT:=$(call sp2esp,$(OF_ROOT))
+
 PLATFORM_VARIANT ?= default
 
 # ifeq ($(CC),$(EMSCRIPTEN)/emcc)
@@ -254,8 +260,8 @@ ifdef MAKEFILE_DEBUG
 endif
 
 
-ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
-$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH) probably you downloaded the wrong package?)
+ifeq ($(call esp-exist,$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
+    $(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH) probably you downloaded the wrong package?)
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
@@ -303,10 +309,10 @@ CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 # find all of the source directories
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_SOURCE_PATHS=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
+ALL_OF_CORE_SOURCE_PATHS=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" | sed 's/ /\\ /g')
 
 # create a list of core source PATHS, filtering out any  items that have a match in the CORE_EXCLUSIONS list
-OF_CORE_SOURCE_PATHS=$(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
+OF_CORE_SOURCE_PATHS=$(call esp-filter-out,$(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
 
 # create our core include paths from the source directory paths,
 # these have already been filtered and processed according to rules.
@@ -315,14 +321,14 @@ OF_CORE_HEADER_PATHS = $(OF_LIBS_OPENFRAMEWORKS_PATH) $(OF_CORE_SOURCE_PATHS)
 
 # add folders or single files to exclude fromt he compiled lib
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell $(FIND) $(OF_LIBS_PATH)/*/include -type d | grep -v "/\.[^\.]")
+ALL_OF_CORE_THIRDPARTY_HEADER_PATHS = $(shell $(FIND)  $(OF_LIBS_PATH)/*/include -type d | grep -v "/\.[^\.]" | sed 's/ /\\ /g')
 
 # filter out all excluded files / folders that were defined above
-OF_CORE_THIRDPARTY_HEADER_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_HEADER_PATHS))
+OF_CORE_THIRDPARTY_HEADER_PATHS = $(call esp-filter-out,$(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_HEADER_PATHS))
 
 # generate the list of core includes
 # 1. Add the header search paths defined by the platform config files.
-OF_CORE_INCLUDES_CFLAGS = $(addprefix -I,$(PLATFORM_HEADER_SEARCH_PATHS))
+OF_CORE_INCLUDES_CFLAGS = $(call esp-addprefix,-I,$(PLATFORM_HEADER_SEARCH_PATHS))
 # 2. Add all of the system library search paths defined by the platform config files.
 CORE_PKG_CONFIG_LIBRARIES =
 CORE_PKG_CONFIG_LIBRARIES += $(PLATFORM_PKG_CONFIG_LIBRARIES)
@@ -353,9 +359,9 @@ $(error couldn't find $(FAILED_PKG) pkg-config package or it's dependencies, did
 endif
 
 # 3. Add all of the standard OF third party library headers (these have already been filtered above according to the platform config files)
-OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_THIRDPARTY_HEADER_PATHS))
+OF_CORE_INCLUDES_CFLAGS += $(call esp-addprefix,-I,$(OF_CORE_THIRDPARTY_HEADER_PATHS))
 # 4. Add all of the core OF headers(these have already been filtered above according to the platform config files)
-OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_HEADER_PATHS))
+OF_CORE_INCLUDES_CFLAGS += $(call esp-addprefix,-I,$(OF_CORE_HEADER_PATHS))
 
 
 ################################################################################
@@ -380,8 +386,8 @@ OF_CORE_BASE_CXXFLAGS=$(PLATFORM_CXXFLAGS)
 # search the directories in the source folders for all .cpp files
 # filter out all excluded files / folders that were defined above
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-OF_CORE_SOURCE_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" -or -name "*.m" | grep -v "/\.[^\.]"))
-OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]"))
+OF_CORE_SOURCE_FILES=$(call esp-filter-out,$(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_SOURCE_PATHS) -name "*.cpp" -or -name "*.mm" -or -name "*.m" | grep -v "/\.[^\.]" | sed 's/ /\\ /g'))
+OF_CORE_HEADER_FILES=$(call esp-filter-out,$(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_SOURCE_PATHS) -name "*.h" | grep -v "/\.[^\.]" | sed 's/ /\\ /g'))
 
 
 
