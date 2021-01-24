@@ -20,6 +20,8 @@ jobs:
         shell: msys2 {0}
     steps:
     - uses: actions/checkout@v2
+      with:
+        path: 'open Frameworks'
     - uses: msys2/setup-msys2@v2
       with:
         update: true
@@ -29,14 +31,20 @@ jobs:
           rsync
           wget
     - name: Install dependencies
-      run: ./scripts/ci/msys2/install.sh
+      run:
+        cd ${GITHUB_WORKSPACE}/open\ Frameworks
+        ./scripts/ci/msys2/install.sh
       env:
         MSYSTEM: ${{ matrix.mingw }}
     - name: Build
-      run: ./scripts/ci/msys2/build.sh
+      run:
+        cd ${GITHUB_WORKSPACE}/open\ Frameworks
+        ./scripts/ci/msys2/build.sh
       env:
         MSYSTEM: ${{ matrix.mingw }}
     - name: Run tests
-      run: ./scripts/ci/msys2/run_tests.sh
+      run:
+        cd ${GITHUB_WORKSPACE}/open\ Frameworks
+        ./scripts/ci/msys2/run_tests.sh
       env:
         MSYSTEM: ${{ matrix.mingw }}
