@@ -5,6 +5,45 @@
 # core and projects. It's included from both the core makefile and the projects
 # makefile
 
+# #####################  UTILITY FUNCTIONS# ###################################
+# Define functions to convert spaces to '+', '\ ' and back. Include a function
+# to quote a path if necessary
+################################################################################
+# convert spaces ' ' to its escaped equivalent '\ '
+sp2esp = $(shell echo $1 | sed 's/ /\\ /g')
+# convert space replacement character to escaped space '\ '
+c2esp = $(subst +,\ ,$1)
+esp2c = $(subst \ ,+,$1)
+
+# display values of an escaped space list
+esp-foreach-info=$(foreach v,$(call esp2c,$1),$(info $(call c2esp,$(v))))
+
+# apply filter command on an escaped space list
+esp-filter = $(call c2esp,$(filter $(call esp2c,$1),$(call esp2c,$2)))
+
+# apply filter-out command on an escaped space list
+esp-filter-out = $(call c2esp,$(filter-out $(call esp2c,$1),$(call esp2c,$2)))
+
+# apply addprefix command on an escaped space list
+esp-addprefix = $(call c2esp,$(addprefix $(call esp2c,$1),$(call esp2c,$2)))
+
+# apply addsuffix command on an escaped space list
+esp-addsuffix = $(call c2esp,$(addsuffix $(call esp2c,$1),$(call esp2c,$2)))
+
+# apply patsubst command on an escaped space list
+esp-patsubst = $(call c2esp,$(patsubst $(call esp2c,$1),$(call esp2c,$2),$(call esp2c,$3)))
+
+# apply firstword command on an escaped space list
+esp-firstword = $(call c2esp,$(firstword $(call esp2c,$1)))
+
+# apply realpath command on an escaped space list
+esp-realpath = $(shell realpath $1 | sed 's/ /\\ /g')
+
+# from an escaped space list of files/directories, return a list of files that exist
+esp-exist = $(foreach f,$(call esp2c,$1),$(if $(wildcard $(call c2esp,$f)),$(call c2esp,$f)))
+
+# get @D from escaped $@ as @D do not return an escaped parent directory 
+esp-@D = $(dir $(call sp2esp,$@))
 
 # #####################  PLATFORM DETECTION ###################################
 # determine the platform's architecture, os and form the platform-specific libarary subpath
