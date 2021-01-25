@@ -82,7 +82,7 @@ else
 endif
 
 CUR_CC = $(CC)
-CC := $(CUR_CC) -c -r
+CC := $(CUR_CC) -r
 
 ifdef USE_CCACHE
 	ifeq ($(findstring ccache, $(CC)),)
