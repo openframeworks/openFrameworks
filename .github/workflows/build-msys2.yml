@@ -31,19 +31,19 @@ jobs:
           rsync
           wget
     - name: Install dependencies
-      run:
+      run: |
         cd "${GITHUB_WORKSPACE}/open Frameworks"
         ./scripts/ci/msys2/install.sh
       env:
         MSYSTEM: ${{ matrix.mingw }}
     - name: Build
-      run:
+      run: |
         cd "${GITHUB_WORKSPACE}/open Frameworks"
         ./scripts/ci/msys2/build.sh
       env:
         MSYSTEM: ${{ matrix.mingw }}
     - name: Run tests
-      run:
+      run: |
         cd "${GITHUB_WORKSPACE}/open Frameworks"
         ./scripts/ci/msys2/run_tests.sh
       env:
