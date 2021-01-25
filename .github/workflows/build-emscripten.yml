@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Docker Step
-      run:  "docker run -di --name emscripten -v $PWD:/src trzeci/emscripten:sdk-incoming-64bit bash"
+      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:latest bash"
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Install dependencies
