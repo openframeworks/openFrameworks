@@ -81,6 +81,8 @@ else
 	PLATFORM_EMSCRIPTEN_TOTAL_MEMORY=134217728
 endif
 
+CC = $(CC) -c -r
+
 ifdef USE_CCACHE
 	ifeq ($(findstring ccache, $(CC)),)
 		ORIGINAL_CC = $(CC)
