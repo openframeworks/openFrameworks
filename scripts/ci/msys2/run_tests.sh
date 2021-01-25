@@ -1,10 +1,10 @@
 #!/bin/bash
 set -ev
 ROOT="$(pwd -P)"
-source $ROOT/scripts/ci/ccache.sh
+source "$ROOT/scripts/ci/ccache.sh"
 
 echo "**** Running unit tests ****"
-cd $ROOT/tests
+cd "$ROOT/tests"
 for group in *; do
 	if [ -d $group ]; then
 		for test in $group/*; do
@@ -21,7 +21,7 @@ for group in *; do
 				if [[ $errorcode -ne 0 ]]; then
 					exit $errorcode
 				fi
-				cd $ROOT/tests
+				cd "$ROOT/tests"
 			fi
 		done
 	fi
