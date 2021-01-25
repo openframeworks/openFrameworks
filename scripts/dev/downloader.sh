@@ -17,18 +17,19 @@ downloader() {
 	if [ -z "$1" ]
 	then printDownloaderHelp; fi
 
-    SILENTARGS="";
-    if [ "$2" == "-s" ]; then
-    	`sh $CATALINA_HOME/bin/startup.sh`
-	elif [ "$2" == "-x" ]; then
-		`sh $CATALINA_HOME/bin/shutdown.sh`
+    	SILENTARGS="";
+    	if [ "$2" == "-s" ]; then
+		if command -v curl 2>/dev/null; then 
+    			curl -LO --retry 20 -O -s $@; 
+    		else 
+        		wget -q $@ 2> /dev/null; fi;
 	else
-		echo "Enter '-s' to start Tomcat, '-x' to shutdown."
+		if command -v curl 2>/dev/null; then 
+    			curl -LO --retry 20 -O --progress-bar $@; 
+    		else 
+        		wget $@ 2> /dev/null; fi;
 	fi
 
-    if command -v curl 2>/dev/null; then 
-    	curl -LO --retry 20 -O --progress-bar $@; 
-    else 
-        wget $@ 2> /dev/null; fi; 
+ 
 }
 
