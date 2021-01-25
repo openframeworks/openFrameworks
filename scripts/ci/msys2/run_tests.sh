@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ev
-ROOT=$(pwd -P)
+ROOT="$(pwd -P)"
 source $ROOT/scripts/ci/ccache.sh
 
 echo "**** Running unit tests ****"
