@@ -84,8 +84,6 @@ endif
 CUR_CC = $(CC)
 CC := $(CUR_CC) -c -r
 
-echo $(CC)
-
 ifdef USE_CCACHE
 	ifeq ($(findstring ccache, $(CC)),)
 		ORIGINAL_CC = $(CC)
