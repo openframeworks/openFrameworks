@@ -10,6 +10,8 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
+ROOT=$(cd $(dirname $0); pwd -P)
+
 pacman -Sy --needed make pkg-config gcc openal glew freeglut freeimage freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav raspberrypi-firmware gst-omx-rpi assimp boost libxcursor opencv assimp glfw-x11  uriparser curl pugixml
 
 wget http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
