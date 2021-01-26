@@ -10,6 +10,8 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
+ROOT=$(cd $(dirname $0); pwd -P)
+
 pacman -Sy --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml rtaudio poco
 
 exit_code=$?
