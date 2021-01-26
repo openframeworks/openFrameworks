@@ -18,7 +18,10 @@ downloader() {
 	then printDownloaderHelp; fi
 
     	SILENTARGS="";
-    	if [ "$2" == "-s" ]; then
+        if [ $# -ge 2  ]; then
+            SILENTARGS=$2
+        fi
+        if [[ "${SILENTARGS}" == "-s" ]]; then
 		if command -v curl 2>/dev/null; then 
     			curl -LO --retry 20 -O -s $@; 
     		else 
