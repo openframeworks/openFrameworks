@@ -34,6 +34,9 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/downloader.sh"
 
 isRunning(){
     if [ “$hostArch” == “Linux” ]; then
@@ -440,7 +443,7 @@ function createPackage {
         	mv projectGenerator-ios projectGenerator
         	rm projectGenerator-ios.zip
 		rm -rf apps/projectGenerator
-		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
+		sed -i "s/osx/ios/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 
 	if [ "$pkg_platform" = "linux" ]; then
