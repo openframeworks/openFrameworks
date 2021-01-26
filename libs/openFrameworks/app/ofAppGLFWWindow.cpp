@@ -177,6 +177,8 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering?1:0);
+#else
+    glfwWindowHint(GLFW_DOUBLEBUFFER, settings.doubleBuffering?1:0);
 #endif
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
