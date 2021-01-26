@@ -214,7 +214,7 @@ ifdef B_PROCESS_ADDONS
 		PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
 	endif
 endif
-$(info Line221)
+
 
 # generate the list of core libraries
 # 1. Add all of the third party static libs defined by the platform config files.

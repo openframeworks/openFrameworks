@@ -118,7 +118,8 @@ define parse_addon
 	$(eval TMP_PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	$(eval TMP_PROJECT_ADDONS_CFLAGS += $(ADDON_CPPFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
-		$(foreach addon_lib, $(strip $(ADDON_LIBS)), \
+		$(foreach addon_lib_c, $(call esp2c,$(strip $(ADDON_LIBS))), \
+			$(eval addon_lib=$(call c2esp,$(addon_lib_c))) \
 			$(if $(wildcard $(addon)/$(addon_lib)), \
 				$(eval TMP_PROJECT_ADDONS_LIBS += $(addon)/$(addon_lib)) \
 			) \
@@ -132,7 +133,7 @@ define parse_addon
 	$(eval TMP_PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
 	$(eval PROJECT_AFTER += $(ADDON_AFTER)) \
 	$(if $(strip $(ADDON_SOURCES)), \
-		$(eval ADDON_SOURCES_FILTERED = $(call filter-out,$(call esp-addprefix,$(addon)/,$(ADDON_SOURCES_EXCLUDE)),$(ADDON_SOURCES))) \
+		$(eval ADDON_SOURCES_FILTERED = $(call esp-filter-out,$(call esp-addprefix,$(addon)/,$(ADDON_SOURCES_EXCLUDE)),$(ADDON_SOURCES))) \
 		$(foreach addon_src_c, $(strip $(call esp2c,$(ADDON_SOURCES_FILTERED))), \
 			$(eval addon_src= $(call c2esp,$(addon_src_c))) \
 			$(if $(call esp-filter,$(addon)%, $(addon_src)), \
