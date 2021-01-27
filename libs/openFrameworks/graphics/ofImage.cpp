@@ -1193,7 +1193,6 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 	FIBITMAP * convertedBmp = nullptr;
 
     ofPixelFormat oldPixFormat = pix.getPixelFormat();
-    int oldNumChannels = pix.getNumChannels();
 
 	switch (newType){
 		case OF_IMAGE_GRAYSCALE:
@@ -1214,17 +1213,14 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
     putBmpIntoPixels(convertedBmp, pix, false);
     
     // if we started with BGRA or BGR pixels make sure we end up with similar
-    // when we add or drop  a channel
-    if( oldNumChannels >= 3 && pix.getNumChannels() >= 3 ){
-        if( oldPixFormat == OF_PIXELS_BGR || oldPixFormat == OF_PIXELS_BGRA ){
-            ofPixelFormat fixedFormat = pix.getPixelFormat();
-            if( fixedFormat == OF_PIXELS_RGBA ){
-                fixedFormat = OF_PIXELS_BGRA;
-            }else if( fixedFormat == OF_PIXELS_RGB ){
-                fixedFormat = OF_PIXELS_BGR;
-            }
-            pix.setFromPixels(pix.getData(),pix.getWidth(),pix.getHeight(), fixedFormat);
+    if( pix.getNumChannels() >= 3 && ( oldPixFormat == OF_PIXELS_BGR || oldPixFormat == OF_PIXELS_BGRA ) ){
+        ofPixelFormat fixedFormat = pix.getPixelFormat();
+        if( fixedFormat == OF_PIXELS_RGBA ){
+            fixedFormat = OF_PIXELS_BGRA;
+        }else if( fixedFormat == OF_PIXELS_RGB ){
+            fixedFormat = OF_PIXELS_BGR;
         }
+        pix.setFromPixels(pix.getData(),pix.getWidth(),pix.getHeight(), fixedFormat);
     }
 
 	if (bmp != nullptr) {
