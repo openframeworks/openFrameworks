@@ -677,6 +677,9 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	// bind texture
 	glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
 	//update the texture image:
+#ifdef TARGET_OF_IOS
+	glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, texData.tex_w, texData.tex_h, 0, glFormat, glType, 0);
+#endif
 	glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 	// unbind texture target by binding 0
 	glBindTexture(texData.textureTarget, 0);
