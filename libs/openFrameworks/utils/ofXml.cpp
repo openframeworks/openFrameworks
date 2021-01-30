@@ -1,5 +1,6 @@
 #include "ofXml.h"
 #include "ofUtils.h"
+#include <clocale>
 
 using namespace std;
 
