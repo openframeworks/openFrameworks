@@ -394,7 +394,6 @@ afterplatform: $(TARGET_NAME)
 ifneq ($(USE_FMOD),0)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
 	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
-	@install_name_tool -add_rpath "@executable_path/../Frameworks" bin/$(BIN_NAME).app/Contents/MacOS/$(BIN_NAME);
 endif
 
 	@echo
