@@ -26,7 +26,7 @@
 - Mike Allison
 - Nicola Pisanti
 - ofTheo
-- Pascal Baltazar
+- Pia Baltazar
 - Patricio Gonzalez Vivo
 - Roy Macdonald
 - Seb Lee-Delisle
