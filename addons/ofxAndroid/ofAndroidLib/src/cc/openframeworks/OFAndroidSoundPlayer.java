@@ -26,7 +26,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		stop();
 		unloadSound();
 		if (player != null) {player.stop(); player.release(); }
-		if(pool != null) pool.release();
+		if(pool != null) pool.release(); pool = null;
 		if(attributes != null) attributes = null;
 	}
 
@@ -40,9 +40,12 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	}
 
 	protected void createSoundPool(){
-		pool = new SoundPool.Builder()
-				.setAudioAttributes(attributes)
-				.build();
+		if(pool == null) {
+			pool = new SoundPool.Builder()
+					.setAudioAttributes(attributes)
+					.setMaxStreams(128)
+					.build();
+		}
 	}
 	
 	void loadSound(String fileName, boolean stream){
@@ -78,7 +81,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		}
 
 		if(soundID!=-1){
-			pool.unload(soundID);
+			if(pool != null) pool.unload(soundID);
 		}
 		fileName = null;
 		soundID = -1;
@@ -93,6 +96,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(getIsPlaying() && getPosition() != 0) setPosition(0);
 			player.start();
 		}else{
+			if(pool == null) return;
 			if(!multiPlay){
 				pool.stop(streamID);
 			}
@@ -109,6 +113,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 				player.seekTo(0);
 			}
 		}else if(streamID!=-1){
+			if(pool == null) return;
 			pool.stop(streamID);
 			bIsPlaying = false;
 		}
@@ -127,7 +132,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(stream){
 			if(player!=null) player.setVolume(leftVolume, rightVolume);
 		}else if(streamID!=-1){
-			pool.setVolume(streamID, leftVolume, rightVolume);
+			if(pool != null) pool.setVolume(streamID, leftVolume, rightVolume);
 		}
 	}
 	
@@ -145,7 +150,9 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(spd<0.5) spd = 0.5f;
 		if(spd>2) spd=2;
 		speed = spd;
-		if(!stream && streamID!=-1) pool.setRate(streamID, spd);
+		if(!stream && streamID!=-1) {
+			if(pool != null) pool.setRate(streamID, spd);
+		}
 	}
 	
 	void setPaused(boolean bP){
@@ -156,6 +163,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			else
 				player.start();
 		}else if(streamID!=-1){
+			if(pool == null) return;
 			if(bP){
 				pool.pause(streamID);
 			}else{
@@ -170,7 +178,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(player!=null)
 				player.setLooping(bLp);
 		}else{
-			if(streamID!=-1) pool.setLoop(streamID, -1);
+			if(streamID!=-1 && pool != null) pool.setLoop(streamID, -1);
 		}
 		loop = bLp;
 	}
@@ -241,6 +249,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		unloadSound();
 		fileName = currFileName;
 		bIsLoaded = currIsLoaded;
+		if(pool != null) pool.autoPause();
 	}
 
 	@Override
@@ -248,6 +257,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(bIsLoaded){
 			loadSound(fileName, stream);
 		}
+		if(pool != null) pool.autoResume();
 	}
 
 	@Override
@@ -264,13 +274,14 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	public boolean onError(MediaPlayer mp, int what, int extra) {
 		// ... react appropriately ...
 		// The MediaPlayer has moved to the Error state, must be reset!
+		Log.w("OF", "onError The MediaPlayer has moved to the Error state, must be reset!");
 		return true;
 	}
 
 
 
 	private MediaPlayer player;
-	private static SoundPool pool;
+	private static SoundPool pool = null;
 	AudioAttributes attributes;
 	private float pan;
 	private float volume;
