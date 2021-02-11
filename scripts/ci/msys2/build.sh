@@ -18,7 +18,9 @@ cp scripts/templates/msys2/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
 
 # this is maybe a fix for some weird issues where the linker runs out of address space
-echo "PROJECT_CFLAGS = -fpic -mcmodel=medium" >> config.make
-echo "PROJECT_OPTIMIZATION_CFLAGS_DEBUG = -Os" >> config.make
+if [ "$MSYSTEM" == "MINGW64" ]; then
+    echo "PROJECT_CFLAGS = -fpic -mcmodel=medium" >> config.make
+    echo "PROJECT_OPTIMIZATION_CFLAGS_DEBUG = -Os" >> config.make
+fi
 
 make ${USE_CCACHE} -j4 Debug
