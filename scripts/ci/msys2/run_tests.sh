@@ -12,11 +12,11 @@ for group in *; do
 				cd $test
 				cp ../../../scripts/templates/msys2/Makefile .
 				cp ../../../scripts/templates/msys2/config.make .
-				make ${USE_CCACHE} -j4 Debug
+				make ${USE_CCACHE} -j4 Release
 				cd bin
 				binname=$(basename ${test})
                 #gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
-				./${binname}_debug.exe
+				./${binname}.exe
 				errorcode=$?
 				if [[ $errorcode -ne 0 ]]; then
 					exit $errorcode
