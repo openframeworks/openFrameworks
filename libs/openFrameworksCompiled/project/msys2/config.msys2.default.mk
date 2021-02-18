@@ -128,10 +128,10 @@ PLATFORM_CFLAGS += -fexceptions
 PLATFORM_LDFLAGS += -lpthread
 
 ifeq ($(findstring MINGW64,$(MSYSTEM)),MINGW64)
-	@echo " found mingw64 "
+  $(info using mingw64)
 	PLATFORM_LDFLAGS += -Wl,--disable-dynamicbase,--disable-high-entropy-va,--default-image-base-low
 else
-	@echo " found mingw32 "
+  $(info using mingw32)
 endif
 
 ifndef DEBUG
