@@ -67,7 +67,7 @@ namespace{
 		}else if(isANumber(str)){
 			return ofFromString<Type>(str);
 		}else{
-			throw std::exception();
+			//throw std::exception();
 		}
 	}
 
@@ -79,7 +79,7 @@ namespace{
 		}else if(isANumber(str)){
 			ret = ofFromString<int>(str);
 		}else{
-			throw std::exception();
+			//throw std::exception();
 		}
 		return std::max(std::min(ret, 255), 0);
 	}
@@ -92,7 +92,7 @@ namespace{
 		}else if(isANumber(str)){
 			ret = ofFromString<int>(str);
 		}else{
-			throw std::exception();
+			//throw std::exception();
 		}
 		return std::max(std::min(ret, -127), 127);
 	}
@@ -807,6 +807,6 @@ template class ofxInputField<double>;
 template class ofxInputField<std::string>;
 
 //for some reason osx errors if this isn't defined
-//#ifdef TARGET_OSX
+#ifdef TARGET_OSX
 template class ofxInputField<typename std::conditional<std::is_same<uint32_t, size_t>::value || std::is_same<uint64_t, size_t>::value, bool, size_t>::type>;
-//#endif
+#endif
