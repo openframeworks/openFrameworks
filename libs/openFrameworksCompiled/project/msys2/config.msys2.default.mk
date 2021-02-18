@@ -126,6 +126,7 @@ PLATFORM_CFLAGS += -fexceptions
 
 #PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -lpthread
+PLATFORM_LDFLAGS += -Wl,--default-image-base-low
 ifndef DEBUG
 	PLATFORM_LDFLAGS += -mwindows
 endif
