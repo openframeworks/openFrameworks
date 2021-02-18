@@ -151,7 +151,7 @@ endif
 PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -ggdb #-D_GLIBCXX_DEBUG
 
 ##########################################################################################
 # PLATFORM CORE EXCLUSIONS

@@ -67,7 +67,7 @@ namespace{
 		}else if(isANumber(str)){
 			return ofFromString<Type>(str);
 		}else{
-			//throw std::exception();
+			throw std::exception();
 		}
 	}
 
@@ -79,7 +79,7 @@ namespace{
 		}else if(isANumber(str)){
 			ret = ofFromString<int>(str);
 		}else{
-			//throw std::exception();
+			throw std::exception();
 		}
 		return std::max(std::min(ret, 255), 0);
 	}
@@ -92,7 +92,7 @@ namespace{
 		}else if(isANumber(str)){
 			ret = ofFromString<int>(str);
 		}else{
-			//throw std::exception();
+			throw std::exception();
 		}
 		return std::max(std::min(ret, -127), 127);
 	}
