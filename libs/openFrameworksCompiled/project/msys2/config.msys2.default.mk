@@ -125,10 +125,8 @@ PLATFORM_CFLAGS += -fexceptions
 
 
 #PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -lpthread -mwindows
-ifndef DEBUG
-	PLATFORM_LDFLAGS += -Wl,-s
-endif
+PLATFORM_LDFLAGS += -lpthread 
+PLATFORM_LDFLAGS += -mwindows
 ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
 	PLATFORM_LDFLAGS += -lstdc++fs
 endif
@@ -151,7 +149,7 @@ endif
 PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -fno-eliminate-unused-debug-symbols #-D_GLIBCXX_DEBUG
 
 ##########################################################################################
 # PLATFORM CORE EXCLUSIONS
