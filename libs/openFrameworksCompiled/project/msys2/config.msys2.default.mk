@@ -126,6 +126,11 @@ PLATFORM_CFLAGS += -fexceptions
 
 #PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -lpthread
+
+ifeq ($(findstring MINGW64,$(MSYSTEM)),MINGW64)
+	PLATFORM_LDFLAGS += -Wl,--disable-dynamicbase,--disable-high-entropy-va,--default-image-base-low
+endif
+
 ifndef DEBUG
 	PLATFORM_LDFLAGS += -mwindows
 endif
