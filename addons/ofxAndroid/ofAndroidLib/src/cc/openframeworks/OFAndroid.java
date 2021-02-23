@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -25,8 +24,8 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Build;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
@@ -75,6 +74,16 @@ public class OFAndroid {
 			ActivityCompat.requestPermissions(OFAndroidLifeCycle.getActivity(),
 					new String[]{permission}, 0);
 		}
+	}
+
+	private boolean isExternalStorageWritable() {
+		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+	}
+
+	// Checks if a volume containing external storage is available to at least read.
+	private boolean isExternalStorageReadable() {
+		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ||
+				Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
 	}
 
 	public static String getRealExternalStorageDirectory(Context context)
@@ -132,6 +141,7 @@ public class OFAndroid {
 		if(srcFile.equals(dstFile)) return;
 
 		if(srcFile.isDirectory() && srcFile.listFiles().length>1){
+			Log.i("OF", "moveOldData  ");
 			for(File f: srcFile.listFiles()){
 				if(f.equals(dstFile)){
 					moveOldData(f.getAbsolutePath(),dst+"/"+f.getName());
