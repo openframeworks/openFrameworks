@@ -252,7 +252,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
                     #ifdef TARGET_OSX
 					    //for OS X we need to set this first as the window size affects the window positon
 					    settings.setSize(mode->width, mode->height);
-						setWindowShape(settings.getWidth(), settings.getHeight());
                     #endif
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 					currentW = mode->width;
@@ -263,7 +262,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
                 #ifdef TARGET_OSX
 				    auto size = getScreenSize();
 					settings.setSize(size.x, size.y);
-					setWindowShape(settings.getWidth(), settings.getHeight());
                 #endif
 					currentW = settings.getWidth();
 					currentH = settings.getHeight();
