@@ -40,7 +40,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
      * We use a minimum size of 4 bits for red/green/blue, but will
      * perform actual matching in chooseConfig() below.
      */
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
     private static int EGL_OPENGL_ES_BIT = 1;
     private static int GLES_VERSION = 1;
     private static int[] s_configAttribsMSAA =
@@ -50,9 +50,9 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 16,
             // Requires that setEGLContextClientVersion(2) is called on the view.
-            EGL10.EGL_RENDERABLE_TYPE, 4 /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
-            EGL10.EGL_SAMPLES, 2,
+            EGL10.EGL_SAMPLES, 4,
             EGL10.EGL_NONE
     };
 
@@ -63,7 +63,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 16,
-            EGL10.EGL_RENDERABLE_TYPE, 4 /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
             EGL_COVERAGE_SAMPLES_NV, 2,  // always 5 in practice on tegra 2
             EGL10.EGL_NONE
@@ -73,7 +73,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
             EGL10.EGL_DEPTH_SIZE, 16,
-            EGL10.EGL_RENDERABLE_TYPE, 4 /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
 
@@ -176,8 +176,15 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             int samples = findConfigAttrib(egl, display, config,
                     EGL10.EGL_SAMPLES, 0);
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize)
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
+                Log.w("OF", String.format("Enabled MSAAx%i ", mSampleSize));
                 return config;
+            }
+
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
+                Log.w("OF", String.format("Enabled MSAAx%i ", mSampleSize));
+                return config;
+            }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize)
                 return config;
