@@ -28,8 +28,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     public static void setGLESVersion(int version){
 		GLES_VERSION = version; 
 		
-    	if(version==1) EGL_OPENGL_ES_BIT=1; /* EGL_OPENGL_ES1_BIT */
-    	else EGL_OPENGL_ES_BIT=4;           /* EGL_OPENGL_ES2_BIT */
+    	if(version==1) EGL_OPENGL_ES_BIT=1;
+    	else EGL_OPENGL_ES_BIT=4;
     }
     
     public static int getGLESVersion(){
@@ -50,7 +50,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 16,
             // Requires that setEGLContextClientVersion(2) is called on the view.
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
             EGL10.EGL_SAMPLES, 4,
             EGL10.EGL_NONE
@@ -63,7 +63,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 16,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
             EGL_COVERAGE_SAMPLES_NV, 2,  // always 5 in practice on tegra 2
             EGL10.EGL_NONE
@@ -73,20 +73,16 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
             EGL10.EGL_DEPTH_SIZE, 16,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-            EGL10.EGL_SAMPLE_BUFFERS, 0 /* false */,
-            EGL10.EGL_SAMPLES, 0,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
 
-    private static int[] s_configAttribsDefaultFallback = {
+    private static int[] s_configAttribsDefaultES = {
             EGL10.EGL_RED_SIZE, 5,
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
-            EGL10.EGL_DEPTH_SIZE, 0,
-            EGL10.EGL_SAMPLE_BUFFERS, 0 /* false */,
-            EGL10.EGL_SAMPLES, 0,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+//            EGL10.EGL_DEPTH_SIZE, 16,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
 
@@ -116,9 +112,9 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 }
                 numConfigs = num_config[0];
                 if (numConfigs <= 0) {
-                    if (!egl.eglChooseConfig(display, s_configAttribsDefaultFallback, null, 0,
+                    if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
                             num_config)) {
-                        throw new IllegalArgumentException("s_configAttribsDefaultFallback Default failed");
+                        throw new IllegalArgumentException("s_configAttribsDefaultES Default failed");
                     }
                     numConfigs = num_config[0];
                     if (numConfigs <= 0) {
@@ -181,12 +177,12 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_SAMPLES, 0);
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
-                Log.w("OF", String.format("Enabled MSAAx%d", mSampleSize));
+                Log.w("OF", String.format("Enabled MSAAx%i ", mSampleSize));
                 return config;
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
-                Log.w("OF", String.format("Enabled MSAAx%d ", mSampleSize));
+                Log.w("OF", String.format("Enabled MSAAx%i ", mSampleSize));
                 return config;
             }
 
