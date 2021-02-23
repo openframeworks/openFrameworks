@@ -177,12 +177,12 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_SAMPLES, 0);
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
-                Log.w("OF", String.format("Enabled MSAAx%i ", mSampleSize));
+                Log.w("OF", String.format("Enabled MSAAx%d", mSampleSize));
                 return config;
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
-                Log.w("OF", String.format("Enabled MSAAx%i ", mSampleSize));
+                Log.w("OF", String.format("Enabled MSAAx%d ", mSampleSize));
                 return config;
             }
 
