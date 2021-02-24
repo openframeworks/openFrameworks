@@ -3,10 +3,10 @@ name: build-linux64-and-arm
 on:
   push:
     paths-ignore:
-    - '**/README.md'
+    - '**/*.md'
   pull_request:
     paths-ignore:
-    - '**/README.md'
+    - '**/*.md'
     
 jobs:
 
