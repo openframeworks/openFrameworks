@@ -403,7 +403,7 @@ protected:
 	ofTrueTypeFontSettings settings;
 	std::unordered_map<uint32_t,size_t> glyphIndexMap;
 
-    int getKerning(uint32_t c, uint32_t prevC) const;
+	int getKerning(uint32_t leftC, uint32_t rightC) const;
 	void drawChar(uint32_t c, float x, float y, bool vFlipped) const;
 	void drawCharAsShape(uint32_t c, float x, float y, bool vFlipped, bool filled) const;
 	void createStringMesh(const std::string & s, float x, float y, bool vFlipped) const;

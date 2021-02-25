@@ -4,16 +4,29 @@ uniform mat4 modelViewProjectionMatrix;
 attribute vec4 position;
 attribute vec2 texcoord;
 
-varying vec2 texCoordVarying;
+uniform sampler2D tex0;
 
-// PLEASE NOTE.
-// texture2D() is not supported in vertex ES2 shaders.
-// so unfortunately on ES2, we can not sample the texture,
-// and displace the mesh.
-// Please see GL2 and GL3 examples for displacement mapping.
+varying vec2 texCoordVarying;
 
 void main()
 {
+	// get the texture coordinates
     texCoordVarying = texcoord;
-	gl_Position = modelViewProjectionMatrix * position;
+
+    // get the position of the vertex relative to the modelViewProjectionMatrix
+	vec4 modifiedPosition = modelViewProjectionMatrix * position;
+   
+    // we need to scale up the values we get from the texture
+    float scale = 100.0;
+    
+    // here we get the red channel value from the texture
+    // to use it as vertical displacement
+    float displacementY = texture2DLod(tex0, texCoordVarying.xy, 0.0).x;
+		
+    // use the displacement we created from the texture data
+    // to modify the vertex position
+    modifiedPosition.y += displacementY * scale;
+
+    // this is the resulting vertex position
+	gl_Position = modifiedPosition;
 }

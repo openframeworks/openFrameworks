@@ -18,9 +18,6 @@ enum ofAppEGLWindowType {
 	OF_APP_WINDOW_X11
 };
 
-typedef std::map<EGLint,EGLint> ofEGLAttributeList;
-typedef std::map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
-
 typedef struct _XIM * XIM;
 typedef struct _XIC * XIC;
 typedef unsigned long Window;
@@ -33,6 +30,9 @@ typedef void *EGLDisplay;
 typedef void *EGLConfig;
 typedef void *EGLSurface;
 typedef void *EGLContext;
+
+typedef std::map<EGLint,EGLint> ofEGLAttributeList;
+typedef std::map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
 
 struct ofAppEGLWindowSettings: public ofGLESWindowSettings {
 public:
@@ -119,7 +119,7 @@ public:
 	EGLSurface getEglSurface() const;
 	EGLContext getEglContext() const;
 
-#ifndef TARGET_RASPBERRY_PI
+#ifndef TARGET_RASPBERRY_PI_LEGACY
 	Display* getX11Display();
 	Window getX11Window();
 #endif
@@ -225,7 +225,7 @@ protected:
 	EGLNativeWindowType getNativeWindow();
 	EGLNativeDisplayType getNativeDisplay();
 
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	void initRPiNative();
 	void exitRPiNative();
 

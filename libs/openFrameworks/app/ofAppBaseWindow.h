@@ -12,7 +12,7 @@ struct __GLXcontextRec;
 typedef __GLXcontextRec * GLXContext;
 #endif
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef unsigned long Window;
 struct _XDisplay;
 typedef struct _XDisplay Display;
@@ -77,7 +77,7 @@ public:
 
     virtual void * getWindowContext(){return nullptr;};
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	virtual Display* getX11Display(){return nullptr;}
 	virtual Window  getX11Window() {return 0;}
 #endif

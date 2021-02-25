@@ -28,7 +28,7 @@ void ofTimer::setPeriodicEvent(uint64_t nanoseconds){
 }
 
 void ofTimer::waitNext(){
-#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
+#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY))
 	timespec remainder = {0,0};
 	timespec wakeTime = nextWakeTime.getAsTimespec();
 	clock_nanosleep(CLOCK_MONOTONIC,TIMER_ABSTIME,&wakeTime,&remainder);

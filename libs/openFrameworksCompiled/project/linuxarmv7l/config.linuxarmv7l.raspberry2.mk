@@ -43,8 +43,44 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+# We detect Raspbian versions Stretch and newer above and enable legacy automatically for older versions
+# If detection fails comment USE_PI_LEGACY = 1 to use the newer system
+USE_PI_LEGACY = 1
+
+VER_ID = 0
+
+#if we have this file lets see if we are Stretch or Newer
+ifneq (,$(wildcard $(RPI_ROOT)/etc/os-release))
+	#grab the Debian version ( 9 = Stretch, 10 = Buster )
+	VER_ID = $(shell grep -oP '(?<=^VERSION_ID=).+' $(RPI_ROOT)/etc/os-release | tr -d '"')
+endif
+
+#check if we are newer than Stretch and use the new system
+ifeq ($(shell expr $(VER_ID) \>= 9), 1)
+	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only 
+	USE_PI_LEGACY = 0
+	USE_ATOMIC = 1
+endif
+
+$(info VER ID IS $(VER_ID)) 
+
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
+
+ifeq ($(USE_PI_LEGACY), 1)
+	PLATFORM_DEFINES += TARGET_RASPBERRY_PI_LEGACY
+    $(info using legacy build)
+else
+	# comment this for older EGL windowing. Has no effect if USE_PI_LEGACY is enabled
+	# GLFW seems to provide a more robust window on newer Raspbian releases
+	USE_GLFW_WINDOW = 1
+    $(info using newer build and GLFW window)
+endif
+
+ifdef USE_GLFW_WINDOW
+	PLATFORM_DEFINES += TARGET_GLFW_WINDOW
+endif
+
 
 # TODO many of these are not relevant to openFrameworks (were just pasted from hello_pi examples)
 # from raspberry pi examples
@@ -119,10 +155,27 @@ PLATFORM_CFLAGS += -pipe
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+ifdef USE_GLFW_WINDOW
+	PLATFORM_PKG_CONFIG_LIBRARIES += gl
+	PLATFORM_PKG_CONFIG_LIBRARIES += glu
+	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+	PLATFORM_LIBRARIES += glfw
+endif
+
 # raspberry pi specific
-PLATFORM_LIBRARIES += GLESv2
-PLATFORM_LIBRARIES += GLESv1_CM
-PLATFORM_LIBRARIES += EGL
+ifeq ($(USE_PI_LEGACY), 0)
+	PLATFORM_LIBRARIES += GLESv2
+	PLATFORM_LIBRARIES += GLESv1_CM
+	PLATFORM_LIBRARIES += EGL
+else ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
+	PLATFORM_LIBRARIES += GLESv2
+	PLATFORM_LIBRARIES += GLESv1_CM
+	PLATFORM_LIBRARIES += EGL
+else
+	PLATFORM_LIBRARIES += brcmGLESv2
+	PLATFORM_LIBRARIES += brcmEGL
+endif
+
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
@@ -136,6 +189,9 @@ PLATFORM_LIBRARIES += dl
 
 PLATFORM_LDFLAGS += -pthread
 
+ifdef USE_ATOMIC
+	PLATFORM_LDFLAGS += -latomic
+endif 
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -183,8 +239,11 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-#PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-egl-$(GST_VERSION)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
+ifndef USE_GLFW_WINDOW
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
+else
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+endif
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
 ifeq ($(CROSS_COMPILING),1)

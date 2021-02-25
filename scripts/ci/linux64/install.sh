@@ -17,6 +17,17 @@ fi
 
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
+#sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+#sudo apt-get install gcc-4.9 g++-4.9
+
+sudo add-apt-repository -y ppa:dns/gnu
+echo deb http://ci.openframeworks.cc/gcc_repo trusty main | sudo tee /etc/apt/sources.list.d/of_gcc_repo.list
+sudo apt-get update -q
+sudo apt-get install -y --allow-unauthenticated gcc-6 g++-6
+sudo apt-get install -y gperf coreutils realpath libxrandr-dev libxinerama-dev libx11-dev libxcursor-dev libxi-dev
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
+g++ -v
 
 if [ "$OPT" = "qbs" ] && [ ! -d "$TRAVIS_BUILD_DIR/linuxbrew/.linuxbrew" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"

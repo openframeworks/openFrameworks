@@ -23,7 +23,7 @@
 
 using namespace std;
 
-#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI)
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
 	#include "ofAppGLFWWindow.h"
 	//special case so we preserve supplied settngs
 	//TODO: remove me when we remove the ofAppGLFWWindow setters.
@@ -471,7 +471,7 @@ void ofSetVerticalSync(bool bSync){
 }
 
 //-------------------------- native window handles
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 Display* ofGetX11Display(){
 	return mainLoop()->getCurrentWindow()->getX11Display();
 }

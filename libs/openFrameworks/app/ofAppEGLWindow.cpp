@@ -287,7 +287,7 @@ EGLContext ofAppEGLWindow::getEglContext() const {
 	return eglContext;
 }
 
-#ifndef TARGET_RASPBERRY_PI
+#ifndef TARGET_RASPBERRY_PI_LEGACY
 //------------------------------------------------------------
 Display* ofAppEGLWindow::getX11Display(){
 	return x11Display;
@@ -315,14 +315,14 @@ EGLint ofAppEGLWindow::getEglVersionMinor() const {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::initNative() {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	initRPiNative();
 #endif
 }
 
 //------------------------------------------------------------
 void ofAppEGLWindow::exitNative() {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	exitRPiNative();
 #endif
 }
@@ -337,7 +337,7 @@ EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
 	if(isUsingX11) {
 		return (EGLNativeWindowType)x11Window;
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		return (EGLNativeWindowType)&dispman_native_window;
 #else
 		ofLogNotice("ofAppEGLWindow") << "getNativeWindow(): no native window type for this system, perhaps try X11?";
@@ -356,7 +356,7 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
 	if(isUsingX11) {
 		return (EGLNativeDisplayType)x11Display;
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		return (EGLNativeDisplayType)NULL;
 #else
 		ofLogNotice("ofAppEGLWindow") << "getNativeDisplay(): no native window type for this system, perhaps try X11?";
@@ -429,7 +429,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	////////////////
 	// TODO remove the following ifdef once x11 is accelerated on RPI
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	if(isUsingX11) {
 		isUsingX11 = false;
 		ofLogWarning("ofAppEGLWindow") << "init(): X11 not availble on RPI yet, using a native window instead";
@@ -758,7 +758,7 @@ bool ofAppEGLWindow::destroyWindow() {
 			XDestroyWindow(x11Display,x11Window); // or XCloseWindow?
 			XFree(x11Screen);
 		} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 			dispman_update = vc_dispmanx_update_start(0);
 			if (dispman_element != DISPMANX_NO_HANDLE) {
 				vc_dispmanx_element_remove(dispman_update, dispman_element);
@@ -942,7 +942,7 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 				currentWindowRect = newRect;
 			}
 		} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 
 			VC_RECT_T dst_rect;
 			dst_rect.x = (int32_t)newRect.x;
@@ -996,7 +996,7 @@ bool ofAppEGLWindow::createWindow(const ofRectangle& requestedWindowRect) {
 	if(isUsingX11) {
 		return createX11NativeWindow(requestedWindowRect);
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		return createRPiNativeWindow(requestedWindowRect);
 #else
 		ofLogError("ofAppEGLWindow") << "createEGLWindow(): no native window type for this system, perhaps try X11?";
@@ -1097,7 +1097,7 @@ glm::vec2 ofAppEGLWindow::getScreenSize(){
 		}
 
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		int success = graphics_get_display_size(settings.screenNum, &screenWidth, &screenHeight);
 		if(success < 0) {
 			ofLogError("ofAppEGLWindow") << "getScreenSize(): tried to get display size but failed";
@@ -1165,7 +1165,7 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 			nonFullscreenWindowRect = currentWindowRect;
 		}
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 
 		// keep it in bounds
 		auto screenSize = getScreenSize();
@@ -1226,7 +1226,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 			nonFullscreenWindowRect = currentWindowRect;
 		}
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		setWindowRect(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
 		nonFullscreenWindowRect = currentWindowRect;
 #else
@@ -1836,7 +1836,7 @@ void ofAppEGLWindow::readNativeInputEvents(){
 	}
 }
 
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 //------------------------------------------------------------
 void ofAppEGLWindow::initRPiNative() {
 	bcm_host_init();

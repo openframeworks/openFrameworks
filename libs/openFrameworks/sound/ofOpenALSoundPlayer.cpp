@@ -23,10 +23,10 @@
 
 using namespace std;
 
-ALCdevice * ofOpenALSoundPlayer::alDevice = 0;
-ALCcontext * ofOpenALSoundPlayer::alContext = 0;
+static ALCdevice * alDevice = nullptr;
+static ALCcontext * alContext = nullptr;
 vector<float> ofOpenALSoundPlayer::window;
-float ofOpenALSoundPlayer::windowSum=0;
+float ofOpenALSoundPlayer::windowSum = 0.f;
 
 
 kiss_fftr_cfg ofOpenALSoundPlayer::systemFftCfg=0;
@@ -40,7 +40,7 @@ static set<ofOpenALSoundPlayer*> & players(){
 }
 
 void ofOpenALSoundUpdate(){
-	alcProcessContext(ofOpenALSoundPlayer::alContext);
+	alcProcessContext(alContext);
 }
 
 // ----------------------------------------------------------------------------
@@ -909,7 +909,7 @@ void ofOpenALSoundPlayer::setMultiPlay(bool bMp){
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::play(){
 	std::unique_lock<std::mutex> lock(mutex);
-	int err = glGetError();
+	int err = alGetError();
 
 	// if the sound is set to multiplay, then create new sources,
 	// do not multiplay on loop or we won't be able to stop it

@@ -203,7 +203,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
-		#if !defined(TARGET_RASPBERRY_PI)
+		#if !defined(TARGET_RASPBERRY_PI_LEGACY)
 		XInitThreads();
 		#endif
 		int argc=0; char **argv = nullptr;
@@ -362,7 +362,9 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		[loadDialog setResolvesAliases:YES];
 
 		if(!windowTitle.empty()) {
-			[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
+			// changed from setTitle to setMessage
+			// https://stackoverflow.com/questions/36879212/title-bar-missing-in-nsopenpanel
+			[loadDialog setMessage:[NSString stringWithUTF8String:windowTitle.c_str()]];
 		}
 
 		if(!defaultPath.empty()) {

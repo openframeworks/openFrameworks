@@ -1,5 +1,6 @@
 #include "ofxSvg.h"
 #include "ofConstants.h"
+#include <locale>
 
 using namespace std;
 
@@ -49,7 +50,11 @@ void ofxSVG::loadFromString(std::string stringdata, std::string urlstring){
 	const char* url = urlstring.c_str();
 
 	struct svgtiny_diagram * diagram = svgtiny_create();
+	// Switch to "C" locale as svgtiny expect it to parse floating points (issue 6644)
+	std::locale prev_locale = std::locale::global( std::locale::classic() );
 	svgtiny_code code = svgtiny_parse(diagram, data, size, url, 0, 0);
+	// Restore locale
+	std::locale::global( prev_locale );
 
 	if(code != svgtiny_OK){
 		string msg;
