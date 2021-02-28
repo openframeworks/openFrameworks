@@ -22,5 +22,7 @@
 	<string>This app needs to access the camera</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs to access the microphone</string>
+	<key>NSHighResolutionCapable</key>
+	<false/>
 </dict>
 </plist>
