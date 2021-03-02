@@ -227,11 +227,6 @@ function createPackage {
     #remove devApps folder
     rm -r $pkg_ofroot/apps/devApps
 
-    #remove projectGenerator folder
-    if [ "$pkg_platform" = "msys2" ]; then
-    	rm -rf $pkg_ofroot/apps/projectGenerator
-    fi
-
 	cd $pkg_ofroot/examples
 
 	#delete ios examples in other platforms
@@ -405,7 +400,7 @@ function createPackage {
 	echo "Creating projectGenerator"
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
-    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ]; then
+    if [ "$pkg_platform" = "vs2015" ] || [ "$pkg_platform" = "vs2017" ] || [ "$pkg_platform" = "msys2" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:vs > /dev/null
@@ -417,7 +412,12 @@ function createPackage {
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
-		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
+		mv projectGenerator-vs projectGenerator
+		if [ "$pkg_platform" = "msys2" ]; then
+			sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
+		else
+			sed -i "s/osx/vs/g" projectGenerator/resources/app/settings.json
+		fi
 	fi
 
     if [ "$pkg_platform" = "osx" ]; then
