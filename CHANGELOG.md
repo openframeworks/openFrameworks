@@ -28,6 +28,8 @@ CORE
 
 ### examples 
 - regexExample - removed closing parenthesis (#6693) [commit](https://github.com/openframeworks/openFrameworks/commit/3a187e7032586f75566e21c2312a3c41f4a811ae)
+- videoGrabberExample - set the inverted pixels to actual grabber dimensions (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)
+- imageLoaderWebExample - fix the async request on key press (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)
 
 ### gl
 - Allow hex format int defines in ofShader code. (#6515) [commit](https://github.com/openframeworks/openFrameworks/commit/c4f90bcb51405905ec0713835f6f57531927b7a6)
