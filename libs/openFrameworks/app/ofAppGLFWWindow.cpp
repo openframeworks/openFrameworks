@@ -177,6 +177,8 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering?1:0);
+#else
+    glfwWindowHint(GLFW_DOUBLEBUFFER, settings.doubleBuffering?1:0);
 #endif
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
@@ -250,7 +252,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
                     #ifdef TARGET_OSX
 					    //for OS X we need to set this first as the window size affects the window positon
 					    settings.setSize(mode->width, mode->height);
-						setWindowShape(settings.getWidth(), settings.getHeight());
                     #endif
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 					currentW = mode->width;
@@ -261,7 +262,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
                 #ifdef TARGET_OSX
 				    auto size = getScreenSize();
 					settings.setSize(size.x, size.y);
-					setWindowShape(settings.getWidth(), settings.getHeight());
                 #endif
 					currentW = settings.getWidth();
 					currentH = settings.getHeight();
@@ -326,7 +326,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	//this lets us detect if the window is running in a retina mode
 	if( framebufferW != tmpWindowW){
-		pixelScreenCoordScale = (float)framebufferW / (float)windowW;
+		pixelScreenCoordScale = (float)framebufferW / (float)tmpWindowW;
 		if( pixelScreenCoordScale < 1 ){
 			pixelScreenCoordScale = 1;
 		}

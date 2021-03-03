@@ -61,7 +61,7 @@ void ofDrawPlane(float x, float y, float z, float width, float height);
 /// \param position A 3D point specifying the plane's centroid.
 /// \param width The width of the plane.
 /// \param height The height of the plane.
-void ofDrawPlane(glm::vec3& position, float width, float height);
+void ofDrawPlane(const glm::vec3& position, float width, float height);
 
 /// \brief Draw a plane with the current renderer at the origin.
 /// \param width The width of the plane.
@@ -500,7 +500,7 @@ public:
 	/// \param position A 3D point specifying the plane's centroid.
 	/// \param width The width to use when drawing the plane.
 	/// \param height The height to use when drawing the plane.
-	void drawPlane(glm::vec3& position, float width, float height) const;
+	void drawPlane(const glm::vec3& position, float width, float height) const;
 
 	/// \brief Draw a plane at the coordinate system's origin.
 	///

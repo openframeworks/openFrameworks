@@ -87,7 +87,7 @@ public:
 
     /// \brief Stops and unloads the current sound.
     void unload();
-    OF_DEPRECATED_MSG("Use load",void unloadSound());
+    OF_DEPRECATED_MSG("Use unload",void unloadSound());
     
     /// \brief Starts playback.
     void play();

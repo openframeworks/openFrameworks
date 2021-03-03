@@ -25,7 +25,7 @@ class ofApp: public ofxUnitTestsApp{
 
 		ofxTest(client.Send(messageSent.c_str(), messageSent.size()), "client send non blocking");
 
-		auto received = 0;
+		std::size_t received = 0;
 		auto left = messageSent.size();
 		for(int i=0;i<10 && received<messageSent.size();i++){
 			auto ret = server.Receive(bufferReceive.data() + received, left);
@@ -124,7 +124,7 @@ class ofApp: public ofxUnitTestsApp{
 		ofxTestEq(ret,SOCKET_TIMEOUT,"socket receive timeout");
 		// seems timers in the test servers are not very accurate so
 		// we test this with a margin of 500ms
-        ofxTestGt(now-then, 4500, "socket receive timeouts after 5s");
+        ofxTestGt(now-then, std::uint64_t(4500), "socket receive timeouts after 5s");
 	}
 
     void testPortsStayBound(){

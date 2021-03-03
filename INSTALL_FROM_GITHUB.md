@@ -88,8 +88,30 @@ Once all changes are downloaded try to compile a program. It if fails it is poss
 
 Finally, if your setup depends on some of the scripts from the scripts folder, you may need to re-run them. For instance, if you use Qt Creator and have trouble creating new OF projects you may want to run `scripts/qtcreator/install_template.sh` again.
 
+### Note: master vs patch-release branches
 
+After an openFrameworks release, bug fixes will be eventually added to the `patch-release` branch while new features will land in the `master` branch instead.
 
+If you need the recent bug fixes, run `git branch` to see if `patch-release` is already in your system. 
+
+A. If it's not, get that branch:
+
+```
+$ git fetch origin patch-release
+$ git checkout -b patch-release
+```
+
+B. If it's already there, switch to it:
+
+```
+$ git checkout patch-release
+```
+
+Finally run
+```
+$ git pull
+``` 
+to download those bug fixes to your local `patch-release` branch, then try compile your program and see if the bug that was troubling you is now gone.
 
 # How to submit your pull requests
 

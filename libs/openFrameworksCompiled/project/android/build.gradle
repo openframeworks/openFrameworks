@@ -48,7 +48,7 @@ model {
                                     "**/ofRtAudioSoundStream.cpp",
                                     "**/glew/**/*",
                                     "**/videoInput/**/*",
-                                    "**/fmodex/**/*",
+                                    "**/fmod/**/*",
                                     "**/kiss/**/*",
                                     "**/assimp/**/*",
                                     "**/portaudio/**/*",
