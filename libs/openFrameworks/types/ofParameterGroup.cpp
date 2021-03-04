@@ -343,11 +343,15 @@ string ofParameterGroup::getName() const{
 	return obj->name;
 }
 
-void ofParameterGroup::setName(const string & name){
-	std::string oldName = getEscapedName();
+bool ofParameterGroup::setName(const string & name){
+	std::string oldName = getName();
 	obj->name = name;
-    
-	changeChildName(this, obj->parents, oldName, getEscapedName());
+	
+	if(!ofParameterGroup::changeChildName(this, obj->parents, escape(oldName), getEscapedName())){
+		setName(oldName);
+		return false;
+	}
+	return true;
 }
 
 string ofParameterGroup::getEscapedName() const{
@@ -445,11 +449,16 @@ void ofParameterGroup::Value::notifyParameterNameChanged(ofAbstractParameter & p
 	}),parents.end());
 }
 			
-void ofParameterGroup::Value::updateParameterName(const std::string oldName, const std::string newName){
-    if(oldName != newName){
-        parametersIndex[newName] = parametersIndex[oldName];
-        parametersIndex.erase(oldName);
-    }
+bool ofParameterGroup::Value::updateParameterName(const std::string oldName, const std::string newName){
+	if(parametersIndex.find(newName) != parametersIndex.end()){
+		return false;
+	}
+	if(oldName != newName){
+		parametersIndex[newName] = parametersIndex[oldName];
+		parametersIndex.erase(oldName);
+		return true;
+	}
+	return false;
 }
 
 const ofParameterGroup ofParameterGroup::getFirstParent() const{
@@ -551,19 +560,28 @@ void ofParameterGroup::checkAndRemoveExpiredParents(std::vector<std::weak_ptr<Va
 }
 
 
-void ofParameterGroup::changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName)
+bool ofParameterGroup::changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName)
 {
-	if(!child) return;
+	if(!child) return false;
 	
 	// name has not change, no need to notify anything
-	if(oldName == newName) return;
+	if(oldName == newName) return false;
 	
 	checkAndRemoveExpiredParents(parents);
 	
-	for(auto & parent: parents){
-		auto p = parent.lock();
+	for(auto parent = parents.begin(); parent != parents.end(); ++parent){
+		auto p = parent->lock();
 		if(p){
-			p->updateParameterName(oldName, newName);
+			if(!p->updateParameterName(oldName, newName)){
+				// Undo the name change in the paremeters that we already did
+				for(auto reverseParent = parent-1; reverseParent != parents.begin()-1; --reverseParent){
+					auto rp = reverseParent->lock();
+					if(rp){
+						rp->updateParameterName(newName, oldName);
+					}
+				}
+				return false;
+			}
 		}
 	}
 		
@@ -577,6 +595,7 @@ void ofParameterGroup::changeChildName(ofAbstractParameter* child, std::vector<s
 			p->notifyParameterNameChanged(*child);
 		}
 	}
+	return true;
 }
 
 ofEvent<std::string>& ofParameterGroup::nameChangedEvent()

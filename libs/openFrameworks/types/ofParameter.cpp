@@ -79,12 +79,15 @@ ofParameter<void>::ofParameter(const string& name)
 
 }
 
-void ofParameter<void>::setName(const string & name){
-    std::string oldName = getEscapedName();
+bool ofParameter<void>::setName(const string & name){
+	std::string oldName = getName();
+	if(escape(name) == escape(oldName)) return false;
+	if(!ofParameterGroup::changeChildName(this, obj->parents, escape(oldName), escape(name))){
+		setName(oldName);
+		return false;
+	}
 	obj->name = name;
-    
-	ofParameterGroup::changeChildName(this, obj->parents, oldName, getEscapedName());
-	
+	return true;
 }
 
 
