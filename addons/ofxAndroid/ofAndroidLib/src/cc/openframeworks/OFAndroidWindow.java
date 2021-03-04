@@ -96,25 +96,25 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
                 num_config)) {
-            throw new IllegalArgumentException("eglChooseConfig MSAA failed");
+            Log.w("OF", String.format("eglChooseConfig MSAA failed"));
         }
         int numConfigs = num_config[0];
         if (numConfigs <= 0) {
             if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
                     num_config)) {
-                throw new IllegalArgumentException("eglChooseConfig MSAA Fallback failed");
+                Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
             }
             numConfigs = num_config[0];
             if (numConfigs <= 0) {
                 if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
                         num_config)) {
-                    throw new IllegalArgumentException("eglChooseConfig Default failed");
+                    Log.w("OF", String.format("eglChooseConfig Default failed"));
                 }
                 numConfigs = num_config[0];
                 if (numConfigs <= 0) {
                     if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
                             num_config)) {
-                        throw new IllegalArgumentException("s_configAttribsDefaultES Default failed");
+                        Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
                     }
                     numConfigs = num_config[0];
                     if (numConfigs <= 0) {
