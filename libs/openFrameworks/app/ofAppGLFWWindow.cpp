@@ -41,6 +41,28 @@
 using namespace std;
 
 //-------------------------------------------------------
+#if defined(TARGET_WIN32)
+void __stdcall	debugMessageCallback(GLenum /*source*/, GLenum /*type*/, GLuint /*id*/, GLenum severity, GLsizei /*length*/, const GLchar *message, void *userParam)
+#else
+void			debugMessageCallback(GLenum /*source*/, GLenum /*type*/, GLuint /*id*/, GLenum severity, GLsizei /*length*/, const GLchar *message, void *userParam)
+#endif
+{
+	switch( severity ) {
+		case GL_DEBUG_SEVERITY_HIGH:
+			std::cout << "OpenGL error: " << message << std::endl;
+		break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			std::cout << "OpenGL warning: " << message << std::endl;
+		break;
+		case GL_DEBUG_SEVERITY_LOW:
+			std::cout << "OpenGL message: " << message << std::endl;
+		break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+		break;
+	}
+}
+
+//-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
 :coreEvents(new ofCoreEvents) {
 	bEnableSetupScreen	= true;
@@ -199,6 +221,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if((settings.glVersionMajor==3 && settings.glVersionMinor>=2) || settings.glVersionMajor>=4){
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		}
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, settings.debugContext);
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
@@ -363,6 +386,11 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 #endif
 	}else{
 		static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+	}
+
+	if(settings.debugContext) {
+		glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
+		glDebugMessageCallback( (GLDEBUGPROC)debugMessageCallback, this );
 	}
 
 	setVerticalSync(true);

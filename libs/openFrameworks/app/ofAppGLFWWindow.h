@@ -52,6 +52,7 @@ public:
 	bool resizable = true;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
+	bool debugContext = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
 };
 
