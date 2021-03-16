@@ -1161,10 +1161,10 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 		return ofRectangle( x, y, 0.f, 0.f);
 	}
 
-	float minX =  std::numeric_limits<float>::max();
-	float minY =  std::numeric_limits<float>::max();
-	float maxX = -std::numeric_limits<float>::max();
-	float maxY = -std::numeric_limits<float>::max();
+	float minX = x;
+	float minY = y;
+	float maxX = x;
+	float maxY = y;
 
 	// Calculate bounding box by iterating over glyph properties
 	// Meaning of props can be deduced from illustration at top of:
