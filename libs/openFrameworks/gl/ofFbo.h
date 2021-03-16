@@ -149,7 +149,7 @@ public:
     ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
     ///           method instead.
     /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
-    void begin(ofFboMode mode = OF_FBOMODE_PERSPECTIVE | OF_FBOMODE_MATRIXFLIP);
+    void begin(ofFboMode mode = OF_FBOMODE_PERSPECTIVE | OF_FBOMODE_MATRIXFLIP) const;
 
 	/// \brief    Ends the current framebuffer render context.
 	/// \sa       void begin(bool setupScreen=true) const;

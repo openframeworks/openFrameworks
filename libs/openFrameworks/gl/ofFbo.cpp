@@ -843,7 +843,7 @@ void ofFbo::begin(bool setupScreen) const{
 }
 
 
-void ofFbo::begin(ofFboMode mode){
+void ofFbo::begin(ofFboMode mode) const{
     auto renderer = settings.renderer.lock();
     if(renderer){
         renderer->begin(*this, mode);
@@ -1115,11 +1115,14 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 		auto renderer = settings.renderer.lock();
 		if(renderer){
+			GLint readBuffer;
+			glGetIntegerv(GL_READ_BUFFER, &readBuffer);
+			
 			renderer->bindForBlitting(*this,*this,attachmentPoint);
 			glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			renderer->unbind(*this);
-		
-			glReadBuffer(GL_BACK);
+			
+			glReadBuffer(readBuffer);
 		}
 
 		if(!ofIsGLProgrammableRenderer()){
