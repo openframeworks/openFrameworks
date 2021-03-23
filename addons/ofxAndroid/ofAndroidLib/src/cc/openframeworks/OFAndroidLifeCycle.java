@@ -318,6 +318,10 @@ public class OFAndroidLifeCycle
 	
 	public static void glResume(ViewGroup glContainer)
 	{
+		OFGLSurfaceView glView = getGLView();
+		if( glView != null ) {
+			glView.onResume();
+		}
 		Log.d(TAG, "glResume");
 		pushState(State.resume);
 	}
@@ -325,6 +329,11 @@ public class OFAndroidLifeCycle
 	public static void glPause()
 	{
 		Log.d(TAG, "glPause");
+		OFGLSurfaceView glView = getGLView();
+		if( glView != null ) {
+			glView.onPause();
+		}
+		OFAndroidLifeCycleHelper.onPause();
 		pushState(State.pause);
 	}
 	
@@ -336,6 +345,7 @@ public class OFAndroidLifeCycle
 			Log.d(TAG, "glDestroy destroy ofApp");
 			pushState(State.destroy);
 		}
+
 	}
 	
 	public static void exit()
