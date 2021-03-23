@@ -49,6 +49,33 @@ public abstract class OFActivity extends Activity{
 		}
 	}
 
+	public void resetView(){
+		String packageName = this.getPackageName();
+		try {
+			Log.v("OF","trying to find class: "+packageName+".R$layout");
+			Class<?> layout = Class.forName(packageName+".R$layout");
+			View view = this.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
+			if(view == null) {
+				Log.w("OF", "Could not find main_layout.xml.");
+				throw new Exception();
+			}
+			this.setContentView(view);
+
+			Class<?> id = Class.forName(packageName+".R$id");
+			mOFGlSurfaceContainer = (ViewGroup)this.findViewById(id.getField("of_gl_surface_container").getInt(null));
+
+			if(mOFGlSurfaceContainer == null) {
+				Log.w("OF", "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
+				throw new Exception();
+			}
+
+		} catch (Exception e) {
+			Log.w("OF", "couldn't create view from layout falling back to GL only",e);
+			mOFGlSurfaceContainer = new FrameLayout(this);
+			this.setContentView(mOFGlSurfaceContainer);
+		}
+	}
+
 
 	private boolean create_first = true;
 	
@@ -87,7 +114,11 @@ public abstract class OFActivity extends Activity{
 		OFAndroidLifeCycle.setActivity(this);
 		if(mOFGlSurfaceContainer == null) {
 			Log.w("OF", "onResume mOFGlSurfaceContainer is null - recreating");
-			initView();
+		}
+		resetView();
+		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() == null) {
+			Log.w("OF", "onResume getGLView is null - glCreateSurface");
+			OFAndroidLifeCycle.glCreateSurface(true);
 		}
 		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 	}

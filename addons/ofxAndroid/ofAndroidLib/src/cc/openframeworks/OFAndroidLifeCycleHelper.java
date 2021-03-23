@@ -192,20 +192,59 @@ public class OFAndroidLifeCycleHelper
 	}
 	
 	public static void onResume(){
+		Log.i(TAG,"onResume");
+		OFAndroid.runOnMainThread(new Runnable() {
+			@Override
+			public void run() {
+
+				synchronized (OFAndroidObject.ofObjects) {
+					for(OFAndroidObject object : OFAndroidObject.ofObjects){
+						object.onResume();
+					}
+
+				}
+			}
+		});
 		OFAndroid.onResume();
+		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		if(glView == null || glView != null && glView.isSetup()){
+			Log.i(TAG,"resume view and native");
+			OFAndroid.onStart();
+		}
 	}
 	
 	public static void onPause(){
+		Log.i(TAG,"onPause");
 		OFAndroid.onPause();
+		OFAndroid.runOnMainThread(new Runnable() {
+			@Override
+			public void run() {
+
+				synchronized (OFAndroidObject.ofObjects) {
+					for(OFAndroidObject object : OFAndroidObject.ofObjects){
+						object.onPause();
+					}
+
+				}
+
+			}
+		});
+
 	}
 	
 	public static void onStart(){
 		Log.i(TAG,"onStart");
 		
 		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-		if(started) return;
+		if(started) {
+			if(glView == null || glView != null && glView.isSetup()){
+				Log.i(TAG,"resume view and native");
+				OFAndroid.onStart();
+			}
+			return;
+		}
 		started = true;
-		
+
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
@@ -219,8 +258,8 @@ public class OFAndroidLifeCycleHelper
 				}
 			}
 		});
-		
-        if(glView.isSetup()){
+
+		if(glView == null || glView != null && glView.isSetup()){
         	Log.i(TAG,"resume view and native");
         	OFAndroid.onStart();
         }
@@ -255,7 +294,8 @@ public class OFAndroidLifeCycleHelper
 	}
 
 	public static void onDestroy(){
-		started = false;		
+		started = false;
+		Log.i(TAG,"onDestroy");
 		OFAndroid.runOnMainThread(new Runnable() {
 			
 			@Override
@@ -266,6 +306,7 @@ public class OFAndroidLifeCycleHelper
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onStop();
+						object.onDestroy();
 					}
 				}
 			}
@@ -281,6 +322,7 @@ public class OFAndroidLifeCycleHelper
 	
 	public static void exit()
 	{
+		Log.i(TAG,"exit");
 		OFAndroid.exit();
 	}
 }
