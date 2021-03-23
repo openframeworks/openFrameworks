@@ -340,8 +340,10 @@ class OFGLSurfaceView extends GLSurfaceView{
 
     @Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i("OF","surfaceDestroyed");
     	super.surfaceDestroyed(holder);
 		OFAndroid.onSurfaceDestroyed();
+        mRenderer.exit();
 	}
 
     
@@ -395,6 +397,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             setup();
     	} else if(!setup && !OFAndroid.unpackingDone) {
             Log.i("OF","onSurfaceChanged not setup however !OFAndroid.unpackingDone");
+            setup();
         } else if(setup && OFAndroid.unpackingDone) {
             Log.i("OF","onSurfaceChanged setup already");
 
@@ -436,6 +439,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public boolean isSetup(){
     	return setup;
     }
+
 
     private static boolean setup;
     private int w,h;

@@ -13,7 +13,8 @@ public abstract class OFAndroidObject {
 		Created,
 		Running,
 		Paused,
-		Stopped
+		Stopped,
+		Destroyed
 	}
 	
 	protected State state;
@@ -39,6 +40,12 @@ public abstract class OFAndroidObject {
     	appStop();
     	state = State.Stopped;
     }
+
+	public void onDestroy(){
+		state = State.Destroyed;
+	}
+
+
     public void release(){
 		synchronized (OFAndroidObject.ofObjects) {
 			ofObjects.remove(this);
