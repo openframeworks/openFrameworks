@@ -112,13 +112,13 @@ public abstract class OFActivity extends Activity{
 	protected void onResume() {
 		super.onResume();
 		OFAndroidLifeCycle.setActivity(this);
-		if(mOFGlSurfaceContainer == null) {
-			Log.w("OF", "onResume mOFGlSurfaceContainer is null - recreating");
+		if(OFAndroidLifeCycle.isInit() && mOFGlSurfaceContainer == null) {
+			Log.e("OF", "onResume mOFGlSurfaceContainer is null");
 		}
-		resetView();
+		//resetView();
 		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() == null) {
-			Log.w("OF", "onResume getGLView is null - glCreateSurface");
-			OFAndroidLifeCycle.glCreateSurface(true);
+			Log.e("OF", "onResume getGLView is null - glCreateSurface");
+			//OFAndroidLifeCycle.glCreateSurface(true);
 		}
 		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 	}

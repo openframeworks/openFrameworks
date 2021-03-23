@@ -207,8 +207,9 @@ public class OFAndroidLifeCycleHelper
 		});
 		OFAndroid.onResume();
 		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-		if(glView == null || glView != null && glView.isSetup()){
-			Log.i(TAG,"resume view and native");
+		if(glView == null || glView != null && !glView.isSetup()){
+			Log.e(TAG,"onResume glView is null or not setup");
+			OFAndroidLifeCycle.glCreateSurface(true);
 			OFAndroid.onStart();
 		}
 	}
@@ -237,14 +238,14 @@ public class OFAndroidLifeCycleHelper
 		
 		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 		if(started) {
-			if(glView == null || glView != null && glView.isSetup()){
+			if(glView == null || glView != null && !glView.isSetup()){
 				Log.i(TAG,"resume view and native");
 				OFAndroid.onStart();
 			}
 			return;
 		}
 		started = true;
-
+		OFAndroid.onStart();
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
@@ -259,13 +260,8 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 
-		if(glView == null || glView != null && glView.isSetup()){
-        	Log.i(TAG,"resume view and native");
-        	OFAndroid.onStart();
-        }
-        
         if(OFAndroid.getOrientation()!=-1) OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
-		
+
 		OFAndroid.registerNetworkStateReceiver();
 	}
 	

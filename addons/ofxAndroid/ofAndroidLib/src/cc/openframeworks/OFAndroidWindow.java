@@ -338,13 +338,13 @@ class OFGLSurfaceView extends GLSurfaceView{
 //            so it is not that surprising, that not every surfaceDestoyed callback means what we might think it means.
 //        We don't need this callback that much anyways, the renderer does not call render callbacks when gl context is invalid, so the OFAndroidWindow.onSurfaceCreated callback should be enought for us to make things work.
 
-    @Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i("OF","surfaceDestroyed");
-    	super.surfaceDestroyed(holder);
-		OFAndroid.onSurfaceDestroyed();
-        mRenderer.exit();
-	}
+//    @Override
+//	public void surfaceDestroyed(SurfaceHolder holder) {
+//        Log.i("OF","surfaceDestroyed");
+//    	//super.surfaceDestroyed(holder);
+//		//OFAndroid.onSurfaceDestroyed();
+//        //mRenderer.exit();
+//	}
 
     
     boolean isSetup(){
