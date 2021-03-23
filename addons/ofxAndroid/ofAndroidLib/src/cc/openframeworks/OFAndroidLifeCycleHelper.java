@@ -196,13 +196,17 @@ public class OFAndroidLifeCycleHelper
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
-
+				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onResume();
 					}
 
 				}
+				if(OFAndroid.getOrientation()!=-1) OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
+
+				OFAndroid.registerNetworkStateReceiver();
 			}
 		});
 		OFAndroid.onResume();
