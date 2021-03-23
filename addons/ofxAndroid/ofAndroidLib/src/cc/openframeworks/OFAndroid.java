@@ -38,9 +38,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 import java.util.concurrent.Semaphore;
 
+import static android.content.Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
+
 public class OFAndroid {
 
 	public static String packageName;
+
 	// List based on http://bit.ly/NpkL4Q
 	private static final String[] mExternalStorageDirectories = new String[] {
 			"/mnt/sdcard-ext",
@@ -361,9 +364,23 @@ public class OFAndroid {
 	}
 	
 	static public void launchBrowser(String url){
-		OFAndroidLifeCycle.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
+		if (!url.startsWith("http") && !url.startsWith("https")) { // fix crash due to missing http/https
+			url = "https" + url; //force https if missing, it's 2021
+		}
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_VIEW);
+		intent.addCategory(Intent.CATEGORY_BROWSABLE);
+		//intent.addFlags(FLAG_ACTIVITY_MULTIPLE_TASK);
+
+		Log.v("OF", "launchBrowser: " + url);
+
+		Intent.createChooser(intent, "Choose browser");
+		intent.setData(Uri.parse(url));
+		//OFAndroidLifeCycle.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+		OFAndroidLifeCycle.getActivity().startActivity(intent);
 	}
-	
+
 	
 	static Map<Integer,ProgressDialog> progressDialogs = new HashMap<Integer, ProgressDialog>();
 	static int lastProgressID=0;

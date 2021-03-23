@@ -85,6 +85,10 @@ public abstract class OFActivity extends Activity{
 	protected void onResume() {
 		super.onResume();
 		OFAndroidLifeCycle.setActivity(this);
+		if(mOFGlSurfaceContainer == null) {
+			Log.w("OF", "onResume mOFGlSurfaceContainer is null - recreating");
+			initView();
+		}
 		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 	}
 	@Override

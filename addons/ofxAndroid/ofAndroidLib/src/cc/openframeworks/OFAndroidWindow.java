@@ -363,9 +363,13 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		Log.i("OF","onSurfaceCreated");
 		// notify that old surface was destroyed
+        boolean hasDestroyed = false;
 		if(this.has_surface) {
+            Log.i("OF","onSurfaceCreated - has_surface destroy");
 			OFAndroid.onSurfaceDestroyed();
 			this.has_surface = false;
+			exit();
+            hasDestroyed = true;
 		}
 		
 		// notify that new surface was created
@@ -374,23 +378,35 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 		Activity activity = OFAndroidLifeCycle.getActivity();
 		if(OFActivity.class.isInstance(activity))
 			((OFActivity)activity).onGLSurfaceCreated();
+
+		if(hasDestroyed == true) {
+		    setup();
+        }
 		
 		return;
     }
 	
 	@Override
     public void onSurfaceChanged(GL10 gl, int w, int h) {
+        Log.i("OF","onSurfaceChanged");
 		this.w = w;
 		this.h = h;
     	if(!setup && OFAndroid.unpackingDone){
-        	setup();
-    	}
+            setup();
+    	} else if(!setup && !OFAndroid.unpackingDone) {
+            Log.i("OF","onSurfaceChanged not setup however !OFAndroid.unpackingDone");
+        } else if(setup && OFAndroid.unpackingDone) {
+            Log.i("OF","onSurfaceChanged setup already");
+
+        }
+
     	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
     	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
     	OFAndroid.resize(w, h);
     }
     
     private void setup(){
+        Log.i("OF","setup");
     	OFAndroid.setup(w,h);
     	setup = true;
     	android.os.Process.setThreadPriority(8);
@@ -413,7 +429,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     		setup();
     	}else{
     		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-    		gl.glClearColor(.5f, .5f, .5f, 1.f);	
+    		gl.glClearColor(0f, 0f, 0f, 1.0f);
     	}
     }
     
@@ -423,5 +439,5 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 
     private static boolean setup;
     private int w,h;
-    private boolean has_surface = false;
+    public boolean has_surface = false;
 }

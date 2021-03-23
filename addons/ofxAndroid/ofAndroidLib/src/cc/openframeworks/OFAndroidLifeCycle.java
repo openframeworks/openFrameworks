@@ -139,7 +139,8 @@ public class OFAndroidLifeCycle
                         m_semaphor.release();
                         if (!isNextStateLegal(next))
                         {
-                            throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
+							Log.e(OFAndroidLifeCycle.class.getSimpleName(), "Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
+                            //throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
                         }
                         
                         m_currentState = next;
