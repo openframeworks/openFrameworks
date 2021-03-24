@@ -215,6 +215,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(settings.windowMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
+		if( settings.monitor >= count ){
+			ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << count;
+		}
+		settings.monitor = ofClamp(settings.monitor,0,count-1);
 		if(settings.isSizeSet()){
 			currentW = settings.getWidth();
 			currentH = settings.getHeight();
@@ -238,13 +242,17 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.windowMode==OF_FULLSCREEN){
 			int count = 0;
 			auto monitors = glfwGetMonitors(&count);
+			if( settings.monitor >= count ){
+				ofLogError("ofAppGLFWWindow") << "requested fullscreen monitor is: " << settings.monitor << " monitor count is: " << count;
+			}
+			settings.monitor = ofClamp(settings.monitor,0,count-1);
+			
 			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
 			currentW = mode->width;
 			currentH = mode->height;
 			if(!settings.isPositionSet()){
 				if(count > 0){
 					int x = 0, y = 0;
-					settings.monitor = ofClamp(settings.monitor,0,count-1);
 					glfwGetMonitorPos(monitors[settings.monitor],&x,&y);
 					settings.setPosition(glm::vec2(x,y));
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
