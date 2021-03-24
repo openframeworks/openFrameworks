@@ -1,4 +1,28 @@
 ```
+ ________    _____    _____       _______     
+|\   __  \  / __  \  / __  \     /  ___  \    
+\ \  \|\  \|\/_|\  \|\/_|\  \   /__/|_/  /|   
+ \ \  \\\  \|/ \ \  \|/ \ \  \  |__|//  / /   
+  \ \  \\\  \ __\ \  \   \ \  \ ___ /  /_/__  
+   \ \_______\\__\ \__\   \ \__\\__\\________\
+    \|_______\|__|\|__|    \|__\|__|\|_______|                                              
+                                              
+```
+
+CORE
+----
+### core
+- bugfix ofAppGLFWWindow requested monitor wasn't being clamped (#6718) [commit](https://github.com/openframeworks/openFrameworks/commit/ee30e43df10f78ed5b054b2aae17381e1bddab02)
+
+PLATFORM/IDE SPECIFIC
+-----------------
+### macos 
+- Update Info.plist with retina entry (#6701) [commit](https://github.com/openframeworks/openFrameworks/commit/46483211a0faf34cf5d06c050e911630a02083ef)
+- bugfix fmod sound player for macos. closes #6714 #6708 (#6717) [commit](https://github.com/openframeworks/openFrameworks/commit/23f9bfd394ca91316257f3d2c9d597a7ac7ff71f)
+- add support for Objective C and Objective C++ source in addon Make builds (#6652) [commit](https://github.com/openframeworks/openFrameworks/commit/8ca678228e589c9c8ae0a644dfb8f79ec1ca7e80)
+
+
+```
       _           _           _               _              
     / /\         / /\        / /\            / /\            
    / /  \       / /  \      / /  \          / /  \           
