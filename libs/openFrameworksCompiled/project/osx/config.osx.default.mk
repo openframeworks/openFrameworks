@@ -383,6 +383,12 @@ afterplatform: $(TARGET_NAME)
 	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>NSCameraUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>This app needs to access the camera</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>NSMicrophoneUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>This app needs to access the microphone</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>NSHighResolutionCapable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <false/>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 
