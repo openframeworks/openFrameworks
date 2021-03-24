@@ -196,8 +196,7 @@ public class OFAndroidLifeCycleHelper
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
-				OFAndroid.enableTouchEvents();
-				OFAndroid.enableOrientationChangeEvents();
+
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onResume();
@@ -206,7 +205,7 @@ public class OFAndroidLifeCycleHelper
 				}
 				if(OFAndroid.getOrientation()!=-1) OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
 
-				OFAndroid.registerNetworkStateReceiver();
+
 			}
 		});
 		OFAndroid.onResume();
@@ -216,11 +215,18 @@ public class OFAndroidLifeCycleHelper
 			OFAndroidLifeCycle.glCreateSurface(true);
 			OFAndroid.onStart();
 		}
+
+		OFAndroid.enableTouchEvents();
+		OFAndroid.enableOrientationChangeEvents();
+		OFAndroid.registerNetworkStateReceiver();
 	}
 	
 	public static void onPause(){
 		Log.i(TAG,"onPause");
 		OFAndroid.onPause();
+		OFAndroid.disableTouchEvents();
+		OFAndroid.disableOrientationChangeEvents();
+		OFAndroid.unregisterNetworkStateReceiver();
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
@@ -229,7 +235,6 @@ public class OFAndroidLifeCycleHelper
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onPause();
 					}
-
 				}
 
 			}
