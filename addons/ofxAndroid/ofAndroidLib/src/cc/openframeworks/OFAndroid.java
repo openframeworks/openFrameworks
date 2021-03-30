@@ -176,7 +176,8 @@ public class OFAndroid {
 	
 	static void runOnGLThread(Runnable runnable)
 	{
-		OFAndroidLifeCycle.getGLView().queueEvent(runnable);
+		if(OFAndroidLifeCycle.getGLView() != null)
+			OFAndroidLifeCycle.getGLView().queueEvent(runnable);
 	}
 	
 	
@@ -812,6 +813,7 @@ public class OFAndroid {
 	}
 	
 	public static boolean isApplicationSetup(){
+		if(OFAndroidLifeCycle.getGLView() == null) return false;
 		return OFAndroidLifeCycle.getGLView().isSetup();
 	}
     
@@ -826,16 +828,21 @@ public class OFAndroid {
 	
 	public static void disableTouchEvents(){
 		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-        glView.setOnClickListener(null); 
-        glView.setOnTouchListener(null);
+		if(glView != null) {
+			glView.setOnClickListener(null);
+			glView.setOnTouchListener(null);
+		}
+		gestureListener = null;
 	}
 	
 	public static void enableTouchEvents(){
 		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-		if(gestureListener == null)
-			gestureListener = new OFGestureListener(OFAndroidLifeCycle.getActivity());
-        glView.setOnClickListener(gestureListener); 
-        glView.setOnTouchListener(gestureListener.touchListener);
+		if(glView != null) {
+			if (gestureListener == null)
+				gestureListener = new OFGestureListener(OFAndroidLifeCycle.getActivity());
+			glView.setOnClickListener(gestureListener);
+			glView.setOnTouchListener(gestureListener.touchListener);
+		}
 	}
 
 	public static void enableOrientationChangeEvents(){

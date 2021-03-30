@@ -118,7 +118,8 @@ public abstract class OFActivity extends Activity{
 		//resetView();
 		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() == null) {
 			Log.e("OF", "onResume getGLView is null - glCreateSurface");
-			//OFAndroidLifeCycle.glCreateSurface(true);
+			OFAndroidLifeCycle.glCreateSurface(true);
+
 		}
 		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 	}
