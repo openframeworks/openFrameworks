@@ -4,7 +4,7 @@
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
-#define OF_VERSION_PATCH 0
+#define OF_VERSION_PATCH 2
 #define OF_VERSION_PRE_RELEASE "master"
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
@@ -82,6 +82,12 @@ enum ofTargetPlatform{
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
+	#if defined(_MSC_VER)
+		#define TARGET_WINVS
+	#endif
+	#if defined(__MINGW32__) || defined(__MINGW64__)
+		#define TARGET_MINGW
+	#endif
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
@@ -372,7 +378,7 @@ typedef TESSindex ofIndexType;
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX)
+  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
   	#define OF_SOUND_PLAYER_OPENAL
   #elif defined(TARGET_EMSCRIPTEN)
 	#define OF_SOUND_PLAYER_EMSCRIPTEN

@@ -24,10 +24,10 @@ endef
 define parse_addons_sources
 	$(eval ADDONS_SOURCES_FILTER = $(call esp-addprefix,$1/, $(ADDON_SOURCES_EXCLUDE))) \
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(call esp-addsuffix,/src, $1)) \
-	$(eval PARSED_ADDONS_OFX_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" | sed 's/ /\\ /g') ) \
+	$(eval PARSED_ADDONS_OFX_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.mm" -or -name "*.m" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" | sed 's/ /\\ /g') ) \
 	$(eval PARSED_ADDONS_FILTERED_SOURCE_PATHS = $(call esp-filter-out,$(ADDONS_SOURCES_FILTER),$(PARSED_ADDONS_OFX_SOURCES))) \
 	$(eval PARSED_ADDONS_LIBS_SOURCE_PATHS = $(call esp-addsuffix,/libs, $1)) \
-	$(eval PARSED_ADDONS_LIBS_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_LIBS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" | sed 's/ /\\ /g')) \
+	$(eval PARSED_ADDONS_LIBS_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_LIBS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.mm" -or -name "*.m" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" | sed 's/ /\\ /g')) \
 	$(eval PARSED_ADDONS_FILTERED_LIBS_SOURCE_PATHS = $(call esp-filter-out,$(ADDONS_SOURCES_FILTER),$(PARSED_ADDONS_LIBS_SOURCES))) \
 	$(eval PARSED_ADDONS_SOURCE_FILES = $(PARSED_ADDONS_FILTERED_SOURCE_PATHS)) \
 	$(eval PARSED_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_FILTERED_LIBS_SOURCE_PATHS))
@@ -52,7 +52,7 @@ space :=
 space +=
 
 define src_to_obj
-	$(call esp-addsuffix,.o,$(basename $(call esp-filter,%.c %.cpp %.cc %.cxx %.cc %.s %.S, $(call esp-addprefix,$3,$(call esp-addprefix,$2,$1)))))
+	$(call esp-addsuffix,.o,$(basename $(call esp-filter,%.c %.cpp %.mm %.m %.cc %.cxx %.cc %.s %.S, $(call esp-addprefix,$3,$(call esp-addprefix,$2,$1)))))
 endef
 
 define rwildcard

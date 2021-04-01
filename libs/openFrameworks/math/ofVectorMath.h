@@ -18,7 +18,6 @@
 #include "glm/trigonometric.hpp"
 #include "glm/exponential.hpp"
 #include "glm/vector_relational.hpp"
-#include "glm/ext.hpp"
 
 #include "glm/gtc/constants.hpp"
 #include "glm/gtc/matrix_transform.hpp"

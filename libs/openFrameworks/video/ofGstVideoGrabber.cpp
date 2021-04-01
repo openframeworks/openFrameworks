@@ -161,8 +161,14 @@ static void get_video_devices (ofGstCamData & cam_data)
 			ofLogNotice("ofGstVideoGrabber") << "driver: " << v2cap.driver << ", version: " << v2cap.version;
 			/* g_print ("Bus info: %s\n", v2cap.bus_info); */ /* Doesn't seem anything useful */
 			ofLogNotice("ofGstVideoGrabber","Capabilities: 0x%08X", v2cap.capabilities);
-			if (!(cap & V4L2_CAP_VIDEO_CAPTURE)){
-				ofLogNotice() << "device " << dev_node << " seems to not have the capture capability, (radio tuner?)";
+			/* Only consider this device, if
+			 * 1. it has 'Video Capture' capability and
+			 * 2. if it also has the 'Device Capabilities' then the actual device has
+			 *    the 'Video Capture' capability too */
+			if (!(cap & V4L2_CAP_VIDEO_CAPTURE)
+			    || (cap & V4L2_CAP_DEVICE_CAPS && !(v2cap.device_caps & V4L2_CAP_VIDEO_CAPTURE))){
+				ofLogNotice() << "device " << dev_node
+				    << " seems to not have the capture capability, (radio tuner/metadata device?)";
 				ofLogNotice() << "removing it from device list";
 				close (fd);
 				continue;

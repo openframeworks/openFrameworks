@@ -3,10 +3,10 @@ name: build-msys2
 on:
   push:
     paths-ignore:
-    - '**/README.md'
+    - '**/*.md'
   pull_request:
     paths-ignore:
-    - '**/README.md'
+    - '**/*.md'
     
 jobs:
 

@@ -67,10 +67,13 @@ ifeq ($(OF_USE_POCO),1)
 	PLATFORM_DEFINES += POCO_STATIC
 endif
 
-ifeq ($(MSYSTEM),MINGW64)
-	PLATFORM_DEFINES += OF_SOUND_PLAYER_OPENAL
+# Define the sound player to use : OpenAL is the default.
+# Uncomment next line to use FMOD sound player
+#PLATFORM_DEFINES += OF_SOUND_PLAYER_FMOD
+ifeq ($(shell pkg-config libmpg123 --exists; echo $$?),0)
 	PLATFORM_DEFINES += OF_USING_MPG123
 endif
+
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -123,6 +126,11 @@ PLATFORM_CFLAGS += -fexceptions
 
 #PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -lpthread
+
+ifeq ($(findstring MINGW64,$(MSYSTEM)),MINGW64)
+	PLATFORM_LDFLAGS += -Wl,--disable-dynamicbase,--disable-high-entropy-va,--default-image-base-low
+endif
+
 ifndef DEBUG
 	PLATFORM_LDFLAGS += -mwindows
 endif
@@ -188,10 +196,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
-# FMOD is not supported on MINGW64
-ifeq ($(MSYSTEM),MINGW64)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
-endif
 #PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glm/%
 
 
@@ -241,9 +245,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
-ifeq ($(findstring OF_SOUND_PLAYER_OPENAL, $(PLATFORM_DEFINES)),OF_SOUND_PLAYER_OPENAL)
-	PLATFORM_PKG_CONFIG_LIBRARIES += openal
-endif
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
 ifeq ($(findstring OF_USING_MPG123, $(PLATFORM_DEFINES)),OF_USING_MPG123)
 	PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 	PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123

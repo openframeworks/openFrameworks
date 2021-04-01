@@ -87,7 +87,7 @@ namespace{
 
     //--------------------------------------------------
     std::filesystem::path & defaultWorkingDirectory(){
-            static auto * defaultWorkingDirectory = new std::filesystem::path();
+            static auto * defaultWorkingDirectory = new std::filesystem::path(ofFilePath::getCurrentExeDir());
             return * defaultWorkingDirectory;
     }
 
