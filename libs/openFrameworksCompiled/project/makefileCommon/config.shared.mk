@@ -38,8 +38,8 @@ esp-patsubst = $(call c2esp,$(patsubst $(call esp2c,$1),$(call esp2c,$2),$(call 
 # apply firstword command on an escaped space list
 esp-firstword = $(call c2esp,$(firstword $(call esp2c,$1)))
 
-# apply realpath command on an escaped space list
-esp-realpath = $(shell realpath $1 | sed 's/ /\\ /g')
+# apply realpath command on an escaped space list 
+esp-realpath = $(shell cd $1 && pwd -P | sed 's/ /\\ /g')
 
 # from an escaped space list of files/directories, return a list of files that exist
 esp-exist = $(foreach f,$(call esp2c,$1),$(if $(wildcard $(call c2esp,$f)),$(call c2esp,$f)))
