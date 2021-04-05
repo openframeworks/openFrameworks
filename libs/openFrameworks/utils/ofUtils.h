@@ -7,7 +7,7 @@
 #include <iomanip>  //for setprecision
 #include <algorithm>
 #include <sstream>
-
+#include <type_traits>
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
