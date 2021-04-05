@@ -631,6 +631,12 @@ size_t ofUTF8Length(const std::string & utf8);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format A printf-style format string.
+/// \param args A variable argument list.
+/// \returns A string representation of the argument list.
+std::string ofVAListToString(const char * format, va_list args);
+
+/// \brief Convert a variable length argument to a string.
+/// \param format A printf-style format string.
 /// \returns A string representation of the argument list.
 std::string ofVAArgsToString(const char * format, ...);
 
@@ -640,7 +646,10 @@ std::string ofVAArgsToString(const char * format, ...);
 /// \returns A string representation of the argument list.
 template <typename VAList>
 auto  ofVAArgsToString(const char * format, VAList args)
-    -> typename std::enable_if<std::is_same<va_list, VAList>::value, std::string>::type;
+    -> typename std::enable_if<std::is_same<va_list, VAList>::value, std::string>::type
+{
+    return ofVAListToString(format, args);
+}
 
 /// \section String Conversion
 /// \brief Convert a value to a string.
