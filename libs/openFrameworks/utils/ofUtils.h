@@ -638,7 +638,9 @@ std::string ofVAArgsToString(const char * format, ...);
 /// \param format A printf-style format string.
 /// \param args A variable argument list.
 /// \returns A string representation of the argument list.
-std::string ofVAArgsToString(const char * format, va_list args);
+template <typename VAList>
+auto  ofVAArgsToString(const char * format, VAList args)
+    -> typename std::enable_if<std::is_same<va_list, VAList>::value, std::string>::type;
 
 /// \section String Conversion
 /// \brief Convert a value to a string.

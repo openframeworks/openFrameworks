@@ -1072,7 +1072,10 @@ string ofVAArgsToString(const char * format, ...){
 	return s;
 }
 
-string ofVAArgsToString(const char * format, va_list args){
+template <typename VAList>
+auto ofVAArgsToString(const char * format, VAList args)
+    -> typename std::enable_if<std::is_same<va_list, VAList>::value, string>::type
+{
 	char buf[256];
 	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
 
