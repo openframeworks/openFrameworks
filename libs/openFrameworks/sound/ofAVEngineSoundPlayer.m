@@ -29,6 +29,7 @@
 - (BOOL)loadWithFile:(NSString*)file;
 - (BOOL)loadWithPath:(NSString*)path;
 - (BOOL)loadWithURL:(NSURL*)url;
+- (BOOL)loadWithSoundFile:(AVAudioFile*)aSoundFile;
 
 - (void)unloadSound;
 
@@ -64,6 +65,8 @@
 - (float)positionSeconds;
 - (float)soundDurationSeconds;
 
+- (AVAudioFile *)getSoundFile;
+
 @end
 
 
@@ -76,6 +79,7 @@
 @property(nonatomic, strong) AVAudioFile *soundFile;
 @property(nonatomic, assign) bool mShouldLoop;
 @property(nonatomic, assign) int mGaurdCount;
+@property(nonatomic, assign) int mRestorePlayCount;
 @property(nonatomic, assign) bool mMultiPlay;
 @property(nonatomic, assign) float mRequestedPositonSeconds;
 @property(nonatomic, assign) AVAudioFramePosition startedSampleOffset;
@@ -133,6 +137,51 @@
 		_mMultiPlay = false;
 		_mRequestedPositonSeconds = 0.0f;
 		_startedSampleOffset = 0;
+		
+		// Speed manipulator
+		self.variSpeed = [[AVAudioUnitVarispeed alloc] init];
+		self.variSpeed.rate = 1.0;
+		
+		// Sound player
+		self.soundPlayer = [[AVAudioPlayerNode alloc] init];
+		
+		[self.engine attachNode:self.variSpeed];
+		[self.engine attachNode:_soundPlayer];
+		
+		//from: https://github.com/robovm/apple-ios-samples/blob/master/UsingAVAudioEngineforPlaybackMixingandRecording/AVAEMixerSample/AudioEngine.m
+		
+        // sign up for notifications from the engine if there's a hardware config change
+        [[NSNotificationCenter defaultCenter] addObserverForName:AVAudioEngineConfigurationChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+            
+            // if we've received this notification, something has changed and the engine has been stopped
+            // re-wire all the connections and start the engine
+                 
+			bool isSessionInterrupted = false; //TODO: maybe handle interupts too.
+			
+            if (!isSessionInterrupted) {
+                NSLog(@"Received a %@ notification!", AVAudioEngineConfigurationChangeNotification);
+                NSLog(@"Re-wiring connections and starting once again");
+                
+                bool isPlaying = [self isPlaying];
+                float posSecs = [self positionSeconds];
+                
+//                std::cout << " isPlaying is " << isPlaying << " pos secs is " << posSecs << std::endl;
+                
+                [self startEngine];
+                
+                if( isPlaying && posSecs >= 0 && posSecs < [self soundDurationSeconds] && self.mRestorePlayCount == 0){
+					self.mRestorePlayCount++;
+					dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * 2.0), dispatch_get_main_queue(), ^{
+						[self play:posSecs];
+					});
+				}
+            }
+            else {
+                NSLog(@"Session is interrupted, deferring changes");
+            }
+            
+        }];
+
     }
         
     return self;
@@ -163,19 +212,19 @@
 		NSLog(@"Sound file %@ loaded!", url);
 	}
 	
+	return [self loadWithSoundFile:self.soundFile];
+}
+
+- (void)startEngine{
 	if (!self.engine.isRunning) {
 
-		// Speed manipulator
-		self.variSpeed = [[AVAudioUnitVarispeed alloc] init];
-		self.variSpeed.rate = 1.0;
-		[self.engine attachNode:self.variSpeed];
+		[self.engine reset];
+
 		[self.engine connect:self.variSpeed to:self.mainMixer fromBus:0 toBus:0  format:self.soundFile.processingFormat];
 		
-		// Sound player
-		self.soundPlayer = [[AVAudioPlayerNode alloc] init];
-		[self.engine attachNode:_soundPlayer];
 		[self.engine connect:self.soundPlayer to:self.variSpeed format:self.soundFile.processingFormat];
 		
+		NSError *error;
 		[self.engine startAndReturnError:&error];
 		if (error) {
 			NSLog(@"Error starting engine: %@", [error localizedDescription]);
@@ -183,11 +232,21 @@
 			NSLog(@"Engine start successful");
 		}
 	}
+}
+
+- (BOOL)loadWithSoundFile:(AVAudioFile *)aSoundFile {
+    [self unloadSound];
+
+    self.soundFile = aSoundFile;
+	
+	if (!self.engine.isRunning) {
+		[self startEngine];
+	}
 	
 	self.mGaurdCount=0;
 	self.mRequestedPositonSeconds = 0;
 	self.startedSampleOffset = 0;
-
+	self.mRestorePlayCount =0;
 	
     return YES;
 }
@@ -225,13 +284,15 @@
 	
 	self.startedSampleOffset = self.soundFile.processingFormat.sampleRate * startTime;
 	AVAudioFramePosition numFramesToPlay = self.soundFile.length - self.startedSampleOffset;
-	
-//	AVAudioTime * playTime =  [[AVAudioTime alloc] initWithSampleTime:sampleTime atRate:self.soundFile.processingFormat.sampleRate];
-	
+		
 	if( startTime == 0.0){
 		self.startedSampleOffset = 0;
 		numFramesToPlay = self.soundFile.length;
 	}
+	
+//	std::cout << " startedSampleOffset is " << self.startedSampleOffset <<  " numFrames is " << numFramesToPlay << " self.mGaurdCount is " << self.mGaurdCount << std::endl;
+	
+	self.mRestorePlayCount = 0;
 	
     [self.soundPlayer play];
 	[self.soundPlayer scheduleSegment:self.soundFile startingFrame:self.startedSampleOffset frameCount:numFramesToPlay atTime:0 completionHandler:^{
@@ -269,6 +330,10 @@
 		});
 		
 	}];
+}
+
+- (AVAudioFile *)getSoundFile{
+	return self.soundFile;
 }
 
 - (void)pause {
@@ -352,7 +417,6 @@
 			[self play];
 		}
 	}
-//    self.soundPlayer.currentTime = value * self.soundPlayer.duration;
 }
 
 - (float)position {
@@ -437,13 +501,78 @@ void ofAVEngineSoundPlayer::unload() {
         [(AVEnginePlayer *)soundPlayer release];
         soundPlayer = NULL;
     }
+	if( bAddedUpdate ){
+		ofRemoveListener(ofEvents().update, this, &ofAVEngineSoundPlayer::updateFunction);
+		bAddedUpdate = false;
+	}
+	cleanupMultiplayers();
 }
 
 void ofAVEngineSoundPlayer::play() {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVEnginePlayer *)soundPlayer play];
+    
+    auto mainPlayer = (AVEnginePlayer *)soundPlayer;
+	if( [mainPlayer multiPlay] && [mainPlayer isPlaying] ){
+				
+		AVEnginePlayer * extraPlayer = [[AVEnginePlayer alloc] init];
+		BOOL bOk = [extraPlayer loadWithSoundFile:[mainPlayer getSoundFile]];
+		if( bOk ){
+			[extraPlayer speed:[mainPlayer speed]];
+			[extraPlayer pan:[mainPlayer pan]];
+			[extraPlayer volume:[mainPlayer volume]];
+			[extraPlayer play];
+			
+			mMultiplayerSoundPlayers.push_back((void *)extraPlayer);
+			
+			if( !bAddedUpdate ){
+				ofAddListener(ofEvents().update, this, &ofAVEngineSoundPlayer::updateFunction);
+				bAddedUpdate = true;
+			}
+		}
+		
+	}else{
+		[(AVEnginePlayer *)soundPlayer play];
+    }
+}
+
+void ofAVEngineSoundPlayer::cleanupMultiplayers(){
+	for( auto mMultiPlayerPtr : mMultiplayerSoundPlayers ){
+		auto mMultiPlayer = (AVEnginePlayer *)mMultiPlayerPtr;
+		if( mMultiPlayer != NULL ){
+			[mMultiPlayer stop];
+			[mMultiPlayer unloadSound];
+			[mMultiPlayer release];
+			mMultiPlayer = NULL;
+		}
+	}
+	mMultiplayerSoundPlayers.clear();
+}
+
+bool ofAVEngineSoundPlayer::removeMultiPlayer(void * aPlayer){
+	return( aPlayer == NULL );
+}
+
+//better do do this in a thread?
+//feels safer to use ofEvents().update so we don't need to lock.
+void ofAVEngineSoundPlayer::updateFunction(	ofEventArgs & args ){
+		
+	vector <void *> playerPlayingList;
+
+	for( auto mMultiPlayerPtr : mMultiplayerSoundPlayers ){
+		if( mMultiPlayerPtr != NULL ){
+		
+			if( [(AVEnginePlayer *)mMultiPlayerPtr isLoaded] && [(AVEnginePlayer *)mMultiPlayerPtr isPlaying] ){
+				playerPlayingList.push_back(mMultiPlayerPtr);
+			}else{
+				[(AVEnginePlayer *)mMultiPlayerPtr unloadSound];
+				[(AVEnginePlayer *)mMultiPlayerPtr release];
+			}
+		}
+	}
+	
+	mMultiplayerSoundPlayers = playerPlayingList;
 }
 
 void ofAVEngineSoundPlayer::stop() {
@@ -451,6 +580,7 @@ void ofAVEngineSoundPlayer::stop() {
         return;
     }
     [(AVEnginePlayer *)soundPlayer stop];
+	cleanupMultiplayers();
 }
 
 void ofAVEngineSoundPlayer::setVolume(float value) {
@@ -493,11 +623,10 @@ void ofAVEngineSoundPlayer::setLoop(bool bLoop) {
 }
 
 void ofAVEngineSoundPlayer::setMultiPlay(bool bMultiPlay) {
-    ofLogNotice("ofAVEngineSoundPlayer") << "setMultiPlay(): sorry, no support for multiplay streams";
     if(soundPlayer == NULL) {
         return;
     }
-    //[(AVEnginePlayer *)soundPlayer multiPlay:bMultiPlay];
+    [(AVEnginePlayer *)soundPlayer multiPlay:bMultiPlay];
 }
 
 void ofAVEngineSoundPlayer::setPosition(float position) {
@@ -532,7 +661,13 @@ bool ofAVEngineSoundPlayer::isPlaying()  const{
     if(soundPlayer == NULL) {
         return false;
     }
-    return [(AVEnginePlayer *)soundPlayer isPlaying];
+    
+    bool bMainPlaying = [(AVEnginePlayer *)soundPlayer isPlaying];
+    if( !bMainPlaying && mMultiplayerSoundPlayers.size() ){
+		return true;
+	}
+	
+	return bMainPlaying;
 }
 
 float ofAVEngineSoundPlayer::getSpeed()  const{

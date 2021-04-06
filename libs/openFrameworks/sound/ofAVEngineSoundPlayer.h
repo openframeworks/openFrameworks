@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ofSoundBaseTypes.h"
+#include "ofEvents.h"
 
 class ofAVEngineSoundPlayer : public ofBaseSoundPlayer {
     
@@ -42,6 +43,12 @@ public:
     
 protected:
     
+	void updateFunction(ofEventArgs & args);
+	bool bAddedUpdate = false;
+	
+    void cleanupMultiplayers();
+    static bool removeMultiPlayer(void * aPlayer);
     void * soundPlayer;
+	std::vector <void *> mMultiplayerSoundPlayers;
     
 };
