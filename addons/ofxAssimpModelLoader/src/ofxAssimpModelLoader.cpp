@@ -18,12 +18,12 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 
 // DEPRECATED
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
-	load(modelName, optimize);
+	return load(modelName, optimize);
 }
 
 // DEPRECATED
 bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
-	load(buffer, optimize, extension);
+	return load(buffer, optimize, extension);
 }
 
 //------------------------------------------
