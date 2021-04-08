@@ -7,6 +7,8 @@ import android.media.SoundPool;
 import android.util.FloatMath;
 import android.util.Log;
 
+import java.io.IOException;
+
 public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
 	OFAndroidSoundPlayer(){
 		pan = 0.f;
@@ -18,8 +20,6 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		soundID = -1;
 		streamID = -1;
 		multiPlay = false;
-
-
 	}
 
 	public void onDestroy() {
@@ -74,9 +74,21 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	
 	void unloadSound(){
 		if(player!=null){
-			player.stop();
-			player.reset();
-			player.release();
+			try {
+				player.stop();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				player.reset();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				player.release();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			player = null;
 		}
 
@@ -94,7 +106,13 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(stream){
 			if(player==null) return;
 			if(getIsPlaying() && getPosition() != 0) setPosition(0);
-			player.start();
+			try {
+				player.start();
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}else{
 			if(pool == null) return;
 			if(!multiPlay){
@@ -107,10 +125,15 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	void stop(){
 		if(stream){
 			if(player==null) return;
-			if(player.isPlaying()) {
-				//player.stop();
-				player.pause();
-				player.seekTo(0);
+			try {
+				if (getIsPlaying()) {
+					//player.stop();
+					player.pause();
+					player.seekTo(0);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
 			}
 		}else if(streamID!=-1){
 			if(pool == null) return;
@@ -158,10 +181,20 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	void setPaused(boolean bP){
 		if(stream){
 			if(player==null) return;
-			if(bP)
-				player.pause();
-			else
-				player.start();
+			if(bP) {
+				try {
+					player.pause();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				try {
+					player.start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}else if(streamID!=-1){
 			if(pool == null) return;
 			if(bP){
@@ -175,8 +208,13 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	
 	void setLoop(boolean bLp){
 		if(stream){
-			if(player!=null)
-				player.setLooping(bLp);
+			if(player!=null) {
+				try {
+					player.setLooping(bLp);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}else{
 			if(streamID!=-1 && pool != null) pool.setLoop(streamID, -1);
 		}
@@ -192,38 +230,71 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			loadSound(currFileName, false);
 		}
 	}
+
+
 	
 	void setPosition(float pct){
-		if(stream && player!=null && player.isPlaying()) {
-			if(getPositionMS() != pct)
-				player.seekTo((int) (player.getDuration() * pct)); // 0 = start, 1 = end;
+		if(stream && getIsPlaying()) {
+			if(getPositionMS() != pct) {
+				try {
+					player.seekTo((int) (player.getDuration() * pct)); // 0 = start, 1 = end;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
 	void setPositionMS(int ms){
-		if(stream && player!=null && player.isPlaying()) {
-			if(getPosition() != ms)
-				player.seekTo(ms); // 0 = start, 1 = end;
+		if(stream && getIsPlaying()) {
+			if(getPosition() != ms) {
+				try {
+					player.seekTo(ms); // 0 = start, 1 = end;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
 	float getPosition(){
-		if(stream && player!=null && player.isPlaying())
-			return ((float)player.getCurrentPosition())/(float)player.getDuration();
+		if(stream && getIsPlaying()) {
+			float position = 0;
+			try {
+				position = ((float) player.getCurrentPosition()) / (float) player.getDuration();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return position;
+		}
 		else
 			return 0;
 	}
 	
 	int getPositionMS(){
-		if(stream && player!=null && player.isPlaying())
-			return player.getCurrentPosition();
+		if(stream && getIsPlaying()){
+			int position = 0;
+			try {
+				position = player.getCurrentPosition();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return position;
+		}
 		else
 			return 0;
 	}
 	
 	boolean getIsPlaying(){
 		if(stream){
-			return player!=null && player.isPlaying();
+			boolean isPlaying = false;
+			try {
+				isPlaying = player!=null && player.isPlaying();
+			} catch (Exception e) {
+				// NOTE: isPlaying() can potentially throw an exception and crash the application
+				e.printStackTrace();
+			}
+			return isPlaying;
 		}else{
 			return bIsPlaying;
 		}
