@@ -43,6 +43,7 @@ import static android.content.Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
 public class OFAndroid {
 
 	public static String packageName;
+	public static int eglVersion = 2;
 
 	// List based on http://bit.ly/NpkL4Q
 	private static final String[] mExternalStorageDirectories = new String[] {
