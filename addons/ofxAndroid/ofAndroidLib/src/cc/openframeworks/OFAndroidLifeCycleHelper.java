@@ -107,6 +107,7 @@ public class OFAndroidLifeCycleHelper
 			if(copydata){
 				for (String file : files) {
 					try {
+
 						copyAssetFolder(am, file, dataPath+"/"+file);
 					} catch (Exception e) {
 						Log.e("OF", "error copying file", e);
@@ -120,6 +121,12 @@ public class OFAndroidLifeCycleHelper
 		} catch (Exception e) {
 			Log.e(TAG,"error retrieving app name",e);
 		}
+	}
+
+	private static boolean DoNotCopyFile(String file) {
+		if(file == null || file.startsWith("license") || file.startsWith("device_features") )
+			return false;
+		return true;
 	}
 
 	private static void copyAssetFolder(AssetManager am, String src, String dest) throws IOException {
@@ -179,6 +186,7 @@ public class OFAndroidLifeCycleHelper
 	
 	public static void onCreate()
 	{
+		Log.i(TAG,"onCreate");
 		OFAndroid.onCreate();
 		OFAndroid.onUnpackingResourcesDone();
 		
@@ -193,44 +201,48 @@ public class OFAndroidLifeCycleHelper
 	
 	public static void onResume(){
 		Log.i(TAG,"onResume");
-		OFAndroid.runOnMainThread(new Runnable() {
-			@Override
-			public void run() {
 
-				synchronized (OFAndroidObject.ofObjects) {
-					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						object.onResume();
-					}
-
-				}
-				if(OFAndroid.getOrientation()!=-1) OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
-
-
-			}
-		});
 		OFAndroid.onResume();
 		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-		if(glView == null || glView != null && !glView.isSetup()){
+		if(OFAndroidLifeCycle.isSurfaceCreated() == true && glView == null || OFAndroidLifeCycle.isSurfaceCreated() == true && glView != null && !glView.isSetup()){
 			Log.e(TAG,"onResume glView is null or not setup");
-			OFAndroidLifeCycle.glCreateSurface(true);
+
+			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 			OFAndroid.onStart();
 		}
+		if(OFAndroidLifeCycle.isSurfaceCreated() == true && OFAndroidLifeCycle.isInit()) {
+			OFAndroid.runOnMainThread(new Runnable() {
+				@Override
+				public void run() {
+					OFAndroid.enableTouchEvents();
+					OFAndroid.enableOrientationChangeEvents();
+					OFAndroid.registerNetworkStateReceiver();
+					synchronized (OFAndroidObject.ofObjects) {
+						for (OFAndroidObject object : OFAndroidObject.ofObjects) {
+							object.onResume();
+						}
 
-		OFAndroid.enableTouchEvents();
-		OFAndroid.enableOrientationChangeEvents();
-		OFAndroid.registerNetworkStateReceiver();
+					}
+					if (OFAndroid.getOrientation() != -1)
+						OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
+
+
+				}
+			});
+		}
+
+
 	}
 	
 	public static void onPause(){
 		Log.i(TAG,"onPause");
 		OFAndroid.onPause();
-		OFAndroid.disableTouchEvents();
-		OFAndroid.disableOrientationChangeEvents();
-		OFAndroid.unregisterNetworkStateReceiver();
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
-
+				OFAndroid.disableTouchEvents();
+				OFAndroid.disableOrientationChangeEvents();
+				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onPause();
@@ -251,13 +263,15 @@ public class OFAndroidLifeCycleHelper
 				Log.i(TAG,"resume view and native");
 				OFAndroid.onStart();
 			}
-			return;
+			else
+				return;
 		}
 		started = true;
 		OFAndroid.onStart();
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
+				OFAndroid.registerNetworkStateReceiver();
 				OFAndroid.enableTouchEvents();
 				OFAndroid.enableOrientationChangeEvents();
 				synchronized (OFAndroidObject.ofObjects) {
@@ -269,9 +283,14 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 
-        if(OFAndroid.getOrientation()!=-1) OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
+        if(OFAndroid.getOrientation()!=-1) {
+			Log.i(TAG,"setScreenOrientation " + OFAndroid.getOrientation());
+			OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
+		} else {
+			Log.i(TAG,"not setScreenOrientation " + OFAndroid.getOrientation());
+		}
 
-		OFAndroid.registerNetworkStateReceiver();
+
 	}
 	
 	public static void onStop(){
@@ -282,7 +301,7 @@ public class OFAndroidLifeCycleHelper
 			public void run() {
 				OFAndroid.disableTouchEvents();
 				OFAndroid.disableOrientationChangeEvents();
-
+				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onPause();
@@ -292,7 +311,7 @@ public class OFAndroidLifeCycleHelper
 		});
 		
 		OFAndroid.onStop();
-		OFAndroid.unregisterNetworkStateReceiver();
+
 
 		OFAndroid.sleepLocked=false;
 		started = false;
@@ -307,7 +326,7 @@ public class OFAndroidLifeCycleHelper
 			public void run() {
 				OFAndroid.disableTouchEvents();
 				OFAndroid.disableOrientationChangeEvents();
-
+				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
 						object.onStop();
@@ -317,7 +336,7 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 		OFAndroid.onStop();
-		OFAndroid.unregisterNetworkStateReceiver();
+
 		
 		OFAndroid.sleepLocked=false;
 		
