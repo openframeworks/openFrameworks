@@ -49,6 +49,7 @@ public class OFAndroidLifeCycle
 	private static Semaphore m_semaphor = new Semaphore(1, false);
 	private static AtomicBoolean m_isWorkerDone = new AtomicBoolean(true);
 	private static AtomicBoolean m_isInit = new AtomicBoolean(false);
+	private static AtomicBoolean m_isSurfaceCreated = new AtomicBoolean(false);
 
 	private static OFActivity m_activity = null;
 	
@@ -154,6 +155,9 @@ public class OFAndroidLifeCycle
                                 OFAndroidLifeCycleHelper.onCreate();
                                 break;
                             case start:
+								synchronized (m_isSurfaceCreated) {
+									m_isSurfaceCreated.set(true);
+								}
                                 OFAndroidLifeCycleHelper.onStart();
                                 break;
                             case stop:
@@ -254,6 +258,13 @@ public class OFAndroidLifeCycle
 			return m_isInit.get();
 		}
 	}
+
+	public static boolean isSurfaceCreated()
+	{
+		synchronized (m_isSurfaceCreated) {
+			return m_isSurfaceCreated.get();
+		}
+	}
 	
 	public static void init()
 	{
@@ -284,11 +295,13 @@ public class OFAndroidLifeCycle
 			
 			ViewGroup glContainer = getActivity().getSurfaceContainer();
 			OFGLSurfaceView glView = getGLView();
-			if( preserveContextOnPause )
-				glView.setPreserveEGLContextOnPause( true );
-			ViewGroup parent = (ViewGroup)glView.getParent();
-			if( parent == null )
-				glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			if(glView != null) {
+				if (preserveContextOnPause)
+					glView.setPreserveEGLContextOnPause(true);
+				ViewGroup parent = (ViewGroup) glView.getParent();
+				if (parent == null)
+					glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			}
 		}
 	}
 	
@@ -296,8 +309,11 @@ public class OFAndroidLifeCycle
 	{
 		Log.d(TAG, "glStart");
 		OFGLSurfaceView glView = getGLView();
-		if( glView != null )
-			glView.onResume();
+		if( glView != null ) {
+			if(glView.isSetup()) {
+				glView.onResume();
+			}
+		}
 		
 		pushState(State.start);
 	}

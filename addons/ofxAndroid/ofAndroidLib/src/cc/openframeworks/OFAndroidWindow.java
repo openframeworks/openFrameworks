@@ -310,27 +310,85 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
-        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
-        if(OFEGLConfigChooser.getGLESVersion()>=2){
-        	setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
-        }
-        getHolder().setFormat( PixelFormat.OPAQUE );
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0, 4);
+        setClientVersion();
+
+        mRenderer = new OFAndroidWindow(getWidth(), getHeight());
+        getHolder().setFormat(PixelFormat.OPAQUE);
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4);
         setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
+        setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+        post(new Runnable() {
+            @Override
+            public void run() {
+                mRenderer.setResolution(getWidth(), getHeight());
+            }
+        });
+
+
+
+
+    }
+
+    public void setBackgroundResourceClear() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                setBackgroundResource(0);
+            }
+        });
+    }
+
+    public void setClientVersion() {
+        if(OFEGLConfigChooser.getGLESVersion()>=2){
+            Log.i("OF","SetClientVersion::setClientVersion setEGLContextClientVersion " + OFEGLConfigChooser.getGLESVersion());
+            setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
+        } else {
+            Log.i("OF","OFGLSurfaceView::setClientVersion setEGLContextClientVersion " + OFEGLConfigChooser.getGLESVersion());
+        }
     }
 	
 	@Deprecated
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
-        mRenderer = new OFAndroidWindow(getWidth(),getHeight());
-        if(OFEGLConfigChooser.getGLESVersion()>=2){
-        	setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
-        }
-        getHolder().setFormat( PixelFormat.OPAQUE );
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0, 4);
+        setClientVersion();
+        mRenderer = new OFAndroidWindow(getWidth(), getHeight());
+        getHolder().setFormat(PixelFormat.OPAQUE);
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4);
         setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
+        setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+        post(new Runnable() {
+            @Override
+            public void run() {
+                mRenderer.setResolution(getWidth(), getHeight());
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        /*
+         * We call a "pause" function in our Renderer class, which tells it to save state and
+         * go to sleep.  Because it's running in the Renderer thread, we call it through
+         * queueEvent(), which doesn't wait for the code to actually execute.  In theory the
+         * application could be killed shortly after we return from here, which would be bad if
+         * it happened while the Renderer thread was still saving off important state.  We need
+         * to wait for it to finish.
+         */
+
+        super.onPause();
+
+        //Log.d(TAG, "asking renderer to pause");
+//        queueEvent(new Runnable() {
+//            @Override public void run() {
+//                if(mRenderer != null)
+//                mRenderer.onViewPause(syncObj);
+//            }});
+
+        //Log.d(TAG, "renderer pause complete");
     }
 
 // NOTE - The following has been removed because it is not a good way to determine that the opengl context was destroyed with its resources.
@@ -348,7 +406,7 @@ class OFGLSurfaceView extends GLSurfaceView{
 
     
     boolean isSetup(){
-    	return mRenderer.isSetup();
+    	return mRenderer != null && mRenderer.isSetup();
     }
     
     private OFAndroidWindow mRenderer;
@@ -356,13 +414,22 @@ class OFGLSurfaceView extends GLSurfaceView{
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
-	public OFAndroidWindow(int w, int h){ 
-		this.w = w;
-		this.h = h;
+	public OFAndroidWindow(int w, int h){
+        setResolution(w,h);
 	}
+
+	public void setResolution(int w, int h) {
+        this.w = w;
+        this.h = h;
+        if(w != 0 && h != 0){
+            resolutionSetup = true;
+        }
+    }
 	
 	@Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+
+
 		Log.i("OF","onSurfaceCreated");
 		// notify that old surface was destroyed
         boolean hasDestroyed = false;
@@ -391,8 +458,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	@Override
     public void onSurfaceChanged(GL10 gl, int w, int h) {
         Log.i("OF","onSurfaceChanged");
-		this.w = w;
-		this.h = h;
+        setResolution(w,h);
     	if(!setup && OFAndroid.unpackingDone){
             setup();
     	} else if(!setup && !OFAndroid.unpackingDone) {
@@ -410,6 +476,9 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     
     private void setup(){
         Log.i("OF","setup");
+        if(w == 0 || h == 0) {
+            Log.e("OF","setup width or height is 0. Will cause strange effects");
+        }
     	OFAndroid.setup(w,h);
     	setup = true;
     	android.os.Process.setThreadPriority(8);
@@ -423,9 +492,16 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public static void exit() {
     	setup = false;
     }
-    
+
+
+
     @Override
     public void onDrawFrame(GL10 gl) {
+            // Remove the initial background
+            if (!initialRender) {
+                initialRender = true;
+                if( OFAndroidLifeCycle.getGLView() != null) OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
+            }
     	if(setup && OFAndroid.unpackingDone){
     		OFAndroid.render();
     	}else if(!setup && OFAndroid.unpackingDone){
@@ -440,8 +516,14 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	return setup;
     }
 
+    public boolean isResolutionSetup(){
+        return resolutionSetup;
+    }
+
 
     private static boolean setup;
+    private static boolean resolutionSetup;
+    private static boolean initialRender;
     private int w,h;
     public boolean has_surface = false;
 }
