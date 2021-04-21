@@ -1,9 +1,14 @@
 package cc.openframeworks;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,7 +27,7 @@ public abstract class OFActivity extends Activity{
 		return mOFGlSurfaceContainer;
 	}
 	
-	public void initView(){  
+	public void initView(){
 		String packageName = this.getPackageName();
         try {
         	Log.v("OF","trying to find class: "+packageName+".R$layout");
@@ -88,6 +93,35 @@ public abstract class OFActivity extends Activity{
 		//create gesture listener
 		//register the two events
 		initView();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		Log.i("SuperHexagon", "onConfigurationChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + newConfig.isScreenWideColorGamut());
+
+		if (newConfig.orientation== Configuration.ORIENTATION_PORTRAIT)
+		{
+
+		}
+		else  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+		{
+
+		}
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		if(glView != null) {
+			DisplayMetrics displayMetrics = new DisplayMetrics();
+
+			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+			int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
+			int height_px =Resources.getSystem().getDisplayMetrics().heightPixels;
+			int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
+
+			glView.setWindowResize(width_px, height_px);
+		}
+
+		//super.initView();
 	}
 	
 	@Override
