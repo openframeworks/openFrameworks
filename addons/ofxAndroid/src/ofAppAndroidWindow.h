@@ -92,6 +92,10 @@ public:
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
 
+	bool	getIsThreadedEvents();
+	bool 	getIsAccumulateTouchEvents();
+
+
 	int 	getGlesVersion();
 
 private:

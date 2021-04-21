@@ -322,12 +322,9 @@ class OFGLSurfaceView extends GLSurfaceView{
         post(new Runnable() {
             @Override
             public void run() {
-                mRenderer.setResolution(getWidth(), getHeight());
+                mRenderer.setResolution(getWidth(), getHeight(), true);
             }
         });
-
-
-
 
     }
 
@@ -363,7 +360,7 @@ class OFGLSurfaceView extends GLSurfaceView{
         post(new Runnable() {
             @Override
             public void run() {
-                mRenderer.setResolution(getWidth(), getHeight());
+                mRenderer.setResolution(getWidth(), getHeight(), true);
             }
         });
     }
@@ -408,6 +405,12 @@ class OFGLSurfaceView extends GLSurfaceView{
     boolean isSetup(){
     	return mRenderer != null && mRenderer.isSetup();
     }
+
+    void setWindowResize(int w, int h){
+        if(mRenderer != null && mRenderer.isSetup()) {
+            mRenderer.setResolution(w,h, true);
+        }
+    }
     
     private OFAndroidWindow mRenderer;
 }
@@ -415,14 +418,15 @@ class OFGLSurfaceView extends GLSurfaceView{
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
 	public OFAndroidWindow(int w, int h){
-        setResolution(w,h);
+        setResolution(w,h, true);
 	}
 
-	public void setResolution(int w, int h) {
+	public void setResolution(int w, int h, boolean updateSurface) {
         this.w = w;
         this.h = h;
         if(w != 0 && h != 0){
             resolutionSetup = true;
+            if(updateSurface) onSurfaceChanged(w,h);
         }
     }
 	
@@ -457,21 +461,24 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
 	@Override
     public void onSurfaceChanged(GL10 gl, int w, int h) {
+        onSurfaceChanged(w,h);
+    }
+
+    public void onSurfaceChanged(int w, int h) {
         Log.i("OF","onSurfaceChanged");
-        setResolution(w,h);
-    	if(!setup && OFAndroid.unpackingDone){
+        setResolution(w,h, false);
+        if(!setup && OFAndroid.unpackingDone){
             setup();
-    	} else if(!setup && !OFAndroid.unpackingDone) {
+        } else if(!setup && !OFAndroid.unpackingDone) {
             Log.i("OF","onSurfaceChanged not setup however !OFAndroid.unpackingDone");
             setup();
         } else if(setup && OFAndroid.unpackingDone) {
             Log.i("OF","onSurfaceChanged setup already");
 
         }
-
-    	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
-    	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
-    	OFAndroid.resize(w, h);
+        OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
+        OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
+        OFAndroid.resize(w, h);
     }
     
     private void setup(){
