@@ -1508,7 +1508,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 
 	int nBytesRead = read(fd, &ev, sizeof(struct input_event));
 	while(nBytesRead >= 0){
-		ofLogVerbose("Input event ") << "dev: " << node << " ,type: " << ev.type << " ,code: " << ev.code << " ,value: " << ev.value << " ,pending: " << axisValuePending;
+		//ofLogVerbose("Input event ") << "dev: " << node << " ,type: " << ev.type << " ,code: " << ev.code << " ,value: " << ev.value << " ,pending: " << axisValuePending;
 		if(ev.type == EV_KEY){
 			if(ev.code == BTN_LEFT){
 				if(ev.value == 0){ // release
