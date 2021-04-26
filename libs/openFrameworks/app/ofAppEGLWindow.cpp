@@ -1364,6 +1364,7 @@ void ofAppEGLWindow::setupNativeInput(){
 		const char * driver = udev_device_get_driver(dev);
 		const char * prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
 		const char * prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
+		const char * prop_touch = udev_device_get_property_value(dev, "ID_INPUT_TOUCHSCREEN");
 
 		ofLogNotice() << "Got device";
 		ofLogNotice() << " - node: " << devnode;
@@ -1374,20 +1375,21 @@ void ofAppEGLWindow::setupNativeInput(){
 		ofLogNotice() << " - devnum: " << devnum;
 		ofLogNotice() << " - ID_INPUT_KEYBOARD: " << prop_keyboard;
 		ofLogNotice() << " - ID_INPUT_MOUSE: " << prop_mouse;
+		ofLogNotice() << " - ID_INPUT_TOUCHSCREEN: " << prop_touch;
 
-		if(prop_mouse){
+		if(prop_mouse || prop_touch){
 			isMouse = true;
 		}else{
 			isMouse = false;
 		}
 
-		if(devnode && (prop_keyboard || prop_mouse) && string_begins_with(sysname, "event")){
+		if(devnode && (prop_keyboard || prop_mouse || prop_touch) && string_begins_with(sysname, "event")){
 			addInput(devnode, isMouse);
 		}
 		if(prop_keyboard){
 			keyboardDetected = true;
 		}
-		if(prop_mouse){
+		if(prop_mouse || prop_touch){
 			mouseDetected = true;
 		}
 
@@ -1506,7 +1508,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 
 	int nBytesRead = read(fd, &ev, sizeof(struct input_event));
 	while(nBytesRead >= 0){
-		// ofLogNotice("Input event ") << "dev: " << node << " ,type: " << ev.type << " ,code: " << ev.code << " ,value: " << ev.value << " ,pending: " << axisValuePending;
+		ofLogVerbose("Input event ") << "dev: " << node << " ,type: " << ev.type << " ,code: " << ev.code << " ,value: " << ev.value << " ,pending: " << axisValuePending;
 		if(ev.type == EV_KEY){
 			if(ev.code == BTN_LEFT){
 				if(ev.value == 0){ // release
@@ -1542,6 +1544,18 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					mb.mouseButtonState |= MOUSE_BUTTON_RIGHT_MASK;
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
+					pushMouseEvent = true;
+				}
+			}else if(ev.code == BTN_TOUCH){
+				if(ev.value == 0){ // release
+					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
+					mouseEvent.type = ofMouseEventArgs::Released;
+					mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
+					pushMouseEvent = true;
+				}else if(ev.value == 1){ // press
+					mb.mouseButtonState |= MOUSE_BUTTON_LEFT_MASK;
+					mouseEvent.type = ofMouseEventArgs::Pressed;
+					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					pushMouseEvent = true;
 				}
 			}else{
@@ -1697,7 +1711,6 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 		}else if(ev.type == EV_REL || ev.type == EV_ABS){
 			int axis = ev.code;
 			int amount = ev.value;
-
 			switch(axis) {
 				case 0:
 					if(ev.type == EV_REL){
@@ -1720,7 +1733,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					axisValuePending = true;
 					break;
 				default:
-					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?)";
+					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?) : "<<axis<<endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
