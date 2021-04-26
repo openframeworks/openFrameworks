@@ -77,6 +77,9 @@ static struct termios ots;
 typedef struct {
 	int mouseButtonState;
 } MouseState;
+typedef struct {
+	int touchState[10];
+} TouchState;
 
 // TODO, make this match the upcoming additions to ofWindow
 #define MOUSE_BUTTON_LEFT_MASK		1
@@ -84,6 +87,7 @@ typedef struct {
 #define MOUSE_BUTTON_RIGHT_MASK  2 << 1
 
 static MouseState mb;
+static TouchState mt;
 ofAppEGLWindow* ofAppEGLWindow::instance = NULL;
 
 static int string_ends_with(const char *str, const char *suffix) {
@@ -1054,6 +1058,18 @@ void ofAppEGLWindow::pollEvents(){
 			instance->coreEvents.notifyKeyEvent(keyEventsCopy.front());
 			keyEventsCopy.pop();
 		}
+
+		queue<ofTouchEventArgs> touchEventsCopy;
+		instance->lock();
+		touchEventsCopy = instance->touchEvents;
+		while(!instance->touchEvents.empty()){
+			instance->touchEvents.pop();
+		}
+		instance->unlock();
+		while(!touchEventsCopy.empty()){
+			instance->coreEvents.notifyTouchEvent(touchEventsCopy.front());
+			touchEventsCopy.pop();
+		}
 	}
 }
 
@@ -1497,18 +1513,20 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	// http://www.diegm.uniud.it/loghi/CE2/kbd.pdf
 	// http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
 	// https://strcpy.net/b/archives/2010/11/17/abusing_the_linux_input_subsystem/index.html
+	static ofTouchEventArgs touchEvent;
 	static ofKeyEventArgs keyEvent;
 	static ofMouseEventArgs mouseEvent;
 	struct input_event ev;
 	char key = 0;
-
+	
 	bool pushKeyEvent = false;
 	bool pushMouseEvent = false;
+	bool pushTouchEvent = false;
 	bool axisValuePending = false;
+	bool touchAxisValuePending = false;
 
 	int nBytesRead = read(fd, &ev, sizeof(struct input_event));
 	while(nBytesRead >= 0){
-		//ofLogVerbose("Input event ") << "dev: " << node << " ,type: " << ev.type << " ,code: " << ev.code << " ,value: " << ev.value << " ,pending: " << axisValuePending;
 		if(ev.type == EV_KEY){
 			if(ev.code == BTN_LEFT){
 				if(ev.value == 0){ // release
@@ -1547,16 +1565,17 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_TOUCH){
-				if(ev.value == 0){ // release
-					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
-					mouseEvent.type = ofMouseEventArgs::Released;
-					mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
-					pushMouseEvent = true;
+				if(ev.value == 0){ // release	
+					touchEvent.type = ofTouchEventArgs::up;
+					touchEvent.id = 0;
+					mt.touchState[touchEvent.id] = 0;
+					pushTouchEvent = true;
+
 				}else if(ev.value == 1){ // press
-					mb.mouseButtonState |= MOUSE_BUTTON_LEFT_MASK;
-					mouseEvent.type = ofMouseEventArgs::Pressed;
-					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
-					pushMouseEvent = true;
+					touchEvent.type = ofTouchEventArgs::down;
+					touchEvent.id = 0;
+					mt.touchState[touchEvent.id] = 1;
+					pushTouchEvent = true;
 				}
 			}else{
 				if(ev.value == 0){
@@ -1728,21 +1747,48 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					}else{
 						mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
 					}
-
 					mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
 					axisValuePending = true;
 					break;
+				case ABS_MT_SLOT:			
+					lock();
+					touchEvents.push(touchEvent);
+					unlock();
+					touchEvent.id = amount;						
+					break;
+				case ABS_MT_TRACKING_ID :
+					if(touchEvent.id != 0){
+						if(amount == -1 && mt.touchState[touchEvent.id] != 0){
+							touchEvent.type = ofTouchEventArgs::up;
+							mt.touchState[touchEvent.id] = 0;
+							pushTouchEvent = true;
+						}else if(mt.touchState[touchEvent.id] != 1){
+							touchEvent.type = ofTouchEventArgs::down;
+							mt.touchState[touchEvent.id] = 1;
+							pushTouchEvent = true;
+						}
+					}
+					break;
+				case ABS_MT_POSITION_X :
+					touchEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+					touchEvent.x = ofClamp(touchEvent.x, 0, currentWindowRect.width);
+					touchAxisValuePending = true;
+					break;
+				case ABS_MT_POSITION_Y :
+					touchEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+					touchEvent.y = ofClamp(touchEvent.y, 0, currentWindowRect.height);
+					touchAxisValuePending = true;
+					break;
 				default:
-					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?) : "<<axis<<endl;
+					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?) : axis "<<axis<<" amount "<<amount<<endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
 		}else if(ev.type == EV_SYN){
 			// EV_SYN Used as markers to separate events. Events may be
 			// separated in time or in space, such as with the multitouch protocol.
-
 			// EV_SYN events are sent when axis value (one or a pair) are changed
-			if(axisValuePending){
+			if(axisValuePending && !touchAxisValuePending){
 				// ofLog() << "EV_SYN pending end : " << iter->second;
 				// TODO, this state doesn't make as much sense when the mouse is not dragging
 				if(mb.mouseButtonState > 0){
@@ -1759,8 +1805,17 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				axisValuePending = false;
 			}
 
-			//ofLogVerbose("ofAppEGLWindow") << "readMouseEvents(): EV_SYN";
+			if(touchAxisValuePending){
+				if(mt.touchState[touchEvent.id] != 0){
+					if(!pushTouchEvent){
+						touchEvent.type = ofTouchEventArgs::move;
+						touchAxisValuePending = false;
+						pushTouchEvent = true;
+					}
+				}
+			}
 		}
+		
 
 		if(pushKeyEvent){
 			lock();
@@ -1775,6 +1830,13 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			mouseEvents.push(mouseEvent);
 			unlock();
 			pushMouseEvent = false;
+		}
+
+		if(pushTouchEvent){
+			lock();
+			touchEvents.push(touchEvent);
+			unlock();
+			pushTouchEvent = false;
 		}
 		nBytesRead = read(fd, &ev,sizeof(struct input_event));
 	}
@@ -2142,6 +2204,7 @@ static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int e
 void ofAppEGLWindow::handleX11Event(const XEvent& event){
 	ofMouseEventArgs mouseEvent;
 	ofKeyEventArgs keyEvent;
+
 	switch (event.type){
 	case KeyPress:
 	case KeyRelease:
