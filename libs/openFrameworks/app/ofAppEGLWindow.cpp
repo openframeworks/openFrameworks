@@ -1727,60 +1727,72 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 						}
 				}	
 			}
-		}else if(ev.type == EV_REL || ev.type == EV_ABS){
+		}else if (ev.type == EV_REL){
 			int axis = ev.code;
 			int amount = ev.value;
-			switch(axis) {
+			switch (axis)
+			{
+			case 0:
+				mouseEvent.x += amount * mouseScaleX;
+				mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+				axisValuePending = true;
+				break;
+			case 1:
+				mouseEvent.y += amount * mouseScaleY;
+				mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+				axisValuePending = true;
+				break;
+			default:
+				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?) : axis " << axis << " amount " << amount << endl;
+				break;
+			}
+		}else if (ev.type == EV_ABS){
+			int axis = ev.code;
+			int amount = ev.value;
+			switch (axis)
+			{
 				case 0:
-					if(ev.type == EV_REL){
-						mouseEvent.x += amount * mouseScaleX;
-					}else{
-						mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
-					}
-
+					mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
 					mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
 					axisValuePending = true;
 					break;
 				case 1:
-					if(ev.type == EV_REL){
-						mouseEvent.y += amount * mouseScaleY;
-					}else{
-						mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
-					}
+					mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
 					mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
 					axisValuePending = true;
 					break;
-				case ABS_MT_SLOT:			
-					lock();
-					touchEvents.push(touchEvent);
-					unlock();
-					touchEvent.id = amount;						
+				case ABS_MT_SLOT:
+					touchEvent.id = amount;
 					break;
-				case ABS_MT_TRACKING_ID :
-					if(touchEvent.id != 0){
-						if(amount == -1 && mt.touchState[touchEvent.id] != 0){
-							touchEvent.type = ofTouchEventArgs::up;
-							mt.touchState[touchEvent.id] = 0;
-							pushTouchEvent = true;
-						}else if(mt.touchState[touchEvent.id] != 1){
-							touchEvent.type = ofTouchEventArgs::down;
-							mt.touchState[touchEvent.id] = 1;
-							pushTouchEvent = true;
-						}
+				case ABS_MT_TRACKING_ID:
+					if (amount == -1 && mt.touchState[touchEvent.id] != 0)
+					{
+						touchEvent.type = ofTouchEventArgs::up;
+						mt.touchState[touchEvent.id] = 0;
+						pushTouchEvent = true;
+					}
+					else if (mt.touchState[touchEvent.id] == 0)
+					{
+						touchEvent.type = ofTouchEventArgs::down;
+						mt.touchState[touchEvent.id] = 1;
+						pushTouchEvent = true;
 					}
 					break;
-				case ABS_MT_POSITION_X :
+				case ABS_MT_POSITION_X:
 					touchEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
 					touchEvent.x = ofClamp(touchEvent.x, 0, currentWindowRect.width);
-					touchAxisValuePending = true;
+					if(!pushTouchEvent){
+						touchEvent.type = ofTouchEventArgs::move;
+						pushTouchEvent = true;
+					}
 					break;
-				case ABS_MT_POSITION_Y :
+				case ABS_MT_POSITION_Y:
 					touchEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
 					touchEvent.y = ofClamp(touchEvent.y, 0, currentWindowRect.height);
-					touchAxisValuePending = true;
-					break;
-				default:
-					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?) : axis "<<axis<<" amount "<<amount<<endl;
+					if(!pushTouchEvent){
+						touchEvent.type = ofTouchEventArgs::move;
+						pushTouchEvent = true;
+					}
 					break;
 			}
 		}else if(ev.type == EV_MSC){
