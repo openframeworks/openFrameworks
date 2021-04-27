@@ -1765,17 +1765,21 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					touchEvent.id = amount;
 					break;
 				case ABS_MT_TRACKING_ID:
-					if (amount == -1 && mt.touchState[touchEvent.id] != 0)
+					if (amount == -1)
 					{
-						touchEvent.type = ofTouchEventArgs::up;
-						mt.touchState[touchEvent.id] = 0;
-						pushTouchEvent = true;
+						if( mt.touchState[touchEvent.id] == 1){
+							touchEvent.type = ofTouchEventArgs::up;
+							mt.touchState[touchEvent.id] = 0;
+							pushTouchEvent = true;
+						}
 					}
-					else if (mt.touchState[touchEvent.id] == 0)
+					else 
 					{
-						touchEvent.type = ofTouchEventArgs::down;
-						mt.touchState[touchEvent.id] = 1;
-						pushTouchEvent = true;
+						if (mt.touchState[touchEvent.id] == 0){
+							touchEvent.type = ofTouchEventArgs::down;
+							mt.touchState[touchEvent.id] = 1;
+							pushTouchEvent = true;
+						}
 					}
 					break;
 				case ABS_MT_POSITION_X:
@@ -1785,6 +1789,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 						touchEvent.type = ofTouchEventArgs::move;
 						pushTouchEvent = true;
 					}
+					touchAxisValuePending = true;
 					break;
 				case ABS_MT_POSITION_Y:
 					touchEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
@@ -1793,6 +1798,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 						touchEvent.type = ofTouchEventArgs::move;
 						pushTouchEvent = true;
 					}
+					touchAxisValuePending = true;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
