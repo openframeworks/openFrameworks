@@ -375,8 +375,8 @@ uint64_t ofGetSystemTimeMicros( ) {
 }
 
 //--------------------------------------------------
-unsigned int ofGetUnixTime(){
-	return (unsigned int)time(nullptr);
+size_t ofGetUnixTime(){
+	return static_cast<size_t>(time(nullptr));
 }
 
 
