@@ -479,6 +479,9 @@ public class OFAndroid {
 
 	public static native void deviceOrientationChanged(int orientation);
 
+	public static native void deviceHighestRefreshRate(int refreshRate);
+	public static native void deviceRefreshRateChanged(int refreshRate);
+
     // static methods to be called from OF c++ code
     public static void setFullscreen(boolean fs){
     	//ofActivity.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -825,6 +828,9 @@ public class OFAndroid {
 	private static String dataPath;
 	public static boolean unpackingDone;
 
+	public static boolean wideGamut = false;
+	public static boolean hdrScreen = false;
+
     public static native boolean hasNeon();
 	
 	public static void disableTouchEvents(){
@@ -894,7 +900,7 @@ public class OFAndroid {
            	}
         }
 		int unicodeChar = event.getUnicodeChar();
-		if(unicodeChar == 0 && keyCode < 256 && keyCode > 0) {
+		if(unicodeChar == 0 && keyCode < 256 && keyCode > 4) {
 			unicodeChar = keyCode;
 		}
 		return onKeyDown(keyCode, unicodeChar);

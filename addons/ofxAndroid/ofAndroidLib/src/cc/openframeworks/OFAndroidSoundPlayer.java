@@ -351,7 +351,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(bIsLoaded && stream == false){
 			loadSound(fileName, stream);
 			if(bIsPlaying) {
-				Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+				//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
 				play();
 			}
 			if(pausePositionMS != 0) {
@@ -359,7 +359,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 				pausePositionMS = 0;
 			}
 		} else  {
-			Log.i("OF","SoundPlayer appResume not loaded" + fileName + " at " + pausePositionMS);
+			//Log.i("OF","SoundPlayer appResume not loaded" + fileName + " at " + pausePositionMS);
 		}
 		if(pool != null) pool.autoResume();
 	}

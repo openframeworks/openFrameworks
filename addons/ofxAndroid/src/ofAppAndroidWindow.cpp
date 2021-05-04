@@ -662,4 +662,17 @@ Java_cc_openframeworks_OFAndroid_deviceOrientationChanged(JNIEnv*  env, jclass  
 	ofOrientation _orientation = (ofOrientation) orientation;
 	ofNotifyEvent(ofxAndroidEvents().deviceOrientationChanged,_orientation );
 }
+
+void
+Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
+    int _refreshRate = (int) refreshRate;
+    ofNotifyEvent(ofxAndroidEvents().deviceHighestRefreshRate,_refreshRate );
+}
+
+
+void
+Java_cc_openframeworks_OFAndroid_deviceRefreshRateChanged(JNIEnv*  env, jclass  thiz, jint refreshRate){
+	int _refreshRate = (int) refreshRate;
+	ofNotifyEvent(ofxAndroidEvents().deviceRefreshRateChanged,_refreshRate );
+}
 }

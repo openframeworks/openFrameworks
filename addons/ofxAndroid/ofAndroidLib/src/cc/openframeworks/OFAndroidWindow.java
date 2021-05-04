@@ -3,19 +3,31 @@ package cc.openframeworks;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
+//import javax.microedition.khronos.egl.EGL15;
+//import javax.microedition.khronos.egl.EGL14;
+import javax.microedition.khronos.egl.EGL11;
+import javax.microedition.khronos.egl.EGL;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.ColorSpace;
 import android.graphics.PixelFormat;
+import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 
 class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
+
 	
-    public OFEGLConfigChooser(int r, int g, int b, int a, int depth, int stencil, int samples) {
+    public OFEGLConfigChooser(int r, int g, int b, int a, int depth, int stencil, int samples, boolean wideGamut) {
         mRedSize = r;
         mGreenSize = g;
         mBlueSize = b;
@@ -23,6 +35,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mDepthSize = depth;
         mStencilSize = stencil;
         mSampleSize = samples;
+        mWideGamut = wideGamut;
     }
     
     public static void setGLESVersion(int version){
@@ -30,6 +43,28 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 		
     	if(version==1) EGL_OPENGL_ES_BIT=1;
     	else EGL_OPENGL_ES_BIT=4;
+    }
+
+    public void setWideGamutRGB(){
+        mRedSize = 10;
+        mGreenSize = 10;
+        mBlueSize = 10;
+        mAlphaSize = 2;
+        mDepthSize = 16;
+        mStencilSize = 16;
+        mSampleSize = 4;
+        mWideGamut = true;
+    }
+
+    public void setRGB(){
+        mRedSize = 8;
+        mGreenSize = 8;
+        mBlueSize = 8;
+        mAlphaSize = 0;
+        mDepthSize = 16;
+        mStencilSize = 16;
+        mSampleSize = 4;
+        mWideGamut = true;
     }
     
     public static int getGLESVersion(){
@@ -43,6 +78,32 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     private static boolean DEBUG = false;
     private static int EGL_OPENGL_ES_BIT = 1;
     private static int GLES_VERSION = 1;
+
+
+    public static final int EGL_GL_COLORSPACE_KHR = 0x309D;
+    public static final int EGL_COLOR_COMPONENT_TYPE_EXT = 0x3339;
+    public static final int EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT = 0x333B;
+    public static final int EGL_GL_COLORSPACE_BT2020_PQ_EXT = 0x3340;
+    public static final int EGL_COVERAGE_BUFFERS_NV = 0x30E0;
+    public static final int EGL_COVERAGE_SAMPLES_NV = 0x30E1;
+    public static final int EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT = 0x3490;
+
+    private static int[] s_configAttribsMSAA_P3 =
+            {
+                    EGL14.EGL_RED_SIZE, 10,
+                    EGL14.EGL_GREEN_SIZE, 10,
+                    EGL14.EGL_BLUE_SIZE, 10,
+                    EGL14.EGL_DEPTH_SIZE, 16,
+                    EGL14.EGL_ALPHA_SIZE, 2,
+                    EGL_COLOR_COMPONENT_TYPE_EXT,
+                    // Requires that setEGLContextClientVersion(2) is called on the view.
+                    EGL14.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL14.EGL_SAMPLE_BUFFERS, 1 /* true */,
+                    EGL14.EGL_SAMPLES, 4,
+                    EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT,
+                    EGL14.EGL_NONE
+            };
+
     private static int[] s_configAttribsMSAA =
     {
             EGL10.EGL_RED_SIZE, 8,
@@ -56,8 +117,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_NONE
     };
 
-    private static final int EGL_COVERAGE_BUFFERS_NV = 0x30E0;
-    private static final int EGL_COVERAGE_SAMPLES_NV = 0x30E1;
+
+
     private static int[] s_configAttribsMSAAFallBack = {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
@@ -93,44 +154,58 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
          */
         int[] num_config = new int[1];
         EGLConfig[] configs = null;
+        num_config[0] = 0;
 
-        if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
-                num_config)) {
-            Log.w("OF", String.format("eglChooseConfig MSAA failed"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mWideGamut == true) {
+            if (!egl.eglChooseConfig(display, s_configAttribsMSAA_P3, null, 0,
+                    num_config)) {
+                Log.w("OF", String.format("s_configAttribsMSAA_P3 MSAA with P3 failed"));
+            }
         }
         int numConfigs = num_config[0];
         if (numConfigs <= 0) {
-            if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
+            setRGB();
+            if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
                     num_config)) {
-                Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
+                Log.w("OF", String.format("eglChooseConfig MSAA failed"));
             }
             numConfigs = num_config[0];
             if (numConfigs <= 0) {
-                if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
+                if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
                         num_config)) {
-                    Log.w("OF", String.format("eglChooseConfig Default failed"));
+                    Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
                 }
                 numConfigs = num_config[0];
                 if (numConfigs <= 0) {
-                    if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
+                    if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
                             num_config)) {
-                        Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
+                        Log.w("OF", String.format("eglChooseConfig Default failed"));
                     }
                     numConfigs = num_config[0];
                     if (numConfigs <= 0) {
-                        throw new IllegalArgumentException("No configs match configSpec");
+                        if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
+                                num_config)) {
+                            Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
+                        }
+                        numConfigs = num_config[0];
+                        if (numConfigs <= 0) {
+                            throw new IllegalArgumentException("No configs match configSpec");
+                        }
+                    } else {
+                        configs = new EGLConfig[numConfigs];
+                        egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
                     }
                 } else {
                     configs = new EGLConfig[numConfigs];
-                    egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
+                    egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
                 }
             } else {
                 configs = new EGLConfig[numConfigs];
-                egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
+                egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
             }
         } else {
             configs = new EGLConfig[numConfigs];
-            egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
+            egl.eglChooseConfig(display, s_configAttribsMSAA_P3, configs, numConfigs, num_config);
         }
         /* Allocate then read the array of minimally matching EGL configs
          */
@@ -141,6 +216,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         }
         /* Now return the "best" one
          */
+
         EGLConfig finalConfig =  chooseConfig(egl, display, configs);
         if (DEBUG) {
             printConfig(egl, display, finalConfig);
@@ -151,6 +227,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
             EGLConfig[] configs) {
+
+        EGLConfig foundConfig = null;
         for(EGLConfig config : configs) {
             int d = findConfigAttrib(egl, display, config,
                     EGL10.EGL_DEPTH_SIZE, 0);
@@ -158,8 +236,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_STENCIL_SIZE, 0);
 
             // We need at least mDepthSize and mStencilSize bits
-            if (d < mDepthSize || s < mStencilSize)
-                continue;
+            //if (d < mDepthSize || s < mStencilSize)
+             //   continue;
 
             // We want an *exact* match for red/green/blue/alpha
             int r = findConfigAttrib(egl, display, config,
@@ -171,25 +249,57 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             int a = findConfigAttrib(egl, display, config,
                     EGL10.EGL_ALPHA_SIZE, 0);
 
+            int gamut =  findConfigAttrib(egl, display, config,
+                    EGL_GL_COLORSPACE_KHR, 0);
+
+            if(gamut != 0) {
+                Log.w("OF", String.format("WideGamut: is ", gamut));
+            }
+
             int sb = findConfigAttrib(egl, display, config,
                     EGL10.EGL_SAMPLE_BUFFERS, 1);
             int samples = findConfigAttrib(egl, display, config,
                     EGL10.EGL_SAMPLES, 0);
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
+                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", mSampleSize));
+                if(foundConfig == null)
+                    foundConfig = config;
+                else {
+                    Log.i("OF", String.format("Already Found. New Row: Config Row: r%d g:%d b%d a:%d s:%d gam:%d", r,g,b,a,samples, gamut));
+                }
+            } else {
+                Log.i("OF", String.format("Config Row: r%d g:%d b%d a:%d s:%d gam:%d", r,g,b,a,samples, gamut));
+            }
+
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
                 Log.w("OF", String.format("Enabled MSAAx%d", mSampleSize));
-                return config;
+                if(foundConfig == null)
+                    foundConfig = config;
+                else {
+                    Log.i("OF", String.format("Already Found. New Row: Config Row: r%d g:%d b%d a:%d s:%d gam:%d", r,g,b,a,samples, gamut));
+                }
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
                 Log.w("OF", String.format("Enabled MSAAx%d ", mSampleSize));
-                return config;
+                if(foundConfig == null)
+                    foundConfig = config;
+                else {
+                    Log.i("OF", String.format("Already Found. New Row: Config Row: r%d g:%d b%d a:%d s:%d gam:%d", r,g,b,a,samples, gamut));
+                }
             }
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize)
-                return config;
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize) {
+                if(foundConfig == null)
+                    foundConfig = config;
+                else {
+                    Log.i("OF", String.format("Already Found. New Row: Config Row: r%d g:%d b%d a:%d s:%d gam:%d", r,g,b,a,samples, gamut));
+                }
+            }
+
         }
-        return null;
+        return foundConfig;
     }
 
     private int findConfigAttrib(EGL10 egl, EGLDisplay display,
@@ -304,21 +414,26 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     protected int mDepthSize;
     protected int mStencilSize;
     protected int mSampleSize;
+    protected boolean mWideGamut;
     private int[] mValue = new int[1];
 }
 
-class OFGLSurfaceView extends GLSurfaceView{
+class OFGLSurfaceView extends GLSurfaceView {
+
 	public OFGLSurfaceView(Context context) {
         super(context);
         setClientVersion();
 
         mRenderer = new OFAndroidWindow(getWidth(), getHeight());
         getHolder().setFormat(PixelFormat.OPAQUE);
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4);
+        OFEGLConfigChooser configChooser = getConfigChooser();
         setEGLConfigChooser(configChooser);
+//        EGLint attribs[] = {OFEGLConfigChooser.EGL_GL_COLORSPACE_KHR,OFEGLConfigChooser.EGL_GL_COLORSPACE_BT2020_PQ_EXT, EGL_NONE };
+//        EGLSurface eglSurface=EGL14.eglCreateWindowSurface(configChooser.displayUsed, configChooser,  context., attribs);
+
         setRenderer(mRenderer);
         setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
-
+        display = getDisplay();
         post(new Runnable() {
             @Override
             public void run() {
@@ -328,13 +443,88 @@ class OFGLSurfaceView extends GLSurfaceView{
 
     }
 
-    public void setBackgroundResourceClear() {
+    @Deprecated
+    public OFGLSurfaceView(Context context,AttributeSet attributes) {
+        super(context,attributes);
+        setClientVersion();
+        mRenderer = new OFAndroidWindow(getWidth(), getHeight());
+        getHolder().setFormat(PixelFormat.OPAQUE);
+        OFEGLConfigChooser configChooser = getConfigChooser();
+        setEGLConfigChooser(configChooser);
+        setRenderer(mRenderer);
+        setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        display = getDisplay();
         post(new Runnable() {
             @Override
             public void run() {
-                setBackgroundResource(0);
+                mRenderer.setResolution(getWidth(), getHeight(), true);
             }
         });
+    }
+
+    @Override
+    public void setRenderer(GLSurfaceView.Renderer renderer) {
+
+	    super.setRenderer(renderer);
+    }
+
+    @Override
+    public void setRenderMode(int renderMode) {
+
+	    super.setRenderMode(renderMode);
+    }
+
+    @Override
+    public void setDebugFlags(int debugFlags) {
+        super.setDebugFlags(debugFlags);
+    }
+
+    @Override
+    public void setPreserveEGLContextOnPause(boolean preserveOnPause) {
+        super.setPreserveEGLContextOnPause(preserveOnPause);
+    }
+
+    @Override
+    public void setEGLContextFactory(EGLContextFactory factory) {
+        super.setEGLContextFactory(factory);
+        Log.i("OF","setEGLContextFactory");
+    }
+
+    @Override
+    public void setEGLWindowSurfaceFactory(EGLWindowSurfaceFactory factory) {
+        super.setEGLWindowSurfaceFactory(factory);
+        Log.i("OF","setEGLWindowSurfaceFactory");
+    }
+
+    @Override
+    public void setEGLConfigChooser(EGLConfigChooser configChooser) {
+        super.setEGLConfigChooser(configChooser);
+        Log.i("OF","setEGLConfigChooser");
+    }
+
+    @Override
+    public void setEGLContextClientVersion(int version) {
+        super.setEGLContextClientVersion(version);
+        Log.i("OF","setEGLContextClientVersion:" + version);
+    }
+
+    public void setBackgroundResourceClear() {
+//        post(new Runnable() {
+//            @Override
+//            public void run() {
+//                setBackgroundResource(0);
+//            }
+//        });
+    }
+
+    public OFEGLConfigChooser getConfigChooser() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Log.i("OF","getConfigChooser::WideGamut Config Chooser");
+                return new OFEGLConfigChooser(10, 10, 10, 2, 16, 0, 4, true);
+        }
+        Log.i("OF","getConfigChooser::sRGB Config");
+        return new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4, false);
+
     }
 
     public void setClientVersion() {
@@ -346,24 +536,7 @@ class OFGLSurfaceView extends GLSurfaceView{
         }
     }
 	
-	@Deprecated
-	public OFGLSurfaceView(Context context,AttributeSet attributes) {
-        super(context,attributes);
-        setClientVersion();
-        mRenderer = new OFAndroidWindow(getWidth(), getHeight());
-        getHolder().setFormat(PixelFormat.OPAQUE);
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4);
-        setEGLConfigChooser(configChooser);
-        setRenderer(mRenderer);
-        setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        post(new Runnable() {
-            @Override
-            public void run() {
-                mRenderer.setResolution(getWidth(), getHeight(), true);
-            }
-        });
-    }
 
     @Override
     public void onPause() {
@@ -388,18 +561,55 @@ class OFGLSurfaceView extends GLSurfaceView{
         //Log.d(TAG, "renderer pause complete");
     }
 
+    @Override
+    public void onResume() {
+
+	    super.onResume();
+    }
+
+    @Override
+    public void queueEvent(Runnable r) {
+        super.queueEvent(r);
+    }
+
 // NOTE - The following has been removed because it is not a good way to determine that the opengl context was destroyed with its resources.
 //        The Android SurfaceView source code is a bit confusing  - there are many times when some kind of surface is beign destroyed (eg. during window resize),
 //            so it is not that surprising, that not every surfaceDestoyed callback means what we might think it means.
 //        We don't need this callback that much anyways, the renderer does not call render callbacks when gl context is invalid, so the OFAndroidWindow.onSurfaceCreated callback should be enought for us to make things work.
 
-//    @Override
-//	public void surfaceDestroyed(SurfaceHolder holder) {
-//        Log.i("OF","surfaceDestroyed");
-//    	//super.surfaceDestroyed(holder);
-//		//OFAndroid.onSurfaceDestroyed();
-//        //mRenderer.exit();
-//	}
+    @Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i("OF","surfaceDestroyed");
+    	super.surfaceDestroyed(holder);
+    	mHolder = null;
+    	//mSurface = null;
+		//OFAndroid.onSurfaceDestroyed();
+        //mRenderer.exit();
+	}
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.i("OF","surfaceCreated");
+        if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
+            mHolder = holder;
+            mSurface = holder.getSurface();
+        }
+        super.surfaceCreated(holder);
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+        Log.i("OF","surfaceChanged format:" + format + " w:" + w + " h:" + h);
+        super.surfaceChanged(holder, format, w, h);
+        if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
+            mHolder = holder;
+            mSurface = holder.getSurface();
+        }
+        if(mRenderer != null && mRenderer.isSetup()) {
+            mRenderer.setResolution(w,h, true);
+        }
+
+    }
 
     
     boolean isSetup(){
@@ -413,6 +623,9 @@ class OFGLSurfaceView extends GLSurfaceView{
     }
     
     private OFAndroidWindow mRenderer;
+	private SurfaceHolder mHolder;
+	private Surface mSurface;
+	private Display display;
 }
 
 class OFAndroidWindow implements GLSurfaceView.Renderer {
@@ -422,8 +635,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	}
 
 	public void setResolution(int w, int h, boolean updateSurface) {
+        Log.i("OF","setResolution:width:" + w + " height:" + h);
         this.w = w;
         this.h = h;
+
         if(w != 0 && h != 0){
             resolutionSetup = true;
             if(updateSurface) onSurfaceChanged(w,h);
@@ -449,8 +664,16 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 		this.has_surface = true;
 		OFAndroid.onSurfaceCreated();
 		Activity activity = OFAndroidLifeCycle.getActivity();
-		if(OFActivity.class.isInstance(activity))
-			((OFActivity)activity).onGLSurfaceCreated();
+		if(OFActivity.class.isInstance(activity)) {
+            ((OFActivity) activity).onGLSurfaceCreated();
+        }
+        else {
+            try {
+                Log.e("OF", "setup OFActivity.class.is NOT Instance(activity)" + activity.getLocalClassName());
+            } catch (Exception e) {
+
+            }
+        }
 
 		if(hasDestroyed == true) {
 		    setup();
@@ -461,11 +684,11 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	
 	@Override
     public void onSurfaceChanged(GL10 gl, int w, int h) {
-        onSurfaceChanged(w,h);
+	    onSurfaceChanged(w,h);
     }
 
     public void onSurfaceChanged(int w, int h) {
-        Log.i("OF","onSurfaceChanged");
+        Log.i("OF","onSurfaceChanged width:" + w + " height:" + h);
         setResolution(w,h, false);
         if(!setup && OFAndroid.unpackingDone){
             setup();
@@ -483,8 +706,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     
     private void setup(){
         Log.i("OF","setup");
-        if(w == 0 || h == 0) {
-            Log.e("OF","setup width or height is 0. Will cause strange effects");
+        if(w <= 0 || h <= 0) {
+            Log.e("OF","setup width or height is <=0. Will cause strange effects");
         }
     	OFAndroid.setup(w,h);
     	setup = true;
@@ -492,8 +715,16 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
     	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
     	Activity activity = OFAndroidLifeCycle.getActivity();
-		if(OFActivity.class.isInstance(activity))
-			((OFActivity)activity).onGLSurfaceCreated();
+		if(OFActivity.class.isInstance(activity)) {
+            ((OFActivity) activity).onGLSurfaceCreated();
+        }
+		else {
+		    try {
+                Log.e("OF", "setup OFActivity.class.is NOT Instance(activity)" + activity.getLocalClassName());
+            } catch (Exception e) {
+
+            }
+        }
     }
     
     public static void exit() {
