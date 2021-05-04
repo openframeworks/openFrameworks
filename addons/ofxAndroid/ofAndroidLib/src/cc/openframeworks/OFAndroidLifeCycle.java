@@ -98,7 +98,7 @@ public class OFAndroidLifeCycle
 				isLegal = false;
 			break;
 		case resume:
-			if(!(m_currentState.equals(State.pause)||m_currentState.equals(State.start)))
+			if(!(m_currentState.equals(State.pause)|| m_currentState.equals(State.start)))
 				isLegal = false;
 			break;
 		case pause:
@@ -141,7 +141,8 @@ public class OFAndroidLifeCycle
                         if (!isNextStateLegal(next))
                         {
 							Log.e(OFAndroidLifeCycle.class.getSimpleName(), "Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
-                            //throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
+                            break;
+							//throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
                         }
                         
                         m_currentState = next;
