@@ -26,6 +26,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display presentationDisplay;
 
 	private float currentRefreshRate;
+	private float highestRefreshRate;
 
 	public void onGLSurfaceCreated(){}
 	public void onLoadPercent(float percent){}
@@ -111,8 +112,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 					float[] refreshRates = display.getSupportedRefreshRates();
+					highestRefreshRate = currentRefreshRate;
 					for(float refreshRate : refreshRates){
 						Log.i("OF", "Display RefreshRate Supported:" +  refreshRate);
+						if(refreshRate > highestRefreshRate) {
+							highestRefreshRate = refreshRate;
+						}
 					}
 
 
@@ -158,6 +163,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		OFAndroidLifeCycle.setActivity(this);
 		OFAndroidLifeCycle.init();
 		OFAndroidLifeCycle.glCreate();
+		OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
+		OFAndroid.deviceRefreshRateChanged((int)currentRefreshRate);
 		//create gesture listener
 		//register the two events
 		initView();
@@ -180,14 +187,21 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		try {
 			display = getWindowManager().getDefaultDisplay();
 			if (display.isValid()) {
-//				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-////					float[] refreshRates = display.getSupportedRefreshRates();
-////					for (float refreshRate : refreshRates) {
-////						Log.i("OF", "Display RefreshRate Supported:" + refreshRate);
-////					}
-//
-//				}
+
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+					boolean isWideColorGamut = display.isWideColorGamut();
+					Log.i("OF", "Display WideColor Gamut Supported:" +  isWideColorGamut);
+					OFAndroid.wideGamut = isWideColorGamut;
+
+					boolean isHDR = display.isHdr();
+					Log.i("OF", "Display is HDR Supported:" +  isHDR);
+					OFAndroid.hdrScreen = isHDR;
+				}
+
 				currentRefreshRate = display.getRefreshRate();
+
+				OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
+				OFAndroid.deviceRefreshRateChanged((int)currentRefreshRate);
 			}
 		} catch(Exception exception) {
 			Log.w("OF", "Could not get Window for Display ", exception);
