@@ -181,7 +181,7 @@ public:
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
 	ofEvent<ofOrientation> deviceOrientationChanged;
-	ofEvent<int> deviceRefreshRateChanged;
+	ofEvent<int> deviceRefreshRate;
     ofEvent<int> deviceHighestRefreshRate;
 	
 	/**
