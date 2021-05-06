@@ -107,6 +107,8 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> &
 			ofAddListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
+			ofAddListener(ofxAndroidEvents().deviceHighestRefreshRate,androidApp,&ofxAndroidApp::deviceHighestRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
+			ofAddListener(ofxAndroidEvents().deviceRefreshRate,androidApp,&ofxAndroidApp::deviceRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}
@@ -210,6 +212,8 @@ void ofMainLoop::exit(){
 			ofRemoveListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
+			ofRemoveListener(ofxAndroidEvents().deviceHighestRefreshRate,androidApp,&ofxAndroidApp::deviceHighestRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
+			ofRemoveListener(ofxAndroidEvents().deviceRefreshRate,androidApp,&ofxAndroidApp::deviceRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}

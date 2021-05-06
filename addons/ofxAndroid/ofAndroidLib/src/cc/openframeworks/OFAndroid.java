@@ -480,7 +480,7 @@ public class OFAndroid {
 	public static native void deviceOrientationChanged(int orientation);
 
 	public static native void deviceHighestRefreshRate(int refreshRate);
-	public static native void deviceRefreshRateChanged(int refreshRate);
+	public static native void deviceRefreshRate(int refreshRate);
 
     // static methods to be called from OF c++ code
     public static void setFullscreen(boolean fs){
@@ -815,6 +815,10 @@ public class OFAndroid {
 	public static String getRandomUUID(){
 		return UUID.randomUUID().toString();
 	}
+
+//	public static int getCurrentFrameRate(){
+//		return OFActivity.A
+//	}
 	
 	public static boolean isApplicationSetup(){
 		if(OFAndroidLifeCycle.getGLView() == null) return false;

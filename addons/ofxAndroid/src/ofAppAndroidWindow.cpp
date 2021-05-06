@@ -666,13 +666,16 @@ Java_cc_openframeworks_OFAndroid_deviceOrientationChanged(JNIEnv*  env, jclass  
 void
 Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
     int _refreshRate = (int) refreshRate;
+	ofLogNotice("oF") << "deviceHighestRefreshRate" << _refreshRate;
     ofNotifyEvent(ofxAndroidEvents().deviceHighestRefreshRate,_refreshRate );
 }
 
 
 void
-Java_cc_openframeworks_OFAndroid_deviceRefreshRateChanged(JNIEnv*  env, jclass  thiz, jint refreshRate){
+Java_cc_openframeworks_OFAndroid_deviceRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
+	ofLogNotice("oF") << "deviceRefreshRateChanged" << refreshRate;
 	int _refreshRate = (int) refreshRate;
-	ofNotifyEvent(ofxAndroidEvents().deviceRefreshRateChanged,_refreshRate );
+	ofNotifyEvent(ofxAndroidEvents().deviceRefreshRate,_refreshRate );
 }
+
 }

@@ -88,6 +88,9 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     public static final int EGL_COVERAGE_SAMPLES_NV = 0x30E1;
     public static final int EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT = 0x3490;
 
+    public static final int EGL_GL_COLORSPACE_DISPLAY_P3_EXT = 0x3363;
+    public static final int EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT = 0x3362;
+
     private static int[] s_configAttribsMSAA_P3 =
             {
                     EGL14.EGL_RED_SIZE, 10,
@@ -101,6 +104,22 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL14.EGL_SAMPLE_BUFFERS, 1 /* true */,
                     EGL14.EGL_SAMPLES, 4,
                     EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT,
+                    EGL14.EGL_NONE
+            };
+
+    private static int[] s_configAttribsMSAA_P3_2 =
+            {
+                    EGL14.EGL_RED_SIZE, 8,
+                    EGL14.EGL_GREEN_SIZE, 8,
+                    EGL14.EGL_BLUE_SIZE, 8,
+                    EGL14.EGL_DEPTH_SIZE, 16,
+                    EGL14.EGL_ALPHA_SIZE, 2,
+                    EGL_COLOR_COMPONENT_TYPE_EXT,
+                    // Requires that setEGLContextClientVersion(2) is called on the view.
+                    EGL14.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL14.EGL_SAMPLE_BUFFERS, 1 /* true */,
+                    EGL14.EGL_SAMPLES, 4,
+                    EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT,
                     EGL14.EGL_NONE
             };
 
@@ -165,43 +184,53 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         int numConfigs = num_config[0];
         if (numConfigs <= 0) {
             setRGB();
-            if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
+            if (!egl.eglChooseConfig(display, s_configAttribsMSAA_P3_2, null, 0,
                     num_config)) {
                 Log.w("OF", String.format("eglChooseConfig MSAA failed"));
             }
             numConfigs = num_config[0];
             if (numConfigs <= 0) {
-                if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
+                if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
                         num_config)) {
-                    Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
+                    Log.w("OF", String.format("eglChooseConfig MSAA failed"));
                 }
                 numConfigs = num_config[0];
                 if (numConfigs <= 0) {
-                    if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
+                    if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
                             num_config)) {
-                        Log.w("OF", String.format("eglChooseConfig Default failed"));
+                        Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
                     }
                     numConfigs = num_config[0];
                     if (numConfigs <= 0) {
-                        if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
+                        if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
                                 num_config)) {
-                            Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
+                            Log.w("OF", String.format("eglChooseConfig Default failed"));
                         }
                         numConfigs = num_config[0];
                         if (numConfigs <= 0) {
-                            throw new IllegalArgumentException("No configs match configSpec");
+                            if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
+                                    num_config)) {
+                                Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
+                            }
+                            numConfigs = num_config[0];
+                            if (numConfigs <= 0) {
+                                throw new IllegalArgumentException("No configs match configSpec");
+                            }
+                        } else {
+                            configs = new EGLConfig[numConfigs];
+                            egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
                         }
                     } else {
                         configs = new EGLConfig[numConfigs];
-                        egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
+                        egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
                     }
                 } else {
                     configs = new EGLConfig[numConfigs];
-                    egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
+                    egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
                 }
             } else {
                 configs = new EGLConfig[numConfigs];
-                egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
+                egl.eglChooseConfig(display, s_configAttribsMSAA_P3, configs, numConfigs, num_config);
             }
         } else {
             configs = new EGLConfig[numConfigs];
@@ -690,6 +719,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(int w, int h) {
         Log.i("OF","onSurfaceChanged width:" + w + " height:" + h);
         setResolution(w,h, false);
+
         if(!setup && OFAndroid.unpackingDone){
             setup();
         } else if(!setup && !OFAndroid.unpackingDone) {

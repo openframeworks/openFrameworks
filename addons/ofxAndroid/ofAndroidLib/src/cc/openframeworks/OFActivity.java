@@ -25,8 +25,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display display;
 	private Display presentationDisplay;
 
-	private float currentRefreshRate;
-	private float highestRefreshRate;
+	public float currentRefreshRate;
+	public float highestRefreshRate;
 
 	public void onGLSurfaceCreated(){}
 	public void onLoadPercent(float percent){}
@@ -135,7 +135,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						supportedModes = display.getSupportedModes();
 					}
 					for(Display.Mode mode : supportedModes){
-						Log.i("OF", "Display Mode Supported:" +  mode);
+						Log.i("OF", "Could not get Window fo:" +  mode);
 					}
 
 
@@ -164,7 +164,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		OFAndroidLifeCycle.init();
 		OFAndroidLifeCycle.glCreate();
 		OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
-		OFAndroid.deviceRefreshRateChanged((int)currentRefreshRate);
+		OFAndroid.deviceRefreshRate((int)currentRefreshRate);
 		//create gesture listener
 		//register the two events
 		initView();
@@ -199,12 +199,24 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				}
 
 				currentRefreshRate = display.getRefreshRate();
+				Log.i("OF", "Display Current RefreshRate :" +  currentRefreshRate);
+
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+					float[] refreshRates = display.getSupportedRefreshRates();
+					highestRefreshRate = currentRefreshRate;
+					for (float refreshRate : refreshRates) {
+						Log.i("OF", "Display RefreshRate Supported:" + refreshRate);
+						if (refreshRate > highestRefreshRate) {
+							highestRefreshRate = refreshRate;
+						}
+					}
+				}
 
 				OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
-				OFAndroid.deviceRefreshRateChanged((int)currentRefreshRate);
+				OFAndroid.deviceRefreshRate((int)currentRefreshRate);
 			}
 		} catch(Exception exception) {
-			Log.w("OF", "Could not get Window for Display ", exception);
+			Log.w("OF", "onDisplayChanged Display Could not get Window for Display ", exception);
 		}
 	}
 
@@ -309,6 +321,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	protected void onStart() {
 		super.onStart();
 		OFAndroidLifeCycle.glStart();
+
+		OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
+		OFAndroid.deviceRefreshRate((int)currentRefreshRate);
 	}
 	
 	@Override
