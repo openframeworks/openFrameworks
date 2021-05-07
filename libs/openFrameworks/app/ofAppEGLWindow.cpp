@@ -77,9 +77,9 @@ static struct termios ots;
 typedef struct {
 	int mouseButtonState;
 } MouseState;
-typedef struct {
-	int touchState[10];
-} TouchState;
+
+typedef map<int, int> TouchState;
+typedef map<int, ofVec2f> TouchPosition;
 
 // TODO, make this match the upcoming additions to ofWindow
 #define MOUSE_BUTTON_LEFT_MASK		1
@@ -88,6 +88,7 @@ typedef struct {
 
 static MouseState mb;
 static TouchState mt;
+static TouchPosition mtp;
 ofAppEGLWindow* ofAppEGLWindow::instance = NULL;
 
 static int string_ends_with(const char *str, const char *suffix) {
@@ -1565,16 +1566,19 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_TOUCH){
+				ofLogNotice("ofAppEGLWindow") << "BTN_TOUCH";
 				if(ev.value == 0){ // release	
 					touchEvent.type = ofTouchEventArgs::up;
 					touchEvent.id = 0;
-					mt.touchState[touchEvent.id] = 0;
+					mt[touchEvent.id] = 0;
+					touchEvent.x = mtp[touchEvent.id].x;
+					touchEvent.y = mtp[touchEvent.id].y;
 					pushTouchEvent = true;
 
 				}else if(ev.value == 1){ // press
 					touchEvent.type = ofTouchEventArgs::down;
 					touchEvent.id = 0;
-					mt.touchState[touchEvent.id] = 1;
+					mt[touchEvent.id] = 1;
 					pushTouchEvent = true;
 				}
 			}else{
@@ -1732,12 +1736,12 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			int amount = ev.value;
 			switch (axis)
 			{
-			case 0:
+			case REL_X:
 				mouseEvent.x += amount * mouseScaleX;
 				mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
 				axisValuePending = true;
 				break;
-			case 1:
+			case REL_Y:
 				mouseEvent.y += amount * mouseScaleY;
 				mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
 				axisValuePending = true;
@@ -1751,15 +1755,17 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			int amount = ev.value;
 			switch (axis)
 			{
-				case 0:
+				case ABS_X:
 					mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
 					mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
 					axisValuePending = true;
 					break;
-				case 1:
+				case ABS_Y:
 					mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
 					mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
 					axisValuePending = true;
+					break;
+				case ABS_MT_TOOL_TYPE:
 					break;
 				case ABS_MT_SLOT:
 					touchEvent.id = amount;
@@ -1767,38 +1773,39 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				case ABS_MT_TRACKING_ID:
 					if (amount == -1)
 					{
-						if( mt.touchState[touchEvent.id] == 1){
+						if( mt[touchEvent.id] == 1){
 							touchEvent.type = ofTouchEventArgs::up;
-							mt.touchState[touchEvent.id] = 0;
+							touchEvent.x = mtp[touchEvent.id].x;
+							touchEvent.y = mtp[touchEvent.id].y;
+							mt[touchEvent.id] = 0;
 							pushTouchEvent = true;
 						}
 					}
 					else 
 					{
-						if (mt.touchState[touchEvent.id] == 0){
+						if (mt[touchEvent.id] == 0 && touchEvent.id != 0){
 							touchEvent.type = ofTouchEventArgs::down;
-							mt.touchState[touchEvent.id] = 1;
+							mt[touchEvent.id] = 1;
 							pushTouchEvent = true;
 						}
 					}
 					break;
 				case ABS_MT_POSITION_X:
-					touchEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
-					touchEvent.x = ofClamp(touchEvent.x, 0, currentWindowRect.width);
+					mtp[touchEvent.id].x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+					mtp[touchEvent.id].x = ofClamp(mtp[touchEvent.id].x, 0, currentWindowRect.width);
+					touchAxisValuePending = true;
+					break;
+				case ABS_MT_POSITION_Y:
+					mtp[touchEvent.id].y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+					mtp[touchEvent.id].y = ofClamp(mtp[touchEvent.id].y, 0, currentWindowRect.height);
 					if(!pushTouchEvent){
 						touchEvent.type = ofTouchEventArgs::move;
 						pushTouchEvent = true;
 					}
 					touchAxisValuePending = true;
 					break;
-				case ABS_MT_POSITION_Y:
-					touchEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
-					touchEvent.y = ofClamp(touchEvent.y, 0, currentWindowRect.height);
-					if(!pushTouchEvent){
-						touchEvent.type = ofTouchEventArgs::move;
-						pushTouchEvent = true;
-					}
-					touchAxisValuePending = true;
+				default:
+					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis : axis " << axis << " amount " << amount << endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
@@ -1822,14 +1829,11 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				pushMouseEvent = true;
 				axisValuePending = false;
 			}
-
 			if(touchAxisValuePending){
-				if(mt.touchState[touchEvent.id] != 0){
-					if(!pushTouchEvent){
-						touchEvent.type = ofTouchEventArgs::move;
-						touchAxisValuePending = false;
-						pushTouchEvent = true;
-					}
+				touchAxisValuePending = false;
+				if(!pushTouchEvent){
+					touchEvent.type = ofTouchEventArgs::move;
+					pushTouchEvent = true;
 				}
 			}
 		}
@@ -1851,6 +1855,8 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 		}
 
 		if(pushTouchEvent){
+			touchEvent.x = mtp[touchEvent.id].x;
+			touchEvent.y = mtp[touchEvent.id].y;
 			lock();
 			touchEvents.push(touchEvent);
 			unlock();
