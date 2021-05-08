@@ -80,7 +80,7 @@ class ofApp : public ofxAndroidApp{
 		Grid					nodeGrid;
 
 		//ray drawn under mouse cursor [start,end]
-		ofVec3f					ray[2];
+		glm::vec3					ray[2];
 };
 
 /*

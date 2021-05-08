@@ -22,8 +22,12 @@ createRaspbianImg(){
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
+
 downloadToolchain(){
-    wget http://ci.openframeworks.cc/rpi_toolchain_gcc6.tar.bz2
+    downloader http://ci.openframeworks.cc/rpi_toolchain_gcc6.tar.bz2
     tar xjf rpi_toolchain_gcc6.tar.bz2
     rm rpi_toolchain_gcc6.tar.bz2
 }

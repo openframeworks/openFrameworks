@@ -23,10 +23,10 @@
 
 using namespace std;
 
-ALCdevice * ofOpenALSoundPlayer::alDevice = 0;
-ALCcontext * ofOpenALSoundPlayer::alContext = 0;
+static ALCdevice * alDevice = nullptr;
+static ALCcontext * alContext = nullptr;
 vector<float> ofOpenALSoundPlayer::window;
-float ofOpenALSoundPlayer::windowSum=0;
+float ofOpenALSoundPlayer::windowSum = 0.f;
 
 
 kiss_fftr_cfg ofOpenALSoundPlayer::systemFftCfg=0;
@@ -40,7 +40,7 @@ static set<ofOpenALSoundPlayer*> & players(){
 }
 
 void ofOpenALSoundUpdate(){
-	alcProcessContext(ofOpenALSoundPlayer::alContext);
+	alcProcessContext(alContext);
 }
 
 // ----------------------------------------------------------------------------
@@ -59,6 +59,24 @@ static string getALErrorString(ALenum error) {
             return "AL_INVALID_OPERATION";
         case AL_OUT_OF_MEMORY:
             return "AL_OUT_OF_MEMORY";
+    };
+	return "UNKWOWN_ERROR";
+}
+
+static string getALCErrorString(ALCenum  error) {
+	switch(error) {
+        case ALC_NO_ERROR:
+            return "ALC_NO_ERROR";
+        case ALC_INVALID_DEVICE:
+            return "ALC_INVALID_DEVICE";
+        case ALC_INVALID_CONTEXT:
+            return "ALC_INVALID_CONTEXT";
+        case ALC_INVALID_ENUM:
+            return "ALC_INVALID_ENUM";
+        case ALC_INVALID_VALUE:
+            return "ALC_INVALID_VALUE";
+        case ALC_OUT_OF_MEMORY:
+            return "ALC_OUT_OF_MEMORY";
     };
 	return "UNKWOWN_ERROR";
 }
@@ -142,21 +160,44 @@ ofOpenALSoundPlayer::~ofOpenALSoundPlayer(){
 	unload();
 	kiss_fftr_free(fftCfg);
 	players().erase(this);
+	if( players().empty() ){
+		close();
+	}
 }
 
 //---------------------------------------
 // this should only be called once
 void ofOpenALSoundPlayer::initialize(){
-	if(!alDevice){
-		alDevice = alcOpenDevice(nullptr);
-		alContext = alcCreateContext(alDevice,nullptr);
-		alcMakeContextCurrent (alContext);
-		alListener3f(AL_POSITION, 0,0,0);
+	if( !alDevice ){
+		alDevice = alcOpenDevice( nullptr );
+		if( !alDevice ){
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't open OpenAL default device";
+			return;
+		}else{
+			ofLogVerbose("ofOpenALSoundPlayer") << "initialize(): opening "<< alcGetString( alDevice, ALC_DEVICE_SPECIFIER );
+		}
+		// Create OpenAL context and make it current. If fails, close the OpenAL device that was just opened.
+		alContext = alcCreateContext( alDevice, nullptr );
+		if( !alContext ){
+			ALCenum err = alcGetError( alDevice ); 
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not create OpenAL context : "<< getALCErrorString( err );
+			close();
+			return;
+		}
+
+		if( alcMakeContextCurrent( alContext )==ALC_FALSE ){
+			ALCenum err = alcGetError( alDevice ); 
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not make current the create OpenAL context : "<< getALCErrorString( err );
+			close();
+			return;
+		};
+		alListener3f( AL_POSITION, 0,0,0 );
 #ifdef OF_USING_MPG123
 		mpg123_init();
 #endif
 
 	}
+	ofLogVerbose("ofOpenALSoundPlayer") << "initialize(): Done";
 }
 
 //---------------------------------------
@@ -174,21 +215,27 @@ void ofOpenALSoundPlayer::createWindow(int size){
 
 //---------------------------------------
 void ofOpenALSoundPlayer::close(){
-	if(alDevice){
-		alcCloseDevice(alDevice);
-		alDevice = nullptr;
-		alcDestroyContext(alContext);
-		alContext = 0;
+	// Destroy the OpenAL context (if any) before closing the device
+	if( alDevice ){
+		if( alContext ){
 #ifdef OF_USING_MPG123
-		mpg123_exit();
+			mpg123_exit();
 #endif
+			alcMakeContextCurrent(nullptr);
+			alcDestroyContext(alContext);
+			alContext = nullptr;
+		}
+		if( alcCloseDevice( alDevice )==ALC_FALSE ){
+			ofLogNotice("ofOpenALSoundPlayer") << "initialize(): error closing OpenAL device.";
+		}
+		alDevice = nullptr;
 	}
 }
 
 // ----------------------------------------------------------------------------
 bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, vector<short> & buffer, vector<float> & fftAuxBuffer){
 	SF_INFO sfInfo;
-	SNDFILE* f = sf_open(path.c_str(),SFM_READ,&sfInfo);
+	SNDFILE* f = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
 	if(!f){
 		ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): couldn't read \"" << path << "\"";
 		return false;
@@ -243,7 +290,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, vector<s
 bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,vector<short> & buffer,vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
 	mpg123_handle * f = mpg123_new(nullptr,&err);
-	if(mpg123_open(f,path.c_str())!=MPG123_OK){
+	if(mpg123_open(f,path.string().c_str())!=MPG123_OK){
 		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): couldn't read \"" << path << "\"";
 		return false;
 	}
@@ -281,7 +328,7 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,vecto
 bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,vector<short> & buffer,vector<float> & fftAuxBuffer){
 	if(!streamf){
 		SF_INFO sfInfo;
-		streamf = sf_open(path.c_str(),SFM_READ,&sfInfo);
+		streamf = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
 		if(!streamf){
 			ofLogError("ofOpenALSoundPlayer") << "sfStream(): couldn't read \"" << path << "\"";
 			return false;
@@ -345,7 +392,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,vector<
 	if(!mp3streamf){
 		int err = MPG123_OK;
 		mp3streamf = mpg123_new(nullptr,&err);
-		if(mpg123_open(mp3streamf,path.c_str())!=MPG123_OK){
+		if(mpg123_open(mp3streamf,path.string().c_str())!=MPG123_OK){
 			mpg123_close(mp3streamf);
 			mpg123_delete(mp3streamf);
 			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): couldn't read \"" << path << "\"";
@@ -862,7 +909,7 @@ void ofOpenALSoundPlayer::setMultiPlay(bool bMp){
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::play(){
 	std::unique_lock<std::mutex> lock(mutex);
-	int err = glGetError();
+	int err = alGetError();
 
 	// if the sound is set to multiplay, then create new sources,
 	// do not multiplay on loop or we won't be able to stop it

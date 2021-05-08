@@ -765,11 +765,23 @@ bool ofFile::isHidden() const {
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
 	try{
-		if(flag){
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
-		}else{
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
-		}
+#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
+        if(flag){
+            std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
+        }else{
+            std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+        }
+#else
+        if(flag){
+            std::filesystem::permissions(myFile,
+                                         std::filesystem::perms::owner_write,
+                                         std::filesystem::perm_options::add);
+        }else{
+            std::filesystem::permissions(myFile,
+                                         std::filesystem::perms::owner_write,
+                                         std::filesystem::perm_options::remove);
+        }
+#endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
@@ -784,11 +796,23 @@ void ofFile::setReadOnly(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setReadable(bool flag){
 	try{
-		if(flag){
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::add_perms);
-		}else{
-			std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::remove_perms);
-		}
+#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
+        if(flag){
+            std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::add_perms);
+        }else{
+            std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::remove_perms);
+        }
+#else
+        if(flag){
+            std::filesystem::permissions(myFile,
+                                         std::filesystem::perms::owner_read,
+                                         std::filesystem::perm_options::add);
+        }else{
+            std::filesystem::permissions(myFile,
+                                         std::filesystem::perms::owner_read,
+                                         std::filesystem::perm_options::remove);
+        }
+#endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set read permission on " << myFile << ": " << e.what();
 	}
@@ -798,11 +822,23 @@ void ofFile::setReadable(bool flag){
 void ofFile::setExecutable(bool flag){
 	try{
 #if OF_USING_STD_FS
-		if(flag){
-			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms);
-		} else{
-			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::remove_perms);
-		}
+#   if OF_USE_EXPERIMENTAL_FS
+        if(flag){
+            std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms);
+        } else{
+            std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::remove_perms);
+        }
+#   else
+        if(flag){
+            std::filesystem::permissions(myFile,
+                                         std::filesystem::perms::owner_exec,
+                                         std::filesystem::perm_options::add);
+        } else{
+            std::filesystem::permissions(myFile,
+                                         std::filesystem::perms::owner_exec,
+                                         std::filesystem::perm_options::remove);
+        }
+#   endif
 #else
 		if(flag){
 			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);

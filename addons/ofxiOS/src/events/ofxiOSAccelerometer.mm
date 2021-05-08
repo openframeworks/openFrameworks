@@ -37,6 +37,7 @@
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofUtils.h"
+#include "ofLog.h"
 
 /************ Interface for iPhone Accelerometer Delegate ************/
 @interface ofxiOSAccelerometerDelegate : NSObject <UIAccelerometerDelegate> {

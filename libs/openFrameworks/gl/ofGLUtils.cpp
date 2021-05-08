@@ -161,6 +161,10 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 		    case GL_RGBA32UI:
 	#endif
 				 return GL_RGBA;
+#ifdef TARGET_OF_IOS
+			case GL_BGRA:
+			return GL_BGRA;
+#endif
 
 
 			case GL_RGB:
@@ -575,7 +579,7 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 		return GL_RGB;
 #endif
     case OF_PIXELS_RGB565:
-	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
+	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI_LEGACY)
 		return GL_RGB565_OES;
 	#elif defined(GL_RGB565)
 		return GL_RGB565;
@@ -691,6 +695,9 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 	switch(glFormat){
 	case GL_RGB:
 		return 3;
+#ifdef TARGET_OF_IOS
+	case GL_BGRA:
+#endif
 	case GL_RGBA:
 		return 4;
 	case GL_LUMINANCE:

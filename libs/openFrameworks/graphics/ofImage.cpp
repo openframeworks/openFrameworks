@@ -2,7 +2,6 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "FreeImage.h"
-#include "ofGLUtils.h"
 
 #include "ofURLFileLoader.h"
 #include "uriparser/Uri.h"
@@ -96,7 +95,7 @@ FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
 
 //----------------------------------------------------
 template<typename PixelType>
-void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLittleEndian = true) {
+void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLittleEndian = true, bool bUsePassedPixelFormat = false) {
 
 	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = nullptr;
@@ -139,15 +138,19 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLitt
 
 
 	ofPixelFormat pixFormat;
-    if(channels==1) pixFormat=OF_PIXELS_GRAY;
-    if(swapRG){
-		if(channels==3) pixFormat=OF_PIXELS_BGR;
-		if(channels==4) pixFormat=OF_PIXELS_BGRA;
-	}else{
-		if(channels==3) pixFormat=OF_PIXELS_RGB;
-		if(channels==4) pixFormat=OF_PIXELS_RGBA;
+    if( bUsePassedPixelFormat ){
+        pixFormat = pix.getPixelFormat();
+    }else{
+        if(channels==1) pixFormat=OF_PIXELS_GRAY;
+        if(swapRG){
+            if(channels==3) pixFormat=OF_PIXELS_BGR;
+            if(channels==4) pixFormat=OF_PIXELS_BGRA;
+        }else{
+            if(channels==3) pixFormat=OF_PIXELS_RGB;
+            if(channels==4) pixFormat=OF_PIXELS_RGBA;
+        }
     }
-
+    
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 
@@ -365,6 +368,9 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
+        if( pix3.getPixelFormat() == OF_PIXELS_BGRA ){
+            pix3.swapRgb();
+        }
 		pix3.setNumChannels(3);
 		return saveImage(pix3,_fileName,qualityLevel);
 	}
@@ -458,6 +464,9 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 
 	if(format==OF_IMAGE_FORMAT_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
+        if( pix3.getPixelFormat() == OF_PIXELS_BGRA ){
+            pix3.swapRgb();
+        }
 		pix3.setNumChannels(3);
 		return saveImage(pix3,buffer,format,qualityLevel);
 	}
@@ -1165,7 +1174,7 @@ void ofImage_<PixelType>::resizePixels(ofPixels_<PixelType> &pix, int newWidth, 
 	FIBITMAP * convertedBmp			= nullptr;
 
 	convertedBmp = FreeImage_Rescale(bmp, newWidth, newHeight, FILTER_BICUBIC);
-    putBmpIntoPixels(convertedBmp, pix, false);
+    putBmpIntoPixels(convertedBmp, pix, false, true);
 
 	if (bmp != nullptr)				FreeImage_Unload(bmp);
 	if (convertedBmp != nullptr)		FreeImage_Unload(convertedBmp);
@@ -1182,6 +1191,8 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 	FIBITMAP * bmp = getBmpFromPixels(pix);
 	FIBITMAP * convertedBmp = nullptr;
+
+    ofPixelFormat oldPixFormat = pix.getPixelFormat();
 
 	switch (newType){
 		case OF_IMAGE_GRAYSCALE:
@@ -1200,6 +1211,17 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 	}
 
     putBmpIntoPixels(convertedBmp, pix, false);
+    
+    // if we started with BGRA or BGR pixels make sure we end up with similar
+    if( pix.getNumChannels() >= 3 && ( oldPixFormat == OF_PIXELS_BGR || oldPixFormat == OF_PIXELS_BGRA ) ){
+        ofPixelFormat fixedFormat = pix.getPixelFormat();
+        if( fixedFormat == OF_PIXELS_RGBA ){
+            fixedFormat = OF_PIXELS_BGRA;
+        }else if( fixedFormat == OF_PIXELS_RGB ){
+            fixedFormat = OF_PIXELS_BGR;
+        }
+        pix.setFromPixels(pix.getData(),pix.getWidth(),pix.getHeight(), fixedFormat);
+    }
 
 	if (bmp != nullptr) {
 		FreeImage_Unload(bmp);

@@ -4,18 +4,18 @@
 void ofApp::setup() {
 	ofBackground(0, 0, 0);
 
-	cameraRotation.set(0);
+	cameraRotation ={0,0,0};
 	zoom = -500;
 	zoomTarget = 200;
 
 	billboards.getVertices().resize(NUM_BILLBOARDS);
 	billboards.getColors().resize(NUM_BILLBOARDS);
-	billboards.getNormals().resize(NUM_BILLBOARDS,ofVec3f(0));
+	billboards.getNormals().resize(NUM_BILLBOARDS,glm::vec3(0));
 
 	// ------------------------- billboard particles
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
 
-		billboardVels[i].set(ofRandomf(), -1.0, ofRandomf());
+		billboardVels[i] = {ofRandomf(), -1.0, ofRandomf()};
         billboards.getVertices()[i] = {ofRandom(-500, 500),ofRandom(-500, 500),ofRandom(-500, 500)};
 		
 		billboards.getColors()[i].set(ofColor::fromHsb(ofRandom(96, 160), 255, 255));
@@ -53,7 +53,7 @@ void ofApp::update() {
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
 
 		// noise
-		ofVec3f vec(ofSignedNoise(t, billboards.getVertex(i).y/div, billboards.getVertex(i).z/div),
+		glm::vec3 vec(ofSignedNoise(t, billboards.getVertex(i).y/div, billboards.getVertex(i).z/div),
 								ofSignedNoise(billboards.getVertex(i).x/div, t, billboards.getVertex(i).z/div),
 								ofSignedNoise(billboards.getVertex(i).x/div, billboards.getVertex(i).y/div, t));
 
@@ -61,14 +61,14 @@ void ofApp::update() {
 		billboardVels[i] += vec;
 		billboards.getVertices()[i] += billboardVels[i];
 		billboardVels[i] *= 0.94f;
-    	billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i] * ofNoise(t+i),0,0));
+    	billboards.setNormal(i,glm::vec3(12 + billboardSizeTarget[i] * ofNoise(t+i),0,0));
 	}
 
 
 	// move the camera around
 	float mx = (float)mouseX/(float)ofGetWidth();
 	float my = (float)mouseY/(float)ofGetHeight();
-	ofVec3f des(mx * 360.0, my * 360.0, 0);
+	glm::vec3 des(mx * 360.0, my * 360.0, 0);
 	cameraRotation += (des-cameraRotation) * 0.03;
 	zoom += (zoomTarget - zoom) * 0.03;
 

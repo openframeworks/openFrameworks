@@ -19,7 +19,7 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 
 	ofSeedRandom();
 	//
-	ofVec3f position, velocity;
+	glm::vec3 position, velocity;
 	ofColor color;
 	for(int i = 0; i < nParticles; i++){
 		position.x = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
@@ -145,8 +145,8 @@ void swarm::update(){
 
 
 		// [4] Force a maximum velocity
-		if(particles[i].velocity.length() > MAX_VELOCITY){
-			particles[i].velocity /= particles[i].velocity.length() * MAX_VELOCITY;
+		if(glm::length(particles[i].velocity) > MAX_VELOCITY){
+			particles[i].velocity /= glm::length(particles[i].velocity) * MAX_VELOCITY;
 		}
 
 		//

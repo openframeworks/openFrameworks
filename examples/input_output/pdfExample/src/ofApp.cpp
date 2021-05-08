@@ -113,8 +113,8 @@ void ofApp::draw(){
 		ofDrawRectangle(0, 0, 30, 30);
 	ofPopMatrix();
 
-	if( boxTrail.size() == 0 || ( boxTrail.back() - ofPoint(x, y) ).length() > 1.5 ){
-		boxTrail.push_back(ofPoint(x, y));
+	if( boxTrail.size() == 0 || glm::distance( boxTrail.back(), glm::vec3(x, y, 0) ) > 1.5 ){
+		boxTrail.push_back(glm::vec3(x, y, 0));
 	}
 
 	if(boxTrail.size() > 800 ){

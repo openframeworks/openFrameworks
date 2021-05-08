@@ -12,14 +12,14 @@ void ofApp::setup(){
 	areaLight.setAttenuation(1.0,0.0001,0.0001);
 	areaLight.setDiffuseColor(ofFloatColor(1,1,1));
 	areaLight.setSpecularColor(ofFloatColor(1,1,1));
-	areaLight.rotateDeg(-90,ofVec3f(1,0,0));
-	areaLight.rotateDeg(30,ofVec3f(0,0,1));
+	areaLight.rotateDeg(-90,glm::vec3(1,0,0));
+	areaLight.rotateDeg(30,glm::vec3(0,0,1));
 	areaLight.setPosition(0,-200,0);
 
 	ofBackground(0);
 	plane.set(20000,20000,2,2);
-	plane.rotateDeg(-90,ofVec3f(1,0,0));
-	plane.move(ofVec3f(0,-300,0));
+	plane.rotateDeg(-90,glm::vec3(1,0,0));
+	plane.move(glm::vec3(0,-300,0));
 	materialPlane.setAmbientColor(ofFloatColor(0.1,0.1,0.1,1.0));
 	materialPlane.setDiffuseColor(ofFloatColor(0.8,0.8,0.8,1.0));
 	materialPlane.setSpecularColor(ofFloatColor(0.8,0.8,0.8,1.0));
@@ -27,7 +27,7 @@ void ofApp::setup(){
 
 
 	camera.setFarClip(20000);
-	camera.move(0,0,3000);
+	camera.move(0,0,1000);
 }
 
 //--------------------------------------------------------------

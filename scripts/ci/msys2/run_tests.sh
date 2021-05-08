@@ -12,7 +12,7 @@ for group in *; do
 				cd $test
 				cp ../../../scripts/templates/msys2/Makefile .
 				cp ../../../scripts/templates/msys2/config.make .
-				make USE_CCACHE=1 -j4 Debug
+				make ${USE_CCACHE} -j4 Debug
 				cd bin
 				binname=$(basename ${test})
                 #gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug

@@ -115,8 +115,7 @@ void of3dGraphics::drawPlane(float x, float y, float width, float height) const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawPlane(float x, float y, float z, float width, float height) const{
-	glm::mat4 m;
-	m = glm::translate(m, glm::vec3(x,y,z));
+	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(width,height,1));
     renderer->pushMatrix();
     renderer->multMatrix(m);
@@ -125,14 +124,13 @@ void of3dGraphics::drawPlane(float x, float y, float z, float width, float heigh
 }
 
 //----------------------------------------------------------
-void of3dGraphics::drawPlane(glm::vec3& position, float width, float height) const{
+void of3dGraphics::drawPlane(const glm::vec3& position, float width, float height) const{
     drawPlane(position.x,position.y,position.z,width, height);
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawPlane( float width, float height ) const{
-	glm::mat4 m;
-	m = glm::scale(m, glm::vec3(width,height,1));
+	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(width,height,1));
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( plane );
@@ -155,8 +153,7 @@ int of3dGraphics::getSphereResolution() const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawSphere(float x, float y, float z, float radius) const{
-	glm::mat4 m;
-	m = glm::translate(m, glm::vec3(x,y,z));
+	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,radius,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
@@ -176,8 +173,7 @@ void of3dGraphics::drawSphere(const glm::vec3& position, float radius) const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawSphere(float radius) const{
-	glm::mat4 m;
-	m = glm::scale(m, glm::vec3(radius,radius,radius));
+	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,radius,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( sphere );
@@ -200,8 +196,7 @@ int of3dGraphics::getIcoSphereResolution() const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawIcoSphere(float x, float y, float z, float radius) const{
-	glm::mat4 m;
-	m = glm::translate(m, glm::vec3(x,y,z));
+	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,radius,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
@@ -221,8 +216,7 @@ void of3dGraphics::drawIcoSphere(const glm::vec3& position, float radius) const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawIcoSphere(float radius) const{
-	glm::mat4 m;
-	m = glm::scale(m, glm::vec3(radius,radius,radius));
+	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,radius,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( icoSphere );
@@ -250,8 +244,7 @@ void of3dGraphics::drawCylinder(float x, float y, float radius, float height) co
 
 //----------------------------------------------------------
 void of3dGraphics::drawCylinder(float x, float y, float z, float radius, float height) const{
-	glm::mat4 m;
-	m = glm::translate(m, glm::vec3(x,y,z));
+	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,height,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
@@ -266,8 +259,7 @@ void of3dGraphics::drawCylinder(const glm::vec3& position, float radius, float h
 
 //----------------------------------------------------------
 void of3dGraphics::drawCylinder(float radius, float height) const{
-	glm::mat4 m;
-	m = glm::scale(m, glm::vec3(radius,height,radius));
+	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,height,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( cylinder );
@@ -291,8 +283,7 @@ glm::vec3 of3dGraphics::getConeResolution() const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawCone(float x, float y, float z, float radius, float height) const{
-	glm::mat4 m;
-	m = glm::translate(m, glm::vec3(x,y,z));
+	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,height,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
@@ -312,8 +303,7 @@ void of3dGraphics::drawCone(const glm::vec3& position, float radius, float heigh
 
 //----------------------------------------------------------
 void of3dGraphics::drawCone(float radius, float height) const{
-	glm::mat4 m;
-	m = glm::scale(m, glm::vec3(radius,height,radius));
+	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,height,radius));
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( cone );
@@ -342,8 +332,7 @@ glm::vec3 of3dGraphics::getBoxResolution() const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawBox( float x, float y, float z, float width, float height, float depth) const{
-	glm::mat4 m;
-	m = glm::translate(m, glm::vec3(x,y,z));
+	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(width,height,depth));
 
     renderer->pushMatrix();
@@ -383,8 +372,7 @@ void of3dGraphics::drawBox( float width, float height, float depth ) const{
 
 
 void of3dGraphics::drawAxis(float size) const{
-	glm::mat4 m;
-	m = glm::scale(m, glm::vec3(size,size,size));
+	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(size,size,size));
 	renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( axis );
@@ -566,7 +554,7 @@ void ofDrawPlane(float x, float y, float z, float width, float height){
 }
 
 //----------------------------------------------------------
-void ofDrawPlane(glm::vec3& position, float width, float height){
+void ofDrawPlane(const glm::vec3& position, float width, float height){
 	ofGetCurrentRenderer()->drawPlane(position,width,height);
 }
 

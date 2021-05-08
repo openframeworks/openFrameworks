@@ -353,19 +353,19 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
 	// parse for includes
 	source.expandedSource = parseForIncludes( source.source, source.directoryPath );
 
-    // parse and set defines
-    for(auto & define: source.intDefines){
-        const auto & name = define.first;
-        const auto & value = define.second;
-		std::regex re_define("#define[ \t]+" + name + "[ \t]+([0-9]+)");
-        source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
-    }
+	// parse and set defines
+	for (auto& define : source.intDefines) {
+		const auto& name = define.first;
+		const auto& value = define.second;
+		std::regex re_define("#define[ \t]+" + name + "[ \t]+(([1-9][0-9]*)|(0([xX][0-9a-fA-F]+)?))");
+		source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
+	}
 
-    for(auto & define: source.floatDefines){
-        const auto & name = define.first;
-        const auto & value = define.second;
+	for (auto& define : source.floatDefines) {
+		const auto& name = define.first;
+		const auto& value = define.second;
 		std::regex re_define("#define[ \t]+" + name + "[ \t]+[0-9]*(\\.[0-9]*f?)?");
-        source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
+		source.expandedSource = std::regex_replace(source.expandedSource, re_define, "#define " + name + " " + std::to_string(value));
 	}
 
 	// store source code (that's the expanded source with all includes copied in)
@@ -839,6 +839,7 @@ void ofShader::end()  const{
 //--------------------------------------------------------------
 void ofShader::beginTransformFeedback(GLenum mode) const {
 	begin();
+    glEnable(GL_RASTERIZER_DISCARD);
 	glBeginTransformFeedback(mode);
 }
 
@@ -873,6 +874,7 @@ void ofShader::beginTransformFeedback(GLenum mode, const std::vector<TransformFe
 //--------------------------------------------------------------
 void ofShader::endTransformFeedback() const {
 	glEndTransformFeedback();
+    glDisable(GL_RASTERIZER_DISCARD);
 	end();
 }
 

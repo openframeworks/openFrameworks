@@ -95,6 +95,19 @@ void ofPolyline_<T>::insertVertex(float x, float y, float z, int index) {
 
 //----------------------------------------------------------
 template<class T>
+void ofPolyline_<T>::removeVertex(int index) {
+	if(index >= points.size()){
+		ofLogError("ofPolyline") << "removeVertex(): ignoring out of range index " << index << ", number of vertices is" << points.size();
+	}else{
+		curveVertices.clear();
+		points.erase(points.begin()+index);
+		flagHasChanged();
+	}
+}
+
+
+//----------------------------------------------------------
+template<class T>
 size_t ofPolyline_<T>::size() const {
 	return points.size();
 }
@@ -345,7 +358,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
     
 	T radii(radiusX, radiusY, 0.f);
-	T point;
+	T point(0);
     
     int currentLUTIndex = 0;
     bool isFirstPoint = true; // special case for the first point
@@ -474,7 +487,7 @@ ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingSha
 	for(int i = 0; i < n; i++) {
 		float sum = 1; // center weight
 		for(int j = 1; j < smoothingSize; j++) {
-			T cur;
+			T cur(0);
 			int leftPosition = i - j;
 			int rightPosition = i + j;
 			if(leftPosition < 0 && bClosed) {
@@ -505,12 +518,15 @@ ofPolyline_<T> ofPolyline_<T>::getResampledBySpacing(float spacing) const {
     if(spacing==0 || size() == 0) return *this;
 	ofPolyline_ poly;
     float totalLength = getPerimeter();
-    for(float f=0; f<totalLength; f += spacing) {
+    float f=0;
+    for(f=0; f<=totalLength; f += spacing) {
         poly.lineTo(getPointAtLength(f));
     }
     
     if(!isClosed()) {
-        if(poly.size() > 0) poly.points.back() = points.back();
+        if( f != totalLength ){
+            poly.lineTo(points.back());
+        }
         poly.setClosed(false);
     } else {
         poly.setClosed(true);
@@ -557,7 +573,7 @@ inline T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 	if(normalizedPosition != nullptr) {
 		*normalizedPosition = u;
 	}
-	return glm::lerp(toGlm(p1), toGlm(p2), u);
+	return glm::mix(toGlm(p1), toGlm(p2), u);
 }
 
 //----------------------------------------------------------
@@ -575,7 +591,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 	}
 	
 	float distance = 0;
-	T nearestPoint;
+	T nearestPoint(0);
 	unsigned int nearest = 0;
 	float normalizedPosition = 0;
 	unsigned int lastPosition = polyline.size() - 1;
@@ -955,7 +971,7 @@ T ofPolyline_<T>::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
 	T leftPoint(points[i1]);
 	T rightPoint(points[i2]);
-	return glm::lerp(toGlm(leftPoint), toGlm(rightPoint), t);
+	return glm::mix(toGlm(leftPoint), toGlm(rightPoint), t);
 }
 
 
@@ -1024,7 +1040,7 @@ T ofPolyline_<T>::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
+	return glm::mix(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1042,7 +1058,7 @@ T ofPolyline_<T>::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
+	return glm::mix(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1060,7 +1076,7 @@ T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
+	return glm::mix(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
 }
 
 

@@ -34,6 +34,11 @@ class ofxBaseGui {
 		virtual void setShape(ofRectangle r);
 		virtual void setShape(float x, float y, float w, float h);
 
+		/// sets the shape but does not notify its parent.
+		/// This is mostly used internally to avoid infinite loops
+		void setShapeNoNotification(const ofRectangle& r);
+		void setShapeNoNotification(float x, float y, float w, float h);
+	
 		glm::vec3 getPosition() const;
 		ofRectangle getShape() const;
 		float getWidth() const;
@@ -71,8 +76,8 @@ class ofxBaseGui {
 		static void loadFont(const ofTrueTypeFontSettings & fontSettings);
 		static void setUseTTF(bool bUseTTF);
 
-		void registerMouseEvents();
-		void unregisterMouseEvents();
+		virtual void registerMouseEvents();
+		virtual void unregisterMouseEvents();
 
 		virtual void sizeChangedCB();
 		virtual void setParent(ofxBaseGui * parent);
@@ -89,6 +94,7 @@ class ofxBaseGui {
 		virtual void mouseExited(ofMouseEventArgs &){
 		}
 
+		void setEvents(ofCoreEvents & events);
 	protected:
 		virtual void render() = 0;
 		virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
@@ -135,10 +141,11 @@ class ofxBaseGui {
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);
 
 		void setNeedsRedraw();
-
+		ofCoreEvents * events = nullptr;
 	private:
 		bool needsRedraw;
 		unsigned long currentFrame;
 		bool bRegisteredForMouseEvents;
+	
 		//std::vector<ofEventListener> coreListeners;
 };

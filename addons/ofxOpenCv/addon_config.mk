@@ -125,6 +125,23 @@ android/armeabi-v7a:
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libquirc.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/liblibprotobuf.a
 
+android/arm64-v8a:
+	ADDON_LIBS =
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_dnn.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_photo.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_stitching.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_calib3d.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_features2d.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_objdetect.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_videoio.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_imgproc.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_ml.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_core.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libopencv_flann.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/libquirc.a
+	ADDON_LIBS += libs/opencv/lib/android/arm64-v8a/liblibprotobuf.a
+
 emscripten:
 	ADDON_LIBS =
 	ADDON_LIBS += libs/opencv/lib/emscripten/libopencv_dnn.a

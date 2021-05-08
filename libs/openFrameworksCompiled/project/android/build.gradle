@@ -18,7 +18,7 @@ model {
         }
 
         ndk {
-            platformVersion = "19"
+            platformVersion = "21"
             moduleName "openFrameworksLib"
             toolchain  = buildToolchain()
             stl        = compilerStl()
@@ -48,7 +48,7 @@ model {
                                     "**/ofRtAudioSoundStream.cpp",
                                     "**/glew/**/*",
                                     "**/videoInput/**/*",
-                                    "**/fmodex/**/*",
+                                    "**/fmod/**/*",
                                     "**/kiss/**/*",
                                     "**/assimp/**/*",
                                     "**/portaudio/**/*",

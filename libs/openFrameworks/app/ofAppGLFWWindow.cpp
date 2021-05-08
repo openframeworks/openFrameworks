@@ -177,6 +177,8 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering?1:0);
+#else
+    glfwWindowHint(GLFW_DOUBLEBUFFER, settings.doubleBuffering?1:0);
 #endif
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
@@ -213,6 +215,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(settings.windowMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
+		if( settings.monitor >= count ){
+			ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << count;
+		}
+		settings.monitor = ofClamp(settings.monitor,0,count-1);
 		if(settings.isSizeSet()){
 			currentW = settings.getWidth();
 			currentH = settings.getHeight();
@@ -236,13 +242,17 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.windowMode==OF_FULLSCREEN){
 			int count = 0;
 			auto monitors = glfwGetMonitors(&count);
+			if( settings.monitor >= count ){
+				ofLogError("ofAppGLFWWindow") << "requested fullscreen monitor is: " << settings.monitor << " monitor count is: " << count;
+			}
+			settings.monitor = ofClamp(settings.monitor,0,count-1);
+			
 			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
 			currentW = mode->width;
 			currentH = mode->height;
 			if(!settings.isPositionSet()){
 				if(count > 0){
 					int x = 0, y = 0;
-					settings.monitor = ofClamp(settings.monitor,0,count-1);
 					glfwGetMonitorPos(monitors[settings.monitor],&x,&y);
 					settings.setPosition(glm::vec2(x,y));
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
@@ -250,7 +260,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
                     #ifdef TARGET_OSX
 					    //for OS X we need to set this first as the window size affects the window positon
 					    settings.setSize(mode->width, mode->height);
-						setWindowShape(settings.getWidth(), settings.getHeight());
                     #endif
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 					currentW = mode->width;
@@ -261,7 +270,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
                 #ifdef TARGET_OSX
 				    auto size = getScreenSize();
 					settings.setSize(size.x, size.y);
-					setWindowShape(settings.getWidth(), settings.getHeight());
                 #endif
 					currentW = settings.getWidth();
 					currentH = settings.getHeight();
@@ -312,6 +320,11 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	windowW = settings.getWidth();
 	windowH = settings.getHeight();
+	
+#ifdef TARGET_RASPBERRY_PI
+	windowRect.width = windowW;
+	windowRect.height = windowH;
+#endif 
 
 	glfwMakeContextCurrent(windowP);
 
@@ -321,7 +334,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	//this lets us detect if the window is running in a retina mode
 	if( framebufferW != tmpWindowW){
-		pixelScreenCoordScale = (float)framebufferW / (float)windowW;
+		pixelScreenCoordScale = (float)framebufferW / (float)tmpWindowW;
 		if( pixelScreenCoordScale < 1 ){
 			pixelScreenCoordScale = 1;
 		}
@@ -441,6 +454,21 @@ void ofAppGLFWWindow::update(){
 			setFullscreen(true);
 		}
 	}
+
+#ifdef TARGET_RASPBERRY_PI
+    //needed for rpi. as good values don't come into resize_cb when coming out of fullscreen
+    if( needsResizeCheck && windowP ){
+        int winW, winH;
+        glfwGetWindowSize(windowP, &winW, &winH);
+        
+        //wait until the window size is the size it was before going fullscreen
+        //then stop the resize check
+        if( winW == windowRect.getWidth() && winH == windowRect.getHeight() ){
+            resize_cb(windowP, currentW, currentH);
+            needsResizeCheck = false;
+        }
+    }
+#endif
 }
 
 //--------------------------------------------
@@ -700,6 +728,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	Window nativeWin = glfwGetX11Window(windowP);
 	Display* display = glfwGetX11Display();
 	if(targetWindowMode==OF_FULLSCREEN){
+		
+#ifdef TARGET_RASPBERRY_PI
+		// save window shape before going fullscreen
+		if( windowP ){
+			int tmpW, tmpH;
+			glfwGetWindowSize(windowP, &tmpW, &tmpH);
+			windowRect.setSize(tmpW, tmpH); 
+		}
+#endif 
+		
 		int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 		if( settings.multiMonitorFullScreen && monitorCount > 1 ){
@@ -798,6 +836,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&value, 1);
 
 	XFlush(display);
+	
+#ifdef TARGET_RASPBERRY_PI 
+	if( !fullscreen ){
+		needsResizeCheck = true; 
+	}
+#endif 
+	
 //	setWindowShape(windowW, windowH);
 
 #elif defined(TARGET_OSX)
@@ -1651,7 +1696,7 @@ void ofAppGLFWWindow::makeCurrent(){
 	glfwMakeContextCurrent(windowP);
 }
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_LINUX)
 Display* ofAppGLFWWindow::getX11Display(){
 	return glfwGetX11Display();
 }

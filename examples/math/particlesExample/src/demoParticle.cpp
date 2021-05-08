@@ -11,7 +11,7 @@ void demoParticle::setMode(particleMode newMode){
 }
 
 //------------------------------------------------------------------
-void demoParticle::setAttractPoints( vector <ofPoint> * attract ){
+void demoParticle::setAttractPoints( vector <glm::vec3> * attract ){
 	attractPoints = attract;
 }
 
@@ -22,11 +22,13 @@ void demoParticle::reset(){
 	
 	pos.x = ofRandomWidth();
 	pos.y = ofRandomHeight();
+    pos.z = 0; 
 	
 	vel.x = ofRandom(-3.9, 3.9);
 	vel.y = ofRandom(-3.9, 3.9);
+    vel.z = 0;
 	
-	frc   = ofPoint(0,0,0);
+	frc   = glm::vec3(0,0,0);
 	
 	scale = ofRandom(0.5, 1.0);
 	
@@ -44,20 +46,20 @@ void demoParticle::update(){
 	//1 - APPLY THE FORCES BASED ON WHICH MODE WE ARE IN 
 	
 	if( mode == PARTICLE_MODE_ATTRACT ){
-		ofPoint attractPt(ofGetMouseX(), ofGetMouseY());
+		glm::vec3 attractPt(ofGetMouseX(), ofGetMouseY(), 0);
 		frc = attractPt-pos; // we get the attraction force/vector by looking at the mouse pos relative to our pos
-		frc.normalize(); //by normalizing we disregard how close the particle is to the attraction point 
+		frc = glm::normalize(frc); //by normalizing we disregard how close the particle is to the attraction point
 		
 		vel *= drag; //apply drag
 		vel += frc * 0.6; //apply force
 	}
 	else if( mode == PARTICLE_MODE_REPEL ){
-		ofPoint attractPt(ofGetMouseX(), ofGetMouseY());
+		glm::vec3 attractPt(ofGetMouseX(), ofGetMouseY(), 0);
 		frc = attractPt-pos; 
 		
 		//let get the distance and only repel points close to the mouse
-		float dist = frc.length();
-		frc.normalize(); 
+		float dist = glm::length(frc);
+		frc = glm::normalize(frc);
 		
 		vel *= drag; 
 		if( dist < 150 ){
@@ -91,12 +93,12 @@ void demoParticle::update(){
 		if( attractPoints ){
 
 			//1 - find closest attractPoint 
-			ofPoint closestPt;
+			glm::vec3 closestPt;
 			int closest = -1; 
 			float closestDist = 9999999;
 			
 			for(unsigned int i = 0; i < attractPoints->size(); i++){
-				float lenSq = ( attractPoints->at(i)-pos ).lengthSquared();
+				float lenSq = glm::length2( attractPoints->at(i)-pos );
 				if( lenSq < closestDist ){
 					closestDist = lenSq;
 					closest = i;

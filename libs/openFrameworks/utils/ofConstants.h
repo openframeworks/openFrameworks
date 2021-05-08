@@ -4,13 +4,16 @@
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
-#define OF_VERSION_PATCH 0
+#define OF_VERSION_PATCH 2
 #define OF_VERSION_PRE_RELEASE "master"
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
 #ifndef OF_USE_LEGACY_VECTOR_MATH
 	#define OF_USE_LEGACY_VECTOR_MATH 0
 #endif
+
+// This enables glm's old behavior of initializing with non garbage values
+#define GLM_FORCE_CTOR_INIT
 
 // Set to 1 to use std filesystem instead of boost's
 #ifndef OF_USING_STD_FS
@@ -79,6 +82,12 @@ enum ofTargetPlatform{
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
+	#if defined(_MSC_VER)
+		#define TARGET_WINVS
+	#endif
+	#if defined(__MINGW32__) || defined(__MINGW64__)
+		#define TARGET_MINGW
+	#endif
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
@@ -369,7 +378,7 @@ typedef TESSindex ofIndexType;
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX)
+  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
   	#define OF_SOUND_PLAYER_OPENAL
   #elif defined(TARGET_EMSCRIPTEN)
 	#define OF_SOUND_PLAYER_EMSCRIPTEN
@@ -435,22 +444,24 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 // Remove from here once everything is using std::filesystem::path
 #if OF_USING_STD_FS
 #	if __cplusplus < 201703L
+#       define OF_USE_EXPERIMENTAL_FS 1
 
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					namespace v1 {
-						namespace __cxx11 {
-							class path;
-						}
-					}
+    namespace std {
+        namespace experimental{
+            namespace filesystem {
+                namespace v1 {
+                    namespace __cxx11 {
+                        class path;
+                    }
+                }
 
-					using v1::__cxx11::path;
-				}
-			}
-			namespace filesystem = experimental::filesystem;
-		}
+                using v1::__cxx11::path;
+            }
+        }
+        namespace filesystem = experimental::filesystem;
+    }
 #	else
+#       define OF_USE_EXPERIMENTAL_FS 0
 
 	namespace std {
 		namespace filesystem {

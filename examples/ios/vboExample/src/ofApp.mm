@@ -47,7 +47,7 @@ void ofApp::update(){
 	
 	
 	if(!bPause) {
-		ofVec3f vec;
+		glm::vec3 vec;
 		float   r = 0.3;
 		
 		for (int i=0; i<GRID_WIDTH; i++) {

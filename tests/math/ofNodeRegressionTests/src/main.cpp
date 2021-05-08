@@ -133,13 +133,13 @@ public:
 			ofxTest(aprox_eq(n3.getLocalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
 			n3.setParent(n2, true);
 			ofxTest(aprox_eq(n3.getPosition(), glm::vec3(0,0,0)), "\tposition");
-			ofxTest(aprox_eq(n3.getOrientationQuat(), glm::quat()), "\torientation");
+			ofxTest(aprox_eq(n3.getOrientationQuat(), glm::quat(1,0,0,0)), "\torientation");
 			ofxTest(aprox_eq(n3.getScale(), glm::vec3(1,1,1)), "\tscale");
 			ofxTest(aprox_eq(n3.getGlobalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
 			n3.setGlobalPosition(n3.getGlobalPosition());
 			n3.setGlobalOrientation(n3.getGlobalOrientation());
 			ofxTest(aprox_eq(n3.getPosition(), glm::vec3(0,0,0)), "\tposition");
-			ofxTest(aprox_eq(n3.getOrientationQuat(), glm::quat()), "\torientation");
+			ofxTest(aprox_eq(n3.getOrientationQuat(), glm::quat(1,0,0,0)), "\torientation");
 			ofxTest(aprox_eq(n3.getScale(), glm::vec3(1,1,1)), "\tscale");
 			ofxTest(aprox_eq(n3.getGlobalTransformMatrix() * zero, n2.getGlobalTransformMatrix() * zero), "\tmatrices");
 			ofLogNotice() << "end add / clear parent and keep global transform";

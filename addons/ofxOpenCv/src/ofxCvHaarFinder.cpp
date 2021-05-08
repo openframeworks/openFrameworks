@@ -257,6 +257,10 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 	}
 
 #else
+    if (!blobs.empty()){
+        blobs.clear();
+    }
+    
 	if( cascade.empty() )
 		return 0;
 	

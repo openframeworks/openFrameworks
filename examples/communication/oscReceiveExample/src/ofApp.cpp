@@ -110,7 +110,7 @@ void ofApp::draw(){
 	ofDrawBitmapStringHighlight(buf, 10, 20);
 
 	// draw mouse state
-	ofPoint mouseIn(mouseXf*ofGetWidth(), mouseYf*ofGetHeight());
+	glm::vec3 mouseIn(mouseXf*ofGetWidth(), mouseYf*ofGetHeight(),0);
 	if(mouseButtonInt == 0){
 		ofSetColor(255);
 	} else{

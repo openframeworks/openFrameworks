@@ -178,7 +178,7 @@ public:
     /// \param fontsize The size in pixels to load the font.
     /// \param _bAntiAliased true if the font should be anti-aliased.
     /// \param _bFullCharacterSet true if the full character set should be cached.
-    /// \param makeControus true if the vector contours should be cached.
+    /// \param makeContours true if the vector contours should be cached.
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
@@ -239,7 +239,7 @@ public:
 	/// \returns the current line height.
 	float getLineHeight() const;
 
-	/// \brief Sets line height for text drawn on screen. 
+	/// \brief Sets line height for text drawn on screen.
 	///
 	/// Note the line height is automatically computed based on the font size, when you load in the font.
 	///
@@ -298,7 +298,7 @@ public:
 	/// \returns the width of the space.
 	float getSpaceSize() const;
 
-	/// \brief Sets the width for the whitespace character for this font
+	/// \brief Sets the width for the whitespace character for this font.
 	/// 
 	/// This number, which defaults to 1.0, scales the width of a whitespace, based on the
 	/// width of the whitespace glyph of this font.
@@ -336,7 +336,7 @@ public:
 	/// \name Drawing
 	/// \{
 
-	/// \brief Draw a string s at position x,y
+	/// \brief Draws a string s at position x,y.
 	/// \param s String to draw
 	/// \param x X position of string
 	/// \param y Y position of string
@@ -403,7 +403,7 @@ protected:
 	ofTrueTypeFontSettings settings;
 	std::unordered_map<uint32_t,size_t> glyphIndexMap;
 
-    int getKerning(uint32_t c, uint32_t prevC) const;
+	int getKerning(uint32_t leftC, uint32_t rightC) const;
 	void drawChar(uint32_t c, float x, float y, bool vFlipped) const;
 	void drawCharAsShape(uint32_t c, float x, float y, bool vFlipped, bool filled) const;
 	void createStringMesh(const std::string & s, float x, float y, bool vFlipped) const;

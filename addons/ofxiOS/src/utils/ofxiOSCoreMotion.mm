@@ -54,12 +54,12 @@ void ofxiOSCoreMotion::disableAttitude() {
     [motionManager stopDeviceMotionUpdates];
     enableAttitude = false;
     roll = pitch = yaw = 0;
-    attitudeQuat.set(0, 0, 0, 1);
-    rotMatrix.makeIdentityMatrix();
-    gravity.set(0,0,0);
-    userAcceleration.set(0, 0, 0);
-    magneticField.set(0, 0, 0);
-    
+    attitudeQuat = glm::quat(1,0,0,0);
+    rotMatrix = glm::mat4(1);
+    gravity = { 0, 0, 0 };
+    userAcceleration = { 0, 0, 0 };
+    magneticField = { 0, 0, 0 };
+
 }
 
 void ofxiOSCoreMotion::setupAccelerometer() {
@@ -73,7 +73,7 @@ void ofxiOSCoreMotion::disableAccelerometer() {
     
     [motionManager stopAccelerometerUpdates];
     enableAccelerometer = false;
-    accelerometerData.set(0, 0, 0);
+    accelerometerData = { 0, 0, 0 };
 }
 
 void ofxiOSCoreMotion::setupGyroscope() {
@@ -87,7 +87,7 @@ void ofxiOSCoreMotion::disableGyroscope() {
     
     [motionManager stopGyroUpdates];
     enableGyro = false;
-    gyroscopeData.set(0, 0, 0);
+    gyroscopeData = { 0, 0, 0 };
 }
 
 void ofxiOSCoreMotion::setupMagnetometer() {
@@ -101,7 +101,7 @@ void ofxiOSCoreMotion::disableMagnetometer() {
     
     [motionManager stopMagnetometerUpdates];
     enableMagnetometer = false;
-    magnetometerData.set(0, 0, 0);
+    magnetometerData = { 0, 0, 0 };
 }
 
 void ofxiOSCoreMotion::setUpdateFrequency(float updateFrequency) {
@@ -167,15 +167,17 @@ void ofxiOSCoreMotion::update() {
         
         
         // attitude quaternion
-        CMQuaternion quat = attitude.quaternion;
-        attitudeQuat.set(quat.x, quat.y, quat.z, quat.w);
+        attitudeQuat.x = attitude.quaternion.x;
+        attitudeQuat.y = attitude.quaternion.y;
+        attitudeQuat.z = attitude.quaternion.z;
+        attitudeQuat.w = attitude.quaternion.w;
 
         // attitude rotation matrix
         CMRotationMatrix rot = attitude.rotationMatrix;
-        rotMatrix.set(rot.m11, rot.m21, rot.m31, 0,
+        rotMatrix = { rot.m11, rot.m21, rot.m31, 0,
                       rot.m12, rot.m22, rot.m32, 0,
                       rot.m13, rot.m23, rot.m33, 0,
-                      0, 0, 0, 1);
+                      0, 0, 0, 1};
     }
     
     if(enableAccelerometer) {
@@ -200,15 +202,15 @@ void ofxiOSCoreMotion::update() {
     }
 }
 
-ofVec3f ofxiOSCoreMotion::getAccelerometerData() {
+glm::vec3 ofxiOSCoreMotion::getAccelerometerData() {
     return accelerometerData;
 }
 
-ofVec3f ofxiOSCoreMotion::getGyroscopeData() {
+glm::vec3 ofxiOSCoreMotion::getGyroscopeData() {
     return gyroscopeData;
 }
 
-ofVec3f ofxiOSCoreMotion::getMagnetometerData() {
+glm::vec3 ofxiOSCoreMotion::getMagnetometerData() {
     return magnetometerData;
 }
 
@@ -224,22 +226,22 @@ float ofxiOSCoreMotion::getYaw() {
     return yaw;
 }
 
-ofQuaternion ofxiOSCoreMotion::getQuaternion() {
+glm::quat ofxiOSCoreMotion::getQuaternion() {
     return attitudeQuat;
 }
 
-ofMatrix4x4 ofxiOSCoreMotion::getRotationMatrix() {
+glm::mat4 ofxiOSCoreMotion::getRotationMatrix() {
     return rotMatrix;
 }
 
-ofVec3f ofxiOSCoreMotion::getGravity() {
+glm::vec3 ofxiOSCoreMotion::getGravity() {
     return gravity;
 }
 
-ofVec3f ofxiOSCoreMotion::getUserAcceleration() {
+glm::vec3 ofxiOSCoreMotion::getUserAcceleration() {
     return userAcceleration;
 }
 
-ofVec3f ofxiOSCoreMotion::getMagneticField() {
+glm::vec3 ofxiOSCoreMotion::getMagneticField() {
     return magneticField;
 }

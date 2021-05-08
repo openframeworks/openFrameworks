@@ -13,7 +13,7 @@ In this example, pay attention to the following code:
 * ```mesh.advertex(a)``` adding vertices to mesh 
 * ```mesh.setmode()``` specifies what primitive mode the mesh should be set to 
 * ```mesh.draw()``` draws the mesh
-* ```getVertexFromImg```gets the vertex from the image using ```ofVec3f```
+* ```getVertexFromImg```gets the vertex from the image using ```glm::vec3```
 
 
 ### Expected Behavior

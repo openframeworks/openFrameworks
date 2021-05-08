@@ -21,7 +21,7 @@ void ofApp::setup(){
 	tangent=0;
 	rotationSpeed=0.01;
 	radius = 180;
-	center.set(ofGetWidth()*0.3f, ofGetHeight()*0.6f, 0);
+	center = {ofGetWidth()*0.3f, ofGetHeight()*0.6f, 0 };
 	
 	ofSetCircleResolution(40);
 	
@@ -29,36 +29,30 @@ void ofApp::setup(){
 	angleArc.setCircleResolution(360);
 	angleArc.setFilled(true);
 	angleArc.setColor(ofColor(240, 130, 10));
-	
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	cout << rotationSpeed << endl;
-    
-    if (!ofGetMousePressed()) {//press the mouse to stop the angle from incrementing.
+
+	if (!ofGetMousePressed()) {//press the mouse to stop the angle from incrementing.
 		angle+=rotationSpeed;//at each update the angle get's incremented 
 	}
-	if (angle>=TWO_PI) { //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
-		angle=0;
-	}
-
+	 //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
+	angle = ofWrap(angle, 0, TWO_PI);
+	
 	//here we get the sine and cosine values for the angle
 	cosine=cos(angle);
 	sine=sin(angle);
 	tangent=tan(angle);
-    
 	
-	
-	point.set(cosine * radius, sine * radius, 0);//here we set the cyan circle position
+	point = { cosine * radius, sine * radius, 0 };//here we set the cyan circle position
 	
 	//this is just to draw the arc that represents the angle 
 	angleArc.clear();
-	angleArc.arc( 0,  0, radius * 0.5f, radius * 0.5f, 0, ofRadToDeg(angle)); 
+	angleArc.arc( 0,  0, radius * 0.5f, radius * 0.5f, 0, ofRadToDeg(angle));
+	angleArc.lineTo(0,0);
 	angleArc.close();
-	
-	
 }
 
 //--------------------------------------------------------------
@@ -129,7 +123,7 @@ void ofApp::draw(){
 	
 	ofDrawBitmapString("Angle cosine: " + ofToString(cosine), 0, -radius *2 -20);
 	ofDrawBitmapString("cosine x radius: " + ofToString(cosine * radius), 0, -radius *2 -5 );
-	
+
 }
 
 //--------------------------------------------------------------
@@ -146,27 +140,25 @@ void ofApp::keyReleased(int key){
 void ofApp::mouseMoved(int x, int y ){
 
 }
-
+//--------------------------------------------------------------
+void ofApp::checkMouse(float x, float y){
+	glm::vec2 mousePos(x-center.x, y-center.y);
+	
+	if (glm::length(mousePos) < radius ) {//if the mouse is inside the circle
+		// get the angle between the line from the mouse to the center of the circle and the positive x axis
+		angle = atan2( mousePos.y , mousePos.x);
+		// wrap the angle so it is always between 0 and TWO_PI (one full rotation)
+		angle = ofWrap(angle, 0, TWO_PI);
+	}
+}
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	ofVec2f mousePos(x-center.x, y-center.y);
-	if (mousePos.length()<radius ) {
-		angle = -mousePos.angleRad(ofVec2f(radius,0));
-		if (angle<0) {
-			angle+=TWO_PI;
-		}
-	}	
+	checkMouse(x,y);
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	ofVec2f mousePos(x-center.x, y-center.y);
-	if (mousePos.length()<radius ) {
-		angle = -mousePos.angleRad(ofVec2f(radius,0));
-		if (angle<0) {
-			angle+=TWO_PI;
-		}
-	}
+	checkMouse(x,y);
 }
 
 //--------------------------------------------------------------

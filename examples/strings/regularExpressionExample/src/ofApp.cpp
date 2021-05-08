@@ -63,7 +63,7 @@ void ofApp::draw(){
     while(getline(file,line)){
         if(line.empty() == false) {
             string minutes = grepStringInRegex(line, "[0-9]+:[0-9]+");
-            string sentence = grepStringInRegex(line, "[^0-9_:\\[\\]])");
+            string sentence = grepStringInRegex(line, "[^0-9_:\\[\\]]");
             ofDrawBitmapString("Time:"+minutes, 400, posY);
             ofDrawBitmapString("Sentence:"+sentence, 500, posY);
             posY += 20;
