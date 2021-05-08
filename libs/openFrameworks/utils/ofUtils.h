@@ -68,7 +68,7 @@ int ofGetHours();
 /// Resolution is in seconds.
 ///
 /// \returns the number of seconds since Midnight, January 1, 1970 (epoch time).
-unsigned int ofGetUnixTime();
+uint64_t ofGetUnixTime();
 
 /// \brief Get the system time in milliseconds.
 /// \returns the system time in milliseconds.
