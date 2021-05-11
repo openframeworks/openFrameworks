@@ -29,8 +29,21 @@ class ofxAssimpModelLoader{
         ~ofxAssimpModelLoader();
         ofxAssimpModelLoader();
 
+        // Pre-loads model from file or url into a buffer but does not initialize OpenGL resources (for load in background thread)
+        bool preLoadModel(std::string modelName, bool optimize=false);
+        // Pre-loads all model's textures without creating any GL resource
+        void preloadTextures();
+        // Pre-loads texture from texURL (file or URL) with texPath identifier inside the model.
+        void preloadTexture(std::string texURL, std::string texPath);
+
+        // Loads model's OpenGL resoruces
+        bool loadModelGLResources();
+        // Reloads model's OpenGL Resources (Textures)
+        bool reloadModelGLResources();
+
 		bool loadModel(std::string modelName, bool optimize=false);
         bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");
+		bool loadTexturesForMaterial(aiMaterial* mtl, ofxAssimpMeshHelper &meshHelper);
         void createEmptyModel();
         void createLightsFromAiModel();
         void optimizeScene();
@@ -119,16 +132,28 @@ class ofxAssimpModelLoader{
         void updateBones();
         void updateModelMatrix();
     
+        bool reloadModelTextures();
+        bool reloadModelVBOs();
+
         // ai scene setup
         unsigned int initImportProperties(bool optimize);
         bool processScene();
+		void resetScene();
 
         // Initial VBO creation, etc
         void loadGLResources();
     
         // updates the *actual GL resources* for the current animation
         void updateGLResources();
-    
+
+		// Imports the model from a file path
+		void importModelFromAssimp(const char * filename, bool optimize);
+		// Imports the model from a buffer
+		void importModelFromAssimp(ofBuffer & buffer, bool optimize, const char * extension);
+
+        // Load VBOs
+        void loadVBOs(aiMesh* mesh, ofxAssimpMeshHelper& meshHelper);
+
         void getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max);
         void getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh,  aiVector3D* min, aiVector3D* max);
 
@@ -160,4 +185,7 @@ class ofxAssimpModelLoader{
         // the main Asset Import scene that does the magic.
 		std::shared_ptr<const aiScene> scene;
 		std::shared_ptr<aiPropertyStore> store;
+
+        std::string modelURI; // url or path of the model file
+        std::string modelDirectory;
 };

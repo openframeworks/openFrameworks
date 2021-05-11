@@ -6,6 +6,7 @@
 
 #include "ofUtils.h"
 #include "ofLog.h"
+#include <uriparser/Uri.h>
 
 
 #ifdef TARGET_OSX
@@ -1073,6 +1074,24 @@ bool ofFile::doesFileExist(const std::filesystem::path& _fPath, bool bRelativeTo
 		tmp.openFromCWD(_fPath,ofFile::Reference);
 	}
 	return !_fPath.empty() && tmp.exists();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofFile::isPathURL(string path){
+	UriUriA uri;
+	UriParserStateA state;
+	state.uri = &uri;
+
+	if (uriParseUriA(&state, path.c_str()) != URI_SUCCESS) {
+		ofLogError("ofFileUtils") << "isPathURL(): malformed uri when loading image from uri " << path;
+		uriFreeUriMembersA(&uri);
+		return false;
+	}
+
+	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
+	uriFreeUriMembersA(&uri);
+
+	return scheme == "http" || scheme == "https";
 }
 
 //------------------------------------------------------------------------------------------------------------
