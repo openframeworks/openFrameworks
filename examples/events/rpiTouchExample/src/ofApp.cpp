@@ -25,9 +25,7 @@ void ofApp::draw(){
 
 
     for(auto finger: touches){
-        if(finger.second != nullptr){
-            ofDrawCircle(*finger.second, 50);
-        }
+        ofDrawCircle(finger.second, 50);
     }
 }
 
@@ -75,26 +73,17 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
-    if(touches[id] == nullptr){
-        touches[id] = new ofVec2f(x, y);
-    }else{
-        touches[id]->set(x, y);
-    }
-    
+    touches[id] = ofVec2f(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(int x, int y, int id){
-    if(touches[id] == nullptr){
-        touches[id] = new ofVec2f(x, y);
-    }else{
-        touches[id]->set(x, y);
-    }
+    touches[id].set(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(int x, int y, int id){
-    touches[id] = nullptr;
+    touches.erase(id);
 }
 
 //--------------------------------------------------------------

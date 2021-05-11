@@ -32,6 +32,6 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont 	vagRounded;
 		string timeString;
 
-		map<int, ofVec2f*> touches;
+		map<int, ofVec2f> touches;
 };
 
