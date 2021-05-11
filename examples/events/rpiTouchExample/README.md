@@ -1,25 +1,20 @@
 # About allEventsExample
 
-![Screenshot of allEventsExample](allEventsExample.png)
+![Screenshot of allEventsExample](rpiTouchExample.png)
 
 
 ### Learning Objectives
 
-This Example demonstrates the keyboard and mouse event of openFrameworks.
+This Example demonstrates the touchscreen event of openFrameworks for the official RaspiberryPI touch screen and the EGLWindow.
 
-After studying this example, you'll understand how to trigger events and retrieve information from events such as mouse behavior, cursor position, which mouse button is pressed or what key is pressed.
+After studying this example, you'll understand how to trigger events and retrieve information from events such as touch down, touch position, and which fingers are touching the screen.
 
 In the code, pay attention to:
 
 * Different commands to access the current time information: ```ofGetTimestampString()``` and ```ofGetElapsedTimeMillis()```
-* Access individual key information: ```keyReleased(int key)```
-*									 ```keyPressed(int key)```
-* Access mouse information: ```mouseMoved(int x, int y )```
-*							```mouseDragged(int x, int y, int button)```
-*							```mousePressed(int x, int y, int button)```
-*							```mouseReleased(int x, int y, int button)```
-* Access information about the window size when resizing: ```windowResized(int w, int h)```
-
+* Access individual key information: ``void touchDown(int x, int y, int id)```
+*									 ```void touchMoved(int x, int y, int id)```
+                                     ```void touchUp(int x, int y, int id)```
 
 ### Expected Behavior
 
@@ -31,7 +26,7 @@ When launching this app, you should see a screen with
 
 Instructions for use:
 
-* Press  keys to see how their corresponding labels are displayed. Manipulate the mouse to see how different mouse events are triggered.
+* Touch the screen and you should see pink circle track your touch positions.  
 
 
 ### Other classes used in this file
