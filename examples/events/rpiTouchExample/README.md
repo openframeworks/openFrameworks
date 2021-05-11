@@ -5,7 +5,7 @@
 
 ### Learning Objectives
 
-This Example demonstrates the touchscreen event of openFrameworks for the official RaspiberryPI touch screen and the EGLWindow.
+This Example demonstrates the touchscreen event of openFrameworks for the [Official Raspberry Pi Touch Display](https://www.raspberrypi.org/documentation/hardware/display/) and the ofAppEGLWindow.
 
 After studying this example, you'll understand how to trigger events and retrieve information from events such as touch down, touch position, and which fingers are touching the screen.
 
