@@ -12,9 +12,10 @@ After studying this example, you'll understand how to trigger events and retriev
 In the code, pay attention to:
 
 * Different commands to access the current time information: ```ofGetTimestampString()``` and ```ofGetElapsedTimeMillis()```
-* Access individual key information: ``void touchDown(int x, int y, int id)```
-*									 ```void touchMoved(int x, int y, int id)```
-                                     ```void touchUp(int x, int y, int id)```
+* Access individual key information: 
+* ```void touchDown(int x, int y, int id)```
+*	```void touchMoved(int x, int y, int id)```
+*	```void touchUp(int x, int y, int id)```
 
 ### Expected Behavior
 
