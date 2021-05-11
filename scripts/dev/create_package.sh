@@ -246,6 +246,10 @@ function createPackage {
 		rm -Rf android
 	fi
 
+    if [ "$pkg_platform" != "linuxarmv6l" && "$pkg_platform" != "linuxarmv7l"   ]; then
+		rm -Rf events/rpiTouchExample
+	fi
+
 	#delete desktop examples in mobile packages
 	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
 		rm -Rf 3d
