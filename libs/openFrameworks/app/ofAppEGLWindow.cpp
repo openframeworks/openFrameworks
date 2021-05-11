@@ -1530,6 +1530,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	while(nBytesRead >= 0){
 		if(ev.type == EV_KEY){
 			if(ev.code == BTN_LEFT){
+				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1542,6 +1543,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_MIDDLE){
+				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1554,6 +1556,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_RIGHT){
+				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1566,13 +1569,10 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_TOUCH){
-				ofLogNotice("ofAppEGLWindow") << "BTN_TOUCH";
 				if(ev.value == 0){ // release	
 					touchEvent.type = ofTouchEventArgs::up;
 					touchEvent.id = 0;
 					mt[touchEvent.id] = 0;
-					touchEvent.x = mtp[touchEvent.id].x;
-					touchEvent.y = mtp[touchEvent.id].y;
 					pushTouchEvent = true;
 
 				}else if(ev.value == 1){ // press
@@ -1755,15 +1755,16 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			int amount = ev.value;
 			switch (axis)
 			{
+				// do not need this mouse returns REL_X/REL_Y
 				case ABS_X:
-					mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
-					mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
-					axisValuePending = true;
+					// mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+					// mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+					// axisValuePending = true;
 					break;
 				case ABS_Y:
-					mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
-					mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
-					axisValuePending = true;
+					// mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+					// mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+					// axisValuePending = true;
 					break;
 				case ABS_MT_TOOL_TYPE:
 					break;
@@ -1775,19 +1776,18 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					{
 						if( mt[touchEvent.id] == 1){
 							touchEvent.type = ofTouchEventArgs::up;
-							touchEvent.x = mtp[touchEvent.id].x;
-							touchEvent.y = mtp[touchEvent.id].y;
 							mt[touchEvent.id] = 0;
 							pushTouchEvent = true;
 						}
 					}
 					else 
 					{
-						if (mt[touchEvent.id] == 0 && touchEvent.id != 0){
+						if (mt[touchEvent.id] == 0){
 							touchEvent.type = ofTouchEventArgs::down;
 							mt[touchEvent.id] = 1;
 							pushTouchEvent = true;
 						}
+						touchAxisValuePending = true;
 					}
 					break;
 				case ABS_MT_POSITION_X:
@@ -1811,10 +1811,9 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 		}else if(ev.type == EV_MSC){
 		}else if(ev.type == EV_SYN){
 			// EV_SYN Used as markers to separate events. Events may be
-			// separated in time or in space, such as with the multitouch protocol.
+			// separated in time or in space, suc8h as with the multitouch protocol.
 			// EV_SYN events are sent when axis value (one or a pair) are changed
-			if(axisValuePending && !touchAxisValuePending){
-				// ofLog() << "EV_SYN pending end : " << iter->second;
+			if(axisValuePending){
 				// TODO, this state doesn't make as much sense when the mouse is not dragging
 				if(mb.mouseButtonState > 0){
 					// dragging (what if dragging w/ more than one button?)
@@ -1829,14 +1828,17 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				pushMouseEvent = true;
 				axisValuePending = false;
 			}
+
 			if(touchAxisValuePending){
-				touchAxisValuePending = false;
 				if(!pushTouchEvent){
 					touchEvent.type = ofTouchEventArgs::move;
 					pushTouchEvent = true;
 				}
+				touchAxisValuePending = false;
 			}
 		}
+
+		
 		
 
 		if(pushKeyEvent){

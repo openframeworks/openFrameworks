@@ -58,7 +58,7 @@ endif
 #check if we are newer than Stretch and use the new system
 ifeq ($(shell expr $(VER_ID) \>= 9), 1)
 	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only 
-	USE_PI_LEGACY = 0
+#	USE_PI_LEGACY = 0
 	USE_ATOMIC = 1
 endif
 
