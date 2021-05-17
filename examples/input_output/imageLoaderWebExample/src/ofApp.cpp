@@ -12,7 +12,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::urlResponse(ofHttpResponse & response){
-	if(response.status==200 && response.request.name == "tsingy_forest"){
+	if(response.status==200 && response.request.name == "about"){
 		img.load(response.data);
 		loading=false;
 	}else{

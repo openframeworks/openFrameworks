@@ -55,6 +55,7 @@
 			<string>PBXProject</string>
 			<key>knownRegions</key>
 			<array>
+				<string>English</string>
 				<string>en</string>
 				<string>Base</string>
 			</array>
@@ -115,7 +116,6 @@
 			<key>files</key>
 			<array>
 				<string>99752D361BF220CC0026316A</string>
-				<string>84C8DBA41BC37A49001606C1</string>
 				<string>84C8DB801BC3732E001606C1</string>
 				<string>84C8DB811BC3732E001606C1</string>
 				<string>84C8DB821BC3732E001606C1</string>
@@ -387,6 +387,8 @@
 				<string>Launch Image</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
 				<string>c++0x</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxtvOS_Prefix.pch</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -415,6 +417,8 @@
 				<string>Launch Image</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
 				<string>c++0x</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxtvOS_Prefix.pch</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -838,7 +842,8 @@
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"</string>
+			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+</string>
 		</dict>
 		<key>84C8DBA21BC37A28001606C1</key>
 		<dict>
@@ -861,13 +866,6 @@
 			<string>tvOS+OFLib</string>
 			<key>targetProxy</key>
 			<string>84C8DBA21BC37A28001606C1</string>
-		</dict>
-		<key>84C8DBA41BC37A49001606C1</key>
-		<dict>
-			<key>fileRef</key>
-			<string>84C8DB6F1BC37247001606C1</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>84C8DBA81BC37F72001606C1</key>
 		<dict>

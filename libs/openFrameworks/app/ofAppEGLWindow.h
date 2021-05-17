@@ -157,6 +157,7 @@ protected:
 	void threadedFunction();
 	std::queue<ofMouseEventArgs> mouseEvents;
 	std::queue<ofKeyEventArgs>   keyEvents;
+	std::queue<ofTouchEventArgs> touchEvents;
 	void checkEvents();
 	ofImage mouseCursor;
 

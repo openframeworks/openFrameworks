@@ -93,10 +93,10 @@ createArchImg(){
 	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
-            pacman --noconfirm -S archlinux-keyring
-            pacman --noconfirm -S ccache
-			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
+            sudo pacman --noconfirm -S archlinux-keyring
+            sudo pacman --noconfirm -S ccache
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
 				gcc \
@@ -205,11 +205,11 @@ installJunest(){
 	junest setup
 	junest -- << EOF
         echo updating keys
-        pacman -Syy gnupg --noconfirm --needed
-        pacman-key --populate archlinux
-        pacman-key --refresh-keys
-		pacman -Syyu --noconfirm
-		pacman -S --noconfirm --needed git flex grep gcc pkg-config make wget sed
+        sudo pacman -Syy gnupg --noconfirm --needed
+        sudo pacman-key --populate archlinux
+        sudo pacman-key --refresh-keys
+		sudo pacman -Syyu --noconfirm
+		sudo pacman -S --noconfirm --needed git flex grep gcc pkg-config make wget sed
 EOF
     echo "Done installing junest"
 }
