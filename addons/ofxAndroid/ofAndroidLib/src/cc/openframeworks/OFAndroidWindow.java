@@ -606,15 +606,15 @@ class OFGLSurfaceView extends GLSurfaceView {
 //            so it is not that surprising, that not every surfaceDestoyed callback means what we might think it means.
 //        We don't need this callback that much anyways, the renderer does not call render callbacks when gl context is invalid, so the OFAndroidWindow.onSurfaceCreated callback should be enought for us to make things work.
 
-//    @Override
-//	public void surfaceDestroyed(SurfaceHolder holder) {
-//        Log.i("OF","surfaceDestroyed");
-//    	super.surfaceDestroyed(holder);
-//    	mHolder = null;
-//    	//mSurface = null;
-//		//OFAndroid.onSurfaceDestroyed();
-//        //mRenderer.exit();
-//	}
+    @Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i("OF","surfaceDestroyed");
+    	super.surfaceDestroyed(holder);
+    	mHolder = null;
+    	mSurface = null;
+		OFAndroid.onSurfaceDestroyed();
+        //mRenderer.exit();
+	}
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -622,6 +622,8 @@ class OFGLSurfaceView extends GLSurfaceView {
         if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
             mHolder = holder;
             mSurface = holder.getSurface();
+        } else {
+            Log.w("OF","surfaceCreated getSurface is not valid");
         }
         super.surfaceCreated(holder);
     }
@@ -633,6 +635,8 @@ class OFGLSurfaceView extends GLSurfaceView {
         if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
             mHolder = holder;
             mSurface = holder.getSurface();
+        } else {
+            Log.w("OF","surfaceCreated getSurface is not valid");
         }
         if(mRenderer != null && mRenderer.isSetup()) {
             mRenderer.setResolution(w,h, true);
@@ -758,7 +762,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
     
     public static void exit() {
-    	setup = false;
+        Log.e("OF", "exit");
+
+        setup = false;
+        resolutionSetup = false;
     }
 
 

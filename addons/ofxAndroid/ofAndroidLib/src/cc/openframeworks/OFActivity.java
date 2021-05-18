@@ -212,6 +212,28 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					}
 				}
 
+				OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+				if(glView != null) {
+
+					DisplayMetrics displayMetrics = new DisplayMetrics();
+					getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+					int height = displayMetrics.heightPixels;
+					int width = displayMetrics.widthPixels;
+					int bar = getNavigationBarHeight();
+					int barWidth = getNavigationBarHeight();
+					int heightBar = displayMetrics.heightPixels + bar;
+					int widthBar = displayMetrics.widthPixels + barWidth;
+
+					int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
+					int height_px = Resources.getSystem().getDisplayMetrics().heightPixels;
+					int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
+
+					Log.i("SuperHexagon", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
+
+
+					glView.setWindowResize(widthBar, heightBar);
+				}
+
 				OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
 				OFAndroid.deviceRefreshRate((int)currentRefreshRate);
 			}
@@ -349,17 +371,43 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() == null) {
 			Log.e("OF", "onResume getGLView is null - glCreateSurface");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
+		}
 
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		if(glView != null) {
+
+			DisplayMetrics displayMetrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+			int height = displayMetrics.heightPixels;
+			int width = displayMetrics.widthPixels;
+			int bar = getNavigationBarHeight();
+			int barWidth = getNavigationBarHeight();
+			int heightBar = displayMetrics.heightPixels + bar;
+			int widthBar = displayMetrics.widthPixels + barWidth;
+
+			int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
+			int height_px = Resources.getSystem().getDisplayMetrics().heightPixels;
+			int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
+
+			Log.i("SuperHexagon", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
+
+
+			glView.setWindowResize(widthBar, heightBar);
+		} else {
+			Log.e("OF", "onResume OFGLSurfaceView is null");
 		}
 		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
+
 	}
 	@Override
 	protected void onPause() {
+		Log.e("OF", "onPause");
 		super.onPause();
 		OFAndroidLifeCycle.glPause();
 	}
 	@Override
 	protected void onDestroy() {
+		Log.e("OF", "onDestroy");
 		OFAndroidLifeCycle.glDestroy();
 		if (displayManager!=null) {
 			displayManager.unregisterDisplayListener(this);
