@@ -71,25 +71,25 @@ matrix:
       - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:sdk-incoming-64bit bash
 
   - os: osx
-    osx_image: xcode9.4
+    osx_image: xcode11.3
     compiler: clang
     env: TARGET="osx"
     cache: ccache
 
   - os: osx
-    osx_image: xcode9.4
+    osx_image: xcode11.3
     compiler: clang
     env: TARGET="osx" OPT="makefiles"
     cache: ccache
 
   - os: osx
-    osx_image: xcode9.4
+    osx_image: xcode11.3
     compiler: clang
     env: TARGET="ios"
     cache: ccache
 
   - os: osx
-    osx_image: xcode9.4
+    osx_image: xcode11.3
     compiler: clang
     env: TARGET="tvos"
     cache: ccache
@@ -121,12 +121,6 @@ matrix:
       directories:
         - ~/.gradle
         - ~/android-ndk-r15c
-
-
-  # Exclude the default build that would otherwise be generated
-  # see https://github.com/travis-ci/travis-ci/issues/1228
-  exclude:
-    - compiler: gcc
 
 install:
   - if [ -f scripts/ci/$TARGET/install.sh ]; then

@@ -127,7 +127,7 @@ CppApplication{
                     if( product.consoleApplication ){
                         return FileInfo.joinPaths(product.destinationDirectory, input.fileName);
                     }else{
-                        return FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/MacOS", input.fileName);
+                        return FileInfo.joinPaths(product.destinationDirectory, product.targetName + ".app", "Contents/Frameworks", input.fileName);
                     }
                 }
 

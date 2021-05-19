@@ -28,9 +28,13 @@ cat << EOF
 EOF
 }
 
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/downloader.sh"
+
 download(){
     echo "Downloading $1"
-    wget ci.openframeworks.cc/libs/$1 $SILENT_ARGS
+    downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 }
 
 # trap any script errors and exit
@@ -241,7 +245,12 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
             rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}
         fi
         mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
-        rsync -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}
+        if ! command -v rsync &> /dev/null
+        then      
+            cp -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}     
+        else
+            rsync -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}
+        fi
         rm -rf ${addonslibs[i]}
     fi
 done

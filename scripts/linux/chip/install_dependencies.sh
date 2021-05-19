@@ -9,6 +9,8 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
+ROOT=$(cd $(dirname $0); pwd -P)
+
 apt-get update
 
 GSTREAMER_VERSION=0.10

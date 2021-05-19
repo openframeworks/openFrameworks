@@ -84,7 +84,7 @@ This granularity makes the code easier to deal with in cases where some things h
 
 #### Submitting the pull request
 
-- Submit your pull request to the __`master`__ branch of openFrameworks (which you branched off from), _not_ the `stable` branch.
+- If the default branch shown on the OF github repo is __`patch-release`__ submit your pull request to that branch if it is addressing a bug or regression. Otherwise submit your pull request to the __`master`__ branch of openFrameworks (which you branched off from), and _not_ the `stable` branch.
 - All pull requests that contain changes that need to be in the changelog **must include relevant additions to `CHANGELOG.md`**. Use previous entries as a guide for style/indentation/etc.
 - In the comments field on your new pull request, enter a description of everything that the code in the pull request does. 
   - This description is the first contact most of the core team will have with your code, so you should use it to explain why your pull request is awesome and we should accept it. 

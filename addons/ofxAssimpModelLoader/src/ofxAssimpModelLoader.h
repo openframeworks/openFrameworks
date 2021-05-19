@@ -25,82 +25,85 @@ struct aiNode;
 
 class ofxAssimpModelLoader{
 
-    public:
-        ~ofxAssimpModelLoader();
-        ofxAssimpModelLoader();
+	public:
+		~ofxAssimpModelLoader();
+		ofxAssimpModelLoader();
 
-		bool loadModel(std::string modelName, bool optimize=false);
-        bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");
-        void createEmptyModel();
-        void createLightsFromAiModel();
-        void optimizeScene();
+		bool load(std::string modelName, bool optimize=false);
+		bool load(ofBuffer & buffer, bool optimize=false, const char * extension="");
+		OF_DEPRECATED_MSG("ofxAssimpModelLoader::loadModel() is deprecated, use load() instead.", bool loadModel(std::string modelName, bool optimize=false));
+		OF_DEPRECATED_MSG("ofxAssimpModelLoader::loadModel() is deprecated, use load() instead.", bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension=""));
 
-        void update();
-    
-        bool hasAnimations();
-        unsigned int getAnimationCount();
-        ofxAssimpAnimation & getAnimation(int animationIndex);
-        void playAllAnimations();
-        void stopAllAnimations();
-        void resetAllAnimations();
-        void setPausedForAllAnimations(bool pause);
-        void setLoopStateForAllAnimations(ofLoopType state);
-        void setPositionForAllAnimations(float position);
-        OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setAnimation(int animationIndex));
-        OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setNormalizedTime(float time));
-        OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setTime(float time));
-        OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", float getDuration(int animationIndex));
+		void createEmptyModel();
+		void createLightsFromAiModel();
+		void optimizeScene();
 
-        bool hasMeshes();
-        unsigned int getMeshCount();
-        ofxAssimpMeshHelper & getMeshHelper(int meshIndex);
-    
-        void clear();
-    
-        void setScale(float x, float y, float z);
-        void setPosition(float x, float y, float z);
-        void setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
+		void update();
+	
+		bool hasAnimations();
+		unsigned int getAnimationCount();
+		ofxAssimpAnimation & getAnimation(int animationIndex);
+		void playAllAnimations();
+		void stopAllAnimations();
+		void resetAllAnimations();
+		void setPausedForAllAnimations(bool pause);
+		void setLoopStateForAllAnimations(ofLoopType state);
+		void setPositionForAllAnimations(float position);
+		OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setAnimation(int animationIndex));
+		OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setNormalizedTime(float time));
+		OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", void setTime(float time));
+		OF_DEPRECATED_MSG("Use ofxAssimpAnimation instead", float getDuration(int animationIndex));
 
-        // Scale the model to the screen automatically.
-        void setScaleNormalization(bool normalize);
-        void setNormalizationFactor(float factor);
+		bool hasMeshes();
+		unsigned int getMeshCount();
+		ofxAssimpMeshHelper & getMeshHelper(int meshIndex);
+	
+		void clear();
+	
+		void setScale(float x, float y, float z);
+		void setPosition(float x, float y, float z);
+		void setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
+
+		// Scale the model to the screen automatically.
+		void setScaleNormalization(bool normalize);
+		void setNormalizationFactor(float factor);
 
 		std::vector<std::string> getMeshNames();
-        unsigned int getNumMeshes();
+		unsigned int getNumMeshes();
 
 		ofMesh getMesh(std::string name);
-        ofMesh getMesh(unsigned int num);
+		ofMesh getMesh(unsigned int num);
 
 		ofMesh getCurrentAnimatedMesh(std::string name);
-        ofMesh getCurrentAnimatedMesh(unsigned int num);
+		ofMesh getCurrentAnimatedMesh(unsigned int num);
 
 		ofMaterial getMaterialForMesh(std::string name);
-        ofMaterial getMaterialForMesh(unsigned int num);
+		ofMaterial getMaterialForMesh(unsigned int num);
 
 		ofTexture getTextureForMesh(std::string name);
-        ofTexture getTextureForMesh(unsigned int num);
+		ofTexture getTextureForMesh(unsigned int num);
 
 
-    	void drawWireframe();
-    	void drawFaces();
-    	void drawVertices();
+		void drawWireframe();
+		void drawFaces();
+		void drawVertices();
 
-    	void enableTextures();
-    	void disableTextures();
-    	void enableNormals();
-    	void enableMaterials();
-    	void disableNormals();
-    	void enableColors();
-    	void disableColors();
-    	void disableMaterials();
+		void enableTextures();
+		void disableTextures();
+		void enableNormals();
+		void enableMaterials();
+		void disableNormals();
+		void enableColors();
+		void disableColors();
+		void disableMaterials();
 
-        void draw(ofPolyRenderMode renderType);
+		void draw(ofPolyRenderMode renderType);
 		
 		ofPoint getPosition();
 		ofPoint getSceneCenter();
 		float getNormalizedScale();
 		ofPoint getScale();
-        ofMatrix4x4 getModelMatrix();
+		ofMatrix4x4 getModelMatrix();
 
 		ofPoint getSceneMin(bool bScaled = false);
 		ofPoint	getSceneMax(bool bScaled = false);
@@ -109,55 +112,55 @@ class ofxAssimpModelLoader{
 		ofPoint	getRotationAxis(int which); // gets each rotation axis
 		float getRotationAngle(int which); //gets each rotation angle
 
-        void calculateDimensions();
+		void calculateDimensions();
 
 		const aiScene * getAssimpScene();
-         
-    protected:
-        void updateAnimations();
-        void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
-        void updateBones();
-        void updateModelMatrix();
-    
-        // ai scene setup
-        unsigned int initImportProperties(bool optimize);
-        bool processScene();
+		 
+	protected:
+		void updateAnimations();
+		void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
+		void updateBones();
+		void updateModelMatrix();
+	
+		// ai scene setup
+		unsigned int initImportProperties(bool optimize);
+		bool processScene();
 
-        // Initial VBO creation, etc
-        void loadGLResources();
-    
-        // updates the *actual GL resources* for the current animation
-        void updateGLResources();
-    
-        void getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max);
-        void getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh,  aiVector3D* min, aiVector3D* max);
+		// Initial VBO creation, etc
+		void loadGLResources();
+	
+		// updates the *actual GL resources* for the current animation
+		void updateGLResources();
+	
+		void getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max);
+		void getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh,  aiVector3D* min, aiVector3D* max);
 
-        ofFile file;
+		ofFile file;
 
-        aiVector3D scene_min, scene_max, scene_center;
+		aiVector3D scene_min, scene_max, scene_center;
 
-        bool normalizeScale;
-        double normalizedScale;
+		bool normalizeScale;
+		double normalizedScale;
 
 		std::vector<float> rotAngle;
 		std::vector<ofPoint> rotAxis;
-        ofPoint scale;
-        ofPoint pos;
-        ofMatrix4x4 modelMatrix;
+		ofPoint scale;
+		ofPoint pos;
+		ofMatrix4x4 modelMatrix;
 
 		std::vector<ofLight> lights;
 		std::vector<ofxAssimpTexture> textures;
 		std::vector<ofxAssimpMeshHelper> modelMeshes;
 		std::vector<ofxAssimpAnimation> animations;
-        int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.
+		int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.
 
-        bool bUsingTextures;
-        bool bUsingNormals;
-        bool bUsingColors;
-        bool bUsingMaterials;
-        float normalizeFactor;
+		bool bUsingTextures;
+		bool bUsingNormals;
+		bool bUsingColors;
+		bool bUsingMaterials;
+		float normalizeFactor;
 
-        // the main Asset Import scene that does the magic.
+		// the main Asset Import scene that does the magic.
 		std::shared_ptr<const aiScene> scene;
 		std::shared_ptr<aiPropertyStore> store;
 };
