@@ -88,9 +88,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     public static final int EGL_COVERAGE_SAMPLES_NV = 0x30E1;
     public static final int EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT = 0x3490;
 
-    public static final int EGL_GL_COLORSPACE_DISPLAY_P3_EXT = 0x3363;
-    public static final int EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT = 0x3362;
-
     private static int[] s_configAttribsMSAA_P3 =
             {
                     EGL14.EGL_RED_SIZE, 10,
@@ -107,23 +104,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL14.EGL_NONE
             };
 
-    private static int[] s_configAttribsMSAA_P3_2 =
-            {
-                    EGL14.EGL_RED_SIZE, 8,
-                    EGL14.EGL_GREEN_SIZE, 8,
-                    EGL14.EGL_BLUE_SIZE, 8,
-                    EGL14.EGL_DEPTH_SIZE, 16,
-                    EGL14.EGL_ALPHA_SIZE, 2,
-                    EGL_COLOR_COMPONENT_TYPE_EXT,
-                    // Requires that setEGLContextClientVersion(2) is called on the view.
-                    EGL14.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
-                    EGL14.EGL_SAMPLE_BUFFERS, 1 /* true */,
-                    EGL14.EGL_SAMPLES, 4,
-                    EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT,
-                    EGL14.EGL_NONE
-            };
-
-    private static int[] s_configAttribsMSAA =
+    private static final int[] s_configAttribsMSAA =
     {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
@@ -136,9 +117,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_NONE
     };
 
-
-
-    private static int[] s_configAttribsMSAAFallBack = {
+    private static final int[] s_configAttribsMSAAFallBack = {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
@@ -148,7 +127,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL_COVERAGE_SAMPLES_NV, 2,  // always 5 in practice on tegra 2
             EGL10.EGL_NONE
     };
-    private static int[] s_configAttribsDefault = {
+    private static final int[] s_configAttribsDefault = {
             EGL10.EGL_RED_SIZE, 5,
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
@@ -157,7 +136,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_NONE
     };
 
-    private static int[] s_configAttribsDefaultES = {
+    private static final int[] s_configAttribsDefaultES = {
             EGL10.EGL_RED_SIZE, 5,
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
@@ -184,53 +163,43 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         int numConfigs = num_config[0];
         if (numConfigs <= 0) {
             setRGB();
-            if (!egl.eglChooseConfig(display, s_configAttribsMSAA_P3_2, null, 0,
+            if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
                     num_config)) {
                 Log.w("OF", String.format("eglChooseConfig MSAA failed"));
             }
             numConfigs = num_config[0];
             if (numConfigs <= 0) {
-                if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
+                if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
                         num_config)) {
-                    Log.w("OF", String.format("eglChooseConfig MSAA failed"));
+                    Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
                 }
                 numConfigs = num_config[0];
                 if (numConfigs <= 0) {
-                    if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
+                    if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
                             num_config)) {
-                        Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
+                        Log.w("OF", String.format("eglChooseConfig Default failed"));
                     }
                     numConfigs = num_config[0];
                     if (numConfigs <= 0) {
-                        if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
+                        if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
                                 num_config)) {
-                            Log.w("OF", String.format("eglChooseConfig Default failed"));
+                            Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
                         }
                         numConfigs = num_config[0];
                         if (numConfigs <= 0) {
-                            if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
-                                    num_config)) {
-                                Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
-                            }
-                            numConfigs = num_config[0];
-                            if (numConfigs <= 0) {
-                                throw new IllegalArgumentException("No configs match configSpec");
-                            }
-                        } else {
-                            configs = new EGLConfig[numConfigs];
-                            egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
+                            throw new IllegalArgumentException("No configs match configSpec");
                         }
                     } else {
                         configs = new EGLConfig[numConfigs];
-                        egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
+                        egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
                     }
                 } else {
                     configs = new EGLConfig[numConfigs];
-                    egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
+                    egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
                 }
             } else {
                 configs = new EGLConfig[numConfigs];
-                egl.eglChooseConfig(display, s_configAttribsMSAA_P3, configs, numConfigs, num_config);
+                egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
             }
         } else {
             configs = new EGLConfig[numConfigs];
@@ -385,7 +354,16 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 EGL10.EGL_ALPHA_MASK_SIZE,
                 EGL10.EGL_COLOR_BUFFER_TYPE,
                 EGL10.EGL_RENDERABLE_TYPE,
-                0x3042 // EGL10.EGL_CONFORMANT
+                0x3042, // EGL10.EGL_CONFORMANT
+                0x309D, // EGL_GL_COLORSPACE_KHR
+                0x3339, //  EGL_COLOR_COMPONENT_TYPE_EXT
+                0x333B, //EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT
+                0x3340, // EGL_GL_COLORSPACE_BT2020_PQ_EXT
+                0x30E0, //EGL_COVERAGE_BUFFERS_NV
+                0x30E1, //EGL_COVERAGE_SAMPLES_NV
+                0x3490, //EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT
+                EGL_COVERAGE_BUFFERS_NV, //
+                EGL_COVERAGE_SAMPLES_NV, // always 5 in practice on tegra 2
         };
         String[] names = {
                 "EGL_BUFFER_SIZE",
@@ -420,7 +398,16 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 "EGL_ALPHA_MASK_SIZE",
                 "EGL_COLOR_BUFFER_TYPE",
                 "EGL_RENDERABLE_TYPE",
-                "EGL_CONFORMANT"
+                "EGL_CONFORMANT",
+                "EGL_GL_COLORSPACE_KHR",
+                "EGL_COLOR_COMPONENT_TYPE_EXT",
+                "EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT",
+                "EGL_GL_COLORSPACE_BT2020_PQ_EXT",
+                "EGL_COVERAGE_BUFFERS_NV",
+               "EGL_COVERAGE_SAMPLES_NV",
+                "EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT",
+                "EGL_COVERAGE_BUFFERS_NV",
+                "EGL_COVERAGE_SAMPLES_NV"
         };
         int[] value = new int[1];
         for (int i = 0; i < attributes.length; i++) {
@@ -549,7 +536,7 @@ class OFGLSurfaceView extends GLSurfaceView {
     public OFEGLConfigChooser getConfigChooser() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Log.i("OF","getConfigChooser::WideGamut Config Chooser");
-                return new OFEGLConfigChooser(10, 10, 10, 2, 16, 0, 4, true);
+                return new OFEGLConfigChooser(10, 10, 10, 2, 16, 0, 4, false);
         }
         Log.i("OF","getConfigChooser::sRGB Config");
         return new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4, false);
@@ -606,15 +593,15 @@ class OFGLSurfaceView extends GLSurfaceView {
 //            so it is not that surprising, that not every surfaceDestoyed callback means what we might think it means.
 //        We don't need this callback that much anyways, the renderer does not call render callbacks when gl context is invalid, so the OFAndroidWindow.onSurfaceCreated callback should be enought for us to make things work.
 
-    @Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i("OF","surfaceDestroyed");
-    	super.surfaceDestroyed(holder);
-    	mHolder = null;
-    	mSurface = null;
-		OFAndroid.onSurfaceDestroyed();
-        //mRenderer.exit();
-	}
+//    @Override
+//	public void surfaceDestroyed(SurfaceHolder holder) {
+//        Log.i("OF","surfaceDestroyed");
+//    	//super.surfaceDestroyed(holder);
+//    	mHolder = null;
+//    	//mSurface = null;
+//		//OFAndroid.onSurfaceDestroyed();
+//        //mRenderer.exit();
+//	}
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -622,8 +609,6 @@ class OFGLSurfaceView extends GLSurfaceView {
         if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
             mHolder = holder;
             mSurface = holder.getSurface();
-        } else {
-            Log.w("OF","surfaceCreated getSurface is not valid");
         }
         super.surfaceCreated(holder);
     }
@@ -635,8 +620,6 @@ class OFGLSurfaceView extends GLSurfaceView {
         if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
             mHolder = holder;
             mSurface = holder.getSurface();
-        } else {
-            Log.w("OF","surfaceCreated getSurface is not valid");
         }
         if(mRenderer != null && mRenderer.isSetup()) {
             mRenderer.setResolution(w,h, true);
@@ -723,7 +706,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(int w, int h) {
         Log.i("OF","onSurfaceChanged width:" + w + " height:" + h);
         setResolution(w,h, false);
-
         if(!setup && OFAndroid.unpackingDone){
             setup();
         } else if(!setup && !OFAndroid.unpackingDone) {
@@ -762,10 +744,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
     
     public static void exit() {
-        Log.e("OF", "exit");
-
-        setup = false;
-        resolutionSetup = false;
+    	setup = false;
     }
 
 
