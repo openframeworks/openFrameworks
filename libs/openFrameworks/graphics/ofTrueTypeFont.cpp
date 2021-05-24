@@ -703,6 +703,13 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
 	#endif
 
+	int maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+	if (maxSize <= 128) {
+		ofLogError("ofTruetypeFont") << "Max size is <=0 maybe queried GL Context before ready GL_MAX_TEXTURE_SIZE is garbage:[" << maxSize << "]";
+		return false;
+	}
+
 	initLibraries();
 	settings = _settings;
 	if( settings.dpi == 0 ){
@@ -860,8 +867,6 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		x+= glyph.tW + border*2;
 	}
 
-	int maxSize;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	if(w > maxSize || h > maxSize){
 		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
 		return false;
