@@ -24,6 +24,20 @@ vFlip(false)
 }
 
 //----------------------------------------
+ofCamera::ofCamera(const ofCamera & camera) :
+	isOrtho(camera.isOrtho),
+	fov(camera.fov),
+	nearClip(camera.nearClip),
+	farClip(camera.farClip),
+	lensOffset(lensOffset),
+	forceAspectRatio(forceAspectRatio),
+	aspectRatio(aspectRatio),
+	vFlip(vFlip),
+	renderer(renderer)
+{ 
+
+}
+//----------------------------------------
 ofCamera::~ofCamera() {}
 
 //----------------------------------------

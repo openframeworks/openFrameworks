@@ -20,6 +20,9 @@ public:
     /// \brief Construct a default camera.
 	ofCamera();
 
+	/// \brief Copy constructor
+	ofCamera(const ofCamera & camera);
+
     /// \brief Destroy the camera.
     virtual ~ofCamera();
 	
