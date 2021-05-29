@@ -14,6 +14,9 @@ public:
     /// \brief Create a default camera.
 	ofEasyCam();
 
+    /// \brief Copy constructor for ofEasyCam
+	ofEasyCam(const ofEasyCam & cam);
+
 	/// \}
 	/// \name Rendering
 	/// \{
@@ -273,6 +276,11 @@ private:
 	struct interaction{
 		interaction():mouseButton(0), key(-1), transformType(TRANSFORM_NONE){}
 		interaction(TransformType type, int _mouseButton, int _key = -1):mouseButton(_mouseButton), key(_key), transformType(type){}
+		interaction(interaction& interaction) : 
+			mouseButton(interaction.mouseButton),
+			key(interaction.key),
+			transformType(interaction.transformType) {}
+    
 		int mouseButton;
 		int key;
 		TransformType transformType;
