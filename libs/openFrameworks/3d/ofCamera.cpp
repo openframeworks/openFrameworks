@@ -35,8 +35,8 @@ ofCamera::ofCamera(const ofCamera & camera) :
 	vFlip(vFlip),
 	renderer(renderer)
 { 
-
 }
+
 //----------------------------------------
 ofCamera::~ofCamera() {}
 
