@@ -904,7 +904,7 @@ public class OFAndroid {
            	}
         }
 		int unicodeChar = event.getUnicodeChar();
-		if(unicodeChar == 0 && keyCode < 256 && keyCode > 4) {
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
 			unicodeChar = keyCode;
 		}
 		return onKeyDown(keyCode, unicodeChar);
@@ -918,7 +918,7 @@ public class OFAndroid {
 	 */
 	public static boolean keyUp(int keyCode, KeyEvent event) {
 		int unicodeChar = event.getUnicodeChar();
-		if(unicodeChar == 0 && keyCode < 256 && keyCode > 0) {
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
 			unicodeChar = keyCode;
 		}
 		return onKeyUp(keyCode, unicodeChar);

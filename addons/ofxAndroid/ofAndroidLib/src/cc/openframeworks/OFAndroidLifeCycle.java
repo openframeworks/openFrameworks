@@ -51,6 +51,10 @@ public class OFAndroidLifeCycle
 	private static AtomicBoolean m_isInit = new AtomicBoolean(false);
 	private static AtomicBoolean m_isSurfaceCreated = new AtomicBoolean(false);
 
+	private static AtomicBoolean m_hasSetup = new AtomicBoolean(false);
+
+
+
 	private static OFActivity m_activity = null;
 	
 	private static int m_countActivities = 0;
@@ -160,6 +164,9 @@ public class OFAndroidLifeCycle
 									m_isSurfaceCreated.set(true);
 								}
                                 OFAndroidLifeCycleHelper.onStart();
+								synchronized (m_isSurfaceCreated) {
+									m_hasSetup.set(true);
+								}
                                 break;
                             case stop:
                                 OFAndroidLifeCycleHelper.onStop();
@@ -168,7 +175,10 @@ public class OFAndroidLifeCycle
                                 OFAndroidLifeCycleHelper.onPause();
                                 break;
                             case resume:
-                                OFAndroidLifeCycleHelper.onResume();
+								synchronized (m_isSurfaceCreated) {
+									if (m_hasSetup.get() == true)
+										OFAndroidLifeCycleHelper.onResume();
+								}
                                 break;
                             case destroy:
                                 OFAndroidLifeCycleHelper.onDestroy();
