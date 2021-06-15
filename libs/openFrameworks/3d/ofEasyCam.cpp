@@ -23,52 +23,7 @@ ofEasyCam::ofEasyCam(){
     addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
 	addInteraction(TRANSFORM_ROTATE, OF_MOUSE_BUTTON_LEFT);
 	addInteraction(TRANSFORM_TRANSLATE_Z, OF_MOUSE_BUTTON_RIGHT);
-	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_MIDDLE);
-	
-}
-
-//----------------------------------------
-ofEasyCam::ofEasyCam(const ofEasyCam & easyCam) :
-	target(easyCam.target),
-	bEnableMouseMiddleButton(easyCam.bEnableMouseMiddleButton),
-	bApplyInertia(easyCam.bApplyInertia),	
-	bInsideArcball(easyCam.bInsideArcball),
-	bMouseInputEnabled(easyCam.bMouseInputEnabled),
-	bDistanceSet(easyCam.bDistanceSet),
-	bAutoDistance(easyCam.bAutoDistance),
-	bEventsSet(easyCam.bEventsSet),
-	bIsScrolling(easyCam.bIsScrolling),
-	lastDistance(easyCam.lastDistance),	
-	drag(easyCam.drag),
-	rot(easyCam.rot),
-	translate(easyCam.translate),
-	sensitivityTranslate(easyCam.sensitivityTranslate),
-	sensitivityRot(easyCam.sensitivityRot),
-	sensitivityScroll(easyCam.sensitivityScroll),
-	prevMouse(easyCam.prevMouse),
-	mouseVel(easyCam.mouseVel),
-	doTranslationKey(easyCam.doTranslationKey),
-	lastTap(easyCam.lastTap),
-	curRot(easyCam.curRot),
-	lastPressAxisX(easyCam.lastPressAxisX),
-	lastPressAxisY(easyCam.lastPressAxisY),
-	lastPressAxisZ(easyCam.lastPressAxisZ),
-	lastPressPosition(easyCam.lastPressPosition),
-	lastPressOrientation(easyCam.lastPressOrientation),
-	lastPressMouse(easyCam.lastPressMouse),
-	viewport(easyCam.viewport),
-	controlArea(easyCam.controlArea),
-	bRelativeYAxis(easyCam.bRelativeYAxis),
-	doInertia(easyCam.doInertia),
-	upAxis(easyCam.upAxis),	
-	mouseAtScroll(easyCam.mouseAtScroll),
-	prevFarClip(easyCam.prevFarClip), 
-	prevNearClip(easyCam.prevNearClip),	
-	currentTransformType(easyCam.currentTransformType),
-	interactions(easyCam.interactions),
-	events(easyCam.events)
-	//listeners(easyCam.listeners) // does not copy event listeners, not necessary and generally a bad idea
-{ 
+	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_MIDDLE);	
 }
 
 //----------------------------------------

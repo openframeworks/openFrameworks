@@ -14,8 +14,11 @@ public:
     /// \brief Create a default camera.
 	ofEasyCam();
 
-    /// \brief Copy constructor for ofEasyCam
-	ofEasyCam(const ofEasyCam & cam);
+    /// \brief Default copy constructor.
+	ofEasyCam(const ofEasyCam & )            = default;
+
+    /// \brief Default assignment copy constructor.
+	ofEasyCam &operator=(const ofEasyCam & ) = default;
 
 	/// \}
 	/// \name Rendering
