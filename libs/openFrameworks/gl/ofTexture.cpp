@@ -217,7 +217,7 @@ ofTexture::ofTexture(ofTexture && mom){
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(const ofTexture & mom){
-	if(!texData.bUseExternalTextureID){
+	if(texData.textureID != 0 && !texData.bUseExternalTextureID){
 		release(texData.textureID);
 	}
 	anchor = mom.anchor;
@@ -233,7 +233,7 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 
 //----------------------------------------------------------
 ofTexture& ofTexture::operator=(ofTexture && mom){
-    if(!texData.bUseExternalTextureID){
+    if(texData.textureID != 0 && !texData.bUseExternalTextureID){
         release(texData.textureID);
     }
     anchor = mom.anchor;
@@ -250,18 +250,18 @@ ofTexture& ofTexture::operator=(ofTexture && mom){
 
 //----------------------------------------------------------
 bool ofTexture::bAllocated() const {
-	return texData.bAllocated;
+	return texData.textureID != 0 && texData.bAllocated;
 }
 
 //----------------------------------------------------------
 bool ofTexture::isAllocated() const {
-	return texData.bAllocated;
+	return texData.textureID != 0 && texData.bAllocated;
 }
 
 
 //----------------------------------------------------------
 ofTextureData& ofTexture::getTextureData(){
-	if(!texData.bAllocated){
+	if(!isAllocated()){
 		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
@@ -269,7 +269,7 @@ ofTextureData& ofTexture::getTextureData(){
 }
 
 const ofTextureData& ofTexture::getTextureData() const {
-	if(!texData.bAllocated){
+	if(!isAllocated()){
 		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
@@ -278,7 +278,7 @@ const ofTextureData& ofTexture::getTextureData() const {
 
 //----------------------------------------------------------
 ofTexture::~ofTexture(){
-	if(!texData.bUseExternalTextureID){
+	if(texData.textureID != 0 && !texData.bUseExternalTextureID){
 		release(texData.textureID);
 	}
 #ifdef TARGET_ANDROID
@@ -288,12 +288,14 @@ ofTexture::~ofTexture(){
 
 //----------------------------------------------------------
 void ofTexture::clear(){
-	if(!texData.bUseExternalTextureID){
-		release(texData.textureID);
+	if(texData.textureID != 0) {
+		if(!texData.bUseExternalTextureID){
+			release(texData.textureID);
+		}
+		texData.bUseExternalTextureID = false;
+		texData.textureID  = 0;
+		texData.bAllocated = false;
 	}
-	texData.bUseExternalTextureID = false;
-	texData.textureID  = 0;
-	texData.bAllocated = false;
 }
 
 //----------------------------------------------------------
