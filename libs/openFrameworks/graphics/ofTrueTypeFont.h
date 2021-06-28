@@ -78,6 +78,7 @@ public:
 	static const range GeometricShapes;
 	static const range MiscSymbols;
 	static const range Dingbats;
+	static const range CJKSymbolAndPunctuation;
 	static const range Hiragana;
 	static const range Katakana;
 	static const range HangulCompatJamo;
