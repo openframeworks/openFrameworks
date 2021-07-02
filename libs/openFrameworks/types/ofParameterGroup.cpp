@@ -345,12 +345,12 @@ string ofParameterGroup::getName() const{
 
 bool ofParameterGroup::setName(const string & name){
 	std::string oldName = getName();
-	obj->name = name;
-	
-	if(!ofParameterGroup::changeChildName(this, obj->parents, escape(oldName), getEscapedName())){
+	if (escape(name) == escape(oldName)) return false;
+	if (!ofParameterGroup::changeChildName(this, obj->parents, escape(oldName), escape(name))) {
 		setName(oldName);
 		return false;
 	}
+	obj->name = name;
 	return true;
 }
 
