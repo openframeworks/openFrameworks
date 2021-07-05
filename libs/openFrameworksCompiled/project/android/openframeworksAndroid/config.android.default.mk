@@ -33,11 +33,11 @@ include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv7 neon x86
+	ABIS_TO_COMPILE_RELEASE = armv7 neon x86 x86_64v arm64
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
-	ABIS_TO_COMPILE_DEBUG = armv7
+	ABIS_TO_COMPILE_DEBUG = armv64
 endif
 
 
@@ -119,12 +119,6 @@ RESFILE=$(RESNAME).zip
 
 ifeq ($(ABI),armv7)
 	ABI_PATH = armeabi-v7a
-	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
-endif
-
-ifeq ($(ABI),armv5)
-	ABI_PATH = armeabi
 	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
 	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
