@@ -218,8 +218,14 @@ public class OFAndroidLifeCycleHelper
 
 		OFAndroid.enableOrientationChangeEvents();
 		OFAndroid.onResume();
-		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 		if(OFAndroidLifeCycle.isSurfaceCreated() == true && glView == null || glView != null && !glView.isSetup()){
+			Log.e(TAG,"onResume glView is null or not setup");
+
+			OFAndroid.setupGL(OFAndroid.eglVersion, true);
+			OFAndroid.onStart();
+		}
+		else if( glView.getRenderer() != null){
 			Log.e(TAG,"onResume glView is null or not setup");
 
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
@@ -239,8 +245,6 @@ public class OFAndroidLifeCycleHelper
 					}
 					if (OFAndroid.getOrientation() != -1)
 						OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
-
-
 			}
 			});
 		}
@@ -294,12 +298,12 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 
-        if(OFAndroid.getOrientation()!=-1) {
-			Log.i(TAG,"setScreenOrientation " + OFAndroid.getOrientation());
-			OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
-		} else {
-			Log.i(TAG,"not setScreenOrientation " + OFAndroid.getOrientation());
-		}
+//        if(OFAndroid.getOrientation()!=-1) {
+//			Log.i(TAG,"setScreenOrientation " + OFAndroid.getOrientation());
+//			OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
+//		} else {
+//			Log.i(TAG,"not setScreenOrientation " + OFAndroid.getOrientation());
+//		}
 
 
 	}

@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
+import static android.opengl.EGL14.EGL_NO_CONTEXT;
+
 public class OFAndroidLifeCycle
 {
 	
@@ -346,9 +348,10 @@ public class OFAndroidLifeCycle
 	public static void glResume(ViewGroup glContainer)
 	{
 		OFGLSurfaceView glView = getGLView();
-		if( glView != null ) {
+		if( glView != null && glView.getRenderer() != null && android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
 			glView.onResume();
 		} else {
+			mGLView = null;
 			glCreateSurface(true);
 		}
 		Log.d(TAG, "glResume");

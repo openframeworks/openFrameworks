@@ -23,7 +23,7 @@ public class OFOrientationListener extends OrientationEventListener {
 
     @Override
     public void disable() {
-        firstCheck = false;
+       // firstCheck = false;
         super.disable();
     }
 
@@ -36,27 +36,27 @@ public class OFOrientationListener extends OrientationEventListener {
         WindowManager windowManager = (WindowManager)OFAndroidLifeCycle.getActivity().getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
 
-        if(lastOrientation != display.getRotation() || firstCheck){
-            lastOrientation = display.getRotation();
-            firstCheck = false;
-
-            int ofOrientation;
-            switch (display.getRotation()) {
-                case Surface.ROTATION_90:
-                    ofOrientation = 3;
-                    break;
-                case Surface.ROTATION_180:
-                    ofOrientation = 2;
-                    break;
-                case Surface.ROTATION_270:
-                    ofOrientation = 4;
-                    break;
-                case Surface.ROTATION_0:
-                default:
-                    ofOrientation = 1;
-                    break;
-            }
-            OFAndroid.deviceOrientationChanged(ofOrientation);
-        }
+//        if(lastOrientation != display.getRotation() || firstCheck){
+//            lastOrientation = display.getRotation();
+//            firstCheck = false;
+//
+//            int ofOrientation;
+//            switch (display.getRotation()) {
+//                case Surface.ROTATION_90:
+//                    ofOrientation = 3;
+//                    break;
+//                case Surface.ROTATION_180:
+//                    ofOrientation = 2;
+//                    break;
+//                case Surface.ROTATION_270:
+//                    ofOrientation = 4;
+//                    break;
+//                case Surface.ROTATION_0:
+//                default:
+//                    ofOrientation = 1;
+//                    break;
+//            }
+//            OFAndroid.deviceOrientationChanged(ofOrientation);
+//        }
     }
 }

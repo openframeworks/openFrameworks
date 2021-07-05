@@ -26,6 +26,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
+import static android.opengl.EGL14.EGL_NO_CONTEXT;
+
 class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
 	
@@ -494,17 +496,7 @@ class OFGLSurfaceView extends GLSurfaceView {
             public void run() {
                 int width = getWidth();
                 int height = getHeight();
-                if(width <= 0 || height <= 0 ) {
-                    try {
-                        DisplayMetrics displayMetrics = new DisplayMetrics();
-                        Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
-                        display.getRealMetrics(displayMetrics);
-                        height = displayMetrics.heightPixels;
-                        width = displayMetrics.widthPixels;
-                    } catch (Exception exception){
-                        Log.w("OF", "Could not get Window for Display ", exception);
-                    }
-                }
+
                 mRenderer.setResolution(width, height, true);
             }
         });
@@ -514,6 +506,10 @@ class OFGLSurfaceView extends GLSurfaceView {
     public void setRenderer(GLSurfaceView.Renderer renderer) {
 
 	    super.setRenderer(renderer);
+    }
+
+    public OFAndroidWindow getRenderer() {
+	    return mRenderer;
     }
 
     @Override
@@ -568,7 +564,7 @@ class OFGLSurfaceView extends GLSurfaceView {
     public OFEGLConfigChooser getConfigChooser() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Log.i("OF","getConfigChooser::WideGamut Config Chooser");
-                return new OFEGLConfigChooser(10, 10, 10, 2, 16, 0, 4, false);
+                return new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4, false);
         }
         Log.i("OF","getConfigChooser::sRGB Config");
         return new OFEGLConfigChooser(8, 8, 8, 0, 16, 0, 4, false);
@@ -612,7 +608,13 @@ class OFGLSurfaceView extends GLSurfaceView {
     @Override
     public void onResume() {
 
+        Log.i("OF","OFGLSurfaceView::onResume");
+        if(mRenderer != null)
+        {
+
+        }
 	    super.onResume();
+
     }
 
     @Override
@@ -692,6 +694,13 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             if(updateSurface) onSurfaceChanged(w,h);
         }
     }
+
+    public static void surfaceHasBeenDestroyed() {
+        Log.i("OF","surfaceHasBeenDestroyed");
+        OFAndroid.onSurfaceDestroyed();
+        has_surface = false;
+        exit();
+    }
 	
 	@Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -702,9 +711,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         boolean hasDestroyed = false;
 		if(this.has_surface) {
             Log.i("OF","onSurfaceCreated - has_surface destroy");
-			OFAndroid.onSurfaceDestroyed();
-			this.has_surface = false;
-			exit();
+            surfaceHasBeenDestroyed();
             hasDestroyed = true;
 		}
 		
@@ -789,7 +796,13 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 if( OFAndroidLifeCycle.getGLView() != null) OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
             }
     	if(setup && OFAndroid.unpackingDone){
-    		OFAndroid.render();
+    	    if(android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT)
+    		    OFAndroid.render();
+    	    else {
+                Log.e("OF", "ofAndroidWindow::onDrawFrame GLContext = EGL_NO_CONTEXT BAD. Restarting Window");
+                setup = false;
+                setup();
+            }
     	}else if(!setup && OFAndroid.unpackingDone){
     		setup();
     	}else{
@@ -811,5 +824,5 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     private static boolean resolutionSetup;
     private static boolean initialRender;
     private int w,h;
-    public boolean has_surface = false;
+    public static boolean has_surface = false;
 }
