@@ -273,7 +273,7 @@ def buildToolchain(){
 
 def appSrcDirs(ofRoot){
     def ret = ['src',
-               ofRoot+"/addons/ofxAndroid/src",
+               ofRoot+"/addons/ofxAndroid/ofxAndroidLib/src/main/cpp",
                ofRoot+"/addons/ofxAccelerometer/src"
     ]
 
@@ -295,7 +295,7 @@ def coreCppFlags(abi, ofRoot){
     def ofSource = ofRoot + 'libs/openFrameworks'
     def libs = ofRoot + 'libs'
 
-    def ret = ["-std=c++17",
+    def ret = ["-std=c++7",
             "-Wall",
             "-frtti",
             "-fexceptions",
@@ -316,33 +316,34 @@ def coreCppFlags(abi, ofRoot){
             "-I${file(ofSource+"/types")}".toString(),
             "-I${file(ofSource+"/utils")}".toString(),
             "-I${file(ofSource+"/video")}".toString(),
-            "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
+            "-I${file(ofRoot+"/addons/ofxAndroid/ofAndroidLib/src/main/cpp")}".toString(),
             "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
             "-I${file(libs+"/FreeImage/include")}".toString(),
-            "-I${file(libs+"/boost/include")}".toString(),
-            "-I${file(libs+"/cairo/include")}".toString(),
-            "-I${file(libs+"/cairo/include/cairo")}".toString(),
+//            "-I${file(libs+"/boost/include")}".toString(),
+//            "-I${file(libs+"/boost/include/boost")}".toString(),
+            // "-I${file(libs+"/cairo/include")}".toString(),
+            // "-I${file(libs+"/cairo/include/cairo")}".toString(),
             "-I${file(libs+"/freetype/include")}".toString(),
             "-I${file(libs+"/freetype/include/freetype2")}".toString(),
             "-I${file(libs+"/freetype/include/freetype2/config")}".toString(),
             "-I${file(libs+"/freetype/include/freetype2/internal")}".toString(),
             "-I${file(libs+"/freetype/include/freetype2/internal/services")}".toString(),
-            "-I${file(libs+"/glfw/include")}".toString(),
-            "-I${file(libs+"/glfw/include/GLFW")}".toString(),
-            // "-I${file(libs+"/openssl/include")}".toString(),
-            // "-I${file(libs+"/openssl/include/openssl")}".toString(),
-            "-I${file(libs+"/poco/include")}".toString(),
+            // "-I${file(libs+"/glfw/include")}".toString(),
+            // "-I${file(libs+"/glfw/include/GLFW")}".toString(),
+//            "-I${file(libs+"/openssl/include")}".toString(),
+//            "-I${file(libs+"/openssl/include/openssl")}".toString(),
+            // "-I${file(libs+"/poco/include")}".toString(),
             "-I${file(libs+"/tess2/include")}".toString(),
             "-I${file(libs+"/utf8cpp/include")}".toString(),
             "-I${file(libs+"/json/include")}".toString(),
-            "-I${file(libs+'/kiss/include')}".toString(),
+            // "-I${file(libs+'/kiss/include')}".toString(),
             "-I${file(libs+'/glm/include')}".toString(),
             "-I${file(libs+'/utf8/include')}".toString(),
             "-I${file(libs+'/uriparser/include')}".toString(),
-            // "-I${file(libs+'/curl/include')}".toString(),
+//            "-I${file(libs+'/curl/include')}".toString(),
             "-I${file(libs+'/pugixml/include')}".toString(),
-            "-I${file(libs+'/libxml2/include')}".toString(),
-            "-I${file(libs+'/libs/glu/include_android')}".toString()
+            // "-I${file(libs+'/libxml2/include')}".toString(),
+            // "-I${file(libs+'/libs/glu/include_android')}".toString()
 
     ]
 
@@ -370,13 +371,13 @@ def getPrebuiltLibPaths(abi, ofRoot) {
 
     def paths = []
     paths += file(libs+"/FreeImage/lib/android/${abi}/libfreeimage.a").toString()
-    // paths += file(libs+"/boost/lib/android/${abi}/libboost_filesystem.a").toString()
-    // paths += file(libs+"/boost/lib/android/${abi}/libboost_system.a").toString()
+//    paths += file(libs+"/boost/lib/android/${abi}/libboost_filesystem.a").toString()
+//    paths += file(libs+"/boost/lib/android/${abi}/libboost_system.a").toString()
     paths += file(libs+"/freetype/lib/android/${abi}/libfreetype.a").toString()
     paths += file(libs+"/tess2/lib/android/${abi}/libtess2.a").toString()
-    // paths += file(libs+"/curl/lib/android/${abi}/libcurl.a").toString()
-    // paths += file(libs+"/openssl/lib/android/${abi}/libssl.a").toString()
-    // paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a").toString()
+//    paths += file(libs+"/curl/lib/android/${abi}/libcurl.a").toString()
+//    paths += file(libs+"/openssl/lib/android/${abi}/libssl.a").toString()
+//    paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a").toString()
     paths += file(libs+"/pugixml/lib/android/${abi}/libpugixml.a").toString()
     paths += file(libs+"/uriparser/lib/android/${abi}").toString()
     return paths

@@ -4,6 +4,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
 
@@ -32,19 +33,23 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 
 	protected void setContentType(int contentType){
 		if(loop) contentType = AudioAttributes.CONTENT_TYPE_MUSIC;
-		 	attributes = new AudioAttributes.Builder()
-				.setUsage(AudioAttributes.USAGE_GAME)
-				.setContentType(contentType)
-				.build();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			attributes = new AudioAttributes.Builder()
+			   .setUsage(AudioAttributes.USAGE_GAME)
+			   .setContentType(contentType)
+			   .build();
+		}
 
 	}
 
 	protected void createSoundPool(){
 		if(pool == null) {
-			pool = new SoundPool.Builder()
-					.setAudioAttributes(attributes)
-					.setMaxStreams(128)
-					.build();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				pool = new SoundPool.Builder()
+						.setAudioAttributes(attributes)
+						.setMaxStreams(128)
+						.build();
+			}
 		}
 	}
 	
@@ -56,16 +61,20 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 					if(player!=null) unloadSound();
 					player = new MediaPlayer();
 					player.setOnErrorListener(this);
-					player.setAudioAttributes(attributes);
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+						player.setAudioAttributes(attributes);
+					}
 					player.setDataSource(fileName);
 				} catch (Exception e) {
 					Log.e("OF","SoundPlayer Exception: couldn't load " + fileName,e);
+					return;
 				}
 				try {
 					if (player != null) player.prepareAsync();
 				}
 				catch (Exception e) {
 						Log.e("OF","SoundPlayer Exception: couldn't prepare " + fileName,e);
+					return;
 				}
 			}else{
 				try {
@@ -75,6 +84,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 				}
 				catch (Exception e) {
 					Log.e("OF","failed to create soundpool could not load " + fileName,e);
+					return;
 				}
 			}
 			setVolume(volume);
