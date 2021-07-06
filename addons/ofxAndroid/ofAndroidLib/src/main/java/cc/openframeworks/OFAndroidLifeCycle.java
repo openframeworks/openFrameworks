@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
+import static android.opengl.EGL14.EGL_NO_CONTEXT;
+
 public class OFAndroidLifeCycle
 {
 	
@@ -21,16 +23,16 @@ public class OFAndroidLifeCycle
         
         try {
             Log.i("OF","loading x86 library");
-            System.loadLibrary("OFAndroidApp_x86");
+            System.loadLibrary("ofAndroid.so");
         }
         catch(Throwable ex)	{
             Log.i("OF","failed x86 loading, trying neon detection",ex);
             
             try{
-                System.loadLibrary("neondetection");
+                System.loadLibrary("ofAndroid.so");
                 if(OFAndroid.hasNeon()){
                     Log.i("OF","loading neon optimized library");
-                    System.loadLibrary("OFAndroidApp_neon");
+                    System.loadLibrary("libofAndroid.so");
                 }
                 else{
                     Log.i("OF","loading not-neon optimized library");
@@ -346,8 +348,11 @@ public class OFAndroidLifeCycle
 	public static void glResume(ViewGroup glContainer)
 	{
 		OFGLSurfaceView glView = getGLView();
-		if( glView != null ) {
+		if( glView != null && glView.getRenderer() != null && android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
 			glView.onResume();
+		} else {
+			mGLView = null;
+			glCreateSurface(true);
 		}
 		Log.d(TAG, "glResume");
 		pushState(State.resume);

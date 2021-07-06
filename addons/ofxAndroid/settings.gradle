@@ -1,1 +1,6 @@
 include ':ofAndroidLib'
+//include ':openframeworksAndroid'
+//
+//project(':openframeworksAndroid').projectDir = new File(settingsDir, '../../libs/openFrameworksCompiled/project/android')
+
+include ':openframeworksAndroid'

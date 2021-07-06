@@ -182,14 +182,14 @@ public class OFAndroid {
 	}
 	
 	
-	static void reportPrecentage(float precent)
+	public static void reportPrecentage(float precent)
 	{
 		Activity activity = OFAndroidLifeCycle.getActivity();
 		if(activity != null && OFActivity.class.isInstance(activity))
 			((OFActivity)activity).onLoadPercent(precent);
 	}
 	
-	static void fatalErrorDialog(final Activity activity, final String msg){
+	public static void fatalErrorDialog(final Activity activity, final String msg){
 		activity.runOnUiThread(new Runnable(){
 			public void run() {
 				new AlertDialog.Builder(activity)  
@@ -811,14 +811,28 @@ public class OFAndroid {
 			});
 		}
 	}
+
+	public static void updateRefreshRates(){
+
+			runOnMainThread(new Runnable() {
+
+				@Override
+				public void run() {
+					try{
+						OFAndroidLifeCycle.getActivity().DetermineDisplayConfiguration();
+					}catch(Exception e){
+
+					}
+
+				}
+			});
+
+	}
 	
 	public static String getRandomUUID(){
 		return UUID.randomUUID().toString();
 	}
 
-//	public static int getCurrentFrameRate(){
-//		return OFActivity.A
-//	}
 	
 	public static boolean isApplicationSetup(){
 		if(OFAndroidLifeCycle.getGLView() == null) return false;
@@ -895,7 +909,7 @@ public class OFAndroid {
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
 	public static boolean keyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)) {
+        if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
             if( onBackPressed() ) {
             	return true;
            	} else {
@@ -917,6 +931,9 @@ public class OFAndroid {
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
 	public static boolean keyUp(int keyCode, KeyEvent event) {
+		if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
+			return true; // handled event
+		}
 		int unicodeChar = event.getUnicodeChar();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
 			unicodeChar = keyCode;
