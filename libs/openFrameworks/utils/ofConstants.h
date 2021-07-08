@@ -15,10 +15,7 @@
 // This enables glm's old behavior of initializing with non garbage values
 #define GLM_FORCE_CTOR_INIT
 
-// Set to 1 to use std filesystem instead of boost's
-#ifndef OF_USING_STD_FS
-#define OF_USING_STD_FS 0
-#endif
+
 
 //-------------------------------
 
@@ -112,6 +109,8 @@ enum ofTargetPlatform{
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
+	#define OF_USING_STD_FS 1
+    #define TARGET_IMPLEMENTS_URL_LOADER
 #elif defined(__ARMEL__)
 	#define TARGET_LINUX
 	#define TARGET_OPENGLES
@@ -127,6 +126,10 @@ enum ofTargetPlatform{
 #endif
 //-------------------------------
 
+// Set to 1 to use std filesystem instead of boost's
+#ifndef OF_USING_STD_FS
+#define OF_USING_STD_FS 0
+#endif
 
 // then the the platform specific includes:
 #ifdef TARGET_WIN32
