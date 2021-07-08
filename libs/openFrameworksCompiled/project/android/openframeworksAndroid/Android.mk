@@ -12,6 +12,9 @@ LOCAL_PATH := $(call my-dir)
 
 SOURCE_PATH := $(LIBS_ROOT)/openFrameworks
 
+OFX_ANDROID_PATH := $(OF_ROOT)/addons/ofxAndroid
+OFX_ANDROID_CPP_PATH := $(OFX_ANDROID_PATH)/ofAndroidLib/src/main/cpp
+
 # openFrameworks Library dependancies 
 
 # curl / openssl for url loading 
@@ -55,8 +58,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := openFrameworksAndroid
 
-LOCAL_CFLAGS    := -std=c17 -frtti -Wall -Werror -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
-LOCAL_CPPFLAGS  := -std=c++17 -stdlib=libc++ -frtti -Wall -Werror -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
+LOCAL_CFLAGS    := -std=c17 -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
+LOCAL_CPPFLAGS  := -std=c++17 -stdlib=libc++ -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
 LOCAL_LDLIBS    := -llog -lGLESv2 -lGLESv1_CM -lOpenSLES -landroid
 LOCAL_LDLIBS    := libGLESv3
 LOCAL_LDLIBS    := -lz -lgcc -lc -lm -ldl -llog -lc++ -lc++abi
@@ -107,9 +110,8 @@ else ifeq ($(TARGET_ARCH_ABI),x86_64)
     ABI := x86_64
 endif
 
-# utils
 
-LOCAL_SRC_FILES := $(SOURCE_PATH)/utils/ofConstants.h \
+LOCAL_SRC_FILES += $(SOURCE_PATH)/utils/ofConstants.h \
     $(SOURCE_PATH)/utils/ofFileUtils.cpp $(SOURCE_PATH)/utils/ofFileUtils.h \
     $(SOURCE_PATH)/utils/ofFpsCounter.cpp $(SOURCE_PATH)/utils/ofFpsCounter.h \
     $(SOURCE_PATH)/utils/ofJson.h \
@@ -131,6 +133,8 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/3d/of3dPrimitives.cpp \
     $(SOURCE_PATH)/3d/ofCamera.cpp \
     $(SOURCE_PATH)/3d/ofEasyCam.cpp \
     $(SOURCE_PATH)/3d/ofNode.cpp \
+    $(SOURCE_PATH)/app/ofMainLoop.cpp \
+    $(SOURCE_PATH)/app/ofAppBaseWindow.cpp \
 	$(SOURCE_PATH)/3d/of3dPrimitives.h \
 	$(SOURCE_PATH)/3d/of3dUtils.h \
 	$(SOURCE_PATH)/3d/ofCamera.h \
@@ -138,60 +142,80 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/3d/of3dPrimitives.cpp \
 	$(SOURCE_PATH)/3d/ofNode.h \
 	$(SOURCE_PATH)/3d/ofMesh.inl \
 	$(SOURCE_PATH)/app/ofWindowSettings.h \
-	$(SOURCE_PATH)/app/ofAppBaseWindow.cpp \
 	$(SOURCE_PATH)/app/ofAppRunner.h \
-	$(SOURCE_PATH)/app/ofMainLoop.cpp \
 	$(SOURCE_PATH)/app/ofAppBaseWindow.h \
 	$(SOURCE_PATH)/app/ofAppRunner.h \
 	$(SOURCE_PATH)/app/ofMainLoop.h \
 
 LOCAL_SRC_FILES += $(SOURCE_PATH)/communication/ofSerial.cpp $(SOURCE_PATH)/communication/ofSerial.h
 LOCAL_SRC_FILES += $(SOURCE_PATH)/events/ofEvents.cpp
-LOCAL_SRC_FILES := $(SOURCE_PATH)/events/ofEvents.h $(SOURCE_PATH)/events/ofEventUtils.h $(SOURCE_PATH)/events/ofEvent.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/gl/ofBufferObject.cpp $(SOURCE_PATH)/gl/ofFbo.cpp $(SOURCE_PATH)/gl/ofGLProgrammableRenderer.cpp
-LOCAL_SRC_FILES := $(SOURCE_PATH)/gl/ofGLRenderer.cpp $(SOURCE_PATH)/gl/ofGLUtils.cpp $(SOURCE_PATH)/gl/ofLight.cpp $(SOURCE_PATH)/gl/ofMaterial.cpp
-LOCAL_SRC_FILES := $(SOURCE_PATH)/gl/ofShader.cpp $(SOURCE_PATH)/gl/ofTexture.cpp $(SOURCE_PATH)/gl/ofVbo.cpp $(SOURCE_PATH)/gl/ofVboMesh.cpp
-LOCAL_SRC_FILES := $(SOURCE_PATH)/gl/ofBufferObject.h $(SOURCE_PATH)/gl/ofFbo.h $(SOURCE_PATH)/gl/ofGLProgrammableRenderer.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/gl/ofGLRenderer.h $(SOURCE_PATH)/gl/ofGLUtils.h $(SOURCE_PATH)/gl/ofLight.h $(SOURCE_PATH)/gl/ofMaterial.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/of3dGraphics.cpp $(SOURCE_PATH)/graphics/of3dGraphics.h 
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofBitmapFont.cpp $(SOURCE_PATH)/graphics/ofBitmapFont.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofCairoRenderer.cpp $(SOURCE_PATH)/graphics/ofCairoRenderer.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofGraphics.cpp $(SOURCE_PATH)/graphics/ofGraphics.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofGraphicsBaseTypes.cpp $(SOURCE_PATH)/graphics/ofGraphicsBaseTypes.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofImage.cpp $(SOURCE_PATH)/graphics/ofImage.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofPath.cpp $(SOURCE_PATH)/graphics/ofPath.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofPixels.cpp $(SOURCE_PATH)/graphics/ofPixels.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofRendererCollection.cpp $(SOURCE_PATH)/graphics/ofRendererCollection.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofTessellator.cpp $(SOURCE_PATH)/graphics/ofTessellator.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/graphics/ofTrueTypeFont.cpp $(SOURCE_PATH)/graphics/ofTrueTypeFont.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofMath.cpp $(SOURCE_PATH)/math/ofMath.h 
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofMathConstants.cpp $(SOURCE_PATH)/math/ofMathConstants.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofMatrix3x3.cpp $(SOURCE_PATH)/math/ofMatrix3x3.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofMatrix4x4.cpp $(SOURCE_PATH)/math/ofMatrix4x4.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofQuaternion.cpp $(SOURCE_PATH)/math/ofQuaternion.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofVec2f.cpp $(SOURCE_PATH)/math/ofVectorMath.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofVec3f.cpp $(SOURCE_PATH)/math/ofVec3f.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/math/ofVec4f.cpp $(SOURCE_PATH)/math/ofVec4f.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/sound/ofSoundBaseTypes.h $(SOURCE_PATH)/sound/ofSoundUtils.h 
-LOCAL_SRC_FILES := $(SOURCE_PATH)/sound/ofSoundBuffer.cpp $(SOURCE_PATH)/sound/ofSoundBuffer.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/sound/ofSoundPlayer.cpp $(SOURCE_PATH)/sound/ofSoundPlayer.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/sound/ofSoundStream.cpp $(SOURCE_PATH)/sound/ofSoundStream.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/sound/ofOpenALSoundPlayer.cpp $(SOURCE_PATH)/sound/ofOpenALSoundPlayer.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/types/ofBaseTypes.h 
-LOCAL_SRC_FILES := $(SOURCE_PATH)/types/ofColor.cpp $(SOURCE_PATH)/types/ofParameter.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/types/ofParameter.cpp $(SOURCE_PATH)/types/ofParameter.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/types/ofParameterGroup.cpp $(SOURCE_PATH)/types/ofParameterGroup.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/types/ofPoint.cpp $(SOURCE_PATH)/types/ofPoint.h
-LOCAL_SRC_FILES := $(SOURCE_PATH)/types/ofRectangle.h 
-LOCAL_SRC_FILES := $(SOURCE_PATH)/types/ofTypes.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/events/ofEvents.h $(SOURCE_PATH)/events/ofEventUtils.h $(SOURCE_PATH)/events/ofEvent.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofBufferObject.cpp $(SOURCE_PATH)/gl/ofFbo.cpp $(SOURCE_PATH)/gl/ofGLProgrammableRenderer.cpp
+LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofGLRenderer.cpp $(SOURCE_PATH)/gl/ofGLUtils.cpp $(SOURCE_PATH)/gl/ofLight.cpp $(SOURCE_PATH)/gl/ofMaterial.cpp
+LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofShader.cpp $(SOURCE_PATH)/gl/ofTexture.cpp $(SOURCE_PATH)/gl/ofVbo.cpp $(SOURCE_PATH)/gl/ofVboMesh.cpp
+LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofBufferObject.h $(SOURCE_PATH)/gl/ofFbo.h $(SOURCE_PATH)/gl/ofGLProgrammableRenderer.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofGLRenderer.h $(SOURCE_PATH)/gl/ofGLUtils.h $(SOURCE_PATH)/gl/ofLight.h $(SOURCE_PATH)/gl/ofMaterial.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/of3dGraphics.cpp $(SOURCE_PATH)/graphics/of3dGraphics.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofBitmapFont.cpp $(SOURCE_PATH)/graphics/ofBitmapFont.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofCairoRenderer.cpp $(SOURCE_PATH)/graphics/ofCairoRenderer.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofGraphics.cpp $(SOURCE_PATH)/graphics/ofGraphics.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofGraphicsBaseTypes.cpp $(SOURCE_PATH)/graphics/ofGraphicsBaseTypes.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofImage.cpp $(SOURCE_PATH)/graphics/ofImage.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofPath.cpp $(SOURCE_PATH)/graphics/ofPath.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofPixels.cpp $(SOURCE_PATH)/graphics/ofPixels.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofRendererCollection.cpp $(SOURCE_PATH)/graphics/ofRendererCollection.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofTessellator.cpp $(SOURCE_PATH)/graphics/ofTessellator.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofTrueTypeFont.cpp $(SOURCE_PATH)/graphics/ofTrueTypeFont.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofMath.cpp $(SOURCE_PATH)/math/ofMath.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofMathConstants.cpp $(SOURCE_PATH)/math/ofMathConstants.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofMatrix3x3.cpp $(SOURCE_PATH)/math/ofMatrix3x3.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofMatrix4x4.cpp $(SOURCE_PATH)/math/ofMatrix4x4.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofQuaternion.cpp $(SOURCE_PATH)/math/ofQuaternion.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofVec2f.cpp $(SOURCE_PATH)/math/ofVectorMath.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofVec3f.cpp $(SOURCE_PATH)/math/ofVec3f.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofVec4f.cpp $(SOURCE_PATH)/math/ofVec4f.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBaseTypes.h $(SOURCE_PATH)/sound/ofSoundUtils.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBuffer.cpp $(SOURCE_PATH)/sound/ofSoundBuffer.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundPlayer.cpp $(SOURCE_PATH)/sound/ofSoundPlayer.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundStream.cpp $(SOURCE_PATH)/sound/ofSoundStream.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofOpenALSoundPlayer.cpp $(SOURCE_PATH)/sound/ofOpenALSoundPlayer.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofBaseTypes.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofColor.cpp $(SOURCE_PATH)/types/ofParameter.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofParameter.cpp $(SOURCE_PATH)/types/ofParameter.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofParameterGroup.cpp $(SOURCE_PATH)/types/ofParameterGroup.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofPoint.cpp $(SOURCE_PATH)/types/ofPoint.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofRectangle.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofTypes.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoBaseTypes.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoGrabber.cpp $(SOURCE_PATH)/video/ofVideoGrabber.h
+LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoPlayer.cpp $(SOURCE_PATH)/video/ofVideoPlayer.h
 LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoBaseTypes.h
 LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoGrabber.cpp $(SOURCE_PATH)/video/ofVideoGrabber.h
 LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoPlayer.cpp $(SOURCE_PATH)/video/ofVideoPlayer.h
 
+LOCAL_SRC_FILES += $(OFX_ANDROID_CPP_PATH)/ofAppAndroidWindow.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidAccelerometer.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidLogChannel.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidSoundPlayer.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidSoundStream.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidUtils.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVibrator.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoGrabber.cpp \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoPlayer.cpp
 
-LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoBaseTypes.h
-LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoGrabber.cpp $(SOURCE_PATH)/video/ofVideoGrabber.h
-LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoPlayer.cpp $(SOURCE_PATH)/video/ofVideoPlayer.h
+LOCAL_SRC_FILES += $(OFX_ANDROID_CPP_PATH)/ofxAndroid.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidApp.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidCircBuffer.h \
+	$(OFX_ANDROID_CPP_PATH)/ofAppAndroidWindow.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidAccelerometer.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidLogChannel.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidSoundPlayer.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidSoundStream.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidUtils.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVibrator.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoGrabber.h \
+	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoPlayer.h
+
 
 LOCAL_STATIC_LIBRARIES := freetype
 LOCAL_STATIC_LIBRARIES := FreeImage
