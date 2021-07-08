@@ -33,27 +33,6 @@ android {
             path 'Android.mk'
         }
     }
-//    flavorDimensions "abi"
-//    productFlavors {
-//        arm7 {
-//            dimension "abi"
-//            ndk.abiFilters 'armeabi-v7a'
-//        }
-//        x86 {
-//            dimension "abi"
-//            ndk.abiFilters 'x86'
-//        }
-//
-//        arm64 {
-//            dimension "abi"
-//            ndk.abiFilters 'arm64-v8a'
-//        }
-//
-//        x86_64 {
-//            dimension "abi"
-//            ndk.abiFilters 'x86_64'
-//        }
-//    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -67,10 +46,10 @@ dependencies {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    implementation project(':openframeworksAndroid')
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.getkeepsafe.relinker:relinker:1.4.3'
 

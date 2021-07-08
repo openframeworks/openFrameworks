@@ -1,6 +1,13 @@
 apply plugin: 'com.android.library'
 // pointing to cmake's source code for the same project
 def PRJ_SRC_ROOT = './'
+def ofRoot(){ return '../../../../' }
+final ofSource = ofRoot() + 'libs/openFrameworks'
+final ofLibs = ofRoot() + 'libs'
+final addons = ofRoot() + 'addons'
+
+final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
+
 
 android {
     compileSdkVersion 30
@@ -10,9 +17,30 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 11
+        versionName '11'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        externalNativeBuild {
+
+            // For ndk-build, instead use the ndkBuild block.
+//            cmake {
+//
+//                // Passes optional arguments to CMake.
+//                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
+//
+//                // Sets a flag to enable format macro constants for the C compiler.
+//                cFlags "-D__STDC_FORMAT_MACROS"
+//
+//                // Sets optional flags for the C++ compiler.
+//                cppFlags "-fexceptions", "-frtti"
+//            }
+
+            ndkBuild {
+                arguments "NDK_OUT=${ofLibOutput}"
+
+//                arguments "ADDON_INCLUDES=+${ADDON_INCLUDES}"
+            }
+        }
     }
     buildTypes {
         release {
@@ -29,31 +57,19 @@ android {
         }
     }
     externalNativeBuild {
+//        cmake {
+//            // Provides a relative path to your CMake build script.
+//            path "CMakeLists.txt"
+//        }
         ndkBuild {
             path 'Android.mk'
         }
     }
-    flavorDimensions "abi"
-    productFlavors {
-        arm7 {
-            dimension "abi"
-            ndk.abiFilters 'armeabi-v7a'
-        }
-        x86 {
-            dimension "abi"
-            ndk.abiFilters 'x86'
-        }
-
-        arm64 {
-            dimension "abi"
-            ndk.abiFilters 'arm64-v8a'
-        }
-
-        x86_64 {
-            dimension "abi"
-            ndk.abiFilters 'x86_64'
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildToolsVersion '30.0.3'
 
 }
 
@@ -62,18 +78,14 @@ dependencies {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 }
 
 
-//def ofRoot(){ return '../../../../' }
-//final ofSource = ofRoot() + 'libs/openFrameworks'
-//final ofLibs = ofRoot() + 'libs'
-//final addons = ofRoot() + 'addons'
-//
+
 //// Load common functions
 //
 //apply plugin: 'com.android.library'
