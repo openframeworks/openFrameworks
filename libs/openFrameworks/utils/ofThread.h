@@ -311,7 +311,7 @@ protected:
     ///
     virtual void threadedFunction();
 
-    /// \brief The Poco::Thread that runs the Poco::Runnable.
+    /// \brief The std::thread that runs the runnable.
     std::thread thread;
 
     /// \brief The internal mutex called through lock() & unlock().
