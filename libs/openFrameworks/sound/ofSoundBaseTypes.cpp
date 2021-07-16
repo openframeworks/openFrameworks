@@ -33,8 +33,10 @@ void ofBaseSoundStream::printDeviceList() const {
 		ofSoundDevice::Api api = (ofSoundDevice::Api)i;
 		auto devices = getDeviceList(api);
 		if(!devices.empty()){
+#ifndef TARGET_ANDROID
 				ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << toString(api);
 				ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
+#endif
 		}
 	}
 }
@@ -48,10 +50,17 @@ std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev) {
 	return os;
 }
 
+std::ostream &operator<<(std::ostream &os, const std::vector<ofSoundDevice> &devs) {
+    return <#initializer#>;
+}
 //------------------------------------------------------------
 std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs) {
 	for(std::size_t i = 0; i < devs.size(); i++) {
 		os << devs[i] << std::endl;
 	}
 	return os;
+}
+
+void ofBaseSoundOutput::audioOut(ofSoundBuffer &buffer) {
+
 }

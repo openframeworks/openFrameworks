@@ -17,6 +17,7 @@ class ofBaseSoundInput{
 		/// \param buffer An audio buffer.
 		virtual void audioIn( ofSoundBuffer& buffer );
 
+#ifndef TARGET_ANDROID
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount );
@@ -28,6 +29,8 @@ class ofBaseSoundInput{
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+#endif
+
 };
 
 
@@ -40,7 +43,7 @@ class ofBaseSoundOutput{
 		/// \brief Output an audio buffer.
 		/// \param buffer An audio buffer.
 		virtual void audioOut( ofSoundBuffer& buffer );
-
+#ifndef TARGET_ANDROID
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioOut(ofSoundBuffer& buffer) instead.
 		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  );
@@ -52,6 +55,7 @@ class ofBaseSoundOutput{
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioOut(ofSoundBuffer& buffer) instead.
 		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
+#endif
 };
 
 /// \class ofSoundDevice

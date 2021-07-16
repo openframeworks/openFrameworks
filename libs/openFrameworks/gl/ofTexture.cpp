@@ -1270,3 +1270,11 @@ float ofTexture::getHeight() const {
 float ofTexture::getWidth() const {
 	return texData.width;
 }
+
+void ofTexture::enableTextureTarget(int textureLocation) const {
+
+}
+
+void ofTexture::disableTextureTarget(int textureLocation) const {
+
+}

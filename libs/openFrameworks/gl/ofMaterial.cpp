@@ -336,6 +336,10 @@ void ofMaterial::setCustomUniformTexture(const string & name, int textureTarget,
 	uniformstex[name] = {textureTarget, textureID, textureLocation};
 }
 
+ofMaterial::Data ofMaterial::getData() const {
+	return ofMaterial::Data();
+}
+
 #include "shaders/phong.vert"
 #include "shaders/phong.frag"
 
@@ -370,4 +374,9 @@ namespace{
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + source;
         return source;
     }
+}
+
+void
+ofBaseMaterial::uploadMatrices(const ofShader &shader, ofGLProgrammableRenderer &renderer) const {
+
 }

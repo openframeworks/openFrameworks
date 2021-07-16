@@ -1472,4 +1472,14 @@ string ofShader::nameForType(GLenum type){
 	}
 }
 
+template<typename T>
+void ofShader::setDefineConstantTemp(const string &name, T value) {
+
+}
+
+template<typename T>
+void ofShader::setConstantTemp(const string &name, const string &type, T value) {
+
+}
+
 
