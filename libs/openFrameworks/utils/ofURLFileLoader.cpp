@@ -5,7 +5,7 @@
 #include "ofConstants.h"
 
 using namespace std;
-
+#if !defined(NO_URL_LOADER)
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 	#include <curl/curl.h>
 	#include "ofThreadChannel.h"
@@ -414,3 +414,5 @@ void ofURLFileLoaderShutdown(){
 		ofStopURLLoader();
 	}
 }
+
+#endif

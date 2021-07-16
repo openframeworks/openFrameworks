@@ -4,6 +4,7 @@
 #include "ofFileUtils.h"
 #include <map>
 
+#if !defined(NO_URL_LOADER)
 class ofHttpResponse;
 
 /// \class ofHttpRequest
@@ -217,3 +218,5 @@ public:
 	virtual int handleRequestAsync(const ofHttpRequest& request)=0; // returns id
 
 };
+
+#endif
