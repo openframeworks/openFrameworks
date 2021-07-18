@@ -473,3 +473,11 @@ bool ofxAndroidSoundPlayer::isLoaded() const{
 
 	return env->CallBooleanMethod(javaSoundPlayer,javaIsLoadedMethod);
 }
+
+void ofxAndroidSoundPlayer::audioIn(ofSoundBuffer &) const {
+
+}
+
+void ofxAndroidSoundPlayer::audioOut(ofSoundBuffer &) const {
+
+}

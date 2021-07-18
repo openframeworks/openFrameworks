@@ -89,6 +89,6 @@ private:
 	bool initCamera();
 
 	// only to be used internally to resize;
-	ofPixelsRef getAuxBuffer();
+	//ofPixelsRef getAuxBuffer();
 	std::shared_ptr<Data> data;
 };

@@ -46,8 +46,12 @@ static bool accumulateTouchEvents = false;
 void ofExitCallback();
 
 //----- define in main.cpp---//
-void ofAndroidApplicationInit();
-void ofAndroidActivityInit();
+void ofAndroidApplicationInit(){
+
+}
+void ofAndroidActivityInit(){
+
+}
 
 //static ofAppAndroidWindow window;
 

@@ -68,8 +68,8 @@ ofxAndroidVideoGrabber::Data::Data()
 ,bGrabberInited(false)
 ,cameraId(-1)
 ,appPaused(false)
-,newPixels(false)
 ,bUsePixels(true)
+,newPixels(false)
 ,attemptFramerate(-1)
 ,javaVideoGrabber(nullptr){
 	JNIEnv *env = ofGetJNIEnv();
