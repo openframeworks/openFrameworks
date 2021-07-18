@@ -5,18 +5,18 @@ def ofRoot(){ return '../../../../' }
 final ofSource = ofRoot() + 'libs/openFrameworks'
 final ofLibs = ofRoot() + 'libs'
 final addons = ofRoot() + 'addons'
-
+def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
 final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
 
 
 android {
-    compileSdkVersion 30
-    ndkPath "/Users/eyenine/Documents/android-ndk-r21e"  // Point to your own NDK if wanted else
-    ndkVersion '21.4.7075529' //NDK will automatically sideload with this
+    compileSdkVersion 31
+    ndkPath "/Users/eyenine/Documents/android-ndk-r22b"  // Point to your own NDK if wanted else
+    //ndkVersion '21.4.7075529' //NDK will automatically sideload with this
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 11
         versionName '11'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -36,7 +36,7 @@ android {
 //            }
 
             ndkBuild {
-                arguments "NDK_OUT=${ofLibOutput}"
+//                arguments "NDK_OUT=${ofLibOutput}"
 
 //                arguments "ADDON_INCLUDES=+${ADDON_INCLUDES}"
             }
@@ -52,7 +52,7 @@ android {
     sourceSets {
         main {
             manifest.srcFile "${PRJ_SRC_ROOT}/AndroidManifest.xml"
-//            java.srcDirs = ["${PRJ_SRC_ROOT}/java"]
+            java.srcDirs = ["${OFX_ANDROID}/java"]
 //            res.srcDirs = ["${PRJ_SRC_ROOT}/res"]
         }
     }
@@ -70,6 +70,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildToolsVersion '30.0.3'
+    ndkVersion '22.1.7171670'
 
 }
 
