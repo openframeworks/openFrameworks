@@ -520,11 +520,13 @@ void ofSetDataPathRoot(const std::filesystem::path& newRoot){
 
 //--------------------------------------------------
 string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
-    if(makeAbsolute && path.is_absolute())
-        return path.string();
+    if(makeAbsolute && path.is_absolute()) {
+		return path.string();
+	}
     
-	if(!enableDataPath)
-        return path.string();
+	if(!enableDataPath) {
+		return path.string();
+	}
 
     bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
 
