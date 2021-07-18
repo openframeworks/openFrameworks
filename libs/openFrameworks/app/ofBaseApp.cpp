@@ -5,9 +5,6 @@ ofBaseApp::ofBaseApp() {
 	mouseX = mouseY = 0;
 }
 
-ofBaseApp::~ofBaseApp(){
-}
-
 void ofBaseApp::setup(){}
 void ofBaseApp::update(){}
 void ofBaseApp::draw(){}

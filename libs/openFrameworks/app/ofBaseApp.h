@@ -15,7 +15,7 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 	public:
 		ofBaseApp();
 
-		virtual ~ofBaseApp();
+		virtual ~ofBaseApp() = 0;
 
 		virtual void setup();
 		virtual void update();
