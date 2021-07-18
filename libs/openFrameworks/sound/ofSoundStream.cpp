@@ -1,4 +1,6 @@
 #include "ofSoundStream.h"
+
+#include <utility>
 #include "ofAppRunner.h"
 #include "ofLog.h"
 
@@ -11,6 +13,8 @@
 #define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
 #elif defined(OF_SOUNDSTREAM_ANDROID)
 #include "ofxAndroidSoundStream.h"
+#include "ofSoundBaseTypes.h"
+
 #define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
 #elif defined(OF_SOUNDSTREAM_IOS)
 #include "ofxiOSSoundStream.h"
@@ -29,7 +33,7 @@ using namespace std;
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
 	if(api!=ofSoundDevice::UNSPECIFIED && device.api!=api){
-		ofLogWarning("ofSoundStreamSettings") << "Setting IN device with api: " << toString(device.api) << " will override the previously set: " << toString(api);
+		ofLogWarning("ofSoundStreamSettings") << "Setting IN device with api: " << device.api << " will override the previously set: " << api;
 	}
 	api = device.api;
 	inDevice = device;
@@ -39,7 +43,7 @@ bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setOutDevice(const ofSoundDevice & device){
 	if(api!=ofSoundDevice::UNSPECIFIED && device.api!=api){
-		ofLogWarning("ofSoundStreamSettings") << "Setting OUT device with api: " << toString(device.api) << " will override the previously set: " << toString(api);
+		ofLogWarning("ofSoundStreamSettings") << "Setting OUT device with api: " << device.api << " will override the previously set: " << api;
 	}
 	api = device.api;
 	outDevice = device;
@@ -49,11 +53,11 @@ bool ofSoundStreamSettings::setOutDevice(const ofSoundDevice & device){
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setApi(ofSoundDevice::Api api){
 	if(api!=ofSoundDevice::UNSPECIFIED && inDevice.deviceID!=-1 && inDevice.api != api){
-		ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " << toString(inDevice.api) << " won't do anything";
+		ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " << inDevice.api << " won't do anything";
 		return false;
 	}
 	if(api!=ofSoundDevice::UNSPECIFIED && outDevice.deviceID!=-1 && outDevice.api != api){
-		ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " << toString(outDevice.api) << " won't do anything";
+		ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " << outDevice.api << " won't do anything";
 		return false;
 	}
 	this->api = api;
@@ -137,8 +141,11 @@ void ofSoundStreamClose(){
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
+
 	vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
+#ifndef TARGET_ANDROID
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
+#endif
 	return deviceList;
 }
 
@@ -151,7 +158,7 @@ ofSoundStream::ofSoundStream(){
 
 //------------------------------------------------------------
 void ofSoundStream::setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr){
-	soundStream = soundStreamPtr;
+	soundStream = std::move(soundStreamPtr);
 }
 
 //------------------------------------------------------------
@@ -171,7 +178,9 @@ vector<ofSoundDevice> ofSoundStream::getDeviceList(ofSoundDevice::Api api) const
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStream::listDevices() const{
 	vector<ofSoundDevice> deviceList = getDeviceList();
+#ifndef TARGET_ANDROID
 	ofLogNotice("ofSoundStream::listDevices") << std::endl << deviceList;
+#endif
 	return deviceList;
 }
 
@@ -342,15 +351,19 @@ vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name,
 	vector<ofSoundDevice> devs = getDeviceList(api);
 	vector<ofSoundDevice> hits;
 	
-	for(size_t i = 0; i < devs.size(); i++) {
-		bool nameMatch = devs[i].name.find(name) != string::npos;
-		bool inMatch = (inChannels == UINT_MAX) || (devs[i].inputChannels == inChannels);
-		bool outMatch = (outChannels == UINT_MAX) || (devs[i].outputChannels == outChannels);
+	for(auto & dev : devs) {
+		bool nameMatch = dev.name.find(name) != string::npos;
+		bool inMatch = (inChannels == UINT_MAX) || (dev.inputChannels == inChannels);
+		bool outMatch = (outChannels == UINT_MAX) || (dev.outputChannels == outChannels);
 		
 		if(nameMatch && inMatch && outMatch) {
-			hits.push_back(devs[i]);
+			hits.push_back(dev);
 		}
 	}
 	
 	return hits;
+}
+
+ofSoundStream::~ofSoundStream() {
+
 }
