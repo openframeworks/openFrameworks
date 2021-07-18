@@ -1,5 +1,0 @@
-//
-//include ':openframeworksAndroid'
-//
-//project(':openframeworksAndroid').projectDir = new File(settingsDir, '../../../libs/openFrameworksCompiled/project/android')
-//

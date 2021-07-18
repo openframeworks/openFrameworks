@@ -6,7 +6,7 @@
 class ofxAndroidSoundPlayer: public ofBaseSoundPlayer{
 public:
 	ofxAndroidSoundPlayer();
-	virtual ~ofxAndroidSoundPlayer();
+	~ofxAndroidSoundPlayer();
 
 	bool load(const std::filesystem::path& fileName, bool stream = false);
 	void unload();
@@ -30,6 +30,9 @@ public:
 	bool isPaused() const;
 	float getVolume() const;
 	bool isLoaded() const;
+
+	void audioIn(ofSoundBuffer&) const;
+	void audioOut(ofSoundBuffer&) const;
 
 private:
 	jobject javaSoundPlayer;
