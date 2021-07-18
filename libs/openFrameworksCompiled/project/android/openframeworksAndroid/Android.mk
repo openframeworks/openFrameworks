@@ -15,7 +15,7 @@ ADDONS_PATH := $(call shorten_path,$(OF_ROOT)/addons)
 SOURCE_PATH := $(LIBS_ROOT)/openFrameworks
 
 OFX_ANDROID_PATH := $(ADDONS_PATH)/ofxAndroid
-OFX_ANDROID_CPP_PATH := $(OFX_ANDROID_PATH)/ofAndroidLib/src/main/cpp
+OFX_ANDROID_CPP_PATH := $(OFX_ANDROID_PATH)/src
 
 SYSROOT=/Users/eyenine/Documents/android-ndk-r22b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot
 TOOLS_HOST=linux
@@ -120,7 +120,7 @@ LOCAL_C_INCLUDES += \
 	$(SOURCE_PATH)/types \
 	$(SOURCE_PATH)/utils \
 	$(SOURCE_PATH)/video \
-	$(OF_ROOT)/addons/ofxAndroid/ofAndroidLib/src/main/cpp \
+	$(OF_ROOT)/addons/ofxAndroid/src \
 	$(OF_ROOT)/addons/ofxAccelerometer/src \
 	$(LIBS_ROOT)/FreeImage/include \
 	$(LIBS_ROOT)/freetype/include \
@@ -137,10 +137,6 @@ LOCAL_C_INCLUDES += \
 	$(ADDONS_INCLUDES)
 
 
-
-
-
-
 LOCAL_SRC_FILES += \
     $(SOURCE_PATH)/utils/ofFileUtils.cpp \
     $(SOURCE_PATH)/utils/ofFpsCounter.cpp \
@@ -153,6 +149,7 @@ LOCAL_SRC_FILES += \
     $(SOURCE_PATH)/utils/ofUtils.cpp \
     $(SOURCE_PATH)/utils/ofXml.cpp
 
+LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBaseTypes.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBuffer.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundPlayer.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundStream.cpp
@@ -216,6 +213,7 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoBaseTypes.cpp \
 	$(SOURCE_PATH)/video/ofVideoPlayer.cpp
 
 
+
 LOCAL_SRC_FILES += $(OFX_ANDROID_CPP_PATH)/ofAppAndroidWindow.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidAccelerometer.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidLogChannel.cpp \
@@ -225,6 +223,7 @@ LOCAL_SRC_FILES += $(OFX_ANDROID_CPP_PATH)/ofAppAndroidWindow.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVibrator.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoGrabber.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoPlayer.cpp
+
 
 LOCAL_SRC_FILES += $(ADDONS_PATH)/ofxAccelerometer/src/ofxAccelerometer.cpp
 
