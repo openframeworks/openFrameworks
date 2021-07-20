@@ -1,22 +1,22 @@
-ifeq ($(call ndk-major-at-least,21),true)
-    shorten_path = $(abspath $1)
-else
-    # Strip the drive letter, call abspath, prepend the drive letter.
-    shorten_path = $(join $(filter %:,$(subst :,: ,$1)),$(abspath $(filter-out %:,$(subst :,: ,$1))))
-endif
+#ifeq ($(call ndk-major-at-least,21),true)
+#    shorten_path = $(abspath $1)
+#else
+#    # Strip the drive letter, call abspath, prepend the drive letter.
+#    shorten_path = $(join $(filter %:,$(subst :,: ,$1)),$(abspath $(filter-out %:,$(subst :,: ,$1))))
+#endif
 
-OF_ROOT := $(call shorten_path,./../../../../../)
-LIBS_ROOT := $(call shorten_path,$(OF_ROOT)/libs)
+OF_LOCAL_PATH := $(call my-dir)
+OF_ROOT := ${OF_LOCAL_PATH}/../../../../../
+LIBS_ROOT := $(OF_ROOT)/libs
 
-LOCAL_PATH := $(call my-dir)
 
-ADDONS_PATH := $(call shorten_path,$(OF_ROOT)/addons)
 
+ADDONS_PATH := $(OF_ROOT)/addons
 SOURCE_PATH := $(LIBS_ROOT)/openFrameworks
-
 OFX_ANDROID_PATH := $(ADDONS_PATH)/ofxAndroid
 OFX_ANDROID_CPP_PATH := $(OFX_ANDROID_PATH)/src
 
+# need to figure out how to determine this dynamically
 SYSROOT=/Users/eyenine/Documents/android-ndk-r22b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot
 TOOLS_HOST=linux
 
@@ -125,9 +125,9 @@ LOCAL_C_INCLUDES += \
 	$(LIBS_ROOT)/FreeImage/include \
 	$(LIBS_ROOT)/freetype/include \
 	$(LIBS_ROOT)/freetype/include/freetype2 \
-	$(LIBS_ROOT)/freetype/include/freetype2/config \
-	$(LIBS_ROOT)/freetype/include/freetype2/internal \
-	$(LIBS_ROOT)/freetype/include/freetype2/internal/services \
+	$(LIBS_ROOT)/freetype/include/freetype2/freetype/config \
+	$(LIBS_ROOT)/freetype/include/freetype2/freetype/internal \
+	$(LIBS_ROOT)/freetype/include/freetype2/freetype/internal/services \
 	$(LIBS_ROOT)/glm/include \
 	$(LIBS_ROOT)/pugixml/include \
 	$(LIBS_ROOT)/json/include \
@@ -149,11 +149,12 @@ LOCAL_SRC_FILES += \
     $(SOURCE_PATH)/utils/ofUtils.cpp \
     $(SOURCE_PATH)/utils/ofXml.cpp
 
-LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBaseTypes.cpp
-LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBuffer.cpp
-LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundPlayer.cpp
-LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundStream.cpp
-LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofOpenALSoundPlayer.cpp
+
+LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBaseTypes.cpp \
+	$(SOURCE_PATH)/sound/ofSoundBuffer.cpp \
+	$(SOURCE_PATH)/sound/ofSoundPlayer.cpp \
+	$(SOURCE_PATH)/sound/ofSoundStream.cpp \
+	$(SOURCE_PATH)/sound/ofOpenALSoundPlayer.cpp
 
 # 3d
 LOCAL_SRC_FILES += $(SOURCE_PATH)/3d/of3dPrimitives.cpp \
@@ -229,6 +230,7 @@ LOCAL_SRC_FILES += $(ADDONS_PATH)/ofxAccelerometer/src/ofxAccelerometer.cpp
 
 
 include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_STATIC_LIBRARY)
 
 
 

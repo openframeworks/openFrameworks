@@ -1,4 +1,10 @@
-apply plugin: 'com.android.library'
+
+plugins {
+    id  'com.android.library'
+}
+
+
+
 // pointing to cmake's source code for the same project
 def PRJ_SRC_ROOT = './'
 def ofRoot(){ return '../../../../' }
@@ -8,11 +14,17 @@ final addons = ofRoot() + 'addons'
 def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
 final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
 
+def LIB_OUTPUT=ofRoot() + './../../../../libs/openFrameworksCompiled/lib/android'
+
 
 android {
     compileSdkVersion 31
     ndkPath "/Users/eyenine/Documents/android-ndk-r22b"  // Point to your own NDK if wanted else
     //ndkVersion '21.4.7075529' //NDK will automatically sideload with this
+
+//    buildFeatures {
+//        prefab true ""
+//    }
 
     defaultConfig {
         minSdkVersion 21
@@ -20,11 +32,12 @@ android {
         versionCode 11
         versionName '11'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-        externalNativeBuild {
 
-            // For ndk-build, instead use the ndkBuild block.
-//            cmake {
-//
+        externalNativeBuild {
+            if (!project.hasProperty("ndkBuild")) {
+                cmake {
+                    arguments "-DANDROID_STL=c++_static"
+                    //
 //                // Passes optional arguments to CMake.
 //                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
 //
@@ -33,12 +46,12 @@ android {
 //
 //                // Sets optional flags for the C++ compiler.
 //                cppFlags "-fexceptions", "-frtti"
-//            }
-
-            ndkBuild {
+                }
+            } else {
+                ndkBuild {
 //                arguments "NDK_OUT=${ofLibOutput}"
-
 //                arguments "ADDON_INCLUDES=+${ADDON_INCLUDES}"
+                }
             }
         }
     }
@@ -57,12 +70,14 @@ android {
         }
     }
     externalNativeBuild {
-//        cmake {
-//            // Provides a relative path to your CMake build script.
-//            path "CMakeLists.txt"
-//        }
-        ndkBuild {
-            path 'Android.mk'
+        if (!project.hasProperty("ndkBuild")) {
+            cmake {
+                path "CMakeLists.txt"
+            }
+        } else {
+            ndkBuild {
+                path "Android.mk"
+            }
         }
     }
     compileOptions {
@@ -71,6 +86,28 @@ android {
     }
     buildToolsVersion '30.0.3'
     ndkVersion '22.1.7171670'
+
+    // Enable generation of Prefab packages and include them in the library's AAR.
+    buildFeatures {
+        prefabPublishing true
+    }
+
+    // Include the "mylibrary" module from the native build system in the AAR,
+    // and export the headers in src/main/cpp/include to its consumers
+    prefab {
+        openFrameworksAndroid {
+            //headers "src/main/cpp/include"
+        }
+    }
+
+    // Avoid packing the unnecessary libraries into final AAR. For details
+    // refer to https://issuetracker.google.com/issues/168777344#comment5
+    // Note that if your AAR also contains Java/Kotlin APIs, you should not
+    // exclude libraries that are used by those APIs.
+    packagingOptions {
+        exclude("**/libopenFrameworksAndroid.so")
+        exclude("**/classes.jar")
+    }
 
 }
 
