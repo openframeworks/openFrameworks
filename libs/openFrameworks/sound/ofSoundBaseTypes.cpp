@@ -14,10 +14,6 @@ void ofBaseSoundStream::printDeviceList() const {
 	}
 }
 
-ofBaseSoundStream::~ofBaseSoundStream() {
-
-}
-
 #ifndef TARGET_ANDROID
 //------------------------------------------------------------
 std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev) {
@@ -43,10 +39,7 @@ void ofBaseSoundInput::audioIn(ofSoundBuffer &buffer) {
 
 }
 
-ofBaseSoundOutput::~ofBaseSoundOutput() {
+void ofBaseSoundOutput::audioOut(ofSoundBuffer &buffer) {
 
 }
 
-ofBaseSoundPlayer::~ofBaseSoundPlayer() {
-
-}

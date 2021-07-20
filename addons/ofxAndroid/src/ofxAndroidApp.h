@@ -59,4 +59,14 @@ public:
 	virtual void deviceHighestRefreshRateChangedEvent(int & refreshRate){
 		deviceHighestRefreshRateChanged(refreshRate);
 	}
+
+	virtual void audioIn( ofSoundBuffer& buffer ) {
+
+	}
+
+	virtual void audioOut( ofSoundBuffer& buffer ) {
+
+	}
 };
+
+
