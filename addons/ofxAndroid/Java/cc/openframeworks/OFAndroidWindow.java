@@ -611,7 +611,10 @@ class OFGLSurfaceView extends GLSurfaceView {
         Log.i("OF","OFGLSurfaceView::onResume");
         if(mRenderer != null)
         {
-
+            if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT) {
+                Log.i("OF", "OFGLSurfaceView::onResume however no CONTEXT");
+                OFAndroid.render();
+            }
         }
 	    super.onResume();
 
@@ -627,15 +630,15 @@ class OFGLSurfaceView extends GLSurfaceView {
 //            so it is not that surprising, that not every surfaceDestoyed callback means what we might think it means.
 //        We don't need this callback that much anyways, the renderer does not call render callbacks when gl context is invalid, so the OFAndroidWindow.onSurfaceCreated callback should be enought for us to make things work.
 
-//    @Override
-//	public void surfaceDestroyed(SurfaceHolder holder) {
-//        Log.i("OF","surfaceDestroyed");
-//    	//super.surfaceDestroyed(holder);
-//    	mHolder = null;
-//    	//mSurface = null;
-//		//OFAndroid.onSurfaceDestroyed();
-//        //mRenderer.exit();
-//	}
+    @Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i("OF","surfaceDestroyed");
+    	super.surfaceDestroyed(holder);
+    	mHolder = null;
+    	mSurface = null;
+		OFAndroid.onSurfaceDestroyed();
+        mRenderer.exit();
+	}
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -746,6 +749,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         Log.i("OF","onSurfaceChanged width:" + w + " height:" + h);
         setResolution(w,h, false);
         if(!setup && OFAndroid.unpackingDone){
+            Log.i("OF","onSurfaceChanged && OFAndroid.unpackingDone");
             setup();
         } else if(!setup && !OFAndroid.unpackingDone) {
             Log.i("OF","onSurfaceChanged not setup however !OFAndroid.unpackingDone");
@@ -787,28 +791,39 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
 
-
+    private int drawFrame = 0;
     @Override
     public void onDrawFrame(GL10 gl) {
+            drawFrame++;
+            //Log.i("OF","onDrawFrame" + drawFrame);
             // Remove the initial background
             if (!initialRender) {
                 initialRender = true;
+                Log.i("OF", "onDrawFrame initialRenderFrame!");
                 if( OFAndroidLifeCycle.getGLView() != null) OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
             }
-    	if(setup && OFAndroid.unpackingDone){
-    	    if(android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT)
-    		    OFAndroid.render();
-    	    else {
-                Log.e("OF", "ofAndroidWindow::onDrawFrame GLContext = EGL_NO_CONTEXT BAD. Restarting Window");
-                setup = false;
+            if(setup && OFAndroid.unpackingDone){
+                if(android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
+                    //Log.i("OF", "onDrawFrame setup and unpacking done");
+                    if(firstFrameDrawn == false) {
+                        firstFrameDrawn = true;
+                        OFAndroidLifeCycle.SetFirstFrameDrawn();
+                    }
+                    OFAndroid.render();
+                }
+                else {
+                    Log.e("OF", "ofAndroidWindow::onDrawFrame GLContext = EGL_NO_CONTEXT BAD. Restarting Window");
+                    setup = false;
+                    setup();
+                }
+            }else if(!setup && OFAndroid.unpackingDone){
+                Log.i("OF", "onDrawFrame !setup and unpacking done");
                 setup();
+            }else{
+                //Log.e("OF", "onDrawFrame  draw clear");
+                gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+                gl.glClearColor(0f, 0f, 0f, 1.0f);
             }
-    	}else if(!setup && OFAndroid.unpackingDone){
-    		setup();
-    	}else{
-    		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-    		gl.glClearColor(0f, 0f, 0f, 1.0f);
-    	}
     }
     
     public boolean isSetup(){
@@ -823,6 +838,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     private static boolean setup;
     private static boolean resolutionSetup;
     private static boolean initialRender;
+    private static boolean firstFrameDrawn = false;
     private int w,h;
     public static boolean has_surface = false;
 }

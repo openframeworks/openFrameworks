@@ -844,7 +844,7 @@ public class OFAndroid {
     private static OFGestureListener gestureListener;
 	private static OFOrientationListener orientationListener;
 	private static String dataPath;
-	public static boolean unpackingDone;
+	public static boolean unpackingDone = false;
 
 	public static boolean wideGamut = false;
 	public static boolean hdrScreen = false;

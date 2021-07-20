@@ -358,8 +358,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	@Override
 	protected void onStop() {
 		Log.i("OF", "onStop");
+		hasPaused = true;
 		OFAndroidLifeCycle.glStop();
+
 		super.onStop();
+
 	}
 	
 	@Override
@@ -374,19 +377,28 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	protected void onResume() {
 		Log.i("OF", "onResume");
 		OFAndroidLifeCycle.setActivity(this);
+
 		super.onResume();
 
-		if(hasPaused == false) return;
+		if(OFAndroidLifeCycle.isInit() == true && OFAndroidLifeCycle.firstFrameDrawn() == true && android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT) {
+			hasPaused = true;
+		}
+
+		if(OFAndroidLifeCycle.firstFrameDrawn()) {
+			Log.i("OF", "onResume firstFrameDrawn");
+		}
+
+		if( hasPaused == false) {
+			Log.i("OF", "onResume hasPaused == false");
+			return;
+		}
+
 		if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT){
 			Log.e("OF", "onResume eglGetCurrentContext = EGL_NO_CONTEXT BAD");
-			hasPaused = true;
 			OFAndroidWindow.exit();
 			OFAndroidWindow.surfaceHasBeenDestroyed();
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		}
-
-
-
 		if(OFAndroidLifeCycle.isInit() && mOFGlSurfaceContainer == null) {
 			Log.i("OF", "onResume mOFGlSurfaceContainer is null");
 		}
@@ -403,17 +415,20 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
 		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 
+		hasPaused = false;
+
 	}
 	@Override
 	protected void onPause() {
 		Log.i("OF", "onPause");
-		super.onPause();
 		hasPaused = true;
 		OFAndroidLifeCycle.glPause();
+		super.onPause();
 	}
 	@Override
 	protected void onDestroy() {
 		Log.e("OF", "onDestroy");
+		hasPaused = true;
 		OFAndroidLifeCycle.glDestroy();
 		if (displayManager!=null) {
 			displayManager.unregisterDisplayListener(this);

@@ -53,6 +53,8 @@ public class OFAndroidLifeCycle
 	private static AtomicBoolean m_isInit = new AtomicBoolean(false);
 	private static AtomicBoolean m_isSurfaceCreated = new AtomicBoolean(false);
 
+	private static AtomicBoolean m_isFirstFrameDrawn = new AtomicBoolean(false);
+
 	private static AtomicBoolean m_hasSetup = new AtomicBoolean(false);
 
 
@@ -230,6 +232,13 @@ public class OFAndroidLifeCycle
 				}
 			});
     }
+
+	public static void SetFirstFrameDrawn()
+	{
+		synchronized (m_isFirstFrameDrawn) {
+			m_isFirstFrameDrawn.set(true);
+		}
+	}
 	
 	static OFActivity getActivity(){
 		return OFAndroidLifeCycle.m_activity;
@@ -269,6 +278,13 @@ public class OFAndroidLifeCycle
 	{
 		synchronized (m_isInit) {
 			return m_isInit.get();
+		}
+	}
+
+	public static boolean firstFrameDrawn()
+	{
+		synchronized (m_isFirstFrameDrawn) {
+			return m_isFirstFrameDrawn.get();
 		}
 	}
 
