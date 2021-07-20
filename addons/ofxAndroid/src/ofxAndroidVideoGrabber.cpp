@@ -66,9 +66,9 @@ static void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int wi
 ofxAndroidVideoGrabber::Data::Data()
 :bIsFrameNew(false)
 ,bGrabberInited(false)
+,bUsePixels(true)
 ,cameraId(-1)
 ,appPaused(false)
-,bUsePixels(true)
 ,newPixels(false)
 ,attemptFramerate(-1)
 ,javaVideoGrabber(nullptr){
