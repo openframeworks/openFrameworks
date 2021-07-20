@@ -14,9 +14,6 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 
 	public:
 		ofBaseApp();
-
-		virtual ~ofBaseApp() = 0;
-
 		virtual void setup();
 		virtual void update();
 		virtual void draw();
@@ -93,6 +90,9 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void touchUp(ofTouchEventArgs & touch);
 		virtual void touchDoubleTap(ofTouchEventArgs & touch);
 		virtual void touchCancelled(ofTouchEventArgs & touch);
+
+		virtual void audioOut( ofSoundBuffer& buffer );
+		virtual void audioIn( ofSoundBuffer& buffer );
 };
 
 

@@ -117,4 +117,11 @@ void ofBaseApp::touchDoubleTap(ofTouchEventArgs & touch) {
 };
 void ofBaseApp::touchCancelled(ofTouchEventArgs & touch){
 	touchCancelled(touch.x, touch.y, touch.id);
-}
+};
+void ofBaseApp::audioOut(ofSoundBuffer &buffer) {
+
+};
+
+void ofBaseApp::audioIn(ofSoundBuffer &buffer) {
+
+};

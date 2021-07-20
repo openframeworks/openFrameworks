@@ -72,7 +72,6 @@ inline void ofSoundShutdown(){}
 class ofSoundPlayer : public ofBaseSoundPlayer {
 public:
     ofSoundPlayer();
-    ~ofSoundPlayer();
 
     void setPlayer(std::shared_ptr<ofBaseSoundPlayer> newPlayer);
     std::shared_ptr<ofBaseSoundPlayer> getPlayer();

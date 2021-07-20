@@ -9,8 +9,6 @@ class ofSoundBuffer;
 /// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
 	public:
-		/// \brief Destroy the ofBaseSoundInput.
-		virtual ~ofBaseSoundInput() = 0;
 
 		/// \brief Receive an audio buffer.
 		/// \param buffer An audio buffer.
@@ -36,10 +34,9 @@ class ofBaseSoundInput{
 /// \brief A base class representing a sound output stream.
 class ofBaseSoundOutput{
 	public:
-		virtual ~ofBaseSoundOutput();
 		/// \brief Output an audio buffer.
 		/// \param buffer An audio buffer.
-		virtual void audioOut( ofSoundBuffer& buffer ) = 0;
+		virtual void audioOut( ofSoundBuffer& buffer );
 #ifndef TARGET_ANDROID
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioOut(ofSoundBuffer& buffer) instead.
@@ -135,7 +132,6 @@ private:
 
 class ofBaseSoundStream {
 public:
-	virtual ~ofBaseSoundStream();
 	virtual bool setup(const ofSoundStreamSettings & settings) = 0;
 	virtual void setInput(ofBaseSoundInput * soundInput) = 0;
 	virtual void setOutput(ofBaseSoundOutput * soundOutput) = 0;
@@ -165,7 +161,6 @@ public:
 class ofBaseSoundPlayer {
 
 public:
-	virtual ~ofBaseSoundPlayer();
 	virtual bool load(const std::filesystem::path& fileName, bool stream = false)=0;
 	virtual void unload()=0;
 	virtual void play() = 0;

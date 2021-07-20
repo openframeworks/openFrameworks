@@ -237,5 +237,3 @@ float ofSoundPlayer::getVolume() const{
 		return 0;
 	}
 }
-
-ofSoundPlayer::~ofSoundPlayer() = default;
