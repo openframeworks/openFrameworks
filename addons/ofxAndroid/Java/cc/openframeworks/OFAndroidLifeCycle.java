@@ -17,34 +17,34 @@ import static android.opengl.EGL14.EGL_NO_CONTEXT;
 public class OFAndroidLifeCycle
 {
 	
-	static {
-        
-        Log.i("OF","static init");
-        
-        try {
-            Log.i("OF","loading x86 library");
-            System.loadLibrary("ofAndroid.so");
-        }
-        catch(Throwable ex)	{
-            Log.i("OF","failed x86 loading, trying neon detection",ex);
-            
-            try{
-                System.loadLibrary("ofAndroid.so");
-                if(OFAndroid.hasNeon()){
-                    Log.i("OF","loading neon optimized library");
-                    System.loadLibrary("libofAndroid.so");
-                }
-                else{
-                    Log.i("OF","loading not-neon optimized library");
-                    System.loadLibrary("OFAndroidApp");
-                }
-            }catch(Throwable ex2){
-                Log.i("OF","failed neon detection, loading not-neon library",ex2);
-                System.loadLibrary("OFAndroidApp");
-            }
-        }
-        Log.i("OF","initializing app");
-    }
+//	static {
+//
+//        Log.i("OF","static init");
+//
+//        try {
+//            Log.i("OF","loading x86 library");
+//            System.loadLibrary("ofAndroid.so");
+//        }
+//        catch(Throwable ex)	{
+//            Log.i("OF","failed x86 loading, trying neon detection",ex);
+//
+//            try{
+//                System.loadLibrary("ofAndroid.so");
+//                if(OFAndroid.hasNeon()){
+//                    Log.i("OF","loading neon optimized library");
+//                    System.loadLibrary("libofAndroid.so");
+//                }
+//                else{
+//                    Log.i("OF","loading not-neon optimized library");
+//                    System.loadLibrary("OFAndroidApp");
+//                }
+//            }catch(Throwable ex2){
+//                Log.i("OF","failed neon detection, loading not-neon library",ex2);
+//                System.loadLibrary("OFAndroidApp");
+//            }
+//        }
+//        Log.i("OF","initializing app");
+//    }
 		
 	private static Vector<State> m_statesStack = new Vector<State>();
 	private static State m_currentState = null;
