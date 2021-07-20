@@ -48,7 +48,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public ViewGroup getSurfaceContainer(){
 		return mOFGlSurfaceContainer;
 	}
-	
+
+	static {
+		System.loadLibrary("openFrameworksAndroid");
+	}
 	public void initView(){
 		String packageName = this.getPackageName();
         try {
