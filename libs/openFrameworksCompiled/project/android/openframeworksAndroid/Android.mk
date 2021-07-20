@@ -120,8 +120,11 @@ LOCAL_C_INCLUDES += \
 	$(SOURCE_PATH)/types \
 	$(SOURCE_PATH)/utils \
 	$(SOURCE_PATH)/video \
+	$(SOURCE_PATH)/ \
 	$(OF_ROOT)/addons/ofxAndroid/src \
 	$(OF_ROOT)/addons/ofxAccelerometer/src \
+	$(OF_ROOT)/addons/ofxXmlSettings/src \
+	$(OF_ROOT)/addons/ofxXmlSettings/libs \
 	$(LIBS_ROOT)/FreeImage/include \
 	$(LIBS_ROOT)/freetype/include \
 	$(LIBS_ROOT)/freetype/include/freetype2 \
@@ -179,7 +182,7 @@ LOCAL_SRC_FILES +=  \
 	$(SOURCE_PATH)/gl/ofGLUtils.cpp \
 	$(SOURCE_PATH)/gl/ofLight.cpp \
 	$(SOURCE_PATH)/gl/ofMaterial.cpp
-	# $(SOURCE_PATH)/gl/ofGLRenderer.cpp
+
 LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofShader.cpp \
 	$(SOURCE_PATH)/gl/ofTexture.cpp \
 	$(SOURCE_PATH)/gl/ofVbo.cpp \
@@ -227,7 +230,10 @@ LOCAL_SRC_FILES += $(OFX_ANDROID_CPP_PATH)/ofAppAndroidWindow.cpp \
 
 
 LOCAL_SRC_FILES += $(ADDONS_PATH)/ofxAccelerometer/src/ofxAccelerometer.cpp
-
+LOCAL_SRC_FILES += $(ADDONS_PATH)/ofxXmlSettings/src/ofxXmlSettings.cpp \
+	$(ADDONS_PATH)/ofxXmlSettings/libs/tinyxml.cpp \
+	$(ADDONS_PATH)/ofxXmlSettings/libs/tinyxmlerror.cpp \
+	$(ADDONS_PATH)/ofxXmlSettings/libs/tinyxmlparser.cpp
 
 include $(BUILD_SHARED_LIBRARY)
 #include $(BUILD_STATIC_LIBRARY)
