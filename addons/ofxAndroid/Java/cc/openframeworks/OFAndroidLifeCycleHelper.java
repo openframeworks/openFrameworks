@@ -27,7 +27,7 @@ public class OFAndroidLifeCycleHelper
 	private static boolean appInitFlag = false;
 	private static boolean started;
 
-	private static boolean copyAssets = false;
+	private static boolean copyAssets = true;
 
 	public static void appInit(Activity activity)
 	{

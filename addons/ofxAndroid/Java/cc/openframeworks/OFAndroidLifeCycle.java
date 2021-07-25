@@ -16,35 +16,21 @@ import static android.opengl.EGL14.EGL_NO_CONTEXT;
 
 public class OFAndroidLifeCycle
 {
-	
+	public static Boolean coreLibraryLoaded = false;
 	static {
-        
-        Log.i("OF","static init");
-        
-        try {
-            Log.i("OF","loading x86 library");
-            System.loadLibrary("OFAndroidApp_x86");
-        }
-        catch(Throwable ex)	{
-            Log.i("OF","failed x86 loading, trying neon detection",ex);
-            
-            try{
-                System.loadLibrary("neondetection");
-                if(OFAndroid.hasNeon()){
-                    Log.i("OF","loading neon optimized library");
-                    System.loadLibrary("OFAndroidApp_neon");
-                }
-                else{
-                    Log.i("OF","loading not-neon optimized library");
-                    System.loadLibrary("OFAndroidApp");
-                }
-            }catch(Throwable ex2){
-                Log.i("OF","failed neon detection, loading not-neon library",ex2);
-                System.loadLibrary("OFAndroidApp");
-            }
-        }
-        Log.i("OF","initializing app");
-    }
+		try{
+			if(coreLibraryLoaded == false) {
+				Log.i("OF", "Loading openFrameworksAndroid Core");
+				System.loadLibrary("openFrameworksAndroid");
+			} else {
+				Log.i("OF", "openFrameworksAndroid Core Already Loaded");
+			}
+			coreLibraryLoaded = true;
+		} catch(Throwable ex2){
+			Log.i("OF","Failed to Load openFrameworksAndroid Exception:", ex2);;
+		}
+	}
+
 		
 	private static Vector<State> m_statesStack = new Vector<State>();
 	private static State m_currentState = null;
@@ -368,6 +354,7 @@ public class OFAndroidLifeCycle
 			glView.onResume();
 		} else {
 			mGLView = null;
+			OFEGLConfigChooser.setGLESVersion(2);
 			glCreateSurface(true);
 		}
 		Log.d(TAG, "glResume");

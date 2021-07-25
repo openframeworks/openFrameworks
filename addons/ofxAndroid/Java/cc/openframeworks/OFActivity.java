@@ -39,7 +39,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 	public boolean hasPaused = false;
 
-	public void onGLSurfaceCreated(){}
+	public void onGLSurfaceCreated(){
+		Log.v("OF","onGLSurfaceCreated");
+	}
 	public void onLoadPercent(float percent){}
 	public void onUnpackingResourcesDone(){}
 	
@@ -49,9 +51,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		return mOFGlSurfaceContainer;
 	}
 
-	static {
-		System.loadLibrary("openFrameworksAndroid");
-	}
+
 	public void initView(){
 		String packageName = this.getPackageName();
         try {
