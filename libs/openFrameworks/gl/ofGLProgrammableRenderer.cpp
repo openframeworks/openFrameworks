@@ -1821,155 +1821,20 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
-	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
-	ofBlendMode blendMode = currentStyle.blendingMode;
-
-	//ofLogNotice("ofGLProgrammableRenderer") << "ofGLProgrammableRenderer::drawString";
-	float sx = 0;
-	float sy = 0;
-
-	///////////////////////////
-	// APPLY TRANSFORM / VIEW
-	///////////////////////////
-	//
-
-	bool hasModelView = false;
-	bool hasProjection = false;
-	bool hasViewport = false;
-
-	ofRectangle rViewport;
-	glm::mat4 modelView = glm::mat4(1.0);
-
-	switch (currentStyle.drawBitmapMode) {
-
-		case OF_BITMAPMODE_SIMPLE:
-
-			sx += x;
-			sy += y;
-			break;
-
-		case OF_BITMAPMODE_SCREEN:
-
-			hasViewport = true;
-			mutThis->pushView();
-
-			rViewport = matrixStack.getFullSurfaceViewport();
-			mutThis->viewport(rViewport);
-
-			mutThis->matrixMode(OF_MATRIX_PROJECTION);
-			mutThis->loadIdentityMatrix();
-			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
-
-			modelView = glm::translate(modelView, glm::vec3(-1,-1,0));
-			modelView = glm::scale(modelView, glm::vec3(2/rViewport.width, 2/rViewport.height, 1));
-			modelView = glm::translate(modelView, glm::vec3(x,y, 0));
-			mutThis->loadMatrix(modelView);
-			break;
-
-		case OF_BITMAPMODE_VIEWPORT:
-
-			rViewport = getCurrentViewport();
-
-			hasProjection = true;
-			mutThis->matrixMode(OF_MATRIX_PROJECTION);
-			mutThis->pushMatrix();
-			mutThis->loadIdentityMatrix();
-
-			hasModelView = true;
-			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
-			mutThis->pushMatrix();
-
-			modelView = glm::translate(modelView, glm::vec3(-1,-1,0));
-			modelView = glm::scale(modelView, glm::vec3(2/rViewport.width, 2/rViewport.height, 1));
-			modelView = glm::translate(modelView, glm::vec3(x,y, 0));
-			mutThis->loadMatrix(modelView);
-			break;
-
-		case OF_BITMAPMODE_MODEL:
-
-			hasModelView = true;
-			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
-			mutThis->pushMatrix();
-
-			mutThis->translate(x, y, 0);
-			break;
-
-		case OF_BITMAPMODE_MODEL_BILLBOARD:
-		{
-			//our aim here is to draw to screen
-			//at the viewport position related
-			//to the world position x,y,z
-
-			// tig: we want to get the signed normalised screen coordinates (-1,+1) of our point (x,y,z)
-			// that's projection * modelview * point in GLSL multiplication order
-			// then doing the good old (v + 1.0) / 2. to get unsigned normalized screen (0,1) coordinates.
-			// we then multiply x by width and y by height to get window coordinates.
-
-			rViewport = getCurrentViewport();
-
-			glm::mat4 mat = matrixStack.getProjectionMatrixNoOrientation()  * matrixStack.getModelViewMatrix();
-			glm::vec4 dScreen4 = mat * glm::vec4(x,y,0,1.0);
-			glm::vec3 dScreen = glm::vec3(dScreen4) / dScreen4.w;
-			dScreen += glm::vec3(1.0) ;
-			dScreen *= 0.5;
-
-			dScreen.x += rViewport.x;
-			dScreen.x *= rViewport.width;
-
-			dScreen.y += rViewport.y;
-			dScreen.y *= rViewport.height;
-
-			if (dScreen.z >= 1) return;
-
-
-			hasProjection = true;
-			mutThis->matrixMode(OF_MATRIX_PROJECTION);
-			mutThis->pushMatrix();
-			mutThis->loadIdentityMatrix();
-
-			hasModelView = true;
-			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
-			mutThis->pushMatrix();
-
-			modelView = glm::translate(modelView, glm::vec3(-1,-1,0));
-			modelView = glm::scale(modelView, glm::vec3(2/rViewport.width, 2/rViewport.height, 1));
-			modelView = glm::translate(modelView, glm::vec3(dScreen.x, dScreen.y, 0));
-			mutThis->loadMatrix(modelView);
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,true,true,false);
+		const ofTexture& tex = font.getFontTexture();
+		ofBlendMode blendMode = currentStyle.blendingMode;
+		if(tex.isAllocated()) {
+			const_cast<ofGLProgrammableRenderer*>(this)->setBlendMode(OF_BLENDMODE_ALPHA);
+			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
+			//draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
+			font.getStringMesh(text, x,y).draw();
+			//draw(font.getStringMesh(text,x,y),OF_MESH_FILL);
+			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
+			const_cast<ofGLProgrammableRenderer*>(this)->setBlendMode(blendMode);
+		} else {
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
-			break;
-
-		default:
-			break;
-	}
-	//
-	///////////////////////////
-
-	// tig: we switch over to our built-in bitmapstring shader
-	// to render text. This gives us more flexibility & control
-	// and does not mess/interfere with client side shaders.
-
-	mutThis->setBlendMode(OF_BLENDMODE_ALPHA);
-	mutThis->bind(font.getFontTexture(),0);
-	draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
-	mutThis->unbind(font.getFontTexture(),0);
-
-	mutThis->setBlendMode(blendMode);
-
-
-	if (hasViewport){
-		mutThis->popView();
-	}else{
-		if (hasModelView){
-			mutThis->popMatrix();
-		}
-
-		if (hasProjection)
-		{
-			mutThis->matrixMode(OF_MATRIX_PROJECTION);
-			mutThis->popMatrix();
-			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
-		}
-	}
 }
 
 #define STRINGIFY(x) #x
