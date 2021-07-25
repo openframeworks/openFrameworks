@@ -112,6 +112,7 @@ jobject ofGetOFActivityObject(){
 
 ofAppAndroidWindow::ofAppAndroidWindow(){
 	window = this;
+	ofGetMainLoop()->setCurrentWindow(this);
 }
 
 ofAppAndroidWindow::~ofAppAndroidWindow() {
@@ -143,6 +144,8 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 		return;
 	}
 
+	makeCurrent();
+
 	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(IZ)V");
 	if(!method){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid setupGL method";
@@ -150,6 +153,8 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	}
 
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
+
+
 }
 
 void ofAppAndroidWindow::update(){
@@ -205,6 +210,14 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 
 ofOrientation ofAppAndroidWindow::getOrientation(){
 	return orientation;
+}
+
+
+void ofAppAndroidWindow::makeCurrent(){
+	shared_ptr<ofMainLoop> mainLoop = ofGetMainLoop();
+	if(mainLoop){
+		mainLoop->setCurrentWindow(this);
+	}
 }
 
 void ofAppAndroidWindow::setFullscreen(bool fullscreen){

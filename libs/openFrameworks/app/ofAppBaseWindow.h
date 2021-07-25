@@ -56,7 +56,8 @@ public:
 	virtual int		getWidth(){ return 0; }
 	virtual int		getHeight(){ return 0; }
 
-	virtual void	setWindowTitle(std::string title){}
+	virtual void	setWindowTitle(std::string title){  }
+	virtual std::string	getWindowTitle(){ return ""; }
 
 	virtual ofWindowMode	getWindowMode() {return OF_WINDOW ;}
 
@@ -70,7 +71,9 @@ public:
     virtual void    setClipboardString(const std::string& text) {}
     virtual std::string  getClipboardString() { return ""; }
 
-    virtual void makeCurrent(){};
+    virtual void makeCurrent(){
+
+    };
 	virtual void swapBuffers() {}
 	virtual void startRender() {}
 	virtual void finishRender() {}

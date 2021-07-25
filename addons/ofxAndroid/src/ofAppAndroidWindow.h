@@ -37,7 +37,7 @@ public:
 		preserveContextOnPause = preserve;
 	}
 	
-	bool preserveContextOnPause;
+	bool preserveContextOnPause = true;
 };
 
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
@@ -76,6 +76,7 @@ public:
 	void	setWindowTitle(std::string title){}
 
 	ofWindowMode	getWindowMode() {return OF_WINDOW;}
+	void 			makeCurrent();
 
 	void	setFullscreen(bool fullscreen);
 	void	toggleFullscreen();
