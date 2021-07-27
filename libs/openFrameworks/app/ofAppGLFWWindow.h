@@ -155,6 +155,9 @@ public:
 	Display* 	getX11Display();
 	Window  	getX11Window();
 	XIC			getX11XIC();
+
+	void setWindowIcon(const std::string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
@@ -177,13 +180,6 @@ public:
 	HWND 		getWin32Window();
 #endif
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-	void setWindowIcon(const std::string & path);
-	void setWindowIcon(const ofPixels & iconPixels);
-	XIM xim;
-	XIC xic;
-#endif
-
 private:
 	static ofAppGLFWWindow * setCurrent(GLFWwindow* windowP);
 	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
@@ -199,6 +195,11 @@ private:
 	static void		error_cb(int errorCode, const char* errorDescription);
 
 	void close();
+
+	#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
+		XIM xim;
+		XIC xic;
+	#endif
 
 	std::unique_ptr<ofCoreEvents> coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
