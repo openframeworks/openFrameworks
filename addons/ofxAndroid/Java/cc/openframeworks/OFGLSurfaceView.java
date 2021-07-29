@@ -11,6 +11,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
+import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 
 class OFGLSurfaceView extends GLSurfaceView {
 
@@ -92,6 +93,13 @@ class OFGLSurfaceView extends GLSurfaceView {
         super.setRenderMode(renderMode);
     }
 
+    public void setFrameRate(float frameRate) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            mSurface.setFrameRate(frameRate,
+                    FRAME_RATE_COMPATIBILITY_DEFAULT);
+        }
+    }
+
     @Override
     public void setDebugFlags(int debugFlags) {
         super.setDebugFlags(debugFlags);
@@ -127,12 +135,12 @@ class OFGLSurfaceView extends GLSurfaceView {
     }
 
     public void setBackgroundResourceClear() {
-//        post(new Runnable() {
-//            @Override
-//            public void run() {
-//                setBackgroundResource(0);
-//            }
-//        });
+        post(new Runnable() {
+            @Override
+            public void run() {
+                setBackgroundColor(0);
+            }
+        });
     }
 
     public OFEGLConfigChooser getConfigChooser() {
