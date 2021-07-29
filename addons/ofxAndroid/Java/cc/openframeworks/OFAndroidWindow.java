@@ -62,11 +62,11 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 		Log.i("OF","onSurfaceCreated");
 		// notify that old surface was destroyed
         boolean hasDestroyed = false;
-//		if(this.has_surface) {
-//            Log.i("OF","onSurfaceCreated - has_surface destroy");
-//            surfaceHasBeenDestroyed();
-//            hasDestroyed = true;
-//		}
+		if(this.has_surface) {
+            Log.i("OF","onSurfaceCreated - has_surface destroy");
+            surfaceHasBeenDestroyed();
+            hasDestroyed = true;
+		}
 
 		// notify that new surface was created
 		this.has_surface = true;
@@ -155,34 +155,43 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
             drawFrame++;
-           // Log.i("OF","onDrawFrame" + drawFrame);
+            //Log.i("OF","onDrawFrame" + drawFrame);
             // Remove the initial background
             if (!initialRender) {
                 initialRender = true;
-                Log.i("OF", "onDrawFrame initialRenderFrame!");
-                if( OFAndroidLifeCycle.getGLView() != null) OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
+                drawClear = true;
+                Log.i("OFAndroidWindow", "onDrawFrame initialRenderFrame!");
+                if( OFAndroidLifeCycle.getGLView() != null)
+                    OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
             }
             if(setup && OFAndroid.unpackingDone){
                 if(android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
-                    //Log.i("OF", "onDrawFrame setup and unpacking done");
+
                     if(firstFrameDrawn == false) {
                         firstFrameDrawn = true;
+                        drawClear = false;
                         OFAndroidLifeCycle.SetFirstFrameDrawn();
+                        Log.i("OFAndroidWindow", "onDrawFrame setup and unpacking done SetFirstFrameDrawn");
                     }
                     OFAndroid.render();
                 }
                 else {
-                    Log.e("OF", "ofAndroidWindow::onDrawFrame GLContext = EGL_NO_CONTEXT BAD. Restarting Window");
+                    Log.e("OFAndroidWindow", "ofAndroidWindow::onDrawFrame GLContext = EGL_NO_CONTEXT BAD. Restarting Window");
                     setup = false;
                     setup();
+                    drawClear = true;
                 }
             }else if(!setup && OFAndroid.unpackingDone){
-                Log.i("OF", "onDrawFrame !setup and unpacking done");
+                Log.i("OFAndroidWindow", "onDrawFrame !setup and unpacking done");
                 setup();
+                drawClear = true;
             }else{
-                Log.e("OF", "onDrawFrame  draw clear");
+                drawClear = true;
+                Log.e("OFAndroidWindow", "onDrawFrame  draw clear");
+            }
+            if(drawClear) {
                 gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-                gl.glClearColor(0f, 0f, 0f, 1.0f);
+                gl.glClearColor(0f, 0f, 0f, 0.0f);
             }
     }
 
@@ -201,4 +210,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     private static boolean firstFrameDrawn = false;
     private int w,h;
     public static boolean has_surface = false;
+
+    private boolean drawClear = false;
 }

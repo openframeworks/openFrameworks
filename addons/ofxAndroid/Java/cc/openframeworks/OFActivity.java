@@ -20,6 +20,7 @@ import android.view.Display;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -195,20 +196,28 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 							}
 						}
 					}
-					highestRefreshRate = currentRefreshRate;
-					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-						boolean isWideColorGamut = display.isWideColorGamut();
-						Log.i("OF", "Display WideColor Gamut Supported:" +  isWideColorGamut);
-						OFAndroid.wideGamut = isWideColorGamut;
 
-						boolean isHDR = display.isHdr();
-						Log.i("OF", "Display is HDR Supported:" +  isHDR);
-						OFAndroid.hdrScreen = isHDR;
+					//if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.) {
+
+
+					OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+					if(glView != null) {
+						glView.setFrameRate(highestRefreshRate);
+						currentRefreshRate = highestRefreshRate;
 					}
-					Display.Mode[] supportedModes = new Display.Mode[0];
-					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-						supportedModes = display.getSupportedModes();
-					}
+//					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//						boolean isWideColorGamut = display.isWideColorGamut();
+//						Log.i("OF", "Display WideColor Gamut Supported:" +  isWideColorGamut);
+//						OFAndroid.wideGamut = isWideColorGamut;
+//
+//						boolean isHDR = display.isHdr();
+//						Log.i("OF", "Display is HDR Supported:" +  isHDR);
+//						OFAndroid.hdrScreen = isHDR;
+//					}
+//					Display.Mode[] supportedModes = new Display.Mode[0];
+//					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//						supportedModes = display.getSupportedModes();
+//					}
 //					for(Display.Mode mode : supportedModes){
 //						Log.i("OF", "Could not get Window fo:" +  mode);
 //					}
@@ -219,12 +228,14 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		} catch (Exception exception) {
 			Log.w("OF", "Could not get Window for Display ", exception);
 		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-			if(getWindow() != null && getWindow().isWideColorGamut()) {
-				OFAndroid.wideGamut = true;
-			}
-			OFAndroid.hdrScreen = false;
-		}
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+//			if(getWindow() != null && getWindow().isWideColorGamut()) {
+//				OFAndroid.wideGamut = true;
+//			}
+//			OFAndroid.hdrScreen = false;
+//		}
+
+
 
 		OFAndroid.deviceRefreshRate((int)currentRefreshRate);
 		OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
@@ -402,9 +413,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(OFAndroidLifeCycle.isInit() && mOFGlSurfaceContainer == null) {
 			Log.i("OF", "onResume mOFGlSurfaceContainer is null");
 		}
-		//resetView();
+		//
 		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() == null) {
 			Log.i("OF", "onResume getGLView is null - glCreateSurface");
+			OFAndroidWindow.exit();
+			OFAndroidWindow.surfaceHasBeenDestroyed();
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		}
 
@@ -562,7 +575,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	@Override
 	public boolean dispatchKeyEvent (KeyEvent event){
 		int deviceId = event.getDeviceId();
-		Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId);
+		//Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId);
 
 		if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
