@@ -21,6 +21,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		soundID = -1;
 		streamID = -1;
 		multiPlay = false;
+		isPaused = false;
 	}
 
 	public void onDestroy() {
@@ -153,8 +154,8 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			try {
 				if (getIsPlaying()) {
 					//player.stop();
-					player.pause();
 					player.seekTo(0);
+					player.pause();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -172,11 +173,20 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		// calculates left/right volumes from pan-value (constant panning law) 
 		// see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
-		float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
-		float cosAngle = (float) Math.cos(angle);
-		float sinAngle = (float) Math.sin(angle);
-		leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
-		rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+
+		if(Math.signum(pan) != 0) { // mastering this causes issues if not panning -
+			float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
+			float cosAngle = (float) Math.cos(angle);
+			float sinAngle = (float) Math.sin(angle);
+			leftVolume = (float) ((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+			rightVolume = (float) ((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		}
+		else {
+			leftVolume = vol;
+			rightVolume = vol;
+		}
+		Log.w("OF", "setVolume " + vol + " as no stream");
+
 		if(stream){
 			if(player!=null) player.setVolume(leftVolume, rightVolume);
 		}else if(streamID!=-1){
@@ -209,6 +219,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(bP) {
 				try {
 					player.pause();
+					isPaused = true;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -216,6 +227,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			else {
 				try {
 					player.start();
+					isPaused = false;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -224,8 +236,10 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(pool == null) return;
 			if(bP){
 				pool.pause(streamID);
+				isPaused = true;
 			}else{
 				pool.resume(streamID);
+				isPaused = false;
 			}
 			bIsPlaying = !bP;
 		}
@@ -310,7 +324,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			return 0;
 	}
 	
-	boolean getIsPlaying(){
+	public boolean getIsPlaying(){
 		if(stream){
 			boolean isPlaying = false;
 			try {
@@ -322,6 +336,21 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			return isPlaying;
 		}else{
 			return bIsPlaying;
+		}
+	}
+
+	public boolean getIsPaused(){
+		if(stream){
+			boolean paused = false;
+			try {
+				paused = player!=null && isPaused == true;
+			} catch (Exception e) {
+				// NOTE: isPlaying() cvan potentially throw an exception and crash the application
+				e.printStackTrace();
+			}
+			return paused;
+		}else{
+			return isPaused;
 		}
 	}
 	
@@ -409,6 +438,8 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	private float speed;
 	private boolean stream;
 	int contentType;
+
+	boolean isPaused;
 
 	int pausePositionMS;
 
