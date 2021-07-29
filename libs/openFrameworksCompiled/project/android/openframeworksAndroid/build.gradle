@@ -36,7 +36,7 @@ android {
         externalNativeBuild {
             if (!project.hasProperty("ndkBuild")) {
                 cmake {
-                    arguments "-DANDROID_STL=c++_static"
+                    arguments "-DANDROID_STL=c++_shared"
                     //
 //                // Passes optional arguments to CMake.
 //                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
