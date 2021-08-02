@@ -16,6 +16,8 @@ import android.content.res.Configuration;
 import android.graphics.ColorSpace;
 import android.graphics.PixelFormat;
 import android.opengl.EGL14;
+import android.opengl.GLES10;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -88,6 +90,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             setup();
         }
 		OFAndroid.updateRefreshRates();
+        gl.glClearColor(0f, 0f, 0, 1);
 		return;
     }
 
@@ -114,6 +117,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         }
         OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
         OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
+        GLES10.glViewport(0, 0, w, h);
         OFAndroid.resize(w, h);
     }
 
@@ -171,6 +175,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                         firstFrameDrawn = true;
                         drawClear = false;
                         OFAndroidLifeCycle.SetFirstFrameDrawn();
+                        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+                        gl.glClearColor(0f, 0f, 0f, 1.0f);
                         Log.i("OFAndroidWindow", "onDrawFrame setup and unpacking done SetFirstFrameDrawn");
                     }
                     OFAndroid.render();
@@ -190,8 +196,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 Log.e("OFAndroidWindow", "onDrawFrame  draw clear");
             }
             if(drawClear) {
-                gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-                gl.glClearColor(0f, 0f, 0f, 0.0f);
+                gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+                //gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+                gl.glClearColor(0f, 0f, 0f, 1.0f);
+                
             }
     }
 
