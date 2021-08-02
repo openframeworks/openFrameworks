@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -46,17 +47,49 @@ public class OFAndroid {
 	public static int eglVersion = 2;
 
 	// List based on http://bit.ly/NpkL4Q
+	@SuppressLint("SdCardPath") // the following list is fall back 3
 	private static final String[] mExternalStorageDirectories = new String[] {
-			"/mnt/sdcard-ext",
-			"/mnt/sdcard/external_sd",
-			"/sdcard/sd",
-			"/mnt/external_sd",
-			"/emmc",
-			"/mnt/sdcard/bpemmctest",
-			"/mnt/sdcard/_ExternalSD",
+
 			"/mnt/Removable/MicroSD",
-			"/Removable/MicroSD",
-			"/sdcard"};
+			"/storage/removable/sdcard1", // !< Sony Xperia Z1
+			"/Removable/MicroSD", // Asus ZenPad C
+			"/removable/microsd",
+			"/external_sd", // Samsung
+			"/_ExternalSD", // some LGs
+			"/storage/extSdCard", // later Samsung
+			"/storage/extsdcard", // Main filesystem is case-sensitive; FAT isn't.
+			"/mnt/extsd", // some Chinese tablets, e.g. Zeki
+			"/storage/sdcard1", // If this exists it's more likely than sdcard0 to be removable.
+			"/mnt/extSdCard",
+			"/mnt/sdcard/external_sd",
+			"/mnt/external_sd",
+			"/storage/external_SD",
+			"/storage/ext_sd", // HTC One Max
+			"/mnt/sdcard/_ExternalSD",
+			"/mnt/sdcard-ext",
+			"/sdcard2", // HTC One M8s
+			"/sdcard1", // Sony Xperia Z
+			"/mnt/media_rw/sdcard1",   // 4.4.2 on CyanogenMod S3
+			"/mnt/sdcard", // This can be built-in storage (non-removable).
+			"/sdcard",
+			"/storage/sdcard0",
+			"/emmc",
+			"/mnt/emmc",
+			"/sdcard/sd",
+			"/mnt/sdcard/bpemmctest",
+			"/mnt/external1",
+			"/data/sdext4",
+			"/data/sdext3",
+			"/data/sdext2",
+			"/data/sdext",
+			"/storage/microsd", //ASUS ZenFone 2
+			// If we ever decide to support USB OTG storage, the following paths could be helpful:
+			// An LG Nexus 5 apparently uses usb://1002/UsbStorage/ as a URI to access an SD
+			// card over OTG cable. Other models, like Galaxy S5, use /storage/UsbDriveA
+			//        "/mnt/usb_storage",
+			//        "/mnt/UsbDriveA",
+			//        "/mnt/UsbDrsdcard-extiveB",
+	};
 
 	private static String getPackageName(){
 		return OFAndroidLifeCycle.getActivity().getPackageName();
@@ -90,8 +123,14 @@ public class OFAndroid {
 				Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
 	}
 
-	public static String getRealExternalStorageDirectory(Context context)
-	{
+	public static String getRealExternalStorageDirectory(Context context) {
+
+		// New Standard way to get the external storage directory
+		File externalPathFile = Environment.getExternalStorageDirectory();
+		if (externalPathFile.exists() && externalPathFile.canWrite()) {
+			return externalPathFile.getPath();
+		}
+
 		// Standard way to get the external storage directory
 		String externalPath = context.getExternalFilesDir(null).getPath();
 		File SDCardDir = new File(externalPath);
