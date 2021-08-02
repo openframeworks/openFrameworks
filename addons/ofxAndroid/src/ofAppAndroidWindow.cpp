@@ -285,7 +285,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 void
-Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir)
+Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jclass thiz, jstring data_dir)
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
@@ -305,12 +305,12 @@ void Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onRestart";
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onStart";
 	stopped = false;
 	bSetupScreen = true;
@@ -318,21 +318,21 @@ Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jobject  thiz ){
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onStop";
 	ofNotifyEvent( ofxAndroidEvents().stop );
 	stopped = true;
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
 	bSetupScreen = true;
 	ofNotifyEvent(ofxAndroidEvents().resume);
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onPause";
 	ofNotifyEvent(ofxAndroidEvents().pause);
 }
@@ -614,7 +614,7 @@ Java_cc_openframeworks_OFAndroid_onScaleEnd(JNIEnv*  env, jclass  thiz, jobject 
 }
 
 jboolean
-Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Pressed;
     key.key = unicode;
@@ -625,7 +625,7 @@ Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  ke
 }
 
 jboolean
-Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Released;
     key.key = unicode;
@@ -636,12 +636,12 @@ Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyC
 }
 
 jboolean
-Java_cc_openframeworks_OFAndroid_onBackPressed(){
+Java_cc_openframeworks_OFAndroid_onBackPressed(JNIEnv *env, jclass clazz){
 	return ofxAndroidEvents().backPressed.notify(nullptr);
 }
 
 jboolean
-Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz, jstring menu_id){
+Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jclass thiz, jstring menu_id){
 	jboolean iscopy;
 	const char * menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
@@ -650,7 +650,7 @@ Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz
 }
 
 jboolean
-Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz, jstring menu_id, jboolean checked){
+Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jclass thiz, jstring menu_id, jboolean checked){
 	jboolean iscopy;
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
@@ -659,17 +659,17 @@ Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz,
 }
 
 void
-Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jclass thiz){
 	ofNotifyEvent(ofxAndroidEvents().okPressed);
 }
 
 void
-Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
+Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jclass thiz){
 	ofNotifyEvent(ofxAndroidEvents().cancelPressed);
 }
 
 void
-Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, jboolean connected){
+Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jclass thiz, jboolean connected){
 	bool bConnected = (bool)connected;
 	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
