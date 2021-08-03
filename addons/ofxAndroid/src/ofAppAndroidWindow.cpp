@@ -364,6 +364,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		window->renderer()->pushStyle();
 		window->renderer()->setupGraphicDefaults();
 		window->renderer()->popStyle();
+		window->setThreadedEvents(false);
         int glesVersion = window->getGlesVersion();
 		bSetupScreen = true;
 		if( glesVersion < 2 )
