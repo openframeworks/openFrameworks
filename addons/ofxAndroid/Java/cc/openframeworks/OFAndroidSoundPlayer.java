@@ -173,7 +173,6 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		// calculates left/right volumes from pan-value (constant panning law) 
 		// see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
-
 		if(Math.signum(pan) != 0) { // mastering this causes issues if not panning -
 			float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
 			float cosAngle = (float) Math.cos(angle);
@@ -185,8 +184,6 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			leftVolume = vol;
 			rightVolume = vol;
 		}
-		Log.w("OF", "setVolume " + vol + " as no stream");
-
 		if(stream){
 			if(player!=null) player.setVolume(leftVolume, rightVolume);
 		}else if(streamID!=-1){
