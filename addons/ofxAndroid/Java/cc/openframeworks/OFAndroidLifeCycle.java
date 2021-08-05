@@ -314,6 +314,10 @@ public class OFAndroidLifeCycle
 				if (preserveContextOnPause)
 					glView.setPreserveEGLContextOnPause(true);
 				ViewGroup parent = (ViewGroup) glView.getParent();
+
+				if(glContainer.getChildCount() > 0) {
+					glContainer.removeAllViews();
+				}
 				if (parent == null)
 					glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 			}
