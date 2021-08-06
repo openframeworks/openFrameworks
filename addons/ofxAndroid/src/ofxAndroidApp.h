@@ -19,8 +19,12 @@ public:
 	virtual void resume(){};
 	virtual void reloadTextures(){}
 	virtual void unloadTextures(){}
-	virtual void reloadGL(){reloadTextures();}
-	virtual void unloadGL(){unloadTextures();}
+	virtual void reloadGL(){
+		reloadTextures();
+	}
+	virtual void unloadGL(){
+		unloadTextures();
+	}
 	virtual void swipe(ofxAndroidSwipeDir swipeDir, int id){
 
 	}

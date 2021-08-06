@@ -316,6 +316,7 @@ public class OFAndroidLifeCycle
 				ViewGroup parent = (ViewGroup) glView.getParent();
 
 				if(glContainer.getChildCount() > 0) {
+					View view = glContainer.getChildAt(0);
 					glContainer.removeAllViews();
 				}
 				if (parent == null)

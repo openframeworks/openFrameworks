@@ -379,17 +379,17 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		}
 
 	}else{
-		int glesVersion = window->getGlesVersion();
-		bSetupScreen = true;
-		if( glesVersion < 2 )
-		{
-			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
-			static_cast<ofGLRenderer*>(window->renderer().get())->setup();
-		}
-		else
-		{
-			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-			static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
+		if(window != nullptr) {
+			int glesVersion = window->getGlesVersion();
+			bSetupScreen = true;
+			if (glesVersion < 2) {
+				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
+				static_cast<ofGLRenderer *>(window->renderer().get())->setup();
+			} else {
+				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
+				static_cast<ofGLProgrammableRenderer *>(window->renderer().get())->setup(
+						glesVersion, 0);
+			}
 		}
 	}
 
@@ -421,7 +421,8 @@ Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jin
     sWindowHeight = h;
     ofLogNotice("ofAppAndroidWindow") << "resize " << w << "x" << h;
     bSetupScreen = true;
-    window->events().notifyWindowResized(w,h);
+    if(window != nullptr)
+    	window->events().notifyWindowResized(w,h);
 }
 
 /* Call to finalize the graphics state */

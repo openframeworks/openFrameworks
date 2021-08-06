@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 
+
 class OFGestureListener extends SimpleOnGestureListener implements OnClickListener, OnScaleGestureListener {
 	
 

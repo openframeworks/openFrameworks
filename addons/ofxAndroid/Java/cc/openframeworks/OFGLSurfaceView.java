@@ -1,10 +1,12 @@
 package cc.openframeworks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
@@ -17,30 +19,45 @@ class OFGLSurfaceView extends GLSurfaceView {
 
     public OFGLSurfaceView(Context context) {
         super(context);
-        setClientVersion();
+        Log.i("OF","OFGLSurfaceView():" + context.toString());
+        init(false, 8, 0);
+    }
 
+    public OFGLSurfaceView(Context context, boolean translucent, int depth, int stencil) {
+        super(context);
+        Log.i("OF","OFGLSurfaceView():" + context.toString());
+        init(translucent, depth, stencil);
+    }
+
+    private void init(boolean translucent, int depth, int stencil) {
+
+        if (translucent) {
+            this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        } else {
+            this.getHolder().setFormat(PixelFormat.OPAQUE);
+        }
+        setEGLContextFactory(new ContextFactory());
+
+        setClientVersion();
         int width = getWidth();
         int height = getHeight();
 
-//        if(width <= 0 || height <= 0 ) {
-//            try {
-//                DisplayMetrics displayMetrics = new DisplayMetrics();
-//                Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
-//                display.getRealMetrics(displayMetrics);
-//                height = displayMetrics.heightPixels;
-//                width = displayMetrics.widthPixels;
-//            } catch (Exception exception){
-//                Log.w("OF", "Could not get Window for Display ", exception);
-//            }
-//        }
+        if(width <= 0 || height <= 0 ) {
+            try {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
+                display.getRealMetrics(displayMetrics);
+                height = displayMetrics.heightPixels;
+                width = displayMetrics.widthPixels;
+            } catch (Exception exception){
+                Log.w("OF", "Could not get Window for Display ", exception);
+            }
+        }
 
-        mRenderer = new OFAndroidWindow(width, height);
-        getHolder().setFormat(PixelFormat.OPAQUE);
         OFEGLConfigChooser configChooser = getConfigChooser();
         setEGLConfigChooser(configChooser);
-//        EGLint attribs[] = {OFEGLConfigChooser.EGL_GL_COLORSPACE_KHR,OFEGLConfigChooser.EGL_GL_COLORSPACE_BT2020_PQ_EXT, EGL_NONE };
-//        EGLSurface eglSurface=EGL14.eglCreateWindowSurface(configChooser.displayUsed, configChooser,  context., attribs);
 
+        mRenderer = new OFAndroidWindow(width, height);
         setRenderer(mRenderer);
         setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
         display = getDisplay();
@@ -50,36 +67,14 @@ class OFGLSurfaceView extends GLSurfaceView {
                 mRenderer.setResolution(getWidth(), getHeight(), true);
             }
         });
-
     }
 
 
-    @Deprecated
-    public OFGLSurfaceView(Context context, AttributeSet attributes) {
-        super(context,attributes);
-        setClientVersion();
-        mRenderer = new OFAndroidWindow(getWidth(), getHeight());
-        getHolder().setFormat(PixelFormat.OPAQUE);
-        OFEGLConfigChooser configChooser = getConfigChooser();
-        setEGLConfigChooser(configChooser);
-        setRenderer(mRenderer);
-        setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        display = getDisplay();
 
-        post(new Runnable() {
-            @Override
-            public void run() {
-                int width = getWidth();
-                int height = getHeight();
-
-                mRenderer.setResolution(width, height, true);
-            }
-        });
-    }
 
     @Override
     public void setRenderer(GLSurfaceView.Renderer renderer) {
-
+        Log.i("OF","setRenderer:" + renderer.toString());
         super.setRenderer(renderer);
     }
 
@@ -94,9 +89,22 @@ class OFGLSurfaceView extends GLSurfaceView {
     }
 
     public void setFrameRate(float frameRate) {
+        Log.i("OF","setFrameRate:" + frameRate);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             mSurface.setFrameRate(frameRate,
                     FRAME_RATE_COMPATIBILITY_DEFAULT);
+        }
+    }
+
+    public void OnResume() {
+        if(mRenderer != null && mRenderer.isSetup()) {
+
+            int width = getWidth();
+            int height = getHeight();
+            Log.i("OF","OnResume w:" + width + " h:" + height);
+            mRenderer.setResolution(width, height, true);
+        } else{
+            Log.i("OF","OnResume no mRenderer:" + (mRenderer!=null &&mRenderer.isSetup()));
         }
     }
 
@@ -194,9 +202,31 @@ class OFGLSurfaceView extends GLSurfaceView {
         if(mRenderer != null)
         {
             if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT) {
-                Log.i("OF", "OFGLSurfaceView::onResume however no CONTEXT");
-                OFAndroid.render();
+                Log.w("OF", "OFGLSurfaceView::onResume however no CONTEXT");
+                // surfaceDestroyed(this.mHolder);
+
+                display = getDisplay();
+
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int width = getWidth();
+                        int height = getHeight();
+
+                        mRenderer.setResolution(width, height, true);
+                    }
+                });
             }
+        } else if(mRenderer == null) {
+            Log.w("OF", "OFGLSurfaceView::onResume however mRenderer is NULL");
+            surfaceDestroyed(this.mHolder);
+
+            mRenderer = new OFAndroidWindow(getWidth(), getHeight());
+            getHolder().setFormat(PixelFormat.OPAQUE);
+
+            setRenderer(mRenderer);
+            setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            display = getDisplay();
         }
         super.onResume();
 
@@ -215,11 +245,18 @@ class OFGLSurfaceView extends GLSurfaceView {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.i("OF","surfaceDestroyed");
-        super.surfaceDestroyed(holder);
-        mHolder = null;
-        mSurface = null;
-        OFAndroid.onSurfaceDestroyed();
-        mRenderer.exit();
+        if(holder != null)
+            super.surfaceDestroyed(holder);
+//        mHolder = null;
+//        mSurface = null;
+        //OFAndroid.onSurfaceDestroyed();
+        //mRenderer.exit();
+        //mRenderer = null;
+    }
+
+    @Override
+    public void finalize() {
+        Log.i("OF","finalize");
     }
 
     @Override
@@ -240,7 +277,7 @@ class OFGLSurfaceView extends GLSurfaceView {
             mHolder = holder;
             mSurface = holder.getSurface();
         }
-        if(mRenderer != null && mRenderer.isSetup()) {
+        if(mRenderer != null) {
             mRenderer.setResolution(w,h, true);
         }
 
@@ -252,7 +289,10 @@ class OFGLSurfaceView extends GLSurfaceView {
     }
 
     void setWindowResize(int w, int h){
+        Log.i("OF","setWindowResize mRenderer:" + " w:" + w + " h:" + h  );
         if(mRenderer != null && mRenderer.isSetup()) {
+            mRenderer.setResolution(w,h, true);
+        } else if(mRenderer != null) {
             mRenderer.setResolution(w,h, true);
         }
     }

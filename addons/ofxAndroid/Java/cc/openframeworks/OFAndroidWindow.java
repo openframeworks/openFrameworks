@@ -90,7 +90,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             setup();
         }
 		OFAndroid.updateRefreshRates();
-        gl.glClearColor(0f, 0f, 0, 1);
+        //gl.glClearColor(0f, 0f, 0, 0);
 		return;
     }
 
@@ -151,7 +151,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public static void exit() {
-    	setup = false;
+	    setup = false;
     }
 
 
@@ -176,7 +176,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                         drawClear = false;
                         OFAndroidLifeCycle.SetFirstFrameDrawn();
                         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-                        gl.glClearColor(0f, 0f, 0f, 1.0f);
+                        gl.glClearColor(0f, 0f, 0f, 0.0f);
                         Log.i("OFAndroidWindow", "onDrawFrame setup and unpacking done SetFirstFrameDrawn");
                     }
                     OFAndroid.render();
@@ -196,9 +196,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 Log.e("OFAndroidWindow", "onDrawFrame  draw clear");
             }
             if(drawClear) {
+                Log.e("OFAndroidWindow", "onDrawFrame  draw clear");
                 gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
                 //gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-                gl.glClearColor(0f, 0f, 0f, 1.0f);
+                gl.glClearColor(0f, 0f, 0f, 0.0f);
                 
             }
     }
