@@ -347,10 +347,14 @@ Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz ){
-	surfaceDestroyed = true;
-	ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed";
-	ofNotifyEvent(ofxAndroidEvents().unloadGL);
-	bSetupScreen = true;
+	if(surfaceDestroyed == false) {
+		surfaceDestroyed = true;
+		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed";
+		ofNotifyEvent(ofxAndroidEvents().unloadGL);
+		bSetupScreen = true;
+	} else {
+		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed already destroyed though";
+	}
 }
 
 void
