@@ -391,7 +391,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		super.onResume();
 
-		if(OFAndroidLifeCycle.isInit() == true && OFAndroidLifeCycle.firstFrameDrawn() == true && android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT) {
+		if(OFAndroidLifeCycle.isInit() == true && OFAndroidLifeCycle.firstFrameDrawn() == true &&
+				android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT) {
 			hasPaused = true;
 		}
 
@@ -406,8 +407,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT){
 			Log.e("OF", "onResume eglGetCurrentContext = EGL_NO_CONTEXT BAD");
-			OFAndroidWindow.exit();
-			OFAndroidWindow.surfaceHasBeenDestroyed();
+			//OFAndroidWindow.exit();
+			//OFAndroidWindow.surfaceHasBeenDestroyed();
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		}
 		if(OFAndroidLifeCycle.isInit() && mOFGlSurfaceContainer == null) {
@@ -416,10 +417,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		//
 		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() == null) {
 			Log.i("OF", "onResume getGLView is null - glCreateSurface");
-			OFAndroidWindow.exit();
-			OFAndroidWindow.surfaceHasBeenDestroyed();
+			//OFAndroidWindow.exit();
+			//OFAndroidWindow.surfaceHasBeenDestroyed();
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		}
+
+
 
 		DetermineDisplayConfiguration();
 		DetermineDisplayDimensions();

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.RelativeLayout;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
 
@@ -51,6 +52,7 @@ public class OFAndroidLifeCycle
 	private static ArrayList<Runnable> m_initializers = new ArrayList<Runnable>();
 	
 	private static OFGLSurfaceView mGLView = null;
+	private static OFGLSurfaceView pausedGLView = null;
 	
 	private static void pushState(State state)
 	{
@@ -219,10 +221,89 @@ public class OFAndroidLifeCycle
 			});
     }
 
+	public static void HasSetup() {
+		ViewGroup glContainer = getActivity().getSurfaceContainer();
+		if(glContainer != null && pausedGLView != null ) {
+			if (glContainer.getChildCount() > 0) {
+
+				m_activity.runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						ViewGroup glContainer = getActivity().getSurfaceContainer();
+
+						//if(pausedGLView != null)
+							//glContainer.removeView(pausedGLView);
+					}
+				});
+			}
+		}
+
+				//			ViewGroup glContainer = getActivity().getSurfaceContainer();
+				//glContainer.removeAllViews();
+//				if(surfaceView != null && pausedGLView == surfaceView) {
+//					Log.d(TAG, "SetFirstFrameDrawn removing pausedGLView");
+//					glContainer.removeView(pausedGLView);
+//					pausedGLView = null;
+//					if (mGLView != null)
+				//glContainer.removeView(pausedGLView);
+//				if(mGLView != null){
+//					glContainer.addView(mGLView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//				} else {
+//					Log.d(TAG, "HasSetup removing pausedGLView");
+//					pausedGLView = null;
+//				}}
+//					});
+//			}
+//				}
+				//glContainer.removeAllViews();
+			//}
+//			if(mGLView != null) {
+//				ViewGroup parent = (ViewGroup) mGLView.getParent();
+//				if (parent == null)
+//					glContainer.addView(mGLView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//			}
+		//}
+	}
+
 	public static void SetFirstFrameDrawn()
 	{
 		synchronized (m_isFirstFrameDrawn) {
 			m_isFirstFrameDrawn.set(true);
+		}
+		ViewGroup glContainer = getActivity().getSurfaceContainer();
+		if(glContainer != null && pausedGLView != null ) {
+			if (glContainer.getChildCount() > 0) {
+
+				m_activity.runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+
+						ViewGroup glContainer = getActivity().getSurfaceContainer();
+						if(mGLView != null) {
+							glContainer.bringChildToFront(mGLView);
+						}
+						if(pausedGLView != null)
+							glContainer.removeView(pausedGLView);
+
+						if(isSurfaceValid() == false ) {
+							// Exception whereFrame broken
+							Log.w(OFAndroidLifeCycle.class.getSimpleName(), "SetFirstFrameDrawn::surface is not valid - Width:0 Height:0 - Recreate");
+							glResume(glContainer);
+						}
+					}
+				});
+			}
+		}
+	}
+
+	static boolean isSurfaceValid() {
+		if(mGLView != null &&
+				(mGLView.getHeight() >= 1 || mGLView.getWidth() >= 1)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
@@ -306,6 +387,8 @@ public class OFAndroidLifeCycle
 		if(mGLView == null)
 		{
 			Log.d(TAG, "Create surface");
+
+
 			mGLView = new OFGLSurfaceView(m_activity);
 			
 			ViewGroup glContainer = getActivity().getSurfaceContainer();
@@ -317,10 +400,23 @@ public class OFAndroidLifeCycle
 
 				if(glContainer.getChildCount() > 0) {
 					View view = glContainer.getChildAt(0);
-					glContainer.removeAllViews();
+					if(pausedGLView == null)
+						pausedGLView = (OFGLSurfaceView) view;
+					if(pausedGLView != null) pausedGLView.setDoNotDraw();
+					//glContainer.removeAllViews();
 				}
-				if (parent == null)
+				if (parent == null )
 					glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+				if(pausedGLView != null) {
+					//glContainer.removeView(pausedGLView); // make ontop
+					//glContainer.addView(pausedGLView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+					//LayoutParams top = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+					//top.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+//					RelativeLayout relativePause = (RelativeLayout)pausedGLView;
+//					pausedGLView.addRule();
+					glContainer.bringChildToFront(pausedGLView);
+				}
 			}
 		}
 	}
@@ -354,15 +450,33 @@ public class OFAndroidLifeCycle
 	
 	public static void glResume(ViewGroup glContainer)
 	{
+		Log.d(TAG, "glResume");
 		OFGLSurfaceView glView = getGLView();
-		if( glView != null && glView.getRenderer() != null && android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
+		boolean offScreenLayoutParamFix = false;
+		if(glView.getWidth() <= 1|| glView.getHeight() <= 1) {
+			offScreenLayoutParamFix = true;
+			Log.d(TAG, "glResume:: offScreenLayoutParamFix required");
+		}
+		if( glView != null && glView.getRenderer() != null && android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT && offScreenLayoutParamFix == false) {
+
 			glView.onResume();
 		} else {
-			mGLView = null;
+			pausedGLView = mGLView;
+			clearGLView(); // mGLView = null;
 			OFEGLConfigChooser.setGLESVersion(2);
 			glCreateSurface(true);
 		}
-		Log.d(TAG, "glResume");
+
+//		if(mGLView != null) {
+//			glContainer.removeView(mGLView);
+//			glContainer.addView(mGLView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//		}
+//		if(pausedGLView != null) {
+//			glContainer.removeView(pausedGLView);
+//			glContainer.addView(pausedGLView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//		}
+
+
 		pushState(State.resume);
 	}
 	
@@ -387,7 +501,7 @@ public class OFAndroidLifeCycle
 		}
 
 	}
-	
+
 	public static void exit()
 	{
 		pushState(State.exit);

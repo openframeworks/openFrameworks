@@ -357,7 +357,7 @@ public class OFAndroidLifeCycleHelper
 		OFAndroid.sleepLocked=false;
 		
 		OFAndroid.onDestroy();
-		OFAndroidWindow.exit();
+		//OFAndroidWindow.exit();
 	}
 	
 	public static void exit()

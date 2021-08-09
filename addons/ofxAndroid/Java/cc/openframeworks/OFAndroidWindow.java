@@ -36,7 +36,8 @@ import static android.opengl.EGL14.EGL_NO_CONTEXT;
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 
 	public OFAndroidWindow(int w, int h){
-        setResolution(w,h, true);
+        Log.i("OF","OFAndroidWindow():width:" + w + " height:" + h);
+	    setResolution(w,h, true);
 	}
 
 	public void setResolution(int w, int h, boolean updateSurface) {
@@ -50,7 +51,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         }
     }
 
-    public static void surfaceHasBeenDestroyed() {
+    public void surfaceHasBeenDestroyed() {
         Log.i("OF","surfaceHasBeenDestroyed");
         OFAndroid.onSurfaceDestroyed();
         has_surface = false;
@@ -100,7 +101,9 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(int w, int h) {
+
         Log.i("OF","onSurfaceChanged width:" + w + " height:" + h);
+        if(doNotDraw == true) return; // fix for strange case
         if(firstFrameDrawn == false) {
             Log.i("OF","onSurfaceChanged firstFrameDrawn not drawn");
             //return;
@@ -126,6 +129,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT) {
             isContext = false;
         }
+
+        if(doNotDraw == true) return; // fix for strange case
         Log.i("OF","OFAndroidWindow::setup context:" + isContext);
         if(w <= 0 || h <= 0) {
             Log.e("OF","setup width or height is <=0. Will cause strange effects");
@@ -148,10 +153,17 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 
             }
         }
+
+        OFAndroidLifeCycle.HasSetup();
+
     }
 
-    public static void exit() {
+    public void exit() {
 	    setup = false;
+    }
+
+    public void setDoNotDraw() {
+	    doNotDraw = true;
     }
 
 
@@ -168,15 +180,15 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 if( OFAndroidLifeCycle.getGLView() != null)
                     OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
             }
-            if(setup && OFAndroid.unpackingDone){
+            if(setup && OFAndroid.unpackingDone && !doNotDraw){
                 if(android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
 
                     if(firstFrameDrawn == false) {
                         firstFrameDrawn = true;
                         drawClear = false;
                         OFAndroidLifeCycle.SetFirstFrameDrawn();
-                        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-                        gl.glClearColor(0f, 0f, 0f, 0.0f);
+                       // gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+                        //gl.glClearColor(0f, 0f, 0f, 0.0f);
                         Log.i("OFAndroidWindow", "onDrawFrame setup and unpacking done SetFirstFrameDrawn");
                     }
                     OFAndroid.render();
@@ -187,7 +199,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                     setup();
                     drawClear = true;
                 }
-            }else if(!setup && OFAndroid.unpackingDone){
+            }else if(doNotDraw){
+                drawClear = false;
+                Log.i("OFAndroidWindow", "onDrawFrame DoNotDraw");
+            } else if(!setup && OFAndroid.unpackingDone){
                 Log.i("OFAndroidWindow", "onDrawFrame !setup and unpacking done");
                 setup();
                 drawClear = true;
@@ -198,7 +213,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             if(drawClear) {
                 Log.e("OFAndroidWindow", "onDrawFrame  draw clear");
                 gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-                //gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+                gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
                 gl.glClearColor(0f, 0f, 0f, 0.0f);
                 
             }
@@ -213,12 +228,13 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
 
-    private static boolean setup;
-    private static boolean resolutionSetup;
-    private static boolean initialRender;
-    private static boolean firstFrameDrawn = false;
+    private boolean setup;
+    private boolean doNotDraw = false;
+    private boolean resolutionSetup;
+    private boolean initialRender;
+    private boolean firstFrameDrawn = false;
     private int w,h;
-    public static boolean has_surface = false;
+    public  boolean has_surface = false;
 
     private boolean drawClear = false;
 }

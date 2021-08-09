@@ -91,8 +91,12 @@ class OFGLSurfaceView extends GLSurfaceView {
     public void setFrameRate(float frameRate) {
         Log.i("OF","setFrameRate:" + frameRate);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            mSurface.setFrameRate(frameRate,
-                    FRAME_RATE_COMPATIBILITY_DEFAULT);
+            if(mSurface != null) {
+                mSurface.setFrameRate(frameRate,
+                        FRAME_RATE_COMPATIBILITY_DEFAULT);
+            } else {
+                Log.i("OF","setFrameRate called and no Surface");
+            }
         }
     }
 
@@ -154,10 +158,10 @@ class OFGLSurfaceView extends GLSurfaceView {
     public OFEGLConfigChooser getConfigChooser() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.i("OF","getConfigChooser::WideGamut Config Chooser");
-            return new OFEGLConfigChooser(8, 8, 8, 8, 16, 0, 4, false);
+            return new OFEGLConfigChooser(8, 8, 8, 8, 0, 0, 4, false);
         }
         Log.i("OF","getConfigChooser::sRGB Config");
-        return new OFEGLConfigChooser(8, 8, 8, 8, 16, 0, 4, false);
+        return new OFEGLConfigChooser(8, 8, 8, 8, 0, 0, 4, false);
 
     }
 
@@ -212,8 +216,9 @@ class OFGLSurfaceView extends GLSurfaceView {
                     public void run() {
                         int width = getWidth();
                         int height = getHeight();
-
-                        mRenderer.setResolution(width, height, true);
+                        if (mRenderer != null){
+                            mRenderer.setResolution(width, height, true);
+                        }
                     }
                 });
             }
@@ -259,6 +264,15 @@ class OFGLSurfaceView extends GLSurfaceView {
         Log.i("OF","finalize");
     }
 
+    public void setDoNotDraw() {
+        Log.i("OF","setDoNotDraw");
+        doNotDraw = true;
+        if(mRenderer != null) {
+            setRenderMode(OFGLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            mRenderer.setDoNotDraw();
+        }
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.i("OF","surfaceCreated");
@@ -296,7 +310,7 @@ class OFGLSurfaceView extends GLSurfaceView {
             mRenderer.setResolution(w,h, true);
         }
     }
-
+    private boolean doNotDraw = false;
     private OFAndroidWindow mRenderer;
     private SurfaceHolder mHolder;
     private Surface mSurface;
