@@ -139,18 +139,18 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
 				int height = displayMetrics.heightPixels;
 				int width = displayMetrics.widthPixels;
-				int bar = getNavigationBarHeight();
-				if(bar > 256) bar = 0;
-				int barWidth = getNavigationBarHeight();
-				if(barWidth > 256) barWidth = 0; // fixes bug in android display metrics
-				int heightBar = displayMetrics.heightPixels + bar;
-				int widthBar = displayMetrics.widthPixels + barWidth;
+//				int bar = getNavigationBarHeight();
+//				if(bar > 256) bar = 0;
+//				int barWidth = getNavigationBarHeight();
+//				if(barWidth > 256) barWidth = 0; // fixes bug in android display metrics
+//				int heightBar = displayMetrics.heightPixels + bar;
+//				int widthBar = displayMetrics.widthPixels + barWidth;
 				int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
 				int height_px = Resources.getSystem().getDisplayMetrics().heightPixels;
 				int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
-				Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
+				//Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
 				Log.i("OF", "DisplayRealMetrics: w/h:" +width_px + "x" + height_px + " pixeldpi:" + pixeldpi);
-				glView.setWindowResize(widthBar, heightBar);
+				glView.setWindowResize(width, height);
 			}
 		} catch (Exception exception) {
 			Log.w("OF", "Could not get Window for Display ", exception);
