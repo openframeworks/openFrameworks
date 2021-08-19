@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
@@ -124,7 +125,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		OFAndroidLifeCycle.glCreate();
 
 		DetermineDisplayConfiguration();
-
 		//create gesture listener
 		//register the two events
 		initView();
@@ -136,21 +136,20 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			OFAndroid.enableOrientationChangeEvents();
 			if(glView != null) {
 				DisplayMetrics displayMetrics = new DisplayMetrics();
-				getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
-				int height = displayMetrics.heightPixels;
-				int width = displayMetrics.widthPixels;
-//				int bar = getNavigationBarHeight();
-//				if(bar > 256) bar = 0;
-//				int barWidth = getNavigationBarHeight();
-//				if(barWidth > 256) barWidth = 0; // fixes bug in android display metrics
-//				int heightBar = displayMetrics.heightPixels + bar;
-//				int widthBar = displayMetrics.widthPixels + barWidth;
-				int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
-				int height_px = Resources.getSystem().getDisplayMetrics().heightPixels;
-				int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
-				//Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
-				Log.i("OF", "DisplayRealMetrics: w/h:" +width_px + "x" + height_px + " pixeldpi:" + pixeldpi);
-				glView.setWindowResize(width, height);
+				WindowManager windowManager = getWindowManager();
+				if(windowManager != null && getWindowManager().getDefaultDisplay() != null) {
+					getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+					int height = displayMetrics.heightPixels;
+					int width = displayMetrics.widthPixels;
+					int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
+					int height_px = Resources.getSystem().getDisplayMetrics().heightPixels;
+					int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
+					//Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
+					Log.i("OF", "DisplayRealMetrics: w/h:" + width_px + "x" + height_px + " pixeldpi:" + pixeldpi);
+					glView.setWindowResize(width, height);
+				} else {
+					throw new Exception("Display window problem");
+				}
 			}
 		} catch (Exception exception) {
 			Log.w("OF", "Could not get Window for Display ", exception);
@@ -165,7 +164,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					boolean isWideColorGamut = display.isWideColorGamut();
 					Log.i("OF", "Display WideColor Gamut Supported:" +  isWideColorGamut);
 					OFAndroid.wideGamut = isWideColorGamut;
-
 					boolean isHDR = display.isHdr();
 					Log.i("OF", "Display is HDR Supported:" +  isHDR);
 					OFAndroid.hdrScreen = isHDR;
@@ -175,29 +173,34 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-						Display.Mode[] modes = display.getSupportedModes();
-						Display.Mode currentMode = display.getMode();
-						if(currentRefreshRate != currentMode.getRefreshRate()) {
-							Log.e("OF", "Display Mode: Current Display Mode Refresh Rate not equal to current :" +  currentMode + " refreshRate: [" +  currentMode.getRefreshRate() + "] displayRefreshRate: " + currentRefreshRate);
-						}
-						currentRefreshRate = currentMode.getRefreshRate();
-						for(Display.Mode mode : modes){
-							Log.i("OF", "Display Mode: Supported:" +  mode + " refreshRate: [" + mode.getRefreshRate() + "] mode PhysicalWidth:[" + mode.getPhysicalWidth() + "] mode PhysicalHeight:[" + mode.getPhysicalHeight() + "]");
-							if( mode.getRefreshRate() >= highestRefreshRate) {
-								highestRefreshRate =  mode.getRefreshRate();
+						try {
+							Display.Mode[] modes = display.getSupportedModes();
+							Display.Mode currentMode = display.getMode();
+							if (currentRefreshRate != currentMode.getRefreshRate()) {
+								Log.e("OF", "Display Mode: Current Display Mode Refresh Rate not equal to current :" + currentMode + " refreshRate: [" + currentMode.getRefreshRate() + "] displayRefreshRate: " + currentRefreshRate);
 							}
+							currentRefreshRate = currentMode.getRefreshRate();
+							for (Display.Mode mode : modes) {
+								Log.i("OF", "Display Mode: Supported:" + mode + " refreshRate: [" + mode.getRefreshRate() + "] mode PhysicalWidth:[" + mode.getPhysicalWidth() + "] mode PhysicalHeight:[" + mode.getPhysicalHeight() + "]");
+								if (mode.getRefreshRate() >= highestRefreshRate) {
+									highestRefreshRate = mode.getRefreshRate();
+								}
+							}
+						} catch (Exception ex) {
+							Log.e("OF", "Display Mode Exception:", ex);
 						}
 					} else { // pre 23 Display Mode
-						float[] refreshRates = display.getSupportedRefreshRates();
-						for(float refreshRate : refreshRates){
-							Log.i("OF", "Display RefreshRate Supported:" +  refreshRate);
-							if(refreshRate >= highestRefreshRate) {
-								highestRefreshRate = refreshRate;
+						try {
+							float[] refreshRates = display.getSupportedRefreshRates();
+							for(float refreshRate : refreshRates){
+								Log.i("OF", "Display RefreshRate Supported:" +  refreshRate);
+								if(refreshRate >= highestRefreshRate) {
+									highestRefreshRate = refreshRate;
+								}
 							}
+						} catch (Exception ex) {
+							Log.e("OF", "Display Mode Exception:", ex);
 						}
-					}
-
-					//if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.) {
 
 
 					OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
