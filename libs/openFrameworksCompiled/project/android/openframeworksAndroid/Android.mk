@@ -89,15 +89,15 @@ else ifeq ($(TARGET_ARCH_ABI),x86)
     ABI := x86
     LIBRARY_ARCHITECTURE = i686-$(TOOLS_HOST)-android
 else ifeq ($(TARGET_ARCH_ABI),x86_64)
-    LOCAL_CFLAGS    +=  -target x86_64-linux-android
+    LOCAL_CFLAGS    += -target x86_64-linux-android
     LOCAL_CPPFLAGS  += -target x86_64-linux-android
     ABI := x86_64
     LIBRARY_ARCHITECTURE = x86_64-$(TOOLS_HOST)-android
 endif
 
-LOCAL_CFLAGS    := -std=c17 --sysroot=$(SYSROOT) -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
-LOCAL_CPPFLAGS  := -std=c++17 --sysroot=$(SYSROOT) -stdlib=libc++ -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
-LOCAL_LDLIBS    += -L$(SYSROOT)/$(LIBRARY_ARCHITECTURE)/$(TARGET_API)  -lGLESv2 -lGLESv1_CM -lOpenSLES -landroid
+LOCAL_CFLAGS    := -std=c17 -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
+LOCAL_CPPFLAGS  := -std=c++17 -stdlib=libc++ -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections
+LOCAL_LDLIBS    += -lGLESv2 -lGLESv1_CM -lOpenSLES -landroid
 LOCAL_LDLIBS    += -lGLESv3
 LOCAL_LDLIBS    += -lz -lc -lm -ldl -llog -ljnigraphics
 #LOCAL_LDLIBS    +=  -lc++_static -lc++ -lc++abi -lgcc -lc++abi -landroid_support

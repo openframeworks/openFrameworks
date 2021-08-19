@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+// pointing to cmake's source code for the same project
+def PRJ_SRC_ROOT = './src/main'
+def ofRoot(){ return '../../../../' }
+final ofSource = ofRoot() + 'libs/openFrameworks'
+final ofLibs = ofRoot() + 'libs'
+final addons = ofRoot() + 'addons'
+def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
+final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
+
+android {
+
+    compileSdkVersion 31
+    //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
+    ndkVersion '22.1.7171670' // use android studio side loaded ndk
+    //buildFeatures.prefab = true
+
+    defaultConfig {
+        applicationId "cc.openframeworks.template"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 3
+        versionName '3.0'
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+
+        externalNativeBuild {
+            if (!project.hasProperty("ndkBuild")) {
+                cmake {
+                    arguments "-DANDROID_STL=c++_static"
+                }
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                          'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            manifest.srcFile "${PRJ_SRC_ROOT}/AndroidManifest.xml"
+            java.srcDirs = ["${PRJ_SRC_ROOT}/java",
+                            "${OFX_ANDROID}/Java"]
+            res.srcDirs = ["${PRJ_SRC_ROOT}/res"]
+            assets {
+                srcDirs 'src/main/assets', '../bin/data'
+            }
+        }
+    }
+    externalNativeBuild {
+        if (!project.hasProperty("ndkBuild")) {
+            cmake {
+                path "src/main/cpp/CMakeLists.txt"
+            }
+        } else {
+            ndkBuild {
+                path "src/main/cpp/Android.mk"
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '31.0.0'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    implementation "com.android.ndk.thirdparty:curl:7.69.1-alpha-1"
+//    implementation "com.android.ndk.thirdparty:jsoncpp:1.8.4-alpha-1"
+//    implementation "com.android.ndk.thirdparty:openssl:1.1.1g-alpha-1"
+    //implementation "com.google.android.gms:play-services-games:21.0.0"
+    //implementation "com.google.android.gms:play-services-auth:19.0.0"
+}
+

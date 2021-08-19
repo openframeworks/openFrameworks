@@ -14,6 +14,8 @@
 
 class ofxAndroidApp: public ofBaseApp{
 public:
+
+	virtual void setup(){}
 	virtual void pause(){};
 	virtual void stop(){};
 	virtual void resume(){};

@@ -1,11 +1,34 @@
-package cc.openframeworks.TEMPLATE_APP_NAME;
+package cc.openframeworks.android;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import cc.openframeworks.OFAndroid;
 
+import cc.openframeworks.OFAndroid;
+import cc.openframeworks.OFAndroidLifeCycle;
+import cc.openframeworks.OFAndroidLifeCycleHelper;
+
 
 public class OFActivity extends cc.openframeworks.OFActivity{
+
+    static { // this
+        System.loadLibrary("ofApp");
+        try{
+            if(OFAndroidLifeCycle.coreLibraryLoaded == false) {
+                Log.i("ofApp", "Loading openFrameworksAndroid Core");
+
+                System.loadLibrary("openFrameworksAndroid");
+                OFAndroidLifeCycle.coreLibraryLoaded = true;
+            } else {
+                Log.i("ofApp", "openFrameworksAndroid Core Already Loaded");
+            }
+
+        } catch(Throwable ex2){
+            Log.i("ofApp","Failed to Load openFrameworksAndroid Exception:", ex2);;
+        }
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)

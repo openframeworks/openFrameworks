@@ -19,6 +19,7 @@
 bin/
 gen/
 out/
+.cxx/
 
 # Gradle files
 .gradle
@@ -48,7 +49,6 @@ captures/
 *.ipr
 *~
 *.swp
-.cxx/
 
 # Keystore files
 *.jks
