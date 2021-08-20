@@ -9,8 +9,9 @@ import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
+import androidx.annotation.Keep;
 
-
+@Keep
 class OFGestureListener extends SimpleOnGestureListener implements OnClickListener, OnScaleGestureListener {
 	
 
@@ -92,6 +93,8 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 		/*boolean res = super.onFling(e1, e2, velocityX, velocityY);
 		return res;*/
 		if(e1==null || e2==null) return false;
+
+		if(!OFAndroid.isApplicationSetup()) return false;
 		
 		final float xDistance = Math.abs(e1.getX() - e2.getX());
 		final float yDistance = Math.abs(e1.getY() - e2.getY());

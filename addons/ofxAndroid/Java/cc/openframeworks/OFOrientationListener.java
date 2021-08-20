@@ -6,7 +6,9 @@ import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.WindowManager;
+import androidx.annotation.Keep;
 
+@Keep
 public class OFOrientationListener extends OrientationEventListener {
     OFOrientationListener(Context context){
         super(context);

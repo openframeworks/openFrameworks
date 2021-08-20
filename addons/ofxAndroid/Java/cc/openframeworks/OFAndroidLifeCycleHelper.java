@@ -20,7 +20,9 @@ import android.content.res.AssetManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.StatFs;
 import android.util.Log;
+import androidx.annotation.Keep;
 
+@Keep
 public class OFAndroidLifeCycleHelper 
 {
 	private static final String TAG = OFAndroidLifeCycleHelper.class.getSimpleName();
@@ -203,6 +205,13 @@ public class OFAndroidLifeCycleHelper
 		Log.i(TAG,"onCreate");
 		OFAndroid.onCreate();
 		OFAndroid.onUnpackingResourcesDone();
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		if(OFAndroidLifeCycle.isSurfaceCreated() == false && glView == null){
+			Log.i(TAG,"onCreate glView is null or not setup");
+
+			OFAndroid.setupGL(OFAndroid.eglVersion, true);
+			OFAndroid.onStart();
+		}
 		
 		OFAndroid.runOnMainThread(new Runnable() {
 		   @Override

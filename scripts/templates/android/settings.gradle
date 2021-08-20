@@ -1,5 +1,1 @@
-def ofRoot = '../../../'
-
-// Load common functions
-apply from: ofRoot+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
 include ':ofApp'

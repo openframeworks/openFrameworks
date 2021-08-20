@@ -12,8 +12,10 @@ import android.media.AudioTrack;
 import android.media.AudioTrack.OnPlaybackPositionUpdateListener;
 import android.media.MediaRecorder;
 import android.util.Log;
+import androidx.annotation.Keep;
 
 // NOTE: the OFAndroidSoundStream class is controlled from the JNI layer (ofxAndroidSoundStream.cpp / h)
+@Keep
 public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, OnRecordPositionUpdateListener, OnPlaybackPositionUpdateListener{
 	
 	boolean threadRunning;

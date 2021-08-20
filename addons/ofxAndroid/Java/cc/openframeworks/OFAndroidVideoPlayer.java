@@ -11,8 +11,9 @@ import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Surface;
+import androidx.annotation.Keep;
 
-
+@Keep
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvailableListener {
 	

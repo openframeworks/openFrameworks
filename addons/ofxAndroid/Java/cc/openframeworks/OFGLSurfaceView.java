@@ -11,10 +11,12 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import androidx.annotation.Keep;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
 import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 
+@Keep
 class OFGLSurfaceView extends GLSurfaceView {
 
     public OFGLSurfaceView(Context context) {
@@ -69,9 +71,6 @@ class OFGLSurfaceView extends GLSurfaceView {
         });
     }
 
-
-
-
     @Override
     public void setRenderer(GLSurfaceView.Renderer renderer) {
         Log.i("OF","setRenderer:" + renderer.toString());
@@ -90,17 +89,19 @@ class OFGLSurfaceView extends GLSurfaceView {
 
     public void setFrameRate(float frameRate) {
         Log.i("OF","setFrameRate:" + frameRate);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if(mSurface != null) {
-                mSurface.setFrameRate(frameRate,
-                        FRAME_RATE_COMPATIBILITY_DEFAULT);
-            } else {
-                Log.i("OF","setFrameRate called and no Surface");
-            }
-        }
+        if(doNotDraw) return;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            if(mSurface != null) {
+//                mSurface.setFrameRate(frameRate,
+//                        FRAME_RATE_COMPATIBILITY_DEFAULT);
+//            } else {
+//                Log.i("OF","setFrameRate called and no Surface");
+//            }
+//        }
     }
 
     public void OnResume() {
+        if(doNotDraw) return;
         if(mRenderer != null && mRenderer.isSetup()) {
 
             int width = getWidth();
@@ -201,7 +202,7 @@ class OFGLSurfaceView extends GLSurfaceView {
 
     @Override
     public void onResume() {
-
+        if(doNotDraw) return;
         Log.i("OF","OFGLSurfaceView::onResume");
         if(mRenderer != null)
         {
@@ -276,6 +277,7 @@ class OFGLSurfaceView extends GLSurfaceView {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.i("OF","surfaceCreated");
+        if(doNotDraw) return;
         if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
             mHolder = holder;
             mSurface = holder.getSurface();
@@ -287,6 +289,7 @@ class OFGLSurfaceView extends GLSurfaceView {
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         Log.i("OF","surfaceChanged format:" + format + " w:" + w + " h:" + h);
         super.surfaceChanged(holder, format, w, h);
+        if(doNotDraw) return;
         if(holder != null && holder.getSurface() != null && holder.getSurface().isValid()) {
             mHolder = holder;
             mSurface = holder.getSurface();
@@ -303,6 +306,7 @@ class OFGLSurfaceView extends GLSurfaceView {
     }
 
     void setWindowResize(int w, int h){
+        if(doNotDraw) return;
         Log.i("OF","setWindowResize mRenderer:" + " w:" + w + " h:" + h  );
         if(mRenderer != null && mRenderer.isSetup()) {
             mRenderer.setResolution(w,h, true);

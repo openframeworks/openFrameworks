@@ -18,21 +18,22 @@ import static android.opengl.EGL14.EGL_NO_CONTEXT;
 public class OFAndroidLifeCycle
 {
 	public static Boolean coreLibraryLoaded = false;
-	static {
-		try{
-			if(coreLibraryLoaded == false) {
-				Log.i("OF", "Loading openFrameworksAndroid Core");
-				System.loadLibrary("openFrameworksAndroid");
-			} else {
-				Log.i("OF", "openFrameworksAndroid Core Already Loaded");
-			}
-			coreLibraryLoaded = true;
-		} catch(Throwable ex2){
-			Log.i("OF","Failed to Load openFrameworksAndroid Exception:", ex2);;
-		}
-	}
+	public static Boolean appLibraryLoaded = false;
+//	static {
+//		try{
+//			if(coreLibraryLoaded == false) {
+//				Log.i("OF", "Loading openFrameworksAndroid Core");
+//				coreLibraryLoaded = true;
+//				System.loadLibrary("openFrameworksAndroid");
+//			} else {
+//				Log.i("OF", "openFrameworksAndroid Core Already Loaded");
+//			}
+//
+//		} catch(Throwable ex2){
+//			Log.i("OF","Failed to Load openFrameworksAndroid Exception:", ex2);;
+//		}
+//	}
 
-		
 	private static Vector<State> m_statesStack = new Vector<State>();
 	private static State m_currentState = null;
 	private static Semaphore m_semaphor = new Semaphore(1, false);
@@ -74,6 +75,8 @@ public class OFAndroidLifeCycle
 	private static boolean isNextStateLegal(State next)
 	{
 		boolean isLegal = true;
+		if(next == null) return false;
+		if(m_currentState == null) return true;
 		
 		switch(next)
 		{
@@ -134,55 +137,60 @@ public class OFAndroidLifeCycle
                         m_statesStack.removeElement(next);
 //                    release
                         m_semaphor.release();
-                        if (!isNextStateLegal(next))
+                        if (next != null && !isNextStateLegal(next))
                         {
-							Log.e(OFAndroidLifeCycle.class.getSimpleName(), "Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
-                            break;
+                        	if(m_currentState != null)
+								Log.e(OFAndroidLifeCycle.class.getSimpleName(), "Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
+                            else
+								Log.e(OFAndroidLifeCycle.class.getSimpleName(), "Illegal next state! when current state null and next state: " + next.toString());
+
+							break;
 							//throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
                         }
-                        
-                        m_currentState = next;
-                        
-                        switch (next) {
-                            case init:
-                                OFAndroidLifeCycleHelper.appInit(m_activity);
-                                coreInitialized();
-                                break;
-                            case create:
-                                OFAndroidLifeCycleHelper.onCreate();
-                                break;
-                            case start:
-								synchronized (m_isSurfaceCreated) {
-									m_isSurfaceCreated.set(true);
-								}
-                                OFAndroidLifeCycleHelper.onStart();
-								synchronized (m_isSurfaceCreated) {
-									m_hasSetup.set(true);
-								}
-                                break;
-                            case stop:
-                                OFAndroidLifeCycleHelper.onStop();
-                                break;
-                            case pause:
-                                OFAndroidLifeCycleHelper.onPause();
-                                break;
-                            case resume:
-								synchronized (m_isSurfaceCreated) {
-									if (m_hasSetup.get() == true)
-										OFAndroidLifeCycleHelper.onResume();
-								}
-                                break;
-                            case destroy:
-                                OFAndroidLifeCycleHelper.onDestroy();
-                                break;
-                            case exit:
-                                OFAndroidLifeCycleHelper.exit();
-                                m_currentState = null;
-                                break;
+                        if(next != null) {
+							m_currentState = next;
 
-                            default:
-                                break;
-                        }
+							switch (next) {
+								case init:
+									OFAndroidLifeCycleHelper.appInit(m_activity);
+									coreInitialized();
+									break;
+								case create:
+									OFAndroidLifeCycleHelper.onCreate();
+									break;
+								case start:
+									synchronized (m_isSurfaceCreated) {
+										m_isSurfaceCreated.set(true);
+									}
+									OFAndroidLifeCycleHelper.onStart();
+									synchronized (m_isSurfaceCreated) {
+										m_hasSetup.set(true);
+									}
+									break;
+								case stop:
+									OFAndroidLifeCycleHelper.onStop();
+									break;
+								case pause:
+									OFAndroidLifeCycleHelper.onPause();
+									break;
+								case resume:
+									synchronized (m_isSurfaceCreated) {
+										if (m_hasSetup.get() == true)
+											OFAndroidLifeCycleHelper.onResume();
+									}
+									break;
+								case destroy:
+									OFAndroidLifeCycleHelper.onDestroy();
+									break;
+								case exit:
+									OFAndroidLifeCycleHelper.exit();
+									m_currentState = null;
+									break;
+
+								default:
+									break;
+							}
+						}
                         //close
                         m_semaphor.acquire();
                     }
@@ -373,10 +381,6 @@ public class OFAndroidLifeCycle
 	
 	public static void init()
 	{
-		if(m_currentState != null)
-		{
-			return;
-		}
 		Log.i("OF","OFAndroid init...");
 		pushState(State.init);
 	}

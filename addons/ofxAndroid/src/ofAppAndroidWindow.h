@@ -58,6 +58,8 @@ public:
 	void update();
 	void draw();
 
+	void setCurrentWindow();
+
 	void hideCursor() {}
 	void showCursor() {}
 

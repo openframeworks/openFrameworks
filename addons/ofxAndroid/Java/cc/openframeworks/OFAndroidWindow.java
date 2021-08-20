@@ -30,9 +30,6 @@ import android.view.WindowManager;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
 
-
-
-
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 
 	public OFAndroidWindow(int w, int h){
@@ -41,11 +38,11 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	}
 
 	public void setResolution(int w, int h, boolean updateSurface) {
-        Log.i("OF","setResolution:width:" + w + " height:" + h);
+        Log.i("OFAndroidWindow","setResolution:width:" + w + " height:" + h);
         this.w = w;
         this.h = h;
 
-        if(w != 0 && h != 0){
+        if(w != 0 && h != 0 && setup == true){
             resolutionSetup = true;
             if(updateSurface) onSurfaceChanged(w,h);
         }
@@ -60,7 +57,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 
 	@Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-
 
 		Log.i("OF","onSurfaceCreated");
 		// notify that old surface was destroyed
@@ -139,12 +135,22 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             OFAndroid.setup(w, h);
             setup = true;
         }
-    	android.os.Process.setThreadPriority(8);
-    	OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
-    	OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
-    	Activity activity = OFAndroidLifeCycle.getActivity();
+        try {
+            android.os.Process.setThreadPriority(8);
+            OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
+            OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
+
+        } catch (Exception e) {
+            Log.e("OF", "setup OFAndroidWindow setup OFGestureListener:Exception:" + e.getMessage());
+        }
+
+        Activity activity = OFAndroidLifeCycle.getActivity();
 		if(activity != null) {
-            ((OFActivity) activity).onGLSurfaceCreated();
+            try {
+                ((OFActivity) activity).onGLSurfaceCreated();
+            } catch (Exception e) {
+                Log.e("OF", "setup OFAndroidWindow setup OFGestureListener:Exception:" + e.getMessage());
+            }
         }
 		else {
 		    try {
@@ -165,7 +171,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public void setDoNotDraw() {
 	    doNotDraw = true;
     }
-
 
     private int drawFrame = 0;
     @Override
@@ -226,7 +231,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     public boolean isResolutionSetup(){
         return resolutionSetup;
     }
-
 
     private boolean setup;
     private boolean doNotDraw = false;

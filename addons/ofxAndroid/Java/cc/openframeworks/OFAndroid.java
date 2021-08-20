@@ -38,9 +38,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.concurrent.Semaphore;
+import androidx.annotation.Keep;
 
 import static android.content.Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
 
+@Keep
 public class OFAndroid {
 
 	public static String packageName;

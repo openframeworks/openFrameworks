@@ -7,9 +7,11 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
+import androidx.annotation.Keep;
 
 import java.io.IOException;
 
+@Keep
 public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
 	OFAndroidSoundPlayer(){
 		pan = 0.f;

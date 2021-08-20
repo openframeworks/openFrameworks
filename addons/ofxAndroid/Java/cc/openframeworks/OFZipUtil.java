@@ -9,8 +9,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.util.Log;
+import androidx.annotation.Keep;
 
-
+@Keep
 public class OFZipUtil
 {
   private static final int  BUFFER_SIZE = 4096;

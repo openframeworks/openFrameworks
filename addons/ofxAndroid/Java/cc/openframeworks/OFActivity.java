@@ -30,8 +30,11 @@ import java.util.ArrayList;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
 
+import com.getkeepsafe.relinker.ReLinker;
+
 public abstract class OFActivity extends Activity implements DisplayManager.DisplayListener{
 
+	private static final String TAG = "OF";
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
@@ -40,6 +43,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public float highestRefreshRate;
 
 	public boolean hasPaused = false;
+	public boolean hasSetup = false;
 
 	public void onGLSurfaceCreated(){
 		Log.v("OF","onGLSurfaceCreated");
@@ -70,12 +74,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			mOFGlSurfaceContainer = (ViewGroup)this.findViewById(id.getField("of_gl_surface_container").getInt(null));
 			
 			if(mOFGlSurfaceContainer == null) {
-				Log.w("OF", "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
+				Log.w(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
 				throw new Exception();
 			}
 			
 		} catch (Exception e) {
-			Log.w("OF", "couldn't create view from layout falling back to GL only",e);
+			Log.w(TAG, "couldn't create view from layout falling back to GL only",e);
 			mOFGlSurfaceContainer = new FrameLayout(this);
 	        this.setContentView(mOFGlSurfaceContainer);
 		}
@@ -84,11 +88,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public void resetView(){
 		String packageName = this.getPackageName();
 		try {
-			Log.v("OF","trying to find class: "+packageName+".R$layout");
+			Log.v(TAG,"trying to find class: "+packageName+".R$layout");
 			Class<?> layout = Class.forName(packageName+".R$layout");
 			View view = this.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
 			if(view == null) {
-				Log.w("OF", "Could not find main_layout.xml.");
+				Log.w(TAG, "Could not find main_layout.xml.");
 				throw new Exception();
 			}
 			this.setContentView(view);
@@ -97,12 +101,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			mOFGlSurfaceContainer = (ViewGroup)this.findViewById(id.getField("of_gl_surface_container").getInt(null));
 
 			if(mOFGlSurfaceContainer == null) {
-				Log.w("OF", "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
+				Log.w(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
 				throw new Exception();
 			}
 
 		} catch (Exception e) {
-			Log.w("OF", "couldn't create view from layout falling back to GL only",e);
+			Log.w(TAG, "couldn't create view from layout falling back to GL only",e);
 			mOFGlSurfaceContainer = new FrameLayout(this);
 			this.setContentView(mOFGlSurfaceContainer);
 		}
@@ -121,16 +125,58 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		}
 		OFAndroidLifeCycle.setActivity(this);
-		OFAndroidLifeCycle.init();
-		OFAndroidLifeCycle.glCreate();
+		if(OFAndroidLifeCycle.coreLibraryLoaded == false) {
+			LoadCoreStatic();
+		} else {
+			Setup();
+		}
+	}
 
-		DetermineDisplayConfiguration();
-		//create gesture listener
-		//register the two events
-		initView();
+	public void LoadCoreStatic() {
+		if(OFAndroidLifeCycle.coreLibraryLoaded == false) {
+			ReLinker.loadLibrary(this, "openFrameworksAndroid", new ReLinker.LoadListener() {
+				@Override
+				public void success() {
+					OFAndroidLifeCycle.coreLibraryLoaded = true;
+					Setup();
+				}
+
+				@Override
+				public void failure(Throwable t) {
+					Log.e(TAG, "Failure to Load Core Static Library: " + t.getMessage());
+				}
+			});
+		}
+	}
+
+	public void Setup() {
+		Log.i(TAG, "OFAndroid.Setup:" + hasSetup + " | OFAndroidLifeCycle.coreLibraryLoaded:" + OFAndroidLifeCycle.coreLibraryLoaded + "| OFAndroidLifeCycle.appLibraryLoaded :" + OFAndroidLifeCycle.appLibraryLoaded);
+
+		if(hasSetup == false &&
+				OFAndroidLifeCycle.appLibraryLoaded == true &&
+				OFAndroidLifeCycle.coreLibraryLoaded == true
+		) {
+			hasSetup = true;
+			
+			this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					initView();
+					OFAndroidLifeCycle.init();
+					OFAndroidLifeCycle.glCreate();
+					DetermineDisplayConfiguration();
+				}
+			});
+
+		} else if(hasSetup == false && OFAndroidLifeCycle.coreLibraryLoaded == false && OFAndroidLifeCycle.appLibraryLoaded == true) {
+			LoadCoreStatic();
+		} else if(hasSetup == true) {
+			Log.i(TAG, "OFAndroid.Setup:true | OFAndroidLifeCycle.coreLibraryLoaded:" + OFAndroidLifeCycle.coreLibraryLoaded + "| OFAndroidLifeCycle.appLibraryLoaded :" + OFAndroidLifeCycle.appLibraryLoaded);
+		}
 	}
 
 	public void DetermineDisplayDimensions() {
+
 		try {
 			OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 			OFAndroid.enableOrientationChangeEvents();
@@ -146,7 +192,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
 					//Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
 					Log.i("OF", "DisplayRealMetrics: w/h:" + width_px + "x" + height_px + " pixeldpi:" + pixeldpi);
-					glView.setWindowResize(width, height);
+					if(hasSetup)
+						glView.setWindowResize(width, height);
 				} else {
 					throw new Exception("Display window problem");
 				}
@@ -192,15 +239,16 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					} else { // pre 23 Display Mode
 						try {
 							float[] refreshRates = display.getSupportedRefreshRates();
-							for(float refreshRate : refreshRates){
-								Log.i("OF", "Display RefreshRate Supported:" +  refreshRate);
-								if(refreshRate >= highestRefreshRate) {
+							for (float refreshRate : refreshRates) {
+								Log.i("OF", "Display RefreshRate Supported:" + refreshRate);
+								if (refreshRate >= highestRefreshRate) {
 									highestRefreshRate = refreshRate;
 								}
 							}
 						} catch (Exception ex) {
 							Log.e("OF", "Display Mode Exception:", ex);
 						}
+					}
 
 
 					OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
@@ -228,8 +276,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			} else {
 				Log.w("OF", "Display is not valid yet");
 			}
-		} catch (Exception exception) {
-			Log.w("OF", "Could not get Window for Display ", exception);
+
+		} catch (Exception ex) {
+			Log.w("OF", "Could not get Window for Display ", ex);
 		}
 //		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
 //			if(getWindow() != null && getWindow().isWideColorGamut()) {
@@ -239,9 +288,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 //		}
 
 
-
-		OFAndroid.deviceRefreshRate((int)currentRefreshRate);
-		OFAndroid.deviceHighestRefreshRate((int)highestRefreshRate);
+		if(hasSetup) {
+			OFAndroid.deviceRefreshRate((int) currentRefreshRate);
+			OFAndroid.deviceHighestRefreshRate((int) highestRefreshRate);
+		}
 	}
 
 
@@ -312,8 +362,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		DetermineDisplayConfiguration();
 		DetermineDisplayDimensions();
-		//resetView();
-		//super.initView();
+
 	}
 
 	public boolean showNavigationBar(Resources resources) {
@@ -355,7 +404,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	protected void onStart() {
 		Log.i("OF", "onStart");
 		super.onStart();
-		OFAndroidLifeCycle.glStart();
+		//OFAndroidLifeCycle.glStart();
 
 		try {
 			display = getWindowManager().getDefaultDisplay();
@@ -405,6 +454,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		if( hasPaused == false) {
 			Log.i("OF", "onResume hasPaused == false");
+			return;
+		}
+
+		if(hasSetup == false) {
+			Log.i("OF", "onResume hasSetup == false");
 			return;
 		}
 
@@ -459,6 +513,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 		Log.i("OF", "onKeyDown" + keyCode + " event:" + event.toString());
+		if(!hasSetup) return false;
 		if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
 				== InputDevice.SOURCE_GAMEPAD) {
 			int deviceId = event.getDeviceId();
@@ -474,6 +529,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
     
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if(!hasSetup) return false;
 		Log.i("OF", "onKeyUp" + keyCode + " event:" + event.toString());
 
 		if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
@@ -580,6 +636,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 	@Override
 	public boolean dispatchKeyEvent (KeyEvent event){
+		if(!hasSetup) return false;
 		int deviceId = event.getDeviceId();
 		//Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId);
 

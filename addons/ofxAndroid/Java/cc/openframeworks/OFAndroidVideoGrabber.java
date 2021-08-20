@@ -12,7 +12,9 @@ import android.hardware.Camera.Size;
 import android.os.Build;
 import android.util.Log;
 import android.view.OrientationEventListener;
+import androidx.annotation.Keep;
 
+@Keep
 public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, Camera.PreviewCallback {
 	
 	

@@ -39,7 +39,9 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
+import androidx.annotation.Keep;
 
+@Keep
 class ContextFactory implements GLSurfaceView.EGLContextFactory {
 
     private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
@@ -68,7 +70,7 @@ class ContextFactory implements GLSurfaceView.EGLContextFactory {
 }
 
 
-
+@Keep
 class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
 
@@ -201,12 +203,12 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         EGLConfig[] configs = null;
         num_config[0] = 0;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mWideGamut == true) {
-            if (!egl.eglChooseConfig(display, s_configAttribsMSAA_P3, null, 0,
-                    num_config)) {
-                Log.w("OF", String.format("s_configAttribsMSAA_P3 MSAA with P3 failed"));
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mWideGamut == true) {
+//            if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
+//                    num_config)) {
+//                Log.w("OF", String.format("s_configAttribsMSAA_P3 MSAA with P3 failed"));
+//            }
+//        }
         int numConfigs = num_config[0];
         if (numConfigs <= 0) {
             setRGB();

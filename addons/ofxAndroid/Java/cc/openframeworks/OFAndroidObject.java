@@ -5,8 +5,9 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.content.Intent;
+import androidx.annotation.Keep;
 
-
+@Keep
 public abstract class OFAndroidObject {
 
 	public enum State{

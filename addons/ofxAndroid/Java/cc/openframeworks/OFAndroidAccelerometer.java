@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+import androidx.annotation.Keep;
 
+@Keep
 public class OFAndroidAccelerometer extends OFAndroidObject {
 	private SensorManager sensorManager;
     private Sensor accelerometer;
