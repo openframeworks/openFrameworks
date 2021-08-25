@@ -350,6 +350,7 @@ JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
 	bSetupScreen = true;
+	stopped = false;
 	ofNotifyEvent(ofxAndroidEvents().resume);
 }
 
@@ -363,6 +364,7 @@ Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jclass thiz){
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
 	appSetup = false;
+	stopped = true;
 	ofEvents().notifyExit();
 	ofExitCallback();
 }
@@ -527,7 +529,10 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || window != nullptr && window->renderer() == nullptr) {
+		ofLogNotice("oF") << "Java_cc_openframeworks_OFAndroid_onTouchDown no window or renderer";
+		return;
+	}
 
 	ofTouchEventArgs touch;
 	touch.id = id;

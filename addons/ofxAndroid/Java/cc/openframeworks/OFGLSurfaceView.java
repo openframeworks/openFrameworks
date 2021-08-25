@@ -33,6 +33,7 @@ class OFGLSurfaceView extends GLSurfaceView {
 
     private void init(boolean translucent, int depth, int stencil) {
 
+        Log.i("OF","OFGLSurfaceView():init translucent:" + translucent + " | depth:" + depth + " | stencil:" + stencil);
         if (translucent) {
             this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         } else {
@@ -211,6 +212,9 @@ class OFGLSurfaceView extends GLSurfaceView {
                 // surfaceDestroyed(this.mHolder);
 
                 display = getDisplay();
+                getHolder().setFormat(PixelFormat.OPAQUE);
+                
+                setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
                 post(new Runnable() {
                     @Override

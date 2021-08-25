@@ -908,6 +908,9 @@ public class OFAndroid {
 				gestureListener = new OFGestureListener(OFAndroidLifeCycle.getActivity());
 			glView.setOnClickListener(gestureListener);
 			glView.setOnTouchListener(gestureListener.touchListener);
+
+		} else {
+			Log.w( "OF", "enableTouchEvents GLView is null");
 		}
 	}
 

@@ -191,6 +191,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                     if(firstFrameDrawn == false) {
                         firstFrameDrawn = true;
                         drawClear = false;
+                        OFAndroidLifeCycle.glStart();
                         OFAndroidLifeCycle.SetFirstFrameDrawn();
                        // gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
                         //gl.glClearColor(0f, 0f, 0f, 0.0f);

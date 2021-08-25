@@ -229,23 +229,31 @@ public class OFAndroidLifeCycleHelper
 		OFAndroid.onResume();
 		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 		if(OFAndroidLifeCycle.isSurfaceCreated() == true && glView == null){
-			Log.e(TAG,"onResume glView is null or not setup");
-
+			Log.w(TAG,"onResume glView is null or not setup");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 			OFAndroid.onStart();
 		}
 		else if( glView.getRenderer() == null){
-			Log.e(TAG,"onResume glView is null or not setup");
-
+			Log.w(TAG,"onResume glView is null or not setup");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 			OFAndroid.onStart();
 		}
+		else if( glView != null && glView.getDisplay() == null) {
+			Log.w(TAG,"onResume glView has a null display");
+			OFAndroid.setupGL(OFAndroid.eglVersion, true);
+			OFAndroid.onStart();
+		}
+		OFAndroid.runOnMainThread(new Runnable() {
+			@Override
+			public void run() {
+				OFAndroid.enableTouchEvents();
+				OFAndroid.registerNetworkStateReceiver();
+			}
+		});
 		if(OFAndroidLifeCycle.isSurfaceCreated() == true && OFAndroidLifeCycle.isInit()) {
 			OFAndroid.runOnMainThread(new Runnable() {
 				@Override
 				public void run() {
-					OFAndroid.enableTouchEvents();
-					OFAndroid.registerNetworkStateReceiver();
 
 					synchronized (OFAndroidObject.ofObjects) {
 						for (OFAndroidObject object : OFAndroidObject.ofObjects) {

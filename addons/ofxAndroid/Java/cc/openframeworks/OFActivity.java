@@ -130,6 +130,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		} else {
 			Setup();
 		}
+
+		initView();
 	}
 
 	public void LoadCoreStatic() {
@@ -161,7 +163,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					initView();
 					OFAndroidLifeCycle.init();
 					OFAndroidLifeCycle.glCreate();
 					DetermineDisplayConfiguration();
@@ -422,7 +423,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	protected void onStop() {
 		Log.i("OF", "onStop");
 		hasPaused = true;
-		OFAndroidLifeCycle.glStop();
+		Log.w("OF", "not calling OFAndroidLifeCycle.glStop()");
+//		OFAndroidLifeCycle.glStop();
+//		OFAndroidLifeCycle.reset();
+//		mOFGlSurfaceContainer = null;
 
 		super.onStop();
 
@@ -443,6 +447,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		super.onResume();
 
+		if(hasSetup == false) {
+			Log.i("OF", "onResume hasSetup == false");
+			return;
+		}
+
 		if(OFAndroidLifeCycle.isInit() == true && OFAndroidLifeCycle.firstFrameDrawn() == true &&
 				android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT) {
 			hasPaused = true;
@@ -457,10 +466,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			return;
 		}
 
-		if(hasSetup == false) {
-			Log.i("OF", "onResume hasSetup == false");
-			return;
-		}
+
 
 		if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT){
 			Log.e("OF", "onResume eglGetCurrentContext = EGL_NO_CONTEXT BAD");
@@ -475,11 +481,14 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() == null) {
 			Log.i("OF", "onResume getGLView is null - glCreateSurface");
 			//OFAndroidWindow.exit();
-			//OFAndroidWindow.surfaceHasBeenDestroyed();
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		}
 
-
+		if(OFAndroidLifeCycle.isInit() && OFAndroidLifeCycle.getGLView() != null && OFAndroidLifeCycle.getGLView().getDisplay() == null) {
+			Log.i("OF", "onResume getGLView is null - glCreateSurface");
+//			OFAndroidWindow.exit();
+			OFAndroid.setupGL(OFAndroid.eglVersion, true);
+		}
 
 		DetermineDisplayConfiguration();
 		DetermineDisplayDimensions();
