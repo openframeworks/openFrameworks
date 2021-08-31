@@ -91,14 +91,14 @@ class OFGLSurfaceView extends GLSurfaceView {
     public void setFrameRate(float frameRate) {
         Log.i("OF","setFrameRate:" + frameRate);
         if(doNotDraw) return;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            if(mSurface != null) {
-//                mSurface.setFrameRate(frameRate,
-//                        FRAME_RATE_COMPATIBILITY_DEFAULT);
-//            } else {
-//                Log.i("OF","setFrameRate called and no Surface");
-//            }
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if(mSurface != null) {
+                mSurface.setFrameRate(frameRate,
+                        FRAME_RATE_COMPATIBILITY_DEFAULT);
+            } else {
+                Log.i("OF","setFrameRate called and no Surface");
+            }
+        }
     }
 
     public void OnResume() {
@@ -301,9 +301,7 @@ class OFGLSurfaceView extends GLSurfaceView {
         if(mRenderer != null) {
             mRenderer.setResolution(w,h, true);
         }
-
     }
-
 
     boolean isSetup(){
         return mRenderer != null && mRenderer.isSetup();
