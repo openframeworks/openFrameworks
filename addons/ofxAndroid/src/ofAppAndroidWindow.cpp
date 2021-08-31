@@ -64,7 +64,7 @@ JNIEXPORT JNIEnv * JNICALL
 		return NULL;
 	}
 
-	int getEnvStat = vm->GetEnv((void**) &env, JNI_VERSION_1_4);
+	int getEnvStat = vm->GetEnv((void**) &env, JNI_VERSION_1_6);
 
 	if (getEnvStat == JNI_EDETACHED) {
 
