@@ -185,7 +185,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 if( OFAndroidLifeCycle.getGLView() != null)
                     OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
             }
-            if(setup && OFAndroid.unpackingDone && !doNotDraw){
+            if(setup && OFAndroid.unpackingDone && !doNotDraw && isWindowReady){
                 if(android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
 
                     if(firstFrameDrawn == false) {
@@ -208,6 +208,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             }else if(doNotDraw){
                 drawClear = false;
                 Log.i("OFAndroidWindow", "onDrawFrame DoNotDraw");
+            } else if(isWindowReady == false) {
+                if(OFAndroid.isWindowReady()) { isWindowReady = true; }
+                Log.w("OFAndroidWindow", "ofAndroidWindow::onDrawFrame isWindowReady:" + isWindowReady);
+                drawClear = true;
             } else if(!setup && OFAndroid.unpackingDone){
                 Log.i("OFAndroidWindow", "onDrawFrame !setup and unpacking done");
                 setup();
@@ -233,12 +237,13 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         return resolutionSetup;
     }
 
-    private boolean setup;
+    private boolean setup = false;
+    private boolean isWindowReady = false;
     private boolean doNotDraw = false;
-    private boolean resolutionSetup;
-    private boolean initialRender;
+    private boolean resolutionSetup = false;
+    private boolean initialRender = false;
     private boolean firstFrameDrawn = false;
-    private int w,h;
+    private int w,h = 0;
     public  boolean has_surface = false;
 
     private boolean drawClear = false;

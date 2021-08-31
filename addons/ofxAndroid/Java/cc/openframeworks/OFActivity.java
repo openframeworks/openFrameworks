@@ -128,7 +128,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(OFAndroidLifeCycle.coreLibraryLoaded == false) {
 			LoadCoreStatic();
 		} else {
-			Setup();
+			//Setup();
 		}
 
 		initView();

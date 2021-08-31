@@ -493,6 +493,7 @@ public class OFAndroid {
     public static native void resize(int w, int h);
     public static native void render();
     public static native void exit();
+    public static native boolean isWindowReady();
     
     public static native void onTouchDown(int id,float x,float y,float pressure,float majoraxis,float minoraxis,float angle);
     public static native void onTouchDoubleTap(int id,float x,float y,float pressure);
