@@ -487,9 +487,9 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #	else
 #       define OF_USE_EXPERIMENTAL_FS 0
 
-#if !defined(_LIBCPP_HAS_NO_RVALUE_REFERENCES)
-#define _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#endif
+//#if !defined(_LIBCPP_HAS_NO_RVALUE_REFERENCES)
+//#define _LIBCPP_HAS_NO_RVALUE_REFERENCES
+//#endif
 	namespace std {
 		namespace filesystem {
 			class path;
