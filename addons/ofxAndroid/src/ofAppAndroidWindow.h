@@ -89,6 +89,9 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
+	void			setSampleSize(int samples);
+	int				getSamples();
+
 	ofCoreEvents & events();
 	std::shared_ptr<ofBaseRenderer> & renderer();
 
@@ -105,4 +108,5 @@ private:
 	ofCoreEvents coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int glesVersion;
+	int msaaSamples;
 };

@@ -118,11 +118,26 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         return GLES_VERSION;
     }
 
+    public int getSampleSize(){
+        return mSampleSize;
+    }
+
+    public boolean IsAntiAliasing(){
+        return mSampleSize > 1;
+    }
+
+    public boolean IsWideGamut(){ // es3 / vulkan
+        return mWideGamut;
+    }
+
+
+
     /* This EGL config specification is used to specify 1.x rendering.
      * We use a minimum size of 4 bits for red/green/blue, but will
      * perform actual matching in chooseConfig() below.
      */
     private static boolean DEBUG = false;
+    private static boolean MSAA = false;
     private static int EGL_OPENGL_ES_BIT = 1;
     private static int GLES_VERSION = 1;
 
@@ -328,6 +343,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
                 Log.w("OF", String.format("Enabled MSAAx%d", mSampleSize));
+                mSampleSize = samples;
                 if(foundConfig == null)
                     foundConfig = config;
                 else {
@@ -337,6 +353,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
                 Log.w("OF", String.format("Enabled MSAAx%d ", mSampleSize));
+                mSampleSize = samples;
                 if(foundConfig == null)
                     foundConfig = config;
                 else {
@@ -345,6 +362,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize) {
+                mSampleSize = 1;
                 if(foundConfig == null)
                     foundConfig = config;
                 else {

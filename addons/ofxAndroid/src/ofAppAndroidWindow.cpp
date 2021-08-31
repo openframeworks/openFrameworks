@@ -104,12 +104,10 @@ jobject ofGetOFActivityObject(){
 	return env->GetStaticObjectField(OFLifeCycle,ofActivityID);
 }
 
-
-
-
 ofAppAndroidWindow::ofAppAndroidWindow(){
 	ofLogError("ofAppAndroidWindow") << "ofAppAndroidWindow() the window is this";
 	window = this;
+	msaaSamples = 1;
 	ofGetMainLoop()->setCurrentWindow(this);
 }
 
@@ -117,6 +115,13 @@ void ofAppAndroidWindow::setCurrentWindow() {
 	ofLogError("ofAppAndroidWindow") << "setCurrentWindow the window is this";
 	window = this;
 	ofGetMainLoop()->setCurrentWindow(this);
+}
+
+void ofAppAndroidWindow::setSampleSize(int samples) {
+	msaaSamples = samples;
+}
+int	ofAppAndroidWindow::getSamples() {
+	return msaaSamples;
 }
 
 ofAppAndroidWindow::~ofAppAndroidWindow() {
@@ -420,6 +425,11 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	surfaceDestroyed = false;
 }
 
+JNIEXPORT jboolean JNICALL
+		Java_cc_openframeworks_OFAndroid_isWindowReady( JNIEnv*  env, jclass  thiz) {
+	  return window != nullptr && window->renderer() != nullptr;
+}
+
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
@@ -431,7 +441,8 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
 	    window->renderer()->startRender();
 	if(bSetupScreen) {
         if(window != nullptr && window->renderer() != nullptr) {
-            window->renderer()->setupScreen();
+			ofLogNotice("ofAppAndroidWindow") << "setupScreen" << w << "x" << h;
+			window->renderer()->setupScreen();
             bSetupScreen = false;
         } else {
             ofLogError("ofAppAndroidWindow") << "No Window or Renderer " << w << "x" << h;
