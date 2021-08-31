@@ -46,12 +46,8 @@ static bool accumulateTouchEvents = false;
 void ofExitCallback();
 
 //----- define in main.cpp---//
-JNIEXPORT void JNICALL ofAndroidApplicationInit(){
-
-}
-JNIEXPORT void JNICALL ofAndroidActivityInit(){
-
-}
+//JNIEXPORT void JNICALL ofAndroidApplicationInit();
+//JNIEXPORT void JNICALL ofAndroidActivityInit();
 
 //static ofAppAndroidWindow window;
 JNIEXPORT JavaVM * JNICALL
@@ -312,19 +308,19 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jclass thiz, jstri
     env->ReleaseStringUTFChars(data_dir, mfile);
 }
 
-JNIEXPORT void JNICALL
-Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
-{
-	ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_init";
-	ofAndroidApplicationInit();
-}
-
-JNIEXPORT void JNICALL
-Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
-{
-    ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_onCreate";
-	ofAndroidActivityInit();
-}
+//JNIEXPORT void JNICALL
+//Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
+//{
+//	ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_init";
+//	//ofAndroidApplicationInit();
+//}
+//
+//JNIEXPORT void JNICALL
+//Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
+//{
+//    ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_onCreate";
+//	ofAndroidActivityInit();
+//}
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jclass thiz){
