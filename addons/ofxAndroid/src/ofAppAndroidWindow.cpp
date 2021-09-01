@@ -37,7 +37,9 @@ static ofAppAndroidWindow * window;
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 
 static queue<ofTouchEventArgs> touchEventArgsQueue;
-static std::mutex mtx;
+static queue<ofKeyEventArgs> keyEventArgsQueue;
+static std::mutex mtx, keyMtx;
+static bool threadedKeyEvents = false;
 static bool threadedTouchEvents = false;
 static bool appSetup = false;
 static bool accumulateTouchEvents = false;
@@ -260,6 +262,7 @@ void ofAppAndroidWindow::toggleFullscreen(){
 
 void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
 	threadedTouchEvents = threadedEvents;
+	threadedKeyEvents = threadedEvents;
 }
 
 
@@ -441,11 +444,11 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
 	    window->renderer()->startRender();
 	if(bSetupScreen) {
         if(window != nullptr && window->renderer() != nullptr) {
-			ofLogNotice("ofAppAndroidWindow") << "setupScreen" << w << "x" << h;
+			ofLogNotice("ofAppAndroidWindow") << "setupScreen Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples();
 			window->renderer()->setupScreen();
             bSetupScreen = false;
         } else {
-            ofLogError("ofAppAndroidWindow") << "No Window or Renderer " << w << "x" << h;
+            ofLogError("ofAppAndroidWindow") << "No Window or Renderer for Logical Resolution:" << w << "x" << h;
         }
 	}
 
@@ -461,7 +464,7 @@ Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jin
 {
     sWindowWidth  = w;
     sWindowHeight = h;
-    ofLogNotice("ofAppAndroidWindow") << "resize " << w << "x" << h;
+    ofLogNotice("ofAppAndroidWindow") << "resize to Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples();
     bSetupScreen = true;
     if(window != nullptr)
     	window->events().notifyWindowResized(w,h);
@@ -480,7 +483,6 @@ Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
-
 	if(stopped || surfaceDestroyed) {
         ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_render  stopped:" << stopped << "surfaceDestroyed" << surfaceDestroyed;
 	    return;
@@ -490,12 +492,11 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_render window is null";
 		return;
 	}
-	if(!threadedTouchEvents){
+	if(!threadedTouchEvents){ // process touch events in render loop thread to prevent latency
 		mtx.lock();
 		queue<ofTouchEventArgs> events = touchEventArgsQueue;
 		while(!touchEventArgsQueue.empty()) touchEventArgsQueue.pop();
 		mtx.unlock();
-
 		while(!events.empty()){
 			switch(events.front().type){
 			case ofTouchEventArgs::down:
@@ -522,15 +523,33 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		}
 	}
 
-		window->renderer()->startRender();
-		window->events().notifyUpdate();
-		if (bSetupScreen) {
-			window->renderer()->setupScreen();
-			bSetupScreen = false;
-		}
-		window->events().notifyDraw();
-		window->renderer()->finishRender();
+	if(!threadedKeyEvents) { // process key events in render loop thread to prevent latency
+		keyMtx.lock();
+		queue<ofKeyEventArgs> keyEvents = keyEventArgsQueue;
+		while (!keyEventArgsQueue.empty()) keyEventArgsQueue.pop();
+		keyMtx.unlock();
 
+		while (!keyEvents.empty()) {
+			switch (keyEvents.front().type) {
+				case ofKeyEventArgs::Type::Pressed:
+					ofNotifyEvent(window->events().keyPressed, keyEvents.front());
+					break;
+				case ofKeyEventArgs::Type::Released:
+					ofNotifyEvent(window->events().keyReleased, keyEvents.front());
+					break;
+			}
+			keyEvents.pop();
+		}
+	}
+
+	window->renderer()->startRender();
+	window->events().notifyUpdate();
+	if (bSetupScreen) {
+		window->renderer()->setupScreen();
+		bSetupScreen = false;
+	}
+	window->events().notifyDraw();
+	window->renderer()->finishRender();
 
 }
 
@@ -683,7 +702,15 @@ Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyC
     key.keycode = keyCode;
     key.scancode = keyCode;
     key.codepoint = unicode;
-    return window->events().notifyKeyEvent(key);
+	if(threadedKeyEvents){
+		return window->events().notifyKeyEvent(key);
+	}else{
+		keyMtx.lock();
+		keyEventArgsQueue.push(key);
+		keyMtx.unlock();
+		return true; // returning key states always true in non-threaded
+	}
+
 }
 
 JNIEXPORT jboolean JNICALL
@@ -695,7 +722,14 @@ Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jclass thiz, jint  keyCod
     key.keycode = keyCode;
     key.scancode = keyCode;
     key.codepoint = unicode;
-    return window->events().notifyKeyEvent(key);
+	if(threadedKeyEvents){
+		return window->events().notifyKeyEvent(key);
+	}else{
+		keyMtx.lock();
+		keyEventArgsQueue.push(key);
+		keyMtx.unlock();
+		return true; // returning key states always true in non-threaded
+	}
 }
 
 JNIEXPORT jboolean JNICALL
@@ -748,7 +782,7 @@ JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
 	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
     int _refreshRate = (int) refreshRate;
-	ofLogNotice("oF") << "deviceHighestRefreshRate" << _refreshRate;
+	ofLogNotice("oF") << "deviceHighestRefreshRate:" << _refreshRate;
     ofNotifyEvent(ofxAndroidEvents().deviceHighestRefreshRate,_refreshRate );
 }
 
@@ -756,9 +790,16 @@ Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_deviceRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
 	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
-	ofLogNotice("oF") << "deviceRefreshRateChanged" << refreshRate;
+	ofLogNotice("oF") << "deviceRefreshRateChanged:" << refreshRate;
 	int _refreshRate = (int) refreshRate;
 	ofNotifyEvent(ofxAndroidEvents().deviceRefreshRate,_refreshRate );
+}
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_setSampleSize(JNIEnv*  env, jclass  thiz, jint sampleSize){
+	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	ofLogNotice("oF") << "setSampleSize:" << sampleSize;
+	window->setSampleSize(sampleSize);
 }
 
 }
