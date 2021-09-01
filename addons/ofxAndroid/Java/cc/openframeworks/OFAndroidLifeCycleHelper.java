@@ -30,6 +30,8 @@ public class OFAndroidLifeCycleHelper
 	private static boolean started;
 
 	private static boolean copyAssets = true;
+	private static boolean copyOldAssets = true;
+	private static String copyOldAssetsFolder = "";
 
 	public static void appInit(Activity activity)
 	{
@@ -47,6 +49,11 @@ public class OFAndroidLifeCycleHelper
 		copyAssets = toCopyAssets;
 	}
 
+	public static void setCopyOldAssets(boolean toCopyOldAssets, String path) {
+		copyOldAssets = toCopyOldAssets;
+		copyOldAssetsFolder = path;
+	}
+
 	private static void copyAssetsToDataPath(Activity activity) {
 		OFAndroid.packageName = activity.getPackageName();
 
@@ -54,11 +61,12 @@ public class OFAndroidLifeCycleHelper
 		boolean copydata = false;
 		String[] files = new String[0];
 		AssetManager am = activity.getApplicationContext().getAssets();
-
+		boolean restored = false;
 		try {
 			SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
 
 			long lastInstalled = preferences.getLong("installed", 0);
+			restored = preferences.getBoolean("restored", false);
 
 			PackageManager pm = activity.getPackageManager();
 
@@ -92,8 +100,8 @@ public class OFAndroidLifeCycleHelper
 			Log.i(TAG, "sd mounted: " + OFAndroid.checkSDCardMounted());
 			OFAndroid.initAppDataDirectory(activity);
 			dataPath = OFAndroid.getAppDataDirectory();
-
 			Log.i(TAG,"creating app directory: " + dataPath);
+			OFAndroid.setAppDataDir(dataPath);
 			try{
 				File dir = new File(dataPath);
 				if(!dir.isDirectory()){
@@ -108,8 +116,21 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.fatalErrorDialog(activity, "Error while copying resources to sdcard:\nCouldn't create directory " + dataPath + "\n"+e.getMessage());
 				Log.e(TAG,"error creating dir " + dataPath,e);
 			}
-			OFAndroid.moveOldData(OFAndroid.getOldExternalStorageDirectory(OFAndroid.packageName), dataPath);
-			OFAndroid.setAppDataDir(dataPath);
+			if(copyOldAssets && !restored) {
+				OFAndroid.moveOldDataFrom(copyOldAssetsFolder, dataPath);
+				try {
+					SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+					Editor editor = preferences.edit();
+					editor.putBoolean("restored", true);
+					editor.apply();
+				} catch (Exception ex) {
+					Log.e(TAG,"Exception saving preferences:" + ex.getMessage());
+				}
+				OFAndroid.reportPrecentage(.10f);
+			} else {
+				OFAndroid.reportPrecentage(.10f);
+			}
+
 			OFAndroid.reportPrecentage(.10f);
 		} catch(Exception e){
 			Log.e(TAG,"couldn't move app resources to data directory " + dataPath,e);
@@ -120,7 +141,6 @@ public class OFAndroidLifeCycleHelper
 			if(copydata){
 				for (String file : files) {
 					try {
-
 						copyAssetFolder(am, file, dataPath+"/"+file);
 					} catch (Exception e) {
 						Log.e("OF", "error copying file", e);
@@ -129,7 +149,7 @@ public class OFAndroidLifeCycleHelper
 				}
 
 			}else{
-				OFAndroid.reportPrecentage(.80f);
+				OFAndroid.reportPrecentage(.70f);
 			}
 		} catch (Exception e) {
 			Log.e(TAG,"error retrieving app name",e);

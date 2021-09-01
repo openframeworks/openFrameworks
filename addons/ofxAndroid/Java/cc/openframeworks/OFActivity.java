@@ -118,6 +118,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+		try {
+			OFAndroid.packageName = getPackageName();
+		} catch (Exception ex) {
+			Log.e(TAG, "Failure to getPackageName" + ex.getMessage());
+		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			displayManager = getSystemService(DisplayManager.class);
@@ -193,7 +198,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
 					//Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
 					Log.i("OF", "DisplayRealMetrics: w/h:" + width_px + "x" + height_px + " pixeldpi:" + pixeldpi);
-					if(hasSetup)
+					//if(hasSetup)
 						glView.setWindowResize(width, height);
 				} else {
 					throw new Exception("Display window problem");

@@ -127,24 +127,29 @@ public class OFAndroid {
 
 	public static String getRealExternalStorageDirectory(Context context) {
 
-		// New Standard way to get the external storage directory
+
+
+		// Standard way to get the external storage directory
 		File externalPathFile = Environment.getExternalStorageDirectory();
-		if (externalPathFile.exists() && externalPathFile.canWrite()) {
-			return externalPathFile.getPath();
+		if (externalPathFile.exists()) {
+			File externalPathFileInternal = new File(externalPathFile.getPath() + "/Android/data/"+packageName);
+			if(externalPathFileInternal.exists() && externalPathFileInternal.canWrite())
+				return externalPathFileInternal.getPath();
 		}
 
 		// Standard way to get the external storage directory
 		String externalPath = context.getExternalFilesDir(null).getPath();
-		File SDCardDir = new File(externalPath);
-    	if(SDCardDir.exists() && SDCardDir.canWrite()) {
-    		return externalPath;
-    	}
+		if(externalPath.endsWith("/files")) externalPath = externalPath.replace("/files", "");
+		File externalCardDir = new File(externalPath);
+		if(externalCardDir.exists() && externalCardDir.canWrite()) {
+			return externalCardDir.getPath();
+		}
 
 		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
 		for(int i = 0; i < mExternalStorageDirectories.length; i++)
 		{
 			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);
-			SDCardDir = new File(mExternalStorageDirectories[i]);
+			File SDCardDir = new File(mExternalStorageDirectories[i]);
 	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {
 	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
 				break;
@@ -170,13 +175,44 @@ public class OFAndroid {
 			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);
 			SDCardDir = new File(mExternalStorageDirectories[i]);
 	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {
-	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
+	    		externalPath = mExternalStorageDirectories[i] + "/Android/data/"+packageName;	// Found writable location
 				break;
 	    	}
 		}
 
 		Log.i("OF", "Using storage location: " + externalPath);
 		return externalPath + "/Android/data/"+packageName;
+	}
+
+	public static void moveOldDataFrom(String fromFolder, String dst){
+
+		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
+		for(int i = 0; i < mExternalStorageDirectories.length; i++)
+		{
+			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);
+			try {
+				File SDCardDir = new File(mExternalStorageDirectories[i]);
+				if (SDCardDir.exists()) { // sd cart mount location exists could have been used
+					File appDataDir = new File(SDCardDir.getPath() + "/Android/data/" + packageName + fromFolder);
+					if (appDataDir.exists() && appDataDir.canWrite()) {
+						String externalPath = appDataDir.getPath();    // Found writable location
+						File dstFile = new File(dst);
+						if (appDataDir.equals(dstFile)) {
+							Log.i("OF", "moveOldData  appDataDir same as new location:" + appDataDir.getPath() + " newLocation:" + dst);
+							continue;
+						}
+						if (appDataDir.isDirectory() && appDataDir.listFiles().length > 1) {
+							Log.i("OF", "moveOldData from:" + appDataDir.getPath() + " to:" + dst);
+							moveOldData(appDataDir.getPath(), dst);
+						}
+					} else {
+						Log.i("OF", "SDCardDir found however no app directory so skipping for" + SDCardDir.getPath());
+					}
+				}
+			} catch(Exception ex) {
+
+			}
+		}
 	}
 
 	public static void moveOldData(String src, String dst){
@@ -186,12 +222,14 @@ public class OFAndroid {
 		if(srcFile.equals(dstFile)) return;
 
 		if(srcFile.isDirectory() && srcFile.listFiles().length>1){
-			Log.i("OF", "moveOldData  ");
+			Log.i("OF", "moveOldData  " + srcFile.getName());
 			for(File f: srcFile.listFiles()){
 				if(f.equals(dstFile)){
+					Log.i("OF", "movingOldData " + f.getName() + " equals" + dstFile.getPath());
 					moveOldData(f.getAbsolutePath(),dst+"/"+f.getName());
 					continue;
 				}
+				Log.i("OF", "movingOldData " + f.getName());
 				f.renameTo(new File(dst+"/"+f.getName()));
 			}
 		}
@@ -523,6 +561,8 @@ public class OFAndroid {
 
 	public static native void deviceHighestRefreshRate(int refreshRate);
 	public static native void deviceRefreshRate(int refreshRate);
+
+	public static native void setSampleSize(int samples);
 
     // static methods to be called from OF c++ code
     public static void setFullscreen(boolean fs){
