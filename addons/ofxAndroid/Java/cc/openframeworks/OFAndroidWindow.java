@@ -184,6 +184,9 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 Log.i("OFAndroidWindow", "onDrawFrame initialRenderFrame!");
                 if( OFAndroidLifeCycle.getGLView() != null)
                     OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
+            } else {
+                if(isWindowReady == false)
+                    if(OFAndroid.isWindowReady()) isWindowReady = true;
             }
             if(setup && OFAndroid.unpackingDone && !doNotDraw && isWindowReady){
                 if(android.opengl.EGL14.eglGetCurrentContext() != EGL_NO_CONTEXT) {
@@ -209,7 +212,6 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 drawClear = false;
                 Log.i("OFAndroidWindow", "onDrawFrame DoNotDraw");
             } else if(isWindowReady == false) {
-                if(OFAndroid.isWindowReady()) { isWindowReady = true; }
                 Log.w("OFAndroidWindow", "ofAndroidWindow::onDrawFrame isWindowReady:" + isWindowReady);
                 drawClear = true;
             } else if(!setup && OFAndroid.unpackingDone){
