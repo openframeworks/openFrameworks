@@ -47,6 +47,7 @@ public class OFAndroid {
 
 	public static String packageName;
 	public static int eglVersion = 2;
+	public static int samples = 8;
 
 	// List based on http://bit.ly/NpkL4Q
 	@SuppressLint("SdCardPath") // the following list is fall back 3

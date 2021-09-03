@@ -57,10 +57,11 @@ class OFGLSurfaceView extends GLSurfaceView {
             }
         }
 
-        OFEGLConfigChooser configChooser = getConfigChooser();
+        OFEGLConfigChooser configChooser = getConfigChooser(8,8,8,8,0,0,OFAndroid.samples,false);
         setEGLConfigChooser(configChooser);
 
         mRenderer = new OFAndroidWindow(width, height);
+        OFAndroid.setSampleSize(configChooser.getSampleSize());
         setRenderer(mRenderer);
         setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
         display = getDisplay();
@@ -107,6 +108,7 @@ class OFGLSurfaceView extends GLSurfaceView {
 
             int width = getWidth();
             int height = getHeight();
+
             Log.i("OF","OnResume w:" + width + " h:" + height);
             mRenderer.setResolution(width, height, true);
         } else{
@@ -158,13 +160,16 @@ class OFGLSurfaceView extends GLSurfaceView {
     }
 
     public OFEGLConfigChooser getConfigChooser() {
+        return getConfigChooser(8,8,8,8,0,0,4,false);
+    }
+
+    public OFEGLConfigChooser getConfigChooser(int r, int g, int b, int a, int depth, int stencil, int samples, boolean gamut) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.i("OF","getConfigChooser::WideGamut Config Chooser");
-            return new OFEGLConfigChooser(8, 8, 8, 8, 0, 0, 4, false);
+            return new OFEGLConfigChooser(r, g, b, a, depth, stencil, samples, gamut);
         }
         Log.i("OF","getConfigChooser::sRGB Config");
-        return new OFEGLConfigChooser(8, 8, 8, 8, 0, 0, 4, false);
-
+        return new OFEGLConfigChooser(r, g, b, a, depth, stencil, samples, false);
     }
 
     public void setClientVersion() {

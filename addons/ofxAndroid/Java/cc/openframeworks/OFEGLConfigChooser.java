@@ -83,6 +83,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mStencilSize = stencil;
         mSampleSize = samples;
         mWideGamut = wideGamut;
+        if(mSampleSize > 1) MSAA = true;
     }
 
     public static void setGLESVersion(int version){
@@ -99,19 +100,19 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mAlphaSize = 2;
         mDepthSize = 16;
         mStencilSize = 16;
-        mSampleSize = 4;
+        mSampleSize = 8;
         mWideGamut = true;
     }
 
     public void setRGB(){
-        mRedSize = 8;
-        mGreenSize = 8;
-        mBlueSize = 8;
-        mAlphaSize = 8;
-        mDepthSize = 16;
-        mStencilSize = 16;
-        mSampleSize = 4;
-        mWideGamut = true;
+//        mRedSize = 8;
+//      //  mGreenSize = 8;
+//      //  mBlueSize = 8;
+//       // mAlphaSize = 8;
+//       // mDepthSize = 16;
+//        //mStencilSize = 16;
+//        //mSampleSize = 4;
+        mWideGamut = false;
     }
 
     public static int getGLESVersion(){
@@ -164,6 +165,20 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL14.EGL_SAMPLES, 4,
                     EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT,
                     EGL14.EGL_NONE
+            };
+
+    private static final int[] s_configAttribsMSAA8 =
+            {
+                    EGL10.EGL_RED_SIZE, 8,
+                    EGL10.EGL_GREEN_SIZE, 8,
+                    EGL10.EGL_BLUE_SIZE, 8,
+                    EGL14.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_DEPTH_SIZE, 16,
+                    // Requires that setEGLContextClientVersion(2) is called on the view.
+                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
+                    EGL10.EGL_SAMPLES, 8,
+                    EGL10.EGL_NONE
             };
 
     private static final int[] s_configAttribsMSAA =
@@ -224,46 +239,58 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 //                Log.w("OF", String.format("s_configAttribsMSAA_P3 MSAA with P3 failed"));
 //            }
 //        }
+
         int numConfigs = num_config[0];
         if (numConfigs <= 0) {
             setRGB();
-            if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
+            if (!egl.eglChooseConfig(display, s_configAttribsMSAA8, null, 0,
                     num_config)) {
-                Log.w("OF", String.format("eglChooseConfig MSAA failed"));
+                Log.w("OF", String.format("eglChooseConfig MSAAx8 failed"));
             }
-            numConfigs = num_config[0];
             if (numConfigs <= 0) {
-                if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
+                setRGB();
+                if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
                         num_config)) {
-                    Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
+                    Log.w("OF", String.format("eglChooseConfig MSAA failed"));
                 }
                 numConfigs = num_config[0];
                 if (numConfigs <= 0) {
-                    if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
+                    if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
                             num_config)) {
-                        Log.w("OF", String.format("eglChooseConfig Default failed"));
+                        Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
                     }
                     numConfigs = num_config[0];
                     if (numConfigs <= 0) {
-                        if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
+                        if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
                                 num_config)) {
-                            Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
+                            Log.w("OF", String.format("eglChooseConfig Default failed"));
                         }
                         numConfigs = num_config[0];
                         if (numConfigs <= 0) {
-                            throw new IllegalArgumentException("No configs match configSpec");
+                            if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
+                                    num_config)) {
+                                Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
+                            }
+                            numConfigs = num_config[0];
+                            if (numConfigs <= 0) {
+                                throw new IllegalArgumentException("No configs match configSpec");
+                            }
+                        } else {
+                            configs = new EGLConfig[numConfigs];
+                            egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
                         }
                     } else {
                         configs = new EGLConfig[numConfigs];
-                        egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
+                        egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
                     }
                 } else {
                     configs = new EGLConfig[numConfigs];
-                    egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
+                    egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
                 }
-            } else {
+            }
+            else {
                 configs = new EGLConfig[numConfigs];
-                egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
+                egl.eglChooseConfig(display, s_configAttribsMSAA_P3, configs, numConfigs, num_config);
             }
         } else {
             configs = new EGLConfig[numConfigs];
@@ -314,8 +341,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             int stencil = findConfigAttrib(egl, display, config,
                     EGL10.EGL_STENCIL_SIZE, 0);
 
-
-
             int gamut =  findConfigAttrib(egl, display, config,
                     EGL_GL_COLORSPACE_KHR, 0);
 
@@ -329,10 +354,37 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_SAMPLES, 0);
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
-                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", mSampleSize));
+                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", samples));
                 if (foundConfig == null) {
                     foundConfig = config;
                      Log.i("OF", String.format("Found Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r, g, b, a, samples, stencil, gamut));
+                }
+                else {
+                    foundConfig = config;
+                    Log.i("OF", String.format("Already Found. Setting to this Highest. New Row: Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r,g,b,a,samples,stencil, gamut));
+                }
+            } else {
+                Log.i("OF", String.format("Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r,g,b,a,samples, stencil, gamut));
+            }
+
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize/2) {
+                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", samples));
+                if (foundConfig == null) {
+                    foundConfig = config;
+                    Log.i("OF", String.format("Found Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r, g, b, a, samples, stencil, gamut));
+                }
+                else {
+                    Log.i("OF", String.format("Already Found. New Row: Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r,g,b,a,samples,stencil, gamut));
+                }
+            } else {
+                Log.i("OF", String.format("Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r,g,b,a,samples, stencil, gamut));
+            }
+
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize/4) {
+                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", samples));
+                if (foundConfig == null) {
+                    foundConfig = config;
+                    Log.i("OF", String.format("Found Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r, g, b, a, samples, stencil, gamut));
                 }
                 else {
                     Log.i("OF", String.format("Already Found. New Row: Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r,g,b,a,samples,stencil, gamut));
@@ -342,7 +394,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
-                Log.w("OF", String.format("Enabled MSAAx%d", mSampleSize));
+                Log.w("OF", String.format("Enabled MSAAx%d", samples));
                 mSampleSize = samples;
                 if(foundConfig == null)
                     foundConfig = config;
@@ -352,7 +404,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
-                Log.w("OF", String.format("Enabled MSAAx%d ", mSampleSize));
+                Log.w("OF", String.format("Enabled MSAAx%d ", samples));
                 mSampleSize = samples;
                 if(foundConfig == null)
                     foundConfig = config;

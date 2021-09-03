@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -171,6 +172,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					OFAndroidLifeCycle.init();
 					OFAndroidLifeCycle.glCreate();
 					DetermineDisplayConfiguration();
+					DetermineDisplayDimensions();
 				}
 			});
 
@@ -196,6 +198,18 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
 					int height_px = Resources.getSystem().getDisplayMetrics().heightPixels;
 					int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
+
+
+
+					Point point = new Point();
+					getWindowManager().getDefaultDisplay().getRealSize(point);
+
+					double x = Math.pow(point.x/ displayMetrics.xdpi, 2);
+					double y = Math.pow(point.y / displayMetrics.ydpi, 2);
+					double screenInches = Math.sqrt(x + y);
+					Log.d(TAG, "Screen inches : " + screenInches +" with realSize:" + point.x +" height:"  + point.y);
+
+
 					//Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
 					Log.i("OF", "DisplayRealMetrics: w/h:" + width_px + "x" + height_px + " pixeldpi:" + pixeldpi);
 					//if(hasSetup)
@@ -229,6 +243,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						try {
 							Display.Mode[] modes = display.getSupportedModes();
 							Display.Mode currentMode = display.getMode();
+							Log.i("OF", "Display Mode: CurrentMode:" + currentMode + " refreshRate: [" + currentMode.getRefreshRate() + "] mode PhysicalWidth:[" + currentMode.getPhysicalWidth() + "] mode PhysicalHeight:[" + currentMode.getPhysicalHeight() + "]");
+
 							if (currentRefreshRate != currentMode.getRefreshRate()) {
 								Log.e("OF", "Display Mode: Current Display Mode Refresh Rate not equal to current :" + currentMode + " refreshRate: [" + currentMode.getRefreshRate() + "] displayRefreshRate: " + currentRefreshRate);
 							}
@@ -256,12 +272,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						}
 					}
 
-
 					OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 					if(glView != null) {
 						glView.setFrameRate(highestRefreshRate);
 						currentRefreshRate = highestRefreshRate;
 					}
+
 //					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 //						boolean isWideColorGamut = display.isWideColorGamut();
 //						Log.i("OF", "Display WideColor Gamut Supported:" +  isWideColorGamut);
@@ -444,6 +460,18 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		super.onRestart();
 		OFAndroidLifeCycle.glRestart();
 	}
+
+	public void onForceRestart() {
+		Log.i("OF", "onForceRestart");
+		OFAndroid.setupGL(OFAndroid.eglVersion, true);
+		DetermineDisplayConfiguration();
+		DetermineDisplayDimensions();
+		if(mOFGlSurfaceContainer == null) {
+			Log.e("OF", "onResume mOFGlSurfaceContainer is null - glCreateSurface");
+		}
+		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
+	}
+
 	
 	@Override
 	protected void onResume() {
