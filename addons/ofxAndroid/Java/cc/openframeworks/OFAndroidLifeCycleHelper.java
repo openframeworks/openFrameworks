@@ -241,6 +241,12 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 	}
+
+	public static void onForceRestart() {
+		Log.i(TAG,"onForceRestart");
+		OFAndroid.setupGL(OFAndroid.eglVersion, true);
+		OFAndroid.onStart();
+	}
 	
 	public static void onResume(){
 		Log.i(TAG,"onResume");
