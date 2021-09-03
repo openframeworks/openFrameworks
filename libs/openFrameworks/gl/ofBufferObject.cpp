@@ -136,7 +136,7 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 }
 
 void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * data){
-	if(!this->data) return;
+	if(!this->data || this->data == nullptr) return;
 
 #ifdef GLEW_VERSION_4_5
 	if(this->data->isDSA){
