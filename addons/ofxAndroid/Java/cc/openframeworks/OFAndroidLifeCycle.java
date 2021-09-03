@@ -19,20 +19,6 @@ public class OFAndroidLifeCycle
 {
 	public static Boolean coreLibraryLoaded = false;
 	public static Boolean appLibraryLoaded = false;
-//	static {
-//		try{
-//			if(coreLibraryLoaded == false) {
-//				Log.i("OF", "Loading openFrameworksAndroid Core");
-//				coreLibraryLoaded = true;
-//				System.loadLibrary("openFrameworksAndroid");
-//			} else {
-//				Log.i("OF", "openFrameworksAndroid Core Already Loaded");
-//			}
-//
-//		} catch(Throwable ex2){
-//			Log.i("OF","Failed to Load openFrameworksAndroid Exception:", ex2);;
-//		}
-//	}
 
 	private static Vector<State> m_statesStack = new Vector<State>();
 	private static State m_currentState = null;
@@ -40,15 +26,9 @@ public class OFAndroidLifeCycle
 	private static AtomicBoolean m_isWorkerDone = new AtomicBoolean(true);
 	private static AtomicBoolean m_isInit = new AtomicBoolean(false);
 	private static AtomicBoolean m_isStateInit = new AtomicBoolean(false);
-
 	private static AtomicBoolean m_isSurfaceCreated = new AtomicBoolean(false);
-
 	private static AtomicBoolean m_isFirstFrameDrawn = new AtomicBoolean(false);
-
 	private static AtomicBoolean m_hasSetup = new AtomicBoolean(false);
-
-
-
 	private static OFActivity m_activity = null;
 	
 	private static int m_countActivities = 0;
@@ -59,11 +39,9 @@ public class OFAndroidLifeCycle
 	
 	private static void pushState(State state)
 	{
-//        close
         try {
             m_semaphor.acquire();
             m_statesStack.add(state);
-//        release
             m_semaphor.release();
             startWorkerThread();
         }
@@ -131,13 +109,11 @@ public class OFAndroidLifeCycle
 			@Override
 			public void run() 
 			{
-//close
                 try {
                     m_semaphor.acquire();
                     while (!m_statesStack.isEmpty()) {
                         State next = m_statesStack.firstElement();
                         m_statesStack.removeElement(next);
-//                    release
                         m_semaphor.release();
                         if (next != null && !isNextStateLegal(next))
                         {
@@ -195,7 +171,6 @@ public class OFAndroidLifeCycle
 									break;
 							}
 						}
-                        //close
                         m_semaphor.acquire();
                     }
                 }
@@ -204,7 +179,6 @@ public class OFAndroidLifeCycle
                     Log.e(OFAndroidLifeCycle.class.getSimpleName(), "startWorkerThread: stack size: "+m_statesStack.size() + "exception message: "+ex.getMessage(), ex);
                     m_semaphor.release();
                 }
-//                release
                 m_semaphor.release();
 				synchronized (m_isWorkerDone) {
 					m_isWorkerDone.set(true);
