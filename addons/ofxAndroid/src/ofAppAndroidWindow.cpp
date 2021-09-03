@@ -708,7 +708,7 @@ Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyC
 		keyMtx.lock();
 		keyEventArgsQueue.push(key);
 		keyMtx.unlock();
-		return true; // returning key states always true in non-threaded
+		return false; // returning key states always false in non-threaded
 	}
 
 }
@@ -728,7 +728,7 @@ Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jclass thiz, jint  keyCod
 		keyMtx.lock();
 		keyEventArgsQueue.push(key);
 		keyMtx.unlock();
-		return true; // returning key states always true in non-threaded
+		return true; // returning key states always false in non-threaded
 	}
 }
 
