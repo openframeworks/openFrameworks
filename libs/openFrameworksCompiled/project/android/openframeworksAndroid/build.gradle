@@ -11,8 +11,8 @@ final addons = ofRoot() + 'addons'
 def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
 final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
 def LIB_OUTPUT=ofRoot() + './../../../../libs/openFrameworksCompiled/lib/android'
-def enableProguardInReleaseBuilds = false
-def enableProguardInDebugBuilds = false
+def enableProguardInReleaseBuilds = true
+def enableProguardInDebugBuilds = true
 
 android {
     compileSdkVersion 31
@@ -26,15 +26,11 @@ android {
         prefabPublishing true
     }
 
-//    buildFeatures {
-//        prefab true ""
-//    }
-
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 11
-        versionName '11'
+        versionCode 12
+        versionName '12'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
 
         externalNativeBuild {
@@ -51,11 +47,12 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
             jniDebuggable false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-//                    'proguard-rules.pro'
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
             packagingOptions {
                 doNotStrip '**/*.so'
             }

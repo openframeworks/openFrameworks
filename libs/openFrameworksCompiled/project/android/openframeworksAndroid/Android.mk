@@ -9,15 +9,12 @@ OF_LOCAL_PATH := $(call my-dir)
 OF_ROOT := ${OF_LOCAL_PATH}/../../../../../
 LIBS_ROOT := $(OF_ROOT)/libs
 
-
-
 ADDONS_PATH := $(OF_ROOT)/addons
 SOURCE_PATH := $(LIBS_ROOT)/openFrameworks
 OFX_ANDROID_PATH := $(ADDONS_PATH)/ofxAndroid
 OFX_ANDROID_CPP_PATH := $(OFX_ANDROID_PATH)/src
 
 # need to figure out how to determine this dynamically
-SYSROOT=/Users/eyenine/Documents/android-ndk-r22b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot
 TOOLS_HOST=linux
 
 # openFrameworks Library dependancies 

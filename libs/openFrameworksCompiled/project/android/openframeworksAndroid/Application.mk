@@ -1,4 +1,5 @@
-APP_ABI := arm64-v8a x86 x86_64 armeabi-v7a
+APP_ABI := armeabi-v7a x86 arm64-v8a x86_64
+APP_CFLAGS := -Oz
+APP_LDFLAGS :=
+APP_CPPFLAGS := -Oz -std=c++17
 APP_STL := c++_shared
-APP_CPPFLAGS := -std=c++17
-APP_CFLAGS := -std=c17
