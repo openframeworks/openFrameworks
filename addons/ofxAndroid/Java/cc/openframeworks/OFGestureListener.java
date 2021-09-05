@@ -1,6 +1,7 @@
 package cc.openframeworks;
 
 import android.app.Activity;
+import android.os.Build;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -10,10 +11,13 @@ import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 import androidx.annotation.Keep;
+import androidx.annotation.RequiresApi;
 
 @Keep
 class OFGestureListener extends SimpleOnGestureListener implements OnClickListener, OnScaleGestureListener {
-	
+
+
+
 
 	OFGestureListener(Activity activity){
 		gestureDetector = new GestureDetector(activity,this);
@@ -56,9 +60,12 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
             
         };
 	}
-	
+
 	// Gesture listener
 	public void onClick(View view) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			view.releasePointerCapture(); // fix focus issues on controllers
+		}
 	}
 
 	@Override

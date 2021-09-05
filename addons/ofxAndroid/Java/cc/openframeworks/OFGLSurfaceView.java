@@ -9,15 +9,18 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.View;
+
 import androidx.annotation.Keep;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
 import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 
 @Keep
-class OFGLSurfaceView extends GLSurfaceView {
+class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListener {
 
     public OFGLSurfaceView(Context context) {
         super(context);
@@ -74,6 +77,15 @@ class OFGLSurfaceView extends GLSurfaceView {
     }
 
     @Override
+    public boolean onCapturedPointerEvent(MotionEvent motionEvent) {
+        // Get the coordinates required by your app
+        float verticalOffset = motionEvent.getY();
+        // Use the coordinates to update your view and return true if the event was
+        // successfully processed
+        return true;
+    }
+
+    @Override
     public void setRenderer(GLSurfaceView.Renderer renderer) {
         Log.i("OF","setRenderer:" + renderer.toString());
         super.setRenderer(renderer);
@@ -87,6 +99,12 @@ class OFGLSurfaceView extends GLSurfaceView {
     public void setRenderMode(int renderMode) {
 
         super.setRenderMode(renderMode);
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if(v != null)
+            Log.i("OF","view onFocusChange:" + v.toString() + " hasFocus:" + hasFocus);
     }
 
     public void setFrameRate(float frameRate) {

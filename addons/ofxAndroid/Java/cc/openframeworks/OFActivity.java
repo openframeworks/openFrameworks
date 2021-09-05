@@ -14,11 +14,13 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.InputDevice;
+import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -124,6 +126,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		} catch (Exception ex) {
 			Log.e(TAG, "Failure to getPackageName" + ex.getMessage());
 		}
+
+		WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			displayManager = getSystemService(DisplayManager.class);
@@ -577,8 +581,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
 				== InputDevice.SOURCE_GAMEPAD) {
 			int deviceId = event.getDeviceId();
-			OFAndroid.keyUp(keyCode+400, event);
-			return true;
+			return OFAndroid.keyUp(keyCode+400, event);
 		}
 		else if (OFAndroid.keyUp(keyCode, event)) {
 		    return true;
@@ -587,36 +590,158 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
     }
 
-//	@Override
-//	public boolean dispatchGenericMotionEvent (MotionEvent event){
-//		Log.i("OF", "dispatchGenericMotionEvent" + " event:" + event.toString());
-//		if (event.isFromSource(InputDevice.SOURCE_CLASS_JOYSTICK)) {
-//			if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//				// process the joystick movement...
-//				final int historySize = event.getHistorySize();
-//
-//				// Process the movements starting from the
-//				// earliest historical position in the batch
-//				for (int i = 0; i < historySize; i++) {
-//					// Process the event at historical position i
-//					processJoystickInput(event, i);
-//				}
-//				//processJoystickInput(event, -1);
-//				return true;
-//			}
-//		}
-//		if (event.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
-//			switch (event.getAction()) {
-//				case MotionEvent.ACTION_HOVER_MOVE:
-//					// process the mouse hover movement...
-//					return true;
-//				case MotionEvent.ACTION_SCROLL:
-//					// process the scroll wheel movement...
-//					return true;
-//			}
-//		}
-//		return super.onGenericMotionEvent(event);
-//	}
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent event) {
+		if(!hasSetup) return true;
+		return genericMotionEvent(event);
+	}
+
+	final static int DPAD_UP       = 0;
+	final static int DPAD_LEFT     = 1;
+	final static int DPAD_RIGHT    = 2;
+	final static int DPAD_DOWN     = 3;
+	final static int DPAD_CENTER   = 4;
+	int directionPressed = -1;
+	int keyCode = -1;
+	int lastKeyCode = -1;
+	int deviceCode = -1;
+
+	boolean DPAD_UP_DOWN  = false;
+	boolean DPAD_LEFT_DOWN     = false;
+	boolean DPAD_RIGHT_DOWN    = false;
+	boolean DPAD_DOWN_DOWN     = false;
+	boolean DPAD_CENTER_DOWN   = false;
+
+
+	public boolean genericMotionEvent (MotionEvent event){
+		Log.i("OF", "dispatchGenericMotionEvent" + " event:" + event.toString() + " deviceId:" + event.getDeviceId());
+
+		if(deviceCode == -1)
+			deviceCode = event.getDeviceId();
+		
+		//if(event.getDeviceId() != deviceCode) return true;
+		try {
+			if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) ==
+					InputDevice.SOURCE_JOYSTICK &&
+					event.getAction() == MotionEvent.ACTION_MOVE) {
+				if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					// process the joystick movement...
+					final int historySize = event.getHistorySize();
+
+					// Process the movements starting from the
+					// earliest historical position in the batch
+					for (int i = 0; i < historySize; i++) {
+						// Process the event at historical position i
+						processJoystickInput(event, i);
+					}
+					//processJoystickInput(event, -1);
+					return true;
+				}
+
+			}
+			if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
+					(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
+					(event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK ||
+					(event.getSource() & InputDevice.SOURCE_CLASS_BUTTON) == InputDevice.SOURCE_CLASS_BUTTON ||
+					(event.getSource() & InputDevice.SOURCE_DPAD) > InputDevice.SOURCE_DPAD - 13 && (event.getSource() & InputDevice.SOURCE_DPAD) < InputDevice.SOURCE_GAMEPAD + 500
+			) {
+				// If the input event is a MotionEvent, check its hat axis values.
+				directionPressed = -1;
+
+				if ((InputEvent) event instanceof KeyEvent) {    // If the input event is a KeyEvent, check its key code.
+
+					// Use the key code to find the D-pad direction.
+					KeyEvent keyEvent = (KeyEvent) (InputEvent) event;
+					boolean isKeyDown = event.getActionMasked() == MotionEvent.ACTION_MOVE || event.getActionMasked() == MotionEvent.ACTION_BUTTON_PRESS;
+					if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+						directionPressed = DPAD_LEFT;
+						keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
+						DPAD_LEFT_DOWN = isKeyDown;
+					} else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+						directionPressed = DPAD_RIGHT;
+						keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
+						DPAD_RIGHT_DOWN = isKeyDown;
+					} else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+						directionPressed = DPAD_UP;
+						keyCode = KeyEvent.KEYCODE_DPAD_UP;
+						DPAD_UP_DOWN = isKeyDown;
+					} else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+						directionPressed = DPAD_DOWN;
+						keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
+						DPAD_DOWN_DOWN = isKeyDown;
+					} else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
+						directionPressed = DPAD_CENTER;
+						keyCode = KeyEvent.KEYCODE_DPAD_CENTER;
+						DPAD_CENTER_DOWN = isKeyDown;
+					}
+					if (event.getActionMasked() == MotionEvent.ACTION_MOVE || event.getActionMasked() == MotionEvent.ACTION_BUTTON_PRESS) {
+						return OFAndroid.keyDown(keyCode + 400, keyCode);
+					}
+					else if (event.getActionMasked() == MotionEvent.ACTION_BUTTON_RELEASE || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+						return OFAndroid.keyUp(keyCode + 400, keyCode);
+					}
+					else {
+						return true;
+					}
+				} else if (event instanceof MotionEvent) {
+
+					// Use the hat axis value to find the D-pad direction
+					MotionEvent motionEvent = (MotionEvent) event;
+					Log.i("OF", "onGenericMotionEvent motionEvent:" + motionEvent);
+					float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+					float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+					boolean isKeyDown = true;
+					// Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+					// LEFT and RIGHT direction accordingly.
+					if (Float.compare(xaxis, -1.0f) == 0) {
+						directionPressed = DPAD_LEFT;
+						keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
+					} else if (Float.compare(xaxis, 1.0f) == 0) {
+						directionPressed = DPAD_RIGHT;
+						keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
+					}
+					// Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+					// UP and DOWN direction accordingly.
+					else if (Float.compare(yaxis, -1.0f) == 0) {
+						directionPressed = DPAD_UP;
+						keyCode = KeyEvent.KEYCODE_DPAD_UP;
+					} else if (Float.compare(yaxis, 1.0f) == 0) {
+						directionPressed = DPAD_DOWN;
+						keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
+					} else if(Float.compare(xaxis, 0.0f) == 0 &&  Float.compare(yaxis, 0.0f) == 0) {
+						boolean value = true;
+						if(keyCode != -10)
+							value = OFAndroid.keyUp(keyCode + 400, keyCode);
+						keyCode = -1; lastKeyCode = -1;
+						return value;
+					}
+					if (event.getActionMasked() == MotionEvent.ACTION_MOVE || event.getActionMasked() == MotionEvent.ACTION_BUTTON_PRESS) {
+						return OFAndroid.keyDown(keyCode + 400, keyCode);
+					}
+					else if (event.getActionMasked() == MotionEvent.ACTION_BUTTON_RELEASE || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+						boolean value = OFAndroid.keyUp(keyCode + 400, keyCode);
+						keyCode = -1;
+						return value;
+					}
+					else
+						return true;
+
+				}
+			} else if (event.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) { // PS4 Touch Pad
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_HOVER_MOVE:
+						// process the mouse hover movement...
+						return true;
+					case MotionEvent.ACTION_SCROLL:
+						// process the scroll wheel movement...
+						return true;
+				}
+			}
+		} catch(Exception exeception) {
+			Log.i("OF", "onGenericMotionEvent Exception:" + exeception.getMessage());
+		}
+		return super.onGenericMotionEvent(event);
+	}
 
 	private static float getCenteredAxis(MotionEvent event,
 										 InputDevice device, int axis, int historyPos) {
@@ -681,6 +806,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(!hasSetup) return false;
 		int deviceId = event.getDeviceId();
 		//Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId);
+		boolean returnValue = false;
 
 		if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
@@ -689,21 +815,24 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				(event.getSource() & InputDevice.SOURCE_DPAD) > InputDevice.SOURCE_DPAD - 13 && (event.getSource() & InputDevice.SOURCE_DPAD)  < InputDevice.SOURCE_GAMEPAD  + 500
 		) {
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
-				return OFAndroid.keyDown(event.getKeyCode()+400, event);
-			if(event.getAction() == KeyEvent.ACTION_UP)
-				return OFAndroid.keyUp(event.getKeyCode()+400, event);
+				returnValue = OFAndroid.keyDown(event.getKeyCode()+400, event);
+			else if(event.getAction() == KeyEvent.ACTION_UP)
+				returnValue = OFAndroid.keyUp(event.getKeyCode()+400, event);
 			else
-				return true;
+				returnValue = true;
 		}  else if ((event.getSource() & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
-			return true;
+			returnValue = true;
 		} else {
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
-				return OFAndroid.keyDown(event.getKeyCode(), event);
-			if(event.getAction() == KeyEvent.ACTION_UP)
-				return OFAndroid.keyUp(event.getKeyCode(), event);
+				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
+			else if(event.getAction() == KeyEvent.ACTION_UP)
+				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
 			else
-				return super.dispatchKeyEvent(event);
+				returnValue = super.dispatchKeyEvent(event);
 		}
+		Log.i("OF", "dispatchKeyEvent:return:" + returnValue + " event:" + event.toString() + " deviceID:" + deviceId);
+
+		return returnValue;
 	}
 
 	@RequiresApi(28)
@@ -722,6 +851,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			return this.mCompatListener.onUnhandledKeyEvent(v, event);
 		}
 	}
+
 
 	public ArrayList<Integer> getGameControllerIds() {
 		ArrayList<Integer> gameControllerDeviceIds = new ArrayList<Integer>();
