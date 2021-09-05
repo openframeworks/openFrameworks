@@ -354,7 +354,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_SAMPLES, 0);
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
-                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", samples));
                 if (foundConfig == null) {
                     foundConfig = config;
                      Log.i("OF", String.format("Found Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r, g, b, a, samples, stencil, gamut));
@@ -368,7 +367,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize/2) {
-                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", samples));
                 if (foundConfig == null) {
                     foundConfig = config;
                     Log.i("OF", String.format("Found Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r, g, b, a, samples, stencil, gamut));
@@ -381,7 +379,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize/4) {
-                Log.w("OF", String.format("WideGamut:enabled and Enabled MSAAx%d", samples));
                 if (foundConfig == null) {
                     foundConfig = config;
                     Log.i("OF", String.format("Found Config Row: r%d g:%d b%d a:%d aa:%d s%d gam:%d", r, g, b, a, samples, stencil, gamut));
@@ -394,7 +391,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
-                Log.w("OF", String.format("Enabled MSAAx%d", samples));
                 mSampleSize = samples;
                 if(foundConfig == null)
                     foundConfig = config;
@@ -404,7 +400,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
-                Log.w("OF", String.format("Enabled MSAAx%d ", samples));
                 mSampleSize = samples;
                 if(foundConfig == null)
                     foundConfig = config;

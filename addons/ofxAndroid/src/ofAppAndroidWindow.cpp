@@ -444,11 +444,11 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
 	    window->renderer()->startRender();
 	if(bSetupScreen) {
         if(window != nullptr && window->renderer() != nullptr) {
-			ofLogNotice("ofAppAndroidWindow") << "setupScreen Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples();
+			ofLogNotice("ofAppAndroidWindow") << "setupScreen - Logical Resolution:" << w << "x" << h << " Rendering at Resolution:" << w * window->getSamples() << "x" << h * window->getSamples() << " with MSAA:" << window->getSamples();
 			window->renderer()->setupScreen();
             bSetupScreen = false;
         } else {
-            ofLogError("ofAppAndroidWindow") << "No Window or Renderer for Logical Resolution:" << w << "x" << h;
+            ofLogError("ofAppAndroidWindow") << "No Window or Renderer for Logical Resolution:" << w << "x" << h  << " with MSAA:" << window->getSamples();
         }
 	}
 
@@ -464,7 +464,7 @@ Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jin
 {
     sWindowWidth  = w;
     sWindowHeight = h;
-    ofLogNotice("ofAppAndroidWindow") << "resize to Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples();
+    ofLogNotice("ofAppAndroidWindow") << "resize to Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples()  << " with MSAA:" << window->getSamples();
     bSetupScreen = true;
     if(window != nullptr)
     	window->events().notifyWindowResized(w,h);
@@ -708,7 +708,7 @@ Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyC
 		keyMtx.lock();
 		keyEventArgsQueue.push(key);
 		keyMtx.unlock();
-		return false; // returning key states always false in non-threaded
+		return true; // returning key states always true in non-threaded
 	}
 
 }
@@ -728,7 +728,7 @@ Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jclass thiz, jint  keyCod
 		keyMtx.lock();
 		keyEventArgsQueue.push(key);
 		keyMtx.unlock();
-		return true; // returning key states always false in non-threaded
+		return true; // returning key states always true in non-threaded
 	}
 }
 

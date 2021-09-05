@@ -28,6 +28,7 @@ import android.os.Environment;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
+import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
 import android.view.WindowManager.LayoutParams;
@@ -47,7 +48,7 @@ public class OFAndroid {
 
 	public static String packageName;
 	public static int eglVersion = 2;
-	public static int samples = 8;
+	public static int samples = 16;
 
 	// List based on http://bit.ly/NpkL4Q
 	@SuppressLint("SdCardPath") // the following list is fall back 3
@@ -932,8 +933,6 @@ public class OFAndroid {
 	public static boolean wideGamut = false;
 	public static boolean hdrScreen = false;
 
-    public static native boolean hasNeon();
-	
 	public static void disableTouchEvents(){
 		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 		if(glView != null) {
@@ -994,6 +993,27 @@ public class OFAndroid {
 	 * @param event
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
+
+	public static boolean keyDown(int keyCode, int keyCodeSource) {
+		int unicodeChar = keyCodeSource;
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
+			unicodeChar = keyCode;
+			return onKeyDown(keyCode, unicodeChar);
+		} else {
+			return onKeyDown(keyCode, unicodeChar);
+		}
+	}
+
+	public static boolean keyUp(int keyCode, int keyCodeSource) {
+		int unicodeChar = keyCodeSource;
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
+			unicodeChar = keyCode;
+			return onKeyUp(keyCode, unicodeChar);
+		} else {
+			return onKeyUp(keyCode, unicodeChar);
+		}
+	}
+
 	public static boolean keyDown(int keyCode, KeyEvent event) {
         if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
             if( onBackPressed() ) {
@@ -1003,11 +1023,16 @@ public class OFAndroid {
            		return false;
            	}
         }
+		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE)) return false;
+
 		int unicodeChar = event.getUnicodeChar();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
 			unicodeChar = keyCode;
+			return onKeyDown(keyCode, unicodeChar);
+		} else {
+			return onKeyDown(keyCode, unicodeChar);
 		}
-		return onKeyDown(keyCode, unicodeChar);
+
 	}
 	
 	/**
@@ -1020,11 +1045,15 @@ public class OFAndroid {
 		if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
 			return true; // handled event
 		}
+		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE)) return false;
+
 		int unicodeChar = event.getUnicodeChar();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
 			unicodeChar = keyCode;
+			return onKeyUp(keyCode, unicodeChar);
+		} else {
+			return onKeyUp(keyCode, unicodeChar);
 		}
-		return onKeyUp(keyCode, unicodeChar);
 	}
 
 

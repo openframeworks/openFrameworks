@@ -90,7 +90,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         //gl.glClearColor(0f, 0f, 0, 0);
 		return;
     }
-
+    
 	@Override
     public void onSurfaceChanged(GL10 gl, int w, int h) {
 	    onSurfaceChanged(w,h);
