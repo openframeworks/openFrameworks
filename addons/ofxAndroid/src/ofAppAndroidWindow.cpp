@@ -555,7 +555,7 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) {
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) {
 		ofLogNotice("oF") << "Java_cc_openframeworks_OFAndroid_onTouchDown no window or renderer";
 		return;
 	}
@@ -581,7 +581,7 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -603,7 +603,7 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,j
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchCancelled(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -621,7 +621,7 @@ Java_cc_openframeworks_OFAndroid_onTouchCancelled(JNIEnv*  env, jclass  thiz, ji
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -648,7 +648,7 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -667,35 +667,35 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofxAndroidSwipeEventArgs swipe{(ofxAndroidSwipeDir)swipeDir,id};
 	ofNotifyEvent(ofxAndroidEvents().swipe,swipe);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onScale(JNIEnv*  env, jclass  thiz, jobject detector){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return false;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
 	ofxAndroidScaleEventArgs scale(detector);
 	return ofxAndroidEvents().scale.notify(nullptr,scale);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onScaleBegin(JNIEnv*  env, jclass  thiz, jobject detector){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return false;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
 	ofxAndroidScaleEventArgs scale(detector);
 	return ofxAndroidEvents().scaleBegin.notify(nullptr,scale);
 }
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onScaleEnd(JNIEnv*  env, jclass  thiz, jobject detector){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofxAndroidScaleEventArgs scale(detector);
     ofxAndroidEvents().scaleEnd.notify(nullptr,scale);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return false;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Pressed;
     key.key = unicode;
@@ -715,7 +715,7 @@ Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyC
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return false;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Released;
     key.key = unicode;
@@ -773,14 +773,14 @@ Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jclass thiz, jb
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_deviceOrientationChanged(JNIEnv*  env, jclass  thiz, jint orientation){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofOrientation _orientation = (ofOrientation) orientation;
 	ofNotifyEvent(ofxAndroidEvents().deviceOrientationChanged,_orientation );
 }
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
     int _refreshRate = (int) refreshRate;
 	ofLogNotice("oF") << "deviceHighestRefreshRate:" << _refreshRate;
     ofNotifyEvent(ofxAndroidEvents().deviceHighestRefreshRate,_refreshRate );
@@ -789,7 +789,7 @@ Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_deviceRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofLogNotice("oF") << "deviceRefreshRateChanged:" << refreshRate;
 	int _refreshRate = (int) refreshRate;
 	ofNotifyEvent(ofxAndroidEvents().deviceRefreshRate,_refreshRate );
@@ -797,7 +797,7 @@ Java_cc_openframeworks_OFAndroid_deviceRefreshRate(JNIEnv*  env, jclass  thiz, j
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_setSampleSize(JNIEnv*  env, jclass  thiz, jint sampleSize){
-	if(window == nullptr || window != nullptr && window->renderer() == nullptr) return;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofLogNotice("oF") << "setSampleSize:" << sampleSize;
 	window->setSampleSize(sampleSize);
 }
