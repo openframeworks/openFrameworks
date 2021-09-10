@@ -104,9 +104,13 @@ public:
 
 	int 	getGlesVersion();
 
+	static jclass getContext();
+
 private:
 	ofCoreEvents coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int glesVersion;
 	int msaaSamples;
+
+	static jclass context;
 };

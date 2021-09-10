@@ -333,11 +333,13 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jclass thiz, jstri
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onRestart";
+	context = thiz;
 }
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onStart";
+	context = thiz;
 	stopped = false;
 	bSetupScreen = true;
 	ofNotifyEvent(ofxAndroidEvents().start);
@@ -353,9 +355,14 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jclass thiz){
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
+	context = thiz;
 	bSetupScreen = true;
 	stopped = false;
 	ofNotifyEvent(ofxAndroidEvents().resume);
+}
+
+static jclass ofppAndroidWindow::getContext() {
+	return context;
 }
 
 JNIEXPORT void JNICALL
@@ -542,14 +549,18 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		}
 	}
 
-	window->renderer()->startRender();
 	window->events().notifyUpdate();
 	if (bSetupScreen) {
+		window->renderer()->startRender();
 		window->renderer()->setupScreen();
+		window->events().notifyDraw();
+		window->renderer()->finishRender();
 		bSetupScreen = false;
-	}
+	} else {
+		window->renderer()->startRender();
 	window->events().notifyDraw();
 	window->renderer()->finishRender();
+	}
 
 }
 
