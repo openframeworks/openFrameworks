@@ -590,11 +590,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
     }
 
-	@Override
-	public boolean onGenericMotionEvent(MotionEvent event) {
-		if(!hasSetup) return true;
-		return genericMotionEvent(event);
-	}
+//	@Override
+//	public boolean onGenericMotionEvent(MotionEvent event) {
+//		if(!hasSetup) return true;
+//		return genericMotionEvent(event);
+//	}
 
 	final static int DPAD_UP       = 0;
 	final static int DPAD_LEFT     = 1;
