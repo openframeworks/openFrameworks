@@ -22,9 +22,9 @@ android {
     buildToolsVersion '31.0.0'
 
     // Enable generation of Prefab packages and include them in the library's AAR.
-    buildFeatures {
-        prefabPublishing true
-    }
+//    buildFeatures {
+//        prefabPublishing true
+//    }
 
     defaultConfig {
         minSdkVersion 21
@@ -36,7 +36,7 @@ android {
         externalNativeBuild {
             if (!project.hasProperty("ndkBuild")) {
                 cmake {
-                    arguments "-DANDROID_STL=c++_shared"
+                    arguments "-DANDROID_STL=c++_shared", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang", "-DTARGET_OPENGLES=TRUE"
                 }
             } else {
                 ndkBuild {
@@ -53,17 +53,17 @@ android {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
-            packagingOptions {
-                doNotStrip '**/*.so'
-            }
+//            packagingOptions {
+//                doNotStrip '**/*.so'
+//            }
         }
         debug {
             shrinkResources false
             jniDebuggable true
             debuggable true
-            packagingOptions {
-                doNotStrip '**/*.so'
-            }
+//            packagingOptions {
+//                doNotStrip '**/*.so'
+//            }
         }
     }
     sourceSets {
@@ -103,7 +103,7 @@ android {
     // Note that if your AAR also contains Java/Kotlin APIs, you should not
     // exclude libraries that are used by those APIs.
     packagingOptions {
-        exclude("**/libopenFrameworksAndroid.so")
+//        exclude("**/libopenFrameworksAndroid.so")
         exclude("**/classes.jar")
     }
 }

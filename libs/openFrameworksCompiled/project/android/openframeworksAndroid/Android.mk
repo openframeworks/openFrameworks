@@ -136,7 +136,6 @@ LOCAL_C_INCLUDES += \
 	$(LIBS_ROOT)/uriparser/include \
 	$(ADDONS_INCLUDES)
 
-
 LOCAL_SRC_FILES += \
     $(SOURCE_PATH)/utils/ofFileUtils.cpp \
     $(SOURCE_PATH)/utils/ofFpsCounter.cpp \
@@ -148,15 +147,11 @@ LOCAL_SRC_FILES += \
     $(SOURCE_PATH)/utils/ofURLFileLoader.cpp \
     $(SOURCE_PATH)/utils/ofUtils.cpp \
     $(SOURCE_PATH)/utils/ofXml.cpp
-
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/sound/ofSoundBaseTypes.cpp \
 	$(SOURCE_PATH)/sound/ofSoundBuffer.cpp \
 	$(SOURCE_PATH)/sound/ofSoundPlayer.cpp \
 	$(SOURCE_PATH)/sound/ofSoundStream.cpp \
 	$(SOURCE_PATH)/sound/ofOpenALSoundPlayer.cpp
-
-# 3d
 LOCAL_SRC_FILES += $(SOURCE_PATH)/3d/of3dPrimitives.cpp \
     $(SOURCE_PATH)/3d/of3dUtils.cpp \
     $(SOURCE_PATH)/3d/ofCamera.cpp \
@@ -165,12 +160,8 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/3d/of3dPrimitives.cpp \
     $(SOURCE_PATH)/app/ofMainLoop.cpp \
     $(SOURCE_PATH)/app/ofAppRunner.cpp \
 	$(SOURCE_PATH)/app/ofBaseApp.cpp
-
-
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/communication/ofSerial.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/events/ofEvents.cpp
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofBufferObject.cpp \
 	$(SOURCE_PATH)/gl/ofFbo.cpp \
 	$(SOURCE_PATH)/gl/ofGLProgrammableRenderer.cpp \
@@ -179,12 +170,10 @@ LOCAL_SRC_FILES +=  \
 	$(SOURCE_PATH)/gl/ofGLUtils.cpp \
 	$(SOURCE_PATH)/gl/ofLight.cpp \
 	$(SOURCE_PATH)/gl/ofMaterial.cpp
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/gl/ofShader.cpp \
 	$(SOURCE_PATH)/gl/ofTexture.cpp \
 	$(SOURCE_PATH)/gl/ofVbo.cpp \
 	$(SOURCE_PATH)/gl/ofVboMesh.cpp
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/of3dGraphics.cpp \
 	$(SOURCE_PATH)/graphics/ofBitmapFont.cpp \
 	$(SOURCE_PATH)/graphics/ofGraphics.cpp
@@ -196,15 +185,11 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofRendererCollection.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofTessellator.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/graphics/ofTrueTypeFont.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofMath.cpp
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofMatrix3x3.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofMatrix4x4.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofQuaternion.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofVec2f.cpp
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/math/ofVec4f.cpp
-
-
 LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofColor.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofParameter.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofParameterGroup.cpp
@@ -212,9 +197,6 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/types/ofRectangle.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/video/ofVideoBaseTypes.cpp \
 	$(SOURCE_PATH)/video/ofVideoGrabber.cpp \
 	$(SOURCE_PATH)/video/ofVideoPlayer.cpp
-
-
-
 LOCAL_SRC_FILES += $(OFX_ANDROID_CPP_PATH)/ofAppAndroidWindow.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidAccelerometer.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidLogChannel.cpp \
@@ -224,8 +206,6 @@ LOCAL_SRC_FILES += $(OFX_ANDROID_CPP_PATH)/ofAppAndroidWindow.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVibrator.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoGrabber.cpp \
 	$(OFX_ANDROID_CPP_PATH)/ofxAndroidVideoPlayer.cpp
-
-
 LOCAL_SRC_FILES += $(ADDONS_PATH)/ofxAccelerometer/src/ofxAccelerometer.cpp
 LOCAL_SRC_FILES += $(ADDONS_PATH)/ofxXmlSettings/src/ofxXmlSettings.cpp \
 	$(ADDONS_PATH)/ofxXmlSettings/libs/tinyxml.cpp \
