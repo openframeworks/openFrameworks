@@ -151,11 +151,11 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	}
 	glesVersion = settings.glesVersion;
 	ofLogError("ofAppAndroidWindow") << "Setup OpenGLES:" << glesVersion;
-	if(glesVersion<2){
-		currentRenderer = make_shared<ofGLRenderer>(this);
-	}else{
-		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
-	}
+//	if(glesVersion<2){
+//		currentRenderer = make_shared<ofGLRenderer>(this);
+//	}else{
+//		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
+//	}
 
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
@@ -333,13 +333,11 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jclass thiz, jstri
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onRestart";
-	context = thiz;
 }
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onStart";
-	context = thiz;
 	stopped = false;
 	bSetupScreen = true;
 	ofNotifyEvent(ofxAndroidEvents().start);
@@ -355,15 +353,11 @@ Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jclass thiz){
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
-	context = thiz;
 	bSetupScreen = true;
 	stopped = false;
 	ofNotifyEvent(ofxAndroidEvents().resume);
 }
 
-static jclass ofppAndroidWindow::getContext() {
-	return context;
-}
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jclass thiz){

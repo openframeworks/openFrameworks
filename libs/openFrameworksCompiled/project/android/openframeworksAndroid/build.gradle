@@ -26,6 +26,11 @@ android {
 //        prefabPublishing true
 //    }
 
+    buildFeatures {
+        prefab true
+    }
+
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 31
@@ -104,7 +109,7 @@ android {
     // exclude libraries that are used by those APIs.
     packagingOptions {
 //        exclude("**/libopenFrameworksAndroid.so")
-        exclude("**/classes.jar")
+//        exclude("**/classes.jar")
     }
 }
 
@@ -116,5 +121,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "com.getkeepsafe.relinker:relinker:1.4.4"
+    implementation 'com.google.oboe:oboe:1.6.1'
 
 }

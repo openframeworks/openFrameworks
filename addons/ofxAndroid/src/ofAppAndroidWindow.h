@@ -104,7 +104,6 @@ public:
 
 	int 	getGlesVersion();
 
-	static jclass getContext();
 
 private:
 	ofCoreEvents coreEvents;
@@ -112,5 +111,4 @@ private:
 	int glesVersion;
 	int msaaSamples;
 
-	static jclass context;
 };
