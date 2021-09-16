@@ -801,39 +801,39 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		Log.i("OF", "processJoystickInput: " + " x:" + x + " y::" + y);
 	}
 
-	@Override
-	public boolean dispatchKeyEvent (KeyEvent event){
-		if(!hasSetup) return false;
-		int deviceId = event.getDeviceId();
-		//Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId);
-		boolean returnValue = false;
-
-		if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
-				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
-				(event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) == InputDevice.SOURCE_CLASS_JOYSTICK ||
-				(event.getSource() & InputDevice.SOURCE_CLASS_BUTTON) == InputDevice.SOURCE_CLASS_BUTTON ||
-				(event.getSource() & InputDevice.SOURCE_DPAD) > InputDevice.SOURCE_DPAD - 13 && (event.getSource() & InputDevice.SOURCE_DPAD)  < InputDevice.SOURCE_GAMEPAD  + 500
-		) {
-			if(event.getAction() == KeyEvent.ACTION_DOWN)
-				returnValue = OFAndroid.keyDown(event.getKeyCode()+400, event);
-			else if(event.getAction() == KeyEvent.ACTION_UP)
-				returnValue = OFAndroid.keyUp(event.getKeyCode()+400, event);
-			else
-				returnValue = true;
-		}  else if ((event.getSource() & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
-			returnValue = true;
-		} else {
-			if(event.getAction() == KeyEvent.ACTION_DOWN)
-				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
-			else if(event.getAction() == KeyEvent.ACTION_UP)
-				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
-			else
-				returnValue = super.dispatchKeyEvent(event);
-		}
-		Log.i("OF", "dispatchKeyEvent:return:" + returnValue + " event:" + event.toString() + " deviceID:" + deviceId);
-
-		return returnValue;
-	}
+//	@Override
+//	public boolean dispatchKeyEvent (KeyEvent event){
+//		if(!hasSetup) return false;
+//		int deviceId = event.getDeviceId();
+//		//Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId);
+//		boolean returnValue = false;
+//
+//		if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
+//				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
+//				(event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) == InputDevice.SOURCE_CLASS_JOYSTICK ||
+//				(event.getSource() & InputDevice.SOURCE_CLASS_BUTTON) == InputDevice.SOURCE_CLASS_BUTTON ||
+//				(event.getSource() & InputDevice.SOURCE_DPAD) > InputDevice.SOURCE_DPAD - 13 && (event.getSource() & InputDevice.SOURCE_DPAD)  < InputDevice.SOURCE_GAMEPAD  + 500
+//		) {
+//			if(event.getAction() == KeyEvent.ACTION_DOWN)
+//				returnValue = OFAndroid.keyDown(event.getKeyCode()+400, event);
+//			else if(event.getAction() == KeyEvent.ACTION_UP)
+//				returnValue = OFAndroid.keyUp(event.getKeyCode()+400, event);
+//			else
+//				returnValue = true;
+//		}  else if ((event.getSource() & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
+//			returnValue = true;
+//		} else {
+//			if(event.getAction() == KeyEvent.ACTION_DOWN)
+//				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
+//			else if(event.getAction() == KeyEvent.ACTION_UP)
+//				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
+//			else
+//				returnValue = super.dispatchKeyEvent(event);
+//		}
+//		Log.i("OF", "dispatchKeyEvent:return:" + returnValue + " event:" + event.toString() + " deviceID:" + deviceId);
+//
+//		return false;
+//	}
 
 	@RequiresApi(28)
 	private static class OnUnhandledKeyEventListenerWrapper implements View.OnUnhandledKeyEventListener {

@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -344,4 +346,59 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     private SurfaceHolder mHolder;
     private Surface mSurface;
     private Display display;
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.i("OF", "onKeyDown" + keyCode + " event:" + event.toString());
+        if(doNotDraw) return true;
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
+                == InputDevice.SOURCE_GAMEPAD) {
+            int deviceId = event.getDeviceId();
+            OFAndroid.keyDown(keyCode+400, event);
+            return true;
+        }
+        else if (OFAndroid.keyDown(keyCode, event)) {
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public boolean onKeyMultiple(int keyCode, int count, KeyEvent event) {
+        Log.i("OF", "onKeyDown" + keyCode + " event:" + event.toString());
+        if(doNotDraw) return true;
+        int keyOffset = 0;
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
+                == InputDevice.SOURCE_GAMEPAD) {
+            keyOffset = 400;
+        }
+        int deviceId = event.getDeviceId();
+        if(event.getAction() == KeyEvent.ACTION_DOWN)
+            return OFAndroid.keyDown(event.getKeyCode()+keyOffset, event);
+        else if(event.getAction() == KeyEvent.ACTION_UP)
+            return OFAndroid.keyUp(event.getKeyCode()+keyOffset, event);
+        else
+            return true;
+
+    }
+
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(doNotDraw) return true;
+        Log.i("OF", "onKeyUp" + keyCode + " event:" + event.toString());
+
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
+                == InputDevice.SOURCE_GAMEPAD) {
+            int deviceId = event.getDeviceId();
+            return OFAndroid.keyUp(keyCode+400, event);
+        }
+        else if (OFAndroid.keyUp(keyCode, event)) {
+            return true;
+        } else {
+            return super.onKeyUp(keyCode, event);
+        }
+    }
 }

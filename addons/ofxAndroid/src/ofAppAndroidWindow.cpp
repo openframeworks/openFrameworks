@@ -700,7 +700,7 @@ Java_cc_openframeworks_OFAndroid_onScaleEnd(JNIEnv*  env, jclass  thiz, jobject 
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
-	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return true;
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Pressed;
     key.key = unicode;
@@ -720,7 +720,7 @@ Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyC
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
-	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return true;
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Released;
     key.key = unicode;
