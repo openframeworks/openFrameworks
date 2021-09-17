@@ -60,9 +60,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		return mOFGlSurfaceContainer;
 	}
 
+	public static String packageName = null;
+
 
 	public void initView(){
-		String packageName = this.getPackageName();
+		if(packageName == null)
+			packageName = this.getPackageName();
         try {
         	Log.v("OF","trying to find class: "+packageName+".R$layout");
 			Class<?> layout = Class.forName(packageName+".R$layout");
