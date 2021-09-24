@@ -87,7 +87,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             setup();
         }
 		OFAndroid.updateRefreshRates();
-        //gl.glClearColor(0f, 0f, 0, 0);
+        gl.glClearColor(0f, 0f, 0, 1);
 		return;
     }
     
