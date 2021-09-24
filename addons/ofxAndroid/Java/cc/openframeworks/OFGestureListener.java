@@ -16,49 +16,44 @@ import androidx.annotation.RequiresApi;
 @Keep
 class OFGestureListener extends SimpleOnGestureListener implements OnClickListener, OnScaleGestureListener {
 
-
-
-
 	OFGestureListener(Activity activity){
 		gestureDetector = new GestureDetector(activity,this);
 		scaleDetector = new ScaleGestureDetector(activity, this);
-        touchListener = new View.OnTouchListener() {
-        	
-            public boolean onTouch(View v, MotionEvent event) {
-            	final int action = event.getAction();
-            	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) 
-                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-                final int pointerId = event.getPointerId(pointerIndex);
-                switch((action & MotionEvent.ACTION_MASK)){
-                case MotionEvent.ACTION_MOVE:
-                {
-            		for(int i=0; i<event.getHistorySize(); i++)
-            		{            			
-		                for(int j=0; j<event.getPointerCount(); j++){	                			
-	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i), event.getHistoricalTouchMajor(j, i), event.getHistoricalTouchMinor(j, i), event.getHistoricalOrientation(j, i));
-	                	}            			
-                	}
-	            	for(int i=0; i<event.getPointerCount(); i++){
-	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i), event.getTouchMajor(i), event.getTouchMinor(i), event.getOrientation(i));
-	            	}
-                }
-	            	break;
-                case MotionEvent.ACTION_POINTER_UP:
-                case MotionEvent.ACTION_UP:
-                	OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
-                	break;
-                case MotionEvent.ACTION_POINTER_DOWN:
-                case MotionEvent.ACTION_DOWN:
-                	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
-                	break;
-                case MotionEvent.ACTION_CANCEL:
-                	OFAndroid.onTouchCancelled(pointerId,event.getX(),event.getY());
-                	break;
-                }
-                return gestureDetector.onTouchEvent(event) || scaleDetector.onTouchEvent(event);
-            }
-            
-        };
+	}
+
+	public boolean onTouch(MotionEvent event) {
+		if(!enableTouchEvents) return false;
+		final int action = event.getAction();
+		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK)
+				>> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+		final int pointerId = event.getPointerId(pointerIndex);
+		switch((action & MotionEvent.ACTION_MASK)){
+			case MotionEvent.ACTION_MOVE:
+			{
+				for(int i=0; i<event.getHistorySize(); i++)
+				{
+					for(int j=0; j<event.getPointerCount(); j++){
+						OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i), event.getHistoricalTouchMajor(j, i), event.getHistoricalTouchMinor(j, i), event.getHistoricalOrientation(j, i));
+					}
+				}
+				for(int i=0; i<event.getPointerCount(); i++){
+					OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i), event.getTouchMajor(i), event.getTouchMinor(i), event.getOrientation(i));
+				}
+			}
+			break;
+			case MotionEvent.ACTION_POINTER_UP:
+			case MotionEvent.ACTION_UP:
+				OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
+				break;
+			case MotionEvent.ACTION_POINTER_DOWN:
+			case MotionEvent.ACTION_DOWN:
+				OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
+				break;
+			case MotionEvent.ACTION_CANCEL:
+				OFAndroid.onTouchCancelled(pointerId,event.getX(),event.getY());
+				break;
+		}
+		return gestureDetector.onTouchEvent(event) || scaleDetector.onTouchEvent(event);
 	}
 
 	// Gesture listener
@@ -92,6 +87,7 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 
 	@Override
 	public boolean onDown(MotionEvent event) {
+		
 		return true;
 	}
 
@@ -134,6 +130,11 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 
 	@Override
 	public void onLongPress(MotionEvent arg0) {
+		
+	}
+	
+	public boolean onScroll(MotionEvent arg0) {
+		return true;
 	}
 
 	@Override
@@ -168,7 +169,11 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 
     private GestureDetector gestureDetector;
     private ScaleGestureDetector scaleDetector;
-    View.OnTouchListener touchListener;
+
+    public boolean enableTouchEvents = true;
+	public boolean enableScaleEvents = true;
+	public boolean enableGestureEvents = true;
+
     public static int swipe_Min_Distance = 100;
     public static int swipe_Max_Distance = 350;
     public static int swipe_Min_Velocity = 100;

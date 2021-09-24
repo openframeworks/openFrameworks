@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.InputDevice;
+import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -28,6 +29,9 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         super(context);
         Log.i("OF","OFGLSurfaceView():" + context.toString());
         init(false, 8, 0);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        requestFocus();
     }
 
     public OFGLSurfaceView(Context context, boolean translucent, int depth, int stencil) {
@@ -66,6 +70,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         setEGLConfigChooser(configChooser);
 
         mRenderer = new OFAndroidWindow(width, height);
+        OFAndroid.samples = configChooser.getSampleSize();
         OFAndroid.setSampleSize(configChooser.getSampleSize());
         setRenderer(mRenderer);
         setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -107,17 +112,23 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     public void onFocusChange(View v, boolean hasFocus) {
         if(v != null)
             Log.i("OF","view onFocusChange:" + v.toString() + " hasFocus:" + hasFocus);
+        if(doNotDraw) return;
+        requestFocus();
     }
 
     public void setFrameRate(float frameRate) {
-        Log.i("OF","setFrameRate:" + frameRate);
         if(doNotDraw) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if(mSurface != null) {
-                mSurface.setFrameRate(frameRate,
-                        FRAME_RATE_COMPATIBILITY_DEFAULT);
-            } else {
-                Log.i("OF","setFrameRate called and no Surface");
+            Log.i("OF","setFrameRate:" + frameRate);
+            try {
+                if(mSurface != null && mSurface.isValid()) {
+                    mSurface.setFrameRate(frameRate,
+                            FRAME_RATE_COMPATIBILITY_DEFAULT);
+                } else {
+                    Log.i("OF","setFrameRate called and no Surface");
+                }
+            } catch (Exception ex) {
+                Log.e("OF", "setFrameRate Exception:", ex);
             }
         }
     }
@@ -213,7 +224,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
          * it happened while the Renderer thread was still saving off important state.  We need
          * to wait for it to finish.
          */
-
+        
         super.onPause();
 
         //Log.d(TAG, "asking renderer to pause");
@@ -225,6 +236,8 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
 
         //Log.d(TAG, "renderer pause complete");
     }
+
+    
 
     @Override
     public void onResume() {
@@ -247,17 +260,19 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                         int width = getWidth();
                         int height = getHeight();
                         if (mRenderer != null){
+                            OFAndroid.setSampleSize(OFAndroid.samples);
                             mRenderer.setResolution(width, height, true);
                         }
                     }
                 });
             }
         } else if(mRenderer == null) {
-            Log.w("OF", "OFGLSurfaceView::onResume however mRenderer is NULL");
+            Log.e("OF", "OFGLSurfaceView::onResume however mRenderer is NULL");
             surfaceDestroyed(this.mHolder);
 
             mRenderer = new OFAndroidWindow(getWidth(), getHeight());
             getHolder().setFormat(PixelFormat.OPAQUE);
+            OFAndroid.setSampleSize(OFAndroid.samples);
 
             setRenderer(mRenderer);
             setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -347,6 +362,23 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     private Surface mSurface;
     private Display display;
 
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        return true;
+//    }
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        return true;
+//    }
+//    @Override
+//    public boolean onGenericMotionEvent(MotionEvent event) {
+//        return true;
+//    }
+//    @Override
+//    public boolean onKeyMultiple(int keyCode, int count, KeyEvent event) {
+//        return true;
+//    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -401,4 +433,17 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
             return super.onKeyUp(keyCode, event);
         }
     }
+
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent event) {
+		if(doNotDraw) return true;
+		return OFAndroidController.genericMotionEvent(event);
+	}
+	
+
+
+    
+
+
+	
 }

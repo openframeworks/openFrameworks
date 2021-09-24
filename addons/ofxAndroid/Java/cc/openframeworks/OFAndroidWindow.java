@@ -230,6 +230,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                 
             }
     }
+    
 
     public boolean isSetup(){
     	return setup;

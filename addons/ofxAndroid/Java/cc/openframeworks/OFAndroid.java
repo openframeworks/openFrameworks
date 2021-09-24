@@ -540,6 +540,9 @@ public class OFAndroid {
     public static native void onTouchUp(int id,float x,float y,float pressure,float majoraxis,float minoraxis,float angle);
     public static native void onTouchMoved(int id,float x,float y,float pressure,float majoraxis,float minoraxis,float angle);
     public static native void onTouchCancelled(int id,float x,float y);
+
+
+	public static native void onAxisMoved(int id, int deviceid, int productid, float x, float y);
     
     public static native void onSwipe(int id, int swipeDir);
     
@@ -565,6 +568,8 @@ public class OFAndroid {
 	public static native void deviceRefreshRate(int refreshRate);
 
 	public static native void setSampleSize(int samples);
+
+	public static native void setMultiWindowMode(boolean multiWindow);
 
     // static methods to be called from OF c++ code
     public static void setFullscreen(boolean fs){
@@ -925,7 +930,7 @@ public class OFAndroid {
     
     private static OFAndroidAccelerometer accelerometer;
     private static OFAndroidGPS gps;
-    private static OFGestureListener gestureListener;
+    public static OFGestureListener gestureListener;
 	private static OFOrientationListener orientationListener;
 	private static String dataPath;
 	public static boolean unpackingDone = false;
@@ -938,6 +943,7 @@ public class OFAndroid {
 		if(glView != null) {
 			glView.setOnClickListener(null);
 			glView.setOnTouchListener(null);
+			if(gestureListener != null) gestureListener.enableTouchEvents = false;
 		}
 		gestureListener = null;
 	}
@@ -948,7 +954,7 @@ public class OFAndroid {
 			if (gestureListener == null)
 				gestureListener = new OFGestureListener(OFAndroidLifeCycle.getActivity());
 			glView.setOnClickListener(gestureListener);
-			glView.setOnTouchListener(gestureListener.touchListener);
+			gestureListener.enableTouchEvents = true;
 
 		} else {
 			Log.w( "OF", "enableTouchEvents GLView is null");
@@ -1019,8 +1025,7 @@ public class OFAndroid {
             if( onBackPressed() ) {
             	return true;
            	} else {
-           		// let the Android system handle the back button
-           		return false;
+           		return true;
            	}
         }
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE)) return false;
