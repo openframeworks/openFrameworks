@@ -5,6 +5,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.FloatMath;
 import android.util.Log;
 import androidx.annotation.Keep;
@@ -64,10 +65,12 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 					if(player!=null) unloadSound();
 					player = new MediaPlayer();
 					player.setOnErrorListener(this);
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-						player.setAudioAttributes(attributes);
-					}
+					player.setOnPreparedListener(this);
+//					player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+					player.setAudioAttributes(attributes);
 					player.setDataSource(fileName);
+
+
 				} catch (Exception e) {
 					Log.e("OF","SoundPlayer Exception: couldn't load " + fileName,e);
 					return;
@@ -96,6 +99,8 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			this.stream = stream;
 
 	}
+
+
 	
 	void unloadSound(){
 		if(player!=null){
@@ -276,6 +281,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(getPositionMS() != pct) {
 				try {
 					player.seekTo((int) (player.getDuration() * pct)); // 0 = start, 1 = end;
+					player.start();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -288,6 +294,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(getPosition() != ms) {
 				try {
 					player.seekTo(ms); // 0 = start, 1 = end;
+					player.start();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -409,6 +416,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 
 	@Override
 	public void onPrepared(MediaPlayer mediaPlayer) {
+		Log.e("OF","onPrepared:" + fileName );
 
 	}
 
