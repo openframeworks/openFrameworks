@@ -38,12 +38,20 @@ static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 
 static queue<ofTouchEventArgs> touchEventArgsQueue;
 static queue<ofKeyEventArgs> keyEventArgsQueue;
-static std::mutex mtx, keyMtx;
+static queue<ofKeyEventArgs> axisEventArgsQueue;
+
+static std::mutex mtx, keyMtx, controllerMtx;
+
+static bool appSetup = false;
+
 static bool threadedKeyEvents = false;
 static bool threadedTouchEvents = false;
-static bool appSetup = false;
-static bool accumulateTouchEvents = false;
+static bool threadedAxisEvents = false;
 
+static bool accumulateTouchEvents = false;
+static bool accumulateAxisEvents = false;
+
+static bool multiWindowMode = false;
 
 void ofExitCallback();
 
@@ -122,6 +130,7 @@ void ofAppAndroidWindow::setCurrentWindow() {
 void ofAppAndroidWindow::setSampleSize(int samples) {
 	msaaSamples = samples;
 }
+
 int	ofAppAndroidWindow::getSamples() {
 	return msaaSamples;
 }
@@ -270,11 +279,19 @@ void ofAppAndroidWindow::setAccumulateTouchEvents(bool accumEvents){
 	accumulateTouchEvents = accumEvents;
 }
 
+void ofAppAndroidWindow::setMultiWindowMode(bool multiWindow) {
+	multiWindowMode = multiWindow;
+}
+
 bool ofAppAndroidWindow::getIsThreadedEvents() {
 	return threadedTouchEvents;
 }
 bool ofAppAndroidWindow::getIsAccumulateTouchEvents() {
 	return accumulateTouchEvents;
+}
+
+bool ofAppAndroidWindow::getIsMultiWindowMode() {
+	return multiWindowMode;
 }
 
 
@@ -430,7 +447,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 }
 
 JNIEXPORT jboolean JNICALL
-		Java_cc_openframeworks_OFAndroid_isWindowReady( JNIEnv*  env, jclass  thiz) {
+Java_cc_openframeworks_OFAndroid_isWindowReady( JNIEnv*  env, jclass  thiz) {
 	  return window != nullptr && window->renderer() != nullptr;
 }
 
@@ -543,17 +560,26 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		}
 	}
 
-	window->events().notifyUpdate();
+	if(!threadedAxisEvents) {
+//		axisMtx.lock();
+//		queue<ofKeyEventArgs> keyEvents = keyEventArgsQueue;
+//		while (!keyEventArgsQueue.empty()) keyEventArgsQueue.pop();
+//		axisMtx.unlock();
+	}
+
+
 	if (bSetupScreen) {
 		window->renderer()->startRender();
 		window->renderer()->setupScreen();
+		window->events().notifyUpdate();
 		window->events().notifyDraw();
 		window->renderer()->finishRender();
 		bSetupScreen = false;
 	} else {
+		window->events().notifyUpdate();
 		window->renderer()->startRender();
-	window->events().notifyDraw();
-	window->renderer()->finishRender();
+		window->events().notifyDraw();
+		window->renderer()->finishRender();
 	}
 
 }
@@ -805,6 +831,21 @@ Java_cc_openframeworks_OFAndroid_setSampleSize(JNIEnv*  env, jclass  thiz, jint 
 	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofLogNotice("oF") << "setSampleSize:" << sampleSize;
 	window->setSampleSize(sampleSize);
+}
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onAxisMoved(JNIEnv*  env, jclass  thiz, jint id, jint deviceid, jint productid, jfloat x, jfloat y){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
+	ofLogNotice("oF") << "axisMoved:[" << id << "] x:" << x << " y:" << y;
+
+}
+
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_setMultiWindowMode(JNIEnv*  env, jclass  thiz, jboolean multiWindow){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
+	ofLogNotice("oF") << "setMultiWindowMode:" << (bool)multiWindow;
+	window->setMultiWindowMode((bool)multiWindow);
 }
 
 }

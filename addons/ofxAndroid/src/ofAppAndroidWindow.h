@@ -98,8 +98,12 @@ public:
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
 
+	void 	setMultiWindowMode(bool multiWindowMode);
+
 	bool	getIsThreadedEvents();
 	bool 	getIsAccumulateTouchEvents();
+
+	bool	getIsMultiWindowMode();
 
 
 	int 	getGlesVersion();
