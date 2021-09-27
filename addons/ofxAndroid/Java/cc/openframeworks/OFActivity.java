@@ -1,12 +1,18 @@
 package cc.openframeworks;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -42,7 +48,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
-	public static final boolean LOG_INPUT = true;
+	public static final boolean LOG_INPUT = false;
 	
 
 	public float currentRefreshRate;
@@ -123,10 +129,57 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 
 	private boolean create_first = true;
-	
+
+	PendingIntent mPermissionIntent = null;
+	UsbManager mUsbManager = null;
+	private static final String ACTION_USB_PERMISSION = "com.multitools.andres.LCView";
+	private boolean deviceAttached = false;
+
+	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+			if (ACTION_USB_PERMISSION.equals(action)) {
+				// Permission requested
+//				synchronized (this) {
+//					if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+//						// User has granted permission
+//						// ... Setup your UsbDeviceConnection via mUsbManager.openDevice(usbDevice) ...
+//					} else {
+//						// User has denied permission
+//					}
+//				}
+			}
+			if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+				// Device removed
+				Log.i(TAG,"ACTION_USB_DEVICE_DETACHED");
+				OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+				deviceAttached = false;
+				if(glView != null) {
+					glView.setVisibility(View.VISIBLE);
+				}
+
+			}
+			if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
+				// Device attached
+				Log.i(TAG,"ACTION_USB_DEVICE_ATTACHED");
+				deviceAttached = true;
+				OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+				if(glView != null) {
+					glView.setVisibility(View.GONE);
+
+				}
+			}
+
+		}
+	};
+
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+
 		try {
 			OFAndroid.packageName = getPackageName();
 		} catch (Exception ex) {
@@ -146,6 +199,18 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		} else {
 			//Setup();
 		}
+
+		try {
+			mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+			IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+			filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+			filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+			registerReceiver(mUsbReceiver, filter);
+		} catch (Exception exception) {
+			Log.i(TAG, exception.getMessage());
+
+		}
+
 
 		initView();
 	}
@@ -454,7 +519,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		//Log.w("OF", "not calling OFAndroidLifeCycle.glStop()");
 		OFAndroidLifeCycle.glStop();
-		OFAndroidLifeCycle.reset();
+//		OFAndroidLifeCycle.reset();
 		mOFGlSurfaceContainer = null;
 
 
@@ -549,10 +614,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		hasPaused = true;
 		OFAndroidLifeCycle.glPause();
 
-		/*OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 		if(glView != null) {
 			glView.setVisibility(View.GONE);
-		}*/
+		}
 		super.onPause();
 	}
 
@@ -573,6 +639,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	protected void onDestroy() {
 		Log.e("OF", "onDestroy");
 		hasPaused = true;
+		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+		if(glView != null) {
+			glView.setVisibility(View.GONE);
+		}
 		OFAndroidLifeCycle.glDestroy();
 		if (displayManager!=null) {
 			displayManager.unregisterDisplayListener(this);
