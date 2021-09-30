@@ -156,9 +156,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				Log.i(TAG,"ACTION_USB_DEVICE_DETACHED");
 				OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 				deviceAttached = false;
-				if(glView != null) {
-					glView.setVisibility(View.VISIBLE);
-				}
+//				if(glView != null) {
+//					glView.setVisibility(View.VISIBLE);
+//				}
 
 			}
 			if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
@@ -167,7 +167,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				deviceAttached = true;
 				OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 				if(glView != null) {
-					glView.setVisibility(View.GONE);
+					//glView.setVisibility(View.GONE);
 
 				}
 			}
@@ -199,6 +199,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		} else {
 			//Setup();
 		}
+		
 
 		try {
 			mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
@@ -349,6 +350,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 					OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 					if(glView != null) {
+
+						if(highestRefreshRate > OFAndroid.highestFrameRate) highestRefreshRate = OFAndroid.highestFrameRate; // allow capping
+
 						glView.setFrameRate(highestRefreshRate);
 						currentRefreshRate = highestRefreshRate;
 					}
@@ -448,13 +452,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			Log.i("OF", "onConfigurationChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + false);
 		}
 
-		if (newConfig.orientation== Configuration.ORIENTATION_PORTRAIT)
-		{
-
-		}
-		else  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-		{
-
+		if(newConfig.locale != OFAndroid.locale) {
+			Log.i("OF", "onConfigurationChanged() Locale has changed to:" + newConfig.locale.getDisplayLanguage());
 		}
 
 		DetermineDisplayConfiguration();
@@ -518,11 +517,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
 
 		//Log.w("OF", "not calling OFAndroidLifeCycle.glStop()");
-		OFAndroidLifeCycle.glStop();
-//		OFAndroidLifeCycle.reset();
-		mOFGlSurfaceContainer = null;
-
-
+//		OFAndroidLifeCycle.glStop();
+////		OFAndroidLifeCycle.reset();
+//		mOFGlSurfaceContainer = null;
 
 		super.onStop();
 
@@ -614,11 +611,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		hasPaused = true;
 		OFAndroidLifeCycle.glPause();
 
-
-		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-		if(glView != null) {
-			glView.setVisibility(View.GONE);
-		}
 		super.onPause();
 	}
 
@@ -631,7 +623,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			Log.i("OF", "onWindowFocusChanged GLView setVisibility VISIBLE");
 			OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 			glView.setVisibility(View.VISIBLE);
-
 		}
 	}
 
@@ -646,6 +637,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		OFAndroidLifeCycle.glDestroy();
 		if (displayManager!=null) {
 			displayManager.unregisterDisplayListener(this);
+		}
+
+		if(mUsbReceiver != null) {
+			unregisterReceiver(mUsbReceiver);
 		}
 
 		super.onDestroy();
@@ -771,6 +766,13 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
 		Log.i("OF", "onMultiWindowModeChanged:isInMultiWindowMode:" + isInMultiWindowMode);
 		OFAndroid.setMultiWindowMode(isInMultiWindowMode);
+
+		if(hasPaused) return;
+
+		Log.i("OF", "onMultiWindowModeChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + false);
+
+		DetermineDisplayConfiguration();
+		DetermineDisplayDimensions();
 	}
 
 	@Override

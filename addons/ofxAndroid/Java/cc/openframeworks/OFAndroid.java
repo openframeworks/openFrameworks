@@ -3,6 +3,7 @@ package cc.openframeworks;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,6 +50,8 @@ public class OFAndroid {
 	public static String packageName;
 	public static int eglVersion = 2;
 	public static int samples = 16;
+	public static int highestFrameRate = 120;
+	public static Locale locale;
 
 	// List based on http://bit.ly/NpkL4Q
 	@SuppressLint("SdCardPath") // the following list is fall back 3

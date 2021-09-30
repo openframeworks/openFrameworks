@@ -14,6 +14,9 @@ import java.io.IOException;
 
 @Keep
 public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
+
+	final Boolean LOG_SOUND = false;
+
 	OFAndroidSoundPlayer(){
 		pan = 0.f;
 		volume = leftVolume = rightVolume = 1;
@@ -267,7 +270,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	void setMultiPlay(boolean bMp){
 		multiPlay = bMp;
 		if(fileName!=null && multiPlay && stream){
-			Log.w("OF", "multiplay only supported as no stream, reloading " + fileName + " as no stream");
+			if(LOG_SOUND) Log.w("OF", "multiplay only supported as no stream, reloading " + fileName + " as no stream");
 			String currFileName = fileName;
 			unloadSound();
 			loadSound(currFileName, false);
@@ -416,8 +419,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 
 	@Override
 	public void onPrepared(MediaPlayer mediaPlayer) {
-		Log.e("OF","onPrepared:" + fileName );
-
+		if(LOG_SOUND) Log.i("OF","onPrepared:" + fileName );
 	}
 
 	@Override
