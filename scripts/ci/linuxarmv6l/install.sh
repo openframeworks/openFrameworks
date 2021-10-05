@@ -19,6 +19,7 @@ installPackages(){
 }
 
 createRaspbianImg(){
+	wget http://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
