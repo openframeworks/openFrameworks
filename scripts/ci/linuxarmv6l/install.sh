@@ -16,21 +16,12 @@ installPackages(){
     sudo apt-get -y install multistrap unzip
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
     sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
-    
-#    sudo sed '/^$config_str .= " -o Apt::Get::AllowUnauthenticated.*/a $config_str .= " -o Acquire::AllowInsecureRepositories=true;"' /usr/sbin/multistrap
-    
-    #cat /usr/sbin/multistrap
-    
-	#sudo mkdir -p "/etc/apt/trusted.gpg.d"
-	#sudo apt-key --keyring "/etc/apt/trusted.gpg.d/raspbian.gpg"  adv --batch --keyserver keyserver.ubuntu.com --recv-key   0x9165938D90FDDD2E
 }
 
 createRaspbianImg(){
-    echo "FIX FOR THIS STUPID BS 1"
+	#needed since Ubuntu 18.04 - allow non https repositories 
 	mkdir -p raspbian/etc/apt/apt.conf.d/
 	echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
-    echo "FIX FOR THIS STUPID BS 2"
-
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
