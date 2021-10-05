@@ -27,7 +27,7 @@ installPackages(){
 
 createRaspbianImg(){
     echo "FIX FOR THIS STUPID BS 1"
-    sudo mkdir -p raspbian/etc/apt/apt.conf.d/
+	mkdir -p raspbian/etc/apt/apt.conf.d/
 	echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
     echo "FIX FOR THIS STUPID BS 2"
 
