@@ -12,15 +12,14 @@ trapError() {
 }
 
 installPackages(){
-	sudo mkdir -p "/etc/apt/apt.conf.d/"
-	echo "APT { Get { AllowInsecureRepositories \"1\"; }; };" | sudo tee /etc/apt/apt.conf.d/99allow_unauth
-	echo " test "
-	sudo cat /etc/apt/apt.conf.d/99allow_unauth
-
-    sudo apt-get -y update
+	sudo apt-get -y update
     sudo apt-get -y install multistrap unzip
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
     sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
+    
+    sudo sed '/^$config_str .= " -o Apt::Get::AllowUnauthenticated.*/a $config_str .= " -o Apt::Get::AllowUnauthenticated=true"' /usr/sbin/multistrap
+    
+    cat /usr/sbin/multistrap
 }
 
 createRaspbianImg(){
