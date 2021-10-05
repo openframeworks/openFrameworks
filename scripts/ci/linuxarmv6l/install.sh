@@ -21,8 +21,8 @@ installPackages(){
     
     #cat /usr/sbin/multistrap
     
-	mkdir -p "build/root/etc/apt/trusted.gpg.d"
-	apt-key --keyring "build/root/etc/apt/trusted.gpg.d/raspbian.gpg"  adv --batch --keyserver ha.pool.sks-keyservers.net --recv-key   0x9165938D90FDDD2E
+	sudo mkdir -p "/etc/apt/trusted.gpg.d"
+	sudo apt-key --keyring "/etc/apt/trusted.gpg.d/raspbian.gpg"  adv --batch --keyserver ha.pool.sks-keyservers.net --recv-key   0x9165938D90FDDD2E
 }
 
 createRaspbianImg(){
