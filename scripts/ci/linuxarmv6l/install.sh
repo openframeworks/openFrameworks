@@ -12,16 +12,16 @@ trapError() {
 }
 
 installPackages(){
-	sudo apt-get -y update
+    sudo apt-get -y update
     sudo apt-get -y install multistrap unzip
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
     sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
 }
 
 createRaspbianImg(){
-	#needed since Ubuntu 18.04 - allow non https repositories 
-	mkdir -p raspbian/etc/apt/apt.conf.d/
-	echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
+    #needed since Ubuntu 18.04 - allow non https repositories 
+    mkdir -p raspbian/etc/apt/apt.conf.d/
+    echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
