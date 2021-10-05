@@ -26,6 +26,10 @@ installPackages(){
 }
 
 createRaspbianImg(){
+    echo "FIX FOR THIS STUPID BS 1"
+	echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
+    echo "FIX FOR THIS STUPID BS 2"
+
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
@@ -45,10 +49,6 @@ downloadFirmware(){
     cp -r firmware-master/opt raspbian/
     rm -r firmware-master
     rm firmware.zip
-    
-    echo "FIX FOR THIS STUPID BS 1"
-	echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
-    echo "FIX FOR THIS STUPID BS 2"
 }
 
 relativeSoftLinks(){
