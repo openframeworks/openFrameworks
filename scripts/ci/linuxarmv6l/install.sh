@@ -17,13 +17,13 @@ installPackages(){
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
     sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
     
-    sudo sed '/^$config_str .= " -o Apt::Get::AllowUnauthenticated.*/a $config_str .= " -o Acquire::AllowInsecureRepositories=true"' /usr/sbin/multistrap
+    sudo sed '/^$config_str .= " -o Apt::Get::AllowUnauthenticated.*/a $config_str .= " -o Acquire::AllowInsecureRepositories=true;"' /usr/sbin/multistrap
     
-    cat /usr/sbin/multistrap
+    #cat /usr/sbin/multistrap
 }
 
 createRaspbianImg(){
-    multistrap --no-auth -a armhf -d raspbian -f multistrap.conf
+    multistrap -a armhf -d raspbian -f multistrap.conf
 }
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
