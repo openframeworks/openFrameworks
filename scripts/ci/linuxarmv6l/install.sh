@@ -14,6 +14,8 @@ trapError() {
 installPackages(){
 	sudo mkdir -p "/etc/apt/apt.conf.d/"
 	echo "APT { Get { AllowUnauthenticated \"1\"; }; };" | sudo tee /etc/apt/apt.conf.d/99allow_unauth
+	echo " test "
+	sudo cat /etc/apt/apt.conf.d/99allow_unauth
 
     sudo apt-get -y update
     sudo apt-get -y install multistrap unzip
