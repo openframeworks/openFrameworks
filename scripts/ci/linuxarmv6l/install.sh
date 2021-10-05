@@ -12,8 +12,6 @@ trapError() {
 }
 
 installPackages(){
-	sudo apt-key adv --no-tty --keyserver keyserver.ubuntu.com --recv-keys 9165938D90FDDD2E
-	
     sudo apt-get -y update
     sudo apt-get -y install multistrap unzip
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
@@ -22,8 +20,10 @@ installPackages(){
 
 createRaspbianImg(){
 	
-#	wget https://archive.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
-#	wget https://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | sudo apt-key add -
+	mkdir -p "patch/root/etc/apt/trusted.gpg.d"
+	apt-key --keyring "patch/root/etc/apt/trusted.gpg.d/debian.gpg"  adv --batch --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 7638D0442B90D010
+	apt-key --keyring "patch/root/etc/apt/trusted.gpg.d/debian.gpg"  adv --batch --keyserver hkp://keyserver.ubuntu.com:80 --recv-key CBF8D6FD518E17E1
+	apt-key --keyring "patch/root/etc/apt/trusted.gpg.d/debian.gpg"  adv --batch --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 9165938D90FDDD2E
 
     multistrap --no-auth -a armhf -d raspbian -f multistrap.conf
 }
