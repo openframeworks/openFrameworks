@@ -21,8 +21,8 @@ installPackages(){
     
     #cat /usr/sbin/multistrap
     
-	sudo mkdir -p "/etc/apt/trusted.gpg.d"
-	sudo apt-key --keyring "/etc/apt/trusted.gpg.d/raspbian.gpg"  adv --batch --keyserver keyserver.ubuntu.com --recv-key   0x9165938D90FDDD2E
+	#sudo mkdir -p "/etc/apt/trusted.gpg.d"
+	#sudo apt-key --keyring "/etc/apt/trusted.gpg.d/raspbian.gpg"  adv --batch --keyserver keyserver.ubuntu.com --recv-key   0x9165938D90FDDD2E
 }
 
 createRaspbianImg(){
@@ -45,6 +45,10 @@ downloadFirmware(){
     cp -r firmware-master/opt raspbian/
     rm -r firmware-master
     rm firmware.zip
+    
+    echo "FIX FOR THIS STUPID BS 1"
+	echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
+    echo "FIX FOR THIS STUPID BS 2"
 }
 
 relativeSoftLinks(){
