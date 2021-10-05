@@ -24,7 +24,7 @@ createRaspbianImg(){
 	#sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 9165938D90FDDD2E
 	
 	downloader http://archive.raspbian.org/raspbian.public.key
-	sudo apt-key add - < raspbian.public.key
+	sudo apt-key add --no-tty - < raspbian.public.key
 
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
