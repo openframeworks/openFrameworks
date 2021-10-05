@@ -21,8 +21,7 @@ installPackages(){
 createRaspbianImg(){
 
 	#add the public key to the raspian server
-	gpg --keyserver keys.gnupg.net --recv-key 9165938D90FDDD2E
-	gpg -a --export 9165938D90FDDD2E | sudo apt-key add -
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 9165938D90FDDD2E
 	
     multistrap -a armhf -d raspbian -f multistrap.conf
 }
