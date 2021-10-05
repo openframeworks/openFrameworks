@@ -17,9 +17,12 @@ installPackages(){
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
     sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
     
-    sudo sed '/^$config_str .= " -o Apt::Get::AllowUnauthenticated.*/a $config_str .= " -o Acquire::AllowInsecureRepositories=true;"' /usr/sbin/multistrap
+#    sudo sed '/^$config_str .= " -o Apt::Get::AllowUnauthenticated.*/a $config_str .= " -o Acquire::AllowInsecureRepositories=true;"' /usr/sbin/multistrap
     
     #cat /usr/sbin/multistrap
+    
+	mkdir -p "build/root/etc/apt/trusted.gpg.d"
+	apt-key --keyring "build/root/etc/apt/trusted.gpg.d/raspbian.gpg"  adv --batch --keyserver ha.pool.sks-keyservers.net --recv-key   0x9165938D90FDDD2E
 }
 
 createRaspbianImg(){
