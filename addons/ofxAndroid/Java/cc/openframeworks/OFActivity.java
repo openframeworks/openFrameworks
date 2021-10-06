@@ -80,7 +80,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			Class<?> layout = Class.forName(packageName+".R$layout");
 			View view = this.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
 			if(view == null) {
-				Log.w("OF", "Could not find main_layout.xml.");
+				Log.e("OF", "Could not find main_layout.xml.");
 				throw new Exception();
 			}
 			this.setContentView(view);
@@ -89,7 +89,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			mOFGlSurfaceContainer = (ViewGroup)this.findViewById(id.getField("of_gl_surface_container").getInt(null));
 			
 			if(mOFGlSurfaceContainer == null) {
-				Log.w(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
+				Log.e(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
 				throw new Exception();
 			}
 			
@@ -107,7 +107,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			Class<?> layout = Class.forName(packageName+".R$layout");
 			View view = this.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
 			if(view == null) {
-				Log.w(TAG, "Could not find main_layout.xml.");
+				Log.e(TAG, "Could not find main_layout.xml.");
 				throw new Exception();
 			}
 			this.setContentView(view);
@@ -116,7 +116,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			mOFGlSurfaceContainer = (ViewGroup)this.findViewById(id.getField("of_gl_surface_container").getInt(null));
 
 			if(mOFGlSurfaceContainer == null) {
-				Log.w(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
+				Log.e(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
 				throw new Exception();
 			}
 
@@ -130,50 +130,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 	private boolean create_first = true;
 
-	PendingIntent mPermissionIntent = null;
-	UsbManager mUsbManager = null;
-	private static final String ACTION_USB_PERMISSION = "com.multitools.andres.LCView";
-	private boolean deviceAttached = false;
 
-	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-			if (ACTION_USB_PERMISSION.equals(action)) {
-				// Permission requested
-//				synchronized (this) {
-//					if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-//						// User has granted permission
-//						// ... Setup your UsbDeviceConnection via mUsbManager.openDevice(usbDevice) ...
-//					} else {
-//						// User has denied permission
-//					}
-//				}
-			}
-			if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-				// Device removed
-				Log.i(TAG,"ACTION_USB_DEVICE_DETACHED");
-				OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-				deviceAttached = false;
-//				if(glView != null) {
-//					glView.setVisibility(View.VISIBLE);
-//				}
-
-			}
-			if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-				// Device attached
-				Log.i(TAG,"ACTION_USB_DEVICE_ATTACHED");
-				deviceAttached = true;
-				OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-				if(glView != null) {
-					//glView.setVisibility(View.GONE);
-
-				}
-			}
-
-		}
-	};
 
 
 	@Override
@@ -198,18 +156,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			LoadCoreStatic();
 		} else {
 			//Setup();
-		}
-		
-
-		try {
-			mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-			IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-			filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-			filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-			registerReceiver(mUsbReceiver, filter);
-		} catch (Exception exception) {
-			Log.i(TAG, exception.getMessage());
-
 		}
 
 
@@ -637,10 +583,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		OFAndroidLifeCycle.glDestroy();
 		if (displayManager!=null) {
 			displayManager.unregisterDisplayListener(this);
-		}
-
-		if(mUsbReceiver != null) {
-			unregisterReceiver(mUsbReceiver);
 		}
 
 		super.onDestroy();

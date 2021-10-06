@@ -482,10 +482,11 @@ Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jin
 {
     sWindowWidth  = w;
     sWindowHeight = h;
-    ofLogNotice("ofAppAndroidWindow") << "resize to Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples()  << " with MSAA:" << window->getSamples();
     bSetupScreen = true;
-    if(window != nullptr)
-    	window->events().notifyWindowResized(w,h);
+    if(window != nullptr) {
+		ofLogNotice("ofAppAndroidWindow") << "resize to Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples()  << " with MSAA:" << window->getSamples();
+		window->events().notifyWindowResized(w,h);
+    }
 }
 
 /* Call to finalize the graphics state */
@@ -844,8 +845,9 @@ Java_cc_openframeworks_OFAndroid_onAxisMoved(JNIEnv*  env, jclass  thiz, jint id
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_setMultiWindowMode(JNIEnv*  env, jclass  thiz, jboolean multiWindow){
 	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
-	ofLogNotice("oF") << "setMultiWindowMode:" << (bool)multiWindow;
-	window->setMultiWindowMode((bool)multiWindow);
+    bool bMultiWindow = (bool)multiWindow;
+	ofLogNotice("oF") << "setMultiWindowMode:" << bMultiWindow;
+	window->setMultiWindowMode(bMultiWindow);
 }
 
 }

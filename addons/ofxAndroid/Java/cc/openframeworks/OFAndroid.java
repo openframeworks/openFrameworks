@@ -51,6 +51,8 @@ public class OFAndroid {
 	public static int eglVersion = 2;
 	public static int samples = 16;
 	public static int highestFrameRate = 120;
+	public static int width;
+	public static int height;
 	public static Locale locale;
 
 	// List based on http://bit.ly/NpkL4Q
