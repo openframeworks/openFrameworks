@@ -70,15 +70,39 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		   EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
 		   EGL_NONE
 	   };
+	   
+    // We'll try these alpha sizes in order ending with EGL_DONT_CARE if we don't get anything higher.
+    std::vector <EGLint> alphaPreference = {8, EGL_DONT_CARE};
     
+    // Find the index for the value EGL_ALPHA_SIZE uses, so we can try a few different values till we get a successful config.
+    int attribListAlphaIndex = -1;
+    for(int i = 0; i < attribList.size(); i++){
+        if( attribList[i] == EGL_ALPHA_SIZE ){
+            attribListAlphaIndex = i+1;
+            break;
+        }
+    }
+
     // We'll try these depth sizes in order ending with EGL_DONT_CARE if we don't get anything higher.
     std::vector <EGLint> depthPreference = {24, 16, EGL_DONT_CARE};
-
+    
     // Find the index for the value EGL_DEPTH_SIZE uses, so we can try a few different values till we get a successful config.
     int attribListDepthIndex = -1;
     for(int i = 0; i < attribList.size(); i++){
         if( attribList[i] == EGL_DEPTH_SIZE ){
             attribListDepthIndex = i+1;
+            break;
+        }
+    }
+
+    // We'll try these sample buffers in order ending with EGL_DONT_CARE if we don't get anything higher.
+    std::vector <EGLint> sampleBuffersPreference = {1, EGL_DONT_CARE};
+    
+    // Find the index for the value EGL_SAMPLE_BUFFERS uses, so we can try a few different values till we get a successful config.
+    int attribListSampleBuffersIndex = -1;
+    for(int i = 0; i < attribList.size(); i++){
+        if( attribList[i] == EGL_SAMPLE_BUFFERS ){
+            attribListSampleBuffersIndex = i+1;
             break;
         }
     }
@@ -103,6 +127,27 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	}
     
     // Choose the config based on our attribute list
+    // Try higher EGL_ALPHA_SIZE first
+    for(int i = 0; i < alphaPreference.size(); i++){
+        // Set EGL_ALPHA_SIZE
+        attribList[attribListAlphaIndex] = alphaPreference[i];
+        
+        // Try out that depth value
+        if ( !eglChooseConfig(display, &attribList[0], &config, 1, &numConfigs) ){
+
+            // Finally fail like we did before if no preference works 
+            if( alphaPreference[i] == EGL_DONT_CARE ){
+                ofLogError() << "couldn't choose display";
+                return;
+            }
+
+        }else{
+            // Got a good configuration. Stop searching. 
+            break;
+        }
+    }
+    
+    // Choose the config based on our attribute list
     // Try higher EGL_DEPTH_SIZE first
     for(int i = 0; i < depthPreference.size(); i++){
         // Set EGL_DEPTH_SIZE
@@ -113,6 +158,27 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 
             // Finally fail like we did before if no preference works 
             if( depthPreference[i] == EGL_DONT_CARE ){
+                ofLogError() << "couldn't choose display";
+                return;
+            }
+
+        }else{
+            // Got a good configuration. Stop searching. 
+            break;
+        }
+    }
+    
+    // Choose the config based on our attribute list
+    // Try higher EGL_SAMPLE_BUFFERS first
+    for(int i = 0; i < sampleBuffersPreference.size(); i++){
+        // Set EGL_SAMPLE_BUFFERS
+        attribList[attribListSampleBuffersIndex] = sampleBuffersPreference[i];
+        
+        // Try out that depth value
+        if ( !eglChooseConfig(display, &attribList[0], &config, 1, &numConfigs) ){
+
+            // Finally fail like we did before if no preference works 
+            if( sampleBuffersPreference[i] == EGL_DONT_CARE ){
                 ofLogError() << "couldn't choose display";
                 return;
             }
@@ -282,21 +348,19 @@ void ofxAppEmscriptenWindow::setWindowPosition(int x, int y){
 }
 
 void ofxAppEmscriptenWindow::setWindowShape(int w, int h){
-    emscripten_set_canvas_element_size(NULL,w,h);
+    emscripten_set_canvas_size(w,h);
 }
-
-
 
 glm::vec2 ofxAppEmscriptenWindow::getWindowPosition(){
 	return glm::vec2(0,0);
 }
 
-
 glm::vec2 ofxAppEmscriptenWindow::getWindowSize(){
 	int width;
 	int height;
-    emscripten_get_canvas_element_size(NULL, &width, &height);
-	return glm::vec2(width,height);
+	int isFullscreen;
+    emscripten_get_canvas_size(&width, &height, &isFullscreen);
+	return glm::vec3(width,height,isFullscreen);
 }
 
 glm::vec2 ofxAppEmscriptenWindow::getScreenSize(){
