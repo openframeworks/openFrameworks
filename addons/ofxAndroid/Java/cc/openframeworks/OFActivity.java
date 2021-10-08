@@ -643,7 +643,19 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId);
 		boolean returnValue = true;
 
-		if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
+		if ((event.getSource() & InputDevice.SOURCE_KEYBOARD) == InputDevice.SOURCE_KEYBOARD){
+			if(event.getAction() == KeyEvent.ACTION_DOWN)
+				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
+			else if(event.getAction() == KeyEvent.ACTION_UP)
+				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
+			else if(event.getAction() == KeyEvent.ACTION_MULTIPLE)
+				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
+			else if(event.getAction() == KeyEvent.FLAG_CANCELED)
+				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
+			else
+				returnValue = true;
+		}
+		else if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
 				(event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) == InputDevice.SOURCE_CLASS_JOYSTICK ||
 				(event.getSource() & InputDevice.SOURCE_CLASS_BUTTON) == InputDevice.SOURCE_CLASS_BUTTON ||
@@ -653,6 +665,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				returnValue = OFAndroid.keyDown(event.getKeyCode()+400, event);
 			else if(event.getAction() == KeyEvent.ACTION_UP)
 				returnValue = OFAndroid.keyUp(event.getKeyCode()+400, event);
+			else if(event.getAction() == KeyEvent.FLAG_CANCELED)
+				returnValue = OFAndroid.keyUp(event.getKeyCode()+400, event);
 			else
 				returnValue = true;
 		}  else if ((event.getSource() & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
@@ -661,6 +675,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
 				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
 			else if(event.getAction() == KeyEvent.ACTION_UP)
+				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
+			else if(event.getAction() == KeyEvent.FLAG_CANCELED)
 				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
 			else
 				returnValue = super.dispatchKeyEvent(event);
