@@ -214,16 +214,16 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	_renderer = make_shared<ofGLProgrammableRenderer>(this);
 	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
-    emscripten_set_keydown_callback(0,this,1,&keydown_cb);
-    emscripten_set_keyup_callback(0,this,1,&keyup_cb);
-    emscripten_set_mousedown_callback(0,this,1,&mousedown_cb);
-    emscripten_set_mouseup_callback(0,this,1,&mouseup_cb);
-    emscripten_set_mousemove_callback(0,this,1,&mousemoved_cb);
+    emscripten_set_keydown_callback("#canvas",this,1,&keydown_cb);
+    emscripten_set_keyup_callback("#canvas",this,1,&keyup_cb);
+    emscripten_set_mousedown_callback("#canvas",this,1,&mousedown_cb);
+    emscripten_set_mouseup_callback("#canvas",this,1,&mouseup_cb);
+    emscripten_set_mousemove_callback("#canvas",this,1,&mousemoved_cb);
 
-    emscripten_set_touchstart_callback(0,this,1,&touch_cb);
-    emscripten_set_touchend_callback(0,this,1,&touch_cb);
-    emscripten_set_touchmove_callback(0,this,1,&touch_cb);
-    emscripten_set_touchcancel_callback(0,this,1,&touch_cb);
+    emscripten_set_touchstart_callback("#canvas",this,1,&touch_cb);
+    emscripten_set_touchend_callback("#canvas",this,1,&touch_cb);
+    emscripten_set_touchmove_callback("#canvas",this,1,&touch_cb);
+    emscripten_set_touchcancel_callback("#canvas",this,1,&touch_cb);
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -295,9 +295,9 @@ int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent
 
 int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	if(ofGetMousePressed()){
-		instance->events().notifyMouseDragged(mouseEvent->canvasX,mouseEvent->canvasY,0);
+		instance->events().notifyMouseDragged(mouseEvent->targetX,mouseEvent->targetY,0);
 	}else{
-		instance->events().notifyMouseMoved(mouseEvent->canvasX,mouseEvent->canvasY);
+		instance->events().notifyMouseMoved(mouseEvent->targetX,mouseEvent->targetY);
 	}
 	return 0;
 
@@ -327,8 +327,8 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
                 ofTouchEventArgs touchArgs;
                 touchArgs.type = touchArgsType;
                 touchArgs.id = i;
-                touchArgs.x =  e->touches[i].canvasX;
-                touchArgs.y =  e->touches[i].canvasY;
+                touchArgs.x =  e->touches[i].targetX;
+                touchArgs.y =  e->touches[i].targetY;
                 instance->events().notifyTouchEvent(touchArgs);
            }
     return 0;
