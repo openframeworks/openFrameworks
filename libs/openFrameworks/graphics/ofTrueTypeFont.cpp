@@ -615,7 +615,7 @@ bool ofTrueTypeFont::loadFont(string filename, int fontSize, bool bAntiAliased, 
 ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 	glyph aGlyph;
 	bool autoHint = settings.antialiased;
-	#ifdef OF_TARGET_EMSCRIPTEN
+	#ifdef TARGET_EMSCRIPTEN
 		autoHint = false;
 	#endif
 	
