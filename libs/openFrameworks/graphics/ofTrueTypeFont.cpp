@@ -614,7 +614,12 @@ bool ofTrueTypeFont::loadFont(string filename, int fontSize, bool bAntiAliased, 
 //-----------------------------------------------------------
 ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 	glyph aGlyph;
-	auto err = FT_Load_Glyph( face.get(), FT_Get_Char_Index( face.get(), utf8 ), FT_LOAD_DEFAULT );
+	bool autoHint = settings.antialiased;
+	#ifdef OF_TARGET_EMSCRIPTEN
+		autoHint = false;
+	#endif
+	
+	auto err = FT_Load_Glyph( face.get(), FT_Get_Char_Index( face.get(), utf8 ), autoHint ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
 	if(err){
 		ofLogError("ofTrueTypeFont") << "loadFont(): FT_Load_Glyph failed for utf8 code " << utf8 << ": FT_Error " << err;
 		return aGlyph;
