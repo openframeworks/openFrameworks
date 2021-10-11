@@ -58,7 +58,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	EGLint majorVersion;
 	EGLint minorVersion;
 	EGLConfig config;
-	EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
+	EGLint contextAttribs[] = { EGL_CONTEXT_MAJOR_VERSION, 3, EGL_NONE, EGL_NONE };
 	std::vector <EGLint> attribList =
 	   {
 		   EGL_RED_SIZE, EGL_DONT_CARE,
@@ -68,6 +68,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 		   EGL_DEPTH_SIZE, EGL_DONT_CARE,
 		   EGL_STENCIL_SIZE, EGL_DONT_CARE,
 		   EGL_SAMPLE_BUFFERS, EGL_DONT_CARE,
+		   EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT_KHR,
 		   EGL_NONE
 	   };
 	   
