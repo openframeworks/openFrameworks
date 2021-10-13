@@ -272,6 +272,7 @@ void ofAppAndroidWindow::toggleFullscreen(){
 void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
 	threadedTouchEvents = threadedEvents;
 	threadedKeyEvents = threadedEvents;
+	threadedAxisEvents = threadedEvents;
 }
 
 
