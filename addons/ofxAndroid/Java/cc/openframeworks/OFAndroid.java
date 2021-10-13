@@ -49,7 +49,7 @@ public class OFAndroid {
 
 	public static String packageName;
 	public static int eglVersion = 2;
-	public static int samples = 16;
+	public static int samples = 8;
 	public static int highestFrameRate = 120;
 	public static int width;
 	public static int height;
@@ -1007,7 +1007,7 @@ public class OFAndroid {
 
 	public static boolean keyDown(int keyCode, int keyCodeSource) {
 		int unicodeChar = keyCodeSource;
-		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
 			return onKeyDown(keyCode, unicodeChar);
 		} else {
@@ -1017,7 +1017,7 @@ public class OFAndroid {
 
 	public static boolean keyUp(int keyCode, int keyCodeSource) {
 		int unicodeChar = keyCodeSource;
-		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
 			return onKeyUp(keyCode, unicodeChar);
 		} else {
@@ -1034,9 +1034,8 @@ public class OFAndroid {
            	}
         }
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE)) return false;
-
 		int unicodeChar = event.getUnicodeChar();
-		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
 			return onKeyDown(keyCode, unicodeChar);
 		} else {
@@ -1058,7 +1057,8 @@ public class OFAndroid {
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE)) return false;
 
 		int unicodeChar = event.getUnicodeChar();
-		if(unicodeChar == 0 && keyCode < 714 && keyCode > 400) {
+		//toast("keyUp:" + keyCode);
+		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
 			return onKeyUp(keyCode, unicodeChar);
 		} else {

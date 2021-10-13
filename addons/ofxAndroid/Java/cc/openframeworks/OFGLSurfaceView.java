@@ -224,6 +224,8 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
          * it happened while the Renderer thread was still saving off important state.  We need
          * to wait for it to finish.
          */
+
+        //setRenderMode(OFGLSurfaceView.RENDERMODE_WHEN_DIRTY);
         
         super.onPause();
 
@@ -297,6 +299,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         Log.i("OF","surfaceDestroyed");
         if(holder != null)
             super.surfaceDestroyed(holder);
+
 //        mHolder = null;
 //        mSurface = null;
         //OFAndroid.onSurfaceDestroyed();
