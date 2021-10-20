@@ -150,6 +150,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			Log.e(TAG, "Failure to getPackageName" + ex.getMessage());
 		}
 
+		if(LOG_ENGINE) Log.i(TAG, "onCreate:" + OFAndroid.packageName);
 		WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -358,7 +359,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 	@Override
 	public void onDisplayChanged(int i) {
-		if(hasPaused) return;
+		//if(hasPaused) return;
 		checkForPresentationDisplays();
 		try {
 			display = getWindowManager().getDefaultDisplay();
@@ -392,7 +393,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-		if(hasPaused) return;
+
 		super.onConfigurationChanged(newConfig);
 
 
@@ -749,7 +750,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(LOG_ENGINE) Log.i("OF", "onMultiWindowModeChanged:isInMultiWindowMode:" + isInMultiWindowMode);
 		OFAndroid.setMultiWindowMode(isInMultiWindowMode);
 
-		if(hasPaused) return;
+		//if(hasPaused) return;
 
 		if(LOG_ENGINE) Log.i("OF", "onMultiWindowModeChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + false);
 
