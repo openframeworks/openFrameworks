@@ -51,7 +51,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display presentationDisplay;
 	public static final boolean LOG_INPUT = false;
 	
-	public static final boolean LOG_ENGINE = false;
+	public static final boolean LOG_ENGINE = true;
 
 	public float currentRefreshRate;
 	public float highestRefreshRate;
@@ -151,6 +151,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
 
 		if(LOG_ENGINE) Log.i(TAG, "onCreate:" + OFAndroid.packageName);
+
 		WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -164,7 +165,37 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		} else {
 			//Setup();
 		}
+
+		clearViewGroup();
 		initView();
+	}
+
+	void clearViewGroup() {
+
+
+		ViewGroup glContainer = getSurfaceContainer();
+		if(glContainer != null ) {
+			if (glContainer.getChildCount() > 0) {
+				if(LOG_ENGINE) Log.i(TAG, "clearViewGroup:views:" + glContainer.getChildCount());
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						ViewGroup glContainer = getSurfaceContainer();
+
+						if (glContainer.getChildCount() > 1) {
+							for(int i=glContainer.getChildCount()-1; i>=0;i--) {
+								View view = glContainer.getChildAt(i);
+								if(view != null) {
+									glContainer.removeViewAt(i);
+									Log.w(OFAndroidLifeCycle.class.getSimpleName(), "SetFirstFrameDrawn::Removing Extra View at Index " + i);
+								}
+							}
+						}
+					}
+				});
+			}
+		}
+
 	}
 
 	public void LoadCoreStatic() {
@@ -225,7 +256,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					int width_px = Resources.getSystem().getDisplayMetrics().widthPixels;
 					int height_px = Resources.getSystem().getDisplayMetrics().heightPixels;
 					int pixeldpi = Resources.getSystem().getDisplayMetrics().densityDpi;
-
+					float density = Resources.getSystem().getDisplayMetrics().density;
 
 
 					Point point = new Point();
@@ -236,11 +267,39 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					double screenInches = Math.sqrt(x + y);
 					Log.d(TAG, "Screen inches : " + screenInches +" with realSize:" + point.x +" height:"  + point.y);
 
-
 					//Log.i("OF", "DisplayMetrics: w/h:" +width + "x" + height + " barHeight:" + heightBar + "x barWidth:" + widthBar + " bar:" + bar + " widthBar:" + barWidth + " densityDPI:"  +pixeldpi);
-					if(LOG_ENGINE) Log.i("OF", "DisplayRealMetrics: w/h:" + width_px + "x" + height_px + " pixeldpi:" + pixeldpi);
+					if(LOG_ENGINE) Log.i("OF", "DisplayRealMetrics: w/h:" + width_px + "x" + height_px + " pixeldpi:" + pixeldpi + " density:" + density);
 					//if(hasSetup)
 						glView.setWindowResize(width, height);
+				} else {
+					throw new Exception("Display window problem");
+				}
+			}
+		} catch (Exception exception) {
+			Log.w("OF", "Could not get Window for Display ", exception);
+		}
+	}
+
+	public void DetermineDisplayDimensionsConfigChange(Configuration config) {
+
+		try {
+			OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
+			OFAndroid.enableOrientationChangeEvents();
+			//DisplayMetrics systemDisplayMetrics = Resources.getSystem().getDisplayMetrics();
+			if(glView != null) {
+				DisplayMetrics displayMetrics = new DisplayMetrics();
+				WindowManager windowManager = getWindowManager();
+				if(windowManager != null && getWindowManager().getDefaultDisplay() != null) {
+					getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+					int height = glView.getMeasuredHeight();
+					int width = glView.getMeasuredWidth();
+
+					float density = displayMetrics.density;
+					//int width = (int)(config.screenWidthDp * density);
+					//int height = (int)(config.screenHeightDp * density);
+					if(LOG_ENGINE) Log.i("OF", "DetermineDisplayDimensionsConfigChange: w/h:" + width + "x" + height + " density:" + density);
+
+					glView.setWindowResize(width, height);
 				} else {
 					throw new Exception("Display window problem");
 				}
@@ -409,6 +468,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		DetermineDisplayConfiguration();
 		DetermineDisplayDimensions();
+		DetermineDisplayDimensionsConfigChange(newConfig);
+
 
 	}
 
@@ -576,6 +637,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			if(LOG_ENGINE) Log.i("OF", "onWindowFocusChanged GLView setVisibility VISIBLE");
 			OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
 			glView.setVisibility(View.VISIBLE);
+			DetermineDisplayConfiguration();
+			DetermineDisplayDimensions();
 		}
 	}
 
@@ -767,6 +830,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	@Override
 	public boolean isLaunchedFromBubble () {
 		if(LOG_ENGINE) Log.i("OF", "isLaunchedFromBubble");
+		DetermineDisplayConfiguration();
+		DetermineDisplayDimensions();
 		return true;
 	}
 
