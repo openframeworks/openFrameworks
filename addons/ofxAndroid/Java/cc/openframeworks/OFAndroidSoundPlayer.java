@@ -427,6 +427,9 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		// ... react appropriately ...
 		// The MediaPlayer has moved to the Error state, must be reset!
 		Log.w("OF", "onError The MediaPlayer has moved to the Error state, must be reset!");
+		if(forceResetIfError) {
+			appResume();
+		}
 		return true;
 	}
 
@@ -434,6 +437,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 
 	private MediaPlayer player;
 	private static SoundPool pool = null;
+	private boolean forceResetIfError = true;
 	AudioAttributes attributes;
 	private float pan;
 	private float volume;
