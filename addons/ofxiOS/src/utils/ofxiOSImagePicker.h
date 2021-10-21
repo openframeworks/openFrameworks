@@ -37,7 +37,7 @@ public:
 {
 
 	UIImagePickerController*			_imagePicker;
-	ofxiOSImagePickerOverlayView *						overlay;
+	ofxiOSImagePickerOverlayView*		overlay;
 	UIImage*							_image;
 	bool								cameraIsAvailable;
 	bool								photoLibraryIsAvailable;
