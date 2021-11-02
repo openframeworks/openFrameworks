@@ -1043,12 +1043,15 @@ public class OFAndroid {
            		return true;
            	}
         }
-		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE)) return false;
+		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)) return false;
 		int unicodeChar = event.getUnicodeChar();
+		lastInputID = event.getSource();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyDown :" + keyCode + " unicodeChar:" + unicodeChar + " sourceID:" + event.getSource());
 			return onKeyDown(keyCode, unicodeChar);
 		} else {
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyDown :" + keyCode + " unicodeChar:" + unicodeChar + " sourceID:" + event.getSource());
 			return onKeyDown(keyCode, unicodeChar);
 		}
 
@@ -1064,14 +1067,17 @@ public class OFAndroid {
 		if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
 			return true; // handled event
 		}
-		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE)) return false;
+		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)) return false;
 
 		int unicodeChar = event.getUnicodeChar();
 		//toast("keyUp:" + keyCode);
+		lastInputID = event.getSource();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyUp :" + keyCode + " unicodeChar:" + unicodeChar + " sourceID:" + event.getSource());
 			return onKeyUp(keyCode, unicodeChar);
 		} else {
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyUp :" + keyCode + " unicodeChar:" + unicodeChar + " sourceID:" + event.getSource());
 			return onKeyUp(keyCode, unicodeChar);
 		}
 	}
