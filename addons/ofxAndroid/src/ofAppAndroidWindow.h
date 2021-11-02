@@ -11,6 +11,8 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 #include "ofTypes.h"
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 
 class ofxAndroidWindowSettings : public ofGLESWindowSettings
 {
@@ -108,11 +110,16 @@ public:
 
 	int 	getGlesVersion();
 
+	AAssetManager& getAssetManager();
+	void setAssetManager(AAssetManager* assetManager);
+
+
 
 private:
 	ofCoreEvents coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int glesVersion;
 	int msaaSamples;
+	AAssetManager* assetManager = nullptr;
 
 };

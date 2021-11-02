@@ -1,5 +1,7 @@
 package cc.openframeworks;
 
+import static cc.openframeworks.OFAndroidObject.activity;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -60,7 +62,8 @@ public class OFAndroidLifeCycleHelper
 		Log.i(TAG,"starting resources extractor");
 		boolean copydata = false;
 		String[] files = new String[0];
-		AssetManager am = activity.getApplicationContext().getAssets();
+		if(OFAndroid.assetManager == null)
+			OFAndroid.assetManager = activity.getApplicationContext().getAssets();
 		boolean restored = false;
 		try {
 			SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
@@ -80,7 +83,7 @@ public class OFAndroidLifeCycleHelper
 				editor.apply();
 				copydata = true;
 			}
-			files = am.list("");
+			files = OFAndroid.assetManager.list("");
 
 		} catch (NameNotFoundException e1) {
 			copydata = false;
@@ -141,7 +144,7 @@ public class OFAndroidLifeCycleHelper
 			if(copydata){
 				for (String file : files) {
 					try {
-						copyAssetFolder(am, file, dataPath+"/"+file);
+						copyAssetFolder( OFAndroid.assetManager, file, dataPath+"/"+file);
 					} catch (Exception e) {
 						Log.e("OF", "error copying file", e);
 					}
@@ -223,6 +226,9 @@ public class OFAndroidLifeCycleHelper
 	public static void onCreate()
 	{
 		Log.i(TAG,"onCreate");
+		if(OFAndroid.assetManager == null)
+			OFAndroid.assetManager = activity.getApplicationContext().getAssets();
+		OFAndroid.setAssetManager(OFAndroid.assetManager);
 		OFAndroid.onCreate();
 		OFAndroid.onUnpackingResourcesDone();
 		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();

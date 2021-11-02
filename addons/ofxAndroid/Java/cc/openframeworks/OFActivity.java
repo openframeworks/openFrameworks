@@ -34,12 +34,15 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
+
+import static cc.openframeworks.OFAndroidObject.activity;
 
 import com.getkeepsafe.relinker.ReLinker;
 
@@ -51,7 +54,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display presentationDisplay;
 	public static final boolean LOG_INPUT = false;
 	
-	public static final boolean LOG_ENGINE = true;
+	public static final boolean LOG_ENGINE = false;
 
 	public float currentRefreshRate;
 	public float highestRefreshRate;
@@ -168,6 +171,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		clearViewGroup();
 		initView();
+
+//		WindowMetrics maximumWindowMetrics = getWindowManager().getMaximumWindowMetrics();
+//		maximumWindowMetrics.getBounds().
 	}
 
 	void clearViewGroup() {
@@ -195,6 +201,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				});
 			}
 		}
+
+
 
 	}
 
@@ -227,8 +235,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
+					if(OFAndroid.assetManager == null)
+						OFAndroid.assetManager = activity.getApplicationContext().getAssets();
+					OFAndroid.setAssetManager(OFAndroid.assetManager);
 					OFAndroidLifeCycle.init();
 					OFAndroidLifeCycle.glCreate();
+
 					DetermineDisplayConfiguration();
 					DetermineDisplayDimensions();
 				}
@@ -585,7 +597,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			return;
 		}
 
-
+		if(OFAndroid.assetManager == null)
+			OFAndroid.assetManager = activity.getApplicationContext().getAssets();
+		OFAndroid.setAssetManager(OFAndroid.assetManager);
 
 		if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT){
 			Log.e("OF", "onResume eglGetCurrentContext = EGL_NO_CONTEXT BAD");
@@ -706,7 +720,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	}
 
 
-		final int PS5_Controller = 1281;
+	final int PS5_Controller = 1281;
+
 	@Override
 	public boolean dispatchKeyEvent (KeyEvent event){
 		if(!hasSetup) return true;
@@ -728,6 +743,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
 			else
 				returnValue = true;
+
 		}
 		else if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||

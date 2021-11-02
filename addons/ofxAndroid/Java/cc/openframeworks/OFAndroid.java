@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -50,10 +51,14 @@ public class OFAndroid {
 	public static String packageName;
 	public static int eglVersion = 2;
 	public static int samples = 8;
-	public static int highestFrameRate = 120;
+	public static int highestFrameRate = 144;
 	public static int width;
 	public static int height;
 	public static Locale locale;
+
+	public static int lastInputID = -1;
+
+	public static AssetManager assetManager;
 
 	// List based on http://bit.ly/NpkL4Q
 	@SuppressLint("SdCardPath") // the following list is fall back 3
@@ -538,6 +543,7 @@ public class OFAndroid {
     public static native void resize(int w, int h);
     public static native void render();
     public static native void exit();
+    public static native void setAssetManager(AssetManager assetManager);
     public static native boolean isWindowReady();
     
     public static native void onTouchDown(int id,float x,float y,float pressure,float majoraxis,float minoraxis,float angle);
@@ -1009,8 +1015,10 @@ public class OFAndroid {
 		int unicodeChar = keyCodeSource;
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyDown :" + keyCode + " unicodeChar:" + unicodeChar);
 			return onKeyDown(keyCode, unicodeChar);
 		} else {
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyDown :" + keyCode + " unicodeChar:" + unicodeChar);
 			return onKeyDown(keyCode, unicodeChar);
 		}
 	}
@@ -1019,8 +1027,10 @@ public class OFAndroid {
 		int unicodeChar = keyCodeSource;
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyUp :" + keyCode + " unicodeChar:" + unicodeChar);
 			return onKeyUp(keyCode, unicodeChar);
 		} else {
+			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyUp :" + keyCode + " unicodeChar:" + unicodeChar);
 			return onKeyUp(keyCode, unicodeChar);
 		}
 	}

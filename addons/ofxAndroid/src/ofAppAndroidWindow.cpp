@@ -53,6 +53,8 @@ static bool accumulateAxisEvents = false;
 
 static bool multiWindowMode = false;
 
+AAssetManager* assetManager;
+
 void ofExitCallback();
 
 //----- define in main.cpp---//
@@ -114,7 +116,8 @@ jobject ofGetOFActivityObject(){
 	return env->GetStaticObjectField(OFLifeCycle,ofActivityID);
 }
 
-ofAppAndroidWindow::ofAppAndroidWindow(){
+
+ofAppAndroidWindow::ofAppAndroidWindow()  {
 	ofLogError("ofAppAndroidWindow") << "ofAppAndroidWindow() the window is this";
 	window = this;
 	msaaSamples = 1;
@@ -133,6 +136,14 @@ void ofAppAndroidWindow::setSampleSize(int samples) {
 
 int	ofAppAndroidWindow::getSamples() {
 	return msaaSamples;
+}
+
+AAssetManager&	ofAppAndroidWindow::getAssetManager() {
+	return *assetManager;
+}
+
+void	ofAppAndroidWindow::setAssetManager(AAssetManager* aaAssetManager) {
+	 assetManager = aaAssetManager;
 }
 
 ofAppAndroidWindow::~ofAppAndroidWindow() {
@@ -309,6 +320,7 @@ int ofAppAndroidWindow::getGlesVersion()
 	return glesVersion;
 }
 
+
 extern "C"{
 
 JNIEXPORT jint JNICALL
@@ -471,8 +483,12 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
         }
 	}
 
-    if(window != nullptr)
+    if(window != nullptr) {
+    	if(assetManager != nullptr)
+			window->setAssetManager(assetManager);
 	    window->events().notifySetup();
+
+    }
     if(window != nullptr && window->renderer() != nullptr)
 	    window->renderer()->finishRender();
 	appSetup = true;
@@ -497,6 +513,38 @@ Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
     ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_exit";
 	exit(0);
 	//window->events().notifyExit();
+}
+
+//
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_setAssetManager(JNIEnv *env, jclass thiz,
+		jobject jAssetManager) {
+
+//	env->NewGlobalRef(jAssetManager)
+	if(assetManager != nullptr) {
+		AAssetManager *aaAssetManager = AAssetManager_fromJava(env, jAssetManager);
+		if (aaAssetManager == nullptr) {
+		ofLogError("ofAppAndroidWindow") << "Could not obtain the AAssetManager";
+		return;
+		}
+
+
+		assetManager = aaAssetManager;
+
+		if(window == nullptr || (window != nullptr && window->
+
+		renderer()
+
+		== nullptr)) {
+		ofLogVerbose("ofAppAndroidWindow") << "setAssetManager window is null";
+		return;
+		}
+		window->
+		setAssetManager(assetManager);
+		}
+
+
+
 }
 
 /* Call to render the next GL frame */
@@ -850,5 +898,6 @@ Java_cc_openframeworks_OFAndroid_setMultiWindowMode(JNIEnv*  env, jclass  thiz, 
 	ofLogNotice("oF") << "setMultiWindowMode:" << bMultiWindow;
 	window->setMultiWindowMode(bMultiWindow);
 }
+
 
 }
