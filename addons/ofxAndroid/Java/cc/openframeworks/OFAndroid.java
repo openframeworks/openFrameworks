@@ -461,17 +461,21 @@ public class OFAndroid {
 		if (!url.startsWith("http") && !url.startsWith("https")) { // fix crash due to missing http/https
 			url = "https" + url; //force https if missing, it's 2021
 		}
-		Intent intent = new Intent();
-		intent.setAction(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_BROWSABLE);
-		//intent.addFlags(FLAG_ACTIVITY_MULTIPLE_TASK);
+		try {
+			Intent intent = new Intent();
+			intent.setAction(Intent.ACTION_VIEW);
+			intent.addCategory(Intent.CATEGORY_BROWSABLE);
+			//intent.addFlags(FLAG_ACTIVITY_MULTIPLE_TASK);
 
-		Log.v("OF", "launchBrowser: " + url);
+			Log.v("OF", "launchBrowser: " + url);
 
-		Intent.createChooser(intent, "Choose browser");
-		intent.setData(Uri.parse(url));
-		//OFAndroidLifeCycle.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-		OFAndroidLifeCycle.getActivity().startActivity(intent);
+			Intent.createChooser(intent, "Choose browser");
+			intent.setData(Uri.parse(url));
+			//OFAndroidLifeCycle.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+			OFAndroidLifeCycle.getActivity().startActivity(intent);
+		} catch (Exception ex) {
+			Log.w("launchBrowser", "Intent to Launch Browser Failed. likely no browser for handling  Exception:" + ex.getMessage());
+		}
 	}
 
 	
