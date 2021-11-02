@@ -385,6 +385,23 @@ Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
 	bSetupScreen = true;
 	stopped = false;
+
+	if(!threadedTouchEvents){
+		mtx.lock();
+			while (!touchEventArgsQueue.empty())
+			{
+			touchEventArgsQueue.pop();
+			}
+		mtx.unlock();
+	}
+	if(!threadedKeyEvents){
+		keyMtx.lock();
+				while (!keyEventArgsQueue.empty())
+				{
+					keyEventArgsQueue.pop();
+				}
+		keyMtx.unlock();
+	}
 	ofNotifyEvent(ofxAndroidEvents().resume);
 }
 
