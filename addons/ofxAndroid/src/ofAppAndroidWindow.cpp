@@ -537,28 +537,23 @@ JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_setAssetManager(JNIEnv *env, jclass thiz,
 		jobject jAssetManager) {
 
-//	env->NewGlobalRef(jAssetManager)
-	if(assetManager != nullptr) {
-		AAssetManager *aaAssetManager = AAssetManager_fromJava(env, jAssetManager);
-		if (aaAssetManager == nullptr) {
+	env->NewGlobalRef(jAssetManager);
+
+	AAssetManager *aaAssetManager = AAssetManager_fromJava(env, jAssetManager);
+	if (aaAssetManager == nullptr) {
 		ofLogError("ofAppAndroidWindow") << "Could not obtain the AAssetManager";
 		return;
-		}
+	}
 
+	assetManager = aaAssetManager;
 
-		assetManager = aaAssetManager;
-
-		if(window == nullptr || (window != nullptr && window->
-
-		renderer()
-
-		== nullptr)) {
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) {
 		ofLogVerbose("ofAppAndroidWindow") << "setAssetManager window is null";
 		return;
-		}
-		window->
-		setAssetManager(assetManager);
-		}
+	}
+
+	window->setAssetManager(assetManager);
+
 
 
 

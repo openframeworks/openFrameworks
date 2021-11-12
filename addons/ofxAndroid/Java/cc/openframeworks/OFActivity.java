@@ -720,7 +720,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	}
 
 
-	final int PS5_Controller = 1281;
+
 
 	@Override
 	public boolean dispatchKeyEvent (KeyEvent event){
@@ -752,19 +752,37 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				(event.getSource() & InputDevice.SOURCE_DPAD) > InputDevice.SOURCE_DPAD - 13 && (event.getSource() & InputDevice.SOURCE_DPAD)  < InputDevice.SOURCE_GAMEPAD  + 500
 		) {
 			int keyCode = event.getKeyCode();
-			if(event.getSource() == PS5_Controller) {
-				if(keyCode == 97) {
-					keyCode = 96;
-				} else if(keyCode == 100) {
-					keyCode = 102;
-				} else if(keyCode == 102) {
-					keyCode = 100;
-				} else if(keyCode == 101) {
-					keyCode = 103;
-				} else if(keyCode == 103) {
-					keyCode = 101;
+			if(event.getDevice() != null) {
+				OFAndroid.lastInputDevice = event.getDevice(); // not sure why this happens
+			}
+			if(event.getDevice() == null && OFAndroid.lastInputDevice == null) {
+				OFAndroid.lastInputDevice = OFAndroidController.getGameControllerForID(event.getDeviceId()); // fall back
+			}
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) { // Android 12 fixes PS5 bug
+
+				if (OFAndroid.lastInputDevice != null && OFAndroid.lastInputDevice.getVendorId() == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))) {
+					if (keyCode == 97) { // flips X to Square to fix HID issues for PS5
+						keyCode = 96;
+					} else if (keyCode == 96) {
+						keyCode = 97;
+					} else if (keyCode == 100) {
+						keyCode = 102;
+					} else if (keyCode == 102) {
+						keyCode = 100;
+					} else if (keyCode == 101) {
+						keyCode = 103;
+					} else if (keyCode == 103) {
+						keyCode = 101;
+					}
 				}
 			}
+			if(OFAndroid.lastInputID != event.getDeviceId() && OFAndroid.lastInputVendorID != OFAndroid.lastInputDevice.getVendorId()) {
+				OFAndroid.lastInputID = event.getSource();
+				OFAndroid.lastInputDescriptor = event.getDevice().getDescriptor();
+				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
+				OFAndroid.lastInputVendorID = OFAndroid.lastInputDevice.getVendorId();
+			}
+
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
 				returnValue = OFAndroid.keyDown(keyCode+400, event);
 			else if(event.getAction() == KeyEvent.ACTION_UP)

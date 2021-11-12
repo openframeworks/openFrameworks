@@ -30,7 +30,7 @@ import android.os.Environment;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
-import android.view.InputEvent;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
 import android.view.WindowManager.LayoutParams;
@@ -42,8 +42,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 import java.util.concurrent.Semaphore;
 import androidx.annotation.Keep;
-
-import static android.content.Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
 
 @Keep
 public class OFAndroid {
@@ -57,7 +55,10 @@ public class OFAndroid {
 	public static Locale locale;
 
 	public static int lastInputID = -1;
-
+	public static int lastInputVendorID = -1;
+	public static String lastInputDescriptor = "";
+	public static OFAndroidController.ControllerType lastControllerType = OFAndroidController.ControllerType.NONE;
+	public static InputDevice lastInputDevice = null;
 	public static AssetManager assetManager;
 
 	// List based on http://bit.ly/NpkL4Q
@@ -1049,7 +1050,6 @@ public class OFAndroid {
         }
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)) return false;
 		int unicodeChar = event.getUnicodeChar();
-		lastInputID = event.getSource();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
 			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyDown :" + keyCode + " unicodeChar:" + unicodeChar + " sourceID:" + event.getSource());
@@ -1075,7 +1075,6 @@ public class OFAndroid {
 
 		int unicodeChar = event.getUnicodeChar();
 		//toast("keyUp:" + keyCode);
-		lastInputID = event.getSource();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
 			if(OFActivity.LOG_INPUT) Log.i( "OF", "keyUp :" + keyCode + " unicodeChar:" + unicodeChar + " sourceID:" + event.getSource());
