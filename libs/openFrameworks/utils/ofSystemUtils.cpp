@@ -17,7 +17,6 @@
 #include <tchar.h>
 #include <stdio.h>
 
-using namespace std;
 
 #endif
 
@@ -253,6 +252,8 @@ void resetLocale(std::locale locale){
 #ifdef TARGET_EMSCRIPTEN
 #include <emscripten/emscripten.h>
 #endif
+
+using namespace std;
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
