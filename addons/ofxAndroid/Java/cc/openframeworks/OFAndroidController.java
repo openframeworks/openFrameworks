@@ -17,6 +17,7 @@ public class OFAndroidController {
 
     public static final int VendorPS = 1356;
     public static final int VendorMS = 1118;
+    public static final int VendorNS = 1406;
 
     public enum ControllerType {
         NONE,
@@ -80,6 +81,8 @@ public class OFAndroidController {
 
         if(device.getVendorId() == VendorPS) {
             return ControllerType.ACTION_X;
+        }else if(device.getVendorId() == VendorNS) {
+            return ControllerType.ACTION_B;
         } else {
             return ControllerType.ACTION_A;
         }
