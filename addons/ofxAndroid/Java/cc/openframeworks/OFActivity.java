@@ -76,7 +76,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 	public static String packageName = null;
 
-
 	public void initView(){
 		if(packageName == null)
 			packageName = this.getPackageName();
@@ -136,13 +135,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
 	}
 
-
-	private boolean create_first = true;
-
-
-
-
-
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -172,8 +164,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		clearViewGroup();
 		initView();
 
-//		WindowMetrics maximumWindowMetrics = getWindowManager().getMaximumWindowMetrics();
-//		maximumWindowMetrics.getBounds().
 	}
 
 	void clearViewGroup() {
@@ -182,16 +172,16 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		ViewGroup glContainer = getSurfaceContainer();
 		if(glContainer != null ) {
 			if (glContainer.getChildCount() > 0) {
-				if(LOG_ENGINE) Log.i(TAG, "clearViewGroup:views:" + glContainer.getChildCount());
+				if (LOG_ENGINE) Log.i(TAG, "clearViewGroup:views:" + glContainer.getChildCount());
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						ViewGroup glContainer = getSurfaceContainer();
 
 						if (glContainer.getChildCount() > 1) {
-							for(int i=glContainer.getChildCount()-1; i>=0;i--) {
+							for (int i = glContainer.getChildCount() - 1; i >= 0; i--) {
 								View view = glContainer.getChildAt(i);
-								if(view != null) {
+								if (view != null) {
 									glContainer.removeViewAt(i);
 									Log.w(OFAndroidLifeCycle.class.getSimpleName(), "SetFirstFrameDrawn::Removing Extra View at Index " + i);
 								}
@@ -201,9 +191,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				});
 			}
 		}
-
-
-
 	}
 
 	public void LoadCoreStatic() {
@@ -214,7 +201,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					OFAndroidLifeCycle.coreLibraryLoaded = true;
 					Setup();
 				}
-
 				@Override
 				public void failure(Throwable t) {
 					Log.e(TAG, "Failure to Load Core Static Library: " + t.getMessage());
