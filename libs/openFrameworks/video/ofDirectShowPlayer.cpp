@@ -615,11 +615,16 @@ class DirectShowVideo : public ISampleGrabberCB{
             IPin* pinOut = 0;
 
             hr = m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
-            if (FAILED(hr)){
-                printf("failed to find the video renderer\n");
-                tearDown();
-                return false;
-            }
+
+			if (FAILED(hr)) {
+				//newer graphs use Video Mixing Renderer 9
+				hr = m_pGraph->FindFilterByName(L"Video Mixing Renderer 9", &m_pVideoRenderer);
+				if (FAILED(hr)) {
+					printf("failed to find the video renderer\n");
+					tearDown();
+					return false;
+				}
+			}
 
             //we disconnect the video renderer window by finding the output pin of the sample grabber
             hr = m_pGrabberF->FindPin(L"Out", &pinOut);

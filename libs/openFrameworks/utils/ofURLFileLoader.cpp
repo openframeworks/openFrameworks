@@ -51,15 +51,12 @@ private:
 	ofThreadChannel<ofHttpResponse> responses;
 	ofThreadChannel<int> cancelRequestQueue;
 	set<int> cancelledRequests;
-	std::unique_ptr<CURL, void(*)(CURL*)> curl;
 };
 
-ofURLFileLoaderImpl::ofURLFileLoaderImpl()
-:curl(nullptr, nullptr){
+ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	if(!curlInited){
 		 curl_global_init(CURL_GLOBAL_ALL);
 	}
-	curl = std::unique_ptr<CURL, void(*)(CURL*)>(curl_easy_init(), curl_easy_cleanup);
 }
 
 ofURLFileLoaderImpl::~ofURLFileLoaderImpl(){
@@ -178,6 +175,8 @@ namespace{
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
+	std::unique_ptr<CURL, void(*)(CURL*)> curl =
+		std::unique_ptr<CURL, void(*)(CURL*)>(curl_easy_init(), curl_easy_cleanup);
 	curl_slist *headers = nullptr;
 	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0);
 	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 0);

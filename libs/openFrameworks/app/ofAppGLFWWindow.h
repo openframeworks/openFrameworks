@@ -155,6 +155,9 @@ public:
 	Display* 	getX11Display();
 	Window  	getX11Window();
 	XIC			getX11XIC();
+
+	void setWindowIcon(const std::string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
@@ -193,12 +196,10 @@ private:
 
 	void close();
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-	void setWindowIcon(const std::string & path);
-	void setWindowIcon(const ofPixels & iconPixels);
-	XIM xim;
-	XIC xic;
-#endif
+	#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
+		XIM xim;
+		XIC xic;
+	#endif
 
 	std::unique_ptr<ofCoreEvents> coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
