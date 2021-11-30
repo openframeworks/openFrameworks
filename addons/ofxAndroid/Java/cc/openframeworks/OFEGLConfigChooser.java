@@ -140,7 +140,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
      * We use a minimum size of 4 bits for red/green/blue, but will
      * perform actual matching in chooseConfig() below.
      */
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
     private static boolean MSAA = false;
     private static int EGL_OPENGL_ES_BIT = 1;
     private static int GLES_VERSION = 1;

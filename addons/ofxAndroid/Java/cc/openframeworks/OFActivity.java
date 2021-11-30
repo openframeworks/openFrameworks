@@ -54,7 +54,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display presentationDisplay;
 	public static final boolean LOG_INPUT = false;
 	
-	public static final boolean LOG_ENGINE = false;
+	public static final boolean LOG_ENGINE = true;
 
 	public float currentRefreshRate;
 	public float highestRefreshRate;
@@ -239,6 +239,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
 	}
 
+
 	public void DetermineDisplayDimensions() {
 
 		try {
@@ -355,6 +356,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 							Log.e("OF", "Display Mode Exception:", ex);
 						}
 					}
+
+					if(currentRefreshRate >= highestRefreshRate)
+						highestRefreshRate = currentRefreshRate;
 
 					OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 					if(glView != null) {

@@ -20,6 +20,7 @@ import android.view.View;
 import androidx.annotation.Keep;
 
 import static android.opengl.EGL14.EGL_NO_CONTEXT;
+import static android.view.Surface.CHANGE_FRAME_RATE_ALWAYS;
 import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 
 @Keep
@@ -122,8 +123,14 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
             Log.i("OF","setFrameRate:" + frameRate);
             try {
                 if(mSurface != null && mSurface.isValid()) {
-                    mSurface.setFrameRate(frameRate,
-                            FRAME_RATE_COMPATIBILITY_DEFAULT);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        mSurface.setFrameRate(frameRate,
+                                FRAME_RATE_COMPATIBILITY_DEFAULT, CHANGE_FRAME_RATE_ALWAYS);
+                    } else {
+                        mSurface.setFrameRate(frameRate,
+                                FRAME_RATE_COMPATIBILITY_DEFAULT);
+                    }
+                    // https://developer.android.com/reference/android/view/Surface#CHANGE_FRAME_RATE_ALWAYS
                 } else {
                     Log.i("OF","setFrameRate called and no Surface");
                 }
