@@ -417,6 +417,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	@Override
 	public void onDisplayChanged(int i) {
 		//if(hasPaused) return;
+		Log.w("OF", "onDisplayChanged:" + i);
 		checkForPresentationDisplays();
 		try {
 			display = getWindowManager().getDefaultDisplay();
@@ -452,22 +453,46 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public void onConfigurationChanged(Configuration newConfig) {
 
 		super.onConfigurationChanged(newConfig);
-
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			if(LOG_ENGINE) Log.i("OF", "onConfigurationChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + newConfig.isScreenWideColorGamut());
-		} else {
-			Log.i("OF", "onConfigurationChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + false);
+		try {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				if(LOG_ENGINE) Log.i("OF", "onConfigurationChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + newConfig.isScreenWideColorGamut());
+			} else {
+				Log.i("OF", "onConfigurationChanged() " + getRequestedOrientation() + " newConfig dpi:" + newConfig.densityDpi + " screenLayout:" + newConfig.screenLayout + " screenWidthDp:" + newConfig.screenWidthDp + " screenHeightDp:" + newConfig.screenHeightDp + " isScreenWideColorGamut:" + false);
+			}
+			if(newConfig.locale != OFAndroid.locale) {
+				if(LOG_ENGINE) Log.i("OF", "onConfigurationChanged() Locale has changed to:" + newConfig.locale.getDisplayLanguage());
+			}
+		} catch (Exception ex) {
+			Log.e("OF", "Display Mode Exception:", ex);
+		}
+		int ofOrientation  = 0;
+		switch (display.getRotation()) {
+			case Surface.ROTATION_90:
+				ofOrientation = 3;
+				break;
+			case Surface.ROTATION_180:
+				ofOrientation = 2;
+				break;
+			case Surface.ROTATION_270:
+				ofOrientation = 4;
+				break;
+			case Surface.ROTATION_0:
+			default:
+				ofOrientation = 1;
+				break;
+		}
+		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			ofOrientation = 3;
+		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+			ofOrientation = 0;
 		}
 
-		if(newConfig.locale != OFAndroid.locale) {
-			if(LOG_ENGINE) Log.i("OF", "onConfigurationChanged() Locale has changed to:" + newConfig.locale.getDisplayLanguage());
+		if(hasSetup) {
+			OFAndroid.deviceOrientationChanged(ofOrientation);
+			DetermineDisplayConfiguration();
+			DetermineDisplayDimensions();
+			DetermineDisplayDimensionsConfigChange(newConfig);
 		}
-
-		DetermineDisplayConfiguration();
-		DetermineDisplayDimensions();
-		DetermineDisplayDimensionsConfigChange(newConfig);
-
 
 	}
 

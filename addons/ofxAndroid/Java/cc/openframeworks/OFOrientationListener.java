@@ -19,7 +19,7 @@ public class OFOrientationListener extends OrientationEventListener {
 
     @Override
     public void enable() {
-        checkOrientation();
+        checkOrientation(-1);
         super.enable();
     }
 
@@ -31,13 +31,12 @@ public class OFOrientationListener extends OrientationEventListener {
 
     @Override
     public void onOrientationChanged(int orientation) {
-        checkOrientation();
+        checkOrientation(orientation);
     }
 
-    private void checkOrientation() {
+    private void checkOrientation(int newOrientation) {
 
         try {
-
 
             WindowManager windowManager = (WindowManager) OFAndroidLifeCycle.getActivity().getSystemService(Context.WINDOW_SERVICE);
             Display display = windowManager.getDefaultDisplay();
