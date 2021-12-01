@@ -918,20 +918,16 @@ public class OFAndroid {
 	}
 
 	public static void updateRefreshRates(){
-
 			runOnMainThread(new Runnable() {
-
 				@Override
 				public void run() {
 					try{
-						OFAndroidLifeCycle.getActivity().DetermineDisplayConfiguration();
+						OFAndroidLifeCycle.getActivity().DetermineDisplayConfiguration(true);
 					}catch(Exception e){
 
 					}
-
 				}
 			});
-
 	}
 	
 	public static String getRandomUUID(){
