@@ -3,6 +3,8 @@ package cc.openframeworks;
 import static android.opengl.EGL14.EGL_OPENGL_ES2_BIT;
 import static android.opengl.EGL15.EGL_OPENGL_ES3_BIT;
 
+import static javax.microedition.khronos.egl.EGL10.EGL_RENDERABLE_TYPE;
+
 import android.opengl.GLSurfaceView;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -52,10 +54,19 @@ class ContextFactory implements GLSurfaceView.EGLContextFactory {
     public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig) {
         Log.w("OFContextFactory", "creating OpenGL ES 2.0 context");
         checkEglError("Before eglCreateContext", egl);
-        int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE};
-        EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
-        checkEglError("After eglCreateContext", egl);
-        return context;
+        int[] attrib_list = {
+                             EGL_CONTEXT_CLIENT_VERSION, 2,
+                             //EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                             EGL10.EGL_NONE
+        };
+        try {
+            EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
+            checkEglError("After eglCreateContext", egl);
+            return context;
+        } catch(Exception ex) {
+            Log.e("OFContextFactory", "egl.eglCreateContext error:" + ex.getMessage());
+        }
+        return null;
     }
 
 
@@ -181,7 +192,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL14.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 8,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
-                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
                     EGL_MAX_SAMPLES_ANGLE, 4,
                     EGL10.EGL_NONE
             };
@@ -194,7 +205,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL14.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 16,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
-                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
                     EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
                     EGL10.EGL_SAMPLES, 16,
                     EGL10.EGL_NONE
@@ -209,7 +220,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL14.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 16,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
-                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
                     EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
                     EGL10.EGL_SAMPLES, 8,
                     EGL10.EGL_NONE
@@ -223,7 +234,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL14.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 16,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
-                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
                     EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
                     EGL10.EGL_SAMPLES, 4,
                     EGL10.EGL_NONE
@@ -235,7 +246,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_BLUE_SIZE, 8,
             EGL14.EGL_ALPHA_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 8,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
             EGL_COVERAGE_SAMPLES_NV, 2,  // always 5 in practice on tegra 2
             EGL10.EGL_NONE
@@ -247,7 +258,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_BLUE_SIZE, 8,
             EGL14.EGL_ALPHA_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 8,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
             EGL_COVERAGE_SAMPLES_NV, 5,  // always 5 in practice on tegra 2
             EGL10.EGL_NONE
@@ -258,7 +269,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 8,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
 
@@ -267,7 +278,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
             EGL10.EGL_DEPTH_SIZE, 0,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
 
@@ -275,7 +286,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, 5,
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
 
@@ -400,12 +411,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         int samples = findConfigAttrib(egl, display, finalConfig,
                 EGL10.EGL_SAMPLES, 1);
 
-
-
-
         // if no samples found in config, and target desires samples... try TEGRA samples
         if(samples == 1 && mSampleSize >= 1) {
-
             int[] samples_num_config = new int[1];
             EGLConfig[] samples_configs = null;
             samples_num_config[0] = 0;
@@ -661,7 +668,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 EGL10.EGL_LUMINANCE_SIZE,
                 EGL10.EGL_ALPHA_MASK_SIZE,
                 EGL10.EGL_COLOR_BUFFER_TYPE,
-                EGL10.EGL_RENDERABLE_TYPE,
+                EGL_RENDERABLE_TYPE,
                 0x3042, // EGL10.EGL_CONFORMANT
                 0x309D, // EGL_GL_COLORSPACE_KHR
                 0x3339, //  EGL_COLOR_COMPONENT_TYPE_EXT

@@ -49,7 +49,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         } else {
             this.getHolder().setFormat(PixelFormat.OPAQUE);
         }
-        setEGLContextFactory(new ContextFactory());
+        //setEGLContextFactory(new ContextFactory());
 
         setClientVersion();
         int width = getWidth();
