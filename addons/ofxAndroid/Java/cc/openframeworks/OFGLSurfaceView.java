@@ -67,7 +67,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
             }
         }
 
-        OFEGLConfigChooser configChooser = getConfigChooser(8,8,8,8,0,0,OFAndroid.samples,false);
+        OFEGLConfigChooser configChooser = getConfigChooser(8,8,8,8,24,8,OFAndroid.samples,false);
         setEGLConfigChooser(configChooser);
 
         mRenderer = new OFAndroidWindow(width, height);
@@ -198,7 +198,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     }
 
     public OFEGLConfigChooser getConfigChooser() {
-        return getConfigChooser(8,8,8,8,0,0,4,false);
+        return getConfigChooser(8,8,8,8,24,8,4,false);
     }
 
     public OFEGLConfigChooser getConfigChooser(int r, int g, int b, int a, int depth, int stencil, int samples, boolean gamut) {
