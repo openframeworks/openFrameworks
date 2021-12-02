@@ -191,6 +191,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	dispatch_async(queue, ^{
+		@autoreleasepool {
+		}
+		
 		[asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:kTracksKey] completionHandler:^{
 			
 			NSError * error = nil;
