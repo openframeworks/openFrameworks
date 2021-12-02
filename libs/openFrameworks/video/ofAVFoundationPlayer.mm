@@ -495,8 +495,7 @@ void ofAVFoundationPlayer::initTextureCache() {
         ofLogError("ofAVFoundationPlayer") << "initTextureCache(): error creating texture cache from image " << err << ".";
     }
 	
-	// No need to unlock every frame of normal video
-	// CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+    CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
 
 #ifdef TARGET_OF_IOS
 
