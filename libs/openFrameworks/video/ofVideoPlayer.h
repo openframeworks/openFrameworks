@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofTexture.h"
+//#include "ofConstants.h"
+//#include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
@@ -45,7 +45,11 @@
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
+class ofVideoPlayer
+:
+//public ofBaseVideoPlayer,
+public ofBaseVideoDraws
+{
 
 	public:
 
@@ -115,6 +119,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		const std::vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;
+	
 		using ofBaseDraws::draw;
 		/// \brief Binds the video texture to the current rendering context.
 		///
@@ -225,4 +230,6 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		mutable ofPixelFormat internalPixelFormat;
 		/// \brief The stored path to the video's path.
 		std::string moviePath;
+	
+		void checkPlayer();
 };
