@@ -54,8 +54,6 @@ public ofBaseVideoDraws
 	public:
 
 		ofVideoPlayer ();
-
-
 		bool 				load(std::string name);
 		void				loadAsync(std::string name);
 		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(std::string name));
@@ -76,6 +74,8 @@ public ofBaseVideoDraws
 		/// This is an alias for close().
 		///
 		/// \sa close()
+	///
+//		OF_DEPRECATED_MSG("Use ofVideoPlayer::close() instead",bool closeMovie());
 		void 				closeMovie();
 		/// \brief Closes the movie file releases its resources.
 		///

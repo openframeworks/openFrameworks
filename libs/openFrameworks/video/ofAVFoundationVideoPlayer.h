@@ -154,6 +154,7 @@ typedef enum _playerLoopType{
 - (void)setFrame:(int)frame;
 - (void)setPosition:(float)position;
 - (float)getPosition;
+- (double)getPositionDouble;
 - (void)setVolume:(float)volume;
 - (float)getVolume;
 - (void)setLoop:(playerLoopType)loop;

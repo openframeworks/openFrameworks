@@ -1347,8 +1347,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (void)setPosition:(float)position {
 	if ([self isReady]) {
-		double time = [self getDurationInSec] * position;
-		[self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+//		double time = [self getDurationInSec] * position;
+		//		[self seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+//		CMTime time2 = [self getDurationInSec2] * position;
+
+		CMTime time = CMTimeMultiplyByFloat64(duration, position);
+		[self seekToTime:time];
 	} else {
 		positionBeforeReady = position;
 		frameBeforeReady = 0;
@@ -1365,9 +1369,20 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 }
 
+//- (float)getPosition {
+//	return ([self getCurrentTimeInSec] / [self getDurationInSec]);
+//}
+
 - (float)getPosition {
-	return ([self getCurrentTimeInSec] / [self getDurationInSec]);
+	// return float64
+	return CMTimeGetSeconds(videoSampleTime) / CMTimeGetSeconds(duration);
 }
+
+- (double)getPositionDouble {
+	// return float64
+	return CMTimeGetSeconds(videoSampleTime) / CMTimeGetSeconds(duration);
+}
+
 
 - (void)setVolume:(float)value {
 	

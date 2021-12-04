@@ -427,9 +427,13 @@ void ofAVFoundationPlayer::initTextureCache() {
 	
     CVImageBufferRef imageBuffer = [videoPlayer getCurrentFrame];
     if(imageBuffer == nil) {
+		std::cout << "imageBuffer == nil" << std::endl;
         return;
     }
-
+	if(imageBuffer == NULL) {
+		std::cout << "imageBuffer == NULL" << std::endl;
+		return;
+	}
     CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
 
     /**
