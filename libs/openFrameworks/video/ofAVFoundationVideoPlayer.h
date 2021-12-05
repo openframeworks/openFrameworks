@@ -79,6 +79,8 @@ typedef enum _playerLoopType{
     BOOL bAutoPlayOnLoad;
     BOOL bSeeking;
     BOOL bSampleVideo; // default to YES
+	BOOL bFirstSeek; // default to YES
+	
     BOOL bSampleAudio; // default to NO
 	BOOL bIsUnloaded;
 	BOOL bStream;
