@@ -442,9 +442,14 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         EGLConfig finalConfig =  chooseConfig(egl, display, configs);
 
+        int samples = 1;
+        try {
+            samples = findConfigAttrib(egl, display, finalConfig,
+                    EGL10.EGL_SAMPLES, 1);
+        } catch(Exception exception)
+        {
 
-        int samples = findConfigAttrib(egl, display, finalConfig,
-                EGL10.EGL_SAMPLES, 1);
+        }
 
         // if no samples found in config, and target desires samples... try TEGRA samples
         if(samples == 1 && mSampleSize >= 1) {
@@ -515,7 +520,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 int anglesamples = findConfigAttrib(egl, display, config,
                         EGL_MAX_SAMPLES_ANGLE, 0);
                 // check for ANGLE Lib EGL Samples
-                if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && anglesamples == mSampleSize) {
+                if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && anglesamples == mSampleSize) {
                     if (foundConfig == null) {
                         foundConfig = config;
                         Log.i("NV samples OF", "Found and Set:" + output);
@@ -526,7 +531,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 } else {
                     Log.v("OF", "Else Config: " + output);
                 }
-                if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && anglesamples == mSampleSize/2) {
+                if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && anglesamples == mSampleSize/2) {
                     if (foundConfig == null) {
                         foundConfig = config;
                         Log.i("NV samples OF", "Found and Set:" + output);
@@ -537,7 +542,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 } else {
                     Log.v("OF", "Else Config: " + output);
                 }
-                if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && anglesamples == mSampleSize/4) {
+                if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && anglesamples == mSampleSize/4) {
                     if (foundConfig == null) {
                         foundConfig = config;
                         Log.i("NV samples OF", "Found and Set:" + output);
@@ -554,7 +559,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             int nvsamples = findConfigAttrib(egl, display, config,
                     EGL_COVERAGE_SAMPLES_NV, 0);
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && nvsamples == 5) {
+            if (foundConfig == null &&  r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && nvsamples == 5) {
                 if (foundConfig == null) {
                     foundConfig = config;
                     Log.i("NV samples OF", "Found and Set:" + output);
@@ -567,7 +572,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize) {
+            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize) {
                 if (foundConfig == null) {
                     foundConfig = config;
                     mSampleSize = samples;
@@ -582,7 +587,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/2) {
+            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/2) {
                 if (foundConfig == null) {
                     foundConfig = config;
                     mSampleSize = samples;
@@ -595,7 +600,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/4) {
+            if (foundConfig == null &&  r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/4) {
                 if (foundConfig == null) {
                     foundConfig = config;
                     mSampleSize = samples;
@@ -608,7 +613,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 2 && mSampleSize > 2) {
+            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 2 && mSampleSize > 2) {
 
                 if (foundConfig == null){
                     foundConfig = config;
@@ -622,11 +627,24 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                  Log.v("OF", "Else Config: " + output);
             }
 
-            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 1 && mSampleSize >= 1) {
+            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 1 && mSampleSize >= 1) {
 
                 if(foundConfig == null) {
-                    //foundConfig = config;
-                    //mSampleSize = 1;
+                    foundConfig = config;
+                    mSampleSize = 1;
+                    Log.i("OF", "Last Resort Found and Set:" + output);
+                }
+                else {
+                    Log.i("OF", "Override Already Found and Set:" + output);
+                }
+            } else {
+                Log.v("OF", "Else Config: " + output);
+            }
+
+            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && mSampleSize >= 1) {
+                if(foundConfig == null) {
+                    foundConfig = config;
+                    mSampleSize = 1;
                     Log.i("OF", "Last Resort Found and Set:" + output);
                 }
                 else {

@@ -118,14 +118,14 @@ jobject ofGetOFActivityObject(){
 
 
 ofAppAndroidWindow::ofAppAndroidWindow()  {
-	ofLogError("ofAppAndroidWindow") << "ofAppAndroidWindow() the window is this";
+	//ofLogError("ofAppAndroidWindow") << "ofAppAndroidWindow() the window is this";
 	window = this;
 	msaaSamples = 1;
 	ofGetMainLoop()->setCurrentWindow(this);
 }
 
 void ofAppAndroidWindow::setCurrentWindow() {
-	ofLogError("ofAppAndroidWindow") << "setCurrentWindow the window is this";
+	ofLogVerbose("ofAppAndroidWindow") << "setCurrentWindow the window is this";
 	window = this;
 	ofGetMainLoop()->setCurrentWindow(this);
 }
