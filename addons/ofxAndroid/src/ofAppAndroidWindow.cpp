@@ -501,6 +501,7 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
 	}
 
     if(window != nullptr) {
+    	window->makeCurrent();
     	if(assetManager != nullptr)
 			window->setAssetManager(assetManager);
 	    window->events().notifySetup();
