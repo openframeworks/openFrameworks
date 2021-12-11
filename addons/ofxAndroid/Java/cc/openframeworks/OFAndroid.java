@@ -1041,7 +1041,7 @@ public class OFAndroid {
             if( onBackPressed() ) {
             	return true;
            	} else {
-           		return true;
+           		return false;
            	}
         }
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)) return false;

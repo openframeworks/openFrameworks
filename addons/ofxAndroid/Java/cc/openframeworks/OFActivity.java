@@ -52,7 +52,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
-	public static final boolean LOG_INPUT = false;
+	public static final boolean LOG_INPUT = true;
 	
 	public static final boolean LOG_ENGINE = true;
 
@@ -519,7 +519,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	}
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
+
 		return true;
+
 	}
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
@@ -570,6 +572,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		super.onStop();
 
+	}
+
+	public void OnBackPressed() {
+		onBackPressed();
 	}
 	
 	@Override
@@ -765,6 +771,18 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			else
 				returnValue = true;
 
+			if (event.getAction() == KeyEvent.ACTION_UP && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
+				if( OFAndroid.onBackPressed() ) {
+					returnValue = true;
+				} else {
+					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
+					//super.onBackPressed();
+					finishAffinity();
+					System.exit(0);
+					returnValue = false;
+				}
+			}
+
 		}
 		else if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
@@ -801,7 +819,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					}
 				}
 			}
-			if(OFAndroid.lastInputID != event.getDeviceId() && OFAndroid.lastInputVendorID != OFAndroid.lastInputDevice.getVendorId()) {
+			if(OFAndroid.lastInputID == -1 || OFAndroid.lastInputID != event.getDeviceId() && OFAndroid.lastInputVendorID != OFAndroid.lastInputDevice.getVendorId()) {
 				OFAndroid.lastInputID = event.getSource();
 				OFAndroid.lastInputDescriptor = event.getDevice().getDescriptor();
 				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
@@ -816,14 +834,27 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				returnValue = OFAndroid.keyUp(keyCode+400, event);
 			else
 				returnValue = true;
+
+			if (event.getAction() == KeyEvent.ACTION_UP && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
+				if( OFAndroid.onBackPressed() ) {
+					returnValue = true;
+				} else {
+					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
+					//super.onBackPressed();
+					finishAffinity();
+					System.exit(0);
+					returnValue = false;
+				}
+			}
+
 		}  else if ((event.getSource() & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
 			returnValue = true;
 		} else {
-			if(event.getAction() == KeyEvent.ACTION_DOWN)
+			if(event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() != KeyEvent.KEYCODE_UNKNOWN)
 				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
-			else if(event.getAction() == KeyEvent.ACTION_UP)
+			else if(event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() != KeyEvent.KEYCODE_UNKNOWN)
 				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
-			else if(event.getAction() == KeyEvent.FLAG_CANCELED)
+			else if(event.getAction() == KeyEvent.FLAG_CANCELED && event.getKeyCode() != KeyEvent.KEYCODE_UNKNOWN)
 				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
 			else
 				returnValue = super.dispatchKeyEvent(event);
