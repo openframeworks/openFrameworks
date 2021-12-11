@@ -52,9 +52,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
-	public static final boolean LOG_INPUT = true;
+	public static final boolean LOG_INPUT = false;
 	
-	public static final boolean LOG_ENGINE = true;
+	public static final boolean LOG_ENGINE = false;
 
 	public float currentRefreshRate;
 	public float highestRefreshRate;
@@ -760,6 +760,20 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if ((event.getSource() & InputDevice.SOURCE_KEYBOARD) == InputDevice.SOURCE_KEYBOARD &&
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD &&
 				(event.getSource() & InputDevice.SOURCE_JOYSTICK) != InputDevice.SOURCE_JOYSTICK){
+
+			if (event.getAction() == KeyEvent.ACTION_DOWN && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
+				if( OFAndroid.onBackPressed() ) {
+					returnValue = true;
+				} else {
+					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
+					//super.onBackPressed();
+					hasSetup = false;
+					finishAffinity();
+					System.exit(0);
+					return false;
+				}
+			}
+
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
 				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
 			else if(event.getAction() == KeyEvent.ACTION_UP)
@@ -770,18 +784,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				returnValue = OFAndroid.keyUp(event.getKeyCode(), event);
 			else
 				returnValue = true;
-
-			if (event.getAction() == KeyEvent.ACTION_UP && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
-				if( OFAndroid.onBackPressed() ) {
-					returnValue = true;
-				} else {
-					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
-					//super.onBackPressed();
-					finishAffinity();
-					System.exit(0);
-					returnValue = false;
-				}
-			}
 
 		}
 		else if ((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD ||
@@ -826,6 +828,19 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				OFAndroid.lastInputVendorID = OFAndroid.lastInputDevice.getVendorId();
 			}
 
+			if (event.getAction() == KeyEvent.ACTION_DOWN && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
+				if( OFAndroid.onBackPressed() ) {
+					returnValue = true;
+				} else {
+					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
+					//super.onBackPressed();
+					hasSetup = false;
+					finishAffinity();
+					System.exit(0);
+					return false;
+				}
+			}
+
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
 				returnValue = OFAndroid.keyDown(keyCode+400, event);
 			else if(event.getAction() == KeyEvent.ACTION_UP)
@@ -835,17 +850,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			else
 				returnValue = true;
 
-			if (event.getAction() == KeyEvent.ACTION_UP && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
-				if( OFAndroid.onBackPressed() ) {
-					returnValue = true;
-				} else {
-					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
-					//super.onBackPressed();
-					finishAffinity();
-					System.exit(0);
-					returnValue = false;
-				}
-			}
+
 
 		}  else if ((event.getSource() & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
 			returnValue = true;
