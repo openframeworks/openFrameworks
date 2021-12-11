@@ -14,6 +14,7 @@ import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
+import android.view.SurfaceControl;
 import android.view.SurfaceHolder;
 import android.view.View;
 
@@ -138,6 +139,21 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                 Log.e("OF", "setFrameRate Exception:", ex);
             }
         }
+
+        // SurfaceControl Fallback for OnePlus Phones
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                SurfaceControl sc = this.getSurfaceControl();
+                SurfaceControl.Transaction transaction = null;
+                transaction = new SurfaceControl.Transaction();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    transaction.setFrameRate(sc, frameRate, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE);
+                }
+            }
+        } catch (Exception ex) {
+            Log.e("OF", "SurfaceControl setFrameRate Exception:", ex);
+        }
+
     }
 
     public void OnResume() {
