@@ -48,13 +48,10 @@ public class OFAndroidController {
 
     public static ControllerType getControllerType(InputDevice device) {
 
-        if(OFActivity.LOG_INPUT) Log.i( "OF", " number:" + device.getControllerNumber() +
+        if(OFActivity.LOG_INPUT) Log.i( "OF", "getControllerType number:" + device.getControllerNumber() +
 
                 " vendorid:" + device.getVendorId() +
                 " descriptor:" + device.getDescriptor() + " name:" + device.getName());
-        
-        
-
 
         int[] keyMap = new int[15];
         keyMap[0] = (int)KeyEvent.KEYCODE_BUTTON_A;
@@ -232,7 +229,8 @@ public class OFAndroidController {
             y = getCenteredAxis(event, inputDevice,
                     MotionEvent.AXIS_RZ, historyPos);
         }
-        Log.i("OF", "processJoystickInput: " + " x:" + x + " y::" + y);
+        if(OFActivity.LOG_INPUT)
+            Log.i("OF", "processJoystickInput: " + " x:" + x + " y::" + y);
         OFAndroid.onAxisMoved(inputDevice.getId(), event.getDeviceId(), inputDevice.getProductId(), x, y);
     }
 

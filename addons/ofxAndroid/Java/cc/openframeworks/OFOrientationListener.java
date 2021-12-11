@@ -61,7 +61,8 @@ public class OFOrientationListener extends OrientationEventListener {
                         ofOrientation = 1;
                         break;
                 }
-                OFAndroid.deviceOrientationChanged(ofOrientation);
+                if(OFAndroidLifeCycle.coreLibraryLoaded)
+                    OFAndroid.deviceOrientationChanged(ofOrientation);
             }
 
         } catch (Exception ex) {

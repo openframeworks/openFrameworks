@@ -167,7 +167,7 @@ public class OFAndroidLifeCycleHelper
 
 	private static void copyAssetFolder(AssetManager am, String src, String dest) throws IOException {
 
-		Log.i("Copy ",src);
+		if(OFActivity.LOG_ENGINE) Log.i("Copy ",src);
 		InputStream srcIS = null;
 		File destfh;
 
@@ -225,7 +225,7 @@ public class OFAndroidLifeCycleHelper
 	
 	public static void onCreate()
 	{
-		Log.i(TAG,"onCreate");
+		if(OFActivity.LOG_ENGINE) Log.i(TAG,"onCreate");
 		if(OFAndroid.assetManager == null)
 			OFAndroid.assetManager = activity.getApplicationContext().getAssets();
 		OFAndroid.setAssetManager(OFAndroid.assetManager);
@@ -249,13 +249,13 @@ public class OFAndroidLifeCycleHelper
 	}
 
 	public static void onForceRestart() {
-		Log.i(TAG,"onForceRestart");
+		if(OFActivity.LOG_ENGINE) Log.i(TAG,"onForceRestart");
 		OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		OFAndroid.onStart();
 	}
 	
 	public static void onResume(){
-		Log.i(TAG,"onResume");
+		if(OFActivity.LOG_ENGINE) Log.i(TAG,"onResume");
 
 		OFAndroid.enableOrientationChangeEvents();
 		OFAndroid.onResume();
@@ -303,7 +303,8 @@ public class OFAndroidLifeCycleHelper
 	
 	public static void onPause(){
 		Log.i(TAG,"onPause");
-		OFAndroid.onPause();
+		if(OFAndroidLifeCycle.coreLibraryLoaded)
+			OFAndroid.onPause();
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
@@ -311,7 +312,8 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						object.onPause();
+						if(OFAndroidLifeCycle.coreLibraryLoaded)
+							object.onPause();
 					}
 				}
 
@@ -321,8 +323,7 @@ public class OFAndroidLifeCycleHelper
 	}
 	
 	public static void onStart(){
-		Log.i(TAG,"onStart");
-		
+		if(OFActivity.LOG_ENGINE) Log.i(TAG,"onStart");
 		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 		if(started) {
 			if(glView == null || glView != null && !glView.isSetup()){
@@ -360,8 +361,7 @@ public class OFAndroidLifeCycleHelper
 	}
 	
 	public static void onStop(){
-		Log.i(TAG,"onStop");
-		
+		if(OFActivity.LOG_ENGINE) Log.i(TAG,"onStop");
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
@@ -369,14 +369,15 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						object.onPause();
+						if(OFAndroidLifeCycle.coreLibraryLoaded)
+							object.onPause();
 					}
 				}
 			}
 		});
-		
-		OFAndroid.onStop();
 
+		if(OFAndroidLifeCycle.coreLibraryLoaded)
+			OFAndroid.onStop();
 
 		OFAndroid.sleepLocked=false;
 		started = false;
@@ -384,7 +385,7 @@ public class OFAndroidLifeCycleHelper
 
 	public static void onDestroy(){
 		started = false;
-		Log.i(TAG,"onDestroy");
+		if(OFActivity.LOG_ENGINE)  Log.i(TAG,"onDestroy");
 		OFAndroid.runOnMainThread(new Runnable() {
 			
 			@Override
@@ -394,24 +395,27 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						object.onStop();
-						object.onDestroy();
+						if(OFAndroidLifeCycle.coreLibraryLoaded) {
+							object.onStop();
+							object.onDestroy();
+						}
 					}
 				}
 			}
 		});
-		OFAndroid.onStop();
-
-		
+		if(OFAndroidLifeCycle.coreLibraryLoaded)
+			OFAndroid.onStop();
 		OFAndroid.sleepLocked=false;
-		
 		OFAndroid.onDestroy();
 		//OFAndroidWindow.exit();
+		OFAndroidLifeCycle.coreLibraryLoaded = false;
 	}
 	
 	public static void exit()
 	{
-		Log.i(TAG,"exit");
-		OFAndroid.exit();
+		if(OFActivity.LOG_ENGINE) Log.i(TAG,"exit");
+
+		if(OFAndroidLifeCycle.coreLibraryLoaded)
+			OFAndroid.exit();
 	}
 }
