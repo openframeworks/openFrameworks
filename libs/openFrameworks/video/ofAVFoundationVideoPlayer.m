@@ -1231,7 +1231,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	if (!bStream && (CMTimeCompare(time, videoSampleTime) < 0)) {
 		// if jumping back in time
-		[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
+		//[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
 	}
 	
 	// set reader to real requested time
