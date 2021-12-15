@@ -362,10 +362,10 @@ static std::string linuxFontPathByName(const std::string& fontname){
 //-----------------------------------------------------------
 static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename){
 	std::filesystem::path fontname = _fontname;
-	filename = ofToDataPath(_fontname,true);
+	filename = ofToDataPath(_fontname,false);
 	auto fileReadMode = ofFile::Reference;
 #if defined(TARGET_ANDROID)
-	fileReadMode = ofFile::ReadWrite;
+	//fileReadMode = ofFile::ReadWrite;
 #endif
 	ofFile fontFile(filename, fileReadMode);
 	int fontID = 0;
@@ -430,7 +430,7 @@ void ofTrueTypeFont::setGlobalDpi(int newDpi){
 //------------------------------------------------------------------
 bool ofTrueTypeFont::initLibraries(){
 	if(!librariesInitialized){
-		ofLogError("ofTrueTypeFont") << "initLibraries";
+		ofLogNotice("ofTrueTypeFont") << "initLibraries";
 		FT_Error err;
 		err = FT_Init_FreeType( &library );
 
@@ -729,6 +729,8 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	if (maxSize <= 128) {
 		ofLogError("ofTruetypeFont") << "Max size is <=0 maybe queried GL Context before ready GL_MAX_TEXTURE_SIZE is garbage:[" << maxSize << "]";
 		return false;
+	} else {
+		ofLogNotice("ofTruetypeFont") << "GL_MAX_TEXTURE_SIZE is:[" << maxSize << "]";
 	}
 
 	initLibraries();
