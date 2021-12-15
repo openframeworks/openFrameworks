@@ -36,9 +36,9 @@ set(distribution_DIR ${OF_ANDROID_OUTPUT})
 #	target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 #endif(MSVC)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c17 -Oz -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections")
-set(CMAKE_CPP_FLAGS "${CMAKE_C_FLAGS} -std=c++17 -Oz -stdlib=libc++ -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections")
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -error-limit=0 -std=c17 -Oz -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections ")
+set(CMAKE_CPP_FLAGS "${CMAKE_C_FLAGS} -error-limit=0 -std=c++17 -Oz -stdlib=libc++ -frtti -Wall -fno-short-enums -fPIE -fPIC -fuse-ld=gold -fexceptions -ffunction-sections -fdata-sections")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-export-dynamic")
 # Creates the project's shared lib: libnative-lib.so.
 # The lib is loaded by this project's Java code in MainActivity.java:
 #     System.loadLibrary("native-lib");
