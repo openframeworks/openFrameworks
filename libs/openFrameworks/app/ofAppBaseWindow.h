@@ -125,7 +125,8 @@ public:
 	virtual ~ofAppBaseGLESWindow(){}
 	virtual void setup(const ofGLESWindowSettings & settings)=0;
 	void setup(const ofWindowSettings & settings){
-		const ofGLESWindowSettings * glSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
+		ofGLESWindowSettings *glSettings;
+		glSettings = (ofGLESWindowSettings*)&settings;
 		if(glSettings){
 			setup(*glSettings);
 		}else{
