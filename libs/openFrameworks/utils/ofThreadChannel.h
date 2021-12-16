@@ -278,6 +278,15 @@ public:
 		return queue.empty();
 	}
 
+
+	/// \brief Queries size of queue.
+	///
+	/// This call is only an approximation, since messages come from a different
+	/// thread.
+	size_t size() const {
+		return queue.size();
+	}
+
 private:
 	/// \brief The FIFO data queue.
 	std::queue<T> queue;

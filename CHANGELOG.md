@@ -1,4 +1,257 @@
 ```
+ ________    _____    _____       _______     
+|\   __  \  / __  \  / __  \     /  ___  \    
+\ \  \|\  \|\/_|\  \|\/_|\  \   /__/|_/  /|   
+ \ \  \\\  \|/ \ \  \|/ \ \  \  |__|//  / /   
+  \ \  \\\  \ __\ \  \   \ \  \ ___ /  /_/__  
+   \ \_______\\__\ \__\   \ \__\\__\\________\
+    \|_______\|__|\|__|    \|__\|__|\|_______|                                              
+                                              
+```
+
+CORE
+----
+### core
+- bugfix ofAppGLFWWindow requested monitor wasn't being clamped (#6718) [commit](https://github.com/openframeworks/openFrameworks/commit/ee30e43df10f78ed5b054b2aae17381e1bddab02)
+
+PLATFORM/IDE SPECIFIC
+-----------------
+### macos 
+- Update Info.plist with retina entry (#6701) [commit](https://github.com/openframeworks/openFrameworks/commit/46483211a0faf34cf5d06c050e911630a02083ef)
+- bugfix fmod sound player for macos. closes #6714 #6708 (#6717) [commit](https://github.com/openframeworks/openFrameworks/commit/23f9bfd394ca91316257f3d2c9d597a7ac7ff71f)
+- add support for Objective C and Objective C++ source in addon Make builds (#6652) [commit](https://github.com/openframeworks/openFrameworks/commit/8ca678228e589c9c8ae0a644dfb8f79ec1ca7e80)
+
+
+```
+      _           _           _               _              
+    / /\         / /\        / /\            / /\            
+   / /  \       / /  \      / /  \          / /  \           
+  / / /\ \     /_/ /\ \    /_/ /\ \        /_/ /\ \          
+ / / /\ \ \    \_\/\ \ \   \_\/\ \ \       \_\/\ \ \         
+/_/ /  \ \ \        \ \ \       \ \ \           \ \ \        
+\ \ \   \ \ \        \ \ \       \ \ \           \ \ \       
+ \ \ \   \ \ \        \ \ \       \ \ \           \ \ \      
+  \ \ \___\ \ \  _   __\ \ \___  __\ \ \___  _   __\ \ \___  
+   \ \/____\ \ \/\_\/___\_\/__/\/___\_\/__/\/\_\/___\_\/__/\ 
+    \_________\/\/_/\_________\/\_________\/\/_/\_________\/ 
+                                                             
+       												
+```
+
+CORE
+----
+### 3d
+- glm::vec3 parameter to drawPlane() functions should be const. (#6516) [commit](https://github.com/openframeworks/openFrameworks/commit/0d3ee1cbead31c7fff4636c82e55ddab9851f0f7)
+- bugfix fixes incorrect pixelScreenCoordScale calc in ofAppGLFWWindow::setup. closes #6487 (#6546) [commit](https://github.com/openframeworks/openFrameworks/commit/c2e3a9b078b5bf26a18f6a2abcdbc0dceb5a80b1)
+- Update ofMesh.inl (#6604) [commit](https://github.com/openframeworks/openFrameworks/commit/b7b7d40ae68587201d1b10ea97f29afb956f8a70)
+
+### core
+- fix error log (#6480) [commit](https://github.com/openframeworks/openFrameworks/commit/dd972c6d595d8c8894db9065fcac18c1dc8bfa02)
+- Add notification to parents for parameterChanged when ofParameter<void> gets triggered. (#6471) [commit](https://github.com/openframeworks/openFrameworks/commit/0e0a59fcc35bcbb5e2078163c1b607c57afd351f)
+- ofEventListeners: added size() method. (#6022) [commit](https://github.com/openframeworks/openFrameworks/commit/4d341aca7079cb4f6dc6668ca62b08f906d9d726)
+
+### examples 
+- regexExample - removed closing parenthesis (#6693) [commit](https://github.com/openframeworks/openFrameworks/commit/3a187e7032586f75566e21c2312a3c41f4a811ae)
+- videoGrabberExample - set the inverted pixels to actual grabber dimensions (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)
+- imageLoaderWebExample - fix the async request on key press (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)
+
+### gl
+- Allow hex format int defines in ofShader code. (#6515) [commit](https://github.com/openframeworks/openFrameworks/commit/c4f90bcb51405905ec0713835f6f57531927b7a6)
+- Fix regex when ofShader int define is set to 0. (#6608) [commit](https://github.com/openframeworks/openFrameworks/commit/a52280c252997e379ca1f8da2dde68302baeaabc)
+
+### graphics
+- fixes ofImage grabScreen and resize getting swapped R and B. (#6670) [commit](https://github.com/openframeworks/openFrameworks/commit/ea66f8de812b62ab4f21696b2a1cb3ef8bc5779f)
+
+### math 
+- core: remove glm/ext.hpp (#6673) [commit](https://github.com/openframeworks/openFrameworks/commit/1d20db946af541faeda94a82f633ef6a8848cef1)
+- bugfix ofNode::setOrientation euler angles. closes #6589 (#6674) [commit](https://github.com/openframeworks/openFrameworks/commit/c828d528ae528571e262d5df88794adf0e0a7135)
+
+### sound
+- ofOpenALSoundPlayer: fix conflicting forward declaration in newer versions (#6498) [commit](https://github.com/openframeworks/openFrameworks/commit/2bee6a395dba12839a5043e3a1f282e3fd7b24dd)
+- changed glGetError() to alGetError() (#6525) [commit](https://github.com/openframeworks/openFrameworks/commit/1afca9f5925ffd0484405bd015181fa8b02bfa09)
+- improve load -> unload (#6580) [commit](https://github.com/openframeworks/openFrameworks/commit/15997a0ff43ab9c80020c64a2a9b4512a9bccedb)
+- fix undesired play after load (#6582) [commit](https://github.com/openframeworks/openFrameworks/commit/6c6ea54f2d429851960fed6617b7664fa0e666b6)
+- bugfix replace deprecated fmod system fft call with future compatible calls (#6639) [commit](https://github.com/openframeworks/openFrameworks/commit/dc17c4329db72c2f44e057c5d882597c3e685ce9)
+
+### utils
+- ofXML fixes (#6678) [commit](https://github.com/openframeworks/openFrameworks/commit/be009f6d2c68f26113832343db72a27d16481cb2)
+
+PLATFORM/IDE SPECIFIC
+-----------------
+### emscripten
+- Fix deprecations emscripten (#6502) [commit](https://github.com/openframeworks/openFrameworks/commit/857df55bb0b2c7e61c2e7eea24a7bcda45b2fd55)
+- Ensures depth buffer for ofxAppEmscriptenWindow. Closes #6484 (#6485) [commit](https://github.com/openframeworks/openFrameworks/commit/06a9366d93d8cea83fbf7efe3819e2bd928627d3)
+- emscripten  DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR (#6536) [commit](https://github.com/openframeworks/openFrameworks/commit/0f03916a4636a7f55b58240fe7c36ebb0c9776f1)
+- Fix emscripten to use non deprecated emsdk docker image (#6665) [commit](https://github.com/openframeworks/openFrameworks/commit/2013d179bd355cf60c9f87acb318cd9fafb125eb)
+- fix for emscripten and ofFbo (#6697) [commit](https://github.com/openframeworks/openFrameworks/commit/0ccbc1852a1e56e586fc330a00edc2ac1ecea546)
+
+### ios 
+- Fixes for drawing BGRA textures on iOS. (#5909) [commit](https://github.com/openframeworks/openFrameworks/commit/0818683e6729db33f5701766bb96b2c1c4c723a4)
+
+### linux 
+- Add libgconf-2-4 to debian/install_dependencies.sh (#6495) [commit](https://github.com/openframeworks/openFrameworks/commit/63916a8ee71d92c15964d34577644602486d5336)
+- Remove gcc4 / gcc5 from nightly builds (#6659) [commit](https://github.com/openframeworks/openFrameworks/commit/6ca04beb025a9f0ae8fb2c3725e9838953672d94)
+- Build gcc6 (#6660) [commit](https://github.com/openframeworks/openFrameworks/commit/b2c18fe22505dc97d83e7d70973f6af41c57c020)
+- set ROOT environment variable (#6668) [commit](https://github.com/openframeworks/openFrameworks/commit/b4ea0d9f1804fb218b0702ea79426ff3b65b1335)
+- This bugfix fixes a segmentation fault when one tries to read the video stream from a device that only provides metadata information (but no video). (#6688) [commit](https://github.com/openframeworks/openFrameworks/commit/ff22d9e254a512094f21107784444c01c5a89876)
+
+### linuxarm 
+- set default AA numSamples to 0 for GLFW window for RPi. closes #6497 (#6503) [commit](https://github.com/openframeworks/openFrameworks/commit/cf8c5005d1e431ede7094d46b8b10c4e5f22100b)
+- add latomic linker for legacy Rpi builds in Stretch and newer (#6508) [commit](https://github.com/openframeworks/openFrameworks/commit/bb3451dc5ec6c180303dcf1101ad118645dddb0f)
+- remove flags (#6629) [commit](https://github.com/openframeworks/openFrameworks/commit/7e942993fc0cbdf0a61bfcd4fc4e5a66328c389d)
+
+### makefiles
+- split PLATFORM_CFLAGS into PLATFORM_CFLAGS and PLATFORM_CXXFLAGS to avoid err when compiling .c files (#6625) [commit](https://github.com/openframeworks/openFrameworks/commit/9eabc1c0048fc3cf1ece8aea26e4931341d0c7d2)
+- fixes wrong OF_ROOT path for make files. closes #6650 (#6661) [commit](https://github.com/openframeworks/openFrameworks/commit/fd102cc4b648b7d63466ad808c7856d48f1c23c3)
+- better fix for resetting OF_ROOT in config.make [commit](https://github.com/openframeworks/openFrameworks/commit/76d738c33783461e9456a76ff633817b85dadf4b)
+
+### macos
+- Fix for transform feedback on macOS (#6473) [commit](https://github.com/openframeworks/openFrameworks/commit/565f9635bdd494a37ee8fb6dd2fa59ae5ae5edcd)
+- remove LDAP from core frameworks (#6519) [commit](https://github.com/openframeworks/openFrameworks/commit/16e9ff41f202285646f664e2c3cadbe85ccf4cc7)
+- bugfix for removing 32bit archs for appstore. stops lipo error (#6520) [commit](https://github.com/openframeworks/openFrameworks/commit/2d2b88f446f60b06df1ebe0610edd7b09a961c7d)
+- Fixed title not being shown when calling ofSystemLoadDialog in macos (#6590) [commit](https://github.com/openframeworks/openFrameworks/commit/29f5edecff90c12ef69e9f79467840af9cdf0ffc)
+- Macos xcode fixes (#6640) [commit](https://github.com/openframeworks/openFrameworks/commit/fe591d17e95218569cc2426d1d8f4f646f75fa00)
+- bugfix make non-double buffer work for macos. closes #6612 (#6663) [commit](https://github.com/openframeworks/openFrameworks/commit/6a59943a518b6ca30673bd7b420503eb4ceed00b)
+- removed install_name_tool fmod post build step as dylib now has correct path. update qbs template to look for dylibs in Contents/Frameworks/ (#6679) [commit](https://github.com/openframeworks/openFrameworks/commit/d95ec462bae8a3e460851454d68721b7bbb35f72)
+- disabled debugging when browsing versions, fixes #6687 (#6689) [commit](https://github.com/openframeworks/openFrameworks/commit/b402c5f7cbb0a98bc262bb13adc8df7492aeb47f)
+- bugfix macos arm fullscreen crash. closes #6685 (#6691) [commit](https://github.com/openframeworks/openFrameworks/commit/5dbfbe951bf6ce300af77cbebeb69ba8a16f9443)
+- Support for Big Sur and Apple M1 Silicon chip / arm64 
+- macos - added fix for apps being half sized on retina in Big Sur (#6694) [commit](https://github.com/openframeworks/openFrameworks/commit/845fc8507f48998cb8b0c09cc1f3d68c8394cf61)
+
+### msys2
+- msys2: Make OpenAL the default soundplayer (#6664) [commit](https://github.com/openframeworks/openFrameworks/commit/3b790d2c50e24e64d18602502ea62824b2e44888)
+- Bugfix msys2 Debug builds. Closes #6683 (#6690) [commit](https://github.com/openframeworks/openFrameworks/commit/43b3e94f0ce6680e2ae9adfd0cc67fe67349b9bb)
+- msys2: Added 64bit release. 
+- added msys2 projectGenerator packaging. (#6696) [commit](https://github.com/openframeworks/openFrameworks/commit/119adffb39928856064a380938dd99a661ca87c4)
+
+### vs 
+- vs bugfix fixes issue where two different cpp files with same name produce same .o file (#6620) [commit](https://github.com/openframeworks/openFrameworks/commit/e5835eab336a865657f0e0d929c268a8fa084636)
+
+
+LIBS
+----
+- removed ldap dependency on private LDAP.framework [commit](https://github.com/openframeworks/apothecary/commit/70b695b327dd975f85593b83a64a619e9fd45376)
+- Emscripten: machine type must be wasm32 or wasm64 [commit](https://github.com/openframeworks/apothecary/commit/966abe0c45810a89b3d4be9c6dd9ce169e1f19cf)
+- switched macos to build arm64 and x86_64 closes #161 [commit](https://github.com/openframeworks/apothecary/commit/128943ab2107246c8a3daa11ebd608154b3c3e82)
+- Bugfix linux armv7 closes #160 [commit](https://github.com/openframeworks/apothecary/commit/14c7a412386fc6b7f1a78d4fa8e2cf8ad2867dee)
+- Update README.md [commit](https://github.com/openframeworks/apothecary/commit/e5d8cf4ee750f5856b0e61611fa1de97fcaa3003)
+- use newer msys build environment by chaning image to VS 2019 (#166) [commit](https://github.com/openframeworks/apothecary/commit/b5d89d7372d68485d1e08e83ce5ce48909e95a73)
+- Msys2 svgtiny (#169) [commit](https://github.com/openframeworks/apothecary/commit/f6ac96b9ee9f73d2622f14685e85da004c3e7f2e)
+- Add support for GitHub actions  (#170) [commit](https://github.com/openframeworks/apothecary/commit/f80cd91dd4967c66ea86eba3d9090a9d6b09ba53)
+- Update README.md [commit](https://github.com/openframeworks/apothecary/commit/216e77195689de59a13c8edf1da601f66d673b85)
+- Fix upload (#171) [commit](https://github.com/openframeworks/apothecary/commit/19c1b46509211e13fdb407958337b89a35fa7685)
+- Fix uploads  (#172) [commit](https://github.com/openframeworks/apothecary/commit/4521e4acafe1d37d9a780b9ddb114a62c9a40a58)
+- tiny fix for macOS builds (#173) [commit](https://github.com/openframeworks/apothecary/commit/18549991659e20841c317fc6371988b279dea8f2)
+- disable appveyor for markdown changes and GitHub actions [commit](https://github.com/openframeworks/apothecary/commit/f31b646abd0b125080ca2461ed3db2365a3ddeb9)
+- Update README.md [commit](https://github.com/openframeworks/apothecary/commit/342016d2a1b2803e1f4df8a95ca7c64128d0737a)
+- small fixes for libaries to make compatible with M1 machines (#174) [commit](https://github.com/openframeworks/apothecary/commit/5284c1d2017b9882d15fc1807c61ace18f7d1880)
+- Bugfix glfw macOS (#175) [commit](https://github.com/openframeworks/apothecary/commit/09b9853c19f2b54c214c87ecb8bf90b415a8ca2a)
+- Curl macos fix legacy (#177) [commit](https://github.com/openframeworks/apothecary/commit/a64ff27cc90d7eb30b35d938e549cd2ac57b4af5)
+- bugfix for min osx sdk being set incorrectly for glfw / cmake [commit](https://github.com/openframeworks/apothecary/commit/44d2d1e94da3a25c6c02a2b945d95ce0bbe2acea)
+- adding fmod script for downloading newer fmod libs. (#168) [commit](https://github.com/openframeworks/apothecary/commit/aee22b638b29eedcb821a0747238471f08e6022b)
+- revert back min osx to 10.9 as the rest of OF uses that. (#179) [commit](https://github.com/openframeworks/apothecary/commit/f08347fa56603c3796e8a711bdf251f98a81fc68)
+- Explicit linux gcc4 (#180) [commit](https://github.com/openframeworks/apothecary/commit/60be0b1f2e821909629e66c00feaede51bf6a454)
+- Bugfix upload (#181) [commit](https://github.com/openframeworks/apothecary/commit/356ef458324cbbceb2c13cd0642a8c202665ddaa)
+- removes CI as an environment which should stop annoying deployment list showing up (#183) [commit](https://github.com/openframeworks/apothecary/commit/a846d2e6186b03dfa64c663578c0fdccc68c7af8)
+- move glm 0.9.9.6 to 0.9.9.7 (#182) [commit](https://github.com/openframeworks/apothecary/commit/79101376435edf6ca8ac47d5be57b3611180576b)
+- try and set default gcc and g++ to 4.9 not 5 (#184) [commit](https://github.com/openframeworks/apothecary/commit/99d57381d1db93489044eb8bf3483371e4f6c056)
+- fix emscripten to use offical docker and move from deprecated image (#186) [commit](https://github.com/openframeworks/apothecary/commit/31609e50ced95a54192c68792ac713d5c6c742a8)
+- Update build-emscripten.yml [commit](https://github.com/openframeworks/apothecary/commit/784426c5c50579b6e4893f1f3aa4652f4be3e259)
+- glfw switch to 3.3 stable (#187) [commit](https://github.com/openframeworks/apothecary/commit/68a0ec866341a8487d5c555311f3d5975bd62436)
+- add fmod download for msys2 64bit (#188) [commit](https://github.com/openframeworks/apothecary/commit/f03420688ba10a577439a918b6a57dbfb42eb202)
+- change branch to stable (#189) [commit](https://github.com/openframeworks/apothecary/commit/30a276b2ffd2fbc137b994ca71a769f10de2b960)
+- fix videoinput.sh to use the branch name (#190) [commit](https://github.com/openframeworks/apothecary/commit/c321bf99a0c6c1926cc71bec4c1a123ccf7ba31a)
+- fix fmod formula to set correct loader path for fmod (#191) [commit](https://github.com/openframeworks/apothecary/commit/d1273ba869c0e36a7c92fbde7ba76fe707a8da23)
+- Fix opencv arm64 (#193) [commit](https://github.com/openframeworks/apothecary/commit/e1b06ea14ae533841b748c99190fc858571d10eb)
+- Bugfix arm64 opencv (#196) [commit](https://github.com/openframeworks/apothecary/commit/7b1205bee13f98ce3a2eefc2012f1bada6f5aed1)
+- added cmake flags for min osx target to fix warnings (#195) [commit](https://github.com/openframeworks/apothecary/commit/f11e77c2327e6e50d49ab5ef685775224b2e08aa)
+
+ADDONS
+------
+### ofxSVG
+- switch to C locale to parse SVG in svgtiny (#6657) [commit](https://github.com/openframeworks/openFrameworks/commit/ea4c2c3154654172d2bb7a77b3344856108070f7)
+
+### ofxGui
+- ofxGui: Updating events to allow multiwindow functioning (#6539) [commit](https://github.com/openframeworks/openFrameworks/commit/ce27971aab60f5c8c0009db6b82df73de20b6938)
+- Fix ofxPanel disable header (#6479) [commit](https://github.com/openframeworks/openFrameworks/commit/b9612146dcb1bb74b2cfa95613ef175632119e70)
+- Revert "ofxGui: Updating events to allow multiwindow functioning (#6539)" (#6544) [commit](https://github.com/openframeworks/openFrameworks/commit/065ed29aabf048d71acf5dab5e293cfe1ee02d7b)
+- ofxGui: Updating events to allow multiwindow functioning (#6429) [commit](https://github.com/openframeworks/openFrameworks/commit/c0a25003942dc8c9331008d2c9d5ce6db3e46ce1)
+- fixed ofxGuiSlider text input not positioned correctly as a side efect of commit b9612146dcb1bb74b2cfa95613ef175632119e70 (#6567) [commit](https://github.com/openframeworks/openFrameworks/commit/07e47f745b6793f3a319d49e470f44b04cbcda07)
+- ofxGui: Fix possible memory leak, because keyword "new" was being used but not deleted. Now using only unique_ptr (#6570) [commit](https://github.com/openframeworks/openFrameworks/commit/8946a080d847887b23c07c0c4e08c33680c296ae)
+- ofxGui:: ofxSliderGroup: properly removing listeners which could lead to a crash when dynamically creating ofxGui objects (#6610) [commit](https://github.com/openframeworks/openFrameworks/commit/f9cb24b3f58d7f8b6aca54dcf4ec57e672202a0d)
+
+### ofxNetwork
+- Fix ofx network (#6675) [commit](https://github.com/openframeworks/openFrameworks/commit/0f4a40358279f3c6868fa2943c3820c4516fc43d)
+
+
+CI 
+----
+- add msys2 64bit builds to nightly and release scripts. (#6486) [commit](https://github.com/openframeworks/openFrameworks/commit/8eabc2ae8859f5ceb187dde3e8870b885acc064b)
+- Add master vs patch-release branches (#6523) [commit](https://github.com/openframeworks/openFrameworks/commit/e6ed59359e23c8a4a34b799c259a200155716caa)
+- Merge make43 msys2ccache (#6566) [commit](https://github.com/openframeworks/openFrameworks/commit/f23c71da938452cb42d4c0bfaef087afc26db82e)
+- MSYS2 : (re)enable ccache in appveyor (#6572) [commit](https://github.com/openframeworks/openFrameworks/commit/6c9654bd9e0f31ab96162097155aa58e84bb6ed5)
+- [CI] Optimize MSYS2 on Appveyor (#6573) [commit](https://github.com/openframeworks/openFrameworks/commit/5453d35ae88022d2c09f47d3beb9a57c1e87a65d)
+- update travis.yml to fix linux build (#6636) [commit](https://github.com/openframeworks/openFrameworks/commit/7edcdec7f3af3a5aeaec2928ab5804576377d4fd)
+- Issue6605 msys2 ci fails (#6645) [commit](https://github.com/openframeworks/openFrameworks/commit/d3562149cbd0b9a02b9a9bda8f8b3942a6d49175)
+- WIP PR for Github Actions (#6649) [commit](https://github.com/openframeworks/openFrameworks/commit/69b671ad39df56fff1bdb293571177431f9b057d)
+
+
+PROJECT GENERATOR 
+----
+- feature  ADDON_FRAMEWORKS_EXCLUDE to exclude frameworks from libs folder [commit](https://github.com/openframeworks/projectGenerator/commit/d459eec68c14e9741110059dc6da845e6d4f0736)
+- added version option [commit](https://github.com/openframeworks/projectGenerator/commit/8c01f1507616c039997619c9ea26f3e38b33736d)
+- feature -  ability to specify additional source/include folders to add to project (#248) [commit](https://github.com/openframeworks/projectGenerator/commit/90a1f0a20c2d31d8d2a020c04d5768a3a3f7ac09)
+- Fix nested dependencies (#252) [commit](https://github.com/openframeworks/projectGenerator/commit/e35cc07893c1319a3f49d3da1a02b95434876121)
+- switched fmodex to fmod (#254) [commit](https://github.com/openframeworks/projectGenerator/commit/f46c32da75ac9516de4553e69d3d42570200ab01)
+- Moving current CI builds to Github Actions (#255) [commit](https://github.com/openframeworks/projectGenerator/commit/c09de46323bce32ba5545fe3413575fd4cb12157)
+- add .metal ext for ios (#256) [commit](https://github.com/openframeworks/projectGenerator/commit/b2c28be317dffb5cf6c6363adad4b88a627998a6)
+- fix due to bug in current electron-packager [commit](https://github.com/openframeworks/projectGenerator/commit/fa7ff49951911a5bd6021361fea15c445f11ecad)
+
+DOCUMENTATION 
+----
+- Update Raspberry-Pi-Getting-Started.md (#719) [commit](https://github.com/openframeworks/projectGenerator/commit/e923ec0d460bc5177461948a8ef6ec818eb4cfc1)
+- Update download.mako (#720) [commit](https://github.com/openframeworks/projectGenerator/commit/a3876be3ddb94d8145f4425ece00824cbaf92d90)
+- update raspberrypi.md.ko for oF 0.11.0 [commit](https://github.com/openframeworks/projectGenerator/commit/f7bd9739a8bef9da6ce7dea7c038422bf7c07153)
+- Raspberry-Pi-Getting-Started.ko.md update for oF 0.11.0 [commit](https://github.com/openframeworks/projectGenerator/commit/93f08120a1cd4fbae5fee26c9bff52c1acba07a3)
+- fix conflicts from KavinHan [commit](https://github.com/openframeworks/projectGenerator/commit/65171cc4fcd123f944d7f901ccb8d572b69656ef)
+- cleaned multilanguage section [commit](https://github.com/openframeworks/projectGenerator/commit/106279d78dea1f4dfee2c5bf08b691f7765cea21)
+- update README-ko.md [commit](https://github.com/openframeworks/projectGenerator/commit/9c06fc053f8053451d4c0d4642b895656d4b43a1)
+- removed new line [commit](https://github.com/openframeworks/projectGenerator/commit/ccc44fb00ffff000ad14ecd7a384bf02d3801436)
+- Update MSYS2 setup guide (#700) [commit](https://github.com/openframeworks/projectGenerator/commit/473a7547b95529feae3540f21ae9cd3493d2da21)
+- add 64bit instructions for msys2 (#721) [commit](https://github.com/openframeworks/projectGenerator/commit/ac0485a431b9703a0fe3bf86f67882cab6ef9a4e)
+- Fix conf.py [commit](https://github.com/openframeworks/projectGenerator/commit/7fedd2a5b75ff3d45539e1d0a87ab0b2fa553362)
+- fix space for the download boxes [commit](https://github.com/openframeworks/projectGenerator/commit/18f8176c52a9c5fa3792f7e7daae286218937b14)
+- update msys2.ko.md [commit](https://github.com/openframeworks/projectGenerator/commit/42bfa561137f57904d4c6cf4573e0211c109bf2d)
+- fix mistype [commit](https://github.com/openframeworks/projectGenerator/commit/fa9921af79628c1516a193ed0f057936399fcf0f)
+- suggest [commit](https://github.com/openframeworks/projectGenerator/commit/d134afe5ffa77c03570609c3f5d037cc5bc2f8c2)
+- remov [commit](https://github.com/openframeworks/projectGenerator/commit/23279c1f88db8a1a7111b881b02c86c245220d03)
+- fix some duplicate and errors (#723) [commit](https://github.com/openframeworks/projectGenerator/commit/2b17b0fca6d2bcd50662f4452c9df673cb17f477)
+- Update emscripten guide (#722) [commit](https://github.com/openframeworks/projectGenerator/commit/65fcd3664201291fb32f142c63bf105809900a6b)
+- Update play_a_sound.markdown (#724) [commit](https://github.com/openframeworks/projectGenerator/commit/dd39680ad25349f3fdb408f3254143bd5a36d1b7)
+- emscripten.ko.md update [commit](https://github.com/openframeworks/projectGenerator/commit/18a013c76f5aa32c682e66df9ad4a8951e0707b2)
+- Update older.md [commit](https://github.com/openframeworks/projectGenerator/commit/0c00220d4665443f652a7d688e060406efca3af3)
+- Update Raspberry-Pi-Getting-Started.md [commit](https://github.com/openframeworks/projectGenerator/commit/408870879898ee40bd3b56b60ada5d34e6bce536)
+- Fix a file path. / ファイルパスの記載を修正 (#727) [commit](https://github.com/openframeworks/projectGenerator/commit/7c1bcee69213ee5fcd839501c473d26729518b5d)
+- ofScale function description update (#733) [commit](https://github.com/openframeworks/projectGenerator/commit/91c05aa76af58f9a096e8eb16afe32b231dd0e5a)
+- Update vs.md [commit](https://github.com/openframeworks/projectGenerator/commit/b4d58a18e426b29c11bf492b69399e5ef2070668)
+- Update vs.ko.md [commit](https://github.com/openframeworks/projectGenerator/commit/270fd52fa10ed22c2425706b6442ad732fdf4af7)
+- Update vs.ja.md [commit](https://github.com/openframeworks/projectGenerator/commit/8d8881ba11ce22dd46f9cf49b285ab39fb957c2c)
+- Update Raspberry-Pi-Getting-Started.md [commit](https://github.com/openframeworks/projectGenerator/commit/2a218598508c0b92afea336a57659304a6718e53)
+- Update Raspberry-Pi-Getting-Started.md [commit](https://github.com/openframeworks/projectGenerator/commit/c6700820be66245158a0dd6dcf6bc8f897dd682f)
+- small syntax fix (#736) [commit](https://github.com/openframeworks/projectGenerator/commit/8a9ada826712bd9fdd7c6d2e14b8f781d31e5474)
+- Update 3d_example_how_to.markdown (#738) [commit](https://github.com/openframeworks/projectGenerator/commit/a2f9200b4b80fefa8c925875042ea37d38c1f8ff)
+- Fix typo in ofRectangle.markdown (#737) [commit](https://github.com/openframeworks/projectGenerator/commit/28ce405a3790b73dac6d31c1f0ede08f89eccbde)
+- Fixed path of where to find example (#730) [commit](https://github.com/openframeworks/projectGenerator/commit/01ad6280e4d65d7306d4aa84440388775c0fba89)
+- Fixed Rectangle coordinate suggestion. (#702) [commit](https://github.com/openframeworks/projectGenerator/commit/7be08964f957d7f0c513299c56baf094e07eba39)
+- Update introduction.markdown (#739) [commit](https://github.com/openframeworks/projectGenerator/commit/5dfed24a04106c50add816c962d03c7f0baee713)
+- Update qtcreator.md to increase readability (#740) [commit](https://github.com/openframeworks/projectGenerator/commit/621e29805d0497ec2586f2fb382330d5f8a4e73c)
+- Update emscripten.md [commit](https://github.com/openframeworks/projectGenerator/commit/8b8d4e2e60c60ec2d64c300962f857ec8eda5d8b)
+- Update download.mako [commit](https://github.com/openframeworks/projectGenerator/commit/840a39522176314e4ed8618a9e2a175851b88345)
+
+
+
+
+```
      __                  _     _                 __     
    /'__`\              /' \  /' \              /'__`\   
   /\ \/\ \            /\_, \/\_, \            /\ \/\ \  

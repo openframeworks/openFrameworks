@@ -127,11 +127,19 @@ ofGstUtils::ofGstUtils() {
 	if(!gst_inited){
 #ifdef TARGET_WIN32
 		string gst_path;
-		if (sizeof(int) == 32) {
-			 gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
-		}else
-		{
-			gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86_64");
+		if (sizeof(int) == 32){
+			auto env_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+			if (env_path == NULL) {
+				env_path = (ofGetTargetPlatform() == OF_TARGET_MINGW) ? g_getenv("GSTREAMER_1_0_ROOT_MINGW_X86") : g_getenv("GSTREAMER_1_0_ROOT_MSVC_X86");
+			}
+			gst_path = env_path;
+		}
+		else {
+			auto env_path = g_getenv("GSTREAMER_1_0_ROOT_X86_64");
+			if (env_path == NULL) {
+				env_path = (ofGetTargetPlatform() == OF_TARGET_MINGW) ? g_getenv("GSTREAMER_1_0_ROOT_MINGW_X86_64") : g_getenv("GSTREAMER_1_0_ROOT_MSVC_X86_64");
+			}
+			gst_path = env_path;
 		}
 		//putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
 		// to make it compatible with gcc and C++11 standard

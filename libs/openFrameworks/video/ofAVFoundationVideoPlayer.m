@@ -191,6 +191,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	dispatch_async(queue, ^{
+		@autoreleasepool {
+		}
+		
 		[asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:kTracksKey] completionHandler:^{
 			
 			NSError * error = nil;
@@ -751,6 +754,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				// auto-play or play if started before beeing ready
 				if(bAutoPlayOnLoad || bPlayStateBeforeLoad) {
 					[self play];
+				} else {
+					[self pause];
 				}
 				
 				// update as soon is ready so pixels are loaded.

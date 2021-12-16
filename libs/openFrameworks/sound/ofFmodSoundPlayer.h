@@ -79,8 +79,8 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		unsigned int length; // in samples;
 
 		FMOD_RESULT result;
-		FMOD_CHANNEL * channel;
-		FMOD_SOUND * sound;
+		FMOD_CHANNEL * channel = NULL;
+		FMOD_SOUND * sound = NULL;
 };
 
 #endif //OF_SOUND_PLAYER_FMOD

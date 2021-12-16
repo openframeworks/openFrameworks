@@ -26,6 +26,7 @@ protected:
 	static size_t dim();
     ofParameter<VecType> value;
     bool sliderChanging;
+	ofEventListeners listeners;
 };
 
 typedef ofxVecSlider_<ofDefaultVec3> ofxVec3Slider;
@@ -58,6 +59,7 @@ protected:
 	ofColor originalHeaderBackground;
 	ofColor originalHeaderText;
 	ofxColorPicker_<ColorType> picker;
+	ofEventListeners listeners;
 };
 typedef ofxColorSlider_<unsigned char> ofxColorSlider;
 typedef ofxColorSlider_<unsigned short> ofxShortColorSlider;
@@ -84,4 +86,5 @@ protected:
     bool sliderChanging;
     void changeSlider(const void * parameter, float & value);
 	void changeValue(ofRectangle & value);
+	ofEventListeners listeners;
 };

@@ -21,8 +21,8 @@ export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=armv6l
 export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
-export CXX="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
-export CC="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
+export CXX="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
+export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
 make Debug

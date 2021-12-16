@@ -24,10 +24,10 @@ endef
 define parse_addons_sources
 	$(eval ADDONS_SOURCES_FILTER = $(addprefix $1/, $(ADDON_SOURCES_EXCLUDE))) \
 	$(eval PARSED_ADDONS_SOURCE_PATHS = $(addsuffix /src, $1)) \
-	$(eval PARSED_ADDONS_OFX_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" )) \
+	$(eval PARSED_ADDONS_OFX_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.mm" -or -name "*.m" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]" )) \
 	$(eval PARSED_ADDONS_FILTERED_SOURCE_PATHS = $(filter-out $(ADDONS_SOURCES_FILTER),$(PARSED_ADDONS_OFX_SOURCES))) \
 	$(eval PARSED_ADDONS_LIBS_SOURCE_PATHS = $(addsuffix /libs, $1)) \
-	$(eval PARSED_ADDONS_LIBS_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_LIBS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]"  )) \
+	$(eval PARSED_ADDONS_LIBS_SOURCES = $(shell $(FIND) $(PARSED_ADDONS_LIBS_SOURCE_PATHS) -type f \( -name "*.cpp" -or -name "*.mm" -or -name "*.m" -or -name "*.c" -or -name "*.cc" -or -name "*.cxx" \) 2> /dev/null | grep -v "/\.[^\.]"  )) \
 	$(eval PARSED_ADDONS_FILTERED_LIBS_SOURCE_PATHS = $(filter-out $(ADDONS_SOURCES_FILTER),$(PARSED_ADDONS_LIBS_SOURCES))) \
 	$(eval PARSED_ADDONS_SOURCE_FILES = $(PARSED_ADDONS_FILTERED_SOURCE_PATHS)) \
 	$(eval PARSED_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_FILTERED_LIBS_SOURCE_PATHS))
@@ -52,7 +52,7 @@ space :=
 space +=
 
 define src_to_obj
-	$(addsuffix .o,$(basename $(filter %.c %.cpp %.cc %.cxx %.cc %.s %.S, $(addprefix $3,$(addprefix $2,$1)))))
+	$(addsuffix .o,$(basename $(filter %.c %.cpp %.mm %.m %.cc %.cxx %.cc %.s %.S, $(addprefix $3,$(addprefix $2,$1)))))
 endef
 
 define rwildcard
@@ -96,7 +96,7 @@ define parse_addon
 	$(eval ADDON_SOURCES=$(PARSED_ADDONS_SOURCE_FILES)) \
 	$(eval PROCESS_NEXT=0) \
 	$(if $(wildcard $(addon)/addon_config.mk), \
-		$(foreach var_line, $(subst $(space),?,$(shell cat $(addon)/addon_config.mk | tr '\n' '\t')), \
+		$(foreach var_line, $(shell cat $(addon)/addon_config.mk | tr '\n ' '\t?'), \
 			$(eval unscaped_var_line=$(strip $(subst ?, ,$(var_line)))) \
 			$(if $(filter $(PROCESS_NEXT),1), $(eval $(unscaped_var_line))) \
 			$(if $(filter %:,$(unscaped_var_line)), \

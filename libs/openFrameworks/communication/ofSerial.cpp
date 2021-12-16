@@ -368,6 +368,7 @@ bool ofSerial::setup(string portName, int baud){
 		options.c_oflag &= (tcflag_t) ~(OPOST);
 		options.c_cflag |= CS8;
 		#if defined( TARGET_LINUX )
+            options.c_iflag &= ~(IXON | IXOFF | IXANY); // turn off software xon/xoff flow ctrl
 			options.c_cflag |= CRTSCTS;
 			options.c_lflag &= ~(ICANON | ECHO | ISIG);
 		#endif
