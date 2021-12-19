@@ -53,15 +53,12 @@ class ContextFactory implements GLSurfaceView.EGLContextFactory {
 
     public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig) {
         Log.w("OFContextFactory", "creating OpenGL ES 2.0 context");
-        checkEglError("Before eglCreateContext", egl);
-        int[] attrib_list = {
-                             EGL_CONTEXT_CLIENT_VERSION, 2,
-                             //EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                             EGL10.EGL_NONE
-        };
+        //checkEglError("Before eglCreateContext", egl);
+        int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
         try {
             EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
-            checkEglError("After eglCreateContext", egl);
+            //checkEglError("After eglCreateContext", egl);
+
             return context;
         } catch(Exception ex) {
             Log.e("OFContextFactory", "egl.eglCreateContext error:" + ex.getMessage());
@@ -114,7 +111,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mAlphaSize = 2;
         mDepthSize = 16;
         mStencilSize = 16;
-        mSampleSize = 8;
+        //mSampleSize = 8;
         mWideGamut = true;
     }
 
@@ -327,12 +324,12 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         if (numConfigs <= 0  && !workingConfig) {
             setRGB();
             Log.i("OF", String.format("eglChooseConfig MSAAx8"));
-            if (!egl.eglChooseConfig(display, s_configAttribsMSAA8, null, 0,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !egl.eglChooseConfig(display, s_configAttribsMSAA8, null, 0,
                     num_config)) {
                 Log.w("OF", String.format("eglChooseConfig MSAAx8 failed"));
             }
             numConfigs = num_config[0];
-            if(numConfigs > 0) {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && numConfigs > 0) {
                 configs = new EGLConfig[numConfigs];
                 if(egl.eglChooseConfig(display, s_configAttribsMSAA8, configs, numConfigs, num_config)){
                     numConfigs = num_config[0];
