@@ -13,7 +13,7 @@
 
 //----------------------------------------------------------
 #include <TargetConditionals.h>
-#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+#if (TARGET_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 #define TARGET_IOS
 #else
 #define TARGET_OSX
