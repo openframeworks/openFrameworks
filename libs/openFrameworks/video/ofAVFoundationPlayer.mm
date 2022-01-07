@@ -102,7 +102,11 @@ bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
 	pixels.clear();
 	videoTexture.clear();
 
+//	bool bCreateTextureCache = bLoaded && bUseTextureCache && (_videoTextureCache == nullptr);
+	
+//	&& bUseTexture ou isUsingTexture();
 	bool bCreateTextureCache = bLoaded && bUseTextureCache && (_videoTextureCache == nullptr);
+
 
 	if(bCreateTextureCache == true) {
 
@@ -411,29 +415,11 @@ void ofAVFoundationPlayer::initTextureCache() {
 		return;
 	}
 
-	if (!videoTexture.isAllocated()) {
-		int videoTextureW = getWidth();
-		int videoTextureH = getHeight();
-		videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA);
-
-		ofTextureData & texData = videoTexture.getTextureData();
-		texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
-		texData.tex_u = 1.0f; // assuming this is something to do with the way ios creates the texture cache.
-		videoTexture.setTextureMinMagFilter(GL_LINEAR, GL_LINEAR);
-		videoTexture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-	}
-	
-//	return;
-	
     CVImageBufferRef imageBuffer = [videoPlayer getCurrentFrame];
     if(imageBuffer == nil) {
-		std::cout << "imageBuffer == nil" << std::endl;
         return;
     }
-	if(imageBuffer == NULL) {
-		std::cout << "imageBuffer == NULL" << std::endl;
-		return;
-	}
+
     CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
 
     /**
@@ -451,7 +437,17 @@ void ofAVFoundationPlayer::initTextureCache() {
      *  so... we can use ofTexture::setUseExternalTextureID() to get around this.
      */
 
+	if (!videoTexture.isAllocated()) {
+		int videoTextureW = getWidth();
+		int videoTextureH = getHeight();
+		videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA);
 
+		ofTextureData & texData = videoTexture.getTextureData();
+		texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
+		texData.tex_u = 1.0f; // assuming this is something to do with the way ios creates the texture cache.
+		videoTexture.setTextureMinMagFilter(GL_LINEAR, GL_LINEAR);
+		videoTexture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	}
 
     CVReturn err;
     unsigned int textureCacheID;

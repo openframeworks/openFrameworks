@@ -104,7 +104,7 @@ class ofBaseVideoDraws:
 	virtual public ofBaseHasPixels{
 public:
 	/// \brief Destroy the ofBaseVideoDraws.
-//	virtual ~ofBaseVideoDraws(){}
+	virtual ~ofBaseVideoDraws(){}
 };
 
 /// \brief A base class representing a video device such as a camera.

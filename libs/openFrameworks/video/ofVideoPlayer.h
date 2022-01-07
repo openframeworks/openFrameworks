@@ -1,7 +1,7 @@
 #pragma once
 
-//#include "ofConstants.h"
-//#include "ofTexture.h"
+#include "ofConstants.h"
+#include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
@@ -45,15 +45,14 @@
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer
-:
-//public ofBaseVideoPlayer,
-public ofBaseVideoDraws
-{
+//class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
+class ofVideoPlayer : public ofBaseVideoDraws{
 
 	public:
 
 		ofVideoPlayer ();
+
+
 		bool 				load(std::string name);
 		void				loadAsync(std::string name);
 		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(std::string name));
@@ -74,8 +73,6 @@ public ofBaseVideoDraws
 		/// This is an alias for close().
 		///
 		/// \sa close()
-	///
-//		OF_DEPRECATED_MSG("Use ofVideoPlayer::close() instead",bool closeMovie());
 		void 				closeMovie();
 		/// \brief Closes the movie file releases its resources.
 		///
@@ -119,7 +116,6 @@ public ofBaseVideoDraws
 		const std::vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;
-	
 		using ofBaseDraws::draw;
 		/// \brief Binds the video texture to the current rendering context.
 		///
@@ -230,6 +226,4 @@ public ofBaseVideoDraws
 		mutable ofPixelFormat internalPixelFormat;
 		/// \brief The stored path to the video's path.
 		std::string moviePath;
-	
-		void checkPlayer();
 };

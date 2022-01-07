@@ -1,9 +1,9 @@
 #include "ofVideoPlayer.h"
-//#include "ofUtils.h"
+#include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofGLUtils.h"
-//#include "ofPixels.h"
-//#include <algorithm>
+#include "ofPixels.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -17,15 +17,21 @@ ofVideoPlayer::ofVideoPlayer (){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
-	player = newPlayer;
-	cout << "setPlayer " << &player << " " << newPlayer << endl;
-	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before.
+//	player = newPlayer;
+	player = std::move(newPlayer);
+	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
+	
+	cout << "setPlayer " << ofGetFrameNum() << endl;
+	cout << "player use count " << player.use_count() << endl;
+	cout << "new player use count " << newPlayer.use_count() << endl;
 }
 
 //---------------------------------------------------------------------------
 shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
-	checkPlayer();
+	if( !player ){
+		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
+	}
 	return player;
 }
 
@@ -67,8 +73,11 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::load(string name){
-	checkPlayer();
-
+	if( !player ){
+//		cout << "load, creating player" << endl;
+		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
+		player->setPixelFormat(internalPixelFormat);
+	}
 	
 	bool bOk = player->load(name);
 
@@ -98,18 +107,13 @@ bool ofVideoPlayer::load(string name){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::loadAsync(string name){
-	checkPlayer();
+	if( !player ){
+		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
+		player->setPixelFormat(internalPixelFormat);
+	}
+	
 	player->loadAsync(name);
 	moviePath = name;
-}
-
-//---------------------------------------------------------------------------
-void ofVideoPlayer::checkPlayer(){
-	if( !player ){
-		player = std::make_shared<OF_VID_PLAYER_TYPE>();
-		player->setPixelFormat(internalPixelFormat);
-		setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you
-	}
 }
 
 //---------------------------------------------------------------------------
@@ -199,6 +203,8 @@ bool ofVideoPlayer::isFrameNew() const{
 
 //--------------------------------------------------------------------
 void ofVideoPlayer::update(){
+	cout << "player use count " << player.use_count() << endl;
+
 	if( player ){
 
 		player->update();
@@ -238,6 +244,8 @@ void ofVideoPlayer::close(){
 		player->close();
 	}
 	tex.clear();
+	
+	cout << "player use count " << player.use_count() << endl;
 }
 
 //--------------------------------------------------------

@@ -41,6 +41,11 @@ class ofAVFoundationGrabber;
 	AVCaptureSession			*captureSession;
 
 	ofAVFoundationGrabber * grabberPtr;
+	
+	// Pixel format conversion
+	ofPixels rgbConvertPixels;
+	vImage_Buffer srcImg;
+	vImage_Buffer dstImg;
 }
 
 -(BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h;
@@ -109,6 +114,12 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		#else
 			void * grabber;
 		#endif
+	
+	
+
+
+	
+
 
 	public:
 		ofPixelFormat pixelFormat;

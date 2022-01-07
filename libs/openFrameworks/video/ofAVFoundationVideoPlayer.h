@@ -79,8 +79,6 @@ typedef enum _playerLoopType{
     BOOL bAutoPlayOnLoad;
     BOOL bSeeking;
     BOOL bSampleVideo; // default to YES
-	BOOL bFirstSeek; // default to YES
-	
     BOOL bSampleAudio; // default to NO
 	BOOL bIsUnloaded;
 	BOOL bStream;
@@ -156,7 +154,6 @@ typedef enum _playerLoopType{
 - (void)setFrame:(int)frame;
 - (void)setPosition:(float)position;
 - (float)getPosition;
-- (double)getPositionDouble;
 - (void)setVolume:(float)volume;
 - (float)getVolume;
 - (void)setLoop:(playerLoopType)loop;

@@ -143,6 +143,53 @@
 
 		// We setup the output
 		captureOutput = [[AVCaptureVideoDataOutput alloc] init];
+		
+//		NSDictionary *formats = [NSDictionary dictionaryWithObjectsAndKeys:
+//			   @"kCVPixelFormatType_1Monochrome", [NSNumber numberWithInt:kCVPixelFormatType_1Monochrome],
+//			   @"kCVPixelFormatType_2Indexed", [NSNumber numberWithInt:kCVPixelFormatType_2Indexed],
+//			   @"kCVPixelFormatType_4Indexed", [NSNumber numberWithInt:kCVPixelFormatType_4Indexed],
+//			   @"kCVPixelFormatType_8Indexed", [NSNumber numberWithInt:kCVPixelFormatType_8Indexed],
+//			   @"kCVPixelFormatType_1IndexedGray_WhiteIsZero", [NSNumber numberWithInt:kCVPixelFormatType_1IndexedGray_WhiteIsZero],
+//			   @"kCVPixelFormatType_2IndexedGray_WhiteIsZero", [NSNumber numberWithInt:kCVPixelFormatType_2IndexedGray_WhiteIsZero],
+//			   @"kCVPixelFormatType_4IndexedGray_WhiteIsZero", [NSNumber numberWithInt:kCVPixelFormatType_4IndexedGray_WhiteIsZero],
+//			   @"kCVPixelFormatType_8IndexedGray_WhiteIsZero", [NSNumber numberWithInt:kCVPixelFormatType_8IndexedGray_WhiteIsZero],
+//			   @"kCVPixelFormatType_16BE555", [NSNumber numberWithInt:kCVPixelFormatType_16BE555],
+//			   @"kCVPixelFormatType_16LE555", [NSNumber numberWithInt:kCVPixelFormatType_16LE555],
+//			   @"kCVPixelFormatType_16LE5551", [NSNumber numberWithInt:kCVPixelFormatType_16LE5551],
+//			   @"kCVPixelFormatType_16BE565", [NSNumber numberWithInt:kCVPixelFormatType_16BE565],
+//			   @"kCVPixelFormatType_16LE565", [NSNumber numberWithInt:kCVPixelFormatType_16LE565],
+//			   @"kCVPixelFormatType_24RGB", [NSNumber numberWithInt:kCVPixelFormatType_24RGB],
+//			   @"kCVPixelFormatType_24BGR", [NSNumber numberWithInt:kCVPixelFormatType_24BGR],
+//			   @"kCVPixelFormatType_32ARGB", [NSNumber numberWithInt:kCVPixelFormatType_32ARGB],
+//			   @"kCVPixelFormatType_32BGRA", [NSNumber numberWithInt:kCVPixelFormatType_32BGRA],
+//			   @"kCVPixelFormatType_32ABGR", [NSNumber numberWithInt:kCVPixelFormatType_32ABGR],
+//			   @"kCVPixelFormatType_32RGBA", [NSNumber numberWithInt:kCVPixelFormatType_32RGBA],
+//			   @"kCVPixelFormatType_64ARGB", [NSNumber numberWithInt:kCVPixelFormatType_64ARGB],
+//			   @"kCVPixelFormatType_48RGB", [NSNumber numberWithInt:kCVPixelFormatType_48RGB],
+//			   @"kCVPixelFormatType_32AlphaGray", [NSNumber numberWithInt:kCVPixelFormatType_32AlphaGray],
+//			   @"kCVPixelFormatType_16Gray", [NSNumber numberWithInt:kCVPixelFormatType_16Gray],
+//			   @"kCVPixelFormatType_422YpCbCr8", [NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8],
+//			   @"kCVPixelFormatType_4444YpCbCrA8", [NSNumber numberWithInt:kCVPixelFormatType_4444YpCbCrA8],
+//			   @"kCVPixelFormatType_4444YpCbCrA8R", [NSNumber numberWithInt:kCVPixelFormatType_4444YpCbCrA8R],
+//			   @"kCVPixelFormatType_444YpCbCr8", [NSNumber numberWithInt:kCVPixelFormatType_444YpCbCr8],
+//			   @"kCVPixelFormatType_422YpCbCr16", [NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr16],
+//			   @"kCVPixelFormatType_422YpCbCr10", [NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr10],
+//			   @"kCVPixelFormatType_444YpCbCr10", [NSNumber numberWithInt:kCVPixelFormatType_444YpCbCr10],
+//			   @"kCVPixelFormatType_420YpCbCr8Planar", [NSNumber numberWithInt:kCVPixelFormatType_420YpCbCr8Planar],
+//			   @"kCVPixelFormatType_420YpCbCr8PlanarFullRange", [NSNumber numberWithInt:kCVPixelFormatType_420YpCbCr8PlanarFullRange],
+//			   @"kCVPixelFormatType_422YpCbCr_4A_8BiPlanar", [NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr_4A_8BiPlanar],
+//			   @"kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange", [NSNumber numberWithInt:kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange],
+//			   @"kCVPixelFormatType_420YpCbCr8BiPlanarFullRange", [NSNumber numberWithInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange],
+//			   @"kCVPixelFormatType_422YpCbCr8_yuvs", [NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8_yuvs],
+//			   @"kCVPixelFormatType_422YpCbCr8FullRange", [NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8FullRange],
+//			nil];
+//
+//		for (NSNumber *fmt in [captureOutput availableVideoCVPixelFormatTypes]) {
+//			NSLog(@"%@", [formats objectForKey:fmt]);
+//		}
+		
+
+		
 		// While a frame is processes in -captureOutput:didOutputSampleBuffer:fromConnection: delegate methods no other frames are added in the queue.
 		// If you don't want this behaviour set the property to NO
 		captureOutput.alwaysDiscardsLateVideoFrames = YES;
@@ -155,12 +202,28 @@
 		[captureOutput setSampleBufferDelegate:self queue:queue];
 		dispatch_release(queue);
 
-		NSDictionary* videoSettings =[NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSNumber numberWithDouble:width], (id)kCVPixelBufferWidthKey,
-                              [NSNumber numberWithDouble:height], (id)kCVPixelBufferHeightKey,
-                              [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], (id)kCVPixelBufferPixelFormatTypeKey,
-                              nil];
-		[captureOutput setVideoSettings:videoSettings];
+//		NSDictionary* videoSettings =[NSDictionary dictionaryWithObjectsAndKeys:
+//                              [NSNumber numberWithDouble:width], (id)kCVPixelBufferWidthKey,
+//                              [NSNumber numberWithDouble:height], (id)kCVPixelBufferHeightKey,
+////                              [NSNumber numberWithInt:kCVPixelFormatType_24BGR], (id)kCVPixelBufferPixelFormatTypeKey,
+//							  [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], (id)kCVPixelBufferPixelFormatTypeKey,
+//                              nil];
+		// XAXA kCVPixelFormatType_24BGR
+		
+		//		kCVPixelFormatType_422YpCbCr8
+		//		kCVPixelFormatType_422YpCbCr8_yuvs
+		//		kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+		//		kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
+		//		kCVPixelFormatType_32ARGB
+		//		kCVPixelFormatType_32BGRA
+		
+		captureOutput.videoSettings = @{
+//			(id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_24BGR),
+			(id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+			(id)kCVPixelBufferWidthKey : @(width),
+			(id)kCVPixelBufferHeightKey : @(height),
+		};
+//		[captureOutput setVideoSettings:videoSettings];
 
 		// And we create a capture session
 		if(self.captureSession) {
@@ -264,6 +327,7 @@
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 	   fromConnection:(AVCaptureConnection *)connection
 {
+//	std::cout << "captureOutput" << std::endl;
 	if(grabberPtr != NULL) {
 		@autoreleasepool {
 			CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
@@ -282,6 +346,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				}
 
 				if( grabberPtr->pixelFormat == OF_PIXELS_BGRA ){
+					std::cout << "OF_PIXELS_BGRA xxx" << std::endl;
 
 					if( grabberPtr->capMutex.try_lock() ){
 						grabberPtr->pixelsTmp.setFromPixels(isrc4, widthIn, heightIn, 4);
@@ -289,21 +354,35 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 						grabberPtr->capMutex.unlock();
 					}
 
+				}
+				
+				
+				else if( grabberPtr->pixelFormat == OF_PIXELS_BGR ){
+					std::cout << "OF_PIXELS_BGR xxx" << std::endl;
+					if( grabberPtr->capMutex.try_lock() ){
+						grabberPtr->pixelsTmp.setFromPixels(isrc4, widthIn, heightIn, 3);
+						grabberPtr->updatePixelsCB();
+						grabberPtr->capMutex.unlock();
+					}
+
 				}else{
+//					std::cout << "rgbConvertPixels" << std::endl;
+//					std::cout << "OF_PIXELS_xxx" << std::endl;
 
-					ofPixels rgbConvertPixels;
-					rgbConvertPixels.allocate(widthIn, heightIn, 3);
 
-					vImage_Buffer srcImg;
-					srcImg.width = widthIn;
-					srcImg.height = heightIn;
+					if (!rgbConvertPixels.isAllocated()) {
+						rgbConvertPixels.allocate(widthIn, heightIn, 3);
+
+						srcImg.width = widthIn;
+						srcImg.height = heightIn;
+						srcImg.rowBytes = CVPixelBufferGetBytesPerRow(imageBuffer);
+
+						dstImg.width = srcImg.width;
+						dstImg.height = srcImg.height;
+						dstImg.rowBytes = width*3;
+					}
+
 					srcImg.data = isrc4;
-					srcImg.rowBytes = CVPixelBufferGetBytesPerRow(imageBuffer);
-
-					vImage_Buffer dstImg;
-					dstImg.width = srcImg.width;
-					dstImg.height = srcImg.height;
-					dstImg.rowBytes = width*3;
 					dstImg.data = rgbConvertPixels.getData();
 
 					vImage_Error err;
@@ -511,6 +590,10 @@ bool ofAVFoundationGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 		pixelFormat = PixelFormat;
 		return true;
 	} else if(PixelFormat == OF_PIXELS_BGRA){
+		pixelFormat = PixelFormat;
+		return true;
+	}
+	else if(PixelFormat == OF_PIXELS_BGR){
 		pixelFormat = PixelFormat;
 		return true;
 	}
