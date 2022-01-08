@@ -100,8 +100,7 @@ public:
 class ofBaseVideoDraws:
 	virtual public ofBaseVideo,
 	public ofBaseDraws,
-	public ofBaseHasTexturePlanes,
-	virtual public ofBaseHasPixels{
+	public ofBaseHasTexturePlanes{
 public:
 	/// \brief Destroy the ofBaseVideoDraws.
 	virtual ~ofBaseVideoDraws(){}
