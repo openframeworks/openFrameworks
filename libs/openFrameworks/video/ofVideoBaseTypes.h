@@ -98,7 +98,7 @@ public:
 
 /// \brief A base class representing a drawable video source.
 class ofBaseVideoDraws:
-	virtual public ofBaseVideo,
+	public ofBaseVideo,
 	public ofBaseDraws,
 	public ofBaseHasTexturePlanes{
 public:
