@@ -22,7 +22,7 @@ ofVideoGrabber::~ofVideoGrabber(){
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber){
-	grabber = newGrabber;
+	grabber = std::move(newGrabber);
 }
 
 //--------------------------------------------------------------------
