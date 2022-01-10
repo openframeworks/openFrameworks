@@ -1609,7 +1609,7 @@ string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
-#if OF_USING_STD_FS
+#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(_path.string().empty()) return "";
     return (std::filesystem::path(_path).make_preferred() / "").string();
 #else
