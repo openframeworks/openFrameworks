@@ -1609,6 +1609,10 @@ string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
+#if OF_USING_STD_FS
+    if(_path.string().empty()) return "";
+    return (std::filesystem::path(_path).make_preferred() / "").string();
+#else
     auto path = std::filesystem::path(_path).make_preferred().string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
@@ -1617,6 +1621,7 @@ string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
 		}
 	}
 	return path;
+#endif
 }
 
 
