@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 #include "pugiconfig.h"
-#include "pugixml.h"
+#include "pugixml.hpp"
 #include "ofParameter.h"
 
 template<typename It>
