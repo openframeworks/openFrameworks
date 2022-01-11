@@ -1229,10 +1229,15 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	time = CMTimeMaximum(time, kCMTimeZero);
 	time = CMTimeMinimum(time, duration);
 	
-	if (!bStream && (CMTimeCompare(time, videoSampleTime) < 0)) {
+// 	if (!bStream && (CMTimeCompare(time, videoSampleTime) < 0)) {
 		// if jumping back in time
+<<<<<<< HEAD
 //		[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
 	}
+=======
+		//[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
+// 	}
+>>>>>>> e71175c606c5b32269687f830a13a596abbb6b97
 	
 	// set reader to real requested time
 	[_player seekToTime:time
