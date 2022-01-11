@@ -21,7 +21,7 @@ task wrapper(type: Wrapper) {
 android {
     compileSdkVersion 32
     //ndkPath "/Users/~/Documents/android-ndk-r21e"  // Point to your own NDK if needed
-    ndkVersion "23.0.7599858" //NDK will automatically sideload with this
+    ndkVersion "23.1.7779620" //NDK will automatically sideload with this
 
     buildToolsVersion '32.0.0'
 
