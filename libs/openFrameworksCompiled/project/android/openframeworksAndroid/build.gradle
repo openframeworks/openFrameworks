@@ -14,12 +14,16 @@ def LIB_OUTPUT=ofRoot() + './../../../../libs/openFrameworksCompiled/lib/android
 def enableProguardInReleaseBuilds = true
 def enableProguardInDebugBuilds = true
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '7.3.3'
+}
+
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     //ndkPath "/Users/~/Documents/android-ndk-r21e"  // Point to your own NDK if needed
     ndkVersion "23.0.7599858" //NDK will automatically sideload with this
 
-    buildToolsVersion '31.0.0'
+    buildToolsVersion '32.0.0'
 
     // Enable generation of Prefab packages and include them in the library's AAR.
 //    buildFeatures {
@@ -33,7 +37,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 12
         versionName '12'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -49,6 +53,7 @@ android {
                 }
             }
         }
+        multiDexEnabled false
     }
     buildTypes {
         release {
@@ -118,8 +123,8 @@ dependencies {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "com.getkeepsafe.relinker:relinker:1.4.4"
     implementation 'com.google.oboe:oboe:1.6.1'

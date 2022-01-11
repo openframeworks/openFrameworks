@@ -155,7 +155,6 @@ include_directories(
 		${PRJ_LIBS_ROOT}/tess2/include
 		${PRJ_LIBS_ROOT}/utf8/include
 		${PRJ_LIBS_ROOT}/uriparser/include
-		${PRJ_LIBS_ROOT}/uriparser/include
 )
 
 find_library(android-lib android)
@@ -199,13 +198,13 @@ target_link_libraries( openFrameworksAndroid
 #include_directories(src/main/cpp/Libraries/include/)
 # Link the thrid-party library with your native library.
 target_link_libraries( openFrameworksAndroid #FreeImage
-		${LIBS_ROOT}/FreeImage/lib/android/${ANDROID_ABI}/libfreeimage.a )
+		${PRJ_LIBS_ROOT}/FreeImage/lib/android/${ANDROID_ABI}/libfreeimage.a )
 target_link_libraries( openFrameworksAndroid #freetype
-		${LIBS_ROOT}/freetype/lib/android/${ANDROID_ABI}/libfreetype.a )
+		${PRJ_LIBS_ROOT}/freetype/lib/android/${ANDROID_ABI}/libfreetype.a )
 target_link_libraries( openFrameworksAndroid #pugixml
-		${LIBS_ROOT}/pugixml/lib/android/${ANDROID_ABI}/libpugixml.a)
+		${PRJ_LIBS_ROOT}/pugixml/lib/android/${ANDROID_ABI}/libpugixml.a)
 target_link_libraries( openFrameworksAndroid #tess2
-		${LIBS_ROOT}/tess2/lib/android/${ANDROID_ABI}/libtess2.a)
+		${PRJ_LIBS_ROOT}/tess2/lib/android/${ANDROID_ABI}/libtess2.a)
 target_link_libraries( openFrameworksAndroid #uriparser
-		${LIBS_ROOT}/uriparser/lib/android/${ANDROID_ABI}/liburiparser.a)
+		${PRJ_LIBS_ROOT}/uriparser/lib/android/${ANDROID_ABI}/liburiparser.a)
 
