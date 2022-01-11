@@ -14,7 +14,10 @@ android-15
 android-16
 android-17
 android-18
+android-19
+android-20
 android-21
+android-22
 *mips*
 *4.8*
 *4.6*
