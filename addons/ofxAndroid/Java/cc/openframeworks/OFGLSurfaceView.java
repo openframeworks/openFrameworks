@@ -27,6 +27,8 @@ import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 @Keep
 class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListener {
 
+    ContextFactory factory;
+
     public OFGLSurfaceView(Context context) {
         super(context);
         Log.i("OF","OFGLSurfaceView():" + context.toString());
@@ -50,8 +52,13 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         } else {
             this.getHolder().setFormat(PixelFormat.OPAQUE);
         }
-        //setEGLContextFactory(new ContextFactory());
 
+        try {
+                factory = new ContextFactory();
+                setEGLContextFactory(factory);
+        } catch (Exception exception){
+                Log.w("OF", "Could not set ContextFactory ", exception);
+        }
         setClientVersion();
         int width = getWidth();
         int height = getHeight();
@@ -67,8 +74,13 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                 Log.w("OF", "Could not get Window for Display ", exception);
             }
         }
+        
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            OFAndroid.samples=2; // force no AA old devices
+            depth = 0;
+        }
 
-        OFEGLConfigChooser configChooser = getConfigChooser(8,8,8,8,24,8,OFAndroid.samples,false);
+        OFEGLConfigChooser configChooser = getConfigChooser(8,8,8,8,depth,8,OFAndroid.samples,false);
         setEGLConfigChooser(configChooser);
 
         mRenderer = new OFAndroidWindow(width, height);
@@ -147,6 +159,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                 SurfaceControl.Transaction transaction = null;
                 transaction = new SurfaceControl.Transaction();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if(transaction != null && sc != null && sc.isValid())
                     transaction.setFrameRate(sc, frameRate, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE);
                 }
             }
@@ -214,7 +227,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     }
 
     public OFEGLConfigChooser getConfigChooser() {
-        return getConfigChooser(8,8,8,8,24,8,4,false);
+        return getConfigChooser(8,8,8,8,24,8,OFAndroid.samples,false);
     }
 
     public OFEGLConfigChooser getConfigChooser(int r, int g, int b, int a, int depth, int stencil, int samples, boolean gamut) {
@@ -261,8 +274,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
 
         //Log.d(TAG, "renderer pause complete");
     }
-
-    
+   
 
     @Override
     public void onResume() {

@@ -470,11 +470,12 @@ public class OFAndroidLifeCycle
 	
 	public static void glRestart()
 	{
+		if(OFActivity.LOG_ENGINE) Log.d(TAG, "glRestart");
 	}
 	
 	public static void glResume(ViewGroup glContainer)
 	{
-		Log.d(TAG, "glResume");
+		if(OFActivity.LOG_ENGINE) Log.d(TAG, "glResume");
 		OFGLSurfaceView glView = getGLView();
 		boolean offScreenLayoutParamFix = false;
 		if(glView.getWidth() <= 1|| glView.getHeight() <= 1) {
@@ -485,8 +486,12 @@ public class OFAndroidLifeCycle
 
 			glView.onResume();
 		} else {
+			if( glView != null ) {
+				glView.onResume();
+			}
 			pausedGLView = mGLView;
 			clearGLView(); // mGLView = null;
+			Log.d(TAG, "glResume setGLESVersion");
 			OFEGLConfigChooser.setGLESVersion(2);
 			glCreateSurface(true);
 		}
@@ -504,7 +509,7 @@ public class OFAndroidLifeCycle
 	
 	public static void glPause()
 	{
-		Log.d(TAG, "glPause");
+		if(OFActivity.LOG_ENGINE) Log.d(TAG, "glPause");
 		OFGLSurfaceView glView = getGLView();
 		if( glView != null ) {
 			glView.onPause();
@@ -515,7 +520,7 @@ public class OFAndroidLifeCycle
 	
 	public static void glDestroy()
 	{
-		Log.d(TAG, "glDestroy");
+		if(OFActivity.LOG_ENGINE) Log.d(TAG, "glDestroy");
 		m_countActivities--;
 		if(m_countActivities == 0){
 			Log.d(TAG, "glDestroy destroy ofApp");

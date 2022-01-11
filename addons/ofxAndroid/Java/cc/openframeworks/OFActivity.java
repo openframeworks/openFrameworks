@@ -33,6 +33,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 import android.view.accessibility.AccessibilityEvent;
@@ -310,10 +311,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	}
 
 	public void DetermineDisplayConfiguration(boolean allowSetFrameRate) {
+		int modeID = 0;
+		int highestModeID = 0;
 		try {
 			display = getWindowManager().getDefaultDisplay();
 			if(display.isValid()) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					boolean isWideColorGamut = display.isWideColorGamut();
 					if(LOG_ENGINE) Log.i("OF", "Display WideColor Gamut Supported:" +  isWideColorGamut);
 					OFAndroid.wideGamut = isWideColorGamut;
@@ -324,11 +327,12 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				currentRefreshRate = display.getRefreshRate();
 				if(LOG_ENGINE) Log.i("OF", "Display Current RefreshRate :" +  currentRefreshRate);
 
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 						try {
 							Display.Mode[] modes = display.getSupportedModes();
 							Display.Mode currentMode = display.getMode();
+							modeID = currentMode.getModeId();
 							if(LOG_ENGINE) Log.i("OF", "Display Mode: CurrentMode:" + currentMode + " refreshRate: [" + currentMode.getRefreshRate() + "] mode PhysicalWidth:[" + currentMode.getPhysicalWidth() + "] mode PhysicalHeight:[" + currentMode.getPhysicalHeight() + "]");
 
 							if (currentRefreshRate != currentMode.getRefreshRate()) {
@@ -339,6 +343,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 								if(LOG_ENGINE) Log.i("OF", "Display Mode: Supported:" + mode + " refreshRate: [" + mode.getRefreshRate() + "] mode PhysicalWidth:[" + mode.getPhysicalWidth() + "] mode PhysicalHeight:[" + mode.getPhysicalHeight() + "]");
 								if (mode.getRefreshRate() >= highestRefreshRate) {
 									highestRefreshRate = mode.getRefreshRate();
+									if (highestRefreshRate >= OFAndroid.highestFrameRate) {
+										highestModeID = mode.getModeId();
+									}
 								}
 							}
 						} catch (Exception ex) {
@@ -358,16 +365,33 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						}
 					}
 
-					if(currentRefreshRate >= highestRefreshRate)
+					if(currentRefreshRate >= highestRefreshRate) {
 						highestRefreshRate = currentRefreshRate;
+						highestModeID = modeID;
+					}
 
 					if(allowSetFrameRate) {
 						OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 						if (glView != null) {
 
-							if (highestRefreshRate > OFAndroid.highestFrameRate)
+							if (highestRefreshRate > OFAndroid.highestFrameRate) {
 								highestRefreshRate = OFAndroid.highestFrameRate; // allow capping
+							}
+
+							try {
+								final Window window = activity.getWindow();
+								final WindowManager.LayoutParams params = window.getAttributes();
+								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+									params.preferredDisplayModeId = highestModeID;
+								}
+								window.setAttributes(params);
+							}catch(Exception ex) {
+								Log.w("OF", "Setting ModeID:"+ ex.getMessage());
+							}
+							
 							glView.setFrameRate(highestRefreshRate);
+
+
 							currentRefreshRate = highestRefreshRate;
 						}
 					} else {
@@ -804,21 +828,47 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				if (OFAndroid.lastInputDevice != null && OFAndroid.lastInputDevice.getVendorId() == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))) {
 					if (keyCode == 97) { // flips X to Square to fix HID issues for PS5
 						keyCode = 96;
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 97->96");
 					} else if (keyCode == 96) {
-						keyCode = 97;
+						keyCode = 99;
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 96->97");
 					} else if (keyCode == 100) {
-						keyCode = 102;
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 100->102");
+						keyCode = 104;
 					} else if (keyCode == 102) {
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 102->100");
 						keyCode = 100;
 					} else if (keyCode == 101) {
-						keyCode = 103;
+						keyCode = 105;
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 101->103");
 					} else if (keyCode == 103) {
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 103->101");
 						keyCode = 101;
 					} else if (keyCode == 99) {
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 99->100");
 						keyCode = 100;
-					} else if (keyCode == 100) {
-						keyCode = 99;
+					}  else if (keyCode == 104) {
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 99->100");
+						keyCode = 109;
+					} else if (keyCode == 105) {
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 99->100");
+						keyCode = 108;
 					}
+				} else {
+					if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+						Log.i("OF", "Not PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId());
+					else
+						Log.i("OF", "Not PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId());
+
 				}
 			}
 			if(OFAndroid.lastInputID == -1 || OFAndroid.lastInputID != event.getDeviceId() && OFAndroid.lastInputVendorID != OFAndroid.lastInputDevice.getVendorId()) {

@@ -19,6 +19,8 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,10 +31,13 @@ import android.os.Build;
 import android.os.Environment;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -132,10 +137,57 @@ public class OFAndroid {
 		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
 	}
 
+	public static Bitmap screenShot(View view) {
+		Bitmap bitmap = Bitmap.createBitmap(view.getWidth(),view.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		view.draw(canvas);
+		return bitmap;
+	}
+
+	@SuppressWarnings("unused")
+	private String getPictureDirectoryPath() {
+		return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+	}
+
+
+	@SuppressWarnings("unused")
+	private void addScreenshotToGallery(String filepath) {
+		Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		File f = new File(filepath);
+		Uri contentUri = Uri.fromFile(f);
+		mediaScanIntent.setData(contentUri);
+		OFAndroidLifeCycle.getActivity().sendBroadcast(mediaScanIntent);
+	}
+
+	public static Bitmap screenShot(OFGLSurfaceView view) {
+		Bitmap bitmap = Bitmap.createBitmap(view.getWidth(),view.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		view.draw(canvas);
+		return bitmap;
+	}
+
+	public static void share(Context context, Bitmap bitmap, String subject, String text){
+		String pathofBmp=
+				MediaStore.Images.Media.insertImage(context.getContentResolver(),
+						bitmap,"title", null);
+		Uri uri = Uri.parse(pathofBmp);
+		Intent shareIntent = new Intent(Intent.ACTION_SEND);
+		shareIntent.setType("image/*");
+		shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+		shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+		context.startActivity(Intent.createChooser(shareIntent, subject));
+	}
+
+
 	// Checks if a volume containing external storage is available to at least read.
 	private boolean isExternalStorageReadable() {
 		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ||
 				Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
+	}
+
+	public static String getDirectoryPictures() {
+		return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
 	}
 
 	public static String getRealExternalStorageDirectory(Context context) {
@@ -1068,6 +1120,7 @@ public class OFAndroid {
 			return true; // handled event
 		}
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)) return false;
+		
 
 		int unicodeChar = event.getUnicodeChar();
 		//toast("keyUp:" + keyCode);
