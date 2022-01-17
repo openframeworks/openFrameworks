@@ -37,8 +37,11 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	    setResolution(w,h, true);
 	}
 
-	public void setResolution(int w, int h, boolean updateSurface) {	    
+	public void setResolution(int w, int h, boolean updateSurface) {
+	    if(w == this.w && h == this.h && updateSurface == false) return;
         Log.i("OFAndroidWindow","setResolution:width:" + w + " height:" + h);
+
+
         this.w = w;
         this.h = h;
 
