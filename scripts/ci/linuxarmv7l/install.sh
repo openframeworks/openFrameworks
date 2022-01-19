@@ -83,14 +83,14 @@ createArchImg(){
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
 		cd ~
-		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz
         # download=$!
         # echoDots $download
         # wait $download
 
 		mkdir ~/archlinux
 		junest -- << EOF
-	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+	        tar xzf ~/ArchLinuxARM-rpi-armv7-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
             sudo pacman --noconfirm -S archlinux-keyring
