@@ -176,7 +176,7 @@ target_link_libraries(openFrameworksAndroid
 		android
 		EGL
 		GLESv2
-		GLESv3
+#		GLESv3
 		log
 		m
 		z
@@ -187,8 +187,8 @@ target_link_libraries( openFrameworksAndroid
 		${android-lib} )
 target_link_libraries( openFrameworksAndroid
 		${GLES2-lib} )
-target_link_libraries( openFrameworksAndroid
-		${GLES3-lib} )
+#target_link_libraries( openFrameworksAndroid
+#		${GLES3-lib} )
 target_link_libraries( openFrameworksAndroid
 		${GLES1-lib} )
 target_link_libraries( openFrameworksAndroid
