@@ -15,7 +15,7 @@ public:
 
 	std::shared_ptr<ofAppBaseWindow> createWindow(const ofWindowSettings & settings);
 	template<typename Window>
-	void addWindow(std::shared_ptr<Window> window){
+	void addWindow(const std::shared_ptr<Window> & window){
 		allowMultiWindow = Window::allowsMultiWindow();
 		if(Window::doesLoop()){
 		    windowLoop = Window::loop;
