@@ -9,41 +9,12 @@ import android.opengl.GLSurfaceView;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLSurface;
-import javax.microedition.khronos.opengles.GL10;
-//import javax.microedition.khronos.egl.EGL15;
-//import javax.microedition.khronos.egl.EGL14;
-import javax.microedition.khronos.egl.EGL11;
-import javax.microedition.khronos.egl.EGL;
-import android.content.Context;
-import android.graphics.PixelFormat;
-import android.opengl.GLSurfaceView;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.opengles.GL10;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.ColorSpace;
-import android.graphics.PixelFormat;
 import android.opengl.EGL14;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.WindowManager;
+
 import androidx.annotation.Keep;
 
 @Keep
@@ -305,21 +276,21 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         boolean workingConfig = false;
         int numConfigs = num_config[0];
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!egl.eglChooseConfig(display, s_configAttribsMSAA16Angle, null, 0,
-                    num_config)) {
-                Log.w("OF", String.format("s_configAttribsMSAA16Angle MSAA with Angle Libs failed"));
-            }  else {
-                numConfigs = num_config[0];
-                if(numConfigs > 0) {
-                    configs = new EGLConfig[numConfigs];
-                    egl.eglChooseConfig(display, s_configAttribsMSAA16, configs, numConfigs, num_config);
-
-                } else {
-                    Log.w("OF", String.format("s_configAttribsMSAA16Angle MSAA with Angle Libs failed"));
-                }
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            if (!egl.eglChooseConfig(display, s_configAttribsMSAA16Angle, null, 0,
+//                    num_config)) {
+//                Log.w("OF", String.format("s_configAttribsMSAA16Angle MSAA with Angle Libs failed"));
+//            }  else {
+//                numConfigs = num_config[0];
+//                if(numConfigs > 0) {
+//                    configs = new EGLConfig[numConfigs];
+//                    egl.eglChooseConfig(display, s_configAttribsMSAA16, configs, numConfigs, num_config);
+//
+//                } else {
+//                    Log.w("OF", String.format("s_configAttribsMSAA16Angle MSAA with Angle Libs failed"));
+//                }
+//            }
+//        }
 
         if (numConfigs <= 0  && !workingConfig) {
             setRGB();
