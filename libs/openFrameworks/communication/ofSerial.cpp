@@ -69,9 +69,10 @@ void ofSerial::enumerateWin32Ports(){
 
 			 char * begin = nullptr;
 			 char * end = nullptr;
-			 begin = strstr((char *)dataBuf, "COM");
+			 begin = strstr((char *)dataBuf, "(COM");
 
 			 if(begin){
+				 begin++;	// get rid of the (
 				 end = strstr(begin, ")");
 				 if(end){
 					 *end = 0;   // get rid of the )...
