@@ -891,14 +891,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			CGSize presentationSize = _playerItem.presentationSize;
 			videoWidth = presentationSize.width;
 			videoHeight = presentationSize.height;
-		}		
+		}
 		
 		// create or update video format description
 		if (!_videoInfo || !CMVideoFormatDescriptionMatchesImageBuffer(_videoInfo, buffer)) {
 			if (_videoInfo) {
 				CFRelease(_videoInfo);
 				_videoInfo = nil;
-			}		
+			}
 			err = CMVideoFormatDescriptionCreateForImageBuffer(NULL, buffer, &_videoInfo);
 		}
 		if (err) {
@@ -1009,7 +1009,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			bNewFrame = NO;
 			return;
 		}
-//		NSLog(@"OW CREATE");
+		
 		[self createAssetReaderWithTimeRange:CMTimeRangeMake(currentTime, duration)];
 	}
 	
@@ -1231,13 +1231,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 // 	if (!bStream && (CMTimeCompare(time, videoSampleTime) < 0)) {
 		// if jumping back in time
-<<<<<<< HEAD
-//		[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
-	}
-=======
 		//[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
 // 	}
->>>>>>> e71175c606c5b32269687f830a13a596abbb6b97
 	
 	// set reader to real requested time
 	[_player seekToTime:time
