@@ -161,8 +161,15 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
 	if(bMix) {
 		if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
 			if([audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
-                             withOptions:(AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionAllowAirPlay | AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP)
-								   error:nil]) {
+                             withOptions:(AVAudioSessionCategoryOptionMixWithOthers |
+            #if !TARGET_OF_WATCHOS
+                                          AVAudioSessionCategoryOptionAllowAirPlay |
+            #endif
+            #if (!TARGET_OF_TVOS && !TARGET_OF_WATCHOS)
+                                          AVAudioSessionCategoryOptionAllowBluetooth |
+            #endif
+                                          AVAudioSessionCategoryOptionAllowBluetoothA2DP)
+                                   error:nil]) {
 				success = true;
 			}
 		}
@@ -171,7 +178,16 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
     
 		// this is the default category + options setup
 		// Note: using a sound input stream will set the category to PlayAndRecord
-        if([audioSession setCategory:AVAudioSessionCategorySoloAmbient withOptions:(AVAudioSessionCategoryOptionAllowAirPlay | AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP) error:nil]) {
+        if([audioSession setCategory:AVAudioSessionCategorySoloAmbient
+                         withOptions:(
+        #if !TARGET_OF_WATCHOS
+                                      AVAudioSessionCategoryOptionAllowAirPlay |
+        #endif
+        #if (!TARGET_OF_TVOS && !TARGET_OF_WATCHOS)
+                                      AVAudioSessionCategoryOptionAllowBluetooth |
+        #endif
+                                      AVAudioSessionCategoryOptionAllowBluetoothA2DP)
+                         error:nil]) {
 			success = true;
 		}
         

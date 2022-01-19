@@ -43,7 +43,14 @@
     // need to configure set the audio category, and override to it route the audio to the speaker
     if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
         if(![audioSession setCategory:playbackCategory
-                          withOptions:(AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionAllowAirPlay | AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP)
+                                       withOptions:(AVAudioSessionCategoryOptionMixWithOthers |
+#if !TARGET_OF_TVOS
+                                                   AVAudioSessionCategoryOptionAllowAirPlay |
+#endif
+#if (!TARGET_OF_TVOS && !TARGET_OF_WATCHOS)
+                                                   AVAudioSessionCategoryOptionAllowBluetooth |
+#endif
+                                                   AVAudioSessionCategoryOptionAllowBluetoothA2DP)
                                         error:&err]) { err = nil; }
     }
 	[[AVAudioSession sharedInstance] setActive: YES error: nil];
