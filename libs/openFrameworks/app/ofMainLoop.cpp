@@ -70,7 +70,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 	return window;
 }
 
-void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+void ofMainLoop::run(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
 	windowsApps[window] = app;
 	if(app){
 		ofAddListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
@@ -228,7 +228,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
 	return currentWindow.lock();
 }
 
-void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
+void ofMainLoop::setCurrentWindow(const shared_ptr<ofAppBaseWindow> & window){
 	currentWindow = window;
 }
 
