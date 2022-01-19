@@ -54,15 +54,15 @@ using namespace std;
 
 //--------------------------------------
 namespace{
-    shared_ptr<ofMainLoop> & mainLoop(){
-        static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
-        return *mainLoop;
-    }
+	shared_ptr<ofMainLoop> & mainLoop(){
+		static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
+		return *mainLoop;
+	}
 
-    bool & initialized(){
-        static bool * initialized = new bool(false);
-        return *initialized;
-    }
+	bool & initialized(){
+		static bool * initialized = new bool(false);
+		return *initialized;
+	}
 
 	bool & exiting(){
 		static bool * exiting = new bool(false);
@@ -74,29 +74,29 @@ namespace{
 		return *noopEvents;
 	}
 
-    #if defined(TARGET_LINUX) || defined(TARGET_OSX)
-        #include <signal.h>
-        #include <string.h>
-        void ofSignalHandler(int signum){
-            char* pSignalString = strsignal(signum);
+	#if defined(TARGET_LINUX) || defined(TARGET_OSX)
+		#include <signal.h>
+		#include <string.h>
+		void ofSignalHandler(int signum){
+			char* pSignalString = strsignal(signum);
 
-            if(pSignalString){
-                ofLogVerbose("ofSignalHandler") << pSignalString;
-            }else{
-                ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
-            }
+			if(pSignalString){
+				ofLogVerbose("ofSignalHandler") << pSignalString;
+			}else{
+				ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
+			}
 
-            signal(SIGTERM, nullptr);
-            signal(SIGQUIT, nullptr);
-            signal(SIGINT,  nullptr);
-            signal(SIGHUP,  nullptr);
-            signal(SIGABRT, nullptr);
+			signal(SIGTERM, nullptr);
+			signal(SIGQUIT, nullptr);
+			signal(SIGINT,  nullptr);
+			signal(SIGHUP,  nullptr);
+			signal(SIGABRT, nullptr);
 
-            if(mainLoop()){
-                mainLoop()->shouldClose(signum);
-            }
-        }
-    #endif
+			if(mainLoop()){
+				mainLoop()->shouldClose(signum);
+			}
+		}
+	#endif
 }
 
 
@@ -110,7 +110,7 @@ void ofInit(){
 	exiting() = false;
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-    // manage own exit
+	// manage own exit
 #else
 	atexit(ofExitCallback);
 #endif
@@ -127,7 +127,7 @@ void ofInit(){
 	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
-        of::priv::initutils();
+		of::priv::initutils();
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeBeginPeriod(1);		// ! experimental, sets high res time
@@ -143,7 +143,7 @@ void ofInit(){
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
 		try{
-            std::locale::global(std::locale("C.UTF-8"));
+			std::locale::global(std::locale("C.UTF-8"));
 		}catch(...){
 			if(ofToLower(std::locale("").name()).find("utf-8")==std::string::npos){
 				ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
@@ -156,8 +156,8 @@ void ofInit(){
 #endif
 
 #if defined(TARGET_WIN32) && !_MSC_VER //MSYS2 UTF-8 limited support
-    setlocale(LC_ALL,"");
-    ofLogWarning("ofInit") << "MSYS2 has limited support for UTF-8. using "<< string( setlocale(LC_ALL,NULL) );
+	setlocale(LC_ALL,"");
+	ofLogWarning("ofInit") << "MSYS2 has limited support for UTF-8. using "<< string( setlocale(LC_ALL,NULL) );
 #endif
 }
 

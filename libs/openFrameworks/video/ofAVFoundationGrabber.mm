@@ -30,9 +30,9 @@
 		bInitCalled = NO;
 		grabberPtr = NULL;
 		deviceID = 0;
-        width = 0;
-        height = 0;
-        currentFrame = 0;
+		width = 0;
+		height = 0;
+		currentFrame = 0;
 	}
 	return self;
 }
@@ -156,10 +156,10 @@
 		dispatch_release(queue);
 
 		NSDictionary* videoSettings =[NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSNumber numberWithDouble:width], (id)kCVPixelBufferWidthKey,
-                              [NSNumber numberWithDouble:height], (id)kCVPixelBufferHeightKey,
-                              [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], (id)kCVPixelBufferPixelFormatTypeKey,
-                              nil];
+							  [NSNumber numberWithDouble:width], (id)kCVPixelBufferWidthKey,
+							  [NSNumber numberWithDouble:height], (id)kCVPixelBufferHeightKey,
+							  [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], (id)kCVPixelBufferPixelFormatTypeKey,
+							  nil];
 		[captureOutput setVideoSettings:videoSettings];
 
 		// And we create a capture session
@@ -228,10 +228,10 @@
 
 		// remove the input and outputs from session
 		for(AVCaptureInput *input1 in self.captureSession.inputs) {
-		    [self.captureSession removeInput:input1];
+			[self.captureSession removeInput:input1];
 		}
 		for(AVCaptureOutput *output1 in self.captureSession.outputs) {
-		    [self.captureSession removeOutput:output1];
+			[self.captureSession removeOutput:output1];
 		}
 
 		[self.captureSession stopRunning];
@@ -243,15 +243,15 @@
 }
 
 -(std::vector <std::string>)listDevices{
-    std::vector <std::string> deviceNames;
+	std::vector <std::string> deviceNames;
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
-        deviceNames.push_back([captureDevice.localizedName UTF8String]);
+		deviceNames.push_back([captureDevice.localizedName UTF8String]);
 		 ofLogNotice() << "Device: " << i << ": " << deviceNames.back();
 		i++;
-    }
-    return deviceNames;
+	}
+	return deviceNames;
 }
 
 -(void)setDevice:(int)_device{
@@ -358,7 +358,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		CGImageRelease(currentFrame);
 		currentFrame = nil;
 	}
-    [super dealloc];
+	[super dealloc];
 }
 
 - (void)eraseGrabberPtr {
@@ -371,8 +371,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 ofAVFoundationGrabber::ofAVFoundationGrabber(){
 	fps		= -1;
 	grabber = [[OSXVideoGrabber alloc] init];
-    width = 0;
-    height = 0;
+	width = 0;
+	height = 0;
 	bIsInit = false;
 	pixelFormat = OF_PIXELS_RGB;
 	newFrame = false;
@@ -404,7 +404,7 @@ void ofAVFoundationGrabber::close(){
 	clear();
 	bIsInit = false;
 	width = 0;
-    height = 0;
+	height = 0;
 	fps		= -1;
 	pixelFormat = OF_PIXELS_RGB;
 	newFrame = false;
@@ -448,7 +448,7 @@ bool ofAVFoundationGrabber::setup(int w, int h){
 
 
 bool ofAVFoundationGrabber::isInitialized() const{
-    return bIsInit;
+	return bIsInit;
 }
 
 void ofAVFoundationGrabber::update(){
@@ -483,16 +483,16 @@ void ofAVFoundationGrabber::updatePixelsCB(){
 std::vector <ofVideoDevice> ofAVFoundationGrabber::listDevices() const{
 	std::vector <std::string> devList = [grabber listDevices];
 
-    std::vector <ofVideoDevice> devices;
-    for(int i = 0; i < devList.size(); i++){
-        ofVideoDevice vd;
-        vd.deviceName = devList[i];
-        vd.id = i;
-        vd.bAvailable = true;
-        devices.push_back(vd);
-    }
+	std::vector <ofVideoDevice> devices;
+	for(int i = 0; i < devList.size(); i++){
+		ofVideoDevice vd;
+		vd.deviceName = devList[i];
+		vd.id = i;
+		vd.bAvailable = true;
+		devices.push_back(vd);
+	}
 
-    return devices;
+	return devices;
 }
 
 void ofAVFoundationGrabber::setDeviceID(int deviceID) {

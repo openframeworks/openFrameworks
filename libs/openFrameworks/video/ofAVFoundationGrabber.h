@@ -70,13 +70,13 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		void setDesiredFrameRate(int capRate);
 		bool setPixelFormat(ofPixelFormat PixelFormat);
 
-        bool setup(int w, int h);
+		bool setup(int w, int h);
 		void update();
 		bool isFrameNew() const;
 		void close();
 
 		ofPixels&		 		getPixels();
-        const ofPixels&		    getPixels() const;
+		const ofPixels&		    getPixels() const;
 
 		float getWidth() const{
 			return width;
@@ -85,7 +85,7 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 			return height;
 		}
 
-        bool isInitialized() const;
+		bool isInitialized() const;
 
 		void updatePixelsCB();
 		std::vector <ofVideoDevice> listDevices() const;
@@ -98,7 +98,7 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		int width, height;
 
 		int device = 0;
-        bool bIsInit = false;
+		bool bIsInit = false;
 
 		int fps  = -1;
 		ofTexture tex;

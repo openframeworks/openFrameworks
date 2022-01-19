@@ -288,7 +288,7 @@ bool ofGstUtils::startPipeline(){
 	//GstState targetState;
 	GstState state;
 	auto ret = gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED);
-    switch (ret) {
+	switch (ret) {
 		case GST_STATE_CHANGE_FAILURE:
 			ofLogError("ofGstUtils") << "startPipeline(): unable to pause pipeline";
 			return false;
@@ -314,7 +314,7 @@ bool ofGstUtils::startPipeline(){
 		case GST_STATE_CHANGE_SUCCESS:
 			ofLogVerbose() << "Pipeline is PREROLLED";
 			break;
-    }
+	}
 
 	// wait for paused state to query the duration
 	if(!isStream){
@@ -1138,7 +1138,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	glXMakeCurrent (ofGetX11Display(), None, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
-	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+				  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
 
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
 	// FIXME: this seems to be the way to add the context in 1.4.5
@@ -1154,7 +1154,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),
-	    		  GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
+				  GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
 
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
 	// FIXME: this seems to be the way to add the context in 1.4.5
@@ -1219,27 +1219,27 @@ GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
 	guint size = GST_BUFFER_SIZE (_buffer.get());
 	int stride = 0;
 	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
-        stride = gst_video_format_get_row_stride( GST_VIDEO_FORMAT_RGB,0, pixels.getWidth());
-        if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
-            ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getTotalBytes();
-            return GST_FLOW_ERROR;
-        }
+		stride = gst_video_format_get_row_stride( GST_VIDEO_FORMAT_RGB,0, pixels.getWidth());
+		if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
+			ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getTotalBytes();
+			return GST_FLOW_ERROR;
+		}
 	}
 	mutex.lock();
 	if(pixels.isAllocated()){
 		backBuffer = _buffer;
-        if(stride > 0) {
-            backPixels.setFromAlignedPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
-        }
-        else {
-            backPixels.setFromExternalPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
-            eventPixels.setFromExternalPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
-        }
+		if(stride > 0) {
+			backPixels.setFromAlignedPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+		}
+		else {
+			backPixels.setFromExternalPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+			eventPixels.setFromExternalPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+		}
 		bBackPixelsChanged=true;
 		mutex.unlock();
-        if(stride == 0) {
-        	ofNotifyEvent(prerollEvent,eventPixels);
-        }
+		if(stride == 0) {
+			ofNotifyEvent(prerollEvent,eventPixels);
+		}
 	}else{
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
@@ -1253,14 +1253,14 @@ GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
 #else
 
 static GstVideoInfo getVideoInfo(GstSample * sample){
-    GstCaps *caps = gst_sample_get_caps(sample);
-    GstVideoInfo vinfo;
-    if(caps){
+	GstCaps *caps = gst_sample_get_caps(sample);
+	GstVideoInfo vinfo;
+	if(caps){
 		gst_video_info_from_caps (&vinfo, caps);
-    }else{
-    	ofLogError() << "couldn't get sample caps";
-    }
-    return vinfo;
+	}else{
+		ofLogError() << "couldn't get sample caps";
+	}
+	return vinfo;
 }
 
 GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){

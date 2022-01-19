@@ -15,9 +15,9 @@
 	#include <Shellapi.h>
 #endif
 #ifdef TARGET_OSX
-    #include <OpenGL/OpenGL.h>
+	#include <OpenGL/OpenGL.h>
 	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
-    #include <Cocoa/Cocoa.h>
+	#include <Cocoa/Cocoa.h>
 #endif
 #ifdef TARGET_LINUX
 	#include <GL/glut.h>
@@ -66,11 +66,11 @@ static HWND handle  = nullptr;
 
 void HandleFiles(WPARAM wParam)
 {
-    // DragQueryFile() takes a LPWSTR for the name so we need a TCHAR string
-    TCHAR szName[MAX_PATH];
+	// DragQueryFile() takes a LPWSTR for the name so we need a TCHAR string
+	TCHAR szName[MAX_PATH];
 
-    // Here we cast the wParam as a HDROP handle to pass into the next functions
-    HDROP hDrop = (HDROP)wParam;
+	// Here we cast the wParam as a HDROP handle to pass into the next functions
+	HDROP hDrop = (HDROP)wParam;
 
 	POINT pt;
 	DragQueryPoint(hDrop, &pt);
@@ -81,22 +81,22 @@ void HandleFiles(WPARAM wParam)
 	info.position.y = pt.y;
 
 
-    // This functions has a couple functionalities.  If you pass in 0xFFFFFFFF in
-    // the second parameter then it returns the count of how many filers were drag
-    // and dropped.  Otherwise, the function fills in the szName string array with
-    // the current file being queried.
-    int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
+	// This functions has a couple functionalities.  If you pass in 0xFFFFFFFF in
+	// the second parameter then it returns the count of how many filers were drag
+	// and dropped.  Otherwise, the function fills in the szName string array with
+	// the current file being queried.
+	int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
 
-    // Here we go through all the files that were drag and dropped then display them
-    for(int i = 0; i < count; i++)
-    {
-        // Grab the name of the file associated with index "i" in the list of files dropped.
-        // Be sure you know that the name is attached to the FULL path of the file.
-        DragQueryFile(hDrop, i, szName, MAX_PATH);
+	// Here we go through all the files that were drag and dropped then display them
+	for(int i = 0; i < count; i++)
+	{
+		// Grab the name of the file associated with index "i" in the list of files dropped.
+		// Be sure you know that the name is attached to the FULL path of the file.
+		DragQueryFile(hDrop, i, szName, MAX_PATH);
 
 		wchar_t * s =  (wchar_t*)szName;
 		char dfault = '?';
-        const std::locale& loc = std::locale();
+		const std::locale& loc = std::locale();
 		std::ostringstream stm;
 		while( *s != L'\0' ) {
 			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
@@ -105,13 +105,13 @@ void HandleFiles(WPARAM wParam)
 
 			//toUTF8(udispName, dispName);
 
-        // Bring up a message box that displays the current file being processed
-        //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
-    }
+		// Bring up a message box that displays the current file being processed
+		//MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
+	}
 
-    // Finally, we destroy the HDROP handle so the extra memory
-    // allocated by the application is released.
-    DragFinish(hDrop);
+	// Finally, we destroy the HDROP handle so the extra memory
+	// allocated by the application is released.
+	DragFinish(hDrop);
 
 	instance->events().notifyDragEvent(info);
 
@@ -125,24 +125,24 @@ static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lPara
 
    switch(Msg){
 
-      case WM_CLOSE:
-         OF_EXIT_APP(0);
-      break;
-      case WM_DESTROY:
-         OF_EXIT_APP(0);
-         break;
+	  case WM_CLOSE:
+		 OF_EXIT_APP(0);
+	  break;
+	  case WM_DESTROY:
+		 OF_EXIT_APP(0);
+		 break;
 	  case WM_DROPFILES:
 
-            // Call our function we created to display all the files.
-            // We pass the wParam because it's the HDROP handle.
-            HandleFiles(wParam);
-            break;
-      default:
-         return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
-      break;
-    }
+			// Call our function we created to display all the files.
+			// We pass the wParam because it's the HDROP handle.
+			HandleFiles(wParam);
+			break;
+	  default:
+		 return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
+	  break;
+	}
 
-    return 0;
+	return 0;
 }
 
 //--------------------------------------
@@ -248,17 +248,17 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
 		}
 
-    	// w x h, 32bit pixel depth, 60Hz refresh rate
+		// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
 		sprintf( gameStr, "%dx%d:%d@%d", settings.getWidth(), settings.getHeight(), 32, 60 );
 
-    	glutGameModeString(gameStr);
+		glutGameModeString(gameStr);
 
-    	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
-    		ofLogError("ofAppGlutWindow") << "setupOpenGL(): selected game mode format " << gameStr << " not available";
-    	}
-    	// start fullscreen game mode
-    	glutEnterGameMode();
+		if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
+			ofLogError("ofAppGlutWindow") << "setupOpenGL(): selected game mode format " << gameStr << " not available";
+		}
+		// start fullscreen game mode
+		glutEnterGameMode();
 	}
 	windowW = glutGet(GLUT_WINDOW_WIDTH);
 	windowH = glutGet(GLUT_WINDOW_HEIGHT);
@@ -280,21 +280,21 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 	setVerticalSync(true);
 
 
-    //----------------------
-    // setup the callbacks
+	//----------------------
+	// setup the callbacks
 
-    glutMouseFunc(mouse_cb);
-    glutMotionFunc(motion_cb);
-    glutPassiveMotionFunc(passive_motion_cb);
-    glutIdleFunc(idle_cb);
-    glutDisplayFunc(display);
+	glutMouseFunc(mouse_cb);
+	glutMotionFunc(motion_cb);
+	glutPassiveMotionFunc(passive_motion_cb);
+	glutIdleFunc(idle_cb);
+	glutDisplayFunc(display);
 
-    glutKeyboardFunc(keyboard_cb);
-    glutKeyboardUpFunc(keyboard_up_cb);
-    glutSpecialFunc(special_key_cb);
-    glutSpecialUpFunc(special_key_up_cb);
+	glutKeyboardFunc(keyboard_cb);
+	glutKeyboardUpFunc(keyboard_up_cb);
+	glutSpecialFunc(special_key_cb);
+	glutSpecialUpFunc(special_key_up_cb);
 
-    glutReshapeFunc(resize_cb);
+	glutReshapeFunc(resize_cb);
 	glutEntryFunc(entry_cb);
 #ifdef TARGET_LINUX
 	glutCloseFunc(exit_cb);
@@ -304,16 +304,16 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 	glutDragEventFunc(dragEvent);
 #endif
 
-    nFramesSinceWindowResized = 0;
+	nFramesSinceWindowResized = 0;
 
-    #ifdef TARGET_WIN32
-        //----------------------
-        // this is specific to windows (respond properly to close / destroy)
-        fixCloseWindowOnWin32();
-    #endif
+	#ifdef TARGET_WIN32
+		//----------------------
+		// this is specific to windows (respond properly to close / destroy)
+		fixCloseWindowOnWin32();
+	#endif
 
 #ifdef TARGET_LINUX
-    if(!iconSet){
+	if(!iconSet){
 		ofPixels iconPixels;
 		#ifdef DEBUG
 			iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
@@ -323,7 +323,7 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
 		#endif
 		setWindowIcon(iconPixels);
-    }
+	}
 #endif
 	if (settings.isPositionSet()) {
 		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
@@ -339,7 +339,7 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
 void ofAppGlutWindow::setWindowIcon(const string & path){
-    ofPixels iconPixels;
+	ofPixels iconPixels;
 	ofLoadImage(iconPixels,path);
 	setWindowIcon(iconPixels);
 }
@@ -505,15 +505,15 @@ void ofAppGlutWindow::toggleFullscreen(){
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setFullscreen(bool fullscreen){
-    if( windowMode == OF_GAME_MODE)return;
+	if( windowMode == OF_GAME_MODE)return;
 
-    if(fullscreen && windowMode != OF_FULLSCREEN){
-        bNewScreenMode  = true;
-        windowMode      = OF_FULLSCREEN;
-    }else if(!fullscreen && windowMode != OF_WINDOW) {
-        bNewScreenMode  = true;
-        windowMode      = OF_WINDOW;
-    }
+	if(fullscreen && windowMode != OF_FULLSCREEN){
+		bNewScreenMode  = true;
+		windowMode      = OF_FULLSCREEN;
+	}else if(!fullscreen && windowMode != OF_WINDOW) {
+		bNewScreenMode  = true;
+		windowMode      = OF_WINDOW;
+	}
 }
 
 //------------------------------------------------------------
@@ -645,24 +645,24 @@ void ofAppGlutWindow::display(void){
 
 	instance->events().notifyDraw();
 
-    #ifdef TARGET_WIN32
-    if (instance->currentRenderer->getBackgroundAuto() == false){
-        // on a PC resizing a window with this method of accumulation (essentially single buffering)
-        // is BAD, so we clear on resize events.
-        if (nFramesSinceWindowResized < 3){
-            instance->currentRenderer->clear();
-        } else {
-            if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
-            else  glFlush();
-        }
-    } else {
-        if(bDoubleBuffered){
+	#ifdef TARGET_WIN32
+	if (instance->currentRenderer->getBackgroundAuto() == false){
+		// on a PC resizing a window with this method of accumulation (essentially single buffering)
+		// is BAD, so we clear on resize events.
+		if (nFramesSinceWindowResized < 3){
+			instance->currentRenderer->clear();
+		} else {
+			if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
+			else  glFlush();
+		}
+	} else {
+		if(bDoubleBuffered){
 			glutSwapBuffers();
 		} else{
 			glFlush();
 		}
-    }
-    #else
+	}
+	#else
 		if (instance->currentRenderer->getBackgroundAuto() == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
@@ -674,11 +674,11 @@ void ofAppGlutWindow::display(void){
 		} else{
 			glFlush();
 		}
-    #endif
+	#endif
 
 	instance->currentRenderer->finishRender();
 
-    nFramesSinceWindowResized++;
+	nFramesSinceWindowResized++;
 
 }
 

@@ -98,12 +98,12 @@ public:
 	:ofWindowSettings(settings)
 	,glVersionMajor(2)
 	,glVersionMinor(1){
-        const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
-        if(glSettings){
-            glVersionMajor = glSettings->glVersionMajor;
-            glVersionMinor = glSettings->glVersionMinor;
-        }
-    }
+		const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
+		if(glSettings){
+			glVersionMajor = glSettings->glVersionMajor;
+			glVersionMinor = glSettings->glVersionMinor;
+		}
+	}
 
 	virtual ~ofGLWindowSettings(){};
 
@@ -123,11 +123,11 @@ public:
 
 	ofGLESWindowSettings(const ofWindowSettings & settings)
 	:ofWindowSettings(settings), glesVersion(1) {
-        const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
-        if(glesSettings){
-            glesVersion = glesSettings->glesVersion;
-        }
-    }
+		const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
+		if(glesSettings){
+			glesVersion = glesSettings->glesVersion;
+		}
+	}
 
 	virtual ~ofGLESWindowSettings(){};
 

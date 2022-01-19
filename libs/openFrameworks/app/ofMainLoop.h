@@ -18,13 +18,13 @@ public:
 	void addWindow(const std::shared_ptr<Window> & window){
 		allowMultiWindow = Window::allowsMultiWindow();
 		if(Window::doesLoop()){
-		    windowLoop = Window::loop;
+			windowLoop = Window::loop;
 		}
 		if(Window::needsPolling()){
 			windowPollEvents = Window::pollEvents;
 		}
 		if(!allowMultiWindow){
-		    windowsApps.clear();
+			windowsApps.clear();
 		}
 		windowsApps[window] = std::shared_ptr<ofBaseApp>();
 		currentWindow = window;

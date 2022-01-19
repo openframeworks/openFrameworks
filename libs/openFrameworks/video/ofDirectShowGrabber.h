@@ -50,7 +50,7 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		int						deviceID;
 		bool 					bVerbose;
 		bool 					bGrabberInited;
-	    ofPixels		 		pixels;
+		ofPixels		 		pixels;
 		int						attemptFramerate;
 		bool 					bIsFrameNew;	
 		

@@ -77,8 +77,8 @@ public:
 	static void pollEvents();
 
 
-    // this functions are only meant to be called from inside OF don't call them from your code
-    using ofAppBaseWindow::setup;
+	// this functions are only meant to be called from inside OF don't call them from your code
+	using ofAppBaseWindow::setup;
 #ifdef TARGET_OPENGLES
 	void setup(const ofGLESWindowSettings & settings);
 #else
@@ -98,9 +98,9 @@ public:
 
 	ofCoreEvents & events();
 	std::shared_ptr<ofBaseRenderer> & renderer();
-    
-    GLFWwindow* getGLFWWindow();
-    void * getWindowContext(){return getGLFWWindow();}
+	
+	GLFWwindow* getGLFWWindow();
+	void * getWindowContext(){return getGLFWWindow();}
 	ofGLFWWindowSettings getSettings(){ return settings; }
 
 	glm::vec2	getWindowSize();
@@ -124,12 +124,12 @@ public:
 
 	void		setVerticalSync(bool bSync);
 
-    void        setClipboardString(const std::string& text);
-    std::string      getClipboardString();
+	void        setClipboardString(const std::string& text);
+	std::string      getClipboardString();
 
-    int         getPixelScreenCoordScale();
+	int         getPixelScreenCoordScale();
 
-    void 		makeCurrent();
+	void 		makeCurrent();
 	void swapBuffers();
 	void startRender();
 	void finishRender();
@@ -232,9 +232,9 @@ private:
 
 	bool iconSet;
 
-    #ifdef TARGET_WIN32
-    LONG lExStyle, lStyle;
-    #endif // TARGET_WIN32
+	#ifdef TARGET_WIN32
+	LONG lExStyle, lStyle;
+	#endif // TARGET_WIN32
 };
 
 

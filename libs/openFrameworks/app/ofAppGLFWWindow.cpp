@@ -13,29 +13,29 @@
 #include "GLFW/glfw3.h"
 
 #ifdef TARGET_LINUX
-    #include "ofIcon.h"
-    #include "ofImage.h"
-    #define GLFW_EXPOSE_NATIVE_X11
-    #ifndef TARGET_OPENGLES
-        #define GLFW_EXPOSE_NATIVE_GLX
-    #else
-        #define GLFW_EXPOSE_NATIVE_EGL
-    #endif
-    #include <X11/extensions/Xrandr.h>
-    #include <X11/XKBlib.h>
-    #include "GLFW/glfw3native.h"
-    #include <X11/Xatom.h>
-    #include <xcb/xcb.h>
-    #include <xcb/xcbext.h>
+	#include "ofIcon.h"
+	#include "ofImage.h"
+	#define GLFW_EXPOSE_NATIVE_X11
+	#ifndef TARGET_OPENGLES
+		#define GLFW_EXPOSE_NATIVE_GLX
+	#else
+		#define GLFW_EXPOSE_NATIVE_EGL
+	#endif
+	#include <X11/extensions/Xrandr.h>
+	#include <X11/XKBlib.h>
+	#include "GLFW/glfw3native.h"
+	#include <X11/Xatom.h>
+	#include <xcb/xcb.h>
+	#include <xcb/xcbext.h>
 #elif defined(TARGET_OSX)
-    #include <Cocoa/Cocoa.h>
-    #define GLFW_EXPOSE_NATIVE_COCOA
-    #define GLFW_EXPOSE_NATIVE_NSGL
-    #include "GLFW/glfw3native.h"
+	#include <Cocoa/Cocoa.h>
+	#define GLFW_EXPOSE_NATIVE_COCOA
+	#define GLFW_EXPOSE_NATIVE_NSGL
+	#include "GLFW/glfw3native.h"
 #elif defined(TARGET_WIN32)
-    #define GLFW_EXPOSE_NATIVE_WIN32
-    #define GLFW_EXPOSE_NATIVE_WGL
-    #include <GLFW/glfw3native.h>
+	#define GLFW_EXPOSE_NATIVE_WIN32
+	#define GLFW_EXPOSE_NATIVE_WGL
+	#include <GLFW/glfw3native.h>
 #endif
 
 using namespace std;
@@ -178,13 +178,13 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering?1:0);
 #else
-    glfwWindowHint(GLFW_DOUBLEBUFFER, settings.doubleBuffering?1:0);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, settings.doubleBuffering?1:0);
 #endif
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
 	glfwWindowHint(GLFW_DECORATED, settings.decorated);
-    #ifdef TARGET_OPENGLES
-	    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
+	#ifdef TARGET_OPENGLES
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 		if(settings.glesVersion>=2){
@@ -192,8 +192,8 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}else{
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
 		}
-    #else
-	    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+	#else
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.glVersionMinor);
 		if((settings.glVersionMajor==3 && settings.glVersionMinor>=2) || settings.glVersionMajor>=4){
@@ -205,7 +205,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}else{
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
 		}
-    #endif
+	#endif
 
 	GLFWwindow * sharedContext = nullptr;
 	if(settings.shareContextWith){
@@ -257,20 +257,20 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					settings.setPosition(glm::vec2(x,y));
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-                    #ifdef TARGET_OSX
-					    //for OS X we need to set this first as the window size affects the window positon
-					    settings.setSize(mode->width, mode->height);
-                    #endif
+					#ifdef TARGET_OSX
+						//for OS X we need to set this first as the window size affects the window positon
+						settings.setSize(mode->width, mode->height);
+					#endif
 					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 					currentW = mode->width;
 					currentH = mode->height;
 				}
 			}else{
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-                #ifdef TARGET_OSX
-				    auto size = getScreenSize();
+				#ifdef TARGET_OSX
+					auto size = getScreenSize();
 					settings.setSize(size.x, size.y);
-                #endif
+				#endif
 					currentW = settings.getWidth();
 					currentH = settings.getHeight();
 					for(int i = 0; i < count; i++){
@@ -295,19 +295,19 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			}
 			glfwGetWindowSize( windowP, &currentW, &currentH );
 		}
-        #ifdef TARGET_LINUX
-		    if(!iconSet){
+		#ifdef TARGET_LINUX
+			if(!iconSet){
 				ofPixels iconPixels;
-                #ifdef DEBUG
-				    iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
+				#ifdef DEBUG
+					iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
 					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-                #else
-				    iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+				#else
+					iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
 					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-                #endif
+				#endif
 				setWindowIcon(iconPixels);
 			}
-        #endif
+		#endif
 		if(settings.iconified){
 			iconify(true);
 		}
@@ -384,7 +384,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 #if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
-	    glfwSetDropCallback( windowP, drop_cb );
+		glfwSetDropCallback( windowP, drop_cb );
 #endif
 
 
@@ -397,10 +397,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		xim = XOpenIM(getX11Display(), 0, 0, 0);
 	}
 	xic = XCreateIC(xim,
-	        XNInputStyle,   XIMPreeditNothing | XIMStatusNothing,
-	        XNClientWindow, getX11Window(),
-	        XNFocusWindow,  getX11Window(),
-	    NULL);
+			XNInputStyle,   XIMPreeditNothing | XIMStatusNothing,
+			XNClientWindow, getX11Window(),
+			XNFocusWindow,  getX11Window(),
+		NULL);
 #endif
 }
 
@@ -427,7 +427,7 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	}
 
 	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
-	                     PropModeReplace,  (const unsigned char*)buffer.data(),  length);
+						 PropModeReplace,  (const unsigned char*)buffer.data(),  length);
 	XFlush(getX11Display());
 }
 #endif
@@ -456,18 +456,18 @@ void ofAppGLFWWindow::update(){
 	}
 
 #ifdef TARGET_RASPBERRY_PI
-    //needed for rpi. as good values don't come into resize_cb when coming out of fullscreen
-    if( needsResizeCheck && windowP ){
-        int winW, winH;
-        glfwGetWindowSize(windowP, &winW, &winH);
-        
-        //wait until the window size is the size it was before going fullscreen
-        //then stop the resize check
-        if( winW == windowRect.getWidth() && winH == windowRect.getHeight() ){
-            resize_cb(windowP, currentW, currentH);
-            needsResizeCheck = false;
-        }
-    }
+	//needed for rpi. as good values don't come into resize_cb when coming out of fullscreen
+	if( needsResizeCheck && windowP ){
+		int winW, winH;
+		glfwGetWindowSize(windowP, &winW, &winH);
+		
+		//wait until the window size is the size it was before going fullscreen
+		//then stop the resize check
+		if( winW == windowRect.getWidth() && winH == windowRect.getHeight() ){
+			resize_cb(windowP, currentW, currentH);
+			needsResizeCheck = false;
+		}
+	}
 #endif
 }
 
@@ -483,7 +483,7 @@ void ofAppGLFWWindow::draw(){
 
 	events().notifyDraw();
 
-    #ifdef TARGET_WIN32
+	#ifdef TARGET_WIN32
 	if (currentRenderer->getBackgroundAuto() == false){
 		// on a PC resizing a window with this method of accumulation (essentially single buffering)
 		// is BAD, so we clear on resize events.
@@ -503,8 +503,8 @@ void ofAppGLFWWindow::draw(){
 			glFlush();
 		}
 	}
-    #else
-	    if (currentRenderer->getBackgroundAuto() == false){
+	#else
+		if (currentRenderer->getBackgroundAuto() == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
 				currentRenderer->clear();
@@ -515,7 +515,7 @@ void ofAppGLFWWindow::draw(){
 		} else{
 			glFlush();
 		}
-    #endif
+	#endif
 
 	currentRenderer->finishRender();
 
@@ -556,7 +556,7 @@ void ofAppGLFWWindow::setWindowTitle(string title){
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getPixelScreenCoordScale(){
-    return pixelScreenCoordScale;
+	return pixelScreenCoordScale;
 }
 
 //------------------------------------------------------------
@@ -578,9 +578,9 @@ glm::vec2 ofAppGLFWWindow::getWindowSize(){
 glm::vec2 ofAppGLFWWindow::getWindowPosition(){
 	int x, y;
 	glfwGetWindowPos(windowP, &x, &y);
-    
-    x *= pixelScreenCoordScale;
-    y *= pixelScreenCoordScale;
+	
+	x *= pixelScreenCoordScale;
+	y *= pixelScreenCoordScale;
 
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return glm::vec2{x,y};
@@ -673,15 +673,15 @@ void ofAppGLFWWindow::setWindowShape(int w, int h){
 	currentW = w/pixelScreenCoordScale;
 	currentH = h/pixelScreenCoordScale;
 
-    #ifdef TARGET_OSX
-	    auto pos = getWindowPosition();
+	#ifdef TARGET_OSX
+		auto pos = getWindowPosition();
 		glfwSetWindowSize(windowP,currentW,currentH);
 		if( pos != getWindowPosition() ){
 			setWindowPosition(pos.x, pos.y);
 		}
-    #else
-	    glfwSetWindowSize(windowP,currentW,currentH);
-    #endif
+	#else
+		glfwSetWindowSize(windowP,currentW,currentH);
+	#endif
 }
 
 //------------------------------------------------------------
@@ -789,7 +789,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			xev.xclient.data.l[3] = monitorRight;
 			xev.xclient.data.l[4] = 1;
 			XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-			           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+					   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 			currentW = maxx - minx;
 			currentH = maxy - minx;
 		}else{
@@ -827,7 +827,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	xev.xclient.data.l[3] = 0;
 	xev.xclient.data.l[4] = 0;
 	XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-	           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+			   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 
 	// tell the window manager to bypass composition for this window in fullscreen for speed
 	// it'll probably help solving vsync issues
@@ -1072,23 +1072,23 @@ static void rotateMouseXY(ofOrientation orientation, int w, int h, double &x, do
 		case OF_ORIENTATION_180:
 			x = w - x;
 			y = h - y;
-		    break;
+			break;
 
 		case OF_ORIENTATION_90_RIGHT:
 			savedY = y;
 			y = x;
 			x = w-savedY;
-		    break;
+			break;
 
 		case OF_ORIENTATION_90_LEFT:
 			savedY = y;
 			y = h - x;
 			x = savedY;
-		    break;
+			break;
 
 		case OF_ORIENTATION_DEFAULT:
 		default:
-		    break;
+			break;
 	}
 }
 
@@ -1141,8 +1141,8 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 		unsigned int ch = 0, count = 0;
 		static const unsigned int offsets[] =
 		{
-		    0x00000000u, 0x00003080u, 0x000e2080u,
-		    0x03c82080u, 0xfa082080u, 0x82082080u
+			0x00000000u, 0x00003080u, 0x000e2080u,
+			0x03c82080u, 0xfa082080u, 0x82082080u
 		};
 
 		do
@@ -1254,15 +1254,15 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	// https://developer.apple.com/library/mac/documentation/Carbon/Reference/Unicode_Utilities_Ref/index.html#//apple_ref/c/func/UCKeyTranslate
 
 	if (noErr == UCKeyTranslate(pKeyboardLayout,
-	                   scancode,
-	                   kUCKeyActionDisplay,
-	                   mod_OSX,
-	                   getKeyboardType(),
-	                   kUCKeyTranslateNoDeadKeysBit,
-	                   &deadKeyState,
-	                   sizeof(characters) / sizeof(characters[0]),
-	                   &characterCount,
-	                   characters))
+					   scancode,
+					   kUCKeyActionDisplay,
+					   mod_OSX,
+					   getKeyboardType(),
+					   kUCKeyTranslateNoDeadKeysBit,
+					   &deadKeyState,
+					   sizeof(characters) / sizeof(characters[0]),
+					   &characterCount,
+					   characters))
 	{
 		// if successful, first character contains codepoint
 		return characters[0];
@@ -1332,10 +1332,10 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 	}
 
 	ofMouseEventArgs args(action,
-	    x*instance->pixelScreenCoordScale,
-	    y*instance->pixelScreenCoordScale,
-	    instance->buttonInUse,
-	    instance->events().getModifiers());
+		x*instance->pixelScreenCoordScale,
+		y*instance->pixelScreenCoordScale,
+		instance->buttonInUse,
+		instance->events().getModifiers());
 	instance->events().notifyMouseEvent(args);
 }
 
@@ -1350,10 +1350,10 @@ void ofAppGLFWWindow::entry_cb(GLFWwindow *windowP_, int entered) {
 	}
 
 	ofMouseEventArgs args(action,
-	    instance->events().getMouseX(),
-	    instance->events().getMouseY(),
-	    instance->buttonInUse,
-	    instance->events().getModifiers());
+		instance->events().getMouseX(),
+		instance->events().getMouseY(),
+		instance->buttonInUse,
+		instance->events().getModifiers());
 	instance->events().notifyMouseEvent(args);
 }
 
@@ -1363,10 +1363,10 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	ofMouseEventArgs args(ofMouseEventArgs::Scrolled,
-	    instance->events().getMouseX(),
-	    instance->events().getMouseY(),
-	    instance->buttonInUse,
-	    instance->events().getModifiers());
+		instance->events().getMouseX(),
+		instance->events().getMouseY(),
+		instance->buttonInUse,
+		instance->events().getModifiers());
 	args.scrollX = x;
 	args.scrollY = y;
 	instance->events().notifyMouseEvent(args);
@@ -1397,164 +1397,164 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 	switch (keycode) {
 		case GLFW_KEY_ESCAPE:
 			key = OF_KEY_ESC;
-		    break;
+			break;
 		case GLFW_KEY_F1:
 			key = OF_KEY_F1;
-		    break;
+			break;
 		case GLFW_KEY_F2:
 			key = OF_KEY_F2;
-		    break;
+			break;
 		case GLFW_KEY_F3:
 			key = OF_KEY_F3;
-		    break;
+			break;
 		case GLFW_KEY_F4:
 			key = OF_KEY_F4;
-		    break;
+			break;
 		case GLFW_KEY_F5:
 			key = OF_KEY_F5;
-		    break;
+			break;
 		case GLFW_KEY_F6:
 			key = OF_KEY_F6;
-		    break;
+			break;
 		case GLFW_KEY_F7:
 			key = OF_KEY_F7;
-		    break;
+			break;
 		case GLFW_KEY_F8:
 			key = OF_KEY_F8;
-		    break;
+			break;
 		case GLFW_KEY_F9:
 			key = OF_KEY_F9;
-		    break;
+			break;
 		case GLFW_KEY_F10:
 			key = OF_KEY_F10;
-		    break;
+			break;
 		case GLFW_KEY_F11:
 			key = OF_KEY_F11;
-		    break;
+			break;
 		case GLFW_KEY_F12:
 			key = OF_KEY_F12;
-		    break;
+			break;
 		case GLFW_KEY_LEFT:
 			key = OF_KEY_LEFT;
-		    break;
+			break;
 		case GLFW_KEY_RIGHT:
 			key = OF_KEY_RIGHT;
-		    break;
+			break;
 		case GLFW_KEY_UP:
 			key = OF_KEY_UP;
-		    break;
+			break;
 		case GLFW_KEY_DOWN:
 			key = OF_KEY_DOWN;
-		    break;
+			break;
 		case GLFW_KEY_PAGE_UP:
 			key = OF_KEY_PAGE_UP;
-		    break;
+			break;
 		case GLFW_KEY_PAGE_DOWN:
 			key = OF_KEY_PAGE_DOWN;
-		    break;
+			break;
 		case GLFW_KEY_HOME:
 			key = OF_KEY_HOME;
-		    break;
+			break;
 		case GLFW_KEY_END:
 			key = OF_KEY_END;
-		    break;
+			break;
 		case GLFW_KEY_INSERT:
 			key = OF_KEY_INSERT;
-		    break;
+			break;
 		case GLFW_KEY_LEFT_SHIFT:
 			key = OF_KEY_LEFT_SHIFT;
-		    break;
+			break;
 		case GLFW_KEY_LEFT_CONTROL:
 			key = OF_KEY_LEFT_CONTROL;
-		    break;
+			break;
 		case GLFW_KEY_LEFT_ALT:
 			key = OF_KEY_LEFT_ALT;
-		    break;
+			break;
 		case GLFW_KEY_LEFT_SUPER:
 			key = OF_KEY_LEFT_SUPER;
-		    break;
+			break;
 		case GLFW_KEY_RIGHT_SHIFT:
 			key = OF_KEY_RIGHT_SHIFT;
-		    break;
+			break;
 		case GLFW_KEY_RIGHT_CONTROL:
 			key = OF_KEY_RIGHT_CONTROL;
-		    break;
+			break;
 		case GLFW_KEY_RIGHT_ALT:
 			key = OF_KEY_RIGHT_ALT;
-		    break;
+			break;
 		case GLFW_KEY_RIGHT_SUPER:
 			key = OF_KEY_RIGHT_SUPER;
-		    break;
+			break;
 		case GLFW_KEY_BACKSPACE:
 			key = OF_KEY_BACKSPACE;
-		    break;
+			break;
 		case GLFW_KEY_DELETE:
 			key = OF_KEY_DEL;
-		    break;
+			break;
 		case GLFW_KEY_ENTER:
 			key = OF_KEY_RETURN;
 			codepoint = '\n';
-		    break;
+			break;
 		case GLFW_KEY_KP_ENTER:
 			key = OF_KEY_RETURN;
 			codepoint = '\n';
-		    break;
+			break;
 		case GLFW_KEY_TAB:
 			key = OF_KEY_TAB;
 			codepoint = '\t';
-		    break;
+			break;
 		case GLFW_KEY_KP_0:
 			key = codepoint = '0';
-		    break;
+			break;
 		case GLFW_KEY_KP_1:
 			key = codepoint = '1';
-		    break;
+			break;
 		case GLFW_KEY_KP_2:
 			key = codepoint = '2';
-		    break;
+			break;
 		case GLFW_KEY_KP_3:
 			key = codepoint = '3';
-		    break;
+			break;
 		case GLFW_KEY_KP_4:
 			key = codepoint = '4';
-		    break;
+			break;
 		case GLFW_KEY_KP_5:
 			key = codepoint = '5';
-		    break;
+			break;
 		case GLFW_KEY_KP_6:
 			key = codepoint = '6';
-		    break;
+			break;
 		case GLFW_KEY_KP_7:
 			key = codepoint = '7';
-		    break;
+			break;
 		case GLFW_KEY_KP_8:
 			key = codepoint = '8';
-		    break;
+			break;
 		case GLFW_KEY_KP_9:
 			key = codepoint = '9';
-		    break;
+			break;
 		case GLFW_KEY_KP_DIVIDE:
 			key = codepoint = '/';
-		    break;
+			break;
 		case GLFW_KEY_KP_MULTIPLY:
 			key = codepoint = '*';
-		    break;
+			break;
 		case GLFW_KEY_KP_SUBTRACT:
 			key = codepoint = '-';
-		    break;
+			break;
 		case GLFW_KEY_KP_ADD:
 			key = codepoint = '+';
-		    break;
+			break;
 		case GLFW_KEY_KP_DECIMAL:
 			key = codepoint = '.';
-		    break;
+			break;
 		case GLFW_KEY_KP_EQUAL:
 			key = codepoint = '=';
-		    break;
+			break;
 		default:
 			codepoint = keycodeToUnicode(instance, scancode, mods);
 			key = codepoint;
-		    break;
+			break;
 	}
 
 	int modifiers = glfwtToOFModifiers(mods);

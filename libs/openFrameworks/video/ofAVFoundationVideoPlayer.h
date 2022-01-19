@@ -24,18 +24,18 @@
 
 // so we are independend from oF in this class
 typedef enum _playerLoopType{
-    LOOP_NONE=0x01,
-    LOOP_PALINDROME=0x02,
-    LOOP_NORMAL=0x03
+	LOOP_NONE=0x01,
+	LOOP_PALINDROME=0x02,
+	LOOP_NORMAL=0x03
 } playerLoopType;
 
 
 //---------------------------------------------------------- video player.
 @interface ofAVFoundationVideoPlayer : NSObject {
 	
-    AVPlayer * _player;
+	AVPlayer * _player;
 	AVAsset * _asset;
-    AVPlayerItem * _playerItem;
+	AVPlayerItem * _playerItem;
 	
 	
 	AVAssetReader * _assetReader;
@@ -48,38 +48,38 @@ typedef enum _playerLoopType{
 #endif
 	
 	
-    id timeObserver;
-    
+	id timeObserver;
+	
 	CMSampleBufferRef videoSampleBuffer;
-    CMSampleBufferRef audioSampleBuffer;
-    CMTime videoSampleTime;
+	CMSampleBufferRef audioSampleBuffer;
+	CMTime videoSampleTime;
 	CMTime videoSampleTimePrev;
-    CMTime audioSampleTime;
-    CMTime synchSampleTime;
+	CMTime audioSampleTime;
+	CMTime synchSampleTime;
 	CMTime duration;
-    CMTime currentTime;
-    float volume;
-    float speed;
-    float frameRate;
-    
-    NSInteger videoWidth;
-    NSInteger videoHeight;
+	CMTime currentTime;
+	float volume;
+	float speed;
+	float frameRate;
 	
-    playerLoopType loop;
+	NSInteger videoWidth;
+	NSInteger videoHeight;
 	
-    BOOL bWillBeUpdatedExternally;
-    BOOL bReady;
+	playerLoopType loop;
+	
+	BOOL bWillBeUpdatedExternally;
+	BOOL bReady;
 	BOOL bLoaded;
-    BOOL bPlayStateBeforeLoad;
-    BOOL bUpdateFirstFrame;
-    BOOL bNewFrame;
-    BOOL bPlaying;
+	BOOL bPlayStateBeforeLoad;
+	BOOL bUpdateFirstFrame;
+	BOOL bNewFrame;
+	BOOL bPlaying;
 	BOOL bWasPlayingBackwards; // for optimisation
-    BOOL bFinished;
-    BOOL bAutoPlayOnLoad;
-    BOOL bSeeking;
-    BOOL bSampleVideo; // default to YES
-    BOOL bSampleAudio; // default to NO
+	BOOL bFinished;
+	BOOL bAutoPlayOnLoad;
+	BOOL bSeeking;
+	BOOL bSampleVideo; // default to YES
+	BOOL bSampleAudio; // default to NO
 	BOOL bIsUnloaded;
 	BOOL bStream;
 	int frameBeforeReady;

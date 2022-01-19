@@ -1411,7 +1411,7 @@ void ofAppEGLWindow::setupNativeInput(){
 		}
 
 		udev_device_unref(dev);
-    }
+	}
 	/* Free the enumerator object */
 	udev_enumerate_unref(enumerate);
 
@@ -1473,12 +1473,12 @@ void ofAppEGLWindow::addInput(const char * node, bool isMouse){
 		}
 
 		inputDevices[node] = fd;
-    }
+	}
 }
 
 void ofAppEGLWindow::removeInput(const char * node){
 	if(node == NULL)
-        return;
+		return;
 
 	device::iterator iter = inputDevices.find(node);
 	if(iter != inputDevices.end()){
@@ -1500,8 +1500,8 @@ void ofAppEGLWindow::destroyNativeInput(){
 	
 	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
 		if(iter->second >= 0){
-            ::close(iter->second);
-        }
+			::close(iter->second);
+		}
 	}
 
 	inputDevices.clear();
@@ -1916,13 +1916,13 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 			if(prop_mouse){
 				is_mouse = true;
 			}
-            if(devnode && (prop_keyboard || prop_mouse) && string_begins_with(sysname, "event")){
-                if(strcmp(action, "add") == 0){
+			if(devnode && (prop_keyboard || prop_mouse) && string_begins_with(sysname, "event")){
+				if(strcmp(action, "add") == 0){
 					addInput(devnode, is_mouse);
-                }else if(strcmp(action, "remove") == 0){
+				}else if(strcmp(action, "remove") == 0){
 					removeInput(devnode);
-                }
-            }
+				}
+			}
 			
 			udev_device_unref(dev);
 		}else{

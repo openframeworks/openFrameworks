@@ -67,15 +67,15 @@ public:
 	virtual void	disableSetupScreen(){}
 	
 	virtual void	setVerticalSync(bool enabled){};
-    virtual void    setClipboardString(const std::string& text) {}
-    virtual std::string  getClipboardString() { return ""; }
+	virtual void    setClipboardString(const std::string& text) {}
+	virtual std::string  getClipboardString() { return ""; }
 
-    virtual void makeCurrent(){};
+	virtual void makeCurrent(){};
 	virtual void swapBuffers() {}
 	virtual void startRender() {}
 	virtual void finishRender() {}
 
-    virtual void * getWindowContext(){return nullptr;};
+	virtual void * getWindowContext(){return nullptr;};
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	virtual Display* getX11Display(){return nullptr;}
