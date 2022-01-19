@@ -637,6 +637,8 @@ string ofSystemTextBoxDialog(string question, string text){
 												 encoding:NSUTF8StringEncoding]];
 		// add text field to alert dialog
 		[alert setAccessoryView:label];
+		[[alert window] setInitialFirstResponder: label];
+
 		NSInteger returnCode = [alert runModal];
 		restoreAppWindowFocus();
 		// if OK was clicked, assign value to text
