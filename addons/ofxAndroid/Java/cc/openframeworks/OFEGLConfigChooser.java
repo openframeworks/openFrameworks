@@ -81,7 +81,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mBlueSize = 10;
         mAlphaSize = 2;
         mDepthSize = 16;
-        mStencilSize = 16;
+        mStencilSize = 1;
         //mSampleSize = 8;
         mWideGamut = true;
     }
@@ -419,22 +419,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         }
 
-        // if no samples found in config, and target desires samples... try TEGRA samples
-        if(samples == 1 && mSampleSize >= 1) {
-            int[] samples_num_config = new int[1];
-            EGLConfig[] samples_configs = null;
-            samples_num_config[0] = 0;
 
-            int samples_numConfigs = samples_num_config[0];
-            if (samples_numConfigs <= 0) {
-                if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
-                        samples_num_config)) {
-                    Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
-                } else {
-                    Log.i("OF", String.format("eglChooseConfig TEGRA MSAA worked Fallback"));
-                }
-            }
-        }
         if(samples == 0) samples = 1;
         mSampleSize = samples;
 

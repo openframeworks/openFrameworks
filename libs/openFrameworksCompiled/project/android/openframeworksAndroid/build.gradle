@@ -89,7 +89,6 @@ android {
         if (!project.hasProperty("ndkBuild")) {
             cmake {
                 path "CMakeLists.txt"
-                version '3.22.1'
             }
         } else {
             ndkBuild {

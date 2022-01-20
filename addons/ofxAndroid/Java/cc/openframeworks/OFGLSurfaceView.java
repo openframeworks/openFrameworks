@@ -80,8 +80,31 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
             depth = 0;
         }
 
-        OFEGLConfigChooser configChooser = getConfigChooser(8,8,8,8,depth,8,OFAndroid.samples,false);
-        setEGLConfigChooser(configChooser);
+        OFEGLConfigChooser configChooser = getConfigChooser(8, 8, 8, 8, depth, 1, OFAndroid.samples, false);
+
+        try {
+            setEGLConfigChooser(configChooser);
+        } catch (Exception ex) {
+            Log.e("OF", "setEGLConfigChooser failed 8,8,8,8,depth,1 ", ex);
+            try {
+                setEGLConfigChooser(configChooser);
+            } catch (Exception exOne) {
+                Log.e("OF", "setEGLConfigChooser failed exOne: Trying 5, 6, 5, 1, 16, 1 ", ex);
+                try {
+                    configChooser = getConfigChooser(5, 6, 5, 1, 16, 1, OFAndroid.samples, false);
+                    setEGLConfigChooser(configChooser);
+                } catch (Exception exceptionTwo) {
+                   try {
+                       Log.e("OF", "setEGLConfigChooser failed exOne: Trying 10, 10, 10, 10, 16, 1 ", exceptionTwo);
+                       configChooser = getConfigChooser(10, 10, 10, 10, 16, 1, OFAndroid.samples, false);
+                       setEGLConfigChooser(configChooser);
+
+                    } catch (Exception exceptionThree) {
+                        setEGLConfigChooser(configChooser);
+                    }
+                }
+            }
+        }
 
         mRenderer = new OFAndroidWindow(width, height);
         OFAndroid.samples = configChooser.getSampleSize();
@@ -227,7 +250,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     }
 
     public OFEGLConfigChooser getConfigChooser() {
-        return getConfigChooser(8,8,8,8,24,8,OFAndroid.samples,false);
+        return getConfigChooser(8,8,8,8,8,1,OFAndroid.samples,false);
     }
 
     public OFEGLConfigChooser getConfigChooser(int r, int g, int b, int a, int depth, int stencil, int samples, boolean gamut) {
