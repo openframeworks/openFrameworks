@@ -45,6 +45,11 @@ PLATFORM_RUN_COMMAND = cd bin/$(BIN_NAME).app/Contents/MacOS/;./$(BIN_NAME)
 
 PLATFORM_DEFINES = __MACOSX_CORE__
 
+# Allows a projects config.make to pass in extra defines for the core and project 
+#ifdef PLATFORM_DEFINES_EXTRA
+	PLATFORM_DEFINES += $(PLATFORM_DEFINES_EXTRA)
+#endif
+
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
 #   This is a list of addons required for this platform.  This list is used to EXCLUDE
@@ -75,6 +80,10 @@ endif
 
 ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
+endif
+
+ifndef MAC_OS_CPP_VER
+    MAC_OS_CPP_VER = -std=c++11
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
@@ -139,7 +148,7 @@ endif
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 PLATFORM_CXXFLAGS += -x objective-c++
-PLATFORM_CXXFLAGS += -std=c++11
+PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
