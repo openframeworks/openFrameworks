@@ -42,8 +42,8 @@ class ofApp: public ofxUnitTestsApp{
 				ofFile fw("noread",ofFile::WriteOnly);
 				fw << "testing";
 			}
-			fw.setReadable(false);
-			fw.setWriteable(false);
+			ofFile("noread").setReadable(false);
+			ofFile("noread").setWriteable(false);
 			if(!ofxTest(!ofFile("noread").canRead(),"!ofFile::canRead")){
 				ofFile fr("noread");
 				std::string str;
