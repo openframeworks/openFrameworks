@@ -45,11 +45,6 @@ PLATFORM_RUN_COMMAND = cd bin/$(BIN_NAME).app/Contents/MacOS/;./$(BIN_NAME)
 
 PLATFORM_DEFINES = __MACOSX_CORE__
 
-# Allows a projects config.make to pass in extra defines for the core and project 
-#ifdef PLATFORM_DEFINES_EXTRA
-	PLATFORM_DEFINES += $(PLATFORM_DEFINES_EXTRA)
-#endif
-
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
 #   This is a list of addons required for this platform.  This list is used to EXCLUDE

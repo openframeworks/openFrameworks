@@ -15,9 +15,14 @@
 // This enables glm's old behavior of initializing with non garbage values
 #define GLM_FORCE_CTOR_INIT
 
-// Set to 1 to use std filesystem instead of boost's
+// If you are building with c++17 or newer std filesystem will be enabled by default
 #ifndef OF_USING_STD_FS
-#define OF_USING_STD_FS 0
+	#if __cplusplus >= 201703L
+		#define OF_USING_STD_FS 1
+	#else
+		// Set to 1 to force std filesystem instead of boost's
+		#define OF_USING_STD_FS 0
+	#endif
 #endif
 
 //-------------------------------

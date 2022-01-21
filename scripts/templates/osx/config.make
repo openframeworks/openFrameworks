@@ -144,4 +144,3 @@
 # Uncomment/comment below to switch between C++11 and C++17 ( or newer ). On macOS C++17 needs 10.15 or above.
 export MAC_OS_MIN_VERSION = 10.15
 export MAC_OS_CPP_VER = -std=c++17
-export PLATFORM_DEFINES_EXTRA = OF_USING_STD_FS=1
