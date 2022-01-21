@@ -13,6 +13,7 @@ final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
 def LIB_OUTPUT=ofRoot() + './../../../../libs/openFrameworksCompiled/lib/android'
 def enableProguardInReleaseBuilds = true
 def enableProguardInDebugBuilds = true
+tasks.register("prepareKotlinBuildScriptModel"){}
 
 
 android {
@@ -44,8 +45,6 @@ android {
                 cmake {
                     arguments "-DANDROID_STL=c++_shared",
                             "-DANDROID_ARM_NEON=TRUE",
-                            "-DENABLE_NEON=ON",
-                            "-DENABLE_VFPV3=ON",
                             "-DANDROID_TOOLCHAIN=clang",
                             "-DTARGET_OPENGLES=TRUE"
                 }
@@ -97,8 +96,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_10
-        targetCompatibility JavaVersion.VERSION_1_10
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 
