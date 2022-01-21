@@ -5,6 +5,11 @@ OF_PATH = ../../..
 //THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
 #include "../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig"
 
+//UNCOMMENT BELOW TO ENABLE C++ 17 and std::filesystem
+CLANG_CXX_LANGUAGE_STANDARD = c++17
+MACOSX_DEPLOYMENT_TARGET = 10.15
+GCC_PREPROCESSOR_DEFINITIONS = OF_USING_STD_FS=1
+
 //ICONS - NEW IN 0072 
 ICON_NAME_DEBUG = icon-debug.icns
 ICON_NAME_RELEASE = icon.icns
