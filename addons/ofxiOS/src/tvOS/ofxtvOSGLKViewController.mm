@@ -3,6 +3,10 @@
 //
 //  Created by Dan Rosser on 10/3/18.
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 #include "ofxtvOSGLKViewController.h"
 #include "ofxiOSGLKView.h"
 
@@ -21,7 +25,7 @@
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup {
     if((self = [super init])) {
-        self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
+        self.glView = [[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup];
         self.glView.delegate = self;
     }
     
@@ -32,8 +36,6 @@
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
     self.glView = nil;
-    
-    [super dealloc];
 }
 
 - (void)viewDidLoad {
@@ -139,7 +141,7 @@
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
     if([self.view respondsToSelector:@selector(handleTap:)]) {
-        [self.glView handleTap:sender];
+        [self.glView performSelector:@selector(handleTap:) withObject:sender];
     }
 }
 
