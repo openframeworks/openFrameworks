@@ -22,6 +22,10 @@
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 //C++ class implementations
 
 //--------------------------------------------------------------
@@ -33,7 +37,6 @@ ofxiOSCoreLocation::ofxiOSCoreLocation()
 //--------------------------------------------------------------
 ofxiOSCoreLocation::~ofxiOSCoreLocation()
 {
-	[coreLoc release];
 }
 
 //--------------------------------------------------------------
@@ -188,9 +191,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 //--------------------------------------------------------------
 - (void)dealloc 
 { 
-	[locationManager release];
-	
-	[super dealloc];
+    locationManager = nil;
 }
 
 //--------------------------------------------------------------
@@ -298,7 +299,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 - (void)locationManager:(CLLocationManager *)manager
 	   didFailWithError:(NSError *)error //thx apple
 {
-	NSMutableString *errorString = [[[NSMutableString alloc] init] autorelease];
+	NSMutableString *errorString = [[NSMutableString alloc] init];
 	
 	if ([error domain] == kCLErrorDomain) {
 		

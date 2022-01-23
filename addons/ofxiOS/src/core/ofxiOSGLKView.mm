@@ -13,6 +13,10 @@
 #include <TargetConditionals.h>
 #import <GameController/GameController.h>
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 static ofxiOSGLKView * _instanceRef = nil;
 
 @interface ofxiOSGLKView() {
@@ -128,8 +132,7 @@ static ofxiOSGLKView * _instanceRef = nil;
     app = NULL;
     window = NULL;
     
-    [activeTouches release];
-    
+    activeTouches = nil;
     delete screenSize;
     screenSize = NULL;
     delete windowSize;
@@ -146,7 +149,6 @@ static ofxiOSGLKView * _instanceRef = nil;
 
 - (void)dealloc {
     [self destroy];
-    [super dealloc];
 }
 
 - (void)layoutSubviews {
@@ -270,7 +272,7 @@ static ofxiOSGLKView * _instanceRef = nil;
             touchIndex++;
         }
         
-        [activeTouches setObject:[NSNumber numberWithInt:touchIndex] forKey:[NSValue valueWithPointer:touch]];
+        [activeTouches setObject:@(touchIndex) forKey:[NSValue valueWithPointer:(__bridge void *)touch]];
         
         CGPoint touchPoint = [touch locationInView:self];
         
@@ -307,7 +309,7 @@ static ofxiOSGLKView * _instanceRef = nil;
     }
     
     for(UITouch *touch in touches){
-        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:(__bridge void *)touch]] intValue];
         
         CGPoint touchPoint = [touch locationInView:self];
         
@@ -339,9 +341,9 @@ static ofxiOSGLKView * _instanceRef = nil;
     }
     
     for(UITouch *touch in touches){
-        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:(__bridge void *)touch]] intValue];
         
-        [activeTouches removeObjectForKey:[NSValue valueWithPointer:touch]];
+        [activeTouches removeObjectForKey:[NSValue valueWithPointer:(__bridge void *)touch]];
         
         CGPoint touchPoint = [touch locationInView:self];
         
@@ -374,7 +376,7 @@ static ofxiOSGLKView * _instanceRef = nil;
     }
     
     for(UITouch *touch in touches){
-        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:touch]] intValue];
+        int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:(__bridge void *)touch]] intValue];
         
         CGPoint touchPoint = [touch locationInView:self];
         

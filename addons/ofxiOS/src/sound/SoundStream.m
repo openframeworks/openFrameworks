@@ -8,6 +8,10 @@
 #import "SoundStream.h"
 #import <AVFoundation/AVFoundation.h>
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 @interface SoundStream() {
     //
 }
@@ -15,7 +19,6 @@
 
 @implementation SoundStream
 
-@synthesize delegate;
 @synthesize streamType;
 @synthesize numOfChannels;
 @synthesize sampleRate;
@@ -51,9 +54,7 @@
 }
 
 - (void)dealloc {
-    [super dealloc];
-	
-	
+    self.delegate = nil;
 	if([SoundStream shouldUseAudioSessionNotifications]) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 														name:AVAudioSessionInterruptionNotification

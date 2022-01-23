@@ -32,6 +32,10 @@
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSMapKit.h"
 #include "ofLog.h"
@@ -48,7 +52,6 @@
 
 -(void)dealloc {
 	ofLogVerbose("ofxiOSMapKitDelegate") << "dealloc";
-	[super dealloc];
 }
 
 

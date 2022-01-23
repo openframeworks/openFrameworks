@@ -18,7 +18,7 @@ class ofAppiOSWindow;
 @interface ofxiOSGLKView : EAGLKView {
 
 @protected
-    NSMutableDictionary * activeTouches;
+    NSMutableDictionary<NSValue *, NSNumber *> * activeTouches;
     glm::vec2 * screenSize;   // because glm::vec2 is forward declared,
     glm::vec2 * windowSize;   // these values have to be pointers.
     glm::vec2 * windowPos;

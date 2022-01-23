@@ -30,7 +30,6 @@ typedef enum {
 @end
 
 @interface SoundStream : NSObject {
-    id<SoundStreamDelegate> delegate;
     SoundStreamType streamType;
     NSInteger numOfChannels;
     NSInteger sampleRate;
@@ -40,7 +39,7 @@ typedef enum {
     BOOL bInterruptedWhileRunning;
 }
 
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, strong) id<SoundStreamDelegate> delegate;
 @property (readonly) SoundStreamType streamType;
 @property (readonly) NSInteger numOfChannels;
 @property (readonly) NSInteger sampleRate;

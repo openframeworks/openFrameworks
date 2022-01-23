@@ -9,6 +9,10 @@
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 /* Asset keys */
 NSString * const kTracksKey         = @"tracks";
 NSString * const kPlayableKey		= @"playable";
@@ -39,7 +43,6 @@ NSString * const kCurrentItemKey	= @"currentItem";
 
 - (void)dealloc {
     self.player = nil;
-    [super dealloc];
 }
 
 @end
@@ -97,10 +100,10 @@ static const NSString * ItemStatusContext;
          *  initialise video player view to full screen by default.
          *  later the view frame can be changed if need be.
          */
-        self.playerView = [[[AVFoundationVideoPlayerView alloc] initWithFrame:[UIScreen mainScreen].bounds] autorelease];
+        self.playerView = [[AVFoundationVideoPlayerView alloc] initWithFrame:[UIScreen mainScreen].bounds];
         self.playerView.backgroundColor = [UIColor blackColor];
         
-        self.player = [[[AVPlayer alloc] init] autorelease];
+        self.player = [[AVPlayer alloc] init];
         [(AVFoundationVideoPlayerView *)self.playerView setPlayer:_player];
         
         [_player addObserver:self 
@@ -162,7 +165,6 @@ static const NSString * ItemStatusContext;
     [_player removeObserver:self forKeyPath:kRateKey];
     
     self.player = nil;
-    [_player release];
     
     [self.assetReader cancelReading];
 	self.assetReader = nil;
@@ -179,8 +181,6 @@ static const NSString * ItemStatusContext;
         CFRelease(audioSampleBuffer);
         audioSampleBuffer = nil;
     }
-    
-    [super dealloc];
 }
 
 //---------------------------------------------------------- position / size.
@@ -306,7 +306,7 @@ static const NSString * ItemStatusContext;
     self.assetReader.timeRange = timeRange;
     
     //------------------------------------------------------------ add video output.
-    NSMutableDictionary * videoOutputSettings = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary * videoOutputSettings = [[NSMutableDictionary alloc] init];
     [videoOutputSettings setObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
                             forKey:(NSString*)kCVPixelBufferPixelFormatTypeKey];
     
@@ -635,17 +635,17 @@ static const NSString * ItemStatusContext;
     
 	double interval = 1.0 / (double)timeObserverFps;
 	
-	timeObserver = [[_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC) 
-                                                          queue:dispatch_get_main_queue() usingBlock:
+    __block typeof(self) weak_self = self;
+	timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
+                                                         queue:dispatch_get_main_queue() usingBlock:
                      ^(CMTime time) {
-                         [self update];
-                     }] retain];
+                         [weak_self update];
+                     }];
 }
 
 - (void)removeTimeObserverFromPlayer {
 	if(timeObserver) {
 		[_player removeTimeObserver:timeObserver];
-		[timeObserver release];
 		timeObserver = nil;
 	}
 }

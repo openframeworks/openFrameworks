@@ -8,6 +8,10 @@
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 #import "ofxiOSGLKViewController.h"
 
 #include "ofxiOSGLKView.h"
@@ -43,7 +47,7 @@
         bFirstUpdate    = NO;
         bAnimated       = NO;
         
-        self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
+        self.glView = [[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup];
         self.glView.delegate = self;
     }
     
@@ -54,8 +58,6 @@
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
     self.glView = nil;
-    
-    [super dealloc];
 }
 
 - (void)viewDidLoad {

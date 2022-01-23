@@ -2,6 +2,10 @@
 
 #import "ES2Renderer.h"
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 @implementation ES2Renderer
 
 // Create an OpenGL ES 2.0 context
@@ -22,7 +26,7 @@
 
         if(!context || ![EAGLContext setCurrentContext:context]) {
             NSLog(@"OpenGL ES2 failed");
-            [self release];
+            self = nil;
             return nil;
         }
         
@@ -172,10 +176,7 @@
         [EAGLContext setCurrentContext:nil];
     }
 
-    [context release];
     context = nil;
-
-    [super dealloc];
 }
 
 - (NSInteger)getWidth {

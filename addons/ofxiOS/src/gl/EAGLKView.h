@@ -35,7 +35,7 @@
     ESRendererVersion rendererVersion;
 }
 
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, weak) id delegate;
 
 - (id)initWithFrame:(CGRect)frame
 andPreferedRenderer:(ESRendererVersion)rendererVersion

@@ -33,8 +33,14 @@
 #include "ofxiOSExtras.h"
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-#include "ofxiOSAppDelegate.h"
-#include "ofxiOSViewController.h"
+
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
+#import "ofxiOSAppDelegate.h"
+#import "ofxiOSViewController.h"
+#import "ofxiOSGLKViewController.h"
 #elif TARGET_OS_TV
 #include "ofxtvOSAppDelegate.h"
 #include "ofxtvOSViewController.h"
@@ -534,30 +540,25 @@ string ofxiOSGetClipboardString() {
 
 /******************** ofxiOSScreenGrab *********************/
 
-@interface SaveDelegate : NSObject {
-    id delegate;
-}
-@property (retain, nonatomic) id delegate;
+@interface SaveDelegate : NSObject
+/// TODO: give protocol explicitly
+@property (nonatomic, strong) id delegate;
 @end
 
 
 @implementation SaveDelegate
-@synthesize delegate;
 
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
     ofLogVerbose("ofxiOSExtras") << "didFinishSavingWithError: save finished";
 
-    if([delegate respondsToSelector: @selector(saveComplete)]) {
-        [delegate performSelector:@selector(saveComplete)];
+    if([self.delegate respondsToSelector: @selector(saveComplete)]) {
+        [self.delegate performSelector:@selector(saveComplete)];
     }
-    
-    [self release];
 }
 
 -(void)dealloc {
-    [delegate release];
-    [super dealloc];
+    self.delegate = nil;
 }
 
 @end

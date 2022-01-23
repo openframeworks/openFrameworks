@@ -15,6 +15,10 @@
 
 using namespace std;
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 //C++ class implementations
 
 //--------------------------------------------------------------
@@ -34,7 +38,6 @@ ofxiOSKeyboard::ofxiOSKeyboard(int _x, int _y, int _w, int _h)
 //--------------------------------------------------------------
 ofxiOSKeyboard::~ofxiOSKeyboard()
 {
-	[keyboard release];
 }
 
 
@@ -288,8 +291,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
 
 //--------------------------------------------------------------
 - (void)dealloc {
-	[_textField release];
-	[super dealloc];
+    _textField = nil;
 }
 
 //--------------------------------------------------------------
@@ -421,7 +423,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
 //--------------------------------------------------------------
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    NSMutableString *newValue = [[textField.text mutableCopy] autorelease];
+    NSMutableString *newValue = [textField.text mutableCopy];
     [newValue replaceCharactersInRange:range withString:string];
 	
 	ofLogVerbose("ofxiOSKeyboard") << "shouldChangeCharactersInRange: " << [newValue length] << " " << fieldLength;

@@ -21,7 +21,7 @@ class ofxiOSApp;
 
 @interface ofxiOSGLKViewController : GLKViewController
 
-@property (nonatomic, retain) ofxiOSGLKView * glView;
+@property (nonatomic, strong) ofxiOSGLKView * glView;
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;

@@ -12,6 +12,10 @@
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 @interface EAGLKView() {
     BOOL bInit;
 }
@@ -80,7 +84,7 @@ andPreferedRenderer:(ESRendererVersion)version
             
             if(!self.context){
                 NSLog(@"Critical Error - ofiOS GLKView.m could not start any type of OpenGLES renderer");
-                [self release];
+                self = nil;
                 return nil;
             }
         }
@@ -116,7 +120,6 @@ andPreferedRenderer:(ESRendererVersion)version
 
 - (void) dealloc{
     [self destroy];
-    [super dealloc];
 }
 
 - (void) setup {

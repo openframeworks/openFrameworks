@@ -15,6 +15,10 @@ using namespace std;
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 //C++ class implementations
 
 //--------------------------------------------------------------
@@ -32,7 +36,6 @@ ofxiOSImagePicker::ofxiOSImagePicker()
 //--------------------------------------------------------------
 ofxiOSImagePicker::~ofxiOSImagePicker(){
 	close(); 
-    [imagePicker release];
 }
 
 //--------------------------------------------------------------
@@ -219,22 +222,18 @@ bool ofxiOSImagePicker::getImageUpdated(){
 
     _imagePicker.delegate = nil;
 	[_imagePicker.view removeFromSuperview];
-	[_imagePicker release];
+    _imagePicker = nil;
 	
     if(_image) {
-        [_image release];
         _image = nil;
     }
     
     if(overlay) {
         overlay.delegate = nil;
-        [overlay release];
         overlay = nil;
     }
     
     cppPixelLoader = NULL;
-	
-	[super dealloc];
 }
 
 //----------------------------------------------------------------
@@ -242,14 +241,14 @@ bool ofxiOSImagePicker::getImageUpdated(){
          didFinishPickingImage:(UIImage *)image 
                    editingInfo:(NSDictionary *)editingInfo {
     
-    _image = [[self scaleAndRotateImage:image] retain];
+    _image = [self scaleAndRotateImage:image];
 	cppPixelLoader->loadPixels();
 }
 
 - (void) imagePickerController:(UIImagePickerController *)picker 
  didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
-    _image = [[self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]] retain];
+    _image = [self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]];
 	cppPixelLoader->loadPixels();
 }
 
@@ -369,7 +368,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
     
     if(overlay) {
         overlay.delegate = nil;
-        [overlay release];
         overlay = nil;
     }
 }

@@ -2,6 +2,10 @@
 
 #import "ES1Renderer.h"
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 @implementation ES1Renderer
 
 // Create an OpenGL ES 1.1 context
@@ -24,7 +28,7 @@
         
         if(!context || ![EAGLContext setCurrentContext:context]) {
             NSLog(@"OpenGL ES1 failed");
-            [self release];
+            self = nil;
             return nil;
         }
         
@@ -176,10 +180,7 @@
         [EAGLContext setCurrentContext:nil];
     }
 
-    [context release];
     context = nil;
-
-    [super dealloc];
 }
 
 - (NSInteger)getWidth {

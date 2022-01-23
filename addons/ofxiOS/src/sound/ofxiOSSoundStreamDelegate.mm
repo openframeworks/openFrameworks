@@ -8,6 +8,10 @@
 #include "ofLog.h"
 #include "ofSoundBuffer.h"
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 @interface ofxiOSSoundStreamDelegate() {
 	std::function<void(ofSoundBuffer &)> inCallback;
 	std::function<void(ofSoundBuffer &)> outCallback;
@@ -25,7 +29,7 @@
     if(self) {
         inputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
         outputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
-	tickCount = 0;
+        tickCount = 0;
     }
     return self;
 }
@@ -33,7 +37,6 @@
 - (void)dealloc {
     inCallback = nullptr;
     outCallback = nullptr;
-    [super dealloc];
 }
 
 - (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)fn {

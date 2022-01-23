@@ -30,6 +30,10 @@
  * ***********************************************************************/ 
 
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 #import <QuartzCore/QuartzCore.h>
 
 #include <TargetConditionals.h>
@@ -123,7 +127,7 @@ andPreferedRenderer:(ESRendererVersion)version
             
             if(!renderer){
                 NSLog(@"Critical Error - ofiOS EAGLView.m could not start any type of OpenGLES renderer");
-                [self release];
+                self = nil;
                 return nil;
             }
             
@@ -169,15 +173,13 @@ andPreferedRenderer:(ESRendererVersion)version
         return;
     }
     [self stopAnimation];
-    [renderer release];
-    [glLock release];
-    
+    renderer = nil;
+    glLock = nil;
     bInit = NO;
 }
 
 - (void) dealloc{
     [self destroy];
-    [super dealloc];
 }
 
 - (void) drawView:(id)sender {

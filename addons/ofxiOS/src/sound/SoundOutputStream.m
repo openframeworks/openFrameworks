@@ -16,6 +16,10 @@
 
 #import "SoundOutputStream.h"
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
                                                 AudioUnitRenderActionFlags *ioActionFlags,
                                                 const AudioTimeStamp *inTimeStamp,
@@ -23,7 +27,7 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
                                                 UInt32 inNumberFrames,
                                                 AudioBufferList *ioData) {
 
-    SoundOutputStream * stream = (SoundOutputStream *)inRefCon;
+    SoundOutputStream * stream = (__bridge SoundOutputStream *)inRefCon;
     AudioBuffer * audioBuffer = &ioData->mBuffers[0];
 	
 	// clearing the buffer before handing it off to the user
@@ -66,7 +70,6 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
 
 - (void)dealloc {
     [self stop];
-    [super dealloc];
 }
 
 - (void)start {
@@ -128,7 +131,7 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
     
     //---------------------------------------------------------- render callback.
     
-	AURenderCallbackStruct callback = {soundOutputStreamRenderCallback, self};
+    AURenderCallbackStruct callback = {soundOutputStreamRenderCallback, (__bridge void * _Nullable)(self)};
 	[self checkStatus:AudioUnitSetProperty(audioUnit,
 										   kAudioUnitProperty_SetRenderCallback,
 										   kAudioUnitScope_Global,

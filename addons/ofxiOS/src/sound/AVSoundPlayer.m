@@ -7,16 +7,16 @@
 #import "AVSoundPlayer.h"
 #include <TargetConditionals.h>
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 @interface AVSoundPlayer() {
     BOOL bMultiPlay;
 }
 @end
 
 @implementation AVSoundPlayer
-
-@synthesize delegate;
-@synthesize player;
-@synthesize timer;
 
 - (id)init {
     self = [super init];
@@ -52,7 +52,6 @@
 
 - (void)dealloc {
     [self unloadSound];
-    [super dealloc];
 }
 
 //----------------------------------------------------------- load / unload.
@@ -72,8 +71,8 @@
     [self unloadSound];
 	[self setupSharedSession];
     NSError * error = nil;
-    self.player = [[[AVAudioPlayer alloc] initWithContentsOfURL:url
-                                                          error:&error] autorelease];
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url
+                                                         error:&error];
     if([self.player respondsToSelector:@selector(setEnableRate:)]) {
         [self.player setEnableRate:YES];
     }
