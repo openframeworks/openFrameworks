@@ -6,6 +6,10 @@
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 #import <QuartzCore/QuartzCore.h>
 
 #include "ofxiOSViewController.h"
@@ -25,11 +29,8 @@
 
 @implementation ofxiOSViewController
 
-@synthesize glView;
-
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
-    [self initWithFrame:frame app:app sharegroup:nil];
-    return self;
+    return [self initWithFrame:frame app:app sharegroup:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
@@ -43,7 +44,7 @@
         }
         bFirstUpdate    = NO;
         bAnimated       = NO;
-        self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
+        self.glView = [[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup];
         
         [self.glView setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
         self.glView.delegate = self;
@@ -57,8 +58,6 @@
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
     self.glView = nil;
-    
-    [super dealloc];
 }
 
 - (void)viewDidLoad {
