@@ -6,6 +6,10 @@
 
 #import "ofAVFoundationVideoPlayer.h"
 
+#if !__has_feature(objc_arc)
+#   error need ARC
+#endif
+
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
 
@@ -16,18 +20,6 @@ static NSString * const kRateKey = @"rate";
 
 //---------------------------------------------------------- video player.
 @implementation ofAVFoundationVideoPlayer
-
-@synthesize player = _player;
-@synthesize asset = _asset;
-@synthesize playerItem = _playerItem;
-
-@synthesize assetReader = _assetReader;
-@synthesize assetReaderVideoTrackOutput = _assetReaderVideoTrackOutput;
-@synthesize assetReaderAudioTrackOutput = _assetReaderAudioTrackOutput;
-#if defined(USE_VIDEO_OUTPUT)
-@synthesize videoOutput = _videoOutput;
-#endif
-
 
 static const void *ItemStatusContext = &ItemStatusContext;
 static const void *PlayerRateContext = &ItemStatusContext;
@@ -101,7 +93,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32ARGB)};
 #endif
 	
-	self.videoOutput = [[[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes] autorelease];
+	self.videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
 	if (!self.videoOutput) {
 		NSLog(@"error creating video output");
 		return;
@@ -124,15 +116,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	[asyncLock unlock];
 	
 	// release locks
-	[asyncLock autorelease];
-	
 	if (deallocCond != nil) {
-		[deallocCond release];
-		deallocCond = nil;
+        deallocCond = nil;
 	}
-	
-	
-	[super dealloc];
 }
 
 
@@ -348,15 +334,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			
 			//------------------------------------------------------------ recreate player.
 			// destroy player if any - should never be the case!!
-			if(_player != nil) {
+			if(self.player != nil) {
 				[self removeTimeObserverFromPlayer];
 				[self.player removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
 				self.player = nil;
-				[_player release];
 			}
 			
 			// create new player
-			_player = [[AVPlayer playerWithPlayerItem:self.playerItem] retain];
+			self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
 			[self.player addObserver:self
 						  forKeyPath:kRateKey
 							 options:NSKeyValueObservingOptionNew
@@ -381,10 +366,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	// Wait for the dispatch semaphore signal
 	if(bAsync == NO){
 		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-		dispatch_release(sema);
 		return bLoaded;
 	} else {
-		dispatch_release(sema);
 		return YES;
 	}
 }
@@ -468,16 +451,13 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// relase assetreader
 			if (currentReader != nil) {
 				[currentReader cancelReading];
-				[currentReader autorelease];
 				currentReader = nil;
 				
 				if (currentVideoTrack != nil) {
-					[currentVideoTrack autorelease];
 					currentVideoTrack = nil;
 				}
 				
 				if (currentAudioTrack != nil) {
-					[currentAudioTrack autorelease];
 					currentAudioTrack = nil;
 				}
 			}
@@ -485,7 +465,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// release asset
 			if (currentAsset != nil) {
 				[currentAsset cancelLoading];
-				[currentAsset autorelease];
 				currentAsset = nil;
 			}
 			
@@ -514,7 +493,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				
 				// release videouOutput
 				if (currentVideoOutput != nil) {
-					[currentVideoOutput autorelease];
 					currentVideoOutput = nil;
 				}
 				
@@ -525,7 +503,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				}
 #endif
 				
-				[currentItem autorelease];
 				currentItem = nil;
 			}
 			
@@ -536,11 +513,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 				if (currentTimeObserver != nil) {
 					[currentPlayer removeTimeObserver:currentTimeObserver];
-					[currentTimeObserver autorelease];
 					currentTimeObserver = nil;
 				}
 				
-				[currentPlayer autorelease];
 				currentPlayer = nil;
 			}
 			
@@ -580,7 +555,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	[deallocCond wait];
 	[deallocCond unlock];
 	
-	[deallocCond release];
 	deallocCond = nil;
 }
 
@@ -620,7 +594,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	//------------------------------------------------------------ add video output.
 	if (bSampleVideo) {
-		NSMutableDictionary * videoOutputSettings = [[[NSMutableDictionary alloc] init] autorelease];
+		NSMutableDictionary * videoOutputSettings = [[NSMutableDictionary alloc] init];
 #ifdef TARGET_IOS
 		[videoOutputSettings setObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
 								forKey:(NSString*)kCVPixelBufferPixelFormatTypeKey];
@@ -1108,17 +1082,16 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	double interval = 1.0 / (double)frameRate;
 	
 	__block ofAVFoundationVideoPlayer* refToSelf = self;
-	timeObserver = [[_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
-														  queue:dispatch_get_main_queue() usingBlock:
-					 ^(CMTime time) {
-						 [refToSelf update];
-					 }] retain];
+	timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
+														 queue:dispatch_get_main_queue()
+                                                    usingBlock:^(CMTime time) {
+                                                        [refToSelf update];
+                                                    }];
 }
 
 - (void)removeTimeObserverFromPlayer {
 	if(timeObserver != nil) {
 		[_player removeTimeObserver:timeObserver];
-		[timeObserver release];
 		timeObserver = nil;
 	}
 }
