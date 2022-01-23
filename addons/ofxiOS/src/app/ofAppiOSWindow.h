@@ -103,7 +103,7 @@ public:
             enableHardwareOrientationAnimation = false;
             enableSetupScreen = true;
             setupOrientation = OF_ORIENTATION_DEFAULT;
-            windowControllerType = windowControllerType;
+//            windowControllerType = windowControllerType;
             colorType = ofxiOSRendererColorFormat::RGBA8888;
             depthType = ofxiOSRendererDepthFormat::DEPTH_NONE;
             stencilType = ofxiOSRendererStencilFormat::STENCIL_NONE;
