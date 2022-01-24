@@ -137,6 +137,7 @@ PLATFORM_REQUIRED_ADDONS =
 ifeq ($(CXX),g++)
 	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
 	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+	GCC_MAJOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 7)
 	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
@@ -156,6 +157,11 @@ ifeq ($(CXX),g++)
 	ifeq ("$(GCC_MAJOR_GT_4)","1")
 		PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
 		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+	endif
+	# c++17 for gcc 7 and newer
+	ifeq ("$(GCC_MAJOR_GTEQ_7)","1")
+		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
+		OF_USING_STD_FS=1
 	endif
 else
 	ifeq ($(CXX),g++-5)
