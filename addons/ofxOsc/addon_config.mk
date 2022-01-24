@@ -78,7 +78,5 @@ vs:
 	# a specific platform
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/posix/%
 	ADDON_DEFINES = OSC_HOST_LITTLE_ENDIAN
-	
-osx:
-	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32/%
+
 	
