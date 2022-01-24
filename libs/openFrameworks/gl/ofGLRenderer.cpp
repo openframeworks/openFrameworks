@@ -1,7 +1,6 @@
 #include "ofGLRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofMesh.h"
 #include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
