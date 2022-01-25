@@ -161,8 +161,7 @@ ifeq ($(CXX),g++)
 	endif
 	# c++17 for gcc 6 and newer
 	ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
-		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
-		OF_USING_STD_FS=1
+		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX -DOF_USING_STD_FS=1
 	endif
 else
 	ifeq ($(CXX),g++-5)
