@@ -26,7 +26,7 @@
 ##########################################################################################
 
 MINGW_PREFIX ?= /mingw32
-PLATFORM_CFLAGS += -std=c++17 -DUNICODE -D_UNICODE -lstdc++fs
+PLATFORM_CFLAGS += -std=gnu++17 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 ifdef USE_CCACHE
 	CC = ccache $(MINGW_PREFIX)/bin/gcc
@@ -134,9 +134,9 @@ endif
 ifndef DEBUG
 	PLATFORM_LDFLAGS += -mwindows
 endif
-#ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
-PLATFORM_LDFLAGS += -lstdc++fs
-#endif
+ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
+	PLATFORM_LDFLAGS += -lstdc++fs
+endif
 
 
 ##########################################################################################
