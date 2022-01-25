@@ -3,9 +3,6 @@ set -ev
 ROOT="$PWD"
 source $ROOT/scripts/ci/ccache.sh
 
-echo "-----> checking gcc version"
-gcc -v
-g++ -v
 echo "**** Building OF core ****"
 cd $ROOT/libs/openFrameworksCompiled/project
 make ${USE_CCACHE} -j4 Debug
