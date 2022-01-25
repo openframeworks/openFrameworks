@@ -63,7 +63,7 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 ##########################################################################################
 
 #for some weird reason we have to disable c++11 this way when using c++17 - otherwise it tries to include the c++11 experimental filesystem instead
-PLATFORM_DEFINES = _GLIBCXX_USE_CXX11_ABI=0
+PLATFORM_DEFINES = _GLIBCXX_USE_CXX11_ABI=0 _HAS_STD_BYTE=0
 ifeq ($(OF_USE_POCO),1)
 	PLATFORM_DEFINES += POCO_STATIC
 endif
