@@ -138,7 +138,7 @@ ifeq ($(CXX),g++)
 	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
 	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
 	GCC_MAJOR_GTEQ_6 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 6)
-	GCC_MAJOR_GTEQ_8 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 8)
+	GCC_MAJOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 8)
 	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
@@ -194,9 +194,9 @@ endif
 
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
-# gcc 6 and 7 need special file system linking with -lstdc++fs
+# gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
 ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
-	ifeq ("$(GCC_MAJOR_GTEQ_8)","0")
+	ifeq ("$(GCC_MAJOR_GTEQ_9)","0")
 		PLATFORM_LDFLAGS += -lstdc++fs
 	endif
 endif
