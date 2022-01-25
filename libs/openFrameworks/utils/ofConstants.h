@@ -15,12 +15,6 @@
 // This enables glm's old behavior of initializing with non garbage values
 #define GLM_FORCE_CTOR_INIT
 
-#define STRING2(x) #x
-#define STRING(x) STRING2(x)
-
-#warning __cplusplus version is STRING(__cplusplus)
-#warning OF_USING_STD_FS is STRING(OF_USING_STD_FS)
-
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #ifndef OF_USING_STD_FS
 	#if __cplusplus >= 201703L
