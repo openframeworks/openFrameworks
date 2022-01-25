@@ -231,7 +231,7 @@ public:
 
 	void mergeDuplicateVertices();
 
-	/// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
+	/// \returns a glm::vec3 defining the centroid of all the vetices in the mesh.
 	V getCentroid() const;
 
 
@@ -432,7 +432,7 @@ public:
 	/// \returns a pointer to the texture coords that the mesh contains.
 	T* getTexCoordsPointer();
 
-	/// \brief Get a pointer to the ofVec2f texture coordinates that the mesh contains.
+	/// \brief Get a pointer to the glm::vec2 texture coordinates that the mesh contains.
 	const T* getTexCoordsPointer() const;
 
 	/// \brief Get a vector representing the texture coordinates of the mesh

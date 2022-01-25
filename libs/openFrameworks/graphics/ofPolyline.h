@@ -25,7 +25,7 @@
 /// 	float r = (2-2*sin(i) + sin(i)*sqrt(abs(cos(i))) / (sin(i)+1.4)) * -80;
 /// 	float x = ofGetWidth()/2 + cos(i) * r;
 /// 	float y = ofGetHeight()/2 + sin(i) * r;
-/// 	line.addVertex(ofVec2f(x,y));
+/// 	line.addVertex(glm::vec2(x,y));
 /// 	i+=0.005*HALF_PI*0.5;
 /// }
 /// line.close(); // close the shape
@@ -65,7 +65,7 @@ public:
 	/// \brief Creates an ofPolyline.
 	ofPolyline_();
 
-	/// \brief Creates an ofPolyline from a vector of ofVec2f or T objects.
+	/// \brief Creates an ofPolyline from a vector of glm::vec2 or T objects.
 	ofPolyline_(const std::vector<T>& verts);
 
 	static ofPolyline_ fromRectangle(const ofRectangle& rect);
