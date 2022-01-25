@@ -467,12 +467,12 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     }
 #	else
 #       define OF_USE_EXPERIMENTAL_FS 0
-	#include <filesystem>
-//	namespace std {
-//		namespace filesystem {
-//			class path;
-//		}
-//	}
+
+	namespace std {
+		namespace filesystem {
+			class path;
+		}
+	}
 #	endif
 #else
 #	if !_MSC_VER
