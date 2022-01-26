@@ -64,8 +64,12 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 
 #for some weird reason we have to disable c++11 this way when using c++17 - otherwise it tries to include the c++11 experimental filesystem instead
 PLATFORM_DEFINES = _GLIBCXX_USE_CXX11_ABI=0
+
+#this is because Poco includes an old windows header which typedefs byte / conflicts with std::byte - could be an issue with other libs too
+PLATFORM_DEFINES += _POCO_NO_WINDOWS_H=1
+
 ifeq ($(OF_USE_POCO),1)
-	PLATFORM_DEFINES += POCO_STATIC _POCO_NO_WINDOWS_H=1
+	PLATFORM_DEFINES += POCO_STATIC
 endif
 
 # Define the sound player to use : OpenAL is the default.
