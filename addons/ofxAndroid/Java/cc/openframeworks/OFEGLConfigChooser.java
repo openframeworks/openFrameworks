@@ -261,6 +261,16 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
 
+        try {
+            Log.i("OF", String.format("eglChooseConfig" + android.os.Build.DEVICE));
+
+            if (android.os.Build.DEVICE.contains("Redmi 6")) {
+                OFAndroid.samples = 1;
+            }
+        } catch (Exception ex) {
+
+        }
+
         /* Get the number of minimally matching EGL configurations
          */
         int[] num_config = new int[1];
@@ -295,7 +305,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         if (numConfigs <= 0  && !workingConfig) {
             setRGB();
             Log.i("OF", String.format("eglChooseConfig MSAAx8"));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !egl.eglChooseConfig(display, s_configAttribsMSAA8, null, 0,
+            if (OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !egl.eglChooseConfig(display, s_configAttribsMSAA8, null, 0,
                     num_config)) {
                 Log.w("OF", String.format("eglChooseConfig MSAAx8 failed"));
             }
@@ -303,7 +313,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && numConfigs > 0) {
                 configs = new EGLConfig[numConfigs];
                 try {
-                    if (egl.eglChooseConfig(display, s_configAttribsMSAA8, configs, numConfigs, num_config)) {
+                    if (OFAndroid.samples > 1 && egl.eglChooseConfig(display, s_configAttribsMSAA8, configs, numConfigs, num_config)) {
                         numConfigs = num_config[0];
                         if (numConfigs > 0) workingConfig = true;
                     }
@@ -316,7 +326,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.i("OF", String.format("eglChooseConfig MSAAx4"));
                 configs = new EGLConfig[numConfigs];
                 try {
-                    if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
+                    if (OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
                             num_config)) {
                         Log.w("OF", String.format("eglChooseConfig MSAA failed"));
                     }
@@ -327,7 +337,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 if(numConfigs > 0) {
                     configs = new EGLConfig[numConfigs];
                     try {
-                        if(egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config)){
+                        if(OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config)){
                             numConfigs = num_config[0];
                             if(numConfigs > 0) workingConfig = true;
                         }
@@ -340,7 +350,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
                     Log.i("OF", String.format("eglChooseConfig MSAAx4 TEGRA"));
                     try {
-                        if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, 0,
+                        if (OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, 0,
                                 num_config)) {
                             Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
                         }
@@ -351,7 +361,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     if(numConfigs > 0) {
                         configs = new EGLConfig[numConfigs];
                         try {
-                            if(egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config)){
+                            if(OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config)){
                                 numConfigs = num_config[0];
                                 if(numConfigs > 0) workingConfig = true;
                             }
@@ -361,7 +371,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     }
                     if (numConfigs <= 0 && !workingConfig) {
                         Log.i("OF", String.format("eglChooseConfig MSAAx4 TEGRA2"));
-                        if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack2, null, 0,
+                        if (OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !egl.eglChooseConfig(display, s_configAttribsMSAAFallBack2, null, 0,
                                 num_config)) {
                             Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
                         }
@@ -369,7 +379,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                         if(numConfigs > 0) {
                             configs = new EGLConfig[numConfigs];
                             try {
-                                if(egl.eglChooseConfig(display, s_configAttribsMSAAFallBack2, configs, numConfigs, num_config)){
+                                if(OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && egl.eglChooseConfig(display, s_configAttribsMSAAFallBack2, configs, numConfigs, num_config)){
                                     numConfigs = num_config[0];
                                     if(numConfigs > 0) workingConfig = true;
                                 }
