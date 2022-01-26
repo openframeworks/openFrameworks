@@ -47,11 +47,11 @@ public:
     /// offset from the center of its frustum. This is called an "assymetric
     /// frustum" and is used (for example) in stereo views.  It is acheived by
     /// applying an offset to the center of projection.  This function sets this
-    /// offset from an ofVec2f argument.  For more information see
+    /// offset from an glm::vec2 argument.  For more information see
     /// <http://www.orthostereo.com/geometryopengl.html>.
 	///
 	/// \param lensOffset The "lens offset" to apply to this camera, encoded in
-    ///     an ofVec2f.
+    ///     an glm::vec2.
 	void setLensOffset(const glm::vec2 & lensOffset);
 	
 	/// \brief Set the recommended aspect ratio for a perspective camera.
@@ -86,17 +86,17 @@ public:
 
     float getFarClip() const { return farClip; };
 	
-	/// \brief Get the "lens offset" applied to this camera, encoded as an ofVec2f.
+	/// \brief Get the "lens offset" applied to this camera, encoded as an glm::vec2.
 	/// 
 	/// Ordinarily, the camera is pointed straight down the center of its view
     /// frustum.  However, it is possible to orient the camera towards a
     /// location offset from the center of its frustum.  This is called an
     /// "asymetric frustum" and is used (for example) in stereo views.  It is
     /// acheived by applying an offset to the center of projection.  This
-    /// function returns the offset that has been applied, as an ofVec2f.  For
+    /// function returns the offset that has been applied, as an glm::vec2.  For
     /// more information see http://www.orthostereo.com/geometryopengl.html.
 	///
-	/// \returns The "lens offset" applied to this camera, encoded in an ofVec2f.
+	/// \returns The "lens offset" applied to this camera, encoded in an glm::vec2.
 	glm::vec2 getLensOffset() const { return lensOffset; };
 	
 	/// \brief Get the boolean state which indicates whether the aspect ratio of this camera is forced to a non-default setting.
