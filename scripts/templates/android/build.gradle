@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
+        classpath 'com.android.tools.build:gradle:7.0.4'
     }
 }
 
@@ -16,15 +16,7 @@ allprojects {
         google()
         mavenCentral()
     }
-
     ext {
-        android_compile_version = 31
-
-        // Google Play Services minimum requirements is 14
-        android_min_sdk_version = 21
-
-        appcompat_library_version = '27.0.2'
-        support_library_version = '27.0.2'
 
     }
 }
