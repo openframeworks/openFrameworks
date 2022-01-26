@@ -26,7 +26,7 @@
 ##########################################################################################
 
 MINGW_PREFIX ?= /mingw32
-PLATFORM_CFLAGS += -std=c++17 -DUNICODE -D_UNICODE
+PLATFORM_CFLAGS += -std=gnu++17 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 ifdef USE_CCACHE
 	CC = ccache $(MINGW_PREFIX)/bin/gcc
@@ -63,9 +63,9 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 ##########################################################################################
 
 #for some weird reason we have to disable c++11 this way when using c++17 - otherwise it tries to include the c++11 experimental filesystem instead
-PLATFORM_DEFINES = _GLIBCXX_USE_CXX11_ABI=0 _HAS_STD_BYTE=0
+PLATFORM_DEFINES = _GLIBCXX_USE_CXX11_ABI=0
 ifeq ($(OF_USE_POCO),1)
-	PLATFORM_DEFINES += POCO_STATIC
+	PLATFORM_DEFINES += POCO_STATIC _POCO_NO_WINDOWS_H=1
 endif
 
 # Define the sound player to use : OpenAL is the default.
