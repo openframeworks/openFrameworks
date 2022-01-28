@@ -1,5 +1,7 @@
 package cc.openframeworks;
 
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -59,6 +61,23 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			}
 		}
 	}
+
+	private AssetFileDescriptor getSeekableFileDescriptor(String fileName) {
+
+		AssetManager assetManager = OFAndroid.assetManager;
+		AssetFileDescriptor assetFileDescriptor = null;
+		//ParcelFileDescriptor fileDescriptor = null;
+		try {
+			assetFileDescriptor = assetManager.openFd(fileName);
+			return assetFileDescriptor;
+//			fileDescriptor = assetFileDescriptor.getParcelFileDescriptor();
+//			return fileDescriptor;
+		}
+		catch (IOException e) {
+			Log.d("OF", e.toString());
+		}
+		return assetFileDescriptor;
+	}
 	
 	void loadSound(String fileName, boolean stream){
 
@@ -71,7 +90,13 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 					player.setOnPreparedListener(this);
 //					player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 					player.setAudioAttributes(attributes);
-					player.setDataSource(fileName);
+
+					AssetFileDescriptor assetManagerFileDescriptor = getSeekableFileDescriptor(fileName);
+					if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && assetManagerFileDescriptor != null) {
+							player.setDataSource(assetManagerFileDescriptor);
+					}
+					else
+						player.setDataSource(fileName);
 
 
 				} catch (Exception e) {
@@ -163,9 +188,13 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(player==null) return;
 			try {
 				if (getIsPlaying()) {
-					//player.stop();
-					player.seekTo(0);
-					player.pause();
+					if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+						Log.i("OF","SoundPlayer stop: " + fileName + " at " + pausePositionMS);
+						player.stop();
+					} else {
+						player.pause();
+						player.seekTo(0);
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -407,7 +436,20 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 				pausePositionMS = 0;
 			}
 		} else  {
-			//Log.i("OF","SoundPlayer appResume not loaded" + fileName + " at " + pausePositionMS);
+			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+				Log.i("OF","SoundPlayer appResume - reloading stream for M" + fileName + " at " + pausePositionMS);
+				loadSound(fileName, stream);
+				if(bIsPlaying) {
+					//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+					play();
+				}
+				if(pausePositionMS != 0) {
+					setPositionMS(pausePositionMS);
+					pausePositionMS = 0;
+				}
+			} else {
+				Log.i("OF","SoundPlayer appResume");
+			}
 		}
 		if(pool != null) pool.autoResume();
 	}
