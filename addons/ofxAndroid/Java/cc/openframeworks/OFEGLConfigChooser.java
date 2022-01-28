@@ -80,7 +80,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mGreenSize = 10;
         mBlueSize = 10;
         mAlphaSize = 2;
-        mDepthSize = 16;
+        mDepthSize = 8;
         mStencilSize = 1;
         //mSampleSize = 8;
         mWideGamut = true;
@@ -138,18 +138,18 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
     private static int[] s_configAttribsMSAA_P3 =
             {
-                    EGL14.EGL_RED_SIZE, 10,
-                    EGL14.EGL_GREEN_SIZE, 10,
-                    EGL14.EGL_BLUE_SIZE, 10,
-                    EGL14.EGL_DEPTH_SIZE, 8,
-                    EGL14.EGL_ALPHA_SIZE, 2,
+                    EGL10.EGL_RED_SIZE, 10,
+                    EGL10.EGL_GREEN_SIZE, 10,
+                    EGL10.EGL_BLUE_SIZE, 10,
+                    EGL10.EGL_DEPTH_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 2,
                     EGL_COLOR_COMPONENT_TYPE_EXT,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
-                    EGL14.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT /* EGL_OPENGL_ES2_BIT */,
-                    EGL14.EGL_SAMPLE_BUFFERS, 1 /* true */,
-                    EGL14.EGL_SAMPLES, 4,
+                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
+                    EGL10.EGL_SAMPLES, 4,
                     EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT,
-                    EGL14.EGL_NONE
+                    EGL10.EGL_NONE
             };
 
     private static final int[] s_configAttribsMSAA16Angle =
@@ -157,8 +157,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_RED_SIZE, 8,
                     EGL10.EGL_GREEN_SIZE, 8,
                     EGL10.EGL_BLUE_SIZE, 8,
-                    EGL14.EGL_ALPHA_SIZE, 8,
-                    EGL10.EGL_DEPTH_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_DEPTH_SIZE, 16,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
                     EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
                     EGL_MAX_SAMPLES_ANGLE, 4,
@@ -170,7 +170,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_RED_SIZE, 8,
                     EGL10.EGL_GREEN_SIZE, 8,
                     EGL10.EGL_BLUE_SIZE, 8,
-                    EGL14.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 16,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
                     EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
@@ -185,7 +185,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_RED_SIZE, 8,
                     EGL10.EGL_GREEN_SIZE, 8,
                     EGL10.EGL_BLUE_SIZE, 8,
-                    EGL14.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 16,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
                     EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
@@ -199,7 +199,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_RED_SIZE, 8,
                     EGL10.EGL_GREEN_SIZE, 8,
                     EGL10.EGL_BLUE_SIZE, 8,
-                    EGL14.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 16,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
                     EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
@@ -212,8 +212,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
-            EGL14.EGL_ALPHA_SIZE, 8,
-            EGL10.EGL_DEPTH_SIZE, 8,
+            EGL10.EGL_ALPHA_SIZE, 8,
+            EGL10.EGL_DEPTH_SIZE, 16,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
             EGL_COVERAGE_SAMPLES_NV, 2,  // always 5 in practice on tegra 2
@@ -224,8 +224,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
-            EGL14.EGL_ALPHA_SIZE, 8,
-            EGL10.EGL_DEPTH_SIZE, 8,
+            EGL10.EGL_ALPHA_SIZE, 8,
+            EGL10.EGL_DEPTH_SIZE, 16,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
             EGL_COVERAGE_SAMPLES_NV, 5,  // always 5 in practice on tegra 2
@@ -236,7 +236,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
-            EGL10.EGL_DEPTH_SIZE, 8,
+            EGL10.EGL_DEPTH_SIZE, 16,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
@@ -245,7 +245,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, 5,
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
-            EGL10.EGL_DEPTH_SIZE, 0,
+            EGL10.EGL_DEPTH_SIZE, 16,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
@@ -262,9 +262,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
 
         try {
-            Log.i("OF", String.format("eglChooseConfig" + android.os.Build.DEVICE));
-
-            if (android.os.Build.DEVICE.contains("Redmi 6")) {
+            Log.i("OF", String.format("eglChooseConfig: DEVICE:" + android.os.Build.DEVICE + " MODEL:"+ Build.MODEL));
+            if (android.os.Build.DEVICE.contains("cactus")) {
                 OFAndroid.samples = 1;
             }
         } catch (Exception ex) {
@@ -291,6 +290,11 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.M // Disable for old API's
            ) {
             tryMSAA = false;
+            OFAndroid.samples = 1;
+            Log.i("OF", String.format("eglChooseConfig MSAA Disabled: height:") + OFAndroid.height);
+
+        } else {
+            Log.i("OF", String.format("eglChooseConfig MSAA Enabled: height:") + OFAndroid.height);
         }
         int numConfigs = num_config[0];
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -532,7 +536,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_SAMPLES, 0);
             String output = String.format("Config Row: r%d g:%d b%d a:%d d:%d s%d aa:%d sbuffer:%d", r, g, b, a, depth,stencil, samples, sampleBuffers);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (OFAndroid.samples > 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 int anglesamples = findConfigAttrib(egl, display, config,
                         EGL_MAX_SAMPLES_ANGLE, 0);
                 // check for ANGLE Lib EGL Samples
@@ -575,7 +579,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             int nvsamples = findConfigAttrib(egl, display, config,
                     EGL_COVERAGE_SAMPLES_NV, 0);
 
-            if (foundConfig == null &&  r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && nvsamples == 5) {
+            if (OFAndroid.samples > 1 && foundConfig == null &&  r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && nvsamples == 5) {
                 if (foundConfig == null) {
                     foundConfig = config;
                     Log.i("NV samples OF", "Found and Set:" + output);
@@ -588,11 +592,11 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize) {
+            if (OFAndroid.samples > 1 && foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize) {
                 if (foundConfig == null) {
                     foundConfig = config;
                     mSampleSize = samples;
-                    Log.i("OF", "Found and Set:" + output);
+                    Log.i("OF", "MSAA Found and Set:" + output);
                 }
                 else {
                     foundConfig = config;
@@ -603,11 +607,11 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/2) {
+            if (OFAndroid.samples > 1 && foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/2) {
                 if (foundConfig == null) {
                     foundConfig = config;
                     mSampleSize = samples;
-                    Log.i("OF", "Found and Set:" + output);
+                    Log.i("OF", "MSAA/2 Found and Set:" + output);
                 }
                 else {
                     Log.i("OF", "Override Already Found and Set:" + output);
@@ -616,70 +620,61 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (foundConfig == null &&  r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/4) {
-                if (foundConfig == null) {
-                    foundConfig = config;
-                    mSampleSize = samples;
-                    Log.i("OF", "Found and Set:" + output);
-                }
-                else {
-                    Log.i("OF", "Override Already Found and Set:" + output);
-                }
+            if (OFAndroid.samples > 1 && foundConfig == null &&  r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize/4) {
+
+                foundConfig = config;
+                mSampleSize = samples;
+                Log.i("OF", "MSAA/4 Found and Set:" + output);
+
             } else {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 2 && mSampleSize > 2) {
+            if (OFAndroid.samples > 1 &&  foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 2 && mSampleSize > 2) {
+                foundConfig = config;
+                mSampleSize = samples;
+                Log.i("OF", "MSAAx2 Found and Set:" + output);
 
-                if (foundConfig == null){
-                    foundConfig = config;
-                    mSampleSize = samples;
-                    Log.i("OF", "Found and Set:" + output);
-                }
-                else {
-                     Log.i("OF", "Override Already Found and Set:" + output);
-                }
             } else {
                  Log.v("OF", "Else Config: " + output);
             }
 
-            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 1 && mSampleSize >= 1) {
+            if (OFAndroid.samples > 1 && foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == 1 && mSampleSize >= 1) {
 
-                if(foundConfig == null) {
-                    foundConfig = config;
-                    mSampleSize = 1;
-                    Log.i("OF", "Found and Set :" + output);
-                }
-                else {
-                    Log.i("OF", "Override Already Found and Set:" + output);
-                }
+                foundConfig = config;
+                mSampleSize = 1;
+                Log.i("OF", "Found and Set :" + output);
+
             } else {
                 Log.v("OF", "Else Config: " + output);
             }
 
-            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 1 && mSampleSize >= 1) {
+            if ( foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 1 && mSampleSize >= 1) {
 
-                if(foundConfig == null) {
-                    foundConfig = config;
-                    mSampleSize = 1;
-                    Log.i("OF", "Found and Set  :Depth Size and Stencil any:" + output);
-                }
-                else {
-                    Log.i("OF", "Override Already Found and Set:" + output);
-                }
+                foundConfig = config;
+                mSampleSize = 1;
+                Log.i("OF", "MSAA Any Found and Set :Depth Size and Stencil any:" + output);
+
+            } else {
+                Log.v("OF", "Else Config: " + output);
+            }
+
+            if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && 16 == mDepthSize && mSampleSize >= 1) {
+
+                foundConfig = config;
+                mSampleSize = 1;
+                Log.i("OF", "MSAA Any - Depth 16 - Last Resort Found and Set:" + output);
+
             } else {
                 Log.v("OF", "Else Config: " + output);
             }
 
             if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && mSampleSize >= 1) {
-                if(foundConfig == null) {
-                    foundConfig = config;
-                    mSampleSize = 1;
-                    Log.i("OF", "Last Resort Found and Set:" + output);
-                }
-                else {
-                    Log.i("OF", "Override Already Found and Set:" + output);
-                }
+
+                foundConfig = config;
+                mSampleSize = 1;
+                Log.i("OF", "Last Resort Found and Set:" + output);
+
             } else {
                 Log.v("OF", "Else Config: " + output);
             }
