@@ -54,7 +54,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display display;
 	private Display presentationDisplay;
 	public static final boolean LOG_INPUT = false;
-	
 	public static final boolean LOG_ENGINE = false;
 
 	public float currentRefreshRate;
@@ -148,13 +147,24 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		if(LOG_ENGINE) Log.i(TAG, "onCreate:" + OFAndroid.packageName);
 
+
+
 		WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			displayManager = getSystemService(DisplayManager.class);
 			displayManager.registerDisplayListener(this, null);
-
 		}
+		try {
+			Log.i(TAG, "onCreate: Device:" + Build.MANUFACTURER.toLowerCase());
+			if(OFAndroid.isHTCDevice()) OFAndroid.isDeviceHTC = true;
+			if(OFAndroid.isSamsungDevice()) OFAndroid.isDeviceSamsung = true;
+			if(OFAndroid.isHuaweiDevice()) OFAndroid.isDeviceHuawei = true;
+			if(OFAndroid.isAmazonDevice()) OFAndroid.isDeviceAmazon = true;
+			Log.i(TAG, "onCreate: Device: isDeviceSamsung:" + OFAndroid.isDeviceSamsung + " isDeviceHuawei:" + OFAndroid.isDeviceHuawei + "  OFAndroid.isDeviceAmazon:" +  OFAndroid.isDeviceAmazon);
+
+		} catch (Exception ex) { }
+
 		OFAndroidLifeCycle.setActivity(this);
 		if(OFAndroidLifeCycle.coreLibraryLoaded == false) {
 			LoadCoreStatic();
@@ -280,6 +290,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			Log.w("OF", "Could not get Window for Display ", exception);
 		}
 	}
+
 
 	public void DetermineDisplayDimensionsConfigChange(Configuration config) {
 
@@ -823,8 +834,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			if(event.getDevice() == null && OFAndroid.lastInputDevice == null) {
 				OFAndroid.lastInputDevice = OFAndroidController.getGameControllerForID(event.getDeviceId()); // fall back
 			}
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) { // Android 12 fixes PS5 bug
-
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Build.VERSION.SDK_INT == Build.VERSION_CODES.S && OFAndroid.isDeviceSamsung) { // Android 12 fixes PS5 bug
+				if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+					OFAndroid.toast(OFAndroid.lastInputDevice.getName() + " keycode:" + keyCode);
 				if (OFAndroid.lastInputDevice != null && OFAndroid.lastInputDevice.getVendorId() == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))) {
 					if (keyCode == 97) { // flips X to Square to fix HID issues for PS5
 						keyCode = 96;
@@ -869,6 +881,18 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					else
 						Log.i("OF", "Not PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId());
 
+				}
+			} else if(OFAndroid.isHuaweiDevice()) {
+				if (OFAndroid.lastInputDevice != null && OFAndroid.lastInputDevice.getVendorId() == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))) {
+					if (keyCode == 100) {
+						if (LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 100->102");
+						keyCode = 104;
+					} else if (keyCode == 101) {
+						keyCode = 105;
+						if (LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 101->103");
+					}
 				}
 			}
 			if(OFAndroid.lastInputID == -1 || OFAndroid.lastInputID != event.getDeviceId() && OFAndroid.lastInputVendorID != OFAndroid.lastInputDevice.getVendorId()) {

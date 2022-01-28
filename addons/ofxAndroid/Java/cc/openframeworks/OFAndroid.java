@@ -66,6 +66,35 @@ public class OFAndroid {
 	public static InputDevice lastInputDevice = null;
 	public static AssetManager assetManager;
 
+	public static boolean isDeviceSamsung = false;
+	public static boolean isDeviceHTC = false;
+	public static boolean isDeviceHuawei = false;
+	public static boolean isDeviceAmazon = false;
+
+	public static boolean isHTCDevice()
+	{
+		String manufacturer = android.os.Build.MANUFACTURER;
+		return manufacturer.toLowerCase(Locale.ENGLISH).contains("htc");
+	}
+
+	public static boolean isSamsungDevice()
+	{
+		String manufacturer = android.os.Build.MANUFACTURER;
+		return manufacturer.toLowerCase(Locale.ENGLISH).contains("samsung");
+	}
+
+	public static boolean isHuaweiDevice()
+	{
+		String manufacturer = android.os.Build.MANUFACTURER;
+		return manufacturer.toLowerCase(Locale.ENGLISH).contains("huawei");
+	}
+
+	public static boolean isAmazonDevice()
+	{
+		String manufacturer = android.os.Build.MANUFACTURER;
+		return manufacturer.toLowerCase(Locale.ENGLISH).contains("amazon");
+	}
+
 	// List based on http://bit.ly/NpkL4Q
 	@SuppressLint("SdCardPath") // the following list is fall back 3
 	private static final String[] mExternalStorageDirectories = new String[] {
