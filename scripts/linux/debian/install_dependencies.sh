@@ -70,6 +70,28 @@ if [ "$OS_CODENAME" = "7 (wheezy)" ]; then
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 1 --force
 fi
 
+if [[ $(uname -a) == *"raspberrypi"* ]] && [[ "$OS_CODENAME" = "11 (bullseye)" ]]; then
+    # sanity for stitching
+    version=/usr/bin/opencv_version
+    if [ -f $version ]; then
+        version=$($version)
+        # check version if necessary.
+        if [ ! -z $version ]; then
+            defined=$(grep "#define HAVE_OPENCV_STITCHING" /usr/include/opencv4/opencv2/opencv_modules.hpp)
+            if [[ ${defined:0:7} == $"#define" ]]; then
+                sed -i 's/\<Status\>/EnumStatus/' /usr/include/opencv4/opencv2/stitching.hpp
+                echo "OpenCV $version stitching updated."
+            fi
+        fi
+    fi
+
+    # sanity for openmaxil
+    if [[ ! -f "/opt/vc/lib/libopenmaxil.so" ]]; then
+            sed -i 's/\<PLATFORM_LIBRARIES += openmaxil\>//' ../../../libs/openFrameworksCompiled/project/linuxarmv6l/config.linuxarmv6l.default.mk
+            echo "config.linuxarmv6l.default.mk (openmaxil) updated."
+    fi
+fi
+
 # Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
 addons_dir="$(readlink -f "$ROOT/../../../addons")"
 $(pkg-config opencv4 --exists)
