@@ -76,19 +76,19 @@ if [[ $(uname -a) == *"raspberrypi"* ]] && [[ "$OS_CODENAME" = "11 (bullseye)" ]
     if [ -f $version ]; then
         version=$($version)
         # check version if necessary.
-        if [ ! -z $version ]; then
-            defined=$(grep "#define HAVE_OPENCV_STITCHING" /usr/include/opencv4/opencv2/opencv_modules.hpp)
-            if [[ ${defined:0:7} == $"#define" ]]; then
-                sed -i 's/\<Status\>/EnumStatus/' /usr/include/opencv4/opencv2/stitching.hpp
-                echo "OpenCV $version stitching updated."
-            fi
-        fi
+#        if [ ! -z $version ]; then
+#            defined=$(grep "#define HAVE_OPENCV_STITCHING" /usr/include/opencv4/opencv2/opencv_modules.hpp)
+#            if [[ ${defined:0:7} == $"#define" ]]; then
+#                sed -i 's/\<Status\>/EnumStatus/' /usr/include/opencv4/opencv2/stitching.hpp
+#                echo "OpenCV $version stitching updated."
+#            fi
+#        fi
     fi
 
     # sanity for openmaxil
     if [[ ! -f "/opt/vc/lib/libopenmaxil.so" ]]; then
-            sed -i 's/\<PLATFORM_LIBRARIES += openmaxil\>//' ../../../libs/openFrameworksCompiled/project/linuxarmv6l/config.linuxarmv6l.default.mk
-            echo "config.linuxarmv6l.default.mk (openmaxil) updated."
+#           sed -i 's/\<PLATFORM_LIBRARIES += openmaxil\>//' ../../../libs/openFrameworksCompiled/project/linuxarmv6l/config.linuxarmv6l.default.mk
+#            echo "config.linuxarmv6l.default.mk (openmaxil) updated."
     fi
 fi
 
