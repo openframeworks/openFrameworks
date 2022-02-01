@@ -7,6 +7,8 @@
 	#undef MAX 
 #endif 
 
+#define Status _PrivateCvStatus
+
 #include "opencv2/core/version.hpp"
 #if CV_MAJOR_VERSION < 4
     #include "cv.h"
@@ -18,6 +20,8 @@
 
 #include <vector>
 #include "ofMain.h"
+
+#undef Status
 
 enum ofxCvRoiMode {
     OFX_CV_ROI_MODE_INTERSECT,
