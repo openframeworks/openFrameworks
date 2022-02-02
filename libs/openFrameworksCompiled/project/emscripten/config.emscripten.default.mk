@@ -64,8 +64,7 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths -lstdc++fs
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths -lstdc++fs
+PLATFORM_CFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths
 
 
 ################################################################################
@@ -91,7 +90,7 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -lstdc++fs
+PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
