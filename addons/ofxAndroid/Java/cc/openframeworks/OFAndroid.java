@@ -60,7 +60,9 @@ public class OFAndroid {
 	public static Locale locale;
 
 	public static int lastInputID = -1;
+	public static int lastDeviceID = -1;
 	public static int lastInputVendorID = -1;
+	public static int lastInputProductID = -1;
 	public static String lastInputDescriptor = "";
 	public static OFAndroidController.ControllerType lastControllerType = OFAndroidController.ControllerType.NONE;
 	public static InputDevice lastInputDevice = null;

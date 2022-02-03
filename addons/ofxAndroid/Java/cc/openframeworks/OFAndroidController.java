@@ -14,12 +14,23 @@ public class OFAndroidController {
     public static final String PS5_Controller_NAME_GENERIC = "Wireless Controller";
     public static final String PS4_Controller_NAME = "Sony Interactive Entertainment Wireless Controller Touchpad";
     public static final String XBOX_Controller_NAME = "Microsoft X-Box One pad (Firmware 2015)";
+    public static final String STEAM_Controller_NAME = "Valve Software Wired Controller";
+    public static final String NINTENDO_Controller_NAME = "Nintendo Wired Controller";
 
+
+    public static final int VendorERROR = 0;
     public static final int VendorPS = 1356;
     public static final int VendorMS = 1118;
     public static final int VendorNS = 1406;
+    public static final int VendorValve = 10462;
+
+    public static final int ProductID_PS5 = 3302;
+    public static final int ProductID_PS4 = 2508;
+    public static final int ProductID_XBOX = 765;
+    public static final int ProductID_STEAM = 4354;
 
     public enum ControllerType {
+        NOT_SET,
         NONE,
         ACTION_DPAD,
         ACTION_X,
@@ -47,6 +58,7 @@ public class OFAndroidController {
     }
 
     public static ControllerType getControllerType(InputDevice device) {
+
 
         if(OFActivity.LOG_INPUT) Log.i( "OF", "getControllerType number:" + device.getControllerNumber() +
 
@@ -76,6 +88,9 @@ public class OFAndroidController {
 
         boolean[] hasMap = device.hasKeys(keyMap);
 
+        if(device.getVendorId() == 0 && device.getProductId() == 0 ) {
+            return ControllerType.ACTION_X;
+        }
         if(device.getVendorId() == VendorPS) {
             return ControllerType.ACTION_X;
         }else if(device.getVendorId() == VendorNS) {

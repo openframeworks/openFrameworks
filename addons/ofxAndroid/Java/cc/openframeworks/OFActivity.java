@@ -149,8 +149,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 
 
-		WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
+		try {
+			WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
+		}catch (Exception ex) {
 
+		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			displayManager = getSystemService(DisplayManager.class);
 			displayManager.registerDisplayListener(this, null);
@@ -162,8 +165,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			if(OFAndroid.isHuaweiDevice()) OFAndroid.isDeviceHuawei = true;
 			if(OFAndroid.isAmazonDevice()) OFAndroid.isDeviceAmazon = true;
 			Log.i(TAG, "onCreate: Device: isDeviceSamsung:" + OFAndroid.isDeviceSamsung + " isDeviceHuawei:" + OFAndroid.isDeviceHuawei + "  OFAndroid.isDeviceAmazon:" +  OFAndroid.isDeviceAmazon);
-
-		} catch (Exception ex) { }
+		} catch (Exception ex) {
+			Log.e(TAG, "onCreate: Device: Failed!" + ex.getMessage());
+		}
 
 		OFAndroidLifeCycle.setActivity(this);
 		if(OFAndroidLifeCycle.coreLibraryLoaded == false) {
@@ -223,9 +227,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public void Setup() {
 		if(LOG_ENGINE) Log.i(TAG, "OFAndroid.Setup:" + hasSetup + " | OFAndroidLifeCycle.coreLibraryLoaded:" + OFAndroidLifeCycle.coreLibraryLoaded + "| OFAndroidLifeCycle.appLibraryLoaded :" + OFAndroidLifeCycle.appLibraryLoaded);
 
-		if(hasSetup == false &&
-				OFAndroidLifeCycle.appLibraryLoaded == true &&
-				OFAndroidLifeCycle.coreLibraryLoaded == true
+		if(!hasSetup &&
+				OFAndroidLifeCycle.appLibraryLoaded &&
+				OFAndroidLifeCycle.coreLibraryLoaded
 		) {
 			hasSetup = true;
 			
@@ -244,9 +248,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			});
 
 
-		} else if(hasSetup == false && OFAndroidLifeCycle.coreLibraryLoaded == false && OFAndroidLifeCycle.appLibraryLoaded == true) {
+		} else if(!hasSetup && !OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded == true) {
 			LoadCoreStatic();
-		} else if(hasSetup == true) {
+		} else if(hasSetup) {
 			if(LOG_ENGINE) Log.i(TAG, "OFAndroid.Setup:true | OFAndroidLifeCycle.coreLibraryLoaded:" + OFAndroidLifeCycle.coreLibraryLoaded + "| OFAndroidLifeCycle.appLibraryLoaded :" + OFAndroidLifeCycle.appLibraryLoaded);
 		}
 	}
@@ -409,22 +413,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						highestRefreshRate = currentRefreshRate;
 					}
 
-//					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//						boolean isWideColorGamut = display.isWideColorGamut();
-//						Log.i("OF", "Display WideColor Gamut Supported:" +  isWideColorGamut);
-//						OFAndroid.wideGamut = isWideColorGamut;
-//
-//						boolean isHDR = display.isHdr();
-//						Log.i("OF", "Display is HDR Supported:" +  isHDR);
-//						OFAndroid.hdrScreen = isHDR;
-//					}
-//					Display.Mode[] supportedModes = new Display.Mode[0];
-//					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//						supportedModes = display.getSupportedModes();
-//					}
-//					for(Display.Mode mode : supportedModes){
-//						Log.i("OF", "Could not get Window fo:" +  mode);
-//					}
 				}
 			} else {
 				Log.w("OF", "Display is not valid yet");
@@ -433,13 +421,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		} catch (Exception ex) {
 			Log.w("OF", "Could not get Window for Display ", ex);
 		}
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-//			if(getWindow() != null && getWindow().isWideColorGamut()) {
-//				OFAndroid.wideGamut = true;
-//			}
-//			OFAndroid.hdrScreen = false;
-//		}
-
 
 		if(hasSetup) {
 			OFAndroid.deviceRefreshRate((int) currentRefreshRate);
@@ -600,10 +581,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			}
 		}
 
-		//Log.w("OF", "not calling OFAndroidLifeCycle.glStop()");
-//		OFAndroidLifeCycle.glStop();
-////		OFAndroidLifeCycle.reset();
-//		mOFGlSurfaceContainer = null;
 
 		super.onStop();
 
@@ -665,8 +642,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		if(android.opengl.EGL14.eglGetCurrentContext() == EGL_NO_CONTEXT){
 			Log.e("OF", "onResume eglGetCurrentContext = EGL_NO_CONTEXT BAD");
-			//OFAndroidWindow.exit();
-			//OFAndroidWindow.surfaceHasBeenDestroyed();
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		}
 		if(OFAndroidLifeCycle.isInit() && mOFGlSurfaceContainer == null) {
@@ -790,23 +765,44 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		int deviceId = event.getDeviceId();
 		if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event:" + event.toString() + " deviceID:" + deviceId + " source:" + event.getSource());
 		boolean returnValue = true;
-
 		int sourceID = event.getSource();
 		if ((event.getSource() & InputDevice.SOURCE_KEYBOARD) == InputDevice.SOURCE_KEYBOARD &&
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD &&
-				(event.getSource() & InputDevice.SOURCE_JOYSTICK) != InputDevice.SOURCE_JOYSTICK){
+				(event.getSource() & InputDevice.SOURCE_JOYSTICK) != InputDevice.SOURCE_JOYSTICK &&
+				(event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != InputDevice.SOURCE_CLASS_JOYSTICK &&
+				(event.getSource() & InputDevice.SOURCE_TOUCHPAD) != InputDevice.SOURCE_TOUCHPAD &&
+				(event.getSource() & InputDevice.SOURCE_DPAD) != InputDevice.SOURCE_DPAD &&
+				(event.getDevice() != null && event.getDevice().getVendorId() != OFAndroidController.VendorValve)){
 
 			if (event.getAction() == KeyEvent.ACTION_DOWN && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
 				if( OFAndroid.onBackPressed() ) {
 					returnValue = true;
 				} else {
-					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
+					Log.w("OF", "dispatchKeyEvent" + " event KEYCODE_BACK - Exiting");
 					//super.onBackPressed();
 					hasSetup = false;
 					finishAffinity();
 					System.exit(0);
 					return false;
 				}
+			}
+
+			if(OFAndroid.lastInputID == -1 && event.getDevice() != null ||
+					event.getDevice() != null && OFAndroid.lastInputID != event.getDeviceId() &&
+							OFAndroid.lastInputVendorID != event.getDevice().getVendorId()) {
+				OFAndroid.lastInputDevice = event.getDevice(); // not sure why this happens
+				OFAndroid.lastInputDescriptor = event.getDevice().getDescriptor();
+				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
+				OFAndroid.lastInputVendorID = OFAndroid.lastInputDevice.getVendorId();
+				OFAndroid.lastInputProductID = OFAndroid.lastInputDevice.getProductId();
+				if(OFAndroid.lastInputVendorID == 0 && OFAndroid.lastInputProductID == 0 ) {
+					OFAndroid.lastInputProductID = OFAndroidController.ProductID_PS5;
+					OFAndroid.lastInputVendorID = OFAndroidController.VendorPS;
+				}
+			}
+			if(LOG_INPUT && OFAndroid.lastInputDevice != null) {
+				OFAndroid.toast("KB:" + OFAndroid.lastInputDevice.getName() + " keycode:" + event.getKeyCode() + "vendor: " + OFAndroid.lastInputDevice.getVendorId() + "PID:" + OFAndroid.lastInputProductID);
+				Log.i("OF", "Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + "PID:" + OFAndroid.lastInputProductID);
 			}
 
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
@@ -828,16 +824,39 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				(event.getSource() & InputDevice.SOURCE_DPAD) > InputDevice.SOURCE_DPAD - 13 && (event.getSource() & InputDevice.SOURCE_DPAD)  < InputDevice.SOURCE_GAMEPAD  + 500
 		) {
 			int keyCode = event.getKeyCode();
-			if(event.getDevice() != null) {
+			if(OFAndroid.lastInputID == -1 && event.getDevice() != null ||
+					event.getDevice() != null && OFAndroid.lastDeviceID != event.getDeviceId() &&
+							OFAndroid.lastInputVendorID != event.getDevice().getVendorId()) {
 				OFAndroid.lastInputDevice = event.getDevice(); // not sure why this happens
+				OFAndroid.lastInputID = event.getSource();
+				OFAndroid.lastDeviceID = event.getDeviceId();
+				OFAndroid.lastInputDescriptor = event.getDevice().getDescriptor();
+				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
+				OFAndroid.lastInputVendorID = OFAndroid.lastInputDevice.getVendorId();
+				OFAndroid.lastInputProductID = OFAndroid.lastInputDevice.getProductId();
+				if(OFAndroid.lastInputVendorID == 0 && OFAndroid.lastInputProductID == 0 ) {
+					OFAndroid.lastInputProductID = OFAndroidController.ProductID_PS5;
+					OFAndroid.lastInputVendorID = OFAndroidController.VendorPS;
+				}
 			}
 			if(event.getDevice() == null && OFAndroid.lastInputDevice == null) {
 				OFAndroid.lastInputDevice = OFAndroidController.getGameControllerForID(event.getDeviceId()); // fall back
+				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
 			}
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Build.VERSION.SDK_INT == Build.VERSION_CODES.S && OFAndroid.isDeviceSamsung) { // Android 12 fixes PS5 bug
-				if(LOG_INPUT && OFAndroid.lastInputDevice != null)
-					OFAndroid.toast(OFAndroid.lastInputDevice.getName() + " keycode:" + keyCode);
-				if (OFAndroid.lastInputDevice != null && OFAndroid.lastInputDevice.getVendorId() == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Build.VERSION.SDK_INT == Build.VERSION_CODES.S
+					&& OFAndroid.isDeviceSamsung
+					&& !OFAndroid.isDeviceAmazon
+			) { // Android 12 fixes PS5 bug
+				if(LOG_INPUT && OFAndroid.lastInputDevice != null) {
+					OFAndroid.toast(OFAndroid.lastInputDevice.getName() + " keycode:" + keyCode + "vendor: " + OFAndroid.lastInputDevice.getVendorId() + "PID:" + OFAndroid.lastInputProductID);
+					Log.i("OF", "Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + "PID:" + OFAndroid.lastInputProductID);
+
+				}
+				if (OFAndroid.lastInputDevice != null &&
+						OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS5 ||
+						(OFAndroid.lastInputVendorID == OFAndroidController.VendorPS &&
+								(OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))
+						)) {
 					if (keyCode == 97) { // flips X to Square to fix HID issues for PS5
 						keyCode = 96;
 						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
@@ -849,13 +868,13 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					} else if (keyCode == 100) {
 						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 100->102");
-						keyCode = 104;
+						keyCode = 102;
 					} else if (keyCode == 102) {
 						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 102->100");
 						keyCode = 100;
 					} else if (keyCode == 101) {
-						keyCode = 105;
+						keyCode = 103;
 						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 101->103");
 					} else if (keyCode == 103) {
@@ -876,6 +895,11 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						keyCode = 108;
 					}
 				} else {
+					if(LOG_INPUT && OFAndroid.lastInputDevice != null) {
+						OFAndroid.toast(OFAndroid.lastInputDevice.getName() + "| keycode:" + keyCode);
+						Log.i("OF", "Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + "PID:" + OFAndroid.lastInputProductID);
+
+					}
 					if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 						Log.i("OF", "Not PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId());
 					else
@@ -883,30 +907,52 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 				}
 			} else if(OFAndroid.isHuaweiDevice()) {
-				if (OFAndroid.lastInputDevice != null && OFAndroid.lastInputDevice.getVendorId() == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))) {
+				if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+					OFAndroid.toast(OFAndroid.lastInputDevice.getName() + " keycode:" + keyCode);
+
+				if (OFAndroid.lastInputDevice != null &&
+						OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS5 ||
+						(OFAndroid.lastInputVendorID == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC)
+						))) {
 					if (keyCode == 100) {
-						if (LOG_INPUT && OFAndroid.lastInputDevice != null)
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 100->102");
-						keyCode = 104;
+						keyCode = 102;
+					} else if (keyCode == 102) {
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 102->100");
+						keyCode = 100;
 					} else if (keyCode == 101) {
-						keyCode = 105;
-						if (LOG_INPUT && OFAndroid.lastInputDevice != null)
+						keyCode = 103;
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 101->103");
+					} else if (keyCode == 103) {
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 103->101");
+						keyCode = 101;
 					}
 				}
 			}
-			if(OFAndroid.lastInputID == -1 || OFAndroid.lastInputID != event.getDeviceId() && OFAndroid.lastInputVendorID != OFAndroid.lastInputDevice.getVendorId()) {
+			if(OFAndroid.lastInputID == -1 && event.getDevice() != null ||
+					event.getDevice() != null && OFAndroid.lastDeviceID != event.getDeviceId() &&
+							OFAndroid.lastInputVendorID != event.getDevice().getVendorId()) {
+				OFAndroid.lastInputDevice = event.getDevice(); // not sure why this happens
 				OFAndroid.lastInputID = event.getSource();
+				OFAndroid.lastDeviceID = event.getDeviceId();
 				OFAndroid.lastInputDescriptor = event.getDevice().getDescriptor();
 				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
 				OFAndroid.lastInputVendorID = OFAndroid.lastInputDevice.getVendorId();
+				OFAndroid.lastInputProductID = OFAndroid.lastInputDevice.getProductId();
+				if(OFAndroid.lastInputVendorID == 0 && OFAndroid.lastInputProductID == 0 ) {
+					OFAndroid.lastInputProductID = OFAndroidController.ProductID_PS5;
+					OFAndroid.lastInputVendorID = OFAndroidController.VendorPS;
+				}
 			}
-
 			if (event.getAction() == KeyEvent.ACTION_DOWN && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
 				if( OFAndroid.onBackPressed() ) {
 					returnValue = true;
 				} else {
-					if(LOG_INPUT) Log.i("OF", "dispatchKeyEvent" + " event KEYCODE_BACK");
+					Log.w("OF", "dispatchKeyEvent" + " event KEYCODE_BACK - Exiting");
 					//super.onBackPressed();
 					hasSetup = false;
 					finishAffinity();
@@ -914,7 +960,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					return false;
 				}
 			}
-
 			if(event.getAction() == KeyEvent.ACTION_DOWN)
 				returnValue = OFAndroid.keyDown(keyCode+400, event);
 			else if(event.getAction() == KeyEvent.ACTION_UP)
@@ -929,6 +974,26 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}  else if ((event.getSource() & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
 			returnValue = true;
 		} else {
+
+			if(OFAndroid.lastInputID == -1 && event.getDevice() != null ||
+					event.getDevice() != null &&  OFAndroid.lastDeviceID != event.getDeviceId() &&
+					OFAndroid.lastInputVendorID != event.getDevice().getVendorId() ) {
+				OFAndroid.lastInputDevice = event.getDevice(); // not sure why this happens
+				OFAndroid.lastInputID = event.getSource();
+				OFAndroid.lastDeviceID = event.getDeviceId();
+				OFAndroid.lastInputDescriptor = event.getDevice().getDescriptor();
+				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
+				OFAndroid.lastInputVendorID = OFAndroid.lastInputDevice.getVendorId();
+				OFAndroid.lastInputProductID = OFAndroid.lastInputDevice.getProductId();
+				if(OFAndroid.lastInputVendorID == 0 && OFAndroid.lastInputProductID == 0 ) { // Fix for Samsung PS5
+					OFAndroid.lastInputProductID = OFAndroidController.ProductID_PS5;
+					OFAndroid.lastInputVendorID = OFAndroidController.VendorPS;
+				}
+			}
+			if(LOG_INPUT && OFAndroid.lastInputDevice != null) {
+				OFAndroid.toast("OTHER:" + OFAndroid.lastInputDevice.getName() + " keycode:" + event.getKeyCode() + "vendor: " + OFAndroid.lastInputDevice.getVendorId() + "PID:" + OFAndroid.lastInputProductID);
+				Log.i("OF", "Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + "PID:" + OFAndroid.lastInputProductID);
+			}
 			if(event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() != KeyEvent.KEYCODE_UNKNOWN)
 				returnValue = OFAndroid.keyDown(event.getKeyCode(), event);
 			else if(event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() != KeyEvent.KEYCODE_UNKNOWN)
