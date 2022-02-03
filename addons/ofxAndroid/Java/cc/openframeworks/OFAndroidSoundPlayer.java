@@ -12,6 +12,7 @@ import android.util.FloatMath;
 import android.util.Log;
 import androidx.annotation.Keep;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 @Keep
@@ -66,12 +67,9 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 
 		AssetManager assetManager = OFAndroid.assetManager;
 		AssetFileDescriptor assetFileDescriptor = null;
-		//ParcelFileDescriptor fileDescriptor = null;
 		try {
 			assetFileDescriptor = assetManager.openFd(fileName);
 			return assetFileDescriptor;
-//			fileDescriptor = assetFileDescriptor.getParcelFileDescriptor();
-//			return fileDescriptor;
 		}
 		catch (IOException e) {
 			Log.d("OF", e.toString());
@@ -92,12 +90,33 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 					player.setAudioAttributes(attributes);
 
 					AssetFileDescriptor assetManagerFileDescriptor = getSeekableFileDescriptor(fileName);
+					bIsLoaded = false;
 					if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && assetManagerFileDescriptor != null) {
+						try {
 							player.setDataSource(assetManagerFileDescriptor);
+							bIsLoaded = true;
+						} catch (Exception ex) {
+							Log.e("OF","SoundPlayer Exception:" + fileName, ex);
+						}
 					}
-					else
-						player.setDataSource(fileName);
-
+//					if(bIsLoaded == false && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && assetManagerFileDescriptor != null) {
+//						try {
+//
+//							FileInputStream in = new FileInputStream(assetManagerFileDescriptor.getFileDescriptor());
+//							player.FileDescriptor(String.valueOf(in));
+//							bIsLoaded = true;
+//						} catch (Exception ex) {
+//							Log.e("OF","SoundPlayer Exception:" + fileName, ex);
+//						}
+//					}
+					if(!bIsLoaded) {
+						try {
+							player.setDataSource(OFAndroid.toDataPath(fileName));
+						} catch (Exception ex) {
+							Log.e("OF","SoundPlayer Exception:" + fileName, ex);
+							return;
+						}
+					}
 
 				} catch (Exception e) {
 					Log.e("OF","SoundPlayer Exception: couldn't load " + fileName,e);
@@ -129,7 +148,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	}
 
 
-	
+
 	void unloadSound(){
 		if(player!=null){
 			try {
