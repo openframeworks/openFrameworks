@@ -162,6 +162,7 @@ const size_t TAB_WIDTH = 4; /// Number of spaces per tab
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
 static bool librariesInitialized = false;
+static int fontsLoaded = 0;
 static FT_Library library;
 
 //--------------------------------------------------------
@@ -170,7 +171,12 @@ void ofTrueTypeShutdown(){
 	// This crashes if gtk was called at any time cause pango leaks
 	// its fc related objects: https://github.com/openframeworks/openFrameworks/issues/5061
 	//FcFini();
+#else
+    if(librariesInitialized && fontsLoaded == 0) {
+		FT_Done_FreeType(library);
+	}
 #endif
+
 }
 
 //--------------------------------------------------------
@@ -207,6 +213,7 @@ static ofPath makeContoursForCharacter(FT_Face face){
 		0,
 		0,
 	};
+
 
 	FT_Outline_Decompose(&face->glyph->outline, &funcs, &charOutlines);
 	charOutlines.close();
@@ -364,9 +371,6 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 	std::filesystem::path fontname = _fontname;
 	filename = ofToDataPath(_fontname,false);
 	auto fileReadMode = ofFile::Reference;
-#if defined(TARGET_ANDROID)
-	//fileReadMode = ofFile::ReadWrite;
-#endif
 	ofFile fontFile(filename, fileReadMode);
 	int fontID = 0;
 	if(!fontFile.exists()){
@@ -396,10 +400,11 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 		}
         filename = winFontPathByName(fontname.string());
 #elif defined(TARGET_ANDROID)
-		filename = ofToDataPath(_fontname,false);
+		filename = ofToDataPath(_fontname, true);
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
+			fontFile.close();
 			return false;
 		}
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
@@ -411,9 +416,10 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 		string errorString = "unknown freetype";
 		if(err == 1) errorString = "INVALID FILENAME";
 		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
+		fontFile.close();
 		return false;
 	}
-
+	fontFile.close();
 	return true;
 }
 
@@ -464,6 +470,7 @@ ofTrueTypeFont::ofTrueTypeFont()
 	ascenderHeight = 0;
 	descenderHeight = 0;
 	lineHeight = 0;
+	fontsLoaded++;
 }
 
 //------------------------------------------------------------------
@@ -471,7 +478,17 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 	#if defined(TARGET_ANDROID)
 	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
-	#endif
+    #endif
+
+	texAtlas.clear();
+    fontsLoaded--;
+
+	FT_Done_Face(loadFace);
+	if(librariesInitialized && fontsLoaded == 0) {
+		FT_Done_FreeType(library);
+	}
+
+
 }
 
 //------------------------------------------------------------------
@@ -605,14 +622,17 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 //-----------------------------------------------------------
 void ofTrueTypeFont::unloadTextures(){
 	ofLogNotice("ofTrueTypeFont") << "unloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
-	if(!bLoadedOk) return;
 	texAtlas.clear();
+	FT_Done_Face(loadFace);
+	if(!bLoadedOk) return;
+
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::reloadTextures(){
 	ofLogNotice("ofTrueTypeFont") << "reloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
-
+	texAtlas.clear();
+	FT_Done_Face(loadFace);
 	if(bLoadedOk) load(settings);
 }
 
@@ -742,8 +762,8 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	bLoadedOk = false;
 
 	//--------------- load the library and typeface
-	FT_Face loadFace;
     if(!loadFontFace(settings.fontName, loadFace, settings.fontName)){
+    	FT_Done_Face(loadFace);
 		ofLogError("ofTruetypeFont") << " could not loadFontFace for " << settings.fontName;
 		return false;
 	}
@@ -894,6 +914,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
         ofLogError("ofTrueTypeFont")  << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
 		return false;
 	}else{
+		texAtlas.clear();
 		texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
 		texAtlas.setRGToRGBASwizzles(true);
 
@@ -905,10 +926,17 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		texAtlas.loadData(atlasPixelsLuminanceAlpha);
 		if(texAtlas.isAllocated()) {
             ofLogNotice("ofTrueTypeFont")  << "texAtlas is allocated for font " << settings.fontName << " at " << settings.fontSize;
+        } else {
+            ofLogError("ofTrueTypeFont")  << "texAtlas is NOT allocated for font " << settings.fontName << " at " << settings.fontSize;
+            texAtlas.clear();
+            return false;
         }
 		bLoadedOk = true;
 		return true;
 	}
+
+	// Destroy FreeType once we're finished
+	FT_Done_Face(loadFace);
 }
 
 //-----------------------------------------------------------
@@ -1227,6 +1255,10 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 
 	float width = maxX - minX;
 	float height = maxY - minY;
+
+	if(width <= 1) {
+		//ofLogError("ofTrueTypeFont") << "empty!>?";
+	}
 
 	return ofRectangle(minX, minY, width, height);
 }
