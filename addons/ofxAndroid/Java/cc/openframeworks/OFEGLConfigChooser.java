@@ -303,17 +303,17 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         boolean workingConfig = false;
         boolean tryMSAA = true;
-        if(OFAndroid.samples == 1 ||
-                OFAndroid.height != 0 && OFAndroid.height <= 720 || // if height < 720 super old hardware
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.M // Disable for old API's
-           ) {
-            tryMSAA = false;
-            OFAndroid.samples = 1;
-            Log.i("OF", String.format("eglChooseConfig MSAA Disabled: height:") + OFAndroid.height);
-
-        } else {
-            Log.i("OF", String.format("eglChooseConfig MSAA Enabled: height:") + OFAndroid.height);
-        }
+//        if(OFAndroid.samples == 1 ||
+//                OFAndroid.height != 0 && OFAndroid.height <= 720 || // if height < 720 super old hardware
+//                Build.VERSION.SDK_INT < Build.VERSION_CODES.M // Disable for old API's
+//           ) {
+//            tryMSAA = false;
+//            OFAndroid.samples = 1;
+//            Log.i("OF", String.format("eglChooseConfig MSAA Disabled: height:") + OFAndroid.height);
+//
+//        } else {
+//            Log.i("OF", String.format("eglChooseConfig MSAA Enabled: height:") + OFAndroid.height);
+//        }
         int numConfigs = num_config[0];
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //            if (!egl.eglChooseConfig(display, s_configAttribsMSAA16Angle, null, 0,
@@ -690,7 +690,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if ( foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples != 0 && mSampleSize >= 1) {
 
                 foundConfig = config;
-                mSampleSize = 1;
+                mSampleSize = samples;
                 Log.i("OF", "MSAA Any Found and Set :Depth Size and Stencil any:" + output);
 
             } else {
