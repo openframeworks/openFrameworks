@@ -1,5 +1,7 @@
 package cc.openframeworks;
 
+import static cc.openframeworks.OFAndroid.runOnMainThread;
+
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioAttributes;
@@ -14,6 +16,8 @@ import androidx.annotation.Keep;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Keep
 public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
@@ -94,7 +98,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 //					player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 					player.setAudioAttributes(attributes);
 
-					AssetFileDescriptor assetManagerFileDescriptor = getSeekableFileDescriptor(fileName);
+					assetManagerFileDescriptor = getSeekableFileDescriptor(fileName);
 					bIsLoaded = false;
 					if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && assetManagerFileDescriptor != null) {
 						try {
@@ -157,6 +161,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	void unloadSound(){
 		if(player!=null){
 			try {
+
 				if(bIsPlaying && player.isPlaying())
 					player.pause();
 			} catch (Exception e) {
@@ -172,6 +177,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
 			player = null;
 		}
 
@@ -208,13 +214,127 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			bIsPlaying = true;
 		}
 	}
+	private void startFadeIn(){
+		final int FADE_DURATION = 500; //The duration of the fade
+		//The amount of time between volume changes. The smaller this is, the smoother the fade
+		final int FADE_INTERVAL = 250;
+		final int MAX_VOLUME = 1; //The volume will increase from 0 to 1
+		int numberOfSteps = FADE_DURATION/FADE_INTERVAL; //Calculate the number of fade steps
+		//Calculate by how much the volume changes each step
+		final float deltaVolume = MAX_VOLUME / (float)numberOfSteps;
+
+		//Create a new Timer and Timer task to run the fading outside the main UI thread
+		final Timer timer = new Timer(true);
+		TimerTask timerTask = new TimerTask() {
+			@Override
+			public void run() {
+				fadeInStep(deltaVolume); //Do a fade step
+				//Cancel and Purge the Timer if the desired volume has been reached
+				if(volume>=1f){
+					timer.cancel();
+					timer.purge();
+				}
+			}
+		};
+		timer.schedule(timerTask,FADE_INTERVAL,FADE_INTERVAL);
+	}
+
+	private void startFadeOut(){
+		final int FADE_DURATION = 500; //The duration of the fade
+		//The amount of time between volume changes. The smaller this is, the smoother the fade
+		final int FADE_INTERVAL = 250;
+		final float MAX_VOLUME = volume; //The volume will increase from 0 to 1
+		int numberOfSteps = FADE_DURATION/FADE_INTERVAL; //Calculate the number of fade steps
+		//Calculate by how much the volume changes each step
+		final float deltaVolume = MAX_VOLUME / (float)numberOfSteps;
+
+		//Create a new Timer and Timer task to run the fading outside the main UI thread
+		final Timer timer = new Timer(true);
+		TimerTask timerTask = new TimerTask() {
+			@Override
+			public void run() {
+				fadeOutStep(deltaVolume); //Do a fade step
+				//Cancel and Purge the Timer if the desired volume has been reached
+				if(volume<=0.0f){
+					timer.cancel();
+					timer.purge();
+					if (bIsLoaded && player.isPlaying()) {
+						player.pause();
+						player.seekTo(0);
+					}
+				}
+			}
+		};
+
+		timer.schedule(timerTask,FADE_INTERVAL,FADE_INTERVAL);
+	}
+
+	private void fadeInStep(float deltaVolume){
+		if (bIsLoaded && player.isPlaying()) {
+			player.setVolume(volume, volume);
+			volume += deltaVolume;
+		}
+	}
+
+	private void fadeOutStep(float deltaVolume){
+		if (bIsLoaded && player.isPlaying()) {
+			player.setVolume(volume, volume);
+			volume -= deltaVolume;
+		}
+	}
+
+
+
+	void fadeOut(){
+		if(stream){
+
+			final long steps = 30;
+			final double stepWidth = (double) 1 / steps;
+			double mFadeOutCriteria = 1;
+			if(player==null) return;
+			try {
+				if (bIsPlaying) {
+					Log.i("OF", "SoundPlayer stop - pause() isPlaying");
+//					player.pause();
+//					player.seekTo(0);
+					startFadeOut();
+				} else {
+					try {
+//						if (bIsLoaded && player.isPlaying())
+//							player.pause();
+//						player.seekTo(0);
+						startFadeOut();
+					} catch(Exception ex) {
+						Log.e("OF", "SoundPlayer stop - pause() !isPlaying excpetion:" + ex.getMessage());
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}else if(streamID!=-1){
+			if(pool == null) return;
+			pool.stop(streamID);
+			bIsPlaying = false;
+		}
+	}
+
 	void stop(){
 		if(stream){
 			if(player==null) return;
 			try {
 				if (bIsPlaying) {
+					Log.i("OF", "SoundPlayer stop - pause() isPlaying");
 					player.pause();
 					player.seekTo(0);
+				} else {
+					try {
+						if (bIsLoaded && player.isPlaying())
+							player.pause();
+						player.seekTo(0);
+					} catch(Exception ex) {
+						Log.e("OF", "SoundPlayer stop - pause() !isPlaying excpetion:" + ex.getMessage());
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -501,6 +621,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	private MediaPlayer player = null;
 	private static SoundPool pool = null;
 	private boolean forceResetIfError = true;
+	AssetFileDescriptor assetManagerFileDescriptor = null;
 	AudioAttributes attributes;
 	private float pan;
 	private float volume;
