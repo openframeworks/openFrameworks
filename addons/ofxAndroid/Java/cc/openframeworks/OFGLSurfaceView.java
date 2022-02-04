@@ -27,7 +27,7 @@ import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 @Keep
 class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListener {
 
-//    ContextFactory factory;
+    ContextFactory factory;
 
     public OFGLSurfaceView(Context context) {
         super(context);
@@ -53,12 +53,12 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
             this.getHolder().setFormat(PixelFormat.OPAQUE);
         }
 
-//        try {
-//                factory = new ContextFactory();
-//                setEGLContextFactory(factory);
-//        } catch (Exception exception){
-//                Log.w("OF", "Could not set ContextFactory ", exception);
-//        }
+        try {
+                factory = new ContextFactory();
+                setEGLContextFactory(factory);
+        } catch (Exception exception){
+                Log.w("OF", "Could not set ContextFactory ", exception);
+        }
         setClientVersion();
         int width = getWidth();
         int height = getHeight();
