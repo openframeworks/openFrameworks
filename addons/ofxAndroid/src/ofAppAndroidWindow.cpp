@@ -639,8 +639,8 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		window->renderer()->finishRender();
 		bSetupScreen = false;
 	} else {
-		window->events().notifyUpdate();
 		window->renderer()->startRender();
+		window->events().notifyUpdate();
 		window->events().notifyDraw();
 		window->renderer()->finishRender();
 	}
