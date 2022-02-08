@@ -434,7 +434,6 @@ private:
 	friend void ofReloadAllFontTextures();
 #endif
 	std::shared_ptr<struct FT_FaceRec_>	face;
-	FT_Face loadFace;
 	static const glyphProps invalidProps;
 	void		unloadTextures();
 	void		reloadTextures();

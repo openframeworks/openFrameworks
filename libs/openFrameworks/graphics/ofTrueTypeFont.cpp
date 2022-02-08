@@ -489,12 +489,16 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 	texAtlas.clear();
     fontsLoaded--;
 
-	FT_Done_Face(loadFace);
-	if(librariesInitialized && fontsLoaded == 0) {
+
+	if(librariesInitialized && fontsLoaded == 0 && library != nullptr) {
+		ofLogNotice("ofTrueTypeFont") << "FT_Done_FreeType";
 		FT_Done_FreeType(library);
 	}
-
-
+    if(face && face.get() != nullptr) {
+    	ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+		FT_Done_Face(face.get());
+		face = nullptr;
+    }
 }
 
 //------------------------------------------------------------------
@@ -629,7 +633,6 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 void ofTrueTypeFont::unloadTextures(){
 	ofLogNotice("ofTrueTypeFont") << "unloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
 	texAtlas.clear();
-	FT_Done_Face(loadFace);
 	if(!bLoadedOk) return;
 
 }
@@ -638,7 +641,6 @@ void ofTrueTypeFont::unloadTextures(){
 void ofTrueTypeFont::reloadTextures(){
 	ofLogNotice("ofTrueTypeFont") << "reloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
 	texAtlas.clear();
-	FT_Done_Face(loadFace);
 	if(bLoadedOk) load(settings);
 }
 
@@ -765,15 +767,23 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		settings.dpi = ttfGlobalDpi;
 	}
 
+	if(face && face.get() != nullptr) {
+		ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+		FT_Done_Face(face.get());
+		face = nullptr;
+	}
+
 	bLoadedOk = false;
 
 	//--------------- load the library and typeface
+	FT_Face loadFace;
     if(!loadFontFace(settings.fontName, loadFace, settings.fontName)){
-    	FT_Done_Face(loadFace);
+    	if(loadFace != nullptr)
+    		FT_Done_Face(loadFace);
 		ofLogError("ofTruetypeFont") << " could not loadFontFace for " << settings.fontName;
 		return false;
 	}
-	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);
+	face = std::shared_ptr<struct FT_FaceRec_>(loadFace, FT_Done_Face);
 
 	if(settings.ranges.empty()){
 		settings.ranges.push_back(ofUnicode::Latin1Supplement);
@@ -799,6 +809,11 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
     if(nGlyphs > 50000) {
         ofLogError("ofTruetypeFont") << "With provided unicode ranges calculation of glyphs has failed with " << nGlyphs;
+        if(face && face.get() != nullptr) {
+        	ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+			FT_Done_Face(face.get());
+			face = nullptr;
+		}
         return false;
     }
 	cps.resize(nGlyphs);
@@ -923,6 +938,11 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 	if(w > maxSize || h > maxSize){
         ofLogError("ofTrueTypeFont")  << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
+		if( face && face.get() != nullptr) {
+			ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+			FT_Done_Face(face.get());
+			face = nullptr;
+		}
 		return false;
 	}else{
 		texAtlas.clear();
@@ -940,14 +960,16 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
         } else {
             ofLogError("ofTrueTypeFont")  << "texAtlas is NOT allocated for font " << settings.fontName << " at " << settings.fontSize;
             texAtlas.clear();
+            if(face && face.get() != nullptr) {
+            	ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+				FT_Done_Face(face.get());
+				face = nullptr;
+			}
             return false;
         }
 		bLoadedOk = true;
 		return true;
 	}
-
-	// Destroy FreeType once we're finished
-	FT_Done_Face(loadFace);
 }
 
 //-----------------------------------------------------------
