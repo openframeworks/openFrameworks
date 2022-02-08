@@ -35,6 +35,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		streamID = -1;
 		multiPlay = false;
 		isPaused = false;
+		bIsPrepared = false;
 	}
 
 	public void onDestroy() {
@@ -92,6 +93,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 					if(player!=null) {
 						unloadSound();
 					}
+					bIsPrepared = false;
 					player = new MediaPlayer();
 					player.setOnErrorListener(this);
 					player.setOnPreparedListener(this);
@@ -162,7 +164,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(player!=null){
 			try {
 
-				if(bIsPlaying && player.isPlaying())
+				if(bIsPlaying && bIsPrepared && player.isPlaying())
 					player.pause();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -195,6 +197,10 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(stream){
 			if(player==null) {
 				Log.e("OF", "SoundPlayer play() player is null");
+				return;
+			}
+			if(!bIsPrepared) {
+				Log.e("OF", "SoundPlayer play() player is not prepared yet");
 				return;
 			}
 			if(getIsPlaying() && getPosition() != 0) setPosition(0);
@@ -293,7 +299,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			double mFadeOutCriteria = 1;
 			if(player==null) return;
 			try {
-				if (bIsPlaying) {
+				if (bIsPlaying && bIsPrepared) {
 					Log.i("OF", "SoundPlayer stop - pause() isPlaying");
 //					player.pause();
 //					player.seekTo(0);
@@ -323,13 +329,13 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		if(stream){
 			if(player==null) return;
 			try {
-				if (bIsPlaying) {
+				if (bIsPlaying && bIsPrepared) {
 					Log.i("OF", "SoundPlayer stop - pause() isPlaying");
 					player.pause();
 					player.seekTo(0);
 				} else {
 					try {
-						if (bIsLoaded && player.isPlaying())
+						if (bIsLoaded && bIsPrepared && player.isPlaying())
 							player.pause();
 						player.seekTo(0);
 					} catch(Exception ex) {
@@ -364,7 +370,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			rightVolume = vol;
 		}
 		if(stream){
-			if(player!=null) player.setVolume(leftVolume, rightVolume);
+			if(player!=null && bIsPrepared) player.setVolume(leftVolume, rightVolume);
 		}else if(streamID!=-1){
 			if(pool != null) pool.setVolume(streamID, leftVolume, rightVolume);
 		}
@@ -394,7 +400,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if(player==null) return;
 			if(bP) {
 				try {
-					if(bIsPlaying && player.isPlaying())
+					if(bIsPrepared && bIsPlaying && player.isPlaying())
 						player.pause();
 					isPaused = true;
 				} catch (Exception e) {
@@ -403,7 +409,8 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			}
 			else {
 				try {
-					player.start();
+					if(bIsPrepared)
+						player.start();
 					isPaused = false;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -505,6 +512,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	
 	public boolean getIsPlaying(){
 		if(stream){
+			if(!bIsLoaded || !bIsPrepared) return false;
 			boolean isPlaying = false;
 			try {
 				isPlaying = player!=null && player.isPlaying();
@@ -580,11 +588,11 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
 				Log.i("OF","SoundPlayer appResume - reloading stream for M" + fileName + " at " + pausePositionMS);
 
-				if(bIsPlaying && bIsLoaded) {
+				if(bIsPlaying && bIsLoaded && bIsPrepared) {
 					//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
 					play();
 				}
-				if(pausePositionMS != 0 && bIsLoaded) {
+				if(pausePositionMS != 0 && bIsLoaded && bIsPrepared) {
 					setPositionMS(pausePositionMS);
 					pausePositionMS = 0;
 				}
@@ -603,6 +611,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	@Override
 	public void onPrepared(MediaPlayer mediaPlayer) {
 		if(LOG_SOUND) Log.i("OF","onPrepared:" + fileName );
+		bIsPrepared = true;
 	}
 
 	@Override
@@ -610,8 +619,23 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		// ... react appropriately ...
 		// The MediaPlayer has moved to the Error state, must be reset!
 		Log.w("OF", "onError The MediaPlayer has moved to the Error state, must be reset!");
+		bIsPrepared = false;
 		if(forceResetIfError) {
-			appResume();
+			if (player != null) {
+				if(player.isPlaying())
+					player.stop();
+				player.release();
+				player = null;
+			}
+			loadSound(fileName, stream);
+			if(bIsPlaying) {
+				//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+				play();
+			}
+			if(pausePositionMS != 0) {
+				setPositionMS(pausePositionMS);
+				pausePositionMS = 0;
+			}
 		}
 		return true;
 	}
@@ -627,6 +651,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	private float volume;
 	private boolean bIsLoaded;
 	private boolean bIsPlaying;
+	private boolean bIsPrepared;
 	private boolean multiPlay;
 	private String fileName;
 	private int soundID, streamID;
