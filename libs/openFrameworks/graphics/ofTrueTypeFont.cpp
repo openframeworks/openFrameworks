@@ -73,6 +73,12 @@ const ofUnicode::range ofUnicode::Uncategorized {0x00A9, 0x1F5FF};
 const ofUnicode::range ofUnicode::AdditionalEmoticons {0x1F600, 0x1F636};
 const ofUnicode::range ofUnicode::AdditionalTransportAndMap {0x1F681, 0x1F6C5};
 const ofUnicode::range ofUnicode::OtherAdditionalSymbols {0x1F30D, 0x1F567};
+const ofUnicode::range ofUnicode::UppercaseLatin {65, 90};
+const ofUnicode::range ofUnicode::LowercaseLatin {97, 122};
+const ofUnicode::range ofUnicode::Braces {123, 127};
+const ofUnicode::range ofUnicode::Numbers {48, 57};
+const ofUnicode::range ofUnicode::Symbols {33, 47};
+const ofUnicode::range ofUnicode::GenericSymbols {58, 64};
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 	ofUnicode::Space,
@@ -786,10 +792,15 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 				  (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
 
 	//--------------- initialize character info and textures
-	auto nGlyphs = std::accumulate(settings.ranges.begin(), settings.ranges.end(), 0u,
-			[](uint32_t acc, ofUnicode::range range){
-				return acc + range.getNumGlyphs();
-			});
+	auto nGlyphs = 0u;
+	for(auto & range: settings.ranges){
+		nGlyphs += range.getNumGlyphs();
+	}
+
+    if(nGlyphs > 50000) {
+        ofLogError("ofTruetypeFont") << "With provided unicode ranges calculation of glyphs has failed with " << nGlyphs;
+        return false;
+    }
 	cps.resize(nGlyphs);
 	if(settings.contours){
 		charOutlines.resize(nGlyphs);

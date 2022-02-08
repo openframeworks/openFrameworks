@@ -42,8 +42,12 @@ void ofTrueTypeShutdown();
 class ofUnicode{
 public:
 	struct range{
-		std::uint32_t begin;
-		std::uint32_t end;
+		range() : begin(0), end(0) {
+		}
+		range(uint32_t be, uint32_t en) : begin(be), end(en) {
+		}
+		std::uint32_t begin = 0;
+		std::uint32_t end = 0;
 		
 		std::uint32_t getNumGlyphs() const{
 			return end - begin + 1;
@@ -103,6 +107,12 @@ public:
 	static const range AdditionalEmoticons;
 	static const range AdditionalTransportAndMap;
 	static const range OtherAdditionalSymbols;
+	static const range Numbers;
+	static const range UppercaseLatin;
+	static const range LowercaseLatin;
+	static const range Braces;
+	static const range Symbols;
+	static const range GenericSymbols;
 };
 
 class ofAlphabet{
@@ -139,7 +149,9 @@ struct ofTrueTypeFontSettings{
     ,fontSize(size){}
 
     void addRanges(std::initializer_list<ofUnicode::range> alphabet){
-        ranges.insert(ranges.end(), alphabet);
+		for(auto & ranger: alphabet) {
+			ranges.push_back(ranger);
+		}
     }
 
     void addRange(const ofUnicode::range & range){
