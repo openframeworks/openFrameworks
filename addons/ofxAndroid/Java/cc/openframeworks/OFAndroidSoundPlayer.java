@@ -36,6 +36,11 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		multiPlay = false;
 		isPaused = false;
 		bIsPrepared = false;
+		fileName = null;
+		contentType = AudioAttributes.CONTENT_TYPE_MUSIC;
+		stream=true;
+		pausePositionMS=0;
+		bWasResume=false;
 	}
 
 	public void onDestroy() {
@@ -575,14 +580,17 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	@Override
 	protected void appResume() {
 		if(bIsLoaded && stream == false){
+			bWasResume = true;
 			loadSound(fileName, stream);
-			if(bIsPlaying) {
-				//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
-				play();
-			}
-			if(pausePositionMS != 0) {
-				setPositionMS(pausePositionMS);
-				pausePositionMS = 0;
+			if(bIsPrepared) {
+				if (bIsPlaying) {
+					//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+					play();
+				}
+				if (pausePositionMS != 0) {
+					setPositionMS(pausePositionMS);
+					pausePositionMS = 0;
+				}
 			}
 		} else  {
 			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
@@ -612,6 +620,17 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	public void onPrepared(MediaPlayer mediaPlayer) {
 		if(LOG_SOUND) Log.i("OF","onPrepared:" + fileName );
 		bIsPrepared = true;
+		if(bWasResume) {
+			bWasResume = false;
+			if (bIsPlaying) {
+				Log.i("OF", "SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+				play();
+			}
+			if (pausePositionMS != 0) {
+				setPositionMS(pausePositionMS);
+				pausePositionMS = 0;
+			}
+		}
 	}
 
 	@Override
@@ -620,21 +639,26 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		// The MediaPlayer has moved to the Error state, must be reset!
 		Log.w("OF", "onError The MediaPlayer has moved to the Error state, must be reset!");
 		bIsPrepared = false;
+		bWasResume = false;
+		boolean forceResetIfError = true;
 		if(forceResetIfError) {
+
 			if (player != null) {
 				if(player.isPlaying())
 					player.stop();
 				player.release();
 				player = null;
 			}
-			loadSound(fileName, stream);
-			if(bIsPlaying) {
-				//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
-				play();
-			}
-			if(pausePositionMS != 0) {
-				setPositionMS(pausePositionMS);
-				pausePositionMS = 0;
+			if(fileName != null) {
+				loadSound(fileName, stream);
+				if (bIsPlaying) {
+					//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+					play();
+				}
+				if (pausePositionMS != 0) {
+					setPositionMS(pausePositionMS);
+					pausePositionMS = 0;
+				}
 			}
 		}
 		return true;
@@ -644,13 +668,13 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 
 	private MediaPlayer player = null;
 	private static SoundPool pool = null;
-	private boolean forceResetIfError = true;
 	AssetFileDescriptor assetManagerFileDescriptor = null;
 	AudioAttributes attributes;
-	private float pan;
+	private float pan ;
 	private float volume;
 	private boolean bIsLoaded;
 	private boolean bIsPlaying;
+	private boolean bWasResume;
 	private boolean bIsPrepared;
 	private boolean multiPlay;
 	private String fileName;
