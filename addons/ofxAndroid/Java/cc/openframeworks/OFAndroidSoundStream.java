@@ -18,7 +18,7 @@ import androidx.annotation.Keep;
 @Keep
 public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, OnRecordPositionUpdateListener, OnPlaybackPositionUpdateListener{
 	
-	boolean threadRunning;
+	boolean threadRunning = false;
 	public OFAndroidSoundStream(){
 	}
 	

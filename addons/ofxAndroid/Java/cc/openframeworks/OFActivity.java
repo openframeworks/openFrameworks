@@ -948,7 +948,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 					OFAndroid.lastInputVendorID = OFAndroidController.VendorPS;
 				}
 			}
-			if (event.getAction() == KeyEvent.ACTION_DOWN && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
+			if (event.getAction() == KeyEvent.ACTION_DOWN && (event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE ) && event.getRepeatCount() == 0) {
 				if( OFAndroid.onBackPressed() ) {
 					returnValue = true;
 				} else {

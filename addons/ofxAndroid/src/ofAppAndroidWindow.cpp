@@ -121,6 +121,8 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 	//ofLogError("ofAppAndroidWindow") << "ofAppAndroidWindow() the window is this";
 	window = this;
 	msaaSamples = 1;
+	glesVersion = 2;
+
 	ofGetMainLoop()->setCurrentWindow(this);
 }
 
