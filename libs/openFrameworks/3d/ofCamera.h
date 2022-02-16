@@ -96,7 +96,7 @@ public:
     /// function returns the offset that has been applied, as an glm::vec2.  For
     /// more information see http://www.orthostereo.com/geometryopengl.html.
 	///
-	/// \returns The "lens offset" applied to this camera, encoded in an ofVec2f.
+	/// \returns The "lens offset" applied to this camera, encoded in an glm::vec2.
 	glm::vec2 getLensOffset() const { return lensOffset; };
 	
 	/// \brief Get the boolean state which indicates whether the aspect ratio of this camera is forced to a non-default setting.
