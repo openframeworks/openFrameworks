@@ -78,7 +78,10 @@ class ofMeshFace_;
 template<class V, class N, class C, class T>
 class ofMesh_{
 public:
-
+    using VertexType = V;
+    using NormalType = N;
+    using ColorType = C;
+    using TexCoordType = T;
 	/// \name Construction
 	/// \{
 

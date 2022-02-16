@@ -59,6 +59,8 @@ class ofRectangle;
 template<class T>
 class ofPolyline_ {
 public:
+    using VertexType = T;
+    
 	/// \name Constructors
 	/// \{
 
