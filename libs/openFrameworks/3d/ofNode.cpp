@@ -397,7 +397,7 @@ void ofNode::rotateRad(float radians, float vx, float vy, float vz) {
 //----------------------------------------
 void ofNode::rotateAround(const glm::quat& q, const glm::vec3& point) {
 	//	ofLogVerbose("ofNode") << "rotateAround(const glm::quat& q, const glm::vec3& point) not implemented yet";
-	//	ofMatrix4x4 m = getLocalTransformMatrix();
+	//	glm::mat4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
 	
