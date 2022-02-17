@@ -468,11 +468,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #	else
 #       define OF_USE_EXPERIMENTAL_FS 0
 
-	namespace std {
-		namespace filesystem {
-			class path;
-		}
-	}
+#include <filesystem>
+
 #	endif
 #else
 #	if !_MSC_VER
