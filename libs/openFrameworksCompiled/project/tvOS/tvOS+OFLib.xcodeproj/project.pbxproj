@@ -527,7 +527,7 @@
 				<key>SYMROOT</key>
 				<string>$(SRCROOT)/../../lib/tvOS/</string>
 				<key>TVOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
+				<string>13.0</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -605,7 +605,7 @@
 				<key>SYMROOT</key>
 				<string>$(SRCROOT)/../../lib/tvOS/</string>
 				<key>TVOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
+				<string>13.0</string>
 				<key>VALIDATE_PRODUCT</key>
 				<string>YES</string>
 			</dict>

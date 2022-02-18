@@ -17,7 +17,7 @@ jobs:
           cfg:
           - {target: linux64, libs: 64gcc6}
           - {target: linuxarmv6l, libs: armv6l}
-          - {target: linuxarmv7l, libs: armv7l}
+#          - {target: linuxarmv7l, libs: armv7l}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
