@@ -19,6 +19,7 @@
 #ifndef OF_USING_STD_FS
 	#if __cplusplus >= 201703L
 		#define OF_USING_STD_FS 1
+        #warning USING OF_USING_STD_FS YEAH!!!
 	#else
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
