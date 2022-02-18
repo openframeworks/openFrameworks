@@ -19,7 +19,6 @@
 #ifndef OF_USING_STD_FS
 	#if __cplusplus >= 201703L
 		#define OF_USING_STD_FS 1
-        #warning USING OF_USING_STD_FS YEAH!!!
 	#else
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
@@ -477,6 +476,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #		define BOOST_NO_CXX11_SCOPED_ENUMS
 #		define BOOST_NO_SCOPED_ENUMS
 #	endif
+#   include <boost/filesystem.hpp>
 	namespace boost {
 		namespace filesystem {
 			class path;
