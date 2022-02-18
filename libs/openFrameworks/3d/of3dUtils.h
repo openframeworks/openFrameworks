@@ -60,7 +60,7 @@ void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labe
 /// ~~~~
 ///
 /// \param start The start point (tail) of the arrow, expressed as an glm::vec3.
-/// \param end The end point (head) of the arrow, expressed as an glm::vec3.
+/// \param end The end point (head) of the arrow, expressed as an glm::vec3. 
 /// \param headSize The size of the arrowhead. 
 void ofDrawArrow(const glm::vec3& start, const glm::vec3& end, float headSize = 0.05f);
 
