@@ -11,7 +11,7 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
     
     // load the first model
-    model.loadModel("penguin.dae", 20);
+    model.load("penguin.dae", 20);
     // model info
     curFileInfo = ".dae";
     
@@ -85,7 +85,7 @@ void ofApp::keyPressed(int key){
     switch (key){
             case '1':
                 bUsingMesh = false;
-				model.loadModel("penguin.dae");
+				model.load("penguin.dae");
 				model.setRotation(0, 180, 1, 0, 0);
 				model.setScale(0.9, 0.9, 0.9);
 				cam.setDistance(700);
@@ -93,7 +93,7 @@ void ofApp::keyPressed(int key){
                 break;
             case '2':
                 bUsingMesh = false;
-				model.loadModel("penguin.3ds");
+				model.load("penguin.3ds");
 				model.setRotation(0, 180, 1, 0, 0);
 				model.setScale(0.9, 0.9, 0.9);
 				cam.setDistance(700);
@@ -101,7 +101,7 @@ void ofApp::keyPressed(int key){
                 break;
             case '3':
                 bUsingMesh = false;
-				model.loadModel("penguin.ply");
+				model.load("penguin.ply");
 				model.setRotation(0, 90, 1, 0, 0);
 				model.setScale(0.9, 0.9, 0.9);
 				cam.setDistance(700);
@@ -109,7 +109,7 @@ void ofApp::keyPressed(int key){
                 break;
             case '4':
                 bUsingMesh = false;
-				model.loadModel("penguin.obj");
+				model.load("penguin.obj");
 				model.setRotation(0, 90, 1, 0, 0);
 				model.setScale(0.9, 0.9, 0.9);
 				cam.setDistance(700);
@@ -117,7 +117,7 @@ void ofApp::keyPressed(int key){
                 break;
             case '5':
                 bUsingMesh = false;
-				model.loadModel("penguin.stl");
+				model.load("penguin.stl");
 				model.setRotation(0, 90, 1, 0, 0);
 				model.setScale(0.9, 0.9, 0.9);
 				cam.setDistance(700);
