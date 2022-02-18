@@ -11,7 +11,7 @@ void ofApp::setup(){
     bAnimateMouse = false;
     animationPosition = 0;
 
-    model.loadModel("astroBoy_walk.dae", false);
+    model.load("astroBoy_walk.dae", false);
     model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
     model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
     model.playAllAnimations();
@@ -102,28 +102,28 @@ void ofApp::keyPressed(int key){
     glm::vec3 modelPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75, 0);
     switch (key) {
         case '1':
-            model.loadModel("astroBoy_walk.dae");
+            model.load("astroBoy_walk.dae");
             model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
             ofEnableSeparateSpecularLight();
             break;
         case '2':
-            model.loadModel("TurbochiFromXSI.dae");
+            model.load("TurbochiFromXSI.dae");
             model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
             ofEnableSeparateSpecularLight();
             break;
         case '3':
-            model.loadModel("dwarf.x");
+            model.load("dwarf.x");
             model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
             ofDisableSeparateSpecularLight();
             break;
         case '4':
-            model.loadModel("monster-animated-character-X.X");
+            model.load("monster-animated-character-X.X");
             model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
             model.setRotation(0, -90, 0, 0, 1);
             ofDisableSeparateSpecularLight();
             break;
 		case '5':
-			model.loadModel("squirrel/NewSquirrel.3ds");
+			model.load("squirrel/NewSquirrel.3ds");
 		    model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
             ofDisableSeparateSpecularLight();
 			break;
