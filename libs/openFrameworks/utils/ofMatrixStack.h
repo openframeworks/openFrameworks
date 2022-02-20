@@ -85,6 +85,7 @@ private:
 
     ofMatrixMode currentMatrixMode;
 
+	glm::mat4 * currentMatrix;
 	bool flipRenderSurfaceMatrix;
 	glm::mat4 modelMatrix;
 	glm::mat4 viewMatrix;
@@ -96,8 +97,6 @@ private:
 	glm::mat4 orientedProjectionMatrix;
 	glm::mat4 orientationMatrix;
 	glm::mat4 orientationMatrixInverse;
-
-	glm::mat4 * currentMatrix;
 
 	std::stack <ofRectangle> viewportHistory;
 	std::stack <glm::mat4> viewMatrixStack;
