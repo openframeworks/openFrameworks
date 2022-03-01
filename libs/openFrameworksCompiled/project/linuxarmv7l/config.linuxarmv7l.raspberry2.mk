@@ -49,6 +49,8 @@ USE_PI_LEGACY = 1
 
 VER_ID = 0
 
+cat $(RPI_ROOT)/etc/os-release
+
 #if we have this file lets see if we are Stretch or Newer
 ifneq (,$(wildcard $(RPI_ROOT)/etc/os-release))
 	#grab the Debian version ( 9 = Stretch, 10 = Buster )
