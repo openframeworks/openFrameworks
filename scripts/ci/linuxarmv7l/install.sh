@@ -80,17 +80,18 @@ createArchImg(){
     fi
 
     if [ "$download" = "1" ]; then
+		mkdir ~/archlinux
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
-		cd ~
+		cd ~/archlinux
 		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz
         # download=$!
         # echoDots $download
         # wait $download
 
-		mkdir ~/archlinux
 		junest -- << EOF
-	        tar xzf ~/ArchLinuxARM-rpi-armv7-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+	        tar xzf ArchLinuxARM-rpi-armv7-latest.tar.gz --no-same-owner 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+			cd ~
 			echo "--------- CHECKING RELEASE VERSION "
 			cat ~/archlinux/etc/os-release
 			echo "--------- DONE CHECKING RELEASE VERSION "
