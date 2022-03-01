@@ -49,7 +49,7 @@ USE_PI_LEGACY = 1
 
 VER_ID = 0
 
-cat $(RPI_ROOT)/etc/os-release
+$(shell cat $(RPI_ROOT)/etc/os-release)
 
 #if we have this file lets see if we are Stretch or Newer
 ifneq (,$(wildcard $(RPI_ROOT)/etc/os-release))
