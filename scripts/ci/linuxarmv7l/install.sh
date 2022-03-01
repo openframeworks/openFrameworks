@@ -91,6 +91,9 @@ createArchImg(){
 		mkdir ~/archlinux
 		junest -- << EOF
 	        tar xzf ~/ArchLinuxARM-rpi-armv7-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+			echo "--------- CHECKING RELEASE VERSION "
+			cat ~/archlinux/etc/os-release
+			echo "--------- DONE CHECKING RELEASE VERSION "
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
             sudo pacman --noconfirm -S archlinux-keyring
