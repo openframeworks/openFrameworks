@@ -98,7 +98,8 @@ createArchImg(){
 			
 			echo " Will need to remove this symlink fix soon "
 			cd ~/archlinux/usr/lib
-			ln -sf ld-linux-armhf.so.3 ld-2.32.so
+			rm ld-2.32.so
+			ln -sf ld-2.32.so ld-linux-armhf.so.3
 			cd ~
 			
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
