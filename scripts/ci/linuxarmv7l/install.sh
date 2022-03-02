@@ -95,6 +95,12 @@ createArchImg(){
 			echo "--------- CHECKING RELEASE VERSION "
 			cat ~/archlinux/etc/os-release
 			echo "--------- DONE CHECKING RELEASE VERSION "
+			
+			echo " Will need to remove this symlink fix soon "
+			cd ~/archlinux/usr/lib
+			ln -sf ld-linux-armhf.so.3 ld-2.32.so
+			cd ~
+			
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
             sudo pacman --noconfirm -S archlinux-keyring
