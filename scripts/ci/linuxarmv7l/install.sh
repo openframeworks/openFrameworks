@@ -99,6 +99,8 @@ createArchImg(){
 			cd ~/archlinux/usr/lib
 			ls -la
 			cd ~
+			
+			cp ~/archlinux/usr/lib/ld-2.32.so ~/ld-2.32.so
 						
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
@@ -163,12 +165,16 @@ downloadFirmware(){
     unzip firmware.zip
     cp -r ~/firmware-master/opt archlinux/
     
+	cp ~/ld-2.32.so ~/archlinux/usr/lib/ld-2.32.so
+
 	echo " Will need to remove this symlink fix soon "
 	cd ~/archlinux/usr/lib
 	ls -la
-	#ln -sf ld-2.32.so ld-linux-armhf.so.3
-	#ls -la
+	rm ld-linux-armhf.so.3
+	ln -sf ld-2.32.so ld-linux-armhf.so.3
+	ls -la
 	cd ~
+	
 }
 
 
