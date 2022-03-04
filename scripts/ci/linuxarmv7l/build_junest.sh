@@ -19,7 +19,7 @@ export PKG_CONFIG_SYSROOT_DIR=${RPI_ROOT}
 export CXX="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
 export CC="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
-export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
+export LD="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld -V"
 export CFLAGS="$CFLAGS --sysroot=${RPI_ROOT}"
 export CXXFLAGS="$CXXFLAGS --sysroot=${RPI_ROOT}"
 export GCCVER=7.1.1
@@ -29,11 +29,6 @@ export GCCVER=7.1.1
 # the "proper" way does not work currently:
 export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
 export USE_PI_LEGACY=1
-
-echo "**** Checking right before build ****"
-cd ~/archlinux/usr/lib
-ls -la
-cd ~
 
 echo "**** Building OF core ****"
 cd $OF_ROOT
