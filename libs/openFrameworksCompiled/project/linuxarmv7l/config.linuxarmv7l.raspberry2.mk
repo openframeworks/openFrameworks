@@ -43,6 +43,8 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+ifndef USE_PI_LEGACY
+
 # We detect Raspbian versions Stretch and newer above and enable legacy automatically for older versions
 # If detection fails comment USE_PI_LEGACY = 1 to use the newer system
 USE_PI_LEGACY = 1
@@ -63,6 +65,8 @@ ifeq ($(shell expr $(VER_ID) \>= 9), 1)
 endif
 
 $(info VER ID IS $(VER_ID)) 
+
+endif
 
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
