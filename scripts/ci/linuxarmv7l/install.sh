@@ -95,6 +95,10 @@ createArchImg(){
 			echo "--------- CHECKING RELEASE VERSION "
 			cat ~/archlinux/etc/os-release
 			echo "--------- DONE CHECKING RELEASE VERSION "
+			
+			cd ~/archlinux/usr/lib
+			ls -la
+			cd ~
 						
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
@@ -162,8 +166,8 @@ downloadFirmware(){
 	echo " Will need to remove this symlink fix soon "
 	cd ~/archlinux/usr/lib
 	ls -la
-	ln -sf ld-2.32.so ld-linux-armhf.so.3
-	ls -la
+	#ln -sf ld-2.32.so ld-linux-armhf.so.3
+	#ls -la
 	cd ~
 }
 
