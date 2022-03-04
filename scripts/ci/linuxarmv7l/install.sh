@@ -95,13 +95,7 @@ createArchImg(){
 			echo "--------- CHECKING RELEASE VERSION "
 			cat ~/archlinux/etc/os-release
 			echo "--------- DONE CHECKING RELEASE VERSION "
-			
-			echo " Will need to remove this symlink fix soon "
-			cd ~/archlinux/usr/lib
-			rm ld-2.32.so
-			ln -sf ld-2.32.so ld-linux-armhf.so.3
-			cd ~
-			
+						
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
             sudo pacman --noconfirm -S archlinux-keyring
@@ -164,6 +158,14 @@ downloadFirmware(){
     wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
     unzip firmware.zip
     cp -r ~/firmware-master/opt archlinux/
+    
+	echo " Will need to remove this symlink fix soon "
+	cd ~/archlinux/usr/lib
+	ls -la ld*
+	rm ld-2.32.so
+	ln -sf ld-2.32.so ld-linux-armhf.so.3
+	ls -la ld*
+	cd ~
 }
 
 
