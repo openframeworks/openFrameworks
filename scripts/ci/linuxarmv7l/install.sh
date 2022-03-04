@@ -95,6 +95,11 @@ createArchImg(){
 			echo "--------- CHECKING RELEASE VERSION "
 			cat ~/archlinux/etc/os-release
 			echo "--------- DONE CHECKING RELEASE VERSION "
+			
+			echo " Removing the junest ld-linux-armhf.so.3 and ld-2.32.so"
+			rm -f ~/archlinux/usr/lib/ld-linux-armhf.so.3
+			rm -f ~/archlinux/usr/ld-2.32.so
+			
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
             sudo pacman --noconfirm -S archlinux-keyring

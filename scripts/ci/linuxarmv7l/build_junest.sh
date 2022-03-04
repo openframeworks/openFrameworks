@@ -19,7 +19,7 @@ export PKG_CONFIG_SYSROOT_DIR=${RPI_ROOT}
 export CXX="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
 export CC="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
-export LD="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld -V"
+export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
 export CFLAGS="$CFLAGS --sysroot=${RPI_ROOT}"
 export CXXFLAGS="$CXXFLAGS --sysroot=${RPI_ROOT}"
 export GCCVER=7.1.1
