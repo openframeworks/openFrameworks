@@ -161,10 +161,9 @@ downloadFirmware(){
     
 	echo " Will need to remove this symlink fix soon "
 	cd ~/archlinux/usr/lib
-	ls -la ld*
-	rm ld-2.32.so
+	ls -la
 	ln -sf ld-2.32.so ld-linux-armhf.so.3
-	ls -la ld*
+	ls -la
 	cd ~
 }
 
