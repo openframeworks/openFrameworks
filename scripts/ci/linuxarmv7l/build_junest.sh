@@ -30,6 +30,11 @@ export GCCVER=7.1.1
 export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
 export USE_PI_LEGACY=1
 
+echo "**** Checking right before build ****"
+cd ~/archlinux/usr/lib
+ls -la
+cd ~
+
 echo "**** Building OF core ****"
 cd $OF_ROOT
 # this carries over to subsequent compilations of examples
