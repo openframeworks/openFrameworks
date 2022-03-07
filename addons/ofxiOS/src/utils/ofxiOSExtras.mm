@@ -187,7 +187,7 @@ ofxtvOSAppDelegate * ofxiOSGetAppDelegate() {
 
 //--------------------------------------------------------------
 ofxtvOSViewController * ofxiOSGetViewController() {
-    return [ofxiOSGetAppDelegate() glViewController];
+    return (ofxtvOSViewController *)[ofxiOSGetAppDelegate() uiViewController];
 }
 
 #endif

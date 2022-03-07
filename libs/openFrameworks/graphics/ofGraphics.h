@@ -1049,7 +1049,7 @@ OF_DEPRECATED_MSG("Use ofRotateZDeg or ofRotateZRad", void ofRotateZ(float degre
 /// and ofPopMatrix() to save and restore the unrotated coordinate system.
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotate(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
+///     ofRotateDeg(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1067,7 +1067,7 @@ void ofRotateDeg(float degrees);
 /// system represented by the vector (1,0,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofRotateXDeg(45); //rotates the coordinate system 45 degrees around the x-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1078,7 +1078,7 @@ void ofRotateXDeg(float degrees);
 /// system represented by the vector (0,1,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
+///     ofRotateYDeg(45); //rotates the coordinate system 45 degrees around the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1089,7 +1089,7 @@ void ofRotateYDeg(float degrees);
 /// system represented by the vector (0,0,1).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofRotateZDeg(45); //rotates the coordinate system 45 degrees around the z-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1102,52 +1102,52 @@ void ofRotateZDeg(float degrees);
 /// and ofPopMatrix() to save and restore the unrotated coordinate system.
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotate(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
+///     ofRotateRad(M_PI / 2.0f, 1, 0.5, 0); //rotates the coordinate system M_PI / 2.0f radians along the x-axis and M_PI / 4.0f degrees on the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
 ///
-/// \param degrees Specifies the angle of rotation, in degrees.
+/// \param radians Specifies the angle of rotation, in radians.
 /// \param vecX specifies the x coordinates of a vector
 /// \param vecY specifies the y coordinates of a vector
 /// \param vecZ specifies the z coordinates of a vector
-void ofRotateRad(float degrees, float vecX, float vecY, float vecZ);
+void ofRotateRad(float radians, float vecX, float vecY, float vecZ);
 
 /// \brief Rotate around the z-axis
-void ofRotateRad(float degrees);
+void ofRotateRad(float radians);
 
 /// \brief Produces a rotation around the X-axis of our coordinate
 /// system represented by the vector (1,0,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofRotateXRad(M_PI / 4.0f); //rotates the coordinate system M_PI / 4.0f radians around the x-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateXRad(float degrees);
+/// \param degrees Specifies the angle of rotation, in radians.
+void ofRotateXRad(float radians);
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
 /// system represented by the vector (0,1,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
+///     ofRotateYRad(M_PI / 4.0f); //rotates the coordinate system M_PI / 4.0f radians around the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateYRad(float degrees);
+/// \param degrees Specifies the angle of rotation, in radians.
+void ofRotateYRad(float radians);
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
 /// system represented by the vector (0,0,1).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofRotateZRad(M_PI / 4.0f); //rotates the coordinate system M_PI / 4.0f radians degrees around the z-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateZRad(float degrees);
+/// \param degrees Specifies the angle of rotation, in radians.
+void ofRotateZRad(float radians);
 
 /// \}
 /// \name Matrix Transformation

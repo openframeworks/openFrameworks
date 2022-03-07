@@ -82,6 +82,7 @@ public:
 	static const range GeometricShapes;
 	static const range MiscSymbols;
 	static const range Dingbats;
+	static const range CJKSymbolAndPunctuation;
 	static const range Hiragana;
 	static const range Katakana;
 	static const range HangulCompatJamo;
@@ -141,6 +142,7 @@ struct ofTrueTypeFontSettings{
     bool                      contours = false;
     float                     simplifyAmt = 0.3f;
     int                       dpi = 0;
+    int                       index = 0;
     ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
     std::vector<ofUnicode::range> ranges;
 

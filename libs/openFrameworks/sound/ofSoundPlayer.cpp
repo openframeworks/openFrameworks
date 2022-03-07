@@ -67,7 +67,7 @@ ofSoundPlayer::ofSoundPlayer (){
 
 //---------------------------------------------------------------------------
 void ofSoundPlayer::setPlayer(shared_ptr<ofBaseSoundPlayer> newPlayer){
-	player = newPlayer;
+	player = std::move(newPlayer);
 }
 
 //--------------------------------------------------------------------

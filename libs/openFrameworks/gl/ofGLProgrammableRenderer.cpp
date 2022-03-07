@@ -1,7 +1,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofMesh.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
@@ -127,12 +126,12 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), vertexData.getVerticesPointer());
+	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofMesh::VertexType), vertexData.getVerticesPointer());
 	
 	useNormals &= (vertexData.getNumNormals()>0);
 	if(useNormals){
 		glEnableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
-		glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, sizeof(ofVec3f), vertexData.getNormalsPointer());
+		glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, sizeof(typename ofMesh::NormalType), vertexData.getNormalsPointer());
 	}else{
 		glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
 	}
@@ -148,7 +147,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	useTextures &= (vertexData.getNumTexCoords()>0);
 	if(useTextures){
 		glEnableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
-		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(ofVec2f), vertexData.getTexCoordsPointer());
+		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(typename ofMesh::TexCoordType), vertexData.getTexCoordsPointer());
 	}else{
 		glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 	}
@@ -304,7 +303,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 #if defined( TARGET_OPENGLES ) && !defined(TARGET_EMSCRIPTEN)
 
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &poly[0]);
+	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
 
 	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,false,false);
 

@@ -1602,6 +1602,10 @@ string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
+#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
+    if(_path.string().empty()) return "";
+    return (std::filesystem::path(_path).make_preferred() / "").string();
+#else
     auto path = std::filesystem::path(_path).make_preferred().string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
@@ -1610,6 +1614,7 @@ string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
 		}
 	}
 	return path;
+#endif
 }
 
 
@@ -1629,12 +1634,17 @@ string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
-	auto sep = std::filesystem::path("/").make_preferred();
+#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
+    if(path.string().empty()) return "";
+    return (path / "").string();
+#else
+    auto sep = std::filesystem::path("/").make_preferred();
     if(!path.empty() && ofToString(path.string().back())!=sep.string()){
         return (path / sep).string();
-	}else{
+    }else{
         return path.string();
-	}
+    }
+#endif
 }
 
 //------------------------------------------------------------------------------------------------------------

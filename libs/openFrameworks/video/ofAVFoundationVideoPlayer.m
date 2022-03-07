@@ -191,6 +191,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	dispatch_async(queue, ^{
+		@autoreleasepool {
+		}
+		
 		[asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:kTracksKey] completionHandler:^{
 			
 			NSError * error = nil;
@@ -1226,10 +1229,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	time = CMTimeMaximum(time, kCMTimeZero);
 	time = CMTimeMinimum(time, duration);
 	
-	if (!bStream && (CMTimeCompare(time, videoSampleTime) < 0)) {
+// 	if (!bStream && (CMTimeCompare(time, videoSampleTime) < 0)) {
 		// if jumping back in time
-		[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
-	}
+		//[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
+// 	}
 	
 	// set reader to real requested time
 	[_player seekToTime:time
