@@ -705,7 +705,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if (displayManager!=null) {
 			displayManager.unregisterDisplayListener(this);
 		}
-
+		OFAndroidLifeCycle.coreLibraryLoaded = false;
+		OFAndroidLifeCycle.appLibraryLoaded = false;
 		super.onDestroy();
 	}
 	
