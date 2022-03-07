@@ -1127,7 +1127,7 @@ public class OFAndroid {
            		return false;
            	}
         }
-		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)) return false;
+		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS) || event.getKeyCode() == KeyEvent.KEYCODE_CAMERA || event.getKeyCode() == 287) return false;
 		int unicodeChar = event.getUnicodeChar();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
@@ -1150,7 +1150,7 @@ public class OFAndroid {
 		if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK  || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_BUTTON_MODE) && event.getRepeatCount() == 0) {
 			return true; // handled event
 		}
-		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)) return false;
+		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)  || event.getKeyCode() == KeyEvent.KEYCODE_CAMERA || event.getKeyCode() == 287) return false;
 		
 
 		int unicodeChar = event.getUnicodeChar();
