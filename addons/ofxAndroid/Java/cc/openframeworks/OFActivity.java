@@ -854,6 +854,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				}
 				if (OFAndroid.lastInputDevice != null &&
 						OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS5 ||
+						!(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS4_2) &&
 						(OFAndroid.lastInputVendorID == OFAndroidController.VendorPS &&
 								(OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))
 						)) {

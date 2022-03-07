@@ -26,6 +26,7 @@ public class OFAndroidController {
 
     public static final int ProductID_PS5 = 3302;
     public static final int ProductID_PS4 = 2508;
+    public static final int ProductID_PS4_2 = 1476;
     public static final int ProductID_XBOX = 765;
     public static final int ProductID_STEAM = 4354;
 
