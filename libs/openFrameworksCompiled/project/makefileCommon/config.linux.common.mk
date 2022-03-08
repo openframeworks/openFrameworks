@@ -183,8 +183,6 @@ else
 	endif
 endif
 
-PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
-
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -197,13 +195,12 @@ PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
 # gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
-#ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
-#	ifeq ("$(GCC_MAJOR_GTEQ_9)","0")
-#		PLATFORM_LDFLAGS += -lstdc++fs
-#	endif
-#endif
+ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
+	ifeq ("$(GCC_MAJOR_GTEQ_9)","0")
+		PLATFORM_LDFLAGS += -lstdc++fs
+	endif
+endif
 
-PLATFORM_LDFLAGS += -lstdc++fs
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
