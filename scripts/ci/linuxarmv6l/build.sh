@@ -9,9 +9,6 @@ PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
 # the "proper" way does not work currently:
 export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
 
-gcc -v
-g++ -v
-
 echo "**** Building OF core ****"
 cd $OF_ROOT
 # this carries over to subsequent compilations of examples
@@ -28,6 +25,10 @@ export CXX="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
 export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
+
+${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc -v
+${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++ -v
+
 make Debug
 
 echo "**** Building emptyExample ****"
