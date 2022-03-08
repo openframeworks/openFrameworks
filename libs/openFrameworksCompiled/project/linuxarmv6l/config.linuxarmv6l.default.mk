@@ -126,6 +126,8 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 
 #c++ 17 support - comment two lines below to use c++11
 PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
+PLATFORM_CFLAGS += -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
+
 PLATFORM_LDFLAGS += -lstdc++fs
 
 PLATFORM_CFLAGS += -march=armv6

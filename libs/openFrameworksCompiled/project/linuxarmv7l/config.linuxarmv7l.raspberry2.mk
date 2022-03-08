@@ -132,6 +132,8 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 ################################################################################
 
 PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
+PLATFORM_CXXFLAGS += -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
+
 PLATFORM_LDFLAGS += -lstdc++fs
 
 PLATFORM_CFLAGS += -march=armv7-a
