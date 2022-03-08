@@ -9,6 +9,9 @@ PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
 # the "proper" way does not work currently:
 export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
 
+gcc -v
+g++ -v
+
 echo "**** Building OF core ****"
 cd $OF_ROOT
 # this carries over to subsequent compilations of examples
