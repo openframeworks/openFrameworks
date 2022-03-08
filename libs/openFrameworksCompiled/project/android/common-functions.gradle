@@ -295,11 +295,11 @@ def coreCppFlags(abi, ofRoot){
     def ofSource = ofRoot + 'libs/openFrameworks'
     def libs = ofRoot + 'libs'
 
-    def ret = ["-std=c++17",
+    def ret = ["-std=c++14",
             "-Wall",
             "-frtti",
             "-fexceptions",
-            "-stdlib=libc++ ",
+            "-nostdlib ",
             "-fno-short-enums",
             "-ffunction-sections",
             "-fdata-sections",
@@ -388,7 +388,6 @@ def coreLdFlags(abi, ofRoot){
     def ret =  [
             '-Wl,--exclude-libs,ALL',
             '-Wl,--as-needed',
-            '-lstdc++fs',
             '-Wl,--gc-sections'
     ]
 

@@ -177,8 +177,7 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 ################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++17 -stdlib=libc++
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -stdlib=libc++
+PLATFORM_CFLAGS = -Wall -std=c++17
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fpic \
@@ -371,7 +370,6 @@ PLATFORM_LIBRARIES += c
 PLATFORM_LIBRARIES += dl
 PLATFORM_LIBRARIES += gcc
 PLATFORM_LIBRARIES += m
-PLATFORM_LIBRARIES += stdc++fs
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
