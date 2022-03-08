@@ -113,6 +113,10 @@ ifeq ($(CROSS_COMPILING),1)
 	SYSROOT=$(RPI_ROOT)
 
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
+	
+	#c++ 17 support - comment out two lines below to use c++11
+	PLATFORM_CFLAGS += -std=c++17
+	PLATFORM_LDFLAGS += -lstdc++fs
 
 	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/7
 
