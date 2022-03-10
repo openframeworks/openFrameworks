@@ -177,7 +177,7 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid ofxAccelerometer
 ################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++17
+PLATFORM_CFLAGS = -Wall -std=c++14
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS +=  -nostdlib --sysroot=$(SYSROOT) -fpic \
@@ -214,7 +214,6 @@ endif
 PLATFORM_LDFLAGS =
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) --isystem=$(SYSROOT) -L"$(NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/$(ABI_PATH)"
 PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL -gcc-toolchain $(GCC_TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)
-PLATFORM_LDFLAGS += -lstdc++fs
 
 
 ifneq ($(ABI),x86)
