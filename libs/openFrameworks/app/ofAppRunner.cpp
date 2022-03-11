@@ -173,7 +173,7 @@ void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
 
 //--------------------------------------
 int ofRunApp(ofBaseApp * OFSA){
-	mainLoop()->run(std::move(shared_ptr<ofBaseApp>(OFSA)));
+	mainLoop()->run(shared_ptr<ofBaseApp>(OFSA));
 	auto ret = ofRunMainLoop();
 #if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
 	ofExitCallback();

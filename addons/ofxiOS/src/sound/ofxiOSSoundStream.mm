@@ -160,21 +160,44 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
     #ifdef __IPHONE_6_0
 	if(bMix) {
 		if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
+#if defined (TARGET_OF_TVOS) || defined (TARGET_OF_WATCHOS)
 			if([audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
-							 withOptions:AVAudioSessionCategoryOptionMixWithOthers
-								   error:nil]) {
+                             withOptions:(AVAudioSessionCategoryOptionMixWithOthers)
+                                   error:nil]) {
 				success = true;
 			}
+#else
+            if([audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+                             withOptions:(AVAudioSessionCategoryOptionMixWithOthers |
+                                          AVAudioSessionCategoryOptionAllowAirPlay |
+                                          AVAudioSessionCategoryOptionAllowBluetooth |
+                                          AVAudioSessionCategoryOptionAllowBluetoothA2DP)
+                                   error:nil]) {
+                success = true;
+            }
+#endif
 		}
 	} else {
     #endif
     
 		// this is the default category + options setup
 		// Note: using a sound input stream will set the category to PlayAndRecord
-		if([audioSession setCategory:AVAudioSessionCategorySoloAmbient error:nil]) {
-			success = true;
-		}
-        
+#if defined (TARGET_OF_TVOS) || defined (TARGET_OF_WATCHOS)
+        if([audioSession setCategory:AVAudioSessionCategorySoloAmbient
+                         error:nil]) {
+            success = true;
+        }
+#else
+        if([audioSession setCategory:AVAudioSessionCategorySoloAmbient
+                         withOptions:(
+                                      AVAudioSessionCategoryOptionAllowAirPlay |
+                                      AVAudioSessionCategoryOptionAllowBluetooth |
+                                      AVAudioSessionCategoryOptionAllowBluetoothA2DP)
+                         error:nil]) {
+            success = true;
+        }
+#endif
+
     #ifdef __IPHONE_6_0
 	}
     #endif

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofFileUtils.h"
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
 #include <chrono>

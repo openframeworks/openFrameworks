@@ -2858,8 +2858,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_NON_VIRTUAL_DESTRUCTOR</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<array>
 					<string>$(inherited)</string>
@@ -2902,8 +2900,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_NON_VIRTUAL_DESTRUCTOR</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<array>
 					<string>$(inherited)</string>
@@ -3070,8 +3066,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_UNUSED_FUNCTION</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>OBJROOT</key>
 				<string>$(SRCROOT)/../../lib/ios/build/debug</string>
 				<key>ONLY_ACTIVE_ARCH</key>
@@ -3149,8 +3143,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_UNUSED_FUNCTION</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>OBJROOT</key>
 				<string>$(SRCROOT)/../../lib/ios/build/release</string>
 				<key>ONLY_ACTIVE_ARCH</key>

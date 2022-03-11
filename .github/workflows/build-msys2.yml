@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        mingw: [MINGW64,MINGW32]
+        mingw: [MINGW64, MINGW32]
     defaults:
       run:
         shell: msys2 {0}

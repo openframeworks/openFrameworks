@@ -3,7 +3,7 @@
  */
 
 #include "ofAVFoundationGrabber.h"
-#include "ofVec2f.h"
+#include "ofVectorMath.h"
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
 
@@ -65,7 +65,7 @@
 			width = w;
 			height = h;
 
-			ofVec2f requestedDimension(width, height);
+			glm::vec2 requestedDimension(width, height);
 
 			AVCaptureDeviceFormat * bestFormat  = nullptr;
 			for ( AVCaptureDeviceFormat * format in [device formats] ) {
@@ -74,7 +74,7 @@
 
 				int tw = dimensions.width;
 				int th = dimensions.height;
-				ofVec2f formatDimension(tw, th);
+                glm::vec2 formatDimension(tw, th);
 
 				if( tw == width && th == height ){
 					bestW = tw;
@@ -83,7 +83,7 @@
 					break;
 				}
 
-				float dist = (formatDimension-requestedDimension).length();
+				float dist = glm::length(formatDimension - requestedDimension);
 				if( dist < smallestDist ){
 					smallestDist = dist;
 					bestW = tw;

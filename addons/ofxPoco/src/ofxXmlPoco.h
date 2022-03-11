@@ -6,6 +6,8 @@
 
 #include <numeric>
 
+#define byte _priv_byte
+
 #include <Poco/DOM/Document.h>
 #include <Poco/DOM/DocumentFragment.h>
 #include <Poco/DOM/Element.h>
@@ -25,6 +27,8 @@
 #include <Poco/DOM/NodeFilter.h>
 #include <Poco/DOM/NamedNodeMap.h>
 #include <Poco/DOM/ChildNodesList.h>
+
+#undef byte
 
 class ofxXmlPoco{
     
