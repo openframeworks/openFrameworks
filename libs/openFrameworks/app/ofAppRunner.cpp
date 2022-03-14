@@ -127,18 +127,19 @@ void ofInit(){
 	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
-        of::priv::initutils();
+    of::priv::initutils();
+    of::priv::initfileutils();
 
-	#ifdef WIN32_HIGH_RES_TIMING
-		timeBeginPeriod(1);		// ! experimental, sets high res time
-								// you need to call timeEndPeriod.
-								// if you quit the app other than "esc"
-								// (ie, close the console, kill the process, etc)
-								// at exit wont get called, and the time will
-								// remain high res, that could mess things
-								// up on your system.
-								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
-	#endif
+#ifdef WIN32_HIGH_RES_TIMING
+    timeBeginPeriod(1);		// ! experimental, sets high res time
+                            // you need to call timeEndPeriod.
+                            // if you quit the app other than "esc"
+                            // (ie, close the console, kill the process, etc)
+                            // at exit wont get called, and the time will
+                            // remain high res, that could mess things
+                            // up on your system.
+                            // info here:http://www.geisswerks.com/ryan/FAQS/timing.html
+#endif
 
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
