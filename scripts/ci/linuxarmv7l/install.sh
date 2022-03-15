@@ -201,7 +201,7 @@ installRtAudio(){
 
 installJunest(){
 	if [ ! -d ~/.local/share/junest ]; then
-		git clone git://github.com/fsquillace/junest ~/.local/share/junest
+		git clone https://github.com/fsquillace/junest ~/.local/share/junest
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
 	junest setup
