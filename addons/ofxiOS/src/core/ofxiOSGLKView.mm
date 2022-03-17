@@ -13,10 +13,6 @@
 #include <TargetConditionals.h>
 #import <GameController/GameController.h>
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 static ofxiOSGLKView * _instanceRef = nil;
 
 @interface ofxiOSGLKView() {

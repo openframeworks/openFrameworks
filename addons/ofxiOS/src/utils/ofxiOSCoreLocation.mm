@@ -22,10 +22,6 @@
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 //C++ class implementations
 
 //--------------------------------------------------------------

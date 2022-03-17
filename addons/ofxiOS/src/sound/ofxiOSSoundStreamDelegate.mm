@@ -8,10 +8,6 @@
 #include "ofLog.h"
 #include "ofSoundBuffer.h"
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 @interface ofxiOSSoundStreamDelegate() {
 	std::function<void(ofSoundBuffer &)> inCallback;
 	std::function<void(ofSoundBuffer &)> outCallback;

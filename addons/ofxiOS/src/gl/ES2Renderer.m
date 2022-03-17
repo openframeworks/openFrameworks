@@ -2,10 +2,6 @@
 
 #import "ES2Renderer.h"
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 @implementation ES2Renderer
 
 // Create an OpenGL ES 2.0 context

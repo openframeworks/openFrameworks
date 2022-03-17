@@ -14,10 +14,6 @@
 	#include "ofTexture.h"
 #endif
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 //--------------------------------------------------------------
 ofAVFoundationPlayer::ofAVFoundationPlayer() {
     videoPlayer = nullptr;

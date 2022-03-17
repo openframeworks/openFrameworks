@@ -9,10 +9,6 @@
 
 #ifdef OF_VIDEO_CAPTURE_AVF
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 #import <Accelerate/Accelerate.h>
 
 @interface OSXVideoGrabber ()

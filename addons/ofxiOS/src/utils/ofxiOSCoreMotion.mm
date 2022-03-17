@@ -1,10 +1,6 @@
 
 #include "ofxiOSCoreMotion.h"
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 ofxiOSCoreMotion::ofxiOSCoreMotion() {
     
     motionManager = [[CMMotionManager alloc] init];

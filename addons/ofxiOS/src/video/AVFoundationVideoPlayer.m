@@ -9,10 +9,6 @@
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 /* Asset keys */
 NSString * const kTracksKey         = @"tracks";
 NSString * const kPlayableKey		= @"playable";

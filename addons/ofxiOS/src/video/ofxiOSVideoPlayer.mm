@@ -7,10 +7,6 @@
 
 using namespace std;
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
 

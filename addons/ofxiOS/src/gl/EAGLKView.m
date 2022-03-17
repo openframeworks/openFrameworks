@@ -12,10 +12,6 @@
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 @interface EAGLKView() {
     BOOL bInit;
 }

@@ -6,10 +6,6 @@
 
 #import "ofAVFoundationVideoPlayer.h"
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
 

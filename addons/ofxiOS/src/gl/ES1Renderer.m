@@ -2,10 +2,6 @@
 
 #import "ES1Renderer.h"
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 @implementation ES1Renderer
 
 // Create an OpenGL ES 1.1 context

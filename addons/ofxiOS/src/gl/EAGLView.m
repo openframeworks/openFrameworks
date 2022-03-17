@@ -30,10 +30,6 @@
  * ***********************************************************************/ 
 
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 #import <QuartzCore/QuartzCore.h>
 
 #include <TargetConditionals.h>

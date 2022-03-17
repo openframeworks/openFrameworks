@@ -16,10 +16,6 @@
 
 #import "SoundOutputStream.h"
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
                                                 AudioUnitRenderActionFlags *ioActionFlags,
                                                 const AudioTimeStamp *inTimeStamp,
