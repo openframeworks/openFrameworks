@@ -536,6 +536,8 @@ string ofxiOSGetClipboardString() {
 
 /******************** ofxiOSScreenGrab *********************/
 
+/// TODO: rename SaveDelegate to ofxiOSSaveDelegateObject (SaveDelegate is too general name, and basically XXXDelegate is name for Protocol).
+/// maybe this change will safety because SaveDelegate is private class
 @interface SaveDelegate : NSObject
 /// TODO: give protocol explicitly
 @property (nonatomic, strong) id delegate;
@@ -568,6 +570,7 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 }
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+/// ???: need to change argument to give Protocol id<ofxiOSSaveDelegateProtocol> explicitly?
 void ofxiOSScreenGrab(id delegate) {
     CGRect rect = [[UIScreen mainScreen] bounds];
     

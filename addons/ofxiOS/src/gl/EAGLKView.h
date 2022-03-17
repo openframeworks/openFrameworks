@@ -12,6 +12,7 @@
 #import <GLKit/GLKit.h>
 #import "ESRenderer.h"
 
+/// ???: inherit GLKViewDelegate?
 @protocol EAGLKViewDelegate <NSObject>
 @optional
 - (void)glViewAnimationStarted;
@@ -35,6 +36,8 @@
     ESRendererVersion rendererVersion;
 }
 
+/// TODO: need to give protocol explicity.
+/// ???: can we assume EAGLKViewDelegate is inherit GLKViewDelegate?
 @property (nonatomic, weak) id delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame

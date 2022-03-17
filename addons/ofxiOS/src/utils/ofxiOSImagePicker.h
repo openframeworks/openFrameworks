@@ -27,6 +27,7 @@ public:
 
 //----------------------------------------------------------- overlay.
 @interface ofxiOSImagePickerOverlayView : UIView
+/// TODO: give protocol explicitly.
 @property (nonatomic, strong) id delegate;
 - (void)initUI;
 - (void)takePhoto:(id)sender;
