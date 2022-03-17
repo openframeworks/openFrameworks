@@ -57,14 +57,14 @@
     return [CAEAGLLayer class];
 }
 
-- (id)initWithFrame:(CGRect)frame
-andPreferedRenderer:(ESRendererVersion)version
-           andDepth:(bool)depth
-              andAA:(bool)msaaEnabled
-      andNumSamples:(int)samples
-          andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale
-         sharegroup:(EAGLSharegroup*)sharegroup {
+- (instancetype)initWithFrame:(CGRect)frame
+          andPreferedRenderer:(ESRendererVersion)version
+                     andDepth:(bool)depth
+                        andAA:(bool)msaaEnabled
+                andNumSamples:(int)samples
+                    andRetina:(bool)retinaEnabled
+               andRetinaScale:(CGFloat)retinaScale
+                   sharegroup:(EAGLSharegroup*)sharegroup {
 
     if((self = [super initWithFrame:frame])) {
         

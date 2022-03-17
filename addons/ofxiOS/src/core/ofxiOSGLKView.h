@@ -30,11 +30,11 @@ class ofAppiOSWindow;
 
 + (ofxiOSGLKView *) getInstance;
 
-- (id)initWithFrame:(CGRect)frame
-             andApp:(ofxiOSApp *)app;
-- (id)initWithFrame:(CGRect)frame
-             andApp:(ofxiOSApp *)app
-         sharegroup:(EAGLSharegroup *)sharegroup;
+- (instancetype)initWithFrame:(CGRect)frame
+                       andApp:(ofxiOSApp *)app;
+- (instancetype)initWithFrame:(CGRect)frame
+                       andApp:(ofxiOSApp *)app
+                   sharegroup:(EAGLSharegroup *)sharegroup;
 - (void)setup;
 - (void)update;
 - (void)draw;

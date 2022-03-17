@@ -14,7 +14,7 @@
 
 @implementation AVSoundPlayer
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if(self) {
         bMultiPlay = NO;

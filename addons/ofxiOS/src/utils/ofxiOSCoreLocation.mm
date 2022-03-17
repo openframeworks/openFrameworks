@@ -157,7 +157,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 @synthesize lat, lng, hAccuracy, alt, vAccuracy, distMoved, x, y, z, magneticHeading, trueHeading, headingAccuracy;
 
 //--------------------------------------------------------------
-- (id) init
+- (instancetype) init
 {
 	if(self = [super init])
 	{		

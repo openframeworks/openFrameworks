@@ -89,7 +89,7 @@ NSString * const kCurrentItemKey	= @"currentItem";
 
 static const NSString * ItemStatusContext;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if(self) {
         /**

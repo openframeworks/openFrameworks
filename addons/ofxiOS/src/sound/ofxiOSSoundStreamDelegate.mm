@@ -20,7 +20,7 @@
 
 @implementation ofxiOSSoundStreamDelegate
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if(self) {
         inputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
@@ -35,7 +35,7 @@
     outCallback = nullptr;
 }
 
-- (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)fn {
+- (instancetype)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)fn {
     self = [self init];
     if(self) {
         inCallback = fn;
@@ -43,7 +43,7 @@
     return self;
 }
 
-- (id)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)fn {
+- (instancetype)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)fn {
     self = [self init];
     if(self) {
         outCallback = fn;

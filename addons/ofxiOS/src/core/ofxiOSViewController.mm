@@ -25,11 +25,11 @@
 
 @implementation ofxiOSViewController
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+- (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
     return [self initWithFrame:frame app:app sharegroup:nil];
 }
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
+- (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup{
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
     if((self = [super init])) {
         currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;

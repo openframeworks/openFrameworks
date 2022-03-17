@@ -191,7 +191,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
 }
 
 //--------------------------------------------------------------
-- (id) init:(int)x y:(int)y width:(int)w height:(int)h
+- (instancetype) init:(int)x y:(int)y width:(int)w height:(int)h
 {
 	if(self = [super init])
 	{			

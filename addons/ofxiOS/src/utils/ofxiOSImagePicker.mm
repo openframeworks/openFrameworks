@@ -179,7 +179,7 @@ bool ofxiOSImagePicker::getImageUpdated(){
 //----------------------------------------------------------------
 @implementation ofxiOSImagePickerDelegate
 
-- (id) initWithPicker:(canLoadPixels *) _picker
+- (instancetype) initWithPicker:(canLoadPixels *) _picker
 {
 	if(self = [super init])
 	{
@@ -522,7 +522,7 @@ bool ofxiOSImagePicker::getImageUpdated(){
 
 @synthesize delegate;
 
-- (id)initWithFrame:(CGRect)frame{
+- (instancetype)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
         [self initUI];
     }

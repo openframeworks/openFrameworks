@@ -84,9 +84,9 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 //----------------------------------------------------------------
 @implementation SoundInputStream
 
-- (id)initWithNumOfChannels:(NSInteger)value0
-             withSampleRate:(NSInteger)value1
-             withBufferSize:(NSInteger)value2 {
+- (instancetype)initWithNumOfChannels:(NSInteger)value0
+                       withSampleRate:(NSInteger)value1
+                       withBufferSize:(NSInteger)value2 {
     self = [super initWithNumOfChannels:value0
                          withSampleRate:value1
                          withBufferSize:value2];

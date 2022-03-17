@@ -23,9 +23,9 @@
 @synthesize audioUnit;
 @synthesize bInterruptedWhileRunning;
 
-- (id)initWithNumOfChannels:(NSInteger)value0
-             withSampleRate:(NSInteger)value1
-             withBufferSize:(NSInteger)value2 {
+- (instancetype)initWithNumOfChannels:(NSInteger)value0
+                       withSampleRate:(NSInteger)value1
+                       withBufferSize:(NSInteger)value2 {
     self = [super init];
     if(self) {
         numOfChannels = value0;

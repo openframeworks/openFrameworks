@@ -48,9 +48,9 @@ typedef enum {
 @property (readonly) AudioUnit audioUnit;
 @property (assign) BOOL bInterruptedWhileRunning;
 
-- (id)initWithNumOfChannels:(NSInteger)numOfChannels
-             withSampleRate:(NSInteger)sampleRate
-             withBufferSize:(NSInteger)bufferSize;
+- (instancetype)initWithNumOfChannels:(NSInteger)numOfChannels
+                       withSampleRate:(NSInteger)sampleRate
+                       withBufferSize:(NSInteger)bufferSize;
 
 - (void)start;
 - (void)stop;

@@ -21,7 +21,7 @@ static const void *ItemStatusContext = &ItemStatusContext;
 static const void *PlayerRateContext = &ItemStatusContext;
 
 
-- (id)init {
+- (instancetype)init {
 	self = [super init];
 	if(self) {
 		

@@ -47,7 +47,7 @@ public:
 	canLoadPixels *						cppPixelLoader;
 }
 
-- (id) initWithPicker:(canLoadPixels *) _picker;
+- (instancetype) initWithPicker:(canLoadPixels *) _picker;
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo;
 

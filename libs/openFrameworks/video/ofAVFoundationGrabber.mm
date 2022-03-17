@@ -20,7 +20,7 @@
 
 #pragma mark -
 #pragma mark Initialization
-- (id)init {
+- (instancetype)init {
 	self = [super init];
 	if (self) {
 		captureInput = nil;
