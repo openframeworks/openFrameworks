@@ -5,10 +5,6 @@
 //  Created by Daniel Rosser on 26/10/2015.
 //
 
-#if !__has_feature(objc_arc)
-#   error need ARC
-#endif
-
 #include "ofxtvOSAppDelegate.h"
 
 #include "ofxtvOSViewController.h"
