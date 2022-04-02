@@ -7,26 +7,26 @@ using namespace std;
 extern "C"{
 	#include "svgtiny.h"
 }
-ofxSVG::~ofxSVG(){
+ofxSvg::~ofxSvg(){
 	paths.clear();
 }
 
-float ofxSVG::getWidth() const {
+float ofxSvg::getWidth() const {
 	return width;
 }
 
-float ofxSVG::getHeight() const {
+float ofxSvg::getHeight() const {
 	return height;
 }
 
-int ofxSVG::getNumPath(){
+int ofxSvg::getNumPath(){
 	return paths.size();
 }
-ofPath & ofxSVG::getPathAt(int n){
+ofPath & ofxSvg::getPathAt(int n){
 	return paths[n];
 }
 
-void ofxSVG::load(std::string path){
+void ofxSvg::load(std::string path){
 	path = ofToDataPath(path);
 
 	if(path.compare("") == 0){
@@ -40,7 +40,7 @@ void ofxSVG::load(std::string path){
 	
 }
 
-void ofxSVG::loadFromString(std::string stringdata, std::string urlstring){
+void ofxSvg::loadFromString(std::string stringdata, std::string urlstring){
 	
 	// goes some way to improving SVG compatibility
 	fixSvgString(stringdata);
@@ -87,7 +87,7 @@ void ofxSVG::loadFromString(std::string stringdata, std::string urlstring){
 	svgtiny_free(diagram);
 }
 
-void ofxSVG::fixSvgString(std::string& xmlstring) {
+void ofxSvg::fixSvgString(std::string& xmlstring) {
 	
 	ofXml xml;
 	
@@ -157,13 +157,13 @@ void ofxSVG::fixSvgString(std::string& xmlstring) {
 	
 }
 
-void ofxSVG::draw(){
+void ofxSvg::draw(){
 	for(int i = 0; i < (int)paths.size(); i++){
 		paths[i].draw();
 	}
 }
 
-void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
+void ofxSvg::setupDiagram(struct svgtiny_diagram * diagram){
 
 	width = diagram->width;
 	height = diagram->height;
@@ -180,7 +180,7 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 	}
 }
 
-void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
+void ofxSvg::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	float * p = shape->path;
 
 	path.setFilled(false);
@@ -223,6 +223,6 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	}
 }
 
-const vector <ofPath> & ofxSVG::getPaths() const{
+const vector <ofPath> & ofxSvg::getPaths() const{
     return paths;
 }
