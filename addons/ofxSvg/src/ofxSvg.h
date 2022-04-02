@@ -16,8 +16,8 @@
 /// but we have gone some way to improving this by manually implementing some extra features (such as the
 /// SVG "use" element).
 
-class ofxSVG {
-	public: ~ofxSVG();
+class ofxSvg {
+	public: ~ofxSvg();
 
 		float getWidth() const ;
 		float getHeight() const;
