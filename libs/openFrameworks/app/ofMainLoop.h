@@ -26,7 +26,8 @@ public:
 		if(!allowMultiWindow){
 		    windowsApps.clear();
 		}
-		windowsApps[window] = std::shared_ptr<ofBaseApp>();
+		windowsApps[window] = NULL;
+
 		currentWindow = window;
 		ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
 	}
