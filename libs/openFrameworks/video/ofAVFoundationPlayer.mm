@@ -4,6 +4,8 @@
 //	Merged with code by Sam Kronick, James George and Elie Zananiri.
 //
 
+#define GL_SILENCE_DEPRECATION 1
+
 //--------------------------------------------------------------
 #import "ofAVFoundationPlayer.h"
 #import "ofAVFoundationVideoPlayer.h"
