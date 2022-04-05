@@ -7,8 +7,6 @@
 #include <condition_variable>
 #include <mutex>
 
-using namespace std;
-
 #ifdef TARGET_WIN32
 #include <winuser.h>
 #include <commdlg.h>
@@ -18,6 +16,7 @@ using namespace std;
 #include <shlobj.h>
 #include <tchar.h>
 #include <stdio.h>
+
 
 #endif
 
@@ -253,6 +252,8 @@ void resetLocale(std::locale locale){
 #ifdef TARGET_EMSCRIPTEN
 #include <emscripten/emscripten.h>
 #endif
+
+using namespace std;
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
@@ -637,6 +638,8 @@ string ofSystemTextBoxDialog(string question, string text){
 												 encoding:NSUTF8StringEncoding]];
 		// add text field to alert dialog
 		[alert setAccessoryView:label];
+		[[alert window] setInitialFirstResponder: label];
+
 		NSInteger returnCode = [alert runModal];
 		restoreAppWindowFocus();
 		// if OK was clicked, assign value to text

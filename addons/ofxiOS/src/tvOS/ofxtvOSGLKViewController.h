@@ -5,8 +5,8 @@
 
 #pragma once
 
-#ifndef ofxtvOSViewController_h
-#define ofxtvOSViewController_h
+#ifndef ofxtvOSGLKViewController_h
+#define ofxtvOSGLKViewController_h
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>

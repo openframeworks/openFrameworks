@@ -15,9 +15,14 @@
 // This enables glm's old behavior of initializing with non garbage values
 #define GLM_FORCE_CTOR_INIT
 
-// Set to 1 to use std filesystem instead of boost's
+// If you are building with c++17 or newer std filesystem will be enabled by default
 #ifndef OF_USING_STD_FS
-#define OF_USING_STD_FS 0
+	#if __cplusplus >= 201703L
+		#define OF_USING_STD_FS 1
+	#else
+		// Set to 1 to force std filesystem instead of boost's
+		#define OF_USING_STD_FS 0
+	#endif
 #endif
 
 //-------------------------------
@@ -91,7 +96,7 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_OS_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
         #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
         #define TARGET_OPENGLES
@@ -463,17 +468,15 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #	else
 #       define OF_USE_EXPERIMENTAL_FS 0
 
-	namespace std {
-		namespace filesystem {
-			class path;
-		}
-	}
+#include <filesystem>
+
 #	endif
 #else
 #	if !_MSC_VER
 #		define BOOST_NO_CXX11_SCOPED_ENUMS
 #		define BOOST_NO_SCOPED_ENUMS
 #	endif
+#   include <boost/filesystem.hpp>
 	namespace boost {
 		namespace filesystem {
 			class path;

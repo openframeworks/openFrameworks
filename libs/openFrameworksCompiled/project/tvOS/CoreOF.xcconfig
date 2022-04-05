@@ -40,4 +40,5 @@ OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AV
 
 // once all libraries are compiled for libc++ / all architectures
 CLANG_CXX_LIBRARY = libc++
-CLANG_CXX_LANGUAGE_STANDARD = c++11
+CLANG_CXX_LANGUAGE_STANDARD = c++17
+TVOS_DEPLOYMENT_TARGET = 13.0

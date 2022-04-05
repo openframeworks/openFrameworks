@@ -747,7 +747,7 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 			// Erase each invalid parent
 			obj->parents.erase(std::remove_if(obj->parents.begin(),
 											  obj->parents.end(),
-											  [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
+											  [](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
 							   obj->parents.end());
 
 			// notify all leftover (valid) parents of this object's changed value.

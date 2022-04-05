@@ -126,6 +126,7 @@ struct ofImageLoadSettings {
 	bool exifRotate = false;
 	bool grayscale = false;
 	bool separateCMYK = false;
+    int freeImageFlags = 0;
 };
 
 //----------------------------------------------------
