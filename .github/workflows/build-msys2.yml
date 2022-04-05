@@ -11,7 +11,7 @@ on:
 jobs:
 
   build-msys2:
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         mingw: [MINGW64]
