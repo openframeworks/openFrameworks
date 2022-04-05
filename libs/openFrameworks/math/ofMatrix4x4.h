@@ -8,6 +8,8 @@
  * 
  */
 
+#pragma GCC diagnostic ignored "-Wshorten-64-to-32"
+
 #pragma once
 
 #include "ofConstants.h"
