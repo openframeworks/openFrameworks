@@ -11,10 +11,10 @@ on:
 jobs:
 
   build-msys2:
-    runs-on: windows-2019
+    runs-on: windows-latest
     strategy:
       matrix:
-        mingw: [MINGW64]
+        mingw: [MINGW64, MINGW32]
     defaults:
       run:
         shell: msys2 {0}
