@@ -2985,6 +2985,8 @@ fi
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
+				<key>ENABLE_TESTABILITY</key>
+				<string>YES</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
