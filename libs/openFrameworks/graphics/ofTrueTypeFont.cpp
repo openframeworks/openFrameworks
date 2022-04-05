@@ -364,11 +364,11 @@ static std::string linuxFontPathByName(const std::string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename){
+static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename, int index){
 	std::filesystem::path fontname = _fontname;
 	filename = ofToDataPath(_fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
-	int fontID = 0;
+	int fontID = index;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
         filename = linuxFontPathByName(fontname.string());
@@ -717,7 +717,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-    if(!loadFontFace(settings.fontName, loadFace, settings.fontName)){
+    if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
 		return false;
 	}
 	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);

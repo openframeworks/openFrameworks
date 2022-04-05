@@ -279,7 +279,7 @@ fi
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj" -target openFrameworks -configuration "${CONFIGURATION}"</string>
+			<string>xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj" -target openFrameworks -configuration "${CONFIGURATION}"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET</string>
 		</dict>
 		<key>E42962AA2163EDD300A6A9E2</key>
 		<dict>

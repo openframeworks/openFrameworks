@@ -851,7 +851,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 
-		[cocoaWindow setStyleMask:NSBorderlessWindowMask];
+		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 
 		int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
@@ -932,7 +932,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-		[cocoaWindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
+		[cocoaWindow setStyleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 
 		setWindowShape(windowRect.width, windowRect.height);
 		setWindowTitle(settings.title);
