@@ -70,7 +70,7 @@ FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
 	FIBITMAP* bmp = FreeImage_AllocateT(freeImageType, width, height, bpp);
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
 	if(bmpBits != nullptr) {
-		int srcStride = width * pix.getBytesPerPixel();
+		size_t srcStride = width * pix.getBytesPerPixel();
 		int dstStride = FreeImage_GetPitch(bmp);
 		unsigned char* src = (unsigned char*) pixels;
 		unsigned char* dst = bmpBits;
@@ -190,7 +190,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	state.uri = &uri;
 
 	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
-		const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
+		const size_t bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
 		std::vector<char> absUri(bytesNeeded);
 	#ifdef TARGET_WIN32
 		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
