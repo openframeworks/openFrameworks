@@ -95,7 +95,7 @@ void ofSeedRandom();
 /// setup.  This can be useful for debugging and testing.
 ///
 /// \param val The value with which to seed the generator.
-void ofSeedRandom(int val);
+void ofSeedRandom(unsigned int val);
 
 /// \}
 
