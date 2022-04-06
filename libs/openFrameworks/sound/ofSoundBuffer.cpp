@@ -92,7 +92,7 @@ uint64_t ofSoundBuffer::getDurationNanos() const{
 	return uint64_t(getNumFrames()) * uint64_t(1000000000) / uint64_t(samplerate);
 }
 
-void ofSoundBuffer::setNumChannels(int channels){
+void ofSoundBuffer::setNumChannels(std::size_t channels){
 	this->channels = channels;
 	checkSizeAndChannelsConsistency("setNumChannels");
 }
@@ -243,15 +243,11 @@ void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t o
 	}
 
 	// do we have anything left?
-	int framesRemaining = nFrames - (int)nFramesToCopy;
-	if (framesRemaining > 0){
-		if(!loop || size() == 0){
-			// fill with 0s
-			for(std::size_t i = 0; i < framesRemaining * outChannels; i++){
-				outBuffer[i] = 0;
-			}
-		}else{
-			// loop
+	if(nFramesToCopy < nFrames) {
+		std::size_t framesRemaining = nFrames - nFramesToCopy;
+		if(!loop || size() == 0) {
+			std::fill_n(outBuffer, framesRemaining * outChannels, 0.0f);
+		} else {
 			copyTo(outBuffer, framesRemaining, outChannels, 0, loop);
 		}
 	}
@@ -294,8 +290,8 @@ void ofSoundBuffer::addTo(float * outBuffer, std::size_t nFrames, std::size_t ou
 	}
 
 	// do we have anything left?
-	int framesRemaining = nFrames - (int)nFramesToCopy;
-	if (framesRemaining > 0 && loop){
+	if (nFrames > nFramesToCopy && loop){
+		std::size_t framesRemaining = nFrames - nFramesToCopy;
 		// loop
 		addTo(outBuffer, framesRemaining, outChannels, 0, loop);
 	}
