@@ -582,7 +582,7 @@ int ofSerial::readByte(){
 
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 
-		int nRead = read(fd, &tmpByte, 1);
+		ssize_t nRead = read(fd, &tmpByte, 1);
 		if(nRead < 0){
 			if ( errno == EAGAIN ){
 				return OF_SERIAL_NO_DATA;

@@ -209,8 +209,8 @@ void ofArduino::update() {
 	if (bytesToRead > 0) {
 		bytesToProcess.resize(bytesToRead);
 		//its possible we dont get all the bytes
-		int bytesRead = _port.readBytes(&bytesToProcess[0], bytesToRead);
-		for (int i = 0; i < bytesRead; i++) {
+		long bytesRead = _port.readBytes(&bytesToProcess[0], bytesToRead);
+		for (long i = 0; i < bytesRead; i++) {
 			processData((char)(bytesToProcess[i]));
 		}
 	}
@@ -1369,7 +1369,7 @@ void  ofArduino::sendI2CWriteRequest(char slaveAddress, vector<char> bytes, int 
 		if (reg >= 0) {
 			sendValueAsTwo7bitBytes(reg);
 		}
-		for (int i = 0, length = bytes.size(); i < length; i++) {
+		for (size_t i = 0, length = bytes.size(); i < length; i++) {
 			sendValueAsTwo7bitBytes(bytes[i]);
 		}
 
@@ -1799,7 +1799,7 @@ bool ofArduino::isPin(int pin) const
 
 //this returns the pin if its already not within the analog pin map
 //we need this to check between digital and analog pin mappings
-int ofArduino::convertAnalogPinToDigital(size_t pin) const
+int ofArduino::convertAnalogPinToDigital(int pin) const
 {
 	if (pin < analogPinMap.size()) {
 		if (analogPinMap.count(pin) > 0) {
@@ -1815,7 +1815,7 @@ int ofArduino::convertAnalogPinToDigital(size_t pin) const
 
 //this returns the pin if its already within the analog pin map
 //we need this to check between digital and analog pin mappings
-int ofArduino::convertDigitalPinToAnalog(size_t pin) const
+int ofArduino::convertDigitalPinToAnalog(int pin) const
 {
 	if (pin > analogPinMap.size()) {
 		for (auto aPin : analogPinMap)
