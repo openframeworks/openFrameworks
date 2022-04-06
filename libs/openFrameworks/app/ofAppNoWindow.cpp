@@ -52,10 +52,10 @@ int kbhit()
 
 int getch()
 {
-    int r;
+    ssize_t r;
     unsigned char c;
     if ((r = read(0, &c, sizeof(c))) < 0) {
-        return r;
+        return (int)r;
     } else {
         return c;
     }
