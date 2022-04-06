@@ -555,7 +555,7 @@ Type ofInterpolateHermite(const Type& y0, const Type& y1, const Type& y2, const 
 ///
 /// \param a The starting point for finding the next power of 2.
 /// \returns value^2.
-int ofNextPow2(int a);
+unsigned long ofNextPow2(unsigned long a);
 
 /// \brief Returns the sign of a number.
 /// \returns int -1 if n is negative, 1 if n is positive, and 0 is n == 0;

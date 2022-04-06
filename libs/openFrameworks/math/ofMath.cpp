@@ -12,9 +12,9 @@
 using namespace std;
 
 //--------------------------------------------------
-size_t ofNextPow2(size_t a){
+unsigned long ofNextPow2(unsigned long a){
 	// from nehe.gamedev.net lesson 43
-	size_t rval=1;
+	unsigned long rval=1;
 	while(rval<a) rval<<=1;
 	return rval;
 }
