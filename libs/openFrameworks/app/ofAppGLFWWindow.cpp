@@ -930,12 +930,12 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			windowRect.height = getWindowSize().y;
 		}
 
+		setWindowShape(windowRect.width, windowRect.height);
+		setWindowTitle(settings.title);
+
 		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 		[cocoaWindow setStyleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
-
-		setWindowShape(windowRect.width, windowRect.height);
-		setWindowTitle(settings.title);
 
 		//----------------------------------------------------
 		// if we have recorded the screen position, put it there
