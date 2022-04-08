@@ -379,7 +379,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		[context makeCurrentContext];
 		restoreAppWindowFocus();
 
-		if(buttonClicked == NSFileHandlingPanelOKButton) {
+		if(buttonClicked == NSModalResponseOK) {
 			NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
 			results.filePath = string([[selectedFileURL path] UTF8String]);
 		}
@@ -529,7 +529,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 		restoreAppWindowFocus();
 		[context makeCurrentContext];
 
-		if(buttonClicked == NSFileHandlingPanelOKButton){
+		if(buttonClicked == NSModalResponseOK){
 			results.filePath = string([[[saveDialog URL] path] UTF8String]);
 		}
 	}
