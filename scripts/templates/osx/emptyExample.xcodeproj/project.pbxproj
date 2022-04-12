@@ -2938,19 +2938,10 @@ fi
 			<string>E4B69B4D0A3A1720003C02F2</string>
 			<key>compatibilityVersion</key>
 			<string>Xcode 3.2</string>
-			<key>developmentRegion</key>
-			<string>English</string>
 			<key>hasScannedForEncodings</key>
 			<string>0</string>
 			<key>isa</key>
 			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>English</string>
-				<string>Japanese</string>
-				<string>French</string>
-				<string>German</string>
-			</array>
 			<key>mainGroup</key>
 			<string>E4B69B4A0A3A1720003C02F2</string>
 			<key>productRefGroup</key>
