@@ -449,10 +449,16 @@ ofBuffer ofBufferFromFile(const std::filesystem::path & path, bool binary){
 	return ofBuffer(f);
 }
 
+
+//--------------------------------------------------
+bool ofSaveBuffer(const ofBuffer& buffer, const std::filesystem::path & path, bool binary) {
+    ofFile f(path, ofFile::WriteOnly, binary);
+    return buffer.writeTo(f);
+}
+
 //--------------------------------------------------
 bool ofBufferToFile(const std::filesystem::path & path, const ofBuffer& buffer, bool binary){
-	ofFile f(path, ofFile::WriteOnly, binary);
-	return buffer.writeTo(f);
+    return ofSaveBuffer(buffer, path, binary);
 }
 
 //------------------------------------------------------------------------------------------------------------

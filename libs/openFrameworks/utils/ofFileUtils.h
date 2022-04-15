@@ -263,11 +263,22 @@ ofBuffer ofBufferFromFile(const std::filesystem::path & path, bool binary=true);
 ///
 /// Saves as a text file by default.
 ///
+/// \param buffer data source to write from
+/// \param path file to open
+/// \param binary set to false if you are writing a text file & want lines
+/// split at endline characters automatically
+bool ofSaveBuffer(const ofBuffer& buffer, const std::filesystem::path & path, bool binary=true);
+
+//--------------------------------------------------
+/// Write the contents of a buffer to a file at path.
+///
+/// Saves as a text file by default.
+///
 /// \param path file to open
 /// \param buffer data source to write from
 /// \param binary set to false if you are writing a text file & want lines
 /// split at endline characters automatically
-bool ofBufferToFile(const std::filesystem::path & path, const ofBuffer& buffer, bool binary=true);
+OF_DEPRECATED_MSG("Use ofSaveBuffer.", bool ofBufferToFile(const std::filesystem::path & path, const ofBuffer& buffer, bool binary=true));
 
 //--------------------------------------------------
 /// \class ofFilePath
