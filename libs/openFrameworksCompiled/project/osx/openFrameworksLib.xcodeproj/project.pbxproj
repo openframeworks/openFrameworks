@@ -48,6 +48,8 @@
 		772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
 		92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F86132DA7DD00EC2631 /* ofPath.cpp */; };
 		92C55F89132DA7DD00EC2631 /* ofPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 92C55F87132DA7DD00EC2631 /* ofPath.h */; };
+		959744752809DDF70091BACA /* ofJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 959744742809DDF70091BACA /* ofJson.h */; };
+		959744782809DE340091BACA /* ofThreadChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 959744772809DE340091BACA /* ofThreadChannel.h */; };
 		9979E8221A1CCC44007E55D1 /* ofWindowSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E81F1A1CCC44007E55D1 /* ofWindowSettings.h */; };
 		9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */; };
 		9979E8241A1CCC44007E55D1 /* ofMainLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
@@ -207,6 +209,8 @@
 		772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOpenALSoundPlayer.h; sourceTree = "<group>"; };
 		92C55F86132DA7DD00EC2631 /* ofPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofPath.cpp; sourceTree = "<group>"; };
 		92C55F87132DA7DD00EC2631 /* ofPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPath.h; sourceTree = "<group>"; };
+		959744742809DDF70091BACA /* ofJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofJson.h; sourceTree = "<group>"; };
+		959744772809DE340091BACA /* ofThreadChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofThreadChannel.h; sourceTree = "<group>"; };
 		9979E81F1A1CCC44007E55D1 /* ofWindowSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWindowSettings.h; sourceTree = "<group>"; };
 		9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMainLoop.cpp; sourceTree = "<group>"; };
 		9979E8211A1CCC44007E55D1 /* ofMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMainLoop.h; sourceTree = "<group>"; };
@@ -588,6 +592,7 @@
 				E4F3BAE312F4C745002D19BB /* ofConstants.h */,
 				E4F3BAE412F4C745002D19BB /* ofFileUtils.cpp */,
 				E4F3BAE512F4C745002D19BB /* ofFileUtils.h */,
+				959744742809DDF70091BACA /* ofJson.h */,
 				E4F3BAE612F4C745002D19BB /* ofLog.cpp */,
 				E4F3BAE712F4C745002D19BB /* ofLog.h */,
 				E4F3BAE812F4C745002D19BB /* ofNoise.h */,
@@ -595,6 +600,7 @@
 				E4F3BAEA12F4C745002D19BB /* ofSystemUtils.h */,
 				E4F3BAEB12F4C745002D19BB /* ofThread.cpp */,
 				E4F3BAEC12F4C745002D19BB /* ofThread.h */,
+				959744772809DE340091BACA /* ofThreadChannel.h */,
 				E4F3BAED12F4C745002D19BB /* ofURLFileLoader.cpp */,
 				E4F3BAEE12F4C745002D19BB /* ofURLFileLoader.h */,
 				E4F3BAEF12F4C745002D19BB /* ofUtils.cpp */,
@@ -663,6 +669,7 @@
 				E4F3BAC812F4C72F002D19BB /* ofQuaternion.h in Headers */,
 				E4F3BACA12F4C72F002D19BB /* ofVec2f.h in Headers */,
 				E4F3BACB12F4C72F002D19BB /* ofVec3f.h in Headers */,
+				959744752809DDF70091BACA /* ofJson.h in Headers */,
 				E4F3BACD12F4C72F002D19BB /* ofVec4f.h in Headers */,
 				692C298C19DC5C5500C27C5D /* ofFpsCounter.h in Headers */,
 				E4F3BACE12F4C72F002D19BB /* ofVectorMath.h in Headers */,
@@ -702,6 +709,7 @@
 				DACFA8E4132D09E8008D4B7A /* ofShader.h in Headers */,
 				676672A51A749D1900400051 /* ofAVFoundationVideoPlayer.h in Headers */,
 				DACFA8E6132D09E8008D4B7A /* ofTexture.h in Headers */,
+				959744782809DE340091BACA /* ofThreadChannel.h in Headers */,
 				DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */,
 				DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */,
 				9979E8221A1CCC44007E55D1 /* ofWindowSettings.h in Headers */,
