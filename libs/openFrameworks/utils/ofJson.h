@@ -49,7 +49,8 @@ inline bool ofSaveJson(const ofJson & json, const std::filesystem::path& filenam
 /// \param filename The destination path.
 /// \param json The Json to save.
 /// \returns true if the json was saved successfully.
-OF_DEPRECATED_MSG("Use ofSaveJson(json, path) instead.", inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json)){
+OF_DEPRECATED_MSG("Use ofSaveJson(json, path) instead.", inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json));
+inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json){
 	return ofSaveJson(json, filename);
 }
 
@@ -75,7 +76,8 @@ inline bool ofSavePrettyJson(const ofJson & json, const std::filesystem::path& f
 /// \param filename The destination path.
 /// \param json The Json to save.
 /// \returns true if the json was saved successfully.
-OF_DEPRECATED_MSG("Use ofSavePrettyJson(json, path) instead.", inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json)){
+OF_DEPRECATED_MSG("Use ofSavePrettyJson(json, path) instead.", inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json));
+inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json){
     return ofSavePrettyJson(json, filename);
 }
 
