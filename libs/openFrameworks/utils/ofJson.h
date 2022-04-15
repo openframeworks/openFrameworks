@@ -54,10 +54,10 @@ OF_DEPRECATED_MSG("Use ofSaveJson(json, path) instead.", inline bool ofSaveJson(
 }
 
 /// \brief Save "pretty" indented Json to the given path.
-/// \param filename The destination path.
 /// \param json The Json to save.
+/// \param filename The destination path.
 /// \returns true if the json was saved successfully.
-inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json){
+inline bool ofSavePrettyJson(const ofJson & json, const std::filesystem::path& filename){
     ofFile jsonFile(filename, ofFile::WriteOnly);
     try{
         jsonFile << json.dump(4);
@@ -69,6 +69,14 @@ inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson
         return false;
     }
     return true;
+}
+
+/// \brief Save "pretty" indented Json to the given path.
+/// \param filename The destination path.
+/// \param json The Json to save.
+/// \returns true if the json was saved successfully.
+OF_DEPRECATED_MSG("Use ofSavePrettyJson(json, path) instead.", inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json)){
+    return ofSavePrettyJson(json, filename);
 }
 
 inline void ofSerialize(ofJson & js, const ofAbstractParameter & parameter){
