@@ -28,21 +28,29 @@ inline ofJson ofLoadJson(const std::filesystem::path& filename){
 }
 
 /// \brief Save minified Json to the given path.
+/// \param json The Json to save.
+/// \param filename The destination path.
+/// \returns true if the json was saved successfully.
+inline bool ofSaveJson(const ofJson & json, const std::filesystem::path& filename){
+    ofFile jsonFile(filename, ofFile::WriteOnly);
+    try{
+        jsonFile << json;
+    }catch(std::exception & e){
+        ofLogError("ofSaveJson") << "Error saving json to " << filename.string() << ": " << e.what();
+        return false;
+    }catch(...){
+        ofLogError("ofSaveJson") << "Error saving json to " << filename.string();
+        return false;
+    }
+    return true;
+}
+
+/// \brief Save minified Json to the given path.
 /// \param filename The destination path.
 /// \param json The Json to save.
 /// \returns true if the json was saved successfully.
-inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json){
-	ofFile jsonFile(filename, ofFile::WriteOnly);
-	try{
-		jsonFile << json;
-	}catch(std::exception & e){
-		ofLogError("ofSaveJson") << "Error saving json to " << filename.string() << ": " << e.what();
-		return false;
-	}catch(...){
-		ofLogError("ofSaveJson") << "Error saving json to " << filename.string();
-		return false;
-	}
-	return true;
+OF_DEPRECATED_MSG("Use ofSaveJson(json, path) instead.", inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json)){
+	return ofSaveJson(json, filename);
 }
 
 /// \brief Save "pretty" indented Json to the given path.
