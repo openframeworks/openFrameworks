@@ -151,7 +151,7 @@ public:
 		using pointer = value_type *;
 		using reference = value_type &;
 		
-		Line(std::vector<char>::const_iterator _begin, std::vector<char>::const_iterator _end);
+		Line(std::vector<char>::const_iterator _begin, std::vector<char>::const_iterator _end, bool incremented = false);
 		const std::string & operator*() const;
 		const std::string * operator->() const;
 		const std::string & asString() const;
@@ -182,7 +182,7 @@ public:
 		using pointer = value_type *;
 		using reference = value_type &;
 		
-		RLine(std::vector<char>::const_reverse_iterator _begin, std::vector<char>::const_reverse_iterator _end);
+		RLine(std::vector<char>::const_reverse_iterator _begin, std::vector<char>::const_reverse_iterator _end, bool incremented = false);
 		const std::string & operator*() const;
 		const std::string * operator->() const;
 		const std::string & asString() const;

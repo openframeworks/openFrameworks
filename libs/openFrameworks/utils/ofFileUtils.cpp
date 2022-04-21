@@ -268,24 +268,24 @@ vector<char>::const_reverse_iterator ofBuffer::rend() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Line::Line(vector<char>::const_iterator _begin, vector<char>::const_iterator _end)
-	:_current(_begin)
-	,_begin(_begin)
-	,_end(_end){
+ofBuffer::Line::Line(vector<char>::const_iterator _begin, vector<char>::const_iterator _end, bool incremented)
+	:_begin(_begin)
+	,_end(_end)
+{
 
 	if(_begin == _end){
 		line =  "";
 		return;
 	}
 
+	if(incremented) {
+		_begin += 1;
+	}
 	_current = std::find(_begin, _end, '\n');
 	if(_current - 1 >= _begin && *(_current - 1) == '\r'){
 		line = string(_begin, _current - 1);
 	}else{
 		line = string(_begin, _current);
-	}
-	if(_current != _end){
-		_current+=1;
 	}
 }
 
@@ -306,7 +306,7 @@ const std::string & ofBuffer::Line::asString() const{
 
 //--------------------------------------------------
 ofBuffer::Line & ofBuffer::Line::operator++(){
-	*this = Line(_current,_end);
+	*this = Line(_current, _end, true);
 	return *this;
 }
 
@@ -334,20 +334,22 @@ bool ofBuffer::Line::empty() const{
 
 
 //--------------------------------------------------
-ofBuffer::RLine::RLine(vector<char>::const_reverse_iterator _rbegin, vector<char>::const_reverse_iterator _rend)
-	:_current(_rbegin)
-	,_rbegin(_rbegin)
-	,_rend(_rend){
-
+ofBuffer::RLine::RLine(vector<char>::const_reverse_iterator _rbegin, vector<char>::const_reverse_iterator _rend, bool incremented)
+	:_rbegin(_rbegin)
+	,_rend(_rend)
+{
 	if(_rbegin == _rend){
 		line =  "";
 		return;
 	}
+	if(incremented) {
+		_rbegin += 1;
+		if(_rbegin != _rend && *_rbegin == '\r'){
+			_rbegin += 1;
+		}
+	}
 	_current = std::find(_rbegin, _rend, '\n');
 	line = string(_current.base(), _rbegin.base());
-	if(_current < _rend - 1 && *_current == '\n'){
-		_current += 1;
-	}
 }
 
 //--------------------------------------------------
@@ -367,7 +369,7 @@ const std::string & ofBuffer::RLine::asString() const{
 
 //--------------------------------------------------
 ofBuffer::RLine & ofBuffer::RLine::operator++(){
-	*this = RLine(_current,_rend);
+	*this = RLine(_current, _rend, true);
 	return *this;
 }
 
