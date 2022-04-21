@@ -144,8 +144,13 @@ public:
 
 	/// A line of text in the buffer.
 	///
-	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
-		Line(std::vector<char>::iterator _begin, std::vector<char>::iterator _end);
+	struct Line {
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = std::string;
+		using difference_type = std::ptrdiff_t;
+		using pointer = value_type *;
+		using reference = value_type &;
+		
 		const std::string & operator*() const;
 		const std::string * operator->() const;
 		const std::string & asString() const;
@@ -169,8 +174,13 @@ public:
 
 	/// A line of text in the buffer.
 	///
-	struct RLine: public std::iterator<std::forward_iterator_tag,Line>{
-		RLine(std::vector<char>::reverse_iterator _begin, std::vector<char>::reverse_iterator _end);
+	struct RLine {
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = std::string;
+		using difference_type = std::ptrdiff_t;
+		using pointer = value_type *;
+		using reference = value_type &;
+		
 		const std::string & operator*() const;
 		const std::string * operator->() const;
 		const std::string & asString() const;
