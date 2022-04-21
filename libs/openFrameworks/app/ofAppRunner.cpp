@@ -17,7 +17,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
 //#include "ofURLFileLoader.h"
-
 #include "ofMainLoop.h"
 
 using namespace std;
