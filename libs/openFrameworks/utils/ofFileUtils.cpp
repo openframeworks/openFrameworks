@@ -419,22 +419,22 @@ ofBuffer::Line ofBuffer::Lines::cend() const {
 
 //--------------------------------------------------
 ofBuffer::RLine ofBuffer::Lines::rbegin() const {
-	return RLine(std::make_reverse_iterator(_begin), std::make_reverse_iterator(_end));
+	return RLine(std::make_reverse_iterator(_end), std::make_reverse_iterator(_begin));
 }
 
 //--------------------------------------------------
 ofBuffer::RLine ofBuffer::Lines::crbegin() const {
-	return RLine(std::make_reverse_iterator(_begin), std::make_reverse_iterator(_end));
+	return RLine(std::make_reverse_iterator(_end), std::make_reverse_iterator(_begin));
 }
 
 //--------------------------------------------------
 ofBuffer::RLine ofBuffer::Lines::rend() const {
-	return RLine(std::make_reverse_iterator(_end), std::make_reverse_iterator(_end));
+	return RLine(std::make_reverse_iterator(_begin), std::make_reverse_iterator(_begin));
 }
 
 //--------------------------------------------------
 ofBuffer::RLine ofBuffer::Lines::crend() const {
-	return RLine(std::make_reverse_iterator(_end), std::make_reverse_iterator(_end));
+	return RLine(std::make_reverse_iterator(_begin), std::make_reverse_iterator(_begin));
 }
 
 //--------------------------------------------------
