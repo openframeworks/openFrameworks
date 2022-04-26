@@ -156,7 +156,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     public void setFrameRate(float frameRate) {
         if(doNotDraw) return;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.) {
             Log.i("OF","setFrameRate:" + frameRate);
             try {
                 if(mSurface != null && mSurface.isValid()) {
@@ -164,8 +164,10 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                         mSurface.setFrameRate(frameRate,
                                 FRAME_RATE_COMPATIBILITY_DEFAULT, CHANGE_FRAME_RATE_ALWAYS);
                     } else {
-                        mSurface.setFrameRate(frameRate,
-                                FRAME_RATE_COMPATIBILITY_DEFAULT);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            mSurface.setFrameRate(frameRate,
+                                    FRAME_RATE_COMPATIBILITY_DEFAULT);
+                        }
                     }
                     // https://developer.android.com/reference/android/view/Surface#CHANGE_FRAME_RATE_ALWAYS
                 } else {
@@ -174,7 +176,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
             } catch (Exception ex) {
                 Log.e("OF", "setFrameRate Exception:", ex);
             }
-        }
+       // }
 
         // SurfaceControl Fallback for OnePlus Phones
         try {
