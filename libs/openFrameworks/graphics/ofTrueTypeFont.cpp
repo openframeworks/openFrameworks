@@ -785,8 +785,8 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	//--------------- load the library and typeface
 	FT_Face loadFace;
     if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
-        if(loadFace != nullptr)
-            FT_Done_Face(loadFace);
+//        if(loadFace != nullptr)
+//            FT_Done_Face(loadFace);
         ofLogError("ofTruetypeFont") << " could not loadFontFace for " << settings.fontName;
 		return false;
 	}
