@@ -283,15 +283,17 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 		if(OFAndroidLifeCycle.isSurfaceCreated() == true && OFAndroidLifeCycle.isInit()) {
+			synchronized (OFAndroidObject.ofObjects) {
+				for (OFAndroidObject object : OFAndroidObject.ofObjects) {
+					if(object != null) {
+						object.onResume();
+						object.appResume();
+					}
+				}
+			}
 			OFAndroid.runOnMainThread(new Runnable() {
 				@Override
 				public void run() {
-
-					synchronized (OFAndroidObject.ofObjects) {
-						for (OFAndroidObject object : OFAndroidObject.ofObjects) {
-							if(object != null) object.onResume();
-						}
-					}
 					if (OFAndroid.getOrientation() != -1)
 						OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
 			}
@@ -343,7 +345,10 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.enableOrientationChangeEvents();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						object.onResume();
+						if(object != null) {
+							object.onResume();
+							object.appResume();
+						}
 					}
 					
 				}
