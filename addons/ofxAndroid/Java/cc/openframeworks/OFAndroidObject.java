@@ -51,6 +51,7 @@ public abstract class OFAndroidObject {
 		synchronized (OFAndroidObject.ofObjects) {
 			ofObjects.remove(this);
 		}
+		ofObjects.clear();
     }
     
     public void onActivityResult(int requestCode, int resultCode,Intent intent){
