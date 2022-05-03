@@ -9,8 +9,13 @@ typedef struct _XIM * XIM;
 typedef struct _XIC * XIC;
 #endif
 
+
+
+
 class ofBaseApp;
 struct GLFWwindow;
+struct GLFWmonitor; // forward declaration
+struct GLFWvidmode; // forward declaration
 class ofCoreEvents;
 template<typename T>
 class ofPixels_;
@@ -55,6 +60,57 @@ public:
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
 };
 
+struct ofMonitor {
+public:
+	int index = 0;
+	ofRectangle rect;
+	int monitorCount = 0;
+	bool exist = false;
+	//	glm::vec2 position;
+	//	glm::vec2 dimensions;
+};
+	
+	struct ofMonitors {
+	public:
+		ofMonitors() {}
+		~ofMonitors() {}
+//		unsigned int selected = 0;
+		std::vector <ofRectangle> rects;
+		ofRectangle allScreensSpace;
+		ofRectangle rectWindow;
+		bool changed = true;
+		
+//		int getMonitorIndex() {
+//			glm::ivec2 pos;
+//			glfwGetWindowPos(windowP, &pos.x, &pos.y);
+//			const GLFWvidmode * desktopMode = glfwGetVideoMode(windowP);
+//			ofRectangle rectM = ofRectangle(pos.x, pos.y, desktopMode->width, desktopMode->height );
+//
+//			int index = 0;
+//			for (auto & rect : rects) {
+//				if (rect.inside(rectM.getCenter())) {
+//					break;
+//				}
+//				index++;
+//			}
+//			return index;
+//		}
+		
+//		int getSelected() {
+//			ofRectangle rectWindow = getWindowRectangle();
+//			int index = 0;
+//			for (auto & rect : rects) {
+//				if (rect.inside(rectWindow.getCenter())) {
+//					selected = index;
+//				}
+//				index++;
+//			}
+//		}
+	};
+	
+	static bool updateMonitor = true;
+	static ofMonitors allMonitors;
+	
 #ifdef TARGET_OPENGLES
 class ofAppGLFWWindow : public ofAppBaseGLESWindow{
 #else
@@ -63,6 +119,11 @@ class ofAppGLFWWindow : public ofAppBaseGLWindow {
 
 public:
 
+
+	
+	
+
+	
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow();
 
@@ -103,20 +164,34 @@ public:
     void * getWindowContext(){return getGLFWWindow();}
 	ofGLFWWindowSettings getSettings(){ return settings; }
 
+	
+	ofMonitor getCurrentMonitorProperties();
+	void updateMonitorProperties();
+
+	
 	glm::vec2	getWindowSize();
-	glm::vec2	getScreenSize();
 	glm::vec2 	getWindowPosition();
+	ofRectangle getWindowRectangle();
+
+	glm::vec2	getScreenSize();
+	
+	glm::vec2	getScreenSize(int index);
+	
 
 	void setWindowTitle(std::string title);
+	
+	void setWindowRectangle(ofRectangle rect);
+	
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
+	
 
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
 	ofWindowMode	getWindowMode();
 
-	void		setFullscreen(bool fullscreen);
+	void		setFullscreen(bool fullscreen, bool force = false);
 	void		toggleFullscreen();
 
 	void		enableSetupScreen();
@@ -194,6 +269,11 @@ private:
 	static void 	drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString);
 	static void		error_cb(int errorCode, const char* errorDescription);
 
+	static void		monitor_cb(GLFWmonitor* monitor, int event);
+	
+//	glfwSetMonitorCallback(monitor_callback);
+
+
 	void close();
 
 	#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
@@ -235,6 +315,8 @@ private:
     #ifdef TARGET_WIN32
     LONG lExStyle, lStyle;
     #endif // TARGET_WIN32
+	
+	
 };
 
 
