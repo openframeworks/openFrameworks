@@ -1243,6 +1243,23 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 	typedef UInt8 (*pFnGetKeyboardType)(void);
 	static const CFBundleRef tisBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.HIToolbox"));
 
+	// We need to call some system methods, following GLFW's example
+		// in their OS X version of ```_glfwPlatformGetKeyName```.
+		//
+		// We know these methods must be available, since GLFW uses them
+		// internally.
+		//
+		// The most important method is ```UCKeyTranslate``` - everything
+		// else here is just a royal preparation party to feed it with the
+		// correct parameters.
+		//
+		// Since these methods are hidden deep within Carbon,
+		// we have to first request function pointers to make
+		// them callable.
+		//
+		// We do this only the first time, then we're re-using them,
+		// that's why these elements are marked static, and static const.
+		//
 	static pFnGetInputSource getInputSource = (pFnGetInputSource)CFBundleGetFunctionPointerForName(tisBundle, CFSTR("TISCopyCurrentKeyboardLayoutInputSource"));
 	static pFnGetKeyboardType        getKeyboardType        = (pFnGetKeyboardType)CFBundleGetFunctionPointerForName(tisBundle,CFSTR("LMGetKbdType"));
 	static pFnGetInputSourceProperty getInputSourceProperty = (pFnGetInputSourceProperty)CFBundleGetFunctionPointerForName(tisBundle, CFSTR("TISGetInputSourceProperty"));
