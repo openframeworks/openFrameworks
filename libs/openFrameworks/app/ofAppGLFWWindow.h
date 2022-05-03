@@ -59,57 +59,19 @@ public:
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
 };
-
-struct ofMonitor {
+	
+struct ofMonitors {
 public:
-	int index = 0;
-	ofRectangle rect;
-	int monitorCount = 0;
-	bool exist = false;
-	//	glm::vec2 position;
-	//	glm::vec2 dimensions;
+	ofMonitors() {}
+	~ofMonitors() {}
+	std::vector <ofRectangle> rects;
+	ofRectangle allScreensSpace;
+	ofRectangle rectWindow;
+	bool changed = true;
 };
-	
-	struct ofMonitors {
-	public:
-		ofMonitors() {}
-		~ofMonitors() {}
-//		unsigned int selected = 0;
-		std::vector <ofRectangle> rects;
-		ofRectangle allScreensSpace;
-		ofRectangle rectWindow;
-		bool changed = true;
-		
-//		int getMonitorIndex() {
-//			glm::ivec2 pos;
-//			glfwGetWindowPos(windowP, &pos.x, &pos.y);
-//			const GLFWvidmode * desktopMode = glfwGetVideoMode(windowP);
-//			ofRectangle rectM = ofRectangle(pos.x, pos.y, desktopMode->width, desktopMode->height );
-//
-//			int index = 0;
-//			for (auto & rect : rects) {
-//				if (rect.inside(rectM.getCenter())) {
-//					break;
-//				}
-//				index++;
-//			}
-//			return index;
-//		}
-		
-//		int getSelected() {
-//			ofRectangle rectWindow = getWindowRectangle();
-//			int index = 0;
-//			for (auto & rect : rects) {
-//				if (rect.inside(rectWindow.getCenter())) {
-//					selected = index;
-//				}
-//				index++;
-//			}
-//		}
-	};
-	
-	static bool updateMonitor = true;
-	static ofMonitors allMonitors;
+
+static bool updateMonitor = true;
+static ofMonitors allMonitors;
 	
 #ifdef TARGET_OPENGLES
 class ofAppGLFWWindow : public ofAppBaseGLESWindow{
@@ -119,11 +81,6 @@ class ofAppGLFWWindow : public ofAppBaseGLWindow {
 
 public:
 
-
-	
-	
-
-	
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow();
 
@@ -164,19 +121,13 @@ public:
     void * getWindowContext(){return getGLFWWindow();}
 	ofGLFWWindowSettings getSettings(){ return settings; }
 
-	
-	ofMonitor getCurrentMonitorProperties();
 	void updateMonitorProperties();
 
-	
 	glm::vec2	getWindowSize();
 	glm::vec2 	getWindowPosition();
 	ofRectangle getWindowRectangle();
 
 	glm::vec2	getScreenSize();
-	
-	glm::vec2	getScreenSize(int index);
-	
 
 	void setWindowTitle(std::string title);
 	

@@ -72,7 +72,6 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 void ofAppGLFWWindow::close(){
 	if(windowP){
 
-
 		glfwSetMouseButtonCallback( windowP, nullptr );
 		glfwSetCursorPosCallback( windowP, nullptr );
 		glfwSetCursorEnterCallback( windowP, nullptr );
@@ -254,41 +253,18 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			windowRect.height = settings.getHeight();
 
 			if(!settings.isPositionSet()){
-//				if(count > 0) // unneeded, monitor count is always > 0
-				{
-					settings.setPosition({
-						allMonitors.rects[settings.monitor].x,
-						allMonitors.rects[settings.monitor].y
-					});
-					
-					// repeated command
-//					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-//					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-                    #ifdef TARGET_OSX
-					    //for OS X we need to set this first as the window size affects the window positon
-//						cout << "setSize " << mode->width << " : " << mode->height << endl;
-					// FIXME: FIXXX
-//					    settings.setSize(mode->width, mode->height);
-//					cout << "windowRect " << windowRect << endl;
-                    #endif
-					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-					currentW = allMonitors.rects[settings.monitor].width;
-					currentH = allMonitors.rects[settings.monitor].height;
-				}
+				settings.setPosition({
+					allMonitors.rects[settings.monitor].x,
+					allMonitors.rects[settings.monitor].y
+				});
+				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+				currentW = allMonitors.rects[settings.monitor].width;
+				currentH = allMonitors.rects[settings.monitor].height;
 			}else{
 				// this is still fullscreen but with position not set yet.
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-				
-				// that's wrong
-//                #ifdef TARGET_OSX
-//					auto size = getScreenSize();
-//					settings.setSize(size.x, size.y);
-//                #endif
 				currentW = settings.getWidth();
 				currentH = settings.getHeight();
-			
-//				cout << "getWidth " << settings.getWidth() << endl;
-//				cout << "getHeight " << settings.getHeight() << endl;
 			
 				ofRectangle settingsRect = ofRectangle(
 					settings.getPosition().x,
@@ -297,7 +273,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 					settings.getHeight()
 				);
 			
-//					cout << "settingsRect " << settingsRect << endl;
 				for (auto & rect : allMonitors.rects) {
 					if (rect.inside(settingsRect.getCenter())) {
 						currentW = rect.width;
@@ -307,7 +282,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 				}
 			}
 			targetWindowMode = settings.windowMode;
-//			settings.windowMode = OF_WINDOW;
 		}else{
 			if (settings.isPositionSet()) {
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
@@ -347,11 +321,11 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	glfwMakeContextCurrent(windowP);
 
+	// TODO: This all can be moved to updateMonitorProperties()
+		
 	int framebufferW, framebufferH, tmpWindowW, tmpWindowH;
 	glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
 	glfwGetWindowSize( windowP, &tmpWindowW, &tmpWindowH );
-//	cout << "framebufferW" << framebufferW << endl;
-//	cout << "tmpWindowW" << tmpWindowW << endl;
 
 	//this lets us detect if the window is running in a retina mode
 	if( framebufferW != tmpWindowW){
@@ -396,7 +370,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 	setVerticalSync(true);
 	
-
 	glfwSetMonitorCallback(monitor_cb);
 	
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
@@ -469,8 +442,6 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
-//	cout << "update" << endl;
-	
 	if (updateMonitor) {
 		updateMonitorProperties();
 		updateMonitor = false;
@@ -480,12 +451,9 @@ void ofAppGLFWWindow::update(){
 
 	//show the window right before the first draw call.
 	if( bWindowNeedsShowing && windowP ){
-		//		cout << "HERE bWindowNeedsShowing" << endl;
 		glfwShowWindow(windowP);
 		bWindowNeedsShowing = false;
 		if(targetWindowMode==OF_FULLSCREEN){
-			//  dimitre changes
-//			setFullscreen(true);
 			setFullscreen(true, true);
 		}
 	}
@@ -515,7 +483,6 @@ void ofAppGLFWWindow::pollEvents(){
 void ofAppGLFWWindow::draw(){
 	currentRenderer->startRender();
 	if( bEnableSetupScreen ) {
-//		cout << "setupScreen" << endl;
 		currentRenderer->setupScreen();
 	}
 
@@ -628,37 +595,9 @@ glm::vec2 ofAppGLFWWindow::getWindowPosition(){
 		return glm::vec2(x,y); //NOTE: shouldn't this be (y,x) ??????
 	}
 }
-
-//------------------------------------------------------------
-ofMonitor ofAppGLFWWindow::getCurrentMonitorProperties(){
-	ofMonitor monitor;
-
-	int numberOfMonitors;
-	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
-	int xW;	int yW;
-	glm::ivec2 pos;
-	glfwGetWindowPos(windowP, &pos.x, &pos.y);
-	
-	for (int iC=0; iC < numberOfMonitors; iC++){
-		glm::ivec2 posM;
-		glfwGetMonitorPos(monitors[iC], &posM.x, &posM.y);
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[iC]);
-		ofRectangle rect = ofRectangle(posM.x, posM.y, desktopMode->width, desktopMode->height );
-		if (rect.inside(pos)) {
-			return { iC, rect, numberOfMonitors, true };
-			break;
-		}
-	}
-	return monitor;
-}
-	
-
 	
 //------------------------------------------------------------
 void ofAppGLFWWindow::updateMonitorProperties(){
-//	cout << "== updateMonitorProperties" << endl;
-//	cout << "GLFW Version: " << glfwGetVersionString() << endl;
-
 	allMonitors.rects.clear();
 	allMonitors.allScreensSpace = { 0,0,0,0 }; // reset ofRectangle;
 
@@ -669,14 +608,13 @@ void ofAppGLFWWindow::updateMonitorProperties(){
 		glm::ivec2 pos;
 		glfwGetMonitorPos(monitors[i], &pos.x, &pos.y);
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
-		//		cout << glfwGetMonitorName(monitors[i]) << endl;
 		ofRectangle rect = ofRectangle( pos.x, pos.y, desktopMode->width, desktopMode->height );
 		allMonitors.rects.emplace_back(rect);
 		allMonitors.allScreensSpace = allMonitors.allScreensSpace.getUnion(rect);
 	}
 }
 	
-	
+//------------------------------------------------------------
 int ofAppGLFWWindow::getCurrentMonitor(){
 	int numberOfMonitors;
 	
@@ -707,33 +645,14 @@ int ofAppGLFWWindow::getCurrentMonitor(){
 	return 0;
 }
 
-glm::vec2 ofAppGLFWWindow::getScreenSize(int index){
-	int count;
-	cout << "getScreenSize glfwGetMonitors" << endl;
-	GLFWmonitor** monitors = glfwGetMonitors(&count);
-	if(count>0){
-		cout << "getScreenSize glfwGetVideoMode" << endl;
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[index]);
-		if(desktopMode){
-			if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-				return {desktopMode->width*pixelScreenCoordScale, desktopMode->height*pixelScreenCoordScale};
-			}else{
-				return {desktopMode->height*pixelScreenCoordScale, desktopMode->width*pixelScreenCoordScale};
-			}
-		}
-	}
-	return {0, 0};
-}
-
 //------------------------------------------------------------
 glm::vec2 ofAppGLFWWindow::getScreenSize(){
+	
+	// TODO: this can be changed to allMonitors style
 	int count;
-	cout << "getScreenSize glfwGetMonitors" << endl;
 	GLFWmonitor** monitors = glfwGetMonitors(&count);
 	if(count>0){
-		cout << "getScreenSize getCurrentMonitor" << endl;
 		int currentMonitor = getCurrentMonitor();
-		cout << "getScreenSize glfwGetVideoMode" << endl;
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[currentMonitor]);
 		if(desktopMode){
 			if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
@@ -783,7 +702,6 @@ void ofAppGLFWWindow::setWindowRectangle(ofRectangle rect) {
 	currentW = rect.width/pixelScreenCoordScale;
 	currentH = rect.height/pixelScreenCoordScale;
 
-//	cout << "glfwSetWindowSize " << ofGetFrameNum() << endl;
 	glfwSetWindowSize(windowP,currentW,currentH);
 	glfwSetWindowPos(windowP,rect.x/pixelScreenCoordScale,rect.y/pixelScreenCoordScale);
 }
@@ -870,9 +788,6 @@ void ofAppGLFWWindow::disableSetupScreen(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
-//	cout << "-------------" << endl;
-//	cout << "----- setFullscreen " << (fullscreen?  "FULL" : "WINDOW")<< endl;
-	
 	if (fullscreen){
 		targetWindowMode = OF_FULLSCREEN;
 	}else{
@@ -1035,9 +950,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 		}
 
 		if (settings.windowMode == OF_WINDOW) {
-//			cout << "windowMode == WINDOW" << endl;
 			windowRect = getWindowRectangle();
-//			cout << "windowRect = " << windowRect << endl;
 		}
 		
 		if( settings.multiMonitorFullScreen ){
@@ -1045,12 +958,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 		} else {
 			setWindowRectangle( getCurrentMonitorRect() );
 		}
-
-		// make sure to save current pos if not specified in settings
-//		if( settings.isPositionSet() ) {
-//			cout << "==== setPosition here " << glm::vec2{ windowRect.x, windowRect.y } << endl;
-//			settings.setPosition({ windowRect.x, windowRect.y });
-//		}
 
 		//make sure the window is getting the mouse/key events
 		[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
@@ -1060,16 +967,9 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 		// set window shape if started in fullscreen
 
 		if(windowRect.width == 0 && windowRect.height == 0) {
-			cout << "windowRect is reset here" << endl;
+//			cout << "windowRect is reset here" << endl;
 			windowRect = getWindowRectangle();
-//			windowRect = {
-//				getWindowPosition().x,
-//				getWindowPosition().y,
-//				getWindowSize().x,
-//				getWindowSize().y
-//			};
 		}
-//		cout << "setWindowRect : " << windowRect << endl;
 		setWindowRectangle(windowRect);
 		setWindowTitle(settings.title);
 
@@ -1079,14 +979,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 			[cocoaWindow setStyleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 		}
 		[cocoaWindow setHasShadow:YES];
-
-		//----------------------------------------------------
-		// if we have recorded the screen position, put it there
-		// if not, better to let the system do it (and put it where it wants)
-//		if (ofGetFrameNum() > 0){
-//			cout << "setWindowPosition ow" << endl;
-//			setWindowPosition(windowRect.x, windowRect.y);
-//		}
 
 		//----------------------------------------------------
 		//make sure the window is getting the mouse/key events
@@ -1196,7 +1088,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 //------------------------------------------------------------
 void ofAppGLFWWindow::toggleFullscreen(){
 	if (settings.windowMode == OF_GAME_MODE) return;
-
 
 	if (settings.windowMode == OF_WINDOW){
 		setFullscreen(true);
@@ -1525,35 +1416,14 @@ void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
 }
 	
 void ofAppGLFWWindow::monitor_cb(GLFWmonitor* monitor, int event) {
-	cout << "monitor_cb " ;
-	if (event == GLFW_CONNECTED) {
-		cout << "GLFW_CONNECTED" << endl;
-	}
-	if (event == GLFW_DISCONNECTED) {
-		cout << "GLFW_DISCONNECTED" << endl;
-	}
-	updateMonitor = true;
-
-	// existe tb glfwGetMonitorUserPointer
-//	allMonitors.rects.clear();
-//	allMonitors.allScreensSpace = { 0,0,0,0 }; // reset ofRectangle;
-//
-////	ofRectangle rectWindow = getWindowRectangle();
-//	int numberOfMonitors;
-//	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
-//
-//	for (int iC=0; iC < numberOfMonitors; iC++){
-//		glm::ivec2 posM;
-//		glfwGetMonitorPos(monitors[iC], &posM.x, &posM.y);
-//		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[iC]);
-//		ofRectangle rect =  ofRectangle( posM.x, posM.y, desktopMode->width, desktopMode->height );
-//		allMonitors.rects.emplace_back(rect);
-////		if (rect.inside(windowPos)) {
-////			allMonitors.selected = iC;
-////		}
-//		allMonitors.allScreensSpace = allMonitors.allScreensSpace.getUnion(rect);
+//	cout << "monitor_cb " ;
+//	if (event == GLFW_CONNECTED) {
+//		cout << "GLFW_CONNECTED" << endl;
 //	}
-//	allMonitors.changed = true;
+//	if (event == GLFW_DISCONNECTED) {
+//		cout << "GLFW_DISCONNECTED" << endl;
+//	}
+//	updateMonitor = true;
 }
 
 
