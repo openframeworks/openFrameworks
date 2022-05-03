@@ -1431,18 +1431,11 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
 	ofLogError("ofAppGLFWWindow") << errorCode << ": " << errorDescription;
 }
-	
-void ofAppGLFWWindow::monitor_cb(GLFWmonitor* monitor, int event) {
-//	cout << "monitor_cb " ;
-//	if (event == GLFW_CONNECTED) {
-//		cout << "GLFW_CONNECTED" << endl;
-//	}
-//	if (event == GLFW_DISCONNECTED) {
-//		cout << "GLFW_DISCONNECTED" << endl;
-//	}
-//	updateMonitor = true;
-}
 
+//------------------------------------------------------------
+void ofAppGLFWWindow::monitor_cb(GLFWmonitor* monitor, int event) {
+	updateMonitor = true;
+}
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancode, int action, int mods) {
