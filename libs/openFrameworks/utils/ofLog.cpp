@@ -272,7 +272,7 @@ shared_ptr<ofBaseLoggerChannel> ofGetLoggerChannel(){
 string ofGetLogLevelName(ofLogLevel level, bool pad){
 	switch(level){
 		case OF_LOG_VERBOSE:
-			return "verbose";
+			return pad ? " verbose" : "verbose";
 		case OF_LOG_NOTICE:
 			return pad ? " notice " : "notice";
 		case OF_LOG_WARNING:
