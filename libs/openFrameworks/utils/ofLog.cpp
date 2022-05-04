@@ -274,15 +274,15 @@ string ofGetLogLevelName(ofLogLevel level, bool pad){
 		case OF_LOG_VERBOSE:
 			return "verbose";
 		case OF_LOG_NOTICE:
-			return pad ? "notice " : "notice";
+			return pad ? " notice " : "notice";
 		case OF_LOG_WARNING:
 			return "warning";
 		case OF_LOG_ERROR:
-			return pad ? " error " : "error";
+			return pad ? " error  " : "error";
 		case OF_LOG_FATAL_ERROR:
-			return pad ? " fatal " : "fatal";
+			return pad ? " fatal  " : "fatal";
 		case OF_LOG_SILENT:
-			return pad ? "silent " : "silent";
+			return pad ? " silent " : "silent";
 		default:
 			return "";
 	}
