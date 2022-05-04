@@ -211,29 +211,33 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(settings.shareContextWith){
 		sharedContext = (GLFWwindow*)settings.shareContextWith->getWindowContext();
 	}
-
+ 
+	
+	int count = allMonitors.rects.size();
+	if( settings.monitor >= count ){
+		ofLogError("ofAppGLFWWindow") << "requested monitor is: " << settings.monitor << " monitor count is: " << count;
+	}
+	settings.monitor = ofClamp(settings.monitor,0,count-1);
+	
+	
 	if(settings.windowMode==OF_GAME_MODE){
-		// FIXME: newmode
-		int count;
-		GLFWmonitor** monitors = glfwGetMonitors(&count);
-		if( settings.monitor >= count ){
-			ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << count;
-		}
-		settings.monitor = ofClamp(settings.monitor,0,count-1);
 		if(settings.isSizeSet()){
 			currentW = settings.getWidth();
 			currentH = settings.getHeight();
 		}else{
-			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-			currentW = mode->width;
-			currentH = mode->height;
+			auto rect = allMonitors.rects[settings.monitor];
+			currentW = rect.width;
+			currentH = rect.height;
 		}
-		if(count>settings.monitor){
-			windowP = glfwCreateWindow(currentW, currentH, settings.title.c_str(), monitors[settings.monitor], sharedContext);
-		}else{
-			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
-			return;
-		}
+		
+		// FIXME: GAMEMODE
+		cout << "will create window" << endl;
+		//		int count;
+		//		GLFWmonitor** monitors = glfwGetMonitors(&count);
+		windowP = glfwCreateWindow(currentW, currentH, settings.title.c_str(), allMonitors.monitors[settings.monitor], sharedContext);
+		
+//		glfwSetWindowMonitor(windowP, NULL, 0, 0, currentW, currentH, GLFW_DONT_CARE);
+		cout << "after create window" << endl;
 	}else{ // not game mode
 		
 		// MARK: window is created first without considering monitor to create yet. update this?
@@ -243,18 +247,11 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			return;
 		}
 		if(settings.windowMode==OF_FULLSCREEN){ // THIS IS SETUP
-			int count = allMonitors.rects.size();
-//			auto monitors = glfwGetMonitors(&count);
-			if( settings.monitor >= count ){
-				ofLogError("ofAppGLFWWindow") << "requested fullscreen monitor is: " << settings.monitor << " monitor count is: " << count;
-			}
-			settings.monitor = ofClamp(settings.monitor,0,count-1);
-			
 			currentW = allMonitors.rects[settings.monitor].width;
 			currentH = allMonitors.rects[settings.monitor].height;
 			windowRect.width = settings.getWidth();
 			windowRect.height = settings.getHeight();
-			cout << "windowRect here " << windowRect << endl;
+//			cout << "windowRect here " << windowRect << endl;
 
 			if(!settings.isPositionSet()){
 				settings.setPosition({
@@ -586,77 +583,89 @@ int ofAppGLFWWindow::getPixelScreenCoordScale(){
 
 //------------------------------------------------------------
 ofRectangle ofAppGLFWWindow::getWindowRectangle() {
-	int w, h;
+	glm::ivec2 size;
 	glm::ivec2 pos;
 
+	// TODO: review game mode. remove pixelScreenCoordScale
 	if(settings.windowMode == OF_GAME_MODE) {
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
 		if(desktopMode){
-			w = desktopMode->width * pixelScreenCoordScale;
-			h = desktopMode->height * pixelScreenCoordScale;
+			size.x = desktopMode->width;
+			size.y = desktopMode->height;
 		} else {
-			w = currentW * pixelScreenCoordScale;
-			h = currentH * pixelScreenCoordScale;
+			size.x = currentW;
+			size.y = currentH;
 		}
 	}else{
-//		w = currentW * pixelScreenCoordScale;
-//		h = currentH * pixelScreenCoordScale;
-		glfwGetWindowSize(windowP, &w, &h);
+		glfwGetWindowSize(windowP, &size.x, &size.y);
 	}
 
 	glfwGetWindowPos(windowP, &pos.x, &pos.y);
-	pos.x *= pixelScreenCoordScale;
-	pos.y *= pixelScreenCoordScale;
-
 	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ) {
 		std::swap(pos.x, pos.y);
 	}
-
-	return { pos, (float)w, (float)h };
+	
+	ofRectangle rect = ofRectangle( pos, size.x, size.y );
+//	cout << rect << endl;
+	return rect;
 }
+
+
+//	if(settings.windowMode == OF_GAME_MODE)
+//	{
+//		// doesn't make sense here.
+//		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
+//		if(desktopMode){
+//			return {desktopMode->width*pixelScreenCoordScale, desktopMode->height*pixelScreenCoordScale};
+//		}else{
+//			return {currentW*pixelScreenCoordScale, currentH*pixelScreenCoordScale};
+//		}
+//	}else{
+//		return {currentW*pixelScreenCoordScale, currentH*pixelScreenCoordScale};
+//	}
+
+/*
+ https://github.com/openframeworks/openFrameworks/issues/6953#issuecomment-1117575993
+ There is a mix between framesize and window size in OF code. I know both used to be the same before retina but temporary fixes created a confusion there.
+ the window should be treated without pixelScreenCoordScale for window purposes, it works well both with High Resolution Capable = YES and NO
+ I'm testing with multiple monitors, mixing retina and regular resolutions.
+
+ the problem is other parts of OF uses a function called getWindowSize which in turn have to consider pixelScreenCoordScale to calculate matrixes and so.
+
+ I think we should reconsider and maybe creating a function called getFramebufferSize, to use in other parts of OF so both subjects are correctly separated from now on (window and framebuffer / renderSurface).
+ */
 
 //------------------------------------------------------------
 glm::vec2 ofAppGLFWWindow::getWindowSize(){
-	if(settings.windowMode == OF_GAME_MODE)
-	{
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
-		if(desktopMode){
-			return {desktopMode->width*pixelScreenCoordScale, desktopMode->height*pixelScreenCoordScale};
-		}else{
-			return {currentW*pixelScreenCoordScale, currentH*pixelScreenCoordScale};
-		}
-	}else{
-		return {currentW*pixelScreenCoordScale, currentH*pixelScreenCoordScale};
-	}
+	glm::ivec2 size;
+	glfwGetWindowSize(windowP, &size.x, &size.y);
+	return size * glm::vec2(pixelScreenCoordScale, pixelScreenCoordScale);
 }
 
 //------------------------------------------------------------
 glm::vec2 ofAppGLFWWindow::getWindowPosition(){
-	int x, y;
-	glfwGetWindowPos(windowP, &x, &y);
-    
-    x *= pixelScreenCoordScale;
-    y *= pixelScreenCoordScale;
-
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return glm::vec2{x,y};
-	}else{
-		return glm::vec2(x,y); //NOTE: shouldn't this be (y,x) ??????
+//	cout << "getWindowPosition" << endl;
+	glm::ivec2 pos;
+	glfwGetWindowPos(windowP, &pos.x, &pos.y);
+	if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ) {
+		std::swap(pos.x, pos.y);
 	}
+	return pos;
 }
-	
+
 //------------------------------------------------------------
 void ofAppGLFWWindow::updateMonitorProperties(){
 	allMonitors.rects.clear();
 	allMonitors.allScreensSpace = { 0,0,0,0 }; // reset ofRectangle;
 
 	int numberOfMonitors;
-	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
+//	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
+	allMonitors.monitors = glfwGetMonitors(&numberOfMonitors);
 	
 	for (unsigned int i=0; i < numberOfMonitors; i++){
 		glm::ivec2 pos;
-		glfwGetMonitorPos(monitors[i], &pos.x, &pos.y);
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+		glfwGetMonitorPos(allMonitors.monitors[i], &pos.x, &pos.y);
+		const GLFWvidmode * desktopMode = glfwGetVideoMode(allMonitors.monitors[i]);
 		ofRectangle rect = ofRectangle( pos.x, pos.y, desktopMode->width, desktopMode->height );
 		allMonitors.rects.emplace_back(rect);
 		allMonitors.allScreensSpace = allMonitors.allScreensSpace.getUnion(rect);
@@ -744,18 +753,21 @@ ofWindowMode ofAppGLFWWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRectangle(const ofRectangle & rect) {
+//	cout << "setWindowRectangle " << rect << endl;
 	if(settings.windowMode == OF_WINDOW){
 		windowW = rect.width;
 		windowH = rect.height;
 	}
-	currentW = rect.width/pixelScreenCoordScale;
-	currentH = rect.height/pixelScreenCoordScale;
+	currentW = rect.width/1;
+	currentH = rect.height/1;
 
-	cout << "setWindowRectangle " << rect << endl;
-	glfwSetWindowPos(windowP,rect.x/pixelScreenCoordScale,rect.y/pixelScreenCoordScale);
-	glfwSetWindowSize(windowP,currentW,currentH);
+	// Now using just one GLFW call to set the entire rectangle.
+	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, currentW, currentH, GLFW_DONT_CARE);
+//	glfwSetWindowPos(windowP,rect.x,rect.y);
+//	glfwSetWindowSize(windowP,currentW,currentH);
 }
 
+#ifdef OLDSTYLE
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
 	glfwSetWindowPos(windowP,x/pixelScreenCoordScale,y/pixelScreenCoordScale);
@@ -781,6 +793,7 @@ void ofAppGLFWWindow::setWindowShape(int w, int h){
 	    glfwSetWindowSize(windowP,currentW,currentH);
     #endif
 }
+#endif
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::hideCursor(){
@@ -960,17 +973,17 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 		return rectOut;
 	};
 	
-	// TODO: Remove this
-	auto getCurrentMonitorIndex = [this]() {
-		int index = 0;
-		for (auto & rect : allMonitors.rects) {
-			if (rect.inside(windowRect.getCenter())) {
-				break;
-			}
-			index++;
-		}
-		return index;
-	};
+//	// TODO: Remove this
+//	auto getCurrentMonitorIndex = [this]() {
+//		int index = 0;
+//		for (auto & rect : allMonitors.rects) {
+//			if (rect.inside(windowRect.getCenter())) {
+//				break;
+//			}
+//			index++;
+//		}
+//		return index;
+//	};
 	
 	
 	if (([cocoaWindow styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask) {
@@ -981,33 +994,17 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 
 	// FIXME: - Aqui
 	if( targetWindowMode == OF_FULLSCREEN){
-		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 		[cocoaWindow setHasShadow:NO];
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
-
 		if (settings.windowMode == OF_WINDOW) {
 			windowRect = getWindowRectangle();
 		}
-		
+		// this call actually triggers framebuffer_size_cb
+		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 		if( settings.multiMonitorFullScreen ){
 			setWindowRectangle(allMonitors.allScreensSpace);
 		} else {
-//			setWindowRectangle( getCurrentMonitorRect() );
-			
-//			int monitorCount;
-//			GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
-			auto rect = getCurrentMonitorRect();
-//			glfwSetWindowMonitor(windowP, monitors[getCurrentMonitorIndex()], 0, 0, rect.width, rect.height, GLFW_DONT_CARE);
-			glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
-
-//			void glfwSetWindowMonitor	(	GLFWwindow * 	window,
-//   GLFWmonitor * 	monitor,
-//   int 	xpos,
-//   int 	ypos,
-//   int 	width,
-//   int 	height,
-//   int 	refreshRate
-//   )
+			setWindowRectangle( getCurrentMonitorRect() );
 		}
 
 		//make sure the window is getting the mouse/key events
@@ -1015,7 +1012,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 
 	}else if( targetWindowMode == OF_WINDOW ){
 		// set window shape if started in fullscreen
-		cout << "OF_WINDOW " << windowRect << endl;
+//		cout << "OF_WINDOW " << windowRect << endl;
 
 		setWindowRectangle(windowRect);
 		setWindowTitle(settings.title);
@@ -1418,8 +1415,8 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 	}
 
 	ofMouseEventArgs args(action,
-	    x*instance->pixelScreenCoordScale,
-	    y*instance->pixelScreenCoordScale,
+	    x*pixelScreenCoordScale,
+	    y*pixelScreenCoordScale,
 	    instance->buttonInUse,
 	    instance->events().getModifiers());
 	instance->events().notifyMouseEvent(args);
@@ -1672,8 +1669,31 @@ void ofAppGLFWWindow::char_cb(GLFWwindow* windowP_, uint32_t key){
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 	// FIXME: modularize here and the next callback too.
-//	cout << "resize_cb " << ofGetFrameNum() << endl;
+	cout << "resize_cb " << ofGetFrameNum() << endl;
 
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+
+	int framebufferW, framebufferH; // <- physical pixel extents
+	glfwGetFramebufferSize(windowP_, &framebufferW, &framebufferH);
+
+	int windowW, windowH; // <- screen coordinates, which may be scaled
+	glfwGetWindowSize(windowP_, &windowW, &windowH);
+
+	instance->windowW = framebufferW;
+	instance->windowH = framebufferH;
+
+	// I think this is causing issues with alternate fullscreen / ofwindow
+	instance->currentW = windowW;
+	instance->currentH = windowH;
+	
+	// when window is resized this event notify so the internal buffer gets resized also
+//	instance->events().notifyWindowResized(framebufferW, framebufferH);
+	instance->nFramesSinceWindowResized = 0;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow* windowP_, int w, int h){
+	cout << "framebuffer_size_cb " << ofGetFrameNum() << endl;
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 
 	int framebufferW, framebufferH; // <- physical pixel extents
@@ -1684,41 +1704,14 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 
 	// Find scale factor needed to transform from screen coordinates
 	// to physical pixel coordinates
-	instance->pixelScreenCoordScale = (float)framebufferW / (float)windowW;
-
-
-	glfwGetWindowSize(windowP_, &pixelScreenScale.windowSize.x, &pixelScreenScale.windowSize.y);
-	glfwGetFramebufferSize(windowP_, &pixelScreenScale.framebufferSize.x, &pixelScreenScale.framebufferSize.y);
-	pixelScreenScale.calculate();
+	pixelScreenCoordScale = (float)framebufferW / (float)windowW;
 	
+	// Sketch only
+//	glfwGetWindowSize(windowP_, &pixelScreenScale.windowSize.x, &pixelScreenScale.windowSize.y);
+//	glfwGetFramebufferSize(windowP_, &pixelScreenScale.framebufferSize.x, &pixelScreenScale.framebufferSize.y);
+//	pixelScreenScale.calculate();
 //	cout << pixelScreenScale.windowSize << endl;
 //	cout << pixelScreenScale.ratio << endl;
-//	ofViewport(0, 0, pixelScreenScale.windowSize.x, pixelScreenScale.windowSize.y, true);
-	
-	if(instance->settings.windowMode == OF_WINDOW){
-//		cout << "OF_WINDOW " <<  ofGetFrameNum() << endl;
-		instance->windowW = framebufferW;
-		instance->windowH = framebufferH;
-		instance->currentW = windowW;
-		instance->currentH = windowH;
-	} else {
-//		cout << "OF_FULL " <<  ofGetFrameNum() << endl;
-	}
-
-	// I think this is causing issues with alternate fullscreen / ofwindow
-//	instance->currentW = windowW;
-//	instance->currentH = windowH;
-	instance->events().notifyWindowResized(framebufferW, framebufferH);
-	instance->nFramesSinceWindowResized = 0;
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow* windowP_, int w, int h){
-	cout << "framebuffer_size_cb " << ofGetFrameNum() << endl;
-//	resize_cb(windowP_, w, h);
-	
-	// ver o q rola aqui
-//	currentRenderer->setupScreen();
 }
 
 //--------------------------------------------
@@ -1756,16 +1749,22 @@ string ofAppGLFWWindow::getClipboardString() {
 void ofAppGLFWWindow::listVideoModes(){
 	glfwInit();
 	int numModes;
-	const GLFWvidmode * vidModes = glfwGetVideoModes(nullptr, &numModes );
-	for(int i=0; i<numModes; i++){
-		ofLogNotice() << vidModes[i].width << " x " << vidModes[i].height
-		<< vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits << "bit";
+	int count;
+	const auto monitors = glfwGetMonitors(&count);
+	for(int a = 0; a<count; a++){
+		ofLogNotice() << glfwGetMonitorName(monitors[a]);
+		const GLFWvidmode * vidModes = glfwGetVideoModes(monitors[a], &numModes );
+		for(int i=0; i<numModes; i++){
+			ofLogNotice() << vidModes[i].width << " x " << vidModes[i].height
+			<< " : "
+			<< vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits << "bit"
+			<< " : " << vidModes[i].refreshRate << "hz";
+		}
 	}
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::listMonitors(){
-	// FIXME: new mode callback
 	glfwInit();
 	int count;
 	const auto monitors = glfwGetMonitors(&count);
