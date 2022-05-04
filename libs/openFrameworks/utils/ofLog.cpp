@@ -276,7 +276,7 @@ string ofGetLogLevelName(ofLogLevel level, bool pad){
 		case OF_LOG_NOTICE:
 			return pad ? " notice " : "notice";
 		case OF_LOG_WARNING:
-			return "warning";
+			return pad ? " warning" : "warning";
 		case OF_LOG_ERROR:
 			return pad ? " error  " : "error";
 		case OF_LOG_FATAL_ERROR:
