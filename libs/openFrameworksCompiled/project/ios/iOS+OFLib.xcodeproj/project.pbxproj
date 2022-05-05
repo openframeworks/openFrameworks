@@ -3083,6 +3083,8 @@
 					<string>-Wno-non-virtual-dtor</string>
 					<string>-Wno-overloaded-virtual</string>
 				</array>
+				<key>ENABLE_TESTABILITY</key>
+ 				<string>YES</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
