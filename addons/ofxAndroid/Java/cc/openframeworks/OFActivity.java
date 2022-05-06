@@ -53,8 +53,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
-	public static final boolean LOG_INPUT = false;
-	public static final boolean LOG_ENGINE = false;
+	public static final boolean LOG_INPUT = true;
+	public static final boolean LOG_ENGINE = true;
 
 	public float currentRefreshRate;
 	public float highestRefreshRate;
@@ -844,7 +844,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				OFAndroid.lastInputDevice = OFAndroidController.getGameControllerForID(event.getDeviceId()); // fall back
 				OFAndroid.lastControllerType = OFAndroidController.getControllerType(event.getDevice());
 			}
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Build.VERSION.SDK_INT == Build.VERSION_CODES.S
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S &&
+					!OFAndroid.isDeviceAmazon && !OFAndroid.isHuaweiDevice() && !OFAndroid.isHTCDevice()
+					||
+					Build.VERSION.SDK_INT == Build.VERSION_CODES.S
 					&& OFAndroid.isDeviceSamsung
 					&& !OFAndroid.isDeviceAmazon
 			) { // Android 12 fixes PS5 bug
@@ -855,7 +858,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				}
 				if (OFAndroid.lastInputDevice != null &&
 						OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS5 ||
-						!(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS4_2) &&
+						!(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS4_2) && !(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS4) &&
 						(OFAndroid.lastInputVendorID == OFAndroidController.VendorPS &&
 								(OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))
 						)) {
@@ -908,19 +911,16 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						Log.i("OF", "Not PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId());
 
 				}
-			} else if(OFAndroid.isHuaweiDevice()) {
+			} else if(OFAndroid.isHuaweiDevice() && !OFAndroid.isAmazonDevice()) {
 				if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 					OFAndroid.toast(OFAndroid.lastInputDevice.getName() + " keycode:" + keyCode);
 
 				if (OFAndroid.lastInputDevice != null &&
 						OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS5 ||
+						!(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS4_2) && !(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS4) &&
 						(OFAndroid.lastInputVendorID == OFAndroidController.VendorPS && (OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC)
 						))) {
-					if (keyCode == 100) {
-						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
-							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 100->102");
-						keyCode = 102;
-					} else if (keyCode == 102) {
+					if (keyCode == 102) {
 						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 102->100");
 						keyCode = 100;
@@ -932,6 +932,57 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
 							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:" + OFAndroid.lastInputDevice.getVendorId() + " 103->101");
 						keyCode = 101;
+					}
+				}
+			} else if(OFAndroid.isAmazonDevice()) {
+				if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+					OFAndroid.toast(OFAndroid.lastInputDevice.getName() + " keycode:" + keyCode);
+
+				if(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS5 ||
+						!(OFAndroid.lastInputProductID == OFAndroidController.ProductID_PS4_2) &&
+								(OFAndroid.lastInputVendorID == OFAndroidController.VendorPS &&
+										(OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME) || OFAndroid.lastInputDevice.getName().equals(OFAndroidController.PS5_Controller_NAME_GENERIC))
+								)) {
+//					if (keyCode == 96) { // X on Amazon
+//						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+//							Log.i("OF", "AMAZON PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:"
+//									+ OFAndroid.lastInputDevice.getVendorId() + " 96->97");
+//						keyCode = 97; // to X
+//					} else if (keyCode == 99) { // ▢ on Amazon
+//						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+//							Log.i("OF", "AMAZON PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:"
+//									+ OFAndroid.lastInputDevice.getVendorId() + " 99->96");
+//						keyCode = 96; // ▢
+//					}
+					if (keyCode == 100) { // △ on Amazon
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:"
+									+ OFAndroid.lastInputDevice.getVendorId() + " 100->99");
+						keyCode = 99;
+					}
+//					else if (keyCode == 102) {
+//						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+//							Log.i("OF", "AMAZON PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:"
+//									+ OFAndroid.lastInputDevice.getVendorId() + " 102->100");
+//						keyCode = 100;
+//					}
+					else if (keyCode == 101) {
+						keyCode = 103;
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "AMAZON PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:"
+									+ OFAndroid.lastInputDevice.getVendorId() + " 101->103");
+					}
+//					else if (keyCode == 103) {
+//						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+//							Log.i("OF", "AMAZON PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:"
+//									+ OFAndroid.lastInputDevice.getVendorId() + " 103->101");
+//						keyCode = 101;
+//					}
+					else if (keyCode == 4) { // share
+						if(LOG_INPUT && OFAndroid.lastInputDevice != null)
+							Log.i("OF", "AMAZON PS5 Controller: name:" + OFAndroid.lastInputDevice.getName() + " vendor:"
+									+ OFAndroid.lastInputDevice.getVendorId() + " 4->109");
+						keyCode = 109;
 					}
 				}
 			}
