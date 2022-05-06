@@ -9,6 +9,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.FloatMath;
 import android.util.Log;
@@ -97,6 +99,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 				try {
 					if(player!=null) {
 						unloadSound();
+
 					}
 					bIsPrepared = false;
 					player = new MediaPlayer();
@@ -347,6 +350,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 						Log.e("OF", "SoundPlayer stop - pause() !isPlaying excpetion:" + ex.getMessage());
 					}
 				}
+				bIsPlaying = false;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
@@ -524,6 +528,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			} catch (Exception e) {
 				// NOTE: isPlaying() can potentially throw an exception and crash the application
 				e.printStackTrace();
+				isPlaying = true;
 			}
 			return isPlaying;
 		}else{
@@ -539,6 +544,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 			} catch (Exception e) {
 				// NOTE: isPlaying() cvan potentially throw an exception and crash the application
 				e.printStackTrace();
+				paused = true;
 			}
 			return paused;
 		}else{
@@ -563,14 +569,17 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 		boolean wasPlaying = bIsPlaying;
 		boolean currIsLoaded = bIsLoaded;
 		String currFileName = fileName;
+		pausePositionMS = getPositionMS();
 		if(bIsLoaded && bIsPlaying) {
 			pausePositionMS = getPositionMS();
 		} else {
-			pausePositionMS = 0;
+//			pausePositionMS = 0;
 		}
+		Log.i("OF","SoundPlayer appPause playing:" + bIsPlaying + " fileName:" + fileName + " at " + pausePositionMS);
+
 		stop();
-		if(!stream)
-			unloadSound();
+			if (!stream)
+				unloadSound();
 		bIsPlaying = wasPlaying;
 		fileName = currFileName;
 		bIsLoaded = currIsLoaded;
@@ -579,8 +588,10 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 
 	@Override
 	protected void appResume() {
+		bWasResume = true;
+		Log.e("OF","SoundPlayer appResume");
 		if(bIsLoaded && stream == false){
-			bWasResume = true;
+
 			loadSound(fileName, stream);
 			if(bIsPrepared) {
 				if (bIsPlaying) {
@@ -593,20 +604,41 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 				}
 			}
 		} else  {
-			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
+//			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
 				Log.i("OF","SoundPlayer appResume - reloading stream for M" + fileName + " at " + pausePositionMS);
-
 				if(bIsPlaying && bIsLoaded && bIsPrepared) {
-					//Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+					Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
 					play();
 				}
 				if(pausePositionMS != 0 && bIsLoaded && bIsPrepared) {
 					setPositionMS(pausePositionMS);
 					pausePositionMS = 0;
 				}
-			} else {
-				Log.i("OF","SoundPlayer appResume");
-			}
+//			} else if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+//
+//				final Handler handler = new Handler(Looper.getMainLooper());
+//				handler.postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						if(fileName != null) {
+//							loadSound(fileName, stream);
+//							if (bIsPlaying) {
+//								Log.i("OF","SoundPlayer appResume was playing " + fileName + " at " + pausePositionMS);
+//								play();
+//							}
+//							Log.i("OF","SoundPlayer appResume was playing:" + bIsPlaying + "fileName:" + fileName + " at " + pausePositionMS + " 174");
+//							if (pausePositionMS != 0) {
+//								setPositionMS(pausePositionMS + 174);
+//								pausePositionMS = 0;
+//							}
+//						}
+//					}
+//				}, 174);
+
+//			} else
+//			{
+//				Log.i("OF","SoundPlayer appResume");
+//			}
 		}
 		if(pool != null) pool.autoResume();
 	}
