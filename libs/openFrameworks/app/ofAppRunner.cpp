@@ -9,14 +9,9 @@
 #endif
 
 #include "ofImage.h"
-//#include "ofUtils.h"
-//#include "ofEvents.h"
-//#include "ofMath.h"
-//#include "ofGraphics.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
-//#include "ofURLFileLoader.h"
 #include "ofMainLoop.h"
 
 using namespace std;
