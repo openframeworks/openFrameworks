@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofFileUtils.h"
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
 #include <chrono>
@@ -207,52 +206,6 @@ int ofGetDay();
 ///
 /// \returns the current weekday [0-6].
 int ofGetWeekday();
-
-/// \section Data Path
-/// \brief Enable the use of the data path.
-///
-/// This function causes ofToDataPath() to respect the relative path set
-/// with ofSetDataPathRoot().  This is enabled by default.
-void ofEnableDataPath();
-
-/// \brief Disable the use of the data path.
-///
-/// This function causes ofToDataPath() to ignore the relative path set
-/// with ofSetDataPathRoot().
-void ofDisableDataPath();
-
-/// \brief Make a path relative to the location of the data/ folder.
-///
-/// This funtion returns path unchanged if ofDisableDataPath() was called first.
-///
-/// By default, a relative path is returned. Users requiring absolute paths for
-/// (e.g. for non-openFrameworks functions), can specify that an absolute path
-/// be returned.
-///
-/// \param path The path to make relative to the data/ folder.
-/// \param absolute Set to true to return an absolute path.
-/// \returns the new path, unless paths were disabled with ofDisableDataPath().
-std::string ofToDataPath(const std::filesystem::path & path, bool absolute=false);
-
-/// \brief Reset the working directory to the platform default.
-///
-/// The default working directory is where the application was started from
-/// or the exe directory in case of osx bundles. GLUT might change the default
-/// working directory to the resources directory in the bundle in osx. This
-/// will restore it to the exe dir or whatever was the current dir when the
-/// application was started
-bool ofRestoreWorkingDirectoryToDefault();
-
-/// \brief Set the relative path to the data/ folder from the executable.
-///
-/// This method can be useful when users want to embed the data as a resource
-/// folder within an *.app bundle on OSX or perhaps work from a shared data
-/// folder in the user's Documents directory.
-///
-/// \warning The provided path must have a trailing slash (/).
-/// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(const std::filesystem::path& root);
-
 
 /// \section Vectors
 /// \brief Randomly reorder the values in a vector.
@@ -1148,11 +1101,9 @@ private:
 };
 
 
-
 /*! \cond PRIVATE */
 namespace of{
 namespace priv{
-    void setWorkingDirectoryToDefault();
     void initutils();
     void endutils();
 }

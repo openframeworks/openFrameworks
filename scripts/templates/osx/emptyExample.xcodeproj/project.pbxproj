@@ -221,10 +221,6 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>ICON</key>
-				<string>$(ICON_NAME_RELEASE)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -2938,19 +2934,10 @@ fi
 			<string>E4B69B4D0A3A1720003C02F2</string>
 			<key>compatibilityVersion</key>
 			<string>Xcode 3.2</string>
-			<key>developmentRegion</key>
-			<string>English</string>
 			<key>hasScannedForEncodings</key>
 			<string>0</string>
 			<key>isa</key>
 			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>English</string>
-				<string>Japanese</string>
-				<string>French</string>
-				<string>German</string>
-			</array>
 			<key>mainGroup</key>
 			<string>E4B69B4A0A3A1720003C02F2</string>
 			<key>productRefGroup</key>
@@ -2985,6 +2972,8 @@ fi
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
+				<key>ENABLE_TESTABILITY</key>
+				<string>YES</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
@@ -3207,10 +3196,6 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>ICON</key>
-				<string>$(ICON_NAME_DEBUG)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -3258,10 +3243,6 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>ICON</key>
-				<string>$(ICON_NAME_RELEASE)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
