@@ -16,10 +16,15 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
+#if defined(METALKIT)
+#import <MetalANGLE/MGLKViewController.h>
+#endif
+
 class ofxiOSApp;
 @class ofxiOSGLKView;
 
 @interface ofxiOSGLKViewController : GLKViewController
+
 
 @property (nonatomic, strong) ofxiOSGLKView * glView;
 
