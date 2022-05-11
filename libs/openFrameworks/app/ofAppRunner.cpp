@@ -1,8 +1,5 @@
 #include "ofAppRunner.h"
 
-#include "ofBaseApp.h"
-#include "ofAppBaseWindow.h"
-
 #ifndef TARGET_NO_SOUND
 #include "ofSoundPlayer.h"
 #include "ofSoundStream.h"
@@ -10,14 +7,7 @@
 
 #include "ofImage.h"
 #include "ofUtils.h"
-#include "ofEvents.h"
-#include "ofMath.h"
-#include "ofGraphics.h"
-#include "ofGLRenderer.h"
-#include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
-
-#include "ofURLFileLoader.h"
 
 #include "ofMainLoop.h"
 
