@@ -119,7 +119,7 @@
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BF3679A4282B97EF004FD612 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3679A3282B97EF004FD612 /* Metal.framework */; };
-		BF3679AE282BB806004FD612 /* MetalANGLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3679AD282BB806004FD612 /* MetalANGLE.framework */; platformFilter = ios; };
+		BF3679AE282BB806004FD612 /* MetalANGLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3679AD282BB806004FD612 /* MetalANGLE.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Required, ); }; };
 		BF3679B9282BBBB9004FD612 /* ofxiOSMLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3679B3282BBBB9004FD612 /* ofxiOSMLKView.h */; };
 		BF3679BA282BBBB9004FD612 /* ofxiOSMLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B4282BBBB9004FD612 /* ofxiOSMLKView.mm */; };
 		BF3679BB282BBBB9004FD612 /* ofxiOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B5282BBBB9004FD612 /* ofxiOSViewController.mm */; };
@@ -129,6 +129,9 @@
 		BF3679C2282BBCC4004FD612 /* EAMLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3679C1282BBCB3004FD612 /* EAMLKView.h */; };
 		BF3679C3282BBCC4004FD612 /* EAMLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF3679C0282BBCB3004FD612 /* EAMLKView.m */; };
 		BF41D521282B95D200608DA9 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF41D520282B95D200608DA9 /* Accelerate.framework */; };
+		BFE07D58282E5FE800E599C1 /* EAMLKView.h in Sources */ = {isa = PBXBuildFile; fileRef = BF3679C1282BBCB3004FD612 /* EAMLKView.h */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		BFE07D59282E5FE800E599C1 /* ofxiOSMLKView.h in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B3282BBBB9004FD612 /* ofxiOSMLKView.h */; };
+		BFE07D5A282E5FE800E599C1 /* ofxiOSMLKViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B6282BBBB9004FD612 /* ofxiOSMLKViewController.h */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -357,8 +360,6 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		BF3679A3282B97EF004FD612 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		BF3679AD282BB806004FD612 /* MetalANGLE.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalANGLE.framework; path = ../../../metal/lib/ios/MetalANGLE.framework; sourceTree = "<group>"; };
-		BF3679AF282BB82B004FD612 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
-		BF3679B0282BB833004FD612 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		BF3679B3282BBBB9004FD612 /* ofxiOSMLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSMLKView.h; sourceTree = "<group>"; };
 		BF3679B4282BBBB9004FD612 /* ofxiOSMLKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSMLKView.mm; sourceTree = "<group>"; };
 		BF3679B5282BBBB9004FD612 /* ofxiOSViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSViewController.mm; sourceTree = "<group>"; };
@@ -681,10 +682,7 @@
 				53DA338D12DF8F5000C622CE /* CoreAudio.framework */,
 				53DA338F12DF8F5000C622CE /* CoreMedia.framework */,
 				53DA339112DF8F5000C622CE /* CoreVideo.framework */,
-				BF3679AF282BB82B004FD612 /* Accelerate.framework */,
 				67D48ECF1C10399900F719BC /* CoreMotion.framework */,
-				BF3679AD282BB806004FD612 /* MetalANGLE.framework */,
-				BF3679B0282BB833004FD612 /* Metal.framework */,
 			);
 			name = "core frameworks";
 			sourceTree = "<group>";
@@ -752,6 +750,7 @@
 		BF41D517282B7A7700608DA9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF3679AD282BB806004FD612 /* MetalANGLE.framework */,
 				BF3679A3282B97EF004FD612 /* Metal.framework */,
 				BF41D520282B95D200608DA9 /* Accelerate.framework */,
 			);
@@ -1170,6 +1169,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFE07D58282E5FE800E599C1 /* EAMLKView.h in Sources */,
+				BFE07D59282E5FE800E599C1 /* ofxiOSMLKView.h in Sources */,
+				BFE07D5A282E5FE800E599C1 /* ofxiOSMLKViewController.h in Sources */,
 				E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */,
 				E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */,
 				BF3679BA282BBBB9004FD612 /* ofxiOSMLKView.mm in Sources */,
@@ -1279,8 +1281,9 @@
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = M927U3X3CC;
 				ENABLE_BITCODE = YES;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj";
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../libs/metal/lib/ios/**";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../../libs/metal/lib/ios";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1300,6 +1303,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework Metal -framework MetalANGLE";
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Debug";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1318,8 +1322,9 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = M927U3X3CC;
 				ENABLE_BITCODE = YES;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj";
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../libs/metal/lib/ios/**";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../../libs/metal/lib/ios";
 				GCC_OPTIMIZATION_LEVEL = z;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					GLES_SILENCE_DEPRECATION,
@@ -1338,6 +1343,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework Metal -framework MetalANGLE";
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_ReleaseAppStore";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1376,7 +1382,7 @@
 				DEVELOPMENT_TEAM = M927U3X3CC;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../libs/metal/lib/ios";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../../libs/metal/lib/ios";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
@@ -1384,6 +1390,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
+				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework Metal -framework MetalANGLE";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -1425,7 +1432,7 @@
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				DEVELOPMENT_TEAM = M927U3X3CC;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../libs/metal/lib/ios";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../../libs/metal/lib/ios";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
@@ -1433,6 +1440,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
+				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework Metal -framework MetalANGLE";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";

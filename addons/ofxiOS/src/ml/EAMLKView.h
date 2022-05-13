@@ -6,24 +6,23 @@
 ////
 //
 //
-//#pragma once
+#pragma once
 //
-//#import <MetalANGLE/MGLKViewController.h>
-//#import <MetalANGLE/MGLKViewDelegate.h>
+////#import <MetalANGLE/MGLKViewDelegate.h>
 //#import <MetalANGLE/MGLKit.h>
 //
 //#import <UIKit/UIKit.h>
 //#import <GLKit/GLKit.h>
 //#import "ESRenderer.h"
 //
-///// ???: inherit MGLKViewDelegate?
-//@protocol EAMGLKViewDelegate <NSObject>
-//@optional
-//- (void)glViewAnimationStarted;
-//- (void)glViewAnimationStopped;
-//- (void)glViewDraw;
-//- (void)glViewResized;
-//@end
+/// ???: inherit MGLKViewDelegate?
+@protocol EAMGLKViewDelegate <NSObject>
+@optional
+- (void)glViewAnimationStarted;
+- (void)glViewAnimationStopped;
+- (void)glViewDraw;
+- (void)glViewResized;
+@end
 //
 //@interface EAMLKView : MGLKView
 //{

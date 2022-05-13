@@ -35,6 +35,7 @@
 
 #import "ofxiOSViewController.h"
 #import "ofxiOSGLKViewController.h"
+#import "ofxiOSMLKViewController.h"
 #import "ofxiOSExternalDisplay.h"
 #include "ofxiOSExtras.h"
 #include "ofxiOSAlerts.h"
@@ -139,7 +140,8 @@
 		
 		switch(ofxiOSGetOFWindow()->getWindowControllerType()) {
 			case METAL_KIT:
-				NSLog(@"No MetalKit yet supported for openFrameworks: Falling back to GLKit");
+				NSLog(@"Metal ANGLE openFrameworks");
+                self.uiViewController = (UIViewController *)[[ofxiOSMLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()];
 			case GL_KIT:
 				self.uiViewController = (UIViewController *)[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil];
 				break;
@@ -250,6 +252,11 @@
                 }
             } else if([self.uiViewController isKindOfClass:ofxiOSGLKViewController.class]) {
                 ofxiOSGLKViewController *controller = (ofxiOSGLKViewController *)self.uiViewController;
+                if([controller isReadyToRotate]) {
+                    ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
+                }
+            } else if([self.uiViewController isKindOfClass:ofxiOSMLKViewController.class]) {
+                ofxiOSMLKViewController *controller = (ofxiOSMLKViewController *)self.uiViewController;
                 if([controller isReadyToRotate]) {
                     ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
                 }

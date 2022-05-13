@@ -65,7 +65,7 @@
 //        }
 //        
 //        if(rendererVersion == ESRendererVersion_20) {
-//            self.context = [[MGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+//            self.context = [[MGLContext alloc] initWithAPI:kMGLRenderingAPIOpenGLES2];
 //            NSLog(@"Creating OpenGL ES2 Renderer");
 //            if(!self.context) {
 //                NSLog(@"OpenGL ES2 failed");
@@ -80,9 +80,9 @@
 //        self.drawableStencilFormat = stencilFormat;
 //        
 //        if(msaaEnabled)
-//            self.drawableMultisample = GLKViewDrawableMultisample4X;
+//            self.drawableMultisample = MGLDrawableMultisample4X;
 //        else
-//            self.drawableMultisample = GLKViewDrawableMultisampleNone;
+//            self.drawableMultisample = MGLDrawableMultisampleNone;
 //        
 //#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 //        self.multipleTouchEnabled = true;
@@ -130,7 +130,7 @@
 //
 ////-------------------------------------------------------------------
 //- (void)updateScaleFactor {
-//    GLKView *view = (GLKView *)self;
+//    MGLKView *view = (MGLKView *)self;
 //    
 //    scaleFactor = MIN(scaleFactorPref, [view contentScaleFactor]);
 //    if(scaleFactor != self.contentScaleFactor) {
@@ -141,9 +141,9 @@
 //- (void) setMSAA:(bool)on
 //{
 //    if(on)
-//        self.drawableMultisample = GLKViewDrawableMultisample4X;
+//        self.drawableMultisample = MGLDrawableMultisample4X;
 //    else
-//        self.drawableMultisample = GLKViewDrawableMultisampleNone;
+//        self.drawableMultisample = MGLDrawableMultisampleNone;
 //}
 //
 ////------------------------------------------------------------------- notify.
