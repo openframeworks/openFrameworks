@@ -68,7 +68,7 @@ std::wstring convertNarrowToWide( const std::string& as ){
 
 #if defined( TARGET_OSX )
 static void restoreAppWindowFocus(){
-	NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+	NSWindow * appWindow = (__bridge NSWindow *)ofGetCocoaWindow();
 	if(appWindow) {
 		[appWindow makeKeyAndOrderFront:nil];
 	}
@@ -292,7 +292,7 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#ifdef TARGET_OSX
 		@autoreleasepool {
-			NSAlert* alertDialog = [[[NSAlert alloc] init] autorelease];
+			NSAlert* alertDialog = [[NSAlert alloc] init];
 			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
 			[alertDialog runModal];
 			restoreAppWindowFocus();
@@ -627,13 +627,13 @@ string ofSystemTextBoxDialog(string question, string text){
 #ifdef TARGET_OSX
 	@autoreleasepool {
 		// create alert dialog
-		NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+		NSAlert *alert = [[NSAlert alloc] init];
 		[alert addButtonWithTitle:@"OK"];
 		[alert addButtonWithTitle:@"Cancel"];
 		[alert setMessageText:[NSString stringWithCString:question.c_str()
 												 encoding:NSUTF8StringEncoding]];
 		// create text field
-		NSTextField* label = [[[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))] autorelease];
+		NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
 		[label setStringValue:[NSString stringWithCString:text.c_str()
 												 encoding:NSUTF8StringEncoding]];
 		// add text field to alert dialog

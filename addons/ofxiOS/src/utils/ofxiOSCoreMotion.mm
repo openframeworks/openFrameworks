@@ -1,7 +1,6 @@
 
 #include "ofxiOSCoreMotion.h"
 
-
 ofxiOSCoreMotion::ofxiOSCoreMotion() {
     
     motionManager = [[CMMotionManager alloc] init];
@@ -18,13 +17,11 @@ ofxiOSCoreMotion::ofxiOSCoreMotion() {
 
 ofxiOSCoreMotion::~ofxiOSCoreMotion() {
     
-    [referenceAttitude release];
     referenceAttitude = nil;
     [motionManager stopAccelerometerUpdates];
     [motionManager stopGyroUpdates];
     [motionManager stopMagnetometerUpdates];
     [motionManager stopDeviceMotionUpdates];
-    [motionManager release];
     motionManager = nil;
 }
 
@@ -121,10 +118,9 @@ void ofxiOSCoreMotion::resetAttitude(bool toCurrentReferenceFrame) {
     if(toCurrentReferenceFrame) {
         CMDeviceMotion *deviceMotion = motionManager.deviceMotion;
         CMAttitude *attitude = deviceMotion.attitude;
-        referenceAttitude = [attitude retain];
+        referenceAttitude = attitude;
     } else {
         if(referenceAttitude != nil) {
-            [referenceAttitude release];
             referenceAttitude = nil;
         }
     }
