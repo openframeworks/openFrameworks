@@ -1,8 +1,5 @@
 #include "ofGraphics.h"
 #include "ofRendererCollection.h"
-// #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
-// #include "ofCairoRenderer.h"
-// #endif
 #include "ofGLRenderer.h"
 
 
