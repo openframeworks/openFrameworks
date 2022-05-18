@@ -48,6 +48,7 @@ const ofUnicode::range ofUnicode::BlockElement {0x2580, 0x259F};
 const ofUnicode::range ofUnicode::GeometricShapes {0x25A0, 0x25FF};
 const ofUnicode::range ofUnicode::MiscSymbols {0x2600, 0x26FF};
 const ofUnicode::range ofUnicode::Dingbats {0x2700, 0x27BF};
+const ofUnicode::range ofUnicode::CJKSymbolAndPunctuation {0x3001, 0x303F};
 const ofUnicode::range ofUnicode::Hiragana {0x3040, 0x309F};
 const ofUnicode::range ofUnicode::Katakana {0x30A0, 0x30FF};
 const ofUnicode::range ofUnicode::HangulCompatJamo {0x3130, 0x318F};
@@ -88,6 +89,7 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 	ofUnicode::Space,
 	ofUnicode::IdeographicSpace,
+	ofUnicode::CJKSymbolAndPunctuation,
 	ofUnicode::Hiragana,
 	ofUnicode::Katakana,
 	ofUnicode::KatakanaPhoneticExtensions,
@@ -98,6 +100,7 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
 	ofUnicode::Space,
 	ofUnicode::IdeographicSpace,
+	ofUnicode::CJKSymbolAndPunctuation,
 	ofUnicode::CJKLettersAndMonths,
 	ofUnicode::CJKUnified
 };
@@ -105,6 +108,7 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
 const std::initializer_list<ofUnicode::range> ofAlphabet::Korean {
 	ofUnicode::Space,
 	ofUnicode::IdeographicSpace,
+	ofUnicode::CJKSymbolAndPunctuation,
 	ofUnicode::HangulJamo,
 	ofUnicode::HangulCompatJamo,
 	ofUnicode::HangulExtendedA,
@@ -360,11 +364,11 @@ static std::string linuxFontPathByName(const std::string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename){
+static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename, int index){
 	std::filesystem::path fontname = _fontname;
 	filename = ofToDataPath(_fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
-	int fontID = 0;
+	int fontID = index;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
         filename = linuxFontPathByName(fontname.string());
@@ -713,7 +717,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-    if(!loadFontFace(settings.fontName, loadFace, settings.fontName)){
+    if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
 		return false;
 	}
 	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);

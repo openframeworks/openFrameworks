@@ -1,7 +1,6 @@
 #include "ofGLRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofMesh.h"
 #include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
@@ -138,7 +137,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 #else
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+			glVertexPointer(3, GL_FLOAT, sizeof(typename ofMesh::VertexType), vertexData.getVerticesPointer());
 		}
 		if(vertexData.getNumNormals() && useNormals){
 			glEnableClientState(GL_NORMAL_ARRAY);
@@ -152,14 +151,14 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		if(vertexData.getNumTexCoords() && useTextures){
 			if(textureLocationsEnabled.size() == 0){
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(typename ofMesh::TexCoordType), &vertexData.getTexCoordsPointer()->x);
 			}else{
 				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
 				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
 					glActiveTexture(GL_TEXTURE0+*textureLocation);
 					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(typename ofMesh::TexCoordType), &vertexData.getTexCoordsPointer()->x);
 				}
 				glActiveTexture(GL_TEXTURE0);
 				glClientActiveTexture(GL_TEXTURE0);

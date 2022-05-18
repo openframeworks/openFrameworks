@@ -160,7 +160,6 @@ void ofAVFoundationPlayer::disposePlayer() {
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 			@autoreleasepool {
 				[currentPlayer unloadVideo]; // synchronious call to unload video
-				[currentPlayer autorelease]; // release
 			}
 		});
 
@@ -498,24 +497,13 @@ void ofAVFoundationPlayer::initTextureCache() {
     CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
 
 #ifdef TARGET_OF_IOS
-
     CVOpenGLESTextureCacheFlush(_videoTextureCache, 0);
-    if(_videoTextureRef) {
-        CFRelease(_videoTextureRef);
-        _videoTextureRef = nullptr;
-    }
-
 #endif
 
 #ifdef TARGET_OSX
-
     CVOpenGLTextureCacheFlush(_videoTextureCache, 0);
-    if(_videoTextureRef) {
-        CVOpenGLTextureRelease(_videoTextureRef);
-        _videoTextureRef = nullptr;
-    }
-
 #endif
+	killTexture();
 }
 
 void ofAVFoundationPlayer::killTexture() {

@@ -54,12 +54,15 @@ class ofxXmlSettings{
 
 		void setVerbose(bool _verbose);
 
-		bool loadFile(const string& xmlFile);
-		bool saveFile(const string& xmlFile);
-		bool saveFile();
+		OF_DEPRECATED_MSG("ofxXmlSettings::loadFile() is deprecated, use load() instead.", bool loadFile(const string& xmlFile));
+		OF_DEPRECATED_MSG("ofxXmlSettings::saveFile() is deprecated, use save() instead.", bool saveFile(const string& xmlFile));
+		OF_DEPRECATED_MSG("ofxXmlSettings::saveFile() is deprecated, use save() instead.", bool saveFile());
 
 		bool load(const string & path);
 		bool save(const string & path);
+		bool save();
+
+
 
 		void clearTagContents(const string& tag, int which = 0);
 		void removeTag(const string& tag, int which = 0);

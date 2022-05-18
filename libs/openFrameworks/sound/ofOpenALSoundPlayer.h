@@ -12,10 +12,7 @@ typedef unsigned int ALuint;
 
 #include "kiss_fft.h"
 #include "kiss_fftr.h"
-
-
-
-typedef	struct SNDFILE_tag	SNDFILE ;
+#include <sndfile.h>
 
 
 #ifdef OF_USING_MPG123

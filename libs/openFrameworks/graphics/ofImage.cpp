@@ -223,9 +223,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName.c_str(), option);
+			bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 		} else {
-			bmp = FreeImage_Load(fif, fileName.c_str(), 0);
+			bmp = FreeImage_Load(fif, fileName.c_str(), 0 | settings.freeImageFlags);
 		}
 
 		if (bmp != nullptr){
@@ -271,9 +271,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	//make the image!!
 	if(fif == FIF_JPEG) {
 		int option = getJpegOptionFromImageLoadSetting(settings);
-		bmp = FreeImage_LoadFromMemory(fif, hmem, option);
+		bmp = FreeImage_LoadFromMemory(fif, hmem, option | settings.freeImageFlags);
 	} else {
-		bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
+		bmp = FreeImage_LoadFromMemory(fif, hmem, settings.freeImageFlags);
 	}
 
 	if( bmp != nullptr ){
