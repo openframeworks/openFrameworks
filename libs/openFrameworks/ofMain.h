@@ -65,6 +65,9 @@
 	#include "ofCairoRenderer.h"
 #endif
 #include "ofGraphics.h"
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
+	#include "ofGraphicsCairo.h"
+#endif
 #include "ofImage.h"
 #include "ofPath.h"
 #include "ofPixels.h"
