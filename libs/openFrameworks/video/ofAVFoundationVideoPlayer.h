@@ -32,21 +32,9 @@ typedef enum _playerLoopType{
 
 //---------------------------------------------------------- video player.
 @interface ofAVFoundationVideoPlayer : NSObject {
-	
-    AVPlayer * _player;
-	AVAsset * _asset;
-    AVPlayerItem * _playerItem;
-	
-	
-	AVAssetReader * _assetReader;
-	AVAssetReaderTrackOutput * _assetReaderVideoTrackOutput;
-	AVAssetReaderTrackOutput * _assetReaderAudioTrackOutput;
-	
 #if defined(USE_VIDEO_OUTPUT)
 	CMVideoFormatDescriptionRef _videoInfo;
-	AVPlayerItemVideoOutput * _videoOutput;
 #endif
-	
 	
     id timeObserver;
     
@@ -89,17 +77,17 @@ typedef enum _playerLoopType{
 	NSCondition* deallocCond;
 }
 
-@property (nonatomic, retain) AVPlayer * player;
-@property (nonatomic, retain) AVAsset * asset;
-@property (nonatomic, retain) AVPlayerItem * playerItem;
+@property (nonatomic, strong) AVPlayer * player;
+@property (nonatomic, strong) AVAsset * asset;
+@property (nonatomic, strong) AVPlayerItem * playerItem;
 
 
-@property (nonatomic, retain) AVAssetReader * assetReader;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
+@property (nonatomic, strong) AVAssetReader * assetReader;
+@property (nonatomic, strong) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
+@property (nonatomic, strong) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
 
 #if defined(USE_VIDEO_OUTPUT)
-@property (nonatomic, retain) AVPlayerItemVideoOutput *videoOutput;
+@property (nonatomic, strong) AVPlayerItemVideoOutput *videoOutput;
 #endif
 
 

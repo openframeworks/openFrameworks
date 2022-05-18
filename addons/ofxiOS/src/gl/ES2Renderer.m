@@ -5,11 +5,11 @@
 @implementation ES2Renderer
 
 // Create an OpenGL ES 2.0 context
-- (id)init {
+- (instancetype)init {
     return [self initWithDepth:false andAA:false andMSAASamples:0 andRetina:false sharegroup:nil];
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup{
+- (instancetype)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup{
     if((self = [super init])) {
         depthEnabled = depth;
         msaaEnabled = msaa;
@@ -22,7 +22,7 @@
 
         if(!context || ![EAGLContext setCurrentContext:context]) {
             NSLog(@"OpenGL ES2 failed");
-            [self release];
+            self = nil;
             return nil;
         }
         
@@ -172,10 +172,7 @@
         [EAGLContext setCurrentContext:nil];
     }
 
-    [context release];
     context = nil;
-
-    [super dealloc];
 }
 
 - (NSInteger)getWidth {
