@@ -144,14 +144,8 @@ public:
 
 	/// A line of text in the buffer.
 	///
-	struct Line {
-		using iterator_category = std::forward_iterator_tag;
-		using value_type = std::string;
-		using difference_type = std::ptrdiff_t;
-		using pointer = value_type *;
-		using reference = value_type &;
-		
-		Line(std::vector<char>::const_iterator _begin, std::vector<char>::const_iterator _end, bool incremented = false);
+	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
+		Line(std::vector<char>::iterator _begin, std::vector<char>::iterator _end);
 		const std::string & operator*() const;
 		const std::string * operator->() const;
 		const std::string & asString() const;
@@ -170,19 +164,13 @@ public:
 
 	private:
 		std::string line;
-		std::vector<char>::const_iterator _current, _begin, _end;
+		std::vector<char>::iterator _current, _begin, _end;
 	};
 
 	/// A line of text in the buffer.
 	///
-	struct RLine {
-		using iterator_category = std::forward_iterator_tag;
-		using value_type = std::string;
-		using difference_type = std::ptrdiff_t;
-		using pointer = value_type *;
-		using reference = value_type &;
-		
-		RLine(std::vector<char>::const_reverse_iterator _begin, std::vector<char>::const_reverse_iterator _end, bool incremented = false);
+	struct RLine: public std::iterator<std::forward_iterator_tag,Line>{
+		RLine(std::vector<char>::reverse_iterator _begin, std::vector<char>::reverse_iterator _end);
 		const std::string & operator*() const;
 		const std::string * operator->() const;
 		const std::string & asString() const;
@@ -201,47 +189,41 @@ public:
 
 	private:
 		std::string line;
-		std::vector<char>::const_reverse_iterator _current, _rbegin, _rend;
+		std::vector<char>::reverse_iterator _current, _rbegin, _rend;
 	};
 
 	/// A series of text lines in the buffer.
 	///
 	struct Lines{
-		Lines(std::vector<char>::const_iterator begin, std::vector<char>::const_iterator end);
+		Lines(std::vector<char>::iterator begin, std::vector<char>::iterator end);
 		
 		/// Get the first line in the buffer.
-		Line begin() const;
-		Line cbegin() const;
-
+		Line begin();
+		
 		/// Get the last line in the buffer.
-		Line end() const;
-		Line cend() const;
+		Line end();
 
-		RLine rbegin() const;
-		RLine crbegin() const;
-		RLine rend() const;
-		RLine crend() const;
+		RLine rbegin();
+		RLine rend();
 
 	private:
-		std::vector<char>::const_iterator _begin, _end;
+		std::vector<char>::iterator _begin, _end;
 	};
 
 
 	/// A series of text lines in the buffer.
 	///
 	struct RLines{
-		RLines(std::vector<char>::const_reverse_iterator rbegin, std::vector<char>::const_reverse_iterator rend);
+		RLines(std::vector<char>::reverse_iterator rbegin, std::vector<char>::reverse_iterator rend);
 
 		/// Get the first line in the buffer.
-		RLine begin() const;
-		RLine cbegin() const;
+		RLine begin();
 
 		/// Get the last line in the buffer.
-		RLine end() const;
-		RLine cend() const;
+		RLine end();
 
 	private:
-		std::vector<char>::const_reverse_iterator _rbegin, _rend;
+		std::vector<char>::reverse_iterator _rbegin, _rend;
 	};
 
 	/// Access the contents of the buffer as a series of text lines.
@@ -250,7 +232,7 @@ public:
 	/// char '\n', you can access each line individually using Line structs.
 	///
 	/// \returns buffer text lines
-	Lines getLines() const;
+	Lines getLines();
 
 	/// Access the contents of the buffer as a series of text lines in reverse
 	/// order
@@ -259,7 +241,7 @@ public:
 	/// char '\n' or '\r\n', you can access each line individually using Line structs.
 	///
 	/// \returns buffer text lines
-	RLines getReverseLines() const;
+	RLines getReverseLines();
 
 private:
 	std::vector<char> 	buffer;
