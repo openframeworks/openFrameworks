@@ -285,10 +285,7 @@ void ofAVFoundationPlayer::stop() {
         return;
     }
 
-	// FIXME: videoPlayer stop
 	[videoPlayer stop];
-//    [videoPlayer pause];
-//    [videoPlayer setPosition:0];
 }
 
 //--------------------------------------------------------------
