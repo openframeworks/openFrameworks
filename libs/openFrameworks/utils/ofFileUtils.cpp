@@ -14,6 +14,8 @@
 	#include <limits.h>        /* PATH_MAX */
 #endif
 
+#include <iterator>
+
 using namespace std;
 
 namespace{
@@ -266,24 +268,24 @@ vector<char>::const_reverse_iterator ofBuffer::rend() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
-	:_current(_begin)
-	,_begin(_begin)
-	,_end(_end){
+ofBuffer::Line::Line(vector<char>::const_iterator _begin, vector<char>::const_iterator _end, bool incremented)
+	:_begin(_begin)
+	,_end(_end)
+{
 
 	if(_begin == _end){
 		line =  "";
 		return;
 	}
 
+	if(incremented) {
+		_begin += 1;
+	}
 	_current = std::find(_begin, _end, '\n');
 	if(_current - 1 >= _begin && *(_current - 1) == '\r'){
 		line = string(_begin, _current - 1);
 	}else{
 		line = string(_begin, _current);
-	}
-	if(_current != _end){
-		_current+=1;
 	}
 }
 
@@ -304,7 +306,7 @@ const std::string & ofBuffer::Line::asString() const{
 
 //--------------------------------------------------
 ofBuffer::Line & ofBuffer::Line::operator++(){
-	*this = Line(_current,_end);
+	*this = Line(_current, _end, true);
 	return *this;
 }
 
@@ -332,20 +334,22 @@ bool ofBuffer::Line::empty() const{
 
 
 //--------------------------------------------------
-ofBuffer::RLine::RLine(vector<char>::reverse_iterator _rbegin, vector<char>::reverse_iterator _rend)
-	:_current(_rbegin)
-	,_rbegin(_rbegin)
-	,_rend(_rend){
-
+ofBuffer::RLine::RLine(vector<char>::const_reverse_iterator _rbegin, vector<char>::const_reverse_iterator _rend, bool incremented)
+	:_rbegin(_rbegin)
+	,_rend(_rend)
+{
 	if(_rbegin == _rend){
 		line =  "";
 		return;
 	}
-	_current = std::find(_rbegin+1, _rend, '\n');
-	line = string(_current.base(), _rbegin.base() - 1);
-	if(_current < _rend-1 && *(_current + 1) == '\r'){
-		_current+=1;
+	if(incremented) {
+		_rbegin += 1;
+		if(_rbegin != _rend && *_rbegin == '\r'){
+			_rbegin += 1;
+		}
 	}
+	_current = std::find(_rbegin, _rend, '\n');
+	line = string(_current.base(), _rbegin.base());
 }
 
 //--------------------------------------------------
@@ -365,7 +369,7 @@ const std::string & ofBuffer::RLine::asString() const{
 
 //--------------------------------------------------
 ofBuffer::RLine & ofBuffer::RLine::operator++(){
-	*this = RLine(_current,_rend);
+	*this = RLine(_current, _rend, true);
 	return *this;
 }
 
@@ -391,43 +395,82 @@ bool ofBuffer::RLine::empty() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Lines::Lines(vector<char>::iterator begin, vector<char>::iterator end)
+ofBuffer::Lines::Lines(vector<char>::const_iterator begin, vector<char>::const_iterator end)
 :_begin(begin)
 ,_end(end){}
 
 //--------------------------------------------------
-ofBuffer::Line ofBuffer::Lines::begin(){
+ofBuffer::Line ofBuffer::Lines::begin() const {
 	return Line(_begin,_end);
 }
 
 //--------------------------------------------------
-ofBuffer::Line ofBuffer::Lines::end(){
+ofBuffer::Line ofBuffer::Lines::cbegin() const {
+	return Line(_begin,_end);
+}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::end() const {
 	return Line(_end,_end);
 }
 
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::cend() const {
+	return Line(_end,_end);
+}
 
 //--------------------------------------------------
-ofBuffer::RLines::RLines(vector<char>::reverse_iterator rbegin, vector<char>::reverse_iterator rend)
+ofBuffer::RLine ofBuffer::Lines::rbegin() const {
+	return RLine(std::make_reverse_iterator(_end), std::make_reverse_iterator(_begin));
+}
+
+//--------------------------------------------------
+ofBuffer::RLine ofBuffer::Lines::crbegin() const {
+	return RLine(std::make_reverse_iterator(_end), std::make_reverse_iterator(_begin));
+}
+
+//--------------------------------------------------
+ofBuffer::RLine ofBuffer::Lines::rend() const {
+	return RLine(std::make_reverse_iterator(_begin), std::make_reverse_iterator(_begin));
+}
+
+//--------------------------------------------------
+ofBuffer::RLine ofBuffer::Lines::crend() const {
+	return RLine(std::make_reverse_iterator(_begin), std::make_reverse_iterator(_begin));
+}
+
+//--------------------------------------------------
+ofBuffer::RLines::RLines(vector<char>::const_reverse_iterator rbegin, vector<char>::const_reverse_iterator rend)
 :_rbegin(rbegin)
 ,_rend(rend){}
 
 //--------------------------------------------------
-ofBuffer::RLine ofBuffer::RLines::begin(){
+ofBuffer::RLine ofBuffer::RLines::begin() const {
 	return RLine(_rbegin,_rend);
 }
 
 //--------------------------------------------------
-ofBuffer::RLine ofBuffer::RLines::end(){
+ofBuffer::RLine ofBuffer::RLines::cbegin() const {
+	return RLine(_rbegin,_rend);
+}
+
+//--------------------------------------------------
+ofBuffer::RLine ofBuffer::RLines::end() const {
 	return RLine(_rend,_rend);
 }
 
 //--------------------------------------------------
-ofBuffer::Lines ofBuffer::getLines(){
+ofBuffer::RLine ofBuffer::RLines::cend() const {
+	return RLine(_rend,_rend);
+}
+
+//--------------------------------------------------
+ofBuffer::Lines ofBuffer::getLines() const {
 	return ofBuffer::Lines(begin(), end());
 }
 
 //--------------------------------------------------
-ofBuffer::RLines ofBuffer::getReverseLines(){
+ofBuffer::RLines ofBuffer::getReverseLines() const {
 	return ofBuffer::RLines(rbegin(), rend());
 }
 
