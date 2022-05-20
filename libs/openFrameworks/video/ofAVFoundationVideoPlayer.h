@@ -72,7 +72,8 @@ typedef enum _playerLoopType{
 	BOOL bStream;
 	int frameBeforeReady;
 	float positionBeforeReady;
-	
+	BOOL bIsStopped;
+
 	NSLock* asyncLock;
 	NSCondition* deallocCond;
 }
@@ -102,6 +103,7 @@ typedef enum _playerLoopType{
 - (void)play;
 - (void)pause;
 - (void)togglePlayPause;
+- (void)stop;
 
 - (void)stepByCount:(long)frames;
 
@@ -113,6 +115,7 @@ typedef enum _playerLoopType{
 - (BOOL)isReady;
 - (BOOL)isLoaded;
 - (BOOL)isPlaying;
+- (BOOL)isPaused;
 - (BOOL)isNewFrame;
 - (BOOL)isFinished;
 

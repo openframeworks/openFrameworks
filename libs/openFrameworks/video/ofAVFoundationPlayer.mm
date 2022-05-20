@@ -285,8 +285,10 @@ void ofAVFoundationPlayer::stop() {
         return;
     }
 
-    [videoPlayer pause];
-    [videoPlayer setPosition:0];
+	// FIXME: videoPlayer stop
+	[videoPlayer stop];
+//    [videoPlayer pause];
+//    [videoPlayer setPosition:0];
 }
 
 //--------------------------------------------------------------
@@ -564,7 +566,7 @@ bool ofAVFoundationPlayer::isPaused() const {
         return false;
     }
 
-    return ![videoPlayer isPlaying];
+	return [videoPlayer isPaused];
 }
 
 //--------------------------------------------------------------
