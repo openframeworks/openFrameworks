@@ -1843,11 +1843,11 @@ EGLSurface ofAppGLFWWindow::getEGLSurface(){
 
 #if defined(TARGET_OSX)
 void * ofAppGLFWWindow::getNSGLContext(){
-	return glfwGetNSGLContext(windowP);
+	return (__bridge void *)glfwGetNSGLContext(windowP);
 }
 
 void * ofAppGLFWWindow::getCocoaWindow(){
-	return glfwGetCocoaWindow(windowP);
+	return (__bridge void *)glfwGetCocoaWindow(windowP);
 }
 #endif
 

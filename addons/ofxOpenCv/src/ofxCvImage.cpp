@@ -404,7 +404,7 @@ void ofxCvImage::draw( float x, float y ) const {
 }
 
 //----------------------------------------------------------
-void ofxCvImage::draw(const ofPoint & point) const{
+void ofxCvImage::draw(const glm::vec2 & point) const{
 	draw(point.x, point.y);
 }
 
