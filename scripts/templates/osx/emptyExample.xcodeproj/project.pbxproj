@@ -40,7 +40,7 @@
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 			<key>shellScript</key>
-			<string>echo "\033[32;1;4mBash script 03\033[0m"
+			<string>echo "\033[32;1;4m3 - Code Sign\033[0m"
 #echo "$GCC_PREPROCESSOR_DEFINITIONS";
 APPSTORE=`expr "$GCC_PREPROCESSOR_DEFINITIONS" : ".*APPSTORE=\([0-9]*\)"`
 if [ -z "$APPSTORE" ] ; then
@@ -280,7 +280,7 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 			<key>shellScript</key>
-			<string>echo "\033[32;1;4mBash script 01\033[0m"
+			<string>echo "\033[32;1;4m1 - Compiling Openframeworks\033[0m"
 xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj" -target openFrameworks -configuration "${CONFIGURATION}"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET</string>
 		</dict>
 		<key>E42962AA2163EDD300A6A9E2</key>
@@ -3381,7 +3381,7 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 			<key>shellScript</key>
-			<string>echo "\033[32;1;4mBash script 02\033[0m"
+			<string>echo "\033[32;1;4m2 - Copying Resources\033[0m"
 mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy default icon file into App/Resources
 rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
@@ -3389,8 +3389,6 @@ rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources
 rsync -aved "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 # Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage 
 # install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
-
-echo "$GCC_PREPROCESSOR_DEFINITIONS";
 </string>
 		</dict>
 		<key>E4C2427710CC5ABF004149E2</key>
