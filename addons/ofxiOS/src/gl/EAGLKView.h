@@ -12,6 +12,7 @@
 #import <GLKit/GLKit.h>
 #import "ESRenderer.h"
 
+/// ???: inherit GLKViewDelegate?
 @protocol EAGLKViewDelegate <NSObject>
 @optional
 - (void)glViewAnimationStarted;
@@ -35,17 +36,19 @@
     ESRendererVersion rendererVersion;
 }
 
-@property (nonatomic, assign) id delegate;
+/// TODO: need to give protocol explicity.
+/// ???: can we assume EAGLKViewDelegate is inherit GLKViewDelegate?
+@property (nonatomic, weak) id delegate;
 
-- (id)initWithFrame:(CGRect)frame
-andPreferedRenderer:(ESRendererVersion)rendererVersion
-              andAA:(bool)msaaEnabled
-          andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale
-     sharegroup:(EAGLSharegroup*)sharegroup
-    colorFormat:(GLKViewDrawableColorFormat)colorFormat
-    depthFormat:(GLKViewDrawableDepthFormat)depthFormat
-    stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat;
+- (instancetype)initWithFrame:(CGRect)frame
+          andPreferedRenderer:(ESRendererVersion)rendererVersion
+                        andAA:(bool)msaaEnabled
+                    andRetina:(bool)retinaEnabled
+               andRetinaScale:(CGFloat)retinaScale
+                   sharegroup:(EAGLSharegroup*)sharegroup
+                  colorFormat:(GLKViewDrawableColorFormat)colorFormat
+                  depthFormat:(GLKViewDrawableDepthFormat)depthFormat
+                stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat;
 
 
 
