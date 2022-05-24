@@ -85,6 +85,8 @@ private:
 
     ofMatrixMode currentMatrixMode;
 
+	glm::mat4 * currentMatrix;
+	bool flipRenderSurfaceMatrix;
 	glm::mat4 modelMatrix;
 	glm::mat4 viewMatrix;
 	glm::mat4 viewInverse;
@@ -96,15 +98,12 @@ private:
 	glm::mat4 orientationMatrix;
 	glm::mat4 orientationMatrixInverse;
 
-	glm::mat4 * currentMatrix;
-
 	std::stack <ofRectangle> viewportHistory;
 	std::stack <glm::mat4> viewMatrixStack;
 	std::stack <glm::mat4> modelViewMatrixStack;
 	std::stack <glm::mat4> projectionMatrixStack;
 	std::stack <glm::mat4> textureMatrixStack;
 	std::stack <std::pair<ofOrientation,bool> > orientationStack;
-	bool flipRenderSurfaceMatrix;
 
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;

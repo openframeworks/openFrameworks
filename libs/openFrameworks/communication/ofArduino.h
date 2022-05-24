@@ -789,7 +789,7 @@ private:
 
 	int _numSteppers;
 
-	int _numEncoders;
+	// int _numEncoders;
 
 	int _encoderID;
 

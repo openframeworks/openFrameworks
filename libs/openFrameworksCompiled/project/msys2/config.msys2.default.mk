@@ -26,7 +26,7 @@
 ##########################################################################################
 
 MINGW_PREFIX ?= /mingw32
-PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
+PLATFORM_CFLAGS += -std=gnu++17 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 ifdef USE_CCACHE
 	CC = ccache $(MINGW_PREFIX)/bin/gcc
@@ -62,7 +62,8 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-#PLATFORM_DEFINES = OF_USING_STD_FS
+PLATFORM_DEFINES = 
+
 ifeq ($(OF_USE_POCO),1)
 	PLATFORM_DEFINES += POCO_STATIC
 endif
