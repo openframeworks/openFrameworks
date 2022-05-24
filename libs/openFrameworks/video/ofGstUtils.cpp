@@ -350,7 +350,7 @@ void ofGstUtils::setPaused(bool _bPause){
 				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
 			}
 		}
-		bPlaying = !pPaused;
+		bPlaying = !bPaused;
 	}
 }
 
