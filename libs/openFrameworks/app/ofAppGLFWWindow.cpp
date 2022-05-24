@@ -239,7 +239,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 //		glfwSetWindowMonitor(windowP, NULL, 0, 0, currentW, currentH, GLFW_DONT_CARE);
 		cout << "after create window" << endl;
 	}else{ // not game mode
-		
 		// MARK: window is created first without considering monitor to create yet. update this?
 		windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), nullptr, sharedContext);
 		if(!windowP){
@@ -249,20 +248,20 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.windowMode==OF_FULLSCREEN){ // THIS IS SETUP
 			currentW = allMonitors.rects[settings.monitor].width;
 			currentH = allMonitors.rects[settings.monitor].height;
+			
+			windowRect.x = settings.getPosition().x;
+			windowRect.y = settings.getPosition().y;
 			windowRect.width = settings.getWidth();
 			windowRect.height = settings.getHeight();
 //			cout << "windowRect here " << windowRect << endl;
 
 			if(!settings.isPositionSet()){
-				settings.setPosition({
-					allMonitors.rects[settings.monitor].x,
-					allMonitors.rects[settings.monitor].y
-				});
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 				// TODO: check what does exactly currentW currentH
 //				currentW = allMonitors.rects[settings.monitor].width;
 //				currentH = allMonitors.rects[settings.monitor].height;
 			}else{
+//				cout << "window not fullscreen" << endl;
 				// this is still fullscreen but with position not set yet.
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 //				currentW = settings.getWidth();
@@ -284,12 +283,15 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 				}
 			}
 			targetWindowMode = settings.windowMode;
-		}else{ // window not fullscreen
+		}else{ // window not fullscreen OF_WINDOW
 			if (settings.isPositionSet()) {
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 			}
-			currentW = settings.getWidth();
-			currentH = settings.getHeight();
+//			currentW = settings.getWidth();
+//			currentH = settings.getHeight();
+			auto rect = getWindowRectangle();
+			currentW = rect.width;
+			currentH = rect.height;
 		}
         #ifdef TARGET_LINUX
 		    if(!iconSet){
@@ -400,7 +402,21 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	        XNFocusWindow,  getX11Window(),
 	    NULL);
 #endif
+	
+#ifdef TARGET_OSX
+//	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+//	[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
+#endif
+//	{
+//	int framebufferW, framebufferH; // <- physical pixel extents
+//	glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
+//		windowW = framebufferW;
+//		windowH = framebufferH;
+////		currentW =
+//	}
+
 }
+// end setup
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
@@ -442,12 +458,17 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
+	events().notifyUpdate();
+
 	if (updateMonitor) {
 		updateMonitorProperties();
 		updateMonitor = false;
 	}
 	
-	events().notifyUpdate();
+	if (updatePixelScreenCoordScale) {
+		calculatePixelCoordScale(windowP);
+		updatePixelScreenCoordScale = false;
+	}
 
 	//show the window right before the first draw call.
 	if( bWindowNeedsShowing && windowP ){
@@ -485,21 +506,21 @@ void ofAppGLFWWindow::windowRefreshCallback(GLFWwindow* windowP_) {
 	// strangely this is only called when dragging, if you stop the mouse and don't release the button it freezes.
 	// GLFW
 
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-
-	instance->currentRenderer->startRender();
-	if( instance->bEnableSetupScreen ) {
-		instance->currentRenderer->setupScreen();
-	}
-	instance->events().notifyDraw();
-	
-	if(instance->settings.doubleBuffering){
-		glfwSwapBuffers(windowP_);
-	} else{
-		glFlush();
-	}
-	instance->currentRenderer->finishRender();
-	glfwPollEvents();
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//
+//	instance->currentRenderer->startRender();
+//	if( instance->bEnableSetupScreen ) {
+//		instance->currentRenderer->setupScreen();
+//	}
+//	instance->events().notifyDraw();
+//	
+//	if(instance->settings.doubleBuffering){
+//		glfwSwapBuffers(windowP_);
+//	} else{
+//		glFlush();
+//	}
+//	instance->currentRenderer->finishRender();
+//	glfwPollEvents();
 }
 
 //--------------------------------------------
@@ -532,6 +553,13 @@ void ofAppGLFWWindow::draw(){
 		}
 	}
     #else
+		if (currentRenderer->getBackgroundAuto() == false){
+			// in accum mode resizing a window is BAD, so we clear on resize events.
+			if (nFramesSinceWindowResized < 3)
+			{
+				currentRenderer->clear();
+			}
+		}
 		if(settings.doubleBuffering){
 			glfwSwapBuffers(windowP);
 		} else{
@@ -542,6 +570,11 @@ void ofAppGLFWWindow::draw(){
 	currentRenderer->finishRender();
 
 	nFramesSinceWindowResized++;
+//	cout << "currentW " << currentW << endl;
+//	cout << "currentH " << currentH << endl;
+//	cout << "windowW " << windowW << endl;
+//	cout << "windowH " << windowH << endl;
+//	cout << "-----" << endl;
 //	cout << "draw " << nFramesSinceWindowResized << endl;
 }
 
@@ -637,9 +670,16 @@ ofRectangle ofAppGLFWWindow::getWindowRectangle() {
 
 //------------------------------------------------------------
 glm::vec2 ofAppGLFWWindow::getWindowSize(){
-	glm::ivec2 size;
-	glfwGetWindowSize(windowP, &size.x, &size.y);
-	return size * glm::vec2(pixelScreenCoordScale, pixelScreenCoordScale);
+//	glm::ivec2 size;
+//	glfwGetWindowSize(windowP, &size.x, &size.y);
+//	cout << "getWindowSize --- " << size<< endl;
+//	cout << size * glm::vec2(pixelScreenCoordScale, pixelScreenCoordScale) << endl;
+//	return size * glm::vec2(pixelScreenCoordScale, pixelScreenCoordScale);
+	glm::vec2 size =  {currentW * pixelScreenCoordScale, currentH * pixelScreenCoordScale};
+//	cout << size << endl;
+	return {currentW * pixelScreenCoordScale, currentH * pixelScreenCoordScale};
+
+//	return size;
 }
 
 //------------------------------------------------------------
@@ -758,13 +798,11 @@ void ofAppGLFWWindow::setWindowRectangle(const ofRectangle & rect) {
 		windowW = rect.width;
 		windowH = rect.height;
 	}
-	currentW = rect.width/1;
-	currentH = rect.height/1;
+	currentW = rect.width;
+	currentH = rect.height;
 
 	// Now using just one GLFW call to set the entire rectangle.
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, currentW, currentH, GLFW_DONT_CARE);
-//	glfwSetWindowPos(windowP,rect.x,rect.y);
-//	glfwSetWindowSize(windowP,currentW,currentH);
 }
 
 #ifdef OLDSTYLE
@@ -1415,8 +1453,8 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 	}
 
 	ofMouseEventArgs args(action,
-	    x*pixelScreenCoordScale,
-	    y*pixelScreenCoordScale,
+	    x*instance->pixelScreenCoordScale,
+	    y*instance->pixelScreenCoordScale,
 	    instance->buttonInUse,
 	    instance->events().getModifiers());
 	instance->events().notifyMouseEvent(args);
@@ -1685,33 +1723,42 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 	// I think this is causing issues with alternate fullscreen / ofwindow
 	instance->currentW = windowW;
 	instance->currentH = windowH;
-	
+
+	// ?
+//	calculatePixelCoordScale(windowP_);
+	updatePixelScreenCoordScale = true;
+
 	// when window is resized this event notify so the internal buffer gets resized also
-//	instance->events().notifyWindowResized(framebufferW, framebufferH);
 	instance->nFramesSinceWindowResized = 0;
+}
+
+void ofAppGLFWWindow::calculatePixelCoordScale(GLFWwindow* windowP_) {
+//	int framebufferW, framebufferH; // <- physical pixel extents
+//	glfwGetFramebufferSize(windowP_, &framebufferW, &framebufferH);
+//
+//	int windowW, windowH; // <- screen coordinates, which may be scaled
+//	glfwGetWindowSize(windowP_, &windowW, &windowH);
+//	pixelScreenCoordScale = (float)framebufferW / (float)windowW;
+
+	float xscale, yscale;
+	glfwGetWindowContentScale(windowP_, &xscale, &yscale);
+	pixelScreenCoordScale = xscale;
+
+	cout << "calculatePixelCoordScale ::" << xscale << endl;
+	// Find scale factor needed to transform from screen coordinates
+	// to physical pixel coordinates
+	//	instance->events().notifyWindowResized(windowW, windowH);
+
+//	instance->events().notifyWindowResized(framebufferW, framebufferH);
+
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow* windowP_, int w, int h){
 	cout << "framebuffer_size_cb " << ofGetFrameNum() << endl;
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-
-	int framebufferW, framebufferH; // <- physical pixel extents
-	glfwGetFramebufferSize(windowP_, &framebufferW, &framebufferH);
-
-	int windowW, windowH; // <- screen coordinates, which may be scaled
-	glfwGetWindowSize(windowP_, &windowW, &windowH);
-
-	// Find scale factor needed to transform from screen coordinates
-	// to physical pixel coordinates
-	pixelScreenCoordScale = (float)framebufferW / (float)windowW;
-	
-	// Sketch only
-//	glfwGetWindowSize(windowP_, &pixelScreenScale.windowSize.x, &pixelScreenScale.windowSize.y);
-//	glfwGetFramebufferSize(windowP_, &pixelScreenScale.framebufferSize.x, &pixelScreenScale.framebufferSize.y);
-//	pixelScreenScale.calculate();
-//	cout << pixelScreenScale.windowSize << endl;
-//	cout << pixelScreenScale.ratio << endl;
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	updatePixelScreenCoordScale = true;
+//	calculatePixelCoordScale(windowP_);
 }
 
 //--------------------------------------------
@@ -1843,11 +1890,11 @@ EGLSurface ofAppGLFWWindow::getEGLSurface(){
 
 #if defined(TARGET_OSX)
 void * ofAppGLFWWindow::getNSGLContext(){
-	return (__bridge void *)glfwGetNSGLContext(windowP);
+	return glfwGetNSGLContext(windowP);
 }
 
 void * ofAppGLFWWindow::getCocoaWindow(){
-	return (__bridge void *)glfwGetCocoaWindow(windowP);
+	return glfwGetCocoaWindow(windowP);
 }
 #endif
 

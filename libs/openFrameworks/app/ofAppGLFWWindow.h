@@ -10,8 +10,6 @@ typedef struct _XIC * XIC;
 #endif
 
 
-
-
 class ofBaseApp;
 struct GLFWwindow;
 struct GLFWmonitor; // forward declaration
@@ -67,21 +65,13 @@ public:
 	GLFWmonitor** monitors;
 
 } allMonitors;
-	
-static struct ofPixelScreenScale {
-public:
-	float ratio = 1.0;
-	glm::ivec2 framebufferSize = { 0, 0 };
-	glm::ivec2 windowSize = { 0, 0 };
-	void calculate() {
-		ratio = (float)framebufferSize.x / (float)windowSize.x;
-	}
-	
-} pixelScreenScale;
+
+// TODO: Remove.
 
 static bool updateMonitor = true;
+static bool updatePixelScreenCoordScale = true;
 /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
-static float pixelScreenCoordScale;
+
 
 	
 #ifdef TARGET_OPENGLES
@@ -105,7 +95,7 @@ public:
 	static bool needsPolling(){ return true; }
 	static void pollEvents();
 	
-
+	float pixelScreenCoordScale;
 
     // this functions are only meant to be called from inside OF don't call them from your code
     using ofAppBaseWindow::setup;
@@ -147,7 +137,8 @@ public:
 	void setWindowRectangle(const ofRectangle & rect);
 	
 	static void windowRefreshCallback(GLFWwindow* window);
-
+	void calculatePixelCoordScale(GLFWwindow* windowP_);
+	
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
@@ -261,10 +252,10 @@ private:
 
 	int 			nFramesSinceWindowResized;
 	bool			bWindowNeedsShowing;
-	
-	#ifdef TARGET_RASPBERRY_PI 
+
+	#ifdef TARGET_RPI
 	bool			needsResizeCheck = false; /// Just for RPI at this point
-	#endif	
+	#endif
 
 	GLFWwindow* 	windowP;
 	
