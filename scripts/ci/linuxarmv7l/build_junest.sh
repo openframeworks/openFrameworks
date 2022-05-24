@@ -28,6 +28,7 @@ export GCCVER=7.1.1
 # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
 # the "proper" way does not work currently:
 export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
+export USE_PI_LEGACY=0
 
 echo "**** Building OF core ****"
 cd $OF_ROOT

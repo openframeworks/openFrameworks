@@ -184,6 +184,8 @@ private:
 
 	// 3d transformation
 	bool b3D;
+	of3dGraphics graphics3d;
+
 	glm::mat4 projection;
 	glm::mat4 modelView;
 	ofRectangle viewportRect, originalViewport;
@@ -203,6 +205,5 @@ private:
 
 	ofStyle currentStyle;
 	std::deque <ofStyle> styleHistory;
-	of3dGraphics graphics3d;
 	ofPath path;
 };

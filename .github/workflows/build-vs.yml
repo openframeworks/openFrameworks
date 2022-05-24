@@ -10,15 +10,13 @@ on:
     
 jobs:
 
-  build-vs2017:
-    runs-on: windows-2016
+  build-vs2019:
+    runs-on: windows-2019
     strategy:
       matrix:
         include:
           - platform: x64
             bits: 64
-          - platform: Win32
-            bits: 32
     env: 
       BITS: ${{ matrix.bits }}
     steps:
@@ -37,7 +35,7 @@ jobs:
         run:
           ./scripts/ci/vs/install.sh
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.1
       - name: Build
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:

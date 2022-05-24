@@ -41,7 +41,7 @@ class ofxiOSMapKit;
 	ofxiOSMapKit*					mapKit;
 }
 
--(id)initWithMapKit:(ofxiOSMapKit*)mk;
+-(instancetype)initWithMapKit:(ofxiOSMapKit*)mk;
 -(void)dealloc;
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated;
