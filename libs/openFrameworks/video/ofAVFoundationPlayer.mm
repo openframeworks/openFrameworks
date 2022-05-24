@@ -160,7 +160,6 @@ void ofAVFoundationPlayer::disposePlayer() {
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 			@autoreleasepool {
 				[currentPlayer unloadVideo]; // synchronious call to unload video
-				[currentPlayer autorelease]; // release
 			}
 		});
 
@@ -286,8 +285,7 @@ void ofAVFoundationPlayer::stop() {
         return;
     }
 
-    [videoPlayer pause];
-    [videoPlayer setPosition:0];
+	[videoPlayer stop];
 }
 
 //--------------------------------------------------------------
@@ -565,7 +563,7 @@ bool ofAVFoundationPlayer::isPaused() const {
         return false;
     }
 
-    return ![videoPlayer isPlaying];
+	return [videoPlayer isPaused];
 }
 
 //--------------------------------------------------------------

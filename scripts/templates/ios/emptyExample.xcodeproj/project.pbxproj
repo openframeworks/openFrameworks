@@ -142,7 +142,7 @@
 				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
 				<string>AppIcon</string>
 				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
-				<string>Brand Assets</string>
+				<string></string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
 				<array>
 					<string>$(inherited)</string>
@@ -156,8 +156,6 @@
 				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>TARGETED_DEVICE_FAMILY</key>
@@ -177,7 +175,7 @@
 				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
 				<string>AppIcon</string>
 				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
-				<string>Brand Assets</string>
+				<string></string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
 				<array>
 					<string>$(inherited)</string>
@@ -191,8 +189,6 @@
 				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>TARGETED_DEVICE_FAMILY</key>
@@ -277,19 +273,10 @@
 			<string>C01FCF4E08A954540054247B</string>
 			<key>compatibilityVersion</key>
 			<string>Xcode 3.2</string>
-			<key>developmentRegion</key>
-			<string>English</string>
 			<key>hasScannedForEncodings</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>English</string>
-				<string>Japanese</string>
-				<string>French</string>
-				<string>German</string>
-			</array>
 			<key>mainGroup</key>
 			<string>29B97314FDCFA39411CA2CEA</string>
 			<key>projectDirPath</key>
@@ -743,8 +730,6 @@
 				<string>NO</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>YES</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
@@ -799,8 +784,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>SDKROOT</key>
