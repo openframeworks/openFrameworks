@@ -792,6 +792,8 @@ void ofCairoRenderer::translate(const glm::vec3 & p){
 
 //----------------------------------------------------------
 void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
+	// temporary fix for a issue where Cairo never recovers after setting scale = 0
+	// safe to remove once it is fixed 
 	if (xAmnt == 0 || yAmnt == 0) return;
 	if(!surface || !cr) return;
 	
