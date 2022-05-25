@@ -349,8 +349,8 @@ void ofGstUtils::setPaused(bool _bPause){
 			if(!bPaused){
 				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
 			}
-			bPlaying = true;
 		}
+		bPlaying = !bPaused;
 	}
 }
 
@@ -368,7 +368,7 @@ void ofGstUtils::stop(){
 	gst_element_set_state (gstPipeline, state);
 	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
 	bPlaying = false;
-	bPaused = true;
+	bPaused = false;
 }
 
 float ofGstUtils::getPosition() const{
