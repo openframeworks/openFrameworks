@@ -14,11 +14,7 @@
 
 @implementation AVSoundPlayer
 
-@synthesize delegate;
-@synthesize player;
-@synthesize timer;
-
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if(self) {
         bMultiPlay = NO;
@@ -61,7 +57,6 @@
 
 - (void)dealloc {
     [self unloadSound];
-    [super dealloc];
 }
 
 //----------------------------------------------------------- load / unload.
@@ -81,8 +76,8 @@
     [self unloadSound];
 	[self setupSharedSession];
     NSError * error = nil;
-    self.player = [[[AVAudioPlayer alloc] initWithContentsOfURL:url
-                                                          error:&error] autorelease];
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url
+                                                         error:&error];
     if([self.player respondsToSelector:@selector(setEnableRate:)]) {
         [self.player setEnableRate:YES];
     }
