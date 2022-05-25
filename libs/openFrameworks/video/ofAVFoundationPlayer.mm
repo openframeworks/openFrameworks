@@ -102,7 +102,11 @@ bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
 	pixels.clear();
 	videoTexture.clear();
 
+//	bool bCreateTextureCache = bLoaded && bUseTextureCache && (_videoTextureCache == nullptr);
+	
+//	&& bUseTexture ou isUsingTexture();
 	bool bCreateTextureCache = bLoaded && bUseTextureCache && (_videoTextureCache == nullptr);
+
 
 	if(bCreateTextureCache == true) {
 

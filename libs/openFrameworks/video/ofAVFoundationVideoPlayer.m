@@ -862,14 +862,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			CGSize presentationSize = _playerItem.presentationSize;
 			videoWidth = presentationSize.width;
 			videoHeight = presentationSize.height;
-		}		
+		}
 		
 		// create or update video format description
 		if (!_videoInfo || !CMVideoFormatDescriptionMatchesImageBuffer(_videoInfo, buffer)) {
 			if (_videoInfo) {
 				CFRelease(_videoInfo);
 				_videoInfo = nil;
-			}		
+			}
 			err = CMVideoFormatDescriptionCreateForImageBuffer(NULL, buffer, &_videoInfo);
 		}
 		if (err) {

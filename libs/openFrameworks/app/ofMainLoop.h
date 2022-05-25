@@ -15,7 +15,7 @@ public:
 
 	std::shared_ptr<ofAppBaseWindow> createWindow(const ofWindowSettings & settings);
 	template<typename Window>
-	void addWindow(std::shared_ptr<Window> window){
+	void addWindow(const std::shared_ptr<Window> & window){
 		allowMultiWindow = Window::allowsMultiWindow();
 		if(Window::doesLoop()){
 		    windowLoop = Window::loop;
@@ -31,7 +31,7 @@ public:
 		ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
 	}
 
-	void run(std::shared_ptr<ofAppBaseWindow> window, std::shared_ptr<ofBaseApp> && app);
+	void run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
 	void run(std::shared_ptr<ofBaseApp> && app);
 	int loop();
 	void loopOnce();

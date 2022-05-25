@@ -37,41 +37,45 @@
 #include <string>
 
 std::string convertWideToNarrow( const wchar_t *s, char dfault = '?',
-                      const std::locale& loc = std::locale() )
+					  const std::locale& loc = std::locale() )
 {
   std::ostringstream stm;
 
   while( *s != L'\0' ) {
-    stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
+	stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
   }
   return stm.str();
 }
 
 std::wstring convertNarrowToWide( const std::string& as ){
-    // deal with trivial case of empty string
-    if( as.empty() )    return std::wstring();
+	// deal with trivial case of empty string
+	if( as.empty() )    return std::wstring();
 
-    // determine required length of new string
-    size_t reqLength = ::MultiByteToWideChar( CP_UTF8, 0, as.c_str(), (int)as.length(), 0, 0 );
+	// determine required length of new string
+	size_t reqLength = ::MultiByteToWideChar( CP_UTF8, 0, as.c_str(), (int)as.length(), 0, 0 );
 
-    // construct new string of required length
-    std::wstring ret( reqLength, L'\0' );
+	// construct new string of required length
+	std::wstring ret( reqLength, L'\0' );
 
-    // convert old string to new string
-    ::MultiByteToWideChar( CP_UTF8, 0, as.c_str(), (int)as.length(), &ret[0], (int)ret.length() );
+	// convert old string to new string
+	::MultiByteToWideChar( CP_UTF8, 0, as.c_str(), (int)as.length(), &ret[0], (int)ret.length() );
 
-    // return new string ( compiler should optimize this away )
-    return ret;
+	// return new string ( compiler should optimize this away )
+	return ret;
 }
 
 #endif
 
 #if defined( TARGET_OSX )
 static void restoreAppWindowFocus(){
-	NSWindow * appWindow = (__bridge NSWindow *)ofGetCocoaWindow();
-	if(appWindow) {
-		[appWindow makeKeyAndOrderFront:nil];
-	}
+
+	cout << "restoreAppWindowFocus "<< endl;
+//	NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+//	if(appWindow) {
+//		[appWindow makeKeyAndOrderFront:nil];
+//	}
+//	[[NSApp mainWindow] makeKeyAndOrderFront:nil];
+	[[NSApp mainWindow] makeKeyWindow];
 }
 #endif
 
@@ -188,7 +192,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
 		dialogData->text = gtk_entry_get_text(GTK_ENTRY(textbox));
 	} else {
-    dialogData->text = "";
+	dialogData->text = "";
   }
 	gtk_widget_destroy (dialog);
 	dialogData->mutex.lock();
@@ -294,8 +298,51 @@ void ofSystemAlertDialog(string errorMessage){
 		@autoreleasepool {
 			NSAlert* alertDialog = [[NSAlert alloc] init];
 			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
-			[alertDialog runModal];
-			restoreAppWindowFocus();
+			//beginSheetModal beginSheetAsync
+
+//			[alertDialog beginSheetAsync];
+//			[alertDialog runModal];
+//			restoreAppWindowFocus();
+			
+//						[alertDialog runModalSheet];
+//			[alertDialog beginSheetModalForWindow:[NSApp mainWindow]
+			
+			
+//			-beginSheet:completionHandler:
+//			-beginCriticalSheet:completionHandler:
+//			-endSheet:
+//			-endSheet:returnCode:
+//			[(NSWindow *)ofGetCocoaWindow()
+//			 beginSheet: alertDialog completionHandler:^(NSModalResponse returnCode) {
+//				NSLog(@"completionHandler called");
+//			 }
+//			];
+			
+			[alertDialog beginSheetModalForWindow:(NSWindow *)ofGetCocoaWindow()
+				completionHandler:^(NSInteger result) {
+				 if (result == 0){
+					 cout << "complete" << endl;
+						 ;
+			 
+//			 [alertDialog orderOut: nil];
+//			 [alertDialog close];
+//					 restoreAppWindowFocus();
+//					 [[alertDialog window] orderOut:self];
+			 
+//			 cout << "restoreAppWindowFocus "<< endl;
+//			 NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+//			 if(appWindow) {
+////				 [appWindow makeKeyWindow];
+////				 [appWindow makeKeyAndOrderFront:nil];
+//			 }
+//		 	[[NSApp mainWindow] makeKeyAndOrderFront:nil];
+			 [[NSApp mainWindow] makeKeyWindow];
+//			 [[NSApp mainWindow] makeFirstResponder:[NSApp mainWindow].contentView];
+				 }
+
+				}
+			];
+
 		}
 	#endif
 
@@ -331,12 +378,12 @@ static int CALLBACK loadDialogBrowseCallback(
   LPARAM lParam,
   LPARAM lpData
 ){
-    string defaultPath = *(string*)lpData;
-    if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
+	string defaultPath = *(string*)lpData;
+	if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
 		wchar_t         wideCharacterBuffer[MAX_PATH];
 		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
-        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
-    }
+		SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
+	}
 
 	return 0;
 }
@@ -398,7 +445,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 	if (bFolderSelection == false){
 
-        OPENFILENAME ofn;
+		OPENFILENAME ofn;
 
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
@@ -546,7 +593,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	wchar_t fileName[MAX_PATH] = L"";
 	OPENFILENAMEW ofn;
-    memset(&ofn, 0, sizeof(OPENFILENAME));
+	memset(&ofn, 0, sizeof(OPENFILENAME));
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
 	ofn.hwndOwner = hwnd;
@@ -592,17 +639,17 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 #ifdef TARGET_WIN32
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    //switch(msg)
-    //{
-    //    case WM_CLOSE:
-    //        DestroyWindow(hwnd);
-    //    break;
-    //    case WM_DESTROY:
-    //        PostQuitMessage(0);
-    //    break;
-    //    default:
-            return DefWindowProc(hwnd, msg, wParam, lParam);
-    //}
+	//switch(msg)
+	//{
+	//    case WM_CLOSE:
+	//        DestroyWindow(hwnd);
+	//    break;
+	//    case WM_DESTROY:
+	//        PostQuitMessage(0);
+	//    break;
+	//    default:
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+	//}
 }
 #endif
 
@@ -641,23 +688,29 @@ string ofSystemTextBoxDialog(string question, string text){
 		[[alert window] setInitialFirstResponder: label];
 
 		NSInteger returnCode = [alert runModal];
+//		NSInteger returnCode = [alert runModalSheet];
+//		NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+//		NSInteger returnCode = [alert runModalSheetForWindow:(NSInteger)appWindow];
+
+//		runModalSheetForWindow
 		restoreAppWindowFocus();
 		// if OK was clicked, assign value to text
-		if ( returnCode == NSAlertFirstButtonReturn )
-			text = [[label stringValue] UTF8String];
-    else
-      text = "";
+//		if ( returnCode == NSAlertFirstButtonReturn )
+		if ( returnCode == NSAlertDefaultReturn )
+			text = [[input stringValue] UTF8String];
+		else
+			text = "";
 	}
 #endif
 
 #ifdef TARGET_WIN32
-    // we need to convert error message to a wide char message.
-    // first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
+	// we need to convert error message to a wide char message.
+	// first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
 
 	WNDCLASSEX wc;
 	MSG Msg;
 
-        #define TMP_STR_CONVERT LPCWSTR
+		#define TMP_STR_CONVERT LPCWSTR
 
 		const LPCWSTR g_szClassName = L"myWindowClass\0";
 
@@ -677,9 +730,9 @@ string ofSystemTextBoxDialog(string question, string text){
 		if(!RegisterClassEx(&wc)){
 			DWORD err=GetLastError();
 			if ((err==ERROR_CLASS_ALREADY_EXISTS)){
-                ; // we are ok
-                // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
-            } else {
+				; // we are ok
+				// http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
+			} else {
 			MessageBox(nullptr, L"Window Registration Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
@@ -780,11 +833,11 @@ string ofSystemTextBoxDialog(string question, string text){
 #endif
 
 #ifdef TARGET_ANDROID
-     ofxAndroidAlertTextBox(question,text);
+	 ofxAndroidAlertTextBox(question,text);
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
-     text = emscripten_run_script_string((string("prompt('") + question + "','')").c_str());
+	 text = emscripten_run_script_string((string("prompt('") + question + "','')").c_str());
 #endif
 	return text;
 }

@@ -19,6 +19,10 @@ void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
 	player = std::move(newPlayer);
 	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
+	
+	cout << "setPlayer " << ofGetFrameNum() << endl;
+	cout << "player use count " << player.use_count() << endl;
+	cout << "new player use count " << newPlayer.use_count() << endl;
 }
 
 //---------------------------------------------------------------------------
@@ -68,6 +72,7 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::load(string name){
 	if( !player ){
+//		cout << "load, creating player" << endl;
 		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
 		player->setPixelFormat(internalPixelFormat);
 	}
@@ -196,6 +201,8 @@ bool ofVideoPlayer::isFrameNew() const{
 
 //--------------------------------------------------------------------
 void ofVideoPlayer::update(){
+	cout << "player use count " << player.use_count() << endl;
+
 	if( player ){
 
 		player->update();
@@ -235,6 +242,8 @@ void ofVideoPlayer::close(){
 		player->close();
 	}
 	tex.clear();
+	
+	cout << "player use count " << player.use_count() << endl;
 }
 
 //--------------------------------------------------------
