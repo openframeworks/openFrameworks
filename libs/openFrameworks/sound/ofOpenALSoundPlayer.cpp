@@ -7,7 +7,6 @@
 #include "glm/common.hpp"
 #include "ofLog.h"
 #include "ofEvents.h"
-#include <sndfile.h>
 
 #if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
 #include <OpenAL/al.h>
