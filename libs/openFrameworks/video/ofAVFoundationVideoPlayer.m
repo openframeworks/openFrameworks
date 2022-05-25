@@ -108,7 +108,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	[asyncLock lock];
-	
+
 	[asyncLock unlock];
 	
 	// release locks
@@ -159,6 +159,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	bIsUnloaded = NO;
 	bReady = NO;
 	bLoaded = NO;
+	bIsStopped = YES;
 	bPlayStateBeforeLoad = NO;
 	frameBeforeReady = 0;
 	positionBeforeReady = 0.F;
@@ -1114,6 +1115,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 - (void)togglePlayPause {
+	bIsStopped = NO;
+
 	bPlaying = !bPlaying;
 	if([self isPlaying]) {
 		if([self isFinished]) {
@@ -1124,6 +1127,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	} else {
 		[_player pause];
 	}
+}
+
+- (void)stop {
+	[self setPosition:0];
+	[self pause];
+	bIsStopped = YES;
 }
 
 - (void)stepByCount:(long)frames
@@ -1223,6 +1232,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (BOOL)isPlaying {
 	return bPlaying;
+}
+
+- (BOOL)isPaused {
+	return !bPlaying & !bIsStopped;
 }
 
 - (BOOL)isNewFrame {
