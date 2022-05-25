@@ -15,13 +15,13 @@
 
 @synthesize glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
+- (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
     return [self initWithFrame:frame app:app sharegroup:nil];
 }
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup {
+- (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup {
     if((self = [super init])) {
-        self.glView = [[[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup] autorelease];
+        self.glView = [[ofxiOSGLKView alloc] initWithFrame:frame andApp:app sharegroup:sharegroup];
         self.glView.delegate = self;
     }
     
@@ -32,8 +32,6 @@
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
     self.glView = nil;
-    
-    [super dealloc];
 }
 
 - (void)viewDidLoad {
@@ -139,7 +137,7 @@
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
     if([self.view respondsToSelector:@selector(handleTap:)]) {
-        [self.glView handleTap:sender];
+        [self.glView performSelector:@selector(handleTap:) withObject:sender];
     }
 }
 

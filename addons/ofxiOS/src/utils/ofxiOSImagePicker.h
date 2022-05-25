@@ -27,7 +27,8 @@ public:
 
 //----------------------------------------------------------- overlay.
 @interface ofxiOSImagePickerOverlayView : UIView
-@property (nonatomic, retain) id delegate;
+/// TODO: give protocol explicitly.
+@property (nonatomic, strong) id delegate;
 - (void)initUI;
 - (void)takePhoto:(id)sender;
 @end
@@ -47,7 +48,7 @@ public:
 	canLoadPixels *						cppPixelLoader;
 }
 
-- (id) initWithPicker:(canLoadPixels *) _picker;
+- (instancetype) initWithPicker:(canLoadPixels *) _picker;
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo;
 
