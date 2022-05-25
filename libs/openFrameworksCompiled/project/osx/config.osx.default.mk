@@ -77,6 +77,10 @@ ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
 endif
 
+ifndef MAC_OS_CPP_VER
+    MAC_OS_CPP_VER = -std=c++11
+endif
+
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
 PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
@@ -85,6 +89,8 @@ PLATFORM_CFLAGS += -Wall
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
+
+PLATFORM_CFLAGS += -Werror=return-type
 
 ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
@@ -139,7 +145,11 @@ endif
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 PLATFORM_CXXFLAGS += -x objective-c++
-PLATFORM_CXXFLAGS += -std=c++11
+PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
+
+# Enable ARC
+PLATFORM_CFLAGS += -fobjc-arc 
+
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers

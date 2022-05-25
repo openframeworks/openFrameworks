@@ -7,8 +7,6 @@
 #include <condition_variable>
 #include <mutex>
 
-using namespace std;
-
 #ifdef TARGET_WIN32
 #include <winuser.h>
 #include <commdlg.h>
@@ -18,6 +16,7 @@ using namespace std;
 #include <shlobj.h>
 #include <tchar.h>
 #include <stdio.h>
+
 
 #endif
 
@@ -69,6 +68,7 @@ std::wstring convertNarrowToWide( const std::string& as ){
 
 #if defined( TARGET_OSX )
 static void restoreAppWindowFocus(){
+
 	cout << "restoreAppWindowFocus "<< endl;
 //	NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
 //	if(appWindow) {
@@ -76,7 +76,6 @@ static void restoreAppWindowFocus(){
 //	}
 //	[[NSApp mainWindow] makeKeyAndOrderFront:nil];
 	[[NSApp mainWindow] makeKeyWindow];
-
 }
 #endif
 
@@ -258,6 +257,8 @@ void resetLocale(std::locale locale){
 #include <emscripten/emscripten.h>
 #endif
 
+using namespace std;
+
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
 	filePath = "";
@@ -295,7 +296,7 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#ifdef TARGET_OSX
 		@autoreleasepool {
-			NSAlert* alertDialog = [[[NSAlert alloc] init] autorelease];
+			NSAlert* alertDialog = [[NSAlert alloc] init];
 			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
 			//beginSheetModal beginSheetAsync
 
@@ -425,7 +426,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		[context makeCurrentContext];
 		restoreAppWindowFocus();
 
-		if(buttonClicked == NSFileHandlingPanelOKButton) {
+		if(buttonClicked == NSModalResponseOK) {
 			NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
 			results.filePath = string([[selectedFileURL path] UTF8String]);
 		}
@@ -575,7 +576,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 		restoreAppWindowFocus();
 		[context makeCurrentContext];
 
-		if(buttonClicked == NSFileHandlingPanelOKButton){
+		if(buttonClicked == NSModalResponseOK){
 			results.filePath = string([[[saveDialog URL] path] UTF8String]);
 		}
 	}
@@ -673,29 +674,18 @@ string ofSystemTextBoxDialog(string question, string text){
 #ifdef TARGET_OSX
 	@autoreleasepool {
 		// create alert dialog
-
-		NSAlert *alert = [NSAlert alertWithMessageText: [NSString stringWithCString:question.c_str() encoding:NSUTF8StringEncoding]
-										 defaultButton:@"OK"
-									   alternateButton:@"Cancel"
-										   otherButton:nil
-							 informativeTextWithFormat:@"%@", @""
-		];
-		[alert setAlertStyle:NSInformationalAlertStyle];
-		
-		
-//		NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-//		[alert addButtonWithTitle:@"OK"];
-//		[alert addButtonWithTitle:@"Cancel"];
-//		[alert setMessageText:[NSString stringWithCString:question.c_str()
-//												 encoding:NSUTF8StringEncoding]];
-//		// create text field
-		NSTextField* input = [[[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))] autorelease];
-		[input setStringValue:[NSString stringWithCString:text.c_str()
+		NSAlert *alert = [[NSAlert alloc] init];
+		[alert addButtonWithTitle:@"OK"];
+		[alert addButtonWithTitle:@"Cancel"];
+		[alert setMessageText:[NSString stringWithCString:question.c_str()
 												 encoding:NSUTF8StringEncoding]];
-		[alert setAccessoryView: input];
-//		// add text field to alert dialog
-//		[[alert window] setInitialFirstResponder: input];
-//		[[alert window] makeFirstResponder:label];
+		// create text field
+		NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
+		[label setStringValue:[NSString stringWithCString:text.c_str()
+												 encoding:NSUTF8StringEncoding]];
+		// add text field to alert dialog
+		[alert setAccessoryView:label];
+		[[alert window] setInitialFirstResponder: label];
 
 		NSInteger returnCode = [alert runModal];
 //		NSInteger returnCode = [alert runModalSheet];

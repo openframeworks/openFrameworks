@@ -329,8 +329,8 @@ void ofTexture::allocate(const ofPixels& pix){
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtention){
-	allocate(pix.getWidth(), pix.getHeight(), ofGetGLInternalFormat(pix), bUseARBExtention, ofGetGLFormat(pix), ofGetGLType(pix));
+void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtension){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGLInternalFormat(pix), bUseARBExtension, ofGetGLFormat(pix), ofGetGLType(pix));
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
@@ -347,8 +347,8 @@ void ofTexture::allocate(const ofShortPixels& pix){
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtention){
-	allocate(pix.getWidth(), pix.getHeight(), ofGetGLInternalFormat(pix), bUseARBExtention, ofGetGLFormat(pix), ofGetGLType(pix));
+void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtension){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGLInternalFormat(pix), bUseARBExtension, ofGetGLFormat(pix), ofGetGLType(pix));
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}
@@ -366,8 +366,8 @@ void ofTexture::allocate(const ofFloatPixels& pix){
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
-	allocate(pix.getWidth(), pix.getHeight(), ofGetGLInternalFormat(pix), bUseARBExtention, ofGetGLFormat(pix), ofGetGLType(pix));
+void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtension){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGLInternalFormat(pix), bUseARBExtension, ofGetGLFormat(pix), ofGetGLType(pix));
 	if((pix.getPixelFormat()==OF_PIXELS_GRAY || pix.getPixelFormat()==OF_PIXELS_GRAY_ALPHA) && ofIsGLProgrammableRenderer()){
 		setRGToRGBASwizzles(true);
 	}

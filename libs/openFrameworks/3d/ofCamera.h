@@ -47,11 +47,11 @@ public:
     /// offset from the center of its frustum. This is called an "assymetric
     /// frustum" and is used (for example) in stereo views.  It is acheived by
     /// applying an offset to the center of projection.  This function sets this
-    /// offset from an ofVec2f argument.  For more information see
+    /// offset from an glm::vec2 argument.  For more information see
     /// <http://www.orthostereo.com/geometryopengl.html>.
 	///
 	/// \param lensOffset The "lens offset" to apply to this camera, encoded in
-    ///     an ofVec2f.
+    ///     an glm::vec2.
 	void setLensOffset(const glm::vec2 & lensOffset);
 	
 	/// \brief Set the recommended aspect ratio for a perspective camera.
@@ -86,17 +86,17 @@ public:
 
     float getFarClip() const { return farClip; };
 	
-	/// \brief Get the "lens offset" applied to this camera, encoded as an ofVec2f.
+	/// \brief Get the "lens offset" applied to this camera, encoded as an glm::vec2.
 	/// 
 	/// Ordinarily, the camera is pointed straight down the center of its view
     /// frustum.  However, it is possible to orient the camera towards a
     /// location offset from the center of its frustum.  This is called an
     /// "asymetric frustum" and is used (for example) in stereo views.  It is
     /// acheived by applying an offset to the center of projection.  This
-    /// function returns the offset that has been applied, as an ofVec2f.  For
+    /// function returns the offset that has been applied, as an glm::vec2.  For
     /// more information see http://www.orthostereo.com/geometryopengl.html.
 	///
-	/// \returns The "lens offset" applied to this camera, encoded in an ofVec2f.
+	/// \returns The "lens offset" applied to this camera, encoded in an glm::vec2.
 	glm::vec2 getLensOffset() const { return lensOffset; };
 	
 	/// \brief Get the boolean state which indicates whether the aspect ratio of this camera is forced to a non-default setting.
@@ -187,14 +187,14 @@ public:
 	
     /// \brief Obtain the screen coordinates of a point in the 3D world.
 	///
-	/// Takes an (X,Y,Z) point in your 3D world, encoded as an ofVec3f, 
-	/// and returns the location (also as an ofVec3f) where this point would
+	/// Takes an (X,Y,Z) point in your 3D world, encoded as an glm::vec3,
+	/// and returns the location (also as an glm::vec3) where this point would
     /// appear on your (two-dimensional) display. The screen position's "Z
     /// coordinate" is set to be the same as your camera's.
 	///
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
-	/// \returns An ofVec3f containing the screen coordinates of your 3D point of interest. 
+	/// \returns An glm::vec3 containing the screen coordinates of your 3D point of interest.
 	glm::vec3 worldToScreen(glm::vec3 WorldXYZ, const ofRectangle & viewport) const;
 	glm::vec3 worldToScreen(glm::vec3 WorldXYZ) const{
 		return worldToScreen(WorldXYZ, getViewport());
@@ -202,8 +202,8 @@ public:
 	
 	/// \brief Obtain the coordinates, in the 3D world, of a 2D point presumed to be on your screen.
 	///
-	/// Takes a pixel location on your screen, encoded in an ofVec3f, 
-	/// and returns (also as an ofVec3f) the 3D world coordinates of that point.
+	/// Takes a pixel location on your screen, encoded in an glm::vec3,
+	/// and returns (also as an glm::vec3) the 3D world coordinates of that point.
 	/// You'll also need to specify a Z value when providing your screen point. 
 	/// This Z value is interpreted as a distance into or away from the screen. 
 	///

@@ -137,6 +137,8 @@ PLATFORM_REQUIRED_ADDONS =
 ifeq ($(CXX),g++)
 	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
 	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+	GCC_MAJOR_GTEQ_6 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 6)
+	GCC_MAJOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 8)
 	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
@@ -156,6 +158,10 @@ ifeq ($(CXX),g++)
 	ifeq ("$(GCC_MAJOR_GT_4)","1")
 		PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
 		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+	endif
+	# c++17 for gcc 6 and newer
+	ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
+		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
 	endif
 else
 	ifeq ($(CXX),g++-5)
@@ -188,7 +194,12 @@ endif
 
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
-
+# gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
+ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
+	ifeq ("$(GCC_MAJOR_GTEQ_9)","0")
+		PLATFORM_LDFLAGS += -lstdc++fs
+	endif
+endif
 
 
 ################################################################################

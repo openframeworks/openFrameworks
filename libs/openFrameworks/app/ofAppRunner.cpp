@@ -10,14 +10,7 @@
 
 #include "ofImage.h"
 #include "ofUtils.h"
-#include "ofEvents.h"
-#include "ofMath.h"
-#include "ofGraphics.h"
-#include "ofGLRenderer.h"
-#include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
-
-#include "ofURLFileLoader.h"
 
 #include "ofMainLoop.h"
 
@@ -127,18 +120,19 @@ void ofInit(){
 	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
-        of::priv::initutils();
+    of::priv::initutils();
+    of::priv::initfileutils();
 
-	#ifdef WIN32_HIGH_RES_TIMING
-		timeBeginPeriod(1);		// ! experimental, sets high res time
-								// you need to call timeEndPeriod.
-								// if you quit the app other than "esc"
-								// (ie, close the console, kill the process, etc)
-								// at exit wont get called, and the time will
-								// remain high res, that could mess things
-								// up on your system.
-								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
-	#endif
+#ifdef WIN32_HIGH_RES_TIMING
+    timeBeginPeriod(1);		// ! experimental, sets high res time
+                            // you need to call timeEndPeriod.
+                            // if you quit the app other than "esc"
+                            // (ie, close the console, kill the process, etc)
+                            // at exit wont get called, and the time will
+                            // remain high res, that could mess things
+                            // up on your system.
+                            // info here:http://www.geisswerks.com/ryan/FAQS/timing.html
+#endif
 
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
@@ -173,7 +167,7 @@ void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
 
 //--------------------------------------
 int ofRunApp(ofBaseApp * OFSA){
-	mainLoop()->run(std::move(shared_ptr<ofBaseApp>(OFSA)));
+	mainLoop()->run(shared_ptr<ofBaseApp>(OFSA));
 	auto ret = ofRunMainLoop();
 #if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
 	ofExitCallback();
@@ -192,7 +186,7 @@ int ofRunApp(shared_ptr<ofBaseApp> && app){
 }
 
 //--------------------------------------
-void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+void ofRunApp(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
 	mainLoop()->run(window, std::move(app));
 }
 

@@ -1078,19 +1078,10 @@
 			<string>C01FCF4E08A954540054247B</string>
 			<key>compatibilityVersion</key>
 			<string>Xcode 3.2</string>
-			<key>developmentRegion</key>
-			<string>English</string>
 			<key>hasScannedForEncodings</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>English</string>
-				<string>Japanese</string>
-				<string>French</string>
-				<string>German</string>
-			</array>
 			<key>mainGroup</key>
 			<string>29B97314FDCFA39411CA2CEA</string>
 			<key>projectDirPath</key>
@@ -2858,8 +2849,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_NON_VIRTUAL_DESTRUCTOR</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<array>
 					<string>$(inherited)</string>
@@ -2902,8 +2891,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_NON_VIRTUAL_DESTRUCTOR</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<array>
 					<string>$(inherited)</string>
@@ -3070,8 +3057,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_UNUSED_FUNCTION</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>OBJROOT</key>
 				<string>$(SRCROOT)/../../lib/ios/build/debug</string>
 				<key>ONLY_ACTIVE_ARCH</key>
@@ -3089,6 +3074,8 @@
 					<string>-Wno-non-virtual-dtor</string>
 					<string>-Wno-overloaded-virtual</string>
 				</array>
+				<key>ENABLE_TESTABILITY</key>
+ 				<string>YES</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -3149,8 +3136,6 @@
 				<string>YES</string>
 				<key>GCC_WARN_UNUSED_FUNCTION</key>
 				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>8.0</string>
 				<key>OBJROOT</key>
 				<string>$(SRCROOT)/../../lib/ios/build/release</string>
 				<key>ONLY_ACTIVE_ARCH</key>
