@@ -72,10 +72,8 @@ void ofxXmlSettings::clear(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::loadFile(const string& xmlFile){
-
+bool ofxXmlSettings::load(const string& xmlFile){
 	string fullXmlFile = ofToDataPath(xmlFile);
-
 	bool loadOkay = doc.LoadFile(fullXmlFile);
 
 	//theo removed bool check as it would
@@ -90,25 +88,24 @@ bool ofxXmlSettings::loadFile(const string& xmlFile){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::saveFile(const string& xmlFile){
-
+bool ofxXmlSettings::save(const string& xmlFile){
 	string fullXmlFile = ofToDataPath(xmlFile);
 	return doc.SaveFile(fullXmlFile);
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::saveFile(){
+bool ofxXmlSettings::save(){
 	return doc.SaveFile();
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::load(const string & path){
-	return loadFile(path);
+bool ofxXmlSettings::loadFile(const string & path){
+	return load(path);
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::save(const string & path){
-	return saveFile(path);
+bool ofxXmlSettings::saveFile(const string & path){
+	return save(path);
 }
 
 //---------------------------------------------------------
