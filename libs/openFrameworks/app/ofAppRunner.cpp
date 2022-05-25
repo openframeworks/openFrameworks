@@ -10,14 +10,7 @@
 
 #include "ofImage.h"
 #include "ofUtils.h"
-#include "ofEvents.h"
-#include "ofMath.h"
-#include "ofGraphics.h"
-#include "ofGLRenderer.h"
-#include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
-
-#include "ofURLFileLoader.h"
 
 #include "ofMainLoop.h"
 
@@ -193,7 +186,7 @@ int ofRunApp(shared_ptr<ofBaseApp> && app){
 }
 
 //--------------------------------------
-void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+void ofRunApp(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
 	mainLoop()->run(window, std::move(app));
 }
 
