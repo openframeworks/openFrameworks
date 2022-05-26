@@ -139,7 +139,7 @@ void ofMainLoop::loopOnce(){
 	if(bShouldClose) return;
 	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
-			auto window = i->first;
+			const auto & window = i->first;
 			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 			window->close();
 		}else{
