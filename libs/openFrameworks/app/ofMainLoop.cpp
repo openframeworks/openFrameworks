@@ -70,7 +70,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 	return window;
 }
 
-void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+void ofMainLoop::run(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
 	windowsApps[window] = app;
 	if(app){
 		ofAddListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
@@ -139,7 +139,7 @@ void ofMainLoop::loopOnce(){
 	if(bShouldClose) return;
 	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
-			auto window = i->first;
+			const auto & window = i->first;
 			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 			window->close();
 		}else{
@@ -228,7 +228,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
 	return currentWindow.lock();
 }
 
-void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
+void ofMainLoop::setCurrentWindow(const shared_ptr<ofAppBaseWindow> & window){
 	currentWindow = window;
 }
 

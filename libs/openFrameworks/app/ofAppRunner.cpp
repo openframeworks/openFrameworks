@@ -9,15 +9,7 @@
 #endif
 
 #include "ofImage.h"
-#include "ofUtils.h"
-#include "ofEvents.h"
-#include "ofMath.h"
-#include "ofGraphics.h"
-#include "ofGLRenderer.h"
-#include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
-
-#include "ofURLFileLoader.h"
 
 #include "ofMainLoop.h"
 
@@ -168,7 +160,7 @@ shared_ptr<ofMainLoop> ofGetMainLoop(){
 }
 
 //--------------------------------------
-void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
+void ofSetMainLoop(const shared_ptr<ofMainLoop> & newMainLoop) {
 	mainLoop() = newMainLoop;
 }
 

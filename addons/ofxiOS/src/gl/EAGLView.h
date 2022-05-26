@@ -47,9 +47,6 @@
 // Note that setting the view non-opaque will only work if the EAGL surface has an alpha channel.
 @interface EAGLView : UIView
 {
-@public
-    id<EAGLViewDelegate> delegate;
-    
 @protected
     id <ESRenderer> renderer;
     CGFloat scaleFactor;
@@ -74,19 +71,19 @@
     NSLock * glLock;
 }
 
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, weak) id<EAGLViewDelegate> delegate;
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;
-@property (nonatomic) float animationFrameInterval;
-@property (nonatomic) float animationFrameRate;
+@property (nonatomic, assign) float animationFrameInterval;
+@property (nonatomic, assign) float animationFrameRate;
 
-- (id)initWithFrame:(CGRect)frame
-andPreferedRenderer:(ESRendererVersion)rendererVersion
-           andDepth:(bool)depth
-              andAA:(bool)msaaEnabled
-      andNumSamples:(int)samples
-          andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale
-     sharegroup:(EAGLSharegroup*)sharegroup;
+- (instancetype)initWithFrame:(CGRect)frame
+          andPreferedRenderer:(ESRendererVersion)rendererVersion
+                     andDepth:(bool)depth
+                        andAA:(bool)msaaEnabled
+                andNumSamples:(int)samples
+                    andRetina:(bool)retinaEnabled
+               andRetinaScale:(CGFloat)retinaScale
+                   sharegroup:(EAGLSharegroup*)sharegroup;
 
 - (void)startAnimation;
 - (void)stopAnimation;

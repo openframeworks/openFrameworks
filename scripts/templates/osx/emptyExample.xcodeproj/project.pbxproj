@@ -37,8 +37,11 @@
 			<string>0</string>
 			<key>shellPath</key>
 			<string>/bin/sh</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
 			<key>shellScript</key>
-			<string>echo "$GCC_PREPROCESSOR_DEFINITIONS";
+			<string>echo "\033[32;1;4m3 - Code Sign\033[0m"
+#echo "$GCC_PREPROCESSOR_DEFINITIONS";
 APPSTORE=`expr "$GCC_PREPROCESSOR_DEFINITIONS" : ".*APPSTORE=\([0-9]*\)"`
 if [ -z "$APPSTORE" ] ; then
 echo "Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution";
@@ -221,10 +224,6 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>ICON</key>
-				<string>$(ICON_NAME_RELEASE)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -278,8 +277,11 @@ fi
 			<string>0</string>
 			<key>shellPath</key>
 			<string>/bin/sh</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
 			<key>shellScript</key>
-			<string>xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj" -target openFrameworks -configuration "${CONFIGURATION}"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET</string>
+			<string>echo "\033[32;1;4m1 - Compiling Openframeworks\033[0m"
+xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj" -target openFrameworks -configuration "${CONFIGURATION}"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET</string>
 		</dict>
 		<key>E42962AA2163EDD300A6A9E2</key>
 		<dict>
@@ -3200,10 +3202,6 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>ICON</key>
-				<string>$(ICON_NAME_DEBUG)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -3251,10 +3249,6 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>ICON</key>
-				<string>$(ICON_NAME_RELEASE)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -3384,16 +3378,17 @@ fi
 			<string>0</string>
 			<key>shellPath</key>
 			<string>/bin/sh</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
 			<key>shellScript</key>
-			<string>mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
+			<string>echo "\033[32;1;4m2 - Copying Resources\033[0m"
+mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy default icon file into App/Resources
 rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy libfmod and change install directory for fmod to run
 rsync -aved "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 # Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage 
 # install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
-
-echo "$GCC_PREPROCESSOR_DEFINITIONS";
 </string>
 		</dict>
 		<key>E4C2427710CC5ABF004149E2</key>
