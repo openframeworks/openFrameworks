@@ -39,7 +39,7 @@ public:
 	void exit();
 	void shouldClose(int status);
 	std::shared_ptr<ofAppBaseWindow> getCurrentWindow();
-	void setCurrentWindow(std::shared_ptr<ofAppBaseWindow> window);
+	void setCurrentWindow(const std::shared_ptr<ofAppBaseWindow> & window);
 	void setCurrentWindow(ofAppBaseWindow * window);
 	std::shared_ptr<ofBaseApp> getCurrentApp();
 	void setEscapeQuitsLoop(bool quits);
