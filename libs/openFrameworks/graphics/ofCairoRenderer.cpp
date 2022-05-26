@@ -3,6 +3,7 @@
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "ofTrueTypeFont.h"
+#include "ofGraphics.h"
 #include "ofGraphicsCairo.h"
 #include "ofVideoBaseTypes.h"
 #include "cairo-features.h"
