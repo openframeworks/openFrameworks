@@ -9,9 +9,8 @@
 #endif
 
 #include "ofImage.h"
-#include "ofGLRenderer.h"
-#include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
+
 #include "ofMainLoop.h"
 
 using namespace std;
@@ -186,7 +185,7 @@ int ofRunApp(shared_ptr<ofBaseApp> && app){
 }
 
 //--------------------------------------
-void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> && app){
+void ofRunApp(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
 	mainLoop()->run(window, std::move(app));
 }
 

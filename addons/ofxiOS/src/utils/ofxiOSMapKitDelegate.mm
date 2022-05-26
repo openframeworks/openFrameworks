@@ -38,7 +38,7 @@
 
 @implementation ofxiOSMapKitDelegate
 
--(id)initWithMapKit:(ofxiOSMapKit*)mk {
+-(instancetype)initWithMapKit:(ofxiOSMapKit*)mk {
 	if(self = [super init]) {
 		mapKit = mk;
 		ofLogVerbose("ofxiOSMapKitDelegate") << "initWithMapKit";
@@ -48,7 +48,6 @@
 
 -(void)dealloc {
 	ofLogVerbose("ofxiOSMapKitDelegate") << "dealloc";
-	[super dealloc];
 }
 
 
