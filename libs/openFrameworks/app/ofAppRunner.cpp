@@ -9,7 +9,6 @@
 #endif
 
 #include "ofImage.h"
-#include "ofUtils.h"
 #include "ofTrueTypeFont.h"
 
 #include "ofMainLoop.h"
@@ -161,7 +160,7 @@ shared_ptr<ofMainLoop> ofGetMainLoop(){
 }
 
 //--------------------------------------
-void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
+void ofSetMainLoop(const shared_ptr<ofMainLoop> & newMainLoop) {
 	mainLoop() = newMainLoop;
 }
 
