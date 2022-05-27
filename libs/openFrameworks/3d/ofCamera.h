@@ -1,9 +1,6 @@
 #pragma once
 
-
 #include "ofNode.h"
-// FIXME: remove comments
-// #include "ofRectangle.h"
 
 class ofRectangle;
 
