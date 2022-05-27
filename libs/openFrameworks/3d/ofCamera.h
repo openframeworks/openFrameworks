@@ -2,7 +2,8 @@
 
 
 #include "ofNode.h"
-#include "ofRectangle.h"
+// FIXME: remove comments
+// #include "ofRectangle.h"
 
 class ofRectangle;
 
