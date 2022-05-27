@@ -13,9 +13,10 @@
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
 
-const string ofGLRenderer::TYPE="GL";
+const std::string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
@@ -101,7 +102,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					glTexCoordPointer(2, GL_FLOAT, sizeof(glm::vec2), &vertexData.getTexCoordsPointer()->x);
 			}else{
-				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				std::set<int>::iterator textureLocation = textureLocationsEnabled.begin();
 				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
 					glActiveTexture(GL_TEXTURE0+*textureLocation);
 					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
@@ -1504,7 +1505,7 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(string textString, float x, float y, float z) const{
+void ofGLRenderer::drawString(std::string textString, float x, float y, float z) const{
 
 	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	float sx = 0;
@@ -1680,7 +1681,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+void ofGLRenderer::drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const{
 	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	bool blendEnabled = glIsEnabled(GL_BLEND);
 	GLint blend_src, blend_dst;

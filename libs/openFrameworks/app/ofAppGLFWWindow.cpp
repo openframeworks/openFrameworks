@@ -38,7 +38,7 @@
     #include <GLFW/glfw3native.h>
 #endif
 
-using namespace std;
+using std::shared_ptr;
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
@@ -549,7 +549,7 @@ void ofAppGLFWWindow::setWindowShouldClose(){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowTitle(string title){
+void ofAppGLFWWindow::setWindowTitle(std::string title){
 	settings.title = title;
 	glfwSetWindowTitle(windowP,settings.title.c_str());
 }
@@ -1626,12 +1626,12 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setClipboardString(const string& text) {
+void ofAppGLFWWindow::setClipboardString(const std::string& text) {
 	glfwSetClipboardString(ofAppGLFWWindow::windowP, text.c_str());
 }
 
 //------------------------------------------------------------
-string ofAppGLFWWindow::getClipboardString() {
+std::string ofAppGLFWWindow::getClipboardString() {
 	const char* clipboard = glfwGetClipboardString(ofAppGLFWWindow::windowP);
 
 	if (clipboard) {

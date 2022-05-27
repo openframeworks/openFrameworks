@@ -16,6 +16,8 @@
 struct termios orig_termios;
 struct sigaction act_open;
 
+using std::shared_ptr;
+
 void reset_terminal_mode()
 {
     tcsetattr(0, TCSANOW, &orig_termios);
@@ -62,8 +64,6 @@ int getch()
 }
 
 #endif
-
-using namespace std;
 
 class ofNoopRenderer: public ofBaseRenderer{
 public:
@@ -212,7 +212,7 @@ private:
 };
 
 
-const string ofNoopRenderer::TYPE="NOOP";
+const std::string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow()
@@ -249,7 +249,7 @@ void ofAppNoWindow::update(){
 		}
 		else if ( key == /* ctrl-c */ 3 )
 		{
-			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
+			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << std::endl;
 			break;
 		}
 		else

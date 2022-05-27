@@ -3,8 +3,6 @@
 #include "ofAppBaseWindow.h"
 #include "ofLog.h"
 
-using namespace std;
-
 static ofEventArgs voidEventArgs;
 
 

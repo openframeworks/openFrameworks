@@ -31,8 +31,6 @@
 	#include "ofAppGLFWWindow.h"
 #endif
 
-//using namespace std;
-
 ofMainLoop::ofMainLoop()
 :bShouldClose(false)
 ,status(0)

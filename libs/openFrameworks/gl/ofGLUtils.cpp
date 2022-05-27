@@ -11,7 +11,9 @@
 #include "ofLog.h"
 #include "ofGraphicsConstants.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //---------------------------------
 // deprecations
@@ -878,7 +880,7 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 #ifndef TARGET_OPENGLES
 namespace{
 	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
-		ostringstream oss;
+		std::ostringstream oss;
 		oss << "GL Debug: ";
 
 		ofLogLevel level;
