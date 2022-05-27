@@ -13,7 +13,7 @@
 
 #include "ofMainLoop.h"
 
-using namespace std;
+using std::shared_ptr;
 
 #if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
 	#include "ofAppGLFWWindow.h"
@@ -429,7 +429,7 @@ ofRectangle	ofGetWindowRect() {
 }
 
 //--------------------------------------
-void ofSetWindowTitle(string title){
+void ofSetWindowTitle(std::string title){
 	mainLoop()->getCurrentWindow()->setWindowTitle(title);
 }
 
