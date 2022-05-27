@@ -8,8 +8,8 @@
 
 #pragma once
 
-
-#include "ofConstants.h"
+// FIXME: remove comments
+// #include "ofConstants.h"
 #include "of3dPrimitives.h"
 
 
