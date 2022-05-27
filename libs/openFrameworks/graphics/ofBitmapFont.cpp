@@ -333,8 +333,6 @@ ofPixels ofBitmapFont::pixels;
 using std::numeric_limits;
 using std::string;
 
-
-
 void ofBitmapFont::init(){
 	if(pixels.isAllocated()) return;
 	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
