@@ -20,7 +20,7 @@
 #include <mpg123.h>
 #endif
 
-using namespace std;
+// using namespace std;
 
 static ALCdevice * alDevice = nullptr;
 static ALCcontext * alContext = nullptr;

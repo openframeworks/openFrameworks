@@ -3,7 +3,7 @@
 
 #include "ofQTKitPlayer.h"
 
-using namespace std;
+// using namespace std;
 
 //--------------------------------------------------------------------
 ofQTKitPlayer::ofQTKitPlayer() {

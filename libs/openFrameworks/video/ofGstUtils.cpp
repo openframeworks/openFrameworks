@@ -27,7 +27,7 @@
 #include <winbase.h>	// to use SetEnvironmentVariableA
 #endif
 
-using namespace std;
+// using namespace std;
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
