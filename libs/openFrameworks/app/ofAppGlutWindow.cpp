@@ -99,7 +99,7 @@ void HandleFiles(WPARAM wParam)
 		while( *s != L'\0' ) {
 			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
 		}
-		info.files.push_back(string(stm.str()));
+		info.files.push_back(std::string(stm.str()));
 
 			//toUTF8(udispName, dispName);
 
@@ -778,7 +778,7 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 	info.position.y = instance->getHeight()-dragY;
 
 	for (int i = 0; i < howManyFiles; i++){
-		string temp = std::string(names[i]);
+		std::string temp = std::string(names[i]);
 		info.files.push_back(temp);
 	}
 
