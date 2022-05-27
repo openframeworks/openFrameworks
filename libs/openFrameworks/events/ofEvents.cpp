@@ -616,7 +616,7 @@ bool ofSendMessage(ofMessage msg){
 }
 
 //------------------------------------------
-bool ofSendMessage(string messageString){
+bool ofSendMessage(std::string messageString){
 	ofMessage msg(messageString);
 	return ofSendMessage(msg);
 }
