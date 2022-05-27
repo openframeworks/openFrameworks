@@ -15,6 +15,8 @@
 
 using std::shared_ptr;
 using std::vector;
+using std::swap;
+using std::string;
 
 const std::string ofGLRenderer::TYPE="GL";
 
@@ -154,7 +156,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					glTexCoordPointer(2, GL_FLOAT, sizeof(typename ofMesh::TexCoordType), &vertexData.getTexCoordsPointer()->x);
 			}else{
-				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				std::set<int>::iterator textureLocation = textureLocationsEnabled.begin();
 				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
 					glActiveTexture(GL_TEXTURE0+*textureLocation);
 					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
@@ -1956,8 +1958,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		pixels.mirror(false,true);
 		break;
 	case OF_ORIENTATION_90_RIGHT:
-		swap(w,h);
-		swap(x,y);
+		std::swap(w,h);
+		std::swap(x,y);
 		if(!isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;
@@ -1971,8 +1973,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		pixels.mirror(true,true);
 		break;
 	case OF_ORIENTATION_90_LEFT:
-		swap(w, h);
-		swap(x, y);
+		std::swap(w, h);
+		std::swap(x, y);
 		if(isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;

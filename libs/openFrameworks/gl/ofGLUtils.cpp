@@ -799,7 +799,7 @@ vector<string> ofGLSupportedExtensions(){
 bool ofGLCheckExtension(string searchName){
 #if defined( TARGET_OPENGLES )
 	vector<string> extensionsList = ofGLSupportedExtensions();
-	set<string> extensionsSet;
+	std::set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 	return extensionsSet.find(searchName)!=extensionsSet.end();
 #else
@@ -815,7 +815,7 @@ bool ofGLSupportsNPOTTextures(){
 	static bool npotSupported = false;
 	if(!npotChecked){
 		vector<string> extensionsList = ofGLSupportedExtensions();
-		set<string> extensionsSet;
+		std::set<string> extensionsSet;
 		extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 
 		npotSupported = extensionsSet.find("GL_OES_texture_npot")!=extensionsSet.end() ||

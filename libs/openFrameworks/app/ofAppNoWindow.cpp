@@ -17,9 +17,6 @@ struct termios orig_termios;
 struct sigaction act_open;
 
 using std::shared_ptr;
-using std::set;
-using std::swap;
-using std::string;
 
 void reset_terminal_mode()
 {

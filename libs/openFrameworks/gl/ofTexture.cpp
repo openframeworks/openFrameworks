@@ -18,6 +18,7 @@ static bool	bUsingArbTex		= true;
 static bool bUsingNormalizedTexCoords = false;
 static bool bUseCustomMinMagFilters = false;
 
+using std::set;
 
 //---------------------------------
 void ofEnableTextureEdgeHack(){
