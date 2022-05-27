@@ -15,7 +15,6 @@
 
 using std::shared_ptr;
 using std::vector;
-using std::swap;
 using std::string;
 
 const std::string ofGLRenderer::TYPE="GL";

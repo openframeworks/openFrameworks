@@ -38,6 +38,7 @@
     #include <GLFW/glfw3native.h>
 #endif
 
+using std::vector;
 using std::shared_ptr;
 using std::numeric_limits;
 
