@@ -253,6 +253,8 @@ void resetLocale(std::locale locale){
 #include <emscripten/emscripten.h>
 #endif
 
+using namespace std;
+
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
 	filePath = "";
