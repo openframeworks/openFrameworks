@@ -16,8 +16,6 @@
 struct termios orig_termios;
 struct sigaction act_open;
 
-using std::shared_ptr;
-
 void reset_terminal_mode()
 {
     tcsetattr(0, TCSANOW, &orig_termios);
@@ -313,7 +311,7 @@ ofCoreEvents & ofAppNoWindow::events(){
 	return *coreEvents;
 }
 
-shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
 	return currentRenderer;
 }
 
