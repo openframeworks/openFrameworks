@@ -1,8 +1,5 @@
 #pragma once
 
-// FIXME: remove comments
-// #include "ofConstants.h"
-// #include "ofFileUtils.h"
 #include "glm/fwd.hpp"
 
 /// \brief Draws x,y,z axes representing the current reference frame.
