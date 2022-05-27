@@ -1,10 +1,5 @@
 #include "ofCamera.h"
-// FIXME: remove comments soon
-// #include "ofLog.h"
-// #include "ofRectangle.h"
 #include "ofGraphics.h"
-// #include "ofAppRunner.h"
-// #include "ofGraphicsBaseTypes.h"
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "of3dGraphics.h"
