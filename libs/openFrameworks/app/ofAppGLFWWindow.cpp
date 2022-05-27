@@ -992,13 +992,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			for(int i = 0; i < monitorCount; i++){
 				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
 				glfwGetMonitorPos(monitors[i], &tempXPos, &tempYPos);
-				minX = min(tempXPos,minX);
-				minY = min(tempYPos,minY);
-				maxX = max(maxX,tempXPos + desktopMode->width);
-				maxY = max(maxY,tempYPos + desktopMode->height);
+				minX = std::min(tempXPos,minX);
+				minY = std::min(tempYPos,minY);
+				maxX = std::max(maxX,tempXPos + desktopMode->width);
+				maxY = std::max(maxY,tempYPos + desktopMode->height);
 
-				xpos = min(xpos,tempXPos);
-				ypos = min(ypos,tempYPos);
+				xpos = std::min(xpos,tempXPos);
+				ypos = std::min(ypos,tempYPos);
 			}
 
 			fullscreenW = maxX-minX;
