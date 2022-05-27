@@ -20,7 +20,7 @@ using namespace std;
 	//special case so we preserve supplied settngs
 	//TODO: remove me when we remove the ofAppGLFWWindow setters.
 	//--------------------------------------
-	void ofSetupOpenGL(shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode){
+	void ofSetupOpenGL(const shared_ptr<ofAppGLFWWindow> & windowPtr, int w, int h, ofWindowMode screenMode){
 		ofInit();
 		auto settings = windowPtr->getSettings();
 		settings.setSize(w,h);
