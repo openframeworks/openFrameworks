@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <iomanip>
 
-using namespace std;
+// using namespace std;
 
 #if (_MSC_VER)
 #undef min
