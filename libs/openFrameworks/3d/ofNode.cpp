@@ -1,9 +1,10 @@
 
 #include "ofNode.h"
-#include "ofMath.h"
-#include "ofLog.h"
+// FIXME: remove comments
+// #include "ofMath.h"
+// #include "ofLog.h"
 #include "of3dGraphics.h"
-#include "ofGraphicsBaseTypes.h"
+// #include "ofGraphicsBaseTypes.h"
 
 //----------------------------------------
 ofNode::ofNode()
