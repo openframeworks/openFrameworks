@@ -408,7 +408,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowIcon(const string & path){
+void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 	ofPixels iconPixels;
 	ofLoadImage(iconPixels,path);
 	setWindowIcon(iconPixels);
