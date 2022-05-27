@@ -4,7 +4,7 @@
 #include "ofPixels.h"
 #include "ofGLUtils.h"
 
-using namespace std;
+// using namespace std;
 
 ofBufferObject::Data::Data()
 :id(0)
