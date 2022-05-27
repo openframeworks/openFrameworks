@@ -39,6 +39,7 @@
 #endif
 
 using std::shared_ptr;
+using std::numeric_limits;
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
