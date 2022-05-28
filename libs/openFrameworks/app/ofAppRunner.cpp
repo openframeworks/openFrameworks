@@ -150,7 +150,7 @@ void ofInit(){
 
 #if defined(TARGET_WIN32) && !_MSC_VER //MSYS2 UTF-8 limited support
     setlocale(LC_ALL,"");
-    ofLogWarning("ofInit") << "MSYS2 has limited support for UTF-8. using "<< string( setlocale(LC_ALL,NULL) );
+    ofLogWarning("ofInit") << "MSYS2 has limited support for UTF-8. using "<< std::string( setlocale(LC_ALL,NULL) );
 #endif
 }
 

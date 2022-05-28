@@ -557,7 +557,7 @@ float ofSoundBuffer::getRMSAmplitudeChannel(std::size_t channel) const {
 void ofSoundBuffer::normalize(float level){
 	float maxAmplitude = 0;
 	for(std::size_t i = 0; i < size(); i++) {
-		maxAmplitude = std::max(maxAmplitude, abs(buffer[i]));
+		maxAmplitude = std::max(maxAmplitude, std::abs(buffer[i]));
 	}
 	float normalizationFactor = level/maxAmplitude;
 	for(std::size_t i = 0; i < size(); i++) {
