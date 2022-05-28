@@ -142,38 +142,15 @@ fi
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
-				<key>CONFIGURATION_BUILD_DIR</key>
-				<string>$(SRCROOT)/bin/</string>
+				<!-- AppStore -->
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
-				<key>DEAD_CODE_STRIPPING</key>
-				<string>YES</string>
-				<key>GCC_AUTO_VECTORIZATION</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SSE3_EXTENSIONS</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS</key>
-				<string>YES</string>
-				<key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
-				<string>NO</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
 				<string>3</string>
 				<key>GCC_PREPROCESSOR_DEFINITIONS[arch=*]</key>
 				<string>DISTRIBUTION=1</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
 				<key>GCC_UNROLL_LOOPS</key>
 				<string>YES</string>
-				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
-				<string>NO</string>
-				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VALUE</key>
-				<string>NO</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -181,18 +158,10 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.9</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>
-				<key>OTHER_CODE_SIGN_FLAGS</key>
-				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
 				</array>
-				<key>SDKROOT</key>
-				<string>macosx</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -205,18 +174,12 @@ fi
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
 				<array>
-                    <string>$(inherited)</string>
-                </array>
-				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-				<string>YES</string>
-				<key>GCC_MODEL_TUNING</key>
-				<string>NONE</string>
+					<string>$(inherited)</string>
+				</array>
 				<key>GCC_PREPROCESSOR_DEFINITIONS[arch=*]</key>
 				<string>APPSTORE=1</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -224,14 +187,10 @@ fi
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>INFOPLIST_FILE</key>
-				<string>openFrameworks-Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>/Applications</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<array>
-                    <string>$(inherited)</string>
-                </array>
+					<string>$(inherited)</string>
+				</array>
 				<key>OTHER_LDFLAGS</key>
 				<array>
 					<string>$(OF_CORE_LIBS)</string>
@@ -240,8 +199,6 @@ fi
 				</array>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>app</string>
 				<key>baseConfigurationReference</key>
 				<string>E4EB6923138AFD0F00A09F29</string>
 			</dict>
@@ -2978,36 +2935,13 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
+				<!-- Debug -->
 				<key>ENABLE_TESTABILITY</key>
 				<string>YES</string>
-				<key>CONFIGURATION_BUILD_DIR</key>
-				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>DEAD_CODE_STRIPPING</key>
-				<string>YES</string>
-				<key>GCC_AUTO_VECTORIZATION</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SSE3_EXTENSIONS</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS</key>
-				<string>YES</string>
-				<key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
 				<string>NO</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
 				<string>0</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
-				<string>NO</string>
-				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VALUE</key>
-				<string>NO</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -3015,18 +2949,10 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.9</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>
-				<key>OTHER_CODE_SIGN_FLAGS</key>
-				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
 				</array>
-				<key>SDKROOT</key>
-				<string>macosx</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -3039,55 +2965,22 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
-				<key>CONFIGURATION_BUILD_DIR</key>
-				<string>$(SRCROOT)/bin/</string>
+				<!-- Release -->
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
-				<key>DEAD_CODE_STRIPPING</key>
-				<string>YES</string>
-				<key>GCC_AUTO_VECTORIZATION</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SSE3_EXTENSIONS</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS</key>
-				<string>YES</string>
-				<key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
-				<string>NO</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
 				<string>3</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
 				<key>GCC_UNROLL_LOOPS</key>
 				<string>YES</string>
-				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
-				<string>NO</string>
-				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VALUE</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>NO</string>
 				<key>HEADER_SEARCH_PATHS</key>
 				<array>
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.9</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>				
-				<key>OTHER_CODE_SIGN_FLAGS</key>
-				<string>--deep</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
 				</array>
-				<key>SDKROOT</key>
-				<string>macosx</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -3114,8 +3007,8 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-                 <string>E4328149138ABC9F0047C5CB</string>
-             </array>
+				 <string>E4328149138ABC9F0047C5CB</string>
+			 </array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
@@ -3183,33 +3076,23 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>NO</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
 				<array>
-                    <string>$(inherited)</string>
-                </array>
+					<string>$(inherited)</string>
+				</array>
 				<key>GCC_DYNAMIC_NO_PIC</key>
 				<string>NO</string>
-				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-				<string>YES</string>
-				<key>GCC_MODEL_TUNING</key>
-				<string>NONE</string>
 				<key>HEADER_SEARCH_PATHS</key>
 				<array>
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>INFOPLIST_FILE</key>
-				<string>openFrameworks-Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>/Applications</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<array>
-                    <string>$(inherited)</string>
-                </array>
+					<string>$(inherited)</string>
+				</array>
 				<key>OTHER_LDFLAGS</key>
 				<array>
 					<string>$(OF_CORE_LIBS)</string>
@@ -3218,8 +3101,6 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 				</array>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)Debug</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>app</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -3232,31 +3113,21 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
 				<array>
-                    <string>$(inherited)</string>
-                </array>
-				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-				<string>YES</string>
-				<key>GCC_MODEL_TUNING</key>
-				<string>NONE</string>
+					<string>$(inherited)</string>
+				</array>
 				<key>HEADER_SEARCH_PATHS</key>
 				<array>
 					<string>$(OF_CORE_HEADERS)</string>
 					<string>src</string>
 				</array>
-				<key>INFOPLIST_FILE</key>
-				<string>openFrameworks-Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>/Applications</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<array>
-                    <string>$(inherited)</string>
-                </array>
+					<string>$(inherited)</string>
+				</array>
 				<key>OTHER_LDFLAGS</key>
 				<array>
 					<string>$(OF_CORE_LIBS)</string>
@@ -3265,8 +3136,6 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 				</array>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>app</string>
 				<key>baseConfigurationReference</key>
 				<string>E4EB6923138AFD0F00A09F29</string>
 			</dict>
