@@ -574,7 +574,7 @@ bool ofSoundBuffer::trimSilence(float threshold, bool trimStart, bool trimEnd) {
 	std::size_t lastNonSilence = buffer.size() - 1;
 	if(trimStart) {
 		for(std::size_t i = 0; i < buffer.size(); ++i) {
-			if(abs(buffer[i]) > threshold) {
+			if(std::abs(buffer[i]) > threshold) {
 				firstNonSilence = i;
 				break;
 			}
@@ -582,7 +582,7 @@ bool ofSoundBuffer::trimSilence(float threshold, bool trimStart, bool trimEnd) {
 	}
 	if(trimEnd) {
 		for(std::size_t i = lastNonSilence; i > firstNonSilence; --i) {
-			if(abs(buffer[i]) > threshold) {
+			if(std::abs(buffer[i]) > threshold) {
 				lastNonSilence = i;
 				break;
 			}

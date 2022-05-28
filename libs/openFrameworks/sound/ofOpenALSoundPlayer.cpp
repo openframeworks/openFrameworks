@@ -22,7 +22,7 @@
 
 static ALCdevice * alDevice = nullptr;
 static ALCcontext * alContext = nullptr;
-vector<float> ofOpenALSoundPlayer::window;
+std::vector<float> ofOpenALSoundPlayer::window;
 float ofOpenALSoundPlayer::windowSum = 0.f;
 
 
@@ -32,7 +32,7 @@ std::vector<float> ofOpenALSoundPlayer::systemBins;
 std::vector<kiss_fft_cpx> ofOpenALSoundPlayer::systemCx_out;
 
 static std::set<ofOpenALSoundPlayer*> & players(){
-	static set<ofOpenALSoundPlayer*> * players = new set<ofOpenALSoundPlayer*>;
+	static std::set<ofOpenALSoundPlayer*> * players = new std::set<ofOpenALSoundPlayer*>;
 	return *players;
 }
 
