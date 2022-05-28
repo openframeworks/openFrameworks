@@ -197,8 +197,6 @@ fi
 					<string>$(OF_CORE_FRAMEWORKS)</string>
 					<string>$(LIB_OF)</string>
 				</array>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
 				<key>baseConfigurationReference</key>
 				<string>E4EB6923138AFD0F00A09F29</string>
 			</dict>
@@ -3099,8 +3097,6 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 					<string>$(OF_CORE_FRAMEWORKS)</string>
 					<string>$(LIB_OF_DEBUG)</string>
 				</array>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)Debug</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -3134,8 +3130,6 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 					<string>$(OF_CORE_FRAMEWORKS)</string>
 					<string>$(LIB_OF)</string>
 				</array>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
 				<key>baseConfigurationReference</key>
 				<string>E4EB6923138AFD0F00A09F29</string>
 			</dict>
