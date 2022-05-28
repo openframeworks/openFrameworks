@@ -784,7 +784,7 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
-     text = emscripten_run_script_string((string("prompt('") + question + "','')").c_str());
+     text = emscripten_run_script_string((std::string("prompt('") + question + "','')").c_str());
 #endif
 	return text;
 }
