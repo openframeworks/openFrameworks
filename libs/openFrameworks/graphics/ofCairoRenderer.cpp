@@ -792,10 +792,10 @@ void ofCairoRenderer::translate(const glm::vec3 & p){
 
 //----------------------------------------------------------
 void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
-	// temporary fix for a issue where Cairo never recovers after setting scale = 0
-	// safe to remove once it is fixed 
-	if (xAmnt == 0 || yAmnt == 0) return;
 	if(!surface || !cr) return;
+	// temporary fix for a issue where Cairo never recovers after setting scale = 0
+	if (xAmnt == 0) xAmnt = std::numeric_limits<float>::epsilon();
+	if (yAmnt == 0) yAmnt = std::numeric_limits<float>::epsilon();
 	
 	cairo_matrix_t matrix;
 	cairo_get_matrix(cr,&matrix);
