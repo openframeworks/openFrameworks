@@ -870,7 +870,7 @@ void ofGstVideoUtils::update(){
 			bHavePixelsChanged = bBackPixelsChanged;
 			if (bHavePixelsChanged){
 				bBackPixelsChanged=false;
-				swap(pixels,backPixels);
+				std::swap(pixels,backPixels);
 				#ifdef OF_USE_GST_GL
 				if(backTexture.isAllocated()){
 					frontTexture.getTextureData() = backTexture.getTextureData();
