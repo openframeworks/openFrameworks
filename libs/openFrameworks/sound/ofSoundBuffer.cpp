@@ -11,7 +11,6 @@
 #include <limits>
 #include "glm/trigonometric.hpp"
 
-// using namespace std;
 using std::vector;
 using std::string;
 
