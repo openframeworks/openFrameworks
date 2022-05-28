@@ -14,7 +14,6 @@
 	#include <limits.h>        /* PATH_MAX */
 #endif
 
-// using namespace std::filesystem;
 // FIXME: better explicit declaration 
 using std::string;
 using std::vector;
@@ -22,7 +21,6 @@ using std::fstream;
 using std::istream;
 using std::ostream;
 using std::ios;
-using std::filebuf;
 
 namespace{
     bool enableDataPath = true;
@@ -635,7 +633,7 @@ bool ofFile::writeFromBuffer(const ofBuffer & buffer){
 }
 
 //------------------------------------------------------------------------------------------------------------
-filebuf *ofFile::getFileBuffer() const {
+std::filebuf *ofFile::getFileBuffer() const {
 	return rdbuf();
 }
 

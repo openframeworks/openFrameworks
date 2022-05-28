@@ -27,7 +27,6 @@
 #include <winbase.h>	// to use SetEnvironmentVariableA
 #endif
 
-// using namespace std;
 using std::shared_ptr;
 using std::string;
 

@@ -3,8 +3,6 @@
 
 #include "ofQTKitPlayer.h"
 
-// using namespace std;
-
 //--------------------------------------------------------------------
 ofQTKitPlayer::ofQTKitPlayer() {
 	moviePlayer = NULL;

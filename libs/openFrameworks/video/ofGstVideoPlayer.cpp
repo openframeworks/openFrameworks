@@ -12,8 +12,6 @@
 #include "ofConstants.h"
 #include "ofGstUtils.h"
 
-// using namespace std;
-
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
 	internalPixelFormat			= OF_PIXELS_RGB;
