@@ -59,6 +59,8 @@ extern "C" {
 #endif
 
 // using namespace std;
+using std::string;
+using std::vector;
 
 static void get_video_devices (ofGstCamData & cam_data)
 {
