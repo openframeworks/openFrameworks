@@ -55,3 +55,5 @@ class ofxSvg {
 		void setupShape(struct svgtiny_shape * shape, ofPath & path);
 
 };
+
+typedef ofxSvg ofxSVG;
