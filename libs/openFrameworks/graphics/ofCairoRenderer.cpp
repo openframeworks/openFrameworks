@@ -794,6 +794,10 @@ void ofCairoRenderer::translate(const glm::vec3 & p){
 //----------------------------------------------------------
 void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 	if(!surface || !cr) return;
+	// temporary fix for a issue where Cairo never recovers after setting scale = 0
+	if (xAmnt == 0) xAmnt = std::numeric_limits<float>::epsilon();
+	if (yAmnt == 0) yAmnt = std::numeric_limits<float>::epsilon();
+	
 	cairo_matrix_t matrix;
 	cairo_get_matrix(cr,&matrix);
 	cairo_matrix_scale(&matrix,xAmnt,yAmnt);
@@ -1146,6 +1150,11 @@ void ofCairoRenderer::setupGraphicDefaults(){
 	path.setMode(ofPath::COMMANDS);
 	path.setUseShapeColor(false);
 	clear();
+	
+	cairo_matrix_t matrix;
+	cairo_matrix_init_scale(&matrix, 1.0, 1.0);
+	cairo_matrix_init_translate(&matrix, 0.0, 0.0);
+	cairo_set_matrix(cr,&matrix);
 };
 
 //----------------------------------------------------------
