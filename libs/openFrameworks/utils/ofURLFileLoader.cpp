@@ -2,7 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 using std::move;
 using std::set;

@@ -2,7 +2,7 @@
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "glm/gtc/constants.hpp"
 #include "glm/common.hpp"
 #include "ofLog.h"

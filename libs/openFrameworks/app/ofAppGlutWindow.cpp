@@ -1,6 +1,6 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "ofPixels.h"
 #include "ofGLRenderer.h"
 

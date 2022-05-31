@@ -1,5 +1,5 @@
 #include "ofBufferObject.h"
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "ofPixels.h"
 #include "ofGLUtils.h"
