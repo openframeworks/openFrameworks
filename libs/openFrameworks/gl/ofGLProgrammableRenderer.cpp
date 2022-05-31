@@ -14,6 +14,10 @@
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
 
+#ifdef TARGET_OF_IOS
+#import "ofAppiOSWindow.h"
+#endif
+
 using namespace std;
 
 
@@ -2668,6 +2672,35 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 		return;
 	}
 	pixels.allocate(w, h, OF_PIXELS_RGBA);
+
+#ifdef TARGET_OF_IOS
+    if (ofAppiOSWindow::getInstance()->isAntiAliasingEnabled()) {
+        GLint wid;
+        GLint hei;
+        glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &wid);
+        glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &hei);
+        GLint def;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING_OES, &def);
+        
+        // init non-multisampled frame buffer
+        GLuint framebuffer = 0;
+        GLuint colorRenderbuffer = 0;
+        
+        glGenFramebuffersOES(1, &framebuffer);
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, framebuffer);
+        
+        glGenRenderbuffersOES(1, &colorRenderbuffer);
+        glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
+        glRenderbufferStorageOES(GL_RENDERBUFFER_OES, GL_RGBA8_OES, wid, hei);
+        glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, colorRenderbuffer);
+        
+        glBindFramebufferOES(GL_DRAW_FRAMEBUFFER_APPLE, framebuffer);
+        glBindFramebufferOES(GL_READ_FRAMEBUFFER_APPLE, def);
+        glResolveMultisampleFramebufferAPPLE();
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    }
+#endif
 
 	switch(matrixStack.getOrientation()){
 	case OF_ORIENTATION_UNKNOWN:
