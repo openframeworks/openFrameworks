@@ -3,7 +3,6 @@
 
 
 #include "ofMatrix4x4.h"
-//#include "ofConstants.h"
 
 #include <limits>
 #include <stdlib.h>

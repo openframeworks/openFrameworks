@@ -5,7 +5,6 @@
  *      Author: arturo
  */
 
-//#include "ofConstants.h"
 #include "ofMatrixStack.h"
 #include "ofAppBaseWindow.h"
 #include "glm/mat4x4.hpp"

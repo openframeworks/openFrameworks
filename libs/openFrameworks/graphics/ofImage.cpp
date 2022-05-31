@@ -1,5 +1,4 @@
 #include "ofImage.h"
-//#include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "FreeImage.h"
 

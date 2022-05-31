@@ -1,5 +1,4 @@
 #include "ofCairoRenderer.h"
-//#include "ofConstants.h"
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "ofTrueTypeFont.h"

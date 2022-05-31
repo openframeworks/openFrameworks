@@ -1,5 +1,4 @@
 #include "ofMaterial.h"
-//#include "ofConstants.h"
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
 
