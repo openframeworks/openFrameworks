@@ -5,7 +5,8 @@
 #include "ofGLUtils.h"
 #include "ofAppRunner.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
 
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){

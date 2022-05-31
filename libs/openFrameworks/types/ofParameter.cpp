@@ -1,6 +1,7 @@
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
-using namespace std;
+
+using std::string;
 
 string ofAbstractParameter::getEscapedName() const{
 	return escape(getName());
@@ -34,8 +35,8 @@ string ofAbstractParameter::type() const{
 	return typeid(*this).name();
 }
 
-vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
-	vector<string> hierarchy;
+std::vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
+	std::vector<string> hierarchy;
 	auto p = getFirstParent();
 	if(p){
 		hierarchy = p.getGroupHierarchyNames();
@@ -48,12 +49,12 @@ bool ofAbstractParameter::isReferenceTo(const ofAbstractParameter &other) const{
 	return getInternalObject() == other.getInternalObject();
 }
 
-ostream& operator<<(ostream& os, const ofAbstractParameter& p){
+std::ostream& operator<<(std::ostream& os, const ofAbstractParameter& p){
 	os << p.toString();
 	return os;
 }
 
-istream& operator>>(istream& is, ofAbstractParameter& p){
+std::istream& operator>>(std::istream& is, ofAbstractParameter& p){
 	string str;
 	is >> str;
 	p.fromString(str);
@@ -176,7 +177,7 @@ void ofParameter<void>::setSerializable(bool serializable){
 	obj->serializable = serializable;
 }
 
-shared_ptr<ofAbstractParameter> ofParameter<void>::newReference() const{
+std::shared_ptr<ofAbstractParameter> ofParameter<void>::newReference() const{
 	return std::make_shared<ofParameter<void>>(*this);
 }
 

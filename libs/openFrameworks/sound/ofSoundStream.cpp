@@ -24,7 +24,8 @@ namespace{
     ofSoundStream systemSoundStream;
 }
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
 
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
@@ -343,7 +344,7 @@ vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name,
 	vector<ofSoundDevice> hits;
 	
 	for(size_t i = 0; i < devs.size(); i++) {
-		bool nameMatch = devs[i].name.find(name) != string::npos;
+		bool nameMatch = devs[i].name.find(name) != std::string::npos;
 		bool inMatch = (inChannels == UINT_MAX) || (devs[i].inputChannels == inChannels);
 		bool outMatch = (outChannels == UINT_MAX) || (devs[i].outputChannels == outChannels);
 		

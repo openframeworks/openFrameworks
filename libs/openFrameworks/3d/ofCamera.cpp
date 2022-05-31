@@ -4,7 +4,7 @@
 #include "glm/gtc/quaternion.hpp"
 #include "of3dGraphics.h"
 
-using namespace std;
+using std::shared_ptr;
 
 //----------------------------------------
 ofCamera::ofCamera() :

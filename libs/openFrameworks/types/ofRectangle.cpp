@@ -3,8 +3,8 @@
 #include "ofLog.h"
 #include "ofVectorMath.h"
 
-using namespace std;
-
+using std::ostream;
+using std::istream;
 //----------------------------------------------------------
 ofRectangle::ofRectangle() : x(position.x), y(position.y) {
     set(0,0,0,0);

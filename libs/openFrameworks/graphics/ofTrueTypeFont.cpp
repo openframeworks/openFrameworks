@@ -18,7 +18,10 @@
 #include "ofGraphics.h"
 #include "utf8.h"
 
-using namespace std;
+using std::max;
+using std::vector;
+using std::string;
+using std::min;
 
 const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
@@ -243,7 +246,7 @@ static std::string osxFontPathByName(const std::string& fontname){
 #ifdef TARGET_WIN32
 #include <map>
 // font font face -> file name name mapping
-static map<std::string, std::string> fonts_table;
+static std::map<std::string, std::string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -320,7 +323,7 @@ static std::string winFontPathByName(const std::string& fontname ){
 	if(fonts_table.find(fontname)!=fonts_table.end()){
 		return fonts_table[fontname];
 	}
-	for(map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+	for(std::map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
 		if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
 	}
 	return "";
