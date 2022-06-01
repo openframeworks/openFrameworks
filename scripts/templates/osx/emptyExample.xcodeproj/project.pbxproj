@@ -2871,6 +2871,7 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 		<dict>
 			<key>children</key>
 			<array>
+				<string>191CD6FA2847E21E0085CBB6</string>
 				<string>E4B6FCAD0C3E899E008CF71C</string>
 				<string>E4EB6923138AFD0F00A09F29</string>
 				<string>E4B69E1C0A3A1BDC003C02F2</string>
@@ -3049,7 +3050,7 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>path</key>
-			<string>emptyExampleDebug.app</string>
+			<string>emptyExample.app</string>
 			<key>sourceTree</key>
 			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
@@ -3211,6 +3212,19 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>E4B69E1E0A3A1BDC003C02F2</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>191CD6FA2847E21E0085CBB6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.entitlements</string>
+			<key>path</key>
+			<string>of.entitlements</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>E4B6FCAD0C3E899E008CF71C</key>
 		<dict>

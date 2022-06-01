@@ -15,7 +15,7 @@ PRODUCT_NAME[config=Debug] = $(TARGET_NAME)Debug
 //PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.ofapp
 PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.$(TARGET_NAME)
 //PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = cc.openFrameworks.$(TARGET_NAME)Debug
-VERSION = 0.1.0
+VERSION = 1.0
 DEVELOPMENT_LANGUAGE = English
 CODE_SIGN_IDENTITY = -
 
