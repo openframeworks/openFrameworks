@@ -18,7 +18,10 @@
 #include "ofGraphics.h"
 #include "utf8.h"
 
-using namespace std;
+using std::max;
+using std::vector;
+using std::string;
+using std::min;
 
 const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
@@ -74,6 +77,12 @@ const ofUnicode::range ofUnicode::Uncategorized {0x00A9, 0x1F5FF};
 const ofUnicode::range ofUnicode::AdditionalEmoticons {0x1F600, 0x1F636};
 const ofUnicode::range ofUnicode::AdditionalTransportAndMap {0x1F681, 0x1F6C5};
 const ofUnicode::range ofUnicode::OtherAdditionalSymbols {0x1F30D, 0x1F567};
+const ofUnicode::range ofUnicode::UppercaseLatin {65, 90};
+const ofUnicode::range ofUnicode::LowercaseLatin {97, 122};
+const ofUnicode::range ofUnicode::Braces {123, 127};
+const ofUnicode::range ofUnicode::Numbers {48, 57};
+const ofUnicode::range ofUnicode::Symbols {33, 47};
+const ofUnicode::range ofUnicode::GenericSymbols {58, 64};
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 	ofUnicode::Space,
@@ -243,7 +252,7 @@ static std::string osxFontPathByName(const std::string& fontname){
 #ifdef TARGET_WIN32
 #include <map>
 // font font face -> file name name mapping
-static map<std::string, std::string> fonts_table;
+static std::map<std::string, std::string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -320,7 +329,7 @@ static std::string winFontPathByName(const std::string& fontname ){
 	if(fonts_table.find(fontname)!=fonts_table.end()){
 		return fonts_table[fontname];
 	}
-	for(map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+	for(std::map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
 		if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
 	}
 	return "";

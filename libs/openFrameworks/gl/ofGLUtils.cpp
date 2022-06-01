@@ -11,7 +11,9 @@
 #include "ofLog.h"
 #include "ofGraphicsConstants.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //---------------------------------
 // deprecations
@@ -797,7 +799,7 @@ vector<string> ofGLSupportedExtensions(){
 bool ofGLCheckExtension(string searchName){
 #if defined( TARGET_OPENGLES )
 	vector<string> extensionsList = ofGLSupportedExtensions();
-	set<string> extensionsSet;
+	std::set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 	return extensionsSet.find(searchName)!=extensionsSet.end();
 #else
@@ -813,7 +815,7 @@ bool ofGLSupportsNPOTTextures(){
 	static bool npotSupported = false;
 	if(!npotChecked){
 		vector<string> extensionsList = ofGLSupportedExtensions();
-		set<string> extensionsSet;
+		std::set<string> extensionsSet;
 		extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 
 		npotSupported = extensionsSet.find("GL_OES_texture_npot")!=extensionsSet.end() ||
@@ -878,7 +880,7 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 #ifndef TARGET_OPENGLES
 namespace{
 	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
-		ostringstream oss;
+		std::ostringstream oss;
 		oss << "GL Debug: ";
 
 		ofLogLevel level;
