@@ -2,8 +2,6 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-#include "ofConstants.h"
-
 using std::move;
 using std::set;
 using std::string;

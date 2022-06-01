@@ -1,13 +1,7 @@
 #include "ofAppGLFWWindow.h"
-#include "ofEvents.h"
 
-#include "ofBaseApp.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofAppRunner.h"
-#include "ofFileUtils.h"
-#include "ofEvents.h"
-#include "ofPixels.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
