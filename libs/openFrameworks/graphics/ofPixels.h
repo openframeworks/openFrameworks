@@ -458,7 +458,13 @@ public:
 
     /// \cond INTERNAL
 
-    struct ConstPixel: public std::iterator<std::forward_iterator_tag,ConstPixel>{
+    struct ConstPixel{
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = ConstPixel;
+		using difference_type = std::ptrdiff_t;
+		using pointer = ConstPixel*;
+		using reference = ConstPixel&;
+
         ConstPixel(const PixelType * pixel, size_t bytesPerPixel, ofPixelFormat pixelFormat);
         const ConstPixel& operator*() const;
         const ConstPixel* operator->() const;
@@ -480,7 +486,13 @@ public:
         ofPixelFormat pixelFormat;
     };
 
-	struct Pixel: public std::iterator<std::forward_iterator_tag,Pixel>{
+	struct Pixel{
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = Pixel;
+		using difference_type = std::ptrdiff_t;
+		using pointer = Pixel*;
+		using reference = Pixel&;
+
 		Pixel(PixelType * pixel, size_t bytesPerPixel, ofPixelFormat pixelFormat);
         const Pixel& operator*() const;
         const Pixel* operator->() const;
@@ -519,7 +531,13 @@ public:
 		ofPixelFormat pixelFormat;
 	};
 
-	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
+	struct Line{
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = Line;
+		using difference_type = std::ptrdiff_t;
+		using pointer = Line*;
+		using reference = Line&;
+
 		Line(PixelType * _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat);
         const Line& operator*() const;
         const Line* operator->() const;
@@ -583,7 +601,13 @@ public:
 		ofPixelFormat pixelFormat;
 	};
 
-	struct ConstLine: public std::iterator<std::forward_iterator_tag,Line>{
+	struct ConstLine{
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = Line;
+		using difference_type = std::ptrdiff_t;
+		using pointer = Line*;
+		using reference = Line&;
+
 		ConstLine(const PixelType * _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat);
 		const ConstLine& operator*() const;
 		const ConstLine* operator->() const;
