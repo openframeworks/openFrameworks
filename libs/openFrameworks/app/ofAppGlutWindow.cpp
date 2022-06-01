@@ -28,8 +28,6 @@
 	#include <GL/glx.h>
 #endif
 
-using namespace std;
-
 // glut works with static callbacks UGH, so we need static variables here:
 
 static ofWindowMode windowMode;
@@ -101,7 +99,7 @@ void HandleFiles(WPARAM wParam)
 		while( *s != L'\0' ) {
 			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
 		}
-		info.files.push_back(string(stm.str()));
+		info.files.push_back(std::string(stm.str()));
 
 			//toUTF8(udispName, dispName);
 
@@ -189,7 +187,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 // "rgba double samples>=4 depth" ( mac )
 // "rgb double depth alpha samples>=4" ( some pcs )
 //------------------------------------------------------------
- void ofAppGlutWindow::setGlutDisplayString(string displayStr){
+ void ofAppGlutWindow::setGlutDisplayString(std::string displayStr){
 	displayString = displayStr;
  }
 
@@ -263,7 +261,7 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 	windowW = glutGet(GLUT_WINDOW_WIDTH);
 	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 
-	currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+	currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 
 
 #ifndef TARGET_OPENGLES
@@ -338,7 +336,7 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
-void ofAppGlutWindow::setWindowIcon(const string & path){
+void ofAppGlutWindow::setWindowIcon(const std::string & path){
     ofPixels iconPixels;
 	ofLoadImage(iconPixels,path);
 	setWindowIcon(iconPixels);
@@ -397,7 +395,7 @@ void ofAppGlutWindow::loop(){
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setWindowTitle(string title){
+void ofAppGlutWindow::setWindowTitle(std::string title){
 	glutSetWindowTitle(title.c_str());
 }
 
@@ -583,7 +581,7 @@ ofCoreEvents & ofAppGlutWindow::events(){
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & ofAppGlutWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppGlutWindow::renderer(){
 	return currentRenderer;
 }
 
@@ -780,7 +778,7 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 	info.position.y = instance->getHeight()-dragY;
 
 	for (int i = 0; i < howManyFiles; i++){
-		string temp = string(names[i]);
+		std::string temp = std::string(names[i]);
 		info.files.push_back(temp);
 	}
 

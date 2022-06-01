@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include <iomanip>
 
-using namespace std;
-
 #if (_MSC_VER)
 #undef min
 // see: http://stackoverflow.com/questions/1904635/warning-c4003-and-errors-c2589-and-c2059-on-x-stdnumericlimitsintmax

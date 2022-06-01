@@ -15,12 +15,12 @@
 #include <algorithm>
 #include <cstring>
 
-using namespace std;
-
 #ifdef TARGET_LINUX
 	#include <linux/serial.h>
 #endif
 
+using std::vector;
+using std::string;
 
 #ifdef TARGET_WIN32
 

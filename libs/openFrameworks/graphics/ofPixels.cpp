@@ -3,8 +3,6 @@
 #include "glm/common.hpp"
 #include <cstring>
 
-using namespace std;
-
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
 	case 1:
@@ -213,7 +211,7 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	}
 }
 
-string ofToString(ofPixelFormat pixelFormat){
+std::string ofToString(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
 			return "RGB";
