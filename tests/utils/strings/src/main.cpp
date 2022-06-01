@@ -67,6 +67,11 @@ class ofApp: public ofxUnitTestsApp{
 		strs.push_back("join");
 		strs.push_back("test");
 		ofxTestEq(ofJoinString(strs,","),"hi,this,is,a,join,test","test #4363");
+
+		// test #6725
+		ofxTestEq(ofVAArgsToString("%d",0),"0","test #6725");
+		ofxTestEq(ofVAArgsToString("Hello %s !","world"),"Hello world !","ofVAArgsToString");
+		ofxTestEq(ofVAArgsToString("writing some floats %+4.2f %g %E",1.2345, -10., 1526.4),"writing some floats +1.23 -10 1.526400E+03","ofVAArgsToString");
 	}
 };
 
