@@ -77,6 +77,12 @@ const ofUnicode::range ofUnicode::Uncategorized {0x00A9, 0x1F5FF};
 const ofUnicode::range ofUnicode::AdditionalEmoticons {0x1F600, 0x1F636};
 const ofUnicode::range ofUnicode::AdditionalTransportAndMap {0x1F681, 0x1F6C5};
 const ofUnicode::range ofUnicode::OtherAdditionalSymbols {0x1F30D, 0x1F567};
+const ofUnicode::range ofUnicode::UppercaseLatin {65, 90};
+const ofUnicode::range ofUnicode::LowercaseLatin {97, 122};
+const ofUnicode::range ofUnicode::Braces {123, 127};
+const ofUnicode::range ofUnicode::Numbers {48, 57};
+const ofUnicode::range ofUnicode::Symbols {33, 47};
+const ofUnicode::range ofUnicode::GenericSymbols {58, 64};
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 	ofUnicode::Space,
