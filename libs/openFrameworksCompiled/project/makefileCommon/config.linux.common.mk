@@ -165,7 +165,7 @@ else
 endif
 
 PLATFORM_CFLAGS = $PLATFORM_CXXFLAGS
-PLATFORM_CXXFLAGS = += $PLATFORM_CXXVER
+PLATFORM_CXXFLAGS += $PLATFORM_CXXVER
 
 ################################################################################
 # PLATFORM LDFLAGS
