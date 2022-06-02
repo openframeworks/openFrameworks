@@ -5,8 +5,6 @@
 #include <limits>
 #include "glm/gtx/vector_angle.hpp"
 
-using namespace std;
-
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
 static const float minDifference = 0.1e-5f;

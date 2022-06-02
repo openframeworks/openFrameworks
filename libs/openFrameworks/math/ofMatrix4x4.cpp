@@ -3,13 +3,10 @@
 
 
 #include "ofMatrix4x4.h"
-#include "ofConstants.h"
 
 #include <limits>
 #include <stdlib.h>
 #include <iomanip>
-
-using namespace std;
 
 #if (_MSC_VER)
 #undef min

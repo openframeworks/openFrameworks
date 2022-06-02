@@ -49,7 +49,11 @@
 #include "ofMath.h"
 #include "ofLog.h"
 
-using namespace std;
+using std::vector;
+using std::string;
+using std::list;
+using std::pair;
+
 
  // TODO thread it?
  // TODO throw event or exception if the serial port goes down...

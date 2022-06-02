@@ -1,6 +1,6 @@
 #include "ofPath.h"
 
-using namespace std;
+using std::vector;
 
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
