@@ -156,7 +156,7 @@ ifeq ("$(GCC_MAJOR)","4")
 else
 	ifeq ($(shell expr $(GCC_MAJOR) \>= 6), 1)
 		# c++17 for gcc 6 and newer
-		PLATFORM_CXXVER = -std=c++17 -lstdc++fs
+		PLATFORM_CXXVER = -std=c++17
 	else
 		# c++14 for gcc 4 and newer
 		PLATFORM_CXXVER = -std=c++14
@@ -176,15 +176,15 @@ PLATFORM_CXXFLAGS += $(PLATFORM_CXXVER)
 ################################################################################
 
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
-PLATFORM_LDFLAGS += -lstdc++fs
 
-## gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
-#ifeq ($(shell expr $(GCC_MAJOR) \>= 6), 1)
-#	ifeq ($(shell expr $(GCC_MAJOR) \< 9), 1)
-#		PLATFORM_LDFLAGS += -lstdc++fs
-#	endif
-#endif
-
+ifeq ($(OF_USING_STD_FS),1)
+	# gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
+	ifeq ($(shell expr $(GCC_MAJOR) \>= 6), 1)
+		ifeq ($(shell expr $(GCC_MAJOR) \< 9), 1)
+			PLATFORM_LDFLAGS += -lstdc++fs
+		endif
+	endif
+endif
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS

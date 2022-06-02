@@ -472,8 +472,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #warning 4 has_include <filesystem>
         #define OF_USE_EXPERIMENTAL_FS 0
     #else
-        #warning 5 eeeeek 
-        #define OF_USE_EXPERIMENTAL_FS 0
+        #warning 5 eeeeek forcing experimental fs
+        #define OF_USE_EXPERIMENTAL_FS 1
     #endif
 #endif
 
