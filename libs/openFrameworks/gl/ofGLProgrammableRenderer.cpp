@@ -590,6 +590,10 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 
 		viewW = currentViewport.width;
 		viewH = currentViewport.height;
+        
+        viewW = 1920;
+        viewH = 1080;
+        fov = 60;
 	}else{
 		viewW = width;
 		viewH = height;
@@ -2471,7 +2475,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 
 	setupGraphicDefaults();
 	viewport();
-	setupScreenPerspective();
+	setupScreenPerspective(1920, 1080);
 }
 
 const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws & video) const{
