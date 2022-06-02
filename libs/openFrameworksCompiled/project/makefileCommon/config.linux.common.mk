@@ -178,8 +178,8 @@ PLATFORM_CXXFLAGS += $(PLATFORM_CXXVER)
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
 # gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
-ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
-	ifeq ("$(GCC_MAJOR_GTEQ_9)","0")
+ifeq ($(shell expr $(GCC_MAJOR) \>= 6), 1)
+	ifeq ($(shell expr $(GCC_MAJOR) \< 9), 1)
 		PLATFORM_LDFLAGS += -lstdc++fs
 	endif
 endif

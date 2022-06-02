@@ -15,16 +15,6 @@
 // This enables glm's old behavior of initializing with non garbage values
 #define GLM_FORCE_CTOR_INIT
 
-// If you are building with c++17 or newer std filesystem will be enabled by default
-#ifndef OF_USING_STD_FS
-	#if __cplusplus >= 201703L
-		#define OF_USING_STD_FS 1
-	#else
-		// Set to 1 to force std filesystem instead of boost's
-		#define OF_USING_STD_FS 0
-	#endif
-#endif
-
 //-------------------------------
 
 /// \brief This enumerates the targeted operating systems or platforms.
@@ -454,38 +444,60 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
-//------------------------------------------------ forward declaration for std::filesystem::path
-// Remove from here once everything is using std::filesystem::path
+// If you are building with c++17 or newer std filesystem will be enabled by default
+#ifndef OF_USING_STD_FS
+	#if __cplusplus >= 201703L
+		#define OF_USING_STD_FS 1
+	#else
+		// Set to 1 to force std filesystem instead of boost's
+		#define OF_USING_STD_FS 0
+	#endif
+#endif
+
+// Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
+// This may be okay but we need to test for the way C++17 is including the filesystem
+#ifdef OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
+    #if defined(__cpp_lib_experimental_filesystem)
+        #define OF_USE_EXPERIMENTAL_FS = 1
+    #elif defined(__cpp_lib_filesystem)
+        #define OF_USE_EXPERIMENTAL_FS = 0
+    #elif !defined(__has_include)
+        #define OF_USE_EXPERIMENTAL_FS = 1
+    #elif __has_include(<filesystem>)
+        #define OF_USE_EXPERIMENTAL_FS = 0
+    #else
+        #define OF_USE_EXPERIMENTAL_FS = 0
+    #endif
+#endif
+
 #if OF_USING_STD_FS
-#	if __cplusplus < 201703L
-#       define OF_USE_EXPERIMENTAL_FS 1
-
-    namespace std {
-        namespace experimental{
-            namespace filesystem {
-                namespace v1 {
-                    namespace __cxx11 {
-                        class path;
+    #if OF_USE_EXPERIMENTAL_FS
+        // C++17 experimental fs support
+        #include <experimental/filesystem>
+        namespace std {
+            namespace experimental{
+                namespace filesystem {
+                    namespace v1 {
+                        namespace __cxx11 {
+                            class path;
+                        }
                     }
+                    using v1::__cxx11::path;
                 }
-
-                using v1::__cxx11::path;
             }
+            namespace filesystem = experimental::filesystem;
         }
-        namespace filesystem = experimental::filesystem;
-    }
-#	else
-#       define OF_USE_EXPERIMENTAL_FS 0
-
-#include <filesystem>
-
-#	endif
+    #else
+        // Regular C++17 fs support
+        #include <filesystem>
+    #endif
 #else
-#	if !_MSC_VER
-#		define BOOST_NO_CXX11_SCOPED_ENUMS
-#		define BOOST_NO_SCOPED_ENUMS
-#	endif
-#   include <boost/filesystem.hpp>
+    // No experimental or c++17 filesytem support use boost
+    #if !_MSC_VER
+        #define BOOST_NO_CXX11_SCOPED_ENUMS
+        #define BOOST_NO_SCOPED_ENUMS
+    #endif
+    #include <boost/filesystem.hpp>
 	namespace boost {
 		namespace filesystem {
 			class path;
