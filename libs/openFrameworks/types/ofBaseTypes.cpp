@@ -9,8 +9,6 @@
 #include "ofVideoBaseTypes.h"
 #include "ofGraphicsBaseTypes.h"
 
-using namespace std;
-
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
 	
@@ -54,7 +52,7 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
 }
 
-void ofBaseVideoPlayer::loadAsync(string name){
+void ofBaseVideoPlayer::loadAsync(std::string name){
 	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
 	load(name);
 }

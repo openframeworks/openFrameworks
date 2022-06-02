@@ -1,13 +1,7 @@
 #include "ofAppGLFWWindow.h"
-#include "ofEvents.h"
 
-#include "ofBaseApp.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofAppRunner.h"
-#include "ofFileUtils.h"
-#include "ofEvents.h"
-#include "ofPixels.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -38,7 +32,9 @@
     #include <GLFW/glfw3native.h>
 #endif
 
-using namespace std;
+using std::vector;
+using std::shared_ptr;
+using std::numeric_limits;
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
@@ -420,7 +416,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowIcon(const string & path){
+void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 	ofPixels iconPixels;
 	ofLoadImage(iconPixels,path);
 	setWindowIcon(iconPixels);
@@ -604,7 +600,7 @@ void ofAppGLFWWindow::setWindowShouldClose(){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowTitle(string title){
+void ofAppGLFWWindow::setWindowTitle(std::string title){
 	settings.title = title;
 	glfwSetWindowTitle(windowP,settings.title.c_str());
 }
@@ -1107,13 +1103,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen, bool force){
 			for(int i = 0; i < monitorCount; i++){
 				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
 				glfwGetMonitorPos(monitors[i], &tempXPos, &tempYPos);
-				minX = min(tempXPos,minX);
-				minY = min(tempYPos,minY);
-				maxX = max(maxX,tempXPos + desktopMode->width);
-				maxY = max(maxY,tempYPos + desktopMode->height);
+				minX = std::min(tempXPos,minX);
+				minY = std::min(tempYPos,minY);
+				maxX = std::max(maxX,tempXPos + desktopMode->width);
+				maxY = std::max(maxY,tempYPos + desktopMode->height);
 
-				xpos = min(xpos,tempXPos);
-				ypos = min(ypos,tempYPos);
+				xpos = std::min(xpos,tempXPos);
+				ypos = std::min(ypos,tempYPos);
 			}
 
 			fullscreenW = maxX-minX;
@@ -1777,12 +1773,12 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setClipboardString(const string& text) {
+void ofAppGLFWWindow::setClipboardString(const std::string& text) {
 	glfwSetClipboardString(ofAppGLFWWindow::windowP, text.c_str());
 }
 
 //------------------------------------------------------------
-string ofAppGLFWWindow::getClipboardString() {
+std::string ofAppGLFWWindow::getClipboardString() {
 	const char* clipboard = glfwGetClipboardString(ofAppGLFWWindow::windowP);
 
 	if (clipboard) {

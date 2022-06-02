@@ -1,5 +1,4 @@
 #include "ofLog.h"
-#include "ofConstants.h"
 #include <ofUtils.h>
 #include <map>
 #include <cstdarg>
@@ -7,7 +6,9 @@
 	#include "ofxAndroidLogChannel.h"
 #endif
 
-using namespace std;
+using std::map;
+using std::string;
+using std::shared_ptr;
 
 static ofLogLevel currentLogLevel =  OF_LOG_NOTICE;
 
@@ -291,13 +292,13 @@ string ofGetLogLevelName(ofLogLevel level, bool pad){
 //--------------------------------------------------
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
 	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
-	ostream& out = level < OF_LOG_ERROR ? cout : cerr;
+	std::ostream& out = level < OF_LOG_ERROR ? std::cout : std::cerr;
 	out << "[" << ofGetLogLevelName(level, true)  << "] ";
 	// only print the module name if it's not ""
 	if(module != ""){
 		out << module << ": ";
 	}
-	out << message << endl;
+	out << message << std::endl;
 }
 
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const char* format, ...){
@@ -324,13 +325,13 @@ void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const 
 #include <array>
 void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, const string & message) {
 	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
-	stringstream out;
+	std::stringstream out;
 	out << "[" << ofGetLogLevelName(level, true) << "] ";
 	// only print the module name if it's not ""
 	if (module != "") {
 		out << module << ": ";
 	}
-	out << message << endl;
+	out << message << std::endl;
 	OutputDebugStringA(out.str().c_str());
 }
 
@@ -372,9 +373,9 @@ void ofFileLoggerChannel::close(){
 
 void ofFileLoggerChannel::setFile(const std::filesystem::path & path,bool append){
 	file.open(path,append?ofFile::Append:ofFile::WriteOnly);
-	file << endl;
-	file << endl;
-	file << "--------------------------------------- " << ofGetTimestampString() << endl;
+	file << std::endl;
+	file << std::endl;
+	file << "--------------------------------------- " << ofGetTimestampString() << std::endl;
 }
 
 void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
@@ -382,7 +383,7 @@ void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const str
 	if(module != ""){
 		file << module << ": ";
 	}
-	file << message << endl;
+	file << message << std::endl;
 }
 
 void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const char* format, ...){
@@ -397,5 +398,5 @@ void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const cha
 	if(module != ""){
 		file << module << ": ";
 	}
-	file << ofVAArgsToString(format,args) << endl;
+	file << ofVAArgsToString(format,args) << std::endl;
 }
