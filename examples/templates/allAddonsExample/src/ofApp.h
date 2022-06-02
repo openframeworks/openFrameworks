@@ -45,6 +45,6 @@ class ofApp : public ofBaseApp{
 	ofxThreadedImageLoader threadedLoader;
 	ofxKinect kinect;
 	ofxPanel gui;
-	ofxSVG svg;
+	ofxSvg svg;
     ofxXmlPoco xml;
 };

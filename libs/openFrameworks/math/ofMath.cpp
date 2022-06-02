@@ -9,8 +9,6 @@
 #include "ofNoise.h"
 #include "ofPolyline.h"
 
-using namespace std;
-
 //--------------------------------------------------
 int ofNextPow2(int a){
 	// from nehe.gamedev.net lesson 43
@@ -55,7 +53,7 @@ float ofRandom(float max) {
 float ofRandom(float x, float y) {
 	float high = MAX(x, y);
 	float low = MIN(x, y);
-	return max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
+	return std::max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
 }
 
 //--------------------------------------------------
@@ -154,7 +152,7 @@ float ofLerp(float start, float stop, float amt) {
 float ofWrap(float value, float from, float to){
 	// algorithm from http://stackoverflow.com/a/5852628/599884
 	if(from > to){
-		swap(from, to);
+		std::swap(from, to);
 	}
 	float cycle = to - from;
 	if(ofIsFloatEqual(cycle, 0.0f)){

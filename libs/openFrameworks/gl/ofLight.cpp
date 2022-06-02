@@ -16,7 +16,8 @@
 #include <map>
 #include <glm/gtc/quaternion.hpp>
 
-using namespace std;
+using std::weak_ptr;
+using std::vector;
 
 static ofFloatColor globalAmbient(0.2, 0.2, 0.2, 1.0);
 

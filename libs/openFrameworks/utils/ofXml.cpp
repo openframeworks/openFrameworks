@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 #include <clocale>
 
-using namespace std;
+using std::string;
 
 ofXml::ofXml()
 :doc(new pugi::xml_document){
@@ -68,7 +68,7 @@ void ofXml::clear(){
 }
 
 std::string ofXml::toString(const std::string & indent) const{
-	ostringstream stream;
+	std::ostringstream stream;
 	if(xml == doc->root()){
 		doc->print(stream, indent.c_str());
 	}else{

@@ -1,11 +1,11 @@
 #include "ofVideoGrabber.h"
 #include "ofUtils.h"
 #include "ofVideoBaseTypes.h"
-#include "ofConstants.h"
 #include "ofGLUtils.h"
 #include "ofAppRunner.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
 
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){

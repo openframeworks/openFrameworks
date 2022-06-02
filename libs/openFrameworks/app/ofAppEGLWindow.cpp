@@ -28,8 +28,6 @@
 
 #include <string.h> // strlen
 
-using namespace std;
-
 // native events
 struct udev* udev;
 struct udev_monitor* mon;
