@@ -456,7 +456,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 // Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
 // This may be okay but we need to test for the way C++17 is including the filesystem
-#ifdef OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
+#if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_experimental_filesystem)
         #define OF_USE_EXPERIMENTAL_FS = 1
     #elif defined(__cpp_lib_filesystem)
