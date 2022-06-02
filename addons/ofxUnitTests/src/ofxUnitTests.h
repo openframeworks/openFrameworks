@@ -12,7 +12,6 @@
 #include "ofAppRunner.h"
 #include "ofURLFileLoader.h"
 #include <string>
-#include <cstdarg>
 
 class ofColorsLoggerChannel: public ofBaseLoggerChannel{
 	std::string CON_DEFAULT="\033[0m";

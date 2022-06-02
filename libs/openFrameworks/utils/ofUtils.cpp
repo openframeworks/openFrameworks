@@ -11,7 +11,6 @@
 #include <chrono>
 #include <numeric>
 #include <locale>
-#include <cstdarg>
 #include "uriparser/Uri.h"
 
 #ifdef TARGET_WIN32	 // For ofLaunchBrowser.
