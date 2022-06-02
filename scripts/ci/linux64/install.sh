@@ -34,6 +34,7 @@ sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 gcc -v
 g++ -v
 
+sudo apt-get install -y gcc-8 g++-8
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
 
 gcc -v
