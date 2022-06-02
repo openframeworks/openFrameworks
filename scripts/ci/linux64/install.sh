@@ -31,7 +31,11 @@ sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 #sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
 #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
 
-sudo update-alternatives --query gcc
+gcc -v
+g++ -v
+
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
+
 gcc -v
 g++ -v
 
