@@ -448,7 +448,9 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #ifndef OF_USING_STD_FS
 	#if __cplusplus >= 201703L
 		#define OF_USING_STD_FS 1
+        #warning 0 defining USING STD FS
 	#else
+        #warning 0 defining NOT USING STD FS
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
 	#endif
@@ -458,14 +460,19 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 // This may be okay but we need to test for the way C++17 is including the filesystem
 #if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_experimental_filesystem)
+        #warning 1 has cpp_lib_experimental_filesystem
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif defined(__cpp_lib_filesystem)
+        #warning 2 has cpp_lib_filesystem
         #define OF_USE_EXPERIMENTAL_FS 0
     #elif !defined(__has_include)
+        #warning 3 has_include
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif __has_include(<filesystem>)
+        #warning 4 has_include <filesystem>
         #define OF_USE_EXPERIMENTAL_FS 0
     #else
+        #warning 5 has_include <filesystem>
         #define OF_USE_EXPERIMENTAL_FS 0
     #endif
 #endif
