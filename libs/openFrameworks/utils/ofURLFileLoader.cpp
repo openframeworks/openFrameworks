@@ -2,9 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-#include "ofConstants.h"
-
-using namespace std;
+using std::move;
+using std::set;
+using std::string;
+using std::map;
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 	#include <curl/curl.h>

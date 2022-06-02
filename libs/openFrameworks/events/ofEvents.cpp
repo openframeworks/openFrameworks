@@ -3,8 +3,6 @@
 #include "ofAppBaseWindow.h"
 #include "ofLog.h"
 
-using namespace std;
-
 static ofEventArgs voidEventArgs;
 
 
@@ -618,7 +616,7 @@ bool ofSendMessage(ofMessage msg){
 }
 
 //------------------------------------------
-bool ofSendMessage(string messageString){
+bool ofSendMessage(std::string messageString){
 	ofMessage msg(messageString);
 	return ofSendMessage(msg);
 }

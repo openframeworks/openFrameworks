@@ -10,7 +10,9 @@
     #define CALLBACK
 #endif
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //style stuff - new in 006
 static ofVboMesh gradientMesh;
@@ -57,7 +59,7 @@ static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool 
 	cairoScreenshot = std::make_unique<ofCairoRenderer>();
 	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
 
-	rendererCollection = make_shared<ofRendererCollection>();
+	rendererCollection = std::make_shared<ofRendererCollection>();
 	rendererCollection->renderers.push_back(storedRenderer);
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	

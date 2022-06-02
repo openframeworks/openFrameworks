@@ -27,7 +27,8 @@
 #include <winbase.h>	// to use SetEnvironmentVariableA
 #endif
 
-using namespace std;
+using std::shared_ptr;
+using std::string;
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
@@ -868,7 +869,7 @@ void ofGstVideoUtils::update(){
 			bHavePixelsChanged = bBackPixelsChanged;
 			if (bHavePixelsChanged){
 				bBackPixelsChanged=false;
-				swap(pixels,backPixels);
+				std::swap(pixels,backPixels);
 				#ifdef OF_USE_GST_GL
 				if(backTexture.isAllocated()){
 					frontTexture.getTextureData() = backTexture.getTextureData();
