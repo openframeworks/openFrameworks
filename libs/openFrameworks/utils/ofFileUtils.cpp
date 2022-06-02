@@ -14,7 +14,13 @@
 	#include <limits.h>        /* PATH_MAX */
 #endif
 
-using namespace std;
+// FIXME: better explicit declaration 
+using std::string;
+using std::vector;
+using std::fstream;
+using std::istream;
+using std::ostream;
+using std::ios;
 
 namespace{
     bool enableDataPath = true;
@@ -627,7 +633,7 @@ bool ofFile::writeFromBuffer(const ofBuffer & buffer){
 }
 
 //------------------------------------------------------------------------------------------------------------
-filebuf *ofFile::getFileBuffer() const {
+std::filebuf *ofFile::getFileBuffer() const {
 	return rdbuf();
 }
 
@@ -896,7 +902,7 @@ void ofFile::setExecutable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(const filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
+bool ofFile::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
 	auto path = _path;
 
 	if(path.empty()){
@@ -952,7 +958,7 @@ bool ofFile::copyTo(const filesystem::path& _path, bool bRelativeToData, bool ov
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::moveTo(const filesystem::path& _path, bool bRelativeToData, bool overwrite){
+bool ofFile::moveTo(const std::filesystem::path& _path, bool bRelativeToData, bool overwrite){
 	auto path = _path;
 
 	if(path.empty()){
@@ -1010,7 +1016,7 @@ bool ofFile::moveTo(const filesystem::path& _path, bool bRelativeToData, bool ov
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::renameTo(const filesystem::path& path, bool bRelativeToData, bool overwrite){
+bool ofFile::renameTo(const std::filesystem::path& path, bool bRelativeToData, bool overwrite){
 	return moveTo(path,bRelativeToData,overwrite);
 }
 
@@ -1563,7 +1569,7 @@ bool ofDirectory::doesDirectoryExist(const std::filesystem::path& _dirPath, bool
 		return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
 	}
 	catch (std::exception & except) {
-		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << endl;
+		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << std::endl;
 		return false;
 	}
 }

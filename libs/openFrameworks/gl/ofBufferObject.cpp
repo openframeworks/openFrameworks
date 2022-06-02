@@ -1,10 +1,8 @@
 #include "ofBufferObject.h"
-#include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "ofPixels.h"
 #include "ofGLUtils.h"
 
-using namespace std;
 
 ofBufferObject::Data::Data()
 :id(0)

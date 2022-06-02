@@ -4,7 +4,10 @@
 #include "ofPixels.h"
 #include <algorithm>
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
+
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){

@@ -63,8 +63,6 @@ int getch()
 
 #endif
 
-using namespace std;
-
 class ofNoopRenderer: public ofBaseRenderer{
 public:
 	ofNoopRenderer():graphics3d(this){}
@@ -212,7 +210,7 @@ private:
 };
 
 
-const string ofNoopRenderer::TYPE="NOOP";
+const std::string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow()
@@ -249,7 +247,7 @@ void ofAppNoWindow::update(){
 		}
 		else if ( key == /* ctrl-c */ 3 )
 		{
-			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
+			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << std::endl;
 			break;
 		}
 		else
@@ -313,7 +311,7 @@ ofCoreEvents & ofAppNoWindow::events(){
 	return *coreEvents;
 }
 
-shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
 	return currentRenderer;
 }
 
