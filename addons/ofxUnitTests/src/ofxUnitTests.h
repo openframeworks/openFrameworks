@@ -57,18 +57,6 @@ public:
         }
     }
 
-    void log(ofLogLevel level, const std::string & module, const char* format, ...){
-        va_list args;
-        va_start(args, format);
-        log(level, module, format, args);
-        va_end(args);
-    }
-
-    void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-        auto msg = ofVAArgsToString(format,args);
-        log(level, module, msg);
-    }
-
     std::string getStdOut(){
         return stdOut;
     }
@@ -113,18 +101,6 @@ public:
 		}
         stdOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "\n";
 		ofSystem("appveyor AddMessage \"" + msg + "\" -Category " + category(level));
-	}
-
-	void log(ofLogLevel level, const std::string & module, const char* format, ...){
-		va_list args;
-		va_start(args, format);
-		log(level, module, format, args);
-		va_end(args);
-	}
-
-	void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-		auto msg = ofVAArgsToString(format,args);
-		log(level, module, msg);
 	}
 };
 
