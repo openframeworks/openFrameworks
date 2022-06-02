@@ -60,7 +60,9 @@
 	#define MAXPATHLEN 1024
 #endif
 
-using namespace std;
+using std::vector;
+using std::string;
+using std::setfill;
 
 namespace of{
 namespace priv{
@@ -471,7 +473,7 @@ const char * ofFromString(const string& value){
 //----------------------------------------
 template <>
 string ofToHex(const string& value) {
-	ostringstream out;
+	std::ostringstream out;
 	// how many bytes are in the string
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
@@ -496,7 +498,7 @@ int ofToInt(const string& intString) {
 //----------------------------------------
 int ofHexToInt(const string& intHexString) {
 	int x = 0;
-	istringstream cur(intHexString);
+	std::istringstream cur(intHexString);
 	cur >> std::hex >> x;
 	return x;
 }
@@ -504,7 +506,7 @@ int ofHexToInt(const string& intHexString) {
 //----------------------------------------
 char ofHexToChar(const string& charHexString) {
 	int x = 0;
-	istringstream cur(charHexString);
+	std::istringstream cur(charHexString);
 	cur >> std::hex >> x;
 	return (char) x;
 }
@@ -516,23 +518,23 @@ float ofHexToFloat(const string& floatHexString) {
 		float f;
 	} myUnion;
 	myUnion.i = 0;
-	istringstream cur(floatHexString);
+	std::istringstream cur(floatHexString);
 	cur >> std::hex >> myUnion.i;
 	return myUnion.f;
 }
 
 //----------------------------------------
 string ofHexToString(const string& stringHexString) {
-	stringstream out;
-	stringstream stream(stringHexString);
+	std::stringstream out;
+	std::stringstream stream(stringHexString);
 	// a hex string has two characters per byte
 	std::size_t numBytes = stringHexString.size() / 2;
 	for(std::size_t i = 0; i < numBytes; i++) {
 		string curByte;
 		// grab two characters from the hex string
-		stream >> setw(2) >> curByte;
+		stream >> std::setw(2) >> curByte;
 		// prepare to parse the two characters
-		stringstream curByteStream(curByte);
+		std::stringstream curByteStream(curByte);
 		int cur = 0;
 		// parse the two characters as a hex-encoded int
 		curByteStream >> std::hex >> cur;
@@ -567,7 +569,7 @@ bool ofToBool(const string& boolString) {
 		return false;
 	}
 	bool x = false;
-	istringstream cur(lower);
+	std::istringstream cur(lower);
 	cur >> x;
 	return x;
 }
@@ -579,7 +581,7 @@ char ofToChar(const string& charString) {
 
 //----------------------------------------
 template <> string ofToBinary(const string& value) {
-	stringstream out;
+	std::stringstream out;
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
 		std::bitset<8> bitBuffer(value[i]);
@@ -622,8 +624,8 @@ float ofBinaryToFloat(const string& value) {
 }
 //----------------------------------------
 string ofBinaryToString(const string& value) {
-	ostringstream out;
-	stringstream stream(value);
+	std::ostringstream out;
+	std::stringstream stream(value);
 	std::bitset<8> byteString;
 	std::size_t numBytes = value.size() / 8;
 	for(std::size_t i = 0; i < numBytes; i++) {
@@ -1012,7 +1014,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 
 //--------------------------------------------------
 string ofGetVersionInfo(){
-	stringstream sstr;
+	std::stringstream sstr;
 	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH;
 
 	if (!std::string(OF_VERSION_PRE_RELEASE).empty())

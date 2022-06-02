@@ -1,5 +1,4 @@
 #include "ofCairoRenderer.h"
-#include "ofConstants.h"
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "ofTrueTypeFont.h"
@@ -12,7 +11,8 @@
 #include "cairo-pdf.h"
 #include "cairo-svg.h"
 
-using namespace std;
+using std::vector;
+using std::string;
 
 const string ofCairoRenderer::TYPE="cairo";
 

@@ -7,7 +7,9 @@
     #define CALLBACK
 #endif
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //style stuff - new in 006
 static ofVboMesh gradientMesh;
@@ -20,7 +22,6 @@ void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults){
 	}
 	ofGetCurrentRenderer() = renderer;
 }
-
 
 //----------------------------------------------------------
 // transformation matrix related functions

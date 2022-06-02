@@ -20,8 +20,7 @@
 bool ofVbo::vaoSupported=true;
 bool ofVbo::vaoChecked=false;
 
-using namespace std;
-
+using std::map;
 
 #ifdef TARGET_OPENGLES
 	#include <dlfcn.h>
