@@ -143,6 +143,8 @@ fi
 			<key>buildSettings</key>
 			<dict>
 				<!-- AppStore -->
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>of.entitlements</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
@@ -2937,6 +2939,8 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 				<!-- Debug -->
 				<key>ENABLE_TESTABILITY</key>
 				<string>YES</string>
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>of.entitlements</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>NO</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
@@ -2965,6 +2969,8 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<key>buildSettings</key>
 			<dict>
 				<!-- Release -->
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>of.entitlements</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
