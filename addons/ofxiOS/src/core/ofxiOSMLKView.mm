@@ -41,14 +41,15 @@ static ofxiOSMLKView * _instanceRef = nil;
    return [super alloc];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
-   
+- (instancetype)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr andMetal:(MGLKView *)glView {
+    theMetal = glView;
     window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
     
     if(window.get() == NULL) {
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAMLView::initWithFrame - window is NULL");
         return nil;
     }
+    
     
 //    ESRendererVersion preferedRendererVersion = (ESRendererVersion)window->getSettings().glesVersion;
 //
@@ -64,7 +65,7 @@ static ofxiOSMLKView * _instanceRef = nil;
 //                 stencilFormat:(MGLDrawableStencilFormat)window->getRendererStencilType()];
     
     bSetup = NO;
-    if(self) {
+    //if(self) {
         
         _instanceRef = self;
         
@@ -76,9 +77,13 @@ static ofxiOSMLKView * _instanceRef = nil;
         windowPos = new glm::vec2();
         ofSetOrientation(window->getOrientation());
         [self updateDimensions];
+    
+    CGRect bounds = [[UIScreen mainScreen] bounds];
+    *windowSize = glm::vec2(bounds.size.width * scaleFactor, bounds.size.height * scaleFactor);
+    *screenSize = glm::vec2(bounds.size.width * scaleFactor, bounds.size.height * scaleFactor);
         
         bInit = YES;
-    }
+    //}
     
     return self;
 }
@@ -88,6 +93,8 @@ static ofxiOSMLKView * _instanceRef = nil;
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
         return;
     }
+    
+    [self updateDimensions];
     
     if(app.get() != ofGetAppPtr()) { // check if already running.
         
@@ -163,14 +170,23 @@ static ofxiOSMLKView * _instanceRef = nil;
 }
 
 - (void)updateDimensions {
-    *windowPos = glm::vec2(theMetal.frame.origin.x * scaleFactor, theMetal.frame.origin.y * scaleFactor);
-    *windowSize = glm::vec2(theMetal.bounds.size.width * scaleFactor, theMetal.bounds.size.height * scaleFactor);
+    if(theMetal) {
+        
+        *windowPos = glm::vec2(theMetal.frame.origin.x * scaleFactor, theMetal.frame.origin.y * scaleFactor);
+        *windowSize = glm::vec2(theMetal.bounds.size.width * scaleFactor, theMetal.bounds.size.height * scaleFactor);
 
-    UIScreen * currentScreen = theMetal.window.screen;  // current screen is the screen that GLView is attached to.
-    if(!currentScreen) {                            // if GLView is not attached, assume to be main device screen.
-        currentScreen = [UIScreen mainScreen];
+        UIScreen * currentScreen = theMetal.window.screen;  // current screen is the screen that GLView is attached to.
+        if(!currentScreen) {                            // if GLView is not attached, assume to be main device screen.
+            currentScreen = [UIScreen mainScreen];
+        }
+        *screenSize = glm::vec2(currentScreen.bounds.size.width * scaleFactor, currentScreen.bounds.size.height * scaleFactor);
+    } else {
+        ofLog(OF_LOG_FATAL_ERROR, "ofxiOSMLKView updateDimensions. No Metal is NULL");
+        
+        CGRect bounds = [[UIScreen mainScreen] bounds];
+        *windowSize = glm::vec2(bounds.size.width * scaleFactor, bounds.size.height * scaleFactor);
+        *screenSize = glm::vec2(bounds.size.width * scaleFactor, bounds.size.height * scaleFactor);
     }
-    *screenSize = glm::vec2(currentScreen.bounds.size.width * scaleFactor, currentScreen.bounds.size.height * scaleFactor);
 }
 
 - (void) setMSAA:(bool)on
@@ -303,7 +319,9 @@ static ofxiOSMLKView * _instanceRef = nil;
 
 - (void)setupMetal:(MGLKView *)metal {
 
-    theMetal = metal;
+    if(theMetal == nil)
+        theMetal = metal;
+    [self updateDimensions];
 }
 
 //------------------------------------------------------

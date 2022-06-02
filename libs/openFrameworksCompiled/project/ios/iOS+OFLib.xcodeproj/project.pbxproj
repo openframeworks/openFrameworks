@@ -19,7 +19,6 @@
 		15594F8715C5697C00727FF2 /* ofxiOSApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F7E15C5697C00727FF2 /* ofxiOSApp.h */; };
 		15594F9115C56A8A00727FF2 /* ofxiOSEAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8B15C56A8A00727FF2 /* ofxiOSEAGLView.mm */; };
 		15594F9215C56A8A00727FF2 /* ofxiOSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */; };
-		15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */; };
 		15594F9415C56A8A00727FF2 /* ofxiOSEAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */; };
 		15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */; };
 		15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */; };
@@ -124,13 +123,12 @@
 		BF3679BA282BBBB9004FD612 /* ofxiOSMLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B4282BBBB9004FD612 /* ofxiOSMLKView.mm */; };
 		BF3679BB282BBBB9004FD612 /* ofxiOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B5282BBBB9004FD612 /* ofxiOSViewController.mm */; };
 		BF3679BC282BBBB9004FD612 /* ofxiOSMLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3679B6282BBBB9004FD612 /* ofxiOSMLKViewController.h */; };
-		BF3679BD282BBBB9004FD612 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3679B7282BBBB9004FD612 /* ofxiOSViewController.h */; };
 		BF3679BE282BBBB9004FD612 /* ofxiOSMLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B8282BBBB9004FD612 /* ofxiOSMLKViewController.mm */; };
 		BF3679C2282BBCC4004FD612 /* EAMLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3679C1282BBCB3004FD612 /* EAMLKView.h */; };
 		BF3679C3282BBCC4004FD612 /* EAMLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF3679C0282BBCB3004FD612 /* EAMLKView.m */; };
 		BF41D521282B95D200608DA9 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF41D520282B95D200608DA9 /* Accelerate.framework */; };
 		BFE07D58282E5FE800E599C1 /* EAMLKView.h in Sources */ = {isa = PBXBuildFile; fileRef = BF3679C1282BBCB3004FD612 /* EAMLKView.h */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		BFE07D59282E5FE800E599C1 /* ofxiOSMLKView.h in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B3282BBBB9004FD612 /* ofxiOSMLKView.h */; };
+		BFE07D59282E5FE800E599C1 /* ofxiOSMLKView.h in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B3282BBBB9004FD612 /* ofxiOSMLKView.h */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		BFE07D5A282E5FE800E599C1 /* ofxiOSMLKViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = BF3679B6282BBBB9004FD612 /* ofxiOSMLKViewController.h */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
@@ -1103,7 +1101,6 @@
 				678C3D2B176F04F800D1CC68 /* SoundStream.h in Headers */,
 				671C0AF41770246200DF03B3 /* AVSoundPlayer.h in Headers */,
 				671C0AF61770246200DF03B3 /* ofxiOSSoundPlayer.h in Headers */,
-				BF3679BD282BBBB9004FD612 /* ofxiOSViewController.h in Headers */,
 				67833F8719F8990D00DBE7AA /* ofTimer.h in Headers */,
 				67509ABD17979781003A3A29 /* ofXml.h in Headers */,
 				66EA462C17A6D396009BB12A /* ofxOpenALSoundPlayer.h in Headers */,
@@ -1138,7 +1135,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					BB24DE5C10DA7A3F00E9C588 = {
 						DevelopmentTeam = M927U3X3CC;
@@ -1147,13 +1144,14 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				Base,
+				fr,
+				de,
+				ja,
+				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -1238,7 +1236,6 @@
 				15594F9115C56A8A00727FF2 /* ofxiOSEAGLView.mm in Sources */,
 				15594F9215C56A8A00727FF2 /* ofxiOSAppDelegate.mm in Sources */,
 				69433CCA1FE45BCD004D5B73 /* ofGraphicsBaseTypes.cpp in Sources */,
-				15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */,
 				9008001D204EDC0F00DC786A /* EAGLKView.m in Sources */,
 				15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */,
 				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */,

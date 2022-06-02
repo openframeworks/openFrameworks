@@ -36,7 +36,7 @@ class ofAppiOSWindow;
 + (ofxiOSMLKView *) getInstance;
 
 - (instancetype)initWithFrame:(CGRect)frame
-                       andApp:(ofxiOSApp *)app;
+                       andApp:(ofxiOSApp *)app andMetal:(MGLKView *)glView;
 
 - (void)mglkView:(MGLKView *)view drawInRect:(CGRect)rect;
 - (void)setupMetal:(MGLKView *)metal;

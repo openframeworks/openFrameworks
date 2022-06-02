@@ -32,6 +32,8 @@ class ofxiOSApp;
 @property (nonatomic, strong) MGLKView * glView; // no subclass
 @property (nonatomic, strong) ofxiOSMLKView * ofView;
 
+@property (nonatomic, strong) IBOutlet MGLKView* mtlkView;
+
 - (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
 
 - (void)mglkView:(MGLKView *)view drawInRect:(CGRect)rect;

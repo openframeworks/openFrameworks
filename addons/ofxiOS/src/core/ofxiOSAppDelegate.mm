@@ -141,7 +141,14 @@
 		switch(ofxiOSGetOFWindow()->getWindowControllerType()) {
 			case METAL_KIT:
 				NSLog(@"Metal ANGLE openFrameworks");
-                self.uiViewController = (UIViewController *)[[ofxiOSMLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()];
+//                self.uiViewController = (UIViewController *)[[ofxiOSMLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()];
+                
+//                UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
+//                ofxiOSAppDelegate *del = (ofxiOSAppDelegate *)[UIApplication sharedApplication].delegate;
+//                MGLKViewController * game = [storyboard instantiateViewControllerWithIdentifier:@"iOSAppMGLKViewController"];
+//                                [del.navigationController pushViewController:game animated:YES];
+                
+                
 			case GL_KIT:
 				self.uiViewController = (UIViewController *)[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil];
 				break;

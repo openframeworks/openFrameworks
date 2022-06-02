@@ -136,7 +136,7 @@ void ofAppiOSWindow::startAppWithDelegate(std::string appDelegateClassName) {
     bAppCreated = true;
     
     @autoreleasepool {
-        UIApplicationMain(0, nil, nil, [NSString stringWithUTF8String:appDelegateClassName.c_str()]);
+        UIApplicationMain(0, 0, nil, [NSString stringWithUTF8String:appDelegateClassName.c_str()]);
     }
 }
 
@@ -439,7 +439,7 @@ void ofAppiOSWindow::enableMultiTouch(bool isOn) {
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     if(settings.windowControllerType == METAL_KIT) {
         if([ofxiOSMLKView getInstance]) {
-            //[[ofxiOSMLKView getInstance] setMultipleTouchEnabled:isOn];
+            [[ofxiOSGLKView getInstance] setMultipleTouchEnabled:isOn];
         }
     } else if(settings.windowControllerType == GL_KIT) {
 		if([ofxiOSGLKView getInstance]) {

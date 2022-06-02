@@ -20,6 +20,8 @@
     BOOL bReadyToRotate;
     BOOL bFirstUpdate;
     BOOL bAnimated;
+    
+    MGLContext *_asyncLoadContext;
 }
 @end
 
@@ -27,6 +29,7 @@
 
 @synthesize glView;
 @synthesize ofView;
+@synthesize mtlkView;
 
 - (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
 //    return [self initWithFrame:frame app:app];
@@ -41,7 +44,16 @@
         bFirstUpdate    = NO;
         bAnimated       = NO;
         
-        self.ofView = [[ofView alloc] initWithFrame:frame andApp:app];
+        //self.glView = [[MGLKView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+//          self.view = customView;
+        self.view =   self.glView ;
+//        self.glView = customView;
+        
+        ofxiOSMLKView *newObject = [[ofxiOSMLKView alloc] initWithFrame:frame andApp:app andMetal:glView];
+    
+        self.ofView = newObject;
+        
+        
         
        
 //        self.ofView.delegate = self;
@@ -61,7 +73,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    MGLKView *view = (MGLKView *)self.glView ;
+   
+//    self.glView = self.view;
+    
+    //self.glView = mtlkView;
 //    view.context = [self.ofView context];
 //    [MGLContext setCurrentContext:view.context];
     
@@ -87,14 +102,15 @@
 
     [MGLContext setCurrentContext:context];
     
-    [self.ofView setupMetal:glView];
+    self.glView.context = context;    
+    [self.ofView setupMetal:self.glView];
    
     self.glView.delegate = self;
 //
     self.delegate = self;
     self.preferredFramesPerSecond = 60; //default
-    [view setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
-    [view bindDrawable];
+//    [self.glView setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];
+    [self.glView bindDrawable];
     [self.ofView setup];
 }
 
@@ -116,7 +132,16 @@
 
 - (void)mglkView:(MGLKView *)view drawInRect:(CGRect)rect {
     [view bindDrawable];
-    [self.ofView draw];
+    
+//    @try {
+        [self.ofView draw];
+//           }
+//
+//           @catch ( NSException *e ) {
+//               NSLog(@"exception:%@", e.reason);
+//           }
+//
+
 }
 
 
@@ -183,26 +208,26 @@
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     if(self.glView != nil)
-        [self.glView touchesMoved:touches withEvent:event];
+        [self.ofView touchesMoved:touches withEvent:event];
     if(self.ofView != nil)
         [self.ofView touchesMoved:touches withEvent:event];
 }
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     if(self.glView != nil)
-        [self.glView touchesEnded:touches withEvent:event];
+        [self.ofView touchesEnded:touches withEvent:event];
     if(self.ofView != nil)
         [self.ofView touchesEnded:touches withEvent:event];
 }
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     if(self.glView != nil)
-        [self.glView touchesCancelled:touches withEvent:event];
+        [self.ofView touchesCancelled:touches withEvent:event];
     if(self.ofView != nil)
         [self.ofView touchesCancelled:touches withEvent:event];
 }
 
 - (void)touchesEstimatedPropertiesUpdated:(NSSet<UITouch *> *)touches {
-    if(self.glView != nil)
-        [self.glView touchesEstimatedPropertiesUpdated:touches];
+//    if(self.glView != nil)
+//        [self.ofView touchesEstimatedPropertiesUpdated:touches];
 //    if(self.ofView != nil)
 //        [self.ofView touchesEstimatedPropertiesUpdated:touches];
 }
