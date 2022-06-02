@@ -583,12 +583,6 @@ std::string ofUTF8ToString(uint32_t codepoint);
 ///          string is an invalid UTF8 string.
 size_t ofUTF8Length(const std::string & utf8);
 
-/// \brief Convert a variable length argument to a string.
-/// \param format A printf-style format string.
-/// \param args A variable argument list.
-/// \returns A string representation of the argument list.
-std::string ofVAListToString(const char * format, va_list args);
-
 
 /// \brief Convert a variable length argument to a string.
 /// \param format A printf-style format string.
