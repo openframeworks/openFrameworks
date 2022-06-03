@@ -493,7 +493,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                 // We're using C++17, so let's use the normal version
                     #define OF_USE_EXPERIMENTAL_FS 0
                     #pragma message(" 4.2 HAS_CXX17")
-
+                    
                 #endif
             #endif
 
@@ -521,21 +521,37 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #if OF_USE_EXPERIMENTAL_FS
         // C++17 experimental fs support
         #include <experimental/filesystem>
-        namespace std {
-            namespace experimental{
-                namespace filesystem {
-                    namespace v1 {
-                        namespace __cxx11 {
+        
+        #if OF_HAS_CPP17
+            namespace std {
+                namespace experimental{
+                    namespace filesystem {
+                        namespace v1 {
                             class path;
                         }
+                        using v1::path;
                     }
-                    using v1::__cxx11::path;
                 }
+                namespace filesystem = experimental::filesystem;
+                #pragma message(" 6.1 exp file system")
             }
-            namespace filesystem = experimental::filesystem;
-            #pragma message(" 6 exp file system")
-
-        }
+        #else
+            namespace std {
+                namespace experimental{
+                    namespace filesystem {
+                        namespace v1 {
+                            namespace __cxx11 {
+                                class path;
+                            }
+                        }
+                        using v1::__cxx11::path;
+                    }
+                }
+                namespace filesystem = experimental::filesystem;
+                #pragma message("6.2 exp file system")
+            }
+        #endif
+        
     #else
         // Regular C++17 fs support
         #include <filesystem>
