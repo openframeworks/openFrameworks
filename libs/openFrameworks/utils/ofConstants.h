@@ -456,6 +456,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 // Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
 // This may be okay but we need to test for the way C++17 is including the filesystem
+
 #if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_experimental_filesystem)
         #define OF_USE_EXPERIMENTAL_FS 1
@@ -464,7 +465,29 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #elif !defined(__has_include)
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif __has_include(<filesystem>)
-        #define OF_USE_EXPERIMENTAL_FS 0
+        // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
+        #ifdef _MSC_VER
+        
+            // Check and include header that defines "_HAS_CXX17"
+            #if __has_include(<yvals_core.h>)
+                #include <yvals_core.h>
+
+                // Check for enabled C++17 support
+                #if defined(_HAS_CXX17) && _HAS_CXX17
+                // We're using C++17, so let's use the normal version
+                    #define OF_USE_EXPERIMENTAL_FS 0
+                #endif
+            #endif
+
+            // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
+            #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+                #define OF_USE_EXPERIMENTAL_FS 1
+            #endif
+
+        // Not on Visual Studio. Let's use the normal version
+        #else // #ifdef _MSC_VER
+            #define OF_USE_EXPERIMENTAL_FS 0
+        #endif
     #else
         #define OF_USE_EXPERIMENTAL_FS 0
     #endif
