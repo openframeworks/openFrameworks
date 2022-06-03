@@ -444,16 +444,13 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
+// If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201703L
     #define OF_HAS_CPP17 1
-    #pragma message(" 0 has CPP17 - yeah")
 #else
     #define OF_HAS_CPP17 0
-    #pragma message(" 0 has CPP17 - no")
 #endif
 
-
-// If you are building with c++17 or newer std filesystem will be enabled by default
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
 		#define OF_USING_STD_FS 1
@@ -469,16 +466,11 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_filesystem)
         #define OF_USE_EXPERIMENTAL_FS 0
-        #pragma message(" 1 cpp_lib_filesystem")
     #elif defined(__cpp_lib_experimental_filesystem)
         #define OF_USE_EXPERIMENTAL_FS 1
-        #pragma message(" 2 cpp_lib_experimental_filesystem")
     #elif !defined(__has_include)
         #define OF_USE_EXPERIMENTAL_FS 1
-        #pragma message(" 3 no has include")
     #elif __has_include(<filesystem>)
-        #pragma message(" 4 does has include")
-
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
         #ifdef _MSC_VER
         
@@ -486,33 +478,23 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             #if __has_include(<yvals_core.h>)
                 #include <yvals_core.h>
                 
-                #pragma message(" 4.1 VS yvals_core")
-
                 // Check for enabled C++17 support
                 #if defined(_HAS_CXX17) && _HAS_CXX17
                 // We're using C++17, so let's use the normal version
                     #define OF_USE_EXPERIMENTAL_FS 0
-                    #pragma message(" 4.2 HAS_CXX17")
-                    
                 #endif
             #endif
 
             // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
             #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
-                #pragma message(" 4.3 nope")
-
                 #define OF_USE_EXPERIMENTAL_FS 1
             #endif
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
-            #pragma message(" 4.4 not VS")
-
             #define OF_USE_EXPERIMENTAL_FS 0
         #endif
     #else
-        #pragma message(" 5 nothing worked")
-
         #define OF_USE_EXPERIMENTAL_FS 0
     #endif
 #endif
@@ -533,7 +515,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                     }
                 }
                 namespace filesystem = experimental::filesystem;
-                #pragma message(" 6.1 exp file system")
             }
         #else
             namespace std {
@@ -548,19 +529,14 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                     }
                 }
                 namespace filesystem = experimental::filesystem;
-                #pragma message("6.2 exp file system")
             }
         #endif
         
     #else
         // Regular C++17 fs support
         #include <filesystem>
-        
-        #pragma message(" 7 reg file system")
     #endif
 #else
-    #pragma message(" 8 boost file system ")
-
     // No experimental or c++17 filesytem support use boost
     #if !_MSC_VER
         #define BOOST_NO_CXX11_SCOPED_ENUMS
