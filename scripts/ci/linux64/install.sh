@@ -17,12 +17,7 @@ fi
 
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
-#sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-#sudo apt-get install gcc-4.9 g++-4.9
-
-
 #commenting out below so we can get it working with default in Ubuntu 18.04
-
 #sudo add-apt-repository -y ppa:dns/gnu
 ##echo deb https://ci.openframeworks.cc/gcc_repo trusty main | sudo tee /etc/apt/sources.list.d/of_gcc_repo.list
 #sudo apt-get update -q
@@ -31,14 +26,11 @@ sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 #sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
 #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
 
-gcc -v
-g++ -v
-
-sudo apt-get install -y --allow-unauthenticated gcc-8 g++-8
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
-
-gcc -v
-g++ -v
+#uncomment to test gcc 8 ( github ci default currently uses 7.5.0 ) 
+#sudo apt-get install -y --allow-unauthenticated gcc-8 g++-8
+#sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
+#gcc -v
+#g++ -v
 
 if [ "$OPT" = "qbs" ] && [ ! -d "$TRAVIS_BUILD_DIR/linuxbrew/.linuxbrew" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"

@@ -155,7 +155,7 @@ ifeq ("$(GCC_MAJOR)","4")
 	endif
 else
 	ifeq ($(shell expr $(GCC_MAJOR) \>= 8), 1)
-		# c++17 for gcc 6 and newer
+		# c++17 for gcc 8 and newer
 		PLATFORM_CXXVER = -std=c++17
 	else
 		# c++14 for gcc 4 and newer
