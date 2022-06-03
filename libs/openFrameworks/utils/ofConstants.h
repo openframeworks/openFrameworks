@@ -473,7 +473,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #define OF_USE_EXPERIMENTAL_FS 0
     #else
         #warning 5 eeeeek forcing experimental fs
-        #define OF_USE_EXPERIMENTAL_FS 1
+        #define OF_USE_EXPERIMENTAL_FS 0
     #endif
 #endif
 

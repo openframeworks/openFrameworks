@@ -154,7 +154,7 @@ ifeq ("$(GCC_MAJOR)","4")
 		endif
 	endif
 else
-	ifeq ($(shell expr $(GCC_MAJOR) \>= 6), 1)
+	ifeq ($(shell expr $(GCC_MAJOR) \>= 8), 1)
 		# c++17 for gcc 6 and newer
 		PLATFORM_CXXVER = -std=c++17
 	else
@@ -178,11 +178,9 @@ PLATFORM_CXXFLAGS += $(PLATFORM_CXXVER)
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
 ifeq ($(OF_USING_STD_FS),1)
-	# gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
-	ifeq ($(shell expr $(GCC_MAJOR) \>= 6), 1)
-		ifeq ($(shell expr $(GCC_MAJOR) \< 9), 1)
-			PLATFORM_LDFLAGS += -lstdc++fs
-		endif
+	# gcc 8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
+	ifeq ("$(GCC_MAJOR)","8")
+		PLATFORM_LDFLAGS += -lstdc++fs
 	endif
 endif
 

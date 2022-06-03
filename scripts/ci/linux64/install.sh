@@ -31,6 +31,8 @@ sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 #sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
 #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
 
+g++ -v
+
 if [ "$OPT" = "qbs" ] && [ ! -d "$TRAVIS_BUILD_DIR/linuxbrew/.linuxbrew" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
     export PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
