@@ -37,7 +37,7 @@ msyspackages="make rsync zip unzip wget"
 mingwPackages="assimp boost cairo curl freeglut FreeImage gcc gdb glew glfw \
 			  harfbuzz libsndfile libusb libxml2 mpg123 \
 			  nlohmann-json ntldd-git openal opencv \
-			  pkg-config poco tools utf8cpp zlib"
+			  pkg-config poco tools uriparser utf8cpp zlib"
 
 # Build the full list of packages adding prefix to MINGW packages
 packages=${msyspackages}
