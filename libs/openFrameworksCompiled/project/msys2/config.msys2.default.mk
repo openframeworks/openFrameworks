@@ -239,7 +239,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/utf8/%
 
 PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
-PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
+PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
 
 #static libraries (fully qualified paths)
@@ -249,6 +249,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 PLATFORM_PKG_CONFIG_LIBRARIES += glm
