@@ -34,7 +34,8 @@ done
 msyspackages="make rsync zip unzip wget"
 
 # List of MINGW packages to be installed (without prefix)
-mingwPackages="assimp boost cairo curl freeglut FreeImage gcc gdb glew glfw \
+mingwPackages="assimp boost cairo curl freeglut FreeImage \
+			  gcc gdb glew glfw glm \
 			  harfbuzz libsndfile libusb libxml2 mpg123 \
 			  nlohmann-json ntldd-git openal opencv \
 			  pkg-config poco pugixml tools uriparser utf8cpp zlib"
