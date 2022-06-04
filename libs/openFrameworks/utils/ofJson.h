@@ -1,6 +1,5 @@
 #pragma once
 
-#include "json.hpp"
 #if !defined(TARGET_MINGW)
 	#include "json.hpp"
 #else
