@@ -38,7 +38,8 @@ mingwPackages="assimp boost cairo curl freeglut FreeImage \
 			  gcc gdb glew glfw glm \
 			  harfbuzz libsndfile libusb libxml2 mpg123 \
 			  nlohmann-json ntldd-git openal opencv \
-			  pkg-config poco pugixml tools uriparser utf8cpp zlib"
+			  pkg-config poco pugixml rtaudio tools \
+			  uriparser utf8cpp zlib"
 
 # Build the full list of packages adding prefix to MINGW packages
 packages=${msyspackages}
