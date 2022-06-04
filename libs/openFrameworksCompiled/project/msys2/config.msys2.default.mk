@@ -197,6 +197,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/utf8/%
 #PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glm/%
 
 
@@ -211,6 +212,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
 ##########################################################################################
 
 # PLATFORM_HEADER_SEARCH_PATHS =
+#PLATFORM_HEADER_SEARCH_PATHS += $(MINGW_PREFIX)/include/utf8cpp
 
 ##########################################################################################
 # PLATFORM LIBRARIES
