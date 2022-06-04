@@ -1,6 +1,11 @@
 #pragma once
 
 #include "json.hpp"
+#if !defined(TARGET_MINGW)
+	#include "json.hpp"
+#else
+	#include "nlohmann/json.hpp" // MSYS2 : use of system-installed include
+#endif
 #include "ofParameter.h"
 
 // for convenience
