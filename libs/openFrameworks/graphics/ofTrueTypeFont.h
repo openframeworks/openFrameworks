@@ -138,7 +138,7 @@ enum ofTrueTypeFontDirection : uint32_t {
 
 struct ofTrueTypeFontSettings{
 
-    std::filesystem::path     fontName;
+    fs::path     fontName;
     int                       fontSize = 0;
     bool                      antialiased = true;
     bool                      contours = false;
@@ -148,7 +148,7 @@ struct ofTrueTypeFontSettings{
     ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
     std::vector<ofUnicode::range> ranges;
 
-    ofTrueTypeFontSettings(const std::filesystem::path & name, int size)
+    ofTrueTypeFontSettings(const fs::path & name, int size)
     :fontName(name)
     ,fontSize(size){}
 
@@ -196,7 +196,7 @@ public:
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-    bool load(const std::filesystem::path& filename,
+    bool load(const fs::path& filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
