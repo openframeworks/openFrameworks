@@ -21,6 +21,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Accelerate/Accelerate.h>
 
 @interface AVEnginePlayer : NSObject
 
@@ -67,12 +68,14 @@
 
 - (AVAudioFile *)getSoundFile;
 
+- (AVAudioEngine *)engine;
+
 @end
 
 
 @interface AVEnginePlayer ()
 
-@property(nonatomic, strong) AVAudioEngine *engine;
+//@property(nonatomic, strong) AVAudioEngine *engine;
 @property(nonatomic, strong) AVAudioMixerNode *mainMixer;
 @property(nonatomic, strong) AVAudioUnitVarispeed *variSpeed;
 @property(nonatomic, strong) AVAudioPlayerNode *soundPlayer;
@@ -90,6 +93,16 @@
 @implementation AVEnginePlayer
 
 @synthesize timer;
+
+- (AVAudioEngine *) engine {
+  static AVAudioEngine * engine = nullptr;
+  
+  if( engine == nullptr ){
+	engine = [[AVAudioEngine alloc] init];
+  }
+  
+  return engine;
+}
 
 // setupSharedSession is to prevent other iOS Classes closing the audio feed, such as AVAssetReader, when reading from disk
 // It is set once on first launch of a AVAudioPlayer and remains as a set property from then on
@@ -123,31 +136,17 @@
     if (self) {
 		[self setupSharedSession];
 		NSError * error = nil;
-		
-		// Engine
-		_engine = [[AVAudioEngine alloc] init];
-				
-		_mainMixer = [_engine mainMixerNode];
+        
+        _mainMixer = [[self engine] mainMixerNode];
 		_mainMixer.outputVolume = 1;
 						
-        //NSLog(@"%@", _engine.description);
-
 		_mShouldLoop = false;
 		_mGaurdCount = 0;
 		_mMultiPlay = false;
 		_mRequestedPositonSeconds = 0.0f;
 		_startedSampleOffset = 0;
 		
-		// Speed manipulator
-		self.variSpeed = [[AVAudioUnitVarispeed alloc] init];
-		self.variSpeed.rate = 1.0;
-		
-		// Sound player
-		self.soundPlayer = [[AVAudioPlayerNode alloc] init];
-		
-		[self.engine attachNode:self.variSpeed];
-		[self.engine attachNode:_soundPlayer];
-		
+//        NSLog(@"%@", mainEngine.engine.description);
 		//from: https://github.com/robovm/apple-ios-samples/blob/master/UsingAVAudioEngineforPlaybackMixingandRecording/AVAEMixerSample/AudioEngine.m
 		
         // sign up for notifications from the engine if there's a hardware config change
@@ -166,7 +165,6 @@
                 float posSecs = [self positionSeconds];
                 
 //                std::cout << " isPlaying is " << isPlaying << " pos secs is " << posSecs << std::endl;
-                
                 [self startEngine];
                 
                 if( isPlaying && posSecs >= 0 && posSecs < [self soundDurationSeconds] && self.mRestorePlayCount == 0){
@@ -201,7 +199,7 @@
 }
 
 - (BOOL)loadWithURL:(NSURL*)url {
-    [self unloadSound];
+    [self stop];
 
 	NSError *error;
     self.soundFile = [[AVAudioFile alloc] initForReading:url error:&error];
@@ -216,32 +214,43 @@
 }
 
 - (void)startEngine{
-	if (!self.engine.isRunning) {
+    
+    NSError * error = nil;
+    if( ![[self engine] isRunning] ){
+        [[self engine] startAndReturnError:&error];
+        if (error) {
+            NSLog(@"Error starting engine: %@", [error localizedDescription]);
+        } else {
+            //NSLog(@"Engine start successful");
+        }
+    }else{
+        //NSLog(@"Engine already running");
+    }
+    
+    if( self.variSpeed == nullptr ){
+        // Speed manipulator
+		self.variSpeed = [[AVAudioUnitVarispeed alloc] init];
+		self.variSpeed.rate = 1.0;
+    }
+    
+    if( self.soundPlayer == nullptr ){
+        // Sound player
+		self.soundPlayer = [[AVAudioPlayerNode alloc] init];
+    }
 
-		[self.engine reset];
-
-		[self.engine connect:self.variSpeed to:self.mainMixer fromBus:0 toBus:0  format:self.soundFile.processingFormat];
-		
-		[self.engine connect:self.soundPlayer to:self.variSpeed format:self.soundFile.processingFormat];
-		
-		NSError *error;
-		[self.engine startAndReturnError:&error];
-		if (error) {
-			NSLog(@"Error starting engine: %@", [error localizedDescription]);
-		} else {
-			NSLog(@"Engine start successful");
-		}
-	}
+	[[self engine] attachNode:self.variSpeed];
+	[[self engine] attachNode:self.soundPlayer];
+	
+	[[self engine]  connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
+	[[self engine]  connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
 }
 
 - (BOOL)loadWithSoundFile:(AVAudioFile *)aSoundFile {
-    [self unloadSound];
+    [self stop];
 
     self.soundFile = aSoundFile;
 	
-	if (!self.engine.isRunning) {
-		[self startEngine];
-	}
+	[self startEngine];
 	
 	self.mGaurdCount=0;
 	self.mRequestedPositonSeconds = 0;
@@ -258,12 +267,9 @@
 
 - (void)unloadSound {
     [self stop];
-	if (self.engine.isRunning) {
-		[self.engine stop];
-		self.soundPlayer = nil;
-		self.soundFile = nil;
-		self.variSpeed = nil;
-    }
+    self.soundPlayer = nil;
+    self.soundFile = nil;
+    self.variSpeed = nil;
 }
 
 - (void)play{

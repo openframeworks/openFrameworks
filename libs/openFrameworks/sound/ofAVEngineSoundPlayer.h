@@ -17,6 +17,8 @@ public:
     ofAVEngineSoundPlayer();
     ~ofAVEngineSoundPlayer();
     
+	static std::vector <float> getSystemSpectrum(int bands);
+
     bool load(const std::filesystem::path& fileName, bool stream = false);
     void unload();
     void play();
@@ -50,5 +52,6 @@ protected:
     static bool removeMultiPlayer(void * aPlayer);
     void * soundPlayer;
 	std::vector <void *> mMultiplayerSoundPlayers;
-    
+	static std::vector<float> systemBins;
+
 };
