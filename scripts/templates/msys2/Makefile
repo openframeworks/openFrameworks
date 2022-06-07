@@ -9,5 +9,8 @@ ifndef OF_ROOT
 	OF_ROOT=$(realpath ../../..)
 endif
 
+# escape white space from OF location
+OF_ROOT:=$(shell echo $(OF_ROOT) | sed 's/ /\\ /g')
+
 # call the project makefile!
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/compile.project.mk

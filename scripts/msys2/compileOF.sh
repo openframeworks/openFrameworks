@@ -24,7 +24,7 @@ then
 	exit 1
 fi
 
-cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
+cd "${SCRIPTPATH}/../../libs/openFrameworksCompiled/project"
 
 if [ -v CI ]; then
 	echo "Building in CI mode"

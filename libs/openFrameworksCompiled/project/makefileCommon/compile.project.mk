@@ -2,13 +2,15 @@
 
 # define the OF_SHARED_MAKEFILES location
 OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
+include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
-	APPNAME = $(shell basename `pwd`)
+	APPNAME = $(shell basename "`pwd`")
 endif
+#replace spaces by underscore in APPNAME to have 'no space targets'
+APPNAME:=$(call sp2_,$(APPNAME))
 
-include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
 
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
@@ -202,49 +204,49 @@ endif
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_PROJECT_OBJ_OUTPUT_PATH)
-	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS))" != "$(strip $$(cat $@ 2>/dev/null))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS)) > $@; fi
+	@if [ "$(call esp2c, $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS)))" != "$(strip $$(cat "$@" 2>/dev/null))" ]; then echo $(call esp2c,$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS))) > "$@"; fi
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_PROJECT_OBJ_OUTPUT_PATH)
 	@mkdir -p $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)
-	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@ 2>/dev/null))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)) > $@; fi
+	@if [ "$(call esp2c, $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)))" != "$(strip $$(cat "$@" 2>/dev/null))" ]; then echo $(call esp2c, $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))) > "$@"; fi
 
 # Rules to compile the project sources
 #$(OBJS): $(SOURCES)
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.cxx $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.cc $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.m $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.mm $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.c $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_ROOT)/%.S $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS)  $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS)  $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 
 
@@ -253,7 +255,7 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.res: $(ICON)
 	@echo "Compiling Resource" $<
 #Need to build an intermediate .rc file with Windows-like file path (C:/myproject/theIcon.ico)
 	@echo MAINICON ICON \"$(shell cygpath -m $<)\" > $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.rc
-	@$(RESOURCE_COMPILER) $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.rc -O coff -o $@
+	@$(RESOURCE_COMPILER) $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.rc -O coff -o "$@"
 
 
 
@@ -261,91 +263,91 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.res: $(ICON)
 # Rules to compile the project external sources
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.cxx $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	@$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	@$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.cc $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.m $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.mm $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.c $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(PROJECT_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 
 
 
 #Rules to compile the addons sources when the addon path is specified explicitly
-PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
+PROJECT_ADDONS_OBJ_PATH=$(PROJECT_ROOT)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o "$@" -c "$<"
 endif
 
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.cxx $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	@$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	@$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o "$@" -c "$<"
 endif
 
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.m $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o "$@" -c "$<"
 endif
 
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.mm $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o "$@" -c "$<"
 endif
 
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.cc $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o "$@" -c "$<"
 endif
 
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.c $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o "$@" -c "$<"
 endif
 
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.S $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(PROJECT_ADDONS_OBJ_PATH)$*.d -MT $(PROJECT_ADDONS_OBJ_PATH)$*.o -o "$@" -c "$<"
 endif
 
 
@@ -356,53 +358,53 @@ endif
 #Rules to compile the standard addons sources
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.cpp $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.cxx $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.cc $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.m $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.mm $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.c $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 $(OF_ADDONS_PATH)/addons/$(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(OF_ADDONS_PATH)/%.S $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o "$@" -c "$<"
 
 
 
 # Rules to compile the addons sources from the core
 $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/%.o: $(OF_ROOT)/libs/openFrameworks/%.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(OF_CORE_INCLUDES_CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.o -o $@ -c $<
+	@mkdir -p $(call esp-@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(OF_CORE_INCLUDES_CFLAGS) $(ADDON_INCLUDE_CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/$*.o -o "$@" -c "$<"
 
 
 # Rules to link the project
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_RESOURCES) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TARGET_LIBS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 	@echo 'Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
-	@mkdir -p $(@D)
-	$(CXX) -o $@ $(OPTIMIZATION_LDFLAGS) $(OF_PROJECT_OBJS) $(OF_PROJECT_RESOURCES) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(LDFLAGS) $(OF_CORE_LIBS)
+	@mkdir -p $(call esp-@D)
+	$(CXX) -o "$@" $(OPTIMIZATION_LDFLAGS) $(OF_PROJECT_OBJS) $(OF_PROJECT_RESOURCES) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(LDFLAGS) $(OF_CORE_LIBS)
 
 
 clean:
