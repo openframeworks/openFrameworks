@@ -47,7 +47,7 @@ if [ -z "$APPSTORE" ] ; then
 echo "Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution";
 else
 # Copy bin/data into App/Resources
-rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
+rsync -avz  --delete --ignore-existing --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
 # ---- Code Sign App Package ----
 
@@ -102,32 +102,34 @@ if [ "${CODE_SIGN_IDENTITY_FOR_ITEMS}" = "" ] ; then
 CODE_SIGN_IDENTITY_FOR_ITEMS="${CODE_SIGN_IDENTITY}"
 fi
 
-echo "Identity:"
-echo "${CODE_SIGN_IDENTITY_FOR_ITEMS}"
+echo "Identity: ${CODE_SIGN_IDENTITY_FOR_ITEMS}"
 
-echo "Entitlements:"
-echo "${CODE_SIGN_ENTITLEMENTS}"
+echo "Entitlements: ${CODE_SIGN_ENTITLEMENTS}"
 
-echo "Found:"
-echo "${ITEMS}"
+echo "Found: ${ITEMS}"
 
 # Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.
 SAVED_IFS=$IFS
 IFS=$(echo -en "\n\b")
 
 # Loop through all items.
-for ITEM in $ITEMS;
+for ITEM in "${ITEMS}";
 do
-echo "Stripping invalid archs '${ITEM}'"
-lipo -extract x86_64 "${ITEM}" -o "${ITEM}"
-echo "Signing '${ITEM}'"
-codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
-RESULT=$?
-if [[ $RESULT != 0 ]] ; then
-echo "Failed to sign '${ITEM}'."
-IFS=$SAVED_IFS
-exit 1
-fi
+	if lipo -archs "${ITEM}" | grep -q 'i386'; then
+		echo "Stripping invalid archs ${ITEM}"
+		lipo -remove i386 "${ITEM}" -o "${ITEM}" 
+	else
+		echo "No need to strip invalid archs {$ITEM}"
+	fi
+
+	echo "Signing '${ITEM}'"
+	codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
+	RESULT=$?
+	if [[ $RESULT != 0 ]] ; then
+		echo "Failed to sign '${ITEM}'."
+		IFS=$SAVED_IFS
+		exit 1
+	fi
 done
 
 # Restore $IFS.
@@ -3267,9 +3269,9 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>echo "\033[32;1;4m2 - Copying Resources\033[0m"
 mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy default icon file into App/Resources
-rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
+rsync -aved --delete --ignore-existing --exclude='.DS_Store' "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy libfmod and change install directory for fmod to run
-rsync -aved "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
+rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 # Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage 
 # install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
 </string>
