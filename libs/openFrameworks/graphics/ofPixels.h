@@ -458,7 +458,7 @@ public:
 
     /// \cond INTERNAL
 
-    struct ConstPixel: public std::iterator<std::forward_iterator_tag,ConstPixel>{
+    struct ConstPixel{
         ConstPixel(const PixelType * pixel, size_t bytesPerPixel, ofPixelFormat pixelFormat);
         const ConstPixel& operator*() const;
         const ConstPixel* operator->() const;
@@ -473,6 +473,13 @@ public:
         size_t getComponentsPerPixel() const;
         ofPixelFormat getPixelFormat() const;
         ofColor_<PixelType> getColor() const;
+		
+		using difference_type = ConstPixel;
+		using value_type = ConstPixel;
+		using pointer = const ConstPixel*;
+		using reference = const ConstPixel&;
+		using iterator_category = std::forward_iterator_tag;
+
 
     private:
         const PixelType * pixel;
@@ -480,7 +487,7 @@ public:
         ofPixelFormat pixelFormat;
     };
 
-	struct Pixel: public std::iterator<std::forward_iterator_tag,Pixel>{
+	struct Pixel {
 		Pixel(PixelType * pixel, size_t bytesPerPixel, ofPixelFormat pixelFormat);
         const Pixel& operator*() const;
         const Pixel* operator->() const;
@@ -500,6 +507,12 @@ public:
 		size_t getComponentsPerPixel() const;
 		ofPixelFormat getPixelFormat() const;
 		ofColor_<PixelType> getColor() const;
+		
+		using difference_type = Pixel;
+		using value_type = Pixel;
+		using pointer = const Pixel*;
+		using reference = const Pixel&;
+		using iterator_category = std::forward_iterator_tag;
 
 	private:
 		PixelType * pixel;
@@ -519,7 +532,7 @@ public:
 		ofPixelFormat pixelFormat;
 	};
 
-	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
+	struct Line {
 		Line(PixelType * _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat);
         const Line& operator*() const;
         const Line* operator->() const;
@@ -544,6 +557,12 @@ public:
 		Pixel getPixel(size_t pixel);
 		Pixels getPixels();
         Pixels getPixels(size_t first, size_t numPixels);
+		
+		using difference_type = Line;
+		using value_type = Line;
+		using pointer = const Line*;
+		using reference = const Line&;
+		using iterator_category = std::forward_iterator_tag;
 
 	private:
 		PixelType * _begin;
@@ -583,7 +602,7 @@ public:
 		ofPixelFormat pixelFormat;
 	};
 
-	struct ConstLine: public std::iterator<std::forward_iterator_tag,Line>{
+	struct ConstLine {
 		ConstLine(const PixelType * _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat);
 		const ConstLine& operator*() const;
 		const ConstLine* operator->() const;
@@ -600,6 +619,12 @@ public:
         ConstPixel getPixel(size_t pixel) const;
 		ConstPixels getPixels() const;
 		ConstPixels getPixels(size_t first, size_t numPixels) const;
+		
+		using difference_type = ConstLine;
+		using value_type = ConstLine;
+		using pointer = const ConstLine*;
+		using reference = const ConstLine&;
+		using iterator_category = std::forward_iterator_tag;
 
 	private:
 		const PixelType * _begin;
