@@ -145,28 +145,6 @@ public:
 	/// A line of text in the buffer.
 	///
 
-//	template<typename _Iterator>
-//	struct iterator_traits
-//	{
-//		typedef typename _Iterator::iterator_category iterator_category;
-//		typedef typename _Iterator::value_type        value_type;
-//		typedef typename _Iterator::difference_type   difference_type;
-//		typedef typename _Iterator::pointer           pointer;
-//		typedef typename _Iterator::reference         reference;
-//	};
-	
-//	template<
-//		typename Category,
-//		typename T,
-//		typename Distance = std::ptrdiff_t,
-//		typename Pointer = T*,
-//		typename Reference = T&
-//	> struct iter;
-//
-//	template <class _Iter>
-//	struct _LIBCPP_TEMPLATE_VIS iterator_traits
-//	: std::__iterator_traits<_Iter, std::__has_iterator_category<_Iter>::value> {};
-
 	struct Line {
 		Line(std::vector<char>::iterator _begin, std::vector<char>::iterator _end);
 		const std::string & operator*() const;
