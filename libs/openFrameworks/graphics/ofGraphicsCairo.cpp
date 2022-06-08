@@ -1,3 +1,4 @@
+#if !defined(TARGET_EMSCRIPTEN)
 #include "ofGraphicsCairo.h"
 #include "ofRendererCollection.h"
 // #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
@@ -64,3 +65,5 @@ void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage, bool b3D, ofR
 void ofEndSaveScreenAsSVG(){
 	ofEndSaveScreen();
 }
+
+#endif
