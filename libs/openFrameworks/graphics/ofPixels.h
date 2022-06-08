@@ -474,11 +474,11 @@ public:
         ofPixelFormat getPixelFormat() const;
         ofColor_<PixelType> getColor() const;
 		
-		using difference_type = ConstPixel;
 		using value_type = ConstPixel;
-		using pointer = const ConstPixel*;
-		using reference = const ConstPixel&;
 		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 
     private:
@@ -508,11 +508,11 @@ public:
 		ofPixelFormat getPixelFormat() const;
 		ofColor_<PixelType> getColor() const;
 		
-		using difference_type = Pixel;
 		using value_type = Pixel;
-		using pointer = const Pixel*;
-		using reference = const Pixel&;
 		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 	private:
 		PixelType * pixel;
@@ -558,11 +558,11 @@ public:
 		Pixels getPixels();
         Pixels getPixels(size_t first, size_t numPixels);
 		
-		using difference_type = Line;
 		using value_type = Line;
-		using pointer = const Line*;
-		using reference = const Line&;
 		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 	private:
 		PixelType * _begin;
@@ -620,11 +620,11 @@ public:
 		ConstPixels getPixels() const;
 		ConstPixels getPixels(size_t first, size_t numPixels) const;
 		
-		using difference_type = ConstLine;
 		using value_type = ConstLine;
-		using pointer = const ConstLine*;
-		using reference = const ConstLine&;
 		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 	private:
 		const PixelType * _begin;

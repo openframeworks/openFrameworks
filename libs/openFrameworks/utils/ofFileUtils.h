@@ -151,11 +151,11 @@ public:
 		const std::string * operator->() const;
 		const std::string & asString() const;
 		
-		using difference_type = std::string;
 		using value_type = std::string;
-		using pointer = const std::string*;
-		using reference = const std::string&;
 		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 		
 		/// Increment to the next line.
 		Line& operator++();
@@ -182,11 +182,11 @@ public:
 		const std::string * operator->() const;
 		const std::string & asString() const;
 		
-		using difference_type = std::string;
 		using value_type = std::string;
-		using pointer = const std::string*;
-		using reference = const std::string&;
 		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 		/// Increment to the next line.
 		RLine& operator++();
