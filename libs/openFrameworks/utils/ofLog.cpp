@@ -1,5 +1,4 @@
 #include "ofLog.h"
-#include "ofConstants.h"
 #include <ofUtils.h>
 #include <map>
 #include <cstdarg>
