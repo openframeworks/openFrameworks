@@ -31,7 +31,8 @@ model {
                         srcDirs = [
                                 ofSource
                         ]
-                        excludes = ["**/ofQtUtils.cpp",
+                        excludes = ["**/ofGraphicsCairo.cpp",
+                                    "**/ofQtUtils.cpp",
                                     "**/ofQuickTimeGrabber.cpp",
                                     "**/ofQuickTimePlayer.cpp",
                                     "**/ofDirectShowGrabber.cpp",
