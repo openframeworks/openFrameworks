@@ -673,7 +673,7 @@ glm::vec2 ofAppGLFWWindow::getWindowSize(){
 //	cout << "getWindowSize --- " << size<< endl;
 //	cout << size * glm::vec2(pixelScreenCoordScale, pixelScreenCoordScale) << endl;
 //	return size * glm::vec2(pixelScreenCoordScale, pixelScreenCoordScale);
-	glm::vec2 size =  {currentW * pixelScreenCoordScale, currentH * pixelScreenCoordScale};
+//	glm::vec2 size =  {currentW * pixelScreenCoordScale, currentH * pixelScreenCoordScale};
 //	cout << size << endl;
 	return {currentW * pixelScreenCoordScale, currentH * pixelScreenCoordScale};
 
@@ -700,7 +700,7 @@ void ofAppGLFWWindow::updateMonitorProperties(){
 //	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
 	allMonitors.monitors = glfwGetMonitors(&numberOfMonitors);
 	
-	for (unsigned int i=0; i < numberOfMonitors; i++){
+	for (int i=0; i < numberOfMonitors; i++){
 		glm::ivec2 pos;
 		glfwGetMonitorPos(allMonitors.monitors[i], &pos.x, &pos.y);
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(allMonitors.monitors[i]);
