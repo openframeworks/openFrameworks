@@ -258,10 +258,7 @@ private:
 	#endif
 
 	GLFWwindow* 	windowP;
-	
-	// FIXME: remove or not
-	GLFWmonitor* 	monitorP;
-	
+		
 	int				getCurrentMonitor();
 
 	ofBaseApp *	ofAppPtr;
