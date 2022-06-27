@@ -35,6 +35,8 @@
 using std::vector;
 using std::shared_ptr;
 using std::numeric_limits;
+using std::cout;
+using std::endl;
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
