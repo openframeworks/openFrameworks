@@ -1738,11 +1738,14 @@ void ofAppGLFWWindow::calculatePixelCoordScale(GLFWwindow* windowP_) {
 //	glfwGetWindowSize(windowP_, &windowW, &windowH);
 //	pixelScreenCoordScale = (float)framebufferW / (float)windowW;
 
-	float xscale, yscale;
-	glfwGetWindowContentScale(windowP_, &xscale, &yscale);
-	pixelScreenCoordScale = xscale;
+	float yscale;
+	
+	
+	// FIXME: Just to know if it compiles in other platforms
+//	glfwGetWindowContentScale(windowP_, &pixelScreenCoordScale, &yscale);
+	pixelScreenCoordScale = 1.0;
+	cout << "calculatePixelCoordScale ::" << pixelScreenCoordScale << endl;
 
-	cout << "calculatePixelCoordScale ::" << xscale << endl;
 	// Find scale factor needed to transform from screen coordinates
 	// to physical pixel coordinates
 	//	instance->events().notifyWindowResized(windowW, windowH);
@@ -1756,6 +1759,11 @@ void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow* windowP_, int w, int h){
 	cout << "framebuffer_size_cb " << ofGetFrameNum() << endl;
 //	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	updatePixelScreenCoordScale = true;
+//	float xscale, yscale;
+//	glfwGetWindowContentScale(windowP_, &xscale, &yscale);
+//	pixelScreenCoordScale = xscale;
+
+	
 //	calculatePixelCoordScale(windowP_);
 }
 

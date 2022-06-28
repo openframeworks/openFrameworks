@@ -95,7 +95,7 @@ public:
 	static bool needsPolling(){ return true; }
 	static void pollEvents();
 	
-	float pixelScreenCoordScale;
+
 
     // this functions are only meant to be called from inside OF don't call them from your code
     using ofAppBaseWindow::setup;
@@ -243,7 +243,7 @@ private:
 	bool			bEnableSetupScreen;
 	int				windowW, windowH;		/// Physical framebuffer pixels extents
 	int				currentW, currentH;		/// Extents of the window client area, which may be scaled by pixelsScreenCoordScale to map to physical framebuffer pixels.
-//	float           pixelScreenCoordScale;  /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
+	float           pixelScreenCoordScale;  /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
 	ofRectangle windowRect;
 
