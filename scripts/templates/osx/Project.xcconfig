@@ -36,6 +36,7 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 //OF_CORE_LIBS = $(inherited) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM)
 //OF_CORE_HEADERS = $(inherited) $(HEADER_BOOST)
 
+// Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
 #include? "App.xcconfig"
 
 OTHER_CFLAGS = $(OF_CORE_CFLAGS)
