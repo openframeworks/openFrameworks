@@ -134,55 +134,38 @@ PLATFORM_REQUIRED_ADDONS =
 # >= 4.7.x c++11
 # >= 4.9.x c++14
 # other compilers c++11 by now
-ifeq ($(CXX),g++)
-	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
-	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
-	GCC_MAJOR_GTEQ_6 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 6)
-	GCC_MAJOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 8)
-	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
-	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
-	ifeq ("$(GCC_MAJOR_EQ_4)","1")
-		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
-			PLATFORM_CFLAGS = -Wall -Werror=return-type -DHAS_TLS=0
-			PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++0x -DHAS_TLS=0
+
+PLATFORM_CXXFLAGS = -Wall -Werror=return-type
+PLATFORM_CXXVER = -std=c++17
+	
+GCC_MAJOR := $(shell expr `gcc -dumpversion | cut -f1 -d.`)
+GCC_MINOR := $(shell expr `gcc -dumpversion | cut -f2 -d.`)
+
+ifeq ("$(GCC_MAJOR)","4")
+	ifeq ($(shell expr $(GCC_MINOR) \< 7), 1)
+		PLATFORM_CXXVER = -std=c++0x
+		PLATFORM_CXXFLAGS += -DHAS_TLS=0
+	else
+		ifeq ("$(GCC_MINOR)","9")
+			PLATFORM_CXXVER = -std=c++14
+			PLATFORM_CFLAGS += DGCC_HAS_REGEX
 		else
-			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
-				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
-			else
-				PLATFORM_CFLAGS = -Wall -Werror=return-type
-				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++11
-			endif
+			PLATFORM_CXXVER = -std=c++11
 		endif
-	endif
-	ifeq ("$(GCC_MAJOR_GT_4)","1")
-		PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
-		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
-	endif
-	# c++17 for gcc 6 and newer
-	ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
-		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++17 -DGCC_HAS_REGEX
 	endif
 else
-	ifeq ($(CXX),g++-5)
-		PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
-		PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+	ifeq ($(shell expr $(GCC_MAJOR) \>= 8), 1)
+		# c++17 for gcc 8 and newer
+		PLATFORM_CXXVER = -std=c++17
 	else
-		ifeq ($(CXX),g++-4.9)
-			PLATFORM_CFLAGS = -Wall -Werror=return-type -DGCC_HAS_REGEX
-			PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
-		else
-			ifeq ($(CXX),g++-4.8)
-				PLATFORM_CFLAGS = -Wall -Werror=return-type
-				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++11
-			else
-				PLATFORM_CFLAGS = -Wall -Werror=return-type
-				PLATFORM_CXXFLAGS = -Wall -Werror=return-type -std=c++11
-			endif
-		endif
+		# c++14 for gcc 4 and newer
+		PLATFORM_CXXVER = -std=c++14
 	endif
+	PLATFORM_CXXFLAGS += -DGCC_HAS_REGEX
 endif
 
+PLATFORM_CFLAGS = $(PLATFORM_CXXFLAGS)
+PLATFORM_CXXFLAGS += $(PLATFORM_CXXVER)
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -194,13 +177,12 @@ endif
 
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
-# gcc 6,7,8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
-ifeq ("$(GCC_MAJOR_GTEQ_6)","1")
-	ifeq ("$(GCC_MAJOR_GTEQ_9)","0")
+ifeq ($(OF_USING_STD_FS),1)
+	# gcc 8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
+	ifeq ("$(GCC_MAJOR)","8")
 		PLATFORM_LDFLAGS += -lstdc++fs
 	endif
 endif
-
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS

@@ -1,7 +1,11 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "utf8.h"
+#if !defined(TARGET_MINGW) 
+	#include "utf8.h"
+#else
+	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
+#endif
 #include <bitset> // For ofToBinary.
 #include <chrono>
 #include <iomanip>  //for setprecision
@@ -583,27 +587,29 @@ std::string ofUTF8ToString(uint32_t codepoint);
 ///          string is an invalid UTF8 string.
 size_t ofUTF8Length(const std::string & utf8);
 
-/// \brief Convert a variable length argument to a string.
-/// \param format A printf-style format string.
-/// \param args A variable argument list.
-/// \returns A string representation of the argument list.
-std::string ofVAListToString(const char * format, va_list args);
-
-/// \brief Convert a variable length argument to a string.
-/// \param format A printf-style format string.
-/// \returns A string representation of the argument list.
-std::string ofVAArgsToString(const char * format, ...);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format A printf-style format string.
 /// \param args A variable argument list.
 /// \returns A string representation of the argument list.
-template <typename VAList>
-auto  ofVAArgsToString(const char * format, VAList args)
-    -> typename std::enable_if<std::is_same<va_list, VAList>::value, std::string>::type
-{
-    return ofVAListToString(format, args);
+template <typename ... Args>
+std::string ofVAArgsToString(const char * format, Args&& ... args){
+	char buf[256];
+	size_t n = std::snprintf(buf, sizeof(buf), format, std::forward<Args>(args)...);
+	
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
+	}
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	std::snprintf(const_cast<char*>(s.data()), s.size(), format, std::forward<Args>(args)...);
+	
+	return s;
+
 }
+
 
 /// \section String Conversion
 /// \brief Convert a value to a string.
