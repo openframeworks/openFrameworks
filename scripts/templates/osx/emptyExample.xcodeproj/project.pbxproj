@@ -47,7 +47,7 @@ if [ -z "$APPSTORE" ] ; then
 echo "Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution";
 else
 # Copy bin/data into App/Resources
-rsync -avz  --delete --ignore-existing --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
+rsync -avz  --delete --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
 # ---- Code Sign App Package ----
 
