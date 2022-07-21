@@ -3269,7 +3269,7 @@ xcodebuild -project "$OF_PATH/libs/openFrameworksCompiled/project/osx/openFramew
 			<string>echo "\033[32;1;4m2 - Copying Resources\033[0m"
 mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy default icon file into App/Resources
-rsync -aved --delete --ignore-existing --exclude='.DS_Store' "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
+rsync -aved --delete --exclude='.DS_Store' "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy libfmod and change install directory for fmod to run
 rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 # Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage 
