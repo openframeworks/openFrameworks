@@ -11,7 +11,6 @@
 #include <chrono>
 #include <numeric>
 #include <locale>
-#include <cstdarg>
 #include "uriparser/Uri.h"
 
 #ifdef TARGET_WIN32	 // For ofLaunchBrowser.
@@ -904,45 +903,6 @@ size_t ofUTF8Length(const std::string & str){
 	}catch(...){
 		return 0;
 	}
-}
-
-//------------------------------------------------
-std::string ofVAListToString(const char * format, va_list args) {
-    char buf[256];
-    size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
-
-    // Static buffer large enough?
-    if (n < sizeof(buf)) {
-        return{ buf, n };
-    }
-
-    // Static buffer too small
-    std::string s(n + 1, 0);
-    std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
-
-    return s;
-}
-
-//--------------------------------------------------
-string ofVAArgsToString(const char * format, ...){
-	va_list args;
-	va_start(args, format);
-	char buf[256];
-	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
-	va_end(args);
-
-	// Static buffer large enough?
-	if (n < sizeof(buf)) {
-		return{ buf, n };
-	}
-
-	// Static buffer too small
-	std::string s(n + 1, 0);
-	va_start(args, format);
-	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
-	va_end(args);
-
-	return s;
 }
 
 //--------------------------------------------------
