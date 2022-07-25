@@ -81,6 +81,10 @@ else
 	PLATFORM_EMSCRIPTEN_TOTAL_MEMORY=134217728
 endif
 
+# needed to force emcc linker not to make an execuatable
+CUR_CC = $(CC)
+CC := $(CUR_CC) -r
+
 ifdef USE_CCACHE
 	ifeq ($(findstring ccache, $(CC)),)
 		ORIGINAL_CC = $(CC)
