@@ -251,9 +251,9 @@ enum ofTargetPlatform{
 
 	#define TARGET_LITTLE_ENDIAN		// arm cpu
 
-	#if defined(__OBJC__) && !__has_feature(objc_arc)
-		#error "Please enable ARC (Automatic Reference Counting) at the project level"
-	#endif
+//	#if defined(__OBJC__) && !__has_feature(objc_arc)
+//		#error "Please enable ARC (Automatic Reference Counting) at the project level"
+//	#endif
 
 #endif
 
