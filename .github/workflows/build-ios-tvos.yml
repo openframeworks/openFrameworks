@@ -23,9 +23,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Download libs
-      run: ./scripts/${{matrix.cfg.libs}}/download_libs.sh
+      run: ./scripts/${{matrix.cfg.target}}/download_libs.sh
     - name: Download tvos libs
-      run: ./scripts/${{matrix.cfg.libs}}/download_libs_tvos.sh
+      run: ./scripts/${{matrix.cfg.target}}/download_libs.sh
     - name: install
       run: ./scripts/ci/$TARGET/install.sh
     - name: Build
