@@ -515,7 +515,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		if(hasSetup) {
 			OFAndroid.deviceOrientationChanged(ofOrientation);
-			DetermineDisplayConfiguration(true);
+			DetermineDisplayConfiguration(false);
 			DetermineDisplayDimensions();
 			DetermineDisplayDimensionsConfigChange(newConfig);
 		}
