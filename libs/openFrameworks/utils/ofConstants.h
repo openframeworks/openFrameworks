@@ -451,6 +451,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #define OF_HAS_CPP17 0
 #endif
 
+
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
 		#define OF_USING_STD_FS 1
@@ -499,6 +500,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #endif
 #endif
 
+#define OF_USING_STD_FS 1
+
 #if OF_USING_STD_FS
     #if OF_USE_EXPERIMENTAL_FS
         // C++17 experimental fs support
@@ -535,6 +538,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #else
         // Regular C++17 fs support
         #include <filesystem>
+
     #endif
 #else
     // No experimental or c++17 filesytem support use boost
@@ -552,3 +556,15 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 		namespace filesystem = boost::filesystem;
 	}
 #endif
+
+
+// namespace std::__fs::filesystem = std::filesystem;
+// using std::filesystem;
+// namespace std::filesystem = std::__fs::filesystem;
+namespace fs = std::__fs::filesystem;
+// using std::__fs::filesystem;
+// namespace std::filesystem = std::__fs::filesystem;
+
+// namespace std {
+	// namespace filesystem = __fs::filesystem;
+// }

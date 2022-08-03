@@ -9,7 +9,7 @@ public:
 	~ofxEmscriptenSoundPlayer();
 
 
-	bool load(const std::filesystem::path& fileName, bool stream = false);
+	bool load(const filesystem::path& fileName, bool stream = false);
 	void unload();
 	void play();
 	void stop();

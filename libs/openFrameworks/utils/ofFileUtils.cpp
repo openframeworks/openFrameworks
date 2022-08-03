@@ -28,16 +28,19 @@ namespace{
     //--------------------------------------------------
     string defaultDataPath(){
     #if defined TARGET_OSX
-        try{
-            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
-        }catch(...){
-            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
-        }
+		return ofFilePath::getCurrentExeDir() / "../../../data/";
+//        try{
+//			return ofFilePath::getCurrentExeDir() / "../../../data/";
+////			return fs::canonical(ofFilePath::getCurrentExeDir() / "../../../data/");
+////            return fs::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
+//        }catch(...){
+//            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
+//        }
     #elif defined TARGET_ANDROID
         return string("sdcard/");
     #else
         try{
-            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
+            return fs::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
         }catch(...){
             return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
         }
@@ -45,14 +48,14 @@ namespace{
     }
 
     //--------------------------------------------------
-    std::filesystem::path & defaultWorkingDirectory(){
-            static auto * defaultWorkingDirectory = new std::filesystem::path(ofFilePath::getCurrentExeDir());
+    fs::path & defaultWorkingDirectory(){
+            static auto * defaultWorkingDirectory = new fs::path(ofFilePath::getCurrentExeDir());
             return * defaultWorkingDirectory;
     }
 
     //--------------------------------------------------
-    std::filesystem::path & dataPathRoot(){
-            static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
+    fs::path & dataPathRoot(){
+            static auto * dataPathRoot = new fs::path(defaultDataPath());
             return *dataPathRoot;
     }
 }
@@ -60,7 +63,7 @@ namespace{
 namespace of{
     namespace priv{
         void initfileutils(){
-            defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
+            defaultWorkingDirectory() = fs::absolute(fs::current_path());
         }
     }
 }
@@ -450,13 +453,13 @@ istream & operator>>(istream & istr, ofBuffer & buf){
 }
 
 //--------------------------------------------------
-ofBuffer ofBufferFromFile(const std::filesystem::path & path, bool binary){
+ofBuffer ofBufferFromFile(const fs::path & path, bool binary){
 	ofFile f(path,ofFile::ReadOnly, binary);
 	return ofBuffer(f);
 }
 
 //--------------------------------------------------
-bool ofBufferToFile(const std::filesystem::path & path, const ofBuffer& buffer, bool binary){
+bool ofBufferToFile(const fs::path & path, const ofBuffer& buffer, bool binary){
 	ofFile f(path, ofFile::WriteOnly, binary);
 	return buffer.writeTo(f);
 }
@@ -473,7 +476,7 @@ ofFile::ofFile()
 ,binary(true){
 }
 
-ofFile::ofFile(const std::filesystem::path & path, Mode mode, bool binary)
+ofFile::ofFile(const fs::path & path, Mode mode, bool binary)
 :mode(mode)
 ,binary(true){
 	open(path, mode, binary);
@@ -520,7 +523,9 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 		case WriteOnly:
 		case ReadWrite:
 		case Append:
-			if(!ofDirectory(ofFilePath::getEnclosingDirectory(path())).exists()){
+			if(!ofDirectory(
+							ofFilePath::getEnclosingDirectory(path())
+							).exists()){
 				ofFilePath::createEnclosingDirectory(path());
 			}
 			break;
@@ -555,16 +560,17 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::open(const std::filesystem::path & _path, Mode _mode, bool binary){
+bool ofFile::open(const fs::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = std::filesystem::path(ofToDataPath(_path.string()));
+	myFile = ofToDataPath(_path);
 	return openStream(_mode, binary);
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::openFromCWD(const std::filesystem::path & _path, Mode _mode, bool binary){
+bool ofFile::openFromCWD(const fs::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = std::filesystem::path(_path.string());
+//	myFile = fs::path(_path.string());
+	myFile = _path;
 	return openStream(_mode, binary);
 }
 
@@ -573,7 +579,7 @@ bool ofFile::changeMode(Mode _mode, bool binary){
 	if(_mode != mode){
 		string _path = path();
 		close();
-		myFile = std::filesystem::path(_path);
+		myFile = fs::path(_path);
 		return openStream(_mode, binary);
 	}
 	else{
@@ -588,7 +594,7 @@ bool ofFile::isWriteMode(){
 
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
-	myFile = std::filesystem::path();
+	myFile = fs::path();
 	if(mode!=Reference) fstream::close();
 }
 
@@ -598,7 +604,7 @@ bool ofFile::create(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::create(const std::filesystem::path & path){
+bool ofFile::create(const fs::path & path){
 	bool success = false;
 
 	auto oldmode = this->mode;
@@ -614,7 +620,7 @@ bool ofFile::create(const std::filesystem::path & path){
 
 //------------------------------------------------------------------------------------------------------------
 ofBuffer ofFile::readToBuffer(){
-	if(myFile.string().empty() || !std::filesystem::exists(myFile)){
+	if(myFile.string().empty() || !fs::exists(myFile)){
 		return ofBuffer();
 	}
 
@@ -643,12 +649,12 @@ bool ofFile::exists() const {
 		return false;
 	}
 
-	return std::filesystem::exists(myFile);
+	return fs::exists(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::path() const {
-	return myFile.string();
+fs::path ofFile::path() const {
+	return myFile;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -672,18 +678,18 @@ string ofFile::getBaseName() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getEnclosingDirectory() const {
+fs::path ofFile::getEnclosingDirectory() const {
 	return ofFilePath::getEnclosingDirectory(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getAbsolutePath() const {
+fs::path ofFile::getAbsolutePath() const {
 	return ofFilePath::getAbsolutePath(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
-	auto perm = std::filesystem::status(myFile).permissions();
+	auto perm = fs::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES)
@@ -696,19 +702,19 @@ bool ofFile::canRead() const {
 	stat(path().c_str(), &info);  // Error check omitted
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
-		return (perm & std::filesystem::perms::owner_read) != std::filesystem::perms::none;
+		return (perm & fs::perms::owner_read) != fs::perms::none;
 	}else if (getegid() == info.st_gid){
-		return (perm & std::filesystem::perms::group_read) != std::filesystem::perms::none;
+		return (perm & fs::perms::group_read) != fs::perms::none;
 	}else{
-		return (perm & std::filesystem::perms::others_read) != std::filesystem::perms::none;
+		return (perm & fs::perms::others_read) != fs::perms::none;
 	}
 #else
 	if(geteuid() == info.st_uid){
-		return perm & std::filesystem::owner_read;
+		return perm & fs::owner_read;
 	}else if (getegid() == info.st_gid){
-		return perm & std::filesystem::group_read;
+		return perm & fs::group_read;
 	}else{
-		return perm & std::filesystem::others_read;
+		return perm & fs::others_read;
 	}
 #endif
 #endif
@@ -716,7 +722,7 @@ bool ofFile::canRead() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canWrite() const {
-	auto perm = std::filesystem::status(myFile).permissions();
+	auto perm = fs::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES){
@@ -729,19 +735,19 @@ bool ofFile::canWrite() const {
 	stat(path().c_str(), &info);  // Error check omitted
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
-		return (perm & std::filesystem::perms::owner_write) != std::filesystem::perms::none;
+		return (perm & fs::perms::owner_write) != fs::perms::none;
 	}else if (getegid() == info.st_gid){
-		return (perm & std::filesystem::perms::group_write) != std::filesystem::perms::none;
+		return (perm & fs::perms::group_write) != fs::perms::none;
 	}else{
-		return (perm & std::filesystem::perms::others_write) != std::filesystem::perms::none;
+		return (perm & fs::perms::others_write) != fs::perms::none;
 	}
 #else
 	if(geteuid() == info.st_uid){
-		return perm & std::filesystem::owner_write;
+		return perm & fs::owner_write;
 	}else if (getegid() == info.st_gid){
-		return perm & std::filesystem::group_write;
+		return perm & fs::group_write;
 	}else{
-		return perm & std::filesystem::others_write;
+		return perm & fs::others_write;
 	}
 #endif
 #endif
@@ -749,7 +755,7 @@ bool ofFile::canWrite() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canExecute() const {
-	auto perm = std::filesystem::status(myFile).permissions();
+	auto perm = fs::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	return getExtension() == "exe";
 #else
@@ -757,19 +763,19 @@ bool ofFile::canExecute() const {
 	stat(path().c_str(), &info);  // Error check omitted
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
-		return (perm & std::filesystem::perms::owner_exec) != std::filesystem::perms::none;
+		return (perm & fs::perms::owner_exec) != fs::perms::none;
 	}else if (getegid() == info.st_gid){
-		return (perm & std::filesystem::perms::group_exec) != std::filesystem::perms::none;
+		return (perm & fs::perms::group_exec) != fs::perms::none;
 	}else{
-		return (perm & std::filesystem::perms::others_exec) != std::filesystem::perms::none;
+		return (perm & fs::perms::others_exec) != fs::perms::none;
 	}
 #else
 	if(geteuid() == info.st_uid){
-		return perm & std::filesystem::owner_exe;
+		return perm & fs::owner_exe;
 	}else if (getegid() == info.st_gid){
-		return perm & std::filesystem::group_exe;
+		return perm & fs::group_exe;
 	}else{
-		return perm & std::filesystem::others_exe;
+		return perm & fs::others_exe;
 	}
 #endif
 #endif
@@ -777,17 +783,17 @@ bool ofFile::canExecute() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isFile() const {
-	return std::filesystem::is_regular_file(myFile);
+	return fs::is_regular_file(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isLink() const {
-	return std::filesystem::is_symlink(myFile);
+	return fs::is_symlink(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isDirectory() const {
-	return std::filesystem::is_directory(myFile);
+	return fs::is_directory(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -796,9 +802,9 @@ bool ofFile::isDevice() const {
 	return false;
 #else
 #if OF_USING_STD_FS
-	return std::filesystem::is_block_file(std::filesystem::status(myFile));
+	return fs::is_block_file(fs::status(myFile));
 #else
-	return std::filesystem::status(myFile).type() == std::filesystem::block_file;
+	return fs::status(myFile).type() == fs::block_file;
 #endif
 #endif
 }
@@ -817,19 +823,19 @@ void ofFile::setWriteable(bool flag){
 	try{
 #if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
         if(flag){
-            std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
+            fs::permissions(myFile,fs::perms::owner_write | fs::perms::add_perms);
         }else{
-            std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+            fs::permissions(myFile,fs::perms::owner_write | fs::perms::remove_perms);
         }
 #else
         if(flag){
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_write,
-                                         std::filesystem::perm_options::add);
+            fs::permissions(myFile,
+                                         fs::perms::owner_write,
+                                         fs::perm_options::add);
         }else{
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_write,
-                                         std::filesystem::perm_options::remove);
+            fs::permissions(myFile,
+                                         fs::perms::owner_write,
+                                         fs::perm_options::remove);
         }
 #endif
 	}catch(std::exception & e){
@@ -848,19 +854,19 @@ void ofFile::setReadable(bool flag){
 	try{
 #if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
         if(flag){
-            std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::add_perms);
+            fs::permissions(myFile,fs::perms::owner_read | fs::perms::add_perms);
         }else{
-            std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::remove_perms);
+            fs::permissions(myFile,fs::perms::owner_read | fs::perms::remove_perms);
         }
 #else
         if(flag){
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_read,
-                                         std::filesystem::perm_options::add);
+            fs::permissions(myFile,
+                                         fs::perms::owner_read,
+                                         fs::perm_options::add);
         }else{
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_read,
-                                         std::filesystem::perm_options::remove);
+            fs::permissions(myFile,
+                                         fs::perms::owner_read,
+                                         fs::perm_options::remove);
         }
 #endif
 	}catch(std::exception & e){
@@ -874,26 +880,26 @@ void ofFile::setExecutable(bool flag){
 #if OF_USING_STD_FS
 #   if OF_USE_EXPERIMENTAL_FS
         if(flag){
-            std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms);
+            fs::permissions(myFile, fs::perms::owner_exec | fs::perms::add_perms);
         } else{
-            std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::remove_perms);
+            fs::permissions(myFile, fs::perms::owner_exec | fs::perms::remove_perms);
         }
 #   else
         if(flag){
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_exec,
-                                         std::filesystem::perm_options::add);
+            fs::permissions(myFile,
+                                         fs::perms::owner_exec,
+                                         fs::perm_options::add);
         } else{
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_exec,
-                                         std::filesystem::perm_options::remove);
+            fs::permissions(myFile,
+                                         fs::perms::owner_exec,
+                                         fs::perm_options::remove);
         }
 #   endif
 #else
 		if(flag){
-			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
+			fs::permissions(myFile, fs::perms::owner_exe | fs::perms::add_perms);
 		} else{
-			std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::remove_perms);
+			fs::permissions(myFile, fs::perms::owner_exe | fs::perms::remove_perms);
 		}
 #endif
 	}catch(std::exception & e){
@@ -902,7 +908,7 @@ void ofFile::setExecutable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
+bool ofFile::copyTo(const fs::path& _path, bool bRelativeToData, bool overwrite) const{
 	auto path = _path;
 
 	if(path.empty()){
@@ -930,7 +936,8 @@ bool ofFile::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bo
 			ofFile tmp;
 			tmp.openFromCWD(path,ofFile::Reference);
 			if(tmp.isDirectory()){
-				path = ofFilePath::join(path,getFileName());
+				path = path / getFileName();
+//				path = ofFilePath::join(path,getFileName());
 			}
 		}
 		if(ofFile::doesFileExist(path, false)){
@@ -944,11 +951,12 @@ bool ofFile::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bo
 
 	try{
 		ofDirectory destDir;
-		destDir.openFromCWD(ofFilePath::getEnclosingDirectory(path,false));
+		auto p = ofFilePath::getEnclosingDirectory(path,false);
+		destDir.openFromCWD(p);
 		if(!destDir.exists()){
 			ofFilePath::createEnclosingDirectory(path, false);
 		}
-		std::filesystem::copy_file(myFile,path);
+		fs::copy_file(myFile,path);
 	}catch(std::exception & except){
 		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\":" << except.what();
 		return false;
@@ -958,7 +966,7 @@ bool ofFile::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bo
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::moveTo(const std::filesystem::path& _path, bool bRelativeToData, bool overwrite){
+bool ofFile::moveTo(const fs::path& _path, bool bRelativeToData, bool overwrite){
 	auto path = _path;
 
 	if(path.empty()){
@@ -1001,7 +1009,7 @@ bool ofFile::moveTo(const std::filesystem::path& _path, bool bRelativeToData, bo
 		if(!destDir.exists()){
 			ofFilePath::createEnclosingDirectory(path,false);
 		}
-		std::filesystem::rename(myFile,path);
+		fs::rename(myFile,path);
 		myFile = path;
 		if(mode != ofFile::Reference){
 			changeMode(mode, binary);
@@ -1016,7 +1024,7 @@ bool ofFile::moveTo(const std::filesystem::path& _path, bool bRelativeToData, bo
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::renameTo(const std::filesystem::path& path, bool bRelativeToData, bool overwrite){
+bool ofFile::renameTo(const fs::path& path, bool bRelativeToData, bool overwrite){
 	return moveTo(path,bRelativeToData,overwrite);
 }
 
@@ -1036,9 +1044,9 @@ bool ofFile::remove(bool recursive){
 			open(path(),Reference,binary);
 		}
 		if(recursive){
-			std::filesystem::remove_all(myFile);
+			fs::remove_all(myFile);
 		}else{
-			std::filesystem::remove(myFile);
+			fs::remove(myFile);
 		}
 	}catch(std::exception & except){
 		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile << "\": " << except.what();
@@ -1051,7 +1059,7 @@ bool ofFile::remove(bool recursive){
 //------------------------------------------------------------------------------------------------------------
 uint64_t ofFile::getSize() const {
 	try{
-		return std::filesystem::file_size(myFile);
+		return fs::file_size(myFile);
 	}catch(std::exception & except){
 		ofLogError("ofFile") << "getSize(): unable to get size of \"" << myFile << "\": " << except.what();
 		return 0;
@@ -1092,7 +1100,7 @@ bool ofFile::operator>=(const ofFile & file) const {
 // ofFile Static Methods
 //------------------------------------------------------------------------------------------------------------
 
-bool ofFile::copyFromTo(const std::filesystem::path& pathSrc, const std::filesystem::path& pathDst, bool bRelativeToData,  bool overwrite){
+bool ofFile::copyFromTo(const fs::path& pathSrc, const fs::path& pathDst, bool bRelativeToData,  bool overwrite){
 	ofFile tmp;
 	if( bRelativeToData ){
 		tmp.open(pathSrc,ofFile::Reference);
@@ -1104,7 +1112,7 @@ bool ofFile::copyFromTo(const std::filesystem::path& pathSrc, const std::filesys
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::moveFromTo(const std::filesystem::path& pathSrc, const std::filesystem::path& pathDst, bool bRelativeToData, bool overwrite){
+bool ofFile::moveFromTo(const fs::path& pathSrc, const fs::path& pathDst, bool bRelativeToData, bool overwrite){
 	ofFile tmp;
 	if( bRelativeToData ){
 		tmp.open(pathSrc,ofFile::Reference);
@@ -1115,7 +1123,7 @@ bool ofFile::moveFromTo(const std::filesystem::path& pathSrc, const std::filesys
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::doesFileExist(const std::filesystem::path& _fPath, bool bRelativeToData){
+bool ofFile::doesFileExist(const fs::path& _fPath, bool bRelativeToData){
 	ofFile tmp;
 	if(bRelativeToData){
 		tmp.open(_fPath,ofFile::Reference);
@@ -1126,7 +1134,7 @@ bool ofFile::doesFileExist(const std::filesystem::path& _fPath, bool bRelativeTo
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::removeFile(const std::filesystem::path& _path, bool bRelativeToData){
+bool ofFile::removeFile(const fs::path& _path, bool bRelativeToData){
 	ofFile tmp;
 	if(bRelativeToData){
 		tmp.open(_path,ofFile::Reference);
@@ -1149,28 +1157,28 @@ ofDirectory::ofDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofDirectory::ofDirectory(const std::filesystem::path & path){
+ofDirectory::ofDirectory(const fs::path & path){
 	showHidden = false;
 	open(path);
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::open(const std::filesystem::path & path){
+void ofDirectory::open(const fs::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
+	myDir = fs::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::openFromCWD(const std::filesystem::path & path){
+void ofDirectory::openFromCWD(const fs::path & path){
 	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = std::filesystem::path(originalDirectory);
+	myDir = fs::path(originalDirectory);
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::close(){
-	myDir = std::filesystem::path();
+	myDir = fs::path();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1179,9 +1187,9 @@ bool ofDirectory::create(bool recursive){
 	if(!myDir.string().empty()){
 		try{
 			if(recursive){
-				std::filesystem::create_directories(myDir);
+				fs::create_directories(myDir);
 			}else{
-				std::filesystem::create_directory(myDir);
+				fs::create_directory(myDir);
 			}
 		}
 		catch(std::exception & except){
@@ -1195,20 +1203,20 @@ bool ofDirectory::create(bool recursive){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::exists() const {
-	return (myDir == "" || std::filesystem::exists(myDir));
+	return (myDir == "" || fs::exists(myDir));
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::path() const {
-	return myDir.string();
+fs::path ofDirectory::path() const {
+	return myDir;
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getAbsolutePath() const {
 	try{
-		return std::filesystem::canonical(std::filesystem::absolute(myDir)).string();
+		return fs::canonical(fs::absolute(myDir)).string();
 	}catch(...){
-		return std::filesystem::absolute(myDir).string();
+		return fs::absolute(myDir).string();
 	}
 }
 
@@ -1260,22 +1268,22 @@ void ofDirectory::setShowHidden(bool showHidden){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::isDirectory() const {
-	return std::filesystem::is_directory(myDir);
+	return fs::is_directory(myDir);
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bool overwrite){
+bool ofDirectory::copyTo(const fs::path& _path, bool bRelativeToData, bool overwrite){
 	auto path = _path;
 
 	if(myDir.string().empty()){
 		ofLogError("ofDirectory") << "copyTo(): source path is empty";
 		return false;
 	}
-	if(!std::filesystem::exists(myDir)){
+	if(!fs::exists(myDir)){
 		ofLogError("ofDirectory") << "copyTo(): source directory does not exist";
 		return false;
 	}
-	if(!std::filesystem::is_directory(myDir)){
+	if(!fs::is_directory(myDir)){
 		ofLogError("ofDirectory") << "copyTo(): source path is not a directory";
 		return false;
 	}
@@ -1299,13 +1307,13 @@ bool ofDirectory::copyTo(const std::filesystem::path& _path, bool bRelativeToDat
 	dir.create(true);
 	
 	// Iterate through the source directory
-	for(std::filesystem::directory_iterator file(myDir); file != std::filesystem::directory_iterator(); ++file){
-		auto currentPath = std::filesystem::absolute(file->path());
-		auto dst = std::filesystem::path(path) / currentPath.filename();
-		if(std::filesystem::is_directory(currentPath)){
+	for(fs::directory_iterator file(myDir); file != fs::directory_iterator(); ++file){
+		auto currentPath = fs::absolute(file->path());
+		auto dst = fs::path(path) / currentPath.filename();
+		if(fs::is_directory(currentPath)){
 			ofDirectory current(currentPath);
 			// Found directory: Recursion
-			if(!current.copyTo(dst.string(),false,overwrite)){
+			if(!current.copyTo(dst,false,overwrite)){
 				return false;
 			}
 		}else{
@@ -1319,7 +1327,7 @@ bool ofDirectory::copyTo(const std::filesystem::path& _path, bool bRelativeToDat
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::moveTo(const std::filesystem::path& path, bool bRelativeToData, bool overwrite){
+bool ofDirectory::moveTo(const fs::path& path, bool bRelativeToData, bool overwrite){
 	if(copyTo(path,bRelativeToData,overwrite)){
 		return remove(true);
 	}
@@ -1328,21 +1336,21 @@ bool ofDirectory::moveTo(const std::filesystem::path& path, bool bRelativeToData
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::renameTo(const std::filesystem::path& path, bool bRelativeToData, bool overwrite){
+bool ofDirectory::renameTo(const fs::path& path, bool bRelativeToData, bool overwrite){
 	return moveTo(path, bRelativeToData, overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::remove(bool recursive){
-	if(path().empty() || !std::filesystem::exists(myDir)){
+	if(path().empty() || !fs::exists(myDir)){
 		return false;
 	}
 
 	try{
 		if(recursive){
-			std::filesystem::remove_all(std::filesystem::canonical(myDir));
+			fs::remove_all(fs::canonical(myDir));
 		}else{
-			std::filesystem::remove(std::filesystem::canonical(myDir));
+			fs::remove(fs::canonical(myDir));
 		}
 	}catch(std::exception & except){
 		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
@@ -1373,14 +1381,14 @@ std::size_t ofDirectory::listDir(){
 		ofLogError("ofDirectory") << "listDir(): directory path is empty";
 		return 0;
 	}
-	if(!std::filesystem::exists(myDir)){
+	if(!fs::exists(myDir)){
 		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
 		return 0;
 	}
 	
-	std::filesystem::directory_iterator end_iter;
-	if ( std::filesystem::exists(myDir) && std::filesystem::is_directory(myDir)){
-		for( std::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
+	fs::directory_iterator end_iter;
+	if ( fs::exists(myDir) && fs::is_directory(myDir)){
+		for( fs::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
 			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
 		}
 	}else{
@@ -1468,8 +1476,8 @@ static bool natural(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 static bool byDate(const ofFile& a, const ofFile& b) {
-	auto ta = std::filesystem::last_write_time(a);
-	auto tb = std::filesystem::last_write_time(b);
+	auto ta = fs::last_write_time(a);
+	auto tb = fs::last_write_time(b);
 	return ta < tb;
 }
 
@@ -1512,7 +1520,7 @@ int ofDirectory::numFiles(){
 //------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::removeDirectory(const std::filesystem::path& _path, bool deleteIfNotEmpty, bool bRelativeToData){
+bool ofDirectory::removeDirectory(const fs::path& _path, bool deleteIfNotEmpty, bool bRelativeToData){
 	auto path = _path;
 
 	ofFile dirToRemove;
@@ -1526,14 +1534,14 @@ bool ofDirectory::removeDirectory(const std::filesystem::path& _path, bool delet
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::createDirectory(const std::filesystem::path& _dirPath, bool bRelativeToData, bool recursive){
+bool ofDirectory::createDirectory(const fs::path& _dirPath, bool bRelativeToData, bool recursive){
 	auto dirPath = _dirPath;
 
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
 	
-	// on OSX,std::filesystem::create_directories seems to return false *if* the path has folders that already exist
+	// on OSX,fs::create_directories seems to return false *if* the path has folders that already exist
 	// and true if it doesn't
 	// so to avoid unnecessary warnings on OSX, we check if it exists here:
 	
@@ -1544,9 +1552,9 @@ bool ofDirectory::createDirectory(const std::filesystem::path& _dirPath, bool bR
 		bool success = false;
 		try{
 			if(!recursive){
-				success = std::filesystem::create_directory(dirPath);
+				success = fs::create_directory(dirPath);
 			}else{
-				success = std::filesystem::create_directories(dirPath);
+				success = fs::create_directories(dirPath);
 			}
 		} catch(std::exception & except){
 			ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
@@ -1560,13 +1568,13 @@ bool ofDirectory::createDirectory(const std::filesystem::path& _dirPath, bool bR
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::doesDirectoryExist(const std::filesystem::path& _dirPath, bool bRelativeToData){
+bool ofDirectory::doesDirectoryExist(const fs::path& _dirPath, bool bRelativeToData){
 	auto dirPath = _dirPath;
 	try {
 		if (bRelativeToData) {
 			dirPath = ofToDataPath(dirPath);
 		}
-		return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
+		return fs::exists(dirPath) && fs::is_directory(dirPath);
 	}
 	catch (std::exception & except) {
 		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << std::endl;
@@ -1575,14 +1583,14 @@ bool ofDirectory::doesDirectoryExist(const std::filesystem::path& _dirPath, bool
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::isDirectoryEmpty(const std::filesystem::path& _dirPath, bool bRelativeToData){
+bool ofDirectory::isDirectoryEmpty(const fs::path& _dirPath, bool bRelativeToData){
 	auto dirPath = _dirPath;
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
 
-	if(!dirPath.empty() && std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath)){
-		return std::filesystem::directory_iterator(dirPath) == std::filesystem::directory_iterator();
+	if(!dirPath.empty() && fs::exists(dirPath) && fs::is_directory(dirPath)){
+		return fs::directory_iterator(dirPath) == fs::directory_iterator();
 	}
 	return false;
 }
@@ -1646,9 +1654,9 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
+string ofFilePath::addLeadingSlash(const fs::path& _path){
     auto path = _path.string();
-	auto sep = std::filesystem::path("/").make_preferred();
+	auto sep = fs::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path[0]) != sep.string()){
 			path = (sep / path).string();
@@ -1658,13 +1666,13 @@ string ofFilePath::addLeadingSlash(const std::filesystem::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
+string ofFilePath::addTrailingSlash(const fs::path& _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(_path.string().empty()) return "";
-    return (std::filesystem::path(_path).make_preferred() / "").string();
+    return (fs::path(_path).make_preferred() / "").string();
 #else
-    auto path = std::filesystem::path(_path).make_preferred().string();
-	auto sep = std::filesystem::path("/").make_preferred();
+    auto path = fs::path(_path).make_preferred().string();
+	auto sep = fs::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path.back()) != sep.string()){
 			path = (path / sep).string();
@@ -1676,18 +1684,18 @@ string ofFilePath::addTrailingSlash(const std::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileExt(const std::filesystem::path& filename){
+string ofFilePath::getFileExt(const fs::path& filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeExt(const std::filesystem::path& filename){
+string ofFilePath::removeExt(const fs::path& filename){
 	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
 }
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
+string ofFilePath::getPathForDirectory(const fs::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
@@ -1695,7 +1703,7 @@ string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
     if(path.string().empty()) return "";
     return (path / "").string();
 #else
-    auto sep = std::filesystem::path("/").make_preferred();
+    auto sep = fs::path("/").make_preferred();
     if(!path.empty() && ofToString(path.string().back())!=sep.string()){
         return (path / sep).string();
     }else{
@@ -1705,7 +1713,7 @@ string ofFilePath::getPathForDirectory(const std::filesystem::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeTrailingSlash(const std::filesystem::path& _path){
+string ofFilePath::removeTrailingSlash(const fs::path& _path){
     auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
@@ -1715,62 +1723,62 @@ string ofFilePath::removeTrailingSlash(const std::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileName(const std::filesystem::path& _filePath, bool bRelativeToData){
+string ofFilePath::getFileName(const fs::path& _filePath, bool bRelativeToData){
     std::string filePath = _filePath.string();
 
 	if(bRelativeToData){
         filePath = ofToDataPath(_filePath);
 	}
 
-	return std::filesystem::path(filePath).filename().string();
+	return fs::path(filePath).filename().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getBaseName(const std::filesystem::path& filePath){
+string ofFilePath::getBaseName(const fs::path& filePath){
 	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getEnclosingDirectory(const std::filesystem::path& _filePath, bool bRelativeToData){
-    std::string filePath = _filePath.string();
+fs::path ofFilePath::getEnclosingDirectory(const fs::path & _filePath, bool bRelativeToData){
+//    std::string filePath = _filePath.string();
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
-	return addTrailingSlash(std::filesystem::path(filePath).parent_path().string());
+	return addTrailingSlash(_filePath.parent_path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFilePath::createEnclosingDirectory(const std::filesystem::path& filePath, bool bRelativeToData, bool bRecursive) {
+bool ofFilePath::createEnclosingDirectory(const fs::path& filePath, bool bRelativeToData, bool bRecursive) {
 	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath,bRelativeToData), bRelativeToData, bRecursive);
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getAbsolutePath(const std::filesystem::path& path, bool bRelativeToData){
+fs::path ofFilePath::getAbsolutePath(const fs::path& path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
 	}else{
 		try{
-			return std::filesystem::canonical(std::filesystem::absolute(path)).string();
+			return fs::canonical(fs::absolute(path));
 		}catch(...){
-			return std::filesystem::absolute(path).string();
+			return fs::absolute(path);
 		}
 	}
 }
 
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFilePath::isAbsolute(const std::filesystem::path& path){
-	return std::filesystem::path(path).is_absolute();
+bool ofFilePath::isAbsolute(const fs::path& path){
+	return fs::path(path).is_absolute();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
-	return std::filesystem::current_path().string();
+	return fs::current_path().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::join(const std::filesystem::path& path1, const std::filesystem::path& path2){
-	return (std::filesystem::path(path1) / std::filesystem::path(path2)).string();
+string ofFilePath::join(const fs::path& path1, const fs::path& path2){
+	return (fs::path(path1) / fs::path(path2)).string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1805,8 +1813,8 @@ string ofFilePath::getCurrentExePath(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getCurrentExeDir(){
-	return getEnclosingDirectory(getCurrentExePath(), false);
+fs::path ofFilePath::getCurrentExeDir(){
+	return ofFilePath::getEnclosingDirectory(ofFilePath::getCurrentExePath(), false);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1824,15 +1832,15 @@ string ofFilePath::getUserHomeDir(){
 	#endif
 }
 
-string ofFilePath::makeRelative(const std::filesystem::path & from, const std::filesystem::path & to){
-	auto pathFrom = std::filesystem::absolute( from );
-	auto pathTo = std::filesystem::absolute( to );
-	std::filesystem::path ret;
-	std::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
+string ofFilePath::makeRelative(const fs::path & from, const fs::path & to){
+	auto pathFrom = fs::absolute( from );
+	auto pathTo = fs::absolute( to );
+	fs::path ret;
+	fs::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
 	// Find common base
-	for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
+	for( fs::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
 	// Navigate backwards in directory to reach previously found base
-	for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
+	for( fs::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
 		if( (*itrFrom) != "." ){
 			ret /= "..";
 		}
@@ -1860,7 +1868,7 @@ void ofDisableDataPath(){
 //--------------------------------------------------
 bool ofRestoreWorkingDirectoryToDefault(){
     try{
-        std::filesystem::current_path(defaultWorkingDirectory());
+        fs::current_path(defaultWorkingDirectory());
         return true;
     }catch(...){
         return false;
@@ -1868,12 +1876,12 @@ bool ofRestoreWorkingDirectoryToDefault(){
 }
 
 //--------------------------------------------------
-void ofSetDataPathRoot(const std::filesystem::path& newRoot){
+void ofSetDataPathRoot(const fs::path& newRoot){
     dataPathRoot() = newRoot;
 }
 
 //--------------------------------------------------
-string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
+fs::path ofToDataPath(const fs::path & path, bool makeAbsolute){
     if (makeAbsolute && path.is_absolute()) {
         return path.string();
     }
@@ -1886,7 +1894,7 @@ string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 
     // if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
-    if (defaultWorkingDirectory() != std::filesystem::current_path()) {
+    if (defaultWorkingDirectory() != fs::current_path()) {
         // change our cwd back to where it was on app load
         bool ret = ofRestoreWorkingDirectoryToDefault();
         if(!ret){
@@ -1897,14 +1905,14 @@ string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
 
     // this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
     const auto  & dataPath = dataPathRoot();
-    std::filesystem::path inputPath(path);
-    std::filesystem::path outputPath;
+    fs::path inputPath(path);
+    fs::path outputPath;
 
     // if path is already absolute, just return it
     if (inputPath.is_absolute()) {
         try {
-            auto outpath = std::filesystem::canonical(inputPath).make_preferred();
-            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
+            auto outpath = fs::canonical(inputPath).make_preferred();
+            if(fs::is_directory(outpath) && hasTrailingSlash){
                 return ofFilePath::addTrailingSlash(outpath.string());
             }else{
                 return outpath.string();
@@ -1918,11 +1926,11 @@ string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
     // here we check whether path already refers to the data folder by looking for common elements
     // if the path begins with the full contents of dataPathRoot then the data path has already been added
     // we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-    auto dirDataPath = dataPath.string();
+//    auto dirDataPath = dataPath.string();
     // also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-    dirDataPath = ofFilePath::addTrailingSlash(dirDataPath);
+    dirDataPath = ofFilePath::addTrailingSlash(dataPath);
 
-    auto relativeDirDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
+    auto relativeDirDataPath = ofFilePath::makeRelative(fs::current_path().string(),dataPath.string());
     relativeDirDataPath  = ofFilePath::addTrailingSlash(relativeDirDataPath);
 
     if (inputPath.string().find(dirDataPath) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
@@ -1941,15 +1949,15 @@ string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
     if(makeAbsolute){
         // then we return the absolute form of the path
         try {
-            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath)).make_preferred();
-            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
-                return ofFilePath::addTrailingSlash(outpath.string());
+            auto outpath = fs::canonical(fs::absolute(outputPath)).make_preferred();
+            if(fs::is_directory(outpath) && hasTrailingSlash){
+                return ofFilePath::addTrailingSlash(outpath);
             }else{
                 return outpath.string();
             }
         }
         catch (std::exception &) {
-            return std::filesystem::absolute(outputPath).string();
+            return fs::absolute(outputPath).string();
         }
     }else{
         // or output the relative path

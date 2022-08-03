@@ -13,8 +13,8 @@ public:
 	virtual ~ofxEmscriptenURLFileLoader();
 	ofHttpResponse get(const std::string &  url);
 	int getAsync(const std::string &  url, const std::string &  name=""); // returns id
-	ofHttpResponse saveTo(const std::string &  url, const std::filesystem::path &  path);
-	int saveAsync(const std::string &  url, const std::filesystem::path &  path);
+	ofHttpResponse saveTo(const std::string &  url, const filesystem::path &  path);
+	int saveAsync(const std::string &  url, const filesystem::path &  path);
 	ofHttpResponse handleRequest(const ofHttpRequest & request);
 	int handleRequestAsync(const ofHttpRequest & request);
 	void remove(int id);

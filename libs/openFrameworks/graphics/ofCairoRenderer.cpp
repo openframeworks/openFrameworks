@@ -37,7 +37,7 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+void ofCairoRenderer::setup(const string & _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
 	if( outputsize.width == 0 || outputsize.height == 0 ){
 		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}

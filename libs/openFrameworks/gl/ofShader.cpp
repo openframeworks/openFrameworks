@@ -196,12 +196,12 @@ ofShader & ofShader::operator=(ofShader && mom){
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(const std::filesystem::path& shaderName) {
+bool ofShader::load(const fs::path& shaderName) {
 	return load(shaderName.string() + ".vert", shaderName.string() + ".frag");
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName) {
+bool ofShader::load(const fs::path& vertName, const fs::path& fragName, const fs::path& geomName) {
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
 #ifndef TARGET_OPENGLES
@@ -215,7 +215,7 @@ bool ofShader::load(const std::filesystem::path& vertName, const std::filesystem
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 //--------------------------------------------------------------
-bool ofShader::loadCompute(const std::filesystem::path& shaderName) {
+bool ofShader::loadCompute(const fs::path& shaderName) {
 	return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
 }
 #endif
@@ -292,11 +292,11 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 #endif
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromFile(GLenum type, const std::filesystem::path& filename) {
+bool ofShader::setupShaderFromFile(GLenum type, const fs::path & filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
-	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	auto absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
 	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
@@ -307,14 +307,14 @@ bool ofShader::setupShaderFromFile(GLenum type, const std::filesystem::path& fil
 }
 
 //--------------------------------------------------------------
-ofShader::Source ofShader::sourceFromFile(GLenum type, const std::filesystem::path& filename) {
+ofShader::Source ofShader::sourceFromFile(GLenum type, const fs::path& filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
-	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
-	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
+	auto absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	auto sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return Source{type, buffer.getText(), sourceDirectoryPath};
+		return Source{type, buffer.getText(), sourceDirectoryPath.string() };
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return Source{};
@@ -413,13 +413,13 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
  */
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, const std::filesystem::path& sourceDirectoryPath) {
+string ofShader::parseForIncludes( const string& source, const fs::path& sourceDirectoryPath) {
 	vector<string> included;
 	return parseForIncludes( source, included, 0, sourceDirectoryPath);
 }
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const std::filesystem::path& sourceDirectoryPath) {
+string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const fs::path& sourceDirectoryPath) {
 
 	if ( level > 32 ) {
 		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
@@ -486,7 +486,10 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 
 		// we store the absolute paths so as have (more) unique file identifiers.
 
-		include = ofFile(ofFilePath::join(sourceDirectoryPath, include)).getAbsolutePath();
+		include = ofFile(
+//						 ofFilePath::join(sourceDirectoryPath, include)
+						 sourceDirectoryPath / include
+						 ).getAbsolutePath();
 		included.push_back( include );
 
 		ofBuffer buffer = ofBufferFromFile( include );
