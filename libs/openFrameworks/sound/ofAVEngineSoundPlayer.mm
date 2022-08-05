@@ -3,7 +3,7 @@
 //  soundPlayerExample
 //
 //  Created by Theo Watson on 3/24/21.
-//
+//  Modified by Dan Rosser 9/5/22
 
 #include "ofAVEngineSoundPlayer.h"
 #include "ofUtils.h"
@@ -138,7 +138,7 @@
 		NSError * error = nil;
         
         _mainMixer = [[self engine] mainMixerNode];
-		_mainMixer.outputVolume = 1;
+		_mainMixer.outputVolume = 0.98;
 						
 		_mShouldLoop = false;
 		_mGaurdCount = 0;
@@ -204,8 +204,9 @@
 	NSError *error;
     self.soundFile = [[AVAudioFile alloc] initForReading:url error:&error];
     if (error) {
-		return NO;
         NSLog(@"Error: %@", [error localizedDescription]);
+        self.soundFile = nil;
+		return NO;
     }else{
 		NSLog(@"Sound file %@ loaded!", url);
 	}
@@ -221,10 +222,10 @@
         if (error) {
             NSLog(@"Error starting engine: %@", [error localizedDescription]);
         } else {
-            //NSLog(@"Engine start successful");
+            NSLog(@"Engine start successful");
         }
     }else{
-        //NSLog(@"Engine already running");
+        NSLog(@"Engine already running");
     }
     
     if( self.variSpeed == nullptr ){
@@ -283,6 +284,16 @@
         [self stop];
     }
     
+    if(self.soundPlayer == nil) {
+        NSLog(@"play - soundPlayer is null");
+        return;
+    }
+    
+    if( self.engine == nil || ![[self engine] isRunning] ){
+        NSLog(@"play - engine is null or not running");
+        return;
+    }
+    
     //we do this as we can't cancel completion handlers.
     //and queded completion handlers can interupt a playing track if we have retriggered it
     //so we basically do this to execute only the last completion handler ( the one for the current playing track ), and ignore the earlier ones.
@@ -290,8 +301,8 @@
 	
 	self.startedSampleOffset = self.soundFile.processingFormat.sampleRate * startTime;
 	AVAudioFramePosition numFramesToPlay = self.soundFile.length - self.startedSampleOffset;
-		
-	if( startTime == 0.0){
+    const float epsilon = 0.0000001f;
+	if( startTime <= epsilon){
 		self.startedSampleOffset = 0;
 		numFramesToPlay = self.soundFile.length;
 	}
@@ -343,11 +354,13 @@
 }
 
 - (void)pause {
-    [self.soundPlayer pause];
+    if(self.soundPlayer != nil)
+        [self.soundPlayer pause];
 }
 
 - (void)stop {
-    [self.soundPlayer stop];
+    if(self.soundPlayer != nil)
+        [self.soundPlayer stop];
     self.startedSampleOffset = 0;
 }
 
@@ -365,6 +378,7 @@
 
 //----------------------------------------------------------- properties.
 - (void)volume:(float)value {
+    if(self.soundPlayer == nil) return;
     self.soundPlayer.volume = value;
 }
 
@@ -376,6 +390,7 @@
 }
 
 - (void)pan:(float)value {
+    if(self.soundPlayer == nil) return;
     self.soundPlayer.pan = value;
 }
 
