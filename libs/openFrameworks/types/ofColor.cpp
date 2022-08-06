@@ -1,5 +1,4 @@
 #include "ofColor.h"
-#include "ofConstants.h"
 
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray(limit() / 2, limit() / 2, limit() / 2);
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white(limit(), limit(), limit());
@@ -346,7 +345,7 @@ float ofColor_<PixelType>::getBrightness() const {
 
 template<typename PixelType>
 float ofColor_<PixelType>::getLightness() const {
-	return (r + g + b) / 3.f;
+	return r / 3. + g / 3. + b / 3.;
 }
 
 template<typename PixelType>

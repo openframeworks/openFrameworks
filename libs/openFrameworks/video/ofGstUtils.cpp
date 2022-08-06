@@ -27,7 +27,8 @@
 #include <winbase.h>	// to use SetEnvironmentVariableA
 #endif
 
-using namespace std;
+using std::shared_ptr;
+using std::string;
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
@@ -349,8 +350,8 @@ void ofGstUtils::setPaused(bool _bPause){
 			if(!bPaused){
 				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
 			}
-			bPlaying = true;
 		}
+		bPlaying = !bPaused;
 	}
 }
 
@@ -368,7 +369,7 @@ void ofGstUtils::stop(){
 	gst_element_set_state (gstPipeline, state);
 	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
 	bPlaying = false;
-	bPaused = true;
+	bPaused = false;
 }
 
 float ofGstUtils::getPosition() const{
@@ -868,7 +869,7 @@ void ofGstVideoUtils::update(){
 			bHavePixelsChanged = bBackPixelsChanged;
 			if (bHavePixelsChanged){
 				bBackPixelsChanged=false;
-				swap(pixels,backPixels);
+				std::swap(pixels,backPixels);
 				#ifdef OF_USE_GST_GL
 				if(backTexture.isAllocated()){
 					frontTexture.getTextureData() = backTexture.getTextureData();

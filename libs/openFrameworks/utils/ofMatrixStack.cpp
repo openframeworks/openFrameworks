@@ -5,7 +5,6 @@
  *      Author: arturo
  */
 
-#include "ofConstants.h"
 #include "ofMatrixStack.h"
 #include "ofAppBaseWindow.h"
 #include "glm/mat4x4.hpp"
@@ -13,7 +12,9 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofLog.h"
 
-using namespace std;
+using std::swap;
+using std::make_pair;
+using std::pair;
 
 ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)

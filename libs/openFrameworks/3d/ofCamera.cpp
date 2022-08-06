@@ -1,14 +1,10 @@
 #include "ofCamera.h"
-#include "ofLog.h"
-#include "ofRectangle.h"
 #include "ofGraphics.h"
-#include "ofAppRunner.h"
-#include "ofGraphicsBaseTypes.h"
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "of3dGraphics.h"
 
-using namespace std;
+using std::shared_ptr;
 
 //----------------------------------------
 ofCamera::ofCamera() :

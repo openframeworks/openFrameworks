@@ -9,7 +9,7 @@ If you are a developer, or if you want to submit a pull request, [read this firs
 Let's start by cloning the last `master` branch of openFrameworks and its submodules.
 
 ```bash
-git clone --recursive git@github.com:openframeworks/openFrameworks.git
+git clone --recursive git@github.com:openframeworks/openFrameworks.git --depth 1
 ```
 
 _Before continuing make sure your new openFrameworks path **has no spaces**. Many of the shell scripts below will fail on paths that include spaces._

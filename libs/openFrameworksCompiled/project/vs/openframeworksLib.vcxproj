@@ -98,6 +98,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level1</WarningLevel>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -111,6 +113,8 @@
       <WarningLevel>Level3</WarningLevel>
       <BrowseInformation>false</BrowseInformation>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,6 +125,8 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,6 +137,8 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level1</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

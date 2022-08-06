@@ -3,8 +3,8 @@
 #include "ofConstants.h"
 #include "ofWindowSettings.h"
 #include "ofMainLoop.h"
-#include "ofRectangle.h"
 
+class ofRectangle;
 class ofAppBaseWindow;
 class ofAppBaseGLWindow;
 class ofAppBaseGLESWindow;
@@ -18,10 +18,10 @@ void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 std::shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
 std::shared_ptr<ofMainLoop> ofGetMainLoop();
-void ofSetMainLoop(std::shared_ptr<ofMainLoop> mainLoop);
+void ofSetMainLoop(const std::shared_ptr<ofMainLoop> & mainLoop);
 
 template<typename Window>
-void ofSetupOpenGL(std::shared_ptr<Window> windowPtr, int w, int h, ofWindowMode screenMode){
+void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWindowMode screenMode){
 	ofInit();
 	ofWindowSettings settings;
 	settings.setSize(w, h);
@@ -32,7 +32,7 @@ void ofSetupOpenGL(std::shared_ptr<Window> windowPtr, int w, int h, ofWindowMode
 
 //special case so we preserve supplied settngs
 //TODO: remove me when we remove the ofSetupOpenGL legacy approach.
-void ofSetupOpenGL(std::shared_ptr<ofAppGLFWWindow> windowPtr, int w, int h, ofWindowMode screenMode);
+void ofSetupOpenGL(const std::shared_ptr<ofAppGLFWWindow> & windowPtr, int w, int h, ofWindowMode screenMode);
 
 template<typename Window>
 static void noopDeleter(Window*){}
@@ -46,7 +46,7 @@ void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode){
 
 int ofRunApp(std::shared_ptr<ofBaseApp> && OFSA);
 int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
-void ofRunApp(std::shared_ptr<ofAppBaseWindow> window, std::shared_ptr<ofBaseApp> && app);
+void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
 int ofRunMainLoop();
 
 

@@ -1,4 +1,4 @@
-################################################################################
+ ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
 #   This file has linux common rules for all the platforms (x86_64, i386,armv6l
 #   and armv7l)
@@ -64,7 +64,7 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++14 -Wno-warn-absolute-paths
+PLATFORM_CFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths
 
 
 ################################################################################

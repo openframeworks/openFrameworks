@@ -10,7 +10,9 @@
     #define CALLBACK
 #endif
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //style stuff - new in 006
 static ofVboMesh gradientMesh;
@@ -57,7 +59,7 @@ static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool 
 	cairoScreenshot = std::make_unique<ofCairoRenderer>();
 	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
 
-	rendererCollection = make_shared<ofRendererCollection>();
+	rendererCollection = std::make_shared<ofRendererCollection>();
 	rendererCollection->renderers.push_back(storedRenderer);
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
@@ -308,28 +310,28 @@ void ofRotateZDeg(float degrees){
 
 //same as ofRotateZ
 //----------------------------------------------------------
-void ofRotateRad(float degrees){
-	ofGetCurrentRenderer()->rotateRad(degrees);
+void ofRotateRad(float radians){
+	ofGetCurrentRenderer()->rotateRad(radians);
 }
 
 //----------------------------------------------------------
-void ofRotateRad(float degrees, float vecX, float vecY, float vecZ){
-	ofGetCurrentRenderer()->rotateRad(degrees, vecX, vecY, vecZ);
+void ofRotateRad(float radians, float vecX, float vecY, float vecZ){
+	ofGetCurrentRenderer()->rotateRad(radians, vecX, vecY, vecZ);
 }
 
 //----------------------------------------------------------
-void ofRotateXRad(float degrees){
-	ofGetCurrentRenderer()->rotateXRad(degrees);
+void ofRotateXRad(float radians){
+	ofGetCurrentRenderer()->rotateXRad(radians);
 }
 
 //----------------------------------------------------------
-void ofRotateYRad(float degrees){
-	ofGetCurrentRenderer()->rotateYRad(degrees);
+void ofRotateYRad(float radians){
+	ofGetCurrentRenderer()->rotateYRad(radians);
 }
 
 //----------------------------------------------------------
-void ofRotateZRad(float degrees){
-	ofGetCurrentRenderer()->rotateZRad(degrees);
+void ofRotateZRad(float radians){
+	ofGetCurrentRenderer()->rotateZRad(radians);
 }
 
 //----------------------------------------------------------

@@ -453,14 +453,10 @@
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
-				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>c++0x</string>
 				<key>CLANG_CXX_LIBRARY</key>
 				<string>libc++</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
-				<key>CLANG_ENABLE_OBJC_ARC</key>
-				<string>NO</string>
 				<key>CLANG_WARN_BOOL_CONVERSION</key>
 				<string>YES</string>
 				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
@@ -529,7 +525,7 @@
 				<key>SYMROOT</key>
 				<string>$(SRCROOT)/../../lib/tvOS/</string>
 				<key>TVOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
+				<string>13.0</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -544,14 +540,10 @@
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
-				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>c++0x</string>
 				<key>CLANG_CXX_LIBRARY</key>
 				<string>libc++</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
-				<key>CLANG_ENABLE_OBJC_ARC</key>
-				<string>NO</string>
 				<key>CLANG_WARN_BOOL_CONVERSION</key>
 				<string>YES</string>
 				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
@@ -609,7 +601,7 @@
 				<key>SYMROOT</key>
 				<string>$(SRCROOT)/../../lib/tvOS/</string>
 				<key>TVOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
+				<string>13.0</string>
 				<key>VALIDATE_PRODUCT</key>
 				<string>YES</string>
 			</dict>

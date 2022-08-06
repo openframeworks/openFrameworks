@@ -32,7 +32,6 @@ ofxiOSImagePicker::ofxiOSImagePicker()
 //--------------------------------------------------------------
 ofxiOSImagePicker::~ofxiOSImagePicker(){
 	close(); 
-    [imagePicker release];
 }
 
 //--------------------------------------------------------------
@@ -180,7 +179,7 @@ bool ofxiOSImagePicker::getImageUpdated(){
 //----------------------------------------------------------------
 @implementation ofxiOSImagePickerDelegate
 
-- (id) initWithPicker:(canLoadPixels *) _picker
+- (instancetype) initWithPicker:(canLoadPixels *) _picker
 {
 	if(self = [super init])
 	{
@@ -219,22 +218,18 @@ bool ofxiOSImagePicker::getImageUpdated(){
 
     _imagePicker.delegate = nil;
 	[_imagePicker.view removeFromSuperview];
-	[_imagePicker release];
+    _imagePicker = nil;
 	
     if(_image) {
-        [_image release];
         _image = nil;
     }
     
     if(overlay) {
         overlay.delegate = nil;
-        [overlay release];
         overlay = nil;
     }
     
     cppPixelLoader = NULL;
-	
-	[super dealloc];
 }
 
 //----------------------------------------------------------------
@@ -242,14 +237,14 @@ bool ofxiOSImagePicker::getImageUpdated(){
          didFinishPickingImage:(UIImage *)image 
                    editingInfo:(NSDictionary *)editingInfo {
     
-    _image = [[self scaleAndRotateImage:image] retain];
+    _image = [self scaleAndRotateImage:image];
 	cppPixelLoader->loadPixels();
 }
 
 - (void) imagePickerController:(UIImagePickerController *)picker 
  didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
-    _image = [[self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]] retain];
+    _image = [self scaleAndRotateImage:[info objectForKey:UIImagePickerControllerOriginalImage]];
 	cppPixelLoader->loadPixels();
 }
 
@@ -309,11 +304,11 @@ bool ofxiOSImagePicker::getImageUpdated(){
     BOOL isOverlayView = YES;
     isOverlayView = isOverlayView && (overlayView != nil);
     if(isOverlayView) {
-        isOverlayView = isOverlayView && [[overlayView class] isSubclassOfClass:[OverlayView class]];
+        isOverlayView = isOverlayView && [[overlayView class] isSubclassOfClass:[ofxiOSImagePickerOverlayView class]];
     }
     
     if(isOverlayView) {
-        overlay = (OverlayView *)overlayView;
+        overlay = (ofxiOSImagePickerOverlayView *)overlayView;
     } else {
         
         CGSize screenSize = [UIScreen mainScreen].bounds.size;
@@ -325,7 +320,7 @@ bool ofxiOSImagePicker::getImageUpdated(){
         }
         
         CGRect overlayFrame = CGRectMake(0, 0, screenW, screenH);
-        overlay = [[OverlayView alloc] initWithFrame:overlayFrame];
+        overlay = [[ofxiOSImagePickerOverlayView alloc] initWithFrame:overlayFrame];
     }
     overlay.delegate = _imagePicker;
     
@@ -369,7 +364,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
     
     if(overlay) {
         overlay.delegate = nil;
-        [overlay release];
         overlay = nil;
     }
 }
@@ -524,11 +518,11 @@ bool ofxiOSImagePicker::getImageUpdated(){
 @end
 
 //----------------------------------------------------------- overlay.
-@implementation OverlayView
+@implementation ofxiOSImagePickerOverlayView
 
 @synthesize delegate;
 
-- (id)initWithFrame:(CGRect)frame{
+- (instancetype)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
         [self initUI];
     }

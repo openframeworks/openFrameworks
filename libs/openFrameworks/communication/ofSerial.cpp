@@ -15,12 +15,12 @@
 #include <algorithm>
 #include <cstring>
 
-using namespace std;
-
 #ifdef TARGET_LINUX
 	#include <linux/serial.h>
 #endif
 
+using std::vector;
+using std::string;
 
 #ifdef TARGET_WIN32
 
@@ -69,9 +69,10 @@ void ofSerial::enumerateWin32Ports(){
 
 			 char * begin = nullptr;
 			 char * end = nullptr;
-			 begin = strstr((char *)dataBuf, "COM");
+			 begin = strstr((char *)dataBuf, "(COM");
 
 			 if(begin){
+				 begin++;	// get rid of the (
 				 end = strstr(begin, ")");
 				 if(end){
 					 *end = 0;   // get rid of the )...

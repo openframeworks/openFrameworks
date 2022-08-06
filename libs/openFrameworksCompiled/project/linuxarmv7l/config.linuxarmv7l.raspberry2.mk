@@ -43,6 +43,8 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+ifndef USE_PI_LEGACY
+
 # We detect Raspbian versions Stretch and newer above and enable legacy automatically for older versions
 # If detection fails comment USE_PI_LEGACY = 1 to use the newer system
 USE_PI_LEGACY = 1
@@ -63,6 +65,8 @@ ifeq ($(shell expr $(VER_ID) \>= 9), 1)
 endif
 
 $(info VER ID IS $(VER_ID)) 
+
+endif
 
 # defines used inside openFrameworks libs.
 PLATFORM_DEFINES += TARGET_RASPBERRY_PI
@@ -126,6 +130,10 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
+
+#c++ 17 support - comment out two lines below to use c++11
+PLATFORM_CFLAGS += -std=c++17
+PLATFORM_LDFLAGS += -lstdc++fs
 
 PLATFORM_CFLAGS += -march=armv7-a
 PLATFORM_CFLAGS += -mfpu=vfp
