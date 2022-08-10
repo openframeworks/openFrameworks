@@ -611,7 +611,9 @@ bool ofFile::create(const fs::path & path){
 	auto oldpath = this->path();
 	success = open(path,ofFile::WriteOnly,binary);
 	close();
-	if( oldpath.length() ){
+	
+	// FIXME: why length?
+	if( oldpath.string().length() ){
 		open(oldpath,oldmode,binary);
 	}
 	
@@ -645,10 +647,15 @@ std::filebuf *ofFile::getFileBuffer() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::exists() const {
+	using std::cout, std::endl;
+	cout << "ofFile::exists()" << endl;
 	if(path().empty()){
+		cout << "path empty" << path() << endl;
 		return false;
 	}
+	cout << "path " << path() << endl;
 
+	cout << (fs::exists(myFile) ? "exist" : "dont exist") << endl;
 	return fs::exists(myFile);
 }
 
@@ -1212,11 +1219,13 @@ fs::path ofDirectory::path() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getAbsolutePath() const {
+fs::path ofDirectory::getAbsolutePath() const {
 	try{
-		return fs::canonical(fs::absolute(myDir)).string();
+//		return fs::canonical(fs::absolute(myDir)).string();
+		return fs::canonical(fs::absolute(myDir));
 	}catch(...){
-		return fs::absolute(myDir).string();
+//		return fs::absolute(myDir).string();
+		return fs::absolute(myDir);
 	}
 }
 
@@ -1742,10 +1751,11 @@ string ofFilePath::getBaseName(const fs::path& filePath){
 //------------------------------------------------------------------------------------------------------------
 fs::path ofFilePath::getEnclosingDirectory(const fs::path & _filePath, bool bRelativeToData){
 //    std::string filePath = _filePath.string();
+	fs::path fp = _filePath;
 	if(bRelativeToData){
-		filePath = ofToDataPath(filePath);
+		fp = ofToDataPath(fp);
 	}
-	return addTrailingSlash(_filePath.parent_path());
+	return addTrailingSlash(fp.parent_path());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1884,11 +1894,11 @@ void ofSetDataPathRoot(const fs::path& newRoot){
 //--------------------------------------------------
 fs::path ofToDataPath(const fs::path & path, bool makeAbsolute){
     if (makeAbsolute && path.is_absolute()) {
-        return path.string();
+        return path;
     }
     
     if (!enableDataPath) {
-        return path.string();
+        return path;
     }
 
     bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
@@ -1928,6 +1938,7 @@ fs::path ofToDataPath(const fs::path & path, bool makeAbsolute){
     // if the path begins with the full contents of dataPathRoot then the data path has already been added
     // we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
 //    auto dirDataPath = dataPath.string();
+	auto dirDataPath = dataPath;
     // also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
     dirDataPath = ofFilePath::addTrailingSlash(dataPath);
 

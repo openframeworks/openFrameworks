@@ -486,7 +486,7 @@ public:
 	/// (read only, read write, etc)
 	/// \param binary set to false if you are working with a text file & want
 	/// lines split at endline characters automatically
-	ofFile(fs::path & path, Mode mode=ReadOnly, bool binary=true);
+//	ofFile(fs::path & path, Mode mode=ReadOnly, bool binary=true);
 	ofFile(const fs::path & path, Mode mode=ReadOnly, bool binary=true);
 	
 	/// Create a new file path using the same path & settings of another

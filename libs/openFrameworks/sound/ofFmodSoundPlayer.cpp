@@ -206,7 +206,7 @@ bool ofFmodSoundPlayer::load(const fs::path& _fileName, bool stream){
 	int fmodFlags =  FMOD_DEFAULT;
 	if(stream)fmodFlags =  FMOD_DEFAULT | FMOD_CREATESTREAM;
 
-    result = FMOD_System_CreateSound(sys, fileName.data(),  fmodFlags, nullptr, &sound);
+    result = FMOD_System_CreateSound(sys, fileName.string().data(),  fmodFlags, nullptr, &sound);
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;
