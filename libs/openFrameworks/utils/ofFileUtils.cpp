@@ -1666,7 +1666,8 @@ string ofFilePath::addLeadingSlash(const fs::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addTrailingSlash(const fs::path& _path){
+//string ofFilePath::addTrailingSlash(const fs::path & _path){
+fs::path ofFilePath::addTrailingSlash(const fs::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(_path.string().empty()) return "";
     return (fs::path(_path).make_preferred() / "").string();

@@ -351,7 +351,7 @@ public:
 	///
 	/// \param path file or directory path
 	/// \returns true if the path is an absolute path
-    static bool isAbsolute(fs::path& path);
+    static bool isAbsolute(const fs::path& path);
 	
 	/// Get the filename of a given path by stripping the parent
 	/// directories ie. "images/duck.jpg" -> "duck.jpg", assumes the path is in
@@ -362,7 +362,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns filename
-    static std::string getFileName(fs::path& filePath, bool bRelativeToData = true);
+    static std::string getFileName(const fs::path& filePath, bool bRelativeToData = true);
 	
 	/// Get a file name without its extension,
 	/// ie. "images/duck.jpg" -> "duck" and
@@ -370,7 +370,7 @@ public:
 	///
 	/// \param filePath file path
 	/// \returns basename
-    static std::string getBaseName(fs::path& filePath);
+    static std::string getBaseName(const fs::path& filePath);
 
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
@@ -413,7 +413,7 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-    static std::string join(fs::path& path1, fs::path& path2);
+    static std::string join(const fs::path& path1, const fs::path& path2);
 	
 	/// Get the full path to the application's executable file.
 	///
@@ -448,7 +448,7 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-    static std::string makeRelative(fs::path & from, fs::path & to);
+    static std::string makeRelative(const fs::path & from, const fs::path & to);
 };
 
 /// \class ofFile
