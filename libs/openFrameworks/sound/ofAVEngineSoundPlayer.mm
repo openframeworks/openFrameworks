@@ -24,7 +24,7 @@
 #import <Accelerate/Accelerate.h>
 
 static BOOL audioSessionSetup = NO;
-static AVAudioEngine * engine = nullptr;
+static AVAudioEngine * _engine = nullptr;
 
 static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotification";
 
@@ -80,9 +80,6 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (void)beginInterruption; /* something has caused your audio session to be interrupted */
 
-/* the interruption is over */
-- (void)endInterruptionWithFlags:(NSUInteger)flags API_AVAILABLE(ios(4.0), watchos(2.0), tvos(9.0)); /* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
-
 - (void)endInterruption; /* endInterruptionWithFlags: will be called instead if implemented. */
 
 /* notification for input become available or unavailable */
@@ -122,12 +119,12 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (AVAudioEngine *) engine {
 
-  if( engine == nullptr ){
-	engine = [[AVAudioEngine alloc] init];
+  if( _engine == nullptr ){
+	_engine = [[AVAudioEngine alloc] init];
     resetAudioEngine = NO;
   }
   
-  return engine;
+  return _engine;
 }
 
 
@@ -165,21 +162,20 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (void) engineReset {
     if( [self engine] != nil && [[self engine] isRunning] ){
-        NSLog(@"engineReconnect isRunning");
+        NSLog(@"engineReset isRunning");
     } else {
-        NSLog(@"engineReconnect is NOT Running");
+        NSLog(@"engineReset is NOT Running");
     }
     if([self engine] && [[self engine] isRunning]) {
-        
-//        for(AVAudioNode* node in [self engine].attachedNodes) {
-//
-//            if(node != nil && [node ]){
-////                [node stop];
-//                [[self engine] detachNode:node];
-//            }
-//        }
+        [_engine stop];
         resetAudioEngine = NO;
     }
+    
+    if(_engine != nullptr) {
+        [_engine release];
+        _engine = nullptr;
+    }
+    [self engine];
 }
 
 
@@ -337,37 +333,20 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             _bInterruptedWhileRunning = YES;
             
             [self engineReconnect];
-            //[self engineReset];
-            [[self engine] stop];
+            
+            _isConfigChangePending = YES;
+                       
+           if (!_isSessionInterrupted) {
+               NSLog(@"Received a %@ notification!", AVAudioEngineConfigurationChangeNotification);
+               NSLog(@"Re-wiring connections");
+               [self makeEngineConnections];
+           } else {
+               NSLog(@"Session is interrupted, deferring changes");
+           }
+            
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.033f), dispatch_get_main_queue(), ^{
-                if( self.engine == nil || ([self engine] != nil && ![[self engine] isRunning]) ){
-                    NSLog(@"play - engine is null or not running - starting");
-                    [self startEngine];
-                    //[self.engine reset];
-                }
-                BOOL found = NO;
-                for(AVAudioPlayerNode* node in [self engine].attachedNodes) {
-                    if(node == self.soundPlayer) {
-                        found = YES;
-                        break;
-                    }
-                }
-                if(self.soundPlayer.engine == nil || found == NO) {
-                    
-                    if(found == NO) {
-                        NSLog(@"AVAudioEngineConfigurationChangeNotification - engine is valid - however NO attachedNode for soundPlayer found - reseting");
-                    } else {
-                        NSLog(@"AVAudioEngineConfigurationChangeNotification - engine is valid - however soundPlayer.engine is NULL - reseting");
-                    }
-                    _mainMixer = [[self engine] mainMixerNode];
-                    
-                    [[self engine] attachNode:self.soundPlayer];
-                    [[self engine]  connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
-                    
-                    [[self engine] attachNode:self.variSpeed];
-                    [[self engine]  connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
-                }
+                
                 [self handleInterruption:note];
             });
             
@@ -387,17 +366,24 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         NSLog(@"Media services have been reset!");
        NSLog(@"Re-wiring connections and starting once again");
       
+    // Re-configure the audio session per QA1749
        audioSessionSetup = NO;
        [self setupSharedSession];
-    if(engine != nil)
-        [engine stop];
-    [engine release];
-    engine = nil;
-    _mainMixer = [[self engine] mainMixerNode];
-    _mainMixer.outputVolume = 0.98;
+    
+    [self engineReset];
+    
+    if(_mainMixer != nil) {
+        [_mainMixer release];
+        _mainMixer = nil;
+    }
+    [self engine];
+    
+
+    [self attachNodes];
+    [self makeEngineConnections];
     
     
-       [self startEngine];
+    [self startEngine];
     
 }
 
@@ -450,10 +436,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             [self beginInterruption];
         } else if(interruptionType == AVAudioSessionInterruptionTypeEnded) {
             [self endInterruption];
-        } else {
-            [self endInterruption];
         }
-    
     bool isPlaying = [self isPlaying] || _isPlaying == YES;
     float posSecs = [self positionSeconds] > 0 ? [self positionSeconds] : _mPositonSecondsAtInterruption;
     
@@ -472,24 +455,51 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     
     NSLog(@"AVEnginePlayer::beginInterruption");
     
+    _isSessionInterrupted = YES;
+    
     if([self isPlaying] || _isPlaying == YES) {
         self.bInterruptedWhileRunning = YES;
     }
-//    [self stop];
+    
+    if([self isValid]) {
+        [self.soundPlayer stop];
+    }
     
 //    if([self.delegate respondsToSelector:@selector(soundStreamBeginInterruption:)]) {
 //        [self.delegate soundStreamBeginInterruption:self];
 //    }
 }
 
+
+- (void) attachNodes {
+    if( self.variSpeed == nullptr ){
+        // Speed manipulator
+        self.variSpeed = [[AVAudioUnitVarispeed alloc] init];
+        self.variSpeed.rate = 1.0;
+
+    }
+    
+    if( self.soundPlayer == nil ){
+        // Sound player
+        self.soundPlayer = [[AVAudioPlayerNode alloc] init];
+    }
+    
+    if(self.soundPlayer != nil && self.variSpeed != nil) {
+        [[self engine] attachNode:self.soundPlayer];
+        [[self engine] attachNode:self.variSpeed];
+    }
+}
+
 - (void) makeEngineConnections {
     _mainMixer = [[self engine] mainMixerNode];
     
-    [[self engine] attachNode:self.soundPlayer];
-    [[self engine] connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
-    
-    [[self engine] attachNode:self.variSpeed];
-    [[self engine] connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
+    AVAudioFormat *stereoFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:44100 channels:2];
+    if(self.soundPlayer != nil) {
+        [[self engine] connect:self.soundPlayer to:self.variSpeed format:stereoFormat];
+    }
+    if(self.variSpeed != nil) {
+        [[self engine] connect:self.variSpeed to:self.mainMixer format:stereoFormat];
+    }
 }
 
 - (void)endInterruption {
@@ -504,16 +514,16 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         if (_isConfigChangePending) {
             // there is a pending config changed notification
             NSLog(@"Responding to earlier engine config changed notification. Re-wiring connections");
+            [self startEngine];
             [self makeEngineConnections];
             
             _isConfigChangePending = NO;
         }
     }
-    [self engineReconnect];
+//    [self engineReconnect];
     
+
     
-    
-    [self startEngine];
     
     if(self.bInterruptedWhileRunning || _isPlaying == YES) {
         self.bInterruptedWhileRunning = NO;
@@ -584,7 +594,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         } else {
             NSLog(@"Engine start successful");
             if(resetAudioEngine) {
-                [self engineReset];
+//                [self engineReset];
                 if(resetAudioEngine == NO)
                     problem = YES;
                 
@@ -616,7 +626,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     }
     
     if(problem == YES) {
-        [[self engine] reset];
+        //[[self engine] reset];
         NSLog(@"Engine start successful - re-attaching nodes");
         [[self engine] attachNode:self.variSpeed];
         [[self engine] attachNode:self.soundPlayer];
