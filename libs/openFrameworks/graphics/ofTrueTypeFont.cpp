@@ -374,7 +374,7 @@ static std::string linuxFontPathByName(const std::string& fontname){
 //-----------------------------------------------------------
 static bool loadFontFace(const fs::path& _fontname, FT_Face & face, fs::path & filename, int index){
 	fs::path fontname = _fontname;
-	// makes no sense
+	// FIXME: makes no sense: why have two fs::path parameters if they are the same?
 	filename = ofToDataPath(_fontname, true);
 	ofFile fontFile(filename, ofFile::Reference);
 	int fontID = index;
@@ -414,8 +414,7 @@ static bool loadFontFace(const fs::path& _fontname, FT_Face & face, fs::path & f
 	FT_Error err;
     err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
 	using std::cout, std::endl;
-	cout << "xxx" << endl;
-	cout << filename << endl;
+
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";

@@ -647,15 +647,16 @@ std::filebuf *ofFile::getFileBuffer() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::exists() const {
-	using std::cout, std::endl;
-	cout << "ofFile::exists()" << endl;
+//	FIXME: remove comments
+//	using std::cout, std::endl;
+//	cout << "ofFile::exists()" << endl;
 	if(path().empty()){
-		cout << "path empty" << path() << endl;
+//		cout << "path empty" << path() << endl;
 		return false;
 	}
-	cout << "path " << path() << endl;
-
-	cout << (fs::exists(myFile) ? "exist" : "dont exist") << endl;
+	
+//	cout << "path " << path() << endl;
+//	cout << (fs::exists(myFile) ? "exist" : "dont exist") << endl;
 	return fs::exists(myFile);
 }
 
@@ -717,11 +718,11 @@ bool ofFile::canRead() const {
 	}
 #else
 	if(geteuid() == info.st_uid){
-		return perm & fs::owner_read;
+		return perm & fs::perms::owner_read;
 	}else if (getegid() == info.st_gid){
-		return perm & fs::group_read;
+		return perm & fs::perms::group_read;
 	}else{
-		return perm & fs::others_read;
+		return perm & fs::perms::others_read;
 	}
 #endif
 #endif
@@ -778,11 +779,11 @@ bool ofFile::canExecute() const {
 	}
 #else
 	if(geteuid() == info.st_uid){
-		return perm & fs::owner_exe;
+		return perm & fs::perms::owner_exec;
 	}else if (getegid() == info.st_gid){
-		return perm & fs::group_exe;
+		return perm & fs::perms::group_exec;
 	}else{
-		return perm & fs::others_exe;
+		return perm & fs::perms::others_exec;
 	}
 #endif
 #endif

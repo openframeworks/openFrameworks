@@ -248,19 +248,6 @@ ifeq ($(USE_FMOD),0)
 endif
 
 
-# DIMITRE LITE
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/communication/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/3d/%
-
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/json/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pugixml/%
-
-
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -323,42 +310,22 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-# PLATFORM_FRAMEWORKS =
-# PLATFORM_FRAMEWORKS += Accelerate
-# PLATFORM_FRAMEWORKS += QTKit
-# PLATFORM_FRAMEWORKS += AGL
-# PLATFORM_FRAMEWORKS += ApplicationServices
-# PLATFORM_FRAMEWORKS += AudioToolbox
-# PLATFORM_FRAMEWORKS += CoreAudio
-# PLATFORM_FRAMEWORKS += CoreFoundation
-# PLATFORM_FRAMEWORKS += CoreServices
-# PLATFORM_FRAMEWORKS += OpenGL
-# PLATFORM_FRAMEWORKS += IOKit
-# PLATFORM_FRAMEWORKS += Cocoa
-# PLATFORM_FRAMEWORKS += CoreVideo
-# PLATFORM_FRAMEWORKS += AVFoundation
-# PLATFORM_FRAMEWORKS += CoreMedia
-# PLATFORM_FRAMEWORKS += QuartzCore
-# PLATFORM_FRAMEWORKS += Security
-
-# DIMITRE LITE 
-
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
-# PLATFORM_FRAMEWORKS += QTKit
-# PLATFORM_FRAMEWORKS += AGL
-# PLATFORM_FRAMEWORKS += ApplicationServices
-# PLATFORM_FRAMEWORKS += AudioToolbox
-# PLATFORM_FRAMEWORKS += CoreAudio
+PLATFORM_FRAMEWORKS += QTKit
+PLATFORM_FRAMEWORKS += AGL
+PLATFORM_FRAMEWORKS += ApplicationServices
+PLATFORM_FRAMEWORKS += AudioToolbox
+PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreFoundation
-# PLATFORM_FRAMEWORKS += CoreServices
+PLATFORM_FRAMEWORKS += CoreServices
 PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
 PLATFORM_FRAMEWORKS += CoreVideo
 PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += CoreMedia
-# PLATFORM_FRAMEWORKS += QuartzCore
+PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
 
 ifeq ($(USE_GST),1)

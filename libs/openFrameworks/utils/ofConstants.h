@@ -500,8 +500,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #endif
 #endif
 
-#define OF_USING_STD_FS 1
-
 #if OF_USING_STD_FS
     #if OF_USE_EXPERIMENTAL_FS
         // C++17 experimental fs support
@@ -546,25 +544,31 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #define BOOST_NO_CXX11_SCOPED_ENUMS
         #define BOOST_NO_SCOPED_ENUMS
     #endif
-    #include <boost/filesystem.hpp>
-	namespace boost {
-		namespace filesystem {
-			class path;
-		}
-	}
-	namespace std {
-		namespace filesystem = boost::filesystem;
-	}
+//    #include <boost/filesystem.hpp>
+//	namespace boost {
+//		namespace filesystem {
+//			class path;
+//		}
+//	}
+//	namespace std {
+//		namespace filesystem = boost::filesystem;
+//	}
 #endif
 
+#if defined __has_include
+	#if __has_include(<filesystem>)
+		#include <filesystem>
+		namespace fs = std::__fs::filesystem;
+		#define OF_USING_STD_FS 1
+	#elif __has_include(<experimental/filesystem>)
+		#include <experimental/filesystem>
+		namespace fs = std::experimental::filesystem;
 
-// namespace std::__fs::filesystem = std::filesystem;
-// using std::filesystem;
-// namespace std::filesystem = std::__fs::filesystem;
-namespace fs = std::__fs::filesystem;
-// using std::__fs::filesystem;
-// namespace std::filesystem = std::__fs::filesystem;
+	#elif __has_include(<boost/filesystem>)
+		#include <boost/filesystem>
+		namespace fs = boost::filesystem;
 
-// namespace std {
-	// namespace filesystem = __fs::filesystem;
-// }
+	#endif
+#endif
+
+//namespace fs = std::__fs::filesystem;
