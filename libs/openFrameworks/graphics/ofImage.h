@@ -134,27 +134,27 @@ struct ofImageLoadSettings {
 
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofPixels & pix, const fs::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofFloatPixels & pix, const fs::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofShortPixels & pix, const fs::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, const fs::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofSaveImage(const ofPixels & pix, const fs::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+bool ofSaveImage(const ofPixels & pix, const of::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 bool ofSaveImage(const ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-bool ofSaveImage(const ofFloatPixels & pix, const fs::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+bool ofSaveImage(const ofFloatPixels & pix, const of::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 bool ofSaveImage(const ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-bool ofSaveImage(const ofShortPixels & pix, const fs::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+bool ofSaveImage(const ofShortPixels & pix, const of::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 bool ofSaveImage(const ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \brief Deallocates FreeImage resources.
@@ -173,7 +173,7 @@ public:
     ofImage_();
 
     ofImage_(const ofPixels_<PixelType> & pix);
-	ofImage_(const fs::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
+	ofImage_(const of::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
 
@@ -217,7 +217,7 @@ public:
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
-	bool load(const fs::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
+	bool load(const of::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
@@ -599,7 +599,7 @@ public:
     ///
     /// \param fileName Saves image to this path, relative to the data folder.
     /// \param compressionLevel The ofImageQualityType.
-	bool save(const fs::path & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
+	bool save(const of::filesystem::path & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
 
     /// \brief This saves the image to the ofBuffer passed with the image
     /// quality specified by compressionLevel.

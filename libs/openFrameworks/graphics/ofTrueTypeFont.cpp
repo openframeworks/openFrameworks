@@ -372,9 +372,9 @@ static std::string linuxFontPathByName(const std::string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(const fs::path& _fontname, FT_Face & face, fs::path & filename, int index){
-	fs::path fontname = _fontname;
-	// FIXME: makes no sense: why have two fs::path parameters if they are the same?
+static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, of::filesystem::path & filename, int index){
+	of::filesystem::path fontname = _fontname;
+	// FIXME: makes no sense: why have two of::filesystem::path parameters if they are the same?
 	filename = ofToDataPath(_fontname, true);
 	ofFile fontFile(filename, ofFile::Reference);
 	int fontID = index;
@@ -698,7 +698,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(const fs::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
 	settings.contours = makeContours;

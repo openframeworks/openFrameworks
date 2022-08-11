@@ -558,17 +558,22 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #if defined __has_include
 	#if __has_include(<filesystem>)
 		#include <filesystem>
-		namespace fs = std::__fs::filesystem;
+namespace of{
+	namespace filesystem = std::__fs::filesystem;
+}
 		#define OF_USING_STD_FS 1
 	#elif __has_include(<experimental/filesystem>)
 		#include <experimental/filesystem>
-		namespace fs = std::experimental::filesystem;
+namespace of{
+	namespace filesystem = std::experimental::filesystem;
+}
 
 	#elif __has_include(<boost/filesystem>)
 		#include <boost/filesystem>
-		namespace fs = boost::filesystem;
+namespace of{
+	namespace filesystem = boost::filesystem;
+}
 
 	#endif
 #endif
 
-//namespace fs = std::__fs::filesystem;

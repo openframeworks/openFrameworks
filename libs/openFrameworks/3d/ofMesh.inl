@@ -1030,7 +1030,7 @@ void ofMesh_<V,N,C,T>::append(const ofMesh_<V,N,C,T> & mesh){
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::load(const fs::path& path){
+void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
 	ofFile is = {path, ofFile::ReadOnly};
 //	ofFile is(path, ofFile::ReadOnly);
 //	ofFile is(path);
@@ -1273,7 +1273,7 @@ void ofMesh_<V,N,C,T>::load(const fs::path& path){
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::save(const fs::path& path, bool useBinary) const{
+void ofMesh_<V,N,C,T>::save(const of::filesystem::path& path, bool useBinary) const{
 	ofFile os(path, ofFile::WriteOnly);
 	const auto & data = *this;
 

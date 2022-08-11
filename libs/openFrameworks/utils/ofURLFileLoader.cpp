@@ -31,8 +31,8 @@ public:
 	~ofURLFileLoaderImpl();
 	ofHttpResponse get(const string& url);
 	int getAsync(const string& url, const string& name=""); // returns id
-	ofHttpResponse saveTo(const string& url, const fs::path& path);
-	int saveAsync(const string& url, const fs::path& path);
+	ofHttpResponse saveTo(const string& url, const of::filesystem::path& path);
+	int saveAsync(const string& url, const of::filesystem::path& path);
 	void remove(int id);
 	void clear();
 	void stop();
@@ -79,12 +79,12 @@ int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
 }
 
 
-ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const fs::path& path){
+ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const of::filesystem::path& path){
 	ofHttpRequest request(url,path.string(),true);
 	return handleRequest(request);
 }
 
-int ofURLFileLoaderImpl::saveAsync(const string& url, const fs::path& path){
+int ofURLFileLoaderImpl::saveAsync(const string& url, const of::filesystem::path& path){
 	ofHttpRequest request(url,path.string(),true);
 	requests.send(request);
 	start();
@@ -293,11 +293,11 @@ int ofURLFileLoader::getAsync(const string& url, const string& name){
 	return impl->getAsync(url,name);
 }
 
-ofHttpResponse ofURLFileLoader::saveTo(const string& url, const fs::path & path){
+ofHttpResponse ofURLFileLoader::saveTo(const string& url, const of::filesystem::path & path){
 	return impl->saveTo(url,path);
 }
 
-int ofURLFileLoader::saveAsync(const string& url, const fs::path & path){
+int ofURLFileLoader::saveAsync(const string& url, const of::filesystem::path & path){
 	return impl->saveAsync(url,path);
 }
 
@@ -388,11 +388,11 @@ int ofLoadURLAsync(const string&  url, const string&  name){
 	return getFileLoader().getAsync(url,name);
 }
 
-ofHttpResponse ofSaveURLTo(const string& url, const fs::path& path){
+ofHttpResponse ofSaveURLTo(const string& url, const of::filesystem::path& path){
 	return getFileLoader().saveTo(url,path);
 }
 
-int ofSaveURLAsync(const string& url, const fs::path& path){
+int ofSaveURLAsync(const string& url, const of::filesystem::path& path){
 	return getFileLoader().saveAsync(url,path);
 }
 

@@ -236,7 +236,7 @@ class ofBaseLoggerChannel;
 /// \brief Set the logging to output to a file instead of the console.
 /// \param path The path to the log file to use.
 /// \param append True if you want to append to the existing file.
-void ofLogToFile(const fs::path & path, bool append=false);
+void ofLogToFile(const of::filesystem::path & path, bool append=false);
 
 /// \brief Set the logging to ouptut to the console.
 /// 
@@ -703,7 +703,7 @@ public:
 	/// \brief Create an ofFileLoggerChannel with parameters.
 	/// \param path The file path for the log file.
 	/// \param append True if the log data should be added to an existing file.
-    ofFileLoggerChannel(const fs::path & path, bool append);
+    ofFileLoggerChannel(const of::filesystem::path & path, bool append);
 
 	/// \brief Destroy the file logger channel.
 	virtual ~ofFileLoggerChannel();
@@ -711,7 +711,7 @@ public:
 	/// \brief Set the log file.
 	/// \param path The file path for the log file.
 	/// \param append True if the log data should be added to an existing file.
-    void setFile(const fs::path & path,bool append=false);
+    void setFile(const of::filesystem::path & path,bool append=false);
 
 	void log(ofLogLevel level, const std::string & module, const std::string & message);
 

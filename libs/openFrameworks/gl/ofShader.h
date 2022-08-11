@@ -26,18 +26,18 @@ typedef ofColor_<float> ofFloatColor;
 enum ofLogLevel: short;
 
 struct ofShaderSettings {
-    std::map<GLuint, fs::path> shaderFiles;
+    std::map<GLuint, of::filesystem::path> shaderFiles;
     std::map<GLuint, std::string> shaderSources;
     std::map<std::string, int> intDefines;
     std::map<std::string, float> floatDefines;
-    fs::path sourceDirectoryPath;
+    of::filesystem::path sourceDirectoryPath;
     bool bindDefaults = true;
 };
 
 class ofShader {
 
 	struct Source{
-		Source(GLuint type, const std::string & source, const fs::path & directoryPath)
+		Source(GLuint type, const std::string & source, const of::filesystem::path & directoryPath)
 			:type(type)
 			,source(source)
 			,directoryPath(directoryPath){}
@@ -47,7 +47,7 @@ class ofShader {
 		GLuint type;
 		std::string source;
 		std::string expandedSource;
-		fs::path directoryPath;
+		of::filesystem::path directoryPath;
 		std::map<std::string, int>   intDefines;
 		std::map<std::string, float> floatDefines;
 	};
@@ -60,20 +60,20 @@ public:
 	ofShader(ofShader && shader);
 	ofShader & operator=(ofShader && shader);
 
-	bool load(const fs::path& shaderName);
-	bool load(const fs::path& vertName, const fs::path& fragName, const fs::path& geomName="");
+	bool load(const of::filesystem::path& shaderName);
+	bool load(const of::filesystem::path& vertName, const of::filesystem::path& fragName, const of::filesystem::path& geomName="");
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
-	bool loadCompute(const fs::path& shaderName);
+	bool loadCompute(const of::filesystem::path& shaderName);
 #endif
 
 #if !defined(TARGET_OPENGLES)
 	struct TransformFeedbackSettings {
-		std::map<GLuint, fs::path> shaderFiles;
+		std::map<GLuint, of::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
 		std::vector<std::string> varyingsToCapture;
 		std::map<std::string, int> intDefines;
 		std::map<std::string, float> floatDefines;
-		fs::path sourceDirectoryPath;
+		of::filesystem::path sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
 	};
@@ -229,7 +229,7 @@ public:
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
 	bool setupShaderFromSource(GLenum type, std::string source, std::string sourceDirectoryPath = "");
-	bool setupShaderFromFile(GLenum type, const fs::path& filename);
+	bool setupShaderFromFile(GLenum type, const of::filesystem::path& filename);
 
 	// links program with all compiled shaders
 	bool linkProgram();
@@ -278,7 +278,7 @@ private:
 #endif
 
 	bool setupShaderFromSource(Source && source);
-	ofShader::Source sourceFromFile(GLenum type, const fs::path& filename);
+	ofShader::Source sourceFromFile(GLenum type, const of::filesystem::path& filename);
 	void checkProgramInfoLog();
 	bool checkProgramLinkStatus();
 	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
@@ -295,8 +295,8 @@ private:
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-	static std::string parseForIncludes( const std::string& source, const fs::path& sourceDirectoryPath = "");
-	static std::string parseForIncludes( const std::string& source, std::vector<std::string>& included, int level = 0, const fs::path& sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string& source, const of::filesystem::path& sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string& source, std::vector<std::string>& included, int level = 0, const of::filesystem::path& sourceDirectoryPath = "");
 
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID

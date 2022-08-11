@@ -274,7 +274,7 @@ private:
 /// \param path file to open
 /// \param binary set to false if you are reading a text file & want lines
 /// split at endline characters automatically
-ofBuffer ofBufferFromFile(const fs::path & path, bool binary=true);
+ofBuffer ofBufferFromFile(const of::filesystem::path & path, bool binary=true);
 
 //--------------------------------------------------
 /// Write the contents of a buffer to a file at path.
@@ -285,7 +285,7 @@ ofBuffer ofBufferFromFile(const fs::path & path, bool binary=true);
 /// \param buffer data source to write from
 /// \param binary set to false if you are writing a text file & want lines
 /// split at endline characters automatically
-bool ofBufferToFile(fs::path & path, const ofBuffer& buffer, bool binary=true);
+bool ofBufferToFile(of::filesystem::path & path, const ofBuffer& buffer, bool binary=true);
 
 //--------------------------------------------------
 /// \class ofFilePath
@@ -299,32 +299,32 @@ public:
 	///
 	/// \param filename file path
 	/// \returns filename extension only
-    static std::string getFileExt(const fs::path& filename);
+    static std::string getFileExt(const of::filesystem::path& filename);
 	
 	/// Remove extension from a filename, ie. "duck.jpg" ->"duck".
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-    static std::string removeExt(const fs::path& filename);
+    static std::string removeExt(const of::filesystem::path& filename);
 	
 	/// Prepend path with a slash, ie. "images" -> "/images".
 	///
 	/// \param path file or directory path
 	/// \returns slah + path
-    static std::string addLeadingSlash(const fs::path& path);
+    static std::string addLeadingSlash(const of::filesystem::path& path);
 	
 	/// Append path with a slash, ie. "images" -> "images/".
 	///
 	/// \param path directory path
 	/// \returns path + slash
-    static fs::path addTrailingSlash(const fs::path& path);
+    static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
 	
 	/// Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
 	///
 	/// \param path directory path
 	/// \returns path minus trailing slash
-    static std::string removeTrailingSlash(const fs::path& path);
+    static std::string removeTrailingSlash(const of::filesystem::path& path);
 	
 	/// Cleaned up a directory path by adding a trailing slash if needed.
 	///
@@ -333,7 +333,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
-    static std::string getPathForDirectory(const fs::path& path);
+    static std::string getPathForDirectory(const of::filesystem::path& path);
 	
 	/// Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
@@ -343,7 +343,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-    static fs::path getAbsolutePath(const fs::path& path, bool bRelativeToData = true);
+    static of::filesystem::path getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
@@ -351,7 +351,7 @@ public:
 	///
 	/// \param path file or directory path
 	/// \returns true if the path is an absolute path
-    static bool isAbsolute(const fs::path& path);
+    static bool isAbsolute(const of::filesystem::path& path);
 	
 	/// Get the filename of a given path by stripping the parent
 	/// directories ie. "images/duck.jpg" -> "duck.jpg", assumes the path is in
@@ -362,7 +362,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns filename
-    static std::string getFileName(const fs::path& filePath, bool bRelativeToData = true);
+    static std::string getFileName(const of::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// Get a file name without its extension,
 	/// ie. "images/duck.jpg" -> "duck" and
@@ -370,7 +370,7 @@ public:
 	///
 	/// \param filePath file path
 	/// \returns basename
-    static std::string getBaseName(const fs::path& filePath);
+    static std::string getBaseName(const of::filesystem::path& filePath);
 
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
@@ -381,7 +381,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-    static fs::path getEnclosingDirectory(const fs::path& filePath, bool bRelativeToData = true);
+    static of::filesystem::path getEnclosingDirectory(const of::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// Create the enclosing parent directory of a path, ie.
 	/// "images" is the enclosing directory of "duck.jpg" = "images/duck.jpg".
@@ -395,7 +395,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if the enclosing directory was created
-    static bool createEnclosingDirectory(const fs::path& filePath, bool bRelativeToData = true, bool bRecursive = true);
+    static bool createEnclosingDirectory(const of::filesystem::path& filePath, bool bRelativeToData = true, bool bRecursive = true);
 	
 	/// Get the full path to the app's current working directory.
 	///
@@ -413,7 +413,7 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-    static std::string join(const fs::path& path1, const fs::path& path2);
+    static std::string join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 	
 	/// Get the full path to the application's executable file.
 	///
@@ -430,7 +430,7 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-	static fs::path getCurrentExeDir();
+	static of::filesystem::path getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
@@ -448,7 +448,7 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-    static std::string makeRelative(const fs::path & from, const fs::path & to);
+    static std::string makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
 };
 
 /// \class ofFile
@@ -486,8 +486,8 @@ public:
 	/// (read only, read write, etc)
 	/// \param binary set to false if you are working with a text file & want
 	/// lines split at endline characters automatically
-//	ofFile(fs::path & path, Mode mode=ReadOnly, bool binary=true);
-	ofFile(const fs::path & path, Mode mode=ReadOnly, bool binary=true);
+//	ofFile(of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+	ofFile(const of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
 	/// Create a new file path using the same path & settings of another
 	/// file.
@@ -512,8 +512,8 @@ public:
 	/// \param binary set to false if you are reading a text file & want lines
 	/// split at endline characters automatically
 	/// \returns true if the path was opened
-	bool open(fs::path & path, Mode mode=ReadOnly, bool binary=true);
-	bool open(const fs::path & path, Mode mode=ReadOnly, bool binary=true);
+	bool open(of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+	bool open(const of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 
 	/// Open the path as a file.
 	///
@@ -525,7 +525,7 @@ public:
 	/// \param binary set to false if you are reading a text file & want lines
 	/// split at endline characters automatically
 	/// \returns true if the path was opened
-	bool openFromCWD(const fs::path & path, Mode mode=ReadOnly, bool binary=true);
+	bool openFromCWD(const of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
 	/// Reopen the current file path with a different access mode.
 	///
@@ -552,7 +552,7 @@ public:
 	///
 	/// \param path file path
 	/// \returns true if the file was created
-	bool create(const fs::path & path);
+	bool create(const of::filesystem::path & path);
 	
 	/// Check if a file exists at the current path.
 	///
@@ -562,7 +562,7 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	fs::path path() const;
+	of::filesystem::path path() const;
 	
 	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
@@ -588,13 +588,13 @@ public:
 	/// directory.
 	///
 	/// \returns current path's enclosing directory
-	fs::path getEnclosingDirectory() const;
+	of::filesystem::path getEnclosingDirectory() const;
 	
 	/// \biref Get the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \returns current path as an absolute path
-	fs::path getAbsolutePath() const;
+	of::filesystem::path getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -666,7 +666,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool copyTo(const fs::path& path, bool bRelativeToData = true, bool overwrite = false) const;
+	bool copyTo(const of::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false) const;
 	
 	/// Move the current file or directory path to a new path.
 	///
@@ -680,7 +680,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool moveTo(const fs::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const of::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Rename the current file or directory path to a new path.
 	///
@@ -694,7 +694,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool renameTo(const fs::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const of::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Removes the file or directory at the current path.
 	///
@@ -748,11 +748,11 @@ public:
 	/// \return output stream
 	std::filebuf * getFileBuffer() const;
 	
-	operator fs::path(){
+	operator of::filesystem::path(){
 		return myFile;
 	}
 //
-	operator fs::path() const{
+	operator of::filesystem::path() const{
 		return myFile;
 	}
 
@@ -772,7 +772,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	static bool copyFromTo(const fs::path& pathSrc, const fs::path& pathDst, bool bRelativeToData = true,  bool overwrite = false);
+	static bool copyFromTo(const of::filesystem::path& pathSrc, const of::filesystem::path& pathDst, bool bRelativeToData = true,  bool overwrite = false);
 
 	/// Move source path to destination path.
 	///
@@ -788,7 +788,7 @@ public:
 	/// \warning be careful with slashes here, appending a slash when moving a
 	/// folder may cause mad headaches in OSX
 	/// \returns true if the move was successful
-	static bool moveFromTo(const fs::path& pathSrc, const fs::path& pathDst, bool bRelativeToData = true, bool overwrite = false);
+	static bool moveFromTo(const of::filesystem::path& pathSrc, const of::filesystem::path& pathDst, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Check if a file or directory exists at a given path.
 	///
@@ -797,7 +797,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if a file or directory exists
-	static bool doesFileExist(const fs::path& fPath,  bool bRelativeToData = true);
+	static bool doesFileExist(const of::filesystem::path& fPath,  bool bRelativeToData = true);
 	
 	/// Remove a file or directory at a given path.
 	///
@@ -805,14 +805,14 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if the path was removed successfully
-	static bool removeFile(const fs::path& path, bool bRelativeToData = true);
+	static bool removeFile(const of::filesystem::path& path, bool bRelativeToData = true);
 
 private:
 	bool isWriteMode();
 	bool openStream(Mode _mode, bool binary);
 	void copyFrom(const ofFile & mom);
 	
-	fs::path myFile;
+	of::filesystem::path myFile;
 	Mode mode;
 	bool binary;
 };
@@ -835,17 +835,17 @@ public:
 	/// Create an ofDirectory instance and attempt to open the path.
 	///
 	/// \param path directory path
-	ofDirectory(const fs::path & path);
+	ofDirectory(const of::filesystem::path & path);
 
 	/// Open a directory path, clears the current file list.
 	///
 	/// \param path directory path
-	void open(const fs::path & path);
+	void open(const of::filesystem::path & path);
 	
 	/// Open a directory path relative to the current working directory without calling ofToDataPath internally, clears the current file list.
 	///
 	/// \param path directory path
-	void openFromCWD(const fs::path & path);
+	void openFromCWD(const of::filesystem::path & path);
 	
 	/// Close the currently open path.
 	void close();
@@ -864,13 +864,13 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	fs::path path() const;
+	of::filesystem::path path() const;
 	
 	/// Get the absolute, full path of the directory,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
-	fs::path getAbsolutePath() const;
+	of::filesystem::path getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -937,7 +937,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool copyTo(const fs::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const of::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Move the current file or directory path to a new path.
 	///
@@ -951,7 +951,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool moveTo(const fs::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const of::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Rename the current file or directory path to a new path.
 	///
@@ -965,7 +965,7 @@ public:
 	/// \param overwrite set to true if you want to overwrite the file or
 	/// directory at the new path
 	/// \returns true if the copy was successful
-	bool renameTo(const fs::path& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const of::filesystem::path& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	/// Removes the file or directory at the current path.
 	///
@@ -1115,11 +1115,11 @@ public:
 	bool operator>(const ofDirectory & dir) const;
 	bool operator>=(const ofDirectory & dir) const;
 
-	operator fs::path(){
+	operator of::filesystem::path(){
 		return myDir;
 	}
 
-	operator fs::path() const{
+	operator of::filesystem::path() const{
 		return myDir;
 	}
 
@@ -1137,7 +1137,7 @@ public:
 	/// \param bRecursive set to true to automatically create nested directories
 	/// as required
 	/// \returns true if directory was created successfully
-	static bool createDirectory(const fs::path& dirPath, bool bRelativeToData = true, bool recursive = false);
+	static bool createDirectory(const of::filesystem::path& dirPath, bool bRelativeToData = true, bool recursive = false);
 	
 	/// Check if a directory at a given path is empty.
 	///
@@ -1148,7 +1148,7 @@ public:
 	/// are *not* in the data directory
 	/// \returns true if the directory is empty aka contains no files or
 	/// directories
-	static bool isDirectoryEmpty(const fs::path& dirPath, bool bRelativeToData = true );
+	static bool isDirectoryEmpty(const of::filesystem::path& dirPath, bool bRelativeToData = true );
 	
 	/// Check if a directory exists at a given path.
 	///
@@ -1158,7 +1158,7 @@ public:
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data directory
 	/// \returns true if the directory exists
-	static bool doesDirectoryExist(const fs::path& dirPath, bool bRelativeToData = true);
+	static bool doesDirectoryExist(const of::filesystem::path& dirPath, bool bRelativeToData = true);
 	
 	
 	/// remove a directory at a given path
@@ -1168,14 +1168,14 @@ public:
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data directory
 	/// \returns true if the path was removed successfully
-	static bool removeDirectory(const fs::path& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
+	static bool removeDirectory(const of::filesystem::path& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
 	std::vector<ofFile>::const_iterator begin() const;
 	std::vector<ofFile>::const_iterator end() const;
 	std::vector<ofFile>::const_reverse_iterator rbegin() const;
 	std::vector<ofFile>::const_reverse_iterator rend() const;
 
-	fs::path myDir;
+	of::filesystem::path myDir;
 	std::string originalDirectory;
 	std::vector <std::string> extensions;
 	std::vector <ofFile> files;
@@ -1207,7 +1207,7 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
-fs::path ofToDataPath(const fs::path & path, bool absolute=false);
+of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///
@@ -1226,7 +1226,7 @@ bool ofRestoreWorkingDirectoryToDefault();
 ///
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(fs::path& root);
+void ofSetDataPathRoot(of::filesystem::path& root);
 
 /*! \cond PRIVATE */
 namespace of{

@@ -1375,7 +1375,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	drag.position = {instance->events().getMouseX(), instance->events().getMouseY()};
 	drag.files.resize(numFiles);
 	for(int i=0; i<(int)drag.files.size(); i++){
-		drag.files[i] = fs::path(dropString[i]).string();
+		drag.files[i] = of::filesystem::path(dropString[i]).string();
 	}
 	instance->events().notifyDragEvent(drag);
 }
