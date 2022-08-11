@@ -23,6 +23,11 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
 
+static BOOL audioSessionSetup = NO;
+static AVAudioEngine * engine = nullptr;
+
+static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotification";
+
 @interface AVEnginePlayer : NSObject
 
 @property(nonatomic, retain) NSTimer * timer;
@@ -66,14 +71,29 @@
 - (float)positionSeconds;
 - (float)soundDurationSeconds;
 
+
+- (void)sessionInterupted;
+
 - (AVAudioFile *)getSoundFile;
 
 - (AVAudioEngine *)engine;
 
+- (void)beginInterruption; /* something has caused your audio session to be interrupted */
+
+/* the interruption is over */
+- (void)endInterruptionWithFlags:(NSUInteger)flags API_AVAILABLE(ios(4.0), watchos(2.0), tvos(9.0)); /* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
+
+- (void)endInterruption; /* endInterruptionWithFlags: will be called instead if implemented. */
+
+/* notification for input become available or unavailable */
+- (void)inputIsAvailableChanged:(BOOL)isInputAvailable;
+
 @end
 
 
-@interface AVEnginePlayer ()
+@interface AVEnginePlayer () {
+    BOOL resetAudioEngine;
+}
 
 //@property(nonatomic, strong) AVAudioEngine *engine;
 @property(nonatomic, strong) AVAudioMixerNode *mainMixer;
@@ -81,12 +101,18 @@
 @property(nonatomic, strong) AVAudioPlayerNode *soundPlayer;
 @property(nonatomic, strong) AVAudioFile *soundFile;
 @property(nonatomic, assign) bool mShouldLoop;
+@property(nonatomic, assign) BOOL bInterruptedWhileRunning;
+@property(nonatomic, assign) bool isPlaying;
 @property(nonatomic, assign) int mGaurdCount;
 @property(nonatomic, assign) int mRestorePlayCount;
 @property(nonatomic, assign) bool mMultiPlay;
+@property(nonatomic, assign) bool isSessionInterrupted;
+@property(nonatomic, assign) bool isConfigChangePending;
 @property(nonatomic, assign) float mRequestedPositonSeconds;
 @property(nonatomic, assign) AVAudioFramePosition startedSampleOffset;
 
+@property(nonatomic, assign) bool mPlayingAtInterruption;
+@property(nonatomic, assign) float mPositonSecondsAtInterruption;
 
 @end
 
@@ -95,39 +121,126 @@
 @synthesize timer;
 
 - (AVAudioEngine *) engine {
-  static AVAudioEngine * engine = nullptr;
-  
+
   if( engine == nullptr ){
 	engine = [[AVAudioEngine alloc] init];
+    resetAudioEngine = NO;
   }
   
   return engine;
 }
 
+
+- (void) engineReconnect {
+    NSLog(@"engineReconnect");
+    
+    if( [self engine] != nil && [[self engine] isRunning] ){
+        NSLog(@"engineReconnect isRunning");
+    } else {
+        NSLog(@"engineReconnect is NOT Running");
+    }
+    if([self engine]) {
+        BOOL found = NO;
+        for(AVAudioPlayerNode* node in [self engine].attachedNodes) {
+            if(node == self.soundPlayer) {
+                break;
+            }
+        }
+        if(found) {
+            NSLog(@"engineReconnect found Node AVAudioPlayerNode - Disconnecting");
+            [[self engine] detachNode:self.soundPlayer];
+        }
+        found = NO;
+        for(AVAudioUnitVarispeed* node in [self engine].attachedNodes) {
+            if(node == self.variSpeed) {
+                break;
+            }
+        }
+        if(found) {
+            NSLog(@"engineReconnect found Node  variSpeed- Disconnecting");
+            [[self engine] detachNode:self.variSpeed];
+        }
+    }
+}
+
+- (void) engineReset {
+    if( [self engine] != nil && [[self engine] isRunning] ){
+        NSLog(@"engineReconnect isRunning");
+    } else {
+        NSLog(@"engineReconnect is NOT Running");
+    }
+    if([self engine] && [[self engine] isRunning]) {
+        
+//        for(AVAudioNode* node in [self engine].attachedNodes) {
+//
+//            if(node != nil && [node ]){
+////                [node stop];
+//                [[self engine] detachNode:node];
+//            }
+//        }
+        resetAudioEngine = NO;
+    }
+}
+
+
+- (void)sessionInterupted {
+    self.isSessionInterrupted = YES;
+}
+
+
+/* the interruption is over */
+- (void)endInterruptionWithFlags:(NSUInteger)flags API_AVAILABLE(ios(4.0), watchos(2.0), tvos(9.0)) { /* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
+    NSLog(@"AVEnginePlayer::endInterruptionWithFlags");
+    if(flags == AVAudioSessionInterruptionTypeBegan) {
+        [self beginInterruption];
+    } else if(flags == AVAudioSessionInterruptionTypeEnded) {
+        [self endInterruption];
+    }
+}
+
+/* notification for input become available or unavailable */
+- (void)inputIsAvailableChanged:(BOOL)isInputAvailable {
+    NSLog(@"AVEnginePlayer::inputIsAvailableChanged");
+}
+
 // setupSharedSession is to prevent other iOS Classes closing the audio feed, such as AVAssetReader, when reading from disk
 // It is set once on first launch of a AVAudioPlayer and remains as a set property from then on
 - (void) setupSharedSession {
-#ifndef TARGET_OSX
-	static BOOL audioSessionSetup = NO;
+//#ifndef TARGET_OSX
+	
 	if(audioSessionSetup) {
 		return;
 	}
-	NSString * playbackCategory = AVAudioSessionCategoryPlayAndRecord;
-#ifdef TARGET_OF_TVOS
-	playbackCategory = AVAudioSessionCategoryPlayback;
-#endif
-	[[AVAudioSession sharedInstance] setCategory:playbackCategory error: nil];
+	NSString * playbackCategory = AVAudioSessionCategoryPlayback;
+//#ifdef TARGET_OF_TVOS
+//	playbackCategory = AVAudioSessionCategoryPlayback;
+//#endif
+	
     AVAudioSession * audioSession = [AVAudioSession sharedInstance];
     NSError * err = nil;
-    // need to configure set the audio category, and override to it route the audio to the speaker
-    if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
+  
+    
         if(![audioSession setCategory:playbackCategory
-             						  withOptions:AVAudioSessionCategoryOptionMixWithOthers
-                                        error:&err]) { err = nil; }
+             						  withOptions:AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers
+                                        error:&err]) {
+            
+            NSLog(@"Unable to setCategory: withOptions error %@, %@", err, [err userInfo]);
+            err = nil;
+            
+        }
+    
+    if(![[AVAudioSession sharedInstance] setActive: YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error: &err]) {
+        NSLog(@"Unable to setActive: error %@, %@", err, [err userInfo]);
+        err = nil;
     }
-	[[AVAudioSession sharedInstance] setActive: YES error: nil];
+    
+    double hwSampleRate = 44100.0;
+    BOOL success = [[AVAudioSession sharedInstance] setPreferredSampleRate:hwSampleRate error:&err];
+        if (!success) NSLog(@"Error setting preferred sample rate! %@\n", [err localizedDescription]);
+    
+    
 	audioSessionSetup = YES;
-#endif
+//#endif
 }
 
 - (instancetype)init
@@ -143,46 +256,286 @@
 		_mShouldLoop = false;
 		_mGaurdCount = 0;
 		_mMultiPlay = false;
+        _isPlaying = false;
+        _isSessionInterrupted = NO;
 		_mRequestedPositonSeconds = 0.0f;
 		_startedSampleOffset = 0;
+        _bInterruptedWhileRunning = NO;
+        resetAudioEngine = NO;
+        _mPlayingAtInterruption = NO;
+        _mPositonSecondsAtInterruption = 0;
+        _isConfigChangePending = NO;
 		
-//        NSLog(@"%@", mainEngine.engine.description);
+
 		//from: https://github.com/robovm/apple-ios-samples/blob/master/UsingAVAudioEngineforPlaybackMixingandRecording/AVAEMixerSample/AudioEngine.m
+   
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleInterruption:)
+                                                     name:AVAudioSessionInterruptionNotification
+                                                   object:[AVAudioSession sharedInstance]];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleRouteChange:)
+                                                     name:AVAudioSessionRouteChangeNotification
+                                                   object:[AVAudioSession sharedInstance]];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleMediaServicesReset:)
+                                                     name:AVAudioSessionMediaServicesWereLostNotification
+                                                   object:[AVAudioSession sharedInstance]];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleMediaServicesReset:)
+                                                     name:AVAudioSessionMediaServicesWereResetNotification
+                                                   object:[AVAudioSession sharedInstance]];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleInterruption:)
+                                                     name:AVAudioSessionSilenceSecondaryAudioHintNotification
+                                                   object:[AVAudioSession sharedInstance]];
+        
+        
+        
+        if (@available(iOS 14.5, *)) {
+            if(![[AVAudioSession sharedInstance] setPrefersNoInterruptionsFromSystemAlerts:YES error:&error]) {
+                NSLog(@"Unable to setPrefersNoInterruptionsFromSystemAlerts: error %@, %@", error, [error userInfo]);
+                error = nil;
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+        
+        [[NSNotificationCenter defaultCenter] addObserverForName:kShouldEnginePauseNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+                   
+                   /* pausing stops the audio engine and the audio hardware, but does not deallocate the resources allocated by prepare().
+                      When your app does not need to play audio, you should pause or stop the engine (as applicable), to minimize power consumption.
+                   */
+                    bool isPlaying = [self isPlaying] || _isPlaying == YES;
+                   if (!_isSessionInterrupted && !_isConfigChangePending) {
+                       
+                       
+                       NSLog(@"Pausing Engine");
+                       [[self engine] pause];
+                       [[self engine] reset];
+                       
+                   }
+               }];
 		
         // sign up for notifications from the engine if there's a hardware config change
         [[NSNotificationCenter defaultCenter] addObserverForName:AVAudioEngineConfigurationChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
             
-            // if we've received this notification, something has changed and the engine has been stopped
-            // re-wire all the connections and start the engine
-                 
-			bool isSessionInterrupted = false; //TODO: maybe handle interupts too.
+        
+            resetAudioEngine = YES;
+            
+            NSLog(@"Received a AVAudioEngineConfigurationChangeNotification %@ notification! NOTE: %@", AVAudioEngineConfigurationChangeNotification, note.description);
 			
-            if (!isSessionInterrupted) {
-                NSLog(@"Received a %@ notification!", AVAudioEngineConfigurationChangeNotification);
-                NSLog(@"Re-wiring connections and starting once again");
-                
-                bool isPlaying = [self isPlaying];
-                float posSecs = [self positionSeconds];
-                
-//                std::cout << " isPlaying is " << isPlaying << " pos secs is " << posSecs << std::endl;
-                [self startEngine];
-                
-                if( isPlaying && posSecs >= 0 && posSecs < [self soundDurationSeconds] && self.mRestorePlayCount == 0){
-					self.mRestorePlayCount++;
-					dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * 2.0), dispatch_get_main_queue(), ^{
-						[self play:posSecs];
-					});
-				}
-            }
-            else {
-                NSLog(@"Session is interrupted, deferring changes");
-            }
+            bool isPlaying = [self isPlaying] || _isPlaying == YES;
+            float posSecs = [self positionSeconds];
+            
+            _mPlayingAtInterruption = isPlaying;
+            _mPositonSecondsAtInterruption = posSecs;
+            _bInterruptedWhileRunning = YES;
+            
+            [self engineReconnect];
+            //[self engineReset];
+            [[self engine] stop];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.033f), dispatch_get_main_queue(), ^{
+                if( self.engine == nil || ([self engine] != nil && ![[self engine] isRunning]) ){
+                    NSLog(@"play - engine is null or not running - starting");
+                    [self startEngine];
+                    //[self.engine reset];
+                }
+                BOOL found = NO;
+                for(AVAudioPlayerNode* node in [self engine].attachedNodes) {
+                    if(node == self.soundPlayer) {
+                        found = YES;
+                        break;
+                    }
+                }
+                if(self.soundPlayer.engine == nil || found == NO) {
+                    
+                    if(found == NO) {
+                        NSLog(@"AVAudioEngineConfigurationChangeNotification - engine is valid - however NO attachedNode for soundPlayer found - reseting");
+                    } else {
+                        NSLog(@"AVAudioEngineConfigurationChangeNotification - engine is valid - however soundPlayer.engine is NULL - reseting");
+                    }
+                    _mainMixer = [[self engine] mainMixerNode];
+                    
+                    [[self engine] attachNode:self.soundPlayer];
+                    [[self engine]  connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
+                    
+                    [[self engine] attachNode:self.variSpeed];
+                    [[self engine]  connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
+                }
+                [self handleInterruption:note];
+            });
             
         }];
+        
+        
 
     }
         
     return self;
+}
+
+- (void) handleMediaServicesReset:(NSNotification *)notification {
+    
+    NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    
+        NSLog(@"Media services have been reset!");
+       NSLog(@"Re-wiring connections and starting once again");
+      
+       audioSessionSetup = NO;
+       [self setupSharedSession];
+    if(engine != nil)
+        [engine stop];
+    [engine release];
+    engine = nil;
+    _mainMixer = [[self engine] mainMixerNode];
+    _mainMixer.outputVolume = 0.98;
+    
+    
+       [self startEngine];
+    
+}
+
+- (void) handleRouteChange:(NSNotification *)notification {
+    
+    NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    
+    UInt8 reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
+        AVAudioSessionRouteDescription *routeDescription = [notification.userInfo valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
+      
+        NSLog(@"Route change:");
+        switch (reasonValue) {
+            case AVAudioSessionRouteChangeReasonNewDeviceAvailable:
+                NSLog(@"     NewDeviceAvailable");
+                break;
+            case AVAudioSessionRouteChangeReasonOldDeviceUnavailable:
+                NSLog(@"     OldDeviceUnavailable");
+                break;
+            case AVAudioSessionRouteChangeReasonCategoryChange:
+                NSLog(@"     CategoryChange");
+                NSLog(@"     New Category: %@", [[AVAudioSession sharedInstance] category]);
+                break;
+            case AVAudioSessionRouteChangeReasonOverride:
+                NSLog(@"     Override");
+                break;
+            case AVAudioSessionRouteChangeReasonWakeFromSleep:
+                NSLog(@"     WakeFromSleep");
+                break;
+            case AVAudioSessionRouteChangeReasonNoSuitableRouteForCategory:
+                NSLog(@"     NoSuitableReasonForCategory");
+                break;
+            default:
+                NSLog(@"     ReasonUnknown");
+        }
+      
+        NSLog(@"Previous route:\n");
+        NSLog(@"%@", routeDescription);
+    
+}
+
+- (void) handleInterruption:(NSNotification *)notification {
+    
+    NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+
+    
+    NSLog(@"AVEnginePlayer::handleInterruption: notification:%@ %@ interruptionType: %lu", notification.name, notification.description, (unsigned long)interruptionType);
+       
+
+        if(interruptionType == AVAudioSessionInterruptionTypeBegan) {
+            [self beginInterruption];
+        } else if(interruptionType == AVAudioSessionInterruptionTypeEnded) {
+            [self endInterruption];
+        } else {
+            [self endInterruption];
+        }
+    
+    bool isPlaying = [self isPlaying] || _isPlaying == YES;
+    float posSecs = [self positionSeconds] > 0 ? [self positionSeconds] : _mPositonSecondsAtInterruption;
+    
+//                std::cout << " isPlaying is " << isPlaying << " pos secs is " << posSecs << std::endl;
+    [self startEngine];
+    
+//    if( isPlaying && posSecs >= 0 && posSecs < [self soundDurationSeconds] && self.mRestorePlayCount == 0){
+//        self.mRestorePlayCount++;
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.017f), dispatch_get_main_queue(), ^{
+//            [self play:posSecs];
+//        });
+//    }
+}
+
+- (void)beginInterruption {
+    
+    NSLog(@"AVEnginePlayer::beginInterruption");
+    
+    if([self isPlaying] || _isPlaying == YES) {
+        self.bInterruptedWhileRunning = YES;
+    }
+//    [self stop];
+    
+//    if([self.delegate respondsToSelector:@selector(soundStreamBeginInterruption:)]) {
+//        [self.delegate soundStreamBeginInterruption:self];
+//    }
+}
+
+- (void) makeEngineConnections {
+    _mainMixer = [[self engine] mainMixerNode];
+    
+    [[self engine] attachNode:self.soundPlayer];
+    [[self engine] connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
+    
+    [[self engine] attachNode:self.variSpeed];
+    [[self engine] connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
+}
+
+- (void)endInterruption {
+    NSLog(@"AVEnginePlayer::endInterruption");
+    
+    NSError *error;
+    bool success = [[AVAudioSession sharedInstance] setActive:YES error:&error];
+    if (!success)
+        NSLog(@"AVAudioSession set active failed with error: %@", [error localizedDescription]);
+    else {
+        _isSessionInterrupted = NO;
+        if (_isConfigChangePending) {
+            // there is a pending config changed notification
+            NSLog(@"Responding to earlier engine config changed notification. Re-wiring connections");
+            [self makeEngineConnections];
+            
+            _isConfigChangePending = NO;
+        }
+    }
+    [self engineReconnect];
+    
+    
+    
+    [self startEngine];
+    
+    if(self.bInterruptedWhileRunning || _isPlaying == YES) {
+        self.bInterruptedWhileRunning = NO;
+        bool isPlaying = [self isPlaying] || _isPlaying == YES;
+        float posSecs = [self positionSeconds] > 0 ? [self positionSeconds] : _mPositonSecondsAtInterruption;
+        
+//                std::cout << " isPlaying is " << isPlaying << " pos secs is " << posSecs << std::endl;
+        
+        
+        if( isPlaying && posSecs >= 0 && posSecs < ([self soundDurationSeconds] + 0.017f) && self.mRestorePlayCount == 0){
+            self.mRestorePlayCount++;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.017f), dispatch_get_main_queue(), ^{
+                self.mRestorePlayCount--;
+                if(_isPlaying == NO) return;
+                [self play:posSecs];
+            });
+        }
+    }
+    
+//    if([self.delegate respondsToSelector:@selector(soundStreamEndInterruption:)]) {
+//        [self.delegate soundStreamEndInterruption:self];
+//    }
 }
 
 //----------------------------------------------------------- load / unload.
@@ -217,33 +570,60 @@
 - (void)startEngine{
     
     NSError * error = nil;
+    BOOL engineRunning = NO;
+    BOOL problem = NO;
     if( ![[self engine] isRunning] ){
         [[self engine] startAndReturnError:&error];
         if (error) {
             NSLog(@"Error starting engine: %@", [error localizedDescription]);
+//            if(resetAudioEngine) {
+//                [self engineReset];
+//            }
+            problem = YES;
+            
         } else {
             NSLog(@"Engine start successful");
+            if(resetAudioEngine) {
+                [self engineReset];
+                if(resetAudioEngine == NO)
+                    problem = YES;
+                
+            }
+            engineRunning = YES;
+//            [self engineReconnect];
         }
     }else{
-        NSLog(@"Engine already running");
+//        NSLog(@"Engine already running");
+        engineRunning = YES;
     }
     
     if( self.variSpeed == nullptr ){
         // Speed manipulator
 		self.variSpeed = [[AVAudioUnitVarispeed alloc] init];
 		self.variSpeed.rate = 1.0;
+        problem = YES;
     }
     
-    if( self.soundPlayer == nullptr ){
+    if( self.soundPlayer == nil ){
         // Sound player
 		self.soundPlayer = [[AVAudioPlayerNode alloc] init];
+        problem = YES;
     }
 
-	[[self engine] attachNode:self.variSpeed];
-	[[self engine] attachNode:self.soundPlayer];
-	
-	[[self engine]  connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
-	[[self engine]  connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
+    if(_mainMixer != [[self engine] mainMixerNode]) {
+        _mainMixer = [[self engine] mainMixerNode];
+        problem = YES;
+    }
+    
+    if(problem == YES) {
+        [[self engine] reset];
+        NSLog(@"Engine start successful - re-attaching nodes");
+        [[self engine] attachNode:self.variSpeed];
+        [[self engine] attachNode:self.soundPlayer];
+        
+        [[self engine]  connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
+        [[self engine]  connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
+    }
 }
 
 - (BOOL)loadWithSoundFile:(AVAudioFile *)aSoundFile {
@@ -264,24 +644,40 @@
 - (void)dealloc {
     [self unloadSound];
     [super dealloc];
+    
+}
+
+- (BOOL)isValid {
+    if(self.soundPlayer != nil && self.soundPlayer.engine != nil && [self engine] != nil && [self engine].isRunning == YES) {
+        return YES;
+    }
+    return NO;
 }
 
 - (void)unloadSound {
     [self stop];
+    if([self isValid]) {
+        [[self engine] detachNode:self.soundPlayer];
+    }
     self.soundPlayer = nil;
     self.soundFile = nil;
     self.variSpeed = nil;
 }
 
 - (void)play{
+    self.mRequestedPositonSeconds = 0.0;
 	[self play:self.mRequestedPositonSeconds];
-	self.mRequestedPositonSeconds = 0.0;
+}
+
+- (void)playloop{
+    self.mRequestedPositonSeconds = 0.0;
+    [self play:self.mRequestedPositonSeconds];
 }
 
 //----------------------------------------------------------- play / pause / stop.
 - (void)play:(float)startTime{
     if([self isPlaying]) {
-        [self stop];
+        [self pause];
     }
     
     if(self.soundPlayer == nil) {
@@ -290,14 +686,50 @@
     }
     
     if( self.engine == nil || ![[self engine] isRunning] ){
-        NSLog(@"play - engine is null or not running");
+        NSLog(@"play - engine is null or not running - starting");
+        [self startEngine];
+        //[self.engine reset];
+    }
+    
+    if( self.engine == nil || ![[self engine] isRunning] ){
+        NSLog(@"play - engine is NULL or not running");
         return;
+    }
+    BOOL found = NO;
+    
+    for(AVAudioPlayerNode* node in [self engine].attachedNodes) {
+        if(node == self.soundPlayer) {
+            found = YES;
+            break;
+        }
+    }
+    
+    
+    
+    if(self.soundPlayer.engine == nil || found == NO) {
+        
+        if(found == NO) {
+            NSLog(@"play - engine is valid - however NO attachedNode for soundPlayer found - reseting");
+        } else {
+            NSLog(@"play - engine is valid - however soundPlayer.engine is NULL - reseting");
+        }
+        _mainMixer = [[self engine] mainMixerNode];
+        
+        [[self engine] attachNode:self.soundPlayer];
+        [[self engine] connect:self.soundPlayer to:self.variSpeed format:[_mainMixer outputFormatForBus:0]];
+        
+        [[self engine] attachNode:self.variSpeed];
+        [[self engine] connect:self.variSpeed to:self.mainMixer format:[_mainMixer outputFormatForBus:0]];
     }
     
     //we do this as we can't cancel completion handlers.
     //and queded completion handlers can interupt a playing track if we have retriggered it
     //so we basically do this to execute only the last completion handler ( the one for the current playing track ), and ignore the earlier ones.
 	self.mGaurdCount++;
+    _mPositonSecondsAtInterruption = 0;
+    _isSessionInterrupted = NO;
+    _mPlayingAtInterruption = NO;
+    self.mRestorePlayCount = 0;
 	
 	self.startedSampleOffset = self.soundFile.processingFormat.sampleRate * startTime;
 	AVAudioFramePosition numFramesToPlay = self.soundFile.length - self.startedSampleOffset;
@@ -312,11 +744,15 @@
 	self.mRestorePlayCount = 0;
 	
     [self.soundPlayer play];
+    _isPlaying = YES;
+    
 	[self.soundPlayer scheduleSegment:self.soundFile startingFrame:self.startedSampleOffset frameCount:numFramesToPlay atTime:0 completionHandler:^{
 	
 		dispatch_async(dispatch_get_main_queue(), ^{
 			self.mGaurdCount--;
 			
+            if(_isPlaying == NO) return;
+            
 			//std::cout << " need gaurd is " << self.mGaurdCount << std::endl;
 
 			if( self.mGaurdCount == 0 ){
@@ -332,13 +768,19 @@
 
 				//all the other time stuff accounts for the speed / rate, except the remaining time delay
 				remainingTime /= ofClamp(self.variSpeed.rate, 0.01, 100.0);
-				
+                
 				if( self.mShouldLoop ){
-					[self performSelector:@selector(play) withObject:nil afterDelay:remainingTime];
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(playloop) object: self.soundPlayer];
+					[self performSelector:@selector(playloop) withObject:self.soundPlayer afterDelay:remainingTime];
 				}else{
-					[self performSelector:@selector(stop) withObject:nil afterDelay:remainingTime];
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stop) object: self.soundPlayer];
+					[self performSelector:@selector(stop) withObject:self.soundPlayer afterDelay:remainingTime];
 				}
-			}
+                
+//                NSLog(@"play - scheduleSegment mShouldLoop:%i - mGaurdCount:%i", _mShouldLoop, _mGaurdCount);
+            } else {
+//                NSLog(@"play - scheduleSegment - mGaurdCount:%i", _mGaurdCount);
+            }
 			
 			if( self.mGaurdCount < 0 ){
 				self.mGaurdCount=0;
@@ -354,13 +796,23 @@
 }
 
 - (void)pause {
-    if(self.soundPlayer != nil)
+    _isPlaying = NO;
+    if([self isValid]) {
         [self.soundPlayer pause];
+    }
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(playloop) object: self.soundPlayer];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stop) object: self.soundPlayer];
 }
 
 - (void)stop {
-    if(self.soundPlayer != nil)
+    _isPlaying = NO;
+    if([self isValid]) {
         [self.soundPlayer stop];
+    }
+   
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(playloop) object: self.soundPlayer];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stop) object: self.soundPlayer];
+
     self.startedSampleOffset = 0;
 }
 
@@ -370,47 +822,39 @@
 }
 
 - (BOOL)isPlaying {
-    if(self.soundPlayer == nil) {
-        return NO;
-    }
+    if(![self isValid]) return NO;
     return self.soundPlayer.isPlaying;
 }
 
 //----------------------------------------------------------- properties.
 - (void)volume:(float)value {
-    if(self.soundPlayer == nil) return;
+    if(![self isValid]) return;
     self.soundPlayer.volume = value;
 }
 
 - (float)volume {
-    if(self.soundPlayer == nil) {
-        return 0;
-    }
+    if(![self isValid]) return 0;
     return self.soundPlayer.volume;
 }
 
 - (void)pan:(float)value {
-    if(self.soundPlayer == nil) return;
+    if(![self isValid]) return;
     self.soundPlayer.pan = value;
 }
 
 - (float)pan {
-    if(self.soundPlayer == nil) {
-        return 0;
-    }
+    if(![self isValid]) return 0;
     return self.soundPlayer.pan;
 }
 
 - (void)speed:(float)value {
-	if( self.variSpeed != nil ){
+    if([self isValid]) {
 		self.variSpeed.rate = value;
     }
 }
 
 - (float)speed {
-    if(self.soundPlayer == nil) {
-        return 0;
-    }
+    if(![self isValid]) return 0;
     return self.variSpeed.rate;
 }
 
@@ -460,7 +904,10 @@
 
 - (void)positionMs:(int)value {
 	if( [self isLoaded] ){
+        float oldDuration = [self positionSeconds];
 		self.mRequestedPositonSeconds = ofClamp(((float)value)/1000.0, 0, [self soundDurationSeconds]);
+        
+        NSLog(@"positionMS: from: %f toNewPos: %f", oldDuration, self.mRequestedPositonSeconds );
 		
 		if( [self isPlaying] ){
 			[self play];
@@ -474,17 +921,21 @@
 }
 
 - (float)positionSeconds{
-	if( [self isPlaying] ){
+	if( [self isPlaying] && self.variSpeed != nil && self.engine != nil){
 		AVAudioTime * playerTime =  [self.soundPlayer playerTimeForNodeTime:self.soundPlayer.lastRenderTime];
-		float time = ((self.startedSampleOffset + playerTime.sampleTime) / playerTime.sampleRate);
+        float time = 0;
+        if(playerTime != nil)
+            time =((self.startedSampleOffset + playerTime.sampleTime) / playerTime.sampleRate);
 		return time;
 	}
 	return 0.0;
 }
 
 - (float)soundDurationSeconds{
-	if( [self isLoaded] ){
-		float duration = self.soundFile.length / self.soundFile.processingFormat.sampleRate;
+	if( [self isLoaded] && self.variSpeed != nil && self.engine != nil){
+        float duration = 0.0;
+        if(self.soundFile.processingFormat != nil)
+            duration = self.soundFile.length / self.soundFile.processingFormat.sampleRate;
 		return duration;
 	}
 	return 0.0;
@@ -518,6 +969,7 @@ bool ofAVEngineSoundPlayer::load(const std::filesystem::path& fileName, bool str
 
 void ofAVEngineSoundPlayer::unload() {
     if(soundPlayer != NULL) {
+        
         [(AVEnginePlayer *)soundPlayer unloadSound];
         [(AVEnginePlayer *)soundPlayer release];
         soundPlayer = NULL;
