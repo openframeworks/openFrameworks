@@ -414,7 +414,8 @@ public:
 	/// \param path2 right half of the path to join
 	/// \returns joined path
     static std::string join(const of::filesystem::path& path1, const of::filesystem::path& path2);
-	
+	static of::filesystem::path join(const of::filesystem::path& path1, const of::filesystem::path& path2);
+
 	/// Get the full path to the application's executable file.
 	///
 	/// Mac: the binary within the application's .app bundle Contents/MacOS dir
