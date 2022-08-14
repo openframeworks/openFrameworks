@@ -26,7 +26,7 @@ namespace{
     bool enableDataPath = true;
 
     //--------------------------------------------------
-    string defaultDataPath(){
+	of::filesystem::path defaultDataPath(){
     #if defined TARGET_OSX
 		return (ofFilePath::getCurrentExeDir() / "../../../data/").string();
 //        try{
@@ -39,7 +39,7 @@ namespace{
     #elif defined TARGET_ANDROID
         return string("sdcard/");
     #else
-		return ofFilePath::getCurrentExeDir() / of::filesystem::path("data/");
+		return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/")).string();
 		// FIXME: Cleanup comments
 //        try{
 //            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
