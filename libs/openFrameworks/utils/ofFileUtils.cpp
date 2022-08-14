@@ -1699,8 +1699,11 @@ string ofFilePath::getFileExt(const of::filesystem::path& filename){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeExt(const of::filesystem::path& filename){
-	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
+// FIXME: remove const and copy
+of::filesystem::path ofFilePath::removeExt(const of::filesystem::path& _filename){
+	auto filename = _filename;
+	return filename.replace_extension();
+//	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
 }
 
 
@@ -1797,9 +1800,9 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
-	return (of::filesystem::path(path1) / of::filesystem::path(path2)).string();
-}
+//string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
+//	return (of::filesystem::path(path1) / of::filesystem::path(path2)).string();
+//}
 
 of::filesystem::path ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
 	return (of::filesystem::path(path1) / of::filesystem::path(path2));

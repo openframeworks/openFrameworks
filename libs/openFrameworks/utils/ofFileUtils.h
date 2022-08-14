@@ -305,7 +305,7 @@ public:
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-    static std::string removeExt(const of::filesystem::path& filename);
+    static of::filesystem::path removeExt(const of::filesystem::path& filename);
 	
 	/// Prepend path with a slash, ie. "images" -> "/images".
 	///
@@ -413,7 +413,7 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-    static std::string join(const of::filesystem::path& path1, const of::filesystem::path& path2);
+//    static std::string join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 	static of::filesystem::path join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 
 	/// Get the full path to the application's executable file.
