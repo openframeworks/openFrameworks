@@ -69,7 +69,7 @@ bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
     }
 
 	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).string().c_str()];
 
 	BOOL bStream = NO;
 

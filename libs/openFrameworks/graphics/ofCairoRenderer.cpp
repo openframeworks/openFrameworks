@@ -73,14 +73,14 @@ void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool mult
 		if(filename==""){
 			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
+			surface = cairo_pdf_surface_create(ofToDataPath(filename).string().c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case SVG:
 		if(filename==""){
 			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
+			surface = cairo_svg_surface_create(ofToDataPath(filename).string().c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case IMAGE:

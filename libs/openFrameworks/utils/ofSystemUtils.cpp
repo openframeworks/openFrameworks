@@ -333,7 +333,7 @@ static int CALLBACK loadDialogBrowseCallback(
     std::string defaultPath = *(std::string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath).string()).c_str());
         SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
     }
 
@@ -414,7 +414,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szDir,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szDir,convertNarrowToWide(ofToDataPath(defaultPath).string()).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
 
@@ -490,8 +490,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		auto locale = std::locale();
-		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,ofToDataPath(defaultPath));
-		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,ofToDataPath(defaultPath));
+		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,ofToDataPath(defaultPath).string());
+		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,ofToDataPath(defaultPath).string());
 		resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------
@@ -573,7 +573,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	auto locale = std::locale();
-	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName, ofToDataPath(defaultName));
+	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName, ofToDataPath(defaultName).string());
 	resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------

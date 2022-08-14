@@ -53,7 +53,7 @@ bool ofQTKitPlayer::load(string movieFilePath, ofQTKitDecodeMode mode) {
 			isURL = true;
 		}
 		else {
-			movieFilePath = ofToDataPath(movieFilePath, false);
+			movieFilePath = ofToDataPath(movieFilePath, false).string();
 		}
 
 		moviePlayer = [[QTKitMovieRenderer alloc] init];

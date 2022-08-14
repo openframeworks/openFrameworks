@@ -302,7 +302,7 @@ bool ofQuickTimePlayer::load(string name){
 		if( name.substr(0, 7) == "http://" || name.substr(0,7) == "rtsp://" ){
 			if(! createMovieFromURL(name, moviePtr) ) return false;
 		}else{
-			name 					= ofToDataPath(name);
+			name 					= ofToDataPath(name).string();
 			if( !createMovieFromPath((char *)name.c_str(), moviePtr) ) return false;
 		}
 

@@ -781,7 +781,7 @@ void ofQTKitGrabber::setAudioCodec(string _audioCodec){
 void ofQTKitGrabber::startRecording(string filePath){
 	if(confirmInit()){
 		@autoreleasepool {
-			NSString * NSfilePath = [NSString stringWithUTF8String: ofToDataPath(filePath).c_str()];
+			NSString * NSfilePath = [NSString stringWithUTF8String: ofToDataPath(filePath).string().c_str()];
 			[grabber startRecording:NSfilePath];
 		}
 	}

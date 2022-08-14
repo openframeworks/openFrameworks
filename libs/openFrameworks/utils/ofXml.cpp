@@ -51,14 +51,14 @@ bool ofXml::parse(const std::string & xmlStr){
 
 bool ofXml::save(const of::filesystem::path & file) const{
 	if(xml == doc->root()){
-		auto res = doc->save_file(ofToDataPath(file).c_str());
+		auto res = doc->save_file(ofToDataPath(file).string().c_str());
 		ofLogVerbose("ofXml")<<"ofXML Save : "<< res;
 		ofLogVerbose("ofXml")<<this->toString();
 		return res;
 	}else{
 		pugi::xml_document doc;
 		if(doc.append_copy(xml.root())){
-			return doc.save_file(ofToDataPath(file).c_str());
+			return doc.save_file(ofToDataPath(file).string().c_str());
 		}
 	}
 	return false;
