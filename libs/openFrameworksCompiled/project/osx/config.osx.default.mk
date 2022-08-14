@@ -69,7 +69,7 @@ PLATFORM_REQUIRED_ADDONS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-MAC_OS_MIN_VERSION = 10.15
+#MAC_OS_MIN_VERSION = 10.15
 
 ifndef MAC_OS_MIN_VERSION
 	MAC_OS_MIN_VERSION = 10.9
@@ -84,7 +84,7 @@ ifndef MAC_OS_CPP_VER
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
-PLATFORM_CFLAGS += -stdlib=$(MAC_OS_STD_LIB)
+PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
 PLATFORM_CFLAGS += -Wall
@@ -168,7 +168,7 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-PLATFORM_LDFLAGS += -lstdc++fs
+#PLATFORM_LDFLAGS += -lstdc++fs
 
 
 #PLATFORM_LDFLAGS += -arch i386

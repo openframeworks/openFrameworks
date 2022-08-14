@@ -413,8 +413,7 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 	}
 	FT_Error err;
     err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
-	using std::cout, std::endl;
-
+	
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";

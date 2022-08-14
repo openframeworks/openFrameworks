@@ -28,7 +28,7 @@ namespace{
     //--------------------------------------------------
     string defaultDataPath(){
     #if defined TARGET_OSX
-		return ofFilePath::getCurrentExeDir() / "../../../data/";
+		return (ofFilePath::getCurrentExeDir() / "../../../data/").string();
 //        try{
 //			return ofFilePath::getCurrentExeDir() / "../../../data/";
 ////			return of::filesystem::canonical(ofFilePath::getCurrentExeDir() / "../../../data/");
@@ -577,9 +577,10 @@ bool ofFile::openFromCWD(const of::filesystem::path & _path, Mode _mode, bool bi
 //-------------------------------------------------------------------------------------------------------------
 bool ofFile::changeMode(Mode _mode, bool binary){
 	if(_mode != mode){
-		string _path = path();
+		auto _path = path();
 		close();
-		myFile = of::filesystem::path(_path);
+		myFile = _path;
+//		myFile = of::filesystem::path(_path);
 		return openStream(_mode, binary);
 	}
 	else{
@@ -779,16 +780,15 @@ bool ofFile::canExecute() const {
 	}
 #else
 	if(geteuid() == info.st_uid){
-		return perm & of::filesystem::perms::owner_exec;
+		return perm & of::filesystem::owner_exe;
 	}else if (getegid() == info.st_gid){
-		return perm & of::filesystem::perms::group_exec;
+		return perm & of::filesystem::group_exe;
 	}else{
-		return perm & of::filesystem::perms::others_exec;
+		return perm & of::filesystem::others_exe;
 	}
 #endif
 #endif
 }
-
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isFile() const {
 	return of::filesystem::is_regular_file(myFile);
@@ -1676,7 +1676,6 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(_path.string().empty()) return "";
@@ -1735,13 +1734,22 @@ string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRelativeToData){
-    std::string filePath = _filePath.string();
+//    std::string filePath = _filePath.string();
+//
+//	if(bRelativeToData){
+//        filePath = ofToDataPath(_filePath);
+//	}
+//
+//	return of::filesystem::path(filePath).filename().string();
+
+	auto filePath = _filePath;
 
 	if(bRelativeToData){
-        filePath = ofToDataPath(_filePath);
+		filePath = ofToDataPath(filePath);
 	}
 
 	return of::filesystem::path(filePath).filename().string();
+
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1844,7 +1852,7 @@ string ofFilePath::getUserHomeDir(){
 	#endif
 }
 
-string ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
+of::filesystem::path ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
 	auto pathFrom = of::filesystem::absolute( from );
 	auto pathTo = of::filesystem::absolute( to );
 	of::filesystem::path ret;
@@ -1864,7 +1872,7 @@ string ofFilePath::makeRelative(const of::filesystem::path & from, const of::fil
 		}
 	}
 
-	return ret.string();
+	return ret;
 }
 
 //--------------------------------------------------
@@ -1944,9 +1952,9 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
     dirDataPath = ofFilePath::addTrailingSlash(dataPath);
 
     auto relativeDirDataPath = ofFilePath::makeRelative(of::filesystem::current_path().string(),dataPath.string());
-    relativeDirDataPath  = ofFilePath::addTrailingSlash(relativeDirDataPath);
+    relativeDirDataPath = ofFilePath::addTrailingSlash(relativeDirDataPath.string());
 
-    if (inputPath.string().find(dirDataPath) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
+    if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath.string())!=0) {
         // inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
         if(makeAbsolute){
             outputPath = dirDataPath / inputPath;

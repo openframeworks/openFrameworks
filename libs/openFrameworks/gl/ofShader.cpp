@@ -297,9 +297,9 @@ bool ofShader::setupShaderFromFile(GLenum type, const of::filesystem::path & fil
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
 	auto absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
-	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
+	auto sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
+		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath.string());
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return false;
@@ -489,7 +489,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		include = ofFile(
 //						 ofFilePath::join(sourceDirectoryPath, include)
 						 sourceDirectoryPath / include
-						 ).getAbsolutePath();
+						 ).getAbsolutePath().string();
 		included.push_back( include );
 
 		ofBuffer buffer = ofBufferFromFile( include );
@@ -498,7 +498,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 			continue;
 		}
 
-		string currentDir = ofFile(include).getEnclosingDirectory();
+		string currentDir = ofFile(include).getEnclosingDirectory().string();
 		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << endl;
 	}
 

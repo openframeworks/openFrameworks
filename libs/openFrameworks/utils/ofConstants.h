@@ -1,6 +1,11 @@
 #pragma once
 #include <stdint.h>
 
+#define Stringize( L )     #L
+#define MakeString( M, L ) M(L)
+#define $Line MakeString( Stringize, __LINE__ )
+#define Reminder __FILE__ "(" $Line ") : Reminder: "
+
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
@@ -506,6 +511,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #include <experimental/filesystem>
         
         #if OF_HAS_CPP17
+			#pragma message(Reminder "OF_HAS_CPP17")
+
             namespace std {
                 namespace experimental{
                     namespace filesystem {
@@ -515,9 +522,15 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                         using v1::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
+//                namespace filesystem = experimental::filesystem;
             }
+			// new
+			namespace of {
+				using std::__fs::filesystem;
+			}
         #else
+			#pragma message(Reminder "no OF_HAS_CPP17")
+
             namespace std {
                 namespace experimental{
                     namespace filesystem {
@@ -529,14 +542,21 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                         using v1::__cxx11::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
+//                namespace filesystem = experimental::filesystem;
             }
+			// new
+			namespace of {
+				namespace filesystem = std::__fs::filesystem;
+			}
+
         #endif
         
     #else
         // Regular C++17 fs support
         #include <filesystem>
-
+		namespace of {
+			namespace filesystem  = std::filesystem;
+		}
     #endif
 #else
     // No experimental or c++17 filesytem support use boost
@@ -544,36 +564,46 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #define BOOST_NO_CXX11_SCOPED_ENUMS
         #define BOOST_NO_SCOPED_ENUMS
     #endif
-//    #include <boost/filesystem.hpp>
-//	namespace boost {
-//		namespace filesystem {
-//			class path;
-//		}
-//	}
-//	namespace std {
-//		namespace filesystem = boost::filesystem;
-//	}
+//	#pragma message(Reminder "using boost")
+
+    #include <boost/filesystem.hpp>
+	namespace of {
+		namespace filesystem = boost::filesystem;
+	}
+
+
+
+	
 #endif
 
 #if defined __has_include
-	#if __has_include(<filesystem>)
-		#include <filesystem>
-namespace of{
-	namespace filesystem = std::__fs::filesystem;
-}
-		#define OF_USING_STD_FS 1
-	#elif __has_include(<experimental/filesystem>)
-		#include <experimental/filesystem>
-namespace of{
-	namespace filesystem = std::experimental::filesystem;
-}
-
-	#elif __has_include(<boost/filesystem>)
-		#include <boost/filesystem>
-namespace of{
-	namespace filesystem = boost::filesystem;
-}
-
-	#endif
+//	#pragma message(Reminder "HAS include")
+	
+//	#if __has_include(<filesystem>)
+////		#define OF_USING_STD_FS 1
+//		#include <filesystem>
+//		#include <experimental/filesystem>
+//
+//		#pragma message(Reminder "filesystem")
+//namespace of{
+//	namespace filesystem = std::__fs::filesystem;
+////	namespace filesystem = std::__fs::filesystem;
+//}
+//	#elif __has_include(<experimental/filesystem>)
+//		#include <experimental/filesystem>
+//		#pragma message(Reminder "experimental filesystem")
+//namespace of{
+////	namespace filesystem = std::experimental::filesystem;
+//}
+//
+//	#elif __has_include(<boost/filesystem>)
+//		#include <boost/filesystem>
+//		#pragma message(Reminder "boost filesystem")
+//namespace of{
+////	namespace filesystem = boost::filesystem;
+//}
+//
+//	#endif
 #endif
+
 

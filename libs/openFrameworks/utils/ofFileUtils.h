@@ -448,7 +448,7 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-    static std::string makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
+    static of::filesystem::path makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
 };
 
 /// \class ofFile
