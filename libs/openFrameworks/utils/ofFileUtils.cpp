@@ -1801,6 +1801,10 @@ string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem:
 	return (of::filesystem::path(path1) / of::filesystem::path(path2)).string();
 }
 
+of::filesystem::path ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
+	return (of::filesystem::path(path1) / of::filesystem::path(path2));
+}
+
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)

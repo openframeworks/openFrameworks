@@ -49,7 +49,7 @@ bool ofxAssimpModelLoader::load(string modelName, bool optimize){
 	unsigned int flags = initImportProperties(optimize);
 	
 	// loads scene from file
-	std::string path = file.getAbsolutePath();
+	std::string path = file.getAbsolutePath().string();
 	scene = shared_ptr<const aiScene>(aiImportFileExWithProperties(path.c_str(), flags, NULL, store.get()), aiReleaseImport);
 	
 	bool bOk = processScene();
@@ -254,10 +254,11 @@ void ofxAssimpModelLoader::loadGLResources(){
 		// TODO: handle other aiTextureTypes
 		if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
 			ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading image from \"" << texPath.data << "\"";
-			string modelFolder = file.getEnclosingDirectory();
-			string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
-			string texFile = ofFilePath::getFileName(texPath.data);
-			string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
+			auto modelFolder = file.getEnclosingDirectory();
+			auto relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
+			auto texFile = ofFilePath::getFileName(texPath.data);
+
+			auto realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
 			
 			if(ofFile::doesFileExist(realPath) == false) {
 				ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
