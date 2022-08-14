@@ -512,7 +512,7 @@ public:
 	/// \param binary set to false if you are reading a text file & want lines
 	/// split at endline characters automatically
 	/// \returns true if the path was opened
-	bool open(of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
+//	bool open(of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	bool open(const of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 
 	/// Open the path as a file.
