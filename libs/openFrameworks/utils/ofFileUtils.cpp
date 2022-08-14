@@ -39,11 +39,13 @@ namespace{
     #elif defined TARGET_ANDROID
         return string("sdcard/");
     #else
-        try{
-            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
-        }catch(...){
-            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
-        }
+		return ofFilePath::getCurrentExeDir() / "data/";
+		// FIXME: Cleanup comments
+//        try{
+//            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
+//        }catch(...){
+//            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
+//        }
     #endif
     }
 
