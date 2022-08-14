@@ -258,7 +258,9 @@ void ofxAssimpModelLoader::loadGLResources(){
 			auto relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
 			auto texFile = ofFilePath::getFileName(texPath.data);
 
-			auto realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
+			// FIXME:  addons/ofxAssimpModelLoader/src/ofxAssimpTexture.h could accept filesystem::path as a parameter
+			// ofLoadImage accept?
+			auto realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile).string();
 			
 			if(ofFile::doesFileExist(realPath) == false) {
 				ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
