@@ -218,36 +218,36 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "";
         ofLogNotice() << "tests #4462";
 		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
-			ofxTestEq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+			ofxTestEq(ofToDataPath("movies\\",true).string().back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			ofxTestEq(ofToDataPath("movies",true).string().back(), 's', "absolute ofToDataPath without \\ should not end in \\");
 			ofDirectory("movies").create();
-			ofxTestEq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+			ofxTestEq(ofToDataPath("movies\\",true).string().back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			ofxTestEq(ofToDataPath("movies",true).string().back(), 's', "absolute ofToDataPath without \\ should not end in \\");
 		}else{
-			ofxTestEq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+			ofxTestEq(ofToDataPath("movies/",true).string().back(), '/', "absolute ofToDataPath with / should end in /");
+			ofxTestEq(ofToDataPath("movies",true).string().back(), 's', "absolute ofToDataPath without / should not end in /");
 			ofDirectory("movies").create();
-			ofxTestEq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+			ofxTestEq(ofToDataPath("movies/",true).string().back(), '/', "absolute ofToDataPath with / should end in /");
+			ofxTestEq(ofToDataPath("movies",true).string().back(), 's', "absolute ofToDataPath without / should not end in /");
 		}
 
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4598";
-		ofxTestEq(ofToDataPath("").back(), std::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
+		ofxTestEq(ofToDataPath("").string().back(), std::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4563";
 #ifdef TARGET_LINUX 
-        ofxTestEq(ofToDataPath("a.txt"), "data/a.txt","#4563 test1");
-        ofxTestEq(ofToDataPath("data.txt"), "data/data.txt", "#4563 test2");
-        ofxTestEq(ofToDataPath(""), "data/", "#4563 test3");
+        ofxTestEq(ofToDataPath("a.txt").string(), "data/a.txt","#4563 test1");
+        ofxTestEq(ofToDataPath("data.txt").string(), "data/data.txt", "#4563 test2");
+        ofxTestEq(ofToDataPath("").string(), "data/", "#4563 test3");
 #elif defined(TARGET_OSX)
-        ofxTestEq(ofToDataPath("a.txt"), "../../../data/a.txt","#4563 test1");
-        ofxTestEq(ofToDataPath("data.txt"), "../../../data/data.txt", "#4563 test2");
-        ofxTestEq(ofToDataPath(""), "../../../data/", "#4563 test3");
+        ofxTestEq(ofToDataPath("a.txt").string(), "../../../data/a.txt","#4563 test1");
+        ofxTestEq(ofToDataPath("data.txt").string(), "../../../data/data.txt", "#4563 test2");
+        ofxTestEq(ofToDataPath("").string(), "../../../data/", "#4563 test3");
 #endif
 
 
@@ -268,12 +268,12 @@ class ofApp: public ofxUnitTestsApp{
         dir.remove(true);
 		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
 			ofDirectory currentVideoDirectory(ofToDataPath("..\\..\\..\\video", true));
-			auto path = currentVideoDirectory.path();
+			auto path = currentVideoDirectory.path().string();
 			std::string pathEnd("data\\..\\..\\..\\video\\");
 			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
 		}else{
 			ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
-			auto path = currentVideoDirectory.path();
+			auto path = currentVideoDirectory.path().string();
 			std::string pathEnd("data/../../../video/");
 			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
 		}
