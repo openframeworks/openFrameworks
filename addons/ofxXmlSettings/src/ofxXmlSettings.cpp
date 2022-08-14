@@ -48,7 +48,7 @@ ofxXmlSettings::ofxXmlSettings(const string& xmlFile):
 	//we do this so that we have a valid handle
 	//without the need for loadFile
 	storedHandle   = TiXmlHandle(&doc);
-	loadFile(xmlFile);
+	load(xmlFile);
 }
 
 //---------------------------------------------------------
@@ -73,8 +73,8 @@ void ofxXmlSettings::clear(){
 
 //---------------------------------------------------------
 bool ofxXmlSettings::load(const string& xmlFile){
-	string fullXmlFile = ofToDataPath(xmlFile);
-	bool loadOkay = doc.LoadFile(fullXmlFile);
+	auto fullXmlFile = ofToDataPath(xmlFile);
+	bool loadOkay = doc.LoadFile(fullXmlFile.string());
 
 	//theo removed bool check as it would
 	//return false if the file exists but was
@@ -89,8 +89,8 @@ bool ofxXmlSettings::load(const string& xmlFile){
 
 //---------------------------------------------------------
 bool ofxXmlSettings::save(const string& xmlFile){
-	string fullXmlFile = ofToDataPath(xmlFile);
-	return doc.SaveFile(fullXmlFile);
+	auto fullXmlFile = ofToDataPath(xmlFile);
+	return doc.SaveFile(fullXmlFile.string());
 }
 
 //---------------------------------------------------------
