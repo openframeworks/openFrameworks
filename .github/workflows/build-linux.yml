@@ -27,7 +27,7 @@ jobs:
         # version: 1.0
 
     - uses: actions/checkout@v3
-    - run: apt update  # Only for Docker jobs
+    # - run: apt update  # Only for Docker jobs
     - name: ccache 
       uses: hendrikmuhs/ccache-action@v1.2
     - name: Download libs
