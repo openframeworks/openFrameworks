@@ -27,8 +27,7 @@ jobs:
     - name: cachezinho
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libegl1-mesa-dev libgles1 libgles2-mesa-dev libassimp-dev librtaudio-dev libboost-filesystem-dev libglfw3-dev  liburiparser-dev libcurl4-openssl-dev libpugixml-dev libpoco-dev libgconf-2-4 libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev  ${GSTREAMER_FFMPEG} gstreamer0.10-pulseaudio gstreamer0.10-x 
-        gstreamer0.10-plugins-base gstreamer0.10-plugins-good
+        packages: freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libegl1-mesa-dev libgles1 libgles2-mesa-dev libassimp-dev librtaudio-dev libboost-filesystem-dev libglfw3-dev  liburiparser-dev libcurl4-openssl-dev libpugixml-dev libpoco-dev libgconf-2-4 libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev  ${GSTREAMER_FFMPEG} gstreamer0.10-pulseaudio gstreamer0.10-x gstreamer0.10-plugins-base gstreamer0.10-plugins-good
         # gstreamer0.10-alsa 
         version: 1.0
 
