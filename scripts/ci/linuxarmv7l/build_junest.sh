@@ -37,11 +37,11 @@ sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_D
 cd $PROJECTS
 
 
-make Debug PLATFORM_VARIANT=raspberry2
+make Debug PLATFORM_VARIANT=raspberry2 -j -s
 
 echo "**** Building emptyExample ****"
 cd $OF_ROOT/scripts/templates/linuxarmv7l
-make Debug PLATFORM_VARIANT=raspberry2
+make Debug PLATFORM_VARIANT=raspberry2 -j -s
 
 echo "**** Building allAddonsExample ****"
 #cd $OF_ROOT
