@@ -115,7 +115,13 @@ bool ofGstVideoPlayer::createPipeline(std::string name){
 	#if GST_VERSION_MAJOR==0
 		GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	#else
-		GstElement * gstPipeline = gst_element_factory_make("playbin","player");
+        #if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR>18
+            //Gsteamer 1.20 and newer has some issues with signals / queues on close with playbin - fixed in playbin3
+            //At some point playbin3 will become playbin and we can go back to using that one
+            GstElement * gstPipeline = gst_element_factory_make("playbin3","player");
+        #else
+            GstElement * gstPipeline = gst_element_factory_make("playbin","player");
+        #endif
 	#endif
 	g_object_ref_sink(gstPipeline);
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);

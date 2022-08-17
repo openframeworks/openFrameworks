@@ -263,28 +263,6 @@ bool ofGstUtils::startPipeline(){
 
 	gst_object_unref(bus);
 
-	if(isAppSink){
-		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
-		// set the appsink to not emit signals, we are using callbacks instead
-		// and frameByFrame to get buffers by polling instead of callback
-		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
-		// gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
-		// gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
-
-		if(!bFrameByFrame){
-			GstAppSinkCallbacks gstCallbacks;
-			gstCallbacks.eos = &on_eos_from_source;
-			gstCallbacks.new_preroll = &on_new_preroll_from_source;
-#if GST_VERSION_MAJOR==0
-			gstCallbacks.new_buffer = &on_new_buffer_from_source;
-#else
-			gstCallbacks.new_sample = &on_new_buffer_from_source;
-#endif
-
-			gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
-		}
-	}
-
 	// pause the pipeline
 	//GstState targetState;
 	GstState state;
@@ -316,6 +294,27 @@ bool ofGstUtils::startPipeline(){
 			ofLogVerbose() << "Pipeline is PREROLLED";
 			break;
     }
+    
+    if(isAppSink){
+		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
+		// set the appsink to not emit signals, we are using callbacks instead
+		// and frameByFrame to get buffers by polling instead of callback
+		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
+		// gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
+		// gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
+
+		if(!bFrameByFrame){
+			GstAppSinkCallbacks gstCallbacks;
+			gstCallbacks.eos = &on_eos_from_source;
+			gstCallbacks.new_preroll = &on_new_preroll_from_source;
+#if GST_VERSION_MAJOR==0
+			gstCallbacks.new_buffer = &on_new_buffer_from_source;
+#else
+			gstCallbacks.new_sample = &on_new_buffer_from_source;
+#endif
+			gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
+		}
+	}
 
 	// wait for paused state to query the duration
 	if(!isStream){
