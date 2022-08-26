@@ -331,8 +331,6 @@ bool ofGstUtils::startPipeline(){
         gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
 	}
  
-    //gst_debug_bin_to_dot_file(GST_BIN(gstPipeline), GST_DEBUG_GRAPH_SHOW_ALL, "pipeine-120");
-
 	// wait for paused state to query the duration
 	if(!isStream){
 		bPlaying = true;
