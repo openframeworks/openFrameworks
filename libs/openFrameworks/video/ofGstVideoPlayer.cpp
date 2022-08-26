@@ -115,14 +115,8 @@ bool ofGstVideoPlayer::createPipeline(std::string name){
 	#if GST_VERSION_MAJOR==0
 		GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	#else
-		//A bug (we think) with GStreamer 1.20.0 - 1.20.2 means we need a different playbin
-		#if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR==2 && GST_VERSION_MICRO <= 2
-			GstElement * gstPipeline = gst_element_factory_make("playbin3","player");
-            ofLogVerbose("ofGstVideoPlayer::createPipeline") << " using experimental playbin3 - upgrade to GSteamer 1.20.3 or newer. 
-		#else
-			GstElement * gstPipeline = gst_element_factory_make("playbin","player");
-		#endif
-	#endif
+        GstElement * gstPipeline = gst_element_factory_make("playbin","player");
+    #endif
 	g_object_ref_sink(gstPipeline);
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
