@@ -341,7 +341,21 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	}
 	
 	std::size_t start = fromFrame;
-	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
+    if(fromFrame > inFrames)
+    {
+        ofLogWarning("ofSoundBuffer") << " fromFrame is out of the buffer. ";
+        return;
+    }
+    if(fromFrame < 2 && speed < 0)
+    {
+        start = inFrames;
+    }
+    else if(fromFrame + 2 > inFrames && speed > 0)
+    {
+        start = 0;
+    }
+    int end_int = start*inChannels + double(numFrames*inChannels)*speed;
+    std::size_t end = end_int < 0 ? 0: end_int;
 	double position = start;
 	std::size_t intPosition = position;
 	float increment = speed;
@@ -350,12 +364,14 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	
 	if(end<size()-2*inChannels){
 		to = numFrames;
-	}else if(fromFrame+2>inFrames){
-		to = 0;
 	}else{
-		to = ceil(float(inFrames-2-fromFrame)/speed);
-	}
-	
+        to = ceil(float(inFrames-2-start)/abs(speed));
+    }
+    if(end_int < 0)
+    {
+        to = ceil(float(start - 2)/abs(speed));
+    }
+
 	float remainder = position - intPosition;
 	float * resBufferPtr = &outBuffer[0];
 	float a, b;
@@ -371,10 +387,27 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 		intPosition = position;
 		remainder = position - intPosition;
 	}
-	if(end>=size()-2*inChannels){
-		to = numFrames-to;
+    int i = 1;
+    while((speed > 0 && end>=size()-2*inChannels) || (speed < 0 && end_int <= 0)){
+        to = ceil(float(inFrames)/abs(speed));
+        if(speed > 0)
+        {
+            end -= size()-2*inChannels;
+        }
+        else
+        {
+            end_int += size()-2*inChannels;
+        }
 		if(loop){
 			intPosition %= inFrames;
+            if(speed > 0)
+            {
+                position -= inFrames;
+            }
+            else
+            {
+                position += inFrames;
+            }
 			for(std::size_t i=0;i<to;i++){
 				intPosition *= inChannels;
 				for(std::size_t j=0;j<inChannels;j++){
@@ -384,6 +417,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 				}
 				position += increment;
 				intPosition = position;
+                remainder = position - intPosition;
 			}
 		}else{
 			memset(resBufferPtr,0,to*copySize);
@@ -405,7 +439,21 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t from
 	}
 	
 	std::size_t start = fromFrame;
-	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
+    if(fromFrame > inFrames)
+    {
+        ofLogWarning("ofSoundBuffer") << " fromFrame is out of the buffer. ";
+        return;
+    }
+    if(fromFrame < 3 && speed < 0)
+    {
+        start = inFrames;
+    }
+    if(fromFrame + 3 > inFrames && speed > 0)
+    {
+        start = 0;
+    }
+    int end_int = start*inChannels + double(numFrames*inChannels)*speed;
+    std::size_t end = end_int < 0 ? 0: end_int;
 	double position = start;
 	std::size_t intPosition = position;
 	float remainder = position - intPosition;
@@ -415,12 +463,14 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t from
 	
 	if(end<size()-3*inChannels){
 		to = numFrames;
-	}else if(fromFrame+3>inFrames){
-		to = 0;
 	}else{
-		to = double(inFrames-3-fromFrame)/speed;
-	}
-	
+        to = double(inFrames-3-start)/abs(speed);
+    }
+    if(end_int < 0)
+    {
+        to = double(start-3)/abs(speed);
+    }
+
 	float * resBufferPtr = &outBuffer[0];
 	float a,b,c,d;
 	std::size_t from = 0;
@@ -454,10 +504,26 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t from
 		remainder = position - intPosition;
 	}
 	
-	if(end>=size()-3*inChannels){
-		to = numFrames-to;
+    while((speed > 0 && end>=size()-3*inChannels) || (speed < 0 && end_int <= 0)){
+        to = double(inFrames)/abs(speed);
+        if(speed > 0)
+        {
+            end -= size()-3*inChannels;
+        }
+        else
+        {
+            end_int += size()-3*inChannels;
+        }
 		if(loop){
-			intPosition %= size();
+            intPosition %= inFrames;
+            if(speed > 0)
+            {
+                position -= inFrames;
+            }
+            else
+            {
+                position += inFrames;
+            }
 			for(std::size_t i=0;i<to;++i){
 				for(std::size_t j=0;j<inChannels;++j){
 					a=buffer[intPosition+j-inChannels];
