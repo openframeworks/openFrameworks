@@ -707,9 +707,7 @@ bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, b
 	}else{
 		settings.ranges = {ofUnicode::Latin};
 	}
-	using std::cout;
-	using std::endl;
-	cout << "ofTrueTypeFont::load - simplify : " << settings.simplifyAmt << endl;
+//	std::cout << "ofTrueTypeFont::load - simplify : " << settings.simplifyAmt << std::endl;
 	return load(settings);
 }
 
@@ -1166,8 +1164,8 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringWidth(const std::string& c) const{
+//	return getStringBoundingBox(c, 0,0).width;
 	int w = 0;
-	// vflip is always false here
 	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
 		if ( c == '\t' ){
 			w += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
@@ -1204,7 +1202,8 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 		if ( c == '\t' ){
             props.advance = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
 		}
-		maxX = max( maxX, pos.x + props.xmin + props.width  );
+//		maxX = max( maxX, pos.x + props.xmin + props.width  );
+		maxX = max( maxX, pos.x + props.advance );
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );
