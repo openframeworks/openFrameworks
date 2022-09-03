@@ -696,6 +696,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 
 //-----------------------------------------------------------
 bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+	
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
 	settings.contours = makeContours;
@@ -706,6 +707,9 @@ bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, b
 	}else{
 		settings.ranges = {ofUnicode::Latin};
 	}
+	using std::cout;
+	using std::endl;
+	cout << "ofTrueTypeFont::load - simplify : " << settings.simplifyAmt << endl;
 	return load(settings);
 }
 
@@ -1162,8 +1166,16 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringWidth(const std::string& c) const{
-	ofRectangle rect = getStringBoundingBox(c, 0,0);
-	return rect.width;
+	int w = 0;
+	// vflip is always false here
+	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
+		if ( c == '\t' ){
+			w += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+		} else {
+			w += getGlyphProperties( c ).advance;
+		}
+	});
+	return w;
 }
 
 //-----------------------------------------------------------
@@ -1185,7 +1197,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 	// We deliberately not generate a mesh and iterate over its
 	// vertices, as this would not correctly return spacing for
 	// blank characters.
-
+	
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
 		auto  props = getGlyphProperties( c );
 
