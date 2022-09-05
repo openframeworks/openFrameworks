@@ -377,10 +377,10 @@ public:
     /// \returns current font direction
 	void setDirection(ofTrueTypeFontDirection direction);
 
-	float charWidth(uint32_t c) const{
+	float getCharWidth(uint32_t c) const {
 		return getGlyphProperties(c).width;
 	}
-	float charAdvance(uint32_t c) const{
+	float getCharAdvance(uint32_t c) const {
 		return getGlyphProperties(c).advance;
 	}
 
