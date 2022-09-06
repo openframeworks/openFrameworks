@@ -377,8 +377,23 @@ public:
     /// \returns current font direction
 	void setDirection(ofTrueTypeFontDirection direction);
 
+	float getCharWidth(uint32_t c) const {
+		return getGlyphProperties(c).width;
+	}
+	float getCharAdvance(uint32_t c) const {
+		return getGlyphProperties(c).advance;
+	}
+
 protected:
 	/// \cond INTERNAL
+	
+	static inline double int26p6_to_dbl(int p) {
+		return double(p) / 64.0;
+	}
+	
+	static inline int dbl_to_int26p6(double p) {
+		return int(p * 64.0 + 0.5);
+	}
 	
 	bool bLoadedOk;
 	
@@ -398,11 +413,11 @@ protected:
 	struct glyphProps{
 		std::size_t characterIndex;
 		uint32_t glyph;
-		long height;
-		long width;
-		long bearingX, bearingY;
-		long xmin, xmax, ymin, ymax;
-		long advance;
+		float height;
+		float width;
+		float bearingX, bearingY;
+		float xmin, xmax, ymin, ymax;
+		float advance;
 		float tW,tH;
 		float t1,t2,v1,v2;
 	};
@@ -417,7 +432,7 @@ protected:
 	ofTrueTypeFontSettings settings;
 	std::unordered_map<uint32_t,size_t> glyphIndexMap;
 
-	int getKerning(uint32_t leftC, uint32_t rightC) const;
+	double getKerning(uint32_t leftC, uint32_t rightC) const;
 	void drawChar(uint32_t c, float x, float y, bool vFlipped) const;
 	void drawCharAsShape(uint32_t c, float x, float y, bool vFlipped, bool filled) const;
 	void createStringMesh(const std::string & s, float x, float y, bool vFlipped) const;
