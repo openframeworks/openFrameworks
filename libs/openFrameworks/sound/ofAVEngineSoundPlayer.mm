@@ -119,6 +119,9 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (AVAudioEngine *) engine {
 
+#if TARGET_OS_SIMULATOR
+    return nullptr;
+#endif
   if( _engine == nullptr ){
 	_engine = [[AVAudioEngine alloc] init];
     resetAudioEngine = NO;
@@ -436,19 +439,13 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             [self beginInterruption];
         } else if(interruptionType == AVAudioSessionInterruptionTypeEnded) {
             [self endInterruption];
+            
+            [self startEngine];
+            
+            
         }
-    bool isPlaying = [self isPlaying] || _isPlaying == YES;
-    float posSecs = [self positionSeconds] > 0 ? [self positionSeconds] : _mPositonSecondsAtInterruption;
     
-//                std::cout << " isPlaying is " << isPlaying << " pos secs is " << posSecs << std::endl;
-    [self startEngine];
     
-//    if( isPlaying && posSecs >= 0 && posSecs < [self soundDurationSeconds] && self.mRestorePlayCount == 0){
-//        self.mRestorePlayCount++;
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.017f), dispatch_get_main_queue(), ^{
-//            [self play:posSecs];
-//        });
-//    }
 }
 
 - (void)beginInterruption {
@@ -562,6 +559,10 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (BOOL)loadWithURL:(NSURL*)url {
+#if TARGET_OS_SIMULATOR
+    return NO;
+#endif
+    
     [self stop];
 
 	NSError *error;
@@ -579,6 +580,9 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (void)startEngine{
     
+#if TARGET_OS_SIMULATOR
+    return;
+#endif
     NSError * error = nil;
     BOOL engineRunning = NO;
     BOOL problem = NO;
@@ -627,7 +631,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     
     if(problem == YES) {
         //[[self engine] reset];
-        NSLog(@"Engine start successful - re-attaching nodes");
+        //NSLog(@"Engine start successful - re-attaching nodes");
         [[self engine] attachNode:self.variSpeed];
         [[self engine] attachNode:self.soundPlayer];
         
@@ -658,7 +662,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (BOOL)isValid {
-    if(self.soundPlayer != nil && self.soundPlayer.engine != nil && [self engine] != nil && [self engine].isRunning == YES) {
+    if(self.soundPlayer != nil && self.soundPlayer.engine != nil) {
         return YES;
     }
     return NO;
@@ -689,16 +693,20 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     if([self isPlaying]) {
         [self pause];
     }
-    
     if(self.soundPlayer == nil) {
         NSLog(@"play - soundPlayer is null");
+        return;
+    }
+    if(_isSessionInterrupted || _isConfigChangePending){
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
+            [self play:startTime];
+        });
         return;
     }
     
     if( self.engine == nil || ![[self engine] isRunning] ){
         NSLog(@"play - engine is null or not running - starting");
         [self startEngine];
-        //[self.engine reset];
     }
     
     if( self.engine == nil || ![[self engine] isRunning] ){
@@ -713,8 +721,6 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             break;
         }
     }
-    
-    
     
     if(self.soundPlayer.engine == nil || found == NO) {
         
@@ -752,6 +758,8 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 //	std::cout << " startedSampleOffset is " << self.startedSampleOffset <<  " numFrames is " << numFramesToPlay << " self.mGaurdCount is " << self.mGaurdCount << std::endl;
 	
 	self.mRestorePlayCount = 0;
+    
+   
 	
     [self.soundPlayer play];
     _isPlaying = YES;
@@ -815,10 +823,18 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (void)stop {
-    _isPlaying = NO;
+    
+    if(_isSessionInterrupted || _isConfigChangePending){
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
+            [self stop];
+        });
+        return;
+    }
+    
     if([self isValid]) {
         [self.soundPlayer stop];
     }
+    _isPlaying = NO;
    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(playloop) object: self.soundPlayer];
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stop) object: self.soundPlayer];
