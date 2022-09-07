@@ -13,7 +13,8 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-using namespace std;
+using std::map;
+using std::vector;
 
 /*
 
@@ -918,7 +919,7 @@ void ofFbo::flagDirty() const{
 		// flagged dirty at activation, so we can be sure all buffers which have 
 		// been rendered to are flagged dirty.
 		// 
-		int numBuffersToFlag = min(dirty.size(), activeDrawBuffers.size());
+		int numBuffersToFlag = std::min(dirty.size(), activeDrawBuffers.size());
 		for(int i=0; i < numBuffersToFlag; i++){
 			dirty[i] = true;
 		}

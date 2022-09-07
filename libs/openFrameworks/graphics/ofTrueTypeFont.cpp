@@ -16,9 +16,11 @@
 #include <numeric>
 
 #include "ofGraphics.h"
-#include "utf8.h"
 
-using namespace std;
+using std::max;
+using std::vector;
+using std::string;
+using std::min;
 
 const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
@@ -255,7 +257,7 @@ static std::string osxFontPathByName(const std::string& fontname){
 #ifdef TARGET_WIN32
 #include <map>
 // font font face -> file name name mapping
-static map<std::string, std::string> fonts_table;
+static std::map<std::string, std::string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -332,7 +334,7 @@ static std::string winFontPathByName(const std::string& fontname ){
 	if(fonts_table.find(fontname)!=fonts_table.end()){
 		return fonts_table[fontname];
 	}
-	for(map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+	for(std::map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
 		if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
 	}
 	return "";
@@ -671,15 +673,15 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 	// -------------------------
 	// info about the character:
 	aGlyph.props.glyph		= utf8;
-	aGlyph.props.height 	= face->glyph->metrics.height>>6;
-	aGlyph.props.width 		= face->glyph->metrics.width>>6;
-	aGlyph.props.bearingX	= face->glyph->metrics.horiBearingX>>6;
-	aGlyph.props.bearingY	= face->glyph->metrics.horiBearingY>>6;
+	aGlyph.props.height 	= int26p6_to_dbl(face->glyph->metrics.height);
+	aGlyph.props.width 		= int26p6_to_dbl(face->glyph->metrics.width);
+	aGlyph.props.bearingX	= int26p6_to_dbl(face->glyph->metrics.horiBearingX);
+	aGlyph.props.bearingY	= int26p6_to_dbl(face->glyph->metrics.horiBearingY);
 	aGlyph.props.xmin		= face->glyph->bitmap_left;
 	aGlyph.props.xmax		= aGlyph.props.xmin + aGlyph.props.width;
 	aGlyph.props.ymin		= -face->glyph->bitmap_top;
 	aGlyph.props.ymax		= aGlyph.props.ymin + aGlyph.props.height;
-	aGlyph.props.advance	= face->glyph->metrics.horiAdvance>>6;
+	aGlyph.props.advance	= int26p6_to_dbl(face->glyph->metrics.horiAdvance);
 	aGlyph.props.tW			= aGlyph.props.width;
 	aGlyph.props.tH			= aGlyph.props.height;
 
@@ -728,6 +730,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 
 //-----------------------------------------------------------
 bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+	
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
 	settings.contours = makeContours;
@@ -738,6 +741,7 @@ bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, b
 	}else{
 		settings.ranges = {ofUnicode::Latin};
 	}
+//	std::cout << "ofTrueTypeFont::load - simplify : " << settings.simplifyAmt << std::endl;
 	return load(settings);
 }
 
@@ -798,7 +802,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	int border = 1;
 
 
-	FT_Set_Char_Size( face.get(), settings.fontSize << 6, settings.fontSize << 6, settings.dpi, settings.dpi);
+	FT_Set_Char_Size( face.get(), dbl_to_int26p6(settings.fontSize), dbl_to_int26p6(settings.fontSize), settings.dpi, settings.dpi);
 	fontUnitScale = (float(settings.fontSize * settings.dpi)) / (72 * face->units_per_EM);
 	lineHeight = face->height * fontUnitScale;
 	ascenderHeight = face->ascender * fontUnitScale;
@@ -1084,7 +1088,7 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 	}
 
 
-	long xmin, ymin, xmax, ymax;
+	float xmin, ymin, xmax, ymax;
 	float t1, v1, t2, v2;
 	auto props = getGlyphProperties(c);
 	t1		= props.t1;
@@ -1092,9 +1096,9 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 	v2		= props.v2;
 	v1		= props.v1;
 
-	xmin		= long(props.xmin+x);
+	xmin		= props.xmin+x;
 	ymin		= props.ymin;
-	xmax		= long(props.xmax+x);
+	xmax		= props.xmax+x;
 	ymax		= props.ymax;
 
 	if(!vFlipped){
@@ -1126,13 +1130,13 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 }
 
 //-----------------------------------------------------------
-int ofTrueTypeFont::getKerning(uint32_t leftC, uint32_t rightC) const{
+double ofTrueTypeFont::getKerning(uint32_t leftC, uint32_t rightC) const{
 	if(FT_HAS_KERNING( face )){
 		FT_Vector kerning;
 		FT_Get_Kerning(face.get(), FT_Get_Char_Index(face.get(), leftC), FT_Get_Char_Index(face.get(), rightC), FT_KERNING_UNFITTED, &kerning);
-		return kerning.x >> 6;
+		return int26p6_to_dbl(kerning.x);
 	}else{
-		return 0;
+		return 0.0;
 	}
 }
 
@@ -1217,11 +1221,11 @@ vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip
 }
 
 bool ofTrueTypeFont::isValidGlyph(uint32_t glyph) const{
-	//return glyphIndexMap.find(glyph) != glyphIndexMap.end();
-	return std::any_of(settings.ranges.begin(), settings.ranges.end(),
+	
+	return (std::any_of(settings.ranges.begin(), settings.ranges.end(),
 		[&](ofUnicode::range range){
 			return glyph >= range.begin && glyph <= range.end;
-	});
+    })) && glyphIndexMap.find(glyph) != glyphIndexMap.end();
 }
 
 size_t ofTrueTypeFont::indexForGlyph(uint32_t glyph) const{
@@ -1255,8 +1259,16 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringWidth(const std::string& c) const{
-	ofRectangle rect = getStringBoundingBox(c, 0,0);
-	return rect.width;
+//	return getStringBoundingBox(c, 0,0).width;
+	int w = 0;
+	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
+		if ( c == '\t' ){
+			w += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+		} else {
+			w += getGlyphProperties( c ).advance;
+		}
+	});
+	return w;
 }
 
 //-----------------------------------------------------------
@@ -1266,11 +1278,9 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 		return ofRectangle( x, y, 0.f, 0.f);
 	}
 
-	float minX = x;
 	float minY = y;
-	float maxX = x;
 	float maxY = y;
-
+	float minX = x;
 	// Calculate bounding box by iterating over glyph properties
 	// Meaning of props can be deduced from illustration at top of:
 	// https://www.freetype.org/freetype2/docs/tutorial/step2.html
@@ -1278,14 +1288,21 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 	// We deliberately not generate a mesh and iterate over its
 	// vertices, as this would not correctly return spacing for
 	// blank characters.
-
+	
+	float w = 0;
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
-		auto  props = getGlyphProperties( c );
-
+		auto props = getGlyphProperties( c );
 		if ( c == '\t' ){
-            props.advance = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+			w += props.advance * spaceSize * TAB_WIDTH;
+		} else {
+			w += props.advance;
 		}
-		maxX = max( maxX, pos.x + props.xmin + props.width  );
+
+        
+        if( c == ' ') {
+            props.advance = spaceSize;
+        }
+//		maxX = max( maxX, pos.x + props.xmin + props.width);
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );
@@ -1294,16 +1311,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 			minY = min( minY, pos.y - ( props.ymax) );
 			maxY = max( maxY, pos.y - ( props.ymin ) );
 		}
-	} );
+	});
 
-	float width = maxX - minX;
 	float height = maxY - minY;
 
-	if(width <= 1) {
-		//ofLogError("ofTrueTypeFont") << "empty!>?";
-	}
-
-	return ofRectangle(minX, minY, width, height);
+	return ofRectangle(minX, minY, w, height);
 }
 
 //-----------------------------------------------------------
@@ -1375,9 +1387,9 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) const{
 	vector<glyph> glyphs;
 	vector<glm::vec2> glyphPositions;
-	long height = 0;
-	int width = 0;
-	int lineWidth = 0;
+	float height = 0;
+	float width = 0;
+	float lineWidth = 0;
 	iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f pos){
 		try{
             if (c != '\n') {
@@ -1400,7 +1412,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
                 
                 width = max(width, lineWidth);
                 y += g.props.ymax;
-				height = max(height, y + long(getLineHeight()));
+				height = max(height, y + getLineHeight());
             }else{
 				lineWidth = 0;
 			}

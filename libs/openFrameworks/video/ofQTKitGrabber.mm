@@ -15,8 +15,6 @@
 #import <QuickTime/QuickTime.h>
 #import <Accelerate/Accelerate.h>
 
-using namespace std;
-
 //This Objective-C class contains all the OS specific
 //Stuff we need for pulling images from a video camera feed
 //the QTCaptureVideoPreviewOutput is a non-blocking frame receiver delegate

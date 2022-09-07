@@ -44,10 +44,10 @@
     NSInteger currentScreenIndex;
 }
 
-@property (nonatomic, retain) UIWindow * window;
-@property (nonatomic, retain) UIWindow * externalWindow;
-@property (nonatomic, retain) UIViewController * uiViewController;
-@property (readonly,  assign) NSInteger currentScreenIndex;
+@property (nonatomic, strong) UIWindow * window;
+@property (nonatomic, strong) UIWindow * externalWindow;
+@property (nonatomic, strong) UIViewController * uiViewController;
+@property (readonly) NSInteger currentScreenIndex;
 
 - (BOOL)application:(UIApplication*)application
       handleOpenURL:(NSURL*)url;

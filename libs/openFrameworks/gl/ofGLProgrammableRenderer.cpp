@@ -14,8 +14,9 @@
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
 
-using namespace std;
-
+using std::vector;
+using std::string;
+using std::swap;
 
 static const string MODEL_MATRIX_UNIFORM="modelMatrix";
 static const string VIEW_MATRIX_UNIFORM="viewMatrix";

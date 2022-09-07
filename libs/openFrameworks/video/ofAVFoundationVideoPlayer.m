@@ -17,23 +17,11 @@ static NSString * const kRateKey = @"rate";
 //---------------------------------------------------------- video player.
 @implementation ofAVFoundationVideoPlayer
 
-@synthesize player = _player;
-@synthesize asset = _asset;
-@synthesize playerItem = _playerItem;
-
-@synthesize assetReader = _assetReader;
-@synthesize assetReaderVideoTrackOutput = _assetReaderVideoTrackOutput;
-@synthesize assetReaderAudioTrackOutput = _assetReaderAudioTrackOutput;
-#if defined(USE_VIDEO_OUTPUT)
-@synthesize videoOutput = _videoOutput;
-#endif
-
-
 static const void *ItemStatusContext = &ItemStatusContext;
 static const void *PlayerRateContext = &ItemStatusContext;
 
 
-- (id)init {
+- (instancetype)init {
 	self = [super init];
 	if(self) {
 		
@@ -101,7 +89,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32ARGB)};
 #endif
 	
-	self.videoOutput = [[[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes] autorelease];
+	self.videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
 	if (!self.videoOutput) {
 		NSLog(@"error creating video output");
 		return;
@@ -120,19 +108,13 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	}
 	
 	[asyncLock lock];
-	
+
 	[asyncLock unlock];
 	
 	// release locks
-	[asyncLock autorelease];
-	
 	if (deallocCond != nil) {
-		[deallocCond release];
-		deallocCond = nil;
+        deallocCond = nil;
 	}
-	
-	
-	[super dealloc];
 }
 
 
@@ -177,6 +159,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	bIsUnloaded = NO;
 	bReady = NO;
 	bLoaded = NO;
+	bIsStopped = YES;
 	bPlayStateBeforeLoad = NO;
 	frameBeforeReady = 0;
 	positionBeforeReady = 0.F;
@@ -202,9 +185,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			if(status != AVKeyValueStatusLoaded) {
 				NSLog(@"error loading asset tracks: %@", [error localizedDescription]);
 				// reset
-				bReady = _bReady;
-				bLoaded = _bLoaded;
-				bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
+				self->bReady = _bReady;
+				self->bLoaded = _bLoaded;
+				self->bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
@@ -216,9 +199,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			if(CMTimeCompare(_duration, kCMTimeZero) == 0) {
 				NSLog(@"track loaded with zero duration.");
 				// reset
-				bReady = _bReady;
-				bLoaded = _bLoaded;
-				bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
+				self->bReady = _bReady;
+				self->bLoaded = _bLoaded;
+				self->bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
@@ -228,12 +211,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// TODO
 			// why not reading infinite media?
 			// how about playing back HLS streams?
-			if(isfinite(CMTimeGetSeconds(duration)) == NO) {
+			if(isfinite(CMTimeGetSeconds(self->duration)) == NO) {
 				NSLog(@"track loaded with infinite duration.");
 				// reset
-				bReady = _bReady;
-				bLoaded = _bLoaded;
-				bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
+				self->bReady = _bReady;
+				self->bLoaded = _bLoaded;
+				self->bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
@@ -241,12 +224,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			}
 			
 			NSArray * videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-			if(!bStream && [videoTracks count] == 0) {
+			if(!self->bStream && [videoTracks count] == 0) {
 				NSLog(@"no video tracks found.");
 				// reset
-				bReady = _bReady;
-				bLoaded = _bLoaded;
-				bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
+				self->bReady = _bReady;
+				self->bLoaded = _bLoaded;
+				self->bPlayStateBeforeLoad = _bPlayStateBeforeLoad;
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
@@ -256,50 +239,50 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			//------------------------------------------------------------
 			//------------------------------------------------------------ use asset
 			// good to go
-			[asyncLock lock];
+			[self->asyncLock lock];
 			
-			if (bIsUnloaded) {
+			if (self->bIsUnloaded) {
 				// player was unloaded before we could load everting
-				bIsUnloaded = NO;
+				self->bIsUnloaded = NO;
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
-				[asyncLock unlock];
+				[self->asyncLock unlock];
 				return;
 			}
 			
 			// clean up
 			[self unloadVideoAsync];     // unload video if one is already loaded.
 			
-			bIsUnloaded = NO;
+			self->bIsUnloaded = NO;
 			
 			// set asset
 			self.asset = asset;
-			duration = _duration;
+			self->duration = _duration;
 			
-			if (!bStream) {
+			if (!self->bStream) {
 				// create asset reader
-				BOOL bOk = [self createAssetReaderWithTimeRange:CMTimeRangeMake(kCMTimeZero, duration)];
+				BOOL bOk = [self createAssetReaderWithTimeRange:CMTimeRangeMake(kCMTimeZero, self->duration)];
 				if(bOk == NO) {
 					NSLog(@"problem with creating asset reader.");
 					if(bAsync == NO){
 						dispatch_semaphore_signal(sema);
 					}
-					[asyncLock unlock];
+					[self->asyncLock unlock];
 					return;
 				}
 				
 				AVAssetTrack * videoTrack = [videoTracks objectAtIndex:0];
-				frameRate = videoTrack.nominalFrameRate;
-				videoWidth = [videoTrack naturalSize].width;
-				videoHeight = [videoTrack naturalSize].height;
+				self->frameRate = videoTrack.nominalFrameRate;
+				self->videoWidth = [videoTrack naturalSize].width;
+				self->videoHeight = [videoTrack naturalSize].height;
 				
-				NSLog(@"video file loaded at %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, frameRate);
+				NSLog(@"video file loaded at %li x %li @ %f fps", (long)self->videoWidth, (long)self->videoHeight, self->frameRate);
 			}
 			
 			
 //			currentTime = CMTimeMakeWithSeconds((1.0/frameRate), NSEC_PER_SEC);//kCMTimeZero;
-			currentTime = CMTimeMakeWithSeconds(0.0, NSEC_PER_SEC);//kCMTimeZero;
+			self->currentTime = CMTimeMakeWithSeconds(0.0, NSEC_PER_SEC);//kCMTimeZero;
 			
 			
 			//------------------------------------------------------------ create player item.
@@ -310,7 +293,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
-				[asyncLock unlock];
+				[self->asyncLock unlock];
 				return;
 			}
 			
@@ -348,15 +331,14 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			
 			//------------------------------------------------------------ recreate player.
 			// destroy player if any - should never be the case!!
-			if(_player != nil) {
+			if(self.player != nil) {
 				[self removeTimeObserverFromPlayer];
 				[self.player removeObserver:self forKeyPath:kRateKey context:&PlayerRateContext];
 				self.player = nil;
-				[_player release];
 			}
 			
 			// create new player
-			_player = [[AVPlayer playerWithPlayerItem:self.playerItem] retain];
+			self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
 			[self.player addObserver:self
 						  forKeyPath:kRateKey
 							 options:NSKeyValueObservingOptionNew
@@ -364,16 +346,16 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// add timeobserver?
 			[self addTimeObserverToPlayer];
 			
-			_player.volume = volume;
+			self->_player.volume = self->volume;
 			
 			// loaded
-			bLoaded = true;
+			self->bLoaded = true;
 			
 			if(bAsync == NO){
 				dispatch_semaphore_signal(sema);
 			}
 			
-			[asyncLock unlock];
+			[self->asyncLock unlock];
 
 		}];
 	});
@@ -381,10 +363,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	// Wait for the dispatch semaphore signal
 	if(bAsync == NO){
 		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-		dispatch_release(sema);
 		return bLoaded;
 	} else {
-		dispatch_release(sema);
 		return YES;
 	}
 }
@@ -463,21 +443,18 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		
 		@autoreleasepool {
 			
-			[asyncLock lock];
+			[self->asyncLock lock];
 			
 			// relase assetreader
 			if (currentReader != nil) {
 				[currentReader cancelReading];
-				[currentReader autorelease];
 				currentReader = nil;
 				
 				if (currentVideoTrack != nil) {
-					[currentVideoTrack autorelease];
 					currentVideoTrack = nil;
 				}
 				
 				if (currentAudioTrack != nil) {
-					[currentAudioTrack autorelease];
 					currentAudioTrack = nil;
 				}
 			}
@@ -485,7 +462,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 			// release asset
 			if (currentAsset != nil) {
 				[currentAsset cancelLoading];
-				[currentAsset autorelease];
 				currentAsset = nil;
 			}
 			
@@ -514,7 +490,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				
 				// release videouOutput
 				if (currentVideoOutput != nil) {
-					[currentVideoOutput autorelease];
 					currentVideoOutput = nil;
 				}
 				
@@ -525,7 +500,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				}
 #endif
 				
-				[currentItem autorelease];
 				currentItem = nil;
 			}
 			
@@ -536,11 +510,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 				if (currentTimeObserver != nil) {
 					[currentPlayer removeTimeObserver:currentTimeObserver];
-					[currentTimeObserver autorelease];
 					currentTimeObserver = nil;
 				}
 				
-				[currentPlayer autorelease];
 				currentPlayer = nil;
 			}
 			
@@ -555,12 +527,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 				currentAudioSampleBuffer = nil;
 			}
 			
-			[asyncLock unlock];
+			[self->asyncLock unlock];
 			
-			if (deallocCond != nil) {
-				[deallocCond lock];
-				[deallocCond signal];
-				[deallocCond unlock];
+			if (self->deallocCond != nil) {
+				[self->deallocCond lock];
+				[self->deallocCond signal];
+				[self->deallocCond unlock];
 			}
 		}
 	});
@@ -580,7 +552,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	[deallocCond wait];
 	[deallocCond unlock];
 	
-	[deallocCond release];
 	deallocCond = nil;
 }
 
@@ -620,7 +591,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	
 	//------------------------------------------------------------ add video output.
 	if (bSampleVideo) {
-		NSMutableDictionary * videoOutputSettings = [[[NSMutableDictionary alloc] init] autorelease];
+		NSMutableDictionary * videoOutputSettings = [[NSMutableDictionary alloc] init];
 #ifdef TARGET_IOS
 		[videoOutputSettings setObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
 								forKey:(NSString*)kCVPixelBufferPixelFormatTypeKey];
@@ -1108,17 +1079,16 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	double interval = 1.0 / (double)frameRate;
 	
 	__block ofAVFoundationVideoPlayer* refToSelf = self;
-	timeObserver = [[_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
-														  queue:dispatch_get_main_queue() usingBlock:
-					 ^(CMTime time) {
-						 [refToSelf update];
-					 }] retain];
+	timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
+														 queue:dispatch_get_main_queue()
+                                                    usingBlock:^(CMTime time) {
+                                                        [refToSelf update];
+                                                    }];
 }
 
 - (void)removeTimeObserverFromPlayer {
 	if(timeObserver != nil) {
 		[_player removeTimeObserver:timeObserver];
-		[timeObserver release];
 		timeObserver = nil;
 	}
 }
@@ -1145,6 +1115,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 - (void)togglePlayPause {
+	bIsStopped = NO;
+
 	bPlaying = !bPlaying;
 	if([self isPlaying]) {
 		if([self isFinished]) {
@@ -1155,6 +1127,12 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	} else {
 		[_player pause];
 	}
+}
+
+- (void)stop {
+	[self setPosition:0];
+	[self pause];
+	bIsStopped = YES;
 }
 
 - (void)stepByCount:(long)frames
@@ -1239,7 +1217,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		toleranceBefore:tolerance
 		 toleranceAfter:tolerance
 	  completionHandler:^(BOOL finished) {
-		  bSeeking = NO;
+		self->bSeeking = NO;
 	  }];
 }
 
@@ -1254,6 +1232,10 @@ static const void *PlayerRateContext = &ItemStatusContext;
 
 - (BOOL)isPlaying {
 	return bPlaying;
+}
+
+- (BOOL)isPaused {
+	return !bPlaying & !bIsStopped;
 }
 
 - (BOOL)isNewFrame {

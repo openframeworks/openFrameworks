@@ -1,9 +1,9 @@
 #include "ofMaterial.h"
-#include "ofConstants.h"
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::string;
 
 std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
 
@@ -345,7 +345,7 @@ ofMaterial::Data ofMaterial::getData() const {
 
 namespace{
     string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
-        header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
+        header += "#define MAX_LIGHTS " + ofToString(std::max(1,maxLights)) + "\n";
         if(hasTexture){
             header += "#define HAS_TEXTURE 1\n";
 		} else {

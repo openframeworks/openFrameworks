@@ -14,8 +14,13 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-using namespace std;
-
+using std::map;
+using std::vector;
+using std::string;
+using std::endl;
+using std::setw;
+using std::stringstream;
+using std::ostringstream;
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
