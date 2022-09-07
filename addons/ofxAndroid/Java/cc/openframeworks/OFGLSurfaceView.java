@@ -164,6 +164,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                         mSurface.setFrameRate(frameRate,
                                 FRAME_RATE_COMPATIBILITY_DEFAULT, CHANGE_FRAME_RATE_ALWAYS);
                     } else {
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             mSurface.setFrameRate(frameRate,
                                     FRAME_RATE_COMPATIBILITY_DEFAULT);

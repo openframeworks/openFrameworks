@@ -314,8 +314,11 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						if(OFAndroidLifeCycle.coreLibraryLoaded)
-							object.onPause();
+						if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+							if (object != null) {
+								object.onPause();
+							}
+						}
 					}
 				}
 
@@ -345,9 +348,11 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.enableOrientationChangeEvents();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						if(object != null) {
-							object.onResume();
-							object.appResume();
+						if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+							if (object != null) {
+								object.onResume();
+								object.appResume();
+							}
 						}
 					}
 					
@@ -374,15 +379,19 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						if(OFAndroidLifeCycle.coreLibraryLoaded)
-							object.onPause();
+						if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+							if (object != null) {
+								object.onPause();
+							}
+						}
 					}
 				}
 			}
 		});
 
-		if(OFAndroidLifeCycle.coreLibraryLoaded)
+		if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
 			OFAndroid.onStop();
+		}
 
 		OFAndroid.sleepLocked=false;
 		started = false;
@@ -400,16 +409,19 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.unregisterNetworkStateReceiver();
 				synchronized (OFAndroidObject.ofObjects) {
 					for(OFAndroidObject object : OFAndroidObject.ofObjects){
-						if(OFAndroidLifeCycle.coreLibraryLoaded) {
-							object.onStop();
-							object.onDestroy();
+						if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+							if (object != null) {
+								object.onStop();
+								object.onDestroy();
+							}
 						}
 					}
 				}
 			}
 		});
-		if(OFAndroidLifeCycle.coreLibraryLoaded)
+		if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
 			OFAndroid.onStop();
+		}
 		OFAndroid.sleepLocked=false;
 		OFAndroid.onDestroy();
 		//OFAndroidWindow.exit();
@@ -420,7 +432,8 @@ public class OFAndroidLifeCycleHelper
 	{
 		if(OFActivity.LOG_ENGINE) Log.i(TAG,"exit");
 
-		if(OFAndroidLifeCycle.coreLibraryLoaded)
+		if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
 			OFAndroid.exit();
+		}
 	}
 }

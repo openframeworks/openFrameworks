@@ -53,7 +53,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
-	public static final boolean LOG_INPUT = true;
+	public static final boolean LOG_INPUT = false;
 	public static final boolean LOG_ENGINE = true;
 
 	public float currentRefreshRate;
@@ -77,8 +77,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public static String packageName = null;
 
 	public void initView(){
-		if(packageName == null)
+		if(packageName == null) {
 			packageName = this.getPackageName();
+		}
         try {
         	if(LOG_ENGINE) Log.v("OF","trying to find class: "+packageName+".R$layout");
 			Class<?> layout = Class.forName(packageName+".R$layout");
