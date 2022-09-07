@@ -1126,11 +1126,11 @@ vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip
 }
 
 bool ofTrueTypeFont::isValidGlyph(uint32_t glyph) const{
-	//return glyphIndexMap.find(glyph) != glyphIndexMap.end();
-	return std::any_of(settings.ranges.begin(), settings.ranges.end(),
+	
+	return (std::any_of(settings.ranges.begin(), settings.ranges.end(),
 		[&](ofUnicode::range range){
 			return glyph >= range.begin && glyph <= range.end;
-	});
+    })) && glyphIndexMap.find(glyph) != glyphIndexMap.end();
 }
 
 size_t ofTrueTypeFont::indexForGlyph(uint32_t glyph) const{
@@ -1203,6 +1203,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 			w += props.advance;
 		}
 
+        
+        if( c == ' ') {
+            props.advance = spaceSize;
+        }
+//		maxX = max( maxX, pos.x + props.xmin + props.width);
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );
