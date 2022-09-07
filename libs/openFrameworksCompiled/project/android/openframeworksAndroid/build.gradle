@@ -17,7 +17,7 @@ tasks.register("prepareKotlinBuildScriptModel"){}
 
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     //ndkPath "/Users/~/Documents/android-ndk-r21e"  // Point to your own NDK if needed
     //ndkVersion "23.1.7779620" //NDK will automatically sideload with this
     ndkVersion '24.0.8215888'
@@ -37,7 +37,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 13
         versionName '13'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -126,7 +126,7 @@ dependencies {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "com.getkeepsafe.relinker:relinker:1.4.4"
