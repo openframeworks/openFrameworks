@@ -388,6 +388,17 @@ public:
 		return getGlyphProperties(c).advance;
 	}
 
+	struct glyphProps{
+		std::size_t characterIndex;
+		uint32_t glyph;
+		float height;
+		float width;
+		float bearingX, bearingY;
+		float xmin, xmax, ymin, ymax;
+		float advance;
+		float tW,tH;
+		float t1,t2,v1,v2;
+	};
 protected:
 	/// \cond INTERNAL
 	
@@ -413,18 +424,6 @@ protected:
 	float letterSpacing;
 	float spaceSize;
 	float fontUnitScale;
-
-	struct glyphProps{
-		std::size_t characterIndex;
-		uint32_t glyph;
-		float height;
-		float width;
-		float bearingX, bearingY;
-		float xmin, xmax, ymin, ymax;
-		float advance;
-		float tW,tH;
-		float t1,t2,v1,v2;
-	};
 
 	struct glyph{
 		glyphProps props;

@@ -493,6 +493,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     }
 #	else
 #       define OF_USE_EXPERIMENTAL_FS 0
+#endif
 
 //#if !defined(_LIBCPP_HAS_NO_RVALUE_REFERENCES)
 //#define _LIBCPP_HAS_NO_RVALUE_REFERENCES

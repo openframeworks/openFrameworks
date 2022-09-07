@@ -2,7 +2,6 @@
 #ifndef TARGET_WIN32
 	#include <pwd.h>
 	#include <sys/stat.h>
-	#include <unistd.h>
 #endif
 
 #include "ofUtils.h"
