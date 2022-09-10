@@ -39,7 +39,6 @@ var LibraryHTML5Audio = {
 				event.currentTarget.removeEventListener(event.type, cb);
 			});
 
-			// var id = AUDIO.lastContextID++;
 			AUDIO.contexts[id] = context;
 			var fft = context.createAnalyser();
 			fft.smoothingTimeConstant = 0;
