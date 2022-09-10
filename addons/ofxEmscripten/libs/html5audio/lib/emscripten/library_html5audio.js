@@ -26,20 +26,20 @@ var LibraryHTML5Audio = {
         	}
     	}
     },
-
+    html5audio_context_create__deps: ['$emscriptenRegisterAudioObject'],
     html5audio_context_create: function(){
     	try {
 			// Fix up for prefixing
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			var context = new AudioContext();
-
+			var id = emscriptenRegisterAudioObject(context);
 			// Fix issue with chrome autoplay policy
 			document.addEventListener('mousedown', function cb(event) {
 				context.resume();
 				event.currentTarget.removeEventListener(event.type, cb);
 			});
 
-			var id = AUDIO.lastContextID++;
+			// var id = AUDIO.lastContextID++;
 			AUDIO.contexts[id] = context;
 			var fft = context.createAnalyser();
 			fft.smoothingTimeConstant = 0;
@@ -181,37 +181,15 @@ var LibraryHTML5Audio = {
 		return AUDIO.soundGains[sound_id] = null;
 	},
 
-	html5audio_stream_create: function(context_id, bufferSize, inputChannels, outputChannels, inbuffer, outbuffer, callback, userData){
-		var stream = AUDIO.contexts[context_id].createScriptProcessor(bufferSize,inputChannels,outputChannels);
-		var inbufferArray = Module.HEAPF32.subarray(inbuffer>>2,(inbuffer>>2)+bufferSize*inputChannels);
-		var outbufferArray = Module.HEAPF32.subarray(outbuffer>>2,(outbuffer>>2)+bufferSize*outputChannels);
-
+	html5audio_stream_create: function(){
 		var id = AUDIO.lastStreamID++;
-
-		stream.onaudioprocess = function(event){
-			var i,j,c;
-			if(inputChannels>0){
-				for(c=0;c<inputChannels;++c){
-					var inChannel = event.inputBuffer.getChannelData(c);
-					for(i=0,j=c;i<bufferSize;++i,j+=inputChannels){
-						inbufferArray[j] = inChannel[i];
-					}
-				}
-			}
-
-			{{{ makeDynCall('viiii', 'callback') }}}(bufferSize,inputChannels,outputChannels,userData);
-
-			if(outputChannels>0){
-				for(c=0;c<outputChannels;++c){
-					var outChannel = event.outputBuffer.getChannelData(c);
-					for(i=0,j=c;i<bufferSize;++i,j+=outputChannels){
-						outChannel[i] = outbufferArray[j];
-					}
-				}
-			}
-		};
-
-		if(inputChannels>0){
+		return id;
+	},
+	
+	html5audio_stream_connect__deps: ['$emscriptenGetAudioObject'],
+	html5audio_stream_connect: function(audioContext, audioWorkletNode, numInputChannels){
+		var audioWorkletNode = emscriptenGetAudioObject(audioWorkletNode);
+		if(numInputChannels>0){
 			navigator.getUserMedia = navigator.getUserMedia ||
 							    	    navigator.webkitGetUserMedia ||
 							    	    navigator.mozGetUserMedia ||
@@ -221,9 +199,9 @@ var LibraryHTML5Audio = {
 				navigator.getUserMedia(
 					{audio: true},
 					function(audioIn) {
-						var mediaElement = AUDIO.contexts[context_id].createMediaStreamSource(audioIn);
-						mediaElement.connect(stream);
-						AUDIO.mediaElements[id] = mediaElement;
+						var mediaElement = AUDIO.contexts[audioContext].createMediaStreamSource(audioIn);
+						mediaElement.connect(audioWorkletNode);
+						AUDIO.mediaElements[AUDIO.lastStreamID] = mediaElement;
 					},
 					function(error){
 						console.log("error creating audio in",error);
@@ -231,12 +209,10 @@ var LibraryHTML5Audio = {
 				);
 			}
 		}
-
-		stream.connect(AUDIO.ffts[context_id]);
-		AUDIO.streams[id] = stream;
-		return id;
+		audioWorkletNode.connect(AUDIO.ffts[audioContext]);
+		AUDIO.streams[AUDIO.lastStreamID] = audioWorkletNode;
 	},
-
+	
 	html5audio_stream_free: function(stream_id){
 		return AUDIO.streams[stream_id] = null;
 		return AUDIO.mediaElements[stream_id] = null;

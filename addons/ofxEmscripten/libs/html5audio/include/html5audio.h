@@ -23,7 +23,8 @@ extern "C"{
 	extern void html5audio_sound_set_gain(int sound, double volume);
 	extern void html5audio_sound_free(int sound);
 
-	extern int html5audio_stream_create(int context_id, int bufferSize, int inputChannels, int outputChannels, float * inbuffer, float * outbuffer, html5audio_stream_callback callback, void * userData);
+	extern int html5audio_stream_create();
+	extern void html5audio_stream_connect(int audioContext, int audioWorkletNode, int numInputChannels);
 	extern int html5audio_stream_free(int stream);
 	extern bool html5audio_sound_is_loaded(int sound);
 }
