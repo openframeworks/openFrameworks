@@ -47,7 +47,7 @@ void emscripten_resume_audio_context_sync(EMSCRIPTEN_WEBAUDIO_T audioContext);
 // Returns the current AudioContext state.
 AUDIO_CONTEXT_STATE emscripten_audio_context_state(EMSCRIPTEN_WEBAUDIO_T audioContext);
 
-typedef void (*EmscriptenStartWebAudioWorkletCallback)(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData, int bufferSize, int inputChannels, int outputChannels, int inbuffer, int outbuffer, int callback2, int userData2);
+typedef void (*EmscriptenStartWebAudioWorkletCallback)(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData);
 
 // Calls .suspend() on the given AudioContext and releases the JS object table
 // reference to the given audio context. The specified handle is invalid
@@ -89,10 +89,10 @@ typedef struct WebAudioWorkletProcessorCreateOptions
 	const WebAudioParamDescriptor *audioParamDescriptors;
 } WebAudioWorkletProcessorCreateOptions;
 
-typedef void (*EmscriptenWorkletProcessorCreatedCallback)(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData, int bufferSize, int numInputChannels, int numOutputChannels, int inbuffer, int outbuffer, int callback2, int userData2);
+typedef void (*EmscriptenWorkletProcessorCreatedCallback)(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData);
 
 // Creates a new AudioWorkletProcessor with the given name and specified set of control parameters.
-void emscripten_create_wasm_audio_worklet_processor_async(EMSCRIPTEN_WEBAUDIO_T audioContext, const WebAudioWorkletProcessorCreateOptions *options, EmscriptenWorkletProcessorCreatedCallback callback, void *userData, int bufferSize, int numInputChannels, int numOutputChannels, int inbuffer, int outbuffer, int callback2, int userData2);
+void emscripten_create_wasm_audio_worklet_processor_async(EMSCRIPTEN_WEBAUDIO_T audioContext, const WebAudioWorkletProcessorCreateOptions *options, EmscriptenWorkletProcessorCreatedCallback callback, void *userData);
 
 typedef int EMSCRIPTEN_AUDIO_WORKLET_NODE_T;
 
@@ -125,12 +125,32 @@ typedef struct EmscriptenAudioWorkletNodeCreateOptions
 } EmscriptenAudioWorkletNodeCreateOptions;
 
 // Instantiates the given AudioWorkletProcessor as an AudioWorkletNode, which continuously calls the specified processCallback() function on the browser's audio thread to perform audio processing.
-EMSCRIPTEN_AUDIO_WORKLET_NODE_T emscripten_create_wasm_audio_worklet_node(EMSCRIPTEN_WEBAUDIO_T audioContext, const char *name, const EmscriptenAudioWorkletNodeCreateOptions *options, void *userData, int bufferSize, int inputChannels, int outputChannels, int inbuffer, int outbuffer, int callback, int userData2);
+EMSCRIPTEN_AUDIO_WORKLET_NODE_T emscripten_create_wasm_audio_worklet_node(EMSCRIPTEN_WEBAUDIO_T audioContext, const char *name, const EmscriptenAudioWorkletNodeCreateOptions *options, void *userData);
 
 // Returns EM_TRUE if the current thread is executing a Wasm AudioWorklet, EM_FALSE otherwise.
 // Note that calling this function can be relatively slow as it incurs a Wasm->JS transition,
 // so avoid calling it in hot paths.
 EM_BOOL emscripten_current_thread_is_audio_worklet(void);
+
+#define EMSCRIPTEN_AUDIO_MAIN_THREAD 0
+
+/* emscripten_audio_worklet_function_*: Post a pointer to a C/C++ function to be executed either
+  on the Audio Worklet thread of the given Web Audio context. Notes:
+ - If running inside an Audio Worklet thread, specify ID EMSCRIPTEN_AUDIO_MAIN_THREAD (== 0) to pass a message
+   from the audio worklet to the main thread.
+ - When specifying non-zero ID, the Audio Context denoted by the ID must have been created by the calling thread.
+ - Passing messages between audio thread and main thread with this family of functions is relatively slow and has
+   a really high latency cost compared to direct coordination using atomics and synchronization primitives like
+   mutexes and synchronization primitives. Additionally these functions will generate garbage on the JS heap.
+   Therefore avoid using these functions where performance is critical. */
+void emscripten_audio_worklet_post_function_v(EMSCRIPTEN_WEBAUDIO_T id, void (*funcPtr)(void));
+void emscripten_audio_worklet_post_function_vi(EMSCRIPTEN_WEBAUDIO_T id, void (*funcPtr)(int), int arg0);
+void emscripten_audio_worklet_post_function_vii(EMSCRIPTEN_WEBAUDIO_T id, void (*funcPtr)(int, int), int arg0, int arg1);
+void emscripten_audio_worklet_post_function_viii(EMSCRIPTEN_WEBAUDIO_T id, void (*funcPtr)(int, int, int), int arg0, int arg1, int arg2);
+void emscripten_audio_worklet_post_function_vd(EMSCRIPTEN_WEBAUDIO_T id, void (*funcPtr)(double), double arg0);
+void emscripten_audio_worklet_post_function_vdd(EMSCRIPTEN_WEBAUDIO_T id, void (*funcPtr)(double, double), double arg0, double arg1);
+void emscripten_audio_worklet_post_function_vddd(EMSCRIPTEN_WEBAUDIO_T id, void (*funcPtr)(double, double, double), double arg0, double arg1, double arg2);
+void emscripten_audio_worklet_post_function_sig(EMSCRIPTEN_WEBAUDIO_T id, void *funcPtr, const char *sig, ...);
 
 #ifdef __cplusplus
 } // ~extern "C"
