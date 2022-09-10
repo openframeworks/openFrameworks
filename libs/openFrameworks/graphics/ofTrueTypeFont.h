@@ -142,7 +142,7 @@ struct ofTrueTypeFontSettings{
     int                       fontSize = 0;
     bool                      antialiased = true;
     bool                      contours = false;
-    float                     simplifyAmt = 0.3f;
+    float                     simplifyAmt = 0.0f;
     int                       dpi = 0;
     int                       index = 0;
     ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
@@ -201,7 +201,7 @@ public:
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
                   bool makeContours=false,
-                  float simplifyAmt=0.3f,
+                  float simplifyAmt=0.0f,
 				  int dpi=0);
 
 	OF_DEPRECATED_MSG("Use load instead",bool loadFont(std::string filename,
@@ -209,7 +209,7 @@ public:
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=false,
                   bool makeContours=false,
-                  float simplifyAmt=0.3f,
+                  float simplifyAmt=0.0f,
 				  int dpi=0));
 	
 	bool load(const ofTrueTypeFontSettings & settings);
@@ -383,17 +383,19 @@ public:
 	float getCharAdvance(uint32_t c) const {
 		return getGlyphProperties(c).advance;
 	}
-
-protected:
-	/// \cond INTERNAL
 	
-	static inline double int26p6_to_dbl(int p) {
+	static double int26p6_to_dbl(long p) {
 		return double(p) / 64.0;
 	}
 	
 	static inline int dbl_to_int26p6(double p) {
 		return int(p * 64.0 + 0.5);
 	}
+
+protected:
+	/// \cond INTERNAL
+	
+
 	
 	bool bLoadedOk;
 	
