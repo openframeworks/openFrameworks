@@ -91,7 +91,6 @@ class BootstrapMessages extends AudioWorkletProcessor {
     let p = globalThis['messagePort'] = this.port;
     p.onmessage = (msg) => {
       let d = msg.data;
-      console.log("wawaw",d)
       if (d['_wpn']) { // '_wpn' is short for 'Worklet Processor Node', using an identifier that will never conflict with user messages
 #if MODULARIZE
         // Instantiate the MODULARIZEd Module function, which is stored for us under the special global
@@ -104,7 +103,7 @@ class BootstrapMessages extends AudioWorkletProcessor {
         // Register a real AudioWorkletProcessor that will actually do audio processing.
         registerProcessor(d['_wpn'], createWasmAudioWorkletProcessor(d['audioParams']));
 #if WEBAUDIO_DEBUG
-        console.log(`Registered a new WasmAudioWorkletProcessor "${d['name']}" with AudioParams: ${d['audioParams']}`);
+        console.log(`Registered a new WasmAudioWorkletProcessor "${d['_wpn']}" with AudioParams: ${d['audioParams']}`);
 #endif
         // Post a Wasm Call message back telling that we have now registered the AudioWorkletProcessor class,
         // and should trigger the user onSuccess callback of the emscripten_create_wasm_audio_worklet_processor_async() call.
