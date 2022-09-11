@@ -40,8 +40,8 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 PLATFORM_CFLAGS += -march=armv7
 PLATFORM_CFLAGS += -mtune=cortex-a8
-PLATFORM_CFLAGS += -mfpu=neon
-PLATFORM_CFLAGS += -mfloat-abi=hard
+# PLATFORM_CFLAGS += -mfpu=neon
+# PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
 PLATFORM_CFLAGS += -Wno-psabi
