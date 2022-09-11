@@ -68,7 +68,7 @@ else
 	endif
 endif
 
-ifdef MAKEFILE_DEBUG
+# ifdef MAKEFILE_DEBUG
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
     $(info HOST_ARCH=$(HOST_ARCH))
@@ -76,7 +76,7 @@ ifdef MAKEFILE_DEBUG
     $(info CROSS_COMPILING=$(CROSS_COMPILING))
     $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
     $(info IS_RASPBIAN=$(IS_RASPBIAN))
-endif
+# endif
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
