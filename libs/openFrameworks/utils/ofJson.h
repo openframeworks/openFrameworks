@@ -14,7 +14,7 @@ using ofJson = nlohmann::json;
 /// \brief Load Json from the given path.
 /// \param filename The file to load from.
 /// \returns loaded json, or an empty json object on failure.
-inline ofJson ofLoadJson(const std::filesystem::path& filename){
+inline ofJson ofLoadJson(const fs::path& filename){
 	ofJson json;
 	ofFile jsonFile(filename);
 	if(jsonFile.exists()){
@@ -35,7 +35,7 @@ inline ofJson ofLoadJson(const std::filesystem::path& filename){
 /// \param filename The destination path.
 /// \param json The Json to save.
 /// \returns true if the json was saved successfully.
-inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json){
+inline bool ofSaveJson(const fs::path& filename, const ofJson & json){
 	ofFile jsonFile(filename, ofFile::WriteOnly);
 	try{
 		jsonFile << json;
@@ -53,7 +53,7 @@ inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & jso
 /// \param filename The destination path.
 /// \param json The Json to save.
 /// \returns true if the json was saved successfully.
-inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json){
+inline bool ofSavePrettyJson(const fs::path& filename, const ofJson & json){
     ofFile jsonFile(filename, ofFile::WriteOnly);
     try{
         jsonFile << json.dump(4);

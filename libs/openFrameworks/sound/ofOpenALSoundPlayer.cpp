@@ -229,7 +229,7 @@ void ofOpenALSoundPlayer::close(){
 }
 
 // ----------------------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfReadFile(const fs::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
 	SF_INFO sfInfo;
 	SNDFILE* f = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
 	if(!f){
@@ -283,7 +283,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, std::vec
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123ReadFile(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
 	mpg123_handle * f = mpg123_new(nullptr,&err);
 	if(mpg123_open(f,path.string().c_str())!=MPG123_OK){
@@ -321,7 +321,7 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,std::
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfStream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!streamf){
 		SF_INFO sfInfo;
 		streamf = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
@@ -384,7 +384,7 @@ bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,std::vector
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123Stream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!mp3streamf){
 		int err = MPG123_OK;
 		mp3streamf = mpg123_new(nullptr,&err);
@@ -435,7 +435,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,std::ve
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::stream(const std::filesystem::path& fileName, std::vector<short> & buffer){
+bool ofOpenALSoundPlayer::stream(const fs::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)=="mp3" || ofFilePath::getFileExt(fileName)=="MP3" || mp3streamf){
 		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return false;
@@ -455,7 +455,7 @@ bool ofOpenALSoundPlayer::stream(const std::filesystem::path& fileName, std::vec
 	return true;
 }
 
-bool ofOpenALSoundPlayer::readFile(const std::filesystem::path& fileName, std::vector<short> & buffer){
+bool ofOpenALSoundPlayer::readFile(const fs::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)!="mp3" && ofFilePath::getFileExt(fileName)!="MP3"){
 		if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return false;
@@ -478,9 +478,9 @@ bool ofOpenALSoundPlayer::readFile(const std::filesystem::path& fileName, std::v
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_stream){
+bool ofOpenALSoundPlayer::load(const fs::path& _fileName, bool is_stream){
 
-	std::filesystem::path fileName = ofToDataPath(_fileName);
+	fs::path fileName = ofToDataPath(_fileName);
 
 	bMultiPlay = false;
 	isStreaming = is_stream;

@@ -453,7 +453,12 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
-		#define OF_USING_STD_FS 1
+        // if target includes version 10.14 or below
+        #if(MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_14)
+            #define OF_USING_STD_FS 0
+        #else
+            #define OF_USING_STD_FS 1
+        #endif
 	#else
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
@@ -514,7 +519,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                         using v1::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
+                namespace fs = experimental::filesystem;
             }
         #else
             namespace std {
@@ -528,13 +533,14 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                         using v1::__cxx11::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
+                namespace fs = experimental::filesystem;
             }
         #endif
         
     #else
         // Regular C++17 fs support
         #include <filesystem>
+        namespace fs = std::filesystem;
     #endif
 #else
     // No experimental or c++17 filesytem support use boost
@@ -548,7 +554,5 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 			class path;
 		}
 	}
-	namespace std {
-		namespace filesystem = boost::filesystem;
-	}
+    namespace fs = boost::filesystem;
 #endif

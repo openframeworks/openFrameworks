@@ -49,7 +49,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		ofOpenALSoundPlayer();
 		virtual ~ofOpenALSoundPlayer();
 
-        bool load(const std::filesystem::path& fileName, bool stream = false);
+        bool load(const fs::path& fileName, bool stream = false);
 		void unload();
 		void play();
 		void stop();
@@ -93,15 +93,15 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		static void runWindow(std::vector<float> & signal);
 		static void initSystemFFT(int bands);
 
-        bool sfReadFile(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
-        bool sfStream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
+        bool sfReadFile(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
+        bool sfStream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
 #ifdef OF_USING_MPG123
-        bool mpg123ReadFile(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
-        bool mpg123Stream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
+        bool mpg123ReadFile(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
+        bool mpg123Stream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
 #endif
 
-        bool readFile(const std::filesystem::path& fileName,std::vector<short> & buffer);
-        bool stream(const std::filesystem::path& fileName, std::vector<short> & buffer);
+        bool readFile(const fs::path& fileName,std::vector<short> & buffer);
+        bool stream(const fs::path& fileName, std::vector<short> & buffer);
 
 		bool isStreaming;
 		bool bMultiPlay;
