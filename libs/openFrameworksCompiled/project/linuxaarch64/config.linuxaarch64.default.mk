@@ -46,7 +46,7 @@ PLATFORM_LDFLAGS += -lstdc++fs
 # PLATFORM_CFLAGS += -mfpu=neon
 # PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -Wall
-PLATFORM_CFLAGS += -Werror
+# PLATFORM_CFLAGS += -Werror
 PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
 PLATFORM_CFLAGS += -Wno-psabi
