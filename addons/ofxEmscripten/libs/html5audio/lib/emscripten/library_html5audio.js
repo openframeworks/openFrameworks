@@ -195,8 +195,13 @@ var LibraryHTML5Audio = {
 							    	    navigator.msGetUserMedia;
 
 			if(navigator.getUserMedia){
-				navigator.getUserMedia(
-					{audio: true},
+				navigator.getUserMedia({
+					audio: {
+						autoGainControl: false,
+						echoCancellation: false,
+						noiseSuppression: false
+						}
+					},
 					function(audioIn) {
 						var mediaElement = AUDIO.contexts[audioContext].createMediaStreamSource(audioIn);
 						mediaElement.connect(audioWorkletNode);
