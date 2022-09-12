@@ -59,13 +59,14 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 #   platform. These flags will always be added when compiling a project or the
 #   core library.  These flags are presented to the compiler AFTER the
 #   PLATFORM_OPTIMIZATION_CFLAGS below.
-#
+#  
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS =
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths
+PLATFORM_CFLAGS = -s SHARED_MEMORY=1
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths -s SHARED_MEMORY=1
+
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -86,16 +87,16 @@ CC := $(CUR_CC) -r
 
 ifdef USE_CCACHE
 	ifeq ($(findstring ccache, $(CC)),)
-		ORIGINAL_CC = $(CC)
-		CC := ccache $(ORIGINAL_CC)
+		ORIGINAL_CC = $(CC) 
+		CC := ccache $(ORIGINAL_CC) 
 		ORIGINAL_CXX = $(CXX)
-		CXX := ccache $(ORIGINAL_CXX)
+		CXX := ccache $(ORIGINAL_CXX)   
 	endif
 endif
 
-PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_FREETYPE=1
-PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
-PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --bind --profiling-funcs -s USE_FREETYPE=1 -s AUDIO_WORKLET=1 -s WASM_WORKERS=1 -sENVIRONMENT="web,worker" -s USE_PTHREADS=1 -s WEBAUDIO_DEBUG=1
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js 
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js  
 
 ifdef PROJECT_EMSCRIPTEN_TEMPLATE
 	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
@@ -103,7 +104,7 @@ else
 	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
 endif
 
-PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) --memory-init-file 1
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) --memory-init-file 1 -s ASSERTIONS=0
 
 PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -g3 -s TOTAL_MEMORY=134217728 --memory-init-file 1  -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2
 
