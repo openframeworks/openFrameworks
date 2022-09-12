@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Docker Step
-      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.19 bash"
+      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash"
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Install dependencies
