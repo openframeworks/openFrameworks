@@ -71,7 +71,7 @@ var LibraryHTML5Audio = {
     },
 
     html5audio_context_samplerate: function(context_id){
-    	return AUDIO.contexts[context_id].sampleRate.value;
+    	return AUDIO.contexts[context_id].sampleRate;
     },
 
     html5audio_sound_load: function(context_id, url){
