@@ -33,6 +33,7 @@ var LibraryHTML5Audio = {
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			var context = new AudioContext();
 			var id = emscriptenRegisterAudioObject(context);
+
 			// Fix issue with chrome autoplay policy
 			document.addEventListener('mousedown', function cb(event) {
 				context.resume();
