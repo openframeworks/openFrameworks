@@ -13,8 +13,8 @@ static unsigned int buffersize = 1024;
 static FMOD_DSP* fftDSP = NULL;
 
 // ---------------------  static vars
-static FMOD_CHANNELGROUP * channelgroup;
-static FMOD_SYSTEM       * sys;
+static FMOD_CHANNELGROUP * channelgroup = NULL;
+static FMOD_SYSTEM       * sys = NULL;
 
 // these are global functions, that affect every sound / channel:
 // ------------------------------------------------------------
@@ -159,7 +159,7 @@ void ofFmodSoundPlayer::initializeFmod(){
 		#ifdef TARGET_LINUX
 			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
 		#endif
-		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, nullptr);  //do we want just 32 channels?
+		FMOD_System_Init(sys, 512, FMOD_INIT_NORMAL, nullptr);  //do we want just 512 channels?
 		FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
 		bFmodInitialized_ = true;
 	}
@@ -233,7 +233,7 @@ void ofFmodSoundPlayer::unload(){
 bool ofFmodSoundPlayer::isPlaying() const{
 
 	if (!bLoadedOk) return false;
-
+	if(channel == NULL) return false;
 	int playing = 0;
 	FMOD_Channel_IsPlaying(channel, &playing);
 	return (playing != 0 ? true : false);

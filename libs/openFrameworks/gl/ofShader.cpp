@@ -6,9 +6,6 @@
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
 #include "ofMatrix3x3.h"
-#include "ofVec2f.h"
-#include "ofVec3f.h"
-#include "ofVec4f.h"
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
 #include "ofBufferObject.h"
@@ -17,8 +14,13 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-using namespace std;
-
+using std::map;
+using std::vector;
+using std::string;
+using std::endl;
+using std::setw;
+using std::stringstream;
+using std::ostringstream;
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";

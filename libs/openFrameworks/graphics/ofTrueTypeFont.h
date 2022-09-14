@@ -42,12 +42,18 @@ void ofTrueTypeShutdown();
 class ofUnicode{
 public:
 	struct range{
-		std::uint32_t begin;
-		std::uint32_t end;
-		
-		std::uint32_t getNumGlyphs() const{
-			return end - begin + 1;
-		}
+            range() : begin(0), end(0) {
+                
+            }
+            range(uint32_t be, uint32_t en) : begin(be), end(en) {
+                
+            }
+            std::uint32_t begin = 0;
+            std::uint32_t end = 0;
+                
+            std::uint32_t getNumGlyphs() const{
+                return end - begin + 1;
+            }
 	};
 
 	static const range Space;
@@ -78,6 +84,7 @@ public:
 	static const range GeometricShapes;
 	static const range MiscSymbols;
 	static const range Dingbats;
+	static const range CJKSymbolAndPunctuation;
 	static const range Hiragana;
 	static const range Katakana;
 	static const range HangulCompatJamo;
@@ -103,6 +110,12 @@ public:
 	static const range AdditionalEmoticons;
 	static const range AdditionalTransportAndMap;
 	static const range OtherAdditionalSymbols;
+    static const range Numbers;
+    static const range UppercaseLatin;
+    static const range LowercaseLatin;
+    static const range Braces;
+    static const range Symbols;
+    static const range GenericSymbols;
 };
 
 class ofAlphabet{
@@ -131,6 +144,7 @@ struct ofTrueTypeFontSettings{
     bool                      contours = false;
     float                     simplifyAmt = 0.3f;
     int                       dpi = 0;
+    int                       index = 0;
     ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
     std::vector<ofUnicode::range> ranges;
 

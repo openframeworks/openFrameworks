@@ -16,9 +16,11 @@
 #include <numeric>
 
 #include "ofGraphics.h"
-#include "utf8.h"
 
-using namespace std;
+using std::max;
+using std::vector;
+using std::string;
+using std::min;
 
 const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
@@ -48,6 +50,7 @@ const ofUnicode::range ofUnicode::BlockElement {0x2580, 0x259F};
 const ofUnicode::range ofUnicode::GeometricShapes {0x25A0, 0x25FF};
 const ofUnicode::range ofUnicode::MiscSymbols {0x2600, 0x26FF};
 const ofUnicode::range ofUnicode::Dingbats {0x2700, 0x27BF};
+const ofUnicode::range ofUnicode::CJKSymbolAndPunctuation {0x3001, 0x303F};
 const ofUnicode::range ofUnicode::Hiragana {0x3040, 0x309F};
 const ofUnicode::range ofUnicode::Katakana {0x30A0, 0x30FF};
 const ofUnicode::range ofUnicode::HangulCompatJamo {0x3130, 0x318F};
@@ -73,6 +76,12 @@ const ofUnicode::range ofUnicode::Uncategorized {0x00A9, 0x1F5FF};
 const ofUnicode::range ofUnicode::AdditionalEmoticons {0x1F600, 0x1F636};
 const ofUnicode::range ofUnicode::AdditionalTransportAndMap {0x1F681, 0x1F6C5};
 const ofUnicode::range ofUnicode::OtherAdditionalSymbols {0x1F30D, 0x1F567};
+const ofUnicode::range ofUnicode::UppercaseLatin {65, 90};
+const ofUnicode::range ofUnicode::LowercaseLatin {97, 122};
+const ofUnicode::range ofUnicode::Braces {123, 127};
+const ofUnicode::range ofUnicode::Numbers {48, 57};
+const ofUnicode::range ofUnicode::Symbols {33, 47};
+const ofUnicode::range ofUnicode::GenericSymbols {58, 64};
 
 const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 	ofUnicode::Space,
@@ -88,6 +97,7 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Emoji {
 const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 	ofUnicode::Space,
 	ofUnicode::IdeographicSpace,
+	ofUnicode::CJKSymbolAndPunctuation,
 	ofUnicode::Hiragana,
 	ofUnicode::Katakana,
 	ofUnicode::KatakanaPhoneticExtensions,
@@ -98,6 +108,7 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Japanese {
 const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
 	ofUnicode::Space,
 	ofUnicode::IdeographicSpace,
+	ofUnicode::CJKSymbolAndPunctuation,
 	ofUnicode::CJKLettersAndMonths,
 	ofUnicode::CJKUnified
 };
@@ -105,6 +116,7 @@ const std::initializer_list<ofUnicode::range> ofAlphabet::Chinese {
 const std::initializer_list<ofUnicode::range> ofAlphabet::Korean {
 	ofUnicode::Space,
 	ofUnicode::IdeographicSpace,
+	ofUnicode::CJKSymbolAndPunctuation,
 	ofUnicode::HangulJamo,
 	ofUnicode::HangulCompatJamo,
 	ofUnicode::HangulExtendedA,
@@ -239,7 +251,7 @@ static std::string osxFontPathByName(const std::string& fontname){
 #ifdef TARGET_WIN32
 #include <map>
 // font font face -> file name name mapping
-static map<std::string, std::string> fonts_table;
+static std::map<std::string, std::string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -316,7 +328,7 @@ static std::string winFontPathByName(const std::string& fontname ){
 	if(fonts_table.find(fontname)!=fonts_table.end()){
 		return fonts_table[fontname];
 	}
-	for(map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+	for(std::map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
 		if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
 	}
 	return "";
@@ -360,11 +372,11 @@ static std::string linuxFontPathByName(const std::string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename){
+static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename, int index){
 	std::filesystem::path fontname = _fontname;
 	filename = ofToDataPath(_fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
-	int fontID = 0;
+	int fontID = index;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
         filename = linuxFontPathByName(fontname.string());
@@ -713,7 +725,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-    if(!loadFontFace(settings.fontName, loadFace, settings.fontName)){
+    if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
 		return false;
 	}
 	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);
@@ -1161,10 +1173,10 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 		return ofRectangle( x, y, 0.f, 0.f);
 	}
 
-	float minX =  std::numeric_limits<float>::max();
-	float minY =  std::numeric_limits<float>::max();
-	float maxX = -std::numeric_limits<float>::max();
-	float maxY = -std::numeric_limits<float>::max();
+	float minX = x;
+	float minY = y;
+	float maxX = x;
+	float maxY = y;
 
 	// Calculate bounding box by iterating over glyph properties
 	// Meaning of props can be deduced from illustration at top of:

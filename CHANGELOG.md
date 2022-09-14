@@ -1,4 +1,28 @@
 ```
+ ________    _____    _____       _______     
+|\   __  \  / __  \  / __  \     /  ___  \    
+\ \  \|\  \|\/_|\  \|\/_|\  \   /__/|_/  /|   
+ \ \  \\\  \|/ \ \  \|/ \ \  \  |__|//  / /   
+  \ \  \\\  \ __\ \  \   \ \  \ ___ /  /_/__  
+   \ \_______\\__\ \__\   \ \__\\__\\________\
+    \|_______\|__|\|__|    \|__\|__|\|_______|                                              
+                                              
+```
+
+CORE
+----
+### core
+- bugfix ofAppGLFWWindow requested monitor wasn't being clamped (#6718) [commit](https://github.com/openframeworks/openFrameworks/commit/ee30e43df10f78ed5b054b2aae17381e1bddab02)
+
+PLATFORM/IDE SPECIFIC
+-----------------
+### macos 
+- Update Info.plist with retina entry (#6701) [commit](https://github.com/openframeworks/openFrameworks/commit/46483211a0faf34cf5d06c050e911630a02083ef)
+- bugfix fmod sound player for macos. closes #6714 #6708 (#6717) [commit](https://github.com/openframeworks/openFrameworks/commit/23f9bfd394ca91316257f3d2c9d597a7ac7ff71f)
+- add support for Objective C and Objective C++ source in addon Make builds (#6652) [commit](https://github.com/openframeworks/openFrameworks/commit/8ca678228e589c9c8ae0a644dfb8f79ec1ca7e80)
+
+
+```
       _           _           _               _              
     / /\         / /\        / /\            / /\            
    / /  \       / /  \      / /  \          / /  \           
@@ -25,6 +49,11 @@ CORE
 - fix error log (#6480) [commit](https://github.com/openframeworks/openFrameworks/commit/dd972c6d595d8c8894db9065fcac18c1dc8bfa02)
 - Add notification to parents for parameterChanged when ofParameter<void> gets triggered. (#6471) [commit](https://github.com/openframeworks/openFrameworks/commit/0e0a59fcc35bcbb5e2078163c1b607c57afd351f)
 - ofEventListeners: added size() method. (#6022) [commit](https://github.com/openframeworks/openFrameworks/commit/4d341aca7079cb4f6dc6668ca62b08f906d9d726)
+
+### examples 
+- regexExample - removed closing parenthesis (#6693) [commit](https://github.com/openframeworks/openFrameworks/commit/3a187e7032586f75566e21c2312a3c41f4a811ae)
+- videoGrabberExample - set the inverted pixels to actual grabber dimensions (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)
+- imageLoaderWebExample - fix the async request on key press (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)
 
 ### gl
 - Allow hex format int defines in ofShader code. (#6515) [commit](https://github.com/openframeworks/openFrameworks/commit/c4f90bcb51405905ec0713835f6f57531927b7a6)
@@ -54,6 +83,7 @@ PLATFORM/IDE SPECIFIC
 - Ensures depth buffer for ofxAppEmscriptenWindow. Closes #6484 (#6485) [commit](https://github.com/openframeworks/openFrameworks/commit/06a9366d93d8cea83fbf7efe3819e2bd928627d3)
 - emscripten  DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR (#6536) [commit](https://github.com/openframeworks/openFrameworks/commit/0f03916a4636a7f55b58240fe7c36ebb0c9776f1)
 - Fix emscripten to use non deprecated emsdk docker image (#6665) [commit](https://github.com/openframeworks/openFrameworks/commit/2013d179bd355cf60c9f87acb318cd9fafb125eb)
+- fix for emscripten and ofFbo (#6697) [commit](https://github.com/openframeworks/openFrameworks/commit/0ccbc1852a1e56e586fc330a00edc2ac1ecea546)
 
 ### ios 
 - Fixes for drawing BGRA textures on iOS. (#5909) [commit](https://github.com/openframeworks/openFrameworks/commit/0818683e6729db33f5701766bb96b2c1c4c723a4)
@@ -86,11 +116,13 @@ PLATFORM/IDE SPECIFIC
 - disabled debugging when browsing versions, fixes #6687 (#6689) [commit](https://github.com/openframeworks/openFrameworks/commit/b402c5f7cbb0a98bc262bb13adc8df7492aeb47f)
 - bugfix macos arm fullscreen crash. closes #6685 (#6691) [commit](https://github.com/openframeworks/openFrameworks/commit/5dbfbe951bf6ce300af77cbebeb69ba8a16f9443)
 - Support for Big Sur and Apple M1 Silicon chip / arm64 
+- macos - added fix for apps being half sized on retina in Big Sur (#6694) [commit](https://github.com/openframeworks/openFrameworks/commit/845fc8507f48998cb8b0c09cc1f3d68c8394cf61)
 
 ### msys2
 - msys2: Make OpenAL the default soundplayer (#6664) [commit](https://github.com/openframeworks/openFrameworks/commit/3b790d2c50e24e64d18602502ea62824b2e44888)
 - Bugfix msys2 Debug builds. Closes #6683 (#6690) [commit](https://github.com/openframeworks/openFrameworks/commit/43b3e94f0ce6680e2ae9adfd0cc67fe67349b9bb)
 - msys2: Added 64bit release. 
+- added msys2 projectGenerator packaging. (#6696) [commit](https://github.com/openframeworks/openFrameworks/commit/119adffb39928856064a380938dd99a661ca87c4)
 
 ### vs 
 - vs bugfix fixes issue where two different cpp files with same name produce same .o file (#6620) [commit](https://github.com/openframeworks/openFrameworks/commit/e5835eab336a865657f0e0d929c268a8fa084636)

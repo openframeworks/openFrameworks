@@ -5,11 +5,11 @@
 @implementation ES1Renderer
 
 // Create an OpenGL ES 1.1 context
-- (id)init {
+- (instancetype)init {
     return [self initWithDepth:false andAA:false  andMSAASamples:0 andRetina:false sharegroup:nil];
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup{
+- (instancetype)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup{
 
     if((self = [super init])) {
         
@@ -24,7 +24,7 @@
         
         if(!context || ![EAGLContext setCurrentContext:context]) {
             NSLog(@"OpenGL ES1 failed");
-            [self release];
+            self = nil;
             return nil;
         }
         
@@ -176,10 +176,7 @@
         [EAGLContext setCurrentContext:nil];
     }
 
-    [context release];
     context = nil;
-
-    [super dealloc];
 }
 
 - (NSInteger)getWidth {

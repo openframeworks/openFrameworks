@@ -265,9 +265,6 @@ private:
 	
 	glm::vec2 mouseAtScroll;
 	
-	/// \brief previous far and near clip.
-	float prevFarClip, prevNearClip;
-	
 	TransformType currentTransformType;
 	/// \brief This struct holds the combination of mouse button and key press that will trigger a specific interaction.
 	struct interaction{
