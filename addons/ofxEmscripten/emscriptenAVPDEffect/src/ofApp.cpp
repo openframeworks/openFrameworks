@@ -57,13 +57,13 @@ void ofApp::setup() {
 	ofSoundStreamSettings settings;
 	settings.numInputChannels = 2;
 	settings.numOutputChannels = 2;
-	settings.sampleRate = 44100;
+	settings.sampleRate = ofSoundStream().getSampleRate();
 	settings.bufferSize = ofxPd::blockSize() * ticksPerBuffer;
 	settings.setInListener(this);
 	settings.setOutListener(this);
 	ofSoundStreamSetup(settings);
 
-	if(!pd.init(2, numInputs, 44100, ticksPerBuffer, false)) {
+	if(!pd.init(2, numInputs, ofSoundStream().getSampleRate(), ticksPerBuffer, false)) {
 		OF_EXIT_APP(1);
 	}
 
