@@ -26,13 +26,14 @@ function createWasmAudioWorkletProcessor(audioParams) {
       globalThis.HEAPF32 = Module['HEAPF32'];
 
       // Capture the Wasm function callback to invoke.
-      this.bufferSize = Module['bufferSize'];
-      this.inputChannels = Module['inputChannels'];
-      this.outputChannels = Module['outputChannels'];
-      this.userData2 = Module['userData2'];
-      this.inbuffer = Module['inbuffer'];
-      this.outbuffer = Module['outbuffer'];
-      this.callback = Module['wasmTable'].get(Module['cb2']);
+      let opts = args.processorOptions;
+      this.bufferSize = 128;
+      this.inputChannels = opts['inputChannels'];
+      this.outputChannels = opts['outputChannels'];
+      this.userData = opts['userData'];
+      this.inbuffer = opts['inbuffer'];
+      this.outbuffer = opts['outbuffer'];
+      this.stream_callback = Module['wasmTable'].get(opts['stream_callback']);
     }
 
     static get parameterDescriptors() {
@@ -40,14 +41,14 @@ function createWasmAudioWorkletProcessor(audioParams) {
     }
 
 	process(inputList, outputList, parameters) {
-		this.callback(this.bufferSize,this.inputChannels,this.outputChannels,this.userData2);
+		this.stream_callback(this.bufferSize,this.inputChannels,this.outputChannels,this.userData);
 		const input = inputList[0];
 		const output = outputList[0];
 		if (this.outputChannels > 0) {
 			for (let c = 0; c < this.outputChannels; ++c) {
 				var outChannel = output[c];
 				for (let i = 0, j = c; i < this.bufferSize; ++i, j += this.outputChannels) {
-					outChannel[i] = HEAPF32.subarray(this.outbuffer >> 2 + this.bufferSize * 2, (this.outbuffer >> 2) + this.bufferSize * this.outputChannels)[j]
+					outChannel[i] = Module.HEAPF32.subarray(this.outbuffer >> 2 + this.bufferSize * 2, (this.outbuffer >> 2) + this.bufferSize * this.outputChannels)[j]
 				}
 			}
 		}
@@ -55,7 +56,7 @@ function createWasmAudioWorkletProcessor(audioParams) {
 			for(let c = 0; c < input.length; ++c){
 				var inChannel = input[c];
 				for(let i = 0, j = c; i < this.bufferSize; ++i, j += this.inputChannels){
-					HEAPF32.subarray(this.inbuffer >> 2, (this.inbuffer >> 2) + this.bufferSize * this.inputChannels)[j] = inChannel[i];
+					Module.HEAPF32.subarray(this.inbuffer >> 2, (this.inbuffer >> 2) + this.bufferSize * this.inputChannels)[j] = inChannel[i];
 				}
 			}
 		}  
@@ -107,7 +108,7 @@ class BootstrapMessages extends AudioWorkletProcessor {
 #endif
         // Post a Wasm Call message back telling that we have now registered the AudioWorkletProcessor class,
         // and should trigger the user onSuccess callback of the emscripten_create_wasm_audio_worklet_processor_async() call.
-        p.postMessage({'_wsc': d['callback'], 'x': [d['contextHandle'], 1/*EM_TRUE*/, d['userData']] }); // "WaSm Call"
+        p.postMessage({'_wsc': d['callback'], 'x': [d['contextHandle'], 1/*EM_TRUE*/, d['inputChannels'], d['outputChannels'], d['inbuffer'], d['outbuffer'], d['stream_callback'], d['userData']] }); // "WaSm Call"
       } else if (d['_wsc']) { // '_wsc' is short for 'wasm call', using an identifier that will never conflict with user messages
         Module['wasmTable'].get(d['_wsc'])(...d['x']);
       };
