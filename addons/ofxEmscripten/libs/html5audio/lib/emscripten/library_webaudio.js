@@ -274,7 +274,7 @@ let LibraryWebAudio = {
       numberOfInputs: HEAP32[options],
       numberOfOutputs: HEAP32[options+1],
       outputChannelCount: HEAPU32[options+2] ? readChannelCountArray(HEAPU32[options+2]>>2, HEAP32[options+1]) : void 0,
-      processorOptions: { 'inputChannels': inputChannels, 'outputChannels': outputChannels, 'inbuffer': inbuffer, 'outbuffer': outbuffer, 'stream_callback': stream_callback, 'userData': userData }
+      processorOptions: {'inputChannels': inputChannels, 'outputChannels': outputChannels, 'inbuffer': inbuffer, 'outbuffer': outbuffer, 'stream_callback': stream_callback, 'userData': userData}
     } : void 0;
 
 #if WEBAUDIO_DEBUG
