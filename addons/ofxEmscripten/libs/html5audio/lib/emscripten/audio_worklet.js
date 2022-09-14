@@ -108,7 +108,7 @@ class BootstrapMessages extends AudioWorkletProcessor {
 #endif
         // Post a Wasm Call message back telling that we have now registered the AudioWorkletProcessor class,
         // and should trigger the user onSuccess callback of the emscripten_create_wasm_audio_worklet_processor_async() call.
-        p.postMessage({'_wsc': d['callback'], 'x': [d['contextHandle'], 1/*EM_TRUE*/, d['inputChannels'], d['outputChannels'], d['inbuffer'], d['outbuffer'], d['stream_callback'], d['userData']] }); // "WaSm Call"
+        p.postMessage({'_wsc': d['callback'], 'x': [d['contextHandle'], 1/*EM_TRUE*/, d['inputChannels'], d['outputChannels'], d['inbuffer'], d['outbuffer'], d['stream_callback'], d['userData']]}); // "WaSm Call"
       } else if (d['_wsc']) { // '_wsc' is short for 'wasm call', using an identifier that will never conflict with user messages
         Module['wasmTable'].get(d['_wsc'])(...d['x']);
       };
