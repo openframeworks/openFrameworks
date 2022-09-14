@@ -13,32 +13,31 @@
 uint8_t wasmAudioWorkletStack[4096];
 
 // This callback will fire after the Audio Worklet Processor has finished being added to the Worklet global scope.
-void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData,int bufferSize, int numInputChannels, int numOutputChannels, int inbuffer, int outbuffer, int callback2, int userData2) 
+void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, int inputChannels, int outputChannels, int inbuffer, int outbuffer, int stream_callback, int userData) 
 {
   if (!success) return; 
   // Specify the input and output node configurations for the Wasm Audio Worklet. A simple setup with single mono output channel here, and no inputs.
-  int outputChannelCounts[1] = { 2 };
+  int outputChannelCounts[1] = { outputChannels };
 
   EmscriptenAudioWorkletNodeCreateOptions options = {
-    .numberOfInputs = 0,
+    .numberOfInputs = 1,
     .numberOfOutputs = 1,
     .outputChannelCounts = outputChannelCounts
   };
 
   // Instantiate the noise-generator Audio Worklet Processor.
-  EMSCRIPTEN_AUDIO_WORKLET_NODE_T audioWorklet = emscripten_create_wasm_audio_worklet_node(audioContext, "noise-generator", &options, 0, bufferSize, numInputChannels, numOutputChannels, inbuffer, outbuffer, callback2, userData2);
-  html5audio_stream_connect(audioContext, audioWorklet, numInputChannels);
+  EMSCRIPTEN_AUDIO_WORKLET_NODE_T audioWorklet = emscripten_create_wasm_audio_worklet_node(audioContext, "noise-generator", &options, inputChannels, outputChannels, inbuffer, outbuffer, stream_callback, userData);
+  html5audio_stream_connect(audioContext, audioWorklet, inputChannels);
 }
 
 // This callback will fire when the Wasm Module has been shared to the AudioWorklet global scope, and is now ready to begin adding Audio Worklet Processors.
-void WebAudioWorkletThreadInitialized(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData, int bufferSize, int numInputChannels, int numOutputChannels, int inbuffer, int outbuffer, int callback2, int userData2)
+void WebAudioWorkletThreadInitialized(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, int inputChannels, int outputChannels, int inbuffer, int outbuffer, int stream_callback, int userData)
 {
-std::cout<<ofToString(userData2)<<std::endl;
   if (!success) return;
   WebAudioWorkletProcessorCreateOptions opts = {
     .name = "noise-generator",
   };
-  emscripten_create_wasm_audio_worklet_processor_async(audioContext, &opts, AudioWorkletProcessorCreated, 0, bufferSize, numInputChannels, numOutputChannels, inbuffer, outbuffer, callback2, userData2);
+  emscripten_create_wasm_audio_worklet_processor_async(audioContext, &opts, AudioWorkletProcessorCreated, inputChannels, outputChannels, inbuffer, outbuffer, stream_callback, userData);
 }
 
 using namespace std;
@@ -66,7 +65,7 @@ bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	inbuffer.allocate(settings.bufferSize, settings.numInputChannels);
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
 	this->settings = settings;
-	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, 0, settings.bufferSize, settings.numInputChannels, settings.numOutputChannels, inbuffer.getBuffer().data(), outbuffer.getBuffer().data(), &audio_cb, this);
+	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, settings.numInputChannels, settings.numOutputChannels, inbuffer.getBuffer().data(), outbuffer.getBuffer().data(), &audio_cb, this);
 	stream = html5audio_stream_create();
 	return true;
 }
