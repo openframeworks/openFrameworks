@@ -36,11 +36,6 @@ void ofApp::setup() {
 	hSlider_2.slider = 0.8;
 	hSlider_3.setup(50, 300, 100, 20, 0, 100);
 	hSlider_3.slider = 0.5;
-	
-	//ofSetLogLevel("Pd", OF_LOG_VERBOSE); // see verbose info inside
-
-	// double check where we are ...
-	cout << ofFilePath::getCurrentWorkingDirectory() << endl;
 
 	// the number of libpd ticks per buffer,
 	// used to compute the audio buffer len: tpb * blocksize (always 64)
