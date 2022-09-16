@@ -7,7 +7,7 @@ int main() {
 	auto window = make_shared<ofAppNoWindow>();
 
 	//to have a normal windowed app comment the line above and uncomment the lines below
-	//ofWindowSettings settings;
+	//ofGLWindowSettings settings;
 	//auto window = ofCreateWindow(settings);
 	
 	ofRunApp(window, make_shared<ofApp>());
