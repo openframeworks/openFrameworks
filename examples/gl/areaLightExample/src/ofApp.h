@@ -25,4 +25,13 @@ class ofApp : public ofBaseApp{
 		ofPlanePrimitive plane;
 		ofEasyCam camera;
 		ofMaterial materialPlane;
+		ofMesh logoMesh;
+		ofMaterial materialMesh;
+		
+		int mode = 0;
+		float orbitSpeed = 0.0;
+		float highwaySpeed = 0.;
+		
+		float bump = 0.;
+		float bumpHeight = 50.0;
 };
