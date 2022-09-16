@@ -11,10 +11,9 @@ int main( ){
 	ofGLWindowSettings settings;
 	settings.setGLVersion(3,2);
 #endif
-    // create a window for display
-	ofCreateWindow(settings);
-    
-	// this kicks off the running of my app
-	ofRunApp(make_shared<ofApp>());
 
+	auto window = ofCreateWindow(settings);
+
+	ofRunApp(window, make_shared<ofApp>());
+	ofRunMainLoop()
 }
