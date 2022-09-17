@@ -10,6 +10,9 @@
 
 uniform float thickness;
 uniform vec3 lightDir;
+uniform float uUseNormals;
+
+varying in vec3 vnormal[2];
 
 void main() {
 	vec3 p0 = gl_PositionIn[0].xyz;
@@ -19,11 +22,22 @@ void main() {
 	
 	vec3 dir = normalize(p1 - p0);			// normalized direction vector from p0 to p1
 	vec3 right = normalize(cross(dir, up));	// right vector
+	
 	vec3 norm = cross(right, dir);
-	float fColMult = abs(dot(norm, lightDir));
+	float fColMult = pow(abs(dot(norm, lightDir)) * 0.75 + 0.25, 0.6);
 	vec4 colMult = vec4(fColMult, fColMult, fColMult, 1.0);
 	
+	if(uUseNormals > 0.5) {
+		right = (vnormal[0]);
+	}
+	vec3 nextRight = right;
+	if( uUseNormals > 0.5 ) {
+		nextRight = (vnormal[1]);
+	}
+	
 	right *= thickness;
+	nextRight *= thickness;
+	
 	
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(p0 - right, 1.0);
 	gl_FrontColor = gl_FrontColorIn[0] * colMult;
@@ -33,12 +47,12 @@ void main() {
 	gl_FrontColor = gl_FrontColorIn[0] * colMult;
 	EmitVertex();
 	
-	gl_Position = gl_ModelViewProjectionMatrix * vec4(p1 - right, 1.0);
-	gl_FrontColor = gl_FrontColorIn[1] * colMult;
+	gl_Position = gl_ModelViewProjectionMatrix * vec4(p1 - nextRight, 1.0);
+	gl_FrontColor = gl_FrontColorIn[0] * colMult;
 	EmitVertex();
 
-	gl_Position = gl_ModelViewProjectionMatrix * vec4(p1 + right, 1.0);
-	gl_FrontColor = gl_FrontColorIn[1] * colMult;
+	gl_Position = gl_ModelViewProjectionMatrix * vec4(p1 + nextRight, 1.0);
+	gl_FrontColor = gl_FrontColorIn[0] * colMult;
 	EmitVertex();
 
 }

@@ -2,14 +2,12 @@
 #include "ofApp.h"
 
 //========================================================================
-int main(){
-
+int main( ){
 	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
 	ofGLWindowSettings settings;
 	settings.setSize(1024, 768);
-	settings.setGLVersion(3,2);
 	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
-
+	settings.setGLVersion(3, 2);
 	auto window = ofCreateWindow(settings);
 	
 	if(!ofGLCheckExtension("GL_ARB_geometry_shader4") && !ofGLCheckExtension("GL_EXT_geometry_shader4") && !ofIsGLProgrammableRenderer()){
