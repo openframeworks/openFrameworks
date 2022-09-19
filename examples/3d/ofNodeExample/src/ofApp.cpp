@@ -51,7 +51,7 @@ void ofApp::draw(){
 	ofDisableDepthTest();
     
 	gui.draw();
-    ofDrawBitmapStringHighlight("Use your Arrow keys to move your \"car\" around the scene. \nClick and drag your mouse to move the 3D scene.", ofGetWidth()/2,20);
+    ofDrawBitmapStringHighlight("Use your Arrow keys to move your \"truck\" around the scene. \nClick and drag your mouse to move the 3D scene.\nPress 'r' to reset the position", ofGetWidth()/2,20);
     
     
 }
