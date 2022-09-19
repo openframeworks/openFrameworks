@@ -81,17 +81,17 @@ void Truck::setup(){
 	logoNode.panDeg(-90);
 	logoNode.tiltDeg(-90);
 	
+	// add a toggle to use sound, disabled by default
+	params.add(bUseSound.set("UseSound", false ));
 	// lets add some sounds
 	hornSoundPlayer.load("horn.mp3");
 	hornSoundPlayer.setVolume(0.5);
 	reverseSoundPlayer.load("reverse.mp3");
 	reverseSoundPlayer.setVolume(0.0);
 	reverseSoundPlayer.setLoop(true);
-	reverseSoundPlayer.play();
 	
 	engineSoundPlayer.load("engine.wav");
 	engineSoundPlayer.setLoop(true);
-	engineSoundPlayer.play();
 	engineSoundPlayer.setVolume(0.0);
 	
 }
@@ -139,7 +139,7 @@ void Truck::update(){
 	if( ofGetKeyPressed(' ') ) {
 		// we don't want the horn sound to play too frequently, so we use timeSinceSpacebarPress as a time counter
 		// and if that time is greater than 0.15, we reset it and play the horn sound
-		if(timeSinceSpacebarPress > 0.15) {
+		if(timeSinceSpacebarPress > 0.15 && bUseSound) {
 			timeSinceSpacebarPress = 0.0;
 			hornSoundPlayer.play();
 		}
@@ -149,27 +149,51 @@ void Truck::update(){
 		timeSinceSpacebarPress += deltaTime;
 	}
 	
-	// are we going in reverse?
-	if( velocity < -0.1 ) {
-		// if so, increase the reverse sound volume
-		reverseVolume += deltaTime * 2.0;
-		if( reverseVolume > 0.5 ) {
-			reverseVolume = 0.5;
+	
+	if( !bUseSound ){
+		reverseVolume=0.0;
+		reverseSoundPlayer.setVolume( reverseVolume );
+		if( reverseSoundPlayer.isPlaying() ) {
+			reverseSoundPlayer.stop();
 		}
-	} else {
-		// otherwise, decrease the reverse sound volume
-		reverseVolume -= deltaTime * 4.0;
-		if( reverseVolume < 0.0 ) {
-			reverseVolume = 0.0;
+	}else{
+		if( !reverseSoundPlayer.isPlaying() ) {
+			reverseSoundPlayer.play();
+		}
+		// are we going in reverse?
+		if( velocity < -0.1 ) {
+			// if so, increase the reverse sound volume
+			reverseVolume += deltaTime * 2.0;
+			if( reverseVolume > 0.5 ) {
+				reverseVolume = 0.5;
+			}
+		} else {
+			// otherwise, decrease the reverse sound volume
+			reverseVolume -= deltaTime * 4.0;
+			if( reverseVolume < 0.0 ) {
+				reverseVolume = 0.0;
+			}
+		}
+		reverseSoundPlayer.setVolume( reverseVolume );
+	}
+	
+	if( bUseSound ){
+		if( !engineSoundPlayer.isPlaying()){
+			engineSoundPlayer.play();
+		}
+		// map the velocity to engine sound volume and speed
+		engineVolume = ofMap(fabs(velocity), 1, 25, 0.05, 0.4, true );
+		float pitch = ofMap(fabs(velocity), 5, 30, 1.0, 1.35, true );
+		engineSoundPlayer.setSpeed(pitch);
+		engineSoundPlayer.setVolume(engineVolume);
+	}else{
+		engineVolume=0.0f;
+		engineSoundPlayer.setSpeed(1.0);
+		engineSoundPlayer.setVolume(engineVolume);
+		if( engineSoundPlayer.isPlaying()){
+			engineSoundPlayer.stop();
 		}
 	}
-	reverseSoundPlayer.setVolume( reverseVolume );
-	
-	// map the velocity to engine sound volume and speed 
-	engineVolume = ofMap(fabs(velocity), 1, 25, 0.05, 0.4, true );
-	float pitch = ofMap(fabs(velocity), 5, 30, 1.0, 1.35, true );
-	engineSoundPlayer.setSpeed(pitch);
-	engineSoundPlayer.setVolume(engineVolume);
 	
 	// position the wheels based on the slider values
 	// the positions are local, based on the node axis system

@@ -61,4 +61,5 @@ class Truck{
 		float reverseVolume = 0.f;
 		ofSoundPlayer engineSoundPlayer;
 		float engineVolume = 0.0f;
+		ofParameter<bool> bUseSound;
 };
