@@ -169,6 +169,10 @@ int ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMouseEv
 
 int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* e, void* userData) {
 
+	int canvas_width, canvas_height;
+	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
+        double css_width, css_height;
+	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
         ofTouchEventArgs::Type touchArgsType;
         switch (eventType) {
                     case EMSCRIPTEN_EVENT_TOUCHSTART:
@@ -191,8 +195,8 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
                 ofTouchEventArgs touchArgs;
                 touchArgs.type = touchArgsType;
                 touchArgs.id = i;
-                touchArgs.x =  e->touches[i].targetX;
-                touchArgs.y =  e->touches[i].targetY;
+                touchArgs.x =  e->touches[i].targetX * (canvas_width / css_width);
+                touchArgs.y =  e->touches[i].targetY* (canvas_height / css_height);
                 instance->events().notifyTouchEvent(touchArgs);
            }
     return 0;
