@@ -26,12 +26,13 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f/5000.f, 1.f/5.f);
+	// slow down the xspeed and yspeed with division
 	xspeed /= 1.f + deltaTime;
 	yspeed /= 1.f + deltaTime;
 	
 	glm::quat yRot = glm::angleAxis(ofDegToRad(xspeed), glm::vec3(0,1,0));
 	glm::quat xRot = glm::angleAxis(ofDegToRad(yspeed), glm::vec3(-1,0,0));
-	
+	//accumulate the changes inside of curRot through multiplication
 	curRot = xRot * yRot * curRot;
 }
 
@@ -159,17 +160,14 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
-	//every time the mouse is dragged, track the change
-	//accumulate the changes inside of curRot through multiplication
 	glm::vec2 mouse(x,y);
-	
+	//every time the mouse is dragged, track the change
+	// accumulate the changes in x inside of xspeed
+	// ofLerp eases the value of xspeed gradually
 	xspeed = ofLerp(xspeed, (x-lastMouse.x) * dampen, 0.1);
+	//accumulate the changes in y inside of yspeed
 	yspeed = ofLerp(yspeed, (y-lastMouse.y) * dampen, 0.1);
 	
-//	glm::quat yRot = glm::angleAxis(ofDegToRad(x-lastMouse.x)*dampen, glm::vec3(0,1,0));
-//	glm::quat xRot = glm::angleAxis(ofDegToRad(y-lastMouse.y)*dampen, glm::vec3(-1,0,0));
-	//curRot = xRot * yRot * curRot;
     lastMouse = mouse;
 }
 
