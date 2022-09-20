@@ -81,13 +81,13 @@ void ofApp::update(){
 	}
 	
 	//let's move the camera when you move the mouse
-	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 360);
+	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), -90, 90);
 
 	
 	//move the camera around the mesh
 	glm::vec3 camDirection(0,0,1);
 	glm::vec3 centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
-	glm::vec3 camDirectionRotated = glm::rotate(camDirection, rotateAmount, glm::vec3(1,0,0));
+	glm::vec3 camDirectionRotated = glm::rotate(camDirection, ofDegToRad(rotateAmount), glm::vec3(1,0,0));
 	glm::vec3 camPosition = centre + camDirectionRotated * extrusionAmount;
 	
 	cam.setPosition(camPosition);
