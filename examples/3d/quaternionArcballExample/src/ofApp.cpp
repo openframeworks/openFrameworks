@@ -14,6 +14,8 @@
 void ofApp::setup(){
 	ofSetFrameRate(30);
 	
+	ofSetCircleResolution(120);
+	
 	// draw a gradient in the background
 	ofBackgroundGradient(ofColor(10), ofColor(50));
 
