@@ -263,28 +263,6 @@ bool ofGstUtils::startPipeline(){
 
 	gst_object_unref(bus);
 
-	if(isAppSink){
-		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
-		// set the appsink to not emit signals, we are using callbacks instead
-		// and frameByFrame to get buffers by polling instead of callback
-		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
-		// gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
-		// gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
-
-		if(!bFrameByFrame){
-			GstAppSinkCallbacks gstCallbacks;
-			gstCallbacks.eos = &on_eos_from_source;
-			gstCallbacks.new_preroll = &on_new_preroll_from_source;
-#if GST_VERSION_MAJOR==0
-			gstCallbacks.new_buffer = &on_new_buffer_from_source;
-#else
-			gstCallbacks.new_sample = &on_new_buffer_from_source;
-#endif
-
-			gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
-		}
-	}
-
 	// pause the pipeline
 	//GstState targetState;
 	GstState state;
@@ -297,10 +275,6 @@ bool ofGstUtils::startPipeline(){
 		case GST_STATE_CHANGE_NO_PREROLL:
 			ofLogVerbose() << "Pipeline is live and does not need PREROLL waiting PLAY";
 			gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PLAYING);
-			if(isAppSink){
-				gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),1);
-				gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
-			}
 			break;
 		case GST_STATE_CHANGE_ASYNC:
 			ofLogVerbose() << "Pipeline is PREROLLING";
@@ -316,7 +290,47 @@ bool ofGstUtils::startPipeline(){
 			ofLogVerbose() << "Pipeline is PREROLLED";
 			break;
     }
+    
+    if(isAppSink){
+		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
 
+        bool bSignals = false;
+        
+#if GST_VERSION_MAJOR==0
+
+        GstAppSinkCallbacks gstCallbacks;
+        gstCallbacks.eos = &on_eos_from_source;
+        gstCallbacks.new_preroll = &on_new_preroll_from_source;
+        gstCallbacks.new_buffer = &on_new_buffer_from_source;
+        gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
+        
+#elseif GST_VERSION_MINOR <= 18
+
+        GstAppSinkCallbacks gstCallbacks;
+        gstCallbacks.eos = &on_eos_from_source;
+        gstCallbacks.new_preroll = &on_new_preroll_from_source;
+        gstCallbacks.new_sample = &on_new_buffer_from_source;
+        gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
+        
+#else
+
+        //GStreamer 1.20 onwards crashes with the callback approach above.
+        //Using signals makes it work! This might be a GStreamer bug - but we'll do this for now
+        g_signal_connect(GST_APP_SINK(gstSink), "eos", G_CALLBACK(on_eos_from_source), this);
+        g_signal_connect(GST_APP_SINK(gstSink), "new-sample", G_CALLBACK(on_new_buffer_from_source), this);
+        g_signal_connect(GST_APP_SINK(gstSink), "new-preroll", G_CALLBACK(on_new_preroll_from_source), this);
+        
+        bSignals = true;
+#endif
+
+        // set the appsink to not emit signals, we are using callbacks instead
+        // and frameByFrame to get buffers by polling instead of callback
+        g_object_set (G_OBJECT (gstSink), "emit-signals", bSignals, "sync", !bFrameByFrame, (void*)NULL);
+
+        gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),3);
+        gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
+	}
+ 
 	// wait for paused state to query the duration
 	if(!isStream){
 		bPlaying = true;
