@@ -47,6 +47,7 @@ public:
 	bool 	isPlaying() const {return bPlaying;}
 
 	float	getPosition() const;
+    int64_t getPositionNanos() const;
 	float 	getSpeed() const;
 	float 	getDuration() const;
 	int64_t  getDurationNanos() const;

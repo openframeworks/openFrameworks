@@ -9,7 +9,7 @@ void ofApp::setup(){
 	// Uncomment this to show movies with alpha channels
 	// fingerMovie.setPixelFormat(OF_PIXELS_RGBA);
 
-	fingerMovie.load("movies/fingers.mov");
+	fingerMovie.load("movies/fingers.mp4");
 	fingerMovie.setLoopState(OF_LOOP_NORMAL);
 	fingerMovie.play();
 }

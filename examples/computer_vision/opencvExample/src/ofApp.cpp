@@ -7,7 +7,7 @@ void ofApp::setup(){
         vidGrabber.setVerbose(true);
         vidGrabber.setup(320,240);
 	#else
-        vidPlayer.load("fingers.mov");
+        vidPlayer.load("fingers.mp4");
         vidPlayer.play();
         vidPlayer.setLoopState(OF_LOOP_NORMAL);
 	#endif
