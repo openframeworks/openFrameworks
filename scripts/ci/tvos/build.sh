@@ -7,4 +7,4 @@ if [[ "$GITHUB_ACTIONS" = true ]]; then
 fi
 #source $ROOT/scripts/ci/ccache.sh
 
-xcodebuild -project "$ROOT/scripts/templates/tvos/emptyExample.xcodeproj"  -target emptyExample -sdk appletvsimulator ONLY_ACTIVE_ARCH=NO
+xcodebuild -project "$ROOT/scripts/templates/tvos/emptyExample.xcodeproj"  -target emptyExample -sdk appletvsimulator ONLY_ACTIVE_ARCH=YES

@@ -498,9 +498,13 @@ bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_s
 	bLoadedOk = false;
 
 	if(!isStreaming){
-		readFile(fileName, buffer);
+		bLoadedOk = readFile(fileName, buffer);
 	}else{
-		stream(fileName, buffer);
+		bLoadedOk = stream(fileName, buffer);
+	}
+	if( !bLoadedOk ) {
+		ofLogError("ofOpenALSoundPlayer::load : ERROR loading file from ") << fileName;
+		return false;
 	}
 
 	int numFrames = buffer.size()/channels;
