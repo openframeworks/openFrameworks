@@ -165,6 +165,11 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 
 const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const{
     initShaders(renderer);
+	
+	if(bHasCustomShader){
+		return *customShader;
+	}
+	
 	switch(textureTarget){
 	case OF_NO_TEXTURE:
         if(geometryHasColor){
@@ -285,6 +290,13 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
 			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
 		}
+	}
+}
+
+void ofMaterial::setCustomShader( std::shared_ptr<ofShader> aCustomShader) {
+	customShader = aCustomShader;
+	if( customShader ) {
+		bHasCustomShader = true;
 	}
 }
 
