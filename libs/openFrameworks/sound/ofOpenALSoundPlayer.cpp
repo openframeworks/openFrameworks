@@ -937,7 +937,7 @@ void ofOpenALSoundPlayer::play(){
 		    alSourcei (sources[sources.size()-channels+i], AL_SOURCE_RELATIVE, AL_TRUE);
 		}
 
-		err = glGetError();
+		err = alGetError();
 		if (err != AL_NO_ERROR){
 			ofLogError("ofOpenALSoundPlayer") << "play(): couldn't assign multiplay buffers: "
 			<< (int) err << " " << getALErrorString(err);
