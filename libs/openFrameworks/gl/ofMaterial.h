@@ -138,6 +138,8 @@ public:
 	/// \param renderer programmable renderer instance to create the material shader for
 	virtual const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const=0;
 	
+	/// \brief set a custom shader controlled by the user. 
+	/// \param aCustomShader the material shader, created and maintained by the user
 	virtual void setCustomShader( std::shared_ptr<ofShader> aCustomShader) = 0;
 
 	/// \brief upload the given renderer's normal matrix to the material shader
