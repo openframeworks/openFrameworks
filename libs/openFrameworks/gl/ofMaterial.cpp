@@ -166,7 +166,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const{
     initShaders(renderer);
 	
-	if(bHasCustomShader){
+	if(bHasCustomShader && customShader){
 		return *customShader;
 	}
 	
