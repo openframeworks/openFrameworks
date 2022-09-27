@@ -34,6 +34,18 @@ void ofApp::update(){
         }
         center = sumOfAllPoints / points.size();
     }
+	if( points.size() > 250 ) {
+		points.erase(points.begin());
+	}
+	
+	polyline.clear();
+	polyline.addVertices( points );
+	if( polyline.getPerimeter() > 5 ) {
+		// this will provide an even distance between points on the line
+//		polyline = polyline.getResampledBySpacing(5);
+		
+		polyline = polyline.getSmoothed(smoothingSize);
+	}
 }
 
 //--------------------------------------------------------------
@@ -45,16 +57,24 @@ void ofApp::draw(){
     if(usecamera){
         camera.begin();
     }
-
+	
+	auto verts = points;
+	if(usePolyline) {
+		verts = polyline.getVertices();
+	}
+	
 	ofSetColor(0);
 	//do the same thing from the first example...
     ofMesh mesh;
 	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-	for(unsigned int i = 1; i < points.size(); i++){
+	for(unsigned int i = 1; i < (int)verts.size(); i++){
 
 		//find this point and the next point
-		glm::vec3 thisPoint = points[i-1];
-		glm::vec3 nextPoint = points[i];
+		glm::vec3 thisPoint = verts[i-1];
+		glm::vec3 nextPoint = verts[i];
+		if( i < verts.size()-1 ) {
+			nextPoint = verts[i+1];
+		}
 
 		//get the direction from one to the next.
 		//the ribbon should fan out from this direction
@@ -75,6 +95,13 @@ void ofApp::draw(){
 		//the longer the distance, the narrower the line.
 		//this makes it look a bit like brush strokes
 		float thickness = ofMap(distance, 0, 60, 20, 2, true);
+		
+		// calculate a taper based on the index
+		float indexPct = 1.0f;
+		if( i < 25 ) {
+			indexPct = ofMap( i, 0, 25, 0.0, 1.0, true );
+		}
+		thickness *= indexPct;
 
 		//calculate the points to the left and to the right
 		//by extending the current point in the direction of left/right by the length
@@ -94,13 +121,35 @@ void ofApp::draw(){
     if(usecamera){
     	camera.end();
     }
+	
+	ofSetColor( 40 );
+	string outString = "Move the mouse to add points to the line";
+	outString += "\nUse camera view(spacebar): "+ofToString(usecamera);
+	outString += "\nUse polyline for smoothing(p): "+ofToString(usePolyline);
+	outString += "\nPolyline smoothing size(up/down): "+ofToString(smoothingSize);
+	ofDrawBitmapString( outString, 20, 20 );
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-  //hitting any key swaps the camera view
-  usecamera = !usecamera;
+	if( key == ' ' ) {
+		//hitting spacebar swaps the camera view
+		usecamera = !usecamera;
+	}
+	if( key == 'p' ) {
+		usePolyline = !usePolyline;
+	}
+	
+	if( key == OF_KEY_UP ) {
+		smoothingSize++;
+	}
+	if( key == OF_KEY_DOWN ){
+		smoothingSize--;
+		if( smoothingSize < 1 ){
+			smoothingSize=1;
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -122,7 +171,7 @@ void ofApp::mouseMoved(int x, int y ){
         }
 
         glm::vec3 directionToFurthestPoint = (furthestPoint - center);
-		glm::vec3 directionToFurthestPointRotated = glm::rotate(directionToFurthestPoint, rotateAmount, glm::vec3(0,1,0));
+		glm::vec3 directionToFurthestPointRotated = glm::rotate(directionToFurthestPoint, ofDegToRad(rotateAmount), glm::vec3(0,1,0));
         camera.setPosition(center + directionToFurthestPointRotated);
         camera.lookAt(center);
     }
@@ -130,6 +179,7 @@ void ofApp::mouseMoved(int x, int y ){
     else{
         glm::vec3 mousePoint(x,y,0);
         points.push_back(mousePoint);
+		
     }
 }
 
