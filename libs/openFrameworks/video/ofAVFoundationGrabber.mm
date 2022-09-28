@@ -252,11 +252,18 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-	AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+
+	NSArray * devices;
+	if (@available(macOS 10.15, *)) {
+		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
 			AVCaptureDeviceTypeBuiltInWideAngleCamera,
 			AVCaptureDeviceTypeExternalUnknown,
 		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
-	NSArray * devices = [session devices];
+		devices = [session devices];
+	} else {
+		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+	}
+
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back([captureDevice.localizedName UTF8String]);
