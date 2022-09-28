@@ -193,7 +193,7 @@ enum ofTargetPlatform{
 	#endif
 
 	#if defined(__OBJC__) && !__has_feature(objc_arc)
-		#error "Please enable ARC (Automatic Reference Counting) at the project level"
+		#warning "Please enable ARC (Automatic Reference Counting) at the project level"
 	#endif
 #endif
 

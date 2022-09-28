@@ -110,13 +110,20 @@ bool ofGstVideoPlayer::createPipeline(std::string name){
 											"format", G_TYPE_STRING, format.c_str(),
 											NULL);
 	}
+    
 #endif
 
 	#if GST_VERSION_MAJOR==0
 		GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	#else
-		GstElement * gstPipeline = gst_element_factory_make("playbin","player");
-	#endif
+        #if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR > 18
+            //TODO: Fedora 35 onwards has issues with playbin - so using playbin3
+            //TODO: Check future GStreamer versions and potentially return to "playbin", or use a different approach to create the pipeline.
+            GstElement * gstPipeline = gst_element_factory_make("playbin3","player");
+        #else
+            GstElement * gstPipeline = gst_element_factory_make("playbin","player");
+        #endif
+    #endif
 	g_object_ref_sink(gstPipeline);
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 

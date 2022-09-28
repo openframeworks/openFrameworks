@@ -10,14 +10,21 @@ int main( ){
 	
 	#ifdef TARGET_OPENGLES
     	ofGLESWindowSettings settings;
-	settings.width = windowWidth;
-	settings.height = windowHeight;
-	settings.setGLESVersion(2);
-	ofCreateWindow(settings);
+		settings.width = windowWidth;
+		settings.height = windowHeight;
+		settings.setGLESVersion(2);
+		
+		auto window = ofCreateWindow(settings);
+		ofRunApp(window, make_shared<ofApp>());
 	#else
-	ofSetupOpenGL(windowWidth, windowHeight, OF_WINDOW);
-	#endif
+		ofGLWindowSettings settings;
+		settings.setSize(windowWidth, windowHeight);
+		settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
-	ofRunApp( new ofApp());
+		auto window = ofCreateWindow(settings);
+		ofRunApp(window, make_shared<ofApp>());
+	#endif
+	
+	ofRunMainLoop();
 
 }

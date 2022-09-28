@@ -498,9 +498,13 @@ bool ofOpenALSoundPlayer::load(const of::filesystem::path& _fileName, bool is_st
 	bLoadedOk = false;
 
 	if(!isStreaming){
-		readFile(fileName, buffer);
+		bLoadedOk = readFile(fileName, buffer);
 	}else{
-		stream(fileName, buffer);
+		bLoadedOk = stream(fileName, buffer);
+	}
+	if( !bLoadedOk ) {
+		ofLogError("ofOpenALSoundPlayer::load : ERROR loading file from ") << fileName;
+		return false;
 	}
 
 	int numFrames = buffer.size()/channels;
@@ -933,7 +937,7 @@ void ofOpenALSoundPlayer::play(){
 		    alSourcei (sources[sources.size()-channels+i], AL_SOURCE_RELATIVE, AL_TRUE);
 		}
 
-		err = glGetError();
+		err = alGetError();
 		if (err != AL_NO_ERROR){
 			ofLogError("ofOpenALSoundPlayer") << "play(): couldn't assign multiplay buffers: "
 			<< (int) err << " " << getALErrorString(err);
