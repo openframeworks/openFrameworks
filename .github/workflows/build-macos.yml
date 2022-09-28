@@ -30,7 +30,7 @@ jobs:
       env:
         cache-name: cache-keep-compile
       with:
-        path: libs/openFrameworksCompiled/lib/osx
+        path: libs/openFrameworksCompiled/lib/osx/**/
         key: ${{ runner.os }}-build-${{ env.cache-compile }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-compile }}-        
@@ -44,11 +44,11 @@ jobs:
       with:
         path: |
           libs
-          addons/ofxAssimpModelLoader/libs
-          addons/ofxKinect/libs
-          addons/ofxOpenCv/libs
-          addons/ofxSvg/libs
-          addons/ofxPoco/libs
+          addons/ofxAssimpModelLoader/libs/**/
+          addons/ofxKinect/libs/**/
+          addons/ofxOpenCv/libs/**/
+          addons/ofxSvg/libs/**/
+          addons/ofxPoco/libs/**/
 
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.h') }}
         restore-keys: |
@@ -59,8 +59,11 @@ jobs:
       run: ./scripts/$TARGET/download_libs.sh
     - name: rm-dev
       run: sudo rm -rf /Library/Developer
-    - name: install
-      run: ./scripts/ci/$TARGET/install.sh
+    
+    # this step is not needed here because the script is empty
+    # - name: install
+    # run: ./scripts/ci/$TARGET/install.sh
+    
     - name: Build
       run:
            if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
