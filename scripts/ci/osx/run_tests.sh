@@ -12,14 +12,14 @@ cd $ROOT
 cp scripts/templates/osx/Makefile examples/templates/emptyExample/
 cp scripts/templates/osx/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
-make -j -s Debug
+make -j2 -s Debug
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
 cp scripts/templates/osx/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/osx/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-make -j -s Debug
+make -j2 -s Debug
 
 echo "**** Running unit tests ****"
 cd $ROOT/tests
@@ -30,7 +30,7 @@ for group in *; do
                 cd $test
                 cp ../../../scripts/templates/osx/Makefile .
                 cp ../../../scripts/templates/osx/config.make .
-                make -j -s Debug
+                make -j2 -s Debug
                 binname=$(basename ${test})
 
                 if [ "${binname}" == "networkTcp" ] || [ "${binname}" == "networkUdp" ]; then
