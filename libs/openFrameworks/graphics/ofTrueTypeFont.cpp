@@ -710,7 +710,6 @@ bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, b
 	}else{
 		settings.ranges = {ofUnicode::Latin};
 	}
-//	std::cout << "ofTrueTypeFont::load - simplify : " << settings.simplifyAmt << std::endl;
 	return load(settings);
 }
 
@@ -1012,7 +1011,6 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 
 	ofIndexType firstIndex = stringQuads.getVertices().size();
 
-//	std::cout << glm::vec3(xmin,ymin,0.f) << std::endl;
 	stringQuads.addVertex(glm::vec3(xmin,ymin,0.f));
 	stringQuads.addVertex(glm::vec3(xmax,ymin,0.f));
 	stringQuads.addVertex(glm::vec3(xmax,ymax,0.f));
@@ -1101,7 +1099,6 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 			break;
 		}
     }
-//	std::cout << pos << std::endl;
 }
 
 //-----------------------------------------------------------
@@ -1147,8 +1144,6 @@ const ofTrueTypeFont::glyphProps & ofTrueTypeFont::getGlyphProperties(uint32_t g
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped, bool filled) const{
-		std::cout << "drawCharAsShape " << x << " : " << y << std::endl;
-
 	if(vFlipped){
 		if(filled){
 			charOutlines[indexForGlyph(c)].draw(x,y);
@@ -1185,9 +1180,9 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 		return ofRectangle( x, y, 0.f, 0.f);
 	}
 
+	float minX = x;
 	float minY = y;
 	float maxY = y;
-	float minX = x;
 	// Calculate bounding box by iterating over glyph properties
 	// Meaning of props can be deduced from illustration at top of:
 	// https://www.freetype.org/freetype2/docs/tutorial/step2.html
