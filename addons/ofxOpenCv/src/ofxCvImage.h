@@ -91,7 +91,7 @@ class ofxCvImage : public ofBaseImage {
     // Access the IplImage as the more modern cv::Mat
     // Might need to call ofxCvImage::flagImageChanged() if you want extenral changes to show up in the ofxCvImage texture or pixels
     virtual cv::Mat getCvMat() { return  cv::cvarrToMat(getCvImage()); };
-    virtual cv::Mat getCvMat() const { return  cv::cvarrToMat(getCvImage()); };
+    virtual const cv::Mat getCvMat() const { return  cv::cvarrToMat(getCvImage()); };
 	
     // Draw Image
     //
