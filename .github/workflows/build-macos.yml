@@ -20,15 +20,15 @@ jobs:
           - {target: osx, opt: ""}
           - {target: osx, opt: "makefiles"}
     env:
-     TARGET: ${{matrix.cfg.target}}
-     OPT: ${{matrix.cfg.opt}}
+      TARGET: ${{matrix.cfg.target}}
+      OPT: ${{matrix.cfg.opt}}
     steps:
     - uses: actions/checkout@v2
     - name: Cache libs
       id: cache-libs
       uses: actions/cache@v3
         env:
-          cache-name: cache-libs
+          cache-name: cache-install-libs
         with:
           path: ~/libs
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
