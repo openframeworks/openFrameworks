@@ -137,6 +137,10 @@ public:
 	/// \param textureTarget an implementation-specific value to specify the type of shader to use
 	/// \param renderer programmable renderer instance to create the material shader for
 	virtual const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const=0;
+	
+	/// \brief set a custom shader controlled by the user. 
+	/// \param aCustomShader the material shader, created and maintained by the user
+	virtual void setCustomShader( std::shared_ptr<ofShader> aCustomShader) = 0;
 
 	/// \brief upload the given renderer's normal matrix to the material shader
 	/// \param shader the material shader, created by getShader()
@@ -228,7 +232,7 @@ public:
 	void setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation);
 	void setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation);
 
-
+	void setCustomShader( std::shared_ptr<ofShader> aCustomShader);
 
 private:
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
@@ -268,4 +272,7 @@ private:
 	std::map<std::string, glm::mat4> uniforms4m;
 	std::map<std::string, glm::mat3> uniforms3m;
 	std::map<std::string, TextureUnifom> uniformstex;
+	
+	std::shared_ptr<ofShader> customShader;
+	bool bHasCustomShader = false;
 };
