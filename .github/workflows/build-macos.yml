@@ -27,10 +27,10 @@ jobs:
     - name: Cache libs
       id: cache-libs
       uses: actions/cache@v3
-        env:
-          cache-name: cache-install-libs
-        with:
-          path: ~/libs
+      env:
+        cache-name: cache-install-libs
+      with:
+        path: ~/libs
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
       name: Download libs
       continue-on-error: true
