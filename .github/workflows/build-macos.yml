@@ -43,8 +43,9 @@ jobs:
       with:
         path: |
           libs
-          addons/ofxOpenCv/libs
           addons/ofxAssimpModelLoader/libs
+          addons/ofxKinect/libs
+          addons/ofxOpenCv/libs
           addons/ofxSvg/libs
           addons/ofxPoco/libs
 
