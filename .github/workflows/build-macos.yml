@@ -17,7 +17,7 @@ jobs:
     strategy:
         matrix:
           cfg:
-          - {target: osx, opt: ""}
+          - {target: osx, opt: "xcode"}
           - {target: osx, opt: "makefiles"}
     env:
       TARGET: ${{matrix.cfg.target}}
@@ -31,9 +31,9 @@ jobs:
         cache-name: cache-keep-compile
       with:
         path: libs/openFrameworksCompiled/lib/osx/**/
-        key: ${{ runner.os }}-build-${{ env.cache-compile }}-${{ hashFiles('**/*.cpp') }}
+        key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-compile }}-        
+          ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-        
 
 
     - name: Cache libs
