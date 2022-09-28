@@ -21,7 +21,7 @@ class ofDirectShowPlayer : public ofBaseVideoPlayer{
 		ofDirectShowPlayer(ofDirectShowPlayer &&);
 		ofDirectShowPlayer & operator=(ofDirectShowPlayer&&);
 
-        bool                load(std::string path);
+        bool                load(of::filesystem::path path);
         void                update();
 
         void                close();
