@@ -22,7 +22,7 @@ void ofApp::setup() {
     [ofxiOSGetGLParentView() addSubview:controls.view];
     
     AVFoundationVideoPlayer * avVideoPlayer;
-	avVideoPlayer = (__bridge AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
+    avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
     [avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
     [ofxiOSGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
     avVideoPlayer.playerView.hidden = YES;
@@ -127,7 +127,7 @@ void ofApp::loadPressed() {
     video.play();
     
     AVFoundationVideoPlayer * avVideoPlayer;
-	avVideoPlayer = (__bridge AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
+    avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
     [avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
     [ofxiOSGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
     avVideoPlayer.playerView.hidden = YES;
@@ -151,12 +151,12 @@ void ofApp::loopOffPressed() {
 }
 
 void ofApp::nativeOnPressed() {
-	[(__bridge AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = NO;
+    [(AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = NO;
     [controls setNative:YES];
 }
 
 void ofApp::nativeOffPressed() {
-	[(__bridge AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = YES;
+    [(AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = YES;
     [controls setNative:NO];
 }
 
@@ -175,7 +175,7 @@ void ofApp::exit(){
     if(controls) {
         [controls.view removeFromSuperview];
         controls.delegate = nil;
-//        [controls release];
+        [controls release];
         controls = nil;
     }
 }
