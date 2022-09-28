@@ -31,7 +31,7 @@ jobs:
         cache-name: cache-keep-compile
       with:
         path: libs/openFrameworksCompiled/lib/osx/build/release
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.h') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-        
 
@@ -41,7 +41,13 @@ jobs:
       env:
         cache-name: cache-install-libs
       with:
-        path: libs
+        path: |
+          libs
+          addons/ofxOpenCv/libs
+          addons/ofxAssimpModelLoader/libs
+          addons/ofxSvg/libs
+          addons/ofxPoco/libs
+
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.h') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-        
