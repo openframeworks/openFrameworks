@@ -11,7 +11,6 @@ on:
     - 'examples/**'
     
 jobs:
-
   build-osx:
     runs-on: macos-12
     strategy:

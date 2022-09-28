@@ -41,8 +41,8 @@ jobs:
            else
             scripts/ci/$TARGET/build.sh;
            fi
-    # - name: Upload Libs
-    #   run: scripts/ci/upload_of_lib.sh;
-    #   env:
-    #     GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+    - name: Upload Libs
+      run: scripts/ci/upload_of_lib.sh;
+      env:
+        GA_CI_SECRET: ${{ secrets.CI_SECRET }}
 
