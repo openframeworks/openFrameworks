@@ -66,11 +66,11 @@ jobs:
     
     - name: Build
       run:
-           if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
-            scripts/ci/$TARGET/run_tests.sh;
-           else
-            scripts/ci/$TARGET/build.sh $OPT;
-           fi
+        if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
+          scripts/ci/$TARGET/run_tests.sh;
+        else
+          scripts/ci/$TARGET/build.sh $OPT;
+        fi
       env:
         DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
         SDKROOT: "/Applications/Xcode_13.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
