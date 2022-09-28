@@ -16,7 +16,6 @@
 #include <numeric>
 
 #include "ofGraphics.h"
-#include "utf8.h"
 
 using std::max;
 using std::vector;
