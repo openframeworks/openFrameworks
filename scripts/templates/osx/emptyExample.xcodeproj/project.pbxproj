@@ -17,6 +17,12 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
+		"192E680F28E4D63A006F5C79": {
+			"path": "ofGraphicsCairo.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "<group>"
+		},
 		"E429630F2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofUtils.cpp",
 			"isa": "PBXFileReference",
@@ -622,18 +628,11 @@
 			"lastKnownFileType": "sourcecode.cpp.cpp",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"8466F1851C04CA0E00918B1C": {
-			"alwaysOutOfDate": "1",
-			"inputPaths": [],
-			"buildActionMask": "12",
-			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
-			"outputPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"\\033[32;1;4m3 - Code Sign\\033[0m\"\n#echo \"$GCC_PREPROCESSOR_DEFINITIONS\";\nAPPSTORE=`expr \"$GCC_PREPROCESSOR_DEFINITIONS\" : \".*APPSTORE=\\([0-9]*\\)\"`\nif [ -z \"$APPSTORE\" ] ; then\necho \"Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution\";\nelse\n# Copy bin/data into App/Resources\nrsync -avz  --delete --exclude='.DS_Store' \"${SRCROOT}/bin/data/\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/\"\n\n# ---- Code Sign App Package ----\n\n# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!\n\n# Verify that $CODE_SIGN_IDENTITY is set\nif [ -z \"${CODE_SIGN_IDENTITY}\" ] ; then\necho \"CODE_SIGN_IDENTITY needs to be set for framework code-signing\"\nexit 0\nfi\n\nif [ -z \"${CODE_SIGN_ENTITLEMENTS}\" ] ; then\necho \"CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!\"\n\nif [ \"${CONFIGURATION}\" = \"Release\" ] ; then\nexit 1\nelse\n# Code-signing is optional for non-release builds.\nexit 0\nfi\nfi\n\nITEMS=\"\"\n\nFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\necho \"$FRAMEWORKS_DIR\"\nif [ -d \"$FRAMEWORKS_DIR\" ] ; then\nFRAMEWORKS=$(find \"${FRAMEWORKS_DIR}\" -depth -type d -name \"*.framework\" -or -name \"*.dylib\" -or -name \"*.bundle\" | sed -e \"s/\\(.*framework\\)/\\1\\/Versions\\/A\\//\")\nRESULT=$?\nif [[ $RESULT != 0 ]] ; then\nexit 1\nfi\n\nITEMS=\"${FRAMEWORKS}\"\nfi\n\nLOGINITEMS_DIR=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems/\"\nif [ -d \"$LOGINITEMS_DIR\" ] ; then\nLOGINITEMS=$(find \"${LOGINITEMS_DIR}\" -depth -type d -name \"*.app\")\nRESULT=$?\nif [[ $RESULT != 0 ]] ; then\nexit 1\nfi\n\nITEMS=\"${ITEMS}\"$'\\n'\"${LOGINITEMS}\"\nfi\n\n# Prefer the expanded name, if available.\nCODE_SIGN_IDENTITY_FOR_ITEMS=\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\nif [ \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" = \"\" ] ; then\n# Fall back to old behavior.\nCODE_SIGN_IDENTITY_FOR_ITEMS=\"${CODE_SIGN_IDENTITY}\"\nfi\n\necho \"Identity: ${CODE_SIGN_IDENTITY_FOR_ITEMS}\"\n\necho \"Entitlements: ${CODE_SIGN_ENTITLEMENTS}\"\n\necho \"Found: ${ITEMS}\"\n\n# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.\nSAVED_IFS=$IFS\nIFS=$(echo -en \"\\n\\b\")\n\n# Loop through all items.\nfor ITEM in \"${ITEMS}\";\ndo\n\tif lipo -archs \"${ITEM}\" | grep -q 'i386'; then\n\t\techo \"Stripping invalid archs ${ITEM}\"\n\t\tlipo -remove i386 \"${ITEM}\" -o \"${ITEM}\" \n\telse\n\t\techo \"No need to strip invalid archs {$ITEM}\"\n\tfi\n\n\techo \"Signing '${ITEM}'\"\n\tcodesign --force --verbose --sign \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" --entitlements \"${CODE_SIGN_ENTITLEMENTS}\" \"${ITEM}\"\n\tRESULT=$?\n\tif [[ $RESULT != 0 ]] ; then\n\t\techo \"Failed to sign '${ITEM}'.\"\n\t\tIFS=$SAVED_IFS\n\t\texit 1\n\tfi\ndone\n\n# Restore $IFS.\nIFS=$SAVED_IFS\n\nfi\n",
-			"name": "Run Script — Code Sign / Copy Data",
-			"files": []
+		"192E680E28E4D63A006F5C79": {
+			"path": "ofGraphicsCairo.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>"
 		},
 		"E429630E2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofMatrixStack.cpp",
@@ -655,6 +654,19 @@
 			"name": "ofVboMesh.h",
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
+		},
+		"8466F1851C04CA0E00918B1C": {
+			"alwaysOutOfDate": "1",
+			"inputPaths": [],
+			"buildActionMask": "12",
+			"shellPath": "/bin/sh",
+			"showEnvVarsInLog": "0",
+			"outputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellScript": "echo \"\\033[32;1;4m3 - Code Sign\\033[0m\"\n#echo \"$GCC_PREPROCESSOR_DEFINITIONS\";\nAPPSTORE=`expr \"$GCC_PREPROCESSOR_DEFINITIONS\" : \".*APPSTORE=\\([0-9]*\\)\"`\nif [ -z \"$APPSTORE\" ] ; then\necho \"Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution\";\nelse\n# Copy bin/data into App/Resources\nrsync -avz  --delete --exclude='.DS_Store' \"${SRCROOT}/bin/data/\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/\"\n\n# ---- Code Sign App Package ----\n\n# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!\n\n# Verify that $CODE_SIGN_IDENTITY is set\nif [ -z \"${CODE_SIGN_IDENTITY}\" ] ; then\necho \"CODE_SIGN_IDENTITY needs to be set for framework code-signing\"\nexit 0\nfi\n\nif [ -z \"${CODE_SIGN_ENTITLEMENTS}\" ] ; then\necho \"CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!\"\n\nif [ \"${CONFIGURATION}\" = \"Release\" ] ; then\nexit 1\nelse\n# Code-signing is optional for non-release builds.\nexit 0\nfi\nfi\n\nITEMS=\"\"\n\nFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\necho \"$FRAMEWORKS_DIR\"\nif [ -d \"$FRAMEWORKS_DIR\" ] ; then\nFRAMEWORKS=$(find \"${FRAMEWORKS_DIR}\" -depth -type d -name \"*.framework\" -or -name \"*.dylib\" -or -name \"*.bundle\" | sed -e \"s/\\(.*framework\\)/\\1\\/Versions\\/A\\//\")\nRESULT=$?\nif [[ $RESULT != 0 ]] ; then\nexit 1\nfi\n\nITEMS=\"${FRAMEWORKS}\"\nfi\n\nLOGINITEMS_DIR=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems/\"\nif [ -d \"$LOGINITEMS_DIR\" ] ; then\nLOGINITEMS=$(find \"${LOGINITEMS_DIR}\" -depth -type d -name \"*.app\")\nRESULT=$?\nif [[ $RESULT != 0 ]] ; then\nexit 1\nfi\n\nITEMS=\"${ITEMS}\"$'\\n'\"${LOGINITEMS}\"\nfi\n\n# Prefer the expanded name, if available.\nCODE_SIGN_IDENTITY_FOR_ITEMS=\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\nif [ \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" = \"\" ] ; then\n# Fall back to old behavior.\nCODE_SIGN_IDENTITY_FOR_ITEMS=\"${CODE_SIGN_IDENTITY}\"\nfi\n\necho \"Identity: ${CODE_SIGN_IDENTITY_FOR_ITEMS}\"\n\necho \"Entitlements: ${CODE_SIGN_ENTITLEMENTS}\"\n\necho \"Found: ${ITEMS}\"\n\n# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.\nSAVED_IFS=$IFS\nIFS=$(echo -en \"\\n\\b\")\n\n# Loop through all items.\nfor ITEM in \"${ITEMS}\";\ndo\n\tif lipo -archs \"${ITEM}\" | grep -q 'i386'; then\n\t\techo \"Stripping invalid archs ${ITEM}\"\n\t\tlipo -remove i386 \"${ITEM}\" -o \"${ITEM}\" \n\telse\n\t\techo \"No need to strip invalid archs {$ITEM}\"\n\tfi\n\n\techo \"Signing '${ITEM}'\"\n\tcodesign --force --verbose --sign \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" --entitlements \"${CODE_SIGN_ENTITLEMENTS}\" \"${ITEM}\"\n\tRESULT=$?\n\tif [[ $RESULT != 0 ]] ; then\n\t\techo \"Failed to sign '${ITEM}'.\"\n\t\tIFS=$SAVED_IFS\n\t\texit 1\n\tfi\ndone\n\n# Restore $IFS.\nIFS=$SAVED_IFS\n\nfi\n",
+			"name": "Run Script — Code Sign / Copy Data",
+			"files": []
 		},
 		"E42962EA2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/app/ofAppGlutWindow.cpp",
@@ -1024,6 +1036,8 @@
 				"E429635F2163EDD300A6A9E2",
 				"E42963522163EDD300A6A9E2",
 				"E429634B2163EDD300A6A9E2",
+				"192E680F28E4D63A006F5C79",
+				"192E680E28E4D63A006F5C79",
 				"E42963602163EDD300A6A9E2",
 				"E42963612163EDD300A6A9E2",
 				"E42963592163EDD300A6A9E2",
