@@ -30,7 +30,7 @@ jobs:
       env:
         cache-name: cache-keep-compile
       with:
-        path: libs/openFrameworksCompiled/lib/osx/build/release
+        path: libs/openFrameworksCompiled/lib/osx
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-        
