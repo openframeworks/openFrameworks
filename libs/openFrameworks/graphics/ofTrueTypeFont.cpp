@@ -231,7 +231,7 @@ static ofPath makeContoursForCharacter(FT_Face face){
 
 #ifdef TARGET_OSX
 //------------------------------------------------------------------
-static std::string osxFontPathByName(const std::string& fontname){
+static string osxFontPathByName(const string& fontname){
 	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
 	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
 	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
@@ -240,7 +240,7 @@ static std::string osxFontPathByName(const std::string& fontname){
 	if(targetURL) {
 		UInt8 buffer[PATH_MAX];
 		CFURLGetFileSystemRepresentation(targetURL, true, buffer, PATH_MAX);
-		fontPath = std::string((char *)buffer);
+		fontPath = string((char *)buffer);
 		CFRelease(targetURL);
 	}
 
@@ -254,7 +254,7 @@ static std::string osxFontPathByName(const std::string& fontname){
 #ifdef TARGET_WIN32
 #include <map>
 // font font face -> file name name mapping
-static std::map<std::string, std::string> fonts_table;
+static std::map<string, string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -299,7 +299,7 @@ void initWindows(){
 	char fontsPath[2048];
 	SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
 	SHGetPathFromIDList(ppidl,&fontsPath);*/
-	std::string fontsDir = getenv ("windir");
+	string fontsDir = getenv ("windir");
 	fontsDir += "\\Fonts\\";
 	for (DWORD i = 0; i < value_count; ++i)
 	{
@@ -314,8 +314,8 @@ void initWindows(){
 
 			wcstombs(value_name_char,value_name,2048);
 			wcstombs(value_data_char,reinterpret_cast<wchar_t *>(value_data),2048);
-			std::string curr_face = value_name_char;
-			std::string font_file = value_data_char;
+			string curr_face = value_name_char;
+			string font_file = value_data_char;
 			curr_face = curr_face.substr(0, curr_face.find('(') - 1);
 			fonts_table[curr_face] = fontsDir + font_file;
 	}
@@ -327,11 +327,11 @@ void initWindows(){
 }
 
 
-static std::string winFontPathByName(const std::string& fontname ){
+static string winFontPathByName(const string& fontname ){
 	if(fonts_table.find(fontname)!=fonts_table.end()){
 		return fonts_table[fontname];
 	}
-	for(std::map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+	for(std::map<string,string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
 		if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
 	}
 	return "";
@@ -340,8 +340,8 @@ static std::string winFontPathByName(const std::string& fontname ){
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------------
-static std::string linuxFontPathByName(const std::string& fontname){
-	std::string filename;
+static string linuxFontPathByName(const string& fontname){
+	string filename;
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
 	if(!ret){
@@ -382,7 +382,7 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 	int fontID = index;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
-        filename = linuxFontPathByName(fontname.string());
+		filename = linuxFontPathByName(fontname.string());
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
@@ -396,7 +396,7 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Menlo Regular";
 		}
-        filename = osxFontPathByName(fontname.string());
+		filename = osxFontPathByName(fontname.string());
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Arial";
@@ -405,7 +405,7 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Courier New";
 		}
-        filename = winFontPathByName(fontname.string());
+		filename = winFontPathByName(fontname.string());
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
@@ -414,7 +414,7 @@ static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face,
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
 	}
 	FT_Error err;
-    err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
+	err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
@@ -729,7 +729,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-    if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
+	if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
 		return false;
 	}
 	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);
@@ -781,7 +781,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 			if(settings.contours){
 				if(printVectorInfo){
-					std::string str;
+					string str;
 					ofUTF8Append(str,g);
 					ofLogNotice("ofTrueTypeFont") <<  "character " << str;
 				}
@@ -1056,7 +1056,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 	float directionX = settings.direction == OF_TTF_LEFT_TO_RIGHT?1:-1;
 
 	uint32_t prevC = 0;
-    for(auto c: ofUTF8Iterator(str)){
+	for(auto c: ofUTF8Iterator(str)){
 		try{
 			if (c == '\n') {
 				pos.y += lineHeight*newLineDirection;
@@ -1071,11 +1071,11 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 					f(c, pos);
 				}
 				prevC = c;
-            }else if(c == ' '){
-                pos.x += getGlyphProperties(' ').advance * spaceSize * directionX;
-                f(c, pos);
-                prevC = c;
-            }else if(isValidGlyph(c)) {
+			}else if(c == ' '){
+				pos.x += getGlyphProperties(' ').advance * spaceSize * directionX;
+				f(c, pos);
+				prevC = c;
+			}else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
 					if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
@@ -1091,14 +1091,14 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				}else{
 					pos.x += props.advance  * directionX;
 					pos.x += getGlyphProperties(' ').advance * (letterSpacing - 1.f) * directionX;
-				    f(c,pos);
+					f(c,pos);
 				}
 				prevC = c;
-            }
-        }catch(...){
+			}
+		}catch(...){
 			break;
 		}
-    }
+	}
 }
 
 //-----------------------------------------------------------
@@ -1160,7 +1160,7 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::stringWidth(const std::string& c) const{
+float ofTrueTypeFont::stringWidth(const string& c) const{
 //	return getStringBoundingBox(c, 0,0).width;
 	int w = 0;
 	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
@@ -1174,7 +1174,7 @@ float ofTrueTypeFont::stringWidth(const std::string& c) const{
 }
 
 //-----------------------------------------------------------
-ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, float y, bool vflip) const{
+ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float y, bool vflip) const{
 
 	if ( c.empty() ){
 		return ofRectangle( x, y, 0.f, 0.f);
@@ -1216,20 +1216,20 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, 
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::stringHeight(const std::string& c) const{
+float ofTrueTypeFont::stringHeight(const string& c) const{
 	ofRectangle rect = getStringBoundingBox(c, 0,0);
 	return rect.height;
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::createStringMesh(const std::string& str, float x, float y, bool vflip) const{
+void ofTrueTypeFont::createStringMesh(const string& str, float x, float y, bool vflip) const{
 	iterateString(str,x,y,vflip,[&](uint32_t c, glm::vec2 pos){
 		drawChar(c, pos.x, pos.y, vflip);
 	});
 }
 
 //-----------------------------------------------------------
-const ofMesh & ofTrueTypeFont::getStringMesh(const std::string& c, float x, float y, bool vFlipped) const{
+const ofMesh & ofTrueTypeFont::getStringMesh(const string& c, float x, float y, bool vFlipped) const{
 	stringQuads.clear();
 	createStringMesh(c,x,y,vFlipped);
 	return stringQuads;
@@ -1241,7 +1241,7 @@ const ofTexture & ofTrueTypeFont::getFontTexture() const{
 }
 
 //-----------------------------------------------------------
-glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bool vflip) const{
+glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const string & str, bool vflip) const{
 	if(!str.empty()){
 		try{
 			auto c = *ofUTF8Iterator(str).begin();
@@ -1257,9 +1257,9 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 					try{
 						if (c != '\n') {
 							auto g = loadGlyph(c);
-                            if(c == '\t')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
-                            else if(c == ' ')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize;
-                            else if(isValidGlyph(c))lineWidth += g.props.advance + getGlyphProperties(' ').advance * (letterSpacing - 1.f);
+							if(c == '\t')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+							else if(c == ' ')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize;
+							else if(isValidGlyph(c))lineWidth += g.props.advance + getGlyphProperties(' ').advance * (letterSpacing - 1.f);
 							width = max(width, lineWidth);
 						}else{
 							lineWidth = 0;
@@ -1281,7 +1281,7 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const std::string & str, bo
 }
 
 //-----------------------------------------------------------
-ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) const{
+ofTexture ofTrueTypeFont::getStringTexture(const string& str, bool vflip) const{
 	vector<glyph> glyphs;
 	vector<glm::vec2> glyphPositions;
 	float height = 0;
@@ -1289,28 +1289,28 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 	float lineWidth = 0;
 	iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f pos){
 		try{
-            if (c != '\n') {
+			if (c != '\n') {
 				auto g = loadGlyph(c);
-                
-                if (c == '\t'){
-                    auto temp = loadGlyph(' ');
-                    glyphs.push_back(temp);
-                }else{
-                    glyphs.push_back(g);
-                }
-                 
+				
+				if (c == '\t'){
+					auto temp = loadGlyph(' ');
+					glyphs.push_back(temp);
+				}else{
+					glyphs.push_back(g);
+				}
+				 
 				int x = pos.x + g.props.xmin;
-                int y = pos.y;
+				int y = pos.y;
 				glyphPositions.emplace_back(x, y);
-                
-                if(c == '\t')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
-                else if(c == ' ')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize;
-                else if(isValidGlyph(c))lineWidth += g.props.advance + getGlyphProperties(' ').advance * (letterSpacing - 1.f);
-                
-                width = max(width, lineWidth);
-                y += g.props.ymax;
+				
+				if(c == '\t')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+				else if(c == ' ')lineWidth += g.props.advance + getGlyphProperties(' ').advance * spaceSize;
+				else if(isValidGlyph(c))lineWidth += g.props.advance + getGlyphProperties(' ').advance * (letterSpacing - 1.f);
+				
+				width = max(width, lineWidth);
+				y += g.props.ymax;
 				height = max(height, y + getLineHeight());
-            }else{
+			}else{
 				lineWidth = 0;
 			}
 		}catch(...){
@@ -1340,7 +1340,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const std::string& str, bool vflip) c
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawString(const std::string &  c, float x, float y) const{
+void ofTrueTypeFont::drawString(const string &  c, float x, float y) const{
 
 	if (!bLoadedOk){
 		ofLogError("ofTrueTypeFont") << "drawString(): font not allocated";
@@ -1352,7 +1352,7 @@ void ofTrueTypeFont::drawString(const std::string &  c, float x, float y) const{
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawStringAsShapes(const std::string& str, float x, float y) const{
+void ofTrueTypeFont::drawStringAsShapes(const string& str, float x, float y) const{
 	if (!bLoadedOk){
 		ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
 		return;
