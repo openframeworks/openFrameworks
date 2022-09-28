@@ -24,7 +24,16 @@ jobs:
      OPT: ${{matrix.cfg.opt}}
     steps:
     - uses: actions/checkout@v2
-    - name: Download libs
+    - name: Cache libs
+      id: cache-libs
+      uses: actions/cache@v3
+        env:
+          cache-name: cache-libs
+        with:
+          path: ~/libs
+    - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
+      name: Download libs
+      continue-on-error: true
       run: ./scripts/$TARGET/download_libs.sh
     - name: rm-dev
       run: sudo rm -rf /Library/Developer
