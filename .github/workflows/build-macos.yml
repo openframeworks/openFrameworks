@@ -24,6 +24,17 @@ jobs:
       OPT: ${{matrix.cfg.opt}}
     steps:
     - uses: actions/checkout@v2
+    - name: Cache compile
+      id: cache-compile
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-keep-compile
+      with:
+        path: libs/openFrameworksCompiled/lib/osx/build/release
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.h') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-        
+
     - name: Cache libs
       id: cache-libs
       uses: actions/cache@v3
