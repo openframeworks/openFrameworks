@@ -4,14 +4,15 @@ on:
   push:
     paths-ignore:
     - '**/*.md'
+    - 'examples/**'
   pull_request:
     paths-ignore:
     - '**/*.md'
+    - 'examples/**'
     
 jobs:
 
   build-osx:
-    # runs-on: macos-10.15
     runs-on: macos-12
     strategy:
         matrix:
@@ -39,6 +40,4 @@ jobs:
       env:
         DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
         SDKROOT: "/Applications/Xcode_13.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
-        # DEVELOPER_DIR: "/Applications/Xcode_12.2.app/Contents/Developer"
-        # SDKROOT: "/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 

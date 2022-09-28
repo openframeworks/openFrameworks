@@ -24,4 +24,5 @@ class ofApp : public ofBaseApp{
 		ofVbo vbo;
 		ofBufferObject buffer;
 		ofEasyCam cam;
+		ofShader renderShader;
 };
