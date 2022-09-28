@@ -5,7 +5,7 @@
 void ofApp::setup(){
 	
 	// lets make two lights
-	for( int i = 0; i < 2; i++ ) {
+	for( int i = 0; i < 2; i++ ){
 		auto light = make_shared<ofLight>();
 		light->setup();
 		if( i == 0 ) {
@@ -49,7 +49,7 @@ void ofApp::setup(){
 	shader = make_shared<ofShader>();
 	shader->load("shaders/shader");
 	
-	for( int i = 0; i < texturePacks.size(); i++ ) {
+	for( int i = 0; i < texturePacks.size(); i++ ){
 		// set the material to use our custom shader
 		// so that on material.begin() it will call shader->begin()
 		// and we can provide our custom vert and frag shaders
@@ -76,7 +76,7 @@ void ofApp::setup(){
 	
 	// check the boolean we set before
 	// if arb textures were enabled then, lets go ahead and activate again
-	if( isArbTexEnabled ) {
+	if( isArbTexEnabled ){
 		ofEnableArbTex();
 	}
 	
@@ -95,7 +95,7 @@ void ofApp::update(){
 		cout << "LOADING SHADER | " << ofGetFrameNum() << endl;
 		shader->load("shaders/shader");
 	}
-	if( lights.size() > 0 ) {
+	if( lights.size() > 0 ){
 		// one of the lights moves around the scene
 		lights.back()->orbitDeg( ofWrapDegrees(ofGetElapsedTimef()* 30.0), -40, 500 );
 	}
@@ -113,7 +113,7 @@ void ofApp::draw(){
 	
 	camera.begin();
 	ofEnableDepthTest();
-	if( shader->isLoaded() ) {
+	if( shader->isLoaded() ){
 		texturePacks[texturePackIndex]->material.begin();
 		// since we set shader to be the custom shader on material
 		// when texturePacks[texturePackIndex]->material.begin(); is called
@@ -136,7 +136,7 @@ void ofApp::draw(){
 	ofDrawGridPlane(100, 20);
 	ofPopMatrix();
 	
-	if( bDebug ) {
+	if( bDebug ){
 		ofSetColor( 255 );
 		for( auto& light : lights ) {
 			ofDrawSphere(light->getPosition(), 20.0);
@@ -148,7 +148,7 @@ void ofApp::draw(){
 	camera.end();
 	
 	
-	if( bDrawIntoFbo ) {
+	if( bDrawIntoFbo ){
 		// if the mouse is inside the fbo rect and the mouse is pressed, try to draw into the fbo
 		if( fboRect.inside(ofGetMouseX(), ofGetMouseY() ) && ofGetMousePressed() ) {
 			// map the mouse from screen coordinates to the fbo coordinates
@@ -173,11 +173,11 @@ void ofApp::draw(){
 		ofDrawRectangle( fboRect );
 		ofFill();
 		camera.disableMouseInput();
-	} else {
+	}else{
 		camera.enableMouseInput();
 	}
 	
-	if( ofGetKeyPressed('e') ) {
+	if( ofGetKeyPressed('e') ){
 		fboInfluence.begin();
 		// slowly draw a transparent black rectangle over the whole fbo to erase the content over time
 		ofSetColor( 0, 10 );
@@ -185,7 +185,7 @@ void ofApp::draw(){
 		fboInfluence.end();
 	}
 	
-	if( ofGetKeyPressed('c')) {
+	if( ofGetKeyPressed('c')){
 		float siny = sinf( ofGetElapsedTimef() * 2.5f ) * 0.5 + 0.5;
 		fboInfluence.begin();
 		ofSetColor( 0, 150 );
@@ -193,7 +193,7 @@ void ofApp::draw(){
 		fboInfluence.end();
 	}
 	
-	if(bDebug) {
+	if(bDebug){
 		ofRectangle fitRect( 20,128,fboInfluence.getWidth() * 0.5, fboInfluence.getHeight() * 0.5 );
 		ofSetColor( 255 );
 		fboInfluence.draw(fitRect);
@@ -211,29 +211,29 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	if( key == OF_KEY_UP ) {
+	if( key == OF_KEY_UP ){
 		texturePackIndex--;
 		if( texturePackIndex < 0 ) {
 			texturePackIndex = 0;
 		}
 	}
-	if( key == OF_KEY_DOWN ) {
+	if( key == OF_KEY_DOWN ){
 		texturePackIndex++;
 		if( texturePackIndex >= texturePacks.size() ) {
 			texturePackIndex = texturePacks.size()-1;
 		}
 	}
-	if( key == ' ' ) {
+	if( key == ' ' ){
 		bDrawIntoFbo = true;
 	}
-	if( key == 'd' ) {
+	if( key == 'd' ){
 		bDebug = !bDebug;
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	if( key == ' ' ) {
+	if( key == ' ' ){
 		bDrawIntoFbo = false;
 	}
 }
