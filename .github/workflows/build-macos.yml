@@ -30,7 +30,10 @@ jobs:
       env:
         cache-name: cache-install-libs
       with:
-        path: ~/libs
+        path: ~/libs  
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.h') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-        
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
       name: Download libs
       continue-on-error: true
