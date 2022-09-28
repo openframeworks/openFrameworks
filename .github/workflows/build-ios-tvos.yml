@@ -11,7 +11,6 @@ on:
     - 'examples/**'
     
 jobs:
-
   build-osx:
     runs-on: macos-12
     strategy:
@@ -32,4 +31,3 @@ jobs:
 
       env:
         DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
-
