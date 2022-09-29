@@ -1227,7 +1227,7 @@ bool ofRestoreWorkingDirectoryToDefault();
 ///
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(of::filesystem::path& root);
+void ofSetDataPathRoot(const of::filesystem::path& root);
 
 /*! \cond PRIVATE */
 namespace of{
