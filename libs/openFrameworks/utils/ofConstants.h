@@ -526,7 +526,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             }
 			// new
 			namespace of {
-				using std::__fs::filesystem;
+				namespace filesystem = std::experimental::filesystem;
 			}
         #else
 			#pragma message(Reminder "no OF_HAS_CPP17")
@@ -546,7 +546,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             }
 			// new
 			namespace of {
-				namespace filesystem = std::__fs::filesystem;
+				namespace filesystem = std::experimental::filesystem;
 			}
 
         #endif
@@ -578,9 +578,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 	namespace of {
 		namespace filesystem = boost::filesystem;
 	}
-
-
-
 	
 #endif
 
