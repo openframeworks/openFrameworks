@@ -552,13 +552,21 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #endif
         
     #else
-        // Regular C++17 fs support
-        #include <filesystem>
-		namespace of {
-			namespace filesystem  = std::filesystem;
-		}
+		#if OF_HAS_CPP17
+			#pragma message(Reminder "OF_HAS_CPP17")
+
+			// Regular C++17 fs support
+			#include <filesystem>
+			namespace of {
+				namespace filesystem  = std::filesystem;
+			}
+		#else
+			namespace of {
+				namespace filesystem = std::__fs::filesystem;
+			}
+		#endif
     #endif
-#else
+#else //OF_USING_STD_FS
     // No experimental or c++17 filesytem support use boost
     #if !_MSC_VER
         #define BOOST_NO_CXX11_SCOPED_ENUMS
