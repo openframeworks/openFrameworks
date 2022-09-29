@@ -260,18 +260,19 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 			// FIXME:  addons/ofxAssimpModelLoader/src/ofxAssimpTexture.h could accept filesystem::path as a parameter
 			// ofLoadImage accept?
-			auto realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile).string();
+			// auto realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile).string();
+			of::filesystem::path realPath = (modelFolder / relTexPath / texFile);
 			
 			if(ofFile::doesFileExist(realPath) == false) {
 				ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
-					<< file.getFileName() + "\" in \"" << realPath << "\"";
+					<< file.getFileName() + "\" in \"" << realPath.string() << "\"";
 			}
 			
 			ofxAssimpTexture assimpTexture;
 			bool bTextureAlreadyExists = false;
 			for(size_t j = 0; j < textures.size(); j++) {
 				assimpTexture = textures[j];
-				if(assimpTexture.getTexturePath() == realPath) {
+				if(assimpTexture.getTexturePath() == realPath.string()) {
 					bTextureAlreadyExists = true;
 					break;
 				}
@@ -284,14 +285,14 @@ void ofxAssimpModelLoader::loadGLResources(){
 				ofTexture texture;
 				bool bTextureLoadedOk = ofLoadImage(texture, realPath);
 				if(bTextureLoadedOk) {
-					textures.push_back(ofxAssimpTexture(texture, realPath));
+					textures.push_back(ofxAssimpTexture(texture, realPath.string()));
 					assimpTexture = textures.back();
 					meshHelper.assimpTexture = assimpTexture;
 					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture loaded, dimensions: "
 						<< texture.getWidth() << "x" << texture.getHeight();
 				} else {
 					ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: \""
-						<< file.getFileName() + "\" from \"" << realPath << "\"";
+						<< file.getFileName() + "\" from \"" << realPath.string() << "\"";
 				}
 			}
 		}
