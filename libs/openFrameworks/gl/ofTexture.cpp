@@ -13,7 +13,12 @@
 
 //----------------------------------------------------------
 // static
+static
+#ifdef TARGET_IOS
+static bool bTexHackEnabled = false;
+#else
 static bool bTexHackEnabled = true;
+#endif
 static bool	bUsingArbTex		= true;
 static bool bUsingNormalizedTexCoords = false;
 static bool bUseCustomMinMagFilters = false;
