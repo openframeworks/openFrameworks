@@ -180,7 +180,7 @@ class ofApp: public ofxUnitTestsApp{
 		ofxTestEq(ofFilePath::getBaseName("test/test.txt"),"test","ofFilePath::getBaseName",ofFilePath::getBaseName("test/test.txt"));
 		ofxTestEq(ofFilePath::getBaseName(ofFilePath::removeTrailingSlash(ofFilePath::getEnclosingDirectory("testdir/test.txt"))),"testdir","ofFilePath::getEnclosingDirectory",ofFilePath::getBaseName(ofFilePath::getEnclosingDirectory("testdir/test.txt")));
 #ifdef TARGET_WIN32
-		ofxTestEq(ofFilePath::join("d1","d2"),"d1\\d2","ofFilePath::join",ofFilePath::join("d1","d2"));
+		ofxTestEq(ofFilePath::join("d1","d2").string(),"d1\\d2","ofFilePath::join",ofFilePath::join("d1","d2").string());
 #else
 		// ofxTestEq(ofFilePath::join("d1","d2"),"d1/d2","ofFilePath::join",ofFilePath::join("d1","d2"));
 		ofxTestEq(ofFilePath::join("d1","d2").string(),"d1/d2","ofFilePath::join",ofFilePath::join("d1","d2").string());
