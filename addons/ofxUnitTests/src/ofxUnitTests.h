@@ -228,9 +228,9 @@ private:
         const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
             //ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
-            auto projectDir = filesystem::canonical(filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+            auto projectDir = of::filesystem::canonical(of::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
             auto projectName = projectDir.stem();
-            auto exeName = filesystem::path(ofFilePath::getCurrentExePath()).filename();
+            auto exeName = of::filesystem::path(ofFilePath::getCurrentExePath()).filename();
             auto stdOut = logger->getStdOut();
             ofStringReplace(stdOut, "\\", "\\\\");
             ofStringReplace(stdOut, "\"", "\\\"");
