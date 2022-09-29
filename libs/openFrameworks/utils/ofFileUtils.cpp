@@ -997,7 +997,8 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 			ofFile tmp;
 			tmp.openFromCWD(path,ofFile::Reference);
 			if(tmp.isDirectory()){
-				path = ofFilePath::join(path,getFileName());
+				path = path / getFileName();
+//				path = ofFilePath::join(path,getFileName());
 			}
 		}
 		if(ofFile::doesFileExist(path, false)){
