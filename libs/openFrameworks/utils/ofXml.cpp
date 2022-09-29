@@ -18,8 +18,7 @@ ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml
 bool ofXml::load(const of::filesystem::path & file){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
 	auto p = ofToDataPath(file);
-	auto res = auxDoc->load_file(
-								 ofToDataPath(file).string().c_str());
+	auto res = auxDoc->load_file(ofToDataPath(file).string().c_str());
 	if( res ){
 		doc = auxDoc;
 		xml = doc->root();

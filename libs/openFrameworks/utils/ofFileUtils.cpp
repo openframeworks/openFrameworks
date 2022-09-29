@@ -1681,6 +1681,7 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(_path.string().empty()) return "";
+	// FIXME: Remove .string() here and following
     return (of::filesystem::path(_path).make_preferred() / "").string();
 #else
     auto path = of::filesystem::path(_path).make_preferred().string();
@@ -1714,6 +1715,9 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
+	
+	// FIXME: Remove .string() here and following
+
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(path.string().empty()) return "";
     return (path / "").string();
@@ -1728,6 +1732,7 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
+// FIXME: convert to of::filesystem::path
 string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
     auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
@@ -1738,6 +1743,8 @@ string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
+// FIXME: convert to of::filesystem::path
+
 string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRelativeToData){
 //    std::string filePath = _filePath.string();
 //

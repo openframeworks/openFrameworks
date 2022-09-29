@@ -566,7 +566,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 			}
 		#endif
     #endif
-#else //OF_USING_STD_FS
+#else //not OF_USING_STD_FS
     // No experimental or c++17 filesytem support use boost
     #if !_MSC_VER
         #define BOOST_NO_CXX11_SCOPED_ENUMS
