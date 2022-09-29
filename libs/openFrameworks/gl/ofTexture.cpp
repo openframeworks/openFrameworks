@@ -13,7 +13,6 @@
 
 //----------------------------------------------------------
 // static
-static
 #ifdef TARGET_IOS
 static bool bTexHackEnabled = false;
 #else
