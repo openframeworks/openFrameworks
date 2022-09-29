@@ -49,7 +49,7 @@ bool ofxAssimpModelLoader::load(string modelName, bool optimize){
 	unsigned int flags = initImportProperties(optimize);
 	
 	// loads scene from file
-	std::string path = file.getAbsolutePath();
+	std::string path = file.getAbsolutePath().string();
 	scene = shared_ptr<const aiScene>(aiImportFileExWithProperties(path.c_str(), flags, NULL, store.get()), aiReleaseImport);
 	
 	bool bOk = processScene();
