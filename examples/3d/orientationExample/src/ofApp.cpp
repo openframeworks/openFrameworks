@@ -8,19 +8,19 @@
  */
 //--------------------------------------------------------------
 void rotateToNormal(glm::vec3 normal) {
-	
+
 	// the normal must be normalized.
 	normal = glm::normalize(normal);
-	
+
 	// the standard Z axis.
 	glm::vec3 axis(0, 0, 1);
-	
+
 	// create the quaternion which represents the rotation between normal and axis
 	glm::quat rotation = glm::rotation(axis, normal);
-	
+
 	// transform the quaternion to a 4x4 matrix using the glm function for such.
 	glm::mat4 rotationMatrix = glm::toMat4(rotation);
-	
+
 	// multiply the rotation matrix with the current matrix.
 	// This means that the rotation matrix, thus the transformation it represents, will be applied on over the current transformation matrix.
 	ofMultMatrix( rotationMatrix );
@@ -84,10 +84,10 @@ void ofApp::draw(){
 	ofDrawLine(current.x, current.y, current.z, current.x, 0, current.z);
 
 	ofTranslate(current.x, current.y, current.z);
-    if( glm::length(current - previous ) > 0.0 ){
-        // translate and rotate every 3D object after this line to the current position and orientation of our line, but only if the line is longer than 0 or has a length
-        rotateToNormal(current - previous);
-    }
+	if( glm::length(current - previous ) > 0.0 ){
+		// translate and rotate every 3D object after this line to the current position and orientation of our line, but only if the line is longer than 0 or has a length
+		rotateToNormal(current - previous);
+	}
 	ofSetColor(255);
 	ofDrawBox(32);
 	ofDrawAxis(32);

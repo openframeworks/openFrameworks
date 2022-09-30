@@ -590,7 +590,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 				ofBuffer::Line line = buf.getLines().begin();
 				int  offendingLineNumber = ofToInt(matches[1]);
 				ostringstream msg;
-				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
+				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << ":"<< endl;
 				for(int i=0; line != buf.getLines().end(); line++, i++ ){
 					string s = *line;
 					if ( i >= offendingLineNumber -3 && i < offendingLineNumber + 2 ){

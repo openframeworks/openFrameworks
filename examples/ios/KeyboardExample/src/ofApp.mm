@@ -2,9 +2,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-    ofSetOrientation(OF_ORIENTATION_DEFAULT);
-        
+	
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
+		
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	
@@ -68,7 +68,7 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------

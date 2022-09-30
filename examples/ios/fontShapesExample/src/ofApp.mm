@@ -44,7 +44,7 @@ void ofApp::draw(){
 
 	//okay lets get the character back as shapes
 	testChar.setFilled(true);
-    testChar.draw(130, ofGetHeight()/2);
+	testChar.draw(130, ofGetHeight()/2);
 
 	ofNoFill();
 	ofPushMatrix();
@@ -63,7 +63,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -96,20 +96,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }
