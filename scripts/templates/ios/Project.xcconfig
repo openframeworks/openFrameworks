@@ -15,3 +15,12 @@ IPHONEOS_DEPLOYMENT_TARGET = 13.0
 COMPILER_INDEX_STORE_ENABLE = NO
 
 PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.iOS.$(TARGET_NAME)
+
+
+// BOOST - UNCOMMENT BELOW TO ENABLE BOOST
+//HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
+//LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/ios/boost_system.a"
+//LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/ios/boost_filesystem.a"
+//LIB_BOOST = $(LIB_BOOST_SYSTEM) $(LIB_BOOST_FS)
+//OF_CORE_LIBS = $(inherited) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM)
+//OF_CORE_HEADERS = $(inherited) $(HEADER_BOOST)
