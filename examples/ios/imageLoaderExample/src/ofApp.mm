@@ -43,7 +43,7 @@ void ofApp::draw(){
 	
 	// getting the pixels out of an image, 
 	// and then use the values to draw circles
-    unsigned char * pixels = bikeIcon.getPixels().getData();
+	unsigned char * pixels = bikeIcon.getPixels().getData();
 	int w = bikeIcon.getWidth();
 	int h = bikeIcon.getHeight();
 	for (int i = 0; i < w; i++){
@@ -60,7 +60,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -90,22 +90,22 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }
 
 
