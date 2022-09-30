@@ -23,7 +23,7 @@ bool ofXml::load(const std::filesystem::path & file){
 		xml = doc->root();
 		return true;
 	}else{
-		ofLogWarning("ofXml") << "Cannot load file " << file << ":" << res.description();
+		ofLogWarning("ofXml") << "Cannot load file " << file << ": " << res.description();
 		return false;
 	}
 }
