@@ -176,14 +176,14 @@ void ofOpenALSoundPlayer::initialize(){
 		alContext = alcCreateContext( alDevice, nullptr );
 		if( !alContext ){
 			ALCenum err = alcGetError( alDevice ); 
-			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not create OpenAL context : "<< getALCErrorString( err );
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not create OpenAL context: "<< getALCErrorString( err );
 			close();
 			return;
 		}
 
 		if( alcMakeContextCurrent( alContext )==ALC_FALSE ){
 			ALCenum err = alcGetError( alDevice ); 
-			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not make current the create OpenAL context : "<< getALCErrorString( err );
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not make current the create OpenAL context: "<< getALCErrorString( err );
 			close();
 			return;
 		};
@@ -222,7 +222,7 @@ void ofOpenALSoundPlayer::close(){
 			alContext = nullptr;
 		}
 		if( alcCloseDevice( alDevice )==ALC_FALSE ){
-			ofLogNotice("ofOpenALSoundPlayer") << "initialize(): error closing OpenAL device.";
+			ofLogNotice("ofOpenALSoundPlayer") << "initialize(): error closing OpenAL device";
 		}
 		alDevice = nullptr;
 	}
@@ -503,7 +503,7 @@ bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_s
 		bLoadedOk = stream(fileName, buffer);
 	}
 	if( !bLoadedOk ) {
-		ofLogError("ofOpenALSoundPlayer::load : ERROR loading file from ") << fileName;
+		ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't read \"" << fileName << "\"";
 		return false;
 	}
 
@@ -531,7 +531,7 @@ bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_s
 			alBufferData(buffers[i],format,&buffer[0],buffer.size()*2,samplerate);
 			err = alGetError();
 			if (err != AL_NO_ERROR){
-				ofLogError("ofOpenALSoundPlayer:") << "loadSound(): couldn't create buffer for \"" << fileName << "\": "
+				ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't create buffer for \"" << fileName << "\": "
 				<< (int) err << " " << getALErrorString(err);
 				return false;
 			}

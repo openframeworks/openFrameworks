@@ -50,7 +50,7 @@ bool ofXml::parse(const std::string & xmlStr){
 bool ofXml::save(const std::filesystem::path & file) const{
 	if(xml == doc->root()){
 		auto res = doc->save_file(ofToDataPath(file).c_str());
-		ofLogVerbose("ofXml")<<"ofXML Save : "<< res;
+		ofLogVerbose("ofXml")<<"save: "<< res;
 		ofLogVerbose("ofXml")<<this->toString();
 		return res;
 	}else{

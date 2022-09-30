@@ -1745,7 +1745,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				axisValuePending = true;
 				break;
 			default:
-				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?) : axis " << axis << " amount " << amount << endl;
+				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << endl;
 				break;
 			}
 		}else if (ev.type == EV_ABS){
@@ -1803,7 +1803,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					touchAxisValuePending = true;
 					break;
 				default:
-					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis : axis " << axis << " amount " << amount << endl;
+					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
