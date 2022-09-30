@@ -36,7 +36,7 @@ class ofApp : public ofBaseApp{
 		float windowWidth;
 		float windowHeight;
 		float viewerDistance;
-	
+
 		deque<glm::vec3> headPositionHistory;
 
 		ofVboMesh window;

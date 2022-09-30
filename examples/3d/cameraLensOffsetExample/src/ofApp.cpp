@@ -99,7 +99,7 @@ void ofApp::drawScene(bool isPreview){
 		ofNode().draw();
 		ofPopMatrix();
 		
-        ofMultMatrix(glm::inverse(headTrackedCamera.getProjectionMatrix()));
+		ofMultMatrix(glm::inverse(headTrackedCamera.getProjectionMatrix()));
 		
 		ofNoFill();
 		ofDrawBox(2.0f);
@@ -121,7 +121,7 @@ void ofApp::drawScene(bool isPreview){
 		window.drawVertices();
 		//
 		//--
-        ofPopStyle();
+		ofPopStyle();
 	}
 	
 	ofPushStyle();

@@ -31,7 +31,7 @@ class ofApp : public ofBaseApp{
 		ofVideoGrabber vidGrabber;
 		int camWidth;
 		int camHeight;
-    
-        string asciiCharacters;
-        ofTrueTypeFont font;
+	
+		string asciiCharacters;
+		ofTrueTypeFont font;
 };

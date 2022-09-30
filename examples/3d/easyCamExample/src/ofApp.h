@@ -22,6 +22,6 @@ class ofApp : public ofBaseApp {
 		void gotMessage(ofMessage msg);		
 	
 		void drawInteractionArea();
-        bool bHelpText;
+		bool bHelpText;
 		ofEasyCam cam; // add mouse controls for camera movement
 };

@@ -15,25 +15,25 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	//just set up the openFrameworks stuff
-    ofSetFrameRate(60);
-    ofSetVerticalSync(true);
-    ofBackground(255);
+	ofSetFrameRate(60);
+	ofSetVerticalSync(true);
+	ofBackground(255);
 
 	//initialize the variable so it's off at the beginning
-    usecamera = false;
+	usecamera = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	//don't move the points if we are using the camera
-    if(!usecamera){
-        glm::vec3 sumOfAllPoints(0,0,0);
-        for(unsigned int i = 0; i < points.size(); i++){
-            points[i].z -= 4;
-            sumOfAllPoints += points[i];
-        }
-        center = sumOfAllPoints / points.size();
-    }
+	if(!usecamera){
+		glm::vec3 sumOfAllPoints(0,0,0);
+		for(unsigned int i = 0; i < points.size(); i++){
+			points[i].z -= 4;
+			sumOfAllPoints += points[i];
+		}
+		center = sumOfAllPoints / points.size();
+	}
 	if( points.size() > 250 ) {
 		points.erase(points.begin());
 	}
@@ -54,9 +54,9 @@ void ofApp::draw(){
 
 	//if we're using the camera, start it.
 	//everything that you draw between begin()/end() shows up from the view of the camera
-    if(usecamera){
-        camera.begin();
-    }
+	if(usecamera){
+		camera.begin();
+	}
 	
 	auto verts = points;
 	if(usePolyline) {
@@ -65,7 +65,7 @@ void ofApp::draw(){
 	
 	ofSetColor(0);
 	//do the same thing from the first example...
-    ofMesh mesh;
+	ofMesh mesh;
 	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 	for(unsigned int i = 1; i < (int)verts.size(); i++){
 
@@ -118,9 +118,9 @@ void ofApp::draw(){
 
 
 	//if we're using the camera, take it away
-    if(usecamera){
-    	camera.end();
-    }
+	if(usecamera){
+		camera.end();
+	}
 	
 	ofSetColor( 40 );
 	string outString = "Move the mouse to add points to the line";
@@ -159,28 +159,28 @@ void ofApp::keyReleased(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
 	//if we are using the camera, the mouse moving should rotate it around the whole sculpture
-    if(usecamera){
-        float rotateAmount = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 360);
-        glm::vec3 furthestPoint;
-        if (points.size() > 0) {
-            furthestPoint = points[0];
-        }
-        else
-        {
-            furthestPoint = glm::vec3(x, y, 0);
-        }
+	if(usecamera){
+		float rotateAmount = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 360);
+		glm::vec3 furthestPoint;
+		if (points.size() > 0) {
+			furthestPoint = points[0];
+		}
+		else
+		{
+			furthestPoint = glm::vec3(x, y, 0);
+		}
 
-        glm::vec3 directionToFurthestPoint = (furthestPoint - center);
+		glm::vec3 directionToFurthestPoint = (furthestPoint - center);
 		glm::vec3 directionToFurthestPointRotated = glm::rotate(directionToFurthestPoint, ofDegToRad(rotateAmount), glm::vec3(0,1,0));
-        camera.setPosition(center + directionToFurthestPointRotated);
-        camera.lookAt(center);
-    }
+		camera.setPosition(center + directionToFurthestPointRotated);
+		camera.lookAt(center);
+	}
 	//otherwise add points like before
-    else{
-        glm::vec3 mousePoint(x,y,0);
-        points.push_back(mousePoint);
+	else{
+		glm::vec3 mousePoint(x,y,0);
+		points.push_back(mousePoint);
 		
-    }
+	}
 }
 
 //--------------------------------------------------------------

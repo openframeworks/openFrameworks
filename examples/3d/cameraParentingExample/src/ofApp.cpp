@@ -154,7 +154,7 @@ void ofApp::draw(){
 			ofSetColor(0, 255, 255);
 			glm::vec3 v1 = cam[i].getGlobalPosition();
 			glm::vec3 v2 = testNodes[lookatIndex[i]].getGlobalPosition();
-            ofDrawLine(v1,v2);
+			ofDrawLine(v1,v2);
 		}
 		
 		// draw line from cam to its parent
@@ -162,7 +162,7 @@ void ofApp::draw(){
 			ofSetColor(255, 255, 0);
 			glm::vec3 v1 = cam[i].getGlobalPosition();
 			glm::vec3 v2 = testNodes[parentIndex[i]].getGlobalPosition();
-            ofDrawLine(v1,v2);
+			ofDrawLine(v1,v2);
 		}
 	}
 	
