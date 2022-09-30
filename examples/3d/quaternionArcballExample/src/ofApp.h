@@ -1,8 +1,8 @@
 /**
  *
- * James George 
+ * James George
  * Quaternion Examples
- * 
+ *
  * A set of examples illustrating useful places to use quaternions
  *
  * ArcBall:
@@ -31,16 +31,16 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-			
+
 		//current state of the rotation
 		glm::quat curRot;
-		
+
 		//a place to store the mouse position so we can measure incremental change
 		glm::vec2 lastMouse;
-		
+
 		//slows down the rotation 1 = 1 degree per pixel
 		float dampen;
-		
+
 		float xspeed = 0.0;
 		float yspeed = 0.0;
 };

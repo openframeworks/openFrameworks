@@ -27,10 +27,10 @@ class ofApp : public ofBaseApp{
 		
 		ofxPanel gui;
 
-        ofLight light;
-        ofEasyCam cam;
-        ofPlanePrimitive plane;
-        ofMaterial roadMaterial;
+		ofLight light;
+		ofEasyCam cam;
+		ofPlanePrimitive plane;
+		ofMaterial roadMaterial;
 	
 		Truck truck;
 };

@@ -168,12 +168,12 @@ void ofApp::mouseDragged(int x, int y, int button){
 	//accumulate the changes in y inside of yspeed
 	yspeed = ofLerp(yspeed, (y-lastMouse.y) * dampen, 0.1);
 	
-    lastMouse = mouse;
+	lastMouse = mouse;
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    //store the last mouse point when it's first pressed to prevent popping
+	//store the last mouse point when it's first pressed to prevent popping
 	lastMouse = glm::vec2(x,y);
 }
 

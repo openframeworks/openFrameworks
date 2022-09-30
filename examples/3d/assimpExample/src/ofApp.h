@@ -23,16 +23,16 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
-    
-        ofxAssimpModelLoader model;
-    
-        bool bHelpText;
+	
+		ofxAssimpModelLoader model;
+	
+		bool bHelpText;
 		bool bAnimate;
-        bool bAnimateMouse;
-        float animationPosition;
+		bool bAnimateMouse;
+		float animationPosition;
 
-        ofMesh mesh;
-        ofLight	light;
+		ofMesh mesh;
+		ofLight	light;
 };
 
 #endif
