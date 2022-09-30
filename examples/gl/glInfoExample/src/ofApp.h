@@ -5,20 +5,20 @@
 
 
 typedef struct {
-    
-    string version;
-    string vendor;
-    string renderer;
-    
+	
+	string version;
+	string vendor;
+	string renderer;
+	
    
-    bool bPointSpritesSupported;
-    bool bVboSupported;
-    bool bShadersSupported;
-    int maxTextureSize;
-    int maxDimensions[2];
-    int maxLights;
-    
-    
+	bool bPointSpritesSupported;
+	bool bVboSupported;
+	bool bShadersSupported;
+	int maxTextureSize;
+	int maxDimensions[2];
+	int maxLights;
+	
+	
 } commonOpenGlInfo;
 
 
@@ -41,8 +41,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-    
-        commonOpenGlInfo info;
-    
-    
+	
+		commonOpenGlInfo info;
+	
+	
 };

@@ -53,7 +53,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -86,15 +86,15 @@ void ofApp::draw(){
 
 	ofSetHexColor(0x333333);
 	stringstream reportString;
-    reportString << "volume: (" << volume << ") \npan: (" << pan << ")\nsynthesis: " << ( bNoise ? "noise" : "sine wave" );
-    reportString << " (" << targetFrequency << "hz)\n";
+	reportString << "volume: (" << volume << ") \npan: (" << pan << ")\nsynthesis: " << ( bNoise ? "noise" : "sine wave" );
+	reportString << " (" << targetFrequency << "hz)\n";
 	ofDrawBitmapString(reportString.str(), leftX, topY + boxH + 20);
 
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -143,10 +143,10 @@ void ofApp::touchMoved(ofTouchEventArgs & touch){
 	if(touch.id ==  0){
 		int width = ofGetWidth();
 		pan = (float)touch.x / (float)width;
-        
-        int height = ofGetHeight();
-        targetFrequency = ((float)touch.y / (float)height) * 1000;
-        phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
+		
+		int height = ofGetHeight();
+		targetFrequency = ((float)touch.y / (float)height) * 1000;
+		phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
 	}
 }
 
@@ -157,7 +157,7 @@ void ofApp::touchUp(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -167,20 +167,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }

@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    ofBackground(0,0,0);
+	ofBackground(0,0,0);
 	ofSetFrameRate(60);
 	int maxSize = 0;
 	// get the max texture size available for openGL
