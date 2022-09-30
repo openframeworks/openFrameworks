@@ -37,7 +37,7 @@ void ofApp::threadedFunction() {
 				// print command and execute it
 				cout << cmd << endl;
 				ofSystem(cmd.c_str());
-				  
+
 		// step to the next word
 		step ++;
 		step %= words.size();

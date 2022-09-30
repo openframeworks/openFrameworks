@@ -19,25 +19,25 @@ void ofApp::setup(){
 	//
 	// An image is used to further emphasize the effect of various
 	// aspect-ratio preservation modes.
-	
+
 	ofSetFrameRate(30);
 	ofEnableAlphaBlending();
 
 	isScaling = false;
 	isAligning = true;
 	isRectScaling = false;
-	
+
 	scaleMode       = OF_SCALEMODE_FIT;
 	aspectRatioMode = OF_ASPECT_RATIO_KEEP;
-	
+
 	target_hAlign   = OF_ALIGN_HORZ_CENTER;
 	target_vAlign   = OF_ALIGN_VERT_CENTER;
-	
+
 	subject_hAlign  = OF_ALIGN_HORZ_CENTER;
 	subject_vAlign  = OF_ALIGN_VERT_CENTER;
-	
+
 	bUseImage = true;
-	
+
 	img.load("resolution_test_1080_mini.png");
 
 	targetColor  = ofColor(255,0,0);
@@ -50,12 +50,12 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 	workingSubjectRect = subjectRect;
 
 	// read the results of our keyboard input to determine
 	// the correct scaling and / or alignment operation.
-	
+
 	if(!isRectScaling) {
 		if(isScaling) {
 			if(isAligning) {
@@ -84,8 +84,8 @@ void ofApp::update(){
 		workingSubjectRect.scaleTo(targetRect,
 								   scaleMode);
 	}
-	
-	
+
+
 }
 
 //--------------------------------------------------------------
@@ -106,26 +106,26 @@ void ofApp::draw(){
 	// draw original subject label
 	ofSetColor(255);
 	ofDrawBitmapStringHighlight("SUBJECT", 16, ofGetHeight() - 20);
-	
+
 	// draw original target in lower right-hand corner
 	ofFill(); ofSetColor(targetColor, 80);
 	ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
-	
+
 	// draw original target frame in lower right-hand corner
 	ofNoFill(); ofSetColor(targetColor, 120);
 	ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
 	ofSetColor(255);
-	ofDrawBitmapStringHighlight("TARGET", ofGetWidth() - 65, ofGetHeight() - 20);    
-	
+	ofDrawBitmapStringHighlight("TARGET", ofGetWidth() - 65, ofGetHeight() - 20);
+
 	// draw target rectangle in center
 	drawAlignRect(targetRect,  targetColor,  target_hAlign,  target_vAlign, false);
-	
+
 	// draw aligned / scaled subject with respect to the target
 	drawAlignRect(workingSubjectRect, subjectColor, subject_hAlign, subject_vAlign, bUseImage);
 
 	// make the menu
 	stringstream ss;
-	
+
 	ss << "Keys:" << endl;
 	ss << "----------------------------------------------------------" << endl;
 	ss << " New Subject / Target (space) " << endl;
@@ -151,7 +151,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	
+
 	// define keyboard interactions
 	if(key == ' ') {
 		makeNewTarget();
@@ -211,15 +211,15 @@ void ofApp::makeNewSubject() {
 								  img.getWidth(),
 								  img.getHeight());
 	}
-	
+
 	// copy the subject to the working subject so it can be modified.
 	workingSubjectRect = subjectRect;
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::makeNewTarget() {
-	
+
 	// create a random target rectangle aligned to the center of the screen
 	targetRect.setFromCenter(ofGetWidth()  / 2.0f,
 							 ofGetHeight() / 2.0f,
@@ -233,7 +233,7 @@ void ofApp::drawAlignRect(const ofRectangle& rect,
 							ofAlignHorz hAlign,
 							ofAlignVert vAlign,
 							bool drawImage) {
-	
+
 	// draw the rect -- draw the image if using an image
 	ofFill();
 	if(drawImage) {
@@ -243,11 +243,11 @@ void ofApp::drawAlignRect(const ofRectangle& rect,
 		ofSetColor(color, 80);
 		ofDrawRectangle(rect);
 	}
-	
+
 	ofNoFill();
 	ofSetColor(color, 120);
 	ofDrawRectangle(rect);
-	
+
 	// draw the alignment marks if applicable
 	if(isAligning && !isRectScaling) {
 		drawHorzAlignMark(rect, color, hAlign);

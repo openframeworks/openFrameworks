@@ -5,29 +5,29 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofEnableAlphaBlending();
-	int camWidth 		= 320;	// try to grab at this size. 
+	int camWidth 		= 320;	// try to grab at this size.
 	int camHeight 		= 240;
-	
+
 	vidGrabber.setVerbose(true);
 	vidGrabber.setup(camWidth,camHeight);
-	
+
 	fingerMovie.load("fingers.mov");
 	fingerMovie.play();
-	
+
 	logoImg.load("colors.jpg");
 	multimaskImg.load("mask.jpg");
-	
+
 	fbo.allocate(camWidth,camHeight);
 	maskFbo.allocate(camWidth,camHeight);
-	
+
 	//ofSetWindowShape(camWidth, camHeight*2);
-	
+
 	// There are 3 of ways of loading a shader:
 	//
-	//  1 - Using just the name of the shader and ledding ofShader look for .frag and .vert: 
+	//  1 - Using just the name of the shader and ledding ofShader look for .frag and .vert:
 	//      Ex.: shader.load( "myShader");
 	//
-	//  2 - Giving the right file names for each one: 
+	//  2 - Giving the right file names for each one:
 	//      Ex.: shader.load( "myShader.vert","myShader.frag");
 	//
 	//  3 - And the third one is passing the shader programa on a single string;
@@ -40,30 +40,30 @@ void ofApp::setup(){
 
 									 void main (void){
 										 vec2 pos = gl_TexCoord[0].st;
-										 
+
 										 vec4 rTxt = texture2DRect(tex0, pos);
 										 vec4 gTxt = texture2DRect(tex1, pos);
 										 vec4 bTxt = texture2DRect(tex2, pos);
 										 vec4 mask = texture2DRect(maskTex, pos);
-										 
+
 										 vec4 color = vec4(0,0,0,0);
 										 color = mix(color, rTxt, mask.r );
 										 color = mix(color, gTxt, mask.g );
 										 color = mix(color, bTxt, mask.b );
-										 
+
 										 gl_FragColor = color;
 									 }
 									 );
-	
+
 	shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram);
-	shader.linkProgram(); 
-	
+	shader.linkProgram();
+
 	// Let's clear the FBOs
-	// otherwise it will bring some junk with it from the memory    
+	// otherwise it will bring some junk with it from the memory
 	fbo.begin();
 	ofClear(0,0,0,255);
 	fbo.end();
-	
+
 	maskFbo.begin();
 	ofClear(0,0,0,255);
 	maskFbo.end();
@@ -73,13 +73,13 @@ void ofApp::setup(){
 void ofApp::update(){
 	vidGrabber.update();
 	fingerMovie.update();
-		
-	// This just 
+
+	// This just
 	maskFbo.begin();
 	ofClear(255, 0, 0,255);
 	multimaskImg.draw( mouseX-multimaskImg.getWidth()*0.5, 0 );
 	maskFbo.end();
-	
+
 	// MULTITEXTURE MIXING FBO
 	//
 	fbo.begin();
@@ -93,14 +93,14 @@ void ofApp::update(){
 	shader.setUniformTexture("tex2", fingerMovie.getTexture() , 3 );
 	// Pass the mask texture
 	shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );
-	
+
 	// We are using this image just as a frame where the pixels can be arrange
-	// this could be a mesh also. 
+	// this could be a mesh also.
 	// Comment "shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );" to se how there is two ways
 	// of passing a texture to the shader
-	// 
+	//
 	maskFbo.draw(0,0);
-	
+
 	shader.end();
 	fbo.end();
 
@@ -110,36 +110,36 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofBackground(ofColor::gray);
-	
+
 	// draw everything
 	ofSetColor(255);
 	vidGrabber.draw(5,5,320,240);
 	ofSetColor(ofColor::red);
 	ofDrawBitmapString("RED", 5+30, 5+30);
-	
+
 	ofSetColor(255);
 	logoImg.draw(320+10,5,320,240);
 	ofSetColor(ofColor::green);
 	ofDrawBitmapString("GREEN", 320+10+30,5+30);
 
-	
+
 	ofSetColor(255);
 	fingerMovie.draw(320*2+15,5,320,240);
 	ofSetColor(ofColor::blue);
 	ofDrawBitmapString("BLUE", 320*2+5+30,5+30);
-	
-	
+
+
 	ofSetColor(255);
 	maskFbo.draw(320+10,240+10,320,240);
 	ofDrawBitmapString("RGB MASK", 320+10+30,240+10+30);
-	
+
 	fbo.draw(320+10,240*2+15,320,240);
 	ofDrawBitmapString("Final FBO", 320+10+30,240*2+15+30);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -188,6 +188,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

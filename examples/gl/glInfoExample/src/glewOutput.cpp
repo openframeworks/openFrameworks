@@ -22,7 +22,7 @@ void glewInfoFunc (const char* name, GLint undefined){
 	printf( "  %s:", name);
 	for (i=0; i<60-strlen(name); i++) printf( " ");
 	printf( "%s\n", undefined ? "MISSING" : "OK");
-   
+
 }
 
 
@@ -40,7 +40,7 @@ void glewInfo_GL_VERSION_1_1 (void)
 void glewInfo_GL_VERSION_1_2 (void)
 {
 	glewPrintExt("GL_VERSION_1_2", GLEW_VERSION_1_2, GLEW_VERSION_1_2, GLEW_VERSION_1_2);
-	
+
 	glewInfoFunc("glCopyTexSubImage3D", glCopyTexSubImage3D == NULL);
 	glewInfoFunc("glDrawRangeElements", glDrawRangeElements == NULL);
 	glewInfoFunc("glTexImage3D", glTexImage3D == NULL);
@@ -63,7 +63,7 @@ void glewInfo_GL_VERSION_1_2_1 (void)
 void glewInfo_GL_VERSION_1_3 (void)
 {
 	glewPrintExt("GL_VERSION_1_3", GLEW_VERSION_1_3, GLEW_VERSION_1_3, GLEW_VERSION_1_3);
-	
+
 	glewInfoFunc("glActiveTexture", glActiveTexture == NULL);
 	glewInfoFunc("glClientActiveTexture", glClientActiveTexture == NULL);
 	glewInfoFunc("glCompressedTexImage1D", glCompressedTexImage1D == NULL);
@@ -119,7 +119,7 @@ void glewInfo_GL_VERSION_1_3 (void)
 void glewInfo_GL_VERSION_1_4 (void)
 {
 	glewPrintExt("GL_VERSION_1_4", GLEW_VERSION_1_4, GLEW_VERSION_1_4, GLEW_VERSION_1_4);
-	
+
 	glewInfoFunc("glBlendColor", glBlendColor == NULL);
 	glewInfoFunc("glBlendEquation", glBlendEquation == NULL);
 	glewInfoFunc("glBlendFuncSeparate", glBlendFuncSeparate == NULL);
@@ -176,7 +176,7 @@ void glewInfo_GL_VERSION_1_4 (void)
 void glewInfo_GL_VERSION_1_5 (void)
 {
 	glewPrintExt("GL_VERSION_1_5", GLEW_VERSION_1_5, GLEW_VERSION_1_5, GLEW_VERSION_1_5);
-	
+
 	glewInfoFunc("glBeginQuery", glBeginQuery == NULL);
 	glewInfoFunc("glBindBuffer", glBindBuffer == NULL);
 	glewInfoFunc("glBufferData", glBufferData == NULL);
@@ -205,7 +205,7 @@ void glewInfo_GL_VERSION_1_5 (void)
 void glewInfo_GL_VERSION_2_0 (void)
 {
 	glewPrintExt("GL_VERSION_2_0", GLEW_VERSION_2_0, GLEW_VERSION_2_0, GLEW_VERSION_2_0);
-	
+
 	glewInfoFunc("glAttachShader", glAttachShader == NULL);
 	glewInfoFunc("glBindAttribLocation", glBindAttribLocation == NULL);
 	glewInfoFunc("glBlendEquationSeparate", glBlendEquationSeparate == NULL);
@@ -308,7 +308,7 @@ void glewInfo_GL_VERSION_2_0 (void)
 void glewInfo_GL_VERSION_2_1 (void)
 {
 	glewPrintExt("GL_VERSION_2_1", GLEW_VERSION_2_1, GLEW_VERSION_2_1, GLEW_VERSION_2_1);
-	
+
 	glewInfoFunc("glUniformMatrix2x3fv", glUniformMatrix2x3fv == NULL);
 	glewInfoFunc("glUniformMatrix2x4fv", glUniformMatrix2x4fv == NULL);
 	glewInfoFunc("glUniformMatrix3x2fv", glUniformMatrix3x2fv == NULL);
@@ -324,7 +324,7 @@ void glewInfo_GL_VERSION_2_1 (void)
 void glewInfo_GL_VERSION_3_0 (void)
 {
 	glewPrintExt("GL_VERSION_3_0", GLEW_VERSION_3_0, GLEW_VERSION_3_0, GLEW_VERSION_3_0);
-	
+
 	glewInfoFunc("glBeginConditionalRender", glBeginConditionalRender == NULL);
 	glewInfoFunc("glBeginTransformFeedback", glBeginTransformFeedback == NULL);
 	glewInfoFunc("glBindFragDataLocation", glBindFragDataLocation == NULL);
@@ -389,7 +389,7 @@ void glewInfo_GL_VERSION_3_0 (void)
 void glewInfo_GL_VERSION_3_1 (void)
 {
 	glewPrintExt("GL_VERSION_3_1", GLEW_VERSION_3_1, GLEW_VERSION_3_1, GLEW_VERSION_3_1);
-	
+
 	glewInfoFunc("glDrawArraysInstanced", glDrawArraysInstanced == NULL);
 	glewInfoFunc("glDrawElementsInstanced", glDrawElementsInstanced == NULL);
 	glewInfoFunc("glPrimitiveRestartIndex", glPrimitiveRestartIndex == NULL);
@@ -403,7 +403,7 @@ void glewInfo_GL_VERSION_3_1 (void)
 void glewInfo_GL_VERSION_3_2 (void)
 {
 	glewPrintExt("GL_VERSION_3_2", GLEW_VERSION_3_2, GLEW_VERSION_3_2, GLEW_VERSION_3_2);
-	
+
 	glewInfoFunc("glFramebufferTexture", glFramebufferTexture == NULL);
 	glewInfoFunc("glGetBufferParameteri64v", glGetBufferParameteri64v == NULL);
 	glewInfoFunc("glGetInteger64i_v", glGetInteger64i_v == NULL);
@@ -416,7 +416,7 @@ void glewInfo_GL_VERSION_3_2 (void)
 void glewInfo_GL_VERSION_3_3 (void)
 {
 	glewPrintExt("GL_VERSION_3_3", GLEW_VERSION_3_3, GLEW_VERSION_3_3, GLEW_VERSION_3_3);
-	
+
 	glewInfoFunc("glVertexAttribDivisor", glVertexAttribDivisor == NULL);
 }
 
@@ -427,7 +427,7 @@ void glewInfo_GL_VERSION_3_3 (void)
 void glewInfo_GL_VERSION_4_0 (void)
 {
 	glewPrintExt("GL_VERSION_4_0", GLEW_VERSION_4_0, GLEW_VERSION_4_0, GLEW_VERSION_4_0);
-	
+
 	glewInfoFunc("glBlendEquationSeparatei", glBlendEquationSeparatei == NULL);
 	glewInfoFunc("glBlendEquationi", glBlendEquationi == NULL);
 	glewInfoFunc("glBlendFuncSeparatei", glBlendFuncSeparatei == NULL);
@@ -455,7 +455,7 @@ void glewInfo_GL_VERSION_4_2 (void)
 #endif
 
 void printGlewInfo(){
-	
+
 	#ifdef GL_VERSION_1_1
 		glewInfo_GL_VERSION_1_1();
 	#endif /* GL_VERSION_1_1 */

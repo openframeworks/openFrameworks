@@ -18,7 +18,7 @@ bool compareSaturation( const colorNameMapping& s1, const colorNameMapping& s2 )
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	
+
 	// build a map from name to ofColor of all the named OF colors;
 
 	colorNameMap["white"] = ofColor::white;
@@ -171,33 +171,33 @@ void ofApp::setup(){
 
 	// this map is useful if we want to address the colors by string.
 	// since we might want to sort this, we can put them in a vector also
-	
+
 	for (unsigned int i = 0; i < colorNameMap.size(); i++){
-		
+
 		map<string, ofColor>::iterator mapEntry = colorNameMap.begin();
 		std::advance( mapEntry, i );
-		
+
 		colorNameMapping mapping;
 		mapping.name = mapEntry->first;
 		mapping.color = mapEntry->second;
 		colorNames.push_back(mapping);
-	
+
 	}
-	
+
 	ofBackground(255);
 
 	ofSetVerticalSync(true);
-	
+
 	ofEnableAlphaBlending();
-	
-	
+
+
 	sortedType = 1; // by name, at the start
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 	// smoothing the mouse a bit over time
 
 	mouseSmoothed = 0.95 * mouseSmoothed + 0.05 * glm::vec3(mouseX, mouseY,0);
@@ -206,44 +206,44 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+
 	// calculate the total size needed to display all the colors
-	
+
 	float totalSize = (ceil(colorNameMap.size()/3.0)) * 50 - ofGetHeight() + 60;
-	
-	// map the smoothed mouse to this: 
-	
+
+	// map the smoothed mouse to this:
+
 	float offset = ofMap(mouseSmoothed.y, 0, ofGetHeight(), 0, totalSize, true);
-	
+
 	// draw all the colors
 	// note this could be optimized, since we're drawing plenty that's offscreen here.
-	
-  
-	
+
+
+
 	for (unsigned int i = 0; i < colorNames.size(); i++){
-	
+
 		int x = (i % 3) * ofGetWidth()/3.0;
 		int y = (floor(i / 3)) * 50;
-		
+
 		ofSetColor( colorNames[i].color );
 		ofDrawRectangle(0 + x, y - offset, (i%3 == 2) ? ofGetWidth() - x : ofGetWidth()/3.0, 50);
-		
+
 		ofDrawBitmapStringHighlight(colorNames[i].name, 20 + x, y -offset+30, ofColor::white, ofColor::black);
-		
+
 	}
 
-	
-	
+
+
 	ofSetColor(0);
 	ofDrawRectangle(0, ofGetHeight()-60, ofGetWidth(), 60);
 	ofDrawBitmapStringHighlight("press '1' to sort by name, '2' to sort by hue,\n'3' to sort by brightness, '4' to sort by saturation", 20, ofGetHeight()-60 + 30, ofColor::black, ofColor::white);
-	
-	
+
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	
+
 	if (key == '1'){
 		if (sortedType != 1){
 			sortedType = 1;
@@ -313,6 +313,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

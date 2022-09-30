@@ -7,8 +7,8 @@
  * The Arduio FIO and Arduino Mini should also work.
  * The Arduino MEGA and other variants based on microcontrollers
  * other than the ATMega168 and ATMega328 are not currently supported.
- * 
- * To use this example, open Arduino (preferably Arduino 1.0) and 
+ *
+ * To use this example, open Arduino (preferably Arduino 1.0) and
  * navigate to File -> Examples -> Firmata and open StandardFirmata.
  * Compile and upload StandardFirmata for your board, then close
  * the Arduino application and run this application.
@@ -32,7 +32,7 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 
 	ofBackground(255,0,130);
-	
+
 	buttonState = "digital pin:";
 	potValue = "analog pin:";
 
@@ -44,7 +44,7 @@ void ofApp::setup(){
 	// you can get this from the Arduino application or via command line
 	// for OSX, in your terminal type "ls /dev/tty.*" to get a list of serial devices
 	ard.connect("/dev/tty.usbmodemfd121", 57600);
-	
+
 	// listen for EInitialized notification. this indicates that
 	// the arduino is ready to receive commands and it is safe to
 	// call setupArduino()
@@ -61,29 +61,29 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::setupArduino(const int & version) {
-	
+
 	// remove listener because we don't need it anymore
 	ofRemoveListener(ard.EInitialized, this, &ofApp::setupArduino);
-	
+
 	// it is now safe to send commands to the Arduino
 	bSetupArduino = true;
-	
+
 	// print firmware name and version to the console
-	ofLogNotice() << ard.getFirmwareName(); 
+	ofLogNotice() << ard.getFirmwareName();
 	ofLogNotice() << "firmata v" << ard.getMajorFirmwareVersion() << "." << ard.getMinorFirmwareVersion();
-		
+
 	// Note: pins A0 - A5 can be used as digital input and output.
 	// Refer to them as pins 14 - 19 if using StandardFirmata from Arduino 1.0.
 	// If using Arduino 0022 or older, then use 16 - 21.
 	// Firmata pin numbering changed in version 2.3 (which is included in Arduino 1.0)
-	
+
 	// set pins D2 and A5 to digital input
 	ard.sendDigitalPinMode(2, ARD_INPUT);
 	ard.sendDigitalPinMode(19, ARD_INPUT);  // pin 21 if using StandardFirmata from Arduino 0022 or older
 
 	// set pin A0 to analog input
 	ard.sendAnalogPinReporting(0, ARD_ANALOG);
-	
+
 	// set pin D13 as digital output
 	ard.sendDigitalPinMode(13, ARD_OUTPUT);
 	// set pin A4 as digital output
@@ -91,14 +91,14 @@ void ofApp::setupArduino(const int & version) {
 
 	// set pin D11 as PWM (analog output)
 	ard.sendDigitalPinMode(11, ARD_PWM);
-	
+
 	// attach a servo to pin D9
 	// servo motors can only be attached to pin D3, D5, D6, D9, D10, or D11
 	ard.sendServoAttach(9);
-	
+
 	// Listen for changes on the digital and analog pins
 	ofAddListener(ard.EDigitalPinChanged, this, &ofApp::digitalPinChanged);
-	ofAddListener(ard.EAnalogPinChanged, this, &ofApp::analogPinChanged);    
+	ofAddListener(ard.EAnalogPinChanged, this, &ofApp::analogPinChanged);
 }
 
 //--------------------------------------------------------------
@@ -107,7 +107,7 @@ void ofApp::updateArduino(){
 	// update the arduino, get any data or messages.
 	// the call to ard.update() is required
 	ard.update();
-	
+
 	// do not send anything until the arduino has been set up
 	if (bSetupArduino) {
 		// fade the led connected to pin D11
@@ -140,21 +140,21 @@ void ofApp::analogPinChanged(const int & pinNum) {
 //--------------------------------------------------------------
 void ofApp::draw(){
 	bgImage.draw(0,0);
-	
+
 	ofEnableAlphaBlending();
 	ofSetColor(0, 0, 0, 127);
 	ofDrawRectangle(510, 15, 275, 150);
 	ofDisableAlphaBlending();
-	
+
 	ofSetColor(255, 255, 255);
 	if (!bSetupArduino){
 		font.drawString("arduino not ready...\n", 515, 40);
 	} else {
 		font.drawString(potValue + "\n" + buttonState +
 						"\nsending pwm: " + ofToString((int)(128 + 128 * sin(ofGetElapsedTimef()))), 515, 40);
-		
+
 		ofSetColor(64, 64, 64);
-		smallFont.drawString("If a servo is attached, use the left arrow key to rotate " 
+		smallFont.drawString("If a servo is attached, use the left arrow key to rotate "
 							 "\ncounterclockwise and the right arrow key to rotate clockwise.", 200, 550);
 		ofSetColor(255, 255, 255);
 
@@ -227,6 +227,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

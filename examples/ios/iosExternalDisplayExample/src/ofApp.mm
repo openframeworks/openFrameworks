@@ -8,15 +8,15 @@ MyViewController * viewController = nil;
 AlertViewDelegate * alertViewDelegate = nil;
 
 //--------------------------------------------------------------
-void ofApp::setup(){	
-	
+void ofApp::setup(){
+
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
-	
+
 	ofBackground(70);
-	
-	ofSetLogLevel(OF_LOG_VERBOSE);  
-	
+
+	ofSetLogLevel(OF_LOG_VERBOSE);
+
 	//-- create buttons.
 	int buttonW = 140;
 	int buttonH = 76;
@@ -24,7 +24,7 @@ void ofApp::setup(){
 	buttonExternalDisplayRect.height = buttonH;
 	buttonExternalDisplayRect.x = (int)((ofGetWidth() - buttonW * 2) / 3);
 	buttonExternalDisplayRect.y = (int)(ofGetHeight() * 0.75);
-	
+
 	buttonMirrorDisplayRect.width = buttonW;
 	buttonMirrorDisplayRect.height = buttonH;
 	buttonMirrorDisplayRect.x = (int)(buttonExternalDisplayRect.x * 2 + buttonW);
@@ -38,18 +38,18 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+
 	ofDisableSmoothing();
 	ofSetLineWidth(2);
-	
+
 	ofPoint p1;
 	ofPoint p2;
-	
+
 	//-- draw width arrow.
-	
+
 	p1.set(15, ofGetHeight()-10);
 	p2.set(ofGetWidth()-15, ofGetHeight()-10);
-	
+
 	ofSetColor(ofColor::magenta);
 	ofPushMatrix();
 	{
@@ -71,12 +71,12 @@ void ofApp::draw(){
 	ofPopMatrix();
 	ofDrawLine( p1.x, p1.y, p2.x, p2.y);
 	ofDrawBitmapString(ofToString(ofGetWidth()), ofGetWidth()*0.5-10, ofGetHeight()-20);
-	
+
 	//-- draw height arrow.
-	
+
 	p1.set(ofGetWidth()-10, 15);
 	p2.set(ofGetWidth()-10, ofGetHeight()-15);
-	
+
 	ofSetColor(ofColor::green);
 	ofPushMatrix();
 	{
@@ -98,59 +98,59 @@ void ofApp::draw(){
 	ofPopMatrix();
 	ofDrawLine( p1.x, p1.y, p2.x, p2.y);
 	ofDrawBitmapString(ofToString(ofGetHeight()), ofGetWidth()-50, ofGetHeight()*0.5-5);
-	
+
 	ofSetLineWidth(1);
-	
+
 	//-- debug information.
-	
+
 	ofSetColor(ofColor::white);
-	
+
 	int x = ofGetWidth() * 0.1;
 	int y = ofGetHeight() * 0.1;
 	int p = 16;
 
 	if(ofxiOSExternalDisplay::isDisplayingOnDeviceScreen()){
 		ofDrawBitmapString("DISPLAYING ON DEVICE SCREEN", (int)(ofGetWidth()*0.5-110), (int)(ofGetHeight()* 0.5));
-		
+
 		int buttonX;
 		int buttonY;
 
 		ofFill();
 		ofSetColor(ofColor::white);
 		ofDrawRectangle(buttonExternalDisplayRect.x, buttonExternalDisplayRect.y, buttonExternalDisplayRect.width, buttonExternalDisplayRect.height);
-		
+
 		ofNoFill();
 		ofSetColor(ofColor::black);
 		ofDrawRectangle(buttonExternalDisplayRect.x, buttonExternalDisplayRect.y, buttonExternalDisplayRect.width, buttonExternalDisplayRect.height);
-		
+
 		ofFill();
 		ofSetColor(ofColor::black);
 		buttonX = buttonExternalDisplayRect.x + 6;
 		buttonY = (int)buttonExternalDisplayRect.y + buttonExternalDisplayRect.height * 0.5 + 5;
 		ofDrawBitmapString("EXTERNAL DISPLAY", buttonX, buttonY);
-		
+
 		ofFill();
 		ofSetColor(ofColor::white);
-		ofDrawRectangle(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);        
-		
+		ofDrawRectangle(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);
+
 		ofNoFill();
 		ofSetColor(ofColor::black);
-		ofDrawRectangle(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);        
-		
+		ofDrawRectangle(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);
+
 		ofFill();
 		ofSetColor(ofColor::black);
 		buttonX = buttonMirrorDisplayRect.x + 35;
 		buttonY = (int)buttonMirrorDisplayRect.y + buttonMirrorDisplayRect.height * 0.5 + 5;
 		string mirrorMode = ofxiOSExternalDisplay::isMirroring() ? "OFF" : "ON";
 		ofDrawBitmapString("MIRROR " + mirrorMode, buttonX, buttonY);
-		
+
 		ofSetColor(ofColor::white);
 	} else {
 		ofDrawBitmapString("DISPLAYING ON EXTERNAL SCREEN", (int)(ofGetWidth()*0.5-110), (int)(ofGetHeight()* 0.5));
 	}
-	
+
 	y+=p;
-	
+
 	ofDrawBitmapString("frame num   = " + ofToString(ofGetFrameNum()), x, y+=p);
 	ofDrawBitmapString("frame rate  = " + ofToString(ofGetFrameRate()), x, y+=p);
 	ofDrawBitmapString("touch x     = " + ofToString(mouseX), x, y+=p);
@@ -164,45 +164,45 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::presentExternalDisplayPopup(){
-	
+
 	alertViewDelegate = [[[AlertViewDelegate alloc] init] retain];
-	
-	UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"External Display" 
-													  message:@"Select a External Display Mode" 
-													 delegate:alertViewDelegate 
-											cancelButtonTitle:@"Cancel" 
+
+	UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"External Display"
+													  message:@"Select a External Display Mode"
+													 delegate:alertViewDelegate
+											cancelButtonTitle:@"Cancel"
 											otherButtonTitles:nil] retain];
-	
+
 	vector<ofxiOSExternalDisplayMode> displayModes;
 	displayModes = ofxiOSExternalDisplay::getExternalDisplayModes();
-	
+
 	[alert addButtonWithTitle:@"Preferred Mode"];
-	
+
 	for(int i = 0; i < displayModes.size(); i++){
 		string buttonText = ofToString(displayModes[i].width) + " x " + ofToString(displayModes[i].height);
 		[alert addButtonWithTitle:ofxStringToNSString(buttonText)];
 	}
-	
+
 	[alert show];
 	[alert release];
 }
 
 //--------------------------------------------------------------
 void ofApp::presentExternalDisplayNotFoundPopup(){
-	UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"External Display" 
+	UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"External Display"
 													  message:@"External Display not found.\nConnect to an external display using a VGA adapter or AirPlay."
-													 delegate:nil 
-											cancelButtonTitle:@"OK" 
+													 delegate:nil
+											cancelButtonTitle:@"OK"
 											otherButtonTitles:nil] retain];
 	[alert show];
 	[alert release];
 }
 
 void ofApp::presentMirroringFailedPopup(){
-	UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"Mirroring Failed" 
+	UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"Mirroring Failed"
 													  message:@"Either you are not connected to an external display or your device does not support mirroring."
-													 delegate:nil 
-											cancelButtonTitle:@"OK" 
+													 delegate:nil
+											cancelButtonTitle:@"OK"
 											otherButtonTitles:nil] retain];
 	[alert show];
 	[alert release];
@@ -218,7 +218,7 @@ void ofApp::popupDismissed(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-	
+
 	if(buttonExternalDisplayRect.inside(touch.x, touch.y)){
 		if(ofxiOSExternalDisplay::isExternalScreenConnected()){
 			presentExternalDisplayPopup();
@@ -235,7 +235,7 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
 				if(!ofxiOSExternalDisplay::mirrorOn()){
 					presentMirroringFailedPopup();
 				}
-					
+
 			}
 		} else {
 			presentMirroringFailedPopup();
@@ -260,7 +260,7 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-	
+
 }
 
 //--------------------------------------------------------------

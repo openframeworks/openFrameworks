@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofBackgroundHex(0xc5c9b2);
-	
+
 	bTimerReached = false;
 	startTime = ofGetElapsedTimeMillis();  // get the start time
 	endTime = (int)ofRandom(1000, 5000); // in milliseconds
@@ -11,26 +11,26 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	
+
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
 
 	float barWidth = 500;
-		
+
 	// update the timer this frame
 	float timer = ofGetElapsedTimeMillis() - startTime;
-	
+
 	if(timer >= endTime && !bTimerReached) {
-		bTimerReached = true;        
+		bTimerReached = true;
 		ofMessage msg("Timer Reached");
 		ofSendMessage(msg);
 	}
-	
+
 	// the background to the progress bar
 	ofSetColor(100);
 	ofDrawRectangle((ofGetWidth()-barWidth)/2, ofGetHeight()/2, barWidth, 30);
-	
+
 	// get the percentage of the timer
 	float pct = ofMap(timer, 0.0, endTime, 0.0, 1.0, true);
 	ofSetHexColor(0xf02589);
@@ -39,13 +39,13 @@ void ofApp::draw(){
 	// draw the percentage
 	ofSetColor(20);
 	ofDrawBitmapString(ofToString(pct*100, 0)+"%", ((ofGetWidth()-barWidth)/2)+barWidth+10, (ofGetHeight()/2)+20);
-	
+
 	// the timer was reached :)
 	if(bTimerReached) {
 		ofSetColor(20);
 		ofDrawBitmapString("Timer Reached!", (ofGetWidth()-100)/2, (ofGetHeight()/2)+70);
 	}
-	
+
 	// some information about the timer
 	string  info  = "FPS:        "+ofToString(ofGetFrameRate(),0)+"\n";
 			info += "Start Time: "+ofToString(startTime, 1)+"\n";
@@ -114,6 +114,6 @@ void ofApp::windowResized(int w, int h){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

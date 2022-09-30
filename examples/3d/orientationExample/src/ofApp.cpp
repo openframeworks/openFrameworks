@@ -8,19 +8,19 @@
  */
 //--------------------------------------------------------------
 void rotateToNormal(glm::vec3 normal) {
-	
+
 	// the normal must be normalized.
 	normal = glm::normalize(normal);
-	
+
 	// the standard Z axis.
 	glm::vec3 axis(0, 0, 1);
-	
+
 	// create the quaternion which represents the rotation between normal and axis
 	glm::quat rotation = glm::rotation(axis, normal);
-	
+
 	// transform the quaternion to a 4x4 matrix using the glm function for such.
 	glm::mat4 rotationMatrix = glm::toMat4(rotation);
-	
+
 	// multiply the rotation matrix with the current matrix.
 	// This means that the rotation matrix, thus the transformation it represents, will be applied on over the current transformation matrix.
 	ofMultMatrix( rotationMatrix );

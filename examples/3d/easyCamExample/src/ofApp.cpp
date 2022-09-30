@@ -27,22 +27,22 @@ void ofApp::draw(){
 	ofEnableDepthTest();
 	ofSetColor(ofColor::red);//RIGHT
 	ofDrawCone(100, 0, 0, 50, 100);
-	
+
 	ofSetColor(ofColor::white);//LEFT
 	ofDrawSphere(-100, 0, 0, 50);
-	
+
 	ofSetColor(ofColor::blue);//BOTTOM
 	ofDrawBox(0, 100, 0, 100);
-	
+
 	ofSetColor(ofColor::cyan);//TOP
 	ofDrawCylinder(0, -100, 0, 50, 100);
-	
+
 	ofSetColor(ofColor::yellow);//FRONT
 	ofDrawBox(0, 0, 100, 100);
-	
+
 	ofSetColor(ofColor::magenta);//BACK
 	ofDrawBox(0, 0, -100, 100);
-	
+
 	ofDrawGrid(20,10,true,true,true,true);
 	ofDisableDepthTest();
 	cam.end();
