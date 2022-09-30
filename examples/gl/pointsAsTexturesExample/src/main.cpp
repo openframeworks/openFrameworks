@@ -8,7 +8,7 @@ int main( ){
 
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	#ifdef TARGET_OPENGLES
-    ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
+	ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
 	#endif
 
 	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen

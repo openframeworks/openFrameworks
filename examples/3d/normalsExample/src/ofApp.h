@@ -20,14 +20,14 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
-        ofEasyCam cam;
-        ofVboMesh mesh;
-        ofLight light;
-    
-    float radius;
-    int max; 
-    float zfreq;
-    float zamt;
+	
+		ofEasyCam cam;
+		ofVboMesh mesh;
+		ofLight light;
+	
+	float radius;
+	int max; 
+	float zfreq;
+	float zamt;
 		
 };

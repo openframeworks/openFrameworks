@@ -33,18 +33,18 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		// we don't actually use these
-        // just checking to see if they
-        // all work in the same place :)
+		// just checking to see if they
+		// all work in the same place :)
 
-        ofxCvGrayscaleImage cvGray;
-        ofxTCPClient client;
-        ofxTCPServer server;
-        ofxOscSender osc_sender;
-        ofxXmlSettings settings;
+		ofxCvGrayscaleImage cvGray;
+		ofxTCPClient client;
+		ofxTCPServer server;
+		ofxOscSender osc_sender;
+		ofxXmlSettings settings;
 	ofxAssimpModelLoader betterModelLoader;
 	ofxThreadedImageLoader threadedLoader;
 	ofxKinect kinect;
 	ofxPanel gui;
 	ofxSvg svg;
-    ofxXmlPoco xml;
+	ofxXmlPoco xml;
 };

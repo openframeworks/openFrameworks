@@ -30,7 +30,7 @@ void ofApp::setup() {
 		p *= radius;
 		
 		addPoint(p.x, p.y, p.z);
-    
+	
 	}
 	
 	// upload the data to the vbo
@@ -41,10 +41,10 @@ void ofApp::setup() {
 	
 	// load the shader
 	#ifdef TARGET_OPENGLES
-        shader.load("shaders_gles/shader");
+		shader.load("shaders_gles/shader");
 	#else
-        shader.load("shaders/shader"); 
-        #endif
+		shader.load("shaders/shader"); 
+		#endif
 
 }
 

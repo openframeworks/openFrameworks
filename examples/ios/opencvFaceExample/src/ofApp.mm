@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
-    ofSetOrientation( OF_ORIENTATION_90_RIGHT );
+	ofSetOrientation( OF_ORIENTATION_90_RIGHT );
 	
 	finder.setup("haarcascade_frontalface_default.xml");
 	
@@ -81,7 +81,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -111,21 +111,21 @@ void ofApp::touchCancelled(ofTouchEventArgs& touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }
 

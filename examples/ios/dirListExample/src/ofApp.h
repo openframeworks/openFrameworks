@@ -26,8 +26,8 @@ class ofApp : public ofxiOSApp {
 
 		int nImages;
 		ofImage	* images;
-        ofDirectory DIR;
+		ofDirectory DIR;
 
-        int currentImage;
+		int currentImage;
 
 };
