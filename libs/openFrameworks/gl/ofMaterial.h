@@ -1,8 +1,10 @@
 #pragma once
-#include "ofColor.h"
-#include "ofShader.h"
+// FIXME: - deprecated only ofConstants.h
 #include "ofConstants.h"
+#include "ofShader.h"
 #include "glm/fwd.hpp"
+#include "ofColor.h"
+
 
 // Material concept: "Anything graphical applied to the polygons"
 //
