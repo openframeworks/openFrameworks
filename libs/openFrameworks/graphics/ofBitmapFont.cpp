@@ -1,4 +1,4 @@
-
+#include "ofConstants.h"
 #include "ofBitmapFont.h"
 #include "ofMesh.h"
 

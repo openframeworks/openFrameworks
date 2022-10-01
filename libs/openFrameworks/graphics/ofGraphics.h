@@ -1,11 +1,7 @@
 #pragma once
 
-//#include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
-//class ofRectangle;
-//#include "glm/fwd.hpp"
-//#include "ofUtils.h"
 
 class ofVec3f;
 class ofVec2f;

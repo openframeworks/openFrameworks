@@ -5,6 +5,7 @@
 #include "ofCairoRenderer.h"
 #endif
 #include "ofGLRenderer.h"
+#include "ofVboMesh.h"
 
 
 #ifndef TARGET_WIN32
