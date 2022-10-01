@@ -1,11 +1,6 @@
 #pragma once
 #include <stdint.h>
 
-#define Stringize( L )     #L
-#define MakeString( M, L ) M(L)
-#define $Line MakeString( Stringize, __LINE__ )
-#define Reminder __FILE__ "(" $Line ") : Reminder: "
-
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
@@ -511,8 +506,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #include <experimental/filesystem>
         
         #if OF_HAS_CPP17
-			#pragma message(Reminder "OF_HAS_CPP17")
-
             namespace std {
                 namespace experimental{
                     namespace filesystem {
@@ -529,7 +522,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 				namespace filesystem = std::experimental::filesystem;
 			}
         #else
-			#pragma message(Reminder "no OF_HAS_CPP17")
 
             namespace std {
                 namespace experimental{
@@ -553,7 +545,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         
     #else
 		#if OF_HAS_CPP17
-			#pragma message(Reminder "OF_HAS_CPP17")
 
 			// Regular C++17 fs support
 			#include <filesystem>
