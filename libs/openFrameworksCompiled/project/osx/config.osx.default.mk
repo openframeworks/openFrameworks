@@ -69,8 +69,6 @@ PLATFORM_REQUIRED_ADDONS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-#MAC_OS_MIN_VERSION = 10.15
-
 ifndef MAC_OS_MIN_VERSION
 	MAC_OS_MIN_VERSION = 10.9
 endif
@@ -168,9 +166,6 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-#PLATFORM_LDFLAGS += -lstdc++fs
-
-
 #PLATFORM_LDFLAGS += -arch i386
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
@@ -246,8 +241,6 @@ ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 	PLATFORM_CFLAGS += -DUSE_FMOD=0
 endif
-
-
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
