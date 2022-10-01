@@ -1,8 +1,7 @@
 #pragma once
 
 #include "ofGraphicsConstants.h"
-//#include "ofColor.h"
-//class ofC
+#include "ofColor.h"
 
 class ofRectangle;
 

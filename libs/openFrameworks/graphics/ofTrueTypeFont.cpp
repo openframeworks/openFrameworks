@@ -1,5 +1,9 @@
+#include "ofPixels.h"
+#include "ofTexture.h"
+
 #include "ofTrueTypeFont.h"
 //--------------------------
+#include "ofPath.h"
 
 #include <ft2build.h>
 
@@ -21,6 +25,7 @@ using std::max;
 using std::vector;
 using std::string;
 using std::min;
+
 
 const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};
