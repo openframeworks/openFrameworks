@@ -1,6 +1,5 @@
 #pragma once
-// FIXME: - deprecated only ofConstants.h
-#include "ofConstants.h"
+#include "ofDeprecated.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 #include <map>

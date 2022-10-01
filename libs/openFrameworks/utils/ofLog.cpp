@@ -70,11 +70,11 @@ void ofLogToConsole(){
 	ofLog::setChannel(shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter)));
 }
 
-#ifdef TARGET_WIN32
 void ofLogToDebugView() {
+#ifdef TARGET_WIN32
 	ofLog::setChannel(shared_ptr<ofDebugViewLoggerChannel>(new ofDebugViewLoggerChannel, std::function<void(ofBaseLoggerChannel *)>(noopDeleter)));
-}
 #endif
+}
 
 //--------------------------------------------------
 ofLog::ofLog(){

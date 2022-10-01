@@ -14,7 +14,6 @@
 	#include <limits.h>        /* PATH_MAX */
 #endif
 
-// FIXME: better explicit declaration 
 using std::string;
 using std::vector;
 using std::fstream;

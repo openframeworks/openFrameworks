@@ -1,7 +1,6 @@
 #pragma once
 
-// FIXME: - deprecated only ofConstants.h
-#include "ofConstants.h"
+#include "ofDeprecated.h"
 class ofBaseApp;
 #include "ofSoundBaseTypes.h"
 #include <climits>
