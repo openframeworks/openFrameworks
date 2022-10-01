@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include <glm/mat3x3.hpp>
 
 

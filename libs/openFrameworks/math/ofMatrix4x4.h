@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include "ofVec4f.h"
 #include "ofQuaternion.h"
 #include <cmath>
