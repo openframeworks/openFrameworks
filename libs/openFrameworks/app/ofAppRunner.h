@@ -13,40 +13,34 @@ class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
 
+using std::shared_ptr;
 
 void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
-std::shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
-std::shared_ptr<ofMainLoop> ofGetMainLoop();
-void ofSetMainLoop(const std::shared_ptr<ofMainLoop> & mainLoop);
+shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
+shared_ptr<ofMainLoop> ofGetMainLoop();
+void ofSetMainLoop(const shared_ptr<ofMainLoop> & mainLoop);
 
 template<typename Window>
-void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWindowMode screenMode){
-	ofInit();
-	ofWindowSettings settings;
-	settings.setSize(w, h);
-	settings.windowMode = screenMode;
-	ofGetMainLoop()->addWindow(windowPtr);
-	windowPtr->setup(settings);
-}
+void ofSetupOpenGL(const shared_ptr<Window> & windowPtr, int w, int h, ofWindowMode screenMode);
 
 //special case so we preserve supplied settngs
 //TODO: remove me when we remove the ofSetupOpenGL legacy approach.
-void ofSetupOpenGL(const std::shared_ptr<ofAppGLFWWindow> & windowPtr, int w, int h, ofWindowMode screenMode);
+void ofSetupOpenGL(const shared_ptr<ofAppGLFWWindow> & windowPtr, int w, int h, ofWindowMode screenMode);
 
 template<typename Window>
 static void noopDeleter(Window*){}
 
 template<typename Window>
 void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode){
-	std::shared_ptr<Window> window = std::shared_ptr<Window>(windowPtr, std::function<void(Window *)>(noopDeleter<Window>));
+	shared_ptr<Window> window = shared_ptr<Window>(windowPtr, std::function<void(Window *)>(noopDeleter<Window>));
 	ofSetupOpenGL(window,w,h,screenMode);
 }
 
 
-int ofRunApp(std::shared_ptr<ofBaseApp> && OFSA);
+int ofRunApp(shared_ptr<ofBaseApp> && OFSA);
 int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
-void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
+void ofRunApp(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app);
 int ofRunMainLoop();
 
 
@@ -94,7 +88,7 @@ bool		ofDoesHWOrientation();
 glm::vec2	ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
 ofAppBaseWindow * ofGetWindowPtr();
-std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow();
+shared_ptr<ofAppBaseWindow> ofGetCurrentWindow();
 
 void 		ofSetWindowPosition(int x, int y);
 void 		ofSetWindowShape(int width, int height);
@@ -107,8 +101,8 @@ void		ofToggleFullscreen();
 void 		ofSetVerticalSync(bool bSync);
 
 ofCoreEvents & ofEvents();
-void ofSetCurrentRenderer(std::shared_ptr<ofBaseRenderer> renderer,bool setDefaults=false);
-std::shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
+void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults=false);
+shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
 void ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
 //-------------------------- native window handles

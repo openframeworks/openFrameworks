@@ -1,7 +1,29 @@
+#include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
 #include "glm/vec2.hpp"
 #include "glm/trigonometric.hpp"
 #include "ofRectangle.h"
+
+ofStyle::ofStyle(){
+	bFill				= true;
+	blendingMode		= OF_BLENDMODE_ALPHA;
+	smoothing			= false;
+	circleResolution	= 20;
+	sphereResolution	= 20;
+	curveResolution		= 20;
+	lineWidth			= 1.0;
+	polyMode			= OF_POLY_WINDING_ODD;
+	rectMode			= OF_RECTMODE_CORNER;
+	#ifdef TARGET_OPENGLES
+		drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
+	#else
+		drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
+	#endif
+	bgColor.set(60, 60, 60);
+	//depthTest = false;
+}
+
+
 
 void ofBaseDraws::draw(const glm::vec2 & point) const {
 	draw(point.x, point.y);
