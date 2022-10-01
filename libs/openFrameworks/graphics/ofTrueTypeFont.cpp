@@ -1,5 +1,4 @@
 #include "ofPixels.h"
-#include "ofTexture.h"
 #include "ofRectangle.h"
 
 #include "ofTrueTypeFont.h"

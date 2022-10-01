@@ -4,8 +4,8 @@
 #include "ofMesh.h"
 #include "ofRectangle.h"
 #include "ofPixels.h"
+#include "ofTexture.h"
 class ofPath;
-class ofTexture;
 
 
 

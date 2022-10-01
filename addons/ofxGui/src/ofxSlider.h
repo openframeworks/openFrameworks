@@ -4,6 +4,7 @@
 #include "ofParameter.h"
 #include "ofxInputField.h"
 #include "ofxGuiUtils.h"
+class ofVboMesh;
 
 template<typename Type>
 class ofxSlider : public ofxBaseGui{

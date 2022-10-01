@@ -1,5 +1,6 @@
 #include "ofxSlider.h"
 #include "ofGraphics.h"
+#include "ofVboMesh.h"
 using namespace std;
 
 namespace{
