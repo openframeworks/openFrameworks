@@ -1,9 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
-#include "glm/fwd.hpp"
+//class ofRectangle;
+//#include "glm/fwd.hpp"
 //#include "ofUtils.h"
 
 class ofVec3f;
@@ -1242,7 +1243,7 @@ ofHandednessType ofGetCoordHandedness();
 /// }
 /// ~~~~
 /// \sa End drawing with ofEndSaveScreenAsPDF()
-void ofBeginSaveScreenAsPDF(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsPDF(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = {});
 
 /// \brief Terminates draw to PDF through ofCairoRenderer and outputs the file.
 /// \sa ofBeginSaveScreenAsPDF()
@@ -1250,7 +1251,7 @@ void ofEndSaveScreenAsPDF();
 
 /// \brief Begin rendering to a SVG file.
 /// \sa ofEndSaveScreenAsSVG(), ofBeginSaveScreenAsPDF()
-void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = {});
 
 /// \brief Terminates draw to SVG and outputs the file.
 /// \sa ofBeginSaveScreenAsSVG()
