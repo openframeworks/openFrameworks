@@ -1,3 +1,12 @@
+#include "ofConstants.h"
+#include "ofTexture.h"
+#include "ofPixels.h"
+#include "ofGLBaseTypes.h"
+#include "ofGraphicsConstants.h"
+#include "ofGLUtils.h"
+#include "ofLog.h"
+
+
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "FreeImage.h"

@@ -3,7 +3,6 @@
 #ifndef OF_MESH_H
 #define OF_MESH_H
 
-#include "ofConstants.h"
 #include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>

@@ -1,3 +1,4 @@
+#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofGraphics.h"
 #include "ofPixels.h"
@@ -183,6 +184,40 @@ void ofRegenerateAllTextures(){
 }
 
 #endif
+
+//----------------------------------------------------------
+ofTextureData::ofTextureData() {
+	textureID = 0;
+#ifndef TARGET_OPENGLES
+	glInternalFormat = GL_RGB8;
+	textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+#else
+	glInternalFormat = GL_RGB;
+	textureTarget = GL_TEXTURE_2D;
+#endif
+
+	tex_t = 0;
+	tex_u = 0;
+	tex_w = 0;
+	tex_h = 0;
+	width = 0;
+	height = 0;
+	
+	bFlipTexture = false;
+	compressionType = OF_COMPRESS_NONE;
+	bAllocated = false;
+	bUseExternalTextureID = false;
+	useTextureMatrix = false;
+	
+	minFilter = GL_LINEAR;
+	magFilter = GL_LINEAR;
+	
+	wrapModeHorizontal = GL_CLAMP_TO_EDGE;
+	wrapModeVertical = GL_CLAMP_TO_EDGE;
+	hasMipmap = false;
+	bufferId = 0;
+}
+
 
 //----------------------------------------------------------
 ofTexture::ofTexture(){

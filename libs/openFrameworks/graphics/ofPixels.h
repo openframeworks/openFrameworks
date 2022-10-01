@@ -1,12 +1,8 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofUtils.h"
 #include "ofColor.h"
 #include "ofLog.h"
 #include "ofMath.h"
-#include <limits>
-
 
 /// \file
 /// ofPixels is an object for working with blocks of pixels, those pixels can

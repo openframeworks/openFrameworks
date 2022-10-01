@@ -1,4 +1,11 @@
 #include "ofPixels.h"
+
+#include "ofUtils.h"
+#include "ofColor.h"
+#include "ofLog.h"
+#include "ofMath.h"
+#include <limits>
+
 #include "ofGraphicsConstants.h"
 #include "glm/common.hpp"
 #include <cstring>
