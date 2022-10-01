@@ -11,7 +11,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -22,13 +22,13 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);		
+		void gotMessage(ofMessage msg);
 
 		ofVideoGrabber grabber;
 		ofxCvColorImage	colorImg;
-        
+
 		yolo5ImageClassify classify;
-        
+
 		vector <yolo5ImageClassify::Result> results;
 
 };

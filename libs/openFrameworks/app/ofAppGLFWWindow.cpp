@@ -357,7 +357,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	}
 #endif
 
-	ofLogVerbose() << "GL Version:" << glGetString(GL_VERSION);
+	ofLogVerbose() << "GL Version: " << glGetString(GL_VERSION);
 
 	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
 #ifndef TARGET_OPENGLES

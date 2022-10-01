@@ -9,7 +9,7 @@ int main( ){
 	int windowHeight = 500;
 	
 	#ifdef TARGET_OPENGLES
-    	ofGLESWindowSettings settings;
+		ofGLESWindowSettings settings;
 		settings.width = windowWidth;
 		settings.height = windowHeight;
 		settings.setGLESVersion(2);
