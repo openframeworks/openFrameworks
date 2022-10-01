@@ -2,6 +2,7 @@
 
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
+#include "ofPixels.h"
 
 class ofFile;
 class ofBuffer;

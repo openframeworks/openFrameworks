@@ -9,6 +9,7 @@
 #include "OscTypes.h"
 #include "OscPacketListener.h"
 #include "UdpSocket.h"
+#include <thread>
 
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
