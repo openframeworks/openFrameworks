@@ -3,6 +3,7 @@
 #include "ofVideoBaseTypes.h"
 #include "ofGLUtils.h"
 #include "ofAppRunner.h"
+#include "ofTexture.h"
 
 using std::shared_ptr;
 using std::vector;

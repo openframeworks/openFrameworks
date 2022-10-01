@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
+class ofTexture;
 
 
 #ifdef OF_VIDEO_CAPTURE_IOS

@@ -13,7 +13,6 @@
 #pragma once
 
 #include "ofNode.h"
-#include "ofColor.h"
 
 class ofBaseGLRenderer;
 

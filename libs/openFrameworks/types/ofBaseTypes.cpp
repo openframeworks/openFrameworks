@@ -8,6 +8,7 @@
 #include "ofSoundBaseTypes.h"
 #include "ofVideoBaseTypes.h"
 #include "ofGraphicsBaseTypes.h"
+#include "ofMaterial.h"
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
