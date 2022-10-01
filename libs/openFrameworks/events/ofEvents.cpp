@@ -1,3 +1,7 @@
+#include <iterator>
+#include <functional>
+#include <thread>
+
 #include "ofEvents.h"
 #include "ofAppRunner.h"
 #include "ofAppBaseWindow.h"

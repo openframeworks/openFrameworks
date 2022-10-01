@@ -1,14 +1,10 @@
 #pragma once
 
 #include <vector>
-#include <functional>
 #include <mutex>
-#include <thread>
 #include <memory>
-#include <iterator>
 #include <atomic>
 #include <stddef.h>
-#include <functional>
 #include <deque>
 
 
