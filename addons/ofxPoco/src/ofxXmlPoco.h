@@ -41,8 +41,8 @@ public:
     ofxXmlPoco( const ofxXmlPoco& rhs );
     const ofxXmlPoco& operator =( const ofxXmlPoco& rhs );
 
-    bool load(const of::filesystem::path & path);
-    bool save(const of::filesystem::path & path);
+    bool load(const of::filesystem::path & filePath);
+    bool save(const of::filesystem::path & filePath);
 
     bool            addChild( const std::string& path );
     void            addXml( ofxXmlPoco& xml, bool copyAll = false);
