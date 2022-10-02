@@ -515,14 +515,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                         using v1::path;
                     }
                 }
-//                namespace filesystem = experimental::filesystem;
             }
-			// new
-			namespace of {
-				namespace filesystem = std::experimental::filesystem;
-			}
         #else
-
             namespace std {
                 namespace experimental{
                     namespace filesystem {
@@ -534,24 +528,26 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                         using v1::__cxx11::path;
                     }
                 }
-//                namespace filesystem = experimental::filesystem;
             }
-			// new
-			namespace of {
-				namespace filesystem = std::experimental::filesystem;
-			}
-
         #endif
         
+		using fs = std::experimental::filesystem;
+		// new
+		namespace of {
+			namespace filesystem = std::experimental::filesystem;
+		}
     #else
+		#include <filesystem>
 		#if OF_HAS_CPP17
+//			using fs = std::filesystem;
 
 			// Regular C++17 fs support
-			#include <filesystem>
 			namespace of {
-				namespace filesystem  = std::filesystem;
+				namespace filesystem = std::filesystem;
 			}
 		#else
+			using fs = std::__fs::filesystem;
+
 			namespace of {
 				namespace filesystem = std::__fs::filesystem;
 			}
@@ -569,7 +565,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 	namespace of {
 		namespace filesystem = boost::filesystem;
 	}
-	
+//	using fs = boost::filesystem;
+
 #endif
 
 #if defined __has_include
