@@ -8,7 +8,6 @@
 #include "ofxPanel.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
-using namespace std;
 
 ofxPanel::ofxPanel()
 :bGrabbed(false){}

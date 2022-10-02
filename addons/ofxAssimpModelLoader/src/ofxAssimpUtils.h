@@ -12,7 +12,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-using namespace std;
 
 //--------------------------------------------------------------
 inline ofFloatColor aiColorToOfColor(const aiColor4D& c){

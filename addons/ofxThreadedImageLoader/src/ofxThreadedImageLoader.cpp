@@ -1,5 +1,8 @@
 #include "ofxThreadedImageLoader.h"
 #include <sstream>
+
+using std::string;
+
 ofxThreadedImageLoader::ofxThreadedImageLoader(){
 	nextID = 0;
     ofAddListener(ofEvents().update, this, &ofxThreadedImageLoader::update);

@@ -2,7 +2,8 @@
 #include "ofConstants.h"
 #include <locale>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 extern "C"{
 	#include "svgtiny.h"

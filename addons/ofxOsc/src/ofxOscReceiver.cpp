@@ -2,7 +2,7 @@
 // copyright (c) Damian Stewart 2007-2009
 #include "ofxOscReceiver.h"
 
-using namespace std;
+using std::string;
 
 //--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver(){

@@ -2,7 +2,10 @@
 #include "ofxXmlPoco.h"
 #include "Poco/AutoPtr.h"
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::ostringstream;
+using std::map;
 
 ofxXmlPoco::~ofxXmlPoco(){
 	releaseAll();
@@ -104,7 +107,7 @@ string ofxXmlPoco::toString() const{
     if(document){
         try{
             writer.writeNode( stream, getPocoDocument() );
-        }catch( exception & e ){
+        }catch( std::exception & e ){
             ofLogError("ofxXmlPoco") << "toString(): " << e.what();
         }
     } else if(element){
@@ -724,7 +727,7 @@ bool ofxXmlPoco::loadFromBuffer(const string & buffer){
 		element = document->documentElement();
 		return false;
 	}
-	catch(const exception & e){
+	catch(const std::exception & e){
 		short msg = atoi(e.what());
 		ofLogError("ofxXmlPoco") << "parse error: " << DOMErrorMessage(msg);
 		document = new Poco::XML::Document;

@@ -6,7 +6,7 @@
 
 #include "UdpSocket.h"
 
-using namespace std;
+using std::string;
 
 //--------------------------------------------------------------
 ofxOscSender::~ofxOscSender() {

@@ -3,11 +3,6 @@
 #include "ofConstants.h"
 #include <fstream>
 
-// #include <filesystem>
-
-// using std::filesystem;
-// using std::fs;
-// using namespace std::filesystem;
 //----------------------------------------------------------
 // ofBuffer
 //----------------------------------------------------------

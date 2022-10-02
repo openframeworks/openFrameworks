@@ -8,7 +8,7 @@
 #include "tinyxml.h"
 #endif
 
-using namespace std;
+//using namespace std;
 
 /*
 	Q: what is the which = 0 argument?

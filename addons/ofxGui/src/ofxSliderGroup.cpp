@@ -1,5 +1,6 @@
 #include "ofxSliderGroup.h"
-using namespace std;
+
+using std::string;
 
 template<class VecType>
 ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, float height){

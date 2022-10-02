@@ -8,7 +8,7 @@
 #include "ofxAssimpTexture.h"
 #include "ofConstants.h"
 
-using namespace std;
+using std::string;
 
 ofxAssimpTexture::ofxAssimpTexture() {
     texturePath = "";
