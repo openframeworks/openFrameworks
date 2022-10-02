@@ -193,8 +193,8 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
                 ofTouchEventArgs touchArgs;
                 touchArgs.type = touchArgsType;
                 touchArgs.id = i;
-                touchArgs.x =  e->touches[i].targetX * (int)(canvas_width / css_width);
-                touchArgs.y =  e->touches[i].targetY* (int)(canvas_height / css_height);
+                touchArgs.x =  std::ceil(e->touches[i].targetX * (canvas_width / css_width));
+                touchArgs.y =  std::ceil(e->touches[i].targetY* (canvas_height / css_height));
                 instance->events().notifyTouchEvent(touchArgs);
            }
     return 0;
@@ -215,7 +215,6 @@ glm::vec2 ofxAppEmscriptenWindow::getWindowPosition(){
 glm::vec2 ofxAppEmscriptenWindow::getWindowSize(){
 	int width;
 	int height;
-
 	emscripten_get_canvas_element_size("#canvas", &width, &height);
 	return glm::vec2(width,height);
 }
