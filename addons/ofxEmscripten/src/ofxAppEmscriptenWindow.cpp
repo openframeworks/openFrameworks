@@ -73,7 +73,7 @@ void ofxAppEmscriptenWindow::loop(){
 
 void ofxAppEmscriptenWindow::update(){
         if (bSetMainLoopTiming) {
-		emscripten_set_main_loop_timing(1, 1);
+		emscripten_set_main_loop_timing(1, 2);
 		bSetMainLoopTiming = false;
 	}
 	events().notifyUpdate();
