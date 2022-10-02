@@ -509,10 +509,10 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            class path;
-                        }
-                        using v1::path;
+//                        namespace v1 {
+//                            class path;
+//                        }
+                        using path = v1::path;
                     }
                 }
             }
@@ -520,12 +520,12 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            namespace __cxx11 {
-                                class path;
-                            }
-                        }
-                        using v1::__cxx11::path;
+//                        namespace v1 {
+//                            namespace __cxx11 {
+//                                class path;
+//                            }
+//                        }
+                        using path = v1::__cxx11::path;
                     }
                 }
             }
@@ -546,10 +546,11 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 				namespace filesystem = std::filesystem;
 			}
 		#else
-			using fs = std::__fs::filesystem;
+//			using fs = std::__fs::filesystem;
 
 			namespace of {
-				namespace filesystem = std::__fs::filesystem;
+//				namespace filesystem = std::__fs::filesystem;
+				namespace filesystem = std::filesystem;
 			}
 		#endif
     #endif
