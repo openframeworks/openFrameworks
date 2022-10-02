@@ -255,14 +255,14 @@ void ofxAssimpModelLoader::loadGLResources(){
 		// TODO: handle other aiTextureTypes
 		if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath)){
 			ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading image from \"" << texPath.data << "\"";
-			auto modelFolder = file.getEnclosingDirectory();
-			auto relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
-			auto texFile = ofFilePath::getFileName(texPath.data);
+			of::filesystem::path modelFolder = file.getEnclosingDirectory();
+			of::filesystem::path relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
+			of::filesystem::path texFile = ofFilePath::getFileName(texPath.data);
 
 			// FIXME:  addons/ofxAssimpModelLoader/src/ofxAssimpTexture.h could accept filesystem::path as a parameter
 			// ofLoadImage accept?
 			// auto realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile).string();
-			of::filesystem::path realPath = (modelFolder / relTexPath / texFile);
+			of::filesystem::path realPath = ((modelFolder / relTexPath) / texFile);
 			
 			if(ofFile::doesFileExist(realPath) == false) {
 				ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
