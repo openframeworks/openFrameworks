@@ -1,4 +1,3 @@
-
 #include "ofCairoRenderer.h"
 #include "ofMesh.h"
 #include "ofImage.h"

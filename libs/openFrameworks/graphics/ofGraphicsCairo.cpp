@@ -1,9 +1,6 @@
-#if !defined(TARGET_EMSCRIPTEN)
 #include "ofGraphicsCairo.h"
 #include "ofRendererCollection.h"
-// #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 #include "ofCairoRenderer.h"
-// #endif
 
 static std::shared_ptr<ofCairoRenderer> cairoScreenshot;
 static std::shared_ptr<ofBaseRenderer> storedRenderer;
@@ -65,5 +62,3 @@ void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage, bool b3D, ofR
 void ofEndSaveScreenAsSVG(){
 	ofEndSaveScreen();
 }
-
-#endif
