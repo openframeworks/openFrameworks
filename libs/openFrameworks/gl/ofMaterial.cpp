@@ -142,11 +142,11 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 
     if(shaders[&renderer] == nullptr){
     
-		//add the custom uniforms to the shader header
-		auto customUniforms = data.customUniforms;
-		for( auto & custom : mCustomUniforms ){
-			customUniforms += custom.second + " " + custom.first + ";\n";
-		}
+        //add the custom uniforms to the shader header
+        auto customUniforms = data.customUniforms;
+        for( auto & custom : mCustomUniforms ){
+        	customUniforms += custom.second + " " + custom.first + ";\n";
+        }
     
         #ifndef TARGET_OPENGLES
             string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
