@@ -284,4 +284,7 @@ private:
 	
 	std::map<std::string, bool> mTexDefines;
 	std::map<std::string, std::string> mCustomUniforms;
+	
+	std::shared_ptr<ofShader> customShader;
+	bool bHasCustomShader = false;
 };
