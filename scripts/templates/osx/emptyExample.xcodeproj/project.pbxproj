@@ -299,13 +299,6 @@
 			},
 			"name": "AppStore"
 		},
-		"E42962BF2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQuickTimeGrabber.cpp",
-			"isa": "PBXFileReference",
-			"name": "ofQuickTimeGrabber.cpp",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"sourceTree": "SOURCE_ROOT"
-		},
 		"E4B69B4D0A3A1720003C02F2": {
 			"isa": "XCConfigurationList",
 			"defaultConfigurationIsVisible": "0",
@@ -315,13 +308,6 @@
 				"E4B69B4F0A3A1720003C02F2",
 				"99FA3DBB1C7456C400CFA0EE"
 			]
-		},
-		"E42962D72163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofAVFoundationVideoPlayer.m",
-			"isa": "PBXFileReference",
-			"name": "ofAVFoundationVideoPlayer.m",
-			"lastKnownFileType": "sourcecode.c.objc",
-			"sourceTree": "SOURCE_ROOT"
 		},
 		"E4B69B5F0A3A1757003C02F2": {
 			"isa": "XCConfigurationList",
@@ -333,18 +319,11 @@
 				"99FA3DBC1C7456C400CFA0EE"
 			]
 		},
-		"E42962BD2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQtUtils.cpp",
+		"E42962D72163EDD300A6A9E2": {
+			"path": "../../../libs/openFrameworks/video/ofAVFoundationVideoPlayer.m",
 			"isa": "PBXFileReference",
-			"name": "ofQtUtils.cpp",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E42962D52163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQTKitPlayer.mm",
-			"isa": "PBXFileReference",
-			"name": "ofQTKitPlayer.mm",
-			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"name": "ofAVFoundationVideoPlayer.m",
+			"lastKnownFileType": "sourcecode.c.objc",
 			"sourceTree": "SOURCE_ROOT"
 		},
 		"E42963692163EDD300A6A9E2": {
@@ -749,13 +728,6 @@
 			"lastKnownFileType": "sourcecode.cpp.cpp",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"E42962CF2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQuickTimePlayer.h",
-			"isa": "PBXFileReference",
-			"name": "ofQuickTimePlayer.h",
-			"lastKnownFileType": "sourcecode.c.h",
-			"sourceTree": "SOURCE_ROOT"
-		},
 		"E42962E72163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/app",
 			"isa": "PBXGroup",
@@ -798,13 +770,6 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"E42962CD2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQtUtils.h",
-			"isa": "PBXFileReference",
-			"name": "ofQtUtils.h",
-			"lastKnownFileType": "sourcecode.c.h",
-			"sourceTree": "SOURCE_ROOT"
-		},
 		"E42962E52163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/types/ofParameter.cpp",
 			"isa": "PBXFileReference",
@@ -819,19 +784,33 @@
 			"lastKnownFileType": "sourcecode.cpp.cpp",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"E42962CB2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQTKitPlayer.h",
+		"E429635F2163EDD300A6A9E2": {
+			"path": "../../../libs/openFrameworks/graphics/ofGraphics.h",
 			"isa": "PBXFileReference",
-			"name": "ofQTKitPlayer.h",
+			"name": "ofGraphics.h",
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"E42962BE2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQTKitGrabber.mm",
-			"isa": "PBXFileReference",
-			"name": "ofQTKitGrabber.mm",
-			"lastKnownFileType": "sourcecode.cpp.objcpp",
-			"sourceTree": "SOURCE_ROOT"
+		"E4B69B4C0A3A1720003C02F2": {
+			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
+			"targets": [
+				"E4B69B5A0A3A1756003C02F2"
+			],
+			"developmentRegion": "en",
+			"knownRegions": [
+				"en",
+				"Base"
+			],
+			"isa": "PBXProject",
+			"compatibilityVersion": "Xcode 3.2",
+			"productRefGroup": "E4B69B4A0A3A1720003C02F2",
+			"projectDirPath": "",
+			"attributes": {
+				"LastUpgradeCheck": "0600"
+			},
+			"hasScannedForEncodings": "0",
+			"projectRoot": "",
+			"mainGroup": "E4B69B4A0A3A1720003C02F2"
 		},
 		"E42962E32163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/types/ofParameter.h",
@@ -840,24 +819,28 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"E42962D62163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQTKitMovieRenderer.m",
-			"isa": "PBXFileReference",
-			"name": "ofQTKitMovieRenderer.m",
-			"lastKnownFileType": "sourcecode.c.objc",
-			"sourceTree": "SOURCE_ROOT"
+		"99FA3DBB1C7456C400CFA0EE": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"GCC_UNROLL_LOOPS": "YES",
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]": "DISTRIBUTION=1",
+				"GCC_OPTIMIZATION_LEVEL": "3",
+				"COPY_PHASE_STRIP": "YES",
+				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
+				"GCC_WARN_UNUSED_VARIABLE": "NO"
+			},
+			"name": "AppStore"
 		},
 		"E42963052163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofUtils.h",
 			"isa": "PBXFileReference",
 			"name": "ofUtils.h",
-			"lastKnownFileType": "sourcecode.c.h",
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E429635F2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/graphics/ofGraphics.h",
-			"isa": "PBXFileReference",
-			"name": "ofGraphics.h",
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
@@ -903,27 +886,6 @@
 				"E4B69B5B0A3A1756003C02F2"
 			]
 		},
-		"E4B69B4C0A3A1720003C02F2": {
-			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
-			"targets": [
-				"E4B69B5A0A3A1756003C02F2"
-			],
-			"developmentRegion": "en",
-			"knownRegions": [
-				"en",
-				"Base"
-			],
-			"isa": "PBXProject",
-			"compatibilityVersion": "Xcode 3.2",
-			"productRefGroup": "E4B69B4A0A3A1720003C02F2",
-			"projectDirPath": "",
-			"attributes": {
-				"LastUpgradeCheck": "0600"
-			},
-			"hasScannedForEncodings": "0",
-			"projectRoot": "",
-			"mainGroup": "E4B69B4A0A3A1720003C02F2"
-		},
 		"E429635B2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/graphics/ofCairoRenderer.h",
 			"isa": "PBXFileReference",
@@ -958,24 +920,6 @@
 			"name": "ofSoundBaseTypes.h",
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
-		},
-		"99FA3DBB1C7456C400CFA0EE": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"GCC_UNROLL_LOOPS": "YES",
-				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]": "DISTRIBUTION=1",
-				"GCC_OPTIMIZATION_LEVEL": "3",
-				"COPY_PHASE_STRIP": "YES",
-				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
-				"GCC_WARN_UNUSED_VARIABLE": "NO"
-			},
-			"name": "AppStore"
 		},
 		"E429634C2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/graphics/ofPath.h",
@@ -1558,25 +1502,11 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"E42962C92163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQuickTimePlayer.cpp",
-			"isa": "PBXFileReference",
-			"name": "ofQuickTimePlayer.cpp",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"sourceTree": "SOURCE_ROOT"
-		},
 		"E42962AF2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/3d/ofNode.cpp",
 			"isa": "PBXFileReference",
 			"name": "ofNode.cpp",
 			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E42962C72163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQuickTimeGrabber.h",
-			"isa": "PBXFileReference",
-			"name": "ofQuickTimeGrabber.h",
-			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
 		"E4B69E210A3A1BDC003C02F2": {
@@ -1587,13 +1517,6 @@
 			"path": "../../../libs/openFrameworks/3d/ofMesh.h",
 			"isa": "PBXFileReference",
 			"name": "ofMesh.h",
-			"lastKnownFileType": "sourcecode.c.h",
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E42962C52163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQTKitGrabber.h",
-			"isa": "PBXFileReference",
-			"name": "ofQTKitGrabber.h",
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
@@ -1615,18 +1538,6 @@
 				"E42962CE2163EDD300A6A9E2",
 				"E42962C12163EDD300A6A9E2",
 				"E42962D72163EDD300A6A9E2",
-				"E42962C52163EDD300A6A9E2",
-				"E42962BE2163EDD300A6A9E2",
-				"E42962C32163EDD300A6A9E2",
-				"E42962D62163EDD300A6A9E2",
-				"E42962CB2163EDD300A6A9E2",
-				"E42962D52163EDD300A6A9E2",
-				"E42962BD2163EDD300A6A9E2",
-				"E42962CD2163EDD300A6A9E2",
-				"E42962BF2163EDD300A6A9E2",
-				"E42962C72163EDD300A6A9E2",
-				"E42962C92163EDD300A6A9E2",
-				"E42962CF2163EDD300A6A9E2",
 				"E42962D92163EDD300A6A9E2",
 				"E42962D02163EDD300A6A9E2",
 				"E42962CA2163EDD300A6A9E2",
@@ -1660,13 +1571,6 @@
 				"E42962AF2163EDD300A6A9E2",
 				"E42962AE2163EDD300A6A9E2"
 			],
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E42962C32163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/video/ofQTKitMovieRenderer.h",
-			"isa": "PBXFileReference",
-			"name": "ofQTKitMovieRenderer.h",
-			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
 		"E42963572163EDD300A6A9E2": {
