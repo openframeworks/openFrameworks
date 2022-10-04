@@ -279,6 +279,7 @@ static const string fragmentShader = R"(
         #ifdef HAS_TEX_SPECULAR
         	vec4 spec_value = TEXTURE(tex_specular, v_texcoord);
         	specular *= spec_value.rgb; //apply the color
+        	specular *= spec_value.a; //also apply alpha which is sometimes used as a mask 
         #endif
 
         // apply ambient texture // these are mostly black and white
