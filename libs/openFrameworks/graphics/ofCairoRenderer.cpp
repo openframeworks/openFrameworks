@@ -1,11 +1,9 @@
+
 #include "ofCairoRenderer.h"
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "ofTrueTypeFont.h"
 #include "ofGraphics.h"
-#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
-	#include "ofGraphicsCairo.h"
-#endif
 #include "ofVideoBaseTypes.h"
 #include "cairo-features.h"
 #include "cairo-pdf.h"

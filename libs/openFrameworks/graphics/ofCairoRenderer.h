@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "cairo.h"
 
 #include <deque>
