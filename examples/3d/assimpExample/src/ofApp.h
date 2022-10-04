@@ -11,7 +11,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -22,17 +22,17 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);		
-    
-        ofxAssimpModelLoader model;
-    
-        bool bHelpText;
-		bool bAnimate;
-        bool bAnimateMouse;
-        float animationPosition;
+		void gotMessage(ofMessage msg);
 
-        ofMesh mesh;
-        ofLight	light;
+		ofxAssimpModelLoader model;
+
+		bool bHelpText;
+		bool bAnimate;
+		bool bAnimateMouse;
+		float animationPosition;
+
+		ofMesh mesh;
+		ofLight	light;
 };
 
 #endif

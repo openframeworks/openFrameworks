@@ -950,7 +950,7 @@ bool ofFile::copyTo(const std::filesystem::path& _path, bool bRelativeToData, bo
 		}
 		std::filesystem::copy_file(myFile,path);
 	}catch(std::exception & except){
-		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\":" << except.what();
+		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\": " << except.what();
 		return false;
 	}
 
@@ -1008,7 +1008,7 @@ bool ofFile::moveTo(const std::filesystem::path& _path, bool bRelativeToData, bo
 		}
 	}
 	catch(std::exception & except){
-		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\":" << except.what();
+		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\": " << except.what();
 		return false;
 	}
 

@@ -36,7 +36,7 @@ void ofApp::draw(){
 
 	ofSetColor(255,150,140,128);
 	ofPushMatrix();
-	    ofTranslate(330,280,0);
+		ofTranslate(330,280,0);
 		ofRotateDeg(phase*5, 0,0,1);
 		ofDrawRectangle(-25,-25,50,50);
 	ofPopMatrix();
@@ -44,7 +44,7 @@ void ofApp::draw(){
 	if (bSnapshot == true){
 		// grab a rectangle at 200,200, width and height of 300,180
 		img.grabScreen(200,200,300,180);
-        
+		
 		string fileName = "snapshot_"+ofToString(snapCounter, 5, '0')+".png";
 		img.save(fileName);
 		snapString = "saved " + fileName;

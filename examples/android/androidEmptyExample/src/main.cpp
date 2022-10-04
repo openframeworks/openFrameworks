@@ -15,7 +15,7 @@ int main(){
 #ifdef TARGET_ANDROID
 void ofAndroidApplicationInit()
 {
-    //application scope init
+	//application scope init
 }
 
 void ofAndroidActivityInit()

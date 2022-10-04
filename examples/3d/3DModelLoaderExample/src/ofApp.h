@@ -23,21 +23,21 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-        ofxAssimpModelLoader model;
-        ofLight	light;
-    
-        // stores the info on the current file.
-        string curFileInfo;
-    
-        //boolean to toggle help text
-        bool bHelpText;
-    
-        // for demonstrating loading in models directly into a mesh without using ofxAssimpModelLoader
-        ofVboMesh mesh;
-        bool bUsingMesh;
+		ofxAssimpModelLoader model;
+		ofLight	light;
+	
+		// stores the info on the current file.
+		string curFileInfo;
+	
+		//boolean to toggle help text
+		bool bHelpText;
+	
+		// for demonstrating loading in models directly into a mesh without using ofxAssimpModelLoader
+		ofVboMesh mesh;
+		bool bUsingMesh;
 		ofNode meshNode;
 
-        ofEasyCam cam;
+		ofEasyCam cam;
 		float cameraOrbit;
 };
 

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Car.h"
+#include "Truck.h"
+#include "ofxGui.h"
 
 /* Refer to the README.md in the example's root folder for more information on usage */
 
@@ -23,11 +24,13 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
 
-        ofLight light;
-        ofEasyCam cam;
-        Car car;
-        ofPlanePrimitive plane;
-        ofMaterial roadMaterial;
+		ofxPanel gui;
+
+		ofLight light;
+		ofEasyCam cam;
+		ofPlanePrimitive plane;
+		ofMaterial roadMaterial;
+
+		Truck truck;
 };

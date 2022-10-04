@@ -77,8 +77,6 @@
 		DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
 		DACFA8E9132D09E8008D4B7A /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
 		DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
-		E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */; };
-		E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */; };
 		E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */; };
 		E486629B1D8C61B000D1735C /* ofAVFoundationGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */; };
 		E495DF7D178896A900994238 /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7B178896A900994238 /* ofAppNoWindow.cpp */; };
@@ -87,11 +85,8 @@
 		E4B27C1910CBEB9D00536013 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
 		E4B27C1A10CBEB9D00536013 /* ofArduino.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB310CBE92A00536013 /* ofArduino.cpp */; };
 		E4B27C1B10CBEB9D00536013 /* ofSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB510CBE92A00536013 /* ofSerial.cpp */; };
-		E4B27C2510CBEB9D00536013 /* ofQtUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AD610CBE92A00536013 /* ofQtUtils.cpp */; };
 		E4B27C2610CBEB9D00536013 /* ofVideoGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADB10CBE92A00536013 /* ofVideoGrabber.cpp */; };
 		E4B27C2710CBEB9D00536013 /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */; };
-		E4B5AE2012D94F9B00BA355D /* ofQuickTimeGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */; };
-		E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */; };
 		E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */; };
 		E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */; };
 		E4F3BA6712F4C4BF002D19BB /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */; };
@@ -155,12 +150,6 @@
 		E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
 		E4F3BB2E12F4C752002D19BB /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
 		E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
-		E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E703368D15D4B03E009A3FDE /* ofQTKitGrabber.h */; };
-		E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703368E15D4B03E009A3FDE /* ofQTKitGrabber.mm */; };
-		E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */; };
-		E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */; };
-		FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */; };
-		FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -236,8 +225,6 @@
 		DACFA8D7132D09E8008D4B7A /* ofVbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVbo.h; path = gl/ofVbo.h; sourceTree = "<group>"; };
 		DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVboMesh.cpp; path = gl/ofVboMesh.cpp; sourceTree = "<group>"; };
 		DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVboMesh.h; path = gl/ofVboMesh.h; sourceTree = "<group>"; };
-		E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimePlayer.cpp; path = ../../../openFrameworks/video/ofQuickTimePlayer.cpp; sourceTree = SOURCE_ROOT; };
-		E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQuickTimePlayer.h; path = ../../../openFrameworks/video/ofQuickTimePlayer.h; sourceTree = SOURCE_ROOT; };
 		E432815E138ABFDD0047C5CB /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		E432815F138AC0470047C5CB /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		E4328160138AC04A0047C5CB /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -257,15 +244,11 @@
 		E4B27ABA10CBE92A00536013 /* ofEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofEvents.h; path = ../../../openFrameworks/events/ofEvents.h; sourceTree = SOURCE_ROOT; };
 		E4B27ABB10CBE92A00536013 /* ofEventUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofEventUtils.h; path = ../../../openFrameworks/events/ofEventUtils.h; sourceTree = SOURCE_ROOT; };
 		E4B27AC710CBE92A00536013 /* ofMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofMain.h; path = ../../../openFrameworks/ofMain.h; sourceTree = SOURCE_ROOT; };
-		E4B27AD610CBE92A00536013 /* ofQtUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQtUtils.cpp; path = ../../../openFrameworks/video/ofQtUtils.cpp; sourceTree = SOURCE_ROOT; };
-		E4B27AD710CBE92A00536013 /* ofQtUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQtUtils.h; path = ../../../openFrameworks/video/ofQtUtils.h; sourceTree = SOURCE_ROOT; };
 		E4B27ADB10CBE92A00536013 /* ofVideoGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVideoGrabber.cpp; path = ../../../openFrameworks/video/ofVideoGrabber.cpp; sourceTree = SOURCE_ROOT; };
 		E4B27ADC10CBE92A00536013 /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoGrabber.h; path = ../../../openFrameworks/video/ofVideoGrabber.h; sourceTree = SOURCE_ROOT; };
 		E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofVideoPlayer.cpp; path = ../../../openFrameworks/video/ofVideoPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		E4B27ADE10CBE92A00536013 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofVideoPlayer.h; path = ../../../openFrameworks/video/ofVideoPlayer.h; sourceTree = SOURCE_ROOT; };
 		E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofQuickTimeGrabber.cpp; path = ../../../openFrameworks/video/ofQuickTimeGrabber.cpp; sourceTree = SOURCE_ROOT; };
-		E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofQuickTimeGrabber.h; path = ../../../openFrameworks/video/ofQuickTimeGrabber.h; sourceTree = SOURCE_ROOT; };
 		E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRtAudioSoundStream.h; sourceTree = "<group>"; };
 		E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRtAudioSoundStream.cpp; sourceTree = "<group>"; };
 		E4EB6916138AFC8500A09F29 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = "<group>"; };
@@ -330,12 +313,6 @@
 		E4F3BB1312F4C752002D19BB /* ofTessellator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTessellator.h; path = ../../../openFrameworks/graphics/ofTessellator.h; sourceTree = SOURCE_ROOT; };
 		E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofTrueTypeFont.cpp; path = ../../../openFrameworks/graphics/ofTrueTypeFont.cpp; sourceTree = SOURCE_ROOT; };
 		E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofTrueTypeFont.h; path = ../../../openFrameworks/graphics/ofTrueTypeFont.h; sourceTree = SOURCE_ROOT; };
-		E703368D15D4B03E009A3FDE /* ofQTKitGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitGrabber.h; sourceTree = "<group>"; };
-		E703368E15D4B03E009A3FDE /* ofQTKitGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofQTKitGrabber.mm; sourceTree = "<group>"; };
-		E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitPlayer.h; sourceTree = "<group>"; };
-		E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofQTKitPlayer.mm; sourceTree = "<group>"; };
-		FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofQTKitMovieRenderer.h; sourceTree = "<group>"; };
-		FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofQTKitMovieRenderer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -451,18 +428,6 @@
 				E4B27ADC10CBE92A00536013 /* ofVideoGrabber.h */,
 				E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */,
 				E4B27ADE10CBE92A00536013 /* ofVideoPlayer.h */,
-				E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */,
-				E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */,
-				E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */,
-				E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */,
-				E4B27AD610CBE92A00536013 /* ofQtUtils.cpp */,
-				E4B27AD710CBE92A00536013 /* ofQtUtils.h */,
-				E703368E15D4B03E009A3FDE /* ofQTKitGrabber.mm */,
-				E703368D15D4B03E009A3FDE /* ofQTKitGrabber.h */,
-				E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */,
-				E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */,
-				FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */,
-				FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */,
 				E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */,
 				E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */,
 				6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */,
@@ -644,7 +609,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */,
 				692C298E19DC5C5500C27C5D /* ofTimer.h in Headers */,
 				E4F3BA6812F4C4BF002D19BB /* of3dUtils.h in Headers */,
 				30CC5385207A36FD008234AF /* ofMathConstants.h in Headers */,
@@ -709,10 +673,6 @@
 				E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */,
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
 				E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */,
-				E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */,
-				E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */,
-				E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */,
-				FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */,
 				DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */,
 				DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
@@ -783,11 +743,9 @@
 				E4B27C1910CBEB9D00536013 /* ofAppRunner.cpp in Sources */,
 				E4B27C1A10CBEB9D00536013 /* ofArduino.cpp in Sources */,
 				E4B27C1B10CBEB9D00536013 /* ofSerial.cpp in Sources */,
-				E4B27C2510CBEB9D00536013 /* ofQtUtils.cpp in Sources */,
 				E4B27C2610CBEB9D00536013 /* ofVideoGrabber.cpp in Sources */,
 				E4B27C2710CBEB9D00536013 /* ofVideoPlayer.cpp in Sources */,
 				E4998A26128A39480094AC3F /* ofEvents.cpp in Sources */,
-				E4B5AE2012D94F9B00BA355D /* ofQuickTimeGrabber.cpp in Sources */,
 				E4F3BA6712F4C4BF002D19BB /* of3dUtils.cpp in Sources */,
 				6678E96F19FEAFA900C00581 /* ofSoundBuffer.cpp in Sources */,
 				E4F3BA6912F4C4BF002D19BB /* ofCamera.cpp in Sources */,
@@ -839,10 +797,6 @@
 				92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */,
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
-				E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */,
-				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
-				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
-				FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */,
 				DAC22D3F16E7A4AF0020226D /* ofParameter.cpp in Sources */,
 				DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */,
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,

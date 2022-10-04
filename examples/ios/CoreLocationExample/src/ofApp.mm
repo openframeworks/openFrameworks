@@ -85,25 +85,25 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }

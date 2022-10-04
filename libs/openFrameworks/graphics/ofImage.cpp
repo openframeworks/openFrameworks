@@ -41,7 +41,7 @@ FREE_IMAGE_TYPE getFreeImageType(const ofShortPixels& pix) {
 		case 3: return FIT_RGB16;
 		case 4: return FIT_RGBA16;
 		default:
-			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels: " << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }
@@ -52,7 +52,7 @@ FREE_IMAGE_TYPE getFreeImageType(const ofFloatPixels& pix) {
 		case 3: return FIT_RGBF;
 		case 4: return FIT_RGBAF;
 		default:
-			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels: " << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }

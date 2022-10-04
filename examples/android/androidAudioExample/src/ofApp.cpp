@@ -17,15 +17,15 @@ void ofApp::setup(){
 
 //     Ask for permission to record audio,
 //     not needed if no in channels used
-    ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_RECORD_AUDIO);
+	ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_RECORD_AUDIO);
 
-    ofSoundStreamSettings settings;
-    settings.setOutListener(this);
-    settings.setInListener(this);
-    settings.numOutputChannels = 2;
-    settings.numInputChannels = 2;
-    settings.numBuffers = 4;
-    settings.bufferSize = 256;
+	ofSoundStreamSettings settings;
+	settings.setOutListener(this);
+	settings.setInListener(this);
+	settings.numOutputChannels = 2;
+	settings.numInputChannels = 2;
+	settings.numBuffers = 4;
+	settings.bufferSize = 256;
 	soundStream.setup(settings);
 }
 
@@ -171,7 +171,7 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 			phase += phaseAdder;
 			float sample = sin(phase);
 			lAudio[i%256] = buffer.getSample(i, 0) = sample * volume * leftScale;
-            buffer.getSample(i, 1) = sample * volume * rightScale;
+			buffer.getSample(i, 1) = sample * volume * rightScale;
 		}
 	}
 }
