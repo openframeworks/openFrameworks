@@ -422,19 +422,19 @@ namespace{
         if(postFragment.empty()){
             postFragment = "vec4 postFragment(vec4 localColor){ return localColor; }";
         }
-		ofStringReplace(source, "%postFragment%", postFragment);
-		ofStringReplace(source, "%custom_uniforms%", customUniforms);
+        ofStringReplace(source, "%postFragment%", postFragment);
+        ofStringReplace(source, "%custom_uniforms%", customUniforms);
 
 		
-		//add custom textures to header of fragment shader
-		//eg: #define HAS_TEX_NORMAL 1
-		string mExtraTexturesHeader = "";
+        //add custom textures to header of fragment shader
+        //eg: #define HAS_TEX_NORMAL 1
+        string mExtraTexturesHeader = "";
 
-		for( auto & customTex : aTexDefines){
-			if( customTex.second ){
-				mExtraTexturesHeader += "#define "+customTex.first+" 1\n";
-			}
-		}
+        for( auto & customTex : aTexDefines){
+        	if( customTex.second ){
+        		mExtraTexturesHeader += "#define "+customTex.first+" 1\n";
+        	}
+        }
 
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + mExtraTexturesHeader + source;
         return source;

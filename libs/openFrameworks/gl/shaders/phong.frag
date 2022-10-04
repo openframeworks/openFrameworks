@@ -249,12 +249,12 @@ static const string fragmentShader = R"(
         vec3 diffuse = vec3(0.0,0.0,0.0);
         vec3 specular = vec3(0.0,0.0,0.0);
         
-		vec3 tNormal = v_transformedNormal;
-		#ifdef HAS_TEX_NORMAL
-			tNormal = PerturbNormal(TEXTURE(tex_normal, v_texcoord).rgb, tNormal, v_eyePosition, v_texcoord);
-		#endif
+        vec3 tNormal = v_transformedNormal;
+        #ifdef HAS_TEX_NORMAL
+        	tNormal = PerturbNormal(TEXTURE(tex_normal, v_texcoord).rgb, tNormal, v_eyePosition, v_texcoord);
+        #endif
 			
-		vec3 transformedNormal = normalize(tNormal);
+        vec3 transformedNormal = normalize(tNormal);
 
         for( int i = 0; i < MAX_LIGHTS; i++ ){
             if(lights[i].enabled<0.5) continue;
@@ -271,21 +271,21 @@ static const string fragmentShader = R"(
         
         // apply emmisive texture
         vec4 mat_emissive_color = mat_emissive;
-		#ifdef HAS_TEX_EMISSIVE
-			mat_emissive_color *= TEXTURE(tex_emissive, v_texcoord);
-		#endif
+        #ifdef HAS_TEX_EMISSIVE
+        	mat_emissive_color *= TEXTURE(tex_emissive, v_texcoord);
+        #endif
 		
-		// apply specular texture // these are mostly black and white
-		#ifdef HAS_TEX_SPECULAR
-			vec4 spec_value = TEXTURE(tex_specular, v_texcoord);
-			specular *= spec_value.rgb; //apply the color
-		#endif
+        // apply specular texture // these are mostly black and white
+        #ifdef HAS_TEX_SPECULAR
+        	vec4 spec_value = TEXTURE(tex_specular, v_texcoord);
+        	specular *= spec_value.rgb; //apply the color
+        #endif
 
-		// apply ambient texture // these are mostly black and white
-		#ifdef HAS_TEX_AMBIENT
-			vec4 ambient_value = TEXTURE(tex_ambient, v_texcoord);
-			ambient *= ambient_value.rgb; //apply the color
-		#endif
+        // apply ambient texture // these are mostly black and white
+        #ifdef HAS_TEX_AMBIENT
+        	vec4 ambient_value = TEXTURE(tex_ambient, v_texcoord);
+        	ambient *= ambient_value.rgb; //apply the color
+        #endif
 
         ////////////////////////////////////////////////////////////
         // now add the material info
@@ -303,10 +303,10 @@ static const string fragmentShader = R"(
             vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive_color;
         #endif
                 
-		#ifdef HAS_TEX_OCCLUSION
-			float occlusioon = TEXTURE(tex_occlusion, v_texcoord).r;
-			localColor.rgb *= occlusioon;
-		#endif
+        #ifdef HAS_TEX_OCCLUSION
+            float occlusioon = TEXTURE(tex_occlusion, v_texcoord).r;
+            localColor.rgb *= occlusioon;
+        #endif
         
         FRAG_COLOR = clamp( postFragment(localColor), 0.0, 1.0 );
     }
