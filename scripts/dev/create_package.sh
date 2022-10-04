@@ -328,7 +328,6 @@ function createPackage {
 	    rm -Rf gles
 	    rm -Rf gl/computeShaderParticlesExample
 	    rm -Rf gl/computeShaderTextureExample
-        rm -Rf gl/transformFeedbackExample
 	fi
 
 
