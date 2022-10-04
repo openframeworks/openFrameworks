@@ -57,6 +57,36 @@ static const string fragmentShader = R"(
 	%custom_uniforms%
 
 
+	//-- normal map code from ------------------------------------ //
+	// http://www.geeks3d.com/20130122/normal-mapping-without-precomputed-tangent-space-vectors/
+	// http://www.thetenthplanet.de/archives/1180
+	mat3 CotangentFrame(vec3 N, vec3 p, vec2 uv) {
+		// get edge vectors of the pixel triangle
+		vec3 dp1 = dFdx(p);
+		vec3 dp2 = dFdy(p);
+		vec2 duv1 = dFdx(uv);
+		vec2 duv2 = dFdy(uv);
+		
+		// solve the linear system
+		vec3 dp2perp = cross(dp2, N);
+		vec3 dp1perp = cross(N, dp1);
+		vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
+		vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
+		
+		// construct a scale-invariant frame
+		float invmax = inversesqrt(max(dot(T, T), dot(B, B)));
+		return mat3(T * invmax, B * invmax, N);
+	}
+
+	vec3 PerturbNormal(vec3 normalMap, vec3 N, vec3 V, vec2 texcoord) {
+		// assume N, the interpolated vertex normal and
+		// V, the view vector (vertex to eye)
+		vec3 map = normalMap * 255. / 127. - 128. / 127.;
+		mat3 TBN = CotangentFrame(N, -V, texcoord);
+		return normalize(TBN * map);
+	}
+	//-- end normal map code ------------------------------------ //
+
     void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
         float nDotVP;       // normal . light direction
         float nDotHV;       // normal . light half vector
@@ -218,8 +248,13 @@ static const string fragmentShader = R"(
         vec3 ambient = global_ambient.rgb;
         vec3 diffuse = vec3(0.0,0.0,0.0);
         vec3 specular = vec3(0.0,0.0,0.0);
-
-		vec3 transformedNormal = normalize(v_transformedNormal);
+        
+		vec3 tNormal = v_transformedNormal;
+		#ifdef HAS_TEX_NORMAL
+			tNormal = PerturbNormal(TEXTURE(tex_normal, v_texcoord).rgb, tNormal, v_eyePosition, v_texcoord);
+		#endif
+			
+		vec3 transformedNormal = normalize(tNormal);
 
         for( int i = 0; i < MAX_LIGHTS; i++ ){
             if(lights[i].enabled<0.5) continue;
@@ -233,20 +268,46 @@ static const string fragmentShader = R"(
                 areaLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
             }
         }
+        
+        // apply emmisive texture
+        vec4 mat_emissive_color = mat_emissive;
+		#ifdef HAS_TEX_EMISSIVE
+			mat_emissive_color *= TEXTURE(tex_emissive, v_texcoord);
+		#endif
+		
+		// apply specular texture // these are mostly black and white
+		#ifdef HAS_TEX_SPECULAR
+			vec4 spec_value = TEXTURE(tex_specular, v_texcoord);
+			specular *= spec_value.rgb; //apply the color
+		#endif
+
+		// apply ambient texture // these are mostly black and white
+		#ifdef HAS_TEX_AMBIENT
+			vec4 ambient_value = TEXTURE(tex_ambient, v_texcoord);
+			ambient *= ambient_value.rgb; //apply the color
+		#endif
 
         ////////////////////////////////////////////////////////////
         // now add the material info
         #if HAS_TEXTURE && !HAS_COLOR
             vec4 tex = TEXTURE(tex0, v_texcoord);
-            vec4 localColor = vec4(ambient,1.0) * tex + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
+            vec4 localColor = vec4(ambient,1.0) * tex + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive_color;
+			localColor.a = tex.a; // allow for alpha in the texture
         #elif HAS_TEXTURE && HAS_COLOR
             vec4 tex = TEXTURE(tex0, v_texcoord);
-            vec4 localColor = vec4(ambient,1.0) * tex * v_color + vec4(diffuse,1.0) * tex * v_color + vec4(specular,1.0) * mat_specular + mat_emissive;
+            vec4 localColor = vec4(ambient,1.0) * tex * v_color + vec4(diffuse,1.0) * tex * v_color + vec4(specular,1.0) * mat_specular + mat_emissive_color;
+			localColor.a = tex.a*v_color.a; // allow for alpha in the texture or vertex
         #elif HAS_COLOR
-            vec4 localColor = vec4(ambient,1.0) * v_color + vec4(diffuse,1.0) * v_color + vec4(specular,1.0) * mat_specular + mat_emissive;
+            vec4 localColor = vec4(ambient,1.0) * v_color + vec4(diffuse,1.0) * v_color + vec4(specular,1.0) * mat_specular + mat_emissive_color;
         #else
-            vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
+            vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive_color;
         #endif
+                
+		#ifdef HAS_TEX_OCCLUSION
+			float occlusioon = TEXTURE(tex_occlusion, v_texcoord).r;
+			localColor.rgb *= occlusioon;
+		#endif
+        
         FRAG_COLOR = clamp( postFragment(localColor), 0.0, 1.0 );
     }
 )";
