@@ -38,10 +38,10 @@ jobs:
           ./scripts/ci/vs/install.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
-      - name: Build
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run:
-          msbuild libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }}
+      #- name: Build
+      #  working-directory: ${{env.GITHUB_WORKSPACE}}
+      #  run:
+      #    msbuild libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }}
       - name: Build emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
