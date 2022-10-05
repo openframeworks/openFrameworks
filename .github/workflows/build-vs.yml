@@ -42,10 +42,10 @@ jobs:
       #  working-directory: ${{env.GITHUB_WORKSPACE}}
       #  run:
       #    msbuild libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }}
-      - name: Build emptyExample
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run:
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }}
+      #- name: Build emptyExample
+      #  working-directory: ${{env.GITHUB_WORKSPACE}}
+      #  run:
+      #    msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }}
       - name: Build allAddonsExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
