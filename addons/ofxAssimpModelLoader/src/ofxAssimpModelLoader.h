@@ -18,7 +18,9 @@
 #include "ofxAssimpAnimation.h"
 #include "ofxAssimpTexture.h"
 #include "ofMesh.h"
-#include "ofPoint.h"
+#include "ofMath.h"
+
+#include <assimp/Importer.hpp>
 
 struct aiScene;
 struct aiNode;
@@ -99,17 +101,24 @@ class ofxAssimpModelLoader{
 
 		void draw(ofPolyRenderMode renderType);
 		
-		ofPoint getPosition();
-		ofPoint getSceneCenter();
+		glm::vec3 getPosition();
+		glm::vec3 getSceneCenter();
 		float getNormalizedScale();
-		ofPoint getScale();
-		ofMatrix4x4 getModelMatrix();
+		glm::vec3 getScale();
+		glm::mat4 getModelMatrix();
 
-		ofPoint getSceneMin(bool bScaled = false);
-		ofPoint	getSceneMax(bool bScaled = false);
-						
+        //these provide the raw scene information with scaling applied from the setScale command not the normalized scale or other transforms
+        //not super useful but leaving as is for legacy usage
+		glm::vec3 getSceneMin(bool bScaled = false);
+		glm::vec3 getSceneMax(bool bScaled = false);
+
+        //this should allow for drawing bounds that enclose the model being drawn with ofxAssimpModelLoader::drawFaces
+		glm::vec3 getSceneMinModelSpace();
+		glm::vec3 getSceneMaxModelSpace();
+		glm::vec3 getSceneCenterModelSpace();
+
 		int	getNumRotations();	// returns the no. of applied rotations
-		ofPoint	getRotationAxis(int which); // gets each rotation axis
+		glm::vec3 getRotationAxis(int which); // gets each rotation axis
 		float getRotationAngle(int which); //gets each rotation angle
 
 		void calculateDimensions();
@@ -118,7 +127,7 @@ class ofxAssimpModelLoader{
 		 
 	protected:
 		void updateAnimations();
-		void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
+		void updateMeshes(aiNode * node, glm::mat4 parentMatrix);
 		void updateBones();
 		void updateModelMatrix();
 	
@@ -143,13 +152,13 @@ class ofxAssimpModelLoader{
 		double normalizedScale;
 
 		std::vector<float> rotAngle;
-		std::vector<ofPoint> rotAxis;
-		ofPoint scale;
-		ofPoint pos;
-		ofMatrix4x4 modelMatrix;
+		std::vector<glm::vec3> rotAxis;
+		glm::vec3 scale = {1.0,1.0,1.0};
+        glm::vec3 pos = {0.0,0.0,0.0};
+		glm::mat4 modelMatrix;
 
 		std::vector<ofLight> lights;
-		std::vector<ofxAssimpTexture> textures;
+		std::map<std::string,std::shared_ptr<ofTexture>> textures;
 		std::vector<ofxAssimpMeshHelper> modelMeshes;
 		std::vector<ofxAssimpAnimation> animations;
 		int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.
@@ -159,6 +168,9 @@ class ofxAssimpModelLoader{
 		bool bUsingColors;
 		bool bUsingMaterials;
 		float normalizeFactor;
+		
+		//new C++ api
+		Assimp::Importer importer;
 
 		// the main Asset Import scene that does the magic.
 		std::shared_ptr<const aiScene> scene;
