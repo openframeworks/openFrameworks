@@ -4,7 +4,7 @@ SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
 
-${OF_ROOT}/scripts/vs/download_libs.sh -p vs --silent
+${OF_ROOT}/scripts/vs/download_libs.sh -p vs -a 64 --silent
 
 cd ~/
 rm -rf projectGenerator
