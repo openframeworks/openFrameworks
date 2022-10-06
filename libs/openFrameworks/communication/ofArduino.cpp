@@ -48,6 +48,7 @@
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofLog.h"
+#include <limits.h>
 
 using std::vector;
 using std::string;
