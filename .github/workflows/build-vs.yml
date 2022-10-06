@@ -4,7 +4,7 @@ on:
   push:
     paths-ignore:
     - '**/*.md'
-    - 'examples/**'
+    #- 'examples/**'
   pull_request:
     paths-ignore:
     - '**/*.md'
