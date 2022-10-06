@@ -49,4 +49,4 @@ jobs:
       - name: Build allAddonsExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }}
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
