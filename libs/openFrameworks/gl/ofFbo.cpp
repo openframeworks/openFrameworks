@@ -4,6 +4,7 @@
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
+#include "ofPixels.h"
 #include <map>
 
 #ifdef TARGET_OPENGLES
