@@ -8,8 +8,8 @@
 #include "ofxThreadedImageLoader.h"
 #include "ofxKinect.h"
 #include "ofxGui.h"
-//#include "ofxSvg.h"
-//#include "ofxXmlPoco.h"
+#include "ofxSvg.h"
+#include "ofxXmlPoco.h"
 #include "ofMain.h"
 
 class ofApp : public ofBaseApp{
@@ -41,13 +41,10 @@ class ofApp : public ofBaseApp{
 		ofxTCPServer server;
 		ofxOscSender osc_sender;
 		ofxXmlSettings settings;
-
-//test this group
 	ofxAssimpModelLoader betterModelLoader;
 	ofxThreadedImageLoader threadedLoader;
 	ofxKinect kinect;
 	ofxPanel gui;
-
-	//ofxSvg svg;
-//	ofxXmlPoco xml;
+	ofxSvg svg;
+	ofxXmlPoco xml;
 };
