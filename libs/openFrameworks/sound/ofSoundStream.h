@@ -2,6 +2,7 @@
 
 #include "ofDeprecated.h"
 #include "ofSoundBaseTypes.h"
+#include <climits>
 #include <limits>
 
 class ofBaseApp;
