@@ -14,12 +14,6 @@
 # define the OF_SHARED_MAKEFILES location
 OF_SHARED_MAKEFILES_PATH=./makefileCommon
 
-# PLATFORM_CFLAGS 
-
-# PROJECT_CXX = include-what-you-use
-# PROJECT_CC = include-what-you-use
-# CXX = include-what-you-use
-# CC = include-what-you-use
 
 # include the global configuration file
 include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
