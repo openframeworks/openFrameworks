@@ -303,6 +303,14 @@ ofFbo::ofFbo(const ofFbo & mom){
 }
 
 //--------------------------------------------------------------
+void ofFbo::operator+=(const ofFbo & mom){
+	this->begin();
+	ofSetColor(255);
+	mom.draw(0,0);
+	this->end();
+}
+
+//--------------------------------------------------------------
 ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
 	clear();
