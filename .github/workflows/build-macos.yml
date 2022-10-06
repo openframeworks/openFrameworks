@@ -50,7 +50,7 @@ jobs:
           addons/ofxSvg/libs/**/
           addons/ofxPoco/libs/**/
 
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.h') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-        
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
