@@ -6,6 +6,5 @@ ofxXmlSettings
 ofxThreadedImageLoader
 ofxGui
 ofxKinect
-ofxSvg
 ofxPoco
 
