@@ -4,9 +4,9 @@
 #include "ofxNetwork.h"
 #include "ofxOsc.h"
 #include "ofxXmlSettings.h"
-//#include "ofxAssimpModelLoader.h"
-//#include "ofxThreadedImageLoader.h"
-//#include "ofxKinect.h"
+#include "ofxAssimpModelLoader.h"
+#include "ofxThreadedImageLoader.h"
+#include "ofxKinect.h"
 #include "ofxGui.h"
 //#include "ofxSvg.h"
 //#include "ofxXmlPoco.h"
@@ -43,7 +43,7 @@ class ofApp : public ofBaseApp{
 		ofxXmlSettings settings;
 
 //test this group
-//	ofxAssimpModelLoader betterModelLoader;
+	ofxAssimpModelLoader betterModelLoader;
 	ofxThreadedImageLoader threadedLoader;
 	ofxKinect kinect;
 	ofxPanel gui;
