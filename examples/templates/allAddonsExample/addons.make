@@ -1,3 +1,4 @@
+ofxAssimpModelLoader
 ofxNetwork
 ofxOpenCv
 ofxOsc
