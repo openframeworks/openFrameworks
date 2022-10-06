@@ -305,7 +305,6 @@ ofFbo::ofFbo(const ofFbo & mom){
 //--------------------------------------------------------------
 void ofFbo::operator+=(const ofFbo & f){
 	this->begin();
-	ofSetColor(255);
 	f.draw(0,0);
 	this->end();
 }
