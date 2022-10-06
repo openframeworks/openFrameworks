@@ -2,4 +2,7 @@ ofxNetwork
 ofxOpenCv
 ofxOsc
 ofxXmlSettings
+ofxThreadedImageLoader
 ofxGui
+ofxKinect
+

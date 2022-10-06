@@ -44,8 +44,8 @@ class ofApp : public ofBaseApp{
 
 //test this group
 //	ofxAssimpModelLoader betterModelLoader;
-//	ofxThreadedImageLoader threadedLoader;
-//	ofxKinect kinect;
+	ofxThreadedImageLoader threadedLoader;
+	ofxKinect kinect;
 	ofxPanel gui;
 
 	//ofxSvg svg;
