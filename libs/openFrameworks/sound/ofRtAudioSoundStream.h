@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ofConstants.h"
-
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
 

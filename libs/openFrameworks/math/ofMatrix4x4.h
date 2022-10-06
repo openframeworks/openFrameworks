@@ -12,9 +12,9 @@
 
 #include "ofVec4f.h"
 #include "ofQuaternion.h"
-#include <cmath>
-#include "glm/mat4x4.hpp"
 #include "ofMathConstants.h"
+#include "glm/mat4x4.hpp"
+#include <cmath>
 
 class ofVec3f;
 

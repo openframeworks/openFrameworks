@@ -6,10 +6,11 @@
  */
 
 #include "ofSoundBuffer.h"
+#include "ofConstants.h"
 #include "ofSoundUtils.h"
 #include "ofLog.h"
-#include <limits>
 #include "glm/trigonometric.hpp"
+
 
 using std::vector;
 using std::string;

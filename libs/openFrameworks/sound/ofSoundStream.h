@@ -1,12 +1,10 @@
 #pragma once
 
 #include "ofDeprecated.h"
-class ofBaseApp;
 #include "ofSoundBaseTypes.h"
-#include <climits>
-#include <functional>
+#include <limits>
 
-
+class ofBaseApp;
 class ofSoundStreamSettings;
 
 

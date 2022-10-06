@@ -1,8 +1,8 @@
-#include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
+#include "ofConstants.h"
+#include "ofRectangle.h"
 #include "glm/vec2.hpp"
 #include "glm/trigonometric.hpp"
-#include "ofRectangle.h"
 
 ofStyle::ofStyle(){
 	bFill				= true;

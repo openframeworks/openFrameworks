@@ -1,6 +1,5 @@
 #include "ofPath.h"
 
-
 using std::vector;
 
 #if defined(TARGET_EMSCRIPTEN)

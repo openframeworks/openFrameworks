@@ -1,14 +1,14 @@
 #pragma once
 
+#include "ofGraphicsBaseTypes.h"
+#include "ofPath.h"
+#include "of3dGraphics.h"
+#include "ofPixels.h"
 
 #include "cairo.h"
 
 #include <deque>
 #include <stack>
-#include "ofGraphicsBaseTypes.h"
-#include "ofPath.h"
-#include "of3dGraphics.h"
-#include "ofPixels.h"
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:

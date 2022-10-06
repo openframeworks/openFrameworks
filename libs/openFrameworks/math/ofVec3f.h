@@ -1,7 +1,5 @@
 #pragma once
 
-//class ofVec2f;
-//class ofVec4f;
 #include "ofVec2f.h"
 #include "ofVec4f.h"
 #include "ofMathConstants.h"

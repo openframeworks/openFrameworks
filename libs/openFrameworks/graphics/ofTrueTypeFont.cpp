@@ -1,11 +1,11 @@
+#include "ofTrueTypeFont.h"
 #include "ofPixels.h"
 #include "ofRectangle.h"
-
-#include "ofTrueTypeFont.h"
-//--------------------------
 #include "ofPath.h"
-
+#include "ofGraphics.h"
 #include <ft2build.h>
+#include <algorithm>
+#include <numeric>
 
 #ifdef TARGET_LINUX
 #include <fontconfig/fontconfig.h>
@@ -16,16 +16,10 @@
 #include FT_OUTLINE_H
 #include FT_TRIGONOMETRY_H
 
-#include <algorithm>
-#include <numeric>
-
-#include "ofGraphics.h"
-
 using std::max;
 using std::vector;
 using std::string;
 using std::min;
-
 
 const ofUnicode::range ofUnicode::Space {32, 32};
 const ofUnicode::range ofUnicode::IdeographicSpace {0x3000, 0x3000};

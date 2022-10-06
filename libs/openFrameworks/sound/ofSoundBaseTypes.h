@@ -4,8 +4,6 @@
 
 class ofSoundBuffer;
 
-
-
 /// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
 	public:

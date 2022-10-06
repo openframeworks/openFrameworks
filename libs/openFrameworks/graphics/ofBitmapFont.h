@@ -1,10 +1,13 @@
 #pragma once
 
-class ofRectangle;
-#include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofGraphics.h"
 
+template<typename T>
+class ofPixels_;
+typedef ofPixels_<unsigned char> ofPixels;
+
+class ofRectangle;
 
 /*
  

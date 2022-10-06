@@ -1,8 +1,8 @@
 #pragma once
 #include "ofDeprecated.h"
 #include "ofShader.h"
-#include "glm/fwd.hpp"
 #include "ofColor.h"
+#include "glm/fwd.hpp"
 
 
 // Material concept: "Anything graphical applied to the polygons"

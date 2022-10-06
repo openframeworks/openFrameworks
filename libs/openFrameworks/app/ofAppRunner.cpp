@@ -2,16 +2,14 @@
 
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
+#include "ofMainLoop.h"
+#include "ofImage.h"
+#include "ofTrueTypeFont.h"
 
 #ifndef TARGET_NO_SOUND
 #include "ofSoundPlayer.h"
 #include "ofSoundStream.h"
 #endif
-
-#include "ofImage.h"
-#include "ofTrueTypeFont.h"
-
-#include "ofMainLoop.h"
 
 using std::shared_ptr;
 

@@ -2,11 +2,14 @@
 #include "ofUtils.h"
 #include "ofLog.h"
 
+#include <climits>
+
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <sys/ioctl.h>
 	#include <getopt.h>
 	#include <dirent.h>
 #endif
+
 
 
 #include <fcntl.h>

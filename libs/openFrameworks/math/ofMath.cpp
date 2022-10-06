@@ -1,13 +1,14 @@
 #include "ofMath.h"
+#include "ofConstants.h"
 #include "ofUtils.h"
-#include "float.h"
-
-#ifndef TARGET_WIN32
-	#include <sys/time.h>
-#endif
-
 #include "ofNoise.h"
 #include "ofPolyline.h"
+#include <float.h>
+#include <cmath>
+
+#ifndef TARGET_WIN32
+    #include <sys/time.h>
+#endif
 
 //--------------------------------------------------
 int ofNextPow2(int a){

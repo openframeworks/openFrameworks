@@ -1,5 +1,5 @@
-#include "ofConstants.h"
 #include "ofTexture.h"
+#include "ofConstants.h"
 #include "ofGraphics.h"
 #include "ofPixels.h"
 #include "ofGLUtils.h"

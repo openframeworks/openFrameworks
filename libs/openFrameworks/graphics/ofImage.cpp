@@ -1,17 +1,14 @@
+#include "ofImage.h"
 #include "ofConstants.h"
+#include "ofAppRunner.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
 #include "ofGLUtils.h"
 #include "ofLog.h"
-
-
-#include "ofImage.h"
-#include "ofAppRunner.h"
-#include "FreeImage.h"
-
 #include "ofURLFileLoader.h"
+#include "FreeImage.h"
 #include "uriparser/Uri.h"
 
 #if defined(TARGET_ANDROID)
