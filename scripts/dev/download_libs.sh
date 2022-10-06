@@ -159,6 +159,11 @@ cd "$SCRIPT_DIR"
 
 if [ "$PLATFORM" == "msys2" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_mingw${ARCH}.zip"
+elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
 elif [ "$PLATFORM" == "vs" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
