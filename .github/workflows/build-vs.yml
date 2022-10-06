@@ -19,9 +19,6 @@ jobs:
         include:
           - platform: x64
             bits: 64
-    defaults:
-      run:
-        shell: msys2 {0}
     env: 
       BITS: ${{ matrix.bits }}
     steps:
@@ -36,6 +33,7 @@ jobs:
             rsync
             wget
       - name: Install dependencies
+        shell: msys2 {0}
         run:
           ./scripts/ci/vs/install.sh
       - name: Setup MSBuild

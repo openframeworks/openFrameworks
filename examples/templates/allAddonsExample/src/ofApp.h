@@ -4,9 +4,9 @@
 #include "ofxNetwork.h"
 #include "ofxOsc.h"
 #include "ofxXmlSettings.h"
-#include "ofxAssimpModelLoader.h"
-#include "ofxThreadedImageLoader.h"
-#include "ofxKinect.h"
+//#include "ofxAssimpModelLoader.h"
+//#include "ofxThreadedImageLoader.h"
+//#include "ofxKinect.h"
 #include "ofxGui.h"
 //#include "ofxSvg.h"
 //#include "ofxXmlPoco.h"
@@ -41,10 +41,13 @@ class ofApp : public ofBaseApp{
 		ofxTCPServer server;
 		ofxOscSender osc_sender;
 		ofxXmlSettings settings;
-	ofxAssimpModelLoader betterModelLoader;
-	ofxThreadedImageLoader threadedLoader;
-	ofxKinect kinect;
+
+//test this group
+//	ofxAssimpModelLoader betterModelLoader;
+//	ofxThreadedImageLoader threadedLoader;
+//	ofxKinect kinect;
 	ofxPanel gui;
+
 	//ofxSvg svg;
 //	ofxXmlPoco xml;
 };
