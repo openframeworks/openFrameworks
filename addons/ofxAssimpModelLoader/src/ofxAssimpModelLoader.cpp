@@ -49,11 +49,11 @@ bool ofxAssimpModelLoader::load(string modelName, bool optimize){
 	// sets various properties & flags to a default preference
 	unsigned int flags = initImportProperties(optimize);
 		
-	//enable assimp logging based on ofGetLogLevel
-	if( ofGetLogLevel() < OF_LOG_NOTICE ){
-		auto logLevel = Assimp::DefaultLogger::LogSeverity::VERBOSE;
-		Assimp::DefaultLogger::create(ASSIMP_DEFAULT_LOG_NAME, logLevel, aiDefaultLogStream_DEBUGGER | aiDefaultLogStream_STDOUT );
-	}
+//	//enable assimp logging based on ofGetLogLevel
+//	if( ofGetLogLevel() < OF_LOG_NOTICE ){
+//		auto logLevel = Assimp::DefaultLogger::LogSeverity::VERBOSE;
+//		Assimp::DefaultLogger::create(ASSIMP_DEFAULT_LOG_NAME, logLevel, aiDefaultLogStream_DEBUGGER | aiDefaultLogStream_STDOUT );
+//	}
 	
 	// loads scene from file
 	std::string path = file.getAbsolutePath();
@@ -81,11 +81,11 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 	// sets various properties & flags to a default preference
 	unsigned int flags = initImportProperties(optimize);
  
- 	//enable assimp logging based on ofGetLogLevel
-	if( ofGetLogLevel() < OF_LOG_NOTICE ){
-		auto logLevel = Assimp::DefaultLogger::LogSeverity::VERBOSE;
-		Assimp::DefaultLogger::create(ASSIMP_DEFAULT_LOG_NAME, logLevel, aiDefaultLogStream_DEBUGGER | aiDefaultLogStream_STDOUT );
-	}
+// 	//enable assimp logging based on ofGetLogLevel
+//	if( ofGetLogLevel() < OF_LOG_NOTICE ){
+//		auto logLevel = Assimp::DefaultLogger::LogSeverity::VERBOSE;
+//		Assimp::DefaultLogger::create(ASSIMP_DEFAULT_LOG_NAME, logLevel, aiDefaultLogStream_DEBUGGER | aiDefaultLogStream_STDOUT );
+//	}
 	
     // loads scene from memory buffer - note this will not work for multipart files (obj, md3, etc)
     const aiScene * scenePtr = importer.ReadFileFromMemory(buffer.getData(), buffer.size(), flags, extension);
