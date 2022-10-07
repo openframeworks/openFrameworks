@@ -45,7 +45,7 @@
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
+class ofVideoPlayer : public ofBaseVideoDraws{
 
 	public:
 

@@ -100,7 +100,7 @@ struct ofMaterialSettings {
     ofFloatColor emissive{ 0.0f, 0.0f, 0.0f, 1.0f }; ///< emitted light intensity
     float shininess{ 0.2f }; ///< specular exponent
     std::string postFragment;
-    std::string customUniforms;
+    std::string customUniforms; ///set by ofMaterial::setCustomUniform*  not to be set manually
 };
 
 /// \class ofBaseMaterial
@@ -137,6 +137,10 @@ public:
 	/// \param textureTarget an implementation-specific value to specify the type of shader to use
 	/// \param renderer programmable renderer instance to create the material shader for
 	virtual const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const=0;
+	
+	/// \brief set a custom shader controlled by the user. 
+	/// \param aCustomShader the material shader, created and maintained by the user
+	virtual void setCustomShader( std::shared_ptr<ofShader> aCustomShader) = 0;
 
 	/// \brief upload the given renderer's normal matrix to the material shader
 	/// \param shader the material shader, created by getShader()
@@ -193,6 +197,15 @@ public:
 	
 	/// \brief set the specular exponent
 	void setShininess(float nShininess);
+	
+	/// \brief set additonal textures to use in the shader.
+	// the following shaders are supported by phong.frag
+	// in the future we will add textures for physical based rendering (PBR)
+	void setSpecularTexture(const ofTexture & aTex);
+	void setAmbientTexture(const ofTexture & aTex);
+	void setEmissiveTexture(const ofTexture & aTex);
+	void setNormalTexture(const ofTexture & aTex);
+	void setOcclusionTexture(const ofTexture & aTex);
 
 	// documented in ofBaseMaterial
 	ofFloatColor getDiffuseColor() const;
@@ -213,7 +226,7 @@ public:
 	void begin() const;
 	void end() const;
 
-
+	/// \brief set custom uniforms to be used by the shader. as of 0.12.0 onwards these are added to the shader header
 	void setCustomUniform1f(const std::string & name, float value);
 	void setCustomUniform2f(const std::string & name, glm::vec2 value);
 	void setCustomUniform3f(const std::string & name, glm::vec3 value);
@@ -228,7 +241,7 @@ public:
 	void setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation);
 	void setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation);
 
-
+	void setCustomShader( std::shared_ptr<ofShader> aCustomShader);
 
 private:
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
@@ -268,4 +281,10 @@ private:
 	std::map<std::string, glm::mat4> uniforms4m;
 	std::map<std::string, glm::mat3> uniforms3m;
 	std::map<std::string, TextureUnifom> uniformstex;
+	
+	std::map<std::string, bool> mTexDefines;
+	std::map<std::string, std::string> mCustomUniforms;
+	
+	std::shared_ptr<ofShader> customShader;
+	bool bHasCustomShader = false;
 };

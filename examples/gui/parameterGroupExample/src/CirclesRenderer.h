@@ -16,7 +16,7 @@ class CirclesRenderer;
 
 template<typename ParameterType>
 class ofCirclesRendererParam: public ofReadOnlyParameter<ParameterType,CirclesRenderer>{
-    friend class CirclesRenderer;
+	friend class CirclesRenderer;
 };
 
 class CirclesRenderer {
