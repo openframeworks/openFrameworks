@@ -10,6 +10,10 @@ on:
     - '**/*.md'
     - 'examples/**'
     
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: true  
+
 jobs:
 
   build-vs2019:
