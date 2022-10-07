@@ -16,7 +16,7 @@ void ofxAssimpTexture::setup(const ofTexture & texture, string texturePath, bool
     if( bTexRepeat ){
 		this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
     }else{
-		this->texture.setTextureWrap(GL_CLAMP, GL_CLAMP);
+		this->texture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 	}
     this->texturePath = texturePath;
 }
