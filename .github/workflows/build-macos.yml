@@ -52,11 +52,11 @@ jobs:
 #
 #        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
 #        restore-keys: |
-#          ${{ runner.os }}-build-${{ env.cache-name }}-        
+#          ${{ runner.os }}-build-${{ env.cache-name }}-
 #    - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
-#      # name: Download libs
-#      # continue-on-error: true
-#      run: ./scripts/$TARGET/download_libs.sh
+    - name: Download libs
+      # continue-on-error: true
+      run: ./scripts/$TARGET/download_libs.sh
     - name: rm-dev
       run: sudo rm -rf /Library/Developer
     
