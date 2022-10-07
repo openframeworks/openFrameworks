@@ -303,7 +303,9 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 		for(int d = 0; d <= AI_TEXTURE_TYPE_MAX; d++){
 			if(AI_SUCCESS == mtl->GetTexture((aiTextureType)d, texIndex, &texPath, NULL, NULL, NULL, NULL, &texMapMode)){
-				ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
+                #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
+                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
+				#endif
 				
 				bool bWrap = (texMapMode==aiTextureMapMode_Wrap);
 

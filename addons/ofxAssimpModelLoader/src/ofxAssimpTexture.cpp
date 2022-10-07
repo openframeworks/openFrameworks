@@ -25,7 +25,11 @@ void ofxAssimpTexture::setTextureType(aiTextureType aTexType){
 	textureType = aTexType;
 	
 	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
-		mTexTypeStr = aiTextureTypeToString(getTextureType());
+        #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
+            mTexTypeStr = aiTextureTypeToString(getTextureType());
+        #else
+            mTexTypeStr = "textureType:"+ofToString(getTextureType());
+        #endif
     }else{
 		ofLogError("ofxAssimpTexture::setTextureType") << ": unknown aiTextureType type " << aTexType;
 		mTexTypeStr = "NONE";
