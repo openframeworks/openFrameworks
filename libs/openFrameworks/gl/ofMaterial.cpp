@@ -330,8 +330,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 
 void ofMaterial::updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
 	// TODO: Where should this start??
-	ofSetShadowShaderData( shader, 10 );
-//	auto& s = ofShadowsData();
+	shader.setShadowUniforms(10);
 }
 
 void ofMaterial::setCustomShader( std::shared_ptr<ofShader> aCustomShader) {

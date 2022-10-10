@@ -374,33 +374,6 @@ void ofLight::onOrientationChanged() {
 	}
 }
 
-//std::shared_ptr<ofShadow::Data> getActiveShadowForIndex( int aActiveIndex ) {
-//	int activeShadowIndex = 0;
-//	for(size_t i=0;i< MIN(ofLightsData().size(),ofShadowsData().size());i++){
-//		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
-//		if(shadow || shadow->isEnabled || shadow->index > -1 ){
-//			if( activeShadowIndex == aActiveIndex ) {
-//				return shadow;
-//			}
-//			activeShadowIndex++;
-//		}
-//	}
-//	return std::shared_ptr<ofShadow::Data>;
-//}
-
-////----------------------------------------
-//int ofLight::getNumActiveShadows() {
-//	int numActiveShadows = 0;
-//
-//	for(size_t i=0;i< MIN(ofLightsData().size(),ofShadowsData().size());i++){
-//		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
-//		if(shadow || shadow->isEnabled || shadow->index > -1 ){
-//			numActiveShadows++;
-//		}
-//	}
-//	return numActiveShadows;
-//}
-
 //-------------------------------
 bool ofLight::shouldRenderShadowDepthPass() {
 	if( !ofIsGLProgrammableRenderer() ) {

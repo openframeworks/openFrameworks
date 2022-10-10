@@ -1,6 +1,6 @@
 //
 //  ofShadow.h
-//  emptyExample
+//  openFrameworksLib
 //
 //  Created by Nick Hardeman on 10/3/22.
 //
@@ -9,7 +9,6 @@
 #include "ofShader.h"
 #include "ofNode.h"
 
-// OF_LIGHT_POINT
 enum ofShadowType {
 	OF_SHADOW_TYPE_HARD=0,
 	OF_SHADOW_TYPE_PCF_LOW,
@@ -30,7 +29,7 @@ public:
 		bool bAllocated = false;
 		bool bFboAllocated = false;
 		
-#if defined(TARGET_OS_IPHONE) || defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_OPENGLES)
 		int width = 512;
 		int height = 512;
 #else
@@ -51,13 +50,13 @@ public:
 		glm::vec3 right = {1,0,0};
 		
 		int lightType = 0;
-#if defined(TARGET_OS_IPHONE) || defined(TARGET_RASPBERRY_PI)
+#if defined(TARGET_OPENGLES)
 		ofShadowType shadowType = OF_SHADOW_TYPE_HARD;
 #else
 		ofShadowType shadowType = OF_SHADOW_TYPE_PCF_LOW;
 #endif
 		
-		glm::mat4 shadowMatrix;// = glm::mat4(1.0f);
+		glm::mat4 shadowMatrix;
 		ofFloatColor color;
 		
 		int texIndex = 0;
@@ -71,8 +70,29 @@ public:
 		int index = -1;
 		float near = 1;
 		float far = 1500;
-		float sampleRadius = 1.f;//  fix this to work in shader
+		float sampleRadius = 1.f;
 	};
+	
+	static void setDepthMapResolution( int aLightType, int ares );
+	static void setDepthMapResolution( int aLightType, int awidth, int aheight );
+	
+	static int getDepthMapWidth(int aLightType);
+	static int getDepthMapHeight(int aLightType);
+	
+	static GLuint getPointTexId();
+	static GLuint getDirectionalTexId();
+	static GLuint getSpotTexId();
+	
+	static bool hasActiveShadows();
+	static std::string getShadowTypeAsString( ofShadowType atype );
+	
+	static void enableAllShadows();
+	static void disableAllShadows();
+	static void setAllShadowTypes( ofShadowType atype );
+	static void setAllShadowDepthResolutions( int awidth, int aheight );
+	static void setAllShadowBias( float bias );
+	static void setAllShadowNormalBias( float normalBias );
+	static void setAllShadowSampleRadius( float sampleRadius );
 	
 	ofShadow();
 	~ofShadow();
@@ -132,24 +152,14 @@ public:
 	void drawFrustum();
 	std::vector<glm::vec3> getFrustumCorners( const glm::vec3& aup, const glm::vec3& aright, const glm::vec3& afwd );
 	
-	static std::string ofGetShadowTypeAsString( ofShadowType atype );
 	std::string getShadowTypeAsString();
-	
-	static void setDepthMapResolution( int aLightType, int ares );
-	static void setDepthMapResolution( int aLightType, int awidth, int aheight );
-	
-	static int getDepthMapWidth(int aLightType);
-	static int getDepthMapHeight(int aLightType);
-	
-	static GLuint getPointTexId();
-	static GLuint getDirectionalTexId();
-	static GLuint getSpotTexId();
 		
 	const ofShader & getDepthShader(ofGLProgrammableRenderer & renderer) const;
 	void updateDepth(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgrammableRenderer & renderer) const;
 	
 protected:
+	
 	static void _updateTexDataIds();
 	
 	void _drawFrustum( const glm::vec3& aup, const glm::vec3& aright, const glm::vec3& afwd );
@@ -199,5 +209,3 @@ private:
 };
 
 std::vector<std::weak_ptr<ofShadow::Data> > & ofShadowsData();
-bool ofSetShadowShaderData( const ofShader& ashader, int aStartTexLocation );
-bool ofHasActiveShadows();
