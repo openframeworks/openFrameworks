@@ -6,6 +6,7 @@
 
 class ofTexture;
 class ofShader;
+class ofShadow;
 
 /// \brief An abstract class representing an object that can have an ofTexture.
 class ofBaseHasTexture{
