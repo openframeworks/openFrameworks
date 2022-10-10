@@ -1,5 +1,6 @@
 #include "ofMaterial.h"
 #include "ofLight.h"
+#include "ofShadow.h"
 #include "ofGLProgrammableRenderer.h"
 
 using std::shared_ptr;
@@ -327,6 +328,12 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 	}
 }
 
+void ofMaterial::updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
+	// TODO: Where should this start??
+	ofSetShadowShaderData( shader, 10 );
+//	auto& s = ofShadowsData();
+}
+
 void ofMaterial::setCustomShader( std::shared_ptr<ofShader> aCustomShader) {
 	customShader = aCustomShader;
 	if( customShader ) {
@@ -396,6 +403,7 @@ void ofMaterial::setCustomUniformTexture(const string & name, int textureTarget,
 
 #include "shaders/phong.vert"
 #include "shaders/phong.frag"
+#include "shaders/shadow.glsl"
 
 namespace{
     string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
@@ -424,7 +432,7 @@ namespace{
         }
         ofStringReplace(source, "%postFragment%", postFragment);
         ofStringReplace(source, "%custom_uniforms%", customUniforms);
-
+		ofStringReplace(source, "%shader_shadow_include%", shadowShaderInclude );
 		
         //add custom textures to header of fragment shader
         //eg: #define HAS_TEX_NORMAL 1

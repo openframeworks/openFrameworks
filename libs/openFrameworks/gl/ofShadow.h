@@ -1,0 +1,203 @@
+//
+//  ofShadow.h
+//  emptyExample
+//
+//  Created by Nick Hardeman on 10/3/22.
+//
+
+#pragma once
+#include "ofShader.h"
+#include "ofNode.h"
+
+// OF_LIGHT_POINT
+enum ofShadowType {
+	OF_SHADOW_TYPE_HARD=0,
+	OF_SHADOW_TYPE_PCF_LOW,
+	OF_SHADOW_TYPE_PCF_MED,
+	OF_SHADOW_TYPE_PCF_HIGH,
+	OF_SHADOW_TYPE_TOTAL
+};
+
+class ofLight;
+class ofGLProgrammableRenderer;
+
+class ofShadow {
+public:
+	
+	struct GLData {
+		GLuint fboId = 0;
+		GLuint texId = 0;
+		bool bAllocated = false;
+		bool bFboAllocated = false;
+		
+#if defined(TARGET_OS_IPHONE) || defined(TARGET_RASPBERRY_PI)
+		int width = 512;
+		int height = 512;
+#else
+		int width = 1024;
+		int height = 1024;
+#endif
+		
+		int totalShadows = 0;
+	};
+	
+	class Data{
+	public:
+		// position, direction, up and right are in world space 
+		glm::vec3 position = {0,0,0};
+		glm::vec3 direction = {1,0,0};
+		
+		glm::vec3 up = {0,1,0};
+		glm::vec3 right = {1,0,0};
+		
+		int lightType = 0;
+#if defined(TARGET_OS_IPHONE) || defined(TARGET_RASPBERRY_PI)
+		ofShadowType shadowType = OF_SHADOW_TYPE_HARD;
+#else
+		ofShadowType shadowType = OF_SHADOW_TYPE_PCF_LOW;
+#endif
+		
+		glm::mat4 shadowMatrix;// = glm::mat4(1.0f);
+		ofFloatColor color;
+		
+		int texIndex = 0;
+		
+		bool isEnabled = false;
+		float bias = 0.005f;
+		float normalBias = 0.0;
+		
+		int numDepthPasses = 1;
+		
+		int index = -1;
+		float near = 1;
+		float far = 1500;
+		float sampleRadius = 1.f;//  fix this to work in shader
+	};
+	
+	ofShadow();
+	~ofShadow();
+	
+	void setLightType( int atype );
+	
+	void update( const ofLight& alight );
+	
+	bool beginDepth();
+	bool endDepth();
+	
+	bool beginDepth(GLenum aCubeFace);
+	bool endDepth(GLenum aCubeFace);
+		
+	void clear();
+	
+	const std::shared_ptr<ofShadow::Data>& getData() const { return data; }
+	bool getIsEnabled() { return data->isEnabled; }
+	void setEnabled( bool ab );
+	
+	float getNearClip() { return data->near; }
+	float getFarClip() { return data->far; }
+	void setNearClip( float anear ) { data->near = anear; }
+	void setFarClip( float afar ) { data->far = afar; }
+	
+	const bool isMultiCubeFacePass() const;
+	const bool isSingleOmniPass() const;
+	const int getNumShadowDepthPasses() const;
+	void setSingleOmniPass( bool ab );
+	int getDepthMapWidth();
+	int getDepthMapHeight();
+	
+	void setDirectionalBounds( float aWorldWidth, float aWorldHeight );
+	
+	void setShadowType(ofShadowType atype) {data->shadowType = atype;}
+	
+	bool isGlCullingEnabled() { return mBEnableCulling; }
+	void setGlCullingEnabled(bool ab) { mBEnableCulling=ab;}
+	GLenum getFrontFaceWindingOrder() { return mGlFrontFaceWindingOrder; }
+	void setFrontFaceWindingOrder( GLenum aw ) { mGlFrontFaceWindingOrder = aw; }
+	
+	GLuint getDepthMapFboId();
+	GLuint getDepthMapTexId();
+	
+	const ofFloatColor& getColor() { return data->color; }
+	void setColor( const ofFloatColor& acolor );
+	
+	const float getBias() { return data->bias; }
+	void setBias( float abias ) { data->bias = abias; }
+	
+	const float getNormalBias() { return data->normalBias; }
+	void setNormalBias( float abias ) { data->normalBias = abias; }
+	
+	const float getSampleRadius() { return data->sampleRadius; }
+	void setSampleRadius( float aradius ) { data->sampleRadius = aradius; }
+	
+	void drawFrustum();
+	std::vector<glm::vec3> getFrustumCorners( const glm::vec3& aup, const glm::vec3& aright, const glm::vec3& afwd );
+	
+	static std::string ofGetShadowTypeAsString( ofShadowType atype );
+	std::string getShadowTypeAsString();
+	
+	static void setDepthMapResolution( int aLightType, int ares );
+	static void setDepthMapResolution( int aLightType, int awidth, int aheight );
+	
+	static int getDepthMapWidth(int aLightType);
+	static int getDepthMapHeight(int aLightType);
+	
+	static GLuint getPointTexId();
+	static GLuint getDirectionalTexId();
+	static GLuint getSpotTexId();
+		
+	const ofShader & getDepthShader(ofGLProgrammableRenderer & renderer) const;
+	void updateDepth(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+	void updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgrammableRenderer & renderer) const;
+	
+protected:
+	static void _updateTexDataIds();
+	
+	void _drawFrustum( const glm::vec3& aup, const glm::vec3& aright, const glm::vec3& afwd );
+	
+	void _allocate();
+	
+	void _checkSetup();
+	void _allocateFbo();
+	void _checkFbos();
+	void _updateNumShadows();
+	
+	std::shared_ptr<ofShadow::Data> data;
+	
+	bool mBSinglePass = true;
+	
+	glm::mat4 mShadowProjection = glm::mat4(1.0);
+	
+	std::vector<glm::mat4> mLookAtMats;
+	std::vector<glm::mat4> mViewProjMats;
+	
+	float mOrthoScaleX = 1.0;
+	float mOrthoScaleY = 1.0;
+	float mDirectionalBoundsWidth = -1;
+	float mDirectionalBoundsHeight = -1;
+	
+	float mFov = 90;
+	
+	bool mBEnableCulling = true;
+	GLenum mGlFrontFaceWindingOrder = GL_CW;
+	
+	const glm::mat4 biasMatrix = glm::mat4(
+										   0.5, 0.0, 0.0, 0.0,
+										   0.0, 0.5, 0.0, 0.0,
+										   0.0, 0.0, 0.5, 0.0,
+										   0.5, 0.5, 0.5, 1.0
+										   );
+    
+private:
+	struct Shaders{
+		ofShader depth;
+		ofShader depthCube;
+		ofShader depthCubeMultiPass;
+	};
+	void initShaders(ofGLProgrammableRenderer & renderer) const;
+	
+	mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
+};
+
+std::vector<std::weak_ptr<ofShadow::Data> > & ofShadowsData();
+bool ofSetShadowShaderData( const ofShader& ashader, int aStartTexLocation );
+bool ofHasActiveShadows();

@@ -373,3 +373,96 @@ void ofLight::onOrientationChanged() {
 		data->right = getXAxis();
 	}
 }
+
+//std::shared_ptr<ofShadow::Data> getActiveShadowForIndex( int aActiveIndex ) {
+//	int activeShadowIndex = 0;
+//	for(size_t i=0;i< MIN(ofLightsData().size(),ofShadowsData().size());i++){
+//		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
+//		if(shadow || shadow->isEnabled || shadow->index > -1 ){
+//			if( activeShadowIndex == aActiveIndex ) {
+//				return shadow;
+//			}
+//			activeShadowIndex++;
+//		}
+//	}
+//	return std::shared_ptr<ofShadow::Data>;
+//}
+
+////----------------------------------------
+//int ofLight::getNumActiveShadows() {
+//	int numActiveShadows = 0;
+//
+//	for(size_t i=0;i< MIN(ofLightsData().size(),ofShadowsData().size());i++){
+//		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
+//		if(shadow || shadow->isEnabled || shadow->index > -1 ){
+//			numActiveShadows++;
+//		}
+//	}
+//	return numActiveShadows;
+//}
+
+//-------------------------------
+bool ofLight::shouldRenderShadowDepthPass() {
+	return getIsEnabled() && shadow.getIsEnabled();
+}
+
+//-------------------------------
+int ofLight::getNumShadowDepthPasses() {
+	return shadow.getNumShadowDepthPasses();
+}
+
+//-------------------------------
+bool ofLight::beginShadowDepthPass() {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	shadow.update(*this);
+	shadow.beginDepth();
+	if( getNumShadowDepthPasses() > 1 ) {
+		ofLogWarning("ofLight :: beginShadowDepthPass : shadow has more than one depth pass! Call beginShadowDepthPass( GLenum aPassIndex ) instead. ");
+		return false;
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::endShadowDepthPass() {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	shadow.endDepth();
+	if( getNumShadowDepthPasses() > 1 ) {
+		ofLogWarning("ofLight :: endShadowDepthPass : shadow has more than one depth pass! Call endShadowDepthPass( GLenum aPassIndex ) instead. ");
+		return false;
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::beginShadowDepthPass( GLenum aPassIndex ) {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	if( aPassIndex == 0 ) {
+		shadow.update(*this);
+	}
+	if( getNumShadowDepthPasses() < 2 ) {
+		shadow.beginDepth();
+	} else {
+		shadow.beginDepth(aPassIndex);
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::endShadowDepthPass( GLenum aPassIndex ) {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	if( getNumShadowDepthPasses() < 2 ) {
+		shadow.endDepth();
+	} else {
+		shadow.endDepth(aPassIndex);
+	}
+	return true;
+}

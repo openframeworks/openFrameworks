@@ -439,6 +439,9 @@ public:
 	/// \param material The material to bind to this renderer.
 	/// \sa glMaterialfv()
 	virtual void bind(const ofBaseMaterial & material)=0;
+	
+	virtual void bind(const ofShadow & shadow)=0;
+	virtual void bind(const ofShadow & shadow, GLenum aCubeFace)=0;
 
 	/// \brief Bind a shader to be used with this renderer.
 	///
@@ -470,6 +473,9 @@ public:
 	///
 	/// \param material The material that is currently bound to this renderer.
 	virtual void unbind(const ofBaseMaterial & material)=0;
+	
+	virtual void unbind(const ofShadow & shadow)=0;
+	virtual void unbind(const ofShadow & shadow, GLenum aCubeFace)=0;
 
 	/// \brief Unbind a shader previously bound to this renderer with bind().
 	///

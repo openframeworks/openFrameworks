@@ -5,6 +5,7 @@ static const string fragmentShader = R"(
     // Eye-coordinate position of vertex
     IN vec3 v_eyePosition;
     IN vec3 v_worldPosition;
+	IN vec3 v_worldNormal;
 #if HAS_COLOR
     IN vec4 v_color;
 #endif
@@ -53,6 +54,9 @@ static const string fragmentShader = R"(
     uniform mat4 modelViewProjectionMatrix;
 
     uniform lightData lights[MAX_LIGHTS];
+
+//	#pragma include "shadow.glsl"
+	%shader_shadow_include%
 
 	%custom_uniforms%
 
@@ -255,19 +259,48 @@ static const string fragmentShader = R"(
         #endif
 			
         vec3 transformedNormal = normalize(tNormal);
+		
+		
+		vec4 oshadowColor = vec4(1);
 
         for( int i = 0; i < MAX_LIGHTS; i++ ){
             if(lights[i].enabled<0.5) continue;
+			float shadow = 0.0;
+			vec4 shadowColor = vec4(1);
             if(lights[i].type<0.5){
                 pointLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
+				if( shadows[i].enabled > 0.5 ) {
+					shadow = PointLightShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
+					shadowColor = shadows[i].color;
+				}
             }else if(lights[i].type<1.5){
                 directionalLight(lights[i], transformedNormal, ambient, diffuse, specular);
+				if( shadows[i].enabled > 0.5 ) {
+					shadow = DirectionalShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
+					shadowColor = shadows[i].color;
+				}
             }else if(lights[i].type<2.5){
                 spotLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
+				if( shadows[i].enabled > 0.5 ) {
+					shadow = SpotShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
+					shadowColor = shadows[i].color;
+				}
             }else{
                 areaLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
+				// no shadows yet
             }
+			
+			float mixAmnt = shadow * shadowColor.a;
+			oshadowColor.rgb = mix( oshadowColor.rgb, shadowColor.rgb, mixAmnt );
+//			float mixAmnt = shadow * shadowColor.a;
+//			ambient.rgb = mix( ambient.rgb, shadowColor.rgb, mixAmnt );
+//			diffuse.rgb = mix( diffuse.rgb, shadowColor.rgb, mixAmnt );
+//			specular.rgb = mix( specular.rgb, shadowColor.rgb, mixAmnt );
         }
+		
+		ambient.rgb *= oshadowColor.rgb;
+		diffuse.rgb *= oshadowColor.rgb;
+		specular.rgb *= oshadowColor.rgb;
         
         // apply emmisive texture
         vec4 mat_emissive_color = mat_emissive;
