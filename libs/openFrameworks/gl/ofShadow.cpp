@@ -58,7 +58,7 @@ static ofShadow::GLData& getGLData( int aLightType ) {
 //--------------------------------------------------------------
 static void retainFBO(int aLightType){
 	if( !getGLData(aLightType).bAllocated ) {
-		ofLogNotice("ofShadow :: retainFBO : for light ") << aLightType << " | " << ofGetFrameNum();
+		ofLogVerbose("ofShadow :: retainFBO : for light ") << aLightType << " | " << ofGetFrameNum();
 		getGLData(aLightType).bAllocated = true;
 		glGenFramebuffers(1, &getGLDatas()[aLightType].fboId);
 		glGenTextures(1, &getGLDatas()[aLightType].texId);
@@ -79,7 +79,7 @@ static GLuint getFBODepthTexId( int aLightType ) {
 //--------------------------------------------------------------
 static void releaseFBO(int aLightType){
 	if( getGLData(aLightType).bAllocated ){
-		ofLogNotice("ofShadow :: releaseFBO : for light ") << aLightType << " | " << ofGetFrameNum();
+		ofLogVerbose("ofShadow :: releaseFBO : for light ") << aLightType << " | " << ofGetFrameNum();
 		glDeleteTextures(1, &getGLDatas()[aLightType].texId );
 		glDeleteFramebuffers(1, &getGLDatas()[aLightType].fboId );
 		getGLDatas()[aLightType].bAllocated = false;
@@ -494,6 +494,10 @@ void ofShadow::clear() {
 
 //--------------------------------------------------------------
 void ofShadow::setEnabled( bool ab ) {
+	if( !ofIsGLProgrammableRenderer() ) {
+		ab = false;
+	}
+	
 	data->isEnabled = ab;
 	if( data->isEnabled ) {
 		_allocate();

@@ -432,7 +432,12 @@ namespace{
         }
         ofStringReplace(source, "%postFragment%", postFragment);
         ofStringReplace(source, "%custom_uniforms%", customUniforms);
-		ofStringReplace(source, "%shader_shadow_include%", shadowShaderInclude );
+		
+		if( ofIsGLProgrammableRenderer() ) {
+			ofStringReplace(source, "%shader_shadow_include%", shadowShaderInclude );
+		} else {
+			ofStringReplace(source, "%shader_shadow_include%", "" );
+		}
 		
         //add custom textures to header of fragment shader
         //eg: #define HAS_TEX_NORMAL 1

@@ -403,11 +403,17 @@ void ofLight::onOrientationChanged() {
 
 //-------------------------------
 bool ofLight::shouldRenderShadowDepthPass() {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
 	return getIsEnabled() && shadow.getIsEnabled();
 }
 
 //-------------------------------
 int ofLight::getNumShadowDepthPasses() {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return 0;
+	}
 	return shadow.getNumShadowDepthPasses();
 }
 
