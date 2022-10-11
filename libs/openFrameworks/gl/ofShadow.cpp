@@ -126,7 +126,6 @@ GLuint ofShadow::getSpotTexId() {
 
 //--------------------------------------------------------------
 std::string ofShadow::getShadowTypeAsString( ofShadowType atype ) {
-	int type = (int)atype;
 	switch( atype ) {
 		case OF_SHADOW_TYPE_HARD:
 			return "Hard";

@@ -575,6 +575,18 @@ void ofGLRenderer::unbind(const ofBaseMaterial &){
 	}
 }
 
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow) {};
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {};
+
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow) {};
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow, GLenum aCubeFace) {};
+
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofTexture & texture, int location){
 	//we could check if it has been allocated - but we don't do that in draw()
