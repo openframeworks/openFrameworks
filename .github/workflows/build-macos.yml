@@ -43,7 +43,7 @@ jobs:
         cache-name: cache-install-libs
       with:
         path: |
-          libs
+#          libs
           addons/ofxAssimpModelLoader/libs/**/
           addons/ofxKinect/libs/**/
           addons/ofxOpenCv/libs/**/
@@ -66,7 +66,7 @@ jobs:
     
     - name: Build
       run:
-        if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
+        if [ "$TARGET" = "osx" ] && [ "$OPT" = "xcode" ]; then
           scripts/ci/$TARGET/build.sh $OPT;
         else
           scripts/ci/$TARGET/run_tests.sh;
