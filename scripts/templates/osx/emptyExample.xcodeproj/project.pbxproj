@@ -10,6 +10,13 @@
 			"lastKnownFileType": "sourcecode.cpp.cpp",
 			"sourceTree": "SOURCE_ROOT"
 		},
+		"E46263292163QRD300A6A1E5": {
+			"path": "../../../libs/openFrameworks/gl/ofShadow.cpp",
+			"isa": "PBXFileReference",
+			"name": "ofShadow.cpp",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
 		"E42962ED2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/app/ofAppBaseWindow.h",
 			"isa": "PBXFileReference",
@@ -89,6 +96,8 @@
 				"E429633D2163EDD300A6A9E2",
 				"E42963322163EDD300A6A9E2",
 				"E429632B2163EDD300A6A9E2",
+				"E46263292163QRD300A6A1E5",
+				"E46263299163QRD300A6A1E5",
 				"E42963292163EDD300A6A9E2",
 				"E429632C2163EDD300A6A9E2",
 				"E429632D2163EDD300A6A9E2",
@@ -1648,6 +1657,13 @@
 			"path": "../../../libs/openFrameworks/gl/ofMaterial.h",
 			"isa": "PBXFileReference",
 			"name": "ofMaterial.h",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E46263299163QRD300A6A1E5": {
+			"path": "../../../libs/openFrameworks/gl/ofShadow.h",
+			"isa": "PBXFileReference",
+			"name": "ofShadow.h",
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
