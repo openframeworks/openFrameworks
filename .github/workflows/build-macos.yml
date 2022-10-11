@@ -10,6 +10,10 @@ on:
     - '**/*.md'
     - 'examples/**'
     
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: true  
+
 jobs:
 
   build-osx:
@@ -43,12 +47,8 @@ jobs:
         cache-name: cache-install-libs
       with:
         path: |
-          libs
-          addons/ofxAssimpModelLoader/libs/**/
-          addons/ofxKinect/libs/**/
-          addons/ofxOpenCv/libs/**/
-          addons/ofxSvg/libs/**/
-          addons/ofxPoco/libs/**/
+          libs/{boost,cairo,curl,fmod,FreeImage,freetype,glew,glfw,glm,json,pugixml,rtAudio,tess2,uriparser,utf8}/**
+          addons/{ofxAssimpModelLoader,ofxKinect,ofxOpenCv,ofxSvg,ofxPoco}/libs/**/
 
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
         restore-keys: |
