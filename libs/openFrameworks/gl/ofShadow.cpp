@@ -390,7 +390,7 @@ void ofShadow::update( const ofLight& alight ) {
 		mLookAtMats[4] = glm::lookAt( data->position, data->position + glm::vec3(0,0,1), glm::vec3(0, -1, 0) );
 		mLookAtMats[5] = glm::lookAt( data->position, data->position + glm::vec3(0,0,-1), glm::vec3(0, -1, 0) );
 		
-		for( uint i = 0; i < 6; i++ ) {
+		for( size_t i = 0; i < 6; i++ ) {
 			mViewProjMats[i] = mShadowProjection * mLookAtMats[i];
 		}
 	}
