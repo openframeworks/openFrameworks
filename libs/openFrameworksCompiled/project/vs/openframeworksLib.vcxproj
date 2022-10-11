@@ -99,6 +99,7 @@
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofLight.h" />
+	<ClInclude Include="..\..\..\openFrameworks\gl\ofShadow.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofMaterial.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofShader.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofLight.cpp" />
+	<ClCompile Include="..\..\..\openFrameworks\gl\ofShadow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofMaterial.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLProgrammableRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofShader.cpp" />
