@@ -68,8 +68,8 @@ public:
 		int numDepthPasses = 1;
 		
 		int index = -1;
-		float near = 1;
-		float far = 1500;
+		float nearClip = 1;
+		float farClip = 1500;
 		float sampleRadius = 1.f;
 	};
 	
@@ -113,10 +113,10 @@ public:
 	bool getIsEnabled() { return data->isEnabled; }
 	void setEnabled( bool ab );
 	
-	float getNearClip() { return data->near; }
-	float getFarClip() { return data->far; }
-	void setNearClip( float anear ) { data->near = anear; }
-	void setFarClip( float afar ) { data->far = afar; }
+	float getNearClip() { return data->nearClip; }
+	float getFarClip() { return data->farClip; }
+	void setNearClip( float anear ) { data->nearClip = anear; }
+	void setFarClip( float afar ) { data->farClip = afar; }
 	
 	const bool isMultiCubeFacePass() const;
 	const bool isSingleOmniPass() const;

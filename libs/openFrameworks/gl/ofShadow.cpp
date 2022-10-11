@@ -783,8 +783,8 @@ const ofShader & ofShadow::getDepthShader(ofGLProgrammableRenderer & renderer) c
 //--------------------------------------------------------------
 void ofShadow::updateDepth(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
 	shader.setUniform3f("uLightPos", data->position );
-	shader.setUniform1f("uNearPlane", data->near );
-	shader.setUniform1f("uFarPlane", data->far );
+	shader.setUniform1f("uNearPlane", data->nearClip );
+	shader.setUniform1f("uFarPlane", data->farClip );
 	
 	if( data->lightType == OF_LIGHT_POINT ) {
 		if( isSingleOmniPass() ) {
@@ -807,8 +807,8 @@ void ofShadow::updateDepth(const ofShader & shader,ofGLProgrammableRenderer & re
 void ofShadow::updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgrammableRenderer & renderer) const {
 	shader.begin();
 	shader.setUniform3f("uLightPos", data->position );
-	shader.setUniform1f("uNearPlane", data->near );
-	shader.setUniform1f("uFarPlane", data->far );
+	shader.setUniform1f("uNearPlane", data->nearClip );
+	shader.setUniform1f("uFarPlane", data->farClip );
 	
 	if( aCubeFace < mViewProjMats.size() ) {
 		shader.setUniformMatrix4f("lightsViewProjectionMatrix", mViewProjMats[aCubeFace] );

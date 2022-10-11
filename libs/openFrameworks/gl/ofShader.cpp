@@ -1459,8 +1459,8 @@ bool ofShader::setShadowUniforms( int textureLocation ) const {
 			setUniformMatrix4f(shadowAddress+".shadowMatrix", shadow->shadowMatrix );
 		}
 		
-		setUniform1f(shadowAddress+".near", shadow->near );
-		setUniform1f(shadowAddress+".far", shadow->far );
+		setUniform1f(shadowAddress+".near", shadow->nearClip );
+		setUniform1f(shadowAddress+".far", shadow->farClip );
 		setUniform1f(shadowAddress+".normalBias", shadow->normalBias );
 		setUniform1f(shadowAddress+".bias", shadow->bias );
 		if( shadow->lightType != OF_LIGHT_POINT ) {
