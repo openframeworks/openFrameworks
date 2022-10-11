@@ -43,7 +43,6 @@ jobs:
         cache-name: cache-install-libs
       with:
         path: |
-#          libs
           addons/ofxAssimpModelLoader/libs/**/
           addons/ofxKinect/libs/**/
           addons/ofxOpenCv/libs/**/
