@@ -47,6 +47,7 @@ jobs:
         cache-name: cache-install-libs
       with:
         path: |
+          libs/boost/**
           libs/cairo/**
           libs/curl/**
           libs/fmod/**
