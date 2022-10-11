@@ -3,9 +3,10 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	
+	// applies lighting to everything, regardless of shadow or facing lights
 	ofSetGlobalAmbientColor(ofColor(140));
 	
+	// add two lights
 	int numLights = 2;
 	for( int i = 0; i < numLights; i++ ) {
 		auto light = make_shared<ofLight>();
@@ -13,17 +14,38 @@ void ofApp::setup(){
 		if( i == 0 ) {
 			light->setPointLight();
 		} else {
+			// set the light to be a spot light with a cutoff (cone/fov) of 30 degrees
+			// and a concentration (softness) of 50 out of a range 0 - 128
 			light->setSpotlight(30, 50);
 			light->getShadow().setNearClip(100);
 			light->getShadow().setFarClip(2000);
 		}
+		
+		if( light->getType() == OF_LIGHT_DIRECTIONAL || light->getType() == OF_LIGHT_SPOT ){
+			glm::quat xq = glm::angleAxis(glm::radians(30.0f), glm::vec3(1,0,0));
+			glm::quat yq = glm::angleAxis(glm::radians(200.0f), glm::vec3(0,1,0));
+			light->setOrientation(yq*xq);
+			// unsure why this is reversed
+			if(light->getType() == OF_LIGHT_SPOT) {
+				light->setOrientation( light->getOrientationQuat() * glm::angleAxis(ofDegToRad(180), glm::vec3(0,1,0) ) );
+			}
+		}
+		
+		if( !ofIsGLProgrammableRenderer() ) {
+			light->enable();
+		}
+		
 		lights.push_back(light);
 	}
-	
+	// shadows are disabled by default
+	// call this function to enable all of them that are attached to lights
 	ofShadow::enableAllShadows();
-	// default is 0.005
-//	ofShadow::setAllShadowBias(0.006);
-	// default is 0
+	// shadow bias is the margin of error the shadow depth
+	// increasing the bias helps reduce shadow acne, but can cause light leaking
+	// try to find a good balance that fits your needs
+	// bias default is 0.005
+	//ofShadow::setAllShadowBias(0.006);
+	// normal bias default is 0
 	// moves the bias along the normal of the mesh, helps reduce shadow acne
 	ofShadow::setAllShadowNormalBias(-4.f);
 	ofShadow::setAllShadowDepthResolutions( 1024, 1024 );
@@ -36,6 +58,8 @@ void ofApp::setup(){
 	boxMesh = ofMesh::box(1, 1, 1, 24, 24, 24);
 	cylinderMesh = ofMesh::cylinder(0.4, 1.0, 48, 12, 4, true, OF_PRIMITIVE_TRIANGLES );
 	
+	// shadows and lights work with materials
+	// create some different materials so the lighting and shadows can be applied
 	boxMaterial.setDiffuseColor( ofFloatColor(0.25) );
 	boxMaterial.setShininess(60);
 	boxMaterial.setSpecularColor(ofFloatColor(1));
@@ -63,21 +87,6 @@ void ofApp::update(){
 		lights[1]->setPosition( 210, 430.0, 750 );
 	}
 	
-	for( int i = 0; i < lights.size(); i++ ){
-		auto& light = lights[i];
-		if( light->getType() == OF_LIGHT_DIRECTIONAL || light->getType() == OF_LIGHT_SPOT ){
-			glm::quat xq = glm::angleAxis(glm::radians(30.0f), glm::vec3(1,0,0));
-			glm::quat yq = glm::angleAxis(glm::radians(200.0f), glm::vec3(0,1,0));
-			light->setOrientation(yq*xq);
-			
-			if(light->getType() == OF_LIGHT_SPOT) {
-				light->setOrientation( light->getOrientationQuat() * glm::angleAxis(ofDegToRad(180), glm::vec3(0,1,0) ) );
-			}
-		} else {
-			light->setOrientation(glm::vec3(0,0,0));
-		}
-	}
-	
 	colorHue += deltaTime * 2.0;
 	if(colorHue >= 255){
 		colorHue = 0.f;
@@ -100,10 +109,29 @@ void ofApp::draw(){
 	
 	for( int i = 0; i < lights.size(); i++ ) {
 		auto& light = lights[i];
+		// query the light to see if it has a depth pass
 		if( light->shouldRenderShadowDepthPass() ) {
+			// Get the number of passes required.
+			// By default the number of passes is 1. And we could just call beginShadowDepthPass() or beginShadowDepthPass(0);
+			// It will be more than one pass if it is a pointlight with setSingleOmniPass set to false
+			// or a platform that does not support geometry shaders.
+			// Most likely it will be a single pass, but we get the number of passes to be safe.
 			int numShadowPasses = light->getNumShadowDepthPasses();
 			for( int j = 0; j < numShadowPasses; j++ ) {
 				light->beginShadowDepthPass(j);
+				// By default, shadows have the following gl culling enabled by default
+				// this helps reduce z fighting by only rendering the rear facing triangles to the depth map
+				// enables face culling
+				//glEnable(GL_CULL_FACE);
+				// sets the gl triangle winding order, default for ofShadow is GL_CW
+				//glFrontFace(mGlFrontFaceWindingOrder);
+				// tells OpenGL to cull front faces
+				//glCullFace(GL_FRONT);
+				
+				// the culling can be disabled by calling
+				//light->getShadow().setGlCullingEnabled(false);
+				// or the culling winding order can be changed by calling
+				//light->getShadow().setFrontFaceWindingOrder(GL_CCW); // default is GL_CW
 				renderScene();
 				light->endShadowDepthPass(j);
 			}
@@ -111,16 +139,28 @@ void ofApp::draw(){
 	}
 	
 	camera.begin();
-	// CULL the back faces of the geometry
+	
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofEnableLighting();
+	}
+	
+	// CULL the back faces of the geometry for rendering
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
 	renderScene();
 	glDisable(GL_CULL_FACE);
+	
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofDisableLighting();
+	}
 
 	
-	for( int i = 0; i < lights.size(); i++ ) {
+	for( int i = 0; i < lights.size(); i++ ){
 		auto& light = lights[i];
+		if( !light->getShadow().getIsEnabled() ){
+			continue;
+		}
 		ofSetColor(light->getDiffuseColor());
 		light->draw();
 		
@@ -141,10 +181,19 @@ void ofApp::draw(){
 	
 	
 	stringstream ss;
-	ss << "Shadows enabled (spacebar): " << bEnableShadows;
-	ss << endl << "Draw frustums (f): " << bDrawFrustums;
-	ss << endl << "Shadow Type (right): " << ofShadow::getShadowTypeAsString(shadowType);
-	ss << endl << "Sample Radius (up / down): " << shadowSampleRadius;
+	
+	if( !ofIsGLProgrammableRenderer() ) {
+		ss << endl << "SHADOWS ONLY WORK WITH PROGRAMMABLE RENDERER!" << endl;
+	} else {
+		ss << "Shadows enabled (spacebar): " << bEnableShadows;
+		ss << endl << "Draw frustums (f): " << bDrawFrustums;
+		ss << endl << "Shadow Type (right): " << ofShadow::getShadowTypeAsString(shadowType);
+		ss << endl << "Sample Radius (up / down): " << shadowSampleRadius;
+		if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
+			ss << endl << "Point light shadows only work with OpenGL 4+" << endl;
+		}
+	}
+	
 	
 	ofDrawBitmapStringHighlight(ss.str(), 20, 20 );
 	
@@ -152,7 +201,8 @@ void ofApp::draw(){
 	ofEnableAlphaBlending();
 	
 }
-
+// create a renderScene() function so the same drawing can happen in both ofApp::draw()
+// and inside the ofLight::beginShadowDepthPass()
 //--------------------------------------------------------------
 void ofApp::renderScene() {
 	float etimef = ofGetElapsedTimef();

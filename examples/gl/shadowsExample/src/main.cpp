@@ -8,6 +8,7 @@ int main( ){
 	ofGLWindowSettings settings;
 	settings.setSize(1200, 768);
 	// shadows only work with programmable renderer
+	// point lights only work with OpenGL 4+
 	settings.setGLVersion(4,1);
 	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 	

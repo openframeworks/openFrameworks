@@ -176,6 +176,7 @@ bool ofLight::getIsEnabled() const {
 //----------------------------------------
 void ofLight::setDirectional() {
 	data->lightType	= OF_LIGHT_DIRECTIONAL;
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -188,6 +189,7 @@ void ofLight::setSpotlight(float spotCutOff, float exponent) {
 	data->lightType		= OF_LIGHT_SPOT;
 	setSpotlightCutOff( spotCutOff );
 	setSpotConcentration( exponent );
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -230,6 +232,7 @@ float ofLight::getSpotConcentration() const{
 //----------------------------------------
 void ofLight::setPointLight() {
 	data->lightType	= OF_LIGHT_POINT;
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -267,6 +270,7 @@ void ofLight::setAreaLight(float width, float height){
 	data->lightType = OF_LIGHT_AREA;
 	data->width = width;
 	data->height = height;
+	shadow.setLightType( data->lightType );
 }
 
 bool ofLight::getIsAreaLight() const{

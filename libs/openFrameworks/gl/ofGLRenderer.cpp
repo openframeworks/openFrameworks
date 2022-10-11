@@ -577,9 +577,13 @@ void ofGLRenderer::unbind(const ofBaseMaterial &){
 
 // does nothing, only programmable renderer supported
 //----------------------------------------------------------
-void ofGLRenderer::bind(const ofShadow & shadow) {};
+void ofGLRenderer::bind(const ofShadow & shadow) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
 //----------------------------------------------------------
-void ofGLRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {};
+void ofGLRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
 
 // does nothing, only programmable renderer supported
 //----------------------------------------------------------

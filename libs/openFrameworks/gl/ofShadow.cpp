@@ -155,10 +155,27 @@ bool ofShadow::hasActiveShadows() {
 
 //--------------------------------------------------------------
 void ofShadow::enableAllShadows() {
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: enableAllShadows : only works with programmable renderer.");
+		return;
+	}
+	
+	int glVersion = 0;
+	if( ofGetGLRenderer() ) {
+		glVersion = ofGetGLRenderer()->getGLVersionMajor();
+	}
+	
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
+		}
+		if( shadow->lightType == OF_LIGHT_POINT ) {
+			if( glVersion < 4 ) {
+				shadow->isEnabled = false;
+				ofLogWarning("ofShadow :: enableAllShadows : point light shadows only work OpenGL 4.0 or greater.") << i << " light type: " << shadow->lightType;
+				continue;
+			}
 		}
 		shadow->isEnabled = true;
 	}
@@ -177,6 +194,10 @@ void ofShadow::disableAllShadows() {
 
 //--------------------------------------------------------------
 void ofShadow::setAllShadowTypes( ofShadowType atype ) {
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: setAllShadowTypes : only works with programmable renderer.");
+		return;
+	}
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
@@ -188,6 +209,10 @@ void ofShadow::setAllShadowTypes( ofShadowType atype ) {
 
 //--------------------------------------------------------------
 void ofShadow::setAllShadowDepthResolutions(int awidth, int aheight ) {
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: setAllShadowDepthResolutions : only works with programmable renderer.");
+		return;
+	}
 	setDepthMapResolution( OF_LIGHT_POINT, awidth, aheight );
 	setDepthMapResolution( OF_LIGHT_DIRECTIONAL, awidth, aheight );
 	setDepthMapResolution( OF_LIGHT_SPOT, awidth, aheight );
@@ -196,6 +221,10 @@ void ofShadow::setAllShadowDepthResolutions(int awidth, int aheight ) {
 
 //--------------------------------------------------------------
 void ofShadow::setAllShadowBias( float bias ) {
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: setAllShadowBias : only works with programmable renderer.");
+		return;
+	}
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
@@ -207,6 +236,10 @@ void ofShadow::setAllShadowBias( float bias ) {
 
 //--------------------------------------------------------------
 void ofShadow::setAllShadowNormalBias( float normalBias ) {
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: setAllShadowNormalBias : only works with programmable renderer.");
+		return;
+	}
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
@@ -218,6 +251,10 @@ void ofShadow::setAllShadowNormalBias( float normalBias ) {
 
 //--------------------------------------------------------------
 void ofShadow::setAllShadowSampleRadius( float sampleRadius ) {
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: enableAllShadows : only works with programmable renderer.");
+		return;
+	}
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
@@ -262,13 +299,15 @@ ofShadow::~ofShadow() {
 void ofShadow::setLightType( int atype ) {
 	
 	if( (ofLightType)atype != data->lightType ) {
-		ofLogNotice() << "ofShadow::setLightType : " << atype;
+		ofLogVerbose() << "ofShadow :: setLightType : " << atype;
 		clear();
 	}
 	data->lightType = atype;
 	data->numDepthPasses = getNumShadowDepthPasses();
-	_checkFbos();
-	_allocate();
+	if( getIsEnabled() ) {
+		_checkFbos();
+		_allocate();
+	}
 }
 
 //--------------------------------------------------------------
@@ -360,16 +399,16 @@ void ofShadow::update( const ofLight& alight ) {
 //----------------------------------------------------
 bool ofShadow::beginDepth() {
 	
-	_allocateFbo();
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: beginDepth() : shadows only work with programmable renderer.");
+		setEnabled(false);
+	}
 	
 	if( !getIsEnabled() ) {
 		return false;
 	}
 	
-	if( !ofIsGLProgrammableRenderer() ) {
-		ofLogWarning("ofShadow :: beginDepth() : shadows are only available with programmable renderer.");
-		return false;
-	}
+	_allocateFbo();
 	
 	auto glRenderer = ofGetGLRenderer();
 	if(!glRenderer){
@@ -401,7 +440,7 @@ bool ofShadow::beginDepth() {
 	if( isGlCullingEnabled() ) {
 		glEnable(GL_CULL_FACE); // enables face culling
 		glFrontFace(mGlFrontFaceWindingOrder);
-		glCullFace(GL_FRONT); // tells OpenGL to cull back faces (the sane default setting)
+		glCullFace(GL_FRONT); // tells OpenGL to cull front faces
 	}
 	return true;
 }
@@ -434,21 +473,23 @@ bool ofShadow::endDepth() {
 
 //--------------------------------------------------------------
 bool ofShadow::beginDepth(GLenum aCubeFace) {
-	_allocateFbo();
+	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: beginDepth(cubeFace) : shadows are only available with programmable renderer.");
+		setEnabled(false);
+	}
 	
 	if( !getIsEnabled() ) {
 		return false;
 	}
+	
+	_allocateFbo();
+	
 	if( data->lightType != OF_LIGHT_POINT ) {
 		ofLogWarning("ofShadow :: beginDepth(cubeFace) called from a light that does not use cube map. Use beginDepth() instead.");
 		return false;
 	}
 	if( isSingleOmniPass() ) {
 		ofLogWarning("ofShadow :: beginDepth(cubeFace) called using single pass, should be calling beginDepth().");
-		return false;
-	}
-	if( !ofIsGLProgrammableRenderer() ) {
-		ofLogWarning("ofShadow :: beginDepth(cubeFace) : shadows are only available with programmable renderer.");
 		return false;
 	}
 	
@@ -494,6 +535,16 @@ void ofShadow::clear() {
 void ofShadow::setEnabled( bool ab ) {
 	if( !ofIsGLProgrammableRenderer() ) {
 		ab = false;
+	}
+	if( data->lightType == OF_LIGHT_POINT ) {
+		int glVersion = 0;
+		if( ofGetGLRenderer() ) {
+			glVersion = ofGetGLRenderer()->getGLVersionMajor();
+		}
+		if(glVersion < 4) {
+			ofLogWarning("ofShadow :: setEnabled : point light shadows only work OpenGL 4.0 or greater.");
+			ab = false;
+		}
 	}
 	
 	data->isEnabled = ab;
@@ -807,7 +858,7 @@ void ofShadow::_allocateFbo() {
 		textureTarget = GL_TEXTURE_CUBE_MAP_ARRAY;
 	}
 	
-	ofLogNotice("Allocating depth map for light type:  ") << data->lightType << " | " << ofGetFrameNum();// << " depth tex id: " << getDepthMapTexId();
+	ofLogVerbose("ofShadow :: Allocating depth map for light type:  ") << data->lightType << " | " << ofGetFrameNum();
 	
 	
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);

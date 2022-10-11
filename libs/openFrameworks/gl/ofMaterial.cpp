@@ -447,6 +447,14 @@ namespace{
         		mExtraTexturesHeader += "#define "+customTex.first+" 1\n";
         	}
         }
+		
+//		SHADOWS_EXCLUDE_CUBE_MAP_ARRAY
+		if( ofGetGLRenderer() ) {
+			int glversion = ofGetGLRenderer()->getGLVersionMajor();
+			if( glversion < 4 ) {
+				mExtraTexturesHeader += "#define SHADOWS_EXCLUDE_CUBE_MAP_ARRAY 1\n";
+			}
+		}
 
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + mExtraTexturesHeader + source;
         return source;

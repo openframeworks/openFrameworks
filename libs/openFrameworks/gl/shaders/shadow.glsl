@@ -21,8 +21,9 @@ struct shadowData
 	mat4 shadowMatrix;
 };
 uniform shadowData shadows[MAX_LIGHTS];
-
+#ifndef SHADOWS_EXCLUDE_CUBE_MAP_ARRAY
 uniform samplerCubeArray uShadowCubeMap;
+#endif
 uniform sampler2DArrayShadow uShadowMapDirectional;
 uniform sampler2DArrayShadow uShadowMapSpot;
 
@@ -97,7 +98,7 @@ float random(in vec2 st) {
 }
 
 
-
+#ifndef SHADOWS_EXCLUDE_CUBE_MAP_ARRAY
 float SampleShadowCube(in shadowData aShadowData, in samplerCubeArray aShadowMap, vec3 fragToLight, float acurrentDepth, float aclosestDepth, float offset, float abias ) {
 	float shadow = 0.0;
 	
@@ -112,7 +113,6 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCubeArray aShadowMap
 	if( aShadowData.shadowType < 1 ) {
 		// already set shadow above
 	} else if( aShadowData.shadowType < 2 ) {
-//		shadow = ShadowPCF2(aShadowData, aWorldFragPos+normalOffset, bias);
 		for( int i = 0; i < 8; i++ ) {
 			closestDepth = texture(uShadowCubeMap, vec4(fragToLight + (cornerSamplingDisk8_v3[i] * offset), aShadowData.texIndex) ).r;
 			if(closestDepth < 1.0 && currentDepth - abias > closestDepth) {
@@ -122,7 +122,6 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCubeArray aShadowMap
 		// dividing by 9 because shadow was set initially and added a grid of 8
 		shadow /= 9.0;
 	} else if( aShadowData.shadowType < 3 ) {
-//		shadow = ShadowPCF4( aShadowData, aWorldFragPos+normalOffset, bias );
 		int samples = 8;
 		for(int i = 0; i < samples; ++i) {
 			closestDepth = texture(aShadowMap, vec4(fragToLight + (cornerSamplingDisk8_v3[i] * offset), aShadowData.texIndex) ).r;
@@ -154,9 +153,11 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCubeArray aShadowMap
 	}
 	return shadow;
 }
+#endif
 
 float PointLightShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal ) {
 	// aWorldNormal should be normalized
+#ifndef SHADOWS_EXCLUDE_CUBE_MAP_ARRAY
 	vec3 normalOffset = aWorldNormal*(aShadowData.normalBias);
 	vec3 lightDiff = (aWorldFragPos+normalOffset) - aShadowData.lightWorldPos;
 	
@@ -167,9 +168,11 @@ float PointLightShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec
 	float closestDepth = texture(uShadowCubeMap, vec4(lightDiff, aShadowData.texIndex) ).r;
 	
 	float diskRadius = (abs(currentDepth-closestDepth)/(aShadowData.far*0.5)) * aShadowData.sampleRadius + aShadowData.sampleRadius * 0.5;
-	
+
 	float shadow = SampleShadowCube(aShadowData, uShadowCubeMap, lightDiff, currentDepth, closestDepth, diskRadius, bias);
 	return shadow;
+#endif
+	return 0.0;
 }
 
 
