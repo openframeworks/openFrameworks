@@ -147,9 +147,9 @@
     <ClInclude Include="..\..\..\openFrameworks\gl\ofLight.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
-	<ClInclude Include="..\..\..\openFrameworks\gl\ofShadow.h">
-		<Filter>libs\openFrameworks\gl</Filter>
-	</ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofShadow.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\gl\ofMaterial.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
@@ -368,9 +368,9 @@
     <ClCompile Include="..\..\..\openFrameworks\gl\ofLight.cpp">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClCompile>
-	<ClCompile Include="..\..\..\openFrameworks\gl\ofShadow.cpp">
-		<Filter>libs\openFrameworks\gl</Filter>
-	</ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofShadow.cpp">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\gl\ofMaterial.cpp">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClCompile>
