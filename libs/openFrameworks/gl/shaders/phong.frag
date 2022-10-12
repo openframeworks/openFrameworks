@@ -60,7 +60,7 @@ static const string fragmentShader = R"(
 
 	%custom_uniforms%
 
-
+	#ifdef HAS_TEX_NORMAL
 	//-- normal map code from ------------------------------------ //
 	// http://www.geeks3d.com/20130122/normal-mapping-without-precomputed-tangent-space-vectors/
 	// http://www.thetenthplanet.de/archives/1180
@@ -90,6 +90,7 @@ static const string fragmentShader = R"(
 		return normalize(TBN * map);
 	}
 	//-- end normal map code ------------------------------------ //
+	#endif
 
     void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
         float nDotVP;       // normal . light direction
@@ -269,22 +270,28 @@ static const string fragmentShader = R"(
 			vec4 shadowColor = vec4(1);
             if(lights[i].type<0.5){
                 pointLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
+				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
 					shadow = PointLightShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
 					shadowColor = shadows[i].color;
 				}
+				#endif
             }else if(lights[i].type<1.5){
                 directionalLight(lights[i], transformedNormal, ambient, diffuse, specular);
+				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
 					shadow = DirectionalShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
 					shadowColor = shadows[i].color;
 				}
+				#endif
             }else if(lights[i].type<2.5){
                 spotLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
+				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
 					shadow = SpotShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
 					shadowColor = shadows[i].color;
 				}
+				#endif
             }else{
                 areaLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
 				// no shadows yet
@@ -297,10 +304,11 @@ static const string fragmentShader = R"(
 //			diffuse.rgb = mix( diffuse.rgb, shadowColor.rgb, mixAmnt );
 //			specular.rgb = mix( specular.rgb, shadowColor.rgb, mixAmnt );
         }
-		
+		#ifdef HAS_SHADOWS
 		ambient.rgb *= oshadowColor.rgb;
 		diffuse.rgb *= oshadowColor.rgb;
 		specular.rgb *= oshadowColor.rgb;
+		#endif
         
         // apply emmisive texture
         vec4 mat_emissive_color = mat_emissive;

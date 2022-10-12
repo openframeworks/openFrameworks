@@ -432,11 +432,15 @@ namespace{
         ofStringReplace(source, "%postFragment%", postFragment);
         ofStringReplace(source, "%custom_uniforms%", customUniforms);
 		
-		if( ofIsGLProgrammableRenderer() ) {
-			ofStringReplace(source, "%shader_shadow_include%", shadowShaderInclude );
-		} else {
-			ofStringReplace(source, "%shader_shadow_include%", "" );
-		}
+	#ifdef TARGET_OPENGLES
+		ofStringReplace(source, "%shader_shadow_include%", "" );
+	#else
+	if( ofIsGLProgrammableRenderer() ) {
+		ofStringReplace(source, "%shader_shadow_include%", "#define HAS_SHADOWS\n"+shadowShaderInclude );
+	} else {
+		ofStringReplace(source, "%shader_shadow_include%", "" );
+	}
+	#endif
 		
         //add custom textures to header of fragment shader
         //eg: #define HAS_TEX_NORMAL 1
@@ -447,7 +451,7 @@ namespace{
         		mExtraTexturesHeader += "#define "+customTex.first+" 1\n";
         	}
         }
-		
+		#ifndef TARGET_OPENGLES
 		GLenum cubeTexTarget = ofShadow::getTextureTarget( OF_LIGHT_POINT );
 		if( cubeTexTarget != GL_TEXTURE_CUBE_MAP ) {
 			mExtraTexturesHeader += "#define SHADOWS_USE_CUBE_MAP_ARRAY 1\n";
@@ -457,6 +461,7 @@ namespace{
 		if( cubeTexTarget != GL_TEXTURE_2D ) {
 			mExtraTexturesHeader += "#define SHADOWS_USE_TEXTURE_ARRAY 1\n";
 		}
+		#endif
 				
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + mExtraTexturesHeader + source;
         return source;
