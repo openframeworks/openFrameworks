@@ -104,12 +104,16 @@ GLenum ofShadow::getTextureTarget( int aLightType ) {
 //#if defined(TARGET_OPENGLES)
 	if( aLightType == OF_LIGHT_POINT ) {
 		#ifdef GL_TEXTURE_CUBE_MAP_ARRAY
+		#ifdef glTexImage3D
 		return GL_TEXTURE_CUBE_MAP_ARRAY;
+		#endif
 		#endif
 		return GL_TEXTURE_CUBE_MAP;
 	}
 	#ifdef GL_TEXTURE_2D_ARRAY
+	#ifdef glTexImage3D
 	return GL_TEXTURE_2D_ARRAY;
+	#endif
 	#endif
 	return GL_TEXTURE_2D;
 //#else
@@ -965,9 +969,13 @@ void ofShadow::_allocateFbo() {
 		if( textureTarget == GL_TEXTURE_CUBE_MAP_ARRAY ) {
 			ofLogVerbose("ofShadow :: Allocating GL_TEXTURE_CUBE_MAP_ARRAY for light type:  ") << data->lightType << " | " << ofGetFrameNum();
 			if( depthComponent == GL_DEPTH_COMPONENT24 ) {
+				#ifdef glTexImage3D
 				glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapWidth(), getGLData(data->lightType).totalShadows * 6, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
+				#endif
 			} else {
-			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapWidth(), getGLData(data->lightType).totalShadows * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+				#ifdef glTexImage3D
+				glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapWidth(), getGLData(data->lightType).totalShadows * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+				#endif
 			}
 		}
 		#endif
@@ -1009,7 +1017,9 @@ void ofShadow::_allocateFbo() {
 		
 		#ifdef GL_TEXTURE_2D_ARRAY
 		if( textureTarget == GL_TEXTURE_2D_ARRAY ) {
+			#ifdef glTexImage3D
 			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapHeight(), getGLData(data->lightType).totalShadows, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+			#endif
 		}
 		#endif
 	}
