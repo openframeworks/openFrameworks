@@ -75,6 +75,44 @@ static void releaseFBO(int aLightType){
 	}
 }
 
+//----------------------------------------
+int ofShadow::getNumTotalPossibleShadows( int aLightType ) {
+	// opengl es does not support texture arrays
+	// so there can only be one type of shadow each
+#if defined(TARGET_OPENGLES)
+	return 1;
+#endif
+
+	if( aLightType == OF_LIGHT_POINT ) {
+		if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
+			// does not support cube map arrays in openGL < 4
+			return 1;
+		}
+	}
+	// a bit of an arbitrary selection here
+	return 64;
+}
+
+//----------------------------------------
+GLenum ofShadow::getTextureTarget( int aLightType ) {
+	
+#if defined(TARGET_OPENGLES)
+	if( aLightType == OF_LIGHT_POINT ) {
+		return GL_TEXTURE_CUBE_MAP;
+	}
+	return GL_TEXTURE_2D;
+#endif
+	
+	if( aLightType == OF_LIGHT_POINT ) {
+		if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
+			// does not support cube map arrays in openGL < 4
+			return GL_TEXTURE_CUBE_MAP;
+		}
+		return GL_TEXTURE_CUBE_MAP_ARRAY;
+	}
+	return GL_TEXTURE_2D_ARRAY;
+}
+
 //--------------------------------------------------------------
 void ofShadow::setDepthMapResolution( int aLightType, int ares ) {
 	setDepthMapResolution( aLightType, ares, ares );
@@ -160,22 +198,10 @@ void ofShadow::enableAllShadows() {
 		return;
 	}
 	
-	int glVersion = 0;
-	if( ofGetGLRenderer() ) {
-		glVersion = ofGetGLRenderer()->getGLVersionMajor();
-	}
-	
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
-		}
-		if( shadow->lightType == OF_LIGHT_POINT ) {
-			if( glVersion < 4 ) {
-				shadow->isEnabled = false;
-				ofLogWarning("ofShadow :: enableAllShadows : point light shadows only work OpenGL 4.0 or greater.") << i << " light type: " << shadow->lightType;
-				continue;
-			}
 		}
 		shadow->isEnabled = true;
 	}
@@ -273,10 +299,12 @@ void ofShadow::_updateTexDataIds() {
 		if(!shadow || !shadow->isEnabled || shadow->index < 0 ){
 			continue;
 		}
+		
 		if( texIdMap.count((int)shadow->lightType) < 0 ) {
 			texIdMap[(int)shadow->lightType] = 0;
 		}
 		shadow->texIndex = texIdMap[(int)shadow->lightType];
+		
 		texIdMap[(int)shadow->lightType]++;
 	}
 }
@@ -287,6 +315,9 @@ ofShadow::ofShadow() {
 	data->color = ofFloatColor(0,0,0,0.5);
 	data->shadowMatrix = glm::mat4(1.0f);
 	setSingleOmniPass(true);
+#if defined(TARGET_OPENGLES)
+	setSingleOmniPass(false);
+#endif
 	_checkSetup();
 }
 
@@ -422,6 +453,10 @@ bool ofShadow::beginDepth() {
 		}
 	}
 	
+	if( data->texIndex+1 > getNumTotalPossibleShadows(data->lightType) ) {
+		ofLogWarning( "ofShadow :: too many shadows detected for light type " ) << data->lightType<<". Total supported for light type: " << getNumTotalPossibleShadows(data->lightType);
+	}
+	
 	glBindFramebuffer( GL_FRAMEBUFFER, getDepthMapFboId() );
 	if( data->lightType == OF_LIGHT_POINT ) {
 		// handled in the depthCubeGeom shader
@@ -493,6 +528,10 @@ bool ofShadow::beginDepth(GLenum aCubeFace) {
 		return false;
 	}
 	
+	if( data->texIndex+1 > getNumTotalPossibleShadows(data->lightType) ) {
+		ofLogWarning( "ofShadow :: too many shadows detected for light type " ) << data->lightType<<". Total supported for light type: " << getNumTotalPossibleShadows(data->lightType);
+	}
+	
 //	if( data->lightType == OF_LIGHT_POINT ) {
 //		glEnable(GL_TEXTURE_CUBE_MAP_ARRAY);
 //	}
@@ -503,12 +542,18 @@ bool ofShadow::beginDepth(GLenum aCubeFace) {
 	}
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, getDepthMapFboId());
-	glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, getDepthMapTexId(), 0, (data->texIndex * 6) + aCubeFace);
-	glViewport(0, 0, getDepthMapWidth(), getDepthMapHeight() );
+	if( getTextureTarget(OF_LIGHT_POINT) != GL_TEXTURE_CUBE_MAP ){
+		glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, getDepthMapTexId(), 0, (data->texIndex * 6) + aCubeFace);
+	} else {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace, getDepthMapTexId(), 0);
+	}
+//	glViewport(0, 0, getDepthMapWidth(), getDepthMapHeight() );
+	ofPushView();
+	ofViewport(0, 0, getDepthMapWidth(), getDepthMapHeight(), false);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	glRenderer->bind(*this,aCubeFace);
-	
+		
 	if( isGlCullingEnabled() ) {
 		glEnable(GL_CULL_FACE); // enables face culling
 		glFrontFace(mGlFrontFaceWindingOrder);
@@ -534,17 +579,8 @@ void ofShadow::clear() {
 //--------------------------------------------------------------
 void ofShadow::setEnabled( bool ab ) {
 	if( !ofIsGLProgrammableRenderer() ) {
+		ofLogWarning("ofShadow :: setEnabled : shadows only work with programmable renderer");
 		ab = false;
-	}
-	if( data->lightType == OF_LIGHT_POINT ) {
-		int glVersion = 0;
-		if( ofGetGLRenderer() ) {
-			glVersion = ofGetGLRenderer()->getGLVersionMajor();
-		}
-		if(glVersion < 4) {
-			ofLogWarning("ofShadow :: setEnabled : point light shadows only work OpenGL 4.0 or greater.");
-			ab = false;
-		}
 	}
 	
 	data->isEnabled = ab;
@@ -576,10 +612,20 @@ const int ofShadow::getNumShadowDepthPasses() const {
 
 //--------------------------------------------------------------
 void ofShadow::setSingleOmniPass( bool ab ) {
+	
+	if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
+		ab = false;
+	}
+	
 #ifdef TARGET_OPENGLES
 	// setting to false because the single pass uses a geometry shader
 	ab = false;
 #endif
+	
+	if(mBSinglePass != ab ) {
+		clear();
+	}
+
 	mBSinglePass = ab;
 	data->numDepthPasses = getNumShadowDepthPasses();
 }
@@ -809,7 +855,7 @@ void ofShadow::updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgramm
 	shader.setUniform3f("uLightPos", data->position );
 	shader.setUniform1f("uNearPlane", data->nearClip );
 	shader.setUniform1f("uFarPlane", data->farClip );
-	
+		
 	if( aCubeFace < mViewProjMats.size() ) {
 		shader.setUniformMatrix4f("lightsViewProjectionMatrix", mViewProjMats[aCubeFace] );
 	}
@@ -853,22 +899,20 @@ void ofShadow::_allocateFbo() {
 	
 	GLenum Status = GL_FRAMEBUFFER_UNSUPPORTED;
 	
-	int textureTarget = GL_TEXTURE_2D_ARRAY;
-	if( data->lightType == OF_LIGHT_POINT ) {
-		textureTarget = GL_TEXTURE_CUBE_MAP_ARRAY;
-	}
+	GLenum textureTarget = getTextureTarget(data->lightType);
 	
 	ofLogVerbose("ofShadow :: Allocating depth map for light type:  ") << data->lightType << " | " << ofGetFrameNum();
 	
-	
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glBindTexture(textureTarget, getDepthMapTexId() );
 	
 	if( data->lightType == OF_LIGHT_POINT ) {
 		// Create the cube map depth buffer
+		#if !defined(TARGET_OPENGLES)
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		#endif
 		
 		if( textureTarget == GL_TEXTURE_CUBE_MAP ) {
+			ofLogVerbose("ofShadow :: Allocating GL_TEXTURE_CUBE_MAP for light type:  ") << data->lightType << " | " << ofGetFrameNum();
 			for (GLint i = 0 ; i < 6 ; i++) {
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT32F, getDepthMapWidth(), getDepthMapWidth(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 			}
@@ -879,10 +923,12 @@ void ofShadow::_allocateFbo() {
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		
+		#if !defined(TARGET_OPENGLES)
 		if( textureTarget == GL_TEXTURE_CUBE_MAP_ARRAY ) {
+			ofLogVerbose("ofShadow :: Allocating GL_TEXTURE_CUBE_MAP_ARRAY for light type:  ") << data->lightType << " | " << ofGetFrameNum();
 			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT32F, getDepthMapWidth(), getDepthMapWidth(), getGLData(data->lightType).totalShadows * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 		}
+		#endif
 	} else {
 		if( textureTarget == GL_TEXTURE_2D ) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, getDepthMapWidth(), getDepthMapHeight(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -894,17 +940,21 @@ void ofShadow::_allocateFbo() {
 		glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 		//--! This is to allow usage of shadow2DProj function in the shader !--//
+		#if !defined(TARGET_OPENGLES)
 		if( textureTarget == GL_TEXTURE_2D_ARRAY ) {
 			glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		}
+		#endif
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glTexParameterfv(textureTarget, GL_TEXTURE_BORDER_COLOR, borderColor);
 		
+		#if !defined(TARGET_OPENGLES)
 		if( textureTarget == GL_TEXTURE_2D_ARRAY ) {
 			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT32F, getDepthMapWidth(), getDepthMapHeight(), getGLData(data->lightType).totalShadows, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 		}
+		#endif
 	}
 	
 	glBindTexture(textureTarget, 0);
@@ -992,13 +1042,13 @@ void ofShadow::initShaders(ofGLProgrammableRenderer & renderer) const{
 		shaders[&renderer]->depth.bindDefaults();
 		shaders[&renderer]->depth.linkProgram();
 		
-#ifndef TARGET_OPENGLES
+		#ifndef TARGET_OPENGLES
 		shaders[&renderer]->depthCube.setupShaderFromSource(GL_VERTEX_SHADER,"#version 330\n#define CUBE_MAP_SINGLE_PASS\n"+depthVertexShaderSource);
 		shaders[&renderer]->depthCube.setupShaderFromSource(GL_FRAGMENT_SHADER,"#version 330\n#define CUBE_MAP_SINGLE_PASS\n"+depthFragShaderSource);
 		shaders[&renderer]->depthCube.setupShaderFromSource(GL_GEOMETRY_SHADER_EXT,depthCubeGeometryShaderSource);
 		shaders[&renderer]->depthCube.bindDefaults();
 		shaders[&renderer]->depthCube.linkProgram();
-#endif
+		#endif
 		shaders[&renderer]->depthCubeMultiPass.setupShaderFromSource(GL_VERTEX_SHADER,"#version 330\n#define CUBE_MAP_MULTI_PASS\n"+depthVertexShaderSource);
 		shaders[&renderer]->depthCubeMultiPass.setupShaderFromSource(GL_FRAGMENT_SHADER,"#version 330\n#define CUBE_MAP_MULTI_PASS\n"+depthFragShaderSource);
 		shaders[&renderer]->depthCubeMultiPass.bindDefaults();

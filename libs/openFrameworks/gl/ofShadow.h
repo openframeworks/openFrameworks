@@ -73,6 +73,9 @@ public:
 		float sampleRadius = 1.f;
 	};
 	
+	static GLenum getTextureTarget( int aLightType );
+	static int getNumTotalPossibleShadows( int aLightType );
+	
 	static void setDepthMapResolution( int aLightType, int ares );
 	static void setDepthMapResolution( int aLightType, int awidth, int aheight );
 	
@@ -198,6 +201,8 @@ protected:
 										   );
     
 private:
+//	int getNumTotalPossibleShadows( int aLightType );
+	
 	struct Shaders{
 		ofShader depth;
 		ofShader depthCube;

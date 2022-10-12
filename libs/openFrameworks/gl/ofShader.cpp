@@ -1442,9 +1442,13 @@ bool ofShader::setShadowUniforms( int textureLocation ) const {
 		return false;
 	}
 	
-	setUniformTexture("uShadowCubeMap", GL_TEXTURE_CUBE_MAP_ARRAY, ofShadow::getPointTexId(), textureLocation );
-	setUniformTexture("uShadowMapDirectional", GL_TEXTURE_2D_ARRAY, ofShadow::getDirectionalTexId(), textureLocation+1 );
-	setUniformTexture("uShadowMapSpot", GL_TEXTURE_2D_ARRAY, ofShadow::getSpotTexId(), textureLocation+2 );
+	setUniformTexture("uShadowCubeMap", ofShadow::getTextureTarget( OF_LIGHT_POINT ), ofShadow::getPointTexId(), textureLocation );
+	setUniformTexture("uShadowMapDirectional", ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL ), ofShadow::getDirectionalTexId(), textureLocation+1 );
+	setUniformTexture("uShadowMapSpot", ofShadow::getTextureTarget( OF_LIGHT_SPOT ), ofShadow::getSpotTexId(), textureLocation+2 );
+	
+//	setUniformTexture("uShadowCubeMap", GL_TEXTURE_CUBE_MAP_ARRAY, ofShadow::getPointTexId(), textureLocation );
+//	setUniformTexture("uShadowMapDirectional", GL_TEXTURE_2D_ARRAY, ofShadow::getDirectionalTexId(), textureLocation+1 );
+//	setUniformTexture("uShadowMapSpot", GL_TEXTURE_2D_ARRAY, ofShadow::getSpotTexId(), textureLocation+2 );
 	
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::string idx = ofToString(i,0);

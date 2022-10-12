@@ -448,14 +448,16 @@ namespace{
         	}
         }
 		
-//		SHADOWS_EXCLUDE_CUBE_MAP_ARRAY
-		if( ofGetGLRenderer() ) {
-			int glversion = ofGetGLRenderer()->getGLVersionMajor();
-			if( glversion < 4 ) {
-				mExtraTexturesHeader += "#define SHADOWS_EXCLUDE_CUBE_MAP_ARRAY 1\n";
-			}
+		GLenum cubeTexTarget = ofShadow::getTextureTarget( OF_LIGHT_POINT );
+		if( cubeTexTarget != GL_TEXTURE_CUBE_MAP ) {
+			mExtraTexturesHeader += "#define SHADOWS_USE_CUBE_MAP_ARRAY 1\n";
 		}
-
+		
+		GLenum shadowTexTarget = ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL );
+		if( cubeTexTarget != GL_TEXTURE_2D ) {
+			mExtraTexturesHeader += "#define SHADOWS_USE_TEXTURE_ARRAY 1\n";
+		}
+				
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + mExtraTexturesHeader + source;
         return source;
     }
