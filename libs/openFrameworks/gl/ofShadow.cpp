@@ -1009,7 +1009,7 @@ void ofShadow::_allocateFbo() {
 		
 		#ifdef GL_TEXTURE_2D_ARRAY
 		if( textureTarget == GL_TEXTURE_2D_ARRAY ) {
-			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT32F, getDepthMapWidth(), getDepthMapHeight(), getGLData(data->lightType).totalShadows, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapHeight(), getGLData(data->lightType).totalShadows, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 		}
 		#endif
 	}
