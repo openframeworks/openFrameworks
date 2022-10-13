@@ -9,13 +9,16 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Insets;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -34,6 +37,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 import android.view.accessibility.AccessibilityEvent;
@@ -54,7 +58,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display display;
 	private Display presentationDisplay;
 	public static final boolean LOG_INPUT = false;
-	public static final boolean LOG_ENGINE = true;
+	public static final boolean LOG_ENGINE = false;
 
 	public float currentRefreshRate;
 	public float highestRefreshRate;
@@ -297,6 +301,55 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	}
 
 
+	public static int getScreenWidth(@NonNull Activity activity) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+			WindowMetrics windowMetrics = activity.getWindowManager().getCurrentWindowMetrics();
+			Rect bounds = windowMetrics.getBounds();
+			Insets insets = windowMetrics.getWindowInsets().getInsetsIgnoringVisibility(
+					WindowInsets.Type.systemBars()
+			);
+
+			if (activity.getResources().getConfiguration().orientation
+					== Configuration.ORIENTATION_LANDSCAPE
+					&& activity.getResources().getConfiguration().smallestScreenWidthDp < 600
+			) { // landscape and phone
+				int navigationBarSize = insets.right + insets.left;
+				return bounds.width() - navigationBarSize;
+			} else { // portrait or tablet
+				return bounds.width();
+			}
+		} else {
+			DisplayMetrics outMetrics = new DisplayMetrics();
+			activity.getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+			return outMetrics.widthPixels;
+		}
+	}
+
+	public static int getScreenHeight(@NonNull Activity activity) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+			WindowMetrics windowMetrics = activity.getWindowManager().getCurrentWindowMetrics();
+			Rect bounds = windowMetrics.getBounds();
+			Insets insets = windowMetrics.getWindowInsets().getInsetsIgnoringVisibility(
+					WindowInsets.Type.systemBars()
+			);
+
+			if (activity.getResources().getConfiguration().orientation
+					== Configuration.ORIENTATION_LANDSCAPE
+					&& activity.getResources().getConfiguration().smallestScreenWidthDp < 600
+			) { // landscape and phone
+				return bounds.height();
+			} else { // portrait or tablet
+				int navigationBarSize = insets.bottom;
+				return bounds.height() - navigationBarSize;
+			}
+		} else {
+			DisplayMetrics outMetrics = new DisplayMetrics();
+			activity.getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+			return outMetrics.heightPixels;
+		}
+	}
+
+
 	public void DetermineDisplayDimensionsConfigChange(Configuration config) {
 
 		try {
@@ -308,15 +361,15 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				WindowManager windowManager = getWindowManager();
 				if(windowManager != null && getWindowManager().getDefaultDisplay() != null) {
 					getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
-					int height = glView.getMeasuredHeight();
-					int width = glView.getMeasuredWidth();
+					int height = displayMetrics.heightPixels;
+					int width = displayMetrics.widthPixels;
 
 					float density = displayMetrics.density;
 					//int width = (int)(config.screenWidthDp * density);
 					//int height = (int)(config.screenHeightDp * density);
 					if(LOG_ENGINE) Log.i("OF", "DetermineDisplayDimensionsConfigChange: w/h:" + width + "x" + height + " density:" + density);
 
-					glView.setWindowResize(width, height);
+					glView.setWindowResize(getScreenWidth(this), getScreenHeight(this));
 				} else {
 					throw new Exception("Display window problem");
 				}
