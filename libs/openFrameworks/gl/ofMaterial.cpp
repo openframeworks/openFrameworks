@@ -1,5 +1,6 @@
 #include "ofMaterial.h"
 #include "ofLight.h"
+#include "ofShadow.h"
 #include "ofGLProgrammableRenderer.h"
 
 using std::shared_ptr;
@@ -327,6 +328,11 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 	}
 }
 
+void ofMaterial::updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
+	// TODO: Where should this start??
+	shader.setShadowUniforms(10);
+}
+
 void ofMaterial::setCustomShader( std::shared_ptr<ofShader> aCustomShader) {
 	customShader = aCustomShader;
 	if( customShader ) {
@@ -396,6 +402,7 @@ void ofMaterial::setCustomUniformTexture(const string & name, int textureTarget,
 
 #include "shaders/phong.vert"
 #include "shaders/phong.frag"
+#include "shaders/shadow.glsl"
 
 namespace{
     string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
@@ -424,7 +431,16 @@ namespace{
         }
         ofStringReplace(source, "%postFragment%", postFragment);
         ofStringReplace(source, "%custom_uniforms%", customUniforms);
-
+		
+	#ifdef TARGET_OPENGLES
+		ofStringReplace(source, "%shader_shadow_include%", "" );
+	#else
+	if( ofIsGLProgrammableRenderer() ) {
+		ofStringReplace(source, "%shader_shadow_include%", "#define HAS_SHADOWS\n"+shadowShaderInclude );
+	} else {
+		ofStringReplace(source, "%shader_shadow_include%", "" );
+	}
+	#endif
 		
         //add custom textures to header of fragment shader
         //eg: #define HAS_TEX_NORMAL 1
@@ -435,7 +451,18 @@ namespace{
         		mExtraTexturesHeader += "#define "+customTex.first+" 1\n";
         	}
         }
-
+		#ifndef TARGET_OPENGLES
+		GLenum cubeTexTarget = ofShadow::getTextureTarget( OF_LIGHT_POINT );
+		if( cubeTexTarget != GL_TEXTURE_CUBE_MAP ) {
+			mExtraTexturesHeader += "#define SHADOWS_USE_CUBE_MAP_ARRAY 1\n";
+		}
+		
+		GLenum shadowTexTarget = ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL );
+		if( cubeTexTarget != GL_TEXTURE_2D ) {
+			mExtraTexturesHeader += "#define SHADOWS_USE_TEXTURE_ARRAY 1\n";
+		}
+		#endif
+				
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + mExtraTexturesHeader + source;
         return source;
     }

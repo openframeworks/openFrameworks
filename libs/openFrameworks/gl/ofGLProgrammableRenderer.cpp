@@ -70,6 +70,9 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 	currentTextureTarget = OF_NO_TEXTURE;
 	currentMaterial = nullptr;
 	alphaMaskTextureTarget = OF_NO_TEXTURE;
+	
+	currentShadow = nullptr;
+	bIsShadowDepthPass = false;
 
 	major = 3;
 	minor = 2;
@@ -782,6 +785,11 @@ glm::mat4 ofGLProgrammableRenderer::getCurrentNormalMatrix() const{
 }
 
 //----------------------------------------------------------
+glm::mat4 ofGLProgrammableRenderer::getCurrentModelMatrix() const{
+	return matrixStack.getModelMatrix();
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 	if(!currentShader) return;
 	// uploads the current matrix to the current shader.
@@ -1371,6 +1379,11 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
     currentMaterial = &material;
+	if( bIsShadowDepthPass ) {
+		// we are the shadow depth pass right now, we don't need
+		// textures or lighting, etc.
+		return;
+	}
     // FIXME: this invalidates the previous shader to avoid that
     // when binding 2 materials one after another, the second won't
     // get the right parameters.
@@ -1379,9 +1392,39 @@ void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::bind(const ofShadow & shadow) {
+	currentShadow = &shadow;
+	bIsShadowDepthPass = true;
+	beginDefaultShader();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {
+	shadowCubeFace = aCubeFace;
+	bind( shadow );
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
     currentMaterial = nullptr;
+	if( bIsShadowDepthPass ) {
+		// we are the shadow depth pass right now, we don't need
+		// textures or lighting, etc.
+		return;
+	}
 	beginDefaultShader();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(const ofShadow & shadow) {
+	currentShadow = nullptr;
+	bIsShadowDepthPass = false;
+	beginDefaultShader();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(const ofShadow & shadow, GLenum aCubeFace) {
+	unbind(shadow);
 }
 
 //----------------------------------------------------------
@@ -1495,17 +1538,27 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 	if(currentMaterial){
 		currentMaterial->updateMaterial(*currentShader,*this);
 		currentMaterial->updateLights(*currentShader,*this);
+		currentMaterial->updateShadows(*currentShader,*this);
+	}
+	if(currentShadow) {
+		if( currentShadow->isMultiCubeFacePass() ) {
+			currentShadow->updateDepth(*currentShader, shadowCubeFace, *this);
+		} else {
+			currentShadow->updateDepth(*currentShader, *this);
+		}
 	}
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::beginDefaultShader(){
-	if(usingCustomShader && !currentMaterial)	return;
+	if(usingCustomShader && !currentMaterial && !currentShadow)	return;
 
 	const ofShader * nextShader = nullptr;
 
-	if(!uniqueShader || currentMaterial){
-        if(currentMaterial){
+	if(!uniqueShader || currentMaterial || currentShadow ){
+		if( currentShadow ) {
+			nextShader = &currentShadow->getDepthShader(*this);
+		} else if(currentMaterial){
             nextShader = &currentMaterial->getShader(currentTextureTarget,colorsEnabled,*this);
 
 		}else if(bitmapStringEnabled){

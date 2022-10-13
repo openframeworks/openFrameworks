@@ -177,6 +177,7 @@ bool ofLight::getIsEnabled() const {
 //----------------------------------------
 void ofLight::setDirectional() {
 	data->lightType	= OF_LIGHT_DIRECTIONAL;
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -189,6 +190,7 @@ void ofLight::setSpotlight(float spotCutOff, float exponent) {
 	data->lightType		= OF_LIGHT_SPOT;
 	setSpotlightCutOff( spotCutOff );
 	setSpotConcentration( exponent );
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -231,6 +233,7 @@ float ofLight::getSpotConcentration() const{
 //----------------------------------------
 void ofLight::setPointLight() {
 	data->lightType	= OF_LIGHT_POINT;
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -268,6 +271,7 @@ void ofLight::setAreaLight(float width, float height){
 	data->lightType = OF_LIGHT_AREA;
 	data->width = width;
 	data->height = height;
+	shadow.setLightType( data->lightType );
 }
 
 bool ofLight::getIsAreaLight() const{
@@ -373,4 +377,76 @@ void ofLight::onOrientationChanged() {
 		data->up = getUpDir();
 		data->right = getXAxis();
 	}
+}
+
+//-------------------------------
+bool ofLight::shouldRenderShadowDepthPass() {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	return getIsEnabled() && shadow.getIsEnabled();
+}
+
+//-------------------------------
+int ofLight::getNumShadowDepthPasses() {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return 0;
+	}
+	return shadow.getNumShadowDepthPasses();
+}
+
+//-------------------------------
+bool ofLight::beginShadowDepthPass() {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	shadow.update(*this);
+	shadow.beginDepth();
+	if( getNumShadowDepthPasses() > 1 ) {
+		ofLogWarning("ofLight :: beginShadowDepthPass : shadow has more than one depth pass! Call beginShadowDepthPass( GLenum aPassIndex ) instead. ");
+		return false;
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::endShadowDepthPass() {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	shadow.endDepth();
+	if( getNumShadowDepthPasses() > 1 ) {
+		ofLogWarning("ofLight :: endShadowDepthPass : shadow has more than one depth pass! Call endShadowDepthPass( GLenum aPassIndex ) instead. ");
+		return false;
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::beginShadowDepthPass( GLenum aPassIndex ) {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	if( aPassIndex == 0 ) {
+		shadow.update(*this);
+	}
+	if( getNumShadowDepthPasses() < 2 ) {
+		shadow.beginDepth();
+	} else {
+		shadow.beginDepth(aPassIndex);
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::endShadowDepthPass( GLenum aPassIndex ) {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	if( getNumShadowDepthPasses() < 2 ) {
+		shadow.endDepth();
+	} else {
+		shadow.endDepth(aPassIndex);
+	}
+	return true;
 }

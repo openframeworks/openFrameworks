@@ -157,6 +157,8 @@ public:
 	/// \param shader the material shader, created by getShader()
 	/// \param renderer programmable renderer instance that uses the material shader
 	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
+	
+	virtual void updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
 };
 
 
@@ -249,6 +251,7 @@ private:
 	const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;
 	void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+	void updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 
 	ofMaterialSettings data;
 

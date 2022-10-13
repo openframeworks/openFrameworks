@@ -13,6 +13,8 @@
 #pragma once
 
 #include "ofNode.h"
+#include "ofColor.h"
+#include "ofShadow.h"
 
 class ofBaseGLRenderer;
 
@@ -74,6 +76,15 @@ public:
 	ofFloatColor getSpecularColor() const;
 	
 	int getLightID() const;
+	
+	bool shouldRenderShadowDepthPass();
+	int getNumShadowDepthPasses();
+	bool beginShadowDepthPass();
+	bool endShadowDepthPass();
+	bool beginShadowDepthPass( GLenum aPassIndex );
+	bool endShadowDepthPass( GLenum aPassIndex );
+	
+	ofShadow& getShadow() { return shadow; }
 
 	class Data{
 	public:
@@ -104,6 +115,9 @@ public:
 		/// weak link back to renderer for which this light was created/setup
 		std::weak_ptr<ofBaseGLRenderer> rendererP;
 	};
+	
+protected:
+	ofShadow shadow;
 	
 private:
 	void customDraw(const ofBaseRenderer * renderer) const;
