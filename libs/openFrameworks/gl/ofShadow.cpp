@@ -328,7 +328,6 @@ void ofShadow::_updateTexDataIds() {
 //--------------------------------------------------------------
 ofShadow::ofShadow() {
 	data = std::make_shared<ofShadow::Data>();
-	data->color = ofFloatColor(0,0,0,0.5);
 	data->shadowMatrix = glm::mat4(1.0f);
 	setSingleOmniPass(true);
 #if defined(TARGET_OPENGLES)
@@ -836,11 +835,6 @@ std::vector<glm::vec3> ofShadow::getFrustumCorners( const glm::vec3& aup, const 
 //--------------------------------------------------------------
 std::string ofShadow::getShadowTypeAsString() {
 	return ofShadow::getShadowTypeAsString(data->shadowType);
-}
-
-//--------------------------------------------------------------
-void ofShadow::setColor( const ofFloatColor& acolor ) {
-	data->color = acolor;
 }
 
 //--------------------------------------------------------------

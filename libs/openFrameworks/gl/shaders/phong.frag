@@ -92,7 +92,9 @@ static const string fragmentShader = R"(
 	//-- end normal map code ------------------------------------ //
 	#endif
 
-    void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
+	
+
+    void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, in float shadow, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
         float nDotVP;       // normal . light direction
         float nDotHV;       // normal . light half vector
         float pf;           // power factor
@@ -119,14 +121,14 @@ static const string fragmentShader = R"(
         nDotVP = max(0.0, dot(normal, VP));
 
         ambient += light.ambient.rgb * attenuation;
-        diffuse += light.diffuse.rgb * nDotVP * attenuation;
+        diffuse += light.diffuse.rgb * shadow * nDotVP * attenuation;
 #ifndef TARGET_OPENGLES
 #define SPECULAR_REFLECTION
 #endif
 #ifndef SPECULAR_REFLECTION
         // ha! no branching :)
         pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
-        specular += light.specular.rgb * pf * nDotVP * attenuation;
+        specular += light.specular.rgb * shadow * pf * nDotVP * attenuation;
 #else
         // fresnel factor
         // http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
@@ -134,11 +136,16 @@ static const string fragmentShader = R"(
         vec3 specularReflection = attenuation * vec3(light.specular.rgb)
           * mix(vec3(mat_specular.rgb), vec3(1.0), w)
           * pow(nDotHV, mat_shininess);
-        specular += mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));
+        specular += shadow * mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));
 #endif
     }
 
-    void directionalLight(in lightData light, in vec3 normal, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
+	void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
+		float tempShadow = 1.0;
+		pointLight( light, normal, ecPosition3, tempShadow, ambient, diffuse, specular );
+	}
+
+    void directionalLight(in lightData light, in vec3 normal, in float shadow, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
         float nDotVP;         // normal . light direction
         float nDotHV;         // normal . light half vector
         float pf;             // power factor
@@ -149,11 +156,15 @@ static const string fragmentShader = R"(
         pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
 
         ambient += light.ambient.rgb;
-        diffuse += light.diffuse.rgb * nDotVP;
-        specular += light.specular.rgb * pf * nDotVP;
+        diffuse += light.diffuse.rgb * nDotVP * shadow;
+        specular += light.specular.rgb * pf * nDotVP * shadow;
     }
 
-    void spotLight(in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
+	void directionalLight(in lightData light, in vec3 normal, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
+		directionalLight(light, normal, 1.0, ambient, diffuse, specular);
+	}
+
+    void spotLight(in lightData light, in vec3 normal, in vec3 ecPosition3, in float shadow, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
         float nDotVP; // = max(dot(normal,normalize(vec3(light.position))),0.0);
         float nDotHV;       // normal . light half vector
         float pf;
@@ -180,14 +191,18 @@ static const string fragmentShader = R"(
 
             pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
 
-            diffuse += light.diffuse.rgb * nDotVP * attenuation;
-            specular += light.specular.rgb * pf * nDotVP * attenuation;
+            diffuse += light.diffuse.rgb * shadow * nDotVP * attenuation;
+            specular += light.specular.rgb * shadow * pf * nDotVP * attenuation;
 
         }
 
         ambient += light.ambient.rgb * attenuation;
 
     }
+
+	void spotLight(in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular) {
+		spotLight(light, normal, ecPosition3, 1.0, ambient, diffuse, specular);
+	}
 
 
     vec3 projectOnPlane(in vec3 point, in vec3 planeCenter, in vec3 planeNormal){
@@ -198,7 +213,7 @@ static const string fragmentShader = R"(
        return lp+lv*(dot(pn,pc-lp)/dot(pn,lv));
     }
 
-    void areaLight(in lightData light, in vec3 N, in vec3 V, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
+    void areaLight(in lightData light, in vec3 N, in vec3 V, float shadow, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
         vec3 right = light.right;
         vec3 pnormal = light.spotDirection;
         vec3 up = light.up;
@@ -235,10 +250,36 @@ static const string fragmentShader = R"(
                 float specFactor = 1.0-clamp(length(nearestSpec2D-dirSpec2D) * 0.05 * mat_shininess,0.0,1.0);
                 specular += light.specular.rgb * specFactor * specAngle * diffuseFactor * attenuation;
             }
-            diffuse  += light.diffuse.rgb  * diffuseFactor * attenuation;
+            diffuse  += light.diffuse.rgb * shadow * diffuseFactor * attenuation;
         }
         ambient += light.ambient.rgb * attenuation;
     }
+
+	void areaLight(in lightData light, in vec3 N, in vec3 V, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular) {
+		areaLight(light, N, V, 1.0, ambient, diffuse, specular);
+	}
+
+#ifdef HAS_SHADOWS
+float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal) {
+	
+	vec3 VP = light.position.xyz - ecPosition3;
+	float spotEffect = dot(light.spotDirection, -normalize(VP));
+	
+	if (spotEffect < light.spotCosCutoff) {
+		return 0.0;
+	}
+	
+	float shadowStrength = 1.0;
+	if( light.spotExponent > 0.0 ) {
+		float d = length(VP);
+		spotEffect = pow(spotEffect, light.spotExponent);
+		float attenuation = spotEffect / (light.constantAttenuation + light.linearAttenuation * d + light.quadraticAttenuation * d * d);
+		shadowStrength = attenuation;
+	}
+	
+	return shadowStrength * SpotShadow( aShadowData, aWorldFragPos, aWorldNormal);
+}
+#endif
 
 
     %postFragment%
@@ -261,54 +302,43 @@ static const string fragmentShader = R"(
 			
         vec3 transformedNormal = normalize(tNormal);
 		
-		
-		vec4 oshadowColor = vec4(1);
-
+		#ifdef HAS_SHADOWS
+		vec3 worldNormalN = normalize(v_worldNormal);
+		#endif
         for( int i = 0; i < MAX_LIGHTS; i++ ){
             if(lights[i].enabled<0.5) continue;
 			float shadow = 0.0;
-			vec4 shadowColor = vec4(1);
             if(lights[i].type<0.5){
-                pointLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
 				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
-					shadow = PointLightShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
-					shadowColor = shadows[i].color;
+					shadow = PointLightShadow(shadows[i], v_worldPosition, worldNormalN);
 				}
+				shadow *= shadows[i].strength;
 				#endif
+                pointLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }else if(lights[i].type<1.5){
-                directionalLight(lights[i], transformedNormal, ambient, diffuse, specular);
 				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
-					shadow = DirectionalShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
-					shadowColor = shadows[i].color;
+					shadow = DirectionalShadow(shadows[i], v_worldPosition, worldNormalN);
 				}
+				shadow *= shadows[i].strength;
 				#endif
+                directionalLight(lights[i], transformedNormal, 1.0-shadow, ambient, diffuse, specular);
             }else if(lights[i].type<2.5){
-                spotLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
 				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
-					shadow = SpotShadow(shadows[i], v_worldPosition, normalize(v_worldNormal));
-					shadowColor = shadows[i].color;
+					shadow = SpotShadow(lights[i], v_eyePosition, shadows[i], v_worldPosition, worldNormalN);
 				}
+				shadow *= shadows[i].strength;
 				#endif
+                spotLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }else{
-                areaLight(lights[i], transformedNormal, v_eyePosition, ambient, diffuse, specular);
-				// no shadows yet
+				#ifdef HAS_SHADOWS
+				shadow *= shadows[i].strength;
+				#endif
+                areaLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }
-			
-			float mixAmnt = shadow * shadowColor.a;
-			oshadowColor.rgb = mix( oshadowColor.rgb, shadowColor.rgb, mixAmnt );
-//			float mixAmnt = shadow * shadowColor.a;
-//			ambient.rgb = mix( ambient.rgb, shadowColor.rgb, mixAmnt );
-//			diffuse.rgb = mix( diffuse.rgb, shadowColor.rgb, mixAmnt );
-//			specular.rgb = mix( specular.rgb, shadowColor.rgb, mixAmnt );
         }
-		#ifdef HAS_SHADOWS
-		ambient.rgb *= oshadowColor.rgb;
-		diffuse.rgb *= oshadowColor.rgb;
-		specular.rgb *= oshadowColor.rgb;
-		#endif
         
         // apply emmisive texture
         vec4 mat_emissive_color = mat_emissive;
@@ -342,7 +372,7 @@ static const string fragmentShader = R"(
         #elif HAS_COLOR
             vec4 localColor = vec4(ambient,1.0) * v_color + vec4(diffuse,1.0) * v_color + vec4(specular,1.0) * mat_specular + mat_emissive_color;
         #else
-            vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive_color;
+			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive_color;
         #endif
                 
         #ifdef HAS_TEX_OCCLUSION

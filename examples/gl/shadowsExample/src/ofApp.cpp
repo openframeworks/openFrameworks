@@ -3,8 +3,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	// applies lighting to everything, regardless of shadow or facing lights
-	ofSetGlobalAmbientColor(ofColor(140));
 	
 	// add two lights
 	int numLights = 2;
@@ -16,11 +14,15 @@ void ofApp::setup(){
 		} else {
 			// set the light to be a spot light with a cutoff (cone/fov) of 30 degrees
 			// and a concentration (softness) of 50 out of a range 0 - 128
-			light->setSpotlight(30, 50);
+			light->setSpotlight(60, 20);
 			light->getShadow().setNearClip(200);
 			light->getShadow().setFarClip(2000);
 			light->setPosition( 210, 330.0, 750 );
+			light->setAmbientColor(ofFloatColor(0.4));
 		}
+		// set the strength of the shadow, how visible it is
+		// default is 0.5
+		light->getShadow().setStrength(0.6f);
 		
 		if( light->getType() == OF_LIGHT_DIRECTIONAL || light->getType() == OF_LIGHT_SPOT ){
 			glm::quat xq = glm::angleAxis(glm::radians(30.0f), glm::vec3(1,0,0));
@@ -45,7 +47,7 @@ void ofApp::setup(){
 	// increasing the bias helps reduce shadow acne, but can cause light leaking
 	// try to find a good balance that fits your needs
 	// bias default is 0.005
-//	ofShadow::setAllShadowBias(0.007);
+	ofShadow::setAllShadowBias(0.007);
 	// normal bias default is 0
 	// moves the bias along the normal of the mesh, helps reduce shadow acne
 	ofShadow::setAllShadowNormalBias(-4.f);
@@ -65,11 +67,11 @@ void ofApp::setup(){
 	boxMaterial.setShininess(60);
 	boxMaterial.setSpecularColor(ofFloatColor(1));
 	
-	bgMaterial.setDiffuseColor( ofFloatColor(0.5) );
-	bgMaterial.setShininess(1);
-	bgMaterial.setSpecularColor(ofFloatColor(1));
+	bgMaterial.setDiffuseColor( ofFloatColor(0.15) );
+	bgMaterial.setShininess(0.0);
+	bgMaterial.setSpecularColor(ofFloatColor(0.25));
 	
-	sphereMaterial.setAmbientColor(ofFloatColor(0.85, 0.4));
+	sphereMaterial.setAmbientColor(ofFloatColor(0.25));
 	sphereMaterial.setDiffuseColor(ofFloatColor(0.85, 1.0));
 	sphereMaterial.setSpecularColor(ofFloatColor(1.0,1.0,1.0,1.0));
 	sphereMaterial.setShininess(100);
@@ -80,10 +82,10 @@ void ofApp::setup(){
 	for( size_t i = 0; i < logoMesh.getNumNormals(); i++ ) {
 		logoMesh.getNormals()[i] *= -1.f;
 	}
-	logoMaterial.setAmbientColor(ofFloatColor(0.85, 0.16, 0.43, 0.4));
+	logoMaterial.setAmbientColor(ofFloatColor(0.85, 0.16, 0.43 ) * 0.8);
 	logoMaterial.setDiffuseColor(ofFloatColor(0.85, 0.16, 0.43, 1.0));
 	logoMaterial.setSpecularColor(ofFloatColor(1.0,1.0,1.0,1.0));
-	logoMaterial.setShininess(10);
+	logoMaterial.setShininess(50);
 	
 }
 
@@ -103,11 +105,13 @@ void ofApp::update(){
 	}
 	lightColor.setHue(colorHue);
 	
-	for( int i = 0; i < (int)lights.size(); i++ ){
-		auto& light = lights[i];
-		lightColor.setHsb(ofWrap(colorHue + (float)i * 29.5, 0, 255.f), 200, 100 );
+	if( lights.size() > 0 ) {
+		auto& light = lights[0];
+		lightColor.setHsb(ofWrap(colorHue, 0, 255.f), 210, 230 );
+		// ambient color applies all over regardless of being lit or not
+		light->setAmbientColor(lightColor*0.2);
 		light->setDiffuseColor(lightColor);
-		lightColor.setBrightness(220);
+		lightColor.setBrightness(250);
 		light->setSpecularColor(lightColor);
 	}
 }
@@ -129,7 +133,7 @@ void ofApp::draw(){
 			int numShadowPasses = light->getNumShadowDepthPasses();
 			for( int j = 0; j < numShadowPasses; j++ ) {
 				light->beginShadowDepthPass(j);
-				// By default, shadows have the following gl culling enabled by default
+				// Shadows have the following gl culling enabled by default
 				// this helps reduce z fighting by only rendering the rear facing triangles to the depth map
 				// enables face culling
 				//glEnable(GL_CULL_FACE);
@@ -170,7 +174,11 @@ void ofApp::draw(){
 		auto& light = lights[i];
 		
 		ofSetColor(light->getDiffuseColor());
-		light->draw();
+		if(light->getType() == OF_LIGHT_POINT ) {
+			ofDrawSphere( light->getPosition(), 12 );
+		} else {
+			light->draw();
+		}
 		
 		if( light->getType() == OF_LIGHT_DIRECTIONAL ){
 			ofSetColor( ofColor::orchid );
@@ -201,9 +209,6 @@ void ofApp::draw(){
 		ss << endl << "Shadow Type (right): " << ofShadow::getShadowTypeAsString(shadowType);
 		ss << endl << "Sample Radius (up / down): " << shadowSampleRadius;
 #endif
-//		if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
-//			ss << endl << "Point light shadows only work with OpenGL 4+" << endl;
-//		}
 	}
 	
 	

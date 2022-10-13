@@ -57,7 +57,7 @@ public:
 #endif
 		
 		glm::mat4 shadowMatrix;
-		ofFloatColor color;
+		float strength = 0.5;
 		
 		int texIndex = 0;
 		
@@ -140,8 +140,8 @@ public:
 	GLuint getDepthMapFboId();
 	GLuint getDepthMapTexId();
 	
-	const ofFloatColor& getColor() { return data->color; }
-	void setColor( const ofFloatColor& acolor );
+	const float& getStrength() { return data->strength; }
+	void setStrength(float astrength) { data->strength = astrength; }
 	
 	const float getBias() { return data->bias; }
 	void setBias( float abias ) { data->bias = abias; }

@@ -13,7 +13,7 @@ struct shadowData
 	
 	int texIndex;
 	
-	vec4 color;
+	float strength;
 	float bias;
 	float normalBias;
 	float sampleRadius;
@@ -97,13 +97,6 @@ vec3 gridSamplingDisk20_v3[20] = vec3[]
  vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
  vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
  );
-
-
-
-// https://github.com/patriciogonzalezvivo/lygia/blob/main/generative/random.glsl#L15
-float random(in vec2 st) {
-	return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453);
-}
 
 
 #ifdef SHADOWS_USE_CUBE_MAP_ARRAY
@@ -202,7 +195,7 @@ float PointLightShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec
 	float closestDepth = texture(uShadowCubeMap, lightDiff ).r;
 #endif
 	
-	float diskRadius = (abs(currentDepth-closestDepth)/(aShadowData.far*0.5)) * aShadowData.sampleRadius + aShadowData.sampleRadius * 0.5;
+	float diskRadius = (abs(currentDepth-closestDepth)/(aShadowData.far*0.5)) * aShadowData.sampleRadius + aShadowData.sampleRadius;
 
 	float shadow = SampleShadowCube(aShadowData, uShadowCubeMap, lightDiff, currentDepth, closestDepth, diskRadius, bias);
 	return shadow;
@@ -317,6 +310,7 @@ float DirectionalShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in ve
 float SpotShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal) {
 	
 	vec3 lightDiff = aWorldFragPos - aShadowData.lightWorldPos;
+	
 	float cosTheta = dot(aWorldNormal, normalize(lightDiff));
 	float bias = clamp(aShadowData.bias * 0.1 * (1.0-(cosTheta)), aShadowData.bias * 0.01, aShadowData.bias);
 	
@@ -326,6 +320,8 @@ float SpotShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWor
 	float visibility = SampleShadow( aShadowData, uShadowMapSpot, fragPosLightSpace, aShadowData.sampleRadius, bias );
 	return clamp(1.0-visibility, 0.0, 1.0);
 }
+	
+	
 )";
 
 

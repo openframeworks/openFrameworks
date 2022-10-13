@@ -1446,10 +1446,6 @@ bool ofShader::setShadowUniforms( int textureLocation ) const {
 	setUniformTexture("uShadowMapDirectional", ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL ), ofShadow::getDirectionalTexId(), textureLocation+1 );
 	setUniformTexture("uShadowMapSpot", ofShadow::getTextureTarget( OF_LIGHT_SPOT ), ofShadow::getSpotTexId(), textureLocation+2 );
 	
-//	setUniformTexture("uShadowCubeMap", GL_TEXTURE_CUBE_MAP_ARRAY, ofShadow::getPointTexId(), textureLocation );
-//	setUniformTexture("uShadowMapDirectional", GL_TEXTURE_2D_ARRAY, ofShadow::getDirectionalTexId(), textureLocation+1 );
-//	setUniformTexture("uShadowMapSpot", GL_TEXTURE_2D_ARRAY, ofShadow::getSpotTexId(), textureLocation+2 );
-	
 	for(size_t i=0;i<ofShadowsData().size();i++){
 		std::string idx = ofToString(i,0);
 		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
@@ -1474,7 +1470,7 @@ bool ofShader::setShadowUniforms( int textureLocation ) const {
 		}
 		
 		setUniform3f(shadowAddress+".lightWorldPos", shadow->position );
-		setUniform4f(shadowAddress+".color", shadow->color );
+		setUniform1f(shadowAddress+".strength", shadow->strength );
 		setUniform3f(shadowAddress+".lightUp", shadow->up );
 		setUniform3f(shadowAddress+".lightRight", shadow->right );
 		setUniform1f(shadowAddress+".shadowType", (float)shadow->shadowType );
