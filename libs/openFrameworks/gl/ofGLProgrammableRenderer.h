@@ -110,6 +110,7 @@ public:
 	glm::mat4 getCurrentOrientationMatrix() const;
 	glm::mat4 getCurrentViewMatrix() const;
 	glm::mat4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentModelMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -176,11 +177,15 @@ public:
 	const ofShader & getCurrentShader() const;
 
 	void bind(const ofBaseMaterial & material);
+	void bind(const ofShadow & shadow);
+	void bind(const ofShadow & shadow, GLenum aCubeFace);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseMaterial & material);
+	void unbind(const ofShadow & shadow);
+	void unbind(const ofShadow & shadow, GLenum aCubeFace);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofBaseVideoDraws & video);
@@ -275,6 +280,10 @@ private:
 
 	const ofBaseMaterial * currentMaterial;
 	int alphaMaskTextureTarget;
+	
+	const ofShadow* currentShadow;
+	bool bIsShadowDepthPass;
+	GLenum shadowCubeFace;
 
 	ofStyle currentStyle;
 	std::deque <ofStyle> styleHistory;
