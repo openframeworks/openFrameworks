@@ -17,8 +17,9 @@ void ofApp::setup(){
 			// set the light to be a spot light with a cutoff (cone/fov) of 30 degrees
 			// and a concentration (softness) of 50 out of a range 0 - 128
 			light->setSpotlight(30, 50);
-			light->getShadow().setNearClip(100);
+			light->getShadow().setNearClip(200);
 			light->getShadow().setFarClip(2000);
+			light->setPosition( 210, 330.0, 750 );
 		}
 		
 		if( light->getType() == OF_LIGHT_DIRECTIONAL || light->getType() == OF_LIGHT_SPOT ){
@@ -44,7 +45,7 @@ void ofApp::setup(){
 	// increasing the bias helps reduce shadow acne, but can cause light leaking
 	// try to find a good balance that fits your needs
 	// bias default is 0.005
-	//ofShadow::setAllShadowBias(0.006);
+//	ofShadow::setAllShadowBias(0.007);
 	// normal bias default is 0
 	// moves the bias along the normal of the mesh, helps reduce shadow acne
 	ofShadow::setAllShadowNormalBias(-4.f);
@@ -68,10 +69,21 @@ void ofApp::setup(){
 	bgMaterial.setShininess(1);
 	bgMaterial.setSpecularColor(ofFloatColor(1));
 	
-	sphereMaterial.setAmbientColor(ofFloatColor(0.85, 0.16, 0.43, 0.4));
-	sphereMaterial.setDiffuseColor(ofFloatColor(0.85, 0.16, 0.43, 1.0));
+	sphereMaterial.setAmbientColor(ofFloatColor(0.85, 0.4));
+	sphereMaterial.setDiffuseColor(ofFloatColor(0.85, 1.0));
 	sphereMaterial.setSpecularColor(ofFloatColor(1.0,1.0,1.0,1.0));
 	sphereMaterial.setShininess(100);
+	
+	logoMesh.load("ofLogoHollow.ply");
+	logoMesh.mergeDuplicateVertices();
+	// we need to flip the normals for this mesh //
+	for( size_t i = 0; i < logoMesh.getNumNormals(); i++ ) {
+		logoMesh.getNormals()[i] *= -1.f;
+	}
+	logoMaterial.setAmbientColor(ofFloatColor(0.85, 0.16, 0.43, 0.4));
+	logoMaterial.setDiffuseColor(ofFloatColor(0.85, 0.16, 0.43, 1.0));
+	logoMaterial.setSpecularColor(ofFloatColor(1.0,1.0,1.0,1.0));
+	logoMaterial.setShininess(10);
 	
 }
 
@@ -81,10 +93,8 @@ void ofApp::update(){
 	float etimef = ofGetElapsedTimef();
 	
 	if( lights.size() > 0 ){
-		lights[0]->setPosition( cosf(etimef * 0.6) * 220.0, 230.0, sinf(etimef * 0.2) * 100 );
-	}
-	if( lights.size() > 1 ){
-		lights[1]->setPosition( 210, 430.0, 750 );
+		float tangle = etimef * 1.05;
+		lights[0]->setPosition( -120, sinf(tangle) * 180.f+150, cosf(tangle) * 100.f );
 	}
 	
 	colorHue += deltaTime * 2.0;
@@ -158,9 +168,7 @@ void ofApp::draw(){
 	
 	for( int i = 0; i < lights.size(); i++ ){
 		auto& light = lights[i];
-		if( !light->getShadow().getIsEnabled() ){
-			continue;
-		}
+		
 		ofSetColor(light->getDiffuseColor());
 		light->draw();
 		
@@ -185,13 +193,17 @@ void ofApp::draw(){
 	if( !ofIsGLProgrammableRenderer() ) {
 		ss << endl << "SHADOWS ONLY WORK WITH PROGRAMMABLE RENDERER!" << endl;
 	} else {
+#ifdef TARGET_OPENGLES
+		ss << endl << "SHADOWS NOT IMPLEMENTED ON OPENGL ES!" << endl;
+#else
 		ss << "Shadows enabled (spacebar): " << bEnableShadows;
 		ss << endl << "Draw frustums (f): " << bDrawFrustums;
 		ss << endl << "Shadow Type (right): " << ofShadow::getShadowTypeAsString(shadowType);
 		ss << endl << "Sample Radius (up / down): " << shadowSampleRadius;
-		if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
-			ss << endl << "Point light shadows only work with OpenGL 4+" << endl;
-		}
+#endif
+//		if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
+//			ss << endl << "Point light shadows only work with OpenGL 4+" << endl;
+//		}
 	}
 	
 	
@@ -209,10 +221,8 @@ void ofApp::renderScene() {
 	ofSetColor(200, 50, 120 );
 	sphereMaterial.begin();
 	ofPushMatrix();
-	ofTranslate(-250, sinf(etimef*0.7)*250, 0);
-	ofRotateZDeg(90*sin(etimef));
-	ofRotateYDeg(90*cos(etimef*0.7));
-	ofScale( 100, 100, 100 );
+	ofTranslate(-120+cosf(etimef*1.4)*20.0, 0, sinf(etimef*1.7)*250 );
+	ofScale( 30, 30, 30 );
 	sphereMesh.draw();
 	sphereMaterial.end();
 	ofSetColor( 255 );
@@ -222,11 +232,19 @@ void ofApp::renderScene() {
 	ofPopMatrix();
 	
 	boxMaterial.begin();
-	ofDrawBox(cosf(etimef) * 200., 0, sinf(etimef*0.452) * 100, 100 );
+//	ofDrawBox(cosf(etimef) * 200., 0, sinf(etimef*0.452) * 100, 100 );
 	ofPushMatrix(); {
 		ofTranslate(250, cosf(etimef*0.6)*50-80, 200 );
 		ofRotateZDeg(ofWrapDegrees((etimef*0.04) * 360));
 		ofRotateXDeg(ofWrapDegrees((etimef*0.06) * 360));
+		ofScale(100, 100, 100.0);
+		boxMesh.draw();
+	} ofPopMatrix();
+	
+	ofPushMatrix(); {
+		ofTranslate(-250, cosf(etimef*0.4)*90-30, 200 );
+		ofRotateZDeg(ofWrapDegrees((etimef*0.034) * 360));
+		ofRotateXDeg(ofWrapDegrees((etimef*0.067) * 360));
 		ofScale(100, 100, 100.0);
 		boxMesh.draw();
 	} ofPopMatrix();
@@ -268,6 +286,15 @@ void ofApp::renderScene() {
 	} ofPopMatrix();
 	
 	bgMaterial.end();
+	
+	logoMaterial.begin();
+	ofPushMatrix();
+	ofTranslate( -50, -170, 50 );
+	ofRotateXDeg(-90);
+	ofScale(60,60,60);
+	logoMesh.draw();
+	ofPopMatrix();
+	logoMaterial.end();
 }
 
 //--------------------------------------------------------------

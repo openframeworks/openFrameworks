@@ -26,10 +26,12 @@ class ofApp : public ofBaseApp{
 		vector< shared_ptr<ofLight> > lights;
 		
 		ofEasyCam camera;
+		ofMesh logoMesh;
 		ofMesh sphereMesh;
 		ofMesh boxMesh;
 		ofMesh cylinderMesh;
 		
+		ofMaterial logoMaterial;
 		ofMaterial boxMaterial;
 		ofMaterial bgMaterial;
 		ofMaterial sphereMaterial;
@@ -41,6 +43,6 @@ class ofApp : public ofBaseApp{
 		bool bEnableShadows = true;
 	
 		ofShadowType shadowType;
-		float shadowSampleRadius = 1.;
+		float shadowSampleRadius = 2.;
 	
 };
