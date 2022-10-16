@@ -9,17 +9,17 @@ in vec4 position;
 uniform mat4 modelMatrix;
 
 // depth camera's view projection matrix
-#ifdef SINGLE_PASS
+#if defined(SINGLE_PASS) || defined(CUBE_MAP_MULTI_PASS)
 uniform mat4 lightsViewProjectionMatrix;
 #endif
 
-#ifdef CUBE_MAP_MULTI_PASS
-uniform mat4 lightsViewProjectionMatrix;
+#if defined(CUBE_MAP_MULTI_PASS)
 out vec3 v_worldPosition;
 #endif
 
 void main() {
-#ifdef SINGLE_PASS
+	
+#if defined(SINGLE_PASS)
 	vec3 worldPosition = (modelMatrix * vec4(position.xyz, 1.0)).xyz;
 	gl_Position = lightsViewProjectionMatrix * vec4(worldPosition, 1.0);
 #endif
@@ -28,7 +28,7 @@ void main() {
 	gl_Position = modelMatrix * vec4(position.xyz, 1.0);
 #endif
 	
-#ifdef CUBE_MAP_MULTI_PASS
+#if defined(CUBE_MAP_MULTI_PASS)
 	v_worldPosition = (modelMatrix * vec4(position.xyz, 1.0)).xyz;
 	gl_Position = lightsViewProjectionMatrix * vec4(v_worldPosition, 1.0);
 #endif

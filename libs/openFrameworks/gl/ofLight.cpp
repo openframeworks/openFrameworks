@@ -271,6 +271,7 @@ void ofLight::setAreaLight(float width, float height){
 	data->width = width;
 	data->height = height;
 	shadow.setLightType( data->lightType );
+	shadow.setAreaLightSize( width, height );
 }
 
 bool ofLight::getIsAreaLight() const{
