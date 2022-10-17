@@ -60,8 +60,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public static final boolean LOG_INPUT = false;
 	public static final boolean LOG_ENGINE = false;
 
-	public float currentRefreshRate;
-	public float highestRefreshRate;
+	public float currentRefreshRate = 0;
+	public float highestRefreshRate = 0;
 
 	public boolean hasPaused = false;
 	public boolean hasSetup = false;
@@ -412,8 +412,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 								if(LOG_ENGINE) Log.i("OF", "Display Mode: Supported:" + mode + " refreshRate: [" + mode.getRefreshRate() + "] mode PhysicalWidth:[" + mode.getPhysicalWidth() + "] mode PhysicalHeight:[" + mode.getPhysicalHeight() + "]");
 								if (mode.getRefreshRate() >= highestRefreshRate) {
 									highestRefreshRate = mode.getRefreshRate();
-									if (highestRefreshRate >= OFAndroid.highestFrameRate) {
+									if (highestRefreshRate <= OFAndroid.highestFrameRate) {
 										highestModeID = mode.getModeId();
+										Log.i("OF", "Display Mode Refresh Rate: Supported:" + mode + " refreshRate: [" + mode.getRefreshRate() + "]");
 									}
 								}
 							}
