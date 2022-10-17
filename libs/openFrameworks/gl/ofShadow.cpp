@@ -101,7 +101,6 @@ GLenum ofShadow::getTextureTarget( int aLightType ) {
 	}
 	#endif
 	
-//#if defined(TARGET_OPENGLES)
 	if( aLightType == OF_LIGHT_POINT ) {
 		#ifdef GL_TEXTURE_CUBE_MAP_ARRAY
 		#ifdef glTexImage3D
@@ -116,17 +115,6 @@ GLenum ofShadow::getTextureTarget( int aLightType ) {
 	#endif
 	#endif
 	return GL_TEXTURE_2D;
-//#else
-//	
-//	if( aLightType == OF_LIGHT_POINT ) {
-//		if( ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() < 4 ) {
-//			// does not support cube map arrays in openGL < 4
-//			return GL_TEXTURE_CUBE_MAP;
-//		}
-//		return GL_TEXTURE_CUBE_MAP_ARRAY;
-//	}
-//	return GL_TEXTURE_2D_ARRAY;
-//#endif
 }
 
 //--------------------------------------------------------------
@@ -176,6 +164,12 @@ GLuint ofShadow::getDirectionalTexId() {
 GLuint ofShadow::getSpotTexId() {
 	_updateTexDataIds();
 	return getFBODepthTexId(OF_LIGHT_SPOT);
+}
+
+//--------------------------------------------------------------
+GLuint ofShadow::getAreaTexId() {
+	_updateTexDataIds();
+	return getFBODepthTexId(OF_LIGHT_AREA);
 }
 
 //--------------------------------------------------------------
@@ -390,9 +384,17 @@ void ofShadow::update( const ofLight& alight ) {
 		mViewProjMats.assign( targetNumMatrices, glm::mat4(1.0) );
 	}
 	
-	if( data->lightType == OF_LIGHT_SPOT ) {
-		mFov = alight.getSpotlightCutOff() * 2.0f;
-		mShadowProjection = glm::perspective(glm::radians(mFov), 1.0f, getNearClip(), getFarClip());
+	if( data->lightType == OF_LIGHT_SPOT || data->lightType == OF_LIGHT_AREA ) {
+		if(data->lightType == OF_LIGHT_SPOT) {
+			mFov = alight.getSpotlightCutOff() * 2.0f;
+		}
+		float aspectRatio = (float)getDepthMapWidth() / (float)getDepthMapHeight();
+		if( data->lightType == OF_LIGHT_AREA ) {
+			mFov = 90;
+			aspectRatio = mAreaLightWidth / mAreaLightHeight;
+		}
+		
+		mShadowProjection = glm::perspective(glm::radians(mFov), aspectRatio, getNearClip(), getFarClip());
 		mLookAtMats[0] = glm::lookAt( data->position, data->position + data->direction, glm::vec3(0.0, 1.0, 0.0) );
 		mViewProjMats[0] = mShadowProjection * mLookAtMats[0];
 		data->shadowMatrix = biasMatrix * mViewProjMats[0];
@@ -470,6 +472,8 @@ bool ofShadow::beginDepth() {
 	if( data->texIndex+1 > getNumTotalPossibleShadows(data->lightType) ) {
 		ofLogWarning( "ofShadow :: too many shadows detected for light type " ) << data->lightType<<". Total supported for light type: " << getNumTotalPossibleShadows(data->lightType);
 	}
+	
+//
 	
 	glBindFramebuffer( GL_FRAMEBUFFER, getDepthMapFboId() );
 	if( data->lightType == OF_LIGHT_POINT ) {
@@ -735,7 +739,7 @@ void ofShadow::_drawFrustum( const glm::vec3& aup, const glm::vec3& aright, cons
 	
 	
 	for( int i = 0; i < 4; i++ ) {
-		if( data->lightType == OF_LIGHT_SPOT ) {
+		if( data->lightType == OF_LIGHT_SPOT || data->lightType == OF_LIGHT_AREA) {
 			mesh.addVertex(data->position);
 		} else {
 			mesh.addVertex(corners[i+4]);
@@ -763,7 +767,7 @@ void ofShadow::_drawFrustum( const glm::vec3& aup, const glm::vec3& aright, cons
 //--------------------------------------------------------------
 std::vector<glm::vec3> ofShadow::getFrustumCorners( const glm::vec3& aup, const glm::vec3& aright, const glm::vec3& afwd ) {
 	
-	if( data->lightType == OF_LIGHT_DIRECTIONAL ) {
+	if( data->lightType == OF_LIGHT_DIRECTIONAL) {
 		
 		glm::vec3 fc = data->position + afwd * getFarClip();
 		glm::vec3 nc = data->position + afwd * getNearClip();
@@ -809,6 +813,11 @@ std::vector<glm::vec3> ofShadow::getFrustumCorners( const glm::vec3& aup, const 
 	glm::vec3 fc = p - Z * getFarClip();
 	
 	float ratio = (float)getDepthMapWidth() / (float)getDepthMapHeight();
+	
+	if( data->lightType == OF_LIGHT_AREA ) {
+		ratio = mAreaLightWidth / mAreaLightHeight;
+	}
+	
 	float Hnear = 2.f * tan( ofDegToRad( mFov ) / 2.f ) * getNearClip();
 	float Wnear = Hnear * ratio;
 	
@@ -846,6 +855,8 @@ const ofShader & ofShadow::getDepthShader(ofGLProgrammableRenderer & renderer) c
 		} else {
 			return shaders[&renderer]->depthCubeMultiPass;
 		}
+	} else if( data->lightType == OF_LIGHT_AREA ) {
+		return shaders[&renderer]->depth;
 	} else {
 		return shaders[&renderer]->depth;
 	}
@@ -876,7 +887,7 @@ void ofShadow::updateDepth(const ofShader & shader,ofGLProgrammableRenderer & re
 
 //--------------------------------------------------------------
 void ofShadow::updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgrammableRenderer & renderer) const {
-	shader.begin();
+//	shader.begin();
 	shader.setUniform3f("uLightPos", data->position );
 	shader.setUniform1f("uNearPlane", data->nearClip );
 	shader.setUniform1f("uFarPlane", data->farClip );
@@ -931,7 +942,7 @@ void ofShadow::_allocateFbo() {
 	int depthComponent = GL_DEPTH_COMPONENT24;
 	#endif
 	
-	ofLogVerbose("ofShadow :: Allocating depth map for light type:  ") << data->lightType << " | " << ofGetFrameNum();
+	ofLogNotice("ofShadow :: Allocating depth map for light type:  ") << data->lightType << " total shadows: " << getGLData(data->lightType).totalShadows << " | " << ofGetFrameNum();
 	
 	glBindTexture(textureTarget, getDepthMapTexId() );
 	
@@ -983,13 +994,20 @@ void ofShadow::_allocateFbo() {
 			
 		}
 		
-		glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		if( data->lightType == OF_LIGHT_AREA ) {
+//			glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//			glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//		} else {
+			glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		}
 		//-- This is to allow usage of shadow2DProj function in the shader --//
-		#ifdef GL_TEXTURE_COMPARE_MODE
-		glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-		glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-		#endif
+		if( data->lightType != OF_LIGHT_AREA ) {
+			#ifdef GL_TEXTURE_COMPARE_MODE
+			glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+			glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+			#endif
+		}
 		//--! This is to allow usage of shadow2DProj function in the shader !--//
 		#ifdef GL_TEXTURE_2D_ARRAY
 		if( textureTarget == GL_TEXTURE_2D_ARRAY ) {
