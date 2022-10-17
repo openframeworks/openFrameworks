@@ -36,13 +36,18 @@ void ofxAssimpMeshHelper::addTexture(ofxAssimpTexture & aAssimpTex){
 		meshTextures.push_back(otherTex);
 	}
 	
+    bool bAmbientOcclusion = false;
+    #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
+        bAmbientOcclusion = meshTextures.back()->getTextureType() == aiTextureType_AMBIENT_OCCLUSION;
+    #endif
+ 
 	if( meshTextures.back()->getTextureType() == aiTextureType_EMISSIVE ){
 		material.setEmissiveTexture(meshTextures.back()->getTextureRef());
 	}
 	else if( meshTextures.back()->getTextureType() == aiTextureType_NORMALS ){
 		material.setNormalTexture(meshTextures.back()->getTextureRef());
 	}
-	else if( meshTextures.back()->getTextureType() == aiTextureType_LIGHTMAP || meshTextures.back()->getTextureType() == aiTextureType_AMBIENT_OCCLUSION  ){
+	else if( meshTextures.back()->getTextureType() == aiTextureType_LIGHTMAP || bAmbientOcclusion ){
 		material.setOcclusionTexture(meshTextures.back()->getTextureRef());
 	}
 	else if( meshTextures.back()->getTextureType() == aiTextureType_AMBIENT ){

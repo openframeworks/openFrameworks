@@ -328,14 +328,16 @@ void ofxAssimpModelLoader::loadGLResources(){
 				
 				if(ofFile::doesFileExist(realPath) == false) {
 					
+                    #if ASSIMP_VERSION_MAJOR >= 4 && ASSIMP_VERSION_MINOR >= 1
 					auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
-					if( embeddedTexture ){
-							bHasEmbeddedTexture = true;
-							ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
-					}else{
-							ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
-								<< file.getFileName() + "\" in \"" << realPath << "\"";
-					}
+                        if( embeddedTexture ){
+                                bHasEmbeddedTexture = true;
+                                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
+                        }else{
+                                ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
+                                    << file.getFileName() + "\" in \"" << realPath << "\"";
+                        }
+                    #endif
 				}
 				
 				
@@ -358,6 +360,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 					shared_ptr<ofTexture> texture = make_shared<ofTexture>();
 
 					if( bHasEmbeddedTexture ){
+                            
+                            #if ASSIMP_VERSION_MAJOR >= 4 && ASSIMP_VERSION_MINOR >= 1
 							auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
 							
 							//compressed texture
@@ -377,6 +381,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 									auto glFormat = getGLFormatFromAiFormat(embeddedTexture->achFormatHint);
 									texture->loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
 							}
+                            #endif
 					}else{
 						ofLoadImage(*texture.get(), realPath);
 					}
