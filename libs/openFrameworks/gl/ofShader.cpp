@@ -13,6 +13,8 @@
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
 #endif
+#include "ofShadow.h"
+#include "ofLight.h"
 
 using std::map;
 using std::vector;
@@ -1432,6 +1434,50 @@ void ofShader::printActiveAttributes()  const{
 		line.str("");
 	}
 	delete [] attributeName;
+}
+	
+//----------------------------------------
+bool ofShader::setShadowUniforms( int textureLocation ) const {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	
+	setUniformTexture("uShadowCubeMap", ofShadow::getTextureTarget( OF_LIGHT_POINT ), ofShadow::getPointTexId(), textureLocation );
+	setUniformTexture("uShadowMapDirectional", ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL ), ofShadow::getDirectionalTexId(), textureLocation+1 );
+	setUniformTexture("uShadowMapSpot", ofShadow::getTextureTarget( OF_LIGHT_SPOT ), ofShadow::getSpotTexId(), textureLocation+2 );
+	setUniformTexture("uShadowMapArea", ofShadow::getTextureTarget( OF_LIGHT_AREA ), ofShadow::getAreaTexId(), textureLocation+3 );
+	
+	for(size_t i=0;i<ofShadowsData().size();i++){
+		std::string idx = ofToString(i,0);
+		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
+		std::string shadowAddress = "shadows["+idx+"]";
+		if(!shadow || !shadow->isEnabled || shadow->index < 0 ){
+			setUniform1f(shadowAddress+".enabled", 0 );
+			continue;
+		}
+		setUniform1f(shadowAddress+".enabled", 1 );
+		if( shadow->lightType != OF_LIGHT_POINT ) {
+			setUniformMatrix4f(shadowAddress+".shadowMatrix", shadow->shadowMatrix );
+		}
+		
+		setUniform1f(shadowAddress+".near", shadow->nearClip );
+		setUniform1f(shadowAddress+".far", shadow->farClip );
+		setUniform1f(shadowAddress+".normalBias", shadow->normalBias );
+		setUniform1f(shadowAddress+".bias", shadow->bias );
+		if( shadow->lightType != OF_LIGHT_POINT ) {
+			setUniform1f(shadowAddress+".sampleRadius", shadow->sampleRadius/(float)ofShadow::getDepthMapWidth(shadow->lightType) );
+		} else {
+			setUniform1f(shadowAddress+".sampleRadius", shadow->sampleRadius );
+		}
+		
+		setUniform3f(shadowAddress+".lightWorldPos", shadow->position );
+		setUniform1f(shadowAddress+".strength", shadow->strength );
+		setUniform3f(shadowAddress+".lightUp", shadow->up );
+		setUniform3f(shadowAddress+".lightRight", shadow->right );
+		setUniform1f(shadowAddress+".shadowType", (float)shadow->shadowType );
+		setUniform1i(shadowAddress+".texIndex", shadow->texIndex );
+	}
+	return true;
 }
 
 //--------------------------------------------------------------

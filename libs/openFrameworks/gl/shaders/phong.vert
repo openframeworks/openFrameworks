@@ -4,6 +4,7 @@ OUT vec3 v_transformedNormal;
 OUT vec3 v_normal;
 OUT vec3 v_eyePosition;
 OUT vec3 v_worldPosition;
+OUT vec3 v_worldNormal;
 #if HAS_COLOR
 OUT vec4 v_color;
 #endif
@@ -21,6 +22,8 @@ uniform mat4 projectionMatrix;
 uniform mat4 textureMatrix;
 uniform mat4 modelViewProjectionMatrix;
 uniform mat4 normalMatrix;
+// shadowNormalMatrix = transpose(inverse(modelMatrix));
+uniform mat4 shadowNormalMatrix;
 
 
 void main (void){
@@ -31,6 +34,9 @@ void main (void){
     v_eyePosition = (eyePosition.xyz) / eyePosition.w;
     //v_worldPosition = (inverse(viewMatrix) * modelViewMatrix * position).xyz;
     v_worldPosition = (modelMatrix * position).xyz;
+	
+	tempNormal = ((shadowNormalMatrix) * vec4(normal.xyz, 1.0)).xyz;
+	v_worldNormal = normalize(tempNormal);
 
     v_texcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
     #if HAS_COLOR

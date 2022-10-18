@@ -10,6 +10,10 @@ on:
     - '**/*.md'
     - 'examples/**'
     
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: true  
+
 jobs:
 
   build-osx:
@@ -23,7 +27,7 @@ jobs:
       TARGET: ${{matrix.cfg.target}}
       OPT: ${{matrix.cfg.opt}}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache compile
       id: cache-compile
       uses: actions/cache@v3
@@ -43,14 +47,28 @@ jobs:
         cache-name: cache-install-libs
       with:
         path: |
-          libs
+          libs/boost/**
+          libs/cairo/**
+          libs/curl/**
+          libs/fmod/**
+          libs/FreeImage/**
+          libs/freetype/**
+          libs/glew/**
+          libs/glfw/**
+          libs/glm/**
+          libs/json/**
+          libs/pugixml/**
+          libs/rtAudio/**
+          libs/tess2/**
+          libs/uriparser/**
+          libs/utf8/**
           addons/ofxAssimpModelLoader/libs/**/
           addons/ofxKinect/libs/**/
           addons/ofxOpenCv/libs/**/
           addons/ofxSvg/libs/**/
           addons/ofxPoco/libs/**/
 
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.h') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-        
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
@@ -66,7 +84,7 @@ jobs:
     
     - name: Build
       run:
-        if [ "$TARGET" = "osx" ] && [ "$OPT" = "makefiles" ]; then
+        if [ "$TARGET" = "osx" ] && [ "$OPT" = "xcode" ]; then
           scripts/ci/$TARGET/build.sh $OPT;
         else
           scripts/ci/$TARGET/run_tests.sh;

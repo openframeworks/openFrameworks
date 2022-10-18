@@ -21,6 +21,8 @@
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
 		27DEA3121796F578000A9E90 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = 27DEA3101796F578000A9E90 /* ofXml.h */; };
+		2E4D30C128F5BA9C0074D450 /* ofShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4D30BF28F5BA9C0074D450 /* ofShadow.h */; };
+		2E4D30C228F5BA9C0074D450 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
@@ -169,6 +171,8 @@
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		27DEA30F1796F578000A9E90 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
 		27DEA3101796F578000A9E90 /* ofXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofXml.h; sourceTree = "<group>"; };
+		2E4D30BF28F5BA9C0074D450 /* ofShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofShadow.h; path = gl/ofShadow.h; sourceTree = "<group>"; };
+		2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofShadow.cpp; path = gl/ofShadow.cpp; sourceTree = "<group>"; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
@@ -346,6 +350,8 @@
 				DACFA8CD132D09E8008D4B7A /* ofGLUtils.h */,
 				DACFA8CE132D09E8008D4B7A /* ofLight.cpp */,
 				DACFA8CF132D09E8008D4B7A /* ofLight.h */,
+				2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */,
+				2E4D30BF28F5BA9C0074D450 /* ofShadow.h */,
 				DACFA8D0132D09E8008D4B7A /* ofMaterial.cpp */,
 				DACFA8D1132D09E8008D4B7A /* ofMaterial.h */,
 				DACFA8D2132D09E8008D4B7A /* ofShader.cpp */,
@@ -687,6 +693,7 @@
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
 				229EB9A61B3181C800FF7B5F /* ofEvent.h in Headers */,
 				22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */,
+				2E4D30C128F5BA9C0074D450 /* ofShadow.h in Headers */,
 				22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */,
 				22246D94176C9987008A8AF4 /* ofGLProgrammableRenderer.h in Headers */,
 				E495DF7E178896A900994238 /* ofAppNoWindow.h in Headers */,
@@ -793,6 +800,7 @@
 				DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */,
 				E486629B1D8C61B000D1735C /* ofAVFoundationGrabber.mm in Sources */,
 				DACFA8DC132D09E8008D4B7A /* ofGLRenderer.cpp in Sources */,
+				2E4D30C228F5BA9C0074D450 /* ofShadow.cpp in Sources */,
 				2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */,
 				DACFA8DF132D09E8008D4B7A /* ofLight.cpp in Sources */,
 				692C298D19DC5C5500C27C5D /* ofTimer.cpp in Sources */,
