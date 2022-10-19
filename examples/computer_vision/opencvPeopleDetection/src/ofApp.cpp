@@ -7,14 +7,14 @@ void ofApp::setup(){
 	bLiveVideo = false;
 	
 	if( bLiveVideo ){
-        vidGrabber.setVerbose(true);
-        vidGrabber.setup(640, 480);
-        
+		vidGrabber.setVerbose(true);
+		vidGrabber.setup(640, 480);
+		
 		colorImg.allocate(vidGrabber.getWidth(),vidGrabber.getHeight());
 	}else{
-        vidPlayer.load("people.mov");
-        vidPlayer.play();
-        vidPlayer.setLoopState(OF_LOOP_NORMAL);
+		vidPlayer.load("people.mov");
+		vidPlayer.play();
+		vidPlayer.setLoopState(OF_LOOP_NORMAL);
 
 		colorImg.allocate(vidPlayer.getWidth(),vidPlayer.getHeight());
 	}
@@ -35,7 +35,7 @@ void ofApp::setup(){
 void ofApp::update(){
 	ofBackground(30, 30, 30);
 
-    bool bNewFrame = false;
+	bool bNewFrame = false;
 
 	if( bLiveVideo ){
 		vidGrabber.update();
@@ -44,9 +44,9 @@ void ofApp::update(){
 			colorImg.setFromPixels(vidGrabber.getPixels());
 		}
 	}else{
-        vidPlayer.update();
-        bNewFrame = vidPlayer.isFrameNew();
-        if( bNewFrame ){
+		vidPlayer.update();
+		bNewFrame = vidPlayer.isFrameNew();
+		if( bNewFrame ){
 			colorImg.setFromPixels(vidPlayer.getPixels());
 		}
 	}

@@ -24,9 +24,9 @@ void ofApp::draw(){
 	vagRounded.drawString(timeString, 100,100);
 
 
-    for(auto finger: touches){
-        ofDrawCircle(finger.second, 50);
-    }
+	for(auto finger: touches){
+		ofDrawCircle(finger.second, 50);
+	}
 }
 
 //--------------------------------------------------------------
@@ -37,7 +37,7 @@ void ofApp::keyPressed  (int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    
+	
 
 }
 
@@ -73,17 +73,17 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
-    touches[id] = ofVec2f(x, y);
+	touches[id] = ofVec2f(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(int x, int y, int id){
-    touches[id].set(x, y);
+	touches[id].set(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(int x, int y, int id){
-    touches.erase(id);
+	touches.erase(id);
 }
 
 //--------------------------------------------------------------
@@ -93,7 +93,7 @@ void ofApp::touchDoubleTap(int x, int y, int id){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(int x, int y, int id){
-    
+	
 }
 
 //--------------------------------------------------------------

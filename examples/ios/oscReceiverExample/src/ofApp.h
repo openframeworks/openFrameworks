@@ -32,8 +32,8 @@ class ofApp : public ofxiOSApp {
 		string msg_strings[NUM_MSG_STRINGS];
 		float timers[NUM_MSG_STRINGS];
 
-        int mouseX;
-        int mouseY;
+		int mouseX;
+		int mouseY;
 		string mouseButtonState;
 };
 

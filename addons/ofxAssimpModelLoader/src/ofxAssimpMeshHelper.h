@@ -23,15 +23,17 @@ class ofxAssimpMeshHelper {
 public:
 
 	ofxAssimpMeshHelper();
+ 
+    void addTexture(ofxAssimpTexture & aAssimpTex);
+    bool hasTexture(aiTextureType aTexType = aiTextureType_DIFFUSE);
     
-    bool hasTexture();
-    ofTexture & getTextureRef();
+    ofTexture & getTextureRef(aiTextureType aTexType = aiTextureType_DIFFUSE);
+    std::vector<std::shared_ptr<ofxAssimpTexture>> & getAllMeshTextures(){ return meshTextures; }
     
     aiMesh * mesh; // pointer to the aiMesh we represent.
 
     ofVbo vbo;
     
-    ofxAssimpTexture assimpTexture;
 	std::vector<ofIndexType> indices;
     
     ofMaterial material;
@@ -43,9 +45,17 @@ public:
 
 	std::vector<aiVector3D> animatedPos;
 	std::vector<aiVector3D> animatedNorm;
-
+	
+	//diffuse texture - legacy api
+    ofxAssimpTexture assimpTexture;
+    
     ofMesh cachedMesh;
     bool validCache;
     
-    ofMatrix4x4 matrix;
+    glm::mat4 matrix;
+    
+protected:
+	//for normal, specular, etc - we include the diffuse too with a null deleter
+	std::vector <std::shared_ptr<ofxAssimpTexture>> meshTextures;
+
 };

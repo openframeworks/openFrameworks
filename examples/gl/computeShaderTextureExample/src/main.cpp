@@ -3,9 +3,9 @@
 
 //========================================================================
 int main(){
-    
-    // this example uses compute shaders which are only supported since
-    // openGL 4.3
+	
+	// this example uses compute shaders which are only supported since
+	// openGL 4.3
 	ofGLWindowSettings settings;
 	settings.setSize(1024, 768);
 	settings.setGLVersion(4,3);

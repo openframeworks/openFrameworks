@@ -55,13 +55,13 @@ glm::vec3 ofApp::getVertexFromImg(ofImage& img, int x, int y) {
 //--------------------------------------------------------------
 void ofApp::setup() {
 
-    #ifdef TARGET_OPENGLES
-    // While this will will work on normal OpenGL as well, it is
-    // required for OpenGL ES because ARB textures are not supported.
-    // If this IS set, then we conditionally normalize our
-    // texture coordinates below.
-    ofEnableNormalizedTexCoords();
-    #endif
+	#ifdef TARGET_OPENGLES
+	// While this will will work on normal OpenGL as well, it is
+	// required for OpenGL ES because ARB textures are not supported.
+	// If this IS set, then we conditionally normalize our
+	// texture coordinates below.
+	ofEnableNormalizedTexCoords();
+	#endif
 
 	img.load("linzer.png");
 

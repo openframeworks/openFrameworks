@@ -4,8 +4,8 @@
 void ofApp::setup(){	
 	ofBackground(54, 54, 54, 255);
 	
-    ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
-    
+	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
+	
 	//old OF default is 96 - but this results in fonts looking larger than in other programs. 
 	ofTrueTypeFont::setGlobalDpi(72);
 
@@ -62,10 +62,10 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-    if(ofGetWidth() > 480){ // then we are running retina
-        ofScale(2.0, 2.0, 1.0);
-    }
-    
+	if(ofGetWidth() > 480){ // then we are running retina
+		ofScale(2.0, 2.0, 1.0);
+	}
+	
 	ofPushMatrix();
 	ofTranslate(-10 + drag.x, -60 + drag.y, 0);
 
@@ -148,7 +148,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -190,22 +190,22 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }
 
 

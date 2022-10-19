@@ -14,7 +14,7 @@ void ofApp::setup(){
 
 	ofEnableAlphaBlending();
 //	ofNoFill();
-	
+
 	camera.setFarClip(5000);
 	camera.move(0,0,1000);
 
@@ -42,60 +42,60 @@ void ofApp::setup(){
 	cities.push_back( buenosaires );
 	cities.push_back( melbourne );
 	cities.push_back( detroit );
-	
+
 	earthMesh = ofMesh::icosphere(earthRadius, 3);
-	
+
 	ofDisableArbTex();
 	ofLoadImage( earthTexture, "earth.jpg" );
 	ofEnableArbTex();
-	
+
 	flyToNextCity();
-	
+
 	starsMesh.setMode(OF_PRIMITIVE_POINTS);
 	// now lets add some random points //
 	int numberOfStars = 200;
 	for( int i = 0; i < numberOfStars; i++ ) {
-		
+
 		float randomLatitude = ofRandom( -360, 360 );
 		float randomLongitude = ofRandom( -180, 180 );
-		
+
 		float randomDistance = earthRadius + ofRandom( 100, 1000);
-		
+
 		glm::vec3 starPosition = getPositionFromLatitudeLongitude(randomLatitude, randomLongitude, randomDistance );
 		starsMesh.addVertex(starPosition);
-		
+
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f / 5000.f, 1.f / 5.f );
-	
+
 	earthSpin += deltaTime * 3.0;
 	earthSpin = ofWrapDegrees(earthSpin);
-	
+
 	flyingObj.percentToNextCity += deltaTime / flyingObj.durationToNextCity;
-	
+
 	if( flyingObj.percentToNextCity >= 1.0f ) {
 		flyToNextCity();
 	}
-	
-	
+
+
 	City currentCity = cities[currentCityIndex];
 	// `auto nextCity` is the same as using `City nextCity` when assigning a variable
 	auto nextCity = cities[nextCityIndex];
-	
+
 	glm::vec3 currentPosition = getPositionFromLatitudeLongitude(currentCity.latitude, currentCity.longitude, earthRadius );
 	auto nextPosition = getPositionFromLatitudeLongitude( nextCity.latitude, nextCity.longitude, earthRadius );
-	
+
 	float flyLatitude = ofLerpDegrees( currentCity.latitude, nextCity.latitude, flyingObj.percentToNextCity );
 	float flyLongitude = ofLerpDegrees( currentCity.longitude, nextCity.longitude, flyingObj.percentToNextCity );
-	
+
 	// lets push out the flying object a bit //
 	float offsetDistance = sinf(flyingObj.percentToNextCity * glm::pi<float>() ) * flyingObj.distanceBetweenCities * 0.6f;
-	
+
 	flyingObj.setPosition(getPositionFromLatitudeLongitude( flyLatitude, flyLongitude, earthRadius + offsetDistance ));
-	
+
 	if( flyingObj.trailPositions.size() < 1 ){
 		flyingObj.trailPositions.push_back(flyingObj.getPosition());
 	} else {
@@ -110,7 +110,7 @@ void ofApp::update(){
 			flyingObj.trailPositions.push_back( flyingObj.getPosition() );
 		}
 	}
-	
+
 	// make sure we don't add trail points forever and ever
 	// if the vector is larger than 20 points, erase the first one
 	if( flyingObj.trailPositions.size() > 20 ){
@@ -121,15 +121,15 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofBackgroundGradient(ofColor(10), ofColor(50));
-	
+
 	ofEnableDepthTest();
-	
+
 	camera.begin();
 
 	ofSetColor( 220 );
 	glPointSize(3);
 	starsMesh.draw();
-	
+
 	ofPushMatrix();
 	//add the earthSpin
 	ofRotateDeg(earthSpin, 0, 1, 0);
@@ -141,7 +141,7 @@ void ofApp::draw(){
 
 	ofSetColor(255);
 	for(unsigned int i = 0; i < cities.size(); i++){
-		
+
 		float extraRadius = 10.;
 		if( i == currentCityIndex ){
 			extraRadius = ofMap( flyingObj.percentToNextCity, 0.2f, 0.9f, 60.0f, 10.0, true );
@@ -151,25 +151,25 @@ void ofApp::draw(){
 		}else{
 			ofSetColor(155);
 		}
-		
+
 		auto worldPoint = getPositionFromLatitudeLongitude( cities[i].latitude, cities[i].longitude, earthRadius+extraRadius );
-		
+
 		//draw it and label it
 		ofDrawLine(glm::vec3(0,0,0), worldPoint);
 
 		//set the bitmap text mode billboard so the points show up correctly in 3d
 		ofDrawBitmapString(cities[i].name, worldPoint );
 	}
-	
+
 	ofSetColor(255);
 	flyingObj.draw();
 	// uncomment to draw the axis of the flying object
 //	flyingObj.transformGL();
 //	ofDrawAxis(30);
 //	flyingObj.restoreTransformGL();
-	
+
 	camera.end();
-	
+
 	ofDisableDepthTest();
 }
 
@@ -183,13 +183,13 @@ void ofApp::flyToNextCity() {
 	if( nextCityIndex >= cities.size() ) {
 		nextCityIndex = 0;
 	}
-	
+
 	auto& currentCity = cities[currentCityIndex];
 	auto& nextCity = cities[nextCityIndex];
-	
+
 	glm::vec3 currentPosition = getPositionFromLatitudeLongitude( currentCity.latitude, currentCity.longitude, earthRadius );
 	auto nextPosition = getPositionFromLatitudeLongitude( nextCity.latitude, nextCity.longitude, earthRadius );
-	
+
 	flyingObj.percentToNextCity = 0.f;
 	float distanceToFly = glm::distance( currentPosition, nextPosition );
 	flyingObj.durationToNextCity = distanceToFly / 200.0;
@@ -211,7 +211,7 @@ glm::vec3 ofApp::getPositionFromLatitudeLongitude( float alatitude, float alongi
 	longRot = glm::angleAxis(ofDegToRad(alongitude), glm::vec3(0, 1, 0));
 	// we add 90 to the rotation so that it lines up with the texture
 	spinQuat = glm::angleAxis(ofDegToRad(90+earthSpin), glm::vec3(0, 1, 0));
-	
+
 	//our starting point is 0,0, on the surface of our sphere, this is where the meridian and equator meet
 	glm::vec3 center = glm::vec3(0.0f,0.f,adistance);
 	//multiplying a quat with another quat combines their rotations into one quat
