@@ -248,7 +248,7 @@ static const string fragmentShader = R"(
                 vec2 dirSpec2D = vec2(dot(dirSpec,right),dot(dirSpec,up));
                 vec2 nearestSpec2D = vec2(clamp( dirSpec2D.x,-width,width  ),clamp(  dirSpec2D.y,-height,height));
                 float specFactor = 1.0-clamp(length(nearestSpec2D-dirSpec2D) * 0.05 * mat_shininess,0.0,1.0);
-                specular += light.specular.rgb * specFactor * specAngle * diffuseFactor * attenuation;
+                specular += light.specular.rgb * specFactor * specAngle * diffuseFactor * attenuation * shadow;
             }
             diffuse  += light.diffuse.rgb * shadow * diffuseFactor * attenuation;
         }
@@ -334,6 +334,9 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
                 spotLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }else{
 				#ifdef HAS_SHADOWS
+				if( shadows[i].enabled > 0.5 ) {
+					shadow = AreaShadow( shadows[i], v_worldPosition, worldNormalN, vec2(lights[i].width, lights[i].height) );
+				}
 				shadow *= shadows[i].strength;
 				#endif
                 areaLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
@@ -379,7 +382,7 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
             float occlusioon = TEXTURE(tex_occlusion, v_texcoord).r;
             localColor.rgb *= occlusioon;
         #endif
-        
+		        
         FRAG_COLOR = clamp( postFragment(localColor), 0.0, 1.0 );
     }
 )";

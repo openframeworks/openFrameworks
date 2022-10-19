@@ -85,6 +85,7 @@ public:
 	static GLuint getPointTexId();
 	static GLuint getDirectionalTexId();
 	static GLuint getSpotTexId();
+	static GLuint getAreaTexId();
 	
 	static bool hasActiveShadows();
 	static std::string getShadowTypeAsString( ofShadowType atype );
@@ -152,6 +153,8 @@ public:
 	const float getSampleRadius() { return data->sampleRadius; }
 	void setSampleRadius( float aradius ) { data->sampleRadius = aradius; }
 	
+	void setAreaLightSize( float awidth, float aheight ) {mAreaLightWidth=awidth;mAreaLightHeight=aheight;};
+	
 	void drawFrustum();
 	std::vector<glm::vec3> getFrustumCorners( const glm::vec3& aup, const glm::vec3& aright, const glm::vec3& afwd );
 	
@@ -187,6 +190,9 @@ protected:
 	float mOrthoScaleY = 1.0;
 	float mDirectionalBoundsWidth = -1;
 	float mDirectionalBoundsHeight = -1;
+	
+	float mAreaLightWidth = 100;
+	float mAreaLightHeight = 50.0;
 	
 	float mFov = 90;
 	

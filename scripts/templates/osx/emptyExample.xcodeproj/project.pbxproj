@@ -17,6 +17,12 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
+		"192E680F28E4D63A006F5C79": {
+			"path": "ofGraphicsCairo.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "<group>"
+		},
 		"E429630F2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofUtils.cpp",
 			"isa": "PBXFileReference",
@@ -976,6 +982,8 @@
 				"E429635F2163EDD300A6A9E2",
 				"E42963522163EDD300A6A9E2",
 				"E429634B2163EDD300A6A9E2",
+				"192E680F28E4D63A006F5C79",
+				"19451A8D28FF1A91008227CC",
 				"E42963602163EDD300A6A9E2",
 				"E42963612163EDD300A6A9E2",
 				"E42963592163EDD300A6A9E2",
@@ -1739,6 +1747,12 @@
 				"E42963432163EDD300A6A9E2"
 			],
 			"sourceTree": "SOURCE_ROOT"
+		},
+		"19451A8D28FF1A91008227CC": {
+			"path": "ofGraphicsCairo.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>"
 		},
 		"E42963312163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/gl/ofVbo.h",
