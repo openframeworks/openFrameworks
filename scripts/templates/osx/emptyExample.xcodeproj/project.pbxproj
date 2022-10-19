@@ -202,9 +202,9 @@
 		"191CD6FA2847E21E0085CBB6": {
 			"path": "of.entitlements",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "text.plist.entitlements",
 			"sourceTree": "<group>",
-			"fileEncoding": "4"
+			"fileEncoding": "4",
+			"lastKnownFileType": "text.plist.entitlements"
 		},
 		"E42963122163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofTimer.h",
@@ -216,10 +216,10 @@
 		"E4B69E1F0A3A1BDC003C02F2": {
 			"path": "src/ofApp.h",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "sourcecode.c.h",
-			"name": "ofApp.h",
 			"sourceTree": "SOURCE_ROOT",
-			"fileEncoding": "4"
+			"name": "ofApp.h",
+			"fileEncoding": "4",
+			"lastKnownFileType": "sourcecode.c.h"
 		},
 		"E429636A2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/sound/ofFmodSoundPlayer.cpp",
@@ -245,10 +245,10 @@
 		"E4B69E1D0A3A1BDC003C02F2": {
 			"path": "src/main.cpp",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"name": "main.cpp",
 			"sourceTree": "SOURCE_ROOT",
-			"fileEncoding": "4"
+			"name": "main.cpp",
+			"fileEncoding": "4",
+			"lastKnownFileType": "sourcecode.cpp.cpp"
 		},
 		"E4B69B4F0A3A1720003C02F2": {
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
@@ -433,16 +433,16 @@
 		"E4B6FCAD0C3E899E008CF71C": {
 			"path": "openFrameworks-Info.plist",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "text.plist.xml",
 			"sourceTree": "<group>",
-			"fileEncoding": "4"
+			"fileEncoding": "4",
+			"lastKnownFileType": "text.plist.xml"
 		},
 		"E4EB6923138AFD0F00A09F29": {
 			"path": "Project.xcconfig",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "text.xcconfig",
 			"sourceTree": "<group>",
-			"fileEncoding": "4"
+			"fileEncoding": "4",
+			"lastKnownFileType": "text.xcconfig"
 		},
 		"E429633C2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/gl/ofTexture.cpp",
@@ -584,8 +584,8 @@
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
 			"shellScript": "echo \"\\033[32;1;4m2 - Copying Resources\\033[0m\"\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n# Copy default icon file into App/Resources\nrsync -aved --delete --exclude='.DS_Store' \"$ICON_FILE\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n# Copy libfmod and change install directory for fmod to run\nrsync -aved --delete --ignore-existing \"$OF_PATH/libs/fmod/lib/osx/libfmod.dylib\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/\";\n# Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage \n# install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n",
-			"name": "Run Script — Copy Resources",
-			"files": []
+			"files": [],
+			"name": "Run Script — Copy Resources"
 		},
 		"E42962FB2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofThreadChannel.h",
@@ -625,8 +625,8 @@
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
 			"shellScript": "if [ -z \"$OF_BUNDLE_DATA_FOLDER\" ] ; then\n    echo 'Bundle data folder disabled';\nelse\n    # Copy bin/data into App/Resources\n    echo 'Bundle data folder enabled - will copy bin/data to App Package'\n    rsync -avz  --delete --exclude='.DS_Store' \"${SRCROOT}/bin/data/\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/\"\nfi\n",
-			"name": "Run Script — Bundle Data Folder",
-			"files": []
+			"files": [],
+			"name": "Run Script — Bundle Data Folder"
 		},
 		"E429630E2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofMatrixStack.cpp",
@@ -1398,8 +1398,8 @@
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
 			"shellScript": "echo \"\\033[32;1;4m1 - Compiling Openframeworks\\033[0m\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET\n",
-			"name": "Run Script — Compile OF",
-			"files": []
+			"files": [],
+			"name": "Run Script — Compile OF"
 		},
 		"E42963062163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofNoise.h",
@@ -1446,10 +1446,10 @@
 		"E4B69E1E0A3A1BDC003C02F2": {
 			"path": "src/ofApp.cpp",
 			"isa": "PBXFileReference",
-			"fileEncoding": "4",
-			"name": "ofApp.cpp",
 			"sourceTree": "SOURCE_ROOT",
-			"explicitFileType": "sourcecode.cpp.cpp"
+			"name": "ofApp.cpp",
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4"
 		},
 		"E429635C2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/graphics/ofBitmapFont.h",
