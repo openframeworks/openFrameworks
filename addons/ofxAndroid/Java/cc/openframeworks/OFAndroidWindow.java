@@ -33,13 +33,14 @@ import static android.opengl.EGL14.EGL_NO_CONTEXT;
 class OFAndroidWindow implements GLSurfaceView.Renderer {
 
 	public OFAndroidWindow(int w, int h){
-        Log.i("OF","OFAndroidWindow():width:" + w + " height:" + h);
+        if( OFActivity.LOG_ENGINE) Log.i("OF","OFAndroidWindow():width:" + w + " height:" + h);
 	    setResolution(w,h, true);
 	}
 
 	public void setResolution(int w, int h, boolean updateSurface) {
-	    if(w == this.w && h == this.h && updateSurface == false) return;
-        Log.i("OFAndroidWindow","setResolution:width:" + w + " height:" + h);
+        if( OFActivity.LOG_ENGINE) Log.i("OFAndroidWindow","setResolution:width:" + w + " height:" + h + "update:" + updateSurface);
+        if(w == this.w && h == this.h && updateSurface == false) return;
+
 
 
         this.w = w;
@@ -52,7 +53,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     }
 
     public void surfaceHasBeenDestroyed() {
-        Log.i("OF","surfaceHasBeenDestroyed");
+        if( OFActivity.LOG_ENGINE) Log.i("OF","surfaceHasBeenDestroyed");
         OFAndroid.onSurfaceDestroyed();
         has_surface = false;
         exit();
@@ -61,11 +62,11 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	@Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-		Log.i("OF","onSurfaceCreated");
+        if( OFActivity.LOG_ENGINE) Log.i("OF","onSurfaceCreated");
 		// notify that old surface was destroyed
         boolean hasDestroyed = false;
 		if(this.has_surface) {
-            Log.i("OF","onSurfaceCreated - has_surface destroy");
+            if( OFActivity.LOG_ENGINE) Log.i("OF","onSurfaceCreated - has_surface destroy");
             surfaceHasBeenDestroyed();
             hasDestroyed = true;
 		}
@@ -86,7 +87,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         }
 
 		if(hasDestroyed) {
-            Log.i("OF", "hasDestroyed calling setup");
+            if( OFActivity.LOG_ENGINE) Log.i("OF", "hasDestroyed calling setup");
             setup();
         }
 		OFAndroid.updateRefreshRates();
@@ -101,7 +102,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 
     public void onSurfaceChanged(int w, int h) {
 
-        Log.i("OF","onSurfaceChanged width:" + w + " height:" + h);
+        if( OFActivity.LOG_ENGINE) Log.i("OF","onSurfaceChanged width:" + w + " height:" + h);
         if(doNotDraw == true) return; // fix for strange case
         if(firstFrameDrawn == false) {
             Log.i("OF","onSurfaceChanged firstFrameDrawn not drawn");
@@ -109,13 +110,13 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         }
         setResolution(w,h, false);
         if(!setup && OFAndroid.unpackingDone && firstFrameDrawn){
-            Log.i("OF","onSurfaceChanged && OFAndroid.unpackingDone");
+            if( OFActivity.LOG_ENGINE) Log.i("OF","onSurfaceChanged && OFAndroid.unpackingDone");
             setup();
         } else if(!setup && !OFAndroid.unpackingDone && firstFrameDrawn) {
-            Log.i("OF","onSurfaceChanged not setup however !OFAndroid.unpackingDone");
+            if( OFActivity.LOG_ENGINE) Log.i("OF","onSurfaceChanged not setup however !OFAndroid.unpackingDone");
             setup();
         } else if(setup && OFAndroid.unpackingDone) {
-            Log.i("OF","onSurfaceChanged setup already");
+            if( OFActivity.LOG_ENGINE) Log.i("OF","onSurfaceChanged setup already");
         }
         OFGestureListener.swipe_Min_Distance = (int)(Math.max(w, h)*.04);
         OFGestureListener.swipe_Max_Distance = (int)(Math.max(w, h)*.6);
@@ -130,7 +131,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
         }
 
         if(doNotDraw == true) return; // fix for strange case
-        Log.i("OF","OFAndroidWindow::setup context:" + isContext);
+        if( OFActivity.LOG_ENGINE) Log.i("OF","OFAndroidWindow::setup context:" + isContext);
         if(w <= 0 || h <= 0) {
             Log.e("OF","setup width or height is <=0. Will cause strange effects");
         }
@@ -184,7 +185,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
             if (!initialRender) {
                 initialRender = true;
                 drawClear = true;
-                Log.i("OFAndroidWindow", "onDrawFrame initialRenderFrame!");
+                if( OFActivity.LOG_ENGINE) Log.i("OFAndroidWindow", "onDrawFrame initialRenderFrame!");
                 if( OFAndroidLifeCycle.getGLView() != null)
                     OFAndroidLifeCycle.getGLView().setBackgroundResourceClear();
             } else {
@@ -201,7 +202,7 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
                         OFAndroidLifeCycle.SetFirstFrameDrawn();
                        // gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
                         //gl.glClearColor(0f, 0f, 0f, 0.0f);
-                        Log.i("OFAndroidWindow", "onDrawFrame setup and unpacking done SetFirstFrameDrawn");
+                        if( OFActivity.LOG_ENGINE) Log.i("OFAndroidWindow", "onDrawFrame setup and unpacking done SetFirstFrameDrawn");
                     }
                     OFAndroid.render();
                 }
