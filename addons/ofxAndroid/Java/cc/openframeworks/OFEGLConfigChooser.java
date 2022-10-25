@@ -685,6 +685,16 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 } else {
                     Log.v("OF", "Else Config: " + output);
                 }
+            } else {
+                if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize) {
+
+                    foundConfig = config;
+                    mSampleSize = samples;
+                    Log.i("OF", "MSAA Found and Set:" + output);
+
+                } else {
+                    Log.v("OF", "Else Config: " + output);
+                }
             }
 
             if ( foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples != 0 && mSampleSize >= 1) {
