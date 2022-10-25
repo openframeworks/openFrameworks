@@ -1,28 +1,18 @@
 package cc.openframeworks;
 
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Insets;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 
@@ -30,7 +20,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.InputDevice;
-import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -41,7 +30,6 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 import android.view.accessibility.AccessibilityEvent;
-import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 
@@ -57,8 +45,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
-	public static final boolean LOG_INPUT = false;
-	public static final boolean LOG_ENGINE = false;
+	public static final boolean LOG_INPUT = true;
+	public static final boolean LOG_ENGINE = true;
 
 	public float currentRefreshRate = 0;
 	public float highestRefreshRate = 0;
@@ -380,6 +368,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	}
 
 	public void DetermineDisplayConfiguration(boolean allowSetFrameRate) {
+		if(LOG_ENGINE) Log.i("OF", "DetermineDisplayConfiguration RefreshRate :" +  currentRefreshRate);
+
 		int modeID = 0;
 		int highestModeID = 0;
 		try {
@@ -409,10 +399,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 							}
 							currentRefreshRate = currentMode.getRefreshRate();
 							for (Display.Mode mode : modes) {
-								if(LOG_ENGINE) Log.i("OF", "Display Mode: Supported:" + mode + " refreshRate: [" + mode.getRefreshRate() + "] mode PhysicalWidth:[" + mode.getPhysicalWidth() + "] mode PhysicalHeight:[" + mode.getPhysicalHeight() + "]");
-								if (mode.getRefreshRate() >= highestRefreshRate) {
+								if(LOG_ENGINE) Log.i("OF", "Display Mode: Supported:" + mode + " refreshRate: [" + mode.getRefreshRate() + "] mode PhysicalWidth:[" + mode.getPhysicalWidth() + "] mode PhysicalHeight:[" + mode.getPhysicalHeight() + "]" + " <=Max:"+OFAndroid.maximumFrameRate + ":" + ( mode.getRefreshRate() <= OFAndroid.maximumFrameRate));
+								if (mode.getRefreshRate() >= highestRefreshRate && mode.getRefreshRate() <= OFAndroid.maximumFrameRate ) {
 									highestRefreshRate = mode.getRefreshRate();
-									if (highestRefreshRate <= OFAndroid.highestFrameRate) {
+									if (highestRefreshRate <= OFAndroid.maximumFrameRate) {
 										highestModeID = mode.getModeId();
 										Log.i("OF", "Display Mode Refresh Rate: Supported:" + mode + " refreshRate: [" + mode.getRefreshRate() + "]");
 									}
@@ -425,8 +415,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						try {
 							float[] refreshRates = display.getSupportedRefreshRates();
 							for (float refreshRate : refreshRates) {
-								if(LOG_ENGINE) Log.i("OF", "Display RefreshRate Supported:" + refreshRate);
-								if (refreshRate >= highestRefreshRate) {
+								if(LOG_ENGINE) Log.i("OF", "Display RefreshRate Supported:" + refreshRate + " <=Max:" + (refreshRate <= OFAndroid.maximumFrameRate));
+								if (refreshRate >= highestRefreshRate && (refreshRate <= OFAndroid.maximumFrameRate)) {
 									highestRefreshRate = refreshRate;
 								}
 							}
@@ -444,13 +434,13 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 						OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 						if (glView != null) {
 
-							if (highestRefreshRate > OFAndroid.highestFrameRate) {
-								highestRefreshRate = OFAndroid.highestFrameRate; // allow capping
+							if (highestRefreshRate > OFAndroid.maximumFrameRate) {
+								highestRefreshRate = OFAndroid.maximumFrameRate; // allow capping
 							}
 
 							try {
-								final Window window = activity.getWindow();
-								final WindowManager.LayoutParams params = window.getAttributes();
+								Window window = activity.getWindow();
+								WindowManager.LayoutParams params = window.getAttributes();
 								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 									params.preferredDisplayModeId = highestModeID;
 								}
@@ -460,8 +450,6 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 							}
 							
 							glView.setFrameRate(highestRefreshRate);
-
-
 							currentRefreshRate = highestRefreshRate;
 						}
 					} else {
@@ -651,6 +639,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(LOG_ENGINE) Log.i("OF", "onRestart");
 		super.onRestart();
 		OFAndroidLifeCycle.glRestart();
+		DetermineDisplayConfiguration(true);
 	}
 
 	public void onForceRestart() {
