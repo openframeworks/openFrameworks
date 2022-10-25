@@ -154,7 +154,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     }
 
     public void setFrameRate(float frameRate) {
-        if(doNotDraw) return;
+//        if(doNotDraw) return;
 
         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.) {
             Log.i("OF","setFrameRate:" + frameRate);
@@ -188,6 +188,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     if(transaction != null && sc != null && sc.isValid())
                     transaction.setFrameRate(sc, frameRate, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE);
+                    transaction.apply();
                 }
             }
         } catch (Exception ex) {
