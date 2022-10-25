@@ -77,8 +77,11 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             OFAndroid.samples=2; // force no AA old devices
+
             depth = 0;
         }
+        if(OFAndroid.maxSamples <= OFAndroid.samples)
+            OFAndroid.samples = OFAndroid.maxSamples;
 
         OFEGLConfigChooser configChooser = getConfigChooser(8, 8, 8, 8, depth, 1, OFAndroid.samples, false);
 
@@ -108,7 +111,9 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
 
         mRenderer = new OFAndroidWindow(width, height);
         OFAndroid.samples = configChooser.getSampleSize();
-        OFAndroid.setSampleSize(configChooser.getSampleSize());
+        if(OFAndroid.maxSamples <= OFAndroid.samples)
+            OFAndroid.samples = OFAndroid.maxSamples;
+        OFAndroid.setSampleSize(OFAndroid.samples);
         setRenderer(mRenderer);
         setRenderMode(OFGLSurfaceView.RENDERMODE_CONTINUOUSLY);
         display = getDisplay();
@@ -325,6 +330,8 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                         int width = getWidth();
                         int height = getHeight();
                         if (mRenderer != null){
+                            if(OFAndroid.maxSamples <= OFAndroid.samples)
+                                OFAndroid.samples = OFAndroid.maxSamples;
                             OFAndroid.setSampleSize(OFAndroid.samples);
                             mRenderer.setResolution(width, height, true);
                         }
@@ -337,6 +344,8 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
 
             mRenderer = new OFAndroidWindow(getWidth(), getHeight());
             getHolder().setFormat(PixelFormat.OPAQUE);
+            if(OFAndroid.maxSamples <= OFAndroid.samples)
+                OFAndroid.samples = OFAndroid.maxSamples;
             OFAndroid.setSampleSize(OFAndroid.samples);
 
             setRenderer(mRenderer);
