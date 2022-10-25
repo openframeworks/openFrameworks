@@ -111,7 +111,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
 
         mRenderer = new OFAndroidWindow(width, height);
         OFAndroid.samples = configChooser.getSampleSize();
-        if(OFAndroid.maxSamples <= OFAndroid.samples)
+        if(OFAndroid.samples > OFAndroid.maxSamples)
             OFAndroid.samples = OFAndroid.maxSamples;
         OFAndroid.setSampleSize(OFAndroid.samples);
         setRenderer(mRenderer);

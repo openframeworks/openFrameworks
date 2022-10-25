@@ -12,7 +12,6 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import android.util.Log;
 import javax.microedition.khronos.egl.EGLContext;
 
-import android.opengl.EGL14;
 import android.os.Build;
 
 import androidx.annotation.Keep;
@@ -194,7 +193,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_NONE
             };
 
-    private static final int[] s_configAttribsMSAA =
+    private static final int[] s_configAttribsMSAA4 =
             {
                     EGL10.EGL_RED_SIZE, 8,
                     EGL10.EGL_GREEN_SIZE, 8,
@@ -207,6 +206,36 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_SAMPLES, 4,
                     EGL10.EGL_NONE
             };
+
+    private static final int[] s_configAttribsMSAA2 =
+            {
+                    EGL10.EGL_RED_SIZE, 8,
+                    EGL10.EGL_GREEN_SIZE, 8,
+                    EGL10.EGL_BLUE_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_DEPTH_SIZE, 16,
+                    // Requires that setEGLContextClientVersion(2) is called on the view.
+                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
+                    EGL10.EGL_SAMPLES, 4,
+                    EGL10.EGL_NONE
+            };
+
+    private static final int[] s_configAttribsNoSample =
+            {
+                    EGL10.EGL_RED_SIZE, 8,
+                    EGL10.EGL_GREEN_SIZE, 8,
+                    EGL10.EGL_BLUE_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_DEPTH_SIZE, 16,
+                    // Requires that setEGLContextClientVersion(2) is called on the view.
+                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
+                    EGL10.EGL_SAMPLE_BUFFERS, 0,
+                    EGL10.EGL_SAMPLES, 0,
+                    EGL10.EGL_NONE
+            };
+
+
 
     private static final int[] s_configAttribsMSAAFallBack = {
             EGL10.EGL_RED_SIZE, 8,
@@ -302,7 +331,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 //        }
 
         boolean workingConfig = false;
-        boolean tryMSAA = true;
+        boolean tryMSAA = OFAndroid.maxSamples > 1;
 //        if(OFAndroid.samples == 1 ||
 //                OFAndroid.height != 0 && OFAndroid.height <= 720 || // if height < 720 super old hardware
 //                Build.VERSION.SDK_INT < Build.VERSION_CODES.M // Disable for old API's
@@ -333,13 +362,13 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         if (numConfigs <= 0  && !workingConfig) {
             setRGB();
-            if(tryMSAA) Log.i("OF", String.format("eglChooseConfig MSAAx8"));
+            if(tryMSAA && OFAndroid.maxSamples >= 8) Log.i("OF", String.format("eglChooseConfig MSAAx8"));
             if (tryMSAA && !egl.eglChooseConfig(display, s_configAttribsMSAA8, null, 0,
                     num_config)) {
                 Log.w("OF", String.format("eglChooseConfig MSAAx8 failed"));
             }
             numConfigs = num_config[0];
-            if(tryMSAA && numConfigs > 0) {
+            if(tryMSAA && OFAndroid.maxSamples >= 8 && numConfigs > 0) {
                 configs = new EGLConfig[numConfigs];
                 try {
                     if (egl.eglChooseConfig(display, s_configAttribsMSAA8, configs, numConfigs, num_config)) {
@@ -357,7 +386,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
                 configs = new EGLConfig[numConfigs];
                 try {
-                    if (tryMSAA && !egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
+                    if (tryMSAA && OFAndroid.maxSamples >=4 && !egl.eglChooseConfig(display, s_configAttribsMSAA4, null, 0,
                             num_config)) {
                         Log.w("OF", String.format("eglChooseConfig MSAA failed"));
                     }
@@ -365,11 +394,11 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     Log.e("OF", String.format("eglChooseConfig MSAAx4 failed with EXCEPTION:") + ex.getMessage());
                 }
                 numConfigs = num_config[0];
-                if(tryMSAA && numConfigs > 0) {
+                if(tryMSAA && OFAndroid.maxSamples >=4 && numConfigs > 0) {
                     configs = new EGLConfig[numConfigs];
                     try {
 
-                        if(egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config)){
+                        if(egl.eglChooseConfig(display, s_configAttribsMSAA4, configs, numConfigs, num_config)){
                             numConfigs = num_config[0];
                             Log.v("OF", String.format("eglChooseConfig MSAA Success"));
                             if(numConfigs > 0) workingConfig = true;
@@ -395,7 +424,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                         }
                     }
                     if (numConfigs <= 0 && !workingConfig) {
-                        if(tryMSAA) Log.i("OF", String.format("eglChooseConfig MSAAx4 TEGRA2"));
+                        if(tryMSAA) Log.i("OF", String.format("try eglChooseConfig MSAAx4 TEGRA2"));
                         if (tryMSAA && !egl.eglChooseConfig(display, s_configAttribsMSAAFallBack2, null, 0,
                                 num_config)) {
                             Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));

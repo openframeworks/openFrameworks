@@ -45,8 +45,8 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private DisplayManager displayManager;
 	private Display display;
 	private Display presentationDisplay;
-	public static final boolean LOG_INPUT = true;
-	public static final boolean LOG_ENGINE = true;
+	public static final boolean LOG_INPUT = false;
+	public static final boolean LOG_ENGINE = false;
 
 	public float currentRefreshRate = 0;
 	public float highestRefreshRate = 0;

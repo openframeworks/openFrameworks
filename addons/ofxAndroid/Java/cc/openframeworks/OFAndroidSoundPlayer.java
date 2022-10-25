@@ -589,7 +589,6 @@ public class OFAndroidSoundPlayer extends OFAndroidObject implements MediaPlayer
 	@Override
 	protected void appResume() {
 		bWasResume = true;
-		Log.e("OF","SoundPlayer appResume");
 		if(bIsLoaded && stream == false){
 
 			loadSound(fileName, stream);
