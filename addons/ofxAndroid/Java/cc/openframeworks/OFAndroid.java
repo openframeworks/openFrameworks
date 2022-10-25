@@ -54,7 +54,7 @@ public class OFAndroid {
 	public static String packageName;
 	public static int eglVersion = 2;
 	public static int samples = 8;
-	public static int highestFrameRate = 144;
+	public static int maximumFrameRate = 144;
 	public static int width;
 	public static int height;
 	public static Locale locale;
