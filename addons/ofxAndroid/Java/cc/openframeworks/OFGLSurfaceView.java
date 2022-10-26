@@ -32,7 +32,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     public OFGLSurfaceView(Context context) {
         super(context);
         Log.i("OF","OFGLSurfaceView():" + context.toString());
-        init(false, 8, 0);
+        init(false, 24, 0);
         setFocusable(true);
         setFocusableInTouchMode(true);
         requestFocus();
@@ -46,7 +46,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
 
     private void init(boolean translucent, int depth, int stencil) {
 
-        Log.i("OF","OFGLSurfaceView():init translucent:" + translucent + " | depth:" + depth + " | stencil:" + stencil);
+        Log.i("OF","OFGLSurfaceView():init translucent:" + translucent + " | depth:" + depth + " | stencil:" + stencil + " | msaa:" + OFAndroid.samples + "| Max FPS:" + OFAndroid.maximumFrameRate);
         if (translucent) {
             this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         } else {
@@ -76,8 +76,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         }
         
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            OFAndroid.samples=2; // force no AA old devices
-
+            OFAndroid.samples=0; // force no AA old devices
             depth = 0;
         }
         if(OFAndroid.maxSamples <= OFAndroid.samples)
@@ -120,7 +119,9 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         post(new Runnable() {
             @Override
             public void run() {
+
                 mRenderer.setResolution(getWidth(), getHeight(), true);
+
             }
         });
     }
@@ -191,9 +192,10 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                 SurfaceControl.Transaction transaction = null;
                 transaction = new SurfaceControl.Transaction();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    if(transaction != null && sc != null && sc.isValid())
-                    transaction.setFrameRate(sc, frameRate, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE);
-                    transaction.apply();
+                    if(transaction != null && sc != null && sc.isValid()) {
+                        transaction.setFrameRate(sc, frameRate, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE);
+                        transaction.apply();
+                    }
                 }
             }
         } catch (Exception ex) {

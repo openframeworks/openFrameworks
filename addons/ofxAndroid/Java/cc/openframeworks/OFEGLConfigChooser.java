@@ -23,12 +23,16 @@ class ContextFactory implements GLSurfaceView.EGLContextFactory {
 
     public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig) {
         Log.w("OFContextFactory", "creating OpenGL ES 2.0 context");
-        //checkEglError("Before eglCreateContext", egl);
+        checkEglError("Before eglCreateContext", egl);
         int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
+
+        if(eglConfig == null) {
+            Log.e("OFContextFactory", "eglConfig is null");
+            return null;
+        }
         try {
             EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
-            //checkEglError("After eglCreateContext", egl);
-
+            checkEglError("After eglCreateContext", egl);
             return context;
         } catch(Exception ex) {
             Log.e("OFContextFactory", "egl.eglCreateContext error:" + ex.getMessage());
@@ -118,7 +122,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
      * We use a minimum size of 4 bits for red/green/blue, but will
      * perform actual matching in chooseConfig() below.
      */
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
     private static boolean MSAA = false;
     private static int EGL_OPENGL_ES_BIT = 1;
     private static int GLES_VERSION = 1;
@@ -185,11 +189,11 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_GREEN_SIZE, 8,
                     EGL10.EGL_BLUE_SIZE, 8,
                     EGL10.EGL_ALPHA_SIZE, 8,
-                    EGL10.EGL_DEPTH_SIZE, 16,
+                    EGL10.EGL_DEPTH_SIZE, 24,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
                     EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
                     EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
-                    EGL10.EGL_SAMPLES, 8,
+                    EGL10.EGL_SAMPLES, 4,
                     EGL10.EGL_NONE
             };
 
@@ -199,7 +203,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     EGL10.EGL_GREEN_SIZE, 8,
                     EGL10.EGL_BLUE_SIZE, 8,
                     EGL10.EGL_ALPHA_SIZE, 8,
-                    EGL10.EGL_DEPTH_SIZE, 16,
+                    EGL10.EGL_DEPTH_SIZE, 24,
                     // Requires that setEGLContextClientVersion(2) is called on the view.
                     EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
                     EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
@@ -222,27 +226,25 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             };
 
     private static final int[] s_configAttribsNoSample =
-            {
-                    EGL10.EGL_RED_SIZE, 8,
-                    EGL10.EGL_GREEN_SIZE, 8,
-                    EGL10.EGL_BLUE_SIZE, 8,
-                    EGL10.EGL_ALPHA_SIZE, 8,
-                    EGL10.EGL_DEPTH_SIZE, 16,
-                    // Requires that setEGLContextClientVersion(2) is called on the view.
-                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
-                    EGL10.EGL_SAMPLE_BUFFERS, 0,
-                    EGL10.EGL_SAMPLES, 0,
-                    EGL10.EGL_NONE
-            };
-
-
+    {
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_ALPHA_SIZE, 8,
+            EGL10.EGL_DEPTH_SIZE, 24,
+            // Requires that setEGLContextClientVersion(2) is called on the view.
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_SAMPLE_BUFFERS, 0,
+            EGL10.EGL_SAMPLES, 0,
+            EGL10.EGL_NONE
+    };
 
     private static final int[] s_configAttribsMSAAFallBack = {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_ALPHA_SIZE, 8,
-            EGL10.EGL_DEPTH_SIZE, 16,
+            EGL10.EGL_DEPTH_SIZE, 24,
             EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
             EGL_COVERAGE_SAMPLES_NV, 2,  // always 5 in practice on tegra 2
@@ -267,6 +269,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 24,
             EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_SAMPLE_BUFFERS, 0,
+            EGL10.EGL_SAMPLES, 0,
             EGL10.EGL_NONE
     };
 
@@ -274,8 +278,10 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, 8,
             EGL10.EGL_GREEN_SIZE, 8,
             EGL10.EGL_BLUE_SIZE, 8,
-            EGL10.EGL_DEPTH_SIZE, 24,
+            EGL10.EGL_DEPTH_SIZE, 16,
             EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_SAMPLE_BUFFERS, 0,
+            EGL10.EGL_SAMPLES, 0,
             EGL10.EGL_NONE
     };
 
@@ -285,6 +291,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_BLUE_SIZE, 8,
             EGL10.EGL_DEPTH_SIZE, 0,
             EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_SAMPLE_BUFFERS, 0,
+            EGL10.EGL_SAMPLES, 0,
             EGL10.EGL_NONE
     };
 
@@ -311,7 +319,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         try {
             Log.i("OF", String.format("eglChooseConfig: DEVICE:" + android.os.Build.DEVICE + " MODEL:"+ Build.MODEL));
             if (android.os.Build.DEVICE.contains("cactus")) {
-                OFAndroid.samples = 1;
+                OFAndroid.samples = 0;
             }
         } catch (Exception ex) {
 
@@ -386,7 +394,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
                 configs = new EGLConfig[numConfigs];
                 try {
-                    if (tryMSAA && OFAndroid.maxSamples >=4 && !egl.eglChooseConfig(display, s_configAttribsMSAA4, null, 0,
+                    if (tryMSAA && OFAndroid.maxSamples >=4 && !egl.eglChooseConfig(display, s_configAttribsMSAA4, configs, 0,
                             num_config)) {
                         Log.w("OF", String.format("eglChooseConfig MSAA failed"));
                     }
@@ -534,12 +542,40 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         /* Allocate then read the array of minimally matching EGL configs
          */
 
+        if(configs == null) {
+            Log.i("OF", String.format("eglChooseConfig Default NO MSAA"));
+            try {
+                if (!egl.eglChooseConfig(display, s_configAttribsNoSample, null, 0,
+                        num_config)) {
+                    Log.w("OF", String.format("eglChooseConfig Default failed"));
+                }
+            } catch (Exception ex) {
+                Log.e("OF", String.format("eglChooseConfig s_configAttribsNoSample failed with EXCEPTION:") + ex.getMessage());
+            }
+            numConfigs = num_config[0];
+            if(numConfigs > 0) {
+                configs = new EGLConfig[numConfigs];
+                try {
+                    if(egl.eglChooseConfig(display, s_configAttribsNoSample, configs, numConfigs, num_config)){
+                        numConfigs = num_config[0];
+                        if(numConfigs > 0) workingConfig = true;
+                    }
+                } catch (Exception ex) {
+                    Log.e("OF", String.format("eglChooseConfig s_configAttribsNoSample failed with EXCEPTION:") + ex.getMessage());
+                }
+            }
+            if(configs != null) {
+                Log.i("OF", String.format("eglChooseConfig Default NO MSAA - worked"));
+            }
+        }
 
 
-
-        if (DEBUG) {
+        if (DEBUG && configs != null) {
             printConfigs(egl, display, configs);
         }
+
+
+
         /* Now return the "best" one
          */
 
@@ -552,20 +588,18 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         }
 
-        int samples = 1;
-        try {
-            samples = findConfigAttrib(egl, display, finalConfig,
-                    EGL10.EGL_SAMPLES, 1);
-        } catch(Exception exception)
-        {
-
+        int samples = 0;
+        if(finalConfig != null) {
+            try {
+                samples = findConfigAttrib(egl, display, finalConfig,
+                        EGL10.EGL_SAMPLES, 0);
+            } catch (Exception exception) {
+                Log.e("OF", String.format("findConfigAttribute EGL_SAMPLES exception: ") + exception.getMessage());
+            }
         }
-
-
-        if(samples == 0) samples = 1;
         mSampleSize = samples;
 
-        if (DEBUG) {
+        if (DEBUG && finalConfig != null) {
             printConfig(egl, display, finalConfig);
         }
         return finalConfig;
@@ -719,7 +753,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
                     foundConfig = config;
                     mSampleSize = samples;
-                    Log.i("OF", "MSAA Found and Set:" + output);
+                    Log.i("OF", "Config Found - NO MSAA and Set:" + output);
 
                 } else {
                     Log.v("OF", "Else Config: " + output);
@@ -739,7 +773,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && depth == 24 && samples == 0) {
 
                 foundConfig = config;
-                mSampleSize = 1;
+                mSampleSize = 0;
                 Log.i("OF", "MSAA Off - Depth 24 - Last Resort Found and Set:" + output);
 
             } else {
@@ -749,7 +783,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && depth == 16 && samples == 0) {
 
                 lastConfig = config;
-                mSampleSize = 1;
+                mSampleSize = 0;
                 Log.i("OF", "MSAA Off - Depth 16 - Last Resort Found and Set:" + output);
 
             } else {
@@ -759,7 +793,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && depth == 0 && samples == 0) {
 
                 lastConfig = config;
-                mSampleSize = 1;
+                mSampleSize = 0;
                 Log.i("OF", "MSAA Off - Depth 0 - Last Resort Found and Set:" + output);
 
             } else {
@@ -769,7 +803,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 0) {
 
                 lastConfig = config;
-                mSampleSize = 1;
+                mSampleSize = 0;
                 Log.i("OF", "Last Resort Found and Set:" + output);
 
             } else {
@@ -797,11 +831,15 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
     private void printConfigs(EGL10 egl, EGLDisplay display,
                               EGLConfig[] configs) {
-        int numConfigs = configs.length;
-        Log.w("OF", String.format("%d configurations", numConfigs));
-        for (int i = 0; i < numConfigs; i++) {
-            Log.w("OF", String.format("Configuration %d:\n", i));
-            printConfig(egl, display, configs[i]);
+        if(configs != null) {
+            int numConfigs = configs.length;
+            Log.w("OF", String.format("%d configurations", numConfigs));
+            for (int i = 0; i < numConfigs; i++) {
+                Log.w("OF", String.format("Configuration %d:\n", i));
+                printConfig(egl, display, configs[i]);
+            }
+        } else {
+            Log.w("OF", String.format("printConfigs - no configs - %d configurations", 0));
         }
     }
 
@@ -817,39 +855,39 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 EGL10.EGL_STENCIL_SIZE,
                 EGL10.EGL_CONFIG_CAVEAT,
                 EGL10.EGL_CONFIG_ID,
-                EGL10.EGL_LEVEL,
-                EGL10.EGL_MAX_PBUFFER_HEIGHT,
-                EGL10.EGL_MAX_PBUFFER_PIXELS,
-                EGL10.EGL_MAX_PBUFFER_WIDTH,
-                EGL10.EGL_NATIVE_RENDERABLE,
+//                EGL10.EGL_LEVEL,
+//                EGL10.EGL_MAX_PBUFFER_HEIGHT,
+//                EGL10.EGL_MAX_PBUFFER_PIXELS,
+//                EGL10.EGL_MAX_PBUFFER_WIDTH,
+//                EGL10.EGL_NATIVE_RENDERABLE,
                 EGL10.EGL_NATIVE_VISUAL_ID,
-                EGL10.EGL_NATIVE_VISUAL_TYPE,
-                0x3030, // EGL10.EGL_PRESERVED_RESOURCES,
+//                EGL10.EGL_NATIVE_VISUAL_TYPE,
+//                0x3030, // EGL10.EGL_PRESERVED_RESOURCES,
                 EGL10.EGL_SAMPLES,
                 EGL10.EGL_SAMPLE_BUFFERS,
                 EGL10.EGL_SURFACE_TYPE,
-                EGL10.EGL_TRANSPARENT_TYPE,
-                EGL10.EGL_TRANSPARENT_RED_VALUE,
-                EGL10.EGL_TRANSPARENT_GREEN_VALUE,
-                EGL10.EGL_TRANSPARENT_BLUE_VALUE,
-                0x3039, // EGL10.EGL_BIND_TO_TEXTURE_RGB,
-                0x303A, // EGL10.EGL_BIND_TO_TEXTURE_RGBA,
-                0x303B, // EGL10.EGL_MIN_SWAP_INTERVAL,
-                0x303C, // EGL10.EGL_MAX_SWAP_INTERVAL,
-                EGL10.EGL_LUMINANCE_SIZE,
-                EGL10.EGL_ALPHA_MASK_SIZE,
-                EGL10.EGL_COLOR_BUFFER_TYPE,
+//                EGL10.EGL_TRANSPARENT_TYPE,
+//                EGL10.EGL_TRANSPARENT_RED_VALUE,
+//                EGL10.EGL_TRANSPARENT_GREEN_VALUE,
+//                EGL10.EGL_TRANSPARENT_BLUE_VALUE,
+//                0x3039, // EGL10.EGL_BIND_TO_TEXTURE_RGB,
+//                0x303A, // EGL10.EGL_BIND_TO_TEXTURE_RGBA,
+//                0x303B, // EGL10.EGL_MIN_SWAP_INTERVAL,
+//                0x303C, // EGL10.EGL_MAX_SWAP_INTERVAL,
+//                EGL10.EGL_LUMINANCE_SIZE,
+//                EGL10.EGL_ALPHA_MASK_SIZE,
+//                EGL10.EGL_COLOR_BUFFER_TYPE,
                 EGL_RENDERABLE_TYPE,
-                0x3042, // EGL10.EGL_CONFORMANT
-                0x309D, // EGL_GL_COLORSPACE_KHR
-                0x3339, //  EGL_COLOR_COMPONENT_TYPE_EXT
-                0x333B, //EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT
-                0x3340, // EGL_GL_COLORSPACE_BT2020_PQ_EXT
-                0x30E0, //EGL_COVERAGE_BUFFERS_NV
-                0x30E1, //EGL_COVERAGE_SAMPLES_NV
-                0x3490, //EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT
-                EGL_COVERAGE_BUFFERS_NV, //
-                EGL_COVERAGE_SAMPLES_NV, // always 5 in practice on tegra 2
+//                0x3042, // EGL10.EGL_CONFORMANT
+//                0x309D, // EGL_GL_COLORSPACE_KHR
+//                0x3339, //  EGL_COLOR_COMPONENT_TYPE_EXT
+//                0x333B, //EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT
+//                0x3340, // EGL_GL_COLORSPACE_BT2020_PQ_EXT
+//                0x30E0, //EGL_COVERAGE_BUFFERS_NV
+//                0x30E1, //EGL_COVERAGE_SAMPLES_NV
+//                0x3490, //EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT
+//                EGL_COVERAGE_BUFFERS_NV, //
+//                EGL_COVERAGE_SAMPLES_NV, // always 5 in practice on tegra 2
         };
         String[] names = {
                 "EGL_BUFFER_SIZE",
@@ -861,49 +899,52 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                 "EGL_STENCIL_SIZE",
                 "EGL_CONFIG_CAVEAT",
                 "EGL_CONFIG_ID",
-                "EGL_LEVEL",
-                "EGL_MAX_PBUFFER_HEIGHT",
-                "EGL_MAX_PBUFFER_PIXELS",
-                "EGL_MAX_PBUFFER_WIDTH",
-                "EGL_NATIVE_RENDERABLE",
+//                "EGL_LEVEL",
+//                "EGL_MAX_PBUFFER_HEIGHT",
+//                "EGL_MAX_PBUFFER_PIXELS",
+//                "EGL_MAX_PBUFFER_WIDTH",
+//                "EGL_NATIVE_RENDERABLE",
                 "EGL_NATIVE_VISUAL_ID",
                 "EGL_NATIVE_VISUAL_TYPE",
-                "EGL_PRESERVED_RESOURCES",
+//                "EGL_PRESERVED_RESOURCES",
                 "EGL_SAMPLES",
                 "EGL_SAMPLE_BUFFERS",
                 "EGL_SURFACE_TYPE",
-                "EGL_TRANSPARENT_TYPE",
-                "EGL_TRANSPARENT_RED_VALUE",
-                "EGL_TRANSPARENT_GREEN_VALUE",
-                "EGL_TRANSPARENT_BLUE_VALUE",
-                "EGL_BIND_TO_TEXTURE_RGB",
-                "EGL_BIND_TO_TEXTURE_RGBA",
-                "EGL_MIN_SWAP_INTERVAL",
-                "EGL_MAX_SWAP_INTERVAL",
-                "EGL_LUMINANCE_SIZE",
-                "EGL_ALPHA_MASK_SIZE",
-                "EGL_COLOR_BUFFER_TYPE",
+//                "EGL_TRANSPARENT_TYPE",
+//                "EGL_TRANSPARENT_RED_VALUE",
+//                "EGL_TRANSPARENT_GREEN_VALUE",
+//                "EGL_TRANSPARENT_BLUE_VALUE",
+//                "EGL_BIND_TO_TEXTURE_RGB",
+//                "EGL_BIND_TO_TEXTURE_RGBA",
+//                "EGL_MIN_SWAP_INTERVAL",
+//                "EGL_MAX_SWAP_INTERVAL",
+//                "EGL_LUMINANCE_SIZE",
+//                "EGL_ALPHA_MASK_SIZE",
+//                "EGL_COLOR_BUFFER_TYPE",
                 "EGL_RENDERABLE_TYPE",
                 "EGL_CONFORMANT",
-                "EGL_GL_COLORSPACE_KHR",
-                "EGL_COLOR_COMPONENT_TYPE_EXT",
-                "EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT",
-                "EGL_GL_COLORSPACE_BT2020_PQ_EXT",
-                "EGL_COVERAGE_BUFFERS_NV",
-                "EGL_COVERAGE_SAMPLES_NV",
-                "EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT",
-                "EGL_COVERAGE_BUFFERS_NV",
-                "EGL_COVERAGE_SAMPLES_NV"
+//                "EGL_GL_COLORSPACE_KHR",
+//                "EGL_COLOR_COMPONENT_TYPE_EXT",
+//                "EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT",
+//                "EGL_GL_COLORSPACE_BT2020_PQ_EXT",
+//                "EGL_COVERAGE_BUFFERS_NV",
+//                "EGL_COVERAGE_SAMPLES_NV",
+//                "EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT",
+//                "EGL_COVERAGE_BUFFERS_NV",
+//                "EGL_COVERAGE_SAMPLES_NV"
         };
         int[] value = new int[1];
-        for (int i = 0; i < attributes.length; i++) {
-            int attribute = attributes[i];
-            String name = names[i];
-            if ( egl.eglGetConfigAttrib(display, config, attribute, value)) {
-                Log.w("OF", String.format("  %s: %d\n", name, value[0]));
-            } else {
-                // Log.w(TAG, String.format("  %s: failed\n", name));
-                while (egl.eglGetError() != EGL10.EGL_SUCCESS);
+        if(attributes != null) {
+            for (int i = 0; i < attributes.length; i++) {
+                int attribute = attributes[i];
+                String name = names[i];
+                if (egl.eglGetConfigAttrib(display, config, attribute, value)) {
+                    if (value != null)
+                        Log.w("OF", String.format("  %s: %d\n", name, value[0]));
+                } else {
+                    // Log.w(TAG, String.format("  %s: failed\n", name));
+                    //while (egl.eglGetError() != EGL10.EGL_SUCCESS);
+                }
             }
         }
     }
