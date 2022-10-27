@@ -38,8 +38,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 14
-        versionName '14'
+        versionCode 15
+        versionName '15'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
 
         externalNativeBuild {

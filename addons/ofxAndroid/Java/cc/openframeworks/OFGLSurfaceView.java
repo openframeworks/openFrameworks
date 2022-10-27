@@ -82,13 +82,14 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         if(OFAndroid.maxSamples <= OFAndroid.samples)
             OFAndroid.samples = OFAndroid.maxSamples;
 
-        OFEGLConfigChooser configChooser = getConfigChooser(8, 8, 8, 8, depth, 1, OFAndroid.samples, false);
+        OFEGLConfigChooser configChooser = getConfigChooser(8, 8, 8, 8, depth, 8, OFAndroid.samples, false);
 
         try {
             setEGLConfigChooser(configChooser);
         } catch (Exception ex) {
             Log.e("OF", "setEGLConfigChooser failed 8,8,8,8,depth,1 ", ex);
             try {
+                configChooser = getConfigChooser(8, 8, 8, 8, 16, 1, OFAndroid.samples, false);
                 setEGLConfigChooser(configChooser);
             } catch (Exception exOne) {
                 Log.e("OF", "setEGLConfigChooser failed exOne: Trying 5, 6, 5, 1, 16, 1 ", ex);
@@ -102,7 +103,8 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
                        setEGLConfigChooser(configChooser);
 
                     } catch (Exception exceptionThree) {
-                        setEGLConfigChooser(configChooser);
+                       configChooser = getConfigChooser(8, 8, 8, 1, 16, 1, 0, false);
+                       setEGLConfigChooser(configChooser);
                     }
                 }
             }
