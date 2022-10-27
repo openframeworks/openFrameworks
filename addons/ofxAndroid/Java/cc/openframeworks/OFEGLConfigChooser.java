@@ -56,6 +56,7 @@ class ContextFactory implements GLSurfaceView.EGLContextFactory {
 }
 
 
+@Keep
 class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
 
@@ -378,7 +379,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 //            }
 //        }
 
-        if (numConfigs <= 0  && !workingConfig) {
+        if (numConfigs <= 0 || !workingConfig) {
             setRGB();
             if(tryMSAA && OFAndroid.maxSamples >= 8) {
                 Log.i("OF", String.format("eglChooseConfig MSAAx8"));
@@ -393,7 +394,15 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                         if (egl.eglChooseConfig(display, s_configAttribsMSAA8, configs, numConfigs, num_config)) {
                             numConfigs = num_config[0];
                             Log.v("OF", String.format("eglChooseConfig MSAA8 Success"));
-                            if (numConfigs > 0) workingConfig = true;
+                            if(numConfigs > 0 && configs != null) {
+                                workingConfig = true;
+                            } else {
+                                workingConfig = false;
+                                numConfigs = 0;
+                            }
+                        } else {
+                            workingConfig = false;
+                            numConfigs = 0;
                         }
 
                     } catch (Exception ex) {
@@ -403,7 +412,6 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             }
             if (numConfigs <= 0 && !workingConfig) {
                 setRGB();
-
                 configs = new EGLConfig[numConfigs];
                 try {
                     if (tryMSAA && OFAndroid.maxSamples >=4 && !egl.eglChooseConfig(display, s_configAttribsMSAA4, null, 0,
@@ -421,7 +429,15 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                         if(egl.eglChooseConfig(display, s_configAttribsMSAA4, configs, numConfigs, num_config)){
                             numConfigs = num_config[0];
                             Log.v("OF", String.format("eglChooseConfig MSAA Success"));
-                            if(numConfigs > 0) workingConfig = true;
+                            if(numConfigs > 0 && configs != null) {
+                                workingConfig = true;
+                            } else {
+                                workingConfig = false;
+                                numConfigs = 0;
+                            }
+                        } else {
+                            workingConfig = false;
+                            numConfigs = 0;
                         }
                     } catch (Exception ex) {
                         numConfigs = num_config[0];
@@ -438,7 +454,15 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                             if(egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config)){
                                 numConfigs = num_config[0];
                                 Log.v("OF", String.format("eglChooseConfig MSAA Tegra Success"));
-                                if(numConfigs > 0) workingConfig = true;
+                                if(numConfigs > 0 && configs != null) {
+                                    workingConfig = true;
+                                } else {
+                                    workingConfig = false;
+                                    numConfigs = 0;
+                                }
+                            } else {
+                                workingConfig = false;
+                                numConfigs = 0;
                             }
                         } catch (Exception ex) {
                             numConfigs = num_config[0];
@@ -457,7 +481,15 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                             try {
                                 if(egl.eglChooseConfig(display, s_configAttribsMSAAFallBack2, configs, numConfigs, num_config)){
                                     numConfigs = num_config[0];
-                                    if(numConfigs > 0) workingConfig = true;
+                                    if(numConfigs > 0 && configs != null) {
+                                        workingConfig = true;
+                                    } else {
+                                        workingConfig = false;
+                                        numConfigs = 0;
+                                    }
+                                } else {
+                                    workingConfig = false;
+                                    numConfigs = 0;
                                 }
                             } catch (Exception ex) {
                                 numConfigs = num_config[0];
@@ -465,8 +497,9 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                             }
                         }
 
-                        if (numConfigs <= 0 && !workingConfig) {
-                            mSampleSize = 1;
+                        if (numConfigs <= 0 || !workingConfig) {
+                            mSampleSize = 0;
+                            mAlphaSize = 0;
                             Log.i("OF", String.format("eglChooseConfig Default8"));
                             if (!egl.eglChooseConfig(display, s_configAttribsDefault8, null, 0,
                                     num_config)) {
@@ -478,14 +511,22 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                                 try {
                                     if(egl.eglChooseConfig(display, s_configAttribsDefault8, configs, numConfigs, num_config)){
                                         numConfigs = num_config[0];
-                                        if(numConfigs > 0) workingConfig = true;
+                                        if(numConfigs > 0 && configs != null) {
+                                            workingConfig = true;
+                                        } else {
+                                            workingConfig = false;
+                                            numConfigs = 0;
+                                        }
+                                    }else {
+                                        workingConfig = false;
+                                        numConfigs = 0;
                                     }
                                 } catch (Exception ex) {
                                     numConfigs = num_config[0];
                                     Log.e("OF", String.format("eglChooseConfig Default8 failed with EXCEPTION:") + ex.getMessage());
                                 }
                             }
-                            if (numConfigs <= 0  && !workingConfig) {
+                            if (numConfigs <= 0  || !workingConfig) {
                                 numConfigs = num_config[0];
                                 if (numConfigs > 0) {
                                     configs = new EGLConfig[numConfigs];
@@ -494,14 +535,22 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                                         mAlphaSize = 0;
                                         if (egl.eglChooseConfig(display, s_configAttribsDefault8Depth16, configs, numConfigs, num_config)) {
                                             numConfigs = num_config[0];
-                                            if (numConfigs > 0) workingConfig = true;
+                                            if(numConfigs > 0 && configs != null) {
+                                                workingConfig = true;
+                                            } else {
+                                                workingConfig = false;
+                                                numConfigs = 0;
+                                            }
+                                        } else {
+                                            workingConfig = false;
+                                            numConfigs = 0;
                                         }
                                     } catch (Exception ex) {
                                         Log.e("OF", String.format("eglChooseConfig Default8Depth16 failed with EXCEPTION:") + ex.getMessage());
                                     }
                                 }
                             }
-                            if (numConfigs <= 0  && !workingConfig) {
+                            if (numConfigs <= 0 || !workingConfig) {
                                 numConfigs = num_config[0];
                                 if (numConfigs > 0) {
                                     configs = new EGLConfig[numConfigs];
@@ -509,14 +558,22 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                                         mDepthSize = 0;
                                         if (egl.eglChooseConfig(display, s_configAttribsDefault8DepthNone, configs, numConfigs, num_config)) {
                                             numConfigs = num_config[0];
-                                            if (numConfigs > 0) workingConfig = true;
+                                            if(numConfigs > 0 && configs != null) {
+                                                workingConfig = true;
+                                            } else {
+                                                workingConfig = false;
+                                                numConfigs = 0;
+                                            }
+                                        } else {
+                                            workingConfig = false;
+                                            numConfigs = 0;
                                         }
                                     } catch (Exception ex) {
                                         Log.e("OF", String.format("eglChooseConfig Default8DepthNone failed with EXCEPTION:") + ex.getMessage());
                                     }
                                 }
                             }
-                            if (numConfigs <= 0  && !workingConfig) {
+                            if (numConfigs <= 0 || !workingConfig) {
                                 Log.i("OF", String.format("eglChooseConfig Default"));
                                 try {
                                     mBlueSize = 5;
@@ -542,13 +599,21 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                                         mDepthSize = 0;
                                         if(egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config)){
                                             numConfigs = num_config[0];
-                                            if(numConfigs > 0) workingConfig = true;
+                                            if(numConfigs > 0 && configs != null) {
+                                                workingConfig = true;
+                                            } else {
+                                                workingConfig = false;
+                                                numConfigs = 0;
+                                            }
+                                        } else {
+                                            workingConfig = false;
+                                            numConfigs = 0;
                                         }
                                     } catch (Exception ex) {
                                         Log.e("OF", String.format("eglChooseConfig s_configAttribsDefault failed with EXCEPTION:") + ex.getMessage());
                                     }
                                 }
-                                if (numConfigs <= 0 && !workingConfig) {
+                                if (numConfigs <= 0 || !workingConfig) {
                                     Log.i("OF", String.format("eglChooseConfig DefaultES"));
                                     try {
                                         if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
