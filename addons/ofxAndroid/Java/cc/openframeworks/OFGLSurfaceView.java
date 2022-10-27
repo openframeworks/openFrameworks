@@ -32,7 +32,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
     public OFGLSurfaceView(Context context) {
         super(context);
         Log.i("OF","OFGLSurfaceView():" + context.toString());
-        init(false, 24, 0);
+        init(false, 24, 8);
         setFocusable(true);
         setFocusableInTouchMode(true);
         requestFocus();
@@ -76,7 +76,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         }
         
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            OFAndroid.samples=0; // force no AA old devices
+            OFAndroid.samples=1; // force no AA old devices
             depth = 0;
         }
         if(OFAndroid.maxSamples <= OFAndroid.samples)
