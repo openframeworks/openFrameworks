@@ -414,8 +414,6 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
-typedef std::vector<std::string> StringList;
-
 //--------------------------------------------------------------
 string ofShader::parseForIncludes( const string& source, const std::filesystem::path& sourceDirectoryPath) {
 	vector<string> included;
