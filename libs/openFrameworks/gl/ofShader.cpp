@@ -414,6 +414,8 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
+typedef std::vector<std::string> StringList;
+
 //--------------------------------------------------------------
 string ofShader::parseForIncludes( const string& source, const std::filesystem::path& sourceDirectoryPath) {
 	vector<string> included;
@@ -446,10 +448,18 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		// while skipping whitespace, read in tokens for: pragma, include, and filename
 		s >> std::skipws >> p >> i >> f;
 
-		if (p.empty() || i.empty() || (f.size() < 2) ) return false;
-		// -----| invariant: all tokens have values
+		if (p.empty())
+			return false;
+		else if (p == "include") {
+			f = i;
+			i = p;
+		}
+		else if (p != "pragma")
+			return false;
 
-		if (p != "pragma") return false;
+		if (i.empty() || (f.size() < 2) ) 
+			return false;
+
 		if (i != "include") return false;
 
 		// first and last character of filename token must match and be either
