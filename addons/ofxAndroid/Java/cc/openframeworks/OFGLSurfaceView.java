@@ -77,7 +77,7 @@ class OFGLSurfaceView extends GLSurfaceView implements View.OnFocusChangeListene
         
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             OFAndroid.samples=1; // force no AA old devices
-            depth = 0;
+            depth = 24;
         }
         if(OFAndroid.maxSamples <= OFAndroid.samples)
             OFAndroid.samples = OFAndroid.maxSamples;
