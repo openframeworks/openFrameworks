@@ -1,6 +1,7 @@
 package cc.openframeworks;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Insets;
@@ -46,10 +47,13 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display display;
 	private Display presentationDisplay;
 	public static final boolean LOG_INPUT = false;
-	public static final boolean LOG_ENGINE = false;
+	public static final boolean LOG_ENGINE = true;
 
 	public float currentRefreshRate = 0;
 	public float highestRefreshRate = 0;
+
+	public static final String KEY_SAMPLES   = "samples";
+	public static final String KEY_HIGHEST   = "highest";
 
 	public boolean hasPaused = false;
 	public boolean hasSetup = false;
@@ -141,6 +145,13 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		if(LOG_ENGINE) Log.i(TAG, "onCreate:" + OFAndroid.packageName);
 
 
+		SharedPreferences settings = getPreferences();
+		int samples =  OFAndroid.maxSamples;
+		int frameRate =  OFAndroid.maximumFrameRate;
+		if(settings != null) {
+			OFAndroid.maxSamples = settings.getInt(KEY_SAMPLES, OFAndroid.maxSamples);
+			OFAndroid.maximumFrameRate = settings.getInt(KEY_HIGHEST, OFAndroid.maximumFrameRate);
+		}
 
 		try {
 			WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
@@ -172,6 +183,33 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		clearViewGroup();
 		initView();
 
+	}
+
+	SharedPreferences getPreferences() {
+		try {
+			if(getApplicationContext() != null) {
+				SharedPreferences settings = getApplicationContext().getSharedPreferences("of_settings", 0);
+				return settings;
+			} else {
+				Log.e(TAG, "getPreferences() getApplicationContext == null");
+				return null;
+			}
+		} catch(Exception ex) {
+			Log.e(TAG, ex.getMessage());
+			return null;
+		}
+	}
+
+	public void savePreferences() {
+		try {
+			SharedPreferences settings = getApplicationContext().getSharedPreferences("of_settings", 0);
+			SharedPreferences.Editor prefsEditor = settings.edit();
+			prefsEditor.putInt(KEY_SAMPLES, OFAndroid.maxSamples);
+			prefsEditor.putInt(KEY_HIGHEST, OFAndroid.maximumFrameRate);
+			prefsEditor.apply();
+		} catch (Exception ex){
+			Log.d(TAG, "savePreferences() -> Exception saving pref" + ex.getMessage());
+		}
 	}
 
 	void clearViewGroup() {
@@ -644,6 +682,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 	public void onForceRestart() {
 		if(LOG_ENGINE) Log.i("OF", "onForceRestart");
+		savePreferences();
 		OFAndroid.setupGL(OFAndroid.eglVersion, true);
 		DetermineDisplayConfiguration(true);
 		DetermineDisplayDimensions();

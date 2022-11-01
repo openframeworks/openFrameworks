@@ -165,6 +165,12 @@ public class OFAndroid {
 		}
 	}
 
+	public static void savePreferences() {
+		Activity activity = OFAndroidLifeCycle.getActivity();
+		if(activity != null && OFActivity.class.isInstance(activity))
+			((OFActivity)activity).savePreferences();
+	}
+
 	private boolean isExternalStorageWritable() {
 		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
 	}
