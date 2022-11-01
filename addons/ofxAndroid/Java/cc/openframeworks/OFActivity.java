@@ -53,7 +53,9 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	public float highestRefreshRate = 0;
 
 	public static final String KEY_SAMPLES   = "samples";
+	public static final String KEY_TARGET_SAMPLES   = "targetmsaa";
 	public static final String KEY_HIGHEST   = "highest";
+	public static final String KEY_TARGET_FPS   = "fpstarget";
 
 	public boolean hasPaused = false;
 	public boolean hasSetup = false;
@@ -144,19 +146,43 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 
 		if(LOG_ENGINE) Log.i(TAG, "onCreate:" + OFAndroid.packageName);
 
+		try {
+			SharedPreferences settings = getPreferences();
+			int samples =  OFAndroid.samples;
+			int maxSamples =  OFAndroid.maxSamples;
+			int maximumFrameRate =  OFAndroid.maximumFrameRate;
+			int targetFrameRate =  OFAndroid.targetFrameRate;
+			if(settings != null) {
+				maxSamples = settings.getInt(KEY_SAMPLES, OFAndroid.maxSamples);
+				samples = settings.getInt(KEY_TARGET_SAMPLES, OFAndroid.samples);
+				maximumFrameRate = settings.getInt(KEY_HIGHEST, OFAndroid.maximumFrameRate);
+				targetFrameRate = settings.getInt(KEY_TARGET_FPS, OFAndroid.targetFrameRate);
+			}
 
-		SharedPreferences settings = getPreferences();
-		int samples =  OFAndroid.maxSamples;
-		int frameRate =  OFAndroid.maximumFrameRate;
-		if(settings != null) {
-			OFAndroid.maxSamples = settings.getInt(KEY_SAMPLES, OFAndroid.maxSamples);
-			OFAndroid.maximumFrameRate = settings.getInt(KEY_HIGHEST, OFAndroid.maximumFrameRate);
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+				Log.i(TAG, "SDK < N (24) : MSAA off by default ");
+				samples = 1; // force no MSAA old devices
+				maxSamples = 1;
+			}
+			else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O && (samples >= 2 && maxSamples >= 2)) {
+				Log.i(TAG, "SDK < O (26): AAx2 by default");
+				maxSamples=2; // force 2xMSAA old devices
+				samples=2; // force 2xMSAA old devices
+			}
+
+			OFAndroid.maximumFrameRate = maximumFrameRate; // Restrict Android FPS to 144 FPS - 144 to 240 Hz displays will default to rendering at 120 Hz
+			OFAndroid.targetFrameRate = targetFrameRate;
+			OFAndroid.samples = samples;
+			OFAndroid.maxSamples = maxSamples;
+
+		} catch (Exception ex) {
+			Log.e(TAG, "onCreate: SharedPreferences:getPreferences Failed!" + ex.getMessage());
 		}
 
 		try {
 			WindowCompat.setDecorFitsSystemWindows(getWindow(), false);  // https://developer.android.com/training/gestures/edge-to-edge#lay-out-in-full-screen
 		}catch (Exception ex) {
-
+			Log.e(TAG, "onCreate: setDecorFitsSystemWindows: Failed!" + ex.getMessage());
 		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			displayManager = getSystemService(DisplayManager.class);
@@ -201,11 +227,17 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	}
 
 	public void savePreferences() {
+		if(OFAndroidLifeCycle.coreLibraryLoaded == false || OFAndroidLifeCycle.getGLView() == null) {
+			Log.e(TAG, "savePreferences() environment not setup");
+			return;
+		}
 		try {
 			SharedPreferences settings = getApplicationContext().getSharedPreferences("of_settings", 0);
 			SharedPreferences.Editor prefsEditor = settings.edit();
 			prefsEditor.putInt(KEY_SAMPLES, OFAndroid.maxSamples);
 			prefsEditor.putInt(KEY_HIGHEST, OFAndroid.maximumFrameRate);
+			prefsEditor.putInt(KEY_TARGET_FPS, OFAndroid.targetFrameRate);
+			prefsEditor.putInt(KEY_TARGET_SAMPLES, OFAndroid.samples);
 			prefsEditor.apply();
 		} catch (Exception ex){
 			Log.d(TAG, "savePreferences() -> Exception saving pref" + ex.getMessage());

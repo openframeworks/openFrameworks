@@ -56,6 +56,7 @@ public class OFAndroid {
 	public static int samples = 8;
 	public static int maxSamples = 8;
 	public static int maximumFrameRate = 144;
+	public static int targetFrameRate = 144;
 	public static int width;
 	public static int height;
 	public static Locale locale;
