@@ -1092,7 +1092,7 @@ public class OFAndroid {
 	/**
 	 * 
 	 * @param keyCode
-	 * @param event
+	 * @param keyCodeSource
 	 * @return true to say we handled this, false to tell Android to handle it
 	 */
 
@@ -1129,6 +1129,9 @@ public class OFAndroid {
            	}
         }
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS) || event.getKeyCode() == KeyEvent.KEYCODE_CAMERA || event.getKeyCode() == 287) return false;
+		if((keyCode == KeyEvent.KEYCODE_VOLUME_UP || (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) || (keyCode == KeyEvent.KEYCODE_VOLUME_MUTE) || (keyCode == KeyEvent.KEYCODE_FOCUS)  || keyCode == KeyEvent.KEYCODE_CAMERA || keyCode == 287) return false;
+
+
 		int unicodeChar = event.getUnicodeChar();
 		if(unicodeChar == 0 && keyCode < 714 && keyCode > 0) {
 			unicodeChar = keyCode;
@@ -1152,7 +1155,8 @@ public class OFAndroid {
 			return true; // handled event
 		}
 		if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)  || event.getKeyCode() == KeyEvent.KEYCODE_CAMERA || event.getKeyCode() == 287) return false;
-		
+		if((keyCode == KeyEvent.KEYCODE_VOLUME_UP || (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) || (keyCode == KeyEvent.KEYCODE_VOLUME_MUTE) || (keyCode == KeyEvent.KEYCODE_FOCUS)  || keyCode == KeyEvent.KEYCODE_CAMERA || keyCode == 287) return false;
+
 
 		int unicodeChar = event.getUnicodeChar();
 		//toast("keyUp:" + keyCode);
