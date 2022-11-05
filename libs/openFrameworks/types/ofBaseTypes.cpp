@@ -8,6 +8,7 @@
 #include "ofSoundBaseTypes.h"
 #include "ofVideoBaseTypes.h"
 #include "ofGraphicsBaseTypes.h"
+#include "ofShadow.h"
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -332,6 +333,9 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
+	if (ofShadow::hasActiveShadows()) {
+		shader.setUniformMatrix4f("shadowNormalMatrix", glm::transpose(glm::inverse(renderer.getCurrentModelMatrix() )));
+	}
 }
 
 
