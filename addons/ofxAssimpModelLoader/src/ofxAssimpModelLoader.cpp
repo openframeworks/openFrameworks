@@ -226,8 +226,10 @@ void ofxAssimpModelLoader::optimizeScene(){
 			aiProcess_RemoveRedundantMaterials);
 }
 
+#ifndef TARGET_WIN32
 //this is a hack to allow for weak definations of functions that might not exist in older assimp versions
 const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
+#endif
 
 //-------------------------------------------
 void ofxAssimpModelLoader::loadGLResources(){
@@ -334,7 +336,8 @@ void ofxAssimpModelLoader::loadGLResources(){
             string relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
             string texFile = ofFilePath::getFileName(texPathStr);
             string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
-                                            
+                            
+#ifndef TARGET_LINUX_ARM
             if(bTryEmbed || ofFile::doesFileExist(realPath) == false) {
                 auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
                 if( embeddedTexture ){
@@ -345,6 +348,7 @@ void ofxAssimpModelLoader::loadGLResources(){
                             << file.getFileName() + "\" in \"" << realPath << "\"";
                 }
             }
+#endif
                             
             bool bTextureAlreadyExists = false;
             if(textures.count(realPath)){
@@ -363,8 +367,10 @@ void ofxAssimpModelLoader::loadGLResources(){
             } else {
                                     
                 shared_ptr<ofTexture> texture = make_shared<ofTexture>();
-
+                
                 if( bHasEmbeddedTexture ){
+                
+#ifndef TARGET_LINUX_ARM
                     auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
                     
                     //compressed texture
@@ -384,6 +390,7 @@ void ofxAssimpModelLoader::loadGLResources(){
                         auto glFormat = getGLFormatFromAiFormat(embeddedTexture->achFormatHint);
                         texture->loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
                     }
+#endif
                 }else{
                     ofLoadImage(*texture.get(), realPath);
                 }
