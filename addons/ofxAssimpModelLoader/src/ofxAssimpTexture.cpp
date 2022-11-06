@@ -21,15 +21,18 @@ void ofxAssimpTexture::setup(const ofTexture & texture, string texturePath, bool
     this->texturePath = texturePath;
 }
 
+//this is a hack to allow for weak definations of functions that might not exist in older assimp versions
+const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
+
 void ofxAssimpTexture::setTextureType(aiTextureType aTexType){
 	textureType = aTexType;
 	
 	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
-        #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
+        if(aiTextureTypeToString){
             mTexTypeStr = aiTextureTypeToString(getTextureType());
-        #else
+        }else{
             mTexTypeStr = "textureType:"+ofToString(getTextureType());
-        #endif
+        }
     }else{
 		ofLogError("ofxAssimpTexture::setTextureType") << ": unknown aiTextureType type " << aTexType;
 		mTexTypeStr = "NONE";

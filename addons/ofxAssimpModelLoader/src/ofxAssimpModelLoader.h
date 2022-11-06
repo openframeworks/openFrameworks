@@ -39,6 +39,10 @@ class ofxAssimpModelLoader{
 		void createEmptyModel();
 		void createLightsFromAiModel();
 		void optimizeScene();
+  
+        // GL_CW, GL_CCW
+        void enableCulling(int glCullType);
+        void disableCulling();
 
 		void update();
 	
@@ -162,7 +166,9 @@ class ofxAssimpModelLoader{
 		std::vector<ofxAssimpMeshHelper> modelMeshes;
 		std::vector<ofxAssimpAnimation> animations;
 		int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.
-
+        
+        int mCullType = -1;
+        
 		bool bUsingTextures;
 		bool bUsingNormals;
 		bool bUsingColors;

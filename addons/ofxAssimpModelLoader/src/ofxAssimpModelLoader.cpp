@@ -226,6 +226,9 @@ void ofxAssimpModelLoader::optimizeScene(){
 			aiProcess_RemoveRedundantMaterials);
 }
 
+//this is a hack to allow for weak definations of functions that might not exist in older assimp versions
+const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
+
 //-------------------------------------------
 void ofxAssimpModelLoader::loadGLResources(){
 
@@ -268,7 +271,6 @@ void ofxAssimpModelLoader::loadGLResources(){
 		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
 			auto col = aiColorToOfColor(tcolor);
 			meshHelper.material.setEmissiveColor(col);
-			
 		}
 
 		float shininess;
@@ -303,9 +305,11 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 		for(int d = 0; d <= AI_TEXTURE_TYPE_MAX; d++){
 			if(AI_SUCCESS == mtl->GetTexture((aiTextureType)d, texIndex, &texPath, NULL, NULL, NULL, NULL, &texMapMode)){
-                #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
-                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
-				#endif
+                
+                //this is a solution to support older versions of assimp. see the weak defination above
+                if( aiTextureTypeToString ){
+                    ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
+				}
 				
 				bool bWrap = (texMapMode==aiTextureMapMode_Wrap);
 
@@ -315,29 +319,31 @@ void ofxAssimpModelLoader::loadGLResources(){
 				if( texPathStr.size() > 2 && texPathStr.substr(0, 2) == "//" ){
 					  texPathStr = texPathStr.substr(2, texPathStr.size()-2);
 				}
+    
+                //glb embedded texture file starts with *0
+                bool bTryEmbed = false;
+                if( texPathStr.size() >= 2 && texPathStr[0] == '*'){
+                    bTryEmbed = true;
+                }
 				
 				//stuff for embedded textures
 				auto ogPath = texPathStr;
 				bool bHasEmbeddedTexture = false;
 				
-				string modelFolder = file.getEnclosingDirectory();
+				string modelFolder = ofFilePath::getEnclosingDirectory( file.getAbsolutePath() );
 				string relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
 				string texFile = ofFilePath::getFileName(texPathStr);
 				string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
-				
-				
-				if(ofFile::doesFileExist(realPath) == false) {
-					
-                    #if ASSIMP_VERSION_MAJOR >= 4 && ASSIMP_VERSION_MINOR >= 1
-					auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
-                        if( embeddedTexture ){
-                                bHasEmbeddedTexture = true;
-                                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
-                        }else{
-                                ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
-                                    << file.getFileName() + "\" in \"" << realPath << "\"";
-                        }
-                    #endif
+								
+				if(bTryEmbed || ofFile::doesFileExist(realPath) == false) {
+                    auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
+                    if( embeddedTexture ){
+                            bHasEmbeddedTexture = true;
+                            ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
+                    }else{
+                            ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
+                                << file.getFileName() + "\" in \"" << realPath << "\"";
+                    }
 				}
 				
 				
@@ -360,29 +366,26 @@ void ofxAssimpModelLoader::loadGLResources(){
 					shared_ptr<ofTexture> texture = make_shared<ofTexture>();
 
 					if( bHasEmbeddedTexture ){
-                            
-                            #if ASSIMP_VERSION_MAJOR >= 4 && ASSIMP_VERSION_MINOR >= 1
-							auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
-							
-							//compressed texture
-							if( embeddedTexture->mHeight == 0 && embeddedTexture->mWidth > 0){
-									ofImage tmp;
-									ofBuffer buffer;
-									buffer.set((char *)embeddedTexture->pcData, embeddedTexture->mWidth);
-									
-									tmp.setUseTexture(false);
-									tmp.load(buffer);
-									
-									ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture size is " << tmp.getWidth() << "x" << tmp.getHeight();
-									
-									texture->loadData(tmp.getPixels());
-							}else{
-									//uncompressed texture - might need swizzling from argb to rgba?
-									auto glFormat = getGLFormatFromAiFormat(embeddedTexture->achFormatHint);
-									texture->loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
-							}
-                            #endif
-					}else{
+                        auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
+                        
+                        //compressed texture
+                        if( embeddedTexture->mHeight == 0 && embeddedTexture->mWidth > 0){
+                                ofImage tmp;
+                                ofBuffer buffer;
+                                buffer.set((char *)embeddedTexture->pcData, embeddedTexture->mWidth);
+                                
+                                tmp.setUseTexture(false);
+                                tmp.load(buffer);
+                                
+                                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture size is " << tmp.getWidth() << "x" << tmp.getHeight();
+                                
+                                texture->loadData(tmp.getPixels());
+                        }else{
+                                //uncompressed texture - might need swizzling from argb to rgba?
+                                auto glFormat = getGLFormatFromAiFormat(embeddedTexture->achFormatHint);
+                                texture->loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
+                        }
+                    }else{
 						ofLoadImage(*texture.get(), realPath);
 					}
 
@@ -847,6 +850,15 @@ void ofxAssimpModelLoader::drawVertices(){
 	draw(OF_MESH_POINTS);
 }
 
+//-------------------------------------------
+void ofxAssimpModelLoader::enableCulling(int glCullType){
+    mCullType = glCullType;
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::disableCulling(){
+    mCullType = -1;
+}
 
 //-------------------------------------------
 void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
@@ -880,14 +892,16 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 		}
 
 //		this was broken / backwards
-		if(!mesh.twoSided) {
+		if(!mesh.twoSided && mCullType >= 0) {
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
-			glFrontFace(GL_CW);
+			glFrontFace(mCullType);
 		}
 		else {
 			glDisable(GL_CULL_FACE);
 		}
+  
+  
 		
 		ofEnableBlendMode(mesh.blendMode);
 		
