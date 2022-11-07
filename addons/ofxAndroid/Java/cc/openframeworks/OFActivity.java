@@ -47,7 +47,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 	private Display display;
 	private Display presentationDisplay;
 	public static final boolean LOG_INPUT = false;
-	public static final boolean LOG_ENGINE = true;
+	public static final boolean LOG_ENGINE = false;
 
 	public float currentRefreshRate = 0;
 	public float highestRefreshRate = 0;
@@ -239,6 +239,7 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 			prefsEditor.putInt(KEY_TARGET_FPS, OFAndroid.targetFrameRate);
 			prefsEditor.putInt(KEY_TARGET_SAMPLES, OFAndroid.samples);
 			prefsEditor.apply();
+			Log.e(TAG, "savePreferences() done!");
 		} catch (Exception ex){
 			Log.d(TAG, "savePreferences() -> Exception saving pref" + ex.getMessage());
 		}
@@ -536,8 +537,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
 
 		if(hasSetup) {
+			OFAndroid.targetFrameRate = (int)currentRefreshRate;
 			OFAndroid.deviceRefreshRate((int) currentRefreshRate);
 			OFAndroid.deviceHighestRefreshRate((int) highestRefreshRate);
+			OFAndroid.setSampleSize(OFAndroid.samples);
 		}
 	}
 
