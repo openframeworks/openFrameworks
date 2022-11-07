@@ -311,7 +311,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, 5,
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
-            EGL10.EGL_DEPTH_SIZE, 24,
+            EGL10.EGL_DEPTH_SIZE, 0,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */,
             EGL10.EGL_NONE
     };
@@ -530,7 +530,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                                             mStencilSize = 8;
                                             mDepthSize = 24;
                                             mAlphaSize = 8;
-                                            mSampleSize = OFAndroid.maxSamples;
+                                            mSampleSize = OFAndroid.samples;
                                             break;
                                         case 4:
                                             mBlueSize = 8;
@@ -539,7 +539,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                                             mStencilSize = 8;
                                             mDepthSize = 16;
                                             mAlphaSize = 8;
-                                            mSampleSize = OFAndroid.maxSamples;
+                                            mSampleSize = OFAndroid.samples;
                                             break;
                                         case 5:
                                             mBlueSize = 8;
@@ -566,7 +566,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                                             mStencilSize = 8;
                                             mDepthSize = 16;
                                             mAlphaSize = 0;
-                                            mSampleSize = OFAndroid.maxSamples;
+                                            mSampleSize = OFAndroid.samples;
                                             break;
 
                                     }
@@ -768,16 +768,13 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
         }
 
-        int samples = 1;
-        if(finalConfig != null) {
-            try {
-                samples = findConfigAttrib(egl, display, finalConfig,
-                        EGL10.EGL_SAMPLES, 1);
-            } catch (Exception exception) {
-                Log.e("OF", String.format("findConfigAttribute EGL_SAMPLES exception: ") + exception.getMessage());
-            }
+        mSampleSize = mFinalSampleSize;
+
+        if(mFinalSampleSize != OFAndroid.samples) {
+            Log.w("OF", String.format("MSAA FinalConfig Final Samples: %d - target:%d - saving max for device", mFinalSampleSize, mSampleSize));
+            OFAndroid.samples = mFinalSampleSize;
+            OFAndroid.savePreferences();
         }
-        mSampleSize = samples;
 
         if (DEBUG && finalConfig != null) {
             printConfig(egl, display, finalConfig);
@@ -898,6 +895,17 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                     if(!validate) Log.v("OF", "No MSAA - NV samples - Else Config: " + output);
                 }
 
+                if ((foundConfig == null || foundMSAA != 0 && foundMSAA != mSampleSize && nvsamples >= foundMSAA) && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && nvsamples == 5) {
+
+                    foundConfig = config;
+                    foundMSAA = nvsamples;
+                    foundDepth = depth;
+                    if(!validate) Log.i("OF", "MSAA - NV 5 samples Found and Set:nvsamples:" + nvsamples + " output:" + output);
+
+                } else {
+                    if(!validate) Log.v("OF", "No MSAA - NV samples - Else Config: " + output);
+                }
+
                 if ((foundConfig == null || foundMSAA != 0 && foundMSAA != mSampleSize && samples >= foundMSAA && samples >= mSampleSize) && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && samples == mSampleSize) {
 
                     foundConfig = config;
@@ -934,7 +942,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
                 if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && depth == mDepthSize && stencil == mStencilSize && mSampleSize <= 1 && samples <= 1) {
                     foundConfig = config;
-                    foundMSAA = 0;
+                    foundMSAA = samples;
                     foundDepth = depth;
                     if(!validate) Log.i("OF", "Found and Set :" + output);
 
@@ -957,7 +965,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if ( foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples != 0 && mSampleSize >= 1 && samples <= OFAndroid.maxSamples) {
 
                 foundConfig = config;
-                mSampleSize = samples;
+                foundMSAA = samples;
                 if(!validate) Log.i("OF", "MSAA Any Found and Set :Depth Size and Stencil any:" + output);
 
             } else {
@@ -967,7 +975,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             if (foundConfig == null && r == mRedSize && g == mGreenSize && b == mBlueSize && depth == mDepthSize && samples == 1 && mSampleSize == 0) {
 
                 foundConfig = config;
-                mSampleSize = 1;
+                foundMSAA = samples;
                 if(!validate) Log.i("OF", "MSAA Off - Last Resort Found and Set:" + output);
 
             } else {
@@ -984,7 +992,10 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
             else
                 Log.v("OF", "Validated Config for FinalConfig: " + foundConfig.toString());
 
-
+            if(foundMSAA == 1)
+                mFinalSampleSize = mSampleSize;
+            else
+                mFinalSampleSize = foundMSAA;
             if(DEBUG) printConfig(egl, display, foundConfig);
         }
         if(validate && foundConfig == null) {
@@ -1132,6 +1143,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     protected int mDepthSize;
     protected int mStencilSize;
     protected int mSampleSize;
+
+    protected int mFinalSampleSize = 1;
     protected boolean mWideGamut;
     private int[] mValue = new int[1];
 }
