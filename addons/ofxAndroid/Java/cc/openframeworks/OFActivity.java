@@ -906,6 +906,10 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 				}
 			}
 
+			if((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) || (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_MUTE) || (event.getKeyCode() == KeyEvent.KEYCODE_FOCUS)  || event.getKeyCode() == KeyEvent.KEYCODE_CAMERA || event.getKeyCode() == 287) {
+				return false;
+			}
+
 			if(OFAndroid.lastInputID == -1 && event.getDevice() != null ||
 					event.getDevice() != null && OFAndroid.lastInputID != event.getDeviceId() &&
 							OFAndroid.lastInputVendorID != event.getDevice().getVendorId()) {
