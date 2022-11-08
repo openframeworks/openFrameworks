@@ -41,7 +41,7 @@ bool ofxAssimpModelLoader::load(string modelName, bool optimize){
 	
 	if(scene.get() != nullptr){
 		clear();
-		// we reset the shared_ptr explicitly here, to force the old 
+		// we reset the shared_ptr explicitly here, to force the old
 		// aiScene to be deleted **before** a new aiScene is created.
 		scene.reset();
 	}
@@ -73,7 +73,7 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 	
 	if(scene.get() != nullptr){
 		clear();
-		// we reset the shared_ptr explicitly here, to force the old 
+		// we reset the shared_ptr explicitly here, to force the old
 		// aiScene to be deleted **before** a new aiScene is created.
 		scene.reset();
 	}
@@ -97,7 +97,7 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 	return bOk;
 }
 
-unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {    
+unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {
 	store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
 	
 	// only ever give us triangles.
@@ -126,7 +126,7 @@ bool ofxAssimpModelLoader::processScene() {
 			ofLogVerbose("ofxAssimpModelLoader") << "load(): scene has " << getAnimationCount() << "animations";
 		else {
 			ofLogVerbose("ofxAssimpModelLoader") << "load(): no animations";
-		}       
+		}
 		
 		return true;
 	}else{
@@ -226,6 +226,11 @@ void ofxAssimpModelLoader::optimizeScene(){
 			aiProcess_RemoveRedundantMaterials);
 }
 
+#ifndef TARGET_WIN32
+//this is a hack to allow for weak definations of functions that might not exist in older assimp versions
+const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
+#endif
+
 //-------------------------------------------
 void ofxAssimpModelLoader::loadGLResources(){
 
@@ -236,241 +241,240 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 	// create OpenGL buffers and populate them based on each meshes pertinant info.
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
-		ofLogVerbose("ofxAssimpModelLoader") << "loadGLResources(): loading mesh " << i;
-		// current mesh we are introspecting
-		aiMesh* mesh = scene->mMeshes[i];
+            ofLogVerbose("ofxAssimpModelLoader") << "loadGLResources(): loading mesh " << i;
+            // current mesh we are introspecting
+            aiMesh* mesh = scene->mMeshes[i];
 
-		// the current meshHelper we will be populating data into.
-		ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
-		//ofxAssimpMeshHelper meshHelper;
-		
-		//meshHelper.texture = NULL;
+            // the current meshHelper we will be populating data into.
+            ofxAssimpMeshHelper & meshHelper = modelMeshes[i];
+            //ofxAssimpMeshHelper meshHelper;
+            
+            //meshHelper.texture = NULL;
 
-		// Handle material info
-		aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
-		aiColor4D tcolor;
+            // Handle material info
+            aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
+            aiColor4D tcolor;
 
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			meshHelper.material.setDiffuseColor(col);
-		}
+            if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &tcolor)){
+                    auto col = aiColorToOfColor(tcolor);
+                    meshHelper.material.setDiffuseColor(col);
+            }
 
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			meshHelper.material.setSpecularColor(col);
-		}
+            if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &tcolor)){
+                    auto col = aiColorToOfColor(tcolor);
+                    meshHelper.material.setSpecularColor(col);
+            }
 
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			meshHelper.material.setAmbientColor(aiColorToOfColor(tcolor));
-		}
+            if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &tcolor)){
+                    auto col = aiColorToOfColor(tcolor);
+                    meshHelper.material.setAmbientColor(aiColorToOfColor(tcolor));
+            }
 
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			meshHelper.material.setEmissiveColor(col);
-			
-		}
+            if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
+                    auto col = aiColorToOfColor(tcolor);
+                    meshHelper.material.setEmissiveColor(col);
+            }
 
-		float shininess;
-		if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
-			meshHelper.material.setShininess(shininess);
-		}
+            float shininess;
+            if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
+                    meshHelper.material.setShininess(shininess);
+            }
 
-		int blendMode;
-		if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
-			if(blendMode==aiBlendMode_Default){
-				meshHelper.blendMode=OF_BLENDMODE_ALPHA;
-			}else{
-				meshHelper.blendMode=OF_BLENDMODE_ADD;
-			}
-		}
+            int blendMode;
+            if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
+                    if(blendMode==aiBlendMode_Default){
+                            meshHelper.blendMode=OF_BLENDMODE_ALPHA;
+                    }else{
+                            meshHelper.blendMode=OF_BLENDMODE_ADD;
+                    }
+            }
 
-		// Culling
-		unsigned int max = 1;
-		int two_sided=0;
-		if((AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided){
-			meshHelper.twoSided = true;
-			ofLogVerbose("ofxAssimpModelLoader::loadGLResources") <<": mesh is two sided";
-		}else{
-			meshHelper.twoSided = false;
-			ofLogVerbose("ofxAssimpModelLoader::loadGLResources") <<": mesh is one sided";
-		}
-		
-		// Load Textures
-		int texIndex = 0;
-		aiString texPath;
-		aiTextureMapMode texMapMode;
+            // Culling
+            unsigned int max = 1;
+            int two_sided=0;
+            if((AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided){
+                    meshHelper.twoSided = true;
+                    ofLogVerbose("ofxAssimpModelLoader::loadGLResources") <<": mesh is two sided";
+            }else{
+                    meshHelper.twoSided = false;
+                    ofLogVerbose("ofxAssimpModelLoader::loadGLResources") <<": mesh is one sided";
+            }
+            
+            // Load Textures
+            int texIndex = 0;
+            aiString texPath;
+            aiTextureMapMode texMapMode;
 
-		for(int d = 0; d <= AI_TEXTURE_TYPE_MAX; d++){
-			if(AI_SUCCESS == mtl->GetTexture((aiTextureType)d, texIndex, &texPath, NULL, NULL, NULL, NULL, &texMapMode)){
-                #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
+            for(int d = 0; d <= AI_TEXTURE_TYPE_MAX; d++){
+                    if(AI_SUCCESS == mtl->GetTexture((aiTextureType)d, texIndex, &texPath, NULL, NULL, NULL, NULL, &texMapMode)){
+            
+            //this is a solution to support older versions of assimp. see the weak defination above
+            if( aiTextureTypeToString ){
                 ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
-				#endif
-				
-				bool bWrap = (texMapMode==aiTextureMapMode_Wrap);
+            }
+            
+            bool bWrap = (texMapMode==aiTextureMapMode_Wrap);
 
-				std::string texPathStr = texPath.C_Str();
-				
-				//deal with Blender putting "//" in front of local file paths
-				if( texPathStr.size() > 2 && texPathStr.substr(0, 2) == "//" ){
-					  texPathStr = texPathStr.substr(2, texPathStr.size()-2);
-				}
-				
-				//stuff for embedded textures
-				auto ogPath = texPathStr;
-				bool bHasEmbeddedTexture = false;
-				
-				string modelFolder = file.getEnclosingDirectory();
-				string relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
-				string texFile = ofFilePath::getFileName(texPathStr);
-				string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
-				
-				
-				if(ofFile::doesFileExist(realPath) == false) {
-					
-                    #if ASSIMP_VERSION_MAJOR >= 4 && ASSIMP_VERSION_MINOR >= 1
-					auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
-                        if( embeddedTexture ){
-                                bHasEmbeddedTexture = true;
-                                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
-                        }else{
-                                ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
-                                    << file.getFileName() + "\" in \"" << realPath << "\"";
-                        }
-                    #endif
-				}
-				
-				
-				bool bTextureAlreadyExists = false;
-				if(textures.count(realPath)){
-					bTextureAlreadyExists = true;
-				}
-				
-				if(bTextureAlreadyExists) {
-					ofxAssimpTexture assimpTexture;
+            std::string texPathStr = texPath.C_Str();
+            
+            //deal with Blender putting "//" in front of local file paths
+            if( texPathStr.size() > 2 && texPathStr.substr(0, 2) == "//" ){
+                      texPathStr = texPathStr.substr(2, texPathStr.size()-2);
+            }
 
-					assimpTexture.setup(*textures[realPath].get(), realPath, bWrap);
-					assimpTexture.setTextureType((aiTextureType)d);
-					meshHelper.addTexture(assimpTexture);
-					
-					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: \""
-						<< file.getFileName() + "\" from \"" << realPath << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
-				} else {
-					
-					shared_ptr<ofTexture> texture = make_shared<ofTexture>();
-
-					if( bHasEmbeddedTexture ){
+            //glb embedded texture file starts with *0
+            bool bTryEmbed = false;
+            if( texPathStr.size() >= 2 && texPathStr[0] == '*'){
+                bTryEmbed = true;
+            }
                             
-                            #if ASSIMP_VERSION_MAJOR >= 4 && ASSIMP_VERSION_MINOR >= 1
-							auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
-							
-							//compressed texture
-							if( embeddedTexture->mHeight == 0 && embeddedTexture->mWidth > 0){
-									ofImage tmp;
-									ofBuffer buffer;
-									buffer.set((char *)embeddedTexture->pcData, embeddedTexture->mWidth);
-									
-									tmp.setUseTexture(false);
-									tmp.load(buffer);
-									
-									ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture size is " << tmp.getWidth() << "x" << tmp.getHeight();
-									
-									texture->loadData(tmp.getPixels());
-							}else{
-									//uncompressed texture - might need swizzling from argb to rgba?
-									auto glFormat = getGLFormatFromAiFormat(embeddedTexture->achFormatHint);
-									texture->loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
-							}
-                            #endif
-					}else{
-						ofLoadImage(*texture.get(), realPath);
-					}
-
-					if(texture && texture->isAllocated()){
-					 
-							bool bWrap = (texMapMode==aiTextureMapMode_Wrap);
-					 
-							ofxAssimpTexture tmpTex;
-							tmpTex.setup(*texture.get(), realPath, bWrap);
-							tmpTex.setTextureType((aiTextureType)d);
-							textures[realPath] = texture;
-						
-							tmpTex.setTextureType((aiTextureType)d);
-							meshHelper.addTexture( tmpTex );
-							
-							ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture " << tmpTex.getTextureTypeAsString() << " loaded, dimensions: "
-						<< texture->getWidth() << "x" << texture->getHeight();
-					}else {
-						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: \""
-						<< file.getFileName() + "\" from \"" << realPath << "\"";
-					}
-				}
-			}
-		}
-
-		meshHelper.mesh = mesh;
-		aiMeshToOfMesh(mesh, meshHelper.cachedMesh, &meshHelper);
-		meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
-		meshHelper.validCache = true;
-		meshHelper.hasChanged = false;
-
-		int numOfAnimations = scene->mNumAnimations;
-		for (int i = 0; i<numOfAnimations; i++) {
-			aiAnimation * animation = scene->mAnimations[i];
-			animations.push_back(ofxAssimpAnimation(scene, animation));
-		}
-
-		if(hasAnimations()){
-			meshHelper.animatedPos.resize(mesh->mNumVertices);
-			if(mesh->HasNormals()){
-				meshHelper.animatedNorm.resize(mesh->mNumVertices);
-			}
-		}
-
-
-		int usage;
-		if(getAnimationCount()){
-#ifndef TARGET_OPENGLES
-			if(!ofIsGLProgrammableRenderer()){
-				usage = GL_STATIC_DRAW;
-			}else{
-				usage = GL_STREAM_DRAW;
-			}
-#else
-			usage = GL_DYNAMIC_DRAW;
+            //stuff for embedded textures
+            auto ogPath = texPathStr;
+            bool bHasEmbeddedTexture = false;
+            
+            string modelFolder = ofFilePath::getEnclosingDirectory( file.getAbsolutePath() );
+            string relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
+            string texFile = ofFilePath::getFileName(texPathStr);
+            string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
+                            
+#ifndef TARGET_LINUX_ARM
+            if(bTryEmbed || ofFile::doesFileExist(realPath) == false) {
+                auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
+                if( embeddedTexture ){
+                        bHasEmbeddedTexture = true;
+                        ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
+                }else{
+                        ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
+                            << file.getFileName() + "\" in \"" << realPath << "\"";
+                }
+            }
 #endif
-		}else{
-			usage = GL_STATIC_DRAW;
+                            
+            bool bTextureAlreadyExists = false;
+            if(textures.count(realPath)){
+                bTextureAlreadyExists = true;
+            }
+            
+            if(bTextureAlreadyExists) {
+                ofxAssimpTexture assimpTexture;
 
-		}
+                assimpTexture.setup(*textures[realPath].get(), realPath, bWrap);
+                assimpTexture.setTextureType((aiTextureType)d);
+                meshHelper.addTexture(assimpTexture);
+                    
+                ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: \""
+                            << file.getFileName() + "\" from \"" << realPath << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
+            } else {
+                                    
+                shared_ptr<ofTexture> texture = make_shared<ofTexture>();
+                
+                if( bHasEmbeddedTexture ){
+                
+#ifndef TARGET_LINUX_ARM
+                    auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
+                    
+                    //compressed texture
+                    if( embeddedTexture->mHeight == 0 && embeddedTexture->mWidth > 0){
+                        ofImage tmp;
+                        ofBuffer buffer;
+                        buffer.set((char *)embeddedTexture->pcData, embeddedTexture->mWidth);
+                        
+                        tmp.setUseTexture(false);
+                        tmp.load(buffer);
+                        
+                        ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture size is " << tmp.getWidth() << "x" << tmp.getHeight();
+                        
+                        texture->loadData(tmp.getPixels());
+                    }else{
+                        //uncompressed texture - might need swizzling from argb to rgba?
+                        auto glFormat = getGLFormatFromAiFormat(embeddedTexture->achFormatHint);
+                        texture->loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
+                    }
+#endif
+                }else{
+                    ofLoadImage(*texture.get(), realPath);
+                }
 
-		meshHelper.vbo.setVertexData(&mesh->mVertices[0].x,3,mesh->mNumVertices,usage,sizeof(aiVector3D));
-		if(mesh->HasVertexColors(0)){
-			meshHelper.vbo.setColorData(&mesh->mColors[0][0].r,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiColor4D));
-		}
-		if(mesh->HasNormals()){
-			meshHelper.vbo.setNormalData(&mesh->mNormals[0].x,mesh->mNumVertices,usage,sizeof(aiVector3D));
-		}
-		if (meshHelper.cachedMesh.hasTexCoords()){			
-			meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoords()[0].x, mesh->mNumVertices,GL_STATIC_DRAW,sizeof(glm::vec2));
-		}
+                if(texture && texture->isAllocated()){
+                 
+                    bool bWrap = (texMapMode==aiTextureMapMode_Wrap);
+     
+                    ofxAssimpTexture tmpTex;
+                    tmpTex.setup(*texture.get(), realPath, bWrap);
+                    tmpTex.setTextureType((aiTextureType)d);
+                    textures[realPath] = texture;
+            
+                    tmpTex.setTextureType((aiTextureType)d);
+                    meshHelper.addTexture( tmpTex );
+                    
+                    ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture " << tmpTex.getTextureTypeAsString() << " loaded, dimensions: " << texture->getWidth() << "x" << texture->getHeight();
+                }else{
+                        ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: \""
+                        << file.getFileName() + "\" from \"" << realPath << "\"";
+                }
+            }
+        }
+    }
 
-		meshHelper.indices.resize(mesh->mNumFaces * 3);
-		int j=0;
-		for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
-			for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
-				meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
-			}
-		}
+    meshHelper.mesh = mesh;
+    aiMeshToOfMesh(mesh, meshHelper.cachedMesh, &meshHelper);
+    meshHelper.cachedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+    meshHelper.validCache = true;
+    meshHelper.hasChanged = false;
 
-		meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
+    int numOfAnimations = scene->mNumAnimations;
+    for (int i = 0; i<numOfAnimations; i++) {
+            aiAnimation * animation = scene->mAnimations[i];
+            animations.push_back(ofxAssimpAnimation(scene, animation));
+    }
 
-		//modelMeshes.push_back(meshHelper);
-	}
-	
+    if(hasAnimations()){
+        meshHelper.animatedPos.resize(mesh->mNumVertices);
+        if(mesh->HasNormals()){
+                meshHelper.animatedNorm.resize(mesh->mNumVertices);
+        }
+    }
 
 
-	ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
+        int usage;
+        if(getAnimationCount()){
+#ifndef TARGET_OPENGLES
+            if(!ofIsGLProgrammableRenderer()){
+                    usage = GL_STATIC_DRAW;
+            }else{
+                    usage = GL_STREAM_DRAW;
+            }
+#else
+            usage = GL_DYNAMIC_DRAW;
+#endif
+        }else{
+            usage = GL_STATIC_DRAW;
+        }
+
+        meshHelper.vbo.setVertexData(&mesh->mVertices[0].x,3,mesh->mNumVertices,usage,sizeof(aiVector3D));
+        if(mesh->HasVertexColors(0)){
+            meshHelper.vbo.setColorData(&mesh->mColors[0][0].r,mesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiColor4D));
+        }
+        if(mesh->HasNormals()){
+            meshHelper.vbo.setNormalData(&mesh->mNormals[0].x,mesh->mNumVertices,usage,sizeof(aiVector3D));
+        }
+        if (meshHelper.cachedMesh.hasTexCoords()){
+            meshHelper.vbo.setTexCoordData(&meshHelper.cachedMesh.getTexCoords()[0].x, mesh->mNumVertices,GL_STATIC_DRAW,sizeof(glm::vec2));
+        }
+
+        meshHelper.indices.resize(mesh->mNumFaces * 3);
+        int j=0;
+        for (unsigned int x = 0; x < mesh->mNumFaces; ++x){
+            for (unsigned int a = 0; a < mesh->mFaces[x].mNumIndices; ++a){
+                    meshHelper.indices[j++]=mesh->mFaces[x].mIndices[a];
+            }
+        }
+
+        meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
+
+        //modelMeshes.push_back(meshHelper);
+    }
+    ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): finished";
 }
 
 //-------------------------------------------
@@ -847,6 +851,15 @@ void ofxAssimpModelLoader::drawVertices(){
 	draw(OF_MESH_POINTS);
 }
 
+//-------------------------------------------
+void ofxAssimpModelLoader::enableCulling(int glCullType){
+    mCullType = glCullType;
+}
+
+//-------------------------------------------
+void ofxAssimpModelLoader::disableCulling(){
+    mCullType = -1;
+}
 
 //-------------------------------------------
 void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
@@ -880,14 +893,16 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 		}
 
 //		this was broken / backwards
-		if(!mesh.twoSided) {
+		if(!mesh.twoSided && mCullType >= 0) {
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
-			glFrontFace(GL_CW);
+			glFrontFace(mCullType);
 		}
 		else {
 			glDisable(GL_CULL_FACE);
 		}
+  
+  
 		
 		ofEnableBlendMode(mesh.blendMode);
 		

@@ -37,10 +37,8 @@ void ofxAssimpMeshHelper::addTexture(ofxAssimpTexture & aAssimpTex){
 	}
 	
     bool bAmbientOcclusion = false;
-    #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
-        bAmbientOcclusion = meshTextures.back()->getTextureType() == aiTextureType_AMBIENT_OCCLUSION;
-    #endif
- 
+    bAmbientOcclusion = meshTextures.back()->getTextureType() == 17; //17 = aiTextureType_AMBIENT_OCCLUSION; //use this when we want to support newer assimp only 
+    
 	if( meshTextures.back()->getTextureType() == aiTextureType_EMISSIVE ){
 		material.setEmissiveTexture(meshTextures.back()->getTextureRef());
 	}

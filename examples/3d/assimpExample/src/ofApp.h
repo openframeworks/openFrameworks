@@ -11,6 +11,8 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+  
+        void loadModel(string filename);
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -30,9 +32,14 @@ class ofApp : public ofBaseApp{
 		bool bAnimate;
 		bool bAnimateMouse;
 		float animationPosition;
-
+        int animationIndex = 0;
+        
 		ofMesh mesh;
 		ofLight	light;
+        ofEasyCam cam;
+        
+        bool bUseCamera = false;
+        
 };
 
 #endif
