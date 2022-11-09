@@ -15,7 +15,7 @@ pacman -S --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
-	echo "error installing packages, there could be an error with your internet connection, or you system might be too out of date (run pacman -Syu before running this script)""
+	echo "error installing packages, there could be an error with your internet connection, or you system might be too out of date (run pacman -Syu before running this script)"
 	exit $exit_code
 fi
 
