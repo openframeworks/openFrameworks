@@ -17,18 +17,37 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 	clear();
 }
 
+
+// DEPRECATED
+bool ofxAssimpModelLoader::load(string modelName, bool optimize){
+    int optimizeFlags = OPTIMIZE_DEFAULT;
+    if( optimize ){
+        optimizeFlags = OPTIMIZE_HIGH;
+    }
+    return load(modelName, optimizeFlags);
+}
+
+// DEPRECATED
+bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * extension){
+    int optimizeFlags = OPTIMIZE_DEFAULT;
+    if( optimize ){
+        optimizeFlags = OPTIMIZE_HIGH;
+    }
+    return load(buffer, optimizeFlags, extension);
+}
+
 // DEPRECATED
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
-	return load(modelName, optimize);
+    return load(modelName, optimize);
 }
 
 // DEPRECATED
 bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
-	return load(buffer, optimize, extension);
+    return load(buffer, optimize, extension);
 }
 
 //------------------------------------------
-bool ofxAssimpModelLoader::load(string modelName, bool optimize){
+bool ofxAssimpModelLoader::load(string modelName, int assimpOptimizeFlags){
 	
 	file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -Ed
 	if(!file.exists()) {
@@ -47,7 +66,7 @@ bool ofxAssimpModelLoader::load(string modelName, bool optimize){
 	}
 	
 	// sets various properties & flags to a default preference
-	unsigned int flags = initImportProperties(optimize);
+	unsigned int flags = initImportProperties(assimpOptimizeFlags);
 		
 //	//enable assimp logging based on ofGetLogLevel
 //	if( ofGetLogLevel() < OF_LOG_NOTICE ){
@@ -67,7 +86,7 @@ bool ofxAssimpModelLoader::load(string modelName, bool optimize){
 }
 
 
-bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * extension){
+bool ofxAssimpModelLoader::load(ofBuffer & buffer, int assimpOptimizeFlags, const char * extension){
 	
 	ofLogVerbose("ofxAssimpModelLoader") << "load(): loading from memory buffer \"." << extension << "\"";
 	
@@ -79,7 +98,7 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 	}
 	
 	// sets various properties & flags to a default preference
-	unsigned int flags = initImportProperties(optimize);
+	unsigned int flags = initImportProperties(assimpOptimizeFlags);
  
 // 	//enable assimp logging based on ofGetLogLevel
 //	if( ofGetLogLevel() < OF_LOG_NOTICE ){
@@ -97,20 +116,46 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 	return bOk;
 }
 
-unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {
+unsigned int ofxAssimpModelLoader::initImportProperties(int assimpOptimizeFlags) {
 	store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
 	
 	// only ever give us triangles.
 	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
 	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_PTV_NORMALIZE, true);
 	
-	// aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
-	unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality |  aiProcess_ConvertToLeftHanded;
-	if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
-		aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate |
-		aiProcess_RemoveRedundantMaterials;
-	
-	return flags;
+	unsigned int flags = assimpOptimizeFlags;
+     
+        if( flags <= OPTIMIZE_HIGH ){
+                                            
+            if( flags == OPTIMIZE_NONE ){
+                flags = 0;
+            }else if( flags == OPTIMIZE_DEFAULT || flags == OPTIMIZE_HIGH ){
+                flags =     aiProcess_CalcTangentSpace              |  \
+                            aiProcess_GenSmoothNormals              |  \
+                            aiProcess_JoinIdenticalVertices         |  \
+                            aiProcess_ImproveCacheLocality          |  \
+                            aiProcess_LimitBoneWeights              |  \
+                            aiProcess_RemoveRedundantMaterials      |  \
+                            aiProcess_SplitLargeMeshes              |  \
+                            aiProcess_Triangulate                   |  \
+                            aiProcess_GenUVCoords                   |  \
+                            aiProcess_SortByPType                   |  \
+                            aiProcess_FindDegenerates               |  \
+                            aiProcess_FindInstances                 |  \
+                            aiProcess_OptimizeMeshes;
+            }
+            
+            if( flags == OPTIMIZE_HIGH ){
+                flags |= aiProcess_OptimizeGraph |  \
+                         aiProcess_FindInstances |  \
+                         aiProcess_ValidateDataStructure;
+            }
+            
+            // this fixes things for OF both tex uvs and model not flipped in z 
+            flags |= aiProcess_ConvertToLeftHanded;
+        }
+    	
+        return flags;
 }
 
 bool ofxAssimpModelLoader::processScene() {
