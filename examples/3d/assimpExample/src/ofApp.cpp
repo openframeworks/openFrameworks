@@ -2,24 +2,24 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofSetLogLevel(OF_LOG_VERBOSE);
-	ofBackground(50, 0);
+    ofSetLogLevel(OF_LOG_VERBOSE);
+    ofBackground(50, 0);
 
-	ofDisableArbTex(); // we need GL_TEXTURE_2D for our models coords.
+    ofDisableArbTex(); // we need GL_TEXTURE_2D for our models coords.
 
-	bAnimate = true;
-	bAnimateMouse = false;
-	animationPosition = 0;
+    bAnimate = true;
+    bAnimateMouse = false;
+    animationPosition = 0;
 
     loadModel("Fox/Fox_05.fbx");
-    
-	bHelpText = true;
+
+    bHelpText = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::loadModel(string filename){
-
-    if( model.load(filename, true) ){
+    
+    if( model.load(filename, ofxAssimpModelLoader::OPTIMIZE_DEFAULT) ){
         if( model.hasAnimations() ){
             animationIndex = 0;
             model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
@@ -61,9 +61,9 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	ofSetColor(255);
+    ofSetColor(255);
 
-	ofEnableDepthTest();
+    ofEnableDepthTest();
     
     if(bUseCamera)cam.begin();
     
@@ -88,10 +88,9 @@ void ofApp::draw(){
     }
  
     if(bUseCamera)cam.end();
-
     ofDisableDepthTest();
 
-	if(bHelpText){
+    if(bHelpText){
         ofSetColor(255, 255, 255 );
         string str;
         str += "FPS: " + ofToString(ofGetFrameRate(),0) + "\n\n";
@@ -102,55 +101,55 @@ void ofApp::draw(){
         str += "(c): toggle camera: " + (bUseCamera ? string(" using ofEasyCam with (0,0) as screen center. \n") : string(" default view (0,0) is top left \n"));
         str += "(h): toggle help.\n";
         ofDrawBitmapString(str, 20, 20);
-	}
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
-	switch (key) {
-		case '1':
-			loadModel("FoxGLTF/glTF-Binary/Fox.glb");
-			break;
-		case '2':
-			loadModel("FlightHelmet/FlightHelmet.gltf");
-			break;
-		case '3':
-			loadModel("Druid/druid.gltf");
-			break;
-		case '4':
-			loadModel("Astroboy/astroBoy_walk.dae");
-			break;
-		case '5':
-			loadModel("Payphone/korean_public_payphone_01_1k.gltf");
-			break;
+    switch (key) {
+        case '1':
+            loadModel("Fox/Fox_05.fbx");
+            break;
+        case '2':
+            loadModel("FlightHelmet/FlightHelmet.gltf");
+            break;
+        case '3':
+            loadModel("Druid/druid.gltf");
+            break;
+        case '4':
+            loadModel("Astroboy/astroBoy_walk.dae");
+            break;
+        case '5':
+            loadModel("Payphone/korean_public_payphone_01_1k.gltf");
+            break;
         case 'c':
             bUseCamera = !bUseCamera;
             break;
-		case ' ':
-			bAnimate = !bAnimate;
-   			if( model.hasAnimations() ){
+        case ' ':
+            bAnimate = !bAnimate;
+            if( model.hasAnimations() ){
                 if( bAnimate ){
                     model.getAnimation(animationIndex).play();
                 }else{
                     model.stopAllAnimations();
                 }
             }
-			break;
-		case 'h':
-			bHelpText = !bHelpText;
-			break;
-		case OF_KEY_RIGHT:
-			if( model.hasAnimations() ){
+            break;
+        case 'h':
+            bHelpText = !bHelpText;
+            break;
+        case OF_KEY_RIGHT:
+            if( model.hasAnimations() ){
                 model.stopAllAnimations();
                 animationIndex++;
                 animationIndex %= model.getAnimationCount();
                 model.getAnimation(animationIndex).play();
             }
-			break;
-		default:
-			break;
-	}
+            break;
+        default:
+            break;
+    }
 }
 
 //--------------------------------------------------------------
