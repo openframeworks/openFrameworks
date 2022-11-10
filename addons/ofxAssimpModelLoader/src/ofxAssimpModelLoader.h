@@ -151,7 +151,7 @@ class ofxAssimpModelLoader{
         void updateModelMatrix();
 
         // ai scene setup
-        unsigned int initImportProperties(bool optimize);
+        unsigned int initImportProperties(int assimpOptimizeFlags);
         bool processScene();
 
         // Initial VBO creation, etc
