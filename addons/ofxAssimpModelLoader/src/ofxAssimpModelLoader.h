@@ -28,11 +28,26 @@ struct aiNode;
 class ofxAssimpModelLoader{
 
     public:
+            
+        //to pass into the load function use this syntax: ofxAssimpModelLoader::OPTIMIZE_DEFAULT
+        //Note these are negative as we want to let users pass in assimp flags directly if they want to
+        enum Flags{
+            OPTIMIZE_NONE =-3,
+            OPTIMIZE_DEFAULT =-2,
+            OPTIMIZE_HIGH =-1
+        };
+
         ~ofxAssimpModelLoader();
         ofxAssimpModelLoader();
+        
+        //use the default OF selected flags ( from the options above ) or pass in the exact assimp flags you want
+        //note: you will probably want to |= aiProcess_ConvertToLeftHanded to anything you pass in
+        bool load(std::string modelName, int assimpOptimizeFlags=OPTIMIZE_DEFAULT);
+        bool load(ofBuffer & buffer, int assimpOptimizeFlags=OPTIMIZE_DEFAULT, const char * extension="");
 
-        bool load(std::string modelName, bool optimize=false);
-        bool load(ofBuffer & buffer, bool optimize=false, const char * extension="");
+        OF_DEPRECATED_MSG("ofxAssimpModelLoader::load(std::string modelName, bool bOptimize) is deprecated, use load(std::string modelName, int assimpOptimizeFlags) instead.", bool load(std::string modelName, bool optimize=false));
+        OF_DEPRECATED_MSG("ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize=false, const char * extension="") is deprecated, use load(std::string modelName, int assimpOptimizeFlags) instead.", bool load(ofBuffer & buffer, bool optimize=false, const char * extension=""));
+
         OF_DEPRECATED_MSG("ofxAssimpModelLoader::loadModel() is deprecated, use load() instead.", bool loadModel(std::string modelName, bool optimize=false));
         OF_DEPRECATED_MSG("ofxAssimpModelLoader::loadModel() is deprecated, use load() instead.", bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension=""));
 
@@ -136,7 +151,7 @@ class ofxAssimpModelLoader{
         void updateModelMatrix();
 
         // ai scene setup
-        unsigned int initImportProperties(bool optimize);
+        unsigned int initImportProperties(int assimpOptimizeFlags);
         bool processScene();
 
         // Initial VBO creation, etc
