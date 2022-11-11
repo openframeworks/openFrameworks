@@ -11,7 +11,7 @@ do
     cd $category
     for example in $( ls . )
     do
-        if [[ "$example" == osx* ]]
+        if [[ "$example" == osx* ]] || [[ "$example" != *Example ]]
         then
             continue
         fi    
