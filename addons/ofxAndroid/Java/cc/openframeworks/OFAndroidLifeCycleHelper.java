@@ -236,7 +236,9 @@ public class OFAndroidLifeCycleHelper
 			Log.i(TAG,"onCreate glView is null or not setup");
 
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
-			OFAndroid.onStart();
+			if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+				OFAndroid.onStart();
+			}
 		}
 		
 		OFAndroid.runOnMainThread(new Runnable() {
@@ -251,29 +253,39 @@ public class OFAndroidLifeCycleHelper
 	public static void onForceRestart() {
 		if(OFActivity.LOG_ENGINE) Log.i(TAG,"onForceRestart");
 		OFAndroid.setupGL(OFAndroid.eglVersion, true);
-		OFAndroid.onStart();
+		if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+			OFAndroid.onStart();
+		}
 	}
 	
 	public static void onResume(){
 		if(OFActivity.LOG_ENGINE) Log.i(TAG,"onResume");
 
 		OFAndroid.enableOrientationChangeEvents();
-		OFAndroid.onResume();
+		if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+			OFAndroid.onResume();
+		}
 		OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
 		if(OFAndroidLifeCycle.isSurfaceCreated() == true && glView == null){
 			Log.w(TAG,"onResume glView is null or not setup");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
-			OFAndroid.onStart();
+			if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+				OFAndroid.onStart();
+			}
 		}
 		else if( glView.getRenderer() == null){
 			Log.w(TAG,"onResume glView is null or not setup");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
-			OFAndroid.onStart();
+			if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+				OFAndroid.onStart();
+			}
 		}
 		else if( glView != null && glView.getDisplay() == null) {
 			Log.w(TAG,"onResume glView has a null display");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
-			OFAndroid.onStart();
+			if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
+				OFAndroid.onStart();
+			}
 		}
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
@@ -305,8 +317,9 @@ public class OFAndroidLifeCycleHelper
 	
 	public static void onPause(){
 		Log.i(TAG,"onPause");
-		if(OFAndroidLifeCycle.coreLibraryLoaded)
+		if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
 			OFAndroid.onPause();
+		}
 		OFAndroid.runOnMainThread(new Runnable() {
 			@Override
 			public void run() {
@@ -419,11 +432,12 @@ public class OFAndroidLifeCycleHelper
 				}
 			}
 		});
+		OFAndroid.sleepLocked=false;
 		if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
 			OFAndroid.onStop();
+			OFAndroid.onDestroy();
 		}
-		OFAndroid.sleepLocked=false;
-		OFAndroid.onDestroy();
+
 		//OFAndroidWindow.exit();
 		OFAndroidLifeCycle.coreLibraryLoaded = false;
 	}
