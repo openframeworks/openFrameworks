@@ -810,7 +810,7 @@ template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::setVertex(ofIndexType index, const V& v){
 	vertices[index] = v;
 	bVertsChanged = true;
-	bIndicesChanged = true;
+	if(usingIndices()) bIndicesChanged = true;
 	bFacesDirty = true;
 }
 
@@ -875,6 +875,7 @@ void ofMesh_<V,N,C,T>::setupIndicesAuto(){
 template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::clearVertices(){
 	vertices.clear();
+	if(usingIndices()) bIndicesChanged = true;
 	bVertsChanged=true;
 }
 
