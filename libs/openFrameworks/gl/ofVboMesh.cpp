@@ -47,34 +47,42 @@ void ofVboMesh::setUsage(int _usage){
 
 void ofVboMesh::enableColors(){
 	vbo.enableColors();
+    ofMesh::enableColors();
 }
 
 void ofVboMesh::enableTextures(){
 	vbo.enableTexCoords();
+	ofMesh::enableTextures();
 }
 
 void ofVboMesh::enableNormals(){
 	vbo.enableNormals();
+	ofMesh::enableNormals();
 }
 
 void ofVboMesh::enableIndices(){
 	vbo.enableIndices();
+	ofMesh::enableIndices();
 }
 
 void ofVboMesh::disableColors(){
 	vbo.disableColors();
+	ofMesh::disableColors();
 }
 
 void ofVboMesh::disableTextures(){
 	vbo.disableTexCoords();
+	ofMesh::disableTextures();
 }
 
 void ofVboMesh::disableNormals(){
 	vbo.disableNormals();
+	ofMesh::disableNormals();
 }
 
 void ofVboMesh::disableIndices(){
 	vbo.disableIndices();
+	ofMesh::disableIndices();
 }
 
 bool ofVboMesh::usingColors() const {
