@@ -196,6 +196,9 @@ public:
 	/// \brief Removes the vertex at the index in the vector.
 	void removeVertex(ofIndexType index);
 
+	/// \brief Removes the vertices at the startIndex in the vector and the endindex specified
+	void removeVertex(ofIndexType startIndex, ofIndexType endIndex);
+
 	void setVertex(ofIndexType index, const V& v);
 
 	/// \brief Removes all the vertices.
@@ -271,6 +274,9 @@ public:
 
 	/// \brief Remove a normal.
 	void removeNormal(ofIndexType index);
+
+	/// \brief Remove normal's from index to end index from normals vector
+	void removeNormal(ofIndexType startIndex, ofIndexType endIndex);
 
 	/// \todo Documentation.
 	void setNormal(ofIndexType index, const N& n);
@@ -355,6 +361,9 @@ public:
 	/// \brief Remove a color at the index in the colors vector.
 	void removeColor(ofIndexType index);
 
+	/// \brief Remove colors at the index to the end index of the colors vector
+	void removeColor(ofIndexType startIndex, ofIndexType endIndex);
+
 	/// \brief Set the color at the index in the colors vector.
 	void setColor(ofIndexType index, const C& c);
 
@@ -423,6 +432,8 @@ public:
 
 	/// \brief  Remove a Vec2f representing the texture coordinate.
 	void removeTexCoord(ofIndexType index);
+
+	void removeTexCoord(ofIndexType startIndex, ofIndexType endIndex);
 	void setTexCoord(ofIndexType index, const T& t);
 
 	/// \brief  Clear all the texture coordinates.
@@ -514,6 +525,7 @@ public:
 
 	/// \brief Removes an index.
 	void removeIndex(ofIndexType index);
+	void removeIndex(ofIndexType startIndex, ofIndexType endIndex);
 
 	/// \brief This sets the index at i.
 	void setIndex(ofIndexType index, ofIndexType val);
