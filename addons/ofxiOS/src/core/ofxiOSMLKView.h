@@ -13,11 +13,15 @@
 #import <MetalANGLE/MGLKViewController.h>
 #import <MetalANGLE/MGLKit.h>
 #include <glm/glm.hpp>
+#import <MetalANGLE/GLES2/gl2.h>
+#import <MetalANGLE/GLES2/gl2ext.h>
+#import <MetalANGLE/MGLKit.h>
+#import <UIKit/UIKit.h>
 
 class ofxiOSApp;
 class ofAppiOSWindow;
 
-@interface ofxiOSMLKView : NSObject  {
+@interface ofxiOSMLKView : UIView  {
 
 @protected
     NSMutableDictionary<NSValue *, NSNumber *> * activeTouches;
@@ -36,7 +40,9 @@ class ofAppiOSWindow;
 + (ofxiOSMLKView *) getInstance;
 
 - (instancetype)initWithFrame:(CGRect)frame
-                       andApp:(ofxiOSApp *)app andMetal:(MGLKView *)glView;
+                       andApp:(ofxiOSApp *)app;
+
+- (void)setupApp:(ofxiOSApp *)app;
 
 - (void)mglkView:(MGLKView *)view drawInRect:(CGRect)rect;
 - (void)setupMetal:(MGLKView *)metal;

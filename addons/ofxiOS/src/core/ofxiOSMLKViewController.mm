@@ -22,6 +22,10 @@
     BOOL bAnimated;
     
     MGLContext *_asyncLoadContext;
+    
+//    EAMLKView *mlkview;
+    
+    ofxiOSMLKView *mlkview;
 }
 @end
 
@@ -29,7 +33,37 @@
 
 @synthesize glView;
 @synthesize ofView;
-@synthesize mtlkView;
+//@synthesize mtlkView;
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    
+    currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
+    
+    currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
+    if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+        bReadyToRotate  = NO;
+    }else{
+        bReadyToRotate  = YES;
+    }
+    bFirstUpdate    = NO;
+    bAnimated       = NO;
+    
+//    if ([self.view isKindOfClass:[ofxiOSMLKView class]]) {
+//        mlkview =  (ofxiOSMLKView *)self.view;
+//        if(mlkview != nullptr) {
+//            [mlkview setupApp:app];
+//        }
+//    } else if ([self.view isKindOfClass:[EAMLKView class]]) {
+//        // wtf
+//        
+//        
+//    } else {
+//        // no idea
+//    }
+    
+    return self;
+    
+}
 
 - (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app {
 //    return [self initWithFrame:frame app:app];
@@ -46,14 +80,30 @@
         
         //self.glView = [[MGLKView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 //          self.view = customView;
-        self.view =   self.glView ;
+//        self.view =   self.glView ;
 //        self.glView = customView;
+//        mlkview = (EAMLKView *)self.view;
         
-        ofxiOSMLKView *newObject = [[ofxiOSMLKView alloc] initWithFrame:frame andApp:app andMetal:glView];
+        if ([self.view isKindOfClass:[ofxiOSMLKView class]]) {
+            mlkview =  (ofxiOSMLKView *)self.view;
+            if(mlkview != nullptr) {
+                [mlkview initWithFrame:frame andApp:app];
+            }
+        } else if ([self.view isKindOfClass:[EAMLKView class]]) {
+            // wtf
+            
+            
+        } else {
+            // no idea
+        }
+        
+        
+        
+//        ofxiOSMLKView *newObject = [[ofxiOSMLKView alloc] initWithFrame:frame andApp:app];
     
-        self.ofView = newObject;
+//        self.ofView = newObject;
         
-        
+//        self.mlkview.delegate = self;
         
        
 //        self.ofView.delegate = self;
@@ -62,12 +112,57 @@
     return self;
 }
 
+
+-(void)setupApp:(ofxiOSApp *)app {
+//    return [self initWithFrame:frame app:app];
+   currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
+//   if((self = [super init])) {
+       currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
+       if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+           bReadyToRotate  = NO;
+       }else{
+           bReadyToRotate  = YES;
+       }
+       bFirstUpdate    = NO;
+       bAnimated       = NO;
+       
+       //self.glView = [[MGLKView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+//          self.view = customView;
+//        self.view =   self.glView ;
+//        self.glView = customView;
+//        mlkview = (EAMLKView *)self.view;
+       
+       if ([self.view isKindOfClass:[ofxiOSMLKView class]]) {
+           mlkview =  (ofxiOSMLKView *)self.view;
+           if(mlkview != nullptr) {
+               [mlkview setupApp:app];
+           }
+       } else if ([self.view isKindOfClass:[EAMLKView class]]) {
+           // wtf
+           
+           
+       } else {
+           // no idea
+       }
+       
+       
+       
+//        ofxiOSMLKView *newObject = [[ofxiOSMLKView alloc] initWithFrame:frame andApp:app];
+   
+        self.ofView = mlkview;
+       
+//        self.mlkview.delegate = self;
+//       
+//      
+//        self.ofView.delegate = self;
+//   }
+   
+//   return self;
+}
+
 - (void) dealloc {
     [self.glView removeFromSuperview];
     self.glView.delegate = nil;
-    self.glView = nil;
-//    self.ofView.delegate = nil;
-    self.ofView = nil;
 }
 
 - (void)viewDidLoad {

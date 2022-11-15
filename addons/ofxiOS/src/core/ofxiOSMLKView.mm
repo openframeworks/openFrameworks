@@ -20,6 +20,27 @@ static ofxiOSMLKView * _instanceRef = nil;
     shared_ptr<ofAppiOSWindow> window;
     shared_ptr<ofxiOSApp> app;
     BOOL bSetup;
+
+    
+    // The pixel dimensions of the backbuffer
+    GLint backingWidth;
+    GLint backingHeight;
+    
+    MGLContext *context;
+    MGLLayer *glLayer;
+    
+    // Shader objects
+    GLuint vertexShader;
+    GLuint fragmentShader;
+    GLuint shaderProgram;
+    
+    Boolean firstTouch;
+    Boolean needsErase;
+
+    // Buffer Objects
+    GLuint vboId;
+
+    BOOL initialized;
 }
 - (void)updateDimensions;
 @end
@@ -35,14 +56,142 @@ static ofxiOSMLKView * _instanceRef = nil;
     return _instanceRef;
 }
 
+// You must implement this method
++ (Class) layerClass {
+    return [MGLLayer class];
+}
+
 +(id)alloc{
     NSLog(@"Allocating...");
 //    return self;
    return [super alloc];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr andMetal:(MGLKView *)glView {
-    theMetal = glView;
+
+- (id)initWithCoder:(NSCoder *)coder
+{
+    if ((self = [super initWithCoder:coder]))
+    {
+        glLayer = (MGLLayer *)self.layer;
+
+        glLayer.opaque = YES;
+        // In this application, we want to retain the EAGLDrawable contents after a call to
+        // presentRenderbuffer.
+        glLayer.drawableColorFormat   = MGLDrawableColorFormatRGBA8888;
+        glLayer.drawableDepthFormat   = MGLDrawableDepthFormatNone;
+        glLayer.drawableStencilFormat = MGLDrawableStencilFormatNone;
+        glLayer.retainedBacking       = YES;
+       
+        if(true)
+            glLayer.drawableMultisample = MGLDrawableMultisample4X;
+        else
+            glLayer.drawableMultisample = MGLDrawableMultisampleNone;
+        //
+//        #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+////            glLayer.multipleTouchEnabled = true;
+//        #endif
+        //        self.opaque = true;
+        //
+        //        [self bindDrawable];
+        //
+                bInit = YES;
+
+        context = [[MGLContext alloc] initWithAPI:kMGLRenderingAPIOpenGLES2];
+
+        if (!context || ![MGLContext setCurrentContext:context])
+        {
+            return nil;
+        }
+
+        // Set the view's scale factor as you wish
+        self.contentScaleFactor = [[UIScreen mainScreen] scale];
+
+        
+    }
+
+    return self;
+}
+
+
+// If our view is resized, we'll be asked to layout subviews.
+// This is the perfect opportunity to also update the framebuffer so that it is
+// the same size as our display area.
+- (void)layoutSubviews
+{
+    [MGLContext setCurrentContext:context forLayer:glLayer];
+
+    if (!initialized)
+    {
+        initialized = [self initGL];
+    }
+    else
+    {
+        [self resizeFromGLLayer];
+    }
+
+    // Clear the framebuffer the first time it is allocated
+    if (needsErase)
+    {
+        [self erase];
+        needsErase = NO;
+    }
+    
+    window->events().notifyWindowResized(ofGetWidth(), ofGetHeight());
+}
+
+- (BOOL)resizeFromGLLayer
+{
+    backingWidth  = (GLint)glLayer.drawableSize.width;
+    backingHeight = (GLint)glLayer.drawableSize.height;
+
+
+    // Update viewport
+    glViewport(0, 0, backingWidth, backingHeight);
+
+    return YES;
+}
+
+- (BOOL)initGL
+{
+    backingWidth  = (GLint)glLayer.drawableSize.width;
+    backingHeight = (GLint)glLayer.drawableSize.height;
+    
+    // Setup the view port in Pixels
+    glViewport(0, 0, backingWidth, backingHeight);
+    
+}
+
+// Releases resources when they are not longer needed.
+- (void)dealloc
+{
+    [self destroy];
+    // vbo
+    if (vboId)
+    {
+        glDeleteBuffers(1, &vboId);
+        vboId = 0;
+    }
+
+    // tear down context
+    if ([MGLContext currentContext] == context)
+        [MGLContext setCurrentContext:nil];
+}
+
+- (void)erase
+{
+    [MGLContext setCurrentContext:context forLayer:glLayer];
+
+    // Clear the buffer
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Display the buffer
+    [glLayer present];
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
+//    theMetal = glView;
     window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
     
     if(window.get() == NULL) {
@@ -153,29 +302,54 @@ static ofxiOSMLKView * _instanceRef = nil;
     
 //    [super destroy];
 }
+
+- (void)setupApp:(ofxiOSApp *)appPtr {
+    bSetup = NO;
+    //if(self) {
+        
+        _instanceRef = self;
+        
+        app = shared_ptr<ofxiOSApp>(appPtr);
+        activeTouches = [[NSMutableDictionary alloc] init];
+                
+        screenSize = new glm::vec2();
+        windowSize = new glm::vec2();
+        windowPos = new glm::vec2();
+        ofSetOrientation(window->getOrientation());
+        [self updateDimensions];
+    
+    CGRect bounds = [[UIScreen mainScreen] bounds];
+    *windowSize = glm::vec2(bounds.size.width * scaleFactor, bounds.size.height * scaleFactor);
+    *screenSize = glm::vec2(bounds.size.width * scaleFactor, bounds.size.height * scaleFactor);
+        
+        bInit = YES;
+    
+//    bSetup = YES;
+}
+
 - (void)mglkView:(MGLKView *)view drawInRect:(CGRect)rect {
 //    [super mglkView:view drawInRect:rect];
 }
 
-- (void)dealloc {
-    [self destroy];
-}
-
-- (void)layoutSubviews {
-//    [super layoutSubviews];
-//    [self updateDimensions];
+//- (void)dealloc {
+//    [self destroy];
+//}
 //
-//    [super notifyResized];
-    window->events().notifyWindowResized(ofGetWidth(), ofGetHeight());
-}
+//- (void)layoutSubviews {
+////    [super layoutSubviews];
+////    [self updateDimensions];
+////
+////    [super notifyResized];
+//    window->events().notifyWindowResized(ofGetWidth(), ofGetHeight());
+//}
 
 - (void)updateDimensions {
-    if(theMetal) {
+    if(glLayer) {
         
-        *windowPos = glm::vec2(theMetal.frame.origin.x * scaleFactor, theMetal.frame.origin.y * scaleFactor);
-        *windowSize = glm::vec2(theMetal.bounds.size.width * scaleFactor, theMetal.bounds.size.height * scaleFactor);
+        *windowPos = glm::vec2(glLayer.frame.origin.x * scaleFactor, glLayer.frame.origin.y * scaleFactor);
+        *windowSize = glm::vec2(glLayer.bounds.size.width * scaleFactor, glLayer.bounds.size.height * scaleFactor);
 
-        UIScreen * currentScreen = theMetal.window.screen;  // current screen is the screen that GLView is attached to.
+        UIScreen * currentScreen = self.window.screen;  // current screen is the screen that GLView is attached to.
         if(!currentScreen) {                            // if GLView is not attached, assume to be main device screen.
             currentScreen = [UIScreen mainScreen];
         }
@@ -192,9 +366,9 @@ static ofxiOSMLKView * _instanceRef = nil;
 - (void) setMSAA:(bool)on
 {
     if(on)
-        theMetal.drawableMultisample = MGLDrawableMultisample4X;
+        glLayer.drawableMultisample = MGLDrawableMultisample4X;
     else
-        theMetal.drawableMultisample = MGLDrawableMultisampleNone;
+        glLayer.drawableMultisample = MGLDrawableMultisampleNone;
 }
 
 - (void)notifyResized {
@@ -293,7 +467,7 @@ static ofxiOSMLKView * _instanceRef = nil;
         
         [activeTouches setObject:@(touchIndex) forKey:[NSValue valueWithPointer:(__bridge void *)touch]];
         
-        CGPoint touchPoint = [touch locationInView:theMetal];
+        CGPoint touchPoint = [touch locationInView:self];
         
         touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
         touchPoint.y *= scaleFactor;
@@ -304,7 +478,7 @@ static ofxiOSMLKView * _instanceRef = nil;
         }
         
         ofTouchEventArgs touchArgs;
-        touchArgs.numTouches = [[event touchesForView:theMetal] count];
+        touchArgs.numTouches = [[event touchesForView:self] count];
         touchArgs.x = touchPoint.x;
         touchArgs.y = touchPoint.y;
         touchArgs.id = touchIndex;
@@ -317,12 +491,12 @@ static ofxiOSMLKView * _instanceRef = nil;
     }
 }
 
-- (void)setupMetal:(MGLKView *)metal {
-
-    if(theMetal == nil)
-        theMetal = metal;
-    [self updateDimensions];
-}
+//- (void)setupMetal:(MGLKView *)metal {
+//
+//    if(theMetal == nil)
+//        theMetal = metal;
+//    [self updateDimensions];
+//}
 
 //------------------------------------------------------
 - (void)touchesMoved:(NSSet *)touches
@@ -337,7 +511,7 @@ static ofxiOSMLKView * _instanceRef = nil;
     for(UITouch *touch in touches){
         int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:(__bridge void *)touch]] intValue];
         
-        CGPoint touchPoint = [touch locationInView:theMetal];
+        CGPoint touchPoint = [touch locationInView:self];
         
         touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
         touchPoint.y *= scaleFactor;
@@ -347,7 +521,7 @@ static ofxiOSMLKView * _instanceRef = nil;
             window->events().notifyMouseDragged(touchPoint.x, touchPoint.y, 0);
         }
         ofTouchEventArgs touchArgs;
-        touchArgs.numTouches = [[event touchesForView:theMetal] count];
+        touchArgs.numTouches = [[event touchesForView:self] count];
         touchArgs.x = touchPoint.x;
         touchArgs.y = touchPoint.y;
         touchArgs.id = touchIndex;
@@ -371,7 +545,7 @@ static ofxiOSMLKView * _instanceRef = nil;
         
         [activeTouches removeObjectForKey:[NSValue valueWithPointer:(__bridge void *)touch]];
         
-        CGPoint touchPoint = [touch locationInView:theMetal];
+        CGPoint touchPoint = [touch locationInView:self];
         
         touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
         touchPoint.y *= scaleFactor;
@@ -382,7 +556,7 @@ static ofxiOSMLKView * _instanceRef = nil;
         }
         
         ofTouchEventArgs touchArgs;
-        touchArgs.numTouches = [[event touchesForView:theMetal] count] - [touches count];
+        touchArgs.numTouches = [[event touchesForView:self] count] - [touches count];
         touchArgs.x = touchPoint.x;
         touchArgs.y = touchPoint.y;
         touchArgs.id = touchIndex;
@@ -404,14 +578,14 @@ static ofxiOSMLKView * _instanceRef = nil;
     for(UITouch *touch in touches){
         int touchIndex = [[activeTouches objectForKey:[NSValue valueWithPointer:(__bridge void *)touch]] intValue];
         
-        CGPoint touchPoint = [touch locationInView:theMetal];
+        CGPoint touchPoint = [touch locationInView:self];
         
         touchPoint.x *= scaleFactor; // this has to be done because retina still returns points in 320x240 but with high percision
         touchPoint.y *= scaleFactor;
         touchPoint = [self orientateTouchPoint:touchPoint];
         
         ofTouchEventArgs touchArgs;
-        touchArgs.numTouches = [[event touchesForView:theMetal] count];
+        touchArgs.numTouches = [[event touchesForView:self] count];
         touchArgs.x = touchPoint.x;
         touchArgs.y = touchPoint.y;
         touchArgs.id = touchIndex;
@@ -426,9 +600,9 @@ static ofxiOSMLKView * _instanceRef = nil;
 - (void)updateScaleFactor {
     //GLKView *view = (GLKView *)self;
     
-    scaleFactor = MIN(scaleFactorPref, [theMetal contentScaleFactor]);
-    if(scaleFactor != theMetal.contentScaleFactor) {
-        theMetal.contentScaleFactor = scaleFactor;
+    scaleFactor = MIN(scaleFactorPref, [self contentScaleFactor]);
+    if(scaleFactor != self.contentScaleFactor) {
+        self.contentScaleFactor = scaleFactor;
     }
 }
 
