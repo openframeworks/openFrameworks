@@ -45,7 +45,7 @@ class ofxAssimpModelLoader{
         bool load(std::string modelName, int assimpOptimizeFlags=OPTIMIZE_DEFAULT);
         bool load(ofBuffer & buffer, int assimpOptimizeFlags=OPTIMIZE_DEFAULT, const char * extension="");
 
-        OF_DEPRECATED_MSG("ofxAssimpModelLoader::load(std::string modelName, bool bOptimize) is deprecated, use load(std::string modelName, int assimpOptimizeFlags) instead.", bool load(std::string modelName, bool optimize=false));
+        OF_DEPRECATED_MSG("ofxAssimpModelLoader::load(std::string modelName, bool bOptimize) is deprecated, use load(std::string modelName, int assimpOptimizeFlags) instead.", bool load(std::string modelName, bool optimize));
         OF_DEPRECATED_MSG("ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize=false, const char * extension="") is deprecated, use load(std::string modelName, int assimpOptimizeFlags) instead.", bool load(ofBuffer & buffer, bool optimize=false, const char * extension=""));
 
         OF_DEPRECATED_MSG("ofxAssimpModelLoader::loadModel() is deprecated, use load() instead.", bool loadModel(std::string modelName, bool optimize=false));
