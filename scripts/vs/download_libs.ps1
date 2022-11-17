@@ -13,7 +13,7 @@ $libsDir = $scriptPath + "\..\..\libs"
 
 function DownloadPackage{
     $pkg = $args[0]
-    $url = "http://ci.openframeworks.cc/libs/$pkg"
+    $url = " https://github.com/openframeworks/apothecary/releases/download/nightly/$pkg"
     If(Test-Path "$pkg") {
         echo "Deleting old package"
         Remove-Item $pkg
