@@ -43,11 +43,15 @@ ifndef GST_VERSION
 	ifeq ($(CROSS_COMPILING),1)
 		ifeq ($(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?),0)
 			GST_VERSION = 1.0
-$(info GSTVERSION=$(GST_VERSION))
+			ifdef MAKEFILE_DEBUG
+                $(info GSTVERSION=$(GST_VERSION))
+			endif
 		else
 			GST_VERSION = 0.10
-$(info GSTVERSION=$(GST_VERSION))
-$(info $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?))
+			ifdef MAKEFILE_DEBUG
+                $(info GSTVERSION=$(GST_VERSION))
+                $(info $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?))
+			endif
 		endif
 	else
 		ifeq ($(shell pkg-config gstreamer-1.0 --exists; echo $$?),0)
@@ -130,41 +134,38 @@ PLATFORM_REQUIRED_ADDONS =
 # >= 4.7.x c++11
 # >= 4.9.x c++14
 # other compilers c++11 by now
-ifeq ($(CXX),g++)
-	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
-	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
-	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
-	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
-	ifeq ("$(GCC_MAJOR_EQ_4)","1")
-		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
-			PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++0x -DHAS_TLS=0
+
+PLATFORM_CXXFLAGS = -Wall -Werror=return-type
+PLATFORM_CXXVER = -std=c++17
+	
+GCC_MAJOR := $(shell expr `gcc -dumpversion | cut -f1 -d.`)
+GCC_MINOR := $(shell expr `gcc -dumpversion | cut -f2 -d.`)
+
+ifeq ("$(GCC_MAJOR)","4")
+	ifeq ($(shell expr $(GCC_MINOR) \< 7), 1)
+		PLATFORM_CXXVER = -std=c++0x
+		PLATFORM_CXXFLAGS += -DHAS_TLS=0
+	else
+		ifeq ("$(GCC_MINOR)","9")
+			PLATFORM_CXXVER = -std=c++14
+			PLATFORM_CFLAGS += DGCC_HAS_REGEX
 		else
-			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
-			else
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
-			endif
+			PLATFORM_CXXVER = -std=c++11
 		endif
-	endif
-	ifeq ("$(GCC_MAJOR_GT_4)","1")
-		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
 	endif
 else
-	ifeq ($(CXX),g++-5)
-		PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
+	ifeq ($(shell expr $(GCC_MAJOR) \>= 8), 1)
+		# c++17 for gcc 8 and newer
+		PLATFORM_CXXVER = -std=c++17
 	else
-		ifeq ($(CXX),g++-4.9)
-			PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++14 -DGCC_HAS_REGEX
-		else
-			ifeq ($(CXX),g++-4.8)
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
-			else
-				PLATFORM_CFLAGS = -Wall -Werror=return-type -std=c++11
-			endif
-		endif
+		# c++14 for gcc 4 and newer
+		PLATFORM_CXXVER = -std=c++14
 	endif
+	PLATFORM_CXXFLAGS += -DGCC_HAS_REGEX
 endif
 
+PLATFORM_CFLAGS = $(PLATFORM_CXXFLAGS)
+PLATFORM_CXXFLAGS += $(PLATFORM_CXXVER)
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -176,8 +177,12 @@ endif
 
 PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
 
-
-
+ifeq ($(OF_USING_STD_FS),1)
+	# gcc 8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
+	ifeq ("$(GCC_MAJOR)","8")
+		PLATFORM_LDFLAGS += -lstdc++fs
+	endif
+endif
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -198,9 +203,9 @@ ifndef PROJECT_OPTIMIZATION_CFLAGS_RELEASE
 	# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
-	ifneq ($(LINUX_ARM),1)
-		PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
-	endif
+	#ifneq ($(LINUX_ARM),1)
+	#	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
+	#endif
 else
 	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
 endif
@@ -231,9 +236,6 @@ PLATFORM_CORE_EXCLUSIONS =
 # core sources
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 
@@ -258,7 +260,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/uriparser/%
 
 ifeq ($(USE_FMOD),0)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 endif
 

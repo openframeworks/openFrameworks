@@ -6,6 +6,7 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
 #include "ofMath.h"
+#include "ofMathConstants.h"
 #include "ofLog.h"
 #include <map>
 
@@ -358,6 +359,17 @@ void ofMesh_<V,N,C,T>::removeVertex(ofIndexType index){
   }
 }
 
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeVertices(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= vertices.size() || endIndex > vertices.size()){
+		ofLogError("ofMesh") << "removeVertex(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of vertices is" << vertices.size();
+	}else{
+		vertices.erase(vertices.begin() + startIndex, vertices.begin() + endIndex);
+		bVertsChanged = true;
+		bFacesDirty = true;
+	}
+}
+
 
 
 //--------------------------------------------------------------
@@ -372,6 +384,16 @@ void ofMesh_<V,N,C,T>::removeNormal(ofIndexType index){
   }
 }
 
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeNormals(ofIndexType startIndex, ofIndexType endIndex){
+    if(startIndex >= normals.size() || endIndex > normals.size()){
+        ofLogError("ofMesh") << "removeNormal(): ignoring out of range beginIndex " << startIndex << " endIndex " << endIndex << ", number of normals is" << normals.size();
+    }else{
+        normals.erase(normals.begin() + startIndex, normals.begin() + endIndex);
+        bNormalsChanged = true;
+        bFacesDirty = true;
+    }
+}
 
 
 //--------------------------------------------------------------
@@ -384,6 +406,17 @@ void ofMesh_<V,N,C,T>::removeColor(ofIndexType index){
 	bColorsChanged = true;
 	bFacesDirty = true;
   }
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeColors(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= colors.size() || endIndex > colors.size()){
+		ofLogError("ofMesh") << "removeColor(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of colors is" << colors.size();
+	}else{
+		colors.erase(colors.begin() + startIndex, colors.begin() + endIndex);
+		bColorsChanged = true;
+		bFacesDirty = true;
+	}
 }
 
 
@@ -400,6 +433,18 @@ void ofMesh_<V,N,C,T>::removeTexCoord(ofIndexType index){
   }
 }
 
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeTexCoords(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= texCoords.size() || endIndex >= texCoords.size()){
+		ofLogError("ofMesh") << "removeTexCoord(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of tex coords is" << texCoords.size();
+	}else{
+		texCoords.erase(texCoords.begin() + startIndex, texCoords.begin() + endIndex);
+		bTexCoordsChanged = true;
+		bFacesDirty = true;
+	}
+}
+
+
 
 
 //--------------------------------------------------------------
@@ -413,6 +458,18 @@ void ofMesh_<V,N,C,T>::removeIndex(ofIndexType index){
 	bFacesDirty = true;
   }
 }
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeIndices(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= indices.size() || endIndex > indices.size()){
+		ofLogError("ofMesh") << "removeIndex(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of indices is" << indices.size();;
+	}else{
+		indices.erase(indices.begin() + startIndex, indices.begin() + endIndex);
+		bIndicesChanged = true;
+		bFacesDirty = true;
+	}
+}
+
 
 
 //GETTERS
@@ -1110,7 +1167,8 @@ void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
 			continue;
 		}
 
-		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0)){
+		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0
+                || lineStr.find("property double x")==0 || lineStr.find("property double y")==0 || lineStr.find("property double z")==0)){
 			meshDefinition.push_back(Position);
 			vertexCoordsFound++;
 			continue;
@@ -1309,6 +1367,9 @@ void ofMesh_<V,N,C,T>::save(const std::filesystem::path& path, bool useBinary) c
 	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
 		os << "element face " << data.getNumVertices() / faceSize << std::endl;
 		os << "property list uchar int vertex_indices" << std::endl;
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLE_STRIP && data.getNumVertices() >= 4) {
+		os << "element face " << data.getNumVertices() - 2 << std::endl;
+		os << "property list uchar int vertex_indices" << std::endl;
 	}
 
 	os << "end_header" << std::endl;
@@ -1364,6 +1425,20 @@ void ofMesh_<V,N,C,T>::save(const std::filesystem::path& path, bool useBinary) c
 				os.write((char*) indices, sizeof(indices));
 			} else {
 				os << (std::size_t) faceSize << " " << indices[0] << " " << indices[1] << " " << indices[2] << std::endl;
+			}
+		}
+	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLE_STRIP && data.getNumVertices() >= 4) {
+		for(uint32_t i = 0; i < data.getNumVertices() - 2; i += 2) {
+			uint32_t indices1[] = {i, i + 1, i + 2};
+			uint32_t indices2[] = {i + 1, i + 3, i + 2};
+			if(useBinary) {
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				os.write((char*) indices1, sizeof(indices1));
+				os.write((char*) &faceSize, sizeof(unsigned char));
+				os.write((char*) indices2, sizeof(indices2));
+			} else {
+				os << (std::size_t) faceSize << " " << indices1[0] << " " << indices1[1] << " " << indices1[2] << std::endl;
+				os << (std::size_t) faceSize << " " << indices2[0] << " " << indices2[1] << " " << indices2[2] << std::endl;
 			}
 		}
 	}
@@ -1808,7 +1883,7 @@ void ofMesh_<V,N,C,T>::flatNormals() {
     if( getMode() == OF_PRIMITIVE_TRIANGLES) {
         
         // get copy original mesh data
-        auto numIndices = getIndices().size();
+        auto indices = getIndices();
         auto verts = getVertices();
         auto texCoords = getTexCoords();
         auto colors = getColors();
@@ -1818,12 +1893,12 @@ void ofMesh_<V,N,C,T>::flatNormals() {
         
         // add mesh data back, duplicating vertices and recalculating normals
         N normal;
-        for(ofIndexType i = 0; i < numIndices; i++) {
-            ofIndexType indexCurr = getIndex(i);
+        for(ofIndexType i = 0; i < indices.size(); i++) {
+            ofIndexType indexCurr = indices[i];
     
             if(i % 3 == 0) {
-                ofIndexType indexNext1 = getIndex(i + 1);
-                ofIndexType indexNext2 = getIndex(i + 2);
+                ofIndexType indexNext1 = indices[i + 1];
+                ofIndexType indexNext2 = indices[i + 2];
                 auto e1 = verts[indexCurr] - verts[indexNext1];
                 auto e2 = verts[indexNext2] - verts[indexNext1];
                 normal = glm::normalize(glm::cross(e1, e2));

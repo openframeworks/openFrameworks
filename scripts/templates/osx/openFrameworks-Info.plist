@@ -3,20 +3,32 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconFile</key>
+	<string>$(ICON_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>cc.openFrameworks.ofapp</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(TARGET_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
-	<key>CFBundleIconFile</key>
-	<string>${ICON}</string>
+	<string>$(VERSION)</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.graphics-design</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs to access the camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs to access the microphone</string>
+	<key>NSHighResolutionCapable</key>
+	<false/>
 </dict>
 </plist>

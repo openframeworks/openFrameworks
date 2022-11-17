@@ -26,19 +26,15 @@
 #include "termios.h"
 #include "sys/ioctl.h"
 
-#include <dirent.h>  // scandir
 #include <string.h> // strlen
-
-using namespace std;
 
 // native events
 struct udev* udev;
-struct udev_device* dev;
 struct udev_monitor* mon;
 static int udev_fd = -1;
 
-static int keyboard_fd = -1; // defaults to 0 ie console
-static int mouse_fd	= -1; // defaults to 0
+typedef map<string, int> device;
+static device inputDevices;
 
 // minimal map
 const int lowercase_map[] = {
@@ -80,12 +76,17 @@ typedef struct {
 	int mouseButtonState;
 } MouseState;
 
+typedef map<int, int> TouchState;
+typedef map<int, ofVec2f> TouchPosition;
+
 // TODO, make this match the upcoming additions to ofWindow
 #define MOUSE_BUTTON_LEFT_MASK		1
 #define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
 #define MOUSE_BUTTON_RIGHT_MASK  2 << 1
 
 static MouseState mb;
+static TouchState mt;
+static TouchPosition mtp;
 ofAppEGLWindow* ofAppEGLWindow::instance = NULL;
 
 static int string_ends_with(const char *str, const char *suffix) {
@@ -106,34 +107,6 @@ static int string_begins_with(const char *str, const char *prefix) {
 	if (lenprefix > lenstr)
 		return 0;
 	return strncmp(str, prefix, lenprefix) == 0;
-}
-
-static int dummy_sort(const struct dirent **a,const struct dirent **b) {
-	return 1; // dummy sort
-}
-
-static int filter_kbd(const struct dirent *d) {
-	if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-kbd")) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-static int filter_mouse(const struct dirent *d) {
-	if(d->d_type != DT_DIR && string_ends_with(d->d_name,"event-mouse")) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-static int filter_event(const struct dirent *d) {
-	if(d->d_type != DT_DIR && string_begins_with(d->d_name,"event")) {
-		return 1;
-	} else {
-		return 0;
-	}
 }
 
 // native
@@ -317,7 +290,7 @@ EGLContext ofAppEGLWindow::getEglContext() const {
 	return eglContext;
 }
 
-#ifndef TARGET_RASPBERRY_PI
+#ifndef TARGET_RASPBERRY_PI_LEGACY
 //------------------------------------------------------------
 Display* ofAppEGLWindow::getX11Display(){
 	return x11Display;
@@ -345,14 +318,14 @@ EGLint ofAppEGLWindow::getEglVersionMinor() const {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::initNative() {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	initRPiNative();
 #endif
 }
 
 //------------------------------------------------------------
 void ofAppEGLWindow::exitNative() {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	exitRPiNative();
 #endif
 }
@@ -367,7 +340,7 @@ EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
 	if(isUsingX11) {
 		return (EGLNativeWindowType)x11Window;
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		return (EGLNativeWindowType)&dispman_native_window;
 #else
 		ofLogNotice("ofAppEGLWindow") << "getNativeWindow(): no native window type for this system, perhaps try X11?";
@@ -386,7 +359,7 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
 	if(isUsingX11) {
 		return (EGLNativeDisplayType)x11Display;
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		return (EGLNativeDisplayType)NULL;
 #else
 		ofLogNotice("ofAppEGLWindow") << "getNativeDisplay(): no native window type for this system, perhaps try X11?";
@@ -459,7 +432,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	////////////////
 	// TODO remove the following ifdef once x11 is accelerated on RPI
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 	if(isUsingX11) {
 		isUsingX11 = false;
 		ofLogWarning("ofAppEGLWindow") << "init(): X11 not availble on RPI yet, using a native window instead";
@@ -788,7 +761,7 @@ bool ofAppEGLWindow::destroyWindow() {
 			XDestroyWindow(x11Display,x11Window); // or XCloseWindow?
 			XFree(x11Screen);
 		} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 			dispman_update = vc_dispmanx_update_start(0);
 			if (dispman_element != DISPMANX_NO_HANDLE) {
 				vc_dispmanx_element_remove(dispman_update, dispman_element);
@@ -933,16 +906,14 @@ shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
 //------------------------------------------------------------
 void ofAppEGLWindow::setupNativeEvents() {
 	setupNativeUDev();
-	setupNativeMouse();
-	setupNativeKeyboard();
+	setupNativeInput();
 	startThread();
 }
 
 //------------------------------------------------------------
 void ofAppEGLWindow::destroyNativeEvents() {
 	destroyNativeUDev();
-	destroyNativeMouse();
-	destroyNativeKeyboard();
+	destroyNativeInput();
 	waitForThread(true, threadTimeout);
 }
 
@@ -974,7 +945,7 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 				currentWindowRect = newRect;
 			}
 		} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 
 			VC_RECT_T dst_rect;
 			dst_rect.x = (int32_t)newRect.x;
@@ -1028,7 +999,7 @@ bool ofAppEGLWindow::createWindow(const ofRectangle& requestedWindowRect) {
 	if(isUsingX11) {
 		return createX11NativeWindow(requestedWindowRect);
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		return createRPiNativeWindow(requestedWindowRect);
 #else
 		ofLogError("ofAppEGLWindow") << "createEGLWindow(): no native window type for this system, perhaps try X11?";
@@ -1086,6 +1057,18 @@ void ofAppEGLWindow::pollEvents(){
 			instance->coreEvents.notifyKeyEvent(keyEventsCopy.front());
 			keyEventsCopy.pop();
 		}
+
+		queue<ofTouchEventArgs> touchEventsCopy;
+		instance->lock();
+		touchEventsCopy = instance->touchEvents;
+		while(!instance->touchEvents.empty()){
+			instance->touchEvents.pop();
+		}
+		instance->unlock();
+		while(!touchEventsCopy.empty()){
+			instance->coreEvents.notifyTouchEvent(touchEventsCopy.front());
+			touchEventsCopy.pop();
+		}
 	}
 }
 
@@ -1129,7 +1112,7 @@ glm::vec2 ofAppEGLWindow::getScreenSize(){
 		}
 
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		int success = graphics_get_display_size(settings.screenNum, &screenWidth, &screenHeight);
 		if(success < 0) {
 			ofLogError("ofAppEGLWindow") << "getScreenSize(): tried to get display size but failed";
@@ -1197,7 +1180,7 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 			nonFullscreenWindowRect = currentWindowRect;
 		}
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 
 		// keep it in bounds
 		auto screenSize = getScreenSize();
@@ -1258,7 +1241,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 			nonFullscreenWindowRect = currentWindowRect;
 		}
 	} else {
-#ifdef TARGET_RASPBERRY_PI
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 		setWindowRect(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
 		nonFullscreenWindowRect = currentWindowRect;
 #else
@@ -1326,9 +1309,7 @@ void ofAppEGLWindow::threadedFunction(){
 
 	while(isThreadRunning()) {
 		readNativeUDevEvents();
-		readNativeMouseEvents();
-		readNativeKeyboardEvents();
-
+		readNativeInputEvents();
 		// sleep briefly
 		ofSleepMillis(20);
 	}
@@ -1366,473 +1347,476 @@ void ofAppEGLWindow::destroyNativeUDev() {
 	udev_unref(udev); // clean up
 }
 
+void ofAppEGLWindow::setupNativeInput(){
+	struct udev_enumerate *enumerate;
+	struct udev_list_entry *devices, *entry;
+	struct udev_device *dev;
+	bool isMouse;
 
-//------------------------------------------------------------
-void ofAppEGLWindow::setupNativeMouse() {
-	struct dirent **eps;
-	// fallback to /dev/input/eventX since some vnc servers use uinput to handle mouse & keyboard
-	typedef int (*filter_ptr)(const struct dirent *d);
-	filter_ptr mouse_filters[2] = { filter_mouse, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
+	ofLogNotice("ofAppEGLWindow") << "setupNativeInput()";
 
-	for(int i=0; i<2; i++){
-		int n = scandir(devicePathBuffers[i].c_str(), &eps, mouse_filters[i], dummy_sort);
+	/* Create a list of the devices in the 'input' subsystem. */
+	enumerate = udev_enumerate_new(udev);
+	udev_enumerate_add_match_subsystem(enumerate, "input");
 
-		// make sure that we found an appropriate entry
-		if(n >= 0 && eps != 0 && eps[0] != 0) {
-			string devicePathBuffer;
-			devicePathBuffer.append(devicePathBuffers[i]);
-			devicePathBuffer.append(eps[0]->d_name);
-			mouse_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
-			ofLogNotice("ofAppEGLWindow") << "setupMouse(): mouse_fd=" <<  mouse_fd << " devicePath=" << devicePathBuffer;
-			break;
-		}
-	}
+	udev_enumerate_scan_devices(enumerate);
 
-	if (mouse_fd >= 0) {
-		char deviceNameBuffer[256] = "Unknown Device";
-		ioctl(mouse_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-		ofLogNotice("ofAppEGLWindow") << "setupMouse(): mouse device name = " << deviceNameBuffer;
-	} else {
-		ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse";
-	}
+	devices = udev_enumerate_get_list_entry(enumerate);
 
-	mb.mouseButtonState = 0;
+	udev_list_entry_foreach(entry, devices)
+	{
+		/* Get the filename of the /sys entry for the device
+			and create a udev_device object (dev) representing it */
+		const char * name = udev_list_entry_get_name(entry);
 
-	if(mouse_fd < 0) {
-		ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse, mouse_fd < 0";
-	} else {
-		mouseDetected = true;
-	}
+		dev = udev_device_new_from_syspath(udev, name);
 
-	// Detect min and max values for absolute axes. Useful for trackpads and touchscreens.
-	// More info on input_absinfo https://github.com/torvalds/linux/blob/master/include/uapi/linux/input.h
-	if(mouseDetected){
+		const char * sysname = udev_device_get_sysname(dev);
+		const char * devnode = udev_device_get_devnode(dev);
+		const char * devpath = udev_device_get_devpath(dev);
+		const char * devtype = udev_device_get_devtype(dev);
+		dev_t devnum = udev_device_get_devnum(dev);
+		const char * driver = udev_device_get_driver(dev);
+		const char * prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
+		const char * prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
+		const char * prop_touch = udev_device_get_property_value(dev, "ID_INPUT_TOUCHSCREEN");
 
-		// Do this for the x axis. EVIOCGABS(0): 0 stands for x axis.
-		struct input_absinfo mabsx;
-		if (ioctl(mouse_fd, EVIOCGABS(0), &mabsx) < 0){
-			ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
-		} else {
-			mouseAbsXMin = mabsx.minimum;
-			mouseAbsXMax = mabsx.maximum;
-			ofLogNotice("ofAppEGLWindow") << "mouse x axis min, max: " << mouseAbsXMin << ", " << mouseAbsXMax;
+		ofLogNotice() << "Got device";
+		ofLogNotice() << " - node: " << devnode;
+		ofLogNotice() << " - sysname: " << sysname;
+		ofLogNotice() << " - devpath: " << devpath;
+		ofLogNotice() << " - devtype: " << devtype;
+		ofLogNotice() << " - driver: " << driver;
+		ofLogNotice() << " - devnum: " << devnum;
+		ofLogNotice() << " - ID_INPUT_KEYBOARD: " << prop_keyboard;
+		ofLogNotice() << " - ID_INPUT_MOUSE: " << prop_mouse;
+		ofLogNotice() << " - ID_INPUT_TOUCHSCREEN: " << prop_touch;
+
+		if(prop_mouse || prop_touch){
+			isMouse = true;
+		}else{
+			isMouse = false;
 		}
 
-		// Do that for the y axis. EVIOCGABS(1): 1 stands for y axis.
-		struct input_absinfo mabsy;
-		if (ioctl(mouse_fd, EVIOCGABS(1), &mabsy) < 0){
-			ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
-		} else {
-			mouseAbsYMin = mabsy.minimum;
-			mouseAbsYMax = mabsy.maximum;
-			ofLogNotice("ofAppEGLWindow") << "mouse y axis min, max: " << mouseAbsYMin << ", " << mouseAbsYMax;
+		if(devnode && (prop_keyboard || prop_mouse || prop_touch) && string_begins_with(sysname, "event")){
+			addInput(devnode, isMouse);
 		}
-	}
-}
-
-//------------------------------------------------------------
-void ofAppEGLWindow::setupNativeKeyboard() {
-	struct dirent **eps;
-	typedef int (*filter_ptr)(const struct dirent *d);
-	filter_ptr kbd_filters[2] = { filter_kbd, filter_event };
-	string devicePathBuffers[2] = { "/dev/input/by-path/", "/dev/input/" };
-
-	for(int i=0; i<2; i++){
-		int n = scandir(devicePathBuffers[i].c_str(), &eps, kbd_filters[i], dummy_sort);
-
-		// make sure that we found an appropriate entry
-		if(n >= 0 && eps != 0 && eps[0] != 0) {
-			string devicePathBuffer;
-			devicePathBuffer.append(devicePathBuffers[i]);
-			devicePathBuffer.append(eps[0]->d_name);
-			keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
-			ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd=" <<  keyboard_fd << " devicePath=" << devicePathBuffer;
-			break;
+		if(prop_keyboard){
+			keyboardDetected = true;
 		}
+		if(prop_mouse || prop_touch){
+			mouseDetected = true;
+		}
+
+		udev_device_unref(dev);
+    }
+	/* Free the enumerator object */
+	udev_enumerate_unref(enumerate);
+
+	if(!mouseDetected){
+		ofLogError("ofAppEGLWindow") << "setupNativeInput(): did not open mouse";
 	}
-
-	if (keyboard_fd >= 0) {
-		char deviceNameBuffer[256] = "Unknown Device";
-		ioctl(keyboard_fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
-		ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard device name = " << deviceNameBuffer;
-
-
-		// save current terminal settings
-		tcgetattr (STDIN_FILENO, &tc);
-		ots = tc;
-		// disable echo on our temporary settings
-		tc.c_lflag &= ~ECHO;
-		tc.c_lflag |= ECHONL;
-		tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
-
-	} else {
+	if(!keyboardDetected){
 		ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard";
 	}
+
+	// save current terminal settings
+	tcgetattr (STDIN_FILENO, &tc);
+	ots = tc;
+	// disable echo on our temporary settings
+	tc.c_lflag &= ~ECHO;
+	tc.c_lflag |= ECHONL;
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
+	
+	mb.mouseButtonState = 0;
 
 	kb.shiftPressed = false;
 	kb.capsLocked = false;
 
-	if(keyboard_fd < 0) {
-		ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd < 0";
-	} else {
-		keyboardDetected = true;
-	}
+	printInput();
 }
 
-//------------------------------------------------------------
-void ofAppEGLWindow::destroyNativeMouse() {
-	if(mouse_fd >= 0) {
-		// nothing to do
+void ofAppEGLWindow::addInput(const char * node, bool isMouse){
+	if(node == NULL){
+		return;
 	}
-}
 
-//------------------------------------------------------------
-void ofAppEGLWindow::destroyNativeKeyboard() {
-	ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard()";
+	removeInput(node);
 
-	if (keyboard_fd >= 0) {
-		tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
-	} else {
-		ofLogNotice("ofAppEGLWindow") << "destroyNativeKeyboard(): unable to reset terminal";
-	}
-}
+	int fd = open(node, O_RDONLY | O_NONBLOCK);
+	if(fd >= 0){
+		char deviceNameBuffer[256] = "Unknown Device";
+		ioctl(fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
+		ofLogNotice("ofAppEGLWindow") << "addInput(): input device name = " << deviceNameBuffer;
 
+		if(isMouse){
+			struct input_absinfo mabsx;
+			if(ioctl(fd, EVIOCGABS(0), &mabsx) < 0){
+				ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
+			} else {
+				mouseAbsXMin = mabsx.minimum;
+				mouseAbsXMax = mabsx.maximum;
+				ofLogNotice("ofAppEGLWindow") << "mouse x axis min, max: " << mouseAbsXMin << ", " << mouseAbsXMax;
+			}
 
-//------------------------------------------------------------
-void ofAppEGLWindow::readNativeUDevEvents() {
-	// look for devices being attatched / detatched
-
-	fd_set fds;
-	struct timeval tv;
-	int ret;
-
-	FD_ZERO(&fds);
-	FD_SET(udev_fd, &fds);
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
-
-	ret = select(udev_fd+1, &fds, NULL, NULL, &tv);
-
-	/* Check if our file descriptor has received data. */
-	if (ret > 0 && FD_ISSET(udev_fd, &fds)) {
-		/* Make the call to receive the device.
-		   select() ensured that this will not block. */
-		dev = udev_monitor_receive_device(mon);
-		if (dev) {
-			// TODO: finish auto connect
-			ofLogNotice() << "Got device";
-			ofLogNotice() << "   node: %s\n", udev_device_get_devnode(dev);
-			ofLogNotice() << "   subsystem: %s\n", udev_device_get_subsystem(dev);
-			ofLogNotice() << "   devtype: %s\n", udev_device_get_devtype(dev);
-			ofLogNotice() << "   action: %s\n", udev_device_get_action(dev);
-			udev_device_unref(dev);
+			// Do that for the y axis. EVIOCGABS(1): 1 stands for y axis.
+			struct input_absinfo mabsy;
+			if(ioctl(fd, EVIOCGABS(1), &mabsy) < 0){
+				ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
+			}else{
+				mouseAbsYMin = mabsy.minimum;
+				mouseAbsYMax = mabsy.maximum;
+				ofLogNotice("ofAppEGLWindow") << "mouse y axis min, max: " << mouseAbsYMin << ", " << mouseAbsYMax;
+			}
 		}
-		else {
-			ofLogNotice("ofAppEGLWindow") << "readNativeUDevEvents(): device returned by receive_device() is NULL";
-		}
+
+		inputDevices[node] = fd;
+    }
+}
+
+void ofAppEGLWindow::removeInput(const char * node){
+	if(node == NULL)
+        return;
+
+	device::iterator iter = inputDevices.find(node);
+	if(iter != inputDevices.end()){
+		::close(iter->second);
+		inputDevices.erase(iter);
 	}
 }
 
+void ofAppEGLWindow::printInput(){
+	ofLogNotice("--- Input Device List ---");
+	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
+		ofLogNotice() << " - " << iter->first;
+	}
+	ofLogNotice("-------------------------");
+}
+
+void ofAppEGLWindow::destroyNativeInput(){
+	ofLogNotice("ofAppEGLWindow") << "destroyNativeInput()";
+	
+	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
+		if(iter->second >= 0){
+            ::close(iter->second);
+        }
+	}
+
+	inputDevices.clear();
+
+	tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
+}
+
 //------------------------------------------------------------
-void ofAppEGLWindow::readNativeKeyboardEvents() {
+void ofAppEGLWindow::processInput(int fd, const char * node){
 	// http://www.diegm.uniud.it/loghi/CE2/kbd.pdf
 	// http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
 	// https://strcpy.net/b/archives/2010/11/17/abusing_the_linux_input_subsystem/index.html
+	static ofTouchEventArgs touchEvent;
+	static ofKeyEventArgs keyEvent;
+	static ofMouseEventArgs mouseEvent;
 	struct input_event ev;
 	char key = 0;
-
-	int nBytesRead = read(keyboard_fd, &ev,sizeof(struct input_event));
-
-	static ofKeyEventArgs keyEvent;
+	
 	bool pushKeyEvent = false;
-
-	while(nBytesRead >= 0) {
-
-		if (ev.type==EV_KEY) {
-			if(ev.value == 0) {
-				// key released
-				keyEvent.type = ofKeyEventArgs::Released;
-			} else if(ev.value == 1) {
-				// key pressed
-				keyEvent.type = ofKeyEventArgs::Pressed;
-			} else if(ev.value == 2) {
-				// key repeated
-				keyEvent.type = ofKeyEventArgs::Pressed;
-			} else {
-				// unknown ev.value
-			}
-
-			switch (ev.code) {
-			case KEY_RIGHTSHIFT:
-			case KEY_LEFTSHIFT:
-				kb.shiftPressed = ev.value;
-				break;
-			case KEY_RIGHTCTRL:
-			case KEY_LEFTCTRL:
-				break;
-			case KEY_CAPSLOCK:
-				if (ev.value == 1) {
-					if (kb.capsLocked) {
-						kb.capsLocked = 0;
-					} else {
-						kb.capsLocked = 1;
-					}
-				}
-				break;
-
-			case KEY_ESC:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_ESC;
-				break;
-			case KEY_BACKSPACE:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_BACKSPACE;
-				break;
-			case KEY_DELETE:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_DEL;
-				break;
-			case KEY_F1:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F1;
-				break;
-			case KEY_F2:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F2;
-				break;
-			case KEY_F3:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F3;
-				break;
-			case KEY_F4:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F4;
-				break;
-			case KEY_F5:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F5;
-				break;
-			case KEY_F6:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F6;
-				break;
-			case KEY_F7:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F7;
-				break;
-			case KEY_F8:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F8;
-				break;
-			case KEY_F9:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F9;
-				break;
-			case KEY_F10:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F10;
-				break;
-			case KEY_F11:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F11;
-				break;
-			case KEY_F12:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_F12;
-				break;
-			case KEY_LEFT:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_LEFT;
-				break;
-			case KEY_UP:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_UP;
-				break;
-			case KEY_RIGHT:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_RIGHT;
-				break;
-			case KEY_DOWN:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_DOWN;
-				break;
-			case KEY_PAGEUP:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_PAGE_UP;
-				break;
-			case KEY_PAGEDOWN:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_PAGE_DOWN;
-				break;
-			case KEY_HOME:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_HOME;
-				break;
-			case KEY_END:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_END;
-				break;
-			case KEY_INSERT:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_INSERT;
-				break;
-			case KEY_ENTER:
-			case KEY_KPENTER:
-				pushKeyEvent = true;
-				keyEvent.key = OF_KEY_RETURN;
-				break;
-
-			default:
-				// VERY RUDIMENTARY KEY MAPPING WITH MAPS ABOVE
-				if(ev.code < sizeof(lowercase_map)) {
-					if (kb.shiftPressed) {
-						key = uppercase_map[ev.code];
-						if (kb.capsLocked) keyEvent.key = tolower(key);
-						keyEvent.key = key;
-						pushKeyEvent = true;
-					} else {
-						key = lowercase_map[ev.code];
-						if (kb.capsLocked) key = toupper(key);
-						keyEvent.key = key;
-						pushKeyEvent = true;
-					}
-				} else {
-					ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents(): input_event.code is outside of our small range";
-				}
-			}
-		} else if(ev.type == EV_MSC) {
-			// EV_MSC events are used for input and output events that
-			// do not fall under other categories.
-			// ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents(): EV_MSC";
-		} else if(ev.type == EV_SYN ) {
-			// EV_SYN Used as markers to separate events. Events may be
-			// separated in time or in space, such as with the multitouch protocol.
-			// ofLogVerbose("ofAppEGLWindow") << "readKeyboardEvents(): EV_SYN";
-		} else {
-			// unhandled type
-		}
-
-		// do we have a mouse svent to push?
-		if(pushKeyEvent){
-			lock();
-			keyEvents.push(keyEvent);
-			unlock();
-			pushKeyEvent = false;
-		}
-
-		nBytesRead = read(keyboard_fd, &ev,sizeof(struct input_event));
-	}
-}
-
-//------------------------------------------------------------
-void ofAppEGLWindow::readNativeMouseEvents() {
-	// http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
-	struct input_event ev;
-
-	static ofMouseEventArgs mouseEvent;
-
 	bool pushMouseEvent = false;
-
-	int nBytesRead = read(mouse_fd, &ev,sizeof(struct input_event));
-
+	bool pushTouchEvent = false;
 	bool axisValuePending = false;
+	bool touchAxisValuePending = false;
 
-	while(nBytesRead >= 0) {
-
-		if(ev.type == EV_REL || ev.type == EV_ABS) {
-			int axis = ev.code;
-			int amount = ev.value;
-
-			switch(axis) {
-			case 0:
-				if(ev.type == EV_REL) {
-					mouseEvent.x += amount * mouseScaleX;
-				} else {
-					mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
-				}
-
-				mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
-				axisValuePending = true;
-				break;
-			case 1:
-				if(ev.type == EV_REL) {
-					mouseEvent.y += amount * mouseScaleY;
-				} else {
-					mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
-				}
-
-				mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
-				axisValuePending = true;
-				break;
-			default:
-				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?)";
-				break;
-			}
-
-		} else if(ev.type == EV_KEY) {
-			// only tracking three buttons now ...
-			if(ev.code == BTN_LEFT) {
-				if(ev.value == 0) { // release
+	int nBytesRead = read(fd, &ev, sizeof(struct input_event));
+	while(nBytesRead >= 0){
+		if(ev.type == EV_KEY){
+			if(ev.code == BTN_LEFT){
+				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << endl;
+				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
-				mouseEvent.type = ofMouseEventArgs::Released;
-				mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
-				pushMouseEvent = true;
-				} else if(ev.value == 1) { // press
+					mouseEvent.type = ofMouseEventArgs::Released;
+					mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
+					pushMouseEvent = true;
+				}else if(ev.value == 1){ // press
 					mb.mouseButtonState |= MOUSE_BUTTON_LEFT_MASK;
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					pushMouseEvent = true;
-				} else { // unknown
-					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.value = " << ev.value;
 				}
-			} else if(ev.code == BTN_MIDDLE) {
-				if(ev.value == 0) { // release
+			}else if(ev.code == BTN_MIDDLE){
+				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << endl;
+				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					mouseEvent.type = ofMouseEventArgs::Released;
 					mb.mouseButtonState &= ~MOUSE_BUTTON_MIDDLE_MASK;
 					pushMouseEvent = true;
-				} else if(ev.value == 1) { // press
+				}else if(ev.value == 1){ // press
 					mb.mouseButtonState |= MOUSE_BUTTON_MIDDLE_MASK;
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					pushMouseEvent = true;
-				} else { // unknown
-					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.value = " << ev.value;
 				}
-			} else if(ev.code == BTN_RIGHT) {
-				if(ev.value == 0) { // release
+			}else if(ev.code == BTN_RIGHT){
+				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << endl;
+				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					mouseEvent.type = ofMouseEventArgs::Released;
 					mb.mouseButtonState &= ~MOUSE_BUTTON_RIGHT_MASK;
 					pushMouseEvent = true;
-				} else if(ev.value == 1) { // press
+				}else if(ev.value == 1){ // press
 					mb.mouseButtonState |= MOUSE_BUTTON_RIGHT_MASK;
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					pushMouseEvent = true;
-				} else {
-					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.value = " << ev.value;
 				}
-			} else {
-				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): EV_KEY : unknown ev.code = " << ev.code;
-			}
-			// not sure why we are getting that event here
-		} else if(ev.type == EV_MSC) {
-			// EV_MSC events are used for input and output events that
-			// do not fall under other categories.
-			// ofLogVerbose("ofAppEGLWindow") << "readMouseEvents() : EV_MSC";
-		} else if(ev.type == EV_SYN ) {
-			// EV_SYN Used as markers to separate events. Events may be
-			// separated in time or in space, such as with the multitouch protocol.
+			}else if(ev.code == BTN_TOUCH){
+				if(ev.value == 0){ // release	
+					touchEvent.type = ofTouchEventArgs::up;
+					touchEvent.id = 0;
+					mt[touchEvent.id] = 0;
+					pushTouchEvent = true;
 
+				}else if(ev.value == 1){ // press
+					touchEvent.type = ofTouchEventArgs::down;
+					touchEvent.id = 0;
+					mt[touchEvent.id] = 1;
+					pushTouchEvent = true;
+				}
+			}else{
+				if(ev.value == 0){
+					// key released
+					keyEvent.type = ofKeyEventArgs::Released;
+				}else if(ev.value == 1){
+					// key pressed
+					keyEvent.type = ofKeyEventArgs::Pressed;
+				}else if(ev.value == 2){
+					// key repeated
+					keyEvent.type = ofKeyEventArgs::Pressed;
+				}else{
+					// unknown ev.value
+				}
+				switch (ev.code) {
+					case KEY_RIGHTSHIFT:
+					case KEY_LEFTSHIFT:
+						kb.shiftPressed = ev.value;
+						break;
+					case KEY_RIGHTCTRL:
+					case KEY_LEFTCTRL:
+						break;
+					case KEY_CAPSLOCK:
+						if (ev.value == 1) {
+							if (kb.capsLocked) {
+								kb.capsLocked = 0;
+							} else {
+								kb.capsLocked = 1;
+							}
+						}
+						break;
+					case KEY_ESC:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_ESC;
+						break;
+					case KEY_BACKSPACE:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_BACKSPACE;
+						break;
+					case KEY_DELETE:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_DEL;
+						break;
+					case KEY_F1:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F1;
+						break;
+					case KEY_F2:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F2;
+						break;
+					case KEY_F3:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F3;
+						break;
+					case KEY_F4:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F4;
+						break;
+					case KEY_F5:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F5;
+						break;
+					case KEY_F6:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F6;
+						break;
+					case KEY_F7:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F7;
+						break;
+					case KEY_F8:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F8;
+						break;
+					case KEY_F9:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F9;
+						break;
+					case KEY_F10:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F10;
+						break;
+					case KEY_F11:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F11;
+						break;
+					case KEY_F12:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_F12;
+						break;
+					case KEY_LEFT:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_LEFT;
+						break;
+					case KEY_UP:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_UP;
+						break;
+					case KEY_RIGHT:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_RIGHT;
+						break;
+					case KEY_DOWN:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_DOWN;
+						break;
+					case KEY_PAGEUP:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_PAGE_UP;
+						break;
+					case KEY_PAGEDOWN:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_PAGE_DOWN;
+						break;
+					case KEY_HOME:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_HOME;
+						break;
+					case KEY_END:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_END;
+						break;
+					case KEY_INSERT:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_INSERT;
+						break;
+					case KEY_ENTER:
+					case KEY_KPENTER:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_RETURN;
+						break;
+					default:
+						// VERY RUDIMENTARY KEY MAPPING WITH MAPS ABOVE
+						if(ev.code < sizeof(lowercase_map)){
+							if(kb.shiftPressed){
+								key = uppercase_map[ev.code];
+								if(kb.capsLocked) keyEvent.key = tolower(key);
+								keyEvent.key = key;
+								pushKeyEvent = true;
+							}else{
+								key = lowercase_map[ev.code];
+								if(kb.capsLocked) key = toupper(key);
+								keyEvent.key = key;
+								pushKeyEvent = true;
+							}
+						}else{
+							ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents(): input_event.code is outside of our small range";
+						}
+				}	
+			}
+		}else if (ev.type == EV_REL){
+			int axis = ev.code;
+			int amount = ev.value;
+			switch (axis)
+			{
+			case REL_X:
+				mouseEvent.x += amount * mouseScaleX;
+				mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+				axisValuePending = true;
+				break;
+			case REL_Y:
+				mouseEvent.y += amount * mouseScaleY;
+				mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+				axisValuePending = true;
+				break;
+			default:
+				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << endl;
+				break;
+			}
+		}else if (ev.type == EV_ABS){
+			int axis = ev.code;
+			int amount = ev.value;
+			switch (axis)
+			{
+				// do not need this mouse returns REL_X/REL_Y
+				case ABS_X:
+					// mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+					// mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+					// axisValuePending = true;
+					break;
+				case ABS_Y:
+					// mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+					// mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+					// axisValuePending = true;
+					break;
+				case ABS_MT_TOOL_TYPE:
+					break;
+				case ABS_MT_SLOT:
+					touchEvent.id = amount;
+					break;
+				case ABS_MT_TRACKING_ID:
+					if (amount == -1)
+					{
+						if( mt[touchEvent.id] == 1){
+							touchEvent.type = ofTouchEventArgs::up;
+							mt[touchEvent.id] = 0;
+							pushTouchEvent = true;
+						}
+					}
+					else 
+					{
+						if (mt[touchEvent.id] == 0){
+							touchEvent.type = ofTouchEventArgs::down;
+							mt[touchEvent.id] = 1;
+							pushTouchEvent = true;
+						}
+						touchAxisValuePending = true;
+					}
+					break;
+				case ABS_MT_POSITION_X:
+					mtp[touchEvent.id].x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+					mtp[touchEvent.id].x = ofClamp(mtp[touchEvent.id].x, 0, currentWindowRect.width);
+					touchAxisValuePending = true;
+					break;
+				case ABS_MT_POSITION_Y:
+					mtp[touchEvent.id].y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+					mtp[touchEvent.id].y = ofClamp(mtp[touchEvent.id].y, 0, currentWindowRect.height);
+					if(!pushTouchEvent){
+						touchEvent.type = ofTouchEventArgs::move;
+						pushTouchEvent = true;
+					}
+					touchAxisValuePending = true;
+					break;
+				default:
+					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << endl;
+					break;
+			}
+		}else if(ev.type == EV_MSC){
+		}else if(ev.type == EV_SYN){
+			// EV_SYN Used as markers to separate events. Events may be
+			// separated in time or in space, suc8h as with the multitouch protocol.
 			// EV_SYN events are sent when axis value (one or a pair) are changed
-			if(axisValuePending) {
+			if(axisValuePending){
 				// TODO, this state doesn't make as much sense when the mouse is not dragging
-				if(mb.mouseButtonState > 0) {
+				if(mb.mouseButtonState > 0){
 					// dragging (what if dragging w/ more than one button?)
 					mouseEvent.type = ofMouseEventArgs::Dragged;
-				} else {
+				}else{
 					// just moving
 					mouseEvent.type = ofMouseEventArgs::Moved;
 				}
@@ -1843,12 +1827,25 @@ void ofAppEGLWindow::readNativeMouseEvents() {
 				axisValuePending = false;
 			}
 
-			//ofLogVerbose("ofAppEGLWindow") << "readMouseEvents(): EV_SYN";
-		} else {
-			// unhandled type
+			if(touchAxisValuePending){
+				if(!pushTouchEvent){
+					touchEvent.type = ofTouchEventArgs::move;
+					pushTouchEvent = true;
+				}
+				touchAxisValuePending = false;
+			}
 		}
 
-		// do we have a mouse event to push?
+		
+		
+
+		if(pushKeyEvent){
+			lock();
+			keyEvents.push(keyEvent);
+			unlock();
+			pushKeyEvent = false;
+		}
+		
 		if(pushMouseEvent){
 			// lock the thread for a moment while we copy the data
 			lock();
@@ -1857,12 +1854,88 @@ void ofAppEGLWindow::readNativeMouseEvents() {
 			pushMouseEvent = false;
 		}
 
-		nBytesRead = read(mouse_fd, &ev,sizeof(struct input_event));
+		if(pushTouchEvent){
+			touchEvent.x = mtp[touchEvent.id].x;
+			touchEvent.y = mtp[touchEvent.id].y;
+			lock();
+			touchEvents.push(touchEvent);
+			unlock();
+			pushTouchEvent = false;
+		}
+		nBytesRead = read(fd, &ev,sizeof(struct input_event));
 	}
-
 }
 
-#ifdef TARGET_RASPBERRY_PI
+//------------------------------------------------------------
+void ofAppEGLWindow::readNativeUDevEvents() {
+	// look for devices being attatched / detatched
+	fd_set fds;
+	struct timeval tv;
+	int ret;
+	struct udev_device *dev;
+	bool is_mouse = false;
+
+	FD_ZERO(&fds);
+	FD_SET(udev_fd, &fds);
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+
+	ret = select(udev_fd+1, &fds, NULL, NULL, &tv);
+
+	/* Check if our file descriptor has received data. */
+	if(ret > 0 && FD_ISSET(udev_fd, &fds)){
+		/* Make the call to receive the device.
+		   select() ensured that this will not block. */
+		dev = udev_monitor_receive_device(mon);
+		if(dev){
+			const char * devnode = udev_device_get_devnode(dev);
+			const char * devpath = udev_device_get_devpath(dev);
+			const char * sysname = udev_device_get_sysname(dev);
+			const char * subsystem = udev_device_get_subsystem(dev);
+			const char * devtype = udev_device_get_devtype(dev);
+			dev_t devnum = udev_device_get_devnum(dev);
+			const char * driver = udev_device_get_driver(dev);
+			const char * action = udev_device_get_action(dev);
+			const char * prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
+			const char * prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
+
+			ofLogNotice("readNativeUDevEvents") << "udev monitor receive devixe";
+			ofLogNotice() << " - node: " << devnode;
+			ofLogNotice() << " - devpath: " << devpath;
+			ofLogNotice() << " - sysname: " << sysname;
+			ofLogNotice() << " - subsystem: " << subsystem;
+			ofLogNotice() << " - devtype: " << devtype;
+			ofLogNotice() << " - devnum: " << devnum;
+			ofLogNotice() << " - driver: " << driver;
+			ofLogNotice() << " - action: " << action;
+			ofLogNotice() << " - ID_INPUT_KEYBOARD: " << prop_keyboard;
+			ofLogNotice() << " - ID_INPUT_MOUSE: " << prop_mouse;
+
+			if(prop_mouse){
+				is_mouse = true;
+			}
+            if(devnode && (prop_keyboard || prop_mouse) && string_begins_with(sysname, "event")){
+                if(strcmp(action, "add") == 0){
+					addInput(devnode, is_mouse);
+                }else if(strcmp(action, "remove") == 0){
+					removeInput(devnode);
+                }
+            }
+			
+			udev_device_unref(dev);
+		}else{
+			ofLogNotice("ofAppEGLWindow") << "readNativeUDevEvents(): device returned by receive_device() is NULL";
+		}
+	}
+}
+
+void ofAppEGLWindow::readNativeInputEvents(){
+	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
+		processInput(iter->second, iter->first.c_str());
+	}
+}
+
+#ifdef TARGET_RASPBERRY_PI_LEGACY
 //------------------------------------------------------------
 void ofAppEGLWindow::initRPiNative() {
 	bcm_host_init();
@@ -2155,6 +2228,7 @@ static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int e
 void ofAppEGLWindow::handleX11Event(const XEvent& event){
 	ofMouseEventArgs mouseEvent;
 	ofKeyEventArgs keyEvent;
+
 	switch (event.type){
 	case KeyPress:
 	case KeyRelease:

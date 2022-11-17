@@ -1,7 +1,6 @@
 #include "ofGLRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofMesh.h"
 #include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
@@ -14,9 +13,11 @@
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
-const string ofGLRenderer::TYPE="GL";
+const std::string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
@@ -102,7 +103,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					glTexCoordPointer(2, GL_FLOAT, sizeof(glm::vec2), &vertexData.getTexCoordsPointer()->x);
 			}else{
-				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				std::set<int>::iterator textureLocation = textureLocationsEnabled.begin();
 				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
 					glActiveTexture(GL_TEXTURE0+*textureLocation);
 					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
@@ -138,7 +139,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 #else
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+			glVertexPointer(3, GL_FLOAT, sizeof(typename ofMesh::VertexType), vertexData.getVerticesPointer());
 		}
 		if(vertexData.getNumNormals() && useNormals){
 			glEnableClientState(GL_NORMAL_ARRAY);
@@ -152,14 +153,14 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		if(vertexData.getNumTexCoords() && useTextures){
 			if(textureLocationsEnabled.size() == 0){
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(typename ofMesh::TexCoordType), &vertexData.getTexCoordsPointer()->x);
 			}else{
-				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				std::set<int>::iterator textureLocation = textureLocationsEnabled.begin();
 				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
 					glActiveTexture(GL_TEXTURE0+*textureLocation);
 					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(typename ofMesh::TexCoordType), &vertexData.getTexCoordsPointer()->x);
 				}
 				glActiveTexture(GL_TEXTURE0);
 				glClientActiveTexture(GL_TEXTURE0);
@@ -469,7 +470,7 @@ void ofGLRenderer::begin(const ofFbo & fbo, ofFboMode mode){
     if(mode & OF_FBOMODE_PERSPECTIVE){
 		setupScreenPerspective();
 	}else{
-		glm::mat4 m;
+		glm::mat4 m = glm::mat4(1.0);
 		glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(m));
 		m =  matrixStack.getOrientationMatrixInverse() * m;
 		ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
@@ -574,6 +575,22 @@ void ofGLRenderer::unbind(const ofBaseMaterial &){
 	}
 }
 
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
+
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow) {};
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow, GLenum aCubeFace) {};
+
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofTexture & texture, int location){
 	//we could check if it has been allocated - but we don't do that in draw()
@@ -586,7 +603,7 @@ void ofGLRenderer::bind(const ofTexture & texture, int location){
 	if(ofGetUsingNormalizedTexCoords()) {
 		matrixMode(OF_MATRIX_TEXTURE);
 		pushMatrix();
-		glm::mat4 m;
+		glm::mat4 m = glm::mat4(1.0);
 
 #ifndef TARGET_OPENGLES
 		if(texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
@@ -640,7 +657,7 @@ void ofGLRenderer::unbind(const ofCamera & camera){
 void ofGLRenderer::pushView() {
 	getCurrentViewport();
 
-	glm::mat4 m;
+	glm::mat4 m = glm::mat4(1.0);
 	ofMatrixMode matrixMode = matrixStack.getCurrentMatrixMode();
 	glGetFloatv(GL_PROJECTION_MATRIX,glm::value_ptr(m));
 	matrixStack.matrixMode(OF_MATRIX_PROJECTION);
@@ -945,7 +962,7 @@ void ofGLRenderer::loadMatrix (const float *m){
  *	@param	matrixMode_  Which matrix mode to query
  */
 glm::mat4 ofGLRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
-	glm::mat4 mat;
+	glm::mat4 mat = glm::mat4(1.0);
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
 			glGetFloatv(GL_MODELVIEW_MATRIX, glm::value_ptr(mat));
@@ -971,7 +988,7 @@ glm::mat4 ofGLRenderer::getCurrentOrientationMatrix() const {
 //----------------------------------------------------------
 void ofGLRenderer::multMatrix (const glm::mat4 & m){
 	if(matrixStack.getCurrentMatrixMode()==OF_MATRIX_PROJECTION){
-		glm::mat4 current;
+		glm::mat4 current = glm::mat4(1.0);
 		glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(current));
 		if(matrixStack.customMatrixNeedsFlip()){
 			current = glm::scale(current, glm::vec3(1,-1,1));
@@ -1505,7 +1522,7 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(string textString, float x, float y, float z) const{
+void ofGLRenderer::drawString(std::string textString, float x, float y, float z) const{
 
 	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	float sx = 0;
@@ -1598,7 +1615,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 
 			rViewport = getCurrentViewport();
 
-			glm::mat4 modelview, projection;
+			glm::mat4 modelview = glm::mat4(1.0), projection = glm::mat4(1.0);
 			glGetFloatv(GL_MODELVIEW_MATRIX, glm::value_ptr(modelview));
 			glGetFloatv(GL_PROJECTION_MATRIX, glm::value_ptr(projection));
 			glm::mat4 mat = matrixStack.getOrientationMatrixInverse() * projection * modelview;
@@ -1681,7 +1698,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+void ofGLRenderer::drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const{
 	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	bool blendEnabled = glIsEnabled(GL_BLEND);
 	GLint blend_src, blend_dst;
@@ -1956,8 +1973,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		pixels.mirror(false,true);
 		break;
 	case OF_ORIENTATION_90_RIGHT:
-		swap(w,h);
-		swap(x,y);
+		std::swap(w,h);
+		std::swap(x,y);
 		if(!isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;
@@ -1971,8 +1988,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		pixels.mirror(true,true);
 		break;
 	case OF_ORIENTATION_90_LEFT:
-		swap(w, h);
-		swap(x, y);
+		std::swap(w, h);
+		std::swap(x, y);
 		if(isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;

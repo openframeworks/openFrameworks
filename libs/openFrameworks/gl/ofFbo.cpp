@@ -13,7 +13,8 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-using namespace std;
+using std::map;
+using std::vector;
 
 /*
 
@@ -25,7 +26,7 @@ using namespace std;
 
  */
 
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) & !defined(TARGET_EMSCRIPTEN)
 	bool ofFbo::bglFunctionsInitialized=false;
 	
 	typedef void (* glGenFramebuffersType) (GLsizei n, GLuint* framebuffers);
@@ -237,7 +238,7 @@ dirty(false),
 defaultTextureIndex(0),
 bIsAllocated(false)
 {
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) & !defined(TARGET_EMSCRIPTEN)
 	if(!bglFunctionsInitialized){
 		if(ofIsGLProgrammableRenderer()){
 			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffers");
@@ -843,7 +844,7 @@ void ofFbo::begin(bool setupScreen) const{
 }
 
 
-void ofFbo::begin(ofFboMode mode){
+void ofFbo::begin(ofFboMode mode) const{
     auto renderer = settings.renderer.lock();
     if(renderer){
         renderer->begin(*this, mode);
@@ -918,7 +919,7 @@ void ofFbo::flagDirty() const{
 		// flagged dirty at activation, so we can be sure all buffers which have 
 		// been rendered to are flagged dirty.
 		// 
-		int numBuffersToFlag = min(dirty.size(), activeDrawBuffers.size());
+		int numBuffersToFlag = std::min(dirty.size(), activeDrawBuffers.size());
 		for(int i=0; i < numBuffersToFlag; i++){
 			dirty[i] = true;
 		}
@@ -1115,11 +1116,14 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 		auto renderer = settings.renderer.lock();
 		if(renderer){
+			GLint readBuffer;
+			glGetIntegerv(GL_READ_BUFFER, &readBuffer);
+			
 			renderer->bindForBlitting(*this,*this,attachmentPoint);
 			glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			renderer->unbind(*this);
-		
-			glReadBuffer(GL_BACK);
+			
+			glReadBuffer(readBuffer);
 		}
 
 		if(!ofIsGLProgrammableRenderer()){

@@ -129,7 +129,7 @@ public:
 
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
-		int received = 0;
+		std::size_t received = 0;
 		do{
 			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
 			ofxTest(ret>0, "received blocking from server");
@@ -164,7 +164,7 @@ public:
 		ofxTest(client.sendRawBytes(messageSent.c_str(), messageSent.size()), "send blocking from client");
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
-		int received = 0;
+		std::size_t received = 0;
 		do{
 			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
 			ofxTest(ret>0, "received blocking from server");
@@ -223,7 +223,7 @@ public:
 		auto now = ofGetElapsedTimeMillis();
 		// seems timers in the test servers are not very accurate so
 		// we test this with a margin of 500ms
-		ofxTestGt(now-then, 4500, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
+		ofxTestGt(now-then, std::uint64_t(4500), "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 		done.notify_all();
 		serverThread.join();
 	}

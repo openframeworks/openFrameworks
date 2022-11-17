@@ -352,7 +352,7 @@ public:
 	};
 
 	void setMode(Mode mode);
-	Mode getMode();
+	Mode getMode() const;
 
 	/// \}
 	/// \name Path Commands

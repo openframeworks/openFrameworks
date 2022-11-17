@@ -88,13 +88,17 @@ class ofxCvImage : public ofBaseImage {
     virtual const ofPixels&		getRoiPixels() const;
     virtual const IplImage*  getCvImage() const { return cvImage; };
 
-
+    // Access the IplImage as the more modern cv::Mat
+    // Might need to call ofxCvImage::flagImageChanged() if you want extenral changes to show up in the ofxCvImage texture or pixels
+    virtual cv::Mat getCvMat() { return  cv::cvarrToMat(getCvImage()); };
+    virtual const cv::Mat getCvMat() const { return  cv::cvarrToMat(getCvImage()); };
+	
     // Draw Image
     //
     virtual void updateTexture();
     virtual void draw( float x, float y ) const;
     virtual void draw( float x, float y, float w, float h ) const;
-	virtual void draw(const ofPoint & point) const;
+	virtual void draw(const glm::vec2 & point) const;
 	virtual void draw(const ofRectangle & rect) const;
     virtual void drawROI( float x, float y ) const;
     virtual void drawROI( float x, float y, float w, float h ) const;

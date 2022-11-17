@@ -22,7 +22,7 @@ void ofApp::setup(){
 	ofBackground(50, 50, 50, 0);
 
 	//we need to call this for textures to work on models
-    ofDisableArbTex();
+	ofDisableArbTex();
 
 	//this makes sure that the back of the model doesn't show through the front
 	ofEnableDepthTest();
@@ -32,7 +32,7 @@ void ofApp::setup(){
 	model.setPosition(ofGetWidth()*.5, ofGetHeight() * 0.75, 0);
 
 	light.enable();
-    light.setPosition(model.getPosition() + ofPoint(0, 0, 1600));
+	light.setPosition(model.getPosition() + glm::vec3(0, 0, 1600));
 }
 
 //--------------------------------------------------------------
@@ -42,7 +42,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofSetColor(255, 255, 255, 255);
+	ofSetColor(255, 255, 255, 255);
 
 	//first let's just draw the model with the model object
 	//drawWithModel();
@@ -55,7 +55,7 @@ void ofApp::draw(){
 void ofApp::drawWithModel(){
 
 	//get the position of the model
-	ofVec3f position = model.getPosition();
+	glm::vec3 position = model.getPosition();
 
 	//save the current view
 	ofPushMatrix();
@@ -70,27 +70,27 @@ void ofApp::drawWithModel(){
 	model.drawFaces();
 
 	//restore the view position
-    ofPopMatrix();
+	ofPopMatrix();
 }
 
 //draw the model manually
 void ofApp::drawWithMesh(){
 
 	//get the model attributes we need
-	ofVec3f scale = model.getScale();
-	ofVec3f position = model.getPosition();
+	glm::vec3 scale = model.getScale();
+	glm::vec3 position = model.getPosition();
 	float normalizedScale = model.getNormalizedScale();
 	ofVboMesh mesh = model.getMesh(0);
 	ofTexture texture;
-    ofxAssimpMeshHelper& meshHelper = model.getMeshHelper( 0 );
-    bool bHasTexture = meshHelper.hasTexture();
-    if( bHasTexture ) {
-        texture = model.getTextureForMesh(0);
-    }
+	ofxAssimpMeshHelper& meshHelper = model.getMeshHelper( 0 );
+	bool bHasTexture = meshHelper.hasTexture();
+	if( bHasTexture ) {
+		texture = model.getTextureForMesh(0);
+	}
 
 	ofMaterial material = model.getMaterialForMesh(0);
 
-    ofPushMatrix();
+	ofPushMatrix();
 
 	//translate and scale based on the positioning.
 	ofTranslate(position);
@@ -105,7 +105,7 @@ void ofApp::drawWithMesh(){
 	float liquidness = 5;
 	float amplitude = mouseY/100.0;
 	float speedDampen = 5;
-    auto &verts = mesh.getVertices();
+	auto &verts = mesh.getVertices();
 
 	for(unsigned int i = 0; i < verts.size(); i++){
 		verts[i].x += ofSignedNoise(verts[i].x/liquidness, verts[i].y/liquidness,verts[i].z/liquidness, ofGetElapsedTimef()/speedDampen)*amplitude;

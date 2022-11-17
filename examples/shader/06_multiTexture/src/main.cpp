@@ -3,14 +3,18 @@
 
 //========================================================================
 int main( ){
-    
+	
+#ifdef OF_TARGET_OPENGLES
+	ofGLESWindowSettings settings;
+	settings.glesVersion=2;
+#else
 	ofGLWindowSettings settings;
 	settings.setGLVersion(3,2);
-	ofCreateWindow(settings);
-    
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp(new ofApp());
-    
+#endif
+
+	auto window = ofCreateWindow(settings);
+
+	ofRunApp(window, make_shared<ofApp>());
+	ofRunMainLoop();
+	
 }

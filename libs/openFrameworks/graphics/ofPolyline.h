@@ -21,7 +21,7 @@
 /// 	float r = (2-2*sin(i) + sin(i)*sqrt(abs(cos(i))) / (sin(i)+1.4)) * -80;
 /// 	float x = ofGetWidth()/2 + cos(i) * r;
 /// 	float y = ofGetHeight()/2 + sin(i) * r;
-/// 	line.addVertex(ofVec2f(x,y));
+/// 	line.addVertex(glm::vec2(x,y));
 /// 	i+=0.005*HALF_PI*0.5;
 /// }
 /// line.close(); // close the shape
@@ -55,13 +55,15 @@ class ofRectangle;
 template<class T>
 class ofPolyline_ {
 public:
+    using VertexType = T;
+    
 	/// \name Constructors
 	/// \{
 
 	/// \brief Creates an ofPolyline.
 	ofPolyline_();
 
-	/// \brief Creates an ofPolyline from a vector of ofVec2f or T objects.
+	/// \brief Creates an ofPolyline from a vector of glm::vec2 or T objects.
 	ofPolyline_(const std::vector<T>& verts);
 
 	static ofPolyline_ fromRectangle(const ofRectangle& rect);
@@ -107,6 +109,15 @@ public:
 
 	void insertVertex(const T &p, int index);
 	void insertVertex(float x, float y, float z, int index);
+
+
+	/// \brief Remove a vertex at a given index.
+	///
+	/// This function print an error and ignore the input if the index is
+	/// invalid. When a vertex is removed, the internal caches are cleared.
+	///
+	/// \param index The index of the vertex to remove.
+	void removeVertex(int index);
 
 	/// \brief Resize the number of points in the ofPolyline to the value
 	/// passed in.
@@ -557,7 +568,7 @@ using ofPolyline = ofPolyline_<ofDefaultVertexType>;
 /// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of glm::vec3s.
 /// \param x The x dimension of the coordinate.
 /// \param y The y dimension of the coordinate.
-/// \param poly a vector of glm::vec3s defining a polygon.
+/// \param polygon a vector of glm::vec3s defining a polygon.
 /// \returns True if the point defined by the coordinates is enclosed, false otherwise.
 template<class T>
 bool ofInsidePoly(float x, float y, const std::vector<T>& polygon){

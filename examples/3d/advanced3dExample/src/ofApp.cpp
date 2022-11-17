@@ -108,7 +108,7 @@ void ofApp::setupViewports(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-   
+
 }
 
 
@@ -185,9 +185,9 @@ void ofApp::draw(){
 	ofDrawRectangle(viewMain);
 
 	// restore the GL depth function
-	
+
 	ofPopStyle();
-	
+
 	//
 	//--
 }
@@ -255,8 +255,8 @@ void ofApp::drawScene(int cameraIndex){
 
 		// Now lets get the inverse ViewProjection
 		//  for the camera
-		ofMatrix4x4 inverseCameraMatrix;
-		inverseCameraMatrix.makeInvertOf(camEasyCam.getModelViewProjectionMatrix(boundsToUse));
+		glm::mat4 inverseCameraMatrix;
+		inverseCameraMatrix = glm::inverse(camEasyCam.getModelViewProjectionMatrix(boundsToUse));
 
 		// By default, we can say
 		//	'we are drawing in world space'
@@ -297,9 +297,9 @@ void ofApp::drawScene(int cameraIndex){
 
 		ofPopMatrix();
 
-		// Alternatively to the above, you may call the built-in method of 
+		// Alternatively to the above, you may call the built-in method of
 		// ofCamera to draw its frustum:
-		// 
+		//
 		// camEasyCam.drawFrustum(boundsToUse);
 
 		ofPopStyle();
@@ -329,8 +329,8 @@ void ofApp::drawScene(int cameraIndex){
 //--------------------------------------------------------------
 void ofApp::updateMouseRay(){
 	// Define ray in screen space
-	ray[0] = ofVec3f(ofGetMouseX(), ofGetMouseY(), -1);
-	ray[1] = ofVec3f(ofGetMouseX(), ofGetMouseY(), 1);
+	ray[0] = glm::vec3(ofGetMouseX(), ofGetMouseY(), -1);
+	ray[1] = glm::vec3(ofGetMouseX(), ofGetMouseY(), 1);
 
 	// Transform ray into world space
 	ray[0] = cameras[iMainCamera]->screenToWorld(ray[0], viewMain);

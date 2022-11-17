@@ -1,15 +1,16 @@
 #include "ofMaterial.h"
-#include "ofConstants.h"
 #include "ofLight.h"
+#include "ofShadow.h"
 #include "ofGLProgrammableRenderer.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::string;
 
 std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
 
 namespace{
 string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor);
-string fragmentSource(string defaultHeader, string customUniforms, string postFragment, int maxLights, bool hasTexture, bool hasColor);
+string fragmentSource(string defaultHeader, string customUniforms, string postFragment, int maxLights, bool hasTexture, bool hasColor, std::map<std::string, bool> aTexDefines = std::map<string, bool>());
 }
 
 
@@ -35,6 +36,8 @@ void ofMaterial::setup(const ofMaterialSettings & settings){
 		uniforms2i.clear();
 		uniforms3i.clear();
 		uniforms4i.clear();
+		mTexDefines.clear();
+		mCustomUniforms.clear();
 	}
 	data = settings;
 }
@@ -57,6 +60,31 @@ void ofMaterial::setEmissiveColor(ofFloatColor oEmissive) {
 
 void ofMaterial::setShininess(float nShininess) {
 	data.shininess = nShininess;
+}
+
+void ofMaterial::setSpecularTexture(const ofTexture & aTex){
+	setCustomUniformTexture("tex_specular", aTex, 2);
+	mTexDefines["HAS_TEX_SPECULAR"] = true;
+}
+
+void ofMaterial::setAmbientTexture(const ofTexture & aTex){
+	setCustomUniformTexture("tex_ambient", aTex, 3);
+	mTexDefines["HAS_TEX_AMBIENT"] = true;
+}
+
+void ofMaterial::setEmissiveTexture(const ofTexture & aTex){
+	setCustomUniformTexture("tex_emissive", aTex, 4);
+	mTexDefines["HAS_TEX_EMISSIVE"] = true;
+}
+
+void ofMaterial::setNormalTexture(const ofTexture & aTex){
+	setCustomUniformTexture("tex_normal", aTex, 5);
+	mTexDefines["HAS_TEX_NORMAL"] = true;
+}
+
+void ofMaterial::setOcclusionTexture(const ofTexture & aTex){
+	setCustomUniformTexture("tex_occlusion", aTex, 6);
+	mTexDefines["HAS_TEX_OCCLUSION"] = true;
 }
 
 void ofMaterial::setData(const ofMaterial::Data &data){
@@ -114,6 +142,13 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
     }
 
     if(shaders[&renderer] == nullptr){
+    
+        //add the custom uniforms to the shader header
+        auto customUniforms = data.customUniforms;
+        for( auto & custom : mCustomUniforms ){
+        	customUniforms += custom.second + " " + custom.first + ";\n";
+        }
+    
         #ifndef TARGET_OPENGLES
             string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
             string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
@@ -124,36 +159,36 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
         shaders[&renderer]->noTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,false));
-        shaders[&renderer]->noTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,false,false));
+        shaders[&renderer]->noTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, customUniforms, data.postFragment,numLights,false,false));
         shaders[&renderer]->noTexture.bindDefaults();
         shaders[&renderer]->noTexture.linkProgram();
 
         shaders[&renderer]->texture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,false));
-        shaders[&renderer]->texture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,true,false));
+        shaders[&renderer]->texture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, customUniforms, data.postFragment,numLights,true,false,mTexDefines));
         shaders[&renderer]->texture2D.bindDefaults();
         shaders[&renderer]->texture2D.linkProgram();
 
         #ifndef TARGET_OPENGLES
             shaders[&renderer]->textureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,false));
-            shaders[&renderer]->textureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader, data.customUniforms, data.postFragment,numLights,true,false));
+            shaders[&renderer]->textureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader, customUniforms, data.postFragment,numLights,true,false,mTexDefines));
             shaders[&renderer]->textureRect.bindDefaults();
             shaders[&renderer]->textureRect.linkProgram();
         #endif
 
         shaders[&renderer]->color.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,true));
-        shaders[&renderer]->color.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,false,true));
+        shaders[&renderer]->color.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, customUniforms, data.postFragment,numLights,false,true));
         shaders[&renderer]->color.bindDefaults();
         shaders[&renderer]->color.linkProgram();
 
 
         shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,true));
-        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,true,true));
+        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, customUniforms, data.postFragment,numLights,true,true,mTexDefines));
         shaders[&renderer]->texture2DColor.bindDefaults();
         shaders[&renderer]->texture2DColor.linkProgram();
 
         #ifndef TARGET_OPENGLES
             shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,true));
-            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader, data.customUniforms, data.postFragment,numLights,true,true));
+            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader, customUniforms, data.postFragment,numLights,true,true,mTexDefines));
             shaders[&renderer]->textureRectColor.bindDefaults();
             shaders[&renderer]->textureRectColor.linkProgram();
         #endif
@@ -165,6 +200,11 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 
 const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const{
     initShaders(renderer);
+	
+	if(bHasCustomShader && customShader){
+		return *customShader;
+	}
+	
 	switch(textureTarget){
 	case OF_NO_TEXTURE:
         if(geometryHasColor){
@@ -288,60 +328,85 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 	}
 }
 
+void ofMaterial::updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
+	// TODO: Where should this start??
+	shader.setShadowUniforms(10);
+}
+
+void ofMaterial::setCustomShader( std::shared_ptr<ofShader> aCustomShader) {
+	customShader = aCustomShader;
+	if( customShader ) {
+		bHasCustomShader = true;
+	}
+}
+
 void ofMaterial::setCustomUniform1f(const std::string & name, float value){
 	uniforms1f[name] = value;
+	mCustomUniforms[name] = "uniform float";
 }
 
 void ofMaterial::setCustomUniform2f(const std::string & name, glm::vec2 value){
 	uniforms2f[name] = value;
+	mCustomUniforms[name] = "uniform vec2";
 }
 
 void ofMaterial::setCustomUniform3f(const std::string & name, glm::vec3 value) {
 	uniforms3f[name] = value;
+	mCustomUniforms[name] = "uniform vec3";
 }
 
 void ofMaterial::setCustomUniform4f(const std::string & name, glm::vec4 value) {
 	uniforms4f[name] = value;
+	mCustomUniforms[name] = "uniform vec4";
 }
 
 void ofMaterial::setCustomUniform1i(const std::string & name, int value) {
 	uniforms1i[name] = value;
+	mCustomUniforms[name] = "uniform int";
 }
 
-void ofMaterial::setCustomUniform2i(const std::string & name, glm::tvec2<int> value) {
+void ofMaterial::setCustomUniform2i(const std::string & name, glm::vec<2,int> value) {
 	uniforms2i[name] = value;
+	mCustomUniforms[name] = "uniform ivec2";
 }
 
-void ofMaterial::setCustomUniform3i(const std::string & name, glm::tvec3<int> value) {
+void ofMaterial::setCustomUniform3i(const std::string & name, glm::vec<3, int> value) {
 	uniforms3i[name] = value;
+	mCustomUniforms[name] = "uniform ivec3";
 }
 
-void ofMaterial::setCustomUniform4i(const std::string & name, glm::tvec4<int> value) {
+void ofMaterial::setCustomUniform4i(const std::string & name, glm::vec<4, int> value) {
 	uniforms4i[name] = value;
+	mCustomUniforms[name] = "uniform ivec4";
 }
 
 void ofMaterial::setCustomUniformMatrix4f(const std::string & name, glm::mat4 value){
 	uniforms4m[name] = value;
+	mCustomUniforms[name] = "uniform mat4";
 }
 
 void ofMaterial::setCustomUniformMatrix3f(const std::string & name, glm::mat3 value){
 	uniforms3m[name] = value;
+	mCustomUniforms[name] = "uniform mat3";
 }
 
 void ofMaterial::setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation){
 	uniformstex[name] = {value.getTextureData().textureTarget, int(value.getTextureData().textureID), textureLocation};
+	mCustomUniforms[name] = "uniform SAMPLER";
 }
 
 void ofMaterial::setCustomUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation){
 	uniformstex[name] = {textureTarget, textureID, textureLocation};
+	mCustomUniforms[name] = "uniform SAMPLER";
 }
 
 #include "shaders/phong.vert"
 #include "shaders/phong.frag"
+#include "shaders/shadow.glsl"
 
 namespace{
     string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
-        header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
+        header += "#define MAX_LIGHTS " + ofToString(std::max(1,maxLights)) + "\n";
         if(hasTexture){
             header += "#define HAS_TEXTURE 1\n";
 		} else {
@@ -359,15 +424,46 @@ namespace{
         return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + vertexShader;
     }
 
-    string fragmentSource(string defaultHeader, string customUniforms,  string postFragment, int maxLights, bool hasTexture, bool hasColor){
+    string fragmentSource(string defaultHeader, string customUniforms,  string postFragment, int maxLights, bool hasTexture, bool hasColor, std::map<std::string, bool> aTexDefines){
         auto source = fragmentShader;
         if(postFragment.empty()){
             postFragment = "vec4 postFragment(vec4 localColor){ return localColor; }";
         }
-		ofStringReplace(source, "%postFragment%", postFragment);
-		ofStringReplace(source, "%custom_uniforms%", customUniforms);
+        ofStringReplace(source, "%postFragment%", postFragment);
+        ofStringReplace(source, "%custom_uniforms%", customUniforms);
+		
+	#ifdef TARGET_OPENGLES
+		ofStringReplace(source, "%shader_shadow_include%", "" );
+	#else
+	if( ofIsGLProgrammableRenderer() ) {
+		ofStringReplace(source, "%shader_shadow_include%", "#define HAS_SHADOWS\n"+shadowShaderInclude );
+	} else {
+		ofStringReplace(source, "%shader_shadow_include%", "" );
+	}
+	#endif
+		
+        //add custom textures to header of fragment shader
+        //eg: #define HAS_TEX_NORMAL 1
+        string mExtraTexturesHeader = "";
 
-        source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + source;
+        for( auto & customTex : aTexDefines){
+        	if( customTex.second ){
+        		mExtraTexturesHeader += "#define "+customTex.first+" 1\n";
+        	}
+        }
+		#ifndef TARGET_OPENGLES
+		GLenum cubeTexTarget = ofShadow::getTextureTarget( OF_LIGHT_POINT );
+		if( cubeTexTarget != GL_TEXTURE_CUBE_MAP ) {
+			mExtraTexturesHeader += "#define SHADOWS_USE_CUBE_MAP_ARRAY 1\n";
+		}
+		
+		GLenum shadowTexTarget = ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL );
+		if( cubeTexTarget != GL_TEXTURE_2D ) {
+			mExtraTexturesHeader += "#define SHADOWS_USE_TEXTURE_ARRAY 1\n";
+		}
+		#endif
+				
+        source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + mExtraTexturesHeader + source;
         return source;
     }
 }

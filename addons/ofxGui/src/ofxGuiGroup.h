@@ -21,7 +21,7 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		template<typename T>
 		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
-			add(new ofxSlider<T>(p));
+			add(createGuiElement< ofxSlider<T> >(p));
 		}
 		void add(ofParameter <void> & parameter);
 		void add(ofParameter <bool> & parameter);
@@ -29,7 +29,8 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		template<typename F>
 		void add(ofReadOnlyParameter <std::string, F> & parameter){
-			add(new ofxLabel(parameter));
+			ownedCollection.emplace_back(std::make_unique<ofxLabel>(parameter));
+			add(ownedCollection.back().get());
 		}
 		void add(ofParameter <ofVec2f> & parameter);
 		void add(ofParameter <ofVec3f> & parameter);
@@ -40,6 +41,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofParameter <ofColor> & parameter);
 		void add(ofParameter <ofShortColor> & parameter);
 		void add(ofParameter <ofFloatColor> & parameter);
+		void add(ofParameter <ofRectangle> & parameter);
 
 		void minimize();
 		void maximize();
@@ -68,23 +70,39 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxToggle & getToggle(const std::string& name);
 		ofxButton & getButton(const std::string& name);
 		ofxGuiGroup & getGroup(const std::string& name);
-
+	
 		ofxBaseGui * getControl(const std::string& name);
 		ofxBaseGui * getControl(std::size_t num);
 
 		virtual ofAbstractParameter & getParameter();
 
-		virtual void setPosition(const ofPoint& p);
+		virtual void setPosition(const glm::vec3& p);
 		virtual void setPosition(float x, float y);
+		
+		void enableHeader();
+		void disableHeader();
+		bool isHeaderEnabled();
+		
+		static float elementSpacing;
+		static float groupSpacing;
+		static float childrenLeftIndent;
+		static float childrenRightIndent;
 	protected:
+	
+		void updateChildrenPositions(bool bUpdateWidth = false);
+		void updateChild(ofxBaseGui* child, const float& x, const float& y, const float& width, bool bUpdateWidth = false);
+		
+		bool bHeaderEnabled = true;
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
 		virtual void onMinimize();
 		virtual void onMaximize();
 
-		float spacing, spacingNextElement;
-		float header;
-
+		
+	
+		ofRectangle headerRect;
+		ofRectangle minimizeRect;
+		
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);
 
@@ -99,6 +117,22 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;
+	
+	template<typename T, typename P>
+	ofxBaseGui* createGuiElement(ofParameter<P>&param, float width = 0, float height = defaultHeight){
+		ownedCollection.emplace_back(std::make_unique<T>(param, (ofIsFloatEqual(width, 0.f)? b.width: width), height));
+		return ownedCollection.back().get();
+	}
+	ofxBaseGui* createGuiGroup(const ofParameterGroup & parameters){
+		ownedCollection.emplace_back(std::make_unique<ofxGuiGroup>(parameters));
+		return ownedCollection.back().get();
+	}
+	
+	private:
+	// This array stores the unique pointers for the elements that this gui group creates, thus owns.
+	// This allowes for correct memory management and no leaks
+	std::vector<std::unique_ptr<ofxBaseGui> > ownedCollection;
+	
 };
 
 template <class ControlType>
@@ -108,7 +142,8 @@ ControlType & ofxGuiGroup::getControlType(const std::string& name){
 		return *control;
 	}else{
 		ofLogWarning() << "getControlType " << name << " not found, creating new";
-		control = new ControlType;
+		ownedCollection.emplace_back(std::make_unique<ControlType>());
+		control =  static_cast<ControlType*> (ownedCollection.back().get());
 		control->setName(name);
 		add(control);
 		return *control;

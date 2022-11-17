@@ -7,9 +7,20 @@ openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welc
 
 ## Build status
 
-Linux, OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframeworks/openFrameworks.svg?branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
+* The **master** branch contains the newest, most recently updated code. This code is packaged and available for download in the "Nightly Builds" section of [openframeworks.cc/download](https://openframeworks.cc/download/).
+* The **stable** branch contains the code corresponding to the last stable openFrameworks release. This stable code is packaged and available for download at [openframeworks.cc/download](https://openframeworks.cc/download/).
 
-Visual studio [![Build status](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi/branch/master?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks/branch/master)
+Platform                     | Master branch  | Stable branch
+-----------------------------|:---------|:---------
+Windows MSYS2        | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-msys2/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-msys2/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+Windows Visual Studio  | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-vs/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-vs/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+Linux 64 & Arm                    | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+Emscripten                   | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions) 
+macos                        | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+iOS & iOS                         | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+Android Arm7                 | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+
+
 
 ## folder structure
 
@@ -23,7 +34,7 @@ This release of OF comes with several folders:
 * libs
 * other
 * scripts
-* project generator
+* projectGenerator
 
 
 `docs` has some documentation around OF usage, per platform things to consider, etc. You should definitely take a look in there; for example, if you are on OSX, read the osx.md.   `apps` and `examples` are where projects go -- `examples` contains a variety of projects that show you how to use OF, and `apps` is where your own projects will go.  `libs` contains the libraries that OF uses, including the openframeworks core itself.  `addons` are for additional functionality that's not part of the core.  `export` is for DLLs and dylibs that need to be put in each compiled project.  The `scripts` folder has the templates and small scripts for automating OF per platform. `project generator` is a GUI based tool for making new projects - this folder is only there in packaged releases.  

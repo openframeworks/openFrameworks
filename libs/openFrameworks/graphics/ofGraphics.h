@@ -4,7 +4,6 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
 #include "glm/fwd.hpp"
-//#include "ofUtils.h"
 
 class ofVec3f;
 class ofVec2f;
@@ -712,7 +711,7 @@ void ofSetupScreen();
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     if(ofGetRectMode() == OF_RECTMODE_CORNER){
-///         ofDrawRea10,10,80,80);
+///         ofDrawRectangle(10,10,80,80);
 ///     }
 ///     else {
 ///         ofDrawRectangle(50,50,80,80);
@@ -935,7 +934,7 @@ void ofSetRectMode(ofRectMode mode);
 /// void ofApp::draw(){
 ///     ofPushMatrix();         // push the current coordinate position
 ///     ofRotateX(90);          // change the coordinate system
-///     ofDrawRea10,10,40,40);  // draw a rect
+///     ofDrawRectangle(10,10,40,40);  // draw a rect
 ///     ofPopMatrix()           // recall the pushed coordinate position
 ///     ofDrawCircle(10, 10, 5);    // draw a circle
 /// }
@@ -1049,7 +1048,7 @@ OF_DEPRECATED_MSG("Use ofRotateZDeg or ofRotateZRad", void ofRotateZ(float degre
 /// and ofPopMatrix() to save and restore the unrotated coordinate system.
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotate(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
+///     ofRotateDeg(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1067,7 +1066,7 @@ void ofRotateDeg(float degrees);
 /// system represented by the vector (1,0,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofRotateXDeg(45); //rotates the coordinate system 45 degrees around the x-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1078,7 +1077,7 @@ void ofRotateXDeg(float degrees);
 /// system represented by the vector (0,1,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
+///     ofRotateYDeg(45); //rotates the coordinate system 45 degrees around the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1089,7 +1088,7 @@ void ofRotateYDeg(float degrees);
 /// system represented by the vector (0,0,1).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofRotateZDeg(45); //rotates the coordinate system 45 degrees around the z-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
@@ -1102,52 +1101,52 @@ void ofRotateZDeg(float degrees);
 /// and ofPopMatrix() to save and restore the unrotated coordinate system.
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotate(50, 1, 0.5, 0); //rotates the coordinate system 50 degrees along the x-axis and 25 degrees on the y-axis
+///     ofRotateRad(M_PI / 2.0f, 1, 0.5, 0); //rotates the coordinate system M_PI / 2.0f radians along the x-axis and M_PI / 4.0f degrees on the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
 ///
-/// \param degrees Specifies the angle of rotation, in degrees.
+/// \param radians Specifies the angle of rotation, in radians.
 /// \param vecX specifies the x coordinates of a vector
 /// \param vecY specifies the y coordinates of a vector
 /// \param vecZ specifies the z coordinates of a vector
-void ofRotateRad(float degrees, float vecX, float vecY, float vecZ);
+void ofRotateRad(float radians, float vecX, float vecY, float vecZ);
 
 /// \brief Rotate around the z-axis
-void ofRotateRad(float degrees);
+void ofRotateRad(float radians);
 
 /// \brief Produces a rotation around the X-axis of our coordinate
 /// system represented by the vector (1,0,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateX(45); //rotates the coordinate system 45 degrees around the x-axis
+///     ofRotateXRad(M_PI / 4.0f); //rotates the coordinate system M_PI / 4.0f radians around the x-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateXRad(float degrees);
+/// \param degrees Specifies the angle of rotation, in radians.
+void ofRotateXRad(float radians);
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
 /// system represented by the vector (0,1,0).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateY(45); //rotates the coordinate system 45 degrees around the y-axis
+///     ofRotateYRad(M_PI / 4.0f); //rotates the coordinate system M_PI / 4.0f radians around the y-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateYRad(float degrees);
+/// \param degrees Specifies the angle of rotation, in radians.
+void ofRotateYRad(float radians);
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
 /// system represented by the vector (0,0,1).
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofRotateZ(45); //rotates the coordinate system 45 degrees around the z-axis
+///     ofRotateZRad(M_PI / 4.0f); //rotates the coordinate system M_PI / 4.0f radians degrees around the z-axis
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in degrees.
-void ofRotateZRad(float degrees);
+/// \param degrees Specifies the angle of rotation, in radians.
+void ofRotateZRad(float radians);
 
 /// \}
 /// \name Matrix Transformation
@@ -1222,41 +1221,6 @@ int ofOrientationToDegrees(ofOrientation orientation);
 
 void ofSetCoordHandedness(ofHandednessType handedness);
 ofHandednessType ofGetCoordHandedness();
-
-/// \}
-/// \name Screen Saving
-/// \{
-
-/// \brief Begin rendering to a PDF file.
-///
-/// openFrameworks allows rendering of 2D graphics to pdf via the
-/// ofCairoRenderer. ofBeginSaveScreenAsPDF() is called before drawing. When
-/// done drawing call ofEndSaveScreenAsPDF() to output the file.
-///
-/// ~~~~{.cpp}
-/// void ofApp::setup(){
-///     ofBeginSaveScreenAsPDF("screenshot.pdf", false);
-///     ofSetColor(54,54,54);
-///     ofDrawEllipse(100,100,200,200);
-///     ofEndSaveScreenAsPDF();
-/// }
-/// ~~~~
-/// \sa End drawing with ofEndSaveScreenAsPDF()
-void ofBeginSaveScreenAsPDF(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
-
-/// \brief Terminates draw to PDF through ofCairoRenderer and outputs the file.
-/// \sa ofBeginSaveScreenAsPDF()
-void ofEndSaveScreenAsPDF();
-
-/// \brief Begin rendering to a SVG file.
-/// \sa ofEndSaveScreenAsSVG(), ofBeginSaveScreenAsPDF()
-void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
-
-/// \brief Terminates draw to SVG and outputs the file.
-/// \sa ofBeginSaveScreenAsSVG()
-void ofEndSaveScreenAsSVG();
-
-/// \}
 
 
 //--------------------------------------------------

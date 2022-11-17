@@ -1,7 +1,8 @@
 #include "ofXml.h"
 #include "ofUtils.h"
+#include <clocale>
 
-using namespace std;
+using std::string;
 
 ofXml::ofXml()
 :doc(new pugi::xml_document){
@@ -16,11 +17,13 @@ ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml
 
 bool ofXml::load(const std::filesystem::path & file){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
-	if(auxDoc->load_file(ofToDataPath(file).c_str())){
+	auto res = auxDoc->load_file(ofToDataPath(file).c_str());
+	if( res ){
 		doc = auxDoc;
 		xml = doc->root();
 		return true;
 	}else{
+		ofLogWarning("ofXml") << "Cannot load file " << file << ": " << res.description();
 		return false;
 	}
 }
@@ -31,7 +34,11 @@ bool ofXml::load(const ofBuffer & buffer){
 
 bool ofXml::parse(const std::string & xmlStr){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
-	if(auxDoc->load(xmlStr.c_str())){
+    #if ( defined(PUGIXML_VERSION) && PUGIXML_VERSION >= 150 )
+        if(auxDoc->load_string(xmlStr.c_str())){
+    #else
+        if(auxDoc->load(xmlStr.c_str())){
+    #endif
 		doc = auxDoc;
 		xml = doc->root();
 		return true;
@@ -42,7 +49,10 @@ bool ofXml::parse(const std::string & xmlStr){
 
 bool ofXml::save(const std::filesystem::path & file) const{
 	if(xml == doc->root()){
-		return doc->save_file(ofToDataPath(file).c_str());
+		auto res = doc->save_file(ofToDataPath(file).c_str());
+		ofLogVerbose("ofXml")<<"save: "<< res;
+		ofLogVerbose("ofXml")<<this->toString();
+		return res;
 	}else{
 		pugi::xml_document doc;
 		if(doc.append_copy(xml.root())){
@@ -52,8 +62,13 @@ bool ofXml::save(const std::filesystem::path & file) const{
 	return false;
 }
 
+void ofXml::clear(){
+	doc.reset(new pugi::xml_document);
+	xml = doc->root();
+}
+
 std::string ofXml::toString(const std::string & indent) const{
-	ostringstream stream;
+	std::ostringstream stream;
 	if(xml == doc->root()){
 		doc->print(stream, indent.c_str());
 	}else{
@@ -145,6 +160,9 @@ ofXml ofXml::getLastChild() const{
 	return ofXml(doc, this->xml.last_child());
 }
 
+ofXml ofXml::getParent() const {
+	return ofXml(doc, this->xml.parent());
+}
 
 ofXml::Attribute ofXml::getAttribute(const std::string & name) const{
 	return this->xml.attribute(name.c_str());
@@ -189,7 +207,7 @@ bool ofXml::removeAttribute(ofXml::Attribute && attr){
 
 ofXml ofXml::findFirst(const std::string & path) const{
 	try{
-		return ofXml(doc, this->xml.select_single_node(path.c_str()).node());
+		return ofXml(doc, this->xml.select_node(path.c_str()).node());
 	}catch(pugi::xpath_exception & e){
 		return ofXml();
 	}
@@ -228,11 +246,19 @@ unsigned int ofXml::getUintValue() const{
 }
 
 float ofXml::getFloatValue() const{
-	return this->xml.text().as_float();
+	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::setlocale( LC_NUMERIC, "C" );
+	float f = this->xml.text().as_float();
+	std::setlocale( LC_NUMERIC, loc );
+	return f;
 }
 
 double ofXml::getDoubleValue() const{
-	return this->xml.text().as_double();
+	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::setlocale( LC_NUMERIC, "C" );
+	float d = this->xml.text().as_double();
+	std::setlocale( LC_NUMERIC, loc );
+	return d;
 }
 
 bool ofXml::getBoolValue() const{
@@ -272,11 +298,19 @@ unsigned int ofXml::Attribute::getUintValue() const{
 }
 
 float ofXml::Attribute::getFloatValue() const{
-	return this->attr.as_float();
+	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::setlocale( LC_NUMERIC, "C" );
+	float f = this->attr.as_float();
+	std::setlocale( LC_NUMERIC, loc );
+	return f;
 }
 
 double ofXml::Attribute::getDoubleValue() const{
-	return this->attr.as_double();
+	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::setlocale( LC_NUMERIC, "C" );
+	float d = this->attr.as_double();
+	std::setlocale( LC_NUMERIC, loc );
+	return d;
 }
 
 bool ofXml::Attribute::getBoolValue() const{

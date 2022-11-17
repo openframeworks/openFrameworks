@@ -6,7 +6,7 @@ import qbs.TextFile
 import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
 
 Project{
-    property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
+    property string of_root: '%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}'
 
     ofApp {
         name: { return FileInfo.baseName(sourceDirectory) }
@@ -19,16 +19,16 @@ Project{
 
         of.addons: [
             %{JS:
-                [].concat(%{ofx3DModelLoader}       ? ['\'ofx3DModelLoader\'']       : [])
-                .concat(%{ofxAssimpModelLoader}     ? ['\'ofxAssimpModelLoader\'']   : [])
-                .concat(%{ofxGui}                   ? ['\'ofxGui\'']                 : [])
-                .concat(%{ofxKinect}                ? ['\'ofxKinect\'']              : [])
-                .concat(%{ofxNetwork}               ? ['\'ofxNetwork\'']             : [])
-                .concat(%{ofxOpenCv}                ? ['\'ofxOpenCv\'']              : [])
-                .concat(%{ofxOsc}                   ? ['\'ofxOsc\'']                 : [])
-                .concat(%{ofxSvg}                   ? ['\'ofxSvg\'']                 : [])
-                .concat(%{ofxVectorGraphics}        ? ['\'ofxVectorGraphics\'']      : [])
-                .concat(%{ofxXmlSettings}           ? ['\'ofxXmlSettings\'']         : []).toString()
+                [].concat(%{ofx3DModelLoader}       ? ["'ofx3DModelLoader'"]       : [])
+                .concat(%{ofxAssimpModelLoader}     ? ["'ofxAssimpModelLoader'"]   : [])
+                .concat(%{ofxGui}                   ? ["'ofxGui'"]                 : [])
+                .concat(%{ofxKinect}                ? ["'ofxKinect'"]              : [])
+                .concat(%{ofxNetwork}               ? ["'ofxNetwork'"]             : [])
+                .concat(%{ofxOpenCv}                ? ["'ofxOpenCv'"]              : [])
+                .concat(%{ofxOsc}                   ? ["'ofxOsc'"]                 : [])
+                .concat(%{ofxSvg}                   ? ["'ofxSvg'"]                 : [])
+                .concat(%{ofxVectorGraphics}        ? ["'ofxVectorGraphics'"]      : [])
+                .concat(%{ofxXmlSettings}           ? ["'ofxXmlSettings'"]         : []).toString()
             }
         ]
 

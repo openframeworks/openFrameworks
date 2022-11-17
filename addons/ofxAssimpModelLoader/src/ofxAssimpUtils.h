@@ -8,7 +8,6 @@
 
 #include "ofMain.h"
 #include "ofxAssimpMeshHelper.h"
-#include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
@@ -44,25 +43,26 @@ inline void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper *
 
 	// copy vertices
 	for (int i=0; i < (int)aim->mNumVertices;i++){
-		ofm.addVertex(ofVec3f(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
+		ofm.addVertex(glm::vec3(aim->mVertices[i].x,aim->mVertices[i].y,aim->mVertices[i].z));
 	}
 
 	if(aim->HasNormals()){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
-			ofm.addNormal(ofVec3f(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
+			ofm.addNormal(glm::vec3(aim->mNormals[i].x,aim->mNormals[i].y,aim->mNormals[i].z));
 		}
 	}
 
-	// aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
+    // aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
 			if(helper && helper->hasTexture()){
 				ofTexture & tex = helper->getTextureRef();
-				ofVec2f texCoord = tex.getCoordFromPercent(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y);
+				glm::vec2 texCoord = tex.getCoordFromPercent(aim->mTextureCoords[0][i].x, aim->mTextureCoords[0][i].y);
 				ofm.addTexCoord(texCoord);
 			}else{
-				ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));
+				glm::vec2 texCoord(aim->mTextureCoords[0][i].x, aim->mTextureCoords[0][i].y);
+				ofm.addTexCoord(texCoord);
 			}
 		}
 	}

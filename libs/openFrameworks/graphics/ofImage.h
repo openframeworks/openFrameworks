@@ -5,6 +5,7 @@
 #include "ofPixels.h"
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
+#include "ofGLUtils.h"
 
 class ofFile;
 class ofBuffer;
@@ -125,6 +126,7 @@ struct ofImageLoadSettings {
 	bool exifRotate = false;
 	bool grayscale = false;
 	bool separateCMYK = false;
+    int freeImageFlags = 0;
 };
 
 //----------------------------------------------------

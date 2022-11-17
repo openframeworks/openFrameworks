@@ -74,27 +74,31 @@ createArchImg(){
         download=1
     elif [ -f ~/archlinux/timestamp ]; then
         if [ $(age ~/archlinux/timestamp) -gt 7 ]; then
+            rm -rf ~/archlinux
             download=1
         fi
     fi
 
     if [ "$download" = "1" ]; then
+		mkdir ~/archlinux
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
-		cd ~
-		wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+		cd ~/archlinux
+		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz
         # download=$!
         # echoDots $download
         # wait $download
 
-		mkdir ~/archlinux
-		junest -u << EOF
-	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+		junest -- << EOF
+	        tar xzf ArchLinuxARM-rpi-armv7-latest.tar.gz --no-same-owner 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+			cd ~
+			
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
-            pacman --noconfirm -S ccache
-			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
+            sudo pacman --noconfirm -S archlinux-keyring
+            sudo pacman --noconfirm -S ccache
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
 				gcc \
@@ -136,7 +140,7 @@ downloadToolchain(){
 		fi
         cd ~
 		wget --quiet http://archlinuxarm.org/builder/xtools/x-tools7h.tar.xz
-		junest -u << EOF
+		junest -- << EOF
 	        tar -x --delay-directory-restore --no-same-owner -f ~/x-tools7h.tar.xz -C ~/
 	        rm ~/x-tools7h.tar.xz
 EOF
@@ -197,12 +201,17 @@ installRtAudio(){
 
 installJunest(){
 	if [ ! -d ~/.local/share/junest ]; then
-		git clone git://github.com/fsquillace/junest ~/.local/share/junest
+		git clone https://github.com/fsquillace/junest ~/.local/share/junest
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
-	junest -u << EOF
-		pacman -Syy --noconfirm
-		pacman -S --noconfirm git flex grep gcc pkg-config make wget
+	junest setup
+	junest -- << EOF
+        echo updating keys
+        sudo pacman -Syy gnupg --noconfirm --needed
+        sudo pacman-key --populate archlinux
+        sudo pacman-key --refresh-keys
+		sudo pacman -Syyu --noconfirm
+		sudo pacman -S --noconfirm --needed git flex grep gcc pkg-config make wget sed
 EOF
     echo "Done installing junest"
 }
@@ -215,8 +224,8 @@ downloadToolchain
 downloadFirmware
 installRtAudio
 
-cd ~/archlinux/usr/lib
-relativeSoftLinks "../.." "..\/.."
+#cd ~/archlinux/usr/lib
+#relativeSoftLinks "../.." "..\/.."
 #cd $ROOT/archlinux/usr/lib/arm-unknown-linux-gnueabihf
 #relativeSoftLinks  "../../.." "..\/..\/.."
 #cd $ROOT/raspbian/usr/lib/gcc/arm-unknown-linux-gnueabihf/5.3

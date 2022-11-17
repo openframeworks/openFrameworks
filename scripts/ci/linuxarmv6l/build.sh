@@ -21,22 +21,22 @@ export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=armv6l
 export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
-export CXX="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
-export CC="ccache ${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
+export CXX="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
+export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
-make Debug
+make Debug -j2
 
 echo "**** Building emptyExample ****"
 cd $OF_ROOT/scripts/templates/linuxarmv6l
-make Debug
+make Debug -j2
 
 echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
 cp scripts/templates/linuxarmv6l/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linuxarmv6l/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-make Debug
+make Debug -j2
 
 git checkout $PROJECTS/makefileCommon/config.linux.common.mk
 git checkout $PROJECTS/linuxarmv6l/config.linuxarmv6l.default.mk

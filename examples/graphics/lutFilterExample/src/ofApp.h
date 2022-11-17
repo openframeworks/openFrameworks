@@ -28,11 +28,11 @@ public:
 	ofVideoGrabber 		vidGrabber;
 	int dirLoadIndex;
 	ofDirectory dir;
-	ofPoint lutPos;
-	ofPoint thumbPos;
+	glm::vec3 lutPos;
+	glm::vec3 thumbPos;
 	
 	bool LUTloaded;
-	ofVec3f lut[32][32][32];
+	glm::vec3 lut[32][32][32];
 	
 	ofImage lutImg;
 	

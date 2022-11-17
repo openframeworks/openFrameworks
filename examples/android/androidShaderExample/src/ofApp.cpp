@@ -12,16 +12,17 @@ void ofApp::setup(){
 	shader.load("shaders/noise.vert", "shaders/noise.frag");
 
 	auto textShapes = font.getStringAsPoints("openFrameworks");
-	ofRectangle boundingBox;
-	for(auto glyph: textShapes){
+	for (auto glyph : textShapes) {
 		text.append(glyph);
-		for(auto outline: glyph.getOutline()){
-			boundingBox = boundingBox.getUnion(outline.getBoundingBox());
-		}
+	}
+
+	ofRectangle boundingBox;
+	for (auto outline : text.getOutline()) {
+		boundingBox = boundingBox.getUnion(outline.getBoundingBox());
 	}
 
 	boundingBox.alignTo(ofGetCurrentViewport(), OF_ALIGN_HORZ_CENTER, OF_ALIGN_VERT_CENTER);
-	ofVec2f textPos(boundingBox.getX(), boundingBox.getMaxY());
+	glm::vec2 textPos(boundingBox.getX(), boundingBox.getMaxY());
 
 	text.translate(textPos);
 	text.setFillColor(ofColor(245, 58, 135));
@@ -48,8 +49,8 @@ void ofApp::draw(){
 
 	}
 
-		//finally draw our text
-		text.draw();
+	//finally draw our text
+	text.draw();
 
 	if( doShader ){
 		shader.end();
@@ -57,12 +58,12 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
+void ofApp::keyPressed  (int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------

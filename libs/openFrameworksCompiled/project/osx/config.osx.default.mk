@@ -77,6 +77,10 @@ ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
 endif
 
+ifndef MAC_OS_CPP_VER
+    MAC_OS_CPP_VER = -std=c++11
+endif
+
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
 PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
@@ -86,13 +90,25 @@ PLATFORM_CFLAGS += -Wall
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
+PLATFORM_CFLAGS += -Werror=return-type
+
 ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
 
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
+			MAC_OS_SDK=10.15
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.14.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.14.sdk)
+			MAC_OS_SDK=10.14
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.13.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.13.sdk)
+			MAC_OS_SDK=10.13
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.12.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.12.sdk)
+			MAC_OS_SDK=10.12
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.11.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.11.sdk)
+			MAC_OS_SDK=10.11
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
 			MAC_OS_SDK=10.10
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.9.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.9.sdk)
 			MAC_OS_SDK=10.9
@@ -129,7 +145,11 @@ endif
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 PLATFORM_CXXFLAGS += -x objective-c++
-PLATFORM_CXXFLAGS += -std=c++11
+PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
+
+# Enable ARC
+PLATFORM_CFLAGS += -fobjc-arc 
+
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
@@ -195,13 +215,6 @@ PLATFORM_CORE_EXCLUSIONS =
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitMovieRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.mm
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimePlayer.cpp
 
 ifneq ($(USE_GST),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
@@ -213,11 +226,10 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 
 
 ifeq ($(USE_FMOD),0)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
+	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 	PLATFORM_CFLAGS += -DUSE_FMOD=0
 endif
@@ -285,7 +297,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
-PLATFORM_FRAMEWORKS += QTKit
 PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AudioToolbox
@@ -300,7 +311,6 @@ PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += CoreMedia
 PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
-PLATFORM_FRAMEWORKS += LDAP
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
@@ -361,7 +371,7 @@ afterplatform: $(TARGET_NAME)
 	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>com.your-company-name.www</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>com.your-company-name.$(APPNAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
@@ -374,6 +384,12 @@ afterplatform: $(TARGET_NAME)
 	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>NSCameraUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>This app needs to access the camera</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>NSMicrophoneUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>This app needs to access the microphone</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>NSHighResolutionCapable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <false/>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 
@@ -383,7 +399,8 @@ afterplatform: $(TARGET_NAME)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
 ifneq ($(USE_FMOD),0)
-	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/MacOS;
+	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
+	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
 endif
 
 	@echo

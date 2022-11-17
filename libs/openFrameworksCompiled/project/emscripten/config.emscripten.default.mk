@@ -1,4 +1,4 @@
-################################################################################
+ ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
 #   This file has linux common rules for all the platforms (x86_64, i386,armv6l
 #   and armv7l)
@@ -64,7 +64,7 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++14 -Wno-warn-absolute-paths
+PLATFORM_CFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths
 
 
 ################################################################################
@@ -90,7 +90,7 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data --emrun
+PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
@@ -100,7 +100,7 @@ else
 	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
 endif
 
-PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s OUTLINING_LIMIT=100000 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) --memory-init-file 1
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) --memory-init-file 1
 
 PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -g3 -s TOTAL_MEMORY=134217728 --memory-init-file 1  -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2
 
@@ -120,7 +120,7 @@ PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -g3 -s TOTAL_MEMORY=134217728 --memory-ini
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 -s OUTLINING_LIMIT=100000
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2
@@ -146,9 +146,8 @@ PLATFORM_CORE_EXCLUSIONS =
 # core sources
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofGraphicsCairo.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
@@ -171,7 +170,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS

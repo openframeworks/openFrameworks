@@ -14,7 +14,7 @@ void ofApp::setup(){
 
 	// Set the pixel format for getPixels to grayscale
 	// (other image formats will include heavy colorspace conversion)
-	grabber.setPixelFormat(OF_PIXELS_GRAY)
+	grabber.setPixelFormat(OF_PIXELS_GRAY);
 
 	// Hint the grabber if you don't need pixel data for better performance
 	//((ofxAndroidVideoGrabber*)grabber.getGrabber().get())->setUsePixels(false);
@@ -22,11 +22,11 @@ void ofApp::setup(){
 	// Start the grabber
 	grabber.setup(1280, 720);
 
-    if(grabber.isInitialized()) {
-        // Get the orientation and facing of the current camera
-        cameraOrientation = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getCameraOrientation();
-        cameraFacingFront = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getFacingOfCamera();
-    }
+	if(grabber.isInitialized()) {
+		// Get the orientation and facing of the current camera
+		cameraOrientation = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getCameraOrientation();
+		cameraFacingFront = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getFacingOfCamera();
+	}
 }
 
 //--------------------------------------------------------------

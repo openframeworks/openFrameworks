@@ -11,6 +11,7 @@ void ofApp::setup(){
 
 	// set other options
 	//settings.blocking = false;
+	//settings.reuse = true;
 	//settings.messageDelimiter = "\n";
 
 	TCP.setup(settings);

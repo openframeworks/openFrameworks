@@ -4,7 +4,7 @@
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
-#define OF_VERSION_PATCH 0
+#define OF_VERSION_PATCH 2
 #define OF_VERSION_PRE_RELEASE "master"
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
@@ -12,10 +12,8 @@
 	#define OF_USE_LEGACY_VECTOR_MATH 0
 #endif
 
-// Set to 1 to use std filesystem instead of boost's
-#ifndef OF_USING_STD_FS
-#define OF_USING_STD_FS 0
-#endif
+// This enables glm's old behavior of initializing with non garbage values
+#define GLM_FORCE_CTOR_INIT
 
 //-------------------------------
 
@@ -79,10 +77,16 @@ enum ofTargetPlatform{
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
+	#if defined(_MSC_VER)
+		#define TARGET_WINVS
+	#endif
+	#if defined(__MINGW32__) || defined(__MINGW64__)
+		#define TARGET_MINGW
+	#endif
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_OS_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
         #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
         #define TARGET_OPENGLES
@@ -124,7 +128,7 @@ enum ofTargetPlatform{
 	#define GLEW_STATIC
 	#define GLEW_NO_GLU
 	#include "GL/glew.h"
-    #include "GL/wglew.h"
+	#include "GL/wglew.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
@@ -177,11 +181,14 @@ enum ofTargetPlatform{
 	#endif
 	#include <unistd.h>
 	#include "GL/glew.h"
-	#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
+	#endif
+
+	#if defined(__OBJC__) && !__has_feature(objc_arc)
+		#warning "Please enable ARC (Automatic Reference Counting) at the project level"
 	#endif
 #endif
 
@@ -205,11 +212,8 @@ enum ofTargetPlatform{
 		#define EGL_EGLEXT_PROTOTYPES
 		#include "EGL/egl.h"
 		#include "EGL/eglext.h"
-	#else // normal linux
-		#define GL_GLEXT_PROTOTYPES
-		#include <GL/glew.h>
-		#include <GL/gl.h>
-		#include <GL/glext.h>
+	#else // desktop linux
+		#include <GL/glew.h> 
 	#endif
 
 	// for some reason, this isn't defined at compile time,
@@ -236,6 +240,11 @@ enum ofTargetPlatform{
 
 
 	#define TARGET_LITTLE_ENDIAN		// arm cpu
+
+	#if defined(__OBJC__) && !__has_feature(objc_arc)
+		#error "Please enable ARC (Automatic Reference Counting) at the project level"
+	#endif
+
 #endif
 
 #ifdef TARGET_ANDROID
@@ -373,7 +382,7 @@ typedef TESSindex ofIndexType;
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX)
+  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
   	#define OF_SOUND_PLAYER_OPENAL
   #elif defined(TARGET_EMSCRIPTEN)
 	#define OF_SOUND_PLAYER_EMSCRIPTEN
@@ -435,38 +444,105 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
-//------------------------------------------------ forward declaration for std::filesystem::path
-// Remove from here once everything is using std::filesystem::path
-#if OF_USING_STD_FS
-#	if __cplusplus < 201703L
-
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					namespace v1 {
-						namespace __cxx11 {
-							class path;
-						}
-					}
-
-					using v1::__cxx11::path;
-				}
-			}
-			namespace filesystem = experimental::filesystem;
-		}
-#	else
-
-	namespace std {
-		namespace filesystem {
-			class path;
-		}
-	}
-#	endif
+// If you are building with c++17 or newer std filesystem will be enabled by default
+#if __cplusplus >= 201703L
+    #define OF_HAS_CPP17 1
 #else
-#	if !_MSC_VER
-#		define BOOST_NO_CXX11_SCOPED_ENUMS
-#		define BOOST_NO_SCOPED_ENUMS
-#	endif
+    #define OF_HAS_CPP17 0
+#endif
+
+#ifndef OF_USING_STD_FS
+	#if OF_HAS_CPP17
+		#define OF_USING_STD_FS 1
+	#else
+		// Set to 1 to force std filesystem instead of boost's
+		#define OF_USING_STD_FS 0
+	#endif
+#endif
+
+// Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
+// This may be okay but we need to test for the way C++17 is including the filesystem
+
+#if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
+    #if defined(__cpp_lib_filesystem)
+        #define OF_USE_EXPERIMENTAL_FS 0
+    #elif defined(__cpp_lib_experimental_filesystem)
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #elif !defined(__has_include)
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #elif __has_include(<filesystem>)
+        // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
+        #ifdef _MSC_VER
+        
+            // Check and include header that defines "_HAS_CXX17"
+            #if __has_include(<yvals_core.h>)
+                #include <yvals_core.h>
+                
+                // Check for enabled C++17 support
+                #if defined(_HAS_CXX17) && _HAS_CXX17
+                // We're using C++17, so let's use the normal version
+                    #define OF_USE_EXPERIMENTAL_FS 0
+                #endif
+            #endif
+
+            // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
+            #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+                #define OF_USE_EXPERIMENTAL_FS 1
+            #endif
+
+        // Not on Visual Studio. Let's use the normal version
+        #else // #ifdef _MSC_VER
+            #define OF_USE_EXPERIMENTAL_FS 0
+        #endif
+    #else
+        #define OF_USE_EXPERIMENTAL_FS 0
+    #endif
+#endif
+
+#if OF_USING_STD_FS
+    #if OF_USE_EXPERIMENTAL_FS
+        // C++17 experimental fs support
+        #include <experimental/filesystem>
+        
+        #if OF_HAS_CPP17
+            namespace std {
+                namespace experimental{
+                    namespace filesystem {
+                        namespace v1 {
+                            class path;
+                        }
+                        using v1::path;
+                    }
+                }
+                namespace filesystem = experimental::filesystem;
+            }
+        #else
+            namespace std {
+                namespace experimental{
+                    namespace filesystem {
+                        namespace v1 {
+                            namespace __cxx11 {
+                                class path;
+                            }
+                        }
+                        using v1::__cxx11::path;
+                    }
+                }
+                namespace filesystem = experimental::filesystem;
+            }
+        #endif
+        
+    #else
+        // Regular C++17 fs support
+        #include <filesystem>
+    #endif
+#else
+    // No experimental or c++17 filesytem support use boost
+    #if !_MSC_VER
+        #define BOOST_NO_CXX11_SCOPED_ENUMS
+        #define BOOST_NO_SCOPED_ENUMS
+    #endif
+    #include <boost/filesystem.hpp>
 	namespace boost {
 		namespace filesystem {
 			class path;

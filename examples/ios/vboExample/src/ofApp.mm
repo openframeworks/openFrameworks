@@ -47,7 +47,7 @@ void ofApp::update(){
 	
 	
 	if(!bPause) {
-		ofVec3f vec;
+		glm::vec3 vec;
 		float   r = 0.3;
 		
 		for (int i=0; i<GRID_WIDTH; i++) {
@@ -113,7 +113,7 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -145,20 +145,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }

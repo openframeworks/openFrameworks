@@ -3,6 +3,7 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 #include "ofPoint.h"
+#include "ofRectangle.h"
 #include "ofColor.h"
 #include "ofLog.h"
 #include <map>
@@ -127,6 +128,7 @@ public:
 	const ofParameter<ofColor> & getColor(const std::string& name) const;
 	const ofParameter<ofShortColor> & getShortColor(const std::string& name) const;
 	const ofParameter<ofFloatColor> & getFloatColor(const std::string& name) const;
+	const ofParameter<ofRectangle> & getRectangle(const std::string& name) const;
 	const ofParameterGroup & getGroup(const std::string& name) const;
 
 
@@ -143,6 +145,7 @@ public:
 	const ofParameter<ofColor> & getColor(std::size_t pose) const;
 	const ofParameter<ofShortColor> & getShortColor(std::size_t pos) const;
 	const ofParameter<ofFloatColor> & getFloatColor(std::size_t pos) const;
+	const ofParameter<ofRectangle> & getRectangle(std::size_t pos) const;
 	const ofParameterGroup & getGroup(std::size_t pos) const;
 
 	ofParameter<void> & getVoid(const std::string& name);
@@ -158,6 +161,7 @@ public:
 	ofParameter<ofColor> & getColor(const std::string& name);
 	ofParameter<ofShortColor> & getShortColor(const std::string& name);
 	ofParameter<ofFloatColor> & getFloatColor(const std::string& name);
+	ofParameter<ofRectangle> & getRectangle(const std::string& name);
 	ofParameterGroup & getGroup(const std::string& name);
 
 
@@ -174,6 +178,7 @@ public:
 	ofParameter<ofColor> & getColor(std::size_t pose);
 	ofParameter<ofShortColor> & getShortColor(std::size_t pos);
 	ofParameter<ofFloatColor> & getFloatColor(std::size_t pos);
+	ofParameter<ofRectangle> & getRectangle(std::size_t pos);
 	ofParameterGroup & getGroup(std::size_t pos);
 
 	const ofAbstractParameter & get(const std::string& name) const;
@@ -406,6 +411,12 @@ namespace priv{
 	struct TypeInfo <ofColor_<T>> {
 		static ofColor_<T> min() { return ofColor_<T>(0,0); }
 		static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); }
+	};
+	template<>
+	struct TypeInfo <ofRectangle> {
+	//Not really sure what would make sense here!!!
+		static ofRectangle min() { return ofRectangle(0,0,0,0); }
+		static ofRectangle max() { return ofRectangle(0,0,1,1); }
 	};
 
 
@@ -739,7 +750,7 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 			// Erase each invalid parent
 			obj->parents.erase(std::remove_if(obj->parents.begin(),
 											  obj->parents.end(),
-											  [this](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
+											  [](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
 							   obj->parents.end());
 
 			// notify all leftover (valid) parents of this object's changed value.

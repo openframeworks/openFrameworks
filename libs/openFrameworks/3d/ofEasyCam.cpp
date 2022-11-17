@@ -5,8 +5,6 @@
 #include <limits>
 #include "glm/gtx/vector_angle.hpp"
 
-using namespace std;
-
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
 static const float minDifference = 0.1e-5f;
@@ -20,8 +18,8 @@ ofEasyCam::ofEasyCam(){
 	sensitivityTranslate = {1,1,1};
 	sensitivityRot = {1,1,1};
 
+    addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
 	addInteraction(TRANSFORM_ROTATE, OF_MOUSE_BUTTON_LEFT);
-	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
 	addInteraction(TRANSFORM_TRANSLATE_Z, OF_MOUSE_BUTTON_RIGHT);
 	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_MIDDLE);
 	
@@ -69,7 +67,10 @@ void ofEasyCam::reset(){
 
 	rot = {0,0,0};
 	translate = {0,0,0};
-
+    
+    if(bAutoDistance){
+        bDistanceSet = false;
+    }
 	bApplyInertia = false;
 	currentTransformType = TRANSFORM_NONE;
 }
@@ -374,7 +375,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 		currentTransformType = TRANSFORM_NONE;
 		if (events) {
 			for (const auto& i: interactions) {
-				if (i.mouseButton == mouse.button && ((i.key == -1) ^ events->getKeyPressed(i.key))) {
+                if (i.mouseButton == mouse.button && ((i.key == -1) || events->getKeyPressed(i.key)) ) {
 					currentTransformType = i.transformType;
 					break;
 				}
@@ -506,4 +507,10 @@ bool ofEasyCam:: hasInteraction(TransformType type, int mouseButton, int key){
 //----------------------------------------
 void ofEasyCam::removeAllInteractions(){
 	interactions.clear();
+}
+//----------------------------------------
+void ofEasyCam::onPositionChanged(){
+	if(!bDistanceSet && bAutoDistance){
+		bDistanceSet = true;
+	}
 }

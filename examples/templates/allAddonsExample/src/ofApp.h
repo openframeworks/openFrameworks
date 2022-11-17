@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxNetwork.h"
 #include "ofxOsc.h"
@@ -11,6 +10,7 @@
 #include "ofxGui.h"
 #include "ofxSvg.h"
 #include "ofxXmlPoco.h"
+#include "ofMain.h"
 
 class ofApp : public ofBaseApp{
 
@@ -19,7 +19,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -30,21 +30,21 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);		
+		void gotMessage(ofMessage msg);
 
 		// we don't actually use these
-        // just checking to see if they
-        // all work in the same place :)
+		// just checking to see if they
+		// all work in the same place :)
 
-        ofxCvGrayscaleImage cvGray;
-        ofxTCPClient client;
-        ofxTCPServer server;
-        ofxOscSender osc_sender;
-        ofxXmlSettings settings;
+		ofxCvGrayscaleImage cvGray;
+		ofxTCPClient client;
+		ofxTCPServer server;
+		ofxOscSender osc_sender;
+		ofxXmlSettings settings;
 	ofxAssimpModelLoader betterModelLoader;
 	ofxThreadedImageLoader threadedLoader;
 	ofxKinect kinect;
 	ofxPanel gui;
-	ofxSVG svg;
-    ofxXmlPoco xml;
+	ofxSvg svg;
+	ofxXmlPoco xml;
 };

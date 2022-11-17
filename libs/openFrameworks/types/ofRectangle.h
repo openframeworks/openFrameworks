@@ -3,6 +3,7 @@
 
 #include "ofConstants.h"
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
 
 
@@ -922,7 +923,7 @@ public:
     ///
     /// \warning The z-component of this position is preserved and can be used
     /// but all ofRectangle operations will ignore the z-component.
-	glm::vec3 position;
+	glm::vec3 position{};
 
     /// \brief The x position of the ofRectangle.
     float& x;

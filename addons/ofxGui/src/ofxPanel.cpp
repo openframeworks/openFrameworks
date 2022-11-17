@@ -50,73 +50,57 @@ void ofxPanel::loadIcons(){
 }
 
 void ofxPanel::generateDraw(){
-	border.clear();
-	border.setStrokeColor(thisBorderColor);
-	border.setStrokeWidth(1);
-	border.setFilled(false);
-	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
-
-
-	headerBg.clear();
-	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
-	headerBg.setFilled(true);
-	headerBg.rectangle(b.x,b.y+1,b.width,header);
-
-	float iconHeight = header*.5;
-	float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
-	int iconSpacing = iconWidth*.5;
-
-	loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
-	loadBox.y = b.y + header / 2. - iconHeight / 2.;
-	loadBox.width = iconWidth;
-	loadBox.height = iconHeight;
-	saveBox.set(loadBox);
-	saveBox.x += iconWidth + iconSpacing;
-
-	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+	ofxGuiGroup::generateDraw();
+	if(bHeaderEnabled){
+		float iconHeight = headerRect.height*.5;
+		float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
+		int iconSpacing = iconWidth*.5;
+	
+		loadBox.x = minimizeRect.getX() - (iconWidth + iconSpacing) * 2;
+		loadBox.y = headerRect.y + headerRect.height / 2. - iconHeight / 2.;
+		loadBox.width = iconWidth;
+		loadBox.height = iconHeight;
+		saveBox.set(loadBox);
+		saveBox.x += iconWidth + iconSpacing;
+	}
 }
 
 void ofxPanel::render(){
-	border.draw();
-	headerBg.draw();
-
-	ofBlendMode blendMode = ofGetStyle().blendingMode;
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
-	}
-	ofColor c = ofGetStyle().color;
-	ofSetColor(thisTextColor);
-
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
-
-	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
-	ofDisableTextureEdgeHack();
-	loadIcon.draw(loadBox);
-	saveIcon.draw(saveBox);
-	if(texHackEnabled){
-		ofEnableTextureEdgeHack();
-	}
-
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->draw();
-	}
-
-	ofSetColor(c);
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableBlendMode(blendMode);
+	ofxGuiGroup::render();
+	
+	if(bHeaderEnabled){
+		ofBlendMode blendMode = ofGetStyle().blendingMode;
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableAlphaBlending();
+		}
+		ofColor c = ofGetStyle().color;
+		ofSetColor(thisTextColor);
+				
+		bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+		ofDisableTextureEdgeHack();
+		loadIcon.draw(loadBox);
+		saveIcon.draw(saveBox);
+		if(texHackEnabled){
+			ofEnableTextureEdgeHack();
+		}
+		ofSetColor(c);
+		
+		if(blendMode!=OF_BLENDMODE_ALPHA){
+			ofEnableBlendMode(blendMode);
+		}
 	}
 }
-
+bool ofxPanel::mousePressed(ofMouseEventArgs & args){
+	if(!ofxGuiGroup::mousePressed(args)){
+		//this is to avoid keeping dragging when more than one ofxPanel instance is present
+		this->bGrabbed = false;
+		return false;
+	}
+	return true;
+}
 bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
     this->bGrabbed = false;
-    if(ofxGuiGroup::mouseReleased(args)) return true;
-    if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-    	return true;
-    }else{
-    	return false;
-    }
+	return ofxGuiGroup::mouseReleased(args);
 }
 
 bool ofxPanel::setValue(float mx, float my, bool bCheck){
@@ -129,25 +113,35 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 	if( bCheck ){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
-
-			if( my > b.y && my <= b.y + header ){
-				bGrabbed = true;
-				grabPt.set(mx-b.x, my-b.y);
+			if( bHeaderEnabled){
+				if(loadBox.inside(mx, my)) {
+					if(!ofNotifyEvent(loadPressedE,this)){
+						loadFromFile(filename);
+					}
+					return true;
+				}
+				if(saveBox.inside(mx, my)) {
+					if(!ofNotifyEvent(savePressedE,this)){
+						saveToFile(filename);
+					}
+					return true;
+				}
+				if(minimizeRect.inside(mx, my)){
+					if(!minimized){
+						minimize();
+					}else{
+						maximize();
+					}
+					return true;
+				}
+				
+				if(headerRect.inside(mx, my)){
+					bGrabbed = true;
+					grabPt = {mx-b.x, my-b.y, 0};
+					return true;
+				}
 			} else{
 				bGrabbed = false;
-			}
-
-			if(loadBox.inside(mx, my)) {
-				if(!ofNotifyEvent(loadPressedE,this)){
-					loadFromFile(filename);
-				}
-				return true;
-			}
-			if(saveBox.inside(mx, my)) {
-				if(!ofNotifyEvent(savePressedE,this)){
-					saveToFile(filename);
-				}
-				return true;
 			}
 		}
 	} else if( bGrabbed ){

@@ -1,13 +1,10 @@
 
-#include "ofConstants.h"
 #include "ofSystemUtils.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
 #include <condition_variable>
 #include <mutex>
-
-using namespace std;
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -18,6 +15,7 @@ using namespace std;
 #include <shlobj.h>
 #include <tchar.h>
 #include <stdio.h>
+
 
 #endif
 
@@ -69,7 +67,7 @@ std::wstring convertNarrowToWide( const std::string& as ){
 
 #if defined( TARGET_OSX )
 static void restoreAppWindowFocus(){
-	NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+	NSWindow * appWindow = (__bridge NSWindow *)ofGetCocoaWindow();
 	if(appWindow) {
 		[appWindow makeKeyAndOrderFront:nil];
 	}
@@ -94,7 +92,7 @@ static void restoreAppWindowFocus(){
 #define CANCEL_BUTTON GTK_STOCK_CANCEL
 #endif
 
-using namespace std;
+// using namespace std;
 
 gboolean init_gtk(gpointer userdata){
 	int argc=0; char **argv = nullptr;
@@ -105,9 +103,9 @@ gboolean init_gtk(gpointer userdata){
 
 struct FileDialogData{
 	GtkFileChooserAction action;
-	string windowTitle;
-	string defaultName;
-	string results;
+	std::string windowTitle;
+	std::string defaultName;
+	std::string results;
 	bool done;
 	std::condition_variable condition;
 	std::mutex mutex;
@@ -157,8 +155,8 @@ gboolean file_dialog_gtk(gpointer userdata){
 }
 
 struct TextDialogData{
-	string text;
-	string question;
+	std::string text;
+	std::string question;
 	bool done;
 	std::condition_variable condition;
 	std::mutex mutex;
@@ -188,7 +186,9 @@ gboolean text_dialog_gtk(gpointer userdata){
 	gtk_widget_show_all (dialog);
 	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
 		dialogData->text = gtk_entry_get_text(GTK_ENTRY(textbox));
-	}
+	} else {
+    dialogData->text = "";
+  }
 	gtk_widget_destroy (dialog);
 	dialogData->mutex.lock();
 	dialogData->condition.notify_all();
@@ -201,7 +201,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
-		#if !defined(TARGET_RASPBERRY_PI)
+		#if !defined(TARGET_RASPBERRY_PI_LEGACY)
 		XInitThreads();
 		#endif
 		int argc=0; char **argv = nullptr;
@@ -212,7 +212,7 @@ static void initGTK(){
 
 }
 
-static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
+static std::string gtkFileDialog(GtkFileChooserAction action,std::string windowTitle,std::string defaultName=""){
 	initGTK();
 	FileDialogData dialogData;
 	dialogData.action = action;
@@ -252,6 +252,8 @@ void resetLocale(std::locale locale){
 #include <emscripten/emscripten.h>
 #endif
 
+// using namespace std;
+
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
 	filePath = "";
@@ -260,18 +262,18 @@ ofFileDialogResult::ofFileDialogResult(){
 }
 
 //------------------------------------------------------------------------------
-string ofFileDialogResult::getName(){
+std::string ofFileDialogResult::getName(){
 	return fileName;
 }
 
 //------------------------------------------------------------------------------
-string ofFileDialogResult::getPath(){
+std::string ofFileDialogResult::getPath(){
 	return filePath;
 }
 
 
 //------------------------------------------------------------------------------
-void ofSystemAlertDialog(string errorMessage){
+void ofSystemAlertDialog(std::string errorMessage){
 	#ifdef TARGET_WIN32
 		// we need to convert error message to a wide char message.
 		// first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
@@ -289,7 +291,7 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#ifdef TARGET_OSX
 		@autoreleasepool {
-			NSAlert* alertDialog = [[[NSAlert alloc] init] autorelease];
+			NSAlert* alertDialog = [[NSAlert alloc] init];
 			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
 			[alertDialog runModal];
 			restoreAppWindowFocus();
@@ -315,7 +317,7 @@ void ofSystemAlertDialog(string errorMessage){
 	#endif
 
 	#ifdef TARGET_EMSCRIPTEN
-		emscripten_run_script((string("alert(")+errorMessage+");").c_str());
+		emscripten_run_script((std::string("alert(")+errorMessage+");").c_str());
 	#endif
 }
 
@@ -328,7 +330,7 @@ static int CALLBACK loadDialogBrowseCallback(
   LPARAM lParam,
   LPARAM lpData
 ){
-    string defaultPath = *(string*)lpData;
+    std::string defaultPath = *(std::string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
 		wchar_t         wideCharacterBuffer[MAX_PATH];
 		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
@@ -342,7 +344,7 @@ static int CALLBACK loadDialogBrowseCallback(
 //---------------------------------------------------------------------
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection, string defaultPath){
+ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelection, std::string defaultPath){
 
 	ofFileDialogResult results;
 
@@ -360,7 +362,9 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		[loadDialog setResolvesAliases:YES];
 
 		if(!windowTitle.empty()) {
-			[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
+			// changed from setTitle to setMessage
+			// https://stackoverflow.com/questions/36879212/title-bar-missing-in-nsopenpanel
+			[loadDialog setMessage:[NSString stringWithUTF8String:windowTitle.c_str()]];
 		}
 
 		if(!defaultPath.empty()) {
@@ -374,9 +378,9 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		[context makeCurrentContext];
 		restoreAppWindowFocus();
 
-		if(buttonClicked == NSFileHandlingPanelOKButton) {
+		if(buttonClicked == NSModalResponseOK) {
 			NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
-			results.filePath = string([[selectedFileURL path] UTF8String]);
+			results.filePath = std::string([[selectedFileURL path] UTF8String]);
 		}
 	}
 #endif
@@ -388,7 +392,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-	wstring windowTitleW;
+	std::wstring windowTitleW;
 	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
 
 	if (bFolderSelection == false){
@@ -506,7 +510,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 
 
-ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
+ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messageName){
 
 	ofFileDialogResult results;
 
@@ -524,8 +528,8 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 		restoreAppWindowFocus();
 		[context makeCurrentContext];
 
-		if(buttonClicked == NSFileHandlingPanelOKButton){
-			results.filePath = string([[[saveDialog URL] path] UTF8String]);
+		if(buttonClicked == NSModalResponseOK){
+			results.filePath = std::string([[[saveDialog URL] path] UTF8String]);
 		}
 	}
 #endif
@@ -602,7 +606,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #endif
 
 
-string ofSystemTextBoxDialog(string question, string text){
+std::string ofSystemTextBoxDialog(std::string question, std::string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	auto locale = std::locale();
 	initGTK();
@@ -622,22 +626,26 @@ string ofSystemTextBoxDialog(string question, string text){
 #ifdef TARGET_OSX
 	@autoreleasepool {
 		// create alert dialog
-		NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+		NSAlert *alert = [[NSAlert alloc] init];
 		[alert addButtonWithTitle:@"OK"];
 		[alert addButtonWithTitle:@"Cancel"];
 		[alert setMessageText:[NSString stringWithCString:question.c_str()
 												 encoding:NSUTF8StringEncoding]];
 		// create text field
-		NSTextField* label = [[[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))] autorelease];
+		NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
 		[label setStringValue:[NSString stringWithCString:text.c_str()
 												 encoding:NSUTF8StringEncoding]];
 		// add text field to alert dialog
 		[alert setAccessoryView:label];
+		[[alert window] setInitialFirstResponder: label];
+
 		NSInteger returnCode = [alert runModal];
 		restoreAppWindowFocus();
 		// if OK was clicked, assign value to text
 		if ( returnCode == NSAlertFirstButtonReturn )
 			text = [[label stringValue] UTF8String];
+    else
+      text = "";
 	}
 #endif
 
@@ -747,7 +755,7 @@ string ofSystemTextBoxDialog(string question, string text){
 			 }else if((Msg.hwnd == cancelButton && Msg.message==WM_LBUTTONUP) ||  (Msg.message==WM_KEYUP && Msg.wParam==27)){
 				 EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
 				 DestroyWindow(dialog);
-				 return text;
+				 return "";
 			 }
 
 			 if (!IsWindow( dialog )){
@@ -775,7 +783,7 @@ string ofSystemTextBoxDialog(string question, string text){
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
-     text = emscripten_run_script_string((string("prompt('") + question + "','')").c_str());
+     text = emscripten_run_script_string((std::string("prompt('") + question + "','')").c_str());
 #endif
 	return text;
 }

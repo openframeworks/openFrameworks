@@ -41,7 +41,7 @@ void ofApp::draw(){
 		ofPushMatrix();
 
 		float t = (ofGetElapsedTimef() + i * spacing) * movementSpeed;
-		ofVec3f pos(
+		glm::vec3 pos(
 			ofSignedNoise(t, 0, 0),
 			ofSignedNoise(0, t, 0),
 			ofSignedNoise(0, 0, t));

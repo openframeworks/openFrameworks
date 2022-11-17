@@ -1,16 +1,32 @@
 #include "ofxSvg.h"
 #include "ofConstants.h"
+#include <locale>
 
 using namespace std;
 
 extern "C"{
 	#include "svgtiny.h"
 }
-ofxSVG::~ofxSVG(){
+ofxSvg::~ofxSvg(){
 	paths.clear();
 }
 
-void ofxSVG::load(string path){
+float ofxSvg::getWidth() const {
+	return width;
+}
+
+float ofxSvg::getHeight() const {
+	return height;
+}
+
+int ofxSvg::getNumPath(){
+	return paths.size();
+}
+ofPath & ofxSvg::getPathAt(int n){
+	return paths[n];
+}
+
+void ofxSvg::load(std::string path){
 	path = ofToDataPath(path);
 
 	if(path.compare("") == 0){
@@ -19,10 +35,26 @@ void ofxSVG::load(string path){
 	}
 
 	ofBuffer buffer = ofBufferFromFile(path);
-	size_t size = buffer.size();
+	
+	loadFromString(buffer.getText(), path);
+	
+}
+
+void ofxSvg::loadFromString(std::string stringdata, std::string urlstring){
+	
+	// goes some way to improving SVG compatibility
+	fixSvgString(stringdata);
+
+	const char* data = stringdata.c_str();
+	int size = stringdata.size();
+	const char* url = urlstring.c_str();
 
 	struct svgtiny_diagram * diagram = svgtiny_create();
-	svgtiny_code code = svgtiny_parse(diagram, buffer.getText().c_str(), size, path.c_str(), 0, 0);
+	// Switch to "C" locale as svgtiny expect it to parse floating points (issue 6644)
+	std::locale prev_locale = std::locale::global( std::locale::classic() );
+	svgtiny_code code = svgtiny_parse(diagram, data, size, url, 0, 0);
+	// Restore locale
+	std::locale::global( prev_locale );
 
 	if(code != svgtiny_OK){
 		string msg;
@@ -47,7 +79,7 @@ void ofxSVG::load(string path){
 			 msg = "unknown svgtiny_code " + ofToString(code);
 			 break;
 		}
-		ofLogError("ofxSVG") << "load(): couldn't parse \"" << path << "\": " << msg;
+		ofLogError("ofxSVG") << "load(): couldn't parse \"" << urlstring << "\": " << msg;
 	}
 
 	setupDiagram(diagram);
@@ -55,14 +87,83 @@ void ofxSVG::load(string path){
 	svgtiny_free(diagram);
 }
 
-void ofxSVG::draw(){
+void ofxSvg::fixSvgString(std::string& xmlstring) {
+	
+	ofXml xml;
+	
+	xml.parse(xmlstring);
+	
+	// so it turns out that if the stroke width is <1 it rounds it down to 0,
+	// and makes it disappear because svgtiny stores strokewidth as an integer!
+	ofXml::Search strokeWidthElements = xml.find("//*[@stroke-width]");
+	if(!strokeWidthElements.empty()) {
+		
+		for(ofXml & element: strokeWidthElements){
+			//cout << element.toString() << endl;
+			float strokewidth = element.getAttribute("stroke-width").getFloatValue();
+			strokewidth = MAX(1,round(strokewidth));
+			element.getAttribute("stroke-width").set(strokewidth);
+			
+		}
+	}
+	
+	//lib svgtiny doesn't remove elements with display = none, so this code fixes that
+	
+	bool finished = false;
+	while(!finished) {
+		
+		ofXml::Search invisibleElements  = xml.find("//*[@display=\"none\"]");
+		
+		if(invisibleElements.empty()) {
+			finished = true;
+		} else {
+			const ofXml& element = invisibleElements[0];
+			ofXml parent = element.getParent();
+			if(parent && element) parent.removeChild(element);
+		}
+		
+	}
+	
+	// implement the SVG "use" element by expanding out those elements into
+	// XML that svgtiny will parse correctly.
+	ofXml::Search useElements = xml.find("//use");
+	if(!useElements.empty()) {
+		
+		for(ofXml & element: useElements){
+			
+			// get the id attribute
+			string id = element.getAttribute("xlink:href").getValue();
+			// remove the leading "#" from the id
+			id.erase(id.begin());
+			
+			// find the original definition of that element - TODO add defs into path?
+			string searchstring ="//*[@id='"+id+"']";
+			ofXml idelement = xml.findFirst(searchstring);
+			
+			// if we found one then use it! (find first returns an empty xml on failure)
+			if(idelement.getAttribute("id").getValue()!="") {
+				
+				// make a copy of that element
+				element.appendChild(idelement);
+				
+				// then turn the use element into a g element
+				element.setName("g");
+				
+			}
+		}
+	}
+	
+	xmlstring = xml.toString();
+	
+}
+
+void ofxSvg::draw(){
 	for(int i = 0; i < (int)paths.size(); i++){
 		paths[i].draw();
 	}
 }
 
-
-void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
+void ofxSvg::setupDiagram(struct svgtiny_diagram * diagram){
 
 	width = diagram->width;
 	height = diagram->height;
@@ -79,7 +180,7 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 	}
 }
 
-void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
+void ofxSvg::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	float * p = shape->path;
 
 	path.setFilled(false);
@@ -122,6 +223,6 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	}
 }
 
-const vector <ofPath> & ofxSVG::getPaths() const{
+const vector <ofPath> & ofxSvg::getPaths() const{
     return paths;
 }

@@ -23,7 +23,7 @@ class ofApp : public ofBaseApp{
 		
 		ofTexture tex;
 		ofBufferObject buffer;
-		vector<ofMatrix4x4> matrices;
+		vector<glm::mat4> matrices;
 		ofVboMesh mesh;
 		ofShader shader;
 		ofEasyCam camera;

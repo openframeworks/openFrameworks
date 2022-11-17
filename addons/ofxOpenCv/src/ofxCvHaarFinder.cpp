@@ -12,14 +12,18 @@ static bool sort_carea_compare( const ofxCvBlob & a, const ofxCvBlob & b) {
 }
 
 ofxCvHaarFinder::ofxCvHaarFinder() {
+#ifdef USE_OLD_CV
 	cascade = NULL;
+#endif
 	scaleHaar = 1.08;
 	neighbors = 2;
 	img.setUseTexture(false);
 }
 
 ofxCvHaarFinder::ofxCvHaarFinder(const ofxCvHaarFinder& finder) {
+#ifdef USE_OLD_CV
 	cascade = NULL;
+#endif
 	scaleHaar = finder.scaleHaar;
 	neighbors = finder.neighbors;
 	img.setUseTexture(false);
@@ -27,8 +31,10 @@ ofxCvHaarFinder::ofxCvHaarFinder(const ofxCvHaarFinder& finder) {
 }
 
 ofxCvHaarFinder::~ofxCvHaarFinder() {
+#ifdef USE_OLD_CV
 	if(cascade != NULL)
 		cvReleaseHaarClassifierCascade(&cascade);
+#endif
 }
 
 // low values	- more accurate - eg: 1.01
@@ -44,12 +50,13 @@ void ofxCvHaarFinder::setNeighbors(unsigned neighbors) {
 }
 
 void ofxCvHaarFinder::setup(std::string haarFile) {
-	if(cascade != NULL)
-		cvReleaseHaarClassifierCascade(&cascade);
 
 	this->haarFile = haarFile;
 
 	haarFile = ofToDataPath(haarFile);
+#ifdef USE_OLD_CV
+	if(cascade != NULL)
+		cvReleaseHaarClassifierCascade(&cascade);
 	cascade = (CvHaarClassifierCascade*) cvLoad(haarFile.c_str(), 0, 0, 0);
 
 	#ifdef HAAR_HACK
@@ -65,6 +72,11 @@ void ofxCvHaarFinder::setup(std::string haarFile) {
 
 	if (!cascade)
         ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: \"" << haarFile << "\"";
+#else
+	cascade.load( haarFile );
+	if( cascade.empty() )
+		ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: \"" << haarFile << "\"";
+#endif //USE_OLD_CV
 }
 
 
@@ -161,6 +173,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 
 	int nHaarResults = 0;
 
+#ifdef USE_OLD_CV
 	if (cascade) {
 		if (!blobs.empty())
 			blobs.clear();
@@ -243,5 +256,87 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 		cvReleaseMemStorage(&storage);
 	}
 
+#else
+    if (!blobs.empty()){
+        blobs.clear();
+    }
+    
+	if( cascade.empty() )
+		return 0;
+	
+	// we make a copy of the input image here
+	// because we need to equalize it.
+
+	if (img.width == input.width && img.height == input.height) {
+			img.resetROI();
+			img = input;
+	} else {
+			img.clear();
+			img.allocate(input.width, input.height);
+			img = input;
+	}
+
+	img.setROI(x, y, w, h);
+	cvEqualizeHist(img.getCvImage(), img.getCvImage());
+	
+	/*
+	Alternative modes:
+
+	cv::CASCADE_DO_CANNY_PRUNING
+	Regions without edges are ignored.
+
+	cv::CASCADE_SCALE_IMAGE
+	Scale the image rather than the detector
+	(sometimes yields speed increases).
+
+	cv::CASCADE_FIND_BIGGEST_OBJECT
+	Only return the largest result.
+
+	cv::CASCADE_DO_ROUGH_SEARCH
+	When BIGGEST_OBJECT is enabled, stop at
+	the first scale for which multiple results
+	are found.
+	*/
+
+	std::vector<cv::Rect> haarResults;
+	cascade.detectMultiScale(cv::cvarrToMat(img.getCvImage()), haarResults, scaleHaar, neighbors, cv::CASCADE_DO_CANNY_PRUNING, 
+		cv::Size(minWidth, minHeight) );
+	
+	nHaarResults = haarResults.size();
+
+		for (int i = 0; i < nHaarResults; i++ ) {
+			//ofLogNotice("ofxCvHaarFinder") << "findHaarObjects(): " << i << " objects";
+
+			ofxCvBlob blob;
+
+			cv::Rect r = haarResults[i];
+
+			float area = r.width * r.height;
+			float length = (r.width * 2) + (r.height * 2);
+			float centerx	= (r.x) + (r.width / 2.0);
+			float centery	= (r.y) + (r.height / 2.0);
+
+			blob.area = fabs(area);
+			blob.hole = area < 0 ? true : false;
+			blob.length	= length;
+			blob.boundingRect.x = r.x + x;
+			blob.boundingRect.y = r.y + y;
+			blob.boundingRect.width = r.width;
+			blob.boundingRect.height = r.height;
+			blob.centroid.x = centerx;
+			blob.centroid.y = centery;
+			blob.pts.push_back(ofPoint(r.x, r.y));
+			blob.pts.push_back(ofPoint(r.x + r.width, r.y));
+			blob.pts.push_back(ofPoint(r.x + r.width, r.y + r.height));
+			blob.pts.push_back(ofPoint(r.x, r.y + r.height));
+
+			blobs.push_back(blob);
+		}
+
+		// sort the pointers based on size
+		if( blobs.size() > 1 ) {
+			sort( blobs.begin(), blobs.end(), sort_carea_compare );
+		}
+#endif // USE_OLD_CV
 	return nHaarResults;
 }

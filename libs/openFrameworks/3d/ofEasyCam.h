@@ -178,6 +178,8 @@ public:
 	bool hasInteraction(TransformType type, int mouseButton, int key = -1);
 	bool hasInteraction(int mouseButton, int key);
 	void removeAllInteractions();
+protected:
+	virtual void onPositionChanged() ;
 private:
 	void setDistance(float distance, bool save);
 
@@ -262,9 +264,6 @@ private:
 	glm::vec3 upAxis{0,1,0};
 	
 	glm::vec2 mouseAtScroll;
-	
-	/// \brief previous far and near clip.
-	float prevFarClip, prevNearClip;
 	
 	TransformType currentTransformType;
 	/// \brief This struct holds the combination of mouse button and key press that will trigger a specific interaction.

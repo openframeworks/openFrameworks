@@ -1,8 +1,5 @@
 #include "ofGraphics.h"
 #include "ofRendererCollection.h"
-#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
-#include "ofCairoRenderer.h"
-#endif
 #include "ofGLRenderer.h"
 
 
@@ -10,7 +7,9 @@
     #define CALLBACK
 #endif
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //style stuff - new in 006
 static ofVboMesh gradientMesh;
@@ -23,72 +22,6 @@ void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults){
 	}
 	ofGetCurrentRenderer() = renderer;
 }
-
-#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
-static shared_ptr<ofCairoRenderer> cairoScreenshot;
-static shared_ptr<ofBaseRenderer> storedRenderer;
-static shared_ptr<ofRendererCollection> rendererCollection;
-static bool bScreenShotStarted = false;
-
-
-static void ofEndSaveScreen(){
-	if( bScreenShotStarted ){
-
-		if( cairoScreenshot ){
-			cairoScreenshot->close();
-			rendererCollection.reset();
-			cairoScreenshot.reset();
-		}
-		if( storedRenderer ){
-			ofSetCurrentRenderer(storedRenderer,true);
-			storedRenderer.reset();
-		}
-
-		bScreenShotStarted = false;
-	}
-
-}
-
-static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle outputsize){
-	if( bScreenShotStarted ) ofEndSaveScreen();
-	
-	storedRenderer = ofGetCurrentRenderer();
-	
-	cairoScreenshot = std::make_unique<ofCairoRenderer>();
-	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
-
-	rendererCollection = make_shared<ofRendererCollection>();
-	rendererCollection->renderers.push_back(storedRenderer);
-	rendererCollection->renderers.push_back(cairoScreenshot);
-	
-	ofSetCurrentRenderer(rendererCollection, true);
-	cairoScreenshot->background(cairoScreenshot->getStyle().bgColor);
-	bScreenShotStarted = true;
-}
-
-//-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
-	ofBeginSaveScreen(filename, ofCairoRenderer::PDF, bMultipage, b3D, outputsize);
-}
-
-//-----------------------------------------------------------------------------------
-void ofEndSaveScreenAsPDF(){
-	ofEndSaveScreen();
-}
-
-//-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsSVG(string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
-	ofBeginSaveScreen(filename, ofCairoRenderer::SVG, bMultipage, b3D, outputsize);
-}
-
-//-----------------------------------------------------------------------------------
-void ofEndSaveScreenAsSVG(){
-	ofEndSaveScreen();
-}
-
-#endif
-
-
 
 //----------------------------------------------------------
 // transformation matrix related functions
@@ -308,28 +241,28 @@ void ofRotateZDeg(float degrees){
 
 //same as ofRotateZ
 //----------------------------------------------------------
-void ofRotateRad(float degrees){
-	ofGetCurrentRenderer()->rotateRad(degrees);
+void ofRotateRad(float radians){
+	ofGetCurrentRenderer()->rotateRad(radians);
 }
 
 //----------------------------------------------------------
-void ofRotateRad(float degrees, float vecX, float vecY, float vecZ){
-	ofGetCurrentRenderer()->rotateRad(degrees, vecX, vecY, vecZ);
+void ofRotateRad(float radians, float vecX, float vecY, float vecZ){
+	ofGetCurrentRenderer()->rotateRad(radians, vecX, vecY, vecZ);
 }
 
 //----------------------------------------------------------
-void ofRotateXRad(float degrees){
-	ofGetCurrentRenderer()->rotateXRad(degrees);
+void ofRotateXRad(float radians){
+	ofGetCurrentRenderer()->rotateXRad(radians);
 }
 
 //----------------------------------------------------------
-void ofRotateYRad(float degrees){
-	ofGetCurrentRenderer()->rotateYRad(degrees);
+void ofRotateYRad(float radians){
+	ofGetCurrentRenderer()->rotateYRad(radians);
 }
 
 //----------------------------------------------------------
-void ofRotateZRad(float degrees){
-	ofGetCurrentRenderer()->rotateZRad(degrees);
+void ofRotateZRad(float radians){
+	ofGetCurrentRenderer()->rotateZRad(radians);
 }
 
 //----------------------------------------------------------

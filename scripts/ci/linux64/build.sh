@@ -5,7 +5,7 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
 # the "proper" way does not work currently:
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
-CUSTOMFLAGS="-ftrack-macro-expansion=0"
+CUSTOMFLAGS="-ftrack-macro-expansion=0 -fpic"
 
 source $ROOT/scripts/ci/ccache.sh
 
@@ -25,16 +25,16 @@ else
     echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux64/config.linux64.default.mk
     sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
     cd libs/openFrameworksCompiled/project
-    make
+    make -j2
 
     echo "**** Building emptyExample ****"
     cd $ROOT/scripts/templates/linux64
-    make
+    make -j2
 
     echo "**** Building allAddonsExample ****"
     cd $ROOT
     cp scripts/templates/linux64/Makefile examples/templates/allAddonsExample/
     cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
     cd examples/templates/allAddonsExample/
-    make
+    make -j2
 fi

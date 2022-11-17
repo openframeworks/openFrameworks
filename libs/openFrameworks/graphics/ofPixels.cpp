@@ -3,8 +3,6 @@
 #include "glm/common.hpp"
 #include <cstring>
 
-using namespace std;
-
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
 	case 1:
@@ -213,7 +211,7 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	}
 }
 
-string ofToString(ofPixelFormat pixelFormat){
+std::string ofToString(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
 			return "RGB";
@@ -944,7 +942,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(size_t planeIdx){
 		case OF_PIXELS_UNKNOWN:
 			break;
 	}
-	return std::move(plane);
+	return plane;
 }
 
 template<typename PixelType>
@@ -1009,7 +1007,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(size_t channel) const{
 	for(auto p: getConstPixelsIter()){
 		*channelPixel++ = p[channel];
 	}
-	return std::move(channelPixels);
+	return channelPixels;
 }
 
 template<typename PixelType>

@@ -25,3 +25,6 @@ void ofxGuiSetTextPadding(int padding);
 void ofxGuiSetDefaultWidth(int width);
 void ofxGuiSetDefaultHeight(int height);
 void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority);
+
+void ofxGuiEnableHiResDisplay();//hiDpi display
+void ofxGuiDisableHiResDisplay();//hiDpi display
