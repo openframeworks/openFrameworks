@@ -21,8 +21,6 @@ struct aiMesh;
 class ofxAssimpMeshHelper {
 
 public:
-
-	ofxAssimpMeshHelper();
  
     void addTexture(ofxAssimpTexture & aAssimpTex);
     bool hasTexture(aiTextureType aTexType = aiTextureType_DIFFUSE);
@@ -30,32 +28,32 @@ public:
     ofTexture & getTextureRef(aiTextureType aTexType = aiTextureType_DIFFUSE);
     std::vector<std::shared_ptr<ofxAssimpTexture>> & getAllMeshTextures(){ return meshTextures; }
     
-    aiMesh * mesh; // pointer to the aiMesh we represent.
+    aiMesh * mesh = NULL; // pointer to the aiMesh we represent.
 
     ofVbo vbo;
     
-	std::vector<ofIndexType> indices;
+    std::vector<ofIndexType> indices;
     
     ofMaterial material;
     
-    ofBlendMode blendMode;
+    ofBlendMode blendMode = OF_BLENDMODE_ALPHA;
     
-    bool twoSided;
-    bool hasChanged;
+    bool twoSided = false;
+    bool hasChanged = false;
 
-	std::vector<aiVector3D> animatedPos;
-	std::vector<aiVector3D> animatedNorm;
+    std::vector<aiVector3D> animatedPos;
+    std::vector<aiVector3D> animatedNorm;
 	
-	//diffuse texture - legacy api
+    //diffuse texture - legacy api
     ofxAssimpTexture assimpTexture;
     
     ofMesh cachedMesh;
-    bool validCache;
+    bool validCache = false;
     
     glm::mat4 matrix;
     
 protected:
-	//for normal, specular, etc - we include the diffuse too with a null deleter
-	std::vector <std::shared_ptr<ofxAssimpTexture>> meshTextures;
+    //for normal, specular, etc - we include the diffuse too with a null deleter
+    std::vector <std::shared_ptr<ofxAssimpTexture>> meshTextures;
 
 };
