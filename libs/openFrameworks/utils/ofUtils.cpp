@@ -768,7 +768,7 @@ std::locale loc;
 	if( printonce ){
 		std::string current( setlocale(LC_ALL,NULL) );
 		setlocale (LC_ALL,"");
-		ofLogWarning("ofUtils") << "std::locale not supported. Using C locale  :" << current ;
+		ofLogWarning("ofUtils") << "std::locale not supported. Using C locale: " << current ;
 		printonce = false;
 	}
 #else

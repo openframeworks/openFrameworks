@@ -5,13 +5,13 @@ cd ../../examples
 
 for category in $( ls . )
 do
-    if [ "$category" = "android" -o "$category" = "ios" -o "$category" = "gles" ]; then
+    if [ ! -d "$category" -o "$category" = "android" -o "$category" = "ios" -o "$category" = "gles" ]; then
             continue
     fi
     cd $category
     for example in $( ls . )
     do
-        if [[ "$example" == osx* ]]
+        if [[ "$example" == osx* ]] || [[ "$example" != *Example ]]
         then
             continue
         fi    

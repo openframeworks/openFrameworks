@@ -5,14 +5,14 @@
 class ofApp : public ofBaseApp, public ofThread {
 	
 public:
-    
-    void setup();
-    void update();
-    void draw();
-    void exit();
+	
+	void setup();
+	void update();
+	void draw();
+	void exit();
 		
-    void threadedFunction();
-    
+	void threadedFunction();
+	
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y);
@@ -24,9 +24,9 @@ public:
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
-    ofTrueTypeFont font;
-    vector <string> words;
-    int step;
-    
+	
+	ofTrueTypeFont font;
+	vector <string> words;
+	int step;
+	
 };
