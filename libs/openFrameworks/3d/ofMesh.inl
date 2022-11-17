@@ -360,7 +360,7 @@ void ofMesh_<V,N,C,T>::removeVertex(ofIndexType index){
 }
 
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::removeVertex(ofIndexType startIndex, ofIndexType endIndex){
+void ofMesh_<V,N,C,T>::removeVertices(ofIndexType startIndex, ofIndexType endIndex){
 	if(startIndex >= vertices.size() || endIndex > vertices.size()){
 		ofLogError("ofMesh") << "removeVertex(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of vertices is" << vertices.size();
 	}else{
@@ -385,7 +385,7 @@ void ofMesh_<V,N,C,T>::removeNormal(ofIndexType index){
 }
 
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::removeNormal(ofIndexType startIndex, ofIndexType endIndex){
+void ofMesh_<V,N,C,T>::removeNormals(ofIndexType startIndex, ofIndexType endIndex){
     if(startIndex >= normals.size() || endIndex > normals.size()){
         ofLogError("ofMesh") << "removeNormal(): ignoring out of range beginIndex " << startIndex << " endIndex " << endIndex << ", number of normals is" << normals.size();
     }else{
@@ -409,7 +409,7 @@ void ofMesh_<V,N,C,T>::removeColor(ofIndexType index){
 }
 
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::removeColor(ofIndexType startIndex, ofIndexType endIndex){
+void ofMesh_<V,N,C,T>::removeColors(ofIndexType startIndex, ofIndexType endIndex){
 	if(startIndex >= colors.size() || endIndex > colors.size()){
 		ofLogError("ofMesh") << "removeColor(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of colors is" << colors.size();
 	}else{
@@ -434,7 +434,7 @@ void ofMesh_<V,N,C,T>::removeTexCoord(ofIndexType index){
 }
 
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::removeTexCoord(ofIndexType startIndex, ofIndexType endIndex){
+void ofMesh_<V,N,C,T>::removeTexCoords(ofIndexType startIndex, ofIndexType endIndex){
 	if(startIndex >= texCoords.size() || endIndex >= texCoords.size()){
 		ofLogError("ofMesh") << "removeTexCoord(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of tex coords is" << texCoords.size();
 	}else{
@@ -460,7 +460,7 @@ void ofMesh_<V,N,C,T>::removeIndex(ofIndexType index){
 }
 
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::removeIndex(ofIndexType startIndex, ofIndexType endIndex){
+void ofMesh_<V,N,C,T>::removeIndices(ofIndexType startIndex, ofIndexType endIndex){
 	if(startIndex >= indices.size() || endIndex > indices.size()){
 		ofLogError("ofMesh") << "removeIndex(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of indices is" << indices.size();;
 	}else{
