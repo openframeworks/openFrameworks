@@ -13,7 +13,7 @@ $libsDir = $scriptPath + "\..\..\libs"
 
 function DownloadPackage{
     $pkg = $args[0]
-    $url = "http://ci.openframeworks.cc/libs/$pkg"
+    $url = " https://github.com/openframeworks/apothecary/releases/download/nightly/$pkg"
     If(Test-Path "$pkg") {
         echo "Deleting old package"
         Remove-Item $pkg
@@ -122,9 +122,7 @@ function moveAddonLib {
 
     echo "Moving addon lib: $lib_name"
 
-    robocopy.exe "..\..\libs\64\$lib_name\lib\vs\x64" "..\..\addons\$addon_path\$lib_name\lib\vs\x64" /MOVE /NFL /R:5 /S
-    Remove-Item  "..\..\libs\64\$lib_name" -Force -Recurse
-
+    robocopy.exe "..\..\libs\64\$lib_name" "..\..\addons\$addon_path\$lib_name" /MOVE /NFL /R:5 /S
 }
 
 echo "Moving addons libs"
