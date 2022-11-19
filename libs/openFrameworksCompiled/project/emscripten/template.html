@@ -117,8 +117,8 @@
 
 <span id='controls'>
   <span><input type="checkbox" id="resize">Resize canvas</span>
-  <span><input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer &nbsp;&nbsp;&nbsp;</span>
-  <span><input type="button" value="Fullscreen" onclick="Module.requestFullScreen(document.getElementById('pointerLock').checked, 
+  <span><input type="checkbox" id="pointerLock">Lock/hide mouse pointer &nbsp;&nbsp;&nbsp;</span>
+  <span><input type="button" value="Fullscreen" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked, 
                                                                             document.getElementById('resize').checked)">
   </span>
 </span>
@@ -129,7 +129,7 @@
 
     
     <div class="emscripten_border">
-      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     </div>
     <textarea id="output" rows="8"></textarea>
 
@@ -181,7 +181,7 @@
           if (text === Module.setStatus.text) return;
           var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
           var now = Date.now();
-          if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
           if (m) {
             text = m[1];
             progressElement.value = parseInt(m[2])*100;
