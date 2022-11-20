@@ -120,7 +120,7 @@ var LibraryHTML5Video = {
     },
 
     html5video_player_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.players[id].pixelFormat), 'i8', ALLOC_STACK);
+        return allocate(intArrayFromString(VIDEO.players[id].pixelFormat), ALLOC_STACK);
     },
 
     html5video_player_set_pixel_format: function(id, format){
@@ -286,7 +286,7 @@ var LibraryHTML5Video = {
     },
 
     html5video_grabber_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.grabbers[id].pixelFormat), 'i8', ALLOC_STACK);
+        return allocate(intArrayFromString(VIDEO.grabbers[id].pixelFormat), ALLOC_STACK);
     },
 
     html5video_grabber_set_pixel_format: function(id, format){
