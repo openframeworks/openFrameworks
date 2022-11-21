@@ -27,10 +27,8 @@ void ofApp::setup() {
 	}
 
 	ofEnableDepthTest();
-	#ifndef TARGET_EMSCRIPTEN
 	glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
 	glPointSize(3); // make the points bigger
-	#endif
 }
 
 //--------------------------------------------------------------
