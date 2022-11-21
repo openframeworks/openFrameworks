@@ -89,12 +89,12 @@ void Truck::setup(){
 	reverseSoundPlayer.load("reverse.mp3");
 	reverseSoundPlayer.setVolume(0.0);
 	#ifndef TARGET_EMSCRIPTEN
-	reverseSoundPlayer.setLoop(true);
+		reverseSoundPlayer.setLoop(true);
 	#endif
 
 	engineSoundPlayer.load("engine.wav");
 	#ifndef TARGET_EMSCRIPTEN
-	engineSoundPlayer.setLoop(true);
+		engineSoundPlayer.setLoop(true);
 	#endif
 	engineSoundPlayer.setVolume(0.0);
 
