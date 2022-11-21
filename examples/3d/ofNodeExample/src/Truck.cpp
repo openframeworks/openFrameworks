@@ -88,10 +88,14 @@ void Truck::setup(){
 	hornSoundPlayer.setVolume(0.5);
 	reverseSoundPlayer.load("reverse.mp3");
 	reverseSoundPlayer.setVolume(0.0);
+	#ifndef TARGET_EMSCRIPTEN
 	reverseSoundPlayer.setLoop(true);
+	#endif
 
 	engineSoundPlayer.load("engine.wav");
+	#ifndef TARGET_EMSCRIPTEN
 	engineSoundPlayer.setLoop(true);
+	#endif
 	engineSoundPlayer.setVolume(0.0);
 
 }
