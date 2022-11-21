@@ -21,7 +21,9 @@ void ofApp::draw(){
 	ofSetColor(ofColor::gray);
 	mesh.drawWireframe();
 	
+	#ifndef TARGET_EMSCRIPTEN
 	glPointSize(2);
+	#endif
 	ofSetColor(ofColor::white);
 	mesh.drawVertices();
 	cam.end();
