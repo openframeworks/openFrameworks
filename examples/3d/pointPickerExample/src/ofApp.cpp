@@ -22,7 +22,7 @@ void ofApp::draw(){
 	mesh.drawWireframe();
 	
 	#ifndef TARGET_EMSCRIPTEN
-	glPointSize(2);
+		glPointSize(2);
 	#endif
 	ofSetColor(ofColor::white);
 	mesh.drawVertices();
