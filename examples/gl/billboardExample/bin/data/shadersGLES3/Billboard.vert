@@ -22,8 +22,3 @@ void main() {
 	gl_PointSize = normal.x * att;
 	colorVarying = color;
 }
-
-
-
-
-
