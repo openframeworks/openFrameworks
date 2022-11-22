@@ -69,7 +69,7 @@ void ofApp::draw(){
 	//------------------------------------------- 
 	ofSetColor(255);
 	#ifdef TARGET_EMSCRIPTEN
-		if (camera.getTexture().isAllocated()){
+		if(camera.getTexture().isAllocated()){
 			camera.getTexture().draw(5,5,320,240);
 		}
 	#else
