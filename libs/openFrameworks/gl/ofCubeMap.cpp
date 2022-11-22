@@ -136,11 +136,18 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 	bool hdr = (ext == "hdr" || ext == "exr");
 	bool bLoadOk = false;
 	data->resolution = aFaceResolution;
-//	data->maxMipLevels = 1;
+
+	#ifdef TARGET_OPENGLES
+	if(hdr) {
+		ofLogWarning("ofCubeMap::load") << "loading of hdr or exr float textures not supported on GLES. Loading GL_RGB.";
+	}
+	hdr = false;
+	#endif
 	
 	bool bArbTexEnabled = ofGetUsingArbTex();
 	ofDisableArbTex();
 	if( hdr ) {
+		#ifndef TARGET_OPENGLES
 		ofFloatPixels fpix;
 		if( ofLoadImage(fpix, apath) ) {
 			ofLogNotice("ofCubeMap::load : loaded ") << ext << " image.";
@@ -148,6 +155,7 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 			texFormat = GL_RGB32F;
 			mSourceTex.loadData(fpix );
 		}
+		#endif
 	} else {
 		ofPixels ipix;
 		if( ofLoadImage(ipix, apath) ) {
@@ -166,7 +174,9 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 		if( isHdr() ) {
 			_createIrradianceMap();
 			_createPrefilteredCubeMap();
+			#ifndef TARGET_OPENGLES
 //			_createBrdfLUT();
+			#endif
 		}
 	}
 	
@@ -336,15 +346,24 @@ GLuint ofCubeMap::getTextureId() {
 
 //--------------------------------------------------------------
 bool ofCubeMap::isHdr() {
+	#ifndef TARGET_OPENGLES
 	return (texFormat == GL_RGB32F);
+	#endif
+	return false;
 }
 
 //--------------------------------------------------------------
 void ofCubeMap::setUseBrdfLutTexture( bool ab ) {
+	#ifdef TARGET_OPENGLES
+	data->useLutTex = false;
+	ofLogWarning("ofCubeMap::setUseBrdfLutTexture") << " brdf lut texture not supported on GLES.";
+	return;
+	#else
 	data->useLutTex = ab;
 	if(ab && !sBrdfLutTex.isAllocated() ) {
 		_createBrdfLUT();
 	}
+	#endif
 }
 
 //--------------------------------------------------------------
@@ -372,22 +391,23 @@ void ofCubeMap::_createCubeMap() {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, data->cubeMapId);
 	
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, data->maxMipLevels);
-	
 	//	glBindTexture(GL_TEXTURE_CUBE_MAP, data->preFilteredMapId);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #ifdef GL_TEXTURE_WRAP_R
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 #endif
-//		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+
+	#ifndef TARGET_OPENGLES
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, data->maxMipLevels);
+		// glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
-	
 	// generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	#endif
 	
 	bool bUseOfFbo = true;
 	ofFboSettings fboSettings;
@@ -569,50 +589,43 @@ void ofCubeMap::_createPrefilteredCubeMap() {
 	if(data->bPreFilteredMapAllocated) {
 		return;
 	}
-//	data->maxMipLevels = 5;
 	
 	_allocateCubeMesh();
 	data->bPreFilteredMapAllocated = true;
 	glGenTextures(1, &data->preFilteredMapId );
 	
-//	glActiveTexture(GL_TEXTURE0);
-	
-	
-//	glBindTexture(GL_TEXTURE_CUBE_MAP, data->preFilteredMapId);
-//	for (unsigned int i = 0; i < 6; ++i) {
-//		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, texFormat, data->preFilterRes, data->preFilterRes, 0, GL_RGB, getTexStorageFormat(), nullptr );
-//	}
-	_initEmptyTextures( data->preFilteredMapId, data->preFilterRes );
+	//_initEmptyTextures( data->preFilteredMapId, data->preFilterRes );
 	glBindTexture(GL_TEXTURE_CUBE_MAP, data->preFilteredMapId);
-//	for (unsigned int i = 0; i < 6; ++i) {
-//		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, texFormat, data->preFilterRes, data->preFilterRes, 0, GL_RGB, getTexStorageFormat(), nullptr);
-//	}
 	
-//	glBindTexture(GL_TEXTURE_CUBE_MAP, data->preFilteredMapId);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	#ifdef GL_TEXTURE_WRAP_R
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	#endif
-//	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-//	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
+	#ifndef TARGET_OPENGLES
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, data->maxMipLevels - 1);
-	
+	#endif
 	// generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
+	// glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+	GLuint texStorageFormat = getTexStorageFormat();
+
+	for (int mip = 0; mip < data->maxMipLevels; mip++) {
+		// reisze framebuffer according to mip-level size.
+		unsigned int mipWidth  = data->preFilterRes * std::pow(0.5, mip);
+		unsigned int mipHeight = data->preFilterRes * std::pow(0.5, mip);
+		for (unsigned int i = 0; i < 6; i++) {
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mip, texFormat, mipWidth, mipHeight, 0, GL_RGB, texStorageFormat, nullptr );
+		}
+	}
+	#ifdef TARGET_OPENGLES
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	
-//	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-//	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, data->maxMipLevels - 1);
-	//glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-//	_initEmptyTextures( data->preFilteredMapId, data->preFilterRes );
-	
-//	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	
+	#endif
 	
 	if( !shaderPreFilterMap.isLoaded() ) {
 		auto psource = ofCubeMapShaders::prefilter();
@@ -627,21 +640,17 @@ void ofCubeMap::_createPrefilteredCubeMap() {
 	
 	fbo.clear();
 	ofFboSettings fboSettings;
-//	fboSettings.width = data->resolution;
-//	fboSettings.height = data->resolution;
 	fboSettings.numSamples = 0;
 	fboSettings.numColorbuffers = 6;
 	fboSettings.useDepth = false;
 	fboSettings.textureTarget = GL_TEXTURE_2D;
 	fboSettings.internalformat = texFormat;
-//	fbo.allocate( fboSettings );
-	
-	
-	
-	for (unsigned int mip = 0; mip < data->maxMipLevels; mip++) {
+
+	for (int mip = 0; mip < data->maxMipLevels; mip++) {
 		// reisze framebuffer according to mip-level size.
 		unsigned int mipWidth  = data->preFilterRes * std::pow(0.5, mip);
 		unsigned int mipHeight = data->preFilterRes * std::pow(0.5, mip);
+
 		fbo.clear();
 		fboSettings.width = mipWidth;
 		fboSettings.height = mipHeight;
@@ -651,9 +660,6 @@ void ofCubeMap::_createPrefilteredCubeMap() {
 		shaderPreFilterMap.begin();
 		shaderPreFilterMap.setUniformTexture("environmentMap", getTextureTarget(), data->cubeMapId, 0 );
 		shaderPreFilterMap.setUniformMatrix4f("uProjection", projectionMat );
-//		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-//		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
-//		glViewport(0, 0, mipWidth, mipHeight);
 		
 		float roughness = (float)mip / (float)(data->maxMipLevels - 1);
 		shaderPreFilterMap.setUniform1f("roughness", roughness);
@@ -668,11 +674,11 @@ void ofCubeMap::_createPrefilteredCubeMap() {
 	}
 	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-//	glBindTexture(GL_TEXTURE_2D, GL_TEXTURE0);
 }
 
 //--------------------------------------------------------------
 void ofCubeMap::_createBrdfLUT() {
+	#ifndef TARGET_OPENGLES
 	int lutWidth = 512;
 	int lutHeight = 512;
 	
@@ -727,6 +733,9 @@ void ofCubeMap::_createBrdfLUT() {
 	lutFbo.clear();
 	
 	glBindTexture(GL_TEXTURE_2D, 0);
+	#else
+	ofLogWarning("ofCubeMap::_createBrdfLUT") << " brdf lut texture not supported on GLES";
+	#endif
 }
 
 //--------------------------------------------------------------
@@ -775,9 +784,11 @@ std::vector<glm::mat4> ofCubeMap::_getViewMatrices(const glm::vec3& apos ) {
 
 //--------------------------------------------------------------
 GLuint ofCubeMap::getTexStorageFormat() {
+	#ifndef TARGET_OPENGLES
 	if( texFormat == GL_RGB32F ) {
 		return GL_FLOAT;
 	}
+	#endif
 	return GL_UNSIGNED_BYTE;
 }
 

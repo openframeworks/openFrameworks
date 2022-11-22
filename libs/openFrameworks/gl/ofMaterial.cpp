@@ -666,8 +666,8 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
         shaders[&renderer]->numLights = numLights;
 		shaders[&renderer]->numCubeMaps = numCubeMaps;
 		
-		std::cout << "ofMaterial:: Shader source ------ " << std::endl;
-		std::cout << vertexSource(isPBR(),vertex2DHeader,numLights,true,false,extraVertString,data) << std::endl;
+		//std::cout << "ofMaterial:: Shader source ------ " << std::endl;
+		//std::cout << vertexSource(isPBR(),vertex2DHeader,numLights,true,false,extraVertString,data) << std::endl;
 //		std::cout << fragmentSource(isPBR(),fragmentRectHeader, customUniforms, data.postFragment,numLights,true,false,definesString);
 //		std::cout << fragmentSource(isPBR(),fragment2DHeader, customUniforms, data.postFragment,numLights,false,false, definesString) << std::endl;
 		
