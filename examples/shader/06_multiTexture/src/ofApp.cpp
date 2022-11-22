@@ -68,7 +68,13 @@ void ofApp::draw(){
 	
 	//------------------------------------------- 
 	ofSetColor(255);
-	camera.draw(5,5,320,240);
+	#ifdef TARGET_EMSCRIPTEN
+		if (camera.getTexture().isAllocated()){
+			camera.getTexture().draw(5,5,320,240);
+		}
+	#else
+		camera.draw(5,5,320,240);
+	#endif
 	ofSetColor(ofColor::red);
 	ofDrawBitmapString("RED", 5+30, 5+30);
 	
