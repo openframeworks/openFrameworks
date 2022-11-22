@@ -10,6 +10,12 @@
 			"lastKnownFileType": "sourcecode.cpp.cpp",
 			"sourceTree": "SOURCE_ROOT"
 		},
+		"2E49891F292C98D80096EC56": {
+			"path": "ofCubeMapShaders.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>"
+		},
 		"E42962ED2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/app/ofAppBaseWindow.h",
 			"isa": "PBXFileReference",
@@ -44,10 +50,10 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"BB4B014C10F69532006C3DED": {
-			"isa": "PBXGroup",
-			"name": "addons",
-			"children": [],
+		"2E49891D292C98D80096EC56": {
+			"path": "ofCubeMap.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "<group>"
 		},
 		"E42962EB2163EDD300A6A9E2": {
@@ -77,6 +83,19 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
+		"BB4B014C10F69532006C3DED": {
+			"isa": "PBXGroup",
+			"name": "addons",
+			"children": [],
+			"sourceTree": "<group>"
+		},
+		"E42963182163EDD300A6A9E2": {
+			"path": "../../../libs/openFrameworks/math/ofMathConstants.h",
+			"isa": "PBXFileReference",
+			"name": "ofMathConstants.h",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
 		"E42963252163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/gl",
 			"isa": "PBXGroup",
@@ -84,6 +103,9 @@
 			"children": [
 				"E429632E2163EDD300A6A9E2",
 				"E42963332163EDD300A6A9E2",
+				"2E49891E292C98D80096EC56",
+				"2E49891D292C98D80096EC56",
+				"2E49891F292C98D80096EC56",
 				"E429632A2163EDD300A6A9E2",
 				"E42963382163EDD300A6A9E2",
 				"E42963392163EDD300A6A9E2",
@@ -108,13 +130,6 @@
 				"E429632F2163EDD300A6A9E2",
 				"E42963262163EDD300A6A9E2"
 			],
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E42963182163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/math/ofMathConstants.h",
-			"isa": "PBXFileReference",
-			"name": "ofMathConstants.h",
-			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
 		"E42962DC2163EDD300A6A9E2": {
@@ -607,6 +622,12 @@
 			"name": "ofShader.h",
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
+		},
+		"2E49891E292C98D80096EC56": {
+			"path": "ofCubeMap.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "<group>"
 		},
 		"E42962EC2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/app/ofAppEGLWindow.cpp",
