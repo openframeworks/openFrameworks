@@ -447,11 +447,17 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		// while skipping whitespace, read in tokens for: pragma, include, and filename
 		s >> std::skipws >> p >> i >> f;
 
-		if (p.empty() || i.empty() || (f.size() < 2) ) return false;
-		// -----| invariant: all tokens have values
-
-		if (p != "pragma") return false;
-		if (i != "include") return false;
+		if (p.empty())
+			return false;
+		else if (p == "include") {
+			f = i;
+			i = p;
+		}
+		else if (p != "pragma")
+			return false;
+		
+		if (i.empty() || (f.size() < 2) )
+			return false;
 
 		// first and last character of filename token must match and be either
 		// '<' and '>', or '"
