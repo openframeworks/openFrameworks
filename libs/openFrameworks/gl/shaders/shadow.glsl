@@ -1,5 +1,5 @@
 
-static const string shadowShaderInclude = R"(
+static const string shadow_shader_include = R"(
 struct shadowData
 {
 	float enabled;
@@ -21,6 +21,16 @@ struct shadowData
 	mat4 shadowMatrix;
 };
 uniform shadowData shadows[MAX_LIGHTS];
+
+#ifndef FLT_EPS
+#define FLT_EPS            0.0006103515625
+#endif
+
+#ifndef ONE_LESS_FLT_EPS
+#define ONE_LESS_FLT_EPS            1.0-FLT_EPS
+#endif
+
+
 #ifdef SHADOWS_USE_CUBE_MAP_ARRAY
 uniform samplerCubeArray uShadowCubeMap;
 #else
@@ -38,60 +48,51 @@ uniform sampler2D uShadowMapArea;
 #endif
 
 
-
-
-vec2 cardinalSampleDisk4_v2[4] = vec2[]
+mediump vec2 cardinalSampleDisk4_v2[4] = vec2[]
 (
  vec2(-1, 0), vec2(1, 0), vec2(0, -1), vec2(0, 1)
  );
 
-vec2 cornerSampleDisk4_v2[4] = vec2[]
+mediump vec2 cornerSampleDisk4_v2[4] = vec2[]
 (
  vec2(-1, -1), vec2(1, -1), vec2(1, 1), vec2(-1, 1)
  );
 
-//vec2 alignedSamplingDisk9_v2[9] = vec2[]
-//(
-// vec2(-1, -1), vec2(0, -1), vec2(1, -1),
-// vec2(-1, 0), vec2(0, 0), vec2(1, 0),
-// vec2(-1, 1), vec2(0, 1), vec2(1, 1)
-// );
-
-vec2 poissonDisk16_v2[16] = vec2[](
-								   vec2( -0.94201624, -0.39906216 ),
-								   vec2( 0.94558609, -0.76890725 ),
-								   vec2( -0.094184101, -0.92938870 ),
-								   vec2( 0.34495938, 0.29387760 ),
-								   vec2( -0.91588581, 0.45771432 ),
-								   vec2( -0.81544232, -0.87912464 ),
-								   vec2( -0.38277543, 0.27676845 ),
-								   vec2( 0.97484398, 0.75648379 ),
-								   vec2( 0.44323325, -0.97511554 ),
-								   vec2( 0.53742981, -0.47373420 ),
-								   vec2( -0.26496911, -0.41893023 ),
-								   vec2( 0.79197514, 0.19090188 ),
-								   vec2( -0.24188840, 0.99706507 ),
-								   vec2( -0.81409955, 0.91437590 ),
-								   vec2( 0.19984126, 0.78641367 ),
-								   vec2( 0.14383161, -0.14100790 )
-								   );
+mediump vec2 poissonDisk16_v2[16] = vec2[](
+										 vec2( -0.94201624, -0.39906216 ),
+										 vec2( 0.94558609, -0.76890725 ),
+										 vec2( -0.094184101, -0.92938870 ),
+										 vec2( 0.34495938, 0.29387760 ),
+										 vec2( -0.91588581, 0.45771432 ),
+										 vec2( -0.81544232, -0.87912464 ),
+										 vec2( -0.38277543, 0.27676845 ),
+										 vec2( 0.97484398, 0.75648379 ),
+										 vec2( 0.44323325, -0.97511554 ),
+										 vec2( 0.53742981, -0.47373420 ),
+										 vec2( -0.26496911, -0.41893023 ),
+										 vec2( 0.79197514, 0.19090188 ),
+										 vec2( -0.24188840, 0.99706507 ),
+										 vec2( -0.81409955, 0.91437590 ),
+										 vec2( 0.19984126, 0.78641367 ),
+										 vec2( 0.14383161, -0.14100790 )
+										 );
 
 // vec 3 arrays of ofset direction for sampling
-vec3 cardinalSamplingDisk6_v3[6] = vec3[]
+mediump vec3 cardinalSamplingDisk6_v3[6] = vec3[]
 (
  vec3(0, 0, -1), vec3(0, 0, 1),
  vec3(-1, 0, 0), vec3(-1, 0, 0),
  vec3(0, -1, 0), vec3(0, 1, 0)
  );
 
-vec3 cornerSamplingDisk8_v3[8] = vec3[]
+mediump vec3 cornerSamplingDisk8_v3[8] = vec3[]
 (
  vec3(-1, -1, -1), vec3(1, -1, -1), vec3(1, 1, -1), vec3(-1, 1, -1),
  vec3(-1, -1, 1), vec3(1, -1, 1), vec3(1, 1, 1), vec3(-1, 1, 1)
  );
 
 // array of offset direction for sampling
-vec3 gridSamplingDisk20_v3[20] = vec3[]
+mediump vec3 gridSamplingDisk20_v3[20] = vec3[]
 (
  vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
  vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
@@ -123,11 +124,11 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCube aShadowMap, vec
 	} else if( aShadowData.shadowType < 2 ) {
 		for( int i = 0; i < 8; i++ ) {
 			st3 = fragToLight + (cornerSamplingDisk8_v3[i] * offset);
-			#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
+#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
 			closestDepth = texture(aShadowMap, vec4(st3, aShadowData.texIndex) ).r;
-			#else
+#else
 			closestDepth = texture(aShadowMap, st3 ).r;
-			#endif
+#endif
 			if(closestDepth < 1.0 && currentDepth - abias > closestDepth) {
 				shadow += 1.0;
 			}
@@ -138,11 +139,11 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCube aShadowMap, vec
 		int samples = 8;
 		for(int i = 0; i < samples; ++i) {
 			st3 = fragToLight + (cornerSamplingDisk8_v3[i] * offset);
-			#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
+#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
 			closestDepth = texture(aShadowMap, vec4(st3, aShadowData.texIndex) ).r;
-			#else
+#else
 			closestDepth = texture(aShadowMap, st3 ).r;
-			#endif
+#endif
 			if(closestDepth < 1.0 && currentDepth - abias > closestDepth) {
 				shadow += 1.0;
 			}
@@ -151,11 +152,11 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCube aShadowMap, vec
 			int samples = 6;
 			for(int i = 0; i < samples; ++i) {
 				st3 = fragToLight + (cardinalSamplingDisk6_v3[i] * offset);
-				#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
+#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
 				closestDepth = texture(aShadowMap, vec4(st3, aShadowData.texIndex) ).r;
-				#else
+#else
 				closestDepth = texture(aShadowMap, st3 ).r;
-				#endif
+#endif
 				if(closestDepth < 1.0 && currentDepth - abias > closestDepth) {
 					shadow += 1.0;
 				}
@@ -168,11 +169,11 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCube aShadowMap, vec
 		int samples = 20;
 		for(int i = 0; i < samples; ++i) {
 			st3 = fragToLight + (gridSamplingDisk20_v3[i] * offset);
-			#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
+#ifdef SHADOWS_USE_CUBE_MAP_ARRAY
 			closestDepth = texture(aShadowMap, vec4(st3, aShadowData.texIndex) ).r;
-			#else
+#else
 			closestDepth = texture(aShadowMap, st3 ).r;
-			#endif
+#endif
 			if(closestDepth < 1.0 && currentDepth - abias > closestDepth) {
 				shadow += 1.0;
 			}
@@ -181,7 +182,7 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCube aShadowMap, vec
 	}
 	return shadow;
 }
-
+	
 float PointLightShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal ) {
 	// aWorldNormal should be normalized
 	vec3 normalOffset = aWorldNormal*(aShadowData.normalBias);
@@ -198,11 +199,11 @@ float PointLightShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec
 #endif
 	
 	float diskRadius = (abs(currentDepth-closestDepth)/(aShadowData.far*0.5)) * aShadowData.sampleRadius + aShadowData.sampleRadius;
-
+	
 	float shadow = SampleShadowCube(aShadowData, uShadowCubeMap, lightDiff, currentDepth, closestDepth, diskRadius, bias);
 	return shadow;
 }
-
+	
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 float SampleShadow(in shadowData aShadowData, in sampler2DArrayShadow aShadowMap, vec4 fragPosLightSpace, float offset, float abias ) {
 #else
@@ -223,27 +224,32 @@ float SampleShadow(in shadowData aShadowData, in sampler2DShadow aShadowMap, vec
 	float visibility = 1.0;
 	projCoords.z = projCoords.z-bias;
 	
-	#ifdef SHADOWS_USE_TEXTURE_ARRAY
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 	visibility = texture(aShadowMap, vec4(projCoords.xy, shadowTexIndex, projCoords.z ));
-	#else
+#else
 	visibility = texture(aShadowMap, projCoords );
-	#endif
+#endif
 	
 	vec2 st2 = projCoords.xy;
+	vec2 claMin = vec2(FLT_EPS);
+	vec2 claMax = vec2(ONE_LESS_FLT_EPS);
 	
 	if( aShadowData.shadowType < 1 ) {
 		// hard shadow //
-		// visibility already set above 
+		// visibility already set above
 	} else if( aShadowData.shadowType < 2 ) {
 		float radius = offset;
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
+//			st2 = clamp(projCoords.xy+cornerSampleDisk4_v2[i]*radius, vec2(0.0), vec2(1.0));
 			st2 = projCoords.xy+cornerSampleDisk4_v2[i]*radius;
-			#ifdef SHADOWS_USE_TEXTURE_ARRAY
+			st2 = clamp( st2, claMin, claMax );
+//			st2.x = clamp(st2.x, FLT_EPS, ONE_LESS_FLT_EPS);
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 			visibility += texture(aShadowMap, vec4(st2, shadowTexIndex, projCoords.z ));
-			#else
+#else
 			visibility += texture(aShadowMap, vec3(st2, projCoords.z ));
-			#endif
+#endif
 		}
 		visibility /= 5.0;
 	} else if( aShadowData.shadowType < 3 ) {
@@ -251,43 +257,46 @@ float SampleShadow(in shadowData aShadowData, in sampler2DShadow aShadowMap, vec
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
 			st2 = projCoords.xy+cornerSampleDisk4_v2[i]*radius;
-			#ifdef SHADOWS_USE_TEXTURE_ARRAY
+			st2 = clamp( st2, claMin, claMax );
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 			visibility += texture(aShadowMap, vec4(st2, shadowTexIndex, projCoords.z ));
-			#else
+#else
 			visibility += texture(aShadowMap, vec3(st2, projCoords.z ));
-			#endif
+#endif
 		}
-		if( visibility < 5.0 ) {
+//		if( visibility < 5.0 ) {
 			// sample from the up, down, left, right
 			for( int i = 0; i < 4; i++ ) {
 				st2 = projCoords.xy+cardinalSampleDisk4_v2[i]*radius;
-				#ifdef SHADOWS_USE_TEXTURE_ARRAY
+				st2 = clamp( st2, claMin, claMax );
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 				visibility += texture(aShadowMap, vec4(st2, shadowTexIndex, projCoords.z ));
-				#else
+#else
 				visibility += texture(aShadowMap, vec3(st2, projCoords.z ));
-				#endif
+#endif
 			}
 			visibility /= 9.0;
-		} else {
-			visibility /= 5.0;
-		}
+//		} else {
+//			visibility /= 5.0;
+//		}
 	} else {
 		float radius = offset;
 		for( int i = 0; i < 16; i++ ) {
 			st2 = projCoords.xy+poissonDisk16_v2[i]*radius;
-			#ifdef SHADOWS_USE_TEXTURE_ARRAY
+			st2 = clamp( st2, claMin, claMax );
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 			visibility += texture(aShadowMap, vec4(st2, shadowTexIndex, projCoords.z ));
-			#else
-			visibility += texture(aShadowMap, vec4(st2, shadowTexIndex, projCoords.z ));
-			#endif
+#else
+			visibility += texture(aShadowMap, vec3(st2, projCoords.z ));
+#endif
 		}
 		visibility /= 17;
 	}
 	
 	return visibility;
 }
-	
-	
+		
+		
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 float SampleShadow2D(in shadowData aShadowData, in sampler2DArray aShadowMap, vec3 aprojCoords, float aclosestDepth, float offset, float abias ) {
 #else
@@ -310,7 +319,7 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 	}
 	
 	vec2 st2 = projCoords.xy;
-		
+	
 	if( aShadowData.shadowType < 1 ) {
 		// hard shadow
 	} else if( aShadowData.shadowType < 2 ) {
@@ -318,11 +327,11 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
 			st2 = projCoords.xy+cornerSampleDisk4_v2[i]*radius;
-			#ifdef SHADOWS_USE_TEXTURE_ARRAY
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 			closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
-			#else
-			closestDepth = texture(aShadowMap, st2 )).r;
-			#endif
+#else
+			closestDepth = texture(aShadowMap, st2).r;
+#endif
 			if(closestDepth < 1.0 && currentDepth > closestDepth) {
 				shadow += 1.f;
 			}
@@ -333,11 +342,11 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
 			st2 = projCoords.xy+cornerSampleDisk4_v2[i]*radius;
-			#ifdef SHADOWS_USE_TEXTURE_ARRAY
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 			closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
-			#else
-			closestDepth = texture(aShadowMap, st2 )).r;
-			#endif
+#else
+			closestDepth = texture(aShadowMap, st2 ).r;
+#endif
 			if(closestDepth < 1.0 && currentDepth > closestDepth) {
 				shadow += 1.f;
 			}
@@ -346,11 +355,11 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 			// sample from the up, down, left, right
 			for( int i = 0; i < 4; i++ ) {
 				st2 = projCoords.xy+cardinalSampleDisk4_v2[i]*radius;
-				#ifdef SHADOWS_USE_TEXTURE_ARRAY
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 				closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
-				#else
-				closestDepth = texture(aShadowMap, st2 )).r;
-				#endif
+#else
+				closestDepth = texture(aShadowMap, st2 ).r;
+#endif
 				if(closestDepth < 1.0 && currentDepth > closestDepth) {
 					shadow += 1.f;
 				}
@@ -370,20 +379,20 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 				closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
 #else
-				closestDepth = texture(aShadowMap, st2 )).r;
+				closestDepth = texture(aShadowMap, st2 ).r;
 #endif
 				if(closestDepth < 1.0 && currentDepth > closestDepth) {
 					shadow += 1.f;
 				}
 			}
 		}
-
+		
 		shadow /= (1.0+((2.0 * float(filterSize) + 1.0) * (2.0 * float(filterSize) + 1.0)));
 	}
 	
 	return shadow;
 }
-
+			
 float DirectionalShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal) {
 	// aWorldNormal should be normalized //
 	vec3 lightDiff = aWorldFragPos - aShadowData.lightWorldPos;
@@ -398,7 +407,7 @@ float DirectionalShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in ve
 	float visibility = SampleShadow( aShadowData, uShadowMapDirectional, fragPosLightSpace, aShadowData.sampleRadius, bias );
 	return clamp(1.0-visibility, 0.0, 1.0);
 }
-	
+			
 float SpotShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal) {
 	
 	vec3 lightDiff = aWorldFragPos - aShadowData.lightWorldPos;
@@ -412,8 +421,8 @@ float SpotShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWor
 	float visibility = SampleShadow( aShadowData, uShadowMapSpot, fragPosLightSpace, aShadowData.sampleRadius, bias );
 	return clamp(1.0-visibility, 0.0, 1.0);
 }
-
-	
+			
+			
 //https://www.gamedev.net/tutorials/programming/graphics/effect-area-light-shadows-part-1-pcss-r4971/
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 vec2 PCSS_BlockerDistance(in sampler2DArray atex, int aSampleIndex, in vec3 projCoord, in float searchUV, in vec2 rotationTrig) {
@@ -429,11 +438,11 @@ vec2 PCSS_BlockerDistance(in sampler2D atex, int aSampleIndex, in vec3 projCoord
 	for (int i = -filterSize; i <= filterSize; i++) {
 		for (int j = -filterSize; j <= filterSize; j++) {
 			vec2 offset = vec2(float(i),float(j)) * searchUV;
-	#ifdef SHADOWS_USE_TEXTURE_ARRAY
+#ifdef SHADOWS_USE_TEXTURE_ARRAY
 			float z = texture(atex, vec3(projCoord.xy + offset, aSampleIndex) ).x;
-	#else
+#else
 			float z = texture(atex, projCoord.xy + offset).x;
-	#endif
+#endif
 			if (z < projCoord.z) {
 				blockers += 1.0;
 				avgBlocker += z;
@@ -449,8 +458,8 @@ vec2 PCSS_BlockerDistance(in sampler2D atex, int aSampleIndex, in vec3 projCoord
 	// To solve cases where there are no blockers - we output 2 values - average blocker depth and no. of blockers
 	return vec2(avgBlocker, blockers);
 }
-
-
+				
+				
 float AreaShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal, in vec2 lightSize) {
 	
 	vec3 lightDiff = aWorldFragPos - aShadowData.lightWorldPos;
@@ -491,13 +500,11 @@ float AreaShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWor
 	
 	fragPosLightSpace = aShadowData.shadowMatrix * vec4(aWorldFragPos+normalOffset, 1.0);
 	projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-																												
+	
 	float shadow = SampleShadow2D(aShadowData, uShadowMapArea, projCoords, closestDepth, penumbraSize, bias );
 	return shadow;
 	
 }
-	
-	
 )";
 
 

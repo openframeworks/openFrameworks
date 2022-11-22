@@ -301,6 +301,26 @@ void ofShadow::setAllShadowSampleRadius( float sampleRadius ) {
 }
 
 //--------------------------------------------------------------
+std::string ofShadow::getShaderDefinesAsString() {
+	std::string definesString = "";
+	// TODO: We should get this working on GLES!
+#ifndef TARGET_OPENGLES
+	if( ofIsGLProgrammableRenderer() ) {
+		definesString += "#define HAS_SHADOWS 1\n";
+		
+		if( ofShadow::getTextureTarget( OF_LIGHT_POINT ) != GL_TEXTURE_CUBE_MAP ) {
+			definesString += "#define SHADOWS_USE_CUBE_MAP_ARRAY 1\n";
+		}
+		
+		if( ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL ) != GL_TEXTURE_2D ) {
+			definesString += "#define SHADOWS_USE_TEXTURE_ARRAY 1\n";
+		}
+	}
+#endif
+	return definesString;
+}
+
+//--------------------------------------------------------------
 void ofShadow::_updateTexDataIds() {
 	std::map<int, int> texIdMap;
 	
@@ -871,7 +891,7 @@ void ofShadow::updateDepth(const ofShader & shader,ofGLProgrammableRenderer & re
 	if( data->lightType == OF_LIGHT_POINT ) {
 		if( isSingleOmniPass() ) {
 			for( unsigned int i = 0; i < 6; i++ ) {
-				shader.setUniformMatrix4f("light["+ std::to_string(i) +"].viewProjectionMatirx", mViewProjMats[i]);
+				shader.setUniformMatrix4f("light["+ std::to_string(i) +"].viewProjectionMatrix", mViewProjMats[i]);
 			}
 			shader.setUniform1i("uStartLayer", data->texIndex );
 		} else {
@@ -1020,7 +1040,7 @@ void ofShadow::_allocateFbo() {
 		#ifdef GL_CLAMP_TO_BORDER
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float borderColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glTexParameterfv(textureTarget, GL_TEXTURE_BORDER_COLOR, borderColor);
 		#else
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

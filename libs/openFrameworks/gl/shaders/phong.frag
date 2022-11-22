@@ -1,5 +1,5 @@
 static const string fragmentShader = R"(
-    IN vec2 v_texcoord; // pass the texCoord if needed
+    IN vec2 v_texcoord; // phong receive the texCoord
     IN vec3 v_normal;
     IN vec3 v_transformedNormal;
     // Eye-coordinate position of vertex
@@ -9,6 +9,7 @@ static const string fragmentShader = R"(
 #if HAS_COLOR
     IN vec4 v_color;
 #endif
+	uniform mat4 viewMatrix;
 
 
     struct lightData
@@ -55,7 +56,7 @@ static const string fragmentShader = R"(
 
     uniform lightData lights[MAX_LIGHTS];
 
-//	#pragma include "shadow.glsl"
+	
 	%shader_shadow_include%
 
 	%custom_uniforms%
@@ -64,7 +65,7 @@ static const string fragmentShader = R"(
 	//-- normal map code from ------------------------------------ //
 	// http://www.geeks3d.com/20130122/normal-mapping-without-precomputed-tangent-space-vectors/
 	// http://www.thetenthplanet.de/archives/1180
-	mat3 CotangentFrame(vec3 N, vec3 p, vec2 uv) {
+	mat3 CotangentFrame(in vec3 N, in vec3 p, in vec2 uv) {
 		// get edge vectors of the pixel triangle
 		vec3 dp1 = dFdx(p);
 		vec3 dp2 = dFdy(p);
@@ -82,7 +83,7 @@ static const string fragmentShader = R"(
 		return mat3(T * invmax, B * invmax, N);
 	}
 
-	vec3 PerturbNormal(vec3 normalMap, vec3 N, vec3 V, vec2 texcoord) {
+	vec3 PerturbNormal(in vec3 normalMap, in vec3 N, in vec3 V, in vec2 texcoord) {
 		// assume N, the interpolated vertex normal and
 		// V, the view vector (vertex to eye)
 		vec3 map = normalMap * 255. / 127. - 128. / 127.;
@@ -297,12 +298,12 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
         
         vec3 tNormal = v_transformedNormal;
         #ifdef HAS_TEX_NORMAL
-        	tNormal = PerturbNormal(TEXTURE(tex_normal, v_texcoord).rgb, tNormal, v_eyePosition, v_texcoord);
+        	tNormal = PerturbNormal(TEXTURE(tex_normal, v_texcoord).rgb, N, V, v_texcoord);
         #endif
 			
         vec3 transformedNormal = normalize(tNormal);
 		
-		#ifdef HAS_SHADOWS
+		#if defined(HAS_SHADOWS)
 		vec3 worldNormalN = normalize(v_worldNormal);
 		#endif
         for( int i = 0; i < MAX_LIGHTS; i++ ){
@@ -312,32 +313,32 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
 				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
 					shadow = PointLightShadow(shadows[i], v_worldPosition, worldNormalN);
+					shadow *= shadows[i].strength;
 				}
-				shadow *= shadows[i].strength;
 				#endif
                 pointLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }else if(lights[i].type<1.5){
 				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
 					shadow = DirectionalShadow(shadows[i], v_worldPosition, worldNormalN);
+					shadow *= shadows[i].strength;
 				}
-				shadow *= shadows[i].strength;
 				#endif
                 directionalLight(lights[i], transformedNormal, 1.0-shadow, ambient, diffuse, specular);
             }else if(lights[i].type<2.5){
 				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
 					shadow = SpotShadow(lights[i], v_eyePosition, shadows[i], v_worldPosition, worldNormalN);
+					shadow *= shadows[i].strength;
 				}
-				shadow *= shadows[i].strength;
 				#endif
                 spotLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }else{
 				#ifdef HAS_SHADOWS
 				if( shadows[i].enabled > 0.5 ) {
 					shadow = AreaShadow( shadows[i], v_worldPosition, worldNormalN, vec2(lights[i].width, lights[i].height) );
+					shadow *= shadows[i].strength;
 				}
-				shadow *= shadows[i].strength;
 				#endif
                 areaLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }
@@ -353,7 +354,7 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
         #ifdef HAS_TEX_SPECULAR
         	vec4 spec_value = TEXTURE(tex_specular, v_texcoord);
         	specular *= spec_value.rgb; //apply the color
-        	specular *= spec_value.a; //also apply alpha which is sometimes used as a mask 
+        	specular *= spec_value.a; //also apply alpha which is sometimes used as a mask
         #endif
 
         // apply ambient texture // these are mostly black and white
@@ -366,7 +367,7 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
         // now add the material info
         #if HAS_TEXTURE && !HAS_COLOR
             vec4 tex = TEXTURE(tex0, v_texcoord);
-            vec4 localColor = vec4(ambient,1.0) * tex + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive_color;
+		vec4 localColor = vec4(ambient,1.0) * tex + vec4(diffuse,1.0) * tex + vec4(specular,1.0) + mat_emissive_color;
 			localColor.a = tex.a; // allow for alpha in the texture
         #elif HAS_TEXTURE && HAS_COLOR
             vec4 tex = TEXTURE(tex0, v_texcoord);
@@ -377,6 +378,10 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
         #else
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive_color;
         #endif
+		
+		
+		
+
                 
         #ifdef HAS_TEX_OCCLUSION
             float occlusioon = TEXTURE(tex_occlusion, v_texcoord).r;

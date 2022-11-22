@@ -4,6 +4,25 @@
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
 
+enum ofMaterialTextureType: short{
+	OF_MATERIAL_TEXTURE_NONE=0,
+	OF_MATERIAL_TEXTURE_DIFFUSE,
+	OF_MATERIAL_TEXTURE_SPECULAR,
+	OF_MATERIAL_TEXTURE_AMBIENT,
+	OF_MATERIAL_TEXTURE_EMISSIVE,
+	OF_MATERIAL_TEXTURE_NORMAL,
+	OF_MATERIAL_TEXTURE_OCCLUSION,
+	OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC,
+	OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC,
+	OF_MATERIAL_TEXTURE_ROUGHNESS,
+	OF_MATERIAL_TEXTURE_METALLIC,
+	OF_MATERIAL_TEXTURE_DISPLACEMENT,
+	OF_MATERIAL_TEXTURE_CLEARCOAT, // INTENSITY
+	OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS,
+	OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS,
+	OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL
+};
+
 // Material concept: "Anything graphical applied to the polygons"
 //
 // Diederick Huijbers <diederick[at]apollomedia[dot]nl>
@@ -11,7 +30,9 @@
 // references:
 //   * Wavefront material file spec: http://people.sc.fsu.edu/~jburkardt/data/mtl/mtl.html
 //   * Ogre3D: http://www.ogre3d.org/docs/manual/manual_11.html#SEC14
-//   * assim material: http://assimp.sourceforge.net/lib_html/ai_material_8h.html#7dd415ff703a2cc53d1c22ddbbd7dde0
+//   * assimp material: http://assimp.sourceforge.net/lib_html/ai_material_8h.html#7dd415ff703a2cc53d1c22ddbbd7dde0
+
+// PBR Material based on GLTF spec from KhronosGroup: https://github.com/KhronosGroup/glTF
 
 class ofGLProgrammableRenderer;
 
@@ -99,8 +120,32 @@ struct ofMaterialSettings {
     ofFloatColor specular{ 0.0f, 0.0f, 0.0f, 1.0f }; ///< specular reflectance
     ofFloatColor emissive{ 0.0f, 0.0f, 0.0f, 1.0f }; ///< emitted light intensity
     float shininess{ 0.2f }; ///< specular exponent
-    std::string postFragment;
-    std::string customUniforms; ///set by ofMaterial::setCustomUniform*  not to be set manually
+	
+	bool isPbr = false;
+	// PBR //
+	// the diffuse color is used for the albedo color, metallic color
+	float metallic{0.0}; ///< metallic properties, can be fraction between 0 -> 1
+	float roughness{0.5}; ///< roughness
+	float reflectance{0.5}; ///< reflectance only applies to dielectric materials (non-metallic)
+	bool clearCoatEnabled = false; ///<this must be enabled for clear coat to have effect, will be enabled if clear coat texture set
+	float clearCoatStrength = 1.0;
+	float clearCoatRoughness = 0.1;
+	float displacementStrength=0.2; ///< strength of vertex displacement from displacement map in world space
+	float displacementNormalsStrength=50.0; ///< strength of normal calculation based on displacement map
+	float normalGeomToNormalMapMix = 0.95; ///< if a normal map is set, the mix between the geometry normal and normal from the normal / displacement map
+	
+	glm::vec2 texCoordScale ={1.0,1.0};
+	
+	// these are not to be set manually
+    std::string postFragment="";
+    std::string customUniforms=""; ///set by ofMaterial::setCustomUniform*  not to be set manually
+	std::string uniqueIdString=""; /// set by ofMaterial to cache shader
+	std::string mainFragment=""; /// override the default main function in the frag shader
+	std::string mainFragmentKey=""; /// access fragment main function with this key make unique for new instances
+	
+	std::string mainVertex=""; /// override the default main function in the vertex shader
+	std::string mainVertexKey=""; /// access vertex main function with this key make unique for new instances
+	
 };
 
 /// \class ofBaseMaterial
@@ -156,8 +201,34 @@ public:
 	/// \param shader the material shader, created by getShader()
 	/// \param renderer programmable renderer instance that uses the material shader
 	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
-	
+
+	/// \brief update the given renderer's shadows to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
 	virtual void updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
+	
+	/// \brief update the given renderer's environment maps / cube maps to the material shader
+	/// \param shader the material shader, created by getShader()
+	/// \param renderer programmable renderer instance that uses the material shader
+	virtual void updateEnvironmentMaps(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
+	
+	/// \brief when begin() is called, the material is set to bound by the renderer.\nSet to unbound via renderer when end() is called.
+	/// \return is the shader bound to a renderer.
+	virtual bool isBound() const;
+	
+protected:
+	friend class ofGLProgrammableRenderer;
+	/// \brief set to bound. Later used if certain properties are set so the shader can be updated without calling end(), set var and then begin() again.
+	virtual void bind(ofGLProgrammableRenderer & renderer) const {
+		mBound = true;
+	}
+	
+	/// \brief unbind the shader. 
+	virtual void unbind(ofGLProgrammableRenderer & renderer) const {
+		mBound = false;
+	}
+	
+	mutable bool mBound = false;
 };
 
 
@@ -169,10 +240,27 @@ class ofMaterial: public ofBaseMaterial {
 public:
 	ofMaterial();
 	virtual ~ofMaterial(){};
+	
+	/// \brief get the shader uniform name for the material texture type.
+	/// \param aMaterialTextureType the material texture type to query
+	/// \return the shader uniform name
+	static std::string getUniformName( const ofMaterialTextureType& aMaterialTextureType );
+	
+	/// \brief is this material pbr. Setting PBR functions will automatically set the material to pbr.\nCan also be set calling setPBR();
+	/// \return is the material pbr.
+	const bool isPBR() const { return data.isPbr; }
+	/// \brief enable or disable PBR for this material.
+	void setPBR(bool ab) { data.isPbr = ab; }
 
 	/// \brief setup using settings struct
 	/// \param settings color & other properties struct
 	void setup(const ofMaterialSettings & settings);
+	
+	/// \brief override the default main shader functions for vert or frag shader
+	/// \param aShaderSrc the shader source as a string
+	/// \param atype GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+	/// \param skey unique key to identify the vertex and fragment sources. If loading dynamically, use same key to overwrite previous instances.
+	void setShaderMain(std::string aShaderSrc, GLenum atype, std::string skey);
 	
 	/// \brief set all material colors: reflectance type & light intensity
 	/// \param oDiffuse the diffuse reflectance
@@ -200,14 +288,49 @@ public:
 	/// \brief set the specular exponent
 	void setShininess(float nShininess);
 	
+	/// \brief set the tex coord scale used in the shader.
+	/// \param xscale texture scale in x
+	/// \param yscale texture scale in y
+	void setTexCoordScale( float xscale, float yscale );
+	
+	//// \brief load a texture that is stored in the material. 
+	/// \param aMaterialTextureType type of texture.
+	/// \param apath file path to texture.
+	/// \return if the load was successful.
+	bool loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath );
+	bool loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath, bool bTex2d, bool mirrorY );
+	
+	bool isPBRTexture(const ofMaterialTextureType& aMaterialTextureType);
 	/// \brief set additonal textures to use in the shader.
 	// the following shaders are supported by phong.frag
 	// in the future we will add textures for physical based rendering (PBR)
-	void setSpecularTexture(const ofTexture & aTex);
-	void setAmbientTexture(const ofTexture & aTex);
-	void setEmissiveTexture(const ofTexture & aTex);
-	void setNormalTexture(const ofTexture & aTex);
-	void setOcclusionTexture(const ofTexture & aTex);
+	void setTexture(const ofMaterialTextureType& aMaterialTextureType,const ofTexture & aTex);
+	void setDiffuseTexture(const ofTexture & aTex); // phong, PBR
+	void setSpecularTexture(const ofTexture & aTex); // phong
+	void setAmbientTexture(const ofTexture & aTex); // phong
+	void setEmissiveTexture(const ofTexture & aTex); // phong, PBR
+	void setNormalTexture(const ofTexture & aTex); // phong, PBR
+	void setOcclusionTexture(const ofTexture & aTex); // phong, PBR
+	
+	// PBR textures //
+	void setAoRoughnessMetallicTexture(const ofTexture & aTex); // PBR
+	void setRoughnessMetallicTexture(const ofTexture & aTex); // PBR
+	void setRoughnessTexture(const ofTexture & aTex); // PBR
+	void setMetallicTexture(const ofTexture& aTex); // PBR
+	void setDisplacementTexture(const ofTexture & aTex); // PBR 
+	void setClearCoatTexture( const ofTexture& aTex ); // PBR
+//	void setClearCoatNormalTexture(const ofTexture & aTex); // PBR
+	
+	// PBR properties
+	void setMetallic( const float& ametallic );
+	void setRoughness( const float& aroughness );
+	void setReflectance( const float& areflectance );
+	void setClearCoatEnabled( bool ab );
+	void setClearCoatStrength( const float& astrength );
+	void setClearCoatRoughness( const float& aroughness );
+	void setDisplacementStrength( const float& astrength );
+	void setDisplacementNormalsStrength( const float& astrength );
+	void setNormalGeomToNormalMapMix( const float& astrength ); 
 
 	// documented in ofBaseMaterial
 	ofFloatColor getDiffuseColor() const;
@@ -215,6 +338,16 @@ public:
 	ofFloatColor getSpecularColor() const;
 	ofFloatColor getEmissiveColor() const;
 	float getShininess() const;
+	
+	float getMetallic() const;
+	float getRoughness() const;
+	float getReflectance() const;
+	bool isClearCoatEnabled() const;
+	float getClearCoatStrength() const;
+	float getClearCoatRoughness() const;
+	float getDisplacementStrength() const;
+	float getDisplacementNormalsStrength() const;
+	float getNormalGeomToNormalMapMix() const;
 	
 	/// \return material color properties data struct
 	typedef ofMaterialSettings Data;
@@ -227,8 +360,10 @@ public:
 	// documented in ofBaseMaterial
 	void begin() const;
 	void end() const;
+	
+	virtual void uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 
-	/// \brief set custom uniforms to be used by the shader. as of 0.12.0 onwards these are added to the shader header
+	/// \brief set custom uniforms to be used by the shader. as of 0.12.0 onwards these are added to the fragment shader header
 	void setCustomUniform1f(const std::string & name, float value);
 	void setCustomUniform2f(const std::string & name, glm::vec2 value);
 	void setCustomUniform3f(const std::string & name, glm::vec3 value);
@@ -240,18 +375,41 @@ public:
 	void setCustomUniform2i(const std::string & name, glm::vec<2, int, glm::precision::defaultp> value);
 	void setCustomUniform3i(const std::string & name, glm::vec<3, int, glm::precision::defaultp> value);
 	void setCustomUniform4i(const std::string & name, glm::vec<4, int, glm::precision::defaultp> value);
+	void setCustomUniformTexture(const std::string & name, const ofTexture & value );
+	void setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID);
 	void setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation);
 	void setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation);
-
+	bool removeCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType);
+	bool removeCustomUniformTexture(const std::string & name);
+	int getHighestUniformTextureLocation() const;
+	bool hasTexture(const ofMaterialTextureType& aMaterialTextureType) const;
+	
+	void addShaderDefine( const std::string & aDefineName );
+	void addShaderDefine( const std::string & aDefineName, const std::string & aDefineValue );
+	bool removeShaderDefine( const std::string & aDefineName );
+	const std::string getDefinesString() const;
+	
 	void setCustomShader( std::shared_ptr<ofShader> aCustomShader);
+	
+	
+protected:
+	/// \brief unbind the material, override the default so we can set current shader to nullptr
+	void unbind(ofGLProgrammableRenderer & renderer) const;
 
 private:
+	
+	void mergeCustomUniformTextures();
+	void mergeCustomUniformTextures(ofMaterialTextureType mainType, std::vector<ofMaterialTextureType> mergeTypes);
+	
+	const std::string getShaderStringId() const;
+
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
 	const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;
 	void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
-
+	void updateEnvironmentMaps(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+	
 	ofMaterialSettings data;
 
 	struct Shaders{
@@ -262,12 +420,17 @@ private:
 		ofShader texture2D;
 		ofShader textureRect;
 		size_t numLights;
+		size_t numCubeMaps;
 	};
 	struct TextureUnifom{
 		int textureTarget;
 		GLint textureID;
 		int textureLocation;
+		std::string shaderDefine;
 	};
+	const TextureUnifom getCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType) const;
+	TextureUnifom getCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType);
+	TextureUnifom getCustomUniformTexture(const std::string & name);
 
 	mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
 	static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
@@ -285,9 +448,16 @@ private:
 	std::map<std::string, glm::mat3> uniforms3m;
 	std::map<std::string, TextureUnifom> uniformstex;
 	
-	std::map<std::string, bool> mTexDefines;
 	std::map<std::string, std::string> mCustomUniforms;
+	std::map<std::string, std::string> mDefines;
+
+	mutable std::map<std::string, int> mShaderIdsToRemove;
+	
+	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
 	
 	std::shared_ptr<ofShader> customShader;
 	bool bHasCustomShader = false;
+	bool mBDefinesDirty = true;
+	mutable const ofShader* currentRenderShader = nullptr;
+	
 };
