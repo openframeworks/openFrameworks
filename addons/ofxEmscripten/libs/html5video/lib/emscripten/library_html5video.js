@@ -215,15 +215,23 @@ var LibraryHTML5Video = {
     },
 
     html5video_grabber_create: function(){
+        var video = document.createElement('video');
+        video.autoplay=true;
+        video.pixelFormat = "RGB";
 
-	        var video = document.createElement('video');
-			video.autoplay=true;
-			video.pixelFormat = "RGB";
-
-	        var grabber_id = VIDEO.getNewGrabberId();
-	        VIDEO.grabbers[grabber_id] = video;
-	        return grabber_id;
-
+        var grabber_id = VIDEO.getNewGrabberId();
+        VIDEO.grabbers[grabber_id] = video;
+	var texId = GL.getNewId(GL.textures);
+	var texture = GLctx.createTexture();
+	texture.name = texId;
+	GL.textures[texId] = texture;
+	GLctx.bindTexture(GLctx.TEXTURE_2D, texture);
+	GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_MAG_FILTER, GLctx.LINEAR);
+	GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_MIN_FILTER, GLctx.LINEAR);
+	GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_S, GLctx.CLAMP_TO_EDGE);
+	GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_T, GLctx.CLAMP_TO_EDGE);
+	VIDEO.grabbers[grabber_id].textureId = texId;
+	return grabber_id;
     },
 
     html5video_grabber_init__deps: ['$GL'],
