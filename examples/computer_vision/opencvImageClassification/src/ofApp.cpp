@@ -36,7 +36,11 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	ofSetColor(255);
-	grabber.draw(0, 0);
+	#ifdef TARGET_EMSCRIPTEN
+		grabber.getTexture().draw(0, 0);
+	#else
+		grabber.draw(0, 0);
+	#endif
 	
 	//draw the detected objects on top of the webcam image 
 	ofNoFill();
