@@ -458,6 +458,8 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		
 		if (i.empty() || (f.size() < 2) )
 			return false;
+		
+		if (i != "include") return false;
 
 		// first and last character of filename token must match and be either
 		// '<' and '>', or '"
