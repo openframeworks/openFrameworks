@@ -37,7 +37,9 @@ void ofApp::draw(){
 
 	ofSetColor(255);
 	#ifdef TARGET_EMSCRIPTEN
-		grabber.getTexture().draw(0, 0);
+		if(grabber.getTexture().isAllocated()){
+			grabber.getTexture().draw(0, 0);
+		}
 	#else
 		grabber.draw(0, 0);
 	#endif
