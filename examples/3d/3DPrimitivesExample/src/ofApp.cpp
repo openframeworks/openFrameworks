@@ -10,7 +10,7 @@ void ofApp::setup(){
 	ofDisableArbTex();
 	texture.load("of.png");
 	texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
-	vidGrabber.setup(640, 480, true);
+	vidGrabber.initGrabber(640, 480);
 
 	bFill       = true;
 	bWireframe  = true;
