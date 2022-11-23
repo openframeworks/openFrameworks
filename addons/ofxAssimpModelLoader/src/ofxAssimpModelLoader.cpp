@@ -383,7 +383,7 @@ void ofxAssimpModelLoader::loadGLResources(){
                 auto ogPath = texPathStr;
                 bool bHasEmbeddedTexture = false;
                 
-                string modelFolder = ofFilePath::getEnclosingDirectory( file.getAbsolutePath() );
+                string modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
                 string relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
                 string texFile = ofFilePath::getFileName(texPathStr);
                 string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
