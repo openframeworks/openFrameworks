@@ -152,7 +152,7 @@ int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEv
 
 int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData){
 	int key = keyEvent->key[0];
-	std::string id = ofToString(keyEvent->key[1]);
+	std::string id = keyEvent->key;
 	if(key == 0){
 		key = keyEvent->which + 32;
 	}else if(id == "ArrowLeft"){
