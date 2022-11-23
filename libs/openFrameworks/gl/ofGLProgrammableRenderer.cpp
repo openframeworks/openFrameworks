@@ -2349,7 +2349,7 @@ static string defaultShaderHeader(string header, GLenum textureTarget, int major
 		ofStringReplace(header,"%extensions%","");
 	}
 #else 
-	ofStringReplace(header,"%extensions%","");
+	ofStringReplace(header,"%extensions%","#extension GL_OES_standard_derivatives : enable");
 #endif
 	if(textureTarget==GL_TEXTURE_2D){
 		header += "#define SAMPLER sampler2D\n";
