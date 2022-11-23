@@ -65,16 +65,14 @@ void ofApp::draw(){
 	light.disable();
 
 	ofDisableDepthTest();
+	ofSetColor(0);
 	
 	// display help text if it is enable
 	if(bHelpText) {
-		stringstream ss;
+		std::stringstream ss;
 		ss << "FPS: " << ofToString(ofGetFrameRate(),0) << endl << endl;
 		ss << "(1/2/3/4/5/6): load different file types"<<endl;
 		ss << "Current file info: " + curFileInfo <<endl;
-		if(bUsingMesh){
-			ss << "Use ofEasyCam mouse and key controls to navigate."<< endl <<endl;
-		}
 		ss <<"(h): Toggle help."<<endl;
 		ofDrawBitmapString(ss.str().c_str(), 20, 20);
 	}
@@ -102,7 +100,7 @@ void ofApp::keyPressed(int key){
 		case '3':
 			bUsingMesh = false;
 			model.load("penguin.ply");
-			model.setRotation(0, 90, 1, 0, 0);
+			model.setRotation(0, 270, 1, 0, 0);
 			model.setScale(0.9, 0.9, 0.9);
 			cam.setDistance(700);
 			curFileInfo = ".ply";
@@ -110,7 +108,7 @@ void ofApp::keyPressed(int key){
 		case '4':
 			bUsingMesh = false;
 			model.load("penguin.obj");
-			model.setRotation(0, 90, 1, 0, 0);
+			model.setRotation(0, 270, 1, 0, 0);
 			model.setScale(0.9, 0.9, 0.9);
 			cam.setDistance(700);
 			curFileInfo = ".obj";
@@ -118,7 +116,7 @@ void ofApp::keyPressed(int key){
 		case '5':
 			bUsingMesh = false;
 			model.load("penguin.stl");
-			model.setRotation(0, 90, 1, 0, 0);
+			model.setRotation(0, 270, 1, 0, 0);
 			model.setScale(0.9, 0.9, 0.9);
 			cam.setDistance(700);
 			curFileInfo = ".stl";
