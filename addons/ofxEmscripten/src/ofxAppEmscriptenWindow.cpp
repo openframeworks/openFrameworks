@@ -98,8 +98,53 @@ void ofxAppEmscriptenWindow::display_cb(){
 
 int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData){
 	int key = keyEvent->key[0];
-	if(key==0){
+	std::string id = keyEvent->key;
+	if(key == 0){
 		key = keyEvent->which + 32;
+	}else if(id == "ArrowLeft"){
+		key = 57356;
+	}else if(id == "ArrowUp"){
+		key = 57357;
+	}else if(id == "ArrowRight"){
+		key = 57358;
+	}else if(id == "ArrowDown"){
+		key = 57359;
+	}else if(id == "Shift"){
+		key = 3680;
+	}else if(id == "Enter"){
+		key = 13;
+	}else if(id == "Backspace"){
+		key = 8;
+	}else if(id == "Tab"){
+		key = 9;
+	}else if(id == "Delete"){
+		key = 127;
+	}else if(id == "Insert"){
+		key = 57364;
+	}else if(id == "Alt"){
+		key = 3684;
+	}else if(id == "AltGraph"){
+		key = 3685;
+	}else if(id == "Control"){
+		key = 3682;
+	}else if(id == "Home"){
+		key = 57362;
+	}else if(id == "PageUp"){
+		key = 57360;
+	}else if(id == "PageDown"){
+		key = 57361;
+	}else if(id == "Escape"){
+		key = 27;
+	}else if(id == "End"){
+		key = 49;
+	}else if(id== "ß"){
+		key = 223;
+	}else if(id== "§"){
+		key = 167;
+	}else if(id == "F1"){
+		key = 57344;
+	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
+		return 0;
 	}
 	instance->events().notifyKeyPressed(key);
 	return 0;
@@ -107,8 +152,53 @@ int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEv
 
 int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData){
 	int key = keyEvent->key[0];
-	if(key==0){
+	std::string id = ofToString(keyEvent->key[1]);
+	if(key == 0){
 		key = keyEvent->which + 32;
+	}else if(id == "ArrowLeft"){
+		key = 57356;
+	}else if(id == "ArrowUp"){
+		key = 57357;
+	}else if(id == "ArrowRight"){
+		key = 57358;
+	}else if(id == "ArrowDown"){
+		key = 57359;
+	}else if(id == "Shift"){
+		key = 3680;
+	}else if(id == "Enter"){
+		key = 13;
+	}else if(id == "Backspace"){
+		key = 8;
+	}else if(id == "Tab"){
+		key = 9;
+	}else if(id == "Delete"){
+		key = 127;
+	}else if(id == "Insert"){
+		key = 57364;
+	}else if(id == "Alt"){
+		key = 3684;
+	}else if(id == "AltGraph"){
+		key = 3685;
+	}else if(id == "Control"){
+		key = 3682;
+	}else if(id == "Home"){
+		key = 57362;
+	}else if(id == "PageUp"){
+		key = 57360;
+	}else if(id == "PageDown"){
+		key = 57361;
+	}else if(id == "Escape"){
+		key = 27;
+	}else if(id == "End"){
+		key = 49;
+	}else if(id== "ß"){
+		key = 223;
+	}else if(id== "§"){
+		key = 167;
+	}else if(id == "F1"){
+		key = 57344;
+	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
+		return 0;
 	}
 	instance->events().notifyKeyReleased(key);
 	return 0;
