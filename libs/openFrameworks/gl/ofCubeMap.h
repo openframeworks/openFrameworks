@@ -23,7 +23,6 @@ public:
 		bool bIrradianceAllocated = false;
 		GLuint preFilteredMapId = 0;
 		bool bPreFilteredMapAllocated = false;
-		//ofTexture brdfLutTex;
 		
 		int index = -1;
 		bool isEnabled = true;
@@ -33,11 +32,14 @@ public:
 		int irradianceRes = 64;
 		int preFilterRes = 256;
 		int maxMipLevels = 5;
+		float exposure = 1.0;
 	};
     
 	static GLenum getTextureTarget();
 	static bool hasActiveCubeMap();
 	static std::shared_ptr<ofCubeMap::Data> getActiveData();
+	static void clearTextureData(std::shared_ptr<ofCubeMap::Data> adata);
+	static void regenerateAllTextures();
 	static const ofTexture& getBrdfLutTexture();
 	
 	ofCubeMap();
@@ -45,38 +47,43 @@ public:
 	
 	bool load( std::string apath, int aFaceResolution, bool aBFlipY=true );
 	
+	/// \section Update Texture
+	/// \brief Copy a given ofCubeMap into this cube map.
+	/// \param mom The ofCubeMap to copy from. Reuses internal GL texture IDs.
+	ofCubeMap& operator=(const ofCubeMap & mom);
+	
+	void clear();
+	
 //	void set( const ofImage& aPosX, const ofImage& aNegX, const ofImage& aPosY, const ofImage& aNegY, const ofImage& aPosZ, const ofImage& aNegZ );
 //	void set( const ofFloatImage& aPosX, const ofFloatImage& aNegX, const ofFloatImage& aPosY, const ofFloatImage& aNegY, const ofFloatImage& aPosZ, const ofFloatImage& aNegZ );
 	
-	void draw();
+//	void draw();
 	void drawCubeMap();
 	void drawIrradiance();
 	void drawPrefilteredCube(float aRoughness);
 	
-	void beginDrawingIntoFace( int aCubeFace );
-	void endDrawingIntoFace( int aCubeFace );
-	
-	void begin3DDrawingIntoFace( int aCubeFace );
-	void end3DDrawingIntoFace( int aCubeFace );
+//	void beginDrawingIntoFace( int aCubeFace );
+//	void endDrawingIntoFace( int aCubeFace );
+//
+//	void begin3DDrawingIntoFace( int aCubeFace );
+//	void end3DDrawingIntoFace( int aCubeFace );
 	
 	int getFaceResolution() { return data->resolution; }
 	GLuint getTextureId();
 	bool isHdr();
 	
-	void setExposure(float aExposure) {mExposure=aExposure;}
-	float getExposure() { return mExposure; }
+	void setExposure(float aExposure) {data->exposure=aExposure;}
+	float getExposure() { return data->exposure; }
 	
 	void setUseBrdfLutTexture( bool ab );
 	bool isUsingLutBrdfTexture() { return data->useLutTex; }
 	
 	GLuint getIrradianceMapId() { return data->irradianceMapId; }
 	GLuint getPrefilterMapId() { return data->preFilteredMapId; }
-//	const ofTexture& getBrdfLutTexture() { return data->brdfLutTex; }
 	
 protected:
 	
 	ofFbo fbo;
-//	ofFbo lutFbo;
 	std::shared_ptr<ofCubeMap::Data> data;
 	
 	void _drawCubeStart(GLuint aCubeMapId);
@@ -101,7 +108,6 @@ protected:
 	
 	ofTexture mSourceTex;
 	bool mBFlipY = true;
-	float mExposure = 1.0;
 	
 	glm::mat4 projectionMat;
 	

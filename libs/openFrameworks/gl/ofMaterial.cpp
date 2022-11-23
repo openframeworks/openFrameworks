@@ -11,11 +11,7 @@ using std::string;
 std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
 
 namespace{
-// string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc);
 string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc,const ofMaterialSettings& adata);
-//string fragmentSource(bool bPBR, string defaultHeader, string customUniforms, string postFragment, int maxLights, bool hasTexture, bool hasColor, std::string definesString="");
-//ofMaterialSettings
-//string fragmentSource(bool bPBR, string defaultHeader, string customUniforms, string postFragment, int maxLights, bool hasTexture, bool hasColor, std::string definesString="");
 string fragmentSource(bool bPBR, string defaultHeader, string customUniforms, const ofMaterialSettings& adata, int maxLights, bool hasTexture, bool hasColor, std::string definesString="");
 }
 
@@ -90,11 +86,15 @@ void ofMaterial::setup(const ofMaterialSettings & settings){
 	}
 	data = settings;
 	setClearCoatEnabled(data.clearCoatEnabled);
-	//setClearCoatStrength(data.clearCoatStrength);
 }
 
 //----------------------------------------------------------
 void ofMaterial::setShaderMain(std::string aShaderSrc, GLenum atype, std::string skey) {
+	if(!isPBR()) {
+		ofLogWarning("ofMaterial::setShaderMain") << "only available on PBR materials.";
+		return;
+	}
+	
 	if(atype == GL_VERTEX_SHADER) {
 		// we would like to replace the current shader at key 
 		// using a skey instead of shadersrc as key so we can easily overwrite
@@ -122,27 +122,38 @@ void ofMaterial::setDiffuseColor(ofFloatColor oDiffuse) {
 	if( isBound() && currentRenderShader) {
 		currentRenderShader->setUniform4fv("mat_diffuse", &data.diffuse.r );
 	}
-	
 }
 
 //----------------------------------------------------------
 void ofMaterial::setAmbientColor(ofFloatColor oAmbient) {
 	data.ambient = oAmbient;
+	if( isBound() && !isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform4fv("mat_ambient", &data.ambient.r);
+	}
 }
 
 //----------------------------------------------------------
 void ofMaterial::setSpecularColor(ofFloatColor oSpecular) {
 	data.specular = oSpecular;
+	if( isBound() && !isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform4fv("mat_specular", &data.specular.r);
+	}
 }
 
 //----------------------------------------------------------
 void ofMaterial::setEmissiveColor(ofFloatColor oEmissive) {
 	data.emissive = oEmissive;
+	if( isBound() && currentRenderShader) {
+		currentRenderShader->setUniform4fv("mat_emissive", &data.emissive.r);
+	}
 }
 
 //----------------------------------------------------------
 void ofMaterial::setShininess(float nShininess) {
 	data.shininess = nShininess;
+	if( isBound() && !isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform1f("mat_shininess",data.shininess);
+	}
 }
 
 //----------------------------------------------------------
@@ -282,11 +293,6 @@ void ofMaterial::setDisplacementTexture(const ofTexture & aTex) {
 void ofMaterial::setClearCoatTexture( const ofTexture& aTex ) {
 	setTexture(OF_MATERIAL_TEXTURE_CLEARCOAT, aTex );
 }
-
-//----------------------------------------------------
-//void ofMaterial::setClearCoatNormalTexture(const ofTexture & aTex) {
-//	setTexture(OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL, aTex);
-//}
 
 //----------------------------------------------------
 void ofMaterial::setMetallic( const float& ametallic ) {
@@ -782,6 +788,14 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 		if( hasTexture(OF_MATERIAL_TEXTURE_NORMAL) || hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
 			shader.setUniform1f("mat_normal_mix", data.normalGeomToNormalMapMix );
 		}
+		
+		std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
+		if( cubeMapData ) {
+			shader.setUniform1f("mat_ibl_exposure", cubeMapData->exposure );
+		} else {
+			shader.setUniform1f("mat_ibl_exposure", 1.0 );
+		}
+		
 	} else {
 		shader.setUniform4fv("mat_ambient", &data.ambient.r);
 		shader.setUniform4fv("mat_diffuse", &data.diffuse.r);

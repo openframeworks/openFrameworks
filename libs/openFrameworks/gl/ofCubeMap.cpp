@@ -17,6 +17,12 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofCubeMapShaders.h"
 
+#ifdef TARGET_ANDROID
+#include "ofAppAndroidWindow.h"
+#endif
+
+#include <map>
+
 #ifndef STRINGIFY
 #define STRINGIFY(x) #x
 #endif
@@ -28,6 +34,65 @@ using std::shared_ptr;
 ofVboMesh ofCubeMap::sCubeMesh;
 ofShader ofCubeMap::shaderBrdfLUT;
 ofTexture ofCubeMap::sBrdfLutTex;
+
+
+// texture management copied from ofTexture
+static std::map<GLuint,int> & getTexturesIndex(){
+	static std::map<GLuint,int> * textureReferences = new std::map<GLuint,int>;
+	return *textureReferences;
+}
+
+static void retain(GLuint id){
+	if(id!=0){
+		if(getTexturesIndex().find(id)!=getTexturesIndex().end()){
+			getTexturesIndex()[id]++;
+		}else{
+			getTexturesIndex()[id]=1;
+		}
+	}
+}
+
+static void release(GLuint id){
+	// try to free up the texture memory so we don't reallocate
+	// http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/deletetextures.html
+	if (id != 0){
+		if(getTexturesIndex().find(id)!=getTexturesIndex().end()){
+			getTexturesIndex()[id]--;
+			if(getTexturesIndex()[id]==0){
+				
+#ifdef TARGET_ANDROID
+				if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+					glDeleteTextures(1, (GLuint *)&id);
+				
+				getTexturesIndex().erase(id);
+			}
+		}else{
+			ofLogError("ofCubeMap") << "release(): something's wrong here, releasing unknown texture id " << id;
+			
+#ifdef TARGET_ANDROID
+			if (!ofAppAndroidWindow::isSurfaceDestroyed())
+#endif
+				glDeleteTextures(1, (GLuint *)&id);
+		}
+	}
+}
+
+//----------------------------------------
+#ifdef TARGET_ANDROID
+// TODO: Hook this up to an event
+void ofCubeMap::regenerateAllTextures() {
+	for(size_t i=0; i<ofCubeMapsData().size(); i++) {
+		if(!ofCubeMapsData()[i].expired()) {
+			std::shared_ptr<ofCubeMap::Data> cubeMap = ofCubeMapsData()[i].lock();
+			ofCubeMap::clearTextureData(cubeMap);
+		}
+	}
+	sBrdfLutTex.clear();
+}
+#endif
+
+
 
 //----------------------------------------
 vector<weak_ptr<ofCubeMap::Data> > & ofCubeMapsData(){
@@ -59,6 +124,25 @@ std::shared_ptr<ofCubeMap::Data> ofCubeMap::getActiveData() {
 }
 
 //--------------------------------------------------------------
+void ofCubeMap::clearTextureData(std::shared_ptr<ofCubeMap::Data> adata) {
+	if( adata ) {
+		if( adata->bPreFilteredMapAllocated ) {
+			adata->bPreFilteredMapAllocated=false;
+			release(adata->preFilteredMapId);
+		}
+		
+		if( adata->bIrradianceAllocated ) {
+			adata->bIrradianceAllocated = false;
+			release(adata->irradianceMapId);
+		}
+		if( adata->bCubeMapAllocated ) {
+			adata->bCubeMapAllocated = false;
+			release(adata->cubeMapId);
+		}
+	}
+}
+
+//--------------------------------------------------------------
 void ofCubeMap::_checkSetup() {
 	if( data->index < 0 ) {
 		bool bFound = false;
@@ -85,6 +169,7 @@ const ofTexture& ofCubeMap::getBrdfLutTexture() {
 	return sBrdfLutTex;
 }
 
+
 //----------------------------------------
 ofCubeMap::ofCubeMap() {
 	texFormat = GL_RGB;
@@ -99,21 +184,7 @@ ofCubeMap::ofCubeMap() {
 
 //----------------------------------------
 ofCubeMap::~ofCubeMap() {
-	if( data ) {
-		if( data->bPreFilteredMapAllocated ) {
-			data->bPreFilteredMapAllocated=false;
-			glDeleteTextures(1, &data->preFilteredMapId );
-		}
-		
-		if( data->bIrradianceAllocated ) {
-			data->bIrradianceAllocated = false;
-			glDeleteTextures(1, &data->irradianceMapId );
-		}
-		if( data->bCubeMapAllocated ) {
-			data->bCubeMapAllocated = false;
-			glDeleteTextures(1, &data->cubeMapId );
-		}
-	}
+	clear();
 }
 
 //----------------------------------------
@@ -153,7 +224,7 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 			ofLogNotice("ofCubeMap::load : loaded ") << ext << " image.";
 			bLoadOk = true;
 			texFormat = GL_RGB32F;
-			mSourceTex.loadData(fpix );
+			mSourceTex.loadData(fpix);
 		}
 		#endif
 	} else {
@@ -161,7 +232,7 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 		if( ofLoadImage(ipix, apath) ) {
 			bLoadOk = true;
 			texFormat = GL_RGB;
-			mSourceTex.loadData( ipix );
+			mSourceTex.loadData(ipix);
 		}
 	}
 	if( !bLoadOk ) {
@@ -174,9 +245,6 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 		if( isHdr() ) {
 			_createIrradianceMap();
 			_createPrefilteredCubeMap();
-			#ifndef TARGET_OPENGLES
-//			_createBrdfLUT();
-			#endif
 		}
 	}
 	
@@ -187,7 +255,46 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 	return bLoadOk;
 }
 
+//--------------------------------------------------------------
+ofCubeMap & ofCubeMap::operator=(const ofCubeMap & mom){
+	if(&mom==this) return *this;
+	clear();
+		
+	if(data) {
+		data.reset();
+	}
+	if( mom.data ) {
+		data = std::make_shared<ofCubeMap::Data>(*mom.data);
+		if( data->bCubeMapAllocated ) {
+			retain(data->cubeMapId);
+		}
+		if( data->bIrradianceAllocated ) {
+			retain(data->irradianceMapId);
+		}
+		if( data->bPreFilteredMapAllocated ) {
+			retain(data->preFilteredMapId);
+		}
+	}
+	if( !data ) {
+		data = std::make_shared<ofCubeMap::Data>();
+	}
+	data->index = -1;
+	_checkSetup(); // grab a new slot in ofCubeMapsData
+	texFormat = mom.texFormat;
+	mBFlipY = mom.mBFlipY;
+	
+	mSourceTex = mom.mSourceTex;
+	return *this;
+}
 
+
+//----------------------------------------
+void ofCubeMap::clear() {
+	mSourceTex.clear();
+	clearTextureData(data);
+}
+
+// TODO: Implement loading image per face
 ////----------------------------------------
 //void ofCubeMap::set( const ofImage& aPosX, const ofImage& aNegX, const ofImage& aPosY, const ofImage& aNegY, const ofImage& aPosZ, const ofImage& aNegZ ) {
 //
@@ -233,16 +340,16 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 //}
 
 //--------------------------------------------------------------
-void ofCubeMap::draw() {
-	if( !mSourceTex.isAllocated() ) {
-		ofLogWarning("ofCubeMap::draw() : texture not allocated, not drawing");
-		return;
-	}
-	ofSetColor(255);
-	mSourceTex.bind();
-	ofDrawSphere(0, 0, 0, 5000.0);
-	mSourceTex.unbind();
-}
+//void ofCubeMap::draw() {
+//	if( !mSourceTex.isAllocated() ) {
+//		ofLogWarning("ofCubeMap::draw() : texture not allocated, not drawing");
+//		return;
+//	}
+//	ofSetColor(255);
+//	mSourceTex.bind();
+//	ofDrawSphere(0, 0, 0, 5000.0);
+//	mSourceTex.unbind();
+//}
 
 //--------------------------------------------------------------
 void ofCubeMap::drawCubeMap() {
@@ -265,7 +372,7 @@ void ofCubeMap::drawIrradiance() {
 	}
 	
 	_drawCubeStart(data->irradianceMapId);
-	shaderRender.setUniform1f("uExposure", 1.0 );
+	shaderRender.setUniform1f("uExposure", getExposure() );
 	shaderRender.setUniform1f("uMaxMips", 1 );
 	_drawCubeEnd();
 }
@@ -278,7 +385,7 @@ void ofCubeMap::drawPrefilteredCube(float aRoughness) {
 	}
 	
 	_drawCubeStart(data->preFilteredMapId);
-	shaderRender.setUniform1f("uExposure", 1.0 );
+	shaderRender.setUniform1f("uExposure", getExposure() );
 	shaderRender.setUniform1f("uRoughness", aRoughness );
 	shaderRender.setUniform1f("uMaxMips", (float)data->maxMipLevels );
 	_drawCubeEnd();
@@ -306,38 +413,41 @@ void ofCubeMap::_drawCubeEnd() {
 	glDepthFunc(GL_LESS); // set depth function back to default
 }
 
-//--------------------------------------------------------------
-void ofCubeMap::beginDrawingIntoFace( int aCubeFace ) {
-	if( !data->bCubeMapAllocated ) {
-		data->bCubeMapAllocated = true;
-		glGenTextures(1, &data->cubeMapId );
-		_initEmptyTextures(data->cubeMapId, data->resolution);
-	}
-	
-	if( !fbo.isAllocated() ) {
-		_allocateFbo(data->resolution);
-	}
-	fbo.begin();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace, data->cubeMapId, 0 );
-}
+// TODO: implement drawing into face
+////--------------------------------------------------------------
+//void ofCubeMap::beginDrawingIntoFace( int aCubeFace ) {
+//	if( !data->bCubeMapAllocated ) {
+//		data->bCubeMapAllocated = true;
+//		glGenTextures(1, &data->cubeMapId );
+//		retain(data->cubeMapId);
+//		_initEmptyTextures(data->cubeMapId, data->resolution);
+//	}
+//
+//	if( !fbo.isAllocated() ) {
+//		_allocateFbo(data->resolution);
+//	}
+//	fbo.begin();
+//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace, data->cubeMapId, 0 );
+//}
+//
+////--------------------------------------------------------------
+//void ofCubeMap::endDrawingIntoFace( int aCubeFace ) {
+//	fbo.end();
+//}
 
-//--------------------------------------------------------------
-void ofCubeMap::endDrawingIntoFace( int aCubeFace ) {
-	fbo.end();
-}
-
-//--------------------------------------------------------------
-void ofCubeMap::begin3DDrawingIntoFace( int aCubeFace ) {
-	ofPushView();
-	beginDrawingIntoFace( aCubeFace );
-	// setup the camera for rendering //
-}
-
-//--------------------------------------------------------------
-void ofCubeMap::end3DDrawingIntoFace( int aCubeFace ) {
-	endDrawingIntoFace( aCubeFace );
-	ofPopView();
-}
+//TODO: Implement drawing via 3D camera
+////--------------------------------------------------------------
+//void ofCubeMap::begin3DDrawingIntoFace( int aCubeFace ) {
+//	ofPushView();
+//	beginDrawingIntoFace( aCubeFace );
+//	// setup the camera for rendering //
+//}
+//
+////--------------------------------------------------------------
+//void ofCubeMap::end3DDrawingIntoFace( int aCubeFace ) {
+//	endDrawingIntoFace( aCubeFace );
+//	ofPopView();
+//}
 
 //--------------------------------------------------------------
 GLuint ofCubeMap::getTextureId() {
@@ -371,6 +481,7 @@ void ofCubeMap::_createCubeMap() {
 	if( !data->bCubeMapAllocated ) {
 		data->bCubeMapAllocated = true;
 		glGenTextures(1, &data->cubeMapId );
+		retain(data->cubeMapId);
 	}
 	
 	_allocateCubeMesh();
@@ -530,6 +641,7 @@ void ofCubeMap::_createIrradianceMap() {
 	if( !data->bIrradianceAllocated ) {
 		data->bIrradianceAllocated = true;
 		glGenTextures(1, &data->irradianceMapId );
+		retain(data->irradianceMapId);
 	}
 	_configureCubeTextures(data->irradianceMapId);
 	_initEmptyTextures(data->irradianceMapId, data->irradianceRes );
@@ -593,6 +705,7 @@ void ofCubeMap::_createPrefilteredCubeMap() {
 	_allocateCubeMesh();
 	data->bPreFilteredMapAllocated = true;
 	glGenTextures(1, &data->preFilteredMapId );
+	retain(data->preFilteredMapId);
 	
 	//_initEmptyTextures( data->preFilteredMapId, data->preFilterRes );
 	glBindTexture(GL_TEXTURE_CUBE_MAP, data->preFilteredMapId);

@@ -25,6 +25,7 @@ struct Material {
 	vec3 clearcoatNormal;
 	
 	vec2 uv;
+	float iblExposure;
 };
 #endif
 
@@ -39,10 +40,10 @@ uniform vec4 mat_emissive;
 uniform float mat_roughness;
 uniform float mat_metallic;
 uniform float mat_reflectance;
+uniform float mat_ibl_exposure;
 #if defined(HAS_CLEAR_COAT)
 uniform vec2 mat_clearcoat;
 #endif
-//uniform float mat_ao;
 #if defined(HAS_TEX_NORMAL) || defined(HAS_TEX_DISPLACEMENT)
 uniform float mat_normal_mix;
 #endif
@@ -56,7 +57,7 @@ uniform SAMPLER tex0;
 #endif
 
 vec4 getMaterialAlbedo(in vec2 aUv) {
-	vec4 albedo = mat_diffuse;//vec4(vec3(0.5), 1.0);
+	vec4 albedo = mat_diffuse;
 	#if defined(HAS_TEXTURE)
 		#if HAS_TEXTURE
 			albedo = TEXTURE(tex0, aUv);
@@ -257,6 +258,8 @@ void setupMaterial( inout Material amat ) {
 	amat.roughness = saturate( amat.roughness + 0.001 );
 	// reflectance only applies to dielectrics, ie, non metals
 	amat.reflectance = saturate( amat.reflectance + FLT_EPS);
+	
+	amat.iblExposure = mat_ibl_exposure;
 	
 	amat.f0 = vec3(0.04);
 	amat.f90 = vec3(1.0);

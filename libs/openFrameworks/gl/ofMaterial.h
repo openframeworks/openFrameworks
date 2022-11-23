@@ -246,91 +246,132 @@ public:
 	/// \return the shader uniform name
 	static std::string getUniformName( const ofMaterialTextureType& aMaterialTextureType );
 	
-	/// \brief is this material pbr. Setting PBR functions will automatically set the material to pbr.\nCan also be set calling setPBR();
+	/// \brief is this material pbr. Setting PBR functions or textures will automatically set the material to pbr.\nCan also be set calling setPBR(bool);
 	/// \return is the material pbr.
 	const bool isPBR() const { return data.isPbr; }
-	/// \brief enable or disable PBR for this material.
+	/// \brief enable or disable PBR for this material. Default is disabled.
 	void setPBR(bool ab) { data.isPbr = ab; }
 
 	/// \brief setup using settings struct
 	/// \param settings color & other properties struct
 	void setup(const ofMaterialSettings & settings);
 	
-	/// \brief override the default main shader functions for vert or frag shader
+	/// \brief override the default main shader functions for vert or frag shader. (PBR)
 	/// \param aShaderSrc the shader source as a string
 	/// \param atype GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
 	/// \param skey unique key to identify the vertex and fragment sources. If loading dynamically, use same key to overwrite previous instances.
 	void setShaderMain(std::string aShaderSrc, GLenum atype, std::string skey);
 	
-	/// \brief set all material colors: reflectance type & light intensity
+	/// \brief set all material colors: reflectance type & light intensity. (Phong)
 	/// \param oDiffuse the diffuse reflectance
 	/// \param oAmbient the ambient reflectance
 	/// \param oSpecular the specular reflectance
 	/// \param oEmmissive the emitted light intensity
 	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
 	
-	/// \brief set the diffuse reflectance
+	/// \brief set the diffuse reflectance. (Phong, PBR)
 	/// \param oDiffuse the diffuse reflectance
 	void setDiffuseColor(ofFloatColor oDiffuse);
 	
-	/// \brief set the ambient reflectance
+	/// \brief set the ambient reflectance. (Phong)
 	/// \param oAmbient the ambient reflectance
 	void setAmbientColor(ofFloatColor oAmbient);
 	
-	/// \brief set the specular reflectance
+	/// \brief set the specular reflectance. (Phong)
 	/// \param oSpecular the specular reflectance
 	void setSpecularColor(ofFloatColor oSpecular);
 	
-	/// \brief set the emitted light intensity
+	/// \brief set the emitted light intensity. (Phong, PBR)
 	/// \param oEmmissive the emitted light intensity
 	void setEmissiveColor(ofFloatColor oEmmisive);
 	
-	/// \brief set the specular exponent
+	/// \brief set the specular exponent. (Phong)
 	void setShininess(float nShininess);
 	
-	/// \brief set the tex coord scale used in the shader.
+	/// \brief set the tex coord scale used in the shader. (Phong, PBR)
 	/// \param xscale texture scale in x
 	/// \param yscale texture scale in y
 	void setTexCoordScale( float xscale, float yscale );
 	
-	//// \brief load a texture that is stored in the material. 
+	/// \brief load a texture that is stored in the material. Check which textures are PBR using isPBRTexture(ofMaterialTextureType)
 	/// \param aMaterialTextureType type of texture.
 	/// \param apath file path to texture.
 	/// \return if the load was successful.
 	bool loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath );
 	bool loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath, bool bTex2d, bool mirrorY );
-	
+	/// \brief check if texture is PBR only.
+	/// \return is texture only PBR.
 	bool isPBRTexture(const ofMaterialTextureType& aMaterialTextureType);
-	/// \brief set additonal textures to use in the shader.
-	// the following shaders are supported by phong.frag
-	// in the future we will add textures for physical based rendering (PBR)
+	/// \brief set additonal textures to use in the shader. If texture is PBR only, will set material to PBR.
 	void setTexture(const ofMaterialTextureType& aMaterialTextureType,const ofTexture & aTex);
-	void setDiffuseTexture(const ofTexture & aTex); // phong, PBR
-	void setSpecularTexture(const ofTexture & aTex); // phong
-	void setAmbientTexture(const ofTexture & aTex); // phong
-	void setEmissiveTexture(const ofTexture & aTex); // phong, PBR
-	void setNormalTexture(const ofTexture & aTex); // phong, PBR
-	void setOcclusionTexture(const ofTexture & aTex); // phong, PBR
+	/// \brief set a diffuse texture. (Phong, PBR).
+	/// \param aTex texture with diffuse color information.
+	void setDiffuseTexture(const ofTexture & aTex);
+	/// \brief set a specular map texture. (Phong)
+	/// \param aTex texture with specular map data.
+	void setSpecularTexture(const ofTexture & aTex);
+	/// \brief set an ambient light texture. (Phong)
+	/// \param aTex texture with ambient lighting data.
+	void setAmbientTexture(const ofTexture & aTex);
+	/// \brief set an emissive texture. (Phong, PBR)
+	/// \param aTex texture with emissive color information.
+	void setEmissiveTexture(const ofTexture & aTex);
+	/// \brief set a normal texture. (Phong, PBR)
+	/// \param aTex texture with normal information.
+	void setNormalTexture(const ofTexture & aTex);
+	/// \brief set an occlusion texture. (Phong, PBR)
+	/// \param aTex texture with r = occlusion, g = n/a and b = n/a.
+	void setOcclusionTexture(const ofTexture & aTex);
 	
-	// PBR textures //
-	void setAoRoughnessMetallicTexture(const ofTexture & aTex); // PBR
-	void setRoughnessMetallicTexture(const ofTexture & aTex); // PBR
-	void setRoughnessTexture(const ofTexture & aTex); // PBR
-	void setMetallicTexture(const ofTexture& aTex); // PBR
-	void setDisplacementTexture(const ofTexture & aTex); // PBR 
-	void setClearCoatTexture( const ofTexture& aTex ); // PBR
-//	void setClearCoatNormalTexture(const ofTexture & aTex); // PBR
+	// PBR only textures //
+	/// \brief set an occlusion, roughness, metallic texture. (PBR)
+	/// \param aTex texture with r = occlusion, g = roughness and b = metallic.
+	void setAoRoughnessMetallicTexture(const ofTexture & aTex);
+	/// \brief set a roughness, metallic texture. (PBR)
+	/// \param aTex texture with r = n/a, g = roughness and b = metallic.
+	void setRoughnessMetallicTexture(const ofTexture & aTex);
+	/// \brief set a roughness texture. (PBR)
+	/// \param aTex texture with r = n/a, g = roughness and b = n/a.
+	void setRoughnessTexture(const ofTexture & aTex);
+	/// \brief set a metallic texture. (PBR)
+	/// \param aTex texture with r = n/a, g = n/a and b = metallic.
+	void setMetallicTexture(const ofTexture& aTex);
+	/// \brief set a vertex displacement texture. (PBR)
+	/// \param aTex rgb texture displacement map.
+	void setDisplacementTexture(const ofTexture & aTex);
+	/// \brief set a clear coat texture. (PBR)
+	/// \param aTex with r = intensity, g = n/a and b = n/a.
+	void setClearCoatTexture( const ofTexture& aTex );
 	
-	// PBR properties
+	//-- PBR properties --//
+	/// \brief set metalness. (PBR)
+	/// \param ametallic metal property of material.
 	void setMetallic( const float& ametallic );
+	/// \brief set roughness. (PBR)
+	/// \param aroughness roughness of material.
 	void setRoughness( const float& aroughness );
+	/// \brief set reflectance - only applies to dielectrics, ie, non metals. (PBR)
+	/// \param areflectance amount of light material reflects.
 	void setReflectance( const float& areflectance );
+	/// \brief set clear coat. Disabled by default. (PBR)
+	/// \param ab is clear coat enabled.
 	void setClearCoatEnabled( bool ab );
+	/// \brief set clear coat strength. Must call setClearCoatEnabled(true) to take effect. (PBR)
+	/// \param astrength strength of clear coat.
 	void setClearCoatStrength( const float& astrength );
+	/// \brief set clear coat roughness. Must call setClearCoatEnabled(true) to take effect. (PBR)
+	/// \param aroughness roughness of clear coat.
 	void setClearCoatRoughness( const float& aroughness );
+	/// \brief amount of vertex displacement. Must have set OF_MATERIAL_TEXTURE_DISPLACEMENT to take effect. (PBR)
+	/// \param astrength amount to displace vertices along normal accoring to displacement texture.
 	void setDisplacementStrength( const float& astrength );
+	/// \brief offset strength to calculate normals for vertex displacement. (PBR)
+	/// \param astrength strength to calculate normals, higher values = more distinct normals.
 	void setDisplacementNormalsStrength( const float& astrength );
-	void setNormalGeomToNormalMapMix( const float& astrength ); 
+	/// \brief percent to mix between geometry normal and normal map normal / displacement normal. (PBR)
+	/// \param astrength percent to mix between the two.
+	void setNormalGeomToNormalMapMix( const float& astrength );
+	//--! PBR properties !--//
 
 	// documented in ofBaseMaterial
 	ofFloatColor getDiffuseColor() const;
@@ -387,9 +428,11 @@ public:
 	void addShaderDefine( const std::string & aDefineName );
 	void addShaderDefine( const std::string & aDefineName, const std::string & aDefineValue );
 	bool removeShaderDefine( const std::string & aDefineName );
+	/// \brief string holding all of the defines added to the shader. (Phong, PBR)
+	/// \return string containing all defines.
 	const std::string getDefinesString() const;
 	
-	void setCustomShader( std::shared_ptr<ofShader> aCustomShader);
+	void setCustomShader(std::shared_ptr<ofShader> aCustomShader);
 	
 	
 protected:

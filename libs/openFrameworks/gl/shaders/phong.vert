@@ -23,6 +23,8 @@ uniform mat4 textureMatrix;
 uniform mat4 modelViewProjectionMatrix;
 uniform mat4 normalMatrix;
 
+uniform vec2 mat_texcoord_scale;
+
 
 void main (void){
 	vec4 eyePosition = modelViewMatrix * position;
@@ -34,7 +36,7 @@ void main (void){
 	
 	v_worldNormal = normalize(mat3(modelMatrix) * normal.xyz);
 
-    v_texcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
+    v_texcoord = (textureMatrix*vec4(texcoord.x*mat_texcoord_scale.x,texcoord.y*mat_texcoord_scale.y,0,1)).xy;
     #if HAS_COLOR
         v_color = color;
     #endif

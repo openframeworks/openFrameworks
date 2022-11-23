@@ -56,7 +56,7 @@ void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in 
 	// cheap luminance approximation
 	//	float f90 = clamp(50.0 * f0.g, 0.0, 1.0);
 	adata.diffuse = amat.albedo.rgb * (1.0-amat.metallic);
-	adata.iblLuminance = 1.0;
+	adata.iblLuminance = amat.iblExposure; // convert to luminance?
 	
 	adata.directDiffuse = vec3(0.0);
 	adata.indirectDiffuse = vec3(0.0);
