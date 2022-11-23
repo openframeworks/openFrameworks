@@ -117,7 +117,9 @@ void ofApp::drawScene(bool isPreview){
 		window.addVertex(windowBottomRight);
 		window.setMode(OF_PRIMITIVE_LINE_STRIP);
 		window.draw();
-		glPointSize(3.0f);
+		#ifndef TARGET_EMSCRIPTEN
+			glPointSize(3.0f);
+		#endif
 		window.drawVertices();
 		//
 		//--
