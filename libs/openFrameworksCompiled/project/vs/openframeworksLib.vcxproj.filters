@@ -252,6 +252,12 @@
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofCubeMap.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofCubeMapShaders.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFpsCounter.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
@@ -478,6 +484,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp">
       <Filter>libs\openFrameworks\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofCubeMap.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.cpp">
       <Filter>libs\openFrameworks\video</Filter>

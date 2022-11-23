@@ -21,6 +21,9 @@
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
 		27DEA3121796F578000A9E90 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = 27DEA3101796F578000A9E90 /* ofXml.h */; };
+		2E498914292C96340096EC56 /* ofCubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E498911292C96340096EC56 /* ofCubeMap.cpp */; };
+		2E498915292C96340096EC56 /* ofCubeMapShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498912292C96340096EC56 /* ofCubeMapShaders.h */; };
+		2E498916292C96340096EC56 /* ofCubeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498913292C96340096EC56 /* ofCubeMap.h */; };
 		2E4D30C128F5BA9C0074D450 /* ofShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4D30BF28F5BA9C0074D450 /* ofShadow.h */; };
 		2E4D30C228F5BA9C0074D450 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
@@ -171,6 +174,9 @@
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		27DEA30F1796F578000A9E90 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
 		27DEA3101796F578000A9E90 /* ofXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofXml.h; sourceTree = "<group>"; };
+		2E498911292C96340096EC56 /* ofCubeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofCubeMap.cpp; path = gl/ofCubeMap.cpp; sourceTree = "<group>"; };
+		2E498912292C96340096EC56 /* ofCubeMapShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofCubeMapShaders.h; path = gl/ofCubeMapShaders.h; sourceTree = "<group>"; };
+		2E498913292C96340096EC56 /* ofCubeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofCubeMap.h; path = gl/ofCubeMap.h; sourceTree = "<group>"; };
 		2E4D30BF28F5BA9C0074D450 /* ofShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofShadow.h; path = gl/ofShadow.h; sourceTree = "<group>"; };
 		2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofShadow.cpp; path = gl/ofShadow.cpp; sourceTree = "<group>"; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
@@ -340,6 +346,9 @@
 				694425151FE4544C00770088 /* ofGLBaseTypes.h */,
 				2292E73C19E3049700DE9411 /* ofBufferObject.cpp */,
 				2292E73D19E3049700DE9411 /* ofBufferObject.h */,
+				2E498911292C96340096EC56 /* ofCubeMap.cpp */,
+				2E498913292C96340096EC56 /* ofCubeMap.h */,
+				2E498912292C96340096EC56 /* ofCubeMapShaders.h */,
 				22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */,
 				22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */,
 				DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */,
@@ -661,10 +670,12 @@
 				E4F3BAFC12F4C745002D19BB /* ofURLFileLoader.h in Headers */,
 				E4F3BAFE12F4C745002D19BB /* ofUtils.h in Headers */,
 				E4F3BB1912F4C752002D19BB /* ofBitmapFont.h in Headers */,
+				2E498915292C96340096EC56 /* ofCubeMapShaders.h in Headers */,
 				E4F3BB1D12F4C752002D19BB /* ofGraphics.h in Headers */,
 				E4F3BB1F12F4C752002D19BB /* ofImage.h in Headers */,
 				E4F3BB2112F4C752002D19BB /* ofPixels.h in Headers */,
 				E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */,
+				2E498916292C96340096EC56 /* ofCubeMap.h in Headers */,
 				E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */,
 				DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */,
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
@@ -782,6 +793,7 @@
 				E4F3BADB12F4C73C002D19BB /* ofColor.cpp in Sources */,
 				E4F3BADF12F4C73C002D19BB /* ofRectangle.cpp in Sources */,
 				E4F3BAF212F4C745002D19BB /* ofFileUtils.cpp in Sources */,
+				2E498914292C96340096EC56 /* ofCubeMap.cpp in Sources */,
 				E4F3BAF412F4C745002D19BB /* ofLog.cpp in Sources */,
 				BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */,
 				9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */,

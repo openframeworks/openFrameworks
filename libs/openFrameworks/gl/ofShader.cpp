@@ -15,6 +15,7 @@
 #endif
 #include "ofShadow.h"
 #include "ofLight.h"
+#include "ofCubeMap.h"
 
 using std::map;
 using std::vector;
@@ -454,10 +455,10 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		}
 		else if (p != "pragma")
 			return false;
-
-		if (i.empty() || (f.size() < 2) ) 
+		
+		if (i.empty() || (f.size() < 2) )
 			return false;
-
+		
 		if (i != "include") return false;
 
 		// first and last character of filename token must match and be either
@@ -1484,6 +1485,27 @@ bool ofShader::setShadowUniforms( int textureLocation ) const {
 		setUniform3f(shadowAddress+".lightRight", shadow->right );
 		setUniform1f(shadowAddress+".shadowType", (float)shadow->shadowType );
 		setUniform1i(shadowAddress+".texIndex", shadow->texIndex );
+	}
+	return true;
+}
+	
+//----------------------------------------
+bool ofShader::setPbrEnvironmentMapUniforms( int textureLocation ) const {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	
+	std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
+	if( cubeMapData ) {
+		if( cubeMapData->bIrradianceAllocated ) {
+			setUniformTexture("tex_irradianceMap", GL_TEXTURE_CUBE_MAP, cubeMapData->irradianceMapId, textureLocation );
+		}
+		if(cubeMapData->bPreFilteredMapAllocated) {
+			setUniformTexture("tex_prefilterEnvMap", GL_TEXTURE_CUBE_MAP, cubeMapData->preFilteredMapId, textureLocation+1 );
+		}
+		if( cubeMapData->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+			setUniformTexture("tex_brdfLUT", ofCubeMap::getBrdfLutTexture(), textureLocation+2 );
+		}
 	}
 	return true;
 }

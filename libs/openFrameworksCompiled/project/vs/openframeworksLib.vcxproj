@@ -94,6 +94,8 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofWindowSettings.h" />
     <ClInclude Include="..\..\..\openFrameworks\events\ofEvent.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofCubeMap.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofCubeMapShaders.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
@@ -178,6 +180,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofCubeMap.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofFbo.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLUtils.cpp" />

@@ -82,6 +82,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 	defaultFramebufferId = 0;
 	path.setMode(ofPath::POLYLINES);
     path.setUseShapeColor(false);
+	currentEyePos = {0.f,0.f,0.f};
 }
 
 //----------------------------------------------------------
@@ -618,6 +619,8 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 	auto lookAt = glm::lookAt( glm::vec3{eyeX, eyeY, dist},  glm::vec3{eyeX, eyeY, 0.f},  glm::vec3{0.f, 1.f, 0.f} );
 	loadViewMatrix(lookAt);
 	
+	currentEyePos = glm::vec3{eyeX, eyeY, dist};
+	
 }
 
 //----------------------------------------------------------
@@ -640,6 +643,8 @@ void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float
 
 	matrixMode(OF_MATRIX_MODELVIEW);
 	loadViewMatrix(glm::mat4(1.0));
+	
+	currentEyePos = glm::vec3{viewW/2.0f, viewH/2.0f, nearDist };
 }
 
 //----------------------------------------------------------
@@ -787,6 +792,11 @@ glm::mat4 ofGLProgrammableRenderer::getCurrentNormalMatrix() const{
 //----------------------------------------------------------
 glm::mat4 ofGLProgrammableRenderer::getCurrentModelMatrix() const{
 	return matrixStack.getModelMatrix();
+}
+
+//----------------------------------------------------------
+glm::vec3 ofGLProgrammableRenderer::getCurrentEyePosition() const {
+	return currentEyePos;
 }
 
 //----------------------------------------------------------
@@ -1378,15 +1388,17 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
-    currentMaterial = &material;
 	if( bIsShadowDepthPass ) {
+//		currentMaterial = nullptr;
 		// we are the shadow depth pass right now, we don't need
 		// textures or lighting, etc.
 		return;
 	}
+	currentMaterial = &material;
     // FIXME: this invalidates the previous shader to avoid that
     // when binding 2 materials one after another, the second won't
     // get the right parameters.
+	currentMaterial->bind(*this);
     currentShader = nullptr;
     beginDefaultShader();
 }
@@ -1406,6 +1418,9 @@ void ofGLProgrammableRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
+	if(currentMaterial) {
+		currentMaterial->unbind(*this);
+	}
     currentMaterial = nullptr;
 	if( bIsShadowDepthPass ) {
 		// we are the shadow depth pass right now, we don't need
@@ -1506,6 +1521,7 @@ void ofGLProgrammableRenderer::bind(const ofCamera & camera, const ofRectangle &
 	loadMatrix(camera.getProjectionMatrix(_viewport));
 	matrixMode(OF_MATRIX_MODELVIEW);
 	loadViewMatrix(camera.getModelViewMatrix());
+	currentEyePos = camera.getPosition();
 }
 
 //----------------------------------------------------------
@@ -1539,6 +1555,7 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 		currentMaterial->updateMaterial(*currentShader,*this);
 		currentMaterial->updateLights(*currentShader,*this);
 		currentMaterial->updateShadows(*currentShader,*this);
+		currentMaterial->updateEnvironmentMaps(*currentShader, *this);
 	}
 	if(currentShadow) {
 		if( currentShadow->isMultiCubeFacePass() ) {
@@ -1559,6 +1576,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 		if( currentShadow ) {
 			nextShader = &currentShadow->getDepthShader(*this);
 		} else if(currentMaterial){
+//			std::cout << "ofGLProgrammableRenderer::beginDefaultShader: " << currentTextureTarget << " | " << ofGetFrameNum() << std::endl;
             nextShader = &currentMaterial->getShader(currentTextureTarget,colorsEnabled,*this);
 
 		}else if(bitmapStringEnabled){
