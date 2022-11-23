@@ -43,14 +43,18 @@ public:
 	static const ofTexture& getBrdfLutTexture();
 	
 	ofCubeMap();
+	ofCubeMap(const ofCubeMap & mom);
+	ofCubeMap(ofCubeMap && mom);
+	
 	~ofCubeMap();
 	
 	bool load( std::string apath, int aFaceResolution, bool aBFlipY=true );
 	
-	/// \section Update Texture
+	/// \section Update ofCubeMap
 	/// \brief Copy a given ofCubeMap into this cube map.
 	/// \param mom The ofCubeMap to copy from. Reuses internal GL texture IDs.
 	ofCubeMap& operator=(const ofCubeMap & mom);
+	ofCubeMap& operator=(ofCubeMap && mom);
 	
 	void clear();
 	

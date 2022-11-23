@@ -183,8 +183,99 @@ ofCubeMap::ofCubeMap() {
 }
 
 //----------------------------------------
+ofCubeMap::ofCubeMap(const ofCubeMap & mom) {
+	clear();
+	std::cout << "ofCubeMap(ofCubeMap & mom)" << std::endl;
+	
+	if(data) {
+		data.reset();
+	}
+	if( mom.data ) {
+		data = std::make_shared<ofCubeMap::Data>(*mom.data);
+		if( data->bCubeMapAllocated ) {
+			retain(data->cubeMapId);
+		}
+		if( data->bIrradianceAllocated ) {
+			retain(data->irradianceMapId);
+		}
+		if( data->bPreFilteredMapAllocated ) {
+			retain(data->preFilteredMapId);
+		}
+	}
+	if( !data ) {
+		data = std::make_shared<ofCubeMap::Data>();
+	}
+	data->index = -1;
+	_checkSetup(); // grab a new slot in ofCubeMapsData
+	texFormat = mom.texFormat;
+	mBFlipY = mom.mBFlipY;
+	
+	mSourceTex = mom.mSourceTex;
+}
+
+//----------------------------------------
+ofCubeMap::ofCubeMap(ofCubeMap && mom) {
+	std::cout << "ofCubeMap(ofCubeMap && mom)" << std::endl;
+	clear();
+	// taking ownership of the data shared_ptr
+	data = mom.data;
+	mSourceTex = mom.mSourceTex;
+	
+	mom.mSourceTex.clear();
+	texFormat = mom.texFormat;
+	mBFlipY = mom.mBFlipY;
+}
+
+//----------------------------------------
 ofCubeMap::~ofCubeMap() {
 	clear();
+}
+
+//--------------------------------------------------------------
+ofCubeMap & ofCubeMap::operator=(const ofCubeMap & mom){
+	if(&mom==this) return *this;
+	clear();
+	std::cout << "operator=(ofCubeMap & mom)" << std::endl;
+	
+	if(data) {
+		data.reset();
+	}
+	if( mom.data ) {
+		data = std::make_shared<ofCubeMap::Data>(*mom.data);
+		if( data->bCubeMapAllocated ) {
+			retain(data->cubeMapId);
+		}
+		if( data->bIrradianceAllocated ) {
+			retain(data->irradianceMapId);
+		}
+		if( data->bPreFilteredMapAllocated ) {
+			retain(data->preFilteredMapId);
+		}
+	}
+	if( !data ) {
+		data = std::make_shared<ofCubeMap::Data>();
+	}
+	data->index = -1;
+	_checkSetup(); // grab a new slot in ofCubeMapsData
+	texFormat = mom.texFormat;
+	mBFlipY = mom.mBFlipY;
+	
+	mSourceTex = mom.mSourceTex;
+	return *this;
+}
+
+//--------------------------------------------------------------
+ofCubeMap& ofCubeMap::operator=(ofCubeMap && mom) {
+	std::cout << "operator=(ofCubeMap && mom)" << std::endl;
+	clear();
+	
+	data = mom.data;
+	mSourceTex = mom.mSourceTex;
+	
+	mom.mSourceTex.clear();
+	texFormat = mom.texFormat;
+	mBFlipY = mom.mBFlipY;
+	return *this;
 }
 
 //----------------------------------------
@@ -253,38 +344,6 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 	}
 	
 	return bLoadOk;
-}
-
-//--------------------------------------------------------------
-ofCubeMap & ofCubeMap::operator=(const ofCubeMap & mom){
-	if(&mom==this) return *this;
-	clear();
-		
-	if(data) {
-		data.reset();
-	}
-	if( mom.data ) {
-		data = std::make_shared<ofCubeMap::Data>(*mom.data);
-		if( data->bCubeMapAllocated ) {
-			retain(data->cubeMapId);
-		}
-		if( data->bIrradianceAllocated ) {
-			retain(data->irradianceMapId);
-		}
-		if( data->bPreFilteredMapAllocated ) {
-			retain(data->preFilteredMapId);
-		}
-	}
-	if( !data ) {
-		data = std::make_shared<ofCubeMap::Data>();
-	}
-	data->index = -1;
-	_checkSetup(); // grab a new slot in ofCubeMapsData
-	texFormat = mom.texFormat;
-	mBFlipY = mom.mBFlipY;
-	
-	mSourceTex = mom.mSourceTex;
-	return *this;
 }
 
 
