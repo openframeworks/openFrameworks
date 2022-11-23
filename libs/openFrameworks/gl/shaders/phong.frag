@@ -10,10 +10,6 @@ static const string fragmentShader = R"(
     IN vec4 v_color;
 #endif
 
-// needed for Perturb Normal on emscripten GLES
-#ifdef TARGET_OPENGLES
-    #extension GL_OES_standard_derivatives : enable
-#endif
 
     struct lightData
     {
