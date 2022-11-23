@@ -53,6 +53,7 @@ void ofApp::setup(){
     vidGrabber.initGrabber(camWidth, camHeight); // set the width and height of the camera
     videoPixels.allocate(camWidth,camHeight, OF_PIXELS_RGB); // set up our pixel object to be the same size as our camera object
     videoTexture.allocate(videoPixels);
+    pixels.allocate(camWidth,camHeight, OF_PIXELS_RGB);
     
     ofSetBackgroundColor(0, 0, 0); // set the background colour to dark black
     ofDisableSmoothing();
