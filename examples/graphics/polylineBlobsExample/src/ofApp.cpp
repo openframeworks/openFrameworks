@@ -7,7 +7,7 @@ void ofApp::setup() {
 	camWidth = 640;
 	camHeight = 480;
 
-	cam.setup(640, 480);
+	cam.initGrabber(camWidth, camHeight);
 	cvImgColor.allocate(camWidth, camHeight);
 	cvImgGrayscale.allocate(camWidth, camHeight);
 
@@ -69,12 +69,12 @@ void drawWithNormals(const ofPolyline& polyline) {
 		if(repeatNext) {
 			ofSetColor(255, 0, 255);
 		}
-		glPushMatrix();
-		glTranslatef(cur.x, cur.y, 0);
+		ofPushMatrix();
+		ofTranslate(cur.x, cur.y, 0);
 		ofRotateDeg(angle);
 		ofDrawLine(0, 0, 0, distance);
 		ofDrawLine(0, 0, distance, 0);
-		glPopMatrix();
+		ofPopMatrix();
 	}
 }
 
