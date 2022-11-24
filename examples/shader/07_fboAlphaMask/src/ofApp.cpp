@@ -46,8 +46,12 @@ void ofApp::update(){
 		auto& texCoords = drawMesh.getTexCoords();
 		// loop through the tex coords and remap to the size of the mask fbo
 		for( auto& tc : texCoords ){
-			tc.x = tc.x * maskFbo.getWidth();
-			tc.y = (1.0f-tc.y) * maskFbo.getHeight();
+			#ifdef TARGET_EMSCRIPTEN
+				tc.y = 1.0f-tc.y;
+			#else
+				tc.x = tc.x * maskFbo.getWidth();
+				tc.y = (1.0f-tc.y) * maskFbo.getHeight();
+			#endif
 		}
 		
 		// lets reload the font at a size in relation to width or height
