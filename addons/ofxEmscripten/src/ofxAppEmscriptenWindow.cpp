@@ -30,7 +30,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
 
-/// when setting  explicitSwapControl to 0 it is emscripten that is in charge of swapping on each render call.
+/// when setting explicitSwapControl to 0 it is emscripten that is in charge of swapping on each render call.
     attrs.explicitSwapControl = 0;
     attrs.depth = 1;
     attrs.stencil = 1;
@@ -73,6 +73,7 @@ void ofxAppEmscriptenWindow::loop(){
 
 void ofxAppEmscriptenWindow::update(){
         if (bSetMainLoopTiming) {
+		// choose the render speed with the second argument. 1 is for every screen refresh, 2 for every second, 3 for every third. and so on...
 		emscripten_set_main_loop_timing(1, 2);
 		bSetMainLoopTiming = false;
 	}
@@ -98,8 +99,77 @@ void ofxAppEmscriptenWindow::display_cb(){
 
 int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData){
 	int key = keyEvent->key[0];
-	if(key==0){
+	std::string id = keyEvent->key;
+	if(key == 0){
 		key = keyEvent->which + 32;
+	}else if(id == "Enter"){
+		key = OF_KEY_RETURN;
+	}else if(id == "Escape"){
+		key = OF_KEY_ESC;
+	}else if(id == "Tab"){
+		key = OF_KEY_TAB;
+	}else if(id == "Backspace"){
+		key = OF_KEY_BACKSPACE;
+	}else if(id == "Delete"){
+		key = OF_KEY_DEL;
+	}else if(id == "Shift"){
+		key = OF_KEY_SHIFT;
+	}else if(id == "Control"){
+		key = OF_KEY_CONTROL;
+	}else if(id == "Meta"){
+		key = OF_KEY_SUPER;
+	}else if(id == "Alt"){
+		key = OF_KEY_LEFT_ALT;
+	}else if(id == "AltGraph"){
+		key = OF_KEY_RIGHT_ALT;
+	}else if(id == "F1"){
+		key = OF_KEY_F1;
+	}else if(id == "F2"){
+		key = OF_KEY_F2;
+	}else if(id == "F3"){
+		key = OF_KEY_F3;
+	}else if(id == "F4"){
+		key = OF_KEY_F4;
+	}else if(id == "F5"){
+		key = OF_KEY_F5;
+	}else if(id == "F6"){
+		key = OF_KEY_F6;
+	}else if(id == "F7"){
+		key = OF_KEY_F7;
+	}else if(id == "F8"){
+		key = OF_KEY_F8;
+	}else if(id == "F9"){
+		key = OF_KEY_F9;
+	}else if(id == "F10"){
+		key = OF_KEY_F10;
+	}else if(id == "F11"){
+		key = OF_KEY_F11;
+	}else if(id == "F12"){
+		key = OF_KEY_F12;
+	}else if(id == "ArrowLeft"){
+		key = OF_KEY_LEFT;
+	}else if(id == "ArrowUp"){
+		key = OF_KEY_UP;
+	}else if(id == "ArrowRight"){
+		key = OF_KEY_RIGHT;
+	}else if(id == "ArrowDown"){
+		key = OF_KEY_DOWN;
+	}else if(id == "PageUp"){
+		key = OF_KEY_PAGE_UP;
+	}else if(id == "PageDown"){
+		key = OF_KEY_PAGE_DOWN;
+	}else if(id == "Home"){
+		key = OF_KEY_HOME;
+	}else if(id == "End"){
+		key = OF_KEY_END;
+	}else if(id == "Insert"){
+		key = OF_KEY_INSERT;
+	}else if(id == "ß"){
+		key = 223;
+	}else if(id == "§"){
+		key = 167;
+	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
+		return 0;
 	}
 	instance->events().notifyKeyPressed(key);
 	return 0;
@@ -107,8 +177,77 @@ int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEv
 
 int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData){
 	int key = keyEvent->key[0];
-	if(key==0){
+	std::string id = keyEvent->key;
+	if(key == 0){
 		key = keyEvent->which + 32;
+	}else if(id == "Enter"){
+		key = OF_KEY_RETURN;
+	}else if(id == "Escape"){
+		key = OF_KEY_ESC;
+	}else if(id == "Tab"){
+		key = OF_KEY_TAB;
+	}else if(id == "Backspace"){
+		key = OF_KEY_BACKSPACE;
+	}else if(id == "Delete"){
+		key = OF_KEY_DEL;
+	}else if(id == "Shift"){
+		key = OF_KEY_SHIFT;
+	}else if(id == "Control"){
+		key = OF_KEY_CONTROL;
+	}else if(id == "Meta"){
+		key = OF_KEY_SUPER;
+	}else if(id == "Alt"){
+		key = OF_KEY_LEFT_ALT;
+	}else if(id == "AltGraph"){
+		key = OF_KEY_RIGHT_ALT;
+	}else if(id == "F1"){
+		key = OF_KEY_F1;
+	}else if(id == "F2"){
+		key = OF_KEY_F2;
+	}else if(id == "F3"){
+		key = OF_KEY_F3;
+	}else if(id == "F4"){
+		key = OF_KEY_F4;
+	}else if(id == "F5"){
+		key = OF_KEY_F5;
+	}else if(id == "F6"){
+		key = OF_KEY_F6;
+	}else if(id == "F7"){
+		key = OF_KEY_F7;
+	}else if(id == "F8"){
+		key = OF_KEY_F8;
+	}else if(id == "F9"){
+		key = OF_KEY_F9;
+	}else if(id == "F10"){
+		key = OF_KEY_F10;
+	}else if(id == "F11"){
+		key = OF_KEY_F11;
+	}else if(id == "F12"){
+		key = OF_KEY_F12;
+	}else if(id == "ArrowLeft"){
+		key = OF_KEY_LEFT;
+	}else if(id == "ArrowUp"){
+		key = OF_KEY_UP;
+	}else if(id == "ArrowRight"){
+		key = OF_KEY_RIGHT;
+	}else if(id == "ArrowDown"){
+		key = OF_KEY_DOWN;
+	}else if(id == "PageUp"){
+		key = OF_KEY_PAGE_UP;
+	}else if(id == "PageDown"){
+		key = OF_KEY_PAGE_DOWN;
+	}else if(id == "Home"){
+		key = OF_KEY_HOME;
+	}else if(id == "End"){
+		key = OF_KEY_END;
+	}else if(id == "Insert"){
+		key = OF_KEY_INSERT;
+	}else if(id == "ß"){
+		key = 223;
+	}else if(id == "§"){
+		key = 167;
+	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
+		return 0;
 	}
 	instance->events().notifyKeyReleased(key);
 	return 0;
