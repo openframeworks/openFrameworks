@@ -73,6 +73,7 @@ void ofxAppEmscriptenWindow::loop(){
 
 void ofxAppEmscriptenWindow::update(){
         if (bSetMainLoopTiming) {
+		// choose with the second argument the render speed. 1 is for every screen refresh, 2 for every second, 3 for every third. and so on...
 		emscripten_set_main_loop_timing(1, 2);
 		bSetMainLoopTiming = false;
 	}
