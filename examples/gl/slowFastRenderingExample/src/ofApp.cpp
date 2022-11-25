@@ -68,11 +68,12 @@ void ofApp::draw() {
 	// a bit faster
 	else if(mode == 2) {
 		ofSetColor(255);
-		
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, &points[0].x);
-		glDrawArrays(GL_POINTS, 0, (int)points.size());
-		glDisableClientState(GL_VERTEX_ARRAY);
+		ofMesh mesh;
+		mesh.setMode(OF_PRIMITIVE_POINTS);
+		for (unsigned int i=0; i<points.size(); i++) {
+			mesh.addVertex(ofVec3f(points[i].x, points[i].y, 0));
+		}
+		mesh.draw();
 	}
 	
 	// super fast (vbo)
@@ -82,15 +83,12 @@ void ofApp::draw() {
 		vbo.draw(GL_POINTS, 0, (int)points.size());
 	}
 	
-	
-
 	ofSetColor(0);
 	ofDrawRectangle(0, 0, 250, 90);
 	ofSetColor(255);
 	ofDrawBitmapString("Mode "+ofToString(mode), 20, 20);
 	ofDrawBitmapString("FPS "+ofToString(ofGetFrameRate(), 0), 20, 40);
 	ofDrawBitmapString("Total Points "+ofToString((int)points.size()), 20, 60);
-	
 }
 
 //--------------------------------------------------------------
