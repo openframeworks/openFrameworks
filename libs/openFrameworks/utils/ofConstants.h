@@ -261,12 +261,8 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
-	#define GL_GLEXT_PROTOTYPES
-	#include <GLES/gl.h>
-	#include <GLES/glext.h>
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
-
 	#include "EGL/egl.h"
 	#include "EGL/eglext.h"
 
