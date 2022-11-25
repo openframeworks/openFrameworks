@@ -124,6 +124,7 @@ void ofApp::draw(){
 		shader->setUniformTexture("mapInfluence", fboInfluence.getTexture(), 4 );
 		
 		ofPushMatrix();
+		ofRotateYDeg(180);
 		ofScale(200, 200, 200 );
 		meshSphere.draw();
 		ofPopMatrix();
