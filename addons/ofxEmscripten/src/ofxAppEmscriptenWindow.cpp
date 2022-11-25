@@ -30,7 +30,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
 
-/// when setting  explicitSwapControl to 0 it is emscripten that is in charge of swapping on each render call.
+/// when setting explicitSwapControl to 0 it is emscripten that is in charge of swapping on each render call.
     attrs.explicitSwapControl = 0;
     attrs.depth = 1;
     attrs.stencil = 1;
@@ -73,7 +73,7 @@ void ofxAppEmscriptenWindow::loop(){
 
 void ofxAppEmscriptenWindow::update(){
         if (bSetMainLoopTiming) {
-		// choose with the second argument the render speed. 1 is for every screen refresh, 2 for every second, 3 for every third. and so on...
+		// choose the render speed with the second argument. 1 is for every screen refresh, 2 for every second, 3 for every third. and so on...
 		emscripten_set_main_loop_timing(1, 2);
 		bSetMainLoopTiming = false;
 	}
