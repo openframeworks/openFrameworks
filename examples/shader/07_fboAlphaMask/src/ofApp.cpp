@@ -45,13 +45,9 @@ void ofApp::update(){
 		// the plane has tex coords from 0 - 1, but we need tex coords from 0 -> maskFbo.getWidth()
 		auto& texCoords = drawMesh.getTexCoords();
 		// loop through the tex coords and remap to the size of the mask fbo
+                auto& tex = maskFbo.getTexture();
 		for( auto& tc : texCoords ){
-			#ifdef TARGET_EMSCRIPTEN
-				tc.y = 1.0f-tc.y;
-			#else
-				tc.x = tc.x * maskFbo.getWidth();
-				tc.y = (1.0f-tc.y) * maskFbo.getHeight();
-			#endif
+                    tc = maskFbo.getTexture().getCoordFromPercent(tc.x, (1.0-tc.y));
 		}
 		
 		// lets reload the font at a size in relation to width or height
