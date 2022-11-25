@@ -314,7 +314,7 @@ void ofxVectorGraphics::arc(float x, float y, float radius, float offsetAngleDeg
 				for(int i = 0; i < arcResolution; i++){
 					xpos	= cos(angle) * radius;
 					ypos	= sin(angle) * radius; 
-					mesh.addVertex(ofVec3f(x + xpos, y + ypos,0));						
+					mesh.addVertex(ofVec3f(x + xpos, y + ypos, 0));						
 					angle += step;
 				}
 			mesh.draw();
@@ -323,7 +323,7 @@ void ofxVectorGraphics::arc(float x, float y, float radius, float offsetAngleDeg
 				for(int i = 0; i < arcResolution; i++){
 					xpos	= cos(angle) * radius;
 					ypos	= sin(angle) * radius; 
-					mesh.addVertex(ofVec3f(x + xpos, y + ypos,0));						
+					mesh.addVertex(ofVec3f(x + xpos, y + ypos, 0));						
 					mesh.addVertex(ofVec3f(x, y,0));														
 					angle += step;
 				}
