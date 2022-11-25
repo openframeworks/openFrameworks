@@ -266,7 +266,7 @@ enum ofTargetPlatform{
 	#include <GLES/glext.h>
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
-
+	#include <GLES3/gl3.h>
 	#include <GL/glew.h>
 
 	#include "EGL/egl.h"
