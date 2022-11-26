@@ -246,16 +246,15 @@ void ofApp::keyPressed(int key){
 
 	if (key == ' '){
 
-		// todo: rewrite this with ofLog:
-
+// todo: rewrite this with ofLog:
+		#ifndef TARGET_EMSCRIPTEN
 		FILE *fp;
-
 
 		if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
 			cout << "Cannot open file.\n";
 			return;
 		}
-
+		#endif
 
 		cout << "-------------------------------------------------\n";
 		cout << "opengl info\n";
@@ -296,20 +295,22 @@ void ofApp::keyPressed(int key){
 
 
 		printGlewInfo();
+		
+		#ifndef TARGET_EMSCRIPTEN
+			fclose(fp);
 
-		fclose(fp);
-
-		#ifdef TARGET_WIN32
-		string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
-		#elif defined(TARGET_LINUX)
-		string command = "xdg-open " + ofToString(ofToDataPath("openglReport.txt").c_str());
-		#else
-		string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#ifdef TARGET_WIN32
+				string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#elif defined(TARGET_LINUX)
+				string command = "xdg-open " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#else
+				string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#endif
+		
+			if (0 != system(command.c_str())){
+				ofLogWarning() << "Command " << command.c_str() << " did not return 0. Something may have gone wrong.";
+			}
 		#endif
-
-		if (0 != system(command.c_str())){
-			ofLogWarning() << "Command " << command.c_str() << " did not return 0. Something may have gone wrong.";
-		}
 	}
 }
 
