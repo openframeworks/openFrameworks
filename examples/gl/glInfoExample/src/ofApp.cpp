@@ -246,14 +246,15 @@ void ofApp::keyPressed(int key){
 
 	if (key == ' '){
 
-// todo: rewrite this with ofLog:
+		// todo: rewrite this with ofLog:
+		
 		#ifndef TARGET_EMSCRIPTEN
-		FILE *fp;
+			FILE *fp;
 
-		if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
-			cout << "Cannot open file.\n";
-			return;
-		}
+			if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
+				cout << "Cannot open file.\n";
+				return;
+			}
 		#endif
 
 		cout << "-------------------------------------------------\n";
