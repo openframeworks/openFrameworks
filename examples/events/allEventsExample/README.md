@@ -14,7 +14,7 @@ In the code, pay attention to:
 * Different commands to access the current time information: ```ofGetTimestampString()``` and ```ofGetElapsedTimeMillis()```
 * Access individual key information: ```keyReleased(int key)```
 *									 ```keyPressed(int key)```
-* Access mouse information: ```mouseMoved(int x, int y )```
+* Access mouse information: ```mouseMoved(int x, int y)```
 *							```mouseDragged(int x, int y, int button)```
 *							```mousePressed(int x, int y, int button)```
 *							```mouseReleased(int x, int y, int button)```

@@ -5,7 +5,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	
+
 	gui.setup("panel");
 	gui.add( bDebug.set("Debug", false ));
 	gui.add( tiltDeg.set( "Tilt", 0., -45, 45 ));
@@ -14,10 +14,10 @@ void ofApp::setup(){
 	gui.add( bottomOffsetY.set( "BottomOffsetY", -2.6, -20, 20 ));
 	gui.add( bottomOffsetZ.set( "BottomOffsetZ", -15.25, -20, 20 ));
 	gui.add( shadowStrength.set("ShadowStrength", 1.3, 0.0, 10.0));
-	
+
 	gui.add( shadowBias.set("ShadowBias", 0.025, 0.001, 0.1 ));
 	gui.add( shadowNormalBias.set("ShadowNormalBias", 0.5, -3, 3));
-	
+
 //    ofSetLogLevel(OF_LOG_VERBOSE);
     ofBackground(50);
 	// https://polyhaven.com/a/security_camera_02
@@ -34,7 +34,7 @@ void ofApp::setup(){
 	light.setOrientation(yq*xq);
 	light.setPosition(glm::vec3(-200, 500, 600));
 	light.getShadow().setStrength(0.6f);
-	
+
 	ofShadow::enableAllShadows();
 	// shadow bias is the margin of error the shadow depth
 	// increasing the bias helps reduce shadow acne, but can cause light leaking
@@ -44,30 +44,30 @@ void ofApp::setup(){
 	// normal bias default is 0
 	// moves the bias along the normal of the mesh, helps reduce shadow acne
 	ofShadow::setAllShadowNormalBias(-2.f);
-	
+
 	ofShadow::setAllShadowTypes(OF_SHADOW_TYPE_PCF_LOW);
-	
+
 	windowResized(ofGetWidth(), ofGetHeight());
 	cam.setFarClip(5000);
 	cam.setPosition( 0, 0, 1200 );
-	
+
 	// box(float width, float height, float depth, int resX=2, int resY=2, int resZ=2)
 	wallMesh = ofMesh::box( 2500, 2500, 40, 24, 24, 4 );
-	
+
 	// https://polyhaven.com/a/painted_concrete
 	wallMaterial.loadTexture( OF_MATERIAL_TEXTURE_DIFFUSE, "wall/painted_concrete_diff_1k.jpg", true, false );
 	wallMaterial.loadTexture( OF_MATERIAL_TEXTURE_DISPLACEMENT, "wall/painted_concrete_disp_1k.png", true, false );
 	wallMaterial.loadTexture( OF_MATERIAL_TEXTURE_NORMAL, "wall/painted_concrete_nor_gl_1k.png", true, false );
 	wallMaterial.loadTexture( OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, "wall/painted_concrete_arm_1k.jpg", true, false );
 	wallMaterial.setDisplacementStrength( 2.0 );
-	
+
 	// https://polyhaven.com/a/abandoned_construction
 	cubeMap.load("abandoned_construction_2k.hdr", 512);
 }
 
 //--------------------------------------------------------------
 void ofApp::loadModel(string filename){
-	
+
 	ofxAssimp::ImportSettings tsettings;
 	tsettings.filePath = filename;
 	// we don't have any animations in this model
@@ -75,7 +75,7 @@ void ofApp::loadModel(string filename){
 	// when converted to left hand coordinate system,
 	// the z-axis is flipped and the text on the camera body appears backwards
 	tsettings.convertToLeftHanded = false;
-    
+
 	if( scene.load(tsettings)) {
 		scene.centerAndScaleToWindow();
 		cout << endl << endl << endl << endl;
@@ -86,36 +86,36 @@ void ofApp::loadModel(string filename){
 		mSceneString = ss.str();
 		mSceneString += scene.getHierarchyAsString();
 		cout << mSceneString << endl;
-		
+
     } else {
         ofLogError() << " can't load model: " << filename << endl;
     }
-	
-	
+
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 	float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f / 1000.0f, 1.f / 5.f);
-	
+
 	if( panDirection != 0.f ) {
 		panDeg += deltaTime * 60.0f * panDirection;
 		panDeg = ofClamp( panDeg, panDeg.getMin(), panDeg.getMax() );
 	}
-	
+
 	if( tiltDirection != 0.f ) {
 		tiltDeg += deltaTime * 60.0f * tiltDirection;
 		tiltDeg = ofClamp( tiltDeg, tiltDeg.getMin(), tiltDeg.getMax() );
 	}
-	
+
 	// move around the meshes
 	light.getShadow().setStrength(shadowStrength);
-	
+
 	ofShadow::setAllShadowBias(shadowBias);
 	ofShadow::setAllShadowNormalBias(shadowNormalBias);
-	
-	
+
+
 	scene.calculateDimensions();
 
 	auto meshMountNode = scene.getNode("security_camera_02_mount", true);
@@ -133,7 +133,7 @@ void ofApp::update(){
 		meshCameraNode->panDeg( panDeg );
 		meshCameraNode->tiltDeg( tiltDeg );
 	}
-	
+
 	if( scene.getNumMeshes() > 1 ) {
 		auto camMesh = scene.getMesh(1);
 		auto camBounds = camMesh->getLocalBounds();
@@ -142,25 +142,25 @@ void ofApp::update(){
 		// so we need to scale it to the global size
 		camBounds *= camMesh->getGlobalScale();
 		auto nCamPos = camMesh->getYAxis() * camBounds.getHeight() * 0.52f + camMesh->getZAxis() * (camBounds.getDepth() * 0.45f);
-		
+
 		auto camMeshQ = camMesh->getGlobalOrientation();
 		nCamPos = camMeshQ * nCamPos;
 		camOnSecurityCam.setPosition( nCamPos + camMesh->getGlobalPosition() );
 		camOnSecurityCam.setOrientation( camMesh->getGlobalOrientation() );
-		
+
 		// we need to rotate the ofCamera in the opposite direction //
 		camOnSecurityCam.panDeg(180);
 	}
-		
-	 
+
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofSetColor(255);
-	
+
 	ofEnableDepthTest();
-	
+
 
 	// query the light to see if it has a depth pass
 	if( light.shouldRenderShadowDepthPass() ) {
@@ -182,35 +182,35 @@ void ofApp::draw(){
 			light.endShadowDepthPass(j);
 		}
 	}
-	
-	
-	
+
+
+
 	cam.begin(mViewRect);
-	
+
 	cubeMap.draw();
-	
+
 	renderScene();
-	
+
 	if( bDebug && bDrawBounds ) {
 		for( auto& mesh : scene.getMeshes() ) {
 			mesh->getGlobalBounds().draw();
 		}
 	}
-	
+
 	if( bDebug ) {
 		light.getShadow().drawFrustum();
 		light.draw();
 		camOnSecurityCam.draw();
 	}
-	
+
 	cam.end();
 	ofDisableDepthTest();
-	
+
 	ofSetColor( 30 );
 	ofDrawRectangle( mTextRect );
-	
+
 	ofSetColor(255);
-	
+
 	float texPadding = 10.f;
 	float texWidth = (mTextRect.getWidth() - texPadding*3.0f) * 0.5;
 	// now lets grab the textures from the meshes //
@@ -232,10 +232,10 @@ void ofApp::draw(){
 			}
 		}
 	}
-	
+
 	ofSetColor( 225 );
 	ofDrawBitmapString(mSceneString, mTextRect.x + 12, mTextRect.y + 24 );
-	
+
 	float camRectW = (mTextRect.getWidth() - texPadding*2.0f);
 	float ratio = 480.f / 640.f;
 	auto camRect = ofRectangle( mTextRect.x+texPadding, meshTexRect.y+texPadding, camRectW, camRectW * ratio );
@@ -244,7 +244,7 @@ void ofApp::draw(){
 	camOnSecurityCam.begin(camRect);
 	cubeMap.draw();
 	camOnSecurityCam.end();
-	
+
 	gui.draw();
 }
 
@@ -266,10 +266,10 @@ void ofApp::renderScene() {
 void ofApp::keyPressed(int key){
     switch (key) {
         case ' ':
-			
+
             break;
         case 'h':
-			
+
             break;
         case OF_KEY_DOWN:
 			tiltDirection = 1.f;
@@ -311,23 +311,23 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -345,7 +345,7 @@ void ofApp::windowResized(int w, int h){
 //	ofLogNotice("ofApp :: windowResized : ") << w << " x " << h;
 	mViewRect = ofRectangle( 0, 0, std::min(ofGetWidth()-320, 900), ofGetHeight());
 	mTextRect = ofRectangle( mViewRect.getRight(), 0, ofGetWidth() - mViewRect.getWidth(), ofGetHeight() );
-	
+
 	cam.setControlArea(mViewRect);
 }
 
@@ -356,6 +356,5 @@ void ofApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
-    
-}
 
+}

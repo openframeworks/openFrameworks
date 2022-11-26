@@ -83,7 +83,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	
 	// when the mouse moves, we change the color image:
 	float pct = (float)x / (float)ofGetWidth();

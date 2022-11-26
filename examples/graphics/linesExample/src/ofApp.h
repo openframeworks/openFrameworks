@@ -11,7 +11,7 @@ class ofApp : public ofBaseApp{
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
@@ -20,12 +20,12 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
-		
+
+
 		float lineWidth = 16.f;
 		std::vector<ofPath> textPaths;
 		ofTrueTypeFont font;
 		bool bUseLineColors = false;
-		bool bLineTexture = false;		
+		bool bLineTexture = false;
 		ofTexture texture;
 };

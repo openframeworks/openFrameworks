@@ -86,7 +86,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	if(!frameByframe){
 		int width = ofGetWidth();
 		float pct = (float)x / (float)width;

@@ -3,15 +3,15 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetBackgroundColor( 230 );
-	
+
 	svgAddTypes = {
 		OFXSVG_TYPE_RECTANGLE,
 		OFXSVG_TYPE_CIRCLE,
 		OFXSVG_TYPE_PATH
 	};
-	
+
 	svg.load("ofxSvg.svg");
-	
+
 }
 
 //--------------------------------------------------------------
@@ -25,7 +25,7 @@ void ofApp::draw(){
 	svg.draw();
 	ofSetColor( ofColor::cyan );
 	polyline.draw();
-	
+
 	std::stringstream ss;
 	ss << "Add Type (left/right): " << (svgTypeIndex+1) << " / " << svgAddTypes.size() << " - " << ofxSvgElement::sGetTypeAsString(svgAddTypes[svgTypeIndex]);
 	if( svgAddTypes[svgTypeIndex] == OFXSVG_TYPE_PATH ) {
@@ -41,7 +41,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -54,7 +54,7 @@ void ofApp::keyPressed(int key){
 		ofLogNotice("ofApp") << "saving svg to file: " << filename;
 		svg.save(filename);
 	}
-	
+
 	if( key == 'c' ) {
 		// get all of the circles
 		auto circles = svg.getAllElementsForType<ofxSvgCircle>();
@@ -75,7 +75,7 @@ void ofApp::keyPressed(int key){
 		auto myRects = svg.getAllElementsForTypeForName<ofxSvgRectangle>("myrect", false);
 		svg.removeElements(myRects);
 	}
-	
+
 	if( key == OF_KEY_RIGHT ) {
 		svgTypeIndex++;
 		svgTypeIndex %= svgAddTypes.size();
@@ -92,17 +92,17 @@ void ofApp::keyPressed(int key){
 	if( key == OF_KEY_DOWN ) {
 		size -= 2;
 	}
-	
+
 	size = ofClamp( size, 2, 2000 );
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	
+
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 
@@ -135,7 +135,7 @@ void ofApp::mousePressed(int x, int y, int button){
 		svg.setStrokeWidth(3);
 		polyline.addVertex(glm::vec3(x,y,0.f));
 	}
-	
+
 	std::cout << "------------------------------------" << std::endl;
 	std::cout << svg.toString() << std::endl;
 	std::cout << "------------------------------------" << std::endl;
@@ -178,6 +178,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

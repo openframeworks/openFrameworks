@@ -4,9 +4,9 @@
 void ofApp::setup(){
 //	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetFrameRate(60);
-	
+
 	ofDisableArbTex();
-	
+
 	light.setDirectional();
 	light.enable();
 	light.setPosition(100.1, 400, 600 );
@@ -20,7 +20,7 @@ void ofApp::setup(){
 	// increase alpha value to increase strength of light
 	light.setDiffuseColor(ofFloatColor(1.0, 2.0));
 	light.getShadow().setShadowType(OF_SHADOW_TYPE_PCF_LOW);
-	
+
 	meshLogoHollow.load("ofLogoHollow.ply");
 	meshLogoHollow.mergeDuplicateVertices();
 	// we need to flip the normals for this mesh //
@@ -33,12 +33,12 @@ void ofApp::setup(){
 //	// set the material to PBR, default if phong
 	matLogo.setPBR(true);
 	matFloor.setPBR(true);
-	
+
 	// try commenting this out to see the effect that cube maps have on lighting
 	// https://polyhaven.com/a/kloppenheim_06_puresky
 	// Windows is not loading .exr files at the moment, so lets do hdr instead
 	cubeMap.load( "kloppenheim_06_puresky_1k.hdr", 512 );
-	
+
 	matPlywood.setPBR(true);
 	matPlywood.loadTexture(OF_MATERIAL_TEXTURE_DIFFUSE, "plywood/plywood_diff_2k.jpg" );
 	matPlywood.loadTexture(OF_MATERIAL_TEXTURE_NORMAL, "plywood/plywood_nor_gl_2k.png" );
@@ -47,15 +47,15 @@ void ofApp::setup(){
 	matPlywood.setClearCoatEnabled(true);
 	matPlywood.setClearCoatStrength(1.0);
 	matPlywood.setClearCoatRoughness(0.0);
-	
+
 	// higher resolution sphere
 	meshPlySphere = ofMesh::icosphere(1.0, 5);
-	
+
 	matSphere.setPBR(true);
 	matSphere.setDiffuseColor(ofFloatColor(0.25,1.0));
 	matSphere.setMetallic(1.0);
 	matSphere.setRoughness(0.05);
-	
+
 	reloadShader();
 }
 
@@ -67,8 +67,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofEnableDepthTest();
-	
-	
+
+
 	if( light.shouldRenderShadowDepthPass() ) {
 		int numShadowPasses = light.getNumShadowDepthPasses();
 		for( int j = 0; j < numShadowPasses; j++ ) {
@@ -77,27 +77,27 @@ void ofApp::draw(){
 			light.endShadowDepthPass(j);
 		}
 	}
-	
+
 	camera.begin(); {
-		
+
 		renderScene(false);
-		
+
 		 if( cubeMap.hasPrefilteredMap() ) {
 		 	cubeMap.drawPrefilteredCube(0.2f);
 		 }
-		
+
 		if(bDebug) {
 			light.draw();
-			
+
 			if( light.getIsEnabled() && light.getShadow().getIsEnabled() ) {
 				light.getShadow().drawFrustum();
 			}
 		}
-		
+
 	} camera.end();
-	
+
 	ofDisableDepthTest();
-	
+
 	ofSetColor(255);
 	ofEnableAlphaBlending();
 #ifdef USE_LIGHT
@@ -105,7 +105,7 @@ void ofApp::draw(){
 		lp->gui.draw();
 	}
 #endif
-	
+
 	stringstream ss;
 	ss << "Reload shader(r): make changes to shader in data/shaders/main.frag and then press 'r' to see changes.";
 	ss << endl << "Wiggle verts(w): " << (bWiggleVerts ? "yes" : "no");
@@ -115,16 +115,16 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::renderScene(bool bShadowPass) {
-	
+
 	matFloor.setMetallic(0.0);
 	matFloor.setReflectance(0.01);
 	matFloor.setRoughness(0.8);
 	matFloor.setDiffuseColor(ofFloatColor(0.97, 0.96, 0.91, 1.0) );
-	
+
 	matFloor.begin();
 	ofDrawBox( 0, -275, 0 ,3200, 50, 2200 );
 	matFloor.end();
-	
+
 	matPlywood.begin();
 	ofPushMatrix();
 	float angle = ofGetElapsedTimef();
@@ -133,7 +133,7 @@ void ofApp::renderScene(bool bShadowPass) {
 	meshPlySphere.draw();
 	ofPopMatrix();
 	matPlywood.end();
-	
+
 	if( !matLogo.hasDepthShader() && bShadowPass && bWiggleVerts ) {
 		mDepthShader.begin();
 		mDepthShader.setUniform1f("iElapsedTime", ofGetElapsedTimef());
@@ -153,7 +153,7 @@ void ofApp::renderScene(bool bShadowPass) {
 	if(!matLogo.hasDepthShader() && bShadowPass && bWiggleVerts ) {
 		mDepthShader.end();
 	}
-	
+
 	matSphere.begin();
 	ofPushMatrix();
 	ofTranslate( 700.0 * std::cos(angle - glm::pi<float>()), -20, std::sin(angle - glm::pi<float>())*300.0-100 );
@@ -161,8 +161,8 @@ void ofApp::renderScene(bool bShadowPass) {
 	meshPlySphere.draw();
 	ofPopMatrix();
 	matSphere.end();
-	
-	
+
+
 }
 
 //--------------------------------------------------------------
@@ -212,7 +212,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 
@@ -252,6 +252,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

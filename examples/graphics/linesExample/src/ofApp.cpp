@@ -5,13 +5,13 @@
 void ofApp::setup(){
 	ofSetVerticalSync(false);
 	ofSetFrameRate(-1);
-	
+
 	ofSetCircleResolution(100);
-	
+
 	font.load("verdana.ttf", 64, true, true, true);
 	// store a vector of ofPaths that represent the characters in the string.
 	textPaths = font.getStringAsPoints("openFrameworks", false, false);
-	
+
 	// disable arb textures so that the tex coords are from 0 -> 1
 	ofDisableArbTex();
 	ofLoadImage(texture, "tex.png");
@@ -33,34 +33,34 @@ void ofApp::draw(){
 	ss << std::endl << "Line colors (c): " << (bUseLineColors ? "yes" : "no");
 	ss << std::endl << "Texture line (t): " << (bLineTexture ? "yes" : "no");
 	ofDrawBitmapString( ss.str(), 24, 36 );
-	
+
 	if( ofIsGLProgrammableRenderer() ) {
 		auto rend = std::dynamic_pointer_cast<ofGLProgrammableRenderer>(ofGetGLRenderer());
 		// comment out the line below to see how openGL renders lines
 		// with the ofGLProgrammableRenderer and line shaders disabled, there is no line width
 		//	rend->disableLinesShaders();
 		//	rend->enableLinesShaders();
-		
+
 		// by default, lines are rendered in screen space, so further lines will have the
 		// same thickness as those closer to the camera
 		// comment out the below to enable size attenuation on the lines.
 		// notice in the box mesh moving up and down, the lines further from the camera appear thinner.
 		//	rend->enableLineSizeAttenuation();
 	}
-	
+
 	// lets store a reference to elapsed time to use later.
 	float elapsedTime = ofGetElapsedTimef();
-	
-	
+
+
 	ofSetColor( 60 );
 	// we can push the style so that line width changes, color changes and other style changes
 	// will only remain between the push and pop of the style
 	ofPushStyle();
 	ofSetLineWidth(std::max(1.f, lineWidth/4.f));
-	
+
 	float rectRadius = 10.f + (1.f-std::abs(std::sinf(elapsedTime))) * 80.f;
 	ofRectangle outlineRect(200, 150, ofGetWidth()-400, ofGetHeight()-300);
-	
+
 	ofPath testRectPath;
 	testRectPath.setCurveResolution(16);
 	testRectPath.setCircleResolution(120);
@@ -71,7 +71,7 @@ void ofApp::draw(){
 	testRectPath.setStrokeColor(ofColor( 60 ));
 	testRectPath.draw();
 	ofPopStyle();
-	
+
 	// enable depth test because we will be drawing in 3d space //
 	ofEnableDepthTest();
 	ofPushMatrix(); {
@@ -105,30 +105,30 @@ void ofApp::draw(){
 				lineMesh.addTexCoord( glm::vec2(fpct * texture.getWidth(), 0.0f ));
 			}
 		}
-		
+
 		if(bLineTexture) {
 			ofPushStyle();
 			ofSetColor(255);
 			texture.bind();
 		}
-		
+
 		lineMesh.draw();
-		
+
 		if(bLineTexture) {
 			ofPopStyle();
 			texture.unbind();
 		}
-		
-		
+
+
 		ofMesh boxMesh;
 		boxMesh.setMode( OF_PRIMITIVE_LINE_LOOP);
-		
+
 		float bsize = height * 0.8f;
 		boxMesh.addVertex(glm::vec3(-bsize, -bsize, 0.f));
 		boxMesh.addVertex(glm::vec3(bsize, -bsize, 0.f));
 		boxMesh.addVertex(glm::vec3(bsize, bsize, 0.f));
 		boxMesh.addVertex(glm::vec3(-bsize, bsize, 0.f));
-		
+
 		if( !bUseLineColors ) {
 			// lets add some colors to our mesh
 			// one for each vertex
@@ -137,34 +137,34 @@ void ofApp::draw(){
 			boxMesh.addColor(ofColor::green);
 			boxMesh.addColor(ofColor::blueSteel);
 		}
-		
+
 		boxMesh.addIndex(0);
 		boxMesh.addIndex(1);
 		boxMesh.addIndex(2);
 		boxMesh.addIndex(3);
 		// OF_PRIMITIVE_LINE_LOOP draws a line between the first and last point
 		// so we don't need to add an index for that.
-		
+
 		ofPushMatrix(); {
 			ofTranslate(0.0, height * 0.5 * std::sinf(elapsedTime) );
 			ofRotateXRad( glm::half_pi<float>() );
 			boxMesh.draw();
 		} ofPopMatrix();
 	} ofPopMatrix();
-	
+
 	// disable depth test because we will only be drawing in 2d
 	ofDisableDepthTest();
-	
-	
-	
+
+
+
 	ofPushMatrix();
 	ofTranslate(ofGetWidth() / 2, ofGetHeight() - 48 );
-	
+
 	string textStringToRender = "openFrameworks";
 	auto fontRect = font.getStringBoundingBox(textStringToRender, 0.0f, 0.f);
-	
-	
-	
+
+
+
 	ofPushMatrix(); {
 		ofTranslate(-fontRect.getWidth() * 0.5f, 0.f );
 		float fi = 0.f;
@@ -185,20 +185,20 @@ void ofApp::draw(){
 			fp.draw();
 		}
 	} ofPopMatrix();
-	
+
 //	// we can render the entire string by calling font.drawString which uses textures to render the font
 //	ofPushStyle();
 //	ofSetHexColor(0xd3ffd3);
 //	font.drawString(textStringToRender, -fontRect.getWidth() * 0.5f, 0.f );
 //	ofPopStyle();
-//	
+//
 //	ofPushStyle();
 //	// we can render the outlines of the entire string by calling drawStringAsShapes
 //	// this will be affected by line width
 //	ofSetLineWidth(2);
 //	font.drawStringAsShapes(textStringToRender,  -fontRect.getWidth() * 0.5f, 0.f );
 //	ofPopStyle();
-	
+
 	// now lets draw some circles
 	ofPushStyle();
 	ofNoFill();
@@ -207,9 +207,9 @@ void ofApp::draw(){
 	ofDrawCircle(-fontRect.getWidth() * 0.5f - 80, -25, 25 );
 	ofDrawCircle(fontRect.getWidth() * 0.5f + 80, -25, 25 );
 	ofPopStyle();
-	
+
 	ofPopMatrix();
-	
+
 }
 
 //--------------------------------------------------------------
@@ -234,7 +234,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 
@@ -274,6 +274,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

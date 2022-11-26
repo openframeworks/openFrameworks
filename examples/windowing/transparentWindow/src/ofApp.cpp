@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){	 
+void ofApp::setup(){
 	if(bLogVerbose){
 		ofSetLogLevel(OF_LOG_VERBOSE);
 	}
@@ -10,19 +10,19 @@ void ofApp::setup(){
 	ofSetWindowPosition(screenW/2-1280/2, screenH/2-720/2);
 	fontRenderer.load(OF_TTF_MONO, 14);
 	lineHeight = fontRenderer.getLineHeight();
-	
+
 	bFullscreen	= 0;
 	ofBackground(0, 0, 0, 0);
 	ofSetWindowTitle("GLFW Transparency"); // should not be shown with floating
 	ofSetFrameRate(60);
 	uint64_t stepNanos = ofGetFixedStepForFps(60);
 	ofSetTimeModeFixedRate(stepNanos);
-	
+
 	ballPositionX = 500;
 	ballPositionY = 500;
 	ballVelocityX = ofRandom(-5,5);
 	ballVelocityY = ofRandom(-5,5);
-	
+
 	bgColor = ofColor(240, 248, 255); // Light Blue
 	textColor = ofColor(0, 51, 102);  // Dark Blue
 	primaryBtnColor = ofColor(51, 153, 255); // Bright Blue
@@ -32,7 +32,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 	if(bFullscreen){
 		ofHideCursor();
 	} else{
@@ -41,10 +41,10 @@ void ofApp::update(){
 
 	ballPositionX += ballVelocityX;
 	ballPositionY += ballVelocityY;
-	
+
 	int posx = ofGetWindowPositionX();
 	int posy = ofGetWindowPositionY();
-	
+
 	if (ballPositionX < 0){
 		ballPositionX = 0;
 		ballVelocityX *= -1;
@@ -58,7 +58,7 @@ void ofApp::update(){
 			ofSetWindowPosition(posx+10, posy);
 		}
 	}
-	
+
 	if (ballPositionY < 0){
 		ballPositionY = 0;
 		ballVelocityY *= -1;
@@ -72,7 +72,7 @@ void ofApp::update(){
 			ofSetWindowPosition(posx, posy+10);
 		}
 	}
-	
+
 }
 
 //--------------------------------------------------------------
@@ -80,7 +80,7 @@ void ofApp::draw(){
 	ofSetupScreen();
 	int width = ofGetWidth();
 	int height = ofGetHeight();
-	
+
 	// Based on @geluso Draw 100 circles https://github.com/geluso
 	for(int i = 0; i < 100; i++) {
 		float speed = 1.74f;
@@ -90,7 +90,7 @@ void ofApp::draw(){
 		ofSetColor(255,0,0,sinAlpha);
 		ofDrawCircle(i * 13, sinX + ofGetWidth()*0.5, sinRadius);
 	}
-	
+
 	if(bDrawGuides) { // Draw edge of transparent window for clarity
 		int screenWidth = ofGetWidth();
 		int screenHeight = ofGetHeight();
@@ -108,7 +108,7 @@ void ofApp::draw(){
 		ofDrawLine(width, 0, width, height);
 		ofDrawLine(0, height, width, height);
 	}
-	
+
 	ofSetColor(textColor);
 	centerX = ofGetWidth() / 2;
 	centerY = 200;
@@ -129,7 +129,7 @@ void ofApp::draw(){
 		fontRenderer.drawString("GLFW Events are all enabled!", 50, 10 + 3 * lineSpacing);
 		fontRenderer.drawString("This happens dynamically via GLFW Attribute", 50, 10 + 4 * lineSpacing);
 	}
-	
+
 	ofSetColor(highlightColor);
 	if (bAllowPassThrough) {
 		fontRenderer.drawString("GLFW Mouse passThrough enabled", centerX, 2 * lineSpacing);
@@ -140,7 +140,7 @@ void ofApp::draw(){
 		fontRenderer.drawString("press h to enable GLFW passThrough or mouse below box", centerX, 2 * lineSpacing);
 	}
 	ofSetColor(secondaryBtnColor);
-	
+
 	if (!bFullscreen) {
 		 fontRenderer.drawString("press f to enter fullscreen", centerX, baseY);
 		 fontRenderer.drawString("window is normal / floating", centerX, baseY + lineSpacing);
@@ -154,22 +154,22 @@ void ofApp::draw(){
 	} else {
 		 fontRenderer.drawString("press g to enable drawing edges", centerX , baseY + 2 * lineSpacing);
 	}
-	
+
 	if (bLogVerbose) {
 		 fontRenderer.drawString("press L to disable Verbose Log", centerX , baseY + 3 * lineSpacing);
 	} else {
 		 fontRenderer.drawString("press L to enable Verbose Log", centerX , baseY + 3 * lineSpacing);
 	}
-	
+
 	fontRenderer.drawString("window pos ("+ofToString(ofGetWindowPositionX())+", "+ofToString( ofGetWindowPositionY())+")", 20, 30);
-	
+
 	ofSetColor(primaryBtnColor);
 	ofDrawCircle(ballPositionX, ballPositionY, 15);
 }
 
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){ 
+void ofApp::keyPressed(int key){
 
 	if(key == 'f' || key == 'F'){
 		bFullscreen = !bFullscreen;
@@ -183,17 +183,17 @@ void ofApp::keyPressed(int key){
 			ofSetFullscreen(true);
 		}
 		ofLogNotice("ofApp") << "bFullscreen:" << bFullscreen;
-		
+
 	} else if(key == 'g' || key == 'G'){
 		bDrawGuides = !bDrawGuides;
 		ofLogNotice("ofApp") << "bDrawGuides:" << bDrawGuides;
-		
+
 	} else if(key == 'h' || key == 'H'){
 		bAllowPassThrough = !bAllowPassThrough;
 		bForcePassThrough = !bForcePassThrough;
 		ofSetWindowMousePassThrough(bAllowPassThrough);
 		ofLogNotice("ofApp") << "ofSetWindowMousePassThrough:" << bAllowPassThrough << " Force:" << bForcePassThrough;
-		
+
 	} else if(key == 'l' || key == 'L' ){
 		bLogVerbose = !bLogVerbose;
 		if(bLogVerbose)
@@ -210,9 +210,9 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	ofLogVerbose("ofApp") << "mouseMoved: x:" << x << " y:" << y;
-	
+
 	float distance = ofDist(x, y, ballPositionX, ballPositionY);
 	if(distance <= 15 || y < 300) {
 		if(bForcePassThrough == true && distance <= 15){
@@ -268,7 +268,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
-

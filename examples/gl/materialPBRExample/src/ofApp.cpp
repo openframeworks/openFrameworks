@@ -3,12 +3,12 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 //	ofSetLogLevel(OF_LOG_VERBOSE);
-	
+
 	ofSetVerticalSync(false);
-	
+
 	camera.setNearClip(200);
 	camera.setFarClip(15000.0);
-	
+
 	// loading a cube map will enable image based lighting on PBR materials.
 	// cube map will create a prefiltered light cube map and an irradiance cube map
 	// cube map texture from https://polyhaven.com : https://polyhaven.com/a/modern_buildings_2
@@ -16,25 +16,25 @@ void ofApp::setup(){
 #ifdef USE_CUBE_MAP
 	// comment out the loading of the cube map image to see added cube map lighting without image
 	// fake environment lighting is added in the pbr shader
-	
+
 	ofCubeMapSettings csettings;
 	csettings.filePath = "modern_buildings_2_1k.hdr";
 	// uncomment to load from a cache or make one if it doesn't exist
 //	csettings.useCache = true;
-	
+
 	// uncomment to use the maximum precision available. OpenGL ES is float16 and OpenGL is float32;
 //	csettings.useMaximumPrecision = true;
-	
+
 	// make sure the defaults are the same for making and loading the cache
 	// ie opengl es defaults are smaller and the file names to load are based on the resolution
 	csettings.irradianceRes = 32;
 	csettings.preFilterRes = 128;
-	
+
 	cubeMap.load(csettings);
 	// below is another method for loading a cube map without passing settings class
 	//	cubeMap.load("modern_buildings_2_1k.exr", 512, true );
 #endif
-	
+
 	ofEnableArbTex();
 }
 
@@ -45,11 +45,11 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+
 	ofEnableDepthTest();
-	
+
 	camera.begin();
-	
+
 	float tradius = 50.0;
 	int numCols = 5;
 	int numRows = 3;
@@ -90,7 +90,7 @@ void ofApp::draw(){
 		}
 	}
 	material.end();
-	
+
 	#ifdef USE_CUBE_MAP
 	// drawing of the cube map renders at max depth, so it can be drawn last
 	// this will allow for the benefit of depth clipping
@@ -110,10 +110,10 @@ void ofApp::draw(){
 		}
 	}
 	#endif
-	
+
 	camera.end();
 	ofDisableDepthTest();
-	
+
 	stringstream ss;
 	string cmMode = "Cube Map";
 	if( cubeMapMode == 2 ) {
@@ -137,9 +137,9 @@ void ofApp::draw(){
 	ss << endl << "Row 1: 0 -> 1 metallic of smooth surface";
 	ss << endl << "Row 2: 0 -> 1 roughness of metallic surface.";
 	ss << endl << "Row 3: 0 -> 1 reflectivity of non-metal surface.";
-		
+
 	ofDrawBitmapStringHighlight(ss.str(), 30, 30);
-	
+
 }
 
 //--------------------------------------------------------------
@@ -159,7 +159,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 
@@ -199,6 +199,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

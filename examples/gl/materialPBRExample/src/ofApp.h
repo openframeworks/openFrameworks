@@ -13,7 +13,7 @@ class ofApp : public ofBaseApp{
 
 		void keyPressed(int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
@@ -22,14 +22,14 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
 		ofEasyCam camera;
 		ofMaterial material;
 		#ifdef USE_CUBE_MAP
 		ofCubeMap cubeMap;
 		#endif
-	
+
 		int cubeMapMode = 1;
 		float prefilterRoughness = 0.25;
-		
+
 };
