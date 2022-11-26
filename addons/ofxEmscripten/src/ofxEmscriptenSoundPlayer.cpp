@@ -41,7 +41,7 @@ ofxEmscriptenSoundPlayer::~ofxEmscriptenSoundPlayer(){
 
 bool ofxEmscriptenSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
 	if(context!=-1){
-		sound = html5audio_sound_load(context,ofToDataPath(fileName).c_str());
+		sound = html5audio_sound_load(ofToDataPath(fileName).c_str());
 	}
 	return sound!=-1;
 }
@@ -56,7 +56,7 @@ void ofxEmscriptenSoundPlayer::play(){
 		if(playing && !multiplay && !html5audio_sound_done(sound)){
 			html5audio_sound_stop(sound);
 		}
-		html5audio_sound_play(context,sound,0);
+		html5audio_sound_play(sound,0);
 		html5audio_sound_set_rate(sound,speed);
 		html5audio_sound_set_gain(sound,volume);
 		playing = true;
@@ -92,7 +92,7 @@ void ofxEmscriptenSoundPlayer::setSpeed(float spd){
 void ofxEmscriptenSoundPlayer::setPaused(bool bP){
 	if(sound!=-1){
 		if(bP) html5audio_sound_pause(sound);
-		else html5audio_sound_play(context,sound,0);
+		else html5audio_sound_play(sound,0);
 	}
 }
 
@@ -124,7 +124,7 @@ void ofxEmscriptenSoundPlayer::setPositionSecs(double s){
 		if(playing && !multiplay && !html5audio_sound_done(sound)){
 			html5audio_sound_stop(sound);
 		}
-		html5audio_sound_play(context,sound,s);
+		html5audio_sound_play(sound,s);
 		html5audio_sound_set_rate(sound,speed);
 		playing = true;
 	}
