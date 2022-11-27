@@ -19,7 +19,7 @@
  */
 
 //--------------------------------------------------------------
-bool ofApp::shouldRemoveBullet(Bullet &b) {
+bool ofApp::shouldRemoveBullet(Bullet &b){
 
 	if(b.bRemove) return true;
 
@@ -40,12 +40,12 @@ bool ofApp::shouldRemoveBullet(Bullet &b) {
 }
 
 //--------------------------------------------------------------
-bool ofApp::shouldRemoveBug(Bug &b) {
+bool ofApp::shouldRemoveBug(Bug &b){
 	return b.bRemove;
 }
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 
 	ofBackgroundHex(0xc5c9b2);
 	ofSetFrameRate(60);
@@ -67,7 +67,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::gameEvent(GameEvent &e) {
+void ofApp::gameEvent(GameEvent &e){
 
 	cout << "Game Event: "+e.message << endl;
 	e.bug->timeBugKilled = ofGetElapsedTimef();
@@ -79,7 +79,7 @@ void ofApp::gameEvent(GameEvent &e) {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 
 	if((int)ofRandom(0, 20)==10) {
 
@@ -209,7 +209,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void ofApp::keyPressed(int key){
 	if(key == ' ') {
 		if(bullets.size() < maxBullets) {
 			bFire = true;
@@ -238,7 +238,7 @@ void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key) {
+void ofApp::keyReleased(int key){
 	bFire = false;
 }
 

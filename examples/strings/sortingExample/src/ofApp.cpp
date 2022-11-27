@@ -3,26 +3,26 @@
 
 // sort on abc's
 //--------------------------------------------------------------
-bool ofApp::sortOnABC(const LyricWord &a, const LyricWord &b) {
+bool ofApp::sortOnABC(const LyricWord &a, const LyricWord &b){
 	return a.word < b.word;
 }
 
 // sort on word length
 //--------------------------------------------------------------
-bool ofApp::sortOnLength(const LyricWord &a, const LyricWord &b) {
+bool ofApp::sortOnLength(const LyricWord &a, const LyricWord &b){
 	return (int)a.word.size() > (int)b.word.size();
 }
 
 // sort on occurrences
 //--------------------------------------------------------------
-bool ofApp::sortOnOccurrences(const LyricWord &a, const LyricWord &b) {
+bool ofApp::sortOnOccurrences(const LyricWord &a, const LyricWord &b){
 	return a.occurrences > b.occurrences;
 }
 
 
 // remove runction
 //--------------------------------------------------------------
-bool ofApp::removeWordIf(LyricWord &wrd) {
+bool ofApp::removeWordIf(LyricWord &wrd){
 
 	bool bRemove = false;
 	static string ignoreWords[11] = {"the", "to", "of", "a", "and", "i", "it", "if", "is", "in", "be"};
@@ -42,7 +42,7 @@ bool ofApp::removeWordIf(LyricWord &wrd) {
 }
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 
 	ofTrueTypeFont::setGlobalDpi(96);
 
@@ -120,12 +120,12 @@ void ofApp::setup() {
 
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 
 	ofSetColor(50);
 

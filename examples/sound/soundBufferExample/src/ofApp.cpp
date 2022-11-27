@@ -53,7 +53,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::audioOut(ofSoundBuffer &outBuffer) {
+void ofApp::audioOut(ofSoundBuffer &outBuffer){
 	
 	// base frequency of the lowest sine wave in cycles per second (hertz)
 	float frequency = 172.5;

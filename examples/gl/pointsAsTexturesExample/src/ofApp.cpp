@@ -71,7 +71,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 
 	glDepthMask(GL_FALSE);
 	
@@ -176,7 +176,7 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::addPoint(float x, float y, float z) {
+void ofApp::addPoint(float x, float y, float z){
 	glm::vec3 p(x, y, z);
 	points.push_back(p);
 	
@@ -194,7 +194,7 @@ void ofApp::addPoint(float x, float y, float z) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void ofApp::keyPressed(int key){
 	
 	if(key == OF_KEY_UP) {
 		camDist -= 10;

@@ -176,7 +176,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::flyToNextCity() {
+void ofApp::flyToNextCity(){
 	currentCityIndex++;
 	if( currentCityIndex >= cities.size() ) {
 		currentCityIndex = 0;
@@ -203,7 +203,7 @@ void ofApp::flyToNextCity() {
 }
 
 //--------------------------------------------------------------
-glm::vec3 ofApp::getPositionFromLatitudeLongitude( float alatitude, float alongitude, float adistance ) {
+glm::vec3 ofApp::getPositionFromLatitudeLongitude(float alatitude, float alongitude, float adistance){
 	//three rotations
 	//two to represent the latitude and lontitude of the city
 	//a third so that it spins along with the spinning sphere

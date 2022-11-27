@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	
 	ofBackgroundHex(0x57554c);
 	ofSetFrameRate(60);
@@ -16,7 +16,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	// add points all the time
 	if(points.size() < 500000) {
 		for (int i=0; i<30; i++) {
@@ -48,7 +48,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	
 	// draw the points the slow way
 	if(mode == 1) {
@@ -92,7 +92,7 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void ofApp::keyPressed(int key){
 	
 	if(key == '1') mode = 1;
 	if(key == '2') mode = 2;

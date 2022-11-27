@@ -197,7 +197,7 @@ void ofApp::keyPressed(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::makeNewSubject() {
+void ofApp::makeNewSubject(){
 	// if we are not using an image, make a random subject rectangle
 	if(!bUseImage) {
 		subjectRect.setFromCenter(ofGetWidth()  / 2.0f,
@@ -218,7 +218,7 @@ void ofApp::makeNewSubject() {
 }
 
 //--------------------------------------------------------------
-void ofApp::makeNewTarget() {
+void ofApp::makeNewTarget(){
 
 	// create a random target rectangle aligned to the center of the screen
 	targetRect.setFromCenter(ofGetWidth()  / 2.0f,
@@ -256,7 +256,7 @@ void ofApp::drawAlignRect(const ofRectangle& rect,
 }
 
 //--------------------------------------------------------------
-void ofApp::drawHorzAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignHorz hAlign) {
+void ofApp::drawHorzAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignHorz hAlign){
 	if(hAlign != OF_ALIGN_HORZ_IGNORE) {
 		float hAnchor = rect.getHorzAnchor(hAlign);
 		ofSetColor(color,120);
@@ -266,7 +266,7 @@ void ofApp::drawHorzAlignMark(const ofRectangle& rect, const ofColor& color, ofA
 }
 
 //--------------------------------------------------------------
-void ofApp::drawVertAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignVert vAlign) {
+void ofApp::drawVertAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignVert vAlign){
 	if(vAlign != OF_ALIGN_VERT_IGNORE) {
 		float vAnchor = rect.getVertAnchor(vAlign);
 		ofSetColor(color,120);
@@ -276,7 +276,7 @@ void ofApp::drawVertAlignMark(const ofRectangle& rect, const ofColor& color, ofA
 }
 
 //--------------------------------------------------------------
-ofScaleMode ofApp::getNextScaleMode(ofScaleMode mode) {
+ofScaleMode ofApp::getNextScaleMode(ofScaleMode mode){
 	if(mode == OF_SCALEMODE_FIT) {
 		mode = OF_SCALEMODE_FILL;
 	} else if(mode == OF_SCALEMODE_FILL) {
@@ -290,7 +290,7 @@ ofScaleMode ofApp::getNextScaleMode(ofScaleMode mode) {
 }
 
 //--------------------------------------------------------------
-ofAspectRatioMode ofApp::getNextAspectRatioMode(ofAspectRatioMode mode) {
+ofAspectRatioMode ofApp::getNextAspectRatioMode(ofAspectRatioMode mode){
 	if(mode == OF_ASPECT_RATIO_IGNORE) {
 		mode = OF_ASPECT_RATIO_KEEP;
 	} else if(mode == OF_ASPECT_RATIO_KEEP) {
@@ -303,7 +303,7 @@ ofAspectRatioMode ofApp::getNextAspectRatioMode(ofAspectRatioMode mode) {
 
 
 //--------------------------------------------------------------
-ofAlignHorz ofApp::getNextHorzAlign(ofAlignHorz hAlign) {
+ofAlignHorz ofApp::getNextHorzAlign(ofAlignHorz hAlign){
 	if(hAlign == OF_ALIGN_HORZ_LEFT) {
 		hAlign = OF_ALIGN_HORZ_CENTER;
 	} else if(hAlign == OF_ALIGN_HORZ_CENTER) {
@@ -315,7 +315,7 @@ ofAlignHorz ofApp::getNextHorzAlign(ofAlignHorz hAlign) {
 }
 
 //--------------------------------------------------------------
-ofAlignVert ofApp::getNextVertAlign(ofAlignVert vAlign) {
+ofAlignVert ofApp::getNextVertAlign(ofAlignVert vAlign){
 	if(vAlign == OF_ALIGN_VERT_TOP) {
 		vAlign = OF_ALIGN_VERT_CENTER;
 	} else if(vAlign == OF_ALIGN_VERT_CENTER) {
@@ -327,7 +327,7 @@ ofAlignVert ofApp::getNextVertAlign(ofAlignVert vAlign) {
 }
 
 //--------------------------------------------------------------
-string ofApp::getHorzAlignString(ofAlignHorz hAlign) {
+string ofApp::getHorzAlignString(ofAlignHorz hAlign){
 	switch (hAlign) {
 		case OF_ALIGN_HORZ_LEFT:
 			return "OF_ALIGN_HORZ_LEFT";
@@ -344,7 +344,7 @@ string ofApp::getHorzAlignString(ofAlignHorz hAlign) {
 }
 
 //--------------------------------------------------------------
-string ofApp::getVertAlignString(ofAlignVert vAlign) {
+string ofApp::getVertAlignString(ofAlignVert vAlign){
 	switch (vAlign) {
 		case OF_ALIGN_VERT_TOP:
 			return "OF_ALIGN_VERT_TOP";
@@ -361,7 +361,7 @@ string ofApp::getVertAlignString(ofAlignVert vAlign) {
 }
 
 //--------------------------------------------------------------
-string ofApp::getAspectRatioModeString(ofAspectRatioMode mode) {
+string ofApp::getAspectRatioModeString(ofAspectRatioMode mode){
 	switch (mode) {
 		case OF_ASPECT_RATIO_IGNORE:
 			return "OF_ASPECT_RATIO_IGNORE";
@@ -376,7 +376,7 @@ string ofApp::getAspectRatioModeString(ofAspectRatioMode mode) {
 }
 
 //--------------------------------------------------------------
-string ofApp::getScaleModeString(ofScaleMode mode) {
+string ofApp::getScaleModeString(ofScaleMode mode){
 	switch (mode) {
 		case OF_SCALEMODE_FIT:
 			return "OF_SCALEMODE_FIT";

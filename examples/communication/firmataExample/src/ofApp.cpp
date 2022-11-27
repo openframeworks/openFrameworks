@@ -60,7 +60,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::setupArduino(const int & version) {
+void ofApp::setupArduino(const int & version){
 
 	// remove listener because we don't need it anymore
 	ofRemoveListener(ard.EInitialized, this, &ofApp::setupArduino);
@@ -121,7 +121,7 @@ void ofApp::updateArduino(){
 // by the digitalPinChanged function rather than the analogPinChanged function.
 
 //--------------------------------------------------------------
-void ofApp::digitalPinChanged(const int & pinNum) {
+void ofApp::digitalPinChanged(const int & pinNum){
 	// do something with the digital input. here we're simply going to print the pin number and
 	// value to the screen each time it changes
 	buttonState = "digital pin: " + ofToString(pinNum) + " = " + ofToString(ard.getDigital(pinNum));
@@ -130,7 +130,7 @@ void ofApp::digitalPinChanged(const int & pinNum) {
 // analog pin event handler, called whenever an analog pin value has changed
 
 //--------------------------------------------------------------
-void ofApp::analogPinChanged(const int & pinNum) {
+void ofApp::analogPinChanged(const int & pinNum){
 	// do something with the analog input. here we're simply going to print the pin number and
 	// value to the screen each time it changes
 	potValue = "analog pin: " + ofToString(pinNum) + " = " + ofToString(ard.getAnalog(pinNum));

@@ -10,12 +10,12 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	for(int i=0; i<NUM_POINTS; i++) balls[i].update();
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	for(int i=0; i<NUM_POINTS; i++) balls[i].draw();
 }
 

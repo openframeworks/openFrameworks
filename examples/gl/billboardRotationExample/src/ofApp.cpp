@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	ofBackground(0);
 	ofSetVerticalSync(true);
 	
@@ -45,7 +45,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	glm::vec2 mouse(ofGetMouseX(), ofGetMouseY());
 	glm::vec2 mouseVec(ofGetPreviousMouseX()-ofGetMouseX(), ofGetPreviousMouseY()-ofGetMouseY());
 	glm::clamp(mouseVec, 0.0f, 10.0f);
@@ -80,7 +80,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofEnableAlphaBlending();
 	ofSetColor(255);
 	
@@ -120,16 +120,16 @@ void ofApp::mouseMoved(int x, int y){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button) {
+void ofApp::mouseDragged(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {
+void ofApp::mousePressed(int x, int y, int button){
 	
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button) {
+void ofApp::mouseReleased(int x, int y, int button){
 	
 }
 

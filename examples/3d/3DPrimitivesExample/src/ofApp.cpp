@@ -54,7 +54,7 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	pointLight.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.5)*(ofGetWidth()*.3), ofGetHeight()/2, 500);
 	pointLight2.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.15)*(ofGetWidth()*.3),
 							ofGetHeight()*.5 + sin(ofGetElapsedTimef()*.7)*(ofGetHeight()), -300);
@@ -72,7 +72,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 
 	float spinX = sin(ofGetElapsedTimef()*.35f);
 	float spinY = cos(ofGetElapsedTimef()*.075f);
@@ -435,7 +435,7 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void ofApp::keyPressed(int key){
 
 	switch(key) {
 		case 'f':

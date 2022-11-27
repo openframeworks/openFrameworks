@@ -122,7 +122,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::drawBounds( glm::vec3 min, glm::vec3 max, float size ) {
+void ofApp::drawBounds(glm::vec3 min, glm::vec3 max, float size){
 	glm::vec3 up( 0,size,0);
 	glm::vec3 right(size,0,0);
 	glm::vec3 forward(0,0,size);
@@ -198,7 +198,7 @@ void ofApp::drawBounds( glm::vec3 min, glm::vec3 max, float size ) {
 }
 
 //--------------------------------------------------------------
-void ofApp::stringToMeshNodes( string astring, float extrudeAmount ) {
+void ofApp::stringToMeshNodes(string astring, float extrudeAmount){
 
 	meshNodes.clear();
 

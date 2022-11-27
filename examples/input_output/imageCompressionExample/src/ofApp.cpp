@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	quality = OF_IMAGE_QUALITY_WORST;
 	maxSize = 2048;
 	glitchStart = .6;
@@ -9,7 +9,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::reset() {
+void ofApp::reset(){
 	generation = 0;
 	img.load("buses.jpg");
 	// pick random for bleeding
@@ -20,7 +20,7 @@ void ofApp::reset() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	string curFilename = "compressed.jpg";
 
 	int size = img.getWidth();
@@ -65,7 +65,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofSetColor(255);
 	img.draw(0, 0, ofGetWidth(), ofGetHeight());
 

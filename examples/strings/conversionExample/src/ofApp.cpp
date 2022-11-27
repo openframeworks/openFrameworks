@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 
 	 cout << "empty" << endl;
 	 cout << ofToInt("") << endl;
@@ -95,11 +95,11 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofBackground(0);
 	ofSetColor(255);
 	ofDrawBitmapString("See the console for output.", 10, 20);

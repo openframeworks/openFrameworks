@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	ofBackgroundHex(0xc5c9b2);
 
 	bTimerReached = false;
@@ -10,7 +10,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 
 }
 //--------------------------------------------------------------
@@ -58,7 +58,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void ofApp::keyPressed(int key){
 	if(key == ' ') {
 		bTimerReached = false;                     // reset the timer
 		startTime = ofGetElapsedTimeMillis();  // get the start time
@@ -68,7 +68,7 @@ void ofApp::keyPressed(int key) {
 
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {
+void ofApp::mousePressed(int x, int y, int button){
 	startTime = ofGetElapsedTimeMillis();
 	endTime = (int)ofRandom(100, 5000); // milliseconds
 }

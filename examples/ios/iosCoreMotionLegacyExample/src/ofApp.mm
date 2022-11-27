@@ -22,7 +22,7 @@ void ofApp::setup(){
 
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	
 	coreMotion.update();
 	accelerometerData = coreMotion.getAccelerometerData();
@@ -34,7 +34,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofSetColor(54);
 	ofDrawBitmapString("Multitouch and Accel Example", 10, 20);
 

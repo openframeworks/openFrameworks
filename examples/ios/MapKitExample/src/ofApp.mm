@@ -54,7 +54,7 @@ void ofApp::setup(){
 
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	if(mapKit.isOpen()) {
 //		ofLog() << "User is %son screen\n" << (mapKit.isUserOnScreen() ? "" : "not ");
 	}
@@ -62,7 +62,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	
 	// if mapKit is open....
 	if(mapKit.isOpen()) {

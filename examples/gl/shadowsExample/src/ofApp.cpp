@@ -219,7 +219,7 @@ void ofApp::draw(){
 // create a renderScene() function so the same drawing can happen in both ofApp::draw()
 // and inside the ofLight::beginShadowDepthPass()
 //--------------------------------------------------------------
-void ofApp::renderScene() {
+void ofApp::renderScene(){
 	float etimef = ofGetElapsedTimef();
 	ofSetColor(200, 50, 120 );
 	sphereMaterial.begin();

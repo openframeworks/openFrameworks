@@ -2,7 +2,7 @@
 
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 
 	font.load("verdana.ttf", 34);
 
@@ -19,7 +19,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::threadedFunction() {
+void ofApp::threadedFunction(){
 
 	while (isThreadRunning()) {
 
@@ -48,13 +48,13 @@ void ofApp::threadedFunction() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	// get a random voice
 }
 
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	// center the word on the screen
 	float x = (ofGetWidth() - font.stringWidth(words[step])) / 2;
 	float y = ofGetHeight() / 2;
@@ -65,13 +65,13 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::exit() {
+void ofApp::exit(){
 	// stop the thread on exit
 	waitForThread(true);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void ofApp::keyPressed(int key){
 
 }
 

@@ -5,7 +5,7 @@
 
 // reset all transformations and options to defaults
 //--------------------------------------------------------------
-void ofApp::reset() {
+void ofApp::reset(){
 	camToView = 0;
 	camToConfigure = 1;
 

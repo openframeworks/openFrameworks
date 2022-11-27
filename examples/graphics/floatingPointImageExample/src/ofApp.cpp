@@ -2,7 +2,7 @@
 
 //Some helper functions
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c){
 	glm::vec3 normal = glm::normalize(glm::cross((b - a),(c - a)));
 	mesh.addNormal(normal);
 	mesh.addVertex(a);
@@ -13,13 +13,13 @@ void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const 
 }
 
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d) {
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d){
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-glm::vec3 ofApp::getVertexFromImg(ofFloatImage& img, int x, int y) {
+glm::vec3 ofApp::getVertexFromImg(ofFloatImage& img, int x, int y){
 	return glm::vec3(x, y, 100 * img.getColor(x, y).getBrightness());
 }
 

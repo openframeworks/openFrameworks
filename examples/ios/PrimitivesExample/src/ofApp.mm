@@ -392,7 +392,7 @@ void ofApp::exit(){
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDown(ofTouchEventArgs & touch) {
+void ofApp::touchDown(ofTouchEventArgs & touch){
 	if(touch.id==0) {
 		numTouches++;
 		if(numTouches > 2) numTouches=0;

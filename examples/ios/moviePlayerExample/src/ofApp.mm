@@ -10,7 +10,7 @@ static bool bPlayingBeforeScrub = false;
 static bool bScrubbing = false;
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	ofSetFrameRate(30);
 	ofBackground(225, 225, 225);
 	
@@ -86,17 +86,17 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::playPressed() {
+void ofApp::playPressed(){
 	video.setPaused(false);
 	[controls setPlay:video.isPlaying()];
 }
 
-void ofApp::pausePressed() {
+void ofApp::pausePressed(){
 	video.setPaused(true);
 	[controls setPlay:video.isPlaying()];
 }
 
-void ofApp::scrubBegin() {
+void ofApp::scrubBegin(){
 	bScrubbing = true;
 	
 	bPlayingBeforeScrub = video.isPlaying();    // save the last play state.
@@ -105,11 +105,11 @@ void ofApp::scrubBegin() {
 	[controls setPlay:video.isPlaying()];
 }
 
-void ofApp::scrubToPosition(float position) {
+void ofApp::scrubToPosition(float position){
 	video.setPosition(position);
 }
 
-void ofApp::scrubEnd() {
+void ofApp::scrubEnd(){
 	if(bPlayingBeforeScrub) {
 		video.setPaused(false);
 	}
@@ -119,7 +119,7 @@ void ofApp::scrubEnd() {
 	bScrubbing = false;
 }
 
-void ofApp::loadPressed() {
+void ofApp::loadPressed(){
 	video.load("hands.m4v");
 	video.play();
 	
@@ -131,17 +131,17 @@ void ofApp::loadPressed() {
 	[controls setLoad:YES];
 }
 
-void ofApp::unloadPressed() {
+void ofApp::unloadPressed(){
 	video.close();
 	[controls setLoad:NO];
 }
 
-void ofApp::loopOnPressed() {
+void ofApp::loopOnPressed(){
 	video.setLoopState(OF_LOOP_NORMAL);
 	[controls setLoop:YES];
 }
 
-void ofApp::loopOffPressed() {
+void ofApp::loopOffPressed(){
 	video.setLoopState(OF_LOOP_NONE);
 	[controls setLoop:NO];
 }
@@ -158,12 +158,12 @@ void ofApp::nativeOffPressed() {
 	[controls setNative:NO];
 }
 
-void ofApp::muteOnPressed() {
+void ofApp::muteOnPressed(){
 	video.setVolume(0.0f);
 	[controls setMute:YES];
 }
 
-void ofApp::muteOffPressed() {
+void ofApp::muteOffPressed(){
 	video.setVolume(1.0f);
 	[controls setMute:NO];
 }
