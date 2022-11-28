@@ -55,7 +55,7 @@ void ofApp::draw(){
 	ofClear(0, 0, 0,255);
 	
 	shader.begin();
-	if(camera.getTexture().isAllocated()){
+	if(camera.isFrameNew()){
 		shader.setUniformTexture("tex0", camera.getTexture(), 1);
 	}
 	shader.setUniformTexture("tex1", image, 2);
@@ -71,7 +71,7 @@ void ofApp::draw(){
 	fbo.end();
 	
 	//------------------------------------------- 
-	if(camera.getTexture().isAllocated()){
+	if(camera.isFrameNew()){
 		ofSetColor(255);
 		camera.draw(5,5,320,240);
 	}
