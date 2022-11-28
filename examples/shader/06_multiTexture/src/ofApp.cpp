@@ -55,9 +55,13 @@ void ofApp::draw(){
 	ofClear(0, 0, 0,255);
 	
 	shader.begin();
-	shader.setUniformTexture("tex0", camera.getTexture(), 1);
+	if(camera.getTexture().isAllocated()){
+		shader.setUniformTexture("tex0", camera.getTexture(), 1);
+	}
 	shader.setUniformTexture("tex1", image, 2);
-	shader.setUniformTexture("tex2", movie.getTexture(), 3);
+	if(movie.getTexture().isAllocated()){
+		shader.setUniformTexture("tex2", movie.getTexture(), 3);
+	}
 	shader.setUniformTexture("imageMask", maskFbo.getTexture(), 4);
 	
 	// we are drawing this fbo so it is used just as a frame.
