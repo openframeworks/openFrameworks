@@ -71,8 +71,10 @@ void ofApp::draw(){
 	fbo.end();
 	
 	//------------------------------------------- 
-	ofSetColor(255);
-	camera.draw(5,5,320,240);
+	if(camera.getTexture().isAllocated()){
+		ofSetColor(255);
+		camera.draw(5,5,320,240);
+	}
 	ofSetColor(ofColor::red);
 	ofDrawBitmapString("RED", 5+30, 5+30);
 	
