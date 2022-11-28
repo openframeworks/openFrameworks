@@ -136,7 +136,6 @@ print_limits(void)
 }
 
 void printShaderLimits(){
-
 	static const struct token_name lll[] = {
 		{ 1, GL_MAX_VERTEX_ATTRIBS, "GL_MAX_VERTEX_ATTRIBS" },
 		{ 1, GL_MAX_VERTEX_UNIFORM_COMPONENTS, "GL_MAX_VERTEX_UNIFORM_COMPONENTS" },
@@ -161,7 +160,6 @@ void printShaderLimits(){
 
 
 void printGLInfo(){
-
 	char *version = NULL;
 	char *vendor = NULL;
 	char *renderer = NULL;
@@ -174,14 +172,11 @@ void printGLInfo(){
 	renderer =    (char*)glGetString(GL_RENDERER);
 
 	cout << "version=" << version << "\nvendor=" << vendor << "\nrenderer=" << renderer << "\n";
-
 }
 
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-
 	info.version = (char*)glGetString(GL_VERSION);
 	info.vendor = (char*)glGetString(GL_VENDOR);
 	info.renderer = (char*)glGetString(GL_RENDERER);
@@ -207,7 +202,6 @@ void ofApp::setup(){
 	#ifndef TARGET_EMSCRIPTEN
 		glGetIntegerv(GL_MAX_LIGHTS, &info.maxLights);
 	#endif
-
 }
 
 //--------------------------------------------------------------
@@ -217,7 +211,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
 	string output = "";
 
 	string pointSprites = ((info.bPointSpritesSupported == true) ? "yes" : "no");
@@ -241,12 +234,10 @@ void ofApp::draw(){
 
 	ofDrawBitmapStringHighlight(output, 20, 20);
 	ofDrawBitmapStringHighlight("press ' ' to load full report", 20, 220, ofColor::magenta, ofColor::white);
-
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
 	if (key == ' '){
 
 		// todo: rewrite this with ofLog:
