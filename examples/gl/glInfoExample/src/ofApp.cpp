@@ -124,7 +124,9 @@ print_limits(void)
 	GLint i, max[2];
 	cout << "OpenGL limits:\n";
 	for (i = 0; openglLimits[i].count; i++) {
-		glGetIntegerv(openglLimits[i].token, max);
+		#ifndef TARGET_EMSCRIPTEN
+			glGetIntegerv(openglLimits[i].token, max);
+		#endif
 		if (glGetError() == GL_NONE) {
 			if (openglLimits[i].count == 1)
 				cout << "    " << openglLimits[i].name << " = " << max[0] << "\n";
@@ -148,9 +150,7 @@ void printShaderLimits(){
 	GLint i, max[2];
 	cout << "Shader limits:\n";
 	for (i = 0; lll[i].count; i++) {
-		#ifndef TARGET_EMSCRIPTEN
-			glGetIntegerv(lll[i].token, max);
-		#endif
+		glGetIntegerv(lll[i].token, max);
 		if (glGetError() == GL_NONE) {
 			if (lll[i].count == 1)
 				cout << "    " << lll[i].name << " = " << max[0] << "\n";
