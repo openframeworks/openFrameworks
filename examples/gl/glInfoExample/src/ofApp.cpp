@@ -148,7 +148,9 @@ void printShaderLimits(){
 	GLint i, max[2];
 	cout << "Shader limits:\n";
 	for (i = 0; lll[i].count; i++) {
-		glGetIntegerv(lll[i].token, max);
+		#ifndef TARGET_EMSCRIPTEN
+			glGetIntegerv(lll[i].token, max);
+		#endif
 		if (glGetError() == GL_NONE) {
 			if (lll[i].count == 1)
 				cout << "    " << lll[i].name << " = " << max[0] << "\n";
@@ -203,7 +205,9 @@ void ofApp::setup(){
 
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &info.maxTextureSize);
 	glGetIntegerv(GL_MAX_VIEWPORT_DIMS, info.maxDimensions);
-	glGetIntegerv(GL_MAX_LIGHTS, &info.maxLights);
+	#ifndef TARGET_EMSCRIPTEN
+		glGetIntegerv(GL_MAX_LIGHTS, &info.maxLights);
+	#endif
 
 }
 
