@@ -71,10 +71,8 @@ void ofApp::draw(){
 	fbo.end();
 	
 	//------------------------------------------- 
-	if(camera.isFrameNew()){
-		ofSetColor(255);
-		camera.draw(5,5,320,240);
-	}
+	ofSetColor(255);
+	camera.draw(5,5,320,240);
 	ofSetColor(ofColor::red);
 	ofDrawBitmapString("RED", 5+30, 5+30);
 	
