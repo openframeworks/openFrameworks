@@ -59,7 +59,7 @@ bool ofxEmscriptenVideoGrabber::setup(int w, int h){
 }
 
 bool ofxEmscriptenVideoGrabber::isInitialized() const{
-	return texture.isAllocated();
+	return html5video_grabber_ready_state(id)>=HAVE_METADATA;
 }
 
 void ofxEmscriptenVideoGrabber::update(){
