@@ -94,7 +94,8 @@ void ofxEmscriptenVideoGrabber::update(){
 }
 
 bool ofxEmscriptenVideoGrabber::isFrameNew() const{
-	return html5video_grabber_ready_state(id)>=HAVE_METADATA;
+	// does not work with Emscripten
+	return true;
 }
 
 ofPixels & ofxEmscriptenVideoGrabber::getPixels(){
