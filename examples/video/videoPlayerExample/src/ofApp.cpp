@@ -24,7 +24,7 @@ void ofApp::draw(){
 
 	ofSetHexColor(0xFFFFFF);
 
-	if(fingerMovie.getTexture().isAllocated()){
+	if(fingerMovie.getPixels().isAllocated()){
 		fingerMovie.draw(20,20);
 		ofSetHexColor(0x000000);
 		ofPixels & pixels = fingerMovie.getPixels();
