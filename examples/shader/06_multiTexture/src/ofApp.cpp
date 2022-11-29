@@ -17,7 +17,7 @@ void ofApp::setup(){
 	int camHeight = 240;
 	
 	camera.setVerbose(false);
-	camera.initGrabber(camWidth, camHeight);
+	camera.setup(camWidth, camHeight);
 	
 	movie.load("movie.mov");
 	movie.play();
