@@ -7,7 +7,7 @@ extern "C"{
 	extern int html5audio_context_start();
 	extern int html5audio_context_stop();
 	extern int html5audio_context_samplerate();
-	extern void html5audio_context_spectrum(int context, int bands, float * spectrum);
+	extern void html5audio_context_spectrum(int bands, float * spectrum);
 
 	extern int html5audio_sound_load(const char* url);
 	extern void html5audio_sound_play(int sound, double offset);
