@@ -88,12 +88,12 @@ void ofApp::update(){
         if (ofGetHours() > hours){
             seconds = minutes = 0 ;
             hours = ofGetHours();
-        } else if (ofGetHours() == 0) {
+        } else if (ofGetHours() == 0){
             hours = 0;
         }
         
         if (numOfHours == 0){
-            hours = seconds = minutes = 0 ;
+            hours = seconds = minutes = 0;
         }
         
         calculateTime();
