@@ -62,8 +62,8 @@ void ofApp::drawWithModel(){
 
 	//center ourselves there
 	ofTranslate(position);
-	ofRotateDeg(-ofGetMouseX(), 0, 1, 0);
-	ofRotateDeg(90,1,0,0);
+	ofRotateDeg(ofGetMouseX() + 270, 0, 1, 0);
+	ofRotateDeg(270,1,0,0);
 	ofTranslate(-position);
 
 	//draw the model
@@ -94,8 +94,8 @@ void ofApp::drawWithMesh(){
 
 	//translate and scale based on the positioning.
 	ofTranslate(position);
-	ofRotateDeg(-ofGetMouseX(), 0, 1, 0);
-	ofRotateDeg(90,1,0,0);
+	ofRotateDeg(ofGetMouseX() + 270, 0, 1, 0);
+	ofRotateDeg(270,1,0,0);
 
 
 	ofScale(normalizedScale, normalizedScale, normalizedScale);
