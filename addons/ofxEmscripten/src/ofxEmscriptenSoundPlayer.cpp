@@ -187,7 +187,7 @@ double ofxEmscriptenSoundPlayer::getDurationSecs() const{
 
 float * ofxEmscriptenSoundPlayer::getSystemSpectrum(int bands){
 	systemSpectrum.resize(bands);
-	html5audio_context_spectrum(ofxEmscriptenAudioContext(),bands,&systemSpectrum[0]);
+	html5audio_context_spectrum(bands, &systemSpectrum[0]);
 	for(size_t i=0;i<systemSpectrum.size();i++){
 		systemSpectrum[i] = (systemSpectrum[i]+100)*0.01;
 	}
