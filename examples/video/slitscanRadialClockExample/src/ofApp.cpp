@@ -99,7 +99,7 @@ void ofApp::update(){
         calculateTime();
         
         xSteps = 0; // step on to the next line.
-     } else if(ofGetSeconds() == 0) {
+     } else if (ofGetSeconds() == 0){
          seconds = 0;
          calculateTime();
      }
