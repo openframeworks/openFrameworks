@@ -38,12 +38,18 @@ ofxEmscriptenSoundPlayer::~ofxEmscriptenSoundPlayer(){
 	html5audio_sound_free(sound);
 }
 
-
 bool ofxEmscriptenSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
-	if(context!=-1){
+	if(context != -1){
 		sound = html5audio_sound_load(context,ofToDataPath(fileName).c_str());
 	}
 	return sound!=-1;
+}
+
+bool ofxEmscriptenSoundPlayer::load(std::string fileName, bool stream){
+	if(context != -1){
+		sound = html5audio_sound_load(fileName.c_str());
+	}
+	return sound != -1;
 }
 
 void ofxEmscriptenSoundPlayer::unload(){
