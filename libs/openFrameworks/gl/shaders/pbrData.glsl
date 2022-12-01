@@ -24,6 +24,8 @@ struct PbrData {
 	
 	vec3 f0;// = vec3(0.04);
 	float f90;// = vec3(1.0);
+	vec3 dfg;// = vec3(0.0);
+	vec3 energyCompensation;// = vec3(1.0);
 };
 
 void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in vec3 aCamPos ) {
@@ -48,14 +50,13 @@ void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in 
 	//	pbrData.f0 = mix(0.04, mat.albedo, mat.metallic);
 	adata.f0 = f0;
 #ifdef PBR_QUALITY_LEVEL_HIGH
+	// cheap luminance approximation
 	//	pbrData.f90 = vec3(clamp(dot(pbrData.f0.g, 50.0 * 0.33), 0.0, 1.0));
 	adata.f90 = saturate(dot(f0, vec3(50.0 * 0.33)));
 #else
 	adata.f90 = 1.0;
 #endif
-	// cheap luminance approximation
-	//	float f90 = clamp(50.0 * f0.g, 0.0, 1.0);
-	adata.diffuse = amat.albedo.rgb * (1.0-amat.metallic);
+	adata.diffuse = amat.albedo.rgb * (1.0 - amat.metallic);
 	adata.iblLuminance = amat.iblExposure; // convert to luminance?
 	
 	adata.directDiffuse = vec3(0.0);
@@ -63,6 +64,9 @@ void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in 
 	
 	adata.directSpecular = vec3(0.0);
 	adata.indirectSpecular = vec3(0.0);
+	
+	adata.dfg = getPrefilteredDFG(adata.f0, adata.NoV, amat.roughness );
+	adata.energyCompensation = 1.0 + adata.f0 * (1.0 / (adata.dfg.y) - 1.0);
 }
 
 #endif
@@ -100,7 +104,10 @@ struct PbrLightData {
 	vec3 up;
 };
 
+#if defined(MAX_LIGHTS) && MAX_LIGHTS
 uniform PbrLightData lights[MAX_LIGHTS];
+#endif
+
 #endif
 
 )";

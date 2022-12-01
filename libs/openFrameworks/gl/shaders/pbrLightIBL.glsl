@@ -10,6 +10,9 @@ static const string shader_pbr_lighting_ibl = R"(
 #define ENV_MAP_MAX_MIPS 5
 #endif
 
+//#ifdef HAS_CUBE_MAP
+//#endif
+
 // Image Based Lighting
 #ifdef HAS_TEX_ENV_IRRADIANCE
 uniform samplerCube tex_irradianceMap;
@@ -23,14 +26,7 @@ uniform samplerCube tex_prefilterEnvMap;
 uniform sampler2D tex_brdfLUT;
 #endif
 
-//vec3 getEnvIrradiance(in vec3 aN) {
-//	vec3 diffuse = vec3(0.0);
-//	// TODO: implement spherical harmonics if tex_irradianceMap not present
-//	#ifdef HAS_TEX_ENV_IRRADIANCE
-//	diffuse = texture(tex_irradianceMap, aN).rgb;
-//	#endif
-//	return diffuse;
-//}
+uniform float uCubeMapEnabled;
 
 vec3 getIndirectPrefilteredReflection( in vec3 aR, in float aroughness ) {
 	vec3 indirectSpecularRadiance = vec3(0.0);
@@ -89,58 +85,52 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 	return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-//vec3 getEnvironmentIndirect(in vec3 aN, in float aNoV, in vec3 aR, in vec3 aF0, in vec3 aF90, in vec3 aDiffuseColor, in float aroughness in float ao ) {
+// ----------------------------------------------------------------------------
+vec3 fakeEnvLightingDiffuse(in PbrData adata, in Material amat ) {
+	vec3 R = abs(adata.reflectionWorld);
+	float cc = max( 0.0, abs( dot(R, vec3(0.0,0.5,0.5) )));
+	return vec3(clamp(cc*0.25+0.6,0,1));
+}
+
+// ----------------------------------------------------------------------------
+vec3 fakeEnvLightingSpecular(in PbrData adata, in Material amat ) {
+	vec3 R = abs(adata.reflectionWorld);
+	float mm = (amat.roughness * amat.roughness);
+	float ss = (1.0-mm*0.95);
+	ss *= ss;
+	ss *= ss;
+	ss = ss * 12.0;
+	float cc = max( 0.0, abs( dot(R, vec3(0.0,0.5,0.5)*1.43 )));
+	cc = pow(cc+0.005, ss+0.05);
+	return vec3(clamp(cc,0,1));
+}
+
 void calcEnvironmentIndirect( inout PbrData adata, in Material amat ) {
-	//	float NoV = max(dot(aN, aV), 0.0);
-	// ambient lighting (we now use IBL as the ambient term)
-	//	vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), aF0, aroughness);
-	//	vec3 F = fresnelSchlickRoughness(nDotV, aF0, aroughness);
-	//	float f90 = 0.5 + 2.0 * roughness * LoH * LoH;
-	//	vec3 f90 = 1.0;
+#ifdef HAS_CUBE_MAP
+	if( uCubeMapEnabled < 0.5 ) {
+		return;
+	}
+#endif
 	
-	//	vec3 kS = F;
-	//	vec3 kD = 1.0 - kS;
-	//	kD *= 1.0 - ametallic;
+	vec3 indirectSpecularRadiance = vec3(0.0);
 	
 	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
-	vec3 indirectSpecularRadiance = vec3(0.0);
 #if defined(HAS_TEX_ENV_PRE_FILTER)
-	//	indirectSpecularRadiance = textureLod(tex_prefilterEnvMap, adata.reflectionWorld, aroughness * (ENV_MAP_MAX_MIPS-1) ).rgb;
-	indirectSpecularRadiance = getIndirectPrefilteredReflection( adata.reflectionWorld, amat.roughness *amat.roughness );
+	indirectSpecularRadiance = getIndirectPrefilteredReflection( adata.reflectionWorld, amat.roughness );
 	indirectSpecularRadiance = indirectSpecularRadiance / (indirectSpecularRadiance+vec3(1.0));
 	// horizon occlusion with falloff, should be computed for direct specular too
 	float horizon = min(1.0 + dot(adata.reflectionWorld, adata.normalWorld), 1.0);
 	indirectSpecularRadiance *= horizon * horizon;
-#endif
-	
-	vec3 specularReflectance = vec3(0.0);
-	vec2 brdf = vec2(0.0, 0.0);
-#if defined(PBR_QUALITY_LEVEL_HIGH) && defined(HAS_TEX_ENV_BRDF_LUT)
-	//	vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), aroughness)).rg;
-	brdf = texture(tex_brdfLUT, vec2(adata.NoV, amat.roughness)).rg;
-	specularReflectance = (adata.f0 * brdf.x + adata.f90 * brdf.y);
-	// vec3 specularColor = f0 * brdf.x + f90 * brdf.y;
 #else
-	brdf = EnvBRDFApproxDFG( amat.roughness*amat.roughness, adata.NoV );
-	specularReflectance = (adata.f0 * brdf.x + adata.f90 * brdf.y);
-//	specularReflectance = mix(brdf.xxx, brdf.yyy, adata.f0);
-	//	specularReflectance = EnvBRDFApprox( adata.f0, aroughness, adata.NoV );
-	//return SpecularColor * AB.x + AB.y;
+	indirectSpecularRadiance = fakeEnvLightingSpecular(adata, amat);
 #endif
 	
-	vec3 Fr = specularReflectance * indirectSpecularRadiance;
-	// float NoV, float ao, float roughness
-	
-	//	vec3 energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
-	//vec3 energyCompensation = 1.0 + adata.f0 * (1.0 / (1.0-brdf.y) - 1.0);
-	vec3 energyCompensation = 1.0 + adata.f0 * (1.0 / specularReflectance.y - 1.0);
-	// Scale the specular lobe to account for multiscattering
-	Fr *= energyCompensation;
+	// adata.dfg and adata.energyCompensation are set in pbrData.glsl :: setupPbrData()
+	vec3 Fr = indirectSpecularRadiance * adata.dfg * adata.energyCompensation;
 	float specAO = computeSpecularAO(adata.NoV, amat.ao, amat.roughness);
 	Fr *= specAO;
 	
-	
-	vec3 Fd = adata.diffuse;//vec3(0.0);
+	vec3 Fd = adata.diffuse;// amat.albedo.rgb * (1.0-amat.metallic);//vec3(0.0);
 	vec3 irradiance = vec3(0.0);
 	// TODO: implement spherical harmonics if tex_irradianceMap not present
 #ifdef HAS_TEX_ENV_IRRADIANCE
@@ -149,23 +139,17 @@ void calcEnvironmentIndirect( inout PbrData adata, in Material amat ) {
 	irradiance = irradiance / (irradiance + vec3(1.0));
 	Fd *= irradiance;// * (1.0);
 	//vec3 Fd = adata.diffuse * irradiance * (1.0 - E) * diffuseBRDF;
+#else
+	irradiance = fakeEnvLightingDiffuse(adata, amat);
+	Fd *= irradiance;
 #endif
-//	vec3 kS = fresnelSchlick(max(adata.NoV, 0.01), vec3(0.04));
-//	vec3 kD = 1.0 - kS;
-	//Fd *= kD;
-	//Fd *= Fd_Lambert();
-	// Fd_Burley(float roughness, float NoV, float NoL, float LoH)
 	Fd *= amat.ao;
-	Fd *= ((1.0-specularReflectance));
-	//	Fd = vec3(1.0,0.0,0.0);
+	Fd *= (1.0-adata.dfg);
 	
 	evaluateClearCoatIBL(adata, amat, Fd, Fr);
 	
-	adata.indirectDiffuse += (Fd * adata.iblLuminance);//irradiance * adata.diffuse* Fd_Lambert() * (1.0-specularReflectance) * ao;
+	adata.indirectDiffuse += (Fd * adata.iblLuminance);
 	adata.indirectSpecular += (Fr * adata.iblLuminance);
-	//	adata.indirectSpecular += indirectSpecularRadiance;
-	
-	//return Fd + Fr;
 }
 
 #endif
