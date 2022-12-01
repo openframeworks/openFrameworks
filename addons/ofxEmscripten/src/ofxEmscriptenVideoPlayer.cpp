@@ -31,7 +31,11 @@ ofxEmscriptenVideoPlayer::~ofxEmscriptenVideoPlayer() {
 }
 
 bool ofxEmscriptenVideoPlayer::load(string name){
-	html5video_player_load(id,ofToDataPath(name).c_str());
+	if (name.substr(0, 12) == "blob:http://" || name.substr(0, 13) == "blob:https://"){
+		html5video_player_load(id, name.c_str());
+	} else{
+		html5video_player_load(id, ofToDataPath(name).c_str());
+	}
 	return true;
 }
 
