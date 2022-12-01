@@ -2,7 +2,7 @@
 #include "ofMain.h"
 
 // comment out to see lighting without cube map
-//#define USE_CUBE_MAP
+#define USE_CUBE_MAP
 
 class ofApp : public ofBaseApp{
 
