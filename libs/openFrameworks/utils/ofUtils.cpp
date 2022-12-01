@@ -1,6 +1,5 @@
 #include "ofUtils.h"
 #include "ofImage.h"
-#include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofAppBaseWindow.h"
 #include "ofMainLoop.h"
@@ -12,7 +11,6 @@
 #include <chrono>
 #include <numeric>
 #include <locale>
-#include <cstdarg>
 #include "uriparser/Uri.h"
 
 #ifdef TARGET_WIN32	 // For ofLaunchBrowser.
@@ -61,47 +59,13 @@
 	#define MAXPATHLEN 1024
 #endif
 
-using namespace std;
-
-namespace{
-	bool enableDataPath = true;
-
-    //--------------------------------------------------
-    string defaultDataPath(){
-    #if defined TARGET_OSX
-        try{
-            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
-        }catch(...){
-            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
-        }
-    #elif defined TARGET_ANDROID
-        return string("sdcard/");
-    #else
-        try{
-            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
-        }catch(...){
-            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
-        }
-    #endif
-    }
-
-    //--------------------------------------------------
-    std::filesystem::path & defaultWorkingDirectory(){
-            static auto * defaultWorkingDirectory = new std::filesystem::path(ofFilePath::getCurrentExeDir());
-            return * defaultWorkingDirectory;
-    }
-
-    //--------------------------------------------------
-    std::filesystem::path & dataPathRoot(){
-            static auto * dataPathRoot = new std::filesystem::path(defaultDataPath());
-            return *dataPathRoot;
-    }
-}
+using std::vector;
+using std::string;
+using std::setfill;
 
 namespace of{
 namespace priv{
 	void initutils(){
-        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
         ofResetElapsedTimeCounter();
         ofSeedRandom();
     }
@@ -375,8 +339,8 @@ uint64_t ofGetSystemTimeMicros( ) {
 }
 
 //--------------------------------------------------
-unsigned int ofGetUnixTime(){
-	return (unsigned int)time(nullptr);
+uint64_t ofGetUnixTime(){
+	return static_cast<uint64_t>(time(nullptr));
 }
 
 
@@ -493,115 +457,6 @@ int ofGetWeekday(){
 	return local.tm_wday;
 }
 
-//--------------------------------------------------
-void ofEnableDataPath(){
-	enableDataPath = true;
-}
-
-//--------------------------------------------------
-void ofDisableDataPath(){
-	enableDataPath = false;
-}
-
-//--------------------------------------------------
-bool ofRestoreWorkingDirectoryToDefault(){
-    try{
-        std::filesystem::current_path(defaultWorkingDirectory());
-        return true;
-    }catch(...){
-        return false;
-    }
-}
-
-//--------------------------------------------------
-void ofSetDataPathRoot(const std::filesystem::path& newRoot){
-	dataPathRoot() = newRoot;
-}
-
-//--------------------------------------------------
-string ofToDataPath(const std::filesystem::path & path, bool makeAbsolute){
-    if (makeAbsolute && path.is_absolute())
-        return path.string();
-    
-	if (!enableDataPath)
-        return path.string();
-
-    bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
-
-	// if our Current Working Directory has changed (e.g. file open dialog)
-#ifdef TARGET_WIN32
-	if (defaultWorkingDirectory() != std::filesystem::current_path()) {
-		// change our cwd back to where it was on app load
-		bool ret = ofRestoreWorkingDirectoryToDefault();
-		if(!ret){
-			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
-		}
-	}
-#endif
-
-	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
-	const auto  & dataPath = dataPathRoot();
-	std::filesystem::path inputPath(path);
-	std::filesystem::path outputPath;
-
-	// if path is already absolute, just return it
-	if (inputPath.is_absolute()) {
-		try {
-            auto outpath = std::filesystem::canonical(inputPath).make_preferred();
-            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
-                return ofFilePath::addTrailingSlash(outpath.string());
-            }else{
-                return outpath.string();
-            }
-		}
-		catch (...) {
-            return inputPath.string();
-		}
-	}
-
-	// here we check whether path already refers to the data folder by looking for common elements
-	// if the path begins with the full contents of dataPathRoot then the data path has already been added
-	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-    auto dirDataPath = dataPath.string();
-	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-    dirDataPath = ofFilePath::addTrailingSlash(dirDataPath);
-
-    auto relativeDirDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
-    relativeDirDataPath  = ofFilePath::addTrailingSlash(relativeDirDataPath);
-
-    if (inputPath.string().find(dirDataPath) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
-		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
-	    if(makeAbsolute){
-            outputPath = dirDataPath / inputPath;
-	    }else{
-            outputPath = relativeDirDataPath / inputPath;
-	    }
-	} else {
-		// inputPath already contains data path, so no need to change
-		outputPath = inputPath;
-	}
-
-    // finally, if we do want an absolute path and we don't already have one
-	if(makeAbsolute){
-	    // then we return the absolute form of the path
-	    try {
-            auto outpath = std::filesystem::canonical(std::filesystem::absolute(outputPath)).make_preferred();
-            if(std::filesystem::is_directory(outpath) && hasTrailingSlash){
-                return ofFilePath::addTrailingSlash(outpath.string());
-            }else{
-                return outpath.string();
-            }
-	    }
-	    catch (std::exception &) {
-            return std::filesystem::absolute(outputPath).string();
-	    }
-	}else{
-		// or output the relative path
-        return outputPath.string();
-	}
-}
-
-
 //----------------------------------------
 template<>
 string ofFromString(const string& value){
@@ -617,7 +472,7 @@ const char * ofFromString(const string& value){
 //----------------------------------------
 template <>
 string ofToHex(const string& value) {
-	ostringstream out;
+	std::ostringstream out;
 	// how many bytes are in the string
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
@@ -642,7 +497,7 @@ int ofToInt(const string& intString) {
 //----------------------------------------
 int ofHexToInt(const string& intHexString) {
 	int x = 0;
-	istringstream cur(intHexString);
+	std::istringstream cur(intHexString);
 	cur >> std::hex >> x;
 	return x;
 }
@@ -650,7 +505,7 @@ int ofHexToInt(const string& intHexString) {
 //----------------------------------------
 char ofHexToChar(const string& charHexString) {
 	int x = 0;
-	istringstream cur(charHexString);
+	std::istringstream cur(charHexString);
 	cur >> std::hex >> x;
 	return (char) x;
 }
@@ -662,23 +517,23 @@ float ofHexToFloat(const string& floatHexString) {
 		float f;
 	} myUnion;
 	myUnion.i = 0;
-	istringstream cur(floatHexString);
+	std::istringstream cur(floatHexString);
 	cur >> std::hex >> myUnion.i;
 	return myUnion.f;
 }
 
 //----------------------------------------
 string ofHexToString(const string& stringHexString) {
-	stringstream out;
-	stringstream stream(stringHexString);
+	std::stringstream out;
+	std::stringstream stream(stringHexString);
 	// a hex string has two characters per byte
 	std::size_t numBytes = stringHexString.size() / 2;
 	for(std::size_t i = 0; i < numBytes; i++) {
 		string curByte;
 		// grab two characters from the hex string
-		stream >> setw(2) >> curByte;
+		stream >> std::setw(2) >> curByte;
 		// prepare to parse the two characters
-		stringstream curByteStream(curByte);
+		std::stringstream curByteStream(curByte);
 		int cur = 0;
 		// parse the two characters as a hex-encoded int
 		curByteStream >> std::hex >> cur;
@@ -713,7 +568,7 @@ bool ofToBool(const string& boolString) {
 		return false;
 	}
 	bool x = false;
-	istringstream cur(lower);
+	std::istringstream cur(lower);
 	cur >> x;
 	return x;
 }
@@ -725,7 +580,7 @@ char ofToChar(const string& charString) {
 
 //----------------------------------------
 template <> string ofToBinary(const string& value) {
-	stringstream out;
+	std::stringstream out;
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
 		std::bitset<8> bitBuffer(value[i]);
@@ -768,8 +623,8 @@ float ofBinaryToFloat(const string& value) {
 }
 //----------------------------------------
 string ofBinaryToString(const string& value) {
-	ostringstream out;
-	stringstream stream(value);
+	std::ostringstream out;
+	std::stringstream stream(value);
 	std::bitset<8> byteString;
 	std::size_t numBytes = value.size() / 8;
 	for(std::size_t i = 0; i < numBytes; i++) {
@@ -913,7 +768,7 @@ std::locale loc;
 	if( printonce ){
 		std::string current( setlocale(LC_ALL,NULL) );
 		setlocale (LC_ALL,"");
-		ofLogWarning("ofUtils") << "std::locale not supported. Using C locale  :" << current ;
+		ofLogWarning("ofUtils") << "std::locale not supported. Using C locale: " << current ;
 		printonce = false;
 	}
 #else
@@ -1050,45 +905,6 @@ size_t ofUTF8Length(const std::string & str){
 	}
 }
 
-//------------------------------------------------
-std::string ofVAListToString(const char * format, va_list args) {
-    char buf[256];
-    size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
-
-    // Static buffer large enough?
-    if (n < sizeof(buf)) {
-        return{ buf, n };
-    }
-
-    // Static buffer too small
-    std::string s(n + 1, 0);
-    std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
-
-    return s;
-}
-
-//--------------------------------------------------
-string ofVAArgsToString(const char * format, ...){
-	va_list args;
-	va_start(args, format);
-	char buf[256];
-	size_t n = std::vsnprintf(buf, sizeof(buf), format, args);
-	va_end(args);
-
-	// Static buffer large enough?
-	if (n < sizeof(buf)) {
-		return{ buf, n };
-	}
-
-	// Static buffer too small
-	std::string s(n + 1, 0);
-	va_start(args, format);
-	std::vsnprintf(const_cast<char*>(s.data()), s.size(), format, args);
-	va_end(args);
-
-	return s;
-}
-
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	UriParserStateA state;
@@ -1158,7 +974,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 
 //--------------------------------------------------
 string ofGetVersionInfo(){
-	stringstream sstr;
+	std::stringstream sstr;
 	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH;
 
 	if (!std::string(OF_VERSION_PRE_RELEASE).empty())

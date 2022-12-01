@@ -15,7 +15,6 @@
 
 @implementation SoundStream
 
-@synthesize delegate;
 @synthesize streamType;
 @synthesize numOfChannels;
 @synthesize sampleRate;
@@ -24,9 +23,9 @@
 @synthesize audioUnit;
 @synthesize bInterruptedWhileRunning;
 
-- (id)initWithNumOfChannels:(NSInteger)value0
-             withSampleRate:(NSInteger)value1
-             withBufferSize:(NSInteger)value2 {
+- (instancetype)initWithNumOfChannels:(NSInteger)value0
+                       withSampleRate:(NSInteger)value1
+                       withBufferSize:(NSInteger)value2 {
     self = [super init];
     if(self) {
         numOfChannels = value0;
@@ -51,9 +50,7 @@
 }
 
 - (void)dealloc {
-    [super dealloc];
-	
-	
+    self.delegate = nil;
 	if([SoundStream shouldUseAudioSessionNotifications]) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 														name:AVAudioSessionInterruptionNotification

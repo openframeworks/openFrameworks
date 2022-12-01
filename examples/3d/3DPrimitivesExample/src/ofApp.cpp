@@ -10,7 +10,7 @@ void ofApp::setup(){
 	ofDisableArbTex();
 	texture.load("of.png");
 	texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
-	vidGrabber.setup(640, 480, true);
+	vidGrabber.initGrabber(640, 480);
 
 	bFill       = true;
 	bWireframe  = true;
@@ -124,7 +124,7 @@ void ofApp::draw() {
 		// x = columns, y = rows //
 		glm::vec2 planeDims = plane.getResolution();
 		float planeAngleX = ofGetElapsedTimef()*3.6;
-		float planeAngleInc = 3.f / (float)planeDims.x;  
+		float planeAngleInc = 3.f / (float)planeDims.x;
 		glm::vec3 vert;
 		for (size_t i = 0; i < deformPlane.getNumIndices(); i++) {
 			planeAngleX += planeAngleInc;
@@ -240,7 +240,7 @@ void ofApp::draw() {
 
 
 	// ICO Sphere //
-	
+
 	icoSphere.rotateDeg(spinX, 1.0, 0.0, 0.0);
 	icoSphere.rotateDeg(spinY, 0, 1.0, 0.0);
 
@@ -411,7 +411,7 @@ void ofApp::draw() {
 	ofFill();
 
 	cam.end();
-	
+
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 
 	ofDrawBitmapStringHighlight("ofPlanePrimitive"	, glm::vec3(-90,-160,0) + cam.worldToScreen(plane.getGlobalPosition()) );

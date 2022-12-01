@@ -8,8 +8,8 @@
 #include "ofSoundBaseTypes.h"
 #include "ofVideoBaseTypes.h"
 #include "ofGraphicsBaseTypes.h"
-
-using namespace std;
+#include "ofShadow.h"
+#include "ofCubeMap.h"
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -54,7 +54,7 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
 }
 
-void ofBaseVideoPlayer::loadAsync(string name){
+void ofBaseVideoPlayer::loadAsync(std::string name){
 	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
 	load(name);
 }
@@ -334,6 +334,10 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
+}
+
+bool ofBaseMaterial::isBound() const {
+	return mBound;
 }
 
 

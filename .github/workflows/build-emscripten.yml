@@ -4,14 +4,16 @@ on:
   push:
     paths-ignore:
     - '**/*.md'
+    - 'examples/**'
   pull_request:
     paths-ignore:
     - '**/*.md'
+    - 'examples/**'
     
 jobs:
 
   build-emscripten:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     strategy:
         matrix:
           cfg:
@@ -21,7 +23,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Docker Step
-      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:1.40.0 bash"
+      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash"
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Install dependencies

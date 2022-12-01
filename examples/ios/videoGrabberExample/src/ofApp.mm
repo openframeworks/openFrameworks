@@ -18,19 +18,19 @@ void ofApp::update(){
 	
 	grabber.update();
 	
-    if(grabber.isFrameNew() == true) {
-        ofPixels & pixels = grabber.getPixels();
-        unsigned char * src = pixels.getData();
-        int totalPix = grabber.getWidth() * grabber.getHeight() * 3;
-        
-        for(int k = 0; k < totalPix; k+= 3){
-            pix[k  ] = 255 - src[k];
-            pix[k+1] = 255 - src[k+1];
-            pix[k+2] = 255 - src[k+2];		
-        }
-        
-        tex.loadData(pix, grabber.getWidth(), grabber.getHeight(), GL_RGB);
-    }
+	if(grabber.isFrameNew() == true) {
+		ofPixels & pixels = grabber.getPixels();
+		unsigned char * src = pixels.getData();
+		int totalPix = grabber.getWidth() * grabber.getHeight() * 3;
+		
+		for(int k = 0; k < totalPix; k+= 3){
+			pix[k  ] = 255 - src[k];
+			pix[k+1] = 255 - src[k+1];
+			pix[k+2] = 255 - src[k+2];		
+		}
+		
+		tex.loadData(pix, grabber.getWidth(), grabber.getHeight(), GL_RGB);
+	}
 }
 
 //--------------------------------------------------------------
@@ -44,7 +44,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -74,22 +74,22 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }
 
 

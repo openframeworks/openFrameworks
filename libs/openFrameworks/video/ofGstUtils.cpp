@@ -27,7 +27,8 @@
 #include <winbase.h>	// to use SetEnvironmentVariableA
 #endif
 
-using namespace std;
+using std::shared_ptr;
+using std::string;
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop = nullptr;
 
@@ -262,28 +263,6 @@ bool ofGstUtils::startPipeline(){
 
 	gst_object_unref(bus);
 
-	if(isAppSink){
-		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
-		// set the appsink to not emit signals, we are using callbacks instead
-		// and frameByFrame to get buffers by polling instead of callback
-		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
-		// gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
-		// gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
-
-		if(!bFrameByFrame){
-			GstAppSinkCallbacks gstCallbacks;
-			gstCallbacks.eos = &on_eos_from_source;
-			gstCallbacks.new_preroll = &on_new_preroll_from_source;
-#if GST_VERSION_MAJOR==0
-			gstCallbacks.new_buffer = &on_new_buffer_from_source;
-#else
-			gstCallbacks.new_sample = &on_new_buffer_from_source;
-#endif
-
-			gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
-		}
-	}
-
 	// pause the pipeline
 	//GstState targetState;
 	GstState state;
@@ -296,10 +275,6 @@ bool ofGstUtils::startPipeline(){
 		case GST_STATE_CHANGE_NO_PREROLL:
 			ofLogVerbose() << "Pipeline is live and does not need PREROLL waiting PLAY";
 			gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PLAYING);
-			if(isAppSink){
-				gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),1);
-				gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
-			}
 			break;
 		case GST_STATE_CHANGE_ASYNC:
 			ofLogVerbose() << "Pipeline is PREROLLING";
@@ -315,7 +290,47 @@ bool ofGstUtils::startPipeline(){
 			ofLogVerbose() << "Pipeline is PREROLLED";
 			break;
     }
+    
+    if(isAppSink){
+		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
 
+        bool bSignals = false;
+        
+#if GST_VERSION_MAJOR==0
+
+        GstAppSinkCallbacks gstCallbacks;
+        gstCallbacks.eos = &on_eos_from_source;
+        gstCallbacks.new_preroll = &on_new_preroll_from_source;
+        gstCallbacks.new_buffer = &on_new_buffer_from_source;
+        gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
+        
+#elseif GST_VERSION_MINOR <= 18
+
+        GstAppSinkCallbacks gstCallbacks;
+        gstCallbacks.eos = &on_eos_from_source;
+        gstCallbacks.new_preroll = &on_new_preroll_from_source;
+        gstCallbacks.new_sample = &on_new_buffer_from_source;
+        gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
+        
+#else
+
+        //GStreamer 1.20 onwards crashes with the callback approach above.
+        //Using signals makes it work! This might be a GStreamer bug - but we'll do this for now
+        g_signal_connect(GST_APP_SINK(gstSink), "eos", G_CALLBACK(on_eos_from_source), this);
+        g_signal_connect(GST_APP_SINK(gstSink), "new-sample", G_CALLBACK(on_new_buffer_from_source), this);
+        g_signal_connect(GST_APP_SINK(gstSink), "new-preroll", G_CALLBACK(on_new_preroll_from_source), this);
+        
+        bSignals = true;
+#endif
+
+        // set the appsink to not emit signals, we are using callbacks instead
+        // and frameByFrame to get buffers by polling instead of callback
+        g_object_set (G_OBJECT (gstSink), "emit-signals", bSignals, "sync", !bFrameByFrame, (void*)NULL);
+
+        gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),3);
+        gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
+	}
+ 
 	// wait for paused state to query the duration
 	if(!isStream){
 		bPlaying = true;
@@ -349,8 +364,8 @@ void ofGstUtils::setPaused(bool _bPause){
 			if(!bPaused){
 				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
 			}
-			bPlaying = true;
 		}
+		bPlaying = !bPaused;
 	}
 }
 
@@ -368,7 +383,7 @@ void ofGstUtils::stop(){
 	gst_element_set_state (gstPipeline, state);
 	gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND);
 	bPlaying = false;
-	bPaused = true;
+	bPaused = false;
 }
 
 float ofGstUtils::getPosition() const{
@@ -391,6 +406,28 @@ float ofGstUtils::getPosition() const{
 		return -1;
 	}
 }
+
+int64_t ofGstUtils::getPositionNanos() const{
+	if(gstPipeline){
+		gint64 pos=0;
+#if GST_VERSION_MAJOR==0
+		GstFormat format=GST_FORMAT_TIME;
+		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos)){
+			ofLogVerbose("ofGstUtils") << "getPosition(): couldn't query position";
+			return -1;
+		}
+#else
+		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),GST_FORMAT_TIME,&pos)){
+			ofLogVerbose("ofGstUtils") << "getPosition(): couldn't query position";
+			return -1;
+		}
+#endif
+		return pos;
+	}else{
+		return -1;
+	}
+}
+
 
 float ofGstUtils::getSpeed() const{
 	return speed;
@@ -472,30 +509,40 @@ void ofGstUtils::setSpeed(float _speed){
 
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+
+    bool needPos = true;
+    #if GST_VERSION_MAJOR >= 1 && GST_VERSION_MINOR >= 18
+        //if requested speed is the same direction as we are already going we can do a fast rate change
+        if( speed * _speed > 0 ){
+            flags = GST_SEEK_FLAG_INSTANT_RATE_CHANGE;
+            needPos = false;
+        }
+    #endif
+    
 	if(_speed > 1 || _speed < -1){
 		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
 	}
-
-	gint64 pos;
 
 	if(_speed==0){
 		gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
 		return;
 	}
-#if GST_VERSION_MAJOR==0
-	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos) || pos<0){
-		//ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
-		return;
-	}
-#else
-	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos) || pos<0){
-		//ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
-		return;
-	}
-#endif
+  
+
+	gint64 pos = 0;
+    GstSeekType seekType = GST_SEEK_TYPE_NONE;
+    if( needPos ){
+        seekType = GST_SEEK_TYPE_SET;
+
+        pos = getPositionNanos();
+        if( pos == -1 ){
+            ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
+            return;
+        }
+
+    }
 
 	speed = _speed;
-	//pos = (float)gstData.lastFrame * (float)fps_d / (float)fps_n * GST_SECOND;
 
 	if(!bPaused)
 		gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
@@ -503,18 +550,18 @@ void ofGstUtils::setSpeed(float _speed){
 	if(speed>0){
 		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				pos,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				-1)) {
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}else{
 		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				0,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				pos)) {
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
@@ -868,7 +915,7 @@ void ofGstVideoUtils::update(){
 			bHavePixelsChanged = bBackPixelsChanged;
 			if (bHavePixelsChanged){
 				bBackPixelsChanged=false;
-				swap(pixels,backPixels);
+				std::swap(pixels,backPixels);
 				#ifdef OF_USE_GST_GL
 				if(backTexture.isAllocated()){
 					frontTexture.getTextureData() = backTexture.getTextureData();

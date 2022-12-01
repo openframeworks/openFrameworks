@@ -153,5 +153,10 @@ void ofDisableGLDebugLog();
         #ifndef GL_HALF_FLOAT
             #define GL_HALF_FLOAT                           GL_HALF_FLOAT_OES
         #endif
+	#ifndef GL_TEXTURE_CUBE_MAP
+	#ifdef GL_TEXTURE_CUBE_MAP_OES
+            #define GL_TEXTURE_CUBE_MAP               	GL_TEXTURE_CUBE_MAP_OES
+	#endif
+	#endif
     #endif
 #endif

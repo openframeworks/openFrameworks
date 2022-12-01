@@ -3,7 +3,7 @@
  */
 
 #include "ofAVFoundationGrabber.h"
-#include "ofVec2f.h"
+#include "ofVectorMath.h"
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
 
@@ -20,7 +20,7 @@
 
 #pragma mark -
 #pragma mark Initialization
-- (id)init {
+- (instancetype)init {
 	self = [super init];
 	if (self) {
 		captureInput = nil;
@@ -38,8 +38,17 @@
 }
 
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-
+	NSArray * devices;
+	if (@available(macOS 10.15, *)) {
+		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+			AVCaptureDeviceTypeBuiltInWideAngleCamera,
+			AVCaptureDeviceTypeExternalUnknown,
+		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
+		devices = [session devices];
+	} else {
+		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+	}
+	
 	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
@@ -61,7 +70,7 @@
 			width = w;
 			height = h;
 
-			ofVec2f requestedDimension(width, height);
+			glm::vec2 requestedDimension(width, height);
 
 			AVCaptureDeviceFormat * bestFormat  = nullptr;
 			for ( AVCaptureDeviceFormat * format in [device formats] ) {
@@ -70,7 +79,7 @@
 
 				int tw = dimensions.width;
 				int th = dimensions.height;
-				ofVec2f formatDimension(tw, th);
+                glm::vec2 formatDimension(tw, th);
 
 				if( tw == width && th == height ){
 					bestW = tw;
@@ -79,7 +88,7 @@
 					break;
 				}
 
-				float dist = (formatDimension-requestedDimension).length();
+				float dist = glm::length(formatDimension - requestedDimension);
 				if( dist < smallestDist ){
 					smallestDist = dist;
 					bestW = tw;
@@ -153,7 +162,6 @@
 		dispatch_queue_t queue;
 		queue = dispatch_queue_create("cameraQueue", NULL);
 		[captureOutput setSampleBufferDelegate:self queue:queue];
-		dispatch_release(queue);
 
 		NSDictionary* videoSettings =[NSDictionary dictionaryWithObjectsAndKeys:
                               [NSNumber numberWithDouble:width], (id)kCVPixelBufferWidthKey,
@@ -166,7 +174,7 @@
 		if(self.captureSession) {
 			self.captureSession = nil;
 		}
-		self.captureSession = [[[AVCaptureSession alloc] init] autorelease];
+		self.captureSession = [[AVCaptureSession alloc] init];
 
 		[self.captureSession beginConfiguration];
 
@@ -244,7 +252,18 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+
+	NSArray * devices;
+	if (@available(macOS 10.15, *)) {
+		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+			AVCaptureDeviceTypeBuiltInWideAngleCamera,
+			AVCaptureDeviceTypeExternalUnknown,
+		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
+		devices = [session devices];
+	} else {
+		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+	}
+
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back([captureDevice.localizedName UTF8String]);
@@ -342,7 +361,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		if(captureOutput.sampleBufferDelegate != nil) {
 			[captureOutput setSampleBufferDelegate:nil queue:NULL];
 		}
-		[captureOutput release];
 		captureOutput = nil;
 	}
 
@@ -358,7 +376,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		CGImageRelease(currentFrame);
 		currentFrame = nil;
 	}
-    [super dealloc];
 }
 
 - (void)eraseGrabberPtr {
@@ -398,7 +415,6 @@ void ofAVFoundationGrabber::close(){
 		// Stop and release the the OSXVideoGrabber
 		[grabber stopCapture];
 		[grabber eraseGrabberPtr];
-		[grabber release];
 		grabber = nil;
 	}
 	clear();

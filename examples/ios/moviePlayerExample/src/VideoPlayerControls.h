@@ -24,7 +24,7 @@
 @end
 
 @interface VideoPlayerControls : UIViewController <UIGestureRecognizerDelegate> {
-    id<VideoPlayerControlsDelegate> delegate;
+	id<VideoPlayerControlsDelegate> delegate;
 }
 
 @property(nonatomic, assign) id delegate;

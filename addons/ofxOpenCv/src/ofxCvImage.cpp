@@ -230,7 +230,7 @@ void  ofxCvImage::operator = ( const IplImage* mom ) {
 		return;
 	}
 			
-	if( !bAllocated || mom->nChannels == cvImage->nChannels && mom->depth == cvImage->depth ){
+	if( !bAllocated || (mom->nChannels == cvImage->nChannels && mom->depth == cvImage->depth) ){
 		if( !bAllocated ){ 	//lets allocate if needed
 			allocate(mom->width, mom->height);
 		}else if( mom->width != width || mom->height != height ){
@@ -404,7 +404,7 @@ void ofxCvImage::draw( float x, float y ) const {
 }
 
 //----------------------------------------------------------
-void ofxCvImage::draw(const ofPoint & point) const{
+void ofxCvImage::draw(const glm::vec2 & point) const{
 	draw(point.x, point.y);
 }
 

@@ -1,5 +1,4 @@
 #include "ofImage.h"
-#include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "FreeImage.h"
 
@@ -42,7 +41,7 @@ FREE_IMAGE_TYPE getFreeImageType(const ofShortPixels& pix) {
 		case 3: return FIT_RGB16;
 		case 4: return FIT_RGBA16;
 		default:
-			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels: " << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }
@@ -53,7 +52,7 @@ FREE_IMAGE_TYPE getFreeImageType(const ofFloatPixels& pix) {
 		case 3: return FIT_RGBF;
 		case 4: return FIT_RGBAF;
 		default:
-			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels: " << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }
@@ -223,9 +222,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName.c_str(), option);
+			bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 		} else {
-			bmp = FreeImage_Load(fif, fileName.c_str(), 0);
+			bmp = FreeImage_Load(fif, fileName.c_str(), 0 | settings.freeImageFlags);
 		}
 
 		if (bmp != nullptr){
@@ -271,9 +270,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	//make the image!!
 	if(fif == FIF_JPEG) {
 		int option = getJpegOptionFromImageLoadSetting(settings);
-		bmp = FreeImage_LoadFromMemory(fif, hmem, option);
+		bmp = FreeImage_LoadFromMemory(fif, hmem, option | settings.freeImageFlags);
 	} else {
-		bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
+		bmp = FreeImage_LoadFromMemory(fif, hmem, settings.freeImageFlags);
 	}
 
 	if( bmp != nullptr ){

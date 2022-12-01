@@ -8,6 +8,7 @@
 #include "ofxtvOSAppDelegate.h"
 
 #include "ofxtvOSViewController.h"
+#include "ofxtvOSGLKViewController.h"
 #include "ofxiOSExtras.h"
 #include "ofxiOSAlerts.h"
 #include "ofxiOSEAGLView.h"
@@ -24,12 +25,11 @@
 - (void)dealloc {
     self.window = nil;
     self.uiViewController = nil;
-    [super dealloc];
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 
-    self.window = [[[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]] autorelease];
+    self.window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
     [self.window makeKeyAndVisible];
 
     // set the root application path
@@ -45,11 +45,11 @@
             case METAL_KIT:
                 NSLog(@"No MetalKit yet supported for openFrameworks: Falling back to GLKit");
             case GL_KIT:
-                self.uiViewController = (UIViewController*)[[[ofxtvOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil] autorelease];
+                self.uiViewController = (UIViewController *)[[ofxtvOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil];
                 break;
             case CORE_ANIMATION:
             default:
-                self.uiViewController = [[[ofxtvOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil] autorelease];
+                self.uiViewController = [[ofxtvOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil];
                 break;
         }
         self.window.rootViewController = self.uiViewController;

@@ -6,9 +6,6 @@
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
 #include "ofMatrix3x3.h"
-#include "ofVec2f.h"
-#include "ofVec3f.h"
-#include "ofVec4f.h"
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
 #include "ofBufferObject.h"
@@ -16,9 +13,17 @@
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
 #endif
+#include "ofShadow.h"
+#include "ofLight.h"
+#include "ofCubeMap.h"
 
-using namespace std;
-
+using std::map;
+using std::vector;
+using std::string;
+using std::endl;
+using std::setw;
+using std::stringstream;
+using std::ostringstream;
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -442,10 +447,18 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		// while skipping whitespace, read in tokens for: pragma, include, and filename
 		s >> std::skipws >> p >> i >> f;
 
-		if (p.empty() || i.empty() || (f.size() < 2) ) return false;
-		// -----| invariant: all tokens have values
-
-		if (p != "pragma") return false;
+		if (p.empty())
+			return false;
+		else if (p == "include") {
+			f = i;
+			i = p;
+		}
+		else if (p != "pragma")
+			return false;
+		
+		if (i.empty() || (f.size() < 2) )
+			return false;
+		
 		if (i != "include") return false;
 
 		// first and last character of filename token must match and be either
@@ -588,7 +601,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 				ofBuffer::Line line = buf.getLines().begin();
 				int  offendingLineNumber = ofToInt(matches[1]);
 				ostringstream msg;
-				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
+				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << ":"<< endl;
 				for(int i=0; line != buf.getLines().end(); line++, i++ ){
 					string s = *line;
 					if ( i >= offendingLineNumber -3 && i < offendingLineNumber + 2 ){
@@ -1430,6 +1443,71 @@ void ofShader::printActiveAttributes()  const{
 		line.str("");
 	}
 	delete [] attributeName;
+}
+	
+//----------------------------------------
+bool ofShader::setShadowUniforms( int textureLocation ) const {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	
+	setUniformTexture("uShadowCubeMap", ofShadow::getTextureTarget( OF_LIGHT_POINT ), ofShadow::getPointTexId(), textureLocation );
+	setUniformTexture("uShadowMapDirectional", ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL ), ofShadow::getDirectionalTexId(), textureLocation+1 );
+	setUniformTexture("uShadowMapSpot", ofShadow::getTextureTarget( OF_LIGHT_SPOT ), ofShadow::getSpotTexId(), textureLocation+2 );
+	setUniformTexture("uShadowMapArea", ofShadow::getTextureTarget( OF_LIGHT_AREA ), ofShadow::getAreaTexId(), textureLocation+3 );
+	
+	for(size_t i=0;i<ofShadowsData().size();i++){
+		std::string idx = ofToString(i,0);
+		std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
+		std::string shadowAddress = "shadows["+idx+"]";
+		if(!shadow || !shadow->isEnabled || shadow->index < 0 ){
+			setUniform1f(shadowAddress+".enabled", 0 );
+			continue;
+		}
+		setUniform1f(shadowAddress+".enabled", 1 );
+		if( shadow->lightType != OF_LIGHT_POINT ) {
+			setUniformMatrix4f(shadowAddress+".shadowMatrix", shadow->shadowMatrix );
+		}
+		
+		setUniform1f(shadowAddress+".near", shadow->nearClip );
+		setUniform1f(shadowAddress+".far", shadow->farClip );
+		setUniform1f(shadowAddress+".normalBias", shadow->normalBias );
+		setUniform1f(shadowAddress+".bias", shadow->bias );
+		if( shadow->lightType != OF_LIGHT_POINT ) {
+			setUniform1f(shadowAddress+".sampleRadius", shadow->sampleRadius/(float)ofShadow::getDepthMapWidth(shadow->lightType) );
+		} else {
+			setUniform1f(shadowAddress+".sampleRadius", shadow->sampleRadius );
+		}
+		
+		setUniform3f(shadowAddress+".lightWorldPos", shadow->position );
+		setUniform1f(shadowAddress+".strength", shadow->strength );
+		setUniform3f(shadowAddress+".lightUp", shadow->up );
+		setUniform3f(shadowAddress+".lightRight", shadow->right );
+		setUniform1f(shadowAddress+".shadowType", (float)shadow->shadowType );
+		setUniform1i(shadowAddress+".texIndex", shadow->texIndex );
+	}
+	return true;
+}
+	
+//----------------------------------------
+bool ofShader::setPbrEnvironmentMapUniforms( int textureLocation ) const {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	
+	std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
+	if( cubeMapData ) {
+		if( cubeMapData->bIrradianceAllocated ) {
+			setUniformTexture("tex_irradianceMap", GL_TEXTURE_CUBE_MAP, cubeMapData->irradianceMapId, textureLocation );
+		}
+		if(cubeMapData->bPreFilteredMapAllocated) {
+			setUniformTexture("tex_prefilterEnvMap", GL_TEXTURE_CUBE_MAP, cubeMapData->preFilteredMapId, textureLocation+1 );
+		}
+		if( cubeMapData->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+			setUniformTexture("tex_brdfLUT", ofCubeMap::getBrdfLutTexture(), textureLocation+2 );
+		}
+	}
+	return true;
 }
 
 //--------------------------------------------------------------

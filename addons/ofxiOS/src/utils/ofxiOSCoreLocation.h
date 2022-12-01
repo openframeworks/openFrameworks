@@ -49,7 +49,7 @@
 @property (nonatomic, readonly) double trueHeading;
 @property (nonatomic, readonly) double headingAccuracy;
 
-- (id) init;
+- (instancetype) init;
 - (void) dealloc;
 
 - (bool) startHeading;

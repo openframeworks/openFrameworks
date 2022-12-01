@@ -33,8 +33,10 @@
 #include "ofxiOSExtras.h"
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-#include "ofxiOSAppDelegate.h"
-#include "ofxiOSViewController.h"
+
+#import "ofxiOSAppDelegate.h"
+#import "ofxiOSViewController.h"
+#import "ofxiOSGLKViewController.h"
 #elif TARGET_OS_TV
 #include "ofxtvOSAppDelegate.h"
 #include "ofxtvOSViewController.h"
@@ -187,7 +189,7 @@ ofxtvOSAppDelegate * ofxiOSGetAppDelegate() {
 
 //--------------------------------------------------------------
 ofxtvOSViewController * ofxiOSGetViewController() {
-    return [ofxiOSGetAppDelegate() glViewController];
+    return (ofxtvOSViewController *)[ofxiOSGetAppDelegate() uiViewController];
 }
 
 #endif
@@ -534,30 +536,27 @@ string ofxiOSGetClipboardString() {
 
 /******************** ofxiOSScreenGrab *********************/
 
-@interface SaveDelegate : NSObject {
-    id delegate;
-}
-@property (retain, nonatomic) id delegate;
+/// TODO: rename SaveDelegate to ofxiOSSaveDelegateObject (SaveDelegate is too general name, and basically XXXDelegate is name for Protocol).
+/// maybe this change will safety because SaveDelegate is private class
+@interface SaveDelegate : NSObject
+/// TODO: give protocol explicitly
+@property (nonatomic, strong) id delegate;
 @end
 
 
 @implementation SaveDelegate
-@synthesize delegate;
 
 // callback for UIImageWriteToSavedPhotosAlbum
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
     ofLogVerbose("ofxiOSExtras") << "didFinishSavingWithError: save finished";
 
-    if([delegate respondsToSelector: @selector(saveComplete)]) {
-        [delegate performSelector:@selector(saveComplete)];
+    if([self.delegate respondsToSelector: @selector(saveComplete)]) {
+        [self.delegate performSelector:@selector(saveComplete)];
     }
-    
-    [self release];
 }
 
 -(void)dealloc {
-    [delegate release];
-    [super dealloc];
+    self.delegate = nil;
 }
 
 @end
@@ -571,6 +570,7 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 }
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+/// ???: need to change argument to give Protocol id<ofxiOSSaveDelegateProtocol> explicitly?
 void ofxiOSScreenGrab(id delegate) {
     CGRect rect = [[UIScreen mainScreen] bounds];
     

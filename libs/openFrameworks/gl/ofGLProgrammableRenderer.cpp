@@ -1,7 +1,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofMesh.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
@@ -15,8 +14,9 @@
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
 
-using namespace std;
-
+using std::vector;
+using std::string;
+using std::swap;
 
 static const string MODEL_MATRIX_UNIFORM="modelMatrix";
 static const string VIEW_MATRIX_UNIFORM="viewMatrix";
@@ -70,6 +70,9 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 	currentTextureTarget = OF_NO_TEXTURE;
 	currentMaterial = nullptr;
 	alphaMaskTextureTarget = OF_NO_TEXTURE;
+	
+	currentShadow = nullptr;
+	bIsShadowDepthPass = false;
 
 	major = 3;
 	minor = 2;
@@ -79,6 +82,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 	defaultFramebufferId = 0;
 	path.setMode(ofPath::POLYLINES);
     path.setUseShapeColor(false);
+	currentEyePos = {0.f,0.f,0.f};
 }
 
 //----------------------------------------------------------
@@ -127,12 +131,12 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), vertexData.getVerticesPointer());
+	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofMesh::VertexType), vertexData.getVerticesPointer());
 	
 	useNormals &= (vertexData.getNumNormals()>0);
 	if(useNormals){
 		glEnableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
-		glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, sizeof(ofVec3f), vertexData.getNormalsPointer());
+		glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, sizeof(typename ofMesh::NormalType), vertexData.getNormalsPointer());
 	}else{
 		glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
 	}
@@ -148,7 +152,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	useTextures &= (vertexData.getNumTexCoords()>0);
 	if(useTextures){
 		glEnableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
-		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(ofVec2f), vertexData.getTexCoordsPointer());
+		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(typename ofMesh::TexCoordType), vertexData.getTexCoordsPointer());
 	}else{
 		glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 	}
@@ -304,7 +308,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 #if defined( TARGET_OPENGLES ) && !defined(TARGET_EMSCRIPTEN)
 
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &poly[0]);
+	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
 
 	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,false,false);
 
@@ -615,6 +619,8 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 	auto lookAt = glm::lookAt( glm::vec3{eyeX, eyeY, dist},  glm::vec3{eyeX, eyeY, 0.f},  glm::vec3{0.f, 1.f, 0.f} );
 	loadViewMatrix(lookAt);
 	
+	currentEyePos = glm::vec3{eyeX, eyeY, dist};
+	
 }
 
 //----------------------------------------------------------
@@ -637,6 +643,8 @@ void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float
 
 	matrixMode(OF_MATRIX_MODELVIEW);
 	loadViewMatrix(glm::mat4(1.0));
+	
+	currentEyePos = glm::vec3{viewW/2.0f, viewH/2.0f, nearDist };
 }
 
 //----------------------------------------------------------
@@ -779,6 +787,16 @@ glm::mat4 ofGLProgrammableRenderer::getCurrentViewMatrix() const{
 //----------------------------------------------------------
 glm::mat4 ofGLProgrammableRenderer::getCurrentNormalMatrix() const{
 	return glm::transpose(glm::inverse(getCurrentMatrix(OF_MATRIX_MODELVIEW)));
+}
+
+//----------------------------------------------------------
+glm::mat4 ofGLProgrammableRenderer::getCurrentModelMatrix() const{
+	return matrixStack.getModelMatrix();
+}
+
+//----------------------------------------------------------
+glm::vec3 ofGLProgrammableRenderer::getCurrentEyePosition() const {
+	return currentEyePos;
 }
 
 //----------------------------------------------------------
@@ -1370,18 +1388,58 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
-    currentMaterial = &material;
+	if( bIsShadowDepthPass ) {
+//		currentMaterial = nullptr;
+		// we are the shadow depth pass right now, we don't need
+		// textures or lighting, etc.
+		return;
+	}
+	currentMaterial = &material;
     // FIXME: this invalidates the previous shader to avoid that
     // when binding 2 materials one after another, the second won't
     // get the right parameters.
+	currentMaterial->bind(*this);
     currentShader = nullptr;
     beginDefaultShader();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
-    currentMaterial = nullptr;
+void ofGLProgrammableRenderer::bind(const ofShadow & shadow) {
+	currentShadow = &shadow;
+	bIsShadowDepthPass = true;
 	beginDefaultShader();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {
+	shadowCubeFace = aCubeFace;
+	bind( shadow );
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
+	if(currentMaterial) {
+		currentMaterial->unbind(*this);
+	}
+    currentMaterial = nullptr;
+	if( bIsShadowDepthPass ) {
+		// we are the shadow depth pass right now, we don't need
+		// textures or lighting, etc.
+		return;
+	}
+	beginDefaultShader();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(const ofShadow & shadow) {
+	currentShadow = nullptr;
+	bIsShadowDepthPass = false;
+	beginDefaultShader();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(const ofShadow & shadow, GLenum aCubeFace) {
+	unbind(shadow);
 }
 
 //----------------------------------------------------------
@@ -1463,6 +1521,7 @@ void ofGLProgrammableRenderer::bind(const ofCamera & camera, const ofRectangle &
 	loadMatrix(camera.getProjectionMatrix(_viewport));
 	matrixMode(OF_MATRIX_MODELVIEW);
 	loadViewMatrix(camera.getModelViewMatrix());
+	currentEyePos = camera.getPosition();
 }
 
 //----------------------------------------------------------
@@ -1495,17 +1554,29 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 	if(currentMaterial){
 		currentMaterial->updateMaterial(*currentShader,*this);
 		currentMaterial->updateLights(*currentShader,*this);
+		currentMaterial->updateShadows(*currentShader,*this);
+		currentMaterial->updateEnvironmentMaps(*currentShader, *this);
+	}
+	if(currentShadow) {
+		if( currentShadow->isMultiCubeFacePass() ) {
+			currentShadow->updateDepth(*currentShader, shadowCubeFace, *this);
+		} else {
+			currentShadow->updateDepth(*currentShader, *this);
+		}
 	}
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::beginDefaultShader(){
-	if(usingCustomShader && !currentMaterial)	return;
+	if(usingCustomShader && !currentMaterial && !currentShadow)	return;
 
 	const ofShader * nextShader = nullptr;
 
-	if(!uniqueShader || currentMaterial){
-        if(currentMaterial){
+	if(!uniqueShader || currentMaterial || currentShadow ){
+		if( currentShadow ) {
+			nextShader = &currentShadow->getDepthShader(*this);
+		} else if(currentMaterial){
+//			std::cout << "ofGLProgrammableRenderer::beginDefaultShader: " << currentTextureTarget << " | " << ofGetFrameNum() << std::endl;
             nextShader = &currentMaterial->getShader(currentTextureTarget,colorsEnabled,*this);
 
 		}else if(bitmapStringEnabled){
@@ -2278,7 +2349,7 @@ static string defaultShaderHeader(string header, GLenum textureTarget, int major
 		ofStringReplace(header,"%extensions%","");
 	}
 #else 
-	ofStringReplace(header,"%extensions%","");
+	ofStringReplace(header,"%extensions%","#extension GL_OES_standard_derivatives : enable");
 #endif
 	if(textureTarget==GL_TEXTURE_2D){
 		header += "#define SAMPLER sampler2D\n";

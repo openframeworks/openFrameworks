@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	
 
-    //ofSetOrientation(OF_ORIENTATION_90_LEFT); 
+	//ofSetOrientation(OF_ORIENTATION_90_LEFT); 
 	ofSetVerticalSync(true);
 	
 	// we add this listener before setting up so the initial circle resolution is correct
@@ -30,7 +30,7 @@ void ofApp::setup(){
 
 	ring.load("ring.wav");
 
-    //screenSize = ofToString(w) + "x" + ofToString(h);
+	//screenSize = ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------
@@ -50,8 +50,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::white, ofColor::gray);
-    
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
+	
 	if( filled ){
 		ofFill();
 	}else{
@@ -98,7 +98,7 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------

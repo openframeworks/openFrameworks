@@ -20,8 +20,7 @@
 bool ofVbo::vaoSupported=true;
 bool ofVbo::vaoChecked=false;
 
-using namespace std;
-
+using std::map;
 
 #ifdef TARGET_OPENGLES
 	#include <dlfcn.h>
@@ -782,6 +781,17 @@ ofBufferObject & ofVbo::getIndexBuffer(){
 
 //--------------------------------------------------------------
 ofBufferObject & ofVbo::getAttributeBuffer(int attributePos_) {
+	
+	if( attributePos_ == ofShader::POSITION_ATTRIBUTE ) {
+		return getVertexBuffer();
+	} else if( attributePos_ == ofShader::COLOR_ATTRIBUTE ) {
+		return getColorBuffer();
+	} else if( attributePos_ == ofShader::NORMAL_ATTRIBUTE ) {
+		return getNormalBuffer();
+	} else if( attributePos_ == ofShader::TEXCOORD_ATTRIBUTE ) {
+		return getTexCoordBuffer();
+	}
+	
 	return customAttributes.at(attributePos_).buffer;
 }
 
@@ -807,6 +817,16 @@ const ofBufferObject & ofVbo::getTexCoordBuffer() const{
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getAttributeBuffer(int attributePos_) const{
+	if( attributePos_ == ofShader::POSITION_ATTRIBUTE ) {
+		return getVertexBuffer();
+	} else if( attributePos_ == ofShader::COLOR_ATTRIBUTE ) {
+		return getColorBuffer();
+	} else if( attributePos_ == ofShader::NORMAL_ATTRIBUTE ) {
+		return getNormalBuffer();
+	} else if( attributePos_ == ofShader::TEXCOORD_ATTRIBUTE ) {
+		return getTexCoordBuffer();
+	}
+	
 	return customAttributes.at(attributePos_).buffer;
 }
 
