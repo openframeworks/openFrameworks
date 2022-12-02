@@ -28,6 +28,7 @@ extern "C"{
     extern int html5video_player_loop(int id);
 
 
+    extern void html5video_list_devices();
     extern int html5video_grabber_create();
     extern void html5video_grabber_init(int id, int w, int h, int framerate=-1);
     extern const char* html5video_grabber_pixel_format(int it);

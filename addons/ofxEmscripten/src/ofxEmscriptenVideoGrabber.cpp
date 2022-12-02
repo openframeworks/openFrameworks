@@ -31,11 +31,12 @@ ofxEmscriptenVideoGrabber::~ofxEmscriptenVideoGrabber() {
 }
 
 vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
+	html5video_list_devices();
 	return vector<ofVideoDevice>();
 }
 
 bool ofxEmscriptenVideoGrabber::setup(int w, int h){
-	if(id!=-1){
+	if(id != -1){
 		html5video_grabber_init(id,w,h,desiredFramerate);
 		switch(getPixelFormat()){
 		case OF_PIXELS_RGBA:
