@@ -306,7 +306,7 @@ std::string ofShadow::getShaderDefinesAsString() {
 	// TODO: We should get this working on GLES!
 #ifndef TARGET_OPENGLES
 	if( ofIsGLProgrammableRenderer() ) {
-		if( ofShadowsData().size() > 0 ) {
+		if( ofShadowsData().size() > 0 && ofLightsData().size() > 0) {
 			definesString += "#define HAS_SHADOWS 1\n";
 		}
 		
