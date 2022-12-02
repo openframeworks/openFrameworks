@@ -168,6 +168,18 @@ int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEv
 		key = 223;
 	}else if(id == "§"){
 		key = 167;
+	}else if(id == "ä"){
+		key = 228;
+	}else if(id == "Ä"){
+		key = 196;
+	}else if(id == "ö"){
+		key = 246;
+	}else if(id == "Ö"){
+		key = 214;
+	}else if(id == "ü"){
+		key = 252;
+	}else if(id == "Ü"){
+		key = 220;
 	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
 		return 0;
 	}
@@ -246,6 +258,18 @@ int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEven
 		key = 223;
 	}else if(id == "§"){
 		key = 167;
+	}else if(id == "ä"){
+		key = 228;
+	}else if(id == "Ä"){
+		key = 196;
+	}else if(id == "ö"){
+		key = 246;
+	}else if(id == "Ö"){
+		key = 214;
+	}else if(id == "ü"){
+		key = 252;
+	}else if(id == "Ü"){
+		key = 220;
 	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
 		return 0;
 	}
