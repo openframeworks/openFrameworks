@@ -27,6 +27,26 @@ var LibraryHTML5Audio = {
     	}
     },
 
+    html5audio_list_devices: function(){
+        if (!navigator.mediaDevices.enumerateDevices) {
+            console.log("enumerateDevices() not supported.");
+        } else {
+            // List cameras and microphones.
+            navigator.mediaDevices.enumerateDevices()
+            .then((devices) => {
+                devices.forEach((device) => {
+                    if(device.kind == "audioinput"){
+                        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+                    }
+                });
+                return devices;
+            })
+            .catch((err) => {
+                console.error(`${err.name}: ${err.message}`);
+            });
+        }
+    },
+
     html5audio_context_create: function(){
     	try {
 			// Fix up for prefixing
