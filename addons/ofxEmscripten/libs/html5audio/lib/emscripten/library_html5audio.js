@@ -1,7 +1,6 @@
 var LibraryHTML5Audio = {
     $AUDIO: {
         players: [],
-
         soundSources: [],
         soundPans: [],
         lastSoundID: 0,
