@@ -59,7 +59,7 @@ void ofApp::draw(){
 		shader.setUniformTexture("tex0", camera.getTexture(), 1);
 	}
 	shader.setUniformTexture("tex1", image, 2);
-	if(movie.getTexture().isAllocated()){
+	if(movie.isFrameNew()){
 		shader.setUniformTexture("tex2", movie.getTexture(), 3);
 	}
 	shader.setUniformTexture("imageMask", maskFbo.getTexture(), 4);
