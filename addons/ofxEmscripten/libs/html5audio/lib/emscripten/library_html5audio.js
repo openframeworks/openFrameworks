@@ -6,7 +6,7 @@ var LibraryHTML5Audio = {
         soundPans: [],
         lastSoundID: 0,
     },
-    
+
     html5audio_list_devices: function(){
         if (!navigator.mediaDevices.enumerateDevices) {
             console.log("enumerateDevices() not supported.");
