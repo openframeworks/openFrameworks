@@ -258,7 +258,7 @@ int ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEve
 	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
         double css_width, css_height;
 	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
-	instance->events().notifyMousePressed(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height),mouseEvent->button);
+	instance->events().notifyMousePressed(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height), mouseEvent->button);
 	return 0;
 }
 
@@ -267,7 +267,7 @@ int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent
 	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
         double css_width, css_height;
 	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
-	instance->events().notifyMouseReleased(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height),0);
+	instance->events().notifyMouseReleased(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height), mouseEvent->button);
 	return 0;
 }
 
