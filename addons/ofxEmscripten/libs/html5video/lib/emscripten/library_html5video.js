@@ -70,6 +70,25 @@ var LibraryHTML5Video = {
         }
     },
 
+    html5video_list_devices: function(){
+        if (!navigator.mediaDevices.enumerateDevices) {
+            console.log("enumerateDevices() not supported.");
+        } else {
+            // List cameras and microphones.
+            navigator.mediaDevices.enumerateDevices()
+            .then((devices) => {
+                devices.forEach((device) => {
+                    if(device.kind == "videoinput"){
+                        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+                    }
+                });
+            })
+            .catch((err) => {
+                console.error(`${err.name}: ${err.message}`);
+            });
+        }
+    },
+
     html5video_player_create: function(){
         var video = document.createElement('video');
         video.loop = true;
