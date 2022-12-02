@@ -31,6 +31,7 @@ ofxEmscriptenVideoGrabber::~ofxEmscriptenVideoGrabber() {
 }
 
 vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
+	html5video_list_devices();
 	return vector<ofVideoDevice>();
 }
 
