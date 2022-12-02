@@ -169,6 +169,11 @@ const ofTexture& ofCubeMap::getBrdfLutTexture() {
 	return sBrdfLutTex;
 }
 
+//----------------------------------------
+int ofCubeMap::getNumMipMaps() {
+	return 5;
+}
+
 
 //----------------------------------------
 ofCubeMap::ofCubeMap() {
@@ -185,7 +190,6 @@ ofCubeMap::ofCubeMap() {
 //----------------------------------------
 ofCubeMap::ofCubeMap(const ofCubeMap & mom) {
 	clear();
-	std::cout << "ofCubeMap(ofCubeMap & mom)" << std::endl;
 	
 	if(data) {
 		data.reset();
@@ -215,7 +219,6 @@ ofCubeMap::ofCubeMap(const ofCubeMap & mom) {
 
 //----------------------------------------
 ofCubeMap::ofCubeMap(ofCubeMap && mom) {
-	std::cout << "ofCubeMap(ofCubeMap && mom)" << std::endl;
 	clear();
 	// taking ownership of the data shared_ptr
 	data = mom.data;
@@ -235,7 +238,6 @@ ofCubeMap::~ofCubeMap() {
 ofCubeMap & ofCubeMap::operator=(const ofCubeMap & mom){
 	if(&mom==this) return *this;
 	clear();
-	std::cout << "operator=(ofCubeMap & mom)" << std::endl;
 	
 	if(data) {
 		data.reset();
@@ -266,7 +268,6 @@ ofCubeMap & ofCubeMap::operator=(const ofCubeMap & mom){
 
 //--------------------------------------------------------------
 ofCubeMap& ofCubeMap::operator=(ofCubeMap && mom) {
-	std::cout << "operator=(ofCubeMap && mom)" << std::endl;
 	clear();
 	
 	data = mom.data;
@@ -298,6 +299,7 @@ bool ofCubeMap::load( std::string apath, int aFaceResolution, bool aBFlipY ) {
 	bool hdr = (ext == "hdr" || ext == "exr");
 	bool bLoadOk = false;
 	data->resolution = aFaceResolution;
+	data->maxMipLevels = getNumMipMaps();
 
 	#ifdef TARGET_OPENGLES
 	if(hdr) {
@@ -507,6 +509,21 @@ void ofCubeMap::_drawCubeEnd() {
 //	endDrawingIntoFace( aCubeFace );
 //	ofPopView();
 //}
+
+//--------------------------------------------------------------
+bool ofCubeMap::hasCubeMap() {
+	return data->bCubeMapAllocated;
+}
+
+//--------------------------------------------------------------
+bool ofCubeMap::hasPrefilteredMap() {
+	return data->bPreFilteredMapAllocated;
+}
+
+//--------------------------------------------------------------
+bool ofCubeMap::hasIrradianceMap() {
+	return data->bIrradianceAllocated;
+}
 
 //--------------------------------------------------------------
 GLuint ofCubeMap::getTextureId() {
