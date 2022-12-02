@@ -66,7 +66,7 @@ var LibraryHTML5Video = {
         	}
         }
     },
-    
+
     html5video_list_devices: function(){
         if (!navigator.mediaDevices.enumerateDevices) {
             console.log("enumerateDevices() not supported.");
