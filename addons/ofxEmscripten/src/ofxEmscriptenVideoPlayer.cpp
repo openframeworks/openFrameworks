@@ -95,7 +95,11 @@ void ofxEmscriptenVideoPlayer::stop(){
 
 bool ofxEmscriptenVideoPlayer::isFrameNew() const{
 	// does not work with Emscripten
-	return true;
+	if (pixels.isAllocated() || texture.isAllocated()){
+		return true;
+	} else{
+		return false;
+	}
 }
 
 ofPixels & ofxEmscriptenVideoPlayer::getPixels(){
