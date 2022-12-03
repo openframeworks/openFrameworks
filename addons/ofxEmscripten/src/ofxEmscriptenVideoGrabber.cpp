@@ -7,6 +7,7 @@
 
 #include "ofxEmscriptenVideoGrabber.h"
 #include "html5video.h"
+#include "emscripten.h"
 
 using namespace std;
 
