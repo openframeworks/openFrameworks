@@ -26,9 +26,29 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 	close();
 }
 
-std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
-	html5audio_list_devices();
-	return vector<ofSoundDevice>();
+EM_ASYNC_JS(const char*, html5audio_list_devices_em_async_js, (), {
+	var string = "";
+	if (!navigator.mediaDevices.enumerateDevices) {
+		console.log("enumerateDevices() not supported.");
+	} else {
+		// List cameras and microphones.
+		var devices = await (navigator.mediaDevices.enumerateDevices());
+		devices.forEach((device) => {
+			if(device.kind == "audioinput"){
+				string = string.concat(",", `${device.kind}: ${device.label} id = ${device.deviceId}`);
+			}
+		});
+	}
+	return allocate(intArrayFromString(string, ALLOC_STACK -1));
+});
+
+std::vector<ofSoundDevice> ofxEmscriptenSoundplayer::listDevices() const{
+	std::string devices = html5video_list_devices_em_async_js();
+	std::vector<std::string> deviceList = ofSplitString(devices, ",", true);
+	for (auto&& device : deviceList){
+		ofLogNotice() << device << std::endl;
+	}
+	return vector<ofSoundDevice>(); // does nothing
 }
 
 bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
