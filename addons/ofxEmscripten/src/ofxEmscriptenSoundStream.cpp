@@ -9,6 +9,7 @@
 #include "html5audio.h"
 #include "ofBaseApp.h"
 #include "ofLog.h"
+#include "emscripten.h"
 
 using namespace std;
 
