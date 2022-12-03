@@ -2,8 +2,7 @@
 
 extern "C"{
 	typedef void (*html5audio_stream_callback)(int bufferSize, int inputChannels, int outputChannels, void * userData);
-	
-	extern void html5audio_list_devices();
+
 	extern int html5audio_context_create();
 	extern int html5audio_context_start(int context);
 	extern int html5audio_context_stop(int context);
