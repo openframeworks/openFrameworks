@@ -40,7 +40,10 @@ EM_ASYNC_JS(const char*, html5audio_list_devices_em_async_js, (), {
 			}
 		});
 	}
-	return allocate(intArrayFromString(string, ALLOC_STACK -1));
+	var size = lengthBytesUTF8(string) + 1;
+  	var stringPointer = stackAlloc(size);
+  	stringToUTF8Array(string, HEAP8, stringPointer, size);
+  	return stringPointer;
 });
 
 std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
