@@ -43,7 +43,7 @@ EM_ASYNC_JS(const char*, html5audio_list_devices_em_async_js, (), {
 	return allocate(intArrayFromString(string, ALLOC_STACK -1));
 });
 
-std::vector<ofSoundDevice> ofxEmscriptenSoundStream::listDevices() const{
+std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
 	std::string devices = html5audio_list_devices_em_async_js();
 	std::vector<std::string> deviceList = ofSplitString(devices, ",", true);
 	for (auto&& device : deviceList){
