@@ -36,7 +36,7 @@ void ofApp::setup(){
 
 	// or by name
 #ifdef TARGET_LINUX
-	auto devices = soundStream.getMatchingDevices("default"); // this prints the device list too, also with linux.
+	auto devices = soundStream.getMatchingDevices("default");
 	if(!devices.empty()){
 		settings.setInDevice(devices[0]);
 	}
