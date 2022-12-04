@@ -29,14 +29,19 @@ std::string toString(ofSoundDevice::Api api){
 
 void ofBaseSoundStream::printDeviceList() const {
 	ofLogNotice("ofBaseSoundStream::printDeviceList") << std::endl;
-	for(int i=ofSoundDevice::ALSA; i<ofSoundDevice::NUM_APIS; ++i){
-		ofSoundDevice::Api api = (ofSoundDevice::Api)i;
-		auto devices = getDeviceList(api);
-		if(!devices.empty()){
+	#ifndef TARGET_EMSCRIPTEN
+		for(int i=ofSoundDevice::ALSA; i<ofSoundDevice::NUM_APIS; ++i){
+			ofSoundDevice::Api api = (ofSoundDevice::Api)i;
+			auto devices = getDeviceList(api);
+			if(!devices.empty()){
 				ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << toString(api);
 				ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
+			}
 		}
-	}
+	#else
+		ofSoundDevice::Api api = (ofSoundDevice::Api)0;
+		getDeviceList(api);	
+	#endif
 }
 
 //------------------------------------------------------------
