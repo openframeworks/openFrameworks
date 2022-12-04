@@ -31,7 +31,7 @@ ofxEmscriptenVideoGrabber::~ofxEmscriptenVideoGrabber() {
 	// TODO Auto-generated destructor stub
 }
 
-EM_ASYNC_JS(const char*, html5video_list_devices_em_async_js, (), {
+EM_ASYNC_JS(const char*, html5video_list_devices, (), {
 	var string = "";
 	if (!navigator.mediaDevices.enumerateDevices) {
 		console.log("enumerateDevices() not supported.");
@@ -48,7 +48,7 @@ EM_ASYNC_JS(const char*, html5video_list_devices_em_async_js, (), {
 });
 
 vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
-	std::string devices = html5video_list_devices_em_async_js();
+	std::string devices = html5video_list_devices();
 	std::vector<std::string> deviceList = ofSplitString(devices, ",", true);
 	for (auto&& device : deviceList){
 		ofLogNotice() << device << std::endl;
