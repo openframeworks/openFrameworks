@@ -47,7 +47,7 @@ std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice
 	std::string devices = html5audio_list_devices_em_async_js();
 	std::vector<std::string> deviceList = ofSplitString(devices, ",", true);
 	for (auto&& device : deviceList){
-		ofLogNotice() << device << std::endl;
+		ofLogNotice() << device;
 	}
 	return vector<ofSoundDevice>(); // does nothing
 }
