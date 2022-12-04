@@ -35,7 +35,7 @@ EM_ASYNC_JS(const char*, html5audio_list_devices_em_async_js, (), {
 		// List cameras and microphones.
 		var devices = await (navigator.mediaDevices.enumerateDevices());
 		devices.forEach((device) => {
-			if(device.kind == "audioinput"){
+			if (device.kind == "audioinput" || device.kind == "audiooutput"){
 				string = string.concat(",", `${device.kind}: ${device.label} id = ${device.deviceId}`);
 			}
 		});
