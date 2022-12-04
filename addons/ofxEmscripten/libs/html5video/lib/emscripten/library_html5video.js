@@ -120,7 +120,11 @@ var LibraryHTML5Video = {
     },
 
     html5video_player_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.players[id].pixelFormat), ALLOC_STACK);
+        var string = VIDEO.players[id].pixelFormat;
+        var size = lengthBytesUTF8(string) + 1;
+        var stringPointer = stackAlloc(size);
+        stringToUTF8Array(string, HEAP8, stringPointer, size);
+        return stringPointer;
     },
 
     html5video_player_set_pixel_format: function(id, format){
@@ -294,7 +298,11 @@ var LibraryHTML5Video = {
     },
 
     html5video_grabber_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.grabbers[id].pixelFormat), ALLOC_STACK);
+        var string = VIDEO.grabbers[id].pixelFormat;
+        var size = lengthBytesUTF8(string) + 1;
+        var stringPointer = stackAlloc(size);
+        stringToUTF8Array(string, HEAP8, stringPointer, size);
+        return stringPointer;
     },
 
     html5video_grabber_set_pixel_format: function(id, format){
