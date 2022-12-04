@@ -35,18 +35,19 @@ void ofApp::setup(){
 	// settings.api = ofSoundDevice::Api::PULSE;
 
 	// or by name
-	auto devices = soundStream.getMatchingDevices("default");
+#ifdef TARGET_LINUX
+	auto devices = soundStream.getMatchingDevices("default"); // this prints the device list too, also with linux.
 	if(!devices.empty()){
 		settings.setInDevice(devices[0]);
 	}
-
+#endif
 	settings.setInListener(this);
 	settings.sampleRate = 44100;
-	#ifdef TARGET_EMSCRIPTEN
-		settings.numOutputChannels = 2;
-	#else
-		settings.numOutputChannels = 0;
-	#endif
+#ifdef TARGET_EMSCRIPTEN
+	settings.numOutputChannels = 2;
+#else
+	settings.numOutputChannels = 0;
+#endif
 	settings.numInputChannels = 2;
 	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
