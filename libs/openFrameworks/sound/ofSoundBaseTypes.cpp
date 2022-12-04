@@ -40,7 +40,7 @@ void ofBaseSoundStream::printDeviceList() const {
 		}
 	#else
 		ofSoundDevice::Api api = (ofSoundDevice::Api)0;
-		getDeviceList(api);	
+		getDeviceList(api); // only trigger the Java Script funtion once.
 	#endif
 }
 
