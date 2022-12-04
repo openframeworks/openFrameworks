@@ -16,7 +16,7 @@ public:
 	ofxEmscriptenSoundStream();
 	~ofxEmscriptenSoundStream();
 
-	std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api) const;
+	std::vector<ofSoundDevice> listDevices() const;
 	bool setup(const ofSoundStreamSettings & settings);
 	void setInput(ofBaseSoundInput * soundInput);
 	void setOutput(ofBaseSoundOutput * soundOutput);
