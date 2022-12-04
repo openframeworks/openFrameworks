@@ -51,7 +51,7 @@ vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
 	std::string devices = html5video_list_devices();
 	std::vector<std::string> deviceList = ofSplitString(devices, ",", true);
 	for (auto&& device : deviceList){
-		ofLogNotice() << device << std::endl;
+		ofLogNotice() << device;
 	}
 	return vector<ofVideoDevice>(); // does nothing
 }
