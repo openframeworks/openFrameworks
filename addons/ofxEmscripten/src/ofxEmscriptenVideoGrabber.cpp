@@ -44,7 +44,10 @@ EM_ASYNC_JS(const char*, html5video_list_devices, (), {
 			}
 		});
 	}
-	return allocate(intArrayFromString(string, ALLOC_STACK -1));
+	var size = lengthBytesUTF8(string) + 1;
+  	var stringPointer = stackAlloc(size);
+  	stringToUTF8Array(string, HEAP8, stringPointer, size);
+  	return stringPointer;
 });
 
 vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
