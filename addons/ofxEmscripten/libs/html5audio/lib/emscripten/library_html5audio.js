@@ -124,11 +124,11 @@ var LibraryHTML5Audio = {
     },
 
     html5audio_sound_set_volume: function (sound_id, volume) {
-        AUDIO.players[sound_id].volume = volume / 10;
+        AUDIO.players[sound_id].volume = volume;
     },
 
     html5audio_sound_volume: function (sound_id) {
-        return AUDIO.players[sound_id].volume * 10;
+        return AUDIO.players[sound_id].volume;
     },
 
     html5audio_sound_set_pan: function (sound_id, pan) {
