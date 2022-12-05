@@ -26,12 +26,12 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
@@ -113,6 +113,7 @@
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphics.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsBaseTypes.h" />
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofImage.h" />
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofPath.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofCairoRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphics.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsBaseTypes.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofImage.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPath.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\graphics\ofPixels.cpp" />
