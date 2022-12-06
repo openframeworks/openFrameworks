@@ -24,14 +24,29 @@ uniform vec3 uCameraPos;
 
 vec4 ofApplyPbr(in Material amat, in PbrData apbrData ) {
 	// calculate the IBL
+	#ifdef HAS_CUBE_MAP
 	calcEnvironmentIndirect( apbrData, amat );
+	#endif
 	
+	#if defined(MAX_LIGHTS) && MAX_LIGHTS
 	// now lets add in all of the lights //
 	for( int i = 0; i < MAX_LIGHTS; i++ ){
 		if(lights[i].enabled<0.5) continue;
 		// function calculates all the surface lighting for each light type, including shadows
-		calcLight(i, apbrData, amat);
+		calcLight(lights[i], i, apbrData, amat);
 	}
+	#endif
+	
+	#ifndef HAS_CUBE_MAP
+		#if defined(MAX_LIGHTS) && !MAX_LIGHTS
+			// we have no lighting in the scene //
+			// lets add some so we can see what's going on //
+			#ifndef HAS_SHADOWS
+//			calcFakeDirectionalLight(vec3(0.0,1.0,-0.75), apbrData, amat );
+			calcFakeDirectionalLight(uCameraPos, apbrData, amat );
+			#endif
+		#endif
+	#endif
 	
 	vec3 totalDiffuse = apbrData.directDiffuse + apbrData.indirectDiffuse;
 	vec3 totalSpecular = apbrData.directSpecular + apbrData.indirectSpecular;

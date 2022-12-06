@@ -14,7 +14,10 @@ struct shadowData {
 	float sampleRadius;
 	mat4 shadowMatrix;
 };
+
+#if defined(MAX_LIGHTS) && MAX_LIGHTS
 uniform shadowData shadows[MAX_LIGHTS];
+#endif
 
 #ifndef FLT_EPS
 #define FLT_EPS            0.0006103515625
