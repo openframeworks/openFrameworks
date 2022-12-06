@@ -750,13 +750,6 @@ const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor,
 		textureTarget = dt.textureTarget;
 	}
 	
-//	ofLogNotice("ofMaterial::getShader : textureTarget ") << textureTarget << " geometryHasColor: "<<geometryHasColor << " | " << ofGetFrameNum();
-//	if( ofGetFrameNum() %600 == 0 ) {
-//		ofLogNotice("-- ofMaterial :: getshader ---------");
-//		ofLogNotice("SHADER: ") << std::endl << shaders[&renderer]->noTexture.getShaderSource(GL_FRAGMENT_SHADER);
-//		ofLogNotice(" --! ofMaterial :: getshader !---------");
-//	}
-	
 	switch(textureTarget){
 	case OF_NO_TEXTURE:
         if(geometryHasColor){
@@ -1188,22 +1181,7 @@ const std::string ofMaterial::getDefinesString() const {
 			definesString += "#define HAS_TEX_ENV_BRDF_LUT 1\n";
 		}
 		
-		//definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(cubeMapData->maxMipLevels,0)+"\n";
 		definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(ofCubeMap::getNumMipMaps(),0)+"\n";
-		
-		
-//		if( cubeMapData ) {
-//			if( cubeMapData->bIrradianceAllocated ) {
-//				definesString += "#define HAS_TEX_ENV_IRRADIANCE 1\n";
-//			}
-//			if(cubeMapData->bPreFilteredMapAllocated) {
-//				definesString += "#define HAS_TEX_ENV_PRE_FILTER 1\n";
-//			}
-//			if( cubeMapData->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
-//				definesString += "#define HAS_TEX_ENV_BRDF_LUT 1\n";
-//			}
-//			definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(cubeMapData->maxMipLevels,0)+"\n";
-//		}
 	}
 	
 	definesString += ofShadow::getShaderDefinesAsString();
