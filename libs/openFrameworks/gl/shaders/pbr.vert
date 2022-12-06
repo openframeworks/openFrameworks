@@ -27,21 +27,38 @@ uniform vec2 mat_texcoord_scale;
 uniform float mat_displacement_strength;
 #endif
 
-vec4 getTransformedPosition() {
+vec2 getTransformedTexcoord() {
+	return (textureMatrix*vec4(texcoord.x*mat_texcoord_scale.x,texcoord.y*mat_texcoord_scale.y,0,1)).xy;
+}
+
+vec4 getTransformedPositionAlongNormal(in float ainfluence) {
 	vec3 npos = position.xyz;
-	#if defined(HAS_TEX_DISPLACEMENT)
-		vec4 dispColor = TEXTURE(tex_displacement, texcoord * mat_texcoord_scale );
-		float df = 0.30 * dispColor.r + 0.59 * dispColor.g + 0.11 * dispColor.b;
-		npos = vec3(normal.xyz * df);
-		npos = npos * mat_displacement_strength;
-		npos += position.xyz;
-	#endif
+	npos = vec3(normal.xyz * ainfluence);
+	npos += position.xyz;
 	return vec4(npos.xyz, position.w);
+}
+
+float getVertexDisplacement() {
+	float df = 0.0;
+#if defined(HAS_TEX_DISPLACEMENT)
+	vec4 dispColor = TEXTURE(tex_displacement, texcoord * mat_texcoord_scale );
+	df = 0.30 * dispColor.r + 0.59 * dispColor.g + 0.11 * dispColor.b;
+#endif
+	return df;
+}
+
+vec4 getTransformedPosition() {
+#if defined(HAS_TEX_DISPLACEMENT)
+	return getTransformedPositionAlongNormal(getVertexDisplacement() * mat_displacement_strength);
+#else
+	return position;
+#endif
 }
 
 void sendVaryings(in vec4 apos) {
 	v_worldNormal = normalize(mat3(modelMatrix) * normal.xyz);
-	v_texcoord = (textureMatrix*vec4(texcoord.x*mat_texcoord_scale.x,texcoord.y*mat_texcoord_scale.y,0,1)).xy;
+//	v_texcoord = (textureMatrix*vec4(texcoord.x*mat_texcoord_scale.x,texcoord.y*mat_texcoord_scale.y,0,1)).xy;
+	v_texcoord = getTransformedTexcoord();
 	v_worldPosition = (modelMatrix * apos).xyz;
 
 	#if HAS_COLOR
