@@ -559,10 +559,7 @@ bool ofArduino::isAttached() {
 // ------------------------------ private functions
 
 void ofArduino::processData(unsigned char inputData) {
-
-	char msg[100];
-	sprintf(msg, "Received Byte: %i", inputData);
-	//Logger::get("Application").information(msg);
+	ofLog() << "Received Byte: " << inputData;
 
 	// we have command data
 	if (_waitForData > 0 && inputData < 128) {
