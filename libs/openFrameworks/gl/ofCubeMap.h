@@ -5,10 +5,8 @@
 //
 
 #pragma once
-#include "ofShader.h"
-#include "ofNode.h"
 #include "ofFbo.h"
-
+class ofShader;
 
 class ofGLProgrammableRenderer;
 
