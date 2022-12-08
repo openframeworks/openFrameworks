@@ -61,7 +61,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_touchmove_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchcancel_callback("#canvas",this,1,&touch_cb);
 
-    EM_ASM({setTimeout(function() {canvas.focused = true;}, 0); canvas.onfocus = function() {canvas.focused = true}; canvas.onblur = function() {canvas.focused = false}});
+    EM_ASM({setTimeout(function() {canvas.hasFocus = true;}, 0); canvas.onfocus = function() {canvas.hasFocus = true}; canvas.onblur = function() {canvas.hasFocus = false}});
 }
 
 void ofxAppEmscriptenWindow::loop(){
