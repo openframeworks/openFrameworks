@@ -303,10 +303,10 @@ ofFbo::ofFbo(const ofFbo & mom){
 }
 
 //--------------------------------------------------------------
-void ofFbo::operator+=(const ofFbo & f){
-	if (f.isAllocated()) {
+void ofFbo::operator+=(const ofFbo & fbo){
+	if (fbo.isAllocated()) {
 		this->begin();
-		f.draw(0,0);
+		fbo.draw(0,0);
 		this->end();
 	}
 }
