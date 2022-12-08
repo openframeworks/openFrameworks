@@ -61,10 +61,10 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_touchmove_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchcancel_callback("#canvas",this,1,&touch_cb);
 
+    EM_ASM({canvas.onfocus = function() {canvas.focused = true}; canvas.onblur = function() {canvas.focused = false}});
 }
 
 void ofxAppEmscriptenWindow::loop(){
-
 	instance->events().notifySetup();
 
 	// Emulate loop via callbacks
@@ -429,11 +429,9 @@ void ofxAppEmscriptenWindow::enableSetupScreen(){
 	bEnableSetupScreen = true;
 }
 
-
 void ofxAppEmscriptenWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 }
-
 
 ofCoreEvents & ofxAppEmscriptenWindow::events(){
 	return _events;
@@ -456,4 +454,3 @@ void ofxAppEmscriptenWindow::startRender(){
 void ofxAppEmscriptenWindow::finishRender(){
 	renderer()->finishRender();
 }
-
