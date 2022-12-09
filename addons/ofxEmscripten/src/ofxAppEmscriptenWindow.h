@@ -69,7 +69,7 @@ public:
 	void update();
 	void draw();
 
-    virtual void makeCurrent();
+	virtual void makeCurrent();
 	virtual void startRender();
 	virtual void finishRender();
 
