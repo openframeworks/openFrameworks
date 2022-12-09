@@ -107,4 +107,3 @@ private:
 };
 
 #endif /* OFAPPEMSCRIPTENWINDOW_H_ */
-
