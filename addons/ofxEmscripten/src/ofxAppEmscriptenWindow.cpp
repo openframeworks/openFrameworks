@@ -369,7 +369,6 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
     return 0;
 }
 
-emscripten_set_wheel_callback("#canvas",this,1,&mousescrolled_cb);
 void ofxAppEmscriptenWindow::hideCursor(){
 	emscripten_hide_mouse();
 }
