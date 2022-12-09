@@ -60,7 +60,8 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_touchend_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchmove_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchcancel_callback("#canvas",this,1,&touch_cb);
-
+	
+    emscripten_set_wheel_callback("#canvas",this,1,&mousescrolled_cb);
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -308,6 +309,11 @@ int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEv
 	return 0;
 }
 
+int ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData){
+	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseX(), wheelEvent->deltaX, wheelEvent->deltaY);
+	return 0;
+}
+
 int ofxAppEmscriptenWindow::mouseenter_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	int canvas_width, canvas_height;
 	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
@@ -363,6 +369,7 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
     return 0;
 }
 
+emscripten_set_wheel_callback("#canvas",this,1,&mousescrolled_cb);
 void ofxAppEmscriptenWindow::hideCursor(){
 	emscripten_hide_mouse();
 }
