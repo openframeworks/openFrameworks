@@ -60,6 +60,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_touchend_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchmove_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchcancel_callback("#canvas",this,1,&touch_cb);
+
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -362,7 +363,6 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
     return 0;
 }
 
-emscripten_set_wheel_callback("#canvas",this,1,&mousescrolled_cb);
 void ofxAppEmscriptenWindow::hideCursor(){
 	emscripten_hide_mouse();
 }
