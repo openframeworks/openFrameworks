@@ -61,7 +61,10 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_touchmove_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchcancel_callback("#canvas",this,1,&touch_cb);
 
-    EM_ASM({setTimeout(function() {canvas.hasFocus = true; canvas.focus()}, 0); canvas.onfocus = function() {canvas.hasFocus = true}; canvas.onblur = function() {canvas.hasFocus = false}});
+    emscripten_set_focus_callback("#canvas",this,1,&focus_cb);    
+    emscripten_set_blur_callback("#canvas",this,1,&blur_cb);
+    emscripten_set_focusin_callback("#canvas",this,1,&focusin_cb);
+    emscripten_set_focusout_callback("#canvas",this,1,&focusout_cb);
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -361,6 +364,22 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
                 instance->events().notifyTouchEvent(touchArgs);
            }
     return 0;
+}
+
+int ofxAppEmscriptenWindow::focus_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData){
+	return 0;
+}
+
+int ofxAppEmscriptenWindow::blur_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData){
+	return 0;
+}
+
+int ofxAppEmscriptenWindow::focusin_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData){
+	return 0;
+}
+
+int ofxAppEmscriptenWindow::focusout_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData){
+	return 0;
 }
 
 void ofxAppEmscriptenWindow::hideCursor(){
