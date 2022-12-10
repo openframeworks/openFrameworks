@@ -94,8 +94,6 @@ private:
 	
 	static int focus_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData);
 	static int blur_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData);
-	static int focusin_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData);
-	static int focusout_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData);
 
 
 	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE  context = 0;
