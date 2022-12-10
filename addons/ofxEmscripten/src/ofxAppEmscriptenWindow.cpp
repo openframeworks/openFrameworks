@@ -63,8 +63,6 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 
     emscripten_set_focus_callback("#canvas",this,1,&focus_cb);    
     emscripten_set_blur_callback("#canvas",this,1,&blur_cb);
-    emscripten_set_focusin_callback("#canvas",this,1,&focusin_cb);
-    emscripten_set_focusout_callback("#canvas",this,1,&focusout_cb);
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -371,14 +369,6 @@ int ofxAppEmscriptenWindow::focus_cb(int eventType, const EmscriptenFocusEvent *
 }
 
 int ofxAppEmscriptenWindow::blur_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData){
-	return 0;
-}
-
-int ofxAppEmscriptenWindow::focusin_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData){
-	return 0;
-}
-
-int ofxAppEmscriptenWindow::focusout_cb(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData){
 	return 0;
 }
 
