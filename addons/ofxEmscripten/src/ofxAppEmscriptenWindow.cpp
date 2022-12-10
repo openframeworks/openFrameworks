@@ -310,7 +310,7 @@ int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEv
 }
 
 int ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData){
-	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseY(), wheelEvent->deltaX, wheelEvent->deltaY);
+	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseY(), wheelEvent->deltaX, wheelEvent->deltaY / 100);
 	return 0;
 }
 
