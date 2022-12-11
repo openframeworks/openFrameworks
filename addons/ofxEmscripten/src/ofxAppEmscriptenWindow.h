@@ -69,7 +69,7 @@ public:
 	void update();
 	void draw();
 
-    virtual void makeCurrent();
+	virtual void makeCurrent();
 	virtual void startRender();
 	virtual void finishRender();
 
@@ -83,24 +83,24 @@ private:
 	static void display_cb();
 	static int keydown_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
 	static int keyup_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
-	
+
 	static int mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
 	static int mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
 	static int mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
 	static int mouseenter_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
 	static int mouseleave_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	
-	static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
-	
-	int id;
 
-	
+	static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
+
+	static int gamepad_cb(int eventType, const EmscriptenGamepadEvent *gamepadEvent, void *userData);
+
+
 	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE  context = 0;
 
-    bool bSetMainLoopTiming = true;
-    bool bEnableSetupScreen = true;
-    ofCoreEvents _events;
-    std::shared_ptr<ofBaseRenderer> _renderer;
+	bool bSetMainLoopTiming = true;
+	bool bEnableSetupScreen = true;
+	ofCoreEvents _events;
+	std::shared_ptr<ofBaseRenderer> _renderer;
 };
 
 #endif /* OFAPPEMSCRIPTENWINDOW_H_ */
