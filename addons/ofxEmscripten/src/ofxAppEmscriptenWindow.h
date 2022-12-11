@@ -92,7 +92,8 @@ private:
 
 	static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
 
-	static int gamepad_cb(int eventType, const EmscriptenGamepadEvent *gamepadEvent, void *userData);
+	static int gamepadconnected_cb(int eventType, const EmscriptenGamepadEvent *gamepadEvent, void *userData);
+	static int gamepaddisconnected_cb(int eventType, const EmscriptenGamepadEvent *gamepadEvent, void *userData);
 
 
 	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE  context = 0;
