@@ -20,9 +20,7 @@ enum ReadyState{
 
 ofxEmscriptenVideoPlayer::ofxEmscriptenVideoPlayer()
 :id(html5video_player_create())
-,gotFirstFrame(false)
 ,usePixels(true){
-
 
 }
 
@@ -38,12 +36,9 @@ bool ofxEmscriptenVideoPlayer::load(string name){
 void ofxEmscriptenVideoPlayer::close(){
 	html5video_player_delete(id);
 	id = html5video_player_create();
-	gotFirstFrame = false;
 }
 
-
 void ofxEmscriptenVideoPlayer::update(){
-	gotFirstFrame = pixels.isAllocated();
 	if(html5video_player_update(id,pixels.isAllocated() && usePixels,pixels.getData())){
 		if(texture.texData.width!=html5video_player_width(id) || texture.texData.height!=html5video_player_height(id)){
 			texture.texData.width = html5video_player_width(id);
@@ -90,19 +85,21 @@ void ofxEmscriptenVideoPlayer::update(){
 	}
 }
 
-
-
 void ofxEmscriptenVideoPlayer::play(){
 	html5video_player_play(id);
 }
-
 
 void ofxEmscriptenVideoPlayer::stop(){
 	html5video_player_stop(id);
 }
 
 bool ofxEmscriptenVideoPlayer::isFrameNew() const{
-	return gotFirstFrame;
+	// does not work with Emscripten
+	if (pixels.isAllocated() || texture.isAllocated()){
+		return true;
+	} else{
+		return false;
+	}
 }
 
 ofPixels & ofxEmscriptenVideoPlayer::getPixels(){
@@ -136,7 +133,6 @@ bool ofxEmscriptenVideoPlayer::isLoaded() const{
 bool ofxEmscriptenVideoPlayer::isPlaying() const{
 	return !isPaused();
 }
-
 
 bool ofxEmscriptenVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
@@ -185,7 +181,6 @@ bool ofxEmscriptenVideoPlayer::getIsMovieDone() const{
 	return html5video_player_ended(id);
 }
 
-
 void ofxEmscriptenVideoPlayer::setPaused(bool bPause){
 	if(bPause){
 		html5video_player_pause(id);
@@ -218,7 +213,6 @@ void ofxEmscriptenVideoPlayer::setFrame(int frame){
 
 }
 
-
 int	ofxEmscriptenVideoPlayer::getCurrentFrame() const{
 	return 0;
 }
@@ -230,7 +224,6 @@ int	ofxEmscriptenVideoPlayer::getTotalNumFrames() const{
 ofLoopType ofxEmscriptenVideoPlayer::getLoopState() const{
 	return html5video_player_loop(id)?OF_LOOP_NORMAL:OF_LOOP_NONE;
 }
-
 
 void ofxEmscriptenVideoPlayer::firstFrame(){
 	html5video_player_set_current_time(id,0);
