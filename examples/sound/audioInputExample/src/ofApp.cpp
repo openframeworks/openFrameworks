@@ -35,7 +35,7 @@ void ofApp::setup(){
 	// settings.api = ofSoundDevice::Api::PULSE;
 
 	// or by name
-#ifdef TARGET_LINUX
+#ifndef TARGET_EMSCRIPTEN
 	auto devices = soundStream.getMatchingDevices("default");
 	if(!devices.empty()){
 		settings.setInDevice(devices[0]);
