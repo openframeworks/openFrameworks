@@ -60,7 +60,7 @@ bool ofxEmscriptenVideoGrabber::setup(int w, int h){
 }
 
 bool ofxEmscriptenVideoGrabber::isInitialized() const{
-	return html5video_grabber_ready_state(id) >= HAVE_ENOUGH_DATA;
+	return html5video_grabber_ready_state(id)>=HAVE_ENOUGH_DATA;
 }
 
 void ofxEmscriptenVideoGrabber::update(){
