@@ -29,7 +29,11 @@ ofxEmscriptenVideoPlayer::~ofxEmscriptenVideoPlayer() {
 }
 
 bool ofxEmscriptenVideoPlayer::load(string name){
-	html5video_player_load(id,ofToDataPath(name).c_str());
+	if (name.substr(0, 12) == "blob:http://" || name.substr(0, 13) == "blob:https://"){
+		html5video_player_load(id, name.c_str());
+	} else{
+		html5video_player_load(id, ofToDataPath(name).c_str());
+	}
 	return true;
 }
 
@@ -239,4 +243,18 @@ void ofxEmscriptenVideoPlayer::previousFrame(){
 
 void ofxEmscriptenVideoPlayer::setUsePixels(bool usePixels){
 	this->usePixels = usePixels;
+}
+
+void ofxEmscriptenVideoPlayer::setPan(float pan){
+	if(id!=-1){
+		html5video_player_set_pan(id, pan);
+	}
+}
+
+float ofxEmscriptenVideoPlayer::getPan() const{
+	if(id!=-1){
+		return html5video_player_pan(id);
+	}else{
+		return 0;
+	}
 }
