@@ -666,6 +666,7 @@
 			"buildActionMask": "2147483647",
 			"files": [
 				"E4B69E200A3A1BDC003C02F2",
+				"19E2B90C294BB5FD006F8E59",
 				"E4B69E210A3A1BDC003C02F2"
 			],
 			"runOnlyForDeploymentPostprocessing": "0"
@@ -929,6 +930,8 @@
 			"isa": "PBXGroup",
 			"name": "sound",
 			"children": [
+				"19E2B90A294BB5FD006F8E59",
+				"19E2B90B294BB5FD006F8E59",
 				"E429636A2163EDD300A6A9E2",
 				"E42963712163EDD300A6A9E2",
 				"E429636C2163EDD300A6A9E2",
@@ -1163,6 +1166,13 @@
 				"E42963002163EDD300A6A9E2"
 			],
 			"sourceTree": "SOURCE_ROOT"
+		},
+		"19E2B90B294BB5FD006F8E59": {
+			"path": "ofAVEngineSoundPlayer.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
 		},
 		"E429631C2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/math/ofMath.h",
@@ -1688,12 +1698,9 @@
 			"lastKnownFileType": "sourcecode.cpp.cpp",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"E429632A2163EDD300A6A9E2": {
-			"path": "../../../libs/openFrameworks/gl/ofFbo.cpp",
-			"isa": "PBXFileReference",
-			"name": "ofFbo.cpp",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"sourceTree": "SOURCE_ROOT"
+		"19E2B90C294BB5FD006F8E59": {
+			"isa": "PBXBuildFile",
+			"fileRef": "19E2B90B294BB5FD006F8E59"
 		},
 		"E429631D2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/math/ofQuaternion.h",
@@ -1702,12 +1709,26 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
+		"E429632A2163EDD300A6A9E2": {
+			"path": "../../../libs/openFrameworks/gl/ofFbo.cpp",
+			"isa": "PBXFileReference",
+			"name": "ofFbo.cpp",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
 		"E42963422163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/communication/ofSerial.cpp",
 			"isa": "PBXFileReference",
 			"name": "ofSerial.cpp",
 			"lastKnownFileType": "sourcecode.cpp.cpp",
 			"sourceTree": "SOURCE_ROOT"
+		},
+		"19E2B90A294BB5FD006F8E59": {
+			"path": "ofAVEngineSoundPlayer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
 		},
 		"E429631B2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/math/ofMatrix3x3.cpp",
