@@ -203,7 +203,7 @@ var LibraryHTML5Audio = {
         return AUDIO.mediaElement = null;
     },
 
-    html5audio_sound_is_loaded: function (sound) {
+    html5audio_sound_is_loaded: function (id) {
         if (AUDIO.players[id].src != undefined) {
             return true;
         }
