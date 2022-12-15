@@ -64,6 +64,10 @@
 					"$(OF_CORE_HEADERS)",
 					"src"
 				],
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)"
+				],
 				"GCC_PREFIX_HEADER": "ofxiOS_Prefix.pch",
 				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME": "",
 				"FRAMEWORK_SEARCH_PATHS": [
@@ -291,6 +295,10 @@
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
 					"src"
+				],
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)"
 				],
 				"GCC_PREFIX_HEADER": "ofxiOS_Prefix.pch",
 				"FRAMEWORK_SEARCH_PATHS": [
