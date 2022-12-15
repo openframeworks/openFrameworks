@@ -26,6 +26,7 @@ std::string toString(ofSoundDevice::Api api){
 	}
 }
 
+
 void ofBaseSoundStream::printDeviceList() const {
 	ofLogNotice("ofBaseSoundStream::printDeviceList") << std::endl;
 #ifndef TARGET_EMSCRIPTEN
