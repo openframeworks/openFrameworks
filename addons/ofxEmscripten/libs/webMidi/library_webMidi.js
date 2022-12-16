@@ -2,29 +2,13 @@ var webMidi = null;
 var midiIn = null;
 var midiOut = null;
 
-function getMidiDevices() {
+function getMidiDevices(){
 	var midiInDevices = "";
 	var midiOutDevices = "";
-	function onMIDISuccess(midiAccess) {
+	function onMIDISuccess(midiAccess){
 		webMidi = midiAccess;
-		var inputDeviceCount = midiAccess.inputs.size;
-		if(inputDeviceCount > 0) {
-			var inputs = midiAccess.inputs.values();
-			for ( var input = inputs.next(); input && !input.done; input = inputs.next()) {
-				midiInDevices = midiInDevices.concat(",", `${input.value.id}`,",", `${input.value.name}`);
-			}
-  			Module.loadMidiInDevices(midiInDevices);
-		}
-		var outputDeviceCount = midiAccess.outputs.size;
-		if(outputDeviceCount > 0) {
-			var outputs = midiAccess.outputs.values();
-			for ( var output = outputs.next(); output && !output.done; output = outputs.next()) {
-				midiOutDevices = midiOutDevices.concat(",", `${output.value.id}`,",", `${output.value.name}`);
-			}
-  			Module.loadMidiOutDevices(midiOutDevices);
-		}
 	}
-	function onMIDIFailure(e) {
+	function onMIDIFailure(e){
 		console.log('No access to MIDI devices' + e);
 	}
 	if(navigator.requestMIDIAccess){
@@ -32,6 +16,25 @@ function getMidiDevices() {
 	}else{
 		alert("No MIDI support in your browser.");
 	}
+	webMidi.onstatechange = (event) => {
+		console.log(event.port.name, event.port.manufacturer, event.port.state);
+		var inputDeviceCount = webMidi.inputs.size;
+		if(inputDeviceCount > 0){
+			var inputs = webMidi.inputs.values();
+			for(var input = inputs.next(); input && !input.done; input = inputs.next()){
+				midiInDevices = midiInDevices.concat(",", `${input.value.id}`,",", `${input.value.name}`);
+			}
+  			Module.loadMidiInDevices(midiInDevices);
+		}
+		var outputDeviceCount = webMidi.outputs.size;
+		if(outputDeviceCount > 0){
+			var outputs = webMidi.outputs.values();
+			for(var output = outputs.next(); output && !output.done; output = outputs.next()){
+				midiOutDevices = midiOutDevices.concat(",", `${output.value.id}`,",", `${output.value.name}`);
+			}
+  			Module.loadMidiOutDevices(midiOutDevices);
+		}
+	};
 }
 		
 function selectMidiIn(file){
