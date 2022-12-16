@@ -34,7 +34,7 @@ function getMidiDevices(){
 			}
   			Module.loadMidiOutDevices(midiOutDevices);
 		}
-	};
+	}
 }
 		
 function selectMidiIn(file){
