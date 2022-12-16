@@ -391,7 +391,6 @@ void ofLight::onOrientationChanged() {
 			r->setLightPosition( data->glIndex, data->position );
 		}
 	}else if(getIsSpotlight() || getIsAreaLight()) {
-		ofLogNotice("ofLight::onOrientationChanged");
 		// determines the axis of the cone light
 		glm::vec3 lookAtDir(glm::normalize(getGlobalOrientation() * glm::vec4(0,0,-1, 1)));
 		data->direction = lookAtDir;
