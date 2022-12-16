@@ -252,6 +252,7 @@ void setupMaterial( inout Material amat ) {
 	amat.clearCoat = 0.0;
 	amat.clearCoatRoughness = 0.1;
 #endif
+	amat.clearCoatRoughness = saturate( amat.clearCoatRoughness + 0.001 );
 	
 	// set some minimums, otherwise things can render black ....
 	amat.metallic = saturate( amat.metallic + FLT_EPS);

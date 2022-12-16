@@ -256,6 +256,9 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 		shadow = 1.f;
 	}
 	vec2 st2 = projCoords.xy;
+	vec2 claMin = vec2(FLT_EPS);
+	vec2 claMax = vec2(ONE_LESS_FLT_EPS);
+
 	if( aShadowData.shadowType < 1 ) {
 		// hard shadow
 	} else if( aShadowData.shadowType < 2 ) {
@@ -263,6 +266,7 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
 			st2 = projCoords.xy+cornerSampleDisk4_v2[i]*radius;
+			st2 = clamp( st2, claMin, claMax );
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 			closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
 #else
@@ -278,6 +282,7 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
 			st2 = projCoords.xy+cornerSampleDisk4_v2[i]*radius;
+			st2 = clamp( st2, claMin, claMax );
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 			closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
 #else
@@ -291,6 +296,7 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 			// sample from the up, down, left, right
 			for( int i = 0; i < 4; i++ ) {
 				st2 = projCoords.xy+cardinalSampleDisk4_v2[i]*radius;
+				st2 = clamp( st2, claMin, claMax );
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 				closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
 #else
@@ -311,6 +317,7 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 		for (int i = -filterSize; i <= filterSize; i++) {
 			for (int j = -filterSize; j <= filterSize; j++) {
 				st2 = projCoords.xy + vec2(float(i),float(j)) * radius;
+				st2 = clamp( st2, claMin, claMax );
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 				closestDepth = texture(aShadowMap, vec3(st2, shadowTexIndex )).r;
 #else
@@ -328,11 +335,11 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 			
 float DirectionalShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWorldNormal) {
 	// aWorldNormal should be normalized //
-	vec3 lightDiff = aWorldFragPos - aShadowData.lightWorldPos;
+	vec3 lightDiff = aWorldFragPos - (aShadowData.lightWorldPos);
 	float cosTheta = dot(aWorldNormal, normalize(lightDiff));
 	cosTheta = clamp(cosTheta, 0.0, 1.0);
-	float bias = aShadowData.bias;
-	bias = clamp(aShadowData.bias*tan(acos(cosTheta)), aShadowData.bias, aShadowData.bias*5.0); // cosTheta is dot( n,l ), clamped between 0 and 1
+	float bias = clamp(aShadowData.bias * 0.1 * (1.0-(cosTheta)), aShadowData.bias * 0.01, aShadowData.bias);
+//	float bias = clamp(aShadowData.bias*tan(acos(cosTheta)), aShadowData.bias, aShadowData.bias*5.0); // cosTheta is dot( n,l ), clamped between 0 and 1
 	vec3 normalOffset = aWorldNormal*(aShadowData.normalBias);
 	vec4 fragPosLightSpace = aShadowData.shadowMatrix * vec4(aWorldFragPos+normalOffset, 1.0);
 	float visibility = SampleShadow( aShadowData, uShadowMapDirectional, fragPosLightSpace, aShadowData.sampleRadius, bias );
@@ -391,11 +398,16 @@ float AreaShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWor
 	vec3 normalOffset = aWorldNormal*(aShadowData.normalBias);
 	vec4 fragPosLightSpace = aShadowData.shadowMatrix * vec4(aWorldFragPos, 1.0);
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	if (projCoords.x >= 1.0 || projCoords.x <= 0.0 ||
-		projCoords.y >= 1.0 || projCoords.y <= 0.0 ||
-		projCoords.z >= 1.0 || projCoords.z <= 0.0) {
-		return 0.0;
-	}
+
+	vec3 claMin = vec3(FLT_EPS);
+	vec3 claMax = vec3(ONE_LESS_FLT_EPS);
+	projCoords = clamp(projCoords, claMin, claMax);
+	// if (projCoords.x >= ONE_LESS_FLT_EPS || projCoords.x <= FLT_EPS ||
+	// 	projCoords.y >= ONE_LESS_FLT_EPS || projCoords.y <= FLT_EPS ||
+	// 	projCoords.z >= ONE_LESS_FLT_EPS || projCoords.z <= FLT_EPS ) {
+	// 	return 0.0;
+	// }
+
 #ifdef SHADOWS_USE_TEXTURE_ARRAY
 	float closestDepth = texture(uShadowMapArea, vec3(projCoords.xy, aShadowData.texIndex) ).r;
 #else
@@ -404,7 +416,7 @@ float AreaShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWor
 	float tsize = textureSize( uShadowMapArea, aShadowData.texIndex ).x;
 	vec2 averageBlocker = PCSS_BlockerDistance(uShadowMapArea, aShadowData.texIndex, projCoords, (lightSize.x*0.5)/tsize, vec2(1.0,1.0));
 	// If there isn't any average blocker distance - it means that there is no blocker at all
-	if (averageBlocker.y < 1.0) {
+	if (averageBlocker.y < 1.0 ) {
 		return 0.0f;
 	}
 	float averageBlockerDepth = averageBlocker.x;
@@ -413,6 +425,13 @@ float AreaShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWor
 	float penumbraSize = (clamp(abs(pvalue) * 4.0, 0.0, 1.0)) * aShadowData.sampleRadius + aShadowData.sampleRadius * 0.01;
 	fragPosLightSpace = aShadowData.shadowMatrix * vec4(aWorldFragPos+normalOffset, 1.0);
 	projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// if (projCoords.x >= ONE_LESS_FLT_EPS || projCoords.x <= FLT_EPS ||
+	// 	projCoords.y >= ONE_LESS_FLT_EPS || projCoords.y <= FLT_EPS ||
+	// 	projCoords.z >= ONE_LESS_FLT_EPS || projCoords.z <= FLT_EPS ) {
+	// 	return 0.0;
+	// }
+	// projCoords = clamp(projCoords, claMin, claMax);
+
 	float shadow = SampleShadow2D(aShadowData, uShadowMapArea, projCoords, closestDepth, penumbraSize, bias );
 	return shadow;
 }

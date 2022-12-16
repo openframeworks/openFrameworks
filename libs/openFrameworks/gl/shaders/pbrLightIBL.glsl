@@ -7,9 +7,6 @@ static const string shader_pbr_lighting_ibl = R"(
 #define ENV_MAP_MAX_MIPS 5
 #endif
 
-//#ifdef HAS_CUBE_MAP
-//#endif
-
 // Image Based Lighting
 #ifdef HAS_TEX_ENV_IRRADIANCE
 uniform samplerCube tex_irradianceMap;
@@ -85,20 +82,19 @@ void evaluateClearCoatIBL(const PbrData adata, const Material amat, inout vec3 F
 		vec3 clearCoatR = reflect(-adata.viewDirectionWorld, clearNormal);
 		
 		// The clear coat layer assumes an IOR of 1.5 (4% reflectance)
-		float Fc = F_Schlick(0.04, 1.0, clearCoatNoV) * amat.clearCoat;
+		float Fc = F_Schlick(0.04, 1.0, clearCoatNoV) * 1.0;//amat.clearCoat;
 		float attenuation = 1.0 - Fc;
 		Fd *= attenuation;
-		Fr *= attenuation;
+//		Fr *= attenuation;
 		
-		// TODO: Should we apply specularAO to the attenuation as well?
-//		float specularAO = specularAO(clearCoatNoV, diffuseAO, adata.clearCoatRoughness, cache);
-		// computeSpecularAO(adata.NoV, ao, aroughness);
 //		float specAO = horizon * horizon * computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
 		float specAO = computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
-//		Fr += getIndirectPrefilteredReflection(clearCoatR, amat.clearCoatRoughness*amat.clearCoatRoughness) * (specAO * Fc);
-//		#if defined(HAS_TEX_ENV_PRE_FILTER)
-		Fr += getIndirectPrefilteredReflection(clearCoatR, clearNormal, amat.clearCoatRoughness*amat.clearCoatRoughness) * (specAO * Fc);
-//		#endif
+		vec3 indirectSpecular = getIndirectPrefilteredReflection(clearCoatR, clearNormal, amat.clearCoatRoughness);
+		//Fr += getIndirectPrefilteredReflection(clearCoatR, clearNormal, amat.clearCoatRoughness) * (specAO * Fc);
+		#if defined(HAS_TEX_ENV_PRE_FILTER)
+			indirectSpecular = indirectSpecular / (indirectSpecular+vec3(1.0));
+		#endif
+		Fr += indirectSpecular * (Fc * specAO);
 	}
 #endif
 }
