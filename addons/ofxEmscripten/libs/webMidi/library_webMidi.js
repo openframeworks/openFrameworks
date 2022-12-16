@@ -58,12 +58,12 @@ function midiMessageReceived(midiIn){
 	var channel = midiIn.data[0];
 	var pitch = midiIn.data[1];
 	var velocity = midiIn.data[2];
-	console.log( "Midi in: " + midiIn.data[0] + " " + midiIn.data[1] + " " + midiIn.data[2]);
+	console.log("midi in - channel: " + midiIn.data[0] + " pitch: " + midiIn.data[1] + " velocity: " + midiIn.data[2]);
   	Module.midiIn(midiIn.data);
   }
   
 function sendMidi(midiOutData){
-	console.log("Midi out: " + midiOutData[0] + " " + midiOutData[1] + " " + midiOutData[2]) ;
+	console.log("midi out - channel: " + midiOutData[0] + " pitch: " + midiOutData[1] + " velocity: " + midiOutData[2]);
 	if(ENVIRONMENT_IS_WEB && midiOut){
 		midiOut.send(midiOutData);  
 	}
