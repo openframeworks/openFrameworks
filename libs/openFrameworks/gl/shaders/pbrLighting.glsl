@@ -42,9 +42,9 @@ float SurfaceDiffuse(float roughness, float NoV, float NoL, float LoH) {
 vec2 SurfaceClearCoat(in PbrData adata, in Material amat, const vec3 h, float NoH, float LoH ) {
 // vec2 SurfaceClearCoat(in PbrData adata, in Material amat, float NoH, float LoH ) {
 	#ifdef PBR_QUALITY_LEVEL_HIGH
-	float D = D_GGX(amat.clearCoatRoughness*amat.clearCoatRoughness, NoH, h);
+	float D = D_GGX(amat.clearCoatRoughness, NoH, h);
 	#else
-	float D = D_GGX(NoH,amat.clearCoatRoughness*amat.clearCoatRoughness);
+	float D = D_GGX(NoH,amat.clearCoatRoughness);
 	#endif
 	float V = V_Kelemen(LoH);
 	float F = F_Schlick(0.04, 1.0, LoH) * amat.clearCoat;//amat.clearCoat; // fix IOR to 1.5
@@ -189,7 +189,7 @@ void calcLight(in PbrLightData light, in int aLightIndex, inout PbrData adata, i
 		float Fcc = clearCoatFactor.y;
 		float clearCoat = clearCoatFactor.x;
 		
-		// // // account for energy loss in the base layer
+		// account for energy loss in the base layer
 		float cattenuation = 1.0 - Fcc;
 		// Fd = ((Fd * cattenuation) + clearSpec);
 		Fd *= cattenuation;// * attenuation;

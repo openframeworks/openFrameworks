@@ -53,7 +53,7 @@ vec3 getIndirectPrefilteredReflection( in vec3 aR, in vec3 aN, in float aroughne
 	//	indirectSpecularRadiance = textureLod(tex_prefilterEnvMap, aR, aroughness * (ENV_MAP_MAX_MIPS-1) ).rgb;
 	vec3 ai = textureLod(tex_prefilterEnvMap, aR, floor(lod) ).rgb;
 	vec3 ab = textureLod(tex_prefilterEnvMap, aR, clamp(ceil(lod), floor(lod), ENV_MAP_MAX_MIPS-1) ).rgb;
-	indirectSpecularRadiance = mix(ai, ab, lod-floor(lod) );
+	indirectSpecularRadiance = mix(gamma2Linear(ai), gamma2Linear(ab), lod-floor(lod) );
 	//indirectSpecularRadiance = indirectSpecularRadiance / (indirectSpecularRadiance+vec3(1.0));
 //	float horizon = min(1.0 + dot(adata.reflectionWorld, adata.normalWorld), 1.0);
 	float horizon = min(1.0 + dot(aR, aN), 1.0);
@@ -82,10 +82,10 @@ void evaluateClearCoatIBL(const PbrData adata, const Material amat, inout vec3 F
 		vec3 clearCoatR = reflect(-adata.viewDirectionWorld, clearNormal);
 		
 		// The clear coat layer assumes an IOR of 1.5 (4% reflectance)
-		float Fc = F_Schlick(0.04, 1.0, clearCoatNoV) * 1.0;//amat.clearCoat;
+		float Fc = F_Schlick(0.04, 1.0, clearCoatNoV) * amat.clearCoat;
 		float attenuation = 1.0 - Fc;
 		Fd *= attenuation;
-//		Fr *= attenuation;
+//		Fr *= (attenuation);
 		
 //		float specAO = horizon * horizon * computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
 		float specAO = computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
@@ -128,11 +128,11 @@ void calcEnvironmentIndirect( inout PbrData adata, in Material amat ) {
 	vec3 irradiance = vec3(0.0);
 	// TODO: implement spherical harmonics if tex_irradianceMap not present
 #ifdef HAS_TEX_ENV_IRRADIANCE
-	irradiance = texture(tex_irradianceMap, adata.normalWorld).rgb;
+	irradiance = gamma2Linear(texture(tex_irradianceMap, adata.normalWorld).rgb);
 	// HDR Tone mapping
 	irradiance = irradiance / (irradiance + vec3(1.0));
 	Fd *= irradiance;// * (1.0);
-	//vec3 Fd = adata.diffuse * irradiance * (1.0 - E) * diffuseBRDF;
+//	vec3 Fd = adata.diffuse * irradiance * (1.0 - E) * diffuseBRDF;
 #else
 	irradiance = fakeEnvLightingDiffuse(adata.reflectionWorld);
 	Fd *= irradiance;

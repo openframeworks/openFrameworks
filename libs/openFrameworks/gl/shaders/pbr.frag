@@ -57,7 +57,7 @@ vec4 ofApplyPbr(in Material amat, in PbrData apbrData ) {
 	color.rgb += totalSpecular;
 	color.a = saturate(amat.albedo.a);
 	
-	color.rgb += saturate(amat.emissive.rgb * (amat.emissive.a * color.a));
+	color.rgb += saturate( amat.emissive.rgb * (amat.emissive.a * color.a));
 	
 	return linear2Gamma(color);
 }

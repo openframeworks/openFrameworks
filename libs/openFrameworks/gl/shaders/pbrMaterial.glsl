@@ -252,11 +252,11 @@ void setupMaterial( inout Material amat ) {
 	amat.clearCoat = 0.0;
 	amat.clearCoatRoughness = 0.1;
 #endif
-	amat.clearCoatRoughness = saturate( amat.clearCoatRoughness + 0.001 );
+	amat.clearCoatRoughness = saturate( amat.clearCoatRoughness + 0.01 );
 	
 	// set some minimums, otherwise things can render black ....
 	amat.metallic = saturate( amat.metallic + FLT_EPS);
-	amat.roughness = saturate( amat.roughness + 0.001 );
+	amat.roughness = saturate( amat.roughness + 0.01 );
 	// reflectance only applies to dielectrics, ie, non metals
 	amat.reflectance = saturate( amat.reflectance + FLT_EPS);
 	
