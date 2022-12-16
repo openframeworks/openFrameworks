@@ -29,6 +29,7 @@ float D_GGX(float roughness, float NoH, const vec3 n, const vec3 h) {
 	return saturateMediump(d);
 }
 
+// https://github.com/google/filament/blob/e1ba37b910617d0ea68bf17071c17264653e3dd0/shaders/src/brdf.fs#L54
 float D_GGX(float roughness, float NoH, const vec3 h) {
     // Walter et al. 2007, "Microfacet Models for Refraction through Rough Surfaces"
 

@@ -164,7 +164,6 @@ void calcLight(in PbrLightData light, in int aLightIndex, inout PbrData adata, i
 		#endif
 	}
 	
-	// vec3 radiance = gamma2Linear(light.diffuse.rgb) * ( light.diffuse.w * attenuation * amat.ao * (1.0-shadow));
 	vec3 radiance = gamma2Linear(light.diffuse.rgb) * ( light.diffuse.w * amat.ao * (1.0-shadow));
 	
 #if defined(HAS_CLEAR_COAT)

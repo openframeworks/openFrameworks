@@ -9,7 +9,6 @@ IN vec4 v_color;
 
 uniform vec3 uCameraPos;
 
-
 #if !defined(PBR_QUALITY_LEVEL_LOW) && !defined(PBR_QUALITY_LEVEL_HIGH)
 // set high level as default, no middle ground :0
 #define PBR_QUALITY_LEVEL_HIGH
@@ -42,7 +41,6 @@ vec4 ofApplyPbr(in Material amat, in PbrData apbrData ) {
 			// we have no lighting in the scene //
 			// lets add some so we can see what's going on //
 			#ifndef HAS_SHADOWS
-//			calcFakeDirectionalLight(vec3(0.0,1.0,-0.75), apbrData, amat );
 			calcFakeDirectionalLight(uCameraPos, apbrData, amat );
 			#endif
 		#endif
