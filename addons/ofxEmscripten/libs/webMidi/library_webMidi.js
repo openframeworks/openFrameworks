@@ -3,7 +3,7 @@ var midiIn = null;
 var midiOut = null;
 
 function startMidi(){
-	function onMIDISuccess(midiAccess){
+	function onMidiSuccess(midiAccess){
 		webMidi = midiAccess;
 		getMidiDevices();
 		webMidi.onstatechange = (event) => {
@@ -11,13 +11,13 @@ function startMidi(){
 			getMidiDevices();
 		}
 	}
-	function onMIDIFailure(e){
-		console.log('No access to MIDI devices' + e);
+	function onMidiFailure(e){
+		console.log('no access to midi devices' + e);
 	}
-	if(navigator.requestMIDIAccess){
-		navigator.requestMIDIAccess({ sysex: false }).then(onMIDISuccess, onMIDIFailure);
+	if(navigator.requestMidiAccess){
+		navigator.requestMidiAccess({ sysex: false }).then(onMidiSuccess, onMidiFailure);
 	}else{
-		alert("No MIDI support in your browser.");
+		alert("no midi support in your browser.");
 	}
 }
 
