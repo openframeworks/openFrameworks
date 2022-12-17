@@ -14,8 +14,8 @@ function startMidi(){
 	function onMidiFailure(e){
 		console.log('no access to midi devices' + e);
 	}
-	if(navigator.requestMidiAccess){
-		navigator.requestMidiAccess({ sysex: false }).then(onMidiSuccess, onMidiFailure);
+	if(navigator.requestMIDIAccess){
+		navigator.requestMIDIAccess({sysex: false}).then(onMidiSuccess, onMidiFailure);
 	}else{
 		alert("no midi support in your browser.");
 	}
