@@ -850,9 +850,10 @@ void ofCubeMap::_createPrefilteredCubeMap() {
 		shaderPreFilterMap.begin();
 		shaderPreFilterMap.setUniformTexture("environmentMap", getTextureTarget(), data->cubeMapId, 0 );
 		shaderPreFilterMap.setUniformMatrix4f("uProjection", projectionMat );
+		shaderPreFilterMap.setUniform1f("resolution", (float)data->resolution );
 		
 		float roughness = (float)mip / (float)(data->maxMipLevels - 1);
-		shaderPreFilterMap.setUniform1f("roughness", roughness);
+		shaderPreFilterMap.setUniform1f("uroughness", roughness);
 		for (unsigned int i = 0; i < 6; ++i) {
 			shaderPreFilterMap.setUniformMatrix4f( "uView", views[i] );
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, data->preFilteredMapId, mip);

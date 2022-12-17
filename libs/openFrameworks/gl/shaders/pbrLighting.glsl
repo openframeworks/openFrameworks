@@ -79,7 +79,7 @@ void calcLight(in PbrLightData light, in int aLightIndex, inout PbrData adata, i
 	vec3 Fr = SurfaceSpecular( adata, halfV, NoL, NoH, LoH, amat.roughness );
 	Fr *= adata.energyCompensation; 
 	// diffuseColor = _mat.albedo.rgb * (vec3(1.0) - _mat.f0) * (1.0 - _mat.metallic);
-	float sd = SurfaceDiffuse( amat.roughness, adata.NoV, NoL, LoH );
+	float sd = SurfaceDiffuse( amat.roughness*amat.roughness, adata.NoV, NoL, LoH );
 	// PbrData.diffuse is multiplied by (1.0-metallic).
 //	vec3 Fd = adata.diffuse * (vec3(1.0)-adata.f0) * sd;
 	vec3 Fd = adata.diffuse * sd;

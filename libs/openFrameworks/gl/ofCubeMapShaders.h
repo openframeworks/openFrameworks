@@ -261,7 +261,8 @@ public:
 										in vec3 oLocalPos;
 										
 										uniform samplerCube environmentMap;
-										uniform float roughness;
+										uniform float uroughness;
+										uniform float resolution; // resolution of source cubemap (per face)
 										
 										const float PI = 3.14159265359;
 										
@@ -310,11 +311,16 @@ public:
 										void main(){
 											vec3 N = normalize(oLocalPos);
 											
+											float roughness = uroughness;
+											
 											// make the simplyfying assumption that V equals R equals the normal
 											vec3 R = N;
 											vec3 V = R;
-											
+											#ifdef TARGET_OPENGLES
 											const uint SAMPLE_COUNT = 1024u;
+											#else
+											const uint SAMPLE_COUNT = 2048u;
+											#endif
 											vec3 prefilteredColor = vec3(0.0);
 											float totalWeight = 0.0;
 											
@@ -332,7 +338,7 @@ public:
 													float HdotV = max(dot(H, V), 0.0);
 													float pdf = D * NdotH / (4.0 * HdotV) + 0.0001;
 													
-													float resolution = 512.0; // resolution of source cubemap (per face)
+//													float resolution = 512.0; // resolution of source cubemap (per face)
 													float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
 													float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
 													
@@ -342,9 +348,11 @@ public:
 													totalWeight      += NdotL;
 												}
 											}
+											if(totalWeight < 0.0001 ) {
+												totalWeight = 0.0001;
+											}
 											
 											prefilteredColor = prefilteredColor / totalWeight;
-											//prefilteredColor = vec3(1.0,0.0,0.0);
 											FragColor = vec4(prefilteredColor, 1.0);
 										}
 										
