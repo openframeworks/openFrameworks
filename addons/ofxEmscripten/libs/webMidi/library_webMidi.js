@@ -22,24 +22,24 @@ function startMidi(){
 }
 
 function getMidiDevices(){
-		var midiInDevices = "";
-		var inputDeviceCount = webMidi.inputs.size;
-		if(inputDeviceCount > 0){
-			var inputs = webMidi.inputs.values();
-			for(var input = inputs.next(); input && !input.done; input = inputs.next()){
-				midiInDevices = midiInDevices.concat(",", `${input.value.id}`,",", `${input.value.name}`);
-			}
-  			Module.loadMidiInDevices(midiInDevices);
+	var midiInDevices = "";
+	var inputDeviceCount = webMidi.inputs.size;
+	if(inputDeviceCount > 0){
+		var inputs = webMidi.inputs.values();
+		for(var input = inputs.next(); input && !input.done; input = inputs.next()){
+			midiInDevices = midiInDevices.concat(",", `${input.value.id}`,",", `${input.value.name}`);
 		}
-		var midiOutDevices = "";
-		var outputDeviceCount = webMidi.outputs.size;
-		if(outputDeviceCount > 0){
-			var outputs = webMidi.outputs.values();
-			for(var output = outputs.next(); output && !output.done; output = outputs.next()){
-				midiOutDevices = midiOutDevices.concat(",", `${output.value.id}`,",", `${output.value.name}`);
-			}
-  			Module.loadMidiOutDevices(midiOutDevices);
+  		Module.loadMidiInDevices(midiInDevices);
+	}
+	var midiOutDevices = "";
+	var outputDeviceCount = webMidi.outputs.size;
+	if(outputDeviceCount > 0){
+		var outputs = webMidi.outputs.values();
+		for(var output = outputs.next(); output && !output.done; output = outputs.next()){
+			midiOutDevices = midiOutDevices.concat(",", `${output.value.id}`,",", `${output.value.name}`);
 		}
+  		Module.loadMidiOutDevices(midiOutDevices);
+	}
 }
 				
 function selectMidiIn(file){
