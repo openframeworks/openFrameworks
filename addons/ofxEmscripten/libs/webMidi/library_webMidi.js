@@ -2,11 +2,14 @@ var webMidi = null;
 var midiIn = null;
 var midiOut = null;
 
-function getMidiDevices(){
-	var midiInDevices = "";
-	var midiOutDevices = "";
+function startMidi(){
 	function onMIDISuccess(midiAccess){
 		webMidi = midiAccess;
+		getMidiDevices();
+		webMidi.onstatechange = (event) => {
+			console.log(event.port.name, event.port.manufacturer, event.port.state);
+			getMidiDevices();
+		}
 	}
 	function onMIDIFailure(e){
 		console.log('No access to MIDI devices' + e);
@@ -16,8 +19,10 @@ function getMidiDevices(){
 	}else{
 		alert("No MIDI support in your browser.");
 	}
-	webMidi.onstatechange = (event) => {
-		console.log(event.port.name, event.port.manufacturer, event.port.state);
+}
+
+function getMidiDevices(){
+		var midiInDevices = "";
 		var inputDeviceCount = webMidi.inputs.size;
 		if(inputDeviceCount > 0){
 			var inputs = webMidi.inputs.values();
@@ -26,6 +31,7 @@ function getMidiDevices(){
 			}
   			Module.loadMidiInDevices(midiInDevices);
 		}
+		var midiOutDevices = "";
 		var outputDeviceCount = webMidi.outputs.size;
 		if(outputDeviceCount > 0){
 			var outputs = webMidi.outputs.values();
@@ -34,9 +40,8 @@ function getMidiDevices(){
 			}
   			Module.loadMidiOutDevices(midiOutDevices);
 		}
-	}
 }
-		
+				
 function selectMidiIn(file){
 	if(midiIn){
 		midiIn.onmidimessage = null;
