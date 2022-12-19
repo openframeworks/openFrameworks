@@ -26,7 +26,8 @@ extern "C"{
     extern double html5video_player_volume(int id);
     extern void html5video_player_set_loop(int id, int loop);
     extern int html5video_player_loop(int id);
-
+    extern double html5video_player_pan(int id);
+    extern void html5video_player_set_pan(int id, double pan);
 
     extern void html5video_list_devices();
     extern int html5video_grabber_create();

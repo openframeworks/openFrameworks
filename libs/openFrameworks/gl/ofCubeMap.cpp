@@ -4,6 +4,7 @@
 //  Created by Nick Hardeman on 10/16/22.
 //
 
+#include "ofShader.h"
 #include "ofCubeMap.h"
 #include "ofImage.h"
 #include "ofConstants.h"
