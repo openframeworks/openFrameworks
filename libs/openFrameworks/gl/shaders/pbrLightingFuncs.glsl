@@ -132,6 +132,24 @@ float computeSpecularAO(float NoV, float ao, float roughness) {
 #endif
 }
 
+vec3 getPrefilteredDFG(in vec3 acolor, in float aNoV, in float aroughness ) {
+	vec3 dfg = vec3(0.0);
+#if defined(PBR_QUALITY_LEVEL_HIGH) && defined(HAS_TEX_ENV_BRDF_LUT)
+	//	vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), aroughness)).rg;
+	dfg = texture(tex_brdfLUT, vec2(aNoV, aroughness)).rgb;
+	//	specularReflectance = (adata.f0 * brdf.x + adata.f90 * brdf.y);
+	// vec3 specularColor = f0 * brdf.x + f90 * brdf.y;
+#else
+//	dfg.xy = EnvBRDFApproxDFG( aroughness*aroughness, aNoV );
+	dfg = EnvBRDFApprox(acolor, aroughness, aNoV );
+	//	specularReflectance = (adata.f0 * brdf.x + adata.f90 * brdf.y);
+	//	specularReflectance = mix(brdf.xxx, brdf.yyy, adata.f0);
+	//	specularReflectance = EnvBRDFApprox( adata.f0, aroughness, adata.NoV );
+	//return SpecularColor * AB.x + AB.y;
+#endif
+	return dfg;
+}
+
 #endif
 
 )";

@@ -306,7 +306,9 @@ std::string ofShadow::getShaderDefinesAsString() {
 	// TODO: We should get this working on GLES!
 #ifndef TARGET_OPENGLES
 	if( ofIsGLProgrammableRenderer() ) {
-		definesString += "#define HAS_SHADOWS 1\n";
+		if( ofShadowsData().size() > 0 && ofLightsData().size() > 0) {
+			definesString += "#define HAS_SHADOWS 1\n";
+		}
 		
 		if( ofShadow::getTextureTarget( OF_LIGHT_POINT ) != GL_TEXTURE_CUBE_MAP ) {
 			definesString += "#define SHADOWS_USE_CUBE_MAP_ARRAY 1\n";

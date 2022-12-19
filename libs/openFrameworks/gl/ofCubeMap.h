@@ -5,10 +5,8 @@
 //
 
 #pragma once
-#include "ofShader.h"
-#include "ofNode.h"
 #include "ofFbo.h"
-
+class ofShader;
 
 class ofGLProgrammableRenderer;
 
@@ -42,6 +40,8 @@ public:
 	static void regenerateAllTextures();
 	static const ofTexture& getBrdfLutTexture();
 	
+	static int getNumMipMaps();
+	
 	ofCubeMap();
 	ofCubeMap(const ofCubeMap & mom);
 	ofCubeMap(ofCubeMap && mom);
@@ -72,6 +72,14 @@ public:
 //	void begin3DDrawingIntoFace( int aCubeFace );
 //	void end3DDrawingIntoFace( int aCubeFace );
 	
+	bool isEnabled() { return data->isEnabled;}
+	const bool isEnabled() const { return data->isEnabled;}
+	void setEnabled(bool ab) {data->isEnabled=ab;}
+	
+	bool hasCubeMap();
+	bool hasPrefilteredMap();
+	bool hasIrradianceMap();
+	
 	int getFaceResolution() { return data->resolution; }
 	GLuint getTextureId();
 	bool isHdr();
@@ -84,6 +92,8 @@ public:
 	
 	GLuint getIrradianceMapId() { return data->irradianceMapId; }
 	GLuint getPrefilterMapId() { return data->preFilteredMapId; }
+	
+	
 	
 protected:
 	

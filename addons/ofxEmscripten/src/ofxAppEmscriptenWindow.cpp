@@ -60,7 +60,8 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_touchend_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchmove_callback("#canvas",this,1,&touch_cb);
     emscripten_set_touchcancel_callback("#canvas",this,1,&touch_cb);
-
+	
+    emscripten_set_wheel_callback("#canvas",this,1,&mousescrolled_cb);
 }
 
 void ofxAppEmscriptenWindow::loop(){
@@ -168,6 +169,18 @@ int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEv
 		key = 223;
 	}else if(id == "§"){
 		key = 167;
+	}else if(id == "ä"){
+		key = 228;
+	}else if(id == "Ä"){
+		key = 196;
+	}else if(id == "ö"){
+		key = 246;
+	}else if(id == "Ö"){
+		key = 214;
+	}else if(id == "ü"){
+		key = 252;
+	}else if(id == "Ü"){
+		key = 220;
 	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
 		return 0;
 	}
@@ -246,6 +259,18 @@ int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEven
 		key = 223;
 	}else if(id == "§"){
 		key = 167;
+	}else if(id == "ä"){
+		key = 228;
+	}else if(id == "Ä"){
+		key = 196;
+	}else if(id == "ö"){
+		key = 246;
+	}else if(id == "Ö"){
+		key = 214;
+	}else if(id == "ü"){
+		key = 252;
+	}else if(id == "Ü"){
+		key = 220;
 	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
 		return 0;
 	}
@@ -258,7 +283,7 @@ int ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEve
 	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
         double css_width, css_height;
 	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
-	instance->events().notifyMousePressed(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height),mouseEvent->button);
+	instance->events().notifyMousePressed(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height), mouseEvent->button);
 	return 0;
 }
 
@@ -267,7 +292,7 @@ int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent
 	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
         double css_width, css_height;
 	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
-	instance->events().notifyMouseReleased(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height),0);
+	instance->events().notifyMouseReleased(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height), mouseEvent->button);
 	return 0;
 }
 
@@ -276,11 +301,20 @@ int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEv
 	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
         double css_width, css_height;
 	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
-	if(ofGetMousePressed()){
-		instance->events().notifyMouseDragged(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height),0);
+	if (ofGetMousePressed(OF_MOUSE_BUTTON_LEFT)){
+		instance->events().notifyMouseDragged(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height), 0);
+	}else if (ofGetMousePressed(OF_MOUSE_BUTTON_MIDDLE)){
+		instance->events().notifyMouseDragged(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height), 1);
+	}else if (ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)){
+		instance->events().notifyMouseDragged(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height), 2);
 	}else{
 		instance->events().notifyMouseMoved(mouseEvent->targetX * (canvas_width / css_width), mouseEvent->targetY * (canvas_height / css_height));
 	}
+	return 0;
+}
+
+int ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData){
+	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseY(), wheelEvent->deltaX, wheelEvent->deltaY / 100);
 	return 0;
 }
 

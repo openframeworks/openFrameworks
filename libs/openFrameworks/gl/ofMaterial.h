@@ -250,7 +250,7 @@ public:
 	/// \return is the material pbr.
 	const bool isPBR() const { return data.isPbr; }
 	/// \brief enable or disable PBR for this material. Default is disabled.
-	void setPBR(bool ab) { data.isPbr = ab; }
+	void setPBR(bool ab);
 
 	/// \brief setup using settings struct
 	/// \param settings color & other properties struct
@@ -464,6 +464,7 @@ private:
 		ofShader textureRect;
 		size_t numLights;
 		size_t numCubeMaps;
+		std::string shaderId;
 	};
 	struct TextureUnifom{
 		int textureTarget;
@@ -477,8 +478,8 @@ private:
 
 	mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
 	static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
-	static std::string vertexShader;
-	static std::string fragmentShader;
+//	static std::string vertexShader;
+//	static std::string fragmentShader;
 	std::map<std::string, float> uniforms1f;
 	std::map<std::string, glm::vec2> uniforms2f;
 	std::map<std::string, glm::vec3> uniforms3f;
@@ -502,5 +503,6 @@ private:
 	bool bHasCustomShader = false;
 	bool mBDefinesDirty = true;
 	mutable const ofShader* currentRenderShader = nullptr;
+	bool bPrintedPBRRenderWarning = false;
 	
 };

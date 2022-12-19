@@ -16,7 +16,7 @@ public:
 	~ofxEmscriptenVideoPlayer();
 
 	//needs implementing
-	bool				load(std::string name);
+	bool				load(const std::string fileName);
 	void				close();
 	void				update();
 
@@ -25,7 +25,7 @@ public:
 
 	bool 				isFrameNew() const;
 	ofPixels & 			getPixels();
-	const ofPixels & 	getPixels() const;
+	const ofPixels & 		getPixels() const;
 	ofTexture *			getTexture(); // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 
 	float 				getWidth() const;
@@ -36,23 +36,25 @@ public:
 	bool				isPlaying() const;
 
 	bool				setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 		getPixelFormat() const;
+	ofPixelFormat 			getPixelFormat() const;
 
 	//should implement!
 	float 				getPosition() const;
 	float 				getSpeed() const;
 	float 				getDuration() const;
 	bool				getIsMovieDone() const;
+	float 				getPan() const;
 
 	void 				setPaused(bool bPause);
 	void 				setPosition(float pct);
 	void 				setVolume(float volume); // 0..1
 	void 				setLoopState(ofLoopType state);
-	void   				setSpeed(float speed);
+	void   			setSpeed(float speed);
 	void				setFrame(int frame);  // frame 0 = first frame...
+	void 				setPan(float pan);
 
-	int					getCurrentFrame() const;
-	int					getTotalNumFrames() const;
+	int				getCurrentFrame() const;
+	int				getTotalNumFrames() const;
 	ofLoopType			getLoopState() const;
 
 	void				firstFrame();
@@ -64,7 +66,5 @@ private:
 	int id;
 	ofTexture texture;
 	ofPixels pixels;
-	bool gotFirstFrame;
 	bool usePixels;
 };
-

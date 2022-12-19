@@ -54,6 +54,7 @@
 #include "ofTexture.h"
 #include "ofVbo.h"
 #include "ofVboMesh.h"
+#include "ofCubeMap.h"
 // #include "ofGLProgrammableRenderer.h"
 // #ifndef TARGET_PROGRAMMABLE_GL
 // 	#include "ofGLRenderer.h"

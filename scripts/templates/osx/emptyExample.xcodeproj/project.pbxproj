@@ -295,35 +295,13 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"99FA3DBC1C7456C400CFA0EE": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]": "APPSTORE=1",
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
-				"COPY_PHASE_STRIP": "YES",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF)"
-				],
-				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)"
-			},
-			"name": "AppStore"
-		},
 		"E4B69B4D0A3A1720003C02F2": {
 			"isa": "XCConfigurationList",
 			"defaultConfigurationIsVisible": "0",
 			"defaultConfigurationName": "Release",
 			"buildConfigurations": [
 				"E4B69B4E0A3A1720003C02F2",
-				"E4B69B4F0A3A1720003C02F2",
-				"99FA3DBB1C7456C400CFA0EE"
+				"E4B69B4F0A3A1720003C02F2"
 			]
 		},
 		"E4B69B5F0A3A1757003C02F2": {
@@ -332,8 +310,7 @@
 			"defaultConfigurationName": "Release",
 			"buildConfigurations": [
 				"E4B69B600A3A1757003C02F2",
-				"E4B69B610A3A1757003C02F2",
-				"99FA3DBC1C7456C400CFA0EE"
+				"E4B69B610A3A1757003C02F2"
 			]
 		},
 		"E42962D72163EDD300A6A9E2": {
@@ -842,24 +819,6 @@
 			"lastKnownFileType": "sourcecode.c.h",
 			"sourceTree": "SOURCE_ROOT"
 		},
-		"99FA3DBB1C7456C400CFA0EE": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"GCC_UNROLL_LOOPS": "YES",
-				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]": "DISTRIBUTION=1",
-				"GCC_OPTIMIZATION_LEVEL": "3",
-				"COPY_PHASE_STRIP": "YES",
-				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
-				"GCC_WARN_UNUSED_VARIABLE": "NO"
-			},
-			"name": "AppStore"
-		},
 		"E42963052163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/utils/ofUtils.h",
 			"isa": "PBXFileReference",
@@ -1220,7 +1179,7 @@
 			"alwaysOutOfDate": "1",
 			"inputFileListPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
-			"shellScript": "\nif [ -z \"$OF_CODESIGN\" ] ; then\n\techo \"Codesign Disabled\";\n#echo \"Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution\";\nelse\n\techo \"Codesign Enabled\";\n\n\t# ---- Code Sign App Package ----\n\t# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!\n\n\t# Verify that $CODE_SIGN_IDENTITY is set\n\tif [ -z \"${CODE_SIGN_IDENTITY}\" ] ; then\n\t\techo \"CODE_SIGN_IDENTITY needs to be set for framework code-signing\"\n\t\texit 0\n\tfi\n\n\tif [ -z \"${CODE_SIGN_ENTITLEMENTS}\" ] ; then\n\t\techo \"CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!\"\n\n\t\tif [ \"${CONFIGURATION}\" = \"Release\" ] ; then\n\t\t\texit 1\n\t\telse\n\t\t\t# Code-signing is optional for non-release builds.\n\t\t\texit 0\n\t\tfi\n\tfi\n\n\tITEMS=\"\"\n\n\tFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\techo \"$FRAMEWORKS_DIR\"\n\tif [ -d \"$FRAMEWORKS_DIR\" ] ; then\n\t\tFRAMEWORKS=$(find \"${FRAMEWORKS_DIR}\" -depth -type d -name \"*.framework\" -or -name \"*.dylib\" -or -name \"*.bundle\" | sed -e \"s/\\(.*framework\\)/\\1\\/Versions\\/A\\//\")\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\texit 1\n\t\tfi\n\n\t\tITEMS=\"${FRAMEWORKS}\"\n\tfi\n\n\tLOGINITEMS_DIR=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems/\"\n\tif [ -d \"$LOGINITEMS_DIR\" ] ; then\n\t\tLOGINITEMS=$(find \"${LOGINITEMS_DIR}\" -depth -type d -name \"*.app\")\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\texit 1\n\t\tfi\n\n\t\tITEMS=\"${ITEMS}\"$'\\n'\"${LOGINITEMS}\"\n\tfi\n\n\t# Prefer the expanded name, if available.\n\tCODE_SIGN_IDENTITY_FOR_ITEMS=\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n\tif [ \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" = \"\" ] ; then\n\t\t# Fall back to old behavior.\n\t\tCODE_SIGN_IDENTITY_FOR_ITEMS=\"${CODE_SIGN_IDENTITY}\"\n\tfi\n\n\techo \"Identity: ${CODE_SIGN_IDENTITY_FOR_ITEMS}\"\n\n\techo \"Entitlements: ${CODE_SIGN_ENTITLEMENTS}\"\n\n\techo \"Found: ${ITEMS}\"\n\n\t# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.\n\tSAVED_IFS=$IFS\n\tIFS=$(echo -en \"\\n\\b\")\n\n\t# Loop through all items.\n\tfor ITEM in \"${ITEMS}\";\n\tdo\n\t\tif lipo -archs \"${ITEM}\" | grep -q 'i386'; then\n\t\t\techo \"Stripping invalid archs ${ITEM}\"\n\t\t\tlipo -remove i386 \"${ITEM}\" -o \"${ITEM}\" \n\t\telse\n\t\t\techo \"No need to strip invalid archs {$ITEM}\"\n\t\tfi\n\n\t\techo \"Signing '${ITEM}'\"\n\t\tcodesign --force --verbose --sign \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" --entitlements \"${CODE_SIGN_ENTITLEMENTS}\" \"${ITEM}\"\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\techo \"Failed to sign '${ITEM}'.\"\n\t\t\tIFS=$SAVED_IFS\n\t\t\texit 1\n\t\tfi\n\tdone\n\n\t# Restore $IFS.\n\tIFS=$SAVED_IFS\n\nfi\n\necho \"💾 end script\";\n",
+			"shellScript": "\nif [ -z \"$OF_CODESIGN\" ] ; then\n\techo \"Codesign Disabled\";\n#echo \"Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution\";\nelse\n\techo \"Codesign Enabled\";\n\n\t# ---- Code Sign App Package ----\n\t# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!\n\n\t# Verify that $CODE_SIGN_IDENTITY is set\n\tif [ -z \"${CODE_SIGN_IDENTITY}\" ] ; then\n\t\techo \"CODE_SIGN_IDENTITY needs to be set for framework code-signing\"\n\t\texit 0\n\tfi\n\n\tif [ -z \"${CODE_SIGN_ENTITLEMENTS}\" ] ; then\n\t\techo \"CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!\"\n\n\t\tif [ \"${CONFIGURATION}\" = \"Release\" ] ; then\n\t\t\texit 1\n\t\telse\n\t\t\t# Code-signing is optional for non-release builds.\n\t\t\texit 0\n\t\tfi\n\tfi\n\n\tITEMS=\"\"\n\n\tFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\techo \"$FRAMEWORKS_DIR\"\n\tif [ -d \"$FRAMEWORKS_DIR\" ] ; then\n\t\tFRAMEWORKS=$(find \"${FRAMEWORKS_DIR}\" -depth -type d -name \"*.framework\" -or -name \"*.dylib\" -or -name \"*.bundle\" | sed -e \"s/\\(.*framework\\)/\\1\\/Versions\\/A\\//\")\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\texit 1\n\t\tfi\n\n\t\tITEMS=\"${FRAMEWORKS}\"\n\tfi\n\n\tLOGINITEMS_DIR=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems/\"\n\tif [ -d \"$LOGINITEMS_DIR\" ] ; then\n\t\tLOGINITEMS=$(find \"${LOGINITEMS_DIR}\" -depth -type d -name \"*.app\")\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\texit 1\n\t\tfi\n\n\t\tITEMS=\"${ITEMS}\"$'\\n'\"${LOGINITEMS}\"\n\tfi\n\n\t# Prefer the expanded name, if available.\n\tCODE_SIGN_IDENTITY_FOR_ITEMS=\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n\tif [ \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" = \"\" ] ; then\n\t\t# Fall back to old behavior.\n\t\tCODE_SIGN_IDENTITY_FOR_ITEMS=\"${CODE_SIGN_IDENTITY}\"\n\tfi\n\n\techo \"Identity: ${CODE_SIGN_IDENTITY_FOR_ITEMS}\"\n\n\techo \"Entitlements: ${CODE_SIGN_ENTITLEMENTS}\"\n\n\techo \"Found: ${ITEMS}\"\n\n\t# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.\n\tSAVED_IFS=$IFS\n\tIFS=$(echo \"\\n\\b\")\n\n\t# Loop through all items.\n\tfor ITEM in ${ITEMS}\n\tdo\n\t\tif lipo -archs \"${ITEM}\" | grep -q 'i386'; then\n\t\t\techo \"Stripping invalid archs '${ITEM}'\"\n\t\t\tlipo -remove i386 \"${ITEM}\" -o \"${ITEM}\" \n\t\telse\n\t\t\techo \"No need to strip invalid archs '{$ITEM}'\"\n\t\tfi\n\n\t\techo \"Signing '${ITEM}'\"\n\t\tcodesign --force --verbose --sign \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" --entitlements \"${CODE_SIGN_ENTITLEMENTS}\" \"${ITEM}\"\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\techo \"Failed to sign '${ITEM}'.\"\n\t\t\tIFS=$SAVED_IFS\n\t\t\texit 1\n\t\tfi\n\tdone\n\n\t# Restore $IFS.\n\tIFS=$SAVED_IFS\n\nfi\n\necho \"💾 end script\";\n",
 			"files": [],
 			"showEnvVarsInLog": "0",
 			"inputPaths": [],

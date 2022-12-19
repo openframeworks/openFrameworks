@@ -92,6 +92,8 @@ private:
 	
 	static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
 	
+	static int mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData);
+	
 	int id;
 
 	

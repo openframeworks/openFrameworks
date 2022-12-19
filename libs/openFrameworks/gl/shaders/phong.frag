@@ -54,7 +54,9 @@ static const string fragmentShader = R"(
     uniform mat4 textureMatrix;
     uniform mat4 modelViewProjectionMatrix;
 
+#if defined(MAX_LIGHTS) && MAX_LIGHTS
     uniform lightData lights[MAX_LIGHTS];
+#endif
 
 	
 	%shader_shadow_include%
@@ -306,6 +308,8 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
 		#if defined(HAS_SHADOWS)
 		vec3 worldNormalN = normalize(v_worldNormal);
 		#endif
+		
+		#if defined(MAX_LIGHTS) && MAX_LIGHTS
         for( int i = 0; i < MAX_LIGHTS; i++ ){
             if(lights[i].enabled<0.5) continue;
 			float shadow = 0.0;
@@ -343,6 +347,10 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
                 areaLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }
         }
+		#else
+		// there are no lights, so just set to fully lit, otherwise would show as black
+		diffuse = vec3(1.0);
+		#endif
         
         // apply emmisive texture
         vec4 mat_emissive_color = mat_emissive;

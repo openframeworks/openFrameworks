@@ -27,23 +27,31 @@ void ofxAssimpMeshHelper::addTexture(ofxAssimpTexture & aAssimpTex){
         meshTextures.push_back(otherTex);
     }
 	
+    auto ttype = meshTextures.back()->getTextureType();
+	
     bool bAmbientOcclusion = false;
-    bAmbientOcclusion = meshTextures.back()->getTextureType() == 17; //17 = aiTextureType_AMBIENT_OCCLUSION; //use this when we want to support newer assimp only 
+    bAmbientOcclusion = ttype == 17; //17 = aiTextureType_AMBIENT_OCCLUSION; //use this when we want to support newer assimp only 
     
-    if( meshTextures.back()->getTextureType() == aiTextureType_EMISSIVE ){
+    if( ttype == aiTextureType_EMISSIVE ){
         material.setEmissiveTexture(meshTextures.back()->getTextureRef());
     }
-    else if( meshTextures.back()->getTextureType() == aiTextureType_NORMALS ){
+    else if( ttype == aiTextureType_NORMALS ){
         material.setNormalTexture(meshTextures.back()->getTextureRef());
     }
-    else if( meshTextures.back()->getTextureType() == aiTextureType_LIGHTMAP || bAmbientOcclusion ){
+    else if( ttype == aiTextureType_LIGHTMAP || bAmbientOcclusion ){
         material.setOcclusionTexture(meshTextures.back()->getTextureRef());
     }
-    else if( meshTextures.back()->getTextureType() == aiTextureType_AMBIENT ){
+    else if( ttype == aiTextureType_AMBIENT ){
         material.setAmbientTexture(meshTextures.back()->getTextureRef());
     }
-    else if( meshTextures.back()->getTextureType() == aiTextureType_SPECULAR ){
+    else if( ttype == aiTextureType_SPECULAR ){
         material.setSpecularTexture(meshTextures.back()->getTextureRef());
+    } else if( ttype == 15 ) { //aiTextureType_METALNESS
+        material.setMetallicTexture(meshTextures.back()->getTextureRef());
+    } else if(ttype == 16 ) { //aiTextureType_DIFFUSE_ROUGHNESS
+        material.setRoughnessTexture(meshTextures.back()->getTextureRef());
+    } else if( ttype == aiTextureType_DISPLACEMENT ) {
+        material.setDisplacementTexture(meshTextures.back()->getTextureRef());
     }
 }
 
