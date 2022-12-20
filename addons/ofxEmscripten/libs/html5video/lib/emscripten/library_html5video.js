@@ -1,10 +1,7 @@
 var LibraryHTML5Video = {
     $VIDEO: {
         players: [],
-        playersContexts: [],
         playersCounter: 0,
-        soundSources: [],
-        soundPans: [],
 
         getNewPlayerId: function() {
           var ret = VIDEO.playersCounter++;
@@ -92,9 +89,9 @@ var LibraryHTML5Video = {
         video.pixelFormat = "RGBA";
 	var player_id = VIDEO.getNewPlayerId();
 	VIDEO.players[player_id] = video;
-	VIDEO.soundSources[player_id] = AUDIO.context.createMediaElementSource(VIDEO.players[player_id]); 
-	VIDEO.soundPans[player_id] = AUDIO.context.createStereoPanner();
-	VIDEO.soundSources[player_id].connect(VIDEO.soundPans[player_id]).connect(AUDIO.fft);
+	var source = AUDIO.context.createMediaElementSource(VIDEO.players[player_id]); 
+	VIDEO.players[player_id].soundPan = AUDIO.context.createStereoPanner();
+	source.connect(VIDEO.players[player_id].soundPan).connect(AUDIO.fft);
 	video.onloadedmetadata = function (e){
         	console.log(this.videoWidth + 'x' + this.videoHeight);
         	VIDEO.players[player_id].width = this.videoWidth;
@@ -106,7 +103,7 @@ var LibraryHTML5Video = {
 		// background color if no video present
 		videoImageContext.fillStyle = '#000000';
 		videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
-		VIDEO.playersContexts[player_id] = videoImageContext;
+		VIDEO.players[player_id].playersContext = videoImageContext;
         };
         return player_id;
     },
@@ -149,7 +146,7 @@ var LibraryHTML5Video = {
         var imageData;
         var data;
         if ( player.readyState === player.HAVE_ENOUGH_DATA ) {
-        	VIDEO.update(update_pixels, player, VIDEO.playersContexts[id], pixels);
+        	VIDEO.update(update_pixels, player, VIDEO.players[id].playersContext, pixels);
             return true;
         }else{
         	return false;
@@ -233,11 +230,11 @@ var LibraryHTML5Video = {
     },
     
     html5video_player_set_pan: function (id, pan) {
-    	VIDEO.soundPans[id].pan.value = pan;
+    	VIDEO.players[id].soundPan.pan.value = pan;
     },
 
     html5video_player_pan: function (id) {
-        return VIDEO.soundPans[id].pan.value;
+        return VIDEO.players[id].soundPan.pan.value;
     },
     
     html5video_grabber_create: function(){
