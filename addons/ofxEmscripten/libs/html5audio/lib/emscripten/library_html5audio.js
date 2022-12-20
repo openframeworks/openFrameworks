@@ -1,8 +1,6 @@
 var LibraryHTML5Audio = {
     $AUDIO: {
         players: [],
-        soundSources: [],
-        soundPans: [],
         lastSoundID: 0,
     },
 
@@ -76,9 +74,9 @@ var LibraryHTML5Audio = {
 	var id = AUDIO.lastSoundID++;
 	AUDIO.players[id] = audio;
 	AUDIO.players[id].src = UTF8ToString(url);
-	AUDIO.soundSources[id] = AUDIO.context.createMediaElementSource(AUDIO.players[id]); 
-	AUDIO.soundPans[id] = AUDIO.context.createStereoPanner();
-	AUDIO.soundSources[id].connect(AUDIO.soundPans[id]).connect(AUDIO.fft);
+	var source = AUDIO.context.createMediaElementSource(AUDIO.players[id]); 
+	AUDIO.players[id].soundPan = AUDIO.context.createStereoPanner();
+	source.connect(AUDIO.players[id].soundPan).connect(AUDIO.fft);
 	return id;
     },
 
@@ -132,11 +130,11 @@ var LibraryHTML5Audio = {
     },
 
     html5audio_sound_set_pan: function (sound_id, pan) {
-    	AUDIO.soundPans[sound_id].pan.value = pan;
+    	AUDIO.players[sound_id].soundPan.pan.value = pan;
     },
 
     html5audio_sound_pan: function (sound_id) {
-        return AUDIO.soundPans[sound_id].pan.value;
+        return AUDIO.players[sound_id].soundPan.pan.value;
     },
     
     html5audio_sound_free: function (sound_id) {
