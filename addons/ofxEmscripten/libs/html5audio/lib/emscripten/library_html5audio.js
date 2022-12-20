@@ -173,6 +173,7 @@ var LibraryHTML5Audio = {
                 }
             }
         };
+
         stream.connect(AUDIO.fft);
         AUDIO.stream = stream;
     },
