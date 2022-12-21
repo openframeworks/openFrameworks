@@ -93,7 +93,6 @@ var LibraryHTML5Video = {
 	VIDEO.players[player_id].soundPan = AUDIO.context.createStereoPanner();
 	source.connect(VIDEO.players[player_id].soundPan).connect(AUDIO.fft);
 	video.onloadedmetadata = function (e){
-        	console.log(this.videoWidth + 'x' + this.videoHeight);
         	VIDEO.players[player_id].width = this.videoWidth;
         	VIDEO.players[player_id].height = this.videoHeight;
 		var videoImage = document.createElement( 'canvas' );
