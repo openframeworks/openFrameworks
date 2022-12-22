@@ -76,15 +76,15 @@ int ofGetHours();
 /// \returns the number of seconds since Midnight, January 1, 1970 (epoch time).
 uint64_t ofGetUnixTime();
 
-/// \brief Get the system time in milliseconds.
+/// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
 OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
 
-/// \brief Get the system time in milliseconds.
+/// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
 uint64_t ofGetSystemTimeMillis();
 
-/// \brief Get the system time in microseconds.
+/// \brief Get the system time in microseconds (system uptime).
 /// \returns the system time in microseconds.
 uint64_t ofGetSystemTimeMicros();
 
@@ -142,7 +142,7 @@ struct ofTime{
 };
 
 /// \brief Get the system time.
-/// \returns the system time.
+/// \returns the system time, which is the time since the system booted (uptime).
 ofTime ofGetCurrentTime();
 
 /// \brief Sleeps the current thread for the specified amount of milliseconds.
