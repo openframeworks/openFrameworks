@@ -7,9 +7,6 @@ static const string shader_pbr_lighting_ibl = R"(
 #define ENV_MAP_MAX_MIPS 5
 #endif
 
-//#ifdef HAS_CUBE_MAP
-//#endif
-
 // Image Based Lighting
 #ifdef HAS_TEX_ENV_IRRADIANCE
 uniform samplerCube tex_irradianceMap;
@@ -88,17 +85,16 @@ void evaluateClearCoatIBL(const PbrData adata, const Material amat, inout vec3 F
 		float Fc = F_Schlick(0.04, 1.0, clearCoatNoV) * amat.clearCoat;
 		float attenuation = 1.0 - Fc;
 		Fd *= attenuation;
-		Fr *= attenuation;
+//		Fr *= (attenuation);
 		
-		// TODO: Should we apply specularAO to the attenuation as well?
-//		float specularAO = specularAO(clearCoatNoV, diffuseAO, adata.clearCoatRoughness, cache);
-		// computeSpecularAO(adata.NoV, ao, aroughness);
 //		float specAO = horizon * horizon * computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
 		float specAO = computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
-//		Fr += getIndirectPrefilteredReflection(clearCoatR, amat.clearCoatRoughness*amat.clearCoatRoughness) * (specAO * Fc);
-//		#if defined(HAS_TEX_ENV_PRE_FILTER)
-		Fr += getIndirectPrefilteredReflection(clearCoatR, clearNormal, amat.clearCoatRoughness*amat.clearCoatRoughness) * (specAO * Fc);
-//		#endif
+		vec3 indirectSpecular = getIndirectPrefilteredReflection(clearCoatR, clearNormal, amat.clearCoatRoughness*amat.clearCoatRoughness);
+		//Fr += getIndirectPrefilteredReflection(clearCoatR, clearNormal, amat.clearCoatRoughness) * (specAO * Fc);
+		#if defined(HAS_TEX_ENV_PRE_FILTER)
+			indirectSpecular = indirectSpecular / (indirectSpecular+vec3(1.0));
+		#endif
+		Fr += indirectSpecular * adata.energyCompensation * (Fc * specAO);
 	}
 #endif
 }
@@ -115,7 +111,7 @@ void calcEnvironmentIndirect( inout PbrData adata, in Material amat ) {
 	}
 #endif
 	// sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
-	vec3 indirectSpecularRadiance = getIndirectPrefilteredReflection( adata.reflectionWorld, adata.normalWorld, amat.roughness );
+	vec3 indirectSpecularRadiance = getIndirectPrefilteredReflection( adata.reflectionWorld, adata.normalWorld, amat.roughness * amat.roughness );
 	
 #if defined(HAS_TEX_ENV_PRE_FILTER)
 	// HDR Tone mapping
@@ -136,7 +132,7 @@ void calcEnvironmentIndirect( inout PbrData adata, in Material amat ) {
 	// HDR Tone mapping
 	irradiance = irradiance / (irradiance + vec3(1.0));
 	Fd *= irradiance;// * (1.0);
-	//vec3 Fd = adata.diffuse * irradiance * (1.0 - E) * diffuseBRDF;
+//	vec3 Fd = adata.diffuse * irradiance * (1.0 - E) * diffuseBRDF;
 #else
 	irradiance = fakeEnvLightingDiffuse(adata.reflectionWorld);
 	Fd *= irradiance;

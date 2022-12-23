@@ -677,11 +677,14 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		}
 		
 		std::string extraVertString = definesString;
-		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
-			extraVertString += "\nuniform SAMPLER "+getUniformName(OF_MATERIAL_TEXTURE_DISPLACEMENT)+";\n";
-		}
+//		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+//			extraVertString += "\nuniform SAMPLER "+getUniformName(OF_MATERIAL_TEXTURE_DISPLACEMENT)+";\n";
+//		}
 		extraVertString += customUniforms;
-    
+		ofLogVerbose( "ofMaterial" ) << " extraVertString------------------- ";
+		ofLogVerbose() << extraVertString;
+		ofLogVerbose( "ofMaterial" ) << "! extraVertString !------------------- " << std::endl;
+     
         #ifndef TARGET_OPENGLES
             string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
             string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
@@ -864,8 +867,23 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 		glm::vec4 lightEyePosition = light->position;
 		// pbr uses global positions
 		if( !isPBR() ) {
-			lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				// support for reversed phong lighting setup
+				lightEyePosition = renderer.getCurrentViewMatrix() * -light->position;
+			} else {
+				lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+			}
 		}
+
+		if( isPBR() ) {
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				lightEyePosition = glm::vec4(-light->direction, lightEyePosition.w);
+			}
+			if( light->lightType != OF_LIGHT_POINT ) {
+				shader.setUniform3f("lights["+idx+"].direction", light->direction );
+			}
+		}
+
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
@@ -891,8 +909,9 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			}
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			//shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
 			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
@@ -910,8 +929,9 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			}
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			
 			auto right = light->right;
 			auto up = light->up;
 			if( !isPBR() ) {
