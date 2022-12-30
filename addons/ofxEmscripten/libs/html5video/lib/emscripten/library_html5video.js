@@ -1,10 +1,7 @@
 var LibraryHTML5Video = {
     $VIDEO: {
         players: [],
-        playersContexts: [],
         playersCounter: 0,
-        soundSources: [],
-        soundPans: [],
 
         getNewPlayerId: function() {
           var ret = VIDEO.playersCounter++;
@@ -92,11 +89,10 @@ var LibraryHTML5Video = {
         video.pixelFormat = "RGBA";
 	var player_id = VIDEO.getNewPlayerId();
 	VIDEO.players[player_id] = video;
-	VIDEO.soundSources[player_id] = AUDIO.context.createMediaElementSource(VIDEO.players[player_id]); 
-	VIDEO.soundPans[player_id] = AUDIO.context.createStereoPanner();
-	VIDEO.soundSources[player_id].connect(VIDEO.soundPans[player_id]).connect(AUDIO.fft);
+	var source = AUDIO.context.createMediaElementSource(VIDEO.players[player_id]); 
+	VIDEO.players[player_id].soundPan = AUDIO.context.createStereoPanner();
+	source.connect(VIDEO.players[player_id].soundPan).connect(AUDIO.fft);
 	video.onloadedmetadata = function (e){
-        	console.log(this.videoWidth + 'x' + this.videoHeight);
         	VIDEO.players[player_id].width = this.videoWidth;
         	VIDEO.players[player_id].height = this.videoHeight;
 		var videoImage = document.createElement( 'canvas' );
@@ -106,7 +102,7 @@ var LibraryHTML5Video = {
 		// background color if no video present
 		videoImageContext.fillStyle = '#000000';
 		videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
-		VIDEO.playersContexts[player_id] = videoImageContext;
+		VIDEO.players[player_id].playersContext = videoImageContext;
         };
         return player_id;
     },
@@ -131,7 +127,11 @@ var LibraryHTML5Video = {
     },
 
     html5video_player_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.players[id].pixelFormat), ALLOC_STACK);
+        var string = VIDEO.players[id].pixelFormat;
+        var size = lengthBytesUTF8(string) + 1;
+        var stringPointer = stackAlloc(size);
+        stringToUTF8Array(string, HEAP8, stringPointer, size);
+        return stringPointer;
     },
 
     html5video_player_set_pixel_format: function(id, format){
@@ -145,7 +145,7 @@ var LibraryHTML5Video = {
         var imageData;
         var data;
         if ( player.readyState === player.HAVE_ENOUGH_DATA ) {
-        	VIDEO.update(update_pixels, player, VIDEO.playersContexts[id], pixels);
+        	VIDEO.update(update_pixels, player, VIDEO.players[id].playersContext, pixels);
             return true;
         }else{
         	return false;
@@ -229,11 +229,11 @@ var LibraryHTML5Video = {
     },
     
     html5video_player_set_pan: function (id, pan) {
-    	VIDEO.soundPans[id].pan.value = pan;
+    	VIDEO.players[id].soundPan.pan.value = pan;
     },
 
     html5video_player_pan: function (id) {
-        return VIDEO.soundPans[id].pan.value;
+        return VIDEO.players[id].soundPan.pan.value;
     },
     
     html5video_grabber_create: function(){
@@ -316,7 +316,11 @@ var LibraryHTML5Video = {
     },
 
     html5video_grabber_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.grabbers[id].pixelFormat), ALLOC_STACK);
+        var string = VIDEO.grabbers[id].pixelFormat;
+        var size = lengthBytesUTF8(string) + 1;
+        var stringPointer = stackAlloc(size);
+        stringToUTF8Array(string, HEAP8, stringPointer, size);
+        return stringPointer;
     },
 
     html5video_grabber_set_pixel_format: function(id, format){

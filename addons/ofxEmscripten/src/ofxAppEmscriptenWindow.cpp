@@ -419,7 +419,7 @@ ofWindowMode ofxAppEmscriptenWindow::getWindowMode(){
 
 void ofxAppEmscriptenWindow::setFullscreen(bool fullscreen){
 	if(fullscreen){
-		emscripten_request_fullscreen("#canvas",1);
+		emscripten_request_fullscreen("#canvas", 1);
 	}else{
 		emscripten_exit_fullscreen();
 	}
