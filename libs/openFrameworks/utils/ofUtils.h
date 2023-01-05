@@ -1050,6 +1050,10 @@ void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
 ///
 /// \note Will block until the executed program/command has finished.
 /// \returns the system command output as string.
+///
+/// \note ofSystem() grabs only stdout; if you are interested in stderr
+///(which may be the case if you're getting "empty" results) consider
+/// redirection by appending 2>&1|cat to your command.
 std::string ofSystem(const std::string& command);
 
 /// \brief Get the target platform of the current system.
