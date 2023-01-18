@@ -7,7 +7,7 @@
 	We will use the normal which is passed to this function and the standard z axis.
  */
 //--------------------------------------------------------------
-void rotateToNormal(glm::vec3 normal) {
+void rotateToNormal(glm::vec3 normal){
 
 	// the normal must be normalized.
 	normal = glm::normalize(normal);

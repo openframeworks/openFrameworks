@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 
 	ofBackgroundHex(0xff72a1);
 	ofSetFrameRate(30);
@@ -40,7 +40,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 
 	// the total width on the line
 	int strWidth = (seussLines[lineCount].length()*8) + 5;
@@ -105,7 +105,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 

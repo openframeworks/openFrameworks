@@ -6,7 +6,7 @@
 */
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	// enable depth->video image calibration
@@ -53,7 +53,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	
 	ofBackground(100, 100, 100);
 	
@@ -101,7 +101,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	
 	ofSetColor(255, 255, 255);
 	
@@ -177,7 +177,7 @@ void ofApp::drawPointCloud() {
 }
 
 //--------------------------------------------------------------
-void ofApp::exit() {
+void ofApp::exit(){
 	kinect.setCameraTiltAngle(0); // zero the tilt on exit
 	kinect.close();
 	
@@ -187,7 +187,7 @@ void ofApp::exit() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed (int key) {
+void ofApp::keyPressed(int key){
 	switch (key) {
 		case ' ':
 			bThreshWithOpenCV = !bThreshWithOpenCV;

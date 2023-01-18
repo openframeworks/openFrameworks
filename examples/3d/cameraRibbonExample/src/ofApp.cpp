@@ -157,7 +157,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	//if we are using the camera, the mouse moving should rotate it around the whole sculpture
 	if(usecamera){
 		float rotateAmount = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 360);

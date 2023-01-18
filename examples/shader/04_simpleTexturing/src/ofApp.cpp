@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 #ifdef TARGET_OPENGLES
 	shader.load("shadersES2/shader");
 #else
@@ -20,12 +20,12 @@ void ofApp::setup() {
 
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	
 	// bind our texture. in our shader this will now be tex0 by default
 	// so we can just go ahead and access it there.

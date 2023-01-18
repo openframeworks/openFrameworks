@@ -51,7 +51,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::exit() {
+void ofApp::exit(){
 	ofUnregisterURLNotification(this);
 }
 

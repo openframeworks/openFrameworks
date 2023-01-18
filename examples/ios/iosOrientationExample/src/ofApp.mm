@@ -113,28 +113,28 @@ void ofApp::exit(){
 }
 
 //--------------------------------------------------------------
-void ofApp::rotateToPortrait() {
+void ofApp::rotateToPortrait(){
 	ofSetOrientation(OF_ORIENTATION_DEFAULT);
 }
 
-void ofApp::rotateToPortraitUpSideDown() {
+void ofApp::rotateToPortraitUpSideDown(){
 	ofSetOrientation(OF_ORIENTATION_180);
 }
 
-void ofApp::rotateToLandscapeLeft() {
+void ofApp::rotateToLandscapeLeft(){
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 }
 
-void ofApp::rotateToLandscapeRight() {
+void ofApp::rotateToLandscapeRight(){
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 }
 
-void ofApp::toggleAutoRotation() {
+void ofApp::toggleAutoRotation(){
 	bAuto = !bAuto;
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDown(ofTouchEventArgs & touch) {
+void ofApp::touchDown(ofTouchEventArgs & touch){
 	
 	NSString * autoTitle;
 	if(bAuto) {
@@ -197,6 +197,6 @@ void ofApp::deviceOrientationChanged(int newOrientation){
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {
+void ofApp::windowResized(int w, int h){
 	//
 }

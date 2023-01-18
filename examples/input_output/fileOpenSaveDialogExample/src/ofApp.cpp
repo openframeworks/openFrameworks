@@ -142,7 +142,7 @@ void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult){
 	
 }
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	
 }
 

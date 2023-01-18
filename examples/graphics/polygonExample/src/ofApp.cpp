@@ -408,7 +408,7 @@ void ofApp::keyReleased(int key){
 }
 
 //------------- -------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	for (int i = 0; i < nCurveVertices; i++){
 		float diffx = x - curveVertices[i].x;
 		float diffy = y - curveVertices[i].y;

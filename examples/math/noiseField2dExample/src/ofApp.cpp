@@ -30,7 +30,7 @@ bool debugMode = false;
  for the v.
  */
 //--------------------------------------------------------------
-glm::vec2 ofApp::getField(const glm::vec2& position) {
+glm::vec2 ofApp::getField(const glm::vec2& position){
 	float normx = ofNormalize(position.x, 0, ofGetWidth());
 	float normy = ofNormalize(position.y, 0, ofGetHeight());
 	float u = ofNoise(t + phase, normx * complexity + phase, normy * complexity + phase);
@@ -39,7 +39,7 @@ glm::vec2 ofApp::getField(const glm::vec2& position) {
 }
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	ofSetVerticalSync(true); // don't go too fast
 	ofEnableAlphaBlending();
 	
@@ -55,7 +55,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	width = ofGetWidth(), height = ofGetHeight();
   t = ofGetFrameNum() * timeSpeed;
   for(int i = 0; i < nPoints; i++) {
@@ -81,7 +81,7 @@ void ofApp::update() {
 } 
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofBackground(255);
   if(debugMode) {
 	ofSetColor(0);
@@ -111,34 +111,34 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
+void ofApp::keyPressed(int key){
 	// when you hit a key, draw the debug screen
   debugMode = !debugMode;
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key) {
+void ofApp::keyReleased(int key){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y) {
+void ofApp::mouseMoved(int x, int y){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button) {
+void ofApp::mouseDragged(int x, int y, int button){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {
+void ofApp::mousePressed(int x, int y, int button){
 	// when you click the mouse, reset all the points
   setup();
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button) {
+void ofApp::mouseReleased(int x, int y, int button){
 
 }
 
@@ -153,7 +153,7 @@ void ofApp::mouseExited(int x, int y){
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {
+void ofApp::windowResized(int w, int h){
 
 }
 

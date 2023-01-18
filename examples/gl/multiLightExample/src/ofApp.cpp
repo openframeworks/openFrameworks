@@ -75,7 +75,7 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	pointLight.setPosition(cos(ofGetElapsedTimef()*.6f) * radius * 2 + center.x,
 						   sin(ofGetElapsedTimef()*.8f) * radius * 2 + center.y,
 						   -cos(ofGetElapsedTimef()*.8f) * radius * 2 + center.z);
@@ -199,7 +199,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 

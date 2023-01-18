@@ -20,7 +20,7 @@
 
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 
 	ofBackground(0);
 	ofSetWindowTitle("The Moon is made of plops");
@@ -62,12 +62,12 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 
 	// we need some images if not return
 	if((int)images.size() <= 0) {
@@ -145,7 +145,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 

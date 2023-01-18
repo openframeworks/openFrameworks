@@ -385,7 +385,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-glm::vec2 ofApp::getOpticalFlowValueForPercent( float xpct, float ypct ){
+glm::vec2 ofApp::getOpticalFlowValueForPercent(float xpct, float ypct){
 	glm::vec2 flowVector(0,0);
 	
 	if( flowMat.empty() || !grayImage.bAllocated) {
@@ -466,7 +466,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 

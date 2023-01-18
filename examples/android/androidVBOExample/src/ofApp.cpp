@@ -76,7 +76,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, zoom);

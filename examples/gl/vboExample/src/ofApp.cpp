@@ -12,27 +12,27 @@
  vertices, or texture coordinates.
  */
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c){
 	mesh.addVertex(a);
 	mesh.addVertex(b);
 	mesh.addVertex(c);
 }
 
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d) {
+void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d){
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c) {
+void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c){
 	mesh.addTexCoord(a);
 	mesh.addTexCoord(b);
 	mesh.addTexCoord(c);
 }
 
 //--------------------------------------------------------------
-void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d) {
+void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d){
 	addTexCoords(mesh, a, b, c);
 	addTexCoords(mesh, a, c, d);
 }
@@ -42,7 +42,7 @@ void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, c
  a 3d point from the current x,y image position.
  */
 //--------------------------------------------------------------
-glm::vec3 ofApp::getVertexFromImg(ofImage& img, int x, int y) {
+glm::vec3 ofApp::getVertexFromImg(ofImage& img, int x, int y){
 	ofColor color = img.getColor(x, y);
 	if(color.a > 0) {
 		float z = ofMap(color.a, 0, 255, -480, 480);
@@ -53,7 +53,7 @@ glm::vec3 ofApp::getVertexFromImg(ofImage& img, int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 
 	#ifdef TARGET_OPENGLES
 	// While this will will work on normal OpenGL as well, it is
@@ -114,12 +114,12 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofBackgroundGradient(ofColor(64), ofColor(0));
 	cam.begin();
 	ofEnableDepthTest();

@@ -164,7 +164,7 @@ void ofApp::keyReleased  (int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	int width = ofGetWidth();
 	pan = (float)x / (float)width;
 	float height = (float)ofGetHeight();

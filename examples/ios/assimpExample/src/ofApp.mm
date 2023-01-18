@@ -19,7 +19,7 @@ void ofApp::setup(){
 	loadModel(modelIndex);
 }
 
-void ofApp::loadModel(int modelIndex) {
+void ofApp::loadModel(int modelIndex){
 	ofPoint modelPosition(ofGetWidth() / 2, (float)ofGetHeight() * 0.75 , 0);
 	
 	switch(modelIndex){

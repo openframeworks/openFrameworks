@@ -22,7 +22,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofBackground(255,0);
 
 
@@ -55,7 +55,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	ofLogVerbose("ofApp") << "mouseMoved() x = " << x << "/" << y;
 }
 

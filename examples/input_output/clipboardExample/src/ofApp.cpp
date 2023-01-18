@@ -1,16 +1,16 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	clipboardContents = "<empty>";
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofBackground(0);
 	ofSetColor(255);
 

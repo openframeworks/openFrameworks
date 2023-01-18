@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	threshold = 32;
 
 	camWidth = 640;
@@ -15,7 +15,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
 	cam.update();
@@ -79,7 +79,7 @@ void drawWithNormals(const ofPolyline& polyline) {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofBackground(0);
 
 	ofSetColor(255);

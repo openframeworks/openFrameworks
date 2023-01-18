@@ -122,7 +122,7 @@ void ofApp::keyReleased  (int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	// update mouse x and y percent when the mouse moves
 	mouseXPercent = float(x) / ofGetWidth();
 	mouseYPercent = float(y) / ofGetHeight();

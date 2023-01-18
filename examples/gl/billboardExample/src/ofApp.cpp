@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup(){
 	ofBackground(0, 0, 0);
 
 	cameraRotation ={0,0,0};
@@ -49,7 +49,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update(){
 
 	float t = (ofGetElapsedTimef()) * 0.9f;
 	float div = 250.0;
@@ -79,7 +79,7 @@ void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw(){
 	ofBackgroundGradient(ofColor(255), ofColor(230, 240, 255));
 
 	string info = ofToString(ofGetFrameRate(), 2)+"\n";
