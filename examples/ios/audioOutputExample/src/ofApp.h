@@ -11,7 +11,6 @@ class ofApp : public ofxiOSApp{
 	
 		void exit();
 	
-//		void audioOut(float * output, int bufferSize, int nChannels);
 		void audioOut(ofSoundBuffer & buffer);
 
 		void touchDown(ofTouchEventArgs & touch);
