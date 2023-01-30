@@ -16,18 +16,13 @@ void ofApp::setup(){
 	// 512 samples per buffer
 	// 4 num buffers (latency)
 
-	sampleRate = 44100;
 	phase = 0;
 	phaseAdder = 0.0f;
 	phaseAdderTarget = 0.0;
 	volume = 0.15f;
 	pan = 0.5;
 	bNoise = false;
-	
-	//for some reason on the iphone simulator 256 doesn't work - it comes in as 512!
-	//so we do 512 - otherwise we crash
-	initialBufferSize = 512;
-	
+		
 	lAudio = new float[initialBufferSize];
 	rAudio = new float[initialBufferSize];
 	
@@ -38,17 +33,15 @@ void ofApp::setup(){
 	targetFrequency = 444.0;
 	phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
 	
-	// This call will allow your app's sound to mix with any others that are creating sound
-	// in the background (e.g. the Music app). It should be done before the call to
-	// ofSoundStreamSetup. It sets a category of "play and record" with the "mix with others"
-	// option turned on. There are many other combinations of categories & options that might
-	// suit your app's needs better. See Apple's guide on "Configuring Your Audio Session".
+	ofSoundStreamSettings settings;
+	settings.setOutListener(this);
+	settings.sampleRate = 44100;
+	settings.numOutputChannels = 2;
+	settings.numInputChannels = 0;
+	settings.bufferSize = 512;
+	soundStream.setup(settings);
 	
-	// ofxiOSSoundStream::setMixWithOtherApps(true);
-	
-	ofSoundStreamSetup(2, 0, this, sampleRate, initialBufferSize, 4);
 	ofSetFrameRate(60);
-
 }
 
 //--------------------------------------------------------------
@@ -98,39 +91,32 @@ void ofApp::exit(){
 }
 
 //--------------------------------------------------------------
-void ofApp::audioOut(float * output, int bufferSize, int nChannels){
-			
-	if( initialBufferSize < bufferSize ){
-		ofLog(OF_LOG_ERROR, "your buffer size was set to %i - but the stream needs a buffer size of %i", initialBufferSize, bufferSize);
-		return;
-	}	
+void ofApp::audioOut(ofSoundBuffer & buffer){
 
 	float leftScale = 1 - pan;
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
 	// keep phase in the range of 0-TWO_PI like this:
-	while(phase > TWO_PI){
+	while (phase > TWO_PI){
 		phase -= TWO_PI;
 	}
 
-	if(bNoise == true){
+	if ( bNoise == true){
 		// ---------------------- noise --------------
-		for(int i = 0; i < bufferSize; i++){
-			lAudio[i] = output[i * nChannels] = ofRandomf() * volume * leftScale;
-			rAudio[i] = output[i * nChannels + 1] = ofRandomf() * volume * rightScale;
+		for (size_t i = 0; i < buffer.getNumFrames(); i++){
+			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = ofRandom(0, 1) * volume * leftScale;
+			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = ofRandom(0, 1) * volume * rightScale;
 		}
 	} else {
 		phaseAdder = 0.95f * phaseAdder + 0.05f * phaseAdderTarget;
-		for(int i = 0; i < bufferSize; i++){
+		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			phase += phaseAdder;
 			float sample = sin(phase);
-			lAudio[i] = output[i * nChannels] = sample * volume * leftScale;
-			rAudio[i] = output[i * nChannels + 1] = sample * volume * rightScale;
+			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = sample * volume * leftScale;
+			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = sample * volume * rightScale;
 		}
 	}
-
-	
 }
 
 //--------------------------------------------------------------
