@@ -10,12 +10,6 @@ void ofApp::setup(){
 
 	ofBackground(255, 255, 255);
 
-	// 2 output channels,
-	// 0 input channels
-	// 44100 samples per second
-	// 512 samples per buffer
-	// 4 num buffers (latency)
-
 	phase = 0;
 	phaseAdder = 0.0f;
 	phaseAdderTarget = 0.0;
@@ -102,7 +96,7 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 		phase -= TWO_PI;
 	}
 
-	if ( bNoise == true){
+	if (bNoise == true){
 		// ---------------------- noise --------------
 		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = ofRandom(0, 1) * volume * leftScale;
