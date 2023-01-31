@@ -47,7 +47,11 @@ void ofApp::setup(){
 	
 	// load a shader that will be used for mesh manipulation and lighting
 	shader = make_shared<ofShader>();
-	shader->load("shaders/shader");
+	#ifndef TARGET_EMSCRIPTEN
+		shader->load("shaders/shader");
+	#else
+		shader->load("shadersGLES/shader");
+	#endif
 	
 	for( int i = 0; i < texturePacks.size(); i++ ){
 		// set the material to use our custom shader
@@ -68,8 +72,7 @@ void ofApp::setup(){
 	
 	// allocate an fbo that will be used to draw into to determine how much the textures
 	// should influence the sphere
-	// we use a value of GL_RGB32F for more precision
-	fboInfluence.allocate(512, 512, GL_RGB32F );
+	fboInfluence.allocate(512, 512, GL_RGB );
 	fboInfluence.begin();
 	ofClear(0,0,0,1);
 	fboInfluence.end();
@@ -121,6 +124,7 @@ void ofApp::draw(){
 		shader->setUniformTexture("mapInfluence", fboInfluence.getTexture(), 4 );
 		
 		ofPushMatrix();
+		ofRotateYDeg(180);
 		ofScale(200, 200, 200 );
 		meshSphere.draw();
 		ofPopMatrix();

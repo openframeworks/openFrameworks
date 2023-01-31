@@ -2,8 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	camWidth = 320;  // try to grab at this size.
-	camHeight = 240;
+	camWidth = 640;  // try to grab at this size.
+	camHeight = 480;
 
 	//get back a list of devices.
 	vector<ofVideoDevice> devices = vidGrabber.listDevices();
@@ -20,9 +20,9 @@ void ofApp::setup(){
 
 	vidGrabber.setDeviceID(0);
 	vidGrabber.setDesiredFrameRate(30);
-	vidGrabber.initGrabber(camWidth, camHeight);
+	vidGrabber.setup(camWidth, camHeight);
 
-	videoInverted.allocate(vidGrabber.getWidth(), vidGrabber.getHeight(), OF_PIXELS_RGB);
+	videoInverted.allocate(camWidth, camHeight, OF_PIXELS_RGB);
 	videoTexture.allocate(videoInverted);
 	ofSetVerticalSync(true);
 }

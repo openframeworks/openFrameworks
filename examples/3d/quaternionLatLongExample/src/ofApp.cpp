@@ -127,7 +127,9 @@ void ofApp::draw(){
 	camera.begin();
 
 	ofSetColor( 220 );
-	glPointSize(3);
+	#ifndef TARGET_EMSCRIPTEN
+		glPointSize(3.0f);
+	#endif
 	starsMesh.draw();
 
 	ofPushMatrix();

@@ -9,21 +9,26 @@
 
 #include "ofConstants.h"
 #include "ofTexture.h"
+#include <assimp/material.h>
 
 class ofxAssimpTexture {
 
 public:
-    
-    ofxAssimpTexture();
-	ofxAssimpTexture(ofTexture texture, std::string texturePath);
+
+	void setup(const ofTexture & texture, std::string texturePath, bool bTexRepeat = true);
 
     ofTexture & getTextureRef();
 	std::string getTexturePath();
     bool hasTexture();
     
+    void setTextureType(aiTextureType aTexType);
+    aiTextureType getTextureType() const;
+    std::string getTextureTypeAsString() const;
+    
 private:
     
     ofTexture texture;
 	std::string texturePath;
-    
+    aiTextureType textureType;
+    std::string mTexTypeStr;
 };
