@@ -152,7 +152,7 @@ string ofGetGLInternalFormatName(int glInternalFormat) {
 int ofGetGLFormatFromInternal(int glInternalFormat){
 	switch(glInternalFormat) {
 			case GL_RGBA:
-	#ifndef TARGET_OPENGLES
+	#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 			case GL_RGBA8:
 			case GL_RGBA16:
 			case GL_RGBA16F:
