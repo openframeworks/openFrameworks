@@ -92,7 +92,6 @@ static void restoreAppWindowFocus(){
 #define CANCEL_BUTTON GTK_STOCK_CANCEL
 #endif
 
-// using namespace std;
 
 gboolean init_gtk(gpointer userdata){
 	int argc=0; char **argv = nullptr;
@@ -252,7 +251,6 @@ void resetLocale(std::locale locale){
 #include <emscripten/emscripten.h>
 #endif
 
-// using namespace std;
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){

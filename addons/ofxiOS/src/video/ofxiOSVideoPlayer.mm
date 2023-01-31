@@ -5,7 +5,7 @@
 #include "ofGLUtils.h"
 #include "ofMath.h"
 
-using namespace std;
+using std::string;
 
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;

@@ -47,7 +47,7 @@ void ofApp::setup(){
 	#else
 		settings.numOutputChannels = 0;
 	#endif
-	settings.numInputChannels = 2;
+	settings.numInputChannels = 1;
 	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
 
