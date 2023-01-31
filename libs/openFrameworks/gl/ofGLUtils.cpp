@@ -275,7 +275,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		break;
 #endif
 
-#ifndef TARGET_OPENGLES
+#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
 		case GL_R32F:
