@@ -9,7 +9,7 @@
 #include "ofLog.h"
 #import "AVSoundPlayer.h"
 
-using namespace std;
+using std::string;
 
 ofxiOSSoundPlayer::ofxiOSSoundPlayer() {
     soundPlayer = NULL;

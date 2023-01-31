@@ -15,7 +15,7 @@
 #import "SoundOutputStream.h"
 #import <AVFoundation/AVFoundation.h>
 
-using namespace std;
+using std::vector;
 
 //------------------------------------------------------------------------------
 ofxiOSSoundStream::ofxiOSSoundStream() {
