@@ -89,7 +89,7 @@ int ofGetGLInternalFormat(const ofShortPixels& pixels) {
 
 //---------------------------------
 int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
-#ifndef TARGET_OPENGLES
+#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB32F;
 		case 4: return GL_RGBA32F;
@@ -152,7 +152,7 @@ string ofGetGLInternalFormatName(int glInternalFormat) {
 int ofGetGLFormatFromInternal(int glInternalFormat){
 	switch(glInternalFormat) {
 			case GL_RGBA:
-	#ifndef TARGET_OPENGLES
+	#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 			case GL_RGBA8:
 			case GL_RGBA16:
 			case GL_RGBA16F:
@@ -275,7 +275,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		break;
 #endif
 
-#ifndef TARGET_OPENGLES
+#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
 		case GL_R32F:

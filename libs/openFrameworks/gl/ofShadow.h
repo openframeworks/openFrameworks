@@ -97,6 +97,7 @@ public:
 	static void setAllShadowBias( float bias );
 	static void setAllShadowNormalBias( float normalBias );
 	static void setAllShadowSampleRadius( float sampleRadius );
+	static std::string getShaderDefinesAsString();
 	
 	ofShadow();
 	~ofShadow();

@@ -49,6 +49,9 @@
 		1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */; };
 		1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */; };
 		1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */; };
+		2E49891A292C98000096EC56 /* ofCubeMapShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498917292C98000096EC56 /* ofCubeMapShaders.h */; };
+		2E49891B292C98000096EC56 /* ofCubeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498918292C98000096EC56 /* ofCubeMap.h */; };
+		2E49891C292C98000096EC56 /* ofCubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E498919292C98000096EC56 /* ofCubeMap.cpp */; };
 		2E6E258328F73C2C00EC8E22 /* ofShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6E258128F73C2C00EC8E22 /* ofShadow.h */; };
 		2E6E258428F73C2C00EC8E22 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6E258228F73C2C00EC8E22 /* ofShadow.cpp */; };
 		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
@@ -276,6 +279,9 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2E498917292C98000096EC56 /* ofCubeMapShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCubeMapShaders.h; sourceTree = "<group>"; };
+		2E498918292C98000096EC56 /* ofCubeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCubeMap.h; sourceTree = "<group>"; };
+		2E498919292C98000096EC56 /* ofCubeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCubeMap.cpp; sourceTree = "<group>"; };
 		2E6E258128F73C2C00EC8E22 /* ofShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShadow.h; sourceTree = "<group>"; };
 		2E6E258228F73C2C00EC8E22 /* ofShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShadow.cpp; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -784,6 +790,9 @@
 				69433CC41FE45BB7004D5B73 /* ofGLBaseTypes.h */,
 				67833F8819F8996300DBE7AA /* ofBufferObject.cpp */,
 				67833F8919F8996300DBE7AA /* ofBufferObject.h */,
+				2E498919292C98000096EC56 /* ofCubeMap.cpp */,
+				2E498918292C98000096EC56 /* ofCubeMap.h */,
+				2E498917292C98000096EC56 /* ofCubeMapShaders.h */,
 				E4F76D93176CB27200798745 /* ofFbo.cpp */,
 				E4F76D94176CB27200798745 /* ofFbo.h */,
 				E4F76D95176CB27200798745 /* ofGLProgrammableRenderer.cpp */,
@@ -944,6 +953,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E49891B292C98000096EC56 /* ofCubeMap.h in Headers */,
 				E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */,
 				E4F76E1C176CB27200798745 /* of3dUtils.h in Headers */,
 				E4F76E1E176CB27200798745 /* ofCamera.h in Headers */,
@@ -1014,6 +1024,7 @@
 				E4F76E9A176CB27200798745 /* ofSystemUtils.h in Headers */,
 				E4F76E9C176CB27200798745 /* ofThread.h in Headers */,
 				E4F76E9E176CB27200798745 /* ofURLFileLoader.h in Headers */,
+				2E49891A292C98000096EC56 /* ofCubeMapShaders.h in Headers */,
 				E4F76EA0176CB27200798745 /* ofUtils.h in Headers */,
 				E4F76EB6176CB27200798745 /* ofVideoGrabber.h in Headers */,
 				67833F8B19F8996300DBE7AA /* ofBufferObject.h in Headers */,
@@ -1146,6 +1157,7 @@
 				E4F76E6B176CB27200798745 /* ofQuaternion.cpp in Sources */,
 				E4F76E6D176CB27200798745 /* ofVec2f.cpp in Sources */,
 				E4F76E70176CB27200798745 /* ofVec4f.cpp in Sources */,
+				2E49891C292C98000096EC56 /* ofCubeMap.cpp in Sources */,
 				69433CD01FE45BF2004D5B73 /* ofSoundBaseTypes.cpp in Sources */,
 				E4F76E80176CB27200798745 /* ofSoundPlayer.cpp in Sources */,
 				E4F76E82176CB27200798745 /* ofSoundStream.cpp in Sources */,

@@ -19,10 +19,8 @@ void main() {
 #endif
 	
 #ifdef CUBE_MAP_SINGLE_PASS
-	float lightDistance = length(FragPos.xyz - uLightPos);
-	lightDistance = lightDistance / uFarPlane;
 	// write out modified depth
-	gl_FragDepth = lightDistance;
+	gl_FragDepth = length(FragPos.xyz - uLightPos) / uFarPlane;
 #endif
 	
 #if defined(CUBE_MAP_MULTI_PASS)

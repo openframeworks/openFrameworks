@@ -137,8 +137,8 @@ void ofMainLoop::loopOnce(){
 	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
 			const auto & window = i->first;
-			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 			window->close();
+			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 		}else{
 			currentWindow = i->first;
 			i->first->makeCurrent();

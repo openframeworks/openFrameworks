@@ -301,6 +301,28 @@ void ofShadow::setAllShadowSampleRadius( float sampleRadius ) {
 }
 
 //--------------------------------------------------------------
+std::string ofShadow::getShaderDefinesAsString() {
+	std::string definesString = "";
+	// TODO: We should get this working on GLES!
+#ifndef TARGET_OPENGLES
+	if( ofIsGLProgrammableRenderer() ) {
+		if( ofShadowsData().size() > 0 && ofLightsData().size() > 0) {
+			definesString += "#define HAS_SHADOWS 1\n";
+		}
+		
+		if( ofShadow::getTextureTarget( OF_LIGHT_POINT ) != GL_TEXTURE_CUBE_MAP ) {
+			definesString += "#define SHADOWS_USE_CUBE_MAP_ARRAY 1\n";
+		}
+		
+		if( ofShadow::getTextureTarget( OF_LIGHT_DIRECTIONAL ) != GL_TEXTURE_2D ) {
+			definesString += "#define SHADOWS_USE_TEXTURE_ARRAY 1\n";
+		}
+	}
+#endif
+	return definesString;
+}
+
+//--------------------------------------------------------------
 void ofShadow::_updateTexDataIds() {
 	std::map<int, int> texIdMap;
 	
@@ -364,11 +386,8 @@ void ofShadow::update( const ofLight& alight ) {
 	
 	data->position = alight.getGlobalPosition();
 	data->direction = glm::normalize(lookAtDir);
-	if( data->lightType == OF_LIGHT_DIRECTIONAL ) {
-		data->direction *= -1.;
-	}
-	data->up = alight.getUpDir();
-	data->right = alight.getSideDir();
+	data->up = rq * glm::vec3(0.0,1.0,0.0);
+	data->right = rq * glm::vec3(1.0,0.0,0.0);
 	
 	unsigned int targetNumMatrices = 1;
 	if(data->lightType == OF_LIGHT_POINT) {
@@ -707,6 +726,13 @@ void ofShadow::_drawFrustum( const glm::vec3& aup, const glm::vec3& aright, cons
 	auto corners = getFrustumCorners(aup, aright, afwd );
 	
 	ofPushStyle();
+
+	ofSetColor( ofColor::green );
+	ofDrawArrow( data->position, data->position+data->up * 100.0, 10.0);
+	ofSetColor( ofColor::red );
+	ofDrawArrow( data->position, data->position+data->right * 100.0, 10.0);
+	ofSetColor( ofColor::blue );
+	ofDrawArrow( data->position, data->position+data->direction * 100.0, 10.0);
 	
 	vector<ofFloatColor> colors;
 	
@@ -803,14 +829,14 @@ std::vector<glm::vec3> ofShadow::getFrustumCorners( const glm::vec3& aup, const 
 		
 	}
 		
-	glm::vec3 Z = glm::normalize(-afwd);
+	glm::vec3 Z = glm::normalize(afwd);
 	glm::vec3 X = glm::normalize(aright);
 	glm::vec3 Y = glm::normalize(aup);
 	
 	glm::vec3 p = data->position;
 	
-	glm::vec3 nc = p - Z * getNearClip();
-	glm::vec3 fc = p - Z * getFarClip();
+	glm::vec3 nc = p + Z * getNearClip();
+	glm::vec3 fc = p + Z * getFarClip();
 	
 	float ratio = (float)getDepthMapWidth() / (float)getDepthMapHeight();
 	
@@ -871,7 +897,7 @@ void ofShadow::updateDepth(const ofShader & shader,ofGLProgrammableRenderer & re
 	if( data->lightType == OF_LIGHT_POINT ) {
 		if( isSingleOmniPass() ) {
 			for( unsigned int i = 0; i < 6; i++ ) {
-				shader.setUniformMatrix4f("light["+ std::to_string(i) +"].viewProjectionMatirx", mViewProjMats[i]);
+				shader.setUniformMatrix4f("light["+ std::to_string(i) +"].viewProjectionMatrix", mViewProjMats[i]);
 			}
 			shader.setUniform1i("uStartLayer", data->texIndex );
 		} else {
@@ -1020,7 +1046,7 @@ void ofShadow::_allocateFbo() {
 		#ifdef GL_CLAMP_TO_BORDER
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float borderColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glTexParameterfv(textureTarget, GL_TEXTURE_BORDER_COLOR, borderColor);
 		#else
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1122,7 +1148,7 @@ void ofShadow::initShaders(ofGLProgrammableRenderer & renderer) const{
 	if(rendererShaders == shaders.end() ){
 		shaders[&renderer] = std::make_shared<ofShadow::Shaders>();
 		
-		std::string gversion = "#version 330\n";
+		std::string gversion = "#version 150\n";
 		#ifdef TARGET_OPENGLES
 		gversion = "#version 310 es\nprecision highp float;\n";
 		#endif
