@@ -151,7 +151,7 @@ ofSoundStream::ofSoundStream(){
 }
 
 //------------------------------------------------------------
-void ofSoundStream::setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr){
+void ofSoundStream::setSoundStream(const shared_ptr<ofBaseSoundStream> & soundStreamPtr){
 	soundStream = soundStreamPtr;
 }
 
