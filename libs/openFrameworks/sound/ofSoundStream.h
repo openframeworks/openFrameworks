@@ -85,7 +85,7 @@ class ofSoundStream {
 public:
 	ofSoundStream();
 
-	void setSoundStream(std::shared_ptr<ofBaseSoundStream> soundStreamPtr);
+	void setSoundStream(const std::shared_ptr<ofBaseSoundStream> & soundStreamPtr);
 	std::shared_ptr<ofBaseSoundStream> getSoundStream();
 
 	/// \brief Prints a list of available audio devices to the console
