@@ -1,12 +1,14 @@
-#ifdef GL_ES
-// define default precision for float, vec, mat.
-precision highp float;
-#endif
+#version 300 es
+// vertex shader
+
+precision lowp float;
+
+in vec4 color;
+out vec4 out_Color;
 
 uniform sampler2D tex;
 
 void main (void) {
-    
-    gl_FragColor = texture2D(tex, gl_TexCoord[0].st) * gl_Color;
+    out_Color = vec4(color.rgb, texture(tex, gl_PointCoord).a);
     
 }
