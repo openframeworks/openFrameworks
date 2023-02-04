@@ -40,7 +40,7 @@ void ofApp::setup() {
 	
 	
 	// load the shader
-	#if defined TARGET_OPENGLES
+	#ifdef TARGET_OPENGLES
 		shader.load("shaders_gles/shader");
 	#else
 		shader.load("shaders/shader"); 
