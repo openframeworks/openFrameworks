@@ -1,5 +1,5 @@
 #version 300 es
-// vertex shader
+// fragment shader
 
 precision lowp float;
 
@@ -9,6 +9,5 @@ out vec4 out_Color;
 uniform sampler2D tex;
 
 void main (void) {
-    out_Color = vec4(color.rgb, texture(tex, gl_PointCoord).a);
-    
+        out_Color = vec4(color.rgb, texture(tex, gl_PointCoord).a);
 }
