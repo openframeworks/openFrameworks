@@ -124,15 +124,15 @@ int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
 string ofGetGLInternalFormatName(int glInternalFormat) {
 	switch(glInternalFormat) {
 		case GL_RGBA: return "GL_RGBA";
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_RGBA8: return "GL_RGBA8";
 #endif
 		case GL_RGB: return "GL_RGB";
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_RGB8: return "GL_RGB8";
 #endif
 		case GL_LUMINANCE: return "GL_LUMINANCE";
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_LUMINANCE8: return "GL_LUMINANCE8";
 		case GL_RGBA16: return "GL_RGBA16";
 		case GL_RGB16: return "GL_RGB16";
@@ -142,7 +142,7 @@ string ofGetGLInternalFormatName(int glInternalFormat) {
 		case GL_LUMINANCE32F_ARB: return "GL_LUMINANCE32F_ARB";
 #endif
 		case GL_LUMINANCE_ALPHA: return "GL_LUMINANCE_ALPHA";
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_LUMINANCE8_ALPHA8: return "GL_LUMINANCE8_ALPHA8";
 #endif
 		default: return "unknown glInternalFormat";
@@ -170,7 +170,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 
 
 			case GL_RGB:
-	#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+	#ifndef TARGET_OPENGLES
 			case GL_RGB8:
 			case GL_RGB16:
 		    case GL_RGB16F:
@@ -184,7 +184,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 
 
 			case GL_LUMINANCE:
-	#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+	#ifndef TARGET_OPENGLES
 			case GL_LUMINANCE8:
 			case GL_LUMINANCE16:
 			case GL_LUMINANCE32F_ARB:
@@ -192,7 +192,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				 return GL_LUMINANCE;
 
 			case GL_LUMINANCE_ALPHA:
-	#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+	#ifndef TARGET_OPENGLES
 			case GL_LUMINANCE8_ALPHA8:
 			case GL_LUMINANCE16_ALPHA16:
 			case GL_LUMINANCE_ALPHA32F_ARB:
@@ -204,7 +204,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				 return GL_DEPTH_STENCIL;
 
 			case GL_DEPTH_COMPONENT:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 			case GL_DEPTH_COMPONENT16:
 			case GL_DEPTH_COMPONENT24:
 			case GL_DEPTH_COMPONENT32:
@@ -214,7 +214,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 			case GL_STENCIL_INDEX:
 				return GL_STENCIL_INDEX;
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 			case GL_R8:
 			case GL_R16:
 		    case GL_R16I:
@@ -236,7 +236,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				return GL_RG;
 #endif
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 			case GL_ALPHA8:
 #endif
 			case GL_ALPHA:
@@ -257,7 +257,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		case GL_LUMINANCE:
 		case GL_LUMINANCE_ALPHA:
 		case GL_ALPHA:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_LUMINANCE8:
 		case GL_LUMINANCE8_ALPHA8:
 		case GL_R8:
@@ -301,7 +301,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 			 return GL_UNSIGNED_INT_24_8;
 
 		case GL_DEPTH_COMPONENT:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_DEPTH_COMPONENT16:
 		case GL_R16UI:
 		case GL_RG16UI:
@@ -310,7 +310,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 #endif
 			return GL_UNSIGNED_SHORT;
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_R16I:
 		case GL_RG16I:
 		case GL_RGB16I:
@@ -318,7 +318,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		    return GL_SHORT;
 #endif
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_DEPTH_COMPONENT24:
 		case GL_DEPTH_COMPONENT32:
 		case GL_R32UI:
@@ -328,7 +328,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 			return GL_UNSIGNED_INT;
 #endif
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_R32I:
 		case GL_RG32I:
 		case GL_RGB32I:
@@ -348,13 +348,13 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 
 //---------------------------------
 int ofGetGLType(const ofPixels & pixels) {
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 	if(pixels.getPixelFormat() == OF_PIXELS_RGB565){
 		return GL_UNSIGNED_SHORT_5_6_5;
 	}else{
 #endif
 		return GL_UNSIGNED_BYTE;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 	}
 #endif
 }
@@ -425,7 +425,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 }
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN || defined TARGET_EMSCRIPTEN
+#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 	switch(mode){
 		case(OF_MESH_POINTS):
 			return GL_POINT;
@@ -447,7 +447,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
 }
 
 ofPolyRenderMode ofGetOFPolyMode(GLuint mode){
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN || defined TARGET_EMSCRIPTEN
+#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 	switch(mode){
 		case(GL_POINT):
 			return OF_MESH_POINTS;
@@ -492,7 +492,7 @@ GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 		case OF_PRIMITIVE_POINTS:
 			return GL_POINTS;
 			break;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case OF_PRIMITIVE_LINES_ADJACENCY:
 			return GL_LINES_ADJACENCY;
 			break;
@@ -539,7 +539,7 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 		case GL_POINTS:
 			return OF_PRIMITIVE_POINTS;
 			break;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_LINES_ADJACENCY:
 			return OF_PRIMITIVE_LINES_ADJACENCY;
 			break;
@@ -568,14 +568,14 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
 	case OF_PIXELS_RGBA:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		return GL_RGBA8;
 #else
 		return GL_RGBA;
 #endif
 	case OF_PIXELS_RGB:
 	case OF_PIXELS_BGR:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		return GL_RGB8;
 #else
 		return GL_RGB;
@@ -596,26 +596,26 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_Y:
 	case OF_PIXELS_U:
 	case OF_PIXELS_V:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		if(ofIsGLProgrammableRenderer()){
 			return GL_R8;
 		}else{
 #endif
 			return GL_LUMINANCE;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		}
 #endif
     case OF_PIXELS_GRAY_ALPHA:
 	case OF_PIXELS_YUY2:
 	case OF_PIXELS_UV:
 	case OF_PIXELS_VU:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		if(ofIsGLProgrammableRenderer()){
 			return GL_RG8;
 		}else{
 #endif
 			return GL_LUMINANCE_ALPHA;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		}
 #endif
 	default:
@@ -653,30 +653,30 @@ int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_Y:
 	case OF_PIXELS_U:
 	case OF_PIXELS_V:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		if(ofIsGLProgrammableRenderer()){
 			return GL_RED;
 		}else{
 #endif
 			return GL_LUMINANCE;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		}
 #endif
     case OF_PIXELS_GRAY_ALPHA:
 	case OF_PIXELS_YUY2:
 	case OF_PIXELS_UV:
 	case OF_PIXELS_VU:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		if(ofIsGLProgrammableRenderer()){
 			return GL_RG;
 		}else{
 #endif
 			return GL_LUMINANCE_ALPHA;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		}
 #endif
 	default:
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		if(ofIsGLProgrammableRenderer()){
 			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format "
 				<< ofToString(pixelFormat) << ", returning GL_RED";
@@ -686,7 +686,7 @@ int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat){
 			ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format "
 				<< ofToString(pixelFormat) << ", returning GL_LUMINANCE";
 			return GL_LUMINANCE;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		}
 #endif
 	}
@@ -706,7 +706,7 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 		return 1;
 	case GL_LUMINANCE_ALPHA:
 		return 2;
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 	case GL_RED:
 		return 1;
 	case GL_RG:
@@ -729,7 +729,7 @@ int ofGetBytesPerChannelFromGLType(int glType){
 			return 2;
 #endif
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_FLOAT:
 			return 4;
 #endif
@@ -737,7 +737,7 @@ int ofGetBytesPerChannelFromGLType(int glType){
 			 return 4;
 
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 		case GL_UNSIGNED_INT:
 			return 4;
 #endif
@@ -808,7 +808,7 @@ bool ofGLCheckExtension(string searchName){
 }
 
 bool ofGLSupportsNPOTTextures(){
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 	return GL_ARB_texture_rectangle;
 #elif !defined(TARGET_EMSCRIPTEN)
 	static bool npotChecked = false;
@@ -877,7 +877,7 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 }
 #endif
 
-#ifndef TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#ifndef TARGET_OPENGLES
 namespace{
 	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
 		std::ostringstream oss;
