@@ -7,7 +7,6 @@
 
 #pragma once
 
-//#include "ofConstants.h"
 #include "ofTexture.h"
 #include <assimp/material.h>
 
