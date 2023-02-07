@@ -13,7 +13,7 @@ on:
 jobs:
 
   build-android:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         cfg:
@@ -25,7 +25,7 @@ jobs:
       GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
       NDK_DIR: android-ndk-r15c
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache projectGenerator folder
       uses: actions/cache@v2
       with:

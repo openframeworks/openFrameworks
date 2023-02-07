@@ -13,7 +13,7 @@ on:
 jobs:
 
   build-emscripten:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
         matrix:
           cfg:
@@ -21,7 +21,7 @@ jobs:
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Docker Step
       run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash"
     - name: Download libs
