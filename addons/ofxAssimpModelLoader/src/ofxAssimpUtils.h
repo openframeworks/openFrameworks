@@ -6,12 +6,13 @@
 
 #pragma once
 
-#include "ofMain.h"
+// #include "ofMain.h"
 #include "ofxAssimpMeshHelper.h"
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 //--------------------------------------------------------------
 inline ofFloatColor aiColorToOfColor(const aiColor4D& c){

@@ -2,12 +2,17 @@
 #include "ofxAssimpUtils.h"
 #include "ofLight.h"
 #include "ofImage.h"
+#include "ofGraphics.h"
+#include "ofConstants.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <assimp/config.h>
 #include <assimp/DefaultLogger.hpp>
+
+using std::shared_ptr;
+using std::vector;
 
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
     clear();
@@ -213,7 +218,7 @@ void ofxAssimpModelLoader::calculateDimensions(){
     normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
     normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
     if (abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
-        ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << endl;
+        ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << std::endl;
         normalizedScale = 1.0;
     } else {
         normalizedScale = 1.f / normalizedScale;
@@ -417,7 +422,7 @@ void ofxAssimpModelLoader::loadGLResources(){
                     << file.getFileName() + "\" from \"" << realPath << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
                 } else {
                     
-                    shared_ptr<ofTexture> texture = make_shared<ofTexture>();
+                    shared_ptr<ofTexture> texture = std::make_shared<ofTexture>();
                     
                     if( bHasEmbeddedTexture ){
                         

@@ -9,9 +9,7 @@
 #include "ofConstants.h"
 #include "ofLog.h"
 
-using namespace std;
-
-void ofxAssimpTexture::setup(const ofTexture & texture, string texturePath, bool bTexRepeat) {
+void ofxAssimpTexture::setup(const ofTexture & texture, std::string texturePath, bool bTexRepeat) {
     this->texture = texture;
     if( bTexRepeat ){
         this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
@@ -45,7 +43,7 @@ ofTexture & ofxAssimpTexture::getTextureRef() {
     return texture;
 }
 
-string ofxAssimpTexture::getTexturePath() {
+std::string ofxAssimpTexture::getTexturePath() {
     return texturePath;
 }
 

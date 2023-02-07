@@ -7,9 +7,7 @@
 #include "ofAppRunner.h"
 #include "ofMath.h"
 
-using namespace std;
-
-ofxAssimpAnimation::ofxAssimpAnimation(shared_ptr<const aiScene> scene, aiAnimation * animation) {
+ofxAssimpAnimation::ofxAssimpAnimation(std::shared_ptr<const aiScene> scene, aiAnimation * animation) {
     this->scene = scene;
     this->animation = animation;
     animationCurrTime = 0;
