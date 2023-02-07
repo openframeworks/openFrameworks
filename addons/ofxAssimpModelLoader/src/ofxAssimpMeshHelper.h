@@ -5,16 +5,13 @@
 
 #pragma once
 
-//#include "ofConstants.h"
 #include "ofMaterial.h"
-//#include "ofGraphics.h"
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "ofxAssimpTexture.h"
 #include "ofVbo.h"
 #include "ofMesh.h"
-// #include "ofMatrix4x4.h"
 #include "glm/mat4x4.hpp"
 
 struct aiMesh;
