@@ -3,14 +3,21 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	// add two lights
 	int numLights = 2;
 	for( int i = 0; i < numLights; i++ ) {
 		auto light = make_shared<ofLight>();
-		light->setup();
+		light->enable();
 		if( i == 0 ) {
 			light->setPointLight();
+//			light->setDirectional();
+//			light->setSpotlight(60, 20);
+//			light->getShadow().setNearClip(200);
+//			light->getShadow().setFarClip(2000);
+//			light->setPosition( 210, 330.0, 750 );
+//			light->setAmbientColor(ofFloatColor(0.4));
 		} else {
 			// set the light to be a spot light with a cutoff (cone/fov) of 30 degrees
 			// and a concentration (softness) of 50 out of a range 0 - 128
@@ -24,14 +31,10 @@ void ofApp::setup(){
 		// default is 0.5
 		light->getShadow().setStrength(0.6f);
 		
-		if( light->getType() == OF_LIGHT_DIRECTIONAL || light->getType() == OF_LIGHT_SPOT ){
-			glm::quat xq = glm::angleAxis(glm::radians(30.0f), glm::vec3(1,0,0));
-			glm::quat yq = glm::angleAxis(glm::radians(200.0f), glm::vec3(0,1,0));
+		if( light->getType() != OF_LIGHT_POINT ){
+			glm::quat xq = glm::angleAxis(glm::radians(-30.0f), glm::vec3(1,0,0));
+			glm::quat yq = glm::angleAxis(glm::radians(20.0f), glm::vec3(0,1,0));
 			light->setOrientation(yq*xq);
-			// unsure why this is reversed
-			if(light->getType() == OF_LIGHT_SPOT) {
-				light->setOrientation( light->getOrientationQuat() * glm::angleAxis(ofDegToRad(180), glm::vec3(0,1,0) ) );
-			}
 		}
 		
 		if( !ofIsGLProgrammableRenderer() ) {
@@ -51,7 +54,9 @@ void ofApp::setup(){
 	// normal bias default is 0
 	// moves the bias along the normal of the mesh, helps reduce shadow acne
 	ofShadow::setAllShadowNormalBias(-4.f);
+	#ifndef TARGET_OPENGLES
 	ofShadow::setAllShadowDepthResolutions( 1024, 1024 );
+	#endif
 	shadowType = OF_SHADOW_TYPE_PCF_LOW;
 	ofShadow::setAllShadowTypes(shadowType);
 	// point light shadow depth maps require OF_PRIMITIVE_TRIANGLES
@@ -95,8 +100,10 @@ void ofApp::update(){
 	float etimef = ofGetElapsedTimef();
 	
 	if( lights.size() > 0 ){
-		float tangle = etimef * 1.05;
-		lights[0]->setPosition( -120, sinf(tangle) * 180.f+150, cosf(tangle) * 100.f );
+		if( lights[0]->getType() == OF_LIGHT_POINT ) {
+			float tangle = etimef * 1.05;
+			lights[0]->setPosition( -120, sinf(tangle) * 180.f+150, cosf(tangle) * 100.f );
+		}
 	}
 	
 	colorHue += deltaTime * 2.0;
@@ -118,8 +125,9 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+		
 	ofEnableDepthTest();
+	
 	
 	for( int i = 0; i < lights.size(); i++ ) {
 		auto& light = lights[i];
@@ -179,14 +187,6 @@ void ofApp::draw(){
 		} else {
 			light->draw();
 		}
-		
-		if( light->getType() == OF_LIGHT_DIRECTIONAL ){
-			ofSetColor( ofColor::orchid );
-			light->transformGL(); {
-				ofDrawArrow( glm::vec3(0,0,0), glm::vec3(0,0,100), 10 );
-			} light->restoreTransformGL();
-		}
-		
 		if( light->getIsEnabled() && light->getShadow().getIsEnabled() && bDrawFrustums ){
 			light->getShadow().drawFrustum();
 		}
@@ -200,15 +200,13 @@ void ofApp::draw(){
 	
 	if( !ofIsGLProgrammableRenderer() ) {
 		ss << endl << "SHADOWS ONLY WORK WITH PROGRAMMABLE RENDERER!" << endl;
+	} else if( ofShadow::areShadowsSupported() ) {
+		ss << endl << "SHADOWS NOT SUPPORTED ON THIS PLATFORM!" << endl;
 	} else {
-#ifdef TARGET_OPENGLES
-		ss << endl << "SHADOWS NOT IMPLEMENTED ON OPENGL ES!" << endl;
-#else
 		ss << "Shadows enabled (spacebar): " << bEnableShadows;
 		ss << endl << "Draw frustums (f): " << bDrawFrustums;
 		ss << endl << "Shadow Type (right): " << ofShadow::getShadowTypeAsString(shadowType);
 		ss << endl << "Sample Radius (up / down): " << shadowSampleRadius;
-#endif
 	}
 	
 	
