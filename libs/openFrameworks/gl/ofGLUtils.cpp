@@ -152,7 +152,7 @@ string ofGetGLInternalFormatName(int glInternalFormat) {
 int ofGetGLFormatFromInternal(int glInternalFormat){
 	switch(glInternalFormat) {
 			case GL_RGBA:
-	#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+	#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_RGBA8:
 			case GL_RGBA16:
 			case GL_RGBA16F:
@@ -204,7 +204,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				 return GL_DEPTH_STENCIL;
 
 			case GL_DEPTH_COMPONENT:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_DEPTH_COMPONENT16:
 			case GL_DEPTH_COMPONENT24:
 			case GL_DEPTH_COMPONENT32:
@@ -275,7 +275,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		break;
 #endif
 
-#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
 		case GL_R32F:
@@ -409,7 +409,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 
 
 	case GL_RGBA:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	case GL_RGBA8:
 	case GL_RGBA16:
 	case GL_RGBA16F:
@@ -729,7 +729,7 @@ int ofGetBytesPerChannelFromGLType(int glType){
 			return 2;
 #endif
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 		case GL_FLOAT:
 			return 4;
 #endif
@@ -834,7 +834,15 @@ bool ofGLSupportsNPOTTextures(){
 
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
-	return "ES1";
+	#ifdef TARGET_EMSCRIPTEN
+	if( major >= 2 ) { // for emscripten major version refers to WEBGL version
+		return "300 es";
+	} else {
+		return "ES1";
+	}
+	#else
+		return "ES1";
+	#endif
 #else
 	switch(major){
 	case 3:
