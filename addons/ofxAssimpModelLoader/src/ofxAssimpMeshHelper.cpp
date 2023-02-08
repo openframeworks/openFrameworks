@@ -6,6 +6,9 @@
 #include "ofxAssimpMeshHelper.h"
 #include "ofxAssimpUtils.h"
 
+using std::make_shared;
+using std::shared_ptr;
+
 void ofxAssimpMeshHelper::addTexture(ofxAssimpTexture & aAssimpTex){
 	
     if( aAssimpTex.getTextureType() == aiTextureType_DIFFUSE ){
