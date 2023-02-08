@@ -49,7 +49,7 @@ void ofxAssimpAnimation::update() {
     float duration = getDurationInSeconds();
     float timeStep = animationCurrTime - animationPrevTime;
     float positionStep = timeStep / (float)duration;
-    float position = getPosition() + positionStep;
+    float position = getPosition() + positionStep * speed * speedFactor;
     
     if(position > 1.0 && loopType == OF_LOOP_NONE) {
         position = 1.0;
@@ -57,9 +57,9 @@ void ofxAssimpAnimation::update() {
     } else if(position > 1.0 && loopType == OF_LOOP_NORMAL) {
         position = fmod(position, 1.0f);
     } else if(position > 1.0 && loopType == OF_LOOP_PALINDROME) {
-        // TODO.
+		speedFactor *= -1;
     } else if(position < 0.0 && loopType == OF_LOOP_PALINDROME) {
-        // TODO.
+        speedFactor *= -1;
     }
     
     setPosition(position);

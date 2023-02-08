@@ -59,5 +59,6 @@ protected:
     int progressInMilliSeconds;
     float durationInSeconds;
     int durationInMilliSeconds;
-    float speed;
+    float speed = 1.0;
+	float speedFactor = 1.0;
 };
