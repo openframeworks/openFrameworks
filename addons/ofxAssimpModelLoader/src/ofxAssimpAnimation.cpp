@@ -21,6 +21,7 @@ ofxAssimpAnimation::ofxAssimpAnimation(std::shared_ptr<const aiScene> scene, aiA
     durationInSeconds = 0;
     durationInMilliSeconds = 0;
     speed = 1;
+	speedFactor = 1;
     
     if(animation != NULL) {
         durationInSeconds = animation->mDuration;
