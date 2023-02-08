@@ -16,18 +16,18 @@ public:
 
 	void setup(const ofTexture & texture, std::string texturePath, bool bTexRepeat = true);
 
-    ofTexture & getTextureRef();
+	ofTexture & getTextureRef();
 	std::string getTexturePath();
-    bool hasTexture();
-    
-    void setTextureType(aiTextureType aTexType);
-    aiTextureType getTextureType() const;
-    std::string getTextureTypeAsString() const;
-    
+	bool hasTexture();
+
+	void setTextureType(aiTextureType aTexType);
+	aiTextureType getTextureType() const;
+	std::string getTextureTypeAsString() const;
+
 private:
-    
-    ofTexture texture;
+
+	ofTexture texture;
 	std::string texturePath;
-    aiTextureType textureType;
-    std::string mTexTypeStr;
+	aiTextureType textureType;
+	std::string mTexTypeStr;
 };
