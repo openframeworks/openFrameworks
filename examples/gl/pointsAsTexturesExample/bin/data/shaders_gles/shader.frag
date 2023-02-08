@@ -1,12 +1,14 @@
-#ifdef GL_ES
-// define default precision for float, vec, mat.
-precision highp float;
-#endif
+#version 300 es
+// fragment shader
+
+precision lowp float;
+
+in vec4 in_Color;
+
+out vec4 out_Color;
 
 uniform sampler2D tex;
 
 void main (void) {
-    
-    gl_FragColor = texture2D(tex, gl_TexCoord[0].st) * gl_Color;
-    
+	out_Color = texture(tex, gl_PointCoord) * in_Color;
 }

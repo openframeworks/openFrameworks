@@ -425,7 +425,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 }
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(mode){
 		case(OF_MESH_POINTS):
 			return GL_POINT;
@@ -447,7 +447,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
 }
 
 ofPolyRenderMode ofGetOFPolyMode(GLuint mode){
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(mode){
 		case(GL_POINT):
 			return OF_MESH_POINTS;
