@@ -41,7 +41,7 @@ public:
     void setPaused(bool paused);
     void setPosition(float position);
     void setLoopState(ofLoopType state);
-    void setSpeed(float speed);
+    void setSpeed(float s);
     
 protected:
     
@@ -59,5 +59,6 @@ protected:
     int progressInMilliSeconds;
     float durationInSeconds;
     int durationInMilliSeconds;
-    float speed;
+    float speed = 1.0;
+	float speedFactor = 1.0;
 };

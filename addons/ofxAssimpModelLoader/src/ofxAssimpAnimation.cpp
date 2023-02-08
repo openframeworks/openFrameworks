@@ -21,6 +21,7 @@ ofxAssimpAnimation::ofxAssimpAnimation(std::shared_ptr<const aiScene> scene, aiA
     durationInSeconds = 0;
     durationInMilliSeconds = 0;
     speed = 1;
+	speedFactor = 1;
     
     if(animation != NULL) {
         durationInSeconds = animation->mDuration;
@@ -49,7 +50,7 @@ void ofxAssimpAnimation::update() {
     float duration = getDurationInSeconds();
     float timeStep = animationCurrTime - animationPrevTime;
     float positionStep = timeStep / (float)duration;
-    float position = getPosition() + positionStep;
+    float position = getPosition() + positionStep * speed * speedFactor;
     
     if(position > 1.0 && loopType == OF_LOOP_NONE) {
         position = 1.0;
@@ -57,9 +58,9 @@ void ofxAssimpAnimation::update() {
     } else if(position > 1.0 && loopType == OF_LOOP_NORMAL) {
         position = fmod(position, 1.0f);
     } else if(position > 1.0 && loopType == OF_LOOP_PALINDROME) {
-        // TODO.
+		speedFactor *= -1;
     } else if(position < 0.0 && loopType == OF_LOOP_PALINDROME) {
-        // TODO.
+		speedFactor *= -1;
     }
     
     setPosition(position);
@@ -158,6 +159,7 @@ void ofxAssimpAnimation::play() {
 }
 
 void ofxAssimpAnimation::stop() {
+	speedFactor = 1.0;
     if(!bPlay) {
         return;
     }
@@ -166,6 +168,7 @@ void ofxAssimpAnimation::stop() {
 }
 
 void ofxAssimpAnimation::reset() {
+	speedFactor = 1.0;
     setPosition(0);
 }
 
@@ -229,6 +232,6 @@ void ofxAssimpAnimation::setLoopState(ofLoopType state) {
     loopType = state;
 }
 
-void ofxAssimpAnimation::setSpeed(float speed) {
-    speed = 1; // TODO.
+void ofxAssimpAnimation::setSpeed(float s) {
+    speed = s;
 }
