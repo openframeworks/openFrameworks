@@ -5,7 +5,12 @@ void ofApp::setup(){
 	
 	ofShader::TransformFeedbackSettings settings;
 	// we only need a vertex shader since the transform feedback is not used for rendering
+#ifndef TARGET_EMSCRIPTEN
 	settings.shaderFiles[GL_VERTEX_SHADER] = "vert.glsl";
+#else
+	settings.shaderFiles[GL_FRAGMENT_SHADER] = "GLES/vert.frag";
+	settings.shaderFiles[GL_VERTEX_SHADER] = "GLES/vert.vert";
+#endif
 	// the default attributes for ofShader are
 	// position, normal, color and texcoord
 	// the names are defined at the top of ofShader.cpp
@@ -77,7 +82,11 @@ void ofApp::setup(){
 	
 	// load a shader to work with point sprites
 	// shaderRender will read in the attributes from the vbo and use them for rendering
+#ifndef TARGET_EMSCRIPTEN
 	shaderRender.load("pointSprite.vert", "pointSprite.frag");
+#else
+	shaderRender.load("GLES/pointSprite.vert", "GLES/pointSprite.frag");
+#endif
 	
 	// load an image to use for shaderRender
 	// we call disableArbTex to be used with the point sprite texcoords that are mapped from 0 -> 1
@@ -169,7 +178,11 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
 	if( key == 'r' ) {
 		// reload the render shader, helpful for testing
+#ifndef TARGET_EMSCRIPTEN
 		shaderRender.load("pointSprite.vert", "pointSprite.frag");
+#else
+		shaderRender.load("GLES/pointSprite.vert", "GLES/pointSprite.frag");
+#endif
 		ofLogNotice("Loading render shader from pointSprite");
 	}
 }
