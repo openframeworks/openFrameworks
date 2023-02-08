@@ -158,6 +158,7 @@ void ofxAssimpAnimation::play() {
 }
 
 void ofxAssimpAnimation::stop() {
+	speedFactor = 1.0;
     if(!bPlay) {
         return;
     }
@@ -166,6 +167,7 @@ void ofxAssimpAnimation::stop() {
 }
 
 void ofxAssimpAnimation::reset() {
+	speedFactor = 1.0;
     setPosition(0);
 }
 
@@ -229,6 +231,6 @@ void ofxAssimpAnimation::setLoopState(ofLoopType state) {
     loopType = state;
 }
 
-void ofxAssimpAnimation::setSpeed(float speed) {
-    speed = 1; // TODO.
+void ofxAssimpAnimation::setSpeed(float s) {
+    speed = s;
 }

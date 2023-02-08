@@ -41,7 +41,7 @@ public:
     void setPaused(bool paused);
     void setPosition(float position);
     void setLoopState(ofLoopType state);
-    void setSpeed(float speed);
+    void setSpeed(float s);
     
 protected:
     
