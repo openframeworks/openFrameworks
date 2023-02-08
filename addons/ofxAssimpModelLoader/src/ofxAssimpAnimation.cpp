@@ -59,7 +59,7 @@ void ofxAssimpAnimation::update() {
     } else if(position > 1.0 && loopType == OF_LOOP_PALINDROME) {
 		speedFactor *= -1;
     } else if(position < 0.0 && loopType == OF_LOOP_PALINDROME) {
-        speedFactor *= -1;
+		speedFactor *= -1;
     }
     
     setPosition(position);
