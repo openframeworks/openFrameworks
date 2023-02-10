@@ -26,9 +26,9 @@ public:
 		bool isEnabled = true;
 		bool useLutTex = false;
 		
-		int resolution = 1024;
-		int irradianceRes = 64;
-		int preFilterRes = 256;
+		int resolution = 512;
+		int irradianceRes = 32;
+		int preFilterRes = 128;
 		int maxMipLevels = 5;
 		float exposure = 1.0;
 	};
@@ -48,7 +48,18 @@ public:
 	
 	~ofCubeMap();
 	
-	bool load( std::string apath, int aFaceResolution, bool aBFlipY=true );
+	/// \load an image and convert to cube map.
+	/// \param apath path to the image to load.
+	/// \param aFaceResolution resolution of the cube map image sides.
+	/// \param aBFlipY flip the images upside down.
+	bool load( std::string apath, int , bool aBFlipY=true );
+	/// \load an image and convert to cube map.
+	/// \param apath path to the image to load.
+	/// \param aFaceResolution resolution of the cube map image sides.
+	/// \param aBFlipY flip the images upside down.
+	/// \param aIrradianceRes resolution of the irradiance map. (default is 32).
+	/// \param aPreFilterRes resolution of the prefiltered map. (default is 128).
+	bool load( std::string apath, int aFaceResolution, bool aBFlipY, int aIrradianceRes, int aPreFilterRes );
 	
 	/// \section Update ofCubeMap
 	/// \brief Copy a given ofCubeMap into this cube map.
@@ -58,19 +69,10 @@ public:
 	
 	void clear();
 	
-//	void set( const ofImage& aPosX, const ofImage& aNegX, const ofImage& aPosY, const ofImage& aNegY, const ofImage& aPosZ, const ofImage& aNegZ );
-//	void set( const ofFloatImage& aPosX, const ofFloatImage& aNegX, const ofFloatImage& aPosY, const ofFloatImage& aNegY, const ofFloatImage& aPosZ, const ofFloatImage& aNegZ );
-	
-//	void draw();
+	void draw();
 	void drawCubeMap();
 	void drawIrradiance();
 	void drawPrefilteredCube(float aRoughness);
-	
-//	void beginDrawingIntoFace( int aCubeFace );
-//	void endDrawingIntoFace( int aCubeFace );
-//
-//	void begin3DDrawingIntoFace( int aCubeFace );
-//	void end3DDrawingIntoFace( int aCubeFace );
 	
 	bool isEnabled() { return data->isEnabled;}
 	const bool isEnabled() const { return data->isEnabled;}
@@ -92,8 +94,6 @@ public:
 	
 	GLuint getIrradianceMapId() { return data->irradianceMapId; }
 	GLuint getPrefilterMapId() { return data->preFilteredMapId; }
-	
-	
 	
 protected:
 	
@@ -117,6 +117,7 @@ protected:
 	
 	bool _loadRenderShader();
 	GLuint getTexStorageFormat();
+	GLuint getGlTypeFromInternalFormat();
 	
 	GLuint texFormat = GL_RGB;
 	
@@ -124,7 +125,6 @@ protected:
 	bool mBFlipY = true;
 	
 	glm::mat4 projectionMat;
-	
 	
 	static ofTexture sBrdfLutTex;
 	static ofVboMesh sCubeMesh;

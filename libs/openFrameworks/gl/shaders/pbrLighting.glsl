@@ -207,7 +207,7 @@ void calcLight(in PbrLightData light, in int aLightIndex, inout PbrData adata, i
 void calcFakeDirectionalLight(in vec3 adir, inout PbrData adata, in Material amat ) {
 	PbrLightData dlight;
 	dlight.enabled = 1.0;
-	dlight.type = 1;
+	dlight.type = 1.0;
 	dlight.position = vec4(adir,1.0);
 	dlight.diffuse = vec4(1.0);
 	calcLight(dlight, 0, adata, amat );
