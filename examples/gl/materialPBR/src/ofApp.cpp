@@ -13,7 +13,7 @@ void ofApp::setup(){
 	#ifdef USE_CUBE_MAP
 	// comment out the loading of the cube map image to see added cube map lighting without image
 	// fake environment lighting is added in the pbr shader
-	cubeMap.load("dancing_hall_2k.exr", 512, true );
+	cubeMap.load("modern_buildings_2_1k.exr", 512, true );
 	#endif
 }
 
@@ -33,23 +33,24 @@ void ofApp::draw(){
 	glm::vec3 pos = {0,0,0};
 	float spacing = 10.0;
 	material.begin();
-	
+
 	for( int y = 0; y < numRows; y++ ) {
 		pos.y = ((float)(numRows-1.f)/2.0f) * ((tradius*2.0)+spacing) - (float)y * ((tradius*2.0)+spacing);
-		
+//
 		for( int x = 0; x < numCols; x++ ) {
 			float xpct = (float)x / ((float)numCols-1);
-			
+
 			pos.x = -((float)(numCols-1.f)/2.0f) * ((tradius*2.0)+spacing) + (float)x * ((tradius*2.0)+spacing);
 //			pos.x *= -1.f;
 			// most properties (excluding textures) of the PBR material can be set inside material.begin()
 			// setting properties that are related to PBR convert the material to a PBR material
 			// a material can also be set to PBR explicitly by calling material.setPBR(true).
 			if( y == 0 ) {
-				material.setRoughness(0.05);
-				material.setReflectance(0.01);
+				material.setRoughness(0.05f);
+				material.setReflectance(0.0f);
 				material.setMetallic(xpct);
 				material.setDiffuseColor(ofFloatColor(0.97, 0.96, 0.91, 1.0) );
+				material.setDiffuseColor(ofFloatColor(1.0, 1.0) );
 			} else if( y == 1 ) {
 				material.setReflectance(0.01);
 				material.setRoughness(ofClamp(xpct+0.05, 0., 1.));
@@ -73,6 +74,8 @@ void ofApp::draw(){
 	if( cubeMapMode == 2 ) {
 		if( cubeMap.hasPrefilteredMap() ) {
 			cubeMap.drawPrefilteredCube(0.25f);
+		} else {
+			ofLogNotice("DOES NOT HAVE PRE FILTERED CUBE MAP") << " " << ofGetFrameNum();
 		}
 	} else if( cubeMapMode == 3 ) {
 		if( cubeMap.hasIrradianceMap() ) {
