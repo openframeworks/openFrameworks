@@ -24,7 +24,7 @@ void ofApp::setup(){
 
 	// There are 3 of ways of loading a shader:
 	//
-	//  1 - Using just the name of the shader and ledding ofShader look for .frag and .vert:
+	//  1 - Using just the name of the shader and letting ofShader look for .frag and .vert:
 	//      Ex.: shader.load( "myShader");
 	//
 	//  2 - Giving the right file names for each one:
@@ -32,31 +32,99 @@ void ofApp::setup(){
 	//
 	//  3 - And the third one is passing the shader programa on a single string;
 	//      In this particular example we are using STRINGIFY which is a handy macro
-	string shaderProgram = STRINGIFY(
-									 uniform sampler2DRect tex0;
-									 uniform sampler2DRect tex1;
-									 uniform sampler2DRect tex2;
-									 uniform sampler2DRect maskTex;
+	
+	
+	if( ofIsGLProgrammableRenderer() ) {
+		string shaderVersion = "#version 150\n";
+		#ifdef TARGET_OPENGLES
+		shaderVersion = "#version 300 es\n";
+		shaderVersion += "precision highp float;\n";
+		#endif
+		string shaderProgramVert = shaderVersion;
+		shaderProgramVert += STRINGIFY(
+									   uniform mat4 modelViewProjectionMatrix;
+											 in vec4 position;
 
-									 void main (void){
-										 vec2 pos = gl_TexCoord[0].st;
+											 void main() {
+												 gl_Position = modelViewProjectionMatrix * position;
+											 }
 
-										 vec4 rTxt = texture2DRect(tex0, pos);
-										 vec4 gTxt = texture2DRect(tex1, pos);
-										 vec4 bTxt = texture2DRect(tex2, pos);
-										 vec4 mask = texture2DRect(maskTex, pos);
+											 );
+		
+		string shaderProgramFrag = shaderVersion;
+		shaderProgramFrag += STRINGIFY(
+									   uniform float texCoordWidthScale;
+									   uniform float texCoordHeightScale;
+									   
+										#ifdef TARGET_OPENGLES
+									   // opengl es only supports non arb textures where tex coords are 0 - 1
+									   uniform sampler2D tex0;
+									   uniform sampler2D tex1;
+									   uniform sampler2D tex2;
+									   uniform sampler2D maskTex;
+										#else
+									   uniform sampler2DRect tex0;
+									   uniform sampler2DRect tex1;
+									   uniform sampler2DRect tex2;
+									   uniform sampler2DRect maskTex;
+										#endif
+											 
+											out vec4 oFragColor;
+										 
+										 void main(){
+											 vec2 pos = gl_FragCoord.xy;
+											 pos.x /= texCoordWidthScale;
+											 pos.y /= texCoordHeightScale;
+											 
+											 vec4 rTxt = texture(tex0, pos);
+											 vec4 gTxt = texture(tex1, pos);
+											 vec4 bTxt = texture(tex2, pos);
+											 vec4 mask = texture(maskTex, pos);
+											 
+											 vec4 color = vec4(0,0,0,0);
+											 color = mix(color, rTxt, mask.r );
+											 color = mix(color, gTxt, mask.g );
+											 color = mix(color, bTxt, mask.b );
+											 
+											 oFragColor = color;
+											 
+										 }
+										 );
+		
+		shader.setupShaderFromSource(GL_VERTEX_SHADER, shaderProgramVert);
+		shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgramFrag);
+		shader.linkProgram();
+	
+	} else {
+		
+		string shaderProgram = STRINGIFY(
+										 uniform sampler2DRect tex0;
+										 uniform sampler2DRect tex1;
+										 uniform sampler2DRect tex2;
+										 uniform sampler2DRect maskTex;
+										 
+										 void main (void){
+											 vec2 pos = gl_TexCoord[0].st;
+											 
+											 vec4 rTxt = texture2DRect(tex0, pos);
+											 vec4 gTxt = texture2DRect(tex1, pos);
+											 vec4 bTxt = texture2DRect(tex2, pos);
+											 vec4 mask = texture2DRect(maskTex, pos);
+											 
+											 vec4 color = vec4(0,0,0,0);
+											 color = mix(color, rTxt, mask.r );
+											 color = mix(color, gTxt, mask.g );
+											 color = mix(color, bTxt, mask.b );
+											 
+											 gl_FragColor = color;
+										 }
+										 );
+		
+		shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram);
+		shader.linkProgram();
+	}
 
-										 vec4 color = vec4(0,0,0,0);
-										 color = mix(color, rTxt, mask.r );
-										 color = mix(color, gTxt, mask.g );
-										 color = mix(color, bTxt, mask.b );
-
-										 gl_FragColor = color;
-									 }
-									 );
-
-	shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram);
-	shader.linkProgram();
+	
 
 	// Let's clear the FBOs
 	// otherwise it will bring some junk with it from the memory
@@ -85,6 +153,14 @@ void ofApp::update(){
 	fbo.begin();
 	ofClear(0, 0, 0,255);
 	shader.begin();
+#ifdef TARGET_OPENGLES
+	// sampler2D expects 0-1 for tex coordinates
+	shader.setUniform1f( "texCoordWidthScale", fbo.getWidth());
+	shader.setUniform1f("texCoordHeightScale", fbo.getHeight());
+#else
+	shader.setUniform1f( "texCoordWidthScale", 1.0f);
+	shader.setUniform1f("texCoordHeightScale", 1.0f);
+#endif
 	// Pass the video texture
 	shader.setUniformTexture("tex0", vidGrabber.getTexture() , 1 );
 	// Pass the image texture
