@@ -741,9 +741,15 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 				fragment2DHeader += "#define FRAG_COLOR fragColor\n";
 				fragment2DHeader += "out vec4 fragColor;\n";
 				fragment2DHeader += "#define SAMPLER sampler2D\n";
-				fragment2DHeader += "precision highp samplerCubeShadow;\n";
+				// we don't use any samplerCubeShadows
+				//fragment2DHeader += "precision highp samplerCubeShadow;\n";
 				fragment2DHeader += "precision highp sampler2DShadow;\n";
+				#if defined( GL_TEXTURE_2D_ARRAY ) && defined(glTexImage3D)
 				fragment2DHeader += "precision highp sampler2DArrayShadow;\n";
+				#endif
+//				fragment2DHeader += "precision highp samplerCubeShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DArrayShadow;\n";
 //			}
 		}
 		#endif
