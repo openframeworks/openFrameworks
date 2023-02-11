@@ -90,7 +90,7 @@ static void releaseProgram(GLuint id){
 	}
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 //--------------------------------------------------------------
 ofShader::TransformFeedbackRangeBinding::TransformFeedbackRangeBinding(const ofBufferObject & buffer, GLuint offset, GLuint size)
 	:offset(offset)
@@ -254,7 +254,7 @@ bool ofShader::setup(const ofShaderSettings & settings) {
 	return linkProgram();
 }
 
-#if !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 //--------------------------------------------------------------
 bool ofShader::setup(const TransformFeedbackSettings & settings) {
 	for (auto shader : settings.shaderFiles) {
@@ -848,7 +848,7 @@ void ofShader::end()  const{
 	ofGetGLRenderer()->unbind(*this);
 }
 
-#if !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 //--------------------------------------------------------------
 void ofShader::beginTransformFeedback(GLenum mode) const {
 	begin();
