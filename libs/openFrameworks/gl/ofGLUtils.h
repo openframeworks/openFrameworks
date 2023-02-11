@@ -144,7 +144,9 @@ void ofDisableGLDebugLog();
 	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
 	#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
 	#ifdef GL_DEPTH_COMPONENT32_OES
-        #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
+		#ifndef GL_DEPTH_COMPONENT32
+			#define GL_DEPTH_COMPONENT32					GL_DEPTH_COMPONENT32_OES
+		#endif
     #endif
     #ifdef TARGET_OPENGLES
         #ifndef GL_UNSIGNED_INT
@@ -154,9 +156,9 @@ void ofDisableGLDebugLog();
             #define GL_HALF_FLOAT                           GL_HALF_FLOAT_OES
         #endif
 	#ifndef GL_TEXTURE_CUBE_MAP
-	#ifdef GL_TEXTURE_CUBE_MAP_OES
-            #define GL_TEXTURE_CUBE_MAP               	GL_TEXTURE_CUBE_MAP_OES
-	#endif
+		#ifdef GL_TEXTURE_CUBE_MAP_OES
+            #define GL_TEXTURE_CUBE_MAP               		GL_TEXTURE_CUBE_MAP_OES
+		#endif
 	#endif
     #endif
 #endif

@@ -8,13 +8,18 @@ void ofApp::setup(){
 	ofDisableArbTex();
 	
 	light.setDirectional();
-	light.setup();
-	light.setPosition(0.1, 400, 400 );
+	light.enable();
+	light.setPosition(100.1, 400, 600 );
 	light.lookAt(glm::vec3(0,0,0));
-	light.panDeg(180);
 	light.getShadow().setEnabled(true);
-	light.getShadow().setGlCullingEnabled(false);
+	light.getShadow().setGlCullingEnabled(true);
 	light.getShadow().setDirectionalBounds(2000, 1000);
+	light.getShadow().setNearClip(200);
+	light.getShadow().setFarClip(2000);
+	light.getShadow().setStrength(1.0);
+	// increase alpha value to increase strength of light
+	light.setDiffuseColor(ofFloatColor(1.0, 2.0));
+	light.getShadow().setShadowType(OF_SHADOW_TYPE_PCF_LOW);
 	
 	meshLogoHollow.load("ofLogoHollow.ply");
 	meshLogoHollow.mergeDuplicateVertices();
@@ -30,14 +35,14 @@ void ofApp::setup(){
 	matFloor.setPBR(true);
 	
 	// try commenting this out to see the effect that cube maps have on lighting
-	cubeMap.load( "dancing_hall_2k.exr", 512 );
+	// https://polyhaven.com/a/kloppenheim_06_puresky
+	cubeMap.load( "kloppenheim_06_puresky_1k.exr", 512 );
 	
 	matPlywood.setPBR(true);
 	matPlywood.loadTexture(OF_MATERIAL_TEXTURE_DIFFUSE, "plywood/plywood_diff_2k.jpg" );
 	matPlywood.loadTexture(OF_MATERIAL_TEXTURE_NORMAL, "plywood/plywood_nor_gl_2k.png" );
 	matPlywood.loadTexture(OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, "plywood/plywood_arm_2k.jpg" );
 	matPlywood.setTexCoordScale(1.0, 0.3);
-	
 	matPlywood.setClearCoatEnabled(true);
 	matPlywood.setClearCoatStrength(1.0);
 	matPlywood.setClearCoatRoughness(0.0);
@@ -46,7 +51,7 @@ void ofApp::setup(){
 	meshPlySphere = ofMesh::icosphere(1.0, 5);
 	
 	matSphere.setPBR(true);
-	matSphere.setDiffuseColor(ofFloatColor(0.1,1.0));
+	matSphere.setDiffuseColor(ofFloatColor(0.25,1.0));
 	matSphere.setMetallic(1.0);
 	matSphere.setRoughness(0.05);
 	
@@ -77,17 +82,12 @@ void ofApp::draw(){
 		
 		renderScene();
 		
-		if( cubeMap.hasPrefilteredMap() ) {
-			cubeMap.drawPrefilteredCube(0.25f);
-		}
+		 if( cubeMap.hasPrefilteredMap() ) {
+		 	cubeMap.drawPrefilteredCube(0.2f);
+		 }
 		
 		if(bDebug) {
-			if( light.getType() == OF_LIGHT_DIRECTIONAL ) {
-				ofSetColor( ofColor::orchid );
-				light.transformGL(); {
-					ofDrawArrow( glm::vec3(0,0,0), glm::vec3(0,0,100), 10 );
-				} light.restoreTransformGL();
-			}
+			light.draw();
 			
 			if( light.getIsEnabled() && light.getShadow().getIsEnabled() ) {
 				light.getShadow().drawFrustum();
@@ -97,8 +97,6 @@ void ofApp::draw(){
 	} camera.end();
 	
 	ofDisableDepthTest();
-	
-	//globalGui.draw();
 	
 	ofSetColor(255);
 	ofEnableAlphaBlending();
@@ -146,7 +144,6 @@ void ofApp::renderScene() {
 	matLogo.begin();
 	ofPushMatrix();
 	ofTranslate( -70, -250, 0 );
-	//		ofRotateYDeg(180);
 	ofRotateXDeg(-90);
 	ofScale(100);
 	meshLogoHollow.draw();

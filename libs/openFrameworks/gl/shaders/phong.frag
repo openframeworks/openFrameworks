@@ -128,11 +128,11 @@ static const string fragmentShader = R"(
 #ifndef TARGET_OPENGLES
 #define SPECULAR_REFLECTION
 #endif
-#ifndef SPECULAR_REFLECTION
-        // ha! no branching :)
-        pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
-        specular += light.specular.rgb * shadow * pf * nDotVP * attenuation;
-#else
+//#ifndef SPECULAR_REFLECTION
+//        // ha! no branching :)
+//        pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
+//        specular += light.specular.rgb * shadow * pf * nDotVP * attenuation;
+//#else
         // fresnel factor
         // http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
         float w = pow(1.0 - max(0.0, dot(halfVector, VP)), 5.0);
@@ -140,7 +140,7 @@ static const string fragmentShader = R"(
           * mix(vec3(mat_specular.rgb), vec3(1.0), w)
           * pow(nDotHV, mat_shininess);
         specular += shadow * mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));
-#endif
+//#endif
     }
 
 	void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){

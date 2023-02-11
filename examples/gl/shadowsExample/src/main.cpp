@@ -3,6 +3,11 @@
 
 //========================================================================
 int main( ){
+	
+#ifdef TARGET_OPENGLES
+	ofGLESWindowSettings settings;
+	settings.glesVersion = 3;
+#else
 
 	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
 	ofGLWindowSettings settings;
@@ -12,8 +17,9 @@ int main( ){
 //	settings.setGLVersion(3,3);
 	// multiple point lights only work with OpenGL 4+
 	settings.setGLVersion(4,1);
-	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
+#endif
 	
+	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 	auto window = ofCreateWindow(settings);
 	
 	ofRunApp(window, make_shared<ofApp>());
