@@ -62,10 +62,11 @@
 
 //--------------------------
 // graphics
-#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
-	#include "ofCairoRenderer.h"
-	#include "ofGraphicsCairo.h"
-#endif
+//#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
+//	#include "ofCairoRenderer.h"
+//	#include "ofGraphicsCairo.h"
+//#endif
+
 #include "ofGraphics.h"
 #include "ofImage.h"
 #include "ofPath.h"
