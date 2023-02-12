@@ -357,6 +357,8 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns filename
+	///
+	// FIXME: Deprecate / Remove this.
     static std::string getFileName(const of::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// Get a file name without its extension,

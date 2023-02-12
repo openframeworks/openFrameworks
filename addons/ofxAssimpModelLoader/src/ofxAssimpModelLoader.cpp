@@ -373,6 +373,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 				std::string texPathStr = texPath.C_Str();
 
+//				std::cout << "first texPathStr: " << texPathStr << std::endl;
 				//deal with Blender putting "//" in front of local file paths
 				if( texPathStr.size() > 2 && texPathStr.substr(0, 2) == "//" ){
 					texPathStr = texPathStr.substr(2, texPathStr.size()-2);
@@ -391,9 +392,27 @@ void ofxAssimpModelLoader::loadGLResources(){
 				// FIXME: Convert everything possible to fs. remove .string() in the end
 				auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
 				auto relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
+				
 				string texFile = ofFilePath::getFileName(texPathStr);
 
-				auto realPath = modelFolder / relTexPath;
+				auto realPath = modelFolder / of::filesystem::path{ texPathStr };
+				
+				using std::cout;
+				using std::endl;
+				cout << "modelFolder : " << modelFolder << endl;
+				cout << "texPathStr : " << texPathStr << endl;
+				cout << "texFile : " << texFile << endl;
+				cout << "relTexPath : " << relTexPath.string() << endl;
+				cout << "realPath : " << realPath.string() << endl;
+				
+				
+//				modelFolder : "../MacOS/../../../data/FlightHelmet/"
+//				texPathStr : FlightHelmet_Materials_LeatherPartsMat_Normal.png
+//				texFile : FlightHelmet_Materials_LeatherPartsMat_Normal.png
+//				relTexPath :
+//				realPath : ../MacOS/../../../data/FlightHelmet/
+
+				
 
 #ifndef TARGET_LINUX_ARM
 				if(bTryEmbed || ofFile::doesFileExist(realPath) == false) {
