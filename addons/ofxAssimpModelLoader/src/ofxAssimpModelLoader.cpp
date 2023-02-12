@@ -388,10 +388,12 @@ void ofxAssimpModelLoader::loadGLResources(){
 				auto ogPath = texPathStr;
 				bool bHasEmbeddedTexture = false;
 
-				string modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
-				string relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
+				// FIXME: Convert everything possible to fs. remove .string() in the end
+				auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
+				auto relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
 				string texFile = ofFilePath::getFileName(texPathStr);
-				string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
+
+				auto realPath = modelFolder / relTexPath;
 
 #ifndef TARGET_LINUX_ARM
 				if(bTryEmbed || ofFile::doesFileExist(realPath) == false) {
@@ -401,7 +403,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
 					}else{
 						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
-						<< file.getFileName() + "\" in \"" << realPath << "\"";
+						<< file.getFileName() + "\" in \"" << realPath.string() << "\"";
 					}
 				}
 #endif
@@ -419,7 +421,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 					meshHelper.addTexture(assimpTexture);
 
 					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: \""
-					<< file.getFileName() + "\" from \"" << realPath << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
+					<< file.getFileName() + "\" from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
 				} else {
 
 					shared_ptr<ofTexture> texture = std::make_shared<ofTexture>();
@@ -463,7 +465,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture " << tmpTex.getTextureTypeAsString() << " loaded, dimensions: " << texture->getWidth() << "x" << texture->getHeight();
 					}else{
 						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: \""
-						<< file.getFileName() + "\" from \"" << realPath << "\"";
+						<< file.getFileName() + "\" from \"" << realPath.string() << "\"";
 					}
 				}
 			}
