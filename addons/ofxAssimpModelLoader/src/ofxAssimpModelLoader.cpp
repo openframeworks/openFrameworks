@@ -392,23 +392,18 @@ void ofxAssimpModelLoader::loadGLResources(){
 				// FIXME: Convert everything possible to fs. remove .string() in the end
 				auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
 				auto relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
-				
-				string texFile = ofFilePath::getFileName(texPathStr);
-
 				auto realPath = modelFolder / of::filesystem::path{ texPathStr };
 				
 				using std::cout;
 				using std::endl;
 				cout << "modelFolder : " << modelFolder << endl;
 				cout << "texPathStr : " << texPathStr << endl;
-				cout << "texFile : " << texFile << endl;
 				cout << "relTexPath : " << relTexPath.string() << endl;
 				cout << "realPath : " << realPath.string() << endl;
 				
 				
 //				modelFolder : "../MacOS/../../../data/FlightHelmet/"
 //				texPathStr : FlightHelmet_Materials_LeatherPartsMat_Normal.png
-//				texFile : FlightHelmet_Materials_LeatherPartsMat_Normal.png
 //				relTexPath :
 //				realPath : ../MacOS/../../../data/FlightHelmet/
 
@@ -419,7 +414,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 					auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
 					if( embeddedTexture ){
 						bHasEmbeddedTexture = true;
-						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << texFile << " is embedded ";
+						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << realPath.filename() << " is embedded ";
 					}else{
 						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
 						<< file.getFileName() + "\" in \"" << realPath.string() << "\"";
