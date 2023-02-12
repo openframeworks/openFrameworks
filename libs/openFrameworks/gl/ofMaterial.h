@@ -246,6 +246,9 @@ public:
 	/// \return the shader uniform name
 	static std::string getUniformName( const ofMaterialTextureType& aMaterialTextureType );
 	
+	/// \is PBR supported on this platform.
+	static bool isPBRSupported();
+	
 	/// \brief is this material pbr. Setting PBR functions or textures will automatically set the material to pbr.\nCan also be set calling setPBR(bool);
 	/// \return is the material pbr.
 	const bool isPBR() const { return data.isPbr; }

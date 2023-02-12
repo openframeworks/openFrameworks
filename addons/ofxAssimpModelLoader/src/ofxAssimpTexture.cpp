@@ -9,16 +9,14 @@
 #include "ofConstants.h"
 #include "ofLog.h"
 
-using std::string;
-
-void ofxAssimpTexture::setup(const ofTexture & texture, string texturePath, bool bTexRepeat) {
-    this->texture = texture;
-    if( bTexRepeat ){
-        this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
-    }else{
-        this->texture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-    }
-    this->texturePath = texturePath;
+void ofxAssimpTexture::setup(const ofTexture & texture, std::string texturePath, bool bTexRepeat) {
+	this->texture = texture;
+	if( bTexRepeat ){
+		this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
+	}else{
+		this->texture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	}
+	this->texturePath = texturePath;
 }
 
 #ifndef TARGET_WIN32
@@ -27,36 +25,36 @@ const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
 #endif
 
 void ofxAssimpTexture::setTextureType(aiTextureType aTexType){
-    textureType = aTexType;
-	
-    if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
-        if(aiTextureTypeToString){
-            mTexTypeStr = aiTextureTypeToString(getTextureType());
-        }else{
-            mTexTypeStr = "textureType:"+ofToString(getTextureType());
-        }
-    }else{
-        ofLogError("ofxAssimpTexture::setTextureType") << ": unknown aiTextureType type " << aTexType;
-        mTexTypeStr = "NONE";
-    }
+	textureType = aTexType;
+
+	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
+		if(aiTextureTypeToString){
+			mTexTypeStr = aiTextureTypeToString(getTextureType());
+		}else{
+			mTexTypeStr = "textureType:"+ofToString(getTextureType());
+		}
+	}else{
+		ofLogError("ofxAssimpTexture::setTextureType") << ": unknown aiTextureType type " << aTexType;
+		mTexTypeStr = "NONE";
+	}
 }
 
 ofTexture & ofxAssimpTexture::getTextureRef() {
-    return texture;
+	return texture;
 }
 
-string ofxAssimpTexture::getTexturePath() {
-    return texturePath;
+std::string ofxAssimpTexture::getTexturePath() {
+	return texturePath;
 }
 
 bool ofxAssimpTexture::hasTexture() {
-    return texture.isAllocated();
+	return texture.isAllocated();
 }
 
 aiTextureType ofxAssimpTexture::getTextureType() const{
-    return textureType;
+	return textureType;
 }
 
 std::string ofxAssimpTexture::getTextureTypeAsString() const{
-    return mTexTypeStr;
+	return mTexTypeStr;
 }

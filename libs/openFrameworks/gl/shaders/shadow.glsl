@@ -98,22 +98,22 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCube aShadowMap, vec
 	// adjust for bias here //
 	currentDepth = currentDepth - abias;
 	vec3 st3 = fragToLight;
-	if( aShadowData.shadowType < 1 ) {
+	if( aShadowData.shadowType < 1.0 ) {
 		// already set shadow above
-	} else if( aShadowData.shadowType < 2 ) {
+	} else if( aShadowData.shadowType < 2.0 ) {
 		for( int i = 0; i < 8; i++ ) {
 			st3 = fragToLight + (cornerSamplingDisk8_v3[i] * offset);
 			AddShadowAmountCubeMap( aShadowMap, currentDepth, st3, aShadowData.texIndex, shadow );
 		}
 		// dividing by 9 because shadow was set initially and added a grid of 8
 		shadow /= 9.0;
-	} else if( aShadowData.shadowType < 3 ) {
+	} else if( aShadowData.shadowType < 3.0 ) {
 		int samples = 8;
 		for(int i = 0; i < samples; ++i) {
 			st3 = fragToLight + (cornerSamplingDisk8_v3[i] * offset);
 			AddShadowAmountCubeMap( aShadowMap, currentDepth, st3, aShadowData.texIndex, shadow );
 		}
-		if( shadow > 0 ) {
+		if( shadow > 0.0 ) {
 			int samples = 6;
 			for(int i = 0; i < samples; ++i) {
 				st3 = fragToLight + (cardinalSamplingDisk6_v3[i] * offset);
@@ -129,7 +129,7 @@ float SampleShadowCube(in shadowData aShadowData, in samplerCube aShadowMap, vec
 			st3 = fragToLight + (gridSamplingDisk20_v3[i] * offset);
 			AddShadowAmountCubeMap( aShadowMap, currentDepth, st3, aShadowData.texIndex, shadow );
 		}
-		shadow /= float(samples+1.0);
+		shadow /= float(samples+1);
 	}
 	return shadow;
 }
@@ -186,9 +186,9 @@ float SampleShadow(in shadowData aShadowData, in sampler2DShadow aShadowMap, vec
 	visibility = texture(aShadowMap, projCoords );
 #endif
 	vec3 st3 = projCoords.xyz;
-	if( aShadowData.shadowType < 1 ) {
+	if( aShadowData.shadowType < 1.0 ) {
 		//hard shadow, visibility already set above
-	} else if( aShadowData.shadowType < 2 ) {
+	} else if( aShadowData.shadowType < 2.0 ) {
 		float radius = offset;
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
@@ -196,7 +196,7 @@ float SampleShadow(in shadowData aShadowData, in sampler2DShadow aShadowMap, vec
 			AddShadowVisibility( aShadowMap, st3, shadowTexIndex, visibility );
 		}
 		visibility /= 5.0;
-	} else if( aShadowData.shadowType < 3 ) {
+	} else if( aShadowData.shadowType < 3.0 ) {
 		float radius = offset;
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
@@ -215,7 +215,7 @@ float SampleShadow(in shadowData aShadowData, in sampler2DShadow aShadowMap, vec
 			st3.xy = projCoords.xy+poissonDisk16_v2[i]*radius;
 			AddShadowVisibility( aShadowMap, st3, shadowTexIndex, visibility );
 		}
-		visibility /= 17;
+		visibility /= 17.0;
 	}
 	return visibility;
 }
@@ -252,12 +252,12 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 	float closestDepth = aclosestDepth;
 	
 	if(closestDepth < 1.0 && st3.z > closestDepth) {
-		shadow = 1.f;
+		shadow = 1.0;
 	}
 
-	if( aShadowData.shadowType < 1 ) {
+	if( aShadowData.shadowType < 1.0 ) {
 		// hard shadow
-	} else if( aShadowData.shadowType < 2 ) {
+	} else if( aShadowData.shadowType < 2.0 ) {
 		float radius = offset;
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
@@ -265,7 +265,7 @@ float SampleShadow2D(in shadowData aShadowData, in sampler2D aShadowMap, vec3 ap
 			AddShadowAmountSampler2D( aShadowMap, st3, shadowTexIndex, shadow );
 		}
 		shadow /= 5.0;
-	} else if( aShadowData.shadowType < 3 ) {
+	} else if( aShadowData.shadowType < 3.0 ) {
 		float radius = offset;
 		// sample from the corners
 		for( int i = 0; i < 4; i++ ) {
@@ -328,8 +328,8 @@ vec2 PCSS_BlockerDistance(in sampler2D atex, int aSampleIndex, in vec3 projCoord
 #endif
 	int PCSS_SampleCount = 6;
 	// Perform N samples with pre-defined offset and random rotation, scale by input search size
-	float blockers = 0;
-	float avgBlocker = 0.0f;
+	float blockers = 0.0;
+	float avgBlocker = 0.0;
 	int filterSize = PCSS_SampleCount;
 	for (int i = -filterSize; i <= filterSize; i++) {
 		for (int j = -filterSize; j <= filterSize; j++) {
@@ -368,7 +368,7 @@ float AreaShadow( in shadowData aShadowData, in vec3 aWorldFragPos, in vec3 aWor
 #else
 	float closestDepth = texture(uShadowMapArea, projCoords.xy ).r;
 #endif
-	float tsize = textureSize( uShadowMapArea, aShadowData.texIndex ).x;
+	float tsize = float(textureSize( uShadowMapArea, aShadowData.texIndex ).x);
 	vec2 averageBlocker = PCSS_BlockerDistance(uShadowMapArea, aShadowData.texIndex, projCoords, (lightSize.x*0.5)/tsize, vec2(1.0,1.0));
 	// If there isn't any average blocker distance - it means that there is no blocker at all
 	if (averageBlocker.y < 1.0 ) {
