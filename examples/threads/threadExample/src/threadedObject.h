@@ -1,7 +1,7 @@
 #pragma once
 
-
 #include "ofMain.h"
+#include "ofThread.h"
 #include <atomic>
 
 /// This is a simple example of a ThreadedObject created by extending ofThread.
@@ -20,7 +20,7 @@ public:
 	}
 
 	void setup(){
-		pixels.allocate(640,480,OF_PIXELS_GRAY);
+		pixels.allocate(640,480,OF_IMAGE_COLOR_ALPHA);
 		tex.allocate(pixels);
 		start();
 	}
@@ -70,6 +70,9 @@ public:
 					auto ux = x/float(pixels.getWidth());
 					auto uy = line.getLineNum()/float(pixels.getHeight());
 					pixel[0] = ofNoise(ux, uy, t);
+					pixel[1] = ofNoise(ux, uy, t);
+					pixel[2] = ofNoise(ux, uy, t);
+					pixel[3] = 1;
 					x++;
 				}
 			}
