@@ -29,6 +29,10 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 //ICON_FILE_PATH = bin/data/
 
 
+//APPSTORE, uncomment next lines to bundle data folder and code sign
+//OF_CODESIGN = 1
+//OF_BUNDLE_DATA_FOLDER = 1
+
 // BOOST - UNCOMMENT BELOW TO ENABLE BOOST
 //HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
 //LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/osx/boost_system.a"

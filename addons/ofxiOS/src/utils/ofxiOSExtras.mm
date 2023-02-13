@@ -48,7 +48,9 @@
 #include "ofImage.h"
 #include <sys/sysctl.h>
 
-using namespace std;
+using std::string;
+using std::vector;
+
 
 //--------------------------------------------------------------
 ofxiOSDeviceType ofxiOSGetDeviceType() {

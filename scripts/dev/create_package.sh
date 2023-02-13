@@ -176,21 +176,21 @@ function deleteEclipse {
 function createProjectFiles {
     if [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
         mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
-        cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
-        rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
-        downloader http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
+        #cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
+        #rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
+        #downloader http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
 
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin $PG_BRANCH
         cd commandLine
         echo "Recompiling command line PG"
         if [ -d ~/logs ]; then
-            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF > ~/logs/compilePG.log 2>&1 &
+            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug > ~/logs/compilePG.log 2>&1 &
             makePGPID=$!
             echoDots $makePGPID
             wait $makePGPID
         else
-            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make DebugNoOF
+            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug
         fi
 
         cd ${pkg_ofroot}
@@ -200,7 +200,15 @@ function createProjectFiles {
         else
             pg_platform=$pkg_platform
         fi
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+        
+        #add vscode to all platforms apart from ios/tvos/android
+        if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
+            pg_template=" "
+        else
+            pg_template="-tvscode"
+        fi
+        
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} ${pg_template} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
         
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
@@ -246,7 +254,7 @@ function createPackage {
 		rm -Rf android
 	fi
 
-    if [ "$pkg_platform" != "linuxarmv6l" && "$pkg_platform" != "linuxarmv7l"   ]; then
+    if [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
 		rm -Rf events/rpiTouchExample
 	fi
 

@@ -11,8 +11,8 @@ class ofApp : public ofxiOSApp{
 	
 		void exit();
 	
-		void audioOut(float * output, int bufferSize, int nChannels);
-		
+		void audioOut(ofSoundBuffer & buffer);
+
 		void touchDown(ofTouchEventArgs & touch);
 		void touchMoved(ofTouchEventArgs & touch);
 		void touchUp(ofTouchEventArgs & touch);
@@ -38,6 +38,8 @@ class ofApp : public ofxiOSApp{
 		float phaseAdder;
 		float phaseAdderTarget;
 		int initialBufferSize;
-	
+
+	ofSoundStream soundStream;
+
 };
 

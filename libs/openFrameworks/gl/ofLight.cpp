@@ -135,7 +135,7 @@ void ofLight::setup() {
                 setSpotlightCutOff(getSpotlightCutOff());
                 setSpotConcentration(getSpotConcentration());
             }
-            if(getIsSpotlight() || getIsDirectional()) {
+            if(getIsSpotlight() || getIsDirectional() || getIsAreaLight()) {
                 onOrientationChanged();
             }
         }else{
@@ -175,7 +175,12 @@ bool ofLight::getIsEnabled() const {
 
 //----------------------------------------
 void ofLight::setDirectional() {
+	if( data->lightType != OF_LIGHT_DIRECTIONAL ) {
+		data->lightType	= OF_LIGHT_DIRECTIONAL;
+		onOrientationChanged();
+	}
 	data->lightType	= OF_LIGHT_DIRECTIONAL;
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -185,9 +190,15 @@ bool ofLight::getIsDirectional() const {
 
 //----------------------------------------
 void ofLight::setSpotlight(float spotCutOff, float exponent) {
+	if( data->lightType != OF_LIGHT_SPOT ) {
+		data->lightType = OF_LIGHT_SPOT;
+		onPositionChanged();
+		onOrientationChanged();
+	}
 	data->lightType		= OF_LIGHT_SPOT;
 	setSpotlightCutOff( spotCutOff );
 	setSpotConcentration( exponent );
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -229,7 +240,13 @@ float ofLight::getSpotConcentration() const{
 
 //----------------------------------------
 void ofLight::setPointLight() {
+	if( data->lightType != OF_LIGHT_POINT ) {
+		data->lightType= OF_LIGHT_POINT;
+		onPositionChanged();
+		onOrientationChanged();
+	}
 	data->lightType	= OF_LIGHT_POINT;
+	shadow.setLightType( data->lightType );
 }
 
 //----------------------------------------
@@ -264,9 +281,16 @@ float ofLight::getAttenuationQuadratic() const{
 }
 
 void ofLight::setAreaLight(float width, float height){
+	if( data->lightType != OF_LIGHT_AREA ) {
+		data->lightType = OF_LIGHT_AREA;
+		onPositionChanged();
+		onOrientationChanged();
+	}
 	data->lightType = OF_LIGHT_AREA;
 	data->width = width;
 	data->height = height;
+	shadow.setLightType( data->lightType );
+	shadow.setAreaLightSize( width, height );
 }
 
 bool ofLight::getIsAreaLight() const{
@@ -319,9 +343,10 @@ ofFloatColor ofLight::getSpecularColor() const {
 }
 
 //----------------------------------------
-void ofLight::customDraw(const ofBaseRenderer * renderer) const{;
+void ofLight::customDraw(const ofBaseRenderer * renderer) const{
     if(getIsPointLight()) {
         renderer->drawSphere( 0,0,0, 10);
+		ofDrawAxis(20);
     } else if (getIsSpotlight()) {
         float coneHeight = (sin(data->spotCutOff*DEG_TO_RAD) * 30.f) + 1;
         float coneRadius = (cos(data->spotCutOff*DEG_TO_RAD) * 30.f) + 8;
@@ -331,10 +356,14 @@ void ofLight::customDraw(const ofBaseRenderer * renderer) const{;
     	const_cast<ofBaseRenderer*>(renderer)->pushMatrix();
 		renderer->drawPlane(data->width,data->height);
 		const_cast<ofBaseRenderer*>(renderer)->popMatrix();
+		ofDrawArrow( glm::vec3(0,0,0), glm::vec3(0,0,-30), 10 );
+	} else if( getIsDirectional() ) {
+		renderer->drawBox(10);
+		renderer->drawArrow(glm::vec3(0,0,0),glm::vec3(0,0,-40),10);
     }else{
         renderer->drawBox(10);
+		ofDrawAxis(20);
     }
-    ofDrawAxis(20);
 }
 
 
@@ -357,6 +386,7 @@ void ofLight::onOrientationChanged() {
 		// if we are a directional light and not positional, update light position (direction)
 		glm::vec3 lookAtDir(glm::normalize(getGlobalOrientation() * glm::vec4(0,0,-1, 1)));
 		data->position = {lookAtDir.x,lookAtDir.y,lookAtDir.z,0.f};
+		data->direction = lookAtDir;
 		if ( auto r = data->rendererP.lock() ){
 			r->setLightPosition( data->glIndex, data->position );
 		}
@@ -372,4 +402,76 @@ void ofLight::onOrientationChanged() {
 		data->up = getUpDir();
 		data->right = getXAxis();
 	}
+}
+
+//-------------------------------
+bool ofLight::shouldRenderShadowDepthPass() {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	return getIsEnabled() && shadow.getIsEnabled();
+}
+
+//-------------------------------
+int ofLight::getNumShadowDepthPasses() {
+	if( !ofIsGLProgrammableRenderer() ) {
+		return 0;
+	}
+	return shadow.getNumShadowDepthPasses();
+}
+
+//-------------------------------
+bool ofLight::beginShadowDepthPass() {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	shadow.update(*this);
+	shadow.beginDepth();
+	if( getNumShadowDepthPasses() > 1 ) {
+		ofLogWarning("ofLight :: beginShadowDepthPass : shadow has more than one depth pass! Call beginShadowDepthPass( GLenum aPassIndex ) instead. ");
+		return false;
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::endShadowDepthPass() {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	shadow.endDepth();
+	if( getNumShadowDepthPasses() > 1 ) {
+		ofLogWarning("ofLight :: endShadowDepthPass : shadow has more than one depth pass! Call endShadowDepthPass( GLenum aPassIndex ) instead. ");
+		return false;
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::beginShadowDepthPass( GLenum aPassIndex ) {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	if( aPassIndex == 0 ) {
+		shadow.update(*this);
+	}
+	if( getNumShadowDepthPasses() < 2 ) {
+		shadow.beginDepth();
+	} else {
+		shadow.beginDepth(aPassIndex);
+	}
+	return true;
+}
+
+//-------------------------------
+bool ofLight::endShadowDepthPass( GLenum aPassIndex ) {
+	if(!shouldRenderShadowDepthPass()) {
+		return false;
+	}
+	if( getNumShadowDepthPasses() < 2 ) {
+		shadow.endDepth();
+	} else {
+		shadow.endDepth(aPassIndex);
+	}
+	return true;
 }

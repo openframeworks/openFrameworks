@@ -225,6 +225,8 @@ public:
 
 
 	// advanced use
+	bool setShadowUniforms( int textureLocation ) const;
+	bool setPbrEnvironmentMapUniforms( int textureLocation ) const;
 
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.

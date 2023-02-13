@@ -84,7 +84,6 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-	[vocals release];
 	vocals = nil;
 }
 
