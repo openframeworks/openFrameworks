@@ -9,7 +9,8 @@ on:
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
-    
+
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -22,7 +23,7 @@ jobs:
         include:
           - platform: x64
             bits: 64
-    env: 
+    env:
       BITS: ${{ matrix.bits }}
     steps:
       - name: Clone repository
