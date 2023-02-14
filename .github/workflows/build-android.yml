@@ -25,7 +25,7 @@ jobs:
       GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
       NDK_DIR: android-ndk-r15c
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache projectGenerator folder
       uses: actions/cache@v2
       with:

@@ -110,6 +110,8 @@ public:
 	glm::mat4 getCurrentNormalMatrix() const;
 	glm::mat4 getCurrentModelMatrix() const;
 	
+	glm::vec3 getCurrentEyePosition() const;
+	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();
@@ -315,6 +317,8 @@ private:
 	ofShader shaderNV12Rect;
 	ofShader shaderNV21Rect;
 	ofShader shaderPlanarYUVRect;
+	
+	glm::vec3 currentEyePos;
 
 	//void setDefaultFramebufferId(const GLuint& fboId_); ///< windowing systems might use this to set the default framebuffer for this renderer.
 

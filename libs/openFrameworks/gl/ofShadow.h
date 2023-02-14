@@ -97,6 +97,9 @@ public:
 	static void setAllShadowBias( float bias );
 	static void setAllShadowNormalBias( float normalBias );
 	static void setAllShadowSampleRadius( float sampleRadius );
+	static std::string getShaderDefinesAsString();
+	
+	static bool areShadowsSupported();
 	
 	ofShadow();
 	~ofShadow();
@@ -206,9 +209,7 @@ protected:
 										   0.5, 0.5, 0.5, 1.0
 										   );
     
-private:
-//	int getNumTotalPossibleShadows( int aLightType );
-	
+private:	
 	struct Shaders{
 		ofShader depth;
 		ofShader depthCube;

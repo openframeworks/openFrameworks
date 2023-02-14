@@ -9,43 +9,46 @@
 #include "ofConstants.h"
 #include "ofLog.h"
 
-using namespace std;
-
-void ofxAssimpTexture::setup(const ofTexture & texture, string texturePath, bool bTexRepeat) {
-    this->texture = texture;
-    if( bTexRepeat ){
+void ofxAssimpTexture::setup(const ofTexture & texture, std::string texturePath, bool bTexRepeat) {
+	this->texture = texture;
+	if( bTexRepeat ){
 		this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
-    }else{
+	}else{
 		this->texture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 	}
-    this->texturePath = texturePath;
+	this->texturePath = texturePath;
 }
+
+#ifndef TARGET_WIN32
+//this is a hack to allow for weak definations of functions that might not exist in older assimp versions
+const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
+#endif
 
 void ofxAssimpTexture::setTextureType(aiTextureType aTexType){
 	textureType = aTexType;
-	
+
 	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
-        #if ASSIMP_VERSION_MAJOR >= 5 && ASSIMP_VERSION_MINOR >= 1
-            mTexTypeStr = aiTextureTypeToString(getTextureType());
-        #else
-            mTexTypeStr = "textureType:"+ofToString(getTextureType());
-        #endif
-    }else{
+		if(aiTextureTypeToString){
+			mTexTypeStr = aiTextureTypeToString(getTextureType());
+		}else{
+			mTexTypeStr = "textureType:"+ofToString(getTextureType());
+		}
+	}else{
 		ofLogError("ofxAssimpTexture::setTextureType") << ": unknown aiTextureType type " << aTexType;
 		mTexTypeStr = "NONE";
 	}
 }
 
 ofTexture & ofxAssimpTexture::getTextureRef() {
-    return texture;
+	return texture;
 }
 
-string ofxAssimpTexture::getTexturePath() {
-    return texturePath;
+std::string ofxAssimpTexture::getTexturePath() {
+	return texturePath;
 }
 
 bool ofxAssimpTexture::hasTexture() {
-    return texture.isAllocated();
+	return texture.isAllocated();
 }
 
 aiTextureType ofxAssimpTexture::getTextureType() const{

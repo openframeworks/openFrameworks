@@ -8,7 +8,8 @@
 #include "ofSoundBaseTypes.h"
 #include "ofVideoBaseTypes.h"
 #include "ofGraphicsBaseTypes.h"
-#include "ofMaterial.h"
+#include "ofShadow.h"
+#include "ofCubeMap.h"
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -333,6 +334,10 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
+}
+
+bool ofBaseMaterial::isBound() const {
+	return mBound;
 }
 
 

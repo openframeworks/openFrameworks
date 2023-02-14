@@ -19,11 +19,11 @@ jobs:
           cfg:
           - {target: linux64, libs: 64gcc6}
           - {target: linuxarmv6l, libs: armv6l}
-          - {target: linuxarmv7l, libs: armv7l}
+#          - {target: linuxarmv7l, libs: armv7l}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Install dependencies

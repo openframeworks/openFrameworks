@@ -47,7 +47,7 @@ void ofApp::setup() {
 	ofTrueTypeFont::setGlobalDpi(96);
 
 	// load the font
-	font.load("sans-serif", 11);
+	font.load("frabk.ttf", 11);
 	sortTypeInfo = "no sort";
 	words.clear();
 
@@ -144,7 +144,7 @@ void ofApp::draw() {
 		ofTranslate(x, y);
 		ofRotateZDeg(a);
 		float scl = 1;
-		glScalef(scl, scl, scl);
+		ofScale(scl, scl, scl);
 		font.drawString(words[i].word, 0, 20);
 		ofPopMatrix();
 

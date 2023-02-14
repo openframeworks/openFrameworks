@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 
+#define USE_MATERIAL
 
 class TexturePack {
 	public:
@@ -84,8 +85,15 @@ class ofApp : public ofBaseApp{
 		
 		vector< shared_ptr<ofLight> > lights;
 		
+	
+		#ifdef USE_MATERIAL
+		vector< shared_ptr<ofMaterial> > materials;
+		int materialIndex = 0;
+		#else
 		vector< shared_ptr<TexturePack> > texturePacks;
 		int texturePackIndex = 0;
+		#endif
+		
 		
 		ofTexture textureBrush;
 		
@@ -93,7 +101,9 @@ class ofApp : public ofBaseApp{
 		
 		ofEasyCam camera;
 		
+		#ifndef USE_MATERIAL
 		shared_ptr<ofShader> shader;
+		#endif
 		
 		ofFbo fboInfluence;
 		ofRectangle fboRect;
