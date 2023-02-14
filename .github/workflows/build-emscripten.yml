@@ -11,7 +11,7 @@ on:
     - 'examples/**'
 
 concurrency:
-  group: github.workflow-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
