@@ -11,11 +11,10 @@ on:
     - 'examples/**'
     
 concurrency:
-  group: environment-${{ github.ref }}
-  cancel-in-progress: true  
-      
+  group: github.workflow-${{ github.ref }}
+  cancel-in-progress: true
+ 
 jobs:
-
   build-msys2:
     runs-on: windows-latest
     strategy:

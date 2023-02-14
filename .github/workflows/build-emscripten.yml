@@ -11,11 +11,10 @@ on:
     - 'examples/**'
 
 concurrency:
-  group: environment-${{ github.ref }}
-  cancel-in-progress: true  
+  group: github.workflow-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-
   build-emscripten:
     runs-on: ubuntu-20.04
     strategy:

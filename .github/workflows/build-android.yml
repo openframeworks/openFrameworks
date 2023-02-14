@@ -11,11 +11,10 @@ on:
     - 'examples/**'
 
 concurrency:
-  group: environment-${{ github.ref }}
+  group: github.workflow-${{ github.ref }}
   cancel-in-progress: true  
 
 jobs:
-
   build-android:
     runs-on: ubuntu-18.04
     strategy:
