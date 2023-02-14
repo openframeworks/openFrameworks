@@ -1,4 +1,4 @@
-#version 330
+OF_GLSL_SHADER_HEADER
 
 // we are going to use 2 lights
 // we also have 2 ofLights in ofApp
