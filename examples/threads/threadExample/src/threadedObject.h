@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofThread.h"
 #include <atomic>
 
 /// This is a simple example of a ThreadedObject created by extending ofThread.
