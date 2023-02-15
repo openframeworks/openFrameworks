@@ -2,12 +2,12 @@
 #include "ofxXmlPoco.h"
 #include "Poco/AutoPtr.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 ofxXmlPoco::~ofxXmlPoco(){
 	releaseAll();
 }
-
 
 ofxXmlPoco::ofxXmlPoco(const string & path){
 	document = new Poco::XML::Document(); // we create this so that they can be merged later
@@ -97,7 +97,7 @@ int ofxXmlPoco::getNumChildren(const string& path) const{
 }
 
 string ofxXmlPoco::toString() const{
-    ostringstream stream;
+    std::ostringstream stream;
 
     Poco::XML::DOMWriter writer;
     writer.setOptions(Poco::XML::XMLWriter::PRETTY_PRINT);
@@ -604,8 +604,8 @@ bool ofxXmlPoco::exists(const string & path) const{ // works for both attributes
 	return false;
 }
 
-map<string, string> ofxXmlPoco::getAttributes() const{ // works for both attributes and tags
-    map<string, string> attrMap;
+std::map<string, string> ofxXmlPoco::getAttributes() const{ // works for both attributes and tags
+    std::map<string, string> attrMap;
 
     if(element){
         Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
