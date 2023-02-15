@@ -89,6 +89,8 @@ int ofGetGLFormat(const ofPixels_<T> & pixels) {
 }
 
 std::string ofGLSLVersionFromGL(int major, int minor);
+std::string ofGLSLVersionFromGL();
+std::string ofGLSLGetDefaultHeader();
 
 #ifndef TARGET_OPENGLES
 void ofEnableGLDebugLog();

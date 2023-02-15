@@ -354,6 +354,13 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
 		// return statements might prevent us from retaining later.
 		retainShader(shaderId);
 	}
+ 
+        // look for OF_GLSL_SHADER_HEADER header placeholder
+	// this will swap the glsl version based on the OpenGL version set in main.cpp
+	// note this won't always work, but is handy for switching between compatible versions of GLSL based on the system
+	if( ofIsStringInString(source.source, "OF_GLSL_SHADER_HEADER") ){
+            ofStringReplace(source.source, "OF_GLSL_SHADER_HEADER", ofGLSLGetDefaultHeader());
+	}
 
 	// parse for includes
 	source.expandedSource = parseForIncludes( source.source, source.directoryPath );

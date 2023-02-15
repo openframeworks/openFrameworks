@@ -1,4 +1,4 @@
-#version 330
+OF_GLSL_SHADER_HEADER
 
 
 // -- output to frag shader ------------- //
