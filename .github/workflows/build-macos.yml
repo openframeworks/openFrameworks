@@ -9,13 +9,12 @@ on:
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
-    
+
 concurrency:
-  group: environment-${{ github.ref }}
-  cancel-in-progress: true  
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-
   build-osx:
     runs-on: macos-12
     strategy:
@@ -37,7 +36,7 @@ jobs:
         path: libs/openFrameworksCompiled/lib/osx/**/
         key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
-          ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-        
+          ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
 
 
     - name: Cache libs
@@ -70,18 +69,18 @@ jobs:
 
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-        
+          ${{ runner.os }}-build-${{ env.cache-name }}-
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
       # name: Download libs
       # continue-on-error: true
       run: ./scripts/$TARGET/download_libs.sh
     - name: rm-dev
       run: sudo rm -rf /Library/Developer
-    
+
     # this step is not needed here because the script is empty
     # - name: install
     # run: ./scripts/ci/$TARGET/install.sh
-    
+
     - name: Build
       run:
         if [ "$TARGET" = "osx" ] && [ "$OPT" = "xcode" ]; then
