@@ -890,7 +890,7 @@ string ofGLSLGetDefaultHeader(){
                 header += "#extension GL_OES_standard_derivatives : enable\n";
             }
             #ifdef TARGET_ANDROID
-                header += "#extension GL_OES_EGL_image_external : require\n"
+                header += "#extension GL_OES_EGL_image_external : require\n";
             #endif
             header += "precision mediump float;\n";
             header += "precision mediump int;\n";
