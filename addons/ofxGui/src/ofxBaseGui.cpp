@@ -427,7 +427,7 @@ string ofxBaseGui::saveStencilToHex(const ofImage & img){
 		}
 		i++;
 		if(i % 8 == 0){
-			strm << "0x" << hex << (unsigned int)cur;
+			strm << "0x" << std::hex << (unsigned int)cur;
 			cur = 0;
 			shift = 0;
 			if(i < n){
