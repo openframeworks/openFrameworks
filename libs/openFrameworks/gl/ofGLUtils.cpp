@@ -886,14 +886,14 @@ string ofGLSLGetDefaultHeader(){
         header = "#version "+versionStr+"\n";
         
         #ifdef TARGET_OPENGLES
-            header += "precision mediump float;\n";
-            header += "precision mediump int;\n";
             if( versionStr != "ES1" ){
                 header += "#extension GL_OES_standard_derivatives : enable\n";
             }
             #ifdef TARGET_ANDROID
                 header += "#extension GL_OES_EGL_image_external : require\n"
             #endif
+            header += "precision mediump float;\n";
+            header += "precision mediump int;\n";
             header += "#define TARGET_OPENGLES\n";
         #else
             if( ofGetUsingArbTex() ){
