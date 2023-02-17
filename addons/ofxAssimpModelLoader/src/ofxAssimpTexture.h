@@ -9,7 +9,6 @@
 
 #include "ofTexture.h"
 #include <assimp/material.h>
-#include "ofConstants.h"
 
 class ofxAssimpTexture {
 

@@ -1,8 +1,5 @@
 #include "ofxThreadedImageLoader.h"
 #include <sstream>
-
-using std::string;
-
 ofxThreadedImageLoader::ofxThreadedImageLoader(){
 	nextID = 0;
     ofAddListener(ofEvents().update, this, &ofxThreadedImageLoader::update);
@@ -22,7 +19,7 @@ ofxThreadedImageLoader::~ofxThreadedImageLoader(){
 
 // Load an image from disk.
 //--------------------------------------------------------------
-void ofxThreadedImageLoader::loadFromDisk(ofImage& image, string filename) {
+void ofxThreadedImageLoader::loadFromDisk(ofImage& image, std::string filename) {
 	nextID++;
 	ofImageLoaderEntry entry(image);
 	entry.filename = filename;
@@ -35,7 +32,7 @@ void ofxThreadedImageLoader::loadFromDisk(ofImage& image, string filename) {
 
 // Load an url asynchronously from an url.
 //--------------------------------------------------------------
-void ofxThreadedImageLoader::loadFromURL(ofImage& image, string url) {
+void ofxThreadedImageLoader::loadFromURL(ofImage& image, std::string url) {
 	nextID++;
 	ofImageLoaderEntry entry(image);
 	entry.url = url;
