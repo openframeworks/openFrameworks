@@ -6,7 +6,6 @@
 //
 
 #include "ofxAssimpTexture.h"
-//#include "ofConstants.h"
 #include "ofLog.h"
 
 void ofxAssimpTexture::setup(const ofTexture & texture, const of::filesystem::path & texturePath, bool bTexRepeat) {
