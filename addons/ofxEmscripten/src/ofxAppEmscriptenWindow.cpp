@@ -47,8 +47,8 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     _renderer = make_shared<ofGLProgrammableRenderer>(this);
     ((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
-    emscripten_set_keydown_callback("#canvas",this,1,&keydown_cb);
-    emscripten_set_keyup_callback("#canvas",this,1,&keyup_cb);
+    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,1,&keydown_cb);
+    emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,1,&keyup_cb);
     
     emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,1,&mousedown_cb);
     emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,1,&mouseup_cb);
