@@ -5,7 +5,8 @@
 #include "ofxLabel.h"
 #include "ofxInputField.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 float ofxGuiGroup::elementSpacing = 1;
 float ofxGuiGroup::groupSpacing = 1;
@@ -17,18 +18,18 @@ ofxGuiGroup::ofxGuiGroup(){
 	bGuiActive = false;
 }
 
-ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const string& filename, float x, float y){
 	minimized = false;
 	parent = nullptr;
 	setup(parameters, filename, x, y);
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
+ofxGuiGroup * ofxGuiGroup::setup(const string& collectionName, const string& filename, float x, float y){
 	ofParameterGroup parameters(collectionName);
 	return setup(parameters, filename, x, y);
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
+ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const string& _filename, float x, float y){
 	b.x = x;
 	b.y = y;
 	headerRect.height = defaultHeight;
@@ -114,7 +115,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 			add(p);
 		}else if(_parameters[i].valueType() == typeid(string).name()){
 			if(_parameters[i].isReadOnly()){
-				auto p = _parameters.get(i).castReadOnly<std::string, void>();
+				auto p = _parameters.get(i).castReadOnly<string, void>();
 				add(p);
 			}else{
 				auto p = _parameters.getString(i);
@@ -169,7 +170,7 @@ void ofxGuiGroup::add(ofParameter <bool> & parameter){
 }
 
 void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(createGuiElement<ofxInputField<std::string> >(parameter));
+	add(createGuiElement<ofxInputField<string> >(parameter));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
@@ -372,27 +373,27 @@ vector <string> ofxGuiGroup::getControlNames() const{
 	return names;
 }
 
-ofxIntSlider & ofxGuiGroup::getIntSlider(const std::string& name){
+ofxIntSlider & ofxGuiGroup::getIntSlider(const string& name){
 	return getControlType <ofxIntSlider>(name);
 }
 
-ofxFloatSlider & ofxGuiGroup::getFloatSlider(const std::string& name){
+ofxFloatSlider & ofxGuiGroup::getFloatSlider(const string& name){
 	return getControlType <ofxFloatSlider>(name);
 }
 
-ofxToggle & ofxGuiGroup::getToggle(const std::string& name){
+ofxToggle & ofxGuiGroup::getToggle(const string& name){
 	return getControlType <ofxToggle>(name);
 }
 
-ofxButton & ofxGuiGroup::getButton(const std::string& name){
+ofxButton & ofxGuiGroup::getButton(const string& name){
 	return getControlType <ofxButton>(name);
 }
 
-ofxGuiGroup & ofxGuiGroup::getGroup(const std::string& name){
+ofxGuiGroup & ofxGuiGroup::getGroup(const string& name){
 	return getControlType <ofxGuiGroup>(name);
 }
 
-ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
+ofxBaseGui * ofxGuiGroup::getControl(const string& name){
     for(std::size_t i = 0; i < collection.size(); i++){
 		if(collection[i]->getName() == name){
 			return collection[i];

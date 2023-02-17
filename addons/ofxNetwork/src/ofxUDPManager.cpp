@@ -6,7 +6,7 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
-using namespace std;
+using std::string;
 
 //--------------------------------------------------------------------------------
 bool ofxUDPManager::m_bWinsockInit= false;
