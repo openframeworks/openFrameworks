@@ -48,7 +48,7 @@ ofxXmlSettings::ofxXmlSettings(const string& xmlFile):
 	//we do this so that we have a valid handle
 	//without the need for loadFile
 	storedHandle   = TiXmlHandle(&doc);
-	loadFile(xmlFile);
+	load(xmlFile);
 }
 
 //---------------------------------------------------------

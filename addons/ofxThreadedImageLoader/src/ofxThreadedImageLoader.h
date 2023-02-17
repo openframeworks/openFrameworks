@@ -6,16 +6,13 @@
 #include "ofTypes.h" 
 #include "ofThreadChannel.h"
 
-
-using namespace std;
-
 class ofxThreadedImageLoader : public ofThread {
 public:
     ofxThreadedImageLoader();
     ~ofxThreadedImageLoader();
 
-	void loadFromDisk(ofImage& image, string file);
-	void loadFromURL(ofImage& image, string url);
+	void loadFromDisk(ofImage& image, std::string file);
+	void loadFromURL(ofImage& image, std::string url);
 
 
 
@@ -40,12 +37,12 @@ private:
     };
 
 
-    typedef map<string, ofImageLoaderEntry>::iterator entry_iterator;
+    typedef std::map<string, ofImageLoaderEntry>::iterator entry_iterator;
 
 	int                 nextID;
     int                 lastUpdate;
 
-	map<string,ofImageLoaderEntry> images_async_loading; // keeps track of images which are loading async
+	std::map<string,ofImageLoaderEntry> images_async_loading; // keeps track of images which are loading async
 	ofThreadChannel<ofImageLoaderEntry> images_to_load_from_disk;
 	ofThreadChannel<ofImageLoaderEntry> images_to_update;
 };
