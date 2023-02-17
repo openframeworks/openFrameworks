@@ -389,24 +389,9 @@ void ofxAssimpModelLoader::loadGLResources(){
 				auto ogPath = texPathStr;
 				bool bHasEmbeddedTexture = false;
 
-				// FIXME: Convert everything possible to fs. remove .string() in the end
 				auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
 				auto relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
 				auto realPath = modelFolder / of::filesystem::path{ texPathStr };
-				
-				using std::cout;
-				using std::endl;
-				cout << "modelFolder : " << modelFolder << endl;
-				cout << "texPathStr : " << texPathStr << endl;
-				cout << "relTexPath : " << relTexPath.string() << endl;
-				cout << "realPath : " << realPath.string() << endl;
-				
-				
-//				modelFolder : "../MacOS/../../../data/FlightHelmet/"
-//				texPathStr : FlightHelmet_Materials_LeatherPartsMat_Normal.png
-//				relTexPath :
-//				realPath : ../MacOS/../../../data/FlightHelmet/
-
 				
 
 #ifndef TARGET_LINUX_ARM
