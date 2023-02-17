@@ -7,7 +7,6 @@
 //
 
 #include "ofxInputField.h"
-
 #include "ofGraphics.h"
 
 using std::string;

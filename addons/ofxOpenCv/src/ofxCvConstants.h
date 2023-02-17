@@ -1,9 +1,9 @@
 #pragma once
 
 #ifdef NO
-	#undef NO
+    #undef NO
 #endif
-#ifdef MIN
+#ifdef MIN 
 	#undef MIN
 #endif 
 #ifdef MAX 
