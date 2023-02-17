@@ -279,44 +279,68 @@ int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEven
 }
 
 int ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	instance->events().notifyMousePressed(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top), mouseEvent->button);
+	int canvas_width, canvas_height;
+	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
+        double css_width, css_height;
+	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
+	instance->events().notifyMousePressed((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height, mouseEvent->button);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	instance->events().notifyMouseReleased(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top), mouseEvent->button);
+	int canvas_width, canvas_height;
+	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
+        double css_width, css_height;
+	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
+	instance->events().notifyMouseReleased((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height, mouseEvent->button);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
+	int canvas_width, canvas_height;
+	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
+        double css_width, css_height;
+	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
 	if (ofGetMousePressed(OF_MOUSE_BUTTON_LEFT)){
-		instance->events().notifyMouseDragged(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top), 0);
+		instance->events().notifyMouseDragged((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height, 0);
 	}else if (ofGetMousePressed(OF_MOUSE_BUTTON_MIDDLE)){
-		instance->events().notifyMouseDragged(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top), 1);
+		instance->events().notifyMouseDragged((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height, 1);
 	}else if (ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)){
-		instance->events().notifyMouseDragged(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top), 2);
+		instance->events().notifyMouseDragged((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height, 2);
 	}else{
-		instance->events().notifyMouseMoved(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top));
+		instance->events().notifyMouseMoved((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height);
 	}
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData){
-	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseY(), wheelEvent->deltaX - EM_ASM_INT(return canvas.getBoundingClientRect().left), wheelEvent->deltaY / 100);
+	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseY(), wheelEvent->deltaX / 100, wheelEvent->deltaY / 100);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mouseenter_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	instance->events().notifyMouseEntered(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top));
+	int canvas_width, canvas_height;
+	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
+        double css_width, css_height;
+	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
+	instance->events().notifyMouseEntered((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	instance->events().notifyMouseExited(mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left), mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top));
+	int canvas_width, canvas_height;
+	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
+        double css_width, css_height;
+	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
+	instance->events().notifyMouseExited((mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width, (mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* e, void* userData) {
+	int canvas_width, canvas_height;
+	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
+        double css_width, css_height;
+	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
         ofTouchEventArgs::Type touchArgsType;
         switch (eventType) {
                     case EMSCRIPTEN_EVENT_TOUCHSTART:
@@ -339,8 +363,8 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
                 ofTouchEventArgs touchArgs;
                 touchArgs.type = touchArgsType;
                 touchArgs.id = i;
-                touchArgs.x =  std::ceil(e->touches[i].targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left));
-                touchArgs.y =  std::ceil(e->touches[i].targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top));
+                touchArgs.x =  std::ceil((e->touches[i].targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left)) * canvas_width / css_width);
+                touchArgs.y =  std::ceil((e->touches[i].targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top)) * canvas_height / css_height);
                 instance->events().notifyTouchEvent(touchArgs);
            }
     return 0;
