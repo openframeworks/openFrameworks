@@ -309,7 +309,6 @@ int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent
 }
 
 int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-std::cout<<mouseEvent->targetX<<std::endl;
 	float mouseX = mouseEvent->targetX;
 	float mouseY = mouseEvent->targetY;
 	float boundingX = EM_ASM_INT(return canvas.getBoundingClientRect().left);
