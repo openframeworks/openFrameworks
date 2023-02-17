@@ -863,6 +863,49 @@ string ofGLSLVersionFromGL(int major, int minor){
 #endif
 }
 
+string ofGLSLVersionFromGL(){
+    int major = 0;
+    int minor = 0;
+    
+    auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
+    if( glRenderer ){
+        major = glRenderer->getGLVersionMajor();
+        minor = glRenderer->getGLVersionMinor();
+    }
+    return ofGLSLVersionFromGL(major, minor);
+}
+
+//TODO: unify this with similar in ofGLProgrammableRenderer and ofMaterial
+string ofGLSLGetDefaultHeader(){
+    string header = "";
+
+    auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
+    
+    if( glRenderer ){
+        string versionStr = ofGLSLVersionFromGL(glRenderer->getGLVersionMajor(), glRenderer->getGLVersionMinor());
+        header = "#version "+versionStr+"\n";
+        
+        #ifdef TARGET_OPENGLES
+            if( versionStr != "ES1" ){
+                header += "#extension GL_OES_standard_derivatives : enable\n";
+            }
+            #ifdef TARGET_ANDROID
+                header += "#extension GL_OES_EGL_image_external : require\n";
+            #endif
+            header += "precision mediump float;\n";
+            header += "precision mediump int;\n";
+            header += "#define TARGET_OPENGLES\n";
+        #else
+            if( ofGetUsingArbTex() ){
+                if( glRenderer->getGLVersionMajor() < 4 && glRenderer->getGLVersionMinor() < 2 ){
+                    header += "\n#extension GL_ARB_texture_rectangle : enable";
+                }
+            }
+        #endif
+    }
+    return header;
+}
+
 #ifndef TARGET_PROGRAMMABLE_GL
 shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){

@@ -39,7 +39,7 @@ public:
 	/// binds the passed target to buffer 0
 	void unbind(GLenum target) const;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	/// glBindBufferBase: https://www.opengl.org/sdk/docs/man4/html/glBindBufferBase.xhtml
 	void bindBase(GLenum target,GLuint index) const;
 

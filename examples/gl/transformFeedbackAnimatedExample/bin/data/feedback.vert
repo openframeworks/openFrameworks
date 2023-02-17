@@ -1,4 +1,4 @@
-#version 330
+OF_GLSL_SHADER_HEADER
 
 //-- Vertex Attributes Coming in -----//
 in vec3 position;
@@ -16,10 +16,10 @@ uniform int uTotalParticles;
 uniform float uElapsedTime;
 uniform float uDeltaTime;
 
-uniform float uMaxLife = 1.0;
-uniform float uNoiseStrength = 250.0;
-uniform float uUpForce = 75.;
-uniform float uNoiseTimeOffsetMultiplier = 1.0;
+uniform float uMaxLife;
+uniform float uNoiseStrength;
+uniform float uUpForce;
+uniform float uNoiseTimeOffsetMultiplier;
 //-------------------------------
 
 //--------------------------------------
