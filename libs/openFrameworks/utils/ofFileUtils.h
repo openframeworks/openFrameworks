@@ -338,7 +338,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-    static of::filesystem::path getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
+	static of::filesystem::path getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
