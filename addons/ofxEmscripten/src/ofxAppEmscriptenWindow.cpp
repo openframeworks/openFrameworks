@@ -345,6 +345,7 @@ int ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMouseEv
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
+	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
 	instance->events().notifyMouseExited(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight);
 	return 0;
 }
