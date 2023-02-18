@@ -69,7 +69,7 @@ void ofxAppEmscriptenWindow::loop(){
 	instance->events().notifySetup();
 
 	// Emulate loop via callbacks
-	emscripten_set_main_loop( display_cb, -1, 1);
+	emscripten_set_main_loop(display_cb, -1, 1);
 }
 
 void ofxAppEmscriptenWindow::update(){
