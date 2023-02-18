@@ -281,12 +281,12 @@ int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEven
 int ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
 	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
-	int canvas_width, canvas_height;
-	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
-        double css_width, css_height;
-	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
-	if(mouseX * canvas_width / css_width >= 0 && mouseX * canvas_width / css_width < canvas_width && mouseY * canvas_height / css_height >= 0 && mouseY * canvas_height / css_height < canvas_height){
-		instance->events().notifyMousePressed(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height, mouseEvent->button);
+	int canvasWidth, canvasHeight;
+	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
+        double cssWidth, cssHeight;
+	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
+	if(mouseX * canvasWidth / cssWidth >= 0 && mouseX * canvasWidth / cssWidth < canvasWidth && mouseY * canvasHeight / cssHeight >= 0 && mouseY * canvasHeight / cssHeight < canvasHeight){
+		instance->events().notifyMousePressed(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight, mouseEvent->button);
 	}
 	return 0;
 }
@@ -294,12 +294,12 @@ int ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEve
 int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
 	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
-	int canvas_width, canvas_height;
-	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
-        double css_width, css_height;
-	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
+	int canvasWidth, canvasHeight;
+	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
+        double cssWidth, cssHeight;
+	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
 	if(ofGetMousePressed()){
-		instance->events().notifyMouseReleased(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height, mouseEvent->button);
+		instance->events().notifyMouseReleased(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight, mouseEvent->button);
 	}
 	return 0;
 }
@@ -307,18 +307,18 @@ int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent
 int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
 	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
-	int canvas_width, canvas_height;
-	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
-        double css_width, css_height;
-	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
+	int canvasWidth, canvasHeight;
+	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
+        double cssWidth, cssHeight;
+	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
 	if(ofGetMousePressed(OF_MOUSE_BUTTON_LEFT)){
-		instance->events().notifyMouseDragged(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height, 0);
+		instance->events().notifyMouseDragged(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight, 0);
 	}else if(ofGetMousePressed(OF_MOUSE_BUTTON_MIDDLE)){
-		instance->events().notifyMouseDragged(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height, 1);
+		instance->events().notifyMouseDragged(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight, 1);
 	}else if(ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)){
-		instance->events().notifyMouseDragged(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height, 2);
-	}else if(mouseX * canvas_width / css_width >= 0 && mouseX * canvas_width / css_width < canvas_width && mouseY * canvas_height / css_height >= 0 && mouseY * canvas_height / css_height < canvas_height){
-		instance->events().notifyMouseMoved(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height);
+		instance->events().notifyMouseDragged(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight, 2);
+	}else if(mouseX * canvasWidth / cssWidth >= 0 && mouseX * canvasWidth / cssWidth < canvasWidth && mouseY * canvasHeight / cssHeight >= 0 && mouseY * canvasHeight / cssHeight < canvasHeight){
+		instance->events().notifyMouseMoved(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight);
 	}
 	return 0;
 }
@@ -331,31 +331,31 @@ int ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWhee
 int ofxAppEmscriptenWindow::mouseenter_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
 	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
-	int canvas_width, canvas_height;
-	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
-        double css_width, css_height;
-	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
-	instance->events().notifyMouseEntered(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height);
+	int canvasWidth, canvasHeight;
+	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
+        double cssWidth, cssHeight;
+	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
+	instance->events().notifyMouseEntered(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
 	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
-	int canvas_width, canvas_height;
-	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
-        double css_width, css_height;
-	instance->events().notifyMouseExited(mouseX * canvas_width / css_width, mouseY * canvas_height / css_height);
+	int canvasWidth, canvasHeight;
+	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
+        double cssWidth, cssHeight;
+	instance->events().notifyMouseExited(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* e, void* userData) {
 	float boundingX = EM_ASM_INT(return canvas.getBoundingClientRect().left);
 	float boundingY = EM_ASM_INT(return canvas.getBoundingClientRect().top);
-	int canvas_width, canvas_height;
-	emscripten_get_canvas_element_size("#canvas", &canvas_width, &canvas_height);
-        double css_width, css_height;
-	emscripten_get_element_css_size("#canvas", &css_width, &css_height);
+	int canvasWidth, canvasHeight;
+	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
+        double cssWidth, cssHeight;
+	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
         ofTouchEventArgs::Type touchArgsType;
         switch (eventType) {
                     case EMSCRIPTEN_EVENT_TOUCHSTART:
@@ -378,8 +378,8 @@ int ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* 
                 ofTouchEventArgs touchArgs;
                 touchArgs.type = touchArgsType;
                 touchArgs.id = i;
-                touchArgs.x =  (e->touches[i].targetX - boundingX) * canvas_width / css_width;
-                touchArgs.y =  (e->touches[i].targetY - boundingY) * canvas_height / css_height;
+                touchArgs.x =  (e->touches[i].targetX - boundingX) * canvasWidth / cssWidth;
+                touchArgs.y =  (e->touches[i].targetY - boundingY) * canvasHeight / cssHeight;
                 instance->events().notifyTouchEvent(touchArgs);
            }
     return 0;
