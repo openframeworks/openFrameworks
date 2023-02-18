@@ -1,7 +1,7 @@
 #include "ofxSlider.h"
 #include "ofGraphics.h"
-#include "ofVboMesh.h"
-using namespace std;
+
+using std::string;
 
 namespace{
 	template<typename Type>

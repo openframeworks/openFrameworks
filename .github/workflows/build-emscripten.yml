@@ -9,9 +9,12 @@ on:
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
-    
-jobs:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
   build-emscripten:
     runs-on: ubuntu-20.04
     strategy:

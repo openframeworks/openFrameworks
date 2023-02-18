@@ -10,8 +10,11 @@ on:
     - '**/*.md'
     - 'examples/**'
     
-jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
   build-linux-platforms:
     runs-on: ubuntu-20.04
     strategy:

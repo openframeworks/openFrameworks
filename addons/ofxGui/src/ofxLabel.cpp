@@ -1,6 +1,7 @@
 #include "ofxLabel.h"
 #include "ofGraphics.h"
-using namespace std;
+
+using std::string;
 
 ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
 	setup(_label,width,height);

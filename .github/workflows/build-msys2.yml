@@ -9,9 +9,12 @@ on:
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
-    
-jobs:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
   build-msys2:
     runs-on: windows-latest
     strategy:
