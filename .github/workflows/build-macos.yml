@@ -26,7 +26,7 @@ jobs:
       TARGET: ${{matrix.cfg.target}}
       OPT: ${{matrix.cfg.opt}}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@latest
     - name: Cache compile
       id: cache-compile
       uses: actions/cache@v3

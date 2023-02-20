@@ -24,7 +24,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@latest
     - uses: msys2/setup-msys2@v2
       with:
         update: true
