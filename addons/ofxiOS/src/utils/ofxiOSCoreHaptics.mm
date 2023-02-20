@@ -2,7 +2,7 @@
 
 #include "ofxiOSCoreHaptics.h"
 
-auto ofxiOSCoreHaptics::prepare_engine() {
+bool ofxiOSCoreHaptics::prepare_engine() {
     
     // this starts the engine and primes it with an instance of CHHapticAdvancedPatternPlayer
     // that will later be modulated by CHHapticDynamicParameters
@@ -58,21 +58,21 @@ auto ofxiOSCoreHaptics::prepare_engine() {
     return true;
 }
 
-auto ofxiOSCoreHaptics::setup() {
+void ofxiOSCoreHaptics::setup() {
     is_vibrating_ = prepare_engine();
     if (!is_vibrating_) NSLog(@"ofxiOSCoreHaptics::setup() failed");
 }
 
-auto ofxiOSCoreHaptics::is_vibrating() {
+bool ofxiOSCoreHaptics::is_vibrating() {
     if (!is_vibrating_) setup();
     return is_vibrating_;
 }
 
-auto ofxiOSCoreHaptics::sendParameters(float i, float s) -> void {
+bool ofxiOSCoreHaptics::sendParameters(float i, float s) {
     
-    NSError * error;
     if (is_vibrating()) {
         
+        NSError * error;
         auto intensity = [[CHHapticDynamicParameter alloc] initWithParameterID:CHHapticDynamicParameterIDHapticIntensityControl value:i relativeTime:CHHapticTimeImmediate];
         auto sharpness = [[CHHapticDynamicParameter alloc] initWithParameterID:CHHapticDynamicParameterIDHapticSharpnessControl value:s relativeTime:CHHapticTimeImmediate];
         
@@ -80,6 +80,10 @@ auto ofxiOSCoreHaptics::sendParameters(float i, float s) -> void {
         
         if (error != nil) {
             NSLog(@"ofxiOSCoreHaptics::sendParameters %@", error);
+            return false;
+        } else {
+            return true;
         }
     }
+    return false;
 }
