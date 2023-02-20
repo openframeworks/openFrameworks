@@ -129,7 +129,7 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
     ofxGuiGroup::setup(value.getName(), "", 0, 0);
     parameters.clear();
 
-	const std::tring names[4] = {"r", "g", "b", "a"};
+	const std::string names[4] = {"r", "g", "b", "a"};
 
     ofColor_<ColorType> val = value;
     ofColor_<ColorType> min = value.getMin();
