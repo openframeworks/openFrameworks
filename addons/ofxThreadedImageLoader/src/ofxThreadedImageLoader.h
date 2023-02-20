@@ -31,9 +31,9 @@ private:
             image = &pImage;
         }
         ofImage* image;
-        string filename;
-        string url;
-        string name;
+        std::string filename;
+        std::string url;
+        std::string name;
     };
 
 
@@ -42,7 +42,7 @@ private:
 	int                 nextID;
     int                 lastUpdate;
 
-	std::map<string,ofImageLoaderEntry> images_async_loading; // keeps track of images which are loading async
+	std::map<std::string,ofImageLoaderEntry> images_async_loading; // keeps track of images which are loading async
 	ofThreadChannel<ofImageLoaderEntry> images_to_load_from_disk;
 	ofThreadChannel<ofImageLoaderEntry> images_to_update;
 };
