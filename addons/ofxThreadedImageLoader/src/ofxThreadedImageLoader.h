@@ -23,6 +23,7 @@ private:
     
     // Entry to load.
     struct ofImageLoaderEntry {
+    public:
         ofImageLoaderEntry() {
             image = NULL;
         }
