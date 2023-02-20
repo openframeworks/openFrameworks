@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-linux-platforms:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
         matrix:
           cfg:

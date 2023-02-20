@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-osx:
-    runs-on: macos-12
+    runs-on: macos-latest
     strategy:
         matrix:
           cfg:
