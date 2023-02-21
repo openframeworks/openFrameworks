@@ -150,6 +150,13 @@ void ofDisableGLDebugLog();
 			#define GL_DEPTH_COMPONENT32					GL_DEPTH_COMPONENT32_OES
 		#endif
     #endif
+	
+	#ifndef GL_RGBA32F
+		#ifdef GL_RGBA32F_EXT
+			#define GL_RGBA32F								GL_RGBA32F_EXT
+		#endif
+	#endif
+
     #ifdef TARGET_OPENGLES
         #ifndef GL_UNSIGNED_INT
             #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES

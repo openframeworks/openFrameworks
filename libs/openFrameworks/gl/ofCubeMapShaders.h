@@ -23,8 +23,12 @@ public:
 			vstr = "#version "+ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor())+"\n";
 		}
 		#ifdef TARGET_OPENGLES
+		vstr += "#define TARGET_OPENGLES\n";
+		//vstr += "#extension GL_OES_standard_derivatives : enable\n";
 		vstr += "precision highp float;\n";
 		vstr += "precision highp int;\n";
+		vstr += "precision highp sampler2D;\n";
+		vstr += "precision highp samplerCube;\n";
 		#endif
 		return vstr;
 	}
@@ -56,6 +60,7 @@ public:
 							 in vec3 oLocalPos;
 							 
 							 uniform float uFlipY;
+							uniform float uConvertToNonFloat; // 0.0 // convert hdr to non float texture
 							 
 							 uniform sampler2D uEquirectangularTex;
 							 
@@ -74,6 +79,14 @@ public:
 							 void main() {
 								 vec2 uv = SampleSphericalMap(normalize(oLocalPos)); // make sure to normalize localPos
 								 vec3 color = texture(uEquirectangularTex, uv).rgb;
+						
+								if(uConvertToNonFloat > 0.5) {
+									// hdr tone mapping
+									color = color / (color+vec3(1.0));
+									// gamma correction 
+									//color = pow(color, vec3(1.0 / 2.2));
+									color = clamp( color, 0.0, 1.0);
+								}
 								 
 								 FRAGCOLOR = vec4(color, 1.0);
 							 }
@@ -89,9 +102,7 @@ public:
 		rsource.fragShader += R"(
 							 out vec4 FRAGCOLOR;
 							 in vec3 oLocalPos;
-							 
-							 //uniform float uFlipY;
-							 
+							 							 
 							 uniform samplerCube environmentMap;
 							 const float PI = 3.14159265359;
 							 
@@ -122,11 +133,12 @@ public:
 										 vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;
 										 
 										 irradiance += texture(environmentMap, sampleVec).rgb * cos(theta) * sin(theta);
-										 nrSamples++;
+										 //nrSamples++;
+										   nrSamples += 1.0;
 									 }
 								 }
-								 irradiance = PI * irradiance * (1.0 / float(nrSamples));
-								 
+								 //irradiance = PI * irradiance * (1.0 / float(nrSamples));
+								 irradiance = irradiance * PI * (1.0 / max(nrSamples, 1.0));
 								 FRAGCOLOR = vec4(irradiance, 1.0);
 							 }
 							 )";
@@ -176,26 +188,26 @@ public:
 								 vec3 envColor = vec3(0.0);
 								 if( uMaxMips > 1.0 && uRoughness > 0.0 ) {
 									 envColor = getEnvColor(oTexCoords, uRoughness );
-//									envColor = textureLod(uCubeMap, oTexCoords, getLodRoughness(uRoughness*uRoughness) ).rgb;
-//									 envColor = texture(uCubeMap, oTexCoords, getLodRoughness(uRoughness) ).rgb;
 								 } else {
 									envColor = texture(uCubeMap, oTexCoords).rgb;
-//									 envColor = textureLod(uCubeMap, oTexCoords, 0.0).rgb;
 								 }
-//								 envColor = textureLod(uCubeMap, oTexCoords, 0.0).rgb;
-								 
+		
 								 if( uIsHDR > 0.5 ) {
-									 
+									 //envColor = envColor / (envColor + vec3(1.0));
 									 // exposure tone mapping
 									 vec3 mapped = vec3(1.0) - exp(-envColor * uExposure);
+									
 									 // gamma correction
 									 envColor = pow(mapped, vec3(1.0 / 2.2));
-									 
+											 
 									 //envColor = envColor / (envColor + vec3(1.0));
 									 //envColor = pow(envColor, vec3(1.0/2.2));
-								 }
-								 
-								 FRAGCOLOR = vec4(envColor, 1.0);
+								 } else {
+									// gamma correction
+									envColor = pow(envColor, vec3(1.0 / max(uExposure*2.2, 0.1) ) );
+								}
+		
+								 FRAGCOLOR = vec4(clamp(envColor, 0.0, 1.0), 1.0);
 							 }
 							 
 							 )";
@@ -319,7 +331,7 @@ public:
 										void main(){
 											vec3 N = normalize(oLocalPos);
 											
-											float roughness = uroughness;
+											//float troughness = uroughness;
 											
 											// make the simplyfying assumption that V equals R equals the normal
 											vec3 R = N;
@@ -335,22 +347,23 @@ public:
 											for(uint i = 0u; i < SAMPLE_COUNT; ++i){
 												// generates a sample vector that's biased towards the preferred alignment direction (importance sampling).
 												vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-												vec3 H = ImportanceSampleGGX(Xi, N, roughness);
+												vec3 H = ImportanceSampleGGX(Xi, N, uroughness);
 												vec3 L  = normalize(2.0 * dot(V, H) * H - V);
 												
 												float NdotL = max(dot(N, L), 0.0);
 												if(NdotL > 0.0){
 													// sample from the environment's mip level based on roughness/pdf
-													float D   = DistributionGGX(N, H, roughness);
+													float D   = DistributionGGX(N, H, uroughness);
 													float NdotH = max(dot(N, H), 0.0);
 													float HdotV = max(dot(H, V), 0.0);
 													float pdf = D * NdotH / (4.0 * HdotV) + 0.0001;
 													
-//													float resolution = 512.0; // resolution of source cubemap (per face)
+//													//float resolution = 512.0; // resolution of source cubemap (per face)
 													float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
 													float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
 													
-													float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel);
+													float mipLevel = uroughness == 0.0 ? 0.0 : max(0.5 * log2(saSample / saTexel), 0.0);
+													//mipLevel = clamp( mipLevel, 0.0, 4.0);
 													
 													prefilteredColor += textureLod(environmentMap, L, mipLevel).rgb * NdotL;
 													totalWeight      += NdotL;
