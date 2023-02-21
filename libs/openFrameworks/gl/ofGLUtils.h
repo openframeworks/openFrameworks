@@ -170,4 +170,10 @@ void ofDisableGLDebugLog();
 		#endif
 	#endif
     #endif
+
+	#ifndef glTexStorage2D
+		#ifdef glTexStorage2DEXT
+			#define glTexStorage2D							glTexStorage2DEXT
+		#endif
+	#endif
 #endif
