@@ -400,10 +400,6 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 			std::string cacheIrrName = baseName+"_irr_"+ofToString(data->settings.irradianceRes,0)+".exr";
 			std::string cachePrefilterName = baseName+"_pre_"+ofToString(data->settings.preFilterRes,0)+".exr";
 			
-			ofLogNotice("encFolder : ") << encFolder;
-			ofLogNotice("baseName: ") << baseName;
-			ofLogNotice("cacheIrrName: ") << cacheIrrName;
-			
 			bool bHasCachedIrr = false;
 			bool bHasCachedPre = false;
 			if( data->settings.useCache && !data->settings.overwriteCache ) {
@@ -415,7 +411,7 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 			
 			bool bMakeCache = data->settings.useCache;
 			#if defined(TARGET_EMSCRIPTEN)
-			// not supporting caches on Emscripten.
+			// not supporting making caches on Emscripten.
 			bMakeCache = false;
 			#endif
 			
@@ -654,6 +650,27 @@ void ofCubeMap::_initEmptyTextures(GLuint aCubeMapId, int aSize) {
 }
 
 //--------------------------------------------------------------
+void ofCubeMap::_initEmptyTextures(GLuint aCubeMapId, GLuint aInternalFormat, int aSize, int aNumMipMaps ) {
+	GLenum textureTarget = getTextureTarget();
+	glBindTexture(textureTarget, aCubeMapId );
+	GLuint texStorageFormat = getTexStorageFormat(aInternalFormat);
+	GLuint gFormat = getGlTypeFromInternalFormat(aInternalFormat);
+	
+	for (int mip = 0; mip < data->maxMipLevels; mip++) {
+		// reisze framebuffer according to mip-level size.
+		unsigned int mipWidth  = static_cast<unsigned int>(data->settings.preFilterRes * std::pow(0.5, mip));
+		if(mipWidth < 1 ) {
+			mipWidth = 1;
+		}
+		for (unsigned int i = 0; i < 6; i++) {
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mip, aInternalFormat, mipWidth, mipWidth, 0, gFormat, texStorageFormat, nullptr );
+		}
+	}
+	
+	glBindTexture(getTextureTarget(), 0);
+}
+
+//--------------------------------------------------------------
 GLuint ofCubeMap::_createFloatCubeMap(ofTexture& aSrcTex, int aSrcRes) {
 	GLuint cubeTexF;
 	glGenTextures(1, &cubeTexF );
@@ -779,9 +796,6 @@ void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, std::
 			if( fpixels[i].getWidth() < 1 || fpixels[i].getHeight() < 1 ) {
 				bAllPixelsCreated = false;
 			}
-//			if(!ofSaveImage(fpixels[i], "irrMap-"+ofToString(i,0)+".jpg")) {
-//				bAllPixelsCreated = false;
-//			}
 		}
 		
 		if(bAllPixelsCreated) {
@@ -938,10 +952,12 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 	GLuint gFormat = getGlTypeFromInternalFormat();
 	
 	// generate all of the textures and mip maps at once ...
-	glTexStorage2D(GL_TEXTURE_CUBE_MAP, data->maxMipLevels, texFormat, data->settings.preFilterRes, data->settings.preFilterRes);
-		
+	//glTexStorage2D(GL_TEXTURE_CUBE_MAP, data->maxMipLevels, texFormat, data->settings.preFilterRes, data->settings.preFilterRes);
+	// create all of the textures with mip maps //
 	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	
+	_initEmptyTextures( data->preFilteredMapId, texFormat, data->settings.preFilterRes, data->maxMipLevels );
 	
 	_configureCubeTextures(data->preFilteredMapId, true);
 	
@@ -1043,6 +1059,7 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 		}
 		
 	} else {
+		
 		unsigned int captureFBO;
 		glGenFramebuffers(1, &captureFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO );
@@ -1107,14 +1124,14 @@ bool ofCubeMap::_loadPrefilterMap( std::string aCachePath ) {
 	GLuint texStorageFormat = getTexStorageFormat(loadTexFormat);
 	GLuint gFormat = getGlTypeFromInternalFormat(loadTexFormat);
 	
-	glBindTexture(GL_TEXTURE_CUBE_MAP, data->preFilteredMapId);
-	glTexStorage2D(GL_TEXTURE_CUBE_MAP, data->maxMipLevels, loadTexFormat, data->settings.preFilterRes, data->settings.preFilterRes);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	_initEmptyTextures( data->preFilteredMapId, loadTexFormat, data->settings.preFilterRes, data->maxMipLevels );
+	
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, data->preFilteredMapId);
+	//glTexStorage2D(GL_TEXTURE_CUBE_MAP, data->maxMipLevels, loadTexFormat, data->settings.preFilterRes, data->settings.preFilterRes);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	
 	_configureCubeTextures(data->preFilteredMapId, true);
-	
-	int texSize = fullPix.getWidth() / 3;
-	
+		
 	ofFloatPixels fpix;
 	size_t numChannels = getNumPixelChannels();
 	
