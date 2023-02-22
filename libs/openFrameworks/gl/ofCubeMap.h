@@ -136,6 +136,7 @@ protected:
 	
 	void _configureCubeTextures(GLuint aCubeMapId,bool abLinearMipLinear);
 	void _initEmptyTextures(GLuint aCubeMapId, int aSize);
+	void _initEmptyTextures(GLuint aCubeMapId, GLuint aInternalFormat, int aSize, int aNumMipMaps );
 	void _allocateCubeMesh();
 	std::vector<glm::mat4> _getViewMatrices(const glm::vec3& apos);
 	
