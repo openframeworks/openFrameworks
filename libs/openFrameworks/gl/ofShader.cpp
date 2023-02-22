@@ -1510,7 +1510,7 @@ bool ofShader::setPbrEnvironmentMapUniforms( int textureLocation ) const {
 		if(cubeMapData->bPreFilteredMapAllocated) {
 			setUniformTexture("tex_prefilterEnvMap", GL_TEXTURE_CUBE_MAP, cubeMapData->preFilteredMapId, textureLocation+1 );
 		}
-		if( cubeMapData->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+		if( cubeMapData->settings.useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
 			setUniformTexture("tex_brdfLUT", ofCubeMap::getBrdfLutTexture(), textureLocation+2 );
 		}
 	}
