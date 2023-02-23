@@ -21,7 +21,10 @@
 #endif
 
 namespace{
-    ofSoundStream systemSoundStream;
+    ofSoundStream &getSystemSoundStream() {
+        static ofSoundStream _;
+        return _;
+    }
 }
 
 using std::shared_ptr;
@@ -118,27 +121,27 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(ofSoundStreamSettings & settings) {
-	systemSoundStream.setup(settings);
+    getSystemSoundStream().setup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-    systemSoundStream.stop();
+    getSystemSoundStream().stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-    systemSoundStream.start();
+    getSystemSoundStream().start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-    systemSoundStream.close();
+    getSystemSoundStream().close();
 }
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
-	vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
+	vector<ofSoundDevice> deviceList = getSystemSoundStream().getDeviceList();
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }

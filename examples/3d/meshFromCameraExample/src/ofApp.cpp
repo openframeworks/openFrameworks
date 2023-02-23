@@ -19,13 +19,12 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofBackground(66,66,66);
 	
+	int width = 320;
+	int height = 240;
+
 	//initialize the video grabber
 	vidGrabber.setVerbose(true);
-	vidGrabber.setup(320,240);
-
-	//store the width and height for convenience
-	int width = vidGrabber.getWidth();
-	int height = vidGrabber.getHeight();
+	vidGrabber.setup(width,height);
 	
 	//add one vertex to the mesh for each pixel
 	for (int y = 0; y < height; y++){
@@ -50,7 +49,6 @@ void ofApp::setup(){
 	
 	//this is an annoying thing that is used to flip the camera
 	cam.setScale(1,-1,1);
-	
 	
 	//this determines how much we push the meshes out
 	extrusionAmount = 300.0;

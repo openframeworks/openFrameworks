@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 
+#define USE_MATERIAL
 
 class TexturePack {
 	public:
@@ -43,9 +44,7 @@ class TexturePack {
 			
 			atex.bind();
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
-			#ifndef TARGET_EMSCRIPTEN
-				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			#endif
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			atex.unbind();
 			
 			atex.setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
@@ -86,8 +85,15 @@ class ofApp : public ofBaseApp{
 		
 		vector< shared_ptr<ofLight> > lights;
 		
+	
+		#ifdef USE_MATERIAL
+		vector< shared_ptr<ofMaterial> > materials;
+		int materialIndex = 0;
+		#else
 		vector< shared_ptr<TexturePack> > texturePacks;
 		int texturePackIndex = 0;
+		#endif
+		
 		
 		ofTexture textureBrush;
 		
@@ -95,7 +101,9 @@ class ofApp : public ofBaseApp{
 		
 		ofEasyCam camera;
 		
+		#ifndef USE_MATERIAL
 		shared_ptr<ofShader> shader;
+		#endif
 		
 		ofFbo fboInfluence;
 		ofRectangle fboRect;

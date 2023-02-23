@@ -7,10 +7,7 @@
 
 #pragma once
 #include "ofConstants.h"
-
-#ifndef STRINGIFY
-#define STRINGIFY(A) #A
-#endif
+#include "ofGLUtils.h"
 
 class ofCubeMapShaders {
 public:
@@ -20,12 +17,26 @@ public:
 		std::string fragShader;
 	};
 	
+	static std::string getGLSLHeader() {
+		std::string vstr = "#version 150\n";
+		if( ofGetGLRenderer() ) {
+			vstr = "#version "+ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor())+"\n";
+		}
+		#ifdef TARGET_OPENGLES
+		vstr += "#define TARGET_OPENGLES\n";
+		//vstr += "#extension GL_OES_standard_derivatives : enable\n";
+		vstr += "precision highp float;\n";
+		vstr += "precision highp int;\n";
+		vstr += "precision highp sampler2D;\n";
+		vstr += "precision highp samplerCube;\n";
+		#endif
+		return vstr;
+	}
+	
 	static std::string defaultVertShader() {
-		std::string vshader = "#version 150\n";
-		vshader += STRINGIFY(
-								in vec4 position;
-								
-								uniform mat4 uProjection;
+		std::string vshader = getGLSLHeader();
+		vshader += R"(in vec4 position;
+					uniform mat4 uProjection;
 								uniform mat4 uView;
 								
 								out vec3 oLocalPos;
@@ -34,7 +45,8 @@ public:
 									oLocalPos = position.xyz;
 									gl_Position = uProjection * uView * vec4(position.xyz, 1.0);
 								}
-								);
+					)";
+								
 		return vshader;
 	}
 	
@@ -42,34 +54,43 @@ public:
 		ShaderSource rsource;
 		rsource.vertShader = defaultVertShader();
 		
-		rsource.fragShader = "#version 150\n";
-		rsource.fragShader += STRINGIFY(
-							 out vec4 FRAGCOLOR;\n
-							 in vec3 oLocalPos;\n
+		rsource.fragShader = getGLSLHeader();
+		rsource.fragShader += R"(
+							 out vec4 FRAGCOLOR;
+							 in vec3 oLocalPos;
 							 
-							 uniform float uFlipY;\n
+							 uniform float uFlipY;
+							uniform float uConvertToNonFloat; // 0.0 // convert hdr to non float texture
 							 
-							 uniform sampler2D uEquirectangularTex;\n
+							 uniform sampler2D uEquirectangularTex;
 							 
-							 // https://learnopengl.com/PBR/IBL/Diffuse-irradiance \n
-							 const vec2 invAtan = vec2(0.1591, 0.3183);\n
-							 vec2 SampleSphericalMap(vec3 v) {\n
-								 vec2 uv = vec2(atan(v.z, v.x), asin(v.y));\n
-								 uv *= invAtan;\n
-								 uv += 0.5;\n
-								 if( uFlipY > 0.5 ) {\n
-									 uv.y = 1.0-uv.y;\n
-								 }\n
-								 return uv;\n
+							 // https://learnopengl.com/PBR/IBL/Diffuse-irradiance
+							 const vec2 invAtan = vec2(0.1591, 0.3183);
+							 vec2 SampleSphericalMap(vec3 v) {
+								 vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+								 uv *= invAtan;
+								 uv += 0.5;
+								 if( uFlipY > 0.5 ) {
+									 uv.y = 1.0-uv.y;
+								 }
+								 return uv;
 							 }
 							 
 							 void main() {
 								 vec2 uv = SampleSphericalMap(normalize(oLocalPos)); // make sure to normalize localPos
 								 vec3 color = texture(uEquirectangularTex, uv).rgb;
+						
+								if(uConvertToNonFloat > 0.5) {
+									// hdr tone mapping
+									color = color / (color+vec3(1.0));
+									// gamma correction 
+									//color = pow(color, vec3(1.0 / 2.2));
+									color = clamp( color, 0.0, 1.0);
+								}
 								 
 								 FRAGCOLOR = vec4(color, 1.0);
 							 }
-							 );
+							 )";
 		return rsource;
 	}
 	
@@ -77,126 +98,125 @@ public:
 		ShaderSource rsource;
 		rsource.vertShader = defaultVertShader();
 		
-		rsource.fragShader = "#version 150\n";
-		rsource.fragShader += STRINGIFY(
-							 out vec4 FRAGCOLOR;\n
-							 in vec3 oLocalPos;\n
+		rsource.fragShader = getGLSLHeader();
+		rsource.fragShader += R"(
+							 out vec4 FRAGCOLOR;
+							 in vec3 oLocalPos;
+							 							 
+							 uniform samplerCube environmentMap;
+							 const float PI = 3.14159265359;
 							 
-							 //uniform float uFlipY;\n
-							 
-							 uniform samplerCube environmentMap;\n
-							 const float PI = 3.14159265359;\n
-							 
-							 // https://learnopengl.com/PBR/IBL/Diffuse-irradiance \n
-							 void main() {\n
-								 // the sample direction equals the hemisphere's orientation\n
-								 // The world vector acts as the normal of a tangent surface\n
-								 // from the origin, aligned to WorldPos. Given this normal, calculate all\n
-								 // incoming radiance of the environment. The result of this radiance\n
-								 // is the radiance of light coming from -Normal direction, which is what\n
-								 // we use in the PBR shader to sample irradiance.\n
-								 vec3 N = normalize(oLocalPos);\n
+							 // https://learnopengl.com/PBR/IBL/Diffuse-irradiance
+							 void main() {
+								 // the sample direction equals the hemisphere's orientation
+								 // The world vector acts as the normal of a tangent surface
+								 // from the origin, aligned to WorldPos. Given this normal, calculate all
+								 // incoming radiance of the environment. The result of this radiance
+								 // is the radiance of light coming from -Normal direction, which is what
+								 // we use in the PBR shader to sample irradiance.
+								 vec3 N = normalize(oLocalPos);
 								 
-								 vec3 irradiance = vec3(0.0);\n
+								 vec3 irradiance = vec3(0.0);
 								 
-								 // tangent space calculation from origin point\n
-								 vec3 up    = vec3(0.0, 1.0, 0.0);\n
-								 vec3 right = normalize(cross(up, N));\n
-								 up         = normalize(cross(N, right));\n
+								 // tangent space calculation from origin point
+								 vec3 up    = vec3(0.0, 1.0, 0.0);
+								 vec3 right = normalize(cross(up, N));
+								 up         = normalize(cross(N, right));
 								 
-								 float sampleDelta = 0.025;\n
-								 float nrSamples = 0.0;\n
-								 for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta) {\n
-									 for(float theta = 0.0; theta < 0.5 * PI; theta += sampleDelta) {\n
-										 // spherical to cartesian (in tangent space)\n
-										 vec3 tangentSample = vec3(sin(theta) * cos(phi),  sin(theta) * sin(phi), cos(theta));\n
-										 // tangent space to world\n
-										 vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;\n
+								 float sampleDelta = 0.025;
+								 float nrSamples = 0.0;
+								 for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta) {
+									 for(float theta = 0.0; theta < 0.5 * PI; theta += sampleDelta) {
+										 // spherical to cartesian (in tangent space)
+										 vec3 tangentSample = vec3(sin(theta) * cos(phi),  sin(theta) * sin(phi), cos(theta));
+										 // tangent space to world
+										 vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;
 										 
-										 irradiance += texture(environmentMap, sampleVec).rgb * cos(theta) * sin(theta);\n
-										 nrSamples++;\n
-									 }\n
-								 }\n
-								 irradiance = PI * irradiance * (1.0 / float(nrSamples));\n
-								 
-								 FRAGCOLOR = vec4(irradiance, 1.0);\n
+										 irradiance += texture(environmentMap, sampleVec).rgb * cos(theta) * sin(theta);
+										 //nrSamples++;
+										   nrSamples += 1.0;
+									 }
+								 }
+								 //irradiance = PI * irradiance * (1.0 / float(nrSamples));
+								 irradiance = irradiance * PI * (1.0 / max(nrSamples, 1.0));
+								 FRAGCOLOR = vec4(irradiance, 1.0);
 							 }
-							 );
+							 )";
 		return rsource;
 	}
 	
 	static ShaderSource renderShader() {
 		ShaderSource rsource;
-		rsource.vertShader = "#version 150\n";
-		rsource.vertShader += STRINGIFY(
-							 in vec4 position;\n
-							 // set from OF //\n
+		rsource.vertShader = getGLSLHeader();
+		rsource.vertShader += R"(
+							 in vec4 position;
+							 // set from OF //
 							 uniform mat4 modelViewProjectionMatrix;
-							 uniform mat4 projectionMatrix;\n
-							 uniform mat4 viewMatrix;\n
-							 \n
-							 out vec3 oTexCoords;\n
-							 \n
-							 void main() {\n
-								 oTexCoords = position.xyz;\n
-								 // removing the translation of the view matrix\n
-								 vec4 pos = projectionMatrix * mat4(mat3(viewMatrix)) * position;\n
-								 gl_Position = pos.xyww;\n
+							 uniform mat4 projectionMatrix;
+							 uniform mat4 viewMatrix;
+							 
+							 out vec3 oTexCoords;
+							 
+							 void main() {
+								 oTexCoords = position.xyz;
+								 // removing the translation of the view matrix
+								 vec4 pos = projectionMatrix * mat4(mat3(viewMatrix)) * position;
+								 gl_Position = pos.xyww;
 								 //							 gl_Position = modelViewProjectionMatrix * position;
-							 }\n
-							 );
-		rsource.fragShader = "#version 150\n";
-		rsource.fragShader += STRINGIFY(
-							 in vec3 oTexCoords;\n
+							 }
+							 )";
+		rsource.fragShader = getGLSLHeader();
+		rsource.fragShader += R"(
+							 in vec3 oTexCoords;
 							 
-							 uniform samplerCube uCubeMap;\n
-							 uniform float uIsHDR;\n
-							 uniform float uExposure = 1.0;\n
-							 uniform float uRoughness = 0.0;\n
-							 uniform float uMaxMips = 1;\n
+							uniform samplerCube uCubeMap;
+							uniform float uIsHDR;
+							uniform float uExposure;// = 1.0;
+							uniform float uRoughness;// = 0.0;
+							uniform float uMaxMips;// = 1;
 							 
-							 out vec4 FRAGCOLOR;\n
+							out vec4 FRAGCOLOR;
 										
-							vec3 getEnvColor( in vec3 aR, in float aroughness ) {\n
-								float lod = aroughness * (uMaxMips-1);\n
-								vec3 ai = textureLod(uCubeMap, aR, floor(lod) ).rgb;\n
-								vec3 ab = textureLod(uCubeMap, aR, clamp(ceil(lod), floor(lod), uMaxMips-1) ).rgb;\n
-								return mix(ai, ab, lod-floor(lod) );\n
-							}\n
+							vec3 getEnvColor( in vec3 aR, in float aroughness ) {
+								float lod = aroughness * (uMaxMips-1.0);
+								vec3 ai = textureLod(uCubeMap, aR, floor(lod) ).rgb;
+								vec3 ab = textureLod(uCubeMap, aR, clamp(ceil(lod), floor(lod), uMaxMips-1.0) ).rgb;
+								return mix(ai, ab, lod-floor(lod) );
+							}
 							 
-							 void main() {\n
-								 vec3 envColor = vec3(0.0);\n
-								 if( uMaxMips > 1 && uRoughness > 0.0 ) {\n
-									 envColor = getEnvColor(oTexCoords, uRoughness );\n
-//									envColor = textureLod(uCubeMap, oTexCoords, getLodRoughness(uRoughness*uRoughness) ).rgb;\n
-//									 envColor = texture(uCubeMap, oTexCoords, getLodRoughness(uRoughness) ).rgb;\n
-								 } else {\n
-									envColor = texture(uCubeMap, oTexCoords).rgb; \n
-//									 envColor = textureLod(uCubeMap, oTexCoords, 0.0).rgb;\n
-								 }\n
-//								 envColor = textureLod(uCubeMap, oTexCoords, 0.0).rgb;\n
-								 
-								 if( uIsHDR > 0.5 ) {\n
-									 
-									 // exposure tone mapping\n
-									 vec3 mapped = vec3(1.0) - exp(-envColor * uExposure);\n
-									 // gamma correction\n
-									 envColor = pow(mapped, vec3(1.0 / 2.2));\n
-									 
-									 //envColor = envColor / (envColor + vec3(1.0));\n
-									 //envColor = pow(envColor, vec3(1.0/2.2));\n
-								 }\n
-								 
-								 FRAGCOLOR = vec4(envColor, 1.0);\n
-							 }\n
+							 void main() {
+								 vec3 envColor = vec3(0.0);
+								 if( uMaxMips > 1.0 && uRoughness > 0.0 ) {
+									 envColor = getEnvColor(oTexCoords, uRoughness );
+								 } else {
+									envColor = texture(uCubeMap, oTexCoords).rgb;
+								 }
+		
+								 if( uIsHDR > 0.5 ) {
+									 //envColor = envColor / (envColor + vec3(1.0));
+									 // exposure tone mapping
+									 vec3 mapped = vec3(1.0) - exp(-envColor * uExposure);
+									
+									 // gamma correction
+									 envColor = pow(mapped, vec3(1.0 / 2.2));
+											 
+									 //envColor = envColor / (envColor + vec3(1.0));
+									 //envColor = pow(envColor, vec3(1.0/2.2));
+								 } else {
+									// gamma correction
+									envColor = pow(envColor, vec3(1.0 / max(uExposure*2.2, 0.1) ) );
+								}
+		
+								 FRAGCOLOR = vec4(clamp(envColor, 0.0, 1.0), 1.0);
+							 }
 							 
-							 );
+							 )";
 		
 		return rsource;
 	}
 	
 	static std::string hammersley() {
-		std::string ssrc = STRINGIFY(
+		std::string ssrc = R"(
 									 // ----------------------------------------------------------------------------
 									 // http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
 									 // efficient VanDerCorpus calculation.
@@ -246,7 +266,7 @@ public:
 										 return HammersleyBits(i, N);
 										#endif
 									 }
-									 );
+									 )";
 		return ssrc;
 	}
 	
@@ -255,21 +275,22 @@ public:
 		ShaderSource rsource;
 		rsource.vertShader = defaultVertShader();
 		
-		rsource.fragShader = "#version 150\n";
-		rsource.fragShader += STRINGIFY(
+		rsource.fragShader = getGLSLHeader();
+		rsource.fragShader += R"(
 										out vec4 FragColor;
 										in vec3 oLocalPos;
 										
 										uniform samplerCube environmentMap;
-										uniform float roughness;
+										uniform float uroughness;
+										uniform float resolution; // resolution of source cubemap (per face)
 										
 										const float PI = 3.14159265359;
 										
-										);
+										)";
 		
 		rsource.fragShader += hammersley();
 		
-		rsource.fragShader += STRINGIFY(
+		rsource.fragShader += R"(
 										// ----------------------------------------------------------------------------
 										float DistributionGGX(vec3 N, vec3 H, float roughness) {
 											float a = roughness*roughness;
@@ -310,45 +331,53 @@ public:
 										void main(){
 											vec3 N = normalize(oLocalPos);
 											
+											//float troughness = uroughness;
+											
 											// make the simplyfying assumption that V equals R equals the normal
 											vec3 R = N;
 											vec3 V = R;
-											
+											#ifdef TARGET_OPENGLES
 											const uint SAMPLE_COUNT = 1024u;
+											#else
+											const uint SAMPLE_COUNT = 2048u;
+											#endif
 											vec3 prefilteredColor = vec3(0.0);
 											float totalWeight = 0.0;
 											
 											for(uint i = 0u; i < SAMPLE_COUNT; ++i){
 												// generates a sample vector that's biased towards the preferred alignment direction (importance sampling).
 												vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-												vec3 H = ImportanceSampleGGX(Xi, N, roughness);
+												vec3 H = ImportanceSampleGGX(Xi, N, uroughness);
 												vec3 L  = normalize(2.0 * dot(V, H) * H - V);
 												
 												float NdotL = max(dot(N, L), 0.0);
 												if(NdotL > 0.0){
 													// sample from the environment's mip level based on roughness/pdf
-													float D   = DistributionGGX(N, H, roughness);
+													float D   = DistributionGGX(N, H, uroughness);
 													float NdotH = max(dot(N, H), 0.0);
 													float HdotV = max(dot(H, V), 0.0);
 													float pdf = D * NdotH / (4.0 * HdotV) + 0.0001;
 													
-													float resolution = 512.0; // resolution of source cubemap (per face)
+//													//float resolution = 512.0; // resolution of source cubemap (per face)
 													float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
 													float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
 													
-													float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel);
+													float mipLevel = uroughness == 0.0 ? 0.0 : max(0.5 * log2(saSample / saTexel), 0.0);
+													//mipLevel = clamp( mipLevel, 0.0, 4.0);
 													
 													prefilteredColor += textureLod(environmentMap, L, mipLevel).rgb * NdotL;
 													totalWeight      += NdotL;
 												}
 											}
+											if(totalWeight < 0.0001 ) {
+												totalWeight = 0.0001;
+											}
 											
 											prefilteredColor = prefilteredColor / totalWeight;
-											//prefilteredColor = vec3(1.0,0.0,0.0);
 											FragColor = vec4(prefilteredColor, 1.0);
 										}
 										
-										);
+										)";
 		
 		return rsource;
 	}
@@ -356,8 +385,8 @@ public:
 	
 	static ShaderSource brdfLUT() {
 		ShaderSource rsource;
-		rsource.vertShader = "#version 150\n";
-		rsource.vertShader += STRINGIFY(
+		rsource.vertShader = getGLSLHeader();
+		rsource.vertShader += R"(
 										in vec4 position;
 										in vec2 texcoord;
 										
@@ -369,19 +398,19 @@ public:
 											TexCoords = texcoord;
 											gl_Position = modelViewProjectionMatrix * position;
 										}
-										);
-		rsource.fragShader = "#version 150\n";
-		rsource.fragShader += STRINGIFY(
+										)";
+		rsource.fragShader = getGLSLHeader();
+		rsource.fragShader += R"(
 										out vec4 FragColor;
 										in vec2 TexCoords;
 										
 										const float PI = 3.14159265359;
 										
-										);
+										)";
 		
 		rsource.fragShader += hammersley();
 		
-		rsource.fragShader += STRINGIFY(
+		rsource.fragShader += R"(
 										// ----------------------------------------------------------------------------
 										vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness){
 											float a = roughness*roughness;
@@ -471,7 +500,7 @@ public:
 //											FragColor.g = 0.0;
 											FragColor.a = 1.0;
 										}
-										);
+										)";
 		return rsource;
 	}
     

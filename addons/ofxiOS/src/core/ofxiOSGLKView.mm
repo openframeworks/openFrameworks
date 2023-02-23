@@ -13,6 +13,8 @@
 #include <TargetConditionals.h>
 #import <GameController/GameController.h>
 
+using std::shared_ptr;
+
 static ofxiOSGLKView * _instanceRef = nil;
 
 @interface ofxiOSGLKView() {

@@ -19,13 +19,6 @@ void main() {
 #endif
 	
 #ifdef CUBE_MAP_SINGLE_PASS
-	
-//	vec3 fdiff = FragPos.xyz - uLightPos;
-//	if( dot(FragPos.xyz, uLightPos) > 0.0 ) {
-//		discard;
-//	}
-//	float lightDistance = length(fdiff);
-//	lightDistance = lightDistance / uFarPlane;
 	// write out modified depth
 	gl_FragDepth = length(FragPos.xyz - uLightPos) / uFarPlane;
 #endif

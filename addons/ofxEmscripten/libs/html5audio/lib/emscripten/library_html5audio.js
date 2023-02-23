@@ -1,8 +1,6 @@
 var LibraryHTML5Audio = {
     $AUDIO: {
         players: [],
-        soundSources: [],
-        soundPans: [],
         lastSoundID: 0,
     },
 
@@ -73,13 +71,13 @@ var LibraryHTML5Audio = {
 
     html5audio_sound_load: function (url) {
 	var audio = document.createElement('audio');
-	var id = AUDIO.lastSoundID++;
-	AUDIO.players[id] = audio;
-	AUDIO.players[id].src = UTF8ToString(url);
-	AUDIO.soundSources[id] = AUDIO.context.createMediaElementSource(AUDIO.players[id]); 
-	AUDIO.soundPans[id] = AUDIO.context.createStereoPanner();
-	AUDIO.soundSources[id].connect(AUDIO.soundPans[id]).connect(AUDIO.fft);
-	return id;
+	var sound_id = AUDIO.lastSoundID++;
+	AUDIO.players[sound_id] = audio;
+	AUDIO.players[sound_id].src = UTF8ToString(url);
+	var source = AUDIO.context.createMediaElementSource(AUDIO.players[sound_id]); 
+	AUDIO.players[sound_id].soundPan = AUDIO.context.createStereoPanner();
+	source.connect(AUDIO.players[sound_id].soundPan).connect(AUDIO.fft);
+	return sound_id;
     },
 
     html5audio_sound_play: function (sound_id, offset) {
@@ -132,11 +130,11 @@ var LibraryHTML5Audio = {
     },
 
     html5audio_sound_set_pan: function (sound_id, pan) {
-    	AUDIO.soundPans[sound_id].pan.value = pan;
+    	AUDIO.players[sound_id].soundPan.pan.value = pan;
     },
 
     html5audio_sound_pan: function (sound_id) {
-        return AUDIO.soundPans[sound_id].pan.value;
+        return AUDIO.players[sound_id].soundPan.pan.value;
     },
     
     html5audio_sound_free: function (sound_id) {
@@ -203,8 +201,8 @@ var LibraryHTML5Audio = {
         return AUDIO.mediaElement = null;
     },
 
-    html5audio_sound_is_loaded: function (sound) {
-        if (AUDIO.players[id].src != undefined) {
+    html5audio_sound_is_loaded: function (sound_id) {
+        if (AUDIO.players[sound_id].src != undefined) {
             return true;
         }
         return false;

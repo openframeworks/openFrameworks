@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "ofMain.h"
 #include "ofxAssimpMeshHelper.h"
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 //--------------------------------------------------------------
 inline ofFloatColor aiColorToOfColor(const aiColor4D& c){
@@ -52,7 +52,7 @@ inline void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper *
 		}
 	}
 
-    // aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
+	// aiVector3D * 	mTextureCoords [AI_MAX_NUMBER_OF_TEXTURECOORDS]
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
