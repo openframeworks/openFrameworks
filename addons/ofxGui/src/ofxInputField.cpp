@@ -7,10 +7,9 @@
 //
 
 #include "ofxInputField.h"
-
 #include "ofGraphics.h"
 
-using namespace std;
+using std::string;
 
 namespace{
 	template<typename Type>
