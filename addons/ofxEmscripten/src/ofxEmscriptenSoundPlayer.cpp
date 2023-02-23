@@ -5,6 +5,7 @@
  *      Author: arturo
  */
 
+#include "ofFileUtils.h"
 #include "ofxEmscriptenSoundPlayer.h"
 #include "html5audio.h"
 
