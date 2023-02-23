@@ -5,7 +5,8 @@ void ofApp::setup(){
 	
 	ofShader::TransformFeedbackSettings settings;
 	// we only need a vertex shader since the transform feedback is not used for rendering
-	settings.shaderFiles[GL_VERTEX_SHADER] = "vert.glsl";
+	settings.shaderFiles[GL_FRAGMENT_SHADER] = "feedback.frag";
+	settings.shaderFiles[GL_VERTEX_SHADER] = "feedback.vert";
 	// the default attributes for ofShader are
 	// position, normal, color and texcoord
 	// the names are defined at the top of ofShader.cpp

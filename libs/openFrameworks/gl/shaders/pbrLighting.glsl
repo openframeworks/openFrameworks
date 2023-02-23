@@ -23,11 +23,6 @@ vec3 SurfaceSpecular(in PbrData adata, const vec3 h, float NoL, float NoH, float
 	
 	// specular BRDF
 	vec3 Fr = (D * V) * F;
-	
-	vec3 energyCompensation = 1.0 + adata.f0 * (1.0 / Fr.y - 1.0);
-	// Scale the specular lobe to account for multiscattering
-	//	Fr *= energyCompensation;
-	
 	return Fr;
 }
 
@@ -44,16 +39,13 @@ float SurfaceDiffuse(float roughness, float NoV, float NoL, float LoH) {
 
 // https://google.github.io/filament/Filament.md.html#materialsystem/clearcoatmodel
 #if defined(HAS_CLEAR_COAT)
-//vec2 SurfaceClearCoat(in PbrData adata, in Material amat, const vec3 h, float NoH, float LoH ) {
-vec2 SurfaceClearCoat(in PbrData adata, in Material amat, float NoH, float LoH ) {
-//	#if defined(HAS_TEX_CLEAR_COAT_NORMAL)
-	// If the material has a normal map, we want to use the geometric normal
-	// instead to avoid applying the normal map details to the clear coat layer
-	//float clearCoatNoH = saturate(dot(adata.normalWorldGeometry, h));
-//	#else
-//	float clearCoatNoH = NoH;
-//	#endif
-	float D = D_GGX(NoH,amat.clearCoatRoughness*amat.clearCoatRoughness);
+vec2 SurfaceClearCoat(in PbrData adata, in Material amat, const vec3 h, float NoH, float LoH ) {
+// vec2 SurfaceClearCoat(in PbrData adata, in Material amat, float NoH, float LoH ) {
+	#ifdef PBR_QUALITY_LEVEL_HIGH
+	float D = D_GGX(amat.clearCoatRoughness, NoH, h);
+	#else
+	float D = D_GGX(NoH,amat.clearCoatRoughness);
+	#endif
 	float V = V_Kelemen(LoH);
 	float F = F_Schlick(0.04, 1.0, LoH) * amat.clearCoat;//amat.clearCoat; // fix IOR to 1.5
 	
@@ -68,11 +60,13 @@ float GetDistanceAttenuation( float distSq, float aLightRad) {
 	return att * att;
 }
 
-void calcLight(in int aLightIndex, inout PbrData adata, in Material amat ) {
+
+//void calcLight(in int aLightIndex, inout PbrData adata, in Material amat ) {
+void calcLight(in PbrLightData light, in int aLightIndex, inout PbrData adata, in Material amat ) {
 	
-	PbrLightData light = lights[aLightIndex];
-	
-	vec3 L = normalize(light.position.xyz);
+	vec3 lPos = light.position.xyz;
+	//vec3 L = normalize(light.position.xyz);
+	vec3 L = normalize(lPos);
 	//	vec3 h = normalize(aV + aL);
 	vec3 halfV = normalize( adata.viewDirectionWorld + L );
 	
@@ -80,23 +74,15 @@ void calcLight(in int aLightIndex, inout PbrData adata, in Material amat ) {
 	float NoL = saturate(dot(adata.normalWorld, L));
 	float NoH = saturate(dot(adata.normalWorld, halfV));
 	float LoH = saturate(dot(L, halfV));
-	//
+
 	//	vec3 SurfaceSpecular(in PbrData adata, const vec3 h, float NoL, float NoH, float LoH, in float aroughness)
 	vec3 Fr = SurfaceSpecular( adata, halfV, NoL, NoH, LoH, amat.roughness );
+	Fr *= adata.energyCompensation; 
 	// diffuseColor = _mat.albedo.rgb * (vec3(1.0) - _mat.f0) * (1.0 - _mat.metallic);
-	float sd = SurfaceDiffuse( amat.roughness, adata.NoV, NoL, LoH );
+	float sd = SurfaceDiffuse( amat.roughness*amat.roughness, adata.NoV, NoL, LoH );
 	// PbrData.diffuse is multiplied by (1.0-metallic).
 //	vec3 Fd = adata.diffuse * (vec3(1.0)-adata.f0) * sd;
 	vec3 Fd = adata.diffuse * sd;
-	//	vec3 Fd = adata.diffuse * (vec3(1.0)-adata.f0) * Fd_Burley(aroughness, adata.NoV, NoL, LoH);
-	//	fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
-	//	vec3 kS = fresnelSchlickRoughness(NoH, vec3(0.04), 0.01 );
-	//	vec3 kD = 1.0-kS;
-	//	Fd = (adata.diffuse * Fd_Lambert()) * kD;
-	
-	//	vec3 Fd = adata.diffuse * sd;
-	
-
 	
 	float attenuation = 0.0;
 	float shadow = 0.0;
@@ -123,14 +109,8 @@ void calcLight(in int aLightIndex, inout PbrData adata, in Material amat ) {
 			shadow *= shadows[aLightIndex].strength;
 		}
 #endif
-		
-		//		attenuation = 1.0;
-		//pointLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
 	}else if(light.type<1.5){
-		// directional light
-		// calcDirectionalLight( inout PbrData adata, in PbrLightData alight, float aroughness, float ao, float ashadow )
-		//calcDirectionalLight( pbrData, lights[i], mat.roughness, mat.ao, shadow );
-		//directionalLight(lights[i], transformedNormal, 1.0-shadow, ambient, diffuse, specular);
+		// directional
 		attenuation = NoL;
 #ifdef HAS_SHADOWS
 		if( shadows[aLightIndex].enabled > 0.5 ) {
@@ -142,8 +122,7 @@ void calcLight(in int aLightIndex, inout PbrData adata, in Material amat ) {
 		// spot light
 		// Compute vector from surface to light position
 		vec3 posToLight = light.position.xyz - adata.positionWorld;
-		//VP = light.position.xyz - ecPosition3;
-		float spotEffect = dot(light.spotDirection, -normalize(posToLight));
+		float spotEffect = dot(light.direction, -normalize(posToLight));
 		
 		if (spotEffect > light.spotCosCutoff) {
 			
@@ -164,7 +143,7 @@ void calcLight(in int aLightIndex, inout PbrData adata, in Material amat ) {
 #ifdef HAS_SHADOWS
 			if( shadows[aLightIndex].enabled > 0.5 ) {
 				shadow = SpotShadow( shadows[aLightIndex], adata.positionWorld, adata.normalWorld );
-				//				shadow *= attenuation;
+//				shadow *= attenuation;
 				shadow *= shadows[aLightIndex].strength;
 			}
 #endif
@@ -172,81 +151,68 @@ void calcLight(in int aLightIndex, inout PbrData adata, in Material amat ) {
 		} else {
 			attenuation = 0.0;
 		}
-		//spotLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
 	}else{
-		//areaLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
-		// TODO: AREA LIGHTS!!
+		// area light
+		// TODO: Implement
+		attenuation = NoL;
+
+		#ifdef HAS_SHADOWS
+			if( shadows[aLightIndex].enabled > 0.5 ) {
+				shadow = AreaShadow( shadows[aLightIndex], adata.positionWorld, adata.normalWorld, vec2(light.width, light.height) );
+				shadow *= shadows[aLightIndex].strength;
+			}
+		#endif
 	}
 	
-	vec3 radiance = light.diffuse.rgb * ( light.diffuse.w * attenuation * amat.ao * (1.0-shadow));
-//	Fd *= radiance;
-//	Fr *= radiance;
+	vec3 radiance = gamma2Linear(light.diffuse.rgb) * ( light.diffuse.w * amat.ao * (1.0-shadow));
 	
-	vec3 color = Fd + Fr;
 #if defined(HAS_CLEAR_COAT)
 	if (amat.clearCoat > 0.0) {
 		
+		vec3 h = normalize( adata.viewDirectionWorld + light.position.xyz );
 		float clearNoH = NoH;
-		
+		vec3 cnormal = adata.normalWorldGeometry;
 		#if defined(HAS_TEX_CLEARCOAT_NORMAL)
 		//float clearCoatNoV = clampNoV(dot(adata.clearcoatNormal, adata.viewDirectionWorld));
 //		// the noh needs to recalc because it is different than the geometry
-		clearNoH = saturate(dot(adata.clearcoatNormal, halfV));
-		#else
-		//float clearCoatNoV = clampNoV(dot(adata.normalWorldGeometry, adata.viewDirectionWorld));
-		clearNoH = saturate(dot(adata.normalWorldGeometry, halfV));
+		cnormal = adata.clearcoatNormal;
 		#endif
+
+		clearNoH = saturate(dot(cnormal, h));
 		
-//		float attenuation = 1.0 - Fc;
-//		Fd *= attenuation;
-//		Fr *= attenuation;
-//		
-//		// TODO: Should we apply specularAO to the attenuation as well?
-//		//		float specularAO = specularAO(clearCoatNoV, diffuseAO, adata.clearCoatRoughness, cache);
-//		// computeSpecularAO(adata.NoV, ao, aroughness);
-//		float specAO = computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
-//		Fr += getIndirectPrefilteredReflection(clearCoatR, amat.clearCoatRoughness) * (specAO * Fc);
+		float clearCoatNoL = saturate(dot(cnormal, light.position.xyz));
 		
-		//float specAO = computeSpecularAO(clearCoatNoV, amat.ao, amat.clearCoatRoughness );
-		//Fr += getIndirectPrefilteredReflection(clearCoatR, amat.clearCoatRoughness) * (specAO * Fc);
-		
-		//	SurfaceClearCoat(in PbrData adata, in Material amat, const vec3 h, float NoH, float LoH )
-//		vec2 clearCoatFactor = SurfaceClearCoat(adata, amat, halfV, clearNoH, LoH );
-		vec2 clearCoatFactor = SurfaceClearCoat(adata, amat, clearNoH, LoH );
+		// SurfaceClearCoat(in PbrData adata, in Material amat, const vec3 h, float NoH, float LoH )
+		vec2 clearCoatFactor = SurfaceClearCoat(adata, amat, h, clearNoH, LoH );
+		// vec2 clearCoatFactor = SurfaceClearCoat(adata, amat, clearNoH, LoH );
 		float Fcc = clearCoatFactor.y;
-		float clearSpec = clearCoatFactor.x;
+		float clearCoat = clearCoatFactor.x;
 		
-		// // account for energy loss in the base layer
-//		color *= ((Fd + Fr * (1.0 - Fcc)) * (1.0 - Fcc) + clearSpec);
+		// account for energy loss in the base layer
 		float cattenuation = 1.0 - Fcc;
-//		Fd *= cattenuation;
-//		Fr *= cattenuation;
-//		Fr += clearSpec * cattenuation * cattenuation;
-//		Fr = Fr * cattenuation * cattenuation;
-		Fd = ((Fd * cattenuation) + clearSpec);
-		//Fr = saturate((Fr * cattenuation * cattenuation) + clearSpec);// * (specAO*Fcc);
-		Fr += ((Fd + (Fr * cattenuation)*cattenuation) + (clearSpec));// * (specAO*Fcc);
-//		Fr = saturate(Fr);
-	//	vec3 color = Fd + Fr;
-//		color *= cattenuation;
-//		color += clearSpec;
-	//	Fr = vec3(1.0, 0.0, 0.0);
-	//	Fd = vec3(1.0, 0.0, 0.0);
+		// Fd = ((Fd * cattenuation) + clearSpec);
+		Fd *= cattenuation;// * attenuation;
+		Fr += clearCoat * clearCoatNoL;
+		// Fd *= cattenuation * attenuation;
+		// Fr += (Fd + (Fr * cattenuation)*cattenuation) + (clearSpec);// * (specAO*Fcc);
 	}
 #endif
-	
-	Fd *= radiance;
-	Fr *= radiance;
-	
-	adata.directDiffuse += Fd;// * radiance;
-	adata.directSpecular += Fr;// * radiance;
-	
-	
-	//vec3 radiance = light.diffuse.rgb * ( light.diffuse.w * attenuation * amat.ao * (1.0-shadow));
-//	adata.directDiffuse += color * radiance;
-	//adata.directDiffuse += Fd * radiance;
-	//adata.directSpecular += Fr * radiance;
+	radiance *= attenuation;
+	adata.directDiffuse += Fd * radiance;
+	adata.directSpecular += Fr * radiance;
 }
+
+
+#ifndef HAS_SHADOWS
+void calcFakeDirectionalLight(in vec3 adir, inout PbrData adata, in Material amat ) {
+	PbrLightData dlight;
+	dlight.enabled = 1.0;
+	dlight.type = 1.0;
+	dlight.position = vec4(adir,1.0);
+	dlight.diffuse = vec4(1.0);
+	calcLight(dlight, 0, adata, amat );
+}
+#endif
 
 
 

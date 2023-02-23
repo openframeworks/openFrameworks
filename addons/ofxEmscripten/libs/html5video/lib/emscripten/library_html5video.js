@@ -1,7 +1,6 @@
 var LibraryHTML5Video = {
     $VIDEO: {
         players: [],
-        playersContexts: [],
         playersCounter: 0,
 
         getNewPlayerId: function() {
@@ -19,10 +18,10 @@ var LibraryHTML5Video = {
         },
 
         getUserMedia: function(){
-        	return navigator.getUserMedia ||
-        	    navigator.webkitGetUserMedia ||
-        	    navigator.mozGetUserMedia ||
-        	    navigator.msGetUserMedia;
+        	return navigator.mediaDevices.getUserMedia ||
+        	    navigator.mediaDevices.webkitGetUserMedia ||
+        	    navigator.mediaDevices.mozGetUserMedia ||
+        	    navigator.mediaDevices.msGetUserMedia;
         },
 
         update: function(updatePixels, video, context, dstPixels){
@@ -32,12 +31,7 @@ var LibraryHTML5Video = {
 	            	imageData = context.getImageData(0,0,video.width,video.height);
 	            	srcPixels = imageData.data;
 	            	if (video.pixelFormat=="RGBA"){
-		            	//TODO: this is faster but under chrome, loop and set_time stop working
-		            	//array.set(imageData.data);
-		            	array = Module.HEAPU8.subarray(dstPixels, dstPixels+(video.width*video.height*4));
-		            	for(var i=0;i<data.length;i++){
-		            		array[i] = srcPixels[i];
-		            	}
+		            	array.set(imageData.data);
 	            	}else if(video.pixelFormat=="RGB"){
 		            	array = Module.HEAPU8.subarray(dstPixels, dstPixels+(video.width*video.height*3));
 		            	for(var i=0, j=0; i<array.length; ){
@@ -70,41 +64,55 @@ var LibraryHTML5Video = {
         }
     },
 
-    html5video_player_create: function(){
+    html5video_list_devices: function(){
+        if (!navigator.mediaDevices.enumerateDevices) {
+            console.log("enumerateDevices() not supported.");
+        } else {
+            // List cameras and microphones.
+            navigator.mediaDevices.enumerateDevices()
+            .then((devices) => {
+                devices.forEach((device) => {
+                    if(device.kind == "videoinput"){
+                        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+                    }
+                });
+            })
+            .catch((err) => {
+                console.error(`${err.name}: ${err.message}`);
+            });
+        }
+    },
+
+   html5video_player_create: function(){
         var video = document.createElement('video');
         video.loop = true;
-        video.pixelFormat = "RGB";
-        //video.crossOrigin = 'anonymous';
-
-        var player_id = VIDEO.getNewPlayerId();
-        VIDEO.players[player_id] = video;
-        video.onloadedmetadata = function (e){
-        	console.log(this.videoWidth + 'x' + this.videoHeight);
+        video.pixelFormat = "RGBA";
+	var player_id = VIDEO.getNewPlayerId();
+	VIDEO.players[player_id] = video;
+	var source = AUDIO.context.createMediaElementSource(VIDEO.players[player_id]); 
+	VIDEO.players[player_id].soundPan = AUDIO.context.createStereoPanner();
+	source.connect(VIDEO.players[player_id].soundPan).connect(AUDIO.fft);
+	video.onloadedmetadata = function (e){
         	VIDEO.players[player_id].width = this.videoWidth;
         	VIDEO.players[player_id].height = this.videoHeight;
-
-    	    var videoImage = document.createElement( 'canvas' );
-    	    videoImage.width = this.videoWidth;
-    	    videoImage.height = this.videoHeight;
-
-    	    var videoImageContext = videoImage.getContext( '2d' );
-    	    // background color if no video present
-    	    videoImageContext.fillStyle = '#000000';
-    	    videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
-
-    	    VIDEO.playersContexts[player_id] = videoImageContext;
+		var videoImage = document.createElement( 'canvas' );
+		videoImage.width = this.videoWidth;
+		videoImage.height = this.videoHeight;
+		var videoImageContext = videoImage.getContext( '2d' );
+		// background color if no video present
+		videoImageContext.fillStyle = '#000000';
+		videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
+		VIDEO.players[player_id].playersContext = videoImageContext;
         };
-
         return player_id;
     },
 
     html5video_player_delete: function(id){
     	VIDEO.players[id] = null;
     },
-
+    
     html5video_player_load__deps: ['$GL'],
     html5video_player_load: function(id,src){
-        console.log(UTF8ToString(src));
         VIDEO.players[id].src = UTF8ToString(src);
         var texId = GL.getNewId(GL.textures);
         var texture = GLctx.createTexture();
@@ -116,11 +124,14 @@ var LibraryHTML5Video = {
         GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_S, GLctx.CLAMP_TO_EDGE);
         GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_T, GLctx.CLAMP_TO_EDGE);
         VIDEO.players[id].textureId = texId;
-        VIDEO.players[id].load();
     },
 
     html5video_player_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.players[id].pixelFormat), ALLOC_STACK);
+        var string = VIDEO.players[id].pixelFormat;
+        var size = lengthBytesUTF8(string) + 1;
+        var stringPointer = stackAlloc(size);
+        stringToUTF8Array(string, HEAP8, stringPointer, size);
+        return stringPointer;
     },
 
     html5video_player_set_pixel_format: function(id, format){
@@ -134,7 +145,7 @@ var LibraryHTML5Video = {
         var imageData;
         var data;
         if ( player.readyState === player.HAVE_ENOUGH_DATA ) {
-        	VIDEO.update(update_pixels, player, VIDEO.playersContexts[id], pixels);
+        	VIDEO.update(update_pixels, player, VIDEO.players[id].playersContext, pixels);
             return true;
         }else{
         	return false;
@@ -154,7 +165,6 @@ var LibraryHTML5Video = {
     },
 
     html5video_player_play: function(id){
-        console.log('play');
         VIDEO.players[id].play();
     },
 
@@ -175,15 +185,19 @@ var LibraryHTML5Video = {
     },
 
     html5video_player_duration: function(id){
+    if (VIDEO.players[id].duration >= 0){
         return VIDEO.players[id].duration;
+        } else {
+        return 0;
+        }
     },
 
     html5video_player_current_time: function(id){
         return VIDEO.players[id].currentTime;
     },
 
-    html5video_player_set_current_time: function(id,time){
-        VIDEO.players[id].currentTime = time;
+    html5video_player_set_current_time: function(id, time) {
+	VIDEO.players[id].currentTime = time;
     },
 
     html5video_player_ended: function(id){
@@ -213,7 +227,15 @@ var LibraryHTML5Video = {
     html5video_player_loop: function(id){
         return VIDEO.players[id].loop;
     },
+    
+    html5video_player_set_pan: function (id, pan) {
+    	VIDEO.players[id].soundPan.pan.value = pan;
+    },
 
+    html5video_player_pan: function (id) {
+        return VIDEO.players[id].soundPan.pan.value;
+    },
+    
     html5video_grabber_create: function(){
         var video = document.createElement('video');
         video.autoplay=true;
@@ -281,7 +303,7 @@ var LibraryHTML5Video = {
         navigator.mediaDevices.getUserMedia(constraints)
         .then(function(stream) {
           window.stream = stream;
-          VIDEO.grabbers[id].srcObject = stream
+          VIDEO.grabbers[id].srcObject = stream;
           VIDEO.grabbers[id].onloadedmetadata = function (e){
             VIDEO.grabbers[id].play();
           }
@@ -294,7 +316,11 @@ var LibraryHTML5Video = {
     },
 
     html5video_grabber_pixel_format: function(id){
-        return allocate(intArrayFromString(VIDEO.grabbers[id].pixelFormat), ALLOC_STACK);
+        var string = VIDEO.grabbers[id].pixelFormat;
+        var size = lengthBytesUTF8(string) + 1;
+        var stringPointer = stackAlloc(size);
+        stringToUTF8Array(string, HEAP8, stringPointer, size);
+        return stringPointer;
     },
 
     html5video_grabber_set_pixel_format: function(id, format){
@@ -328,9 +354,7 @@ var LibraryHTML5Video = {
         return VIDEO.grabbers[id].readyState;
     },
 
-
 }
-
 
 autoAddDeps(LibraryHTML5Video, '$VIDEO');
 mergeInto(LibraryManager.library, LibraryHTML5Video);

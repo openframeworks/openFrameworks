@@ -92,15 +92,15 @@ private:
 	
 	static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
 	
-	int id;
+	static int mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData);
 
-	
+
 	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE  context = 0;
 
-    bool bSetMainLoopTiming = true;
-    bool bEnableSetupScreen = true;
-    ofCoreEvents _events;
-    std::shared_ptr<ofBaseRenderer> _renderer;
+	bool bSetMainLoopTiming = true;
+	bool bEnableSetupScreen = true;
+	ofCoreEvents _events;
+	std::shared_ptr<ofBaseRenderer> _renderer;
 };
 
 #endif /* OFAPPEMSCRIPTENWINDOW_H_ */

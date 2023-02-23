@@ -3,7 +3,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	
+	ofSetLogLevel(OF_LOG_VERBOSE);
 	// lets make two lights
 	for( int i = 0; i < 2; i++ ){
 		auto light = make_shared<ofLight>();
@@ -27,6 +27,35 @@ void ofApp::setup(){
 	// Use a class called TexturePack that has been defined in ofApp.h
 	// this will help us load and store all the textures from a folder
 	// see TexturePack class for other functions and variables in ofApp.h
+	#ifdef USE_MATERIAL
+	string matPath = "textures/Snow_03/";
+	auto snowMat = make_shared<ofMaterial>();
+	snowMat->setEmissiveColor(ofFloatColor(211/255.,25/255.,150/255., 0.8));
+	snowMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, matPath+"snow_03_arm.jpg");
+	snowMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DIFFUSE, matPath+"snow_03_diff.jpg");
+	snowMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DISPLACEMENT, matPath+"snow_03_disp.png");
+	snowMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_NORMAL, matPath+"snow_03_nor_gl.jpg");
+	materials.push_back(snowMat);
+	
+	matPath = "textures/Mud_cracked_dry_03/";
+	auto mudMat = make_shared<ofMaterial>();
+	mudMat->setEmissiveColor(ofFloatColor(25/255.,221/255.,137/255., 0.8));
+	mudMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, matPath+"mud_cracked_dry_03_arm.jpg");
+	mudMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DIFFUSE, matPath+"mud_cracked_dry_03_diff.jpg");
+	mudMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DISPLACEMENT, matPath+"mud_cracked_dry_03_disp.png");
+	mudMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_NORMAL, matPath+"mud_cracked_dry_03_nor_gl.jpg");
+	materials.push_back(mudMat);
+	
+	matPath = "textures/Square_floor/";
+	auto floorMat = make_shared<ofMaterial>();
+	floorMat->setEmissiveColor(ofColor(237,222,69., 200));
+	floorMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, matPath+"square_floor_arm.jpg");
+	floorMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DIFFUSE, matPath+"square_floor_diff.jpg");
+	floorMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DISPLACEMENT, matPath+"square_floor_disp.png");
+	floorMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_NORMAL, matPath+"square_floor_nor_gl.jpg");
+	materials.push_back(floorMat);
+	#else
+	
 	texturePacks.push_back( make_shared<TexturePack>("Snow_03"));
 	texturePacks.back()->material.setEmissiveColor(ofFloatColor(211/255.,25/255.,150/255., 0.8));
 	texturePacks.back()->material.setSpecularColor(ofFloatColor(1,1,1,0.8));
@@ -62,6 +91,7 @@ void ofApp::setup(){
 		texturePacks[i]->material.setCustomUniformTexture("mapDisplacement", texturePacks[i]->textureDisplacementMap, 2 );
 		texturePacks[i]->material.setCustomUniformTexture("mapAORoughMetal", texturePacks[i]->textureAORoughMetal, 3 );
 	}
+	#endif
 	// We need a higher resolution sphere because we are going to use the displacement maps
 	// to push out the vertices using their normal as a direction ( see shader.vert )
 	meshSphere = ofMesh::sphere(1.0, 128);
@@ -69,10 +99,17 @@ void ofApp::setup(){
 	// allocate an fbo that will be used to draw into to determine how much the textures
 	// should influence the sphere
 	// we use a value of GL_RGB32F for more precision
-	fboInfluence.allocate(512, 512, GL_RGB32F );
+	fboInfluence.allocate(512, 512, GL_RGBA32F );
 	fboInfluence.begin();
 	ofClear(0,0,0,1);
 	fboInfluence.end();
+	fboInfluence.updateTexture(0);
+#ifdef USE_MATERIAL
+	for( auto& mat : materials ) {
+		mat->setCustomUniformTexture("mapInfluence", fboInfluence.getTexture() );
+	}
+	keyPressed('r');
+#endif
 	
 	// check the boolean we set before
 	// if arb textures were enabled then, lets go ahead and activate again
@@ -91,10 +128,12 @@ void ofApp::update(){
 	// it can be handy to reload a shader without recompiling when debugging or working on shader functionality
 	// change shader, save and then press 'r' with this app in foreground and the shader should reload
 	// check the console to see if there are any errors
+#ifndef USE_MATERIAL
 	if( ofGetKeyPressed('r') || (!shader->isLoaded() && ofGetFrameNum() % 30 == 0) ){
 		cout << "LOADING SHADER | " << ofGetFrameNum() << endl;
 		shader->load("shaders/shader");
 	}
+#endif
 	if( lights.size() > 0 ){
 		// one of the lights moves around the scene
 		lights.back()->orbitDeg( ofWrapDegrees(ofGetElapsedTimef()* 30.0), -40, 500 );
@@ -113,6 +152,14 @@ void ofApp::draw(){
 	
 	camera.begin();
 	ofEnableDepthTest();
+#ifdef USE_MATERIAL
+	materials[materialIndex]->begin();
+	ofPushMatrix();
+	ofScale(200, 200, 200 );
+	meshSphere.draw();
+	ofPopMatrix();
+	materials[materialIndex]->end();
+#else
 	if( shader->isLoaded() ){
 		texturePacks[texturePackIndex]->material.begin();
 		// since we set shader to be the custom shader on material
@@ -126,6 +173,7 @@ void ofApp::draw(){
 		ofPopMatrix();
 		texturePacks[texturePackIndex]->material.end();
 	}
+#endif
 	
 	// draw a grid for reference
 	ofSetColor( 80 );
@@ -204,7 +252,11 @@ void ofApp::draw(){
 	ss << "Draw into influence with mouse pressed and (spacebar): " << bDrawIntoFbo << endl;
 	ss << "Linear clear influence(c): " << ofGetKeyPressed('c') << endl;
 	ss << "Clear influence(e): " << ofGetKeyPressed('e') << endl;
+#ifdef USE_MATERIAL
+	ss << "Material index (up / down): " << (materialIndex+1) << " / " << materials.size() << endl;
+#else
 	ss << "Texture pack index (up / down): " << (texturePackIndex+1) << " / " << texturePacks.size() << endl;
+#endif
 	ss << "Debug (d): " << bDebug;
 	ofDrawBitmapString(ss.str(), 20, 32);
 }
@@ -212,22 +264,55 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	if( key == OF_KEY_UP ){
+		#ifdef USE_MATERIAL
+		materialIndex--;
+		if(materialIndex < 0 ) {
+			materialIndex = 0;
+		}
+		#else
 		texturePackIndex--;
 		if( texturePackIndex < 0 ) {
 			texturePackIndex = 0;
 		}
+		#endif
 	}
 	if( key == OF_KEY_DOWN ){
+		#ifdef USE_MATERIAL
+		materialIndex++;
+		if( materialIndex >= materials.size() ) {
+			materialIndex = materials.size()-1;
+		}
+		#else
 		texturePackIndex++;
 		if( texturePackIndex >= texturePacks.size() ) {
 			texturePackIndex = texturePacks.size()-1;
 		}
+		#endif
 	}
 	if( key == ' ' ){
 		bDrawIntoFbo = true;
 	}
 	if( key == 'd' ){
 		bDebug = !bDebug;
+	}
+	if( key == 'r' ) {
+		#ifdef USE_MATERIAL
+		string vname = "shaders/material.vert";
+		ofBuffer vbuffer = ofBufferFromFile(vname);
+		string fname = "shaders/material.frag";
+		ofBuffer fbuffer = ofBufferFromFile(fname);
+		if( vbuffer.size() ) {
+			for( auto& mat : materials ) {
+				ofLogNotice("SETTING the shader vertex main!") << " | " << ofGetFrameNum();
+				mat->setShaderMain(vbuffer.getText(), GL_VERTEX_SHADER, "main.vert");
+			}
+		}
+		if( fbuffer.size() ) {
+			for( auto& mat : materials ) {
+				mat->setShaderMain(fbuffer.getText(), GL_FRAGMENT_SHADER, "main.frag");
+			}
+		}
+		#endif
 	}
 }
 

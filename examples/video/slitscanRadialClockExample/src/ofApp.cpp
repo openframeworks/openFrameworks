@@ -50,8 +50,8 @@ void ofApp::setup(){
     // set up our camera and video grabber object
     vidGrabber.setDeviceID(0); // set the ID of the camera you want to use
     vidGrabber.setDesiredFrameRate(30); // set how fast we will grab frames from the camera
-    vidGrabber.initGrabber(camWidth, camHeight); // set the width and height of the camera
-    videoPixels.allocate(camWidth,camHeight, OF_PIXELS_RGB); // set up our pixel object to be the same size as our camera object
+    vidGrabber.setup(camWidth, camHeight); // set the width and height of the camera
+    videoPixels.allocate(camWidth, camHeight, OF_PIXELS_RGB); // set up our pixel object to be the same size as our camera object
     videoTexture.allocate(videoPixels);
     
     ofSetBackgroundColor(0, 0, 0); // set the background colour to dark black
@@ -81,34 +81,28 @@ void ofApp::update(){
         
         if (ofGetMinutes() >  minutes){
             minutes = ofGetMinutes();
-        } else {
-            if (ofGetMinutes() == 0){
-                minutes = 0;
-            }
+        } else if (ofGetMinutes() == 0){
+            minutes = 0;
         }
         
         if (ofGetHours() > hours){
             seconds = minutes = 0 ;
             hours = ofGetHours();
-        } else {
-            if (ofGetHours() == 0){
-                hours = 0;
-            }
+        } else if (ofGetHours() == 0){
+            hours = 0;
         }
         
         if (numOfHours == 0){
-            hours = seconds = minutes = 0 ;
+            hours = seconds = minutes = 0;
         }
         
         calculateTime();
         
         xSteps = 0; // step on to the next line.
-    } else {
-        if (ofGetSeconds() == 0){
-            seconds = 0;
-            calculateTime();
-        }
-    }
+     } else if (ofGetSeconds() == 0){
+         seconds = 0;
+         calculateTime();
+     }
     
     switch (scanStyle) {
         case 1: // scan horizontal 'push' ribbon from centre. grabbing only the vertical pixels at the centre of the camera image

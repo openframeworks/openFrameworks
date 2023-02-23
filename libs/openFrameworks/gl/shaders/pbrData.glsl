@@ -3,27 +3,28 @@ static const string shader_pbr_data = R"(
 #ifndef STRUCT_PBR_DATA
 #define STRUCT_PBR_DATA
 
-//#pragma include "pbrMaterial.glsl"
 
 struct PbrData {
-	vec3 directDiffuse;// = vec3(0.0);
-	vec3 indirectDiffuse;// = vec3(0.0);
+	vec3 directDiffuse;
+	vec3 indirectDiffuse;
 	
-	vec3 directSpecular;// = vec3(0.0);
-	vec3 indirectSpecular;// = vec3(0.0);
+	vec3 directSpecular;
+	vec3 indirectSpecular;
 	
-	vec3 diffuse;// = vec3(0.0);
-	float NoV;// = 1.0;
-	vec3 normalWorld;// = vec3(0.0,1.0,0.0);
-	vec3 normalWorldGeometry;// = vec3(0.0,1.0,0.0);
-	vec3 viewDirectionWorld; // normalize(uCameraPos - v_worldPosition);
-	vec3 reflectionWorld;// = vec3( 0.0, 1.0, 0.0 );
+	vec3 diffuse; // multiplied by (1.0 - amat.metallic);
+	float NoV;
+	vec3 normalWorld;
+	vec3 normalWorldGeometry;
+	vec3 viewDirectionWorld;
+	vec3 reflectionWorld;
 	vec3 positionWorld;
 	
-	float iblLuminance;// = 1.0;
+	float iblLuminance;
 	
-	vec3 f0;// = vec3(0.04);
-	float f90;// = vec3(1.0);
+	vec3 f0;
+	float f90;
+	vec3 dfg;
+	vec3 energyCompensation;
 };
 
 void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in vec3 aCamPos ) {
@@ -48,14 +49,13 @@ void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in 
 	//	pbrData.f0 = mix(0.04, mat.albedo, mat.metallic);
 	adata.f0 = f0;
 #ifdef PBR_QUALITY_LEVEL_HIGH
+	// cheap luminance approximation
 	//	pbrData.f90 = vec3(clamp(dot(pbrData.f0.g, 50.0 * 0.33), 0.0, 1.0));
 	adata.f90 = saturate(dot(f0, vec3(50.0 * 0.33)));
 #else
 	adata.f90 = 1.0;
 #endif
-	// cheap luminance approximation
-	//	float f90 = clamp(50.0 * f0.g, 0.0, 1.0);
-	adata.diffuse = amat.albedo.rgb * (1.0-amat.metallic);
+	adata.diffuse = amat.albedo.rgb * (1.0 - amat.metallic);
 	adata.iblLuminance = amat.iblExposure; // convert to luminance?
 	
 	adata.directDiffuse = vec3(0.0);
@@ -63,6 +63,11 @@ void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in 
 	
 	adata.directSpecular = vec3(0.0);
 	adata.indirectSpecular = vec3(0.0);
+	
+	adata.dfg = getPrefilteredDFG(adata.f0, adata.NoV, amat.roughness );
+	adata.dfg.y = clamp( adata.dfg.y, 0.001, 10.0);
+	
+	adata.energyCompensation = 1.0 + adata.f0 * (1.0 / (adata.dfg.y) - 1.0);
 }
 
 #endif
@@ -72,16 +77,15 @@ void setupPbrData( inout PbrData adata, in Material amat, in vec3 aPosWorld, in 
 
 struct PbrLightData {
 	float enabled;
-	//	vec4 ambient;
 	// 0 = pointlight 1 = directionlight, 2 = spotlight, 3 = area light
 	float type;
 	// where are we in world space
 	vec4 position;
+	vec3 direction;
 	// light color, intensity is stored in .w
 	vec4 diffuse;
 	float radius;// = 0.0;
-				 //	vec4 specular; // what kinda specular stuff we got going on?
-				 // attenuation
+	// attenuation
 	float constantAttenuation;
 	float linearAttenuation;
 	float quadraticAttenuation;
@@ -89,10 +93,6 @@ struct PbrLightData {
 	float spotCutoff;
 	float spotCosCutoff;
 	float spotExponent;
-	//	// spot and area
-	vec3 spotDirection;
-	//	// only for directional
-	//	vec3 halfVector;
 	//	// only for area
 	float width;
 	float height;
@@ -100,7 +100,10 @@ struct PbrLightData {
 	vec3 up;
 };
 
+#if defined(MAX_LIGHTS) && MAX_LIGHTS
 uniform PbrLightData lights[MAX_LIGHTS];
+#endif
+
 #endif
 
 )";

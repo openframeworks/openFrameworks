@@ -29,10 +29,38 @@ float D_GGX(float roughness, float NoH, const vec3 n, const vec3 h) {
 	return saturateMediump(d);
 }
 
+// https://github.com/google/filament/blob/e1ba37b910617d0ea68bf17071c17264653e3dd0/shaders/src/brdf.fs#L54
+float D_GGX(float roughness, float NoH, const vec3 h) {
+    // Walter et al. 2007, "Microfacet Models for Refraction through Rough Surfaces"
+
+    // In mediump, there are two problems computing 1.0 - NoH^2
+    // 1) 1.0 - NoH^2 suffers floating point cancellation when NoH^2 is close to 1 (highlights)
+    // 2) NoH doesn't have enough precision around 1.0
+    // Both problem can be fixed by computing 1-NoH^2 in highp and providing NoH in highp as well
+
+    // However, we can do better using Lagrange's identity:
+    //      ||a x b||^2 = ||a||^2 ||b||^2 - (a . b)^2
+    // since N and H are unit vectors: ||N x H||^2 = 1.0 - NoH^2
+    // This computes 1.0 - NoH^2 directly (which is close to zero in the highlights and has
+    // enough precision).
+    // Overall this yields better performance, keeping all computations in mediump
+//#if defined(TARGET_MOBILE)
+    //vec3 NxH = cross(shading_normal, h);
+    //float oneMinusNoHSquared = dot(NxH, NxH);
+//#else
+    float oneMinusNoHSquared = 1.0 - NoH * NoH;
+//#endif
+
+    float a = NoH * roughness;
+    float k = roughness / (oneMinusNoHSquared + a * a);
+    float d = k * k * (1.0 / PI);
+    return saturateMediump(d);
+}
+
 //Eric Heitz. 2014. Understanding the Masking-Shadowing Function in Microfacet-Based BRDFs.
 //Journal of Computer Graphics Techniques, 3 (2).
 float V_SmithGGXCorrelated(in float NoV, in float NoL, in float aroughness) {
-	float a2 = aroughness * aroughness;
+	float a2 = aroughness;// * aroughness;
 	float GGXV = NoL * sqrt((NoV - a2 * NoV) * NoV + a2);
 	float GGXL = NoV * sqrt((NoL - a2 * NoL) * NoL + a2);
 	float v = 0.5 / (GGXV + GGXL);
@@ -130,6 +158,24 @@ float computeSpecularAO(float NoV, float ao, float roughness) {
 #else
 	return 1.0;
 #endif
+}
+
+vec3 getPrefilteredDFG(in vec3 acolor, in float aNoV, in float aroughness ) {
+	vec3 dfg = vec3(0.0);
+#if defined(PBR_QUALITY_LEVEL_HIGH) && defined(HAS_TEX_ENV_BRDF_LUT)
+	//	vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), aroughness)).rg;
+	dfg = texture(tex_brdfLUT, vec2(aNoV, aroughness)).rgb;
+	//	specularReflectance = (adata.f0 * brdf.x + adata.f90 * brdf.y);
+	// vec3 specularColor = f0 * brdf.x + f90 * brdf.y;
+#else
+//	dfg.xy = EnvBRDFApproxDFG( aroughness*aroughness, aNoV );
+	dfg = EnvBRDFApprox(acolor, aroughness, aNoV );
+	//	specularReflectance = (adata.f0 * brdf.x + adata.f90 * brdf.y);
+	//	specularReflectance = mix(brdf.xxx, brdf.yyy, adata.f0);
+	//	specularReflectance = EnvBRDFApprox( adata.f0, aroughness, adata.NoV );
+	//return SpecularColor * AB.x + AB.y;
+#endif
+	return dfg;
 }
 
 #endif

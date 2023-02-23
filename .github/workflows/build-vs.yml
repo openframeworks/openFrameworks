@@ -9,9 +9,13 @@ on:
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
-    
-jobs:
 
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
   build-vs2019:
     runs-on: windows-2019
     strategy:
@@ -19,11 +23,11 @@ jobs:
         include:
           - platform: x64
             bits: 64
-    env: 
+    env:
       BITS: ${{ matrix.bits }}
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: msys2/setup-msys2@v2
         with:
           update: true

@@ -54,7 +54,9 @@ static const string fragmentShader = R"(
     uniform mat4 textureMatrix;
     uniform mat4 modelViewProjectionMatrix;
 
+#if defined(MAX_LIGHTS) && MAX_LIGHTS
     uniform lightData lights[MAX_LIGHTS];
+#endif
 
 	
 	%shader_shadow_include%
@@ -126,11 +128,11 @@ static const string fragmentShader = R"(
 #ifndef TARGET_OPENGLES
 #define SPECULAR_REFLECTION
 #endif
-#ifndef SPECULAR_REFLECTION
-        // ha! no branching :)
-        pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
-        specular += light.specular.rgb * shadow * pf * nDotVP * attenuation;
-#else
+//#ifndef SPECULAR_REFLECTION
+//        // ha! no branching :)
+//        pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
+//        specular += light.specular.rgb * shadow * pf * nDotVP * attenuation;
+//#else
         // fresnel factor
         // http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
         float w = pow(1.0 - max(0.0, dot(halfVector, VP)), 5.0);
@@ -138,7 +140,7 @@ static const string fragmentShader = R"(
           * mix(vec3(mat_specular.rgb), vec3(1.0), w)
           * pow(nDotHV, mat_shininess);
         specular += shadow * mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));
-#endif
+//#endif
     }
 
 	void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
@@ -306,6 +308,8 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
 		#if defined(HAS_SHADOWS)
 		vec3 worldNormalN = normalize(v_worldNormal);
 		#endif
+		
+		#if defined(MAX_LIGHTS) && MAX_LIGHTS
         for( int i = 0; i < MAX_LIGHTS; i++ ){
             if(lights[i].enabled<0.5) continue;
 			float shadow = 0.0;
@@ -343,6 +347,10 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
                 areaLight(lights[i], transformedNormal, v_eyePosition, 1.0-shadow, ambient, diffuse, specular);
             }
         }
+		#else
+		// there are no lights, so just set to fully lit, otherwise would show as black
+		diffuse = vec3(1.0);
+		#endif
         
         // apply emmisive texture
         vec4 mat_emissive_color = mat_emissive;

@@ -59,6 +59,44 @@ std::string ofMaterial::getUniformName( const ofMaterialTextureType& aMaterialTe
 }
 
 //----------------------------------------------------------
+bool ofMaterial::isPBRSupported() {
+	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	return false;
+	#endif
+	
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	return true;
+}
+
+//----------------------------------------------------------
+void ofMaterial::setPBR(bool ab) {
+	if( ab && !ofIsGLProgrammableRenderer() ) {
+		if( !bPrintedPBRRenderWarning ) {
+			bPrintedPBRRenderWarning=true;
+			ofLogWarning("ofMaterial::setPBR") << " PBR material must be used with Programmable Renderer.";
+		}
+		data.isPbr = false;
+		return;
+	}
+	
+	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	if( ab ) {
+		if( !bPrintedPBRRenderWarning ) {
+			bPrintedPBRRenderWarning=true;
+			ofLogWarning("ofMaterial::setPBR") << " PBR material is not supported on this OPENGL ES platform.";
+		}
+		data.isPbr = false;
+		return;
+	}
+	#endif
+	
+	
+	data.isPbr = ab;
+}
+
+//----------------------------------------------------------
 void ofMaterial::setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor oEmissive) {
 	setDiffuseColor(oDiffuse);
 	setAmbientColor(oAmbient);
@@ -220,6 +258,8 @@ void ofMaterial::setTexture(const ofMaterialTextureType& aMaterialTextureType,co
 			setPBR(true);
 		}
 	}
+	
+	
 
 	if(aMaterialTextureType == OF_MATERIAL_TEXTURE_CLEARCOAT ||
 	   aMaterialTextureType == OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS ||
@@ -606,7 +646,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 				}
 			}
 
-			ofLogNotice("ofMaterial :: initShaders") << shadersMap.size() << " | " << ofGetFrameNum();
+			ofLogVerbose("ofMaterial :: initShaders") << shadersMap.size() << " | " << ofGetFrameNum();
 
 			auto trendererShaders = shaders.find(&renderer);
 			if( trendererShaders != shaders.end() ) {
@@ -624,22 +664,28 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 	size_t numLights = ofLightsData().size();
 	// only support for a single cube map at a time
 	size_t numCubeMaps = ofCubeMapsData().size() > 0 ? 1 : 0;
-	const std::string shaderId = getShaderStringId();//data.uniqueIdString+data.postFragment+data.mainVertexKey+data.mainFragmentKey;
+	const std::string shaderId = getShaderStringId();
 	
-	if(rendererShaders == shaders.end() || rendererShaders->second->numLights != numLights || rendererShaders->second->numCubeMaps != numCubeMaps ){
+	if(rendererShaders == shaders.end() ||
+	   rendererShaders->second->numLights != numLights ||
+	   rendererShaders->second->numCubeMaps != numCubeMaps ||
+	   rendererShaders->second->shaderId != shaderId ){
 		if(shadersMap[&renderer].find(shaderId)!=shadersMap[&renderer].end()){
 			auto newShaders = shadersMap[&renderer][shaderId].lock();
 			if(newShaders == nullptr || newShaders->numLights != numLights || newShaders->numCubeMaps != numCubeMaps ){
 				shadersMap[&renderer].erase(shaderId);
 				shaders[&renderer] = nullptr;
 			}else{
+				ofLogVerbose("ofMaterial") << "initShaders : swapping shaders | " << ofGetFrameNum();
 				shaders[&renderer] = newShaders;
 			}
+		} else {
+			shaders[&renderer] = nullptr;
 		}
 	}
 
     if(shaders[&renderer] == nullptr){
-		ofLogNotice("ofMaterial") << "initShaders : allocating shaders again | " << ofGetFrameNum();
+		ofLogVerbose("ofMaterial") << "initShaders : allocating shaders again | " << ofGetFrameNum();
         //add the custom uniforms to the shader header
         auto customUniforms = data.customUniforms;
         for( auto & custom : mCustomUniforms ){
@@ -650,32 +696,74 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		
 		ofLogVerbose("ofMaterial") << " defines--------------- " << std::endl;
 		ofLogVerbose("ofMaterial") << definesString;
-//		ofLogNotice("ofMaterial") << "custom uniforms ---------- "
 		ofLogVerbose("ofMaterial") << "textures --------------- " << uniformstex.size();
 		for (auto & uniform : uniformstex) {
 			ofLogVerbose() << uniform.first << ", " << uniform.second.textureTarget <<", " << uniform.second.textureID << ", " << uniform.second.textureLocation << std::endl;
 		}
 		
 		std::string extraVertString = definesString;
-		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
-			extraVertString += "\nuniform SAMPLER "+getUniformName(OF_MATERIAL_TEXTURE_DISPLACEMENT)+";\n";
-		}
-    
+//		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+//			extraVertString += "\nuniform SAMPLER "+getUniformName(OF_MATERIAL_TEXTURE_DISPLACEMENT)+";\n";
+//		}
+		extraVertString += customUniforms;
+		ofLogVerbose( "ofMaterial" ) << " extraVertString------------------- ";
+		ofLogVerbose() << extraVertString;
+		ofLogVerbose( "ofMaterial" ) << "! extraVertString !------------------- " << std::endl;
+     
         #ifndef TARGET_OPENGLES
             string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
             string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
         #endif
         string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
         string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
+		
+		#if defined(TARGET_OPENGLES) && defined(TARGET_EMSCRIPTEN)
+		// TODO: Should this be in programmable renderer?
+		if(ofIsGLProgrammableRenderer()) {
+//			if(isPBR()) {
+//			header = "#version 300 es\n";// + header;
+				vertex2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
+				vertex2DHeader += "precision highp float;\n";
+				vertex2DHeader += "precision highp int;\n";
+				vertex2DHeader += "#define TARGET_OPENGLES\n";
+				vertex2DHeader += "#define IN in\n";
+				vertex2DHeader += "#define OUT out\n";
+				vertex2DHeader += "#define TEXTURE texture\n";
+				vertex2DHeader += "#define SAMPLER sampler2D\n";
+
+				fragment2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
+				fragment2DHeader += "precision highp float;\n";
+				fragment2DHeader += "precision highp int;\n";
+				fragment2DHeader += "#define TARGET_OPENGLES\n";
+				fragment2DHeader += "#define IN in\n";
+				fragment2DHeader += "#define OUT out\n";
+				fragment2DHeader += "#define TEXTURE texture\n";
+				fragment2DHeader += "#define FRAG_COLOR fragColor\n";
+				fragment2DHeader += "out vec4 fragColor;\n";
+				fragment2DHeader += "#define SAMPLER sampler2D\n";
+				fragment2DHeader += "precision highp sampler2D;\n";
+				fragment2DHeader += "precision highp samplerCube;\n";
+				// we don't use any samplerCubeShadows
+				//fragment2DHeader += "precision highp samplerCubeShadow;\n";
+				fragment2DHeader += "precision mediump sampler2DShadow;\n";
+				#if defined( GL_TEXTURE_2D_ARRAY ) && defined(glTexImage3D)
+				fragment2DHeader += "precision mediump sampler2DArrayShadow;\n";
+				#endif
+//				fragment2DHeader += "precision highp samplerCubeShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DArrayShadow;\n";
+//			}
+		}
+		#endif
+		
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader------------------- ";
+		ofLogVerbose() << fragment2DHeader;
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader xxxxxxx ";
 
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
 		shaders[&renderer]->numCubeMaps = numCubeMaps;
-		
-		//std::cout << "ofMaterial:: Shader source ------ " << std::endl;
-		//std::cout << vertexSource(isPBR(),vertex2DHeader,numLights,true,false,extraVertString,data) << std::endl;
-//		std::cout << fragmentSource(isPBR(),fragmentRectHeader, customUniforms, data.postFragment,numLights,true,false,definesString);
-//		std::cout << fragmentSource(isPBR(),fragment2DHeader, customUniforms, data.postFragment,numLights,false,false, definesString) << std::endl;
+		shaders[&renderer]->shaderId = shaderId;
 		
         shaders[&renderer]->noTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(isPBR(),vertex2DHeader,numLights,false,false,extraVertString,data));
         shaders[&renderer]->noTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(isPBR(),fragment2DHeader, customUniforms, data,numLights,false,false, definesString));
@@ -712,7 +800,6 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
             shaders[&renderer]->textureRectColor.linkProgram();
         #endif
 
-//        shadersMap[&renderer][data.postFragment] = shaders[&renderer];
 		shadersMap[&renderer][shaderId] = shaders[&renderer];
     }
 
@@ -725,8 +812,6 @@ const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor,
 		return *customShader;
 	}
 	
-//	std::cout << "ofMaterial::getShader : textureTarget: " << textureTarget << " GL_TEXTURE_2D: " << GL_TEXTURE_2D << " geometryHasColor: " << geometryHasColor << " diffuse: " << hasTexture(OF_MATERIAL_TEXTURE_DIFFUSE) << std::endl;
-	
 	// override the textureTarget argument coming from the programmable renderer
 	// the renderer is passing the textureTarget based on if there is a texture that is bound
 	// if there is no texture bound, then go ahead and switch to the diffuse texture
@@ -735,10 +820,6 @@ const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor,
 		const auto& dt = uniformstex.at(loc);
 		textureTarget = dt.textureTarget;
 	}
-	
-//	if(ofGetFrameNum() % 600 == 0) {
-//		std::cout << shaders[&renderer]->texture2D.getShaderSource( GL_VERTEX_SHADER );
-//	}
 	
 	switch(textureTarget){
 	case OF_NO_TEXTURE:
@@ -792,8 +873,12 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 		std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
 		if( cubeMapData ) {
 			shader.setUniform1f("mat_ibl_exposure", cubeMapData->exposure );
+			shader.setUniform1f("uCubeMapEnabled", 1.0f );
+			shader.setUniform1f("uEnvMapMaxMips", cubeMapData->maxMipLevels );
 		} else {
-			shader.setUniform1f("mat_ibl_exposure", 1.0 );
+			shader.setUniform1f("mat_ibl_exposure", 1.0f );
+			shader.setUniform1f("uCubeMapEnabled", 0.0f );
+			shader.setUniform1f("uEnvMapMaxMips", 1.0f );
 		}
 		
 	} else {
@@ -834,7 +919,6 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 		shader.setUniformMatrix3f(uniform.first, uniform.second);
 	}
 	for (auto & uniform : uniformstex) {
-		//std::cout << "uniform tex " << uniform.first << " " << std::endl;
 		shader.setUniformTexture(uniform.first,
 								 uniform.second.textureTarget,
 								 uniform.second.textureID,
@@ -853,8 +937,23 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 		glm::vec4 lightEyePosition = light->position;
 		// pbr uses global positions
 		if( !isPBR() ) {
-			lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				// support for reversed phong lighting setup
+				lightEyePosition = renderer.getCurrentViewMatrix() * -light->position;
+			} else {
+				lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+			}
 		}
+
+		if( isPBR() ) {
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				lightEyePosition = glm::vec4(-light->direction, lightEyePosition.w);
+			}
+			if( light->lightType != OF_LIGHT_POINT ) {
+				shader.setUniform3f("lights["+idx+"].direction", light->direction );
+			}
+		}
+
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
@@ -880,8 +979,9 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			}
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			//shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
 			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
@@ -899,8 +999,9 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			}
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			
 			auto right = light->right;
 			auto up = light->up;
 			if( !isPBR() ) {
@@ -1139,19 +1240,39 @@ const std::string ofMaterial::getDefinesString() const {
 	}
 	
 	if(isPBR() && ofCubeMapsData().size() > 0 && ofIsGLProgrammableRenderer() ) {
-		const auto& cubeMapData = ofCubeMap::getActiveData();
-		if( cubeMapData ) {
-			if( cubeMapData->bIrradianceAllocated ) {
-				definesString += "#define HAS_TEX_ENV_IRRADIANCE 1\n";
+//		const auto& cubeMapData = ofCubeMap::getActiveData();
+		
+		definesString += "#define HAS_CUBE_MAP 1\n";
+		
+		bool bHasIrradiance = false;
+		bool bPreFilteredMap = false;
+		bool bBrdfLutTex = false;
+		for( auto cmdWeak : ofCubeMapsData() ) {
+			auto cmd = cmdWeak.lock();
+			if( !cmd ) continue;
+			if( cmd->bIrradianceAllocated ) {
+				bHasIrradiance=true;
 			}
-			if(cubeMapData->bPreFilteredMapAllocated) {
-				definesString += "#define HAS_TEX_ENV_PRE_FILTER 1\n";
+			if( cmd->bPreFilteredMapAllocated ) {
+				bPreFilteredMap=true;
 			}
-			if( cubeMapData->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
-				definesString += "#define HAS_TEX_ENV_BRDF_LUT 1\n";
+			if( cmd->settings.useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+				bBrdfLutTex=true;
 			}
-			definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(cubeMapData->maxMipLevels,0)+"\n";
 		}
+		
+		if(bHasIrradiance) {
+			definesString += "#define HAS_TEX_ENV_IRRADIANCE 1\n";
+		}
+		if(bPreFilteredMap) {
+			definesString += "#define HAS_TEX_ENV_PRE_FILTER 1\n";
+		}
+		if(bBrdfLutTex) {
+			definesString += "#define HAS_TEX_ENV_BRDF_LUT 1\n";
+		}
+		// need to add .0 to be read as a float in the shader for gl es
+		//definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(ofCubeMap::getNumMipMaps(),0)+".0\n";
+		
 	}
 	
 	definesString += ofShadow::getShaderDefinesAsString();
@@ -1176,7 +1297,9 @@ const std::string ofMaterial::getDefinesString() const {
 
 namespace{
     string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
-        header += "#define MAX_LIGHTS " + ofToString(std::max(1,maxLights)) + "\n";
+//        header += "#define MAX_LIGHTS " + ofToString(std::max(1,maxLights)) + "\n";
+		header += "#define MAX_LIGHTS " + ofToString(maxLights) + "\n";
+		
         if(hasTexture){
             header += "#define HAS_TEXTURE 1\n";
 		} else {
@@ -1187,6 +1310,7 @@ namespace{
 		} else {
 			header += "#define HAS_COLOR 0\n";
 		}
+		
         return header;
     }
 
@@ -1234,8 +1358,8 @@ namespace{
 		if(bPBR) {
 			string addIncludes = shader_utils;
 			addIncludes += shader_pbr_material;
-			addIncludes += shader_pbr_data;
 			addIncludes += shader_pbr_lighting_funcs;
+			addIncludes += shader_pbr_data;
 			addIncludes += shader_pbr_lighting;
 			addIncludes += shader_pbr_lighting_ibl;
 			// set PBR includes here
@@ -1243,16 +1367,20 @@ namespace{
 		}
 		
 		
-		#ifdef TARGET_OPENGLES
-		ofStringReplace(source, "%shader_shadow_include%", "" );
-		#else
 		if( ofIsGLProgrammableRenderer() ) {
-			ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+			#if defined(TARGET_OPENGLES)
+				#if defined(TARGET_EMSCRIPTEN)
+					ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+				#else
+					ofStringReplace(source, "%shader_shadow_include%", "" );
+				#endif
+			#else
+				ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+			#endif
 		} else {
 			ofStringReplace(source, "%shader_shadow_include%", "" );
 		}
-		#endif
-				
+		
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + definesString + source;
         return source;
     }

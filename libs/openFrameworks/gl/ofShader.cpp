@@ -90,7 +90,7 @@ static void releaseProgram(GLuint id){
 	}
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 //--------------------------------------------------------------
 ofShader::TransformFeedbackRangeBinding::TransformFeedbackRangeBinding(const ofBufferObject & buffer, GLuint offset, GLuint size)
 	:offset(offset)
@@ -254,7 +254,7 @@ bool ofShader::setup(const ofShaderSettings & settings) {
 	return linkProgram();
 }
 
-#if !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 //--------------------------------------------------------------
 bool ofShader::setup(const TransformFeedbackSettings & settings) {
 	for (auto shader : settings.shaderFiles) {
@@ -353,6 +353,13 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
 		// we need to do this at this point in the code path, since early
 		// return statements might prevent us from retaining later.
 		retainShader(shaderId);
+	}
+ 
+        // look for OF_GLSL_SHADER_HEADER header placeholder
+	// this will swap the glsl version based on the OpenGL version set in main.cpp
+	// note this won't always work, but is handy for switching between compatible versions of GLSL based on the system
+	if( ofIsStringInString(source.source, "OF_GLSL_SHADER_HEADER") ){
+            ofStringReplace(source.source, "OF_GLSL_SHADER_HEADER", ofGLSLGetDefaultHeader());
 	}
 
 	// parse for includes
@@ -848,7 +855,7 @@ void ofShader::end()  const{
 	ofGetGLRenderer()->unbind(*this);
 }
 
-#if !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 //--------------------------------------------------------------
 void ofShader::beginTransformFeedback(GLenum mode) const {
 	begin();
@@ -1503,7 +1510,7 @@ bool ofShader::setPbrEnvironmentMapUniforms( int textureLocation ) const {
 		if(cubeMapData->bPreFilteredMapAllocated) {
 			setUniformTexture("tex_prefilterEnvMap", GL_TEXTURE_CUBE_MAP, cubeMapData->preFilteredMapId, textureLocation+1 );
 		}
-		if( cubeMapData->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+		if( cubeMapData->settings.useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
 			setUniformTexture("tex_brdfLUT", ofCubeMap::getBrdfLutTexture(), textureLocation+2 );
 		}
 	}
