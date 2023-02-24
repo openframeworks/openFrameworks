@@ -3,7 +3,7 @@
 #include "ofThread.h"
 #include "ofImage.h"
 #include "ofURLFileLoader.h"
-#include "ofTypes.h" 
+#include "ofTypes.h"
 #include "ofThreadChannel.h"
 
 class ofxThreadedImageLoader : public ofThread {
@@ -38,7 +38,7 @@ private:
     };
 
 
-    typedef std::map<string, ofImageLoaderEntry>::iterator entry_iterator;
+    typedef std::map<std::string, ofImageLoaderEntry>::iterator entry_iterator;
 
 	int                 nextID;
     int                 lastUpdate;
