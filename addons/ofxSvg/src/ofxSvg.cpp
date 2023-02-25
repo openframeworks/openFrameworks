@@ -2,7 +2,8 @@
 #include "ofConstants.h"
 #include <locale>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 extern "C"{
 	#include "svgtiny.h"
@@ -27,7 +28,7 @@ ofPath & ofxSvg::getPathAt(int n){
 }
 
 void ofxSvg::load(std::string path){
-	path = ofToDataPath(path);
+	path = ofToDataPath(path).string();
 
 	if(path.compare("") == 0){
 		ofLogError("ofxSVG") << "load(): path does not exist: \"" << path << "\"";

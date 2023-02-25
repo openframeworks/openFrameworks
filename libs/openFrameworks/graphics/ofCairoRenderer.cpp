@@ -37,7 +37,7 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
 	if( outputsize.width == 0 || outputsize.height == 0 ){
 		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
@@ -73,14 +73,14 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		if(filename==""){
 			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
+			surface = cairo_pdf_surface_create(ofToDataPath(filename).string().c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case SVG:
 		if(filename==""){
 			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
+			surface = cairo_svg_surface_create(ofToDataPath(filename).string().c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case IMAGE:

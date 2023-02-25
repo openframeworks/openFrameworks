@@ -427,7 +427,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         return E_NOTIMPL;
     }
 
-    bool loadMovie(std::string path, ofPixelFormat format){
+    bool loadMovie(of::filesystem::path path, ofPixelFormat format){
         tearDown();
 		this->pixelFormat = format;
 
@@ -530,7 +530,8 @@ class DirectShowVideo : public ISampleGrabberCB{
         }
 
         //printf("step 6\n"); 
-        std::wstring filePathW = std::wstring(path.begin(), path.end());
+        std::string pathString = path.string();
+        std::wstring filePathW = std::wstring(pathString.begin(), pathString.end());
 
         //this is the easier way to connect the graph, but we have to remove the video window manually
         hr = m_pGraph->RenderFile(filePathW.c_str(), NULL);
@@ -1125,8 +1126,8 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-bool ofDirectShowPlayer::load(std::string path){
-    path = ofToDataPath(path); 
+bool ofDirectShowPlayer::load(std::string stringPath){
+    auto path = ofToDataPath(of::filesystem::path(stringPath));
 
     close();
     player.reset(new DirectShowVideo());
