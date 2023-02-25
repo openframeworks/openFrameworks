@@ -178,7 +178,6 @@ class ofxAssimpModelLoader{
 		glm::mat4 modelMatrix;
 
 		std::vector<ofLight> lights;
-		// std::map<std::string,std::shared_ptr<ofTexture>> textures;
 		std::map<
 			of::filesystem::path,
 			std::shared_ptr<ofTexture>
