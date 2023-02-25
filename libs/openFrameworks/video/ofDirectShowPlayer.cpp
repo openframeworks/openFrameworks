@@ -1126,6 +1126,7 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
+// FIXME: convert to filesystem::path in near future
 bool ofDirectShowPlayer::load(std::string stringPath){
     auto path = ofToDataPath(of::filesystem::path(stringPath));
 

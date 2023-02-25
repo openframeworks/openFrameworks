@@ -182,7 +182,6 @@ class ofApp: public ofxUnitTestsApp{
 #ifdef TARGET_WIN32
 		ofxTestEq(ofFilePath::join("d1","d2").string(),"d1\\d2","ofFilePath::join",ofFilePath::join("d1","d2").string());
 #else
-		// ofxTestEq(ofFilePath::join("d1","d2"),"d1/d2","ofFilePath::join",ofFilePath::join("d1","d2"));
 		ofxTestEq(ofFilePath::join("d1","d2").string(),"d1/d2","ofFilePath::join",ofFilePath::join("d1","d2").string());
 #endif
 

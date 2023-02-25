@@ -410,7 +410,6 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-//    static std::string join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 	static of::filesystem::path join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 
 	/// Get the full path to the application's executable file.
@@ -484,7 +483,6 @@ public:
 	/// (read only, read write, etc)
 	/// \param binary set to false if you are working with a text file & want
 	/// lines split at endline characters automatically
-//	ofFile(of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	ofFile(const of::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	
 	/// Create a new file path using the same path & settings of another

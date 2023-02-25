@@ -515,9 +515,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-//                        namespace v1 {
-//                            class path;
-//                        }
                         using path = v1::path;
                     }
                 }
@@ -526,36 +523,24 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-//                        namespace v1 {
-//                            namespace __cxx11 {
-//                                class path;
-//                            }
-//                        }
                         using path = v1::__cxx11::path;
                     }
                 }
             }
         #endif
         
-		using fs = std::experimental::filesystem;
-		// new
 		namespace of {
 			namespace filesystem = std::experimental::filesystem;
 		}
     #else
 		#include <filesystem>
 		#if OF_HAS_CPP17
-//			using fs = std::filesystem;
-
 			// Regular C++17 fs support
 			namespace of {
 				namespace filesystem = std::filesystem;
 			}
 		#else
-//			using fs = std::__fs::filesystem;
-
 			namespace of {
-//				namespace filesystem = std::__fs::filesystem;
 				namespace filesystem = std::filesystem;
 			}
 		#endif
@@ -566,44 +551,10 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #define BOOST_NO_CXX11_SCOPED_ENUMS
         #define BOOST_NO_SCOPED_ENUMS
     #endif
-//	#pragma message(Reminder "using boost")
 
     #include <boost/filesystem.hpp>
 	namespace of {
 		namespace filesystem = boost::filesystem;
 	}
-//	using fs = boost::filesystem;
 
 #endif
-
-#if defined __has_include
-//	#pragma message(Reminder "HAS include")
-	
-//	#if __has_include(<filesystem>)
-////		#define OF_USING_STD_FS 1
-//		#include <filesystem>
-//		#include <experimental/filesystem>
-//
-//		#pragma message(Reminder "filesystem")
-//namespace of{
-//	namespace filesystem = std::__fs::filesystem;
-////	namespace filesystem = std::__fs::filesystem;
-//}
-//	#elif __has_include(<experimental/filesystem>)
-//		#include <experimental/filesystem>
-//		#pragma message(Reminder "experimental filesystem")
-//namespace of{
-////	namespace filesystem = std::experimental::filesystem;
-//}
-//
-//	#elif __has_include(<boost/filesystem>)
-//		#include <boost/filesystem>
-//		#pragma message(Reminder "boost filesystem")
-//namespace of{
-////	namespace filesystem = boost::filesystem;
-//}
-//
-//	#endif
-#endif
-
-

@@ -503,10 +503,11 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		}
 
 		// we store the absolute paths so as have (more) unique file identifiers.
-
+		// FIXME: Included can be a vector of of::filesystem::path in near future
 		include = ofFile(
-						 sourceDirectoryPath / include
-						 ).getAbsolutePath().string();
+			sourceDirectoryPath / include
+		).getAbsolutePath().string();
+
 		included.push_back( include );
 
 		ofBuffer buffer = ofBufferFromFile( include );

@@ -1088,10 +1088,7 @@ void ofMesh_<V,N,C,T>::append(const ofMesh_<V,N,C,T> & mesh){
 template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
 	ofFile is = {path, ofFile::ReadOnly};
-//	ofFile is(path, ofFile::ReadOnly);
-//	ofFile is(path);
 	auto & data = *this;
-
 
 	std::string error;
 	ofBuffer buffer(is);

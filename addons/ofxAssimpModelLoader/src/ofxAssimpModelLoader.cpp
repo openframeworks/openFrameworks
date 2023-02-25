@@ -373,7 +373,6 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 				std::string texPathStr = texPath.C_Str();
 
-//				std::cout << "first texPathStr: " << texPathStr << std::endl;
 				//deal with Blender putting "//" in front of local file paths
 				if( texPathStr.size() > 2 && texPathStr.substr(0, 2) == "//" ){
 					texPathStr = texPathStr.substr(2, texPathStr.size()-2);

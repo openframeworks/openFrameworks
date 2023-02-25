@@ -29,23 +29,10 @@ namespace{
 	of::filesystem::path defaultDataPath(){
     #if defined TARGET_OSX
 		return (ofFilePath::getCurrentExeDir() / "../../../data/").string();
-//        try{
-//			return ofFilePath::getCurrentExeDir() / "../../../data/";
-////			return of::filesystem::canonical(ofFilePath::getCurrentExeDir() / "../../../data/");
-////            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
-//        }catch(...){
-//            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
-//        }
     #elif defined TARGET_ANDROID
         return string("sdcard/");
     #else
 		return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/")).string();
-		// FIXME: Cleanup comments
-//        try{
-//            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
-//        }catch(...){
-//            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
-//        }
     #endif
     }
 
@@ -525,9 +512,7 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 		case WriteOnly:
 		case ReadWrite:
 		case Append:
-			if(!ofDirectory(
-							ofFilePath::getEnclosingDirectory(path())
-							).exists()){
+			if(!ofDirectory(ofFilePath::getEnclosingDirectory(path())).exists()){
 				ofFilePath::createEnclosingDirectory(path());
 			}
 			break;
@@ -571,7 +556,6 @@ bool ofFile::open(const of::filesystem::path & _path, Mode _mode, bool binary){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::openFromCWD(const of::filesystem::path & _path, Mode _mode, bool binary){
 	close();
-//	myFile = of::filesystem::path(_path.string());
 	myFile = _path;
 	return openStream(_mode, binary);
 }
@@ -582,7 +566,6 @@ bool ofFile::changeMode(Mode _mode, bool binary){
 		auto _path = path();
 		close();
 		myFile = _path;
-//		myFile = of::filesystem::path(_path);
 		return openStream(_mode, binary);
 	}
 	else{
@@ -650,16 +633,9 @@ std::filebuf *ofFile::getFileBuffer() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::exists() const {
-//	FIXME: remove comments
-//	using std::cout, std::endl;
-//	cout << "ofFile::exists()" << endl;
 	if(path().empty()){
-//		cout << "path empty" << path() << endl;
 		return false;
 	}
-	
-//	cout << "path " << path() << endl;
-//	cout << (of::filesystem::exists(myFile) ? "exist" : "dont exist") << endl;
 	return of::filesystem::exists(myFile);
 }
 
@@ -947,7 +923,6 @@ bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 			tmp.openFromCWD(path,ofFile::Reference);
 			if(tmp.isDirectory()){
 				path = path / getFileName();
-//				path = ofFilePath::join(path,getFileName());
 			}
 		}
 		if(ofFile::doesFileExist(path, false)){
@@ -998,7 +973,6 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 			tmp.openFromCWD(path,ofFile::Reference);
 			if(tmp.isDirectory()){
 				path = path / getFileName();
-//				path = ofFilePath::join(path,getFileName());
 			}
 		}
 		if(ofFile::doesFileExist(path, false)){
@@ -1225,10 +1199,8 @@ of::filesystem::path ofDirectory::path() const {
 //------------------------------------------------------------------------------------------------------------
 of::filesystem::path ofDirectory::getAbsolutePath() const {
 	try{
-//		return of::filesystem::canonical(of::filesystem::absolute(myDir)).string();
 		return of::filesystem::canonical(of::filesystem::absolute(myDir));
 	}catch(...){
-//		return of::filesystem::absolute(myDir).string();
 		return of::filesystem::absolute(myDir);
 	}
 }
@@ -1707,9 +1679,7 @@ string ofFilePath::getFileExt(const of::filesystem::path& filename){
 of::filesystem::path ofFilePath::removeExt(const of::filesystem::path& _filename){
 	auto filename = _filename;
 	return filename.replace_extension();
-//	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
 }
-
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
@@ -1718,6 +1688,7 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 	// if it's a unix-style "/" path it will add a "/"
 	
 	// FIXME: Remove .string() here and following
+	// FIXME: this seems over complicated and not useful anymore, using filesystem
 
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(path.string().empty()) return "";
@@ -1745,16 +1716,8 @@ string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: convert to of::filesystem::path
-
+// FIXME: is this still useful?
 string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRelativeToData){
-//    std::string filePath = _filePath.string();
-//
-//	if(bRelativeToData){
-//        filePath = ofToDataPath(_filePath);
-//	}
-//
-//	return of::filesystem::path(filePath).filename().string();
-
 	auto filePath = _filePath;
 
 	if(bRelativeToData){
@@ -1762,18 +1725,17 @@ string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRela
 	}
 
 	return of::filesystem::path(filePath).filename().string();
-
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getBaseName(const of::filesystem::path& filePath){
+	// FIXME: is this still useful?	
 	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
 of::filesystem::path ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
-//    std::string filePath = _filePath.string();
-	of::filesystem::path fp = _filePath;
+	auto fp = _filePath;
 	if(bRelativeToData){
 		fp = ofToDataPath(fp);
 	}
@@ -1810,12 +1772,9 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
-//	return (of::filesystem::path(path1) / of::filesystem::path(path2)).string();
-//}
-
 of::filesystem::path ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
-	return (of::filesystem::path(path1) / of::filesystem::path(path2));
+	// FIXME: remove when possible. helper function more complex than actual solution
+	return (path1 / path2);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1963,7 +1922,6 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
     // here we check whether path already refers to the data folder by looking for common elements
     // if the path begins with the full contents of dataPathRoot then the data path has already been added
     // we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-//    auto dirDataPath = dataPath.string();
 	auto dirDataPath = dataPath;
     // also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
     dirDataPath = ofFilePath::addTrailingSlash(dataPath);
@@ -2002,4 +1960,3 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
         return outputPath.string();
     }
 }
-
