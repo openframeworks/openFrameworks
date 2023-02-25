@@ -505,7 +505,6 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		// we store the absolute paths so as have (more) unique file identifiers.
 
 		include = ofFile(
-//						 ofFilePath::join(sourceDirectoryPath, include)
 						 sourceDirectoryPath / include
 						 ).getAbsolutePath().string();
 		included.push_back( include );
