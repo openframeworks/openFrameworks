@@ -332,13 +332,6 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 	get3dGraphics().drawRotationAxes(radius,stripWidth,circleRes);
 }
 
-void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
-	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
-}
-
-bool ofBaseMaterial::isBound() const {
-	return mBound;
-}
 
 
 void ofBaseSoundInput::audioIn( ofSoundBuffer& buffer ){
