@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ofFileUtils.h"
+#include "ofConstants.h"
+#include <functional>
 
 class ofSoundBuffer;
 
