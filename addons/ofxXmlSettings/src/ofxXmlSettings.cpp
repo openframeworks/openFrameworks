@@ -28,7 +28,6 @@ static vector<string> tokenize(const string & str, const string & delim)
   }
   return tokens;
 }
-//----------------------------------------
 
 //----------------------------------------
 ofxXmlSettings::ofxXmlSettings():
@@ -48,7 +47,7 @@ ofxXmlSettings::ofxXmlSettings(const string& xmlFile):
 	//we do this so that we have a valid handle
 	//without the need for loadFile
 	storedHandle   = TiXmlHandle(&doc);
-	loadFile(xmlFile);
+	load(xmlFile);
 }
 
 //---------------------------------------------------------

@@ -31,7 +31,8 @@ model {
                         srcDirs = [
                                 ofSource
                         ]
-                        excludes = ["**/ofDirectShowGrabber.cpp",
+                        excludes = ["**/ofGraphicsCairo.cpp",
+                                    "**/ofDirectShowGrabber.cpp",
                                     "**/ofDirectShowPlayer.cpp",
                                     "**/ofGstUtils.cpp",
                                     "**/ofGstVideoGrabber.cpp",

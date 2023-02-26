@@ -9,19 +9,22 @@ on:
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
-    
-jobs:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
   build-msys2:
     runs-on: windows-latest
     strategy:
       matrix:
-        mingw: [MINGW64, MINGW32]
+        mingw: [MINGW64]
     defaults:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: msys2/setup-msys2@v2
       with:
         update: true

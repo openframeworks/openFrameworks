@@ -8,7 +8,7 @@ int main( ){
 	int windowWidth = 1024;
 	int windowHeight = 500;
 	
-	#ifdef TARGET_OPENGLES
+	#if defined TARGET_OPENGLES && not defined TARGET_EMSCRIPTEN
 		ofGLESWindowSettings settings;
 		settings.width = windowWidth;
 		settings.height = windowHeight;
