@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofEvents.h"
 #include <map>
 
@@ -15,21 +14,8 @@ public:
 
 	std::shared_ptr<ofAppBaseWindow> createWindow(const ofWindowSettings & settings);
 	template<typename Window>
-	void addWindow(const std::shared_ptr<Window> & window){
-		allowMultiWindow = Window::allowsMultiWindow();
-		if(Window::doesLoop()){
-		    windowLoop = Window::loop;
-		}
-		if(Window::needsPolling()){
-			windowPollEvents = Window::pollEvents;
-		}
-		if(!allowMultiWindow){
-		    windowsApps.clear();
-		}
-		windowsApps[window] = std::shared_ptr<ofBaseApp>();
-		currentWindow = window;
-		ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
-	}
+	void addWindow(const std::shared_ptr<Window> & window);
+
 
 	void run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
 	void run(std::shared_ptr<ofBaseApp> && app);
