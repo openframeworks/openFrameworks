@@ -1,6 +1,7 @@
 //TODO: Add edge flags?
 
 #pragma once
+
 #include "ofConstants.h"
 #include "ofGraphicsConstants.h"
 #include "ofBufferObject.h"

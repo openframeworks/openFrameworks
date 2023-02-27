@@ -1,9 +1,10 @@
-#include "ofConstants.h"
 #include "ofFbo.h"
+#include "ofConstants.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
+#include "ofPixels.h"
 #include <map>
 
 #ifdef TARGET_OPENGLES

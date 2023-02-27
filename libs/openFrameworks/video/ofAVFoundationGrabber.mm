@@ -6,6 +6,8 @@
 #include "ofVectorMath.h"
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
+#include "ofLog.h"
+
 
 #ifdef OF_VIDEO_CAPTURE_AVF
 

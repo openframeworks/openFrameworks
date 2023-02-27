@@ -2,6 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofGLUtils.h"
 #include "ofPixels.h"
+#include "ofTexture.h"
 #include <algorithm>
 
 using std::shared_ptr;

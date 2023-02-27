@@ -1,8 +1,8 @@
 #include "ofCamera.h"
 #include "ofGraphics.h"
+#include "of3dGraphics.h"
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
-#include "of3dGraphics.h"
 
 using std::shared_ptr;
 

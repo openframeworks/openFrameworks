@@ -1,5 +1,5 @@
 #pragma once
-#include "ofConstants.h"
+#include "ofDeprecated.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
 #include <map>

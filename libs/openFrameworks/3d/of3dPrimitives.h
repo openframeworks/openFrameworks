@@ -2,7 +2,6 @@
 
 #include "ofMesh.h"
 #include "ofNode.h"
-#include <map>
 
 class ofTexture;
 class ofVboMesh;

@@ -2,6 +2,7 @@
 
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
+#include "ofPath.h"
 
 class ofxLabel: public ofxBaseGui {
 public:

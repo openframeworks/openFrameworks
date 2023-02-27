@@ -5,7 +5,7 @@
 #include "ofGLUtils.h"
 #include "ofImage.h"
 #include "ofFbo.h"
-#include "ofVbo.h"
+#include "ofVboMesh.h"
 #include "of3dPrimitives.h"
 #include "ofLight.h"
 #include "ofMaterial.h"

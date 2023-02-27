@@ -1,4 +1,5 @@
 #include "ofxThreadedImageLoader.h"
+#include "ofLog.h"
 #include <sstream>
 ofxThreadedImageLoader::ofxThreadedImageLoader(){
 	nextID = 0;

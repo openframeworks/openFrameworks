@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "ofTexture.h"
+class ofTexture;
 #include "ofVideoBaseTypes.h"
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER

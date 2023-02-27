@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofUtils.h"
 #include <sstream>
@@ -124,33 +123,6 @@ enum ofLogLevel: short{
 					/// ofSetLogLevel(OF_LOG_SILENT).
 };
 
-//--------------------------------------------
-//console colors for our logger - shame this doesn't work with the xcode console
-#ifdef TARGET_WIN32
-
-	#define OF_CONSOLE_COLOR_RESTORE (0 | (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE) )
-	#define OF_CONSOLE_COLOR_BLACK (0)
-	#define OF_CONSOLE_COLOR_RED (FOREGROUND_RED)
-	#define OF_CONSOLE_COLOR_GREEN (FOREGROUND_GREEN)
-	#define OF_CONSOLE_COLOR_YELLOW (FOREGROUND_RED|FOREGROUND_GREEN)
-	#define OF_CONSOLE_COLOR_BLUE (FOREGROUND_BLUE)
-	#define OF_CONSOLE_COLOR_PURPLE (FOREGROUND_RED | FOREGROUND_BLUE )
-	#define OF_CONSOLE_COLOR_CYAN (FOREGROUND_GREEN | FOREGROUND_BLUE)
-	#define OF_CONSOLE_COLOR_WHITE (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)
-
-#else
-
-	#define OF_CONSOLE_COLOR_RESTORE (0)
-	#define OF_CONSOLE_COLOR_BLACK (30)
-	#define OF_CONSOLE_COLOR_RED (31)
-	#define OF_CONSOLE_COLOR_GREEN (32)
-	#define OF_CONSOLE_COLOR_YELLOW (33)
-	#define OF_CONSOLE_COLOR_BLUE (34)
-	#define OF_CONSOLE_COLOR_PURPLE (35)
-	#define OF_CONSOLE_COLOR_CYAN (36)
-	#define OF_CONSOLE_COLOR_WHITE (37)
-
-#endif
 
 
 /// \brief Sets the logging level to selectively show log messages.
@@ -244,13 +216,11 @@ void ofLogToFile(const std::filesystem::path & path, bool append=false);
 /// after ofLogToFile or ofSetLoggerChannel has been called.
 void ofLogToConsole();
 
-#ifdef TARGET_WIN32
 /// Set the logging to ouptut to windows debug view or visual studio console
 /// 
 /// This is the default state and can be called to reset console logging
 /// after ofLogToFile or ofSetLoggerChannel has been called.
 void ofLogToDebugView();
-#endif
 
 /// \brief Set the logger to use a custom logger channel.
 ///
@@ -684,7 +654,6 @@ public:
 	void log(ofLogLevel level, const std::string & module, const std::string & message);
 };
 
-#ifdef TARGET_WIN32
 /// A logger channel that logs its messages to windows debug view and visual studio output.
 class ofDebugViewLoggerChannel : public ofBaseLoggerChannel {
 public:
@@ -692,7 +661,6 @@ public:
 	virtual ~ofDebugViewLoggerChannel() {};
 	void log(ofLogLevel level, const std::string & module, const std::string & message);
 };
-#endif
 
 /// \brief A logger channel that logs its messages to a log file.
 class ofFileLoggerChannel: public ofBaseLoggerChannel{

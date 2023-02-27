@@ -1,9 +1,6 @@
 #pragma once
 
-#include <climits>
 #include "ofConstants.h"
-
-class ofBuffer;
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
 	#include <termios.h>
@@ -24,6 +21,9 @@ class ofBuffer;
 		#include <initguid.h> // needed for dev-c++ & DEFINE_GUID
 	#endif*/
 #endif
+
+class ofBuffer;
+
 
 // serial error codes
 #define OF_SERIAL_NO_DATA 	-2

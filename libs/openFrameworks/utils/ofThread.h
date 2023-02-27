@@ -1,11 +1,12 @@
 #pragma once
-#include "ofConstants.h"
+#include "ofDeprecated.h"
 #ifndef TARGET_NO_THREADS
 
 #include <atomic>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <string>
 
 
 /// \class ofThread

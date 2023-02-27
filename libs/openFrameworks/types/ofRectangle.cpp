@@ -1,3 +1,4 @@
+#include "ofConstants.h"
 #include "ofRectangle.h"
 #include "ofMath.h"
 #include "ofLog.h"
@@ -724,9 +725,9 @@ const glm::vec3& ofRectangle::getPosition() const {
 }
 
 //----------------------------------------------------------
-glm::vec3& ofRectangle::getPositionRef() {
-	return position;
-}
+//glm::vec3& ofRectangle::getPositionRef() {
+//	return position;
+//}
 
 //----------------------------------------------------------
 glm::vec3 ofRectangle::getCenter() const {

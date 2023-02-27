@@ -3,7 +3,8 @@
 #ifndef OF_POLYLINE_H
 #define OF_POLYLINE_H
 
-#include "ofConstants.h"
+// ofConstants included only for deprecated messages.
+#include "ofDeprecated.h"
 #include "glm/fwd.hpp"
 #include <deque>
 

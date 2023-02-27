@@ -1,5 +1,6 @@
 #include "ofUtils.h"
 #include "ofImage.h"
+#include "ofPixels.h"
 #include "ofLog.h"
 #include "ofAppBaseWindow.h"
 #include "ofMainLoop.h"

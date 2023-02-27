@@ -1,7 +1,7 @@
-    #pragma once
+#pragma once
 
 
-#include "ofConstants.h"
+#include <iostream>
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
@@ -803,7 +803,7 @@ public:
     /// \returns The rectangle's position.
 	const glm::vec3& getPosition() const;
 
-	OF_DEPRECATED_MSG("Use getPosition() instead.", glm::vec3& getPositionRef() );
+//	OF_DEPRECATED_MSG("Use getPosition() instead.", glm::vec3& getPositionRef() );
 
 	/// \brief Get the coordiantes of the ofRectangle's center as glm::vec3.
     ///

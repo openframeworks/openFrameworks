@@ -9,7 +9,6 @@
  */
 
 #pragma once
-#include "ofConstants.h"
 #include "ofVec3f.h"
 #include "ofVec4f.h"
 #include <cmath>
@@ -18,7 +17,6 @@
 // make microsoft visual studio complain less about double / float conversion.
 #pragma warning(disable : 4244)
 #endif
-
 
 class ofMatrix4x4;
 

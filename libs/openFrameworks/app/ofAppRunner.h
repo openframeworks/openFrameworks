@@ -13,7 +13,6 @@ class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
 
-
 void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 std::shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
@@ -21,14 +20,7 @@ std::shared_ptr<ofMainLoop> ofGetMainLoop();
 void ofSetMainLoop(const std::shared_ptr<ofMainLoop> & mainLoop);
 
 template<typename Window>
-void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWindowMode screenMode){
-	ofInit();
-	ofWindowSettings settings;
-	settings.setSize(w, h);
-	settings.windowMode = screenMode;
-	ofGetMainLoop()->addWindow(windowPtr);
-	windowPtr->setup(settings);
-}
+void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWindowMode screenMode);
 
 //special case so we preserve supplied settngs
 //TODO: remove me when we remove the ofSetupOpenGL legacy approach.

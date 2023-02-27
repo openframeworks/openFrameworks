@@ -1,12 +1,13 @@
 #pragma once
 
-#include "ofConstants.h"
-#include <unordered_map>
-#include "ofRectangle.h"
-#include "ofPath.h"
-#include "ofTexture.h"
 #include "ofMesh.h"
+#include "ofRectangle.h"
 #include "ofPixels.h"
+#include "ofTexture.h"
+#include <unordered_map>
+class ofPath;
+
+
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into
@@ -449,10 +450,10 @@ protected:
 	/// \endcond
 
 private:
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
-#endif
+
 	std::shared_ptr<struct FT_FaceRec_>	face;
 	static const glyphProps invalidProps;
 	void		unloadTextures();

@@ -1,7 +1,7 @@
 #include "ofTessellator.h"
-#include "tesselator.h"
 #include "ofPolyline.h"
 #include "ofMesh.h"
+#include "tesselator.h"
 
 using std::vector;
 

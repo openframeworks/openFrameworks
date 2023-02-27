@@ -1,5 +1,6 @@
 
 #include "ofSystemUtils.h"
+#include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"

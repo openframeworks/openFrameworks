@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
-#include "glm/fwd.hpp"
+// FIXME: Remove if unneeded
+//#include "glm/fwd.hpp"
 
 class ofVec3f;
 class ofVec2f;
@@ -1221,7 +1221,6 @@ int ofOrientationToDegrees(ofOrientation orientation);
 
 void ofSetCoordHandedness(ofHandednessType handedness);
 ofHandednessType ofGetCoordHandedness();
-
 
 //--------------------------------------------------
 template<typename T>

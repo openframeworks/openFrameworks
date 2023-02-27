@@ -3,11 +3,9 @@
 #include "ofPolyline.h"
 #include "ofShader.h"
 #include "ofMatrixStack.h"
-#include "ofVboMesh.h"
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
-#include "ofMaterial.h"
 
 
 class ofShapeTessellation;

@@ -3,6 +3,12 @@
 #include "ofAppBaseWindow.h"
 #include "ofLog.h"
 
+#include <iterator>
+#include <functional>
+#include <thread>
+#include <memory>
+#include <stddef.h>
+
 static ofEventArgs voidEventArgs;
 
 

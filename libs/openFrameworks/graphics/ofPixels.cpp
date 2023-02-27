@@ -1,6 +1,11 @@
 #include "ofPixels.h"
+#include "ofUtils.h"
+#include "ofColor.h"
+#include "ofLog.h"
+#include "ofMath.h"
 #include "ofGraphicsConstants.h"
 #include "glm/common.hpp"
+#include <limits>
 #include <cstring>
 
 static ofImageType getImageTypeFromChannels(size_t channels){

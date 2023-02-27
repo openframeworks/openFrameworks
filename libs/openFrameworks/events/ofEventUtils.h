@@ -2,7 +2,6 @@
 
 #include "ofConstants.h"
 #include "ofEvent.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 

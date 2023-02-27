@@ -1,11 +1,8 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofPixels.h"
 #include "ofGLBaseTypes.h"
-#include "ofGraphicsConstants.h"
-#include "ofGLUtils.h"
+#include "ofPixels.h"
 
 class ofFile;
 class ofBuffer;

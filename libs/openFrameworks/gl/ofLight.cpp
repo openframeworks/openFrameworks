@@ -13,8 +13,9 @@
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
-#include <map>
+#include "ofColor.h"
 #include <glm/gtc/quaternion.hpp>
+#include <map>
 
 using std::weak_ptr;
 using std::vector;

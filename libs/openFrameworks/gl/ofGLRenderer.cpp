@@ -12,6 +12,7 @@
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
+#include "ofVboMesh.h"
 
 using std::shared_ptr;
 using std::vector;
