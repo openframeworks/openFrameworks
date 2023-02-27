@@ -9,6 +9,7 @@
 #include "ofWindowSettings.h"
 #include "ofAppBaseWindow.h"
 #include "ofBaseApp.h"
+#include "ofConstants.h"
 
 //========================================================================
 // default windowing
