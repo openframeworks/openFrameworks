@@ -44,9 +44,8 @@ namespace priv{
 		StdFunctionId(uint64_t id)
 		:id(id){}
 	public:
-		StdFunctionId(){
-			id = nextId++;
-		}
+		StdFunctionId()
+		:id(nextId++){}
 
 		virtual ~StdFunctionId();
 
