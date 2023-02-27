@@ -9,8 +9,6 @@
 #include "ofWindowSettings.h"
 #include "ofAppBaseWindow.h"
 #include "ofBaseApp.h"
-// #include "ofConstants.h"
-
 
 //========================================================================
 // default windowing
@@ -181,7 +179,7 @@ void ofMainLoop::exit(){
 	for(auto i: windowsApps){
 		std::shared_ptr<ofAppBaseWindow> window = i.first;
 		std::shared_ptr<ofBaseApp> app = i.second;
-		
+
 		if(window == nullptr) {
 			continue;
 		}
@@ -279,5 +277,5 @@ void ofMainLoop::setEscapeQuitsLoop(bool quits){
 void ofMainLoop::keyPressed(ofKeyEventArgs & key){
 	if (key.key == OF_KEY_ESC && escapeQuits == true){				// "escape"
 		shouldClose(0);
-    }
+	}
 }

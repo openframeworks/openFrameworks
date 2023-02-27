@@ -16,7 +16,6 @@ public:
 	template<typename Window>
 	void addWindow(const std::shared_ptr<Window> & window);
 
-
 	void run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
 	void run(std::shared_ptr<ofBaseApp> && app);
 	int loop();
@@ -34,7 +33,7 @@ public:
 	ofEvent<void> loopEvent;
 private:
 	void keyPressed(ofKeyEventArgs & key);
-	std::map<std::shared_ptr<ofAppBaseWindow>,std::shared_ptr<ofBaseApp> > windowsApps;
+	std::map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
 	bool bShouldClose;
 	std::weak_ptr<ofAppBaseWindow> currentWindow;
 	int status;
