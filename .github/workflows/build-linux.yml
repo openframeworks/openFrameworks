@@ -13,7 +13,7 @@ on:
 jobs:
 
   build-linux-platforms:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
         matrix:
           cfg:
@@ -23,7 +23,7 @@ jobs:
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - uses: awalsh128/cache-apt-pkgs-action@latest
       id: cache-apt    
@@ -31,12 +31,9 @@ jobs:
         packages: libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk-3-dev libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gdb libglfw3-dev liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev
         version: 1.0
 
-        # if we install everything with the latest command
-    # - if: ${{ steps.cache-apt.outputs.cache-hit != 'true' }}
 
     - name: Install dependencies
       run: ./scripts/ci/$TARGET/install.sh;
-
 
     - name: Cache libs
       id: cache-libs
@@ -67,12 +64,10 @@ jobs:
       env:
         cache-name: cache-keep-compile
       with:
-        path: libs/openFrameworksCompiled/lib/osx/**/
+        path: libs/openFrameworksCompiled/lib/**/
         key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
           ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
-
-
 
     - name: Build
       run: if [ "$TARGET" = "linux64" ]; then
