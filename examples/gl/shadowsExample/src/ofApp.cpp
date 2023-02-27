@@ -200,7 +200,7 @@ void ofApp::draw(){
 	
 	if( !ofIsGLProgrammableRenderer() ) {
 		ss << endl << "SHADOWS ONLY WORK WITH PROGRAMMABLE RENDERER!" << endl;
-	} else if( ofShadow::areShadowsSupported() ) {
+	} else if( !ofShadow::areShadowsSupported() ) {
 		ss << endl << "SHADOWS NOT SUPPORTED ON THIS PLATFORM!" << endl;
 	} else {
 		ss << "Shadows enabled (spacebar): " << bEnableShadows;
