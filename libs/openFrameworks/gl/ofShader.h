@@ -66,7 +66,7 @@ public:
 	bool loadCompute(const std::filesystem::path& shaderName);
 #endif
 
-#if !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	struct TransformFeedbackSettings {
 		std::map<GLuint, std::filesystem::path> shaderFiles;
 		std::map<GLuint, std::string> shaderSources;
@@ -106,7 +106,7 @@ public:
 #endif
 
 	bool setup(const ofShaderSettings & settings);
-#if !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	bool setup(const TransformFeedbackSettings & settings);
 #endif
 
@@ -125,7 +125,7 @@ public:
 	void begin() const;
 	void end() const;
 
-#if !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	void beginTransformFeedback(GLenum mode) const;
 	void beginTransformFeedback(GLenum mode, const TransformFeedbackRangeBinding & binding) const;
 	void beginTransformFeedback(GLenum mode, const std::vector<TransformFeedbackRangeBinding> & binding) const;
@@ -225,6 +225,8 @@ public:
 
 
 	// advanced use
+	bool setShadowUniforms( int textureLocation ) const;
+	bool setPbrEnvironmentMapUniforms( int textureLocation ) const;
 
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.

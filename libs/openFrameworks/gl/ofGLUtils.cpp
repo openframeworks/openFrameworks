@@ -89,7 +89,7 @@ int ofGetGLInternalFormat(const ofShortPixels& pixels) {
 
 //---------------------------------
 int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
-#ifndef TARGET_OPENGLES
+#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
 	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB32F;
 		case 4: return GL_RGBA32F;
@@ -152,7 +152,7 @@ string ofGetGLInternalFormatName(int glInternalFormat) {
 int ofGetGLFormatFromInternal(int glInternalFormat){
 	switch(glInternalFormat) {
 			case GL_RGBA:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_RGBA8:
 			case GL_RGBA16:
 			case GL_RGBA16F:
@@ -204,7 +204,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				 return GL_DEPTH_STENCIL;
 
 			case GL_DEPTH_COMPONENT:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_DEPTH_COMPONENT16:
 			case GL_DEPTH_COMPONENT24:
 			case GL_DEPTH_COMPONENT32:
@@ -275,7 +275,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		break;
 #endif
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
 		case GL_R32F:
@@ -409,7 +409,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 
 
 	case GL_RGBA:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	case GL_RGBA8:
 	case GL_RGBA16:
 	case GL_RGBA16F:
@@ -425,7 +425,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 }
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(mode){
 		case(OF_MESH_POINTS):
 			return GL_POINT;
@@ -447,7 +447,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
 }
 
 ofPolyRenderMode ofGetOFPolyMode(GLuint mode){
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(mode){
 		case(GL_POINT):
 			return OF_MESH_POINTS;
@@ -729,7 +729,7 @@ int ofGetBytesPerChannelFromGLType(int glType){
 			return 2;
 #endif
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 		case GL_FLOAT:
 			return 4;
 #endif
@@ -834,7 +834,15 @@ bool ofGLSupportsNPOTTextures(){
 
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
-	return "ES1";
+	#ifdef TARGET_EMSCRIPTEN
+	if( major >= 2 ) { // for emscripten major version refers to WEBGL version
+		return "300 es";
+	} else {
+		return "ES1";
+	}
+	#else
+		return "ES1";
+	#endif
 #else
 	switch(major){
 	case 3:
@@ -853,6 +861,49 @@ string ofGLSLVersionFromGL(int major, int minor){
 		return "120";
 	}
 #endif
+}
+
+string ofGLSLVersionFromGL(){
+    int major = 0;
+    int minor = 0;
+    
+    auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
+    if( glRenderer ){
+        major = glRenderer->getGLVersionMajor();
+        minor = glRenderer->getGLVersionMinor();
+    }
+    return ofGLSLVersionFromGL(major, minor);
+}
+
+//TODO: unify this with similar in ofGLProgrammableRenderer and ofMaterial
+string ofGLSLGetDefaultHeader(){
+    string header = "";
+
+    auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
+    
+    if( glRenderer ){
+        string versionStr = ofGLSLVersionFromGL(glRenderer->getGLVersionMajor(), glRenderer->getGLVersionMinor());
+        header = "#version "+versionStr+"\n";
+        
+        #ifdef TARGET_OPENGLES
+            if( versionStr != "ES1" ){
+                header += "#extension GL_OES_standard_derivatives : enable\n";
+            }
+            #ifdef TARGET_ANDROID
+                header += "#extension GL_OES_EGL_image_external : require\n";
+            #endif
+            header += "precision mediump float;\n";
+            header += "precision mediump int;\n";
+            header += "#define TARGET_OPENGLES\n";
+        #else
+            if( ofGetUsingArbTex() ){
+                if( glRenderer->getGLVersionMajor() < 4 && glRenderer->getGLVersionMinor() < 2 ){
+                    header += "\n#extension GL_ARB_texture_rectangle : enable";
+                }
+            }
+        #endif
+    }
+    return header;
 }
 
 #ifndef TARGET_PROGRAMMABLE_GL

@@ -1,4 +1,4 @@
-#version 330
+OF_GLSL_SHADER_HEADER
 
 out vec4 FRAGCOLOR;
 

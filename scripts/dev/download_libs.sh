@@ -13,14 +13,13 @@ cat << EOF
     Options:
 
     -v, --version VERSION       OF version to download the libraries for. Defaults to master
-    -p, --platform PLATFORM     Platorm among: android, emscritpen, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs2015, vs2017
+    -p, --platform PLATFORM     Platorm among: android, emscritpen, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs
                                 If not specified tries to autodetect the platform.
     -a, --arch ARCH             Architecture:
-                                    vs2015: 32 or 64
-                                    vs2017: 32 or 64
-                                    msys2: 32 or 64
+                                    vs: 64
+                                    msys2: 64
                                     android: armv7, arm64, and x86 (if not specified will download all)
-                                    linux: 64gcc4, 64gcc5, 64gcc6 / 64, armv6l or armv7l
+                                    linux: 64gcc6, armv6l or armv7l
     -n, --no-overwrite          Merge new libraries with existing ones, use only to download same version for different platforms
                                 If not set deletes any existing libraries
     -s, --silent                Silent download progress
@@ -34,7 +33,9 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 
 download(){
     echo "Downloading $1"
-    downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
+    # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
+    echo downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
+    downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
 }
 
 # trap any script errors and exit
@@ -156,27 +157,14 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
-if [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2015" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32_1.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_32_2.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_32_3.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_32_4.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
-elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs2017" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_32_1.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_32_2.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_32_3.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_32_4.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
-elif [ "$PLATFORM" == "msys2" ]; then
+if [ "$PLATFORM" == "msys2" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_mingw${ARCH}.zip"
-elif [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
+elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
+          openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
+elif [ "$PLATFORM" == "vs" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
@@ -214,7 +202,7 @@ fi
 
 for PKG in $PKGS; do
     echo "Uncompressing libraries ${PLATFORM}${ARCH} from $PKG"
-    if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
+    if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
         unzip -qo ../scripts/dev/$PKG
         rm ../scripts/dev/$PKG
     else
@@ -226,7 +214,7 @@ done
 if [ "$PLATFORM" == "osx" ]; then
     addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco" "openssl")
     addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
-elif [ "$PLATFORM" == "vs2015" ] || [ "$PLATFORM" == "vs2017" ]; then
+elif [ "$PLATFORM" == "vs" ]; then
     addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
     addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
 elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then

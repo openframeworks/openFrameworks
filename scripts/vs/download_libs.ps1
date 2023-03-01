@@ -5,7 +5,7 @@
 # Which will load the visual studio 2015 libraries
 param(
     [String]$ver="master",
-    [String]$platform="vs2017"
+    [String]$platform="vs"
     )
 $currentPath = $pwd
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -13,7 +13,7 @@ $libsDir = $scriptPath + "\..\..\libs"
 
 function DownloadPackage{
     $pkg = $args[0]
-    $url = "http://ci.openframeworks.cc/libs/$pkg"
+    $url = " https://github.com/openframeworks/apothecary/releases/download/nightly/$pkg"
     If(Test-Path "$pkg") {
         echo "Deleting old package"
         Remove-Item $pkg
@@ -60,7 +60,6 @@ If(-Not $libsExists) {
 } 
 
 $libs = @(
-    "32", 
     "64", 
     "boost", 
     "cairo", 
@@ -113,7 +112,6 @@ ForEach ($lib in $addon_libs){
     }
 }
 
-DownloadLibs 32
 DownloadLibs 64
 
 function moveAddonLib {
@@ -124,10 +122,7 @@ function moveAddonLib {
 
     echo "Moving addon lib: $lib_name"
 
-    robocopy.exe "..\..\libs\32\$lib_name" "..\..\addons\$addon_path\$lib_name" /MOVE /NFL /R:5 /S
-    robocopy.exe "..\..\libs\64\$lib_name\lib\vs\x64" "..\..\addons\$addon_path\$lib_name\lib\vs\x64" /MOVE /NFL /R:5 /S
-    Remove-Item  "..\..\libs\64\$lib_name" -Force -Recurse
-
+    robocopy.exe "..\..\libs\64\$lib_name" "..\..\addons\$addon_path\$lib_name" /MOVE /NFL /R:5 /S
 }
 
 echo "Moving addons libs"
@@ -135,12 +130,7 @@ ForEach ($lib in $addon_libs){
    moveAddonLib $lib
 }
 
-robocopy.exe ..\..\libs\32\ ..\..\libs\ /MOVE /NFL /R:5 /S
 robocopy.exe ..\..\libs\64\ ..\..\libs\ /MOVE /NFL /R:5 /S
-
-if(Test-Path "..\..\libs\32"){
-    Remove-Item "..\..\libs\32" -Force -Recurse
-}
 
 if(Test-Path "..\..\libs\64"){
     Remove-Item "..\..\libs\64" -Force -Recurse

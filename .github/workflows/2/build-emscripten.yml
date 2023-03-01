@@ -9,9 +9,12 @@ on:
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
-    
-jobs:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
   build-emscripten:
     runs-on: ubuntu-22.04
     strategy:
@@ -21,9 +24,9 @@ jobs:
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Docker Step
-      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:1.40.0 bash"
+      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash"
     - name: Download libs
       run: ./scripts/$TARGET/download_libs.sh
     - name: Install dependencies
