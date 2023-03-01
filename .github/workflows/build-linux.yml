@@ -29,6 +29,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Update apt
       run: |
+        sudo apt-get remove shim-signed --yes
         sudo apt-get purge grub\*
         sudo apt-get install grub-efi
         sudo apt-get autoremove
