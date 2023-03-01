@@ -49,8 +49,8 @@ jobs:
 
     - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: ./scripts/ci/$TARGET/install.sh;
+    # - name: Install dependencies
+      # run: ./scripts/ci/$TARGET/install.sh;
 
     - name: Cache libs
       id: cache-libs
