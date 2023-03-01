@@ -29,6 +29,13 @@ jobs:
     - uses: actions/checkout@v3
     - name: Update apt
       run: |
+        sudo apt-get purge grub\*
+        sudo apt-get install grub-efi
+        sudo apt-get autoremove
+        sudo update-grub
+        sudo apt remove php* --yes
+        sudo apt remove aspnet* --yes
+        sudo apt remove dotnet* --yes
         # sudo apt remove grub-efi-amd64-signed --yes
         sudo apt update --yes
         sudo apt upgrade --yes
