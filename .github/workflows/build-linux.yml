@@ -27,6 +27,10 @@ jobs:
      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v3
+    - name: Update apt
+      run: |
+        sudo apt update -y
+        sudo apt upgrade -y
 
     - uses: awalsh128/cache-apt-pkgs-action@latest
       id: cache-apt    
