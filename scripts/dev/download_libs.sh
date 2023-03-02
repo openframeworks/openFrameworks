@@ -135,18 +135,15 @@ EOF
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
-        if [ "$MSYSTEM" == "MINGW64" ]; then 
-            ARCH=64
-        elif [ "$MSYSTEM" == "MINGW32" ]; then 
-            ARCH=32
-        else
-            cat << EOF
-This MSYS2 variant ($MSYSTEM) is not recognized.
-Check if you are running a MINGW32 or MINGW64 shell.
-Assuming 32bits version for now...
-EOF
-            ARCH=32
-        fi 
+        if [ "$MSYSTEM" == "MINGW64" ]; then
+            ARCH=mingw64
+        elif [ "$MSYSTEM" == "MINGW32" ]; then
+            ARCH=mingw32
+        elif [ "$MSYSTEM" == "UCRT64" ]; then
+            ARCH=ucrt64
+        elif [ "$MSYSTEM" == "CLANG64" ]; then
+            ARCH=clang64
+        fi
     fi
 fi
 
@@ -158,7 +155,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 if [ "$PLATFORM" == "msys2" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_mingw${ARCH}.zip"
+    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
