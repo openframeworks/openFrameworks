@@ -31,7 +31,12 @@ namespace{
         try{
             return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
         }catch(...){
-            return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
+			try{
+			return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../Resources/data/")).string();
+			}catch(...){
+			
+				return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
+			}
         }
     #elif defined TARGET_ANDROID
         return string("sdcard/");
