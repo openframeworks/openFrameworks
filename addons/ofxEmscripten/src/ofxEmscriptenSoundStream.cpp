@@ -44,7 +44,6 @@ void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL su
 void WebAudioWorkletThreadInitialized(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData) {
 	if (!success) return;
 	audioWorkletEvent.notify();
-
 	WebAudioWorkletProcessorCreateOptions opts = {
 		.name = "tone-generator",
 	};
