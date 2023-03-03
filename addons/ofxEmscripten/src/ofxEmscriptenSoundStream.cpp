@@ -4,11 +4,39 @@
  *  Created on: May 16, 2014
  *      Author: arturo
  */
-
+ 
 #include "ofxEmscriptenSoundStream.h"
 #include "html5audio.h"
 #include "ofBaseApp.h"
 #include "ofLog.h"
+
+// This callback will fire after the Audio Worklet Processor has finished being added to the Worklet global scope.
+void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, int inputChannels, int outputChannels, int inbuffer, int outbuffer, int stream_callback, int userData) {
+	if (!success) return; 
+	// Specify the input and output node configurations for the Wasm Audio Worklet. A simple setup with single mono output channel here, and no inputs.
+	int outputChannelCounts[1] = { outputChannels };
+	EmscriptenAudioWorkletNodeCreateOptions options = {
+		.numberOfInputs = 1,
+		.numberOfOutputs = 1,
+		.outputChannelCounts = outputChannelCounts
+	};
+	// Instantiate the noise-generator Audio Worklet Processor.
+	EMSCRIPTEN_AUDIO_WORKLET_NODE_T audioWorklet = emscripten_create_wasm_audio_worklet_node(audioContext, "noise-generator", &options, inputChannels, outputChannels, inbuffer, outbuffer, stream_callback, userData);
+	html5audio_stream_create(audioWorklet, inputChannels);
+}
+
+// This callback will fire when the Wasm Module has been shared to the AudioWorklet global scope, and is now ready to begin adding Audio Worklet Processors.
+void WebAudioWorkletThreadInitialized(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, int inputChannels, int outputChannels, int inbuffer, int outbuffer, int stream_callback, int userData) {
+	if (!success) return;
+	WebAudioWorkletProcessorCreateOptions opts = {
+		.name = "noise-generator",
+	};
+	emscripten_create_wasm_audio_worklet_processor_async(audioContext, &opts, AudioWorkletProcessorCreated, inputChannels, outputChannels, inbuffer, outbuffer, stream_callback, userData);
+}
+
+// Define a global stack space for the AudioWorkletGlobalScope. Note that all AudioWorkletProcessors and/or AudioWorkletNodes on the given Audio Context all share the same AudioWorkerGlobalScope,
+// i.e. they all run on the same one audio thread (multiple nodes/processors do not each get their own thread). Hence one stack is enough.
+uint8_t wasmAudioWorkletStack[4096];
 
 using namespace std;
 
@@ -26,7 +54,7 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 }
 
 std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
-	html5audio_list_devices();
+	ofLogWarning() << "ofSoundStream::getDeviceList() not supported in emscripten";
 	return vector<ofSoundDevice>();
 }
 
@@ -34,7 +62,7 @@ bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	inbuffer.allocate(settings.bufferSize, settings.numInputChannels);
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
 	this->settings = settings;
-	html5audio_stream_create(settings.bufferSize,settings.numInputChannels,settings.numOutputChannels,inbuffer.getBuffer().data(),outbuffer.getBuffer().data(),&audio_cb,this);
+	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, settings.numInputChannels, settings.numOutputChannels, inbuffer.getBuffer().data(), outbuffer.getBuffer().data(), &audio_cb, this);
 	return true;
 }
 
