@@ -166,6 +166,7 @@ var LibraryHTML5Audio = {
 					function(audioIn) {
 						var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
 						mediaElement.connect(audioWorkletNode);
+						AUDIO.mediaElement = mediaElement;
 					},
 					function(error){
 						console.log("error creating audio in",error);
@@ -173,7 +174,9 @@ var LibraryHTML5Audio = {
 				);
 			}
 		}
+
 		audioWorkletNode.connect(AUDIO.fft);
+		AUDIO.stream = audioWorkletNode;
 	},
 
     html5audio_stream_free: function () {
