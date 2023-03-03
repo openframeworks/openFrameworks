@@ -9,6 +9,8 @@
 
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
+#include "ofEvents.h"
+#include "emscripten/webaudio.h"
 
 class ofxEmscriptenSoundStream: public ofBaseSoundStream {
 public:
@@ -26,6 +28,7 @@ public:
 	void start();
 	void stop();
 	void close();
+	void audioWorklet();
 
 	uint64_t getTickCount() const;
 	int getNumInputChannels() const;
