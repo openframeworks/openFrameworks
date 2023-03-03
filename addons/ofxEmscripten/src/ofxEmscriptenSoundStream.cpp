@@ -54,7 +54,7 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 }
 
 std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
-	ofLogWarning() << "ofSoundStream::getDeviceList() not supported in emscripten";
+	html5audio_list_devices();
 	return vector<ofSoundDevice>();
 }
 
