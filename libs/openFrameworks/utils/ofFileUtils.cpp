@@ -14,7 +14,7 @@
 	#include <limits.h>        /* PATH_MAX */
 #endif
 
-// FIXME: better explicit declaration 
+// FIXME: better explicit declaration
 using std::string;
 using std::vector;
 using std::fstream;
@@ -23,40 +23,40 @@ using std::ostream;
 using std::ios;
 
 namespace{
-    bool enableDataPath = true;
+	bool enableDataPath = true;
 
-    //--------------------------------------------------
+	//--------------------------------------------------
 //	MARK: - near future
 //	of::filesystem::path defaultDataPath(){
 	std::string defaultDataPath(){
-    #if defined TARGET_OSX
+	#if defined TARGET_OSX
 		return (ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/")).string();
-    #elif defined TARGET_ANDROID
-        return string("sdcard/");
-    #else
+	#elif defined TARGET_ANDROID
+		return string("sdcard/");
+	#else
 		return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/")).string();
-    #endif
-    }
+	#endif
+	}
 
-    //--------------------------------------------------
-    of::filesystem::path & defaultWorkingDirectory(){
-            static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
-            return * defaultWorkingDirectory;
-    }
+	//--------------------------------------------------
+	of::filesystem::path & defaultWorkingDirectory(){
+			static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
+			return * defaultWorkingDirectory;
+	}
 
-    //--------------------------------------------------
-    of::filesystem::path & dataPathRoot(){
-            static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
-            return *dataPathRoot;
-    }
+	//--------------------------------------------------
+	of::filesystem::path & dataPathRoot(){
+			static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
+			return *dataPathRoot;
+	}
 }
 
 namespace of{
-    namespace priv{
-        void initfileutils(){
-            defaultWorkingDirectory() = of::filesystem::absolute(of::filesystem::current_path());
-        }
-    }
+	namespace priv{
+		void initfileutils(){
+			defaultWorkingDirectory() = of::filesystem::absolute(of::filesystem::current_path());
+		}
+	}
 }
 
 
@@ -599,11 +599,11 @@ bool ofFile::create(const of::filesystem::path & path){
 	auto oldpath = this->path();
 	success = open(path,ofFile::WriteOnly,binary);
 	close();
-	
+
 	if( !oldpath.empty() ){
 		open(oldpath,oldmode,binary);
 	}
-	
+
 	return success;
 }
 
@@ -817,21 +817,21 @@ bool ofFile::isHidden() const {
 void ofFile::setWriteable(bool flag){
 	try{
 #if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
-        if(flag){
-            of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::add_perms);
-        }else{
-            of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::remove_perms);
-        }
+		if(flag){
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::add_perms);
+		}else{
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::remove_perms);
+		}
 #else
-        if(flag){
-            of::filesystem::permissions(myFile,
-                                         of::filesystem::perms::owner_write,
-                                         of::filesystem::perm_options::add);
-        }else{
-            of::filesystem::permissions(myFile,
-                                         of::filesystem::perms::owner_write,
-                                         of::filesystem::perm_options::remove);
-        }
+		if(flag){
+			of::filesystem::permissions(myFile,
+										 of::filesystem::perms::owner_write,
+										 of::filesystem::perm_options::add);
+		}else{
+			of::filesystem::permissions(myFile,
+										 of::filesystem::perms::owner_write,
+										 of::filesystem::perm_options::remove);
+		}
 #endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
@@ -848,21 +848,21 @@ void ofFile::setReadOnly(bool flag){
 void ofFile::setReadable(bool flag){
 	try{
 #if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
-        if(flag){
-            of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::add_perms);
-        }else{
-            of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::remove_perms);
-        }
+		if(flag){
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::add_perms);
+		}else{
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::remove_perms);
+		}
 #else
-        if(flag){
-            of::filesystem::permissions(myFile,
-                                         of::filesystem::perms::owner_read,
-                                         of::filesystem::perm_options::add);
-        }else{
-            of::filesystem::permissions(myFile,
-                                         of::filesystem::perms::owner_read,
-                                         of::filesystem::perm_options::remove);
-        }
+		if(flag){
+			of::filesystem::permissions(myFile,
+										 of::filesystem::perms::owner_read,
+										 of::filesystem::perm_options::add);
+		}else{
+			of::filesystem::permissions(myFile,
+										 of::filesystem::perms::owner_read,
+										 of::filesystem::perm_options::remove);
+		}
 #endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set read permission on " << myFile << ": " << e.what();
@@ -874,21 +874,21 @@ void ofFile::setExecutable(bool flag){
 	try{
 #if OF_USING_STD_FS
 #   if OF_USE_EXPERIMENTAL_FS
-        if(flag){
-            of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::add_perms);
-        } else{
-            of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::remove_perms);
-        }
+		if(flag){
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::add_perms);
+		} else{
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::remove_perms);
+		}
 #   else
-        if(flag){
-            of::filesystem::permissions(myFile,
-                                         of::filesystem::perms::owner_exec,
-                                         of::filesystem::perm_options::add);
-        } else{
-            of::filesystem::permissions(myFile,
-                                         of::filesystem::perms::owner_exec,
-                                         of::filesystem::perm_options::remove);
-        }
+		if(flag){
+			of::filesystem::permissions(myFile,
+										 of::filesystem::perms::owner_exec,
+										 of::filesystem::perm_options::add);
+		} else{
+			of::filesystem::permissions(myFile,
+										 of::filesystem::perms::owner_exec,
+										 of::filesystem::perm_options::remove);
+		}
 #   endif
 #else
 		if(flag){
@@ -925,7 +925,7 @@ bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	
+
 	if(ofFile::doesFileExist(path, false)){
 		if(isFile()){
 			ofFile tmp;
@@ -976,7 +976,7 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, false)){
-	
+
 		if(isFile()){
 			ofFile tmp;
 			tmp.openFromCWD(path,ofFile::Reference);
@@ -1306,11 +1306,11 @@ bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData
 		}
 	}
 
-	//our path is bRelativeToData handled from above - so can't open via the constructor approach 
+	//our path is bRelativeToData handled from above - so can't open via the constructor approach
 	ofDirectory dir;
 	dir.openFromCWD(path);
 	dir.create(true);
-	
+
 	// Iterate through the source directory
 	for(of::filesystem::directory_iterator file(myDir); file != of::filesystem::directory_iterator(); ++file){
 		auto currentPath = of::filesystem::absolute(file->path());
@@ -1336,7 +1336,7 @@ bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData,
 	if(copyTo(path,bRelativeToData,overwrite)){
 		return remove(true);
 	}
-	
+
 	return false;
 }
 
@@ -1390,7 +1390,7 @@ std::size_t ofDirectory::listDir(){
 		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
 		return 0;
 	}
-	
+
 	of::filesystem::directory_iterator end_iter;
 	if ( of::filesystem::exists(myDir) && of::filesystem::is_directory(myDir)){
 		for( of::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
@@ -1412,7 +1412,7 @@ std::size_t ofDirectory::listDir(){
 		ofRemove(files, [&](ofFile & file){
 			return std::find(extensions.begin(), extensions.end(), ofToLower(file.getExtension())) == extensions.end();
 		});
-	}        
+	}
 
 	if(ofGetLogLevel() == OF_LOG_VERBOSE){
 		for(int i = 0; i < (int)size(); i++){
@@ -1534,7 +1534,7 @@ bool ofDirectory::removeDirectory(const of::filesystem::path& _path, bool delete
 	}else{
 		dirToRemove.openFromCWD(path,ofFile::Reference);
 	}
-	
+
 	return dirToRemove.remove(deleteIfNotEmpty);
 }
 
@@ -1545,15 +1545,15 @@ bool ofDirectory::createDirectory(const of::filesystem::path& _dirPath, bool bRe
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-	
+
 	// on OSX,of::filesystem::create_directories seems to return false *if* the path has folders that already exist
 	// and true if it doesn't
 	// so to avoid unnecessary warnings on OSX, we check if it exists here:
-	
+
 	bool bDoesExistAlready = ofDirectory::doesDirectoryExist(dirPath,false);
-	
+
 	if (!bDoesExistAlready){
-		
+
 		bool success = false;
 		try{
 			if(!recursive){
@@ -1567,7 +1567,7 @@ bool ofDirectory::createDirectory(const of::filesystem::path& _dirPath, bool bRe
 		}
 		return success;
 	}
-	
+
 	// no need to create it - it already exists.
 	return true;
 }
@@ -1660,7 +1660,7 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
-    auto path = _path.string();
+	auto path = _path.string();
 	auto sep = of::filesystem::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path[0]) != sep.string()){
@@ -1675,12 +1675,12 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 //of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
-    if(_path.string().empty()) return "";
+	if(_path.string().empty()) return "";
 	// FIXME: Remove .string() here and following
-    // return (of::filesystem::path(_path).make_preferred() / "");
-    return (of::filesystem::path(_path).make_preferred() / "").string();
+	// return (of::filesystem::path(_path).make_preferred() / "");
+	return (of::filesystem::path(_path).make_preferred() / "").string();
 #else
-    auto path = of::filesystem::path(_path).make_preferred();
+	auto path = of::filesystem::path(_path).make_preferred();
 	auto sep = of::filesystem::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path.string().back()) != sep.string()){
@@ -1713,27 +1713,27 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
-	
+
 	// FIXME: Remove .string() here and following
 	// FIXME: this seems over complicated and not useful anymore, using filesystem
 
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
-    if(path.string().empty()) return "";
-    return (path / "").string();
+	if(path.string().empty()) return "";
+	return (path / "").string();
 #else
-    auto sep = of::filesystem::path("/").make_preferred();
-    if(!path.empty() && ofToString(path.string().back())!=sep.string()){
-        return (path / sep).string();
-    }else{
-        return path.string();
-    }
+	auto sep = of::filesystem::path("/").make_preferred();
+	if(!path.empty() && ofToString(path.string().back())!=sep.string()){
+		return (path / sep).string();
+	}else{
+		return path.string();
+	}
 #endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: convert to of::filesystem::path
 string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
-    auto path = _path.string();
+	auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
@@ -1756,7 +1756,7 @@ string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRela
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getBaseName(const of::filesystem::path& filePath){
-	// FIXME: is this still useful?	
+	// FIXME: is this still useful?
 	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
@@ -1895,123 +1895,123 @@ std::string ofFilePath::makeRelative(const of::filesystem::path & from, const of
 
 //--------------------------------------------------
 void ofEnableDataPath(){
-    enableDataPath = true;
+	enableDataPath = true;
 }
 
 //--------------------------------------------------
 void ofDisableDataPath(){
-    enableDataPath = false;
+	enableDataPath = false;
 }
 
 //--------------------------------------------------
 bool ofRestoreWorkingDirectoryToDefault(){
-    try{
-        of::filesystem::current_path(defaultWorkingDirectory());
-        return true;
-    }catch(...){
-        return false;
-    }
+	try{
+		of::filesystem::current_path(defaultWorkingDirectory());
+		return true;
+	}catch(...){
+		return false;
+	}
 }
 
 //--------------------------------------------------
 void ofSetDataPathRoot(const of::filesystem::path& newRoot){
-    dataPathRoot() = newRoot;
+	dataPathRoot() = newRoot;
 }
 
 //--------------------------------------------------
 // MARK: - near future
 //of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
-    if (makeAbsolute && path.is_absolute()) {
+	if (makeAbsolute && path.is_absolute()) {
 		// MARK: need to convert to string? or automatic?
 //        return path;
 		return path.string();
-    }
-    
-    if (!enableDataPath) {
+	}
+
+	if (!enableDataPath) {
 		// MARK: need to convert to string? or automatic?
 //		return path;
 		return path.string();
-    }
+	}
 
-    bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
+	bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
 
-    // if our Current Working Directory has changed (e.g. file open dialog)
+	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
-    if (defaultWorkingDirectory() != of::filesystem::current_path()) {
-        // change our cwd back to where it was on app load
-        bool ret = ofRestoreWorkingDirectoryToDefault();
-        if(!ret){
-            ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
-        }
-    }
+	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
+		// change our cwd back to where it was on app load
+		bool ret = ofRestoreWorkingDirectoryToDefault();
+		if(!ret){
+			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
+		}
+	}
 #endif
 
-    // this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
-    const auto & dataPath = dataPathRoot();
-    of::filesystem::path inputPath(path);
-    of::filesystem::path outputPath;
+	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
+	const auto & dataPath = dataPathRoot();
+	of::filesystem::path inputPath(path);
+	of::filesystem::path outputPath;
 
-    // if path is already absolute, just return it
-    if (inputPath.is_absolute()) {
-        try {
-            auto outpath = of::filesystem::canonical(inputPath).make_preferred();
-            if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
+	// if path is already absolute, just return it
+	if (inputPath.is_absolute()) {
+		try {
+			auto outpath = of::filesystem::canonical(inputPath).make_preferred();
+			if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
 				return ofFilePath::addTrailingSlash(outpath);
-            }else{
-//                return outpath.string();
-				return outpath;
-            }
-        }
-        catch (...) {
+			}else{
+				return outpath.string();
+				// return outpath;
+			}
+		}
+		catch (...) {
 //			return inputPath.string();
-            return inputPath;
-        }
-    }
+			return inputPath;
+		}
+	}
 
-    // here we check whether path already refers to the data folder by looking for common elements
-    // if the path begins with the full contents of dataPathRoot then the data path has already been added
-    // we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
+	// here we check whether path already refers to the data folder by looking for common elements
+	// if the path begins with the full contents of dataPathRoot then the data path has already been added
+	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
 	auto dirDataPath = dataPath;
-    // also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-    dirDataPath = ofFilePath::addTrailingSlash(dataPath);
+	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
+	dirDataPath = ofFilePath::addTrailingSlash(dataPath);
 
-    auto relativeDirDataPath = ofFilePath::makeRelative(of::filesystem::current_path(), dataPath);
-    relativeDirDataPath = ofFilePath::addTrailingSlash(relativeDirDataPath);
+	auto relativeDirDataPath = ofFilePath::makeRelative(of::filesystem::current_path(), dataPath);
+	relativeDirDataPath = ofFilePath::addTrailingSlash(relativeDirDataPath);
 
 	// FIXME: this can be simplified without using string conversion
-    // if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath.string())!=0) {
-    if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
-        // inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
-        if(makeAbsolute){
-            outputPath = dirDataPath / inputPath;
-        }else{
-            outputPath = relativeDirDataPath / inputPath;
-        }
-    } else {
-        // inputPath already contains data path, so no need to change
-        outputPath = inputPath;
-    }
+	// if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath.string())!=0) {
+	if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
+		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
+		if(makeAbsolute){
+			outputPath = dirDataPath / inputPath;
+		}else{
+			outputPath = relativeDirDataPath / inputPath;
+		}
+	} else {
+		// inputPath already contains data path, so no need to change
+		outputPath = inputPath;
+	}
 
-    // finally, if we do want an absolute path and we don't already have one
-    if(makeAbsolute){
-        // then we return the absolute form of the path
-        try {
-            auto outpath = of::filesystem::canonical(of::filesystem::absolute(outputPath)).make_preferred();
-            if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
-                return ofFilePath::addTrailingSlash(outpath);
-            }else{
+	// finally, if we do want an absolute path and we don't already have one
+	if(makeAbsolute){
+		// then we return the absolute form of the path
+		try {
+			auto outpath = of::filesystem::canonical(of::filesystem::absolute(outputPath)).make_preferred();
+			if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
+				return ofFilePath::addTrailingSlash(outpath);
+			}else{
 //				return outpath;
-                return outpath.string();
-            }
-        }
-        catch (std::exception &) {
-//            return of::filesystem::absolute(outputPath).string();
-			return of::filesystem::absolute(outputPath);
-        }
-    }else{
-        // or output the relative path
+				return outpath.string();
+			}
+		}
+		catch (std::exception &) {
+		   return of::filesystem::absolute(outputPath).string();
+			// return of::filesystem::absolute(outputPath);
+		}
+	}else{
+		// or output the relative path
 //		return outputPath;
 		return outputPath.string();
-    }
+	}
 }

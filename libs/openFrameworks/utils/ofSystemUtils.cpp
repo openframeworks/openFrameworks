@@ -488,8 +488,10 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		auto locale = std::locale();
-		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,ofToDataPath(defaultPath).string());
-		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,ofToDataPath(defaultPath).string());
+		if(bFolderSelection)
+			results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, windowTitle, ofToDataPath(defaultPath).c_str());
+		else
+			results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN, windowTitle, ofToDataPath(defaultPath).c_str());
 		resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------
