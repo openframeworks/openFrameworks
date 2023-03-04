@@ -394,7 +394,8 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 				} else {
 					
 				}
-				encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory ).string();
+				// encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory ).string();
+				encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory );
 			}
 			std::string baseName = ofFilePath::getBaseName( data->settings.filePath );
 			std::string cacheIrrName = baseName+"_irr_"+ofToString(data->settings.irradianceRes,0)+".exr";

@@ -27,17 +27,19 @@ ofPath & ofxSvg::getPathAt(int n){
 	return paths[n];
 }
 
-void ofxSvg::load(std::string path){
-	path = ofToDataPath(path).string();
+void ofxSvg::load(of::filesystem::path fileName){
+	fileName = ofToDataPath(fileName);
 
-	if(path.compare("") == 0){
-		ofLogError("ofxSVG") << "load(): path does not exist: \"" << path << "\"";
+	// FIXME: I think this is the equivalent of .empty() which is simpler.
+	// maybe use file exists to check instead?
+	if(fileName.compare("") == 0){
+		ofLogError("ofxSVG") << "load(): path does not exist: \"" << fileName << "\"";
 		return;
 	}
 
-	ofBuffer buffer = ofBufferFromFile(path);
+	ofBuffer buffer = ofBufferFromFile(fileName);
 	
-	loadFromString(buffer.getText(), path);
+	loadFromString(buffer.getText(), fileName);
 	
 }
 

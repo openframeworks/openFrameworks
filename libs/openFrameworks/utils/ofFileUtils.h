@@ -300,8 +300,10 @@ public:
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-    static of::filesystem::path removeExt(const of::filesystem::path& filename);
-	
+//	MARK: - near future
+//	static of::filesystem::path removeExt(const of::filesystem::path& filename);
+	static std::string removeExt(const of::filesystem::path& filename);
+
 	/// Prepend path with a slash, ie. "images" -> "/images".
 	///
 	/// \param path file or directory path
@@ -312,8 +314,10 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path + slash
-    static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
-	
+//	MARK: - near future
+//	static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
+	static std::string addTrailingSlash(const of::filesystem::path& path);
+
 	/// Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
 	///
@@ -338,7 +342,8 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	static of::filesystem::path getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
+	// MARK - near future
+	// static of::filesystem::path getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
 	static std::string getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
@@ -379,7 +384,9 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-    static of::filesystem::path getEnclosingDirectory(const of::filesystem::path& filePath, bool bRelativeToData = true);
+//	MARK: - near future
+//	static of::filesystem::path getEnclosingDirectory(const of::filesystem::path& filePath, bool bRelativeToData = true);
+	static std::string getEnclosingDirectory(const of::filesystem::path& filePath, bool bRelativeToData = true);
 	
 	/// Create the enclosing parent directory of a path, ie.
 	/// "images" is the enclosing directory of "duck.jpg" = "images/duck.jpg".
@@ -411,7 +418,9 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-	static of::filesystem::path join(const of::filesystem::path& path1, const of::filesystem::path& path2);
+//	MARK: - near future
+//	static of::filesystem::path join(const of::filesystem::path& path1, const of::filesystem::path& path2);
+	static std::string join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 
 	/// Get the full path to the application's executable file.
 	///
@@ -428,7 +437,9 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-	static of::filesystem::path getCurrentExeDir();
+//	MARK: - near future
+//	static of::filesystem::path getCurrentExeDir();
+	static std::string getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
@@ -446,7 +457,9 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-    static of::filesystem::path makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
+	//	MARK: - near future
+//    static of::filesystem::path makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
+	static std::string makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
 };
 
 /// \class ofFile
@@ -559,8 +572,10 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	of::filesystem::path path() const;
-	
+//	MARK: - near future
+//	of::filesystem::path path() const;
+	std::string path() const;
+
 	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
 	///
@@ -585,13 +600,17 @@ public:
 	/// directory.
 	///
 	/// \returns current path's enclosing directory
-	of::filesystem::path getEnclosingDirectory() const;
+//	MARK: - near future
+//	of::filesystem::path getEnclosingDirectory() const;
+	std::string getEnclosingDirectory() const;
 	
 	/// \biref Get the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \returns current path as an absolute path
-	of::filesystem::path getAbsolutePath() const;
+//	MARK: - near future
+//	of::filesystem::path getAbsolutePath() const;
+	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -861,13 +880,17 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	of::filesystem::path path() const;
-	
+//	MARK: - near future
+//	of::filesystem::path path() const;
+	std::string path() const;
+
 	/// Get the absolute, full path of the directory,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
-	of::filesystem::path getAbsolutePath() const;
+//	MARK: - near future
+//	of::filesystem::path getAbsolutePath() const;
+	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -1204,7 +1227,9 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
-of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute=false);
+//	MARK: - near future
+//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute=false);
+std::string ofToDataPath(const of::filesystem::path & path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///

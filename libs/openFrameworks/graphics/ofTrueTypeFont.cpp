@@ -382,6 +382,7 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 	int fontID = index;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
+		// FIXME: update function linuxFontPathByName to use path instead of string
 		filename = linuxFontPathByName(fontname.string());
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
@@ -414,7 +415,7 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
 	}
 	FT_Error err;
-	err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
+	err = FT_New_Face( library, filename.c_str(), fontID, &face );
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";

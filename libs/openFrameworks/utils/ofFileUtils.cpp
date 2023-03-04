@@ -26,9 +26,11 @@ namespace{
     bool enableDataPath = true;
 
     //--------------------------------------------------
-	of::filesystem::path defaultDataPath(){
+//	MARK: - near future
+//	of::filesystem::path defaultDataPath(){
+	std::string defaultDataPath(){
     #if defined TARGET_OSX
-		return (ofFilePath::getCurrentExeDir() / "../../../data/").string();
+		return (ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/")).string();
     #elif defined TARGET_ANDROID
         return string("sdcard/");
     #else
@@ -598,8 +600,7 @@ bool ofFile::create(const of::filesystem::path & path){
 	success = open(path,ofFile::WriteOnly,binary);
 	close();
 	
-	// FIXME: why length?
-	if( oldpath.string().length() ){
+	if( !oldpath.empty() ){
 		open(oldpath,oldmode,binary);
 	}
 	
@@ -640,13 +641,17 @@ bool ofFile::exists() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFile::path() const {
-	return myFile;
+//	MARK: - near future
+//of::filesystem::path ofFile::path() const {
+//return myFile;
+std::string ofFile::path() const {
+	return myFile.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getExtension() const {
 	auto dotext = myFile.extension().string();
+	// FIXME: probably not needed;
 	if(!dotext.empty() && dotext.front()=='.'){
 		return std::string(dotext.begin()+1,dotext.end());
 	}else{
@@ -665,18 +670,17 @@ string ofFile::getBaseName() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFile::getEnclosingDirectory() const {
+//	MARK: - near future
+//of::filesystem::path ofFile::getEnclosingDirectory() const {
+std::string ofFile::getEnclosingDirectory() const {
 	return ofFilePath::getEnclosingDirectory(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFile::getAbsolutePath() const {
-	return ofFilePath::getAbsolutePath(path());
-}
-
-//------------------------------------------------------------------------------------------------------------
+//	MARK: - near future
+//of::filesystem::path ofFile::getAbsolutePath() const {
 std::string ofFile::getAbsolutePath() const {
-	return ofFilePath::getAbsolutePath(path()).string();
+	return ofFilePath::getAbsolutePath(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1197,16 +1201,27 @@ bool ofDirectory::exists() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofDirectory::path() const {
-	return myDir;
+//	MARK: - near future
+//of::filesystem::path ofDirectory::path() const {
+//	return myDir;
+std::string ofDirectory::path() const {
+	return myDir.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofDirectory::getAbsolutePath() const {
+//	MARK: - near future
+//of::filesystem::path ofDirectory::getAbsolutePath() const {
+//	try{
+//		return of::filesystem::canonical(of::filesystem::absolute(myDir));
+//	}catch(...){
+//		return of::filesystem::absolute(myDir);
+//	}
+//}
+std::string ofDirectory::getAbsolutePath() const {
 	try{
-		return of::filesystem::canonical(of::filesystem::absolute(myDir));
+		return of::filesystem::canonical(of::filesystem::absolute(myDir)).string();
 	}catch(...){
-		return of::filesystem::absolute(myDir);
+		return of::filesystem::absolute(myDir).string();
 	}
 }
 
@@ -1656,20 +1671,24 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
+//	MARK: - near future
+//of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
+std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
     if(_path.string().empty()) return "";
 	// FIXME: Remove .string() here and following
+    // return (of::filesystem::path(_path).make_preferred() / "");
     return (of::filesystem::path(_path).make_preferred() / "").string();
 #else
-    auto path = of::filesystem::path(_path).make_preferred().string();
+    auto path = of::filesystem::path(_path).make_preferred();
 	auto sep = of::filesystem::path("/").make_preferred();
 	if(!path.empty()){
-		if(ofToString(path.back()) != sep.string()){
-			path = (path / sep).string();
+		if(ofToString(path.string().back()) != sep.string()){
+			path = (path / sep);
 		}
 	}
-	return path;
+//	return path;
+	return path.string();
 #endif
 }
 
@@ -1681,9 +1700,12 @@ string ofFilePath::getFileExt(const of::filesystem::path& filename){
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: remove const and copy
-of::filesystem::path ofFilePath::removeExt(const of::filesystem::path& _filename){
+// MARK: - near future
+// of::filesystem::path ofFilePath::removeExt(const of::filesystem::path& _filename){
+std::string ofFilePath::removeExt(const of::filesystem::path& _filename){
 	auto filename = _filename;
-	return filename.replace_extension();
+//	return filename.replace_extension();
+	return filename.replace_extension().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1720,8 +1742,7 @@ string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: convert to of::filesystem::path
-// FIXME: is this still useful?
+// FIXME: is this still useful? if yes convert to of::filesystem::path
 string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRelativeToData){
 	auto filePath = _filePath;
 
@@ -1729,6 +1750,7 @@ string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRela
 		filePath = ofToDataPath(filePath);
 	}
 
+	// FIXME: this is probably over complicated
 	return of::filesystem::path(filePath).filename().string();
 }
 
@@ -1739,7 +1761,9 @@ string ofFilePath::getBaseName(const of::filesystem::path& filePath){
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
+//	MARK: - near future
+//of::filesystem::path ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
+std::string ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
 	auto fp = _filePath;
 	if(bRelativeToData){
 		fp = ofToDataPath(fp);
@@ -1753,18 +1777,21 @@ bool ofFilePath::createEnclosingDirectory(const of::filesystem::path& filePath, 
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
+// FIXME: - near future
+//of::filesystem::path ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
+std::string ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
 	}else{
 		try{
-			return of::filesystem::canonical(of::filesystem::absolute(path));
+//			return of::filesystem::canonical(of::filesystem::absolute(path));
+			return of::filesystem::canonical(of::filesystem::absolute(path)).string();
 		}catch(...){
-			return of::filesystem::absolute(path);
+//			return of::filesystem::absolute(path);
+			return of::filesystem::absolute(path).string();
 		}
 	}
 }
-
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFilePath::isAbsolute(const of::filesystem::path& path){
@@ -1777,9 +1804,14 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
-	// FIXME: remove when possible. helper function more complex than actual solution
-	return (path1 / path2);
+// MARK: - near future
+//of::filesystem::path ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
+//	// FIXME: deprecate when possible. helper function more complex than actual solution
+//	return (path1 / path2);
+//}
+std::string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
+	// FIXME: deprecate when possible. helper function more complex than actual solution
+	return (path1 / path2).string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1814,7 +1846,9 @@ string ofFilePath::getCurrentExePath(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFilePath::getCurrentExeDir(){
+// MARK: - near future
+//of::filesystem::path ofFilePath::getCurrentExeDir(){
+std::string ofFilePath::getCurrentExeDir(){
 	return ofFilePath::getEnclosingDirectory(ofFilePath::getCurrentExePath(), false);
 }
 
@@ -1833,7 +1867,9 @@ string ofFilePath::getUserHomeDir(){
 	#endif
 }
 
-of::filesystem::path ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
+// MARK: - near future
+//of::filesystem::path ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
+std::string ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
 	auto pathFrom = of::filesystem::absolute( from );
 	auto pathTo = of::filesystem::absolute( to );
 	of::filesystem::path ret;
@@ -1853,7 +1889,8 @@ of::filesystem::path ofFilePath::makeRelative(const of::filesystem::path & from,
 		}
 	}
 
-	return ret;
+//	return ret;
+	return ret.string();
 }
 
 //--------------------------------------------------
@@ -1882,13 +1919,19 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 }
 
 //--------------------------------------------------
-of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+// MARK: - near future
+//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
     if (makeAbsolute && path.is_absolute()) {
-        return path;
+		// MARK: need to convert to string? or automatic?
+//        return path;
+		return path.string();
     }
     
     if (!enableDataPath) {
-        return path;
+		// MARK: need to convert to string? or automatic?
+//		return path;
+		return path.string();
     }
 
     bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
@@ -1905,7 +1948,7 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
 #endif
 
     // this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
-    const auto  & dataPath = dataPathRoot();
+    const auto & dataPath = dataPathRoot();
     of::filesystem::path inputPath(path);
     of::filesystem::path outputPath;
 
@@ -1914,13 +1957,15 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
         try {
             auto outpath = of::filesystem::canonical(inputPath).make_preferred();
             if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
-                return ofFilePath::addTrailingSlash(outpath.string());
+				return ofFilePath::addTrailingSlash(outpath);
             }else{
-                return outpath.string();
+//                return outpath.string();
+				return outpath;
             }
         }
         catch (...) {
-            return inputPath.string();
+//			return inputPath.string();
+            return inputPath;
         }
     }
 
@@ -1931,10 +1976,12 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
     // also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
     dirDataPath = ofFilePath::addTrailingSlash(dataPath);
 
-    auto relativeDirDataPath = ofFilePath::makeRelative(of::filesystem::current_path().string(),dataPath.string());
-    relativeDirDataPath = ofFilePath::addTrailingSlash(relativeDirDataPath.string());
+    auto relativeDirDataPath = ofFilePath::makeRelative(of::filesystem::current_path(), dataPath);
+    relativeDirDataPath = ofFilePath::addTrailingSlash(relativeDirDataPath);
 
-    if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath.string())!=0) {
+	// FIXME: this can be simplified without using string conversion
+    // if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath.string())!=0) {
+    if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
         // inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
         if(makeAbsolute){
             outputPath = dirDataPath / inputPath;
@@ -1954,14 +2001,17 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
             if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
                 return ofFilePath::addTrailingSlash(outpath);
             }else{
+//				return outpath;
                 return outpath.string();
             }
         }
         catch (std::exception &) {
-            return of::filesystem::absolute(outputPath).string();
+//            return of::filesystem::absolute(outputPath).string();
+			return of::filesystem::absolute(outputPath);
         }
     }else{
         // or output the relative path
-        return outputPath.string();
+//		return outputPath;
+		return outputPath.string();
     }
 }

@@ -49,11 +49,12 @@ void ofxCvHaarFinder::setNeighbors(unsigned neighbors) {
 	this->neighbors = neighbors;
 }
 
+// FIXME: convert to of::filesystem::path
 void ofxCvHaarFinder::setup(std::string haarFile) {
 
 	this->haarFile = haarFile;
 
-	haarFile = ofToDataPath(haarFile).string();
+	haarFile = ofToDataPath(haarFile);
 #ifdef USE_OLD_CV
 	if(cascade != NULL)
 		cvReleaseHaarClassifierCascade(&cascade);

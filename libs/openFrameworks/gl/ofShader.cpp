@@ -302,7 +302,7 @@ bool ofShader::setupShaderFromFile(GLenum type, const of::filesystem::path & fil
 	auto absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
 	auto sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath.string());
+		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return false;
@@ -317,7 +317,8 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const of::filesystem::pat
 	auto absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
 	auto sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return Source{type, buffer.getText(), sourceDirectoryPath.string() };
+		// return Source{type, buffer.getText(), sourceDirectoryPath.string() };
+		return Source{type, buffer.getText(), sourceDirectoryPath };
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return Source{};
@@ -325,6 +326,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const of::filesystem::pat
 }
 
 //--------------------------------------------------------------
+// FIXME: change to of::filesystem
 bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
 	return setupShaderFromSource({type, source, sourceDirectoryPath});
 }
@@ -429,6 +431,7 @@ string ofShader::parseForIncludes( const string& source, const of::filesystem::p
 }
 
 //--------------------------------------------------------------
+// FIXME: update to use fs::path in vector and source
 string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const of::filesystem::path& sourceDirectoryPath) {
 
 	if ( level > 32 ) {
@@ -506,7 +509,8 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		// FIXME: Included can be a vector of of::filesystem::path in near future
 		include = ofFile(
 			sourceDirectoryPath / include
-		).getAbsolutePath().string();
+		// ).getAbsolutePath().string();
+		).getAbsolutePath();
 
 		included.push_back( include );
 
@@ -516,7 +520,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 			continue;
 		}
 
-		string currentDir = ofFile(include).getEnclosingDirectory().string();
+		auto currentDir = ofFile(include).getEnclosingDirectory();
 		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << endl;
 	}
 
