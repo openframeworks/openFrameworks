@@ -1,5 +1,4 @@
 #include "ofColor.h"
-#include "glm/gtx/wrap.hpp"
 
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray(limit() / 2, limit() / 2, limit() / 2);
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white(limit(), limit(), limit());
@@ -670,34 +669,3 @@ template class ofColor_<long>;
 template class ofColor_<unsigned long>;
 template class ofColor_<float>;
 template class ofColor_<double>;
-
-
-
-
-template<typename PixelType>
-template<typename SrcType>
-void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
-	const float srcMax = mom.limit();
-	const float dstMax = limit();
-	const float factor = dstMax / srcMax;
-
-	if(typeid(SrcType) == typeid(float) || typeid(SrcType) == typeid(double)) {
-		// coming from float we need a special case to clamp the values
-		for(int i = 0; i < 4; i++){
-			v[i] = glm::clamp(float(mom[i]), 0.f, 1.f) * factor;
-		}
-	} else{
-		// everything else is a straight scaling
-		for(int i = 0; i < 4; i++){
-			v[i] = mom[i] * factor;
-		}
-	}
-}
-
-template <typename PixelType>
-ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
-	return color * val;
-}
-
-
-
