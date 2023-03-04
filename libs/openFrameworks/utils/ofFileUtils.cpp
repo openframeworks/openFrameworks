@@ -675,6 +675,11 @@ of::filesystem::path ofFile::getAbsolutePath() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
+std::string ofFile::getAbsolutePath() const {
+	return ofFilePath::getAbsolutePath(path()).string();
+}
+
+//------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
 	auto perm = of::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
