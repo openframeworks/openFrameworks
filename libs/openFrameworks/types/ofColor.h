@@ -2,6 +2,7 @@
 
 
 #include "glm/gtx/wrap.hpp"
+#include <typeinfo>
 #include <iostream>
 #include <limits>
 
