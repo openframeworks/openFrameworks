@@ -990,7 +990,6 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 		
 		vector<ofFloatPixels> fpixels;
 		fpixels.assign(6, ofFloatPixels() );
-		bool bAllPixelsCreated = true;
 		
 		int shiftX = 0;
 		int shiftY = 0;
