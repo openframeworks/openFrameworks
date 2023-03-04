@@ -4,6 +4,10 @@
 //	Merged with code by Sam Kronick, James George and Elie Zananiri.
 //
 
+#include "ofConstants.h"
+
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
+
 #import "ofAVFoundationVideoPlayer.h"
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
@@ -1447,3 +1451,5 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 @end
+
+#endif // OF_VIDEO_PLAYER_AVFOUNDATION

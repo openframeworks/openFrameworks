@@ -5,6 +5,9 @@
  *      Author: arturo
  */
 
+#include "ofConstants.h"
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+
 #include "ofGstVideoGrabber.h"
 #include "ofPixels.h"
 
@@ -858,3 +861,5 @@ float ofGstVideoGrabber::getWidth() const {
 void ofGstVideoGrabber::close(){
 	videoUtils.close();
 }
+
+#endif // defined( TARGET_LINUX ) && defined (OF_USING_GTK)

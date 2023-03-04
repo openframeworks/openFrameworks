@@ -5,6 +5,11 @@
 //
 
 //--------------------------------------------------------------
+
+#include "ofConstants.h"
+
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
+
 #import "ofAVFoundationPlayer.h"
 #import "ofAVFoundationVideoPlayer.h"
 #include "ofRectangle.h"
@@ -777,3 +782,5 @@ const ofPixels & ofAVFoundationPlayer::getPixelsRef() const {
 ofTexture * ofAVFoundationPlayer::getTexture() {
     return getTexturePtr();
 }
+
+#endif // OF_VIDEO_PLAYER_AVFOUNDATION
