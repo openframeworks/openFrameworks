@@ -1,0 +1,5 @@
+
+add_subdirectory(guiExample)
+add_subdirectory(guiFromParametersExample)
+add_subdirectory(oscParametersReceiverExample)
+add_subdirectory(oscParametersSenderExample)

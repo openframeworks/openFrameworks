@@ -20,3 +20,7 @@ function(TEST_IF_DEFINED OUTPUT_VAR DEFINE)
     file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/try_compile)
 
 endfunction()
+
+function(copy_file_after_build TARGET_NAME SOURCE_FILE TARGET_FILE)
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_FILE}" "${TARGET_FILE}")
+endfunction()
