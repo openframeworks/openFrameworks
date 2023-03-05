@@ -143,3 +143,57 @@ foreach(LIB IN LISTS __SHARED_LIBS)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${LIB}" "${CMAKE_BINARY_DIR}/bin/$<IF:$<CONFIG:Debug>,Debug,Release>")
 endforeach()
+
+
+
+# And link to all the dependencies we depend upon
+target_link_libraries(openframeworks 
+    of::tess2 
+    of::cairo 
+    of::glm 
+    of::utf8
+    of::glfw
+    of::glut
+    of::fmod
+    of::FreeImage
+    of::rtAudio
+    of::videoInput
+    of::uriparser
+    of::openssl
+    of::curl
+    of::freetype
+    of::pugixml
+    of::json
+)
+
+# Conditional dependencies
+if(WIN32)       # Linking to WinAPI system libraries
+    target_link_libraries(openframeworks winmm ws2_32 wldap32 crypt32 dsound.lib)
+endif()
+
+if (OF_TARGET_ARCHITECTURE STREQUAL "msvc" OR OF_TARGET_ARCHITECTURE STREQUAL "macos")
+    target_link_libraries(openframeworks of::glew)
+endif()
+
+find_package(OpenGL)
+if (NOT OpenGL_FOUND)       # This should never be not found on windows
+    message(FATAL_ERROR "Dependency OpenGL not found. On Linux, please install it using your system's equivalent of 'sudo apt install libgl1-mesa-dev'")
+endif()
+target_include_directories(openframeworks PUBLIC ${OPENGL_INCLUDE_DIRS})
+target_link_libraries(openframeworks ${OPENGL_LIBRARIES})
+
+if (LINUX)
+    find_package(assimp)
+    if (NOT assimp_FOUND)
+        message(FATAL_ERROR "Dependency Assimp not found. Please install it using your system's equivalent of 'sudo apt install libassimp-dev'")
+    endif()
+    target_include_directories(openframeworks PUBLIC ${assimp_INCLUDE_DIRS})
+    target_link_libraries(openframeworks ${assimp_LIBRARIES})
+
+    find_package(OpenCV)
+    if (NOT OpenCV_FOUND)
+        message(FATAL_ERROR "Dependency OpenCV not found. Please install it using your system's equivalent of 'sudo apt install libopencv-dev'")
+    endif()
+    target_include_directories(openframeworks PUBLIC ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(openframeworks ${OpenCV_LIBS})
+endif()

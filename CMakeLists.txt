@@ -58,37 +58,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set_target_properties(openframeworks PROPERTIES FOLDER "openframeworks")
 
 # This downloads and configures the dependencies for us
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_deps.cmake)
-
-# And link to all the dependencies we depend upon
-target_link_libraries(openframeworks 
-    of::glew 
-    of::tess2 
-    of::cairo 
-    of::glm 
-    of::utf8
-    of::glfw
-    of::glut
-    of::fmod
-    of::FreeImage
-    of::rtAudio
-    of::videoInput
-    of::uriparser
-    of::openssl
-    of::curl
-    of::freetype
-    of::pugixml
-    of::json
-)
-
-if(WIN32)       # Linking to WinAPI system libraries
-    target_link_libraries(openframeworks winmm ws2_32 wldap32 crypt32 dsound.lib)
-endif()
-
-# Other dependencies
-find_package(OpenGL)
-target_include_directories(openframeworks PUBLIC ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(openframeworks ${OPENGL_LIBRARIES})
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_and_link_deps.cmake)
 
 add_subdirectory(addons)
 
