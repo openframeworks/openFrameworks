@@ -1964,8 +1964,8 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 			}
 		}
 		catch (...) {
-//			return inputPath.string();
-			return inputPath;
+			return inputPath.string();
+			// return inputPath;
 		}
 	}
 
