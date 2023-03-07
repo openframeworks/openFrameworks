@@ -39,7 +39,7 @@ namespace{
 		return string("sdcard/");
 	#else
 		try{
-            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
+            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
         }catch(...){
 			return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/")).string();
 		}
