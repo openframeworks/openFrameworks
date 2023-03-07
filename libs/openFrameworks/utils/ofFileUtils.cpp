@@ -1927,7 +1927,8 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 }
 
 //--------------------------------------------------
-of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 // if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
@@ -1938,17 +1939,18 @@ of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAb
 		}
 	}
 #endif
-
+	// FIXME: change to direct returns when return type is fs::path
+	of::filesystem::path outPath;
 	const auto & dataPath = dataPathRoot();
 	if (makeAbsolute) {
-		return dataPath / path;
+		outPath = dataPath / path;
 	} else {
 		if (!path.is_absolute()) {
 			auto exeDir = ofFilePath::getCurrentExeDir();
-			auto result = of::filesystem::relative(dataPath / path, ofFilePath::getCurrentExeDir());
-			return result;
+			outPath = of::filesystem::relative(dataPath / path, ofFilePath::getCurrentExeDir());
 		} else {
-			return path;
+			outPath = path;
 		}
 	}
+	return outPath.string();
 }
