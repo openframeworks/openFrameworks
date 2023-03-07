@@ -991,7 +991,7 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 		
 		vector<ofFloatPixels> fpixels;
 		fpixels.assign(6, ofFloatPixels() );
-		bool bAllPixelsCreated = true;
+		// bool bAllPixelsCreated = true;
 		
 		int shiftX = 0;
 		int shiftY = 0;
@@ -1028,7 +1028,7 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 				
 				tfbo.readToPixels(fpixels[i]);
 				if( fpixels[i].getWidth() < 1 || fpixels[i].getHeight() < 1 ) {
-					bAllPixelsCreated = false;
+					// bAllPixelsCreated = false;
 				} else {
 					cacheFbo.begin();
 					tfbo.getTexture().draw( (i%3) * mipWidth + shiftX, floor(i/3) * mipWidth + shiftY, mipWidth, mipWidth );
