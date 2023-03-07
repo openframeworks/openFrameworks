@@ -1382,7 +1382,7 @@ void ofDirectory::allowExt(const std::string& extension){
 }
 
 //------------------------------------------------------------------------------------------------------------
-std::size_t ofDirectory::listDir(const std::string& directory){
+std::size_t ofDirectory::listDir(const of::filesystem::path & directory){
 	open(directory);
 	return listDir();
 }
