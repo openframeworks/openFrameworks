@@ -316,7 +316,7 @@ public:
 	/// \returns path + slash
 //	MARK: - near future
 //	static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
-	static std::string addTrailingSlash(const of::filesystem::path& path);
+//	static std::string addTrailingSlash(const of::filesystem::path& path);
 
 	/// Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
@@ -437,9 +437,7 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-//	MARK: - near future
-//	static of::filesystem::path getCurrentExeDir();
-	static std::string getCurrentExeDir();
+	static of::filesystem::path getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
@@ -1228,8 +1226,8 @@ void ofDisableDataPath();
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
 //	MARK: - near future
-//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute=false);
-std::string ofToDataPath(const of::filesystem::path & path, bool absolute=false);
+of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute=false);
+//std::string ofToDataPath(const of::filesystem::path & path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///

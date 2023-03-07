@@ -30,19 +30,13 @@ namespace{
 //	of::filesystem::path defaultDataPath(){
 	std::string defaultDataPath(){
 	#if defined TARGET_OSX
-		try{
-			return of::filesystem::canonical(ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/")).string();
-		}catch(...){
-			return (ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/")).string();
-		}
+		// three levels up because is a directory with path App.app/Contents/MacOS/App
+		return (ofFilePath::getCurrentExeDir().parent_path().parent_path().parent_path()
+				/ "data/").string();
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
 	#else
-		try{
-            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
-        }catch(...){
-			return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/")).string();
-		}
+		return (ofFilePath::getCurrentExeDir() / "data/").string();
 	#endif
 	}
 
@@ -1681,24 +1675,24 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 //------------------------------------------------------------------------------------------------------------
 //	MARK: - near future
 //of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
-std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
-#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
-	if(_path.string().empty()) return "";
-	// FIXME: Remove .string() here and following
-	// return (of::filesystem::path(_path).make_preferred() / "");
-	return (of::filesystem::path(_path).make_preferred() / "").string();
-#else
-	auto path = of::filesystem::path(_path).make_preferred();
-	auto sep = of::filesystem::path("/").make_preferred();
-	if(!path.empty()){
-		if(ofToString(path.string().back()) != sep.string()){
-			path = (path / sep);
-		}
-	}
-//	return path;
-	return path.string();
-#endif
-}
+//std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
+//#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
+//	if(_path.string().empty()) return "";
+//	// FIXME: Remove .string() here and following
+//	// return (of::filesystem::path(_path).make_preferred() / "");
+//	return (of::filesystem::path(_path).make_preferred() / "").string();
+//#else
+//	auto path = of::filesystem::path(_path).make_preferred();
+//	auto sep = of::filesystem::path("/").make_preferred();
+//	if(!path.empty()){
+//		if(ofToString(path.string().back()) != sep.string()){
+//			path = (path / sep);
+//		}
+//	}
+////	return path;
+//	return path.string();
+//#endif
+//}
 
 
 //------------------------------------------------------------------------------------------------------------
@@ -1776,7 +1770,9 @@ std::string ofFilePath::getEnclosingDirectory(const of::filesystem::path & _file
 	if(bRelativeToData){
 		fp = ofToDataPath(fp);
 	}
-	return addTrailingSlash(fp.parent_path());
+	
+//	return addTrailingSlash(fp.parent_path());
+	return fp.parent_path();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1854,10 +1850,9 @@ string ofFilePath::getCurrentExePath(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future
-//of::filesystem::path ofFilePath::getCurrentExeDir(){
-std::string ofFilePath::getCurrentExeDir(){
-	return ofFilePath::getEnclosingDirectory(ofFilePath::getCurrentExePath(), false);
+of::filesystem::path ofFilePath::getCurrentExeDir(){
+	auto exePath = of::filesystem::path(getCurrentExePath());
+	return exePath.parent_path();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1927,22 +1922,8 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 }
 
 //--------------------------------------------------
-// MARK: - near future
-//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
-std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
-	if (makeAbsolute && path.is_absolute()) {
-//		return path;
-		return path.string();
-	}
-
-	if (!enableDataPath) {
-//		return path;
-		return path.string();
-	}
-
-	bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
-
-	// if our Current Working Directory has changed (e.g. file open dialog)
+of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
 		// change our cwd back to where it was on app load
@@ -1953,71 +1934,16 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 	}
 #endif
 
-	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
 	const auto & dataPath = dataPathRoot();
-	of::filesystem::path inputPath(path);
-	of::filesystem::path outputPath;
-
-	// if path is already absolute, just return it
-	if (inputPath.is_absolute()) {
-		try {
-			auto outpath = of::filesystem::canonical(inputPath).make_preferred();
-			if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
-				return ofFilePath::addTrailingSlash(outpath);
-			}else{
-				return outpath.string();
-				// return outpath;
-			}
-		}
-		catch (...) {
-			return inputPath.string();
-			// return inputPath;
-		}
-	}
-
-	// here we check whether path already refers to the data folder by looking for common elements
-	// if the path begins with the full contents of dataPathRoot then the data path has already been added
-	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-	auto dirDataPath = dataPath;
-	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-	dirDataPath = ofFilePath::addTrailingSlash(dataPath);
-
-	auto relativeDirDataPath = ofFilePath::makeRelative(of::filesystem::current_path(), dataPath);
-	relativeDirDataPath = ofFilePath::addTrailingSlash(relativeDirDataPath);
-
-	// FIXME: this can be simplified without using string conversion
-	// if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath.string())!=0) {
-	if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
-		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
-		if(makeAbsolute){
-			outputPath = dirDataPath / inputPath;
-		}else{
-			outputPath = relativeDirDataPath / inputPath;
-		}
+	if (makeAbsolute) {
+		return dataPath / path;
 	} else {
-		// inputPath already contains data path, so no need to change
-		outputPath = inputPath;
-	}
-
-	// finally, if we do want an absolute path and we don't already have one
-	if(makeAbsolute){
-		// then we return the absolute form of the path
-		try {
-			auto outpath = of::filesystem::canonical(of::filesystem::absolute(outputPath)).make_preferred();
-			if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
-				return ofFilePath::addTrailingSlash(outpath);
-			}else{
-//				return outpath;
-				return outpath.string();
-			}
+		if (!path.is_absolute()) {
+			auto exeDir = ofFilePath::getCurrentExeDir();
+			auto result = of::filesystem::relative(dataPath / path, ofFilePath::getCurrentExeDir());
+			return result;
+		} else {
+			return path;
 		}
-		catch (std::exception &) {
-		   return of::filesystem::absolute(outputPath).string();
-			// return of::filesystem::absolute(outputPath);
-		}
-	}else{
-		// or output the relative path
-//		return outputPath;
-		return outputPath.string();
 	}
 }
