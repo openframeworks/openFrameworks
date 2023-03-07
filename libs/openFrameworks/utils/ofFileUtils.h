@@ -1017,7 +1017,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns number of paths found
-	std::size_t listDir(const std::string& path);
+	std::size_t listDir(const of::filesystem::path & path);
 	
 	/// Open and read the contents of the current directory.
 	///
