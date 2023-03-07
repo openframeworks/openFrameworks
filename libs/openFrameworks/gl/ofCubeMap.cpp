@@ -881,7 +881,7 @@ void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, std::
 }
 
 //--------------------------------------------------------------
-bool ofCubeMap::_loadIrradianceMap(std::string aCachePath) {
+bool ofCubeMap::_loadIrradianceMap(of::filesystem::path aCachePath) {
 	
 	if(data->bIrradianceAllocated) {
 		return false;
@@ -1098,7 +1098,7 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 }
 
 //--------------------------------------------------------------
-bool ofCubeMap::_loadPrefilterMap( std::string aCachePath ) {
+bool ofCubeMap::_loadPrefilterMap( of::filesystem::path aCachePath ) {
 	if(data->bPreFilteredMapAllocated) {
 		return false;
 	}

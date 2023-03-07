@@ -126,10 +126,10 @@ protected:
 	void _equiRectToCubeMap( GLuint& aCubeTexId, ofTexture& aSrcTex, int aSrcRes, bool aBConvertToNonFloat );
 	
 	void _createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, std::string aCachePath);
-	bool _loadIrradianceMap(std::string aCachePath);
+	bool _loadIrradianceMap( of::filesystem::path aCachePath );
 	
 	void _createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool aBMakeCache, std::string aCachePath);
-	bool _loadPrefilterMap( std::string aCachePath );
+	bool _loadPrefilterMap( of::filesystem::path aCachePath );
 	
 	static void _createBrdfLUT();
 	

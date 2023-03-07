@@ -26,18 +26,23 @@ namespace{
 	bool enableDataPath = true;
 
 	//--------------------------------------------------
-//	MARK: - near future
-//	of::filesystem::path defaultDataPath(){
-	std::string defaultDataPath(){
-	#if defined TARGET_OSX
-		// three levels up because is a directory with path App.app/Contents/MacOS/App
-		return (ofFilePath::getCurrentExeDir().parent_path().parent_path().parent_path()
-				/ "data/").string();
-	#elif defined TARGET_ANDROID
-		return string("sdcard/");
-	#else
-		return (ofFilePath::getCurrentExeDir() / "data/").string();
-	#endif
+	of::filesystem::path defaultDataPath(){
+#if defined TARGET_OSX
+		
+	// three levels up because is a directory with path App.app/Contents/MacOS/App
+	of::filesystem::path data = ofFilePath::getCurrentExeDir().parent_path().parent_path().parent_path() / "data";
+	if (!of::filesystem::is_directory(data)) {
+		// bundle data folder inside app
+		// one level up : MacOS/../Resources/data
+		data = ofFilePath::getCurrentExeDir().parent_path() / "Resources/data";
+	}
+	return data;
+	
+#elif defined TARGET_ANDROID
+	return { "sdcard/" };
+#else
+	return (ofFilePath::getCurrentExeDir() / "data");
+#endif
 	}
 
 	//--------------------------------------------------
