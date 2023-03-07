@@ -167,7 +167,7 @@ public:
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
 
-	virtual bool load(const std::filesystem::path& fileName, bool stream = false)=0;
+	virtual bool load(const of::filesystem::path& fileName, bool stream = false)=0;
 	virtual void unload()=0;
 	virtual void play() = 0;
 	virtual void stop() = 0;

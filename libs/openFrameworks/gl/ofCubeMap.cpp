@@ -394,6 +394,7 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 				} else {
 					
 				}
+				// encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory ).string();
 				encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory );
 			}
 			std::string baseName = ofFilePath::getBaseName( data->settings.filePath );

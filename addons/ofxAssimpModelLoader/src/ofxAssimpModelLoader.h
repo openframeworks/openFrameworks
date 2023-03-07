@@ -19,6 +19,7 @@
 #include "ofxAssimpTexture.h"
 #include "ofMesh.h"
 #include "ofMath.h"
+#include "ofConstants.h"
 
 #include <assimp/Importer.hpp>
 
@@ -177,7 +178,10 @@ class ofxAssimpModelLoader{
 		glm::mat4 modelMatrix;
 
 		std::vector<ofLight> lights;
-		std::map<std::string,std::shared_ptr<ofTexture>> textures;
+		std::map<
+			of::filesystem::path,
+			std::shared_ptr<ofTexture>
+		> textures;
 		std::vector<ofxAssimpMeshHelper> modelMeshes;
 		std::vector<ofxAssimpAnimation> animations;
 		int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.
