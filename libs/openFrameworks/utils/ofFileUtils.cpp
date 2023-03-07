@@ -30,7 +30,11 @@ namespace{
 //	of::filesystem::path defaultDataPath(){
 	std::string defaultDataPath(){
 	#if defined TARGET_OSX
-		return (ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/")).string();
+		try{
+			return of::filesystem::canonical(ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/")).string();
+		}catch(...){
+			return (ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/")).string();
+		}
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
 	#else
