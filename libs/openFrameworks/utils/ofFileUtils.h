@@ -314,9 +314,8 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path + slash
-//	MARK: - near future
-//	static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
-//	static std::string addTrailingSlash(const of::filesystem::path& path);
+//	MARK: - remove after fs transition
+	static std::string addTrailingSlash(const of::filesystem::path& path);
 
 	/// Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
@@ -1015,7 +1014,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns number of paths found
-	std::size_t listDir(const std::string& path);
+	std::size_t listDir(const of::filesystem::path & path);
 	
 	/// Open and read the contents of the current directory.
 	///

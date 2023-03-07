@@ -1381,7 +1381,7 @@ void ofDirectory::allowExt(const std::string& extension){
 }
 
 //------------------------------------------------------------------------------------------------------------
-std::size_t ofDirectory::listDir(const std::string& directory){
+std::size_t ofDirectory::listDir(const of::filesystem::path & directory){
 	open(directory);
 	return listDir();
 }
@@ -1678,26 +1678,25 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
-//std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
-//#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
-//	if(_path.string().empty()) return "";
-//	// FIXME: Remove .string() here and following
-//	// return (of::filesystem::path(_path).make_preferred() / "");
-//	return (of::filesystem::path(_path).make_preferred() / "").string();
-//#else
-//	auto path = of::filesystem::path(_path).make_preferred();
-//	auto sep = of::filesystem::path("/").make_preferred();
-//	if(!path.empty()){
-//		if(ofToString(path.string().back()) != sep.string()){
-//			path = (path / sep);
-//		}
-//	}
-////	return path;
-//	return path.string();
-//#endif
-//}
+//	MARK: - Remove this function after FS transition
+std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
+#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
+	if(_path.string().empty()) return "";
+	// FIXME: Remove .string() here and following
+	// return (of::filesystem::path(_path).make_preferred() / "");
+	return (of::filesystem::path(_path).make_preferred() / "").string();
+#else
+	auto path = of::filesystem::path(_path).make_preferred();
+	auto sep = of::filesystem::path("/").make_preferred();
+	if(!path.empty()){
+		if(ofToString(path.string().back()) != sep.string()){
+			path = (path / sep);
+		}
+	}
+//	return path;
+	return path.string();
+#endif
+}
 
 
 //------------------------------------------------------------------------------------------------------------
