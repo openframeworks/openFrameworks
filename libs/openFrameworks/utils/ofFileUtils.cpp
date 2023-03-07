@@ -38,20 +38,24 @@ namespace{
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
 	#else
-		return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/")).string();
+		try{
+            return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred().string();
+        }catch(...){
+			return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/")).string();
+		}
 	#endif
 	}
 
 	//--------------------------------------------------
 	of::filesystem::path & defaultWorkingDirectory(){
-			static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
-			return * defaultWorkingDirectory;
+		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
+		return * defaultWorkingDirectory;
 	}
 
 	//--------------------------------------------------
 	of::filesystem::path & dataPathRoot(){
-			static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
-			return *dataPathRoot;
+		static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
+		return *dataPathRoot;
 	}
 }
 
@@ -1927,13 +1931,11 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 //of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 	if (makeAbsolute && path.is_absolute()) {
-		// MARK: need to convert to string? or automatic?
-//        return path;
+//		return path;
 		return path.string();
 	}
 
 	if (!enableDataPath) {
-		// MARK: need to convert to string? or automatic?
 //		return path;
 		return path.string();
 	}
