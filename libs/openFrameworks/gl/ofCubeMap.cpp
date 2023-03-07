@@ -740,7 +740,7 @@ void ofCubeMap::_equiRectToCubeMap( GLuint& aCubeTexId, ofTexture& aSrcTex, int 
 }
 
 //--------------------------------------------------------------
-void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, std::string aCachePath) {
+void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, of::filesystem::path aCachePath) {
 	if(data->bIrradianceAllocated) {
 		return;
 	}
@@ -940,7 +940,7 @@ bool ofCubeMap::_loadIrradianceMap(of::filesystem::path aCachePath) {
 }
 
 //--------------------------------------------------------------
-void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool aBMakeCache, std::string aCachePath) {
+void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool aBMakeCache, of::filesystem::path aCachePath) {
 	if(data->bPreFilteredMapAllocated) {
 		return;
 	}
