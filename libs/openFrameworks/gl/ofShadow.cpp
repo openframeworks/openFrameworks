@@ -1035,7 +1035,7 @@ void ofShadow::_allocateFbo() {
 		}
 		#endif
 		
-		#ifdef GL_CLAMP_TO_BORDER && !defined(TARGET_EMSCRIPTEN)
+		#if defined(GL_CLAMP_TO_BORDER) && !defined(TARGET_EMSCRIPTEN)
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		float borderColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
