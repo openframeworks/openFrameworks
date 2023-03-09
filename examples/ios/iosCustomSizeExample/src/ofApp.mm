@@ -3,9 +3,6 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
-	
 	ofBackground(70);
 }
 
@@ -31,18 +28,18 @@ void ofApp::draw(){
 	ofPushMatrix();
 	{
 		ofTranslate(p1.x, p1.y);
-		ofRotate(45);
+		ofRotateDeg(45);
 		ofDrawLine(0, 0, 0, -10);
-		ofRotate(90);
+		ofRotateDeg(90);
 		ofDrawLine(0, 0, 0, -10);
 	}
 	ofPopMatrix();
 	ofPushMatrix();
 	{
 		ofTranslate(p2.x, p2.y);
-		ofRotate(-45);
+		ofRotateDeg(-45);
 		ofDrawLine(0, 0, 0, -10);
-		ofRotate(-90);
+		ofRotateDeg(-90);
 		ofDrawLine(0, 0, 0, -10);
 	}
 	ofPopMatrix();
@@ -58,18 +55,18 @@ void ofApp::draw(){
 	ofPushMatrix();
 	{
 		ofTranslate(p1.x, p1.y);
-		ofRotate(-135);
+		ofRotateDeg(-135);
 		ofDrawLine(0, 0, 0, -10);
-		ofRotate(-90);
+		ofRotateDeg(-90);
 		ofDrawLine(0, 0, 0, -10);
 	}
 	ofPopMatrix();
 	ofPushMatrix();
 	{
 		ofTranslate(p2.x, p2.y);
-		ofRotate(-45);
+		ofRotateDeg(-45);
 		ofDrawLine(0, 0, 0, -10);
-		ofRotate(-270);
+		ofRotateDeg(-270);
 		ofDrawLine(0, 0, 0, -10);
 	}
 	ofPopMatrix();
