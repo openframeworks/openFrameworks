@@ -1,12 +1,11 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){	
-
+void ofApp::setup(){
+	
 	ofSetFrameRate(60);
 	ofBackground(255, 255, 0);
 	
-
 	coreMotion.setupMagnetometer();
 	coreMotion.setupGyroscope();
 	coreMotion.setupAccelerometer();
@@ -15,22 +14,20 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
 	coreMotion.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
 	
 	// attitude- quaternion
 	ofDrawBitmapStringHighlight("Attitude: (quaternion x,y,z,w)", 20, 25);
 	ofSetColor(0);
 	glm::quat quat = coreMotion.getQuaternion();
-	ofDrawBitmapString(ofToString(quat.x(),3), 20, 50);
-	ofDrawBitmapString(ofToString(quat.y(),3), 90, 50);
-	ofDrawBitmapString(ofToString(quat.z(),3), 160, 50);
-	ofDrawBitmapString(ofToString(quat.w(),3), 230, 50);
+	ofDrawBitmapString(ofToString(quat.x,3), 20, 50);
+	ofDrawBitmapString(ofToString(quat.y,3), 90, 50);
+	ofDrawBitmapString(ofToString(quat.z,3), 160, 50);
+	ofDrawBitmapString(ofToString(quat.w,3), 230, 50);
 	
 	// attitude- roll,pitch,yaw
 	ofDrawBitmapStringHighlight("Attitude: (roll,pitch,yaw)", 20, 75);
@@ -63,17 +60,13 @@ void ofApp::draw(){
 	ofDrawBitmapString(ofToString(m.y,3), 120, 250);
 	ofDrawBitmapString(ofToString(m.z,3), 220, 250);
 	
-	
-	
-	
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
 	
 	// 1) quaternion rotations
-	float angle;
-	glm::vec3 axis;//(0,0,1.0f);
-	quat.getRotate(angle, axis);
-	ofRotate(angle, axis.x, -axis.y, axis.z); // rotate with quaternion
+	auto angle = glm::angle(quat);
+	auto axis = glm::axis(quat);
+	ofRotateRad(angle, axis.x, -axis.y, axis.z); // rotate with quaternion
 	
 	// 2) rotate by multiplying matrix directly
 	//ofMatrix4x4 mat = coreMotion.getRotationMatrix();
@@ -96,27 +89,27 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-
+	
 	// resets attitude to current
 	coreMotion.resetAttitude();
 }
@@ -128,20 +121,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-
+	
 }

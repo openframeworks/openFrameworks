@@ -4,9 +4,6 @@
 void ofApp::setup(){
 	
 	ofSetOrientation(OF_ORIENTATION_DEFAULT);
-		
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
 	
 	keyboard = new ofxiOSKeyboard(2,40,320,32);
 	keyboard->setVisible(true);
