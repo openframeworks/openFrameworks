@@ -1,12 +1,11 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){	
-
+void ofApp::setup(){
+	
 	ofSetFrameRate(60);
 	ofBackground(255, 255, 0);
 	
-
 	coreMotion.setupMagnetometer();
 	coreMotion.setupGyroscope();
 	coreMotion.setupAccelerometer();
@@ -15,13 +14,11 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
 	coreMotion.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
 	
 	// attitude- quaternion
 	ofDrawBitmapStringHighlight("Attitude: (quaternion x,y,z,w)", 20, 25);
@@ -63,9 +60,6 @@ void ofApp::draw(){
 	ofDrawBitmapString(ofToString(m.y,3), 120, 250);
 	ofDrawBitmapString(ofToString(m.z,3), 220, 250);
 	
-	
-	
-	
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
 	
@@ -95,27 +89,27 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-
+	
 	// resets attitude to current
 	coreMotion.resetAttitude();
 }
@@ -127,20 +121,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-
+	
 }
