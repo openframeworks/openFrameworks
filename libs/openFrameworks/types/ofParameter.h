@@ -608,8 +608,8 @@ private:
 		,serializable(true){}
 
 		Value(ParameterType v)
-		:value(v)
-        ,init(v)
+		:init(v)
+		,value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
 		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
@@ -634,8 +634,7 @@ private:
 		,serializable(true){}
 
 		std::string name;
-		ParameterType value;
-		ParameterType min, max, init;
+		ParameterType init, value, min, max;
 		ofEvent<ParameterType> changedE;
 		bool bInNotify;
 		bool serializable;
