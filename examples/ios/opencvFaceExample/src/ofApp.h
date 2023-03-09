@@ -5,7 +5,7 @@
 #include "ofxOpenCv.h"
 
 //UNCOMMENT TO USE CAMERA. CAMERA ONLY WORKS ON DEVICE NOT SIMULATOR
-//#define USE_CAMERA
+#define USE_CAMERA
 
 class ofApp : public ofxiOSApp{
 	
