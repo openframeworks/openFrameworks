@@ -22,6 +22,9 @@ using std::istream;
 using std::ostream;
 using std::ios;
 
+using std::cout;
+using std::endl;
+
 namespace{
 	bool enableDataPath = true;
 
@@ -558,7 +561,9 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::open(const of::filesystem::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = ofToDataPath(_path);
+	myFile = ofToDataPath(_path, true);
+	cout << "offile::open=" << _path << endl;
+	cout << "myFile=" << myFile << endl;
 	return openStream(_mode, binary);
 }
 
@@ -1165,9 +1170,15 @@ ofDirectory::ofDirectory(const of::filesystem::path & path){
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(const of::filesystem::path & path){
-	originalDirectory = ofFilePath::getPathForDirectory(path.string());
+	using std::cout;
+	using std::endl;
+//	originalDirectory = ofFilePath::getPathForDirectory(path.string());
+//	cout << "ofDirectory path " << path << endl;
+//	cout << "ofDirectory originalDirectory " << originalDirectory << endl;
+	
 	files.clear();
-	myDir = of::filesystem::path(ofToDataPath(originalDirectory));
+	myDir = of::filesystem::path(ofToDataPath(path));
+	cout << "ofDirectory myDir " << myDir << endl;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1185,7 +1196,7 @@ void ofDirectory::close(){
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::create(bool recursive){
 
-	if(!myDir.string().empty()){
+	if(!myDir.empty()){
 		try{
 			if(recursive){
 				of::filesystem::create_directories(myDir);
@@ -1339,12 +1350,40 @@ bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData
 }
 
 //------------------------------------------------------------------------------------------------------------
+using std::cout;
+using std::endl;
 bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData, bool overwrite){
-	if(copyTo(path,bRelativeToData,overwrite)){
-		return remove(true);
+	if (of::filesystem::exists(path)) {
+		cout << "exists " << path << endl;
+		if (overwrite) {
+			of::filesystem::remove_all(path);
+			cout << "remove all " << path << endl;
+		}
+		else {
+			return false;
+		}
 	}
+	const of::filesystem::path & old = myDir;
+//	std::error_code ec;
+	try {
+		of::filesystem::rename(old, path);
+	} catch (of::filesystem::filesystem_error const& ex) {
+		return false;
+	}
+	myDir = path;
+	return true;
 
-	return false;
+	// error_code 0 means success. any other result will return false;
+//	std::cout << ec.value() << " " << ec.message() << std::endl;
+//	if (ec.empty()) {
+//	}
+//	return ec.empty();
+	
+//	if(copyTo(path,bRelativeToData,overwrite)){
+//		return remove(true);
+//	}
+//
+//	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1928,6 +1967,7 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 //--------------------------------------------------
 //of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+
 // if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
@@ -1939,17 +1979,45 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 	}
 #endif
 	// FIXME: change to direct returns when return type is fs::path
+//	of::filesystem::path outPath;
+//	const auto & dataPath = dataPathRoot();
+//	if (makeAbsolute) {
+////		cout << dataPath << endl;
+////		cout << path << endl;
+////		cout << (dataPath / path) << endl;
+////		outPath = of::filesystem::absolute(dataPath / path);
+//		if (path.is_absolute()) {
+//			outPath = path;
+//		} else {
+//			outPath = dataPath / path;
+//		}
+//	} else {
+//		if (!path.is_absolute()) {
+//			auto exeDir = ofFilePath::getCurrentExeDir();
+//			outPath = of::filesystem::relative(dataPath / path, ofFilePath::getCurrentExeDir());
+//		} else {
+//			outPath = path;
+//		}
+//	}
+	
+	using std::cout;
+	using std::endl;
+	cout << "path = " << path << endl;
+
+	auto exeDir = ofFilePath::getCurrentExeDir();
+	// xaxa
 	of::filesystem::path outPath;
-	const auto & dataPath = dataPathRoot();
-	if (makeAbsolute) {
-		outPath = dataPath / path;
+	if (path.is_absolute()) {
+		cout << "path is already absolute" << endl;
+		outPath = path;
 	} else {
-		if (!path.is_absolute()) {
-			auto exeDir = ofFilePath::getCurrentExeDir();
-			outPath = of::filesystem::relative(dataPath / path, ofFilePath::getCurrentExeDir());
-		} else {
-			outPath = path;
-		}
+		const auto & dataPath = dataPathRoot();
+		outPath = { dataPath / path };
 	}
+	if (!makeAbsolute) {
+		outPath = of::filesystem::relative(outPath, ofFilePath::getCurrentExeDir());
+	}
+	cout << "outpath = " << outPath << endl;
+
 	return outPath.string();
 }
