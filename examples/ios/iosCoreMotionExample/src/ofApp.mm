@@ -27,10 +27,10 @@ void ofApp::draw(){
 	ofDrawBitmapStringHighlight("Attitude: (quaternion x,y,z,w)", 20, 25);
 	ofSetColor(0);
 	glm::quat quat = coreMotion.getQuaternion();
-	ofDrawBitmapString(ofToString(quat.x(),3), 20, 50);
-	ofDrawBitmapString(ofToString(quat.y(),3), 90, 50);
-	ofDrawBitmapString(ofToString(quat.z(),3), 160, 50);
-	ofDrawBitmapString(ofToString(quat.w(),3), 230, 50);
+	ofDrawBitmapString(ofToString(quat.x,3), 20, 50);
+	ofDrawBitmapString(ofToString(quat.y,3), 90, 50);
+	ofDrawBitmapString(ofToString(quat.z,3), 160, 50);
+	ofDrawBitmapString(ofToString(quat.w,3), 230, 50);
 	
 	// attitude- roll,pitch,yaw
 	ofDrawBitmapStringHighlight("Attitude: (roll,pitch,yaw)", 20, 75);
@@ -70,10 +70,9 @@ void ofApp::draw(){
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
 	
 	// 1) quaternion rotations
-	float angle;
-	glm::vec3 axis;//(0,0,1.0f);
-	quat.getRotate(angle, axis);
-	ofRotate(angle, axis.x, -axis.y, axis.z); // rotate with quaternion
+	auto angle = glm::angle(quat);
+	auto axis = glm::axis(quat);
+	ofRotateRad(angle, axis.x, -axis.y, axis.z); // rotate with quaternion
 	
 	// 2) rotate by multiplying matrix directly
 	//ofMatrix4x4 mat = coreMotion.getRotationMatrix();
