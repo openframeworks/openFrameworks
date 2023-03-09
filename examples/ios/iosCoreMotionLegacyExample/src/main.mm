@@ -12,6 +12,7 @@ int main() {
 	settings.enableHardwareOrientation = false; // enables native view orientation.
 	settings.enableHardwareOrientationAnimation = false; // enables native orientation changes to be animated.
 	settings.glesVersion = OFXIOS_RENDERER_ES1; // type of renderer to use, ES1, ES2, etc.
+	settings.enableMultiTouch = true;
 	
 	ofCreateWindow(settings);
 	
