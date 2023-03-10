@@ -1646,6 +1646,14 @@
 			"files": [],
 			"runOnlyForDeploymentPostprocessing": "0"
 		},
+		"E4A5B60F29BAAAE400C2D356": {
+			"isa": "PBXCopyFilesBuildPhase",
+			"buildActionMask": "2147483647",
+			"dstPath": "",
+			"dstSubfolderSpec": "6",
+			"files": [],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
 		"E429632E2163EDD300A6A9E2": {
 			"path": "../../../libs/openFrameworks/gl/ofBufferObject.cpp",
 			"isa": "PBXFileReference",
@@ -1767,6 +1775,7 @@
 				"E4B69B590A3A1756003C02F2",
 				"E4B6FFFD0C3F9AB9008CF71C",
 				"E4C2427710CC5ABF004149E2",
+                                "E4A5B60F29BAAAE400C2D356",
 				"8466F1851C04CA0E00918B1C",
 				"19D6CF9228F07C000044A7EB",
 				"E935D72329ADADAE00AC8EFD"
