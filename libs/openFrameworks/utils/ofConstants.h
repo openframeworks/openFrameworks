@@ -114,7 +114,6 @@ enum ofTargetPlatform{
 #elif defined(__EMSCRIPTEN__)
 	#define TARGET_EMSCRIPTEN
 	#define TARGET_OPENGLES
-	#define TARGET_NO_THREADS
 	#define TARGET_PROGRAMMABLE_GL
 	#define TARGET_IMPLEMENTS_URL_LOADER
 #else
