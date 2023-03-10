@@ -2,8 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
 	
 	//If you want a landscape oreintation
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);
@@ -100,7 +98,7 @@ void ofApp::draw(){
 	if(mode == 2) {
 		deformPlane = plane.getMesh();
 		// x = columns, y = rows //
-		glm::vec3 planeDims = plane.getResolution();
+		auto planeDims = plane.getResolution();
 		float planeAngleX = ofGetElapsedTimef()*3.6;
 		float planeAngleInc = 3.f/(float)planeDims.x;
 		glm::vec3 vert;
