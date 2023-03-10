@@ -4,6 +4,7 @@
 #include "ofCubeMap.h"
 #include "ofImage.h"
 #include "ofGLProgrammableRenderer.h"
+#include <typeinfo>
 
 using std::shared_ptr;
 using std::string;
@@ -741,9 +742,17 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 				fragment2DHeader += "#define FRAG_COLOR fragColor\n";
 				fragment2DHeader += "out vec4 fragColor;\n";
 				fragment2DHeader += "#define SAMPLER sampler2D\n";
-				fragment2DHeader += "precision highp samplerCubeShadow;\n";
-				fragment2DHeader += "precision highp sampler2DShadow;\n";
-				fragment2DHeader += "precision highp sampler2DArrayShadow;\n";
+				fragment2DHeader += "precision highp sampler2D;\n";
+				fragment2DHeader += "precision highp samplerCube;\n";
+				// we don't use any samplerCubeShadows
+				//fragment2DHeader += "precision highp samplerCubeShadow;\n";
+				fragment2DHeader += "precision mediump sampler2DShadow;\n";
+				#if defined( GL_TEXTURE_2D_ARRAY ) && defined(glTexImage3D)
+				fragment2DHeader += "precision mediump sampler2DArrayShadow;\n";
+				#endif
+//				fragment2DHeader += "precision highp samplerCubeShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DArrayShadow;\n";
 //			}
 		}
 		#endif
@@ -865,10 +874,12 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 		std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
 		if( cubeMapData ) {
 			shader.setUniform1f("mat_ibl_exposure", cubeMapData->exposure );
-			shader.setUniform1f("uCubeMapEnabled", 1.0);
+			shader.setUniform1f("uCubeMapEnabled", 1.0f );
+			shader.setUniform1f("uEnvMapMaxMips", cubeMapData->maxMipLevels );
 		} else {
-			shader.setUniform1f("mat_ibl_exposure", 1.0 );
-			shader.setUniform1f("uCubeMapEnabled", 0.0);
+			shader.setUniform1f("mat_ibl_exposure", 1.0f );
+			shader.setUniform1f("uCubeMapEnabled", 0.0f );
+			shader.setUniform1f("uEnvMapMaxMips", 1.0f );
 		}
 		
 	} else {
@@ -1246,7 +1257,7 @@ const std::string ofMaterial::getDefinesString() const {
 			if( cmd->bPreFilteredMapAllocated ) {
 				bPreFilteredMap=true;
 			}
-			if( cmd->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+			if( cmd->settings.useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
 				bBrdfLutTex=true;
 			}
 		}
@@ -1261,7 +1272,7 @@ const std::string ofMaterial::getDefinesString() const {
 			definesString += "#define HAS_TEX_ENV_BRDF_LUT 1\n";
 		}
 		// need to add .0 to be read as a float in the shader for gl es
-		definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(ofCubeMap::getNumMipMaps(),0)+".0\n";
+		//definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(ofCubeMap::getNumMipMaps(),0)+".0\n";
 		
 	}
 	

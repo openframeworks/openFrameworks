@@ -1005,27 +1005,15 @@ void ofShadow::_allocateFbo() {
 		#ifdef GL_TEXTURE_WRAP_R
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		#endif
-		#ifdef GL_TEXTURE_CUBE_MAP_ARRAY
+		#if defined( GL_TEXTURE_CUBE_MAP_ARRAY ) && defined(glTexImage3D)
 		if( textureTarget == GL_TEXTURE_CUBE_MAP_ARRAY ) {
-			if( depthComponent == GL_DEPTH_COMPONENT24 ) {
-				#ifdef glTexImage3D
-				glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapWidth(), getGLData(data->lightType).totalShadows * 6, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
-				#endif
-			} else {
-				#ifdef glTexImage3D
-				glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapWidth(), getGLData(data->lightType).totalShadows * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-				#endif
-			}
+			
+			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, depthComponent, getDepthMapWidth(), getDepthMapWidth(), getGLData(data->lightType).totalShadows * 6, 0, GL_DEPTH_COMPONENT, glType, NULL);
 		}
 		#endif
 	} else {
 		if( textureTarget == GL_TEXTURE_2D ) {
-			if( depthComponent == GL_DEPTH_COMPONENT24 ) {
-				glTexImage2D(GL_TEXTURE_2D, 0, depthComponent, getDepthMapWidth(), getDepthMapHeight(), 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
-			} else {
-				glTexImage2D(GL_TEXTURE_2D, 0, depthComponent, getDepthMapWidth(), getDepthMapHeight(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-			}
-			
+			glTexImage2D(GL_TEXTURE_2D, 0, depthComponent, getDepthMapWidth(), getDepthMapHeight(), 0, GL_DEPTH_COMPONENT, glType, NULL);
 		}
 		
 		glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1047,7 +1035,7 @@ void ofShadow::_allocateFbo() {
 		}
 		#endif
 		
-		#ifdef GL_CLAMP_TO_BORDER
+		#if defined(GL_CLAMP_TO_BORDER) && !defined(TARGET_EMSCRIPTEN)
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		float borderColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };

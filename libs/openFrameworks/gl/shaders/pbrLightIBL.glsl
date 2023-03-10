@@ -3,9 +3,9 @@ static const string shader_pbr_lighting_ibl = R"(
 #ifndef FUNCTIONS_ENV_LIGHT
 #define FUNCTIONS_ENV_LIGHT
 
-#ifndef ENV_MAP_MAX_MIPS
-#define ENV_MAP_MAX_MIPS 5
-#endif
+//#ifndef ENV_MAP_MAX_MIPS
+//#define ENV_MAP_MAX_MIPS 5.0
+//#endif
 
 // Image Based Lighting
 #ifdef HAS_TEX_ENV_IRRADIANCE
@@ -21,13 +21,14 @@ uniform sampler2D tex_brdfLUT;
 #endif
 
 uniform float uCubeMapEnabled;
+uniform float uEnvMapMaxMips; // 5.0
 
 
 // ----------------------------------------------------------------------------
 vec3 fakeEnvLightingDiffuse( in vec3 aRefl ) {
 	vec3 R = abs(aRefl);//abs(adata.reflectionWorld);
 	float cc = max( 0.0, abs( dot(R, vec3(0.0,0.5,0.5) )));
-	return vec3(clamp(cc*0.25+0.6,0,1));
+	return vec3(clamp(cc*0.25+0.6,0.0,1.0));
 }
 
 // ----------------------------------------------------------------------------
@@ -41,7 +42,7 @@ vec3 fakeEnvLightingSpecular( in vec3 aRefl, in float aroughness ) {
 	ss = ss * 122.0;
 	float cc = max( 0.0, abs( dot(R, vec3(0.0,0.5,0.5)*1.43 )));
 	cc = pow(cc+0.005, ss+0.05);
-	return vec3(clamp(cc,0,1));
+	return vec3(clamp(cc,0.0,1.0));
 }
 
 
@@ -49,10 +50,10 @@ vec3 getIndirectPrefilteredReflection( in vec3 aR, in vec3 aN, in float aroughne
 	vec3 indirectSpecularRadiance = vec3(0.0);
 	//	float lod = pow(aroughness, 2.0) * (ENV_MAP_MAX_MIPS-1);
 #if defined(HAS_TEX_ENV_PRE_FILTER)
-	float lod = aroughness * (ENV_MAP_MAX_MIPS-1);
+	float lod = aroughness * (uEnvMapMaxMips-1.0);
 	//	indirectSpecularRadiance = textureLod(tex_prefilterEnvMap, aR, aroughness * (ENV_MAP_MAX_MIPS-1) ).rgb;
 	vec3 ai = textureLod(tex_prefilterEnvMap, aR, floor(lod) ).rgb;
-	vec3 ab = textureLod(tex_prefilterEnvMap, aR, clamp(ceil(lod), floor(lod), ENV_MAP_MAX_MIPS-1) ).rgb;
+	vec3 ab = textureLod(tex_prefilterEnvMap, aR, clamp(ceil(lod), floor(lod), uEnvMapMaxMips-1.0) ).rgb;
 	indirectSpecularRadiance = mix(ai, ab, lod-floor(lod) );
 	//indirectSpecularRadiance = indirectSpecularRadiance / (indirectSpecularRadiance+vec3(1.0));
 //	float horizon = min(1.0 + dot(adata.reflectionWorld, adata.normalWorld), 1.0);

@@ -3,6 +3,7 @@
 #include "ofShader.h"
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
+#include "glm/vec2.hpp"
 
 enum ofMaterialTextureType: short{
 	OF_MATERIAL_TEXTURE_NONE=0,

@@ -457,6 +457,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #define OF_HAS_CPP17 0
 #endif
 
+
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
 		#define OF_USING_STD_FS 1
@@ -514,47 +515,46 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            class path;
-                        }
-                        using v1::path;
+                        using path = v1::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
             }
         #else
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            namespace __cxx11 {
-                                class path;
-                            }
-                        }
-                        using v1::__cxx11::path;
+                        using path = v1::__cxx11::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
             }
         #endif
         
+		namespace of {
+			namespace filesystem = std::experimental::filesystem;
+		}
     #else
-        // Regular C++17 fs support
-        #include <filesystem>
+		#include <filesystem>
+		#if OF_HAS_CPP17
+			// Regular C++17 fs support
+			namespace of {
+				namespace filesystem = std::filesystem;
+			}
+		#else
+			namespace of {
+				namespace filesystem = std::filesystem;
+			}
+		#endif
     #endif
-#else
+#else //not OF_USING_STD_FS
     // No experimental or c++17 filesytem support use boost
     #if !_MSC_VER
         #define BOOST_NO_CXX11_SCOPED_ENUMS
         #define BOOST_NO_SCOPED_ENUMS
     #endif
+
     #include <boost/filesystem.hpp>
-	namespace boost {
-		namespace filesystem {
-			class path;
-		}
-	}
-	namespace std {
+	namespace of {
 		namespace filesystem = boost::filesystem;
 	}
+
 #endif

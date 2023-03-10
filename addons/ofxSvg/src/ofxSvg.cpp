@@ -2,7 +2,8 @@
 #include "ofConstants.h"
 #include <locale>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 extern "C"{
 	#include "svgtiny.h"
@@ -26,18 +27,30 @@ ofPath & ofxSvg::getPathAt(int n){
 	return paths[n];
 }
 
-void ofxSvg::load(std::string path){
-	path = ofToDataPath(path);
+void ofxSvg::load(of::filesystem::path fileName){
+	// fileName = ofToDataPath(fileName);
+	std::string file = ofToDataPath(fileName);
 
-	if(path.compare("") == 0){
-		ofLogError("ofxSVG") << "load(): path does not exist: \"" << path << "\"";
+	// FIXME: I think this is the equivalent of .empty() which is simpler.
+	// maybe use file exists to check instead?
+	// if(fileName.compare("") == 0){
+	// 	ofLogError("ofxSVG") << "load(): path does not exist: \"" << fileName << "\"";
+	// 	return;
+	// }
+
+	// ofBuffer buffer = ofBufferFromFile(fileName);
+	
+	// loadFromString(buffer.getText(), fileName);
+
+	if(file.compare("") == 0){
+		ofLogError("ofxSVG") << "load(): path does not exist: \"" << file << "\"";
 		return;
 	}
 
-	ofBuffer buffer = ofBufferFromFile(path);
+	ofBuffer buffer = ofBufferFromFile(file);
 	
-	loadFromString(buffer.getText(), path);
-	
+	loadFromString(buffer.getText(), file);
+
 }
 
 void ofxSvg::loadFromString(std::string stringdata, std::string urlstring){
