@@ -49,6 +49,7 @@ void ofxCvHaarFinder::setNeighbors(unsigned neighbors) {
 	this->neighbors = neighbors;
 }
 
+// FIXME: convert to of::filesystem::path
 void ofxCvHaarFinder::setup(std::string haarFile) {
 
 	this->haarFile = haarFile;

@@ -374,13 +374,14 @@ static string linuxFontPathByName(const string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(const std::filesystem::path& _fontname, FT_Face & face, std::filesystem::path & filename, int index){
-	std::filesystem::path fontname = _fontname;
+static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, of::filesystem::path & filename, int index){
+	of::filesystem::path fontname = _fontname;
 	filename = ofToDataPath(_fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
 	int fontID = index;
 	if(!fontFile.exists()){
 #ifdef TARGET_LINUX
+		// FIXME: update function linuxFontPathByName to use path instead of string
 		filename = linuxFontPathByName(fontname.string());
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
@@ -697,7 +698,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(const std::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
