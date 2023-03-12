@@ -383,7 +383,7 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 			// figure out the number of mip maps //
 			data->maxMipLevels = log2(data->settings.preFilterRes) + 1;
 			
-			of::filesystem::path encFolder = data->settings.cacheDirectory;
+			of::filesystem::path encFolder { data->settings.cacheDirectory };
 			if( !encFolder.empty() ) {
 				if( !ofDirectory::doesDirectoryExist( ofFilePath::removeTrailingSlash( data->settings.cacheDirectory ))) {
 #if !defined(TARGET_OPENGLES)
@@ -394,15 +394,11 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 				} else {
 					
 				}
-				// encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory ).string();
-				//				encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory );
-				
 			}
 			
-			// TODO: change everything to of::filesystem
-			of::filesystem::path baseName = ofFilePath::getBaseName( data->settings.filePath );
-			of::filesystem::path cacheIrrName = baseName / ("_irr_"+ofToString(data->settings.irradianceRes,0) + ".exr");
-			of::filesystem::path cachePrefilterName = baseName / ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr");
+			of::filesystem::path baseName { ofFilePath::getBaseName( data->settings.filePath ) };
+			of::filesystem::path cacheIrrName { baseName / ("_irr_"+ofToString(data->settings.irradianceRes,0) + ".exr") };
+			of::filesystem::path cachePrefilterName { baseName / ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr") };
 			
 			bool bHasCachedIrr = false;
 			bool bHasCachedPre = false;
