@@ -20,7 +20,6 @@
 #include "ofMesh.h"
 #include "ofMath.h"
 #include "ofConstants.h"
-
 #include <assimp/Importer.hpp>
 
 struct aiScene;
@@ -173,9 +172,9 @@ class ofxAssimpModelLoader{
 
 		std::vector<float> rotAngle;
 		std::vector<glm::vec3> rotAxis;
-		glm::vec3 scale = {1.0,1.0,1.0};
-		glm::vec3 pos = {0.0,0.0,0.0};
-		glm::mat4 modelMatrix;
+		glm::vec3 scale {1.0,1.0,1.0};
+		glm::vec3 pos {0.0,0.0,0.0};
+		glm::mat4 modelMatrix; // { glm::mat4() }
 
 		std::vector<ofLight> lights;
 		std::map<
