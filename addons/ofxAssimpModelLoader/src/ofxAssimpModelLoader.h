@@ -14,6 +14,7 @@
 // 2) convert to ofMesh (?) in OF 007 ?
 // 3) Ability to ease *between* two animations. Maybe later folks.
 
+
 #include "ofxAssimpMeshHelper.h"
 #include "ofxAssimpAnimation.h"
 #include "ofxAssimpTexture.h"
@@ -173,9 +174,9 @@ class ofxAssimpModelLoader{
 
 		std::vector<float> rotAngle;
 		std::vector<glm::vec3> rotAxis;
-		glm::vec3 scale = {1.0,1.0,1.0};
-		glm::vec3 pos = {0.0,0.0,0.0};
-		glm::mat4 modelMatrix;
+		glm::vec3 scale {1.0,1.0,1.0};
+		glm::vec3 pos {0.0,0.0,0.0};
+		glm::mat4 modelMatrix { glm::mat4() };
 
 		std::vector<ofLight> lights;
 		std::map<
