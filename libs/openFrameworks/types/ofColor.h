@@ -1,6 +1,6 @@
 #pragma once
 
-
+#define GLM_FORCE_CTOR_INIT
 #include "glm/gtx/wrap.hpp"
 #include <typeinfo>
 #include <iostream>

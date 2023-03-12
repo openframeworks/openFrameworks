@@ -1,11 +1,21 @@
 #pragma once
-#include <stdint.h>
 
-//-------------------------------
+// version: ------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
 #define OF_VERSION_PATCH 2
 #define OF_VERSION_PRE_RELEASE "master"
+
+// core: ---------------------------
+#include <stdint.h>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <functional>
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
 #ifndef OF_USE_LEGACY_VECTOR_MATH
@@ -114,7 +124,6 @@ enum ofTargetPlatform{
 #elif defined(__EMSCRIPTEN__)
 	#define TARGET_EMSCRIPTEN
 	#define TARGET_OPENGLES
-	#define TARGET_NO_THREADS
 	#define TARGET_PROGRAMMABLE_GL
 	#define TARGET_IMPLEMENTS_URL_LOADER
 #else
@@ -282,16 +291,6 @@ typedef TESSindex ofIndexType;
 
 #define OF_EXIT_APP(val)		std::exit(val);
 
-
-// core: ---------------------------
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <functional>
 
 
 //------------------------------------------------ capture
