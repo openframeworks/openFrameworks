@@ -1944,14 +1944,26 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 }
 
 //--------------------------------------------------
-//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+
+	of::filesystem::path outPath { path };
 	if (path.is_absolute()) {
-		return path.string();
+		if (makeAbsolute) {
+			// nothing needed here. outPath is already path
+		} else {
+			auto current = of::filesystem::current_path();
+			outPath = of::filesystem::relative(path, current);
+		}
 	} else {
-		return (dataPathRoot() / path).string();
+		if (makeAbsolute) {
+			outPath = dataPathRoot() / path;
+		} else {
+			auto current = of::filesystem::current_path();
+			outPath = of::filesystem::relative(dataPathRoot() / path, current);
+		}
 	}
 
+	return outPath.string();
 //// if our Current Working Directory has changed (e.g. file open dialog)
 //#ifdef TARGET_WIN32
 //	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
