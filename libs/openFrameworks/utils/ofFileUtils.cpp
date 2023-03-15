@@ -1977,7 +1977,12 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 //--------------------------------------------------
 //of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
-
+	if (path.is_absolute()) {
+		return path.string();
+	} else {
+		return (dataPathRoot() / path).string();
+	}
+//	return path.string();
 // if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
