@@ -34,13 +34,11 @@ namespace{
 		
 	// three levels up because is a directory with path App.app/Contents/MacOS/App
 	of::filesystem::path data = ofFilePath::getCurrentExeDir().parent_path().parent_path().parent_path() / "data";
-//		cout << "defaultDataPath() " << data << endl;
 	if (!of::filesystem::is_directory(data)) {
 		// bundle data folder inside app
 		// one level up : MacOS/../Resources/data
 		data = ofFilePath::getCurrentExeDir().parent_path() / "Resources/data";
 	}
-
 	return data;
 	
 #elif defined TARGET_ANDROID
@@ -52,18 +50,15 @@ namespace{
 
 	//--------------------------------------------------
 	of::filesystem::path & defaultWorkingDirectory(){
-//		cout << "defaultWorkingDirectory()" << endl;
 		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
 		return * defaultWorkingDirectory;
 	}
 
 	//--------------------------------------------------
 	of::filesystem::path & dataPathRoot(){
-		
 		static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
-//		cout << "<dataPathRoot() internal = " << *dataPathRoot << ">" << endl;
+		// This is the most important change in the way OF handles paths.
 		of::filesystem::current_path(*dataPathRoot);
-
 		return *dataPathRoot;
 	}
 }
@@ -71,9 +66,6 @@ namespace{
 namespace of{
 	namespace priv{
 		void initfileutils(){
-//			cout << "initfileutils :: " << dataPathRoot() << endl;
-//			defaultWorkingDirectory() = of::filesystem::absolute(of::filesystem::current_path());
-//			cout << defaultDataPath() << endl;
 			defaultWorkingDirectory() = dataPathRoot();
 		}
 	}
@@ -1180,25 +1172,13 @@ ofDirectory::ofDirectory(const of::filesystem::path & path){
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(const of::filesystem::path & path){
-	using std::cout;
-	using std::endl;
-//	originalDirectory = ofFilePath::getPathForDirectory(path.string());
-//	cout << "ofDirectory path " << path << endl;
-//	cout << "ofDirectory originalDirectory " << originalDirectory << endl;
-	
 	files.clear();
-	
 	myDir = of::filesystem::path(ofToDataPath(path)).lexically_normal();
-//	cout << "ofDirectory " << path << endl;
-//	cout << of::filesystem::path(ofToDataPath(path)) << endl;
-//	cout << "lexically normal " << myDir << endl;
-//	cout << "----" << endl;
-	
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::openFromCWD(const of::filesystem::path & path){
-	originalDirectory = ofFilePath::getPathForDirectory(path.string());
+	originalDirectory = ofFilePath::getPathForDirectory(path);
 	files.clear();
 	myDir = of::filesystem::path(originalDirectory);
 }
