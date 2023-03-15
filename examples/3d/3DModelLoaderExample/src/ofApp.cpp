@@ -7,13 +7,14 @@ Loads in the same 3D penguin model in various file types. Demonstrates how to lo
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	ofBackground(255,255,255);
+//	ofSetLogLevel(OF_LOG_VERBOSE);
 		
 	ofSetVerticalSync(true);
 	
 	// load the first model
-	model.load("penguin.dae", 20);
+	model.load("penguin.3ds", 20);
 	// model info
-	curFileInfo = ".dae";
+	curFileInfo = ".3ds";
 	
 	// this loads in the model directly into a mesh
 	// ofMesh can only read in .plys that are in the ascii and not in the binary format.
@@ -28,8 +29,13 @@ void ofApp::setup(){
 	model.setRotation(0, 180, 1, 0, 0);
 	model.setScale(0.9, 0.9, 0.9);
 	light.setPosition(0, 0, 500);
+	light.getShadow().setEnabled(false);
+	// some models load in specular that is pure white, so tone it down a bit
+	light.setSpecularColor( ofFloatColor(0.15, 1.0));
+	light.setDiffuseColor( ofFloatColor(1.0, 1.0));
 	
-	cameraOrbit = 0;
+	cameraOrbit = 0.f;
+	camLatOrbit = 0.f;
 	cam.setDistance(700);
 
 	//set help text to display by default
@@ -38,8 +44,16 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	cameraOrbit += ofGetLastFrameTime() * 20.; // 20 degrees per second;
-	cam.orbitDeg(cameraOrbit, 0., cam.getDistance(), {0., 0., 0.});
+	if( ofGetMousePressed() ) {
+		// cache the camera orbit degrees in latitude and longitude
+		cameraOrbit = 90.f-ofRadToDeg( ofWrapRadians( atan2(cam.getZ(), cam.getX() )) );
+		camLatOrbit = -ofRadToDeg(asinf( cam.getPosition().y / cam.getDistance() ));
+	} else {
+		cameraOrbit += ofGetLastFrameTime() * 20.; // 20 degrees per second;
+		cam.orbitDeg(cameraOrbit, camLatOrbit, cam.getDistance(), {0., 0., 0.});
+	}
+	
+	
 }
 
 //--------------------------------------------------------------
@@ -60,6 +74,7 @@ void ofApp::draw(){
 		// draws all the other file types which are loaded into model.
 		model.drawFaces();
 	}
+	
 	cam.end();
 	
 	light.disable();
@@ -72,10 +87,9 @@ void ofApp::draw(){
 		ss << "FPS: " << ofToString(ofGetFrameRate(),0) << endl << endl;
 		ss << "(1/2/3/4/5/6): load different file types"<<endl;
 		ss << "Current file info: " + curFileInfo <<endl;
-		if(bUsingMesh){
-			ss << "Use ofEasyCam mouse and key controls to navigate."<< endl <<endl;
-		}
+		ss << "Use ofEasyCam mouse and key controls to navigate."<< endl <<endl;
 		ss <<"(h): Toggle help."<<endl;
+		ofSetColor(60);
 		ofDrawBitmapString(ss.str().c_str(), 20, 20);
 	}
 }
@@ -102,7 +116,7 @@ void ofApp::keyPressed(int key){
 		case '3':
 			bUsingMesh = false;
 			model.load("penguin.ply");
-			model.setRotation(0, 90, 1, 0, 0);
+			model.setRotation(0, -90, 1, 0, 0);
 			model.setScale(0.9, 0.9, 0.9);
 			cam.setDistance(700);
 			curFileInfo = ".ply";
@@ -110,7 +124,7 @@ void ofApp::keyPressed(int key){
 		case '4':
 			bUsingMesh = false;
 			model.load("penguin.obj");
-			model.setRotation(0, 90, 1, 0, 0);
+			model.setRotation(0, -90, 1, 0, 0);
 			model.setScale(0.9, 0.9, 0.9);
 			cam.setDistance(700);
 			curFileInfo = ".obj";
@@ -118,7 +132,7 @@ void ofApp::keyPressed(int key){
 		case '5':
 			bUsingMesh = false;
 			model.load("penguin.stl");
-			model.setRotation(0, 90, 1, 0, 0);
+			model.setRotation(0, -90, 1, 0, 0);
 			model.setScale(0.9, 0.9, 0.9);
 			cam.setDistance(700);
 			curFileInfo = ".stl";
