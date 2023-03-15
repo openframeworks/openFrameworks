@@ -69,7 +69,7 @@ public:
 	/// \param apath path to the image to load.
 	/// \param aFaceResolution resolution of the cube map image sides.
 	/// \param aBFlipY flip the images upside down.
-	bool load( const of::filesystem::path & apath, int , bool aBFlipY=true );
+	bool load( const of::filesystem::path & apath, int aFaceResolution, bool aBFlipY=true );
 	/// \load an image and convert to cube map.
 	/// \param apath path to the image to load.
 	/// \param aFaceResolution resolution of the cube map image sides.

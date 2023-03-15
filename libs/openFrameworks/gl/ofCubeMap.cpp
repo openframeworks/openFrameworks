@@ -396,8 +396,8 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 				encFolder = data->settings.cacheDirectory;
 			}
 			auto baseName = data->settings.filePath.stem(); // equivalent to getBaseName
-			auto cacheIrrName = baseName / ("_irr_"+ofToString(data->settings.irradianceRes,0)+".exr");
-			auto cachePrefilterName = baseName / ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr");
+			auto cacheIrrName = of::filesystem::path (baseName+"_irr_"+ofToString(data->settings.irradianceRes,0)+".exr");
+			auto cachePrefilterName = of::filesystem::path (baseName+"_pre_"+ofToString(data->settings.preFilterRes,0)+".exr");
 			
 			bool bHasCachedIrr = false;
 			bool bHasCachedPre = false;
