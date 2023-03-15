@@ -151,7 +151,10 @@ void ofApp::update(){
 		lights.back()->orbitDeg( ofWrapDegrees(ofGetElapsedTimef()* 30.0), -40, 500 );
 	}
 	
-	auto dpos = camera.screenToWorld( glm::vec3(ofGetMouseX(), ofGetMouseY(), 100) );
+	mInputPos = glm::vec2(ofGetMouseX(), ofGetMouseY() );
+	bBrushDrawing = ofGetMousePressed();
+	
+	auto dpos = camera.screenToWorld( glm::vec3( mInputPos.x, mInputPos.y, 100) );
 	auto dir = camera.getPosition() - dpos;
 	dir = glm::normalize(dir);
 	
@@ -314,29 +317,30 @@ void ofApp::draw(){
 			// offset on the mesh in the shader
 			glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
 
-			float tsize = mBrushSize;
+			float tsize = 0.5f * mBrushSize;//ofMap( fabs(mHitCoord.y-0.5), 0.5, 0.0,1.0, 0.5, true )  *  mBrushSize;
+			float tsizey = mBrushSize;
 			float fmousex = mHitCoord.x * fboInfluence.getWidth();
 			float fmousey = mHitCoord.y * fboInfluence.getHeight();
 			
-			if(ofGetMousePressed()) {
+			if(bBrushDrawing) {
 				// draw based on mouse position
-				textureBrush.draw(fmousex,fmousey,tsize,tsize);
+				textureBrush.draw(fmousex,fmousey,tsize,tsizey);
 				// we want the fbo texture to 'wrap' around the sphere horizontally, so we also draw using offsets
 				// that way if the brush is at 0,0, it will also draw at width,height of the fbo
 				// enable debug to see the fbo influence drawn to the screen
-				textureBrush.draw(fmousex+fboInfluence.getWidth(),fmousey, tsize,tsize);
-				textureBrush.draw(fmousex-fboInfluence.getWidth(),fmousey, tsize,tsize);
+				textureBrush.draw(fmousex+fboInfluence.getWidth(),fmousey, tsize,tsizey);
+				textureBrush.draw(fmousex-fboInfluence.getWidth(),fmousey, tsize,tsizey);
 			}
 			
 			// lets store the brush influence in the Green channel, since it's not used to calculate height
 			// mask out the other colors to only render green
-			glColorMask(GL_FALSE, GL_TRUE, GL_FALSE, GL_FALSE);
+			glColorMask(GL_FALSE, GL_TRUE, GL_FALSE, GL_TRUE);
 			// clear to black
 			ofClear(0, 0, 0, 0);
 			ofSetColor(255);
-			textureBrush.draw(fmousex,fmousey,tsize,tsize);
-			textureBrush.draw(fmousex+fboInfluence.getWidth(),fmousey, tsize,tsize);
-			textureBrush.draw(fmousex-fboInfluence.getWidth(),fmousey, tsize,tsize);
+			textureBrush.draw(fmousex,fmousey,tsize,tsizey);
+			textureBrush.draw(fmousex+fboInfluence.getWidth(),fmousey, tsize,tsizey);
+			textureBrush.draw(fmousex-fboInfluence.getWidth(),fmousey, tsize,tsizey);
 			// reset drawing all colors
 			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 			fboInfluence.end();

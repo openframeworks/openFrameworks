@@ -116,6 +116,7 @@ class ofApp : public ofBaseApp{
 	
 		bool bDrawIntoFbo = false;
 		bool bDebug = false;
+		bool bBrushDrawing = false;
 	
 		float mBrushSize = 150.f;
 		float mBrushStrength = 12.f;
@@ -125,4 +126,5 @@ class ofApp : public ofBaseApp{
 		glm::vec2 mHitCoord = {0,0};
 		bool mBHitATri = false;
 	
+		glm::vec2 mInputPos = {0,0};	
 };
