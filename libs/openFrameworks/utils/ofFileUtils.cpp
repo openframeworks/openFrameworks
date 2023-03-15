@@ -34,11 +34,13 @@ namespace{
 		
 	// three levels up because is a directory with path App.app/Contents/MacOS/App
 	of::filesystem::path data = ofFilePath::getCurrentExeDir().parent_path().parent_path().parent_path() / "data";
+//		cout << "defaultDataPath() " << data << endl;
 	if (!of::filesystem::is_directory(data)) {
 		// bundle data folder inside app
 		// one level up : MacOS/../Resources/data
 		data = ofFilePath::getCurrentExeDir().parent_path() / "Resources/data";
 	}
+
 	return data;
 	
 #elif defined TARGET_ANDROID
@@ -50,13 +52,18 @@ namespace{
 
 	//--------------------------------------------------
 	of::filesystem::path & defaultWorkingDirectory(){
+		cout << "defaultWorkingDirectory()" << endl;
 		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
 		return * defaultWorkingDirectory;
 	}
 
 	//--------------------------------------------------
 	of::filesystem::path & dataPathRoot(){
+		
 		static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
+		cout << "dataPathRoot() internal = " << *dataPathRoot << endl;
+		of::filesystem::current_path(*dataPathRoot);
+
 		return *dataPathRoot;
 	}
 }
@@ -64,7 +71,10 @@ namespace{
 namespace of{
 	namespace priv{
 		void initfileutils(){
-			defaultWorkingDirectory() = of::filesystem::absolute(of::filesystem::current_path());
+			cout << "initfileutils" << endl;
+//			defaultWorkingDirectory() = of::filesystem::absolute(of::filesystem::current_path());
+			cout << defaultDataPath() << endl;
+			defaultWorkingDirectory() = dataPathRoot();
 		}
 	}
 }
@@ -2002,13 +2012,13 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 	
 	using std::cout;
 	using std::endl;
-	cout << "path = " << path << endl;
+//	cout << "path = " << path << endl;
 
 	auto exeDir = ofFilePath::getCurrentExeDir();
 	// xaxa
 	of::filesystem::path outPath;
 	if (path.is_absolute()) {
-		cout << "path is already absolute" << endl;
+//		cout << "path is already absolute" << endl;
 		outPath = path;
 	} else {
 		const auto & dataPath = dataPathRoot();
@@ -2017,7 +2027,7 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 	if (!makeAbsolute) {
 		outPath = of::filesystem::relative(outPath, ofFilePath::getCurrentExeDir());
 	}
-	cout << "outpath = " << outPath << endl;
+//	cout << "outpath = " << outPath << endl;
 
 	return outPath.string();
 }
