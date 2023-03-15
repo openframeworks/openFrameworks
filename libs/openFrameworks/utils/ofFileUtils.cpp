@@ -1699,8 +1699,9 @@ std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - deprecate and suggest using of::filesystem::path.extension() instead
 string ofFilePath::getFileExt(const of::filesystem::path& filename){
-	return filename.extension().string();
-//	return ofFile(filename,ofFile::Reference).getExtension();
+	return ofFile(filename,ofFile::Reference).getExtension();
+	// doesn't work because it returns extension starting with a dot.
+	//	return filename.extension().string();
 }
 
 //------------------------------------------------------------------------------------------------------------

@@ -305,7 +305,7 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 	clear();
 	
 	std::string ext = ofToLower(aSettings.filePath.extension().string());
-	bool hdr = (ext == "hdr" || ext == "exr");
+	bool hdr = (ext == ".hdr" || ext == ".exr");
 	
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	if( hdr ) {

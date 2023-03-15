@@ -48,9 +48,9 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 
 	if(type == FROM_FILE_EXTENSION){
 		string ext = ofToLower(filename.extension().string());
-		if(ext=="svg"){
+		if(ext==".svg"){
 			type = SVG;
-		}else if(ext=="pdf"){
+		}else if(ext==".pdf"){
 			type = PDF;
 		}else{ // default to image
 			type = IMAGE;
