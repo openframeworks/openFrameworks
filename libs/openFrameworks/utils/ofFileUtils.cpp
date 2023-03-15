@@ -1345,7 +1345,7 @@ bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData,
 			of::filesystem::remove_all(path);
 		}
 		else {
-			ofLogError("ofDirectory") << "moveTo(): destination folder exists, overwrite = false " << endl;
+			ofLogError("ofDirectory") << "moveTo(): destination folder exists, overwrite = false " << std::endl;
 			return false;
 		}
 	}
@@ -1353,7 +1353,7 @@ bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData,
 	try {
 		of::filesystem::rename(old, path);
 	} catch (of::filesystem::filesystem_error const& ex) {
-		ofLogError("ofDirectory") << "moveTo(): can't rename folder " << ex.code().message() << endl;
+		ofLogError("ofDirectory") << "moveTo(): can't rename folder " << ex.code().message() << std::endl;
 		return false;
 	}
 	myDir = path;
