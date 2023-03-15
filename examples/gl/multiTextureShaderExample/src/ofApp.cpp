@@ -4,6 +4,10 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	// Disabling arb textures loads all of the textures with tex coords from 0-1
+	// If ARB is left enabled, then it would be 0 -> tex width and 0 -> tex height
+	// opengl es only supports non arb textures where tex coords are 0 - 1
+	ofDisableArbTex();
 	ofEnableAlphaBlending();
 	int camWidth 		= 320;	// try to grab at this size.
 	int camHeight 		= 240;
@@ -35,14 +39,10 @@ void ofApp::setup(){
 	
 	
 	if( ofIsGLProgrammableRenderer() ) {
-		string shaderVersion = "#version 150\n";
-		#ifdef TARGET_OPENGLES
-		shaderVersion = "#version 300 es\n";
-		shaderVersion += "precision highp float;\n";
-		#endif
-		string shaderProgramVert = shaderVersion;
-		shaderProgramVert += STRINGIFY(
-									   uniform mat4 modelViewProjectionMatrix;
+		string shaderProgramVert = STRINGIFY(
+											 // OF_GLSL_SHADER_HEADER is replaced by OF with the appropriate shader header
+											 OF_GLSL_SHADER_HEADER
+											 uniform mat4 modelViewProjectionMatrix;
 											 in vec4 position;
 
 											 void main() {
@@ -51,25 +51,18 @@ void ofApp::setup(){
 
 											 );
 		
-		string shaderProgramFrag = shaderVersion;
-		shaderProgramFrag += STRINGIFY(
+		string shaderProgramFrag = STRINGIFY(
+										// OF_GLSL_SHADER_HEADER is replaced by OF with the appropriate shader header
+										OF_GLSL_SHADER_HEADER
 									   uniform float texCoordWidthScale;
 									   uniform float texCoordHeightScale;
-									   
-										#ifdef TARGET_OPENGLES
-									   // opengl es only supports non arb textures where tex coords are 0 - 1
+											 
 									   uniform sampler2D tex0;
 									   uniform sampler2D tex1;
 									   uniform sampler2D tex2;
 									   uniform sampler2D maskTex;
-										#else
-									   uniform sampler2DRect tex0;
-									   uniform sampler2DRect tex1;
-									   uniform sampler2DRect tex2;
-									   uniform sampler2DRect maskTex;
-										#endif
 											 
-											out vec4 oFragColor;
+										out vec4 oFragColor;
 										 
 										 void main(){
 											 vec2 pos = gl_FragCoord.xy;
@@ -98,18 +91,24 @@ void ofApp::setup(){
 	} else {
 		
 		string shaderProgram = STRINGIFY(
-										 uniform sampler2DRect tex0;
-										 uniform sampler2DRect tex1;
-										 uniform sampler2DRect tex2;
-										 uniform sampler2DRect maskTex;
+										 OF_GLSL_SHADER_HEADER
+										 uniform float texCoordWidthScale;
+										 uniform float texCoordHeightScale;
+										 uniform sampler2D tex0;
+										 uniform sampler2D tex1;
+										 uniform sampler2D tex2;
+										 uniform sampler2D maskTex;
 										 
 										 void main (void){
-											 vec2 pos = gl_TexCoord[0].st;
+//											 vec2 pos = gl_TexCoord[0].st;
+											 vec2 pos = gl_FragCoord.xy;
+											 pos.x /= texCoordWidthScale;
+											 pos.y /= texCoordHeightScale;
 											 
-											 vec4 rTxt = texture2DRect(tex0, pos);
-											 vec4 gTxt = texture2DRect(tex1, pos);
-											 vec4 bTxt = texture2DRect(tex2, pos);
-											 vec4 mask = texture2DRect(maskTex, pos);
+											 vec4 rTxt = texture2D(tex0, pos);
+											 vec4 gTxt = texture2D(tex1, pos);
+											 vec4 bTxt = texture2D(tex2, pos);
+											 vec4 mask = texture2D(maskTex, pos);
 											 
 											 vec4 color = vec4(0,0,0,0);
 											 color = mix(color, rTxt, mask.r );
@@ -153,14 +152,12 @@ void ofApp::update(){
 	fbo.begin();
 	ofClear(0, 0, 0,255);
 	shader.begin();
-#ifdef TARGET_OPENGLES
+	
 	// sampler2D expects 0-1 for tex coordinates
-	shader.setUniform1f( "texCoordWidthScale", fbo.getWidth());
+	// we pass in the width and height of the fbo so that we can normalize it in the shader
+	shader.setUniform1f("texCoordWidthScale", fbo.getWidth());
 	shader.setUniform1f("texCoordHeightScale", fbo.getHeight());
-#else
-	shader.setUniform1f( "texCoordWidthScale", 1.0f);
-	shader.setUniform1f("texCoordHeightScale", 1.0f);
-#endif
+	
 	// Pass the video texture
 	shader.setUniformTexture("tex0", vidGrabber.getTexture() , 1 );
 	// Pass the image texture
