@@ -392,12 +392,13 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 				} else {
 					
 				}
-				// encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory ).string();
 				encFolder = data->settings.cacheDirectory;
 			}
-			auto baseName = data->settings.filePath.stem(); // equivalent to getBaseName
-			auto cacheIrrName = baseName + ("_irr_"+ofToString(data->settings.irradianceRes,0)+".exr");
-			auto cachePrefilterName = baseName + ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr");
+			of::filesystem::path baseName = data->settings.filePath.stem(); // equivalent to getBaseName
+			of::filesystem::path cacheIrrName { baseName };
+			cacheIrrName += ("_irr_"+ofToString(data->settings.irradianceRes,0)+".exr");
+			of::filesystem::path cachePrefilterName { baseName };
+			cacheIrrName += ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr");
 			
 			bool bHasCachedIrr = false;
 			bool bHasCachedPre = false;
