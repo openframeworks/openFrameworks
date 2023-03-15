@@ -22,6 +22,7 @@ using std::istream;
 using std::ostream;
 using std::ios;
 
+// FIXME: remove this temporary using
 using std::cout;
 using std::endl;
 
