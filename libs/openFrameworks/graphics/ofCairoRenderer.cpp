@@ -37,7 +37,7 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
 	if( outputsize.width == 0 || outputsize.height == 0 ){
 		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
@@ -47,10 +47,10 @@ void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool mult
 	streamBuffer.clear();
 
 	if(type == FROM_FILE_EXTENSION){
-		string ext = ofFilePath::getFileExt(filename);
-		if(ofToLower(ext)=="svg"){
+		string ext = ofToLower(filename.extension().string());
+		if(ext=="svg"){
 			type = SVG;
-		}else if(ofToLower(ext)=="pdf"){
+		}else if(ext=="pdf"){
 			type = PDF;
 		}else{ // default to image
 			type = IMAGE;

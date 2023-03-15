@@ -438,7 +438,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(const of::filesystem::path& path,std::vec
 //------------------------------------------------------------
 bool ofOpenALSoundPlayer::stream(const of::filesystem::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
-	if(ofFilePath::getFileExt(fileName)=="mp3" || ofFilePath::getFileExt(fileName)=="MP3" || mp3streamf){
+	if(ofToLower(fileName.extension().string())=="mp3" || mp3streamf){
 		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return false;
 	}else
 #endif
@@ -458,7 +458,7 @@ bool ofOpenALSoundPlayer::stream(const of::filesystem::path& fileName, std::vect
 
 bool ofOpenALSoundPlayer::readFile(const of::filesystem::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
-	if(ofFilePath::getFileExt(fileName)!="mp3" && ofFilePath::getFileExt(fileName)!="MP3"){
+	if(ofToLower(fileName.extension().string())=="mp3"){
 		if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return false;
 	}else{
 		if(!mpg123ReadFile(fileName,buffer,fftAuxBuffer)) return false;
