@@ -34,6 +34,9 @@
 	requested that these non-binding requests be included whenever the
 	above license is reproduced.
 */
+
+#ifndef _WIN32
+
 #include "ip/UdpSocket.h"
 
 #include <pthread.h>
@@ -624,3 +627,5 @@ void SocketReceiveMultiplexer::AsynchronousBreak()
 }
 
 }
+
+#endif // _WIN32

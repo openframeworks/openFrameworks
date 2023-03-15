@@ -1,4 +1,8 @@
 
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR "In-source builds are a really bad idea. If you don't know what you're doing, please create a 'build' folder and call 'cmake ..' from within.")
+endif()
+
 # This function test-compiles a tiny program to see if a definition is defined or not (compiler internal)
 function(TEST_IF_DEFINED OUTPUT_VAR DEFINE)
 
@@ -23,4 +27,13 @@ endfunction()
 
 function(copy_file_after_build TARGET_NAME SOURCE_FILE TARGET_FILE)
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_FILE}" "${TARGET_FILE}")
+endfunction()
+
+# After compilation copy the dll files to the binary dir
+function(of_copy_runtime_to_bin_dir_after_build TARGET BIN_DIR)
+    file(GLOB_RECURSE libs "${CMAKE_BINARY_DIR}/_deps/**/${CMAKE_SHARED_LIBRARY_PREFIX}**${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    foreach(lib_path IN LISTS libs)
+        get_filename_component(lib_name ${lib_path} NAME)
+        add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${lib_path}" "${BIN_DIR}/${lib_name}")
+    endforeach()
 endfunction()

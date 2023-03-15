@@ -3,6 +3,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/utils.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/import_deps.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/CPM.cmake)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+
 set(OF_TARGET_ARCHITECTURE "auto" CACHE STRING "The target platform for openFrameworks. 'auto' to detect automatically")
 option(OF_VERBOSE "Enable verbose printing while downloading the compiled binaries for OF" OFF)
 
@@ -13,7 +15,7 @@ if(OF_TARGET_ARCHITECTURE STREQUAL "auto")
         message(FATAL_ERROR "OpenFrameworks does no longer support 32-bit build systems. Please upgrade your compiler to 64-bit.")
     endif()
 
-    message(STATUS "Auto-detecting platform...")
+    message(STATUS "[openframeworks] Auto-detecting platform...")
 
     if (MSVC)
         set(OF_TARGET_ARCHITECTURE "msvc" CACHE STRING "" FORCE)
@@ -54,9 +56,9 @@ function(get_packages_and_link)
         # Download and extract the compressed archive
         CPMAddPackage(
             NAME of-deps-${dependency}
-            URL ${_URL}
             DOWNLOAD_EXTRACT_TIMESTAMP TRUE
             DOWNLOAD_ONLY YES
+            URL ${_URL}
         )
 
         # Now, create the targets and link all files to them
@@ -136,16 +138,6 @@ add_library(of-deps-glut INTERFACE)
 add_library(of::glut ALIAS of-deps-glut)
 target_include_directories(of-deps-glut INTERFACE ${of-deps-glut_SOURCE_DIR}/include/GL)
 
-# After compilation copy the dll files to the binary dir
-file(GLOB_RECURSE __SHARED_LIBS "${CMAKE_CURRENT_BINARY_DIR}/_deps/**/${CMAKE_SHARED_LIBRARY_PREFIX}**${CMAKE_SHARED_LIBRARY_SUFFIX}")
-foreach(LIB IN LISTS __SHARED_LIBS)
-    add_custom_command(TARGET openframeworks POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${LIB}" "${CMAKE_BINARY_DIR}/bin/$<IF:$<CONFIG:Debug>,Debug,Release>")
-endforeach()
-
-
-
 # And link to all the dependencies we depend upon
 target_link_libraries(openframeworks 
     of::tess2 
@@ -187,13 +179,35 @@ if (LINUX)
     if (NOT assimp_FOUND)
         message(FATAL_ERROR "Dependency Assimp not found. Please install it using your system's equivalent of 'sudo apt install libassimp-dev'")
     endif()
-    target_include_directories(openframeworks PUBLIC ${assimp_INCLUDE_DIRS})
-    target_link_libraries(openframeworks ${assimp_LIBRARIES})
+    add_library(of-deps-assimp INTERFACE)
+    add_library(of::assimp ALIAS of-deps-assimp)
+    target_include_directories(of-deps-assimp INTERFACE ${assimp_INCLUDE_DIRS})
+    target_link_libraries(of-deps-assimp INTERFACE ${assimp_LIBRARIES})
 
     find_package(OpenCV)
     if (NOT OpenCV_FOUND)
         message(FATAL_ERROR "Dependency OpenCV not found. Please install it using your system's equivalent of 'sudo apt install libopencv-dev'")
     endif()
-    target_include_directories(openframeworks PUBLIC ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(openframeworks ${OpenCV_LIBS})
+    add_library(of-deps-opencv INTERFACE)
+    add_library(of::opencv ALIAS of-deps-opencv)
+    target_include_directories(of-deps-opencv INTERFACE ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(of-deps-opencv INTERFACE ${OpenCV_LIBS})
+
+    find_package(Cairo)
+    if (NOT Cairo_FOUND)
+        message(FATAL_ERROR "Dependency Cairo not found. Please install it using your system's equivalent of 'sudo apt install libcairo-dev'")
+    endif()
+    add_library(of-deps-cairo INTERFACE)
+    add_library(of::cairo ALIAS of-deps-cairo)
+    target_include_directories(of-deps-cairo INTERFACE ${Cairo_INCLUDE_DIRS})
+    target_link_libraries(of-deps-cairo INTERFACE ${Cairo_LIBRARIES})
+
+    find_package(GLFW3)
+    if (NOT GLFW_FOUND)
+        message(FATAL_ERROR "Dependency GLFW not found. Please install it using your system's equivalent of 'sudo apt install libglfw-dev'")
+    endif()
+    add_library(of-deps-glfw INTERFACE)
+    add_library(of::glfw ALIAS of-deps-glfw)
+    target_include_directories(of-deps-glfw INTERFACE ${GLFW_INCLUDE_DIRS})
+    target_link_libraries(of-deps-glfw INTERFACE ${GLFW_LIBRARIES})
 endif()

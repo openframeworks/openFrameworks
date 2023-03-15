@@ -60,6 +60,10 @@ if you have bugs or feature requests, consider opening an issue.  If you are a d
 
 We also have a developer's mailing list, which is useful for discussing issues around the development and future of OF.
 
+## Working with CMake
+
+Using CMake will give you the best possible experience when working with openFrameworks. There is an entire page dedicated to [CMake support](CMAKE.md).
+
 ## Developers
 
 To grab a copy of openFrameworks for your platform, check the [download page](http://openframeworks.cc/download) on the main site.  

@@ -1,7 +1,4 @@
-
-file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/**)
-define_example(ofNodeExample ${SOURCES})
-
+define_example(ofNodeExample)
 target_link_libraries(ofNodeExample of::ofxGui)
 
 copy_example_resource(ofNodeExample bin/data/engine.wav)

@@ -1,17 +1,25 @@
 
 function(define_addon TARGET_NAME)
+    file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/**)
+
     add_library(${TARGET_NAME} STATIC)
     add_library(of::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
-    target_sources(${TARGET_NAME} PRIVATE ${ARGN})
+    target_sources(${TARGET_NAME} PRIVATE ${SOURCES})
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src)
+    target_link_libraries(${TARGET_NAME} of::openframeworks)
 
-    target_compile_features(${TARGET_NAME} PUBLIC cxx_std_17)
+    source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/" PREFIX "" FILES ${SOURCES})
+
+    target_compile_features(${TARGET_NAME} PRIVATE cxx_std_17)
     set_target_properties(${TARGET_NAME} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "openframeworks/addons")
 
-    target_link_libraries(${TARGET_NAME} of::openframeworks)
+    set_target_properties(${TARGET_NAME} PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/$<IF:$<CONFIG:Debug>,debug,release>"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/$<IF:$<CONFIG:Debug>,debug,release>"
+    )
 endfunction()
 
 # add_subdirectory(ofxAccelerometer)

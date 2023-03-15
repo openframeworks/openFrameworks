@@ -42,6 +42,7 @@ function(add_libraries_to_dependency LIB_DIR_NAME LIB_NAME DEP_NAME)
 endfunction()
 
 # This function is called for every dependency in every package, e.g. 'boost', 'freetype', 'libcurl', etc.
+# It creates the CMake target for each dependency and adds the library files to the targets
 function(import_dependency DEP_NAME DEP_ROOT PACKAGE_SOURCE_DIR)
 
     # Find all the library files in one dependency

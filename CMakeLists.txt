@@ -1,10 +1,8 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.22)
 project(openframeworks)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/utils.cmake)
 
-if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-    message(FATAL_ERROR "In-source builds are a really bad idea. If you don't know what you're doing, please create a 'build' folder and call 'cmake ..' from within.")
-endif()
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/utils.cmake)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(OF_IS_MAIN_PROJECT ON)
@@ -13,24 +11,21 @@ else()
 endif()
 
 # Here are all the options you can set for customizing your build
-option(BUILD_SHARED_LIBS "Build OF as a shared library instead of a static one" OFF)
+# BUILD_SHARED_LIBS can be set to build a dll
 option(BUILD_EXAMPLES "Add all OpenFrameworks examples to the project" ${OF_IS_MAIN_PROJECT})
 option(BUILD_TESTS "Add all OpenFrameworks examples to the project" ${OF_IS_MAIN_PROJECT})
 
 # This defines the actual library
-if (BUILD_SHARED_LIBS)
-    add_library(openframeworks SHARED)
-else()
-    add_library(openframeworks STATIC)
-endif()
+add_library(openframeworks)
 add_library(of::openframeworks ALIAS openframeworks)
 
 # This is another CMake script that adds the header locations and source files
-include(${CMAKE_CURRENT_LIST_DIR}/libs/openFrameworks/ofSources.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/libs/openFrameworks/CMakeLists.txt)
 
 # C++ standard version and disabling non-standard compiler specific features
 target_compile_features(openframeworks PUBLIC cxx_std_17)
 set_target_properties(openframeworks PROPERTIES CXX_EXTENSIONS OFF)
+set_target_properties(openframeworks PROPERTIES FOLDER "openframeworks")
 
 # Preprocessor defines
 target_compile_definitions(openframeworks PUBLIC 
@@ -49,13 +44,11 @@ if(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099 /NODEFAULTLIB:LIBCMT /NODEFAULTLIB:MSVCRT")
 endif()
 
-# Output everything into a bin folder
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-# Folder layout in Visual Studio & Co
-set_target_properties(openframeworks PROPERTIES FOLDER "openframeworks")
+# Where compiled binaries should be placed
+set_target_properties(openframeworks PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/$<IF:$<CONFIG:Debug>,debug,release>"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/$<IF:$<CONFIG:Debug>,debug,release>"
+)
 
 # This downloads and configures the dependencies for us
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_and_link_deps.cmake)

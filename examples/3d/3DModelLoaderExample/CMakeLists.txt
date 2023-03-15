@@ -1,7 +1,10 @@
-
-file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/**)
-define_example(3DModelLoaderExample ${SOURCES})
-
+define_example(3DModelLoaderExample)
 target_link_libraries(3DModelLoaderExample of::ofxAssimpModelLoader)
 
-# copy_example_resource(3DModelLoaderExample bin/data/penguin.jpg)
+copy_example_resource(3DModelLoaderExample bin/data/penguin.3ds)
+copy_example_resource(3DModelLoaderExample bin/data/penguin.dae)
+copy_example_resource(3DModelLoaderExample bin/data/penguin.jpg)
+copy_example_resource(3DModelLoaderExample bin/data/penguin.obj)
+copy_example_resource(3DModelLoaderExample bin/data/penguin.obj.mtl)
+copy_example_resource(3DModelLoaderExample bin/data/penguin.ply)
+copy_example_resource(3DModelLoaderExample bin/data/penguin.stl)
