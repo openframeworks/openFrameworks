@@ -564,8 +564,6 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 bool ofFile::open(const of::filesystem::path & _path, Mode _mode, bool binary){
 	close();
 	myFile = ofToDataPath(_path, true);
-//	cout << "offile::open=" << _path << endl;
-//	cout << "myFile=" << myFile << endl;
 	return openStream(_mode, binary);
 }
 
