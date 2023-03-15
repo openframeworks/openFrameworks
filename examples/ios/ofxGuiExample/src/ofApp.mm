@@ -3,9 +3,9 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	
 
-	//ofSetOrientation(OF_ORIENTATION_90_LEFT); 
+//	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	ofSetVerticalSync(true);
-	
+
 	// we add this listener before setting up so the initial circle resolution is correct
 	circleResolution.addListener(this, &ofApp::circleResolutionChanged);
 	ringButton.addListener(this,&ofApp::ringButtonPressed);
@@ -16,16 +16,16 @@ void ofApp::setup(){
 	ofxGuiSetDefaultWidth(300);
 	ofxGuiSetDefaultHeight(18);
 
-	gui.setup("panel"); // most of the time you don't need a name but don't forget to call setup
+//	gui.setup("panel"); // most of the time you don't need a name but don't forget to call setup
 	gui.add(filled.set("bFill", true));
 	gui.add(radius.set( "radius", 140, 10, 300 ));
 	gui.add(center.set("center",glm::vec2(ofGetWidth()*.5,ofGetHeight()*.75),glm::vec2(0,0),glm::vec2(ofGetWidth(),ofGetHeight())));
-	gui.add(color.set("color",ofColor(100,100,140),ofColor(0,0),ofColor(255,255)));
+	gui.add(color.set("color",ofColor(100,100,140),ofColor(0,0,0),ofColor(255,255,255)));
 	gui.add(circleResolution.set("circleRes", 5, 3, 90));
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.set("screenSize", ofToString(ofGetWidth()) + "x" + ofToString(ofGetHeight())));
-	
+
 	bHide = true;
 
 	ring.load("ring.wav");
@@ -65,7 +65,7 @@ void ofApp::draw(){
 	}else{
 		ofDrawCircle((glm::vec2)center, radius );
 	}
-	
+
 	if( bHide ){
 		gui.draw();
 	}

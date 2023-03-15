@@ -199,12 +199,12 @@ ofShader & ofShader::operator=(ofShader && mom){
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(const std::filesystem::path& shaderName) {
+bool ofShader::load(const of::filesystem::path& shaderName) {
 	return load(shaderName.string() + ".vert", shaderName.string() + ".frag");
 }
 
 //--------------------------------------------------------------
-bool ofShader::load(const std::filesystem::path& vertName, const std::filesystem::path& fragName, const std::filesystem::path& geomName) {
+bool ofShader::load(const of::filesystem::path& vertName, const of::filesystem::path& fragName, const of::filesystem::path& geomName) {
 	if(vertName.empty() == false) setupShaderFromFile(GL_VERTEX_SHADER, vertName);
 	if(fragName.empty() == false) setupShaderFromFile(GL_FRAGMENT_SHADER, fragName);
 #ifndef TARGET_OPENGLES
@@ -218,7 +218,7 @@ bool ofShader::load(const std::filesystem::path& vertName, const std::filesystem
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 //--------------------------------------------------------------
-bool ofShader::loadCompute(const std::filesystem::path& shaderName) {
+bool ofShader::loadCompute(const of::filesystem::path& shaderName) {
 	return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
 }
 #endif
@@ -295,12 +295,12 @@ bool ofShader::setup(const TransformFeedbackSettings & settings) {
 #endif
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromFile(GLenum type, const std::filesystem::path& filename) {
+bool ofShader::setupShaderFromFile(GLenum type, const of::filesystem::path & filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
-	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
-	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
+	auto absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	auto sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
@@ -310,14 +310,15 @@ bool ofShader::setupShaderFromFile(GLenum type, const std::filesystem::path& fil
 }
 
 //--------------------------------------------------------------
-ofShader::Source ofShader::sourceFromFile(GLenum type, const std::filesystem::path& filename) {
+ofShader::Source ofShader::sourceFromFile(GLenum type, const of::filesystem::path& filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
-	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
-	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
+	auto absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	auto sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return Source{type, buffer.getText(), sourceDirectoryPath};
+		// return Source{type, buffer.getText(), sourceDirectoryPath.string() };
+		return Source{type, buffer.getText(), sourceDirectoryPath };
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << absoluteFilePath << "\"";
 		return Source{};
@@ -325,6 +326,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const std::filesystem::pa
 }
 
 //--------------------------------------------------------------
+// FIXME: change to of::filesystem
 bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
 	return setupShaderFromSource({type, source, sourceDirectoryPath});
 }
@@ -423,13 +425,14 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source){
  */
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, const std::filesystem::path& sourceDirectoryPath) {
+string ofShader::parseForIncludes( const string& source, const of::filesystem::path& sourceDirectoryPath) {
 	vector<string> included;
 	return parseForIncludes( source, included, 0, sourceDirectoryPath);
 }
 
 //--------------------------------------------------------------
-string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const std::filesystem::path& sourceDirectoryPath) {
+// FIXME: update to use fs::path in vector and source
+string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const of::filesystem::path& sourceDirectoryPath) {
 
 	if ( level > 32 ) {
 		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
@@ -503,8 +506,12 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		}
 
 		// we store the absolute paths so as have (more) unique file identifiers.
+		// FIXME: Included can be a vector of of::filesystem::path in near future
+		include = ofFile(
+			sourceDirectoryPath / include
+		// ).getAbsolutePath().string();
+		).getAbsolutePath();
 
-		include = ofFile(ofFilePath::join(sourceDirectoryPath, include)).getAbsolutePath();
 		included.push_back( include );
 
 		ofBuffer buffer = ofBufferFromFile( include );
@@ -513,7 +520,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 			continue;
 		}
 
-		string currentDir = ofFile(include).getEnclosingDirectory();
+		auto currentDir = ofFile(include).getEnclosingDirectory();
 		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << endl;
 	}
 
@@ -1510,7 +1517,7 @@ bool ofShader::setPbrEnvironmentMapUniforms( int textureLocation ) const {
 		if(cubeMapData->bPreFilteredMapAllocated) {
 			setUniformTexture("tex_prefilterEnvMap", GL_TEXTURE_CUBE_MAP, cubeMapData->preFilteredMapId, textureLocation+1 );
 		}
-		if( cubeMapData->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+		if( cubeMapData->settings.useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
 			setUniformTexture("tex_brdfLUT", ofCubeMap::getBrdfLutTexture(), textureLocation+2 );
 		}
 	}

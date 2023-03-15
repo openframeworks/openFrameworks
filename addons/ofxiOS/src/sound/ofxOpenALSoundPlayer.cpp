@@ -93,7 +93,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::load(const std::filesystem::path& filePath, bool stream) {
+bool ofxOpenALSoundPlayer::load(const of::filesystem::path& filePath, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();

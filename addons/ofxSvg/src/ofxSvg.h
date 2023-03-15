@@ -25,7 +25,7 @@ class ofxSvg {
 		/// \brief Loads an SVG file from the provided filename.
 		///
 		/// ~~~~
-		void load(std::string path);
+		void load(of::filesystem::path fileName);
 	
 		/// \brief Loads an SVG from a text string.
 		///

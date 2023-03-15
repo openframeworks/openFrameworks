@@ -1,17 +1,13 @@
 #include "ofApp.h"
 
-//NOTE: in this example ofApp ( this class ) is not used. 
-//      look inside Apps/ to see the native iOS implementation
-
 //--------------------------------------------------------------
-void ofApp::setup(){	
-	
-	ofBackground(127,127,127);
+void ofApp::setup(){
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	haptics_.sendParameters(fmod(ofGetElapsedTimef()*2.0f,1),ofMap(sin(ofGetElapsedTimef()*PI/3.0f), -1, 1, 0, 1));
 }
 
 //--------------------------------------------------------------
@@ -69,3 +65,7 @@ void ofApp::deviceOrientationChanged(int newOrientation){
 
 }
 
+//--------------------------------------------------------------
+void ofApp::launchedWithURL(std::string url){
+
+}

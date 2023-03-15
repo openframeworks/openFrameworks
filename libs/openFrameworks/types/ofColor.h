@@ -1,9 +1,10 @@
 #pragma once
 
-
-#include "ofConstants.h"
+#define GLM_FORCE_CTOR_INIT
+#include "glm/gtx/wrap.hpp"
+#include <typeinfo>
+#include <iostream>
 #include <limits>
-#include "glm/common.hpp"
 
 /// \class ofColor_
 ///
