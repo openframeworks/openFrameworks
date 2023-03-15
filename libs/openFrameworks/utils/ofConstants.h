@@ -1,11 +1,21 @@
 #pragma once
-#include <stdint.h>
 
-//-------------------------------
+// version: ------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
 #define OF_VERSION_PATCH 2
 #define OF_VERSION_PRE_RELEASE "master"
+
+// core: ---------------------------
+#include <stdint.h>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <functional>
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
 #ifndef OF_USE_LEGACY_VECTOR_MATH
@@ -114,7 +124,6 @@ enum ofTargetPlatform{
 #elif defined(__EMSCRIPTEN__)
 	#define TARGET_EMSCRIPTEN
 	#define TARGET_OPENGLES
-	#define TARGET_NO_THREADS
 	#define TARGET_PROGRAMMABLE_GL
 	#define TARGET_IMPLEMENTS_URL_LOADER
 #else
@@ -283,16 +292,6 @@ typedef TESSindex ofIndexType;
 #define OF_EXIT_APP(val)		std::exit(val);
 
 
-// core: ---------------------------
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <functional>
-
 
 //------------------------------------------------ capture
 // check if any video capture system is already defined from the compiler
@@ -457,6 +456,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     #define OF_HAS_CPP17 0
 #endif
 
+
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
 		#define OF_USING_STD_FS 1
@@ -514,47 +514,46 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            class path;
-                        }
-                        using v1::path;
+                        using path = v1::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
             }
         #else
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            namespace __cxx11 {
-                                class path;
-                            }
-                        }
-                        using v1::__cxx11::path;
+                        using path = v1::__cxx11::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
             }
         #endif
         
+		namespace of {
+			namespace filesystem = std::experimental::filesystem;
+		}
     #else
-        // Regular C++17 fs support
-        #include <filesystem>
+		#include <filesystem>
+		#if OF_HAS_CPP17
+			// Regular C++17 fs support
+			namespace of {
+				namespace filesystem = std::filesystem;
+			}
+		#else
+			namespace of {
+				namespace filesystem = std::filesystem;
+			}
+		#endif
     #endif
-#else
+#else //not OF_USING_STD_FS
     // No experimental or c++17 filesytem support use boost
     #if !_MSC_VER
         #define BOOST_NO_CXX11_SCOPED_ENUMS
         #define BOOST_NO_SCOPED_ENUMS
     #endif
+
     #include <boost/filesystem.hpp>
-	namespace boost {
-		namespace filesystem {
-			class path;
-		}
-	}
-	namespace std {
+	namespace of {
 		namespace filesystem = boost::filesystem;
 	}
+
 #endif

@@ -14,10 +14,10 @@ class ofxAssimpTexture {
 
 public:
 
-	void setup(const ofTexture & texture, std::string texturePath, bool bTexRepeat = true);
+	void setup(const ofTexture & texture, const of::filesystem::path & texturePath, bool bTexRepeat = true);
 
 	ofTexture & getTextureRef();
-	std::string getTexturePath();
+	of::filesystem::path getTexturePath();
 	bool hasTexture();
 
 	void setTextureType(aiTextureType aTexType);
@@ -27,7 +27,7 @@ public:
 private:
 
 	ofTexture texture;
-	std::string texturePath;
+	of::filesystem::path texturePath;
 	aiTextureType textureType;
 	std::string mTexTypeStr;
 };

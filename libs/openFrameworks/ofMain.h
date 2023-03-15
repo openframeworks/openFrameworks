@@ -12,10 +12,8 @@
 
 #include "ofUtils.h"
 
-#if !defined(TARGET_EMSCRIPTEN)
 #include "ofThread.h"
 #include "ofThreadChannel.h"
-#endif
 
 #include "ofFpsCounter.h"
 #include "ofJson.h"
