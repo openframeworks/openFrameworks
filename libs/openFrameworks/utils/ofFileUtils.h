@@ -315,7 +315,6 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path + slash
-//	MARK: - remove after fs transition
 	static std::string addTrailingSlash(const of::filesystem::path& path);
 
 	/// Remove a path's trailing slash (if found),

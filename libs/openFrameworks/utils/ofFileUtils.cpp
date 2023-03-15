@@ -1343,8 +1343,6 @@ bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData
 }
 
 //------------------------------------------------------------------------------------------------------------
-using std::cout;
-using std::endl;
 bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData, bool overwrite){
 	if (of::filesystem::exists(path)) {
 		cout << "exists " << path << endl;
@@ -1357,7 +1355,6 @@ bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData,
 		}
 	}
 	const of::filesystem::path & old = myDir;
-//	std::error_code ec;
 	try {
 		of::filesystem::rename(old, path);
 	} catch (of::filesystem::filesystem_error const& ex) {
@@ -1365,18 +1362,6 @@ bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData,
 	}
 	myDir = path;
 	return true;
-
-	// error_code 0 means success. any other result will return false;
-//	std::cout << ec.value() << " " << ec.message() << std::endl;
-//	if (ec.empty()) {
-//	}
-//	return ec.empty();
-	
-//	if(copyTo(path,bRelativeToData,overwrite)){
-//		return remove(true);
-//	}
-//
-//	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
