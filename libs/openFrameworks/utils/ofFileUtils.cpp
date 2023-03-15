@@ -1679,6 +1679,7 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
+//	FIXME: - Deprecate
 string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 	auto path = _path.string();
 	auto sep = of::filesystem::path("/").make_preferred();
@@ -1691,12 +1692,10 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - Remove this function after FS transition
+//	FIXME: - Deprecate
 std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
 	if(_path.string().empty()) return "";
-	// FIXME: Remove .string() here and following
-	// return (of::filesystem::path(_path).make_preferred() / "");
 	return (of::filesystem::path(_path).make_preferred() / "").string();
 #else
 	auto path = of::filesystem::path(_path).make_preferred();
@@ -1706,21 +1705,19 @@ std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 			path = (path / sep);
 		}
 	}
-//	return path;
 	return path.string();
 #endif
 }
 
 
 //------------------------------------------------------------------------------------------------------------
+//	FIXME: - Deprecate
 string ofFilePath::getFileExt(const of::filesystem::path& filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: remove const and copy
-// MARK: - near future
-// of::filesystem::path ofFilePath::removeExt(const of::filesystem::path& _filename){
+// FIXME: Deprecate
 std::string ofFilePath::removeExt(const of::filesystem::path& _filename){
 	auto filename = _filename;
 //	return filename.replace_extension();
@@ -1728,6 +1725,7 @@ std::string ofFilePath::removeExt(const of::filesystem::path& _filename){
 }
 
 //------------------------------------------------------------------------------------------------------------
+// FIXME: Deprecate
 string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
@@ -1750,7 +1748,7 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: convert to of::filesystem::path
+// FIXME: Deprecate
 string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
 	auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
@@ -1761,7 +1759,7 @@ string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: is this still useful? if yes convert to of::filesystem::path
+// FIXME: Deprecate
 string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRelativeToData){
 	auto filePath = _filePath;
 
@@ -1774,13 +1772,13 @@ string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRela
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: is this still useful?
+// FIXME: Deprecate
 string ofFilePath::getBaseName(const of::filesystem::path& filePath){
 	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - near future
+//	FIXME: Is this useful? if not deprecate
 std::string ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
 	auto fp = _filePath;
 	if(bRelativeToData){
@@ -1795,7 +1793,7 @@ bool ofFilePath::createEnclosingDirectory(const of::filesystem::path& filePath, 
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - near future
+//	FIXME: Is this useful? if not deprecate
 std::string ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
@@ -1809,17 +1807,19 @@ std::string ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool b
 }
 
 //------------------------------------------------------------------------------------------------------------
+// FIXME: Deprecate
 bool ofFilePath::isAbsolute(const of::filesystem::path& path){
 	return of::filesystem::path(path).is_absolute();
 }
 
 //------------------------------------------------------------------------------------------------------------
+// FIXME: Deprecate
 string ofFilePath::getCurrentWorkingDirectory(){
 	return of::filesystem::current_path().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: deprecate when possible. helper function more complex than actual solution
+// FIXME: Deprecate helper function more complex than actual solution
 std::string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
 	return (path1 / path2).string();
 }
@@ -1856,6 +1856,7 @@ string ofFilePath::getCurrentExePath(){
 }
 
 //------------------------------------------------------------------------------------------------------------
+// Can be changed to be unneeded in near future
 of::filesystem::path ofFilePath::getCurrentExeDir(){
 	auto exePath = of::filesystem::path(getCurrentExePath());
 	return exePath.parent_path();
@@ -1876,27 +1877,10 @@ string ofFilePath::getUserHomeDir(){
 	#endif
 }
 
+//--------------------------------------------------
 // FIXME: - deprecate
 std::string ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
-	auto pathFrom = of::filesystem::absolute( from );
-	auto pathTo = of::filesystem::absolute( to );
-	of::filesystem::path ret;
-	of::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
-	// Find common base
-	for( of::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
-	// Navigate backwards in directory to reach previously found base
-	for( of::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
-		if( (*itrFrom) != "." ){
-			ret /= "..";
-		}
-	}
-	// Now navigate down the directory branch
-	for( ; itrTo != pathTo.end() ; ++itrTo ){
-		if( itrTo->string() != "."){
-			ret /= *itrTo;
-		}
-	}
-	return ret.string();
+	return of::filesystem::relative (to, from).string();
 }
 
 //--------------------------------------------------
@@ -1926,7 +1910,6 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 
 //--------------------------------------------------
 std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
-
 	of::filesystem::path outPath { path };
 	if (path.is_absolute()) {
 		if (makeAbsolute) {
@@ -1955,5 +1938,4 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 //		}
 //	}
 //#endif
-
 }
