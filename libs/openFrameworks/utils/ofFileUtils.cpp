@@ -22,10 +22,6 @@ using std::istream;
 using std::ostream;
 using std::ios;
 
-// FIXME: remove this temporary using
-using std::cout;
-using std::endl;
-
 namespace{
 	bool enableDataPath = true;
 
@@ -36,8 +32,7 @@ namespace{
 	// three levels up because is a directory with path App.app/Contents/MacOS/App
 	of::filesystem::path data = ofFilePath::getCurrentExeDir().parent_path().parent_path().parent_path() / "data";
 	if (!of::filesystem::is_directory(data)) {
-		// bundle data folder inside app
-		// one level up : MacOS/../Resources/data
+		// bundle data folder inside app = one level up : MacOS/../Resources/data
 		data = ofFilePath::getCurrentExeDir().parent_path() / "Resources/data";
 	}
 	return data;
@@ -1346,12 +1341,11 @@ bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData, bool overwrite){
 	if (of::filesystem::exists(path)) {
-		cout << "exists " << path << endl;
 		if (overwrite) {
 			of::filesystem::remove_all(path);
-			cout << "remove all " << path << endl;
 		}
 		else {
+			ofLogError("ofDirectory") << "moveTo(): destination folder exists, overwrite = false " << endl;
 			return false;
 		}
 	}
@@ -1359,6 +1353,7 @@ bool ofDirectory::moveTo(const of::filesystem::path& path, bool bRelativeToData,
 	try {
 		of::filesystem::rename(old, path);
 	} catch (of::filesystem::filesystem_error const& ex) {
+		ofLogError("ofDirectory") << "moveTo(): can't rename folder " << ex.code().message() << endl;
 		return false;
 	}
 	myDir = path;
@@ -1779,21 +1774,18 @@ string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRela
 }
 
 //------------------------------------------------------------------------------------------------------------
+// FIXME: is this still useful?
 string ofFilePath::getBaseName(const of::filesystem::path& filePath){
-	// FIXME: is this still useful?
 	return ofFile(filePath,ofFile::Reference).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
+//	FIXME: - near future
 std::string ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
 	auto fp = _filePath;
 	if(bRelativeToData){
 		fp = ofToDataPath(fp);
 	}
-	
-//	return addTrailingSlash(fp.parent_path());
 	return fp.parent_path().string();
 }
 
@@ -1804,16 +1796,13 @@ bool ofFilePath::createEnclosingDirectory(const of::filesystem::path& filePath, 
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - near future
-//of::filesystem::path ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
 std::string ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
 	}else{
 		try{
-//			return of::filesystem::canonical(of::filesystem::absolute(path));
 			return of::filesystem::canonical(of::filesystem::absolute(path)).string();
 		}catch(...){
-//			return of::filesystem::absolute(path);
 			return of::filesystem::absolute(path).string();
 		}
 	}
@@ -1830,13 +1819,8 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future
-//of::filesystem::path ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
-//	// FIXME: deprecate when possible. helper function more complex than actual solution
-//	return (path1 / path2);
-//}
+// FIXME: deprecate when possible. helper function more complex than actual solution
 std::string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
-	// FIXME: deprecate when possible. helper function more complex than actual solution
 	return (path1 / path2).string();
 }
 
@@ -1892,8 +1876,7 @@ string ofFilePath::getUserHomeDir(){
 	#endif
 }
 
-// MARK: - near future
-//of::filesystem::path ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
+// FIXME: - deprecate
 std::string ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
 	auto pathFrom = of::filesystem::absolute( from );
 	auto pathTo = of::filesystem::absolute( to );
@@ -1913,8 +1896,6 @@ std::string ofFilePath::makeRelative(const of::filesystem::path & from, const of
 			ret /= *itrTo;
 		}
 	}
-
-//	return ret;
 	return ret.string();
 }
 
