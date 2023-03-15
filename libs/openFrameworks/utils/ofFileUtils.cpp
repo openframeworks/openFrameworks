@@ -1987,57 +1987,16 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 	} else {
 		return (dataPathRoot() / path).string();
 	}
-//	return path.string();
-// if our Current Working Directory has changed (e.g. file open dialog)
-#ifdef TARGET_WIN32
-	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
-		// change our cwd back to where it was on app load
-		bool ret = ofRestoreWorkingDirectoryToDefault();
-		if(!ret){
-			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
-		}
-	}
-#endif
-	// FIXME: change to direct returns when return type is fs::path
-//	of::filesystem::path outPath;
-//	const auto & dataPath = dataPathRoot();
-//	if (makeAbsolute) {
-////		cout << dataPath << endl;
-////		cout << path << endl;
-////		cout << (dataPath / path) << endl;
-////		outPath = of::filesystem::absolute(dataPath / path);
-//		if (path.is_absolute()) {
-//			outPath = path;
-//		} else {
-//			outPath = dataPath / path;
-//		}
-//	} else {
-//		if (!path.is_absolute()) {
-//			auto exeDir = ofFilePath::getCurrentExeDir();
-//			outPath = of::filesystem::relative(dataPath / path, ofFilePath::getCurrentExeDir());
-//		} else {
-//			outPath = path;
+
+//// if our Current Working Directory has changed (e.g. file open dialog)
+//#ifdef TARGET_WIN32
+//	if (defaultWorkingDirectory() != of::filesystem::current_path()) {
+//		// change our cwd back to where it was on app load
+//		bool ret = ofRestoreWorkingDirectoryToDefault();
+//		if(!ret){
+//			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
 //		}
 //	}
-	
-	using std::cout;
-	using std::endl;
-//	cout << "path = " << path << endl;
+//#endif
 
-	auto exeDir = ofFilePath::getCurrentExeDir();
-	// xaxa
-	of::filesystem::path outPath;
-	if (path.is_absolute()) {
-//		cout << "path is already absolute" << endl;
-		outPath = path;
-	} else {
-		const auto & dataPath = dataPathRoot();
-		outPath = { dataPath / path };
-	}
-	if (!makeAbsolute) {
-		outPath = of::filesystem::relative(outPath, ofFilePath::getCurrentExeDir());
-	}
-//	cout << "outpath = " << outPath << endl;
-
-	return outPath.string();
 }
