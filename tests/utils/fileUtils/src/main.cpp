@@ -120,7 +120,7 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTest(ofDirectory("d1").canExecute(),"ofDirectory::canExecute");
 		}
 
-		std::exit(0);
+//		std::exit(0);
 
 		ofDirectory("noreaddir").create();
 		ofDirectory("noreaddir").setWriteable(false);

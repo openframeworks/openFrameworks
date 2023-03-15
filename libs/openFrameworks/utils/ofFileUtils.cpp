@@ -52,7 +52,7 @@ namespace{
 
 	//--------------------------------------------------
 	of::filesystem::path & defaultWorkingDirectory(){
-		cout << "defaultWorkingDirectory()" << endl;
+//		cout << "defaultWorkingDirectory()" << endl;
 		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
 		return * defaultWorkingDirectory;
 	}
@@ -61,7 +61,7 @@ namespace{
 	of::filesystem::path & dataPathRoot(){
 		
 		static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
-		cout << "dataPathRoot() internal = " << *dataPathRoot << endl;
+//		cout << "<dataPathRoot() internal = " << *dataPathRoot << ">" << endl;
 		of::filesystem::current_path(*dataPathRoot);
 
 		return *dataPathRoot;
@@ -71,9 +71,9 @@ namespace{
 namespace of{
 	namespace priv{
 		void initfileutils(){
-			cout << "initfileutils" << endl;
+//			cout << "initfileutils :: " << dataPathRoot() << endl;
 //			defaultWorkingDirectory() = of::filesystem::absolute(of::filesystem::current_path());
-			cout << defaultDataPath() << endl;
+//			cout << defaultDataPath() << endl;
 			defaultWorkingDirectory() = dataPathRoot();
 		}
 	}
@@ -572,8 +572,8 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 bool ofFile::open(const of::filesystem::path & _path, Mode _mode, bool binary){
 	close();
 	myFile = ofToDataPath(_path, true);
-	cout << "offile::open=" << _path << endl;
-	cout << "myFile=" << myFile << endl;
+//	cout << "offile::open=" << _path << endl;
+//	cout << "myFile=" << myFile << endl;
 	return openStream(_mode, binary);
 }
 
@@ -1187,8 +1187,13 @@ void ofDirectory::open(const of::filesystem::path & path){
 //	cout << "ofDirectory originalDirectory " << originalDirectory << endl;
 	
 	files.clear();
-	myDir = of::filesystem::path(ofToDataPath(path));
-	cout << "ofDirectory myDir " << myDir << endl;
+	
+	myDir = of::filesystem::path(ofToDataPath(path)).lexically_normal();
+//	cout << "ofDirectory " << path << endl;
+//	cout << of::filesystem::path(ofToDataPath(path)) << endl;
+//	cout << "lexically normal " << myDir << endl;
+//	cout << "----" << endl;
+	
 }
 
 //------------------------------------------------------------------------------------------------------------
