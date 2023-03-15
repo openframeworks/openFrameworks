@@ -383,29 +383,30 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 			// figure out the number of mip maps //
 			data->maxMipLevels = log2(data->settings.preFilterRes) + 1;
 			
-			of::filesystem::path encFolder { data->settings.cacheDirectory };
+			std::string encFolder = data->settings.cacheDirectory;
 			if( !encFolder.empty() ) {
 				if( !ofDirectory::doesDirectoryExist( ofFilePath::removeTrailingSlash( data->settings.cacheDirectory ))) {
-#if !defined(TARGET_OPENGLES)
+					#if !defined(TARGET_OPENGLES)
 					if(!ofDirectory::createDirectory( data->settings.cacheDirectory )) {
 						ofLogWarning("ofCubeMap :: load : unable to create directory: ") << data->settings.cacheDirectory;
 					}
-#endif
+					#endif
 				} else {
 					
 				}
+				// encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory ).string();
+				encFolder = ofFilePath::addTrailingSlash( data->settings.cacheDirectory );
 			}
-			
-			of::filesystem::path baseName { ofFilePath::getBaseName( data->settings.filePath ) };
-			of::filesystem::path cacheIrrName { baseName / ("_irr_"+ofToString(data->settings.irradianceRes,0) + ".exr") };
-			of::filesystem::path cachePrefilterName { baseName / ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr") };
+			std::string baseName = ofFilePath::getBaseName( data->settings.filePath );
+			std::string cacheIrrName = baseName+"_irr_"+ofToString(data->settings.irradianceRes,0)+".exr";
+			std::string cachePrefilterName = baseName+"_pre_"+ofToString(data->settings.preFilterRes,0)+".exr";
 			
 			bool bHasCachedIrr = false;
 			bool bHasCachedPre = false;
 			if( data->settings.useCache && !data->settings.overwriteCache ) {
-				bHasCachedIrr = _loadIrradianceMap(encFolder / cacheIrrName);
+				bHasCachedIrr = _loadIrradianceMap(encFolder+cacheIrrName);
 				ofLogVerbose("ofCubeMap :: _loadIrradianceMap: ") << bHasCachedIrr;
-				bHasCachedPre = _loadPrefilterMap(encFolder / cachePrefilterName);
+				bHasCachedPre = _loadPrefilterMap(encFolder+cachePrefilterName);
 				ofLogVerbose("ofCubeMap :: _loadPrefilterMap: ") << bHasCachedPre;
 			}
 			
@@ -417,12 +418,12 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 			
 			if( !bHasCachedIrr ) {
 				ofLogVerbose("ofCubeMap :: going to create irradiance map");
-				_createIrradianceMap(cubeFid,bMakeCache, encFolder / cacheIrrName);
+				_createIrradianceMap(cubeFid,bMakeCache, encFolder+cacheIrrName);
 			}
 			
 			if( !bHasCachedPre ) {
 				ofLogVerbose("ofCubeMap :: going to create pre filtered cube map");
-				_createPrefilteredCubeMap(cubeFid, srcCubeFSize,bMakeCache,encFolder / cachePrefilterName );
+				_createPrefilteredCubeMap(cubeFid, srcCubeFSize,bMakeCache,encFolder+cachePrefilterName );
 			}
 			
 			glDeleteTextures(1, &cubeFid );
@@ -736,7 +737,7 @@ void ofCubeMap::_equiRectToCubeMap( GLuint& aCubeTexId, ofTexture& aSrcTex, int 
 }
 
 //--------------------------------------------------------------
-void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, of::filesystem::path aCachePath) {
+void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, std::string aCachePath) {
 	if(data->bIrradianceAllocated) {
 		return;
 	}
@@ -877,7 +878,7 @@ void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, of::f
 }
 
 //--------------------------------------------------------------
-bool ofCubeMap::_loadIrradianceMap(of::filesystem::path aCachePath) {
+bool ofCubeMap::_loadIrradianceMap(std::string aCachePath) {
 	
 	if(data->bIrradianceAllocated) {
 		return false;
@@ -936,7 +937,7 @@ bool ofCubeMap::_loadIrradianceMap(of::filesystem::path aCachePath) {
 }
 
 //--------------------------------------------------------------
-void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool aBMakeCache, of::filesystem::path aCachePath) {
+void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool aBMakeCache, std::string aCachePath) {
 	if(data->bPreFilteredMapAllocated) {
 		return;
 	}
@@ -1094,7 +1095,7 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 }
 
 //--------------------------------------------------------------
-bool ofCubeMap::_loadPrefilterMap( of::filesystem::path aCachePath ) {
+bool ofCubeMap::_loadPrefilterMap( std::string aCachePath ) {
 	if(data->bPreFilteredMapAllocated) {
 		return false;
 	}
