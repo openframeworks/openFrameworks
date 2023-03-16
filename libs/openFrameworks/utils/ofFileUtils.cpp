@@ -1818,7 +1818,7 @@ std::string ofFilePath::join(const of::filesystem::path& path1, const of::filesy
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFilePath::getCurrentExePath(){
+of::filesystem::path ofFilePath::getCurrentExePathFS(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
 		ssize_t size = readlink("/proc/self/exe", buff, sizeof(buff) - 1);
@@ -1849,9 +1849,18 @@ of::filesystem::path ofFilePath::getCurrentExePath(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-of::filesystem::path ofFilePath::getCurrentExeDir(){
-//	return ofFilePath::getEnclosingDirectory(ofFilePath::getCurrentExePath(), false);
-	return ofFilePath::getCurrentExePath().parent_path();
+std::string ofFilePath::getCurrentExePath(){
+	return getCurrentExePathFS().string();
+}
+
+//------------------------------------------------------------------------------------------------------------
+of::filesystem::path ofFilePath::getCurrentExeDirFS(){
+	return ofFilePath::getCurrentExePathFS().parent_path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+std::string ofFilePath::getCurrentExeDir(){
+	return getCurrentExeDirFS().string() + of::filesystem::path::preferred_separator;
 }
 
 //------------------------------------------------------------------------------------------------------------

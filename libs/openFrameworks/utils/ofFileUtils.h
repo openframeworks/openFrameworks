@@ -433,7 +433,8 @@ public:
 	/// Linux: the binary file itself
 	///
 	/// \returns current executable path
-	static of::filesystem::path getCurrentExePath();
+	static of::filesystem::path getCurrentExePathFS();
+	static std::string getCurrentExePath();
 	
 	/// Get the full path to the application's parent directory.
 	///
@@ -441,7 +442,8 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-	static of::filesystem::path getCurrentExeDir();
+	static of::filesystem::path getCurrentExeDirFS();
+	static std::string getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
