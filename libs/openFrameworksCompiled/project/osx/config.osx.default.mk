@@ -70,7 +70,7 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 ifndef MAC_OS_MIN_VERSION
-	MAC_OS_MIN_VERSION = 10.9
+	MAC_OS_MIN_VERSION = 10.15
 endif
 
 ifndef MAC_OS_STD_LIB
@@ -78,7 +78,7 @@ ifndef MAC_OS_STD_LIB
 endif
 
 ifndef MAC_OS_CPP_VER
-    MAC_OS_CPP_VER = -std=c++11
+    MAC_OS_CPP_VER = -std=c++17
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
