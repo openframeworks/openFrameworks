@@ -398,7 +398,7 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 			of::filesystem::path cacheIrrName { baseName };
 			cacheIrrName += ("_irr_"+ofToString(data->settings.irradianceRes,0)+".exr");
 			of::filesystem::path cachePrefilterName { baseName };
-			cacheIrrName += ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr");
+			cachePrefilterName += ("_pre_"+ofToString(data->settings.preFilterRes,0)+".exr");
 			
 			bool bHasCachedIrr = false;
 			bool bHasCachedPre = false;
