@@ -1860,7 +1860,8 @@ of::filesystem::path ofFilePath::getCurrentExeDirFS(){
 
 //------------------------------------------------------------------------------------------------------------
 std::string ofFilePath::getCurrentExeDir(){
-	return getCurrentExeDirFS().string() + string(of::filesystem::path::preferred_separator);
+
+	return getCurrentExeDirFS().string() + of::filesystem::path::preferred_separator.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
