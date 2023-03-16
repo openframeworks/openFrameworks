@@ -1,10 +1,11 @@
 #version 120
 
 // this is how we receive the texture
-uniform sampler2D tex0;
-uniform vec2 resolution;
+uniform sampler2DRect tex0;
+
+varying vec2 texCoordVarying;
 
 void main()
 {
-    gl_FragColor = texture2D(tex0, gl_FragCoord.xy / resolution);
+    gl_FragColor = texture2DRect(tex0, texCoordVarying);
 }
