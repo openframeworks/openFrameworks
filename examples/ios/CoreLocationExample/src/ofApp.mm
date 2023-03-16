@@ -3,9 +3,6 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(225, 225, 225);
-
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
 	
 	coreLocation = new ofxiOSCoreLocation();
 	hasCompass = coreLocation->startHeading();

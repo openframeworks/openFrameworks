@@ -11,10 +11,10 @@ void ofApp::setup(){
 	drawCounter = 0;
 	bufferCounter = 0;
 
-	sound.load("sounds/beat.caf");
-	sound.setLoop(true);
-	sound.play();
-	sound.setVolume(0);
+//	sound.load("sounds/beat.caf");
+//	sound.setLoop(true);
+//	sound.play();
+//	sound.setVolume(0);
 	
 	ofSoundStreamSettings settings;
 	settings.setInListener(this);
@@ -76,12 +76,12 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-	sound.setVolume(1.0);
+//	sound.setVolume(1.0);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-	sound.setVolume(0.0);
+//	sound.setVolume(0.0);
 }
 
 //--------------------------------------------------------------

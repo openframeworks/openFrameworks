@@ -42,8 +42,8 @@ ofxXmlPoco::ofxXmlPoco(){
 }
 
 
-bool ofxXmlPoco::load(const std::filesystem::path & path){
-	ofFile file(path, ofFile::ReadOnly);
+bool ofxXmlPoco::load(const of::filesystem::path & filePath){
+	ofFile file(filePath, ofFile::ReadOnly);
 	if(!file.exists()){
 		ofLogError("ofxXmlPoco") << "couldn't load, \"" << file.getFileName() << "\" not found";
 		return false;
@@ -53,10 +53,10 @@ bool ofxXmlPoco::load(const std::filesystem::path & path){
 }
 
 
-bool ofxXmlPoco::save(const std::filesystem::path & path){
+bool ofxXmlPoco::save(const of::filesystem::path & filePath){
     ofBuffer buffer;
     buffer.set(toString());
-    ofFile file(path, ofFile::WriteOnly);
+    ofFile file(filePath, ofFile::WriteOnly);
     return file.writeFromBuffer(buffer);
 }
 
