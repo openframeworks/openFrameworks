@@ -3,7 +3,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/utils.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/import_deps.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/CPM.cmake)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/modules)
 
 set(OF_TARGET_ARCHITECTURE "auto" CACHE STRING "The target platform for openFrameworks. 'auto' to detect automatically")
 option(OF_VERBOSE "Enable verbose printing while downloading the compiled binaries for OF" OFF)
@@ -37,7 +37,7 @@ if(OF_TARGET_ARCHITECTURE STREQUAL "auto")
         # msys-clang and msys-ucrt must be specified manually
     elseif (MINGW)
         set(OF_TARGET_ARCHITECTURE "mingw" CACHE STRING "" FORCE)
-    elseif (LINUX)
+    elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(OF_TARGET_ARCHITECTURE "linux64" CACHE STRING "" FORCE)
         # 'linuxarmv6l' and 'linuxarmv7l' must be specified manually
     else ()
@@ -126,30 +126,46 @@ endif()
 
 
 
+# Find system packages
+find_package(OpenGL)
+if (NOT OpenGL_FOUND)       # This should never be not found on windows
+    message(SEND_ERROR "Dependency OpenGL not found. On Linux, please install it using your system's equivalent of 'sudo apt install libgl1-mesa-dev'")
+endif()
+target_include_directories(openframeworks PUBLIC ${OPENGL_INCLUDE_DIRS})
+target_link_libraries(openframeworks ${OPENGL_LIBRARIES})
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")  # All Linux-only packages (that are part of apothecary on all platforms except Linux)
+    include(${CMAKE_CURRENT_LIST_DIR}/find_linux_deps.cmake)
+    find_linux_deps()
+endif()
+
+
+
 # TODO: Now, download glut since it's somehow not part of the apothecary. Glut support seems to be deprecated
-CPMAddPackage(
-    NAME of-deps-glut
-    GIT_REPOSITORY "https://github.com/markkilgard/glut"
-    GIT_TAG "8cd96cb440f1f2fac3a154227937be39d06efa53"
-    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-    DOWNLOAD_ONLY YES
-)
-add_library(of-deps-glut INTERFACE)
-add_library(of::glut ALIAS of-deps-glut)
-target_include_directories(of-deps-glut INTERFACE ${of-deps-glut_SOURCE_DIR}/include/GL)
+if (WIN32)
+    CPMAddPackage(
+        NAME of-deps-glut
+        GIT_REPOSITORY "https://github.com/markkilgard/glut"
+        GIT_TAG "8cd96cb440f1f2fac3a154227937be39d06efa53"
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        DOWNLOAD_ONLY YES
+    )
+    add_library(of-deps-glut INTERFACE)
+    add_library(of::glut ALIAS of-deps-glut)
+    target_include_directories(of-deps-glut INTERFACE ${of-deps-glut_SOURCE_DIR}/include)
+    target_include_directories(of-deps-glut INTERFACE ${of-deps-glut_SOURCE_DIR}/include/GL)
+endif()
 
 # And link to all the dependencies we depend upon
 target_link_libraries(openframeworks 
     of::tess2 
-    of::cairo 
+    of::cairo
     of::glm 
     of::utf8
     of::glfw
-    of::glut
     of::fmod
     of::FreeImage
     of::rtAudio
-    of::videoInput
     of::uriparser
     of::openssl
     of::curl
@@ -160,54 +176,17 @@ target_link_libraries(openframeworks
 
 # Conditional dependencies
 if(WIN32)       # Linking to WinAPI system libraries
+    target_link_libraries(openframeworks of::videoInput of::glut)    # videoInput library is Windows-only
     target_link_libraries(openframeworks winmm ws2_32 wldap32 crypt32 dsound.lib)
 endif()
 
-if (OF_TARGET_ARCHITECTURE STREQUAL "msvc" OR OF_TARGET_ARCHITECTURE STREQUAL "macos")
-    target_link_libraries(openframeworks of::glew)
+if (OF_TARGET_ARCHITECTURE MATCHES "linux")
+    target_link_libraries(openframeworks of::OpenAL of::KissFFT of::sndfile of::gstreamer of::glib of::fontconfig of::udev)
+    target_link_libraries(openframeworks -lX11)
 endif()
 
-find_package(OpenGL)
-if (NOT OpenGL_FOUND)       # This should never be not found on windows
-    message(FATAL_ERROR "Dependency OpenGL not found. On Linux, please install it using your system's equivalent of 'sudo apt install libgl1-mesa-dev'")
-endif()
-target_include_directories(openframeworks PUBLIC ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(openframeworks ${OPENGL_LIBRARIES})
-
-if (LINUX)
-    find_package(assimp)
-    if (NOT assimp_FOUND)
-        message(FATAL_ERROR "Dependency Assimp not found. Please install it using your system's equivalent of 'sudo apt install libassimp-dev'")
-    endif()
-    add_library(of-deps-assimp INTERFACE)
-    add_library(of::assimp ALIAS of-deps-assimp)
-    target_include_directories(of-deps-assimp INTERFACE ${assimp_INCLUDE_DIRS})
-    target_link_libraries(of-deps-assimp INTERFACE ${assimp_LIBRARIES})
-
-    find_package(OpenCV)
-    if (NOT OpenCV_FOUND)
-        message(FATAL_ERROR "Dependency OpenCV not found. Please install it using your system's equivalent of 'sudo apt install libopencv-dev'")
-    endif()
-    add_library(of-deps-opencv INTERFACE)
-    add_library(of::opencv ALIAS of-deps-opencv)
-    target_include_directories(of-deps-opencv INTERFACE ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(of-deps-opencv INTERFACE ${OpenCV_LIBS})
-
-    find_package(Cairo)
-    if (NOT Cairo_FOUND)
-        message(FATAL_ERROR "Dependency Cairo not found. Please install it using your system's equivalent of 'sudo apt install libcairo-dev'")
-    endif()
-    add_library(of-deps-cairo INTERFACE)
-    add_library(of::cairo ALIAS of-deps-cairo)
-    target_include_directories(of-deps-cairo INTERFACE ${Cairo_INCLUDE_DIRS})
-    target_link_libraries(of-deps-cairo INTERFACE ${Cairo_LIBRARIES})
-
-    find_package(GLFW3)
-    if (NOT GLFW_FOUND)
-        message(FATAL_ERROR "Dependency GLFW not found. Please install it using your system's equivalent of 'sudo apt install libglfw-dev'")
-    endif()
-    add_library(of-deps-glfw INTERFACE)
-    add_library(of::glfw ALIAS of-deps-glfw)
-    target_include_directories(of-deps-glfw INTERFACE ${GLFW_INCLUDE_DIRS})
-    target_link_libraries(of-deps-glfw INTERFACE ${GLFW_LIBRARIES})
+if (OF_TARGET_ARCHITECTURE STREQUAL "msvc" OR       # GLEW is only a requirement on these systems
+    OF_TARGET_ARCHITECTURE STREQUAL "macos" OR 
+    OF_TARGET_ARCHITECTURE MATCHES "linux")
+        target_link_libraries(openframeworks of::glew)
 endif()

@@ -1,4 +1,2 @@
 define_example(cameraLensOffsetExample)
 target_link_libraries(cameraLensOffsetExample of::ofxOpenCv)
-
-copy_example_resource(cameraLensOffsetExample bin/data/haarcascade_frontalface_default.xml)

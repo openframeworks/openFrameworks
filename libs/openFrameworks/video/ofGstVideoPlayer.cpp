@@ -6,7 +6,7 @@
  */
 
 #include "ofConstants.h"
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#if defined(TARGET_LINUX)
 
 #include "ofGstVideoPlayer.h"
 #include <gst/gst.h>
@@ -462,4 +462,4 @@ bool ofGstVideoPlayer::isFrameByFrame() const{
 	return videoUtils.isFrameByFrame();
 }
 
-#endif // defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#endif // defined(TARGET_LINUX)

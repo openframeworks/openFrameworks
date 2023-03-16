@@ -1,2 +1,1 @@
 define_example(3DPrimitivesExample)
-copy_example_resource(3DPrimitivesExample bin/data/of.png)

@@ -1,3 +1,1 @@
 define_example(quaternionLatLongExample)
-
-copy_example_resource(quaternionLatLongExample bin/data/earth.jpg)

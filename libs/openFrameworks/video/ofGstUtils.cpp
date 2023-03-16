@@ -1,6 +1,6 @@
 
 #include "ofConstants.h"
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#if defined(TARGET_LINUX)
 
 #include "ofGstUtils.h"
 #ifndef TARGET_ANDROID
@@ -1460,4 +1460,4 @@ void ofGstVideoUtils::eos_cb(){
 
 #endif
 
-#endif // defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#endif // defined(TARGET_LINUX)

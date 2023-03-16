@@ -2,7 +2,12 @@
 # Macro for defining an example with all of its properties
 macro(define_example TARGET_NAME)       # A macro is executed in the caller's scope (current list is the caller)
     set(BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin/$<IF:$<CONFIG:Debug>,debug,release>")
-    file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/**)
+
+    if (MSVC)     # In MSVC we add all files so the resource files are shown in the IDE
+        file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/**)
+    else()        # But GCC doesn't like compiling resource files
+        file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/**)
+    endif()
 
     add_executable(${TARGET_NAME})
     target_sources(${TARGET_NAME} PRIVATE ${SOURCES})
@@ -20,15 +25,20 @@ macro(define_example TARGET_NAME)       # A macro is executed in the caller's sc
     get_filename_component(parent_path ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
     get_filename_component(example_name ${parent_path} NAME)
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "openframeworks/examples/${example_name}")
+
+    # And copy the resource files to destination after building
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD 
+            COMMAND ${CMAKE_COMMAND} -E 
+            copy_directory "${CMAKE_CURRENT_LIST_DIR}/bin/data" "${BIN_DIR}/data")
 endmacro()
 
 # Function to let the build system copy resource files to the target location after compiling
-function(copy_example_resource TARGET_NAME SOURCE_FILE) 
-    get_filename_component(__FILENAME ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_FILE} NAME)
-    copy_file_after_build(${TARGET_NAME} 
-        "${CMAKE_CURRENT_LIST_DIR}/${SOURCE_FILE}" "${CMAKE_CURRENT_BINARY_DIR}/bin/$<IF:$<CONFIG:Debug>,debug,release>/data/${__FILENAME}"
-    )
-endfunction()
+# function(copy_example_resource TARGET_NAME SOURCE_FILE) 
+#     get_filename_component(__FILENAME ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_FILE} NAME)
+#     copy_file_after_build(${TARGET_NAME} 
+#         "${CMAKE_CURRENT_LIST_DIR}/${SOURCE_FILE}" "${CMAKE_CURRENT_BINARY_DIR}/bin/$<IF:$<CONFIG:Debug>,debug,release>/data/${__FILENAME}"
+#     )
+# endfunction()
 
 # Folders with examples to build
 add_subdirectory(3d)

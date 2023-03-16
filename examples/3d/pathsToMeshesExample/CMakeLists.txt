@@ -1,3 +1,1 @@
 define_example(pathsToMeshesExample)
-
-copy_example_resource(pathsToMeshesExample bin/data/frabk.ttf)

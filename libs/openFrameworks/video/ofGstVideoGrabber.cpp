@@ -6,7 +6,7 @@
  */
 
 #include "ofConstants.h"
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#if defined(TARGET_LINUX)
 
 #include "ofGstVideoGrabber.h"
 #include "ofPixels.h"
@@ -862,4 +862,4 @@ void ofGstVideoGrabber::close(){
 	videoUtils.close();
 }
 
-#endif // defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+#endif // defined(TARGET_LINUX)

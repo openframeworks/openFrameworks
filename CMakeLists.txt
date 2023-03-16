@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.16)
 project(openframeworks)
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/utils.cmake)
