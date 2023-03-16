@@ -29,24 +29,24 @@ namespace{
 	of::filesystem::path defaultDataPath(){
 	#if defined TARGET_OSX
 		try{
-			return of::filesystem::canonical(ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/"));
+			return of::filesystem::canonical(ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
 		}catch(...){
-			return (ofFilePath::getCurrentExeDir() / of::filesystem::path("../../../data/"));
+			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
 		}
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
 	#else
 		try{
-            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).make_preferred();
+            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDirFS(),  "data/")).make_preferred();
         }catch(...){
-			return (ofFilePath::getCurrentExeDir() / of::filesystem::path("data/"));
+			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("data/"));
 		}
 	#endif
 	}
 
 	//--------------------------------------------------
 	of::filesystem::path & defaultWorkingDirectory(){
-		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDir());
+		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDirFS());
 		return * defaultWorkingDirectory;
 	}
 
@@ -1861,7 +1861,8 @@ of::filesystem::path ofFilePath::getCurrentExeDirFS(){
 //------------------------------------------------------------------------------------------------------------
 std::string ofFilePath::getCurrentExeDir(){
 
-	return getCurrentExeDirFS().string() + of::filesystem::path::preferred_separator.string();
+	// std::string sep = of::filesystem::path::preferred_separator;
+	return getCurrentExeDirFS().string() + of::filesystem::path("/").make_preferred().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
