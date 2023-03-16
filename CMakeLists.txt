@@ -38,7 +38,7 @@ target_compile_definitions(openframeworks PUBLIC
 
 # Compiler flags specific to MSVC
 if(MSVC)
-    target_compile_options(openframeworks PUBLIC "/Zc:__cplusplus")    # Force MSVC to set macro correctly
+    target_compile_options(openframeworks PUBLIC "/Zc:__cplusplus")    # Force MSVC to set __cplusplus macro correctly
     target_compile_options(openframeworks PUBLIC "/MP")                # Enable multi-core compilation
     # Ignore linker warning that no .pdb file is available for debugging
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099 /NODEFAULTLIB:LIBCMT /NODEFAULTLIB:MSVCRT")
