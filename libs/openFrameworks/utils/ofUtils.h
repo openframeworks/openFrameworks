@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma clang diagnostic ignored "-Wformat-security"
-
 #include "ofConstants.h"
 #if !defined(TARGET_MINGW) 
 	#include "utf8.h"
