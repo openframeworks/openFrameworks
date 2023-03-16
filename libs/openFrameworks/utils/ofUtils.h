@@ -1,6 +1,8 @@
 #pragma once
 
-#pragma clang diagnostic ignored "-Wformat-security"
+#if defined(__clang__)
+	#pragma clang diagnostic ignored "-Wformat-security"
+#endif
 
 #include "ofConstants.h"
 #if !defined(TARGET_MINGW) 
