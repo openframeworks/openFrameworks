@@ -12,9 +12,9 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	
 	// load the first model
-	model.load("penguin.3ds", 20);
+	model.load("penguin.dae", 20);
 	// model info
-	curFileInfo = ".3ds";
+	curFileInfo = ".dae";
 	
 	// this loads in the model directly into a mesh
 	// ofMesh can only read in .plys that are in the ascii and not in the binary format.
