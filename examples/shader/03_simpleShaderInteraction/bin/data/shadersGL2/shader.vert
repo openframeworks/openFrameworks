@@ -1,4 +1,4 @@
-#version 120
+OF_GLSL_SHADER_HEADER
 
 uniform float mouseRange;
 uniform vec2 mousePos;

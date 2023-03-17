@@ -2,8 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofDisableArbTex();
 	if(ofIsGLProgrammableRenderer()){
-		ofDisableArbTex();
 		shaderBlurX.load("shadersGL3/shaderBlurX");
 		shaderBlurY.load("shadersGL3/shaderBlurY");
 	}else{

@@ -1,6 +1,6 @@
-#version 120
+OF_GLSL_SHADER_HEADER
 
-uniform sampler2DRect tex0;
+uniform sampler2D tex0;
 
 varying vec2 texCoordVarying;
 
@@ -14,11 +14,11 @@ void main()
     vec4 modifiedPosition = position;
     
     // we need to scale up the values we get from the texture
-    float scale = 100;
+    float scale = 100.;
     
     // here we get the red channel value from the texture
     // to use it as vertical displacement
-    float displacementY = texture2DRect(tex0, texCoordVarying).x;
+    float displacementY = texture2D(tex0, texCoordVarying).x;
 		
     // use the displacement we created from the texture data
     // to modify the vertex position

@@ -1,18 +1,18 @@
-#version 120
+OF_GLSL_SHADER_HEADER
 
-uniform sampler2DRect tex0;
-uniform sampler2DRect tex1;
-uniform sampler2DRect tex2;
-uniform sampler2DRect imageMask;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform sampler2D tex2;
+uniform sampler2D imageMask;
 
 varying vec2 texCoordVarying;
 
 void main()
 {
-    vec4 rTxt = texture2DRect(tex0, texCoordVarying);
-    vec4 gTxt = texture2DRect(tex1, texCoordVarying);
-    vec4 bTxt = texture2DRect(tex2, texCoordVarying);
-    vec4 mask = texture2DRect(imageMask, texCoordVarying);
+    vec4 rTxt = texture2D(tex0, texCoordVarying);
+    vec4 gTxt = texture2D(tex1, texCoordVarying);
+    vec4 bTxt = texture2D(tex2, texCoordVarying);
+    vec4 mask = texture2D(imageMask, texCoordVarying);
     
     vec4 color = vec4(0, 0, 0, 0);
     color = mix(color, rTxt, mask.r);
