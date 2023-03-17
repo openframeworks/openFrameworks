@@ -3,22 +3,26 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	dir.listDir("images/of_logos/");
-	dir.allowExt("jpg");
+	uint64_t mStart = ofGetElapsedTimeMillis();
+//	dir.listDir("/Users/z/Pictures/s1"); // 1 ms
+	dir.listDir("/Users/z/Pictures/Sun"); //171 ms //16ms after
 	dir.sort(); // in linux the file system doesn't return file lists ordered in alphabetical order
-
+	uint64_t mEnd = ofGetElapsedTimeMillis();
+	cout << mEnd - mStart << endl;
+//	dir.allowExt("jpg");
+	
 	//allocate the vector to have as many ofImages as files
-	if( dir.size() ){
-		images.assign(dir.size(), ofImage());
-	}
+//	if( dir.size() ){
+//		images.assign(dir.size(), ofImage());
+//	}
 
 	// you can now iterate through the files and load them into the ofImage vector
-	for(int i = 0; i < (int)dir.size(); i++){
-		images[i].load(dir.getPath(i));
-	}
-	currentImage = 0;
-
-	ofBackground(ofColor::white);
+//	for(int i = 0; i < (int)dir.size(); i++){
+//		images[i].load(dir.getPath(i));
+//	}
+//	currentImage = 0;
+//
+//	ofBackground(ofColor::white);
 }
 
 //--------------------------------------------------------------
@@ -31,13 +35,13 @@ void ofApp::draw(){
 
 	if (dir.size() > 0){
 		ofSetColor(ofColor::white);
-		images[currentImage].draw(300,50);
+//		images[currentImage].draw(300,50);
 
 		ofSetColor(ofColor::gray);
 		string pathInfo = dir.getName(currentImage) + " " + dir.getPath(currentImage) + "\n\n" +
 			"press any key to advance current image\n\n" +
 			"many thanks to hikaru furuhashi for the OFs";
-		ofDrawBitmapString(pathInfo, 300, images[currentImage].getHeight() + 80);
+//		ofDrawBitmapString(pathInfo, 300, images[currentImage].getHeight() + 80);
 	}
 
 	ofSetColor(ofColor::gray);

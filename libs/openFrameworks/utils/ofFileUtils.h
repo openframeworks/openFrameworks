@@ -1191,15 +1191,16 @@ public:
 	/// \returns true if the path was removed successfully
 	static bool removeDirectory(const of::filesystem::path& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
-	std::vector<ofFile>::const_iterator begin() const;
-	std::vector<ofFile>::const_iterator end() const;
-	std::vector<ofFile>::const_reverse_iterator rbegin() const;
-	std::vector<ofFile>::const_reverse_iterator rend() const;
+	std::vector<of::filesystem::path>::const_iterator begin() const;
+	std::vector<of::filesystem::path>::const_iterator end() const;
+	std::vector<of::filesystem::path>::const_reverse_iterator rbegin() const;
+	std::vector<of::filesystem::path>::const_reverse_iterator rend() const;
 
 	of::filesystem::path myDir;
 	std::string originalDirectory;
 	std::vector <std::string> extensions;
-	std::vector <ofFile> files;
+//	std::vector <ofFile> files;
+	std::vector <of::filesystem::path> files;
 	bool showHidden;
 
 };

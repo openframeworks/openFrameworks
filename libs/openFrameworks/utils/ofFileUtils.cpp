@@ -1402,25 +1402,27 @@ std::size_t ofDirectory::listDir(){
 	of::filesystem::directory_iterator end_iter;
 	if ( of::filesystem::exists(myDir) && of::filesystem::is_directory(myDir)){
 		for( of::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
-			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
+			files.emplace_back(dir_iter->path());
 		}
 	}else{
 		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
 		return 0;
 	}
 
-	if(!showHidden){
-		ofRemove(files, [](ofFile & file){
-			return file.isHidden();
-		});
-	}
+
+	// FIXME:
+//	if(!showHidden){
+//		ofRemove(files, [](of::filesystem::path & file){
+//			return file.isHidden();
+//		});
+//	}
 
 
-	if(!extensions.empty() && !ofContains(extensions, (string)"*")){
-		ofRemove(files, [&](ofFile & file){
-			return std::find(extensions.begin(), extensions.end(), ofToLower(file.getExtension())) == extensions.end();
-		});
-	}
+//	if(!extensions.empty() && !ofContains(extensions, (string)"*")){
+//		ofRemove(files, [&](ofFile & file){
+//			return std::find(extensions.begin(), extensions.end(), ofToLower(file.getExtension())) == extensions.end();
+//		});
+//	}
 
 	if(ofGetLogLevel() == OF_LOG_VERBOSE){
 		for(int i = 0; i < (int)size(); i++){
@@ -1439,7 +1441,7 @@ string ofDirectory::getOriginalDirectory() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getName(std::size_t position) const{
-	return files.at(position).getFileName();
+	return files.at(position).string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1463,7 +1465,8 @@ const vector<ofFile> & ofDirectory::getFiles() const{
 	if(files.empty() && !myDir.empty()){
 		const_cast<ofDirectory*>(this)->listDir();
 	}
-	return files;
+	// FIXME
+//	return files;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1507,7 +1510,8 @@ void ofDirectory::sort(){
 	if(files.empty() && !myDir.empty()){
 		listDir();
 	}
-	ofSort(files, natural);
+	std::sort(files.begin(), files.end());
+//	ofSort(files, natural);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1639,22 +1643,22 @@ bool ofDirectory::operator>=(const ofDirectory & dir) const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_iterator ofDirectory::begin() const{
-	return getFiles().begin();
+vector<of::filesystem::path>::const_iterator ofDirectory::begin() const{
+	return files.begin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_iterator ofDirectory::end() const{
+vector<of::filesystem::path>::const_iterator ofDirectory::end() const{
 	return files.end();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
-	return getFiles().rbegin();
+vector<of::filesystem::path>::const_reverse_iterator ofDirectory::rbegin() const{
+	return files.rbegin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
+vector<of::filesystem::path>::const_reverse_iterator ofDirectory::rend() const{
 	return files.rend();
 }
 

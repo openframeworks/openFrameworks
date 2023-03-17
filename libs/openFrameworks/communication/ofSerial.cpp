@@ -176,7 +176,7 @@ void ofSerial::buildDeviceList(){
 		ofDirectory dir("/dev");
 		int deviceCount = 0;
 		for(auto & entry: dir){
-			std::string deviceName = entry.getFileName();
+			std::string deviceName = entry.string();
 
 			//we go through the prefixes
 			for(auto & prefix: prefixMatch){
