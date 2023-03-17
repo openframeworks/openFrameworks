@@ -1075,7 +1075,7 @@ public:
 	/// Directory contents are automatically listed.
 	///
 	/// \returns vector of files in the directory
-	const std::vector<ofFile> & getFiles() const;
+	const std::vector<of::filesystem::path> & getFiles() const;
 
 	/// Access directory contents via th array operator.
 	///

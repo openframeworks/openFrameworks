@@ -1461,12 +1461,12 @@ ofFile ofDirectory::operator[](std::size_t position) const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-const vector<ofFile> & ofDirectory::getFiles() const{
+const vector<of::filesystem::path> & ofDirectory::getFiles() const{
 	if(files.empty() && !myDir.empty()){
 		const_cast<ofDirectory*>(this)->listDir();
 	}
 	// FIXME
-//	return files;
+	return files;
 }
 
 //------------------------------------------------------------------------------------------------------------
