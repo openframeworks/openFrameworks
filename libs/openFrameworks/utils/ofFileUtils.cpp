@@ -1397,10 +1397,9 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 
-	of::filesystem::directory_iterator end_iter;
 	if ( of::filesystem::exists(myDir) && of::filesystem::is_directory(myDir)){
-		for( of::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
-			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
+		for (const auto & f : of::filesystem::directory_iterator{ myDir }) {
+			files.emplace_back(f.path(), ofFile::Reference);
 		}
 	}else{
 		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
