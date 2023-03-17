@@ -92,7 +92,6 @@ static void restoreAppWindowFocus(){
 #define CANCEL_BUTTON GTK_STOCK_CANCEL
 #endif
 
-// using namespace std;
 
 gboolean init_gtk(gpointer userdata){
 	int argc=0; char **argv = nullptr;
@@ -252,7 +251,6 @@ void resetLocale(std::locale locale){
 #include <emscripten/emscripten.h>
 #endif
 
-// using namespace std;
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
@@ -490,8 +488,10 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		auto locale = std::locale();
-		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,ofToDataPath(defaultPath));
-		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,ofToDataPath(defaultPath));
+		if(bFolderSelection)
+			results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, windowTitle, ofToDataPath(defaultPath).c_str());
+		else
+			results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN, windowTitle, ofToDataPath(defaultPath).c_str());
 		resetLocale(locale);
 #endif
 	//----------------------------------------------------------------------------------------
@@ -573,6 +573,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	auto locale = std::locale();
+	// results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName, ofToDataPath(defaultName).string());
 	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName, ofToDataPath(defaultName));
 	resetLocale(locale);
 #endif

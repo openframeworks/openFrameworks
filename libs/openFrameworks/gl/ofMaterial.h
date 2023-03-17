@@ -1,8 +1,11 @@
 #pragma once
-#include "ofColor.h"
+
 #include "ofShader.h"
+#include "ofColor.h"
+// FIXME: deprecated only and ctor
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
+#include "glm/vec2.hpp"
 
 enum ofMaterialTextureType: short{
 	OF_MATERIAL_TEXTURE_NONE=0,
@@ -115,26 +118,26 @@ class ofGLProgrammableRenderer;
 ///     vec3 lights[i].up;
 ///
 struct ofMaterialSettings {
-    ofFloatColor diffuse{ 0.8f, 0.8f, 0.8f, 1.0f }; ///< diffuse reflectance
-    ofFloatColor ambient{ 0.2f, 0.2f, 0.2f, 1.0f }; ///< ambient reflectance
-    ofFloatColor specular{ 0.0f, 0.0f, 0.0f, 1.0f }; ///< specular reflectance
-    ofFloatColor emissive{ 0.0f, 0.0f, 0.0f, 1.0f }; ///< emitted light intensity
+    ofFloatColor diffuse { 0.8f, 0.8f, 0.8f, 1.0f }; ///< diffuse reflectance
+    ofFloatColor ambient { 0.2f, 0.2f, 0.2f, 1.0f }; ///< ambient reflectance
+    ofFloatColor specular { 0.0f, 0.0f, 0.0f, 1.0f }; ///< specular reflectance
+    ofFloatColor emissive { 0.0f, 0.0f, 0.0f, 1.0f }; ///< emitted light intensity
     float shininess{ 0.2f }; ///< specular exponent
 	
 	bool isPbr = false;
 	// PBR //
 	// the diffuse color is used for the albedo color, metallic color
-	float metallic{0.0}; ///< metallic properties, can be fraction between 0 -> 1
-	float roughness{0.5}; ///< roughness
-	float reflectance{0.5}; ///< reflectance only applies to dielectric materials (non-metallic)
+	float metallic {0.0}; ///< metallic properties, can be fraction between 0 -> 1
+	float roughness {0.5}; ///< roughness
+	float reflectance {0.5}; ///< reflectance only applies to dielectric materials (non-metallic)
 	bool clearCoatEnabled = false; ///<this must be enabled for clear coat to have effect, will be enabled if clear coat texture set
 	float clearCoatStrength = 1.0;
 	float clearCoatRoughness = 0.1;
-	float displacementStrength=0.2; ///< strength of vertex displacement from displacement map in world space
-	float displacementNormalsStrength=50.0; ///< strength of normal calculation based on displacement map
+	float displacementStrength = 0.2; ///< strength of vertex displacement from displacement map in world space
+	float displacementNormalsStrength = 50.0; ///< strength of normal calculation based on displacement map
 	float normalGeomToNormalMapMix = 0.95; ///< if a normal map is set, the mix between the geometry normal and normal from the normal / displacement map
 	
-	glm::vec2 texCoordScale ={1.0,1.0};
+	glm::vec2 texCoordScale = { 1.0,1.0 };
 	
 	// these are not to be set manually
     std::string postFragment="";
@@ -245,6 +248,9 @@ public:
 	/// \param aMaterialTextureType the material texture type to query
 	/// \return the shader uniform name
 	static std::string getUniformName( const ofMaterialTextureType& aMaterialTextureType );
+	
+	/// \is PBR supported on this platform.
+	static bool isPBRSupported();
 	
 	/// \brief is this material pbr. Setting PBR functions or textures will automatically set the material to pbr.\nCan also be set calling setPBR(bool);
 	/// \return is the material pbr.

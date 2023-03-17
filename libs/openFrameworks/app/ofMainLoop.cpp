@@ -5,10 +5,11 @@
  *      Author: arturo
  */
 
-#include <ofMainLoop.h>
+#include "ofMainLoop.h"
 #include "ofWindowSettings.h"
 #include "ofAppBaseWindow.h"
 #include "ofBaseApp.h"
+#include "ofConstants.h"
 
 //========================================================================
 // default windowing
@@ -65,6 +66,23 @@ std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings
 	addWindow(window);
 	window->setup(settings);
 	return window;
+}
+
+template<typename Window>
+void ofMainLoop::addWindow(const std::shared_ptr<Window> & window){
+	allowMultiWindow = Window::allowsMultiWindow();
+	if(Window::doesLoop()){
+		windowLoop = Window::loop;
+	}
+	if(Window::needsPolling()){
+		windowPollEvents = Window::pollEvents;
+	}
+	if(!allowMultiWindow){
+		windowsApps.clear();
+	}
+	windowsApps[window] = std::shared_ptr<ofBaseApp>();
+	currentWindow = window;
+	ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
 }
 
 void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app){
@@ -162,7 +180,7 @@ void ofMainLoop::exit(){
 	for(auto i: windowsApps){
 		std::shared_ptr<ofAppBaseWindow> window = i.first;
 		std::shared_ptr<ofBaseApp> app = i.second;
-		
+
 		if(window == nullptr) {
 			continue;
 		}
@@ -260,5 +278,5 @@ void ofMainLoop::setEscapeQuitsLoop(bool quits){
 void ofMainLoop::keyPressed(ofKeyEventArgs & key){
 	if (key.key == OF_KEY_ESC && escapeQuits == true){				// "escape"
 		shouldClose(0);
-    }
+	}
 }

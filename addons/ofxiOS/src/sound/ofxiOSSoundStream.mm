@@ -15,7 +15,7 @@
 #import "SoundOutputStream.h"
 #import <AVFoundation/AVFoundation.h>
 
-using namespace std;
+using std::vector;
 
 //------------------------------------------------------------------------------
 ofxiOSSoundStream::ofxiOSSoundStream() {
@@ -63,21 +63,24 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
 	this->settings = settings;
 	
     if(settings.numInputChannels > 0) {
-        soundInputStream = (__bridge void *)[[SoundInputStream alloc] initWithNumOfChannels:settings.numInputChannels
+        __autoreleasing SoundInputStream *inputStream = [[SoundInputStream alloc] initWithNumOfChannels:settings.numInputChannels
                                                             withSampleRate:settings.sampleRate
                                                             withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundInputFn:settings.inCallback];
-        ((__bridge SoundInputStream *)soundInputStream).delegate = delegate;
-        [(__bridge SoundInputStream *)soundInputStream start];
+        inputStream.delegate = delegate;
+        [inputStream start];
+        soundInputStream = (__bridge_retained void *)inputStream;
     }
     
     if(settings.numOutputChannels > 0) {
-        soundOutputStream = (__bridge void *)[[SoundOutputStream alloc] initWithNumOfChannels:settings.numOutputChannels
+        __autoreleasing SoundOutputStream *outputStream =
+        [[SoundOutputStream alloc] initWithNumOfChannels:settings.numOutputChannels
                                                               withSampleRate:settings.sampleRate
                                                               withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundOutputFn:settings.outCallback];
-        ((__bridge SoundInputStream *)soundOutputStream).delegate = delegate;
-        [(__bridge SoundInputStream *)soundOutputStream start];
+        outputStream.delegate = delegate;
+        [outputStream start];
+        soundOutputStream = (__bridge_retained void *)outputStream;
     }
     
     bool bOk = (soundInputStream != NULL) || (soundOutputStream != NULL);
@@ -109,14 +112,17 @@ void ofxiOSSoundStream::stop(){
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::close(){
     if(soundInputStream != NULL) {
-        [(__bridge SoundInputStream *)soundInputStream setDelegate:nil];
-        [(__bridge SoundInputStream *)soundInputStream stop];
+        __strong SoundInputStream *inputStream = (__bridge_transfer SoundInputStream *)soundInputStream;
+        [inputStream setDelegate:nil];
+        [inputStream stop];
+
         soundInputStream = NULL;
     }
     
     if(soundOutputStream != NULL) {
-        [(__bridge SoundOutputStream *)soundOutputStream setDelegate:nil];
-        [(__bridge SoundOutputStream *)soundOutputStream stop];
+        __strong SoundOutputStream *outputStream = (__bridge_transfer SoundOutputStream *)soundOutputStream;
+        [outputStream setDelegate:nil];
+        [outputStream stop];
         soundOutputStream = NULL;
     }
 	

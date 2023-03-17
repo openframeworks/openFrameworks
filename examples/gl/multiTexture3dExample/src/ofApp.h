@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 
+#define USE_MATERIAL
 
 class TexturePack {
 	public:
@@ -43,9 +44,7 @@ class TexturePack {
 			
 			atex.bind();
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
-			#ifndef TARGET_EMSCRIPTEN
-				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			#endif
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			atex.unbind();
 			
 			atex.setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
@@ -71,6 +70,11 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+	
+		bool rayIntersectsTriangle( glm::vec3& aP, glm::vec3& aDirection,
+							   glm::vec3& aV0, glm::vec3& aV1, glm::vec3& aV2, glm::vec3& aIntersectionPt );
+		float calcTriArea( glm::vec3& aA, glm::vec3& aB, glm::vec3& aC );
+		void calcTriArea( glm::vec3& aA, glm::vec3& aB, glm::vec3& aC, glm::vec3& aP, float& a1, float& a2, float& a3 );
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -86,21 +90,41 @@ class ofApp : public ofBaseApp{
 		
 		vector< shared_ptr<ofLight> > lights;
 		
+	
+		#ifdef USE_MATERIAL
+		vector< shared_ptr<ofMaterial> > materials;
+		int materialIndex = 0;
+		#else
 		vector< shared_ptr<TexturePack> > texturePacks;
 		int texturePackIndex = 0;
+		#endif
+		
 		
 		ofTexture textureBrush;
 		
 		ofVboMesh meshSphere;
+		ofMesh colliderMesh;
+		ofMesh mHitMeshTri;
 		
 		ofEasyCam camera;
 		
+		#ifndef USE_MATERIAL
 		shared_ptr<ofShader> shader;
+		#endif
 		
 		ofFbo fboInfluence;
-		ofRectangle fboRect;
-		
+	
 		bool bDrawIntoFbo = false;
 		bool bDebug = false;
+		bool bBrushDrawing = false;
 	
+		float mBrushSize = 150.f;
+		float mBrushStrength = 12.f;
+	
+		glm::vec3 mHitSpherePos = {0,0,0};
+		glm::vec3 mHitNormal = {1,0,0};
+		glm::vec2 mHitCoord = {0,0};
+		bool mBHitATri = false;
+	
+		glm::vec2 mInputPos = {0,0};	
 };

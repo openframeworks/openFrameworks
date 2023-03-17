@@ -356,11 +356,7 @@ function createPackage {
     elif [ "$pkg_platform" = "linuxarmv7l" ]; then
         scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
-        if [ "$libs_abi" = "mingw64" ]; then
-            scripts/msys2/download_libs.sh -a 64
-        else
-            scripts/msys2/download_libs.sh
-        fi
+        scripts/msys2/download_libs.sh -a $libs_abi
     elif [ "$pkg_platform" = "vs" ]; then
         scripts/dev/download_libs.sh -p vs
     elif [ "$pkg_platform" = "android" ]; then
@@ -525,8 +521,8 @@ function createPackage {
 		rm -Rf ofxUnitTests
 	fi
 
-	#delete ofxMultiTouch & ofxAccelerometer in non mobile
-	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
+	#delete ofxMultiTouch in non mobile
+	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
 		rm -Rf ofxUnitTests

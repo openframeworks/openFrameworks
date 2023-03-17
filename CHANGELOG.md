@@ -50,7 +50,7 @@ CORE
 - Add notification to parents for parameterChanged when ofParameter<void> gets triggered. (#6471) [commit](https://github.com/openframeworks/openFrameworks/commit/0e0a59fcc35bcbb5e2078163c1b607c57afd351f)
 - ofEventListeners: added size() method. (#6022) [commit](https://github.com/openframeworks/openFrameworks/commit/4d341aca7079cb4f6dc6668ca62b08f906d9d726)
 
-### examples 
+### examples
 - regexExample - removed closing parenthesis (#6693) [commit](https://github.com/openframeworks/openFrameworks/commit/3a187e7032586f75566e21c2312a3c41f4a811ae)
 - videoGrabberExample - set the inverted pixels to actual grabber dimensions (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)
 - imageLoaderWebExample - fix the async request on key press (#6698) [commit](https://github.com/openframeworks/openFrameworks/commit/a6e565809d53834c23112be0b816e9243fb4429d)

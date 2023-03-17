@@ -94,3 +94,7 @@ android/x86:
 	ADDON_LIBS=
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libassimp.a
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libIrrXML.a
+
+ios:
+	ADDON_LIBS=
+	ADDON_LIBS=libs/assimp/lib/ios/assimp.a

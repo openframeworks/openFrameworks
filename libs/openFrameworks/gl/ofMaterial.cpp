@@ -4,6 +4,7 @@
 #include "ofCubeMap.h"
 #include "ofImage.h"
 #include "ofGLProgrammableRenderer.h"
+#include <typeinfo>
 
 using std::shared_ptr;
 using std::string;
@@ -59,6 +60,18 @@ std::string ofMaterial::getUniformName( const ofMaterialTextureType& aMaterialTe
 }
 
 //----------------------------------------------------------
+bool ofMaterial::isPBRSupported() {
+	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	return false;
+	#endif
+	
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	return true;
+}
+
+//----------------------------------------------------------
 void ofMaterial::setPBR(bool ab) {
 	if( ab && !ofIsGLProgrammableRenderer() ) {
 		if( !bPrintedPBRRenderWarning ) {
@@ -68,6 +81,19 @@ void ofMaterial::setPBR(bool ab) {
 		data.isPbr = false;
 		return;
 	}
+	
+	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	if( ab ) {
+		if( !bPrintedPBRRenderWarning ) {
+			bPrintedPBRRenderWarning=true;
+			ofLogWarning("ofMaterial::setPBR") << " PBR material is not supported on this OPENGL ES platform.";
+		}
+		data.isPbr = false;
+		return;
+	}
+	#endif
+	
+	
 	data.isPbr = ab;
 }
 
@@ -677,17 +703,63 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		}
 		
 		std::string extraVertString = definesString;
-		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
-			extraVertString += "\nuniform SAMPLER "+getUniformName(OF_MATERIAL_TEXTURE_DISPLACEMENT)+";\n";
-		}
+//		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+//			extraVertString += "\nuniform SAMPLER "+getUniformName(OF_MATERIAL_TEXTURE_DISPLACEMENT)+";\n";
+//		}
 		extraVertString += customUniforms;
-    
+		ofLogVerbose( "ofMaterial" ) << " extraVertString------------------- ";
+		ofLogVerbose() << extraVertString;
+		ofLogVerbose( "ofMaterial" ) << "! extraVertString !------------------- " << std::endl;
+     
         #ifndef TARGET_OPENGLES
             string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
             string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
         #endif
         string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
         string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
+		
+		#if defined(TARGET_OPENGLES) && defined(TARGET_EMSCRIPTEN)
+		// TODO: Should this be in programmable renderer?
+		if(ofIsGLProgrammableRenderer()) {
+//			if(isPBR()) {
+//			header = "#version 300 es\n";// + header;
+				vertex2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
+				vertex2DHeader += "precision highp float;\n";
+				vertex2DHeader += "precision highp int;\n";
+				vertex2DHeader += "#define TARGET_OPENGLES\n";
+				vertex2DHeader += "#define IN in\n";
+				vertex2DHeader += "#define OUT out\n";
+				vertex2DHeader += "#define TEXTURE texture\n";
+				vertex2DHeader += "#define SAMPLER sampler2D\n";
+
+				fragment2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
+				fragment2DHeader += "precision highp float;\n";
+				fragment2DHeader += "precision highp int;\n";
+				fragment2DHeader += "#define TARGET_OPENGLES\n";
+				fragment2DHeader += "#define IN in\n";
+				fragment2DHeader += "#define OUT out\n";
+				fragment2DHeader += "#define TEXTURE texture\n";
+				fragment2DHeader += "#define FRAG_COLOR fragColor\n";
+				fragment2DHeader += "out vec4 fragColor;\n";
+				fragment2DHeader += "#define SAMPLER sampler2D\n";
+				fragment2DHeader += "precision highp sampler2D;\n";
+				fragment2DHeader += "precision highp samplerCube;\n";
+				// we don't use any samplerCubeShadows
+				//fragment2DHeader += "precision highp samplerCubeShadow;\n";
+				fragment2DHeader += "precision mediump sampler2DShadow;\n";
+				#if defined( GL_TEXTURE_2D_ARRAY ) && defined(glTexImage3D)
+				fragment2DHeader += "precision mediump sampler2DArrayShadow;\n";
+				#endif
+//				fragment2DHeader += "precision highp samplerCubeShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DArrayShadow;\n";
+//			}
+		}
+		#endif
+		
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader------------------- ";
+		ofLogVerbose() << fragment2DHeader;
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader xxxxxxx ";
 
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
@@ -802,10 +874,12 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 		std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
 		if( cubeMapData ) {
 			shader.setUniform1f("mat_ibl_exposure", cubeMapData->exposure );
-			shader.setUniform1f("uCubeMapEnabled", 1.0);
+			shader.setUniform1f("uCubeMapEnabled", 1.0f );
+			shader.setUniform1f("uEnvMapMaxMips", cubeMapData->maxMipLevels );
 		} else {
-			shader.setUniform1f("mat_ibl_exposure", 1.0 );
-			shader.setUniform1f("uCubeMapEnabled", 0.0);
+			shader.setUniform1f("mat_ibl_exposure", 1.0f );
+			shader.setUniform1f("uCubeMapEnabled", 0.0f );
+			shader.setUniform1f("uEnvMapMaxMips", 1.0f );
 		}
 		
 	} else {
@@ -864,8 +938,23 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 		glm::vec4 lightEyePosition = light->position;
 		// pbr uses global positions
 		if( !isPBR() ) {
-			lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				// support for reversed phong lighting setup
+				lightEyePosition = renderer.getCurrentViewMatrix() * -light->position;
+			} else {
+				lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+			}
 		}
+
+		if( isPBR() ) {
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				lightEyePosition = glm::vec4(-light->direction, lightEyePosition.w);
+			}
+			if( light->lightType != OF_LIGHT_POINT ) {
+				shader.setUniform3f("lights["+idx+"].direction", light->direction );
+			}
+		}
+
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
@@ -891,8 +980,9 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			}
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			//shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
 			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
@@ -910,8 +1000,9 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			}
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			
 			auto right = light->right;
 			auto up = light->up;
 			if( !isPBR() ) {
@@ -1166,7 +1257,7 @@ const std::string ofMaterial::getDefinesString() const {
 			if( cmd->bPreFilteredMapAllocated ) {
 				bPreFilteredMap=true;
 			}
-			if( cmd->useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+			if( cmd->settings.useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
 				bBrdfLutTex=true;
 			}
 		}
@@ -1180,8 +1271,9 @@ const std::string ofMaterial::getDefinesString() const {
 		if(bBrdfLutTex) {
 			definesString += "#define HAS_TEX_ENV_BRDF_LUT 1\n";
 		}
+		// need to add .0 to be read as a float in the shader for gl es
+		//definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(ofCubeMap::getNumMipMaps(),0)+".0\n";
 		
-		definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(ofCubeMap::getNumMipMaps(),0)+"\n";
 	}
 	
 	definesString += ofShadow::getShaderDefinesAsString();
@@ -1276,15 +1368,19 @@ namespace{
 		}
 		
 		
-		#ifdef TARGET_OPENGLES
-		ofStringReplace(source, "%shader_shadow_include%", "" );
-		#else
 		if( ofIsGLProgrammableRenderer() ) {
-			ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+			#if defined(TARGET_OPENGLES)
+				#if defined(TARGET_EMSCRIPTEN)
+					ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+				#else
+					ofStringReplace(source, "%shader_shadow_include%", "" );
+				#endif
+			#else
+				ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+			#endif
 		} else {
 			ofStringReplace(source, "%shader_shadow_include%", "" );
 		}
-		#endif
 		
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + definesString + source;
         return source;

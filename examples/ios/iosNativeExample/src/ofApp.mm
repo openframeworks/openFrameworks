@@ -6,9 +6,6 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
-	
 	ofBackground(127,127,127);
 }
 

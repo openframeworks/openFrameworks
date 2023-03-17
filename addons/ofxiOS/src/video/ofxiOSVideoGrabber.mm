@@ -4,7 +4,8 @@
 
 #include <TargetConditionals.h>
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
