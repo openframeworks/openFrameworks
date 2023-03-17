@@ -281,7 +281,7 @@ ofBuffer ofBufferFromFile(const of::filesystem::path & path, bool binary=true);
 /// \param buffer data source to write from
 /// \param binary set to false if you are writing a text file & want lines
 /// split at endline characters automatically
-bool ofBufferToFile(of::filesystem::path & path, const ofBuffer& buffer, bool binary=true);
+bool ofBufferToFile(const of::filesystem::path & path, const ofBuffer& buffer, bool binary=true);
 
 //--------------------------------------------------
 /// \class ofFilePath
