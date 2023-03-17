@@ -1,4 +1,4 @@
-#version 150
+OF_GLSL_SHADER_HEADER
 
 uniform vec4 globalColor;
 
