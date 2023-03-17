@@ -149,33 +149,36 @@ void ofApp::update(){
 
 	// MULTITEXTURE MIXING FBO
 	//
-	fbo.begin();
-	ofClear(0, 0, 0,255);
-	shader.begin();
 	
-	// sampler2D expects 0-1 for tex coordinates
-	// we pass in the width and height of the fbo so that we can normalize it in the shader
-	shader.setUniform1f("texCoordWidthScale", fbo.getWidth());
-	shader.setUniform1f("texCoordHeightScale", fbo.getHeight());
-	
-	// Pass the video texture
-	shader.setUniformTexture("tex0", vidGrabber.getTexture() , 1 );
-	// Pass the image texture
-	shader.setUniformTexture("tex1", logoImg, 2 );
-	// Pass the movie texture
-	shader.setUniformTexture("tex2", fingerMovie.getTexture() , 3 );
-	// Pass the mask texture
-	shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );
-
-	// We are using this image just as a frame where the pixels can be arrange
-	// this could be a mesh also.
-	// Comment "shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );" to se how there is two ways
-	// of passing a texture to the shader
-	//
-	maskFbo.draw(0,0);
-
-	shader.end();
-	fbo.end();
+	if( vidGrabber.getTexture().isAllocated() && fingerMovie.getTexture().isAllocated()) {
+		fbo.begin();
+		ofClear(0, 0, 0,255);
+		shader.begin();
+		
+		// sampler2D expects 0-1 for tex coordinates
+		// we pass in the width and height of the fbo so that we can normalize it in the shader
+		shader.setUniform1f("texCoordWidthScale", fbo.getWidth());
+		shader.setUniform1f("texCoordHeightScale", fbo.getHeight());
+		
+		// Pass the video texture
+		shader.setUniformTexture("tex0", vidGrabber.getTexture() , 1 );
+		// Pass the image texture
+		shader.setUniformTexture("tex1", logoImg, 2 );
+		// Pass the movie texture
+		shader.setUniformTexture("tex2", fingerMovie.getTexture() , 3 );
+		// Pass the mask texture
+		shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );
+		
+		// We are using this image just as a frame where the pixels can be arrange
+		// this could be a mesh also.
+		// Comment "shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );" to se how there is two ways
+		// of passing a texture to the shader
+		//
+		maskFbo.draw(0,0);
+		
+		shader.end();
+		fbo.end();
+	}
 
 	ofSetWindowTitle( ofToString( ofGetFrameRate()));
 }
@@ -186,7 +189,9 @@ void ofApp::draw(){
 
 	// draw everything
 	ofSetColor(255);
-	vidGrabber.draw(5,5,320,240);
+	if( vidGrabber.getTexture().isAllocated() ) {
+		vidGrabber.draw(5,5,320,240);
+	}
 	ofSetColor(ofColor::red);
 	ofDrawBitmapString("RED", 5+30, 5+30);
 
@@ -197,7 +202,9 @@ void ofApp::draw(){
 
 
 	ofSetColor(255);
-	fingerMovie.draw(320*2+15,5,320,240);
+	if(fingerMovie.getTexture().isAllocated() ) {
+		fingerMovie.draw(320*2+15,5,320,240);
+	}
 	ofSetColor(ofColor::blue);
 	ofDrawBitmapString("BLUE", 320*2+5+30,5+30);
 
