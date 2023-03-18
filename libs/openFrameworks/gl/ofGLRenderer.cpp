@@ -12,6 +12,7 @@
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
 #include "ofMaterial.h"
+#include "ofVboMesh.h"
 
 using std::shared_ptr;
 using std::vector;
