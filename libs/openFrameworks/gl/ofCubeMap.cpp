@@ -14,15 +14,14 @@
 #include "ofCubeMapShaders.h"
 #include "ofConstants.h"
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include <map>
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
 #endif
-
-#include <map>
-
 
 using std::weak_ptr;
 using std::vector;

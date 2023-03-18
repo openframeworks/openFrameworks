@@ -15,6 +15,7 @@
 //#include "glm/detail/_swizzle.hpp"
 //#include "glm/detail/_swizzle_func.hpp"
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"

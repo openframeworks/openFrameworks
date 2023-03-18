@@ -3,6 +3,7 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
 #include "ofConstants.h"
+#define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
 
 class ofVec3f;
