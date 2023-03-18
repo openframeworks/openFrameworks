@@ -10,13 +10,11 @@
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
-
 #include "ofLight.h"
+#include "ofGLProgrammableRenderer.h"
 
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
-
-#include "ofGLProgrammableRenderer.h"
 
 using std::weak_ptr;
 using std::vector;

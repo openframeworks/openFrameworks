@@ -1,14 +1,13 @@
 #pragma once
 
-
 #include "cairo.h"
-
-#include <deque>
-#include <stack>
 #include "ofGraphicsBaseTypes.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
+// FIXME: replace by template
 #include "ofPixels.h"
+#include <deque>
+#include <stack>
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:

@@ -9,9 +9,10 @@
 
 //------
 #include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofThread.h"
+// FIXME: template
+#include "ofPixels.h"
 #include <mutex>
 
 #ifdef __OBJC__

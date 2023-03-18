@@ -11,12 +11,11 @@
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
+#include "ofGLProgrammableRenderer.h"
+#include "ofCubeMapShaders.h"
 
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
-
-#include "ofGLProgrammableRenderer.h"
-#include "ofCubeMapShaders.h"
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"

@@ -8,7 +8,7 @@
 #include "ofVbo.h"
 #include "of3dPrimitives.h"
 #include "ofLight.h"
-#include "ofMaterial.h"
+#include "ofMaterialBaseTypes.h"
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"

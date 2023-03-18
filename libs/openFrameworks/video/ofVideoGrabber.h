@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
+// FIXME: template
 #include "ofPixels.h"
 
 
