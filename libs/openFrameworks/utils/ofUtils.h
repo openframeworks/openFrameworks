@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+
 #if !defined(TARGET_MINGW) 
 	#include "utf8.h"
 #else

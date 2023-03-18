@@ -1,8 +1,7 @@
 #pragma once
 
-
-#include <vector>
 #include "ofGraphicsBaseTypes.h"
+#include <vector>
 
 class ofTexture;
 class ofShader;

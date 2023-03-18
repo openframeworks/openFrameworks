@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include "ofParameter.h"
 #include <array>
 #include "glm/mat4x4.hpp"
+#include "ofConstants.h"
 
 class ofBaseRenderer;
 

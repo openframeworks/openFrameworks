@@ -1,13 +1,13 @@
 #pragma once
 
-class ofVec3f;
-class ofVec4f;
-
-#include "ofConstants.h"
 #include "ofMathConstants.h"
+#include "ofConstants.h"
 #include "glm/vec2.hpp"
 #include "glm/fwd.hpp"
 #include <cmath>
+
+class ofVec3f;
+class ofVec4f;
 
 /// \brief
 /// ofVec2f is a class for storing a two dimensional vector. 

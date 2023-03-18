@@ -3,6 +3,7 @@
  */
 
 #pragma once
+
 #include "ofConstants.h"
 
 #ifdef OF_VIDEO_CAPTURE_AVF

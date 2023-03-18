@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
 // FIXME: template
 #include "ofPixels.h"
+#include "ofConstants.h"
 
 
 #ifdef OF_VIDEO_CAPTURE_IOS

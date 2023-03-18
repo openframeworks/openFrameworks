@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
 #include "ofGLUtils.h"
 // FIXME: replace by template
 #include "ofPixels.h"
+#include "ofConstants.h"
 
 class ofFile;
 class ofBuffer;

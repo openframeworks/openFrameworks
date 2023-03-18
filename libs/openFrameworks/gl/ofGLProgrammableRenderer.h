@@ -10,7 +10,6 @@
 #include "ofPath.h"
 #include "ofMaterialBaseTypes.h"
 
-
 class ofShapeTessellation;
 class ofFbo;
 class ofVbo;

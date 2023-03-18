@@ -7,12 +7,12 @@
 #include "ofShader.h"
 #include "ofCubeMap.h"
 #include "ofImage.h"
-#include "ofConstants.h"
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofCubeMapShaders.h"
+#include "ofConstants.h"
 
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
