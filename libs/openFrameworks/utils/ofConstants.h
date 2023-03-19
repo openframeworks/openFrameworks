@@ -553,18 +553,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 //#endif
 
 
-#define Stringize( L )     #L
-#define MakeString( M, L ) M(L)
-#define $Line MakeString( Stringize, __LINE__ )
-#define Reminder __FILE__ "(" $Line ") : Reminder: "
-
-// #pragma message(Reminder (__cpp_lib_experimental_filesystem))
-// #pragma message(Reminder __has_include(<filesystem>))
-
-
-#define __STR2__(x) #x
-#define __STR1__(x) __STR2__(x)
-
 #define OF_CPP 11
 
 #if __cplusplus >= 201402
@@ -580,20 +568,21 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 
 #if defined(__has_include)
-	#pragma message("has include")
+	// #pragma message("has include")
 
 	#if __has_include(<filesystem>)
-		#pragma message("has include filesystem")
+		// #pragma message("has include filesystem")
+		#define OF_FS PURE
 		#include <filesystem>
 		namespace of {
 			namespace filesystem = std::filesystem;
 		}
 	#elif __has_include(<experimental/filesystem>)
-	#pragma message("has include experimental/filesystem")
+		// #pragma message("has include experimental/filesystem")
 		#include <experimental/filesystem>
-		#define OF_FS_EXPERIMENTAL
+		#define OF_FS EXPERIMENTAL
 		#if OF_CPP >= 14
-			#pragma message("OF_CPP >= 14")
+			// #pragma message("OF_CPP >= 14")
 			namespace std {
 				namespace experimental{
 					namespace filesystem {
@@ -602,7 +591,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 				}
 			}
 		#else
-			#pragma message("OF_CPP >= 14 else")
+			// #pragma message("OF_CPP >= 14 else")
 			namespace std {
 				namespace experimental{
 					namespace filesystem {
@@ -615,21 +604,32 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 			namespace filesystem = std::experimental::filesystem;
 		}
 	#elif __has_include(<boost/filesystem>)
-		#pragma message("has include boost filesystem")
+		// #pragma message("has include boost filesystem")
 
 		#if !_MSC_VER
 			#define BOOST_NO_CXX11_SCOPED_ENUMS
 			#define BOOST_NO_SCOPED_ENUMS
 		#endif
+		#define OF_FS BOOST
 		#include <boost/filesystem.hpp>
 		namespace of {
 			namespace filesystem = boost::filesystem;
 		}
 	#endif
 #else
-	#pragma message("has include - not")
+	// #pragma message("has include - not")
+	#define OF_FS PURE
 	#include <filesystem>
 	namespace of {
 		namespace filesystem = std::filesystem;
 	}
 #endif
+
+
+// #if OF_FS == PURE
+// 	#pragma message("PURE")
+// #elif OF_FS == EXPERIMENTAL
+// 	#pragma message("EXPERIMENTAL")
+// #elif OF_FS == BOOST
+// 	#pragma message("BOOST")
+// #endif

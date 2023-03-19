@@ -1,4 +1,8 @@
 #include "ofFileUtils.h"
+
+// adicionei. nao sei se precisa
+#include "ofConstants.h"
+
 #ifndef TARGET_WIN32
 	#include <pwd.h>
 	#include <sys/stat.h>
@@ -705,7 +709,9 @@ bool ofFile::canRead() const {
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 //#if OF_USING_STD_FS
-#if defined(OF_FS_EXPERIMENTAL)
+// #if defined(OF_FS_EXPERIMENTAL)
+#if OF_FS == EXPERIMENTAL
+
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_read) != of::filesystem::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -739,7 +745,7 @@ bool ofFile::canWrite() const {
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 //#if OF_USING_STD_FS
-#if defined(OF_FS_EXPERIMENTAL)
+#if OF_FS == EXPERIMENTAL
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_write) != of::filesystem::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -768,7 +774,9 @@ bool ofFile::canExecute() const {
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 //#if OF_USING_STD_FS
-#if defined(OF_FS_EXPERIMENTAL)
+// #if defined(OF_FS_EXPERIMENTAL)
+#if OF_FS == EXPERIMENTAL
+
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_exec) != of::filesystem::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -808,7 +816,7 @@ bool ofFile::isDevice() const {
 	return false;
 #else
 //#if OF_USING_STD_FS
-#if defined(OF_FS_EXPERIMENTAL)
+#if OF_FS == EXPERIMENTAL
 	return of::filesystem::is_block_file(of::filesystem::status(myFile));
 #else
 	return of::filesystem::status(myFile).type() == of::filesystem::block_file;
@@ -829,21 +837,23 @@ bool ofFile::isHidden() const {
 void ofFile::setWriteable(bool flag){
 	try{
 //#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
-#if defined(OF_FS_EXPERIMENTAL)
+// #if defined(OF_FS_EXPERIMENTAL)
+#if OF_FS == PURE
 		if(flag){
-			of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::add_perms);
+			of::filesystem::permissions(myFile,
+				of::filesystem::perms::owner_write, of::filesystem::perm_options::add);
 		}else{
-			of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::remove_perms);
+			of::filesystem::permissions(myFile,
+				of::filesystem::perms::owner_write, of::filesystem::perm_options::remove);
 		}
 #else
+
 		if(flag){
 			of::filesystem::permissions(myFile,
-										 of::filesystem::perms::owner_write,
-										 of::filesystem::perm_options::add);
+				of::filesystem::perms::owner_write | of::filesystem::perms::add_perms);
 		}else{
 			of::filesystem::permissions(myFile,
-										 of::filesystem::perms::owner_write,
-										 of::filesystem::perm_options::remove);
+				of::filesystem::perms::owner_write | of::filesystem::perms::remove_perms);
 		}
 #endif
 	}catch(std::exception & e){
@@ -860,22 +870,24 @@ void ofFile::setReadOnly(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setReadable(bool flag){
 	try{
-#if defined(OF_FS_EXPERIMENTAL)
+
 //#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
+
+#if OF_FS == PURE
+		if(flag){
+			of::filesystem::permissions(myFile,
+				of::filesystem::perms::owner_read,
+				of::filesystem::perm_options::add);
+		}else{
+			of::filesystem::permissions(myFile,
+				of::filesystem::perms::owner_read,
+				of::filesystem::perm_options::remove);
+		}
+#else
 		if(flag){
 			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::add_perms);
 		}else{
 			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::remove_perms);
-		}
-#else
-		if(flag){
-			of::filesystem::permissions(myFile,
-										 of::filesystem::perms::owner_read,
-										 of::filesystem::perm_options::add);
-		}else{
-			of::filesystem::permissions(myFile,
-										 of::filesystem::perms::owner_read,
-										 of::filesystem::perm_options::remove);
 		}
 #endif
 	}catch(std::exception & e){
@@ -888,13 +900,7 @@ void ofFile::setExecutable(bool flag){
 	try{
 //#if OF_USING_STD_FS
 //#   if OF_USE_EXPERIMENTAL_FS
-#if defined(OF_FS_EXPERIMENTAL)
-		if(flag){
-			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::add_perms);
-		} else{
-			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::remove_perms);
-		}
-#   else
+#if OF_FS == PURE
 		if(flag){
 			of::filesystem::permissions(myFile,
 										 of::filesystem::perms::owner_exec,
@@ -904,16 +910,20 @@ void ofFile::setExecutable(bool flag){
 										 of::filesystem::perms::owner_exec,
 										 of::filesystem::perm_options::remove);
 		}
-#   endif
-		
+#elif OF_FS == EXPERIMENTAL
+		if(flag){
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::add_perms);
+		} else{
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::remove_perms);
+		}
+#elif OF_FS == BOOST
 		// BOOST? FIXME:
-//#else
-//		if(flag){
-//			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::add_perms);
-//		} else{
-//			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::remove_perms);
-//		}
-//#endif
+		if(flag){
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::add_perms);
+		} else{
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::remove_perms);
+		}
+#endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
 	}
