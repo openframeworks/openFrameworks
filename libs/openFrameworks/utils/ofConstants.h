@@ -399,8 +399,19 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------ c++11
 // check if the compiler supports c++11. vs hasn't updated the value
 // of __cplusplus so we need to check for vs >= 2012 (1700)
-#if __cplusplus>=201103 || _MSC_VER >= 1700
-#define HAS_CPP11 1
+#if __cplusplus >= 201103 || _MSC_VER >= 1700
+	#define HAS_CPP11 1
+#endif
+
+#if __cplusplus >= 201402L || _MSC_VER >= 1700
+	#define OF_HAS_CPP14 1
+#endif
+
+// If you are building with c++17 or newer std filesystem will be enabled by default
+#if __cplusplus >= 201703L
+	#define OF_HAS_CPP17 1
+#else
+	#define OF_HAS_CPP17 0
 #endif
 
 //------------------------------------------------ thread local storage
@@ -449,12 +460,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
-// If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201703L
-    #define OF_HAS_CPP17 1
-#else
-    #define OF_HAS_CPP17 0
-#endif
+
 
 
 #ifndef OF_USING_STD_FS
