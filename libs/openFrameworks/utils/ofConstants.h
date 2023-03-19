@@ -489,11 +489,11 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 //    #elif __has_include(<filesystem>)
 //        // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
 //        #ifdef _MSC_VER
-//        
+//
 //            // Check and include header that defines "_HAS_CXX17"
 //            #if __has_include(<yvals_core.h>)
 //                #include <yvals_core.h>
-//                
+//
 //                // Check for enabled C++17 support
 //                #if defined(_HAS_CXX17) && _HAS_CXX17
 //                // We're using C++17, so let's use the normal version
@@ -519,7 +519,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 //    #if OF_USE_EXPERIMENTAL_FS
 //        // C++17 experimental fs support
 //        #include <experimental/filesystem>
-//        
+//
 //        #if OF_HAS_CPP17
 //            namespace std {
 //                namespace experimental{
@@ -537,7 +537,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 //                }
 //            }
 //        #endif
-//        
+//
 //		namespace of {
 //			namespace filesystem = std::experimental::filesystem;
 //		}
@@ -569,9 +569,24 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 //#endif
 
 
+#define Stringize( L )     #L
+#define MakeString( M, L ) M(L)
+#define $Line MakeString( Stringize, __LINE__ )
+#define Reminder __FILE__ "(" $Line ") : Reminder: "
+
+#pragma message(Reminder ()))
+// #pragma message(Reminder (__cpp_lib_experimental_filesystem))
+// #pragma message(Reminder __has_include(<filesystem>))
+
+
+#define __STR2__(x) #x
+#define __STR1__(x) __STR2__(x)
+
 
 
 #if defined(__has_include)
+	#pragma message("has include")
+
 	#if __has_include(<filesystem>)
 		#include <filesystem>
 		namespace of {
@@ -609,6 +624,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 		}
 	#endif
 #else
+#pragma message("has include - not")
 #include <filesystem>
 namespace of {
 	namespace filesystem = std::filesystem;
