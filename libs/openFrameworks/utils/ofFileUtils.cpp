@@ -914,9 +914,9 @@ void ofFile::setExecutable(bool flag){
 //			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::remove_perms);
 //		}
 //#endif
-//	}catch(std::exception & e){
-//		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
-//	}
+	}catch(std::exception & e){
+		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
