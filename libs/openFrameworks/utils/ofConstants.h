@@ -565,21 +565,17 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #define __STR2__(x) #x
 #define __STR1__(x) __STR2__(x)
 
+#define OF_CPP 11
 
-#if __cplusplus >= 201103 || _MSC_VER >= 1700
-	#define HAS_CPP11 1
+#if __cplusplus >= 201402
+	#undef OF_CPP
+	#define OF_CPP 14
 #endif
 
-#if __cplusplus >= 201402L
-	#define OF_HAS_CPP14 1
-#endif
-
-// If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201703L
-	#define OF_HAS_CPP17 1
+#if __cplusplus >= 201703
+	#undef OF_CPP
+	#define OF_CPP 17
 #else
-	#define OF_HAS_CPP17 0
-#endif
 
 
 
@@ -592,7 +588,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 			namespace filesystem = std::filesystem;
 		}
 	#elif __has_include(<experimental/filesystem>)
-		#if OF_HAS_CPP17
+		#if OF_CPP >= 14
 		namespace std {
 			namespace experimental{
 				namespace filesystem {
