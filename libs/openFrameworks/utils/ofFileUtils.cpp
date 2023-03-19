@@ -917,7 +917,7 @@ void ofFile::setExecutable(bool flag){
 //	}catch(std::exception & e){
 //		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
 //	}
-//}
+}
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
