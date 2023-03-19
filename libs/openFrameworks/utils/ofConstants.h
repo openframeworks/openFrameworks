@@ -583,32 +583,39 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 	#pragma message("has include")
 
 	#if __has_include(<filesystem>)
+		#pragma message("has include filesystem")
 		#include <filesystem>
 		namespace of {
 			namespace filesystem = std::filesystem;
 		}
 	#elif __has_include(<experimental/filesystem>)
+	#pragma message("has include experimental/filesystem")
 		#if OF_CPP >= 14
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					using path = v1::path;
+			#pragma message("OF_CPP >= 14")
+
+			namespace std {
+				namespace experimental{
+					namespace filesystem {
+						using path = v1::path;
+					}
 				}
 			}
-		}
 		#else
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					using path = v1::__cxx11::path;
+			#pragma message("OF_CPP >= 14 else")
+			namespace std {
+				namespace experimental{
+					namespace filesystem {
+						using path = v1::__cxx11::path;
+					}
 				}
 			}
-		}
 		#endif
 		namespace of {
 			namespace filesystem = std::experimental::filesystem;
 		}
 	#elif __has_include(<boost/filesystem>)
+		#pragma message("has include boost filesystem")
+
 		#if !_MSC_VER
 			#define BOOST_NO_CXX11_SCOPED_ENUMS
 			#define BOOST_NO_SCOPED_ENUMS
@@ -619,9 +626,9 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 		}
 	#endif
 #else
-#pragma message("has include - not")
-#include <filesystem>
-namespace of {
-	namespace filesystem = std::filesystem;
-}
+	#pragma message("has include - not")
+	#include <filesystem>
+	namespace of {
+		namespace filesystem = std::filesystem;
+	}
 #endif
