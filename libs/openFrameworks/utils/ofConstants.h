@@ -465,7 +465,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 	#if __has_include(<filesystem>)
 		// #pragma message("has include filesystem")
-		#define OF_FS PURE
+		#define OF_FS_PURE
 		#include <filesystem>
 		namespace of {
 			namespace filesystem = std::filesystem;
@@ -473,7 +473,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 	#elif __has_include(<experimental/filesystem>)
 		// #pragma message("has include experimental/filesystem")
 		#include <experimental/filesystem>
-		#define OF_FS EXPERIMENTAL
+		#define OF_FS_EXPERIMENTAL
 		#if OF_CPP >= 14
 			// #pragma message("OF_CPP >= 14")
 			namespace std {
@@ -503,7 +503,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 			#define BOOST_NO_CXX11_SCOPED_ENUMS
 			#define BOOST_NO_SCOPED_ENUMS
 		#endif
-		#define OF_FS BOOST
+		#define OF_FS_BOOST
 		#include <boost/filesystem.hpp>
 		namespace of {
 			namespace filesystem = boost::filesystem;
@@ -511,18 +511,25 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 	#endif
 #else
 	// #pragma message("has include - not")
-	#define OF_FS PURE
+	#define OF_FS_PURE
 	#include <filesystem>
 	namespace of {
 		namespace filesystem = std::filesystem;
 	}
 #endif
 
+//#if defined(OF_FS)
+//#pragma message("OF_FS defined")
+//#else
+//#pragma message("OF_FS undefined")
+//#endif
 
-#if OF_FS == PURE
-	#pragma message("PURE")
-#elif OF_FS == EXPERIMENTAL
+#if defined(OF_FS_EXPERIMENTAL)
 	#pragma message("EXPERIMENTAL")
-#elif OF_FS == BOOST
+#endif
+#if defined(OF_FS_PURE)
+	#pragma message("PURE")
+#endif
+#if defined(OF_FS_BOOST)
 	#pragma message("BOOST")
 #endif

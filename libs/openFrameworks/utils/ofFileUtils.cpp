@@ -838,7 +838,7 @@ void ofFile::setWriteable(bool flag){
 	try{
 //#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
 // #if defined(OF_FS_EXPERIMENTAL)
-#if OF_FS == PURE
+#if defined(OF_FS_PURE)
 		if(flag){
 			of::filesystem::permissions(myFile,
 				of::filesystem::perms::owner_write, of::filesystem::perm_options::add);
@@ -873,7 +873,7 @@ void ofFile::setReadable(bool flag){
 
 //#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
 
-#if OF_FS == PURE
+#if defined(OF_FS_PURE)
 		if(flag){
 			of::filesystem::permissions(myFile,
 				of::filesystem::perms::owner_read,
@@ -885,9 +885,11 @@ void ofFile::setReadable(bool flag){
 		}
 #else
 		if(flag){
-			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::add_perms);
+			of::filesystem::permissions(myFile,
+				of::filesystem::perms::owner_read | of::filesystem::perms::add_perms);
 		}else{
-			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::remove_perms);
+			of::filesystem::permissions(myFile,
+				of::filesystem::perms::owner_read | of::filesystem::perms::remove_perms);
 		}
 #endif
 	}catch(std::exception & e){
@@ -900,7 +902,7 @@ void ofFile::setExecutable(bool flag){
 	try{
 //#if OF_USING_STD_FS
 //#   if OF_USE_EXPERIMENTAL_FS
-#if OF_FS == PURE
+#if defined(OF_FS_PURE)
 		if(flag){
 			of::filesystem::permissions(myFile,
 										 of::filesystem::perms::owner_exec,
@@ -910,13 +912,14 @@ void ofFile::setExecutable(bool flag){
 										 of::filesystem::perms::owner_exec,
 										 of::filesystem::perm_options::remove);
 		}
-#elif OF_FS == EXPERIMENTAL
+#elif defined(OF_FS_EXPERIMENTAL)
+
 		if(flag){
 			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::add_perms);
 		} else{
 			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::remove_perms);
 		}
-#elif OF_FS == BOOST
+#else
 		// BOOST? FIXME:
 		if(flag){
 			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::add_perms);
