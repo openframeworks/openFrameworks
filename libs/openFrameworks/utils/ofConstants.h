@@ -446,23 +446,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 
 
-//------------------------------------------------ c++11
-// check if the compiler supports c++11. vs hasn't updated the value
-// of __cplusplus so we need to check for vs >= 2012 (1700)
-//#if __cplusplus >= 201103 || _MSC_VER >= 1700
-//	#define HAS_CPP11 1
-//#endif
-//
-//#if __cplusplus >= 201402L
-//	#define OF_HAS_CPP14 1
-//#endif
-//
-//// If you are building with c++17 or newer std filesystem will be enabled by default
-//#if __cplusplus >= 201703L
-//	#define OF_HAS_CPP17 1
-//#else
-//	#define OF_HAS_CPP17 0
-//#endif
+
 //
 //
 //
@@ -574,13 +558,28 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #define $Line MakeString( Stringize, __LINE__ )
 #define Reminder __FILE__ "(" $Line ") : Reminder: "
 
-#pragma message(Reminder ()))
 // #pragma message(Reminder (__cpp_lib_experimental_filesystem))
 // #pragma message(Reminder __has_include(<filesystem>))
 
 
 #define __STR2__(x) #x
 #define __STR1__(x) __STR2__(x)
+
+
+#if __cplusplus >= 201103 || _MSC_VER >= 1700
+	#define HAS_CPP11 1
+#endif
+
+#if __cplusplus >= 201402L
+	#define OF_HAS_CPP14 1
+#endif
+
+// If you are building with c++17 or newer std filesystem will be enabled by default
+#if __cplusplus >= 201703L
+	#define OF_HAS_CPP17 1
+#else
+	#define OF_HAS_CPP17 0
+#endif
 
 
 
