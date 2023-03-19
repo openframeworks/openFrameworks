@@ -704,7 +704,8 @@ bool ofFile::canRead() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-#if OF_USING_STD_FS
+//#if OF_USING_STD_FS
+#if defined(OF_FS_EXPERIMENTAL)
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_read) != of::filesystem::perms::none;
 	}else if (getegid() == info.st_gid){

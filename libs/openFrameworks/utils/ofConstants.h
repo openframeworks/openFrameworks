@@ -591,6 +591,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 	#elif __has_include(<experimental/filesystem>)
 	#pragma message("has include experimental/filesystem")
 		#include <experimental/filesystem>
+		#define OF_FS_EXPERIMENTAL
 		#if OF_CPP >= 14
 			#pragma message("OF_CPP >= 14")
 			namespace std {
