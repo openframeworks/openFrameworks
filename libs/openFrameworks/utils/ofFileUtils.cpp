@@ -905,17 +905,19 @@ void ofFile::setExecutable(bool flag){
 										 of::filesystem::perm_options::remove);
 		}
 #   endif
-#else
-		if(flag){
-			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::add_perms);
-		} else{
-			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::remove_perms);
-		}
-#endif
-	}catch(std::exception & e){
-		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
-	}
-}
+		
+		// BOOST? FIXME:
+//#else
+//		if(flag){
+//			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::add_perms);
+//		} else{
+//			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::remove_perms);
+//		}
+//#endif
+//	}catch(std::exception & e){
+//		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
+//	}
+//}
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
