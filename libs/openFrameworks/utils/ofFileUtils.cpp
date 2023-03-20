@@ -1,8 +1,4 @@
 #include "ofFileUtils.h"
-
-// adicionei. nao sei se precisa
-#include "ofConstants.h"
-
 #ifndef TARGET_WIN32
 	#include <pwd.h>
 	#include <sys/stat.h>
@@ -708,10 +704,7 @@ bool ofFile::canRead() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-//#if OF_USING_STD_FS
-// #if defined(OF_FS_EXPERIMENTAL)
-#if OF_FS == EXPERIMENTAL
-
+#if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_read) != of::filesystem::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -744,8 +737,7 @@ bool ofFile::canWrite() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-//#if OF_USING_STD_FS
-#if OF_FS == EXPERIMENTAL
+#if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_write) != of::filesystem::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -773,10 +765,7 @@ bool ofFile::canExecute() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-//#if OF_USING_STD_FS
-// #if defined(OF_FS_EXPERIMENTAL)
-#if OF_FS == EXPERIMENTAL
-
+#if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_exec) != of::filesystem::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -815,8 +804,7 @@ bool ofFile::isDevice() const {
 #ifdef TARGET_WIN32
 	return false;
 #else
-//#if OF_USING_STD_FS
-#if OF_FS == EXPERIMENTAL
+#if OF_USING_STD_FS
 	return of::filesystem::is_block_file(of::filesystem::status(myFile));
 #else
 	return of::filesystem::status(myFile).type() == of::filesystem::block_file;
@@ -836,24 +824,21 @@ bool ofFile::isHidden() const {
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
 	try{
-//#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
-// #if defined(OF_FS_EXPERIMENTAL)
-#if defined(OF_FS_PURE)
+#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
 		if(flag){
-			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_write, of::filesystem::perm_options::add);
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::add_perms);
 		}else{
-			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_write, of::filesystem::perm_options::remove);
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_write | of::filesystem::perms::remove_perms);
 		}
 #else
-
 		if(flag){
 			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_write | of::filesystem::perms::add_perms);
+										 of::filesystem::perms::owner_write,
+										 of::filesystem::perm_options::add);
 		}else{
 			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_write | of::filesystem::perms::remove_perms);
+										 of::filesystem::perms::owner_write,
+										 of::filesystem::perm_options::remove);
 		}
 #endif
 	}catch(std::exception & e){
@@ -870,26 +855,21 @@ void ofFile::setReadOnly(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setReadable(bool flag){
 	try{
-
-//#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
-
-#if defined(OF_FS_PURE)
+#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
 		if(flag){
-			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_read,
-				of::filesystem::perm_options::add);
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::add_perms);
 		}else{
-			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_read,
-				of::filesystem::perm_options::remove);
+			of::filesystem::permissions(myFile,of::filesystem::perms::owner_read | of::filesystem::perms::remove_perms);
 		}
 #else
 		if(flag){
 			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_read | of::filesystem::perms::add_perms);
+										 of::filesystem::perms::owner_read,
+										 of::filesystem::perm_options::add);
 		}else{
 			of::filesystem::permissions(myFile,
-				of::filesystem::perms::owner_read | of::filesystem::perms::remove_perms);
+										 of::filesystem::perms::owner_read,
+										 of::filesystem::perm_options::remove);
 		}
 #endif
 	}catch(std::exception & e){
@@ -900,9 +880,14 @@ void ofFile::setReadable(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-//#if OF_USING_STD_FS
-//#   if OF_USE_EXPERIMENTAL_FS
-#if defined(OF_FS_PURE)
+#if OF_USING_STD_FS
+#   if OF_USE_EXPERIMENTAL_FS
+		if(flag){
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::add_perms);
+		} else{
+			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::remove_perms);
+		}
+#   else
 		if(flag){
 			of::filesystem::permissions(myFile,
 										 of::filesystem::perms::owner_exec,
@@ -912,15 +897,8 @@ void ofFile::setExecutable(bool flag){
 										 of::filesystem::perms::owner_exec,
 										 of::filesystem::perm_options::remove);
 		}
-#elif defined(OF_FS_EXPERIMENTAL)
-
-		if(flag){
-			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::add_perms);
-		} else{
-			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exec | of::filesystem::perms::remove_perms);
-		}
+#   endif
 #else
-		// BOOST? FIXME:
 		if(flag){
 			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::add_perms);
 		} else{
@@ -1704,11 +1682,7 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 //	MARK: - near future
 //of::filesystem::path ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
-
-//#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
-// TALVEZ ERRADA A LOGICA
-#if defined(OF_FS_EXPERIMENTAL)
-
+#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
 	if(_path.string().empty()) return "";
 	// FIXME: Remove .string() here and following
 	// return (of::filesystem::path(_path).make_preferred() / "");
@@ -1751,9 +1725,7 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 	// FIXME: Remove .string() here and following
 	// FIXME: this seems over complicated and not useful anymore, using filesystem
 
-#if defined(OF_FS_EXPERIMENTAL)
-	// TALVEZ ERRADA A LOGICA
-//#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
+#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
 	if(path.string().empty()) return "";
 	return (path / "").string();
 #else
