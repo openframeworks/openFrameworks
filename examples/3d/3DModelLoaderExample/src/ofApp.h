@@ -39,5 +39,6 @@ class ofApp : public ofBaseApp{
 
 		ofEasyCam cam;
 		float cameraOrbit;
+		float camLatOrbit;
 };
 
