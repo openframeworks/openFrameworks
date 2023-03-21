@@ -8,7 +8,6 @@
 
 class ofBaseRenderer;
 
-
 /// \brief A generic 3d object in space with transformation (position, rotation, scale).
 
 class ofNode {
