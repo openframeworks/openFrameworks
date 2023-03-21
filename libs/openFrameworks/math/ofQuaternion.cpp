@@ -2,6 +2,8 @@
 #include "ofMatrix4x4.h"
 #include "ofMath.h"
 #include "ofMathConstants.h"
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/gtc/quaternion.hpp"
 
 //----------------------------------------
