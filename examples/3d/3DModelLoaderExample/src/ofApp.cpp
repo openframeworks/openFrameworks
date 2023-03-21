@@ -7,7 +7,7 @@ Loads in the same 3D penguin model in various file types. Demonstrates how to lo
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	ofBackground(255,255,255);
-//	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel(OF_LOG_VERBOSE);
 		
 	ofSetVerticalSync(true);
 	
