@@ -1,8 +1,9 @@
 #pragma once
 
-// FIXME: deprecated only
-#include "ofConstants.h"
+#include "ofDeprecated.h"
+#include "ofFS.h"
 #include <fstream>
+#include <vector>
 
 //----------------------------------------------------------
 // ofBuffer

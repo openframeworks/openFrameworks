@@ -3,8 +3,9 @@
 #include "ofShader.h"
 #include "ofColor.h"
 #include "ofMaterialBaseTypes.h"
-// FIXME: deprecated only and ctor
-#include "ofConstants.h"
+
+#define GLM_FORCE_CTOR_INIT
+#include "ofDeprecated.h"
 #include "glm/fwd.hpp"
 #include "glm/vec2.hpp"
 

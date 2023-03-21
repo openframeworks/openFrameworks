@@ -2,7 +2,9 @@
 
 #include "ofWindowSettings.h"
 #include "ofMainLoop.h"
-#include "ofConstants.h"
+// FIXME: platforms only
+//#include "ofConstants.h"
+#include "ofPlatforms.h"
 
 class ofRectangle;
 class ofAppBaseWindow;

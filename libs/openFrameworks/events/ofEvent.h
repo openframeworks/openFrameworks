@@ -15,8 +15,7 @@
 #include <iostream>
 #include <array>
 
-// FIXME: deprecated only
-#include "ofConstants.h"
+#include "ofDeprecated.h"
 
 
 /*! \cond PRIVATE */
