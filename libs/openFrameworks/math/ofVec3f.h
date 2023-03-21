@@ -1,11 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofVec2f.h"
 #include "ofVec4f.h"
 #include "ofMathConstants.h"
+#include "ofConstants.h"
 #include "glm/vec3.hpp"
-
 #include <cmath>
 #include <iostream>
 

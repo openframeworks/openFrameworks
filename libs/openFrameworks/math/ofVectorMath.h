@@ -1,5 +1,12 @@
 #pragma once
 
+#include "ofMathConstants.h"
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+#include "ofVec4f.h"
+#include "ofMatrix3x3.h"
+#include "ofMatrix4x4.h"
+#include "ofQuaternion.h"
 
 #include "ofConstants.h"
 //#include "glm/glm.hpp"
@@ -8,6 +15,7 @@
 //#include "glm/detail/_swizzle.hpp"
 //#include "glm/detail/_swizzle_func.hpp"
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
@@ -35,13 +43,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iomanip>
-#include "ofMathConstants.h"
-#include "ofVec2f.h"
-#include "ofVec3f.h"
-#include "ofVec4f.h"
-#include "ofMatrix3x3.h"
-#include "ofMatrix4x4.h"
-#include "ofQuaternion.h"
 
 //--------------------------------------------------------------
 inline const ofVec2f & toOf(const glm::vec2 & v){

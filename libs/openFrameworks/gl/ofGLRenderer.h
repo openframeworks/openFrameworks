@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ofGraphicsBaseTypes.h"
 #include "ofPolyline.h"
 #include "of3dGraphics.h"

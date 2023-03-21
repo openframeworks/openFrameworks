@@ -1,6 +1,4 @@
 #include "ofGLUtils.h"
-
-#include <set>
 #include "ofGLProgrammableRenderer.h"
 #include "ofGraphics.h"
 #include "ofShader.h"
@@ -10,6 +8,7 @@
 #include "ofPixels.h"
 #include "ofLog.h"
 #include "ofGraphicsConstants.h"
+#include <set>
 
 using std::shared_ptr;
 using std::vector;

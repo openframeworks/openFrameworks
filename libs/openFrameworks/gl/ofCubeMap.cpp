@@ -7,23 +7,21 @@
 #include "ofShader.h"
 #include "ofCubeMap.h"
 #include "ofImage.h"
-#include "ofConstants.h"
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
-
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/quaternion.hpp"
-
 #include "ofGLProgrammableRenderer.h"
 #include "ofCubeMapShaders.h"
+#include "ofConstants.h"
+
+#define GLM_FORCE_CTOR_INIT
+#include "glm/gtx/transform.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include <map>
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
 #endif
-
-#include <map>
-
 
 using std::weak_ptr;
 using std::vector;

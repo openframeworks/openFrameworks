@@ -5,10 +5,11 @@
 //
 
 #pragma once
-#include "ofFbo.h"
-#include "ofMesh.h"
-class ofShader;
 
+#include "ofFbo.h"
+#include "ofVboMesh.h"
+
+class ofShader;
 class ofGLProgrammableRenderer;
 
 class ofCubeMap {

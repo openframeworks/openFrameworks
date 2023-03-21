@@ -7,11 +7,12 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 #include "ofLight.h"
-#include "ofMaterial.h"
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
+#include "ofMaterial.h"
+#include "ofVboMesh.h"
 
 using std::shared_ptr;
 using std::vector;

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofColor.h"
 #include "ofPolyline.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
+#include "ofConstants.h"
 
 /// \class
 

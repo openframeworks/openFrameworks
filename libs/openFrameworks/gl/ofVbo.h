@@ -1,9 +1,10 @@
+#pragma once
+
 //TODO: Add edge flags?
 
-#pragma once
-#include "ofConstants.h"
 #include "ofGraphicsConstants.h"
 #include "ofBufferObject.h"
+#include "ofConstants.h"
 #include <map>
 
 template<typename T>
