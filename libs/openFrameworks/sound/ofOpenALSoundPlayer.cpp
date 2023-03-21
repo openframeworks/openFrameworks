@@ -2,6 +2,7 @@
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/gtc/constants.hpp"
 #include "glm/common.hpp"
 #include "ofLog.h"

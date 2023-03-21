@@ -1,5 +1,6 @@
 #include "ofSoundPlayer.h"
 #include "ofLog.h"
+#define GLM_FORCE_CTOR_INIT
 #include "glm/common.hpp"
 
 // these are global functions, that affect every sound / channel:
