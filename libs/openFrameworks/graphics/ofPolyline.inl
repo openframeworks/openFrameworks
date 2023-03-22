@@ -190,7 +190,7 @@ void ofPolyline_<T>::setCircleResolution(int res){
 		circlePoints.resize(res);
         
 		float angle = 0.0f;
-		const float angleAdder = M_TWO_PI / (float)res;
+		const float angleAdder = glm::two_pi<float>() / (float)res;
 		for (int i = 0; i < res; i++){
 			circlePoints[i].x = cos(angle);
 			circlePoints[i].y = sin(angle);
@@ -207,7 +207,7 @@ template<class T>
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
 float ofPolyline_<T>::wrapAngle(float angleRadians) {
-	return ofWrap(angleRadians, 0.0f, TWO_PI);
+	return ofWrap(angleRadians, 0.0f, glm::two_pi<float>());
 }
 
 //----------------------------------------------------------
@@ -337,13 +337,13 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     const float epsilon = 0.0001f;
     
     const size_t nCirclePoints = circlePoints.size();
-    float segmentArcSize  = M_TWO_PI / (float)nCirclePoints;
+    float segmentArcSize  = glm::two_pi<float>() / (float)nCirclePoints;
     
     // convert angles to radians and wrap them into the range 0-M_TWO_PI and
     float angleBeginRad = wrapAngle(ofDegToRad(angleBegin));
     float angleEndRad =   wrapAngle(ofDegToRad(angleEnd));
     
-    while(angleBeginRad >= angleEndRad) angleEndRad += M_TWO_PI;
+    while(angleBeginRad >= angleEndRad) angleEndRad += glm::two_pi<float>();
     
     // determine the directional angle delta
     float d = clockwise ? angleEndRad - angleBeginRad : angleBeginRad - angleEndRad;
@@ -355,7 +355,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     
     // if the delta angle is in the CCW direction OR the start and stop angles are
     // effectively the same adjust the remaining angle to be a be a full rotation
-    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
+    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += glm::two_pi<float>();
     
 	T radii(radiusX, radiusY, 0.f);
 	T point(0);
@@ -373,7 +373,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
             // don't fall precisely on a LUT entry)
 			point = T(cos(angleBeginRad), sin(angleBeginRad), 0.f);
             // set up the get any in between points from the LUT
-            float ratio = angleBeginRad / M_TWO_PI * (float)nCirclePoints;
+            float ratio = angleBeginRad / glm::two_pi<float>() * (float)nCirclePoints;
             currentLUTIndex = clockwise ? (int)ceil(ratio) : (int)floor(ratio);
             float lutAngleAtIndex = currentLUTIndex * segmentArcSize;
             // the angle between the beginning angle and the next angle in the LUT table

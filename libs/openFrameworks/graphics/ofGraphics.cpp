@@ -398,7 +398,7 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		gradientMesh.addVertex(glm::vec3(center, 0.f));
 		gradientMesh.addColor(start);
 		int n = 32; // circular gradient resolution
-		float angleBisector = TWO_PI / (n * 2);
+		float angleBisector = glm::two_pi<float>() / (n * 2);
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
