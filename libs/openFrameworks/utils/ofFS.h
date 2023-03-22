@@ -49,10 +49,11 @@
                 #endif
             #endif
 
+			// FIXME: this was causing error in Windows. INCLUDE_STD_FILESYSTEM_EXPERIMENTAL is not defined anywhere else in OF
             // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
-            #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
-                #define OF_USE_EXPERIMENTAL_FS 1
-            #endif
+//            #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+//                #define OF_USE_EXPERIMENTAL_FS 1
+//            #endif
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
