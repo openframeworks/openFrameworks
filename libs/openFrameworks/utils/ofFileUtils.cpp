@@ -1,4 +1,6 @@
 #include "ofFileUtils.h"
+#include "ofPlatforms.h"
+
 #ifndef TARGET_WIN32
 	#include <pwd.h>
 	#include <sys/stat.h>
