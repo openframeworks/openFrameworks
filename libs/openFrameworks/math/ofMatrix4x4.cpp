@@ -890,7 +890,7 @@ void ofMatrix4x4::makePerspectiveMatrix(double fovy,double aspectRatio,
                                             double zNear, double zFar)
 {
     // calculate the appropriate left, right etc.
-    double tan_fovy = tan(fovy*0.5*DEG_TO_RAD);
+    double tan_fovy = tan(ofDegToRad(fovy*0.5));
     double right  =  tan_fovy * aspectRatio * zNear;
     double left   = -right;
     double top    =  tan_fovy * zNear;
@@ -907,7 +907,7 @@ bool ofMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
     double bottom =  0.0;
     if (getFrustum(left,right,bottom,top,zNear,zFar))
     {
-        fovy = (atan(top/zNear)-atan(bottom/zNear))*RAD_TO_DEG;
+        fovy = ofRadToDeg(atan(top/zNear)-atan(bottom/zNear));
         aspectRatio = (right-left)/(top-bottom);
         return true;
     }

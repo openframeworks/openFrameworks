@@ -273,7 +273,7 @@ float ofDistSquared(float x1, float y1, float z1, float x2, float y2, float z2);
 ///
 /// \param radians An angle in radians.
 /// \returns the angle in degrees.
-float ofRadToDeg(float radians);
+float ofRadToDeg(const float & radians);
 
 /// \brief Convert degrees to radians.
 ///
@@ -284,7 +284,7 @@ float ofRadToDeg(float radians);
 ///
 /// \param degrees An angle in degrees.
 /// \returns the angle in radians.
-float ofDegToRad(float degrees);
+float ofDegToRad(const float & degrees);
 
 /// \brief Linearly interpolate a value between two angles in degrees.
 /// 

@@ -1840,7 +1840,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 
 		V vert;
 		N normal;
-		float angleCos = cos(angle * DEG_TO_RAD );
+		float angleCos = cos(ofDegToRad(angle));
 		float numNormals=0;
 
 		for(ofIndexType j = 0; j < triangles.size(); j++) {

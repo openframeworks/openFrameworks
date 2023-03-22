@@ -476,11 +476,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 			mut_this->translate(0,-command.to.y*ellipse_ratio);
 			mut_this->scale(1,ellipse_ratio);
 			mut_this->translate(0,command.to.y/ellipse_ratio);
-			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc(cr,command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		}else{
-			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc(cr,command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 		}
 		break;
 
@@ -493,11 +493,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 			mut_this->translate(0,-command.to.y*ellipse_ratio);
 			mut_this->scale(1,ellipse_ratio);
 			mut_this->translate(0,command.to.y/ellipse_ratio);
-			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc_negative(cr,command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		}else{
-			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc_negative(cr,command.to.x, command.to.y, command.radiusX,  ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 		}
 	break;
 
