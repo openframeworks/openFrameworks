@@ -208,7 +208,7 @@ bool ofLight::getIsSpotlight() const{
 
 //----------------------------------------
 void ofLight::setSpotlightCutOff( float spotCutOff ) {
-    data->spotCutOff = CLAMP(spotCutOff, 0, 90);
+    data->spotCutOff = ofClamp(spotCutOff, 0, 90);
 	if ( auto r = data->rendererP.lock() ){
 		r->setLightSpotlightCutOff( data->glIndex, spotCutOff );
 	}
@@ -224,7 +224,7 @@ float ofLight::getSpotlightCutOff() const{
 
 //----------------------------------------
 void ofLight::setSpotConcentration( float exponent ) {
-    data->exponent = CLAMP(exponent, 0, 128);
+    data->exponent = ofClamp(exponent, 0, 128);
 	if ( auto r = data->rendererP.lock() ){
 		r->setLightSpotConcentration( data->glIndex, exponent );
 	}

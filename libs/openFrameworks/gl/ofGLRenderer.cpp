@@ -770,7 +770,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
-	float halfFov = PI * fov / 360;
+	float halfFov = PI * fov / 360.0f;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 	float aspect = (float) viewW / viewH;
