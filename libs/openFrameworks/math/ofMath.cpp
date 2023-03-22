@@ -135,12 +135,12 @@ bool ofInRange(float t, float min, float max) {
 }
 
 //--------------------------------------------------
-float ofRadToDeg(const float & radians) {
+float ofRadToDeg(float radians) {
 	return radians * RAD_TO_DEG;
 }
 
 //--------------------------------------------------
-float ofDegToRad(const float & degrees) {
+float ofDegToRad(float degrees) {
     return degrees * DEG_TO_RAD;
 }
 
