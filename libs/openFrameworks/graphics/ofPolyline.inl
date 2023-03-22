@@ -647,9 +647,9 @@ bool ofPolyline_<T>::inside(float x, float y, const ofPolyline_ & polyline){
 	p1 = polyline[0];
 	for (i=1;i<=N;i++) {
 		p2 = polyline[i % N];
-		if (y > MIN(p1.y,p2.y)) {
-            if (y <= MAX(p1.y,p2.y)) {
-                if (x <= MAX(p1.x,p2.x)) {
+		if (y > std::min(p1.y,p2.y)) {
+            if (y <= std::max(p1.y,p2.y)) {
+                if (x <= std::max(p1.x,p2.x)) {
                     if (p1.y != p2.y) {
                         xinters = (y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
                         if (p1.x == p2.x || x <= xinters)
@@ -1156,7 +1156,7 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
         area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
         area *= 0.5;
         
-        if(fabsf(area) < FLT_EPSILON) {
+        if(fabsf(area) < std::numeric_limits<float>::epsilon()) {
             centroid2D = getBoundingBox().getCenter();
         } else {
             // centroid

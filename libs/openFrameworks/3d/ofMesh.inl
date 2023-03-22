@@ -1154,14 +1154,14 @@ void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
 
 		if((state==Header || state==FaceDef) && lineStr.find("element vertex")==0){
 			state = VertexDef;
-			orderVertices = MAX(orderIndices, 0)+1;
+			orderVertices = std::max(orderIndices, 0)+1;
 			data.getVertices().resize(ofTo<size_t>(lineStr.substr(15)));
 			continue;
 		}
 
 		if((state==Header || state==VertexDef) && lineStr.find("element face")==0){
 			state = FaceDef;
-			orderIndices = MAX(orderVertices, 0)+1;
+			orderIndices = std::max(orderVertices, 0)+1;
 			data.getIndices().resize(ofTo<size_t>(lineStr.substr(13))*3);
 			continue;
 		}

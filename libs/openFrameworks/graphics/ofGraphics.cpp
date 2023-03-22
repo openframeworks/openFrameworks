@@ -1213,7 +1213,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 				currentLineLength++;
 			}
 		}
-		maxLineLength = MAX(maxLineLength, currentLineLength);
+		maxLineLength = std::max(maxLineLength, currentLineLength);
 	}
 	
 	int padding = 4;

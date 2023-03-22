@@ -28,6 +28,7 @@ void ofQuaternion::get(ofMatrix4x4& matrix) const {
 void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
 	angle = ofDegToRad(angle);
 	
+	// FIXME: why not using std::numeric_limits<float>::epsilon() ?
 	const float epsilon = 0.0000001f;
 
 	float length = sqrtf( x * x + y * y + z * z );
@@ -240,6 +241,8 @@ void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const
 /// See also
 /// http://www.gamasutra.com/features/programming/19980703/quaternions_01.htm
 void ofQuaternion::slerp( float t, const ofQuaternion& from, const ofQuaternion& to ) {
+	
+	// FIXME: std::numeric_limits<double>::epsilon()
 	const double epsilon = 0.00001;
 	double omega, cosomega, sinomega, scale_from, scale_to ;
 
