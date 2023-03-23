@@ -1,13 +1,12 @@
 #include "ofMath.h"
 #include "ofUtils.h"
-#include "float.h"
+#include "ofNoise.h"
+#include "ofPolyline.h"
+#include <float.h>
 
 #ifndef TARGET_WIN32
 	#include <sys/time.h>
 #endif
-
-#include "ofNoise.h"
-#include "ofPolyline.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -136,12 +135,14 @@ bool ofInRange(float t, float min, float max) {
 
 //--------------------------------------------------
 float ofRadToDeg(float radians) {
-	return radians * RAD_TO_DEG;
+//	return radians * RAD_TO_DEG;
+	return glm::degrees(radians);
 }
 
 //--------------------------------------------------
 float ofDegToRad(float degrees) {
-    return degrees * DEG_TO_RAD;
+//    return degrees * DEG_TO_RAD;
+	return glm::radians(degrees);
 }
 
 //--------------------------------------------------
