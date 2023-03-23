@@ -1,8 +1,8 @@
 #pragma once
 
+#include "ofMath.h"
 #include "ofMathConstants.h"
 #include "ofConstants.h"
-#include "ofMath.h"
 #include "glm/vec2.hpp"
 #include "glm/fwd.hpp"
 #include <cmath>

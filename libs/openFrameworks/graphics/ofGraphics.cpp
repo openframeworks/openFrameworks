@@ -402,7 +402,7 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
-			float theta = i * TWO_PI / n;
+			float theta = i * glm::two_pi<float>() / n;
 			gradientMesh.addVertex(glm::vec3(center + glm::vec2(sin(theta), cos(theta)) * bigRadius, 0));
 			gradientMesh.addColor(end);
 		}
