@@ -375,7 +375,7 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 		_createCubeMap(srcTex);
 		if( isHdr() ) {
 			
-			int srcCubeFSize = MAX(256, data->settings.preFilterRes);
+			int srcCubeFSize = std::max(256, data->settings.preFilterRes);
 			GLuint cubeFid = _createFloatCubeMap(srcTex, srcCubeFSize );
 			
 			// figure out the number of mip maps //

@@ -1,13 +1,12 @@
 #include "ofMath.h"
 #include "ofUtils.h"
-#include "float.h"
+#include "ofNoise.h"
+#include "ofPolyline.h"
+#include <float.h>
 
 #ifndef TARGET_WIN32
 	#include <sys/time.h>
 #endif
-
-#include "ofNoise.h"
-#include "ofPolyline.h"
 
 //--------------------------------------------------
 int ofNextPow2(int a){
@@ -51,8 +50,8 @@ float ofRandom(float max) {
 
 //--------------------------------------------------
 float ofRandom(float x, float y) {
-	float high = MAX(x, y);
-	float low = MIN(x, y);
+	float high = std::max(x, y);
+	float low = std::min(x, y);
 	return std::max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
 }
 
@@ -78,7 +77,7 @@ float ofNormalize(float value, float min, float max){
 //--------------------------------------------------
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
-	if (fabs(inputMin - inputMax) < FLT_EPSILON){
+	if (fabs(inputMin - inputMax) < std::numeric_limits<float>::epsilon()){
 		return outputMin;
 	} else {
 		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
@@ -136,12 +135,12 @@ bool ofInRange(float t, float min, float max) {
 
 //--------------------------------------------------
 float ofRadToDeg(float radians) {
-	return radians * RAD_TO_DEG;
+	return glm::degrees(radians);
 }
 
 //--------------------------------------------------
 float ofDegToRad(float degrees) {
-    return degrees * DEG_TO_RAD;
+	return glm::radians(degrees);
 }
 
 //--------------------------------------------------

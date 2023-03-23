@@ -1154,14 +1154,14 @@ void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
 
 		if((state==Header || state==FaceDef) && lineStr.find("element vertex")==0){
 			state = VertexDef;
-			orderVertices = MAX(orderIndices, 0)+1;
+			orderVertices = std::max(orderIndices, 0)+1;
 			data.getVertices().resize(ofTo<size_t>(lineStr.substr(15)));
 			continue;
 		}
 
 		if((state==Header || state==VertexDef) && lineStr.find("element face")==0){
 			state = FaceDef;
-			orderIndices = MAX(orderVertices, 0)+1;
+			orderIndices = std::max(orderVertices, 0)+1;
 			data.getIndices().resize(ofTo<size_t>(lineStr.substr(13))*3);
 			continue;
 		}
@@ -1840,7 +1840,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 
 		V vert;
 		N normal;
-		float angleCos = cos(angle * DEG_TO_RAD );
+		float angleCos = cos(ofDegToRad(angle));
 		float numNormals=0;
 
 		for(ofIndexType j = 0; j < triangles.size(); j++) {
@@ -2006,8 +2006,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 	ofMesh_<V,N,C,T> mesh;
 
 	float doubleRes = res*2.f;
-	float polarInc = PI/(res); // ringAngle
-	float azimInc = TWO_PI/(doubleRes); // segAngle //
+	float polarInc = glm::pi<float>()/(res); // ringAngle
+	float azimInc = glm::two_pi<float>()/(doubleRes); // segAngle //
 
 	if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
 		mode = OF_PRIMITIVE_TRIANGLE_STRIP;
@@ -2019,8 +2019,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 
 	for(float i = 0; i < res+1; i++) {
 
-		float tr = sin( PI-i * polarInc );
-		float ny = cos( PI-i * polarInc );
+		float tr = sin( glm::pi<float>()-i * polarInc );
+		float ny = cos( glm::pi<float>()-i * polarInc );
 
 		tcoord.y = 1.f - (i / res);
 
@@ -2228,8 +2228,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		float r0 = sqrtf(vec.x*vec.x+vec.z*vec.z);
 		float alpha;
 		alpha = atan2f(vec.z,vec.x);
-		u = alpha/TWO_PI+.5f;
-		v = atan2f(vec.y, r0)/PI + .5f;
+		u = alpha/glm::two_pi<float>()+.5f;
+		v = atan2f(vec.y, r0)/glm::pi<float>() + .5f;
 		// reverse the u coord, so the default is texture mapped left to
 		// right on the outside of a sphere 
 		// reverse the v coord, so that texture origin is at top left
@@ -2338,7 +2338,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 	if( capSegs < 2 ) bCapped = false;
 	if(!bCapped) capSegs=1;
 
-	float angleIncRadius = -1 * (TWO_PI/((float)radiusSegments-1.f));
+	float angleIncRadius = -1 * (glm::two_pi<float>()/((float)radiusSegments-1.f));
 	float heightInc = height/((float)heightSegments-1.f);
 	float halfH = height*.5f;
 
@@ -2533,7 +2533,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 	}
 
 
-	float angleIncRadius = -1.f * ((TWO_PI/((float)radiusSegments-1.f)));
+	float angleIncRadius = -1.f * ((glm::two_pi<float>()/((float)radiusSegments-1.f)));
 	float heightInc = height/((float)heightSegments-1);
 	float halfH = height*.5f;
 

@@ -396,7 +396,7 @@ void ofColor_<PixelType>::setHue(float hue) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHueAngle(float angle) {
-	setHue(angle / 360. * limit());
+	setHue(angle / 360.0f * limit());
 }
 
 template<typename PixelType>
