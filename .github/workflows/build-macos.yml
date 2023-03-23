@@ -33,7 +33,11 @@ jobs:
       env:
         cache-name: cache-keep-compile
       with:
-        path: libs/openFrameworksCompiled/lib/osx/**/
+        path: |
+          libs/openFrameworksCompiled/lib/osx/*.a
+          libs/openFrameworksCompiled/lib/osx/**/
+          addons/obj/osx/**/
+
         key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
           ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
