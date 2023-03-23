@@ -135,13 +135,11 @@ bool ofInRange(float t, float min, float max) {
 
 //--------------------------------------------------
 float ofRadToDeg(float radians) {
-//	return radians * RAD_TO_DEG;
 	return glm::degrees(radians);
 }
 
 //--------------------------------------------------
 float ofDegToRad(float degrees) {
-//    return degrees * DEG_TO_RAD;
 	return glm::radians(degrees);
 }
 

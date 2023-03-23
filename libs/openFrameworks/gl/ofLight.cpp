@@ -13,8 +13,8 @@
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
 #include "ofConstants.h"
-#include <map>
 #include <glm/gtc/quaternion.hpp>
+#include <map>
 
 using std::weak_ptr;
 using std::vector;
