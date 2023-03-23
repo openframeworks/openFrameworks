@@ -30,12 +30,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Cache projectGenerator folder
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: '~/projectGenerator'
         key: ${{ runner.os }}-pg-${{matrix.cfg.gradle_target}}
     - name: Cache NDK
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: '~/android-ndk-r15c'
         key: ${{ runner.os }}-android-ndk-${{matrix.cfg.gradle_target}}
