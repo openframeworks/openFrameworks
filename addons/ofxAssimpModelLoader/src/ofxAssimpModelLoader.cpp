@@ -215,8 +215,8 @@ void ofxAssimpModelLoader::calculateDimensions(){
 
 	// optional normalized scaling
 	normalizedScale = scene_max.x-scene_min.x;
-	normalizedScale = std::max(scene_max.y - scene_min.y,normalizedScale);
-	normalizedScale = std::max(scene_max.z - scene_min.z,normalizedScale);
+	normalizedScale = std::max(double(scene_max.y - scene_min.y), normalizedScale);
+	normalizedScale = std::max(double(scene_max.z - scene_min.z), normalizedScale);
 	if (abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
 		ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << std::endl;
 		normalizedScale = 1.0;
