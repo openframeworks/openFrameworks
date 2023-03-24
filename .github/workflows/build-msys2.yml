@@ -41,13 +41,7 @@ jobs:
           pkgconf
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
-      env:
-        MSYSTEM: ${{ matrix.sys }}
     - name: Build
       run: ./scripts/ci/msys2/build.sh
-      env:
-        MSYSTEM: ${{ matrix.sys }}
     - name: Run tests
       run: ./scripts/ci/msys2/run_tests.sh
-      env:
-        MSYSTEM: ${{ matrix.sys }}
