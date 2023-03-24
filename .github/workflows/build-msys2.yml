@@ -19,7 +19,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        mingw: [MINGW64]
+        sys:
+          - mingw64
     defaults:
       run:
         shell: msys2 {0}
@@ -29,8 +30,8 @@ jobs:
       with:
         release: false
         update: true
-        msystem: ${{matrix.mingw}}
-        pacboy: boost assimp gcc gdb glew glfw glm harfbuzz
+        msystem: ${{matrix.sys}}
+        pacboy: boost assimp gcc gdb glew glfw glm harfbuzz libsndfile libusb libxml2 mpg123 nlohmann-json ntldd-git openal opencv poco pugixml rtaudio tools uriparser utf8cpp zlib
         install: >-
           git
           unzip
@@ -41,12 +42,12 @@ jobs:
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
       env:
-        MSYSTEM: ${{ matrix.mingw }}
+        MSYSTEM: ${{ matrix.sys }}
     - name: Build
       run: ./scripts/ci/msys2/build.sh
       env:
-        MSYSTEM: ${{ matrix.mingw }}
+        MSYSTEM: ${{ matrix.sys }}
     - name: Run tests
       run: ./scripts/ci/msys2/run_tests.sh
       env:
-        MSYSTEM: ${{ matrix.mingw }}
+        MSYSTEM: ${{ matrix.sys }}
