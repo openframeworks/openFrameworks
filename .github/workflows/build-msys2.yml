@@ -39,6 +39,8 @@ jobs:
           wget
           make
           pkgconf
+          mingw-w64-x86_64-harfbuzz
+          mingw-w64-x86_64-ffmpeg
           mingw-w64-x86_64-frei0r-plugins
           mingw-w64-x86_64-freetype
           mingw-w64-x86_64-libwebp
@@ -49,7 +51,6 @@ jobs:
           mingw-w64-x86_64-glew
           mingw-w64-x86_64-glfw
           mingw-w64-x86_64-glm
-          mingw-w64-x86_64-harfbuzz
           mingw-w64-x86_64-libsndfile
           mingw-w64-x86_64-libusb
           mingw-w64-x86_64-libxml2
