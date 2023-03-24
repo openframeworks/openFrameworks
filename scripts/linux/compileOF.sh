@@ -10,7 +10,7 @@ else
 fi
 
 pushd `dirname $0` > /dev/null
-SCRIPTPATH=`pwd`
+SCRIPTPATH="$(pwd)"
 popd > /dev/null
 
 BUILD="install"
