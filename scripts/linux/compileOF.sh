@@ -24,7 +24,7 @@ while getopts tj: opt ; do
 	esac
 done
 
-cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
+cd "${SCRIPTPATH}/../../libs/openFrameworksCompiled/project"
 make -j$JOBS Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
