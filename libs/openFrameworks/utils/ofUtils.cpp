@@ -1,5 +1,6 @@
 #include "ofUtils.h"
-//#include "ofImage.h"
+// FIXME: split ofUtils in two files, one which uses urlparser / ofImage, other without for smaller apps.
+#include "ofImage.h"
 #include "ofLog.h"
 #include "ofAppBaseWindow.h"
 #include "ofMainLoop.h"
