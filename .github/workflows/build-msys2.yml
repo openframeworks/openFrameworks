@@ -29,11 +29,15 @@ jobs:
       with:
         release: false
         update: true
+        msystem: ${{matrix.mingw}}
+        pacboy: boost assimp gcc gdb glew glfw glm harfbuzz
         install: >-
           git
           unzip
           rsync
           wget
+          make
+          pkgconf
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
       env:
