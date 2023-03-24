@@ -1,4 +1,7 @@
 #include "ofApp.h"
+#if defined(TARGET_EMSCRIPTEN)
+#include "ofxAppEmscriptenWindow.h"
+#endif
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -14,6 +17,36 @@ void ofApp::setup(){
     loadModel("Fox/Fox_05.fbx");
 
     bHelpText = true;
+	bUseCamera = true;
+	
+	#if defined(TARGET_EMSCRIPTEN)
+	auto ewin =  dynamic_pointer_cast<ofxAppEmscriptenWindow>(ofGetCurrentWindow());
+	ewin->setTouchSimulatesMouse(true);
+	ewin->preventDefaultBrowserTouchMoveBehavior();
+	ewin->setFullscreenScaleStrategy(EMSCRIPTEN_FULLSCREEN_SCALE_ASPECT);
+	bEnableAutoSwitch = true;
+	#endif
+}
+
+
+//--------------------------------------------------------------
+void ofApp::loadModel(int aindex){
+	
+	vector<string> modelPaths = {
+		"Fox/Fox_05.fbx",
+		"FlightHelmet/FlightHelmet.gltf",
+		"Druid/druid.gltf",
+		"Astroboy/astroBoy_walk.dae"
+	};
+	
+	#if !defined(TARGET_OPENGLES)
+	// model looks strange in emscripten
+	modelPaths.push_back("Payphone/korean_public_payphone_01_1k.gltf");
+	#endif
+	
+	modelIndex = ofClamp(aindex, 0, (int)modelPaths.size()-1 );
+	loadModel( modelPaths[modelIndex] );
+	
 }
 
 //--------------------------------------------------------------
@@ -28,8 +61,7 @@ void ofApp::loadModel(string filename){
     }else{
         ofLogError() << " can't load model: " << filename << endl;
     }
-    
-
+	mTimeModelLoaded = ofGetElapsedTimef();
 }
 
 //--------------------------------------------------------------
@@ -57,51 +89,68 @@ void ofApp::update(){
         }
         mesh = model.getCurrentAnimatedMesh(0);
     }
+	
+	if( bEnableAutoSwitch ) {
+		float ctime = ofGetElapsedTimef();
+		if( ctime - mTimeModelLoaded > 10.0f ) {
+			modelIndex++;
+			if( modelIndex >= 5 ) {
+				modelIndex = 0;
+			}
+			loadModel(modelIndex);
+		}
+	} else {
+		mTimeModelLoaded = ofGetElapsedTimef();
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofSetColor(255);
-
-    ofEnableDepthTest();
-    
-    if(bUseCamera)cam.begin();
-    
-        ofEnableLighting();
-        light.enable();
-        ofEnableSeparateSpecularLight();
-
-        ofPushMatrix();
-            ofTranslate(model.getPosition().x, model.getPosition().y, 0);
-            ofRotateDeg(mouseX+30, 0, 1, 0);
-            ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
-            
-            model.drawFaces();
-        ofPopMatrix();
-
-        light.disable();
-        ofDisableLighting();
-        ofDisableSeparateSpecularLight();
- 
-    if( bUseCamera ){
-        ofDrawSphere(light.getPosition(), 10);
-    }
- 
-    if(bUseCamera)cam.end();
-    ofDisableDepthTest();
-
-    if(bHelpText){
-        ofSetColor(255, 255, 255 );
-        string str;
-        str += "FPS: " + ofToString(ofGetFrameRate(),0) + "\n\n";
-        str +="(keys 1-5): load models\n";
-        str += "num of animations in this model: " + ofToString(model.getAnimationCount()) + " <- -> to change\n";
-        str +="(Spacebar): toggle animation\n";
-        str +="(LEFT MOUSE BUTTON DRAG in y-axis): control animation.\n";
-        str += "(c): toggle camera: " + (bUseCamera ? string(" using ofEasyCam with (0,0) as screen center. \n") : string(" default view (0,0) is top left \n"));
-        str += "(h): toggle help.\n";
-        ofDrawBitmapString(str, 20, 20);
-    }
+	ofSetColor(255);
+	
+	ofEnableDepthTest();
+	
+	if(bUseCamera)cam.begin();
+	
+	ofEnableLighting();
+	light.enable();
+	ofEnableSeparateSpecularLight();
+	
+	ofPushMatrix();
+	if( !bUseCamera ) {
+		ofTranslate(model.getPosition().x, model.getPosition().y, 0);
+		ofRotateDeg(mouseX+30, 0, 1, 0);
+		ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
+	}
+	model.drawFaces();
+	ofPopMatrix();
+	
+	light.disable();
+	ofDisableLighting();
+	ofDisableSeparateSpecularLight();
+	
+	if( bUseCamera ){
+		ofDrawSphere(light.getPosition(), 10);
+	}
+	
+	if(bUseCamera)cam.end();
+	ofDisableDepthTest();
+	
+	if(bHelpText){
+		ofSetColor(255, 255, 255 );
+		string str;
+		str += "FPS: " + ofToString(ofGetFrameRate(),0) + "\n\n";
+		str +="(keys 1-5): load models\n";
+		str += "num of animations in this model: " + ofToString(model.getAnimationCount()) + " <- -> to change\n";
+		str +="(Spacebar): toggle animation\n";
+		str +="(LEFT MOUSE BUTTON DRAG in y-axis): control animation.\n";
+		str += "(c): toggle camera: " + (bUseCamera ? string(" using ofEasyCam with (0,0) as screen center. \n") : string(" default view (0,0) is top left \n"));
+		str += "(h): toggle help.\n";
+		str += "(a): auto switch: " + (bEnableAutoSwitch ? string("enabled") + " "+ofToString( ofClamp(10.f-(ofGetElapsedTimef()-mTimeModelLoaded), 0.f, 10.f), 1) : string("disabled"))+"\n";
+		str += "(f): toggle fullscreen: " + ofToString(ofGetWidth(),0)+" x "+ofToString(ofGetHeight(),0)+"\n";
+		ofDrawBitmapString(str, 20, 20);
+	}
+	
 }
 
 //--------------------------------------------------------------
@@ -109,19 +158,24 @@ void ofApp::keyPressed(int key){
 
     switch (key) {
         case '1':
-            loadModel("Fox/Fox_05.fbx");
+			bEnableAutoSwitch = false;
+            loadModel(0);
             break;
         case '2':
-            loadModel("FlightHelmet/FlightHelmet.gltf");
+			bEnableAutoSwitch = false;
+            loadModel(1);
             break;
         case '3':
-            loadModel("Druid/druid.gltf");
+			bEnableAutoSwitch = false;
+            loadModel(2);
             break;
         case '4':
-            loadModel("Astroboy/astroBoy_walk.dae");
+			bEnableAutoSwitch = false;
+            loadModel(3);
             break;
         case '5':
-            loadModel("Payphone/korean_public_payphone_01_1k.gltf");
+			bEnableAutoSwitch = false;
+            loadModel(4);
             break;
         case 'c':
             bUseCamera = !bUseCamera;
@@ -147,6 +201,12 @@ void ofApp::keyPressed(int key){
                 model.getAnimation(animationIndex).play();
             }
             break;
+		case 'a':
+			bEnableAutoSwitch = !bEnableAutoSwitch;
+			break;
+		case 'f':
+			ofToggleFullscreen();
+			break;
         default:
             break;
     }
@@ -197,7 +257,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+	ofLogNotice("ofApp :: windowResized : ") << w << " x " << h;
 }
 
 //--------------------------------------------------------------
