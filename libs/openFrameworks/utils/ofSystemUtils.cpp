@@ -63,6 +63,23 @@ std::wstring convertNarrowToWide( const std::string& as ){
     return ret;
 }
 
+
+#include <codecvt>
+//#include <string>
+// convert UTF-8 string to wstring
+std::wstring utf8_to_wstring (const std::string& str)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+	return myconv.from_bytes(str);
+}
+
+// convert wstring to UTF-8 string
+std::string wstring_to_utf8 (const std::wstring& str)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+	return myconv.to_bytes(str);
+}
+
 #endif
 
 #if defined( TARGET_OSX )
@@ -331,7 +348,8 @@ static int CALLBACK loadDialogBrowseCallback(
     std::string defaultPath = *(std::string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+		
+		wcscpy(wideCharacterBuffer, utf8_to_wstring(ofToDataPath(defaultPath)).c_str());
         SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
     }
 
@@ -412,12 +430,12 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szDir,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szDir,utf8_to_wstring(ofToDataPath(defaultPath)).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
 
 		if (windowTitle != "") {
-			wcscpy(szTitle, convertNarrowToWide(windowTitle).c_str());
+			wcscpy(szTitle, utf8_to_wstring(windowTitle).c_str());
 			ofn.lpstrTitle = szTitle;
 		} else {
 			ofn.lpstrTitle = nullptr;
@@ -431,7 +449,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.lpstrTitle = windowTitleW.c_str();
 
 		if(GetOpenFileName(&ofn)) {
-			results.filePath = convertWideToNarrow(szFileName);
+			results.filePath = wstring_to_utf8(szFileName);
 		}
 		else {
 			//this should throw an error on failure unless its just the user canceling out
@@ -447,7 +465,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		LPMALLOC		lpMalloc;
 
 		if (windowTitle != "") {
-			wcscpy(wideWindowTitle, convertNarrowToWide(windowTitle).c_str());
+			wcscpy(wideWindowTitle, utf8_to_wstring(windowTitle).c_str());
 		} else {
 			wcscpy(wideWindowTitle, L"Select Directory");
 		}
@@ -468,7 +486,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		if(pidl = SHBrowseForFolderW(&bi)){
 			// Copy the path directory to the buffer
 			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
-				results.filePath = convertWideToNarrow(wideCharacterBuffer);
+				results.filePath = wstring_to_utf8(wideCharacterBuffer);
 			}
 			lpMalloc->Free(pidl);
 		}
@@ -559,7 +577,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	ofn.lpstrTitle = L"Select Output File";
 
 	if (GetSaveFileNameW(&ofn)){
-		results.filePath = convertWideToNarrow(fileName);
+		results.filePath = wstring_to_utf8(fileName);
 	}
 
 #endif
@@ -688,7 +706,8 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
 
 		HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
 			g_szClassName,
-			convertNarrowToWide(question).c_str(),
+//			convertNarrowToWide(question).c_str(),
+			utf8_to_wstring(question).c_str(),
 			WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
 			CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
 			WindowFromDC(wglGetCurrentDC()), nullptr, GetModuleHandle(0),nullptr);
@@ -703,9 +722,12 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
 		}
 
 		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
-		HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT\0", convertNarrowToWide(text).c_str(),
+	
+		
+		HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT\0", utf8_to_wstring(text).c_str(),
 			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 			10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(nullptr), nullptr);
+
 
 
 		HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, L"BUTTON\0", L"OK\0",
