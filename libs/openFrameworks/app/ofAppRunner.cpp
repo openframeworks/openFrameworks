@@ -10,7 +10,8 @@
 
 using std::shared_ptr;
 
-#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
+#if !defined(TARGET_NODISPLAY)
+	#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
 	#include "ofAppGLFWWindow.h"
 	//special case so we preserve supplied settngs
 	//TODO: remove me when we remove the ofAppGLFWWindow setters.
@@ -23,6 +24,7 @@ using std::shared_ptr;
 		ofGetMainLoop()->addWindow(windowPtr);
 		windowPtr->setup(settings);
 	}
+	#endif
 #endif
 
 #ifdef TARGET_LINUX

@@ -384,18 +384,19 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------ soundplayer
 // check if any soundplayer api is defined from the compiler
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
-  #ifdef TARGET_OF_IOS
-  	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
-  	#define OF_SOUND_PLAYER_OPENAL
-  #elif defined(TARGET_EMSCRIPTEN)
-	#define OF_SOUND_PLAYER_EMSCRIPTEN
-  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
-  	#define OF_SOUND_PLAYER_FMOD
-  #endif
+#if !defined(TARGET_NO_SOUND)
+	#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
+	  #ifdef TARGET_OF_IOS
+		#define OF_SOUND_PLAYER_IPHONE
+	  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
+		#define OF_SOUND_PLAYER_OPENAL
+	  #elif defined(TARGET_EMSCRIPTEN)
+		#define OF_SOUND_PLAYER_EMSCRIPTEN
+	  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
+		#define OF_SOUND_PLAYER_FMOD
+	  #endif
+	#endif
 #endif
-
 //------------------------------------------------ c++11
 // check if the compiler supports c++11. vs hasn't updated the value
 // of __cplusplus so we need to check for vs >= 2012 (1700)
