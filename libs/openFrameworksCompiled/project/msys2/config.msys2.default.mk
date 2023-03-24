@@ -173,8 +173,6 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
-
 # core sources
 
 PLATFORM_CORE_EXCLUSIONS += %.mm
