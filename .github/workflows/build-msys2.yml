@@ -34,40 +34,6 @@ jobs:
           unzip
           rsync
           wget
-          make
-          rsync
-          zip
-          unzip
-          wget
-          pkgconf
-          assimp
-          boost
-          cairo
-          curl
-          freeglut
-          FreeImage
-          gcc
-          gdb
-          glew
-          glfw
-          glm
-          harfbuzz
-          libsndfile
-          libusb
-          libxml2
-          mpg123
-          nlohmann-json
-          ntldd-git
-          openal
-          opencv
-          poco
-          pugixml
-          rtaudio
-          tools
-          uriparser
-          utf8cpp
-          zlib"
-
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
       env:
