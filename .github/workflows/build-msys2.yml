@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         sys:
-          - mingw64
+          - { sys: mingw64, env: x86_64 }
     defaults:
       run:
         shell: msys2 {0}
@@ -31,7 +31,7 @@ jobs:
         release: false
         update: true
         msystem: ${{matrix.sys}}
-        pacboy: boost assimp gcc gdb glew glfw glm harfbuzz libsndfile libusb libxml2 mpg123 nlohmann-json ntldd-git openal opencv poco pugixml rtaudio tools uriparser utf8cpp zlib
+        pacboy: frei0r-plugins freetype libwebp boost assimp gcc gdb glew glfw glm harfbuzz libsndfile libusb libxml2 mpg123 nlohmann-json ntldd-git openal opencv poco pugixml rtaudio tools uriparser utf8cpp zlib
         install: >-
           git
           unzip
