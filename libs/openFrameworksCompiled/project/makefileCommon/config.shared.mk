@@ -262,10 +262,24 @@ CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 # find all of the source directories
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_SOURCE_PATHS=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
+ALL_OF_CORE_SOURCE_PATHS2=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
 
 # create a list of core source PATHS, filtering out any  items that have a match in the CORE_EXCLUSIONS list
+ALL_OF_CORE_SOURCE_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS2))
+
+
+$(info OF_LIBS_OPENFRAMEWORKS_PATH=${ALL_OF_CORE_SOURCE_PATHS})
+
+$(info CORE_EXCLUSIONS=${CORE_EXCLUSIONS})
+$(info --------)
+$(info ALL_OF_CORE_SOURCE_PATHS=${ALL_OF_CORE_SOURCE_PATHS})
+$(info --------)
+
 OF_CORE_SOURCE_PATHS=$(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
+
+$(info OF_CORE_SOURCE_PATHS=${OF_CORE_SOURCE_PATHS})
+$(info --------)
+$(info --------)
 
 # create our core include paths from the source directory paths,
 # these have already been filtered and processed according to rules.

@@ -8,8 +8,9 @@
 #include "ofSoundStream.h"
 #endif
 
-#include "ofImage.h"
-#include "ofTrueTypeFont.h"
+#include "ofLog.h"
+#include "ofMath.h"
+#include "ofGraphicsBaseTypes.h"
 
 #include "ofMainLoop.h"
 
@@ -46,6 +47,7 @@ using std::shared_ptr;
 
 //--------------------------------------
 namespace{
+
     shared_ptr<ofMainLoop> & mainLoop(){
         static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
         return *mainLoop;
@@ -95,6 +97,8 @@ namespace{
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
+void ofTrueTypeShutdown();
+void ofCloseFreeImage();
 
 void ofInit(){
 	if(initialized()) return;
@@ -263,7 +267,7 @@ void ofExitCallback(){
 
 	//------------------------
 	// try to close font libraries
-	ofTrueTypeShutdown();
+//	ofTrueTypeShutdown();
 
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
