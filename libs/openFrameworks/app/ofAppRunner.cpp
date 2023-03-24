@@ -2,17 +2,10 @@
 
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
-
-#ifndef TARGET_NO_SOUND
-#include "ofSoundPlayer.h"
-#include "ofSoundStream.h"
-#endif
-
 #include "ofLog.h"
 #include "ofMath.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
-
 #include "ofMainLoop.h"
 
 using std::shared_ptr;
@@ -95,11 +88,11 @@ namespace{
 }
 
 
-
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
 void ofTrueTypeShutdown();
 void ofCloseFreeImage();
+void ofSoundShutdown();
 
 void ofInit(){
 	if(initialized()) return;
