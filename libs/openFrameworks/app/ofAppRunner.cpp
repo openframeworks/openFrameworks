@@ -94,7 +94,13 @@ void ofExitCallback();
 void ofURLFileLoaderShutdown();
 void ofTrueTypeShutdown();
 void ofCloseFreeImage();
-void ofSoundShutdown();
+
+#if defined(TARGET_ANDROID) || defined (TARGET_LINUX_ARM)
+	inline void ofSoundShutdown(){}
+#else
+	void ofSoundShutdown();
+#endif
+
 
 void ofInit(){
 	if(initialized()) return;
