@@ -39,11 +39,13 @@ jobs:
           wget
           make
           pkgconf
+          mingw-w64-x86_64-libwebp
+          mingw-w64-x86_64-libtiff
+          mingw-w64-x86_64-freetype
           mingw-w64-x86_64-harfbuzz
+          mingw-w64-x86_64-opencv
           mingw-w64-x86_64-ffmpeg
           mingw-w64-x86_64-frei0r-plugins
-          mingw-w64-x86_64-freetype
-          mingw-w64-x86_64-libwebp
           mingw-w64-x86_64-boost
           mingw-w64-x86_64-assimp
           mingw-w64-x86_64-gcc
@@ -58,7 +60,6 @@ jobs:
           mingw-w64-x86_64-nlohmann-json
           mingw-w64-x86_64-ntldd-git
           mingw-w64-x86_64-openal
-          mingw-w64-x86_64-opencv
           mingw-w64-x86_64-poco
           mingw-w64-x86_64-pugixml
           mingw-w64-x86_64-rtaudio
