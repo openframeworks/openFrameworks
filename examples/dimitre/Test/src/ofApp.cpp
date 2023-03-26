@@ -34,7 +34,8 @@ void ofApp::keyPressed(int key){
 	else if (key == 's') {
 		ofFileDialogResult result = ofSystemLoadDialog("Anunciação Load file");
 		if(result.bSuccess) {
-		   path = result.getPath();
+		   path = result.getPath().string();
+		   cout << result.getPath() << endl;
 		  // load your file at `path`
 		}
 	}
