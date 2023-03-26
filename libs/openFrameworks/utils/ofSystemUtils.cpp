@@ -532,7 +532,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	ofn.lpstrTitle = L"Select Output File";
 
 	if (GetSaveFileNameW(&ofn)){
-		results.filePath = wstring_to_utf8(fileName);
+		results.filePath = fileName;
 	}
 
 #endif
