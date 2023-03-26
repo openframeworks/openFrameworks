@@ -1125,14 +1125,15 @@ bool ofFile::moveFromTo(const of::filesystem::path& pathSrc, const of::filesyste
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::doesFileExist(const of::filesystem::path& _fPath, bool bRelativeToData){
-	ofFile tmp;
-	if(bRelativeToData){
-		tmp.open(_fPath,ofFile::Reference);
-	}else{
-		tmp.openFromCWD(_fPath,ofFile::Reference);
+bool ofFile::doesFileExist(const of::filesystem::path & _path, bool bRelativeToData){
+	auto path = _path;
+	if (path.empty()) {
+		return false;
 	}
-	return !_fPath.empty() && tmp.exists();
+	if(bRelativeToData){
+		path = ofToDataPath(path);
+	}
+	return !path.empty() && of::filesystem::exists(path);
 }
 
 //------------------------------------------------------------------------------------------------------------
