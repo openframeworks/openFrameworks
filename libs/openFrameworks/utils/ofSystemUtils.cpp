@@ -456,7 +456,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.lParam           =   (LPARAM) &defaultPath;
 		bi.lpszTitle        =   windowTitleW.c_str();
 
-		if(pidl = SHBrowseForFolderW(&bi)){
+		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
 			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
 				results.filePath = convertWideToNarrow(wideCharacterBuffer);
