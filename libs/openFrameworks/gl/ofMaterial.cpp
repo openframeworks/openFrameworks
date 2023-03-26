@@ -571,7 +571,7 @@ void ofMaterial::mergeCustomUniformTextures(ofMaterialTextureType mainType, std:
 		bool bMatchingTextures = true;
 		int minTexLocation = 99999;
 		
-		for(int i = 0; i < mtsSize; i++ ) {
+		for(size_t i = 0; i < mtsSize; i++ ) {
 			if(!hasTexture(mergeTypes[i])){
 				bHasAllMergeTypes = false;
 				bMatchingTextures = false;
@@ -594,7 +594,7 @@ void ofMaterial::mergeCustomUniformTextures(ofMaterialTextureType mainType, std:
 		}
 		
 		if(bHasAllMergeTypes && bMatchingTextures && minTexLocation < 1000){
-			for(int i = 0; i < mtsSize; i++ ) {
+			for(size_t i = 0; i < mtsSize; i++ ) {
 				removeCustomUniformTexture(mergeTypes[i]);
 			}
 			setCustomUniformTexture( getUniformName(mainType), texTarget, texID, minTexLocation );
