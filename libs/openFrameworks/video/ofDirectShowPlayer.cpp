@@ -403,7 +403,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         HRESULT hr = pSample->GetPointer(&ptrBuffer);
 
         if(hr == S_OK){
-            std:size_t latestBufferLength = pSample->GetActualDataLength();
+            std::size_t latestBufferLength = pSample->GetActualDataLength();
             if(latestBufferLength == pixels.getTotalBytes() ){
                 EnterCriticalSection(&critSection);
 				pSample->AddRef();
@@ -824,8 +824,8 @@ class DirectShowVideo : public ISampleGrabberCB{
     void processPixels(ofPixels & src, ofPixels & dst){
 		auto format = src.getPixelFormat();
 
-        if(needsRBSwap(src.getPixelFormat(), dst.getPixelFormat())){
-			if (src.getPixelFormat() == OF_PIXELS_BGR) {
+        if(needsRBSwap(format, dst.getPixelFormat())){
+			if (format == OF_PIXELS_BGR) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGB);
 				auto dstLine = dst.getLines().begin();
 				auto srcLine = --src.getLines().end();
@@ -841,7 +841,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 					}
 				}
 			}
-			else if (src.getPixelFormat() == OF_PIXELS_BGRA) {
+			else if (format == OF_PIXELS_BGRA) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGBA);
 				auto dstLine = dst.getLines().begin();
 				auto srcLine = --src.getLines().end();
