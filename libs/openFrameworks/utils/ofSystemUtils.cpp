@@ -426,7 +426,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 		else {
 			//this should throw an error on failure unless its just the user canceling out
-			DWORD err = CommDlgExtendedError();
+			//DWORD err = CommDlgExtendedError();
 		}
 
 	} else {
