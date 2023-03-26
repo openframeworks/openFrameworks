@@ -10,7 +10,9 @@
 
 
 #include <dshow.h>
+#ifdef _MSC_VER
 #pragma include_alias( "dxtrans.h", "qedit.h" )
+#endif
 #define __IDxtCompositor_INTERFACE_DEFINED__
 #define __IDxtAlphaSetter_INTERFACE_DEFINED__
 #define __IDxtJpeg_INTERFACE_DEFINED__
