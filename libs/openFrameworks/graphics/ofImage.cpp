@@ -183,7 +183,7 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
 
-	auto uriStr = _fileName.string();
+	auto uriStr = _fileName;
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
@@ -206,10 +206,10 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	uriFreeUriMembersA(&uri);
 
 	if(scheme == "http" || scheme == "https"){
-		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
+		return ofLoadImage(pix, ofLoadURL(_fileName).data);
 	}
 
-	auto fileName = ofToDataPath(_fileName, true);
+	auto fileName = ofToDataPathFS(_fileName, true);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
