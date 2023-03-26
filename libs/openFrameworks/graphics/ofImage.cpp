@@ -220,7 +220,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_TARGET_WINDOWS
-	fif = FreeImage_GetFileTypeU(fileName, 0);
+	fif = FreeImage_GetFileTypeU(fileName.wstring(), 0);
 #else
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 #endif
@@ -239,7 +239,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 		}
 		
 #ifdef OF_TARGET_WINDOWS
-		bmp = FreeImage_LoadU(fif, fileNamewstring, option | settings.freeImageFlags);
+		bmp = FreeImage_LoadU(fif, fileName.wstring(), option | settings.freeImageFlags);
 #else
 		bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 #endif
