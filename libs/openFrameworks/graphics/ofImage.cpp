@@ -222,14 +222,14 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 #ifdef OF_TARGET_WINDOWS
 	fif = FreeImage_GetFileTypeU(fileName, 0);
 #else
-	fif = FreeImage_GetFileType(fileName, 0);
+	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_TARGET_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(fileName);
+		fif = FreeImage_GetFIFFromFilenameU(fileName.wstring());
 #else
-		fif = FreeImage_GetFIFFromFilename(fileName);
+		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 #endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
@@ -239,9 +239,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 		}
 		
 #ifdef OF_TARGET_WINDOWS
-		bmp = FreeImage_LoadU(fif, fileName, option | settings.freeImageFlags);
+		bmp = FreeImage_LoadU(fif, fileNamewstring, option | settings.freeImageFlags);
 #else
-		bmp = FreeImage_Load(fif, fileName, option | settings.freeImageFlags);
+		bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 #endif
 
 		if (bmp != nullptr){

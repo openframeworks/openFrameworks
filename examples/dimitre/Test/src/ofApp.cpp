@@ -1,5 +1,5 @@
 #include "ofApp.h"
-using namespace std;
+
 string path = "-";
 ofImage image;
 //--------------------------------------------------------------
