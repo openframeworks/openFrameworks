@@ -358,12 +358,12 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPathFS(_fileName);
+	auto fileName = ofToDataPathFS(_fileName).string().c_str();
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-	fif = FreeImage_GetFileType(fileName.c_str(), 0);
+	fif = FreeImage_GetFileType(fileName, 0);
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
+		fif = FreeImage_GetFIFFromFilename(fileName);
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
@@ -401,7 +401,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
 				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 			}
-			retValue = FreeImage_Save(fif, bmp, fileName.c_str(), quality);
+			retValue = FreeImage_Save(fif, bmp, fileName, quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLogWarning("ofImage") << "saveImage(): ofImageCompressionType only applies to JPEGs,"
@@ -417,12 +417,12 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 					// this will create a 256-color palette from the image
 					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
 				}
-				retValue = FreeImage_Save(fif, convertedBmp, fileName.c_str());
+				retValue = FreeImage_Save(fif, convertedBmp, fileName);
 				if (convertedBmp != nullptr){
 					FreeImage_Unload(convertedBmp);
 				}
 			} else {
-				retValue = FreeImage_Save(fif, bmp, fileName.c_str());
+				retValue = FreeImage_Save(fif, bmp, fileName);
 			}
 		}
 	}
