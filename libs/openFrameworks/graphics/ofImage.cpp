@@ -214,15 +214,23 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
-	auto fileName = ofToDataPathFS(_fileName, true).string().c_str();
+	auto fileName = ofToDataPathFS(_fileName, true);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+#ifdef OF_TARGET_WINDOWS
+	fif = FreeImage_GetFileTypeU(fileName, 0);
+#else
 	fif = FreeImage_GetFileType(fileName, 0);
+#endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
+#ifdef OF_TARGET_WINDOWS
+		fif = FreeImage_GetFIFFromFilenameU(fileName);
+#else
 		fif = FreeImage_GetFIFFromFilename(fileName);
+#endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		int option = 0;
