@@ -28,7 +28,7 @@ void ofSystemAlertDialog(std::string errorMessage);
 /// \param bFolderSelection set to true to allow folder selection
 /// \param defaultPath optional default directory path to start the dialog in, ie. ofFilePath::getUserHomeDir()
 /// \return dialog result with selection (if any)
-ofFileDialogResult ofSystemLoadDialog(std::string windowTitle="", bool bFolderSelection = false, std::string defaultPath="");
+ofFileDialogResult ofSystemLoadDialog(std::string windowTitle="", bool bFolderSelection = false, of::filesystem::path defaultPath="");
 
 /// \brief show a file save dialog box
 /// \param defaultName suggested filename to start dialog, ie "screenshot.png"
