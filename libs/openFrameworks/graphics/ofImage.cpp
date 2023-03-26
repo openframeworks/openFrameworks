@@ -206,18 +206,18 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	uriFreeUriMembersA(&uri);
 
 	if(scheme == "http" || scheme == "https"){
-		return ofLoadImage(pix, ofLoadURL(_fileName).data);
+		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
-	auto fileName = ofToDataPathFS(_fileName, true);
+	auto fileName = ofToDataPathFS(_fileName, true).string().c_str();
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-	fif = FreeImage_GetFileType(fileName.c_str(), 0);
+	fif = FreeImage_GetFileType(fileName, 0);
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
+		fif = FreeImage_GetFIFFromFilename(fileName);
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
