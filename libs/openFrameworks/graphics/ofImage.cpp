@@ -182,7 +182,7 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
-#ifdef TARGET_WIN32
+#ifdef TARGET_WIN32 || defined(__MINGW64__) || defined(__CYGWIN__) || defined(TARGET_WINVS)
 	auto uriStr = _fileName.string();
 #else
 	auto uriStr = _fileName;
