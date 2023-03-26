@@ -403,7 +403,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         HRESULT hr = pSample->GetPointer(&ptrBuffer);
 
         if(hr == S_OK){
-            long latestBufferLength = pSample->GetActualDataLength();
+            std:size_t latestBufferLength = pSample->GetActualDataLength();
             if(latestBufferLength == pixels.getTotalBytes() ){
                 EnterCriticalSection(&critSection);
 				pSample->AddRef();
@@ -415,7 +415,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 
                 LeaveCriticalSection(&critSection);
             }else{
-                printf("ERROR: SampleCB() - buffer sizes do not match %d %d\n", latestBufferLength, pixels.getTotalBytes());
+                ofLogError() << "SampleCB() - buffer sizes do not match "<< latestBufferLength << " " << pixels.getTotalBytes();
             }
         }
 
