@@ -1022,6 +1022,25 @@ class DirectShowVideo : public ISampleGrabberCB{
 			case OF_PIXELS_BGRA:
 				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
 				break;
+            case OF_PIXELS_GRAY:
+            case OF_PIXELS_GRAY_ALPHA:
+            case OF_PIXELS_RGB565:
+            case OF_PIXELS_NV12:
+            case OF_PIXELS_NV21:
+            case OF_PIXELS_YV12:
+            case OF_PIXELS_I420:
+            case OF_PIXELS_YUY2:
+            case OF_PIXELS_UYVY:
+            case OF_PIXELS_Y:
+            case OF_PIXELS_U:
+            case OF_PIXELS_V:
+            case OF_PIXELS_UV:
+            case OF_PIXELS_VU:
+            case OF_PIXELS_NUM_FORMATS:
+            case OF_PIXELS_UNKNOWN:
+            case OF_PIXELS_NATIVE:
+            default:
+                break;
 			}
 
             processPixels(srcBuffer, pixels);
