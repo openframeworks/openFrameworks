@@ -182,7 +182,9 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
-#ifdef TARGET_WIN32 || defined(__MINGW64__) || defined(__CYGWIN__) || defined(TARGET_WINVS)
+	
+#if defined(TARGET_WIN32) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(TARGET_WINVS)
+	#define OF_TARGET_WINDOWS
 	auto uriStr = _fileName.string();
 #else
 	auto uriStr = _fileName;
@@ -194,7 +196,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
 		const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
 		std::vector<char> absUri(bytesNeeded);
-	#ifdef TARGET_WIN32
+	#ifdef OF_TARGET_WINDOWS
 		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
 	#else
 		uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
@@ -223,12 +225,16 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 		fif = FreeImage_GetFIFFromFilename(fileName);
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
+		int option = 0;
 		if(fif == FIF_JPEG) {
-			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName, option | settings.freeImageFlags);
-		} else {
-			bmp = FreeImage_Load(fif, fileName, 0 | settings.freeImageFlags);
+			option = getJpegOptionFromImageLoadSetting(settings);
 		}
+		
+#ifdef OF_TARGET_WINDOWS
+		bmp = FreeImage_LoadU(fif, fileName, option | settings.freeImageFlags);
+#else
+		bmp = FreeImage_Load(fif, fileName, option | settings.freeImageFlags);
+#endif
 
 		if (bmp != nullptr){
 			bLoaded = true;
