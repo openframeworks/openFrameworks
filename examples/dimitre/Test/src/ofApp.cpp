@@ -29,10 +29,10 @@ void ofApp::draw(){
 
 void ofApp::keyPressed(int key){
 	if (key == 'a') {
-		auto s = ofSystemTextBoxDialog("what is your favorite color?" , "blue");
+		auto s = ofSystemTextBoxDialog("Anunciação what is your favorite color?" , "Anunciação blue");
 	}
 	else if (key == 's') {
-		ofFileDialogResult result = ofSystemLoadDialog("Load file");
+		ofFileDialogResult result = ofSystemLoadDialog("Anunciação Load file");
 		if(result.bSuccess) {
 		   path = result.getPath();
 		  // load your file at `path`

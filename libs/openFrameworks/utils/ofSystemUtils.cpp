@@ -277,12 +277,12 @@ ofFileDialogResult::ofFileDialogResult(){
 }
 
 //------------------------------------------------------------------------------
-std::string ofFileDialogResult::getName(){
+of::filesystem::path ofFileDialogResult::getName(){
 	return fileName;
 }
 
 //------------------------------------------------------------------------------
-std::string ofFileDialogResult::getPath(){
+of::filesystem::path ofFileDialogResult::getPath(){
 	return filePath;
 }
 
@@ -408,8 +408,10 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-	std::wstring windowTitleW;
-	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
+	
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	std::wstring windowTitleW = converter.from_bytes(windowTitle);
+
 
 	if (bFolderSelection == false){
 
@@ -430,15 +432,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szDir,utf8_to_wstring(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szDir, (ofToDataPath(defaultPath)).c_str());
 			ofn.lpstrInitialDir = szDir;
-		}
-
-		if (windowTitle != "") {
-			wcscpy(szTitle, utf8_to_wstring(windowTitle).c_str());
-			ofn.lpstrTitle = szTitle;
-		} else {
-			ofn.lpstrTitle = nullptr;
 		}
 
 		ofn.lpstrFilter = L"All\0";
@@ -449,7 +444,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.lpstrTitle = windowTitleW.c_str();
 
 		if(GetOpenFileName(&ofn)) {
-			results.filePath = wstring_to_utf8(szFileName);
+			results.filePath = szFileName;
 		}
 		else {
 			//this should throw an error on failure unless its just the user canceling out
@@ -465,7 +460,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		LPMALLOC		lpMalloc;
 
 		if (windowTitle != "") {
-			wcscpy(wideWindowTitle, utf8_to_wstring(windowTitle).c_str());
+			wcscpy(wideWindowTitle, windowTitleW.c_str());
 		} else {
 			wcscpy(wideWindowTitle, L"Select Directory");
 		}

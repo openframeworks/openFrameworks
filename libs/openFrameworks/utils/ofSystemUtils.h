@@ -10,13 +10,13 @@ class ofFileDialogResult{
 		
 		/// \return the name of the selected file or directory, if set
 		/// currently returns only 1 file, this may change in the future
-		std::string getName();
+		of::filesystem::path getName();
 	
 		/// \return the full path of the selected file or directory, if set
-		std::string getPath();
+		of::filesystem::path getPath();
 	
-		std::string filePath; ///< full path to selected file or directory
-		std::string fileName; ///< selected file or directory name
+		of::filesystem::path filePath; ///< full path to selected file or directory
+		of::filesystem::path fileName; ///< selected file or directory name
 		bool bSuccess; ///< true if the dialog action was successful, aka file select not cancel
 };
 
