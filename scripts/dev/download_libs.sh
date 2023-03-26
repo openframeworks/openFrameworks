@@ -109,8 +109,6 @@ if [ "$PLATFORM" == "" ]; then
     fi
 fi
 
-
-
 if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
@@ -148,11 +146,6 @@ EOF
         fi
     fi
 fi
-
-
-echo "platform = $PLATFORM"
-echo "MSYSTEM = $MSYSTEM"
-echo "ARCH = $ARCH"
 
 if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     ARCH=64gcc6
