@@ -7,6 +7,7 @@
 #include <mutex>
 
 #ifdef TARGET_WIN32
+#include <codecvt>
 #include <winuser.h>
 #include <commdlg.h>
 #define _WIN32_DCOM
