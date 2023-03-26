@@ -612,8 +612,7 @@ ofMaterial::TextureUnifom ofMaterial::getCustomUniformTexture(const std::string 
 	if(uniformstex.find(name) != uniformstex.end()){
 		return uniformstex[name];
 	}
-	TextureUnifom tu;
-	return tu;
+	return TextureUnifom{};
 }
 
 // called from ofGLProgrammableRenderer
