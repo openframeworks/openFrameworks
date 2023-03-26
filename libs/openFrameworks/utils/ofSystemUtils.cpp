@@ -432,7 +432,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szDir, (ofToDataPath(defaultPath)).c_str());
+			wcscpy(szDir, converter.from_bytes(ofToDataPath(defaultPath)).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
 
@@ -481,7 +481,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		if(pidl = SHBrowseForFolderW(&bi)){
 			// Copy the path directory to the buffer
 			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
-				results.filePath = wstring_to_utf8(wideCharacterBuffer);
+				results.filePath = wideCharacterBuffer;
 			}
 			lpMalloc->Free(pidl);
 		}
@@ -513,9 +513,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 
 
-	if( results.filePath.length() > 0 ){
+	if( !empty(results.filePath.length()) ){
 		results.bSuccess = true;
-		results.fileName = ofFilePath::getFileName(results.filePath);
+		results.fileName = results.filePath.filename();
 	}
 
 	return results;
