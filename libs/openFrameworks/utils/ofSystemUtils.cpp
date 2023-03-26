@@ -274,17 +274,9 @@ std::string ofFileDialogResult::getPath(){
 void ofSystemAlertDialog(std::string errorMessage){
 	#ifdef TARGET_WIN32
 		// we need to convert error message to a wide char message.
-		// first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
-		int length = strlen(errorMessage.c_str());
-		wchar_t * widearray = new wchar_t[length+1];
-		memset(widearray, 0, sizeof(wchar_t)*(length+1));
-		// then, call mbstowcs:
-		// http://www.cplusplus.com/reference/clibrary/cstdlib/mbstowcs/
-		mbstowcs(widearray, errorMessage.c_str(), length);
+		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
 		// launch the alert:
-		MessageBoxW(nullptr, widearray, L"alert", MB_OK);
-		// clear the allocated memory:
-		delete widearray;
+		MessageBoxW(nullptr, errorMessageW.c_str(), L"alert", MB_OK);
 	#endif
 
 	#ifdef TARGET_OSX
@@ -390,8 +382,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-	std::wstring windowTitleW;
-	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
+	std::wstring windowTitleW{windowTitle.begin(), windowTitle.end()};
 
 	if (bFolderSelection == false){
 
