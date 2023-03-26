@@ -222,9 +222,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
+			bmp = FreeImage_Load(fif, fileName, option | settings.freeImageFlags);
 		} else {
-			bmp = FreeImage_Load(fif, fileName.c_str(), 0 | settings.freeImageFlags);
+			bmp = FreeImage_Load(fif, fileName, 0 | settings.freeImageFlags);
 		}
 
 		if (bmp != nullptr){
@@ -358,7 +358,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPath(_fileName);
+	auto fileName = ofToDataPathFS(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
