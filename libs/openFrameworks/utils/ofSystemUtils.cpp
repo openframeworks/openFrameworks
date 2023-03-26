@@ -594,9 +594,9 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
 
-	if( results.filePath.length() > 0 ){
+	if( !empty(results.filePath) ){
 		results.bSuccess = true;
-		results.fileName = ofFilePath::getFileName(results.filePath);
+		results.fileName = results.filePath.filename();
 	}
 
 	return results;
