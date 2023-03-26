@@ -1011,39 +1011,40 @@ class DirectShowVideo : public ISampleGrabberCB{
 			bNewPixels = false;
 			LeaveCriticalSection(&critSection);
 			BYTE * ptrBuffer = NULL;
-			HRESULT hr = middleSample->GetPointer(&ptrBuffer);
-			ofPixels srcBuffer;
-			switch (pixelFormat) {
-			case OF_PIXELS_RGB:
-			case OF_PIXELS_BGR:
-				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGR);
-				break;
-			case OF_PIXELS_RGBA:
-			case OF_PIXELS_BGRA:
-				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
-				break;
-            case OF_PIXELS_GRAY:
-            case OF_PIXELS_GRAY_ALPHA:
-            case OF_PIXELS_RGB565:
-            case OF_PIXELS_NV12:
-            case OF_PIXELS_NV21:
-            case OF_PIXELS_YV12:
-            case OF_PIXELS_I420:
-            case OF_PIXELS_YUY2:
-            case OF_PIXELS_UYVY:
-            case OF_PIXELS_Y:
-            case OF_PIXELS_U:
-            case OF_PIXELS_V:
-            case OF_PIXELS_UV:
-            case OF_PIXELS_VU:
-            case OF_PIXELS_NUM_FORMATS:
-            case OF_PIXELS_UNKNOWN:
-            case OF_PIXELS_NATIVE:
-            default:
-                break;
-			}
+			if( middleSample->GetPointer(&ptrBuffer) == S_OK) {
+                ofPixels srcBuffer;
+                switch (pixelFormat) {
+                case OF_PIXELS_RGB:
+                case OF_PIXELS_BGR:
+                    srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGR);
+                    break;
+                case OF_PIXELS_RGBA:
+                case OF_PIXELS_BGRA:
+                    srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
+                    break;
+                case OF_PIXELS_GRAY:
+                case OF_PIXELS_GRAY_ALPHA:
+                case OF_PIXELS_RGB565:
+                case OF_PIXELS_NV12:
+                case OF_PIXELS_NV21:
+                case OF_PIXELS_YV12:
+                case OF_PIXELS_I420:
+                case OF_PIXELS_YUY2:
+                case OF_PIXELS_UYVY:
+                case OF_PIXELS_Y:
+                case OF_PIXELS_U:
+                case OF_PIXELS_V:
+                case OF_PIXELS_UV:
+                case OF_PIXELS_VU:
+                case OF_PIXELS_NUM_FORMATS:
+                case OF_PIXELS_UNKNOWN:
+                case OF_PIXELS_NATIVE:
+                default:
+                    break;
+                }
 
-            processPixels(srcBuffer, pixels);
+                processPixels(srcBuffer, pixels);
+            }
         }
 		return pixels;
     }
