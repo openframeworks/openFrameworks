@@ -1,8 +1,6 @@
 #include "ofApp.h"
-
 using namespace std;
 string path = "-";
-
 ofImage image;
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -14,21 +12,14 @@ void ofApp::setup(){
 //	cout << "ofToDataPath = " << ofToDataPath("") << endl;
 //
 //	cout << "setup ---- " << endl;
-
-	
-
 }
 
-//--------------------------------------------------------------
 void ofApp::update(){
-
 }
 
-//--------------------------------------------------------------
 void ofApp::draw(){
-	
 	ofDrawBitmapString(path, 10, 30);
-	
+	ofDrawBitmapString("Consolação", 10, 46);
 	if (image.isAllocated()) {
 		image.draw(10,50);
 	}
@@ -41,7 +32,7 @@ void ofApp::keyPressed(int key){
 	else if (key == 's') {
 		ofFileDialogResult result = ofSystemLoadDialog("Anunciação Load file");
 		if(result.bSuccess) {
-			path = result.getPath().string();
+			path = result.getPath().u8string();
 			image.load(result.getPath());
 			cout << result.getPath() << endl;
 		  // load your file at `path`
