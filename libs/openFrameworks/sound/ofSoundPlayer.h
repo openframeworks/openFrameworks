@@ -55,12 +55,8 @@ float * ofSoundGetSpectrum(int nBands);
 #ifdef TARGET_ANDROID
 #include "ofxAndroidSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
-//inline void ofSoundShutdown(){}
 #endif
 
-#ifdef TARGET_LINUX_ARM
-//inline void ofSoundShutdown(){}
-#endif
 
 /// \class ofSoundPlayer
 /// \brief Plays sound files.
