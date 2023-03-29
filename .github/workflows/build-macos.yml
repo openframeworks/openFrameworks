@@ -37,6 +37,7 @@ jobs:
           libs/openFrameworksCompiled/lib/osx/*.a
           libs/openFrameworksCompiled/lib/osx/**/
           addons/obj/osx/**/
+          scripts/templates/osx/build/**/
 
         key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
