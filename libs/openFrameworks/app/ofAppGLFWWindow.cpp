@@ -379,7 +379,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetFramebufferSizeCallback( windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
-#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
+#if GLFW_VERSION_MAJOR>=3 && GLFW_VERSION_MINOR>=1
 	    glfwSetDropCallback( windowP, drop_cb );
 #endif
 
