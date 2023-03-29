@@ -22,6 +22,7 @@
 #include "ofConstants.h"
 #include <assimp/Importer.hpp>
 #include <unordered_map>
+#include <map>
 
 struct aiScene;
 struct aiNode;
@@ -178,7 +179,7 @@ class ofxAssimpModelLoader{
 		glm::mat4 modelMatrix; // { glm::mat4() }
 
 		std::vector<ofLight> lights;
-		std::unordered_map<
+		std::map<
 			of::filesystem::path,
 			std::shared_ptr<ofTexture>
 		> textures;
