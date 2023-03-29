@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofEvents.h"
-#include <map>
+#include <unordered_map>
 
 class ofBaseApp;
 class ofAppBaseWindow;
@@ -48,7 +48,7 @@ public:
 	ofEvent<void> loopEvent;
 private:
 	void keyPressed(ofKeyEventArgs & key);
-	std::map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
+	std::unordered_map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
 	bool bShouldClose;
 	std::weak_ptr<ofAppBaseWindow> currentWindow;
 	int status;

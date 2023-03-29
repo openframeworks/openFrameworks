@@ -8,7 +8,7 @@
 #include "ofMath.h"
 #include "ofMathConstants.h"
 #include "ofLog.h"
-#include <map>
+#include <unordered_map>
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
@@ -1560,8 +1560,8 @@ void ofMesh_<V,N,C,T>::mergeDuplicateVertices() {
 	//so we are going to create a new list of points and new indexes - we will use a map to map old index values to the new ones
 	std::vector <V> newPoints;
 	std::vector <ofIndexType> newIndexes;
-	std::map <ofIndexType, bool> ptCreated;
-	std::map <ofIndexType, ofIndexType> oldIndexNewIndex;
+	std::unordered_map <ofIndexType, bool> ptCreated;
+	std::unordered_map <ofIndexType, ofIndexType> oldIndexNewIndex;
 
 	std::vector<ofFloatColor> newColors;
 	std::vector<ofFloatColor>& colors = getColors();
@@ -1788,7 +1788,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 			}
 		}
 
-		std::map<int, int> removeIds;
+		std::unordered_map<int, int> removeIds;
 
 		float epsilon = .01f;
 		for(ofIndexType i = 0; i < verts.size()-1; i++) {
@@ -1807,7 +1807,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 		}
 
 		// string of vertex in 3d space to triangle index //
-		std::map<std::string, std::vector<int> > vertHash;
+		std::unordered_map<std::string, std::vector<int> > vertHash;
 
 		//ofLogNotice("ofMesh") << "smoothNormals(): num verts = " << verts.size() << " tris size = " << triangles.size();
 
@@ -1833,8 +1833,8 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 			}
 		}
 
-//		for( std::map<std::string, std::vector<int> >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
-//			//for( std::map<std::string, int >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
+//		for( std::unordered_map<std::string, std::vector<int> >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
+//			//for( std::unordered_map<std::string, int >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
 //			ofLogNotice("ofMesh") << "smoothNormals(): " << it->first << "  num = " << it->second.size();
 //		}
 
