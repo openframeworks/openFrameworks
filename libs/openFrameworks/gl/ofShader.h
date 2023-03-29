@@ -10,6 +10,7 @@
 #include "ofFileUtils.h"
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
+#include <map>
 #include <unordered_map>
 
 class ofTexture;

@@ -400,8 +400,8 @@ private:
 	TextureUnifom getCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType);
 	TextureUnifom getCustomUniformTexture(const std::string & name);
 
-	mutable std::unordered_map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
-	static std::unordered_map<ofGLProgrammableRenderer*, std::unordered_map<std::string,std::weak_ptr<Shaders>>> shadersMap;
+	mutable std::unordered_map<ofGLProgrammableRenderer*, std::shared_ptr<Shaders>> shaders;
+	static std::unordered_map<ofGLProgrammableRenderer*, std::unordered_map<std::string, std::weak_ptr<Shaders>>> shadersMap;
 //	static std::string vertexShader;
 //	static std::string fragmentShader;
 	std::unordered_map<std::string, float> uniforms1f;
