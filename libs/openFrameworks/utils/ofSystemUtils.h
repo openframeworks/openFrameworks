@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include "ofConstants.h"
 
 /// \class ofFileDialogResult
 /// \brief file dialog box selection or save result
