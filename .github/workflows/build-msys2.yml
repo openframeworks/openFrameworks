@@ -41,6 +41,7 @@ jobs:
           # mingw-w64-x86_64-zlib
         install: >-
           make
+          unzip
           mingw-w64-x86_64-pkgconf
           mingw-w64-x86_64-libwebp
           mingw-w64-x86_64-libtiff
