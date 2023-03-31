@@ -31,15 +31,16 @@ while [[ $# > 0 ]] ; do
 done
 
 # List of MSYS packages to be installed
-msyspackages="make rsync zip unzip wget pkgconf"
+# rsync zip unzip wget 
+msyspackages="make "
 
 # List of MINGW packages to be installed (without prefix)
 mingwPackages="assimp boost cairo curl freeglut FreeImage \
 			  gcc gdb glew glfw glm \
 			  harfbuzz libsndfile libusb libxml2 mpg123 \
-			  nlohmann-json ntldd-git openal opencv \
-			  poco pugixml rtaudio tools \
-			  uriparser utf8cpp zlib"
+			  nlohmann-json openal opencv \
+			  poco pugixml rtaudio \
+			  uriparser utf8cpp zlib pkgconf" #tools ntldd-git 
 
 # Build the full list of packages adding prefix to MINGW packages
 packages=${msyspackages}
