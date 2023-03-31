@@ -54,7 +54,7 @@
 			"isa": "PBXFileReference",
 			"name": "openFrameworks",
 			"lastKnownFileType": "folder",
-			"sourceTree": "<group>"
+			"sourceTree": "SOURCE_ROOT"
 		},
 		"191CD6FA2847E21E0085CBB6": {
 			"path": "of.entitlements",
