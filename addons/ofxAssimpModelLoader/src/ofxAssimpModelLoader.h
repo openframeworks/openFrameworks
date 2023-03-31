@@ -21,6 +21,8 @@
 #include "ofMath.h"
 #include "ofConstants.h"
 #include <assimp/Importer.hpp>
+#include <unordered_map>
+#include <map>
 
 struct aiScene;
 struct aiNode;
