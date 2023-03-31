@@ -32,11 +32,14 @@ jobs:
         update: false
         msystem: ${{matrix.sys.sys}}
         # pacboy: frei0r-plugins freetype libwebp boost assimp gcc gdb glew glfw glm harfbuzz libsndfile libusb libxml2 mpg123 nlohmann-json ntldd-git openal opencv poco pugixml rtaudio tools uriparser utf8cpp zlib
-        install: >-
           # git
           # unzip
           # rsync
           # wget
+          # mingw-w64-x86_64-ntldd-git
+          # mingw-w64-x86_64-tools
+          # mingw-w64-x86_64-zlib
+        install: >-
           make
           mingw-w64-x86_64-pkgconf
           mingw-w64-x86_64-libwebp
@@ -58,15 +61,12 @@ jobs:
           mingw-w64-x86_64-libxml2
           mingw-w64-x86_64-mpg123
           mingw-w64-x86_64-nlohmann-json
-          # mingw-w64-x86_64-ntldd-git
           mingw-w64-x86_64-openal
           mingw-w64-x86_64-poco
           mingw-w64-x86_64-pugixml
           mingw-w64-x86_64-rtaudio
-          # mingw-w64-x86_64-tools
           mingw-w64-x86_64-uriparser
           mingw-w64-x86_64-utf8cpp
-          # mingw-w64-x86_64-zlib
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
     - name: Build
