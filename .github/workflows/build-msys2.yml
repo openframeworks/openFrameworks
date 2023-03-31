@@ -42,7 +42,7 @@ jobs:
         install: >-
           make
           unzip
-          mingw-w64-x86_64-pkgconf
+          pkgconf
           mingw-w64-x86_64-libwebp
           mingw-w64-x86_64-libtiff
           mingw-w64-x86_64-freetype
