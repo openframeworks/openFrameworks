@@ -32,6 +32,8 @@ Project{
             }
         ]
 
+        cpp.cxxLanguageVersion: 'c++17'
+
         // additional flags for the project. the of module sets some
         // flags by default to add the core libraries, search paths...
         // this flags can be augmented through the following properties:
