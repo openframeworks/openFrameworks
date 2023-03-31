@@ -19,7 +19,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        mingw: [MINGW64]
+        sys:
+          - { sys: mingw64, env: x86_64 }
     defaults:
       run:
         shell: msys2 {0}
@@ -27,21 +28,49 @@ jobs:
     - uses: actions/checkout@v3
     - uses: msys2/setup-msys2@v2
       with:
-        update: true
+        release: false
+        update: false
+        msystem: ${{matrix.sys.sys}}
+        # pacboy: frei0r-plugins freetype libwebp boost assimp gcc gdb glew glfw glm harfbuzz libsndfile libusb libxml2 mpg123 nlohmann-json ntldd-git openal opencv poco pugixml rtaudio tools uriparser utf8cpp zlib
+          # git
+          # unzip
+          # rsync
+          # wget
+          # mingw-w64-x86_64-ntldd-git
+          # mingw-w64-x86_64-tools
+          # mingw-w64-x86_64-zlib
         install: >-
-          git
+          make
           unzip
-          rsync
-          wget
+          pkgconf
+          mingw-w64-x86_64-libwebp
+          mingw-w64-x86_64-libtiff
+          mingw-w64-x86_64-freetype
+          mingw-w64-x86_64-harfbuzz
+          mingw-w64-x86_64-opencv
+          mingw-w64-x86_64-ffmpeg
+          mingw-w64-x86_64-frei0r-plugins
+          mingw-w64-x86_64-boost
+          mingw-w64-x86_64-assimp
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-gdb
+          mingw-w64-x86_64-glew
+          mingw-w64-x86_64-glfw
+          mingw-w64-x86_64-glm
+          mingw-w64-x86_64-libsndfile
+          mingw-w64-x86_64-libusb
+          mingw-w64-x86_64-libxml2
+          mingw-w64-x86_64-mpg123
+          mingw-w64-x86_64-nlohmann-json
+          mingw-w64-x86_64-openal
+          mingw-w64-x86_64-poco
+          mingw-w64-x86_64-pugixml
+          mingw-w64-x86_64-rtaudio
+          mingw-w64-x86_64-uriparser
+          mingw-w64-x86_64-utf8cpp
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
-      env:
-        MSYSTEM: ${{ matrix.mingw }}
     - name: Build
       run: ./scripts/ci/msys2/build.sh
-      env:
-        MSYSTEM: ${{ matrix.mingw }}
     - name: Run tests
       run: ./scripts/ci/msys2/run_tests.sh
-      env:
-        MSYSTEM: ${{ matrix.mingw }}
