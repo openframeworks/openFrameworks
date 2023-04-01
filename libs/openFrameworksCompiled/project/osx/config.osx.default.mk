@@ -148,7 +148,7 @@ PLATFORM_CXXFLAGS += -x objective-c++
 PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
 
 # Enable ARC
-PLATFORM_CFLAGS += -fobjc-arc 
+PLATFORM_CFLAGS += -fobjc-arc
 
 
 ifeq ($(USE_GST),1)
@@ -363,7 +363,8 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
 # Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
-	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist
+	@if [ ! -a openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
+	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
 	
 # App icons
  ifeq ($(RUN_TARGET), RunRelease)
