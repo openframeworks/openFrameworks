@@ -1,11 +1,9 @@
 #include "ofAppRunner.h"
 
 #include "ofBaseApp.h"
-#include "ofAppBaseWindow.h"
 
 #ifndef TARGET_NO_SOUND
 #include "ofSoundPlayer.h"
-#include "ofSoundStream.h"
 #endif
 
 #include "ofImage.h"

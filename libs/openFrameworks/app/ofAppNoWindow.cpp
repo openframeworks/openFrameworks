@@ -1,5 +1,4 @@
 #include "ofAppNoWindow.h"
-#include "ofBaseApp.h"
 #include "ofGraphics.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
