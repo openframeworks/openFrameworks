@@ -362,69 +362,25 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
-# Info.plist:
-# You can get most of these xcode variables by doing xcrun xcodebuild -showBuildSettings
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+# Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
+	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist
+	
 # App icons
-	@echo '  <key>CFBundleIconFile</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-ifeq ($(RUN_TARGET), RunRelease)
-# Use the user's custom icon in their project's icons folder
-# If you want your own custom icon just make an icons/debug.icns file and/or icons/release.icns
-	@cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/of.icns
-	@if [ -a icons/release.icns ]; then cp icons/release.icns bin/$(BIN_NAME).app/Contents/Resources/of.icns; fi;
-	@echo '  <string>of.icns</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-else
-	@cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/of_debug.icns
-	@if [ -a icons/release.icns ]; then cp icons/debug.icns bin/$(BIN_NAME).app/Contents/Resources/of_debug.icns; fi;
-	@echo '  <string>of_debug.icns</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-endif
-
-	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>com.your-company-name.$(APPNAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>NSCameraUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>This app needs to access the camera</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>NSMicrophoneUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>This app needs to access the microphone</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-
-# High resolution / retina display
-	@echo '  <key>NSHighResolutionCapable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-# Does the user have an openFrameworks-Info.plist?
-ifneq ("$(wildcard openFrameworks-Info.plist)", "")
-# Get the value NSHighResolution from the user's openFrameworks-Info.plist (if it exists)
-	@if [ -n "$$(/usr/libexec/PlistBuddy -c 'Print :NSHighResolutionCapable' openFrameworks-Info.plist 2>/dev/null)" ]; then \
-		echo '  <$(shell /usr/libexec/PlistBuddy -c "Print :NSHighResolutionCapable" openFrameworks-Info.plist 2>/dev/null)/>' >> bin/$(BIN_NAME).app/Contents/Info.plist; \
-	else \
-		echo '  <false/>' >> bin/$(BIN_NAME).app/Contents/Info.plist; \
-	fi
-else
-# Just load a default of false
-	@echo '  <false/>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-endif
-
-	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+ ifeq ($(RUN_TARGET), RunRelease)
+	@if [ -a of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@sed -i '' 's/\$$(ICON_NAME)/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+ else
+	@if [ -a of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@sed -i '' 's/\$$(ICON_NAME)/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+ endif
+ 
+	@sed -i '' 's/\$$(DEVELOPMENT_LANGUAGE)/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(EXECUTABLE_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(TARGET_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(PRODUCT_BUNDLE_IDENTIFIER)/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(VERSION)/1.0/g' bin/$(BIN_NAME).app/Contents/Info.plist
+		
 	@echo TARGET=$(TARGET)
-
-
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
 ifneq ($(USE_FMOD),0)
