@@ -7,11 +7,6 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofMaterialBaseTypes.h"
 
-//#include "ofCubeMap.h"
-//#include "ofGLUtils.h"
-//#include "ofShadow.h"
-//#include "ofVideoPlayer.h"
-
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
 	
