@@ -590,8 +590,6 @@ Module{
         name: "cpp"
     }
 
-    //cpp.cxxLanguageVersion: "c++14"
-
     property string coreWarningLevel: 'default'
     property stringList coreCFlags: {
         var flags = CORE.cflags
@@ -610,7 +608,7 @@ Module{
         condition: of.platform === "linux" || of.platform === "linux64" || of.platform === "msys2"
         coreCxxFlags: {
             var flags = CORE.cflags
-                .concat(['-Wno-unused-parameter','-Werror=return-type','-std=gnu++14'])
+                .concat(['-Wno-unused-parameter','-Werror=return-type','-std=c++17'])
                 .concat(cxxFlags);
             if(of.isCoreLibrary){
                 return flags
