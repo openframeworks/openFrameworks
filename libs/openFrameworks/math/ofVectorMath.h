@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofMathConstants.h"
 #include "ofVec2f.h"
 #include "ofVec3f.h"
 #include "ofVec4f.h"
@@ -8,6 +7,7 @@
 #include "ofMatrix4x4.h"
 #include "ofQuaternion.h"
 
+#include "ofMathConstants.h"
 #include "ofConstants.h"
 //#include "glm/glm.hpp"
 

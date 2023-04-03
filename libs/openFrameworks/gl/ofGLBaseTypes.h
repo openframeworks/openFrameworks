@@ -76,7 +76,7 @@ template<typename T>
 class ofBaseImage_: public ofAbstractImage, virtual public ofBaseHasPixels_<T>{
 public:
 	/// \brief Destroy the ofBaseImage_.
-	virtual ~ofBaseImage_<T>(){};
+	virtual ~ofBaseImage_(){};
 };
 
 
@@ -439,7 +439,7 @@ public:
 	/// \param material The material to bind to this renderer.
 	/// \sa glMaterialfv()
 	virtual void bind(const ofBaseMaterial & material)=0;
-	
+
 	virtual void bind(const ofShadow & shadow)=0;
 	virtual void bind(const ofShadow & shadow, GLenum aCubeFace)=0;
 
@@ -473,7 +473,7 @@ public:
 	///
 	/// \param material The material that is currently bound to this renderer.
 	virtual void unbind(const ofBaseMaterial & material)=0;
-	
+
 	virtual void unbind(const ofShadow & shadow)=0;
 	virtual void unbind(const ofShadow & shadow, GLenum aCubeFace)=0;
 

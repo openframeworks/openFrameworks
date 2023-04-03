@@ -401,28 +401,28 @@ private:
 	TextureUnifom getCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType);
 	TextureUnifom getCustomUniformTexture(const std::string & name);
 
-	mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
-	static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
+	mutable std::unordered_map<ofGLProgrammableRenderer*, std::shared_ptr<Shaders>> shaders;
+	static std::unordered_map<ofGLProgrammableRenderer*, std::unordered_map<std::string, std::weak_ptr<Shaders>>> shadersMap;
 //	static std::string vertexShader;
 //	static std::string fragmentShader;
-	std::map<std::string, float> uniforms1f;
-	std::map<std::string, glm::vec2> uniforms2f;
-	std::map<std::string, glm::vec3> uniforms3f;
-	std::map<std::string, glm::vec4> uniforms4f;
-	std::map<std::string, float> uniforms1i;
-	std::map<std::string, glm::vec<2, int, glm::precision::defaultp>> uniforms2i;
-	std::map<std::string, glm::vec<3, int, glm::precision::defaultp>> uniforms3i;
-	std::map<std::string, glm::vec<4, int, glm::precision::defaultp>> uniforms4i;
-	std::map<std::string, glm::mat4> uniforms4m;
-	std::map<std::string, glm::mat3> uniforms3m;
-	std::map<std::string, TextureUnifom> uniformstex;
+	std::unordered_map<std::string, float> uniforms1f;
+	std::unordered_map<std::string, glm::vec2> uniforms2f;
+	std::unordered_map<std::string, glm::vec3> uniforms3f;
+	std::unordered_map<std::string, glm::vec4> uniforms4f;
+	std::unordered_map<std::string, float> uniforms1i;
+	std::unordered_map<std::string, glm::vec<2, int, glm::precision::defaultp>> uniforms2i;
+	std::unordered_map<std::string, glm::vec<3, int, glm::precision::defaultp>> uniforms3i;
+	std::unordered_map<std::string, glm::vec<4, int, glm::precision::defaultp>> uniforms4i;
+	std::unordered_map<std::string, glm::mat4> uniforms4m;
+	std::unordered_map<std::string, glm::mat3> uniforms3m;
+	std::unordered_map<std::string, TextureUnifom> uniformstex;
 	
-	std::map<std::string, std::string> mCustomUniforms;
-	std::map<std::string, std::string> mDefines;
+	std::unordered_map<std::string, std::string> mCustomUniforms;
+	std::unordered_map<std::string, std::string> mDefines;
 
-	mutable std::map<std::string, int> mShaderIdsToRemove;
+	mutable std::unordered_map<std::string, int> mShaderIdsToRemove;
 	
-	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+	std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
 	
 	std::shared_ptr<ofShader> customShader;
 	bool bHasCustomShader = false;

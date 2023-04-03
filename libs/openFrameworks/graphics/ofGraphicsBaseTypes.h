@@ -257,7 +257,7 @@ template<typename T>
 class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
 	/// \brief Destroy the ofAbstractHasPixels.
-	virtual ~ofBaseHasPixels_<T>(){}
+	virtual ~ofBaseHasPixels_(){}
 
 	/// \brief Get a reference to the underlying ofPixels.
 	/// \returns a reference the underlying ofPixels.

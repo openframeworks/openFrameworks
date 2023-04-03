@@ -137,7 +137,7 @@ PLATFORM_REQUIRED_ADDONS =
 
 PLATFORM_CXXFLAGS = -Wall -Werror=return-type
 PLATFORM_CXXVER = -std=c++17
-	
+
 GCC_MAJOR := $(shell expr `gcc -dumpversion | cut -f1 -d.`)
 GCC_MINOR := $(shell expr `gcc -dumpversion | cut -f2 -d.`)
 
@@ -159,12 +159,17 @@ ifeq ("$(GCC_MAJOR)","4")
 		endif
 	endif
 else
-	ifeq ($(shell expr $(GCC_MAJOR) \>= 8), 1)
-		# c++17 for gcc 8 and newer
-		PLATFORM_CXXVER = -std=c++17
+	ifeq ($(shell expr $(GCC_MAJOR) \>= 10), 1)
+		# c++20 for gcc 10 and newer
+		PLATFORM_CXXVER = -std=c++20
 	else
-		# c++14 for gcc 4 and newer
-		PLATFORM_CXXVER = -std=c++14
+		ifeq ($(shell expr $(GCC_MAJOR) \>= 8), 1)
+			# c++17 for gcc 8 and newer
+			PLATFORM_CXXVER = -std=c++17
+		else
+			# c++14 for gcc 4 and newer
+			PLATFORM_CXXVER = -std=c++14
+		endif
 	endif
 	PLATFORM_CXXFLAGS += -DGCC_HAS_REGEX
 endif

@@ -7,10 +7,6 @@
 	#include <unistd.h>
 #endif
 
-#include "ofUtils.h"
-#include "ofLog.h"
-
-
 #ifdef TARGET_OSX
 	#include <mach-o/dyld.h>       /* _NSGetExecutablePath */
 	#include <limits.h>        /* PATH_MAX */
