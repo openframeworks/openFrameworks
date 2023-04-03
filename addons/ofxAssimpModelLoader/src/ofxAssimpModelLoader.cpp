@@ -320,7 +320,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &tcolor)){
 			auto col = aiColorToOfColor(tcolor);
-			meshHelper.material.setAmbientColor(aiColorToOfColor(tcolor));
+			meshHelper.material.setAmbientColor(col);
 		}
 
 		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){

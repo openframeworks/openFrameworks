@@ -3,22 +3,10 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
+#include "ofConstants.h"
+
 #include <condition_variable>
 #include <mutex>
-
-#ifdef TARGET_WIN32
-#include <codecvt>
-#include <winuser.h>
-#include <commdlg.h>
-#define _WIN32_DCOM
-
-#include <windows.h>
-#include <shlobj.h>
-#include <tchar.h>
-#include <stdio.h>
-
-
-#endif
 
 #ifdef TARGET_OSX
 	// ofSystemUtils.cpp is configured to build as
@@ -32,7 +20,14 @@
 #endif
 
 #ifdef TARGET_WIN32
-// still needed?
+
+#define _WIN32_DCOM
+#include <winuser.h>
+#include <commdlg.h>
+#include <windows.h>
+#include <shlobj.h>
+#include <tchar.h>
+#include <stdio.h>
 #include <locale>
 #include <sstream>
 #include <string>

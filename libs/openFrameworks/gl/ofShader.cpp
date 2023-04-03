@@ -9,15 +9,15 @@
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
 #include "ofBufferObject.h"
-#include <regex>
-#ifdef TARGET_ANDROID
-#include "ofxAndroidUtils.h"
-#endif
 #include "ofShadow.h"
 #include "ofLight.h"
 #include "ofCubeMap.h"
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
+#include <regex>
 
-using std::map;
+using std::unordered_map;
 using std::vector;
 using std::string;
 using std::endl;
@@ -30,13 +30,13 @@ static const string POSITION_ATTRIBUTE="position";
 static const string NORMAL_ATTRIBUTE="normal";
 static const string TEXCOORD_ATTRIBUTE="texcoord";
 
-static map<GLuint,int> & getShaderIds(){
-	static map<GLuint,int> * ids = new map<GLuint,int>;
+static unordered_map<GLuint,int> & getShaderIds(){
+	static unordered_map<GLuint,int> * ids = new unordered_map<GLuint,int>;
 	return *ids;
 }
 
-static map<GLuint,int> & getProgramIds(){
-	static map<GLuint,int> * ids = new map<GLuint,int>;
+static unordered_map<GLuint,int> & getProgramIds(){
+	static unordered_map<GLuint,int> * ids = new unordered_map<GLuint,int>;
 	return *ids;
 }
 

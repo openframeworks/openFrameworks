@@ -1,13 +1,11 @@
 #include "ofFileUtils.h"
+#include "ofLog.h"
+
 #ifndef TARGET_WIN32
 	#include <pwd.h>
 	#include <sys/stat.h>
 	#include <unistd.h>
 #endif
-
-#include "ofUtils.h"
-#include "ofLog.h"
-
 
 #ifdef TARGET_OSX
 	#include <mach-o/dyld.h>       /* _NSGetExecutablePath */
