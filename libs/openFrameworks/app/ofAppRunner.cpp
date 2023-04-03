@@ -13,6 +13,8 @@
 
 #include "ofMainLoop.h"
 
+#include "ofConstants.h"
+
 using std::shared_ptr;
 
 #if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)

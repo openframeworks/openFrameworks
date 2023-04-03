@@ -1,7 +1,11 @@
 #pragma once
 
-#include "ofConstants.h"
+// filesystem only
+//#include "ofConstants.h"
+#include "ofFS.h"
 #include <functional>
+#include <string>
+#include <vector>
 
 class ofSoundBuffer;
 

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "ofParameter.h"
-#include "ofConstants.h"
+#include "ofDeprecated.h"
 #include "glm/mat4x4.hpp"
 #include <array>
 

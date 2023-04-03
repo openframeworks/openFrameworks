@@ -4,7 +4,7 @@
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
 #include "ofGLUtils.h"
-// FIXME: replace by template
+// FIXME: template
 #include "ofPixels.h"
 #include "ofConstants.h"
 
