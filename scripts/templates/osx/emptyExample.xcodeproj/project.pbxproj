@@ -150,6 +150,7 @@
 			"name": "Release"
 		},
 		"BB4B014C10F69532006C3DED": {
+			"path": "../../../addons",
 			"isa": "PBXGroup",
 			"name": "addons",
 			"children": [],
