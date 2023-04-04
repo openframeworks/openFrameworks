@@ -3,11 +3,16 @@ set -ev
 ROOT=${GITHUB_WORKSPACE}
 
 sudo dpkg --add-architecture i386
+sudo apt update
 
-wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
+sudo apt-add-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
+
+wget -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/Release.key -O Release.key -O- | sudo apt-key add -
+sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/ ./'
+
 sudo apt-get update
-sudo apt-get install --install-recommends wine-stable
+
+sudo apt-get install --install-recommends winehq-stable
 
 pwd
 cd $ROOT
