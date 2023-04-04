@@ -16,8 +16,8 @@ class ofCubeMap {
 public:
 	
 	struct ofCubeMapSettings {
-		std::string filePath = "";
-		std::string cacheDirectory = "";
+		of::filesystem::path filePath = "";
+		of::filesystem::path cacheDirectory = "";
 		
 		bool overwriteCache = false;
 		bool useCache = false;
@@ -69,14 +69,14 @@ public:
 	/// \param apath path to the image to load.
 	/// \param aFaceResolution resolution of the cube map image sides.
 	/// \param aBFlipY flip the images upside down.
-	bool load( std::string apath, int , bool aBFlipY=true );
+	bool load( const of::filesystem::path & apath, int aFaceResolution, bool aBFlipY=true );
 	/// \load an image and convert to cube map.
 	/// \param apath path to the image to load.
 	/// \param aFaceResolution resolution of the cube map image sides.
 	/// \param aBFlipY flip the images upside down.
 	/// \param aIrradianceRes resolution of the irradiance map. (default is 32).
 	/// \param aPreFilterRes resolution of the prefiltered map. (default is 128).
-	bool load( std::string apath, int aFaceResolution, bool aBFlipY, int aIrradianceRes, int aPreFilterRes );
+	bool load( const of::filesystem::path & apath, int aFaceResolution, bool aBFlipY, int aIrradianceRes, int aPreFilterRes );
 	
 	bool load( ofCubeMapSettings aSettings );
 	
@@ -126,11 +126,11 @@ protected:
 	GLuint _createFloatCubeMap(ofTexture& aSrcTex, int aSrcRes);
 	void _equiRectToCubeMap( GLuint& aCubeTexId, ofTexture& aSrcTex, int aSrcRes, bool aBConvertToNonFloat );
 	
-	void _createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, std::string aCachePath);
-	bool _loadIrradianceMap(std::string aCachePath);
+	void _createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, const of::filesystem::path & aCachePath);
+	bool _loadIrradianceMap( const of::filesystem::path & aCachePath );
 	
-	void _createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool aBMakeCache, std::string aCachePath);
-	bool _loadPrefilterMap( std::string aCachePath );
+	void _createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool aBMakeCache, const of::filesystem::path & aCachePath);
+	bool _loadPrefilterMap( const of::filesystem::path & aCachePath );
 	
 	static void _createBrdfLUT();
 	
