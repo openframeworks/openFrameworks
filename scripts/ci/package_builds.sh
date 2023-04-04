@@ -1,8 +1,8 @@
 #!/bin/bash
 set -ev
 ROOT=${GITHUB_WORKSPACE}
-
-cd ROOT
+pwd
+cd $ROOT
 pwd
 ls -la
 
