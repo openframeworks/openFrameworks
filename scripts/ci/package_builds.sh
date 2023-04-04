@@ -7,18 +7,9 @@ pwd
 ls -la
 
 OUTPUT_FOLDER=$ROOT/out
-
 mkdir $OUTPUT_FOLDER
 
 lastversion=$(date +%Y%m%d)
-
-pwd
-ls -la
-
-cd $OUTPUT_FOLDER
-
-pwd
-ls -la
 
 git submodule update --init --recursive
 git submodule update --recursive --remote
