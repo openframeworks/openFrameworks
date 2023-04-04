@@ -180,11 +180,10 @@ function createProjectFiles {
         #rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
         #downloader http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
 
-        cd ${main_ofroot}/apps/projectGenerator
-        pwd
-        ls -la
-        #git pull $PG_REPO $PG_BRANCH
-        cd commandLine
+        rm -rf ${main_ofroot}/apps/projectGenerator
+        cd ${main_ofroot}/apps/
+        git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+        cd projectGenerator/commandLine
         echo "Recompiling command line PG"
         if [ -d ~/logs ]; then
             PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug > ~/logs/compilePG.log 2>&1 &
