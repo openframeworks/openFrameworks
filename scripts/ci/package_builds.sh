@@ -34,7 +34,7 @@ sudo apt-get dist-upgrade # to get newest dependencies
 #sudo apt-get install aptitude
 #sudo aptitude install wine32:i386
 #sudo aptitude install libfaudio0=20.04-2 libodbc1=2.3.6-0.1build1 libpcre3=2:8.39-12build1
-sudo apt-get -y install --install-recommends wine wine32
+sudo apt-get -y install --install-recommends wine
 
 
 pwd
