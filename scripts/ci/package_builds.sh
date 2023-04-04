@@ -21,6 +21,8 @@ cd $OUTPUT_FOLDER
 
 $ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
 pwd
-cd $OUTPUT_FOLDER
 ls -la
-pwd
+cd $ROOT
+
+#export a list of files for the next step - matching .zip or .tar anything and including the relative paths
+echo "FILES_OUT=$( (ls -t out/*.zip 2> /dev/null || true) && (ls -t out/*.tar* 2> /dev/null || true) )" >> $GITHUB_OUTPUT

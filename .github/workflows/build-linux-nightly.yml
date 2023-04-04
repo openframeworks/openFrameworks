@@ -31,6 +31,7 @@ jobs:
       run: ./scripts/ci/$TARGET/install.sh;
     - name: Create Package
       run: scripts/ci/package_builds.sh;
+      id: createpackage
     - name: Update Release
       uses: johnwbyrd/update-release@v1.0.0
       with:
@@ -38,6 +39,6 @@ jobs:
         tag: nightly
         release: nightly
         prerelease: false
-        files: openFrameworks/out/of_v*
+        files: ${{ steps.createpackage.outputs.FILES_OUT }}
       if: github.repository == 'ofTheo/openFrameworks' && github.event_name == 'push' && github.ref == 'refs/heads/nightly-release'
 
