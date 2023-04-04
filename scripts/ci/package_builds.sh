@@ -2,8 +2,12 @@
 set -ev
 ROOT=${GITHUB_WORKSPACE}
 
-sudo apt-get install wine64
-sudo apt-get install libwine-dev 2> /dev/null 
+sudo dpkg --add-architecture i386
+
+wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
+sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ disco main'
+sudo apt-get update
+sudo apt install --install-recommends winehq-stable
 
 pwd
 cd $ROOT
