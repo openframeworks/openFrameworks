@@ -23,9 +23,8 @@ sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ disco 
 sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ eoan main'
 sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
 
-sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo apt-get dist-upgrade # to get newest dependencies
+
 
 # remove obsolete PPA
 #sudo add-apt-repository -r ppa:gnome3-team/gnome3
@@ -34,7 +33,18 @@ sudo apt-get dist-upgrade # to get newest dependencies
 #sudo apt-get install aptitude
 #sudo aptitude install wine32:i386
 #sudo aptitude install libfaudio0=20.04-2 libodbc1=2.3.6-0.1build1 libpcre3=2:8.39-12build1
-sudo apt-get -y install --install-recommends wine
+
+
+sudo dpkg --add-architecture i386 && sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
+wget -nc https://dl.winehq.org/wine-builds/winehq.key && sudo apt-key add winehq.key
+
+sudo apt-get update
+sudo apt-get dist-upgrade # to get newest dependencies
+
+sudo apt-get install --install-recommends winehq-stable
+wine --version
+
+#sudo apt-get -y install --install-recommends wine
 
 
 pwd
