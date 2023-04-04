@@ -590,8 +590,6 @@ Module{
         name: "cpp"
     }
 
-    //cpp.cxxLanguageVersion: "c++14"
-
     property string coreWarningLevel: 'default'
     property stringList coreCFlags: {
         var flags = CORE.cflags
@@ -607,10 +605,14 @@ Module{
     }
 
     Properties{
+        coreCxxLanguageVersion: "c++17"
+    }
+    
+    Properties{
         condition: of.platform === "linux" || of.platform === "linux64" || of.platform === "msys2"
         coreCxxFlags: {
             var flags = CORE.cflags
-                .concat(['-Wno-unused-parameter','-Werror=return-type','-std=gnu++14'])
+                .concat(['-Wno-unused-parameter','-Werror=return-type'])
                 .concat(cxxFlags);
             if(of.isCoreLibrary){
                 return flags
@@ -633,7 +635,6 @@ Module{
 
     Properties{
         condition: of.platform === "osx"
-        coreCxxLanguageVersion: "c++11"
         coreCxxStandardLibrary: "libc++"
 
         coreCxxFlags: {
@@ -699,7 +700,7 @@ Module{
         readonly property string abiPath: Android.ndk.abi
         coreSysroot: ndk_root + '/platforms/android-19/arch-arm'
         coreCxxFlags: {
-            var flags = ['-Wno-unused-parameter','-Werror=return-type','-std=gnu++14']
+            var flags = ['-Wno-unused-parameter','-Werror=return-type']
                 .concat('-I'+coreSysroot+'/usr/include')
                 .concat('-I'+ndk_root+'/sources/android/support/include')
                 .concat('-I'+ndk_root+'/sources/cxx-stl/llvm-libc++/libcxx/include')
