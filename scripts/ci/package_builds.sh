@@ -20,7 +20,12 @@ git pull origin master
 cd $OUTPUT_FOLDER
 
 $ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
-pwd
+$ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
+$ROOT/scripts/dev/create_package.sh vs $lastversion master
+$ROOT/scripts/dev/create_package.sh ios $lastversion master
+$ROOT/scripts/dev/create_package.sh osx $lastversion master
+$ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
+
 ls -la
 cd $ROOT
 
