@@ -16,7 +16,7 @@ ROOT=${GITHUB_WORKSPACE}
 #
 #sudo apt-get -y install --install-recommends winehq-stable
 
-#from https://askubuntu.com/questions/1226845/cannot-install-wine-on-ubuntu-19-10-20-04 
+#from https://askubuntu.com/questions/1226845/cannot-install-wine-on-ubuntu-19-10-20-04
 sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
 sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ cosmic main'
 sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ disco main'
@@ -28,13 +28,13 @@ sudo apt-get update
 sudo apt-get dist-upgrade # to get newest dependencies
 
 # remove obsolete PPA
-sudo add-apt-repository -r ppa:gnome3-team/gnome3
+#sudo add-apt-repository -r ppa:gnome3-team/gnome3
 
 # check real reason of the problem
-sudo apt-get install aptitude
-sudo aptitude install wine32:i386
-sudo aptitude install libfaudio0=20.04-2 libodbc1=2.3.6-0.1build1 libpcre3=2:8.39-12build1
-sudo apt-get install wine wine32
+#sudo apt-get install aptitude
+#sudo aptitude install wine32:i386
+#sudo aptitude install libfaudio0=20.04-2 libodbc1=2.3.6-0.1build1 libpcre3=2:8.39-12build1
+sudo apt-get -y install --install-recommends wine wine32
 
 
 pwd
