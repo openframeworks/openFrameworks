@@ -20,6 +20,12 @@ cd $OUTPUT_FOLDER
 pwd
 ls -la
 
+git submodule update --init --recursive
+git submodule update --recursive --remote
+cd apps/projectGenerator
+git pull origin master
+
 $ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
 
-
+cd $OUTPUT_FOLDER
+ls -la
