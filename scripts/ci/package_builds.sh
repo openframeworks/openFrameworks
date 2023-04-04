@@ -20,6 +20,6 @@ cd $OUTPUT_FOLDER
 pwd
 ls -la
 
-./$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
+$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
 
 
