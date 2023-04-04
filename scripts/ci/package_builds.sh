@@ -2,70 +2,12 @@
 set -ev
 ROOT=${GITHUB_WORKSPACE}
 
-#sudo dpkg --add-architecture i386
-#sudo apt update
-#
-#sudo apt-add-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
-#
-#wget -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/Release.key -O Release.key -O- | sudo apt-key add -
-#sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/ ./'
-#
-#sudo apt-get update
-#
-#sudo apt-get install wine-stable-i386
-#
-#sudo apt-get -y install --install-recommends winehq-stable
-
-##from https://askubuntu.com/questions/1226845/cannot-install-wine-on-ubuntu-19-10-20-04
-#sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
-#sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ cosmic main'
-#sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ disco main'
-#sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ eoan main'
-#sudo add-apt-repository -r 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
-#
-#sudo apt-get update
-#
-#
-## remove obsolete PPA
-##sudo add-apt-repository -r ppa:gnome3-team/gnome3
-#
-## check real reason of the problem
-##sudo apt-get install aptitude
-##sudo aptitude install wine32:i386
-##sudo aptitude install libfaudio0=20.04-2 libodbc1=2.3.6-0.1build1 libpcre3=2:8.39-12build1
-#
-#wget -nc https://dl.winehq.org/wine-builds/winehq.key && sudo apt-key add winehq.key
-#sudo dpkg --add-architecture i386 && sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
-#
-#sudo apt-get update
-#sudo apt-get dist-upgrade # to get newest dependencies
-#
-#sudo apt-get install --install-recommends winehq-stable
-#wine --version
-
-#sudo apt-get -y install --install-recommends wine
-
-# Install Wine from WineHQ Repository
-sudo dpkg --add-architecture i386
-wget -qO- https://dl.winehq.org/wine-builds/Release.key | sudo apt-key add -
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F
-sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
 sudo apt-get update
-sudo apt-get install -y --install-recommends winehq-stable
+sudo apt-get -y install wine32
 
-# Installing mono
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-sudo sh -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" > /etc/apt/sources.list.d/mono-official-stable.list'
-sudo apt-get update
-sudo apt-get install -y mono-complete
-
-pwd
 cd $ROOT
-pwd
-ls -la
 
 OUTPUT_FOLDER=$ROOT/out
-
 mkdir $OUTPUT_FOLDER
 
 lastversion=$(date +%Y%m%d)
