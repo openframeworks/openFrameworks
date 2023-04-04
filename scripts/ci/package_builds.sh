@@ -12,7 +12,9 @@ sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulator
 
 sudo apt-get update
 
-sudo apt-get install --install-recommends winehq-stable
+sudo apt-get install wine-stable-i386
+
+sudo apt-get -y install --install-recommends winehq-stable
 
 pwd
 cd $ROOT
