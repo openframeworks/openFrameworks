@@ -2,10 +2,8 @@
 set -ev
 ROOT=${GITHUB_WORKSPACE}
 
-sudo dpkg --add-architecture i386
-sudo apt update
-sudo apt-get install wine32
-#sudo apt-get install wine64
+sudo apt-get install wine64
+sudo apt-get install libwine-dev 2> /dev/null 
 
 pwd
 cd $ROOT
