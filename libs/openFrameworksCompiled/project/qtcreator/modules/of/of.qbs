@@ -133,6 +133,7 @@ Module{
             var libsexceptions = [];
             if(platform === "linux"  || platform === "linux64"){
                 libsexceptions = [
+                    "fmod",
                     "glew",
                     "cairo",
                     "videoInput",
