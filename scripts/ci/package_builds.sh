@@ -5,9 +5,9 @@ ROOT=${GITHUB_WORKSPACE}
 sudo dpkg --add-architecture i386
 
 wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ disco main'
+sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
 sudo apt-get update
-sudo apt install --install-recommends winehq-stable
+sudo apt-get install --install-recommends wine-stable
 
 pwd
 cd $ROOT
