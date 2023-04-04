@@ -181,7 +181,7 @@ function createProjectFiles {
         #downloader http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
 
         cd ${main_ofroot}/apps/projectGenerator
-        git pull $PG_REPO $PG_BRANCH --rebase
+        #git pull $PG_REPO $PG_BRANCH
         cd commandLine
         echo "Recompiling command line PG"
         if [ -d ~/logs ]; then
