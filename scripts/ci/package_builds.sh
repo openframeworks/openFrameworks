@@ -34,9 +34,8 @@ sudo apt-get update
 #sudo aptitude install wine32:i386
 #sudo aptitude install libfaudio0=20.04-2 libodbc1=2.3.6-0.1build1 libpcre3=2:8.39-12build1
 
-
-sudo dpkg --add-architecture i386 && sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
 wget -nc https://dl.winehq.org/wine-builds/winehq.key && sudo apt-key add winehq.key
+sudo dpkg --add-architecture i386 && sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
 
 sudo apt-get update
 sudo apt-get dist-upgrade # to get newest dependencies
