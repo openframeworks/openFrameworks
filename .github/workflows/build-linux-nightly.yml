@@ -38,6 +38,6 @@ jobs:
         tag: nightly
         release: nightly
         prerelease: false
-        files: out/*.tar.bz2
+        files: openFrameworks/out/of_v*
       if: github.repository == 'ofTheo/openFrameworks' && github.event_name == 'push' && github.ref == 'refs/heads/nightly-release'
 
