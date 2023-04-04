@@ -26,7 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install dependencies
-      run:  apt get install libunwind-dev && ./scripts/linux/ubuntu/install_dependencies.sh -y;
+      run:  sudo apt-get install libunwind-dev && ./scripts/linux/ubuntu/install_dependencies.sh -y;
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Create Package
