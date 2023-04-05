@@ -127,12 +127,14 @@ endif()
 
 
 # Find system packages
-find_package(OpenGL)
-if (NOT OpenGL_FOUND)       # This should never be not found on windows
-    message(SEND_ERROR "Dependency OpenGL not found. On Linux, please install it using your system's equivalent of 'sudo apt install libgl1-mesa-dev'")
+if (NOT OF_TARGET_ARCHITECTURE MATCHES "android")
+    find_package(OpenGL)
+    if (NOT OpenGL_FOUND)       # This should never be not found on windows
+        message(SEND_ERROR "Dependency OpenGL not found. On Linux, please install it using your system's equivalent of 'sudo apt install libgl1-mesa-dev'")
+    endif()
+    target_include_directories(openframeworks PUBLIC ${OPENGL_INCLUDE_DIRS})
+    target_link_libraries(openframeworks ${OPENGL_LIBRARIES})
 endif()
-target_include_directories(openframeworks PUBLIC ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(openframeworks ${OPENGL_LIBRARIES})
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")  # All Linux-only packages (that are part of apothecary on all platforms except Linux)
     include(${CMAKE_CURRENT_LIST_DIR}/find_linux_deps.cmake)

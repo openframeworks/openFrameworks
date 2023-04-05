@@ -1,0 +1,1 @@
+define_addon(ofxAccelerometer)

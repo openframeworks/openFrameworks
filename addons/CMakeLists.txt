@@ -22,7 +22,7 @@ function(define_addon TARGET_NAME)
     )
 endfunction()
 
-# add_subdirectory(ofxAccelerometer)
+add_subdirectory(ofxAccelerometer)
 
 if (OF_TARGET_ARCHITECTURE MATCHES "android")
     add_subdirectory(ofxAndroid)
