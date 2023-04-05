@@ -1,22 +1,13 @@
 name: nightly-linux64
 
 on:
-  push:
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-  pull_request:
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-    
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  schedule:
+    - cron: "0 6 * * *"
 
 jobs:
   build-linux-platforms:
     runs-on: ubuntu-22.04
+    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:
@@ -43,5 +34,3 @@ jobs:
         prerelease: false
         replace: true
         files: ${{ steps.createpackage.outputs.FILES_OUT }}
-      if: github.repository == 'ofTheo/openFrameworks' && github.event_name == 'push' # && github.ref == 'refs/heads/nightly-release'
-

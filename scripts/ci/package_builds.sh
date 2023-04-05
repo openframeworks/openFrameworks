@@ -2,6 +2,7 @@
 set -ev
 ROOT=${GITHUB_WORKSPACE}
 
+#for ubuntu 22.04 we need to install wine32
 sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get -y install wine32
@@ -20,19 +21,12 @@ git pull origin master
 
 cd $OUTPUT_FOLDER
 
-#$ROOT/scripts/dev/create_package.sh ios $lastversion master
-#$ROOT/scripts/dev/create_package.sh osx $lastversion master
-#$ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
-#$ROOT/scripts/dev/create_package.sh vs $lastversion master
-#$ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
-#$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
-
-echo "test 123" >> of_v20230405_ios_release.zip
-echo "test 123" >> of_v20230405_linux64gcc6_release.tar.gz
-echo "test 123" >> of_v20230405_linuxarmv6l_release.tar.gz
-echo "test 123" >> of_v20230405_msys2_mingw64_release.zip
-echo "test 123" >> of_v20230405_osx_release.zip
-echo "test 123" >> of_v20230405_vs_release.zip
+$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
+$ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
+$ROOT/scripts/dev/create_package.sh osx $lastversion master
+$ROOT/scripts/dev/create_package.sh ios $lastversion master
+$ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
+$ROOT/scripts/dev/create_package.sh vs $lastversion master
 
 ls -la
 cd $ROOT
