@@ -192,7 +192,7 @@ target_link_libraries(openframeworks
 # Conditional dependencies
 if(WIN32)       # Linking to WinAPI system libraries
     target_link_libraries(openframeworks of::videoInput of::glut)    # videoInput library is Windows-only
-    target_link_libraries(openframeworks winmm ws2_32 wldap32 crypt32 dsound.lib)
+    target_link_libraries(openframeworks winmm ws2_32 wldap32 crypt32 dsound setupapi)
 endif()
 
 if (OF_TARGET_ARCHITECTURE MATCHES "linux")

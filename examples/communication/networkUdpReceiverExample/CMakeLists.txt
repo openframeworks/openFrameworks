@@ -1,0 +1,2 @@
+define_example(networkUdpReceiverExample)
+target_link_libraries(networkUdpReceiverExample of::ofxNetwork)

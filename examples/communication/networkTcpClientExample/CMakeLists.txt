@@ -1,0 +1,2 @@
+define_example(networkTcpClientExample)
+target_link_libraries(networkTcpClientExample of::ofxNetwork)

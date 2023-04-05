@@ -1,0 +1,2 @@
+define_example(oscReceiveExample)
+target_link_libraries(oscReceiveExample of::ofxOsc)

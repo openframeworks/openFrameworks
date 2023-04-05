@@ -1,0 +1,10 @@
+
+add_subdirectory(firmataExample)
+add_subdirectory(networkTcpClientExample)
+add_subdirectory(networkTcpServerExample)
+add_subdirectory(networkUdpReceiverExample)
+add_subdirectory(networkUdpSenderExample)
+add_subdirectory(oscChatSystemExample)
+add_subdirectory(oscReceiveExample)
+add_subdirectory(oscSenderExample)
+add_subdirectory(serialExample)
