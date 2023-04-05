@@ -42,7 +42,7 @@ if (OF_TARGET_ARCHITECTURE MATCHES "android")
 endif()
 
 add_subdirectory(communication)
-# add_subdirectory(computer_vision)
+add_subdirectory(computer_vision)
 # add_subdirectory(events)
 # add_subdirectory(gl)
 # add_subdirectory(gles)

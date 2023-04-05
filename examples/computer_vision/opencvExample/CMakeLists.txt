@@ -1,0 +1,2 @@
+define_example(opencvExample)
+target_link_libraries(opencvExample of::ofxOpenCv)

@@ -1,0 +1,2 @@
+define_example(opencvPeopleDetection)
+target_link_libraries(opencvPeopleDetection of::ofxOpenCv)

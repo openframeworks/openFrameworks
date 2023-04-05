@@ -1,0 +1,2 @@
+define_example(opencvOpticalFlowExample)
+target_link_libraries(opencvOpticalFlowExample of::ofxOpenCv)
