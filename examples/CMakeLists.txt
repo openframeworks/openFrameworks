@@ -32,17 +32,15 @@ macro(define_example TARGET_NAME)       # A macro is executed in the caller's sc
             copy_directory "${CMAKE_CURRENT_LIST_DIR}/bin/data" "${BIN_DIR}/data")
 endmacro()
 
-# Function to let the build system copy resource files to the target location after compiling
-# function(copy_example_resource TARGET_NAME SOURCE_FILE) 
-#     get_filename_component(__FILENAME ${CMAKE_CURRENT_LIST_DIR}/${SOURCE_FILE} NAME)
-#     copy_file_after_build(${TARGET_NAME} 
-#         "${CMAKE_CURRENT_LIST_DIR}/${SOURCE_FILE}" "${CMAKE_CURRENT_BINARY_DIR}/bin/$<IF:$<CONFIG:Debug>,debug,release>/data/${__FILENAME}"
-#     )
-# endfunction()
+
 
 # Folders with examples to build
 add_subdirectory(3d)
-# add_subdirectory(android)
+
+if (OF_TARGET_ARCHITECTURE MATCHES "android")
+    add_subdirectory(android)
+endif()
+
 # add_subdirectory(communication)
 # add_subdirectory(computer_vision)
 # add_subdirectory(events)

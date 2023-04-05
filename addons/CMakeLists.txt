@@ -23,9 +23,17 @@ function(define_addon TARGET_NAME)
 endfunction()
 
 # add_subdirectory(ofxAccelerometer)
-# add_subdirectory(ofxAndroid)
+
+if (OF_TARGET_ARCHITECTURE MATCHES "android")
+    add_subdirectory(ofxAndroid)
+endif()
+
 add_subdirectory(ofxAssimpModelLoader)
-# add_subdirectory(ofxEmscripten)
+
+if (OF_TARGET_ARCHITECTURE MATCHES "emscripten")
+    add_subdirectory(ofxEmscripten)
+endif()
+
 # add_subdirectory(ofxGPS)
 add_subdirectory(ofxGui)
 # add_subdirectory(ofxiOS)

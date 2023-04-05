@@ -1,4 +1,3 @@
-
 add_subdirectory(3DModelLoaderExample)
 add_subdirectory(3DPrimitivesExample)
 add_subdirectory(advanced3dExample)
