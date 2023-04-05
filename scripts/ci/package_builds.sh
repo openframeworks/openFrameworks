@@ -2,6 +2,7 @@
 set -ev
 ROOT=${GITHUB_WORKSPACE}
 
+sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get -y install wine32
 
