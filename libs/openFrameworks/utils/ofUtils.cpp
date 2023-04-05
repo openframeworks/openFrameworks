@@ -929,8 +929,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	}
 
 	#ifdef TARGET_WIN32
-		ShellExecuteA(nullptr, "open", uriStr.c_str(),
-				nullptr, nullptr, SW_SHOWNORMAL);
+		ShellExecuteA(nullptr, "open", uriStr.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 	#endif
 
 	#ifdef TARGET_OSX
