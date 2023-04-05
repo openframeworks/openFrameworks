@@ -8,11 +8,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/modules)
 set(OF_TARGET_ARCHITECTURE "auto" CACHE STRING "The target platform for openFrameworks. 'auto' to detect automatically")
 option(OF_VERBOSE "Enable verbose printing while downloading the compiled binaries for OF" OFF)
 
-set(_AVAILABLE_ARCHITECTURES "msvc, androidarm7, androidarm64, androidx86, ios, tvos, macos, msys-mingw, msys-clang, msys-ucrt, mingw, linux64, linuxarmv6l, linuxarmv7l, emscripten")
+set(_AVAILABLE_ARCHITECTURES "msvc, androidarmeabi, androidarm64, androidx86, ios, tvos, macos, msys-mingw, msys-clang, msys-ucrt, mingw, linux64, linuxarmv6l, linuxarmv7l, emscripten")
 
 if(OF_TARGET_ARCHITECTURE STREQUAL "auto")
     if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
-        message(FATAL_ERROR "OpenFrameworks does no longer support 32-bit build systems. Please upgrade your compiler to 64-bit.")
+        message(FATAL_ERROR "OpenFrameworks no longer supports 32-bit build systems. Please upgrade your compiler to 64-bit.")
     endif()
 
     message(STATUS "[openframeworks] Auto-detecting platform...")
@@ -22,10 +22,21 @@ if(OF_TARGET_ARCHITECTURE STREQUAL "auto")
     elseif (EMSCRIPTEN)
         set(OF_TARGET_ARCHITECTURE "emscripten" CACHE STRING "" FORCE)
     elseif (ANDROID)
-        set(OF_TARGET_ARCHITECTURE "androidarm7" CACHE STRING "" FORCE)
-        # androidx86 and androidarm64 must be specified manually
+        if (CMAKE_ANDROID_ARCH_ABI MATCHES "arm64")
+            set(OF_TARGET_ARCHITECTURE "androidarm64" CACHE STRING "" FORCE)
+        else ()
+            if (CMAKE_ANDROID_ARCH_ABI MATCHES "armeabi")
+                set(OF_TARGET_ARCHITECTURE "androidarmeabi" CACHE STRING "" FORCE)
+            else ()
+                if (CMAKE_ANDROID_ARCH_ABI MATCHES "x86")
+                    set(OF_TARGET_ARCHITECTURE "androidx86" CACHE STRING "" FORCE)
+                else ()
+                    message(FATAL_ERROR "The target platform could not be detected automatically. Please specify it manually using '-DOF_TARGET_ARCHITECTURE=<target_arch> to your cmake call'. Possible values are: ${_AVAILABLE_ARCHITECTURES}.")
+                endif ()
+            endif ()
+        endif ()
     elseif (APPLE)
-        if (IOS)
+        if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
             set(OF_TARGET_ARCHITECTURE "ios" CACHE STRING "" FORCE)
         elseif (CMAKE_SYSTEM_NAME STREQUAL "tvOS")
             set(OF_TARGET_ARCHITECTURE "tvos" CACHE STRING "" FORCE)
@@ -41,17 +52,21 @@ if(OF_TARGET_ARCHITECTURE STREQUAL "auto")
         set(OF_TARGET_ARCHITECTURE "linux64" CACHE STRING "" FORCE)
         # 'linuxarmv6l' and 'linuxarmv7l' must be specified manually
     else ()
-        message(FATAL_ERROR "The target platform could not be detected automatically. Please specify it manually using '<cmake_command> -DOF_TARGET_ARCHITECTURE=<target_arch>'. Possible values are: ${_AVAILABLE_ARCHITECTURES}.")
+        message(FATAL_ERROR "The target platform could not be detected automatically. Please specify it manually using '-DOF_TARGET_ARCHITECTURE=<target_arch> to your cmake call'. Possible values are: ${_AVAILABLE_ARCHITECTURES}.")
     endif()
 
 endif()
 
 function(get_packages_and_link)
-    #Set(FETCHCONTENT_QUIET FALSE)
-    message(STATUS "[openframeworks] Using ${OF_TARGET_ARCHITECTURE} toolchain, downloading dependencies")
+    if (OF_VERBOSE)
+        Set(FETCHCONTENT_QUIET FALSE)
+    endif()
+    message(STATUS "[openframeworks] Using ${OF_TARGET_ARCHITECTURE} toolchain, downloading dependencies (-DOF_VERBOSE=ON for progress)")
     foreach(dependency IN LISTS ARGN)
         set(_URL "http://ci.openframeworks.cc/libs/openFrameworksLibs_master_${dependency}")
-        #message(STATUS "[openframeworks] Fetching ${_URL}")
+        if (OF_VERBOSE)
+            message(STATUS "[openframeworks] Fetching ${_URL}")
+        endif()
 
         # Download and extract the compressed archive
         CPMAddPackage(
@@ -70,7 +85,9 @@ function(get_packages_and_link)
         endforeach()
 
     endforeach()
-    #Set(FETCHCONTENT_QUIET TRUE)
+    if (OF_VERBOSE)
+        Set(FETCHCONTENT_QUIET TRUE)
+    endif()
 endfunction()
 
 # And now download the archives, depending on the platform we're on
@@ -81,7 +98,7 @@ elseif (OF_TARGET_ARCHITECTURE STREQUAL "emscripten")       # TODO
     message(SEND_ERROR "Emscripten dependencies are not yet implemented in CMake! Please edit cmake/download_deps.cmake to add support yourself!")
     get_packages_and_link()
 
-elseif (OF_TARGET_ARCHITECTURE STREQUAL "androidarm7")
+elseif (OF_TARGET_ARCHITECTURE STREQUAL "androidarmeabi")
     get_packages_and_link("androidarmv7.tar.bz2")
 
 elseif (OF_TARGET_ARCHITECTURE STREQUAL "androidarm64")
@@ -161,13 +178,9 @@ endif()
 # And link to all the dependencies we depend upon
 target_link_libraries(openframeworks 
     of::tess2 
-    of::cairo
     of::glm 
     of::utf8
-    of::glfw
-    of::fmod
     of::FreeImage
-    of::rtAudio
     of::uriparser
     of::openssl
     of::curl
@@ -190,5 +203,5 @@ endif()
 if (OF_TARGET_ARCHITECTURE STREQUAL "msvc" OR       # GLEW is only a requirement on these systems
     OF_TARGET_ARCHITECTURE STREQUAL "macos" OR 
     OF_TARGET_ARCHITECTURE MATCHES "linux")
-        target_link_libraries(openframeworks of::glew)
+        target_link_libraries(openframeworks of::rtAudio of::fmod of::glfw of::cairo of::glew)
 endif()

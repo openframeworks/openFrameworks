@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(openframeworks)
 
+
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/utils.cmake)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -21,6 +22,9 @@ add_library(of::openframeworks ALIAS openframeworks)
 
 # This is another CMake script that adds the header locations and source files
 include(${CMAKE_CURRENT_LIST_DIR}/libs/openFrameworks/CMakeLists.txt)
+
+# This downloads and configures the dependencies for us
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_and_link_deps.cmake)
 
 # C++ standard version and disabling non-standard compiler specific features
 target_compile_features(openframeworks PUBLIC cxx_std_17)
@@ -49,9 +53,6 @@ set_target_properties(openframeworks PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/$<IF:$<CONFIG:Debug>,debug,release>"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/$<IF:$<CONFIG:Debug>,debug,release>"
 )
-
-# This downloads and configures the dependencies for us
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_and_link_deps.cmake)
 
 add_subdirectory(addons)
 

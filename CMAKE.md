@@ -21,3 +21,32 @@ cmake --build .
 ```
 
 This is it! OpenFrameworks and all examples have been built!
+
+```
+    set(CMAKE_SYSTEM_NAME "Android")
+    set(CMAKE_SYSTEM_VERSION 1)
+
+    cmake .. -DCMAKE_C_COMPILER=x86_64-linux-android33-clang -DCMAKE_CXX_COMPILER=x86_64-linux-android33-clang++
+
+    cmake .. \
+        -DCMAKE_C_COMPILER=armv7a-linux-androideabi33-clang \
+        -DCMAKE_CXX_COMPILER=armv7a-linux-androideabi33-clang++ \
+        -DCMAKE_SYSTEM_NAME=Android \
+        -DCMAKE_SYSTEM_VERSION=25
+
+    cmake .. \
+        -DCMAKE_SYSTEM_NAME=Android \
+        -DCMAKE_SYSTEM_VERSION=25 \
+        -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=/home/${USER}/android-ndk-r25c/toolchains/llvm/prebuilt/linux-x86_64
+
+
+
+    https://developer.android.com/ndk/guides/cmake#command-line
+
+    cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/$USER/android-ndk-r25c/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64
+
+    AT LEAST CMake 3.19 !!!
+
+    deb http://deb.debian.org/debian bullseye-backports main
+    sudo apt install cmake -t bullseye-backports
+```
