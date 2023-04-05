@@ -3,7 +3,7 @@
 
 openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welcome!
 
-[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
+[Join Our Slack](https://join.slack.com/t/openframeworks/shared_invite/zt-1r2brqms0-dZMMFZgZhFTgomjJ0vlCjA)
 
 ## Build status
 
