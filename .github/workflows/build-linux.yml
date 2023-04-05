@@ -21,7 +21,7 @@ jobs:
         matrix:
           cfg:
           - {target: linux64, libs: 64gcc6}
-#          - {target: linuxarmv6l, libs: armv6l}
+          - {target: linuxarmv6l, libs: armv6l}
 #          - {target: linuxarmv7l, libs: armv7l}
     env:
      TARGET: ${{matrix.cfg.target}}
@@ -37,26 +37,15 @@ jobs:
 #                sudo apt-get update -q;
 #                sudo apt-get install gcc-4.9 g++-4.9;
 #            fi
-#    - name: Build
-#      run: if [ "$TARGET" = "linux64" ]; then
-#            scripts/ci/$TARGET/build.sh;
-#            scripts/ci/$TARGET/run_tests.sh;
-#           else
-#            scripts/ci/$TARGET/build.sh;
-#           fi
-    - name: Create Package
-      run: scripts/ci/package_builds.sh;
+    - name: Build
+      run: if [ "$TARGET" = "linux64" ]; then
+            scripts/ci/$TARGET/build.sh;
+            scripts/ci/$TARGET/run_tests.sh;
+           else
+            scripts/ci/$TARGET/build.sh;
+           fi
     - name: Upload Libs
       run: scripts/ci/upload_of_lib.sh;
       env:
         GA_CI_SECRET: ${{ secrets.CI_SECRET }}
-#    - name: Update Release
-#      uses: johnwbyrd/update-release@v1.0.0
-#      with:
-#        token: ${{ secrets.GITHUB_TOKEN }}
-#        tag: nightly
-#        release: nightly
-#        prerelease: false
-#        files: out/openFrameworksLibs_master_linux64gcc6.tar.bz2
-#      if: github.repository == 'openframeworks/apothecary' && github.event_name == 'push' && github.ref == 'refs/heads/master'
 
