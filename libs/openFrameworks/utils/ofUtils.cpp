@@ -22,7 +22,6 @@
 	#else
 		#include <unistd.h> // this if for MINGW / _getcwd
 		#include <sys/param.h> // for MAXPATHLEN
-	// FIXME: else
 	#endif
 #endif
 
