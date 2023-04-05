@@ -158,7 +158,7 @@ protected:
 		if(length < 0.1) return;
 		
 		//Clear matrix to be used to rotate from the current referential to one based on the gravity vector
-		bzero(matrix, sizeof(matrix));
+		memset(matrix, 0, sizeof(matrix));
 		matrix[3][3] = 1.0;
 		
 		//Setup first matrix column as gravity vector
