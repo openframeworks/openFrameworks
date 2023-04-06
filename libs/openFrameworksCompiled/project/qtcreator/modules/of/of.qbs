@@ -602,11 +602,16 @@ Module{
         }else{
             return flags.concat(ADDONS.cflags)
         }
-
     }
 
     Properties{
-        coreCxxLanguageVersion: "c++17"
+        coreCxxLanguageVersion: {
+            if(of.cxxLanguageVersion){
+                return of.cxxLanguageVersion;
+            } else {
+                return "c++17"
+            }
+        }
     }
     
     Properties{
@@ -745,6 +750,7 @@ Module{
     property stringList staticLibraries: []
     property stringList dynamicLibraries: []
     property stringList addons
+    property string cxxLanguageVersion
 
     property stringList coreIncludePaths: {
         var flags = CORE.includes
