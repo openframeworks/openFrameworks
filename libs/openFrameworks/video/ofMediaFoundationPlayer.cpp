@@ -3,8 +3,8 @@
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
 #include <string.h>
-#include <mfapi.h>
-#include <mferror.h>
+#include "mfapi.h"
+#include "mferror.h"
 #include "ofTexture.h"
 #include "ofGLUtils.h"
 #include "ofGraphics.h"

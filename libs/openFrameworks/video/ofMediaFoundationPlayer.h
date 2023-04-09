@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mfmediaengine.h>
-#include <d3d11_1.h>
+#include "mfmediaengine.h"
+#include "d3d11_1.h"
 #include <wrl.h>
 #include <wincodec.h>
 #include "ofConstants.h"
