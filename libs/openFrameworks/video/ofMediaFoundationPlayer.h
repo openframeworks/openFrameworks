@@ -13,8 +13,6 @@
 #include <mutex>
 #include <queue>
 
-////https://github.com/microsoftarchive/msdn-code-gallery-microsoft/blob/411c271e537727d737a53fa2cbe99eaecac00cc0/Official%20Windows%20Platform%20Sample/Windows%208%20app%20samples/%5BC%2B%2B%5D-Windows%208%20app%20samples/C%2B%2B/Windows%208%20app%20samples/Media%20engine%20native%20C%2B%2B%20video%20playback%20sample%20(Windows%208)/C%2B%2B/meplayer.h
-
 namespace of {
     struct MediaEngineNotifyCallback {
     public:

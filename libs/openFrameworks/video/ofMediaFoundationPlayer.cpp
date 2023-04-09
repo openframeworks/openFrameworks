@@ -1,9 +1,4 @@
 
-#pragma comment(lib, "mf.lib")
-#pragma comment(lib, "mfplat.lib")
-#pragma comment(lib, "mfuuid.lib")
-#pragma comment(lib, "d3d11.lib")
-
 #include "ofPixels.h"
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
@@ -18,7 +13,6 @@
 using namespace Microsoft::WRL;
 
 int ofMediaFoundationPlayer::sNumInstances = 0;
-//TODO: delete this on app exit?
 std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPlayer::sDeviceManager;
 
 bool ofMediaFoundationPlayer::sBAllowDurationHack = true;
@@ -464,7 +458,6 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix) {
         aSrcTex.readToPixels(apix);
         return apix.getWidth() > 0;
     }
-    //ofLogNotice("ofMEVideoPlayer :: SharedDXGLTexture :: updatePixels ") << " SETTING PIXELS FROM HW";
     apix.setFromPixels(reinterpret_cast<unsigned char*>(mapInfo.pData), getWidth(), getHeight(), mOfPixFmt);
     if (mOfPixFmt == OF_PIXELS_RGB || mOfPixFmt == OF_PIXELS_RGBA) {
         apix.swapRgb();
@@ -918,7 +911,7 @@ void ofMediaFoundationPlayer::update() {
     // now lets update the events in the queue
     bool bHasEvent = true;
     DWORD tevent;
-    while (bHasEvent && (numEventsProcessed < mMaxEventsToProcess) ) { // maybe we should have a maximum?
+    while (bHasEvent && (numEventsProcessed < mMaxEventsToProcess) ) { 
         bHasEvent = false;
         {
             std::unique_lock<std::mutex> lk(mMutexEvents);
@@ -1179,7 +1172,6 @@ ofPixelFormat ofMediaFoundationPlayer::getPixelFormat() const {
     return mPixFormat;
 }
 
-// TODO: Actually populate the pixels with data :/
 //----------------------------------------------
 ofPixels& ofMediaFoundationPlayer::getPixels() {
     if (!mBUpdatePixels && mFbo.isAllocated()) {
@@ -1323,17 +1315,6 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
         }
         case MF_MEDIA_ENGINE_EVENT_TIMEUPDATE:
         {
-            //if (ofMediaFoundationPlayer::sBAllowDurationHack) {
-            //    //not sure why the GetDuration() method returns inaccurate values,
-            //    // but this will update the duration if the current time is larger
-            //    double ctime = m_spMediaEngine->GetCurrentTime();
-            //    if (ctime > mDuration) {
-            //        mDuration = ctime;
-            //        if (mFramerate > 0.0) {
-            //            mEstimatedNumFrames = mDuration / (1.f / mFramerate);
-            //        }
-            //    }
-            //}
             break;
         }
         case MF_MEDIA_ENGINE_EVENT_SEEKING:
