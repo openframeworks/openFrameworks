@@ -11,7 +11,8 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-  
+	
+		void loadModel(int aindex);
         void loadModel(string filename);
 
 		void keyPressed(int key);
@@ -22,6 +23,7 @@ class ofApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void mouseEntered(int x, int y);
 		void mouseExited(int x, int y);
+	
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
@@ -39,7 +41,11 @@ class ofApp : public ofBaseApp{
         ofEasyCam cam;
         
         bool bUseCamera = false;
-        
+	
+		bool bEnableAutoSwitch = false;
+		float mTimeModelLoaded = 0.f;
+		int modelIndex = 1;
+	
 };
 
 #endif
