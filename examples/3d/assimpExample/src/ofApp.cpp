@@ -20,10 +20,6 @@ void ofApp::setup(){
 	bUseCamera = true;
 	
 	#if defined(TARGET_EMSCRIPTEN)
-	auto ewin =  dynamic_pointer_cast<ofxAppEmscriptenWindow>(ofGetCurrentWindow());
-	ewin->setTouchSimulatesMouse(true);
-	ewin->preventDefaultBrowserTouchMoveBehavior();
-	ewin->setFullscreenScaleStrategy(EMSCRIPTEN_FULLSCREEN_SCALE_ASPECT);
 	bEnableAutoSwitch = true;
 	#endif
 }
