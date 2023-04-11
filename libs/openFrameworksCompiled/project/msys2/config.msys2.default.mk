@@ -62,7 +62,7 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES = 
+PLATFORM_DEFINES = OF_VIDEO_PLAYER_DIRECTSHOW
 
 ifeq ($(OF_USE_POCO),1)
 	PLATFORM_DEFINES += POCO_STATIC
