@@ -3,8 +3,8 @@
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
 #include <string.h>
-#include "mfapi.h"
-#include "mferror.h"
+#include <mfapi.h>
+#include <mferror.h>
 #include "ofTexture.h"
 #include "ofGLUtils.h"
 #include "ofGraphics.h"
@@ -676,8 +676,19 @@ std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPla
 
 //----------------------------------------------
 bool ofMediaFoundationPlayer::load(std::string name) {
+    return _load(name, false);
+}
 
+//----------------------------------------------
+void ofMediaFoundationPlayer::loadAsync(std::string name) {
+    _load(name, true);
+}
+
+//----------------------------------------------
+bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     close();
+
+    mBLoadAsync = abAsync;
 
     EnterCriticalSection(&m_critSec);
 
@@ -780,6 +791,18 @@ bool ofMediaFoundationPlayer::load(std::string name) {
         close();
     }
 
+    if (!mBLoadAsync) {
+        if (hr == S_OK) {
+            mBIsDoneAtomic.store(false);
+            mBIsClosedAtomic.store(false);
+
+            std::mutex lock;
+            std::unique_lock lk{ lock };
+            //std::unique_lock<std::mutex> lk(mMutexLoad);
+            mWaitCondition.wait(lk, [&] { return mBIsDoneAtomic.load() || mBIsClosedAtomic.load();  });
+        }
+    }
+
     //mBLoaded = SUCCEEDED(hr);
 
     return (hr == S_OK);
@@ -789,6 +812,10 @@ bool ofMediaFoundationPlayer::load(std::string name) {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::close() {
+
+    mBIsClosedAtomic.store(true);
+    mBIsDoneAtomic.store(false);
+    mWaitCondition.notify_all();
 
     EnterCriticalSection(&m_critSec);
 
@@ -844,8 +871,25 @@ bool ofMediaFoundationPlayer::isInitialized() const {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent) {
-    std::unique_lock<std::mutex> tt(mMutexEvents);
-    mEventsQueue.push(aEvent);
+    if (aEvent == MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA) {
+        if (!mBLoadAsync) {
+            mBIsDoneAtomic.store(true);
+            mWaitCondition.notify_one();
+        }
+        mBLoaded = true;
+    } else if (aEvent == MF_MEDIA_ENGINE_EVENT_ERROR) {
+        // not sure if we should handle this here
+    }
+
+    if (mBLoaded) {
+        // lets not overload the events, query similar with isFrameNew()
+        if (aEvent != MF_MEDIA_ENGINE_EVENT_TIMEUPDATE) {
+            std::unique_lock<std::mutex> tt(mMutexEvents);
+            mEventsQueue.push(aEvent);
+        }
+    }
+
+    
 }
 
 //----------------------------------------------

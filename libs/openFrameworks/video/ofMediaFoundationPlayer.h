@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mfmediaengine.h"
-#include "d3d11_1.h"
+#include <mfmediaengine.h>
+#include <d3d11_1.h>
 #include <wrl.h>
 #include <wincodec.h>
 #include "ofConstants.h"
@@ -70,6 +70,7 @@ public:
     static void setDurationHackEnabled(bool ab);
 
     bool                load(std::string name) override;
+    void				loadAsync(std::string name) override;
     void                close() override;
 
     bool                isInitialized() const override;
@@ -128,6 +129,7 @@ public:
     ofEvent<MF_MEDIA_ENGINE_ERR> MFErrorEvent;
 
 protected:
+    bool _load(std::string name, bool abAsync);
     void OnMediaEngineEvent(DWORD aEvent) override;
 
     class MEDXDeviceManager {
@@ -233,5 +235,10 @@ protected:
     ofPixels mPixels;
     mutable bool mBUpdatePixels = false;
 
+    //std::mutex mMutexLoad;
+    bool mBLoadAsync = false;
+    std::atomic_bool mBIsDoneAtomic;
+    std::atomic_bool mBIsClosedAtomic;
+    std::condition_variable mWaitCondition;
     
 };
