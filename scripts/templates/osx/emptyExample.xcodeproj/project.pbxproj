@@ -29,7 +29,7 @@
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"\\033[32;1;4m1 - Compiling Openframeworks\\033[0m\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET\n",
+			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET\n",
 			"name": "Run Script — Compile OF",
 			"files": []
 		},
@@ -100,18 +100,17 @@
 			"projectRoot": "",
 			"mainGroup": "E4B69B4A0A3A1720003C02F2"
 		},
-		"8466F1851C04CA0E00918B1C": {
-			"alwaysOutOfDate": "1",
+		"19B789C429E5AB4A0082E9B8": {
 			"inputPaths": [],
-			"buildActionMask": "12",
+			"buildActionMask": "2147483647",
 			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "if [ -z \"$OF_BUNDLE_DATA_FOLDER\" ] ; then\n    echo 'Bundle data folder disabled';\nelse\n    # Copy bin/data into App/Resources\n    echo 'Bundle data folder enabled - will copy bin/data to App Package'\n    rsync -avz  --delete --exclude='.DS_Store' \"${SRCROOT}/bin/data/\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/\"\nfi\n",
-			"name": "Run Script — Bundle Data Folder",
-			"files": []
+			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
+			"outputFileListPaths": [],
+			"files": [],
+			"inputFileListPaths": []
 		},
 		"E4B69B4F0A3A1720003C02F2": {
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
@@ -133,19 +132,20 @@
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
-				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)",
-				"COPY_PHASE_STRIP": "YES",
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
 					"src"
 				],
 				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "YES",
+				"ARCHS": "$(ARCHS_STANDARD)",
 				"OTHER_LDFLAGS": [
 					"$(OF_CORE_LIBS)",
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(LIB_OF)"
-				]
+				],
+				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
 			},
 			"name": "Release"
 		},
@@ -196,46 +196,32 @@
 			},
 			"name": "Debug"
 		},
-		"19D6CF9228F07C000044A7EB": {
-			"buildActionMask": "2147483647",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"outputPaths": [],
-			"shellPath": "/bin/sh",
-			"alwaysOutOfDate": "1",
-			"inputFileListPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"shellScript": "\nif [ -z \"$OF_CODESIGN\" ] ; then\n\techo \"Codesign Disabled\";\n#echo \"Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution\";\nelse\n\techo \"Codesign Enabled\";\n\n\t# ---- Code Sign App Package ----\n\t# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!\n\n\t# Verify that $CODE_SIGN_IDENTITY is set\n\tif [ -z \"${CODE_SIGN_IDENTITY}\" ] ; then\n\t\techo \"CODE_SIGN_IDENTITY needs to be set for framework code-signing\"\n\t\texit 0\n\tfi\n\n\tif [ -z \"${CODE_SIGN_ENTITLEMENTS}\" ] ; then\n\t\techo \"CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!\"\n\n\t\tif [ \"${CONFIGURATION}\" = \"Release\" ] ; then\n\t\t\texit 1\n\t\telse\n\t\t\t# Code-signing is optional for non-release builds.\n\t\t\texit 0\n\t\tfi\n\tfi\n\n\tITEMS=\"\"\n\n\tFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\techo \"$FRAMEWORKS_DIR\"\n\tif [ -d \"$FRAMEWORKS_DIR\" ] ; then\n\t\tFRAMEWORKS=$(find \"${FRAMEWORKS_DIR}\" -depth -type d -name \"*.framework\" -or -name \"*.dylib\" -or -name \"*.bundle\" | sed -e \"s/\\(.*framework\\)/\\1\\/Versions\\/A\\//\")\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\texit 1\n\t\tfi\n\n\t\tITEMS=\"${FRAMEWORKS}\"\n\tfi\n\n\tLOGINITEMS_DIR=\"${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems/\"\n\tif [ -d \"$LOGINITEMS_DIR\" ] ; then\n\t\tLOGINITEMS=$(find \"${LOGINITEMS_DIR}\" -depth -type d -name \"*.app\")\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\texit 1\n\t\tfi\n\n\t\tITEMS=\"${ITEMS}\"$'\\n'\"${LOGINITEMS}\"\n\tfi\n\n\t# Prefer the expanded name, if available.\n\tCODE_SIGN_IDENTITY_FOR_ITEMS=\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n\tif [ \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" = \"\" ] ; then\n\t\t# Fall back to old behavior.\n\t\tCODE_SIGN_IDENTITY_FOR_ITEMS=\"${CODE_SIGN_IDENTITY}\"\n\tfi\n\n\techo \"Identity: ${CODE_SIGN_IDENTITY_FOR_ITEMS}\"\n\n\techo \"Entitlements: ${CODE_SIGN_ENTITLEMENTS}\"\n\n\techo \"Found: ${ITEMS}\"\n\n\t# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.\n\tSAVED_IFS=$IFS\n\tIFS=$(echo \"\\n\\b\")\n\n\t# Loop through all items.\n\tfor ITEM in ${ITEMS}\n\tdo\n\t\tif lipo -archs \"${ITEM}\" | grep -q 'i386'; then\n\t\t\techo \"Stripping invalid archs '${ITEM}'\"\n\t\t\tlipo -remove i386 \"${ITEM}\" -o \"${ITEM}\" \n\t\telse\n\t\t\techo \"No need to strip invalid archs '{$ITEM}'\"\n\t\tfi\n\n\t\techo \"Signing '${ITEM}'\"\n\t\tcodesign --force --verbose --sign \"${CODE_SIGN_IDENTITY_FOR_ITEMS}\" --entitlements \"${CODE_SIGN_ENTITLEMENTS}\" \"${ITEM}\"\n\t\tRESULT=$?\n\t\tif [[ $RESULT != 0 ]] ; then\n\t\t\techo \"Failed to sign '${ITEM}'.\"\n\t\t\tIFS=$SAVED_IFS\n\t\t\texit 1\n\t\tfi\n\tdone\n\n\t# Restore $IFS.\n\tIFS=$SAVED_IFS\n\nfi\n\necho \"💾 end script\";\n",
-			"files": [],
-			"showEnvVarsInLog": "0",
-			"inputPaths": [],
-			"outputFileListPaths": [],
-			"name": "Run Script — Code Sign"
+		"E4B69B600A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"GCC_DYNAMIC_NO_PIC": "NO",
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "NO",
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF_DEBUG)"
+				],
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
+			},
+			"name": "Debug"
 		},
 		"E4B69B590A3A1756003C02F2": {
 			"isa": "PBXFrameworksBuildPhase",
 			"buildActionMask": "2147483647",
 			"files": [],
 			"runOnlyForDeploymentPostprocessing": "0"
-		},
-		"E4B69B600A3A1757003C02F2": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"COPY_PHASE_STRIP": "NO",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)",
-				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"GCC_DYNAMIC_NO_PIC": "NO",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF_DEBUG)"
-				]
-			},
-			"name": "Debug"
 		},
 		"E4B69B4D0A3A1720003C02F2": {
 			"isa": "XCConfigurationList",
@@ -270,12 +256,9 @@
 				"E42962A92163ECCD00A6A9E2",
 				"E4B69B580A3A1756003C02F2",
 				"E4B69B590A3A1756003C02F2",
-				"E4B6FFFD0C3F9AB9008CF71C",
 				"E4C2427710CC5ABF004149E2",
 				"E4A5B60F29BAAAE400C2D356",
-				"8466F1851C04CA0E00918B1C",
-				"19D6CF9228F07C000044A7EB",
-				"E935D72329ADADAE00AC8EFD"
+				"19B789C429E5AB4A0082E9B8"
 			],
 			"dependencies": [],
 			"name": "emptyExample",
@@ -303,33 +286,6 @@
 			"includeInIndex": "0",
 			"explicitFileType": "wrapper.application",
 			"sourceTree": "BUILT_PRODUCTS_DIR"
-		},
-		"E935D72329ADADAE00AC8EFD": {
-			"buildActionMask": "2147483647",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"outputPaths": [],
-			"shellPath": "/bin/zsh",
-			"alwaysOutOfDate": "1",
-			"inputFileListPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"shellScript": "# make sure shell above is set to /bin/zsh\n#\n# requires `brew install dylibbundler` (v1.0.5 as of 20230121)\n#\n# activate via flag in Project.xcconfig\n#\n# note: dylib subdependencies (dylibs that load dylibs) will be found\n#\t\trecursively and bundled within the .app but might need doctoring \n#\t\tto work in both bundled or freestanding states.\n#\n\nif [ -z \"$OF_BUNDLE_DYLIBS\" ] ; then\n\techo \"Not bundling dylibs\";\nelse\n\techo \"Bundling dylibs\";\n\n\t\tflags=(${(@s: :)OTHER_LDFLAGS})\n\t\tdeclare -A paths\n\t\tsargs=\"\"\n\n\t# use the keys of an associative array to accumulate unique directories enclosing .dylibs based on OTHER_LDFLAGS\n\tfor ITEM in $flags; do\n\t\tif [[ $ITEM == *'.dylib' ]] then\n\t\t\td=$(dirname \"$ITEM\")\n\t\t\tpaths[$d]=$d\n\t\tfi\n\tdone\n\t\t\n\t# construct a list of -s args for dylibbuilder to find the dylibs\n\tfor key val in \"${(@kv)paths}\"; do\n\t\tsargs+=-s\\ $key\\ \n\tdone\n\n\t# do the thing\n\t/opt/homebrew/bin/dylibbundler -cd -b -x \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\" -d \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/libs\" ${(s[ ])sargs}\n\nfi\n",
-			"files": [],
-			"inputPaths": [],
-			"outputFileListPaths": [],
-			"name": "Run Script — Bundle dylibs"
-		},
-		"E4B6FFFD0C3F9AB9008CF71C": {
-			"alwaysOutOfDate": "1",
-			"inputPaths": [],
-			"buildActionMask": "2147483647",
-			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
-			"outputPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"\\033[32;1;4m2 - Copying Resources\\033[0m\"\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n# Copy default icon file into App/Resources\nrsync -aved --delete --exclude='.DS_Store' \"$ICON_FILE\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n# Copy libfmod and change install directory for fmod to run\nrsync -aved --delete --ignore-existing \"$OF_PATH/libs/fmod/lib/osx/libfmod.dylib\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/\";\n# Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage \n# install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n",
-			"name": "Run Script — Copy Resources",
-			"files": []
 		},
 		"E4B69E1F0A3A1BDC003C02F2": {
 			"path": "src/ofApp.h",
