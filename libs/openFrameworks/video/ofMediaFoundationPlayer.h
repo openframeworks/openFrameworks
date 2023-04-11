@@ -16,7 +16,7 @@
 namespace of {
     struct MediaEngineNotifyCallback {
     public:
-        virtual void OnMediaEngineEvent(DWORD meEvent) = 0;
+        virtual void OnMediaEngineEvent(DWORD meEvent, DWORD_PTR param1, DWORD param2) = 0;
     };
 }
 
@@ -43,7 +43,7 @@ protected:
             if (meEvent == MF_MEDIA_ENGINE_EVENT_NOTIFYSTABLESTATE) {
                 SetEvent(reinterpret_cast<HANDLE>(param1));
             } else {
-                mCB->OnMediaEngineEvent(meEvent);
+                mCB->OnMediaEngineEvent(meEvent, param1, param2);
             }
             return S_OK;
         }
@@ -130,7 +130,7 @@ public:
 
 protected:
     bool _load(std::string name, bool abAsync);
-    void OnMediaEngineEvent(DWORD aEvent) override;
+    void OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) override;
 
     class MEDXDeviceManager {
     public:

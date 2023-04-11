@@ -690,6 +690,24 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
 
     mBLoadAsync = abAsync;
 
+    bool bStream = false;
+    bStream = bStream || ofIsStringInString(name, "http://");
+    bStream = bStream || ofIsStringInString(name, "https://");
+    bStream = bStream || ofIsStringInString(name, "rtsp://");
+    bStream = bStream || ofIsStringInString(name, "rtmp://");
+
+    std::string absPath = name;
+
+    if (!bStream) {
+        if (ofFile::doesFileExist(absPath)) {
+            absPath = ofFilePath::getAbsolutePath(absPath, true);
+        } else {
+            ofLogError("ofMediaFoundationPlayer") << " file does not exist! " << absPath;
+            return false;
+        }
+    }
+
+
     EnterCriticalSection(&m_critSec);
 
     // init device manager if not created
@@ -757,16 +775,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
 
     // now lets make a BSTR 
     //std::string tPathToLoad = name;
-    bool bStream = false;
-    bStream = bStream || ofIsStringInString(name, "http://");
-    bStream = bStream || ofIsStringInString(name, "https://");
-    bStream = bStream || ofIsStringInString(name, "rtsp://");
-    bStream = bStream || ofIsStringInString(name, "rtmp://");
-
-    std::string absPath = name;
-    if (!bStream) {
-        absPath = ofToDataPath(name, true);
-    }
+    
     m_spMediaEngine->SetAutoPlay(FALSE);
 
     //callAsyncBlocking([&] {
@@ -870,7 +879,7 @@ bool ofMediaFoundationPlayer::isInitialized() const {
 }
 
 //----------------------------------------------
-void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent) {
+void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) {
     if (aEvent == MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA) {
         if (!mBLoadAsync) {
             mBIsDoneAtomic.store(true);
@@ -879,17 +888,21 @@ void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent) {
         mBLoaded = true;
     } else if (aEvent == MF_MEDIA_ENGINE_EVENT_ERROR) {
         // not sure if we should handle this here
-    }
-
-    if (mBLoaded) {
-        // lets not overload the events, query similar with isFrameNew()
-        if (aEvent != MF_MEDIA_ENGINE_EVENT_TIMEUPDATE) {
-            std::unique_lock<std::mutex> tt(mMutexEvents);
-            mEventsQueue.push(aEvent);
+        ofLogVerbose("engine event: ofMediaFoundationPlayer") << " ERRROR";
+        // clear out the mutex so that we no longer wait and the close event can be fired
+        if (!mBLoadAsync) {
+            mBIsDoneAtomic.store(false);
+            mBIsClosedAtomic.store(true);
+            mWaitCondition.notify_one();
         }
     }
+    // lets not overload the events, query similar with isFrameNew()
+    if (aEvent != MF_MEDIA_ENGINE_EVENT_TIMEUPDATE) {
+        std::unique_lock<std::mutex> tt(mMutexEvents);
+        mEventsQueue.push(aEvent);
+    }
 
-    
+
 }
 
 //----------------------------------------------
@@ -1385,6 +1398,7 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                     MF_MEDIA_ENGINE_ERR meError = static_cast<MF_MEDIA_ENGINE_ERR>(errorCode);
                     ofLogError("ofMediaFoundationPlayer") << MFErrorToString(meError);
                     ofNotifyEvent(MFErrorEvent, meError, this);
+                    close();
                 }
             }
             break;
