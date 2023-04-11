@@ -1,13 +1,10 @@
 #!/bin/zsh
 
-#MARK: COPY RESOURCES
-
 divider () {
 	echo "---------------------------------------------------------------"
 }
+
 msg() {
-    # result=$(($1 + $2))
-    # echo "Result is: $result"
 	# echo "\033[32;1;4m2$1\033[0m"
 	divider
 	echo "💾 $1"
@@ -178,8 +175,10 @@ bundle_dylibs() {
 	fi
 }
 
-
 echo ''
+divider
+echo "Running $OF_PATH/scripts/osx/xcode_project.sh"
+
 copy_resources
 bundle_data_folder
 code_sign
