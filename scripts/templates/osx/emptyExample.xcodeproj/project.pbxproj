@@ -29,7 +29,7 @@
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"\\033[32;1;4m1 - Compiling Openframeworks\\033[0m\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET\n",
+			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET\n",
 			"name": "Run Script — Compile OF",
 			"files": []
 		},
@@ -132,19 +132,20 @@
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
-				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)",
-				"COPY_PHASE_STRIP": "YES",
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
 					"src"
 				],
 				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "YES",
+				"ARCHS": "$(ARCHS_STANDARD)",
 				"OTHER_LDFLAGS": [
 					"$(OF_CORE_LIBS)",
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(LIB_OF)"
-				]
+				],
+				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
 			},
 			"name": "Release"
 		},
@@ -199,19 +200,20 @@
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
-				"COPY_PHASE_STRIP": "NO",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)",
-				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
 					"src"
 				],
 				"GCC_DYNAMIC_NO_PIC": "NO",
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "NO",
+				"ARCHS": "$(ARCHS_STANDARD)",
 				"OTHER_LDFLAGS": [
 					"$(OF_CORE_LIBS)",
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(LIB_OF_DEBUG)"
-				]
+				],
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
 			},
 			"name": "Debug"
 		},
@@ -254,7 +256,6 @@
 				"E42962A92163ECCD00A6A9E2",
 				"E4B69B580A3A1756003C02F2",
 				"E4B69B590A3A1756003C02F2",
-				"E4B6FFFD0C3F9AB9008CF71C",
 				"E4C2427710CC5ABF004149E2",
 				"E4A5B60F29BAAAE400C2D356",
 				"19B789C429E5AB4A0082E9B8"
@@ -285,19 +286,6 @@
 			"includeInIndex": "0",
 			"explicitFileType": "wrapper.application",
 			"sourceTree": "BUILT_PRODUCTS_DIR"
-		},
-		"E4B6FFFD0C3F9AB9008CF71C": {
-			"alwaysOutOfDate": "1",
-			"inputPaths": [],
-			"buildActionMask": "2147483647",
-			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
-			"outputPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"\\033[32;1;4m2 - Copying Resources\\033[0m\"\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n# Copy default icon file into App/Resources\nrsync -aved --delete --exclude='.DS_Store' \"$ICON_FILE\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n# Copy libfmod and change install directory for fmod to run\nrsync -aved --delete --ignore-existing \"$OF_PATH/libs/fmod/lib/osx/libfmod.dylib\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/\";\n# Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage \n# install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n",
-			"name": "Run Script — Copy Resources",
-			"files": []
 		},
 		"E4B69E1F0A3A1BDC003C02F2": {
 			"path": "src/ofApp.h",

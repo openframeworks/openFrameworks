@@ -1,14 +1,19 @@
 #!/bin/zsh
 
 #MARK: COPY RESOURCES
+
+divider () {
+	echo "---------------------------------------------------------------"
+}
 msg() {
     # result=$(($1 + $2))
     # echo "Result is: $result"
 	# echo "\033[32;1;4m2$1\033[0m"
+	divider
 	echo "💾 $1"
 }
 
-
+echo ''
 msg "Copying Resources - Icon and libfmod"
 
 mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
@@ -24,7 +29,7 @@ rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib
 #MARK: BUNDLE DATA FOLDER
 
 if [ -z "$OF_BUNDLE_DATA_FOLDER" ] ; then
-    msg 'Bundle data folder disabled - can be enabled with OF_BUNDLE_DATA_FOLDER=1 in Project.xcconfig ';
+    msg 'Bundle data folder disabled \ncan be enabled with OF_BUNDLE_DATA_FOLDER=1 in Project.xcconfig ';
 else
     # Copy bin/data into App/Resources
     msg 'Bundle data folder enabled - will copy bin/data to App Package'
@@ -144,7 +149,7 @@ fi
 #
 
 if [ -z "$OF_BUNDLE_DYLIBS" ] ; then
-	msg "Bundling dylibs disabled - can be enabled with OF_BUNDLE_DYLIBS=1 in Project.xcconfig ";
+	msg "Bundling dylibs disabled \ncan be enabled with OF_BUNDLE_DYLIBS=1 in Project.xcconfig ";
 else
 	msg "Bundling dylibs";
 
@@ -169,3 +174,5 @@ else
 	/opt/homebrew/bin/dylibbundler -cd -b -x "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME" -d "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/libs" ${(s[ ])sargs}
 
 fi
+
+divider
