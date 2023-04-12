@@ -300,22 +300,24 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         
 #endif
         
+        __typeof(self) __weak weak_self = self;
+
         [[NSNotificationCenter defaultCenter] addObserverForName:kShouldEnginePauseNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
                    
                    /* pausing stops the audio engine and the audio hardware, but does not deallocate the resources allocated by prepare().
                       When your app does not need to play audio, you should pause or stop the engine (as applicable), to minimize power consumption.
                    */
-                    bool isPlaying = [self isPlaying] || self.bIsPlaying == YES;
-                   if (!self.isSessionInterrupted && !self.isConfigChangePending) {
+                    bool isPlaying = [weak_self isPlaying] || weak_self.bIsPlaying == YES;
+                   if (!weak_self.isSessionInterrupted && !weak_self.isConfigChangePending) {
                        
                        
                        NSLog(@"Pausing Engine");
-                       [[self engine] pause];
-                       [[self engine] reset];
+                       [[weak_self engine] pause];
+                       [[weak_self engine] reset];
                        
                    }
                }];
-		
+		        
         // sign up for notifications from the engine if there's a hardware config change
         [[NSNotificationCenter defaultCenter] addObserverForName:AVAudioEngineConfigurationChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         
@@ -323,29 +325,28 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             
             NSLog(@"Received a AVAudioEngineConfigurationChangeNotification %@ notification! NOTE: %@", AVAudioEngineConfigurationChangeNotification, note.description);
 			
-            bool isPlaying = [self isPlaying] || self.bIsPlaying == YES;
-            float posSecs = [self positionSeconds];
+            bool isPlaying = [weak_self isPlaying] || weak_self.bIsPlaying == YES;
+            float posSecs = [weak_self positionSeconds];
             
-            self.mPlayingAtInterruption = isPlaying;
-            self.mPositonSecondsAtInterruption = posSecs;
-            self.bInterruptedWhileRunning = YES;
+            weak_self.mPlayingAtInterruption = isPlaying;
+            weak_self.mPositonSecondsAtInterruption = posSecs;
+            weak_self.bInterruptedWhileRunning = YES;
             
-            [self engineReconnect];
+            [weak_self engineReconnect];
             
-            self.isConfigChangePending = YES;
+            weak_self.isConfigChangePending = YES;
                        
-           if (!self.isSessionInterrupted) {
+           if (!weak_self.isSessionInterrupted) {
                NSLog(@"Received a %@ notification!", AVAudioEngineConfigurationChangeNotification);
                NSLog(@"Re-wiring connections");
-               [self makeEngineConnections];
+               [weak_self makeEngineConnections];
            } else {
                NSLog(@"Session is interrupted, deferring changes");
            }
             
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.033f), dispatch_get_main_queue(), ^{
-                
-                [self handleInterruption:note];
+                [weak_self handleInterruption:note];
             });
             
         }];
@@ -540,10 +541,13 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         
         if( isPlaying && posSecs >= 0 && posSecs < ([self soundDurationSeconds] + 0.017f) && self.mRestorePlayCount == 0){
             self.mRestorePlayCount++;
+            
+        __typeof(self) __weak weak_self = self;
+    
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.017f), dispatch_get_main_queue(), ^{
-                self.mRestorePlayCount--;
-                if(self.bIsPlaying == NO) return;
-                [self play:posSecs];
+                weak_self.mRestorePlayCount--;
+                if(weak_self.bIsPlaying == NO) return;
+                [weak_self play:posSecs];
             });
         }
     }
@@ -704,8 +708,9 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         return;
     }
     if(_isSessionInterrupted || _isConfigChangePending){
+        __typeof(self) __weak weak_self = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
-            [self play:startTime];
+            [weak_self play:startTime];
         });
         return;
     }
@@ -770,19 +775,21 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     [self.soundPlayer play];
     _bIsPlaying = YES;
     
+        __typeof(self) __weak weak_self = self;
+
 	[self.soundPlayer scheduleSegment:self.soundFile startingFrame:self.startedSampleOffset frameCount:numFramesToPlay atTime:0 completionHandler:^{
 	
 		dispatch_async(dispatch_get_main_queue(), ^{
-			self.mGaurdCount--;
+			weak_self.mGaurdCount--;
 			
-            if(self.bIsPlaying == NO) return;
+            if(weak_self.bIsPlaying == NO) return;
             
 			//std::cout << " need gaurd is " << self.mGaurdCount << std::endl;
 
-			if( self.mGaurdCount == 0 ){
-				float time = [self positionSeconds];
+			if( weak_self.mGaurdCount == 0 ){
+				float time = [weak_self positionSeconds];
 				
-				float duration = [self soundDurationSeconds];
+				float duration = [weak_self soundDurationSeconds];
 				
 				//have to do all this because the completion handler fires before the player is actually finished - which isn't very helpful
 				float remainingTime = duration-time;
@@ -793,12 +800,12 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 				//all the other time stuff accounts for the speed / rate, except the remaining time delay
 				remainingTime /= ofClamp(self.variSpeed.rate, 0.01, 100.0);
                 
-				if( self.mShouldLoop ){
-                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(playloop) object: self.soundPlayer];
-					[self performSelector:@selector(playloop) withObject:self.soundPlayer afterDelay:remainingTime];
+				if( weak_self.mShouldLoop ){
+                    [NSObject cancelPreviousPerformRequestsWithTarget:weak_self selector:@selector(playloop) object: weak_self.soundPlayer];
+					[weak_self performSelector:@selector(playloop) withObject:self.soundPlayer afterDelay:remainingTime];
 				}else{
-                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stop) object: self.soundPlayer];
-					[self performSelector:@selector(stop) withObject:self.soundPlayer afterDelay:remainingTime];
+                    [NSObject cancelPreviousPerformRequestsWithTarget:weak_self selector:@selector(stop) object: weak_self.soundPlayer];
+					[weak_self performSelector:@selector(stop) withObject:weak_self.soundPlayer afterDelay:remainingTime];
 				}
                 
 //                NSLog(@"play - scheduleSegment mShouldLoop:%i - mGaurdCount:%i", _mShouldLoop, _mGaurdCount);
@@ -806,8 +813,8 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 //                NSLog(@"play - scheduleSegment - mGaurdCount:%i", _mGaurdCount);
             }
 			
-			if( self.mGaurdCount < 0 ){
-				self.mGaurdCount=0;
+			if( weak_self.mGaurdCount < 0 ){
+				weak_self.mGaurdCount=0;
 			}
 			
 		});
@@ -830,9 +837,11 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (void)stop {
     
+    __typeof(self) __weak weak_self = self;
+
     if(_isSessionInterrupted || _isConfigChangePending){
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
-            [self stop];
+            [weak_self stop];
         });
         return;
     }
