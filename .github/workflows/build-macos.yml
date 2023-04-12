@@ -15,8 +15,63 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  clone:
+    steps:
+      - uses: actions/checkout@v3
+  cache-compile:
+    steps:
+      - name: Cache compile
+        id: cache-compile
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-keep-compile
+        with:
+          path: |
+            libs/openFrameworksCompiled/lib/osx/*.a
+            libs/openFrameworksCompiled/lib/osx/**/
+            addons/obj/osx/**/
+            scripts/templates/osx/build/**/
+
+          key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
+          restore-keys: |
+            ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
+  cache-libs:
+    steps:
+      - name: Cache libs
+        id: cache-libs
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-install-libs
+        with:
+          path: |
+            libs/boost/**
+            libs/cairo/**
+            libs/curl/**
+            libs/fmod/**
+            libs/FreeImage/**
+            libs/freetype/**
+            libs/glew/**
+            libs/glfw/**
+            libs/glm/**
+            libs/json/**
+            libs/pugixml/**
+            libs/rtAudio/**
+            libs/tess2/**
+            libs/uriparser/**
+            libs/utf8/**
+            addons/ofxAssimpModelLoader/libs/**/
+            addons/ofxKinect/libs/**/
+            addons/ofxOpenCv/libs/**/
+            addons/ofxSvg/libs/**/
+            addons/ofxPoco/libs/**/
+
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+
   build-osx:
     runs-on: macos-12
+    needs: [clone, cache-libs, cache-compile]
     strategy:
         matrix:
           cfg:
@@ -26,55 +81,6 @@ jobs:
       TARGET: ${{matrix.cfg.target}}
       OPT: ${{matrix.cfg.opt}}
     steps:
-    - uses: actions/checkout@v3
-    - name: Cache compile
-      id: cache-compile
-      uses: actions/cache@v3
-      env:
-        cache-name: cache-keep-compile
-      with:
-        path: |
-          libs/openFrameworksCompiled/lib/osx/*.a
-          libs/openFrameworksCompiled/lib/osx/**/
-          addons/obj/osx/**/
-          scripts/templates/osx/build/**/
-
-        key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
-        restore-keys: |
-          ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
-
-
-    - name: Cache libs
-      id: cache-libs
-      uses: actions/cache@v3
-      env:
-        cache-name: cache-install-libs
-      with:
-        path: |
-          libs/boost/**
-          libs/cairo/**
-          libs/curl/**
-          libs/fmod/**
-          libs/FreeImage/**
-          libs/freetype/**
-          libs/glew/**
-          libs/glfw/**
-          libs/glm/**
-          libs/json/**
-          libs/pugixml/**
-          libs/rtAudio/**
-          libs/tess2/**
-          libs/uriparser/**
-          libs/utf8/**
-          addons/ofxAssimpModelLoader/libs/**/
-          addons/ofxKinect/libs/**/
-          addons/ofxOpenCv/libs/**/
-          addons/ofxSvg/libs/**/
-          addons/ofxPoco/libs/**/
-
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
       # name: Download libs
       # continue-on-error: true
