@@ -7,17 +7,34 @@
 
 #pragma once
 
+#include "ofConstants.h"
+
+#ifdef OF_SOUND_PLAYER_AV_ENGINE
+
 #include "ofSoundBaseTypes.h"
 #include "ofEvents.h"
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+    #import <AVFoundation/AVFoundation.h>
+    #import <Accelerate/Accelerate.h>
+#endif
 
 class ofAVEngineSoundPlayer : public ofBaseSoundPlayer {
     
 public:
 
+//thanks to @bangnoise for this trick 
+#ifdef __OBJC__
+    using ObjectType = id<NSObject>;
+#else
+    using ObjectType = void *;
+#endif
+
     ofAVEngineSoundPlayer();
     ~ofAVEngineSoundPlayer();
     
-	static std::vector <float> getSystemSpectrum(int bands);
+    static std::vector <float> getSystemSpectrum(int bands);
 
     bool load(const std::filesystem::path& fileName, bool stream = false);
     void unload();
@@ -48,10 +65,12 @@ protected:
 	void updateFunction(ofEventArgs & args);
 	bool bAddedUpdate = false;
 	
-    void cleanupMultiplayers();
-    static bool removeMultiPlayer(void * aPlayer);
-    void * soundPlayer;
-	std::vector <void *> mMultiplayerSoundPlayers;
+        void cleanupMultiplayers();
+        static bool removeMultiPlayer(void * aPlayer);
+        ObjectType soundPlayer;
+	std::vector <ObjectType> mMultiplayerSoundPlayers;
 	static std::vector<float> systemBins;
 
 };
+
+#endif
