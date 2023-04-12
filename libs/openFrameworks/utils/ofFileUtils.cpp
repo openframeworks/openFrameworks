@@ -691,7 +691,7 @@ std::string ofFile::getAbsolutePath() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
-	auto perm = of::filesystem::status(myFile).permissions();
+	
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES)
@@ -702,6 +702,7 @@ bool ofFile::canRead() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
+	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_read) != of::filesystem::perms::none;
@@ -724,7 +725,6 @@ bool ofFile::canRead() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canWrite() const {
-	auto perm = of::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES){
@@ -735,6 +735,7 @@ bool ofFile::canWrite() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
+	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_write) != of::filesystem::perms::none;
@@ -757,12 +758,12 @@ bool ofFile::canWrite() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canExecute() const {
-	auto perm = of::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	return getExtension() == "exe";
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
+	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_exec) != of::filesystem::perms::none;
