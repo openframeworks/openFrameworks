@@ -16,9 +16,13 @@ concurrency:
 
 jobs:
   clone:
+    timeout-minutes: 20
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
   cache-compile:
+    timeout-minutes: 20
+    runs-on: macos-12
     steps:
       - name: Cache compile
         id: cache-compile
@@ -36,6 +40,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
   cache-libs:
+    timeout-minutes: 20
+    runs-on: macos-12
     steps:
       - name: Cache libs
         id: cache-libs
