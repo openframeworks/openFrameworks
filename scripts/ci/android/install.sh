@@ -14,6 +14,13 @@ fi
 # Install linux dependencies (for project generator to work)
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
+sudo add-apt-repository -y ppa:dns/gnu
+sudo apt-get update -q
+sudo apt-get install -y --allow-unauthenticated gcc-6 g++-6
+sudo apt-get install -y gperf coreutils libxrandr-dev libxinerama-dev libx11-dev libxcursor-dev libxi-dev
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
+
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
@@ -46,7 +53,7 @@ else
     cd $OF_ROOT/
     scripts/linux/download_libs.sh
     cd $OF_ROOT/apps/projectGenerator/commandLine
-    make Debug -C .
+    make -j2 Debug -C .
     ret=$?
     if [ $ret -ne 0 ]; then
           echo "Failed building Project Generator"

@@ -19,8 +19,8 @@
 @interface ofxtvOSAppDelegate : NSObject <UIApplicationDelegate> {
 }
 
-@property (nonatomic, retain) UIWindow * window;
-@property (nonatomic, retain) UIViewController * uiViewController;
+@property (nonatomic, strong) UIWindow * window;
+@property (nonatomic, strong) UIViewController * uiViewController;
 
 - (BOOL)application:(UIApplication*)application
       handleOpenURL:(NSURL*)url;

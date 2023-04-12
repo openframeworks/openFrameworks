@@ -1,22 +1,24 @@
 #include "ofGLRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofMesh.h"
 #include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
 #include "ofFbo.h"
 #include "ofLight.h"
-#include "ofMaterial.h"
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
+#include "ofMaterial.h"
+#include "ofVboMesh.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
-const string ofGLRenderer::TYPE="GL";
+const std::string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
@@ -102,7 +104,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					glTexCoordPointer(2, GL_FLOAT, sizeof(glm::vec2), &vertexData.getTexCoordsPointer()->x);
 			}else{
-				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				std::set<int>::iterator textureLocation = textureLocationsEnabled.begin();
 				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
 					glActiveTexture(GL_TEXTURE0+*textureLocation);
 					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
@@ -138,7 +140,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 #else
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
+			glVertexPointer(3, GL_FLOAT, sizeof(typename ofMesh::VertexType), vertexData.getVerticesPointer());
 		}
 		if(vertexData.getNumNormals() && useNormals){
 			glEnableClientState(GL_NORMAL_ARRAY);
@@ -152,14 +154,14 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		if(vertexData.getNumTexCoords() && useTextures){
 			if(textureLocationsEnabled.size() == 0){
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(typename ofMesh::TexCoordType), &vertexData.getTexCoordsPointer()->x);
 			}else{
-				set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+				std::set<int>::iterator textureLocation = textureLocationsEnabled.begin();
 				for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
 					glActiveTexture(GL_TEXTURE0+*textureLocation);
 					glClientActiveTexture(GL_TEXTURE0+*textureLocation);
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(typename ofMesh::TexCoordType), &vertexData.getTexCoordsPointer()->x);
 				}
 				glActiveTexture(GL_TEXTURE0);
 				glClientActiveTexture(GL_TEXTURE0);
@@ -574,6 +576,22 @@ void ofGLRenderer::unbind(const ofBaseMaterial &){
 	}
 }
 
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
+
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow) {};
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow, GLenum aCubeFace) {};
+
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofTexture & texture, int location){
 	//we could check if it has been allocated - but we don't do that in draw()
@@ -752,7 +770,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
-	float halfFov = PI * fov / 360;
+	float halfFov = glm::pi<float>() * fov / 360.0f;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 	float aspect = (float) viewW / viewH;
@@ -1505,7 +1523,7 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(string textString, float x, float y, float z) const{
+void ofGLRenderer::drawString(std::string textString, float x, float y, float z) const{
 
 	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	float sx = 0;
@@ -1681,7 +1699,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+void ofGLRenderer::drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const{
 	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	bool blendEnabled = glIsEnabled(GL_BLEND);
 	GLint blend_src, blend_dst;
@@ -1956,8 +1974,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		pixels.mirror(false,true);
 		break;
 	case OF_ORIENTATION_90_RIGHT:
-		swap(w,h);
-		swap(x,y);
+		std::swap(w,h);
+		std::swap(x,y);
 		if(!isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;
@@ -1971,8 +1989,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		pixels.mirror(true,true);
 		break;
 	case OF_ORIENTATION_90_LEFT:
-		swap(w, h);
-		swap(x, y);
+		std::swap(w, h);
+		std::swap(x, y);
 		if(isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
 			x -= w;

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "ofParameter.h"
 #include "ofConstants.h"
 #include "pugixml.hpp"
-#include "ofParameter.h"
 
 template<typename It>
 class ofXmlIterator;
@@ -100,10 +100,10 @@ public:
 
 	ofXml();
 
-	bool load(const std::filesystem::path & file);
+	bool load(const of::filesystem::path & file);
 	bool load(const ofBuffer & buffer);
 	bool parse(const std::string & xmlStr);
-	bool save(const std::filesystem::path & file) const;
+	bool save(const of::filesystem::path & file) const;
 	void clear();
 	std::string toString(const std::string & indent = "\t") const;
 

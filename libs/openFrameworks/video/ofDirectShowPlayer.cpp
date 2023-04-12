@@ -2,6 +2,10 @@
 #include "ofPixels.h"
 #include "ofMath.h"
 
+#ifdef _MSC_VER
+#pragma comment(lib,"Strmiids.lib")
+#endif
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 // DirectShow includes and helper methods 
@@ -427,7 +431,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         return E_NOTIMPL;
     }
 
-    bool loadMovie(std::string path, ofPixelFormat format){
+    bool loadMovie(of::filesystem::path path, ofPixelFormat format){
         tearDown();
 		this->pixelFormat = format;
 
@@ -530,7 +534,8 @@ class DirectShowVideo : public ISampleGrabberCB{
         }
 
         //printf("step 6\n"); 
-        std::wstring filePathW = std::wstring(path.begin(), path.end());
+        std::string pathString = path.string();
+        std::wstring filePathW = std::wstring(pathString.begin(), pathString.end());
 
         //this is the easier way to connect the graph, but we have to remove the video window manually
         hr = m_pGraph->RenderFile(filePathW.c_str(), NULL);
@@ -615,11 +620,16 @@ class DirectShowVideo : public ISampleGrabberCB{
             IPin* pinOut = 0;
 
             hr = m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
-            if (FAILED(hr)){
-                printf("failed to find the video renderer\n");
-                tearDown();
-                return false;
-            }
+
+			if (FAILED(hr)) {
+				//newer graphs use Video Mixing Renderer 9
+				hr = m_pGraph->FindFilterByName(L"Video Mixing Renderer 9", &m_pVideoRenderer);
+				if (FAILED(hr)) {
+					printf("failed to find the video renderer\n");
+					tearDown();
+					return false;
+				}
+			}
 
             //we disconnect the video renderer window by finding the output pin of the sample grabber
             hr = m_pGrabberF->FindPin(L"Out", &pinOut);
@@ -1120,8 +1130,9 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-bool ofDirectShowPlayer::load(std::string path){
-    path = ofToDataPath(path); 
+// FIXME: convert to filesystem::path in near future
+bool ofDirectShowPlayer::load(std::string stringPath){
+    auto path = ofToDataPath(of::filesystem::path(stringPath));
 
     close();
     player.reset(new DirectShowVideo());

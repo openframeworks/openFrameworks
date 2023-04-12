@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    ofBackground(0,0,0);
+	ofBackground(0,0,0);
 	ofSetFrameRate(60);
 
 	//allocate our fbos.
@@ -12,9 +12,9 @@ void ofApp::setup(){
 
 	#ifdef TARGET_OPENGLES
 	rgbaFboFloat.allocate(400, 400, GL_RGBA ); // with alpha, 8 bits red, 8 bits green, 8 bits blue, 8 bits alpha, from 0 to 255 in 256 steps
-        ofLogWarning("ofApp") << "GL_RGBA32F_ARB is not available for OPENGLES.  Using RGBA.";
+		ofLogWarning("ofApp") << "GL_RGBA32F_ARB is not available for OPENGLES.  Using RGBA.";
 	#else
-        rgbaFboFloat.allocate(400, 400, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
+		rgbaFboFloat.allocate(400, 400, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
 	#endif
 
 	// we can also define the fbo with ofFboSettings.
@@ -30,31 +30,31 @@ void ofApp::setup(){
 	 */
 
 
-    // we have to clear all the fbos so that we don't see any artefacts
+	// we have to clear all the fbos so that we don't see any artefacts
 	// the clearing color does not matter here, as the alpha value is 0, that means the fbo is cleared from all colors
 	// whenever we want to draw/update something inside the fbo, we have to write that inbetween fbo.begin() and fbo.end()
 
-    rgbaFbo.begin();
+	rgbaFbo.begin();
 	ofClear(255,255,255, 0);
-    rgbaFbo.end();
+	rgbaFbo.end();
 
 	rgbaFboFloat.begin();
 	ofClear(255,255,255, 0);
-    rgbaFboFloat.end();
+	rgbaFboFloat.end();
 
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
-    ofEnableAlphaBlending();
+	ofEnableAlphaBlending();
 
 	//lets draw some graphics into our two fbos
-    rgbaFbo.begin();
+	rgbaFbo.begin();
 		drawFboTest();
-    rgbaFbo.end();
+	rgbaFbo.end();
 
-    rgbaFboFloat.begin();
+	rgbaFboFloat.begin();
 		drawFboTest();
 	rgbaFboFloat.end();
 
@@ -114,12 +114,12 @@ void ofApp::drawFboTest(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-    ofSetColor(255, 255, 255);
-    rgbaFbo.draw(0, 0);
-    rgbaFboFloat.draw(410, 0);
+	ofSetColor(255, 255, 255);
+	rgbaFbo.draw(0, 0);
+	rgbaFboFloat.draw(410, 0);
 
-    ofDrawBitmapString("non floating point FBO", 10, 20);
-    ofDrawBitmapString("floating point FBO", 420, 20);
+	ofDrawBitmapString("non floating point FBO", 10, 20);
+	ofDrawBitmapString("floating point FBO", 420, 20);
 
 	string alphaInfo = "Current alpha fade amnt = " + ofToString(fadeAmnt);
 	alphaInfo += "\nHold '1' to set alpha fade to 1";
@@ -127,7 +127,7 @@ void ofApp::draw(){
 	alphaInfo += "\nHold '3' to set alpha fade to 15";
 	alphaInfo += "\nHold 'c' to clear the fbo each frame\n\nMove mouse to draw with a circle";
 
-    ofDrawBitmapString(alphaInfo, 10, 430);
+	ofDrawBitmapString(alphaInfo, 10, 430);
 
 }
 

@@ -70,11 +70,15 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 ifndef MAC_OS_MIN_VERSION
-	MAC_OS_MIN_VERSION = 10.9
+	MAC_OS_MIN_VERSION = 10.15
 endif
 
 ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
+endif
+
+ifndef MAC_OS_CPP_VER
+    MAC_OS_CPP_VER = -std=c++17
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
@@ -85,6 +89,8 @@ PLATFORM_CFLAGS += -Wall
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
+
+PLATFORM_CFLAGS += -Werror=return-type
 
 ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
@@ -139,7 +145,11 @@ endif
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 PLATFORM_CXXFLAGS += -x objective-c++
-PLATFORM_CXXFLAGS += -std=c++11
+PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
+
+# Enable ARC
+PLATFORM_CFLAGS += -fobjc-arc
+
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
@@ -205,13 +215,7 @@ PLATFORM_CORE_EXCLUSIONS =
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitMovieRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.mm
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimePlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
 
 ifneq ($(USE_GST),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
@@ -223,7 +227,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 
 
 ifeq ($(USE_FMOD),0)
@@ -295,7 +298,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
-PLATFORM_FRAMEWORKS += QTKit
 PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AudioToolbox
@@ -361,40 +363,26 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>com.your-company-name.$(APPNAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>NSCameraUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>This app needs to access the camera</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>NSMicrophoneUsageDescription</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>This app needs to access the microphone</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>NSHighResolutionCapable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <false/>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-
+# Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
+	@if [ ! -a openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
+	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
+	
+# App icons
+ ifeq ($(RUN_TARGET), RunRelease)
+	@if [ -a of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@sed -i '' 's/\$$(ICON_NAME)/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+ else
+	@if [ -a of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@sed -i '' 's/\$$(ICON_NAME)/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+ endif
+ 
+	@sed -i '' 's/\$$(DEVELOPMENT_LANGUAGE)/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(EXECUTABLE_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(TARGET_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(PRODUCT_BUNDLE_IDENTIFIER)/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$$(VERSION)/1.0/g' bin/$(BIN_NAME).app/Contents/Info.plist
+		
 	@echo TARGET=$(TARGET)
-
-
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
 ifneq ($(USE_FMOD),0)

@@ -86,7 +86,9 @@
 #include <pthread.h>
 #include <mach/mach.h>
 #include <iostream>
-using namespace std;
+
+using std::cout;
+using std::endl;
 
 // Local Includes
 #include "SoundEngine.h"

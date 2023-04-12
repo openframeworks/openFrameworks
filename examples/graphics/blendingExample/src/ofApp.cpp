@@ -2,13 +2,13 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	 
-    eventString = "Alpha";
+	eventString = "Alpha";
 
 	vagRounded.load("vag.ttf", 32);
 	ofBackground(50,50,50);	
 
-    rainbow.allocate(256, 256, OF_IMAGE_COLOR_ALPHA);
-    rainbow.load("rainbow.tiff");
+	rainbow.allocate(256, 256, OF_IMAGE_COLOR_ALPHA);
+	rainbow.load("rainbow.tiff");
 	blendMode = OF_BLENDMODE_ALPHA;
 }
 
@@ -21,10 +21,10 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-    timeString = "Press 1 - 5 to switch blend modes";
+	timeString = "Press 1 - 5 to switch blend modes";
 	
-    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-    
+	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+	
 	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);
 	
@@ -37,44 +37,44 @@ void ofApp::draw(){
 	ofSetColor(255,122,220);
 	vagRounded.drawString(timeString, 100,100);
 
-    ofSetColor(255, 255, 255,255);
-    
-    
-    ofEnableBlendMode(blendMode);
-    
-    rainbow.draw(mouseX, mouseY);
-    
-    ofDisableBlendMode();
+	ofSetColor(255, 255, 255,255);
+	
+	
+	ofEnableBlendMode(blendMode);
+	
+	rainbow.draw(mouseX, mouseY);
+	
+	ofDisableBlendMode();
 }
 
 
 //--------------------------------------------------------------
 void ofApp::keyPressed  (int key){ 
 
-    switch (key) {
-        case 49:
-            blendMode = OF_BLENDMODE_ALPHA;
-            eventString = "Alpha";
-            break;
-        case 50:
-            blendMode = OF_BLENDMODE_ADD;
-            eventString = "Add";
-            break;
-        case 51:
-            blendMode = OF_BLENDMODE_MULTIPLY;
-            eventString = "Multiply";
-            break;
-        case 52:
-            blendMode = OF_BLENDMODE_SUBTRACT;
-            eventString = "Subtract";
-            break;
-        case 53:
-            blendMode = OF_BLENDMODE_SCREEN;
-            eventString = "Screen";
-            break;
-        default:
-            break;
-    }
+	switch (key) {
+		case 49:
+			blendMode = OF_BLENDMODE_ALPHA;
+			eventString = "Alpha";
+			break;
+		case 50:
+			blendMode = OF_BLENDMODE_ADD;
+			eventString = "Add";
+			break;
+		case 51:
+			blendMode = OF_BLENDMODE_MULTIPLY;
+			eventString = "Multiply";
+			break;
+		case 52:
+			blendMode = OF_BLENDMODE_SUBTRACT;
+			eventString = "Subtract";
+			break;
+		case 53:
+			blendMode = OF_BLENDMODE_SCREEN;
+			eventString = "Screen";
+			break;
+		default:
+			break;
+	}
 }
 
 //--------------------------------------------------------------

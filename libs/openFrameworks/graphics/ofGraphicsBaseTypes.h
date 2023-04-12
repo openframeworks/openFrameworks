@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofGraphicsConstants.h"
-#include "glm/fwd.hpp"
 #include "ofColor.h"
+#include "ofConstants.h"
+#include "glm/fwd.hpp"
 
 class ofRectangle;
 
@@ -257,7 +257,7 @@ template<typename T>
 class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
 	/// \brief Destroy the ofAbstractHasPixels.
-	virtual ~ofBaseHasPixels_<T>(){}
+	virtual ~ofBaseHasPixels_(){}
 
 	/// \brief Get a reference to the underlying ofPixels.
 	/// \returns a reference the underlying ofPixels.

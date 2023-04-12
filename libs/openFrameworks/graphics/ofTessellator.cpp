@@ -3,11 +3,7 @@
 #include "ofPolyline.h"
 #include "ofMesh.h"
 
-using namespace std;
-
-
-
-
+using std::vector;
 
 //-------------- polygons ----------------------------------
 //

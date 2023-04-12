@@ -13,8 +13,8 @@ class ofSoundBuffer;
 
 @interface ofxiOSSoundStreamDelegate : NSObject <SoundStreamDelegate>
 
-- (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)input;
-- (id)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)output;
+- (instancetype)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)input;
+- (instancetype)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)output;
 - (void)setInput:(std::function<void(ofSoundBuffer &)>)input;
 - (void)setOutput:(std::function<void(ofSoundBuffer &)>)output;
 

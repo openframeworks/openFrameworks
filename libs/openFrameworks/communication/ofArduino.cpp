@@ -48,8 +48,13 @@
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofLog.h"
+#include <climits>
 
-using namespace std;
+using std::vector;
+using std::string;
+using std::list;
+using std::pair;
+
 
  // TODO thread it?
  // TODO throw event or exception if the serial port goes down...
@@ -555,10 +560,7 @@ bool ofArduino::isAttached() {
 // ------------------------------ private functions
 
 void ofArduino::processData(unsigned char inputData) {
-
-	char msg[100];
-	sprintf(msg, "Received Byte: %i", inputData);
-	//Logger::get("Application").information(msg);
+	ofLog() << "Received Byte: " << inputData;
 
 	// we have command data
 	if (_waitForData > 0 && inputData < 128) {
@@ -986,14 +988,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			mode = Firmata_Pin_Modes::MODE_ENCODER;
 			break;
 		}
-//		int val;
-		int shift = 0;
-		while (it != data.end()) {
-//			val = *it << shift;
-			it++;
-			shift += 7;
-		} //clear whatever is left
-		//int pinVal[2] = { pin, val }; //I think this was supposed to be the return value
+
 		pair<int, Firmata_Pin_Modes> reply(pin, mode);
 		ofNotifyEvent(EPinStateResponseReceived, reply, this);
 	}

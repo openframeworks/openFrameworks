@@ -1,11 +1,13 @@
 #include "ofVideoPlayer.h"
-#include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofGLUtils.h"
 #include "ofPixels.h"
 #include <algorithm>
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
+
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
@@ -17,7 +19,7 @@ ofVideoPlayer::ofVideoPlayer (){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
-	player = newPlayer;
+	player = std::move(newPlayer);
 	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }

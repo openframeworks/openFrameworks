@@ -1,5 +1,4 @@
 #include "ofAppNoWindow.h"
-#include "ofBaseApp.h"
 #include "ofGraphics.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
@@ -44,10 +43,10 @@ void set_conio_terminal_mode()
 int kbhit()
 {
 	return 0;
-    struct timeval tv = { 0L, 0L };
-    fd_set fds;
-    FD_SET(0, &fds);
-    return select(1, &fds, nullptr, nullptr, &tv);
+//    struct timeval tv = { 0L, 0L };
+//    fd_set fds;
+//    FD_SET(0, &fds);
+//    return select(1, &fds, nullptr, nullptr, &tv);
 }
 
 int getch()
@@ -62,8 +61,6 @@ int getch()
 }
 
 #endif
-
-using namespace std;
 
 class ofNoopRenderer: public ofBaseRenderer{
 public:
@@ -212,7 +209,7 @@ private:
 };
 
 
-const string ofNoopRenderer::TYPE="NOOP";
+const std::string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow()
@@ -249,7 +246,7 @@ void ofAppNoWindow::update(){
 		}
 		else if ( key == /* ctrl-c */ 3 )
 		{
-			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
+			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << std::endl;
 			break;
 		}
 		else
@@ -313,7 +310,7 @@ ofCoreEvents & ofAppNoWindow::events(){
 	return *coreEvents;
 }
 
-shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
 	return currentRenderer;
 }
 

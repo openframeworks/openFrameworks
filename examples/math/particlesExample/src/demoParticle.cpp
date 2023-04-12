@@ -22,11 +22,11 @@ void demoParticle::reset(){
 	
 	pos.x = ofRandomWidth();
 	pos.y = ofRandomHeight();
-    pos.z = 0; 
+	pos.z = 0; 
 	
 	vel.x = ofRandom(-3.9, 3.9);
 	vel.y = ofRandom(-3.9, 3.9);
-    vel.z = 0;
+	vel.z = 0;
 	
 	frc   = glm::vec3(0,0,0);
 	

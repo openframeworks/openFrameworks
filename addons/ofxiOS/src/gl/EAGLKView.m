@@ -25,15 +25,15 @@
     return [CAEAGLLayer class];
 }
 
-- (id)initWithFrame:(CGRect)frame
-andPreferedRenderer:(ESRendererVersion)version
-              andAA:(bool)msaaEnabled
-          andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale
- sharegroup:(EAGLSharegroup*)sharegroup
-        colorFormat:(GLKViewDrawableColorFormat)colorFormat
-        depthFormat:(GLKViewDrawableDepthFormat)depthFormat
-      stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat {
+- (instancetype)initWithFrame:(CGRect)frame
+          andPreferedRenderer:(ESRendererVersion)version
+                        andAA:(bool)msaaEnabled
+                    andRetina:(bool)retinaEnabled
+               andRetinaScale:(CGFloat)retinaScale
+                   sharegroup:(EAGLSharegroup*)sharegroup
+                  colorFormat:(GLKViewDrawableColorFormat)colorFormat
+                  depthFormat:(GLKViewDrawableDepthFormat)depthFormat
+                stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat {
 
     if((self = [super initWithFrame:frame])) {
         
@@ -80,7 +80,7 @@ andPreferedRenderer:(ESRendererVersion)version
             
             if(!self.context){
                 NSLog(@"Critical Error - ofiOS GLKView.m could not start any type of OpenGLES renderer");
-                [self release];
+                self = nil;
                 return nil;
             }
         }
@@ -116,7 +116,6 @@ andPreferedRenderer:(ESRendererVersion)version
 
 - (void) dealloc{
     [self destroy];
-    [super dealloc];
 }
 
 - (void) setup {

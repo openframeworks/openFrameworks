@@ -190,6 +190,15 @@ bool ofxiOSUIImageToOFTexture(UIImage * uiImage, ofTexture & outTexture, int tar
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+
+/// TODO: define protocol for ofxiOSScreenGrab, and give protocol explicitly for argument of ofxiOSScreenGrab
+//@protocol ofxiOSSaveDelegate <NSObject>
+//
+//@optional
+//- (void)saveComplete;
+//
+//@end
+
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
 void ofxiOSScreenGrab(id delegate);

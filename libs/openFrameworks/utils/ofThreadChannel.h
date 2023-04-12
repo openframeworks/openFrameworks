@@ -1,10 +1,8 @@
 #pragma once
 
-
 #include <mutex>
 #include <queue>
 #include <condition_variable>
-
 
 /// \brief Safely send data between threads without additional synchronization.
 ///
@@ -276,6 +274,15 @@ public:
 	/// a message right afterwards
 	bool empty() const{
 		return queue.empty();
+	}
+
+
+	/// \brief Queries size of queue.
+	///
+	/// This call is only an approximation, since messages come from a different
+	/// thread.
+	size_t size() const {
+		return queue.size();
 	}
 
 private:

@@ -63,7 +63,7 @@ common:
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
-
+ 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
 	# ADDON_INCLUDES_EXCLUDE =
@@ -78,3 +78,5 @@ vs:
 	# a specific platform
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/posix/%
 	ADDON_DEFINES = OSC_HOST_LITTLE_ENDIAN
+
+	

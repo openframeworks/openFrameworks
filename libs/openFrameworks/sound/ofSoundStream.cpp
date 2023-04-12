@@ -21,10 +21,14 @@
 #endif
 
 namespace{
-    ofSoundStream systemSoundStream;
+    ofSoundStream &getSystemSoundStream() {
+        static ofSoundStream _;
+        return _;
+    }
 }
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
 
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
@@ -117,27 +121,27 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(ofSoundStreamSettings & settings) {
-	systemSoundStream.setup(settings);
+    getSystemSoundStream().setup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-    systemSoundStream.stop();
+    getSystemSoundStream().stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-    systemSoundStream.start();
+    getSystemSoundStream().start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-    systemSoundStream.close();
+    getSystemSoundStream().close();
 }
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
-	vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
+	vector<ofSoundDevice> deviceList = getSystemSoundStream().getDeviceList();
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }
@@ -343,7 +347,7 @@ vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name,
 	vector<ofSoundDevice> hits;
 	
 	for(size_t i = 0; i < devs.size(); i++) {
-		bool nameMatch = devs[i].name.find(name) != string::npos;
+		bool nameMatch = devs[i].name.find(name) != std::string::npos;
 		bool inMatch = (inChannels == UINT_MAX) || (devs[i].inputChannels == inChannels);
 		bool outMatch = (outChannels == UINT_MAX) || (devs[i].outputChannels == outChannels);
 		

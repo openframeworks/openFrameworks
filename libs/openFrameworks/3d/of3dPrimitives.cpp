@@ -13,7 +13,8 @@
 #include "ofTexture.h"
 #include "of3dUtils.h"
 
-using namespace std;
+using std::vector;
+using std::shared_ptr;
 
 of3dPrimitive::of3dPrimitive()
 :usingVbo(true)

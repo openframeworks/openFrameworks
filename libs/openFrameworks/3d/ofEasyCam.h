@@ -3,6 +3,8 @@
 #include "ofCamera.h"
 #include "ofEvents.h"
 #include "ofRectangle.h"
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/gtc/quaternion.hpp"
 
 /// \brief A super simple camera for interacting with objects in 3D space.
@@ -264,9 +266,6 @@ private:
 	glm::vec3 upAxis{0,1,0};
 	
 	glm::vec2 mouseAtScroll;
-	
-	/// \brief previous far and near clip.
-	float prevFarClip, prevNearClip;
 	
 	TransformType currentTransformType;
 	/// \brief This struct holds the combination of mouse button and key press that will trigger a specific interaction.

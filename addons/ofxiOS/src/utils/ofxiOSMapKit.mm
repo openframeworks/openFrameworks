@@ -40,6 +40,7 @@
 #include "glm/common.hpp"
 
 ofxiOSMapKit::ofxiOSMapKit() {
+    mapKitDelegate = nil;
 	mapView = nil;
 }
 
@@ -63,7 +64,6 @@ void ofxiOSMapKit::close() {
 		ofLogVerbose("ofxiOSMapKit") << "close(): releasing MKMapView";
         mapView.delegate = nil;
         [mapView removeFromSuperview];
-        [mapView release];
         mapView = nil;
     }
 }
@@ -221,7 +221,8 @@ void ofxiOSMapKit::addListener(ofxiOSMapKitListener* o) {
     if(isOpen()) {
         ofLogVerbose("ofxiOSMapKit") << "addListener(): adding ofxiOSMapKitDelegate";
         if(mapView.delegate == nil) {
-            mapView.delegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+            mapKitDelegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+            mapView.delegate = mapKitDelegate;
         }
         listeners.push_back(o);
     }

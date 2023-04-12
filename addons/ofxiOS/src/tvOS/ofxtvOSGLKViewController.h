@@ -5,8 +5,8 @@
 
 #pragma once
 
-#ifndef ofxtvOSViewController_h
-#define ofxtvOSViewController_h
+#ifndef ofxtvOSGLKViewController_h
+#define ofxtvOSGLKViewController_h
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
@@ -18,8 +18,8 @@ class ofxiOSApp;
 
 @property (nonatomic, retain) ofxiOSGLKView * glView;
 
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
-- (id)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
+- (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
+- (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
 
 - (void)setPreferredFPS:(int)fps;
 - (EAGLSharegroup *)getSharegroup;

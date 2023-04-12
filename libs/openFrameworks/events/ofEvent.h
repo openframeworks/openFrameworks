@@ -11,6 +11,13 @@
 #include <functional>
 #include <deque>
 
+#include <cstddef>
+#include <iostream>
+#include <array>
+
+// FIXME: deprecated only
+#include "ofConstants.h"
+
 
 /*! \cond PRIVATE */
 namespace of{
@@ -50,9 +57,8 @@ namespace priv{
 		StdFunctionId(uint64_t id)
 		:id(id){}
 	public:
-		StdFunctionId(){
-			id = nextId++;
-		}
+		StdFunctionId()
+		:id(nextId++){}
 
 		virtual ~StdFunctionId();
 

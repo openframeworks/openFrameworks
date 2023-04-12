@@ -201,7 +201,7 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) const {
 
 
 //----------------------------------------------------------
-void ofxCvContourFinder::draw(const ofPoint & point) const{
+void ofxCvContourFinder::draw(const glm::vec2 & point) const{
 	draw(point.x, point.y);
 }
 

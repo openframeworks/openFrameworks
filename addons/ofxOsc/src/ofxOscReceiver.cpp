@@ -2,8 +2,6 @@
 // copyright (c) Damian Stewart 2007-2009
 #include "ofxOscReceiver.h"
 
-using namespace std;
-
 //--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver(){
 	stop();
@@ -75,7 +73,7 @@ bool ofxOscReceiver::start() {
 		listenSocket = std::move(newPtr);
 	}
 	catch(std::exception &e){
-		string what = e.what();
+		std::string what = e.what();
 		// strip endline as ofLogError already adds one
 		if(!what.empty() && what.back() == '\n') {
 			what = what.substr(0, what.size()-1);
@@ -143,7 +141,7 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter &parameter){
 			if(p){
 				if(address[i] == p->getEscapedName()){
 					if(p->type() == typeid(ofParameterGroup).name()){
-						if(address.size() >= i+1){
+						if(address.size() > i+1){
 							ofParameterGroup* g = static_cast<ofParameterGroup*>(p);
 							if(g->contains(address[i+1])){
 								p = &g->get(address[i+1]);

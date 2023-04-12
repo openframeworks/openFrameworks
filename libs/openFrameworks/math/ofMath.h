@@ -143,7 +143,7 @@ float ofNormalize(float value, float min, float max);
 /// \param outputMax The upper bound of the output range.
 /// \param clamp True if the value should be clamped to [outputMin, outputMax).
 /// \note If the absolute difference between inputMin and inputMax is less than
-///		  FLT_EPSILON, outputMin will be returned to prevent divide by zero
+///		  std::numeric_limits<float>::epsilon(), outputMin will be returned to prevent divide by zero
 ///		  errors.
 /// \returns a mapped floating point number.
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
@@ -441,13 +441,13 @@ bool ofLineSegmentIntersection(const vectype& line1Start, const vectype& line1En
 	compareB = diffLB.x*line2Start.y - diffLB.y*line2Start.x;
 	if (
 		(
-			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) < compareA ) ^
-			( ( diffLA.x*line2End.y - diffLA.y*line2End.x ) < compareA )
+			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) <= compareA ) ^
+			( ( diffLA.x*line2End.y - diffLA.y*line2End.x ) <= compareA )
 		)
 		&&
 		(
-			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) < compareB ) ^
-			( ( diffLB.x*line1End.y - diffLB.y*line1End.x) < compareB )
+			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) <= compareB ) ^
+			( ( diffLB.x*line1End.y - diffLB.y*line1End.x) <= compareB )
 		)
 	)
 	{

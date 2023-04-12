@@ -8,8 +8,6 @@
 
 #pragma once
 
-
-#include "ofConstants.h"
 #include "of3dPrimitives.h"
 
 
