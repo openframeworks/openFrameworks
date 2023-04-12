@@ -497,11 +497,11 @@ function createPackage {
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ] || [ "$pkg_platform" = "android" ]; then
 	    cd ${pkg_ofroot}
 		mv apps/projectGenerator/commandLine .
-		mv apps/projectGenerator/ofxProjectGenerator .
+		mv apps/projectGenerator/ofxProjectGenerator . || true
 		rm -rf apps/projectGenerator
 		mkdir apps/projectGenerator
 		mv commandLine apps/projectGenerator/
-		mv ofxProjectGenerator apps/projectGenerator/
+		mv ofxProjectGenerator apps/projectGenerator/ || true
 		cd apps/projectGenerator/commandLine
 		deleteCodeblocks
 		deleteVS
