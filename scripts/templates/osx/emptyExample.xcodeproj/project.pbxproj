@@ -63,22 +63,6 @@
 			"sourceTree": "<group>",
 			"fileEncoding": "4"
 		},
-		"E4B69E1D0A3A1BDC003C02F2": {
-			"path": "src/main.cpp",
-			"isa": "PBXFileReference",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"name": "main.cpp",
-			"sourceTree": "SOURCE_ROOT",
-			"fileEncoding": "4"
-		},
-		"E4B69E1E0A3A1BDC003C02F2": {
-			"path": "src/ofApp.cpp",
-			"isa": "PBXFileReference",
-			"fileEncoding": "4",
-			"name": "ofApp.cpp",
-			"sourceTree": "SOURCE_ROOT",
-			"explicitFileType": "sourcecode.cpp.cpp"
-		},
 		"E4B69B4C0A3A1720003C02F2": {
 			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
 			"targets": [
@@ -99,6 +83,22 @@
 			"hasScannedForEncodings": "0",
 			"projectRoot": "",
 			"mainGroup": "E4B69B4A0A3A1720003C02F2"
+		},
+		"E4B69E1E0A3A1BDC003C02F2": {
+			"path": "src/ofApp.cpp",
+			"isa": "PBXFileReference",
+			"fileEncoding": "4",
+			"name": "ofApp.cpp",
+			"sourceTree": "SOURCE_ROOT",
+			"explicitFileType": "sourcecode.cpp.cpp"
+		},
+		"E4B69E1D0A3A1BDC003C02F2": {
+			"path": "src/main.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"name": "main.cpp",
+			"sourceTree": "SOURCE_ROOT",
+			"fileEncoding": "4"
 		},
 		"19B789C429E5AB4A0082E9B8": {
 			"inputPaths": [],
@@ -166,7 +166,6 @@
 				"E4B69E1C0A3A1BDC003C02F2",
 				"191EF70929D778A400F35F26",
 				"BB4B014C10F69532006C3DED",
-				"6948EE371B920CB800B5AC1A",
 				"E4B69B5B0A3A1756003C02F2"
 			]
 		},
@@ -235,12 +234,6 @@
 		"E4B69E200A3A1BDC003C02F2": {
 			"isa": "PBXBuildFile",
 			"fileRef": "E4B69E1D0A3A1BDC003C02F2"
-		},
-		"6948EE371B920CB800B5AC1A": {
-			"isa": "PBXGroup",
-			"name": "local_addons",
-			"children": [],
-			"sourceTree": "<group>"
 		},
 		"E4B69E210A3A1BDC003C02F2": {
 			"isa": "PBXBuildFile",
