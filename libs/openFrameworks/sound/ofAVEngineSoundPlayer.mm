@@ -85,9 +85,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 @end
 
 
-@interface AVEnginePlayer () {
-    BOOL resetAudioEngine;
-}
+@interface AVEnginePlayer ()
 
 //@property(nonatomic, strong) AVAudioEngine *engine;
 @property(nonatomic, strong) AVAudioMixerNode *mainMixer;
@@ -108,6 +106,8 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 @property(nonatomic, assign) bool mPlayingAtInterruption;
 @property(nonatomic, assign) float mPositonSecondsAtInterruption;
 
+@property(nonatomic, assign) BOOL resetAudioEngine;
+
 @end
 
 @implementation AVEnginePlayer
@@ -120,7 +120,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     @autoreleasepool {
         _engine = [[AVAudioEngine alloc] init];
     }
-    resetAudioEngine = NO;
+    self.resetAudioEngine = NO;
   }
   
   return _engine;
@@ -167,7 +167,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     }
     if([self engine] && [[self engine] isRunning]) {
         [_engine stop];
-        resetAudioEngine = NO;
+        self.resetAudioEngine = NO;
     }
     @autoreleasepool {
         if(_engine != nil) {
@@ -252,7 +252,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 		_mRequestedPositonSeconds = 0.0f;
 		_startedSampleOffset = 0;
         _bInterruptedWhileRunning = NO;
-        resetAudioEngine = NO;
+        _resetAudioEngine = NO;
         _mPlayingAtInterruption = NO;
         _mPositonSecondsAtInterruption = 0;
         _isConfigChangePending = NO;
@@ -321,7 +321,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         // sign up for notifications from the engine if there's a hardware config change
         [[NSNotificationCenter defaultCenter] addObserverForName:AVAudioEngineConfigurationChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         
-            resetAudioEngine = YES;
+            weak_self.resetAudioEngine = YES;
             
             NSLog(@"Received a AVAudioEngineConfigurationChangeNotification %@ notification! NOTE: %@", AVAudioEngineConfigurationChangeNotification, note.description);
 			
@@ -597,16 +597,16 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         [[self engine] startAndReturnError:&error];
         if (error) {
             NSLog(@"Error starting engine: %@", [error localizedDescription]);
-//            if(resetAudioEngine) {
+//            if(self.resetAudioEngine) {
 //                [self engineReset];
 //            }
             problem = YES;
             
         } else {
             NSLog(@"Engine start successful");
-            if(resetAudioEngine) {
+            if(self.resetAudioEngine) {
 //                [self engineReset];
-                if(resetAudioEngine == NO)
+                if(self.resetAudioEngine == NO)
                     problem = YES;
                 
             }
