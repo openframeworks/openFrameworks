@@ -178,7 +178,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
 	glfwWindowHint(GLFW_DECORATED, settings.decorated);
-	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
+	
     #ifdef TARGET_OPENGLES
 	    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -197,6 +197,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+			glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
 			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
