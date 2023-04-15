@@ -4,6 +4,7 @@
 openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welcome!
 
 - [Grab the Nightly Release (to avoid submodule cloning)](https://github.com/openframeworks/openFrameworks/releases)
+- [Setup guides for different Platforms](https://openframeworks.cc/download/)
 - [Join Our Slack](https://join.slack.com/t/openframeworks/shared_invite/zt-1r2brqms0-dZMMFZgZhFTgomjJ0vlCjA)
 - [Discuss on the Forum](https://forum.openframeworks.cc) 
 - [Follow OF on Mastodon](https://fosstodon.org/@openframeworks)
