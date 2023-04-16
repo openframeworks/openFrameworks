@@ -1,0 +1,5 @@
+
+add_subdirectory(asciiVideoExample)
+add_subdirectory(slitscanRadialClockExample)
+add_subdirectory(videoGrabberExample)
+add_subdirectory(videoPlayerExample)

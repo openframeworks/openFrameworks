@@ -1,0 +1,2 @@
+define_example(multiWindowExample)
+target_link_libraries(multiWindowExample of::ofxGui)

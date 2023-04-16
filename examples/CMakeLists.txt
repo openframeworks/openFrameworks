@@ -28,9 +28,11 @@ macro(define_example TARGET_NAME)       # A macro is executed in the caller's sc
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "openframeworks/examples/${example_name}")
 
     # And copy the resource files to destination after building
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD 
-            COMMAND ${CMAKE_COMMAND} -E 
-            copy_directory "${CMAKE_CURRENT_LIST_DIR}/bin/data" "${BIN_DIR}/data")
+    if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/bin/data")
+        add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E 
+                copy_directory "${CMAKE_CURRENT_LIST_DIR}/bin/data" "${BIN_DIR}/data")
+    endif()
 endmacro()
 
 
@@ -40,7 +42,7 @@ add_subdirectory(3d)
 
 if (OF_TARGET_ARCHITECTURE MATCHES "android")
     # add_subdirectory(android)
-    message(WARNING "[openframeworks] Android Examples are not yet implemented. Please implement them yourself, test and submit a PR!")
+    message(WARNING "[openframeworks] Android Examples are not yet implemented. Feel free to implement them yourself, test and submit a PR!")
 endif()
 
 add_subdirectory(communication)
@@ -58,15 +60,20 @@ add_subdirectory(input_output)
 
 if (OF_TARGET_ARCHITECTURE MATCHES "ios")
     #add_subdirectory(ios)
-    message(WARNING "[openframeworks] iOS Examples are not yet implemented. Please implement them yourself, test and submit a PR!")
+    message(WARNING "[openframeworks] iOS Examples are not yet implemented. Feel free to implement them yourself, test and submit a PR!")
 endif()
 
 add_subdirectory(math)
 add_subdirectory(shader)
 add_subdirectory(sound)
 add_subdirectory(strings)
-# add_subdirectory(templates)
-# add_subdirectory(threads)
-# add_subdirectory(tvOS)
-# add_subdirectory(video)
-# add_subdirectory(windowing)
+add_subdirectory(templates)
+add_subdirectory(threads)
+
+if (OF_TARGET_ARCHITECTURE MATCHES "tvos")
+    #add_subdirectory(tvOS)
+    message(WARNING "[openframeworks] tvOS Examples are not yet implemented. Feel free to implement them yourself, test and submit a PR!")
+endif()
+
+add_subdirectory(video)
+add_subdirectory(windowing)
