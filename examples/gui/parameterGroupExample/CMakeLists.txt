@@ -1,0 +1,2 @@
+define_example(parameterGroupExample)
+target_link_libraries(parameterGroupExample of::ofxGui)

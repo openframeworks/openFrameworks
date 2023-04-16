@@ -52,7 +52,7 @@ if (NOT OF_TARGET_ARCHITECTURE MATCHES "msvc" AND NOT OF_TARGET_ARCHITECTURE MAT
 endif()
 
 add_subdirectory(graphics)
-# add_subdirectory(gui)
+add_subdirectory(gui)
 # add_subdirectory(input_output)
 # add_subdirectory(ios)
 # add_subdirectory(math)
