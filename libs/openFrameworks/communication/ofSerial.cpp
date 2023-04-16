@@ -157,18 +157,15 @@ void ofSerial::buildDeviceList(){
 	vector <string> prefixMatch;
 
 	#ifdef TARGET_OSX
-
-		prefixMatch.push_back("cu.");
-		prefixMatch.push_back("tty.");
-
+		prefixMatch = {
+			"cu.", "tty."
+		};
 	#endif
 
 	#ifdef TARGET_LINUX
-
-		prefixMatch.push_back("ttyACM");
-		prefixMatch.push_back("ttyS");
-		prefixMatch.push_back("ttyUSB");
-		prefixMatch.push_back("rfc");
+		prefixMatch = {
+			"ttyACM", "ttyS", "ttyUSB", "rfc"
+		};
 
 	#endif
 

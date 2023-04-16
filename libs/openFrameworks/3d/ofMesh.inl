@@ -2192,29 +2192,51 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			auto i1 = faces[i*3];
 			auto i2 = faces[i*3+1];
 			auto i3 = faces[i*3+2];
-			auto i12 = vertices.size();
-			auto i23 = i12+1;
-			auto i13 = i12+2;
+			unsigned int i12 = vertices.size();
+			unsigned int i23 = i12+1;
+			unsigned int i13 = i12+2;
 			auto v1 = vertices[i1];
 			auto v2 = vertices[i2];
 			auto v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
-			vertices.emplace_back(glm::normalize(toGlm(v1+v2)));
-			vertices.emplace_back(glm::normalize(toGlm(v2+v3)));
-			vertices.emplace_back(glm::normalize(toGlm(v1+v3)));
+//			vertices.emplace_back(glm::normalize(toGlm(v1+v2)));
+//			vertices.emplace_back(glm::normalize(toGlm(v2+v3)));
+//			vertices.emplace_back(glm::normalize(toGlm(v1+v3)));
+			
+			vertices.insert(vertices.end(), {
+				glm::normalize(toGlm(v1+v2)),
+				glm::normalize(toGlm(v2+v3)),
+				glm::normalize(toGlm(v1+v3))
+			});
+			
 			//now recreate indices
-			newFaces.emplace_back(i1);
-			newFaces.emplace_back(i12);
-			newFaces.emplace_back(i13);
-			newFaces.emplace_back(i2);
-			newFaces.emplace_back(i23);
-			newFaces.emplace_back(i12);
-			newFaces.emplace_back(i3);
-			newFaces.emplace_back(i13);
-			newFaces.emplace_back(i23);
-			newFaces.emplace_back(i12);
-			newFaces.emplace_back(i23);
-			newFaces.emplace_back(i13);
+			newFaces.insert(newFaces.end(), {
+				i1,
+				i12,
+				i13,
+				i2,
+				i23,
+				i12,
+				i3,
+				i13,
+				i23,
+				i12,
+				i23,
+				i13
+			});
+			
+//			newFaces.emplace_back(i1);
+//			newFaces.emplace_back(i12);
+//			newFaces.emplace_back(i13);
+//			newFaces.emplace_back(i2);
+//			newFaces.emplace_back(i23);
+//			newFaces.emplace_back(i12);
+//			newFaces.emplace_back(i3);
+//			newFaces.emplace_back(i13);
+//			newFaces.emplace_back(i23);
+//			newFaces.emplace_back(i12);
+//			newFaces.emplace_back(i23);
+//			newFaces.emplace_back(i13);
 		}
 		faces.swap(newFaces);
 	}

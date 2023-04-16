@@ -767,8 +767,8 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	tex.allocate(texData);
 
     attachTexture(tex, internalFormat, attachmentPoint);
-	dirty.push_back(true);
-	activeDrawBuffers.push_back(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+	dirty.emplace_back(true);
+	activeDrawBuffers.emplace_back(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 }
 
 //----------------------------------------------------------
@@ -793,7 +793,7 @@ void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachm
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         
 		GLuint colorBuffer = createAndAttachRenderbuffer(internalFormat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
-		colorBuffers.push_back(colorBuffer);
+		colorBuffers.emplace_back(colorBuffer);
 		retainRB(colorBuffer);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, temp);

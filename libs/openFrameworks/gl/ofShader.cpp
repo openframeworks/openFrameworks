@@ -512,7 +512,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		// ).getAbsolutePath().string();
 		).getAbsolutePath();
 
-		included.push_back( include );
+		included.emplace_back( include );
 
 		ofBuffer buffer = ofBufferFromFile( include );
 		if ( !buffer.size() ) {

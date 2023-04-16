@@ -437,7 +437,7 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 
 
 	case ofPath::Command::curveTo:
-		curvePoints.push_back(command.to);
+		curvePoints.emplace_back(command.to);
 
 		//code adapted from ofxVectorGraphics to convert catmull rom to bezier
 		if(curvePoints.size()==4){
@@ -1192,7 +1192,7 @@ ofStyle ofCairoRenderer::getStyle() const{
 }
 
 void ofCairoRenderer::pushStyle(){
-	styleHistory.push_back(currentStyle);
+	styleHistory.emplace_back(currentStyle);
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.pop_front();

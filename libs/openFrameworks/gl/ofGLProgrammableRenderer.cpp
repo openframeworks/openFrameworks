@@ -88,7 +88,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
-	framebufferIdStack.push_back(defaultFramebufferId);
+	framebufferIdStack.emplace_back(defaultFramebufferId);
 	matrixStack.setRenderSurface(*window);
 	beginDefaultShader();
 	viewport();
@@ -1135,7 +1135,7 @@ ofStyle ofGLProgrammableRenderer::getStyle() const{
 }
 
 void ofGLProgrammableRenderer::pushStyle(){
-	styleHistory.push_back(currentStyle);
+	styleHistory.emplace_back(currentStyle);
 	//if we are over the max number of styles we have set, then delete the oldest styles.
 	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
 		styleHistory.pop_front();
@@ -1346,7 +1346,7 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
 	// I'm keeping it here, so that if we want to do more fancyful
 	// named framebuffers with GL 4.5+, we can have 
 	// different implementations.
-	framebufferIdStack.push_back(currentFramebufferId);
+	framebufferIdStack.emplace_back(currentFramebufferId);
 	currentFramebufferId = fbo.getId();
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
@@ -1364,7 +1364,7 @@ void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fbo
 	// I'm keeping it here, so that if we want to do more fancyful
 	// named framebuffers with GL 4.5+, we can have
 	// different implementations.
-	framebufferIdStack.push_back(currentFramebufferId);
+	framebufferIdStack.emplace_back(currentFramebufferId);
 	currentFramebufferId = fboSrc.getId();
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);

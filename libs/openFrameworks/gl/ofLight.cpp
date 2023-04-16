@@ -118,7 +118,7 @@ void ofLight::setup() {
 			}
 		}
 		if(!bLightFound && ofIsGLProgrammableRenderer()){
-			ofLightsData().push_back(data);
+			ofLightsData().emplace_back(data);
 			data->glIndex = ofLightsData().size() - 1;
 			data->isEnabled = true;
 			bLightFound = true;
