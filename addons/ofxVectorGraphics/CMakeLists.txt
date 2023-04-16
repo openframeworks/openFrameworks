@@ -1,0 +1,3 @@
+define_addon(ofxVectorGraphics)
+target_sources(ofxVectorGraphics PRIVATE libs/CreEPS.cpp)
+target_include_directories(ofxVectorGraphics PUBLIC libs)

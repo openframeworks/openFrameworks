@@ -1,3 +1,4 @@
+message(STATUS "[openframeworks] Configuring examples")
 
 # Macro for defining an example with all of its properties
 macro(define_example TARGET_NAME)       # A macro is executed in the caller's scope (current list is the caller)
@@ -45,8 +46,12 @@ add_subdirectory(communication)
 add_subdirectory(computer_vision)
 add_subdirectory(events)
 add_subdirectory(gl)
-# add_subdirectory(gles)
-# add_subdirectory(graphics)
+
+if (NOT OF_TARGET_ARCHITECTURE MATCHES "msvc" AND NOT OF_TARGET_ARCHITECTURE MATCHES "macos" AND NOT OF_TARGET_ARCHITECTURE MATCHES "linux")
+    add_subdirectory(gles)
+endif()
+
+add_subdirectory(graphics)
 # add_subdirectory(gui)
 # add_subdirectory(input_output)
 # add_subdirectory(ios)

@@ -1,3 +1,4 @@
+message(STATUS "[openframeworks] Configuring addons")
 
 function(define_addon TARGET_NAME)
     file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/**)
@@ -45,5 +46,5 @@ add_subdirectory(ofxOsc)
 # add_subdirectory(ofxSvg)
 # add_subdirectory(ofxThreadedImageLoader)
 # add_subdirectory(ofxUnitTests)
-# add_subdirectory(ofxVectorGraphics)
+add_subdirectory(ofxVectorGraphics)
 # add_subdirectory(ofxXmlSettings)

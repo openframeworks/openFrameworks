@@ -63,18 +63,22 @@ function(get_packages_and_link)
     endif()
     message(STATUS "[openframeworks] Using ${OF_TARGET_ARCHITECTURE} toolchain, downloading dependencies (-DOF_VERBOSE=ON for progress)")
     foreach(dependency IN LISTS ARGN)
-        set(_URL "http://ci.openframeworks.cc/libs/openFrameworksLibs_master_${dependency}")
-        if (OF_VERBOSE)
-            message(STATUS "[openframeworks] Fetching ${_URL}")
-        endif()
 
         # Download and extract the compressed archive
-        CPMAddPackage(
-            NAME of-deps-${dependency}
-            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-            DOWNLOAD_ONLY YES
-            URL ${_URL}
-        )
+        if (NOT of-deps-${dependency}_CONFIGURED)
+            set(_URL "http://ci.openframeworks.cc/libs/openFrameworksLibs_master_${dependency}")
+            message(STATUS "[openframeworks] Fetching ${_URL}")
+            CPMAddPackage(
+                NAME of-deps-${dependency}
+                DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+                DOWNLOAD_ONLY YES
+                URL ${_URL}
+            )
+            set(of-deps-${dependency}_SOURCE_DIR ${of-deps-${dependency}_SOURCE_DIR} CACHE BOOL "" FORCE)
+            set(of-deps-${dependency}_CONFIGURED ON CACHE BOOL "" FORCE)
+        else()
+            message(STATUS "[openframeworks] Skipping check of ${dependency} to save build time. To force a re-download, delete the build folder and re-run cmake.")
+        endif()
 
         # Now, create the targets and link all files to them
         set(PACKAGE_SOURCE_DIR ${of-deps-${dependency}_SOURCE_DIR})
@@ -142,7 +146,6 @@ else ()
 endif()
 
 
-
 # Find system packages
 if (NOT OF_TARGET_ARCHITECTURE MATCHES "android")
     find_package(OpenGL)
@@ -162,13 +165,20 @@ endif()
 
 # TODO: Now, download glut since it's somehow not part of the apothecary. Glut support seems to be deprecated
 if (WIN32)
-    CPMAddPackage(
-        NAME of-deps-glut
-        GIT_REPOSITORY "https://github.com/markkilgard/glut"
-        GIT_TAG "8cd96cb440f1f2fac3a154227937be39d06efa53"
-        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-        DOWNLOAD_ONLY YES
-    )
+    if (NOT of-deps-glut_CONFIGURED)
+        CPMAddPackage(
+            NAME of-deps-glut
+            GIT_REPOSITORY "https://github.com/markkilgard/glut"
+            GIT_TAG "8cd96cb440f1f2fac3a154227937be39d06efa53"
+            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+            DOWNLOAD_ONLY YES
+        )
+        set(of-deps-glut_SOURCE_DIR ${of-deps-glut_SOURCE_DIR} CACHE PATH "" FORCE)
+        set(of-deps-glut_CONFIGURED ON CACHE BOOL "" FORCE)
+    else()
+        message(STATUS "[openframeworks] Skipping check of of-deps-glut to save build time. To force a re-download, delete the build folder and re-run cmake.")
+    endif()
+
     add_library(of-deps-glut INTERFACE)
     add_library(of::glut ALIAS of-deps-glut)
     target_include_directories(of-deps-glut INTERFACE ${of-deps-glut_SOURCE_DIR}/include)
@@ -205,3 +215,6 @@ if (OF_TARGET_ARCHITECTURE STREQUAL "msvc" OR       # GLEW is only a requirement
     OF_TARGET_ARCHITECTURE MATCHES "linux")
         target_link_libraries(openframeworks of::rtAudio of::fmod of::glfw of::cairo of::glew)
 endif()
+
+# And finally find all shared libraries that are part of the dependencies, to be used later
+file(GLOB_RECURSE OF_DEPS_SHARED_LIBS "${CMAKE_BINARY_DIR}/_deps/**/${CMAKE_SHARED_LIBRARY_PREFIX}**${CMAKE_SHARED_LIBRARY_SUFFIX}")

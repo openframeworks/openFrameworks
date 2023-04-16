@@ -31,8 +31,10 @@ endfunction()
 
 # After compilation copy the dll files to the binary dir
 function(of_copy_runtime_to_bin_dir_after_build TARGET BIN_DIR)
-    file(GLOB_RECURSE libs "${CMAKE_BINARY_DIR}/_deps/**/${CMAKE_SHARED_LIBRARY_PREFIX}**${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    foreach(lib_path IN LISTS libs)
+    if (NOT DEFINED OF_DEPS_SHARED_LIBS)
+        message(FATAL_ERROR "INTERNAL ERROR: of_copy_runtime_to_bin_dir_after_build: OF_DEPS_SHARED_LIBS is not defined")
+    endif()
+    foreach(lib_path IN LISTS OF_DEPS_SHARED_LIBS)
         get_filename_component(lib_name ${lib_path} NAME)
         add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${lib_path}" "${BIN_DIR}/${lib_name}")
     endforeach()
