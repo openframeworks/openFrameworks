@@ -631,7 +631,7 @@ string ofBinaryToString(const string& value) {
 vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty, bool trim) {
 	vector<string> result;
 	if (delimiter.empty()) {
-		result.push_back(source);
+		result.emplace_back(source);
 		return result;
 	}
 	string::const_iterator substart = source.begin(), subend;
@@ -642,7 +642,7 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 			sub = ofTrim(sub);
 		}
 		if (!ignoreEmpty || !sub.empty()) {
-			result.push_back(sub);
+			result.emplace_back(sub);
 		}
 		if (subend == source.end()) {
 			break;

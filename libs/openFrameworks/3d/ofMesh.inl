@@ -180,7 +180,7 @@ bool ofMesh_<V,N,C,T>::hasIndices() const{
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::addVertex(const V& v){
-	vertices.push_back(v);
+	vertices.emplace_back(v);
 	bVertsChanged = true;
 	bFacesDirty = true;
 }
@@ -210,7 +210,7 @@ void ofMesh_<V,N,C,T>::addVertices(const V* verts, std::size_t amt){
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::addColor(const C& c){
-	colors.push_back(c);
+	colors.emplace_back(c);
 	bColorsChanged = true;
 	bFacesDirty = true;
 }
@@ -240,7 +240,7 @@ void ofMesh_<V,N,C,T>::addColors(const C* cols, std::size_t amt){
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::addNormal(const N& n){
-	normals.push_back(n);
+	normals.emplace_back(n);
 	bNormalsChanged = true;
 	bFacesDirty = true;
 }
@@ -271,7 +271,7 @@ void ofMesh_<V,N,C,T>::addNormals(const N* norms, std::size_t amt){
 template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::addTexCoord(const T& t){
 	//TODO: figure out if we add to all other arrays to match
-	texCoords.push_back(t);
+	texCoords.emplace_back(t);
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
@@ -309,7 +309,7 @@ ofIndexType ofMesh_<V,N,C,T>::getIndex(ofIndexType i) const{
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
 void ofMesh_<V,N,C,T>::addIndex(ofIndexType i){
-	indices.push_back(i);
+	indices.emplace_back(i);
 	bIndicesChanged = true;
 	bFacesDirty = true;
 }
@@ -1076,7 +1076,7 @@ void ofMesh_<V,N,C,T>::append(const ofMesh_<V,N,C,T> & mesh){
 	}
 	if(mesh.getNumIndices()){
 		for(auto index: mesh.getIndices()){
-			indices.push_back(index+prevNumVertices);
+			indices.emplace_back(index+prevNumVertices);
 		}
 	}
 }
@@ -1168,14 +1168,14 @@ void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
 
 		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0
                 || lineStr.find("property double x")==0 || lineStr.find("property double y")==0 || lineStr.find("property double z")==0)){
-			meshDefinition.push_back(Position);
+			meshDefinition.emplace_back(Position);
 			vertexCoordsFound++;
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float r")==0 || lineStr.find("property float g")==0 || lineStr.find("property float b")==0 || lineStr.find("property float a")==0)){
 			colorCompsFound++;
-			meshDefinition.push_back(Color);
+			meshDefinition.emplace_back(Color);
 			data.getColors().resize(data.getVertices().size());
 			continue;
 		}
@@ -1183,21 +1183,21 @@ void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
 		if(state==VertexDef && (lineStr.find("property uchar red")==0 || lineStr.find("property uchar green")==0 || lineStr.find("property uchar blue")==0 || lineStr.find("property uchar alpha")==0)){
 			colorTypeIsUChar = true;
 			colorCompsFound++;
-			meshDefinition.push_back(Color);
+			meshDefinition.emplace_back(Color);
 			data.getColors().resize(data.getVertices().size());
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float u")==0 || lineStr.find("property float v")==0|| lineStr.find("property float s")==0 || lineStr.find("property float t")==0)){
 			texCoordsFound++;
-			meshDefinition.push_back(TexCoord);
+			meshDefinition.emplace_back(TexCoord);
 			data.getTexCoords().resize(data.getVertices().size());
 			continue;
 		}
 
 		if(state==VertexDef && (lineStr.find("property float nx")==0 || lineStr.find("property float ny")==0 || lineStr.find("property float nz")==0)){
 			normalsCoordsFound++;
-			meshDefinition.push_back(Normal);
+			meshDefinition.emplace_back(Normal);
 			if (normalsCoordsFound==3) data.getNormals().resize(data.getVertices().size());
 			continue;
 		}
@@ -1580,22 +1580,22 @@ void ofMesh_<V,N,C,T>::mergeDuplicateVertices() {
 
 		if( ptCreated[index] == false ){
 			oldIndexNewIndex[index] = newPoints.size();
-			newPoints.push_back( p );
+			newPoints.emplace_back( p );
 			if(hasColors()) {
-				newColors.push_back(colors[index]);
+				newColors.emplace_back(colors[index]);
 			}
 			if(hasTexCoords()) {
-				newTCoords.push_back(tcoords[index]);
+				newTCoords.emplace_back(tcoords[index]);
 			}
 			if(hasNormals()) {
-				newNormals.push_back(normals[index]);
+				newNormals.emplace_back(normals[index]);
 			}
 
 			ptCreated[index] = true;
 		}
 
 		//ofLogNotice("ofMesh") << "[" << i << "]: old " << index << " --> " << oldIndexNewIndex[index];
-		newIndexes.push_back( oldIndexNewIndex[index] );
+		newIndexes.emplace_back( oldIndexNewIndex[index] );
 	}
 
 	verts.clear();
@@ -1784,7 +1784,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 		std::vector<V> verts;
 		for(ofIndexType i = 0; i < triangles.size(); i++) {
 			for(ofIndexType j = 0; j < 3; j++) {
-				verts.push_back( triangles[i].getVertex(j) );
+				verts.emplace_back( triangles[i].getVertex(j) );
 			}
 		}
 
@@ -1824,7 +1824,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 						if(verts[i].x == triangles[j].getVertex(k).x) {
 							if(verts[i].y == triangles[j].getVertex(k).y) {
 								if(verts[i].z == triangles[j].getVertex(k).z) {
-									vertHash[vstring].push_back( j );
+									vertHash[vstring].emplace_back( j );
 								}
 							}
 						}
@@ -2199,22 +2199,22 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			auto v2 = vertices[i2];
 			auto v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
-			vertices.push_back(glm::normalize(toGlm(v1+v2)));
-			vertices.push_back(glm::normalize(toGlm(v2+v3)));
-			vertices.push_back(glm::normalize(toGlm(v1+v3)));
+			vertices.emplace_back(glm::normalize(toGlm(v1+v2)));
+			vertices.emplace_back(glm::normalize(toGlm(v2+v3)));
+			vertices.emplace_back(glm::normalize(toGlm(v1+v3)));
 			//now recreate indices
-			newFaces.push_back(i1);
-			newFaces.push_back(i12);
-			newFaces.push_back(i13);
-			newFaces.push_back(i2);
-			newFaces.push_back(i23);
-			newFaces.push_back(i12);
-			newFaces.push_back(i3);
-			newFaces.push_back(i13);
-			newFaces.push_back(i23);
-			newFaces.push_back(i12);
-			newFaces.push_back(i23);
-			newFaces.push_back(i13);
+			newFaces.emplace_back(i1);
+			newFaces.emplace_back(i12);
+			newFaces.emplace_back(i13);
+			newFaces.emplace_back(i2);
+			newFaces.emplace_back(i23);
+			newFaces.emplace_back(i12);
+			newFaces.emplace_back(i3);
+			newFaces.emplace_back(i13);
+			newFaces.emplace_back(i23);
+			newFaces.emplace_back(i12);
+			newFaces.emplace_back(i23);
+			newFaces.emplace_back(i13);
 		}
 		faces.swap(newFaces);
 	}
@@ -2233,7 +2233,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		// reverse the u coord, so the default is texture mapped left to
 		// right on the outside of a sphere 
 		// reverse the v coord, so that texture origin is at top left
-		texCoords.push_back(T(1.0-u,1.f-v));
+		texCoords.emplace_back(T(1.0-u,1.f-v));
 	}
 
 	/// Step 4 : fix texcoords
@@ -2249,23 +2249,23 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		if (std::abs(t2.x-t0.x)>0.5)
 		{
 			if (t0.x<0.5)
-				indexToSplit.push_back(faces[i*3]);
+				indexToSplit.emplace_back(faces[i*3]);
 			else
-				indexToSplit.push_back(faces[i*3+2]);
+				indexToSplit.emplace_back(faces[i*3+2]);
 		}
 		if (std::abs(t1.x-t0.x)>0.5)
 		{
 			if (t0.x<0.5)
-				indexToSplit.push_back(faces[i*3]);
+				indexToSplit.emplace_back(faces[i*3]);
 			else
-				indexToSplit.push_back(faces[i*3+1]);
+				indexToSplit.emplace_back(faces[i*3+1]);
 		}
 		if (std::abs(t2.x-t1.x)>0.5)
 		{
 			if (t1.x<0.5)
-				indexToSplit.push_back(faces[i*3+1]);
+				indexToSplit.emplace_back(faces[i*3+1]);
 			else
-				indexToSplit.push_back(faces[i*3+2]);
+				indexToSplit.emplace_back(faces[i*3+2]);
 		}
 	}
 
@@ -2276,8 +2276,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		//duplicate vertex
 		V v = vertices[index];
 		T t = texCoords[index] + T(1.f, 0.f);
-		vertices.push_back(v);
-		texCoords.push_back(t);
+		vertices.emplace_back(v);
+		texCoords.emplace_back(t);
 		ofIndexType newIndex = vertices.size()-1;
 		//reassign indices
 		for (ofIndexType j=0;j<faces.size();j++)

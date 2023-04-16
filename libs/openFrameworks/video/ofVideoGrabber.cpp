@@ -106,7 +106,7 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 		if(!grabber->getTexturePtr()){
 			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
-				tex.push_back(ofTexture());
+				tex.emplace_back(ofTexture());
 				tex[i].allocate(plane);
 			}
 		}
@@ -235,7 +235,7 @@ const ofTexture & ofVideoGrabber::getTextureReference() const{
 vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
 	if(grabber->getTexturePtr() != nullptr){
 		tex.clear();
-		tex.push_back(*grabber->getTexturePtr());
+		tex.emplace_back(*grabber->getTexturePtr());
 	}
 	return tex;
 }
@@ -245,7 +245,7 @@ const vector<ofTexture> & ofVideoGrabber::getTexturePlanes() const{
 	if(grabber->getTexturePtr() != nullptr){
 		ofVideoGrabber* mutThis = const_cast<ofVideoGrabber*>(this);
 		mutThis->tex.clear();
-		mutThis->tex.push_back(*grabber->getTexturePtr());
+		mutThis->tex.emplace_back(*grabber->getTexturePtr());
 	}
 	return tex;
 }

@@ -174,7 +174,7 @@ const ofTexture & ofVideoPlayer::getTextureReference() const{
 vector<ofTexture> & ofVideoPlayer::getTexturePlanes(){
 	if(playerTex != nullptr){
 		tex.clear();
-		tex.push_back(*playerTex);
+		tex.emplace_back(*playerTex);
 	}
 	return tex;
 }
@@ -184,7 +184,7 @@ const vector<ofTexture> & ofVideoPlayer::getTexturePlanes() const{
 	if(playerTex != nullptr){
 		ofVideoPlayer * mutThis = const_cast<ofVideoPlayer*>(this);
 		mutThis->tex.clear();
-		mutThis->tex.push_back(*playerTex);
+		mutThis->tex.emplace_back(*playerTex);
 	}
 	return tex;
 }

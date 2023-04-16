@@ -1377,7 +1377,7 @@ void ofDirectory::allowExt(const std::string& extension){
 	if(extension == "*"){
 		ofLogWarning("ofDirectory") << "allowExt(): wildcard extension * is deprecated";
 	}
-	extensions.push_back(ofToLower(extension));
+	extensions.emplace_back(ofToLower(extension));
 }
 
 //------------------------------------------------------------------------------------------------------------

@@ -185,7 +185,7 @@ void ofxSvg::setupDiagram(struct svgtiny_diagram * diagram){
 
 	for(int i = 0; i < (int)diagram->shape_count; i++){
 		if(diagram->shape[i].path){
-			paths.push_back(ofPath());
+			paths.emplace_back(ofPath());
 			setupShape(&diagram->shape[i],paths.back());
 		}else if(diagram->shape[i].text){
 			ofLogWarning("ofxSVG") << "setupDiagram(): text: not implemented yet";
