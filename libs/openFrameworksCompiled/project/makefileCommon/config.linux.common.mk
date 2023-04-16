@@ -161,7 +161,7 @@ ifeq ("$(GCC_MAJOR)","4")
 else
 	ifeq ($(shell expr $(GCC_MAJOR) \>= 10), 1)
 		# c++20 for gcc 10 and newer
-		PLATFORM_CXXVER = -std=c++20
+		# PLATFORM_CXXVER = -std=c++20
 	else
 		ifeq ($(shell expr $(GCC_MAJOR) \>= 8), 1)
 			# c++17 for gcc 8 and newer
