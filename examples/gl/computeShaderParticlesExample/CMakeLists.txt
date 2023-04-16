@@ -1,0 +1,2 @@
+define_example(computeShaderParticlesExample)
+target_link_libraries(computeShaderParticlesExample of::ofxGui)
