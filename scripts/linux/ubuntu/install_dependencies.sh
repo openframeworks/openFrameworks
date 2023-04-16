@@ -195,7 +195,7 @@ PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev 
 
 #jammy needs libunwind-dev
 if [ $MAJOR_VERSION -gt 21 ]; then
-PACKAGES=${$PACKAGES} libunwind-dev
+PACKAGES+=" libunwind-dev"
 fi
 
 echo "installing OF dependencies"
