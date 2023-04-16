@@ -1,0 +1,2 @@
+define_example(xmlSettingsExample)
+target_link_libraries(xmlSettingsExample of::ofxXmlSettings)

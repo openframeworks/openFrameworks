@@ -53,7 +53,7 @@ endif()
 
 add_subdirectory(graphics)
 add_subdirectory(gui)
-# add_subdirectory(input_output)
+add_subdirectory(input_output)
 # add_subdirectory(ios)
 # add_subdirectory(math)
 # add_subdirectory(shader)

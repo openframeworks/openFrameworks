@@ -38,6 +38,7 @@ target_compile_definitions(openframeworks PUBLIC
     _UNICODE
     CURL_STATICLIB
     POCO_STATIC
+    CAIRO_WIN32_STATIC_BUILD
 )
 
 # Compiler flags specific to MSVC
