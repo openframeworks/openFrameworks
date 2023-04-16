@@ -1,0 +1,9 @@
+
+add_subdirectory(noise1dExample)
+add_subdirectory(noise1dOctaveExample)
+add_subdirectory(noiseField2dExample)
+add_subdirectory(particlesExample)
+add_subdirectory(periodicSignalsExample)
+add_subdirectory(trigonometricMotionExample)
+add_subdirectory(trigonometryExample)
+add_subdirectory(vectorMathExample)

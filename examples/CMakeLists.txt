@@ -61,7 +61,7 @@ if (OF_TARGET_ARCHITECTURE MATCHES "ios")
     message(WARNING "[openframeworks] iOS Examples are not yet implemented. Please implement them yourself, test and submit a PR!")
 endif()
 
-# add_subdirectory(math)
+add_subdirectory(math)
 # add_subdirectory(shader)
 # add_subdirectory(sound)
 # add_subdirectory(strings)
