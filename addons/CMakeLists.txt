@@ -37,7 +37,7 @@ endif()
 
 # add_subdirectory(ofxGPS)
 add_subdirectory(ofxGui)
-# add_subdirectory(ofxiOS)
+# add_subdirectory(ofxiOS)      # Not implemented yet, please contribute!
 add_subdirectory(ofxKinect)
 add_subdirectory(ofxNetwork)
 add_subdirectory(ofxOpenCv)

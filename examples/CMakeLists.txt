@@ -39,7 +39,8 @@ endmacro()
 add_subdirectory(3d)
 
 if (OF_TARGET_ARCHITECTURE MATCHES "android")
-    add_subdirectory(android)
+    # add_subdirectory(android)
+    message(WARNING "[openframeworks] Android Examples are not yet implemented. Please implement them yourself, test and submit a PR!")
 endif()
 
 add_subdirectory(communication)
@@ -54,7 +55,12 @@ endif()
 add_subdirectory(graphics)
 add_subdirectory(gui)
 add_subdirectory(input_output)
-# add_subdirectory(ios)
+
+if (OF_TARGET_ARCHITECTURE MATCHES "ios")
+    #add_subdirectory(ios)
+    message(WARNING "[openframeworks] iOS Examples are not yet implemented. Please implement them yourself, test and submit a PR!")
+endif()
+
 # add_subdirectory(math)
 # add_subdirectory(shader)
 # add_subdirectory(sound)
