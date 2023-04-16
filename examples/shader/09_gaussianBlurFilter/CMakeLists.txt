@@ -1,0 +1,1 @@
+define_example(09_gaussianBlurFilter)

@@ -62,7 +62,7 @@ if (OF_TARGET_ARCHITECTURE MATCHES "ios")
 endif()
 
 add_subdirectory(math)
-# add_subdirectory(shader)
+add_subdirectory(shader)
 # add_subdirectory(sound)
 # add_subdirectory(strings)
 # add_subdirectory(templates)

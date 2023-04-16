@@ -1,0 +1,10 @@
+
+add_subdirectory(01_simpleColorQuad)
+add_subdirectory(02_simpleVertexDisplacement)
+add_subdirectory(03_simpleShaderInteraction)
+add_subdirectory(04_simpleTexturing)
+add_subdirectory(05_alphaMasking)
+add_subdirectory(06_multiTexture)
+add_subdirectory(07_fboAlphaMask)
+add_subdirectory(08_displacementMap)
+add_subdirectory(09_gaussianBlurFilter)
