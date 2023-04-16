@@ -82,7 +82,7 @@ void ofPath::clear(){
 void ofPath::newSubPath(){
 	if(mode==COMMANDS){
 	}else{
-		polylines.push_back(ofPolyline());
+		polylines.emplace_back(ofPolyline());
 	}
 }
 
@@ -227,7 +227,7 @@ void ofPath::arc(const glm::vec3 & centre, float radiusX, float radiusY, float a
 		//addCommand adds a moveTo if one hasn't been set, but in this case it is adding a moveTo to the center of the arc and not the beginning of the arc
 		if(commands.empty() || commands.back().type==Command::close){
 			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
-			commands.push_back(Command(Command::moveTo,start));
+			commands.emplace_back(Command::moveTo,start);
 		}
 		addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
@@ -256,7 +256,7 @@ void ofPath::arcNegative(const glm::vec3 & centre, float radiusX, float radiusY,
 	if(mode==COMMANDS){
 		if(commands.empty() || commands.back().type==Command::close){
 			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
-			commands.push_back(Command(Command::moveTo,start));
+			commands.emplace_back(Command::moveTo,start);
 		}
 		addCommand(Command(Command::arcNegative,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
@@ -538,7 +538,7 @@ void ofPath::setStrokeWidth(float width){
 //----------------------------------------------------------
 ofPolyline & ofPath::lastPolyline(){
 	if(polylines.empty() || polylines.back().isClosed()){
-		polylines.push_back(ofPolyline());
+		polylines.emplace_back(ofPolyline());
 	}
 	return polylines.back();
 }
@@ -598,7 +598,7 @@ void ofPath::generatePolylinesFromCommands(){
 		for(int i=0; i<(int)commands.size();i++){
 			switch(commands[i].type){
 			case Command::moveTo:
-				polylines.push_back(ofPolyline());
+				polylines.emplace_back(ofPolyline());
 				j++;
 				polylines[j].addVertex(commands[i].to);
 				break;
@@ -893,7 +893,7 @@ void ofPath::append(const ofPath & path){
 		}
 	}else{
 		for(auto & poly: path.getOutline()){
-			polylines.push_back(poly);
+			polylines.emplace_back(poly);
 		}
 	}
 	flagShapeChanged();
@@ -901,7 +901,7 @@ void ofPath::append(const ofPath & path){
 
 void ofPath::addCommand(const ofPath::Command & command){
 	if((commands.empty() || commands.back().type==Command::close) && command.type!=Command::moveTo){
-		commands.push_back(Command(Command::moveTo,command.to));
+		commands.emplace_back(Command::moveTo,command.to);
 	}
-	commands.push_back(command);
+	commands.emplace_back(command);
 }
