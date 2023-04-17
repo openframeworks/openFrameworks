@@ -32,7 +32,6 @@ jobs:
     - name: Remove Old lib-unwind
       run: if [ "$TARGET" = "linux64" ]; then
             sudo apt-get remove libunwind-14 -y;
-            sudo apt-get install libharfbuzz-dev -y;
            fi
     - name: Install dependencies
       run: ./scripts/ci/$TARGET/install.sh;
