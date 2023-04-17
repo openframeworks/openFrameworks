@@ -1854,8 +1854,7 @@ of::filesystem::path ofFilePath::getCurrentExePathFS(){
 		);
 		if (result == 0) {
 			// Error
-			const DWORD error = ::GetLastError();
-			throw win32_error("Error in getting module filename.", error);
+			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
 		}
 		return filename;
 //		vector<wchar_t> executablePath(MAX_PATH);
