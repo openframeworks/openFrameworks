@@ -50,7 +50,7 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 		auto ext = filename.extension();
 		if(ext == of::filesystem::path{".svg"} || ext == of::filesystem::path{".SVG"} ){
 			type = SVG;
-		}else if(ext == of::filesystem::path".pdf" || ext == of::filesystem::path".PDF" ){
+		}else if(ext == of::filesystem::path {".pdf"} || ext == of::filesystem::path{".PDF"} ){
 			type = PDF;
 		}else{ // default to image
 			type = IMAGE;
