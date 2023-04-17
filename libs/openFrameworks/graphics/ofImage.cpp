@@ -183,12 +183,7 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
 	
-#if defined(TARGET_WIN32) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(TARGET_WINVS)
-	#define OF_TARGET_WINDOWS
-	auto uriStr = _fileName.string();
-#else
 	auto uriStr = _fileName;
-#endif
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
@@ -196,7 +191,8 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
 		const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
 		std::vector<char> absUri(bytesNeeded);
-	#ifdef OF_TARGET_WINDOWS
+// FIXME: Change to OF_OS_WINDOWS soon		
+	#ifdef TARGET_WIN32
 		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
 	#else
 		uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
@@ -219,15 +215,17 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	FIBITMAP * bmp = nullptr;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-#ifdef OF_TARGET_WINDOWS
+// FIXME: Change to OF_OS_WINDOWS soon
+#ifdef TARGET_WIN32
 	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);
 #else
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-#ifdef OF_TARGET_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(fileName.wstring().c_str());
+// FIXME: Change to OF_OS_WINDOWS soon		
+#ifdef TARGET_WIN32
+		fif = FreeImage_GetFIFFromFilenameU(fileName.c_str());
 #else
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 #endif
@@ -237,9 +235,10 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 		if(fif == FIF_JPEG) {
 			option = getJpegOptionFromImageLoadSetting(settings);
 		}
-		
-#ifdef OF_TARGET_WINDOWS
-		bmp = FreeImage_LoadU(fif, fileName.wstring().c_str(), option | settings.freeImageFlags);
+
+// FIXME: Change to OF_OS_WINDOWS soon		
+#ifdef TARGET_WIN32
+		bmp = FreeImage_LoadU(fif, fileName.c_str(), option | settings.freeImageFlags);
 #else
 		bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 #endif
@@ -534,6 +533,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 		but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
 		length of the buffer, and the buffer memory address.
 		*/
+// FIXME: Change to OF_OS_WINDOWS soon		
 		#ifdef TARGET_WIN32
 		   DWORD size_in_bytes = 0;
 		#else
