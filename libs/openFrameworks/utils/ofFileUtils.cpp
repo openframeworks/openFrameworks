@@ -1869,10 +1869,13 @@ of::filesystem::path ofFilePath::getCurrentExePathFS(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future
-//of::filesystem::path ofFilePath::getCurrentExeDir(){
 std::string ofFilePath::getCurrentExeDir(){
-	return ofFilePath::getEnclosingDirectory(ofFilePath::getCurrentExePath(), false);
+	return getCurrentExeDirFS().string();
+}
+
+//------------------------------------------------------------------------------------------------------------
+of::filesystem::path ofFilePath::getCurrentExeDirFS(){
+		return ofFilePath::getCurrentExePathFS().parent_path();
 }
 
 //------------------------------------------------------------------------------------------------------------

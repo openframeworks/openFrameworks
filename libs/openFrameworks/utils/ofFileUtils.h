@@ -443,6 +443,7 @@ public:
 //	MARK: - near future
 //	static of::filesystem::path getCurrentExeDir();
 	static std::string getCurrentExeDir();
+	static of::filesystem::path getCurrentExeDirFS();
 
 	/// Get the absolute path to the user's home directory.
 	///
