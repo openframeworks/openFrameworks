@@ -1811,11 +1811,6 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future
-//of::filesystem::path ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
-//	// FIXME: deprecate when possible. helper function more complex than actual solution
-//	return (path1 / path2);
-//}
 std::string ofFilePath::join(const of::filesystem::path& path1, const of::filesystem::path& path2){
 	// FIXME: deprecate when possible. helper function more complex than actual solution
 	return (path1 / path2).string();
@@ -1857,13 +1852,6 @@ of::filesystem::path ofFilePath::getCurrentExePathFS(){
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
 		}
 		return filename;
-//		vector<wchar_t> executablePath(MAX_PATH);
-//		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
-//		if(result == 0) {
-//			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
-//		}else{
-//			return { executablePath.begin(), executablePath.begin() + result };
-//		}
 	#endif
 	return {};
 }
