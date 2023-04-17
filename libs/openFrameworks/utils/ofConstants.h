@@ -53,10 +53,6 @@ enum ofTargetPlatform{
 };
 
 
-#ifndef OF_TARGET_IPHONE
-    #define OF_TARGET_IPHONE OF_TARGET_IOS
-#endif
-
 
 // Cross-platform deprecation warning
 #ifdef __GNUC__
@@ -449,18 +445,36 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
+
+
+
+#ifndef OF_TARGET_IPHONE
+	#define OF_TARGET_IPHONE OF_TARGET_IOS
+#endif
+
+#define Stringize( L )     #L
+#define MakeString( M, L ) M(L)
+#define $Line MakeString( Stringize, __LINE__ )
+#define Reminder __FILE__ "(" $Line ") : Reminder: "
+
+
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201703L
+	#pragma message(Reminder "OF_HAS_CPP17 1")
     #define OF_HAS_CPP17 1
 #else
+	#pragma message(Reminder "OF_HAS_CPP17 0")
     #define OF_HAS_CPP17 0
 #endif
 
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
+		#pragma message(Reminder "OF_USING_STD_FS 1")
+
 		#define OF_USING_STD_FS 1
 	#else
+		#pragma message(Reminder "OF_USING_STD_FS 0")
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
 	#endif
@@ -471,10 +485,14 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_filesystem)
+		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 0")
         #define OF_USE_EXPERIMENTAL_FS 0
     #elif defined(__cpp_lib_experimental_filesystem)
+		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 1")
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif !defined(__has_include)
+		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 1 B")
+
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
@@ -498,6 +516,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
+			#pragma message(Reminder "Not on Visual Studio OF_USE_EXPERIMENTAL_FS 1 B")
             #define OF_USE_EXPERIMENTAL_FS 0
         #endif
     #else
