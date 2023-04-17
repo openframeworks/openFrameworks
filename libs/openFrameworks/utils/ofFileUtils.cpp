@@ -1823,6 +1823,11 @@ std::string ofFilePath::join(const of::filesystem::path& path1, const of::filesy
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentExePath(){
+	return getCurrentExePathFS().string();
+}
+
+//------------------------------------------------------------------------------------------------------------
+fs::path ofFilePath::getCurrentExePathFS(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
 		ssize_t size = readlink("/proc/self/exe", buff, sizeof(buff) - 1);
@@ -1841,15 +1846,27 @@ string ofFilePath::getCurrentExePath(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
-		if(result == 0) {
-			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
-		}else{
-			return string(executablePath.begin(), executablePath.begin() + result);
+		wchar_t filename[MAX_PATH];
+		DWORD result = ::GetModuleFileName(
+			nullptr,    // retrieve path of current process .EXE
+			filename,
+			_countof(filename)
+		);
+		if (result == 0) {
+			// Error
+			const DWORD error = ::GetLastError();
+			throw win32_error("Error in getting module filename.", error);
 		}
+		return filename;
+//		vector<wchar_t> executablePath(MAX_PATH);
+//		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+//		if(result == 0) {
+//			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
+//		}else{
+//			return { executablePath.begin(), executablePath.begin() + result };
+//		}
 	#endif
-	return "";
+	return {};
 }
 
 //------------------------------------------------------------------------------------------------------------
