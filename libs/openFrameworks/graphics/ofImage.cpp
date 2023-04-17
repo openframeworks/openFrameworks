@@ -193,9 +193,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		std::vector<char> absUri(bytesNeeded);
 // FIXME: Change to OF_OS_WINDOWS soon		
 	#ifdef TARGET_WIN32
-		uriWindowsFilenameToUriStringA(uriStr, absUri.data());
+		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
 	#else
-		uriUnixFilenameToUriStringA(uriStr, absUri.data());
+		uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
 	#endif
 		if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
 			ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
@@ -374,12 +374,12 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPathFS(_fileName).string().c_str();
+	auto fileName = ofToDataPathFS(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-	fif = FreeImage_GetFileType(fileName, 0);
+	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(fileName);
+		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
@@ -417,7 +417,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
 				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 			}
-			retValue = FreeImage_Save(fif, bmp, fileName, quality);
+			retValue = FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLogWarning("ofImage") << "saveImage(): ofImageCompressionType only applies to JPEGs,"
@@ -433,12 +433,12 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 					// this will create a 256-color palette from the image
 					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
 				}
-				retValue = FreeImage_Save(fif, convertedBmp, fileName);
+				retValue = FreeImage_Save(fif, convertedBmp, fileName.c_str());
 				if (convertedBmp != nullptr){
 					FreeImage_Unload(convertedBmp);
 				}
 			} else {
-				retValue = FreeImage_Save(fif, bmp, fileName);
+				retValue = FreeImage_Save(fif, bmp, fileName.c_str());
 			}
 		}
 	}
