@@ -141,7 +141,7 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter &parameter){
 			if(p){
 				if(address[i] == p->getEscapedName()){
 					if(p->type() == typeid(ofParameterGroup).name()){
-						if(address.size() >= i+1){
+						if(address.size() > i+1){
 							ofParameterGroup* g = static_cast<ofParameterGroup*>(p);
 							if(g->contains(address[i+1])){
 								p = &g->get(address[i+1]);

@@ -5,7 +5,6 @@
 
 #ifndef TARGET_NO_SOUND
 #include "ofSoundPlayer.h"
-#include "ofSoundStream.h"
 #endif
 
 #include "ofImage.h"

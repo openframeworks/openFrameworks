@@ -1,13 +1,11 @@
 #pragma once
 
 #include "ofWindowSettings.h"
-#include "ofMainLoop.h"
 #include "ofConstants.h"
+#include "ofMainLoop.h"
 
 class ofRectangle;
 class ofAppBaseWindow;
-class ofAppBaseGLWindow;
-class ofAppBaseGLESWindow;
 class ofAppGLFWWindow;
 class ofBaseApp;
 class ofBaseRenderer;
