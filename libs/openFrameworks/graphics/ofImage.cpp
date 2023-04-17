@@ -220,7 +220,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_TARGET_WINDOWS
-	fif = FreeImage_GetFileTypeU(fileName.wstring().c_str(), 0);
+	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);
 #else
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 #endif
