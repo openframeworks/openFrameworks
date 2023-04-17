@@ -1875,7 +1875,7 @@ std::string ofFilePath::getCurrentExeDir(){
 
 //------------------------------------------------------------------------------------------------------------
 of::filesystem::path ofFilePath::getCurrentExeDirFS(){
-		return ofFilePath::getCurrentExePathFS().parent_path();
+	return ofFilePath::getCurrentExePathFS().parent_path();
 }
 
 //------------------------------------------------------------------------------------------------------------
