@@ -343,7 +343,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
     #ifdef TARGET_LINUX
         #define OF_VIDEO_PLAYER_GSTREAMER
     #elif defined(TARGET_ANDROID)
@@ -351,7 +351,7 @@ typedef TESSindex ofIndexType;
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
-        #define OF_VIDEO_PLAYER_DIRECTSHOW
+		#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
@@ -383,19 +383,24 @@ typedef TESSindex ofIndexType;
 #endif
 
 //------------------------------------------------ soundplayer
+//MAC_OS and IOS uncomment to enable AVEnginePlayer
+//#define OF_SOUND_PLAYER_AV_ENGINE
+
 // check if any soundplayer api is defined from the compiler
+
 #if !defined(TARGET_NO_SOUND)
-	#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
-	  #ifdef TARGET_OF_IOS
-		#define OF_SOUND_PLAYER_IPHONE
-	  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
-		#define OF_SOUND_PLAYER_OPENAL
-	  #elif defined(TARGET_EMSCRIPTEN)
-		#define OF_SOUND_PLAYER_EMSCRIPTEN
-	  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
-		#define OF_SOUND_PLAYER_FMOD
-	  #endif
-	#endif
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
+  #ifdef TARGET_OF_IOS
+  	#define OF_SOUND_PLAYER_IPHONE
+  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
+  	#define OF_SOUND_PLAYER_OPENAL
+  #elif defined(TARGET_EMSCRIPTEN)
+	#define OF_SOUND_PLAYER_EMSCRIPTEN
+  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
+  	#define OF_SOUND_PLAYER_FMOD
+  #endif
+#endif
+
 #endif
 //------------------------------------------------ c++11
 // check if the compiler supports c++11. vs hasn't updated the value

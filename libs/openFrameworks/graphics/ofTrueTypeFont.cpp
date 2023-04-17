@@ -252,9 +252,9 @@ static string osxFontPathByName(const string& fontname){
 #endif
 
 #ifdef TARGET_WIN32
-#include <map>
+#include <unordered_map>
 // font font face -> file name name mapping
-static std::map<string, string> fonts_table;
+static std::unordered_map<string, string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -317,6 +317,7 @@ void initWindows(){
 			string curr_face = value_name_char;
 			string font_file = value_data_char;
 			curr_face = curr_face.substr(0, curr_face.find('(') - 1);
+			curr_face = ofToLower(curr_face);
 			fonts_table[curr_face] = fontsDir + font_file;
 	}
 
@@ -328,13 +329,7 @@ void initWindows(){
 
 
 static string winFontPathByName(const string& fontname ){
-	if(fonts_table.find(fontname)!=fonts_table.end()){
-		return fonts_table[fontname];
-	}
-	for(std::map<string,string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
-		if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
-	}
-	return "";
+	return fonts_table[fontname];
 }
 #endif
 

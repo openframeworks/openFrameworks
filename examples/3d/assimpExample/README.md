@@ -18,10 +18,10 @@ In the code, pay attention to:
 
 When launching this app, you should see
 
-* A lit 3D model of astroboy.
-* a text overlay with instructions.
+* An animated, lit 3D model of a fox.
+* A text overlay with instructions.
 
 Instructions for use:
 
 * press the number keys to load various models.
-* press the space bar and click and drag the mouse to control the animation play back.  
+* Click and drag the mouse to control the animation play back.  

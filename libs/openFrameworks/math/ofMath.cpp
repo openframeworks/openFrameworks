@@ -1,5 +1,4 @@
 #include "ofMath.h"
-#include "ofUtils.h"
 #include "ofNoise.h"
 #include "ofPolyline.h"
 #include <float.h>
