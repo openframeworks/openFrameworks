@@ -47,10 +47,10 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 	streamBuffer.clear();
 
 	if(type == FROM_FILE_EXTENSION){
-		string ext = ofToLower(filename.extension().string());
-		if(ext==".svg"){
+		auto ext = filename.extension();
+		if(ext == of::filesystem::path{".svg"} || ext == of::filesystem::path{".SVG"} ){
 			type = SVG;
-		}else if(ext==".pdf"){
+		}else if(ext == of::filesystem::path".pdf" || ext == of::filesystem::path".PDF" ){
 			type = PDF;
 		}else{ // default to image
 			type = IMAGE;
@@ -73,6 +73,7 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 		if(filename==""){
 			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
+			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
@@ -80,6 +81,7 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 		if(filename==""){
 			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
+			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
