@@ -20,6 +20,7 @@ git submodule update --init --recursive
 git submodule update --recursive --remote
 cd apps/projectGenerator
 git pull origin master
+git checkout 2163abe9403741d170dc6054e19aa444438a6444
 
 cd $OUTPUT_FOLDER
 
