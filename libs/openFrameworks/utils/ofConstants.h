@@ -51,6 +51,7 @@ enum ofTargetPlatform{
 	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN,
 	OF_TARGET_LINUXAARCH64
+
 };
 
 
@@ -473,31 +474,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #endif
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
-=======
-
-
-#ifndef OF_TARGET_IPHONE
-	#define OF_TARGET_IPHONE OF_TARGET_IOS
-#endif
-
-#define Stringize( L )     #L
-#define MakeString( M, L ) M(L)
-#define $Line MakeString( Stringize, __LINE__ )
-#define Reminder __FILE__ "(" $Line ") : Reminder: "
-
-
-// If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201703L
-	#pragma message(Reminder "OF_HAS_CPP17 1")
->>>>>>> 2eeef177a6 (constants)
-=======
-// If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201500
->>>>>>> c7b5ba3af1 (rpi constants update)
     #define OF_HAS_CPP17 1
     #if __cplusplus < 201703L
         #define OF_USE_EXPERIMENTAL_FS 1
