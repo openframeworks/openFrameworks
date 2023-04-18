@@ -38,19 +38,12 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-# PLATFORM_CFLAGS += -std=c++17
 PLATFORM_LDFLAGS += -lstdc++fs
 
 
-# https://gist.github.com/fm4dd/c663217935dc17f0fc73c9c81b0aa845
-# -mcpu=cortex-a72 -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits
 PLATFORM_CFLAGS += -march=armv8-a
 PLATFORM_CFLAGS += -mcpu=cortex-a72
 PLATFORM_CFLAGS += -mtune=cortex-a72
-# PLATFORM_CFLAGS += -mfpu=neon-fp-armv8
-# PLATFORM_CFLAGS += -mneon-for-64bits
-# PLATFORM_CFLAGS += -mfloat-abi=hard
-
 # PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
 PLATFORM_CFLAGS += -fPIC
@@ -121,11 +114,8 @@ ifeq ($(CROSS_COMPILING),1)
 
 	SYSROOT=$(RPI_ROOT)
 
-	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
-	
 	#c++ 17 support - comment out two lines below to use c++11
 	PLATFORM_CFLAGS += -std=c++17
-	PLATFORM_LDFLAGS += -lstdc++fs
 
 	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++/7
 
