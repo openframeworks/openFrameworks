@@ -68,6 +68,8 @@ else
 	endif
 endif
 
+$(info $(shell tput setaf 1)Config Shared.mk $(shell tput sgr0))
+
 # ifdef MAKEFILE_DEBUG
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
