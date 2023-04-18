@@ -512,9 +512,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif !defined(__has_include)
 		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 1 B")
-		#ifndef OF_HAS_CPP17
-			#define OF_USE_EXPERIMENTAL_FS 1
-		#endif
+		#define OF_USE_EXPERIMENTAL_FS 1
 
 	#elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
@@ -538,7 +536,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
-			#pragma message(Reminder "Not on Visual Studio OF_USE_EXPERIMENTAL_FS 1 B")
+			#pragma message(Reminder "Not on Visual Studio OF_USE_EXPERIMENTAL_FS 0 B")
             #define OF_USE_EXPERIMENTAL_FS 0
         #endif
     #else
