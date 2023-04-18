@@ -1,5 +1,3 @@
-$(info $(shell tput setaf 1)Config Shared.mk $(shell tput sgr0))
-
 #------------------------------------------------------------------------------
 # This file detects the current platform, creates the needed variables for that
 # platform, generates the variables for the paths to the code, addons, libraries...

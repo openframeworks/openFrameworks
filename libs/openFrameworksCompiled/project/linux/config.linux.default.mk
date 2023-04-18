@@ -1,5 +1,3 @@
-$(info $(shell tput setaf 1)config.linux.default.mk $(shell tput sgr0))
-
 ###############################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
 #   This file is where we make platform and architecture specific 

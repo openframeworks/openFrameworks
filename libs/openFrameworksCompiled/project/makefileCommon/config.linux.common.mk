@@ -1,5 +1,3 @@
-$(info $(shell tput setaf 1)Config linux common.mk $(shell tput sgr0))
-
 ################################################################################
 # CONFIGURE CORE PLATFORM MAKEFILE
 #   This file has linux common rules for all the platforms (x86_64, i386,armv6l

@@ -1,5 +1,3 @@
-$(info $(shell tput setaf 1)compile project.mk $(shell tput sgr0))
-
 .DEFAULT_GOAL=Release
 
 # define the OF_SHARED_MAKEFILES location
