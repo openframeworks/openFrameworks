@@ -456,7 +456,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #define STR(x) #x
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201703L
+#if __cplusplus >= 201500
     #define OF_HAS_CPP17 1
      #pragma message "OF_HAS_CPP17 1  -- version " XSTR(__cplusplus)
 #else
