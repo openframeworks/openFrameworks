@@ -461,7 +461,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
      #pragma message "OF_HAS_CPP17 1  -- version " XSTR(__cplusplus)
 #else
     #define OF_HAS_CPP17 0
-     #pragma message "OF_HAS_CPP17 0" -- version " XSTR(__cplusplus)
+     #pragma message "OF_HAS_CPP17 0 -- version " XSTR(__cplusplus)
 #endif
 
 
