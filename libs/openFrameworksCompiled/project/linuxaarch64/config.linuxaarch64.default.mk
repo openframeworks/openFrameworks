@@ -47,9 +47,9 @@ PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_CFLAGS += -march=armv8-a
 PLATFORM_CFLAGS += -mcpu=cortex-a72
 PLATFORM_CFLAGS += -mtune=cortex-a72
-PLATFORM_CFLAGS += -mfpu=neon-fp-armv8
-PLATFORM_CFLAGS += -mneon-for-64bits
-PLATFORM_CFLAGS += -mfloat-abi=hard
+# PLATFORM_CFLAGS += -mfpu=neon-fp-armv8
+# PLATFORM_CFLAGS += -mneon-for-64bits
+# PLATFORM_CFLAGS += -mfloat-abi=hard
 
 PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
