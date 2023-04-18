@@ -38,13 +38,15 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CFLAGS += -std=c++17
+# PLATFORM_CFLAGS += -std=c++17
 PLATFORM_LDFLAGS += -lstdc++fs
 
-# PLATFORM_CFLAGS += -march=armv7
-# PLATFORM_CFLAGS += -mtune=cortex-a8
-# PLATFORM_CFLAGS += -mfpu=neon
-# PLATFORM_CFLAGS += -mfloat-abi=hard
+# next four were commented out
+PLATFORM_CFLAGS += -march=armv7
+PLATFORM_CFLAGS += -mtune=cortex-a8
+PLATFORM_CFLAGS += -mfpu=neon
+PLATFORM_CFLAGS += -mfloat-abi=hard
+
 PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
 PLATFORM_CFLAGS += -fPIC
