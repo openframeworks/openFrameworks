@@ -42,7 +42,7 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 PLATFORM_LDFLAGS += -lstdc++fs
 
 # next four were commented out
-PLATFORM_CFLAGS += -march=armv7
+PLATFORM_CFLAGS += -march=armv8-a
 PLATFORM_CFLAGS += -mtune=cortex-a8
 # PLATFORM_CFLAGS += -mfpu=neon
 # PLATFORM_CFLAGS += -mfloat-abi=hard
