@@ -458,10 +458,13 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
     #define OF_HAS_CPP17 1
-     #pragma message "OF_HAS_CPP17 1  -- version " XSTR(__cplusplus)
+    #if __cplusplus < 201703L
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #endif
+    #pragma message "OF_HAS_CPP17 1  -- version " XSTR(__cplusplus)
 #else
     #define OF_HAS_CPP17 0
-     #pragma message "OF_HAS_CPP17 0 -- version " XSTR(__cplusplus)
+    #pragma message "OF_HAS_CPP17 0 -- version " XSTR(__cplusplus)
 #endif
 
 
@@ -476,8 +479,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 // Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
 // This may be okay but we need to test for the way C++17 is including the filesystem
-
-#define OF_USE_EXPERIMENTAL_FS 1
 
 #if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_filesystem)
