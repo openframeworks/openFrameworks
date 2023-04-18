@@ -456,18 +456,16 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #endif
 
 
-//// If you are building with c++17 or newer std filesystem will be enabled by default
-//#if __cplusplus >= 201500
-//    #define OF_HAS_CPP17 1
-//    #if __cplusplus < 201703L
-//        #define OF_USE_EXPERIMENTAL_FS 1
-//    #endif
-//#else
-//    #define OF_HAS_CPP17 0
-//#endif
+// If you are building with c++17 or newer std filesystem will be enabled by default
+#if __cplusplus >= 201500
+    #define OF_HAS_CPP17 1
+    #if __cplusplus < 201703L
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #endif
+#else
+    #define OF_HAS_CPP17 0
+#endif
 
-#define OF_HAS_CPP17 1
-#define OF_USING_STD_FS 1
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17

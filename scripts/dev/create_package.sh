@@ -207,7 +207,7 @@ function createProjectFiles {
             pg_template="-tvscode"
         fi
         
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} ${pg_template} -o$pkg_ofroot $pkg_ofroot/examples #> /dev/null
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} ${pg_template} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
         
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
