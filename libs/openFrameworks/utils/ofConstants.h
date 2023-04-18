@@ -54,6 +54,10 @@ enum ofTargetPlatform{
 };
 
 
+#ifndef OF_TARGET_IPHONE
+    #define OF_TARGET_IPHONE OF_TARGET_IOS
+#endif
+
 
 // Cross-platform deprecation warning
 #ifdef __GNUC__
@@ -340,7 +344,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
     #ifdef TARGET_LINUX
         #define OF_VIDEO_PLAYER_GSTREAMER
     #elif defined(TARGET_ANDROID)
@@ -349,10 +353,14 @@ typedef TESSindex ofIndexType;
         #define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
 <<<<<<< HEAD
+<<<<<<< HEAD
 		#define OF_VIDEO_PLAYER_DIRECTSHOW
 =======
         #define OF_VIDEO_PLAYER_DIRECTSHOW
 >>>>>>> 3abb29a9bc (constants)
+=======
+		#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+>>>>>>> ce084876ff (update)
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
@@ -384,7 +392,11 @@ typedef TESSindex ofIndexType;
 #endif
 
 //------------------------------------------------ soundplayer
+//MAC_OS and IOS uncomment to enable AVEnginePlayer
+//#define OF_SOUND_PLAYER_AV_ENGINE
+
 // check if any soundplayer api is defined from the compiler
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 #if !defined(TARGET_NO_SOUND)
@@ -392,6 +404,9 @@ typedef TESSindex ofIndexType;
 =======
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
 >>>>>>> 3abb29a9bc (constants)
+=======
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
+>>>>>>> ce084876ff (update)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
   #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
@@ -459,6 +474,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
 =======
@@ -478,23 +494,23 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #if __cplusplus >= 201703L
 	#pragma message(Reminder "OF_HAS_CPP17 1")
 >>>>>>> 2eeef177a6 (constants)
+=======
+// If you are building with c++17 or newer std filesystem will be enabled by default
+#if __cplusplus >= 201500
+>>>>>>> c7b5ba3af1 (rpi constants update)
     #define OF_HAS_CPP17 1
     #if __cplusplus < 201703L
         #define OF_USE_EXPERIMENTAL_FS 1
     #endif
 #else
-	#pragma message(Reminder "OF_HAS_CPP17 0")
     #define OF_HAS_CPP17 0
 #endif
 
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
-		#pragma message(Reminder "OF_USING_STD_FS 1")
-
 		#define OF_USING_STD_FS 1
 	#else
-		#pragma message(Reminder "OF_USING_STD_FS 0")
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
 	#endif
@@ -503,18 +519,14 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 // Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
 // This may be okay but we need to test for the way C++17 is including the filesystem
 
-#if OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
+#if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_filesystem)
-		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 0")
         #define OF_USE_EXPERIMENTAL_FS 0
     #elif defined(__cpp_lib_experimental_filesystem)
-		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 1")
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif !defined(__has_include)
-		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 1 B")
-		#define OF_USE_EXPERIMENTAL_FS 1
-
-	#elif __has_include(<filesystem>)
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
         #ifdef _MSC_VER
         
@@ -536,7 +548,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
-			#pragma message(Reminder "Not on Visual Studio OF_USE_EXPERIMENTAL_FS 0 B")
             #define OF_USE_EXPERIMENTAL_FS 0
         #endif
     #else
