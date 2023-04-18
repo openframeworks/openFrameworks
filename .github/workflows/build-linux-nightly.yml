@@ -1,9 +1,16 @@
 name: nightly-linux64
 
 on:
-  schedule:
-    - cron: "0 6 * * *"
-
+#  schedule:
+#    - cron: "0 6 * * *"
+  push:
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
 jobs:
   build-linux-platforms:
     runs-on: ubuntu-22.04
