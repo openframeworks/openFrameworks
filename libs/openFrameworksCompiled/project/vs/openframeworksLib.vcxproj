@@ -160,6 +160,7 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\video\ofMediaFoundationPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoPlayer.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\video\ofMediaFoundationPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofVideoGrabber.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofVideoPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\communication\ofArduino.cpp" />
