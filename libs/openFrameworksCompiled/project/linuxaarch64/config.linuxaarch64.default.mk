@@ -41,11 +41,15 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 # PLATFORM_CFLAGS += -std=c++17
 PLATFORM_LDFLAGS += -lstdc++fs
 
-# next four were commented out
+
+# https://gist.github.com/fm4dd/c663217935dc17f0fc73c9c81b0aa845
+# -mcpu=cortex-a72 -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits
 PLATFORM_CFLAGS += -march=armv8-a
-PLATFORM_CFLAGS += -mtune=cortex-a8
-# PLATFORM_CFLAGS += -mfpu=neon
-# PLATFORM_CFLAGS += -mfloat-abi=hard
+PLATFORM_CFLAGS += -mcpu=cortex-a72
+PLATFORM_CFLAGS += -mtune=cortex-a72
+PLATFORM_CFLAGS += -mfpu=neon-fp-armv8
+PLATFORM_CFLAGS += -mneon-for-64bits
+PLATFORM_CFLAGS += -mfloat-abi=hard
 
 PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
