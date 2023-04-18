@@ -51,7 +51,7 @@ PLATFORM_CFLAGS += -mtune=cortex-a72
 # PLATFORM_CFLAGS += -mneon-for-64bits
 # PLATFORM_CFLAGS += -mfloat-abi=hard
 
-PLATFORM_CFLAGS += -Wall
+# PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
 PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
