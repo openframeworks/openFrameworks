@@ -1914,7 +1914,7 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		y = sh - y;
 		y -= h; // top, bottom issues
 	}
-	auto pixelFormat = OF_PIXELS_BGRA;
+	auto pixelFormat = OF_PIXELS_RGBA;
 	pixels.allocate(w, h, pixelFormat);
 	auto glFormat = ofGetGLFormat(pixels);
 
