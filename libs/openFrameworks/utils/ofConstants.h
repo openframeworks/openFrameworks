@@ -51,10 +51,6 @@ enum ofTargetPlatform{
 	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN,
 	OF_TARGET_LINUXAARCH64
-<<<<<<< HEAD
-
-=======
->>>>>>> 1c3557488c (fix conflicts)
 };
 
 
