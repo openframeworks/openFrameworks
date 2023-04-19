@@ -6,7 +6,7 @@ function(define_test TARGET_NAME)                          # A CMake function li
 
     file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/**)
 
-    add_executable(${TARGET_NAME})
+    add_executable(${TARGET_NAME} EXCLUDE_FROM_ALL)
     target_sources(${TARGET_NAME} PRIVATE ${SOURCES})
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src)
     target_link_libraries(${TARGET_NAME} of::openframeworks of::ofxUnitTests)

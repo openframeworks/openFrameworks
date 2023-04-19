@@ -10,7 +10,7 @@ macro(define_example TARGET_NAME)       # A macro is executed in the caller's sc
         file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/**)
     endif()
 
-    add_executable(${TARGET_NAME})
+    add_executable(${TARGET_NAME} EXCLUDE_FROM_ALL)
     target_sources(${TARGET_NAME} PRIVATE ${SOURCES})
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src)
     target_link_libraries(${TARGET_NAME} of::openframeworks)
