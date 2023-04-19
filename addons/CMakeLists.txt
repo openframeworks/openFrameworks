@@ -10,7 +10,7 @@ function(define_interface_addon TARGET_NAME)
 endfunction()
 
 function(define_addon_without_paths TARGET_NAME)
-    add_library(${TARGET_NAME} STATIC)
+    add_library(${TARGET_NAME} STATIC EXCLUDE_FROM_ALL)
     add_library(of::${TARGET_NAME} ALIAS ${TARGET_NAME})
     target_link_libraries(${TARGET_NAME} of::openframeworks)
 
