@@ -166,12 +166,14 @@ public:
         virtual bool create(DXGI_FORMAT aDxFormat) = 0; 
         virtual bool isValid() = 0;
         virtual bool draw(ofPixels& apix) = 0;
-        virtual bool updatePixels(ofTexture& aSrcTex, ofPixels& apix) = 0;
+        virtual bool updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) = 0;
         
         int getWidth() { return mWidth; }
         int getHeight() { return mHeight; }
 
     protected:
+        bool _swapPixelsFromSrc4ChannelTo3(ofPixels& aDstPix);
+
         unsigned int mWidth = 0;
         unsigned int mHeight = 0;
 
@@ -179,6 +181,7 @@ public:
         MFVideoNormalizedRect mNormalizedVidRect{ 0.0f, 0.0f, 1.0f, 1.0f };
         ofPixelFormat mOfPixFmt;
         std::shared_ptr<ofTexture> mOfTex;
+        ofPixels mSrcPixels;
     };
 
 protected:
