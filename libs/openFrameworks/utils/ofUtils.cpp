@@ -16,11 +16,11 @@
 
 #ifdef TARGET_WIN32	 // For ofLaunchBrowser.
 	#include <shellapi.h>
-	#ifndef _MSC_VER
-		#include <unistd.h> // this if for MINGW / _getcwd
+    #ifndef _MSC_VER
+        #include <unistd.h> // this if for MINGW / _getcwd
 		#include <sys/param.h> // for MAXPATHLEN
 	// FIXME: else
-	#endif
+    #endif
 	#ifdef _MSC_VER
 		#include <direct.h>
 	#endif
@@ -59,15 +59,15 @@ using std::setfill;
 namespace of{
 namespace priv{
 	void initutils(){
-		ofResetElapsedTimeCounter();
-		ofSeedRandom();
-	}
+        ofResetElapsedTimeCounter();
+        ofSeedRandom();
+    }
 
 	void endutils(){
 //#ifdef TARGET_OSX
 //        mach_port_deallocate(mach_task_self(), cs);
 //#endif
-	}
+    }
 
 	class Clock{
 	public:
@@ -365,7 +365,7 @@ string ofGetTimestampString(const string& timestampFormat){
 	std::stringstream str;
 	auto now = std::chrono::system_clock::now();
 	auto t = std::chrono::system_clock::to_time_t(now);    std::chrono::duration<double> s = now - std::chrono::system_clock::from_time_t(t);
-	int ms = s.count() * 1000;
+    int ms = s.count() * 1000;
 	auto tm = *std::localtime(&t);
 	constexpr int bufsize = 256;
 	char buf[bufsize];
@@ -382,7 +382,7 @@ string ofGetTimestampString(const string& timestampFormat){
 	auto ret = str.str();
 
 
-	return ret;
+    return ret;
 }
 
 //--------------------------------------------------
@@ -689,7 +689,7 @@ void ofStringReplace(string& input, const string& searchStr, const string& repla
 
 //--------------------------------------------------
 bool ofIsStringInString(const string& haystack, const string& needle){
-	return haystack.find(needle) != std::string::npos;
+    return haystack.find(needle) != std::string::npos;
 }
 
 //--------------------------------------------------
@@ -803,23 +803,23 @@ string ofToUpper(const string & src, const string & locale){
 
 //--------------------------------------------------
 string ofTrimFront(const string & src, const string& locale){
-	auto dst = src;
-	std::locale loc = getLocale(locale);
-	dst.erase(dst.begin(),std::find_if_not(dst.begin(),dst.end(),[&](char & c){return std::isspace<char>(c,loc);}));
-	return dst;
+    auto dst = src;
+    std::locale loc = getLocale(locale);
+    dst.erase(dst.begin(),std::find_if_not(dst.begin(),dst.end(),[&](char & c){return std::isspace<char>(c,loc);}));
+    return dst;
 }
 
 //--------------------------------------------------
 string ofTrimBack(const string & src, const string& locale){
-	auto dst = src;
-	std::locale loc = getLocale(locale);
+    auto dst = src;
+    std::locale loc = getLocale(locale);
 	dst.erase(std::find_if_not(dst.rbegin(),dst.rend(),[&](char & c){return std::isspace<char>(c,loc);}).base(), dst.end());
 	return dst;
 }
 
 //--------------------------------------------------
 string ofTrim(const string & src, const string& locale){
-	return ofTrimFront(ofTrimBack(src));
+    return ofTrimFront(ofTrimBack(src));
 }
 
 //--------------------------------------------------
@@ -932,14 +932,14 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 
 	#ifdef TARGET_WIN32
 		ShellExecuteA(nullptr, "open", uriStr.c_str(),
-				nullptr, nullptr, SW_SHOWNORMAL);
+                nullptr, nullptr, SW_SHOWNORMAL);
 	#endif
 
 	#ifdef TARGET_OSX
-		// could also do with LSOpenCFURLRef
+        // could also do with LSOpenCFURLRef
 		string commandStr = "open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
-		if(ret!=0) {
+        if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
 		}
 	#endif
@@ -1068,36 +1068,32 @@ string ofSystem(const string& command){
 //--------------------------------------------------
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
-	string arch = ofSystem("uname -m");
-	if(ofIsStringInString(arch,"x86_64")) {
-		return OF_TARGET_LINUX64;
-	} 
-	else if(ofIsStringInString(arch,"armv6l")) {
-		return OF_TARGET_LINUXARMV6L;
-  	} 
-	else if(ofIsStringInString(arch,"armv7l")) {
-		return OF_TARGET_LINUXARMV7L;
-	} 
-	else if(ofIsStringInString(arch,"aarch64")) {
-		return OF_TARGET_LINUXAARCH64;
-	} 
-	else {
-		return OF_TARGET_LINUX;
-	}
+    string arch = ofSystem("uname -m");
+    if(ofIsStringInString(arch,"x86_64")) {
+        return OF_TARGET_LINUX64;
+    } else if(ofIsStringInString(arch,"armv6l")) {
+        return OF_TARGET_LINUXARMV6L;
+    } else if(ofIsStringInString(arch,"armv7l")) {
+        return OF_TARGET_LINUXARMV7L;
+	} else if(ofIsStringInString(arch,"aarch64")) {
+		return OF_TARGET_LINUXAARCH64;		
+    } else {
+        return OF_TARGET_LINUX;
+    }
 #elif defined(TARGET_OSX)
-	return OF_TARGET_OSX;
+    return OF_TARGET_OSX;
 #elif defined(TARGET_WIN32)
-	#if (_MSC_VER)
-		return OF_TARGET_WINVS;
-	#else
-		return OF_TARGET_MINGW;
-	#endif
+    #if (_MSC_VER)
+        return OF_TARGET_WINVS;
+    #else
+        return OF_TARGET_MINGW;
+    #endif
 #elif defined(TARGET_ANDROID)
-	return OF_TARGET_ANDROID;
+    return OF_TARGET_ANDROID;
 #elif defined(TARGET_OF_IOS)
-	return OF_TARGET_IOS;
+    return OF_TARGET_IOS;
 #elif defined(TARGET_EMSCRIPTEN)
-	return OF_TARGET_EMSCRIPTEN;
+    return OF_TARGET_EMSCRIPTEN;
 #endif
 }
 
