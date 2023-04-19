@@ -32,7 +32,7 @@ enum ofTargetPlatform{
 	/// \brief 32- and 64-bit x86 architecture on Mac OSX.
 	OF_TARGET_OSX,
 	/// \brief 32- and 64-bit x86 architecture using MinGW on Windows OS.
-	OF_TARGET_MINGW,
+    OF_TARGET_MINGW,
 	/// \brief 32- and 64-bit x86 architecture using Visual Studio on Windows OS.
 	OF_TARGET_WINVS,
 	/// \brief 32- and 64-bit armv7, arm64, x86 (simulator) architecture Mac iOS.
@@ -51,12 +51,11 @@ enum ofTargetPlatform{
 	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN,
 	OF_TARGET_LINUXAARCH64
-
 };
 
 
 #ifndef OF_TARGET_IPHONE
-	#define OF_TARGET_IPHONE OF_TARGET_IOS
+    #define OF_TARGET_IPHONE OF_TARGET_IOS
 #endif
 
 
@@ -64,10 +63,10 @@ enum ofTargetPlatform{
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5
 	#if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || __GNUC__ > 4
-		#define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__ __attribute__ ((deprecated(message)))
-	#else
-		#define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__ __attribute__ ((deprecated))
-	#endif
+        #define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__ __attribute__ ((deprecated(message)))
+    #else
+        #define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__ __attribute__ ((deprecated))
+    #endif
 	#define OF_DEPRECATED(...) __VA_ARGS__ __attribute__ ((deprecated))
 	#define OF_INTERNAL_DEPRECATED(...) __VA_ARGS__ __attribute__ ((deprecated("OF core deprecated")))
 #elif defined(_MSC_VER)
@@ -96,23 +95,23 @@ enum ofTargetPlatform{
 		#define TARGET_MINGW
 	#endif
 #elif defined( __APPLE_CC__)
-	#define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
-	#include <TargetConditionals.h>
+    #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+    #include <TargetConditionals.h>
 	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
-		#define TARGET_OF_IPHONE
-		#define TARGET_OF_IOS
-		#define TARGET_OPENGLES
-		#include <unistd.h>
-	#elif TARGET_OS_TV
-		#define TARGET_OF_IOS
-		#define TARGET_OF_TVOS
-		#define TARGET_OPENGLES
-		#include <unistd.h>
-	#elif TARGET_OS_WATCH
-		#define TARGET_OF_IOS
-		#define TARGET_OF_WATCHOS
-		#define TARGET_OPENGLES
-		#include <unistd.h>
+        #define TARGET_OF_IPHONE
+        #define TARGET_OF_IOS
+        #define TARGET_OPENGLES
+        #include <unistd.h>
+    #elif TARGET_OS_TV
+        #define TARGET_OF_IOS
+        #define TARGET_OF_TVOS
+        #define TARGET_OPENGLES
+        #include <unistd.h>
+    #elif TARGET_OS_WATCH
+        #define TARGET_OF_IOS
+        #define TARGET_OF_WATCHOS
+        #define TARGET_OPENGLES
+        #include <unistd.h>
 	#else
 		#define TARGET_OSX
 	#endif
@@ -224,7 +223,7 @@ enum ofTargetPlatform{
 		#include "EGL/egl.h"
 		#include "EGL/eglext.h"
 	#else // desktop linux
-		#include <GL/glew.h>
+		#include <GL/glew.h> 
 	#endif
 
 	// for some reason, this isn't defined at compile time,
@@ -311,7 +310,7 @@ typedef TESSindex ofIndexType;
 			#define OF_VIDEO_CAPTURE_QTKIT
 		#else
 			#define OF_VIDEO_CAPTURE_AVF
-		#endif
+        #endif
 
 	#elif defined (TARGET_WIN32)
 
@@ -346,28 +345,28 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
 #if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
-	#ifdef TARGET_LINUX
-		#define OF_VIDEO_PLAYER_GSTREAMER
-	#elif defined(TARGET_ANDROID)
-		#define OF_VIDEO_PLAYER_ANDROID
-	#elif defined(TARGET_OF_IOS)
-		#define OF_VIDEO_PLAYER_IOS
+    #ifdef TARGET_LINUX
+        #define OF_VIDEO_PLAYER_GSTREAMER
+    #elif defined(TARGET_ANDROID)
+        #define OF_VIDEO_PLAYER_ANDROID
+    #elif defined(TARGET_OF_IOS)
+        #define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
 		#define OF_VIDEO_PLAYER_DIRECTSHOW
-	#elif defined(TARGET_OSX)
-		//for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
-		#ifndef MAC_OS_X_VERSION_10_7
-			#define OF_VIDEO_PLAYER_QUICKTIME
-		#elif !defined(MAC_OS_X_VERSION_10_8)
-			#define OF_VIDEO_PLAYER_QTKIT
-		#else
-			#define OF_VIDEO_PLAYER_AVFOUNDATION
-		#endif
-	#elif defined(TARGET_EMSCRIPTEN)
-		#define OF_VIDEO_PLAYER_EMSCRIPTEN
-	#else
-		#define OF_VIDEO_PLAYER_QUICKTIME
-	#endif
+    #elif defined(TARGET_OSX)
+        //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
+        #ifndef MAC_OS_X_VERSION_10_7
+            #define OF_VIDEO_PLAYER_QUICKTIME
+        #elif !defined(MAC_OS_X_VERSION_10_8)
+            #define OF_VIDEO_PLAYER_QTKIT
+        #else
+            #define OF_VIDEO_PLAYER_AVFOUNDATION
+        #endif
+    #elif defined(TARGET_EMSCRIPTEN)
+        #define OF_VIDEO_PLAYER_EMSCRIPTEN
+    #else
+        #define OF_VIDEO_PLAYER_QUICKTIME
+    #endif
 #endif
 
 //------------------------------------------------ soundstream
@@ -391,17 +390,18 @@ typedef TESSindex ofIndexType;
 // check if any soundplayer api is defined from the compiler
 
 #if !defined(TARGET_NO_SOUND)
-	#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
-		#ifdef TARGET_OF_IOS
-			#define OF_SOUND_PLAYER_IPHONE
-		#elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
-			#define OF_SOUND_PLAYER_OPENAL
-		#elif defined(TARGET_EMSCRIPTEN)
-			#define OF_SOUND_PLAYER_EMSCRIPTEN
-		#elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
-			#define OF_SOUND_PLAYER_FMOD
-		#endif
-	#endif
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
+  #ifdef TARGET_OF_IOS
+  	#define OF_SOUND_PLAYER_IPHONE
+  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
+  	#define OF_SOUND_PLAYER_OPENAL
+  #elif defined(TARGET_EMSCRIPTEN)
+	#define OF_SOUND_PLAYER_EMSCRIPTEN
+  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
+  	#define OF_SOUND_PLAYER_FMOD
+  #endif
+#endif
+
 #endif
 //------------------------------------------------ c++11
 // check if the compiler supports c++11. vs hasn't updated the value
@@ -418,7 +418,7 @@ typedef TESSindex ofIndexType;
 		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined(__ANDROID__) && !defined(TARGET_OF_IOS)
 			#define HAS_TLS 1
 		#endif
-	#elif !defined(TARGET_WIN32) || _MSC_VER
+    #elif !defined(TARGET_WIN32) || _MSC_VER
 		#define HAS_TLS 1
 	#endif
 #endif
@@ -459,12 +459,12 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
-	#define OF_HAS_CPP17 1
-	#if __cplusplus < 201703L
-		#define OF_USE_EXPERIMENTAL_FS 1
-	#endif
+    #define OF_HAS_CPP17 1
+    #if __cplusplus < 201703L
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #endif
 #else
-	#define OF_HAS_CPP17 0
+    #define OF_HAS_CPP17 0
 #endif
 
 
@@ -481,68 +481,68 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 // This may be okay but we need to test for the way C++17 is including the filesystem
 
 #if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
-	#if defined(__cpp_lib_filesystem)
-		#define OF_USE_EXPERIMENTAL_FS 0
-	#elif defined(__cpp_lib_experimental_filesystem)
-		#define OF_USE_EXPERIMENTAL_FS 1
-	#elif !defined(__has_include)
-		#define OF_USE_EXPERIMENTAL_FS 1
-	#elif __has_include(<filesystem>)
-		// If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
-		#ifdef _MSC_VER
+    #if defined(__cpp_lib_filesystem)
+        #define OF_USE_EXPERIMENTAL_FS 0
+    #elif defined(__cpp_lib_experimental_filesystem)
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #elif !defined(__has_include)
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #elif __has_include(<filesystem>)
+        // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
+        #ifdef _MSC_VER
+        
+            // Check and include header that defines "_HAS_CXX17"
+            #if __has_include(<yvals_core.h>)
+                #include <yvals_core.h>
+                
+                // Check for enabled C++17 support
+                #if defined(_HAS_CXX17) && _HAS_CXX17
+                // We're using C++17, so let's use the normal version
+                    #define OF_USE_EXPERIMENTAL_FS 0
+                #endif
+            #endif
 
-			// Check and include header that defines "_HAS_CXX17"
-			#if __has_include(<yvals_core.h>)
-				#include <yvals_core.h>
+            // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
+            #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+                #define OF_USE_EXPERIMENTAL_FS 1
+            #endif
 
-				// Check for enabled C++17 support
-				#if defined(_HAS_CXX17) && _HAS_CXX17
-				// We're using C++17, so let's use the normal version
-					#define OF_USE_EXPERIMENTAL_FS 0
-				#endif
-			#endif
-
-			// If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
-			#ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
-				#define OF_USE_EXPERIMENTAL_FS 1
-			#endif
-
-		// Not on Visual Studio. Let's use the normal version
-		#else // #ifdef _MSC_VER
-			#define OF_USE_EXPERIMENTAL_FS 0
-		#endif
-	#else
-		#define OF_USE_EXPERIMENTAL_FS 0
-	#endif
+        // Not on Visual Studio. Let's use the normal version
+        #else // #ifdef _MSC_VER
+            #define OF_USE_EXPERIMENTAL_FS 0
+        #endif
+    #else
+        #define OF_USE_EXPERIMENTAL_FS 0
+    #endif
 #endif
 
 #if OF_USING_STD_FS
-	#if OF_USE_EXPERIMENTAL_FS
-		// C++17 experimental fs support
-		#include <experimental/filesystem>
-
-		#if OF_HAS_CPP17
-			namespace std {
-				namespace experimental{
-					namespace filesystem {
-						using path = v1::path;
-					}
-				}
-			}
-		#else
-			namespace std {
-				namespace experimental{
-					namespace filesystem {
-						using path = v1::__cxx11::path;
-					}
-				}
-			}
-		#endif
-
+    #if OF_USE_EXPERIMENTAL_FS
+        // C++17 experimental fs support
+        #include <experimental/filesystem>
+        
+        #if OF_HAS_CPP17
+            namespace std {
+                namespace experimental{
+                    namespace filesystem {
+                        using path = v1::path;
+                    }
+                }
+            }
+        #else
+            namespace std {
+                namespace experimental{
+                    namespace filesystem {
+                        using path = v1::__cxx11::path;
+                    }
+                }
+            }
+        #endif
+        
 		namespace of {
 			namespace filesystem = std::experimental::filesystem;
 		}
-	#else
+    #else
 		#include <filesystem>
 		#if OF_HAS_CPP17
 			// Regular C++17 fs support
@@ -554,15 +554,15 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 				namespace filesystem = std::filesystem;
 			}
 		#endif
-	#endif
+    #endif
 #else //not OF_USING_STD_FS
-	// No experimental or c++17 filesytem support use boost
-	#if !_MSC_VER
-		#define BOOST_NO_CXX11_SCOPED_ENUMS
-		#define BOOST_NO_SCOPED_ENUMS
-	#endif
+    // No experimental or c++17 filesytem support use boost
+    #if !_MSC_VER
+        #define BOOST_NO_CXX11_SCOPED_ENUMS
+        #define BOOST_NO_SCOPED_ENUMS
+    #endif
 
-	#include <boost/filesystem.hpp>
+    #include <boost/filesystem.hpp>
 	namespace of {
 		namespace filesystem = boost::filesystem;
 	}
