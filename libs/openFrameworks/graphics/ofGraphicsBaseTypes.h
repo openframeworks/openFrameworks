@@ -1421,6 +1421,8 @@ public:
 	/// ofSetColor(). The cube is drawn filled by default; change this with
 	/// ofFill().
 	///
+	/// The box is drawn starting from a point in the middle, and expands outwards	
+	///
 	/// \param x The x-coordinate of the cube's origin.
 	/// \param y The y-coordinate of the cube's origin.
 	/// \param z The z-coordinate of the cube's origin.
