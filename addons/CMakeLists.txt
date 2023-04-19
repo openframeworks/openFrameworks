@@ -1,6 +1,15 @@
 message(STATUS "[openframeworks] Configuring addons")
 
-function(define_raw_addon_without_paths TARGET_NAME)
+function(define_interface_addon TARGET_NAME)
+    add_library(${TARGET_NAME} INTERFACE)
+    add_library(of::${TARGET_NAME} ALIAS ${TARGET_NAME})
+    target_link_libraries(${TARGET_NAME} INTERFACE of::openframeworks)
+
+    target_include_directories(${TARGET_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
+    target_include_directories(${TARGET_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR}/src)
+endfunction()
+
+function(define_addon_without_paths TARGET_NAME)
     add_library(${TARGET_NAME} STATIC)
     add_library(of::${TARGET_NAME} ALIAS ${TARGET_NAME})
     target_link_libraries(${TARGET_NAME} of::openframeworks)
@@ -16,7 +25,7 @@ function(define_raw_addon_without_paths TARGET_NAME)
 endfunction()
 
 function(define_addon TARGET_NAME)
-    define_raw_addon_without_paths(${TARGET_NAME})
+    define_addon_without_paths(${TARGET_NAME})
 
     file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/**)
     target_sources(${TARGET_NAME} PRIVATE ${SOURCES})

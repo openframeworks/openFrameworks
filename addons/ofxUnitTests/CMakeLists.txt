@@ -1,1 +1,1 @@
-define_addon(ofxUnitTests)
+define_interface_addon(ofxUnitTests)

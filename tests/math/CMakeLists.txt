@@ -1,0 +1,2 @@
+add_subdirectory(ofNodeRegressionTests)
+add_subdirectory(quaternionTests)

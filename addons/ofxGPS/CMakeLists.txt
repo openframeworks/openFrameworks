@@ -1,7 +1,7 @@
 
 if (OF_TARGET_ARCHITECTURE MATCHES "android" OR OF_TARGET_ARCHITECTURE MATCHES "ios")
 
-    define_raw_addon_without_paths(ofxGPS)
+    define_addon_without_paths(ofxGPS)
 
     file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/common/**)
     target_sources(ofxGPS PRIVATE ${SOURCES})
