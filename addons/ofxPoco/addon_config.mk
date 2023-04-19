@@ -105,6 +105,17 @@ linuxarmv7l:
 	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
+linuxaarch64:
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoJSON
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
+
 android/armeabi-v7a:
 	ADDON_INCLUDES = libs/poco/include/%
 	ADDON_INCLUDES += src
