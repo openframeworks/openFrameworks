@@ -355,6 +355,7 @@ typedef TESSindex ofIndexType;
 	#elif defined(TARGET_WIN32)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		#define OF_VIDEO_PLAYER_DIRECTSHOW
 =======
         #define OF_VIDEO_PLAYER_DIRECTSHOW
@@ -362,6 +363,9 @@ typedef TESSindex ofIndexType;
 =======
 		#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
 >>>>>>> ce084876ff (update)
+=======
+		#define OF_VIDEO_PLAYER_DIRECTSHOW
+>>>>>>> 54751a6421 (Add mediafoundation to OF VS project and switch to 142 ( VS 2019 )  (#7505))
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
