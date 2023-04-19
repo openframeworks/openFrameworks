@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofSoundBaseTypes.h"
+#include "ofConstants.h"
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
 void ofSoundStopAll();
@@ -25,7 +25,10 @@ void ofSoundUpdate();
 /// \return pointer to an FFT sample, sample size is equal to the nBands parameter.
 float * ofSoundGetSpectrum(int nBands);
 
-
+#ifdef OF_SOUND_PLAYER_AV_ENGINE
+#include "ofAVEngineSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofAVEngineSoundPlayer
+#endif
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME
 #include "ofQuicktimeSoundPlayer.h"
@@ -47,20 +50,16 @@ float * ofSoundGetSpectrum(int nBands);
 #define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
 #endif
 
-#ifdef TARGET_ANDROID
-#include "ofxAndroidSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
-inline void ofSoundShutdown(){}
-#endif
-
 #ifdef OF_SOUND_PLAYER_EMSCRIPTEN
 #include "ofxEmscriptenSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxEmscriptenSoundPlayer
 #endif
 
-#ifdef TARGET_LINUX_ARM
-inline void ofSoundShutdown(){}
+#ifdef TARGET_ANDROID
+#include "ofxAndroidSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
 #endif
+
 
 /// \class ofSoundPlayer
 /// \brief Plays sound files.

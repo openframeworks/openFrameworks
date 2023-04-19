@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofUtils.h"
 #include "ofColor.h"
 #include "ofLog.h"
 #include "ofMath.h"
+#include "ofConstants.h"
 #include <limits>
 
 

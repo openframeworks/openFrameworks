@@ -2,16 +2,11 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-#ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
-#else
 	if(ofIsGLProgrammableRenderer()){
 		shader.load("shadersGL3/shader");
 	}else{
 		shader.load("shadersGL2/shader");
 	}
-#endif
 
 	float planeScale = 0.75;
 	int planeWidth = ofGetWidth() * planeScale;

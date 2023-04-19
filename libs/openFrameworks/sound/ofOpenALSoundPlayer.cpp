@@ -2,7 +2,8 @@
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 
-#include "glm/gtc/constants.hpp"
+#define GLM_FORCE_CTOR_INIT
+#include <glm/gtc/constants.hpp>
 #include "glm/common.hpp"
 #include "ofLog.h"
 #include "ofEvents.h"
@@ -836,11 +837,13 @@ void ofOpenALSoundPlayer::setPan(float p){
         // calculates left/right volumes from pan-value (constant panning law)
         // see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
-        float angle = p * 0.7853981633974483f; // in radians from -45. to +45.
+		
+        float angle = p * glm::quarter_pi<float>(); // in radians from -45. to +45.
         float cosAngle = cos(angle);
         float sinAngle = sin(angle);
-        float leftVol  = (cosAngle - sinAngle) * 0.7071067811865475; // multiplied by sqrt(2)/2
-        float rightVol = (cosAngle + sinAngle) * 0.7071067811865475; // multiplied by sqrt(2)/2
+
+		float leftVol  = (cosAngle - sinAngle) * glm::one_over_root_two<float>(); //// multiplied by 1/sqrt(2)
+		float rightVol = (cosAngle + sinAngle) * glm::one_over_root_two<float>(); // multiplied by 1/sqrt(2)
 		for(int i=0;i<(int)channels;i++){
 			if(i==0){
 				alSourcef(sources[sources.size()-channels+i],AL_GAIN,leftVol*volume);

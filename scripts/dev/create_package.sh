@@ -180,9 +180,8 @@ function createProjectFiles {
         #rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
         #downloader http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
 
-        cd ${main_ofroot}/apps/projectGenerator
-        git pull origin $PG_BRANCH
-        cd commandLine
+        #git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+        cd ${main_ofroot}/apps/projectGenerator/commandLine
         echo "Recompiling command line PG"
         if [ -d ~/logs ]; then
             PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug > ~/logs/compilePG.log 2>&1 &
@@ -357,8 +356,10 @@ function createPackage {
         scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
         scripts/msys2/download_libs.sh -a $libs_abi
+        scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         scripts/dev/download_libs.sh -p vs
+        scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
@@ -498,11 +499,11 @@ function createPackage {
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ] || [ "$pkg_platform" = "android" ]; then
 	    cd ${pkg_ofroot}
 		mv apps/projectGenerator/commandLine .
-		mv apps/projectGenerator/ofxProjectGenerator .
+		mv apps/projectGenerator/ofxProjectGenerator . || true
 		rm -rf apps/projectGenerator
 		mkdir apps/projectGenerator
 		mv commandLine apps/projectGenerator/
-		mv ofxProjectGenerator apps/projectGenerator/
+		mv ofxProjectGenerator apps/projectGenerator/ || true
 		cd apps/projectGenerator/commandLine
 		deleteCodeblocks
 		deleteVS
@@ -567,13 +568,13 @@ function createPackage {
     	rm -Rf msys2 vs osx ios android ci dev apothecary
 	fi
 
-    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "vs" ]; then
+    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ]; then
         rm -Rf qtcreator emscripten
     fi
 
-    if [ "$pkg_platform" = "msys2" ]; then
-        rm -Rf emscripten
-    fi
+#    if [ "$pkg_platform" = "msys2" ]; then
+#        rm -Rf emscripten
+#    fi
 
     #delete omap4 scripts for non armv7l
 	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then

@@ -1,7 +1,7 @@
-#version 150
+OF_GLSL_SHADER_HEADER
 
-uniform sampler2DRect tex0;
-uniform sampler2DRect imageMask;
+uniform sampler2D tex0;
+uniform sampler2D imageMask;
 
 in vec2 texCoordVarying;
 

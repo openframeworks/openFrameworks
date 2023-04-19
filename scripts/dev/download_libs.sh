@@ -115,9 +115,9 @@ if [ "$ARCH" == "" ]; then
         if [ "$ARCH" == "x86_64" ]; then
             GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
             if [ $GCC_VERSION -eq 4 ]; then
-                ARCH=64gcc4
+                ARCH=64gcc6
             elif [ $GCC_VERSION -eq 5 ]; then
-                ARCH=64gcc5
+                ARCH=64gcc6
             else
                 ARCH=64gcc6
             fi

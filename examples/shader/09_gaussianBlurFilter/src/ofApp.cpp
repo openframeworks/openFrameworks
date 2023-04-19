@@ -2,11 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	
-#ifdef TARGET_OPENGLES
-	shaderBlurX.load("shadersES2/shaderBlurX");
-	shaderBlurY.load("shadersES2/shaderBlurY");
-#else
+	ofDisableArbTex();
 	if(ofIsGLProgrammableRenderer()){
 		shaderBlurX.load("shadersGL3/shaderBlurX");
 		shaderBlurY.load("shadersGL3/shaderBlurY");
@@ -14,7 +10,6 @@ void ofApp::setup(){
 		shaderBlurX.load("shadersGL2/shaderBlurX");
 		shaderBlurY.load("shadersGL2/shaderBlurY");
 	}
-#endif
 
 	image.load("img.jpg");
 	
@@ -37,9 +32,7 @@ void ofApp::draw(){
 	
 	shaderBlurX.begin();
 	shaderBlurX.setUniform1f("blurAmnt", blur);
-#ifdef TARGET_OPENGLES
 	shaderBlurX.setUniform1f("texwidth", image.getWidth());
-#endif
 
 	image.draw(0, 0);
 	
@@ -52,9 +45,7 @@ void ofApp::draw(){
 	
 	shaderBlurY.begin();
 	shaderBlurY.setUniform1f("blurAmnt", blur);
-#ifdef TARGET_OPENGLES
 	shaderBlurY.setUniform1f("texheight", image.getHeight());
-#endif
 	
 	fboBlurOnePass.draw(0, 0);
 	

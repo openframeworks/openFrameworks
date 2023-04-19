@@ -2,6 +2,7 @@
 
 #include "ofShader.h"
 #include "ofColor.h"
+#include "ofMaterialBaseTypes.h"
 // FIXME: deprecated only and ctor
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
@@ -149,89 +150,6 @@ struct ofMaterialSettings {
 	std::string mainVertex=""; /// override the default main function in the vertex shader
 	std::string mainVertexKey=""; /// access vertex main function with this key make unique for new instances
 	
-};
-
-/// \class ofBaseMaterial
-/// \brief material parameter properties that can be applied to vertices in the OpenGL lighting model
-/// used in determining both the intensity and color of reflected light based on the lighting model in use
-/// and if the vertices are on a front or back sided face
-class ofBaseMaterial{
-public:
-
-	virtual ~ofBaseMaterial(){};
-
-	/// \return the diffuse reflectance
-	virtual ofFloatColor getDiffuseColor() const=0;
-
-	/// \return the ambient reflectance
-	virtual ofFloatColor getAmbientColor() const=0;
-
-	/// \return the specular reflectance
-	virtual ofFloatColor getSpecularColor() const=0;
-
-	/// \return the emitted light intensity
-	virtual ofFloatColor getEmissiveColor() const=0;
-
-	/// \return the specular exponent
-	virtual float getShininess() const=0;
-
-	/// \brief begin using this material's properties
-	virtual void begin() const=0;
-
-	/// \brief end using this material's properties
-	virtual void end() const=0;
-
-	/// \brief create and return a shader used to implement the materials effect for a given renderer
-	/// \param textureTarget an implementation-specific value to specify the type of shader to use
-	/// \param renderer programmable renderer instance to create the material shader for
-	virtual const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const=0;
-	
-	/// \brief set a custom shader controlled by the user. 
-	/// \param aCustomShader the material shader, created and maintained by the user
-	virtual void setCustomShader( std::shared_ptr<ofShader> aCustomShader) = 0;
-
-	/// \brief upload the given renderer's normal matrix to the material shader
-	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
-	virtual void uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
-
-	/// \brief update the material properties to the material shader
-	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
-	virtual void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
-
-	/// \brief update the given renderer's lights to the material shader
-	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
-	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
-
-	/// \brief update the given renderer's shadows to the material shader
-	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
-	virtual void updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
-	
-	/// \brief update the given renderer's environment maps / cube maps to the material shader
-	/// \param shader the material shader, created by getShader()
-	/// \param renderer programmable renderer instance that uses the material shader
-	virtual void updateEnvironmentMaps(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
-	
-	/// \brief when begin() is called, the material is set to bound by the renderer.\nSet to unbound via renderer when end() is called.
-	/// \return is the shader bound to a renderer.
-	virtual bool isBound() const;
-	
-protected:
-	friend class ofGLProgrammableRenderer;
-	/// \brief set to bound. Later used if certain properties are set so the shader can be updated without calling end(), set var and then begin() again.
-	virtual void bind(ofGLProgrammableRenderer & renderer) const {
-		mBound = true;
-	}
-	
-	/// \brief unbind the shader. 
-	virtual void unbind(ofGLProgrammableRenderer & renderer) const {
-		mBound = false;
-	}
-	
-	mutable bool mBound = false;
 };
 
 
@@ -482,28 +400,28 @@ private:
 	TextureUnifom getCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType);
 	TextureUnifom getCustomUniformTexture(const std::string & name);
 
-	mutable std::map<ofGLProgrammableRenderer*,std::shared_ptr<Shaders>> shaders;
-	static std::map<ofGLProgrammableRenderer*, std::map<std::string,std::weak_ptr<Shaders>>> shadersMap;
+	mutable std::unordered_map<ofGLProgrammableRenderer*, std::shared_ptr<Shaders>> shaders;
+	static std::unordered_map<ofGLProgrammableRenderer*, std::unordered_map<std::string, std::weak_ptr<Shaders>>> shadersMap;
 //	static std::string vertexShader;
 //	static std::string fragmentShader;
-	std::map<std::string, float> uniforms1f;
-	std::map<std::string, glm::vec2> uniforms2f;
-	std::map<std::string, glm::vec3> uniforms3f;
-	std::map<std::string, glm::vec4> uniforms4f;
-	std::map<std::string, float> uniforms1i;
-	std::map<std::string, glm::vec<2, int, glm::precision::defaultp>> uniforms2i;
-	std::map<std::string, glm::vec<3, int, glm::precision::defaultp>> uniforms3i;
-	std::map<std::string, glm::vec<4, int, glm::precision::defaultp>> uniforms4i;
-	std::map<std::string, glm::mat4> uniforms4m;
-	std::map<std::string, glm::mat3> uniforms3m;
-	std::map<std::string, TextureUnifom> uniformstex;
+	std::unordered_map<std::string, float> uniforms1f;
+	std::unordered_map<std::string, glm::vec2> uniforms2f;
+	std::unordered_map<std::string, glm::vec3> uniforms3f;
+	std::unordered_map<std::string, glm::vec4> uniforms4f;
+	std::unordered_map<std::string, float> uniforms1i;
+	std::unordered_map<std::string, glm::vec<2, int, glm::precision::defaultp>> uniforms2i;
+	std::unordered_map<std::string, glm::vec<3, int, glm::precision::defaultp>> uniforms3i;
+	std::unordered_map<std::string, glm::vec<4, int, glm::precision::defaultp>> uniforms4i;
+	std::unordered_map<std::string, glm::mat4> uniforms4m;
+	std::unordered_map<std::string, glm::mat3> uniforms3m;
+	std::unordered_map<std::string, TextureUnifom> uniformstex;
 	
-	std::map<std::string, std::string> mCustomUniforms;
-	std::map<std::string, std::string> mDefines;
+	std::unordered_map<std::string, std::string> mCustomUniforms;
+	std::unordered_map<std::string, std::string> mDefines;
 
-	mutable std::map<std::string, int> mShaderIdsToRemove;
+	mutable std::unordered_map<std::string, int> mShaderIdsToRemove;
 	
-	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+	std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
 	
 	std::shared_ptr<ofShader> customShader;
 	bool bHasCustomShader = false;

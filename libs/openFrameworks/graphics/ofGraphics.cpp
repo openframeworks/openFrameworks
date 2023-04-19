@@ -397,12 +397,12 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		glm::vec2 center(w / 2, h / 2);
 		gradientMesh.addVertex(glm::vec3(center, 0.f));
 		gradientMesh.addColor(start);
-		int n = 32; // circular gradient resolution
-		float angleBisector = TWO_PI / (n * 2);
+		float n = 32; // circular gradient resolution
+		float angleBisector = glm::two_pi<float>() / (n * 2.0);
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
-			float theta = i * TWO_PI / n;
+			float theta = i * glm::two_pi<float>() / n;
 			gradientMesh.addVertex(glm::vec3(center + glm::vec2(sin(theta), cos(theta)) * bigRadius, 0));
 			gradientMesh.addColor(end);
 		}
@@ -1213,7 +1213,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 				currentLineLength++;
 			}
 		}
-		maxLineLength = MAX(maxLineLength, currentLineLength);
+		maxLineLength = std::max(maxLineLength, currentLineLength);
 	}
 	
 	int padding = 4;

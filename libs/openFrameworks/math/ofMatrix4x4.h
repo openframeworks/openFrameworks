@@ -10,12 +10,12 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include "ofVec4f.h"
 #include "ofQuaternion.h"
-#include <cmath>
-#include "glm/mat4x4.hpp"
 #include "ofMathConstants.h"
+#include "ofConstants.h"
+#include "glm/mat4x4.hpp"
+#include <cmath>
 
 class ofVec3f;
 
@@ -985,7 +985,7 @@ inline void ofMatrix4x4::rotate(float angle, float x, float y, float z){
 
 /// \brief Rotates this Matrix by the provided angle (in Radians) around an axis defined by the three values
 inline void ofMatrix4x4::rotateRad(float angle, float x, float y, float z){
-	postMultRotate(angle*static_cast<float>(RAD_TO_DEG),x,y,z);
+	postMultRotate(ofRadToDeg(angle),x,y,z);
 }
 
 /// \brief Translates this matrix by the provided amount
@@ -1014,7 +1014,7 @@ inline void ofMatrix4x4::glRotate(float angle, float x, float y, float z){
 }
 
 inline void ofMatrix4x4::glRotateRad(float angle, float x, float y, float z){
-	preMultRotate(ofQuaternion(angle*static_cast<float>(RAD_TO_DEG),ofVec3f(x,y,z)));
+	preMultRotate(ofQuaternion(ofRadToDeg(angle),ofVec3f(x,y,z)));
 }
 
 inline void ofMatrix4x4::glRotate(const ofQuaternion& q){

@@ -1,5 +1,7 @@
-#include "ofPixels.h"
 #include "ofGraphicsConstants.h"
+#include "ofPixels.h"
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/common.hpp"
 #include <cstring>
 

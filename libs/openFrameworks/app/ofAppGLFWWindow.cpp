@@ -77,9 +77,8 @@ void ofAppGLFWWindow::close(){
 		glfwSetFramebufferSizeCallback( windowP, nullptr);
 		glfwSetWindowCloseCallback( windowP, nullptr );
 		glfwSetScrollCallback( windowP, nullptr );
-#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
 		glfwSetDropCallback( windowP, nullptr );
-#endif
+
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
 
@@ -179,6 +178,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
 	glfwWindowHint(GLFW_DECORATED, settings.decorated);
+	
     #ifdef TARGET_OPENGLES
 	    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -197,6 +197,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+			glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
 			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
@@ -376,12 +377,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetKeyCallback(windowP, keyboard_cb);
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
-	glfwSetFramebufferSizeCallback( windowP, framebuffer_size_cb);
+	glfwSetFramebufferSizeCallback(windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
-#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
-	    glfwSetDropCallback( windowP, drop_cb );
-#endif
+	glfwSetDropCallback(windowP, drop_cb );
 
 
 #ifdef TARGET_LINUX

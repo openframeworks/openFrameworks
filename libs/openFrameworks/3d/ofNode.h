@@ -1,13 +1,12 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include "ofParameter.h"
-#include <array>
+#include "ofConstants.h"
 #include "glm/mat4x4.hpp"
+#include <array>
 
 class ofBaseRenderer;
-
 
 /// \brief A generic 3d object in space with transformation (position, rotation, scale).
 

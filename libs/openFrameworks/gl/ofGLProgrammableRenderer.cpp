@@ -5,10 +5,10 @@
 #include "ofGLUtils.h"
 #include "ofImage.h"
 #include "ofFbo.h"
-#include "ofVbo.h"
+#include "ofVboMesh.h"
 #include "of3dPrimitives.h"
 #include "ofLight.h"
-#include "ofMaterial.h"
+#include "ofMaterialBaseTypes.h"
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
@@ -602,7 +602,7 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
-	float halfFov = PI * fov / 360;
+	float halfFov = glm::pi<float>() * fov / 360.0f;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 	float aspect = (float) viewW / viewH;

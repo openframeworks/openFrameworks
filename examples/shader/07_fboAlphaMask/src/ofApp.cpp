@@ -2,16 +2,12 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	
-#ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
-#else
+	ofDisableArbTex();
 	if(ofIsGLProgrammableRenderer()){
 		shader.load("shadersGL3/shader");
 	}else{
 		shader.load("shadersGL2/shader");
 	}
-#endif
 	
 	brushImage.load("brush.png");
 	// change the image to draw from the center

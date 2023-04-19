@@ -1,4 +1,4 @@
-#version 120
+OF_GLSL_SHADER_HEADER
 
 // this is coming from our C++ code
 uniform float mouseX;

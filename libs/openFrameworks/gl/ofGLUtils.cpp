@@ -1,6 +1,4 @@
 #include "ofGLUtils.h"
-
-#include <set>
 #include "ofGLProgrammableRenderer.h"
 #include "ofGraphics.h"
 #include "ofShader.h"
@@ -10,6 +8,7 @@
 #include "ofPixels.h"
 #include "ofLog.h"
 #include "ofGraphicsConstants.h"
+#include <set>
 
 using std::shared_ptr;
 using std::vector;
@@ -89,7 +88,7 @@ int ofGetGLInternalFormat(const ofShortPixels& pixels) {
 
 //---------------------------------
 int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
-#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB32F;
 		case 4: return GL_RGBA32F;

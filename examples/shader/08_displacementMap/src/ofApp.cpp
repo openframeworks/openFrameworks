@@ -2,16 +2,12 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-#ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
-#else
+	ofDisableArbTex();
 	if(ofIsGLProgrammableRenderer()){
 		shader.load("shadersGL3/shader");
 	}else{
 		shader.load("shadersGL2/shader");
 	}
-#endif
 
 	img.allocate(80, 60, OF_IMAGE_GRAYSCALE);
 

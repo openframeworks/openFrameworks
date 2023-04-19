@@ -9,12 +9,12 @@
 
 
 #include "ofLight.h"
-#include "ofConstants.h"
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
-#include <map>
+#include "ofConstants.h"
 #include <glm/gtc/quaternion.hpp>
+#include <map>
 
 using std::weak_ptr;
 using std::vector;
@@ -208,7 +208,7 @@ bool ofLight::getIsSpotlight() const{
 
 //----------------------------------------
 void ofLight::setSpotlightCutOff( float spotCutOff ) {
-    data->spotCutOff = CLAMP(spotCutOff, 0, 90);
+    data->spotCutOff = ofClamp(spotCutOff, 0, 90);
 	if ( auto r = data->rendererP.lock() ){
 		r->setLightSpotlightCutOff( data->glIndex, spotCutOff );
 	}
@@ -224,7 +224,7 @@ float ofLight::getSpotlightCutOff() const{
 
 //----------------------------------------
 void ofLight::setSpotConcentration( float exponent ) {
-    data->exponent = CLAMP(exponent, 0, 128);
+    data->exponent = ofClamp(exponent, 0, 128);
 	if ( auto r = data->rendererP.lock() ){
 		r->setLightSpotConcentration( data->glIndex, exponent );
 	}
@@ -348,8 +348,8 @@ void ofLight::customDraw(const ofBaseRenderer * renderer) const{
         renderer->drawSphere( 0,0,0, 10);
 		ofDrawAxis(20);
     } else if (getIsSpotlight()) {
-        float coneHeight = (sin(data->spotCutOff*DEG_TO_RAD) * 30.f) + 1;
-        float coneRadius = (cos(data->spotCutOff*DEG_TO_RAD) * 30.f) + 8;
+        float coneHeight = (sin(ofDegToRad(data->spotCutOff)) * 30.f) + 1;
+        float coneRadius = (cos(ofDegToRad(data->spotCutOff)) * 30.f) + 8;
 		const_cast<ofBaseRenderer*>(renderer)->rotateDeg(-90,1,0,0);
 		renderer->drawCone(0, -(coneHeight*.5), 0, coneHeight, coneRadius);
     } else  if (getIsAreaLight()) {

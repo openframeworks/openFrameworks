@@ -1,14 +1,17 @@
 name: build-macos
 
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
   push:
+    if: github.event_name == 'push' && github.event.pull_request == null
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
   pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
     paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
+      - '**/*.md'
+      - 'examples/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,7 +36,12 @@ jobs:
       env:
         cache-name: cache-keep-compile
       with:
-        path: libs/openFrameworksCompiled/lib/osx/**/
+        path: |
+          libs/openFrameworksCompiled/lib/osx/*.a
+          libs/openFrameworksCompiled/lib/osx/**/
+          addons/obj/osx/**/
+          scripts/templates/osx/build/**/
+
         key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
         restore-keys: |
           ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-

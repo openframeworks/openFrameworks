@@ -6,14 +6,11 @@
 #include "ofSoundBaseTypes.h"
 #include "ofThread.h"
 
-
-
 typedef unsigned int ALuint;
 
 #include "kiss_fft.h"
 #include "kiss_fftr.h"
 #include <sndfile.h>
-
 
 #ifdef OF_USING_MPG123
 	typedef struct mpg123_handle_struct mpg123_handle;

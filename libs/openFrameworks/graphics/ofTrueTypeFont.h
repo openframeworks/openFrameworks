@@ -1,12 +1,13 @@
 #pragma once
 
-#include "ofConstants.h"
-#include <unordered_map>
 #include "ofRectangle.h"
 #include "ofPath.h"
 #include "ofTexture.h"
 #include "ofMesh.h"
+// FIXME: template
 #include "ofPixels.h"
+#include "ofConstants.h"
+#include <unordered_map>
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into
