@@ -262,8 +262,6 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG #-D_GLIBCXX_
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
-
 # core sources
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m

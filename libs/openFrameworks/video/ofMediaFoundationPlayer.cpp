@@ -37,12 +37,8 @@ public:
 
     STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
         //m_hrStatus = m_pStream->EndRead(pResult, &m_cbRead);
-
         //SetEvent(m_hEvent);
-        //std::cout << " CALLING ASYNC INVOKE! START" << std::endl;
         mCallBack();
-        //ofLogNotice("Calling ASYNC INVOKEEEEE") << "RELEASED";
-        //std::cout << " CALLING ASYNC INVOKE! DONE" << std::endl;
         //Release();
         return S_OK;
     }
@@ -88,7 +84,6 @@ void callAsyncBlocking(std::function<void()> aCallBack) {
         new AsyncCallback(
             [&] {
         aCallBack();
-        //std::cout << " CALLING SHUTDOWN ASYNC INVOKE! DONE" << std::endl;
         isDone.store(true);
         wait.notify_one();
     }
@@ -104,8 +99,6 @@ void callAsyncBlocking(std::function<void()> aCallBack) {
             pCB = nullptr;
         }
     }
-
-    //std::cout << "AFTER thread lock destroy " << std::endl;
 }
 
 //----------------------------------------------
@@ -131,8 +124,7 @@ void ofMediaFoundationPlayer::sCloseMediaFoundation() {
     if (sNumInstances <= 0) {
         // Shut down Media Foundation.
         CoUninitialize();
-        ofLogNotice("ofMEVideoPlayer") << " calling MFShutdown.";
-        std::cout << "calling MFShutdown. " << std::endl;
+        ofLogVerbose("ofMEVideoPlayer") << " calling MFShutdown.";
         MFShutdown();
     }
     if (sNumInstances < 0) {
@@ -268,6 +260,43 @@ bool ofMediaFoundationPlayer::METexture::allocate( ofPixelFormat afmt, int aw, i
 }
 
 //----------------------------------------------
+bool ofMediaFoundationPlayer::METexture::_swapPixelsFromSrc4ChannelTo3(ofPixels& aDstPix) {
+    const auto targetPixFormat = aDstPix.getPixelFormat();
+    const auto srcPixFormat = mSrcPixels.getPixelFormat();
+
+    bool bNeedsSwap = (srcPixFormat == OF_PIXELS_BGRA && targetPixFormat == OF_PIXELS_RGB);
+    if (srcPixFormat == OF_PIXELS_RGBA && targetPixFormat == OF_PIXELS_BGR) {
+        bNeedsSwap = true;
+    }
+
+    if (bNeedsSwap) {
+        auto srcPixels = mSrcPixels.getPixelsIter();
+        auto dstPixels = aDstPix.getPixelsIter();
+        auto srcPixel = srcPixels.begin();
+        auto dstPixel = dstPixels.begin();
+        auto endPixel = srcPixels.end();
+        for (; srcPixel != srcPixels.end(); srcPixel++, dstPixel++) {
+            dstPixel[0] = srcPixel[2];
+            dstPixel[1] = srcPixel[1];
+            dstPixel[2] = srcPixel[0];
+        }
+    } else {
+        // straight copy, removing the alpha channel
+        auto srcPixels = mSrcPixels.getPixelsIter();
+        auto dstPixels = aDstPix.getPixelsIter();
+        auto srcPixel = srcPixels.begin();
+        auto dstPixel = dstPixels.begin();
+        auto endPixel = srcPixels.end();
+        for (; srcPixel != srcPixels.end(); srcPixel++, dstPixel++) {
+            dstPixel[0] = srcPixel[0];
+            dstPixel[1] = srcPixel[1];
+            dstPixel[2] = srcPixel[2];
+        }
+    }
+    return true;
+}
+
+//----------------------------------------------
 class SharedDXGLTexture : public ofMediaFoundationPlayer::METexture {
 public:
     SharedDXGLTexture() { mGLDX_Handle = nullptr; }
@@ -281,7 +310,7 @@ public:
     ID3D11Texture2D* getDXTexture() { return mDXTex.Get(); }
 
     bool draw(ofPixels& apix) override;
-    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix) override;
+    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) override;
 
     bool lock();
     bool unlock();
@@ -305,7 +334,7 @@ public:
 
     bool transferFrame(IMFMediaEngine* aengine) override;
     bool draw(ofPixels& apix) override;
-    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix) override;
+    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) override;
 
 protected:
     Microsoft::WRL::ComPtr<IWICBitmap> mWicBitmap = nullptr;
@@ -315,7 +344,11 @@ protected:
 
 //----------------------------------------------
 bool SharedDXGLTexture::allocate(ofPixelFormat afmt, int aw, int ah) {
-    return METexture::allocate(OF_PIXELS_BGRA, aw, ah);
+    ofPixelFormat outfmt = OF_PIXELS_BGRA;
+    if (afmt == OF_PIXELS_RGBA || afmt == OF_PIXELS_RGB) {
+        outfmt = OF_PIXELS_RGBA;
+    }
+    return METexture::allocate(outfmt, aw, ah);
 }
 
 //----------------------------------------------
@@ -418,9 +451,7 @@ bool SharedDXGLTexture::draw(ofPixels& apix) {
 }
 
 //----------------------------------------------
-bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix) {
-
-    //aSrcTex.readToPixels(apix);
+bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) {
 
     auto deviceMan = ofMediaFoundationPlayer::getDxDeviceManager();
     auto immediateContext = deviceMan->getContext();
@@ -458,11 +489,25 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix) {
         aSrcTex.readToPixels(apix);
         return apix.getWidth() > 0;
     }
-    apix.setFromPixels(reinterpret_cast<unsigned char*>(mapInfo.pData), getWidth(), getHeight(), mOfPixFmt);
-    if (mOfPixFmt == OF_PIXELS_RGB || mOfPixFmt == OF_PIXELS_RGBA) {
-        apix.swapRgb();
+    // the mOfPixFmt is always going to be BGRA || RGBA
+    bool bSetStraightOnPix = (mOfPixFmt == aTargetPixFormat);
+    if (mOfPixFmt == OF_PIXELS_BGRA && aTargetPixFormat == OF_PIXELS_RGBA) {
+        bSetStraightOnPix = true;
     }
+    if (mOfPixFmt == OF_PIXELS_RGBA && aTargetPixFormat == OF_PIXELS_BGRA) {
+        bSetStraightOnPix = true;
+    }
+    if (bSetStraightOnPix) {
+        apix.setFromPixels(reinterpret_cast<unsigned char*>(mapInfo.pData), getWidth(), getHeight(), mOfPixFmt);
+        if (aTargetPixFormat != mOfPixFmt) {
+            apix.swapRgb();
+        }
+    } else {
+        mSrcPixels.setFromPixels(reinterpret_cast<unsigned char*>(mapInfo.pData), getWidth(), getHeight(), mOfPixFmt);
 
+        apix.allocate(mSrcPixels.getWidth(), mSrcPixels.getHeight(), aTargetPixFormat);
+        _swapPixelsFromSrc4ChannelTo3(apix);
+    }
     return apix.getWidth() > 0 && apix.getHeight() > 0;
 }
 
@@ -483,7 +528,7 @@ SharedDXGLTexture::~SharedDXGLTexture() {
 //----------------------------------------------
 bool WICTextureManager::allocate(ofPixelFormat afmt, int aw, int ah) {
     ofLogVerbose("ofMediaFoundationVideoPlayer :: WICTextureManager") << " allocate.";
-    METexture::allocate(afmt, aw, ah);
+    METexture::allocate(OF_PIXELS_BGRA, aw, ah);
     mBValid = false;
     HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&mWicFactory));
     if (hr == S_OK && mWicFactory) {
@@ -563,7 +608,7 @@ bool WICTextureManager::draw(ofPixels& apix) {
         return false;
     }
 
-    apix.setFromAlignedPixels(data, getWidth(), getHeight(), OF_PIXELS_BGRA, stride);
+    mSrcPixels.setFromAlignedPixels(data, getWidth(), getHeight(), mOfPixFmt, stride);
     mOfTex->loadData(apix);
     //mOfTex->loadData(data, mWidth, mHeight, GL_BGRA);
     mOfTex->draw(0, 0);
@@ -574,9 +619,21 @@ bool WICTextureManager::draw(ofPixels& apix) {
 }
 
 //----------------------------------------------
-bool WICTextureManager::updatePixels(ofTexture& aSrcTex, ofPixels& apix) {
-    if (mOfPixFmt == OF_PIXELS_RGB || mOfPixFmt == OF_PIXELS_RGBA) {
-        apix.swapRgb();
+bool WICTextureManager::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) {
+    // always has mOfPixFmt == OF_PIXELS_BGRA
+    bool bSetStraightOnPix = (mOfPixFmt == aTargetPixFormat);
+    if (mOfPixFmt == OF_PIXELS_BGRA && aTargetPixFormat == OF_PIXELS_RGBA) {
+        bSetStraightOnPix = true;
+    }
+    if (bSetStraightOnPix) {
+        apix = mSrcPixels;
+        if (aTargetPixFormat != mOfPixFmt) {
+            apix.swapRgb();
+        }
+    } else {
+        // swap around pixels 
+        apix.allocate(mSrcPixels.getWidth(), mSrcPixels.getHeight(), aTargetPixFormat);
+        _swapPixelsFromSrc4ChannelTo3(apix);
     }
     return true;
 }
@@ -655,7 +712,7 @@ std::string ofMediaFoundationPlayer::MFErrorToString(MF_MEDIA_ENGINE_ERR aerror)
 ofMediaFoundationPlayer::ofMediaFoundationPlayer() {
     sInitMediaFoundation();
 	InitializeCriticalSectionEx(&m_critSec, 0, 0);
-    mPixFormat = OF_PIXELS_BGRA;
+    mPixFormat = OF_PIXELS_RGB;
 }
 
 //----------------------------------------------
@@ -773,17 +830,12 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
         }
     }
 
-    // now lets make a BSTR 
-    //std::string tPathToLoad = name;
-    
     m_spMediaEngine->SetAutoPlay(FALSE);
 
-    //callAsyncBlocking([&] {
+    // now lets make a BSTR 
     m_spMediaEngine->SetSource(BstrURL(absPath));
 
-    //callAsyncBlocking([&] {
     hr = m_spMediaEngine->Load();
-    //});
 
     //mBLoaded = (hr == S_OK);
 
@@ -807,7 +859,6 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
 
             std::mutex lock;
             std::unique_lock lk{ lock };
-            //std::unique_lock<std::mutex> lk(mMutexLoad);
             mWaitCondition.wait(lk, [&] { return mBIsDoneAtomic.load() || mBIsClosedAtomic.load();  });
         }
     }
@@ -925,7 +976,7 @@ void ofMediaFoundationPlayer::update() {
                         if (bValidDraw) {
                             mCopyTex = mFbo.getTexture();
                             if (mBUpdatePixels) {
-                                mMeTexture->updatePixels(mCopyTex, mPixels);
+                                mMeTexture->updatePixels(mCopyTex, mPixels,mPixFormat);
                             }
                             mBNewFrame = true;
                         }
@@ -1211,6 +1262,12 @@ void ofMediaFoundationPlayer::previousFrame() {
 
 //----------------------------------------------
 bool ofMediaFoundationPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
+    if (pixelFormat == OF_PIXELS_BGRA || pixelFormat == OF_PIXELS_BGR ) {
+        m_d3dFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+    } else if(pixelFormat == OF_PIXELS_RGBA || pixelFormat == OF_PIXELS_RGB ) {
+        m_d3dFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    }
+
     switch (pixelFormat) {
     case OF_PIXELS_RGB:
     case OF_PIXELS_BGR:
@@ -1312,7 +1369,6 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
         }
         case MF_MEDIA_ENGINE_EVENT_LOADEDDATA:
         {
-
             //IMFMediaEngineEx::GetStreamAttribute
             //HRESULT GetStreamAttribute(
             //    [in]  DWORD       dwStreamIndex,
@@ -1338,9 +1394,6 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                         }
                         PropVariantClear(&pvar);
                     }
-
-                    //std::cout << "DURATION: " << mDuration << std::endl;
-
                     updateDuration();
                 }
             }

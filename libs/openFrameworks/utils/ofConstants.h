@@ -49,7 +49,8 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUXARMV7L,
 	/// \brief Compiled to javascript using Emscripten.
 	/// \sa https://github.com/kripken/emscripten
-	OF_TARGET_EMSCRIPTEN
+	OF_TARGET_EMSCRIPTEN,
+	OF_TARGET_LINUXAARCH64
 };
 
 
@@ -86,6 +87,7 @@ enum ofTargetPlatform{
 // 		http://www.ogre3d.org/docs/api/html/OgrePlatform_8h-source.html
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
+	#define OF_OS_WINDOWS
 	#define TARGET_WIN32
 	#if defined(_MSC_VER)
 		#define TARGET_WINVS
@@ -351,7 +353,7 @@ typedef TESSindex ofIndexType;
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
-		#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+		#define OF_VIDEO_PLAYER_DIRECTSHOW
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
@@ -387,6 +389,8 @@ typedef TESSindex ofIndexType;
 //#define OF_SOUND_PLAYER_AV_ENGINE
 
 // check if any soundplayer api is defined from the compiler
+
+#if !defined(TARGET_NO_SOUND)
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
@@ -399,6 +403,7 @@ typedef TESSindex ofIndexType;
   #endif
 #endif
 
+#endif
 //------------------------------------------------ c++11
 // check if the compiler supports c++11. vs hasn't updated the value
 // of __cplusplus so we need to check for vs >= 2012 (1700)
@@ -452,9 +457,13 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
+
 // If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201703L
+#if __cplusplus >= 201500
     #define OF_HAS_CPP17 1
+    #if __cplusplus < 201703L
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #endif
 #else
     #define OF_HAS_CPP17 0
 #endif

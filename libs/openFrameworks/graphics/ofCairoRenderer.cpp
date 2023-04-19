@@ -37,7 +37,7 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
 	if( outputsize.width == 0 || outputsize.height == 0 ){
 		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
@@ -47,10 +47,10 @@ void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool mult
 	streamBuffer.clear();
 
 	if(type == FROM_FILE_EXTENSION){
-		string ext = ofFilePath::getFileExt(filename);
-		if(ofToLower(ext)=="svg"){
+		auto ext = filename.extension();
+		if(ext == of::filesystem::path{".svg"} || ext == of::filesystem::path{".SVG"} ){
 			type = SVG;
-		}else if(ofToLower(ext)=="pdf"){
+		}else if(ext == of::filesystem::path {".pdf"} || ext == of::filesystem::path{".PDF"} ){
 			type = PDF;
 		}else{ // default to image
 			type = IMAGE;
@@ -73,6 +73,7 @@ void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool mult
 		if(filename==""){
 			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
+			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
@@ -80,6 +81,7 @@ void ofCairoRenderer::setup(const std::string & _filename, Type _type, bool mult
 		if(filename==""){
 			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
+			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
@@ -796,7 +798,7 @@ void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 	// temporary fix for a issue where Cairo never recovers after setting scale = 0
 	if (xAmnt == 0) xAmnt = std::numeric_limits<float>::epsilon();
 	if (yAmnt == 0) yAmnt = std::numeric_limits<float>::epsilon();
-	
+
 	cairo_matrix_t matrix;
 	cairo_get_matrix(cr,&matrix);
 	cairo_matrix_scale(&matrix,xAmnt,yAmnt);
@@ -1149,7 +1151,7 @@ void ofCairoRenderer::setupGraphicDefaults(){
 	path.setMode(ofPath::COMMANDS);
 	path.setUseShapeColor(false);
 	clear();
-	
+
 	cairo_matrix_t matrix;
 	cairo_matrix_init_scale(&matrix, 1.0, 1.0);
 	cairo_matrix_init_translate(&matrix, 0.0, 0.0);

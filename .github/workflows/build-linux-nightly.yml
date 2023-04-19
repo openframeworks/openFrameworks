@@ -1,9 +1,8 @@
 name: nightly-linux64
 
 on:
-  schedule:
-    - cron: "0 6 * * *"
-
+ schedule:
+   - cron: "0 6 * * *"
 jobs:
   build-linux-platforms:
     runs-on: ubuntu-22.04

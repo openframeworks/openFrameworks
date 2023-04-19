@@ -356,8 +356,10 @@ function createPackage {
         scripts/linux/download_libs.sh -a armv7l
     elif [ "$pkg_platform" = "msys2" ]; then
         scripts/msys2/download_libs.sh -a $libs_abi
+        scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         scripts/dev/download_libs.sh -p vs
+        scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
@@ -566,13 +568,13 @@ function createPackage {
     	rm -Rf msys2 vs osx ios android ci dev apothecary
 	fi
 
-    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "vs" ]; then
+    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ]; then
         rm -Rf qtcreator emscripten
     fi
 
-    if [ "$pkg_platform" = "msys2" ]; then
-        rm -Rf emscripten
-    fi
+#    if [ "$pkg_platform" = "msys2" ]; then
+#        rm -Rf emscripten
+#    fi
 
     #delete omap4 scripts for non armv7l
 	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
