@@ -51,13 +51,12 @@ enum ofTargetPlatform{
 	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN,
 	OF_TARGET_LINUXAARCH64
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c3557488c (fix conflicts)
 };
 
-
-#ifndef OF_TARGET_IPHONE
-    #define OF_TARGET_IPHONE OF_TARGET_IOS
-#endif
 
 
 // Cross-platform deprecation warning
@@ -345,7 +344,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
     #ifdef TARGET_LINUX
         #define OF_VIDEO_PLAYER_GSTREAMER
     #elif defined(TARGET_ANDROID)
@@ -356,16 +355,22 @@ typedef TESSindex ofIndexType;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 1c3557488c (fix conflicts)
 		#define OF_VIDEO_PLAYER_DIRECTSHOW
 =======
         #define OF_VIDEO_PLAYER_DIRECTSHOW
 >>>>>>> 3abb29a9bc (constants)
+<<<<<<< HEAD
 =======
 		#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
 >>>>>>> ce084876ff (update)
 =======
 		#define OF_VIDEO_PLAYER_DIRECTSHOW
 >>>>>>> 54751a6421 (Add mediafoundation to OF VS project and switch to 142 ( VS 2019 )  (#7505))
+=======
+>>>>>>> 1c3557488c (fix conflicts)
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
@@ -397,21 +402,24 @@ typedef TESSindex ofIndexType;
 #endif
 
 //------------------------------------------------ soundplayer
-//MAC_OS and IOS uncomment to enable AVEnginePlayer
-//#define OF_SOUND_PLAYER_AV_ENGINE
-
 // check if any soundplayer api is defined from the compiler
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 1c3557488c (fix conflicts)
 
 #if !defined(TARGET_NO_SOUND)
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
 =======
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
 >>>>>>> 3abb29a9bc (constants)
+<<<<<<< HEAD
 =======
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
 >>>>>>> ce084876ff (update)
+=======
+>>>>>>> 1c3557488c (fix conflicts)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
   #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
@@ -478,21 +486,43 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #endif
 
 
+<<<<<<< HEAD
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
+=======
+
+
+#ifndef OF_TARGET_IPHONE
+	#define OF_TARGET_IPHONE OF_TARGET_IOS
+#endif
+
+#define Stringize( L )     #L
+#define MakeString( M, L ) M(L)
+#define $Line MakeString( Stringize, __LINE__ )
+#define Reminder __FILE__ "(" $Line ") : Reminder: "
+
+
+// If you are building with c++17 or newer std filesystem will be enabled by default
+#if __cplusplus >= 201703L
+	#pragma message(Reminder "OF_HAS_CPP17 1")
+>>>>>>> 2eeef177a6 (constants)
     #define OF_HAS_CPP17 1
     #if __cplusplus < 201703L
         #define OF_USE_EXPERIMENTAL_FS 1
     #endif
 #else
+	#pragma message(Reminder "OF_HAS_CPP17 0")
     #define OF_HAS_CPP17 0
 #endif
 
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
+		#pragma message(Reminder "OF_USING_STD_FS 1")
+
 		#define OF_USING_STD_FS 1
 	#else
+		#pragma message(Reminder "OF_USING_STD_FS 0")
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
 	#endif
@@ -503,10 +533,14 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_filesystem)
+		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 0")
         #define OF_USE_EXPERIMENTAL_FS 0
     #elif defined(__cpp_lib_experimental_filesystem)
+		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 1")
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif !defined(__has_include)
+		#pragma message(Reminder "OF_USE_EXPERIMENTAL_FS 1 B")
+
         #define OF_USE_EXPERIMENTAL_FS 1
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
@@ -530,6 +564,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
+			#pragma message(Reminder "Not on Visual Studio OF_USE_EXPERIMENTAL_FS 1 B")
             #define OF_USE_EXPERIMENTAL_FS 0
         #endif
     #else
