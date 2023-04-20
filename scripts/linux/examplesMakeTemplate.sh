@@ -35,6 +35,7 @@ then
 			for example in $(ls -1d *)
 			do
 				echo "	$example"
+				cp ${MAKEFILE_PATH}/{Makefile,config.make} ${category}/${example}
 				# echo cp ${MAKEFILE_PATH}/{Makefile,config.make} ${category}/${example}
 			done
 			echo 
