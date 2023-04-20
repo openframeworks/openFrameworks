@@ -68,6 +68,7 @@ else
 	endif
 endif
 
+
 ifdef MAKEFILE_DEBUG
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
@@ -92,6 +93,8 @@ ifndef PLATFORM_LIB_SUBPATH
 			PLATFORM_LIB_SUBPATH=linux
 		else ifeq ($(PLATFORM_ARCH),i686)
 			PLATFORM_LIB_SUBPATH=linux
+		else ifeq ($(PLATFORM_ARCH),aarch64)
+			PLATFORM_LIB_SUBPATH=linuxaarch64
 		else
 			$(error This makefile does not support your architecture $(PLATFORM_ARCH))
 		endif
