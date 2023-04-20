@@ -32,12 +32,19 @@ then
 		if [ $category != "addons" ] && [ $category != "ios" ] && [ $category != "android" ] && [[ -d $category ]]; then
 			echo examples/${category}
 			echo 
+			cd ${category}
 			for example in $(ls -1d *)
 			do
-				echo "	$example"
-				cp ${MAKEFILE_PATH}/{Makefile,config.make} ${category}/${example}
-				# echo cp ${MAKEFILE_PATH}/{Makefile,config.make} ${category}/${example}
+				if [ -d ${example} ];
+				then
+					echo "	$example"
+					cp ${MAKEFILE_PATH}/{Makefile,config.make} ${example}
+					# echo $(pwd)
+					# echo cp ${MAKEFILE_PATH}/Makefile ${category}/${example}/
+					# echo cp ${MAKEFILE_PATH}/config.make ${category}/${example}/
+				fi
 			done
+			cd ..
 			echo 
 		fi
 	done
