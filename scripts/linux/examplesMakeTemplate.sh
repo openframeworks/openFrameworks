@@ -27,11 +27,11 @@ if [ "$ARCH" == "" ]; then
 		if [ "$ARCH" == "x86_64" ]; then
 			GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
 			if [ $GCC_VERSION -eq 4 ]; then
-				ARCH=64gcc6
+				ARCH=64
 			elif [ $GCC_VERSION -eq 5 ]; then
-				ARCH=64gcc6
+				ARCH=64
 			else
-				ARCH=64gcc6
+				ARCH=64
 			fi
 		elif [ "$ARCH" == "armv7l" ]; then
 			# Check for Raspberry Pi
