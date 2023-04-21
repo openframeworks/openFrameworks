@@ -24,6 +24,8 @@ ARCH=$(uname -m)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PARENT_DIR="$(dirname "$DIR")"
 MAKEFILE_PATH=$PARENT_DIR/templates/${PLATFORM}${ARCH}
+echo "Makefile Path ${MAKEFILE_PATH}"
+
 cd ${DIR}/../../examples
 
 # echo "${MAKEFILE_PATH}"
