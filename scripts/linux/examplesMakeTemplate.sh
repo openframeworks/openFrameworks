@@ -59,9 +59,9 @@ EOF
 	fi
 fi
 
-if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
-	ARCH=64gcc6
-fi
+# if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
+# 	ARCH=64
+# fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PARENT_DIR="$(dirname "$DIR")"
