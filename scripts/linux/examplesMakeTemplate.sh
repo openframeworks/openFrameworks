@@ -85,6 +85,7 @@ then
 				then
 					echo "	$example"
 					cp ${MAKEFILE_PATH}/{Makefile,config.make} ${example}
+					# echo cp ${MAKEFILE_PATH}/{Makefile,config.make} ${example}
 					# echo $(pwd)
 					# echo cp ${MAKEFILE_PATH}/Makefile ${category}/${example}/
 					# echo cp ${MAKEFILE_PATH}/config.make ${category}/${example}/
