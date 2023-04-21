@@ -16,7 +16,7 @@ if [ "$PLATFORM" == "" ]; then
 	fi
 fi
 
-ARCH=$(uname -m)
+# ARCH=$(uname -m)
 
 # PLATFORM=linux
 # ARCH=aarch64
