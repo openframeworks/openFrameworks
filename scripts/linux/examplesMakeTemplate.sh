@@ -21,6 +21,48 @@ ARCH=$(uname -m)
 # PLATFORM=linux
 # ARCH=aarch64
 
+if [ "$ARCH" == "" ]; then
+	if [ "$PLATFORM" == "linux" ]; then
+		ARCH=$(uname -m)
+		if [ "$ARCH" == "x86_64" ]; then
+			GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+			if [ $GCC_VERSION -eq 4 ]; then
+				ARCH=64gcc6
+			elif [ $GCC_VERSION -eq 5 ]; then
+				ARCH=64gcc6
+			else
+				ARCH=64gcc6
+			fi
+		elif [ "$ARCH" == "armv7l" ]; then
+			# Check for Raspberry Pi
+			if [ -f /opt/vc/include/bcm_host.h ]; then
+				ARCH=armv6l
+			fi
+		elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
+			cat << EOF
+32bit linux is not officially supported anymore but compiling
+the libraries using the build script in apothecary/scripts
+should compile all the dependencies without problem
+EOF
+			exit 1
+		fi
+	elif [ "$PLATFORM" == "msys2" ]; then
+		if [ "$MSYSTEM" == "MINGW64" ]; then
+			ARCH=mingw64
+		elif [ "$MSYSTEM" == "MINGW32" ]; then
+			ARCH=mingw32
+		elif [ "$MSYSTEM" == "UCRT64" ]; then
+			ARCH=ucrt64
+		elif [ "$MSYSTEM" == "CLANG64" ]; then
+			ARCH=clang64
+		fi
+	fi
+fi
+
+if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
+	ARCH=64gcc6
+fi
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PARENT_DIR="$(dirname "$DIR")"
 MAKEFILE_PATH=$PARENT_DIR/templates/${PLATFORM}${ARCH}
