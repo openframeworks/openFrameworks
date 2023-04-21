@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script copy the needed files to compile every example via Make. 
+
 if [ "$PLATFORM" == "" ]; then
 	OS=$(uname)
 	if [ "$OS" == "Linux" ]; then
