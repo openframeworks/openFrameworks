@@ -40,7 +40,7 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_LDFLAGS += -no-pie
-PLATFORM_LDFLAGS += -nostartfiles
+# PLATFORM_LDFLAGS += -nostartfiles
 
 PLATFORM_CFLAGS += -march=armv8-a
 PLATFORM_CFLAGS += -mcpu=cortex-a72
