@@ -1,4 +1,4 @@
 #!/bin/bash
 cd "$(dirname "$0")"
-c++ main.app
+c++ main.cpp
 ./a.out
