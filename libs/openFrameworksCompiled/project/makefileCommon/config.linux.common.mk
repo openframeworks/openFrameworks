@@ -99,10 +99,7 @@ endif
 
 ifdef OF_USING_STD_FS
 	$(info OF_USING_STD_FS)
-
 	PLATFORM_DEFINES += "OF_USING_STD_FS=1"
-else
-	$(info NOT_OF_USING_STD_FS)
 endif
 
 
