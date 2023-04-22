@@ -333,6 +333,11 @@ PLATFORM_LIBRARIES += freeimage
 # REMOVER
 # PLATFORM_LIBRARIES += stdc++fs
 
+ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
+$(info $(shell tput setaf 1)YESSS$(shell tput sgr0))
+PLATFORM_LDFLAGS += -lstdc++fs
+endif
+
 ifeq ($(OF_USING_STD_FS),1)
 $(info $(shell tput setaf 1)Using std fs$(shell tput sgr0))
 PLATFORM_LIBRARIES += stdc++fs
@@ -479,4 +484,3 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 afterplatform: after
 	@echo
 
-$(info ${PLATFORM_LIBRARIES})
