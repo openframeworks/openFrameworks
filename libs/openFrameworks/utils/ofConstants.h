@@ -463,8 +463,19 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #endif
 
 
+
+ #define Stringize( L )     #L 
+ #define MakeString( M, L ) M(L)
+ #define $Line MakeString( Stringize, __LINE__ )
+ #define Reminder __FILE__ "(" $Line ") : Reminder: "
+
+
 // If you are building with c++17 or newer std filesystem will be enabled by default
+#pragma message(Reminder __cplusplus) 
+
 #if __cplusplus >= 201500
+
+
     #define OF_HAS_CPP17 1
     #if __cplusplus < 201703L
         #define OF_USE_EXPERIMENTAL_FS 1
@@ -527,7 +538,10 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         // C++17 experimental fs support
         #include <experimental/filesystem>
         
+
         #if OF_HAS_CPP17
+			#pragma message(Reminder "has cpp17") 
+
             namespace std {
                 namespace experimental{
                     namespace filesystem {
@@ -536,6 +550,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                 }
             }
         #else
+			#pragma message(Reminder "false - has cpp17") 
+
             namespace std {
                 namespace experimental{
                     namespace filesystem {
