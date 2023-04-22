@@ -1,5 +1,14 @@
 #include <iostream>
-#include <experimental/filesystem>
+#ifdef __cpp_lib_filesystem
+	#include <filesystem>
+	namespace fs = std::filesystem;
+#else
+	#ifdef __cpp_lib_experimental_filesystem
+		#include <experimental/filesystem>
+		namespace fs = std::experimental::filesystem;
+	#endif
+#endif
+
 
 using std::cout;
 using std::endl;
@@ -11,6 +20,12 @@ int main() {
 	#endif		
 	#ifdef __cpp_lib_filesystem
 		cout << "__cpp_lib_filesystem " << endl;
-	#endif		
+	#endif
+
+	cout << fs::current_path() << endl;
+	fs::path here { "folder" };
+	cout << here << endl;
+	here = fs::current_path();
+	cout << here << endl;
 	return 0;
 }
