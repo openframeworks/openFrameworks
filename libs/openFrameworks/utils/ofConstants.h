@@ -483,8 +483,11 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
+		#pragma message(Reminder "has cpp17, defining OF_USING_STD_FS 1") 
+
 		#define OF_USING_STD_FS 1
 	#else
+		#pragma message(Reminder "no cpp17, defining OF_USING_STD_FS 0") 
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
 	#endif
