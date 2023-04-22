@@ -471,11 +471,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
-#pragma message(Reminder __cplusplus) 
-
 #if __cplusplus >= 201500
-
-
     #define OF_HAS_CPP17 1
     #if __cplusplus < 201703L
         #define OF_USE_EXPERIMENTAL_FS 1
