@@ -22,10 +22,10 @@ int main() {
 		cout << "__cpp_lib_filesystem " << endl;
 	#endif
 
-	cout << fs::current_path() << endl;
-	fs::path here { "folder" };
-	cout << here << endl;
-	here = fs::current_path();
-	cout << here << endl;
+	// cout << fs::current_path() << endl;
+	// fs::path here { "folder" };
+	// cout << here << endl;
+	// here = fs::current_path();
+	// cout << here << endl;
 	return 0;
 }
