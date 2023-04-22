@@ -98,11 +98,11 @@ ifdef USE_GST_GL
 endif
 
 ifdef OF_USING_STD_FS
-	$(info $(shell tput setaf 1)OF_USING_STD_FS$(shell tput sgr0))
+	$(info OF_USING_STD_FS)
 
 	PLATFORM_DEFINES += "OF_USING_STD_FS=1"
 else
-	$(info $(shell tput setaf 1)NOT OF_USING_STD_FS$(shell tput sgr0))
+	$(info NOT_OF_USING_STD_FS)
 endif
 
 
