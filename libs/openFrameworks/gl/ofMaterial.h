@@ -7,6 +7,7 @@
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
 #include "glm/vec2.hpp"
+#include <map>
 
 enum ofMaterialTextureType: short{
 	OF_MATERIAL_TEXTURE_NONE=0,
@@ -421,7 +422,9 @@ private:
 
 	mutable std::unordered_map<std::string, int> mShaderIdsToRemove;
 	
-	std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+	// unordered_map works well here on modern compilers
+	// std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
 	
 	std::shared_ptr<ofShader> customShader;
 	bool bHasCustomShader = false;
