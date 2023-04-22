@@ -472,3 +472,5 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 afterplatform: after
 	@echo
+
+$(info ${PLATFORM_LIBRARIES})
