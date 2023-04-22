@@ -329,6 +329,9 @@ ifneq ($(PLATFORM_ARCH),armv6l)
 endif
 
 PLATFORM_LIBRARIES += freeimage
+// REMOVER
+PLATFORM_LIBRARIES += stdc++fs
+
 ifeq ($(OF_USING_STD_FS),1)
 PLATFORM_LIBRARIES += stdc++fs
 else
