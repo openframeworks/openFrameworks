@@ -6,10 +6,10 @@
 	#ifdef __cpp_lib_experimental_filesystem
 		#include <experimental/filesystem>
 		namespace fs = std::experimental::filesystem;
+	#else
+		#include <experimental/filesystem>
+		namespace fs = std::experimental::filesystem;
 	#endif
-#else 	
-	#include <experimental/filesystem>
-	namespace fs = std::experimental::filesystem;
 #endif
 
 
