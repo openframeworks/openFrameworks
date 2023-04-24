@@ -226,4 +226,5 @@ if (OF_TARGET_ARCHITECTURE STREQUAL "msvc" OR       # GLEW is only a requirement
 endif()
 
 # And finally find all shared libraries that are part of the dependencies, to be used later
-file(GLOB_RECURSE OF_DEPS_SHARED_LIBS "${CMAKE_BINARY_DIR}/_deps/**/${CMAKE_SHARED_LIBRARY_PREFIX}**${CMAKE_SHARED_LIBRARY_SUFFIX}")
+file(GLOB_RECURSE _OF_DEPS_SHARED_LIBS "${CMAKE_BINARY_DIR}/_deps/**/${CMAKE_SHARED_LIBRARY_PREFIX}**${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(OF_DEPS_SHARED_LIBS ${_OF_DEPS_SHARED_LIBS} CACHE INTERNAL "")
