@@ -1,12 +1,6 @@
 
 # CMake Support
 
-## Introduction
-
-CMake is a Meta- build system. You no longer have to deal with strange compiler flags or huge unreadable Makefiles, instead you describe the project layout logically. Then, when executing, it sets everything up so that the compilation will work without errors.
-
-The best part of this is that is is 100% cross platform: The same CMake script can generate project files for more than 40 different build systems on any operating system, including Visual Studio, GCC Makefiles, Ninja Makefiles, Code::Blocks, and many more.
-
 ## Building with CMake
 
 To build the library itself for testing the examples:
@@ -50,3 +44,48 @@ This is it! OpenFrameworks and all examples have been built!
     deb http://deb.debian.org/debian bullseye-backports main
     sudo apt install cmake -t bullseye-backports
 ```
+
+## Visual Studio
+
+The following instructions are for building openFrameworks itself, in the root directory of the repository. Make sure to download a nightly build as soon as CMake support is available, as the main repository takes tremendously longer to download.
+
+### Building in IDE
+
+Open the generated `openFrameworks.sln` in your build folder with Visual Studio. Then, just build it like any other VS project. Right-click a project and click on `Set as Startup Project` to be able to run it with F5.
+
+### Building in the terminal
+
+You can also build Visual Studio projects without actually opening Visual Studio, by the use of MSBuild. CMake does all of that for you. 
+
+Note that configurations in Visual Studio work a bit different compared to makefiles, as VS is a multi-configuration build tool, makefiles are not.
+
+#### Build all examples
+```bash
+# in root directory of openFrameworks
+mkdir build && cd build
+cmake ..
+cmake --build . --target=build_all_examples --config=Release   # Or 'Debug'
+```
+
+#### Build specific example
+
+Replace `ofNodeExample` with the project name of the example.
+
+```bash
+# in root directory of openFrameworks
+mkdir build && cd build
+cmake ..
+cmake --build . --target=ofNodeExample --config=Release   # Or 'Debug'
+```
+
+#### Run tests
+
+```bash
+# in root directory of openFrameworks
+mkdir build && cd build
+cmake ..
+cmake --build . --config=Release   # Or 'Debug'
+ctest -C Release                   # Or 'Debug'
+```
+
+In the VS IDE, building RUN_TESTS (in CMakePredefinedTargets folder) does the same thing.

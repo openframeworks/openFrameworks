@@ -77,7 +77,7 @@ function(get_packages_and_link)
             set(of-deps-${dependency}_SOURCE_DIR ${of-deps-${dependency}_SOURCE_DIR} CACHE BOOL "" FORCE)
             set(of-deps-${dependency}_CONFIGURED ON CACHE BOOL "" FORCE)
         else()
-            message(STATUS "[openframeworks] Skipping check of ${dependency} to save build time. To force a re-download, delete the build folder and re-run cmake.")
+            message(STATUS "[openframeworks] Skipping check of ${dependency} to save build time. To force a re-download, delete CMakeCache.txt and re-run cmake.")
         endif()
 
         # Now, create the targets and link all files to them
@@ -181,7 +181,7 @@ if (WIN32)
         set(of-deps-glut_SOURCE_DIR ${of-deps-glut_SOURCE_DIR} CACHE PATH "" FORCE)
         set(of-deps-glut_CONFIGURED ON CACHE BOOL "" FORCE)
     else()
-        message(STATUS "[openframeworks] Skipping check of of-deps-glut to save build time. To force a re-download, delete the build folder and re-run cmake.")
+        message(STATUS "[openframeworks] Skipping check of of-deps-glut to save build time. To force a re-download, delete CMakeCache.txt and and re-run cmake.")
     endif()
 
     add_library(of-deps-glut INTERFACE)

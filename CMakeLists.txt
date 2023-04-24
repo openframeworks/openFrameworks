@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(openframeworks)
 
-
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/utils.cmake)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -43,10 +42,11 @@ target_compile_definitions(openframeworks PUBLIC
 
 # Compiler flags specific to MSVC
 if(MSVC)
-    target_compile_options(openframeworks PUBLIC "/Zc:__cplusplus")    # Force MSVC to set __cplusplus macro correctly
-    target_compile_options(openframeworks PUBLIC "/MP")                # Enable multi-core compilation
-    # Ignore linker warning that no .pdb file is available for debugging
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099 /NODEFAULTLIB:LIBCMT /NODEFAULTLIB:MSVCRT")
+    target_compile_options(openframeworks PUBLIC "/Zc:__cplusplus")     # Force MSVC to set __cplusplus macro correctly
+    target_compile_options(openframeworks PUBLIC "/MP")                 # Enable multi-core compilation
+    target_link_options(openframeworks PUBLIC "/ignore:4099")           # Suppress compiler warning that no .pdb file is available for debugging (in third-party libraries)
+    target_link_options(openframeworks PUBLIC "/NODEFAULTLIB:LIBCMT")      # Don't link to the default C runtime library (Conflicting with third-party libraries)
+    target_link_options(openframeworks PUBLIC "/NODEFAULTLIB:$<IF:$<CONFIG:Debug>,MSVCRT,MSVCRTd>")     # Don't link to the default C++ standard library (Conflicting with third-party libraries)
 endif()
 
 # Where compiled binaries should be placed
@@ -62,5 +62,6 @@ if (BUILD_EXAMPLES)
 endif()
 
 if (BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()

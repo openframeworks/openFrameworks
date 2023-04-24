@@ -6,7 +6,7 @@ function(define_test TARGET_NAME)                          # A CMake function li
 
     file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/**)
 
-    add_executable(${TARGET_NAME} EXCLUDE_FROM_ALL)
+    add_executable(${TARGET_NAME})
     target_sources(${TARGET_NAME} PRIVATE ${SOURCES})
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src)
     target_link_libraries(${TARGET_NAME} of::openframeworks of::ofxUnitTests)
@@ -30,21 +30,9 @@ function(define_test TARGET_NAME)                          # A CMake function li
                 copy_directory "${CMAKE_CURRENT_LIST_DIR}/bin/data" "${BIN_DIR}/data")
     endif()
 
-    add_dependencies(build_all_tests ${TARGET_NAME})
-
-    # Add this test to the custom target that runs all tests
-    add_custom_target(run_${TARGET_NAME} DEPENDS ${TARGET_NAME})
-    add_custom_command(TARGET run_${TARGET_NAME} POST_BUILD COMMAND ${BIN_DIR}/${TARGET_NAME} WORKING_DIRECTORY ${BIN_DIR} COMMENT "Running test '${TARGET_NAME}'")
-    add_dependencies(run_all_tests run_${TARGET_NAME})
-    set_target_properties(run_${TARGET_NAME} PROPERTIES FOLDER "openframeworks/tests/${test_name}")
+    add_test(NAME of_${TARGET_NAME} COMMAND ${BIN_DIR}/${TARGET_NAME} WORKING_DIRECTORY ${BIN_DIR})
 
 endfunction()
-
-add_custom_target(build_all_tests)
-set_target_properties(build_all_tests PROPERTIES FOLDER "openframeworks/tests")
-
-add_custom_target(run_all_tests)
-set_target_properties(run_all_tests PROPERTIES FOLDER "openframeworks/tests")
 
 # Folders with tests to build
 add_subdirectory(addons)
