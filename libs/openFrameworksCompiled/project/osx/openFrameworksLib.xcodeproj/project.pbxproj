@@ -192,7 +192,7 @@
 		6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
 		6678E97C19FEB5A600C00581 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
-		6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofAVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
+		6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objcpp; path = ofAVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
 		6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationPlayer.h; sourceTree = "<group>"; };
 		6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationVideoPlayer.h; sourceTree = "<group>"; };
 		676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVFoundationPlayer.mm; sourceTree = "<group>"; };
