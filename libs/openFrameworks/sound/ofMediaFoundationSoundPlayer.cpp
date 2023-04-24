@@ -38,8 +38,9 @@ int ofMediaFoundationUtils::sNumMFInstances = 0;
 bool ofMediaFoundationUtils::InitMediaFoundation() {
     if (sNumMFInstances == 0) {
         HRESULT hr = MFStartup(MF_VERSION);
-        // TODO: This should be managed because ofMediaFoundationPlayer also
+        // TODO: This is called by ofMediaFoundationPlayer also
         // uses CoInitializeEx
+        // using the coinit in case ofDirectShowPlayer is also being used
         hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
         //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
         //HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
@@ -54,7 +55,6 @@ bool ofMediaFoundationUtils::CloseMediaFoundation() {
     sNumMFInstances--;
     HRESULT hr = S_OK;
     if (sNumMFInstances <= 0) {
-        //sCloseXAudio2();
         CoUninitialize();
         ofLogVerbose("ofMediaFoundationUtils") << " calling MFShutdown.";
         // Shut down Media Foundation.
@@ -159,12 +159,6 @@ bool ofMediaFoundationSoundPlayer::sCloseXAudio2() {
 bool ofMediaFoundationSoundPlayer::sInitAudioSystems() {
     ofMediaFoundationUtils::InitMediaFoundation();
     if (sNumInstances == 0) {
-        // TODO: This should be managed because ofMediaFoundationPlayer also
-        // uses CoInitializeEx
-        
-        //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-        //HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
-        //ofLogVerbose("ofMediaFoundationSoundPlayer :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
         sInitXAudio2();
     }
     sNumInstances++;
@@ -175,11 +169,8 @@ bool ofMediaFoundationSoundPlayer::sInitAudioSystems() {
 void ofMediaFoundationSoundPlayer::sCloseAudioSystems() {
     sNumInstances--;
     if (sNumInstances <= 0) {
-        sCloseXAudio2();
-        //CoUninitialize();
-        ofLogVerbose("ofMediaFoundationSoundPlayer") << " calling MFShutdown.";
-        // Shut down Media Foundation.
-        //sCloseMediaFoundation();
+        ofLogVerbose("ofMediaFoundationSoundPlayer") << " closing XAudio2.";
+        sCloseXAudio2(); 
     }
     ofMediaFoundationUtils::CloseMediaFoundation();
     if (sNumInstances < 0) {
@@ -432,10 +423,10 @@ void ofMediaFoundationSoundPlayer::unload() {
     mBStreaming = false;
 
     for (auto& it : mExtraVoices) {
-        if (it) {
-            std::ignore = it->Stop();
-            std::ignore = it->FlushSourceBuffers();
-            it->DestroyVoice();
+        if (it.second) {
+            std::ignore = it.second->Stop();
+            std::ignore = it.second->FlushSourceBuffers();
+            it.second->DestroyVoice();
         }
     }
     mExtraVoices.clear();
@@ -534,10 +525,10 @@ void ofMediaFoundationSoundPlayer::update(ofEventArgs& args) {
 
     for (auto it = mExtraVoices.begin(); it != mExtraVoices.end(); ) {
         XAUDIO2_VOICE_STATE xstate;
-        it->get()->GetState(&xstate, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+        it->second->GetState(&xstate, XAUDIO2_VOICE_NOSAMPLESPLAYED);
         if (!xstate.BuffersQueued) {
-            std::ignore = it->get()->Stop(0);
-            it->get()->DestroyVoice();
+            std::ignore = it->second->Stop(0);
+            it->second->DestroyVoice();
             it = mExtraVoices.erase(it);
         } else {
             ++it;
@@ -551,19 +542,47 @@ void ofMediaFoundationSoundPlayer::play() {
         ofLogError("ofMediaFoundationSoundPlayer :: play") << "error creating sXAudio2.";
         return;
     }
+
     // don't want a ton of loops going on here 
     if (mBLoop) {
         stop();
     }
 
     if (mBMultiPlay && isPlaying()) {
-        std::shared_ptr<IXAudio2SourceVoice> uptr;// = std::make_shared<IXAudio2SourceVoice>();
-        IXAudio2SourceVoice* pSourceVoice = uptr.get();
+        unsigned int voiceKey = 0;
+        // get next available key //
+        if (mExtraVoices.size() > 0) {
+            bool bOkGotAGoodOne = false;
+            int numAttempts = 0;
+            while (!bOkGotAGoodOne && (numAttempts < 1024)) {
+                bool bOneIsAlreadyKey = false;
+                for (auto& it : mExtraVoices) {
+                    if (it.first == voiceKey) {
+                        bOneIsAlreadyKey = true;
+                        break;
+                    }
+                }
+                if (!bOneIsAlreadyKey) {
+                    bOkGotAGoodOne = true;
+                } else {
+                    voiceKey++;
+                    numAttempts++;
+                }
+            }
+
+            if (!bOkGotAGoodOne) {
+                ofLogError("ofMediaFoundationSoundPlayer::play") << " error finding key for multi play";
+                return;
+            }
+        }
+
+        IXAudio2SourceVoice* pSourceVoice;
         HRESULT hr = sXAudio2->CreateSourceVoice(&pSourceVoice, &mWaveFormatEx);
         if (hr != S_OK) {
             ofLogError("ofMediaFoundationSoundPlayer::play") << " error creating extra multi play sounds.";
             return;
         }
+
         // ok, now lets add some extra players //
         // Submit the wave sample data using an XAUDIO2_BUFFER structure
         XAUDIO2_BUFFER buffer = {};
@@ -572,12 +591,13 @@ void ofMediaFoundationSoundPlayer::play() {
         buffer.Flags = XAUDIO2_END_OF_STREAM;  
         buffer.AudioBytes = mBuffer.size();
 
-        hr = uptr->SubmitSourceBuffer(&buffer);
-        uptr->SetVolume(mVolume);
-        uptr->SetFrequencyRatio(mSpeed);
-        _setPan(uptr.get(), mPan);
-        mExtraVoices.push_back(uptr);
-        hr = uptr->Start(0);
+        hr = pSourceVoice->SubmitSourceBuffer(&buffer);
+        pSourceVoice->SetVolume(mVolume);
+        pSourceVoice->SetFrequencyRatio(mSpeed);
+        _setPan(pSourceVoice, mPan);
+        mExtraVoices.emplace_back(std::make_pair(voiceKey, pSourceVoice));
+        //mExtraVoices.push_back(uptr);
+        hr = pSourceVoice->Start(0);
     } else {
 
         if (mBStreaming && mSrcReader) {
@@ -607,12 +627,14 @@ void ofMediaFoundationSoundPlayer::play() {
 
 //--------------------
 void ofMediaFoundationSoundPlayer::stop() {
-    for (auto& it : mExtraVoices) {
-        it->Stop();
-        it->FlushSourceBuffers();
-        it->DestroyVoice();
-    }
-    mExtraVoices.clear();
+    //for (auto& it : mExtraVoices) {
+    //    if (it.second) {
+    //        std::ignore = it.second->Stop();
+    //        std::ignore = it.second->FlushSourceBuffers();
+    //        it.second->DestroyVoice();
+    //    }
+    //}
+    //mExtraVoices.clear();
 
     if (mBStreaming && mSrcReader) {
         ofMediaFoundationUtils::CallAsyncBlocking(
@@ -641,8 +663,8 @@ void ofMediaFoundationSoundPlayer::setVolume(float vol) {
         mVoice->SetVolume(mVolume);
     }
     for (auto& it : mExtraVoices) {
-        if (it) {
-            it->SetVolume(mVolume);
+        if (it.second) {
+            it.second->SetVolume(mVolume);
         }
     }
 };

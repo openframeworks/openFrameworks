@@ -10,9 +10,11 @@
 #include "ofGraphics.h"
 #include "ofEventUtils.h"
 
+#include "ofMediaFoundationSoundPlayer.h"
+
 using namespace Microsoft::WRL;
 
-int ofMediaFoundationPlayer::sNumInstances = 0;
+//int ofMediaFoundationPlayer::sNumInstances = 0;
 std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPlayer::sDeviceManager;
 
 bool ofMediaFoundationPlayer::sBAllowDurationHack = true;
@@ -22,115 +24,117 @@ void ofMediaFoundationPlayer::setDurationHackEnabled(bool ab) {
     sBAllowDurationHack = ab;
 }
 
-class AsyncCallback : public IMFAsyncCallback {
-public:
-    AsyncCallback(std::function<void()> aCallBack) {
-        mCallBack = aCallBack;
-    }
-    virtual ~AsyncCallback() = default;
-
-    IFACEMETHODIMP GetParameters(_Out_ DWORD* flags, _Out_ DWORD* queue) {
-        *flags = 0;// MFASYNC_BLOCKING_CALLBACK;
-        *queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED;
-        return S_OK;
-    }
-
-    STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
-        //m_hrStatus = m_pStream->EndRead(pResult, &m_cbRead);
-        //SetEvent(m_hEvent);
-        mCallBack();
-        //Release();
-        return S_OK;
-    }
-
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID* ppvObj) {
-        if (!ppvObj) return E_INVALIDARG;
-        *ppvObj = NULL;
-        if (riid == IID_IMFAsyncCallback) {
-            *ppvObj = (LPVOID)this;
-            AddRef();
-            return NOERROR;
-        }
-        return E_NOINTERFACE;
-    }
-
-    ULONG STDMETHODCALLTYPE AddRef() {
-        InterlockedIncrement(&m_refCount);
-        return m_refCount;
-    }
-
-    ULONG STDMETHODCALLTYPE Release() {
-        ULONG count = InterlockedDecrement(&m_refCount);
-        if (0 == m_refCount) {
-            delete this;
-        }
-        return count;
-    }
-
-protected:
-    std::function<void()> mCallBack;
-    ULONG m_refCount = 0;
-};
-
-//----------------------------------------------
-void callAsyncBlocking(std::function<void()> aCallBack) {
-    std::mutex lock;
-    std::condition_variable wait;
-    std::atomic_bool isDone(false);
-
-    HRESULT hr = S_OK;
-
-    ComPtr<AsyncCallback> pCB(
-        new AsyncCallback(
-            [&] {
-        aCallBack();
-        isDone.store(true);
-        wait.notify_one();
-    }
-    ));
-
-    hr = MFPutWorkItem(MFASYNC_CALLBACK_QUEUE_MULTITHREADED, pCB.Get(), NULL);
-    if (hr == S_OK) {
-        std::unique_lock lk{ lock };
-        wait.wait(lk, [&] { return isDone.load(); });
-    } else {
-        if (pCB) {
-            pCB->Release();
-            pCB = nullptr;
-        }
-    }
-}
-
-//----------------------------------------------
-bool ofMediaFoundationPlayer::sInitMediaFoundation() {
-    
-    if (sNumInstances == 0) {
-        HRESULT hr = MFStartup(MF_VERSION);
-        if (SUCCEEDED(hr)) {
-            //sMFInited = true;
-        }
-        ofLogVerbose("ofMEVideoPlayer :: sInitMediaFoundation : init ok ") << SUCCEEDED(hr);
-        hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED); 
-        //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-        //ofLogVerbose("ofMEVideoPlayer :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
-    }
-    sNumInstances++;
-    return sNumInstances > 0;
-}
-
-//----------------------------------------------
-void ofMediaFoundationPlayer::sCloseMediaFoundation() {
-    sNumInstances--;
-    if (sNumInstances <= 0) {
-        // Shut down Media Foundation.
-        CoUninitialize();
-        ofLogVerbose("ofMEVideoPlayer") << " calling MFShutdown.";
-        MFShutdown();
-    }
-    if (sNumInstances < 0) {
-        sNumInstances = 0;
-    }
-}
+//class AsyncCallback : public IMFAsyncCallback {
+//public:
+//    AsyncCallback(std::function<void()> aCallBack) {
+//        mCallBack = aCallBack;
+//    }
+//    virtual ~AsyncCallback() = default;
+//
+//    IFACEMETHODIMP GetParameters(_Out_ DWORD* flags, _Out_ DWORD* queue) {
+//        *flags = 0;// MFASYNC_BLOCKING_CALLBACK;
+//        *queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED;
+//        return S_OK;
+//    }
+//
+//    STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
+//        //m_hrStatus = m_pStream->EndRead(pResult, &m_cbRead);
+//        //SetEvent(m_hEvent);
+//        mCallBack();
+//        //Release();
+//        return S_OK;
+//    }
+//
+//    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID* ppvObj) {
+//        if (!ppvObj) return E_INVALIDARG;
+//        *ppvObj = NULL;
+//        if (riid == IID_IMFAsyncCallback) {
+//            *ppvObj = (LPVOID)this;
+//            AddRef();
+//            return NOERROR;
+//        }
+//        return E_NOINTERFACE;
+//    }
+//
+//    ULONG STDMETHODCALLTYPE AddRef() {
+//        InterlockedIncrement(&m_refCount);
+//        return m_refCount;
+//    }
+//
+//    ULONG STDMETHODCALLTYPE Release() {
+//        ULONG count = InterlockedDecrement(&m_refCount);
+//        if (0 == m_refCount) {
+//            delete this;
+//        }
+//        return count;
+//    }
+//
+//protected:
+//    std::function<void()> mCallBack;
+//    ULONG m_refCount = 0;
+//};
+//
+////----------------------------------------------
+//void callAsyncBlocking(std::function<void()> aCallBack) {
+//    std::mutex lock;
+//    std::condition_variable wait;
+//    std::atomic_bool isDone(false);
+//
+//    HRESULT hr = S_OK;
+//
+//    ComPtr<AsyncCallback> pCB(
+//        new AsyncCallback(
+//            [&] {
+//        aCallBack();
+//        isDone.store(true);
+//        wait.notify_one();
+//    }
+//    ));
+//
+//    hr = MFPutWorkItem(MFASYNC_CALLBACK_QUEUE_MULTITHREADED, pCB.Get(), NULL);
+//    if (hr == S_OK) {
+//        std::unique_lock lk{ lock };
+//        wait.wait(lk, [&] { return isDone.load(); });
+//    } else {
+//        if (pCB) {
+//            pCB->Release();
+//            pCB = nullptr;
+//        }
+//    }
+//}
+//
+////----------------------------------------------
+//bool ofMediaFoundationPlayer::sInitMediaFoundation() {
+//    
+//    if (sNumInstances == 0) {
+//        HRESULT hr = MFStartup(MF_VERSION);
+//        if (SUCCEEDED(hr)) {
+//            //sMFInited = true;
+//        }
+//        ofLogVerbose("ofMEVideoPlayer :: sInitMediaFoundation : init ok ") << SUCCEEDED(hr);
+//        // matching that of ofMediaFoundationSoundPlayer 
+//        hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+//        //hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED); 
+//        //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+//        //ofLogVerbose("ofMEVideoPlayer :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
+//    }
+//    sNumInstances++;
+//    return sNumInstances > 0;
+//}
+//
+////----------------------------------------------
+//void ofMediaFoundationPlayer::sCloseMediaFoundation() {
+//    sNumInstances--;
+//    if (sNumInstances <= 0) {
+//        // Shut down Media Foundation.
+//        CoUninitialize();
+//        ofLogVerbose("ofMEVideoPlayer") << " calling MFShutdown.";
+//        MFShutdown();
+//    }
+//    if (sNumInstances < 0) {
+//        sNumInstances = 0;
+//    }
+//}
 
 //----------------------------------------------
 ofMediaFoundationPlayer::MEDXDeviceManager::MEDXDeviceManager() {
@@ -710,7 +714,9 @@ std::string ofMediaFoundationPlayer::MFErrorToString(MF_MEDIA_ENGINE_ERR aerror)
 
 //----------------------------------------------
 ofMediaFoundationPlayer::ofMediaFoundationPlayer() {
-    sInitMediaFoundation();
+    //sInitMediaFoundation();
+    // TODO: this is currently located in ofMediaFoundationSoundPlayer
+    ofMediaFoundationUtils::InitMediaFoundation();
 	InitializeCriticalSectionEx(&m_critSec, 0, 0);
     mPixFormat = OF_PIXELS_RGB;
 }
@@ -718,7 +724,7 @@ ofMediaFoundationPlayer::ofMediaFoundationPlayer() {
 //----------------------------------------------
 ofMediaFoundationPlayer::~ofMediaFoundationPlayer() {
     close();
-    sCloseMediaFoundation();
+    ofMediaFoundationUtils::CloseMediaFoundation();
     DeleteCriticalSection(&m_critSec);
 }
 
@@ -880,7 +886,7 @@ void ofMediaFoundationPlayer::close() {
     EnterCriticalSection(&m_critSec);
 
     if (m_spMediaEngine) {
-        callAsyncBlocking(
+        ofMediaFoundationUtils::CallAsyncBlocking(
             [&] { m_spMediaEngine->Shutdown(); }
         );
     }
@@ -1157,7 +1163,9 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 //----------------------------------------------
 void ofMediaFoundationPlayer::setVolume(float volume) {
     if (m_spMediaEngine) {
-        callAsyncBlocking([&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); });
+        ofMediaFoundationUtils::CallAsyncBlocking(
+            [&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); 
+        });
     }
 }
 

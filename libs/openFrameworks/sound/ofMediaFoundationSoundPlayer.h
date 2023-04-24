@@ -9,8 +9,7 @@
 #include <wrl.h>
 #include <xaudio2.h>
 
-#include "stdio.h"
-#include "windows.h"
+#include <list>
 
 // https://github.com/microsoft/DirectXTK/blob/main/Audio/AudioEngine.cpp
 
@@ -170,7 +169,8 @@ protected:
 	static std::shared_ptr<IXAudio2MasteringVoice> sXAudioMasteringVoice;
 
 	UniqueVoice mVoice;
-	std::vector< std::shared_ptr<IXAudio2SourceVoice> > mExtraVoices;
+	//std::vector< std::shared_ptr<IXAudio2SourceVoice> > mExtraVoices;
+	std::list< std::pair<unsigned int, IXAudio2SourceVoice*> > mExtraVoices;
 
 	bool mBLoaded = false;
 	bool mBIsPlaying = false;
