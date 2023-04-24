@@ -2,6 +2,8 @@
 #include "ofMediaFoundationSoundPlayer.h"
 #include "ofLog.h"
 
+#include <condition_variable>
+
 //#include <mmdeviceapi.h>
 //#include <mferror.h>
 #include <propvarutil.h>
@@ -113,7 +115,11 @@ bool ofMediaFoundationSoundPlayer::sInitXAudio2() {
 
     if (sXAudio2 == nullptr) {
         UINT32 flags = 0;
-        HRESULT hr = XAudio2Create(sXAudio2.GetAddressOf(), flags);
+#if defined(TARGET_WINVS)
+        HRESULT hr = XAudio2Create(sXAudio2.GetAddressOf(), 0U);
+#else
+        HRESULT hr = XAudio2Create(sXAudio2.GetAddressOf(), 0U, XAUDIO2_DEFAULT_PROCESSOR );
+#endif
         if (sXAudio2) {
             sXAudio2->StartEngine();
         }
@@ -219,7 +225,9 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     HRESULT hr = MFCreateAttributes(&attributes, mBStreaming ? 2 : 1);
     //hr = attributes->SetUINT32(MF_LOW_LATENCY, TRUE);
     if (mBStreaming) {
+        #if defined MF_LOW_LATENCY
         hr = attributes->SetUINT32(MF_LOW_LATENCY, TRUE);
+        #endif
         mSrcReaderCallback = std::make_shared< SourceReaderCallback>();
         mSrcReaderCallback->setCB(this);
         hr = attributes->SetUnknown(MF_SOURCE_READER_ASYNC_CALLBACK, mSrcReaderCallback.get());

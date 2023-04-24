@@ -9,6 +9,9 @@
 #include <wrl.h>
 #include <xaudio2.h>
 
+#include "stdio.h"
+#include "windows.h"
+
 // https://github.com/microsoft/DirectXTK/blob/main/Audio/AudioEngine.cpp
 
 namespace of {
@@ -231,7 +234,7 @@ protected:
 			if (!ppv)
 				return E_POINTER;
 
-			if (_uuidof(IMFSourceReaderCallback) == iid) {
+			if (__uuidof(IMFSourceReaderCallback) == iid) {
 				*ppv = this;
 				return S_OK;
 			}
