@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofSoundBaseTypes.h"
-#include "ofSoundBuffer.h"
 #include "ofEvents.h"
 
 #include <mfidl.h>
@@ -172,7 +171,9 @@ protected:
 	class SourceReaderCallback : public IMFSourceReaderCallback {
 	public:
 		STDMETHOD(QueryInterface) (REFIID iid, _COM_Outptr_ void** ppv) override {
-			if (!ppv) { return E_POINTER; }
+			if (!ppv)
+				return E_POINTER;
+
 			if (_uuidof(IMFSourceReaderCallback) == iid) {
 				*ppv = this;
 				return S_OK;
@@ -200,11 +201,11 @@ protected:
 		void setCB(of::MFSourceReaderNotifyCallback* acb) {
 			mCB = acb;
 		}
-
 		HRESULT             status;
 		of::MFSourceReaderNotifyCallback* mCB = nullptr;
 		SourceReaderCallback() : status(S_OK) {}
-		virtual ~SourceReaderCallback() { mCB = nullptr; }
+		virtual ~SourceReaderCallback() {}
+
 	};
 
 

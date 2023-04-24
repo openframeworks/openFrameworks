@@ -38,9 +38,7 @@ public:
     }
 
     STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
-        //SetEvent(m_hEvent);
         mCallBack();
-        //Release();
         return S_OK;
     }
 
@@ -185,76 +183,6 @@ void ofMediaFoundationSoundPlayer::sCloseAudioSystems() {
     }
 }
 
-////----------------------------------------------
-//template <class T> void SAFE_RELEASE(T** ppT) {
-//    if (*ppT) {
-//        (*ppT)->Release();
-//        *ppT = NULL;
-//    }
-//}
-//
-////----------------------------------------------
-//template <class T> inline void SAFE_RELEASE(T*& pT) {
-//    if (pT != NULL) {
-//        pT->Release();
-//        pT = NULL;
-//    }
-//}
-
-
-
-
-
-//// https://learn.microsoft.com/en-us/windows/win32/medfound/streaming-audio-renderer
-////--------------------
-//bool ofMediaFoundationSoundPlayer::sConfigureAudioEndPoint() {
-//    IMMDeviceEnumerator* pEnum = NULL;      // Audio device enumerator.
-//    IMMDeviceCollection* pDevices = NULL;   // Audio device collection.
-//    IMMDevice* pDevice = NULL;              // An audio device.
-//    //IMFAttributes* pAttributes = NULL;      // Attribute store.
-//    // Create the device enumerator.
-//    HRESULT hr = CoCreateInstance(
-//        __uuidof(MMDeviceEnumerator),
-//        NULL,
-//        CLSCTX_ALL,
-//        __uuidof(IMMDeviceEnumerator),
-//        (void**)&pEnum
-//    );
-//
-//    // Enumerate the rendering devices.
-//    if (SUCCEEDED(hr)) {
-//        hr = pEnum->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pDevices);
-//    }
-//
-//    // Get ID of the first device in the list.
-//    if (SUCCEEDED(hr)) {
-//        hr = pDevices->Item(0, &pDevice);
-//    }
-//
-//    if (SUCCEEDED(hr)) {
-//        hr = pDevice->GetId(&sMfAudioDeviceIdWSTR);
-//    }
-//
-//    //// Create an attribute store and set the device ID attribute.
-//    //if (SUCCEEDED(hr)) {
-//    //    hr = MFCreateAttributes(&pAttributes, 2);
-//    //}
-//
-//    //if (SUCCEEDED(hr)) {
-//    //    hr = pAttributes->SetString(
-//    //        MF_AUDIO_RENDERER_ATTRIBUTE_ENDPOINT_ID,
-//    //        wstrID
-//    //    );
-//    //}
-//    SAFE_RELEASE(pEnum);
-//    SAFE_RELEASE(pDevices);
-//    SAFE_RELEASE(pDevice);
-//    //SAFE_RELEASE(pAttributes);
-//    //CoTaskMemFree(wstrID);
-//    return (hr == S_OK);
-//
-//}
-
 ofMediaFoundationSoundPlayer::ofMediaFoundationSoundPlayer() {
     InitializeCriticalSectionEx(&m_critSec, 0, 0);
     sInitAudioSystems();
@@ -287,15 +215,6 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
         }
     }
 
-    //if (sMfAudioDeviceIdWSTR == NULL) {
-    //    //sConfigureAudioEndPoint();
-    //}
-
-    //if (sMfAudioDeviceIdWSTR == NULL) {
-    //    //ofLogError("ofMediaFoundationSoundPlayer::load") << " error getting default device ID!";
-    //    //return false;
-    //}
-
     mBStreaming = (bStream || stream);
 
     ComPtr<IMFAttributes> attributes;
@@ -308,24 +227,20 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
         hr = attributes->SetUnknown(MF_SOURCE_READER_ASYNC_CALLBACK, mSrcReaderCallback.get());
     }
 
-    //ComPtr<IMFSourceReader> sreader;
-    //IMFSourceReader* sreader;
+
     LPCWSTR path = absPath.c_str();
     
 
     hr = MFCreateSourceReaderFromURL(
         path,
         attributes.Get(),
-        mSrcReader.GetAddressOf());// &sreader );
+        mSrcReader.GetAddressOf());
 
     if (hr != S_OK) {
         ofLogError("ofMediaFoundationSoundPlayer::load") << " unable to load from: " << absPath;
         unload();
         return false;
     }
-
-    //mSrcReader.reset(sreader);
-    //mSrcReader = std::make_shared<IMFSourceReader>(sreader);
 
     ofLogVerbose("ofMediaFoundationSoundPlayer::load") << " created the source reader " << absPath;
     // Select only the audio stream
@@ -356,7 +271,6 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     
 
     ComPtr<IMFMediaType> mediaType;
-    //IMFMediaType* mediaType;
     hr = MFCreateMediaType(mediaType.GetAddressOf());
     if (hr != S_OK) {
         return false;
@@ -377,8 +291,6 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
         return false;
     }
 
-    //SAFE_RELEASE(mediaType);
-
     ComPtr<IMFMediaType> outputMediaType;
     hr = mSrcReader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, outputMediaType.GetAddressOf());
     if (hr != S_OK) {
@@ -398,7 +310,6 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     std::cout << "mWaveFormatEx Num channels: " << mWaveFormatEx.nChannels << std::endl;
 
     if (!mBStreaming) {
-        //_readToBuffer(mSrcReader.get());
         _readToBuffer(mSrcReader.Get());
     }
 
@@ -433,19 +344,14 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     ofLogVerbose(" ofMediaFoundationSoundPlayer::load") << "made it all the way to the end.";
     
     if (!mBStreaming) {
-        //mSrcReader.reset();
-        //mSrcReader->Release();
         mSrcReader.Reset();
         mSrcReader = nullptr;
     }
 
-    
-    //SAFE_RELEASE(sreader);
     {
 
         // create stream context for listening to voice 
         mVoiceContext = std::make_shared<StreamingVoiceContext>();
-        //mVoiceContext->setCallback(this);
         // Create the source voice
         IXAudio2SourceVoice* pSourceVoice = nullptr;
         // setting max freq ratio to 3, though it may need to be higher to play at a 
@@ -538,7 +444,6 @@ void ofMediaFoundationSoundPlayer::unload() {
     mDurationSeconds = 0.f;
     mDurationMS = 0;
 
-    //mFrameIndex = 0;
     mTotalNumFrames = 0;
     mNumSamplesAlreadyPlayed = 0;
     mBRequestNewReaderSample = false;
@@ -554,7 +459,6 @@ void ofMediaFoundationSoundPlayer::update(ofEventArgs& args) {
                 XAUDIO2_VOICE_STATE xstate;
                 mVoice->GetState(&xstate);
                 mNumSamplesAlreadyPlayed += xstate.SamplesPlayed - mNumSamplesStored;
-                //UINT64 SamplesPlayed = xstate.SamplesPlayed;// -mStartFrameIndex;
                 double seconds = (double)mNumSamplesAlreadyPlayed / (double)mSampleRate;
                 mPosPct = seconds / mDurationSeconds;
                 mNumSamplesStored = xstate.SamplesPlayed;
@@ -595,24 +499,17 @@ void ofMediaFoundationSoundPlayer::update(ofEventArgs& args) {
                     if (mBRequestNewReaderSample) {
                         mBRequestNewReaderSample = false;
                         HRESULT hr = mSrcReader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, nullptr, nullptr, nullptr, nullptr);
-                       /* if (hr == S_OK) {
-                            mBRequestNewReaderSample = false;
-                        }*/
                     }
                 }
-
-                
             }
         } else {
             if (isPlaying()) {
                 XAUDIO2_VOICE_STATE xstate;
                 mVoice->GetState(&xstate);
                 mNumSamplesAlreadyPlayed += xstate.SamplesPlayed - mNumSamplesStored;
-                //UINT64 SamplesPlayed = xstate.SamplesPlayed;// -mStartFrameIndex;
                 double seconds = (double)mNumSamplesAlreadyPlayed / (double)mSampleRate;
                 mPosPct = seconds / mDurationSeconds;
                 mNumSamplesStored = xstate.SamplesPlayed;
-                //std::cout << "SamplesPlayed: " << SamplesPlayed << " - " << SamplesPlayed / mSampleRate << " -- " << seconds << " / " << mDurationSeconds << " pos: " << mPosPct << std::endl;
 
                 if (!xstate.BuffersQueued) {
                     // we have reached the end //
@@ -655,8 +552,6 @@ void ofMediaFoundationSoundPlayer::play() {
     }
 
     if (mBMultiPlay && isPlaying()) {
-        std::cout << "Playing with Multi play " << std::endl;
-        //IXAudio2SourceVoice* pSourceVoice = nullptr;
         std::shared_ptr<IXAudio2SourceVoice> uptr;// = std::make_shared<IXAudio2SourceVoice>();
         IXAudio2SourceVoice* pSourceVoice = uptr.get();
         HRESULT hr = sXAudio2->CreateSourceVoice(&pSourceVoice, &mWaveFormatEx);
@@ -683,7 +578,6 @@ void ofMediaFoundationSoundPlayer::play() {
         if (mBStreaming && mSrcReader) {
             mBRequestNewReaderSample = true;
         } else {
-            //std::cout << "TRying to play the source! " << std::endl;
             XAUDIO2_BUFFER buffer = {};
             buffer.pAudioData = mBuffer.data();
             // tell the source voice not to expect any data after this buffer
@@ -836,8 +730,6 @@ void ofMediaFoundationSoundPlayer::setPosition(float pct) {
                 }
                 mVoice->Start();
             } else {
-                // mTotalNumFrames = (mBuffer.size() / uint64_t(mNumChannels)) / uint64_t(mBytesPerSample);
-                //uint64_t temp = (mBuffer.size() / uint64_t(mNumChannels)) / uint64_t(mBytesPerSample);
                 XAUDIO2_BUFFER buffer = {};
                 buffer.pAudioData = mBuffer.data();
                 // tell the source voice not to expect any data after this buffer
@@ -964,6 +856,7 @@ void ofMediaFoundationSoundPlayer::OnSourceReaderEvent(HRESULT hrStatus, DWORD d
                 if (state.BuffersQueued < MAX_BUFFER_COUNT-1) {
                     break;
                 }
+                //WaitForSingleObject(mVoiceContext->hBufferEndEvent, INFINITE);
                 WaitForSingleObject(mVoiceContext->hBufferEndEvent, 50);
             }
 
@@ -1065,7 +958,7 @@ void ofMediaFoundationSoundPlayer::_setPan(IXAudio2SourceVoice* avoice, float ap
 bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
     bool bKeepOnReadin = true;
 
-    std::cout << "_readToBuffer: " << mNumChannels << " sample rate: " << mSampleRate << std::endl;
+    ofLogVerbose("ofMediaFoundationSoundPlayer::_readToBuffer") << "num channels: " << mNumChannels << " sample rate: " << mSampleRate << std::endl;
 
     unsigned int totalFrames = 0;
 
@@ -1074,7 +967,6 @@ bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
 
     while (bKeepOnReadin) {
         // figure out a better way to process this //
-    //IMFSample* audioSample = NULL;
         ComPtr<IMFSample> audioSample;
         DWORD streamIndex, flags = 0;
         LONGLONG llAudioTimeStamp;
@@ -1113,22 +1005,14 @@ bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
                 continue;
             }
             
-            //BYTE temp;
-            
             size_t numFramesRead = uint64_t(sampleBufferLength) / (bytes64 * numChannels64);
-            std::cout << "sampleBufferLength :: " << sampleBufferLength << " num frames: " << numFramesRead << std::endl;
+            ofLogVerbose("ofMediaFoundationSoundPlayer::_readToBuffer") << "sampleBufferLength : " << sampleBufferLength << " num frames: " << numFramesRead << std::endl;
             totalFrames += numFramesRead;
             std::vector<BYTE> tempBuffer;
             tempBuffer.resize(sampleBufferLength, 0);
             memcpy_s(tempBuffer.data(), sampleBufferLength, audioData, sampleBufferLength);
             // add into the main buffer? 
             mBuffer.insert(mBuffer.end(), tempBuffer.begin(), tempBuffer.end());
-            //if (bufferSize[currentStreamBuffer] < sampleBufferLength) {
-            //    buffers[currentStreamBuffer].reset(new uint8_t[sampleBufferLength]);
-            //    bufferSize[currentStreamBuffer] = sampleBufferLength;
-            //}
-
-            //memcpy_s(buffers[currentStreamBuffer].get(), sampleBufferLength, audioData, sampleBufferLength);
 
             hr = mediaBuffer->Unlock();
             if (hr != S_OK) {
@@ -1141,6 +1025,6 @@ bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
     mDurationMS = mTotalNumFrames * uint64_t(1000) / uint64_t(mSampleRate);
     auto durMillis = mTotalNumFrames * uint64_t(1000) / uint64_t(mSampleRate);
     double durSeconds = (double)durMillis / 1000.0;
-    std::cout << "Total frames read: " << (totalFrames) << " mTotalNumFrames: " << mTotalNumFrames << " dur millis: " << durMillis << " dur seconds: " << durSeconds << std::endl;
+    ofLogVerbose("ofMediaFoundationSoundPlayer::_readToBuffer") << "Total frames read: " << (totalFrames) << " mTotalNumFrames: " << mTotalNumFrames << " dur millis: " << durMillis << " dur seconds: " << durSeconds << std::endl;
     return mBuffer.size() > 0;
 }
