@@ -4,7 +4,7 @@
 //	Merged with code by Sam Kronick, James George and Elie Zananiri.
 //
 
-#include "ofConstants.h"
+#import "ofConstants.h"
 
 #ifdef OF_VIDEO_PLAYER_AVFOUNDATION
 
