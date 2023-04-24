@@ -103,8 +103,8 @@ endfunction()
 if (OF_TARGET_ARCHITECTURE STREQUAL "msvc")
     get_packages_and_link("vs2017_64_1.zip" "vs2017_64_2.zip" "vs2017_64_3.zip" "vs2017_64_4.zip")
 
-elseif (OF_TARGET_ARCHITECTURE STREQUAL "emscripten")       # TODO
-    message(SEND_ERROR "Emscripten dependencies are not yet implemented in CMake! Please edit cmake/download_deps.cmake to add support yourself!")
+elseif (OF_TARGET_ARCHITECTURE STREQUAL "emscripten")       # TODO: Implement Emscripten dependencies
+    message(SEND_ERROR "Emscripten is not yet implemented in CMake! You are welcome to contribute!")
     get_packages_and_link()
 
 elseif (OF_TARGET_ARCHITECTURE STREQUAL "androidarmeabi")
@@ -126,16 +126,20 @@ elseif (OF_TARGET_ARCHITECTURE STREQUAL "macos")
     get_packages_and_link("osx1.tar.bz2" "osx2.tar.bz2" "osx3.tar.bz2" "osx4.tar.bz2")
     
 elseif (OF_TARGET_ARCHITECTURE STREQUAL "msys-mingw")
-    get_packages_and_link("msys2_mingw64.zip")
+    message(SEND_ERROR "MSYS2/MinGW is not yet implemented in CMake! You are welcome to contribute!")
+#    get_packages_and_link("msys2_mingw64.zip")
     
 elseif (OF_TARGET_ARCHITECTURE STREQUAL "msys-ucrt")
-    get_packages_and_link("msys2_ucrt64.zip")
+    message(SEND_ERROR "MSYS2/ucrt64 is not yet implemented in CMake! You are welcome to contribute!")
+#    get_packages_and_link("msys2_ucrt64.zip")
     
 elseif (OF_TARGET_ARCHITECTURE STREQUAL "msys-clang")
-    get_packages_and_link("msys2_clang64.zip")
+    message(SEND_ERROR "MSYS2/clang64 is not yet implemented in CMake! You are welcome to contribute!")
+#    get_packages_and_link("msys2_clang64.zip")
     
 elseif (OF_TARGET_ARCHITECTURE STREQUAL "mingw")
-    get_packages_and_link("msys2_mingw64.zip")
+    message(SEND_ERROR "Raw MinGW is not yet implemented in CMake! You are welcome to contribute!")
+#    get_packages_and_link("msys2_mingw64.zip")
     
 elseif (OF_TARGET_ARCHITECTURE STREQUAL "linux64")
     get_packages_and_link("linux64gcc6.tar.bz2")
