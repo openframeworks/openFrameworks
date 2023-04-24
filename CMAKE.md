@@ -46,7 +46,7 @@ Setup steps for a completely new OF project:
    
    # The actual executable to build
    add_executable(ofExample ${SOURCE_FILES})
-   source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/" PREFIX "" FILES ${SOURCE_FILES})
+   source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/" PREFIX "" FILES ${SOURCE_FILES})      # Group into Folders in VS
    
    # C++ version of the project (independent from the version OF is built with)
    target_compile_features(ofExample PUBLIC cxx_std_17)
@@ -81,7 +81,7 @@ And in `include/pch.hpp`:
 #define PCH_HPP
 
 #include "ofMain.h"
-// And any other common header files that do not change
+// And any other common header files that do not change frequently
 
 #endif //PCH_HPP
 ```
@@ -110,18 +110,19 @@ An output directory including all resources and shared libraries it depends on, 
 
 ## Visual Studio (and multi-config build systems)
 
-The following instructions are for building openFrameworks itself, in the root directory of the repository. Make sure to download a nightly build as soon as CMake support is available, as the main repository takes tremendously longer to download.
+`-j<number-of-cores>` has no effect in Visual Studio, it automatically uses all available cores.
 
-Visual Studio automatically uses all available cores.
-
-In the following examples, we always use cmake like `cmake ..` in the build folder. However, you can also use following signature: 
+In the following examples, we always use the command `cmake ..` in the build folder. However, you can also use following signature: 
 `cmake -S source_dir -B build_dir`. This way the current working directory is irrelevant and the two directories can be anywhere (especially useful for CI toolchains).
 
-### Building in IDE
+### Building inside the VS IDE
 
 Open the generated `openFrameworks.sln` in your build folder with Visual Studio. Then, just build it like any other VS project. Right-click a project and click on `Set as Startup Project` to be able to run it with F5.
 
-### Building in the terminal
+Remember not to change anything in the project setting, as it is overwritten by CMake. Every change must be done
+in CMake to keep it cross-platform.
+
+### Building VS project from the terminal
 
 You can also build Visual Studio projects without actually opening Visual Studio, by the use of MSBuild. CMake does all of that for you. 
 
@@ -129,7 +130,7 @@ Note that configurations in Visual Studio work a bit different compared to makef
 
 #### Build all examples
 ```bash
-# in root directory of openFrameworks
+# either in root directory of openFrameworks, or setting -DBUILD_EXAMPLES=ON
 mkdir build
 cd build
 cmake ..
@@ -141,17 +142,17 @@ cmake --build . --target=build_all_examples --config=Release   # Or 'Debug'
 Replace `ofNodeExample` with the project name of the example.
 
 ```bash
-# in root directory of openFrameworks
+# either in root directory of openFrameworks, or setting -DBUILD_EXAMPLES=ON
 mkdir build
 cd build
 cmake ..
 cmake --build . --target=ofNodeExample --config=Release   # Or 'Debug'
 ```
 
-#### Run tests
+#### Run all tests
 
 ```bash
-# in root directory of openFrameworks
+# either in root directory of openFrameworks, or setting -DBUILD_TESTS=ON
 mkdir build
 cd build
 cmake ..
@@ -166,7 +167,7 @@ In the VS IDE, building RUN_TESTS (in CMakePredefinedTargets folder) does the sa
 #### Building all examples
 
 ```bash
-# in root directory of openFrameworks
+# either in root directory of openFrameworks, or setting -DBUILD_EXAMPLES=ON
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release             # Or 'Debug'
@@ -176,17 +177,17 @@ cmake --build . --target=build_all_examples -j<number-of-cores>
 #### Building specific example
 
 ```bash
-# in root directory of openFrameworks
+# either in root directory of openFrameworks, or setting -DBUILD_EXAMPLES=ON
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release             # Or 'Debug'
 cmake --build . --target=ofNodeExample -j<number-of-cores>
 ```
 
-#### Run tests
+#### Run all tests
 
 ```bash
-# in root directory of openFrameworks
+# either in root directory of openFrameworks, or setting -DBUILD_TESTS=ON
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release            # Or 'Debug'
@@ -209,20 +210,19 @@ If [Visual Studio](https://visualstudio.microsoft.com/de/downloads/) is installe
 Thus, you can build using CLion's excellent IDE, while the Visual Studio compiler is used under the hood.
 This results in the most robust development experience on Windows.
 
-MinGW support (especially for CI) and more is yet to be finalized by you! :)
+MinGW support is waiting to be implemented!
 
 ## Visual Studio Code
 
 When working with Visual Studio Code, the default C++ extensions are recommended, as well as the CMake extension from Microsoft. 
-See the CLion section above, as the same applies to VS Code. The CMake extension simply invokes CMake, which then uses MSVC under the hood.
-The CMake extension's panel in the left bar allows you to build and run targets.
+See the CLion section above, as the same applies to VS Code. The CMake extension simply invokes CMake, which then uses MSVC under the hood, just like CLion.
 
-This means you can also build and run directly in VS Code, very similar to CLion.
+The CMake extension's panel in the left bar allows you to build and execute targets directly in VS Code.
 
 # Known issues
 
- - Currently, all shared libraries are always copied to the target location, even if they are not linked
- - And only shared libraries of the apothecary are copied, not from system dependencies
+ - Currently, all shared libraries are always copied to the target location, even if they are not linked (including both debug and release versions)
+ - And only shared libraries from apothecary dependencies are copied, libraries from other dependencies are not
 
 # Yet to be done
 
@@ -265,7 +265,7 @@ Feel free to contribute to make this list shorter, Happy Coding!
 > 
 >     cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/$USER/android-ndk-r25c/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64
 > 
->     AT LEAST CMake 3.19 !!!
+>     AT LEAST CMake 3.19 !!! (better latest which is 3.26 at the time of writing)
 > 
 >     To update cmake:
 >     deb http://deb.debian.org/debian bullseye-backports main    # put this into /etc/apt/sources.list
