@@ -5,7 +5,7 @@
 
 Setup steps for a completely new OF project:
 
- - Create the following file structure:
+ - Create the following file structure:  
    ![cmake-example-layout](assets/cmake-example-layout.png)  
    As you can see it is very concise.
  - [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake): Just [download the latest release](https://github.com/cpm-cmake/CPM.cmake/releases/latest) and place it in the cmake folder.  
