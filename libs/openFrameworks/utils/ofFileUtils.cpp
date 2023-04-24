@@ -1486,6 +1486,24 @@ static bool natural(const ofFile& a, const ofFile& b) {
 	}
 }
 
+
+//------------------------------------------------------------------------------------------------------------
+struct StringSort{
+    of::filesystem::path path;
+    string basename;
+    int nameInt;
+    string stringInt;
+};
+
+//------------------------------------------------------------------------------------------------------------
+static bool naturalStr(const StringSort& a, const StringSort& b) {
+    if(a.stringInt == a.basename && b.stringInt == b.basename) {
+        return a.nameInt < b.nameInt;
+    } else {
+        return a.path < b.path;
+    }
+}
+
 //------------------------------------------------------------------------------------------------------------
 static bool byDate(const ofFile& a, const ofFile& b) {
 	auto ta = of::filesystem::last_write_time(a);
@@ -1502,11 +1520,49 @@ void ofDirectory::sortByDate() {
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::sort(){
+void ofDirectory::sort(const SortMode & mode){
 	if(files.empty() && !myDir.empty()){
 		listDir();
 	}
-	ofSort(files, natural);
+
+    if( mode == ofDirectory::SORT_NATURAL ){
+        vector <StringSort> sort;
+        sort.reserve(files.size());
+
+        for( auto & f : files ){
+            StringSort ss;
+            ss.path = f.path();
+            ss.basename = f.getBaseName();
+            ss.nameInt = ofToInt(ss.basename);
+            ss.stringInt = ofToString(ss.nameInt);
+            sort.push_back(ss);
+        }
+        
+        ofSort(sort, naturalStr);
+        files.clear();
+        files.reserve(sort.size());
+        for( auto & s : sort ){
+            files.emplace_back( s.path , ofFile::Reference);
+        }
+    }
+    else if(mode == ofDirectory::SORT_FAST){
+        std::vector <string> sort;
+        sort.reserve(files.size());
+        
+        for( auto & f : files ){
+            string ss = f.getFileName();
+            sort.push_back(ss);
+        }
+
+        std::sort(sort.begin(), sort.end());
+        files.clear();
+        files.reserve(sort.size());
+        for( auto & s : sort ){
+            files.emplace_back( myDir / of::filesystem::path(s), ofFile::Reference);
+        }
+    }else if(mode == ofDirectory::SORT_BY_DATE){
+        sortByDate();
+    }
 }
 
 //------------------------------------------------------------------------------------------------------------
