@@ -194,4 +194,13 @@ function(find_linux_deps)
     target_link_libraries(of-deps-libusb INTERFACE ${LIBUSB_1_LIBRARIES})
     target_compile_definitions(of-deps-libusb INTERFACE ${LIBUSB_1_DEFINITIONS})
 
+    find_package(Poco COMPONENTS Data Foundation Net NetSSL Util XML)
+    if (NOT Poco_FOUND)
+        message(SEND_ERROR "Dependency Poco or any of its modules not found. Please install them using your system's equivalent of 'sudo apt install libpoco-dev'")
+    endif()
+    add_library(of-deps-poco INTERFACE)
+    add_library(of::poco ALIAS of-deps-poco)
+    target_include_directories(of-deps-poco INTERFACE ${Poco_INCLUDE_DIRS})
+    target_link_libraries(of-deps-poco INTERFACE ${Poco_LIBRARIES})
+
 endfunction()

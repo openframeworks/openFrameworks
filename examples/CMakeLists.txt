@@ -1,7 +1,7 @@
 message(STATUS "[openframeworks] Configuring examples")
 
-add_custom_target(all_examples)
-set_target_properties(all_examples PROPERTIES FOLDER "openframeworks/examples")
+add_custom_target(build_all_examples)
+set_target_properties(build_all_examples PROPERTIES FOLDER "openframeworks/examples")
 
 # Macro for defining an example with all of its properties
 macro(define_example TARGET_NAME)       # A macro is executed in the caller's scope (current list is the caller)
@@ -37,9 +37,8 @@ macro(define_example TARGET_NAME)       # A macro is executed in the caller's sc
                 copy_directory "${CMAKE_CURRENT_LIST_DIR}/bin/data" "${BIN_DIR}/data")
     endif()
 
-    add_dependencies(all_examples ${TARGET_NAME})
+    add_dependencies(build_all_examples ${TARGET_NAME})
 endmacro()
-
 
 
 # Folders with examples to build

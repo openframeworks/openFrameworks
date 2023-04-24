@@ -1,5 +1,5 @@
 
-function(add_libraries_to_dependency LIB_DIR_NAME LIB_NAME DEP_NAME)
+function(add_libraries_to_dependency LIB_DIR_NAME LIB_NAME DEP_NAME LIB_PATH)
 
     set(CONFIG "ALL")
     if (LIB_DIR_NAME STREQUAL "Debug")
@@ -60,7 +60,7 @@ function(import_dependency DEP_NAME DEP_ROOT PACKAGE_SOURCE_DIR)
             get_filename_component(LIB_NAME ${LIB_PATH} NAME)
             get_filename_component(LIB_EXTENSION ${LIB_PATH} LAST_EXT)
 
-            add_libraries_to_dependency(${LIB_DIR_NAME} ${LIB_NAME} ${DEP_NAME})
+            add_libraries_to_dependency(${LIB_DIR_NAME} ${LIB_NAME} ${DEP_NAME} ${LIB_PATH})
 
         endforeach()
 

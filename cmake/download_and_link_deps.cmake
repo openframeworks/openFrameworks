@@ -85,6 +85,11 @@ function(get_packages_and_link)
         file(GLOB deps "${PACKAGE_SOURCE_DIR}/**")
         foreach(DEP_ROOT IN LISTS deps)
             get_filename_component(DEP_NAME ${DEP_ROOT} NAME)   #  vvv  This is called for each dependency in each downloaded package
+
+            if (OF_TARGET_ARCHITECTURE MATCHES "linux" AND DEP_NAME STREQUAL "poco")   # We do not want to use the embedded poco on linux as it's deprecated. We use the system's package instead
+                continue()
+            endif ()
+
             import_dependency(${DEP_NAME} ${DEP_ROOT} ${PACKAGE_SOURCE_DIR})
         endforeach()
 
