@@ -386,7 +386,12 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------ soundplayer
 //MAC_OS and IOS uncomment to enable AVEnginePlayer
-//#define OF_SOUND_PLAYER_AV_ENGINE
+#ifdef OF_NO_FMOD
+    #undef USE_FMOD
+    #if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
+        #define OF_SOUND_PLAYER_AV_ENGINE
+    #endif
+#endif
 
 // check if any soundplayer api is defined from the compiler
 
