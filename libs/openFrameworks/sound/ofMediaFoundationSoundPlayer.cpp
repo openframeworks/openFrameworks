@@ -2,77 +2,75 @@
 #include "ofMediaFoundationSoundPlayer.h"
 #include "ofLog.h"
 
-#include <mmdeviceapi.h>
-#include <mferror.h>
+//#include <mmdeviceapi.h>
+//#include <mferror.h>
 #include <propvarutil.h>
 #include <xaudio2.h>
-#include <x3daudio.H>
+#include <mmreg.h>
 
-int ofMediaFoundationSoundPlayer::sNumInstances = 0;
+// standard speaker geometry configurations, used with X3DAudioInitialize
+#if !defined(SPEAKER_MONO)
+#define SPEAKER_MONO             SPEAKER_FRONT_CENTER
+#define SPEAKER_STEREO           (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT)
+#define SPEAKER_2POINT1          (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_LOW_FREQUENCY)
+#define SPEAKER_SURROUND         (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | SPEAKER_BACK_CENTER)
+#define SPEAKER_QUAD             (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT)
+#define SPEAKER_4POINT1          (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_LOW_FREQUENCY | SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT)
+#define SPEAKER_5POINT1          (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | SPEAKER_LOW_FREQUENCY | SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT)
+#define SPEAKER_7POINT1          (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | SPEAKER_LOW_FREQUENCY | SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT | SPEAKER_FRONT_LEFT_OF_CENTER | SPEAKER_FRONT_RIGHT_OF_CENTER)
+#define SPEAKER_5POINT1_SURROUND (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | SPEAKER_LOW_FREQUENCY | SPEAKER_SIDE_LEFT  | SPEAKER_SIDE_RIGHT)
+#define SPEAKER_7POINT1_SURROUND (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | SPEAKER_LOW_FREQUENCY | SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT | SPEAKER_SIDE_LEFT  | SPEAKER_SIDE_RIGHT)
+#endif
 
 using namespace Microsoft::WRL;
+
+int ofMediaFoundationSoundPlayer::sNumInstances = 0;
 
 ComPtr<IXAudio2> ofMediaFoundationSoundPlayer::sXAudio2 = nullptr;
 std::shared_ptr<IXAudio2MasteringVoice> ofMediaFoundationSoundPlayer::sXAudioMasteringVoice;
 
+
+int ofMediaFoundationUtils::sNumMFInstances = 0;
+// media foundation utils
 //----------------------------------------------
-void ofMediaFoundationSoundPlayer::SetMasterVolume(float apct) {
-    sInitAudioSystems();
-    if (sXAudioMasteringVoice) {
-        sXAudioMasteringVoice->SetVolume(std::clamp(apct, 0.f, 1.0f));
+bool ofMediaFoundationUtils::InitMediaFoundation() {
+    if (sNumMFInstances == 0) {
+        HRESULT hr = MFStartup(MF_VERSION);
+        // TODO: This should be managed because ofMediaFoundationPlayer also
+        // uses CoInitializeEx
+        hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+        //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+        //HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
+        ofLogVerbose("ofMediaFoundationUtils :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
     }
+    sNumMFInstances++;
+    return sNumMFInstances > 0;
 }
 
-
-class AsyncCallback : public IMFAsyncCallback {
-public:
-    AsyncCallback(std::function<void()> aCallBack) {
-        mCallBack = aCallBack;
+//----------------------------------------------
+bool ofMediaFoundationUtils::CloseMediaFoundation() {
+    sNumMFInstances--;
+    HRESULT hr = S_OK;
+    if (sNumMFInstances <= 0) {
+        //sCloseXAudio2();
+        CoUninitialize();
+        ofLogVerbose("ofMediaFoundationUtils") << " calling MFShutdown.";
+        // Shut down Media Foundation.
+        hr = MFShutdown();
     }
-    virtual ~AsyncCallback() = default;
-
-    IFACEMETHODIMP GetParameters(_Out_ DWORD* flags, _Out_ DWORD* queue) {
-        *flags = 0;// MFASYNC_BLOCKING_CALLBACK;
-        *queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED;
-        return S_OK;
+    if (sNumMFInstances < 0) {
+        sNumMFInstances = 0;
     }
-
-    STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
-        mCallBack();
-        return S_OK;
-    }
-
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID* ppvObj) {
-        if (!ppvObj) return E_INVALIDARG;
-        *ppvObj = NULL;
-        if (riid == IID_IMFAsyncCallback) {
-            *ppvObj = (LPVOID)this;
-            AddRef();
-            return NOERROR;
-        }
-        return E_NOINTERFACE;
-    }
-
-    ULONG STDMETHODCALLTYPE AddRef() {
-        InterlockedIncrement(&m_refCount);
-        return m_refCount;
-    }
-
-    ULONG STDMETHODCALLTYPE Release() {
-        ULONG count = InterlockedDecrement(&m_refCount);
-        if (0 == m_refCount) {
-            delete this;
-        }
-        return count;
-    }
-
-protected:
-    std::function<void()> mCallBack;
-    ULONG m_refCount = 0;
-};
+    return (hr == S_OK);
+}
 
 //----------------------------------------------
-void callAsyncBlocking(std::function<void()> aCallBack) {
+int ofMediaFoundationUtils::GetNumInstances() {
+    return sNumMFInstances;
+}
+
+//----------------------------------------------
+void ofMediaFoundationUtils::CallAsyncBlocking(std::function<void()> aCallBack) {
     std::mutex lock;
     std::condition_variable wait;
     std::atomic_bool isDone(false);
@@ -98,6 +96,14 @@ void callAsyncBlocking(std::function<void()> aCallBack) {
             pCB->Release();
             pCB = nullptr;
         }
+    }
+}
+
+//----------------------------------------------
+void ofMediaFoundationSoundPlayer::SetMasterVolume(float apct) {
+    sInitAudioSystems();
+    if (sXAudioMasteringVoice) {
+        sXAudioMasteringVoice->SetVolume(std::clamp(apct, 0.f, 1.0f));
     }
 }
 
@@ -141,27 +147,18 @@ bool ofMediaFoundationSoundPlayer::sCloseXAudio2() {
     return true;
 }
 
-//----------------------------------------------
-bool ofMediaFoundationSoundPlayer::sInitMediaFoundation() {
-    HRESULT hr = MFStartup(MF_VERSION);
-    return (hr == S_OK);
-}
 
-//----------------------------------------------
-bool ofMediaFoundationSoundPlayer::sCloseMediaFoundation() {
-    return (MFShutdown() == S_OK);
-}
 
 //----------------------------------------------
 bool ofMediaFoundationSoundPlayer::sInitAudioSystems() {
+    ofMediaFoundationUtils::InitMediaFoundation();
     if (sNumInstances == 0) {
-        sInitMediaFoundation();
         // TODO: This should be managed because ofMediaFoundationPlayer also
         // uses CoInitializeEx
         
         //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-        HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
-        ofLogVerbose("ofMediaFoundationSoundPlayer :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
+        //HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
+        //ofLogVerbose("ofMediaFoundationSoundPlayer :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
         sInitXAudio2();
     }
     sNumInstances++;
@@ -173,11 +170,12 @@ void ofMediaFoundationSoundPlayer::sCloseAudioSystems() {
     sNumInstances--;
     if (sNumInstances <= 0) {
         sCloseXAudio2();
-        CoUninitialize();
+        //CoUninitialize();
         ofLogVerbose("ofMediaFoundationSoundPlayer") << " calling MFShutdown.";
         // Shut down Media Foundation.
-        sCloseMediaFoundation();
+        //sCloseMediaFoundation();
     }
+    ofMediaFoundationUtils::CloseMediaFoundation();
     if (sNumInstances < 0) {
         sNumInstances = 0;
     }
@@ -396,7 +394,7 @@ void ofMediaFoundationSoundPlayer::unload() {
             mBRequestNewReaderSample = false;
         }
 
-        callAsyncBlocking(
+        ofMediaFoundationUtils::CallAsyncBlocking(
             [&] {
                 //mSrcReader->Flush(MF_SOURCE_READER_FIRST_AUDIO_STREAM);
                 mSrcReader.Reset();
@@ -406,7 +404,7 @@ void ofMediaFoundationSoundPlayer::unload() {
     mSrcReader = nullptr;
 
     if (mSrcReaderCallback) {
-        callAsyncBlocking(
+        ofMediaFoundationUtils::CallAsyncBlocking(
             [&] { mSrcReaderCallback.reset(); }
         );
     }
@@ -609,7 +607,7 @@ void ofMediaFoundationSoundPlayer::stop() {
     mExtraVoices.clear();
 
     if (mBStreaming && mSrcReader) {
-        callAsyncBlocking(
+        ofMediaFoundationUtils::CallAsyncBlocking(
             [&] { mSrcReader->Flush(MF_SOURCE_READER_FIRST_AUDIO_STREAM); }
         );
     }

@@ -19,6 +19,66 @@ namespace of {
 	};
 }
 
+class ofMediaFoundationUtils {
+public:
+	static bool InitMediaFoundation();
+	static bool CloseMediaFoundation();
+	static int GetNumInstances();
+
+	class AsyncCallback : public IMFAsyncCallback {
+	public:
+		AsyncCallback(std::function<void()> aCallBack) {
+			mCallBack = aCallBack;
+		}
+		virtual ~AsyncCallback() = default;
+
+		IFACEMETHODIMP GetParameters(_Out_ DWORD* flags, _Out_ DWORD* queue) {
+			*flags = 0;// MFASYNC_BLOCKING_CALLBACK;
+			*queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED;
+			return S_OK;
+		}
+
+		STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
+			mCallBack();
+			return S_OK;
+		}
+
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID* ppvObj) {
+			if (!ppvObj) return E_INVALIDARG;
+			*ppvObj = NULL;
+			if (riid == IID_IMFAsyncCallback) {
+				*ppvObj = (LPVOID)this;
+				AddRef();
+				return NOERROR;
+			}
+			return E_NOINTERFACE;
+		}
+
+		ULONG STDMETHODCALLTYPE AddRef() {
+			InterlockedIncrement(&m_refCount);
+			return m_refCount;
+		}
+
+		ULONG STDMETHODCALLTYPE Release() {
+			ULONG count = InterlockedDecrement(&m_refCount);
+			if (0 == m_refCount) {
+				delete this;
+			}
+			return count;
+		}
+
+	protected:
+		std::function<void()> mCallBack;
+		ULONG m_refCount = 0;
+	};
+
+	//----------------------------------------------
+	static void CallAsyncBlocking(std::function<void()> aCallBack);
+
+protected:
+	static int sNumMFInstances;
+};
+
 class ofMediaFoundationSoundPlayer : public ofBaseSoundPlayer, public of::MFSourceReaderNotifyCallback {
 public:
 
@@ -92,9 +152,6 @@ protected:
 
 	static bool sInitXAudio2();
 	static bool sCloseXAudio2();
-
-	static bool sInitMediaFoundation();
-	static bool sCloseMediaFoundation();
 
 	static bool sInitAudioSystems();
 	static void sCloseAudioSystems();
