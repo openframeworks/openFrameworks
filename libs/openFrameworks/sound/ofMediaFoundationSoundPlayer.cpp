@@ -305,9 +305,8 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
         return false;
     }
 
-    std::cout << "waveFormat Num channels: " << waveFormat->nChannels << " bits: " << waveFormat->wBitsPerSample << std::endl;
     memcpy_s(&mWaveFormatEx, sizeof(mWaveFormatEx), waveFormat, waveFormatSize);
-    std::cout << "mWaveFormatEx Num channels: " << mWaveFormatEx.nChannels << std::endl;
+    ofLogVerbose("ofMediaFoundationSoundPlayer::load") << "waveFormatEx num channels: " << mWaveFormatEx.nChannels << std::endl;
 
     if (!mBStreaming) {
         _readToBuffer(mSrcReader.Get());
@@ -329,7 +328,7 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
         if (hr == S_OK) {
             mDurationSeconds = (double)durationProp.uhVal.QuadPart / 10000000.0;
             mDurationMS = (double)durationProp.uhVal.QuadPart / 10000.0;
-            std::cout << "Reader duration seconds: " << (double)durationProp.uhVal.QuadPart / 10000000.0 << " millis: " << mDurationMS << std::endl;
+            ofLogVerbose("ofMediaFoundationSoundPlayer::load") << "Reader duration seconds: " << (double)durationProp.uhVal.QuadPart / 10000000.0 << " millis: " << mDurationMS << std::endl;
         }
     }
 
@@ -338,10 +337,10 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     if (hr == S_OK) {
         ULONG flags = seekProp.ulVal;
         mBCanSeek = ((flags & MFMEDIASOURCE_CAN_SEEK) == MFMEDIASOURCE_CAN_SEEK);
-        std::cout << "mBCanSeek: " << mBCanSeek << std::endl;
+        ofLogVerbose("ofMediaFoundationSoundPlayer::load") << "mBCanSeek: " << mBCanSeek << std::endl;
     }
 
-    ofLogVerbose(" ofMediaFoundationSoundPlayer::load") << "made it all the way to the end.";
+    ofLogVerbose("ofMediaFoundationSoundPlayer::load") << "made it all the way to the end.";
     
     if (!mBStreaming) {
         mSrcReader.Reset();
