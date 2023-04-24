@@ -409,7 +409,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		downloader https://github.com/openFrameworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip
+		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
