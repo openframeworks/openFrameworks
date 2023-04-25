@@ -108,6 +108,16 @@ An output directory including all resources and shared libraries it depends on, 
 
 ![cmake-example-output](assets/cmake-example-output.png)
 
+## Choosing the target platform
+
+When not doing anything special, CMake will try to detect the target platform and then choose the correct binary package. However, in case it cannot determine it or if you want to choose a different target platform, this is how you can set it:
+
+```bash
+cmake .. -DOF_TARGET_ARCHITECTURE=<value>
+```
+
+Simply run the command with an arbitrary value and it will print an error message with all possible values.
+
 ## Visual Studio (and multi-config build systems)
 
 `-j<number-of-cores>` has no effect in Visual Studio, it automatically uses all available cores.
