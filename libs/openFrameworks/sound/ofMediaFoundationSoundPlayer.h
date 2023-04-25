@@ -147,6 +147,7 @@ protected:
 
 	using UniqueVoice = std::unique_ptr< IXAudio2SourceVoice, MyVoiceDeleterFunctor >;
 
+	void _clearExtraVoices();
 	void _setPan(IXAudio2SourceVoice* avoice, float apan);
 	bool _readToBuffer(IMFSourceReader* areader);
 

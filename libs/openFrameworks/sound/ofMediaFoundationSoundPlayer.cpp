@@ -3,9 +3,6 @@
 #include "ofLog.h"
 
 #include <condition_variable>
-
-//#include <mmdeviceapi.h>
-//#include <mferror.h>
 #include <propvarutil.h>
 #include <xaudio2.h>
 #include <mmreg.h>
@@ -416,20 +413,10 @@ void ofMediaFoundationSoundPlayer::unload() {
         mVoiceContext.reset();
     }
 
-    
-
-    
 
     mBStreaming = false;
 
-    for (auto& it : mExtraVoices) {
-        if (it.second) {
-            std::ignore = it.second->Stop();
-            std::ignore = it.second->FlushSourceBuffers();
-            it.second->DestroyVoice();
-        }
-    }
-    mExtraVoices.clear();
+    _clearExtraVoices();
 
     mStreamBuffers.clear();
     mBuffer.clear();
@@ -507,7 +494,7 @@ void ofMediaFoundationSoundPlayer::update(ofEventArgs& args) {
                 mPosPct = seconds / mDurationSeconds;
                 mNumSamplesStored = xstate.SamplesPlayed;
 
-                if (!xstate.BuffersQueued) {
+                if (!xstate.BuffersQueued && mExtraVoices.size() < 1) {
                     // we have reached the end //
                     if (mBLoop) {
                         // set isPlaying to false, so that it will create a new instance 
@@ -546,6 +533,14 @@ void ofMediaFoundationSoundPlayer::play() {
     // don't want a ton of loops going on here 
     if (mBLoop) {
         stop();
+    }
+    if (!mBMultiPlay) {
+        stop();
+    }
+
+    if (mBStreaming) {
+        // just in case, multiplay is not supported for streams 
+        _clearExtraVoices();
     }
 
     if (mBMultiPlay && isPlaying()) {
@@ -627,14 +622,7 @@ void ofMediaFoundationSoundPlayer::play() {
 
 //--------------------
 void ofMediaFoundationSoundPlayer::stop() {
-    //for (auto& it : mExtraVoices) {
-    //    if (it.second) {
-    //        std::ignore = it.second->Stop();
-    //        std::ignore = it.second->FlushSourceBuffers();
-    //        it.second->DestroyVoice();
-    //    }
-    //}
-    //mExtraVoices.clear();
+    _clearExtraVoices();
 
     if (mBStreaming && mSrcReader) {
         ofMediaFoundationUtils::CallAsyncBlocking(
@@ -701,9 +689,20 @@ void ofMediaFoundationSoundPlayer::setPaused(bool bP) {
         if (mVoice) {
             mVoice->Stop();
         }
+        for (auto& it : mExtraVoices) {
+            if (it.second) {
+                it.second->Stop();
+            }
+        }
     } else {
         if (mVoice) {
             mVoice->Start();
+        }
+
+        for (auto& it : mExtraVoices) {
+            if (it.second) {
+                it.second->Start();
+            }
         }
     }
     mBIsPlaying = !bP;
@@ -711,6 +710,10 @@ void ofMediaFoundationSoundPlayer::setPaused(bool bP) {
 
 //--------------------
 void ofMediaFoundationSoundPlayer::setLoop(bool bLp) {
+    if (bLp) {
+        // we don't want a lot of looping iterations 
+        _clearExtraVoices();
+    }
     mBLoop = bLp;
 };
 
@@ -720,6 +723,9 @@ void ofMediaFoundationSoundPlayer::setMultiPlay(bool bMp) {
         ofLogWarning("ofMediaFoundationSoundPlayer::setMultiPlay") << "multiplay not supported for streams.";
         mBMultiPlay = false;
         return;
+    }
+    if (!mBMultiPlay) {
+        _clearExtraVoices();
     }
     mBMultiPlay = bMp;
 };
@@ -921,6 +927,18 @@ void ofMediaFoundationSoundPlayer::removeUpdateListener() {
         ofRemoveListener(ofEvents().update, this, &ofMediaFoundationSoundPlayer::update);
     }
     mBAddedUpdateEvent = false;
+}
+
+//--------------------
+void ofMediaFoundationSoundPlayer::_clearExtraVoices() {
+    for (auto& it : mExtraVoices) {
+        if (it.second) {
+            std::ignore = it.second->Stop();
+            std::ignore = it.second->FlushSourceBuffers();
+            it.second->DestroyVoice();
+        }
+    }
+    mExtraVoices.clear();
 }
 
 //--------------------
