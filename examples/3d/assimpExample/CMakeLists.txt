@@ -1,2 +1,0 @@
-define_example(assimpExample)
-target_link_libraries(assimpExample of::ofxAssimpModelLoader)

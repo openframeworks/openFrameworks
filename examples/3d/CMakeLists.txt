@@ -1,7 +1,6 @@
-add_subdirectory(3DModelLoaderExample)
 add_subdirectory(3DPrimitivesExample)
 add_subdirectory(advanced3dExample)
-add_subdirectory(assimpExample)
+add_subdirectory(assimp3DModelLoaderExample)
 add_subdirectory(cameraLensOffsetExample)
 add_subdirectory(cameraParentingExample)
 add_subdirectory(cameraRibbonExample)

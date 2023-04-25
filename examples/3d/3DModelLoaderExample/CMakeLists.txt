@@ -1,2 +1,0 @@
-define_example(3DModelLoaderExample)
-target_link_libraries(3DModelLoaderExample of::ofxAssimpModelLoader)
