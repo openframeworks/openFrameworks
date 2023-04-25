@@ -40,6 +40,11 @@ float * ofSoundGetSpectrum(int nBands);
 #define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer
 #endif
 
+#ifdef OF_SOUND_PLAYER_MEDIA_FOUNDATION
+#include "ofMediaFoundationSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofMediaFoundationSoundPlayer
+#endif
+
 #ifdef OF_SOUND_PLAYER_OPENAL
 #include "ofOpenALSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer

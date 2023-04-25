@@ -22,6 +22,7 @@ namespace of {
 
 class ofMediaFoundationPlayer : public ofBaseVideoPlayer, public of::MediaEngineNotifyCallback {
 protected:
+    friend class ofMediaFoundationSoundPlayer;
     
     // MediaEngineNotify: Implements the callback for Media Engine event notification.
     class ofMEEventProcessor : public IMFMediaEngineNotify {
@@ -224,10 +225,10 @@ protected:
 
     CRITICAL_SECTION m_critSec;
 
-    static int sNumInstances;
+    //static int sNumInstances;
 
-    static bool sInitMediaFoundation();
-    static void sCloseMediaFoundation();
+    //static bool sInitMediaFoundation();
+    //static void sCloseMediaFoundation();
 
     std::queue<DWORD> mEventsQueue;
     std::mutex mMutexEvents;

@@ -225,6 +225,9 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofMediaFoundationSoundPlayer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h">
       <Filter>libs\openFrameworks\types</Filter>
     </ClInclude>
@@ -438,6 +441,9 @@
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofMediaFoundationSoundPlayer.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
