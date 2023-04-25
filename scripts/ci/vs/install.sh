@@ -11,8 +11,8 @@ rm -rf projectGenerator
 mkdir -p ~/projectGenerator
 cd ~/projectGenerator
 
-echo "Downloading projectGenerator from ci server"
-downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-vs.zip 2> /dev/null
+echo "Downloading projectGenerator from Github Nightly"
+downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip 2> /dev/null
 unzip projectGenerator-vs.zip 2> /dev/null
 rm projectGenerator-vs.zip
 
