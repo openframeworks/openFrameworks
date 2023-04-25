@@ -1,2 +1,2 @@
 define_example(assimp3DModelLoaderExample)
-target_link_libraries(assimp3DModelLoaderExample of::assimp)
+target_link_libraries(assimp3DModelLoaderExample of::ofxAssimpModelLoader)
