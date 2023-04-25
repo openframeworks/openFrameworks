@@ -43,7 +43,7 @@ endfunction()
 
 # This function is called for every dependency in every package, e.g. 'boost', 'freetype', 'libcurl', etc.
 # It creates the CMake target for each dependency and adds the library files to the targets
-function(import_dependency DEP_NAME DEP_ROOT PACKAGE_SOURCE_DIR)
+function(import_dependency DEP_NAME DEP_ROOT)
 
     # Find all the library files in one dependency
     file(GLOB_RECURSE libraries "${DEP_ROOT}/**/${CMAKE_STATIC_LIBRARY_PREFIX}**${CMAKE_STATIC_LIBRARY_SUFFIX}")

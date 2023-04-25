@@ -80,18 +80,21 @@ function(get_packages_and_link)
             message(STATUS "[openframeworks] Skipping check of ${dependency} to save build time. To force a re-download, delete CMakeCache.txt and re-run cmake.")
         endif()
 
-        # Now, create the targets and link all files to them
-        set(PACKAGE_SOURCE_DIR ${of-deps-${dependency}_SOURCE_DIR})
-        file(GLOB deps "${PACKAGE_SOURCE_DIR}/**")
-        foreach(DEP_ROOT IN LISTS deps)
-            get_filename_component(DEP_NAME ${DEP_ROOT} NAME)   #  vvv  This is called for each dependency in each downloaded package
+        if (NOT ${dependency} STREQUAL "osx4.tar.bz2")              # All normal packages
+            # Now, create the targets and link all files to them
+            file(GLOB deps "${of-deps-${dependency}_SOURCE_DIR}/**")
+            foreach(DEP_ROOT IN LISTS deps)
+                get_filename_component(DEP_NAME ${DEP_ROOT} NAME)   #  vvv  This is called for each dependency in each downloaded package
 
-            if (OF_TARGET_ARCHITECTURE MATCHES "linux" AND DEP_NAME STREQUAL "poco")   # We do not want to use the embedded poco on linux as it's deprecated. We use the system's package instead
-                continue()
-            endif ()
+                if (OF_TARGET_ARCHITECTURE MATCHES "linux" AND DEP_NAME STREQUAL "poco")   # We do not want to use the embedded poco on linux as it's deprecated. We use the system's package instead
+                    continue()
+                endif ()
 
-            import_dependency(${DEP_NAME} ${DEP_ROOT} ${PACKAGE_SOURCE_DIR})
-        endforeach()
+                import_dependency(${DEP_NAME} ${DEP_ROOT})
+            endforeach()
+        else()      # osx4.tar.bz2 is another huge exception, it contains just opencv in *NOT* a subfolder
+            import_dependency("opencv" "${of-deps-${dependency}_SOURCE_DIR}")
+        endif()
 
     endforeach()
     if (OF_VERBOSE)
@@ -158,16 +161,15 @@ endif()
 # Find system packages
 if (NOT OF_TARGET_ARCHITECTURE MATCHES "android")
     find_package(OpenGL)
-    if (NOT OpenGL_FOUND)       # This should never be not found on windows
-        message(SEND_ERROR "Dependency OpenGL not found. On Linux, please install it using your system's equivalent of 'sudo apt install libgl1-mesa-dev'")
+    if (NOT OpenGL_FOUND)
+        if (WIN32)
+            message(SEND_ERROR "Dependency OpenGL not found. Please try to update your graphics drivers!")
+        else()
+            message(SEND_ERROR "Dependency OpenGL not found. Please install it using your system's equivalent of 'sudo apt install libgl1-mesa-dev'")
+        endif()
     endif()
     target_include_directories(openframeworks PUBLIC ${OPENGL_INCLUDE_DIRS})
     target_link_libraries(openframeworks ${OPENGL_LIBRARIES})
-endif()
-
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")  # All Linux-only packages (that are part of apothecary on all platforms except Linux)
-    include(${CMAKE_CURRENT_LIST_DIR}/find_linux_deps.cmake)
-    find_linux_deps()
 endif()
 
 
@@ -217,6 +219,7 @@ endif()
 if (OF_TARGET_ARCHITECTURE MATCHES "linux")
     target_link_libraries(openframeworks of::OpenAL of::KissFFT of::sndfile of::gstreamer of::glib of::fontconfig of::udev)
     target_link_libraries(openframeworks -lX11)
+    find_linux_deps()   # All Linux-only packages (that are part of apothecary on all other platforms, but not on Linux)
 endif()
 
 if (OF_TARGET_ARCHITECTURE STREQUAL "msvc" OR       # GLEW is only a requirement on these systems
