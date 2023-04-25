@@ -31,7 +31,7 @@ apps/*
 # general
 #########################
 
-[Bb]uild/
+[Bb]uild*/
 [Oo]bj/
 cmake-build-*/
 *.o
