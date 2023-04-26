@@ -465,13 +465,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 #endif
 
 
-
- #define Stringize( L )     #L 
- #define MakeString( M, L ) M(L)
- #define $Line MakeString( Stringize, __LINE__ )
- #define Reminder __FILE__ "(" $Line ") : Reminder: "
-
-
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
     #define OF_HAS_CPP17 1
@@ -485,11 +478,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
-		#pragma message(Reminder "has cpp17, defining OF_USING_STD_FS 1") 
-
 		#define OF_USING_STD_FS 1
 	#else
-		#pragma message(Reminder "no cpp17, defining OF_USING_STD_FS 0") 
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
 	#endif
@@ -539,10 +529,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
         // C++17 experimental fs support
         #include <experimental/filesystem>
         
-
         #if OF_HAS_CPP17
-			#pragma message(Reminder "has cpp17") 
-
             namespace std {
                 namespace experimental{
                     namespace filesystem {
@@ -551,14 +538,10 @@ std::unique_ptr<T> make_unique(Args&&... args) {
                 }
             }
         #else
-			#pragma message(Reminder "false - has cpp17") 
-
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        using path = v1::path;
-
-                        // using path = v1::__cxx11::path;
+                        using path = v1::__cxx11::path;
                     }
                 }
             }
