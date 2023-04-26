@@ -207,10 +207,13 @@ if [ "$1" != "-y" ]; then
     echo
 fi
 
-#jammy needs libunwind-dev before gstreamer and libharfbuzz-dev
+#jammy needs libunwind-dev installed before gstreamer
+#and some additional packages
 if [ $MAJOR_VERSION -gt 21 ]; then
 installPackages "libunwind-dev"
 PACKAGES+=" libharfbuzz-dev"
+PACKAGES+=" gstreamer1.0-vaapi"
+PACKAGES+=" gstreamer1.0-libav"
 fi
 
 installPackages ${PACKAGES}
