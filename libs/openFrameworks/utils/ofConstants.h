@@ -353,7 +353,11 @@ typedef TESSindex ofIndexType;
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
-		#define OF_VIDEO_PLAYER_DIRECTSHOW
+            #ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
+	        #define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+            #else
+	        #define OF_VIDEO_PLAYER_DIRECTSHOW
+            #endif
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
