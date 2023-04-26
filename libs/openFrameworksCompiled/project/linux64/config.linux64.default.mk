@@ -28,3 +28,4 @@
 include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 PLATFORM_LDFLAGS += -fuse-ld=gold
+PLATFORM_LDFLAGS += -lstdc++fs
