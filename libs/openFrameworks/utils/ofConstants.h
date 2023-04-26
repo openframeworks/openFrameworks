@@ -390,13 +390,15 @@ typedef TESSindex ofIndexType;
     #undef USE_FMOD
     #if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
         #define OF_SOUND_PLAYER_AV_ENGINE
-    #endif
+    #elif defined(TARGET_WIN32)
+		#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
+	#endif
 #endif
 
 // check if any soundplayer api is defined from the compiler
 
 #if !defined(TARGET_NO_SOUND)
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE)
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE) && !defined(OF_SOUND_PLAYER_MEDIA_FOUNDATION)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
   #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
