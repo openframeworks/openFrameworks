@@ -198,7 +198,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 			std::cout << ">>>> GLFW Version: " << glfwGetVersionString() << std::endl;
-			// glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
+#if !(GLFW_VERSION_MAJOR == 3 && GLFW_VERSION_MINOR == 1 && GLFW_VERSION_REVISION == 2)
+			glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
+#endif
 			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
