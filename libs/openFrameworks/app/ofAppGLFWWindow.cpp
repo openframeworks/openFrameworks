@@ -712,6 +712,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	}else{
 		targetWindowMode = OF_WINDOW;
 	}
+ 
+    #if defined(TARGET_OSX)
+	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+ 	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+                settings.windowMode = OF_FULLSCREEN;
+ 		if (targetWindowMode == OF_WINDOW) {
+                    [cocoaWindow toggleFullScreen:nil];
+ 		}
+ 	}
+    #endif
 
 	//we only want to change window mode if the requested window is different to the current one.
 	bool bChanged = targetWindowMode != settings.windowMode;
@@ -843,6 +853,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 //	setWindowShape(windowW, windowH);
 
 #elif defined(TARGET_OSX)
+
 	if( targetWindowMode == OF_FULLSCREEN){
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
@@ -1600,6 +1611,15 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 	instance->currentH = windowH;
 	instance->events().notifyWindowResized(framebufferW, framebufferH);
 	instance->nFramesSinceWindowResized = 0;
+ 
+         #if defined(TARGET_OSX)
+            NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP_);
+            if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+                instance->settings.windowMode = OF_FULLSCREEN;
+            }else{
+                instance->settings.windowMode = OF_WINDOW;
+            }
+        #endif
 }
 
 //------------------------------------------------------------
