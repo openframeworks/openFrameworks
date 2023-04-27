@@ -5,7 +5,7 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
-	APPNAME = $(shell basename `pwd`)
+	APPNAME = $(shell basename "`pwd`")
 endif
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
@@ -299,7 +299,8 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S $(OF_PROJ
 
 
 #Rules to compile the addons sources when the addon path is specified explicitly
-PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
+# PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
+PROJECT_ADDONS_OBJ_PATH=./$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
