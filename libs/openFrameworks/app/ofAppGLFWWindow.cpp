@@ -843,12 +843,20 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 //	setWindowShape(windowW, windowH);
 
 #elif defined(TARGET_OSX)
+	
+	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+		if (targetWindowMode == OF_FULLSCREEN) {
+			targetWindowMode = OF_WINDOW;
+			[cocoaWindow toggleFullScreen:nil];
+		}
+	}
+
+	
 	if( targetWindowMode == OF_FULLSCREEN){
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
-		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 
-		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 
 		int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
@@ -918,7 +926,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 
 	}else if( targetWindowMode == OF_WINDOW ){
-
 		// set window shape if started in fullscreen
 		if(windowRect.width == 0 && windowRect.height == 0) {
 			windowRect.x = getWindowPosition().x;
@@ -931,7 +938,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		setWindowTitle(settings.title);
 
 		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
-		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 		[cocoaWindow setStyleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 
 		//----------------------------------------------------
