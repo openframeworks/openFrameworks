@@ -712,6 +712,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	}else{
 		targetWindowMode = OF_WINDOW;
 	}
+ 
+    #if defined(TARGET_OSX)
+	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+ 	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+                settings.windowMode = OF_FULLSCREEN;
+ 		if (targetWindowMode == OF_WINDOW) {
+                    [cocoaWindow toggleFullScreen:nil];
+ 		}
+ 	}
+    #endif
 
 	//we only want to change window mode if the requested window is different to the current one.
 	bool bChanged = targetWindowMode != settings.windowMode;
@@ -843,20 +853,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 //	setWindowShape(windowW, windowH);
 
 #elif defined(TARGET_OSX)
-	
-	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
-		if (targetWindowMode == OF_FULLSCREEN) {
-			targetWindowMode = OF_WINDOW;
-			[cocoaWindow toggleFullScreen:nil];
-		}
-	}
 
-	
 	if( targetWindowMode == OF_FULLSCREEN){
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 
+		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 
 		int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
@@ -926,6 +929,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 
 	}else if( targetWindowMode == OF_WINDOW ){
+
 		// set window shape if started in fullscreen
 		if(windowRect.width == 0 && windowRect.height == 0) {
 			windowRect.x = getWindowPosition().x;
@@ -938,6 +942,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		setWindowTitle(settings.title);
 
 		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 		[cocoaWindow setStyleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 
 		//----------------------------------------------------
@@ -1606,6 +1611,15 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 	instance->currentH = windowH;
 	instance->events().notifyWindowResized(framebufferW, framebufferH);
 	instance->nFramesSinceWindowResized = 0;
+ 
+         #if defined(TARGET_OSX)
+            NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP_);
+            if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+                instance->settings.windowMode = OF_FULLSCREEN;
+            }else{
+                instance->settings.windowMode = OF_WINDOW;
+            }
+        #endif
 }
 
 //------------------------------------------------------------
