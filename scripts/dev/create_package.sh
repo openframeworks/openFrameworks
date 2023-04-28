@@ -422,7 +422,7 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "osx" ]; then
-		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
+		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         	unzip projectGenerator-osx.zip
         	mv projectGenerator-osx projectGenerator
         	rm projectGenerator-osx.zip
@@ -433,7 +433,7 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "ios" ]; then
-		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-ios.zip 2> /dev/null
+		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-ios.zip 2> /dev/null
         	unzip projectGenerator-ios.zip
         	mv projectGenerator-ios projectGenerator
         	rm projectGenerator-ios.zip
