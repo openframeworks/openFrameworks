@@ -1,9 +1,12 @@
-name: manual-nightly
+name: nightly-linux64
 
-on: workflow_dispatch
+on:
+ schedule:
+   - cron: "0 6 * * *"
 jobs:
-  manual-nightly:
+  build-linux-platforms:
     runs-on: ubuntu-22.04
+    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:

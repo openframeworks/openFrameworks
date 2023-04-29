@@ -1,0 +1,102 @@
+name: build-macos
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-osx:
+    runs-on: macos-12
+    strategy:
+        matrix:
+          cfg:
+          - {target: osx, opt: "xcode"}
+          - {target: osx, opt: "makefiles"}
+    env:
+      TARGET: ${{matrix.cfg.target}}
+      OPT: ${{matrix.cfg.opt}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache compile
+      id: cache-compile
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-keep-compile
+      with:
+        path: |
+          libs/openFrameworksCompiled/lib/osx/*.a
+          libs/openFrameworksCompiled/lib/osx/**/
+          addons/obj/osx/**/
+          scripts/templates/osx/build/**/
+
+        key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
+        restore-keys: |
+          ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
+
+
+    - name: Cache libs
+      id: cache-libs
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-install-libs
+      with:
+        path: |
+          libs/boost/**
+          libs/cairo/**
+          libs/curl/**
+          libs/fmod/**
+          libs/FreeImage/**
+          libs/freetype/**
+          libs/glew/**
+          libs/glfw/**
+          libs/glm/**
+          libs/json/**
+          libs/pugixml/**
+          libs/rtAudio/**
+          libs/tess2/**
+          libs/uriparser/**
+          libs/utf8/**
+          addons/ofxAssimpModelLoader/libs/**/
+          addons/ofxKinect/libs/**/
+          addons/ofxOpenCv/libs/**/
+          addons/ofxSvg/libs/**/
+          addons/ofxPoco/libs/**/
+
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+    - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
+      # name: Download libs
+      # continue-on-error: true
+      run: ./scripts/$TARGET/download_libs.sh
+    - name: rm-dev
+      run: sudo rm -rf /Library/Developer
+
+    # this step is not needed here because the script is empty
+    # - name: install
+    # run: ./scripts/ci/$TARGET/install.sh
+
+    - name: Build
+      run:
+        if [ "$TARGET" = "osx" ] && [ "$OPT" = "xcode" ]; then
+          scripts/ci/$TARGET/build.sh $OPT;
+        else
+          scripts/ci/$TARGET/run_tests.sh;
+        fi
+      env:
+        DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode_13.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+
