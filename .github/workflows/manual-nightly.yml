@@ -4,7 +4,7 @@ on: workflow_dispatch
 jobs:
   build-linux-platforms:
     runs-on: ubuntu-22.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    #if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:
