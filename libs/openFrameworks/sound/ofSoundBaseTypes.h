@@ -5,10 +5,6 @@
 
 class ofSoundBuffer;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
 /// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
 	public:
@@ -164,15 +160,13 @@ public:
 class ofBaseSoundPlayer {
 
 public:
-<<<<<<< HEAD
-	virtual bool load(const std::filesystem::path& fileName, bool stream = false)=0;
-=======
+
 
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
 
 	virtual bool load(const of::filesystem::path& fileName, bool stream = false)=0;
->>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
+
 	virtual void unload()=0;
 	virtual void play() = 0;
 	virtual void stop() = 0;

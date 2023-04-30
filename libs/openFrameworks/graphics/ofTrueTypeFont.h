@@ -382,13 +382,6 @@ public:
 	void setDirection(ofTrueTypeFontDirection direction);
 
 
-	float getCharWidth(uint32_t c) const {
-		return getGlyphProperties(c).width;
-	}
-	float getCharAdvance(uint32_t c) const {
-		return getGlyphProperties(c).advance;
-	}
-
 	struct glyphProps{
 		std::size_t characterIndex;
 		uint32_t glyph;

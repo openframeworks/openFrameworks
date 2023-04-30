@@ -1,69 +1,7 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-<<<<<<< HEAD
 buildscript {
     repositories {
         google()
         mavenCentral()
-=======
-// Load common functions
-apply from: "common-functions.gradle"
-
-apply plugin: "com.android.model.native"
-
-model {
-    android {
-        compileSdkVersion 25
-
-        defaultConfig.with {
-            minSdkVersion.apiLevel 19
-            targetSdkVersion.apiLevel 25
-        }
-
-        ndk {
-            platformVersion = "21"
-            moduleName "openFrameworksLib"
-            toolchain  = buildToolchain()
-            stl        = compilerStl()
-        }
-
-        sources {
-            main {
-                jni {
-                    source {
-                        srcDirs = [
-                                ofSource
-                        ]
-                        excludes = ["**/ofGraphicsCairo.cpp",
-                                    "**/ofDirectShowGrabber.cpp",
-                                    "**/ofDirectShowPlayer.cpp",
-                                    "**/ofGstUtils.cpp",
-                                    "**/ofGstVideoGrabber.cpp",
-                                    "**/ofGstVideoPlayer.cpp",
-                                    "**/ofAppGlutWindow.cpp",
-                                    "**/ofAppEGLWindow.cpp",
-                                    "**/ofAppGLFWWindow.cpp",
-                                    "**/ofCairoRenderer.cpp",
-                                    "**/ofFmodSoundPlayer.cpp",
-                                    "**/ofOpenALSoundPlayer.cpp",
-                                    "**/ofRtAudioSoundStream.cpp",
-                                    "**/glew/**/*",
-                                    "**/videoInput/**/*",
-                                    "**/fmod/**/*",
-                                    "**/kiss/**/*",
-                                    "**/assimp/**/*",
-                                    "**/portaudio/**/*",
-                                    "**/rtAudio/**/*",
-                                    "**/poco/lib/**/*",
-                                    "**/openssl/lib/**/*",
-                                    "**/boost/include/boost/**/*",
-                                    "**/curl/**/*"
-                        ]
-                    }
-                }
-            }
-        }
->>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.1.3'

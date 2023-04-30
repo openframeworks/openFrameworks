@@ -1272,6 +1272,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 
 	float minY = y;
 	float maxY = y;
+	float minX = x;
 	// Calculate bounding box by iterating over glyph properties
 	// Meaning of props can be deduced from illustration at top of:
 	// https://www.freetype.org/freetype2/docs/tutorial/step2.html
@@ -1279,6 +1280,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 	// We deliberately not generate a mesh and iterate over its
 	// vertices, as this would not correctly return spacing for
 	// blank characters.
+	
 	
 	float w = 0;
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){

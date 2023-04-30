@@ -878,26 +878,6 @@ void ofFile::setReadable(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-<<<<<<< HEAD
-#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
-        if(flag){
-            std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms);
-        } else{
-            std::filesystem::permissions(myFile, std::filesystem::perms::owner_exec | std::filesystem::perms::remove_perms);
-        }
-# else
-        if(flag){
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_exec,
-                                         std::filesystem::perm_options::add);
-        } else{
-            std::filesystem::permissions(myFile,
-                                         std::filesystem::perms::owner_exec,
-                                         std::filesystem::perm_options::remove);
-        }
-# endif
-
-=======
 #if OF_USING_STD_FS
 #   if OF_USE_EXPERIMENTAL_FS
 		if(flag){
@@ -923,7 +903,6 @@ void ofFile::setExecutable(bool flag){
 			of::filesystem::permissions(myFile, of::filesystem::perms::owner_exe | of::filesystem::perms::remove_perms);
 		}
 #endif
->>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set executable permission on " << myFile << ": " << e.what();
 	}

@@ -232,7 +232,7 @@ void ofVboMesh::removeVertex(ofIndexType index) {
 }
 
 void ofVboMesh::removeVertex(ofIndexType startIndex, ofIndexType endIndex) {
-    ofMesh::removeVertex(startIndex, endIndex);
+    ofMesh::removeVertices(startIndex, endIndex);
     vboNumVerts = getNumVertices();
 	updateSet = true;
 }
@@ -244,7 +244,7 @@ void ofVboMesh::removeColor(ofIndexType index) {
 }
 
 void ofVboMesh::removeColor(ofIndexType startIndex, ofIndexType endIndex) {
-    ofMesh::removeColor(startIndex, endIndex);
+    ofMesh::removeColors(startIndex, endIndex);
     vboNumColors = getNumColors();
 	updateSet = true;
 }

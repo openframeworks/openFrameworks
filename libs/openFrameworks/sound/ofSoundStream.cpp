@@ -156,7 +156,9 @@ void ofSoundStreamClose(){
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
 	vector<ofSoundDevice> deviceList = OF_SYSTEM_SS.getDeviceList();
+#if !ANDROID
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
+#endif
 	return deviceList;
 }
 
