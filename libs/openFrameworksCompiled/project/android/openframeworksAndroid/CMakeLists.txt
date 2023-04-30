@@ -80,6 +80,8 @@ add_library( openFrameworksAndroid
 		${PRJ_SOURCE_PATH}/gl/ofMaterial.cpp
 		${PRJ_SOURCE_PATH}/gl/ofShader.cpp
 		${PRJ_SOURCE_PATH}/gl/ofTexture.cpp
+		${PRJ_SOURCE_PATH}/gl/ofShadow.cpp
+		${PRJ_SOURCE_PATH}/gl/ofCubeMap.cpp
 		${PRJ_SOURCE_PATH}/gl/ofVbo.cpp
 		${PRJ_SOURCE_PATH}/gl/ofVboMesh.cpp
 		${PRJ_SOURCE_PATH}/graphics/of3dGraphics.cpp

@@ -2,6 +2,8 @@ plugins {
     id  'com.android.library'
 }
 
+
+
 // pointing to cmake's source code for the same project
 def PRJ_SRC_ROOT = './'
 def ofRoot(){ return '../../../../' }
@@ -126,7 +128,7 @@ dependencies {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "com.getkeepsafe.relinker:relinker:1.4.4"
