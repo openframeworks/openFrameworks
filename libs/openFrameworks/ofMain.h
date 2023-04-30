@@ -12,10 +12,8 @@
 
 #include "ofUtils.h"
 
-#if !defined(TARGET_EMSCRIPTEN)
 #include "ofThread.h"
 #include "ofThreadChannel.h"
-#endif
 
 #include "ofFpsCounter.h"
 #include "ofJson.h"
@@ -54,6 +52,7 @@
 #include "ofTexture.h"
 #include "ofVbo.h"
 #include "ofVboMesh.h"
+#include "ofCubeMap.h"
 // #include "ofGLProgrammableRenderer.h"
 // #ifndef TARGET_PROGRAMMABLE_GL
 // 	#include "ofGLRenderer.h"
@@ -63,6 +62,7 @@
 // graphics
 #if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
 	#include "ofCairoRenderer.h"
+	#include "ofGraphicsCairo.h"
 #endif
 #include "ofGraphics.h"
 #include "ofImage.h"

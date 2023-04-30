@@ -1,4 +1,4 @@
-#version 150
+OF_GLSL_SHADER_HEADER
 
 // these are from the programmable pipeline system
 uniform mat4 modelViewProjectionMatrix;
@@ -6,7 +6,7 @@ in vec4 position;
 in vec2 texcoord;
 
 // this is how we receive the texture
-uniform sampler2DRect tex0;
+uniform sampler2D tex0;
 
 out vec2 texCoordVarying;
 
@@ -16,7 +16,7 @@ void main()
     vec4 modifiedPosition = modelViewProjectionMatrix * position;
     
     // we need to scale up the values we get from the texture
-    float scale = 100;
+    float scale = 100.;
     
     // here we get the red channel value from the texture
     // to use it as vertical displacement

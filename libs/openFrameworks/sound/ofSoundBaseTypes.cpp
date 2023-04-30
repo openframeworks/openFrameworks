@@ -4,6 +4,7 @@
 
 void ofBaseSoundStream::printDeviceList() const {
 	ofLogNotice("ofBaseSoundStream::printDeviceList") << std::endl;
+#ifndef TARGET_EMSCRIPTEN
 	for(int i=ofSoundDevice::ALSA; i<ofSoundDevice::NUM_APIS; ++i){
 		ofSoundDevice::Api api = (ofSoundDevice::Api)i;
 		auto devices = getDeviceList(api);
@@ -12,6 +13,10 @@ void ofBaseSoundStream::printDeviceList() const {
 //				ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
 		}
 	}
+#else
+	ofSoundDevice::Api api = (ofSoundDevice::Api)0;
+	getDeviceList(api); // only trigger the java script function once.
+#endif
 }
 
 #ifndef TARGET_ANDROID

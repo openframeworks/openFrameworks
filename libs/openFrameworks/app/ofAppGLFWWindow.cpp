@@ -77,9 +77,8 @@ void ofAppGLFWWindow::close(){
 		glfwSetFramebufferSizeCallback( windowP, nullptr);
 		glfwSetWindowCloseCallback( windowP, nullptr );
 		glfwSetScrollCallback( windowP, nullptr );
-#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
 		glfwSetDropCallback( windowP, nullptr );
-#endif
+
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
 
@@ -179,6 +178,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
 	glfwWindowHint(GLFW_DECORATED, settings.decorated);
+	
     #ifdef TARGET_OPENGLES
 	    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -197,6 +197,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3 )
+			glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
+#endif
 			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
@@ -357,7 +360,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	}
 #endif
 
-	ofLogVerbose() << "GL Version:" << glGetString(GL_VERSION);
+	ofLogVerbose() << "GL Version: " << glGetString(GL_VERSION);
 
 	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
 #ifndef TARGET_OPENGLES
@@ -376,12 +379,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetKeyCallback(windowP, keyboard_cb);
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
-	glfwSetFramebufferSizeCallback( windowP, framebuffer_size_cb);
+	glfwSetFramebufferSizeCallback(windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
-#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
-	    glfwSetDropCallback( windowP, drop_cb );
-#endif
+	glfwSetDropCallback(windowP, drop_cb );
 
 
 #ifdef TARGET_LINUX
@@ -711,6 +712,16 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	}else{
 		targetWindowMode = OF_WINDOW;
 	}
+ 
+    #if defined(TARGET_OSX)
+	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+ 	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+                settings.windowMode = OF_FULLSCREEN;
+ 		if (targetWindowMode == OF_WINDOW) {
+                    [cocoaWindow toggleFullScreen:nil];
+ 		}
+ 	}
+    #endif
 
 	//we only want to change window mode if the requested window is different to the current one.
 	bool bChanged = targetWindowMode != settings.windowMode;
@@ -842,6 +853,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 //	setWindowShape(windowW, windowH);
 
 #elif defined(TARGET_OSX)
+
 	if( targetWindowMode == OF_FULLSCREEN){
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
@@ -1375,7 +1387,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	drag.position = {instance->events().getMouseX(), instance->events().getMouseY()};
 	drag.files.resize(numFiles);
 	for(int i=0; i<(int)drag.files.size(); i++){
-		drag.files[i] = std::filesystem::path(dropString[i]).string();
+		drag.files[i] = of::filesystem::path(dropString[i]).string();
 	}
 	instance->events().notifyDragEvent(drag);
 }
@@ -1599,6 +1611,15 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 	instance->currentH = windowH;
 	instance->events().notifyWindowResized(framebufferW, framebufferH);
 	instance->nFramesSinceWindowResized = 0;
+ 
+         #if defined(TARGET_OSX)
+            NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP_);
+            if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+                instance->settings.windowMode = OF_FULLSCREEN;
+            }else{
+                instance->settings.windowMode = OF_WINDOW;
+            }
+        #endif
 }
 
 //------------------------------------------------------------

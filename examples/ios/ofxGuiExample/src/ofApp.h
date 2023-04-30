@@ -5,39 +5,39 @@
 
 class ofApp : public ofxiOSApp{
 	
-    public:
-        void setup();
-        void update();
-        void draw();
-        void exit();
+	public:
+		void setup();
+		void update();
+		void draw();
+		void exit();
 	
-        void touchDown(ofTouchEventArgs & touch);
-        void touchMoved(ofTouchEventArgs & touch);
-        void touchUp(ofTouchEventArgs & touch);
-        void touchDoubleTap(ofTouchEventArgs & touch);
-        void touchCancelled(ofTouchEventArgs & touch);
+		void touchDown(ofTouchEventArgs & touch);
+		void touchMoved(ofTouchEventArgs & touch);
+		void touchUp(ofTouchEventArgs & touch);
+		void touchDoubleTap(ofTouchEventArgs & touch);
+		void touchCancelled(ofTouchEventArgs & touch);
 
-        void lostFocus();
-        void gotFocus();
-        void gotMemoryWarning();
-        void deviceOrientationChanged(int newOrientation);
+		void lostFocus();
+		void gotFocus();
+		void gotMemoryWarning();
+		void deviceOrientationChanged(int newOrientation);
 
-        void circleResolutionChanged(int & circleResolution);
-        void ringButtonPressed();
+		void circleResolutionChanged(int & circleResolution);
+		void ringButtonPressed();
 
-        bool bHide;
+		bool bHide;
 
-        ofParameter<float> radius;
-        ofParameter<ofColor> color;
-        ofParameter<glm::vec2> center;
-        ofParameter<int> circleResolution;
-        ofParameter<bool> filled;
-        ofxButton twoCircles;
-        ofxButton ringButton;
-        ofParameter<string> screenSize;
+		ofParameter<float> radius;
+		ofParameter<ofColor> color;
+		ofParameter<glm::vec2> center;
+		ofParameter<int> circleResolution;
+		ofParameter<bool> filled;
+		ofxButton twoCircles;
+		ofxButton ringButton;
+		ofParameter<string> screenSize;
 
-        ofxPanel gui;
+		ofxPanel gui;
 
-        ofSoundPlayer ring;
+		ofSoundPlayer ring;
 };
 

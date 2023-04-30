@@ -1,14 +1,13 @@
 #pragma once
 
-
 #include "cairo.h"
-
-#include <deque>
-#include <stack>
 #include "ofGraphicsBaseTypes.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
+// FIXME: replace by template
 #include "ofPixels.h"
+#include <deque>
+#include <stack>
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:
@@ -24,7 +23,8 @@ public:
 		IMAGE,
 		FROM_FILE_EXTENSION
 	};
-	void setup(std::string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+
+	void setup(const of::filesystem::path & filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
 	void flush();
@@ -199,7 +199,7 @@ private:
 	std::vector<glm::vec3> sphereVerts;
 	std::vector<glm::vec3> spherePoints;
 
-	std::string filename;
+	of::filesystem::path filename;
 	ofBuffer streamBuffer;
 	ofPixels imageBuffer;
 

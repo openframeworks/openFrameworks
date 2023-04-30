@@ -22,9 +22,24 @@
 #define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
 #endif
 
-namespace{
-    ofSoundStream systemSoundStream;
-}
+
+//FIXME: this is needed to make video work on emscripten
+//See: https://github.com/openframeworks/openFrameworks/issues/7377 
+#ifdef OF_SOUNDSTREAM_EMSCRIPTEN
+    namespace{
+        ofSoundStream systemSoundStream;
+    }
+    #define OF_SYSTEM_SS systemSoundStream
+#else
+    namespace{
+        ofSoundStream &getSystemSoundStream() {
+            static ofSoundStream _;
+            return _;
+        }
+    }
+    #define OF_SYSTEM_SS getSystemSoundStream()
+#endif
+
 
 using std::shared_ptr;
 using std::vector;
@@ -120,28 +135,28 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(ofSoundStreamSettings & settings) {
-	systemSoundStream.setup(settings);
+    OF_SYSTEM_SS.setup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-    systemSoundStream.stop();
+    OF_SYSTEM_SS.stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-    systemSoundStream.start();
+    OF_SYSTEM_SS.start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-    systemSoundStream.close();
+    OF_SYSTEM_SS.close();
 }
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
-	vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
-	//ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
+	vector<ofSoundDevice> deviceList = OF_SYSTEM_SS.getDeviceList();
+	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }
 
@@ -189,7 +204,7 @@ void ofSoundStream::printDeviceList()  const{
 void ofSoundStream::setDeviceID(int deviceID){
 	if( soundStream ){
 		tmpDeviceId = deviceID;
-	}	
+	}
 }
 
 //------------------------------------------------------------

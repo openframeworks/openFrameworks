@@ -1,8 +1,7 @@
 #pragma once
 
-#pragma clang diagnostic ignored "-Wformat-security"
-
 #include "ofConstants.h"
+
 #if !defined(TARGET_MINGW) 
 	#include "utf8.h"
 #else
@@ -76,15 +75,15 @@ int ofGetHours();
 /// \returns the number of seconds since Midnight, January 1, 1970 (epoch time).
 uint64_t ofGetUnixTime();
 
-/// \brief Get the system time in milliseconds.
+/// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
 OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
 
-/// \brief Get the system time in milliseconds.
+/// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
 uint64_t ofGetSystemTimeMillis();
 
-/// \brief Get the system time in microseconds.
+/// \brief Get the system time in microseconds (system uptime).
 /// \returns the system time in microseconds.
 uint64_t ofGetSystemTimeMicros();
 
@@ -142,7 +141,7 @@ struct ofTime{
 };
 
 /// \brief Get the system time.
-/// \returns the system time.
+/// \returns the system time, which is the time since the system booted (uptime).
 ofTime ofGetCurrentTime();
 
 /// \brief Sleeps the current thread for the specified amount of milliseconds.
@@ -1096,6 +1095,10 @@ void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
 ///
 /// \note Will block until the executed program/command has finished.
 /// \returns the system command output as string.
+///
+/// \note ofSystem() grabs only stdout; if you are interested in stderr
+///(which may be the case if you're getting "empty" results) consider
+/// redirection by appending 2>&1|cat to your command.
 std::string ofSystem(const std::string& command);
 
 /// \brief Get the target platform of the current system.

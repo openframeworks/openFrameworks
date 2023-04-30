@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ofGraphicsBaseTypes.h"
 #include "ofPolyline.h"
 #include "of3dGraphics.h"
@@ -192,11 +193,15 @@ public:
 
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofBaseMaterial & material);
+	void bind(const ofShadow & shadow); // does nothing, only programmable renderer supported
+	void bind(const ofShadow & shadow, GLenum aCubeFace);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseVideoDraws & video);
 	void unbind(const ofBaseMaterial & material);
+	void unbind(const ofShadow & shadow); // does nothing, only programmable renderer supported
+	void unbind(const ofShadow & shadow, GLenum aCubeFace);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofCamera & camera);

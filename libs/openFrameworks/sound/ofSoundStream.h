@@ -1,14 +1,12 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofBaseApp.h"
 #include "ofSoundBaseTypes.h"
+#include "ofConstants.h"
 #include <climits>
 #include <functional>
 
-
 class ofSoundStreamSettings;
-
 
 ///// \brief Sets up and starts a global ofSoundStream.
 /////

@@ -18,11 +18,15 @@ void ofApp::setup() {
 	
 	// set the vertex data
 	vbo.setVertexData(pos, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	if(ofIsGLProgrammableRenderer()){
-		shader.load("shaderGL3/Billboard");
-	}else{
-		shader.load("shaderGL2/Billboard");
-	}
+	#ifdef TARGET_EMSCRIPTEN
+		shader.load("shaderGLES3/Billboard");
+	#else
+		if(ofIsGLProgrammableRenderer()){
+			shader.load("shaderGL3/Billboard");
+		}else{
+			shader.load("shaderGL2/Billboard");
+		}
+	#endif
 	
 	ofDisableArbTex();
 	texture.load("snow.png");

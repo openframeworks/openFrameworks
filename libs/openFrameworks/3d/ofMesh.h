@@ -3,7 +3,6 @@
 #ifndef OF_MESH_H
 #define OF_MESH_H
 
-#include "ofConstants.h"
 #include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>
@@ -197,7 +196,11 @@ public:
 	void removeVertex(ofIndexType index);
 
 	/// \brief Removes the vertices at the startIndex in the vector and the endindex specified
+<<<<<<< HEAD
 	void removeVertex(ofIndexType startIndex, ofIndexType endIndex);
+=======
+	void removeVertices(ofIndexType startIndex, ofIndexType endIndex);
+>>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
 
 	void setVertex(ofIndexType index, const V& v);
 
@@ -276,7 +279,11 @@ public:
 	void removeNormal(ofIndexType index);
 
 	/// \brief Remove normal's from index to end index from normals vector
+<<<<<<< HEAD
 	void removeNormal(ofIndexType startIndex, ofIndexType endIndex);
+=======
+	void removeNormals(ofIndexType startIndex, ofIndexType endIndex);
+>>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
 
 	/// \todo Documentation.
 	void setNormal(ofIndexType index, const N& n);
@@ -362,7 +369,11 @@ public:
 	void removeColor(ofIndexType index);
 
 	/// \brief Remove colors at the index to the end index of the colors vector
+<<<<<<< HEAD
 	void removeColor(ofIndexType startIndex, ofIndexType endIndex);
+=======
+	void removeColors(ofIndexType startIndex, ofIndexType endIndex);
+>>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
 
 	/// \brief Set the color at the index in the colors vector.
 	void setColor(ofIndexType index, const C& c);
@@ -433,7 +444,12 @@ public:
 	/// \brief  Remove a Vec2f representing the texture coordinate.
 	void removeTexCoord(ofIndexType index);
 
+<<<<<<< HEAD
 	void removeTexCoord(ofIndexType startIndex, ofIndexType endIndex);
+=======
+	void removeTexCoords(ofIndexType startIndex, ofIndexType endIndex);
+	
+>>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
 	void setTexCoord(ofIndexType index, const T& t);
 
 	/// \brief  Clear all the texture coordinates.
@@ -525,7 +541,11 @@ public:
 
 	/// \brief Removes an index.
 	void removeIndex(ofIndexType index);
+<<<<<<< HEAD
 	void removeIndex(ofIndexType startIndex, ofIndexType endIndex);
+=======
+	void removeIndices(ofIndexType startIndex, ofIndexType endIndex);
+>>>>>>> 515b768b1d9cc133d651d045c64a14c09dd254ba
 
 	/// \brief This sets the index at i.
 	void setIndex(ofIndexType index, ofIndexType val);
@@ -603,7 +623,7 @@ public:
 	///
 	/// It expects that the file will be in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
 	/// It will only load meshes saved in the PLY ASCII format; the binary format is not supported.
-    void load(const std::filesystem::path& path);
+    void load(const of::filesystem::path& path);
 
 	///  \brief Saves the mesh at the passed path in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
 	///
@@ -614,7 +634,7 @@ public:
 	///  If you're planning on reloading the mesh into ofMesh, ofMesh currently only supports loading the ASCII format.
 	///
 	///  For more information, see the [PLY format specification](http://paulbourke.net/dataformats/ply/).
-    void save(const std::filesystem::path& path, bool useBinary = false) const;
+    void save(const of::filesystem::path& path, bool useBinary = false) const;
 
 	/// \}
 

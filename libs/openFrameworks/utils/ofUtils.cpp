@@ -1,4 +1,5 @@
 #include "ofUtils.h"
+// FIXME: split ofUtils in two files, one which uses urlparser / ofImage, other without for smaller apps.
 #include "ofImage.h"
 #include "ofLog.h"
 #include "ofAppBaseWindow.h"
@@ -15,16 +16,16 @@
 
 #ifdef TARGET_WIN32	 // For ofLaunchBrowser.
 	#include <shellapi.h>
-#endif
-
-
-#ifdef TARGET_WIN32
     #ifndef _MSC_VER
         #include <unistd.h> // this if for MINGW / _getcwd
 		#include <sys/param.h> // for MAXPATHLEN
+	// FIXME: else
     #endif
+	#ifdef _MSC_VER
+		#include <direct.h>
+	#endif
+	#include <mmsystem.h>
 #endif
-
 
 #if defined(TARGET_OF_IOS) || defined(TARGET_OSX ) || defined(TARGET_LINUX) || defined(TARGET_EMSCRIPTEN)
 	#include <sys/time.h>
@@ -37,14 +38,6 @@
 	#endif
 	#include <mach/clock.h>
 	#include <mach/mach.h>
-#endif
-
-#ifdef TARGET_WIN32
-    #include <mmsystem.h>
-	#ifdef _MSC_VER
-		#include <direct.h>
-	#endif
-
 #endif
 
 #ifdef TARGET_OF_IOS
@@ -879,7 +872,7 @@ std::locale loc;
 	if( printonce ){
 		std::string current( setlocale(LC_ALL,NULL) );
 		setlocale (LC_ALL,"");
-		ofLogWarning("ofUtils") << "std::locale not supported. Using C locale  :" << current ;
+		ofLogWarning("ofUtils") << "std::locale not supported. Using C locale: " << current ;
 		printonce = false;
 	}
 #else
@@ -1193,6 +1186,8 @@ ofTargetPlatform ofGetTargetPlatform(){
         return OF_TARGET_LINUXARMV6L;
     } else if(ofIsStringInString(arch,"armv7l")) {
         return OF_TARGET_LINUXARMV7L;
+	} else if(ofIsStringInString(arch,"aarch64")) {
+		return OF_TARGET_LINUXAARCH64;		
     } else {
         return OF_TARGET_LINUX;
     }

@@ -13,7 +13,7 @@
 #include "ofAppRunner.h"
 #include "ofLog.h"
 
-using namespace std;
+using std::string;
 
 //C++ class implementations
 

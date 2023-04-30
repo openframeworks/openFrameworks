@@ -143,7 +143,7 @@ float ofNormalize(float value, float min, float max);
 /// \param outputMax The upper bound of the output range.
 /// \param clamp True if the value should be clamped to [outputMin, outputMax).
 /// \note If the absolute difference between inputMin and inputMax is less than
-///		  FLT_EPSILON, outputMin will be returned to prevent divide by zero
+///		  std::numeric_limits<float>::epsilon(), outputMin will be returned to prevent divide by zero
 ///		  errors.
 /// \returns a mapped floating point number.
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);

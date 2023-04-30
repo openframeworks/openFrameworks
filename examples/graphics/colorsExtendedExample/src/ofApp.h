@@ -6,8 +6,8 @@
 #endif
 
 typedef struct {
-    string name;
-    ofColor color;
+	string name;
+	ofColor color;
 } colorNameMapping;
 
 class ofApp : public ofBaseApp{
@@ -28,13 +28,13 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
-        map < string, ofColor > colorNameMap;
-    
-        vector < colorNameMapping > colorNames;
-    
-        glm::vec3 mouseSmoothed;
+	
+		map < string, ofColor > colorNameMap;
+	
+		vector < colorNameMapping > colorNames;
+	
+		glm::vec3 mouseSmoothed;
 
-        int sortedType;             // keep track of which sort we've done
-    
+		int sortedType;             // keep track of which sort we've done
+	
 };

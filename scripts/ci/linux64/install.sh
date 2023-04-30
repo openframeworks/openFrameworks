@@ -15,6 +15,9 @@ fi
 # sudo service mysql stop
 # sudo service postgresql stop
 
+echo "checking assimp versions"
+apt-cache policy libassimp-dev
+
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
 
 #commenting out below so we can get it working with default in Ubuntu 18.04

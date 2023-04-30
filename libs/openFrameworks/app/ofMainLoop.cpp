@@ -5,10 +5,9 @@
  *      Author: arturo
  */
 
-#include <ofMainLoop.h>
-#include "ofWindowSettings.h"
-#include "ofAppBaseWindow.h"
+#include "ofMainLoop.h"
 #include "ofBaseApp.h"
+#include "ofConstants.h"
 
 //========================================================================
 // default windowing
@@ -139,8 +138,8 @@ void ofMainLoop::loopOnce(){
 	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
 			const auto & window = i->first;
-			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 			window->close();
+			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 		}else{
 			currentWindow = i->first;
 			i->first->makeCurrent();
@@ -164,7 +163,7 @@ void ofMainLoop::exit(){
 	for(auto i: windowsApps){
 		std::shared_ptr<ofAppBaseWindow> window = i.first;
 		std::shared_ptr<ofBaseApp> app = i.second;
-		
+
 		if(window == nullptr) {
 			continue;
 		}
@@ -264,5 +263,5 @@ void ofMainLoop::setEscapeQuitsLoop(bool quits){
 void ofMainLoop::keyPressed(ofKeyEventArgs & key){
 	if (key.key == OF_KEY_ESC && escapeQuits == true){				// "escape"
 		shouldClose(0);
-    }
+	}
 }

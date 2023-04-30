@@ -1,8 +1,5 @@
 #include "ofGraphics.h"
 #include "ofRendererCollection.h"
-#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
-#include "ofCairoRenderer.h"
-#endif
 #include "ofGLRenderer.h"
 
 
@@ -25,72 +22,6 @@ void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults){
 	}
 	ofGetCurrentRenderer() = renderer;
 }
-
-#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
-static shared_ptr<ofCairoRenderer> cairoScreenshot;
-static shared_ptr<ofBaseRenderer> storedRenderer;
-static shared_ptr<ofRendererCollection> rendererCollection;
-static bool bScreenShotStarted = false;
-
-
-static void ofEndSaveScreen(){
-	if( bScreenShotStarted ){
-
-		if( cairoScreenshot ){
-			cairoScreenshot->close();
-			rendererCollection.reset();
-			cairoScreenshot.reset();
-		}
-		if( storedRenderer ){
-			ofSetCurrentRenderer(storedRenderer,true);
-			storedRenderer.reset();
-		}
-
-		bScreenShotStarted = false;
-	}
-
-}
-
-static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle outputsize){
-	if( bScreenShotStarted ) ofEndSaveScreen();
-	
-	storedRenderer = ofGetCurrentRenderer();
-	
-	cairoScreenshot = std::make_unique<ofCairoRenderer>();
-	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
-
-	rendererCollection = std::make_shared<ofRendererCollection>();
-	rendererCollection->renderers.push_back(storedRenderer);
-	rendererCollection->renderers.push_back(cairoScreenshot);
-	
-	ofSetCurrentRenderer(rendererCollection, true);
-	cairoScreenshot->background(cairoScreenshot->getStyle().bgColor);
-	bScreenShotStarted = true;
-}
-
-//-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
-	ofBeginSaveScreen(filename, ofCairoRenderer::PDF, bMultipage, b3D, outputsize);
-}
-
-//-----------------------------------------------------------------------------------
-void ofEndSaveScreenAsPDF(){
-	ofEndSaveScreen();
-}
-
-//-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsSVG(string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
-	ofBeginSaveScreen(filename, ofCairoRenderer::SVG, bMultipage, b3D, outputsize);
-}
-
-//-----------------------------------------------------------------------------------
-void ofEndSaveScreenAsSVG(){
-	ofEndSaveScreen();
-}
-
-#endif
-
-
 
 //----------------------------------------------------------
 // transformation matrix related functions
@@ -466,12 +397,12 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		glm::vec2 center(w / 2, h / 2);
 		gradientMesh.addVertex(glm::vec3(center, 0.f));
 		gradientMesh.addColor(start);
-		int n = 32; // circular gradient resolution
-		float angleBisector = TWO_PI / (n * 2);
+		float n = 32; // circular gradient resolution
+		float angleBisector = glm::two_pi<float>() / (n * 2.0);
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
 		float bigRadius = smallRadius / cos(angleBisector);
 		for(int i = 0; i <= n; i++) {
-			float theta = i * TWO_PI / n;
+			float theta = i * glm::two_pi<float>() / n;
 			gradientMesh.addVertex(glm::vec3(center + glm::vec2(sin(theta), cos(theta)) * bigRadius, 0));
 			gradientMesh.addColor(end);
 		}
@@ -1282,7 +1213,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 				currentLineLength++;
 			}
 		}
-		maxLineLength = MAX(maxLineLength, currentLineLength);
+		maxLineLength = std::max(maxLineLength, currentLineLength);
 	}
 	
 	int padding = 4;

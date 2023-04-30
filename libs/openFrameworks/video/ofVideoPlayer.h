@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
+#include "ofConstants.h"
+
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
@@ -29,6 +30,11 @@
     #define OF_VID_PLAYER_TYPE ofDirectShowPlayer
 #endif
 
+#if defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) 
+	#include "ofMediaFoundationPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofMediaFoundationPlayer
+#endif
+
 #ifdef OF_VIDEO_PLAYER_IOS
 	#include "ofxiOSVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
@@ -45,7 +51,7 @@
 #endif
 
 //---------------------------------------------
-class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
+class ofVideoPlayer : public ofBaseVideoDraws{
 
 	public:
 

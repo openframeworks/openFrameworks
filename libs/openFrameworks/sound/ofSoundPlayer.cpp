@@ -1,5 +1,6 @@
 #include "ofSoundPlayer.h"
 #include "ofLog.h"
+#define GLM_FORCE_CTOR_INIT
 #include "glm/common.hpp"
 
 // these are global functions, that affect every sound / channel:
@@ -18,6 +19,8 @@ void ofSoundStopAll(){
 void ofSoundSetVolume(float vol){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundSetVolume(vol);
+	#elif defined(OF_SOUND_PLAYER_MEDIA_FOUNDATION)
+		ofMediaFoundationSoundPlayer::SetMasterVolume(vol);
 	#else
 		ofLogWarning("ofSoundPlayer") << "ofSoundSetVolume() not implemented on this platform";
 	#endif
@@ -73,7 +76,7 @@ std::shared_ptr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 }
 
 //--------------------------------------------------------------------
-bool ofSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
+bool ofSoundPlayer::load(const of::filesystem::path& fileName, bool stream){
 	if( player ){
 		return player->load(fileName, stream);
 	}

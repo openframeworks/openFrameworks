@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ofConstants.h"
 #ifndef TARGET_NO_THREADS
 

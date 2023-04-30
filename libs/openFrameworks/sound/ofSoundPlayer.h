@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofSoundBaseTypes.h"
+#include "ofConstants.h"
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
 void ofSoundStopAll();
@@ -25,7 +25,10 @@ void ofSoundUpdate();
 /// \return pointer to an FFT sample, sample size is equal to the nBands parameter.
 float * ofSoundGetSpectrum(int nBands);
 
-
+#ifdef OF_SOUND_PLAYER_AV_ENGINE
+#include "ofAVEngineSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofAVEngineSoundPlayer
+#endif
 
 #ifdef OF_SOUND_PLAYER_QUICKTIME
 #include "ofQuicktimeSoundPlayer.h"
@@ -35,6 +38,11 @@ float * ofSoundGetSpectrum(int nBands);
 #ifdef OF_SOUND_PLAYER_FMOD
 #include "ofFmodSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer
+#endif
+
+#ifdef OF_SOUND_PLAYER_MEDIA_FOUNDATION
+#include "ofMediaFoundationSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofMediaFoundationSoundPlayer
 #endif
 
 #ifdef OF_SOUND_PLAYER_OPENAL
@@ -47,20 +55,16 @@ float * ofSoundGetSpectrum(int nBands);
 #define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
 #endif
 
-#ifdef TARGET_ANDROID
-#include "ofxAndroidSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
-inline void ofSoundShutdown(){}
-#endif
-
 #ifdef OF_SOUND_PLAYER_EMSCRIPTEN
 #include "ofxEmscriptenSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxEmscriptenSoundPlayer
 #endif
 
-#ifdef TARGET_LINUX_ARM
-inline void ofSoundShutdown(){}
+#ifdef TARGET_ANDROID
+#include "ofxAndroidSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
 #endif
+
 
 /// \class ofSoundPlayer
 /// \brief Plays sound files.
@@ -82,7 +86,7 @@ public:
     ///
     /// \param fileName Path to the sound file, relative to your app's data folder.
     /// \param stream set "true" to enable streaming from disk (for large files).
-    bool load(const std::filesystem::path& fileName, bool stream = false);
+    bool load(const of::filesystem::path& fileName, bool stream = false);
     OF_DEPRECATED_MSG("Use load",bool loadSound(std::string fileName, bool stream = false));
 
     /// \brief Stops and unloads the current sound.

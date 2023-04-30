@@ -10,6 +10,7 @@ class ofDragInfo;
 class ofMessage;
 class ofTouchEventArgs;
 
+
 class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 
 	public:

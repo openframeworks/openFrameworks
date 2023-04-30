@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include "ofGraphicsConstants.h"
+#include "ofConstants.h"
 
 class ofShader;
 class ofGLProgrammableRenderer;
@@ -89,6 +89,8 @@ int ofGetGLFormat(const ofPixels_<T> & pixels) {
 }
 
 std::string ofGLSLVersionFromGL(int major, int minor);
+std::string ofGLSLVersionFromGL();
+std::string ofGLSLGetDefaultHeader();
 
 #ifndef TARGET_OPENGLES
 void ofEnableGLDebugLog();
@@ -152,8 +154,17 @@ void ofDisableGLDebugLog();
         #define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
     #endif
 	#ifdef GL_DEPTH_COMPONENT32_OES
-        #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
+		#ifndef GL_DEPTH_COMPONENT32
+			#define GL_DEPTH_COMPONENT32					GL_DEPTH_COMPONENT32_OES
+		#endif
     #endif
+	
+	#ifndef GL_RGBA32F
+		#ifdef GL_RGBA32F_EXT
+			#define GL_RGBA32F								GL_RGBA32F_EXT
+		#endif
+	#endif
+
     #ifdef TARGET_OPENGLES
         #ifndef GL_UNSIGNED_INT
             #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES
@@ -161,5 +172,16 @@ void ofDisableGLDebugLog();
         #ifndef GL_HALF_FLOAT
             #define GL_HALF_FLOAT                           GL_HALF_FLOAT_OES
         #endif
+	#ifndef GL_TEXTURE_CUBE_MAP
+		#ifdef GL_TEXTURE_CUBE_MAP_OES
+            #define GL_TEXTURE_CUBE_MAP               		GL_TEXTURE_CUBE_MAP_OES
+		#endif
+	#endif
     #endif
+
+	#ifndef glTexStorage2D
+		#ifdef glTexStorage2DEXT
+			#define glTexStorage2D							glTexStorage2DEXT
+		#endif
+	#endif
 #endif

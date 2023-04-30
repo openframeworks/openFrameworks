@@ -1,5 +1,4 @@
 #include "ofAppNoWindow.h"
-#include "ofBaseApp.h"
 #include "ofGraphics.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
@@ -44,10 +43,10 @@ void set_conio_terminal_mode()
 int kbhit()
 {
 	return 0;
-    struct timeval tv = { 0L, 0L };
-    fd_set fds;
-    FD_SET(0, &fds);
-    return select(1, &fds, nullptr, nullptr, &tv);
+//    struct timeval tv = { 0L, 0L };
+//    fd_set fds;
+//    FD_SET(0, &fds);
+//    return select(1, &fds, nullptr, nullptr, &tv);
 }
 
 int getch()

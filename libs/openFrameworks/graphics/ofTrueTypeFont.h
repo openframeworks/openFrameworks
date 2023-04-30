@@ -1,12 +1,13 @@
 #pragma once
 
-#include "ofConstants.h"
-#include <unordered_map>
 #include "ofRectangle.h"
 #include "ofPath.h"
 #include "ofTexture.h"
 #include "ofMesh.h"
+// FIXME: template
 #include "ofPixels.h"
+#include "ofConstants.h"
+#include <unordered_map>
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into
@@ -138,17 +139,17 @@ enum ofTrueTypeFontDirection : uint32_t {
 
 struct ofTrueTypeFontSettings{
 
-    std::filesystem::path     fontName;
+    of::filesystem::path     fontName;
     int                       fontSize = 0;
     bool                      antialiased = true;
     bool                      contours = false;
-    float                     simplifyAmt = 0.3f;
+    float                     simplifyAmt = 0.0f;
     int                       dpi = 0;
     int                       index = 0;
     ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
     std::vector<ofUnicode::range> ranges;
 
-    ofTrueTypeFontSettings(const std::filesystem::path & name, int size)
+    ofTrueTypeFontSettings(const of::filesystem::path & name, int size)
     :fontName(name)
     ,fontSize(size){}
 
@@ -199,12 +200,12 @@ public:
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-    bool load(const std::filesystem::path& filename,
+    bool load(const of::filesystem::path& filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
                   bool makeContours=false,
-                  float simplifyAmt=0.3f,
+                  float simplifyAmt=0.0f,
 				  int dpi=0);
 
 	OF_DEPRECATED_MSG("Use load instead",bool loadFont(std::string filename,
@@ -212,7 +213,7 @@ public:
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=false,
                   bool makeContours=false,
-                  float simplifyAmt=0.3f,
+                  float simplifyAmt=0.0f,
 				  int dpi=0));
 	
 	bool load(const ofTrueTypeFontSettings & settings);
@@ -399,16 +400,25 @@ public:
 		float tW,tH;
 		float t1,t2,v1,v2;
 	};
-protected:
-	/// \cond INTERNAL
+	float getCharWidth(uint32_t c) const {
+		return getGlyphProperties(c).width;
+	}
+	float getCharAdvance(uint32_t c) const {
+		return getGlyphProperties(c).advance;
+	}
 	
-	static inline double int26p6_to_dbl(int p) {
+	static double int26p6_to_dbl(long p) {
 		return double(p) / 64.0;
 	}
 	
 	static inline int dbl_to_int26p6(double p) {
 		return int(p * 64.0 + 0.5);
 	}
+
+protected:
+	/// \cond INTERNAL
+	
+
 	
 	bool bLoadedOk;
 	
@@ -450,10 +460,6 @@ protected:
 	/// \endcond
 
 private:
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-	friend void ofUnloadAllFontTextures();
-	friend void ofReloadAllFontTextures();
-#endif
 	std::shared_ptr<struct FT_FaceRec_>	face;
 	static const glyphProps invalidProps;
 	void		unloadTextures();

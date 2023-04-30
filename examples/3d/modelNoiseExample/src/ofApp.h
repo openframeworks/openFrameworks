@@ -36,12 +36,12 @@ class ofApp : public ofBaseApp{
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
-	
-	//this is our model we'll draw	
+
+	//this is our model we'll draw
 	ofxAssimpModelLoader model;
-	
+
 	ofLight light;
-	
+
 	//we added these functions to make it easier to switch between the two methods of drawing
 	void drawWithModel();
 	void drawWithMesh();

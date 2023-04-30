@@ -7,11 +7,12 @@
 #include "ofImage.h"
 #include "ofFbo.h"
 #include "ofLight.h"
-#include "ofMaterial.h"
 #include "ofCamera.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
 #include "ofVideoBaseTypes.h"
+#include "ofMaterial.h"
+#include "ofVboMesh.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -575,6 +576,22 @@ void ofGLRenderer::unbind(const ofBaseMaterial &){
 	}
 }
 
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofShadow & shadow, GLenum aCubeFace) {
+	ofLogWarning("ofGLRenderer::bind(const ofShadow & shadow) : shadows are only supported via programmable renderer");
+};
+
+// does nothing, only programmable renderer supported
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow) {};
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShadow & shadow, GLenum aCubeFace) {};
+
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofTexture & texture, int location){
 	//we could check if it has been allocated - but we don't do that in draw()
@@ -753,7 +770,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
-	float halfFov = PI * fov / 360;
+	float halfFov = glm::pi<float>() * fov / 360.0f;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 	float aspect = (float) viewW / viewH;
