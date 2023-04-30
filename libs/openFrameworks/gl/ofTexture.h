@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "ofGraphicsBaseTypes.h"
 #include "ofConstants.h"
 #include "glm/mat4x4.hpp"
