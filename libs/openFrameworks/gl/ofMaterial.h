@@ -1,10 +1,11 @@
 #pragma once
 
 #include "ofShader.h"
-#include "ofColor.h"
 #include "ofMaterialBaseTypes.h"
-// FIXME: deprecated only and ctor
+// FIXME: constants deprecated only and ctor
 #include "ofConstants.h"
+#include "ofColor.h"
+
 #include "glm/fwd.hpp"
 #include "glm/vec2.hpp"
 #include <map>

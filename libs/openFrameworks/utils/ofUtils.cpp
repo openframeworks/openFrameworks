@@ -8,6 +8,7 @@
 #include "ofEvents.h"
 #include "ofGLUtils.h"
 #include "ofMath.h"
+#include "ofPixels.h"
 
 #include <chrono>
 #include <numeric>

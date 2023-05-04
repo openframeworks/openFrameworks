@@ -1,15 +1,15 @@
 #pragma once
 
 #include "ofGraphicsConstants.h"
-#include "ofColor.h"
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
+
+#include "ofColor.h"
 
 class ofRectangle;
 
 template<typename T>
 class ofPixels_;
-
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<float> ofFloatPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;

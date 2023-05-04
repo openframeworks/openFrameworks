@@ -2,7 +2,7 @@
 
 #include "ofShader.h"
 // #include "ofColor.h"
-// FIXME: deprecated only and ctor
+// FIXME: constants deprecated only and ctor
 // #include "ofConstants.h"
 // #include "glm/fwd.hpp"
 // #include "glm/vec2.hpp"
