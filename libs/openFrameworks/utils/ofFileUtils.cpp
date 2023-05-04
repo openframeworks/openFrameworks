@@ -1935,25 +1935,14 @@ string ofFilePath::getUserHomeDir(){
 std::string ofFilePath::makeRelative(const of::filesystem::path & from, const of::filesystem::path & to){
 	auto pathFrom = of::filesystem::absolute( from );
 	auto pathTo = of::filesystem::absolute( to );
-	of::filesystem::path ret;
-	of::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
-	// Find common base
-	for( of::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
-	// Navigate backwards in directory to reach previously found base
-	for( of::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom ){
-		if( (*itrFrom) != "." ){
-			ret /= "..";
-		}
-	}
-	// Now navigate down the directory branch
-	for( ; itrTo != pathTo.end() ; ++itrTo ){
-		if( itrTo->string() != "."){
-			ret /= *itrTo;
-		}
-	}
-
+    of::filesystem::path ret;
+    try {
+        ret = of::filesystem::relative(pathTo, pathFrom);
+    } catch(std::filesystem::filesystem_error &err) {
+        ofLogError("ofFilePath::makeRelative") << err.what();
+    }
 //	return ret;
-	return ret.string();
+    return ret.string();
 }
 
 //--------------------------------------------------
