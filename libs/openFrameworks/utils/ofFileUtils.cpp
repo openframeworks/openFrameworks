@@ -1938,7 +1938,7 @@ std::string ofFilePath::makeRelative(const of::filesystem::path & from, const of
     of::filesystem::path ret;
     try {
         ret = of::filesystem::relative(pathTo, pathFrom);
-    } catch(std::filesystem::filesystem_error &err) {
+    } catch(of::filesystem::filesystem_error &err) {
         ofLogError("ofFilePath::makeRelative") << err.what();
     }
 //	return ret;
