@@ -4,14 +4,7 @@
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
 #include "ofGLUtils.h"
-
-template<typename T>
-class ofPixels_;
-typedef ofPixels_<unsigned char> ofPixels;
-typedef ofPixels_<float> ofFloatPixels;
-typedef ofPixels_<unsigned short> ofShortPixels;
-typedef ofPixels& ofPixelsRef;
-
+#include "ofPixels.h"
 #include "ofConstants.h"
 
 class ofFile;
