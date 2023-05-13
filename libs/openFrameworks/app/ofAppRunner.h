@@ -52,6 +52,8 @@ ofBaseApp * ofGetAppPtr();
 
 void		ofExit(int status=0);
 
+bool 		ofIsCurrentThreadTheMainThread();
+
 //-------------------------- time
 float 		ofGetFrameRate();
 float 		ofGetTargetFrameRate();

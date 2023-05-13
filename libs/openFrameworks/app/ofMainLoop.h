@@ -46,6 +46,9 @@ public:
 
 	ofEvent<void> exitEvent;
 	ofEvent<void> loopEvent;
+	
+	std::thread::id thread_id { std::this_thread::get_id() };
+
 private:
 	void keyPressed(ofKeyEventArgs & key);
 	std::unordered_map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
