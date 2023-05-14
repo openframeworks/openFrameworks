@@ -324,8 +324,12 @@ ofBaseApp * ofGetAppPtr(){
 }
 
 //--------------------------------------
+std::thread::id ofGetMainThreadId() {
+	return ofGetMainLoop()->get_thread_id() ;
+}
+
 bool ofIsCurrentThreadTheMainThread() {
-	return ofGetMainLoop()->thread_id == std::this_thread::get_id();
+	return ofGetMainThreadId() == std::this_thread::get_id();
 }
 
 //--------------------------------------

@@ -47,9 +47,11 @@ public:
 	ofEvent<void> exitEvent;
 	ofEvent<void> loopEvent;
 	
-	std::thread::id thread_id { std::this_thread::get_id() };
+	std::thread::id get_thread_id() { return thread_id; };
 
 private:
+	std::thread::id thread_id { std::this_thread::get_id() };
+
 	void keyPressed(ofKeyEventArgs & key);
 	std::unordered_map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
 	bool bShouldClose;
