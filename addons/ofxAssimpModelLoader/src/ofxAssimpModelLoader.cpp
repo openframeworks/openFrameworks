@@ -2,6 +2,7 @@
 #include "ofxAssimpUtils.h"
 #include "ofLight.h"
 #include "ofImage.h"
+#include "ofPixels.h"
 #include "ofGraphics.h"
 #include "ofConstants.h"
 
