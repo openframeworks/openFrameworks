@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ofShader.h"
+//#include "ofShader.h"
+class ofShader;
 // #include "ofColor.h"
 // FIXME: constants deprecated only and ctor
 // #include "ofConstants.h"
