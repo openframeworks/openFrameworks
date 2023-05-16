@@ -52,6 +52,9 @@ ofBaseApp * ofGetAppPtr();
 
 void		ofExit(int status=0);
 
+bool 		ofIsCurrentThreadTheMainThread();
+std::thread::id ofGetMainThreadId();
+
 //-------------------------- time
 float 		ofGetFrameRate();
 float 		ofGetTargetFrameRate();

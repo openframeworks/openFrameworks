@@ -324,6 +324,15 @@ ofBaseApp * ofGetAppPtr(){
 }
 
 //--------------------------------------
+std::thread::id ofGetMainThreadId() {
+	return ofGetMainLoop()->get_thread_id() ;
+}
+
+bool ofIsCurrentThreadTheMainThread() {
+	return ofGetMainThreadId() == std::this_thread::get_id();
+}
+
+//--------------------------------------
 ofAppBaseWindow * ofGetWindowPtr(){
 	return mainLoop()->getCurrentWindow().get();
 }
