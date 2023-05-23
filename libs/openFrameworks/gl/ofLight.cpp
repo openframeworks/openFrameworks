@@ -13,6 +13,7 @@
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
 #include "ofConstants.h"
+#include "ofColor.h"
 #include <glm/gtc/quaternion.hpp>
 #include <map>
 

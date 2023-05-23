@@ -4,7 +4,6 @@
 #include "ofPath.h"
 #include "ofTexture.h"
 #include "ofMesh.h"
-// FIXME: template
 #include "ofPixels.h"
 #include "ofConstants.h"
 #include <unordered_map>

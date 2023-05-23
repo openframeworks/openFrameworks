@@ -1,11 +1,7 @@
 #pragma once
 
-#include "ofShader.h"
-// #include "ofColor.h"
-// FIXME: deprecated only and ctor
-// #include "ofConstants.h"
-// #include "glm/fwd.hpp"
-// #include "glm/vec2.hpp"
+class ofShader;
+class ofGLProgrammableRenderer;
 
 // enum ofMaterialTextureType: short{
 // 	OF_MATERIAL_TEXTURE_NONE=0,
@@ -36,8 +32,6 @@
 //   * assimp material: http://assimp.sourceforge.net/lib_html/ai_material_8h.html#7dd415ff703a2cc53d1c22ddbbd7dde0
 
 // PBR Material based on GLTF spec from KhronosGroup: https://github.com/KhronosGroup/glTF
-
-class ofGLProgrammableRenderer;
 
 
 /// \class ofBaseMaterial
