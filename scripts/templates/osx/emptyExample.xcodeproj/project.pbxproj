@@ -104,6 +104,7 @@
 			"inputPaths": [],
 			"buildActionMask": "2147483647",
 			"shellPath": "/bin/sh",
+			"showEnvVarsInLog": "0",
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
