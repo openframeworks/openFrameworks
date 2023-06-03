@@ -99,7 +99,6 @@ This has the effect that these libraries are 'precompiled', which is taking a lo
  ```
 
  - For Visual Studio IDE, skip the last command and open the generated `ofExample.sln`
- - For Visual Studio in the terminal, replace the last command with just `cmake --build .`
  - For CLion and vscode, just open the root `CMakeLists.txt` in CLion or vscode with CMake extension, no terminal commands needed.
 
 #### This results in:
@@ -208,14 +207,14 @@ ctest -C Release                               # Or 'Debug'
 ## Jetbrains CLion
 
 When starting with CLion, you do not generate anything with CMake. It's the opposite: You open your root CMakeLists.txt in CLion,
-which then calls CMake for you. Time to relax.
+which then calls CMake for you.
 
 CLion is especially useful when it comes to unit tests due to its excellent support for CMake CTest.
 
 ### CLion on Windows
 
 Currently, MinGW/MSYS2 is entirely unsupported. If you want to use CLion on Windows, you must use the Microsoft MSVC toolchain 
-(Visual Studio), which is also faster and more reliable than MinGW or MSYS as it's native.
+(Visual Studio), which is also faster and more reliable than MinGW or MSYS.
 If [Visual Studio](https://visualstudio.microsoft.com/de/downloads/) is installed, it is automatically recognized in the CLion toolchain settings.
 Thus, you can build using CLion's excellent IDE, while the Visual Studio compiler is used under the hood.
 This results in the most robust development experience on Windows.

@@ -67,7 +67,8 @@ We also have a developer's mailing list, which is useful for discussing issues a
 
 ## Working with CMake
 
-Using CMake will give you the best possible experience when working with openFrameworks. There is an entire page dedicated to [CMake support](CMAKE.md).
+CMake support is a new feature, which allows to build openFrameworks out of the box. It also allows CLion to be used as an IDE.  
+There is an entire page dedicated to [CMake support](CMAKE.md).
 
 ## Developers
 
