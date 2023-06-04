@@ -32,6 +32,12 @@ void ofResetElapsedTimeCounter();
 /// \returns the floating point elapsed time in seconds.
 float ofGetElapsedTimef();
 
+/// \brief Get the Unix Time in milliseconds.
+///
+/// This returns the milliseconds since Midnight, January 1, 1970.
+///
+/// \returns the milliseconds since Midnight, January 1, 1970.
+uint64_t ofGetUnixTimeMillis();
 
 /// \brief Get the elapsed time in milliseconds.
 ///

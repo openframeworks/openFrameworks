@@ -337,6 +337,10 @@ uint64_t ofGetUnixTime(){
 	return static_cast<uint64_t>(time(nullptr));
 }
 
+uint64_t ofGetUnixTimeMillis() {
+    auto elapsed = std::chrono::system_clock::now().time_since_epoch();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+}
 
 //--------------------------------------
 void ofSleepMillis(int millis){
