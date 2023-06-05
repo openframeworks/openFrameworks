@@ -10,26 +10,18 @@ function recordVideo(isRecording, recordTexture) {
 	if (isRecording) {
 		mediaParts = [];
 		if (recordTexture) {
-			stream = canvas2.captureStream();
+			stream = canvas2.captureStream(30);
 		} else {
-			stream = canvas.captureStream();
+			stream = canvas.captureStream(30);
 		}
-		if (typeof AUDIO != 'undefined') {
-			stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
-			mediaRecorder = new MediaRecorder(stream, {
-				audioBitsPerSecond: 128000, // 128 kbps
-  				videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
-				mimeType: 'video/webm'
-			});
-		} else {
-			mediaRecorder = new MediaRecorder(stream, {
-  				videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
-				mimeType: 'video/webm'
-			});
-		}
+		stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
+		mediaRecorder = new MediaRecorder(stream, {
+  			videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
+			mimeType: 'video/webm;codecs=vp9,pcm'
+		});
 		mediaRecorder.onstop = function() {
 			var duration = Date.now() - startTime;
-			var buggyBlob = new Blob(mediaParts, { type: 'video/webm' });
+			var buggyBlob = new Blob(mediaParts, { type: 'video/webm;codecs=vp9,pcm' });
 			ysFixWebmDuration(buggyBlob, duration, function(fixedBlob) {
 				downloadBlob(fixedBlob);
 			});
@@ -51,7 +43,7 @@ function downloadBlob(blob) {
 	var url = URL.createObjectURL(blob);
 	var tag = document.createElement('a');
 	tag.href = url;
-	tag.download = 'Video.webm';
+	tag.download = 'Video.mp4';
 	document.body.appendChild(tag);
 	tag.click();
 	document.body.removeChild(tag);
