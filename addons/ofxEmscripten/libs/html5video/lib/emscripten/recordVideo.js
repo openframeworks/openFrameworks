@@ -17,7 +17,7 @@ function recordVideo(isRecording, recordTexture) {
 		if (typeof AUDIO != 'undefined') {
 			stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
 			mediaRecorder = new MediaRecorder(stream, {
-				audioBitsPerSecond: 320000, // 320 kbps
+				audioBitsPerSecond: 128000, // 128 kbps
   				videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
 				mimeType: 'video/webm'
 			});
