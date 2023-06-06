@@ -3,6 +3,7 @@ var stream;
 var mediaParts;
 var startTime;
 var mediaRecorder;
+var data;
 var canvas2 = document.createElement('canvas');    
 var context2 = canvas2.getContext('2d');
 
@@ -16,12 +17,13 @@ function recordVideo(isRecording, recordTexture) {
 		}
 		stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
 		mediaRecorder = new MediaRecorder(stream, {
+			audioBitsPerSecond : 128000, // 128 kbps
   			videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
-			mimeType: 'video/webm;codecs=vp9,pcm'
+			mimeType: 'video/webm'
 		});
 		mediaRecorder.onstop = function() {
 			var duration = Date.now() - startTime;
-			var buggyBlob = new Blob(mediaParts, { type: 'video/webm;codecs=vp9,pcm' });
+			var buggyBlob = new Blob(mediaParts, { type: 'video/webm' });
 			ysFixWebmDuration(buggyBlob, duration, function(fixedBlob) {
 				downloadBlob(fixedBlob);
 			});
@@ -43,7 +45,7 @@ function downloadBlob(blob) {
 	var url = URL.createObjectURL(blob);
 	var tag = document.createElement('a');
 	tag.href = url;
-	tag.download = 'Video.mp4';
+	tag.download = 'Video.webm';
 	document.body.appendChild(tag);
 	tag.click();
 	document.body.removeChild(tag);
@@ -51,7 +53,7 @@ function downloadBlob(blob) {
 
 function drawTexture(textureID, textureWidth, textureHeight){ 
 	var texture = GL.textures[textureID];
-
+	
 	// make a framebuffer
 	var fb = GLctx.createFramebuffer();
 
@@ -67,8 +69,8 @@ function drawTexture(textureID, textureWidth, textureHeight){
 	if (canvas2.width != textureWidth || canvas2.height != textureHeight) {
 		canvas2.width = textureWidth;
 		canvas2.height = textureHeight;
+		data = new Uint8Array(textureWidth * textureHeight * 4);
 	}
-	var data = new Uint8Array(textureWidth * textureHeight * 4);
 	GLctx.readPixels(0, 0, textureWidth, textureHeight, GLctx.RGBA, GLctx.UNSIGNED_BYTE, data);
 	
 	// Unbind the framebuffer
