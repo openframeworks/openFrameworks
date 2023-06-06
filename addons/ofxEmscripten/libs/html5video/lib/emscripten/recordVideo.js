@@ -7,6 +7,9 @@ var data;
 var fb;
 var canvas2 = document.createElement('canvas');    
 var context2 = canvas2.getContext('2d');
+var videoTypes = ["webm", "ogg", "mp4", "x-matroska"];
+var audioTypes = ["webm", "ogg", "mp3", "x-matroska"];
+var codecs = ["should-not-be-supported","vp9", "vp9.0", "vp8", "vp8.0", "avc1", "av1", "h265", "h.265", "h264", "h.264", "pcm", "opus", "aac", "mpeg", "mp4a"];
 
 function recordVideo(isRecording, textureID) {
 	if (isRecording) {
@@ -31,11 +34,21 @@ function recordVideo(isRecording, textureID) {
 		} else {
 			stream = canvas.captureStream(30);
 		}
+		var supportedVideos = getSupportedMimeTypes("video", videoTypes, codecs);
+		var supportedAudios = getSupportedMimeTypes("audio", audioTypes, codecs);
+
+		console.log('-- Top supported Video : ', supportedVideos[0])
+		console.log('-- Top supported Audio : ', supportedAudios[0])
+		console.log('-- All supported Videos : ', supportedVideos)
+		console.log('-- All supported Audios : ', supportedAudios)
+		
+		var audioCodec = supportedAudios[0].split("codecs=")[1];
+		console.log("-- MIME type : ", supportedVideos[0] + "," + audioCodec);
 		stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
 		mediaRecorder = new MediaRecorder(stream, {
 			audioBitsPerSecond : 128000, // 128 kbps
   			videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
-			mimeType: 'video/webm'
+			mimeType: supportedVideos[0] + "," + audioCodec
 		});
 		mediaRecorder.onstop = function() {
 			var duration = Date.now() - startTime;
@@ -67,7 +80,7 @@ function downloadBlob(blob) {
 	document.body.removeChild(tag);
 }
 
-function drawTexture(textureWidth, textureHeight) { 
+function drawTexture(textureWidth, textureHeight){ 
 	// make this the current frame buffer
 	GLctx.bindFramebuffer(GLctx.FRAMEBUFFER, fb);
 	
@@ -84,3 +97,20 @@ function drawTexture(textureWidth, textureHeight) {
 	var imageData = new ImageData(new Uint8ClampedArray(data.buffer), textureWidth, textureHeight);
 	context2.putImageData(imageData, 0, 0);
 }
+
+function getSupportedMimeTypes(media, types, codecs) {
+	var isSupported = MediaRecorder.isTypeSupported;
+	var supported = [];
+	types.forEach((type) => {
+	var mimeType = `${media}/${type}`;
+	codecs.forEach((codec) => [
+		`${mimeType};codecs=${codec}`,
+	].forEach(variation => {
+	if(isSupported(variation)) 
+		supported.push(variation);
+	}));
+	if (isSupported(mimeType))
+		supported.push(mimeType);
+	});
+	return supported;
+};
