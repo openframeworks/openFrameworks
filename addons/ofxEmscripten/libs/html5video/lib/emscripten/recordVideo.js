@@ -43,16 +43,17 @@ function recordVideo(isRecording, textureID) {
 		console.log('-- All supported Audios : ', supportedAudios)
 		
 		var audioCodec = supportedAudios[0].split("codecs=")[1];
-		console.log("-- MIME type : ", supportedVideos[0] + "," + audioCodec);
+		var mimeType = supportedVideos[0] + "," + audioCodec;
+		console.log("-- MIME type : ", mimeType);
 		stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
 		mediaRecorder = new MediaRecorder(stream, {
 			audioBitsPerSecond : 128000, // 128 kbps
   			videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
-			mimeType: supportedVideos[0] + "," + audioCodec
+			mimeType: mimeType
 		});
 		mediaRecorder.onstop = function() {
 			var duration = Date.now() - startTime;
-			var buggyBlob = new Blob(mediaParts, { type: 'video/webm' });
+			var buggyBlob = new Blob(mediaParts, { type: mimeType });
 			ysFixWebmDuration(buggyBlob, duration, function(fixedBlob) {
 				downloadBlob(fixedBlob);
 			});
@@ -74,13 +75,13 @@ function downloadBlob(blob) {
 	var url = URL.createObjectURL(blob);
 	var tag = document.createElement('a');
 	tag.href = url;
-	tag.download = 'Video.webm';
+	tag.download = 'Video.mp4';
 	document.body.appendChild(tag);
 	tag.click();
 	document.body.removeChild(tag);
 }
 
-function drawTexture(textureWidth, textureHeight){ 
+function drawTexture(textureWidth, textureHeight) { 
 	// make this the current frame buffer
 	GLctx.bindFramebuffer(GLctx.FRAMEBUFFER, fb);
 	
