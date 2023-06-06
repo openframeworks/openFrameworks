@@ -4,14 +4,30 @@ var mediaParts;
 var startTime;
 var mediaRecorder;
 var data;
+var fb;
 var canvas2 = document.createElement('canvas');    
 var context2 = canvas2.getContext('2d');
 
-function recordVideo(isRecording, recordTexture) {
+function recordVideo(isRecording, recordTexture, textureID) {
 	if (isRecording) {
 		mediaParts = [];
 		if (recordTexture) {
 			stream = canvas2.captureStream(30);
+			var texture = GL.textures[textureID];
+	
+			// make a framebuffer
+			fb = GLctx.createFramebuffer();
+
+			// make this the current frame buffer
+			GLctx.bindFramebuffer(GLctx.FRAMEBUFFER, fb);
+
+			// attach the texture to the framebuffer.
+			GLctx.framebufferTexture2D(
+			GLctx.FRAMEBUFFER, GLctx.COLOR_ATTACHMENT0,
+			GLctx.TEXTURE_2D, texture, 0);
+	
+			// Unbind the framebuffer
+			GLctx.bindFramebuffer(GLctx.FRAMEBUFFER, null);
 		} else {
 			stream = canvas.captureStream(30);
 		}
@@ -51,20 +67,10 @@ function downloadBlob(blob) {
 	document.body.removeChild(tag);
 }
 
-function drawTexture(textureID, textureWidth, textureHeight){ 
-	var texture = GL.textures[textureID];
-	
-	// make a framebuffer
-	var fb = GLctx.createFramebuffer();
-
+function drawTexture(textureWidth, textureHeight){ 
 	// make this the current frame buffer
 	GLctx.bindFramebuffer(GLctx.FRAMEBUFFER, fb);
-
-	// attach the texture to the framebuffer.
-	GLctx.framebufferTexture2D(
-	GLctx.FRAMEBUFFER, GLctx.COLOR_ATTACHMENT0,
-	GLctx.TEXTURE_2D, texture, 0);
-
+	
 	// read the pixels
 	if (canvas2.width != textureWidth || canvas2.height != textureHeight) {
 		canvas2.width = textureWidth;
