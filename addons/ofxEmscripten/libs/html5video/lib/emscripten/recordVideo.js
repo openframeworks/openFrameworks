@@ -8,10 +8,10 @@ var fb;
 var canvas2 = document.createElement('canvas');    
 var context2 = canvas2.getContext('2d');
 
-function recordVideo(isRecording, recordTexture, textureID) {
+function recordVideo(isRecording, textureID) {
 	if (isRecording) {
 		mediaParts = [];
-		if (recordTexture) {
+		if (typeof textureID != 'undefined') {
 			stream = canvas2.captureStream(30);
 			var texture = GL.textures[textureID];
 	
