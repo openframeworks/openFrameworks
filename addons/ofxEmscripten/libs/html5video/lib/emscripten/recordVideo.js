@@ -67,7 +67,7 @@ function downloadBlob(blob) {
 	document.body.removeChild(tag);
 }
 
-function drawTexture(textureWidth, textureHeight){ 
+function drawTexture(textureWidth, textureHeight) { 
 	// make this the current frame buffer
 	GLctx.bindFramebuffer(GLctx.FRAMEBUFFER, fb);
 	
