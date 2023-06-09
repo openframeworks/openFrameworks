@@ -18,8 +18,9 @@ void ofBaseSoundStream::printDeviceList() const {
 	getDeviceList(api); // only trigger the java script function once.
 #endif
 }
-
 #ifndef TARGET_ANDROID
+
+std::string toString(ofSoundDevice::Api api){ switch(api){ case ofSoundDevice::ALSA: return "Alsa"; case ofSoundDevice::PULSE: return "Pulse"; case ofSoundDevice::OSS: return "OSS"; case ofSoundDevice::JACK: return "Jack"; case ofSoundDevice::OSX_CORE: return "OSX Core Audio"; case ofSoundDevice::MS_WASAPI: return "MS WASAPI"; case ofSoundDevice::MS_ASIO: return "MS ASIO"; case ofSoundDevice::MS_DS: return "MS DirectShow"; default: return "Unkown API"; } }
 //------------------------------------------------------------
 std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev) {
 	os << "[" << toString(dev.api) << ": " << dev.deviceID << "] " << dev.name;
