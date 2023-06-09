@@ -8,6 +8,8 @@
 #include "ofMath.h"
 #include "ofMathConstants.h"
 #include "ofLog.h"
+#include "ofColor.h"
+
 #include <unordered_map>
 
 //--------------------------------------------------------------

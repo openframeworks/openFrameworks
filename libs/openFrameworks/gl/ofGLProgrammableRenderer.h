@@ -7,7 +7,7 @@
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
-#include "ofMaterialBaseTypes.h"
+//#include "ofMaterialBaseTypes.h"
 
 class ofShapeTessellation;
 class ofFbo;

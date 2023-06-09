@@ -1,5 +1,7 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
+#include "ofPixels.h"
+
 #include "FreeImage.h"
 
 #include "ofURLFileLoader.h"

@@ -3,9 +3,10 @@
 #include "ofEvents.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
-#include "ofColor.h"
 #include "ofLog.h"
 #include "ofConstants.h"
+#include "ofColor.h"
+
 #include <map>
 
 template<typename ParameterType>
