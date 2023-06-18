@@ -80,19 +80,32 @@ public abstract class OFActivity extends Activity implements DisplayManager.Disp
 		}
         try {
         	if(LOG_ENGINE) Log.v("OF","trying to find class: "+packageName+".R$layout");
-			Class<?> layout = Class.forName(packageName+".R$layout");
-			View view = this.getLayoutInflater().inflate(layout.getField("main_layout").getInt(null),null);
+			// Get the resource ID of the layout dynamically
+			int layoutResID = getResources().getIdentifier("main_layout", "layout", packageName);
+
+			// Check if the resource ID is valid
+			if (layoutResID == 0) {
+				Log.e("TAG", "Could not find main_layout.xml.");
+				throw new Exception();
+			}
+			// Inflate the layout using its resource ID
+			View view = getLayoutInflater().inflate(layoutResID, null);
+			// Check if the view was successfully inflated
+			if (view == null) {
+				Log.e("TAG", "Could not find main_layout.xml.");
+				throw new Exception();
+			}
 			if(view == null) {
 				Log.e("OF", "Could not find main_layout.xml.");
 				throw new Exception();
 			}
 			this.setContentView(view);
-			
-			Class<?> id = Class.forName(packageName+".R$id");
-			mOFGlSurfaceContainer = (ViewGroup)this.findViewById(id.getField("of_gl_surface_container").getInt(null));
-			
-			if(mOFGlSurfaceContainer == null) {
-				Log.e(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from latest empty example to fix this warning.");
+			// Find the ViewGroup by its ID
+			int containerID = getResources().getIdentifier("of_gl_surface_container", "id", packageName);
+			mOFGlSurfaceContainer = null;
+			mOFGlSurfaceContainer = findViewById(containerID);
+			if (mOFGlSurfaceContainer == null) {
+				Log.e(TAG, "Could not find of_gl_surface_container in main_layout.xml. Copy main_layout.xml from the latest empty example to fix this warning.");
 				throw new Exception();
 			}
 			
