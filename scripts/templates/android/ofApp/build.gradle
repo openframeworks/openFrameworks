@@ -8,13 +8,13 @@ def JAVA_SOURCE = './src/main/java'
 
 // pointing to cmake's source code for the same project
 def PRJ_SRC_ROOT = './src/main'
-def ofRoot(){ return '../../../../' }
+def ofRoot(){ return '../../../' }
 final ofSource = ofRoot() + 'libs/openFrameworks'
 final ofLibs = ofRoot() + 'libs'
 final addons = ofRoot() + 'addons'
 final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
 def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
-def OF_ADDONS_ARGUMENTS = "${OF_ADDONS}"
+//def OF_ADDONS_ARGUMENTS = "${OF_ADDONS}"
 def enableProguardInReleaseBuilds = true
 def enableProguardInDebugBuilds = false
 
@@ -25,10 +25,10 @@ tasks.register("prepareKotlinBuildScriptModel"){
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 34
     buildToolsVersion '32.0.0'
     //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
-    ndkVersion '23.1.7779620' // use android studio side loaded ndk
+    ndkVersion '24.0.8215888' // use android studio side loaded ndk
     buildFeatures {
         prefab true
     }
@@ -39,9 +39,9 @@ android {
         }
     }
     defaultConfig {
-        applicationId "cc.openframeworks.template"
+        applicationId "cc.openframeworks.ofapp"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 34
         versionCode 12
         versionName '12.0'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -52,7 +52,7 @@ android {
                     arguments "-DANDROID_STL=c++_shared",
                             "-DANDROID_ARM_NEON=TRUE",
                             "-DANDROID_TOOLCHAIN=clang",
-                            "${OF_ADDONS_ARGUMENTS}",
+                            //"${OF_ADDONS_ARGUMENTS}",
                             "-DTARGET_OPENGLES=TRUE"
 
                     version '3.22.1'
@@ -84,21 +84,18 @@ android {
             applicationIdSuffix ""
             signingConfig signingConfigs.release
         }
-        humble {
-            applicationIdSuffix ".humble"
-        }
-        amazon {
-            applicationIdSuffix ".amazon"
-        }
-        samsung {
-            applicationIdSuffix ".samsung"
-        }
-        huawei {
-            applicationIdSuffix ".huawei"
-        }
-        oppo {
-            applicationIdSuffix ".oppo"
-        }
+//        humble {
+//            applicationIdSuffix ".humble"
+//        }
+//        amazon {
+//            applicationIdSuffix ".amazon"
+//        }
+//        samsung {
+//            applicationIdSuffix ".samsung"
+//        }
+//        oppo {
+//            applicationIdSuffix ".oppo"
+//        }
     }
     sourceSets {
         main {
@@ -153,13 +150,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "com.getkeepsafe.relinker:relinker:1.4.4"
-    implementation 'com.google.oboe:oboe:1.6.1'
-    implementation 'com.google.android.material:material:1.6.0-alpha01'
-    implementation "androidx.media:media:1.4.3"
+    implementation "com.getkeepsafe.relinker:relinker:1.4.5"
+    implementation 'com.google.android.material:material:1.9.0'
     if (project.hasProperty("googleplay")) {
         implementation "com.google.android.gms:play-services-games:22.0.1"
         implementation "com.google.android.gms:play-services-auth:20.0.1"

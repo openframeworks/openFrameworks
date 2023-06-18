@@ -8,6 +8,7 @@ class ofApp : public ofxAndroidApp{
 	public:
 		
 		void setup();
+		void exit();
 		void update();
 		void draw();
 		

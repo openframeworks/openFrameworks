@@ -38,7 +38,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
-        android:label="@string/app_name"
+        android:label="@string/APP_NAME"
         android:theme="@style/AppTheme"
         android:requestLegacyExternalStorage="true"
         tools:remove="android:appComponentFactory"
@@ -66,7 +66,7 @@
         <activity
             android:name="cc.openframeworks.android.OFActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
-            android:label="@string/app_name"
+            android:label="@string/APP_NAME"
             android:screenOrientation="sensorLandscape"  tools:ignore="LockedOrientationActivity"
             android:preferMinimalPostProcessing="true"
             android:maxAspectRatio="2.4"
