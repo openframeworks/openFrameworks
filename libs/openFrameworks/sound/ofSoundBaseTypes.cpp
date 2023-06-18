@@ -38,8 +38,7 @@ std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& d
 	return os;
 }
 
-#endif
-
+#else
 
 void ofBaseSoundInput::audioIn(ofSoundBuffer &buffer) {
 
@@ -49,3 +48,4 @@ void ofBaseSoundOutput::audioOut(ofSoundBuffer &buffer) {
 
 }
 
+#endif
