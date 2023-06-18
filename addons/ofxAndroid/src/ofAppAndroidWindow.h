@@ -45,6 +45,7 @@ public:
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
 	ofAppAndroidWindow();
+	ofAppAndroidWindow(ofAppBaseWindow &other);
 	virtual ~ofAppAndroidWindow();
 
 	static bool doesLoop(){ return true; }

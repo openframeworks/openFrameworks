@@ -30,7 +30,7 @@ static int  sWindowHeight = 800;
 
 static bool bSetupScreen = true;
 
-static JavaVM *ofJavaVM=0;
+static JavaVM *ofJavaVM=nullptr;
 
 static ofAppAndroidWindow * window;
 
@@ -73,20 +73,20 @@ JNIEXPORT JNIEnv * JNICALL
 	JavaVM * vm = ofGetJavaVMPtr();
 	if(!vm){
 		ofLogError("ofAppAndroidWindow") << "couldn't get java virtual machine";
-		return NULL;
+		return nullptr;
 	}
 
 	int getEnvStat = vm->GetEnv((void**) &env, JNI_VERSION_1_6);
 
 	if (getEnvStat == JNI_EDETACHED) {
 
-		if (vm->AttachCurrentThread(&env, NULL) != 0) {
+		if (vm->AttachCurrentThread(&env, nullptr) != 0) {
 			ofLogError("ofAppAndroidWindow") << "couldn't get environment using GetEnv()";
-			return NULL;
+			return nullptr;
 		}
 	} else if (getEnvStat != JNI_OK) {
 		ofLogError("ofAppAndroidWindow") << "couldn't get environment using GetEnv()";
-		return NULL;
+		return nullptr;
 	}
 
 	return env;
@@ -102,15 +102,15 @@ jclass ofGetOFLifeCycle(){
 
 jobject ofGetOFActivityObject(){
 	JNIEnv * env = ofGetJNIEnv();
-	if(!env) return NULL;
+	if(!env) return nullptr;
 
 	jclass OFLifeCycle = ofGetOFLifeCycle();
-	if(!OFLifeCycle) return NULL;
+	if(!OFLifeCycle) return nullptr;
 
 	jfieldID ofActivityID = env->GetStaticFieldID(OFLifeCycle,"m_activity","Lcc/openframeworks/OFActivity;");
 	if(!ofActivityID){
 		ofLogError("ofAppAndroidWindow") << "couldn't get field ID for ofActivity";
-		return NULL;
+		return nullptr;
 	}
 
 	return env->GetStaticObjectField(OFLifeCycle,ofActivityID);
@@ -123,6 +123,14 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 	msaaSamples = 1;
 	glesVersion = 2;
 
+	ofGetMainLoop()->setCurrentWindow(this);
+}
+
+ofAppAndroidWindow::ofAppAndroidWindow(ofAppBaseWindow & other) {
+	window = this;
+	msaaSamples = 1;
+	glesVersion = 2;
+	setMultiWindowMode(other.getWindowMode());
 	ofGetMainLoop()->setCurrentWindow(this);
 }
 
@@ -181,7 +189,7 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
-	if(javaClass==0){
+	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid java class";
 		return;
 	}
@@ -232,7 +240,7 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 	orientation = _orientation;
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
-	if(javaClass==0){
+	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setOrientation(): couldn't find OFAndroid java class";
 		return;
 	}
@@ -265,7 +273,7 @@ void ofAppAndroidWindow::makeCurrent(){
 void ofAppAndroidWindow::setFullscreen(bool fullscreen){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
-	if(javaClass==0){
+	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setFullscreen(): couldn't find OFAndroid java class";
 		return;
 	}
@@ -425,7 +433,7 @@ Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz ){
-	if(surfaceDestroyed == false) {
+	if(!surfaceDestroyed) {
 		surfaceDestroyed = true;
 		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed";
 		ofNotifyEvent(ofxAndroidEvents().unloadGL);
@@ -452,12 +460,12 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		if( glesVersion < 2 )
 		{
 			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
-			static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+			dynamic_cast<ofGLRenderer*>(window->renderer().get())->setup();
 		}
 		else
 		{
 			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-			static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
+			dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
 		}
 
 	}else{
@@ -466,10 +474,10 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 			bSetupScreen = true;
 			if (glesVersion < 2) {
 				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
-				static_cast<ofGLRenderer *>(window->renderer().get())->setup();
+				dynamic_cast<ofGLRenderer *>(window->renderer().get())->setup();
 			} else {
 				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-				static_cast<ofGLProgrammableRenderer *>(window->renderer().get())->setup(
+				dynamic_cast<ofGLProgrammableRenderer *>(window->renderer().get())->setup(
 						glesVersion, 0);
 			}
 		}
@@ -480,7 +488,12 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_isWindowReady( JNIEnv*  env, jclass  thiz) {
-	  return window != nullptr && window->renderer() != nullptr;
+
+          if(window != nullptr && window->renderer() != nullptr) {
+            return true;
+      } else {
+        return false;
+        }
 }
 
 JNIEXPORT void JNICALL
@@ -498,7 +511,7 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
 			window->renderer()->setupScreen();
             bSetupScreen = false;
         } else {
-            ofLogError("ofAppAndroidWindow") << "No Window or Renderer for Logical Resolution:" << w << "x" << h  << " with MSAA:" << window->getSamples();
+            ofLogError("ofAppAndroidWindow") << "No Window or Renderer for Logical Resolution:" << w << "x" << h;
         }
 	}
 
