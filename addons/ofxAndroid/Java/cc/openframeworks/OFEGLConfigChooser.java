@@ -23,10 +23,12 @@ class ContextFactory implements GLSurfaceView.EGLContextFactory {
 
     private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
+    public static int OPENGLES_VERSION = 2;
+
     public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig) {
-        Log.w("OFContextFactory", "creating OpenGL ES 2.0 context");
+        Log.w("OFContextFactory", "creating OpenGL ES context");
         //checkEglError("Before eglCreateContext", egl);
-        int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
+        int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, OPENGLES_VERSION, EGL10.EGL_NONE };
 
         if(eglConfig == null) {
             Log.e("OFContextFactory", "eglConfig is null");
@@ -72,15 +74,20 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         if(mSampleSize > 1) MSAA = true;
     }
 
-    public static void setGLESVersion(int version){
+    public static void setGLESVersion(int version) {
         GLES_VERSION = version;
 
-        if(version==1)
-            EGL_OPENGL_ES_BIT=1;
-        else if(version==2)
-            EGL_OPENGL_ES_BIT=4;
-//        else if(version==3)
+        if (version == 1) {
+            EGL_OPENGL_ES_BIT = 1;
+            ContextFactory.OPENGLES_VERSION = 1;
+        } else if (version == 2) {
+            EGL_OPENGL_ES_BIT = 4;
+            ContextFactory.OPENGLES_VERSION = 2;
+        }
+//        else if(version==3) {
 //            EGL_OPENGL_ES_BIT=EGL_OPENGL_ES3_BIT;
+//            ContextFactory.OPENGLES_VERSION = 3;
+//    }
     }
 
     public void setWideGamutRGB(){
@@ -90,18 +97,10 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mAlphaSize = 2;
         mDepthSize = 8;
         mStencilSize = 1;
-        //mSampleSize = 8;
         mWideGamut = true;
     }
 
     public void setRGB(){
-//        mRedSize = 8;
-//      //  mGreenSize = 8;
-//      //  mBlueSize = 8;
-//       // mAlphaSize = 8;
-//       // mDepthSize = 16;
-//        mStencilSize = 16;
-//        //mSampleSize = 4;
         mWideGamut = false;
     }
 

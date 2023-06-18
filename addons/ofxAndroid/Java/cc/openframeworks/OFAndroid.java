@@ -1079,6 +1079,8 @@ public class OFAndroid {
 		final int finalversion = version;
 		final boolean finalPreserveContextOnPause = preserveContextOnPause;
 		final Semaphore mutex = new Semaphore( 0 );
+
+		OFAndroid.eglVersion = finalversion;
 		
 		runOnMainThread(new Runnable() {
 			@Override

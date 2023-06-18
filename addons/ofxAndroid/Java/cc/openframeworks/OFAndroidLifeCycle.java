@@ -492,7 +492,7 @@ public class OFAndroidLifeCycle
 			pausedGLView = mGLView;
 			clearGLView(); // mGLView = null;
 			Log.d(TAG, "glResume setGLESVersion");
-			OFEGLConfigChooser.setGLESVersion(2);
+			OFEGLConfigChooser.setGLESVersion(OFAndroid.eglVersion);
 			glCreateSurface(true);
 		}
 
