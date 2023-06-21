@@ -4,7 +4,7 @@ var LibraryHTML5Audio = {
         lastPlayerID: 0,
     },
 
-    html5audio_list_devices: function(){
+    html5audio_list_devices: function () {
         if (!navigator.mediaDevices.enumerateDevices) {
             console.log("enumerateDevices() not supported.");
         } else {
@@ -83,10 +83,20 @@ var LibraryHTML5Audio = {
         AUDIO.player[player_id].src = UTF8ToString(url);
     },
 
-    html5audio_sound_play: function (player_id, offset) {
+    html5audio_sound_play: function (player_id, multiplay, volume, speed, offset) {
+    console.log(volume, speed);
         if (AUDIO.player[player_id].src != "") {
-            AUDIO.player[player_id].play(offset);
-        }
+        	if (multiplay) {
+        		const clone = AUDIO.player[player_id].cloneNode();
+			clone.volume = volume;
+        		clone.playbackRate = speed;
+        		clone.play(offset);
+        	} else {
+        		AUDIO.player[player_id].volume = volume;
+        		AUDIO.player[player_id].playbackRate = speed;
+            		AUDIO.player[player_id].play(offset);
+            	}
+	}
     },
 
     html5audio_sound_stop: function (player_id) {
