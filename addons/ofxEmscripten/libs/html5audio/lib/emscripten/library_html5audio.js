@@ -84,7 +84,6 @@ var LibraryHTML5Audio = {
     },
 
     html5audio_sound_play: function (player_id, multiplay, volume, speed, offset) {
-    console.log(volume, speed);
         if (AUDIO.player[player_id].src != "") {
         	if (multiplay) {
         		const clone = AUDIO.player[player_id].cloneNode();
