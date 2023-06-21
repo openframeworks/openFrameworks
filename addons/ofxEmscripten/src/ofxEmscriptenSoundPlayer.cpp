@@ -25,7 +25,7 @@ int ofxEmscriptenAudioContext(){
 
 ofxEmscriptenSoundPlayer::ofxEmscriptenSoundPlayer()
 :context(ofxEmscriptenAudioContext())
-,sound(-1)
+,player_id(html5audio_player_create())
 ,multiplay(false)
 ,speed(1)
 ,volume(0.5)
@@ -34,157 +34,108 @@ ofxEmscriptenSoundPlayer::ofxEmscriptenSoundPlayer()
 }
 
 ofxEmscriptenSoundPlayer::~ofxEmscriptenSoundPlayer(){
-	sound = -1;
-	html5audio_sound_free(sound);
+	html5audio_sound_free(player_id);
 }
 
 bool ofxEmscriptenSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
-	sound = html5audio_sound_load(ofToDataPath(fileName).c_str());
-	return sound != -1;
+	html5audio_sound_load(player_id, ofToDataPath(fileName).c_str());
+	return true;
 }
 
 bool ofxEmscriptenSoundPlayer::load(const std::string& fileName, bool stream){
-	sound = html5audio_sound_load(fileName.c_str());
-	return sound != -1;
+	html5audio_sound_load(player_id, fileName.c_str());
+	return true;
 }
 
 void ofxEmscriptenSoundPlayer::unload(){
-	if(sound != -1){
-		html5audio_sound_free(sound);
-		sound = -1;
-	}
+	html5audio_sound_free(player_id);
 }
 
 void ofxEmscriptenSoundPlayer::play(){
-	if(sound != -1){
-		if(playing && !multiplay && !html5audio_sound_done(sound)){
-			html5audio_sound_stop(sound);
-		}
-		html5audio_sound_play(sound, 0);
-		html5audio_sound_set_rate(sound,speed);
-		html5audio_sound_set_volume(sound,volume);
-		playing = true;
+	if(playing && !html5audio_sound_done(player_id)){
+		html5audio_sound_stop(player_id);
 	}
+	html5audio_sound_play(player_id, 0);
+	html5audio_sound_set_rate(player_id, speed);
+	html5audio_sound_set_volume(player_id, volume);
+	playing = true;
 }
 
 void ofxEmscriptenSoundPlayer::stop(){
-	if(sound != -1){
-		html5audio_sound_stop(sound);
-	}
+	html5audio_sound_stop(player_id);
 	playing = false;
 }
 
 
 void ofxEmscriptenSoundPlayer::setVolume(float vol){
 	volume = vol;
-	if(sound != -1){
-		html5audio_sound_set_volume(sound,vol);
-	}
+	html5audio_sound_set_volume(player_id, vol);
 }
 
 void ofxEmscriptenSoundPlayer::setPan(float pan){
-	if(sound != -1){
-		html5audio_sound_set_pan(sound, pan);
-	}
+	html5audio_sound_set_pan(player_id, pan);
 }
 
 void ofxEmscriptenSoundPlayer::setSpeed(float spd){
-	if(sound != -1){
-		html5audio_sound_set_rate(sound,spd);
-	}
+	html5audio_sound_set_rate(player_id, spd);
 }
 
 void ofxEmscriptenSoundPlayer::setPaused(bool bP){
-	if(sound != -1){
-		if(bP) html5audio_sound_pause(sound);
-		else html5audio_sound_play(sound, 0);
-	}
+	if(bP) html5audio_sound_pause(player_id);
+	else html5audio_sound_play(player_id, 0);
 }
 
 void ofxEmscriptenSoundPlayer::setLoop(bool bLp){
-	if(sound != -1){
-		html5audio_sound_set_loop(sound, bLp);
-	}
+	html5audio_sound_set_loop(player_id, bLp);
 }
 
 void ofxEmscriptenSoundPlayer::setMultiPlay(bool bMp){
-	multiplay = bMp;
+	// does not work with Emscripten
+	// multiplay = bMp;
 }
 
 void ofxEmscriptenSoundPlayer::setPosition(float pct){
-	if(sound != -1){
-		html5audio_sound_set_position(sound, pct);
-	}
+	html5audio_sound_set_position(player_id, pct);
 }
 
 void ofxEmscriptenSoundPlayer::setPositionMS(int ms){
-	if(sound != -1){
-		html5audio_sound_set_position(sound, ms / html5audio_sound_duration(sound) / 1000);
-	}
+	html5audio_sound_set_position(player_id, ms / html5audio_sound_duration(player_id) / 1000);
 }
 
 float ofxEmscriptenSoundPlayer::getPosition() const{
-	if(sound != -1){
-		return html5audio_sound_position(sound);
-	}else{
-		return 0;
-	}
+	return html5audio_sound_position(player_id);
 }
 
 int ofxEmscriptenSoundPlayer::getPositionMS() const{
-	if(sound != -1){
-		return html5audio_sound_position(sound) * html5audio_sound_duration(sound) * 1000;
-	}else{
-		return 0;
-	}
+	return html5audio_sound_position(player_id) * html5audio_sound_duration(player_id) * 1000;
 }
 
 bool ofxEmscriptenSoundPlayer::isPlaying() const{
-	return playing && !html5audio_sound_done(sound);
+	return playing && !html5audio_sound_done(player_id);
 }
 
 float ofxEmscriptenSoundPlayer::getSpeed() const{
-	if(sound != -1){
-		return html5audio_sound_rate(sound);
-	}else{
-		return 0;
-	}
+	return html5audio_sound_rate(player_id);
 }
 
 float ofxEmscriptenSoundPlayer::getPan() const{
-	if(sound != -1){
-		return html5audio_sound_pan(sound);
-	}else{
-		return 0;
-	}
+	return html5audio_sound_pan(player_id);
 }
 
 bool ofxEmscriptenSoundPlayer::isLoaded() const{
-	return html5audio_sound_is_loaded(sound);
+	return html5audio_sound_is_loaded(player_id);
 }
 
 float ofxEmscriptenSoundPlayer::getVolume() const{
-	if(sound != -1){
-		return html5audio_sound_volume(sound);
-	}else{
-		return 0;
-	}
+	return html5audio_sound_volume(player_id);
 }
 
 int ofxEmscriptenSoundPlayer::getDurationMS() const{
-	if(sound != -1){
-		return html5audio_sound_duration(sound) * 1000;
-	}else{
-		return 0;
-	}
+	return html5audio_sound_duration(player_id) * 1000;
 }
 
 double ofxEmscriptenSoundPlayer::getDurationSecs() const{
-	if(sound != -1){
-		return html5audio_sound_duration(sound);
-	}else{
-		return 0;
-	}
+	return html5audio_sound_duration(player_id);
 }
 
 float * ofxEmscriptenSoundPlayer::getSystemSpectrum(int bands){
