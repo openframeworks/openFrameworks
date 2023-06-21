@@ -250,15 +250,9 @@ void ofxEmscriptenVideoPlayer::setUsePixels(bool usePixels){
 }
 
 void ofxEmscriptenVideoPlayer::setPan(float pan){
-	if(player_id != -1){
-		html5video_player_set_pan(player_id, pan);
-	}
+	html5video_player_set_pan(player_id, pan);
 }
 
 float ofxEmscriptenVideoPlayer::getPan() const{
-	if(player_id != -1){
-		return html5video_player_pan(player_id);
-	}else{
-		return 0;
-	}
+	return html5video_player_pan(player_id);
 }
