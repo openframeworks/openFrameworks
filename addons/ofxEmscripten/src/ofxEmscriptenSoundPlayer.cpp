@@ -25,12 +25,12 @@ int ofxEmscriptenAudioContext(){
 
 ofxEmscriptenSoundPlayer::ofxEmscriptenSoundPlayer()
 :context(ofxEmscriptenAudioContext())
-,player_id(html5audio_player_create())
 ,multiplay(false)
-,speed(1)
 ,volume(0.5)
-,playing(false){
-
+,speed(1)
+,pan(0)
+,playing(false)
+,player_id(html5audio_player_create()){
 }
 
 ofxEmscriptenSoundPlayer::~ofxEmscriptenSoundPlayer(){
