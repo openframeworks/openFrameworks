@@ -68,7 +68,7 @@ var LibraryHTML5Audio = {
     html5audio_context_samplerate: function () {
         return AUDIO.context.sampleRate.value;
     },
-    
+
    html5audio_player_create: function() {
 	var audio = document.createElement('audio');
 	var player_id = AUDIO.lastPlayerID++;
