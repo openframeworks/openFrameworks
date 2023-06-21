@@ -12,7 +12,7 @@ extern "C"{
 
 	extern int html5audio_player_create();
 	extern void html5audio_sound_load(int sound_id, const char* url);
-	extern void html5audio_sound_play(int sound, bool multiplay, double volume, double speed, double offset);
+	extern void html5audio_sound_play(int sound, bool multiplay, double volume, double speed, double pan, double offset);
 	extern void html5audio_sound_stop(int sound);
 	extern void html5audio_sound_pause(int sound);
 	extern double html5audio_sound_rate(int sound);
