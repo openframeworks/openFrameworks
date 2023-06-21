@@ -36,6 +36,7 @@ public:
 	static float * getSystemSpectrum(int bands);
 
 private:
+	int player_id;
 	void setPositionSecs(double s);
 	static std::vector<float> systemSpectrum;
 	int context;
@@ -43,5 +44,4 @@ private:
 	float speed;
 	float volume;
 	bool playing;
-	int player_id;
 };
