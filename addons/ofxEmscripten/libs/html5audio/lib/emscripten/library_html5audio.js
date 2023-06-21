@@ -69,7 +69,7 @@ var LibraryHTML5Audio = {
         return AUDIO.context.sampleRate.value;
     },
 
-   html5audio_player_create: function() {
+   html5audio_player_create: function () {
 	var audio = document.createElement('audio');
 	var player_id = AUDIO.lastPlayerID++;
 	AUDIO.player[player_id] = audio;
