@@ -83,18 +83,18 @@ var LibraryHTML5Audio = {
         AUDIO.player[player_id].src = UTF8ToString(url);
     },
 
-    html5audio_sound_play: function (player_id, multiplay, volume, speed, offset) {
+    html5audio_sound_play: function (player_id, multiplay, volume, speed, pan, offset) {
         if (AUDIO.player[player_id].src != "") {
         	if (multiplay) {
         		const clone = AUDIO.player[player_id].cloneNode();
+			clone.soundPan = AUDIO.context.createStereoPanner();
 			clone.volume = volume;
         		clone.playbackRate = speed;
-        		clone.play(offset);
-        	} else {
-        		AUDIO.player[player_id].volume = volume;
-        		AUDIO.player[player_id].playbackRate = speed;
-            		AUDIO.player[player_id].play(offset);
-            	}
+        		clone.soundPan.pan.value = pan;
+        		AUDIO.player[player_id] = clone;
+        		AUDIO.player[player_id].play(offset);
+        	}
+            	AUDIO.player[player_id].play(offset);
 	}
     },
 
