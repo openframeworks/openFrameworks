@@ -55,7 +55,9 @@ void ofxEmscriptenSoundPlayer::play(){
 	if(playing && !multiplay && !html5audio_sound_done(player_id)){
 		html5audio_sound_stop(player_id);
 	}
-	html5audio_sound_play(player_id, multiplay, volume, speed, 0);
+	html5audio_sound_play(player_id, multiplay, volume, speed, pan, 0);
+	html5audio_sound_set_rate(player_id, speed);
+	html5audio_sound_set_volume(player_id, volume);
 	playing = true;
 }
 
@@ -70,7 +72,8 @@ void ofxEmscriptenSoundPlayer::setVolume(float vol){
 	html5audio_sound_set_volume(player_id, vol);
 }
 
-void ofxEmscriptenSoundPlayer::setPan(float pan){
+void ofxEmscriptenSoundPlayer::setPan(float panorama){
+	pan = panorama;
 	html5audio_sound_set_pan(player_id, pan);
 }
 
@@ -81,7 +84,7 @@ void ofxEmscriptenSoundPlayer::setSpeed(float spd){
 
 void ofxEmscriptenSoundPlayer::setPaused(bool bP){
 	if(bP) html5audio_sound_pause(player_id);
-	else html5audio_sound_play(player_id, multiplay, volume, speed, 0);
+	else html5audio_sound_play(player_id, multiplay, volume, speed, pan, 0);
 }
 
 void ofxEmscriptenSoundPlayer::setLoop(bool bLp){
@@ -89,7 +92,6 @@ void ofxEmscriptenSoundPlayer::setLoop(bool bLp){
 }
 
 void ofxEmscriptenSoundPlayer::setMultiPlay(bool bMp){
-	// does not work with Emscripten
 	multiplay = bMp;
 }
 
