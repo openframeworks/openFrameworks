@@ -11,7 +11,7 @@ extern "C"{
 	extern void html5audio_context_spectrum(int bands, float * spectrum);
 
 	extern int html5audio_player_create();
-	extern void html5audio_sound_load(int sound_id, const char* url);
+	extern void html5audio_sound_load(int player_id, const char* url);
 	extern void html5audio_sound_play(int sound, double offset);
 	extern void html5audio_sound_stop(int sound);
 	extern void html5audio_sound_pause(int sound);
