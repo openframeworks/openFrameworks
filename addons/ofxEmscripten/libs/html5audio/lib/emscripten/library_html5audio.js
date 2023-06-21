@@ -92,7 +92,6 @@ var LibraryHTML5Audio = {
         		clone.playbackRate = speed;
         		clone.soundPan.pan.value = pan;
         		AUDIO.player[player_id] = clone;
-        		AUDIO.player[player_id].play(offset);
         	}
             	AUDIO.player[player_id].play(offset);
 	}
