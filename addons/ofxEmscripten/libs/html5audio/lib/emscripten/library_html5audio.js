@@ -154,8 +154,8 @@ var LibraryHTML5Audio = {
     
     html5audio_sound_free: function (player_id) {
 	if (AUDIO.player[player_id].src != "") {
-		AUDIO.player[player_id].pause();
-		URL.revokeObjectURL(AUDIO.player[player_id].src);
+            AUDIO.player[player_id].pause();
+            URL.revokeObjectURL(AUDIO.player[player_id].src);
 	}
     },
 
