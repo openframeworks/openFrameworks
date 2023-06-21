@@ -23,12 +23,13 @@ var LibraryHTML5Audio = {
             });
         }
     },
-    
+
     html5audio_context_create: function () {
        try {
             // Fix up for prefixing
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             var context = new AudioContext({});
+
             // Fix issue with chrome autoplay policy
             document.addEventListener('mousedown', function cb(event) {
 		context.resume();
@@ -68,7 +69,7 @@ var LibraryHTML5Audio = {
         return AUDIO.context.sampleRate.value;
     },
     
-   html5audio_player_create: function(){
+   html5audio_player_create: function() {
 	var audio = document.createElement('audio');
 	var player_id = AUDIO.lastPlayerID++;
 	AUDIO.player[player_id] = audio;
