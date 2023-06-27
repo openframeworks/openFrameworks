@@ -830,7 +830,7 @@ ParameterType ofParameter<ParameterType>::getInit() const {
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::reInit() {
-    set(obj->init);
+    setMethod(obj->init);
 }
 
 template<typename ParameterType>
