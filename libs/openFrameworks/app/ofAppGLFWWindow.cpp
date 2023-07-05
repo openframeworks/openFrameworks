@@ -74,6 +74,7 @@ void ofAppGLFWWindow::close(){
 		glfwSetCursorEnterCallback( windowP, nullptr );
 		glfwSetKeyCallback( windowP, nullptr );
 		glfwSetWindowSizeCallback( windowP, nullptr );
+        glfwSetWindowPosCallback(windowP, nullptr);
 		glfwSetFramebufferSizeCallback( windowP, nullptr);
 		glfwSetWindowCloseCallback( windowP, nullptr );
 		glfwSetScrollCallback( windowP, nullptr );
@@ -379,6 +380,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetKeyCallback(windowP, keyboard_cb);
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
+    glfwSetWindowPosCallback(windowP,position_cb);
 	glfwSetFramebufferSizeCallback(windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
@@ -1584,6 +1586,15 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 void ofAppGLFWWindow::char_cb(GLFWwindow* windowP_, uint32_t key){
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().charEvent.notify(key);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
+    ofAppGLFWWindow * instance = setCurrent(windowP_);
+    
+    x *= instance->pixelScreenCoordScale;
+    y *= instance->pixelScreenCoordScale;
+    instance->events().notifyWindowMoved(x,y);
 }
 
 //------------------------------------------------------------
