@@ -1,6 +1,9 @@
 // copyright (c) openFrameworks team 2010-2017
 // copyright (c) Damian Stewart 2007-2009
+#include <optional>
+
 #include "ofxOscReceiver.h"
+#include "ofxOscMessage.h"
 
 //--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver(){
@@ -130,6 +133,16 @@ bool ofxOscReceiver::getNextMessage(ofxOscMessage *message){
 //--------------------------------------------------------------
 bool ofxOscReceiver::getNextMessage(ofxOscMessage &message){
 	return messagesChannel.tryReceive(message);
+}
+
+std::optional<ofxOscMessage> ofxOscReceiver::getMessage() {
+    if (hasWaitingMessages()) {
+        ofxOscMessage message;
+		if (messagesChannel.tryReceive(message)) return {message};
+//            return std::optional<const ofxOscMessage>(message);
+        
+    }
+    return nullopt;
 }
 
 //--------------------------------------------------------------

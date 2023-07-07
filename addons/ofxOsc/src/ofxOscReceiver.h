@@ -2,6 +2,8 @@
 // copyright (c) Damian Stewart 2007-2009
 #pragma once
 
+#include <optional>
+
 #include "ofxOscMessage.h"
 #include "ofParameter.h"
 #include "ofThreadChannel.h"
@@ -83,6 +85,8 @@ public:
 	bool getNextMessage(ofxOscMessage& msg);
 	OF_DEPRECATED_MSG("Pass a reference instead of a pointer", bool getNextMessage(ofxOscMessage *msg));
 	
+    std::optional<ofxOscMessage> getMessage();
+
 	/// try to get waiting message an ofParameter
 	/// \return true if message was handled by the given parameter
 	bool getParameter(ofAbstractParameter &parameter);
