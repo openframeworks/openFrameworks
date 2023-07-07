@@ -89,10 +89,10 @@ void ofxOscSender::clear(){
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::sendBundle(const ofxOscBundle &bundle){
+bool ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 	if(!sendSocket){
 		ofLogError("ofxOscSender") << "trying to send with empty socket";
-		return;
+		return false;
 	}
 	
 	// setting this much larger as it gets trimmed down to the size its using before being sent.
@@ -104,13 +104,14 @@ void ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 	// serialise the bundle and send
 	appendBundle(bundle, p);
 	sendSocket->Send(p.Data(), p.Size());
+	return true;
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
+bool ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
 	if(!sendSocket){
 		ofLogError("ofxOscSender") << "trying to send with empty socket";
-		return;
+		return false;
 	}
 	
 	// setting this much larger as it gets trimmed down to the size its using before being sent.
@@ -128,11 +129,12 @@ void ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
 		p << osc::EndBundle;
 	}
 	sendSocket->Send(p.Data(), p.Size());
+	return true;
 }
 
 //--------------------------------------------------------------
-void ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
-	if(!parameter.isSerializable()) return;
+bool ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
+	if(!parameter.isSerializable()) return false;
 	if(parameter.type() == typeid(ofParameterGroup).name()){
 		std::string address = "/";
 		const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
@@ -156,6 +158,7 @@ void ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
 		appendParameter(msg, parameter, address);
 		sendMessage(msg, false);
 	}
+	return true;
 }
 
 //--------------------------------------------------------------
