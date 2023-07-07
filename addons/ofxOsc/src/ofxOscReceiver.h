@@ -24,7 +24,9 @@ struct ofxOscReceiverSettings {
 class ofxOscReceiver : public osc::OscPacketListener {
 public:
 
-	ofxOscReceiver() {};
+    ofxOscReceiver(int port = 7970) {
+        setup(port);
+    };
 	~ofxOscReceiver();
 	ofxOscReceiver(const ofxOscReceiver &mom);
 	ofxOscReceiver& operator=(const ofxOscReceiver &mom);
