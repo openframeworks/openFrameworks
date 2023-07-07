@@ -46,13 +46,16 @@ public:
 
 	/// send the given message
 	/// if wrapInBundle is true (default), message sent in a timetagged bundle
-	void sendMessage(const ofxOscMessage &message, bool wrapInBundle=false);
+	bool sendMessage(const ofxOscMessage &message, bool wrapInBundle=false);
+	bool send(const ofxOscMessage &message, bool wrapInBundle=false) { return sendMessage(message, wrapInBundle); };
 
 	/// send the given bundle
-	void sendBundle(const ofxOscBundle &bundle);
+	bool sendBundle(const ofxOscBundle &bundle);
+	bool send(const ofxOscBundle &bundle) { return sendBundle(bundle); };
 
 	/// create & send a message with data from an ofParameter
-	void sendParameter(const ofAbstractParameter &parameter);
+	bool sendParameter(const ofAbstractParameter &parameter);
+	bool send(const ofAbstractParameter &parameter)  { return sendParameter(parameter); } ;
 
 	/// \return current host name/ip
 	std::string getHost() const;
