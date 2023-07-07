@@ -24,7 +24,9 @@ class ofxOscSender{
 public:
 
 
-	ofxOscSender() {}
+	ofxOscSender(std::string host="127.0.0.1", size_t port = 7970 ) {
+		setup(host, port);
+	}
 	~ofxOscSender();
 	ofxOscSender(const ofxOscSender &mom);
 	ofxOscSender& operator=(const ofxOscSender &mom);
