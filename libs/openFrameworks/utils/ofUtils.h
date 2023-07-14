@@ -229,7 +229,6 @@ void ofRandomize(std::vector<T>& values) {
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::shuffle(values.begin(), values.end(), g);
-//	random_shuffle(values.begin(), values.end());
 }
 
 /// \brief Conditionally remove values from a vector.
