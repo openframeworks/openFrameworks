@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <sstream>
 #include <type_traits>
+#include <random>
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
@@ -225,7 +226,10 @@ int ofGetWeekday();
 /// \sa http://www.cplusplus.com/reference/algorithm/random_shuffle/
 template<class T>
 void ofRandomize(std::vector<T>& values) {
-	random_shuffle(values.begin(), values.end());
+	std::random_device rd;
+	std::mt19937 g(rd());
+	std::shuffle(values.begin(), values.end(), g);
+//	random_shuffle(values.begin(), values.end());
 }
 
 /// \brief Conditionally remove values from a vector.
