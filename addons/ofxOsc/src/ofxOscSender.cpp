@@ -90,8 +90,13 @@ void ofxOscSender::clear(){
 }
 
 //--------------------------------------------------------------
+bool ofxOscSender::isReady() {
+	return sendSocket != nullptr;
+}
+
+//--------------------------------------------------------------
 bool ofxOscSender::sendBundle(const ofxOscBundle &bundle){
-	if(!sendSocket){
+	if(!isReady()){
 		if (!settings.silent) {
 			ofLogError("ofxOscSender") << "trying to send with empty socket";
 		}
@@ -112,7 +117,7 @@ bool ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 
 //--------------------------------------------------------------
 bool ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
-	if(!sendSocket){
+	if(!isReady()){
 		if (!settings.silent) {
 			ofLogError("ofxOscSender") << "trying to send with empty socket";
 		}
