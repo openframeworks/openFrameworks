@@ -44,6 +44,9 @@ public:
 
 	/// clear the sender, does not clear host or port values
 	void clear();
+	
+	/// returns true if the sender can send
+	bool isReady();
 
 	/// send the given message
 	/// if wrapInBundle is true (default), message sent in a timetagged bundle
