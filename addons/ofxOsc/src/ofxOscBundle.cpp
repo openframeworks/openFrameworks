@@ -44,12 +44,12 @@ void ofxOscBundle::addMessage(const ofxOscMessage &message){
 }
 
 //--------------------------------------------------------------
-int ofxOscBundle::getBundleCount() const{ 
+std::size_t ofxOscBundle::getBundleCount() const{
 	return bundles.size();
 }
 
 //--------------------------------------------------------------
-int ofxOscBundle::getMessageCount() const{
+std::size_t ofxOscBundle::getMessageCount() const{
 	return messages.size();
 }
 

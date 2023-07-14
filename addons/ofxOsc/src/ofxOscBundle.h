@@ -25,10 +25,10 @@ public:
 	void addMessage(const ofxOscMessage &message);
 
 	/// \return the current bundle count
-	int getBundleCount() const;
+	std::size_t getBundleCount() const;
 
 	/// \return the current message count
-	int getMessageCount() const;
+	std::size_t getMessageCount() const;
 
 	/// \return the bundle at the given index
 	const ofxOscBundle& getBundleAt(std::size_t i) const;
