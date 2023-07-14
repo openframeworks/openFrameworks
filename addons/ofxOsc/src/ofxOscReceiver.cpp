@@ -141,7 +141,7 @@ std::optional<ofxOscMessage> ofxOscReceiver::getMessage() {
 //            return std::optional<const ofxOscMessage>(message);
         
     }
-    return nullopt;
+    return std::nullopt;
 }
 
 //--------------------------------------------------------------
