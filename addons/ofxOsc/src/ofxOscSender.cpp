@@ -32,9 +32,10 @@ ofxOscSender& ofxOscSender::copy(const ofxOscSender& other){
 }
 
 //--------------------------------------------------------------
-bool ofxOscSender::setup(const std::string &host, int port){
+bool ofxOscSender::setup(const std::string &host, int port, bool silent){
 	settings.host = host;
 	settings.port = port;
+	settings.silent = silent;
 	return setup(settings);
 }
 
@@ -91,7 +92,9 @@ void ofxOscSender::clear(){
 //--------------------------------------------------------------
 bool ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 	if(!sendSocket){
-		ofLogError("ofxOscSender") << "trying to send with empty socket";
+		if (!settings.silent) {
+			ofLogError("ofxOscSender") << "trying to send with empty socket";
+		}
 		return false;
 	}
 	
@@ -110,7 +113,9 @@ bool ofxOscSender::sendBundle(const ofxOscBundle &bundle){
 //--------------------------------------------------------------
 bool ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
 	if(!sendSocket){
-		ofLogError("ofxOscSender") << "trying to send with empty socket";
+		if (!settings.silent) {
+			ofLogError("ofxOscSender") << "trying to send with empty socket";
+		}
 		return false;
 	}
 	

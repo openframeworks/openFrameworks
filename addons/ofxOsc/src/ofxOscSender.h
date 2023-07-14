@@ -16,6 +16,7 @@ struct ofxOscSenderSettings {
 	std::string host = "localhost"; ///< destination host name/ip
 	int port = 0;                   ///< destination port
 	bool broadcast = true;          ///< broadcast (aka multicast) ip range support?
+	bool silent = false;            ///< does not complain if msgs not received
 };
 
 /// \class ofxOscSender
@@ -24,8 +25,8 @@ class ofxOscSender{
 public:
 
 
-	ofxOscSender(std::string host="127.0.0.1", size_t port = 7970 ) {
-		setup(host, port);
+	ofxOscSender(std::string host="127.0.0.1", size_t port = 7970, bool silent = false ) {
+		setup(host, port, silent);
 	}
 	~ofxOscSender();
 	ofxOscSender(const ofxOscSender &mom);
@@ -35,7 +36,7 @@ public:
 
 	/// set up the sender with the destination host name/ip and port
 	/// \return true on success
-	bool setup(const std::string &host, int port);
+	bool setup(const std::string &host, int port, bool silent = false);
 
 	/// set up the sender with the given settings
 	/// \returns true on success
