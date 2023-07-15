@@ -1,9 +1,11 @@
 #include "ofApp.h"
 
-void ofApp::setup() {}
+void ofApp::setup() {
+	// Look Ma, No Hands!
+}
 
 void ofApp::update() {
-	while(auto m = osc_receiver.getMessage()){
+	while (auto m = osc_receiver.getMessage()){
 		ofLogNotice("got message") << m->getAddress() << " = " << m->getArgAsInt(0) << " @ " << m->getArgAsFloat(1);
 	}
 }
@@ -14,8 +16,16 @@ void ofApp::draw() {
 
 void ofApp::keyPressed(int key) {
 	if (key == ' ') {
-		ofxOscMessage m { "/message" };
-		osc_sender.send(m.addIntArg(ofRandom(100)).addFloatArg(ofGetElapsedTimef()));
+		
+		// old-timer
+		ofxOscMessage m;
+		m.setAddress("/message");
+		m.addIntArg(ofRandom(100));
+		m.addFloatArg(ofGetElapsedTimef());
+		osc_sender.sendMessage(m);
+
+		// ctor + chaining (implicit types) + polymorphic send
+		osc_sender.send(ofxOscMessage{"/terse"}.add(ofRandom(100)).add(ofGetElapsedTimef()));
 	}
 }
 
