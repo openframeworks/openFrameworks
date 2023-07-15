@@ -176,22 +176,25 @@ public:
 
 	/// add a 32-bit integer
 	ofxOscMessage& addIntArg(std::int32_t argument);
-	
-	/// add a 32-bit integer
 	ofxOscMessage& addInt32Arg(std::int32_t argument);
-	
+	ofxOscMessage& add(std::int32_t argument) { return addInt32Arg(argument); }
+
 	/// add a 64-bit integer
 	ofxOscMessage& addInt64Arg(std::int64_t argument);
-	
+	ofxOscMessage& add(std::int64_t argument) { return addInt64Arg(argument); }
+
 	/// add a 32-bit float
 	ofxOscMessage& addFloatArg(float argument);
-	
+	ofxOscMessage& add(float argument) { return addFloatArg(argument); }
+
 	/// add a 64-bit double
 	ofxOscMessage& addDoubleArg(double argument);
-	
+	ofxOscMessage& add(double argument) { return addDoubleArg(argument); }
+
 	/// add a string
 	ofxOscMessage& addStringArg(const std::string &argument);
-	
+	ofxOscMessage& add(const std::string &argument) { return addStringArg(argument); }
+
 	/// add a symbol (string)
 	ofxOscMessage& addSymbolArg(const std::string &argument);
 	
