@@ -176,38 +176,44 @@ public:
 
 	/// add a 32-bit integer
 	ofxOscMessage& addIntArg(std::int32_t argument);
-	
-	/// add a 32-bit integer
 	ofxOscMessage& addInt32Arg(std::int32_t argument);
-	
+	ofxOscMessage& add(std::int32_t argument) { return addInt32Arg(argument); }
+
 	/// add a 64-bit integer
 	ofxOscMessage& addInt64Arg(std::int64_t argument);
-	
+	ofxOscMessage& add(std::int64_t argument) { return addInt64Arg(argument); }
+
 	/// add a 32-bit float
 	ofxOscMessage& addFloatArg(float argument);
-	
+	ofxOscMessage& add(float argument) { return addFloatArg(argument); }
+
 	/// add a 64-bit double
 	ofxOscMessage& addDoubleArg(double argument);
-	
+	ofxOscMessage& add(double argument) { return addDoubleArg(argument); }
+
 	/// add a string
 	ofxOscMessage& addStringArg(const std::string &argument);
-	
+	ofxOscMessage& add(const std::string &argument) { return addStringArg(argument); }
+
 	/// add a symbol (string)
 	ofxOscMessage& addSymbolArg(const std::string &argument);
 	
 	/// add a char
 	ofxOscMessage& addCharArg(char argument);
-	
+	ofxOscMessage& add(char &argument) { return addCharArg(argument); }
+
 	/// add a 4-byte MIDI message
 	ofxOscMessage& addMidiMessageArg(std::uint32_t argument);
 	
 	/// add a bool
 	/// true sends a OFXOSC_TYPE_TRUE & false sends a OFXOSC_TYPE_FALSE
 	ofxOscMessage& addBoolArg(bool argument);
-	
+	ofxOscMessage& add(bool &argument) { return addBoolArg(argument); }
+
 	/// add a none/nil (has no value)
 	ofxOscMessage& addNoneArg();
-	
+	ofxOscMessage& add() { return addNoneArg(); }
+
 	/// add a trigger impulse (has no value)
 	ofxOscMessage& addTriggerArg();
 	
@@ -224,7 +230,8 @@ public:
 	
 	/// add a binary blog
 	ofxOscMessage& addBlobArg(const ofBuffer &argument);
-	
+	ofxOscMessage& add(const ofBuffer &argument) { return addBlobArg(argument); }
+
 	/// add a 32-bit color
 	ofxOscMessage& addRgbaColorArg(std::uint32_t argument);
 
