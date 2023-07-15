@@ -5,9 +5,9 @@
 
 // demonstrates the optional pattern as well as constructors and method chaining
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 	
-	const int port { 12345 } ; // listening port
+	const int port { 12345 } ;
 	ofxOscReceiver osc_receiver { port };
 	ofxOscSender osc_sender { "127.0.0.1", port };
 	
@@ -20,7 +20,6 @@ public:
 	void keyPressed(int key) override;
 	
 	// ofBaseApp interface boilerplate: //
-	
 	//	void keyReleased(int key) override;
 	//	void mouseMoved(int x, int y) override;
 	//	void mouseDragged(int x, int y, int button) override;
