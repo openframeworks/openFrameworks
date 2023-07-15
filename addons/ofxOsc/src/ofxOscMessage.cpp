@@ -514,88 +514,105 @@ std::uint32_t ofxOscMessage::getArgAsRgbaColor(std::size_t index) const{
 
 // set methods
 //--------------------------------------------------------------
-void ofxOscMessage::addIntArg(std::int32_t argument){
+ofxOscMessage& ofxOscMessage::addIntArg(std::int32_t argument){
 	args.push_back(new ofxOscArgInt32(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addInt32Arg(std::int32_t argument){
+ofxOscMessage& ofxOscMessage::addInt32Arg(std::int32_t argument){
 	args.push_back(new ofxOscArgInt32(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addInt64Arg(std::int64_t argument){
+ofxOscMessage& ofxOscMessage::addInt64Arg(std::int64_t argument){
 	args.push_back(new ofxOscArgInt64(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addFloatArg(float argument){
+ofxOscMessage& ofxOscMessage::addFloatArg(float argument){
 	args.push_back(new ofxOscArgFloat(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addDoubleArg(double argument){
+ofxOscMessage& ofxOscMessage::addDoubleArg(double argument){
 	args.push_back(new ofxOscArgDouble(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addStringArg(const std::string &argument){
+ofxOscMessage& ofxOscMessage::addStringArg(const std::string &argument){
 	args.push_back(new ofxOscArgString(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addSymbolArg(const std::string &argument){
+ofxOscMessage& ofxOscMessage::addSymbolArg(const std::string &argument){
 	args.push_back(new ofxOscArgSymbol(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addCharArg( char argument){
+ofxOscMessage& ofxOscMessage::addCharArg( char argument){
 	args.push_back(new ofxOscArgChar(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addMidiMessageArg(std::uint32_t argument){
+ofxOscMessage& ofxOscMessage::addMidiMessageArg(std::uint32_t argument){
 	args.push_back(new ofxOscArgMidiMessage(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addBoolArg(bool argument){
+ofxOscMessage& ofxOscMessage::addBoolArg(bool argument){
 	args.push_back(new ofxOscArgBool(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addNoneArg(){
+ofxOscMessage& ofxOscMessage::addNoneArg(){
 	args.push_back(new ofxOscArgNone());
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addTriggerArg(){
+ofxOscMessage& ofxOscMessage::addTriggerArg(){
 	args.push_back(new ofxOscArgTrigger());
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addImpulseArg(){
+ofxOscMessage& ofxOscMessage::addImpulseArg(){
 	args.push_back(new ofxOscArgTrigger());
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addInfinitumArg(){
+ofxOscMessage& ofxOscMessage::addInfinitumArg(){
 	args.push_back(new ofxOscArgTrigger());
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addTimetagArg(std::uint64_t argument){
+ofxOscMessage& ofxOscMessage::addTimetagArg(std::uint64_t argument){
 	args.push_back(new ofxOscArgTimetag(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addBlobArg(const ofBuffer &argument){
+ofxOscMessage& ofxOscMessage::addBlobArg(const ofBuffer &argument){
 	args.push_back(new ofxOscArgBlob(argument));
+	return *this;
 }
 
 //--------------------------------------------------------------
-void ofxOscMessage::addRgbaColorArg(std::uint32_t argument){
+ofxOscMessage& ofxOscMessage::addRgbaColorArg(std::uint32_t argument){
 	args.push_back(new ofxOscArgRgbaColor(argument));
+	return *this;
 }
 
 // util

@@ -175,58 +175,58 @@ public:
 	/// \section Argument Setters
 
 	/// add a 32-bit integer
-	void addIntArg(std::int32_t argument);
+	ofxOscMessage& addIntArg(std::int32_t argument);
 	
 	/// add a 32-bit integer
-	void addInt32Arg(std::int32_t argument);
+	ofxOscMessage& addInt32Arg(std::int32_t argument);
 	
 	/// add a 64-bit integer
-	void addInt64Arg(std::int64_t argument);
+	ofxOscMessage& addInt64Arg(std::int64_t argument);
 	
 	/// add a 32-bit float
-	void addFloatArg(float argument);
+	ofxOscMessage& addFloatArg(float argument);
 	
 	/// add a 64-bit double
-	void addDoubleArg(double argument);
+	ofxOscMessage& addDoubleArg(double argument);
 	
 	/// add a string
-	void addStringArg(const std::string &argument);
+	ofxOscMessage& addStringArg(const std::string &argument);
 	
 	/// add a symbol (string)
-	void addSymbolArg(const std::string &argument);
+	ofxOscMessage& addSymbolArg(const std::string &argument);
 	
 	/// add a char
-	void addCharArg(char argument);
+	ofxOscMessage& addCharArg(char argument);
 	
 	/// add a 4-byte MIDI message
-	void addMidiMessageArg(std::uint32_t argument);
+	ofxOscMessage& addMidiMessageArg(std::uint32_t argument);
 	
 	/// add a bool
 	/// true sends a OFXOSC_TYPE_TRUE & false sends a OFXOSC_TYPE_FALSE
-	void addBoolArg(bool argument);
+	ofxOscMessage& addBoolArg(bool argument);
 	
 	/// add a none/nil (has no value)
-	void addNoneArg();
+	ofxOscMessage& addNoneArg();
 	
 	/// add a trigger impulse (has no value)
-	void addTriggerArg();
-	
-	/// add a trigger impulse (has no value)
-	/// alias for addTriggerArg()
-	void addImpulseArg();
+	ofxOscMessage& addTriggerArg();
 	
 	/// add a trigger impulse (has no value)
 	/// alias for addTriggerArg()
-	void addInfinitumArg();
+	ofxOscMessage& addImpulseArg();
+	
+	/// add a trigger impulse (has no value)
+	/// alias for addTriggerArg()
+	ofxOscMessage& addInfinitumArg();
 	
 	/// add a 64-bit NTP time tag
-	void addTimetagArg(std::uint64_t argument);
+	ofxOscMessage& addTimetagArg(std::uint64_t argument);
 	
 	/// add a binary blog
-	void addBlobArg(const ofBuffer &argument);
+	ofxOscMessage& addBlobArg(const ofBuffer &argument);
 	
 	/// add a 32-bit color
-	void addRgbaColorArg(std::uint32_t argument);
+	ofxOscMessage& addRgbaColorArg(std::uint32_t argument);
 
 	/// set host and port of the remote endpoint,
 	/// this is mainly used by ofxOscReceiver
