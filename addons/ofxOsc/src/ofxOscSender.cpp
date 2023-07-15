@@ -90,7 +90,7 @@ void ofxOscSender::clear(){
 }
 
 //--------------------------------------------------------------
-bool ofxOscSender::isReady() {
+bool ofxOscSender::isReady() const {
 	return sendSocket != nullptr;
 }
 
