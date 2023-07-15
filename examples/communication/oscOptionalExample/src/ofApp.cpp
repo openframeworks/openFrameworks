@@ -1,12 +1,14 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
-	// Look Ma, No Hands!
+	// look Ma, no hands!
 }
 
 void ofApp::update() {
 	while (const auto m = osc_receiver.getMessage()) {
-		ofLogNotice(m->getAddress()) << m->getArgAsInt(0) << " @ " << m->getArgAsFloat(1);
+		// ofxOscMessage alloc is out of sight
+		// valid optional is accessed like a pointer
+		ofLogNotice(m->getAddress()) << m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << " @ " << m->getArgTypeName(1) << ": " << m->getArgAsFloat(1);
 	}
 }
 
@@ -24,8 +26,15 @@ void ofApp::keyPressed(int key) {
 		m.addFloatArg(ofGetElapsedTimef());
 		osc_sender.sendMessage(m);
 
-		// ctor + chaining (implicit types) + polymorphic send
-		osc_sender.send(ofxOscMessage{"/terse"}.add(ofRandom(100)).add(ofGetElapsedTimef()));
+		// ctor, chaining, overloaded operator+ (implicit types), in-place overloaded send
+		osc_sender.send(ofxOscMessage{"/terse"} + int(ofRandom(100)) + ofGetElapsedTimef());
+		
+		// of course it's a spectrum, this is familiar yet fresh:
+		ofxOscMessage m2 { "/comfortable" };
+		m2.add(int(ofRandom(100)));
+		m2.add(ofGetElapsedTimef());
+		osc_sender.send(m2);
+		
 	}
 }
 
