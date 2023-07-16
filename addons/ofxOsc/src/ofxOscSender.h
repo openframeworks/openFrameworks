@@ -50,14 +50,17 @@ public:
 
 	/// send the given message
 	/// if wrapInBundle is true (default), message sent in a timetagged bundle
+	/// \return true on successfull send
 	bool sendMessage(const ofxOscMessage &message, bool wrapInBundle=false);
 	bool send(const ofxOscMessage &message, bool wrapInBundle=false) { return sendMessage(message, wrapInBundle); };
 
 	/// send the given bundle
+	/// \return true on successfull send
 	bool sendBundle(const ofxOscBundle &bundle);
 	bool send(const ofxOscBundle &bundle) { return sendBundle(bundle); };
 
 	/// create & send a message with data from an ofParameter
+	/// \return true on successfull send
 	bool sendParameter(const ofAbstractParameter &parameter);
 	bool send(const ofAbstractParameter &parameter)  { return sendParameter(parameter); } ;
 

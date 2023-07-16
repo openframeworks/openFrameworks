@@ -175,73 +175,89 @@ public:
 	/// \section Argument Setters
 
 	/// add a 32-bit integer
-	ofxOscMessage& addIntArg(std::int32_t argument);
+	/// \return a reference to this ofxOscMessage
+ofxOscMessage& addIntArg(std::int32_t argument);
 	ofxOscMessage& addInt32Arg(std::int32_t argument);
 	ofxOscMessage& add(std::int32_t argument) { return addInt32Arg(argument); }
 	ofxOscMessage& operator+(std::int32_t argument) { return addInt32Arg(argument); }
 
 	/// add a 64-bit integer
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addInt64Arg(std::int64_t argument);
 	ofxOscMessage& add(std::int64_t argument) { return addInt64Arg(argument); }
 	ofxOscMessage& operator+(std::int64_t argument) { return addInt64Arg(argument); }
 
 	/// add a 32-bit float
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addFloatArg(float argument);
 	ofxOscMessage& add(float argument) { return addFloatArg(argument); }
 	ofxOscMessage& operator+(float argument) { return addFloatArg(argument); }
 	
 	/// add a 64-bit double
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addDoubleArg(double argument);
 	ofxOscMessage& add(double argument) { return addDoubleArg(argument); }
 	ofxOscMessage& operator+(double argument) { return addDoubleArg(argument); }
 
 	/// add a string
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addStringArg(const std::string &argument);
 	ofxOscMessage& add(const std::string &argument) { return addStringArg(argument); }
 	ofxOscMessage& operator+(const std::string &argument) { return addStringArg(argument); }
 
 	/// add a symbol (string)
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addSymbolArg(const std::string &argument);
 	
 	/// add a char
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addCharArg(char argument);
 	ofxOscMessage& add(char &argument) { return addCharArg(argument); }
 	ofxOscMessage& operator+(char &argument) { return addCharArg(argument); }
 
 	/// add a 4-byte MIDI message
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addMidiMessageArg(std::uint32_t argument);
 	
 	/// add a bool
 	/// true sends a OFXOSC_TYPE_TRUE & false sends a OFXOSC_TYPE_FALSE
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addBoolArg(bool argument);
 	ofxOscMessage& add(bool &argument) { return addBoolArg(argument); }
 	ofxOscMessage& operator+(bool &argument) { return addBoolArg(argument); }
 
 	/// add a none/nil (has no value)
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addNoneArg();
 	ofxOscMessage& add() { return addNoneArg(); }
 	ofxOscMessage& operator+() { return addNoneArg(); }
 
 	/// add a trigger impulse (has no value)
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addTriggerArg();
 	
 	/// add a trigger impulse (has no value)
 	/// alias for addTriggerArg()
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addImpulseArg();
 	
 	/// add a trigger impulse (has no value)
 	/// alias for addTriggerArg()
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addInfinitumArg();
 	
 	/// add a 64-bit NTP time tag
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addTimetagArg(std::uint64_t argument);
 	
 	/// add a binary blog
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addBlobArg(const ofBuffer &argument);
 	ofxOscMessage& add(const ofBuffer &argument) { return addBlobArg(argument); }
 	ofxOscMessage& operator+(const ofBuffer &argument) { return addBlobArg(argument); }
 
 	/// add a 32-bit color
+	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addRgbaColorArg(std::uint32_t argument);
 
 	/// set host and port of the remote endpoint,
