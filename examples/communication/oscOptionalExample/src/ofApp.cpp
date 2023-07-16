@@ -5,8 +5,8 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
+	// ofxOscMessage alloc is out of sight
 	while (const auto m = osc_receiver.getMessage()) {
-		// ofxOscMessage alloc is out of sight
 		// valid optional is accessed like a pointer
 		ofLogNotice(m->getAddress()) << m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << " @ " << m->getArgTypeName(1) << ": " << m->getArgAsFloat(1);
 	}

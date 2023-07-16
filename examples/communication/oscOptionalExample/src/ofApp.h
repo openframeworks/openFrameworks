@@ -7,7 +7,7 @@
 
 class ofApp : public ofBaseApp {
 	
-	const int port { 12345 } ;
+	const int port { 12345 };
 	ofxOscReceiver osc_receiver { port };
 	ofxOscSender osc_sender { "127.0.0.1", port };
 	
