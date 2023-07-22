@@ -102,7 +102,7 @@ public:
 	/// the number of channels per frame
 	std::size_t getNumChannels() const { return channels; }
 	/// set the number of channels. does not change the underlying data, ie causes getNumFrames() to return a different result.
-	void setNumChannels(int channels);
+	void setNumChannels(std::size_t channels);
 	/// the number of frames, ie the number of sets of (getNumChannels()) samples
 	std::size_t getNumFrames() const { return size()/getNumChannels(); }
 	

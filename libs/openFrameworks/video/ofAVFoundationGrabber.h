@@ -34,7 +34,7 @@ class ofAVFoundationGrabber;
 	int height;
 
 	BOOL bInitCalled;
-	int deviceID;
+	NSUInteger deviceID;
 
 	AVCaptureDeviceInput		*captureInput;
 	AVCaptureVideoDataOutput    *captureOutput;

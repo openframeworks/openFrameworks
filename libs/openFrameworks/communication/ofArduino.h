@@ -813,8 +813,8 @@ private:
 	bool isAnalogPin(int pin) const;
 	bool isPin(int pin) const;
 
-	int convertAnalogPinToDigital(size_t pin) const;
-	int convertDigitalPinToAnalog(size_t pin) const;
+	int convertAnalogPinToDigital(int pin) const;
+	int convertDigitalPinToAnalog(int pin) const;
 };
 
 typedef ofArduino ofStandardFirmata;

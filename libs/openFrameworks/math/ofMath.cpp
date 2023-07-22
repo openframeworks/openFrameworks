@@ -8,9 +8,9 @@
 #endif
 
 //--------------------------------------------------
-int ofNextPow2(int a){
+unsigned long ofNextPow2(unsigned long a){
 	// from nehe.gamedev.net lesson 43
-	int rval=1;
+	unsigned long rval=1;
 	while(rval<a) rval<<=1;
 	return rval;
 }
@@ -28,18 +28,18 @@ void ofSeedRandom() {
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
-		srand(n);
+		srand((unsigned int)n);
 	#else
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec);
-		srand(n);
+		srand((unsigned int)n);
 	#endif
 }
 
 //--------------------------------------------------
-void ofSeedRandom(int val) {
-	srand((long) val);
+void ofSeedRandom(unsigned int val) {
+	srand((unsigned int)val);
 }
 
 //--------------------------------------------------
