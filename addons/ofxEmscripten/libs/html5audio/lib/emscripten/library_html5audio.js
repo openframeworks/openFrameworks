@@ -172,26 +172,6 @@ var LibraryHTML5Audio = {
             }
         };
 
-        if (inputChannels > 0){
-            navigator.getUserMedia = navigator.getUserMedia ||
-            navigator.webkitGetUserMedia ||
-            navigator.mozGetUserMedia ||
-            navigator.msGetUserMedia;
-            
-	    if (navigator.getUserMedia){
-                navigator.getUserMedia(
-                {audio: true},
-                function (audioIn){
-                    var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
-                    mediaElement.connect(stream);
-                    AUDIO.mediaElement = mediaElement;
-                },
-                function (error){
-                    console.log("error creating audio in",error);
-                });
-	    }
-        }
-
         stream.connect(AUDIO.fft);
         AUDIO.stream = stream;
     },
