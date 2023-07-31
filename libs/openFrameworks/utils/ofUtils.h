@@ -15,6 +15,8 @@
 #include <type_traits>
 #include <random>
 
+#include "ofRandom.hpp"
+
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
 ///
@@ -224,10 +226,22 @@ int ofGetWeekday();
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
 /// \sa http://www.cplusplus.com/reference/algorithm/random_shuffle/
+
+namespace of::random {
 template<class T>
-void ofRandomize(std::vector<T>& values) {
-    //switch from random_shuffle ( removed in some C++17 impl )
-    std::shuffle(values.begin(), values.end(), std::default_random_engine(0));
+void shuffle(std::vector<T>& values) {
+	std::shuffle(values.begin(), values.end(), of::random::Engine::instance()->generator());
+}
+}
+
+template<class T>
+[[deprecated("use of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
+	of::random::shuffle(values);
+}
+
+template<class T>
+[[deprecated("use of::random::shuffle()")]] void ofShuffle(std::vector<T>& values) {
+	of::random::shuffle(values);
 }
 
 /// \brief Conditionally remove values from a vector.

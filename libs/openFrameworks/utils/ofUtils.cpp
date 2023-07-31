@@ -57,10 +57,13 @@ using std::vector;
 using std::string;
 using std::setfill;
 
+#include "ofRandom.hpp"
+
 namespace of{
 namespace priv{
 	void initutils(){
         ofResetElapsedTimeCounter();
+		of::random::Engine::construct();
         ofSeedRandom();
     }
 
