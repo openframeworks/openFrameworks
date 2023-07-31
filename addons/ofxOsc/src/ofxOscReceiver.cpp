@@ -31,11 +31,12 @@ ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver &other){
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::setup(int port){
+bool ofxOscReceiver::setup(int port, std::string host) {
 	if(listenSocket){ // already running
 		stop();
 	}
 	settings.port = port;
+    settings.host = host;
 	return start();
 }
 
@@ -65,7 +66,7 @@ bool ofxOscReceiver::start() {
 	// create socket
 	osc::UdpListeningReceiveSocket *socket = nullptr;
 	try{
-		osc::IpEndpointName name(osc::IpEndpointName::ANY_ADDRESS, settings.port);
+		osc::IpEndpointName name(settings.host.c_str(), settings.port);
 		socket = new osc::UdpListeningReceiveSocket(name, this, settings.reuse);
 		auto deleter = [](osc::UdpListeningReceiveSocket*socket){
 			// tell the socket to shutdown
