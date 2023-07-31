@@ -174,9 +174,16 @@ public:
 
 	/// \section Argument Setters
 
+	template<typename T, typename... Args>
+	ofxOscMessage& add(T first, Args... args) {
+		add(first);
+		add(args...);
+		return *this;
+	}
+	
 	/// add a 32-bit integer
 	/// \return a reference to this ofxOscMessage
-ofxOscMessage& addIntArg(std::int32_t argument);
+	ofxOscMessage& addIntArg(std::int32_t argument);
 	ofxOscMessage& addInt32Arg(std::int32_t argument);
 	ofxOscMessage& add(std::int32_t argument) { return addInt32Arg(argument); }
 	ofxOscMessage& operator+(std::int32_t argument) { return addInt32Arg(argument); }
