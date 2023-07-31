@@ -186,31 +186,26 @@ public:
 	ofxOscMessage& addIntArg(std::int32_t argument);
 	ofxOscMessage& addInt32Arg(std::int32_t argument);
 	ofxOscMessage& add(std::int32_t argument) { return addInt32Arg(argument); }
-	ofxOscMessage& operator+(std::int32_t argument) { return addInt32Arg(argument); }
 
 	/// add a 64-bit integer
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addInt64Arg(std::int64_t argument);
 	ofxOscMessage& add(std::int64_t argument) { return addInt64Arg(argument); }
-	ofxOscMessage& operator+(std::int64_t argument) { return addInt64Arg(argument); }
 
 	/// add a 32-bit float
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addFloatArg(float argument);
 	ofxOscMessage& add(float argument) { return addFloatArg(argument); }
-	ofxOscMessage& operator+(float argument) { return addFloatArg(argument); }
 	
 	/// add a 64-bit double
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addDoubleArg(double argument);
 	ofxOscMessage& add(double argument) { return addDoubleArg(argument); }
-	ofxOscMessage& operator+(double argument) { return addDoubleArg(argument); }
 
 	/// add a string
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addStringArg(const std::string &argument);
 	ofxOscMessage& add(const std::string &argument) { return addStringArg(argument); }
-	ofxOscMessage& operator+(const std::string &argument) { return addStringArg(argument); }
 
 	/// add a symbol (string)
 	/// \return a reference to this ofxOscMessage
@@ -220,7 +215,6 @@ public:
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addCharArg(char argument);
 	ofxOscMessage& add(char &argument) { return addCharArg(argument); }
-	ofxOscMessage& operator+(char &argument) { return addCharArg(argument); }
 
 	/// add a 4-byte MIDI message
 	/// \return a reference to this ofxOscMessage
@@ -231,13 +225,11 @@ public:
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addBoolArg(bool argument);
 	ofxOscMessage& add(bool &argument) { return addBoolArg(argument); }
-	ofxOscMessage& operator+(bool &argument) { return addBoolArg(argument); }
 
 	/// add a none/nil (has no value)
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addNoneArg();
 	ofxOscMessage& add() { return addNoneArg(); }
-	ofxOscMessage& operator+() { return addNoneArg(); }
 
 	/// add a trigger impulse (has no value)
 	/// \return a reference to this ofxOscMessage
@@ -261,7 +253,6 @@ public:
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage& addBlobArg(const ofBuffer &argument);
 	ofxOscMessage& add(const ofBuffer &argument) { return addBlobArg(argument); }
-	ofxOscMessage& operator+(const ofBuffer &argument) { return addBlobArg(argument); }
 
 	/// add a 32-bit color
 	/// \return a reference to this ofxOscMessage
