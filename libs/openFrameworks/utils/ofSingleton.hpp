@@ -4,7 +4,9 @@
 // atomic C++17 DCLP CRTP singleton adapted by burton@artificiel.org from
 // https://github.com/jimmy-park/singleton/blob/main/include/singleton_dclp.hpp (1d26f91)
 
+#include <cassert>
 #include <mutex>
+#include <atomic>
 
 namespace of::utils
 {
