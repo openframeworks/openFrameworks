@@ -25,7 +25,6 @@ struct ofxOscReceiverSettings {
 /// \brief OSC message receiver which listens on a network port
 class ofxOscReceiver : public osc::OscPacketListener {
 public:
-
     ofxOscReceiver(int port = 7970) {
         setup(port);
     };
@@ -79,6 +78,7 @@ public:
 	/// if there is at tleast 1 message in the queue, pop and swap it into an optional message
 	/// \return the std::optional<ofxOscMessage> if there was a message; std::nullopt otherwise
     std::optional<const ofxOscMessage> getMessage();
+	ofxOscMessage message_buffer;
 
 	/// try to get waiting message an ofParameter
 	/// \return true if message was handled by the given parameter

@@ -136,10 +136,7 @@ bool ofxOscReceiver::getNextMessage(ofxOscMessage &message){
 }
 
 std::optional<const ofxOscMessage> ofxOscReceiver::getMessage() {
-    if (hasWaitingMessages()) {
-        ofxOscMessage message;
-		if (messagesChannel.tryReceive(message)) return {message};
-    }
+	if (messagesChannel.tryReceive(message_buffer)) return { message_buffer };
     return std::nullopt;
 }
 
