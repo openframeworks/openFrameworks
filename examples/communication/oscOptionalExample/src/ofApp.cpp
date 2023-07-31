@@ -8,7 +8,7 @@ void ofApp::update() {
 	// ofxOscMessage alloc is out of sight
 	while (const auto m = osc_receiver.getMessage()) {
 		// valid optional is accessed like a pointer
-		ofLogNotice(m->getAddress()) << m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << " @ " << m->getArgTypeName(1) << ": " << m->getArgAsFloat(1);
+		ofLogNotice(m->getAddress()) << m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << " @ " << m->getArgTypeName(1) << ": " << m->getArgAsFloat(1)  << ": " << m->getArgAsInt(2);
 	}
 }
 
@@ -24,17 +24,16 @@ void ofApp::keyPressed(int key) {
 		m.setAddress("/message");
 		m.addIntArg(ofRandom(100));
 		m.addFloatArg(ofGetElapsedTimef());
+		m.addFloatArg(1982);
 		osc_sender.sendMessage(m);
 
-		// ctor, chaining, overloaded operator+ (implicit types), in-place overloaded send
-		osc_sender.send(ofxOscMessage{"/terse"} + int(ofRandom(100)) + ofGetElapsedTimef());
+		// ctor, chaining, implicit types, variadic add, in-place overloaded send
+		osc_sender.send(ofxOscMessage{"/terse"}.add(int(ofRandom(100)), ofGetElapsedTimef(), 1983));
 		
 		// of course it's a spectrum, this is familiar yet fresh:
 		ofxOscMessage m2 { "/comfortable" };
-		m2.add(int(ofRandom(100)));
-		m2.add(ofGetElapsedTimef());
+		m2.add(int(ofRandom(100)), ofGetElapsedTimef(), 1984);
 		osc_sender.send(m2);
-		
 	}
 }
 
