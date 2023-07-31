@@ -8,7 +8,9 @@ void ofApp::update() {
 	// ofxOscMessage alloc is out of sight
 	while (const auto m = osc_receiver.getMessage()) {
 		// valid optional is accessed like a pointer
-		ofLogNotice(m->getAddress()) << m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << " @ " << m->getArgTypeName(1) << ": " << m->getArgAsFloat(1)  << ": " << m->getArgAsInt(2);
+		ofLogNotice("<optional> received "s + m->getAddress()) 	<< m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << ", "
+																<< m->getArgTypeName(1) << ": " << m->getArgAsFloat(1) << ", "
+																<< m->getArgTypeName(2) << ": " << m->getArgAsInt(2);
 	}
 }
 
@@ -19,6 +21,8 @@ void ofApp::draw() {
 void ofApp::keyPressed(int key) {
 	if (key == ' ') {
 		
+		ofLogNotice("sending messages") << ofGetElapsedTimef();
+		
 		// old-timer
 		ofxOscMessage m;
 		m.setAddress("/message");
@@ -27,16 +31,17 @@ void ofApp::keyPressed(int key) {
 		m.addFloatArg(1982);
 		osc_sender.sendMessage(m);
 
-		// ctor, chaining, implicit types, variadic add, in-place overloaded send
+		// ctor, chaining, implicit types, variadic add, in-place, overloaded send
 		osc_sender.send(ofxOscMessage{"/terse"}.add(int(ofRandom(100)), ofGetElapsedTimef(), 1983));
 		
-		// of course it's a spectrum, this is familiar yet fresh:
+		// of course it's a spectrum — this is familiar yet refreshing:
 		ofxOscMessage m2 { "/comfortable" };
 		m2.add(int(ofRandom(100)), ofGetElapsedTimef(), 1984);
 		osc_sender.send(m2);
 	}
 }
 
+// MARK: - ofBaseApp interface boilerplate
 //void ofApp::keyReleased(int key){}
 //void ofApp::mouseMoved(int x, int y){}
 //void ofApp::mouseDragged(int x, int y, int button){}
