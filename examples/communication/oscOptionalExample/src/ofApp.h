@@ -19,7 +19,7 @@ public:
 	
 	void keyPressed(int key) override;
 	
-	// ofBaseApp interface boilerplate: //
+	// MARK: - ofBaseApp interface boilerplate
 	//	void keyReleased(int key) override;
 	//	void mouseMoved(int x, int y) override;
 	//	void mouseDragged(int x, int y, int button) override;
