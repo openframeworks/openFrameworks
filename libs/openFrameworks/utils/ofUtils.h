@@ -235,12 +235,12 @@ void shuffle(std::vector<T>& values) {
 }
 
 template<class T>
-[[deprecated("use of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
+[[deprecated("use ofShuffle() or of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
 	of::random::shuffle(values);
 }
 
 template<class T>
-[[deprecated("use of::random::shuffle()")]] void ofShuffle(std::vector<T>& values) {
+void ofShuffle(std::vector<T>& values) {
 	of::random::shuffle(values);
 }
 
