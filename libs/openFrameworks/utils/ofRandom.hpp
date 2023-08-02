@@ -47,10 +47,10 @@ uniform(Args&&... args) {
 	return distr(of::random::Engine::instance()->generator());
 }
 
-template <typename T, typename ... Args>
+template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-uniform(Args&&... args) {
-	std::uniform_real_distribution<float> dist(std::forward<Args>(args)...);
+uniform(double min, double max) {
+	std::uniform_real_distribution<float> dist(min,max);
 	return {
 		dist(of::random::Engine::instance()->generator()),
 		dist(of::random::Engine::instance()->generator())
@@ -303,36 +303,56 @@ T ofRandomUniform(T min, T max) { return of::random::uniform<T>(min, max); }
 // https://blogs.sas.com/content/iml/2019/07/22/extreme-value-normal-data.html
 
 template<class T = float> // works for all non-refined
-T ofRandomNormalLimits(float min, float max, float factor = 4.0f) {
-	auto stddev = (max-min)/(2*factor);
-	auto mean = (max+min)/2.0f;
-	return of::random::normal<T>(mean, stddev);
+T ofRandomNormalLimits(float min, float max, float focus = 4.0f) {
+	if (min >= max) {
+		std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
+		return {};
+	} else {
+		if (focus <= .0099) {
+			std::cout << "ofRandomNormalLimits()" << "focus must be at least .01\n";
+			return {};
+		} else {
+			T v;
+			do { v = of::random::normal<T>((max+min)/2.0f, (max-min)/(2*focus)); } while (v < min || v > max);
+			return v;
+		}
+	}
 }
 
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-ofRandomNormalLimits(T min, T max, T factor = {4.0f, 4.0f}) {
-	return {
-		of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*factor.x)),
-		of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*factor.y))
-	};
+ofRandomNormalLimits(T min, T max, T focus = {4.0f, 4.0f}) {
+	if (!min.x < max.x || !min.y < max.y) {
+		std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
+		return {};
+	} else {
+		if (focus.x < 1 || focus.y < 1 ) {
+			std::cout << "ofRandomNormalLimits()" << "focus must be at least 1\n";
+			return {};
+		} else {
+			T v;
+			do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
+			do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
+			return v;
+		}
+	}
 }
 
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-ofRandomNormalLimits(T min, T max, T factor = {4.0f, 4.0f, 4.0f}) {
+ofRandomNormalLimits(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
 	if (!min.x < max.x || !min.y < max.y || !min.z < max.z) {
 		std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
 		return {};
 	} else {
-		if (factor.x < 1 || factor.y < 1 || factor.z < 1) {
-			std::cout << "ofRandomNormalLimits()" << "factor must be at least 1\n";
+		if (focus.x < 1 || focus.y < 1 || focus.z < 1) {
+			std::cout << "ofRandomNormalLimits()" << "focus must be at least 1\n";
 			return {};
 		} else {
 			T v;
-			do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*factor.x)); } while (v.x < min && v.x > max);
-			do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*factor.y)); } while (v.y < min && v.y > max);
-			do { v.z = of::random::normal<float>((max.z+min.z)/2.0f, (max.z-min.z)/(2*factor.z)); } while (v.z < min && v.z > max);
+			do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
+			do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
+			do { v.z = of::random::normal<float>((max.z+min.z)/2.0f, (max.z-min.z)/(2*focus.z)); } while (v.z < min || v.z > max);
 			return v;
 		}
 	}
