@@ -5,16 +5,22 @@
 
 
 void ofApp::setup(){
-
+    
+    ofColor(255,255,255);
+    ofRectangle(10,10,200,200);
+    
 	ofSetWindowShape(1920,1000);
 	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-	
+    
 	panel_.setup("Random Generators");
 	panel_.add(size_);
-	panel_.add(size_calc_);
-	panel_.setPosition(400,0);
+    panel_.add(size_calc_);
+    panel_.add(seed_);
+    panel_.add(reinit_);
+	panel_.setPosition(400,10);
+    
 	size_t i = 0; // to spread hue
-	float chunk = 255.0/(dists_.size() + of_dists_.size());
+	auto chunk = 255.0/(dists_.size() + of_dists_.size());
 	for (auto & dist: dists_) {
 		panel_.add(dist->parameters_);
 		dist->color_.setHsb(chunk * i++, 192, 64);
@@ -26,16 +32,10 @@ void ofApp::setup(){
 		dist->color_.setHsb(chunk * i++, 192, 64);
 		panel_.getGroup(dist->parameters_.getName()).setHeaderBackgroundColor(dist->color_);
 	}
-	
-	std::vector<int> v {1,2,3,4,5,6,7,8};
-	ofRandomize(v);
-	for (auto & i: v) ofLogNotice("1") << i;
-
-	ofShuffle(v);
-	for (auto & i: v) ofLogNotice("1") << i;
-
-	of::random::shuffle(v);
-	for (auto & i: v) ofLogNotice("1") << i;
+    
+    seed_.addListener(this, &ofApp::seed);
+    reinit_.addListener(this, &ofApp::reinit);
+    reinit(); // not required, but keeps the demo together
 
 }
 
@@ -45,7 +45,6 @@ void ofApp::update(){
 	// NON-DETERMINISTIC  vs  DETERMINISTIC
 	// shuffle
 	// barbo
-	
 	
 	// DISTRIBUTIONS
 	auto num_samples = pow(size_.get(),3);
@@ -59,13 +58,20 @@ void ofApp::update(){
 			d->compile();
 		}
 	}
-	
-	// VEC2 THINGS
-	// truc vec2d avec params animés
 }
 
 void ofApp::draw(){
 	ofClear(20);
+    
+    if (of::random::Engine::instance()->is_deterministic()) {
+        ofDrawBitmapStringHighlight("engine is deterministic (seeded)", 20, 20, ofColor::black, ofColor::green);
+    } else {
+        ofDrawBitmapStringHighlight("engine is non-deterministic", 20, 20, ofColor::black, ofColor::white);
+    }
+
+    ofDrawBitmapStringHighlight(dna_string_, 20, 40);
+    ofDrawBitmapStringHighlight(shuffle_string_, 20, 60);
+
 	panel_.draw();
 
 	ofPushMatrix();
@@ -97,71 +103,3 @@ void ofApp::draw(){
 	}
 	ofPopMatrix();
 }
-
-// MARK: ofApp boilerplate
-/*
-//--------------------------------------------------------------
-void ofApp::exit(){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseScrolled(int x, int y, float scrollX, float scrollY){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
-*/
