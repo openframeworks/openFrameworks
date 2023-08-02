@@ -14,19 +14,24 @@ namespace of::random
 
 class Engine: public of::utils::Singleton<Engine> {
 	std::random_device rd_{ };
-	std::seed_seq seq_ { rd_(), rd_(), rd_(), rd_() };
+	std::seed_seq seq_{ rd_(), rd_(), rd_(), rd_() };
 	std::mt19937 g_{ seq_ };
-	bool deterministic_ { false };
+	bool deterministic_{ false };
 public:
 	auto & generator() { return g_; }
 	auto seed(unsigned long new_seed) {
 		g_.seed(new_seed);
 		deterministic_ = true;
 	}
+    auto is_deterministic() const { return deterministic_; }
 };
 
 auto seed(unsigned long seed) {
 	of::random::Engine::instance()->seed(seed);
+}
+
+auto engine() {
+    return of::random::Engine::instance();
 }
 
 // MARK: - DISTRIBUTIONS -
