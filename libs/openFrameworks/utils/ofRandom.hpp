@@ -6,11 +6,11 @@
 
 #include "ofSingleton.hpp"
 
-// https://stackoverflow.com/questions/34934480/how-efficient-is-it-to-make-a-temporary-uniform-random-distribution-each-time-ro
+// https://stackoverflow.com/questions/
 // https://simplecxx.github.io/2018/11/03/seed-mt19937.html
 // https://gist.github.com/imneme/540829265469e673d045
 // https://github.com/effolkronium/random/tree/master
-// https://www.theanalysisfactor.com/differences-between-normal-and-poisson-distributions/#:~:text=Both%20are%20discrete%20and%20bounded,tail%20extending%20to%20the%20right.
+// https://www.theanalysisfactor.com/differences-between-normal-and-poisson-distributions
 // https://blogs.sas.com/content/iml/2019/07/22/extreme-value-normal-data.html
 // https://rovdownloads.com/blog/quick-overview-of-probability-distributions/
 
