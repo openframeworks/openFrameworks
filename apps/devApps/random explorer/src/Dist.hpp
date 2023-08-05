@@ -12,7 +12,7 @@ struct Dist {
     ofColor color_ {128,128,128};
     std::string info_;
     glm::vec2 range_ { };
-    bool discrete_ { };
+    bool discrete_ { false };
     size_t underflow_;
     size_t overflow_;
     std::size_t max_ { 0 };
@@ -22,7 +22,7 @@ struct Dist {
     virtual auto clear() -> void = 0;
     virtual auto compile() -> void = 0;
     virtual auto draw(float x, float y, float w, float h) -> void = 0;
-    virtual ~Dist() {};
+    virtual ~Dist() = default;
 
     Dist() {};
 };
@@ -54,11 +54,11 @@ struct ConcreteDist: public Dist {
         for (auto & p: params) parameters_.add(*p);
     }
     
-    auto gen() -> void  {
+    auto gen() -> void override {
         data_.push_back(gen_());
     }
     
-    auto clear() -> void  {
+    auto clear() -> void override {
         overflow_ = 0;
         underflow_ = 0;
         data_.clear();
@@ -66,7 +66,7 @@ struct ConcreteDist: public Dist {
         max_ = 0;
     }
     
-    auto compile() -> void  {
+    auto compile() -> void override {
         // histograms non-vecs only
         if constexpr (std::is_arithmetic_v<T>) {
             float divisor = (range_.y-range_.x)/float(bins_.size()-1);
@@ -84,7 +84,7 @@ struct ConcreteDist: public Dist {
         }
     }
     
-    auto draw(float x, float y, float w, float h) -> void  {
+    auto draw(float x, float y, float w, float h) -> void override {
         ofPushStyle();
         ofPushMatrix();
         {
