@@ -15,7 +15,7 @@
 #include <type_traits>
 #include <random>
 
-#include "ofRandom.hpp"
+#include "ofRandom.h"
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
