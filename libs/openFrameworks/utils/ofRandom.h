@@ -31,15 +31,15 @@ public:
     auto is_deterministic() const { return deterministic_; }
 };
 
-auto engine() {
+inline auto engine() {
     return of::random::Engine::instance();
 }
 
-auto & gen() {
+inline auto & gen() {
     return of::random::engine()->gen();
 }
 
-auto seed(unsigned long seed) {
+inline auto seed(unsigned long seed) {
 	return of::random::engine()->seed(seed);
 }
 
@@ -613,7 +613,7 @@ void shuffle(std::vector<T>& values) {
 
 namespace {
 
-auto ofSetRandomSeed(unsigned long new_seed) {
+inline auto ofSetRandomSeed(unsigned long new_seed) {
 	of::random::seed(new_seed);
 }
 
@@ -686,7 +686,7 @@ template<class T>
 T ofRandomGeometric() { return of::random::geometric<T>(); }
 
 template<class T = float> 
-T ofBoundNormal(float min, float max, float focus = 4.0f) {
+T ofRandomBoundNormal(float min, float max, float focus = 4.0f) {
     return of::random::bound_normal(min, max, focus);
 }
 
