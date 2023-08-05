@@ -685,7 +685,7 @@ T ofRandomGeometric(Args&&... args) { return of::random::geometric<T>(std::forwa
 template<class T>
 T ofRandomGeometric() { return of::random::geometric<T>(); }
 
-template<class T = float> // works for all non-refined
+template<class T = float> 
 T ofBoundNormal(float min, float max, float focus = 4.0f) {
     return of::random::bound_normal(min, max, focus);
 }
