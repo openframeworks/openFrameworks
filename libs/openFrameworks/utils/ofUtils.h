@@ -227,13 +227,6 @@ int ofGetWeekday();
 /// \param values The vector of values to modify.
 /// \sa http://www.cplusplus.com/reference/algorithm/random_shuffle/
 
-namespace of::random {
-template<class T>
-void shuffle(std::vector<T>& values) {
-	std::shuffle(values.begin(), values.end(), of::random::Engine::instance()->generator());
-}
-}
-
 template<class T>
 [[deprecated("use ofShuffle() or of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
 	of::random::shuffle(values);
