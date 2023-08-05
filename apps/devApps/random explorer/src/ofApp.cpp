@@ -1,15 +1,15 @@
 #include "ofApp.h"
-#include "ofRandom.hpp"
+#include "ofRandom.h"
 
 void ofApp::setup(){
     
+	
     ofSetWindowShape(1920,1000);
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     ofSetWindowTitle("Random Explorer");
     
     panel_.setup("Global state");
     panel_.add(size_);
-    panel_.add(size_calc_);
     panel_.add(seed_);
     panel_.add(reinit_);
         
@@ -51,7 +51,7 @@ void ofApp::update(){
     
     // DISTRIBUTIONS
     auto num_samples = pow(size_.get(),3);
-    size_calc_ = ofToString(num_samples);
+	size_string_ = "samples per distribution per frame: "s+ofToString(num_samples);
     for (auto & [name, group]: dists_) {
         for (const auto & d: group->dists_) {
             d->clear();
@@ -64,17 +64,18 @@ void ofApp::update(){
 }
 
 void ofApp::draw(){
-    ofClear(20);
     
     auto x =  220;
-    ofDrawBitmapStringHighlight(dna_string_, x, 60);
-    ofDrawBitmapStringHighlight(shuffle_string_, x, 80);
+	ofDrawBitmapStringHighlight(size_string_, x, 40);
+    ofDrawBitmapStringHighlight(dna_string_, x, 80);
+    ofDrawBitmapStringHighlight(shuffle_string_, x, 100);
     
     if (of::random::Engine::instance()->is_deterministic()) {
         ofDrawBitmapStringHighlight("engine is deterministic (seeded)", x, 20, ofColor::black, ofColor::green);
     } else {
         ofDrawBitmapStringHighlight("engine is non-deterministic", x, 20, ofColor::black, ofColor::white);
     }
+
     panel_.draw();
     dists_["core"]->draw("C++ fundamental distributions", square_, gap_);
     dists_["special"]->draw("more specialized distributions", square_, gap_);

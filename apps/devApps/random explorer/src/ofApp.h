@@ -5,14 +5,13 @@
 #include "Dist.hpp"
 
 class ofApp : public ofBaseApp {
-    
+
     ofxPanel panel_;
     std::vector<std::shared_ptr<ofxPanel>> group_panels_;
-    ofParameter<size_t> size_{"size cube root", 25, 1, 50};
-    ofParameter<std::string> size_calc_{"actual num"};
+    ofParameter<size_t> size_{"size (cube root)", 25, 1, 50};
     ofParameter<unsigned long> seed_{"seed", 0, 0, 1000};
     ofParameter<void> reinit_{"re-init engine"};
-    
+
     size_t col_w_ = 640;
     size_t square_ = 110;
     size_t gap_ = 20;
@@ -20,36 +19,37 @@ class ofApp : public ofBaseApp {
     std::array<uint8_t, 8> dna_;
     std::vector<uint8_t> shuffle_{1,2,3,4,5,6,7,8};
     std::string dna_string_;
-    std::string shuffle_string_;
-    
-    ofParameter<float> 		rand_min_	{"min", 0, 0, 100};
-    ofParameter<float> 		rand_max_	{"max", 100, 0, 100};
-    ofParameter<float> 		uni_min_	{"min", 0, 0, 100};
-    ofParameter<float> 		uni_max_	{"max", 100, 0, 100};
-    ofParameter<int> 		uni_int_min_{"min", 1, 0, 9};
-    ofParameter<int> 		uni_int_max_{"max", 6, 1, 10};
-    ofParameter<float>      norm_mean_  {"mean", 100, 0, 200};
-    ofParameter<float>      norm_dev_   {"stddev", 20, 0, 50};
-    ofParameter<float>      log_mean_   {"mean", 1.6, 0, 5};
-    ofParameter<float>      log_dev_    {"stddev", 0.25, 0, 10};
-    ofParameter<float> 		bn_min_		{"min", 35, 0, 200};
-    ofParameter<float> 		bn_max_		{"max", 165, 0, 200};
-    ofParameter<float> 		bn_focus_	{"focus", 1.75, 0.01, 20};
-    ofParameter<float> 		gamma_alpha_{"alpha", 3, 1, 20};
-    ofParameter<float> 		gamma_beta_	{"beta", 5, 0, 50};
-    ofParameter<float> 		poiss_mean_	{"mean", 4, 0, 20};
-    ofParameter<float> 		exp_lambda_	{"lambda", .1, 0.01, 0.5};
-    ofParameter<glm::vec2> 	vec_min_	{"min", {40,10}, {0,0}, {200,200}};
-    ofParameter<glm::vec2> 	vec_max_	{"max", {60,90}, {0,0}, {200,200}};
-    ofParameter<glm::vec2> 	vec_mean_	{"mean", {50,50}, {0,0}, {100,100}};
-    ofParameter<glm::vec2> 	vec_dev_	{"stddev", {50,15}, {0,0}, {50,50}};
-    ofParameter<float> 		vec_gamma_a_{"alpha", 1.5, 1, 20};
-    ofParameter<float>      vec_gamma_b_{"beta", 10, 0, 50};
-    ofParameter<float>      yes_        {"yes", .33, 0, 1};
-    ofParameter<int>        bin_p_      {"p", 5, 0, 40};
-    ofParameter<float>      bin_t_      {"t", .5, 0, .99};
-    ofParameter<float>      chi_n_      {"freedom", 4, 0, 10};
-    
+	std::string shuffle_string_;
+	std::string size_string_;
+
+    ofParameter<float> 		rand_min_		{"min", 0, 0, 100};
+    ofParameter<float> 		rand_max_		{"max", 100, 0, 100};
+    ofParameter<float> 		uni_min_		{"min", 0, 0, 100};
+    ofParameter<float> 		uni_max_		{"max", 100, 0, 100};
+    ofParameter<int> 		uni_int_min_	{"min", 1, 0, 9};
+    ofParameter<int> 		uni_int_max_	{"max", 6, 1, 10};
+    ofParameter<float>      norm_mean_  	{"mean", 100, 0, 200};
+    ofParameter<float>      norm_dev_   	{"stddev", 20, 0, 50};
+    ofParameter<float>      log_mean_   	{"mean", 1.6, 0, 5};
+    ofParameter<float>      log_dev_    	{"stddev", 0.25, 0, 10};
+    ofParameter<float> 		bn_min_			{"min", 35, 0, 200};
+    ofParameter<float> 		bn_max_			{"max", 165, 0, 200};
+    ofParameter<float> 		bn_focus_		{"focus", 1.75, 0.01, 20};
+    ofParameter<float> 		gamma_alpha_	{"alpha", 3, 1, 20};
+    ofParameter<float> 		gamma_beta_		{"beta", 5, 0, 50};
+    ofParameter<float> 		poiss_mean_		{"mean", 4, 0, 20};
+    ofParameter<float> 		exp_lambda_		{"lambda", .1, 0.01, 0.5};
+    ofParameter<glm::vec2> 	vec_min_		{"min", {40,10}, {0,0}, {200,200}};
+    ofParameter<glm::vec2> 	vec_max_		{"max", {60,90}, {0,0}, {200,200}};
+    ofParameter<glm::vec2> 	vec_mean_		{"mean", {50,50}, {0,0}, {100,100}};
+    ofParameter<glm::vec2> 	vec_dev_		{"stddev", {50,15}, {0,0}, {50,50}};
+    ofParameter<float> 		vec_gamma_a_	{"alpha", 1.5, 1, 20};
+    ofParameter<float>      vec_gamma_b_	{"beta", 10, 0, 50};
+    ofParameter<float>      yes_        	{"yes", .33, 0, 1};
+    ofParameter<int>        bin_p_      	{"p", 5, 0, 40};
+    ofParameter<float>      bin_t_      	{"t", .5, 0, .99};
+    ofParameter<float>      chi_n_      	{"freedom", 4, 0, 10};
+
     std::map<std::string, std::shared_ptr<DistGroup>> dists_ {
         {
             "old", std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>>  {
@@ -69,8 +69,8 @@ class ofApp : public ofBaseApp {
                                                     { return of::random::uniform<int>(uni_int_min_, uni_int_max_); }, 11, glm::vec2{0,  10}, true),
                 
                 std::make_shared<ConcreteDist<float>>("normal", "aliased to of::random::gaussian", "gaussian_distribution",
-                                                      std::vector<ofAbstractParameter *>{&norm_mean_, &norm_dev_},[&]
-                                                      { return of::random::normal<float>(norm_mean_, norm_dev_); }, 201, glm::vec2{0, 200}),
+                                                      std::vector<ofAbstractParameter *>{&norm_mean_, &norm_dev_}, [&]
+                                                      { return of::random::normal<float>(norm_mean_, norm_dev_); }, 201, glm::vec2{0, 200} ),
                 
                 std::make_shared<ConcreteDist<float>>("exponential", "all in the title", "exponential_distribution",
                                                       std::vector<ofAbstractParameter *>{&exp_lambda_}, [&]
@@ -134,7 +134,7 @@ public:
         for (size_t i = 0; i < dna_.size(); i++) {
             dna_[i] = of::random::uniform<uint8_t>(0,255);
             dna_string_ += ofToUpper(ofToHex(dna_[i])) + " ";
-        };
+        }
         
         shuffle_string_= "2. shuffled vector: ";
         shuffle_ = { 1,2,3,4,5,6,7,8 }; // initial order
