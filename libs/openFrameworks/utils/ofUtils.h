@@ -1071,8 +1071,10 @@ ofTargetPlatform ofGetTargetPlatform();
 /// \brief Get the value of a given environment variable.
 ///
 /// \note The available environment variables differ between operating systems.
-/// \returns the environmnt variable's value or an empty string if not found.
-std::string ofGetEnv(const std::string & var);
+/// \param var the environment variable name.
+/// \param defaultValue the value to return if the environment variable is not set. defaults to empty string.
+/// \returns the environmnt variable's value or the provided default value if not found.
+std::string ofGetEnv(const std::string & var, const std::string defaultValue = "");
 
 /// \brief Iterate through each Unicode codepoint in a UTF8-encoded std::string.
 ///
