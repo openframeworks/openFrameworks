@@ -6,9 +6,9 @@
 
 struct Dist {
     
-    inline static string base_url_ { "https://en.cppreference.com/w/cpp/numeric/random/" };
+    inline static string base_url_{ "https://en.cppreference.com/w/cpp/numeric/random/" };
     string url_;
-    ofParameterGroup parameters_;
+	ofParameterGroup parameters_;
     ofColor color_ {128,128,128};
     std::string info_;
     glm::vec2 range_ { };
@@ -34,6 +34,8 @@ struct ConcreteDist: public Dist {
     std::function<T()> gen_;
     std::vector<T> bins_;
     int autorot_ { 0 };
+	
+	ofParameter<void> url_button_;
 
     ConcreteDist(std::string label,
                  std::string info,
@@ -45,15 +47,26 @@ struct ConcreteDist: public Dist {
                  bool discrete = false )
     : gen_(gen)
     {
-        url_ = url;
+        url_ = base_url_+url;
         info_ = info;
         range_ = range;
         discrete_ = discrete;
         bins_.resize(num_bins);
         parameters_.setName(label);
         for (auto & p: params) parameters_.add(*p);
+		url_button_.set("click for reference");
+		url_button_.addListener(this, &ConcreteDist::open_url);
+		parameters_.add(url_button_);
+		
+		//panel_.getControl("seed")->setTextColor(ofColor::green);
+
+
     }
     
+	auto open_url() {
+		ofLaunchBrowser(url_);
+	}
+	
     auto gen() -> void override {
         data_.push_back(gen_());
     }
@@ -63,7 +76,6 @@ struct ConcreteDist: public Dist {
         underflow_ = 0;
         data_.clear();
         std::fill(bins_.begin(), bins_.end(), T{0});
-        max_ = 0;
     }
     
     auto compile() -> void override {
@@ -78,10 +90,16 @@ struct ConcreteDist: public Dist {
                     overflow_++;
                 } else {
                     bins_.at(v) = bins_.at(v)+1;
-                    if (bins_.at(v) > max_) max_ = bins_.at(v);
                 }
             }
-        }
+
+			max_ = 0.0;
+			for (size_t i=0;i<bins_.size(); i++) {
+				if (bins_.at(i) > max_) max_ = bins_.at(i);
+			}
+		} else {
+			// no histograms for vecN
+		}
     }
     
     auto draw(float x, float y, float w, float h) -> void override {
@@ -104,7 +122,7 @@ struct ConcreteDist: public Dist {
             if constexpr (std::is_arithmetic_v<T>) {
 
                 auto p = 0.0f;
-                auto incr = w/bins_.size();
+                double incr = w/bins_.size();
                 auto fact = h/max_;
                 if (discrete_) {
                     
@@ -128,6 +146,8 @@ struct ConcreteDist: public Dist {
                     line.addVertex(0,h-bins_[0]*fact);
                     for (auto y: bins_) line.lineTo(p+=incr, h-float(y)*fact);
                     line.draw();
+					ofDrawBitmapString(ofToString(max_)+" "+ofToString(incr), 10,10);
+
                 }
                 
             } else if constexpr (std::is_same_v<T, glm::vec2>) {
@@ -150,7 +170,9 @@ struct ConcreteDist: public Dist {
                     prim.drawAxes(w * 0.5);
                 }
                 ofPopMatrix();
-            }
+			} else {
+				ofDrawBitmapString("unsupported visualisation", 10,10);
+			}
         }
         ofPopMatrix();
         ofPopStyle();

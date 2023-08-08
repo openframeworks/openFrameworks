@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "Dist.hpp"
+#include "OKColor.h"
 
 class ofApp : public ofBaseApp {
 
@@ -11,6 +12,10 @@ class ofApp : public ofBaseApp {
     ofParameter<size_t> size_{"size (cube root)", 25, 1, 50};
     ofParameter<unsigned long> seed_{"seed", 0, 0, 1000};
     ofParameter<void> reinit_{"re-init engine"};
+	ofParameter<bool> ok_color_{"ok_color"};
+	ofParameter<float> saturation_{"saturation", 0.9};
+	ofParameter<float> value_{"value", .25};
+	ofParameter<float> offset_{"offset", 0};
 
     size_t col_w_ = 640;
     size_t square_ = 110;
@@ -60,17 +65,17 @@ class ofApp : public ofBaseApp {
         }, {
             "core", std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>>  {
                 
-                std::make_shared<ConcreteDist<float>>("uniform <real>", "modern, thread safe\nright bound improbable", "uniform_distribution",
+                std::make_shared<ConcreteDist<float>>("uniform <real>", "modern, thread safe\nright bound improbable", "uniform_real_distribution",
                                                       std::vector<ofAbstractParameter *>{&uni_min_, &uni_max_}, [&]
                                                       { return of::random::uniform<float>(uni_min_, uni_max_); }),
                 
-                std::make_shared<ConcreteDist<int>>("uniform <int>", "unambiguously\nincludes bounds", "uniform_distribution",
+                std::make_shared<ConcreteDist<int>>("uniform <int>", "unambiguously\nincludes bounds", "uniform_int_distribution",
                                                     std::vector<ofAbstractParameter *>{&uni_int_min_, &uni_int_max_}, [&]
                                                     { return of::random::uniform<int>(uni_int_min_, uni_int_max_); }, 11, glm::vec2{0,  10}, true),
                 
-                std::make_shared<ConcreteDist<float>>("normal", "aliased to of::random::gaussian", "gaussian_distribution",
+                std::make_shared<ConcreteDist<double>>("normal", "also aliased to random::gaussian\for stochastic familiarity", "normal_distribution",
                                                       std::vector<ofAbstractParameter *>{&norm_mean_, &norm_dev_}, [&]
-                                                      { return of::random::normal<float>(norm_mean_, norm_dev_); }, 201, glm::vec2{0, 200} ),
+                                                      { return of::random::normal<double>(norm_mean_, norm_dev_); }, 101, glm::vec2{0, 200} ),
                 
                 std::make_shared<ConcreteDist<float>>("exponential", "all in the title", "exponential_distribution",
                                                       std::vector<ofAbstractParameter *>{&exp_lambda_}, [&]
@@ -97,7 +102,7 @@ class ofApp : public ofBaseApp {
                 
                 std::make_shared<ConcreteDist<float>>("chi-squared", "cool energy bulge", "chi_squared_distribution",
                                                       std::vector<ofAbstractParameter *>{&chi_n_}, [&]
-                                                      { return of::random::chi_squared<float>(chi_n_);}, 201, glm::vec2{0,  20} ),
+                                                      { return of::random::chi_squared<float>(chi_n_);}, 101, glm::vec2{0,  20} ),
                 
                 std::make_shared<ConcreteDist<int>>("binomial", "~normal for ints\nsquashes nicely on zero", "binomial_distribution",
                                                     std::vector<ofAbstractParameter *>{&bin_p_, &bin_t_}, [&]
@@ -109,26 +114,25 @@ class ofApp : public ofBaseApp {
         }, {
             "of", std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>>  {
                 
-                std::make_shared<ConcreteDist<float>>("bound normal", "practical min/max\nwith enforced limits\n(allows to \"focus\")", "normal_distribution",
+                std::make_shared<ConcreteDist<float>>("bound normal", "practical min/max\nwith enforced limits\n(allows to \"focus\")\nintuitiver", "normal_distribution",
                                                       std::vector<ofAbstractParameter *>{&bn_min_, &bn_max_, &bn_focus_}, [&]
-                                                      { return ofRandomNormalLimits<int>(bn_min_, bn_max_, bn_focus_); }, 201, glm::vec2{0, 200}),
+                                                      { return ofRandomBoundNormal<int>(bn_min_, bn_max_, bn_focus_); }, 101, glm::vec2{0, 200}),
                 
-                std::make_shared<ConcreteDist<glm::vec2>>("vec2 uniform/axis", "all generators can\nbe typed vec2, 3 or 4", "uniform_distribution",
+                std::make_shared<ConcreteDist<glm::vec2>>("vec2 uniform/axis", "all generators can\nbe typed vec2, 3 or 4", "uniform_int_distribution",
                                                           std::vector<ofAbstractParameter *>{&vec_min_, &vec_max_}, [&]
-                                                          { return of::random::uniform<glm::vec2>(vec_min_, vec_max_); }, 201, glm::vec2{0, 200}),
+                                                          { return of::random::uniform<glm::vec2>(vec_min_, vec_max_); }, 101, glm::vec2{0, 200}),
                 
                 std::make_shared<ConcreteDist<glm::vec2>>("vec2 normal/axis", "vecN version can be\nrefined to vecN axis", "normal_distribution",
                                                           std::vector<ofAbstractParameter *>{&vec_mean_, &vec_dev_}, [&]
-                                                          { return of::random::gaussian<glm::vec2>(vec_mean_, vec_dev_); }, 201, glm::vec2{0, 200}),
+                                                          { return of::random::gaussian<glm::vec2>(vec_mean_, vec_dev_); }, 101, glm::vec2{0, 200}),
                 
                 std::make_shared<ConcreteDist<glm::vec3>>("vec3 gamma", "", "gamma_distribution",
                                                           std::vector<ofAbstractParameter *>{&vec_gamma_a_, &vec_gamma_b_}, [&]
-                                                          { return of::random::gamma<glm::vec3>(vec_gamma_a_, vec_gamma_b_); }, 201, glm::vec2{0, 200} ) } )
+                                                          { return of::random::gamma<glm::vec3>(vec_gamma_a_, vec_gamma_b_); }, 101, glm::vec2{0, 200} ) } )
         }
     };
     
 public:
-    
     auto rebuild_signatures() {
         dna_string_= "1. first 8 numbers: ";
         for (size_t i = 0; i < dna_.size(); i++) {
@@ -158,6 +162,34 @@ public:
         panel_.getControl("seed")->setTextColor(ofColor::gray);
     }
     
+	auto colorize() {
+		
+		size_t sum = 0;
+		for (auto& group : {dists_["core"], dists_["special"], dists_["of"]}) sum+=group->dists_.size();
+		auto chunk = 255.0/sum;
+		
+		size_t i = 0; // to spread the hue; order below matters
+		for (auto & group:  {dists_["core"], dists_["special"], dists_["of"], dists_["old"]} ) {
+			for (auto & dist: group->dists_) {
+				if (i>=sum) {
+					dist->color_ = {48,48,48,255}; // sad
+				} else {
+					if (ok_color_) {
+						auto color = OKColor::okhsv_to_srgb({float(fmod((((chunk * i++)/256.0f)+offset_),1)), saturation_.get(), value_.get()});
+						dist->color_=ofColor(color.r*255.0, color.g*255.0, color.b*255.0);
+					} else {
+						dist->color_.setHsb(int((chunk * i++) + (offset_*255))%255, saturation_*255.0, value_*255.0);
+					}
+				}
+				group->panel_.getGroup(dist->parameters_.getName()).setHeaderBackgroundColor(dist->color_);
+			}
+		}
+	}
+	
+	auto colorize_float(float & v) { colorize(); } // for non-bool ofParameters
+	auto colorize_bool(bool & v) { colorize(); } // for non-bool for ofParameters
+
+	
     void setup() override;
     void update() override;
     void draw() override;
