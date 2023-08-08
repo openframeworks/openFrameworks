@@ -412,20 +412,34 @@ void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
-	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
-	vector<unsigned long> buffer(length);
-	buffer[0]=iconPixels.getWidth();
-	buffer[1]=iconPixels.getHeight();
-	for(size_t i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
-		buffer[i+2]  = iconPixels[i*4+3]<<24;
-		buffer[i+2] += iconPixels[i*4+0]<<16;
-		buffer[i+2] += iconPixels[i*4+1]<<8;
-		buffer[i+2] += iconPixels[i*4+2];
+	
+	// make sure we have a RGBA image
+	auto rgbaIcon = ofPixels(iconPixels);
+	rgbaIcon.setImageType(OF_IMAGE_COLOR_ALPHA);
+	if(rgbaIcon.getPixelFormat()==OF_PIXELS_BGRA){
+		rgbaIcon.swapRgb();
 	}
-
-	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
-	                     PropModeReplace,  (const unsigned char*)buffer.data(),  length);
-	XFlush(getX11Display());
+	// build a list of icon with different sizes
+	const std::vector<int> iconSizes{16,32,48,256};
+	std::vector<ofPixels> iconList;
+	for(auto iconSize : iconSizes){
+		iconList.emplace_back(ofPixels(rgbaIcon));
+		iconList.back().resize(iconSize,iconSize,OF_INTERPOLATE_BICUBIC);
+	}
+	// convert iconlist to GLFWimage array
+	std::vector<GLFWimage> glfwIcons;
+	for(auto resizedIcon : iconList){
+		int w=resizedIcon.getWidth();
+		int h=resizedIcon.getHeight();
+		glfwIcons.emplace_back(GLFWimage{w,h,static_cast<unsigned char*>(malloc(w*h*4))});
+		std::memcpy(glfwIcons.back().pixels, resizedIcon.getData(), w*h*4);
+	}
+	// set icon(s) on window
+	glfwSetWindowIcon(windowP, iconSizes.size(), glfwIcons.data());
+	// cleanup
+	for(auto icon : glfwIcons){
+		free(icon.pixels);
+	}
 }
 
 //--------------------------------------------
