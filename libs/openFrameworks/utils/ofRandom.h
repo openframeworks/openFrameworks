@@ -107,14 +107,14 @@ uniform(T min, T max) {
 
 template<typename T = float>
 std::enable_if_t<std::is_arithmetic_v<T>, T>
-normal(double mean, double stddev) {
-	return std::normal_distribution{mean, stddev}(of::random::gen());
+normal(T mean, T stddev) {
+	return std::normal_distribution<T>{mean, stddev}(of::random::gen());
 }
 
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-normal(double mean, double stddev) {
-	std::normal_distribution dist(mean, stddev);
+normal(float mean, float stddev) {
+	std::normal_distribution<float> dist(mean, stddev);
 	return {
 		dist(of::random::gen()),
 		dist(of::random::gen())
@@ -125,15 +125,15 @@ template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
 normal(T mean, T stddev) {
 	return {
-		std::normal_distribution{mean.x, stddev.x}(of::random::gen()),
-		std::normal_distribution{mean.y, stddev.y}(of::random::gen())
+		std::normal_distribution<float>{mean.x, stddev.x}(of::random::gen()),
+		std::normal_distribution<float>{mean.y, stddev.y}(of::random::gen())
 	};
 }
 
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-normal(double mean, double stddev) {
-	std::normal_distribution dist(mean, stddev);
+normal(float mean, float stddev) {
+	std::normal_distribution<float> dist(mean, stddev);
 	return {
 		dist(of::random::gen()),
 		dist(of::random::gen()),
@@ -145,9 +145,9 @@ template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
 normal(T mean, T stddev) {
 	return {
-		std::normal_distribution{mean.x, stddev.x}(of::random::gen()),
-		std::normal_distribution{mean.y, stddev.y}(of::random::gen()),
-		std::normal_distribution{mean.z, stddev.z}(of::random::gen())
+		std::normal_distribution<float>{mean.x, stddev.x}(of::random::gen()),
+		std::normal_distribution<float>{mean.y, stddev.y}(of::random::gen()),
+		std::normal_distribution<float>{mean.z, stddev.z}(of::random::gen())
 	};
 }
 
@@ -700,64 +700,6 @@ template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
 ofRandomBoundNormal(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
     return of::random::bound_normal(min, max, focus);
-}
-
-// MARK: - PRACTICAL WRAPPERS
-
-template<class T = float> // works for all non-refined
-T ofRandomNormalLimits(float min, float max, float focus = 4.0f) {
-	if (min >= max) {
-		std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
-		return {};
-	} else {
-		if (focus <= .0099) {
-			std::cout << "ofRandomNormalLimits()" << "focus must be at least .01\n";
-			return {};
-		} else {
-			T v;
-			do { v = of::random::normal<T>((max+min)/2.0f, (max-min)/(2*focus)); } while (v < min || v > max);
-			return v;
-		}
-	}
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-ofRandomNormalLimits(T min, T max, T focus = {4.0f, 4.0f}) {
-	if (!min.x < max.x || !min.y < max.y) {
-		std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
-		return {};
-	} else {
-		if (focus.x < 1 || focus.y < 1 ) {
-			std::cout << "ofRandomNormalLimits()" << "focus must be at least 1\n";
-			return {};
-		} else {
-			T v;
-			do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
-			do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
-			return v;
-		}
-	}
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-ofRandomNormalLimits(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
-	if (!min.x < max.x || !min.y < max.y || !min.z < max.z) {
-		std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
-		return {};
-	} else {
-		if (focus.x < 1 || focus.y < 1 || focus.z < 1) {
-			std::cout << "ofRandomNormalLimits()" << "focus must be at least 1\n";
-			return {};
-		} else {
-			T v;
-			do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
-			do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
-			do { v.z = of::random::normal<float>((max.z+min.z)/2.0f, (max.z-min.z)/(2*focus.z)); } while (v.z < min || v.z > max);
-			return v;
-		}
-	}
 }
 
 } // end anonymous namespace
