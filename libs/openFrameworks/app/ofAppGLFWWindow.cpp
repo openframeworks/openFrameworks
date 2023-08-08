@@ -6,9 +6,11 @@
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
+#include "ofIcon.h"
+#include "ofImage.h"
 #ifdef TARGET_LINUX
-    #include "ofIcon.h"
-    #include "ofImage.h"
+    
+    
     #define GLFW_EXPOSE_NATIVE_X11
     #ifndef TARGET_OPENGLES
         #define GLFW_EXPOSE_NATIVE_GLX
@@ -294,7 +296,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			}
 			glfwGetWindowSize( windowP, &currentW, &currentH );
 		}
-        #ifdef TARGET_LINUX
+        
 		    if(!iconSet){
 				ofPixels iconPixels;
                 #ifdef DEBUG
@@ -306,8 +308,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
                 #endif
 				setWindowIcon(iconPixels);
 			}
-        #endif
-		if(settings.iconified){
+        if(settings.iconified){
 			iconify(true);
 		}
 	}
@@ -401,7 +402,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 #endif
 }
 
-#ifdef TARGET_LINUX
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 	ofPixels iconPixels;
@@ -427,7 +427,6 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	                     PropModeReplace,  (const unsigned char*)buffer.data(),  length);
 	XFlush(getX11Display());
 }
-#endif
 
 //--------------------------------------------
 ofCoreEvents & ofAppGLFWWindow::events(){
