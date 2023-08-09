@@ -178,7 +178,7 @@ else
 	PLATFORM_LIBRARIES += brcmEGL
 endif
 
-PLATFORM_LIBRARIES += openmaxil
+#PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm

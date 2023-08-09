@@ -41,7 +41,6 @@ jobs:
             ./scripts/linux/debian/install_dependencies.sh -y
             echo "3 - install omx"
             apt-get -y install gstreamer1.0-omx
-            apt-get -y install libomxil-bellagio-dev
             echo "4 - build";
             ./scripts/ci/$TARGET/build-arm-runner.sh;
 
