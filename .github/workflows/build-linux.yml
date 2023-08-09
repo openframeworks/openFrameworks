@@ -30,8 +30,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: pguyot/arm-runner-action@v2
-      base_image: raspios_lite:2022-04-04
+      id: build_image
       with:
+        base_image: raspios_lite:2022-04-04
         commands: |
             echo "1 - download libs";
             ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
