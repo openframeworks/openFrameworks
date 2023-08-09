@@ -33,7 +33,7 @@ jobs:
       id: build_image
       with:
         base_image: raspios_lite:2022-04-04
-        image_additional_900
+        image_additional_mb: 900
         commands: |
             echo "1 - download libs";
             ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
