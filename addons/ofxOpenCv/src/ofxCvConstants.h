@@ -8,7 +8,13 @@
 #endif 
 #ifdef MAX 
 	#undef MAX 
-#endif 
+#endif
+
+//fix for X11 Status clash with OpenCV2 Stitching.hpp
+#ifdef Status
+    #define Status_Save Status
+    #undef Status
+#endif
 
 #include "opencv2/core/version.hpp"
 #if CV_MAJOR_VERSION < 4
@@ -26,3 +32,7 @@ enum ofxCvRoiMode {
     OFX_CV_ROI_MODE_INTERSECT,
     OFX_CV_ROI_MODE_NONINTERSECT
 };
+
+#ifdef Status_Save
+    #define Status Status_Save
+#endif
