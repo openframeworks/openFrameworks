@@ -38,7 +38,7 @@ jobs:
             echo "1 - download libs";
             ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
             echo "2 - install deps"
-            ./scripts/linux/debian/install_dependencies.sh
+            ./scripts/linux/debian/install_dependencies.sh -y
             echo "3 - build";
             ./scripts/ci/$TARGET/build-arm-runner.sh;
 #    - name: Download libs
