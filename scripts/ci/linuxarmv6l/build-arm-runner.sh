@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev
 pwd
-OF_ROOT=$( cd "$(dirname "$0")" ; pwd -P )
+OF_ROOT=/home/actions/temp/arm-runner/mnt/openFrameworks
 PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
 # source $OF_ROOT/scripts/ci/ccache.sh
 
