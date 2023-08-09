@@ -10,23 +10,16 @@ PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
 # the "proper" way does not work currently:
 export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
 
-echo "**** Building OF core ****"
-cd $OF_ROOT
-# this carries over to subsequent compilations of examples
-sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" $PROJECTS/makefileCommon/config.linux.common.mk
-cd $PROJECTS
-make Debug -j2
-
 echo "**** Building emptyExample ****"
 cd $OF_ROOT/scripts/templates/linuxarmv6l
-make Debug -j2
+make Debug -j3
 
 echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
 cp scripts/templates/linuxarmv6l/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linuxarmv6l/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-make Debug -j2
+make Debug -j3
 
 git checkout $PROJECTS/makefileCommon/config.linux.common.mk
 git checkout $PROJECTS/linuxarmv6l/config.linuxarmv6l.default.mk
