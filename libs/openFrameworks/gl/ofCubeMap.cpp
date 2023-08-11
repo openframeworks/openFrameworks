@@ -12,6 +12,7 @@
 #include "ofGLUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofCubeMapShaders.h"
+#include "ofFbo.h"
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
@@ -31,6 +32,9 @@ ofVboMesh ofCubeMap::sCubeMesh;
 ofShader ofCubeMap::shaderBrdfLUT;
 ofTexture ofCubeMap::sBrdfLutTex;
 
+void ofCubeMap::setExposure(float aExposure) {
+	data->exposure=ofClamp(aExposure, 0.0f, 1.0f);
+}
 
 // texture management copied from ofTexture
 static std::map<GLuint,int> & getTexturesIndex(){

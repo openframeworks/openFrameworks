@@ -2,6 +2,7 @@
 
 #include "ofFileUtils.h"
 #include "ofConstants.h"
+#include "ofUtils.h" // ofVAArgsToString
 #include <sstream>
 
 /// \file
