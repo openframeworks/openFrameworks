@@ -10,11 +10,11 @@
 
 #include <random>
 #include <sstream>
-//#include <bitset> // For ofToBinary.
-//#include <chrono>
-//#include <iomanip>  //for setprecision
-//#include <algorithm>
-//#include <type_traits>
+#include <bitset> // For ofToBinary.
+#include <chrono>
+#include <iomanip>  //for setprecision
+#include <algorithm>
+#include <type_traits>
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
