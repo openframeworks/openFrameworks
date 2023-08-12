@@ -7,14 +7,13 @@
 #else
 	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
 #endif
-
-#include <random>
-#include <sstream>
 #include <bitset> // For ofToBinary.
 #include <chrono>
 #include <iomanip>  //for setprecision
 #include <algorithm>
+#include <sstream>
 #include <type_traits>
+#include <random>
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
