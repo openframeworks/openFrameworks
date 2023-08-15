@@ -56,9 +56,7 @@
 using std::vector;
 using std::string;
 using std::setfill;
-
-#include "ofRandom.h"
-
+    
 namespace of{
 namespace priv{
 	void initutils(){
