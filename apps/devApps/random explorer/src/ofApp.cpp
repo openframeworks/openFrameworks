@@ -1,9 +1,9 @@
 #include "ofApp.h"
-#include "ofRandom.h"
+#include "ofRandomEngine.h"
+#include "ofRandomDistributions.h"
 
 void ofApp::setup(){
     
-	
     ofSetWindowShape(1920,1000);
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     ofSetWindowTitle("Random Explorer");

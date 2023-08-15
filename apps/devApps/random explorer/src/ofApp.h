@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofRandomDistributions.h"
 #include "ofxGui.h"
 #include "Dist.hpp"
 #include "OKColor.h"
