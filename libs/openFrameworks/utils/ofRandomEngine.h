@@ -16,18 +16,21 @@ namespace of::random
 /// \class of::random::Engine
 ///
 /// An mt19937 instance wrapped in a singleton, with default non-deterministic seeding
+/// A balance is aimed between ease-of-use, and versatility, and minimize reliance on advanced concepts
+/// (e.g. the lib is templated, but default usage does not require template parameters)
+/// The goal is to have a centralized, thread-safe source of randomness that can be deterministic or not.
 ///
 class Engine: public of::utils::Singleton<Engine> {
     
 	std::random_device rd_{ };
-	std::seed_seq seq_{ rd_(), rd_(), rd_(), rd_() };
+	std::seed_seq seq_{ rd_(), rd_(), rd_(), rd_() }; // 4 is considered fine for non-cryptographic needs
 	std::mt19937 gen_{ seq_ };
-	bool deterministic_{ false };
+	bool deterministic_{ false }; // by default the degine is non-deterministic (unpredictable)
     
 public:
     
     Engine() {
-        ofSeedRandom();
+        ofSeedRandom(); // called to maintain "parallelism" until old-school srand() is phase-out of OF
     }
 
     /// return the generator for use in random distributions or functions
@@ -60,7 +63,7 @@ inline void seed(unsigned long seed) {
 	 of::random::Engine::instance()->seed(seed);
 }
 
-/// Shuffles the passed container, using the centralized random eng
+/// Shuffles the order of the elements within the passed container, using the centralized random engine
 template<class T>
 void shuffle(T & values) {
     std::shuffle(values.begin(), values.end(), of::random::gen());
