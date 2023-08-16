@@ -5,13 +5,18 @@
 #include <glm/glm.hpp>
 
 #include "ofSingleton.hpp"
-
-// https://stackoverflow.com/questions/25360241/using-random-number-generator-multiple-instances-or-singleton-approach
-// https://simplecxx.github.io/2018/11/03/seed-mt19937.html
+#include "ofMath.h"
 
 namespace of::random
 {
 
+// https://stackoverflow.com/questions/25360241/using-random-number-generator-multiple-instances-or-singleton-approach
+// https://simplecxx.github.io/2018/11/03/seed-mt19937.html
+
+/// \class of::random::Engine
+///
+/// An mt19937 instance wrapped in a singleton, with default non-deterministic seeding
+///
 class Engine: public of::utils::Singleton<Engine> {
     
 	std::random_device rd_{ };
@@ -20,28 +25,44 @@ class Engine: public of::utils::Singleton<Engine> {
 	bool deterministic_{ false };
     
 public:
+    
+    Engine() {
+        ofSeedRandom();
+    }
+
+    /// return the generator for use in random distributions or functions
+    ///
+    /// \returns a reference to the mt19937 generator
     auto & gen() { return gen_; }
-	auto seed(unsigned long new_seed) {
+    
+    /// passes a value to seed the mt19937 generator
+	void seed(unsigned long new_seed) {
 		deterministic_ = true;
-        return gen_.seed(new_seed);
+        gen_.seed(new_seed);
 	}
+    
+    /// \returns true or fall depending if the engine is deterministic
     auto is_deterministic() const { return deterministic_; }
 };
 
+/// \returns a reference to the engine singleton instance
 inline auto engine() {
     return of::random::Engine::instance();
 }
 
+/// \returns a reference to the generator within the engine instance
 inline auto & gen() {
-    return of::random::engine()->gen();
+    return of::random::Engine::instance()->gen();
 }
 
-inline auto seed(unsigned long seed) {
-	return of::random::engine()->seed(seed);
+/// Passes a value to seed the mt19937 generator within the ending instance
+inline void seed(unsigned long seed) {
+	 of::random::Engine::instance()->seed(seed);
 }
 
+/// Shuffles the passed container, using the centralized random eng
 template<class T>
-void shuffle(std::vector<T>& values) {
+void shuffle(T & values) {
     std::shuffle(values.begin(), values.end(), of::random::gen());
 }
 
