@@ -221,22 +221,22 @@ int ofGetDay();
 /// \returns the current weekday [0-6].
 int ofGetWeekday();
 
-/// \section Vectors
-/// \brief Randomly reorder the values in a vector.
+/// \section Containers
+/// \brief Randomly reorder the values in a container.
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
-/// \sa http://www.cplusplus.com/reference/algorithm/random_shuffle/
 
 template<class T>
 [[deprecated("use ofShuffle() or of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
 	of::random::shuffle(values);
 }
 
-template<class T>
-void ofShuffle(std::vector<T>& values) {
-	of::random::shuffle(values);
+template<typename ... Args>
+void ofShuffle(Args&&... args) {
+    of::random::shuffle(std::forward<Args>(args)...);
 }
 
+/// \section Vectors
 /// \brief Conditionally remove values from a vector.
 ///
 /// Values are removed if, when passed to the BoolFunction, the BoolFunction
