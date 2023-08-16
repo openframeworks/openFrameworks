@@ -232,9 +232,9 @@ void ofShuffle(Args&&... args) {
 }
 
 /// \section Vectors
-/// \brief Randomly reorder the values in a container.
-/// \tparam T the type of the container.
-/// \param values The container of values to modify.
+/// \brief Randomly reorder the values in a vector.
+/// \tparam T the type contained by the vector.
+/// \param values The vector of values to modify.
 
 template<class T>
 [[deprecated("use ofShuffle() or of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
