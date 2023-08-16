@@ -56,13 +56,12 @@
 using std::vector;
 using std::string;
 using std::setfill;
-    
+
 namespace of{
 namespace priv{
 	void initutils(){
         ofResetElapsedTimeCounter();
-		of::random::Engine::construct();
-        ofSeedRandom();
+        of::random::Engine::construct();
     }
 
 	void endutils(){

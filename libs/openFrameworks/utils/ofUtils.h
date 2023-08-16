@@ -223,13 +223,8 @@ int ofGetWeekday();
 
 /// \section Containers
 /// \brief Randomly reorder the values in a container.
-/// \tparam T the type contained by the vector.
-/// \param values The vector of values to modify.
-
-template<class T>
-[[deprecated("use ofShuffle() or of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
-	of::random::shuffle(values);
-}
+/// \tparam T the type of the container.
+/// \param values The container of values to modify.
 
 template<typename ... Args>
 void ofShuffle(Args&&... args) {
@@ -237,6 +232,15 @@ void ofShuffle(Args&&... args) {
 }
 
 /// \section Vectors
+/// \brief Randomly reorder the values in a container.
+/// \tparam T the type of the container.
+/// \param values The container of values to modify.
+
+template<class T>
+[[deprecated("use ofShuffle() or of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
+    of::random::shuffle(values);
+}
+
 /// \brief Conditionally remove values from a vector.
 ///
 /// Values are removed if, when passed to the BoolFunction, the BoolFunction
