@@ -1,21 +1,22 @@
 #include "ofApp.h"
 
 void ofApp::setup(){
-    ofSetWindowTitle("Random Example");
-    
-    // GUI
+        
     panel_.setup("Engine Seeding");
     panel_.add(seed_);
-    panel_.add(reinit_);
-    seed_.addListener(this, &ofApp::seed);
-    reinit_.addListener(this, &ofApp::reinit);
+    panel_.add(reconstruct_);
     
-    // get things shuffled
-    perform_shuffle();
+    seed_.addListener(this, &ofApp::seed);
+    reconstruct_.addListener(this, &ofApp::reconstruct);
+    
+    // not required but keeps the example together
+    reconstruct();
 }
 
 void ofApp::draw(){
+    
     panel_.draw();
+    
     ofDrawBitmapStringHighlight(shuffled_string_, 230, 80);
     if (of::random::engine()->is_deterministic()) {
         ofDrawBitmapStringHighlight("engine is deterministic (seeded)", 230, 40, ofColor::black, ofColor::green);

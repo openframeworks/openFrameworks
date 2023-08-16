@@ -10,7 +10,7 @@ public:
     ofxPanel panel_;
     std::string shuffled_string_;
     ofParameter<unsigned long> seed_{"seed", 0, 0, 1000};
-    ofParameter<void> reinit_{"re-init engine"};
+    ofParameter<void> reconstruct_{"re-construct engine"};
 
     void setup() override;
     void draw() override;
@@ -18,19 +18,19 @@ public:
     auto perform_shuffle() {
         std::vector<uint8_t> values = { 1, 2, 3, 4, 5, 6, 7, 8 }; // initial order
         ofShuffle(values);
-         shuffled_string_ = "shuffled values:";
+        shuffled_string_ = "shuffled values:";
         for (const auto v: values) {
             shuffled_string_ += " " + ofToUpper(ofToHex(v));
         }
     }
     
     auto seed (unsigned long & seed) {
-        of::random::engine()->seed(seed);
+        of::random::seed(seed);
         perform_shuffle();
         panel_.getControl("seed")->setTextColor(ofColor::green);
     }
     
-    void reinit() {
+    void reconstruct() {
         seed_ = 0;
         of::random::Engine::destruct();
         of::random::Engine::construct(); // from scratch
