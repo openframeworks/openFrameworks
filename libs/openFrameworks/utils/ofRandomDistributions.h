@@ -586,10 +586,10 @@ inline auto ofSetRandomSeed(unsigned long new_seed) {
 
 // again, 2 templates per function, for the convenience of implicit brace init of glm::vec parameters
 
-template<class T, typename ... Args>
+template<class T = float, typename ... Args>
 T ofRandomUniform(Args&&... args) { return of::random::uniform<T>(std::forward<Args>(args)...); }
 
-template<class T>
+template<class T = float>
 T ofRandomUniform(T min, T max) { return of::random::uniform<T>(min, max); }
 
 template<class T, typename ... Args>
