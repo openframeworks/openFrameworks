@@ -1,10 +1,10 @@
 #include "ofApp.h"
 
 void ofApp::setup(){
-    
     ofSetWindowTitle("Random Example");
     
-    panel_.setup();
+    // GUI
+    panel_.setup("Engine Seeding");
     panel_.add(seed_);
     panel_.add(reinit_);
     seed_.addListener(this, &ofApp::seed);
