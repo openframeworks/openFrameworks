@@ -580,10 +580,6 @@ bound_normal(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
 
 namespace {
 
-inline auto ofSetRandomSeed(unsigned long new_seed) {
-    of::random::seed(new_seed);
-}
-
 // again, 2 templates per function, for the convenience of implicit brace init of glm::vec parameters
 
 template<class T = float, typename ... Args>
