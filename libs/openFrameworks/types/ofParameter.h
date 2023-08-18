@@ -603,7 +603,8 @@ private:
 	class Value{
 	public:
 		Value()
-		:min(of::priv::TypeInfo<ParameterType>::min())
+		:init(of::priv::TypeInfo<ParameterType>::min())
+		,min(of::priv::TypeInfo<ParameterType>::min())
 		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){}
@@ -830,7 +831,7 @@ ParameterType ofParameter<ParameterType>::getInit() const {
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::reInit() {
-    set(obj->init);
+    setMethod(obj->init);
 }
 
 template<typename ParameterType>

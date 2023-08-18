@@ -6,8 +6,9 @@
 
 #pragma once
 
-#include "ofFbo.h"
-#include "ofVboMesh.h"
+#include "glm/mat4x4.hpp"
+
+class ofVboMesh;
 
 class ofShader;
 class ofGLProgrammableRenderer;
@@ -16,8 +17,8 @@ class ofCubeMap {
 public:
 	
 	struct ofCubeMapSettings {
-		of::filesystem::path filePath = "";
-		of::filesystem::path cacheDirectory = "";
+		of::filesystem::path filePath { "" };
+		of::filesystem::path cacheDirectory { "" };
 		
 		bool overwriteCache = false;
 		bool useCache = false;
@@ -105,7 +106,7 @@ public:
 	GLuint getTextureId();
 	bool isHdr();
 	
-	void setExposure(float aExposure) {data->exposure=ofClamp(aExposure, 0.0f, 1.0f);}
+	void setExposure(float aExposure);
 	float getExposure() { return data->exposure; }
 	
 	void setUseBrdfLutTexture( bool ab );
