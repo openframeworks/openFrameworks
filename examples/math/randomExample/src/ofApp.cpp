@@ -9,7 +9,6 @@ void ofApp::setup(){
     seed_.addListener(this, &ofApp::seed);
     reconstruct_.addListener(this, &ofApp::reconstruct);
     
-    // not required but keeps the example together
     reconstruct();
 }
 
