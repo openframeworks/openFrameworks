@@ -31,7 +31,7 @@ public:
 	/// for operator= and copy constructor
 	ofxOscReceiver& copy(const ofxOscReceiver &other);
 
-    /// set up the receiver with the port to listen for messages through any interface on the given port
+    /// set up the receiver to listen for messages through any hosts on the given port
     /// and start listening
     ///
     /// multiple receivers can share the same port if port reuse is
@@ -40,7 +40,7 @@ public:
     /// \return true if listening started
     bool setup(int port) { return setup( "0.0.0.0", port); }
     
-    /// set up the receiver with the specific host/ip to listen for messages on
+    /// set up the receiver to listen for messages on the specific host/ip
     /// and start listening
     ///
     /// multiple receivers can share the same port if port reuse is
