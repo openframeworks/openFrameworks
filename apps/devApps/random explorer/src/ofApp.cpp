@@ -12,10 +12,11 @@ void ofApp::setup(){
     panel_.add(size_);
     panel_.add(seed_);
 	panel_.add(reinit_);
-	panel_.add(ok_color_);
-	panel_.add(saturation_);
-	panel_.add(value_);
-	panel_.add(offset_);
+    
+//	panel_.add(ok_color_);
+//	panel_.add(saturation_);
+//	panel_.add(value_);
+//	panel_.add(offset_);
 	
 	for (auto & [name, group]: dists_) {
 		group->panel_.setup();
@@ -28,7 +29,7 @@ void ofApp::setup(){
 	
 	colorize();
     
-    auto y = panel_.getPosition().y + panel_.getHeight() + 50;
+    auto y = panel_.getPosition().y + panel_.getHeight() + 120;
 
     dists_["core"]->panel_.setPosition(10,y);
     dists_["special"]->panel_.setPosition(10+col_w_,y);
