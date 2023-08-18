@@ -223,8 +223,8 @@ int ofGetWeekday();
 
 /// \section Containers
 /// \brief Randomly reorder the values in a container.
-/// \tparam T the type of the container.
-/// \param values The container of values to modify.
+/// \tparam T Any container that meets std::shuffle's requirements
+/// which are: ValueSwappable and LegacyRandomAccessIterator.
 
 template<typename ... Args>
 void ofShuffle(Args&&... args) {
