@@ -503,7 +503,7 @@ auto yes(Args&&... args) -> decltype(bernoulli(std::forward<Args>(args)...)) {
   return bernoulli(std::forward<Args>(args)...);
 }
 
-// whilst nerdy enough, the above does not work with {initializer list} for glm::vec parameters such as:
+// whilst nerdy enough, the above do not work with {initializer list} for glm::vec parameters such as:
 // of::random::gaussian<glm::vec2>({0,10},{1,100});
 // so this additional explicit nerdiness is required to wrap them:
 
