@@ -36,7 +36,6 @@ void ofSeedRandom() {
 
 //--------------------------------------------------
 void ofSetRandomSeed(unsigned long new_seed) {
-    srand(long(new_seed)); // temporary
     of::random::seed(new_seed);
 }
 
