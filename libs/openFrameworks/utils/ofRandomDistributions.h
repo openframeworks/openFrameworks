@@ -4,8 +4,6 @@
 #include <random>
 #include <glm/glm.hpp>
 
-#include "ofRandomEngine.h"
-
 // https://gist.github.com/imneme/540829265469e673d045
 // https://github.com/effolkronium/random/tree/master
 // https://www.theanalysisfactor.com/differences-between-normal-and-poisson-distributions

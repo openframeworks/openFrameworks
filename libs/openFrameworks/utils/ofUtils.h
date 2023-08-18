@@ -16,6 +16,7 @@
 #include <random>
 
 #include "ofRandomEngine.h"
+#include "ofRandomDistributions.h"
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
