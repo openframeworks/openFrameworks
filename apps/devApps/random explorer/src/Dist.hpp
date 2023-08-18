@@ -146,8 +146,6 @@ struct ConcreteDist: public Dist {
                     line.addVertex(0,h-bins_[0]*fact);
                     for (auto y: bins_) line.lineTo(p+=incr, h-float(y)*fact);
                     line.draw();
-					ofDrawBitmapString(ofToString(max_)+" "+ofToString(incr), 10,10);
-
                 }
                 
             } else if constexpr (std::is_same_v<T, glm::vec2>) {
