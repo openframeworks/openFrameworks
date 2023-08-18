@@ -237,7 +237,7 @@ void ofShuffle(Args&&... args) {
 /// \param values The vector of values to modify.
 
 template<class T>
-[[deprecated("use ofShuffle() or of::random::shuffle()")]] void ofRandomize(std::vector<T>& values) {
+void ofRandomize(std::vector<T>& values) {
     of::random::shuffle(values);
 }
 
