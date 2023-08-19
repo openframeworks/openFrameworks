@@ -310,17 +310,9 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
     #endif
 
 #ifdef TARGET_LINUX
-    if(!iconSet){
-		ofPixels iconPixels;
-		#ifdef DEBUG
-			iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-		#else
-			iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-		#endif
-		setWindowIcon(iconPixels);
-    }
+	if(!iconSet){
+		setWindowIcon(getIcon());
+	}
 #endif
 	if (settings.isPositionSet()) {
 		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
