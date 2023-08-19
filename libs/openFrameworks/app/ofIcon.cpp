@@ -5742,7 +5742,7 @@ const ofPixels getIcon(){
 		if(hIcon){
 			ICONINFO iconinfo;
 			GetIconInfo(hIcon, &iconinfo);
-			if(iconinfo.fIcon==true){
+			if(!(iconinfo.fIcon)){
 				if(iconinfo.hbmColor){
 					//Copy color icon in bitmap
 					auto hBmp = (HBITMAP)CopyImage(iconinfo.hbmColor, IMAGE_BITMAP, 0, 0,  LR_CREATEDIBSECTION);
@@ -5762,7 +5762,7 @@ const ofPixels getIcon(){
 					ofLogWarning()<<"Monochrome icons not supported yet";
 				}
 			}
-			DeleteObject(iconinfo.hbmColor);
+			if(iconinfo.hbmColor) DeleteObject(iconinfo.hbmColor);
 			DeleteObject(iconinfo.hbmMask);
 			DestroyIcon(hIcon);
 		}
