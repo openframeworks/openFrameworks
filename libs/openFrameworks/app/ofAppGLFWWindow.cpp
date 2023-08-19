@@ -151,7 +151,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(windowP){
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
-		ofLogError() << "calling window->setup() after ofCreateWindow() is not necesary and won't do anything";
+		ofLogError() << "calling window->setup() after ofCreateWindow() is not necessary and won't do anything";
 		return;
 	}
 	settings = _settings;

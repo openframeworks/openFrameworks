@@ -7,7 +7,6 @@
  make sure to catch and report that error.
  */
 
-#include "ofFileUtils.h"
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
 #include <unordered_map>

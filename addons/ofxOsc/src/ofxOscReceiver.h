@@ -31,15 +31,24 @@ public:
 	/// for operator= and copy constructor
 	ofxOscReceiver& copy(const ofxOscReceiver &other);
 
-	/// set up the receiver with the port (and specific host/ip) to listen for messages on
-	/// and start listening
-	///
-	/// multiple receivers can share the same port if port reuse is
-	/// enabled (true by default)
-	///
-	/// \return true if listening started
-	bool setup(int port, std::string host = "0.0.0.0");
-	
+    /// set up the receiver to listen for messages through any hosts on the given port
+    /// and start listening
+    ///
+    /// multiple receivers can share the same port if port reuse is
+    /// enabled (true by default)
+    ///
+    /// \return true if listening started
+    bool setup(int port) { return setup( "0.0.0.0", port); }
+    
+    /// set up the receiver to listen for messages on the specific host/ip
+    /// and start listening
+    ///
+    /// multiple receivers can share the same port if port reuse is
+    /// enabled (true by default)
+    ///
+    /// \return true if listening started
+    bool setup(std::string host, int port);
+    
 	/// set up the receiver with the given settings
 	///
 	/// starts listening if start is true (true by default)
