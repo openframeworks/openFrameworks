@@ -1,5 +1,5 @@
 /* GIMP RGBA C-Source image dump 1-byte-run-length-encoded (icon.c) */
-#pragma once
+#include "app/ofIcon.h"
 
 #define GIMP_IMAGE_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
 { unsigned int __bpp; unsigned char *__ip; const unsigned char *__il, *__rd; \
@@ -5733,3 +5733,20 @@ static const struct {
   "\377[af\377!$&\377\37!\"\377*.1\377\26\31\32\377\35\36\40\377\36!#\377\16"
   "\17\17\377"
 };
+
+
+const ofPixels getIcon(){
+	return getOfIcon();
+}
+
+const ofPixels getOfIcon(){
+  ofPixels iconPixels;
+  #ifdef DEBUG
+    iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
+    GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+  #else
+    iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+    GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+  #endif
+  return iconPixels;
+}
