@@ -5736,6 +5736,38 @@ static const struct {
 
 
 const ofPixels getIcon(){
+	// On Windows, try to retrieve the embedded icon
+	#ifdef TARGET_WIN32
+		auto hIcon = (HICON) LoadImage(GetModuleHandle(nullptr), TEXT("MAINICON"), IMAGE_ICON, 128, 128, LR_DEFAULTSIZE | LR_CREATEDIBSECTION);
+		if(hIcon){
+			ICONINFO iconinfo;
+			GetIconInfo(hIcon, &iconinfo);
+			if(iconinfo.fIcon==true){
+				if(iconinfo.hbmColor){
+					//Copy color icon in bitmap
+					auto hBmp = (HBITMAP)CopyImage(iconinfo.hbmColor, IMAGE_BITMAP, 0, 0,  LR_CREATEDIBSECTION);
+					DeleteObject(iconinfo.hbmColor);
+					DeleteObject(iconinfo.hbmMask);
+					DestroyIcon(hIcon);
+
+					BITMAP bgraBmp;
+					GetObject(hBmp, sizeof(BITMAP), &bgraBmp);
+					ofPixels icon;
+					icon.setFromPixels((unsigned char*)bgraBmp.bmBits,bgraBmp.bmWidth,bgraBmp.bmHeight,OF_PIXELS_BGRA);
+					DeleteObject(hBmp);
+					icon.mirror(true,false); // flip vertically
+					return icon;
+				}else{
+					/// TODO
+					ofLogWarning()<<"Monochrome icons not supported yet";
+				}
+			}
+			DeleteObject(iconinfo.hbmColor);
+			DeleteObject(iconinfo.hbmMask);
+			DestroyIcon(hIcon);
+		}
+		ofLogWarning() << "Cannot retrieve application icon - using default OF icon";
+	#endif
 	return getOfIcon();
 }
 
