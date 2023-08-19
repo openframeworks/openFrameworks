@@ -297,9 +297,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			glfwGetWindowSize( windowP, &currentW, &currentH );
 		}
         
-		    if(!iconSet){
-				setWindowIcon(getIcon());
-			}
+		if(!iconSet){
+			setWindowIcon(getIcon());
+		}
         if(settings.iconified){
 			iconify(true);
 		}
