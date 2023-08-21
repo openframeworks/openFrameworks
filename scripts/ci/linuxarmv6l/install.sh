@@ -73,13 +73,12 @@ downloadFirmware
 #cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/usr/lib/* rpi_toolchain/arm-linux-gnueabihf/lib/
 #cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/lib/* rpi_toolchain/arm-linux-gnueabihf/lib/
 
-cd $ROOT/rpi_toolchain/arm-linux-gnueabihf/lib
-relativeSoftLinks
-cd $ROOT/rpi_toolchain/arm-linux-gnueabihf/libc/usr/lib
-relativeSoftLinks
-cd $ROOT/rpi_toolchain/arm-linux-gnueabihf/libc/lib
-relativeSoftLinks
-cd $ROOT/raspbian/usr/lib
-relativeSoftLinks
-cd $ROOT/raspbian/usr/lib/arm-linux-gnueabihf
-relativeSoftLinks
+#cd $ROOT/rpi_toolchain/arm-linux-gnueabihf/lib
+#cd $ROOT/rpi_toolchain/arm-linux-gnueabihf/libc/usr/lib
+#relativeSoftLinks
+#cd $ROOT/rpi_toolchain/arm-linux-gnueabihf/libc/lib
+#relativeSoftLinks
+#cd $ROOT/raspbian/usr/lib
+#relativeSoftLinks
+#cd $ROOT/raspbian/usr/lib/arm-linux-gnueabihf
+#relativeSoftLinks
