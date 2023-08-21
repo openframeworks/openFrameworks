@@ -220,6 +220,7 @@ PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/l
 ##########################################################################################
 
 PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
+PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/arm-linux-gnueabihf/lib
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS

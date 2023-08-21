@@ -34,8 +34,8 @@ downloadToolchain(){
     tar xvf cross-gcc-9.4.0-pi_2-3.tar.gz
     mv cross-pi-gcc-9.4.0-1 rpi_toolchain
     rm cross-gcc-9.4.0-pi_2-3.tar.gz
-    cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/usr/lib/* rpi_toolchain/arm-linux-gnueabihf/lib/*
-    cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/lib/* rpi_toolchain/arm-linux-gnueabihf/lib/*
+    cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/usr/lib/* rpi_toolchain/arm-linux-gnueabihf/lib/
+    cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/lib/* rpi_toolchain/arm-linux-gnueabihf/lib/
 }
 
 downloadFirmware(){
