@@ -63,7 +63,7 @@ public:
 
 	void				setUsePixels(bool usePixels);
 private:
-	int id;
+	int player_id;
 	ofTexture texture;
 	ofPixels pixels;
 	bool usePixels;

@@ -149,7 +149,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(windowP){
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
-		ofLogError() << "calling window->setup() after ofCreateWindow() is not necesary and won't do anything";
+		ofLogError() << "calling window->setup() after ofCreateWindow() is not necessary and won't do anything";
 		return;
 	}
 	settings = _settings;
@@ -716,11 +716,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
     #if defined(TARGET_OSX)
 	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
  	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
-                settings.windowMode = OF_FULLSCREEN;
- 		if (targetWindowMode == OF_WINDOW) {
-                    [cocoaWindow toggleFullScreen:nil];
- 		}
- 	}
+		settings.windowMode = OF_FULLSCREEN;
+		if (targetWindowMode == OF_WINDOW) {
+			[cocoaWindow toggleFullScreen:nil];
+		}
+	} else {
+		[cocoaWindow setHasShadow:NO];
+	}
     #endif
 
 	//we only want to change window mode if the requested window is different to the current one.

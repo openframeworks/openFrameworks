@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofParameter.h"
-#include "ofConstants.h"
 #include "pugiconfig.hpp"
 #include "pugixml.hpp"
 
