@@ -16,10 +16,6 @@ installPackages(){
     sudo apt-get -y install multistrap unzip
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
     sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
-    
-    sudo dpkg --add-architecture armhf
-    sudo apt-get -y update
-    sudo apt-get -y install libudev-dev libudev-dev:armhf
 }
 
 createRaspbianImg(){
@@ -75,6 +71,9 @@ installPackages
 createRaspbianImg
 downloadToolchain
 downloadFirmware
+
+ls -la /raspbian/usr/lib/arm-linux-gnueabihf/
+ls -la /raspbian/lib/arm-linux-gnueabihf/
 
 cd $ROOT/raspbian/usr/lib
 relativeSoftLinks
