@@ -73,7 +73,7 @@ downloadToolchain
 downloadFirmware
 
 cd $ROOT/raspbian/usr/lib
-#relativeSoftLinks
+relativeSoftLinks
 cd $ROOT/raspbian/usr/lib/arm-linux-gnueabihf
-#relativeSoftLinks
+relativeSoftLinks
 #cd $ROOT/raspbian/usr/lib/gcc/arm-linux-gnueabihf/4.9
