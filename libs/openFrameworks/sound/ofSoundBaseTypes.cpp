@@ -44,7 +44,25 @@ void ofBaseSoundInput::audioIn(ofSoundBuffer &buffer) {
 
 }
 
+void ofBaseSoundInput::audioIn(float *input, int bufferSize, int nChannels, int deviceID,
+                               unsigned long long int tickCount) {
+
+}
+
+void ofBaseSoundInput::audioIn(float *input, int bufferSize, int nChannels) {
+
+}
+
 void ofBaseSoundOutput::audioOut(ofSoundBuffer &buffer) {
+
+}
+
+void ofBaseSoundOutput::audioOut(float *output, int bufferSize, int nChannels) {
+
+}
+
+void ofBaseSoundOutput::audioOut(float *output, int bufferSize, int nChannels, int deviceID,
+								 unsigned long long int tickCount) {
 
 }
 

@@ -8,12 +8,13 @@ class ofSoundBuffer;
 /// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
 	public:
+		/// \brief Destroy the ofBaseSoundInput.
+		virtual ~ofBaseSoundInput() {};
 
 		/// \brief Receive an audio buffer.
 		/// \param buffer An audio buffer.
+		virtual void audioIn( ofSoundBuffer& buffer );
 
-
-#ifndef TARGET_ANDROID
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount );
@@ -25,20 +26,19 @@ class ofBaseSoundInput{
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
-#else
-	virtual void audioIn( ofSoundBuffer& buffer );
-#endif
-
 };
 
 
 /// \brief A base class representing a sound output stream.
 class ofBaseSoundOutput{
 	public:
+		/// \brief Destroy the ofBaseSoundOutput.
+		virtual ~ofBaseSoundOutput() {};
+
 		/// \brief Output an audio buffer.
 		/// \param buffer An audio buffer.
+		virtual void audioOut( ofSoundBuffer& buffer );
 
-#ifndef TARGET_ANDROID
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioOut(ofSoundBuffer& buffer) instead.
 		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  );
@@ -50,9 +50,6 @@ class ofBaseSoundOutput{
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioOut(ofSoundBuffer& buffer) instead.
 		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
-#else
-		virtual void audioOut( ofSoundBuffer& buffer );
-#endif
 };
 
 /// \class ofSoundDevice
@@ -73,10 +70,8 @@ public:
 		NUM_APIS
 	} api = UNSPECIFIED;
 
-#ifndef TARGET_ANDROID
 	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
 	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
-#endif
 
 	/// \brief Descriptive name for the device
 	/// This is the same string that ofSoundStream::getMatchingDevices() will be looking for
@@ -103,6 +98,7 @@ public:
 
 class ofSoundStreamSettings {
 public:
+	virtual ~ofSoundStreamSettings() {}
 	size_t sampleRate = 44100;
 	size_t bufferSize = 256;
 	size_t numBuffers = 4;
@@ -135,6 +131,7 @@ private:
 
 class ofBaseSoundStream {
 public:
+	virtual ~ofBaseSoundStream() {}
 	virtual bool setup(const ofSoundStreamSettings & settings) = 0;
 	virtual void setInput(ofBaseSoundInput * soundInput) = 0;
 	virtual void setOutput(ofBaseSoundOutput * soundOutput) = 0;
@@ -155,7 +152,7 @@ public:
 	virtual ofSoundDevice getOutDevice() const = 0;
 };
 
-
+std::string toString(ofSoundDevice::Api api);
 
 
 //----------------------------------------------------------
@@ -165,12 +162,10 @@ class ofBaseSoundPlayer {
 
 public:
 
-
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
 
 	virtual bool load(const of::filesystem::path& fileName, bool stream = false)=0;
-
 	virtual void unload()=0;
 	virtual void play() = 0;
 	virtual void stop() = 0;
