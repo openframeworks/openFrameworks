@@ -220,7 +220,8 @@ PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/l
 ##########################################################################################
 
 PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
-
+PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/arm-linux-gnueabihf/9.4.0
+PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -245,7 +246,7 @@ else
 endif
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
-CROSS_COMPILING=1
+
 ifeq ($(CROSS_COMPILING),1)
 ifdef MAKEFILE_DEBUG
     $(info detected cross compiling $(CROSS_COMPILING))
