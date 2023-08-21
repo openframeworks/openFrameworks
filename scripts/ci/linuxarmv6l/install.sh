@@ -30,10 +30,10 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
 
 downloadToolchain(){
-    wget https://github.com/openframeworks/openFrameworks/releases/download/tools/cross-gcc-9.4.0-pi_2-3.tar.gz
-    tar xvf cross-gcc-9.4.0-pi_2-3.tar.gz
-    mv cross-pi-gcc-9.4.0-1 rpi_toolchain
-    rm cross-gcc-9.4.0-pi_2-3.tar.gz
+    wget https://github.com/openframeworks/openFrameworks/releases/download/tools/cross-gcc-9.4.0-pi_0-1.tar.gz
+    tar xvf cross-gcc-9.4.0-pi_0-1.tar.gz
+    mv cross-pi-gcc-9.4.0-0 rpi_toolchain
+    rm cross-gcc-9.4.0-pi_0-1.tar.gz
 }
 
 downloadFirmware(){
