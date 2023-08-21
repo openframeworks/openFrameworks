@@ -226,6 +226,11 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/arm-linux-gnueabihf/lib
 PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/lib/arm-linux-gnueabihf
 PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(TOOLCHAIN_ROOT)/arm-linux-gnueabihf/lib
 
+PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/lib/arm-linux-gnueabihf
+PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(TOOLCHAIN_ROOT)/arm-linux-gnueabihf/libc/lib
+PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(TOOLCHAIN_ROOT)/arm-linux-gnueabihf/libc/usr/lib
+
+
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers
