@@ -245,6 +245,7 @@ else
 endif
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
+CROSS_COMPILING=1
 ifeq ($(CROSS_COMPILING),1)
 ifdef MAKEFILE_DEBUG
     $(info detected cross compiling $(CROSS_COMPILING))
