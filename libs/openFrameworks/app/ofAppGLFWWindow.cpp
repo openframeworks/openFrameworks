@@ -716,11 +716,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
     #if defined(TARGET_OSX)
 	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
  	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
-                settings.windowMode = OF_FULLSCREEN;
- 		if (targetWindowMode == OF_WINDOW) {
-                    [cocoaWindow toggleFullScreen:nil];
- 		}
- 	}
+		settings.windowMode = OF_FULLSCREEN;
+		if (targetWindowMode == OF_WINDOW) {
+			[cocoaWindow toggleFullScreen:nil];
+		}
+	} else {
+		[cocoaWindow setHasShadow:NO];
+	}
     #endif
 
 	//we only want to change window mode if the requested window is different to the current one.
