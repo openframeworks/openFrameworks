@@ -1,6 +1,11 @@
-/* GIMP RGBA C-Source image dump 1-byte-run-length-encoded (icon.c) */
 #include "app/ofIcon.h"
 
+#ifdef TARGET_WIN32
+	//#include "utils/ofFileUtils.h"
+	#include "shellapi.h"
+#endif
+
+/* GIMP RGBA C-Source image dump 1-byte-run-length-encoded (icon.c) */
 #define GIMP_IMAGE_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
 { unsigned int __bpp; unsigned char *__ip; const unsigned char *__il, *__rd; \
   __bpp = (bpp); __ip = (image_buf); __il = __ip + (size) * __bpp; \
@@ -5736,27 +5741,31 @@ static const struct {
 
 
 const ofPixels getIcon(){
-	// On Windows, try to retrieve the embedded icon
+	// On Windows, try to retrieve the embedded icon from application file
 	#ifdef TARGET_WIN32
-		auto hIcon = (HICON) LoadImage(GetModuleHandle(nullptr), TEXT("MAINICON"), IMAGE_ICON, 128, 128, LR_DEFAULTSIZE | LR_CREATEDIBSECTION);
-		if(hIcon){
+		bool gotIcon = false;
+
+		// Get the application file name
+		TCHAR exeName[MAX_PATH];
+		GetModuleFileName(NULL, exeName, MAX_PATH);
+		//auto exeName = ofFilePath::getCurrentExePath(); // ExtractIconEx espects WCHAR... 
+		
+		// extract the first (index 0) large icon from the application
+		HICON hIcon;
+		if(ExtractIconEx(exeName,0,&hIcon,NULL,1)==1){
 			ICONINFO iconinfo;
 			GetIconInfo(hIcon, &iconinfo);
-			if(!(iconinfo.fIcon)){
-				if(iconinfo.hbmColor){
+			ofPixels icon;
+			if(iconinfo.fIcon){
+				if(iconinfo.hbmColor){ // We have a color icon
 					//Copy color icon in bitmap
 					auto hBmp = (HBITMAP)CopyImage(iconinfo.hbmColor, IMAGE_BITMAP, 0, 0,  LR_CREATEDIBSECTION);
-					DeleteObject(iconinfo.hbmColor);
-					DeleteObject(iconinfo.hbmMask);
-					DestroyIcon(hIcon);
-
 					BITMAP bgraBmp;
 					GetObject(hBmp, sizeof(BITMAP), &bgraBmp);
-					ofPixels icon;
 					icon.setFromPixels((unsigned char*)bgraBmp.bmBits,bgraBmp.bmWidth,bgraBmp.bmHeight,OF_PIXELS_BGRA);
 					DeleteObject(hBmp);
 					icon.mirror(true,false); // flip vertically
-					return icon;
+					gotIcon = true;
 				}else{
 					/// TODO
 					ofLogWarning()<<"Monochrome icons not supported yet";
@@ -5765,6 +5774,7 @@ const ofPixels getIcon(){
 			if(iconinfo.hbmColor) DeleteObject(iconinfo.hbmColor);
 			DeleteObject(iconinfo.hbmMask);
 			DestroyIcon(hIcon);
+			if(gotIcon) return icon;
 		}
 		ofLogWarning() << "Cannot retrieve application icon - using default OF icon";
 	#endif
