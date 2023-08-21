@@ -25,21 +25,6 @@ export CXX="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
 export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
-
-PATH=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain/bin:$PATH
-LD_LIBRARY_PATH=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain/lib:$LD_LIBRARY_PATH
- 
-export AR="arm-linux-gnueabihf-gcc-ar"
-export CC="arm-linux-gnueabihf-gcc"
-export CXX="arm-linux-gnueabihf-g++"
-export CPP="arm-linux-gnueabihf-cpp"
-export FC="arm-linux-gnueabihf-gfortran"
-export RANLIB="arm-linux-gnueabihf-gcc-ranlib"
-export LD="$CXX"
-
-GCCPATH="${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain/libexec/gcc/arm-linux-gnueabihf/9.4.0"
-export ARFLAGS="--plugin $GCCPATH/liblto_plugin.so"
-export RANLIBFLAGS="--plugin $GCCPATH/liblto_plugin.so"
  
 make Debug -j2
 
