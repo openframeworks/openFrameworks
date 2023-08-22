@@ -22,7 +22,7 @@ echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
 cp scripts/templates/linuxarmv6l/Makefile examples/computer_vision/opencvExample/
 cp scripts/templates/linuxarmv6l/config.make examples/computer_vision/opencvExample/
-cd examples/templates/opencvExample/
+cd examples/computer_vision/opencvExample/
 make Debug -j2
 
 #echo "**** Building emptyExample ****"
