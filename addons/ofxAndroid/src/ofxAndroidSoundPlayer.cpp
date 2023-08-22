@@ -482,19 +482,4 @@ void ofxAndroidSoundPlayer::audioOut(ofSoundBuffer &) const {
 
 }
 
-void ofxAndroidSoundPlayer::audioOut(float*, int, int) {
-	
-}
 
-
-void ofxAndroidSoundPlayer::audioIn(float*, int, int) {
-
-}
-
-void ofxAndroidSoundPlayer::audioIn(float*, int, int, int, unsigned long long) {
-
-}
-
-void ofxAndroidSoundPlayer::audioOut(float*, int, int, int, unsigned long long) {
-
-}
