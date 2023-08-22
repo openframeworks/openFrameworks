@@ -24,6 +24,15 @@ task wrapper(type: Wrapper) {
 tasks.register("prepareKotlinBuildScriptModel"){
 }
 
+evaluationDependsOn(':openFrameworksProject')
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assemble') {
+        task.dependsOn(':openFrameworksProject:assemble')
+    }
+}
+
+
 android {
     compileSdkVersion 34
     buildToolsVersion '32.0.0'
