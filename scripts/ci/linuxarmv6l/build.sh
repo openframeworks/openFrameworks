@@ -18,16 +18,16 @@ export CROSS_COMPILING=1
 export PATH=/rpi_toolchain/bin/:$PATH
 export LD_LIBRARY_PATH=/rpi_toolchain/lib:$LD_LIBRARY_PATH
  
-echo "**** Building emptyExample ****"
-cd $OF_ROOT
-cp scripts/templates/linuxarmv6l/Makefile examples/templates/emptyExample/
-cp scripts/templates/linuxarmv6l/config.make examples/templates/emptyExample/
-cd examples/templates/emptyExample/
-make Debug -j2
-
 echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
-cp scripts/templates/linuxarmv6l/Makefile examples/templates/allAddonsExample/
-cp scripts/templates/linuxarmv6l/config.make examples/templates/allAddonsExample/
-cd examples/templates/allAddonsExample/
+cp scripts/templates/linuxarmv6l/Makefile examples/computer_vision/opencvExample/
+cp scripts/templates/linuxarmv6l/config.make examples/computer_vision/opencvExample/
+cd examples/templates/opencvExample/
 make Debug -j2
+
+#echo "**** Building emptyExample ****"
+#cd $OF_ROOT
+#cp scripts/templates/linuxarmv6l/Makefile examples/templates/emptyExample/
+#cp scripts/templates/linuxarmv6l/config.make examples/templates/emptyExample/
+#cd examples/templates/emptyExample/
+#make Debug -j2
