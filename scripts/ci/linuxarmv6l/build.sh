@@ -4,7 +4,9 @@ OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
 export GCC_PREFIX=arm-linux-gnueabihf
 export GST_VERSION=1.0
-export RPI_ROOT=${OF_ROOT}/scripts/ci/$TARGET//raspbian
+#NOTE: GCC_VERSION should match the version present in the downloaded toolchain
+export GCC_VERSION=9.4.0
+export RPI_ROOT=${OF_ROOT}/scripts/ci/$TARGET/raspbian
 export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=armv6l
