@@ -41,7 +41,7 @@ void ofxiOSVideoPlayer::disableTextureCache() {
 bool ofxiOSVideoPlayer::load(string name) {
 	
     if(!videoPlayer) {
-        videoPlayer = (__bridge void *)[[AVFoundationVideoPlayer alloc] init];
+        videoPlayer = (__bridge_retained void *)[[AVFoundationVideoPlayer alloc] init];
         [(__bridge AVFoundationVideoPlayer *)videoPlayer setWillBeUpdatedExternally:YES];
     }
     
