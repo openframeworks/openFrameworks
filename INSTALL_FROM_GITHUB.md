@@ -23,7 +23,7 @@ As the external dependencies are not found in the repository, you need to downlo
 Now that you have all the required files, you need to compile them and set up all the projects contained in the `examples` folder. The easiest way to do this is by using the Project Generator to compile all the examples.
 The Project Generator app facilitates creating new openFrameworks projects and adding or removing addons to existing projects. As it is a separate project with a well defined scope, the openFrameworks developers decided to put it into its own repository. You can get the project generator in two different ways:
 * Initialize and update all the git submodules (including the Project Generator) by first running `git submodule init` and then `git submodule update`.
-* Or, easier, download an already packaged openFrameworks installation from the [nightly download page](https://github.com/openframeworks/openFrameworks/releases/tag/nightly), and copy the `projectGenerator` folder into your openFrameworks installation.
+* Or, easier, download an compiled Project Generator from the [nightly builds download page](https://github.com/openframeworks/projectGenerator/releases/tag/nightly), and copy the `projectGenerator` folder into your openFrameworks installation.
 
 As the first option can lead to [unexpected results](https://forum.openframeworks.cc/t/how-to-build-project-generator-from-of-git-repo/26232), we suggest you use the second approach.
 
