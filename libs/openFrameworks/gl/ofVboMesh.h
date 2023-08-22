@@ -5,12 +5,12 @@
 
 class ofVboMesh: public ofMesh{
 public:
-	using ofMesh::draw;
-	ofVboMesh();
-	ofVboMesh(const ofMesh & mom);
+    using ofMesh::draw;
+    ofVboMesh();
+    ofVboMesh(const ofMesh & mom);
     void operator=(const ofMesh & mom);
-	virtual ~ofVboMesh();
-	void setUsage(int usage);
+    virtual ~ofVboMesh();
+    void setUsage(int usage);
 
     void enableColors();
     void enableTextures();
@@ -22,26 +22,23 @@ public:
     void disableNormals();
     void disableIndices();
 
-	void removeVertex(ofIndexType index);
-	void removeVertex(ofIndexType startIndex, ofIndexType endIndex);
-	void removeColor(ofIndexType index);
-	void removeColor(ofIndexType startIndex, ofIndexType endIndex);
-//	void removeTexCoord(ofIndexType index);
-//
-//	void removeTexCoord(ofIndexType startIndex, ofIndexType endIndex);
+    void removeVertex(ofIndexType index);
+    void removeVertex(ofIndexType startIndex, ofIndexType endIndex);
+    void removeColor(ofIndexType index);
+    void removeColor(ofIndexType startIndex, ofIndexType endIndex);
 
     virtual bool usingColors() const;
     virtual bool usingTextures() const;
     virtual bool usingNormals() const;
     virtual bool usingIndices() const;
 
-	void updateVbo();
+    void updateVbo();
 
-	void draw(ofPolyRenderMode drawMode) const;
-	void drawInstanced(ofPolyRenderMode drawMode, int primCount) const;
+    void draw(ofPolyRenderMode drawMode) const;
+    void drawInstanced(ofPolyRenderMode drawMode, int primCount) const;
 	
-	ofVbo & getVbo();
-	const ofVbo & getVbo() const;
+    ofVbo & getVbo();
+    const ofVbo & getVbo() const;
 
 private:
 
