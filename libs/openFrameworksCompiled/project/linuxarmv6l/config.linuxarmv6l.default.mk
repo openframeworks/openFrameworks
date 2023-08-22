@@ -57,7 +57,7 @@ endif
 
 #check if we are newer than Stretch and use the new system
 ifeq ($(shell expr $(VER_ID) \>= 9), 1)
-	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only 
+	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only
 	USE_PI_LEGACY = 0
 	USE_ATOMIC = 1
 endif
@@ -191,7 +191,7 @@ PLATFORM_LDFLAGS += -pthread
 
 ifdef USE_ATOMIC
 	PLATFORM_LDFLAGS += -latomic
-endif 
+endif
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -220,8 +220,8 @@ PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/l
 ##########################################################################################
 
 PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
-PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib
-PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/arm-linux-gnueabihf
+PLATFORM_LD_FLAGS += -L/raspbian/lib/arm-linux-gnueabihf
+PLATFORM_LD_FLAGS += -ludev
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -245,7 +245,6 @@ else
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-
 
 ifeq ($(CROSS_COMPILING),1)
 ifdef MAKEFILE_DEBUG
@@ -273,10 +272,11 @@ endif
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 
 	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/$(GCC_PREFIX)/c++/7
+	PLATFORM_HEADER_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/9.4.0/include
 
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/gcc/$(GCC_PREFIX)/7
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/9.4.0
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX)
