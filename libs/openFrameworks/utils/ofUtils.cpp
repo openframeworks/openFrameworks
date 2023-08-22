@@ -1102,7 +1102,7 @@ ofTargetPlatform ofGetTargetPlatform(){
 #endif
 }
 
-std::string ofGetEnv(const std::string & var){
+std::string ofGetEnv(const std::string & var, const std::string defaultValue){
 #ifdef TARGET_WIN32
 	const size_t BUFSIZE = 4096;
 	std::vector<char> pszOldVal(BUFSIZE, 0);
@@ -1110,14 +1110,14 @@ std::string ofGetEnv(const std::string & var){
 	if(size>0){
 		return std::string(pszOldVal.begin(), pszOldVal.begin()+size);
 	}else{
-		return "";
+		return defaultValue;
 	}
 #else
 	auto value = getenv(var.c_str());
 	if(value){
 		return value;
 	}else{
-		return "";
+		return defaultValue;
 	}
 #endif
 }
