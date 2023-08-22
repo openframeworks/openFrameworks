@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ofParameter.h"
+#if defined(PUGI_NEW)
 #include "pugiconfig.hpp"
+#endif
 #include "pugixml.hpp"
 
 template<typename It>
