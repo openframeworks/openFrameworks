@@ -892,7 +892,7 @@ Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  
 	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
     int _refreshRate = (int) refreshRate;
 	ofLogNotice("oF") << "deviceHighestRefreshRate:" << _refreshRate;
-    ofNotifyEvent(ofxAndroidEvents().deviceHighestRefreshRate,_refreshRate );
+   // ofNotifyEvent(ofxAndroidEvents().deviceHighestRefreshRate,_refreshRate );
 }
 
 
@@ -901,7 +901,7 @@ Java_cc_openframeworks_OFAndroid_deviceRefreshRate(JNIEnv*  env, jclass  thiz, j
 	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofLogNotice("oF") << "deviceRefreshRateChanged:" << refreshRate;
 	int _refreshRate = (int) refreshRate;
-	ofNotifyEvent(ofxAndroidEvents().deviceRefreshRate,_refreshRate );
+	//ofNotifyEvent(ofxAndroidEvents().deviceRefreshRate,_refreshRate );
 }
 
 JNIEXPORT void JNICALL
@@ -914,7 +914,7 @@ Java_cc_openframeworks_OFAndroid_setSampleSize(JNIEnv*  env, jclass  thiz, jint 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onAxisMoved(JNIEnv*  env, jclass  thiz, jint id, jint deviceid, jint productid, jfloat x, jfloat y){
 	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
-	ofLogNotice("oF") << "axisMoved:[" << id << "] x:" << x << " y:" << y;
+	//ofLogNotice("oF") << "axisMoved:[" << id << "] x:" << x << " y:" << y;
 
 }
 
