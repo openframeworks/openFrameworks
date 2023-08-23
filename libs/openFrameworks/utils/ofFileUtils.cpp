@@ -12,7 +12,7 @@ uid_t geteuid() {
     return 0;
 }
 gid_t getegid() {
-    return 0
+    return 0;
 }
 #endif
 #ifdef TARGET_OSX
