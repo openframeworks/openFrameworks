@@ -5,8 +5,16 @@
 #ifndef TARGET_WIN32
 	#include <pwd.h>
 	#include <sys/stat.h>
+	#include <unistd.h>
 #endif
-
+#ifdef EMSCRIPTEN
+uid_t geteuid() {
+    return 0;
+}
+gid_t getegid() {
+    return 0
+}
+#endif
 #ifdef TARGET_OSX
 	#include <mach-o/dyld.h>       /* _NSGetExecutablePath */
 	#include <limits.h>        /* PATH_MAX */
