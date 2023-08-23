@@ -1,0 +1,47 @@
+name: build-msys2
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-msys2:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        msystem:
+        - mingw64
+        # - ucrt64
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        msystem: ${{matrix.msystem}}
+        install: >-
+          git
+          unzip
+          rsync
+          wget
+    - name: Install dependencies
+      run: ./scripts/ci/msys2/install.sh
+    - name: Build
+      run: ./scripts/ci/msys2/build.sh
+    - name: Run tests
+      run: ./scripts/ci/msys2/run_tests.sh

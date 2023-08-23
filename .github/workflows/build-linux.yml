@@ -1,0 +1,51 @@
+name: build-linux64
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+    
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-linux-platforms:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          cfg:
+          - {target: linux64, libs: 64gcc6}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download libs
+      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+    - name: Remove Old lib-unwind
+      run: if [ "$TARGET" = "linux64" ]; then
+            sudo apt-get remove libunwind-14 -y;
+           fi
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh;
+    - name: Build
+      run: if [ "$TARGET" = "linux64" ]; then
+            scripts/ci/$TARGET/build.sh;
+            scripts/ci/$TARGET/run_tests.sh;
+           else
+            scripts/ci/$TARGET/build.sh;
+           fi
+    - name: Upload Libs
+      run: scripts/ci/upload_of_lib.sh;
+      env:
+        GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+
