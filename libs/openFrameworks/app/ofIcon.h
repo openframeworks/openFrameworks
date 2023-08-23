@@ -1,4 +1,11 @@
 #pragma once
+#include "utils/ofConstants.h"
+
+#if defined(TARGET_WIN32) || defined(TARGET_LINUX)
+    #define TARGET_HAS_WINDOW_ICON
+#endif
+
+
 #include "graphics/ofPixels.h"
 
 /**

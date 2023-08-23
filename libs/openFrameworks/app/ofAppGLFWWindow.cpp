@@ -296,11 +296,13 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			}
 			glfwGetWindowSize( windowP, &currentW, &currentH );
 		}
-        
-		if(!iconSet){
-			setWindowIcon(getIcon());
-		}
-        if(settings.iconified){
+
+		#ifdef TARGET_HAS_WINDOW_ICON
+			if(!iconSet){
+				setWindowIcon(getIcon());
+			}
+		#endif
+		if(settings.iconified){
 			iconify(true);
 		}
 	}
@@ -403,6 +405,9 @@ void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
+	#ifndef TARGET_HAS_WINDOW_ICON
+		return;
+	#endif
 	iconSet = true;
 	
 	// make sure we have a RGBA image
