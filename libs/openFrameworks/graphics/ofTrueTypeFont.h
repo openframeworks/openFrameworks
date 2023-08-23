@@ -153,9 +153,6 @@ struct ofTrueTypeFontSettings{
     ,fontSize(size){}
 
     void addRanges(std::initializer_list<ofUnicode::range> alphabet){
-		//for(auto & ranger: alphabet) {
-		//	ranges.push_back(ranger);
-		//}
         ranges.insert(ranges.end(), alphabet);
     }
 
@@ -377,7 +374,7 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
-    /// \returns current font direction
+	/// \returns current font direction
 	void setDirection(ofTrueTypeFontDirection direction);
 
 
@@ -408,10 +405,6 @@ public:
 	}
 
 protected:
-	/// \cond INTERNAL
-	
-
-	
 	bool bLoadedOk;
 	
 	std::vector <ofPath> charOutlines;
@@ -448,8 +441,6 @@ protected:
 
 	ofTexture texAtlas;
 	mutable ofMesh stringQuads;
-
-	/// \endcond
 
 private:
 	std::shared_ptr<struct FT_FaceRec_>	face;
