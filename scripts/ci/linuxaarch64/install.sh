@@ -12,19 +12,22 @@ trapError() {
 }
 
 installPackages(){
-     apt-get -y update
-     apt-get -y install multistrap unzip
+    sudo apt-get -y update
+    sudo apt-get -y install multistrap unzip
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
-     sed -i s/\$forceyes//g /usr/sbin/multistrap
+    sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
 }
 
 createRaspbianImg(){
     #needed since Ubuntu 18.04 - allow non https repositories 
     mkdir -p raspbian/etc/apt/apt.conf.d/
-    echo 'Acquire::AllowInsecureRepositories "true";' |  tee raspbian/etc/apt/apt.conf.d/90insecure
+    echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
     multistrap -a arm64 -d raspbian -f multistrap.conf
 }
 
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
 
 downloadToolchain(){
     wget https://github.com/openframeworks/openFrameworks/releases/download/tools/cross-gcc-10.3.0-pi_64.tar.gz

@@ -18,11 +18,17 @@ export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
 export PATH=/rpi_toolchain/bin/:$PATH
 export LD_LIBRARY_PATH=/rpi_toolchain/lib:$LD_LIBRARY_PATH
 
-cp config.linuxaarch64.default.mk openFrameworks/libs/openFrameworksCompiled/project/linuxaarch64/
-cd openFrameworks 
-./scripts/linux/download_libs.sh -a aarch64
-cp -r scripts/templates/linuxaarch64/config.make examples/templates/emptyExample/
-cp -r scripts/templates/linuxaarch64/Makefile examples/templates/emptyExample/
-
+echo "**** Building emptyExample ****"
+cd $OF_ROOT
+cp scripts/templates/linuxarmv6l/Makefile examples/templates/emptyExample/
+cp scripts/templates/linuxarmv6l/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
 make Debug -j2
+
+#TODO: 
+#echo "**** Building allAddonsExample ****"
+#cd $OF_ROOT
+#cp scripts/templates/linuxarmv6l/Makefile examples/templates/allAddonsExample/
+#cp scripts/templates/linuxarmv6l/config.make examples/templates/allAddonsExample/
+#cd examples/templates/allAddonsExample/
+#make Debug -j2
