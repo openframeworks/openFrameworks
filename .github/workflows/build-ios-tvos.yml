@@ -1,4 +1,5 @@
-name: build-linux-arm
+name: build-ios-tvos
+
 
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
@@ -12,26 +13,30 @@ on:
     paths-ignore:
       - '**/*.md'
       - 'examples/**'
-    
+
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-linux-platforms:
-    runs-on: ubuntu-latest
+  build-osx:
+    runs-on: macos-12
     strategy:
         matrix:
           cfg:
-          - {target: linuxarmv6l, libs: armv6l}
-#          - {target: linuxarmv7l, libs: armv7l}
+          - {target: ios, libs: ios}
+          #- {target: tvos, libs: ios} #broken currently maybe better to just remove
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v3
     - name: Download libs
-      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
-    - name: Install dependencies
-      run: ./scripts/ci/$TARGET/install.sh;
+      run: ./scripts/${{matrix.cfg.libs}}/download_libs.sh
+    - name: install
+      run: ./scripts/ci/$TARGET/install.sh
     - name: Build
       run: ./scripts/ci/$TARGET/build.sh;
+
+      env:
+        DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
