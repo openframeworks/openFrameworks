@@ -70,10 +70,6 @@ createRaspbianImg
 downloadToolchain
 downloadFirmware
 
-cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/lib/* $ROOT/raspbian/usr/lib/
-cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/usr/lib/* $ROOT/raspbian/usr/lib/
-cp -rn rpi_toolchain/arm-linux-gnueabihf/lib/* $ROOT/raspbian/usr/lib/
-
 cd $ROOT/raspbian/usr/lib
 relativeSoftLinks
 cd $ROOT/raspbian/usr/lib/arm-linux-gnueabihf
