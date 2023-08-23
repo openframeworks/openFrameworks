@@ -1,6 +1,6 @@
 #!/bin/bash
-
-OF_ROOT=$( cd "$(dirname "$0")" ; pwd -P )
+set -ev
+OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
 export GCC_PREFIX=aarch64-linux-gnu
 export GCC_VERSION=10.3.0
@@ -20,15 +20,15 @@ export LD_LIBRARY_PATH=/rpi_toolchain/lib:$LD_LIBRARY_PATH
 
 echo "**** Building emptyExample ****"
 cd $OF_ROOT
-cp scripts/templates/linuxarmv6l/Makefile examples/templates/emptyExample/
-cp scripts/templates/linuxarmv6l/config.make examples/templates/emptyExample/
+cp scripts/templates/linuxaarch64/Makefile examples/templates/emptyExample/
+cp scripts/templates/linuxaarch64/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
 make Debug -j2
 
-#TODO: 
+#TODO:
 #echo "**** Building allAddonsExample ****"
 #cd $OF_ROOT
-#cp scripts/templates/linuxarmv6l/Makefile examples/templates/allAddonsExample/
-#cp scripts/templates/linuxarmv6l/config.make examples/templates/allAddonsExample/
+#cp scripts/templates/linuxaarch64/Makefile examples/templates/allAddonsExample/
+#cp scripts/templates/linuxaarch64/config.make examples/templates/allAddonsExample/
 #cd examples/templates/allAddonsExample/
 #make Debug -j2
