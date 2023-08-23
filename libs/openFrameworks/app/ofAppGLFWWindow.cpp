@@ -412,7 +412,7 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 		rgbaIcon.swapRgb();
 	}
 	// build a list of icon with different sizes
-	const std::vector<int> iconSizes{16,32,48,256};
+	const std::vector<int> iconSizes{16,32,48,96,128,256};
 	std::vector<ofPixels> iconList;
 	for(auto iconSize : iconSizes){
 		iconList.emplace_back(ofPixels(rgbaIcon));
