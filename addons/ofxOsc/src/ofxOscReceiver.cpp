@@ -31,7 +31,7 @@ ofxOscReceiver& ofxOscReceiver::copy(const ofxOscReceiver &other){
 }
 
 //--------------------------------------------------------------
-bool ofxOscReceiver::setup(int port, std::string host) {
+bool ofxOscReceiver::setup(std::string host, int port) {
 	if(listenSocket){ // already running
 		stop();
 	}

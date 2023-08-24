@@ -15,6 +15,9 @@
 #include <type_traits>
 #include <random>
 
+#include "ofRandomEngine.h"
+#include "ofRandomDistributions.h"
+
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
 ///
@@ -219,15 +222,24 @@ int ofGetDay();
 /// \returns the current weekday [0-6].
 int ofGetWeekday();
 
+/// \section Containers
+/// \brief Randomly reorder the values in a container.
+/// \tparam T Any container that meets std::shuffle's requirements
+/// which are: ValueSwappable and LegacyRandomAccessIterator.
+
+template<typename ... Args>
+void ofShuffle(Args&&... args) {
+    of::random::shuffle(std::forward<Args>(args)...);
+}
+
 /// \section Vectors
 /// \brief Randomly reorder the values in a vector.
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
-/// \sa http://www.cplusplus.com/reference/algorithm/random_shuffle/
+
 template<class T>
 void ofRandomize(std::vector<T>& values) {
-    //switch from random_shuffle ( removed in some C++17 impl )
-    std::shuffle(values.begin(), values.end(), std::default_random_engine(0));
+    of::random::shuffle(values);
 }
 
 /// \brief Conditionally remove values from a vector.
@@ -1071,8 +1083,10 @@ ofTargetPlatform ofGetTargetPlatform();
 /// \brief Get the value of a given environment variable.
 ///
 /// \note The available environment variables differ between operating systems.
-/// \returns the environmnt variable's value or an empty string if not found.
-std::string ofGetEnv(const std::string & var);
+/// \param var the environment variable name.
+/// \param defaultValue the value to return if the environment variable is not set. defaults to empty string.
+/// \returns the environmnt variable's value or the provided default value if not found.
+std::string ofGetEnv(const std::string & var, const std::string defaultValue = "");
 
 /// \brief Iterate through each Unicode codepoint in a UTF8-encoded std::string.
 ///

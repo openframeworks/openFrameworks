@@ -1,0 +1,37 @@
+name: build-linux-arm
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+    
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-linux-platforms:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          cfg:
+          - {target: linuxarmv6l, libs: armv6l}
+          - {target: linuxaarch64, libs: aarch64}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download libs
+      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh;
+    - name: Build
+      run: ./scripts/ci/$TARGET/build.sh;

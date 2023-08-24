@@ -39,9 +39,10 @@ private:
 	void setPositionSecs(double s);
 	static std::vector<float> systemSpectrum;
 	int context;
-	int sound;
 	bool multiplay;
-	float speed;
 	float volume;
+	float speed;
+	float pan;
 	bool playing;
+	int player_id;
 };
