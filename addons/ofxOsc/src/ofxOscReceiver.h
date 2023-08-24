@@ -28,6 +28,9 @@ public:
     ofxOscReceiver(int port = 7970) {
         setup(port);
     };
+    ofxOscReceiver(std::string host, int port) {
+        setup(host, port);
+    }
 	~ofxOscReceiver();
 	ofxOscReceiver(const ofxOscReceiver &mom);
 	ofxOscReceiver& operator=(const ofxOscReceiver &mom);
