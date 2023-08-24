@@ -61,7 +61,7 @@ namespace of{
 namespace priv{
 	void initutils(){
         ofResetElapsedTimeCounter();
-        ofSeedRandom();
+        of::random::Engine::construct();
     }
 
 	void endutils(){

@@ -82,11 +82,19 @@ float ofRandomWidth();
 /// \returns a random number between 0 and ofGetHeight().
 float ofRandomHeight();
 
-/// \brief Seed the seeds the random number generator with a unique value.
+/// \brief Seed the random number generator.
 ///
-/// This seeds the random number generator with an acceptably random value, 
+/// This passes a seed value to the random engine;
+/// see of::random::Engine for details
+///
+/// \param val The value with which to seed the generator.
+void ofSetRandomSeed(unsigned long new_seed);
+
+/// \brief Seeds the random number generator with a unique value.
+///
+/// This seeds the old-school srand-based random number generator with an acceptably random value, 
 /// generated from clock time and the PID.
-void ofSeedRandom();
+[[deprecated("to get a new non-deterministic state, destroy and re-construct the of::random::Engine")]] void ofSeedRandom();
 
 /// \brief Seed the random number generator.
 ///
@@ -95,7 +103,7 @@ void ofSeedRandom();
 /// setup.  This can be useful for debugging and testing.
 ///
 /// \param val The value with which to seed the generator.
-void ofSeedRandom(int val);
+[[deprecated("use ofSetRandomSeed() or of::random::seed() instead")]] void ofSeedRandom(int val);
 
 /// \}
 

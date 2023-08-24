@@ -18,9 +18,6 @@ int ofNextPow2(int a){
 //--------------------------------------------------
 void ofSeedRandom() {
 
-	// good info here:
-	// http://stackoverflow.com/questions/322938/recommended-way-to-initialize-srand
-
 	#ifdef TARGET_WIN32
 		srand(GetTickCount());
 	#elif !defined(TARGET_EMSCRIPTEN)
@@ -38,8 +35,12 @@ void ofSeedRandom() {
 }
 
 //--------------------------------------------------
+void ofSetRandomSeed(unsigned long new_seed) {
+    of::random::seed(new_seed);
+}
+
 void ofSeedRandom(int val) {
-	srand((long) val);
+    ofSetRandomSeed(val);
 }
 
 //--------------------------------------------------
