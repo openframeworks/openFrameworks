@@ -86,6 +86,7 @@ void ofxiOSVideoPlayer::close() {
 		
         ((__bridge AVFoundationVideoPlayer *)videoPlayer).delegate = nil;
         
+        __autoreleasing AVFoundationVideoPlayer *player = (__bridge_transfer AVFoundationVideoPlayer *)videoPlayer;
         if(bTextureCacheSupported == true) {
             killTextureCache();
         }

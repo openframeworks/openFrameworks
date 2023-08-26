@@ -8,13 +8,22 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	ofBackground(255,255,255);
 	player_.update();
+	
+	if (ofGetElapsedTimef() > 10) {
+		player_.close();
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){	
-	player_.draw(0,0);
+void ofApp::draw(){
+	ofBackground(0,0,0);
+	if (player_.isLoaded()) {
+		player_.draw(0,0);
+
+	} else {
+		ofDrawBitmapString("Player was unloaded sucessfully after 10 seconds", 20,20);
+	}
 }
 
 //--------------------------------------------------------------
