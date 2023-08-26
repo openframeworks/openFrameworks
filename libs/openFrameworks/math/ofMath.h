@@ -94,7 +94,7 @@ void ofSetRandomSeed(unsigned long new_seed);
 ///
 /// This seeds the old-school srand-based random number generator with an acceptably random value, 
 /// generated from clock time and the PID.
-[[deprecated("to get a new non-deterministic state, destroy and re-construct the of::random::Engine")]] void ofSeedRandom();
+void ofSeedRandom();
 
 /// \brief Seed the random number generator.
 ///
