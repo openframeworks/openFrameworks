@@ -545,8 +545,8 @@ bound_normal(T min, T max, T focus = {4.0f, 4.0f}) {
             return {};
         } else {
             T v;
-            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
-            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
+            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min.x || v.x > max.x);
+            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min.y || v.y > max.y);
             return v;
         }
     }
@@ -564,9 +564,9 @@ bound_normal(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
             return {};
         } else {
             T v;
-            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
-            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
-            do { v.z = of::random::normal<float>((max.z+min.z)/2.0f, (max.z-min.z)/(2*focus.z)); } while (v.z < min || v.z > max);
+            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min.x || v.x > max.x);
+            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min.y || v.y > max.y);
+            do { v.z = of::random::normal<float>((max.z+min.z)/2.0f, (max.z-min.z)/(2*focus.z)); } while (v.z < min.z || v.z > max.z);
             return v;
         }
     }
