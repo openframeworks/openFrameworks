@@ -144,7 +144,6 @@ bool ofxOscSender::sendMessage(const ofxOscMessage &message, bool wrapInBundle){
 
 //--------------------------------------------------------------
 bool ofxOscSender::sendParameter(const ofAbstractParameter &parameter){
-	if(!parameter.isSerializable()) return false;
 	if(parameter.type() == typeid(ofParameterGroup).name()){
 		std::string address = "/";
 		const std::vector<std::string> hierarchy = parameter.getGroupHierarchyNames();
@@ -283,17 +282,21 @@ void ofxOscSender::appendParameter(ofxOscBundle &_bundle, const ofAbstractParame
 //--------------------------------------------------------------
 void ofxOscSender::appendParameter(ofxOscMessage &msg, const ofAbstractParameter &parameter, const std::string &address){
 	msg.setAddress(address+parameter.getEscapedName());
-	if(parameter.type() == typeid(ofParameter<int>).name()){
+	
+	if(parameter.isOfType<int>()) {
 		msg.addIntArg(parameter.cast<int>());
 	}
-	else if(parameter.type() == typeid(ofParameter<float>).name()){
+	else if(parameter.isOfType<float>()) {
 		msg.addFloatArg(parameter.cast<float>());
 	}
-	else if(parameter.type() == typeid(ofParameter<double>).name()){
+	else if(parameter.isOfType<double>()) {
 		msg.addDoubleArg(parameter.cast<double>());
 	}
-	else if(parameter.type() == typeid(ofParameter<bool>).name()){
+	else if(parameter.isOfType<bool>()) {
 		msg.addBoolArg(parameter.cast<bool>());
+	}
+	else if(parameter.isOfType<void>()) {
+		msg.addTriggerArg();
 	}
 	else{
 		msg.addStringArg(parameter.toString());

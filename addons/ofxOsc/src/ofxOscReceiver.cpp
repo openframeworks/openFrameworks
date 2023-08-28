@@ -172,6 +172,10 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter &parameter){
 						msg.getArgType(0) == OFXOSC_TYPE_DOUBLE){
 						p->cast<double>() = msg.getArgAsDouble(0);
 					}
+					else if(p->type() == typeid(ofParameter<void>).name() &&
+						msg.getArgType(0) == OFXOSC_TYPE_TRIGGER){
+						p->cast<void>().trigger();
+					}
 					else if(p->type() == typeid(ofParameter<bool>).name() &&
 						(msg.getArgType(0) == OFXOSC_TYPE_TRUE ||
 						 msg.getArgType(0) == OFXOSC_TYPE_FALSE ||
