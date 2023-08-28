@@ -53,6 +53,10 @@
 	#define MAXPATHLEN 1024
 #endif
 
+#ifdef TARGET_EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 using std::vector;
 using std::string;
 using std::setfill;
@@ -904,7 +908,7 @@ size_t ofUTF8Length(const std::string & str){
 }
 
 //--------------------------------------------------
-void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
+void ofLaunchBrowser(const string& url, bool uriEncodeQuery, std::string target){
 	UriParserStateA state;
 	UriUriA uri;
 	state.uri = &uri;
@@ -966,7 +970,9 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_EMSCRIPTEN
-		ofLogError("ofUtils") << "ofLaunchBrowser() not implementeed in emscripten";
+		EM_ASM_({
+			window.open(UTF8ToString($0), UTF8ToString($1));
+		}, uriStr.c_str(), target.c_str());
 	#endif
 }
 

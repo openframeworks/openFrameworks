@@ -1056,14 +1056,13 @@ void ofSaveViewport(const std::string& filename);
 
 /// \section System
 
-/// \brief Launch the given URL in the default browser.
+/// \brief Launch the given URL in the default browser, or within itself in the case of emscripten.
 ///
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
-#ifndef TARGET_EMSCRIPTEN
-void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
-#endif
+/// \param target defaults to '_blank', behaves like the target of the javascript open function (e.g. use "_self" to replace content).
+void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false, std::string target = "_blank");
 
 /// \brief Executes a system command. Similar to run a command in terminal.
 ///
