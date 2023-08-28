@@ -536,7 +536,7 @@ T bound_normal(float min, float max, float focus = 4.0f) {
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
 bound_normal(T min, T max, T focus = {4.0f, 4.0f}) {
-    if (!min.x < max.x || !min.y < max.y) {
+    if (min.x >= max.x || min.y >= max.y) {
         std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
         return {};
     } else {
@@ -555,7 +555,7 @@ bound_normal(T min, T max, T focus = {4.0f, 4.0f}) {
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
 bound_normal(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
-    if (!min.x < max.x || !min.y < max.y || !min.z < max.z) {
+    if (min.x >= max.x || min.y >= max.y || min.z >= max.z) {
         std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
         return {};
     } else {
