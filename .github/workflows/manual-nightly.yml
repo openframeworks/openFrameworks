@@ -25,7 +25,7 @@ jobs:
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Create Package
-      run: scripts/ci/package_builds.sh -a ${{ github.event.inputs.release }};
+      run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
       id: createpackage
     - name: Update Release
       uses: IsaacShelton/update-existing-release@v1.3.2
