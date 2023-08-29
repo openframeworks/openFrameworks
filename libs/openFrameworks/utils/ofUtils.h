@@ -1056,13 +1056,34 @@ void ofSaveViewport(const std::string& filename);
 
 /// \section System
 
+/// \brief Process the string into an actionable URL
+///
+/// \param url the URL to process.
+/// \param uriEncodeQuery true if the query parameters in the given URL have
+/// already been URL encoded.
+/// \returns an <optional> string if the preparation is successful
+std::optional<std::string> ofSanitizeURLString(const std::string& url, bool uriEncodeQuery=false);
+
+#ifndef TARGET_EMSCRIPTEN
+
 /// \brief Launch the given URL in the default browser, or within itself in the case of emscripten.
+///
+/// \param url the URL to open.
+/// \param uriEncodeQuery true if the query parameters in the given URL have
+/// already been URL encoded.
+void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
+
+#else
+
+/// \brief Opens an URL in a new browser tab (or other behaviour depending on target value)
 ///
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
 /// \param target defaults to '_blank', behaves like the target of the javascript open function (e.g. use "_self" to replace content).
 void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false, std::string target = "_blank");
+
+#endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
 ///
