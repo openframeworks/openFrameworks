@@ -977,7 +977,6 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 #else
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery, std::string target){
 	if (auto uriStr = ofSanitizeURLString(url, uriEncodeQuery)) {
-		ofLogNotice("ofLaunchBrowser") << url << " " << target;
 		EM_ASM_({
 			window.open(UTF8ToString($0), UTF8ToString($1));
 		}, uriStr->c_str(), target.c_str());
