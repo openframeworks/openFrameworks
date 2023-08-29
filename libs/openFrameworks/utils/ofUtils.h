@@ -14,6 +14,7 @@
 #include <sstream>
 #include <type_traits>
 #include <random>
+#include <optional>
 
 #include "ofRandomEngine.h"
 #include "ofRandomDistributions.h"
