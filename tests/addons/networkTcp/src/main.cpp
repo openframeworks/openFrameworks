@@ -257,7 +257,6 @@ public:
 	}
 
 	void run(){
-		ofSetRandomSeed(ofGetSeconds()); // why? random engine is initialized to a non-deterministic state
 		testNonBlocking();
 		testBlocking();
 		disconnectionAutoDetection();
