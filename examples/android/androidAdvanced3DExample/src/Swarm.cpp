@@ -56,9 +56,6 @@ void Swarm::init(int _nParticles, float positionDispersion, float velocityDisper
 	// INITIALISE VALUES
 	///////////////////////////////////////////
 	//
-	//	ofSeedRandom(); superfluous -- the current random engine state
-	// is indistinguishable from another arbirarilty-seeded state
-	//
 	for (int i=0; i< nParticles; i++)
 	{
 		positions[i].x = (ofRandom(1.0f)-0.5f)  * positionDispersion;
