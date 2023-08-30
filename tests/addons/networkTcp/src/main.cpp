@@ -257,7 +257,6 @@ public:
 	}
 
 	void run(){
-		ofSeedRandom(ofGetSeconds());
 		testNonBlocking();
 		testBlocking();
 		disconnectionAutoDetection();
