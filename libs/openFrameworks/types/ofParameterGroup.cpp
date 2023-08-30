@@ -1,7 +1,15 @@
 #include "ofUtils.h"
 #include "ofParameter.h"
 
-using namespace std;
+using std::string;
+using std::endl;
+using std::setw;
+using std::weak_ptr;
+using std::shared_ptr;
+using std::vector;
+using std::map;
+using std::ostream;
+using std::stringstream;
 
 ofParameterGroup::ofParameterGroup()
 :obj(new Value)

@@ -5,7 +5,7 @@
 #include "ofxOpenCv.h"
 
 //UNCOMMENT TO USE CAMERA. CAMERA ONLY WORKS ON DEVICE NOT SIMULATOR
-//#define USE_CAMERA
+#define USE_CAMERA
 
 class ofApp : public ofxiOSApp{
 	
@@ -14,18 +14,18 @@ class ofApp : public ofxiOSApp{
 		void setup();
 		void update();
 		void draw();
-        void exit();
-    
-        void touchDown(ofTouchEventArgs & touch);
-        void touchMoved(ofTouchEventArgs & touch);
-        void touchUp(ofTouchEventArgs & touch);
-        void touchDoubleTap(ofTouchEventArgs & touch);
-        void touchCancelled(ofTouchEventArgs & touch);
+		void exit();
 	
-        void lostFocus();
-        void gotFocus();
-        void gotMemoryWarning();
-        void deviceOrientationChanged(int newOrientation);
+		void touchDown(ofTouchEventArgs & touch);
+		void touchMoved(ofTouchEventArgs & touch);
+		void touchUp(ofTouchEventArgs & touch);
+		void touchDoubleTap(ofTouchEventArgs & touch);
+		void touchCancelled(ofTouchEventArgs & touch);
+	
+		void lostFocus();
+		void gotFocus();
+		void gotMemoryWarning();
+		void deviceOrientationChanged(int newOrientation);
 
 		ofImage img;
 				

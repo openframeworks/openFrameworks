@@ -28,9 +28,12 @@ void ofApp::setup(){
 
 	//note: you can get nicer anti-aliased rendering ( with slower fps )
 	//if you uncomment the appropriate line in main.cpp
-
+	
+	img.setUseTexture(false);
 	img.load("nyc-small.exr");
 
+	material.setShininess(120);
+	material.setSpecularColor(ofColor(255, 255, 255, 255));
 	light.enable();
 	light.setPosition(+500, 0, 0);
 
@@ -60,6 +63,7 @@ void ofApp::draw(){
 	ofBackground(0);
 
 	easyCam.begin();
+		material.begin();
 		ofScale(1, -1, 1);
 		ofRotateXDeg(60);
 		ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2, 0);
@@ -67,6 +71,7 @@ void ofApp::draw(){
 		ofEnableDepthTest();
 		mesh.draw();
 		ofDisableDepthTest();
+		material.end();
 	easyCam.end();
 }
 

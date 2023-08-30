@@ -14,11 +14,7 @@
 
 @implementation AVSoundPlayer
 
-@synthesize delegate;
-@synthesize player;
-@synthesize timer;
-
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if(self) {
         bMultiPlay = NO;
@@ -34,7 +30,7 @@
 		return;
 	}
 	NSString * playbackCategory = AVAudioSessionCategoryPlayAndRecord;
-#ifdef TARGET_OF_TVOS
+#ifdef TARGET_OS_TV
 	playbackCategory = AVAudioSessionCategoryPlayback;
 #endif
 	[[AVAudioSession sharedInstance] setCategory:playbackCategory error: nil];
@@ -42,9 +38,18 @@
     NSError * err = nil;
     // need to configure set the audio category, and override to it route the audio to the speaker
     if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
+#if defined (TARGET_OS_TV) || defined (TARGET_OS_WATCH)
         if(![audioSession setCategory:playbackCategory
-             						  withOptions:AVAudioSessionCategoryOptionMixWithOthers
+                                       withOptions:(AVAudioSessionCategoryOptionMixWithOthers)
+                                error:&err]) { err = nil; }
+#else
+        if(![audioSession setCategory:playbackCategory
+                                       withOptions:(AVAudioSessionCategoryOptionMixWithOthers |
+                                                   AVAudioSessionCategoryOptionAllowAirPlay |
+                                                   AVAudioSessionCategoryOptionAllowBluetooth |
+                                                   AVAudioSessionCategoryOptionAllowBluetoothA2DP)
                                         error:&err]) { err = nil; }
+#endif
     }
 	[[AVAudioSession sharedInstance] setActive: YES error: nil];
 	audioSessionSetup = YES;
@@ -52,7 +57,6 @@
 
 - (void)dealloc {
     [self unloadSound];
-    [super dealloc];
 }
 
 //----------------------------------------------------------- load / unload.
@@ -72,8 +76,8 @@
     [self unloadSound];
 	[self setupSharedSession];
     NSError * error = nil;
-    self.player = [[[AVAudioPlayer alloc] initWithContentsOfURL:url
-                                                          error:&error] autorelease];
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url
+                                                         error:&error];
     if([self.player respondsToSelector:@selector(setEnableRate:)]) {
         [self.player setEnableRate:YES];
     }

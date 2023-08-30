@@ -1,6 +1,10 @@
 #pragma once
 
-#include "json.hpp"
+#if !defined(TARGET_MINGW)
+	#include "json.hpp"
+#else
+	#include "nlohmann/json.hpp" // MSYS2 : use of system-installed include
+#endif
 #include "ofParameter.h"
 
 // for convenience
@@ -10,7 +14,7 @@ using ofJson = nlohmann::json;
 /// \brief Load Json from the given path.
 /// \param filename The file to load from.
 /// \returns loaded json, or an empty json object on failure.
-inline ofJson ofLoadJson(const std::filesystem::path& filename){
+inline ofJson ofLoadJson(const of::filesystem::path& filename){
 	ofJson json;
 	ofFile jsonFile(filename);
 	if(jsonFile.exists()){
@@ -31,7 +35,7 @@ inline ofJson ofLoadJson(const std::filesystem::path& filename){
 /// \param filename The destination path.
 /// \param json The Json to save.
 /// \returns true if the json was saved successfully.
-inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & json){
+inline bool ofSaveJson(const of::filesystem::path& filename, const ofJson & json){
 	ofFile jsonFile(filename, ofFile::WriteOnly);
 	try{
 		jsonFile << json;
@@ -49,7 +53,7 @@ inline bool ofSaveJson(const std::filesystem::path& filename, const ofJson & jso
 /// \param filename The destination path.
 /// \param json The Json to save.
 /// \returns true if the json was saved successfully.
-inline bool ofSavePrettyJson(const std::filesystem::path& filename, const ofJson & json){
+inline bool ofSavePrettyJson(const of::filesystem::path& filename, const ofJson & json){
     ofFile jsonFile(filename, ofFile::WriteOnly);
     try{
         jsonFile << json.dump(4);

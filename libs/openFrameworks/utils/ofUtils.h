@@ -1,13 +1,22 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "utf8.h"
+
+#if !defined(TARGET_MINGW) 
+	#include "utf8.h"
+#else
+	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
+#endif
 #include <bitset> // For ofToBinary.
 #include <chrono>
 #include <iomanip>  //for setprecision
 #include <algorithm>
 #include <sstream>
+#include <type_traits>
+#include <random>
 
+#include "ofRandomEngine.h"
+#include "ofRandomDistributions.h"
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
@@ -27,6 +36,12 @@ void ofResetElapsedTimeCounter();
 /// \returns the floating point elapsed time in seconds.
 float ofGetElapsedTimef();
 
+/// \brief Get the Unix Time in milliseconds.
+///
+/// This returns the milliseconds since Midnight, January 1, 1970.
+///
+/// \returns the milliseconds since Midnight, January 1, 1970.
+uint64_t ofGetUnixTimeMillis();
 
 /// \brief Get the elapsed time in milliseconds.
 ///
@@ -68,17 +83,17 @@ int ofGetHours();
 /// Resolution is in seconds.
 ///
 /// \returns the number of seconds since Midnight, January 1, 1970 (epoch time).
-unsigned int ofGetUnixTime();
+uint64_t ofGetUnixTime();
 
-/// \brief Get the system time in milliseconds.
+/// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
 OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
 
-/// \brief Get the system time in milliseconds.
+/// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
 uint64_t ofGetSystemTimeMillis();
 
-/// \brief Get the system time in microseconds.
+/// \brief Get the system time in microseconds (system uptime).
 /// \returns the system time in microseconds.
 uint64_t ofGetSystemTimeMicros();
 
@@ -136,7 +151,7 @@ struct ofTime{
 };
 
 /// \brief Get the system time.
-/// \returns the system time.
+/// \returns the system time, which is the time since the system booted (uptime).
 ofTime ofGetCurrentTime();
 
 /// \brief Sleeps the current thread for the specified amount of milliseconds.
@@ -207,60 +222,24 @@ int ofGetDay();
 /// \returns the current weekday [0-6].
 int ofGetWeekday();
 
-/// \section Data Path
-/// \brief Enable the use of the data path.
-///
-/// This function causes ofToDataPath() to respect the relative path set
-/// with ofSetDataPathRoot().  This is enabled by default.
-void ofEnableDataPath();
+/// \section Containers
+/// \brief Randomly reorder the values in a container.
+/// \tparam T Any container that meets std::shuffle's requirements
+/// which are: ValueSwappable and LegacyRandomAccessIterator.
 
-/// \brief Disable the use of the data path.
-///
-/// This function causes ofToDataPath() to ignore the relative path set
-/// with ofSetDataPathRoot().
-void ofDisableDataPath();
-
-/// \brief Make a path relative to the location of the data/ folder.
-///
-/// This funtion returns path unchanged if ofDisableDataPath() was called first.
-///
-/// By default, a relative path is returned. Users requiring absolute paths for
-/// (e.g. for non-openFrameworks functions), can specify that an absolute path
-/// be returned.
-///
-/// \param path The path to make relative to the data/ folder.
-/// \param absolute Set to true to return an absolute path.
-/// \returns the new path, unless paths were disabled with ofDisableDataPath().
-std::string ofToDataPath(const std::filesystem::path & path, bool absolute=false);
-
-/// \brief Reset the working directory to the platform default.
-///
-/// The default working directory is where the application was started from
-/// or the exe directory in case of osx bundles. GLUT might change the default
-/// working directory to the resources directory in the bundle in osx. This
-/// will restore it to the exe dir or whatever was the current dir when the
-/// application was started
-bool ofRestoreWorkingDirectoryToDefault();
-
-/// \brief Set the relative path to the data/ folder from the executable.
-///
-/// This method can be useful when users want to embed the data as a resource
-/// folder within an *.app bundle on OSX or perhaps work from a shared data
-/// folder in the user's Documents directory.
-///
-/// \warning The provided path must have a trailing slash (/).
-/// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(const std::filesystem::path& root);
-
+template<typename ... Args>
+void ofShuffle(Args&&... args) {
+    of::random::shuffle(std::forward<Args>(args)...);
+}
 
 /// \section Vectors
 /// \brief Randomly reorder the values in a vector.
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
-/// \sa http://www.cplusplus.com/reference/algorithm/random_shuffle/
+
 template<class T>
 void ofRandomize(std::vector<T>& values) {
-	random_shuffle(values.begin(), values.end());
+    of::random::shuffle(values);
 }
 
 /// \brief Conditionally remove values from a vector.
@@ -629,16 +608,34 @@ std::string ofUTF8ToString(uint32_t codepoint);
 ///          string is an invalid UTF8 string.
 size_t ofUTF8Length(const std::string & utf8);
 
-/// \brief Convert a variable length argument to a string.
-/// \param format A printf-style format string.
-/// \returns A string representation of the argument list.
-std::string ofVAArgsToString(const char * format, ...);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format A printf-style format string.
 /// \param args A variable argument list.
 /// \returns A string representation of the argument list.
-std::string ofVAArgsToString(const char * format, va_list args);
+///
+template <typename ... Args>
+//__attribute__((__format__ (__printf__, 2, 0)))
+std::string ofVAArgsToString(const char * format, Args&& ... args){
+	char buf[256];
+	size_t n = std::snprintf(buf, sizeof(buf), format, std::forward<Args>(args)...);
+	
+//	std::string str = format;
+//	size_t n = std::snprintf(buf, sizeof(buf), str, std::forward<Args>(args)...);
+
+	// Static buffer large enough?
+	if (n < sizeof(buf)) {
+		return{ buf, n };
+	}
+
+	// Static buffer too small
+	std::string s(n + 1, 0);
+	std::snprintf(const_cast<char*>(s.data()), s.size(), format, std::forward<Args>(args)...);
+	
+	return s;
+
+}
+
 
 /// \section String Conversion
 /// \brief Convert a value to a string.
@@ -1072,6 +1069,10 @@ void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
 ///
 /// \note Will block until the executed program/command has finished.
 /// \returns the system command output as string.
+///
+/// \note ofSystem() grabs only stdout; if you are interested in stderr
+///(which may be the case if you're getting "empty" results) consider
+/// redirection by appending 2>&1|cat to your command.
 std::string ofSystem(const std::string& command);
 
 /// \brief Get the target platform of the current system.
@@ -1082,8 +1083,10 @@ ofTargetPlatform ofGetTargetPlatform();
 /// \brief Get the value of a given environment variable.
 ///
 /// \note The available environment variables differ between operating systems.
-/// \returns the environmnt variable's value or an empty string if not found.
-std::string ofGetEnv(const std::string & var);
+/// \param var the environment variable name.
+/// \param defaultValue the value to return if the environment variable is not set. defaults to empty string.
+/// \returns the environmnt variable's value or the provided default value if not found.
+std::string ofGetEnv(const std::string & var, const std::string defaultValue = "");
 
 /// \brief Iterate through each Unicode codepoint in a UTF8-encoded std::string.
 ///
@@ -1136,11 +1139,9 @@ private:
 };
 
 
-
 /*! \cond PRIVATE */
 namespace of{
 namespace priv{
-    void setWorkingDirectoryToDefault();
     void initutils();
     void endutils();
 }

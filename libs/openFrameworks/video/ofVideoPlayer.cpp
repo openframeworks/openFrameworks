@@ -1,11 +1,59 @@
 #include "ofVideoPlayer.h"
-#include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofGLUtils.h"
 #include "ofPixels.h"
 #include <algorithm>
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
+
+
+#ifdef OF_VIDEO_PLAYER_GSTREAMER
+	#include "ofGstVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_QUICKTIME
+	#include "ofQuickTimePlayer.h"
+	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_QTKIT
+	#include "ofQTKitPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
+	#include "ofAVFoundationPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_DIRECTSHOW
+	#include "ofDirectShowPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofDirectShowPlayer
+#endif
+
+#if defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION)
+	#include "ofMediaFoundationPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofMediaFoundationPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_IOS
+	#include "ofxiOSVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_ANDROID
+	#include "ofxAndroidVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_EMSCRIPTEN
+	#include "ofxEmscriptenVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
+#endif
+
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
@@ -17,7 +65,7 @@ ofVideoPlayer::ofVideoPlayer (){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
-	player = newPlayer;
+	player = std::move(newPlayer);
 	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }

@@ -3,9 +3,6 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(225, 225, 225);
-
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
 	
 	coreLocation = new ofxiOSCoreLocation();
 	hasCompass = coreLocation->startHeading();
@@ -85,25 +82,25 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }

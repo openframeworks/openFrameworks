@@ -1,27 +1,11 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofGraphicsConstants.h"
+#include "ofConstants.h"
 #include "glm/fwd.hpp"
 #include "ofColor.h"
 
 class ofRectangle;
-
-template<typename T>
-class ofPixels_;
-
-typedef ofPixels_<unsigned char> ofPixels;
-typedef ofPixels_<float> ofFloatPixels;
-typedef ofPixels_<unsigned short> ofShortPixels;
-typedef ofPixels& ofPixelsRef;
-
-template<typename T>
-class ofImage_;
-
-typedef ofImage_<unsigned char> ofImage;
-typedef ofImage_<float> ofFloatImage;
-typedef ofImage_<unsigned short> ofShortImage;
-
 class ofPath;
 class of3dPrimitive;
 class ofLight;
@@ -36,6 +20,19 @@ class ofVboMesh;
 class ofSoundBuffer;
 class ofFbo;
 class ofBaseVideoDraws;
+
+template<typename T>
+class ofPixels_;
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels& ofPixelsRef;
+
+template<typename T>
+class ofImage_;
+typedef ofImage_<unsigned char> ofImage;
+typedef ofImage_<float> ofFloatImage;
+typedef ofImage_<unsigned short> ofShortImage;
 
 template<class T>
 class ofPolyline_;
@@ -257,7 +254,7 @@ template<typename T>
 class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
 	/// \brief Destroy the ofAbstractHasPixels.
-	virtual ~ofBaseHasPixels_<T>(){}
+	virtual ~ofBaseHasPixels_(){}
 
 	/// \brief Get a reference to the underlying ofPixels.
 	/// \returns a reference the underlying ofPixels.

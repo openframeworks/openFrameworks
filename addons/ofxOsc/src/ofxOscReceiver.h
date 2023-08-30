@@ -13,9 +13,10 @@
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
 struct ofxOscReceiverSettings {
-	int port = 0;            ///< port to listen on
-	bool reuse = true;       ///< should the port be reused by other receivers?
-	bool start = true;       ///< start listening after setup?
+	int port = 0;                 ///< port to listen on
+    std::string host = "0.0.0.0"; ///< host to listen on
+    bool reuse = true;            ///< should the port be reused by other receivers?
+	bool start = true;            ///< start listening after setup?
 };
 
 /// \class ofxOscReceiver
@@ -30,15 +31,24 @@ public:
 	/// for operator= and copy constructor
 	ofxOscReceiver& copy(const ofxOscReceiver &other);
 
-	/// set up the receiver with the port to listen for messages on
-	/// and start listening
-	///
-	/// multiple receivers can share the same port if port reuse is
-	/// enabled (true by default)
-	///
-	/// \return true if listening started
-	bool setup(int port);
-	
+    /// set up the receiver to listen for messages through any hosts on the given port
+    /// and start listening
+    ///
+    /// multiple receivers can share the same port if port reuse is
+    /// enabled (true by default)
+    ///
+    /// \return true if listening started
+    bool setup(int port) { return setup( "0.0.0.0", port); }
+    
+    /// set up the receiver to listen for messages on the specific host/ip
+    /// and start listening
+    ///
+    /// multiple receivers can share the same port if port reuse is
+    /// enabled (true by default)
+    ///
+    /// \return true if listening started
+    bool setup(std::string host, int port);
+    
 	/// set up the receiver with the given settings
 	///
 	/// starts listening if start is true (true by default)

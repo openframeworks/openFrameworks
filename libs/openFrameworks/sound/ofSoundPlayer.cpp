@@ -1,11 +1,51 @@
 #include "ofSoundPlayer.h"
 #include "ofLog.h"
+#define GLM_FORCE_CTOR_INIT
 #include "glm/common.hpp"
 
-using namespace std;
+
+#ifdef OF_SOUND_PLAYER_AV_ENGINE
+#include "ofAVEngineSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofAVEngineSoundPlayer
+#endif
+
+#ifdef OF_SOUND_PLAYER_QUICKTIME
+#include "ofQuicktimeSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer
+#endif
+
+#ifdef OF_SOUND_PLAYER_FMOD
+#include "ofFmodSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer
+#endif
+
+#ifdef OF_SOUND_PLAYER_MEDIA_FOUNDATION
+#include "ofMediaFoundationSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofMediaFoundationSoundPlayer
+#endif
+
+#ifdef OF_SOUND_PLAYER_OPENAL
+#include "ofOpenALSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
+#endif
+
+#ifdef TARGET_OF_IOS
+#include "ofxiOSSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
+#endif
+
+#ifdef OF_SOUND_PLAYER_EMSCRIPTEN
+#include "ofxEmscriptenSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxEmscriptenSoundPlayer
+#endif
+
+#ifdef TARGET_ANDROID
+#include "ofxAndroidSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
+#endif
+
 
 // these are global functions, that affect every sound / channel:
-// ------------------------------------------------------------
 // ------------------------------------------------------------
 
 //--------------------
@@ -21,6 +61,8 @@ void ofSoundStopAll(){
 void ofSoundSetVolume(float vol){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundSetVolume(vol);
+	#elif defined(OF_SOUND_PLAYER_MEDIA_FOUNDATION)
+		ofMediaFoundationSoundPlayer::SetMasterVolume(vol);
 	#else
 		ofLogWarning("ofSoundPlayer") << "ofSoundSetVolume() not implemented on this platform";
 	#endif
@@ -66,17 +108,17 @@ ofSoundPlayer::ofSoundPlayer (){
 }
 
 //---------------------------------------------------------------------------
-void ofSoundPlayer::setPlayer(shared_ptr<ofBaseSoundPlayer> newPlayer){
-	player = newPlayer;
+void ofSoundPlayer::setPlayer(std::shared_ptr<ofBaseSoundPlayer> newPlayer){
+	player = std::move(newPlayer);
 }
 
 //--------------------------------------------------------------------
-shared_ptr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
+std::shared_ptr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 	return player;
 }
 
 //--------------------------------------------------------------------
-bool ofSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
+bool ofSoundPlayer::load(const of::filesystem::path& fileName, bool stream){
 	if( player ){
 		return player->load(fileName, stream);
 	}
@@ -84,7 +126,7 @@ bool ofSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
 }
 
 //--------------------------------------------------------------------
-bool ofSoundPlayer::loadSound(string fileName, bool stream){
+bool ofSoundPlayer::loadSound(std::string fileName, bool stream){
 	return load(fileName,stream);
 }
 

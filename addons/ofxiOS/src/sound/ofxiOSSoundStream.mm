@@ -15,7 +15,7 @@
 #import "SoundOutputStream.h"
 #import <AVFoundation/AVFoundation.h>
 
-using namespace std;
+using std::vector;
 
 //------------------------------------------------------------------------------
 ofxiOSSoundStream::ofxiOSSoundStream() {
@@ -47,13 +47,13 @@ int ofxiOSSoundStream::getDeviceID()  const{
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
 	settings.setInListener(soundInput);
-	[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput: settings.inCallback];
+	[(ofxiOSSoundStreamDelegate *)[(__bridge id)soundInputStream delegate] setInput: settings.inCallback];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
 	settings.setOutListener(soundOutput);
-	[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput: settings.outCallback];
+	[(ofxiOSSoundStreamDelegate *)[(__bridge id)soundOutputStream delegate] setOutput: settings.outCallback];
 }
 
 //------------------------------------------------------------------------------
@@ -63,21 +63,24 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
 	this->settings = settings;
 	
     if(settings.numInputChannels > 0) {
-        soundInputStream = [[SoundInputStream alloc] initWithNumOfChannels:settings.numInputChannels
+        __autoreleasing SoundInputStream *inputStream = [[SoundInputStream alloc] initWithNumOfChannels:settings.numInputChannels
                                                             withSampleRate:settings.sampleRate
                                                             withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundInputFn:settings.inCallback];
-        ((SoundInputStream *)soundInputStream).delegate = delegate;
-        [(SoundInputStream *)soundInputStream start];
+        inputStream.delegate = delegate;
+        [inputStream start];
+        soundInputStream = (__bridge_retained void *)inputStream;
     }
     
     if(settings.numOutputChannels > 0) {
-        soundOutputStream = [[SoundOutputStream alloc] initWithNumOfChannels:settings.numOutputChannels
+        __autoreleasing SoundOutputStream *outputStream =
+        [[SoundOutputStream alloc] initWithNumOfChannels:settings.numOutputChannels
                                                               withSampleRate:settings.sampleRate
                                                               withBufferSize:settings.bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundOutputFn:settings.outCallback];
-        ((SoundInputStream *)soundOutputStream).delegate = delegate;
-        [(SoundInputStream *)soundOutputStream start];
+        outputStream.delegate = delegate;
+        [outputStream start];
+        soundOutputStream = (__bridge_retained void *)outputStream;
     }
     
     bool bOk = (soundInputStream != NULL) || (soundOutputStream != NULL);
@@ -87,40 +90,39 @@ bool ofxiOSSoundStream::setup(const ofSoundStreamSettings & settings) {
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::start(){
     if(soundInputStream != NULL) {
-        [(SoundInputStream *)soundInputStream start];
+        [(__bridge SoundInputStream *)soundInputStream start];
     }
     
     if(soundOutputStream != NULL) {
-        [(SoundOutputStream *)soundOutputStream start];
+        [(__bridge SoundOutputStream *)soundOutputStream start];
     }
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::stop(){
     if(soundInputStream != NULL) {
-        [(SoundInputStream *)soundInputStream stop];
+        [(__bridge SoundInputStream *)soundInputStream stop];
     }
     
     if(soundOutputStream != NULL) {
-        [(SoundOutputStream *)soundOutputStream stop];
+        [(__bridge SoundOutputStream *)soundOutputStream stop];
     }
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::close(){
     if(soundInputStream != NULL) {
-        [((SoundInputStream *)soundInputStream).delegate release];
-        [(SoundInputStream *)soundInputStream setDelegate:nil];
-        [(SoundInputStream *)soundInputStream stop];
-        [(SoundInputStream *)soundInputStream release];
+        __strong SoundInputStream *inputStream = (__bridge_transfer SoundInputStream *)soundInputStream;
+        [inputStream setDelegate:nil];
+        [inputStream stop];
+
         soundInputStream = NULL;
     }
     
     if(soundOutputStream != NULL) {
-        [((SoundOutputStream *)soundInputStream).delegate release];
-        [(SoundOutputStream *)soundInputStream setDelegate:nil];
-        [(SoundOutputStream *)soundOutputStream stop];
-        [(SoundOutputStream *)soundOutputStream release];
+        __strong SoundOutputStream *outputStream = (__bridge_transfer SoundOutputStream *)soundOutputStream;
+        [outputStream setDelegate:nil];
+        [outputStream stop];
         soundOutputStream = NULL;
     }
 	
@@ -160,21 +162,44 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
     #ifdef __IPHONE_6_0
 	if(bMix) {
 		if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
+#if defined (TARGET_OF_TVOS) || defined (TARGET_OF_WATCHOS)
 			if([audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
-							 withOptions:AVAudioSessionCategoryOptionMixWithOthers
-								   error:nil]) {
+                             withOptions:(AVAudioSessionCategoryOptionMixWithOthers)
+                                   error:nil]) {
 				success = true;
 			}
+#else
+            if([audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
+                             withOptions:(AVAudioSessionCategoryOptionMixWithOthers |
+                                          AVAudioSessionCategoryOptionAllowAirPlay |
+                                          AVAudioSessionCategoryOptionAllowBluetooth |
+                                          AVAudioSessionCategoryOptionAllowBluetoothA2DP)
+                                   error:nil]) {
+                success = true;
+            }
+#endif
 		}
 	} else {
     #endif
     
 		// this is the default category + options setup
 		// Note: using a sound input stream will set the category to PlayAndRecord
-		if([audioSession setCategory:AVAudioSessionCategorySoloAmbient error:nil]) {
-			success = true;
-		}
-        
+#if defined (TARGET_OF_TVOS) || defined (TARGET_OF_WATCHOS)
+        if([audioSession setCategory:AVAudioSessionCategorySoloAmbient
+                         error:nil]) {
+            success = true;
+        }
+#else
+        if([audioSession setCategory:AVAudioSessionCategorySoloAmbient
+                         withOptions:(
+                                      AVAudioSessionCategoryOptionAllowAirPlay |
+                                      AVAudioSessionCategoryOptionAllowBluetooth |
+                                      AVAudioSessionCategoryOptionAllowBluetoothA2DP)
+                         error:nil]) {
+            success = true;
+        }
+#endif
+
     #ifdef __IPHONE_6_0
 	}
     #endif

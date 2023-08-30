@@ -5,7 +5,8 @@
 #include "ofLog.h"
 #include "RtAudio.h"
 
-using namespace std;
+using std::vector;
+using std::shared_ptr;
 
 //------------------------------------------------------------------------------
 RtAudio::Api toRtAudio(ofSoundDevice::Api api){

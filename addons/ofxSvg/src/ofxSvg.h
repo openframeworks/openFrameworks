@@ -16,8 +16,8 @@
 /// but we have gone some way to improving this by manually implementing some extra features (such as the
 /// SVG "use" element).
 
-class ofxSVG {
-	public: ~ofxSVG();
+class ofxSvg {
+	public: ~ofxSvg();
 
 		float getWidth() const ;
 		float getHeight() const;
@@ -25,7 +25,7 @@ class ofxSVG {
 		/// \brief Loads an SVG file from the provided filename.
 		///
 		/// ~~~~
-		void load(std::string path);
+		void load(of::filesystem::path fileName);
 	
 		/// \brief Loads an SVG from a text string.
 		///
@@ -55,3 +55,5 @@ class ofxSVG {
 		void setupShape(struct svgtiny_shape * shape, ofPath & path);
 
 };
+
+typedef ofxSvg ofxSVG;

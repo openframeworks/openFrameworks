@@ -22,11 +22,11 @@ void ofApp::setup(){
 	// Start the grabber
 	grabber.setup(1280, 720);
 
-    if(grabber.isInitialized()) {
-        // Get the orientation and facing of the current camera
-        cameraOrientation = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getCameraOrientation();
-        cameraFacingFront = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getFacingOfCamera();
-    }
+	if(grabber.isInitialized()) {
+		// Get the orientation and facing of the current camera
+		cameraOrientation = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getCameraOrientation();
+		cameraFacingFront = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getFacingOfCamera();
+	}
 }
 
 //--------------------------------------------------------------

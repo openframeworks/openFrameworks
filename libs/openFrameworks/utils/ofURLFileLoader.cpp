@@ -2,9 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-#include "ofConstants.h"
-
-using namespace std;
+using std::move;
+using std::set;
+using std::string;
+using std::map;
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
 	#include <curl/curl.h>
@@ -30,8 +31,8 @@ public:
 	~ofURLFileLoaderImpl();
 	ofHttpResponse get(const string& url);
 	int getAsync(const string& url, const string& name=""); // returns id
-	ofHttpResponse saveTo(const string& url, const std::filesystem::path& path);
-	int saveAsync(const string& url, const std::filesystem::path& path);
+	ofHttpResponse saveTo(const string& url, const of::filesystem::path& path);
+	int saveAsync(const string& url, const of::filesystem::path& path);
 	void remove(int id);
 	void clear();
 	void stop();
@@ -51,15 +52,12 @@ private:
 	ofThreadChannel<ofHttpResponse> responses;
 	ofThreadChannel<int> cancelRequestQueue;
 	set<int> cancelledRequests;
-	std::unique_ptr<CURL, void(*)(CURL*)> curl;
 };
 
-ofURLFileLoaderImpl::ofURLFileLoaderImpl()
-:curl(nullptr, nullptr){
+ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	if(!curlInited){
 		 curl_global_init(CURL_GLOBAL_ALL);
 	}
-	curl = std::unique_ptr<CURL, void(*)(CURL*)>(curl_easy_init(), curl_easy_cleanup);
 }
 
 ofURLFileLoaderImpl::~ofURLFileLoaderImpl(){
@@ -81,12 +79,12 @@ int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
 }
 
 
-ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const std::filesystem::path& path){
+ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const of::filesystem::path& path){
 	ofHttpRequest request(url,path.string(),true);
 	return handleRequest(request);
 }
 
-int ofURLFileLoaderImpl::saveAsync(const string& url, const std::filesystem::path& path){
+int ofURLFileLoaderImpl::saveAsync(const string& url, const of::filesystem::path& path){
 	ofHttpRequest request(url,path.string(),true);
 	requests.send(request);
 	start();
@@ -121,7 +119,7 @@ void ofURLFileLoaderImpl::stop() {
 void ofURLFileLoaderImpl::threadedFunction() {
 	setThreadName("ofURLFileLoader " + ofToString(getThreadId()));
 	while( isThreadRunning() ){
-		int cancelled;
+		int cancelled=0;
 		while(cancelRequestQueue.tryReceive(cancelled)){
 			cancelledRequests.insert(cancelled);
 		}
@@ -178,9 +176,11 @@ namespace{
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
+	std::unique_ptr<CURL, void(*)(CURL*)> curl =
+		std::unique_ptr<CURL, void(*)(CURL*)>(curl_easy_init(), curl_easy_cleanup);
 	curl_slist *headers = nullptr;
-	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0);
-	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 0);
+	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, true);
+	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 
 	// always follow redirections
@@ -293,11 +293,11 @@ int ofURLFileLoader::getAsync(const string& url, const string& name){
 	return impl->getAsync(url,name);
 }
 
-ofHttpResponse ofURLFileLoader::saveTo(const string& url, const std::filesystem::path & path){
+ofHttpResponse ofURLFileLoader::saveTo(const string& url, const of::filesystem::path & path){
 	return impl->saveTo(url,path);
 }
 
-int ofURLFileLoader::saveAsync(const string& url, const std::filesystem::path & path){
+int ofURLFileLoader::saveAsync(const string& url, const of::filesystem::path & path){
 	return impl->saveAsync(url,path);
 }
 
@@ -388,11 +388,11 @@ int ofLoadURLAsync(const string&  url, const string&  name){
 	return getFileLoader().getAsync(url,name);
 }
 
-ofHttpResponse ofSaveURLTo(const string& url, const std::filesystem::path& path){
+ofHttpResponse ofSaveURLTo(const string& url, const of::filesystem::path& path){
 	return getFileLoader().saveTo(url,path);
 }
 
-int ofSaveURLAsync(const string& url, const std::filesystem::path& path){
+int ofSaveURLAsync(const string& url, const of::filesystem::path& path){
 	return getFileLoader().saveAsync(url,path);
 }
 

@@ -1,11 +1,11 @@
 #pragma once
 
-
-#include <vector>
 #include "ofGraphicsBaseTypes.h"
+#include <vector>
 
 class ofTexture;
 class ofShader;
+class ofShadow;
 
 /// \brief An abstract class representing an object that can have an ofTexture.
 class ofBaseHasTexture{
@@ -76,7 +76,7 @@ template<typename T>
 class ofBaseImage_: public ofAbstractImage, virtual public ofBaseHasPixels_<T>{
 public:
 	/// \brief Destroy the ofBaseImage_.
-	virtual ~ofBaseImage_<T>(){};
+	virtual ~ofBaseImage_(){};
 };
 
 
@@ -440,6 +440,9 @@ public:
 	/// \sa glMaterialfv()
 	virtual void bind(const ofBaseMaterial & material)=0;
 
+	virtual void bind(const ofShadow & shadow)=0;
+	virtual void bind(const ofShadow & shadow, GLenum aCubeFace)=0;
+
 	/// \brief Bind a shader to be used with this renderer.
 	///
 	/// The shader bound with this method will be used by this renderer until
@@ -470,6 +473,9 @@ public:
 	///
 	/// \param material The material that is currently bound to this renderer.
 	virtual void unbind(const ofBaseMaterial & material)=0;
+
+	virtual void unbind(const ofShadow & shadow)=0;
+	virtual void unbind(const ofShadow & shadow, GLenum aCubeFace)=0;
 
 	/// \brief Unbind a shader previously bound to this renderer with bind().
 	///

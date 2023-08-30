@@ -1,13 +1,7 @@
 #include "ofAppGLFWWindow.h"
-#include "ofEvents.h"
 
-#include "ofBaseApp.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofAppRunner.h"
-#include "ofFileUtils.h"
-#include "ofEvents.h"
-#include "ofPixels.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -38,7 +32,9 @@
     #include <GLFW/glfw3native.h>
 #endif
 
-using namespace std;
+using std::vector;
+using std::shared_ptr;
+using std::numeric_limits;
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
@@ -81,9 +77,8 @@ void ofAppGLFWWindow::close(){
 		glfwSetFramebufferSizeCallback( windowP, nullptr);
 		glfwSetWindowCloseCallback( windowP, nullptr );
 		glfwSetScrollCallback( windowP, nullptr );
-#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
 		glfwSetDropCallback( windowP, nullptr );
-#endif
+
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
 
@@ -154,7 +149,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(windowP){
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
-		ofLogError() << "calling window->setup() after ofCreateWindow() is not necesary and won't do anything";
+		ofLogError() << "calling window->setup() after ofCreateWindow() is not necessary and won't do anything";
 		return;
 	}
 	settings = _settings;
@@ -183,6 +178,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_SAMPLES, settings.numSamples);
 	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
 	glfwWindowHint(GLFW_DECORATED, settings.decorated);
+	
     #ifdef TARGET_OPENGLES
 	    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -201,6 +197,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3 )
+			glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
+#endif
 			currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 		}else{
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
@@ -361,7 +360,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	}
 #endif
 
-	ofLogVerbose() << "GL Version:" << glGetString(GL_VERSION);
+	ofLogVerbose() << "GL Version: " << glGetString(GL_VERSION);
 
 	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
 #ifndef TARGET_OPENGLES
@@ -380,12 +379,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetKeyCallback(windowP, keyboard_cb);
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
-	glfwSetFramebufferSizeCallback( windowP, framebuffer_size_cb);
+	glfwSetFramebufferSizeCallback(windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
-#if GLFW_VERSION_MAJOR>3 || GLFW_VERSION_MINOR>=1
-	    glfwSetDropCallback( windowP, drop_cb );
-#endif
+	glfwSetDropCallback(windowP, drop_cb );
 
 
 #ifdef TARGET_LINUX
@@ -406,7 +403,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowIcon(const string & path){
+void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 	ofPixels iconPixels;
 	ofLoadImage(iconPixels,path);
 	setWindowIcon(iconPixels);
@@ -549,7 +546,7 @@ void ofAppGLFWWindow::setWindowShouldClose(){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowTitle(string title){
+void ofAppGLFWWindow::setWindowTitle(std::string title){
 	settings.title = title;
 	glfwSetWindowTitle(windowP,settings.title.c_str());
 }
@@ -715,6 +712,18 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	}else{
 		targetWindowMode = OF_WINDOW;
 	}
+ 
+    #if defined(TARGET_OSX)
+	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+ 	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+		settings.windowMode = OF_FULLSCREEN;
+		if (targetWindowMode == OF_WINDOW) {
+			[cocoaWindow toggleFullScreen:nil];
+		}
+	} else {
+		[cocoaWindow setHasShadow:NO];
+	}
+    #endif
 
 	//we only want to change window mode if the requested window is different to the current one.
 	bool bChanged = targetWindowMode != settings.windowMode;
@@ -846,18 +855,19 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 //	setWindowShape(windowW, windowH);
 
 #elif defined(TARGET_OSX)
+
 	if( targetWindowMode == OF_FULLSCREEN){
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 
-		[cocoaWindow setStyleMask:NSBorderlessWindowMask];
+		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 
 		int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 
 		int currentMonitor = getCurrentMonitor();
-		ofVec3f screenSize = getScreenSize();
+		auto screenSize = getScreenSize();
 
 		if( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ){
 			std::swap(screenSize.x, screenSize.y);
@@ -913,7 +923,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 
 		// make sure to save current pos if not specified in settings
 		if( settings.isPositionSet() ) {
-			ofVec3f pos = getWindowPosition();
+			auto pos = getWindowPosition();
 			settings.setPosition(ofVec2f(pos.x, pos.y));
 		}
 
@@ -930,12 +940,12 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			windowRect.height = getWindowSize().y;
 		}
 
-		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
-		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-		[cocoaWindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
-
 		setWindowShape(windowRect.width, windowRect.height);
 		setWindowTitle(settings.title);
+
+		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+		[cocoaWindow setStyleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 
 		//----------------------------------------------------
 		// if we have recorded the screen position, put it there
@@ -990,13 +1000,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 			for(int i = 0; i < monitorCount; i++){
 				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
 				glfwGetMonitorPos(monitors[i], &tempXPos, &tempYPos);
-				minX = min(tempXPos,minX);
-				minY = min(tempYPos,minY);
-				maxX = max(maxX,tempXPos + desktopMode->width);
-				maxY = max(maxY,tempYPos + desktopMode->height);
+				minX = std::min(tempXPos,minX);
+				minY = std::min(tempYPos,minY);
+				maxX = std::max(maxX,tempXPos + desktopMode->width);
+				maxY = std::max(maxY,tempYPos + desktopMode->height);
 
-				xpos = min(xpos,tempXPos);
-				ypos = min(ypos,tempYPos);
+				xpos = std::min(xpos,tempXPos);
+				ypos = std::min(ypos,tempYPos);
 			}
 
 			fullscreenW = maxX-minX;
@@ -1379,7 +1389,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	drag.position = {instance->events().getMouseX(), instance->events().getMouseY()};
 	drag.files.resize(numFiles);
 	for(int i=0; i<(int)drag.files.size(); i++){
-		drag.files[i] = std::filesystem::path(dropString[i]).string();
+		drag.files[i] = of::filesystem::path(dropString[i]).string();
 	}
 	instance->events().notifyDragEvent(drag);
 }
@@ -1603,6 +1613,15 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_, int w, int h) {
 	instance->currentH = windowH;
 	instance->events().notifyWindowResized(framebufferW, framebufferH);
 	instance->nFramesSinceWindowResized = 0;
+ 
+         #if defined(TARGET_OSX)
+            NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP_);
+            if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+                instance->settings.windowMode = OF_FULLSCREEN;
+            }else{
+                instance->settings.windowMode = OF_WINDOW;
+            }
+        #endif
 }
 
 //------------------------------------------------------------
@@ -1626,12 +1645,12 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setClipboardString(const string& text) {
+void ofAppGLFWWindow::setClipboardString(const std::string& text) {
 	glfwSetClipboardString(ofAppGLFWWindow::windowP, text.c_str());
 }
 
 //------------------------------------------------------------
-string ofAppGLFWWindow::getClipboardString() {
+std::string ofAppGLFWWindow::getClipboardString() {
 	const char* clipboard = glfwGetClipboardString(ofAppGLFWWindow::windowP);
 
 	if (clipboard) {
@@ -1732,11 +1751,11 @@ EGLSurface ofAppGLFWWindow::getEGLSurface(){
 
 #if defined(TARGET_OSX)
 void * ofAppGLFWWindow::getNSGLContext(){
-	return glfwGetNSGLContext(windowP);
+	return (__bridge void *)glfwGetNSGLContext(windowP);
 }
 
 void * ofAppGLFWWindow::getCocoaWindow(){
-	return glfwGetCocoaWindow(windowP);
+	return (__bridge void *)glfwGetCocoaWindow(windowP);
 }
 #endif
 

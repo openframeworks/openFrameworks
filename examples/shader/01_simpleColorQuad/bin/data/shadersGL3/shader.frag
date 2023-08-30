@@ -1,4 +1,4 @@
-#version 150
+OF_GLSL_SHADER_HEADER
 
 out vec4 outputColor;
 

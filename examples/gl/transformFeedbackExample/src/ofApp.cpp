@@ -47,21 +47,25 @@ void ofApp::setup(){
 	vbo.setVertexBuffer(buffer, 4, sizeof(glm::vec4) * 2, 0);
 	// color at offset sizeof(glm::vec4)
 	vbo.setColorBuffer(buffer, sizeof(glm::vec4) * 2, sizeof(glm::vec4));
-
-	ofEnablePointSprites();
-	glPointSize(4);
-	cam.setDistance(2400);
+	
+	// use a render shader so we can control the size of the points 
+	renderShader.load("pointSprite.vert", "pointSprite.frag" );
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	cam.orbit(ofGetElapsedTimef() * 100., 0, 2400, {0,0,0});
+	cam.orbitDeg(ofGetElapsedTimef() * 100., 0, 1800, {0,0,0});
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	ofEnableDepthTest();
 	cam.begin();
+	ofEnablePointSprites();
+	renderShader.begin();
 	vbo.draw(GL_POINTS, 0, numVertices);
+	renderShader.end();
+	ofDisablePointSprites();
 	cam.end();
 }
 

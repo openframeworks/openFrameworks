@@ -3,7 +3,6 @@
 #ifndef OF_MESH_H
 #define OF_MESH_H
 
-#include "ofConstants.h"
 #include "ofGLUtils.h"
 
 template<class V, class N, class C, class T>
@@ -78,7 +77,10 @@ class ofMeshFace_;
 template<class V, class N, class C, class T>
 class ofMesh_{
 public:
-
+    using VertexType = V;
+    using NormalType = N;
+    using ColorType = C;
+    using TexCoordType = T;
 	/// \name Construction
 	/// \{
 
@@ -193,6 +195,9 @@ public:
 	/// \brief Removes the vertex at the index in the vector.
 	void removeVertex(ofIndexType index);
 
+	/// \brief Removes the vertices at the startIndex in the vector and the endindex specified
+	void removeVertices(ofIndexType startIndex, ofIndexType endIndex);
+
 	void setVertex(ofIndexType index, const V& v);
 
 	/// \brief Removes all the vertices.
@@ -231,7 +236,7 @@ public:
 
 	void mergeDuplicateVertices();
 
-	/// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
+	/// \returns a glm::vec3 defining the centroid of all the vetices in the mesh.
 	V getCentroid() const;
 
 
@@ -268,6 +273,9 @@ public:
 
 	/// \brief Remove a normal.
 	void removeNormal(ofIndexType index);
+
+	/// \brief Remove normal's from index to end index from normals vector
+	void removeNormals(ofIndexType startIndex, ofIndexType endIndex);
 
 	/// \todo Documentation.
 	void setNormal(ofIndexType index, const N& n);
@@ -352,6 +360,9 @@ public:
 	/// \brief Remove a color at the index in the colors vector.
 	void removeColor(ofIndexType index);
 
+	/// \brief Remove colors at the index to the end index of the colors vector
+	void removeColors(ofIndexType startIndex, ofIndexType endIndex);
+
 	/// \brief Set the color at the index in the colors vector.
 	void setColor(ofIndexType index, const C& c);
 
@@ -420,6 +431,9 @@ public:
 
 	/// \brief  Remove a Vec2f representing the texture coordinate.
 	void removeTexCoord(ofIndexType index);
+
+	void removeTexCoords(ofIndexType startIndex, ofIndexType endIndex);
+	
 	void setTexCoord(ofIndexType index, const T& t);
 
 	/// \brief  Clear all the texture coordinates.
@@ -432,7 +446,7 @@ public:
 	/// \returns a pointer to the texture coords that the mesh contains.
 	T* getTexCoordsPointer();
 
-	/// \brief Get a pointer to the ofVec2f texture coordinates that the mesh contains.
+	/// \brief Get a pointer to the glm::vec2 texture coordinates that the mesh contains.
 	const T* getTexCoordsPointer() const;
 
 	/// \brief Get a vector representing the texture coordinates of the mesh
@@ -511,6 +525,7 @@ public:
 
 	/// \brief Removes an index.
 	void removeIndex(ofIndexType index);
+	void removeIndices(ofIndexType startIndex, ofIndexType endIndex);
 
 	/// \brief This sets the index at i.
 	void setIndex(ofIndexType index, ofIndexType val);
@@ -588,7 +603,7 @@ public:
 	///
 	/// It expects that the file will be in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
 	/// It will only load meshes saved in the PLY ASCII format; the binary format is not supported.
-    void load(const std::filesystem::path& path);
+    void load(const of::filesystem::path& path);
 
 	///  \brief Saves the mesh at the passed path in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
 	///
@@ -599,7 +614,7 @@ public:
 	///  If you're planning on reloading the mesh into ofMesh, ofMesh currently only supports loading the ASCII format.
 	///
 	///  For more information, see the [PLY format specification](http://paulbourke.net/dataformats/ply/).
-    void save(const std::filesystem::path& path, bool useBinary = false) const;
+    void save(const of::filesystem::path& path, bool useBinary = false) const;
 
 	/// \}
 

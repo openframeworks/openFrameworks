@@ -1,5 +1,4 @@
 #include "ofCairoRenderer.h"
-#include "ofConstants.h"
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "ofTrueTypeFont.h"
@@ -9,7 +8,8 @@
 #include "cairo-pdf.h"
 #include "cairo-svg.h"
 
-using namespace std;
+using std::vector;
+using std::string;
 
 const string ofCairoRenderer::TYPE="cairo";
 
@@ -37,7 +37,7 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
 	if( outputsize.width == 0 || outputsize.height == 0 ){
 		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
@@ -47,10 +47,10 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	streamBuffer.clear();
 
 	if(type == FROM_FILE_EXTENSION){
-		string ext = ofFilePath::getFileExt(filename);
-		if(ofToLower(ext)=="svg"){
+		auto ext = filename.extension();
+		if(ext == of::filesystem::path{".svg"} || ext == of::filesystem::path{".SVG"} ){
 			type = SVG;
-		}else if(ofToLower(ext)=="pdf"){
+		}else if(ext == of::filesystem::path {".pdf"} || ext == of::filesystem::path{".PDF"} ){
 			type = PDF;
 		}else{ // default to image
 			type = IMAGE;
@@ -73,6 +73,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		if(filename==""){
 			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
+			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
@@ -80,6 +81,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		if(filename==""){
 			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
+			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
@@ -104,6 +106,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
+	setupGraphicDefaults();
 }
 
 void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
@@ -475,11 +478,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 			mut_this->translate(0,-command.to.y*ellipse_ratio);
 			mut_this->scale(1,ellipse_ratio);
 			mut_this->translate(0,command.to.y/ellipse_ratio);
-			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc(cr,command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		}else{
-			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc(cr,command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 		}
 		break;
 
@@ -492,11 +495,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 			mut_this->translate(0,-command.to.y*ellipse_ratio);
 			mut_this->scale(1,ellipse_ratio);
 			mut_this->translate(0,command.to.y/ellipse_ratio);
-			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc_negative(cr,command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		}else{
-			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
+			cairo_arc_negative(cr,command.to.x, command.to.y, command.radiusX,  ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
 		}
 	break;
 
@@ -792,6 +795,10 @@ void ofCairoRenderer::translate(const glm::vec3 & p){
 //----------------------------------------------------------
 void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 	if(!surface || !cr) return;
+	// temporary fix for a issue where Cairo never recovers after setting scale = 0
+	if (xAmnt == 0) xAmnt = std::numeric_limits<float>::epsilon();
+	if (yAmnt == 0) yAmnt = std::numeric_limits<float>::epsilon();
+
 	cairo_matrix_t matrix;
 	cairo_get_matrix(cr,&matrix);
 	cairo_matrix_scale(&matrix,xAmnt,yAmnt);
@@ -921,7 +928,7 @@ void ofCairoRenderer::viewport(ofRectangle v){
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
 	if(width < 0) width = originalViewport.width;
 	if(height < 0) height = originalViewport.height;
-    ofLogVerbose("ofCairoRenderer::viewport") << "Setting viewport to:" << width << ", " << height;
+    ofLogVerbose("ofCairoRenderer::viewport") << "Setting viewport to: " << width << ", " << height;
 
 	if (invertY){
 		y = -y;
@@ -951,7 +958,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
-	float halfFov = PI * fov / 360;
+	float halfFov = glm::pi<float>() * fov / 360.0f;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 	float aspect = (float) viewW / viewH;
@@ -1144,6 +1151,11 @@ void ofCairoRenderer::setupGraphicDefaults(){
 	path.setMode(ofPath::COMMANDS);
 	path.setUseShapeColor(false);
 	clear();
+
+	cairo_matrix_t matrix;
+	cairo_matrix_init_scale(&matrix, 1.0, 1.0);
+	cairo_matrix_init_translate(&matrix, 0.0, 0.0);
+	cairo_set_matrix(cr,&matrix);
 };
 
 //----------------------------------------------------------
@@ -1296,7 +1308,7 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 //----------------------------------------------------------
 void ofCairoRenderer::drawCircle(float x, float y, float z, float radius) const{
 	cairo_new_path(cr);
-	cairo_arc(cr, x,y,radius,0,2*PI);
+	cairo_arc(cr, x, y, radius, 0, glm::two_pi<float>());
 
 	cairo_close_path(cr);
 
@@ -1326,7 +1338,7 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 	mutThis->translate(0,-y*ellipse_ratio);
 	mutThis->scale(1,ellipse_ratio);
 	mutThis->translate(0,y/ellipse_ratio);
-	cairo_arc(cr,x,y,width*0.5,0,2*PI);
+	cairo_arc(cr, x, y, width*0.5, 0, glm::two_pi<float>());
 	mutThis->popMatrix();
 
 	cairo_close_path(cr);

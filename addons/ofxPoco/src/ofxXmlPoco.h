@@ -6,6 +6,8 @@
 
 #include <numeric>
 
+#define byte _priv_byte
+
 #include <Poco/DOM/Document.h>
 #include <Poco/DOM/DocumentFragment.h>
 #include <Poco/DOM/Element.h>
@@ -26,6 +28,8 @@
 #include <Poco/DOM/NamedNodeMap.h>
 #include <Poco/DOM/ChildNodesList.h>
 
+#undef byte
+
 class ofxXmlPoco{
     
 public:
@@ -37,8 +41,8 @@ public:
     ofxXmlPoco( const ofxXmlPoco& rhs );
     const ofxXmlPoco& operator =( const ofxXmlPoco& rhs );
 
-    bool load(const std::filesystem::path & path);
-    bool save(const std::filesystem::path & path);
+    bool load(const of::filesystem::path & filePath);
+    bool save(const of::filesystem::path & filePath);
 
     bool            addChild( const std::string& path );
     void            addXml( ofxXmlPoco& xml, bool copyAll = false);

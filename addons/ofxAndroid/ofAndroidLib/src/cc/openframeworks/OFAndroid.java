@@ -858,8 +858,10 @@ public class OFAndroid {
            		return false;
            	}
         }
-
 		int unicodeChar = event.getUnicodeChar();
+		if(unicodeChar == 0 && keyCode < 256 && keyCode > 0) {
+			unicodeChar = keyCode;
+		}
 		return onKeyDown(keyCode, unicodeChar);
 	}
 	
@@ -871,6 +873,9 @@ public class OFAndroid {
 	 */
 	public static boolean keyUp(int keyCode, KeyEvent event) {
 		int unicodeChar = event.getUnicodeChar();
+		if(unicodeChar == 0 && keyCode < 256 && keyCode > 0) {
+			unicodeChar = keyCode;
+		}
 		return onKeyUp(keyCode, unicodeChar);
 	}
 

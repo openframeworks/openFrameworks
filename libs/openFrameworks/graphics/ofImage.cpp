@@ -1,6 +1,7 @@
 #include "ofImage.h"
-#include "ofConstants.h"
 #include "ofAppRunner.h"
+#include "ofPixels.h"
+
 #include "FreeImage.h"
 
 #include "ofURLFileLoader.h"
@@ -42,7 +43,7 @@ FREE_IMAGE_TYPE getFreeImageType(const ofShortPixels& pix) {
 		case 3: return FIT_RGB16;
 		case 4: return FIT_RGBA16;
 		default:
-			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels: " << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }
@@ -53,7 +54,7 @@ FREE_IMAGE_TYPE getFreeImageType(const ofFloatPixels& pix) {
 		case 3: return FIT_RGBF;
 		case 4: return FIT_RGBAF;
 		default:
-			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels:" << pix.getNumChannels();
+			ofLogError("ofImage") << "getFreeImageType(): unknown FreeImage type for number of channels: " << pix.getNumChannels();
 			return FIT_UNKNOWN;
 	}
 }
@@ -181,7 +182,7 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 }
 
 template<typename PixelType>
-static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _fileName, const ofImageLoadSettings& settings){
+static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _fileName, const ofImageLoadSettings& settings){
 	ofInitFreeImage();
 
 	auto uriStr = _fileName.string();
@@ -210,7 +211,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
-	std::string fileName = ofToDataPath(_fileName, true);
+	auto fileName = ofToDataPath(_fileName, true);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
@@ -223,9 +224,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const std::filesystem::path& _
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName.c_str(), option);
+			bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 		} else {
-			bmp = FreeImage_Load(fif, fileName.c_str(), 0);
+			bmp = FreeImage_Load(fif, fileName.c_str(), 0 | settings.freeImageFlags);
 		}
 
 		if (bmp != nullptr){
@@ -271,9 +272,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	//make the image!!
 	if(fif == FIF_JPEG) {
 		int option = getJpegOptionFromImageLoadSetting(settings);
-		bmp = FreeImage_LoadFromMemory(fif, hmem, option);
+		bmp = FreeImage_LoadFromMemory(fif, hmem, option | settings.freeImageFlags);
 	} else {
-		bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
+		bmp = FreeImage_LoadFromMemory(fif, hmem, settings.freeImageFlags);
 	}
 
 	if( bmp != nullptr ){
@@ -298,7 +299,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
@@ -308,7 +309,7 @@ bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSetti
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofShortPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
@@ -318,7 +319,7 @@ bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoad
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofFloatPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings) {
 	return loadImage(pix, path, settings);
 }
 
@@ -328,7 +329,7 @@ bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoad
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofImageLoadSettings &settings){
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings){
 	ofPixels pixels;
 	bool loaded = ofLoadImage(pixels, path, settings);
 	if(loaded){
@@ -351,7 +352,7 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 
 //----------------------------------------------------------------
 template<typename PixelType>
-static bool saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
+static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (_pix.isAllocated() == false){
 		ofLogError("ofImage") << "saveImage(): couldn't save \"" << _fileName << "\", pixels are not allocated";
@@ -359,7 +360,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	std::string fileName = ofToDataPath(_fileName);
+	auto fileName = ofToDataPath(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
@@ -436,17 +437,17 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const std::filesystem::
 }
 
 //----------------------------------------------------------------
-bool ofSaveImage(const ofPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel){
+bool ofSaveImage(const ofPixels & pix, const of::filesystem::path& fileName, ofImageQualityType qualityLevel){
 	return saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-bool ofSaveImage(const ofFloatPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel) {
+bool ofSaveImage(const ofFloatPixels & pix, const of::filesystem::path& fileName, ofImageQualityType qualityLevel) {
 	return saveImage(pix,fileName,qualityLevel);
 }
 
 //----------------------------------------------------------------
-bool ofSaveImage(const ofShortPixels & pix, const std::filesystem::path& fileName, ofImageQualityType qualityLevel) {
+bool ofSaveImage(const ofShortPixels & pix, const of::filesystem::path& fileName, ofImageQualityType qualityLevel) {
 	return saveImage(pix,fileName,qualityLevel);
 }
 
@@ -604,7 +605,7 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 }
 
 template<typename PixelType>
-ofImage_<PixelType>::ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings){
+ofImage_<PixelType>::ofImage_(const of::filesystem::path & fileName, const ofImageLoadSettings &settings){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -701,7 +702,7 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings){
+bool ofImage_<PixelType>::load(const of::filesystem::path& fileName, const ofImageLoadSettings &settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
@@ -747,7 +748,7 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::save(const std::filesystem::path& fileName, ofImageQualityType qualityLevel) const {
+bool ofImage_<PixelType>::save(const of::filesystem::path& fileName, ofImageQualityType qualityLevel) const {
 	return ofSaveImage(pixels, fileName, qualityLevel);
 }
 

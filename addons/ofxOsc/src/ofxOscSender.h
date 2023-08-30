@@ -44,7 +44,7 @@ public:
 
 	/// send the given message
 	/// if wrapInBundle is true (default), message sent in a timetagged bundle
-	void sendMessage(const ofxOscMessage &message, bool wrapInBundle=true);
+	void sendMessage(const ofxOscMessage &message, bool wrapInBundle=false);
 
 	/// send the given bundle
 	void sendBundle(const ofxOscBundle &bundle);

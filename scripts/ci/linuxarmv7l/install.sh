@@ -80,17 +80,19 @@ createArchImg(){
     fi
 
     if [ "$download" = "1" ]; then
+		mkdir ~/archlinux
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
-		cd ~
-		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+		cd ~/archlinux
+		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz
         # download=$!
         # echoDots $download
         # wait $download
 
-		mkdir ~/archlinux
 		junest -- << EOF
-	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+	        tar xzf ArchLinuxARM-rpi-armv7-latest.tar.gz --no-same-owner 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+			cd ~
+			
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
             sudo pacman --noconfirm -S archlinux-keyring
@@ -199,7 +201,7 @@ installRtAudio(){
 
 installJunest(){
 	if [ ! -d ~/.local/share/junest ]; then
-		git clone git://github.com/fsquillace/junest ~/.local/share/junest
+		git clone https://github.com/fsquillace/junest ~/.local/share/junest
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
 	junest setup
@@ -222,8 +224,8 @@ downloadToolchain
 downloadFirmware
 installRtAudio
 
-cd ~/archlinux/usr/lib
-relativeSoftLinks "../.." "..\/.."
+#cd ~/archlinux/usr/lib
+#relativeSoftLinks "../.." "..\/.."
 #cd $ROOT/archlinux/usr/lib/arm-unknown-linux-gnueabihf
 #relativeSoftLinks  "../../.." "..\/..\/.."
 #cd $ROOT/raspbian/usr/lib/gcc/arm-unknown-linux-gnueabihf/5.3

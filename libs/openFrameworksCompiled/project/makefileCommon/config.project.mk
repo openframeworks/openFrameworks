@@ -374,7 +374,7 @@ ifdef MAKEFILE_DEBUG
 endif
 
 ifdef PROJECT_CXX
-	CXX ?= $(PROJECT_CXX)
+	CXX = $(PROJECT_CXX)
 endif
 
 ifdef PLATFORM_CXX
@@ -382,7 +382,7 @@ ifdef PLATFORM_CXX
 endif
 
 ifdef PROJECT_CC
-	CC ?= $(PROJECT_CC)
+	CC = $(PROJECT_CC)
 endif
 
 ifdef PLATFORM_CC

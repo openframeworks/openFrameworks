@@ -1,10 +1,10 @@
-#version 120
+OF_GLSL_SHADER_HEADER
 
-uniform sampler2DRect tex0;				
+uniform sampler2D tex0;
 
 varying vec2 texCoordVarying;
 
 void main()
 {
-    gl_FragColor = texture2DRect(tex0, texCoordVarying);
+    gl_FragColor = texture2D(tex0, texCoordVarying);
 }

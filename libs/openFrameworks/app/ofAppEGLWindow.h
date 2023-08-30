@@ -1,13 +1,11 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 #include "ofThread.h"
 #include "ofImage.h"
 #include "ofEvents.h"
 #include "ofRectangle.h"
-
-
+#include "ofConstants.h"
 #include <queue>
 #include <map>
 #include <X11/Xlib.h>
@@ -157,6 +155,7 @@ protected:
 	void threadedFunction();
 	std::queue<ofMouseEventArgs> mouseEvents;
 	std::queue<ofKeyEventArgs>   keyEvents;
+	std::queue<ofTouchEventArgs> touchEvents;
 	void checkEvents();
 	ofImage mouseCursor;
 

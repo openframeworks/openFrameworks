@@ -82,9 +82,17 @@ float ofRandomWidth();
 /// \returns a random number between 0 and ofGetHeight().
 float ofRandomHeight();
 
-/// \brief Seed the seeds the random number generator with a unique value.
+/// \brief Seed the random number generator.
 ///
-/// This seeds the random number generator with an acceptably random value, 
+/// This passes a seed value to the random engine;
+/// see of::random::Engine for details
+///
+/// \param val The value with which to seed the generator.
+void ofSetRandomSeed(unsigned long new_seed);
+
+/// \brief Seeds the random number generator with a unique value.
+///
+/// This seeds the old-school srand-based random number generator with an acceptably random value, 
 /// generated from clock time and the PID.
 void ofSeedRandom();
 
@@ -95,7 +103,7 @@ void ofSeedRandom();
 /// setup.  This can be useful for debugging and testing.
 ///
 /// \param val The value with which to seed the generator.
-void ofSeedRandom(int val);
+[[deprecated("use ofSetRandomSeed() or of::random::seed() instead")]] void ofSeedRandom(int val);
 
 /// \}
 
@@ -143,7 +151,7 @@ float ofNormalize(float value, float min, float max);
 /// \param outputMax The upper bound of the output range.
 /// \param clamp True if the value should be clamped to [outputMin, outputMax).
 /// \note If the absolute difference between inputMin and inputMax is less than
-///		  FLT_EPSILON, outputMin will be returned to prevent divide by zero
+///		  std::numeric_limits<float>::epsilon(), outputMin will be returned to prevent divide by zero
 ///		  errors.
 /// \returns a mapped floating point number.
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
@@ -441,13 +449,13 @@ bool ofLineSegmentIntersection(const vectype& line1Start, const vectype& line1En
 	compareB = diffLB.x*line2Start.y - diffLB.y*line2Start.x;
 	if (
 		(
-			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) < compareA ) ^
-			( ( diffLA.x*line2End.y - diffLA.y*line2End.x ) < compareA )
+			( ( diffLA.x*line2Start.y - diffLA.y*line2Start.x ) <= compareA ) ^
+			( ( diffLA.x*line2End.y - diffLA.y*line2End.x ) <= compareA )
 		)
 		&&
 		(
-			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) < compareB ) ^
-			( ( diffLB.x*line1End.y - diffLB.y*line1End.x) < compareB )
+			( ( diffLB.x*line1Start.y - diffLB.y*line1Start.x ) <= compareB ) ^
+			( ( diffLB.x*line1End.y - diffLB.y*line1End.x) <= compareB )
 		)
 	)
 	{

@@ -1,9 +1,6 @@
 
 #include "ofNode.h"
-#include "ofMath.h"
-#include "ofLog.h"
 #include "of3dGraphics.h"
-#include "ofGraphicsBaseTypes.h"
 
 //----------------------------------------
 ofNode::ofNode()
@@ -396,8 +393,8 @@ void ofNode::rotateRad(float radians, float vx, float vy, float vz) {
 
 //----------------------------------------
 void ofNode::rotateAround(const glm::quat& q, const glm::vec3& point) {
-	//	ofLogVerbose("ofNode") << "rotateAround(const glm::quat& q, const ofVec3f& point) not implemented yet";
-	//	ofMatrix4x4 m = getLocalTransformMatrix();
+	//	ofLogVerbose("ofNode") << "rotateAround(const glm::quat& q, const glm::vec3& point) not implemented yet";
+	//	glm::mat4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
 	

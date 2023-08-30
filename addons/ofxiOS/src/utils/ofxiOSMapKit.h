@@ -36,6 +36,7 @@
 #import <MapKit/MapKit.h>
 #include "ofConstants.h"
 #include "ofxiOSMapKitListener.h"
+#import "ofxiOSMapKitDelegate.h"
 #include "glm/vec2.hpp"
 #include "ofRectangle.h"
 #include <list>
@@ -140,7 +141,7 @@ public:
 	MKMapView	*getMKMapView();
 	
 protected:
-	
+    ofxiOSMapKitDelegate *mapKitDelegate;
 	MKMapView	*mapView;
 	std::list<ofxiOSMapKitListener*> listeners;
 	
