@@ -17,9 +17,6 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 		particles.clear();
 	}
 
-	//	ofSeedRandom(); superfluous -- the current random engine state
-	// is indistinguishable from another arbirarilty-seeded state
-	//
 	glm::vec3 position, velocity;
 	ofColor color;
 	for(int i = 0; i < nParticles; i++){
