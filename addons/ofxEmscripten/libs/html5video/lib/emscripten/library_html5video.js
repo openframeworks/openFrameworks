@@ -111,7 +111,7 @@ var LibraryHTML5Video = {
     },
     
     html5video_player_load__deps: ['$GL'],
-    html5video_player_load: function(player_id, src) {
+    html5video_player_load_url: function(player_id, src) {
         VIDEO.player[player_id].src = UTF8ToString(src);
         var texId = GL.getNewId(GL.textures);
         var texture = GLctx.createTexture();
@@ -124,6 +124,40 @@ var LibraryHTML5Video = {
         GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_T, GLctx.CLAMP_TO_EDGE);
         VIDEO.player[player_id].textureId = texId;
     },
+
+    html5video_player_load: function(player_id, src) {
+            
+          try {
+            var filePath = UTF8ToString(src); // The path to your file in MEMFS
+            var data = FS.readFile(filePath, { encoding: 'binary' });
+            var ext = filePath.split('.').pop();
+            
+            var stats = FS.stat(filePath)
+            var fileSizeInBytes = stats.size;
+            
+            const blob = new Blob([data], { type: 'video/' + ext  });
+            const videoSrc = URL.createObjectURL(blob);
+
+            VIDEO.player[player_id].src = videoSrc;
+            var texId = GL.getNewId(GL.textures);
+            var texture = GLctx.createTexture();
+            texture.name = texId;
+            GL.textures[texId] = texture;
+            GLctx.bindTexture(GLctx.TEXTURE_2D, texture);
+            GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_MAG_FILTER, GLctx.LINEAR);
+            GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_MIN_FILTER, GLctx.LINEAR);
+            GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_S, GLctx.CLAMP_TO_EDGE);
+            GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_T, GLctx.CLAMP_TO_EDGE);
+            VIDEO.player[player_id].textureId = texId;
+
+            // Check the file size
+            //console.log('File size:' + fileSizeInBytes);
+            //console.log('data size:' + data.length);
+          } catch (error) {
+            console.error('Error reading file:' + filePath + " " + error);
+          }
+    },
+
 
     html5video_player_pixel_format: function(player_id) {
         var string = VIDEO.player[player_id].pixelFormat;
