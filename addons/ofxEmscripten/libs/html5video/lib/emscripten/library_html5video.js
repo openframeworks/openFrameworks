@@ -367,7 +367,7 @@ var LibraryHTML5Video = {
     html5video_grabber_update__deps: ['$GL'],
     html5video_grabber_update: function(grabber_id, update_pixels, pixels) {
         var grabber = VIDEO.grabber[grabber_id];
-        if ( grabber.readyState == grabber.HAVE_METADATA ) {
+        if ( grabber.readyState > grabber.HAVE_NOTHING ) {
         	VIDEO.update(update_pixels, grabber, VIDEO.grabber[grabber_id].context, pixels);
             return true;
         }else{
