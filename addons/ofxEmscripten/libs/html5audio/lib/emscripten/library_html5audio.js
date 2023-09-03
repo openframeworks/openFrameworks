@@ -80,7 +80,41 @@ var LibraryHTML5Audio = {
     },
     
     html5audio_sound_load: function (player_id, url) {
-        AUDIO.player[player_id].src = UTF8ToString(url);
+        try {
+            var filePath = UTF8ToString(url); 
+
+            if( filePath.indexOf("http") == 0 ) {
+                AUDIO.player[player_id].src = filePath;
+            }else{
+
+                console.log("file path is" + filePath);
+                
+                var data = FS.readFile(filePath, { encoding: 'binary' });
+                
+                var ext = filePath.split('.').pop();
+                
+                var stats = FS.stat(filePath)
+                var fileSizeInBytes = stats.size;
+                    
+                var tag = 'mpeg';
+                if( ext == 'wav' ){
+                    tag = 'wav';
+                }else if( ext == 'ogg'){
+                    tag = 'ogg'
+                }else if( ext == 'aiff'){
+                    tag = 'aiff'
+                }
+                
+                const blob = new Blob([data], { type: 'audio/' + tag });
+                const audioSrc = URL.createObjectURL(blob);
+            
+                AUDIO.player[player_id].src = audioSrc;
+            }
+
+        } catch (error) {
+            console.error('Error reading file:' + filePath + " " + error);
+        }
+        
     },
 
     html5audio_sound_play: function (player_id, multiplay, volume, speed, pan, offset) {
