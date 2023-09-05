@@ -6,7 +6,7 @@ void ofApp::setup(){
 //	ofSetLogLevel(OF_LOG_VERBOSE);
 	// lets make two lights
 	for( int i = 0; i < 2; i++ ){
-		auto light = make_shared<ofLight>();
+		auto light = std::make_shared<ofLight>();
 		light->setup();
 		if( i == 0 ) {
 			light->setPosition(400, -100, 400);
@@ -29,7 +29,7 @@ void ofApp::setup(){
 	// see TexturePack class for other functions and variables in ofApp.h
 	#ifdef USE_MATERIAL
 	string matPath = "textures/Snow_03/";
-	auto snowMat = make_shared<ofMaterial>();
+	auto snowMat = std::make_shared<ofMaterial>();
 	snowMat->setEmissiveColor(ofFloatColor(211/255.,25/255.,150/255., 0.8));
 	snowMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, matPath+"snow_03_arm.jpg");
 	snowMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DIFFUSE, matPath+"snow_03_diff.jpg");
@@ -38,7 +38,7 @@ void ofApp::setup(){
 	materials.push_back(snowMat);
 	
 	matPath = "textures/Mud_cracked_dry_03/";
-	auto mudMat = make_shared<ofMaterial>();
+	auto mudMat = std::make_shared<ofMaterial>();
 	mudMat->setEmissiveColor(ofFloatColor(25/255.,221/255.,137/255., 0.8));
 	mudMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, matPath+"mud_cracked_dry_03_arm.jpg");
 	mudMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DIFFUSE, matPath+"mud_cracked_dry_03_diff.jpg");
@@ -47,7 +47,7 @@ void ofApp::setup(){
 	materials.push_back(mudMat);
 	
 	matPath = "textures/Square_floor/";
-	auto floorMat = make_shared<ofMaterial>();
+	auto floorMat = std::make_shared<ofMaterial>();
 	floorMat->setEmissiveColor(ofColor(237,222,69., 200));
 	floorMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, matPath+"square_floor_arm.jpg");
 	floorMat->loadTexture(ofMaterialTextureType::OF_MATERIAL_TEXTURE_DIFFUSE, matPath+"square_floor_diff.jpg");
@@ -56,26 +56,26 @@ void ofApp::setup(){
 	materials.push_back(floorMat);
 	#else
 	
-	texturePacks.push_back( make_shared<TexturePack>("Snow_03"));
+	texturePacks.push_back( std::make_shared<TexturePack>("Snow_03"));
 	texturePacks.back()->material.setEmissiveColor(ofFloatColor(211/255.,25/255.,150/255., 0.8));
 	texturePacks.back()->material.setSpecularColor(ofFloatColor(1,1,1,0.8));
 	texturePacks.back()->material.setShininess(40);
 	texturePacks.back()->material.setDiffuseColor(ofFloatColor(1,1,1,1.0));
 	
-	texturePacks.push_back( make_shared<TexturePack>("Mud_cracked_dry_03"));
+	texturePacks.push_back( std::make_shared<TexturePack>("Mud_cracked_dry_03"));
 	texturePacks.back()->material.setEmissiveColor(ofFloatColor(25/255.,221/255.,137/255., 0.8));
 	texturePacks.back()->material.setSpecularColor(ofFloatColor(1,1,1,0.05));
 	texturePacks.back()->material.setShininess(1);
 	texturePacks.back()->material.setDiffuseColor(ofFloatColor(1,1,1,0.7));
 	
-	texturePacks.push_back( make_shared<TexturePack>("Square_floor"));
+	texturePacks.push_back( std::make_shared<TexturePack>("Square_floor"));
 	texturePacks.back()->material.setEmissiveColor(ofColor(237,222,69., 200));
 	texturePacks.back()->material.setSpecularColor(ofFloatColor(1,1,1,0.6));
 	texturePacks.back()->material.setShininess(100);
 	texturePacks.back()->material.setDiffuseColor(ofFloatColor(1,1,1,1.0));
 	
 	// load a shader that will be used for mesh manipulation and lighting
-	shader = make_shared<ofShader>();
+	shader = std::make_shared<ofShader>();
 	shader->load("shaders/shader");
 	
 	for( int i = 0; i < texturePacks.size(); i++ ){

@@ -19,7 +19,7 @@ int main( ){
 	auto guiWindow = ofCreateWindow(settings);
 	guiWindow->setVerticalSync(false);
 
-	auto mainApp = make_shared<ofApp>();
+	auto mainApp = std::make_shared<ofApp>();
 	mainApp->setupGui();
 	ofAddListener(guiWindow->events().draw,mainApp.get(),&ofApp::drawGui);
 
