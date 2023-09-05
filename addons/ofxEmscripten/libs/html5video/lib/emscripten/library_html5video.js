@@ -149,6 +149,10 @@ var LibraryHTML5Video = {
             GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_S, GLctx.CLAMP_TO_EDGE);
             GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_T, GLctx.CLAMP_TO_EDGE);
             VIDEO.player[player_id].textureId = texId;
+            
+            if (typeof VIDEO.player[player_id].audioTracks == "undefined") {
+                VIDEO.player[player_id].muted = true;
+            }
 
             // Check the file size
             //console.log('File size:' + fileSizeInBytes);
@@ -255,6 +259,11 @@ var LibraryHTML5Video = {
 
     html5video_player_set_volume: function(player_id, volume) {
         VIDEO.player[player_id].volume = volume;
+        if( volume <= 0 ){
+            VIDEO.player[player_id].muted = true;
+        }else{
+            VIDEO.player[player_id].muted = false;
+        }
     },
 
     html5video_player_set_loop: function(player_id, loop) {
