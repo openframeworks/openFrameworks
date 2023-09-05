@@ -1062,8 +1062,8 @@ void ofSaveViewport(const std::string& filename);
 /// \param url the URL to process.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
-/// \returns an <optional> string if the preparation is successful
-std::optional<std::string> ofSanitizeURLString(const std::string& url, bool uriEncodeQuery=false);
+/// \returns a string if the preparation is successful, emtpy if not
+std::string ofSanitizeURLString(const std::string& url, bool uriEncodeQuery=false);
 
 #ifndef TARGET_EMSCRIPTEN
 
