@@ -18,6 +18,20 @@
 ### All 0.12.0 changes newest to oldest ### 
 Grabbed via: `git log --oneline  --ancestry-path ac69b2f..34e8eac --pretty=format:'- %s [commit](https://github.com/openframeworks/openFrameworks/commit/%H)' > changes.txt` 
 
+Major Changes: 
+- all: Physical Based Rendering (PBR) now supported in ofxAssimpModelLoader and ofMaterial
+- all: Built in shadow support
+- all: C++17 default
+- arm: aarch64 / 64bit support for Rapsberry Pi and other arm64 devices
+- Windows: ofMediaFoundationSoundPlayer can be used instead of fmod
+- macOS: ofAVEngineSoundPlayer can be used instead of fmod
+- Windows ofMediaFoundationPlayer for video playback. No need for codecs!!! 
+- iOS: ARC is now enabled for all projects by default. Some addons might require -fno-objc-arc for files which aren't ARC compatible. [More info](https://stackoverflow.com/a/6658549)
+- emscripten: Loads of emscripten fixes to make more examples compatible.
+- all: new computer_vision / OpenCV examples
+- msys2: UCRT64 support
+
+Full list: 
 - Update manual-nightly.yml [commit](https://github.com/openframeworks/openFrameworks/commit/42b6dff3e77aa49425dffc2902d32ca86c818a59)
 - update submodules [commit](https://github.com/openframeworks/openFrameworks/commit/93d0efda1413471e6f50761f73b1e72f04f6ba42)
 - removal of some iOS examples (#7601) [commit](https://github.com/openframeworks/openFrameworks/commit/478620f212ec09b48abfd99e8e285c09b97ca921)

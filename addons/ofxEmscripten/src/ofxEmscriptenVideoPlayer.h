@@ -67,4 +67,7 @@ private:
 	ofTexture texture;
 	ofPixels pixels;
 	bool usePixels;
+        float timePlayRequested = 0;
+        bool bHadValidFrame = false;
+        bool bWarnBlocked = false; 
 };
