@@ -15,14 +15,14 @@ int main( ){
 		settings.setGLESVersion(2);
 		
 		auto window = ofCreateWindow(settings);
-		ofRunApp(window, make_shared<ofApp>());
+		ofRunApp(window, std::make_shared<ofApp>());
 	#else
 		ofGLWindowSettings settings;
 		settings.setSize(windowWidth, windowHeight);
 		settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
 		auto window = ofCreateWindow(settings);
-		ofRunApp(window, make_shared<ofApp>());
+		ofRunApp(window, std::make_shared<ofApp>());
 	#endif
 	
 	ofRunMainLoop();
