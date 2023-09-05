@@ -15,6 +15,9 @@ OUTPUT_FOLDER=$ROOT/out
 mkdir $OUTPUT_FOLDER
 
 lastversion=$(date +%Y%m%d)
+if [ -n "$1" ] && [ "$1" != "nightly" ]; then
+    lastversion=$1
+fi
 
 git submodule update --init --recursive
 git submodule update --recursive --remote

@@ -1140,6 +1140,52 @@ void ofShadow::_updateNumShadows() {
 #include "shaders/shadowDepth.frag"
 #include "shaders/shadowDepthCubeGeom.glsl"
 
+bool ofShadow::setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) {
+	return setupShadowDepthShader( ashader, data->lightType, aShaderMain );
+}
+
+bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain) {
+	std::string gversion = "#version 150\n";
+	#ifdef TARGET_OPENGLES
+	gversion = "#version 300 es\nprecision highp float;\n";
+	#endif
+	std::string tdefines = "#define SINGLE_PASS\n";
+
+	bool bDepthCubeSinglePass = false;
+
+	if( aLightType == OF_LIGHT_POINT ) {
+		#ifndef TARGET_OPENGLES
+		if(isSingleOmniPass()) {
+			//return shaders[&renderer]->depthCube;
+			tdefines = "#define CUBE_MAP_SINGLE_PASS\n";
+			bDepthCubeSinglePass = true;
+		} else {
+			//return shaders[&renderer]->depthCubeMultiPass;
+			tdefines = "#define CUBE_MAP_MULTI_PASS\n";
+		}
+		#else
+		//return shaders[&renderer]->depthCubeMultiPass;
+		tdefines = "#define CUBE_MAP_MULTI_PASS\n";
+		#endif
+	} else if( aLightType == OF_LIGHT_AREA ) {
+		//return shaders[&renderer]->depth;
+	} else {
+		//return shaders[&renderer]->depth;
+	}
+
+	ashader.setupShaderFromSource(GL_VERTEX_SHADER,gversion+tdefines+depthVertexShaderSource+aShaderMain);
+	ashader.setupShaderFromSource(GL_FRAGMENT_SHADER,gversion+tdefines+depthFragShaderSource);
+
+	#ifndef TARGET_OPENGLES
+	if(bDepthCubeSinglePass) {
+		ashader.setupShaderFromSource(GL_GEOMETRY_SHADER_EXT,depthCubeGeometryShaderSource);
+	}
+	#endif
+
+	ashader.bindDefaults();
+	return ashader.linkProgram();
+}
+
 
 void ofShadow::initShaders(ofGLProgrammableRenderer & renderer) const{
 	auto rendererShaders = shaders.find(&renderer);
@@ -1152,19 +1198,21 @@ void ofShadow::initShaders(ofGLProgrammableRenderer & renderer) const{
 		gversion = "#version 300 es\nprecision highp float;\n";
 		#endif
 		
-		shaders[&renderer]->depth.setupShaderFromSource(GL_VERTEX_SHADER,gversion+"#define SINGLE_PASS\n"+depthVertexShaderSource);
+		std::string vertString = depthVertexShaderSource+depthVertexShader_Main;
+		
+		shaders[&renderer]->depth.setupShaderFromSource(GL_VERTEX_SHADER,gversion+"#define SINGLE_PASS\n"+vertString);
 		shaders[&renderer]->depth.setupShaderFromSource(GL_FRAGMENT_SHADER,gversion+"#define SINGLE_PASS\n"+depthFragShaderSource);
 		shaders[&renderer]->depth.bindDefaults();
 		shaders[&renderer]->depth.linkProgram();
 		
 		#ifndef TARGET_OPENGLES
-		shaders[&renderer]->depthCube.setupShaderFromSource(GL_VERTEX_SHADER,gversion+"#define CUBE_MAP_SINGLE_PASS\n"+depthVertexShaderSource);
+		shaders[&renderer]->depthCube.setupShaderFromSource(GL_VERTEX_SHADER,gversion+"#define CUBE_MAP_SINGLE_PASS\n"+vertString);
 		shaders[&renderer]->depthCube.setupShaderFromSource(GL_FRAGMENT_SHADER,gversion+"#define CUBE_MAP_SINGLE_PASS\n"+depthFragShaderSource);
 		shaders[&renderer]->depthCube.setupShaderFromSource(GL_GEOMETRY_SHADER_EXT,depthCubeGeometryShaderSource);
 		shaders[&renderer]->depthCube.bindDefaults();
 		shaders[&renderer]->depthCube.linkProgram();
 		#endif
-		shaders[&renderer]->depthCubeMultiPass.setupShaderFromSource(GL_VERTEX_SHADER,gversion+"#define CUBE_MAP_MULTI_PASS\n"+depthVertexShaderSource);
+		shaders[&renderer]->depthCubeMultiPass.setupShaderFromSource(GL_VERTEX_SHADER,gversion+"#define CUBE_MAP_MULTI_PASS\n"+vertString);
 		shaders[&renderer]->depthCubeMultiPass.setupShaderFromSource(GL_FRAGMENT_SHADER,gversion+"#define CUBE_MAP_MULTI_PASS\n"+depthFragShaderSource);
 		shaders[&renderer]->depthCubeMultiPass.bindDefaults();
 		shaders[&renderer]->depthCubeMultiPass.linkProgram();

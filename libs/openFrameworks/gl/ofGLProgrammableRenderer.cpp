@@ -1290,6 +1290,19 @@ void ofGLProgrammableRenderer::bind(const ofShader & shader){
     if(currentShader && *currentShader==shader){
 		return;
     }
+	
+	if(bIsShadowDepthPass) {
+		// if we are not the shadow shader, lets unbind it
+		if(!settingDefaultShader && currentShadow && currentShader ) {
+			// lets assume it's bound?
+			if(!bCustomShadowShader) {
+				glUseProgram(0);
+			}
+			// we are assuming that since it's a custom depth shader, it all will be taken care of ...
+			bCustomShadowShader=true;
+		}
+	}
+	
 	glUseProgram(shader.getProgram());
 
 	currentShader = &shader;
@@ -1304,6 +1317,7 @@ void ofGLProgrammableRenderer::bind(const ofShader & shader){
 void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 	glUseProgram(0);
 	usingCustomShader = false;
+	bCustomShadowShader=false;
 	beginDefaultShader();
 }
 
@@ -1434,6 +1448,7 @@ void ofGLProgrammableRenderer::unbind(const ofBaseMaterial &){
 void ofGLProgrammableRenderer::unbind(const ofShadow & shadow) {
 	currentShadow = nullptr;
 	bIsShadowDepthPass = false;
+	bCustomShadowShader = false;
 	beginDefaultShader();
 }
 
@@ -1569,11 +1584,12 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::beginDefaultShader(){
 	if(usingCustomShader && !currentMaterial && !currentShadow)	return;
+	if( currentShadow && bCustomShadowShader ) return;
 
 	const ofShader * nextShader = nullptr;
 
 	if(!uniqueShader || currentMaterial || currentShadow ){
-		if( currentShadow ) {
+		if(currentShadow) {
 			nextShader = &currentShadow->getDepthShader(*this);
 		} else if(currentMaterial){
 //			std::cout << "ofGLProgrammableRenderer::beginDefaultShader: " << currentTextureTarget << " | " << ofGetFrameNum() << std::endl;

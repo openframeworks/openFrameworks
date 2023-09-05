@@ -29,8 +29,8 @@ ofxEmscriptenVideoPlayer::~ofxEmscriptenVideoPlayer() {
 }
 
 bool ofxEmscriptenVideoPlayer::load(string name){
-	if (name.substr(0, 12) == "blob:http://" || name.substr(0, 13) == "blob:https://"){
-		html5video_player_load(player_id, name.c_str());
+	if (name.substr(0, 7) == "http://" || name.substr(0, 8) == "https://"){
+		html5video_player_load_url(player_id, name.c_str());
 	} else{
 		html5video_player_load(player_id, ofToDataPath(name).c_str());
 	}
@@ -86,7 +86,16 @@ void ofxEmscriptenVideoPlayer::update(){
 			texture.texData.bAllocated = true;
 			texture.setUseExternalTextureID(html5video_player_texture_id(player_id));
 		}
-	}
+	}else{
+            if( !bHadValidFrame && !bWarnBlocked ){
+                if( ofGetElapsedTimef() - timePlayRequested > 3.0 ){
+                    string errorMsg = "ofxEmscriptenVideoPlayer::update video is not playing - check your browser preferences 'Auto Play' and click allow for this site  ";
+                    ofLogError() << errorMsg << endl;
+                    std::cout << errorMsg << endl;
+                    bWarnBlocked = true;
+                }
+            }
+        }
 }
 
 void ofxEmscriptenVideoPlayer::play(){
