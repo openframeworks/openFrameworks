@@ -285,6 +285,7 @@ private:
 	const ofShadow* currentShadow;
 	bool bIsShadowDepthPass;
 	GLenum shadowCubeFace;
+	bool bCustomShadowShader = false;
 
 	ofStyle currentStyle;
 	std::deque <ofStyle> styleHistory;

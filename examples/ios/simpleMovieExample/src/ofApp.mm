@@ -1,29 +1,34 @@
 #include "ofApp.h"
 
-//NOTE: in this example ofApp ( this class ) is not used. 
-//      look inside Apps/ to see the native iOS implementation
-//      If the app is not compiling, try removing the storyboard reference
-//      from the xcode project and adding it back to the project.
-//      Set the deployment target in project / General / Deployment Target >= 5.1
-
 //--------------------------------------------------------------
-void ofApp::setup(){	
-	
+void ofApp::setup(){
+	player_.load("hands.m4v");
+	player_.play();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	player_.update();
+	
+	if (ofGetElapsedTimef() > 10) {
+		player_.close();
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+	ofBackground(0,0,0);
+	if (player_.isLoaded()) {
+		player_.draw(0,0);
+
+	} else {
+		ofDrawBitmapString("Player was unloaded sucessfully after 10 seconds", 20,20);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-
+	
 }
 
 //--------------------------------------------------------------
@@ -48,26 +53,27 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-
+	
 }
+
 
