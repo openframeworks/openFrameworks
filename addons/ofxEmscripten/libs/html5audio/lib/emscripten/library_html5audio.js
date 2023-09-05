@@ -87,7 +87,7 @@ var LibraryHTML5Audio = {
                 AUDIO.player[player_id].src = filePath;
             }else{
 
-                console.log("file path is" + filePath);
+                //console.log("file path is" + filePath);
                 
                 var data = FS.readFile(filePath, { encoding: 'binary' });
                 
@@ -96,13 +96,13 @@ var LibraryHTML5Audio = {
                 var stats = FS.stat(filePath)
                 var fileSizeInBytes = stats.size;
                     
-                var tag = 'mpeg';
-                if( ext == 'wav' ){
-                    tag = 'wav';
-                }else if( ext == 'ogg'){
-                    tag = 'ogg'
-                }else if( ext == 'aiff'){
-                    tag = 'aiff'
+                var tag = ext; //this covers most types
+                if( ext == mp3 ){
+                    tag = 'mpeg';
+                }else if( ext == 'oga'){
+                    tag = 'ogg';
+                }else if( ext == 'weba'){
+                    tag = 'webm';
                 }
                 
                 const blob = new Blob([data], { type: 'audio/' + tag });
