@@ -135,5 +135,6 @@ using std::shared_ptr;
 using std::weak_ptr;
 using std::to_string;
 #endif
- 
+#endif
+
 #endif // OF_MAIN_H
