@@ -92,9 +92,11 @@ var LibraryHTML5Video = {
 	VIDEO.player[player_id].soundPan = AUDIO.context.createStereoPanner();
 	source.connect(VIDEO.player[player_id].soundPan).connect(AUDIO.fft);
 	video.onloadeddata = function (e){
-                if (!(VIDEO.player[player_id].mozHasAudio || Boolean(VIDEO.player[player_id].webkitAudioDecodedByteCount) || Boolean(VIDEO.player[player_id].audioTracks && VIDEO.player[player_id].audioTracks.length))) {
-                    VIDEO.player[player_id].muted = true;
-                }
+                setTimeout(() => {
+                    if (!(VIDEO.player[player_id].mozHasAudio || Boolean(VIDEO.player[player_id].webkitAudioDecodedByteCount) || Boolean(VIDEO.player[player_id].audioTracks && VIDEO.player[player_id].audioTracks.length))) {
+                        VIDEO.player[player_id].muted = true;
+                    }
+                }, 0);
         	VIDEO.player[player_id].width = this.videoWidth;
         	VIDEO.player[player_id].height = this.videoHeight;
 		var videoImage = document.createElement( 'canvas' );
