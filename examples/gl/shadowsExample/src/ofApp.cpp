@@ -8,7 +8,7 @@ void ofApp::setup(){
 	// add two lights
 	int numLights = 2;
 	for( int i = 0; i < numLights; i++ ) {
-		auto light = make_shared<ofLight>();
+		auto light = std::make_shared<ofLight>();
 		light->enable();
 		if( i == 0 ) {
 			light->setPointLight();
