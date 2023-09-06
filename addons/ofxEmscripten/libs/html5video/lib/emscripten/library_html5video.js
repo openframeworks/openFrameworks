@@ -96,7 +96,7 @@ var LibraryHTML5Video = {
                     if (!(VIDEO.player[player_id].mozHasAudio || Boolean(VIDEO.player[player_id].webkitAudioDecodedByteCount) || Boolean(VIDEO.player[player_id].audioTracks && VIDEO.player[player_id].audioTracks.length))) {
                         VIDEO.player[player_id].muted = true;
                     }
-                }, 0);
+                }, 100);
         	VIDEO.player[player_id].width = this.videoWidth;
         	VIDEO.player[player_id].height = this.videoHeight;
 		var videoImage = document.createElement( 'canvas' );
