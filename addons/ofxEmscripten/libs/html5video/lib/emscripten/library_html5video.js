@@ -150,8 +150,8 @@ var LibraryHTML5Video = {
             GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_T, GLctx.CLAMP_TO_EDGE);
             VIDEO.player[player_id].textureId = texId;
             
-            if (!(VIDEO.players[player_id].mozHasAudio || Boolean(VIDEO.players[player_id].webkitAudioDecodedByteCount) || Boolean(VIDEO.players[player_id].audioTracks && VIDEO.players[player_id].audioTracks.length))) {
-                VIDEO.players[player_id].muted = true;
+            if (!(VIDEO.player[player_id].mozHasAudio || Boolean(VIDEO.player[player_id].webkitAudioDecodedByteCount) || Boolean(VIDEO.player[player_id].audioTracks && VIDEO.player[player_id].audioTracks.length))) {
+                VIDEO.player[player_id].muted = true;
             }
 
             // Check the file size
