@@ -12,7 +12,7 @@ void ofApp::setup(){
 	float xdist = 1000.0;
 	
 	for( int i = 0; i < numLights; i++ ){
-		auto pointLight = make_shared<ofLight>();
+		auto pointLight = std::make_shared<ofLight>();
 		pointLight->setup();
 		pointLight->enable();
 		pointLight->setPointLight();

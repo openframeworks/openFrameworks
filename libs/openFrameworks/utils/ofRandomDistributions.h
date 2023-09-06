@@ -536,7 +536,7 @@ T bound_normal(float min, float max, float focus = 4.0f) {
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
 bound_normal(T min, T max, T focus = {4.0f, 4.0f}) {
-    if (!min.x < max.x || !min.y < max.y) {
+    if (min.x >= max.x || min.y >= max.y) {
         std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
         return {};
     } else {
@@ -545,8 +545,8 @@ bound_normal(T min, T max, T focus = {4.0f, 4.0f}) {
             return {};
         } else {
             T v;
-            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
-            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
+            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min.x || v.x > max.x);
+            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min.y || v.y > max.y);
             return v;
         }
     }
@@ -555,7 +555,7 @@ bound_normal(T min, T max, T focus = {4.0f, 4.0f}) {
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
 bound_normal(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
-    if (!min.x < max.x || !min.y < max.y || !min.z < max.z) {
+    if (min.x >= max.x || min.y >= max.y || min.z >= max.z) {
         std::cout << "ofRandomNormalLimits()" << "max must be > than min\n";
         return {};
     } else {
@@ -564,9 +564,9 @@ bound_normal(T min, T max, T focus = {4.0f, 4.0f, 4.0f}) {
             return {};
         } else {
             T v;
-            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min || v.x > max);
-            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min || v.y > max);
-            do { v.z = of::random::normal<float>((max.z+min.z)/2.0f, (max.z-min.z)/(2*focus.z)); } while (v.z < min || v.z > max);
+            do { v.x = of::random::normal<float>((max.x+min.x)/2.0f, (max.x-min.x)/(2*focus.x)); } while (v.x < min.x || v.x > max.x);
+            do { v.y = of::random::normal<float>((max.y+min.y)/2.0f, (max.y-min.y)/(2*focus.y)); } while (v.y < min.y || v.y > max.y);
+            do { v.z = of::random::normal<float>((max.z+min.z)/2.0f, (max.z-min.z)/(2*focus.z)); } while (v.z < min.z || v.z > max.z);
             return v;
         }
     }

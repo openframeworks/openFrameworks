@@ -18,7 +18,7 @@ public:
     auto perform_shuffle() {
         std::vector<uint8_t> values = { 1, 2, 3, 4, 5, 6, 7, 8 }; // initial order
         ofShuffle(values);
-        shuffled_string_ = "shuffled values:";
+        shuffled_string_ = "shuffled values:";
         for (const auto v: values) {
             shuffled_string_ += " " + ofToUpper(ofToHex(v));
         }
