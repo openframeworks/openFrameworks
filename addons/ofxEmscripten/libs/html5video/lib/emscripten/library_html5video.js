@@ -91,7 +91,10 @@ var LibraryHTML5Video = {
 	var source = AUDIO.context.createMediaElementSource(VIDEO.player[player_id]); 
 	VIDEO.player[player_id].soundPan = AUDIO.context.createStereoPanner();
 	source.connect(VIDEO.player[player_id].soundPan).connect(AUDIO.fft);
-	video.onloadedmetadata = function (e){
+	video.onloadeddata = function (e){
+                if (!(VIDEO.player[player_id].mozHasAudio || Boolean(VIDEO.player[player_id].webkitAudioDecodedByteCount) || Boolean(VIDEO.player[player_id].audioTracks && VIDEO.player[player_id].audioTracks.length))) {
+                    VIDEO.player[player_id].muted = true;
+                }
         	VIDEO.player[player_id].width = this.videoWidth;
         	VIDEO.player[player_id].height = this.videoHeight;
 		var videoImage = document.createElement( 'canvas' );
@@ -149,10 +152,6 @@ var LibraryHTML5Video = {
             GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_S, GLctx.CLAMP_TO_EDGE);
             GLctx.texParameteri(GLctx.TEXTURE_2D, GLctx.TEXTURE_WRAP_T, GLctx.CLAMP_TO_EDGE);
             VIDEO.player[player_id].textureId = texId;
-            
-            if (!(VIDEO.player[player_id].mozHasAudio || Boolean(VIDEO.player[player_id].webkitAudioDecodedByteCount) || Boolean(VIDEO.player[player_id].audioTracks && VIDEO.player[player_id].audioTracks.length))) {
-                VIDEO.player[player_id].muted = true;
-            }
 
             // Check the file size
             //console.log('File size:' + fileSizeInBytes);
