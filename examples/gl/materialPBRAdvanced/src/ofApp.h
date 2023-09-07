@@ -41,5 +41,6 @@ class ofApp : public ofBaseApp{
 	
 		ofLight light;
 		bool bDebug = false;
+		bool bWiggleVerts = false;
 		
 };

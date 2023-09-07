@@ -108,6 +108,7 @@ void ofApp::draw(){
 	
 	stringstream ss;
 	ss << "Reload shader(r): make changes to shader in data/shaders/main.frag and then press 'r' to see changes.";
+	ss << endl << "Wiggle verts(w): " << (bWiggleVerts ? "yes" : "no");
 	ofDrawBitmapStringHighlight(ss.str(), 40, 40);
 }
 
@@ -143,8 +144,11 @@ void ofApp::renderScene(bool bShadowPass) {
 	if( bShadowPass ) {
 		mDepthShader.begin();
 		mDepthShader.setUniform1f("iElapsedTime", ofGetElapsedTimef());
+		mDepthShader.setUniform1f("uWiggleVerts", bWiggleVerts ? 1.0f : 0.0f);
 	}
+	// setting custom uniforms on a material automatically adds it to the shader
 	matLogo.setCustomUniform1f("iElapsedTime", ofGetElapsedTimef());
+	matLogo.setCustomUniform1f("uWiggleVerts", bWiggleVerts ? 1.0f : 0.0f);
 	matLogo.begin();
 	ofPushMatrix();
 	ofTranslate( -70, -250, 0 );
@@ -181,6 +185,9 @@ void ofApp::keyPressed(int key){
 	}
 	if( key == 'd' ) {
 		bDebug = !bDebug;
+	}
+	if( key == 'w') {
+		bWiggleVerts = !bWiggleVerts;
 	}
 }
 
