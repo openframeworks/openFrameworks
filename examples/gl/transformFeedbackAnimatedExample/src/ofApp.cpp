@@ -59,7 +59,7 @@ void ofApp::setup(){
 	// the output of transform feedback 0 will output to vbo[1]
 	// the output of transform feedback 1 will output to vbo[0]
 	for (int i = 0; i < 2; i++) {
-		auto vbo = make_shared<ofVbo>();
+		auto vbo = std::make_shared<ofVbo>();
 		vbo->setVertexData( positionData.data(), numVertices, GL_DYNAMIC_COPY );
 		// since we are using glm::vec4 we can not call the vbo->setColorData function because it is expecting a vector
 		// of ofFloatColor as an argument 
