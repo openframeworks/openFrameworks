@@ -6,11 +6,14 @@
 
 #pragma once
 
+#include <memory>
 #include "glm/mat4x4.hpp"
+#include "ofShader.h"
+#include "ofConstants.h"
+
 
 class ofVboMesh;
 
-class ofShader;
 class ofGLProgrammableRenderer;
 
 class ofCubeMap {

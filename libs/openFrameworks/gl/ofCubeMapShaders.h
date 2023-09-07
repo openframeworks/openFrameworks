@@ -9,6 +9,7 @@
 
 #include "ofConstants.h"
 #include "ofGLUtils.h"
+#include "ofGLRenderer.h"
 
 class ofCubeMapShaders {
 public:
