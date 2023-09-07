@@ -255,11 +255,6 @@ var LibraryHTML5Video = {
 
     html5video_player_set_volume: function(player_id, volume) {
         VIDEO.player[player_id].volume = volume;
-        if( volume <= 0 ){
-            VIDEO.player[player_id].muted = true;
-        }else{
-            VIDEO.player[player_id].muted = false;
-        }
     },
 
     html5video_player_set_loop: function(player_id, loop) {
