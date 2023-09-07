@@ -72,7 +72,7 @@ void ofApp::draw(){
 		int numShadowPasses = light.getNumShadowDepthPasses();
 		for( int j = 0; j < numShadowPasses; j++ ) {
 			light.beginShadowDepthPass(j);
-			renderScene();
+			renderScene(true);
 			light.endShadowDepthPass(j);
 		}
 	}
@@ -80,7 +80,7 @@ void ofApp::draw(){
 	
 	camera.begin(); {
 		
-		renderScene();
+		renderScene(false);
 		
 		 if( cubeMap.hasPrefilteredMap() ) {
 		 	cubeMap.drawPrefilteredCube(0.2f);
@@ -112,7 +112,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::renderScene() {
+void ofApp::renderScene(bool bShadowPass) {
 	
 	matFloor.setMetallic(0.0);
 	matFloor.setReflectance(0.01);
@@ -140,6 +140,10 @@ void ofApp::renderScene() {
 	ofPopMatrix();
 	matSphere.end();
 	
+	if( bShadowPass ) {
+		mDepthShader.begin();
+		mDepthShader.setUniform1f("iElapsedTime", ofGetElapsedTimef());
+	}
 	matLogo.setCustomUniform1f("iElapsedTime", ofGetElapsedTimef());
 	matLogo.begin();
 	ofPushMatrix();
@@ -149,6 +153,9 @@ void ofApp::renderScene() {
 	meshLogoHollow.draw();
 	ofPopMatrix();
 	matLogo.end();
+	if(bShadowPass ) {
+		mDepthShader.end();
+	}
 }
 
 //--------------------------------------------------------------
@@ -161,6 +168,7 @@ bool ofApp::reloadShader() {
 	if( vbuffer.size() && fbuffer.size() ) {
 		matLogo.setShaderMain(vbuffer.getText(), GL_VERTEX_SHADER, "main.vert");
 		matLogo.setShaderMain(fbuffer.getText(), GL_FRAGMENT_SHADER, "main.frag");
+		light.getShadow().setupShadowDepthShader(mDepthShader, "#define SHADOW_DEPTH_PASS\n"+vbuffer.getText());
 		return true;
 	}
 	return false;
