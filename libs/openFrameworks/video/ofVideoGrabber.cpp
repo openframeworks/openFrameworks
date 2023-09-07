@@ -1,9 +1,9 @@
 #include "ofVideoGrabber.h"
-#include "ofVideoBaseTypes.h"
-#include "ofGLUtils.h"
 #include "ofAppRunner.h"
 #include "ofConstants.h"
+#include "ofGLUtils.h"
 #include "ofPixels.h"
+#include "ofVideoBaseTypes.h"
 
 #ifdef OF_VIDEO_CAPTURE_IOS
 	#include "ofxiOSVideoGrabber.h"
@@ -49,63 +49,63 @@ using std::shared_ptr;
 using std::vector;
 
 //--------------------------------------------------------------------
-ofVideoGrabber::ofVideoGrabber(){
-	bUseTexture			= true;
-	requestedDeviceID	= -1;
+ofVideoGrabber::ofVideoGrabber() {
+	bUseTexture = true;
+	requestedDeviceID = -1;
 	internalPixelFormat = OF_PIXELS_RGB;
-	desiredFramerate 	= -1;
+	desiredFramerate = -1;
 	tex.resize(1);
 }
 
 //--------------------------------------------------------------------
-ofVideoGrabber::~ofVideoGrabber(){
+ofVideoGrabber::~ofVideoGrabber() {
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber){
+void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber) {
 	grabber = std::move(newGrabber);
 }
 
 //--------------------------------------------------------------------
-shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
-	if(!grabber){
+shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber() {
+	if (!grabber) {
 		setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 	return grabber;
 }
 
-const shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber() const{
+const shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber() const {
 	return grabber;
 }
 
 //--------------------------------------------------------------------
-bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
+bool ofVideoGrabber::setup(int w, int h, bool setUseTexture) {
 
 #ifndef OF_VID_GRABBER_TYPE
-#error OF_VID_GRABBER_TYPE is not #defined!
+	#error OF_VID_GRABBER_TYPE is not #defined!
 #endif
 
-	if(!grabber){
+	if (!grabber) {
 		setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 
 	bUseTexture = setUseTexture;
 
-	if( requestedDeviceID >= 0 ){
+	if (requestedDeviceID >= 0) {
 		grabber->setDeviceID(requestedDeviceID);
 	}
 
-	setPixelFormat(internalPixelFormat); //this safely handles checks for supported format
+	setPixelFormat(internalPixelFormat); // this safely handles checks for supported format
 
-	if( desiredFramerate!=-1 ){
+	if (desiredFramerate != -1) {
 		grabber->setDesiredFrameRate(desiredFramerate);
 	}
 
 	grabber->setup(w, h);
 
-	if( grabber->isInitialized() && bUseTexture ){
-		if(!grabber->getTexturePtr()){
-			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
+	if (grabber->isInitialized() && bUseTexture) {
+		if (!grabber->getTexturePtr()) {
+			for (std::size_t i = 0; i < grabber->getPixels().getNumPlanes(); i++) {
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
 				tex[i].allocate(plane);
@@ -117,124 +117,122 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 }
 
 //--------------------------------------------------------------------
-bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
-	return setup(w,h,setUseTexture);
+bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture) {
+	return setup(w, h, setUseTexture);
 }
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
-	if(grabber){
-		if( grabber->isInitialized() ){
+	if (grabber) {
+		if (grabber->isInitialized()) {
 			ofLogWarning("ofVideoGrabber") << "setPixelFormat(): can't set pixel format while grabber is running";
-			internalPixelFormat = grabber->getPixelFormat(); 
+			internalPixelFormat = grabber->getPixelFormat();
 			return false;
-		}else{
-			if( grabber->setPixelFormat(pixelFormat) ){		
-				internalPixelFormat = grabber->getPixelFormat();  //we do this as either way we want the grabbers format
-			}else{
-				internalPixelFormat = grabber->getPixelFormat();  //we do this as either way we want the grabbers format
-				return false; 					
+		} else {
+			if (grabber->setPixelFormat(pixelFormat)) {
+				internalPixelFormat = grabber->getPixelFormat(); // we do this as either way we want the grabbers format
+			} else {
+				internalPixelFormat = grabber->getPixelFormat(); // we do this as either way we want the grabbers format
+				return false;
 			}
 		}
-	}else{
-		internalPixelFormat = pixelFormat;	
+	} else {
+		internalPixelFormat = pixelFormat;
 	}
 	return true;
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoGrabber::getPixelFormat() const{
-	if(grabber){
+ofPixelFormat ofVideoGrabber::getPixelFormat() const {
+	if (grabber) {
 		internalPixelFormat = grabber->getPixelFormat();
 	}
 	return internalPixelFormat;
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofVideoGrabber::listDevices() const{
-	if(!grabber){
-		ofVideoGrabber * mutThis = const_cast<ofVideoGrabber*>(this);
+vector<ofVideoDevice> ofVideoGrabber::listDevices() const {
+	if (!grabber) {
+		ofVideoGrabber* mutThis = const_cast<ofVideoGrabber*>(this);
 		mutThis->setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 	return grabber->listDevices();
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setVerbose(bool bTalkToMe){
-	if(grabber){
+void ofVideoGrabber::setVerbose(bool bTalkToMe) {
+	if (grabber) {
 		grabber->setVerbose(bTalkToMe);
 	}
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setDeviceID(int _deviceID){
+void ofVideoGrabber::setDeviceID(int _deviceID) {
 	requestedDeviceID = _deviceID;
-	if( grabber && grabber->isInitialized() ){
+	if (grabber && grabber->isInitialized()) {
 		ofLogWarning("ofVideoGrabber") << "setDeviceID(): can't set device while grabber is running.";
 	}
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setDesiredFrameRate(int framerate){
+void ofVideoGrabber::setDesiredFrameRate(int framerate) {
 	desiredFramerate = framerate;
-	if(grabber){
+	if (grabber) {
 		grabber->setDesiredFrameRate(framerate);
 	}
 }
 
 //---------------------------------------------------------------------------
-ofPixels & ofVideoGrabber::getPixels(){
+ofPixels& ofVideoGrabber::getPixels() {
 	return getGrabber()->getPixels();
 }
 
 //---------------------------------------------------------------------------
-const ofPixels & ofVideoGrabber::getPixels() const{
+const ofPixels& ofVideoGrabber::getPixels() const {
 	return getGrabber()->getPixels();
 }
 
 //---------------------------------------------------------------------------
-ofPixels& ofVideoGrabber::getPixelsRef(){
+ofPixels& ofVideoGrabber::getPixelsRef() {
 	return getGrabber()->getPixels();
 }
 
 //---------------------------------------------------------------------------
-const ofPixels& ofVideoGrabber::getPixelsRef() const{
+const ofPixels& ofVideoGrabber::getPixelsRef() const {
 	return getGrabber()->getPixels();
 }
 
 //------------------------------------
-ofTexture & ofVideoGrabber::getTexture(){
-	if(grabber->getTexturePtr() == nullptr){
+ofTexture& ofVideoGrabber::getTexture() {
+	if (grabber->getTexturePtr() == nullptr) {
 		return tex[0];
-	}
-	else{
+	} else {
 		return *grabber->getTexturePtr();
 	}
 }
 
 //------------------------------------
-const ofTexture & ofVideoGrabber::getTexture() const{
-	if(grabber->getTexturePtr() == nullptr){
+const ofTexture& ofVideoGrabber::getTexture() const {
+	if (grabber->getTexturePtr() == nullptr) {
 		return tex[0];
-	}
-	else{
+	} else {
 		return *grabber->getTexturePtr();
 	}
 }
 
 //------------------------------------
-ofTexture & ofVideoGrabber::getTextureReference(){
+ofTexture& ofVideoGrabber::getTextureReference() {
 	return getTexture();
 }
 
 //------------------------------------
-const ofTexture & ofVideoGrabber::getTextureReference() const{
+const ofTexture& ofVideoGrabber::getTextureReference() const {
 	return getTexture();
 }
 
 //------------------------------------
-vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
-	if(grabber->getTexturePtr() != nullptr){
+vector<ofTexture>& ofVideoGrabber::getTexturePlanes() {
+	if (grabber->getTexturePtr() != nullptr) {
 		tex.clear();
 		tex.push_back(*grabber->getTexturePtr());
 	}
@@ -242,8 +240,8 @@ vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
 }
 
 //------------------------------------
-const vector<ofTexture> & ofVideoGrabber::getTexturePlanes() const{
-	if(grabber->getTexturePtr() != nullptr){
+const vector<ofTexture>& ofVideoGrabber::getTexturePlanes() const {
+	if (grabber->getTexturePtr() != nullptr) {
 		ofVideoGrabber* mutThis = const_cast<ofVideoGrabber*>(this);
 		mutThis->tex.clear();
 		mutThis->tex.push_back(*grabber->getTexturePtr());
@@ -252,27 +250,27 @@ const vector<ofTexture> & ofVideoGrabber::getTexturePlanes() const{
 }
 
 //---------------------------------------------------------------------------
-bool  ofVideoGrabber::isFrameNew() const{
-	if(grabber){
+bool ofVideoGrabber::isFrameNew() const {
+	if (grabber) {
 		return grabber->isFrameNew();
 	}
 	return false;
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::update(){
-	if(grabber){
+void ofVideoGrabber::update() {
+	if (grabber) {
 		grabber->update();
-		if( bUseTexture && !grabber->getTexturePtr() && grabber->isFrameNew() ){
-			if(tex.size()!=grabber->getPixels().getNumPlanes()){
+		if (bUseTexture && !grabber->getTexturePtr() && grabber->isFrameNew()) {
+			if (tex.size() != grabber->getPixels().getNumPlanes()) {
 				tex.resize(grabber->getPixels().getNumPlanes());
 			}
-			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
+			for (std::size_t i = 0; i < grabber->getPixels().getNumPlanes(); i++) {
 				ofPixels plane = grabber->getPixels().getPlane(i);
-				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
-				if(bDiffPixFormat || !tex[i].isAllocated() ){
+				bool bDiffPixFormat = (tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()));
+				if (bDiffPixFormat || !tex[i].isAllocated()) {
 					tex[i].allocate(plane);
-				}else{
+				} else {
 					tex[i].loadData(plane);
 				}
 			}
@@ -281,92 +279,90 @@ void ofVideoGrabber::update(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::close(){
-	if(grabber){
+void ofVideoGrabber::close() {
+	if (grabber) {
 		grabber->close();
 	}
 	tex.clear();
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::videoSettings(void){
-	if(grabber){
+void ofVideoGrabber::videoSettings(void) {
+	if (grabber) {
 		grabber->videoSettings();
 	}
 }
 
 //------------------------------------
-void ofVideoGrabber::setUseTexture(bool bUse){
+void ofVideoGrabber::setUseTexture(bool bUse) {
 	bUseTexture = bUse;
 }
 
 //------------------------------------
-bool ofVideoGrabber::isUsingTexture() const{
+bool ofVideoGrabber::isUsingTexture() const {
 	return bUseTexture;
 }
 
-
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
+void ofVideoGrabber::setAnchorPercent(float xPct, float yPct) {
 	getTexture().setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::setAnchorPoint(float x, float y){
+void ofVideoGrabber::setAnchorPoint(float x, float y) {
 	getTexture().setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
-void ofVideoGrabber::resetAnchor(){
+void ofVideoGrabber::resetAnchor() {
 	getTexture().resetAnchor();
 }
 
 //------------------------------------
-void ofVideoGrabber::draw(float _x, float _y, float _w, float _h) const{
-	ofGetCurrentRenderer()->draw(*this,_x,_y,_w,_h);
+void ofVideoGrabber::draw(float _x, float _y, float _w, float _h) const {
+	ofGetCurrentRenderer()->draw(*this, _x, _y, _w, _h);
 }
 
 //------------------------------------
-void ofVideoGrabber::draw(float _x, float _y) const{
-	draw(_x, _y,getWidth(),getHeight());
+void ofVideoGrabber::draw(float _x, float _y) const {
+	draw(_x, _y, getWidth(), getHeight());
 }
 
-
 //------------------------------------
-void ofVideoGrabber::bind() const{
+void ofVideoGrabber::bind() const {
 	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
-	if(renderer){
+	if (renderer) {
 		renderer->bind(*this);
 	}
 }
 
 //------------------------------------
-void ofVideoGrabber::unbind() const{
+void ofVideoGrabber::unbind() const {
 	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
-	if(renderer){
+	if (renderer) {
 		renderer->unbind(*this);
 	}
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getHeight() const{
-	if(grabber){
+float ofVideoGrabber::getHeight() const {
+	if (grabber) {
 		return grabber->getHeight();
-	}else{
+	} else {
 		return 0;
 	}
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getWidth() const{
-	if(grabber){
+float ofVideoGrabber::getWidth() const {
+	if (grabber) {
 		return grabber->getWidth();
-	}else{
+	} else {
 		return 0;
 	}
 }
 
 //----------------------------------------------------------
-bool ofVideoGrabber::isInitialized() const{
+bool ofVideoGrabber::isInitialized() const {
 	return grabber && grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated() || grabber->getTexturePtr());
 }

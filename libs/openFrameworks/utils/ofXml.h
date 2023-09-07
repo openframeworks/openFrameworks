@@ -3,16 +3,16 @@
 #include "ofParameter.h"
 #include "pugixml.hpp"
 
-template<typename It>
+template <typename It>
 class ofXmlIterator;
 class ofXmlAttributeIterator;
 class ofXmlSearchIterator;
 
-class ofXml{
+class ofXml {
 public:
-	class Search{
+	class Search {
 	public:
-		Search(){}
+		Search() { }
 
 		// Get collection type
 		pugi::xpath_node_set::type_t type() const;
@@ -35,6 +35,7 @@ public:
 
 		// Check if collection is empty
 		bool empty() const;
+
 	private:
 		Search(std::shared_ptr<pugi::xml_document> doc, pugi::xpath_node_set set);
 		std::shared_ptr<pugi::xml_document> doc;
@@ -42,12 +43,12 @@ public:
 		friend class ofXml;
 	};
 
-	class Attribute{
+	class Attribute {
 	public:
-		Attribute(){}
+		Attribute() { }
 		std::string getValue() const;
 
-		void setName(const std::string & name);
+		void setName(const std::string& name);
 		std::string getName() const;
 
 		int getIntValue() const;
@@ -60,30 +61,31 @@ public:
 		Attribute getNextAttribute() const;
 		Attribute getPreviousAttribute() const;
 
-		template<typename T>
-		ofXml::Attribute & operator=(const T & value){
+		template <typename T>
+		ofXml::Attribute& operator=(const T& value) {
 			this->attr = ofToString(value);
 			return *this;
 		}
 
-		template<typename T>
-		Attribute & set(const T & value){
+		template <typename T>
+		Attribute& set(const T& value) {
 			this->attr.set_value(ofToString(value).c_str());
 			return *this;
 		}
+
 	private:
-		Attribute(const pugi::xml_attribute & attr);
+		Attribute(const pugi::xml_attribute& attr);
 		pugi::xml_attribute attr;
 		friend class ofXml;
 	};
 
-	template<class It>
-	class Range{
+	template <class It>
+	class Range {
 	public:
 		It begin() const {
-			if(range.begin() != range.end()){
+			if (range.begin() != range.end()) {
 				return It(doc, *range.begin());
-			}else{
+			} else {
 				return It(doc, typename It::Node());
 			}
 		}
@@ -91,7 +93,8 @@ public:
 
 	private:
 		Range(std::shared_ptr<pugi::xml_document> doc, pugi::xml_object_range<typename It::Base> range)
-			:doc(doc), range(range){}
+		    : doc(doc)
+		    , range(range) { }
 		std::shared_ptr<pugi::xml_document> doc;
 		pugi::xml_object_range<typename It::Base> range;
 		friend class ofXml;
@@ -99,105 +102,103 @@ public:
 
 	ofXml();
 
-	bool load(const of::filesystem::path & file);
-	bool load(const ofBuffer & buffer);
-	bool parse(const std::string & xmlStr);
-	bool save(const of::filesystem::path & file) const;
+	bool load(const of::filesystem::path& file);
+	bool load(const ofBuffer& buffer);
+	bool parse(const std::string& xmlStr);
+	bool save(const of::filesystem::path& file) const;
 	void clear();
-	std::string toString(const std::string & indent = "\t") const;
+	std::string toString(const std::string& indent = "\t") const;
 
-	ofXml getChild(const std::string & name) const;
+	ofXml getChild(const std::string& name) const;
 	Range<ofXmlIterator<pugi::xml_node_iterator>> getChildren() const;
-	Range<ofXmlIterator<pugi::xml_named_node_iterator>> getChildren(const std::string & name) const;
+	Range<ofXmlIterator<pugi::xml_named_node_iterator>> getChildren(const std::string& name) const;
 
-	ofXml appendChild(const ofXml & xml);
-	ofXml prependChild(const ofXml & xml);
-	bool removeChild(const ofXml & node);
+	ofXml appendChild(const ofXml& xml);
+	ofXml prependChild(const ofXml& xml);
+	bool removeChild(const ofXml& node);
 
-#if PUGIXML_VERSION>=170
-	ofXml appendChild(ofXml && xml);
-	ofXml prependChild(ofXml && xml);
-	bool removeChild(ofXml && node);
+#if PUGIXML_VERSION >= 170
+	ofXml appendChild(ofXml&& xml);
+	ofXml prependChild(ofXml&& xml);
+	bool removeChild(ofXml&& node);
 #endif
 
-	ofXml appendChild(const std::string & name);
-	ofXml prependChild(const std::string & name);
-	bool removeChild(const std::string & name);
+	ofXml appendChild(const std::string& name);
+	ofXml prependChild(const std::string& name);
+	bool removeChild(const std::string& name);
 
-	ofXml insertChildAfter(const std::string & name, const ofXml & after);
-	ofXml insertChildBefore(const std::string & name, const ofXml & after);
+	ofXml insertChildAfter(const std::string& name, const ofXml& after);
+	ofXml insertChildBefore(const std::string& name, const ofXml& after);
 
 	ofXml getNextSibling() const;
 	ofXml getPreviousSibling() const;
-	ofXml getNextSibling(const std::string & name) const;
-	ofXml getPreviousSibling(const std::string & name) const;
+	ofXml getNextSibling(const std::string& name) const;
+	ofXml getPreviousSibling(const std::string& name) const;
 
 	ofXml getFirstChild() const;
 	ofXml getLastChild() const;
-	
+
 	ofXml getParent() const;
 
-
-	Attribute getAttribute(const std::string & name) const;
+	Attribute getAttribute(const std::string& name) const;
 	Range<ofXmlAttributeIterator> getAttributes() const;
 	Attribute getFirstAttribute() const;
 	Attribute getLastAttribute() const;
-	Attribute appendAttribute(const std::string & name);
-	Attribute prependAttribute(const std::string & name);
-	bool removeAttribute(const std::string & name);
-	bool removeAttribute(const Attribute & attr);
-	bool removeAttribute(Attribute && attr);
+	Attribute appendAttribute(const std::string& name);
+	Attribute prependAttribute(const std::string& name);
+	bool removeAttribute(const std::string& name);
+	bool removeAttribute(const Attribute& attr);
+	bool removeAttribute(Attribute&& attr);
 
-	template<typename T>
-	Attribute setAttribute(const std::string & name, const T & value){
+	template <typename T>
+	Attribute setAttribute(const std::string& name, const T& value) {
 		auto attr = getAttribute(name);
-		if(!attr){
+		if (!attr) {
 			attr = appendAttribute(name);
 		}
 		attr.set(value);
 		return attr;
 	}
 
-	ofXml findFirst(const std::string & path) const;
-	Search find(const std::string & path) const;
+	ofXml findFirst(const std::string& path) const;
+	Search find(const std::string& path) const;
 
-	template<typename T>
-	T getValue() const{
+	template <typename T>
+	T getValue() const {
 		return ofFromString<T>(this->xml.text().as_string());
 	}
 
 	std::string getValue() const;
 	std::string getName() const;
 
-	template<typename T>
-	void set(const T & value){
-		if(!xml){
+	template <typename T>
+	void set(const T& value) {
+		if (!xml) {
 			xml = doc->append_child(pugi::node_element);
 		}
 		auto child = this->xml.first_child();
-		if(!child){
+		if (!child) {
 			child = this->xml.append_child(pugi::node_pcdata);
 		}
-		if(child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata){
+		if (child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata) {
 			child.set_value(ofToString(value).c_str());
 		}
 	}
 
-	void set(const unsigned char & value){
-		if(!xml){
+	void set(const unsigned char& value) {
+		if (!xml) {
 			xml = doc->append_child(pugi::node_element);
 		}
 		auto child = this->xml.first_child();
-		if(!child){
+		if (!child) {
 			child = this->xml.append_child(pugi::node_pcdata);
 		}
-		if(child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata){
+		if (child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata) {
 			child.set_value(ofToString(int(value)).c_str());
 		}
 	}
 
-
-	void setName(const std::string & name);
+	void setName(const std::string& name);
 
 	int getIntValue() const;
 	unsigned int getUintValue() const;
@@ -208,148 +209,146 @@ public:
 	operator bool() const;
 
 private:
-	ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml);
+	ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node& xml);
 	std::shared_ptr<pugi::xml_document> doc;
 	pugi::xml_node xml;
 
-	template<typename It>
+	template <typename It>
 	friend class ofXmlIterator;
 	friend class ofXmlAttributeIterator;
 	friend class ofXmlSearchIterator;
 };
 
-template<typename It>
-class ofXmlIterator{
+template <typename It>
+class ofXmlIterator {
 public:
-	ofXmlIterator(){}
+	ofXmlIterator() { }
 
 	// Iterator operators
-	bool operator==(const ofXmlIterator& rhs) const{
+	bool operator==(const ofXmlIterator& rhs) const {
 		return this->xml.xml == rhs.xml.xml;
 	}
 
-	bool operator!=(const ofXmlIterator& rhs) const{
+	bool operator!=(const ofXmlIterator& rhs) const {
 		return this->xml.xml != rhs.xml.xml;
 	}
 
-	const ofXml& operator*() const{
+	const ofXml& operator*() const {
 		return this->xml;
 	}
 
-	const ofXml* operator->() const{
+	const ofXml* operator->() const {
 		return &this->xml;
 	}
 
-	ofXml& operator*(){
+	ofXml& operator*() {
 		return this->xml;
 	}
 
-	ofXml* operator->(){
+	ofXml* operator->() {
 		return &this->xml;
 	}
 
-	const ofXmlIterator& operator++(){
-		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
-			this->xml = xml.getNextSibling( xml.getName() );
-		}else{
+	const ofXmlIterator& operator++() {
+		if (std::is_same<Base, pugi::xml_named_node_iterator>::value) {
+			this->xml = xml.getNextSibling(xml.getName());
+		} else {
 			this->xml = xml.getNextSibling();
 		}
 		return *this;
 	}
 
-	ofXmlIterator operator++(int){
+	ofXmlIterator operator++(int) {
 		auto now = xml;
-		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
-			this->xml = xml.getNextSibling( xml.getName() );
-		}else{
+		if (std::is_same<Base, pugi::xml_named_node_iterator>::value) {
+			this->xml = xml.getNextSibling(xml.getName());
+		} else {
 			this->xml = xml.getNextSibling();
 		}
 		return now;
 	}
 
-	const ofXmlIterator& operator--(){
-		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
-			this->xml = xml.getPreviousSibling( xml.getName() );
-		}else{
+	const ofXmlIterator& operator--() {
+		if (std::is_same<Base, pugi::xml_named_node_iterator>::value) {
+			this->xml = xml.getPreviousSibling(xml.getName());
+		} else {
 			this->xml = xml.getPreviousSibling();
 		}
 		return *this;
 	}
 
-	ofXmlIterator operator--(int){
+	ofXmlIterator operator--(int) {
 		auto now = xml;
-		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
-			this->xml = xml.getPreviousSibling( xml.getName() );
-		}else{
+		if (std::is_same<Base, pugi::xml_named_node_iterator>::value) {
+			this->xml = xml.getPreviousSibling(xml.getName());
+		} else {
 			this->xml = xml.getPreviousSibling();
 		}
 		return now;
 	}
 	typedef It Base;
 	typedef pugi::xml_node Node;
+
 private:
-
 	// Construct an iterator which points to the specified node
-	ofXmlIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml)
-	:xml(doc, xml){
-
+	ofXmlIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node& xml)
+	    : xml(doc, xml) {
 	}
 
 	// Construct an iterator which points to the specified node
-	ofXmlIterator(ofXml && xml)
-	:xml(xml){
-
+	ofXmlIterator(ofXml&& xml)
+	    : xml(xml) {
 	}
 	mutable ofXml xml;
 	friend class ofXml;
 };
 
-class ofXmlAttributeIterator{
+class ofXmlAttributeIterator {
 public:
-	ofXmlAttributeIterator(){}
+	ofXmlAttributeIterator() { }
 
 	// Iterator operators
-	bool operator==(const ofXmlAttributeIterator& rhs) const{
+	bool operator==(const ofXmlAttributeIterator& rhs) const {
 		return this->attr == rhs.attr;
 	}
 
-	bool operator!=(const ofXmlAttributeIterator& rhs) const{
+	bool operator!=(const ofXmlAttributeIterator& rhs) const {
 		return this->attr != rhs.attr;
 	}
 
-	const ofXml::Attribute & operator*() const{
+	const ofXml::Attribute& operator*() const {
 		return this->attr;
 	}
 
-	const ofXml::Attribute* operator->() const{
+	const ofXml::Attribute* operator->() const {
 		return &this->attr;
 	}
 
-	ofXml::Attribute & operator*(){
+	ofXml::Attribute& operator*() {
 		return this->attr;
 	}
 
-	ofXml::Attribute* operator->(){
+	ofXml::Attribute* operator->() {
 		return &this->attr;
 	}
 
-	const ofXmlAttributeIterator& operator++(){
+	const ofXmlAttributeIterator& operator++() {
 		this->attr = attr.getNextAttribute();
 		return *this;
 	}
 
-	ofXmlAttributeIterator operator++(int){
+	ofXmlAttributeIterator operator++(int) {
 		auto now = attr;
 		this->attr = attr.getNextAttribute();
 		return now;
 	}
 
-	const ofXmlAttributeIterator& operator--(){
+	const ofXmlAttributeIterator& operator--() {
 		this->attr = attr.getPreviousAttribute();
 		return *this;
 	}
 
-	ofXmlAttributeIterator operator--(int){
+	ofXmlAttributeIterator operator--(int) {
 		auto now = attr;
 		this->attr = attr.getPreviousAttribute();
 		return now;
@@ -357,24 +356,21 @@ public:
 
 	typedef pugi::xml_attribute_iterator Base;
 	typedef pugi::xml_attribute Node;
+
 private:
-
 	// Construct an iterator which points to the specified node
-	ofXmlAttributeIterator(std::shared_ptr<pugi::xml_document>, const ofXml::Attribute & attr)
-	:attr(attr){
-
+	ofXmlAttributeIterator(std::shared_ptr<pugi::xml_document>, const ofXml::Attribute& attr)
+	    : attr(attr) {
 	}
 
-	ofXmlAttributeIterator(const ofXml::Attribute & attr)
-	:attr(attr){
-
+	ofXmlAttributeIterator(const ofXml::Attribute& attr)
+	    : attr(attr) {
 	}
 	ofXml::Attribute attr;
 	friend class ofXml;
 };
 
-
-class ofXmlSearchIterator{
+class ofXmlSearchIterator {
 public:
 	ofXmlSearchIterator();
 
@@ -382,8 +378,8 @@ public:
 	bool operator==(const ofXmlSearchIterator& rhs) const;
 	bool operator!=(const ofXmlSearchIterator& rhs) const;
 
-	ofXml & operator*() const;
-	ofXml * operator->() const;
+	ofXml& operator*() const;
+	ofXml* operator->() const;
 
 	const ofXmlSearchIterator& operator++();
 	ofXmlSearchIterator operator++(int);
@@ -392,17 +388,16 @@ public:
 	ofXmlSearchIterator operator--(int);
 
 private:
-	ofXmlSearchIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xpath_node * node)
-		:node(node)
-	{
-		if(node){
+	ofXmlSearchIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xpath_node* node)
+	    : node(node) {
+		if (node) {
 			xml = ofXml(doc, node->node());
 		}
 	}
-	const pugi::xpath_node * node = nullptr;
+	const pugi::xpath_node* node = nullptr;
 	mutable ofXml xml;
 	friend ofXml::Search;
 };
 // serializer
-void ofSerialize(ofXml & xml, const ofAbstractParameter & parameter);
-void ofDeserialize(const ofXml & xml, ofAbstractParameter & parameter);
+void ofSerialize(ofXml& xml, const ofAbstractParameter& parameter);
+void ofDeserialize(const ofXml& xml, ofAbstractParameter& parameter);

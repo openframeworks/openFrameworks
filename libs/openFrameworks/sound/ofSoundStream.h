@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ofBaseApp.h"
-#include "ofSoundBaseTypes.h"
 #include "ofConstants.h"
+#include "ofSoundBaseTypes.h"
 #include <climits>
 #include <functional>
 
@@ -17,7 +17,7 @@ class ofSoundStreamSettings;
 ///// \param nInputChannels number of requested input channels.
 ///// \param appPtr pointer to the app which will own the sound stream (optional).
 OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-	void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = nullptr));
+    void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp* appPtr = nullptr));
 
 ///// \brief Sets up and starts a global ofSoundStream.
 ///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
@@ -27,7 +27,7 @@ OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passi
 /////        will be more responsive, but less stable.
 ///// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
 OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-	void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers));
+    void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers));
 
 ///// \brief Sets up and starts a global ofSoundStream.
 ///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
@@ -39,9 +39,9 @@ OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passi
 ///// \param nBuffers number of buffers to queue. Less buffers will be more
 /////        responsive, but less stable.
 OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-	void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers));
+    void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp* appPtr, int sampleRate, int bufferSize, int nBuffers));
 
-void ofSoundStreamSetup(ofSoundStreamSettings & settings);
+void ofSoundStreamSetup(ofSoundStreamSettings& settings);
 
 /// \brief Stops the sound stream (audioIn() / audioOut() will stop being called)
 void ofSoundStreamStop();
@@ -97,13 +97,13 @@ public:
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		void setDeviceID(int deviceID));
+	    void setDeviceID(int deviceID));
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		void setDevice(const ofSoundDevice& device));
+	    void setDevice(const ofSoundDevice& device));
 
-	bool setup(const ofSoundStreamSettings & settings);
+	bool setup(const ofSoundStreamSettings& settings);
 
 	///// \brief Sets up and starts the stream.
 	///// \param app pointer to the app which will own the sound stream.
@@ -116,7 +116,7 @@ public:
 	/////        responsive, but less stable.
 	///// \return true on success
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers));
+	    bool setup(ofBaseApp* app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers));
 
 	///// \brief Sets up and starts the stream.
 	///// \param outChannels number of requested output channels (i.e. 2 for stereo).
@@ -128,19 +128,19 @@ public:
 	/////        responsive, but less stable.
 	///// \return true on success
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers));
+	    bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers));
 
 	/// \brief Sets the object which will have audioIn() called when the device receives audio.
-	void setInput(ofBaseSoundInput * soundInput);
+	void setInput(ofBaseSoundInput* soundInput);
 
 	/// \brief Sets the object which will have audioIn() called when the device receives audio.
-	void setInput(ofBaseSoundInput &soundInput);
+	void setInput(ofBaseSoundInput& soundInput);
 
 	/// \brief Sets the object which will have audioOut() called when the device requests audio.
-	void setOutput(ofBaseSoundOutput * soundOutput);
+	void setOutput(ofBaseSoundOutput* soundOutput);
 
 	/// \brief Sets the object which will have audioOut() called when the device requests audio.
-	void setOutput(ofBaseSoundOutput &soundOutput);
+	void setOutput(ofBaseSoundOutput& soundOutput);
 
 	/// \brief Starts a stream (note that setup() will start the stream on its own).
 	void start();
@@ -185,6 +185,4 @@ public:
 protected:
 	std::shared_ptr<ofBaseSoundStream> soundStream;
 	int tmpDeviceId = -1;
-
 };
-

@@ -2,21 +2,21 @@
 
 #include "ofConstants.h"
 
-#if !defined(TARGET_MINGW) 
+#if !defined(TARGET_MINGW)
 	#include "utf8.h"
 #else
 	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
 #endif
+#include <algorithm>
 #include <bitset> // For ofToBinary.
 #include <chrono>
-#include <iomanip>  //for setprecision
-#include <algorithm>
+#include <iomanip> //for setprecision
+#include <random>
 #include <sstream>
 #include <type_traits>
-#include <random>
 
-#include "ofRandomEngine.h"
 #include "ofRandomDistributions.h"
+#include "ofRandomEngine.h"
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
@@ -97,15 +97,15 @@ uint64_t ofGetSystemTimeMillis();
 /// \returns the system time in microseconds.
 uint64_t ofGetSystemTimeMicros();
 
-
-struct ofTime{
+struct ofTime {
 	uint64_t seconds = 0;
 	uint64_t nanoseconds = 0;
 
-	enum Mode{
+	enum Mode {
 		System,
 		FixedRate,
-	} mode = System;
+	} mode
+	    = System;
 
 	uint64_t getAsMilliseconds() const;
 	uint64_t getAsMicroseconds() const;
@@ -122,29 +122,29 @@ struct ofTime{
 	bool operator<=(const ofTime&) const;
 	bool operator>=(const ofTime&) const;
 
-	template<typename rep, typename ratio>
-	ofTime operator+(const std::chrono::duration<rep,ratio> & duration) const{
+	template <typename rep, typename ratio>
+	ofTime operator+(const std::chrono::duration<rep, ratio>& duration) const {
 		constexpr uint64_t NANOS_PER_SEC = 1000000000ll;
 		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
 		ofTime t = *this;
 		t.nanoseconds += ns.count();
-		if(t.nanoseconds>=NANOS_PER_SEC){
+		if (t.nanoseconds >= NANOS_PER_SEC) {
 			uint64_t secs = t.nanoseconds / NANOS_PER_SEC;
-			t.nanoseconds -= NANOS_PER_SEC*secs;
-			t.seconds+=secs;
+			t.nanoseconds -= NANOS_PER_SEC * secs;
+			t.seconds += secs;
 		}
 		return t;
 	}
 
-	template<typename rep, typename ratio>
-	ofTime &operator+=(const std::chrono::duration<rep,ratio> & duration){
+	template <typename rep, typename ratio>
+	ofTime& operator+=(const std::chrono::duration<rep, ratio>& duration) {
 		constexpr uint64_t NANOS_PER_SEC = 1000000000ll;
 		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
 		this->nanoseconds += ns.count();
-		if(this->nanoseconds>=NANOS_PER_SEC){
+		if (this->nanoseconds >= NANOS_PER_SEC) {
 			uint64_t secs = this->nanoseconds / NANOS_PER_SEC;
-			this->nanoseconds -= NANOS_PER_SEC*secs;
-			this->seconds+=secs;
+			this->nanoseconds -= NANOS_PER_SEC * secs;
+			this->seconds += secs;
 		}
 		return *this;
 	}
@@ -227,9 +227,9 @@ int ofGetWeekday();
 /// \tparam T Any container that meets std::shuffle's requirements
 /// which are: ValueSwappable and LegacyRandomAccessIterator.
 
-template<typename ... Args>
+template <typename... Args>
 void ofShuffle(Args&&... args) {
-    of::random::shuffle(std::forward<Args>(args)...);
+	of::random::shuffle(std::forward<Args>(args)...);
 }
 
 /// \section Vectors
@@ -237,9 +237,9 @@ void ofShuffle(Args&&... args) {
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
 
-template<class T>
+template <class T>
 void ofRandomize(std::vector<T>& values) {
-    of::random::shuffle(values);
+	of::random::shuffle(values);
 }
 
 /// \brief Conditionally remove values from a vector.
@@ -280,7 +280,7 @@ void ofRandomize(std::vector<T>& values) {
 /// \param values The vector of values to modify.
 /// \param shouldErase A boolean function as described above.
 /// \sa http://www.cplusplus.com/reference/algorithm/remove_if/
-template<class T, class BoolFunction>
+template <class T, class BoolFunction>
 void ofRemove(std::vector<T>& values, BoolFunction shouldErase) {
 	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
 }
@@ -294,7 +294,7 @@ void ofRemove(std::vector<T>& values, BoolFunction shouldErase) {
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to be sorted.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
-template<class T>
+template <class T>
 void ofSort(std::vector<T>& values) {
 	sort(values.begin(), values.end());
 }
@@ -339,7 +339,7 @@ void ofSort(std::vector<T>& values) {
 /// \param values The vector of values to be sorted.
 /// \param compare The comparison function.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
-template<class T, class BoolFunction>
+template <class T, class BoolFunction>
 void ofSort(std::vector<T>& values, BoolFunction compare) {
 	std::sort(values.begin(), values.end(), compare);
 }
@@ -364,8 +364,6 @@ template <class T>
 bool ofContains(const std::vector<T>& values, const T& target) {
 	return ofFind(values, target) != values.size();
 }
-
-
 
 /// \section String Manipulation
 /// \brief Splits a string using a delimiter.
@@ -438,7 +436,7 @@ std::size_t ofStringTimesInString(const std::string& haystack, const std::string
 ///
 /// \param src The UTF-8 encoded string to convert to lowercase.
 /// \returns the UTF-8 encoded string as all lowercase characters.
-std::string ofToLower(const std::string& src, const std::string & locale="");
+std::string ofToLower(const std::string& src, const std::string& locale = "");
 
 /// \brief Converts all characters in the string to uppercase.
 ///
@@ -453,7 +451,7 @@ std::string ofToLower(const std::string& src, const std::string & locale="");
 ///
 /// \param src The UTF-8 encoded string to convert to uppercase.
 /// \returns the UTF-8 encoded string as all uppercase characters.
-std::string ofToUpper(const std::string& src, const std::string & locale="");
+std::string ofToUpper(const std::string& src, const std::string& locale = "");
 
 /// \brief Remove locale-defined whitespace from the beginning of a string.
 ///
@@ -477,7 +475,7 @@ std::string ofToUpper(const std::string& src, const std::string & locale="");
 /// \param src The original un-trimmed string.
 /// \param locale The locale for determining the definition of "spaces".
 /// \returns a front-trimmed std::string.
-std::string ofTrimFront(const std::string & src, const std::string & locale = "");
+std::string ofTrimFront(const std::string& src, const std::string& locale = "");
 
 /// \brief Remove locale-defined whitespace from the end of a string.
 ///
@@ -501,7 +499,7 @@ std::string ofTrimFront(const std::string & src, const std::string & locale = ""
 /// \param src The original un-trimmed string.
 /// \param locale The locale for determining the definition of "spaces".
 /// \returns a front-trimmed std::string.
-std::string ofTrimBack(const std::string & src, const std::string & locale = "");
+std::string ofTrimBack(const std::string& src, const std::string& locale = "");
 
 /// \brief Remove locale-defined whitespace from the beginning and end of a string.
 ///
@@ -525,9 +523,9 @@ std::string ofTrimBack(const std::string & src, const std::string & locale = "")
 /// \param src The original un-trimmed string.
 /// \param locale The locale for determining the definition of "spaces".
 /// \returns a front-trimmed std::string.
-std::string ofTrim(const std::string & src, const std::string & locale = "");
+std::string ofTrim(const std::string& src, const std::string& locale = "");
 
-OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(std::string & str, uint32_t utf8));
+OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(std::string& str, uint32_t utf8));
 
 /// \brief Append a Unicode codepoint to a UTF8-encoded std::string.
 ///
@@ -540,7 +538,7 @@ OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(std::string & st
 ///
 /// \param utf8 The UTF8-encoded std::string to be modified.
 /// \param codepoint The Unicode codepoint that will be converted to UTF8 and appended to \p utf8.
-void ofUTF8Append(std::string & utf8, uint32_t codepoint);
+void ofUTF8Append(std::string& utf8, uint32_t codepoint);
 
 /// \brief Insert a Unicode codepoint into a UTF8-encoded string at a position.
 ///
@@ -554,7 +552,7 @@ void ofUTF8Append(std::string & utf8, uint32_t codepoint);
 /// \param utf8 The string to insert a codepoint into.
 /// \param pos The codepoint position in the UTF8-encoded string.
 /// \param codepoint The codepoint to insert.
-void ofUTF8Insert(std::string & utf8, size_t pos, uint32_t codepoint);
+void ofUTF8Insert(std::string& utf8, size_t pos, uint32_t codepoint);
 
 /// \brief Erase a range of codepoints from a UTF8-encoded substring.
 ///
@@ -568,7 +566,7 @@ void ofUTF8Insert(std::string & utf8, size_t pos, uint32_t codepoint);
 /// \param pos The codepoint position in the UTF8-encoded string.
 /// \param len The number of codepoints starting at \pos to extract.
 /// \returns a UTF8-encoded substring.
-void ofUTF8Erase(std::string & utf8, size_t pos, size_t len);
+void ofUTF8Erase(std::string& utf8, size_t pos, size_t len);
 
 /// \brief Extract a range of codepoints from as a std::string.
 ///
@@ -581,7 +579,7 @@ void ofUTF8Erase(std::string & utf8, size_t pos, size_t len);
 /// \param pos The codepoint position in the UTF8-encoded string.
 /// \param len The number of codepoints starting at \pos to extract.
 /// \returns a UTF8-encoded substring.
-std::string ofUTF8Substring(const std::string & utf8, size_t pos, size_t len);
+std::string ofUTF8Substring(const std::string& utf8, size_t pos, size_t len);
 
 /// \brief Convert a Unicode codepoint to a UTF8-encoded std::string.
 ///
@@ -606,36 +604,33 @@ std::string ofUTF8ToString(uint32_t codepoint);
 /// \param utf8 The UTF8-encoded std::string.
 /// \returns the number of Unicode codepoints in the given string, or 0 if the
 ///          string is an invalid UTF8 string.
-size_t ofUTF8Length(const std::string & utf8);
-
+size_t ofUTF8Length(const std::string& utf8);
 
 /// \brief Convert a variable length argument to a string.
 /// \param format A printf-style format string.
 /// \param args A variable argument list.
 /// \returns A string representation of the argument list.
 ///
-template <typename ... Args>
+template <typename... Args>
 //__attribute__((__format__ (__printf__, 2, 0)))
-std::string ofVAArgsToString(const char * format, Args&& ... args){
+std::string ofVAArgsToString(const char* format, Args&&... args) {
 	char buf[256];
 	size_t n = std::snprintf(buf, sizeof(buf), format, std::forward<Args>(args)...);
-	
-//	std::string str = format;
-//	size_t n = std::snprintf(buf, sizeof(buf), str, std::forward<Args>(args)...);
+
+	//	std::string str = format;
+	//	size_t n = std::snprintf(buf, sizeof(buf), str, std::forward<Args>(args)...);
 
 	// Static buffer large enough?
 	if (n < sizeof(buf)) {
-		return{ buf, n };
+		return { buf, n };
 	}
 
 	// Static buffer too small
 	std::string s(n + 1, 0);
 	std::snprintf(const_cast<char*>(s.data()), s.size(), format, std::forward<Args>(args)...);
-	
+
 	return s;
-
 }
-
 
 /// \section String Conversion
 /// \brief Convert a value to a string.
@@ -654,7 +649,7 @@ std::string ofVAArgsToString(const char * format, Args&& ... args){
 /// \param value The value to convert to a string.
 /// \returns A string representing the value or an empty string on failure.
 template <class T>
-std::string ofToString(const T& value){
+std::string ofToString(const T& value) {
 	std::ostringstream out;
 	out << value;
 	return out.str();
@@ -669,7 +664,7 @@ std::string ofToString(const T& value){
 /// \param precision The precision to use when converting to a string.
 /// \returns The string representation of the value.
 template <class T>
-std::string ofToString(const T& value, int precision){
+std::string ofToString(const T& value, int precision) {
 	std::ostringstream out;
 	out << std::fixed << std::setprecision(precision) << value;
 	return out.str();
@@ -685,7 +680,7 @@ std::string ofToString(const T& value, int precision){
 /// \param fill The character to use when padding the converted string.
 /// \returns The string representation of the value.
 template <class T>
-std::string ofToString(const T& value, int width, char fill ){
+std::string ofToString(const T& value, int width, char fill) {
 	std::ostringstream out;
 	out << std::fixed << std::setfill(fill) << std::setw(width) << value;
 	return out.str();
@@ -702,7 +697,7 @@ std::string ofToString(const T& value, int width, char fill ){
 /// \param fill The character to use when padding the converted string.
 /// \returns The string representation of the value.
 template <class T>
-std::string ofToString(const T& value, int precision, int width, char fill ){
+std::string ofToString(const T& value, int precision, int width, char fill) {
 	std::ostringstream out;
 	out << std::fixed << std::setfill(fill) << std::setw(width) << std::setprecision(precision) << value;
 	return out.str();
@@ -716,13 +711,13 @@ std::string ofToString(const T& value, int precision, int width, char fill ){
 /// \tparam T The data type held by the vector.
 /// \param values The vector of values to be converted to a string.
 /// \returns a comma-delimited string representation of the intput values.
-template<class T>
+template <class T>
 std::string ofToString(const std::vector<T>& values) {
 	std::stringstream out;
 	int n = values.size();
 	out << "{";
-	if(n > 0) {
-		for(int i = 0; i < n - 1; i++) {
+	if (n > 0) {
+		for (int i = 0; i < n - 1; i++) {
 			out << values[i] << ", ";
 		}
 		out << values[n - 1];
@@ -738,8 +733,8 @@ std::string ofToString(const std::vector<T>& values) {
 /// \tparam T The target data type.
 /// \param value The string value to convert to type T.
 /// \returns the string converted to the target data type T.
-template<class T>
-T ofFromString(const std::string & value){
+template <class T>
+T ofFromString(const std::string& value) {
 	T data;
 	std::stringstream ss;
 	ss << value;
@@ -750,8 +745,8 @@ T ofFromString(const std::string & value){
 /// \brief Convert a string represetnation to another string.
 /// \param value The string value to convert to another string.
 /// \returns the string converted to another string.
-template<>
-std::string ofFromString(const std::string & value);
+template <>
+std::string ofFromString(const std::string& value);
 
 /// \brief Convert a string represetnation to another string.
 ///
@@ -759,15 +754,15 @@ std::string ofFromString(const std::string & value);
 ///
 /// \param value The string value to convert to another string.
 /// \returns the string converted to a c-style string.
-template<>
-const char * ofFromString(const std::string & value);
+template <>
+const char* ofFromString(const std::string& value);
 
 /// \brief Convert a string to a given data type.
 /// \tparam T The return type.
 /// \param value The string value to convert to a give type.
 /// \returns the string converted to the type.
-template<typename T>
-T ofTo(const std::string & str){
+template <typename T>
+T ofTo(const std::string& str) {
 	T x;
 	std::istringstream cur(str);
 	cur >> x;
@@ -833,13 +828,13 @@ template <class T>
 std::string ofToHex(const T& value) {
 	std::ostringstream out;
 	// pretend that the value is a bunch of bytes
-	unsigned char* valuePtr = (unsigned char*) &value;
+	unsigned char* valuePtr = (unsigned char*)&value;
 	// the number of bytes is determined by the datatype
 	int numBytes = sizeof(T);
 	// the bytes are stored backwards (least significant first)
-	for(int i = numBytes - 1; i >= 0; i--) {
+	for (int i = numBytes - 1; i >= 0; i--) {
 		// print each byte out as a 2-character wide hex value
-		out << std::setfill('0') << std::setw(2) << std::hex << (int) valuePtr[i];
+		out << std::setfill('0') << std::setw(2) << std::hex << (int)valuePtr[i];
 	}
 	return out.str();
 }
@@ -1024,7 +1019,6 @@ unsigned int ofGetVersionPatch();
 /// \returns The pre-release version string.
 std::string ofGetVersionPreRelease();
 
-
 /// \section Frame Saving
 /// \brief Saves the current screen image to a file on disk.
 ///
@@ -1053,7 +1047,6 @@ void ofSaveFrame(bool bUseViewport = false);
 /// \param filename The image output file.
 void ofSaveViewport(const std::string& filename);
 
-
 /// \section System
 
 /// \brief Launch the given URL in the default browser.
@@ -1062,7 +1055,7 @@ void ofSaveViewport(const std::string& filename);
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
 #ifndef TARGET_EMSCRIPTEN
-void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
+void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery = false);
 #endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
@@ -1086,7 +1079,7 @@ ofTargetPlatform ofGetTargetPlatform();
 /// \param var the environment variable name.
 /// \param defaultValue the value to return if the environment variable is not set. defaults to empty string.
 /// \returns the environmnt variable's value or the provided default value if not found.
-std::string ofGetEnv(const std::string & var, const std::string defaultValue = "");
+std::string ofGetEnv(const std::string& var, const std::string defaultValue = "");
 
 /// \brief Iterate through each Unicode codepoint in a UTF8-encoded std::string.
 ///
@@ -1111,12 +1104,12 @@ std::string ofGetEnv(const std::string & var, const std::string defaultValue = "
 ///     std::string invalidUTF8String = "...";
 ///     ofLog() << (ofUTF8Iterator(invalidUTF8String).begin() == ofUTF8Iterator(invalidUTF8String).end()); // Returns true.
 /// ~~~~
-class ofUTF8Iterator{
+class ofUTF8Iterator {
 public:
 	/// \brief Create a ofUTF8Iterator for a given UTF8-encoded string.
 	///
 	/// \param str A UTF8-encoded string to iterate through.
-	ofUTF8Iterator(const std::string & str);
+	ofUTF8Iterator(const std::string& str);
 
 	/// \returns A forward iterator that points to the first codepoint in the UTF8 string.
 	utf8::iterator<std::string::const_iterator> begin() const;
@@ -1138,12 +1131,11 @@ private:
 	std::string src_valid;
 };
 
-
 /*! \cond PRIVATE */
-namespace of{
-namespace priv{
-    void initutils();
-    void endutils();
+namespace of {
+namespace priv {
+void initutils();
+void endutils();
 }
 }
 /*! \endcond */

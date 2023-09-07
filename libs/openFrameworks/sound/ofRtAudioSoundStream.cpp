@@ -1,15 +1,15 @@
 #include "ofRtAudioSoundStream.h"
-#include "ofMath.h"
-#include "ofUtils.h"
+#include "RtAudio.h"
 #include "ofAppRunner.h"
 #include "ofLog.h"
-#include "RtAudio.h"
+#include "ofMath.h"
+#include "ofUtils.h"
 
-using std::vector;
 using std::shared_ptr;
+using std::vector;
 
 //------------------------------------------------------------------------------
-RtAudio::Api toRtAudio(ofSoundDevice::Api api){
+RtAudio::Api toRtAudio(ofSoundDevice::Api api) {
 	switch (api) {
 	case ofSoundDevice::Api::ALSA:
 		return RtAudio::Api::LINUX_ALSA;
@@ -35,7 +35,7 @@ RtAudio::Api toRtAudio(ofSoundDevice::Api api){
 }
 
 //------------------------------------------------------------------------------
-ofSoundDevice::Api toOf(RtAudio::Api api){
+ofSoundDevice::Api toOf(RtAudio::Api api) {
 	switch (api) {
 	case RtAudio::Api::LINUX_ALSA:
 		return ofSoundDevice::Api::ALSA;
@@ -72,13 +72,13 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Api api) const{
+std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Api api) const {
 	vector<ofSoundDevice> deviceList;
 	try {
 		auto rtAudioApi = toRtAudio(api);
 		RtAudio audioTemp(toRtAudio(api));
 		audioTemp.showWarnings(false);
-		if(audioTemp.getCurrentApi()!=rtAudioApi && rtAudioApi!=RtAudio::Api::UNSPECIFIED){
+		if (audioTemp.getCurrentApi() != rtAudioApi && rtAudioApi != RtAudio::Api::UNSPECIFIED) {
 			return deviceList;
 		}
 		auto deviceCount = audioTemp.getDeviceCount();
@@ -86,8 +86,7 @@ std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Ap
 		for (unsigned int i = 0; i < deviceCount; i++) {
 			try {
 				info = audioTemp.getDeviceInfo(i);
-			}
-			catch (std::exception &error) {
+			} catch (std::exception& error) {
 				ofLogError("ofRtAudioSoundStream") << "Error retrieving info for device " << i;
 				ofLogError() << error.what();
 				break;
@@ -104,27 +103,25 @@ std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Ap
 			dev.api = api;
 			deviceList.push_back(dev);
 		}
-	}catch (std::exception &error) {
+	} catch (std::exception& error) {
 		ofLogError() << error.what();
 	}
 
 	return deviceList;
-
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::setInput(ofBaseSoundInput * soundInput) {
+void ofRtAudioSoundStream::setInput(ofBaseSoundInput* soundInput) {
 	settings.setInListener(soundInput);
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
+void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput* soundOutput) {
 	settings.setOutListener(soundOutput);
 }
 
 //------------------------------------------------------------------------------
-bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
-{
+bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings& settings_) {
 	if (audio != nullptr) {
 		close();
 	}
@@ -132,16 +129,15 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 	this->settings = settings_;
 
 	tickCount = 0;
-	this->settings.bufferSize = ofNextPow2(settings.bufferSize);	// must be pow2
+	this->settings.bufferSize = ofNextPow2(settings.bufferSize); // must be pow2
 
 	try {
 		if (settings.getApi() != ofSoundDevice::Api::UNSPECIFIED) {
 			audio = std::make_shared<RtAudio>(toRtAudio(settings.getApi()));
-		}else{
+		} else {
 			audio = std::make_shared<RtAudio>();
 		}
-	}
-	catch (std::exception &error) {
+	} catch (std::exception& error) {
 		ofLogError() << error.what();
 		return false;
 	}
@@ -179,10 +175,9 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 	unsigned int bufferSize = settings.bufferSize;
 	try {
 		audio->openStream((settings.numOutputChannels > 0) ? &outputParameters : nullptr, (settings.numInputChannels > 0) ? &inputParameters : nullptr, RTAUDIO_FLOAT32,
-			settings.sampleRate, &bufferSize, &rtAudioCallback, this, &options);
+		    settings.sampleRate, &bufferSize, &rtAudioCallback, this, &options);
 		audio->startStream();
-	}
-	catch (std::exception &error) {
+	} catch (std::exception& error) {
 		ofLogError() << error.what();
 		return false;
 	}
@@ -191,45 +186,45 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::start() {
-	if (audio == nullptr) return;
+	if (audio == nullptr)
+		return;
 
 	try {
 		audio->startStream();
-	}
-	catch (std::exception &error) {
+	} catch (std::exception& error) {
 		ofLogError() << error.what();
 	}
 }
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::stop() {
-	if (audio == nullptr) return;
+	if (audio == nullptr)
+		return;
 
 	try {
 		if (audio->isStreamRunning()) {
 			audio->stopStream();
 		}
-	}
-	catch (std::exception &error) {
+	} catch (std::exception& error) {
 		ofLogError() << error.what();
 	}
 }
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::close() {
-	if (audio == nullptr) return;
+	if (audio == nullptr)
+		return;
 
 	try {
 		if (audio->isStreamOpen()) {
 			audio->closeStream();
 		}
-	}
-	catch (std::exception &error) {
+	} catch (std::exception& error) {
 		ofLogError() << error.what();
 	}
 	settings.outCallback = nullptr;
 	settings.inCallback = nullptr;
-	audio.reset();	// delete
+	audio.reset(); // delete
 }
 
 //------------------------------------------------------------------------------
@@ -244,7 +239,7 @@ int ofRtAudioSoundStream::getNumInputChannels() const {
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getNumOutputChannels() const {
-	return  settings.numOutputChannels;
+	return settings.numOutputChannels;
 }
 
 //------------------------------------------------------------------------------
@@ -257,17 +252,17 @@ int ofRtAudioSoundStream::getBufferSize() const {
 	return settings.bufferSize;
 }
 
-ofSoundDevice ofRtAudioSoundStream::getInDevice() const{
+ofSoundDevice ofRtAudioSoundStream::getInDevice() const {
 	return *settings.getInDevice();
 }
 
-ofSoundDevice ofRtAudioSoundStream::getOutDevice() const{
+ofSoundDevice ofRtAudioSoundStream::getOutDevice() const {
 	return *settings.getOutDevice();
 }
 
 //------------------------------------------------------------------------------
-int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int nFramesPerBuffer, double streamTime, RtAudioStreamStatus status, void *data) {
-	ofRtAudioSoundStream * rtStreamPtr = (ofRtAudioSoundStream *)data;
+int ofRtAudioSoundStream::rtAudioCallback(void* outputBuffer, void* inputBuffer, unsigned int nFramesPerBuffer, double streamTime, RtAudioStreamStatus status, void* data) {
+	ofRtAudioSoundStream* rtStreamPtr = (ofRtAudioSoundStream*)data;
 
 	if (status) {
 		ofLogWarning("ofRtAudioSoundStream") << "stream over/underflow detected";
@@ -277,14 +272,14 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// 	can be of different formats
 	// 	char, float, etc.
 	// 	we choose float
-	float * fPtrOut = (float *)outputBuffer;
-	float * fPtrIn = (float *)inputBuffer;
+	float* fPtrOut = (float*)outputBuffer;
+	float* fPtrIn = (float*)inputBuffer;
 	// [zach] memset output to zero before output call
 	// this is because of how rtAudio works: duplex w/ one callback
 	// you need to cut in the middle. if the simpleApp
 	// doesn't produce audio, we pass silence instead of duplex...
 
-	size_t nInputChannels  = rtStreamPtr->getNumInputChannels();
+	size_t nInputChannels = rtStreamPtr->getNumInputChannels();
 	size_t nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
 	if (nInputChannels > 0) {
@@ -300,9 +295,9 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	if (nOutputChannels > 0) {
 		if (rtStreamPtr->settings.outCallback) {
 
-			if (rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels() != nOutputChannels) {
+			if (rtStreamPtr->outputBuffer.size() != nFramesPerBuffer * nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels() != nOutputChannels) {
 				rtStreamPtr->outputBuffer.setNumChannels(nOutputChannels);
-				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
+				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer * nOutputChannels);
 			}
 			rtStreamPtr->outputBuffer.setTickCount(rtStreamPtr->tickCount);
 			rtStreamPtr->settings.outCallback(rtStreamPtr->outputBuffer);

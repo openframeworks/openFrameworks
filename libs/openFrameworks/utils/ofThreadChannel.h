@@ -1,8 +1,8 @@
 #pragma once
 
+#include <condition_variable>
 #include <mutex>
 #include <queue>
-#include <condition_variable>
 
 /// \brief Safely send data between threads without additional synchronization.
 ///
@@ -25,8 +25,8 @@
 ///
 /// \sa https://github.com/openframeworks/ofBook/blob/master/chapters/threads/chapter.md
 /// \tparam T The data type sent by the ofThreadChannel.
-template<typename T>
-class ofThreadChannel{
+template <typename T>
+class ofThreadChannel {
 public:
 	/// \brief Create a default ofThreadChannel.
 	///
@@ -35,7 +35,7 @@ public:
 	/// 	ofThreadChannel<ofPixels> myThreadChannel;
 	/// ~~~~
 	ofThreadChannel()
-	:closed(false){}
+	    : closed(false) { }
 
 	/// \brief Block the receiving thread until a new sent value is available.
 	///
@@ -63,19 +63,19 @@ public:
 	///
 	/// \param sentValue A reference to a sent value.
 	/// \returns True if a new value was received or false if the ofThreadChannel was closed.
-	bool receive(T & sentValue){
+	bool receive(T& sentValue) {
 		std::unique_lock<std::mutex> lock(mutex);
-		if(closed){
+		if (closed) {
 			return false;
 		}
-        while(queue.empty() && !closed){
+		while (queue.empty() && !closed) {
 			condition.wait(lock);
 		}
-		if(!closed){
-			std::swap(sentValue,queue.front());
+		if (!closed) {
+			std::swap(sentValue, queue.front());
 			queue.pop();
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -110,16 +110,16 @@ public:
 	///
 	/// \param sentValue A reference to a sent value.
 	/// \returns True if a new value was received or false if the ofThreadChannel was closed.
-	bool tryReceive(T & sentValue){
+	bool tryReceive(T& sentValue) {
 		std::unique_lock<std::mutex> lock(mutex);
-		if(closed){
+		if (closed) {
 			return false;
 		}
-        if(!queue.empty()){
-			std::swap(sentValue,queue.front());
+		if (!queue.empty()) {
+			std::swap(sentValue, queue.front());
 			queue.pop();
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -156,23 +156,23 @@ public:
 	/// \param sentValue A reference to a sent value.
 	/// \param timeoutMs The number of milliseconds to wait for new data before continuing.
 	/// \returns True if a new value was received or false if the ofThreadChannel was closed.
-	bool tryReceive(T & sentValue, int64_t timeoutMs){
+	bool tryReceive(T& sentValue, int64_t timeoutMs) {
 		std::unique_lock<std::mutex> lock(mutex);
-		if(closed){
+		if (closed) {
 			return false;
 		}
-		if(queue.empty()){
+		if (queue.empty()) {
 			condition.wait_for(lock, std::chrono::milliseconds(timeoutMs));
-			if(queue.empty()) {
+			if (queue.empty()) {
 				return false;
 			}
 		}
 
-		if(!closed){
-			std::swap(sentValue,queue.front());
+		if (!closed) {
+			std::swap(sentValue, queue.front());
 			queue.pop();
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -203,13 +203,13 @@ public:
 	/// ~~~~
 	///
 	/// \returns true if the value was sent successfully or false if the channel was closed.
-	bool send(const T & value){
+	bool send(const T& value) {
 		std::unique_lock<std::mutex> lock(mutex);
-		if(closed){
+		if (closed) {
 			return false;
 		}
 		queue.push(value);
-        condition.notify_one();
+		condition.notify_one();
 		return true;
 	}
 
@@ -244,13 +244,13 @@ public:
 	/// ~~~~
 	///
 	/// \returns true if the value was sent successfully or false if the channel was closed.
-	bool send(T && value){
+	bool send(T&& value) {
 		std::unique_lock<std::mutex> lock(mutex);
-		if(closed){
+		if (closed) {
 			return false;
 		}
 		queue.push(std::move(value));
-        condition.notify_one();
+		condition.notify_one();
 		return true;
 	}
 
@@ -260,22 +260,20 @@ public:
 	/// received. All threads waiting to receive new values will be notified and
 	/// all ofThreadChannel::receive and ofThreadChannel::tryReceive methods
 	/// will return false.
-	void close(){
+	void close() {
 		std::unique_lock<std::mutex> lock(mutex);
 		closed = true;
 		condition.notify_all();
 	}
-
 
 	/// \brief Queries empty channel.
 	///
 	/// This call is only an approximation, since messages come from a different
 	/// thread the channel can return true when calling empty() and then receive
 	/// a message right afterwards
-	bool empty() const{
+	bool empty() const {
 		return queue.empty();
 	}
-
 
 	/// \brief Queries size of queue.
 	///
@@ -297,5 +295,4 @@ private:
 
 	/// \brief True if the channel is closed.
 	bool closed;
-
 };

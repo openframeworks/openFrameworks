@@ -2,66 +2,64 @@
 
 #include "ofGstUtils.h"
 
-
-class ofGstVideoPlayer: public ofBaseVideoPlayer, public ofGstAppSink{
+class ofGstVideoPlayer : public ofBaseVideoPlayer, public ofGstAppSink {
 public:
-
 	ofGstVideoPlayer();
 	~ofGstVideoPlayer();
 
 	/// needs to be called before loadMovie
-	bool 	setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat	getPixelFormat() const;
-	
-	void	loadAsync(std::string name);
-	bool 	load(std::string uri);
+	bool setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat getPixelFormat() const;
 
-	void 	update();
+	void loadAsync(std::string name);
+	bool load(std::string uri);
 
-	int		getCurrentFrame() const;
-	int		getTotalNumFrames() const;
+	void update();
 
-	void 	firstFrame();
-	void 	nextFrame();
-	void 	previousFrame();
-	void 	setFrame(int frame);  // frame 0 = first frame...
+	int getCurrentFrame() const;
+	int getTotalNumFrames() const;
 
-	bool	isStream() const;
+	void firstFrame();
+	void nextFrame();
+	void previousFrame();
+	void setFrame(int frame); // frame 0 = first frame...
 
-	void 	play();
-	void 	stop();
-	void 	setPaused(bool bPause);
-	bool 	isPaused() const;
-	bool 	isLoaded() const;
-	bool 	isPlaying() const;
+	bool isStream() const;
 
-	float	getPosition() const;
-	float 	getSpeed() const;
-	float 	getDuration() const;
-	bool  	getIsMovieDone() const;
+	void play();
+	void stop();
+	void setPaused(bool bPause);
+	bool isPaused() const;
+	bool isLoaded() const;
+	bool isPlaying() const;
 
-	void 	setPosition(float pct);
-	void 	setVolume(float volume);
-	void 	setLoopState(ofLoopType state);
-	ofLoopType 	getLoopState() const;
-	void 	setSpeed(float speed);
-	void 	close();
+	float getPosition() const;
+	float getSpeed() const;
+	float getDuration() const;
+	bool getIsMovieDone() const;
 
-	bool 			isFrameNew() const;
+	void setPosition(float pct);
+	void setVolume(float volume);
+	void setLoopState(ofLoopType state);
+	ofLoopType getLoopState() const;
+	void setSpeed(float speed);
+	void close();
 
-	ofPixels&		getPixels();
+	bool isFrameNew() const;
+
+	ofPixels& getPixels();
 	const ofPixels& getPixels() const;
-	ofTexture * getTexturePtr();
+	ofTexture* getTexturePtr();
 
-	float 			getHeight() const;
-	float 			getWidth() const;
+	float getHeight() const;
+	float getWidth() const;
 
 	void setFrameByFrame(bool frameByFrame);
 	void setThreadAppSink(bool threaded);
 	bool isThreadedAppSink() const;
 	bool isFrameByFrame() const;
 
-	ofGstVideoUtils * getGstVideoUtils();
+	ofGstVideoUtils* getGstVideoUtils();
 
 protected:
 	bool allocate();
@@ -69,15 +67,15 @@ protected:
 	void on_stream_prepared();
 
 	// return true to set the message as attended so upstream doesn't try to process it
-	virtual bool on_message(GstMessage* msg){return false;};
+	virtual bool on_message(GstMessage* msg) { return false; };
 
 private:
-	ofPixelFormat		internalPixelFormat;
-	guint64				nFrames;
-	int 				fps_n, fps_d;
-	bool				bIsStream;
-	bool				bIsAllocated;
-	bool				bAsyncLoad;
-	bool				threadAppSink;
-	ofGstVideoUtils		videoUtils;
+	ofPixelFormat internalPixelFormat;
+	guint64 nFrames;
+	int fps_n, fps_d;
+	bool bIsStream;
+	bool bIsAllocated;
+	bool bAsyncLoad;
+	bool threadAppSink;
+	ofGstVideoUtils videoUtils;
 };

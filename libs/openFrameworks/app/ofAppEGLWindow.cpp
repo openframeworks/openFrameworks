@@ -1,30 +1,30 @@
 #include "ofAppEGLWindow.h"
 
-#include "ofGraphics.h" // used in runAppViaInfiniteLoop()
 #include "ofAppRunner.h"
-#include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
+#include "ofGraphics.h" // used in runAppViaInfiniteLoop()
+#include "ofUtils.h"
 #include "ofVectorMath.h"
 #include <assert.h>
 // x11
-#include <X11/Xutil.h>
 #include <EGL/egl.h>
+#include <X11/Xutil.h>
 
 // include includes for both native and X11 possibilities
+#include <fcntl.h> // open fcntl
 #include <libudev.h>
+#include <linux/joystick.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h> // sprintf
-#include <stdlib.h>  // malloc
-#include <math.h>
-#include <fcntl.h>  // open fcntl
+#include <stdlib.h> // malloc
 #include <unistd.h> // read close
-#include <linux/joystick.h>
 
-#include "linux/kd.h"	// keyboard stuff...
-#include "termios.h"
+#include "linux/kd.h" // keyboard stuff...
 #include "sys/ioctl.h"
+#include "termios.h"
 
 #include <string.h> // strlen
 
@@ -38,27 +38,27 @@ static device inputDevices;
 
 // minimal map
 const int lowercase_map[] = {
-		0,  0,  '1',  '2',  '3',  '4',  '5', '6',  '7', '8', '9', '0',
-		'-', '=', '\b', '\t', 'q',  'w',  'e', 'r',  't', 'y', 'u', 'i',
-		'o', 'p', '[',  ']',  '\n', 0,   'a', 's',  'd', 'f', 'g', 'h',
-		'j', 'k', 'l',  ';',  '\'',  '\n', 0,  '\\', 'z', 'x', 'c', 'v',
-		'b', 'n', 'm',  ',',  '.',  '/',  0,  '*',  0,  ' ', 0,  0,
-		0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-		0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-		0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
+	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+	'-', '=', '\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
+	'o', 'p', '[', ']', '\n', 0, 'a', 's', 'd', 'f', 'g', 'h',
+	'j', 'k', 'l', ';', '\'', '\n', 0, '\\', 'z', 'x', 'c', 'v',
+	'b', 'n', 'm', ',', '.', '/', 0, '*', 0, ' ', 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '\r'
 
 };
 
 // minimal keyboard map
 const int uppercase_map[] = {
-		0,  0,  '!',  '@',  '#',  '$',  '%', '^',  '&', '*', '(', ')',
-		'_', '+', '\b', '\t', 'Q',  'W',  'E', 'R',  'T', 'Y', 'U', 'I',
-		'O', 'P', '{',  '}',  '\n', 0,   'A', 'S',  'D', 'F', 'G', 'H',
-		'J', 'K', 'L',  ':',  '"', '\n', 0,  '\\', 'Z', 'X', 'C', 'V',
-		'B', 'N', 'M',  '<',  '>',  '?',  0,  '*',  0,  ' ', 0,  0,
-		0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-		0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0,  0, 0,
-		0,  0,  0,   0,   0,   0,   0,  0,   0,  0,  0,  '\r'
+	0, 0, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+	'_', '+', '\b', '\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I',
+	'O', 'P', '{', '}', '\n', 0, 'A', 'S', 'D', 'F', 'G', 'H',
+	'J', 'K', 'L', ':', '"', '\n', 0, '\\', 'Z', 'X', 'C', 'V',
+	'B', 'N', 'M', '<', '>', '?', 0, '*', 0, ' ', 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '\r'
 };
 
 // keep track of a few things ...
@@ -80,16 +80,16 @@ typedef map<int, int> TouchState;
 typedef map<int, ofVec2f> TouchPosition;
 
 // TODO, make this match the upcoming additions to ofWindow
-#define MOUSE_BUTTON_LEFT_MASK		1
+#define MOUSE_BUTTON_LEFT_MASK 1
 #define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
-#define MOUSE_BUTTON_RIGHT_MASK  2 << 1
+#define MOUSE_BUTTON_RIGHT_MASK 2 << 1
 
 static MouseState mb;
 static TouchState mt;
 static TouchPosition mtp;
 ofAppEGLWindow* ofAppEGLWindow::instance = NULL;
 
-static int string_ends_with(const char *str, const char *suffix) {
+static int string_ends_with(const char* str, const char* suffix) {
 	if (!str || !suffix)
 		return 0;
 	size_t lenstr = strlen(str);
@@ -99,7 +99,7 @@ static int string_ends_with(const char *str, const char *suffix) {
 	return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
-static int string_begins_with(const char *str, const char *prefix) {
+static int string_begins_with(const char* str, const char* prefix) {
 	if (!str || !prefix)
 		return 0;
 	size_t lenstr = strlen(str);
@@ -110,112 +110,132 @@ static int string_begins_with(const char *str, const char *prefix) {
 }
 
 // native
-#define MOUSE_CURSOR_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) do \
-		{ unsigned int __bpp; unsigned char *__ip; const unsigned char *__il, *__rd; \
-		__bpp = (bpp); __ip = (image_buf); __il = __ip + (size) * __bpp; \
-		__rd = (rle_data); \
-		while (__ip < __il) { unsigned int __l = *(__rd++); \
-		if (__l & 128) { __l = __l - 128; \
-		do { memcpy (__ip, __rd, 4); __ip += 4; } while (--__l); __rd += 4; \
-		} else { __l *= 4; memcpy (__ip, __rd, __l); \
-		__ip += __l; __rd += __l; } } \
-		} while (0)
+#define MOUSE_CURSOR_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp) \
+	do {                                                               \
+		unsigned int __bpp;                                            \
+		unsigned char* __ip;                                           \
+		const unsigned char *__il, *__rd;                              \
+		__bpp = (bpp);                                                 \
+		__ip = (image_buf);                                            \
+		__il = __ip + (size)*__bpp;                                    \
+		__rd = (rle_data);                                             \
+		while (__ip < __il) {                                          \
+			unsigned int __l = *(__rd++);                              \
+			if (__l & 128) {                                           \
+				__l = __l - 128;                                       \
+				do {                                                   \
+					memcpy(__ip, __rd, 4);                             \
+					__ip += 4;                                         \
+				} while (--__l);                                       \
+				__rd += 4;                                             \
+			} else {                                                   \
+				__l *= 4;                                              \
+				memcpy(__ip, __rd, __l);                               \
+				__ip += __l;                                           \
+				__rd += __l;                                           \
+			}                                                          \
+		}                                                              \
+	} while (0)
 static const struct {
 	unsigned int width;
 	unsigned int height;
 	unsigned int bpp; /* 2:RGB16, 3:RGB, 4:RGBA */
 	unsigned char rle_pixel_data[382 + 1];
 } mouse_cursor_data = {
-		12, 19, 4,
-		"\1\0\0\0\377\213\377\377\377\0\202\0\0\0\377\212\377\377\377\0\3\0\0\0\377"
-		"\377\377\377\377\0\0\0\377\211\377\377\377\0\1\0\0\0\377\202\377\377\377"
-		"\377\1\0\0\0\377\210\377\377\377\0\1\0\0\0\377\203\377\377\377\377\1\0\0"
-		"\0\377\207\377\377\377\0\1\0\0\0\377\204\377\377\377\377\1\0\0\0\377\206"
-		"\377\377\377\0\1\0\0\0\377\205\377\377\377\377\1\0\0\0\377\205\377\377\377"
-		"\0\1\0\0\0\377\206\377\377\377\377\1\0\0\0\377\204\377\377\377\0\1\0\0\0"
-		"\377\207\377\377\377\377\1\0\0\0\377\203\377\377\377\0\1\0\0\0\377\210\377"
-		"\377\377\377\1\0\0\0\377\202\377\377\377\0\1\0\0\0\377\211\377\377\377\377"
-		"\3\0\0\0\377\377\377\377\0\0\0\0\377\212\377\377\377\377\202\0\0\0\377\206"
-		"\377\377\377\377\206\0\0\0\377\203\377\377\377\377\1\0\0\0\377\202\377\377"
-		"\377\377\1\0\0\0\377\204\377\377\377\0\1\0\0\0\377\202\377\377\377\377\3"
-		"\0\0\0\377\377\377\377\0\0\0\0\377\202\377\377\377\377\1\0\0\0\377\203\377"
-		"\377\377\0\3\0\0\0\377\377\377\377\377\0\0\0\377\202\377\377\377\0\1\0\0"
-		"\0\377\202\377\377\377\377\1\0\0\0\377\203\377\377\377\0\202\0\0\0\377\204"
-		"\377\377\377\0\1\0\0\0\377\202\377\377\377\377\1\0\0\0\377\210\377\377\377"
-		"\0\1\0\0\0\377\202\377\377\377\377\1\0\0\0\377\211\377\377\377\0\202\0\0"
-		"\0\377\203\377\377\377\0",
+	12,
+	19,
+	4,
+	"\1\0\0\0\377\213\377\377\377\0\202\0\0\0\377\212\377\377\377\0\3\0\0\0\377"
+	"\377\377\377\377\0\0\0\377\211\377\377\377\0\1\0\0\0\377\202\377\377\377"
+	"\377\1\0\0\0\377\210\377\377\377\0\1\0\0\0\377\203\377\377\377\377\1\0\0"
+	"\0\377\207\377\377\377\0\1\0\0\0\377\204\377\377\377\377\1\0\0\0\377\206"
+	"\377\377\377\0\1\0\0\0\377\205\377\377\377\377\1\0\0\0\377\205\377\377\377"
+	"\0\1\0\0\0\377\206\377\377\377\377\1\0\0\0\377\204\377\377\377\0\1\0\0\0"
+	"\377\207\377\377\377\377\1\0\0\0\377\203\377\377\377\0\1\0\0\0\377\210\377"
+	"\377\377\377\1\0\0\0\377\202\377\377\377\0\1\0\0\0\377\211\377\377\377\377"
+	"\3\0\0\0\377\377\377\377\0\0\0\0\377\212\377\377\377\377\202\0\0\0\377\206"
+	"\377\377\377\377\206\0\0\0\377\203\377\377\377\377\1\0\0\0\377\202\377\377"
+	"\377\377\1\0\0\0\377\204\377\377\377\0\1\0\0\0\377\202\377\377\377\377\3"
+	"\0\0\0\377\377\377\377\0\0\0\0\377\202\377\377\377\377\1\0\0\0\377\203\377"
+	"\377\377\0\3\0\0\0\377\377\377\377\377\0\0\0\377\202\377\377\377\0\1\0\0"
+	"\0\377\202\377\377\377\377\1\0\0\0\377\203\377\377\377\0\202\0\0\0\377\204"
+	"\377\377\377\0\1\0\0\0\377\202\377\377\377\377\1\0\0\0\377\210\377\377\377"
+	"\0\1\0\0\0\377\202\377\377\377\377\1\0\0\0\377\211\377\377\377\0\202\0\0"
+	"\0\377\203\377\377\377\0",
 };
 
 // from http://cantuna.googlecode.com/svn-history/r16/trunk/src/screen.cpp
-#define CASE_STR(x,y) case x: str = y; break
+#define CASE_STR(x, y) \
+	case x:            \
+		str = y;       \
+		break
 
 static const char* eglErrorString(EGLint err) {
 	string str;
 	switch (err) {
-	CASE_STR(EGL_SUCCESS, "no error");
-	CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
-	CASE_STR(EGL_BAD_ACCESS, "access violation");
-	CASE_STR(EGL_BAD_ALLOC, "could not allocate resources");
-	CASE_STR(EGL_BAD_ATTRIBUTE, "invalid attribute");
-	CASE_STR(EGL_BAD_CONTEXT, "invalid context specified");
-	CASE_STR(EGL_BAD_CONFIG, "invald frame buffer configuration specified");
-	CASE_STR(EGL_BAD_CURRENT_SURFACE, "current window, pbuffer or pixmap surface is no longer valid");
-	CASE_STR(EGL_BAD_DISPLAY, "invalid display specified");
-	CASE_STR(EGL_BAD_SURFACE, "invalid surface specified");
-	CASE_STR(EGL_BAD_MATCH, "bad argument match");
-	CASE_STR(EGL_BAD_PARAMETER, "invalid paramater");
-	CASE_STR(EGL_BAD_NATIVE_PIXMAP, "invalid NativePixmap");
-	CASE_STR(EGL_BAD_NATIVE_WINDOW, "invalid NativeWindow");
-	CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
-	default: str = "unknown error " + err; break;
+		CASE_STR(EGL_SUCCESS, "no error");
+		CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
+		CASE_STR(EGL_BAD_ACCESS, "access violation");
+		CASE_STR(EGL_BAD_ALLOC, "could not allocate resources");
+		CASE_STR(EGL_BAD_ATTRIBUTE, "invalid attribute");
+		CASE_STR(EGL_BAD_CONTEXT, "invalid context specified");
+		CASE_STR(EGL_BAD_CONFIG, "invald frame buffer configuration specified");
+		CASE_STR(EGL_BAD_CURRENT_SURFACE, "current window, pbuffer or pixmap surface is no longer valid");
+		CASE_STR(EGL_BAD_DISPLAY, "invalid display specified");
+		CASE_STR(EGL_BAD_SURFACE, "invalid surface specified");
+		CASE_STR(EGL_BAD_MATCH, "bad argument match");
+		CASE_STR(EGL_BAD_PARAMETER, "invalid paramater");
+		CASE_STR(EGL_BAD_NATIVE_PIXMAP, "invalid NativePixmap");
+		CASE_STR(EGL_BAD_NATIVE_WINDOW, "invalid NativeWindow");
+		CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
+	default:
+		str = "unknown error " + err;
+		break;
 	}
 	return str.c_str();
 }
 
-
 // X11 events
 #include <X11/XKBlib.h>
 
-
 #ifdef TARGET_RASPBERRY_PI
-// TODO: remove these when they enter system headers
-// From : https://github.com/raspberrypi/userland/blob/master/interface/vmcs_host/vc_vchi_dispmanx.h
-#ifndef ELEMENT_CHANGE_LAYER
-#define ELEMENT_CHANGE_LAYER		  (1<<0)
+    // TODO: remove these when they enter system headers
+    // From : https://github.com/raspberrypi/userland/blob/master/interface/vmcs_host/vc_vchi_dispmanx.h
+	#ifndef ELEMENT_CHANGE_LAYER
+		#define ELEMENT_CHANGE_LAYER (1 << 0)
+	#endif
+	#ifndef ELEMENT_CHANGE_OPACITY
+		#define ELEMENT_CHANGE_OPACITY (1 << 1)
+	#endif
+	#ifndef ELEMENT_CHANGE_DEST_RECT
+		#define ELEMENT_CHANGE_DEST_RECT (1 << 2)
+	#endif
+	#ifndef ELEMENT_CHANGE_SRC_RECT
+		#define ELEMENT_CHANGE_SRC_RECT (1 << 3)
+	#endif
+	#ifndef ELEMENT_CHANGE_MASK_RESOURCE
+		#define ELEMENT_CHANGE_MASK_RESOURCE (1 << 4)
+	#endif
+	#ifndef ELEMENT_CHANGE_TRANSFORM
+		#define ELEMENT_CHANGE_TRANSFORM (1 << 5)
+	#endif
 #endif
-#ifndef ELEMENT_CHANGE_OPACITY
-#define ELEMENT_CHANGE_OPACITY		(1<<1)
-#endif
-#ifndef ELEMENT_CHANGE_DEST_RECT
-#define ELEMENT_CHANGE_DEST_RECT	  (1<<2)
-#endif
-#ifndef ELEMENT_CHANGE_SRC_RECT
-#define ELEMENT_CHANGE_SRC_RECT	   (1<<3)
-#endif
-#ifndef ELEMENT_CHANGE_MASK_RESOURCE
-#define ELEMENT_CHANGE_MASK_RESOURCE  (1<<4)
-#endif
-#ifndef ELEMENT_CHANGE_TRANSFORM
-#define ELEMENT_CHANGE_TRANSFORM	  (1<<5)
-#endif
-#endif
-
 
 //-------------------------------------------------------------------------------------
 ofAppEGLWindowSettings::ofAppEGLWindowSettings()
-:ofGLESWindowSettings(){
+    : ofGLESWindowSettings() {
 	eglWindowPreference = OF_APP_WINDOW_AUTO;
 	eglWindowOpacity = 255;
 
 	// these are usually set as default, but set them here just to be sure
-	frameBufferAttributes[EGL_RED_SIZE]	 = 8; // 8 bits for red
-	frameBufferAttributes[EGL_GREEN_SIZE]   = 8; // 8 bits for green
-	frameBufferAttributes[EGL_BLUE_SIZE]	= 8; // 8 bits for blue
-	frameBufferAttributes[EGL_ALPHA_SIZE]   = 8; // 8 bits for alpha
+	frameBufferAttributes[EGL_RED_SIZE] = 8; // 8 bits for red
+	frameBufferAttributes[EGL_GREEN_SIZE] = 8; // 8 bits for green
+	frameBufferAttributes[EGL_BLUE_SIZE] = 8; // 8 bits for blue
+	frameBufferAttributes[EGL_ALPHA_SIZE] = 8; // 8 bits for alpha
 	frameBufferAttributes[EGL_LUMINANCE_SIZE] = EGL_DONT_CARE; // 8 bits for alpha
-	frameBufferAttributes[EGL_DEPTH_SIZE]   = 24; // 24 bits for depth
+	frameBufferAttributes[EGL_DEPTH_SIZE] = 24; // 24 bits for depth
 	frameBufferAttributes[EGL_STENCIL_SIZE] = 8; // 8 bits for stencil
-	frameBufferAttributes[EGL_SAMPLES]	  = 1;
+	frameBufferAttributes[EGL_SAMPLES] = 1;
 
 	initialClearColor = ofColor(0.15 * 255, 0.15 * 255, 0.15 * 255, 255);
 
@@ -223,20 +243,20 @@ ofAppEGLWindowSettings::ofAppEGLWindowSettings()
 	layer = 0;
 }
 
-ofAppEGLWindowSettings::ofAppEGLWindowSettings(const ofGLESWindowSettings & settings)
-:ofGLESWindowSettings(settings){
+ofAppEGLWindowSettings::ofAppEGLWindowSettings(const ofGLESWindowSettings& settings)
+    : ofGLESWindowSettings(settings) {
 	eglWindowPreference = OF_APP_WINDOW_AUTO;
 	eglWindowOpacity = 255;
 
 	// these are usually set as default, but set them here just to be sure
-	frameBufferAttributes[EGL_RED_SIZE]	 = 8; // 8 bits for red
-	frameBufferAttributes[EGL_GREEN_SIZE]   = 8; // 8 bits for green
-	frameBufferAttributes[EGL_BLUE_SIZE]	= 8; // 8 bits for blue
-	frameBufferAttributes[EGL_ALPHA_SIZE]   = 8; // 8 bits for alpha
+	frameBufferAttributes[EGL_RED_SIZE] = 8; // 8 bits for red
+	frameBufferAttributes[EGL_GREEN_SIZE] = 8; // 8 bits for green
+	frameBufferAttributes[EGL_BLUE_SIZE] = 8; // 8 bits for blue
+	frameBufferAttributes[EGL_ALPHA_SIZE] = 8; // 8 bits for alpha
 	frameBufferAttributes[EGL_LUMINANCE_SIZE] = EGL_DONT_CARE; // 8 bits for alpha
-	frameBufferAttributes[EGL_DEPTH_SIZE]   = 24; // 24 bits for depth
+	frameBufferAttributes[EGL_DEPTH_SIZE] = 24; // 24 bits for depth
 	frameBufferAttributes[EGL_STENCIL_SIZE] = 8; // 8 bits for stencil
-	frameBufferAttributes[EGL_SAMPLES]	  = 1;
+	frameBufferAttributes[EGL_SAMPLES] = 1;
 
 	initialClearColor = ofColor(0.15 * 255, 0.15 * 255, 0.15 * 255, 255);
 
@@ -264,7 +284,7 @@ ofAppEGLWindow::ofAppEGLWindow() {
 	x11ScreenNum = 0l;
 	glesVersion = 1;
 
-	if(instance!=NULL){
+	if (instance != NULL) {
 		ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
 	}
 	instance = this;
@@ -292,12 +312,12 @@ EGLContext ofAppEGLWindow::getEglContext() const {
 
 #ifndef TARGET_RASPBERRY_PI_LEGACY
 //------------------------------------------------------------
-Display* ofAppEGLWindow::getX11Display(){
+Display* ofAppEGLWindow::getX11Display() {
 	return x11Display;
 }
 
 //------------------------------------------------------------
-Window ofAppEGLWindow::getX11Window(){
+Window ofAppEGLWindow::getX11Window() {
 	return x11Window;
 }
 #endif
@@ -307,7 +327,7 @@ EGLConfig ofAppEGLWindow::getEglConfig() const {
 }
 
 //------------------------------------------------------------
-EGLint ofAppEGLWindow::getEglVersionMajor () const {
+EGLint ofAppEGLWindow::getEglVersionMajor() const {
 	return eglVersionMajor;
 }
 
@@ -331,13 +351,13 @@ void ofAppEGLWindow::exitNative() {
 }
 
 //------------------------------------------------------------
-EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
-	if(!isWindowInited) {
+EGLNativeWindowType ofAppEGLWindow::getNativeWindow() {
+	if (!isWindowInited) {
 		ofLogWarning("ofAppEGLWindow") << "getNativeDisplay(): window not initialized, returning NULL";
 		return NULL;
 	}
 
-	if(isUsingX11) {
+	if (isUsingX11) {
 		return (EGLNativeWindowType)x11Window;
 	} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
@@ -351,12 +371,12 @@ EGLNativeWindowType ofAppEGLWindow::getNativeWindow()  {
 
 //------------------------------------------------------------
 EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
-	if(!isWindowInited) {
+	if (!isWindowInited) {
 		ofLogWarning("ofAppEGLWindow") << "getNativeDisplay(): window not initialized, returning NULL";
 		return 0;
 	}
 
-	if(isUsingX11) {
+	if (isUsingX11) {
 		return (EGLNativeDisplayType)x11Display;
 	} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
@@ -369,40 +389,40 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setup(const ofGLESWindowSettings & settings){
-	const Settings * glSettings = dynamic_cast<const Settings*>(&settings);
-	if(glSettings){
+void ofAppEGLWindow::setup(const ofGLESWindowSettings& settings) {
+	const Settings* glSettings = dynamic_cast<const Settings*>(&settings);
+	if (glSettings) {
 		setup(*glSettings);
-	}else{
+	} else {
 		setup(Settings(settings));
 	}
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
+void ofAppEGLWindow::setup(const ofAppEGLWindowSettings& _settings) {
 	settings = _settings;
 	windowMode = OF_WINDOW;
 	bNewScreenMode = true;
 	nFramesSinceWindowResized = 0;
-	buttonInUse	= 0;
+	buttonInUse = 0;
 	bEnableSetupScreen = true;
 	eglDisplayString = "";
 	orientation = OF_ORIENTATION_DEFAULT;
 
-	//TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
-	// to be totally correct we might need to take into account screen size
-	// and add acceleration
+	// TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
+	//  to be totally correct we might need to take into account screen size
+	//  and add acceleration
 	mouseScaleX = 2.0f;
 	mouseScaleY = 2.0f;
 
 	isUsingX11 = false;
-	isWindowInited  = false;
+	isWindowInited = false;
 	isSurfaceInited = false;
 
 	eglDisplay = NULL;
 	eglSurface = NULL;
 	eglContext = NULL;
-	eglConfig  = NULL;
+	eglConfig = NULL;
 	eglVersionMajor = -1;
 	eglVersionMinor = -1;
 	glesVersion = 1;
@@ -414,17 +434,17 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	bool bIsX11Available = getenv("DISPLAY") != NULL;
 
-	if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
-		if(bIsX11Available) {
+	if (settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
+		if (bIsX11Available) {
 			isUsingX11 = true;
 		} else {
 			isUsingX11 = false;
 		}
-	} else if(settings.eglWindowPreference == OF_APP_WINDOW_NATIVE) {
+	} else if (settings.eglWindowPreference == OF_APP_WINDOW_NATIVE) {
 		isUsingX11 = false;
-	} else if(settings.eglWindowPreference == OF_APP_WINDOW_X11) {
+	} else if (settings.eglWindowPreference == OF_APP_WINDOW_X11) {
 		isUsingX11 = true;
-		if(!bIsX11Available) {
+		if (!bIsX11Available) {
 			isUsingX11 = false;
 			ofLogError("ofAppEGLWindow") << "init(): X11 window requested, but X11 is not available";
 		}
@@ -433,7 +453,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	////////////////
 	// TODO remove the following ifdef once x11 is accelerated on RPI
 #ifdef TARGET_RASPBERRY_PI_LEGACY
-	if(isUsingX11) {
+	if (isUsingX11) {
 		isUsingX11 = false;
 		ofLogWarning("ofAppEGLWindow") << "init(): X11 not availble on RPI yet, using a native window instead";
 	}
@@ -448,50 +468,50 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	windowMode = settings.windowMode;
 	bShowCursor = true;
 
-	nonFullscreenWindowRect.set(0,0,settings.getWidth(),settings.getHeight());
+	nonFullscreenWindowRect.set(0, 0, settings.getWidth(), settings.getHeight());
 	nonFullscreenWindowRect.standardize();
 
 	ofRectangle startRect = nonFullscreenWindowRect;
 	bNewScreenMode = false;
 
-	if(windowMode == OF_GAME_MODE) {
+	if (windowMode == OF_GAME_MODE) {
 		ofLogWarning("ofAppEGLWindow") << "setupOpenGL(): OF_GAME_MODE not supported, using OF_WINDOW";
 		startRect = nonFullscreenWindowRect;
-	} else if(windowMode == OF_FULLSCREEN) {
+	} else if (windowMode == OF_FULLSCREEN) {
 		startRect = getScreenRect();
 	}
 
 	isWindowInited = createWindow(startRect);
 	isSurfaceInited = createSurface();
 
-	if(!isWindowInited) {
-		ofLogError("ofAppEGLWindow")  << "setupOpenGL(): screen creation failed, window not inited";
+	if (!isWindowInited) {
+		ofLogError("ofAppEGLWindow") << "setupOpenGL(): screen creation failed, window not inited";
 	}
 
 	setupPeripherals();
 
 	nFramesSinceWindowResized = 0;
 
-	if(settings.glesVersion>1){
+	if (settings.glesVersion > 1) {
 		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
-	}else{
+	} else {
 		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}
 
 	makeCurrent();
-	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
-		static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
-	}else{
+	if (currentRenderer->getType() == ofGLProgrammableRenderer::TYPE) {
+		static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion, 0);
+	} else {
 		static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
 	}
 }
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setupPeripherals() {
-	if(!isUsingX11) {
+	if (!isUsingX11) {
 		// roll our own cursor!
-		mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
-		MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels().getData(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
+		mouseCursor.allocate(mouse_cursor_data.width, mouse_cursor_data.height, OF_IMAGE_COLOR_ALPHA);
+		MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels().getData(), mouse_cursor_data.rle_pixel_data, mouse_cursor_data.width * mouse_cursor_data.height, mouse_cursor_data.bpp);
 		mouseCursor.update();
 		ofLogNotice("ofAppEGLWindow") << "setupPeripherals(): peripheral setup complete";
 		setupNativeEvents();
@@ -515,33 +535,33 @@ bool ofAppEGLWindow::createSurface() {
 
 	EGLint result;
 
-	if(display==0){
+	if (display == 0) {
 		eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-	}else{
+	} else {
 		eglDisplay = eglGetDisplay(display);
 	}
 
-	if(eglDisplay == EGL_NO_DISPLAY) {
+	if (eglDisplay == EGL_NO_DISPLAY) {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): eglGetDisplay returned: " << eglDisplay;
 		return false;
-	}else{
+	} else {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL Display correctly set " << eglDisplay;
 	}
 
 	// initialize the EGL eglDisplay connection
 	result = eglInitialize(eglDisplay,
-			&eglVersionMajor,
-			&eglVersionMinor);
+	    &eglVersionMajor,
+	    &eglVersionMinor);
 
-	if(result == EGL_BAD_DISPLAY) {
+	if (result == EGL_BAD_DISPLAY) {
 		//  eglDisplay is not an EGL connection
 		ofLogError("ofAppEGLWindow") << "createSurface(): eglInitialize returned EGL_BAD_DISPLAY";
 		return false;
-	} else if(result == EGL_NOT_INITIALIZED) {
+	} else if (result == EGL_NOT_INITIALIZED) {
 		// eglDisplay cannot be intitialized
 		ofLogError("ofAppEGLWindow") << "createSurface(): eglInitialize returned EGL_NOT_INITIALIZED";
 		return false;
-	} else if(result == EGL_FALSE) {
+	} else if (result == EGL_FALSE) {
 		// eglinitialize was not initialiezd
 		ofLogError("ofAppEGLWindow") << "createSurface(): eglInitialize returned EGL_FALSE";
 		return false;
@@ -553,17 +573,17 @@ bool ofAppEGLWindow::createSurface() {
 	EGLint glesVersion;
 	int glesVersionForContext;
 
-	if(ofGetCurrentRenderer()) {
+	if (ofGetCurrentRenderer()) {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): current renderer type: " << ofGetCurrentRenderer()->getType();
 	} else {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): no current renderer selected";
 	}
 
-	if(this->glesVersion==2){
+	if (this->glesVersion == 2) {
 		glesVersion = EGL_OPENGL_ES2_BIT;
 		glesVersionForContext = 2;
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): GLES2 renderer detected";
-	}else{
+	} else {
 		glesVersion = EGL_OPENGL_ES_BIT;
 		glesVersionForContext = 1;
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): default renderer detected";
@@ -578,12 +598,12 @@ bool ofAppEGLWindow::createSurface() {
 	iter = settings.frameBufferAttributes.begin();
 	iterEnd = settings.frameBufferAttributes.end();
 	i = 0;
-	for(; iter != iterEnd; iter++) {
+	for (; iter != iterEnd; iter++) {
 		attribute_list_framebuffer_config[i++] = iter->first;
 		attribute_list_framebuffer_config[i++] = iter->second;
 	}
 	attribute_list_framebuffer_config[i++] = EGL_RENDERABLE_TYPE;
-	attribute_list_framebuffer_config[i++] = glesVersion; //openGL ES version
+	attribute_list_framebuffer_config[i++] = glesVersion; // openGL ES version
 	attribute_list_framebuffer_config[i] = EGL_NONE; // add the terminator
 
 	EGLint num_configs;
@@ -591,25 +611,24 @@ bool ofAppEGLWindow::createSurface() {
 	// get an appropriate EGL frame buffer configuration
 	// http://www.khronos.org/registry/egl/sdk/docs/man/xhtml/eglChooseConfig.html
 	result = eglChooseConfig(eglDisplay,
-			attribute_list_framebuffer_config,
-			&eglConfig,
-			1, // we only want the first one.  if we want more,
-			// we need to pass in an array.
-			// we are optimistic and don't give it more chances
-			// to find a good configuration
-			&num_configs);
+	    attribute_list_framebuffer_config,
+	    &eglConfig,
+	    1, // we only want the first one.  if we want more,
+	    // we need to pass in an array.
+	    // we are optimistic and don't give it more chances
+	    // to find a good configuration
+	    &num_configs);
 
-	if(result == EGL_FALSE) {
+	if (result == EGL_FALSE) {
 		EGLint error = eglGetError();
 		ofLogError("ofAppEGLWindow") << "createSurface(): error finding valid configuration based on settings: " << eglErrorString(error);
 		return false;
 	}
 
-	if(num_configs <= 0 || eglConfig == NULL) {
+	if (num_configs <= 0 || eglConfig == NULL) {
 		ofLogError("ofAppEGLWindow") << "createSurface(): no matching configs were found, num_configs: " << num_configs;
 		return false;
 	}
-
 
 	// each attribute has 2 values, and we need one extra for the EGL_NONE terminator
 	EGLint attribute_list_window_surface[settings.windowSurfaceAttributes.size() * 2 + 1];
@@ -618,21 +637,21 @@ bool ofAppEGLWindow::createSurface() {
 	iterEnd = settings.windowSurfaceAttributes.end();
 
 	i = 0;
-	for(; iter != iterEnd; iter++) {
+	for (; iter != iterEnd; iter++) {
 		attribute_list_window_surface[i++] = iter->first;
 		attribute_list_window_surface[i++] = iter->second;
 	}
 	attribute_list_window_surface[i] = EGL_NONE; // add the terminator
 
 	// create a surface
-	eglSurface = eglCreateWindowSurface( eglDisplay, // our display handle
-			eglConfig,	// our first config
-			nativeWindow, // our native window
-			attribute_list_window_surface); // surface attribute list
+	eglSurface = eglCreateWindowSurface(eglDisplay, // our display handle
+	    eglConfig, // our first config
+	    nativeWindow, // our native window
+	    attribute_list_window_surface); // surface attribute list
 
-	if(eglSurface == EGL_NO_SURFACE) {
+	if (eglSurface == EGL_NO_SURFACE) {
 		EGLint error = eglGetError();
-		switch(error) {
+		switch (error) {
 		case EGL_BAD_MATCH:
 			ofLogError("ofAppEGLWindow") << "createSurface(): error creating surface: EGL_BAD_MATCH " << eglErrorString(error);
 			ofLogError("ofAppEGLWindow") << "createSurface(): check window and EGLConfig attributes to determine compatibility, ";
@@ -655,34 +674,34 @@ bool ofAppEGLWindow::createSurface() {
 		}
 
 		return false;
-	}else{
+	} else {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): surface created correctly";
 	}
 
 	// get an appropriate EGL frame buffer configuration
 	result = eglBindAPI(EGL_OPENGL_ES_API);
 
-	if(result == EGL_FALSE) {
+	if (result == EGL_FALSE) {
 		ofLogError("ofAppEGLWindow") << "createSurface(): error binding API: " << eglErrorString(eglGetError());
 		return false;
-	}else{
+	} else {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): API bound correctly";
 	}
 
 	// create an EGL rendering eglContext
 	EGLint attribute_list_surface_context[] = {
-			EGL_CONTEXT_CLIENT_VERSION, glesVersionForContext,
-			EGL_NONE
+		EGL_CONTEXT_CLIENT_VERSION, glesVersionForContext,
+		EGL_NONE
 	};
 
 	eglContext = eglCreateContext(eglDisplay,
-			eglConfig,
-			EGL_NO_CONTEXT,
-			attribute_list_surface_context);
+	    eglConfig,
+	    EGL_NO_CONTEXT,
+	    attribute_list_surface_context);
 
-	if(eglContext == EGL_NO_CONTEXT) {
+	if (eglContext == EGL_NO_CONTEXT) {
 		EGLint error = eglGetError();
-		if(error == EGL_BAD_CONFIG) {
+		if (error == EGL_BAD_CONFIG) {
 			ofLogError("ofAppEGLWindow") << "createSurface(): error creating context: EGL_BAD_CONFIG " << eglErrorString(error);
 			return false;
 		} else {
@@ -693,11 +712,11 @@ bool ofAppEGLWindow::createSurface() {
 
 	// connect the eglContext to the eglSurface
 	result = eglMakeCurrent(eglDisplay,
-			eglSurface, // draw surface
-			eglSurface, // read surface
-			eglContext);
+	    eglSurface, // draw surface
+	    eglSurface, // read surface
+	    eglContext);
 
-	if(eglContext == nullptr) {
+	if (eglContext == nullptr) {
 		EGLint error = eglGetError();
 		ofLogError("ofAppEGLWindow") << "createSurface(): couldn't making current surface: " << eglErrorString(error);
 		return false;
@@ -705,17 +724,17 @@ bool ofAppEGLWindow::createSurface() {
 
 	// Set background color and clear buffers
 	glClearColor(settings.initialClearColor.r / 255.0f,
-			settings.initialClearColor.g / 255.0f,
-			settings.initialClearColor.b / 255.0f,
-			settings.initialClearColor.a / 255.0f);
-	glClear( GL_COLOR_BUFFER_BIT );
-	glClear( GL_DEPTH_BUFFER_BIT );
+	    settings.initialClearColor.g / 255.0f,
+	    settings.initialClearColor.b / 255.0f,
+	    settings.initialClearColor.a / 255.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	ofLogNotice("ofAppEGLWindow") << "createSurface(): -----EGL-----";
 	ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VERSION_MAJOR = " << eglVersionMajor;
 	ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VERSION_MINOR = " << eglVersionMinor;
 	ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_CLIENT_APIS = " << eglQueryString(eglDisplay, EGL_CLIENT_APIS);
-	ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VENDOR = "  << eglQueryString(eglDisplay, EGL_VENDOR);
+	ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VENDOR = " << eglQueryString(eglDisplay, EGL_VENDOR);
 	ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_VERSION = " << eglQueryString(eglDisplay, EGL_VERSION);
 	ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL_EXTENSIONS = " << eglQueryString(eglDisplay, EGL_EXTENSIONS);
 	ofLogNotice("ofAppEGLWindow") << "createSurface(): GL_RENDERER = " << glGetString(GL_RENDERER);
@@ -730,7 +749,7 @@ bool ofAppEGLWindow::createSurface() {
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::destroySurface() {
-	if(isSurfaceInited) {
+	if (isSurfaceInited) {
 		ofLogNotice("ofAppEGLWindow") << "destroySurface(): destroying EGL surface";
 		eglSwapBuffers(eglDisplay, eglSurface);
 		eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -742,7 +761,7 @@ bool ofAppEGLWindow::destroySurface() {
 		eglDisplay = NULL;
 		eglSurface = NULL;
 		eglContext = NULL;
-		eglConfig  = NULL;
+		eglConfig = NULL;
 		eglVersionMinor = -1;
 		eglVersionMinor = -1;
 
@@ -755,10 +774,10 @@ bool ofAppEGLWindow::destroySurface() {
 
 //------------------------------------------------------------
 bool ofAppEGLWindow::destroyWindow() {
-	if(isWindowInited) {
-		if(isUsingX11) {
+	if (isWindowInited) {
+		if (isUsingX11) {
 			// TODO: double check
-			XDestroyWindow(x11Display,x11Window); // or XCloseWindow?
+			XDestroyWindow(x11Display, x11Window); // or XCloseWindow?
 			XFree(x11Screen);
 		} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
@@ -775,7 +794,7 @@ bool ofAppEGLWindow::destroyWindow() {
 				dispman_display = DISPMANX_NO_HANDLE;
 			}
 #else
-	ofLogNotice("ofAppEGLWindow") << "destroyWindow(): no native window type for this system, perhaps try X11?";
+			ofLogNotice("ofAppEGLWindow") << "destroyWindow(): no native window type for this system, perhaps try X11?";
 #endif
 		}
 
@@ -786,9 +805,8 @@ bool ofAppEGLWindow::destroyWindow() {
 	return true;
 }
 
-
-void ofAppEGLWindow::close(){
-	if(!isUsingX11) {
+void ofAppEGLWindow::close() {
+	if (!isUsingX11) {
 		destroyNativeEvents();
 	}
 
@@ -802,17 +820,17 @@ void ofAppEGLWindow::close(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::makeCurrent(){
+void ofAppEGLWindow::makeCurrent() {
 	eglMakeCurrent(eglDisplay,
-			eglSurface, // draw surface
-			eglSurface, // read surface
-			eglContext);
+	    eglSurface, // draw surface
+	    eglSurface, // read surface
+	    eglContext);
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::swapBuffers(){
+void ofAppEGLWindow::swapBuffers() {
 	EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
-	if(!success) {
+	if (!success) {
 		GLint error = eglGetError();
 		ofLogNotice("ofAppEGLWindow") << "display(): eglSwapBuffers failed: " << eglErrorString(error);
 	}
@@ -833,50 +851,50 @@ void ofAppEGLWindow::update() {
 	coreEvents.notifyUpdate();
 }
 
-
 //------------------------------------------------------------
 void ofAppEGLWindow::draw() {
 	// take care of any requests for a new screen mode
-	if (windowMode != OF_GAME_MODE && bNewScreenMode){
-		if( windowMode == OF_FULLSCREEN){
+	if (windowMode != OF_GAME_MODE && bNewScreenMode) {
+		if (windowMode == OF_FULLSCREEN) {
 			setWindowRect(getScreenRect());
-		} else if( windowMode == OF_WINDOW ){
+		} else if (windowMode == OF_WINDOW) {
 			setWindowRect(nonFullscreenWindowRect);
 		}
 		bNewScreenMode = false;
 	}
 
 	currentRenderer->startRender();
-	if( bEnableSetupScreen ) currentRenderer->setupScreen();
+	if (bEnableSetupScreen)
+		currentRenderer->setupScreen();
 
 	coreEvents.notifyDraw();
 
-	if(!isUsingX11) {
-		if(bShowCursor){
+	if (!isUsingX11) {
+		if (bShowCursor) {
 			GLboolean bIsDepthTestEnabled = GL_FALSE;
 			glGetBooleanv(GL_DEPTH_TEST, &bIsDepthTestEnabled);
 
-			if(bIsDepthTestEnabled == GL_TRUE) {
+			if (bIsDepthTestEnabled == GL_TRUE) {
 				glDisable(GL_DEPTH_TEST);
 			}
 
 			bool isUsingNormalizedTexCoords = ofGetUsingNormalizedTexCoords();
-			if(isUsingNormalizedTexCoords) {
+			if (isUsingNormalizedTexCoords) {
 				ofDisableNormalizedTexCoords();
 			}
 
 			currentRenderer->pushStyle();
 			currentRenderer->setBlendMode(OF_BLENDMODE_ADD);
 			currentRenderer->setColor(255);
-			mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
+			mouseCursor.draw(ofGetMouseX(), ofGetMouseY());
 
 			currentRenderer->popStyle();
 
-			if(bIsDepthTestEnabled == GL_TRUE) {
+			if (bIsDepthTestEnabled == GL_TRUE) {
 				glEnable(GL_DEPTH_TEST);
 			}
 
-			if(isUsingNormalizedTexCoords) {
+			if (isUsingNormalizedTexCoords) {
 				ofEnableNormalizedTexCoords();
 			}
 		}
@@ -884,22 +902,21 @@ void ofAppEGLWindow::draw() {
 	currentRenderer->finishRender();
 
 	EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
-	if(!success) {
+	if (!success) {
 		GLint error = eglGetError();
 		ofLogNotice("ofAppEGLWindow") << "display(): eglSwapBuffers failed: " << eglErrorString(error);
 	}
 
 	nFramesSinceWindowResized++;
-
 }
 
 //------------------------------------------------------------
-ofCoreEvents & ofAppEGLWindow::events(){
+ofCoreEvents& ofAppEGLWindow::events() {
 	return coreEvents;
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
+shared_ptr<ofBaseRenderer>& ofAppEGLWindow::renderer() {
 	return currentRenderer;
 }
 
@@ -919,26 +936,26 @@ void ofAppEGLWindow::destroyNativeEvents() {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
-	if(!isWindowInited) {
+	if (!isWindowInited) {
 		ofLogError("ofAppEGLWindow") << "setWindowRect(): window not inited";
 		return;
 	}
 
 	ofRectangle newRect = requestedWindowRect.getStandardized();
 
-	if(newRect != currentWindowRect) {
+	if (newRect != currentWindowRect) {
 		ofRectangle oldWindowRect = currentWindowRect;
 
-		if(isUsingX11) {
+		if (isUsingX11) {
 			int ret = XMoveResizeWindow(x11Display,
-					x11Window,
-					(int)newRect.x,
-					(int)newRect.y,
-					(unsigned int)newRect.width,
-					(unsigned int)newRect.height);
-			if(ret == BadValue) {
+			    x11Window,
+			    (int)newRect.x,
+			    (int)newRect.y,
+			    (unsigned int)newRect.width,
+			    (unsigned int)newRect.height);
+			if (ret == BadValue) {
 				ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadValue";
-			} else if(ret == BadWindow) {
+			} else if (ret == BadWindow) {
 				ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadWindow";
 			} else {
 				// all is good
@@ -962,15 +979,14 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 			DISPMANX_UPDATE_HANDLE_T dispman_update = vc_dispmanx_update_start(0);
 
 			vc_dispmanx_element_change_attributes(dispman_update,
-					dispman_element,
-					ELEMENT_CHANGE_SRC_RECT|ELEMENT_CHANGE_DEST_RECT, // we do both when resizing
-					0, // layer (we aren't changing it here)
-					0, // opactiy (we aren't changing it here)
-					&dst_rect,
-					&src_rect,
-					0, // mask (we aren't changing it here)
-					(DISPMANX_TRANSFORM_T)0);
-
+			    dispman_element,
+			    ELEMENT_CHANGE_SRC_RECT | ELEMENT_CHANGE_DEST_RECT, // we do both when resizing
+			    0, // layer (we aren't changing it here)
+			    0, // opactiy (we aren't changing it here)
+			    &dst_rect,
+			    &src_rect,
+			    0, // mask (we aren't changing it here)
+			    (DISPMANX_TRANSFORM_T)0);
 
 			vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -986,17 +1002,16 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 #endif
 		}
 
-		if(oldWindowRect.width  != currentWindowRect.width || oldWindowRect.height != currentWindowRect.height) {
-			coreEvents.notifyWindowResized(currentWindowRect.width,	currentWindowRect.height);
+		if (oldWindowRect.width != currentWindowRect.width || oldWindowRect.height != currentWindowRect.height) {
+			coreEvents.notifyWindowResized(currentWindowRect.width, currentWindowRect.height);
 			nFramesSinceWindowResized = 0;
 		}
 	}
 }
 
-
 //------------------------------------------------------------
 bool ofAppEGLWindow::createWindow(const ofRectangle& requestedWindowRect) {
-	if(isUsingX11) {
+	if (isUsingX11) {
 		return createX11NativeWindow(requestedWindowRect);
 	} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
@@ -1019,16 +1034,17 @@ int ofAppEGLWindow::getWindowHeight() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::pollEvents(){
-	if(!instance) return;
-	if(instance->isUsingX11) {
-		while(1){
+void ofAppEGLWindow::pollEvents() {
+	if (!instance)
+		return;
+	if (instance->isUsingX11) {
+		while (1) {
 			XEvent event;
-			if (::XCheckWindowEvent(instance->x11Display, instance->x11Window, -1, &event)){
+			if (::XCheckWindowEvent(instance->x11Display, instance->x11Window, -1, &event)) {
 				handleX11Event(event);
-			}else if (::XCheckTypedEvent(instance->x11Display, ClientMessage, &event)){
+			} else if (::XCheckTypedEvent(instance->x11Display, ClientMessage, &event)) {
 				handleX11Event(event);
-			}else{
+			} else {
 				break;
 			}
 		}
@@ -1036,11 +1052,11 @@ void ofAppEGLWindow::pollEvents(){
 		queue<ofMouseEventArgs> mouseEventsCopy;
 		instance->lock();
 		mouseEventsCopy = instance->mouseEvents;
-		while(!instance->mouseEvents.empty()){
+		while (!instance->mouseEvents.empty()) {
 			instance->mouseEvents.pop();
 		}
 		instance->unlock();
-		while(!mouseEventsCopy.empty()){
+		while (!mouseEventsCopy.empty()) {
 			instance->coreEvents.notifyMouseEvent(mouseEventsCopy.front());
 			mouseEventsCopy.pop();
 		}
@@ -1049,11 +1065,11 @@ void ofAppEGLWindow::pollEvents(){
 		queue<ofKeyEventArgs> keyEventsCopy;
 		instance->lock();
 		keyEventsCopy = instance->keyEvents;
-		while(!instance->keyEvents.empty()){
+		while (!instance->keyEvents.empty()) {
 			instance->keyEvents.pop();
 		}
 		instance->unlock();
-		while(!keyEventsCopy.empty()){
+		while (!keyEventsCopy.empty()) {
 			instance->coreEvents.notifyKeyEvent(keyEventsCopy.front());
 			keyEventsCopy.pop();
 		}
@@ -1061,11 +1077,11 @@ void ofAppEGLWindow::pollEvents(){
 		queue<ofTouchEventArgs> touchEventsCopy;
 		instance->lock();
 		touchEventsCopy = instance->touchEvents;
-		while(!instance->touchEvents.empty()){
+		while (!instance->touchEvents.empty()) {
 			instance->touchEvents.pop();
 		}
 		instance->unlock();
-		while(!touchEventsCopy.empty()){
+		while (!touchEventsCopy.empty()) {
 			instance->coreEvents.notifyTouchEvent(touchEventsCopy.front());
 			touchEventsCopy.pop();
 		}
@@ -1073,12 +1089,12 @@ void ofAppEGLWindow::pollEvents(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::hideCursor(){
+void ofAppEGLWindow::hideCursor() {
 	bShowCursor = false;
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::showCursor(){
+void ofAppEGLWindow::showCursor() {
 	bShowCursor = true;
 }
 
@@ -1088,24 +1104,24 @@ void ofAppEGLWindow::setWindowTitle(string title) {
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getWindowSize(){
-	return {currentWindowRect.width, currentWindowRect.height};
+glm::vec2 ofAppEGLWindow::getWindowSize() {
+	return { currentWindowRect.width, currentWindowRect.height };
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getWindowPosition(){
+glm::vec2 ofAppEGLWindow::getWindowPosition() {
 	return glm::vec2(currentWindowRect.getPosition());
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getScreenSize(){
+glm::vec2 ofAppEGLWindow::getScreenSize() {
 	unsigned int screenWidth = 0;
 	unsigned int screenHeight = 0;
 
-	if(isUsingX11) {
+	if (isUsingX11) {
 		// TODO, there must be a way to get screensize if the window is not inited
-		if(isWindowInited && x11Screen) {
-			screenWidth  = XWidthOfScreen(x11Screen);
+		if (isWindowInited && x11Screen) {
+			screenWidth = XWidthOfScreen(x11Screen);
 			screenHeight = XHeightOfScreen(x11Screen);
 		} else {
 			ofLogError("ofAppEGLWindow") << "getScreenSize(): tried to get display size but failed, x11Screen is not inited";
@@ -1114,42 +1130,41 @@ glm::vec2 ofAppEGLWindow::getScreenSize(){
 	} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
 		int success = graphics_get_display_size(settings.screenNum, &screenWidth, &screenHeight);
-		if(success < 0) {
+		if (success < 0) {
 			ofLogError("ofAppEGLWindow") << "getScreenSize(): tried to get display size but failed";
 		}
 
 #else
 		ofLogError("ofAppEGLWindow") << "getScreenSize(): no native window type for this system, perhaps try X11?";
 #endif
-
 	}
 
-	return {screenWidth, screenHeight};
+	return { screenWidth, screenHeight };
 }
 
 //------------------------------------------------------------
-int ofAppEGLWindow::getWidth(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+int ofAppEGLWindow::getWidth() {
+	if (orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180) {
 		return currentWindowRect.width;
 	}
 	return currentWindowRect.height;
 }
 
 //------------------------------------------------------------
-int ofAppEGLWindow::getHeight(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+int ofAppEGLWindow::getHeight() {
+	if (orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180) {
 		return currentWindowRect.height;
 	}
 	return currentWindowRect.width;
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setOrientation(ofOrientation orientationIn){
+void ofAppEGLWindow::setOrientation(ofOrientation orientationIn) {
 	orientation = orientationIn;
 }
 
 //------------------------------------------------------------
-ofOrientation ofAppEGLWindow::getOrientation(){
+ofOrientation ofAppEGLWindow::getOrientation() {
 	return orientation;
 }
 
@@ -1159,20 +1174,20 @@ bool ofAppEGLWindow::doesHWOrientation() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowPosition(int x, int y){
-	if(!isWindowInited) {
+void ofAppEGLWindow::setWindowPosition(int x, int y) {
+	if (!isWindowInited) {
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): window not inited";
 		return;
 	}
 
-	if(isUsingX11) {
+	if (isUsingX11) {
 		int ret = XMoveWindow(x11Display,
-				x11Window,
-				x,
-				y);
-		if(ret == BadValue) {
+		    x11Window,
+		    x,
+		    y);
+		if (ret == BadValue) {
 			ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadValue";
-		} else if(ret == BadWindow) {
+		} else if (ret == BadWindow) {
 			ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadWindow";
 		} else {
 			currentWindowRect.x = x;
@@ -1196,44 +1211,42 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
 		dispman_update = vc_dispmanx_update_start(0);
 
 		vc_dispmanx_element_change_attributes(dispman_update,
-				dispman_native_window.element,
-				ELEMENT_CHANGE_DEST_RECT,
-				0,
-				0,
-				&dst_rect,
-				NULL,
-				0,
-				(DISPMANX_TRANSFORM_T)0);
+		    dispman_native_window.element,
+		    ELEMENT_CHANGE_DEST_RECT,
+		    0,
+		    0,
+		    &dst_rect,
+		    NULL,
+		    0,
+		    (DISPMANX_TRANSFORM_T)0);
 
+		vc_dispmanx_update_submit_sync(dispman_update);
 
-vc_dispmanx_update_submit_sync(dispman_update);
-
-currentWindowRect.x = x;
-currentWindowRect.y = y;
-nonFullscreenWindowRect = currentWindowRect;
+		currentWindowRect.x = x;
+		currentWindowRect.y = y;
+		nonFullscreenWindowRect = currentWindowRect;
 
 #else
-	ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
+		ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
 #endif
 	}
-
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowShape(int w, int h){
-	if(!isWindowInited) {
+void ofAppEGLWindow::setWindowShape(int w, int h) {
+	if (!isWindowInited) {
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): window not inited";
 		return;
 	}
 
-	if(isUsingX11) {
+	if (isUsingX11) {
 		int ret = XResizeWindow(x11Display,
-				x11Window,
-				(unsigned int)w,
-				(unsigned int)h);
-		if(ret == BadValue) {
+		    x11Window,
+		    (unsigned int)w,
+		    (unsigned int)h);
+		if (ret == BadValue) {
 			ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadValue";
-		} else if(ret == BadWindow) {
+		} else if (ret == BadWindow) {
 			ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadWindow";
 		} else {
 			currentWindowRect.width = w;
@@ -1242,7 +1255,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 		}
 	} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
-		setWindowRect(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
+		setWindowRect(ofRectangle(currentWindowRect.x, currentWindowRect.y, w, h));
 		nonFullscreenWindowRect = currentWindowRect;
 #else
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
@@ -1251,63 +1264,64 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 }
 
 //------------------------------------------------------------
-ofWindowMode ofAppEGLWindow::getWindowMode(){
+ofWindowMode ofAppEGLWindow::getWindowMode() {
 	return windowMode;
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::toggleFullscreen(){
-	if( windowMode == OF_GAME_MODE) return;
+void ofAppEGLWindow::toggleFullscreen() {
+	if (windowMode == OF_GAME_MODE)
+		return;
 
-	if( windowMode == OF_WINDOW ){
+	if (windowMode == OF_WINDOW) {
 		setFullscreen(true);
-	}else{
+	} else {
 		setFullscreen(false);
 	}
-
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setFullscreen(bool fullscreen){
-	if( windowMode == OF_GAME_MODE) return;
+void ofAppEGLWindow::setFullscreen(bool fullscreen) {
+	if (windowMode == OF_GAME_MODE)
+		return;
 
-	if(fullscreen && windowMode != OF_FULLSCREEN){
+	if (fullscreen && windowMode != OF_FULLSCREEN) {
 		bNewScreenMode = true;
 		windowMode = OF_FULLSCREEN;
-	}else if(!fullscreen && windowMode != OF_WINDOW) {
+	} else if (!fullscreen && windowMode != OF_WINDOW) {
 		bNewScreenMode = true;
 		windowMode = OF_WINDOW;
 	}
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::enableSetupScreen(){
+void ofAppEGLWindow::enableSetupScreen() {
 	bEnableSetupScreen = true;
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::disableSetupScreen(){
+void ofAppEGLWindow::disableSetupScreen() {
 	bEnableSetupScreen = false;
 }
 
 //------------------------------------------------------------
-ofRectangle ofAppEGLWindow::getScreenRect(){
+ofRectangle ofAppEGLWindow::getScreenRect() {
 	auto screenSize = getScreenSize();
-	return ofRectangle(0,0,screenSize.x,screenSize.y);
+	return ofRectangle(0, 0, screenSize.x, screenSize.y);
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setVerticalSync(bool enabled){
+void ofAppEGLWindow::setVerticalSync(bool enabled) {
 	eglSwapInterval(eglDisplay, enabled ? 1 : 0);
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::threadedFunction(){
+void ofAppEGLWindow::threadedFunction() {
 	// TODO: a way to setup mouse and keyboard if
 	// they are not plugged in upon start
 	// This can be done with our udev device callbacks
 
-	while(isThreadRunning()) {
+	while (isThreadRunning()) {
 		readNativeUDevEvents();
 		readNativeInputEvents();
 		// sleep briefly
@@ -1323,7 +1337,7 @@ void ofAppEGLWindow::threadedFunction(){
 void ofAppEGLWindow::setupNativeUDev() {
 
 	udev = udev_new(); // create new udev object
-	if(!udev) {
+	if (!udev) {
 		ofLogError("ofAppEGLWindow") << "setupNativeUDev(): couldn't create udev object";
 	} else {
 		ofLogNotice("ofAppEGLWindow") << "setupNativeUDev(): created udev object";
@@ -1336,10 +1350,9 @@ void ofAppEGLWindow::setupNativeUDev() {
 		udev_fd = udev_monitor_get_fd(mon);
 	}
 
-	if(udev_fd < 0) {
+	if (udev_fd < 0) {
 		ofLogError("ofAppEGLWindow") << "setupNativeUDev(): did not create udev object, udev_fd < 0";
 	}
-
 }
 
 //------------------------------------------------------------
@@ -1347,10 +1360,10 @@ void ofAppEGLWindow::destroyNativeUDev() {
 	udev_unref(udev); // clean up
 }
 
-void ofAppEGLWindow::setupNativeInput(){
-	struct udev_enumerate *enumerate;
+void ofAppEGLWindow::setupNativeInput() {
+	struct udev_enumerate* enumerate;
 	struct udev_list_entry *devices, *entry;
-	struct udev_device *dev;
+	struct udev_device* dev;
 	bool isMouse;
 
 	ofLogNotice("ofAppEGLWindow") << "setupNativeInput()";
@@ -1363,23 +1376,22 @@ void ofAppEGLWindow::setupNativeInput(){
 
 	devices = udev_enumerate_get_list_entry(enumerate);
 
-	udev_list_entry_foreach(entry, devices)
-	{
+	udev_list_entry_foreach(entry, devices) {
 		/* Get the filename of the /sys entry for the device
-			and create a udev_device object (dev) representing it */
-		const char * name = udev_list_entry_get_name(entry);
+		    and create a udev_device object (dev) representing it */
+		const char* name = udev_list_entry_get_name(entry);
 
 		dev = udev_device_new_from_syspath(udev, name);
 
-		const char * sysname = udev_device_get_sysname(dev);
-		const char * devnode = udev_device_get_devnode(dev);
-		const char * devpath = udev_device_get_devpath(dev);
-		const char * devtype = udev_device_get_devtype(dev);
+		const char* sysname = udev_device_get_sysname(dev);
+		const char* devnode = udev_device_get_devnode(dev);
+		const char* devpath = udev_device_get_devpath(dev);
+		const char* devtype = udev_device_get_devtype(dev);
 		dev_t devnum = udev_device_get_devnum(dev);
-		const char * driver = udev_device_get_driver(dev);
-		const char * prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
-		const char * prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
-		const char * prop_touch = udev_device_get_property_value(dev, "ID_INPUT_TOUCHSCREEN");
+		const char* driver = udev_device_get_driver(dev);
+		const char* prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
+		const char* prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
+		const char* prop_touch = udev_device_get_property_value(dev, "ID_INPUT_TOUCHSCREEN");
 
 		ofLogNotice() << "Got device";
 		ofLogNotice() << " - node: " << devnode;
@@ -1392,42 +1404,42 @@ void ofAppEGLWindow::setupNativeInput(){
 		ofLogNotice() << " - ID_INPUT_MOUSE: " << prop_mouse;
 		ofLogNotice() << " - ID_INPUT_TOUCHSCREEN: " << prop_touch;
 
-		if(prop_mouse || prop_touch){
+		if (prop_mouse || prop_touch) {
 			isMouse = true;
-		}else{
+		} else {
 			isMouse = false;
 		}
 
-		if(devnode && (prop_keyboard || prop_mouse || prop_touch) && string_begins_with(sysname, "event")){
+		if (devnode && (prop_keyboard || prop_mouse || prop_touch) && string_begins_with(sysname, "event")) {
 			addInput(devnode, isMouse);
 		}
-		if(prop_keyboard){
+		if (prop_keyboard) {
 			keyboardDetected = true;
 		}
-		if(prop_mouse || prop_touch){
+		if (prop_mouse || prop_touch) {
 			mouseDetected = true;
 		}
 
 		udev_device_unref(dev);
-    }
+	}
 	/* Free the enumerator object */
 	udev_enumerate_unref(enumerate);
 
-	if(!mouseDetected){
+	if (!mouseDetected) {
 		ofLogError("ofAppEGLWindow") << "setupNativeInput(): did not open mouse";
 	}
-	if(!keyboardDetected){
+	if (!keyboardDetected) {
 		ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard";
 	}
 
 	// save current terminal settings
-	tcgetattr (STDIN_FILENO, &tc);
+	tcgetattr(STDIN_FILENO, &tc);
 	ots = tc;
 	// disable echo on our temporary settings
 	tc.c_lflag &= ~ECHO;
 	tc.c_lflag |= ECHONL;
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
-	
+
 	mb.mouseButtonState = 0;
 
 	kb.shiftPressed = false;
@@ -1436,22 +1448,22 @@ void ofAppEGLWindow::setupNativeInput(){
 	printInput();
 }
 
-void ofAppEGLWindow::addInput(const char * node, bool isMouse){
-	if(node == NULL){
+void ofAppEGLWindow::addInput(const char* node, bool isMouse) {
+	if (node == NULL) {
 		return;
 	}
 
 	removeInput(node);
 
 	int fd = open(node, O_RDONLY | O_NONBLOCK);
-	if(fd >= 0){
+	if (fd >= 0) {
 		char deviceNameBuffer[256] = "Unknown Device";
 		ioctl(fd, EVIOCGNAME(sizeof(deviceNameBuffer)), deviceNameBuffer);
 		ofLogNotice("ofAppEGLWindow") << "addInput(): input device name = " << deviceNameBuffer;
 
-		if(isMouse){
+		if (isMouse) {
 			struct input_absinfo mabsx;
-			if(ioctl(fd, EVIOCGABS(0), &mabsx) < 0){
+			if (ioctl(fd, EVIOCGABS(0), &mabsx) < 0) {
 				ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
 			} else {
 				mouseAbsXMin = mabsx.minimum;
@@ -1461,9 +1473,9 @@ void ofAppEGLWindow::addInput(const char * node, bool isMouse){
 
 			// Do that for the y axis. EVIOCGABS(1): 1 stands for y axis.
 			struct input_absinfo mabsy;
-			if(ioctl(fd, EVIOCGABS(1), &mabsy) < 0){
+			if (ioctl(fd, EVIOCGABS(1), &mabsy) < 0) {
 				ofLogError("ofAppEGLWindow") << "ioctl GABS failed";
-			}else{
+			} else {
 				mouseAbsYMin = mabsy.minimum;
 				mouseAbsYMax = mabsy.maximum;
 				ofLogNotice("ofAppEGLWindow") << "mouse y axis min, max: " << mouseAbsYMin << ", " << mouseAbsYMax;
@@ -1471,44 +1483,44 @@ void ofAppEGLWindow::addInput(const char * node, bool isMouse){
 		}
 
 		inputDevices[node] = fd;
-    }
+	}
 }
 
-void ofAppEGLWindow::removeInput(const char * node){
-	if(node == NULL)
-        return;
+void ofAppEGLWindow::removeInput(const char* node) {
+	if (node == NULL)
+		return;
 
 	device::iterator iter = inputDevices.find(node);
-	if(iter != inputDevices.end()){
+	if (iter != inputDevices.end()) {
 		::close(iter->second);
 		inputDevices.erase(iter);
 	}
 }
 
-void ofAppEGLWindow::printInput(){
+void ofAppEGLWindow::printInput() {
 	ofLogNotice("--- Input Device List ---");
-	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
+	for (device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++) {
 		ofLogNotice() << " - " << iter->first;
 	}
 	ofLogNotice("-------------------------");
 }
 
-void ofAppEGLWindow::destroyNativeInput(){
+void ofAppEGLWindow::destroyNativeInput() {
 	ofLogNotice("ofAppEGLWindow") << "destroyNativeInput()";
-	
-	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
-		if(iter->second >= 0){
-            ::close(iter->second);
-        }
+
+	for (device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++) {
+		if (iter->second >= 0) {
+			::close(iter->second);
+		}
 	}
 
 	inputDevices.clear();
 
-	tcsetattr (STDIN_FILENO, TCSAFLUSH, &ots);
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &ots);
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::processInput(int fd, const char * node){
+void ofAppEGLWindow::processInput(int fd, const char* node) {
 	// http://www.diegm.uniud.it/loghi/CE2/kbd.pdf
 	// http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
 	// https://strcpy.net/b/archives/2010/11/17/abusing_the_linux_input_subsystem/index.html
@@ -1517,7 +1529,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	static ofMouseEventArgs mouseEvent;
 	struct input_event ev;
 	char key = 0;
-	
+
 	bool pushKeyEvent = false;
 	bool pushMouseEvent = false;
 	bool pushTouchEvent = false;
@@ -1525,215 +1537,216 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	bool touchAxisValuePending = false;
 
 	int nBytesRead = read(fd, &ev, sizeof(struct input_event));
-	while(nBytesRead >= 0){
-		if(ev.type == EV_KEY){
-			if(ev.code == BTN_LEFT){
+	while (nBytesRead >= 0) {
+		if (ev.type == EV_KEY) {
+			if (ev.code == BTN_LEFT) {
 				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << endl;
-				if(ev.value == 0){ // release
+				if (ev.value == 0) { // release
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					mouseEvent.type = ofMouseEventArgs::Released;
 					mb.mouseButtonState &= ~MOUSE_BUTTON_LEFT_MASK;
 					pushMouseEvent = true;
-				}else if(ev.value == 1){ // press
+				} else if (ev.value == 1) { // press
 					mb.mouseButtonState |= MOUSE_BUTTON_LEFT_MASK;
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					pushMouseEvent = true;
 				}
-			}else if(ev.code == BTN_MIDDLE){
+			} else if (ev.code == BTN_MIDDLE) {
 				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << endl;
-				if(ev.value == 0){ // release
+				if (ev.value == 0) { // release
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					mouseEvent.type = ofMouseEventArgs::Released;
 					mb.mouseButtonState &= ~MOUSE_BUTTON_MIDDLE_MASK;
 					pushMouseEvent = true;
-				}else if(ev.value == 1){ // press
+				} else if (ev.value == 1) { // press
 					mb.mouseButtonState |= MOUSE_BUTTON_MIDDLE_MASK;
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					pushMouseEvent = true;
 				}
-			}else if(ev.code == BTN_RIGHT){
+			} else if (ev.code == BTN_RIGHT) {
 				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << endl;
-				if(ev.value == 0){ // release
+				if (ev.value == 0) { // release
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					mouseEvent.type = ofMouseEventArgs::Released;
 					mb.mouseButtonState &= ~MOUSE_BUTTON_RIGHT_MASK;
 					pushMouseEvent = true;
-				}else if(ev.value == 1){ // press
+				} else if (ev.value == 1) { // press
 					mb.mouseButtonState |= MOUSE_BUTTON_RIGHT_MASK;
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					pushMouseEvent = true;
 				}
-			}else if(ev.code == BTN_TOUCH){
-				if(ev.value == 0){ // release	
+			} else if (ev.code == BTN_TOUCH) {
+				if (ev.value == 0) { // release
 					touchEvent.type = ofTouchEventArgs::up;
 					touchEvent.id = 0;
 					mt[touchEvent.id] = 0;
 					pushTouchEvent = true;
 
-				}else if(ev.value == 1){ // press
+				} else if (ev.value == 1) { // press
 					touchEvent.type = ofTouchEventArgs::down;
 					touchEvent.id = 0;
 					mt[touchEvent.id] = 1;
 					pushTouchEvent = true;
 				}
-			}else{
-				if(ev.value == 0){
+			} else {
+				if (ev.value == 0) {
 					// key released
 					keyEvent.type = ofKeyEventArgs::Released;
-				}else if(ev.value == 1){
+				} else if (ev.value == 1) {
 					// key pressed
 					keyEvent.type = ofKeyEventArgs::Pressed;
-				}else if(ev.value == 2){
+				} else if (ev.value == 2) {
 					// key repeated
 					keyEvent.type = ofKeyEventArgs::Pressed;
-				}else{
+				} else {
 					// unknown ev.value
 				}
 				switch (ev.code) {
-					case KEY_RIGHTSHIFT:
-					case KEY_LEFTSHIFT:
-						kb.shiftPressed = ev.value;
-						break;
-					case KEY_RIGHTCTRL:
-					case KEY_LEFTCTRL:
-						break;
-					case KEY_CAPSLOCK:
-						if (ev.value == 1) {
-							if (kb.capsLocked) {
-								kb.capsLocked = 0;
-							} else {
-								kb.capsLocked = 1;
-							}
+				case KEY_RIGHTSHIFT:
+				case KEY_LEFTSHIFT:
+					kb.shiftPressed = ev.value;
+					break;
+				case KEY_RIGHTCTRL:
+				case KEY_LEFTCTRL:
+					break;
+				case KEY_CAPSLOCK:
+					if (ev.value == 1) {
+						if (kb.capsLocked) {
+							kb.capsLocked = 0;
+						} else {
+							kb.capsLocked = 1;
 						}
-						break;
-					case KEY_ESC:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_ESC;
-						break;
-					case KEY_BACKSPACE:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_BACKSPACE;
-						break;
-					case KEY_DELETE:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_DEL;
-						break;
-					case KEY_F1:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F1;
-						break;
-					case KEY_F2:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F2;
-						break;
-					case KEY_F3:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F3;
-						break;
-					case KEY_F4:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F4;
-						break;
-					case KEY_F5:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F5;
-						break;
-					case KEY_F6:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F6;
-						break;
-					case KEY_F7:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F7;
-						break;
-					case KEY_F8:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F8;
-						break;
-					case KEY_F9:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F9;
-						break;
-					case KEY_F10:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F10;
-						break;
-					case KEY_F11:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F11;
-						break;
-					case KEY_F12:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_F12;
-						break;
-					case KEY_LEFT:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_LEFT;
-						break;
-					case KEY_UP:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_UP;
-						break;
-					case KEY_RIGHT:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_RIGHT;
-						break;
-					case KEY_DOWN:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_DOWN;
-						break;
-					case KEY_PAGEUP:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_PAGE_UP;
-						break;
-					case KEY_PAGEDOWN:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_PAGE_DOWN;
-						break;
-					case KEY_HOME:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_HOME;
-						break;
-					case KEY_END:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_END;
-						break;
-					case KEY_INSERT:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_INSERT;
-						break;
-					case KEY_ENTER:
-					case KEY_KPENTER:
-						pushKeyEvent = true;
-						keyEvent.key = OF_KEY_RETURN;
-						break;
-					default:
-						// VERY RUDIMENTARY KEY MAPPING WITH MAPS ABOVE
-						if(ev.code < sizeof(lowercase_map)){
-							if(kb.shiftPressed){
-								key = uppercase_map[ev.code];
-								if(kb.capsLocked) keyEvent.key = tolower(key);
-								keyEvent.key = key;
-								pushKeyEvent = true;
-							}else{
-								key = lowercase_map[ev.code];
-								if(kb.capsLocked) key = toupper(key);
-								keyEvent.key = key;
-								pushKeyEvent = true;
-							}
-						}else{
-							ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents(): input_event.code is outside of our small range";
+					}
+					break;
+				case KEY_ESC:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_ESC;
+					break;
+				case KEY_BACKSPACE:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_BACKSPACE;
+					break;
+				case KEY_DELETE:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_DEL;
+					break;
+				case KEY_F1:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F1;
+					break;
+				case KEY_F2:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F2;
+					break;
+				case KEY_F3:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F3;
+					break;
+				case KEY_F4:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F4;
+					break;
+				case KEY_F5:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F5;
+					break;
+				case KEY_F6:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F6;
+					break;
+				case KEY_F7:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F7;
+					break;
+				case KEY_F8:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F8;
+					break;
+				case KEY_F9:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F9;
+					break;
+				case KEY_F10:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F10;
+					break;
+				case KEY_F11:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F11;
+					break;
+				case KEY_F12:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_F12;
+					break;
+				case KEY_LEFT:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_LEFT;
+					break;
+				case KEY_UP:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_UP;
+					break;
+				case KEY_RIGHT:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_RIGHT;
+					break;
+				case KEY_DOWN:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_DOWN;
+					break;
+				case KEY_PAGEUP:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_PAGE_UP;
+					break;
+				case KEY_PAGEDOWN:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_PAGE_DOWN;
+					break;
+				case KEY_HOME:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_HOME;
+					break;
+				case KEY_END:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_END;
+					break;
+				case KEY_INSERT:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_INSERT;
+					break;
+				case KEY_ENTER:
+				case KEY_KPENTER:
+					pushKeyEvent = true;
+					keyEvent.key = OF_KEY_RETURN;
+					break;
+				default:
+					// VERY RUDIMENTARY KEY MAPPING WITH MAPS ABOVE
+					if (ev.code < sizeof(lowercase_map)) {
+						if (kb.shiftPressed) {
+							key = uppercase_map[ev.code];
+							if (kb.capsLocked)
+								keyEvent.key = tolower(key);
+							keyEvent.key = key;
+							pushKeyEvent = true;
+						} else {
+							key = lowercase_map[ev.code];
+							if (kb.capsLocked)
+								key = toupper(key);
+							keyEvent.key = key;
+							pushKeyEvent = true;
 						}
-				}	
+					} else {
+						ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents(): input_event.code is outside of our small range";
+					}
+				}
 			}
-		}else if (ev.type == EV_REL){
+		} else if (ev.type == EV_REL) {
 			int axis = ev.code;
 			int amount = ev.value;
-			switch (axis)
-			{
+			switch (axis) {
 			case REL_X:
 				mouseEvent.x += amount * mouseScaleX;
 				mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
@@ -1748,75 +1761,71 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << endl;
 				break;
 			}
-		}else if (ev.type == EV_ABS){
+		} else if (ev.type == EV_ABS) {
 			int axis = ev.code;
 			int amount = ev.value;
-			switch (axis)
-			{
-				// do not need this mouse returns REL_X/REL_Y
-				case ABS_X:
-					// mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
-					// mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
-					// axisValuePending = true;
-					break;
-				case ABS_Y:
-					// mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
-					// mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
-					// axisValuePending = true;
-					break;
-				case ABS_MT_TOOL_TYPE:
-					break;
-				case ABS_MT_SLOT:
-					touchEvent.id = amount;
-					break;
-				case ABS_MT_TRACKING_ID:
-					if (amount == -1)
-					{
-						if( mt[touchEvent.id] == 1){
-							touchEvent.type = ofTouchEventArgs::up;
-							mt[touchEvent.id] = 0;
-							pushTouchEvent = true;
-						}
+			switch (axis) {
+			// do not need this mouse returns REL_X/REL_Y
+			case ABS_X:
+				// mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+				// mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+				// axisValuePending = true;
+				break;
+			case ABS_Y:
+				// mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+				// mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+				// axisValuePending = true;
+				break;
+			case ABS_MT_TOOL_TYPE:
+				break;
+			case ABS_MT_SLOT:
+				touchEvent.id = amount;
+				break;
+			case ABS_MT_TRACKING_ID:
+				if (amount == -1) {
+					if (mt[touchEvent.id] == 1) {
+						touchEvent.type = ofTouchEventArgs::up;
+						mt[touchEvent.id] = 0;
+						pushTouchEvent = true;
 					}
-					else 
-					{
-						if (mt[touchEvent.id] == 0){
-							touchEvent.type = ofTouchEventArgs::down;
-							mt[touchEvent.id] = 1;
-							pushTouchEvent = true;
-						}
-						touchAxisValuePending = true;
-					}
-					break;
-				case ABS_MT_POSITION_X:
-					mtp[touchEvent.id].x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
-					mtp[touchEvent.id].x = ofClamp(mtp[touchEvent.id].x, 0, currentWindowRect.width);
-					touchAxisValuePending = true;
-					break;
-				case ABS_MT_POSITION_Y:
-					mtp[touchEvent.id].y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
-					mtp[touchEvent.id].y = ofClamp(mtp[touchEvent.id].y, 0, currentWindowRect.height);
-					if(!pushTouchEvent){
-						touchEvent.type = ofTouchEventArgs::move;
+				} else {
+					if (mt[touchEvent.id] == 0) {
+						touchEvent.type = ofTouchEventArgs::down;
+						mt[touchEvent.id] = 1;
 						pushTouchEvent = true;
 					}
 					touchAxisValuePending = true;
-					break;
-				default:
-					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << endl;
-					break;
+				}
+				break;
+			case ABS_MT_POSITION_X:
+				mtp[touchEvent.id].x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+				mtp[touchEvent.id].x = ofClamp(mtp[touchEvent.id].x, 0, currentWindowRect.width);
+				touchAxisValuePending = true;
+				break;
+			case ABS_MT_POSITION_Y:
+				mtp[touchEvent.id].y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+				mtp[touchEvent.id].y = ofClamp(mtp[touchEvent.id].y, 0, currentWindowRect.height);
+				if (!pushTouchEvent) {
+					touchEvent.type = ofTouchEventArgs::move;
+					pushTouchEvent = true;
+				}
+				touchAxisValuePending = true;
+				break;
+			default:
+				ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << endl;
+				break;
 			}
-		}else if(ev.type == EV_MSC){
-		}else if(ev.type == EV_SYN){
+		} else if (ev.type == EV_MSC) {
+		} else if (ev.type == EV_SYN) {
 			// EV_SYN Used as markers to separate events. Events may be
 			// separated in time or in space, suc8h as with the multitouch protocol.
 			// EV_SYN events are sent when axis value (one or a pair) are changed
-			if(axisValuePending){
+			if (axisValuePending) {
 				// TODO, this state doesn't make as much sense when the mouse is not dragging
-				if(mb.mouseButtonState > 0){
+				if (mb.mouseButtonState > 0) {
 					// dragging (what if dragging w/ more than one button?)
 					mouseEvent.type = ofMouseEventArgs::Dragged;
-				}else{
+				} else {
 					// just moving
 					mouseEvent.type = ofMouseEventArgs::Moved;
 				}
@@ -1827,8 +1836,8 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				axisValuePending = false;
 			}
 
-			if(touchAxisValuePending){
-				if(!pushTouchEvent){
+			if (touchAxisValuePending) {
+				if (!pushTouchEvent) {
 					touchEvent.type = ofTouchEventArgs::move;
 					pushTouchEvent = true;
 				}
@@ -1836,17 +1845,14 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			}
 		}
 
-		
-		
-
-		if(pushKeyEvent){
+		if (pushKeyEvent) {
 			lock();
 			keyEvents.push(keyEvent);
 			unlock();
 			pushKeyEvent = false;
 		}
-		
-		if(pushMouseEvent){
+
+		if (pushMouseEvent) {
 			// lock the thread for a moment while we copy the data
 			lock();
 			mouseEvents.push(mouseEvent);
@@ -1854,7 +1860,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			pushMouseEvent = false;
 		}
 
-		if(pushTouchEvent){
+		if (pushTouchEvent) {
 			touchEvent.x = mtp[touchEvent.id].x;
 			touchEvent.y = mtp[touchEvent.id].y;
 			lock();
@@ -1862,7 +1868,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			unlock();
 			pushTouchEvent = false;
 		}
-		nBytesRead = read(fd, &ev,sizeof(struct input_event));
+		nBytesRead = read(fd, &ev, sizeof(struct input_event));
 	}
 }
 
@@ -1872,7 +1878,7 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 	fd_set fds;
 	struct timeval tv;
 	int ret;
-	struct udev_device *dev;
+	struct udev_device* dev;
 	bool is_mouse = false;
 
 	FD_ZERO(&fds);
@@ -1880,24 +1886,24 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
 
-	ret = select(udev_fd+1, &fds, NULL, NULL, &tv);
+	ret = select(udev_fd + 1, &fds, NULL, NULL, &tv);
 
 	/* Check if our file descriptor has received data. */
-	if(ret > 0 && FD_ISSET(udev_fd, &fds)){
+	if (ret > 0 && FD_ISSET(udev_fd, &fds)) {
 		/* Make the call to receive the device.
 		   select() ensured that this will not block. */
 		dev = udev_monitor_receive_device(mon);
-		if(dev){
-			const char * devnode = udev_device_get_devnode(dev);
-			const char * devpath = udev_device_get_devpath(dev);
-			const char * sysname = udev_device_get_sysname(dev);
-			const char * subsystem = udev_device_get_subsystem(dev);
-			const char * devtype = udev_device_get_devtype(dev);
+		if (dev) {
+			const char* devnode = udev_device_get_devnode(dev);
+			const char* devpath = udev_device_get_devpath(dev);
+			const char* sysname = udev_device_get_sysname(dev);
+			const char* subsystem = udev_device_get_subsystem(dev);
+			const char* devtype = udev_device_get_devtype(dev);
 			dev_t devnum = udev_device_get_devnum(dev);
-			const char * driver = udev_device_get_driver(dev);
-			const char * action = udev_device_get_action(dev);
-			const char * prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
-			const char * prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
+			const char* driver = udev_device_get_driver(dev);
+			const char* action = udev_device_get_action(dev);
+			const char* prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
+			const char* prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
 
 			ofLogNotice("readNativeUDevEvents") << "udev monitor receive devixe";
 			ofLogNotice() << " - node: " << devnode;
@@ -1911,26 +1917,26 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 			ofLogNotice() << " - ID_INPUT_KEYBOARD: " << prop_keyboard;
 			ofLogNotice() << " - ID_INPUT_MOUSE: " << prop_mouse;
 
-			if(prop_mouse){
+			if (prop_mouse) {
 				is_mouse = true;
 			}
-            if(devnode && (prop_keyboard || prop_mouse) && string_begins_with(sysname, "event")){
-                if(strcmp(action, "add") == 0){
+			if (devnode && (prop_keyboard || prop_mouse) && string_begins_with(sysname, "event")) {
+				if (strcmp(action, "add") == 0) {
 					addInput(devnode, is_mouse);
-                }else if(strcmp(action, "remove") == 0){
+				} else if (strcmp(action, "remove") == 0) {
 					removeInput(devnode);
-                }
-            }
-			
+				}
+			}
+
 			udev_device_unref(dev);
-		}else{
+		} else {
 			ofLogNotice("ofAppEGLWindow") << "readNativeUDevEvents(): device returned by receive_device() is NULL";
 		}
 	}
 }
 
-void ofAppEGLWindow::readNativeInputEvents(){
-	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
+void ofAppEGLWindow::readNativeInputEvents() {
+	for (device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++) {
 		processInput(iter->second, iter->first.c_str());
 	}
 }
@@ -1943,11 +1949,10 @@ void ofAppEGLWindow::initRPiNative() {
 	memset(&dispman_native_window, 0x0, sizeof(EGL_DISPMANX_WINDOW_T));
 	dispman_element = DISPMANX_NO_HANDLE;
 	dispman_display = DISPMANX_NO_HANDLE;
-	dispman_update  = DISPMANX_NO_HANDLE;
+	dispman_update = DISPMANX_NO_HANDLE;
 	memset(&dispman_clamp, 0x0, sizeof(DISPMANX_CLAMP_T));
 	dispman_transform = DISPMANX_NO_ROTATE;
 	memset(&dispman_alpha, 0x0, sizeof(VC_DISPMANX_ALPHA_T)); // zero dispman_alpha
-
 }
 
 //------------------------------------------------------------
@@ -1956,7 +1961,7 @@ void ofAppEGLWindow::exitRPiNative() {
 }
 
 //------------------------------------------------------------
-bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRect){
+bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRect) {
 
 	ofRectangle screenRect = getScreenRect();
 
@@ -1979,12 +1984,12 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 
 	src_rect.x = 0;
 	src_rect.y = 0;
-	src_rect.width  = dst_rect.width << 16;
+	src_rect.width = dst_rect.width << 16;
 	src_rect.height = dst_rect.height << 16;
 
 	memset(&dispman_alpha, 0x0, sizeof(VC_DISPMANX_ALPHA_T)); // zero dispman_alpha
 	dispman_alpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
-	dispman_alpha.opacity = ofClamp(settings.eglWindowOpacity,0,255);
+	dispman_alpha.opacity = ofClamp(settings.eglWindowOpacity, 0, 255);
 	dispman_alpha.mask = 0;
 
 	memset(&dispman_clamp, 0x0, sizeof(DISPMANX_CLAMP_T));
@@ -1996,28 +2001,28 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 	dispman_display = vc_dispmanx_display_open(settings.screenNum);
 
 	// begin the display manager interaction
-	dispman_update  = vc_dispmanx_update_start( 0 );
+	dispman_update = vc_dispmanx_update_start(0);
 
 	// add a "display manager element" with our parameters so
 	// that it can fill in the structures.  we will pass this
 	// filled dispman_element to our native window, which will
 	// be used to construct the EGL surface, etc.
-	dispman_element = vc_dispmanx_element_add ( dispman_update,
-			dispman_display,
-			settings.layer, // layer
-			&dst_rect, // dst rect
-			(DISPMANX_RESOURCE_HANDLE_T)0, // src
-			&src_rect, // src rect
-			DISPMANX_PROTECTION_NONE, // ?
-			&dispman_alpha, // alpha
-			&dispman_clamp, // clamp
-			dispman_transform // transform
+	dispman_element = vc_dispmanx_element_add(dispman_update,
+	    dispman_display,
+	    settings.layer, // layer
+	    &dst_rect, // dst rect
+	    (DISPMANX_RESOURCE_HANDLE_T)0, // src
+	    &src_rect, // src rect
+	    DISPMANX_PROTECTION_NONE, // ?
+	    &dispman_alpha, // alpha
+	    &dispman_clamp, // clamp
+	    dispman_transform // transform
 	);
 
-	if(dispman_element == DISPMANX_NO_HANDLE) {
+	if (dispman_element == DISPMANX_NO_HANDLE) {
 		ofLogError("ofAppEGLWindow") << "setupRPiNativeWindow(): dispman_element == DISPMANX_NO_HANDLE";
 		return false;
-	} else if(dispman_element == (unsigned)DISPMANX_INVALID) {
+	} else if (dispman_element == (unsigned)DISPMANX_INVALID) {
 		ofLogError("ofAppEGLWindow") << "setupRPiNativeWindow(): dispman_element == DISPMANX_INVALID";
 		return false;
 	}
@@ -2032,7 +2037,7 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 	vc_dispmanx_display_set_background(dispman_update, dispman_display, 0x00, 0x00, 0x00);
 
 	// finished with display manager update, so sync
-	vc_dispmanx_update_submit_sync( dispman_update );
+	vc_dispmanx_update_submit_sync(dispman_update);
 
 	currentWindowRect = windowRect;
 
@@ -2043,7 +2048,7 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 //------------------------------------------------------------
 // X11 BELOW
 //------------------------------------------------------------
-bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRect){
+bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRect) {
 
 	// X11 variables
 	x11Window = 0;
@@ -2061,20 +2066,20 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 	unsigned int ui32Mask;
 	int i32Depth;
 
-	//ofRectangle screenRect = getScreenRect();
+	// ofRectangle screenRect = getScreenRect();
 
 	// make sure our requested window rectangle does not exceed the native
 	// screen size, or start outside of it.
-	ofRectangle windowRect = requestedWindowRect.getStandardized();//screenRect.getIntersection(requestedWindowRect);
+	ofRectangle windowRect = requestedWindowRect.getStandardized(); // screenRect.getIntersection(requestedWindowRect);
 
 	// Initializes the display and screen
-	x11Display = XOpenDisplay( 0 );
+	x11Display = XOpenDisplay(0);
 	if (!x11Display) {
 		ofLogError("ofAppEGLWindow") << "unable to open X display";
 		return false;
 	}
 
-	x11ScreenNum = XDefaultScreen( x11Display );
+	x11ScreenNum = XDefaultScreen(x11Display);
 
 	x11Screen = XDefaultScreenOfDisplay(x11Display);
 
@@ -2083,18 +2088,18 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 	i32Depth = DefaultDepth(x11Display, x11ScreenNum);
 	x11Visual = new XVisualInfo();
 
-	XMatchVisualInfo( x11Display,
-			x11ScreenNum,
-			i32Depth,
-			TrueColor,
-			x11Visual);
+	XMatchVisualInfo(x11Display,
+	    x11ScreenNum,
+	    i32Depth,
+	    TrueColor,
+	    x11Visual);
 
 	if (!x11Visual) {
 		ofLogError("ofAppEGLWindow") << "unable to acquire XVisualInfo";
 		return false;
 	}
 
-	x11Colormap = XCreateColormap( x11Display, sRootWindow, x11Visual->visual, AllocNone );
+	x11Colormap = XCreateColormap(x11Display, sRootWindow, x11Visual->visual, AllocNone);
 
 	delete x11Visual;
 
@@ -2120,32 +2125,32 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 
 	// Creates the X11 window
 	x11Window = XCreateWindow(x11Display, // Specifies the connection to the X server.
-			sRootWindow, // Specifies the parent window.
-			(int)windowRect.x, (int)windowRect.y, // Specify the x and y coordinates,
-			// which are the top-left outside corner
-			// of the window's borders and are relative
-			// to the inside of the parent window's borders.
-			(unsigned int)windowRect.width, (unsigned int)windowRect.height, // Specify the width and height, which are the
-			// created window's inside dimensions and do
-			// not include the created window's borders.
-			0, // Specifies the width of the created
-			// window's border in pixels.
-			CopyFromParent, // Specifies the window's depth.
-			// A depth of CopyFromParent means
-			// the depth is taken from the parent.
-			InputOutput, // Specifies the created window's class.
-			// You can pass InputOutput, InputOnly,
-			// or CopyFromParent. A class of CopyFromParent
-			// means the class is taken from the parent.
-			CopyFromParent, // Specifies the visual type.
-			// A visual of CopyFromParent means the visual type
-			// is taken from the parent.
-			ui32Mask, // Specifies which window attributes are
-			// defined in the attributes argument. This mask is
-			// the bitwise inclusive OR of the valid attribute
-			// mask bits. If valuemask is zero, the attributes
-			// are ignored and are not referenced.
-			&sWA //Specifies the background pixel value of the window.
+	    sRootWindow, // Specifies the parent window.
+	    (int)windowRect.x, (int)windowRect.y, // Specify the x and y coordinates,
+	    // which are the top-left outside corner
+	    // of the window's borders and are relative
+	    // to the inside of the parent window's borders.
+	    (unsigned int)windowRect.width, (unsigned int)windowRect.height, // Specify the width and height, which are the
+	    // created window's inside dimensions and do
+	    // not include the created window's borders.
+	    0, // Specifies the width of the created
+	    // window's border in pixels.
+	    CopyFromParent, // Specifies the window's depth.
+	    // A depth of CopyFromParent means
+	    // the depth is taken from the parent.
+	    InputOutput, // Specifies the created window's class.
+	    // You can pass InputOutput, InputOnly,
+	    // or CopyFromParent. A class of CopyFromParent
+	    // means the class is taken from the parent.
+	    CopyFromParent, // Specifies the visual type.
+	    // A visual of CopyFromParent means the visual type
+	    // is taken from the parent.
+	    ui32Mask, // Specifies which window attributes are
+	    // defined in the attributes argument. This mask is
+	    // the bitwise inclusive OR of the valid attribute
+	    // mask bits. If valuemask is zero, the attributes
+	    // are ignored and are not referenced.
+	    &sWA // Specifies the background pixel value of the window.
 	);
 
 	XMapWindow(x11Display, x11Window);
@@ -2158,17 +2163,17 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 }
 
 //------------------------------------------------------------
-static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int event_mask) {
+static KeySym KeyCodeToKeySym(Display* display, KeyCode keycode, unsigned int event_mask) {
 	KeySym keysym = NoSymbol;
 
-	//Get the map
+	// Get the map
 	XkbDescPtr keyboard_map = XkbGetMap(display, XkbAllClientInfoMask, XkbUseCoreKbd);
 	if (keyboard_map) {
-		//What is diff between XkbKeyGroupInfo and XkbKeyNumGroups?
+		// What is diff between XkbKeyGroupInfo and XkbKeyNumGroups?
 		unsigned char info = XkbKeyGroupInfo(keyboard_map, keycode);
 		unsigned int num_groups = XkbKeyNumGroups(keyboard_map, keycode);
 
-		//Get the group
+		// Get the group
 		unsigned int group = 0x00;
 		switch (XkbOutOfRangeGroupAction(info)) {
 		case XkbRedirectIntoRange:
@@ -2225,34 +2230,32 @@ static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int e
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::handleX11Event(const XEvent& event){
+void ofAppEGLWindow::handleX11Event(const XEvent& event) {
 	ofMouseEventArgs mouseEvent;
 	ofKeyEventArgs keyEvent;
 
-	switch (event.type){
+	switch (event.type) {
 	case KeyPress:
-	case KeyRelease:
-	{
-		KeySym key = KeyCodeToKeySym(instance->x11Display,event.xkey.keycode,event.xkey.state);
+	case KeyRelease: {
+		KeySym key = KeyCodeToKeySym(instance->x11Display, event.xkey.keycode, event.xkey.state);
 		keyEvent.key = key;
 		if (event.type == KeyPress) {
 			keyEvent.type = ofKeyEventArgs::Pressed;
-			if(key == 65307){
+			if (key == 65307) {
 				keyEvent.key = OF_KEY_ESC;
 			}
-		} else if (event.type == KeyRelease){
+		} else if (event.type == KeyRelease) {
 			keyEvent.type = ofKeyEventArgs::Released;
 		}
 
 		instance->coreEvents.notifyKeyEvent(keyEvent);
-	}
-	break;
+	} break;
 	case ButtonPress:
 	case ButtonRelease:
 		mouseEvent.x = static_cast<float>(event.xbutton.x);
 		mouseEvent.y = static_cast<float>(event.xbutton.y);
 		mouseEvent.button = event.xbutton.button;
-		if (event.type == ButtonPress){
+		if (event.type == ButtonPress) {
 			mouseEvent.type = ofMouseEventArgs::Pressed;
 		} else {
 			mouseEvent.type = ofMouseEventArgs::Released;
@@ -2261,11 +2264,11 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
 		instance->coreEvents.notifyMouseEvent(mouseEvent);
 		break;
 	case MotionNotify:
-		//cout << "motion notify" << endl;
+		// cout << "motion notify" << endl;
 		mouseEvent.x = static_cast<float>(event.xmotion.x);
 		mouseEvent.y = static_cast<float>(event.xmotion.y);
 		mouseEvent.button = event.xbutton.button;
-		if(ofGetMousePressed()) {
+		if (ofGetMousePressed()) {
 			mouseEvent.type = ofMouseEventArgs::Dragged;
 		} else {
 			mouseEvent.type = ofMouseEventArgs::Moved;
@@ -2279,24 +2282,24 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
 		instance->currentWindowRect.width = event.xconfigure.width;
 		instance->currentWindowRect.height = event.xconfigure.height;
 		instance->nonFullscreenWindowRect = instance->currentWindowRect;
-		instance->coreEvents.notifyWindowResized(event.xconfigure.width,event.xconfigure.height);
+		instance->coreEvents.notifyWindowResized(event.xconfigure.width, event.xconfigure.height);
 		break;
-	/*case ClientMessage:{
-		if (event.xclient.message_type == wmProtocols_ &&
-		event.xclient.format == 32 &&
-		event.xclient.data.l[0] == (long) wmDeleteWindow_)
-		{
-		if (listener())
-		{
-		  if (listener()->onClose(wrapper() ? *wrapper() : *(WindowInterface*)this))
-			isShuttingDown_ = true;
-		}
-		else
-		{
-		  isShuttingDown_ = true;
-		}
-		}
-		break;
-	  }*/
+		/*case ClientMessage:{
+		    if (event.xclient.message_type == wmProtocols_ &&
+		    event.xclient.format == 32 &&
+		    event.xclient.data.l[0] == (long) wmDeleteWindow_)
+		    {
+		    if (listener())
+		    {
+		      if (listener()->onClose(wrapper() ? *wrapper() : *(WindowInterface*)this))
+		        isShuttingDown_ = true;
+		    }
+		    else
+		    {
+		      isShuttingDown_ = true;
+		    }
+		    }
+		    break;
+		  }*/
 	}
 }

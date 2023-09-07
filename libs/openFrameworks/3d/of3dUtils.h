@@ -8,7 +8,7 @@
 /// This function draws a set of x,y,z axes, which can be helpful for
 /// understanding which way is up. There are no unit markings nor arrowheads.
 /// Axes are not drawn in the negative directions. Axes are drawn in red (+x),
-/// green (+y) and blue (+z), starting from the origin. 
+/// green (+y) and blue (+z), starting from the origin.
 //
 /// \param size The size at which to draw the axes.
 void ofDrawAxis(float size);
@@ -20,7 +20,7 @@ void ofDrawAxis(float size);
 /// turned on or off. Optionally, the function can include white numeric labels
 /// for grid subdivisions. (Numeric labels are drawn using ofDrawBitmapString
 /// internally.)
-/// 
+///
 /// The yz plane (at x=0) is drawn in red.
 /// The xz plane (at y=0) is drawn in green.
 /// The xy plane (at z=0) is drawn in blue.
@@ -39,18 +39,18 @@ void ofDrawGrid(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = 
 /// centered at the origin. Optionally, the function can include white numeric
 /// labels for grid subdivisions. (Numeric labels are drawn using
 /// ofDrawBitmapString internally.) The grid is drawn with the current color
-/// (i.e. set with ofSetColor). 
+/// (i.e. set with ofSetColor).
 ///
 /// \param stepSize distance between (parallel) lines on the grid
 /// \param numberOfSteps number of lines to draw on each side of the central axis of the grid. A number of 8 will draw 8 lines on each side of the central axis, plus one line at the central axis.
 /// \param labels Whether or not labels are drawn.
-void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = false );
+void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = false);
 
-/// \brief Draws an arrow with the current color. 
+/// \brief Draws an arrow with the current color.
 ///
 /// This function draws an arrow from a start (tail) point to an end (head)
 /// point, with a conical arrowhead at the end point. The arrow is drawn in the
-/// current color (e.g. set with ofSetColor). 
+/// current color (e.g. set with ofSetColor).
 ///
 /// ~~~~{.cpp}
 ///     ofSetColor(0,0,0);
@@ -60,13 +60,13 @@ void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labe
 /// ~~~~
 ///
 /// \param start The start point (tail) of the arrow, expressed as an glm::vec3.
-/// \param end The end point (head) of the arrow, expressed as an glm::vec3. 
-/// \param headSize The size of the arrowhead. 
+/// \param end The end point (head) of the arrow, expressed as an glm::vec3.
+/// \param headSize The size of the arrowhead.
 void ofDrawArrow(const glm::vec3& start, const glm::vec3& end, float headSize = 0.05f);
 
 /// \brief This function renders a set of 3 axis-aligned circular bands, centered at the origin.
 ///
-/// \param radius The radius of the circular bands. 
-/// \param stripWidth The width of the circular bands. The default is 10 units. 
+/// \param radius The radius of the circular bands.
+/// \param stripWidth The width of the circular bands. The default is 10 units.
 /// \param circleRes The resolution of the circular bands. The default is 60 segments.
 void ofDrawRotationAxes(float radius, float stripWidth = 10, int circleRes = 60);
