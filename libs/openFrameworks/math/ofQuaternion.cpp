@@ -8,7 +8,7 @@
 
 //----------------------------------------
 ofQuaternion::ofQuaternion(const glm::quat& q)
-    : _v(q.x, q.y, q.z, q.w) { }
+	: _v(q.x, q.y, q.z, q.w) { }
 
 //----------------------------------------
 ofQuaternion::operator glm::quat() const {
@@ -53,8 +53,8 @@ void ofQuaternion::makeRotate(float angle, const ofVec3f& vec) {
 }
 
 void ofQuaternion::makeRotate(float angle1, const ofVec3f& axis1,
-    float angle2, const ofVec3f& axis2,
-    float angle3, const ofVec3f& axis3) {
+	float angle2, const ofVec3f& axis2,
+	float angle3, const ofVec3f& axis3) {
 	ofQuaternion q1;
 	q1.makeRotate(angle1, axis1);
 	ofQuaternion q2;

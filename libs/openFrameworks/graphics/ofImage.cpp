@@ -426,7 +426,7 @@ static bool saveImage(const ofPixels_<PixelType>& _pix, const of::filesystem::pa
 		} else {
 			if (qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLogWarning("ofImage") << "saveImage(): ofImageCompressionType only applies to JPEGs,"
-				                        << " ignoring value for \" " << fileName << "\"";
+										<< " ignoring value for \" " << fileName << "\"";
 			}
 
 			if (fif == FIF_GIF) {
@@ -1230,7 +1230,7 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType>& pix, ofImageT
 		break;
 	default:
 		ofLogError("ofImage") << "changeTypeOfPixels(): unknown image type: "
-		                      << ofToString(newType);
+							  << ofToString(newType);
 		break;
 	}
 

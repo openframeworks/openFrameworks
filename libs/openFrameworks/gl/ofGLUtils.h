@@ -105,13 +105,13 @@ void ofDisableGLDebugLog();
 		#define GL_UNSIGNED_INT_24_8 GL_UNSIGNED_INT_24_8_EXT
 	#endif
 #else
-    // ES1 - check if GL_FRAMEBUFFER is defined, if not assume ES1 is running.
+	// ES1 - check if GL_FRAMEBUFFER is defined, if not assume ES1 is running.
 	#ifndef GL_FRAMEBUFFER
 		#define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
 		#define GL_RENDERBUFFER GL_RENDERBUFFER_OES
 		#define GL_DEPTH_ATTACHMENT GL_DEPTH_ATTACHMENT_OES
 		#define GL_STENCIL_ATTACHMENT GL_STENCIL_ATTACHMENT_OES
-	    // #define GL_DEPTH_STENCIL_ATTACHMENT					GL_DEPTH_STENCIL_ATTACHMENT_OES
+		// #define GL_DEPTH_STENCIL_ATTACHMENT					GL_DEPTH_STENCIL_ATTACHMENT_OES
 		#define GL_DEPTH_COMPONENT GL_DEPTH_COMPONENT16_OES
 		#define GL_STENCIL_INDEX GL_STENCIL_INDEX8_OES
 		#define GL_FRAMEBUFFER_BINDING GL_FRAMEBUFFER_BINDING_OES
@@ -132,7 +132,7 @@ void ofDisableGLDebugLog();
 		#define GL_DEPTH_COMPONENT16 GL_DEPTH_COMPONENT16_OES
 	#endif
 
-    // ES2 + ES3 - GL_STENCIL_INDEX has been removed from gl header, and now replaced with GL_STENCIL_INDEX8.
+	// ES2 + ES3 - GL_STENCIL_INDEX has been removed from gl header, and now replaced with GL_STENCIL_INDEX8.
 	#ifndef GL_STENCIL_INDEX
 		#ifdef GL_STENCIL_INDEX8
 			#define GL_STENCIL_INDEX GL_STENCIL_INDEX8

@@ -316,33 +316,33 @@ A clampedMultiply(const A& a, const B& b) {
 
 template <typename PixelType>
 ofColor_<PixelType>::ofColor_(float _r, float _g, float _b, float _a)
-    : r(_r)
-    , g(_g)
-    , b(_b)
-    , a(_a) {
+	: r(_r)
+	, g(_g)
+	, b(_b)
+	, a(_a) {
 }
 
 template <typename PixelType>
 ofColor_<PixelType>::ofColor_(const ofColor_<PixelType>& color, float _a)
-    : r(color.r)
-    , g(color.g)
-    , b(color.b)
-    , a(_a) {
+	: r(color.r)
+	, g(color.g)
+	, b(color.b)
+	, a(_a) {
 }
 
 template <typename PixelType>
 ofColor_<PixelType>::ofColor_(float gray, float _a)
-    : r(gray)
-    , g(gray)
-    , b(gray)
-    , a(_a) {
+	: r(gray)
+	, g(gray)
+	, b(gray)
+	, a(_a) {
 }
 
 template <typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::fromHsb(float hue,
-    float saturation,
-    float brightness,
-    float alpha) {
+	float saturation,
+	float brightness,
+	float alpha) {
 	ofColor_<PixelType> cur;
 	cur.setHsb(hue, saturation, brightness, alpha);
 	return cur;
@@ -405,7 +405,7 @@ ofColor_<PixelType>& ofColor_<PixelType>::normalize() {
 
 template <typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::lerp(const ofColor_<PixelType>& target,
-    float amount) {
+	float amount) {
 	float invAmount = 1.f - amount;
 	r = invAmount * r + amount * target.r;
 	g = invAmount * g + amount * target.g;
@@ -437,7 +437,7 @@ ofColor_<PixelType> ofColor_<PixelType>::getNormalized() const {
 
 template <typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::getLerped(const ofColor_<PixelType>& target,
-    float amount) const {
+	float amount) const {
 	ofColor_<PixelType> cur(*this);
 	cur.lerp(target, amount);
 	return cur;
@@ -485,8 +485,8 @@ float ofColor_<PixelType>::getLightness() const {
 
 template <typename PixelType>
 void ofColor_<PixelType>::getHsb(float& hue,
-    float& saturation,
-    float& brightness) const {
+	float& saturation,
+	float& brightness) const {
 	float max = getBrightness();
 
 	float min = r;

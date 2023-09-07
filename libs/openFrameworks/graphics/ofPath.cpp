@@ -10,42 +10,42 @@ thread_local ofTessellator ofPath::tessellator;
 #endif
 
 ofPath::Command::Command(Type type)
-    : type(type) {
+	: type(type) {
 }
 
 //----------------------------------------------------------
 ofPath::Command::Command(Type type, const glm::vec3& p)
-    : type(type)
-    , to(p)
-    , cp1(glm::vec3(0))
-    , cp2(glm::vec3(0))
-    , radiusX(0)
-    , radiusY(0)
-    , angleBegin(0)
-    , angleEnd(0) { }
+	: type(type)
+	, to(p)
+	, cp1(glm::vec3(0))
+	, cp2(glm::vec3(0))
+	, radiusX(0)
+	, radiusY(0)
+	, angleBegin(0)
+	, angleEnd(0) { }
 
 //----------------------------------------------------------
 ofPath::Command::Command(Type type, const glm::vec3& p, const glm::vec3& cp1, const glm::vec3& cp2)
-    : type(type)
-    , to(p)
-    , cp1(cp1)
-    , cp2(cp2)
-    , radiusX(0)
-    , radiusY(0)
-    , angleBegin(0)
-    , angleEnd(0) {
+	: type(type)
+	, to(p)
+	, cp1(cp1)
+	, cp2(cp2)
+	, radiusX(0)
+	, radiusY(0)
+	, angleBegin(0)
+	, angleEnd(0) {
 }
 
 //----------------------------------------------------------
 ofPath::Command::Command(Type type, const glm::vec3& centre, float radiusX, float radiusY, float angleBegin, float angleEnd)
-    : type(type)
-    , to(centre)
-    , cp1(glm::vec3(0))
-    , cp2(glm::vec3(0))
-    , radiusX(radiusX)
-    , radiusY(radiusY)
-    , angleBegin(angleBegin)
-    , angleEnd(angleEnd) {
+	: type(type)
+	, to(centre)
+	, cp1(glm::vec3(0))
+	, cp2(glm::vec3(0))
+	, radiusX(radiusX)
+	, radiusY(radiusY)
+	, angleBegin(angleBegin)
+	, angleEnd(angleEnd) {
 }
 
 //----------------------------------------------------------
@@ -405,35 +405,35 @@ void ofPath::rectRounded(float x, float y, float w, float h, float r) {
 
 //----------------------------------------------------------
 void ofPath::rectRounded(const glm::vec3& p, float w, float h, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius) {
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius) {
 
 	rectRounded(p.x, p.y, p.z, w, h, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
 }
 
 //----------------------------------------------------------
 void ofPath::rectRounded(const glm::vec2& p, float w, float h, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius) {
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius) {
 
 	rectRounded(p.x, p.y, 0.0, w, h, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
 }
 
 //----------------------------------------------------------
 void ofPath::rectRounded(const ofRectangle& b, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius) {
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius) {
 	rectRounded(b.x, b.y, 0, b.width, b.height, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
 }
 
 //----------------------------------------------------------
 void ofPath::rectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius) {
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius) {
 	// since we support w / h < 0, canonicalize the rectangle for easier drawing
 	if (w < 0.0f) {
 		x += w;

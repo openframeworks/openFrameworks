@@ -433,13 +433,13 @@ void ofDrawRectRounded(float x, float y, float z, float w, float h, float r);
 /// }
 /// ~~~~
 void ofDrawRectRounded(const glm::vec3& p, float w, float h, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius);
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius);
 void ofDrawRectRounded(const glm::vec2& p, float w, float h, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius);
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius);
 
 /// \brief Draws a rounded rectangle from the given rectangle using different given
 /// radius for each of the corners.
@@ -456,9 +456,9 @@ void ofDrawRectRounded(const glm::vec2& p, float w, float h, float topLeftRadius
 /// }
 /// ~~~~
 void ofDrawRectRounded(const ofRectangle& b, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius);
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius);
 
 /// \brief Draws a rounded rectangle from point X, Y, at depth Z with a given width,
 /// height and different radius for each rounded corner.
@@ -469,9 +469,9 @@ void ofDrawRectRounded(const ofRectangle& b, float topLeftRadius,
 /// }
 /// ~~~~
 void ofDrawRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-    float topRightRadius,
-    float bottomRightRadius,
-    float bottomLeftRadius);
+	float topRightRadius,
+	float bottomRightRadius,
+	float bottomLeftRadius);
 
 /// \brief Draws a curve from point (x1, y1) to point (x2, y2). The curve is shaped by
 /// the two control points (x0,y0) and (x3,y3).
@@ -1184,9 +1184,9 @@ void ofSetupScreenPerspective(float width = -1, float height = -1, float fov = 6
 void ofSetupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 
 OF_DEPRECATED_MSG("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-    void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0));
+	void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0));
 OF_DEPRECATED_MSG("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-    void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1));
+	void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1));
 
 int ofOrientationToDegrees(ofOrientation orientation);
 

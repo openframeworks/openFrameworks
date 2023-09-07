@@ -118,11 +118,11 @@ class ofPlanePrimitive : public of3dPrimitive {
 public:
 	ofPlanePrimitive();
 	ofPlanePrimitive(float width, float height, int columns, int rows,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	~ofPlanePrimitive();
 
 	void set(float width, float height, int columns, int rows,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	void set(float width, float height);
 	void resizeToTexture(ofTexture& inTexture, float scale = 1.f);
 	void setWidth(float width);
@@ -201,11 +201,11 @@ class ofSpherePrimitive : public of3dPrimitive {
 public:
 	ofSpherePrimitive();
 	ofSpherePrimitive(float radius, int res,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	~ofSpherePrimitive();
 
 	void set(float radius, int resolution,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	void setResolution(int res);
 	void setRadius(float radius);
 	void setMode(ofPrimitiveMode mode);
@@ -312,13 +312,13 @@ class ofCylinderPrimitive : public of3dPrimitive {
 public:
 	ofCylinderPrimitive();
 	ofCylinderPrimitive(float radius, float height, int radiusSegments,
-	    int heightSegments, int capSegments = 2, bool bCapped = true,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		int heightSegments, int capSegments = 2, bool bCapped = true,
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	~ofCylinderPrimitive();
 
 	void set(float radius, float height, int radiusSegments,
-	    int heightSegments, int capSegments = 2, bool bCapped = true,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		int heightSegments, int capSegments = 2, bool bCapped = true,
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	void set(float radius, float height, bool bCapped = true);
 	void setRadius(float radius);
 	void setHeight(float height);
@@ -405,12 +405,12 @@ class ofConePrimitive : public of3dPrimitive {
 public:
 	ofConePrimitive();
 	ofConePrimitive(float radius, float height, int radiusSegments,
-	    int heightSegments, int capSegments = 2,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		int heightSegments, int capSegments = 2,
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	~ofConePrimitive();
 
 	void set(float radius, float height, int radiusSegments, int heightSegments,
-	    int capSegments = 2, ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		int capSegments = 2, ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	void set(float radius, float height);
 	void setResolutionRadius(int radiusRes);
 	void setResolutionHeight(int heightRes);
@@ -515,11 +515,11 @@ public:
 	};
 	ofBoxPrimitive();
 	ofBoxPrimitive(float width, float height, float depth, int resWidth = 2,
-	    int resHeight = 2, int resDepth = 2);
+		int resHeight = 2, int resDepth = 2);
 	~ofBoxPrimitive();
 
 	void set(float width, float height, float depth, int resWidth,
-	    int resHeight, int resDepth);
+		int resHeight, int resDepth);
 	void set(float width, float height, float depth);
 	void set(float size); // all sides the same dimensions //
 

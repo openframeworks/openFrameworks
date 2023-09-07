@@ -17,8 +17,8 @@ using std::shared_ptr;
 using std::vector;
 
 of3dPrimitive::of3dPrimitive()
-    : usingVbo(true)
-    , mesh(new ofVboMesh) {
+	: usingVbo(true)
+	, mesh(new ofVboMesh) {
 	setScale(1.0, 1.0, 1.0);
 }
 
@@ -28,7 +28,7 @@ of3dPrimitive::~of3dPrimitive() {
 
 //----------------------------------------------------------
 of3dPrimitive::of3dPrimitive(const of3dPrimitive& mom)
-    : ofNode(mom) {
+	: ofNode(mom) {
 	texCoords = mom.texCoords;
 	usingVbo = mom.usingVbo;
 	if (usingVbo) {
@@ -41,8 +41,8 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive& mom)
 
 //----------------------------------------------------------
 of3dPrimitive::of3dPrimitive(const ofMesh& mesh)
-    : usingVbo(true)
-    , mesh(new ofVboMesh(mesh)) {
+	: usingVbo(true)
+	, mesh(new ofVboMesh(mesh)) {
 }
 
 //----------------------------------------------------------
@@ -648,7 +648,7 @@ ofMesh ofCylinderPrimitive::getTopCapMesh() const {
 		return ofMesh();
 	}
 	return getMesh().getMeshForIndices(strides[0][0], strides[0][0] + strides[0][1],
-	    vertices[0][0], vertices[0][0] + vertices[0][1]);
+		vertices[0][0], vertices[0][0] + vertices[0][1]);
 }
 
 //--------------------------------------------------------------
@@ -666,7 +666,7 @@ ofMesh ofCylinderPrimitive::getCylinderMesh() const {
 		return ofMesh();
 	}
 	return getMesh().getMeshForIndices(strides[1][0], strides[1][0] + strides[1][1],
-	    vertices[1][0], vertices[1][0] + vertices[1][1]);
+		vertices[1][0], vertices[1][0] + vertices[1][1]);
 }
 
 //--------------------------------------------------------------
@@ -684,7 +684,7 @@ ofMesh ofCylinderPrimitive::getBottomCapMesh() const {
 		return ofMesh();
 	}
 	return getMesh().getMeshForIndices(strides[2][0], strides[2][0] + strides[2][1],
-	    vertices[2][0], vertices[2][0] + vertices[2][1]);
+		vertices[2][0], vertices[2][0] + vertices[2][1]);
 }
 
 //--------------------------------------------------------------

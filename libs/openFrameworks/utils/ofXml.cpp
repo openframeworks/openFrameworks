@@ -5,13 +5,13 @@
 using std::string;
 
 ofXml::ofXml()
-    : doc(new pugi::xml_document) {
+	: doc(new pugi::xml_document) {
 	xml = doc->root();
 }
 
 ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node& xml)
-    : doc(doc)
-    , xml(xml) {
+	: doc(doc)
+	, xml(xml) {
 }
 
 bool ofXml::load(const of::filesystem::path& file) {
@@ -273,7 +273,7 @@ ofXml::operator bool() const {
 // Attribute
 
 ofXml::Attribute::Attribute(const pugi::xml_attribute& attr)
-    : attr(attr) { }
+	: attr(attr) { }
 
 std::string ofXml::Attribute::getValue() const {
 	return this->attr.as_string();
@@ -370,8 +370,8 @@ bool ofXml::Search::empty() const {
 }
 
 ofXml::Search::Search(std::shared_ptr<pugi::xml_document> doc, pugi::xpath_node_set set)
-    : doc(doc)
-    , search(set) { }
+	: doc(doc)
+	, search(set) { }
 
 //----------------------------------------------------
 // SearchIterator

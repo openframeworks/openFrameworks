@@ -27,14 +27,14 @@ inline T square(T v) { return v * v; }
 
 #define INNER_PRODUCT(a, b, r, c)           \
 	((a)._mat[r][0] * (b)._mat[0][c])       \
-	    + ((a)._mat[r][1] * (b)._mat[1][c]) \
-	    + ((a)._mat[r][2] * (b)._mat[2][c]) \
-	    + ((a)._mat[r][3] * (b)._mat[3][c])
+		+ ((a)._mat[r][1] * (b)._mat[1][c]) \
+		+ ((a)._mat[r][2] * (b)._mat[2][c]) \
+		+ ((a)._mat[r][3] * (b)._mat[3][c])
 
 ofMatrix4x4::ofMatrix4x4(float a00, float a01, float a02, float a03,
-    float a10, float a11, float a12, float a13,
-    float a20, float a21, float a22, float a23,
-    float a30, float a31, float a32, float a33) {
+	float a10, float a11, float a12, float a13,
+	float a20, float a21, float a22, float a23,
+	float a30, float a31, float a32, float a33) {
 	SET_ROW(0, a00, a01, a02, a03)
 	SET_ROW(1, a10, a11, a12, a13)
 	SET_ROW(2, a20, a21, a22, a23)
@@ -42,9 +42,9 @@ ofMatrix4x4::ofMatrix4x4(float a00, float a01, float a02, float a03,
 }
 
 void ofMatrix4x4::set(float a00, float a01, float a02, float a03,
-    float a10, float a11, float a12, float a13,
-    float a20, float a21, float a22, float a23,
-    float a30, float a31, float a32, float a33) {
+	float a10, float a11, float a12, float a13,
+	float a20, float a21, float a22, float a23,
+	float a30, float a31, float a32, float a33) {
 	SET_ROW(0, a00, a01, a02, a03)
 	SET_ROW(1, a10, a11, a12, a13)
 	SET_ROW(2, a20, a21, a22, a23)
@@ -395,14 +395,14 @@ void ofMatrix4x4::makeRotationMatrix(const ofQuaternion& quat) {
 }
 
 void ofMatrix4x4::makeRotationMatrix(float angle1, const ofVec3f& axis1,
-    float angle2, const ofVec3f& axis2,
-    float angle3, const ofVec3f& axis3) {
+	float angle2, const ofVec3f& axis2,
+	float angle3, const ofVec3f& axis3) {
 	makeIdentityMatrix();
 
 	ofQuaternion quat;
 	quat.makeRotate(angle1, axis1,
-	    angle2, axis2,
-	    angle3, axis3);
+		angle2, axis2,
+		angle3, axis3);
 	setRotate(quat);
 }
 
@@ -572,8 +572,8 @@ bool invert_4x3(const ofMatrix4x4& src, ofMatrix4x4& dst) {
 	}
 
 	float r00, r01, r02,
-	    r10, r11, r12,
-	    r20, r21, r22;
+		r10, r11, r12,
+		r20, r21, r22;
 	// Copy rotation components directly into registers for speed
 	r00 = src._mat[0][0];
 	r01 = src._mat[0][1];
@@ -742,8 +742,8 @@ bool invert_4x4(const ofMatrix4x4& src, ofMatrix4x4& dst) {
 		if (irow != icol)
 			for (l = 0; l < 4; l++)
 				SGL_SWAP(dst(irow, l),
-				    dst(icol, l),
-				    temp);
+					dst(icol, l),
+					temp);
 
 		indxr[i] = irow;
 		indxc[i] = icol;
@@ -766,15 +766,15 @@ bool invert_4x4(const ofMatrix4x4& src, ofMatrix4x4& dst) {
 		if (indxr[lx - 1] != indxc[lx - 1])
 			for (k = 0; k < 4; k++)
 				SGL_SWAP(dst(k, indxr[lx - 1]),
-				    dst(k, indxc[lx - 1]), temp);
+					dst(k, indxc[lx - 1]), temp);
 	}
 
 	return true;
 }
 
 void ofMatrix4x4::makeOrthoMatrix(double left, double right,
-    double bottom, double top,
-    double zNear, double zFar) {
+	double bottom, double top,
+	double zNear, double zFar) {
 	// note transpose of ofMatrix4x4 wr.t OpenGL documentation, since the OSG use post multiplication rather than pre.
 	double tx = -(right + left) / (right - left);
 	double ty = -(top + bottom) / (top - bottom);
@@ -786,8 +786,8 @@ void ofMatrix4x4::makeOrthoMatrix(double left, double right,
 }
 
 bool ofMatrix4x4::getOrtho(double& left, double& right,
-    double& bottom, double& top,
-    double& zNear, double& zFar) const {
+	double& bottom, double& top,
+	double& zNear, double& zFar) const {
 	if (_mat[0][3] != 0.0 || _mat[1][3] != 0.0 || _mat[2][3] != 0.0 || _mat[3][3] != 1.0)
 		return false;
 
@@ -804,8 +804,8 @@ bool ofMatrix4x4::getOrtho(double& left, double& right,
 }
 
 void ofMatrix4x4::makeFrustumMatrix(double left, double right,
-    double bottom, double top,
-    double zNear, double zFar) {
+	double bottom, double top,
+	double zNear, double zFar) {
 	// note transpose of ofMatrix4x4 wr.t OpenGL documentation, since the OSG use post multiplication rather than pre.
 	double A = (right + left) / (right - left);
 	double B = (top + bottom) / (top - bottom);
@@ -818,8 +818,8 @@ void ofMatrix4x4::makeFrustumMatrix(double left, double right,
 }
 
 bool ofMatrix4x4::getFrustum(double& left, double& right,
-    double& bottom, double& top,
-    double& zNear, double& zFar) const {
+	double& bottom, double& top,
+	double& zNear, double& zFar) const {
 	if (_mat[0][3] != 0.0 || _mat[1][3] != 0.0 || _mat[2][3] != -1.0 || _mat[3][3] != 0.0)
 		return false;
 
@@ -836,7 +836,7 @@ bool ofMatrix4x4::getFrustum(double& left, double& right,
 }
 
 void ofMatrix4x4::makePerspectiveMatrix(double fovy, double aspectRatio,
-    double zNear, double zFar) {
+	double zNear, double zFar) {
 	// calculate the appropriate left, right etc.
 	double tan_fovy = tan(ofDegToRad(fovy * 0.5));
 	double right = tan_fovy * aspectRatio * zNear;
@@ -847,7 +847,7 @@ void ofMatrix4x4::makePerspectiveMatrix(double fovy, double aspectRatio,
 }
 
 bool ofMatrix4x4::getPerspective(double& fovy, double& aspectRatio,
-    double& zNear, double& zFar) const {
+	double& zNear, double& zFar) const {
 	double right = 0.0;
 	double left = 0.0;
 	double top = 0.0;
@@ -1564,9 +1564,9 @@ void decompAffine(_HMatrix A, _affineParts* parts) {
 }
 
 void ofMatrix4x4::decompose(ofVec3f& t,
-    ofQuaternion& r,
-    ofVec3f& s,
-    ofQuaternion& so) const {
+	ofQuaternion& r,
+	ofVec3f& s,
+	ofQuaternion& so) const {
 
 	_affineParts parts;
 	_HMatrix hmatrix;

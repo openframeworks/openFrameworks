@@ -442,9 +442,9 @@ bool ofLineSegmentIntersection(const vectype& line1Start, const vectype& line1En
 	compareA = diffLA.x * line1Start.y - diffLA.y * line1Start.x;
 	compareB = diffLB.x * line2Start.y - diffLB.y * line2Start.x;
 	if (
-	    (
-	        ((diffLA.x * line2Start.y - diffLA.y * line2Start.x) <= compareA) ^ ((diffLA.x * line2End.y - diffLA.y * line2End.x) <= compareA))
-	    && (((diffLB.x * line1Start.y - diffLB.y * line1Start.x) <= compareB) ^ ((diffLB.x * line1End.y - diffLB.y * line1End.x) <= compareB))) {
+		(
+			((diffLA.x * line2Start.y - diffLA.y * line2Start.x) <= compareA) ^ ((diffLA.x * line2End.y - diffLA.y * line2End.x) <= compareA))
+		&& (((diffLB.x * line1Start.y - diffLB.y * line1Start.x) <= compareB) ^ ((diffLB.x * line1End.y - diffLB.y * line1End.x) <= compareB))) {
 		float lDetDivInv = 1 / ((diffLA.x * diffLB.y) - (diffLA.y * diffLB.x));
 		intersection.x = -((diffLA.x * compareB) - (compareA * diffLB.x)) * lDetDivInv;
 		intersection.y = -((diffLA.y * compareB) - (compareA * diffLB.y)) * lDetDivInv;

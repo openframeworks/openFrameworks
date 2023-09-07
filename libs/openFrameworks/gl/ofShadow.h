@@ -207,10 +207,10 @@ protected:
 	GLenum mGlFrontFaceWindingOrder = GL_CW;
 
 	const glm::mat4 biasMatrix = glm::mat4(
-	    0.5, 0.0, 0.0, 0.0,
-	    0.0, 0.5, 0.0, 0.0,
-	    0.0, 0.0, 0.5, 0.0,
-	    0.5, 0.5, 0.5, 1.0);
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0);
 
 private:
 	struct Shaders {

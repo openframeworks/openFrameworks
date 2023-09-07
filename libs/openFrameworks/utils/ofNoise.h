@@ -32,8 +32,8 @@
  */
 
 /** \file
-    \brief C implementation of Perlin Simplex Noise over 1,2,3, and 4 dimensions.
-    \author Stefan Gustavson (stegu@itn.liu.se)
+	\brief C implementation of Perlin Simplex Noise over 1,2,3, and 4 dimensions.
+	\author Stefan Gustavson (stegu@itn.liu.se)
 */
 
 /*
@@ -139,7 +139,7 @@ inline float grad3(int hash, float x, float y, float z) {
 	int h = hash & 15; /* Convert low 4 bits of hash code into 12 simple */
 	float u = h < 8 ? x : y; /* gradient directions, and compute dot product. */
 	float v = h < 4 ? y : h == 12 || h == 14 ? x
-	                                         : z; /* Fix repeats at h = 12 to 15 */
+											 : z; /* Fix repeats at h = 12 to 15 */
 	return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
 }
 

@@ -553,8 +553,8 @@ public:
 	/// (0,1) -- to a new coordinate system defined with origin at origin, X direction
 	/// vx, and Y direction vy.
 	ofVec2f getMapped(const ofVec2f& origin,
-	    const ofVec2f& vx,
-	    const ofVec2f& vy) const;
+		const ofVec2f& vx,
+		const ofVec2f& vy) const;
 
 	/// \brief Maps this vector from its default coordinate system -- origin (0,0), X
 	/// direction (1,0), Y direction (0,1) -- to a new coordinate system defined with
@@ -566,7 +566,7 @@ public:
 	///
 	/// \sa perpendicular()
 	ofVec2f& map(const ofVec2f& origin,
-	    const ofVec2f& vx, const ofVec2f& vy);
+		const ofVec2f& vx, const ofVec2f& vy);
 
 	/// \}
 
@@ -976,17 +976,17 @@ ofVec2f operator/(float f, const ofVec2f& vec);
 /// \cond INTERNAL
 
 inline ofVec2f::ofVec2f()
-    : x(0)
-    , y(0) { }
+	: x(0)
+	, y(0) { }
 inline ofVec2f::ofVec2f(float _scalar)
-    : x(_scalar)
-    , y(_scalar) { }
+	: x(_scalar)
+	, y(_scalar) { }
 inline ofVec2f::ofVec2f(float _x, float _y)
-    : x(_x)
-    , y(_y) { }
+	: x(_x)
+	, y(_y) { }
 inline ofVec2f::ofVec2f(const glm::vec2& v)
-    : x(v.x)
-    , y(v.y) { }
+	: x(v.x)
+	, y(v.y) { }
 
 // Getters and Setters.
 //
@@ -1023,7 +1023,7 @@ inline bool ofVec2f::operator!=(const ofVec2f& vec) const {
 
 inline bool ofVec2f::match(const ofVec2f& vec, float tolerance) const {
 	return (fabs(x - vec.x) < tolerance)
-	    && (fabs(y - vec.y) < tolerance);
+		&& (fabs(y - vec.y) < tolerance);
 }
 
 //
@@ -1193,13 +1193,13 @@ inline ofVec2f ofVec2f::rotated(float angle) const {
 inline ofVec2f ofVec2f::getRotated(float angle) const {
 	float a = (float)(ofDegToRad(angle));
 	return ofVec2f(x * cos(a) - y * sin(a),
-	    x * sin(a) + y * cos(a));
+		x * sin(a) + y * cos(a));
 }
 
 inline ofVec2f ofVec2f::getRotatedRad(float angle) const {
 	float a = angle;
 	return ofVec2f(x * cos(a) - y * sin(a),
-	    x * sin(a) + y * cos(a));
+		x * sin(a) + y * cos(a));
 }
 
 inline ofVec2f& ofVec2f::rotate(float angle) {
@@ -1230,7 +1230,7 @@ inline ofVec2f ofVec2f::rotated(float angle, const ofVec2f& pivot) const {
 inline ofVec2f ofVec2f::getRotated(float angle, const ofVec2f& pivot) const {
 	float a = (float)(ofDegToRad(angle));
 	return ofVec2f(((x - pivot.x) * cos(a) - (y - pivot.y) * sin(a)) + pivot.x,
-	    ((x - pivot.x) * sin(a) + (y - pivot.y) * cos(a)) + pivot.y);
+		((x - pivot.x) * sin(a) + (y - pivot.y) * cos(a)) + pivot.y);
 }
 
 inline ofVec2f& ofVec2f::rotate(float angle, const ofVec2f& pivot) {
@@ -1244,7 +1244,7 @@ inline ofVec2f& ofVec2f::rotate(float angle, const ofVec2f& pivot) {
 inline ofVec2f ofVec2f::getRotatedRad(float angle, const ofVec2f& pivot) const {
 	float a = angle;
 	return ofVec2f(((x - pivot.x) * cos(a) - (y - pivot.y) * sin(a)) + pivot.x,
-	    ((x - pivot.x) * sin(a) + (y - pivot.y) * cos(a)) + pivot.y);
+		((x - pivot.x) * sin(a) + (y - pivot.y) * cos(a)) + pivot.y);
 }
 
 inline ofVec2f& ofVec2f::rotateRad(float angle, const ofVec2f& pivot) {
@@ -1261,20 +1261,20 @@ inline ofVec2f& ofVec2f::rotateRad(float angle, const ofVec2f& pivot) {
 
 // This method is deprecated in 006 please use getMapped instead
 inline ofVec2f ofVec2f::mapped(const ofVec2f& origin,
-    const ofVec2f& vx,
-    const ofVec2f& vy) const {
+	const ofVec2f& vx,
+	const ofVec2f& vy) const {
 	return getMapped(origin, vx, vy);
 }
 
 inline ofVec2f ofVec2f::getMapped(const ofVec2f& origin,
-    const ofVec2f& vx,
-    const ofVec2f& vy) const {
+	const ofVec2f& vx,
+	const ofVec2f& vy) const {
 	return ofVec2f(origin.x + x * vx.x + y * vy.x,
-	    origin.y + x * vx.y + y * vy.y);
+		origin.y + x * vx.y + y * vy.y);
 }
 
 inline ofVec2f& ofVec2f::map(const ofVec2f& origin,
-    const ofVec2f& vx, const ofVec2f& vy) {
+	const ofVec2f& vx, const ofVec2f& vy) {
 	float xmap = origin.x + x * vx.x + y * vy.x;
 	y = origin.y + x * vx.y + y * vy.y;
 	x = xmap;

@@ -33,7 +33,7 @@
 	#include <winuser.h>
 
 std::string convertWideToNarrow(const wchar_t* s, char dfault = '?',
-    const std::locale& loc = std::locale()) {
+	const std::locale& loc = std::locale()) {
 	std::ostringstream stm;
 
 	while (*s != L'\0') {
@@ -126,11 +126,11 @@ gboolean file_dialog_gtk(gpointer userdata) {
 
 	if (button_name != nullptr) {
 		GtkWidget* dialog = gtk_file_chooser_dialog_new(dialogData->windowTitle.c_str(),
-		    nullptr,
-		    dialogData->action,
-		    button_name, GTK_RESPONSE_ACCEPT,
-		    CANCEL_BUTTON, GTK_RESPONSE_CANCEL,
-		    nullptr);
+			nullptr,
+			dialogData->action,
+			button_name, GTK_RESPONSE_ACCEPT,
+			CANCEL_BUTTON, GTK_RESPONSE_CANCEL,
+			nullptr);
 
 		if (ofFile(dialogData->defaultName, ofFile::Reference).isDirectory()) {
 			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), dialogData->defaultName.c_str());
@@ -231,9 +231,9 @@ void resetLocale(std::locale locale) {
 	} catch (...) {
 		if (ofToLower(std::locale("").name()).find("utf-8") == std::string::npos) {
 			ofLogWarning("ofSystemUtils") << "GTK changes the locale when opening a dialog which can "
-			                                 "break number parsing. We tried to change back to "
-			                              << locale.name() << "but failed some string parsing functions might behave differently "
-			                                                  "after this";
+											 "break number parsing. We tried to change back to "
+										  << locale.name() << "but failed some string parsing functions might behave differently "
+															  "after this";
 		}
 	}
 }
@@ -309,10 +309,10 @@ void ofSystemAlertDialog(std::string errorMessage) {
 #ifdef TARGET_WIN32
 //---------------------------------------------------------------------
 static int CALLBACK loadDialogBrowseCallback(
-    HWND hwnd,
-    UINT uMsg,
-    LPARAM lParam,
-    LPARAM lpData) {
+	HWND hwnd,
+	UINT uMsg,
+	LPARAM lParam,
+	LPARAM lpData) {
 	std::string defaultPath = *(std::string*)lpData;
 	if (defaultPath != "" && uMsg == BFFM_INITIALIZED) {
 		wchar_t wideCharacterBuffer[MAX_PATH];
@@ -603,11 +603,11 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text) {
 		[alert addButtonWithTitle:@"OK"];
 		[alert addButtonWithTitle:@"Cancel"];
 		[alert setMessageText:[NSString stringWithCString:question.c_str()
-		                                         encoding:NSUTF8StringEncoding]];
+												 encoding:NSUTF8StringEncoding]];
 		// create text field
 		NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0, 0, 300, 40))];
 		[label setStringValue:[NSString stringWithCString:text.c_str()
-		                                         encoding:NSUTF8StringEncoding]];
+												 encoding:NSUTF8StringEncoding]];
 		// add text field to alert dialog
 		[alert setAccessoryView:label];
 		[[alert window] setInitialFirstResponder:label];
@@ -653,37 +653,37 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text) {
 			// http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
 		} else {
 			MessageBox(nullptr, L"Window Registration Failed!\0", L"Error!\0",
-			    MB_ICONEXCLAMATION | MB_OK);
+				MB_ICONEXCLAMATION | MB_OK);
 			return text;
 		}
 	}
 
 	HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
-	    g_szClassName,
-	    convertNarrowToWide(question).c_str(),
-	    WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
-	    CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
-	    WindowFromDC(wglGetCurrentDC()), nullptr, GetModuleHandle(0), nullptr);
+		g_szClassName,
+		convertNarrowToWide(question).c_str(),
+		WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
+		CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
+		WindowFromDC(wglGetCurrentDC()), nullptr, GetModuleHandle(0), nullptr);
 
 	if (dialog == nullptr) {
 
 		MessageBox(nullptr, L"Window Creation Failed!\0", L"Error!\0",
-		    MB_ICONEXCLAMATION | MB_OK);
+			MB_ICONEXCLAMATION | MB_OK);
 		return text;
 	}
 
 	EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
 	HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT\0", convertNarrowToWide(text).c_str(),
-	    WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-	    10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(nullptr), nullptr);
+		WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+		10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(nullptr), nullptr);
 
 	HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, L"BUTTON\0", L"OK\0",
-	    WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-	    10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(nullptr), nullptr);
+		WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+		10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(nullptr), nullptr);
 
 	HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, L"BUTTON\0", L"Cancel\0",
-	    WS_CHILD | WS_VISIBLE,
-	    80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(nullptr), nullptr);
+		WS_CHILD | WS_VISIBLE,
+		80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(nullptr), nullptr);
 
 	SetFocus(hEdit);
 

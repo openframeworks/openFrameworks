@@ -10,14 +10,14 @@ using std::shared_ptr;
 
 //----------------------------------------
 ofCamera::ofCamera()
-    : isOrtho(false)
-    , fov(60)
-    , nearClip(0)
-    , farClip(0)
-    , lensOffset(0.0f, 0.0f)
-    , forceAspectRatio(false)
-    , aspectRatio(4. / 3.)
-    , vFlip(false) {
+	: isOrtho(false)
+	, fov(60)
+	, nearClip(0)
+	, farClip(0)
+	, lensOffset(0.0f, 0.0f)
+	, forceAspectRatio(false)
+	, aspectRatio(4. / 3.)
+	, vFlip(false) {
 }
 
 //----------------------------------------

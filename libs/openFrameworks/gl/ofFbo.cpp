@@ -229,13 +229,13 @@ int ofFbo::_maxSamples = -1;
 
 //--------------------------------------------------------------
 ofFbo::ofFbo()
-    : fbo(0)
-    , fboTextures(0)
-    , depthBuffer(0)
-    , stencilBuffer(0)
-    , dirty(false)
-    , defaultTextureIndex(0)
-    , bIsAllocated(false) {
+	: fbo(0)
+	, fboTextures(0)
+	, depthBuffer(0)
+	, stencilBuffer(0)
+	, dirty(false)
+	, defaultTextureIndex(0)
+	, bIsAllocated(false) {
 #if defined(TARGET_OPENGLES) & !defined(TARGET_EMSCRIPTEN)
 	if (!bglFunctionsInitialized) {
 		if (ofIsGLProgrammableRenderer()) {
@@ -340,18 +340,18 @@ ofFbo& ofFbo::operator=(const ofFbo& mom) {
 }
 
 ofFbo::ofFbo(ofFbo&& mom)
-    : settings(std::move(mom.settings))
-    , fbo(mom.fbo)
-    , fboTextures(mom.fboTextures)
-    , depthBuffer(mom.depthBuffer)
-    , stencilBuffer(mom.stencilBuffer)
-    , colorBuffers(std::move(mom.colorBuffers))
-    , textures(std::move(mom.textures))
-    , depthBufferTex(std::move(mom.depthBufferTex))
-    , activeDrawBuffers(std::move(mom.activeDrawBuffers))
-    , dirty(std::move(mom.dirty))
-    , defaultTextureIndex(std::move(mom.defaultTextureIndex))
-    , bIsAllocated(std::move(mom.bIsAllocated)) {
+	: settings(std::move(mom.settings))
+	, fbo(mom.fbo)
+	, fboTextures(mom.fboTextures)
+	, depthBuffer(mom.depthBuffer)
+	, stencilBuffer(mom.stencilBuffer)
+	, colorBuffers(std::move(mom.colorBuffers))
+	, textures(std::move(mom.textures))
+	, depthBufferTex(std::move(mom.depthBufferTex))
+	, activeDrawBuffers(std::move(mom.activeDrawBuffers))
+	, dirty(std::move(mom.dirty))
+	, defaultTextureIndex(std::move(mom.defaultTextureIndex))
+	, bIsAllocated(std::move(mom.bIsAllocated)) {
 	if (fbo != 0) {
 #ifdef TARGET_ANDROID
 		ofAddListener(ofxAndroidEvents().reloadGL, this, &ofFbo::reloadFbo);
@@ -505,9 +505,9 @@ bool ofFbo::checkGLSupport() {
 	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
 
 	ofLogVerbose("ofFbo") << "checkGLSupport(): "
-	                      << "maxColorAttachments: " << _maxColorAttachments << ", "
-	                      << "maxDrawBuffers: " << _maxDrawBuffers << ", "
-	                      << "maxSamples: " << _maxSamples;
+						  << "maxColorAttachments: " << _maxColorAttachments << ", "
+						  << "maxDrawBuffers: " << _maxDrawBuffers << ", "
+						  << "maxSamples: " << _maxSamples;
 #else
 
 	if (ofIsGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")) {
@@ -644,8 +644,8 @@ void ofFbo::allocate(ofFboSettings _settings) {
 			// http://www.khronos.org/registry/gles/extensions/OES/OES_packed_depth_stencil.txt
 			if (_settings.useDepth && _settings.useStencil) {
 				glFramebufferTexture2D(GL_FRAMEBUFFER,
-				    GL_STENCIL_ATTACHMENT,
-				    GL_TEXTURE_2D, depthBufferTex.texData.textureID, 0);
+					GL_STENCIL_ATTACHMENT,
+					GL_TEXTURE_2D, depthBufferTex.texData.textureID, 0);
 			}
 #endif
 		}
@@ -853,34 +853,34 @@ void ofFbo::begin(ofFboMode mode) const {
 
 //----------------------------------------------------------
 /*void ofFbo::begin() const {
-    auto renderer = settings.renderer.lock();
-    if (renderer) {
-        renderer->begin(*this, true);
-    }
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->begin(*this, true);
+	}
 }
 
 //----------------------------------------------------------
 void ofFbo::beginNoPerspective() const {
-    auto renderer = settings.renderer.lock();
-    if (renderer) {
-        renderer->begin(*this, false);
-    }
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->begin(*this, false);
+	}
 }
 
 //----------------------------------------------------------
 void ofFbo::beginNoMatrixFlip() const {
-    auto renderer = settings.renderer.lock();
-    if (renderer) {
-        renderer->beginNoMatrixFlip(*this);
-    }
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->beginNoMatrixFlip(*this);
+	}
 }
 
 //----------------------------------------------------------
 void ofFbo::beginNoMatrixFlipNoPerspective() const {
-    auto renderer = settings.renderer.lock();
-    if (renderer) {
-        renderer->beginNoMatrixFlipNoPerspective(*this);
-    }
+	auto renderer = settings.renderer.lock();
+	if (renderer) {
+		renderer->beginNoMatrixFlipNoPerspective(*this);
+	}
 }*/
 
 //----------------------------------------------------------

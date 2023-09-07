@@ -40,12 +40,12 @@ class ofUnicode {
 public:
 	struct range {
 		range()
-		    : begin(0)
-		    , end(0) {
+			: begin(0)
+			, end(0) {
 		}
 		range(uint32_t be, uint32_t en)
-		    : begin(be)
-		    , end(en) {
+			: begin(be)
+			, end(en) {
 		}
 		std::uint32_t begin = 0;
 		std::uint32_t end = 0;
@@ -148,8 +148,8 @@ struct ofTrueTypeFontSettings {
 	std::vector<ofUnicode::range> ranges;
 
 	ofTrueTypeFontSettings(const of::filesystem::path& name, int size)
-	    : fontName(name)
-	    , fontSize(size) { }
+		: fontName(name)
+		, fontSize(size) { }
 
 	void addRanges(std::initializer_list<ofUnicode::range> alphabet) {
 		ranges.insert(ranges.end(), alphabet);
@@ -195,12 +195,12 @@ public:
 	/// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
 	bool load(const of::filesystem::path& filename,
-	    int fontsize,
-	    bool _bAntiAliased = true,
-	    bool _bFullCharacterSet = true,
-	    bool makeContours = false,
-	    float simplifyAmt = 0.0f,
-	    int dpi = 0);
+		int fontsize,
+		bool _bAntiAliased = true,
+		bool _bFullCharacterSet = true,
+		bool makeContours = false,
+		float simplifyAmt = 0.0f,
+		int dpi = 0);
 
 	OF_DEPRECATED_MSG("Use load instead", bool loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0));
 

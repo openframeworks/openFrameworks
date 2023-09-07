@@ -59,7 +59,7 @@ int getch() {
 class ofNoopRenderer : public ofBaseRenderer {
 public:
 	ofNoopRenderer()
-	    : graphics3d(this) { }
+		: graphics3d(this) { }
 
 private:
 	static const std::string TYPE;
@@ -207,8 +207,8 @@ const std::string ofNoopRenderer::TYPE = "NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow()
-    : coreEvents(new ofCoreEvents)
-    , currentRenderer(new ofNoopRenderer) {
+	: coreEvents(new ofCoreEvents)
+	, currentRenderer(new ofNoopRenderer) {
 	ofAppPtr = nullptr;
 	width = 0;
 	height = 0;

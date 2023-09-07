@@ -82,13 +82,13 @@ public:
 
 	template <typename... Args>
 	ofParameterGroup(const std::string& name)
-	    : obj(std::make_shared<Value>()) {
+		: obj(std::make_shared<Value>()) {
 		setName(name);
 	}
 
 	template <typename... Args>
 	ofParameterGroup(const std::string& name, Args&... p)
-	    : obj(std::make_shared<Value>()) {
+		: obj(std::make_shared<Value>()) {
 		add(p...);
 		setName(name);
 	}
@@ -256,7 +256,7 @@ private:
 	class Value {
 	public:
 		Value()
-		    : serializable(true) { }
+			: serializable(true) { }
 
 		void notifyParameterChanged(ofAbstractParameter& param);
 
@@ -269,7 +269,7 @@ private:
 	};
 	std::shared_ptr<Value> obj;
 	ofParameterGroup(std::shared_ptr<Value> obj)
-	    : obj(obj) { }
+		: obj(obj) { }
 
 	template <typename T>
 	friend class ofParameter;
@@ -574,8 +574,8 @@ public:
 
 	const ofParameterGroup getFirstParent() const {
 		obj->parents.erase(std::remove_if(obj->parents.begin(), obj->parents.end(),
-		                       [](std::weak_ptr<ofParameterGroup::Value> p) { return p.lock() == nullptr; }),
-		    obj->parents.end());
+							   [](std::weak_ptr<ofParameterGroup::Value> p) { return p.lock() == nullptr; }),
+			obj->parents.end());
 		if (!obj->parents.empty()) {
 			return obj->parents.front().lock();
 		} else {
@@ -591,37 +591,37 @@ private:
 	class Value {
 	public:
 		Value()
-		    : init(of::priv::TypeInfo<ParameterType>::min())
-		    , min(of::priv::TypeInfo<ParameterType>::min())
-		    , max(of::priv::TypeInfo<ParameterType>::max())
-		    , bInNotify(false)
-		    , serializable(true) { }
+			: init(of::priv::TypeInfo<ParameterType>::min())
+			, min(of::priv::TypeInfo<ParameterType>::min())
+			, max(of::priv::TypeInfo<ParameterType>::max())
+			, bInNotify(false)
+			, serializable(true) { }
 
 		Value(ParameterType v)
-		    : init(v)
-		    , value(v)
-		    , min(of::priv::TypeInfo<ParameterType>::min())
-		    , max(of::priv::TypeInfo<ParameterType>::max())
-		    , bInNotify(false)
-		    , serializable(true) { }
+			: init(v)
+			, value(v)
+			, min(of::priv::TypeInfo<ParameterType>::min())
+			, max(of::priv::TypeInfo<ParameterType>::max())
+			, bInNotify(false)
+			, serializable(true) { }
 
 		Value(std::string name, ParameterType v)
-		    : name(name)
-		    , init(v)
-		    , value(v)
-		    , min(of::priv::TypeInfo<ParameterType>::min())
-		    , max(of::priv::TypeInfo<ParameterType>::max())
-		    , bInNotify(false)
-		    , serializable(true) { }
+			: name(name)
+			, init(v)
+			, value(v)
+			, min(of::priv::TypeInfo<ParameterType>::min())
+			, max(of::priv::TypeInfo<ParameterType>::max())
+			, bInNotify(false)
+			, serializable(true) { }
 
 		Value(std::string name, ParameterType v, ParameterType min, ParameterType max)
-		    : name(name)
-		    , init(v)
-		    , value(v)
-		    , min(min)
-		    , max(max)
-		    , bInNotify(false)
-		    , serializable(true) { }
+			: name(name)
+			, init(v)
+			, value(v)
+			, min(min)
+			, max(max)
+			, bInNotify(false)
+			, serializable(true) { }
 
 		std::string name;
 		ParameterType init, value, min, max;
@@ -643,28 +643,28 @@ private:
 
 template <typename ParameterType>
 ofParameter<ParameterType>::ofParameter()
-    : obj(std::make_shared<Value>())
-    , setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
+	: obj(std::make_shared<Value>())
+	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
 
 template <typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ofParameter<ParameterType>& v)
-    : obj(v.obj)
-    , setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
+	: obj(v.obj)
+	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
 
 template <typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ParameterType& v)
-    : obj(std::make_shared<Value>(v))
-    , setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
+	: obj(std::make_shared<Value>(v))
+	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
 
 template <typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const std::string& name, const ParameterType& v)
-    : obj(std::make_shared<Value>(name, v))
-    , setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
+	: obj(std::make_shared<Value>(name, v))
+	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
 
 template <typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const std::string& name, const ParameterType& v, const ParameterType& min, const ParameterType& max)
-    : obj(std::make_shared<Value>(name, v, min, max))
-    , setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
+	: obj(std::make_shared<Value>(name, v, min, max))
+	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
 
 template <typename ParameterType>
 inline ofParameter<ParameterType>& ofParameter<ParameterType>::operator=(const ofParameter<ParameterType>& v) {
@@ -736,9 +736,9 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType& v) {
 		if (!obj->parents.empty()) {
 			// Erase each invalid parent
 			obj->parents.erase(std::remove_if(obj->parents.begin(),
-			                       obj->parents.end(),
-			                       [](const std::weak_ptr<ofParameterGroup::Value>& p) { return p.expired(); }),
-			    obj->parents.end());
+								   obj->parents.end(),
+								   [](const std::weak_ptr<ofParameterGroup::Value>& p) { return p.expired(); }),
+				obj->parents.end());
 
 			// notify all leftover (valid) parents of this object's changed value.
 			// this can't happen in the same iterator as above, because a notified listener
@@ -1058,11 +1058,11 @@ private:
 	class Value {
 	public:
 		Value()
-		    : serializable(false) { }
+			: serializable(false) { }
 
 		Value(std::string name)
-		    : name(name)
-		    , serializable(false) { }
+			: name(name)
+			, serializable(false) { }
 
 		std::string name;
 		ofEvent<void> changedE;
@@ -1204,15 +1204,15 @@ inline ofReadOnlyParameter<ParameterType, Friend>::ofReadOnlyParameter() { }
 
 template <typename ParameterType, typename Friend>
 inline ofReadOnlyParameter<ParameterType, Friend>::ofReadOnlyParameter(const ParameterType& v)
-    : parameter(v) { }
+	: parameter(v) { }
 
 template <typename ParameterType, typename Friend>
 inline ofReadOnlyParameter<ParameterType, Friend>::ofReadOnlyParameter(const std::string& name, const ParameterType& v)
-    : parameter(name, v) { }
+	: parameter(name, v) { }
 
 template <typename ParameterType, typename Friend>
 inline ofReadOnlyParameter<ParameterType, Friend>::ofReadOnlyParameter(const std::string& name, const ParameterType& v, const ParameterType& min, const ParameterType& max)
-    : parameter(name, v, min, max) { }
+	: parameter(name, v, min, max) { }
 
 template <typename ParameterType, typename Friend>
 inline const ParameterType& ofReadOnlyParameter<ParameterType, Friend>::get() const {

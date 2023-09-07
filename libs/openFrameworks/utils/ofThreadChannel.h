@@ -35,7 +35,7 @@ public:
 	/// 	ofThreadChannel<ofPixels> myThreadChannel;
 	/// ~~~~
 	ofThreadChannel()
-	    : closed(false) { }
+		: closed(false) { }
 
 	/// \brief Block the receiving thread until a new sent value is available.
 	///

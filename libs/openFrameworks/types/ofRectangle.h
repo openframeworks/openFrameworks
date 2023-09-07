@@ -331,7 +331,7 @@ public:
 	/// \param targetRect The Target Rectangle to scale to.
 	/// \param scaleMode The scale mode to use when scaling.
 	void scaleTo(const ofRectangle& targetRect,
-	    ofScaleMode scaleMode = OF_SCALEMODE_FIT);
+		ofScaleMode scaleMode = OF_SCALEMODE_FIT);
 
 	/// \brief Scale the rectangle using a target ofRectangle and parameters.
 	///
@@ -344,9 +344,9 @@ public:
 	/// \param sharedHorzAnchor The horizontal alignment method.
 	/// \param sharedVertAnchor The vertical alignment method.
 	void scaleTo(const ofRectangle& targetRect,
-	    ofAspectRatioMode subjectAspectRatioMode,
-	    ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
-	    ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
+		ofAspectRatioMode subjectAspectRatioMode,
+		ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
+		ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
 
 	/// \brief Scale the rectangle using a target ofRectangle and parameters.
 	///
@@ -361,11 +361,11 @@ public:
 	/// \param subjectHorzAnchor The subject horizontal alignment method.
 	/// \param subjectVertAnchor The subject vertical alignment method.
 	void scaleTo(const ofRectangle& targetRect,
-	    ofAspectRatioMode subjectAspectRatioMode,
-	    ofAlignHorz modelHorzAnchor,
-	    ofAlignVert modelVertAnchor,
-	    ofAlignHorz subjectHorzAnchor,
-	    ofAlignVert subjectVertAnchor);
+		ofAspectRatioMode subjectAspectRatioMode,
+		ofAlignHorz modelHorzAnchor,
+		ofAlignVert modelVertAnchor,
+		ofAlignHorz subjectHorzAnchor,
+		ofAlignVert subjectVertAnchor);
 
 	/// \}
 
@@ -381,7 +381,7 @@ public:
 	/// \param targetX The x-position to align this rectangle to.
 	/// \param thisHorzAnchor The edge of this rectangle to align.
 	void alignToHorz(const float& targetX,
-	    ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER);
+		ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER);
 
 	/// \brief Horizontally align two rectangles to another using one anchor for both.
 	///
@@ -397,7 +397,7 @@ public:
 	/// \param targetRect The target rectangle to align this rectangle to.
 	/// \param sharedAnchor The common edge of the rectangles to align.
 	void alignToHorz(const ofRectangle& targetRect,
-	    ofAlignHorz sharedAnchor = OF_ALIGN_HORZ_CENTER);
+		ofAlignHorz sharedAnchor = OF_ALIGN_HORZ_CENTER);
 
 	/// \brief Horizontally align two rectangles to another using two anchors.
 	///
@@ -411,8 +411,8 @@ public:
 	/// \param targetHorzAnchor The edge of the other rectangle to align.
 	/// \param thisHorzAnchor The edge of this rectangle to align.
 	void alignToHorz(const ofRectangle& targetRect,
-	    ofAlignHorz targetHorzAnchor,
-	    ofAlignHorz thisHorzAnchor);
+		ofAlignHorz targetHorzAnchor,
+		ofAlignHorz thisHorzAnchor);
 
 	/// \brief Vertically align a rectangle using a position and anchor edge.
 	///
@@ -423,7 +423,7 @@ public:
 	/// \param targetY The target y-position to align this rectangle to.
 	/// \param sharedAnchor The alignment position of this ofRectangle to use.
 	void alignToVert(const float& targetY,
-	    ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
+		ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
 
 	/// \brief Vertically align two rectangles to another using one anchor for both.
 	///
@@ -438,7 +438,7 @@ public:
 	/// \param targetRect The target ofRectangle to align this rectangle to.
 	/// \param sharedAnchor The alignment position for both rectangles to use.
 	void alignToVert(const ofRectangle& targetRect,
-	    ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
+		ofAlignVert sharedAnchor = OF_ALIGN_VERT_CENTER);
 
 	/// \brief Vertically align two rectangles to another using two anchors.
 	///
@@ -449,8 +449,8 @@ public:
 	/// \param targetVertAnchor The alignment anchor for this rectangle.
 	/// \param thisVertAnchor The alignment anchor for the other rectangle.
 	void alignToVert(const ofRectangle& targetRect,
-	    ofAlignVert targetVertAnchor,
-	    ofAlignVert thisVertAnchor);
+		ofAlignVert targetVertAnchor,
+		ofAlignVert thisVertAnchor);
 
 	/// \brief Align this ofRectangle to an glm::vec3 in both x- and y dimentions.
 	///
@@ -464,11 +464,11 @@ public:
 	/// \param thisHorzAnchor The horizontal alignment anchor.
 	/// \param thisVertAnchor The vertical alignment anchor.
 	void alignTo(const glm::vec3& targetPoint,
-	    ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
-	    ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
+		ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
+		ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
 	void alignTo(const glm::vec2& targetPoint,
-	    ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
-	    ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
+		ofAlignHorz thisHorzAnchor = OF_ALIGN_HORZ_CENTER,
+		ofAlignVert thisVertAnchor = OF_ALIGN_VERT_CENTER);
 
 	/// \brief Align this ofRectangle to an glm::vec3 in both x- and y dimentions using a shared anchor.
 	///
@@ -486,8 +486,8 @@ public:
 	/// \param sharedHorzAnchor The alignment anchor for both rectangles.
 	/// \param sharedVertAnchor The alignment anchor for both rectangles.
 	void alignTo(const ofRectangle& targetRect,
-	    ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
-	    ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
+		ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
+		ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
 
 	/// \brief Vertically align this ofRectangle to another target ofRectangle.
 	///
@@ -504,10 +504,10 @@ public:
 	/// \param thisHorzAnchor The horizontal alignment anchor for this rectangle.
 	/// \param thisVertAnchor The vertical alignment anchor for this rectangle.
 	void alignTo(const ofRectangle& targetRect,
-	    ofAlignHorz targetHorzAnchor,
-	    ofAlignVert targetVertAnchor,
-	    ofAlignHorz thisHorzAnchor,
-	    ofAlignVert thisVertAnchor);
+		ofAlignHorz targetHorzAnchor,
+		ofAlignVert targetVertAnchor,
+		ofAlignHorz thisHorzAnchor,
+		ofAlignVert thisVertAnchor);
 
 	/// \}
 

@@ -93,13 +93,13 @@ void ofRendererCollection::draw(const ofBaseVideoDraws& video, float x, float y,
 
 /*void bind(const ofBaseVideoDraws & video) const{
    for(int i=0;i<(int)renderers.size();i++){
-       renderers[i]->bind(video);
+	   renderers[i]->bind(video);
    }
 }
 
 void unbind(const ofBaseVideoDraws & video) const{
    for(int i=0;i<(int)renderers.size();i++){
-       renderers[i]->unbind(video);
+	   renderers[i]->unbind(video);
    }
 }*/
 

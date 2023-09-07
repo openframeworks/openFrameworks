@@ -267,13 +267,13 @@ void ofURLFileLoaderImpl::update(ofEventArgs& args) {
 }
 
 ofURLFileLoader::ofURLFileLoader()
-    : impl(new ofURLFileLoaderImpl) { }
+	: impl(new ofURLFileLoaderImpl) { }
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
 	#include "ofxEmscriptenURLFileLoader.h"
 ofURLFileLoader::ofURLFileLoader()
-    : impl(new ofxEmscriptenURLFileLoader) { }
+	: impl(new ofxEmscriptenURLFileLoader) { }
 #endif
 
 ofHttpResponse ofURLFileLoader::get(const string& url) {
@@ -320,17 +320,17 @@ static ofURLFileLoader& getFileLoader() {
 }
 
 ofHttpRequest::ofHttpRequest()
-    : saveTo(false)
-    , method(GET)
-    , id(nextID++) {
+	: saveTo(false)
+	, method(GET)
+	, id(nextID++) {
 }
 
 ofHttpRequest::ofHttpRequest(const string& url, const string& name, bool saveTo)
-    : url(url)
-    , name(name)
-    , saveTo(saveTo)
-    , method(GET)
-    , id(nextID++) {
+	: url(url)
+	, name(name)
+	, saveTo(saveTo)
+	, method(GET)
+	, id(nextID++) {
 }
 
 int ofHttpRequest::getId() const {
@@ -342,20 +342,20 @@ int ofHttpRequest::getID() {
 }
 
 ofHttpResponse::ofHttpResponse()
-    : status(0) {
+	: status(0) {
 }
 
 ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const string& error)
-    : request(request)
-    , data(data)
-    , status(status)
-    , error(error) {
+	: request(request)
+	, data(data)
+	, status(status)
+	, error(error) {
 }
 
 ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, int status, const string& error)
-    : request(request)
-    , status(status)
-    , error(error) {
+	: request(request)
+	, status(status)
+	, error(error) {
 }
 
 ofHttpResponse::operator ofBuffer&() {

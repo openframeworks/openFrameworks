@@ -274,13 +274,13 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType>& mom) {
 
 template <typename PixelType>
 ofPixels_<PixelType>::ofPixels_(ofPixels_<PixelType>&& mom)
-    : pixels(mom.pixels)
-    , width(mom.width)
-    , height(mom.height)
-    , pixelsSize(mom.pixelsSize)
-    , bAllocated(mom.bAllocated)
-    , pixelsOwner(mom.pixelsOwner)
-    , pixelFormat(mom.pixelFormat) {
+	: pixels(mom.pixels)
+	, width(mom.width)
+	, height(mom.height)
+	, pixelsSize(mom.pixelsSize)
+	, bAllocated(mom.bAllocated)
+	, pixelsOwner(mom.pixelsOwner)
+	, pixelFormat(mom.pixelFormat) {
 	mom.pixelsOwner = false;
 }
 

@@ -26,10 +26,10 @@ public:
 
 #ifdef TARGET_OPENGLES
 	ofGLFWWindowSettings(const ofGLESWindowSettings& settings)
-	    : ofGLESWindowSettings(settings) { }
+		: ofGLESWindowSettings(settings) { }
 #else
 	ofGLFWWindowSettings(const ofGLWindowSettings& settings)
-	    : ofGLWindowSettings(settings) { }
+		: ofGLWindowSettings(settings) { }
 #endif
 
 #ifdef TARGET_RASPBERRY_PI

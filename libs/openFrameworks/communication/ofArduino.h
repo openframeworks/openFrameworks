@@ -792,15 +792,15 @@ private:
 	int _firstAnalogPin;
 
 	bool firmataInputSupported,
-	    firmataOutputSupported,
-	    firmataAnalogSupported,
-	    firmataPwmSupported,
-	    firmataServoSupported,
-	    firmataI2cSupported,
-	    firmataOnewireSupported,
-	    firmataStepperSupported,
-	    firmataEncoderSupported,
-	    firmataSerialSupported;
+		firmataOutputSupported,
+		firmataAnalogSupported,
+		firmataPwmSupported,
+		firmataServoSupported,
+		firmataI2cSupported,
+		firmataOnewireSupported,
+		firmataStepperSupported,
+		firmataEncoderSupported,
+		firmataSerialSupported;
 
 	mutable std::map<int, supportedPinTypes> pinCapabilities;
 	mutable std::map<int, int> analogPinMap;

@@ -277,23 +277,23 @@ ofVec4f operator/(float f, const ofVec4f& vec);
 /////////////////
 
 inline ofVec4f::ofVec4f()
-    : x(0)
-    , y(0)
-    , z(0)
-    , w(0) { }
+	: x(0)
+	, y(0)
+	, z(0)
+	, w(0) { }
 inline ofVec4f::ofVec4f(float _s)
-    : x(_s)
-    , y(_s)
-    , z(_s)
-    , w(_s) { }
+	: x(_s)
+	, y(_s)
+	, z(_s)
+	, w(_s) { }
 inline ofVec4f::ofVec4f(float _x,
-    float _y,
-    float _z,
-    float _w)
-    : x(_x)
-    , y(_y)
-    , z(_z)
-    , w(_w) { }
+	float _y,
+	float _z,
+	float _w)
+	: x(_x)
+	, y(_y)
+	, z(_z)
+	, w(_w) { }
 
 inline ofVec4f::operator glm::vec4() const {
 	return glm::vec4(x, y, z, w);
@@ -335,9 +335,9 @@ inline bool ofVec4f::operator!=(const ofVec4f& vec) const {
 
 inline bool ofVec4f::match(const ofVec4f& vec, float tolerance) const {
 	return (fabs(x - vec.x) < tolerance)
-	    && (fabs(y - vec.y) < tolerance)
-	    && (fabs(z - vec.z) < tolerance)
-	    && (fabs(w - vec.w) < tolerance);
+		&& (fabs(y - vec.y) < tolerance)
+		&& (fabs(z - vec.z) < tolerance)
+		&& (fabs(w - vec.w) < tolerance);
 }
 
 // Additions and Subtractions.
@@ -476,7 +476,7 @@ inline ofVec4f ofVec4f::getScaled(const float length) const {
 	float l = (float)sqrt(x * x + y * y + z * z + w * w);
 	if (l > 0)
 		return ofVec4f((x / l) * length, (y / l) * length,
-		    (z / l) * length, (w / l) * length);
+			(z / l) * length, (w / l) * length);
 	else
 		return ofVec4f();
 }
@@ -532,9 +532,9 @@ inline ofVec4f ofVec4f::interpolated(const ofVec4f& pnt, float p) const {
 
 inline ofVec4f ofVec4f::getInterpolated(const ofVec4f& pnt, float p) const {
 	return ofVec4f(x * (1 - p) + pnt.x * p,
-	    y * (1 - p) + pnt.y * p,
-	    z * (1 - p) + pnt.z * p,
-	    w * (1 - p) + pnt.w * p);
+		y * (1 - p) + pnt.y * p,
+		z * (1 - p) + pnt.z * p,
+		w * (1 - p) + pnt.w * p);
 }
 
 inline ofVec4f& ofVec4f::interpolate(const ofVec4f& pnt, float p) {
@@ -551,7 +551,7 @@ inline ofVec4f ofVec4f::middled(const ofVec4f& pnt) const {
 
 inline ofVec4f ofVec4f::getMiddle(const ofVec4f& pnt) const {
 	return ofVec4f((x + pnt.x) / 2.0f, (y + pnt.y) / 2.0f,
-	    (z + pnt.z) / 2.0f, (w + pnt.w) / 2.0f);
+		(z + pnt.z) / 2.0f, (w + pnt.w) / 2.0f);
 }
 
 inline ofVec4f& ofVec4f::middle(const ofVec4f& pnt) {

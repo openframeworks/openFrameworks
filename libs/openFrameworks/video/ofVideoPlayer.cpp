@@ -65,7 +65,7 @@ ofVideoPlayer::ofVideoPlayer() {
 void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer) {
 	player = std::move(newPlayer);
 	setPixelFormat(internalPixelFormat); // this means that it will try to set the pixel format you have been using before.
-	                                     // if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
+										 // if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }
 
 //---------------------------------------------------------------------------

@@ -52,7 +52,7 @@
  If I have an ofSoundBuffer with 8 _frames_ of mono (1 _channel_) audio, the underlying array contains 8 _samples_ (ie it is 8 floats long),
  and the samples are arranged like this:
 
-         L L L L L L L L
+		 L L L L L L L L
 
  where `L` represents a single sample.
 
@@ -60,22 +60,22 @@
  If I have an ofSoundBuffer with 8 _frames_ of stereo (2 _channel_) audio, then the underlying array contains 16 _samples_ ((getNumFrames()*getNumChannels(),
  ie 8*2) arranged in an _interleaved_ pattern:
 
-         L R L R L R L R L R L R L R L R
+		 L R L R L R L R L R L R L R L R
 
  where `L` represents a single sample for the left channel, and `R` represents a single sample for the right channel. Grouping the frames together for clarity:
 
-         LR LR LR LR LR LR LR LR
+		 LR LR LR LR LR LR LR LR
 
 
  If I have an ofSoundBuffer with 8 frames of 5.1 surround (6 _channel_) audio, then the underlying array of floats contains 48 _samples_ (getNumFrames()*getNumChannels(),
  ie 8*6) and is usually arranged in an _interleaved_ pattern like this:
 
-         L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe
+		 L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe L C R Ls Rs Lfe
 
  where `L` represents a single sample for the left channel, `C` for centre, `R` for right, `Ls` for left surround, `Rs` for right surround and `Lfe` for the subwoofer.
  Grouping the frames together for clarity:
 
-         LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe
+		 LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe LCRLsRsLfe
 
  */
 

@@ -30,10 +30,10 @@
 #endif
 
 ofMainLoop::ofMainLoop()
-    : bShouldClose(false)
-    , status(0)
-    , allowMultiWindow(true)
-    , escapeQuits(true) {
+	: bShouldClose(false)
+	, status(0)
+	, allowMultiWindow(true)
+	, escapeQuits(true) {
 }
 
 ofMainLoop::~ofMainLoop() {

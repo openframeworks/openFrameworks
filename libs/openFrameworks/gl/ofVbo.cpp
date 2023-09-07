@@ -74,12 +74,12 @@ static void releaseVAO(GLuint id) {
 
 //--------------------------------------------------------------
 ofVbo::VertexAttribute::VertexAttribute()
-    : stride(0)
-    , offset(0)
-    , numCoords(0)
-    , location(0)
-    , normalize(false)
-    , divisor(0) {
+	: stride(0)
+	, offset(0)
+	, numCoords(0)
+	, location(0)
+	, normalize(false)
+	, divisor(0) {
 }
 
 //--------------------------------------------------------------
@@ -867,8 +867,8 @@ void ofVbo::bind() const {
 #ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_VERTEX_ARRAY);
 				glVertexPointer(positionAttribute.numCoords, GL_FLOAT,
-				    positionAttribute.stride,
-				    (void*)positionAttribute.offset);
+					positionAttribute.stride,
+					(void*)positionAttribute.offset);
 #endif
 			} else {
 				positionAttribute.enable();
@@ -883,8 +883,8 @@ void ofVbo::bind() const {
 #ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_COLOR_ARRAY);
 				glColorPointer(colorAttribute.numCoords, GL_FLOAT,
-				    colorAttribute.stride,
-				    (void*)colorAttribute.offset);
+					colorAttribute.stride,
+					(void*)colorAttribute.offset);
 #endif
 			} else {
 				colorAttribute.enable();
@@ -899,7 +899,7 @@ void ofVbo::bind() const {
 #ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_NORMAL_ARRAY);
 				glNormalPointer(GL_FLOAT, normalAttribute.stride,
-				    (void*)normalAttribute.offset);
+					(void*)normalAttribute.offset);
 #endif
 			} else {
 				normalAttribute.enable();
@@ -914,8 +914,8 @@ void ofVbo::bind() const {
 #ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 				glTexCoordPointer(texCoordAttribute.numCoords,
-				    GL_FLOAT, texCoordAttribute.stride,
-				    (void*)texCoordAttribute.offset);
+					GL_FLOAT, texCoordAttribute.stride,
+					(void*)texCoordAttribute.offset);
 #endif
 			} else {
 				texCoordAttribute.enable();

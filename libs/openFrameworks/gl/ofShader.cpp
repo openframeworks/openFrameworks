@@ -95,19 +95,19 @@ static void releaseProgram(GLuint id) {
 #if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 //--------------------------------------------------------------
 ofShader::TransformFeedbackRangeBinding::TransformFeedbackRangeBinding(const ofBufferObject& buffer, GLuint offset, GLuint size)
-    : offset(offset)
-    , size(size)
-    , buffer(buffer) { }
+	: offset(offset)
+	, size(size)
+	, buffer(buffer) { }
 
 //--------------------------------------------------------------
 ofShader::TransformFeedbackBaseBinding::TransformFeedbackBaseBinding(const ofBufferObject& buffer)
-    : buffer(buffer) { }
+	: buffer(buffer) { }
 #endif
 
 //--------------------------------------------------------------
 ofShader::ofShader()
-    : program(0)
-    , bLoaded(false) {
+	: program(0)
+	, bLoaded(false) {
 }
 
 //--------------------------------------------------------------
@@ -117,13 +117,13 @@ ofShader::~ofShader() {
 
 //--------------------------------------------------------------
 ofShader::ofShader(const ofShader& mom)
-    : program(mom.program)
-    , bLoaded(mom.bLoaded)
-    , shaders(mom.shaders)
-    , uniformsCache(mom.uniformsCache)
-    , attributesBindingsCache(mom.attributesBindingsCache)
+	: program(mom.program)
+	, bLoaded(mom.bLoaded)
+	, shaders(mom.shaders)
+	, uniformsCache(mom.uniformsCache)
+	, attributesBindingsCache(mom.attributesBindingsCache)
 #ifndef TARGET_OPENGLES
-    , uniformBlocksCache(mom.uniformBlocksCache)
+	, uniformBlocksCache(mom.uniformBlocksCache)
 #endif
 {
 	if (mom.bLoaded) {
@@ -165,11 +165,11 @@ ofShader& ofShader::operator=(const ofShader& mom) {
 }
 
 ofShader::ofShader(ofShader&& mom)
-    : program(std::move(mom.program))
-    , bLoaded(std::move(mom.bLoaded))
-    , shaders(std::move(mom.shaders))
-    , uniformsCache(std::move(mom.uniformsCache))
-    , attributesBindingsCache(std::move(mom.attributesBindingsCache)) {
+	: program(std::move(mom.program))
+	, bLoaded(std::move(mom.bLoaded))
+	, shaders(std::move(mom.shaders))
+	, uniformsCache(std::move(mom.uniformsCache))
+	, attributesBindingsCache(std::move(mom.attributesBindingsCache)) {
 	if (mom.bLoaded) {
 #ifdef TARGET_ANDROID
 		ofAddListener(ofxAndroidEvents().unloadGL, this, &ofShader::unloadGL);
@@ -309,7 +309,7 @@ bool ofShader::setupShaderFromFile(GLenum type, const of::filesystem::path& file
 		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader "
-		                       << " from \"" << absoluteFilePath << "\"";
+							   << " from \"" << absoluteFilePath << "\"";
 		return false;
 	}
 }
@@ -326,7 +326,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const of::filesystem::pat
 		return Source { type, buffer.getText(), sourceDirectoryPath };
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader "
-		                       << " from \"" << absoluteFilePath << "\"";
+							   << " from \"" << absoluteFilePath << "\"";
 		return Source {};
 	}
 }
@@ -516,10 +516,10 @@ string ofShader::parseForIncludes(const string& source, vector<string>& included
 		// we store the absolute paths so as have (more) unique file identifiers.
 		// FIXME: Included can be a vector of of::filesystem::path in near future
 		include = ofFile(
-		    sourceDirectoryPath / include
-		    // ).getAbsolutePath().string();
-		    )
-		              .getAbsolutePath();
+			sourceDirectoryPath / include
+			// ).getAbsolutePath().string();
+			)
+					  .getAbsolutePath();
 
 		included.push_back(include);
 

@@ -39,8 +39,8 @@ bool ofIsGLProgrammableRenderer() {
 
 //----------------------------------------------------------
 ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow* _window)
-    : matrixStack(_window)
-    , graphics3d(this) {
+	: matrixStack(_window)
+	, graphics3d(this) {
 	programmableRendererCreated = true;
 	bBackgroundAuto = true;
 
@@ -1181,9 +1181,9 @@ void ofGLProgrammableRenderer::setStyle(const ofStyle& style) {
 
 	// smoothing
 	/*if(style.smoothing ){
-	    enableSmoothing();
+		enableSmoothing();
 	}else{
-	    disableSmoothing();
+		disableSmoothing();
 	}*/
 
 	// blending
@@ -1353,7 +1353,7 @@ void ofGLProgrammableRenderer::end(const ofFbo& fbo) {
 void ofGLProgrammableRenderer::bind(const ofFbo& fbo) {
 	if (currentFramebufferId == fbo.getId()) {
 		ofLogWarning() << "Framebuffer with id: " << fbo.getId() << " cannot be bound onto itself. \n"
-		               << "Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
+					   << "Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
 		return;
 	}
 	// this method could just as well have been placed in ofBaseGLRenderer
@@ -1371,7 +1371,7 @@ void ofGLProgrammableRenderer::bind(const ofFbo& fbo) {
 void ofGLProgrammableRenderer::bindForBlitting(const ofFbo& fboSrc, ofFbo& fboDst, int attachmentPoint) {
 	if (currentFramebufferId == fboSrc.getId()) {
 		ofLogWarning() << "Framebuffer with id: " << fboSrc.getId() << " cannot be bound onto itself. \n"
-		               << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
+					   << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
 	// this method could just as well have been placed in ofBaseGLRenderer
@@ -1934,194 +1934,194 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont& font, string tex
 
 #ifdef TARGET_OPENGLES
 static const string vertex_shader_header = "%extensions%\n"
-                                           "precision highp float;\n"
-                                           "#define IN attribute\n"
-                                           "#define OUT varying\n"
-                                           "#define TEXTURE texture2D\n"
-                                           "#define TARGET_OPENGLES\n";
+										   "precision highp float;\n"
+										   "#define IN attribute\n"
+										   "#define OUT varying\n"
+										   "#define TEXTURE texture2D\n"
+										   "#define TARGET_OPENGLES\n";
 static const string fragment_shader_header = "%extensions%\n"
-                                             "precision highp float;\n"
-                                             "#define IN varying\n"
-                                             "#define OUT\n"
-                                             "#define TEXTURE texture2D\n"
-                                             "#define FRAG_COLOR gl_FragColor\n"
-                                             "#define TARGET_OPENGLES\n";
+											 "precision highp float;\n"
+											 "#define IN varying\n"
+											 "#define OUT\n"
+											 "#define TEXTURE texture2D\n"
+											 "#define FRAG_COLOR gl_FragColor\n"
+											 "#define TARGET_OPENGLES\n";
 #else
 static const string vertex_shader_header = "#version %glsl_version%\n"
-                                           "%extensions%\n"
-                                           "#define IN in\n"
-                                           "#define OUT out\n"
-                                           "#define TEXTURE texture\n";
+										   "%extensions%\n"
+										   "#define IN in\n"
+										   "#define OUT out\n"
+										   "#define TEXTURE texture\n";
 static const string fragment_shader_header = "#version %glsl_version%\n"
-                                             "%extensions%\n"
-                                             "#define IN in\n"
-                                             "#define OUT out\n"
-                                             "#define TEXTURE texture\n"
-                                             "#define FRAG_COLOR fragColor\n"
-                                             "out vec4 fragColor;\n";
+											 "%extensions%\n"
+											 "#define IN in\n"
+											 "#define OUT out\n"
+											 "#define TEXTURE texture\n"
+											 "#define FRAG_COLOR fragColor\n"
+											 "out vec4 fragColor;\n";
 #endif
 
 static const string defaultVertexShader = vertex_shader_header + STRINGIFY(uniform mat4 projectionMatrix; uniform mat4 modelViewMatrix; uniform mat4 textureMatrix; uniform mat4 modelViewProjectionMatrix;
 
-                                                                           IN vec4 position; IN vec2 texcoord; IN vec4 color; IN vec3 normal;
+																		   IN vec4 position; IN vec2 texcoord; IN vec4 color; IN vec3 normal;
 
-                                                                           OUT vec4 colorVarying; OUT vec2 texCoordVarying; OUT vec4 normalVarying;
+																		   OUT vec4 colorVarying; OUT vec2 texCoordVarying; OUT vec4 normalVarying;
 
-                                                                           void main() {
-	                                                                           colorVarying = color;
-	                                                                           texCoordVarying = (textureMatrix * vec4(texcoord.x, texcoord.y, 0, 1)).xy;
-	                                                                           gl_Position = modelViewProjectionMatrix * position;
-                                                                           });
+																		   void main() {
+																			   colorVarying = color;
+																			   texCoordVarying = (textureMatrix * vec4(texcoord.x, texcoord.y, 0, 1)).xy;
+																			   gl_Position = modelViewProjectionMatrix * position;
+																		   });
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderTexRectColor = fragment_shader_header + STRINGIFY(
 
-                                                            uniform sampler2DRect src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+															uniform sampler2DRect src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                            IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+															IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                            void main() {
-	                                                            FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
-                                                            });
+															void main() {
+																FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
+															});
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderTexRectNoColor = fragment_shader_header + STRINGIFY(
 
-                                                              uniform sampler2DRect src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+															  uniform sampler2DRect src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                              IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+															  IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                              void main() {
-	                                                              FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
-                                                              });
+															  void main() {
+																  FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+															  });
 
 // ----------------------------------------------------------------------
 
 static const string alphaMaskFragmentShaderTexRectNoColor = fragment_shader_header + STRINGIFY(
 
-                                                                uniform sampler2DRect src_tex_unit0; uniform sampler2DRect src_tex_unit1; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+																uniform sampler2DRect src_tex_unit0; uniform sampler2DRect src_tex_unit1; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                                IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+																IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                                void main() {
-	                                                                FRAG_COLOR = vec4(TEXTURE(src_tex_unit0, texCoordVarying).rgb, TEXTURE(src_tex_unit1, texCoordVarying).r) * globalColor;
-                                                                });
+																void main() {
+																	FRAG_COLOR = vec4(TEXTURE(src_tex_unit0, texCoordVarying).rgb, TEXTURE(src_tex_unit1, texCoordVarying).r) * globalColor;
+																});
 
 // ----------------------------------------------------------------------
 
 static const string alphaMaskFragmentShaderTex2DNoColor = fragment_shader_header + STRINGIFY(
 
-                                                              uniform sampler2D src_tex_unit0; uniform sampler2D src_tex_unit1; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+															  uniform sampler2D src_tex_unit0; uniform sampler2D src_tex_unit1; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                              IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+															  IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                              void main() {
-	                                                              FRAG_COLOR = vec4(TEXTURE(src_tex_unit0, texCoordVarying).rgb, TEXTURE(src_tex_unit1, texCoordVarying).r) * globalColor;
-                                                              });
+															  void main() {
+																  FRAG_COLOR = vec4(TEXTURE(src_tex_unit0, texCoordVarying).rgb, TEXTURE(src_tex_unit1, texCoordVarying).r) * globalColor;
+															  });
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderTex2DColor = fragment_shader_header + STRINGIFY(
 
-                                                          uniform sampler2D src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+														  uniform sampler2D src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                          IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+														  IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                          void main() {
-	                                                          FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
-                                                          });
+														  void main() {
+															  FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
+														  });
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderTex2DNoColor = fragment_shader_header + STRINGIFY(
 
-                                                            uniform sampler2D src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+															uniform sampler2D src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                            IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying; void main() {
-	                                                            FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
-                                                            });
+															IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying; void main() {
+																FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+															});
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderOESTexNoColor = fragment_shader_header + STRINGIFY(
 
-                                                             uniform samplerExternalOES src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+															 uniform samplerExternalOES src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                             IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+															 IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                             void main() {
-	                                                             FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
-                                                             });
+															 void main() {
+																 FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+															 });
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderOESTexColor = fragment_shader_header + STRINGIFY(
 
-                                                           uniform samplerExternalOES src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+														   uniform samplerExternalOES src_tex_unit0; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                           IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+														   IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                           void main() {
-	                                                           FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
-                                                           });
+														   void main() {
+															   FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
+														   });
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderNoTexColor = fragment_shader_header + STRINGIFY(
 
-                                                          uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+														  uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                          IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+														  IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                          void main() {
-	                                                          FRAG_COLOR = colorVarying;
-                                                          });
+														  void main() {
+															  FRAG_COLOR = colorVarying;
+														  });
 
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderNoTexNoColor = fragment_shader_header + STRINGIFY(
 
-                                                            uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+															uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                                            IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
+															IN float depth; IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                                            void main() {
-	                                                            FRAG_COLOR = globalColor;
-                                                            });
+															void main() {
+																FRAG_COLOR = globalColor;
+															});
 
 // ----------------------------------------------------------------------
 
 static const string bitmapStringVertexShader = vertex_shader_header + STRINGIFY(
 
-                                                   uniform mat4 projectionMatrix; uniform mat4 modelViewMatrix; uniform mat4 textureMatrix; uniform mat4 modelViewProjectionMatrix;
+												   uniform mat4 projectionMatrix; uniform mat4 modelViewMatrix; uniform mat4 textureMatrix; uniform mat4 modelViewProjectionMatrix;
 
-                                                   IN vec4 position; IN vec4 color; IN vec2 texcoord;
+												   IN vec4 position; IN vec4 color; IN vec2 texcoord;
 
-                                                   OUT vec2 texCoordVarying;
+												   OUT vec2 texCoordVarying;
 
-                                                   void main() {
-	                                                   texCoordVarying = texcoord;
-	                                                   gl_Position = modelViewProjectionMatrix * position;
-                                                   });
+												   void main() {
+													   texCoordVarying = texcoord;
+													   gl_Position = modelViewProjectionMatrix * position;
+												   });
 
 // ----------------------------------------------------------------------
 
 static const string bitmapStringFragmentShader = fragment_shader_header + STRINGIFY(
 
-                                                     uniform sampler2D src_tex_unit0; uniform vec4 globalColor;
+													 uniform sampler2D src_tex_unit0; uniform vec4 globalColor;
 
-                                                     IN vec2 texCoordVarying;
+													 IN vec2 texCoordVarying;
 
-                                                     void main() {
-	                                                     vec4 tex = TEXTURE(src_tex_unit0, texCoordVarying);
-	                                                     // We will not write anything to the framebuffer if we have a transparent pixel
-	                                                     // This makes sure we don't mess up our depth buffer.
-	                                                     if (tex.a < 0.5)
-		                                                     discard;
-	                                                     FRAG_COLOR = globalColor * tex;
-                                                     });
+													 void main() {
+														 vec4 tex = TEXTURE(src_tex_unit0, texCoordVarying);
+														 // We will not write anything to the framebuffer if we have a transparent pixel
+														 // This makes sure we don't mess up our depth buffer.
+														 if (tex.a < 0.5)
+															 discard;
+														 FRAG_COLOR = globalColor * tex;
+													 });
 
 // ----------------------------------------------------------------------
 // changing shaders in raspberry pi is very expensive so we use only one shader there
@@ -2129,167 +2129,167 @@ static const string bitmapStringFragmentShader = fragment_shader_header + STRING
 
 static const string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 
-                                             uniform mat4 modelViewMatrix; uniform mat4 projectionMatrix; uniform mat4 textureMatrix; uniform mat4 modelViewProjectionMatrix; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
+											 uniform mat4 modelViewMatrix; uniform mat4 projectionMatrix; uniform mat4 textureMatrix; uniform mat4 modelViewProjectionMatrix; uniform float usingTexture; uniform float usingColors; uniform vec4 globalColor;
 
-                                             IN vec4 position; IN vec4 color; IN vec4 normal; IN vec2 texcoord;
+											 IN vec4 position; IN vec4 color; IN vec4 normal; IN vec2 texcoord;
 
-                                             OUT vec4 colorVarying; OUT vec2 texCoordVarying;
+											 OUT vec4 colorVarying; OUT vec2 texCoordVarying;
 
-                                             void main() {
-	                                             gl_Position = modelViewProjectionMatrix * position;
-	                                             if (usingTexture > .5)
-		                                             texCoordVarying = (textureMatrix * vec4(texcoord.x, texcoord.y, 0, 1)).xy;
-	                                             if (usingColors > .5)
-		                                             colorVarying = color;
-	                                             else
-		                                             colorVarying = globalColor;
-                                             });
+											 void main() {
+												 gl_Position = modelViewProjectionMatrix * position;
+												 if (usingTexture > .5)
+													 texCoordVarying = (textureMatrix * vec4(texcoord.x, texcoord.y, 0, 1)).xy;
+												 if (usingColors > .5)
+													 colorVarying = color;
+												 else
+													 colorVarying = globalColor;
+											 });
 
 // ----------------------------------------------------------------------
 static const string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
 
-                                               uniform sampler2D src_tex_unit0; uniform float usingTexture; uniform float bitmapText;
+											   uniform sampler2D src_tex_unit0; uniform float usingTexture; uniform float bitmapText;
 
-                                               IN vec4 colorVarying; IN vec2 texCoordVarying;
+											   IN vec4 colorVarying; IN vec2 texCoordVarying;
 
-                                               void main() {
-	                                               vec4 tex;
-	                                               if (usingTexture > .5) {
-		                                               tex = TEXTURE(src_tex_unit0, texCoordVarying);
-		                                               if (bitmapText > .5 && tex.a < 0.5) {
-			                                               discard;
-		                                               } else {
-			                                               FRAG_COLOR = colorVarying * tex;
-		                                               }
-	                                               } else {
-		                                               FRAG_COLOR = colorVarying;
-	                                               }
-                                               });
+											   void main() {
+												   vec4 tex;
+												   if (usingTexture > .5) {
+													   tex = TEXTURE(src_tex_unit0, texCoordVarying);
+													   if (bitmapText > .5 && tex.a < 0.5) {
+														   discard;
+													   } else {
+														   FRAG_COLOR = colorVarying * tex;
+													   }
+												   } else {
+													   FRAG_COLOR = colorVarying;
+												   }
+											   });
 
 // ----------------------------------------------------------------------
 // video color space conversion shaders
 static const string FRAGMENT_SHADER_YUY2 = STRINGIFY(
-    uniform SAMPLER src_tex_unit0;\n
-        uniform vec4 globalColor;\n
+	uniform SAMPLER src_tex_unit0;\n
+		uniform vec4 globalColor;\n
 
-            IN vec4 colorVarying;\n
-                IN vec2 texCoordVarying;\n
-                    uniform float onePixel;\n
-                        uniform float textureWidth;\n
+			IN vec4 colorVarying;\n
+				IN vec2 texCoordVarying;\n
+					uniform float onePixel;\n
+						uniform float textureWidth;\n
 
-    const vec3 offset
-    = vec3(-0.0625, -0.5, -0.5);\n const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n const vec3 gcoeff = vec3(1.164, -0.391, -0.813);\n const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
+	const vec3 offset
+	= vec3(-0.0625, -0.5, -0.5);\n const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n const vec3 gcoeff = vec3(1.164, -0.391, -0.813);\n const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
 
-    void main() {
-	    \n
-	        vec3 yuv;
-	    \n
-	        yuv.x
-	        = TEXTURE(src_tex_unit0, texCoordVarying).r;
-	    \n float x = texCoordVarying.x * textureWidth;
-	    \n if (mod(x, 2.0) > 0.5) {
-		    \n
-		        yuv.y
-		        = TEXTURE(src_tex_unit0, vec2(texCoordVarying.x - onePixel, texCoordVarying.y)).% g;
-		    \n
-		        yuv.z
-		        = TEXTURE(src_tex_unit0, texCoordVarying).% g;
-		    \n
-	    }
-	    else {
-		    \n
-		        yuv.y
-		        = TEXTURE(src_tex_unit0, texCoordVarying).% g;
-		    \n
-		        yuv.z
-		        = TEXTURE(src_tex_unit0, vec2(texCoordVarying.x + onePixel, texCoordVarying.y)).% g;
-		    \n
-	    }
-	    \n
-	        yuv
-	        += offset;
-	    \n float r = dot(yuv, rcoeff);
-	    \n float g = dot(yuv, gcoeff);
-	    \n float b = dot(yuv, bcoeff);
-	    \n
-	        FRAG_COLOR
-	        = vec4(r, g, b, 1.0) * globalColor;
-	    \n
-    }\n);
+	void main() {
+		\n
+			vec3 yuv;
+		\n
+			yuv.x
+			= TEXTURE(src_tex_unit0, texCoordVarying).r;
+		\n float x = texCoordVarying.x * textureWidth;
+		\n if (mod(x, 2.0) > 0.5) {
+			\n
+				yuv.y
+				= TEXTURE(src_tex_unit0, vec2(texCoordVarying.x - onePixel, texCoordVarying.y)).% g;
+			\n
+				yuv.z
+				= TEXTURE(src_tex_unit0, texCoordVarying).% g;
+			\n
+		}
+		else {
+			\n
+				yuv.y
+				= TEXTURE(src_tex_unit0, texCoordVarying).% g;
+			\n
+				yuv.z
+				= TEXTURE(src_tex_unit0, vec2(texCoordVarying.x + onePixel, texCoordVarying.y)).% g;
+			\n
+		}
+		\n
+			yuv
+			+= offset;
+		\n float r = dot(yuv, rcoeff);
+		\n float g = dot(yuv, gcoeff);
+		\n float b = dot(yuv, bcoeff);
+		\n
+			FRAG_COLOR
+			= vec4(r, g, b, 1.0) * globalColor;
+		\n
+	}\n);
 
 // ----------------------------------------------------------------------
 static const string FRAGMENT_SHADER_NV12_NV21 = STRINGIFY(
-    uniform SAMPLER Ytex;\n
-        uniform SAMPLER UVtex;\n
-            uniform vec4 globalColor;\n
-                uniform vec2 tex_scaleUV;\n
+	uniform SAMPLER Ytex;\n
+		uniform SAMPLER UVtex;\n
+			uniform vec4 globalColor;\n
+				uniform vec2 tex_scaleUV;\n
 
-                    IN vec4 colorVarying;\n
-                        IN vec2 texCoordVarying;\n
+					IN vec4 colorVarying;\n
+						IN vec2 texCoordVarying;\n
 
-    const vec3 offset
-    = vec3(-0.0625, -0.5, -0.5);\n const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n const vec3 gcoeff = vec3(1.164, -0.391, -0.813);\n const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
+	const vec3 offset
+	= vec3(-0.0625, -0.5, -0.5);\n const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n const vec3 gcoeff = vec3(1.164, -0.391, -0.813);\n const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
 
-    void main() {
-	    \n
-	        vec3 yuv;
-	    \n
-	        yuv.x
-	        = TEXTURE(Ytex, texCoordVarying).r;
-	    \n
-	        yuv.yz
-	        = TEXTURE(UVtex, texCoordVarying * tex_scaleUV).% r % g;
-	    \n
-	        yuv
-	        += offset;
-	    \n float r = dot(yuv, rcoeff);
-	    \n float g = dot(yuv, gcoeff);
-	    \n float b = dot(yuv, bcoeff);
-	    \n
-	        FRAG_COLOR
-	        = vec4(r, g, b, 1.0) * globalColor;
-	    \n
-    }\n);
+	void main() {
+		\n
+			vec3 yuv;
+		\n
+			yuv.x
+			= TEXTURE(Ytex, texCoordVarying).r;
+		\n
+			yuv.yz
+			= TEXTURE(UVtex, texCoordVarying * tex_scaleUV).% r % g;
+		\n
+			yuv
+			+= offset;
+		\n float r = dot(yuv, rcoeff);
+		\n float g = dot(yuv, gcoeff);
+		\n float b = dot(yuv, bcoeff);
+		\n
+			FRAG_COLOR
+			= vec4(r, g, b, 1.0) * globalColor;
+		\n
+	}\n);
 
 // ----------------------------------------------------------------------
 static const string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
-    uniform SAMPLER Ytex;\n
-        uniform SAMPLER Utex;\n
-            uniform SAMPLER Vtex;\n
-                uniform vec2 tex_scaleY;\n
-                    uniform vec2 tex_scaleU;\n
-                        uniform vec2 tex_scaleV;\n
-                            uniform vec4 globalColor;\n
+	uniform SAMPLER Ytex;\n
+		uniform SAMPLER Utex;\n
+			uniform SAMPLER Vtex;\n
+				uniform vec2 tex_scaleY;\n
+					uniform vec2 tex_scaleU;\n
+						uniform vec2 tex_scaleV;\n
+							uniform vec4 globalColor;\n
 
-                                IN vec4 colorVarying;\n
-                                    IN vec2 texCoordVarying;\n
+								IN vec4 colorVarying;\n
+									IN vec2 texCoordVarying;\n
 
-    const vec3 offset
-    = vec3(-0.0625, -0.5, -0.5);\n const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n const vec3 gcoeff = vec3(1.164, -0.391, -0.813);\n const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
+	const vec3 offset
+	= vec3(-0.0625, -0.5, -0.5);\n const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n const vec3 gcoeff = vec3(1.164, -0.391, -0.813);\n const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
 
-    void main() {
-	    \n
-	        vec3 yuv;
-	    \n
-	        yuv.x
-	        = TEXTURE(Ytex, texCoordVarying * tex_scaleY).r;
-	    \n
-	        yuv.y
-	        = TEXTURE(Utex, texCoordVarying * tex_scaleU).r;
-	    \n
-	        yuv.z
-	        = TEXTURE(Vtex, texCoordVarying * tex_scaleV).r;
-	    \n
-	        yuv
-	        += offset;
-	    \n float r = dot(yuv, rcoeff);
-	    \n float g = dot(yuv, gcoeff);
-	    \n float b = dot(yuv, bcoeff);
-	    \n
-	        FRAG_COLOR
-	        = vec4(r, g, b, 1.0) * globalColor;
-	    \n
-    }\n);
+	void main() {
+		\n
+			vec3 yuv;
+		\n
+			yuv.x
+			= TEXTURE(Ytex, texCoordVarying * tex_scaleY).r;
+		\n
+			yuv.y
+			= TEXTURE(Utex, texCoordVarying * tex_scaleU).r;
+		\n
+			yuv.z
+			= TEXTURE(Vtex, texCoordVarying * tex_scaleV).r;
+		\n
+			yuv
+			+= offset;
+		\n float r = dot(yuv, rcoeff);
+		\n float g = dot(yuv, gcoeff);
+		\n float b = dot(yuv, bcoeff);
+		\n
+			FRAG_COLOR
+			= vec4(r, g, b, 1.0) * globalColor;
+		\n
+	}\n);
 
 static string defaultShaderHeader(string header, GLenum textureTarget, int major, int minor) {
 	ofStringReplace(header, "%glsl_version%", ofGLSLVersionFromGL(major, minor));

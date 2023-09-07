@@ -489,7 +489,7 @@ void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles) {
 		if (texData.glInternalFormat == GL_R8 || texData.glInternalFormat == GL_R16 || texData.glInternalFormat == GL_R32F || texData.glInternalFormat == GL_DEPTH_COMPONENT
 
 	#ifndef TARGET_OPENGLES
-		    || texData.glInternalFormat == GL_DEPTH_COMPONENT16 || texData.glInternalFormat == GL_DEPTH_COMPONENT24 || texData.glInternalFormat == GL_DEPTH_COMPONENT32
+			|| texData.glInternalFormat == GL_DEPTH_COMPONENT16 || texData.glInternalFormat == GL_DEPTH_COMPONENT24 || texData.glInternalFormat == GL_DEPTH_COMPONENT32
 
 	#endif
 		) {
@@ -731,8 +731,8 @@ void ofTexture::generateMipmap() {
 
 		if (!warningIssuedAlready) {
 			ofLogWarning() << "Mipmaps are not supported for textureTarget 0x" << std::hex << texData.textureTarget << std::endl
-			               << "Most probably you are trying to create mipmaps from a GL_TEXTURE_RECTANGLE texture." << std::endl
-			               << "Try ofDisableArbTex() before loading this texture.";
+						   << "Most probably you are trying to create mipmaps from a GL_TEXTURE_RECTANGLE texture." << std::endl
+						   << "Try ofDisableArbTex() before loading this texture.";
 			warningIssuedAlready = true;
 		}
 		texData.hasMipmap = false;
@@ -752,7 +752,7 @@ void ofTexture::loadScreenData(int x, int y, int w, int h) {
 
 	if (w > texData.tex_w || h > texData.tex_h) {
 		ofLogError("ofTexture") << "loadScreenData(): " << w << "x" << h << " image data too big for "
-		                        << texData.tex_w << "x " << texData.tex_h << " allocated texture, not uploading";
+								<< texData.tex_w << "x " << texData.tex_h << " allocated texture, not uploading";
 		return;
 	}
 
@@ -950,8 +950,8 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter) {
 		static bool hasWarnedNoMipmapsForMinFilter = false;
 		if (!hasWarnedNoMipmapsForMinFilter) {
 			ofLogWarning() << "Texture has no mipmaps - but minFilter 0x" << std::hex << minFilter << " requires mipmaps."
-			               << std::endl
-			               << "Call ofTexture::generateMipmaps() first.";
+						   << std::endl
+						   << "Call ofTexture::generateMipmaps() first.";
 		}
 		hasWarnedNoMipmapsForMinFilter = true;
 		return;

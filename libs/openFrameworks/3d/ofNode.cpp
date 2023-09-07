@@ -4,9 +4,9 @@
 
 //----------------------------------------
 ofNode::ofNode()
-    : parent(nullptr)
-    , localTransformMatrix(1)
-    , legacyCustomDrawOverrided(true) {
+	: parent(nullptr)
+	, localTransformMatrix(1)
+	, legacyCustomDrawOverrided(true) {
 	setPosition({ 0.f, 0.f, 0.f });
 	setOrientation({ 0.f, 0.f, 0.f });
 	setScale(1.f);
@@ -32,10 +32,10 @@ ofNode::~ofNode() {
 
 //----------------------------------------
 ofNode::ofNode(const ofNode& node)
-    : parent(node.parent)
-    , axis(node.axis)
-    , localTransformMatrix(node.localTransformMatrix)
-    , legacyCustomDrawOverrided(true) {
+	: parent(node.parent)
+	, axis(node.axis)
+	, localTransformMatrix(node.localTransformMatrix)
+	, legacyCustomDrawOverrided(true) {
 	if (parent) {
 		parent->addListener(*this);
 	}
@@ -49,14 +49,14 @@ ofNode::ofNode(const ofNode& node)
 
 //----------------------------------------
 ofNode::ofNode(ofNode&& node)
-    : parent(node.parent)
-    , position(std::move(node.position))
-    , orientation(std::move(node.orientation))
-    , scale(std::move(node.scale))
-    , axis(std::move(node.axis))
-    , localTransformMatrix(std::move(node.localTransformMatrix))
-    , legacyCustomDrawOverrided(std::move(node.legacyCustomDrawOverrided))
-    , children(std::move(node.children)) {
+	: parent(node.parent)
+	, position(std::move(node.position))
+	, orientation(std::move(node.orientation))
+	, scale(std::move(node.scale))
+	, axis(std::move(node.axis))
+	, localTransformMatrix(std::move(node.localTransformMatrix))
+	, legacyCustomDrawOverrided(std::move(node.legacyCustomDrawOverrided))
+	, children(std::move(node.children)) {
 	if (parent) {
 		parent->addListener(*this);
 	}
@@ -596,7 +596,7 @@ void ofNode::orbitDeg(float longitude, float latitude, float radius, ofNode& cen
 //----------------------------------------
 void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
 	glm::quat q = glm::angleAxis(ofDegToRad(longitude), glm::vec3(0, 1, 0))
-	    * glm::angleAxis(ofDegToRad(latitude), glm::vec3(1, 0, 0));
+		* glm::angleAxis(ofDegToRad(latitude), glm::vec3(1, 0, 0));
 
 	glm::vec4 p { 0.f, 0.f, 1.f, 0.f }; // p is a direction, not a position, so .w == 0
 
@@ -618,7 +618,7 @@ void ofNode::orbitRad(float longitude, float latitude, float radius, ofNode& cen
 //----------------------------------------
 void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
 	glm::quat q = glm::angleAxis(longitude, glm::vec3(0, 1, 0))
-	    * glm::angleAxis(latitude, glm::vec3(1, 0, 0));
+		* glm::angleAxis(latitude, glm::vec3(1, 0, 0));
 
 	glm::vec4 p { 0.f, 0.f, 1.f, 0.f }; // p is a direction, not a position, so .w == 0
 

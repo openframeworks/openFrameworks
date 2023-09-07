@@ -74,18 +74,18 @@ void initfileutils() {
 
 //--------------------------------------------------
 ofBuffer::ofBuffer()
-    : currentLine(end(), end()) {
+	: currentLine(end(), end()) {
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const char* buffer, std::size_t size)
-    : buffer(buffer, buffer + size)
-    , currentLine(end(), end()) {
+	: buffer(buffer, buffer + size)
+	, currentLine(end(), end()) {
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(istream& stream, std::size_t ioBlockSize)
-    : currentLine(end(), end()) {
+	: currentLine(end(), end()) {
 	set(stream, ioBlockSize);
 }
 
@@ -272,9 +272,9 @@ vector<char>::const_reverse_iterator ofBuffer::rend() const {
 
 //--------------------------------------------------
 ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
-    : _current(_begin)
-    , _begin(_begin)
-    , _end(_end) {
+	: _current(_begin)
+	, _begin(_begin)
+	, _end(_end) {
 
 	if (_begin == _end) {
 		line = "";
@@ -336,9 +336,9 @@ bool ofBuffer::Line::empty() const {
 
 //--------------------------------------------------
 ofBuffer::RLine::RLine(vector<char>::reverse_iterator _rbegin, vector<char>::reverse_iterator _rend)
-    : _current(_rbegin)
-    , _rbegin(_rbegin)
-    , _rend(_rend) {
+	: _current(_rbegin)
+	, _rbegin(_rbegin)
+	, _rend(_rend) {
 
 	if (_rbegin == _rend) {
 		line = "";
@@ -395,8 +395,8 @@ bool ofBuffer::RLine::empty() const {
 
 //--------------------------------------------------
 ofBuffer::Lines::Lines(vector<char>::iterator begin, vector<char>::iterator end)
-    : _begin(begin)
-    , _end(end) { }
+	: _begin(begin)
+	, _end(end) { }
 
 //--------------------------------------------------
 ofBuffer::Line ofBuffer::Lines::begin() {
@@ -410,8 +410,8 @@ ofBuffer::Line ofBuffer::Lines::end() {
 
 //--------------------------------------------------
 ofBuffer::RLines::RLines(vector<char>::reverse_iterator rbegin, vector<char>::reverse_iterator rend)
-    : _rbegin(rbegin)
-    , _rend(rend) { }
+	: _rbegin(rbegin)
+	, _rend(rend) { }
 
 //--------------------------------------------------
 ofBuffer::RLine ofBuffer::RLines::begin() {
@@ -465,13 +465,13 @@ bool ofBufferToFile(const of::filesystem::path& path, const ofBuffer& buffer, bo
 
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile()
-    : mode(Reference)
-    , binary(true) {
+	: mode(Reference)
+	, binary(true) {
 }
 
 ofFile::ofFile(const of::filesystem::path& path, Mode mode, bool binary)
-    : mode(mode)
-    , binary(true) {
+	: mode(mode)
+	, binary(true) {
 	open(path, mode, binary);
 }
 
@@ -482,10 +482,10 @@ ofFile::~ofFile() {
 
 //-------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(const ofFile& mom)
-    : basic_ios()
-    , fstream()
-    , mode(Reference)
-    , binary(true) {
+	: basic_ios()
+	, fstream()
+	, mode(Reference)
+	, binary(true) {
 	copyFrom(mom);
 }
 
@@ -827,12 +827,12 @@ void ofFile::setWriteable(bool flag) {
 #else
 		if (flag) {
 			of::filesystem::permissions(myFile,
-			    of::filesystem::perms::owner_write,
-			    of::filesystem::perm_options::add);
+				of::filesystem::perms::owner_write,
+				of::filesystem::perm_options::add);
 		} else {
 			of::filesystem::permissions(myFile,
-			    of::filesystem::perms::owner_write,
-			    of::filesystem::perm_options::remove);
+				of::filesystem::perms::owner_write,
+				of::filesystem::perm_options::remove);
 		}
 #endif
 	} catch (std::exception& e) {
@@ -858,12 +858,12 @@ void ofFile::setReadable(bool flag) {
 #else
 		if (flag) {
 			of::filesystem::permissions(myFile,
-			    of::filesystem::perms::owner_read,
-			    of::filesystem::perm_options::add);
+				of::filesystem::perms::owner_read,
+				of::filesystem::perm_options::add);
 		} else {
 			of::filesystem::permissions(myFile,
-			    of::filesystem::perms::owner_read,
-			    of::filesystem::perm_options::remove);
+				of::filesystem::perms::owner_read,
+				of::filesystem::perm_options::remove);
 		}
 #endif
 	} catch (std::exception& e) {
@@ -884,12 +884,12 @@ void ofFile::setExecutable(bool flag) {
 	#else
 		if (flag) {
 			of::filesystem::permissions(myFile,
-			    of::filesystem::perms::owner_exec,
-			    of::filesystem::perm_options::add);
+				of::filesystem::perms::owner_exec,
+				of::filesystem::perm_options::add);
 		} else {
 			of::filesystem::permissions(myFile,
-			    of::filesystem::perms::owner_exec,
-			    of::filesystem::perm_options::remove);
+				of::filesystem::perms::owner_exec,
+				of::filesystem::perm_options::remove);
 		}
 	#endif
 #else

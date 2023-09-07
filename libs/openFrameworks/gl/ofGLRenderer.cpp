@@ -22,8 +22,8 @@ const std::string ofGLRenderer::TYPE = "GL";
 
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow* _window)
-    : matrixStack(_window)
-    , graphics3d(this) {
+	: matrixStack(_window)
+	, graphics3d(this) {
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
@@ -501,7 +501,7 @@ void ofGLRenderer::end(const ofFbo& fbo) {
 void ofGLRenderer::bind(const ofFbo& fbo) {
 	if (currentFramebufferId == fbo.getId()) {
 		ofLogWarning() << "Framebuffer with id: " << fbo.getId() << " cannot be bound onto itself. \n"
-		               << "Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
+					   << "Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
 		return;
 	}
 	// this method could just as well have been placed in ofBaseGLRenderer
@@ -519,7 +519,7 @@ void ofGLRenderer::bind(const ofFbo& fbo) {
 void ofGLRenderer::bindForBlitting(const ofFbo& fboSrc, ofFbo& fboDst, int attachmentPoint) {
 	if (currentFramebufferId == fboSrc.getId()) {
 		ofLogWarning() << "Framebuffer with id: " << fboSrc.getId() << " cannot be bound onto itself. \n"
-		               << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
+					   << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
 	// this method could just as well have been placed in ofBaseGLRenderer
@@ -1364,9 +1364,9 @@ void ofGLRenderer::setStyle(const ofStyle& style) {
 
 	// smoothing
 	/*if(style.smoothing ){
-	    enableSmoothing();
+		enableSmoothing();
 	}else{
-	    disableSmoothing();
+		disableSmoothing();
 	}*/
 
 	// blending

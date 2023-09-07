@@ -23,7 +23,7 @@ public:
 	bool setup(int w, int h) { return setup(w, h, bUseTexture); }
 	bool setup(int w, int h, bool bTexture);
 	OF_DEPRECATED_MSG(
-	    "Use setup instead", bool initGrabber(int w, int h) { return setup(w, h); })
+		"Use setup instead", bool initGrabber(int w, int h) { return setup(w, h); })
 	OF_DEPRECATED_MSG("Use setup instead", bool initGrabber(int w, int h, bool bTexture));
 
 	bool setPixelFormat(ofPixelFormat pixelFormat);

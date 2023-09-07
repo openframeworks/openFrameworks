@@ -14,7 +14,7 @@
 	#include <mutex>
 	#include <queue>
 
-    // #define OF_USE_GST_GL
+	// #define OF_USE_GST_GL
 	#ifdef OF_USE_GST_GL
 		#define GST_USE_UNSTABLE_API
 		#include <gst/gl/gl.h>
@@ -115,7 +115,7 @@ private:
 	class ofGstMainLoopThread : public ofThread {
 	public:
 		ofGstMainLoopThread()
-		    : main_loop(nullptr) {
+			: main_loop(nullptr) {
 		}
 
 		virtual ~ofGstMainLoopThread() {};

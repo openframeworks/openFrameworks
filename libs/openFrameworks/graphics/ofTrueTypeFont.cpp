@@ -204,14 +204,14 @@ static ofPath makeContoursForCharacter(FT_Face face) {
 		ofPath* charOutlines = static_cast<ofPath*>(userData);
 		auto lastP = charOutlines->getCommands().back().to;
 		charOutlines->quadBezierTo(lastP, { ofTrueTypeFont::int26p6_to_dbl(cp->x), ofTrueTypeFont::int26p6_to_dbl(-cp->y) },
-		    { ofTrueTypeFont::int26p6_to_dbl(to->x), ofTrueTypeFont::int26p6_to_dbl(-to->y) });
+			{ ofTrueTypeFont::int26p6_to_dbl(to->x), ofTrueTypeFont::int26p6_to_dbl(-to->y) });
 		return 0;
 	};
 	auto cubicTo = [](const FT_Vector* cp1, const FT_Vector* cp2, const FT_Vector* to, void* userData) {
 		ofPath* charOutlines = static_cast<ofPath*>(userData);
 		charOutlines->bezierTo({ ofTrueTypeFont::int26p6_to_dbl(cp1->x), ofTrueTypeFont::int26p6_to_dbl(-cp1->y) },
-		    { ofTrueTypeFont::int26p6_to_dbl(cp2->x), ofTrueTypeFont::int26p6_to_dbl(-cp2->y) },
-		    { ofTrueTypeFont::int26p6_to_dbl(to->x), ofTrueTypeFont::int26p6_to_dbl(-to->y) });
+			{ ofTrueTypeFont::int26p6_to_dbl(cp2->x), ofTrueTypeFont::int26p6_to_dbl(-cp2->y) },
+			{ ofTrueTypeFont::int26p6_to_dbl(to->x), ofTrueTypeFont::int26p6_to_dbl(-to->y) });
 		return 0;
 	};
 	FT_Outline_Funcs funcs {
@@ -455,7 +455,7 @@ bool ofTrueTypeFont::initLibraries() {
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont()
-    : settings("", 0) {
+	: settings("", 0) {
 	bLoadedOk = false;
 	letterSpacing = 1;
 	spaceSize = 1;
@@ -476,7 +476,7 @@ ofTrueTypeFont::~ofTrueTypeFont() {
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
-    : settings(mom.settings) {
+	: settings(mom.settings) {
 #if defined(TARGET_ANDROID)
 	if (mom.isLoaded()) {
 		ofAddListener(ofxAndroidEvents().unloadGL, this, &ofTrueTypeFont::unloadTextures);
@@ -542,7 +542,7 @@ ofTrueTypeFont& ofTrueTypeFont::operator=(const ofTrueTypeFont& mom) {
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
-    : settings(std::move(mom.settings)) {
+	: settings(std::move(mom.settings)) {
 #if defined(TARGET_ANDROID)
 	if (mom.isLoaded()) {
 		ofAddListener(ofxAndroidEvents().unloadGL, this, &ofTrueTypeFont::unloadTextures);
@@ -742,15 +742,15 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings& _settings) {
 	ascenderHeight = face->ascender * fontUnitScale;
 	descenderHeight = face->descender * fontUnitScale;
 	glyphBBox.set(face->bbox.xMin * fontUnitScale,
-	    face->bbox.yMin * fontUnitScale,
-	    (face->bbox.xMax - face->bbox.xMin) * fontUnitScale,
-	    (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
+		face->bbox.yMin * fontUnitScale,
+		(face->bbox.xMax - face->bbox.xMin) * fontUnitScale,
+		(face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
 
 	//--------------- initialize character info and textures
 	auto nGlyphs = std::accumulate(settings.ranges.begin(), settings.ranges.end(), 0u,
-	    [](uint32_t acc, ofUnicode::range range) {
-		    return acc + range.getNumGlyphs();
-	    });
+		[](uint32_t acc, ofUnicode::range range) {
+			return acc + range.getNumGlyphs();
+		});
 	cps.resize(nGlyphs);
 	if (settings.contours) {
 		charOutlines.resize(nGlyphs);
@@ -1115,9 +1115,9 @@ vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string& str, bool vflip, 
 bool ofTrueTypeFont::isValidGlyph(uint32_t glyph) const {
 	// return glyphIndexMap.find(glyph) != glyphIndexMap.end();
 	return std::any_of(settings.ranges.begin(), settings.ranges.end(),
-	    [&](ofUnicode::range range) {
-		    return glyph >= range.begin && glyph <= range.end;
-	    });
+		[&](ofUnicode::range range) {
+			return glyph >= range.begin && glyph <= range.end;
+		});
 }
 
 size_t ofTrueTypeFont::indexForGlyph(uint32_t glyph) const {

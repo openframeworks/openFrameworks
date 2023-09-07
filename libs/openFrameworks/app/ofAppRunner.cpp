@@ -139,13 +139,13 @@ void ofInit() {
 
 #ifdef WIN32_HIGH_RES_TIMING
 	timeBeginPeriod(1); // ! experimental, sets high res time
-	                    // you need to call timeEndPeriod.
-	                    // if you quit the app other than "esc"
-	                    // (ie, close the console, kill the process, etc)
-	                    // at exit wont get called, and the time will
-	                    // remain high res, that could mess things
-	                    // up on your system.
-	                    // info here:http://www.geisswerks.com/ryan/FAQS/timing.html
+						// you need to call timeEndPeriod.
+						// if you quit the app other than "esc"
+						// (ie, close the console, kill the process, etc)
+						// at exit wont get called, and the time will
+						// remain high res, that could mess things
+						// up on your system.
+						// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 #endif
 
 #ifdef TARGET_LINUX
@@ -155,9 +155,9 @@ void ofInit() {
 		} catch (...) {
 			if (ofToLower(std::locale("").name()).find("utf-8") == std::string::npos) {
 				ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
-				                          "won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
-				                          "manually using std::locale::global(std::locale(\"locale\"))\n"
-				                          "available locales can be queried with 'locale -a' in a terminal.";
+										  "won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
+										  "manually using std::locale::global(std::locale(\"locale\"))\n"
+										  "available locales can be queried with 'locale -a' in a terminal.";
 			}
 		}
 	}

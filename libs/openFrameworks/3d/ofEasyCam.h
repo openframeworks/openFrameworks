@@ -272,13 +272,13 @@ private:
 	/// \brief This struct holds the combination of mouse button and key press that will trigger a specific interaction.
 	struct interaction {
 		interaction()
-		    : mouseButton(0)
-		    , key(-1)
-		    , transformType(TRANSFORM_NONE) { }
+			: mouseButton(0)
+			, key(-1)
+			, transformType(TRANSFORM_NONE) { }
 		interaction(TransformType type, int _mouseButton, int _key = -1)
-		    : mouseButton(_mouseButton)
-		    , key(_key)
-		    , transformType(type) { }
+			: mouseButton(_mouseButton)
+			, key(_key)
+			, transformType(type) { }
 		int mouseButton;
 		int key;
 		TransformType transformType;

@@ -19,9 +19,9 @@ _cairo_status ofCairoRenderer::stream_function(void* closure, const unsigned cha
 }
 
 ofCairoRenderer::ofCairoRenderer()
-    : graphics3d(this)
-    , projection(1)
-    , modelView(1) {
+	: graphics3d(this)
+	, projection(1)
+	, modelView(1) {
 	type = PDF;
 	surface = nullptr;
 	cr = nullptr;
@@ -301,13 +301,13 @@ void ofCairoRenderer::draw(const vector<glm::vec3>& vertexData, ofPrimitiveMode 
 			break;
 		case (OF_PRIMITIVE_TRIANGLE_FAN):
 			/*triangles.addIndex((GLuint)0);
-			    triangles.addIndex((GLuint)1);
-			    triangles.addIndex((GLuint)2);
-			    for(int i = 2; i < primitive.getNumVertices()-1;i++){
-			        triangles.addIndex((GLuint)0);
-			        triangles.addIndex((GLuint)i);
-			        triangles.addIndex((GLuint)i+1);
-			    }*/
+				triangles.addIndex((GLuint)1);
+				triangles.addIndex((GLuint)2);
+				for(int i = 2; i < primitive.getNumVertices()-1;i++){
+					triangles.addIndex((GLuint)0);
+					triangles.addIndex((GLuint)i);
+					triangles.addIndex((GLuint)i+1);
+				}*/
 			break;
 		default:
 			break;
@@ -384,13 +384,13 @@ void ofCairoRenderer::draw(const ofMesh& primitive, ofPolyRenderMode mode, bool 
 			break;
 		case (OF_PRIMITIVE_TRIANGLE_FAN):
 			/*triangles.addIndex((GLuint)0);
-			    triangles.addIndex((GLuint)1);
-			    triangles.addIndex((GLuint)2);
-			    for(int i = 2; i < primitive.getNumVertices()-1;i++){
-			        triangles.addIndex((GLuint)0);
-			        triangles.addIndex((GLuint)i);
-			        triangles.addIndex((GLuint)i+1);
-			    }*/
+				triangles.addIndex((GLuint)1);
+				triangles.addIndex((GLuint)2);
+				for(int i = 2; i < primitive.getNumVertices()-1;i++){
+					triangles.addIndex((GLuint)0);
+					triangles.addIndex((GLuint)i);
+					triangles.addIndex((GLuint)i+1);
+				}*/
 			break;
 		default:
 			break;
@@ -582,7 +582,7 @@ void ofCairoRenderer::draw(const ofPixels& raw, float x, float y, float z, float
 	case OF_IMAGE_UNDEFINED:
 	default:
 		ofLogError("ofCairoRenderer") << "draw(): trying to draw undefined image type "
-		                              << ofToString(pix.getImageType());
+									  << ofToString(pix.getImageType());
 		mut_this->popMatrix();
 		return;
 		break;

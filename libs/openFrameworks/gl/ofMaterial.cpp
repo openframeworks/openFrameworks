@@ -899,9 +899,9 @@ void ofMaterial::updateMaterial(const ofShader& shader, ofGLProgrammableRenderer
 	}
 	for (auto& uniform : uniformstex) {
 		shader.setUniformTexture(uniform.first,
-		    uniform.second.textureTarget,
-		    uniform.second.textureID,
-		    uniform.second.textureLocation);
+			uniform.second.textureTarget,
+			uniform.second.textureID,
+			uniform.second.textureLocation);
 	}
 }
 

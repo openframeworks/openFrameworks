@@ -143,14 +143,14 @@ void ofDirectShowGrabber::update() {
 			bIsFrameNew = true;
 
 			/*
-			    rescale --
-			    currently this is nearest neighbor scaling
-			    not the greatest, but fast
-			    this can be optimized too
-			    with pointers, etc
+				rescale --
+				currently this is nearest neighbor scaling
+				not the greatest, but fast
+				this can be optimized too
+				with pointers, etc
 
-			    better --
-			    make sure that you ask for a "good" size....
+				better --
+				make sure that you ask for a "good" size....
 
 			*/
 

@@ -94,7 +94,7 @@ ofLight::Data::~Data() {
 
 //----------------------------------------
 ofLight::ofLight()
-    : data(new Data) {
+	: data(new Data) {
 	setAmbientColor(ofColor(0, 0, 0));
 	setDiffuseColor(ofColor(255, 255, 255));
 	setSpecularColor(ofColor(255, 255, 255));

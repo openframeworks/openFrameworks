@@ -68,11 +68,11 @@ const ofParameterGroup& ofAbstractParameter::castGroup() const {
 }
 
 ofParameter<void>::ofParameter()
-    : obj(new Value) {
+	: obj(new Value) {
 }
 
 ofParameter<void>::ofParameter(const string& name)
-    : obj(new Value(name)) {
+	: obj(new Value(name)) {
 }
 
 void ofParameter<void>::setName(const string& name) {
@@ -105,9 +105,9 @@ void ofParameter<void>::trigger() {
 	if (!obj->parents.empty()) {
 		// Erase each invalid parent
 		obj->parents.erase(std::remove_if(obj->parents.begin(),
-		                       obj->parents.end(),
-		                       [](const std::weak_ptr<ofParameterGroup::Value>& p) { return p.expired(); }),
-		    obj->parents.end());
+							   obj->parents.end(),
+							   [](const std::weak_ptr<ofParameterGroup::Value>& p) { return p.expired(); }),
+			obj->parents.end());
 
 		// notify all leftover (valid) parents of this object's changed value.
 		// this can't happen in the same iterator as above, because a notified listener
@@ -128,9 +128,9 @@ void ofParameter<void>::trigger(const void* sender) {
 	if (!obj->parents.empty()) {
 		// Erase each invalid parent
 		obj->parents.erase(std::remove_if(obj->parents.begin(),
-		                       obj->parents.end(),
-		                       [](const std::weak_ptr<ofParameterGroup::Value>& p) { return p.expired(); }),
-		    obj->parents.end());
+							   obj->parents.end(),
+							   [](const std::weak_ptr<ofParameterGroup::Value>& p) { return p.expired(); }),
+			obj->parents.end());
 
 		// notify all leftover (valid) parents of this object's changed value.
 		// this can't happen in the same iterator as above, because a notified listener

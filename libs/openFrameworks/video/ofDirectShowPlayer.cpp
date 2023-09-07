@@ -32,49 +32,49 @@ MIDL_INTERFACE("0579154A-2B53-4994-B0D0-E773148EFF85")
 ISampleGrabberCB : public IUnknown {
 public:
 	virtual HRESULT STDMETHODCALLTYPE SampleCB(
-	    double SampleTime,
-	    IMediaSample* pSample)
-	    = 0;
+		double SampleTime,
+		IMediaSample* pSample)
+		= 0;
 
 	virtual HRESULT STDMETHODCALLTYPE BufferCB(
-	    double SampleTime,
-	    BYTE* pBuffer,
-	    long BufferLen)
-	    = 0;
+		double SampleTime,
+		BYTE* pBuffer,
+		long BufferLen)
+		= 0;
 };
 
 MIDL_INTERFACE("6B652FFF-11FE-4fce-92AD-0266B5D7C78F")
 ISampleGrabber : public IUnknown {
 public:
 	virtual HRESULT STDMETHODCALLTYPE SetOneShot(
-	    BOOL OneShot)
-	    = 0;
+		BOOL OneShot)
+		= 0;
 
 	virtual HRESULT STDMETHODCALLTYPE SetMediaType(
-	    const AM_MEDIA_TYPE* pType)
-	    = 0;
+		const AM_MEDIA_TYPE* pType)
+		= 0;
 
 	virtual HRESULT STDMETHODCALLTYPE GetConnectedMediaType(
-	    AM_MEDIA_TYPE * pType)
-	    = 0;
+		AM_MEDIA_TYPE * pType)
+		= 0;
 
 	virtual HRESULT STDMETHODCALLTYPE SetBufferSamples(
-	    BOOL BufferThem)
-	    = 0;
+		BOOL BufferThem)
+		= 0;
 
 	virtual HRESULT STDMETHODCALLTYPE GetCurrentBuffer(
-	    /* [out][in] */ long* pBufferSize,
-	    /* [out] */ long* pBuffer)
-	    = 0;
+		/* [out][in] */ long* pBufferSize,
+		/* [out] */ long* pBuffer)
+		= 0;
 
 	virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(
-	    /* [retval][out] */ IMediaSample * *ppSample)
-	    = 0;
+		/* [retval][out] */ IMediaSample * *ppSample)
+		= 0;
 
 	virtual HRESULT STDMETHODCALLTYPE SetCallback(
-	    ISampleGrabberCB * pCallback,
-	    long WhichMethodToCallback)
-	    = 0;
+		ISampleGrabberCB * pCallback,
+		long WhichMethodToCallback)
+		= 0;
 };
 EXTERN_C const CLSID CLSID_SampleGrabber;
 EXTERN_C const IID IID_ISampleGrabber;
@@ -83,9 +83,9 @@ EXTERN_C const CLSID CLSID_NullRenderer;
 // GetUnconnectedPin
 //    Finds an unconnected pin on a filter in the desired direction
 HRESULT GetUnconnectedPin(
-    IBaseFilter* pFilter, // Pointer to the filter.
-    PIN_DIRECTION PinDir, // Direction of the pin to find.
-    IPin** ppPin) // Receives a pointer to the pin.
+	IBaseFilter* pFilter, // Pointer to the filter.
+	PIN_DIRECTION PinDir, // Direction of the pin to find.
+	IPin** ppPin) // Receives a pointer to the pin.
 {
 	*ppPin = 0;
 	IEnumPins* pEnum = 0;
@@ -139,9 +139,9 @@ HRESULT DisconnectPins(IBaseFilter* pFilter) {
 // ConnectFilters
 //    Connects a pin of an upstream filter to the pDest downstream filter
 HRESULT ConnectFilters(
-    IGraphBuilder* pGraph, // Filter Graph Manager.
-    IPin* pOut, // Output pin on the upstream filter.
-    IBaseFilter* pDest) // Downstream filter.
+	IGraphBuilder* pGraph, // Filter Graph Manager.
+	IPin* pOut, // Output pin on the upstream filter.
+	IBaseFilter* pDest) // Downstream filter.
 {
 	if ((pGraph == NULL) || (pOut == NULL) || (pDest == NULL)) {
 		return E_POINTER;
@@ -167,9 +167,9 @@ HRESULT ConnectFilters(
 // ConnectFilters
 //    Connects two filters
 HRESULT ConnectFilters(
-    IGraphBuilder* pGraph,
-    IBaseFilter* pSrc,
-    IBaseFilter* pDest) {
+	IGraphBuilder* pGraph,
+	IBaseFilter* pSrc,
+	IBaseFilter* pDest) {
 	if ((pGraph == NULL) || (pSrc == NULL) || (pDest == NULL)) {
 		return E_POINTER;
 	}
@@ -216,18 +216,18 @@ HRESULT SaveGraphFile(IGraphBuilder* pGraph, WCHAR* wszPath) {
 
 	IStorage* pStorage = NULL;
 	hr = StgCreateDocfile(
-	    wszPath,
-	    STGM_CREATE | STGM_TRANSACTED | STGM_READWRITE | STGM_SHARE_EXCLUSIVE,
-	    0, &pStorage);
+		wszPath,
+		STGM_CREATE | STGM_TRANSACTED | STGM_READWRITE | STGM_SHARE_EXCLUSIVE,
+		0, &pStorage);
 	if (FAILED(hr)) {
 		return hr;
 	}
 
 	IStream* pStream;
 	hr = pStorage->CreateStream(
-	    wszStreamName,
-	    STGM_WRITE | STGM_CREATE | STGM_SHARE_EXCLUSIVE,
-	    0, 0, &pStream);
+		wszStreamName,
+		STGM_WRITE | STGM_CREATE | STGM_SHARE_EXCLUSIVE,
+		0, 0, &pStream);
 	if (FAILED(hr)) {
 		pStorage->Release();
 		return hr;
@@ -523,9 +523,9 @@ public:
 		// this is the more manual way to do it - its a pain though because the audio won't be connected by default
 		/*hr = m_pGraph->AddSourceFilter(filePathW.c_str(), L"Source", &m_pSourceFile);
 		if (FAILED(hr)){
-		    printf("unable to AddSourceFilter\n");
-		    tearDown();
-		    return false;
+			printf("unable to AddSourceFilter\n");
+			tearDown();
+			return false;
 		}*/
 		// hr = ConnectFilters(m_pGraph, m_pSourceFile, m_pGrabberF);
 		// if (FAILED(hr)){
@@ -1107,12 +1107,12 @@ protected:
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ofDirectShowPlayer::ofDirectShowPlayer()
-    : pixelFormat(OF_PIXELS_RGB) {
+	: pixelFormat(OF_PIXELS_RGB) {
 }
 
 ofDirectShowPlayer::ofDirectShowPlayer(ofDirectShowPlayer&& other)
-    : player(std::move(other.player))
-    , pixelFormat(std::move(other.pixelFormat)) {
+	: player(std::move(other.player))
+	, pixelFormat(std::move(other.pixelFormat)) {
 }
 
 ofDirectShowPlayer& ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {

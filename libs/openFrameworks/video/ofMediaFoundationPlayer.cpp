@@ -58,16 +58,16 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 	mBUseDX = true;
 
 	hr = D3D11CreateDevice(
-	    nullptr,
-	    D3D_DRIVER_TYPE_HARDWARE,
-	    nullptr,
-	    D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-	    levels,
-	    ARRAYSIZE(levels),
-	    D3D11_SDK_VERSION,
-	    &m_spDX11Device,
-	    &FeatureLevel,
-	    &m_spDX11DeviceContext);
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		nullptr,
+		D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+		levels,
+		ARRAYSIZE(levels),
+		D3D11_SDK_VERSION,
+		&m_spDX11Device,
+		&FeatureLevel,
+		&m_spDX11DeviceContext);
 
 	if (FAILED(hr)) {
 		ofLogError("ofMEDXDeviceManager::CreateDX11Device()") << " unable to use hw accel.";
@@ -262,11 +262,11 @@ bool SharedDXGLTexture::create(DXGI_FORMAT aDxFormat) {
 
 	if (SUCCEEDED(dxMan->getD11Device()->CreateTexture2D(&desc, nullptr, mDXTex.GetAddressOf()))) {
 		mGLDX_Handle = wglDXRegisterObjectNV(
-		    dxMan->getGLHandleD3D(),
-		    mDXTex.Get(),
-		    mOfTex->getTextureData().textureID,
-		    GL_TEXTURE_2D,
-		    WGL_ACCESS_READ_ONLY_NV);
+			dxMan->getGLHandleD3D(),
+			mDXTex.Get(),
+			mOfTex->getTextureData().textureID,
+			GL_TEXTURE_2D,
+			WGL_ACCESS_READ_ONLY_NV);
 
 		D3D11_TEXTURE2D_DESC desc2;
 		desc2.Width = desc.Width;
@@ -301,9 +301,9 @@ bool SharedDXGLTexture::transferFrame(IMFMediaEngine* aengine) {
 	}
 	RECT targetRect { 0, 0, mWidth, mHeight };
 	if ((aengine->TransferVideoFrame(
-	        getDXTexture(),
-	        &mNormalizedVidRect, &targetRect, &bgColor))
-	    == S_OK) {
+			getDXTexture(),
+			&mNormalizedVidRect, &targetRect, &bgColor))
+		== S_OK) {
 		return true;
 	}
 	return false;
@@ -368,11 +368,11 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixel
 
 	// now, map the staging resource
 	hr = immediateContext->Map(
-	    stagingTexture.Get(),
-	    0,
-	    D3D11_MAP_READ,
-	    0,
-	    &mapInfo);
+		stagingTexture.Get(),
+		0,
+		D3D11_MAP_READ,
+		0,
+		&mapInfo);
 	if (hr != S_OK) {
 		ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << " Failed to map staging texture.";
 		return false;
@@ -453,7 +453,7 @@ bool WICTextureManager::create(DXGI_FORMAT aDxFormat) {
 			GUID wicPixFmt = GUID_WICPixelFormat32bppBGRA;
 			// GUID_WICPixelFormat32bppRGBA
 			HRESULT hr = mWicFactory->CreateBitmap(tw, th, wicPixFmt, WICBitmapCacheOnDemand,
-			    mWicBitmap.GetAddressOf());
+				mWicBitmap.GetAddressOf());
 			if (hr == S_OK) {
 
 			} else {
@@ -474,9 +474,9 @@ bool WICTextureManager::transferFrame(IMFMediaEngine* aengine) {
 	}
 	RECT targetRect { 0, 0, mWidth, mHeight };
 	if ((aengine->TransferVideoFrame(
-	        mWicBitmap.Get(),
-	        &mNormalizedVidRect, &targetRect, &bgColor))
-	    == S_OK) {
+			mWicBitmap.Get(),
+			&mNormalizedVidRect, &targetRect, &bgColor))
+		== S_OK) {
 		return true;
 	}
 	return false;
@@ -773,7 +773,7 @@ void ofMediaFoundationPlayer::close() {
 
 	if (m_spMediaEngine) {
 		ofMediaFoundationUtils::CallAsyncBlocking(
-		    [&] { m_spMediaEngine->Shutdown(); });
+			[&] { m_spMediaEngine->Shutdown(); });
 	}
 
 	m_spMediaEngine = nullptr;
@@ -1050,9 +1050,9 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 void ofMediaFoundationPlayer::setVolume(float volume) {
 	if (m_spMediaEngine) {
 		ofMediaFoundationUtils::CallAsyncBlocking(
-		    [&] {
-			    m_spMediaEngine->SetVolume(static_cast<double>(volume));
-		    });
+			[&] {
+				m_spMediaEngine->SetVolume(static_cast<double>(volume));
+			});
 	}
 }
 

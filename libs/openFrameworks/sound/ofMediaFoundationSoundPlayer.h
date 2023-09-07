@@ -17,8 +17,8 @@ namespace of {
 struct MFSourceReaderNotifyCallback {
 public:
 	virtual void OnSourceReaderEvent(HRESULT hrStatus, DWORD dwStreamIndex,
-	    DWORD dwStreamFlags, LONGLONG llTimestamp, IMFSample* pSample)
-	    = 0;
+		DWORD dwStreamFlags, LONGLONG llTimestamp, IMFSample* pSample)
+		= 0;
 };
 }
 
@@ -118,7 +118,7 @@ public:
 
 protected:
 	void OnSourceReaderEvent(HRESULT hrStatus, DWORD dwStreamIndex,
-	    DWORD dwStreamFlags, LONGLONG llTimestamp, IMFSample* pSample) override;
+		DWORD dwStreamFlags, LONGLONG llTimestamp, IMFSample* pSample) override;
 
 	bool mBAddedUpdateEvent = false;
 	void update(ofEventArgs& args);
@@ -217,11 +217,11 @@ protected:
 		(void*, HRESULT) override { }
 		HANDLE hBufferEndEvent;
 		StreamingVoiceContext()
-		    :
+			:
 #if (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
-		    hBufferEndEvent(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE))
+			hBufferEndEvent(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE))
 #else
-		    hBufferEndEvent(CreateEvent(nullptr, FALSE, FALSE, nullptr))
+			hBufferEndEvent(CreateEvent(nullptr, FALSE, FALSE, nullptr))
 #endif
 		{
 		}
@@ -277,7 +277,7 @@ protected:
 		HRESULT status;
 		of::MFSourceReaderNotifyCallback* mCB = nullptr;
 		SourceReaderCallback()
-		    : status(S_OK) { }
+			: status(S_OK) { }
 		virtual ~SourceReaderCallback() { }
 	};
 

@@ -100,9 +100,9 @@ public:
 	///
 	/// All 16 values of the matrix as positional arguments in row-major order.
 	ofMatrix4x4(float a00, float a01, float a02, float a03,
-	    float a10, float a11, float a12, float a13,
-	    float a20, float a21, float a22, float a23,
-	    float a30, float a31, float a32, float a33);
+		float a10, float a11, float a12, float a13,
+		float a20, float a21, float a22, float a23,
+		float a30, float a31, float a32, float a33);
 
 	/// \} end Constructor group
 
@@ -158,8 +158,8 @@ public:
 	/// axes, in order. Angles are given in degrees, and axes can be arbitrary
 	/// vectors.
 	void makeRotationMatrix(float angle1, const ofVec3f& axis1,
-	    float angle2, const ofVec3f& axis2,
-	    float angle3, const ofVec3f& axis3);
+		float angle2, const ofVec3f& axis2,
+		float angle3, const ofVec3f& axis3);
 	/// \}
 
 	/// \name Make* methods related to another matrix
@@ -194,8 +194,8 @@ public:
 	/// and top specify coordinates in the zNear clipping plane where the
 	/// corresponding box sides intersect it.
 	void makeOrthoMatrix(double left, double right,
-	    double bottom, double top,
-	    double zNear, double zFar);
+		double bottom, double top,
+		double zNear, double zFar);
 
 	/// \brief Matrix becomes a 2D orthographic projection matrix.
 	///
@@ -203,7 +203,7 @@ public:
 	/// described by the four parameters and, implicitly, a zNear of -1
 	/// and a zFar of 1.
 	void makeOrtho2DMatrix(double left, double right,
-	    double bottom, double top);
+		double bottom, double top);
 
 	/// \brief Matrix becomes a perspective projection matrix.
 	///
@@ -214,8 +214,8 @@ public:
 	/// the view volume. The resulting volume can be vertically and
 	/// horizontally asymmetrical around the center of the near plane.
 	void makeFrustumMatrix(double left, double right,
-	    double bottom, double top,
-	    double zNear, double zFar);
+		double bottom, double top,
+		double zNear, double zFar);
 
 	/// \brief Matrix becomes a perspective projection matrix.
 	///
@@ -228,7 +228,7 @@ public:
 	/// height. Note that the resulting volume is both vertically and
 	/// horizontally symmetrical around the center of the near plane.
 	void makePerspectiveMatrix(double fovy, double aspectRatio,
-	    double zNear, double zFar);
+		double zNear, double zFar);
 
 	/// \brief Matrix becomes a combination of translation and rotation.
 	///
@@ -284,8 +284,8 @@ public:
 	inline static ofMatrix4x4 newRotationMatrix(float angle, float x, float y, float z);
 	inline static ofMatrix4x4 newRotationMatrix(float angle, const ofVec3f& axis);
 	inline static ofMatrix4x4 newRotationMatrix(float angle1, const ofVec3f& axis1,
-	    float angle2, const ofVec3f& axis2,
-	    float angle3, const ofVec3f& axis3);
+		float angle2, const ofVec3f& axis2,
+		float angle3, const ofVec3f& axis3);
 	inline static ofMatrix4x4 newRotationMatrix(const ofQuaternion& quat);
 
 	/// These functions create new matrices related to glFunctions. See
@@ -293,26 +293,26 @@ public:
 
 	/// \sa makeOrthoMatrix
 	inline static ofMatrix4x4 newOrthoMatrix(double left, double right,
-	    double bottom, double top,
-	    double zNear, double zFar);
+		double bottom, double top,
+		double zNear, double zFar);
 
 	/// \sa makeOrtho2DMatrix
 	inline static ofMatrix4x4 newOrtho2DMatrix(double left, double right,
-	    double bottom, double top);
+		double bottom, double top);
 
 	/// \sa makeFrustumMatrix
 	inline static ofMatrix4x4 newFrustumMatrix(double left, double right,
-	    double bottom, double top,
-	    double zNear, double zFar);
+		double bottom, double top,
+		double zNear, double zFar);
 
 	/// \sa makePerspectiveMatrix
 	inline static ofMatrix4x4 newPerspectiveMatrix(double fovy, double aspectRatio,
-	    double zNear, double zFar);
+		double zNear, double zFar);
 
 	/// \sa makeLookAtMatrix
 	inline static ofMatrix4x4 newLookAtMatrix(const ofVec3f& eye,
-	    const ofVec3f& center,
-	    const ofVec3f& up);
+		const ofVec3f& center,
+		const ofVec3f& up);
 
 	/// \} end Static new* matrix group
 
@@ -387,9 +387,9 @@ public:
 	void set(float const* const ptr);
 	void set(double const* const ptr);
 	void set(float a00, float a01, float a02, float a03,
-	    float a10, float a11, float a12, float a13,
-	    float a20, float a21, float a22, float a23,
-	    float a30, float a31, float a32, float a33);
+		float a10, float a11, float a12, float a13,
+		float a20, float a21, float a22, float a23,
+		float a30, float a31, float a32, float a33);
 
 	/// \}
 
@@ -404,13 +404,13 @@ public:
 	///
 	/// This only works with pure perspective projection matrices.
 	bool getOrtho(double& left, double& right,
-	    double& bottom, double& top,
-	    double& zNear, double& zFar) const;
+		double& bottom, double& top,
+		double& zNear, double& zFar) const;
 
 	/// \brief Gets the perspective components for a frustum projection matrix.
 	bool getFrustum(double& left, double& right,
-	    double& bottom, double& top,
-	    double& zNear, double& zFar) const;
+		double& bottom, double& top,
+		double& zNear, double& zFar) const;
 
 	/// \brief Get the frustum settings of a symmetric perspective projection
 	/// matrix.
@@ -424,20 +424,20 @@ public:
 	/// \returns false if matrix is not a perspective matrix,
 	/// where parameter values are undefined.
 	bool getPerspective(double& fovy, double& aspectRatio,
-	    double& zNear, double& zFar) const;
+		double& zNear, double& zFar) const;
 
 	/// \brief Gets the lookAt determiners of the matrix.
 	///
 	/// This function will only work for modelview matrices.
 	void getLookAt(ofVec3f& eye, ofVec3f& center, ofVec3f& up,
-	    float lookDistance = 1.0f) const;
+		float lookDistance = 1.0f) const;
 
 	/// \brief Decompose the matrix into translation, rotation,
 	/// scale and scale orientation.
 	void decompose(ofVec3f& translation,
-	    ofQuaternion& rotation,
-	    ofVec3f& scale,
-	    ofQuaternion& so) const;
+		ofQuaternion& rotation,
+		ofVec3f& scale,
+		ofQuaternion& so) const;
 
 	/// Create new matrices as transformation of another.
 
@@ -706,7 +706,7 @@ inline bool ofMatrix4x4::isIdentity() const {
 }
 
 inline void ofMatrix4x4::makeOrtho2DMatrix(double left, double right,
-    double bottom, double top) {
+	double bottom, double top) {
 	makeOrthoMatrix(left, right, bottom, top, -1.0, 1.0);
 }
 
@@ -762,8 +762,8 @@ inline ofMatrix4x4 ofMatrix4x4::newRotationMatrix(float angle, const ofVec3f& ax
 	return m;
 }
 inline ofMatrix4x4 ofMatrix4x4::newRotationMatrix(float angle1, const ofVec3f& axis1,
-    float angle2, const ofVec3f& axis2,
-    float angle3, const ofVec3f& axis3) {
+	float angle2, const ofVec3f& axis2,
+	float angle3, const ofVec3f& axis3) {
 	ofMatrix4x4 m;
 	m.makeRotationMatrix(angle1, axis1, angle2, axis2, angle3, axis3);
 	return m;
@@ -782,10 +782,10 @@ inline ofMatrix4x4 ofMatrix4x4::getInverseOf(const ofMatrix4x4& matrix) {
 
 inline ofMatrix4x4 ofMatrix4x4::getTransposedOf(const ofMatrix4x4& matrix) {
 	ofMatrix4x4 m(matrix._mat[0][0], matrix._mat[1][0], matrix._mat[2][0],
-	    matrix._mat[3][0], matrix._mat[0][1], matrix._mat[1][1], matrix._mat[2][1],
-	    matrix._mat[3][1], matrix._mat[0][2], matrix._mat[1][2], matrix._mat[2][2],
-	    matrix._mat[3][2], matrix._mat[0][3], matrix._mat[1][3], matrix._mat[2][3],
-	    matrix._mat[3][3]);
+		matrix._mat[3][0], matrix._mat[0][1], matrix._mat[1][1], matrix._mat[2][1],
+		matrix._mat[3][1], matrix._mat[0][2], matrix._mat[1][2], matrix._mat[2][2],
+		matrix._mat[3][2], matrix._mat[0][3], matrix._mat[1][3], matrix._mat[2][3],
+		matrix._mat[3][3]);
 	return m;
 }
 
@@ -796,30 +796,30 @@ inline ofMatrix4x4 ofMatrix4x4::getOrthoNormalOf(const ofMatrix4x4& matrix) {
 }
 
 inline ofMatrix4x4 ofMatrix4x4::newOrthoMatrix(double left, double right,
-    double bottom, double top,
-    double zNear, double zFar) {
+	double bottom, double top,
+	double zNear, double zFar) {
 	ofMatrix4x4 m;
 	m.makeOrthoMatrix(left, right, bottom, top, zNear, zFar);
 	return m;
 }
 
 inline ofMatrix4x4 ofMatrix4x4::newOrtho2DMatrix(double left, double right,
-    double bottom, double top) {
+	double bottom, double top) {
 	ofMatrix4x4 m;
 	m.makeOrtho2DMatrix(left, right, bottom, top);
 	return m;
 }
 
 inline ofMatrix4x4 ofMatrix4x4::newFrustumMatrix(double left, double right,
-    double bottom, double top,
-    double zNear, double zFar) {
+	double bottom, double top,
+	double zNear, double zFar) {
 	ofMatrix4x4 m;
 	m.makeFrustumMatrix(left, right, bottom, top, zNear, zFar);
 	return m;
 }
 
 inline ofMatrix4x4 ofMatrix4x4::newPerspectiveMatrix(double fovy, double aspectRatio,
-    double zNear, double zFar) {
+	double zNear, double zFar) {
 	ofMatrix4x4 m;
 	m.makePerspectiveMatrix(fovy, aspectRatio, zNear, zFar);
 	return m;
@@ -834,49 +834,49 @@ inline ofMatrix4x4 ofMatrix4x4::newLookAtMatrix(const ofVec3f& eye, const ofVec3
 inline ofVec3f ofMatrix4x4::postMult(const ofVec3f& v) const {
 	float d = 1.0f / (_mat[3][0] * v.x + _mat[3][1] * v.y + _mat[3][2] * v.z + _mat[3][3]);
 	return ofVec3f((_mat[0][0] * v.x + _mat[0][1] * v.y + _mat[0][2] * v.z + _mat[0][3]) * d,
-	    (_mat[1][0] * v.x + _mat[1][1] * v.y + _mat[1][2] * v.z + _mat[1][3]) * d,
-	    (_mat[2][0] * v.x + _mat[2][1] * v.y + _mat[2][2] * v.z + _mat[2][3]) * d);
+		(_mat[1][0] * v.x + _mat[1][1] * v.y + _mat[1][2] * v.z + _mat[1][3]) * d,
+		(_mat[2][0] * v.x + _mat[2][1] * v.y + _mat[2][2] * v.z + _mat[2][3]) * d);
 }
 
 inline ofVec3f ofMatrix4x4::preMult(const ofVec3f& v) const {
 	float d = 1.0f / (_mat[0][3] * v.x + _mat[1][3] * v.y + _mat[2][3] * v.z + _mat[3][3]);
 	return ofVec3f((_mat[0][0] * v.x + _mat[1][0] * v.y + _mat[2][0] * v.z + _mat[3][0]) * d,
-	    (_mat[0][1] * v.x + _mat[1][1] * v.y + _mat[2][1] * v.z + _mat[3][1]) * d,
-	    (_mat[0][2] * v.x + _mat[1][2] * v.y + _mat[2][2] * v.z + _mat[3][2]) * d);
+		(_mat[0][1] * v.x + _mat[1][1] * v.y + _mat[2][1] * v.z + _mat[3][1]) * d,
+		(_mat[0][2] * v.x + _mat[1][2] * v.y + _mat[2][2] * v.z + _mat[3][2]) * d);
 }
 
 /// \brief post-multiplies the vector by the matrix (i.e. returns M mult v).
 /// The vector is implicitly treated as a column-matrix
 inline ofVec4f ofMatrix4x4::postMult(const ofVec4f& v) const {
 	return ofVec4f((_mat[0][0] * v.x + _mat[0][1] * v.y + _mat[0][2] * v.z + _mat[0][3] * v.w),
-	    (_mat[1][0] * v.x + _mat[1][1] * v.y + _mat[1][2] * v.z + _mat[1][3] * v.w),
-	    (_mat[2][0] * v.x + _mat[2][1] * v.y + _mat[2][2] * v.z + _mat[2][3] * v.w),
-	    (_mat[3][0] * v.x + _mat[3][1] * v.y + _mat[3][2] * v.z + _mat[3][3] * v.w));
+		(_mat[1][0] * v.x + _mat[1][1] * v.y + _mat[1][2] * v.z + _mat[1][3] * v.w),
+		(_mat[2][0] * v.x + _mat[2][1] * v.y + _mat[2][2] * v.z + _mat[2][3] * v.w),
+		(_mat[3][0] * v.x + _mat[3][1] * v.y + _mat[3][2] * v.z + _mat[3][3] * v.w));
 }
 
 /// \brief pre-multiplies the vector by the matrix (i.e. returns v mult M)
 /// The vector is implicitly treated as a row-matrix
 inline ofVec4f ofMatrix4x4::preMult(const ofVec4f& v) const {
 	return ofVec4f((_mat[0][0] * v.x + _mat[1][0] * v.y + _mat[2][0] * v.z + _mat[3][0] * v.w),
-	    (_mat[0][1] * v.x + _mat[1][1] * v.y + _mat[2][1] * v.z + _mat[3][1] * v.w),
-	    (_mat[0][2] * v.x + _mat[1][2] * v.y + _mat[2][2] * v.z + _mat[3][2] * v.w),
-	    (_mat[0][3] * v.x + _mat[1][3] * v.y + _mat[2][3] * v.z + _mat[3][3] * v.w));
+		(_mat[0][1] * v.x + _mat[1][1] * v.y + _mat[2][1] * v.z + _mat[3][1] * v.w),
+		(_mat[0][2] * v.x + _mat[1][2] * v.y + _mat[2][2] * v.z + _mat[3][2] * v.w),
+		(_mat[0][3] * v.x + _mat[1][3] * v.y + _mat[2][3] * v.z + _mat[3][3] * v.w));
 }
 
 /// \brief performs a pre-multiplication transformation on the vector using only the
 /// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofVec3f& v, const ofMatrix4x4& m) {
 	return ofVec3f((m._mat[0][0] * v.x + m._mat[1][0] * v.y + m._mat[2][0] * v.z),
-	    (m._mat[0][1] * v.x + m._mat[1][1] * v.y + m._mat[2][1] * v.z),
-	    (m._mat[0][2] * v.x + m._mat[1][2] * v.y + m._mat[2][2] * v.z));
+		(m._mat[0][1] * v.x + m._mat[1][1] * v.y + m._mat[2][1] * v.z),
+		(m._mat[0][2] * v.x + m._mat[1][2] * v.y + m._mat[2][2] * v.z));
 }
 
 /// \brief performs a post-multiplication transformation on the vector using only the
 /// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofMatrix4x4& m, const ofVec3f& v) {
 	return ofVec3f((m._mat[0][0] * v.x + m._mat[0][1] * v.y + m._mat[0][2] * v.z),
-	    (m._mat[1][0] * v.x + m._mat[1][1] * v.y + m._mat[1][2] * v.z),
-	    (m._mat[2][0] * v.x + m._mat[2][1] * v.y + m._mat[2][2] * v.z));
+		(m._mat[1][0] * v.x + m._mat[1][1] * v.y + m._mat[1][2] * v.z),
+		(m._mat[2][0] * v.x + m._mat[2][1] * v.y + m._mat[2][2] * v.z));
 }
 
 /// \brief translates this matrix by treating the ofVec3f like a translation matrix,

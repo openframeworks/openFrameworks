@@ -5,9 +5,9 @@
 void ofGetMonotonicTime(uint64_t& seconds, uint64_t& nanoseconds);
 
 ofTimer::ofTimer()
-    : nanosPerPeriod(0)
+	: nanosPerPeriod(0)
 #ifdef TARGET_WIN32
-    , hTimer(CreateWaitableTimer(nullptr, TRUE, nullptr))
+	, hTimer(CreateWaitableTimer(nullptr, TRUE, nullptr))
 #endif
 {
 }

@@ -52,11 +52,11 @@ class StdFunctionId : public BaseFunctionId {
 	uint64_t id;
 
 	StdFunctionId(uint64_t id)
-	    : id(id) { }
+		: id(id) { }
 
 public:
 	StdFunctionId()
-	    : id(nextId++) { }
+		: id(nextId++) { }
 
 	virtual ~StdFunctionId();
 
@@ -80,9 +80,9 @@ template <typename T, class Mutex>
 class Function {
 public:
 	Function(int priority, std::function<bool(const void*, T&)> function, std::unique_ptr<BaseFunctionId>&& id)
-	    : priority(priority)
-	    , id(std::move(id))
-	    , function(function) { }
+		: priority(priority)
+		, id(std::move(id))
+		, function(function) { }
 
 	bool operator==(const Function<T, Mutex>& f) const {
 		return f.priority == priority && *id == *f.id;
@@ -115,9 +115,9 @@ template <class Mutex>
 class Function<void, Mutex> {
 public:
 	Function(int priority, std::function<bool(const void*)> function, std::unique_ptr<BaseFunctionId>&& id)
-	    : priority(priority)
-	    , id(std::move(id))
-	    , function(function) { }
+		: priority(priority)
+		, id(std::move(id))
+		, function(function) { }
 
 	bool operator==(const Function<void, Mutex>& f) const {
 		return f.priority == priority && *id == *f.id;
@@ -226,8 +226,8 @@ protected:
 		EventToken() {};
 		template <typename Id>
 		EventToken(std::shared_ptr<Data>& event, const Id& id)
-		    : event(event)
-		    , id(id.clone()) {
+			: event(event)
+			, id(id.clone()) {
 		}
 
 		~EventToken() {
@@ -380,7 +380,7 @@ public:
 	ofEventListener& operator=(ofEventListener&&) = delete;
 
 	ofEventListener(std::unique_ptr<of::priv::AbstractEventToken>&& token)
-	    : token(std::move(token)) { }
+		: token(std::move(token)) { }
 
 	ofEventListener& operator=(std::unique_ptr<of::priv::AbstractEventToken>&& token) {
 		std::swap(this->token, token);
@@ -441,8 +441,8 @@ protected:
 		TMethod method;
 
 		FunctionId(TObj* listener, TMethod method)
-		    : listener(listener)
-		    , method(method) {
+			: listener(listener)
+			, method(method) {
 		}
 
 		BaseFunctionId* clone() const {
@@ -473,11 +473,11 @@ protected:
 	template <class TObj>
 	FunctionPtr make_function(TObj* listener, void (TObj::*method)(T&), int priority) {
 		return std::make_shared<Function>(
-		    priority, [listener, method](const void*, T& t) {
-			    ((listener)->*(method))(t);
-			    return false;
-		    },
-		    make_function_id(listener, method));
+			priority, [listener, method](const void*, T& t) {
+				((listener)->*(method))(t);
+				return false;
+			},
+			make_function_id(listener, method));
 	}
 
 	template <class TObj>
@@ -488,11 +488,11 @@ protected:
 	template <class TObj>
 	FunctionPtr make_function(TObj* listener, void (TObj::*method)(const void*, T&), int priority) {
 		return std::make_shared<Function>(
-		    priority, [listener, method](const void* s, T& t) {
-			    std::bind(method, listener, std::placeholders::_1, std::placeholders::_2)(s, t);
-			    return false;
-		    },
-		    make_function_id(listener, method));
+			priority, [listener, method](const void* s, T& t) {
+				std::bind(method, listener, std::placeholders::_1, std::placeholders::_2)(s, t);
+				return false;
+			},
+			make_function_id(listener, method));
 	}
 
 	template <typename F>
@@ -507,7 +507,7 @@ protected:
 
 	FunctionPtr make_function(std::function<bool(T&)> f, int priority) {
 		return std::make_shared<Function>(
-		    priority, [f](const void*, T& t) { return f(t); }, make_std_function_id(f));
+			priority, [f](const void*, T& t) { return f(t); }, make_std_function_id(f));
 	}
 
 	FunctionPtr make_function(std::function<bool(const void*, T&)> f, int priority) {
@@ -516,12 +516,12 @@ protected:
 
 	FunctionPtr make_function(std::function<void(T&)> f, int priority) {
 		return std::make_shared<Function>(
-		    priority, [f](const void*, T& t) {f(t); return false; }, make_std_function_id(f));
+			priority, [f](const void*, T& t) {f(t); return false; }, make_std_function_id(f));
 	}
 
 	FunctionPtr make_function(std::function<void(const void*, T&)> f, int priority) {
 		return std::make_shared<Function>(
-		    priority, [f](const void* s, T& t) {f(s, t); return false; }, make_std_function_id(f));
+			priority, [f](const void* s, T& t) {f(s, t); return false; }, make_std_function_id(f));
 	}
 
 	using of::priv::BaseEvent<of::priv::Function<T, Mutex>, Mutex>::addFunction;
@@ -602,8 +602,8 @@ protected:
 		TMethod method;
 
 		FunctionId(TObj* listener, TMethod method)
-		    : listener(listener)
-		    , method(method) {
+			: listener(listener)
+			, method(method) {
 		}
 
 		BaseFunctionId* clone() const {
@@ -634,11 +634,11 @@ protected:
 	template <class TObj>
 	FunctionPtr make_function(TObj* listener, void (TObj::*method)(), int priority) {
 		return std::make_shared<Function>(
-		    priority, [listener, method](const void*) {
-			    std::bind(method, listener)();
-			    return false;
-		    },
-		    make_function_id(listener, method));
+			priority, [listener, method](const void*) {
+				std::bind(method, listener)();
+				return false;
+			},
+			make_function_id(listener, method));
 	}
 
 	template <class TObj>
@@ -649,11 +649,11 @@ protected:
 	template <class TObj>
 	FunctionPtr make_function(TObj* listener, void (TObj::*method)(const void*), int priority) {
 		return std::make_shared<Function>(
-		    priority, [listener, method](const void* sender) {
-			    std::bind(method, listener, std::placeholders::_1)(sender);
-			    return false;
-		    },
-		    make_function_id(listener, method));
+			priority, [listener, method](const void* sender) {
+				std::bind(method, listener, std::placeholders::_1)(sender);
+				return false;
+			},
+			make_function_id(listener, method));
 	}
 
 	template <typename F>
@@ -668,7 +668,7 @@ protected:
 
 	FunctionPtr make_function(std::function<bool()> f, int priority) {
 		return std::make_shared<Function>(
-		    priority, [f](const void*) { return f(); }, make_std_function_id(f));
+			priority, [f](const void*) { return f(); }, make_std_function_id(f));
 	}
 
 	FunctionPtr make_function(std::function<bool(const void*)> f, int priority) {
@@ -677,12 +677,12 @@ protected:
 
 	FunctionPtr make_function(std::function<void()> f, int priority) {
 		return std::make_shared<Function>(
-		    priority, [f](const void*) {f(); return false; }, make_std_function_id(f));
+			priority, [f](const void*) {f(); return false; }, make_std_function_id(f));
 	}
 
 	FunctionPtr make_function(std::function<void(const void*)> f, int priority) {
 		return std::make_shared<Function>(
-		    priority, [f](const void* s) {f(s); return false; }, make_std_function_id(f));
+			priority, [f](const void* s) {f(s); return false; }, make_std_function_id(f));
 	}
 
 	using of::priv::BaseEvent<of::priv::Function<void, Mutex>, Mutex>::addFunction;

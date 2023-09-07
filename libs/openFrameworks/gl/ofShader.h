@@ -36,9 +36,9 @@ class ofShader {
 	struct Source {
 		// FIXME: change source to of::filesystem::path
 		Source(GLuint type, const std::string& source, const of::filesystem::path& directoryPath)
-		    : type(type)
-		    , source(source)
-		    , directoryPath(directoryPath) { }
+			: type(type)
+			, source(source)
+			, directoryPath(directoryPath) { }
 
 		Source() { }
 

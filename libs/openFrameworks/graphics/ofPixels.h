@@ -791,9 +791,9 @@ inline typename ofPixels_<PixelType>::const_reverse_iterator ofPixels_<PixelType
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::Pixel::Pixel(PixelType* pixel, size_t componentsPerPixel, ofPixelFormat pixelFormat)
-    : pixel(pixel)
-    , componentsPerPixel(componentsPerPixel)
-    , pixelFormat(pixelFormat) {
+	: pixel(pixel)
+	, componentsPerPixel(componentsPerPixel)
+	, pixelFormat(pixelFormat) {
 }
 
 //----------------------------------------------------------------------
@@ -959,18 +959,18 @@ ofColor_<PixelType> ofPixels_<PixelType>::Pixel::getColor() const {
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::Pixels::Pixels(PixelType* begin, PixelType* end, size_t componentsPerPixel, ofPixelFormat pixelFormat)
-    : _begin(begin)
-    , _end(end)
-    , componentsPerPixel(componentsPerPixel)
-    , pixelFormat(pixelFormat) { }
+	: _begin(begin)
+	, _end(end)
+	, componentsPerPixel(componentsPerPixel)
+	, pixelFormat(pixelFormat) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::Pixels::Pixels(Pixel begin, Pixel end)
-    : _begin(&begin[0])
-    , _end(&end[0])
-    , componentsPerPixel(begin.getComponentsPerPixel())
-    , pixelFormat(begin.getPixelFormat()) { }
+	: _begin(&begin[0])
+	, _end(&end[0])
+	, componentsPerPixel(begin.getComponentsPerPixel())
+	, pixelFormat(begin.getPixelFormat()) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>
@@ -987,12 +987,12 @@ inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixels::end() 
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::Line::Line(PixelType* _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat)
-    : _begin(_begin)
-    , _end(_begin + stride)
-    , stride(stride)
-    , componentsPerPixel(componentsPerPixel)
-    , lineNum(lineNum)
-    , pixelFormat(pixelFormat) { }
+	: _begin(_begin)
+	, _end(_begin + stride)
+	, stride(stride)
+	, componentsPerPixel(componentsPerPixel)
+	, lineNum(lineNum)
+	, pixelFormat(pixelFormat) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>
@@ -1152,12 +1152,12 @@ inline typename ofPixels_<PixelType>::Pixels ofPixels_<PixelType>::Line::getPixe
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::Lines::Lines(PixelType* _begin, PixelType* _end, size_t stride, size_t componentsPerPixel, size_t lines, ofPixelFormat pixelFormat)
-    : _begin(_begin)
-    , _end(_end)
-    , stride(stride)
-    , componentsPerPixel(componentsPerPixel)
-    , lines(lines)
-    , pixelFormat(pixelFormat) { }
+	: _begin(_begin)
+	, _end(_end)
+	, stride(stride)
+	, componentsPerPixel(componentsPerPixel)
+	, lines(lines)
+	, pixelFormat(pixelFormat) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>
@@ -1198,9 +1198,9 @@ inline typename ofPixels_<PixelType>::Pixels ofPixels_<PixelType>::getPixelsIter
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::ConstPixel::ConstPixel(const PixelType* pixel, size_t componentsPerPixel, ofPixelFormat pixelFormat)
-    : pixel(pixel)
-    , componentsPerPixel(componentsPerPixel)
-    , pixelFormat(pixelFormat) {
+	: pixel(pixel)
+	, componentsPerPixel(componentsPerPixel)
+	, pixelFormat(pixelFormat) {
 }
 
 //----------------------------------------------------------------------
@@ -1327,18 +1327,18 @@ ofColor_<PixelType> ofPixels_<PixelType>::ConstPixel::getColor() const {
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::ConstPixels::ConstPixels(const PixelType* begin, const PixelType* end, size_t componentsPerPixel, ofPixelFormat pixelFormat)
-    : _begin(begin)
-    , _end(end)
-    , componentsPerPixel(componentsPerPixel)
-    , pixelFormat(pixelFormat) { }
+	: _begin(begin)
+	, _end(end)
+	, componentsPerPixel(componentsPerPixel)
+	, pixelFormat(pixelFormat) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::ConstPixels::ConstPixels(const ConstPixel& begin, const ConstPixel& end)
-    : _begin(&begin[0])
-    , _end(&end[0])
-    , componentsPerPixel(begin.getComponentsPerPixel())
-    , pixelFormat(begin.getPixelFormat()) { }
+	: _begin(&begin[0])
+	, _end(&end[0])
+	, componentsPerPixel(begin.getComponentsPerPixel())
+	, pixelFormat(begin.getPixelFormat()) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>
@@ -1355,12 +1355,12 @@ inline typename ofPixels_<PixelType>::ConstPixel ofPixels_<PixelType>::ConstPixe
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::ConstLine::ConstLine(const PixelType* _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat)
-    : _begin(_begin)
-    , _end(_begin + stride)
-    , stride(stride)
-    , componentsPerPixel(componentsPerPixel)
-    , lineNum(lineNum)
-    , pixelFormat(pixelFormat) { }
+	: _begin(_begin)
+	, _end(_begin + stride)
+	, stride(stride)
+	, componentsPerPixel(componentsPerPixel)
+	, lineNum(lineNum)
+	, pixelFormat(pixelFormat) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>
@@ -1463,12 +1463,12 @@ inline typename ofPixels_<PixelType>::ConstPixels ofPixels_<PixelType>::ConstLin
 //----------------------------------------------------------------------
 template <typename PixelType>
 inline ofPixels_<PixelType>::ConstLines::ConstLines(const PixelType* _begin, const PixelType* _end, size_t stride, size_t componentsPerPixel, size_t lines, ofPixelFormat pixelFormat)
-    : _begin(_begin)
-    , _end(_end)
-    , stride(stride)
-    , componentsPerPixel(componentsPerPixel)
-    , lines(lines)
-    , pixelFormat(pixelFormat) { }
+	: _begin(_begin)
+	, _end(_end)
+	, stride(stride)
+	, componentsPerPixel(componentsPerPixel)
+	, lines(lines)
+	, pixelFormat(pixelFormat) { }
 
 //----------------------------------------------------------------------
 template <typename PixelType>

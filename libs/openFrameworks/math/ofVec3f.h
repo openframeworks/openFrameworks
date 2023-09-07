@@ -599,9 +599,9 @@ public:
 	/// the mapping.*
 	///
 	ofVec3f getMapped(const ofVec3f& origin,
-	    const ofVec3f& vx,
-	    const ofVec3f& vy,
-	    const ofVec3f& vz) const;
+		const ofVec3f& vx,
+		const ofVec3f& vy,
+		const ofVec3f& vz) const;
 
 	/// \brief Map this vector from its default coordinate system -- origin (0,0,0), X
 	/// direction (1,0,0), Y direction (0,1,0), Z direction (0,0,1) -- to a new
@@ -614,9 +614,9 @@ public:
 	/// as part of the mapping.*
 	///
 	ofVec3f& map(const ofVec3f& origin,
-	    const ofVec3f& vx,
-	    const ofVec3f& vy,
-	    const ofVec3f& vz);
+		const ofVec3f& vx,
+		const ofVec3f& vy,
+		const ofVec3f& vz);
 
 	/// \}
 
@@ -1023,38 +1023,38 @@ ofVec3f operator/(float f, const ofVec3f& vec);
 /////////////////
 
 inline ofVec3f::ofVec3f(const ofVec2f& vec)
-    : x(vec.x)
-    , y(vec.y)
-    , z(0) { }
+	: x(vec.x)
+	, y(vec.y)
+	, z(0) { }
 inline ofVec3f::ofVec3f(const ofVec4f& vec)
-    : x(vec.x)
-    , y(vec.y)
-    , z(vec.z) { }
+	: x(vec.x)
+	, y(vec.y)
+	, z(vec.z) { }
 inline ofVec3f::ofVec3f()
-    : x(0)
-    , y(0)
-    , z(0) { }
+	: x(0)
+	, y(0)
+	, z(0) { }
 inline ofVec3f::ofVec3f(float _all)
-    : x(_all)
-    , y(_all)
-    , z(_all) { }
+	: x(_all)
+	, y(_all)
+	, z(_all) { }
 inline ofVec3f::ofVec3f(float _x, float _y, float _z)
-    : x(_x)
-    , y(_y)
-    , z(_z) { }
+	: x(_x)
+	, y(_y)
+	, z(_z) { }
 
 inline ofVec3f::ofVec3f(const glm::vec2& vec)
-    : x(vec.x)
-    , y(vec.y)
-    , z(0.f) { }
+	: x(vec.x)
+	, y(vec.y)
+	, z(0.f) { }
 inline ofVec3f::ofVec3f(const glm::vec3& vec)
-    : x(vec.x)
-    , y(vec.y)
-    , z(vec.z) { }
+	: x(vec.x)
+	, y(vec.y)
+	, z(vec.z) { }
 inline ofVec3f::ofVec3f(const glm::vec4& vec)
-    : x(vec.x)
-    , y(vec.y)
-    , z(vec.z) { }
+	: x(vec.x)
+	, y(vec.y)
+	, z(vec.z) { }
 
 inline ofVec3f::operator glm::vec3() const {
 	return glm::vec3(x, y, z);
@@ -1094,8 +1094,8 @@ inline bool ofVec3f::operator!=(const ofVec3f& vec) const {
 
 inline bool ofVec3f::match(const ofVec3f& vec, float tolerance) const {
 	return (fabs(x - vec.x) < tolerance)
-	    && (fabs(y - vec.y) < tolerance)
-	    && (fabs(z - vec.z) < tolerance);
+		&& (fabs(y - vec.y) < tolerance)
+		&& (fabs(z - vec.z) < tolerance);
 }
 
 /**
@@ -1282,14 +1282,14 @@ inline ofVec3f ofVec3f::getRotated(float angle, const ofVec3f& axis) const {
 	float cosb = 1.0f - cosa;
 
 	return ofVec3f(x * (ax.x * ax.x * cosb + cosa)
-	        + y * (ax.x * ax.y * cosb - ax.z * sina)
-	        + z * (ax.x * ax.z * cosb + ax.y * sina),
-	    x * (ax.y * ax.x * cosb + ax.z * sina)
-	        + y * (ax.y * ax.y * cosb + cosa)
-	        + z * (ax.y * ax.z * cosb - ax.x * sina),
-	    x * (ax.z * ax.x * cosb - ax.y * sina)
-	        + y * (ax.z * ax.y * cosb + ax.x * sina)
-	        + z * (ax.z * ax.z * cosb + cosa));
+			+ y * (ax.x * ax.y * cosb - ax.z * sina)
+			+ z * (ax.x * ax.z * cosb + ax.y * sina),
+		x * (ax.y * ax.x * cosb + ax.z * sina)
+			+ y * (ax.y * ax.y * cosb + cosa)
+			+ z * (ax.y * ax.z * cosb - ax.x * sina),
+		x * (ax.z * ax.x * cosb - ax.y * sina)
+			+ y * (ax.z * ax.y * cosb + ax.x * sina)
+			+ z * (ax.z * ax.z * cosb + cosa));
 }
 
 inline ofVec3f ofVec3f::getRotatedRad(float angle, const ofVec3f& axis) const {
@@ -1300,14 +1300,14 @@ inline ofVec3f ofVec3f::getRotatedRad(float angle, const ofVec3f& axis) const {
 	float cosb = 1.0f - cosa;
 
 	return ofVec3f(x * (ax.x * ax.x * cosb + cosa)
-	        + y * (ax.x * ax.y * cosb - ax.z * sina)
-	        + z * (ax.x * ax.z * cosb + ax.y * sina),
-	    x * (ax.y * ax.x * cosb + ax.z * sina)
-	        + y * (ax.y * ax.y * cosb + cosa)
-	        + z * (ax.y * ax.z * cosb - ax.x * sina),
-	    x * (ax.z * ax.x * cosb - ax.y * sina)
-	        + y * (ax.z * ax.y * cosb + ax.x * sina)
-	        + z * (ax.z * ax.z * cosb + cosa));
+			+ y * (ax.x * ax.y * cosb - ax.z * sina)
+			+ z * (ax.x * ax.z * cosb + ax.y * sina),
+		x * (ax.y * ax.x * cosb + ax.z * sina)
+			+ y * (ax.y * ax.y * cosb + cosa)
+			+ z * (ax.y * ax.z * cosb - ax.x * sina),
+		x * (ax.z * ax.x * cosb - ax.y * sina)
+			+ y * (ax.z * ax.y * cosb + ax.x * sina)
+			+ z * (ax.z * ax.z * cosb + cosa));
 }
 
 inline ofVec3f& ofVec3f::rotate(float angle, const ofVec3f& axis) {
@@ -1318,14 +1318,14 @@ inline ofVec3f& ofVec3f::rotate(float angle, const ofVec3f& axis) {
 	float cosb = 1.0f - cosa;
 
 	float nx = x * (ax.x * ax.x * cosb + cosa)
-	    + y * (ax.x * ax.y * cosb - ax.z * sina)
-	    + z * (ax.x * ax.z * cosb + ax.y * sina);
+		+ y * (ax.x * ax.y * cosb - ax.z * sina)
+		+ z * (ax.x * ax.z * cosb + ax.y * sina);
 	float ny = x * (ax.y * ax.x * cosb + ax.z * sina)
-	    + y * (ax.y * ax.y * cosb + cosa)
-	    + z * (ax.y * ax.z * cosb - ax.x * sina);
+		+ y * (ax.y * ax.y * cosb + cosa)
+		+ z * (ax.y * ax.z * cosb - ax.x * sina);
 	float nz = x * (ax.z * ax.x * cosb - ax.y * sina)
-	    + y * (ax.z * ax.y * cosb + ax.x * sina)
-	    + z * (ax.z * ax.z * cosb + cosa);
+		+ y * (ax.z * ax.y * cosb + ax.x * sina)
+		+ z * (ax.z * ax.z * cosb + cosa);
 	x = nx;
 	y = ny;
 	z = nz;
@@ -1340,14 +1340,14 @@ inline ofVec3f& ofVec3f::rotateRad(float angle, const ofVec3f& axis) {
 	float cosb = 1.0f - cosa;
 
 	float nx = x * (ax.x * ax.x * cosb + cosa)
-	    + y * (ax.x * ax.y * cosb - ax.z * sina)
-	    + z * (ax.x * ax.z * cosb + ax.y * sina);
+		+ y * (ax.x * ax.y * cosb - ax.z * sina)
+		+ z * (ax.x * ax.z * cosb + ax.y * sina);
 	float ny = x * (ax.y * ax.x * cosb + ax.z * sina)
-	    + y * (ax.y * ax.y * cosb + cosa)
-	    + z * (ax.y * ax.z * cosb - ax.x * sina);
+		+ y * (ax.y * ax.y * cosb + cosa)
+		+ z * (ax.y * ax.z * cosb - ax.x * sina);
 	float nz = x * (ax.z * ax.x * cosb - ax.y * sina)
-	    + y * (ax.z * ax.y * cosb + ax.x * sina)
-	    + z * (ax.z * ax.z * cosb + cosa);
+		+ y * (ax.z * ax.y * cosb + ax.x * sina)
+		+ z * (ax.z * ax.z * cosb + cosa);
 	x = nx;
 	y = ny;
 	z = nz;
@@ -1429,14 +1429,14 @@ inline ofVec3f& ofVec3f::rotateRad(float ax, float ay, float az) {
 //
 //
 inline ofVec3f ofVec3f::rotated(float angle,
-    const ofVec3f& pivot,
-    const ofVec3f& axis) const {
+	const ofVec3f& pivot,
+	const ofVec3f& axis) const {
 	return getRotated(angle, pivot, axis);
 }
 
 inline ofVec3f ofVec3f::getRotated(float angle,
-    const ofVec3f& pivot,
-    const ofVec3f& axis) const {
+	const ofVec3f& pivot,
+	const ofVec3f& axis) const {
 	ofVec3f ax = axis.getNormalized();
 	float tx = x - pivot.x;
 	float ty = y - pivot.y;
@@ -1448,21 +1448,21 @@ inline ofVec3f ofVec3f::getRotated(float angle,
 	float cosb = 1.0f - cosa;
 
 	float xrot = tx * (ax.x * ax.x * cosb + cosa)
-	    + ty * (ax.x * ax.y * cosb - ax.z * sina)
-	    + tz * (ax.x * ax.z * cosb + ax.y * sina);
+		+ ty * (ax.x * ax.y * cosb - ax.z * sina)
+		+ tz * (ax.x * ax.z * cosb + ax.y * sina);
 	float yrot = tx * (ax.y * ax.x * cosb + ax.z * sina)
-	    + ty * (ax.y * ax.y * cosb + cosa)
-	    + tz * (ax.y * ax.z * cosb - ax.x * sina);
+		+ ty * (ax.y * ax.y * cosb + cosa)
+		+ tz * (ax.y * ax.z * cosb - ax.x * sina);
 	float zrot = tx * (ax.z * ax.x * cosb - ax.y * sina)
-	    + ty * (ax.z * ax.y * cosb + ax.x * sina)
-	    + tz * (ax.z * ax.z * cosb + cosa);
+		+ ty * (ax.z * ax.y * cosb + ax.x * sina)
+		+ tz * (ax.z * ax.z * cosb + cosa);
 
 	return ofVec3f(xrot + pivot.x, yrot + pivot.y, zrot + pivot.z);
 }
 
 inline ofVec3f ofVec3f::getRotatedRad(float angle,
-    const ofVec3f& pivot,
-    const ofVec3f& axis) const {
+	const ofVec3f& pivot,
+	const ofVec3f& axis) const {
 	ofVec3f ax = axis.getNormalized();
 	float tx = x - pivot.x;
 	float ty = y - pivot.y;
@@ -1474,21 +1474,21 @@ inline ofVec3f ofVec3f::getRotatedRad(float angle,
 	float cosb = 1.0f - cosa;
 
 	float xrot = tx * (ax.x * ax.x * cosb + cosa)
-	    + ty * (ax.x * ax.y * cosb - ax.z * sina)
-	    + tz * (ax.x * ax.z * cosb + ax.y * sina);
+		+ ty * (ax.x * ax.y * cosb - ax.z * sina)
+		+ tz * (ax.x * ax.z * cosb + ax.y * sina);
 	float yrot = tx * (ax.y * ax.x * cosb + ax.z * sina)
-	    + ty * (ax.y * ax.y * cosb + cosa)
-	    + tz * (ax.y * ax.z * cosb - ax.x * sina);
+		+ ty * (ax.y * ax.y * cosb + cosa)
+		+ tz * (ax.y * ax.z * cosb - ax.x * sina);
 	float zrot = tx * (ax.z * ax.x * cosb - ax.y * sina)
-	    + ty * (ax.z * ax.y * cosb + ax.x * sina)
-	    + tz * (ax.z * ax.z * cosb + cosa);
+		+ ty * (ax.z * ax.y * cosb + ax.x * sina)
+		+ tz * (ax.z * ax.z * cosb + cosa);
 
 	return ofVec3f(xrot + pivot.x, yrot + pivot.y, zrot + pivot.z);
 }
 
 inline ofVec3f& ofVec3f::rotate(float angle,
-    const ofVec3f& pivot,
-    const ofVec3f& axis) {
+	const ofVec3f& pivot,
+	const ofVec3f& axis) {
 	ofVec3f ax = axis.getNormalized();
 	x -= pivot.x;
 	y -= pivot.y;
@@ -1500,14 +1500,14 @@ inline ofVec3f& ofVec3f::rotate(float angle,
 	float cosb = 1.0f - cosa;
 
 	float xrot = x * (ax.x * ax.x * cosb + cosa)
-	    + y * (ax.x * ax.y * cosb - ax.z * sina)
-	    + z * (ax.x * ax.z * cosb + ax.y * sina);
+		+ y * (ax.x * ax.y * cosb - ax.z * sina)
+		+ z * (ax.x * ax.z * cosb + ax.y * sina);
 	float yrot = x * (ax.y * ax.x * cosb + ax.z * sina)
-	    + y * (ax.y * ax.y * cosb + cosa)
-	    + z * (ax.y * ax.z * cosb - ax.x * sina);
+		+ y * (ax.y * ax.y * cosb + cosa)
+		+ z * (ax.y * ax.z * cosb - ax.x * sina);
 	float zrot = x * (ax.z * ax.x * cosb - ax.y * sina)
-	    + y * (ax.z * ax.y * cosb + ax.x * sina)
-	    + z * (ax.z * ax.z * cosb + cosa);
+		+ y * (ax.z * ax.y * cosb + ax.x * sina)
+		+ z * (ax.z * ax.z * cosb + cosa);
 
 	x = xrot + pivot.x;
 	y = yrot + pivot.y;
@@ -1517,8 +1517,8 @@ inline ofVec3f& ofVec3f::rotate(float angle,
 }
 
 inline ofVec3f& ofVec3f::rotateRad(float angle,
-    const ofVec3f& pivot,
-    const ofVec3f& axis) {
+	const ofVec3f& pivot,
+	const ofVec3f& axis) {
 	ofVec3f ax = axis.getNormalized();
 	x -= pivot.x;
 	y -= pivot.y;
@@ -1530,14 +1530,14 @@ inline ofVec3f& ofVec3f::rotateRad(float angle,
 	float cosb = 1.0f - cosa;
 
 	float xrot = x * (ax.x * ax.x * cosb + cosa)
-	    + y * (ax.x * ax.y * cosb - ax.z * sina)
-	    + z * (ax.x * ax.z * cosb + ax.y * sina);
+		+ y * (ax.x * ax.y * cosb - ax.z * sina)
+		+ z * (ax.x * ax.z * cosb + ax.y * sina);
 	float yrot = x * (ax.y * ax.x * cosb + ax.z * sina)
-	    + y * (ax.y * ax.y * cosb + cosa)
-	    + z * (ax.y * ax.z * cosb - ax.x * sina);
+		+ y * (ax.y * ax.y * cosb + cosa)
+		+ z * (ax.y * ax.z * cosb - ax.x * sina);
 	float zrot = x * (ax.z * ax.x * cosb - ax.y * sina)
-	    + y * (ax.z * ax.y * cosb + ax.x * sina)
-	    + z * (ax.z * ax.z * cosb + cosa);
+		+ y * (ax.z * ax.y * cosb + ax.x * sina)
+		+ z * (ax.z * ax.z * cosb + cosa);
 
 	x = xrot + pivot.x;
 	y = yrot + pivot.y;
@@ -1550,25 +1550,25 @@ inline ofVec3f& ofVec3f::rotateRad(float angle,
 //
 //
 inline ofVec3f ofVec3f::mapped(const ofVec3f& origin,
-    const ofVec3f& vx,
-    const ofVec3f& vy,
-    const ofVec3f& vz) const {
+	const ofVec3f& vx,
+	const ofVec3f& vy,
+	const ofVec3f& vz) const {
 	return getMapped(origin, vx, vy, vz);
 }
 
 inline ofVec3f ofVec3f::getMapped(const ofVec3f& origin,
-    const ofVec3f& vx,
-    const ofVec3f& vy,
-    const ofVec3f& vz) const {
+	const ofVec3f& vx,
+	const ofVec3f& vy,
+	const ofVec3f& vz) const {
 	return ofVec3f(origin.x + x * vx.x + y * vy.x + z * vz.x,
-	    origin.y + x * vx.y + y * vy.y + z * vz.y,
-	    origin.z + x * vx.z + y * vy.z + z * vz.z);
+		origin.y + x * vx.y + y * vy.y + z * vz.y,
+		origin.z + x * vx.z + y * vy.z + z * vz.z);
 }
 
 inline ofVec3f& ofVec3f::map(const ofVec3f& origin,
-    const ofVec3f& vx,
-    const ofVec3f& vy,
-    const ofVec3f& vz) {
+	const ofVec3f& vx,
+	const ofVec3f& vy,
+	const ofVec3f& vz) {
 	float xmap = origin.x + x * vx.x + y * vy.x + z * vz.x;
 	float ymap = origin.y + x * vx.y + y * vy.y + z * vz.y;
 	z = origin.z + x * vx.z + y * vy.z + z * vz.z;
@@ -1612,8 +1612,8 @@ inline ofVec3f ofVec3f::interpolated(const ofVec3f& pnt, float p) const {
 
 inline ofVec3f ofVec3f::getInterpolated(const ofVec3f& pnt, float p) const {
 	return ofVec3f(x * (1 - p) + pnt.x * p,
-	    y * (1 - p) + pnt.y * p,
-	    z * (1 - p) + pnt.z * p);
+		y * (1 - p) + pnt.y * p,
+		z * (1 - p) + pnt.z * p);
 }
 
 inline ofVec3f& ofVec3f::interpolate(const ofVec3f& pnt, float p) {
@@ -1722,8 +1722,8 @@ inline ofVec3f ofVec3f::crossed(const ofVec3f& vec) const {
 }
 inline ofVec3f ofVec3f::getCrossed(const ofVec3f& vec) const {
 	return ofVec3f(y * vec.z - z * vec.y,
-	    z * vec.x - x * vec.z,
-	    x * vec.y - y * vec.x);
+		z * vec.x - x * vec.z,
+		x * vec.y - y * vec.x);
 }
 
 inline ofVec3f& ofVec3f::cross(const ofVec3f& vec) {

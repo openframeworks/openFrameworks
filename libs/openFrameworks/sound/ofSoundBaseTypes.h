@@ -68,7 +68,7 @@ public:
 		MS_DS, /*!< The Microsoft Direct Sound API. */
 		NUM_APIS
 	} api
-	    = UNSPECIFIED;
+		= UNSPECIFIED;
 
 	friend std::ostream& operator<<(std::ostream& os, const ofSoundDevice& dev);
 	friend std::ostream& operator<<(std::ostream& os, const std::vector<ofSoundDevice>& devs);

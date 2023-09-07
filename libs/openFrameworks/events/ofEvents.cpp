@@ -116,14 +116,14 @@ int ofGetPreviousMouseY() {
 }
 
 ofCoreEvents::ofCoreEvents()
-    : targetRate(0)
-    , bFrameRateSet(false)
-    , fps(60)
-    , currentMouseX(0)
-    , currentMouseY(0)
-    , previousMouseX(0)
-    , previousMouseY(0)
-    , bPreMouseNotSet(false) {
+	: targetRate(0)
+	, bFrameRateSet(false)
+	, fps(60)
+	, currentMouseX(0)
+	, currentMouseY(0)
+	, previousMouseX(0)
+	, previousMouseY(0)
+	, bPreMouseNotSet(false) {
 }
 
 //------------------------------------------
@@ -296,10 +296,10 @@ bool ofCoreEvents::notifyDraw() {
 			fps = ofFpsCounter(targetRate);
 	} else {
 		/*if(ofIsVerticalSyncEnabled()){
-		    float rate = ofGetRefreshRate();
-		    int intervals = round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
-		    //vsyncedIntervalsRemainder = lastFrameTime*rate/1000000.+vsyncedIntervalsRemainder - intervals;
-		    lastFrameTime = intervals*1000000/rate;
+			float rate = ofGetRefreshRate();
+			int intervals = round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
+			//vsyncedIntervalsRemainder = lastFrameTime*rate/1000000.+vsyncedIntervalsRemainder - intervals;
+			lastFrameTime = intervals*1000000/rate;
 		}*/
 	}
 	fps.newFrame();

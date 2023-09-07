@@ -121,30 +121,30 @@ public:
 	};
 
 	ofKeyEventArgs()
-	    : type(Pressed)
-	    , key(0)
-	    , keycode(0)
-	    , scancode(0)
-	    , codepoint(0)
-	    , isRepeat(false) { }
+		: type(Pressed)
+		, key(0)
+		, keycode(0)
+		, scancode(0)
+		, codepoint(0)
+		, isRepeat(false) { }
 
 	ofKeyEventArgs(Type type, int key, int keycode, int scancode, unsigned int codepoint, int modifiers)
-	    : type(type)
-	    , key(key)
-	    , keycode(keycode)
-	    , scancode(scancode)
-	    , codepoint(codepoint)
-	    , isRepeat(false)
-	    , modifiers(modifiers) {
+		: type(type)
+		, key(key)
+		, keycode(keycode)
+		, scancode(scancode)
+		, codepoint(codepoint)
+		, isRepeat(false)
+		, modifiers(modifiers) {
 	}
 
 	ofKeyEventArgs(Type type, int key)
-	    : type(type)
-	    , key(key)
-	    , keycode(0)
-	    , scancode(0)
-	    , codepoint(0)
-	    , isRepeat(false) {
+		: type(type)
+		, key(key)
+		, keycode(0)
+		, scancode(0)
+		, codepoint(0)
+		, isRepeat(false) {
 	}
 
 	Type type;
@@ -179,32 +179,32 @@ public:
 	};
 
 	ofMouseEventArgs()
-	    : type(Pressed)
-	    , button(OF_MOUSE_BUTTON_LEFT)
-	    , scrollX(0.f)
-	    , scrollY(0.f) { }
+		: type(Pressed)
+		, button(OF_MOUSE_BUTTON_LEFT)
+		, scrollX(0.f)
+		, scrollY(0.f) { }
 
 	ofMouseEventArgs(Type type, float x, float y, int button)
-	    : glm::vec2(x, y)
-	    , type(type)
-	    , button(button)
-	    , scrollX(0.f)
-	    , scrollY(0.f) { }
+		: glm::vec2(x, y)
+		, type(type)
+		, button(button)
+		, scrollX(0.f)
+		, scrollY(0.f) { }
 
 	ofMouseEventArgs(Type type, float x, float y, int button, int modifiers)
-	    : glm::vec2(x, y)
-	    , type(type)
-	    , button(button)
-	    , scrollX(0.f)
-	    , scrollY(0.f)
-	    , modifiers(modifiers) { }
+		: glm::vec2(x, y)
+		, type(type)
+		, button(button)
+		, scrollX(0.f)
+		, scrollY(0.f)
+		, modifiers(modifiers) { }
 
 	ofMouseEventArgs(Type type, float x, float y)
-	    : glm::vec2(x, y)
-	    , type(type)
-	    , button(0)
-	    , scrollX(0.f)
-	    , scrollY(0.f) { }
+		: glm::vec2(x, y)
+		, type(type)
+		, button(0)
+		, scrollX(0.f)
+		, scrollY(0.f) { }
 
 	Type type;
 	int button;
@@ -229,38 +229,38 @@ public:
 	};
 
 	ofTouchEventArgs()
-	    : type(down)
-	    , id(0)
-	    , time(0)
-	    , numTouches(0)
-	    , width(0)
-	    , height(0)
-	    , angle(0)
-	    , minoraxis(0)
-	    , majoraxis(0)
-	    , pressure(0)
-	    , xspeed(0)
-	    , yspeed(0)
-	    , xaccel(0)
-	    , yaccel(0) {
+		: type(down)
+		, id(0)
+		, time(0)
+		, numTouches(0)
+		, width(0)
+		, height(0)
+		, angle(0)
+		, minoraxis(0)
+		, majoraxis(0)
+		, pressure(0)
+		, xspeed(0)
+		, yspeed(0)
+		, xaccel(0)
+		, yaccel(0) {
 	}
 
 	ofTouchEventArgs(Type type, float x, float y, int id)
-	    : glm::vec2(x, y)
-	    , type(type)
-	    , id(id)
-	    , time(0)
-	    , numTouches(0)
-	    , width(0)
-	    , height(0)
-	    , angle(0)
-	    , minoraxis(0)
-	    , majoraxis(0)
-	    , pressure(0)
-	    , xspeed(0)
-	    , yspeed(0)
-	    , xaccel(0)
-	    , yaccel(0) { }
+		: glm::vec2(x, y)
+		, type(type)
+		, id(id)
+		, time(0)
+		, numTouches(0)
+		, width(0)
+		, height(0)
+		, angle(0)
+		, minoraxis(0)
+		, majoraxis(0)
+		, pressure(0)
+		, xspeed(0)
+		, yspeed(0)
+		, xaccel(0)
+		, yaccel(0) { }
 
 	Type type;
 	int id;
@@ -277,12 +277,12 @@ public:
 class ofResizeEventArgs : public ofEventArgs {
 public:
 	ofResizeEventArgs()
-	    : width(0)
-	    , height(0) { }
+		: width(0)
+		, height(0) { }
 
 	ofResizeEventArgs(int width, int height)
-	    : width(width)
-	    , height(height) { }
+		: width(width)
+		, height(height) { }
 
 	int width;
 	int height;
@@ -293,7 +293,7 @@ public:
 	ofWindowPosEventArgs() { }
 
 	ofWindowPosEventArgs(int x, int y)
-	    : glm::vec2(x, y) { }
+		: glm::vec2(x, y) { }
 };
 
 class ofMessage : public ofEventArgs {
@@ -412,7 +412,7 @@ private:
 		FixedRate,
 		Filtered,
 	} timeMode
-	    = System;
+		= System;
 	std::chrono::nanoseconds fixedRateTimeNanos;
 };
 

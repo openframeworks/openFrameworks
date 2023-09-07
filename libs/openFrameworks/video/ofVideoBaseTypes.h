@@ -95,8 +95,8 @@ public:
 
 /// \brief A base class representing a drawable video source.
 class ofBaseVideoDraws : public ofBaseVideo,
-                         public ofBaseDraws,
-                         public ofBaseHasTexturePlanes {
+						 public ofBaseDraws,
+						 public ofBaseHasTexturePlanes {
 public:
 	/// \brief Destroy the ofBaseVideoDraws.
 	virtual ~ofBaseVideoDraws() { }

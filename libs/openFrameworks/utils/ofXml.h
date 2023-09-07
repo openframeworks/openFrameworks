@@ -93,8 +93,8 @@ public:
 
 	private:
 		Range(std::shared_ptr<pugi::xml_document> doc, pugi::xml_object_range<typename It::Base> range)
-		    : doc(doc)
-		    , range(range) { }
+			: doc(doc)
+			, range(range) { }
 		std::shared_ptr<pugi::xml_document> doc;
 		pugi::xml_object_range<typename It::Base> range;
 		friend class ofXml;
@@ -292,12 +292,12 @@ public:
 private:
 	// Construct an iterator which points to the specified node
 	ofXmlIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node& xml)
-	    : xml(doc, xml) {
+		: xml(doc, xml) {
 	}
 
 	// Construct an iterator which points to the specified node
 	ofXmlIterator(ofXml&& xml)
-	    : xml(xml) {
+		: xml(xml) {
 	}
 	mutable ofXml xml;
 	friend class ofXml;
@@ -360,11 +360,11 @@ public:
 private:
 	// Construct an iterator which points to the specified node
 	ofXmlAttributeIterator(std::shared_ptr<pugi::xml_document>, const ofXml::Attribute& attr)
-	    : attr(attr) {
+		: attr(attr) {
 	}
 
 	ofXmlAttributeIterator(const ofXml::Attribute& attr)
-	    : attr(attr) {
+		: attr(attr) {
 	}
 	ofXml::Attribute attr;
 	friend class ofXml;
@@ -389,7 +389,7 @@ public:
 
 private:
 	ofXmlSearchIterator(std::shared_ptr<pugi::xml_document> doc, const pugi::xpath_node* node)
-	    : node(node) {
+		: node(node) {
 		if (node) {
 			xml = ofXml(doc, node->node());
 		}

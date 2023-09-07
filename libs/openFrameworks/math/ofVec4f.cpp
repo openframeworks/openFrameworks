@@ -21,25 +21,25 @@ ofVec4f::ofVec4f(const ofVec2f& vec) {
 }
 
 ofVec2f::ofVec2f(const glm::vec3& v)
-    : x(v.x)
-    , y(v.y) { }
+	: x(v.x)
+	, y(v.y) { }
 
 ofVec2f::ofVec2f(const glm::vec4& v)
-    : x(v.x)
-    , y(v.y) { }
+	: x(v.x)
+	, y(v.y) { }
 
 ofVec4f::ofVec4f(const glm::vec2& v)
-    : x(v.x)
-    , y(v.y)
-    , z(0.0)
-    , w(0.0) { }
+	: x(v.x)
+	, y(v.y)
+	, z(0.0)
+	, w(0.0) { }
 ofVec4f::ofVec4f(const glm::vec3& v)
-    : x(v.x)
-    , y(v.y)
-    , z(v.z)
-    , w(0.0) { }
+	: x(v.x)
+	, y(v.y)
+	, z(v.z)
+	, w(0.0) { }
 ofVec4f::ofVec4f(const glm::vec4& v)
-    : x(v.x)
-    , y(v.y)
-    , z(v.z)
-    , w(v.w) { }
+	: x(v.x)
+	, y(v.y)
+	, z(v.z)
+	, w(v.w) { }

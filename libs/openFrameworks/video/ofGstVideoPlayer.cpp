@@ -46,55 +46,55 @@ bool ofGstVideoPlayer::createPipeline(std::string name) {
 	case OF_PIXELS_GRAY:
 		bpp = 8;
 		caps = gst_caps_new_simple("video/x-raw-gray",
-		    "bpp", G_TYPE_INT, bpp,
-		    "depth", G_TYPE_INT, 8,
-		    NULL);
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 8,
+			NULL);
 		break;
 	case OF_PIXELS_RGB:
 		bpp = 24;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
-		    "bpp", G_TYPE_INT, bpp,
-		    "depth", G_TYPE_INT, 24,
-		    "endianness", G_TYPE_INT, 4321,
-		    "red_mask", G_TYPE_INT, 0xff0000,
-		    "green_mask", G_TYPE_INT, 0x00ff00,
-		    "blue_mask", G_TYPE_INT, 0x0000ff,
-		    NULL);
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness", G_TYPE_INT, 4321,
+			"red_mask", G_TYPE_INT, 0xff0000,
+			"green_mask", G_TYPE_INT, 0x00ff00,
+			"blue_mask", G_TYPE_INT, 0x0000ff,
+			NULL);
 		break;
 	case OF_PIXELS_RGBA:
 		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
-		    "bpp", G_TYPE_INT, bpp,
-		    "depth", G_TYPE_INT, 32,
-		    "endianness", G_TYPE_INT, 4321,
-		    "red_mask", G_TYPE_INT, 0xff000000,
-		    "green_mask", G_TYPE_INT, 0x00ff0000,
-		    "blue_mask", G_TYPE_INT, 0x0000ff00,
-		    "alpha_mask", G_TYPE_INT, 0x000000ff,
-		    NULL);
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness", G_TYPE_INT, 4321,
+			"red_mask", G_TYPE_INT, 0xff000000,
+			"green_mask", G_TYPE_INT, 0x00ff0000,
+			"blue_mask", G_TYPE_INT, 0x0000ff00,
+			"alpha_mask", G_TYPE_INT, 0x000000ff,
+			NULL);
 		break;
 	case OF_PIXELS_BGRA:
 		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
-		    "bpp", G_TYPE_INT, bpp,
-		    "depth", G_TYPE_INT, 32,
-		    "endianness", G_TYPE_INT, 4321,
-		    "red_mask", G_TYPE_INT, 0x0000ff00,
-		    "green_mask", G_TYPE_INT, 0x00ff0000,
-		    "blue_mask", G_TYPE_INT, 0xff000000,
-		    "alpha_mask", G_TYPE_INT, 0x000000ff,
-		    NULL);
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness", G_TYPE_INT, 4321,
+			"red_mask", G_TYPE_INT, 0x0000ff00,
+			"green_mask", G_TYPE_INT, 0x00ff0000,
+			"blue_mask", G_TYPE_INT, 0xff000000,
+			"alpha_mask", G_TYPE_INT, 0x000000ff,
+			NULL);
 		break;
 	default:
 		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
-		    "bpp", G_TYPE_INT, bpp,
-		    "depth", G_TYPE_INT, 24,
-		    "endianness", G_TYPE_INT, 4321,
-		    "red_mask", G_TYPE_INT, 0xff0000,
-		    "green_mask", G_TYPE_INT, 0x00ff00,
-		    "blue_mask", G_TYPE_INT, 0x0000ff,
-		    NULL);
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness", G_TYPE_INT, 4321,
+			"red_mask", G_TYPE_INT, 0xff0000,
+			"green_mask", G_TYPE_INT, 0x00ff00,
+			"blue_mask", G_TYPE_INT, 0x0000ff,
+			NULL);
 		break;
 	}
 	#else
@@ -106,8 +106,8 @@ bool ofGstVideoPlayer::createPipeline(std::string name) {
 	} else {
 		std::string format = ofGstVideoUtils::getGstFormatName(internalPixelFormat);
 		caps = gst_caps_new_simple(mime.c_str(),
-		    "format", G_TYPE_STRING, format.c_str(),
-		    NULL);
+			"format", G_TYPE_STRING, format.c_str(),
+			NULL);
 	}
 
 	#endif
@@ -166,7 +166,7 @@ bool ofGstVideoPlayer::createPipeline(std::string name) {
 	glXMakeCurrent (ofGetX11Display(), None, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
-	              GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+				  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
 
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
 

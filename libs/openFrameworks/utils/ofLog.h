@@ -118,8 +118,8 @@ enum ofLogLevel : short {
 	OF_LOG_ERROR,
 	OF_LOG_FATAL_ERROR,
 	OF_LOG_SILENT // OF_LOG_SILENT can be used to disable _all_ log messages.
-	              // All logging can be disabled by calling
-	              /// ofSetLogLevel(OF_LOG_SILENT).
+				  // All logging can be disabled by calling
+				  /// ofSetLogLevel(OF_LOG_SILENT).
 };
 
 //--------------------------------------------
@@ -428,7 +428,7 @@ public:
 	/// \param format The printf-style format string.
 	template <typename... Args>
 	ofLog(ofLogLevel level, const char* format, Args&&... args)
-	    : ofLog(level, ofVAArgsToString(format, args...)) { }
+		: ofLog(level, ofVAArgsToString(format, args...)) { }
 	/// \}
 
 	//--------------------------------------------------
@@ -543,7 +543,7 @@ public:
 	/// \param format The printf-style format string.
 	template <typename... Args>
 	ofLogVerbose(const std::string& module, const char* format, Args&&... args)
-	    : ofLogVerbose(module, ofVAArgsToString(format, args...)) { }
+		: ofLogVerbose(module, ofVAArgsToString(format, args...)) { }
 };
 
 /// \brief Derived log class for easy notice logging.
@@ -565,7 +565,7 @@ public:
 	/// \param format The printf-style format string.
 	template <typename... Args>
 	ofLogNotice(const std::string& module, const char* format, Args&&... args)
-	    : ofLogNotice(module, ofVAArgsToString(format, args...)) { }
+		: ofLogNotice(module, ofVAArgsToString(format, args...)) { }
 };
 
 /// \brief Derived log class for easy warning logging.
@@ -586,7 +586,7 @@ public:
 	/// \param format The printf-style format string.
 	template <typename... Args>
 	ofLogWarning(const std::string& module, const char* format, Args&&... args)
-	    : ofLogWarning(module, ofVAArgsToString(format, args...)) { }
+		: ofLogWarning(module, ofVAArgsToString(format, args...)) { }
 };
 
 /// \brief Derived log class for easy error logging.
@@ -608,7 +608,7 @@ public:
 	/// \param format The printf-style format string.
 	template <typename... Args>
 	ofLogError(const std::string& module, const char* format, Args&&... args)
-	    : ofLogError(module, ofVAArgsToString(format, args...)) { }
+		: ofLogError(module, ofVAArgsToString(format, args...)) { }
 };
 
 /// \brief Derived log class for easy fatal error logging.
@@ -630,7 +630,7 @@ public:
 	/// \param format The printf-style format string.
 	template <typename... Args>
 	ofLogFatalError(const std::string& module, const char* format, Args&&... args)
-	    : ofLogFatalError(module, ofVAArgsToString(format, args...)) { }
+		: ofLogFatalError(module, ofVAArgsToString(format, args...)) { }
 };
 
 /// \cond INTERNAL

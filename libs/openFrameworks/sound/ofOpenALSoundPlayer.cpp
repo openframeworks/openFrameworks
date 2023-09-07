@@ -251,7 +251,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vect
 		sf_count_t samples_read = sf_read_float(f, &fftAuxBuffer[0], fftAuxBuffer.size());
 		if (samples_read < (int)fftAuxBuffer.size()) {
 			ofLogWarning("ofOpenALSoundPlayer") << "sfReadFile(): read " << samples_read << " float samples, expected "
-			                                    << fftAuxBuffer.size() << " for \"" << path << "\"";
+												<< fftAuxBuffer.size() << " for \"" << path << "\"";
 		}
 		for (int i = 0; i < int(fftAuxBuffer.size()); i++) {
 			fftAuxBuffer[i] *= scale;
@@ -261,14 +261,14 @@ bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vect
 		sf_count_t frames_read = sf_readf_short(f, &buffer[0], sfInfo.frames);
 		if (frames_read < sfInfo.frames) {
 			ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): read " << frames_read << " frames from buffer, expected "
-			                                  << sfInfo.frames << " for \"" << path << "\"";
+											  << sfInfo.frames << " for \"" << path << "\"";
 			return false;
 		}
 		sf_seek(f, 0, SEEK_SET);
 		frames_read = sf_readf_float(f, &fftAuxBuffer[0], sfInfo.frames);
 		if (frames_read < sfInfo.frames) {
 			ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): read " << frames_read << " frames from fft buffer, expected "
-			                                  << sfInfo.frames << " for \"" << path << "\"";
+											  << sfInfo.frames << " for \"" << path << "\"";
 			return false;
 		}
 	}
@@ -295,8 +295,8 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const of::filesystem::path& path, std::
 	mpg123_getformat(f, &rate, &channels, (int*)&encoding);
 	if (encoding != MPG123_ENC_SIGNED_16) {
 		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): " << getMpg123EncodingString(encoding)
-		                                  << " encoding for \"" << path << "\""
-		                                  << " unsupported, expecting MPG123_ENC_SIGNED_16";
+										  << " encoding for \"" << path << "\""
+										  << " unsupported, expecting MPG123_ENC_SIGNED_16";
 		return false;
 	}
 	samplerate = rate;
@@ -402,8 +402,8 @@ bool ofOpenALSoundPlayer::mpg123Stream(const of::filesystem::path& path, std::ve
 		mpg123_getformat(mp3streamf, &rate, &channels, (int*)&stream_encoding);
 		if (stream_encoding != MPG123_ENC_SIGNED_16) {
 			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): " << getMpg123EncodingString(stream_encoding)
-			                                  << " encoding for \"" << path << "\""
-			                                  << " unsupported, expecting MPG123_ENC_SIGNED_16";
+											  << " encoding for \"" << path << "\""
+											  << " unsupported, expecting MPG123_ENC_SIGNED_16";
 			return false;
 		}
 		samplerate = rate;
@@ -446,7 +446,7 @@ bool ofOpenALSoundPlayer::stream(const of::filesystem::path& fileName, std::vect
 			return false;
 	} else
 	#endif
-	    if (!sfStream(fileName, buffer, fftAuxBuffer))
+		if (!sfStream(fileName, buffer, fftAuxBuffer))
 		return false;
 
 	fftBuffers.resize(channels);
@@ -531,7 +531,7 @@ bool ofOpenALSoundPlayer::load(const of::filesystem::path& _fileName, bool is_st
 		err = alGetError();
 		if (err != AL_NO_ERROR) {
 			ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't generate source for \"" << fileName << "\": "
-			                                  << (int)err << " " << getALErrorString(err);
+											  << (int)err << " " << getALErrorString(err);
 			return false;
 		}
 
@@ -541,7 +541,7 @@ bool ofOpenALSoundPlayer::load(const of::filesystem::path& _fileName, bool is_st
 			err = alGetError();
 			if (err != AL_NO_ERROR) {
 				ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't create buffer for \"" << fileName << "\": "
-				                                  << (int)err << " " << getALErrorString(err);
+												  << (int)err << " " << getALErrorString(err);
 				return false;
 			}
 			if (isStreaming) {
@@ -592,7 +592,7 @@ bool ofOpenALSoundPlayer::load(const of::filesystem::path& _fileName, bool is_st
 				err = alGetError();
 				if (err != AL_NO_ERROR) {
 					ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't create stereo buffers for \"" << fileName << "\": "
-					                                  << (int)err << " " << getALErrorString(err);
+													  << (int)err << " " << getALErrorString(err);
 					return false;
 				}
 				alSourcei(sources[i], AL_BUFFER, buffers[i]);
@@ -603,7 +603,7 @@ bool ofOpenALSoundPlayer::load(const of::filesystem::path& _fileName, bool is_st
 			err = alGetError();
 			if (err != AL_NO_ERROR) {
 				ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't create stereo sources for \"" << fileName << "\": "
-				                                  << (int)err << " " << getALErrorString(err);
+												  << (int)err << " " << getALErrorString(err);
 				return false;
 			}
 
@@ -801,7 +801,7 @@ void ofOpenALSoundPlayer::setPositionMS(int ms) {
 		mpg123_seek(mp3streamf, float(ms) / 1000.f * samplerate, SEEK_SET);
 	} else
 	#endif
-	    if (streamf) {
+		if (streamf) {
 		stream_samples_read = sf_seek(streamf, float(ms) / 1000.f * samplerate, SEEK_SET) * channels;
 	} else {
 		for (int i = 0; i < (int)channels; i++) {
@@ -828,7 +828,7 @@ int ofOpenALSoundPlayer::getPositionMS() const {
 		pos = float(mpg123_tell(mp3streamf)) / float(samplerate);
 	} else
 	#endif
-	    if (streamf) {
+		if (streamf) {
 		pos = float(stream_samples_read) / float(channels) / float(samplerate);
 	} else {
 		alGetSourcef(sources[sources.size() - 1], AL_SEC_OFFSET, &pos);
@@ -936,7 +936,7 @@ void ofOpenALSoundPlayer::play() {
 		err = alGetError();
 		if (err != AL_NO_ERROR) {
 			ofLogError("ofOpenALSoundPlayer") << "play(): couldn't create multiplay stereo sources: "
-			                                  << (int)err << " " << getALErrorString(err);
+											  << (int)err << " " << getALErrorString(err);
 			return;
 		}
 		for (int i = 0; i < channels; i++) {
@@ -956,7 +956,7 @@ void ofOpenALSoundPlayer::play() {
 		err = alGetError();
 		if (err != AL_NO_ERROR) {
 			ofLogError("ofOpenALSoundPlayer") << "play(): couldn't assign multiplay buffers: "
-			                                  << (int)err << " " << getALErrorString(err);
+											  << (int)err << " " << getALErrorString(err);
 			return;
 		}
 	}

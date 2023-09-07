@@ -37,12 +37,12 @@ enum ofOrientation : short {
 class ofWindowSettings {
 public:
 	ofWindowSettings()
-	    : windowMode(OF_WINDOW)
-	    , width(1024)
-	    , height(768)
-	    , sizeSet(false)
-	    , position(0, 0)
-	    , positionSet(false) { }
+		: windowMode(OF_WINDOW)
+		, width(1024)
+		, height(768)
+		, sizeSet(false)
+		, position(0, 0)
+		, positionSet(false) { }
 
 	virtual ~ofWindowSettings() {};
 
@@ -91,13 +91,13 @@ protected:
 class ofGLWindowSettings : public ofWindowSettings {
 public:
 	ofGLWindowSettings()
-	    : glVersionMajor(2)
-	    , glVersionMinor(1) { }
+		: glVersionMajor(2)
+		, glVersionMinor(1) { }
 
 	ofGLWindowSettings(const ofWindowSettings& settings)
-	    : ofWindowSettings(settings)
-	    , glVersionMajor(2)
-	    , glVersionMinor(1) {
+		: ofWindowSettings(settings)
+		, glVersionMajor(2)
+		, glVersionMinor(1) {
 		const ofGLWindowSettings* glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
 		if (glSettings) {
 			glVersionMajor = glSettings->glVersionMajor;
@@ -119,11 +119,11 @@ public:
 class ofGLESWindowSettings : public ofWindowSettings {
 public:
 	ofGLESWindowSettings()
-	    : glesVersion(1) { }
+		: glesVersion(1) { }
 
 	ofGLESWindowSettings(const ofWindowSettings& settings)
-	    : ofWindowSettings(settings)
-	    , glesVersion(1) {
+		: ofWindowSettings(settings)
+		, glesVersion(1) {
 		const ofGLESWindowSettings* glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
 		if (glesSettings) {
 			glesVersion = glesSettings->glesVersion;

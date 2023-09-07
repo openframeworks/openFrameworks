@@ -16,7 +16,7 @@
 #include <cmath>
 
 #if (_MSC_VER)
-    // make microsoft visual studio complain less about double / float conversion.
+	// make microsoft visual studio complain less about double / float conversion.
 	#pragma warning(disable : 4244)
 #endif
 
@@ -319,9 +319,9 @@ ofQuaternion& ofQuaternion::operator*=(float rhs) {
 //----------------------------------------
 const ofQuaternion ofQuaternion::operator*(const ofQuaternion& rhs) const {
 	return ofQuaternion(rhs._v.w * _v.x + rhs._v.x * _v.w + rhs._v.y * _v.z - rhs._v.z * _v.y,
-	    rhs._v.w * _v.y - rhs._v.x * _v.z + rhs._v.y * _v.w + rhs._v.z * _v.x,
-	    rhs._v.w * _v.z + rhs._v.x * _v.y - rhs._v.y * _v.x + rhs._v.z * _v.w,
-	    rhs._v.w * _v.w - rhs._v.x * _v.x - rhs._v.y * _v.y - rhs._v.z * _v.z);
+		rhs._v.w * _v.y - rhs._v.x * _v.z + rhs._v.y * _v.w + rhs._v.z * _v.x,
+		rhs._v.w * _v.z + rhs._v.x * _v.y - rhs._v.y * _v.x + rhs._v.z * _v.w,
+		rhs._v.w * _v.w - rhs._v.x * _v.x - rhs._v.y * _v.y - rhs._v.z * _v.z);
 }
 
 //----------------------------------------
@@ -368,7 +368,7 @@ ofQuaternion& ofQuaternion::operator/=(const ofQuaternion& denom) {
 //----------------------------------------
 const ofQuaternion ofQuaternion::operator+(const ofQuaternion& rhs) const {
 	return ofQuaternion(_v.x + rhs._v.x, _v.y + rhs._v.y,
-	    _v.z + rhs._v.z, _v.w + rhs._v.w);
+		_v.z + rhs._v.z, _v.w + rhs._v.w);
 }
 
 //----------------------------------------
@@ -383,7 +383,7 @@ ofQuaternion& ofQuaternion::operator+=(const ofQuaternion& rhs) {
 //----------------------------------------
 const ofQuaternion ofQuaternion::operator-(const ofQuaternion& rhs) const {
 	return ofQuaternion(_v.x - rhs._v.x, _v.y - rhs._v.y,
-	    _v.z - rhs._v.z, _v.w - rhs._v.w);
+		_v.z - rhs._v.z, _v.w - rhs._v.w);
 }
 
 //----------------------------------------

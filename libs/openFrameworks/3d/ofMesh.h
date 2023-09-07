@@ -117,9 +117,9 @@ public:
 	/// \name Primitive constructor helper methods
 	/// \{
 	static ofMesh_ plane(float width, float height, int columns = 2, int rows = 2,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	static ofMesh_ sphere(float radius, int res = 12,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 	static ofMesh_ icosahedron(float radius);
 	static ofMesh_ icosphere(float radius, std::size_t iterations = 2);
 	///
@@ -137,8 +137,8 @@ public:
 	///	![image of a simple cylinder](3d/cylinder.jpg)
 	///
 	static ofMesh_ cylinder(float radius, float height, int radiusSegments = 12,
-	    int heightSegments = 6, int numCapSegments = 2, bool bCapped = true,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		int heightSegments = 6, int numCapSegments = 2, bool bCapped = true,
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 
 	/// \brief A helper method that returns a cone made of triangles.
 	/// The resolution settings for the radius, height, and cap are optional
@@ -152,8 +152,8 @@ public:
 	///
 	/// ![image of a simple cone](3d/cone.jpg)
 	static ofMesh_ cone(float radius, float height, int radiusSegments = 12,
-	    int heightSegments = 6, int capSegments = 2,
-	    ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
+		int heightSegments = 6, int capSegments = 2,
+		ofPrimitiveMode mode = OF_PRIMITIVE_TRIANGLE_STRIP);
 
 	/// \brief A helper method that returns a box made of triangles.
 	/// The resolution settings for the width and height are optional
@@ -165,7 +165,7 @@ public:
 	///
 	/// ![image of a simple box](3d/box.jpg)
 	static ofMesh_ box(float width, float height, float depth, int resX = 2,
-	    int resY = 2, int resZ = 2);
+		int resY = 2, int resZ = 2);
 
 	/// \returns an ofMesh representing an XYZ coordinate system.
 	static ofMesh_ axis(float size = 1.0);
@@ -639,7 +639,7 @@ private:
 	mutable bool bFacesDirty;
 
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged,
-	    bIndicesChanged;
+		bIndicesChanged;
 	ofPrimitiveMode mode;
 
 	bool useColors;

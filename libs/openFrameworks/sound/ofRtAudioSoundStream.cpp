@@ -175,7 +175,7 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings& settings_) {
 	unsigned int bufferSize = settings.bufferSize;
 	try {
 		audio->openStream((settings.numOutputChannels > 0) ? &outputParameters : nullptr, (settings.numInputChannels > 0) ? &inputParameters : nullptr, RTAUDIO_FLOAT32,
-		    settings.sampleRate, &bufferSize, &rtAudioCallback, this, &options);
+			settings.sampleRate, &bufferSize, &rtAudioCallback, this, &options);
 		audio->startStream();
 	} catch (std::exception& error) {
 		ofLogError() << error.what();

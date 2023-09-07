@@ -442,12 +442,12 @@ void ofShadow::update(const ofLight& alight) {
 		float viewWidth = getGLData(data->lightType).width;
 		float viewHeight = getGLData(data->lightType).height; //
 		mShadowProjection = glm::ortho(
-		    -viewWidth / 2 * mOrthoScaleX,
-		    +viewWidth / 2 * mOrthoScaleX,
-		    -viewHeight / 2 * mOrthoScaleY,
-		    +viewHeight / 2 * mOrthoScaleY,
-		    getNearClip(),
-		    getFarClip());
+			-viewWidth / 2 * mOrthoScaleX,
+			+viewWidth / 2 * mOrthoScaleX,
+			-viewHeight / 2 * mOrthoScaleY,
+			+viewHeight / 2 * mOrthoScaleY,
+			getNearClip(),
+			getFarClip());
 		mLookAtMats[0] = glm::lookAt(data->position, data->position + data->direction, glm::vec3(0.0, 1.0, 0.0));
 		mViewProjMats[0] = mShadowProjection * mLookAtMats[0];
 		data->shadowMatrix = biasMatrix * mViewProjMats[0];

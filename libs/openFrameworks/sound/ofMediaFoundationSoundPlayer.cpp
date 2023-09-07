@@ -76,12 +76,12 @@ void ofMediaFoundationUtils::CallAsyncBlocking(std::function<void()> aCallBack) 
 	HRESULT hr = S_OK;
 
 	ComPtr<AsyncCallback> pCB(
-	    new AsyncCallback(
-	        [&] {
-		        aCallBack();
-		        isDone.store(true);
-		        wait.notify_one();
-	        }));
+		new AsyncCallback(
+			[&] {
+				aCallBack();
+				isDone.store(true);
+				wait.notify_one();
+			}));
 
 	hr = MFPutWorkItem(MFASYNC_CALLBACK_QUEUE_MULTITHREADED, pCB.Get(), NULL);
 	if (hr == S_OK) {
@@ -219,9 +219,9 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
 	LPCWSTR path = absPath.c_str();
 
 	hr = MFCreateSourceReaderFromURL(
-	    path,
-	    attributes.Get(),
-	    mSrcReader.GetAddressOf());
+		path,
+		attributes.Get(),
+		mSrcReader.GetAddressOf());
 
 	if (hr != S_OK) {
 		ofLogError("ofMediaFoundationSoundPlayer::load") << " unable to load from: " << absPath;
@@ -339,10 +339,10 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
 		// faster pitch
 		if (mBStreaming) {
 			hr = sXAudio2->CreateSourceVoice(
-			    &pSourceVoice,
-			    &mWaveFormatEx,
-			    0U, 3.0f,
-			    mVoiceContext.get());
+				&pSourceVoice,
+				&mWaveFormatEx,
+				0U, 3.0f,
+				mVoiceContext.get());
 		} else {
 			hr = sXAudio2->CreateSourceVoice(&pSourceVoice, &mWaveFormatEx);
 		}
@@ -378,16 +378,16 @@ void ofMediaFoundationSoundPlayer::unload() {
 		}
 
 		ofMediaFoundationUtils::CallAsyncBlocking(
-		    [&] {
-			    // mSrcReader->Flush(MF_SOURCE_READER_FIRST_AUDIO_STREAM);
-			    mSrcReader.Reset();
-		    });
+			[&] {
+				// mSrcReader->Flush(MF_SOURCE_READER_FIRST_AUDIO_STREAM);
+				mSrcReader.Reset();
+			});
 	}
 	mSrcReader = nullptr;
 
 	if (mSrcReaderCallback) {
 		ofMediaFoundationUtils::CallAsyncBlocking(
-		    [&] { mSrcReaderCallback.reset(); });
+			[&] { mSrcReaderCallback.reset(); });
 	}
 
 	if (mVoice) {
@@ -609,7 +609,7 @@ void ofMediaFoundationSoundPlayer::stop() {
 
 	if (mBStreaming && mSrcReader) {
 		ofMediaFoundationUtils::CallAsyncBlocking(
-		    [&] { mSrcReader->Flush(MF_SOURCE_READER_FIRST_AUDIO_STREAM); });
+			[&] { mSrcReader->Flush(MF_SOURCE_READER_FIRST_AUDIO_STREAM); });
 	}
 
 	if (mVoice) {
@@ -803,7 +803,7 @@ float ofMediaFoundationSoundPlayer::getVolume() const {
 
 //--------------------
 void ofMediaFoundationSoundPlayer::OnSourceReaderEvent(HRESULT hrStatus, DWORD dwStreamIndex,
-    DWORD dwStreamFlags, LONGLONG llTimestamp, IMFSample* pSample) {
+	DWORD dwStreamFlags, LONGLONG llTimestamp, IMFSample* pSample) {
 	HRESULT hr = S_OK;
 	if (dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM) {
 		ofLogVerbose("ofMediaFoundationSoundPlayer::update") << "End of stream";
@@ -999,12 +999,12 @@ bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
 		LONGLONG llAudioTimeStamp;
 
 		HRESULT hr = areader->ReadSample(
-		    MF_SOURCE_READER_FIRST_AUDIO_STREAM,
-		    0, // Flags.
-		    &streamIndex, // Receives the actual stream index.
-		    &flags, // Receives status flags.
-		    &llAudioTimeStamp, // Receives the time stamp.
-		    &audioSample // Receives the sample or NULL.
+			MF_SOURCE_READER_FIRST_AUDIO_STREAM,
+			0, // Flags.
+			&streamIndex, // Receives the actual stream index.
+			&flags, // Receives status flags.
+			&llAudioTimeStamp, // Receives the time stamp.
+			&audioSample // Receives the sample or NULL.
 		);
 
 		if (flags & MF_SOURCE_READERF_ENDOFSTREAM) {

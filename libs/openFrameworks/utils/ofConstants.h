@@ -59,7 +59,7 @@ enum ofTargetPlatform {
 
 // Cross-platform deprecation warning
 #ifdef __GNUC__
-    // clang also has this defined. deprecated(message) is only for gcc>=4.5
+	// clang also has this defined. deprecated(message) is only for gcc>=4.5
 	#if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || __GNUC__ > 4
 		#define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__ __attribute__((deprecated(message)))
 	#else
@@ -140,7 +140,7 @@ enum ofTargetPlatform {
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER) // microsoft visual studio
-	    // TODO: Fix this in the code instead of disabling the warnings
+		// TODO: Fix this in the code instead of disabling the warnings
 		#define _CRT_SECURE_NO_WARNINGS
 		#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
@@ -150,20 +150,20 @@ enum ofTargetPlatform {
 		#pragma warning(disable : 4756) // overflow in constant arithmetic
 		#pragma warning(disable : 4800) // 'Boolean' : forcing value to bool 'true' or 'false'
 
-	    // make microsoft visual studio complain less about double / float conversion and
-	    // truncation
+		// make microsoft visual studio complain less about double / float conversion and
+		// truncation
 		#pragma warning(disable : 4244)
 		#pragma warning(disable : 4305)
-	    // warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
+		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
 
-	    // NOMINMAX doesn't seem to work anymore in vs2015 so let's just remove them
+		// NOMINMAX doesn't seem to work anymore in vs2015 so let's just remove them
 		#undef min
 		#undef max
 	#endif
 
 	#define TARGET_LITTLE_ENDIAN // intel cpu
 
-    // some gl.h files, like dev-c++, are old - this is pretty universal
+	// some gl.h files, like dev-c++, are old - this is pretty universal
 	#ifndef GL_BGR_EXT
 		#define GL_BGR_EXT 0x80E0
 	#endif
@@ -207,8 +207,8 @@ enum ofTargetPlatform {
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
 			#include "bcm_host.h"
-		    // rpi firmware headers define countof
-		    // which messes up other libraries like glm
+			// rpi firmware headers define countof
+			// which messes up other libraries like glm
 			#undef countof
 		#endif
 
@@ -224,15 +224,15 @@ enum ofTargetPlatform {
 		#include <GL/glew.h>
 	#endif
 
-    // for some reason, this isn't defined at compile time,
-    // so this hack let's us work
-    // for 99% of the linux folks that are on intel
-    // everyone one else will have RGB / BGR issues.
-    // #if defined(__LITTLE_ENDIAN__)
+	// for some reason, this isn't defined at compile time,
+	// so this hack let's us work
+	// for 99% of the linux folks that are on intel
+	// everyone one else will have RGB / BGR issues.
+	// #if defined(__LITTLE_ENDIAN__)
 	#define TARGET_LITTLE_ENDIAN // intel cpu
-    // #endif
+	// #endif
 
-    // some things for serial compilation:
+	// some things for serial compilation:
 	#define B14400 14400
 	#define B28800 28800
 
@@ -294,7 +294,7 @@ typedef TESSindex ofIndexType;
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
 	#elif defined(TARGET_OSX)
-	    // on 10.6 and below we can use the old grabber
+		// on 10.6 and below we can use the old grabber
 		#ifndef MAC_OS_X_VERSION_10_7
 			#define OF_VIDEO_CAPTURE_QUICKTIME
 		// if we are below 10.12 or targeting below 10.12 we use QTKit
@@ -350,7 +350,7 @@ typedef TESSindex ofIndexType;
 			#define OF_VIDEO_PLAYER_DIRECTSHOW
 		#endif
 	#elif defined(TARGET_OSX)
-	    // for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
+		// for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
 		#ifndef MAC_OS_X_VERSION_10_7
 			#define OF_VIDEO_PLAYER_QUICKTIME
 		#elif !defined(MAC_OS_X_VERSION_10_8)
@@ -442,7 +442,7 @@ std::unique_ptr<T> make_unique_helper(std::false_type, Args&&... args) {
 template <typename T, typename... Args>
 std::unique_ptr<T> make_unique_helper(std::true_type, Args&&... args) {
 	static_assert(std::extent<T>::value == 0,
-	    "make_unique<T[N]>() is forbidden, please use make_unique<T[]>().");
+		"make_unique<T[N]>() is forbidden, please use make_unique<T[]>().");
 
 	typedef typename std::remove_extent<T>::type U;
 	return std::unique_ptr<T>(new U[sizeof...(Args)] { std::forward<Args>(args)... });
@@ -490,18 +490,18 @@ std::unique_ptr<T> make_unique(Args&&... args) {
   // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
 		#ifdef _MSC_VER
 
-		    // Check and include header that defines "_HAS_CXX17"
+			// Check and include header that defines "_HAS_CXX17"
 			#if __has_include(<yvals_core.h>)
 				#include <yvals_core.h>
 
-			    // Check for enabled C++17 support
+				// Check for enabled C++17 support
 				#if defined(_HAS_CXX17) && _HAS_CXX17
   // We're using C++17, so let's use the normal version
 					#define OF_USE_EXPERIMENTAL_FS 0
 				#endif
 			#endif
 
-		    // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
+			// If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
 			#ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
 				#define OF_USE_EXPERIMENTAL_FS 1
 			#endif
@@ -555,7 +555,7 @@ namespace filesystem = std::filesystem;
 		#endif
 	#endif
 #else // not OF_USING_STD_FS
-    // No experimental or c++17 filesytem support use boost
+	// No experimental or c++17 filesytem support use boost
 	#if !_MSC_VER
 		#define BOOST_NO_CXX11_SCOPED_ENUMS
 		#define BOOST_NO_SCOPED_ENUMS

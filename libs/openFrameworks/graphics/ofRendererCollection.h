@@ -7,7 +7,7 @@
 class ofRendererCollection : public ofBaseRenderer {
 public:
 	ofRendererCollection()
-	    : graphics3d(this) { }
+		: graphics3d(this) { }
 	~ofRendererCollection() { }
 
 	static const std::string TYPE;
@@ -41,15 +41,15 @@ public:
 	void draw(const ofBaseVideoDraws& video, float x, float y, float w, float h) const;
 
 	/*void bind(const ofBaseVideoDraws & video) const{
-	    for(int i=0;i<(int)renderers.size();i++){
-	        renderers[i]->bind(video);
-	    }
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->bind(video);
+		}
 	}
 
 	void unbind(const ofBaseVideoDraws & video) const{
-	    for(int i=0;i<(int)renderers.size();i++){
-	        renderers[i]->unbind(video);
-	    }
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->unbind(video);
+		}
 	}*/
 
 	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;

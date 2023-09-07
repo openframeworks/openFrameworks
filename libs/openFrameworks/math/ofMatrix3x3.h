@@ -34,8 +34,8 @@ public:
 	/// \{
 
 	ofMatrix3x3(float _a = 0.0, float _b = 0.0, float _c = 0.0,
-	    float _d = 0.0, float _e = 0.0, float _f = 0.0,
-	    float _g = 0.0, float _h = 0.0, float _i = 0.0);
+		float _d = 0.0, float _e = 0.0, float _f = 0.0,
+		float _g = 0.0, float _h = 0.0, float _i = 0.0);
 
 	ofMatrix3x3(const glm::mat3& mat) {
 		*this = reinterpret_cast<const ofMatrix3x3&>(mat);
@@ -52,8 +52,8 @@ public:
 	/// \{
 
 	void set(float _a, float _b, float _c,
-	    float _d, float _e, float _f,
-	    float _g, float _h, float _i);
+		float _d, float _e, float _f,
+		float _g, float _h, float _i);
 
 	float& operator[](const int& index);
 

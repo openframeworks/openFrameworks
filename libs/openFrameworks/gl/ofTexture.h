@@ -192,9 +192,9 @@ public:
 
 	unsigned int textureID; ///< GL internal texture ID.
 	int textureTarget; ///< GL texture type, either GL_TEXTURE_2D or
-	                   ///< GL_TEXTURE_RECTANGLE_ARB.
+					   ///< GL_TEXTURE_RECTANGLE_ARB.
 	int glInternalFormat; ///< GL internal format, e.g. GL_RGB8.
-	                      ///< \sa http://www.opengl.org/wiki/Image_Format
+						  ///< \sa http://www.opengl.org/wiki/Image_Format
 
 	float tex_t; ///< Texture horizontal coordinate, ratio of width to display width.
 	float tex_u; ///< Texture vertical coordinate, ratio of height to display height.
@@ -926,7 +926,7 @@ public:
 
 	/// \internal
 	ofTextureData texData; ///< Internal texture data access.
-	                       ///< For backwards compatibility.
+						   ///< For backwards compatibility.
 
 protected:
 	/// \brief Enable a texture target.
@@ -940,7 +940,7 @@ protected:
 	glm::vec3 anchor; ///< The texture's anchor point.
 
 	bool bAnchorIsPct; ///< Is the anchor point represented as a normalized
-	                   ///< (0 - 1) coordinate?
+					   ///< (0 - 1) coordinate?
 
 private:
 	bool bWantsMipmap; ///< Should mipmaps be created?

@@ -26,7 +26,7 @@ using std::vector;
 // needed for serial bus enumeration:
 // 4d36e978-e325-11ce-bfc1-08002be10318}
 DEFINE_GUID(GUID_SERENUM_BUS_ENUMERATOR, 0x4D36E978, 0xE325,
-    0x11CE, 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18);
+	0x11CE, 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18);
 
 void ofSerial::enumerateWin32Ports() {
 	if (bPortsEnumerated == true) {
@@ -53,12 +53,12 @@ void ofSerial::enumerateWin32Ports() {
 			}
 
 			if (SetupDiGetDeviceRegistryPropertyA(hDevInfo,
-			        &DeviceInterfaceData,
-			        SPDRP_FRIENDLYNAME,
-			        &dataType,
-			        dataBuf,
-			        sizeof(dataBuf),
-			        &actualSize)) {
+					&DeviceInterfaceData,
+					SPDRP_FRIENDLYNAME,
+					&dataType,
+					dataBuf,
+					sizeof(dataBuf),
+					&actualSize)) {
 
 				sprintf(portNamesFriendly[nPorts], "%s", dataBuf);
 				portNamesShort[nPorts][0] = 0;
@@ -141,7 +141,7 @@ ofSerial::~ofSerial() {
 static bool isDeviceArduino(ofSerialDeviceInfo& A) {
 	// TODO - this should be ofStringInString
 	return (strstr(A.getDeviceName().c_str(), "usbserial") != nullptr
-	    || strstr(A.getDeviceName().c_str(), "usbmodem") != nullptr);
+		|| strstr(A.getDeviceName().c_str(), "usbmodem") != nullptr);
 }
 #endif
 
@@ -395,7 +395,7 @@ bool ofSerial::setup(string portName, int baud) {
 	// "COM4", etc...
 
 	hComm = CreateFileA(pn, GENERIC_READ | GENERIC_WRITE, 0, 0,
-	    OPEN_EXISTING, 0, 0);
+		OPEN_EXISTING, 0, 0);
 
 	if (hComm == INVALID_HANDLE_VALUE) {
 		ofLogError("ofSerial") << "setup(): unable to open " << portName;

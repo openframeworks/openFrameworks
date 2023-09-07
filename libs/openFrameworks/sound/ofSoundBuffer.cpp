@@ -22,15 +22,15 @@ ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundB
 #endif
 
 ofSoundBuffer::ofSoundBuffer()
-    : channels(1)
-    , samplerate(44100)
-    , tickCount(0)
-    , soundStreamDeviceID(0) {
+	: channels(1)
+	, samplerate(44100)
+	, tickCount(0)
+	, soundStreamDeviceID(0) {
 }
 
 ofSoundBuffer::ofSoundBuffer(short* shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate)
-    : tickCount(0)
-    , soundStreamDeviceID(0) {
+	: tickCount(0)
+	, soundStreamDeviceID(0) {
 	copyFrom(shortBuffer, numFrames, numChannels, sampleRate);
 	checkSizeAndChannelsConsistency("constructor");
 }

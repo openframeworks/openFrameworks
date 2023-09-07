@@ -519,12 +519,12 @@ template <class T = float> // works for all non-refined
 T bound_normal(float min, float max, float focus = 4.0f) {
 	if (min >= max) {
 		std::cout << "ofRandomNormalLimits()"
-		          << "max must be > than min\n";
+				  << "max must be > than min\n";
 		return {};
 	} else {
 		if (focus <= .0099) {
 			std::cout << "ofRandomNormalLimits()"
-			          << "focus must be at least .01\n";
+					  << "focus must be at least .01\n";
 			return {};
 		} else {
 			T v;
@@ -541,12 +541,12 @@ std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
 bound_normal(T min, T max, T focus = { 4.0f, 4.0f }) {
 	if (min.x >= max.x || min.y >= max.y) {
 		std::cout << "ofRandomNormalLimits()"
-		          << "max must be > than min\n";
+				  << "max must be > than min\n";
 		return {};
 	} else {
 		if (focus.x < 1 || focus.y < 1) {
 			std::cout << "ofRandomNormalLimits()"
-			          << "focus must be at least 1\n";
+					  << "focus must be at least 1\n";
 			return {};
 		} else {
 			T v;
@@ -566,12 +566,12 @@ std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
 bound_normal(T min, T max, T focus = { 4.0f, 4.0f, 4.0f }) {
 	if (min.x >= max.x || min.y >= max.y || min.z >= max.z) {
 		std::cout << "ofRandomNormalLimits()"
-		          << "max must be > than min\n";
+				  << "max must be > than min\n";
 		return {};
 	} else {
 		if (focus.x < 1 || focus.y < 1 || focus.z < 1) {
 			std::cout << "ofRandomNormalLimits()"
-			          << "focus must be at least 1\n";
+					  << "focus must be at least 1\n";
 			return {};
 		} else {
 			T v;

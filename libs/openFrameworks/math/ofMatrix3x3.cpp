@@ -2,8 +2,8 @@
 #include <iomanip>
 
 ofMatrix3x3::ofMatrix3x3(float _a, float _b, float _c,
-    float _d, float _e, float _f,
-    float _g, float _h, float _i) {
+	float _d, float _e, float _f,
+	float _g, float _h, float _i) {
 	a = _a;
 	b = _b;
 	c = _c;
@@ -16,8 +16,8 @@ ofMatrix3x3::ofMatrix3x3(float _a, float _b, float _c,
 }
 
 void ofMatrix3x3::set(float _a, float _b, float _c,
-    float _d, float _e, float _f,
-    float _g, float _h, float _i) {
+	float _d, float _e, float _f,
+	float _g, float _h, float _i) {
 	a = _a;
 	b = _b;
 	c = _c;
@@ -92,11 +92,11 @@ ofMatrix3x3 ofMatrix3x3::transpose(const ofMatrix3x3& A) {
 
 float ofMatrix3x3::determinant() const {
 	float det = a * e * i
-	    + b * f * g
-	    + d * h * c
-	    - g * e * c
-	    - d * b * i
-	    - h * f * a;
+		+ b * f * g
+		+ d * h * c
+		- g * e * c
+		- d * b * i
+		- h * f * a;
 	return det;
 }
 

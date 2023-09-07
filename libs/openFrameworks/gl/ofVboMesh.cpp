@@ -15,7 +15,7 @@ ofVboMesh::ofVboMesh() {
 }
 
 ofVboMesh::ofVboMesh(const ofMesh& mom)
-    : ofMesh(mom) {
+	: ofMesh(mom) {
 	usage = GL_STATIC_DRAW;
 	vboNumIndices = 0;
 	vboNumVerts = 0;

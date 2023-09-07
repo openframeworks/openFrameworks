@@ -1,20 +1,20 @@
 #include "ofFpsCounter.h"
 
 ofFpsCounter::ofFpsCounter()
-    : nFrameCount(0)
-    , then(ofGetCurrentTime())
-    , fps(0)
-    , lastFrameTime(0)
-    , filteredTime(0)
-    , filterAlpha(0.9) { }
+	: nFrameCount(0)
+	, then(ofGetCurrentTime())
+	, fps(0)
+	, lastFrameTime(0)
+	, filteredTime(0)
+	, filterAlpha(0.9) { }
 
 ofFpsCounter::ofFpsCounter(double targetFPS)
-    : nFrameCount(0)
-    , then(ofGetCurrentTime())
-    , fps(targetFPS)
-    , lastFrameTime(0)
-    , filteredTime(0)
-    , filterAlpha(0.9) { }
+	: nFrameCount(0)
+	, then(ofGetCurrentTime())
+	, fps(targetFPS)
+	, lastFrameTime(0)
+	, filteredTime(0)
+	, filterAlpha(0.9) { }
 
 void ofFpsCounter::newFrame() {
 	auto now = ofGetCurrentTime();

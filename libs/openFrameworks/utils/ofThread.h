@@ -96,7 +96,7 @@ public:
 	/// \note Subclasses can directly access the mutex and employ thier
 	///       own locking strategy.
 	OF_DEPRECATED_MSG("Use tryLock instead of setting the type of lock on startThread",
-	    void startThread(bool mutexBlocks));
+		void startThread(bool mutexBlocks));
 
 	/// \brief Lock the mutex.
 	///
@@ -167,7 +167,7 @@ public:
 	/// \sa http://pocoproject.org/docs/Poco.Event.html
 	/// \sa http://pocoproject.org/docs/Poco.Semaphore.html
 	void waitForThread(bool callStopThread = true,
-	    long milliseconds = INFINITE_JOIN_TIMEOUT);
+		long milliseconds = INFINITE_JOIN_TIMEOUT);
 
 	/// \brief Tell the thread to sleep for a certain amount of milliseconds.
 	///

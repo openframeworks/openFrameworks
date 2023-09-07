@@ -199,8 +199,8 @@ static const char* eglErrorString(EGLint err) {
 #include <X11/XKBlib.h>
 
 #ifdef TARGET_RASPBERRY_PI
-    // TODO: remove these when they enter system headers
-    // From : https://github.com/raspberrypi/userland/blob/master/interface/vmcs_host/vc_vchi_dispmanx.h
+	// TODO: remove these when they enter system headers
+	// From : https://github.com/raspberrypi/userland/blob/master/interface/vmcs_host/vc_vchi_dispmanx.h
 	#ifndef ELEMENT_CHANGE_LAYER
 		#define ELEMENT_CHANGE_LAYER (1 << 0)
 	#endif
@@ -223,7 +223,7 @@ static const char* eglErrorString(EGLint err) {
 
 //-------------------------------------------------------------------------------------
 ofAppEGLWindowSettings::ofAppEGLWindowSettings()
-    : ofGLESWindowSettings() {
+	: ofGLESWindowSettings() {
 	eglWindowPreference = OF_APP_WINDOW_AUTO;
 	eglWindowOpacity = 255;
 
@@ -244,7 +244,7 @@ ofAppEGLWindowSettings::ofAppEGLWindowSettings()
 }
 
 ofAppEGLWindowSettings::ofAppEGLWindowSettings(const ofGLESWindowSettings& settings)
-    : ofGLESWindowSettings(settings) {
+	: ofGLESWindowSettings(settings) {
 	eglWindowPreference = OF_APP_WINDOW_AUTO;
 	eglWindowOpacity = 255;
 
@@ -550,8 +550,8 @@ bool ofAppEGLWindow::createSurface() {
 
 	// initialize the EGL eglDisplay connection
 	result = eglInitialize(eglDisplay,
-	    &eglVersionMajor,
-	    &eglVersionMinor);
+		&eglVersionMajor,
+		&eglVersionMinor);
 
 	if (result == EGL_BAD_DISPLAY) {
 		//  eglDisplay is not an EGL connection
@@ -611,13 +611,13 @@ bool ofAppEGLWindow::createSurface() {
 	// get an appropriate EGL frame buffer configuration
 	// http://www.khronos.org/registry/egl/sdk/docs/man/xhtml/eglChooseConfig.html
 	result = eglChooseConfig(eglDisplay,
-	    attribute_list_framebuffer_config,
-	    &eglConfig,
-	    1, // we only want the first one.  if we want more,
-	    // we need to pass in an array.
-	    // we are optimistic and don't give it more chances
-	    // to find a good configuration
-	    &num_configs);
+		attribute_list_framebuffer_config,
+		&eglConfig,
+		1, // we only want the first one.  if we want more,
+		// we need to pass in an array.
+		// we are optimistic and don't give it more chances
+		// to find a good configuration
+		&num_configs);
 
 	if (result == EGL_FALSE) {
 		EGLint error = eglGetError();
@@ -645,9 +645,9 @@ bool ofAppEGLWindow::createSurface() {
 
 	// create a surface
 	eglSurface = eglCreateWindowSurface(eglDisplay, // our display handle
-	    eglConfig, // our first config
-	    nativeWindow, // our native window
-	    attribute_list_window_surface); // surface attribute list
+		eglConfig, // our first config
+		nativeWindow, // our native window
+		attribute_list_window_surface); // surface attribute list
 
 	if (eglSurface == EGL_NO_SURFACE) {
 		EGLint error = eglGetError();
@@ -695,9 +695,9 @@ bool ofAppEGLWindow::createSurface() {
 	};
 
 	eglContext = eglCreateContext(eglDisplay,
-	    eglConfig,
-	    EGL_NO_CONTEXT,
-	    attribute_list_surface_context);
+		eglConfig,
+		EGL_NO_CONTEXT,
+		attribute_list_surface_context);
 
 	if (eglContext == EGL_NO_CONTEXT) {
 		EGLint error = eglGetError();
@@ -712,9 +712,9 @@ bool ofAppEGLWindow::createSurface() {
 
 	// connect the eglContext to the eglSurface
 	result = eglMakeCurrent(eglDisplay,
-	    eglSurface, // draw surface
-	    eglSurface, // read surface
-	    eglContext);
+		eglSurface, // draw surface
+		eglSurface, // read surface
+		eglContext);
 
 	if (eglContext == nullptr) {
 		EGLint error = eglGetError();
@@ -724,9 +724,9 @@ bool ofAppEGLWindow::createSurface() {
 
 	// Set background color and clear buffers
 	glClearColor(settings.initialClearColor.r / 255.0f,
-	    settings.initialClearColor.g / 255.0f,
-	    settings.initialClearColor.b / 255.0f,
-	    settings.initialClearColor.a / 255.0f);
+		settings.initialClearColor.g / 255.0f,
+		settings.initialClearColor.b / 255.0f,
+		settings.initialClearColor.a / 255.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -822,9 +822,9 @@ void ofAppEGLWindow::close() {
 //------------------------------------------------------------
 void ofAppEGLWindow::makeCurrent() {
 	eglMakeCurrent(eglDisplay,
-	    eglSurface, // draw surface
-	    eglSurface, // read surface
-	    eglContext);
+		eglSurface, // draw surface
+		eglSurface, // read surface
+		eglContext);
 }
 
 //------------------------------------------------------------
@@ -948,11 +948,11 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 
 		if (isUsingX11) {
 			int ret = XMoveResizeWindow(x11Display,
-			    x11Window,
-			    (int)newRect.x,
-			    (int)newRect.y,
-			    (unsigned int)newRect.width,
-			    (unsigned int)newRect.height);
+				x11Window,
+				(int)newRect.x,
+				(int)newRect.y,
+				(unsigned int)newRect.width,
+				(unsigned int)newRect.height);
 			if (ret == BadValue) {
 				ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadValue";
 			} else if (ret == BadWindow) {
@@ -979,14 +979,14 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 			DISPMANX_UPDATE_HANDLE_T dispman_update = vc_dispmanx_update_start(0);
 
 			vc_dispmanx_element_change_attributes(dispman_update,
-			    dispman_element,
-			    ELEMENT_CHANGE_SRC_RECT | ELEMENT_CHANGE_DEST_RECT, // we do both when resizing
-			    0, // layer (we aren't changing it here)
-			    0, // opactiy (we aren't changing it here)
-			    &dst_rect,
-			    &src_rect,
-			    0, // mask (we aren't changing it here)
-			    (DISPMANX_TRANSFORM_T)0);
+				dispman_element,
+				ELEMENT_CHANGE_SRC_RECT | ELEMENT_CHANGE_DEST_RECT, // we do both when resizing
+				0, // layer (we aren't changing it here)
+				0, // opactiy (we aren't changing it here)
+				&dst_rect,
+				&src_rect,
+				0, // mask (we aren't changing it here)
+				(DISPMANX_TRANSFORM_T)0);
 
 			vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1182,9 +1182,9 @@ void ofAppEGLWindow::setWindowPosition(int x, int y) {
 
 	if (isUsingX11) {
 		int ret = XMoveWindow(x11Display,
-		    x11Window,
-		    x,
-		    y);
+			x11Window,
+			x,
+			y);
 		if (ret == BadValue) {
 			ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadValue";
 		} else if (ret == BadWindow) {
@@ -1211,14 +1211,14 @@ void ofAppEGLWindow::setWindowPosition(int x, int y) {
 		dispman_update = vc_dispmanx_update_start(0);
 
 		vc_dispmanx_element_change_attributes(dispman_update,
-		    dispman_native_window.element,
-		    ELEMENT_CHANGE_DEST_RECT,
-		    0,
-		    0,
-		    &dst_rect,
-		    NULL,
-		    0,
-		    (DISPMANX_TRANSFORM_T)0);
+			dispman_native_window.element,
+			ELEMENT_CHANGE_DEST_RECT,
+			0,
+			0,
+			&dst_rect,
+			NULL,
+			0,
+			(DISPMANX_TRANSFORM_T)0);
 
 		vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1241,9 +1241,9 @@ void ofAppEGLWindow::setWindowShape(int w, int h) {
 
 	if (isUsingX11) {
 		int ret = XResizeWindow(x11Display,
-		    x11Window,
-		    (unsigned int)w,
-		    (unsigned int)h);
+			x11Window,
+			(unsigned int)w,
+			(unsigned int)h);
 		if (ret == BadValue) {
 			ofLogError("ofAppEGLWindow") << "setWindowPosition(): XMoveWindow returned BadValue";
 		} else if (ret == BadWindow) {
@@ -1378,7 +1378,7 @@ void ofAppEGLWindow::setupNativeInput() {
 
 	udev_list_entry_foreach(entry, devices) {
 		/* Get the filename of the /sys entry for the device
-		    and create a udev_device object (dev) representing it */
+			and create a udev_device object (dev) representing it */
 		const char* name = udev_list_entry_get_name(entry);
 
 		dev = udev_device_new_from_syspath(udev, name);
@@ -2008,15 +2008,15 @@ bool ofAppEGLWindow::createRPiNativeWindow(const ofRectangle& requestedWindowRec
 	// filled dispman_element to our native window, which will
 	// be used to construct the EGL surface, etc.
 	dispman_element = vc_dispmanx_element_add(dispman_update,
-	    dispman_display,
-	    settings.layer, // layer
-	    &dst_rect, // dst rect
-	    (DISPMANX_RESOURCE_HANDLE_T)0, // src
-	    &src_rect, // src rect
-	    DISPMANX_PROTECTION_NONE, // ?
-	    &dispman_alpha, // alpha
-	    &dispman_clamp, // clamp
-	    dispman_transform // transform
+		dispman_display,
+		settings.layer, // layer
+		&dst_rect, // dst rect
+		(DISPMANX_RESOURCE_HANDLE_T)0, // src
+		&src_rect, // src rect
+		DISPMANX_PROTECTION_NONE, // ?
+		&dispman_alpha, // alpha
+		&dispman_clamp, // clamp
+		dispman_transform // transform
 	);
 
 	if (dispman_element == DISPMANX_NO_HANDLE) {
@@ -2089,10 +2089,10 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 	x11Visual = new XVisualInfo();
 
 	XMatchVisualInfo(x11Display,
-	    x11ScreenNum,
-	    i32Depth,
-	    TrueColor,
-	    x11Visual);
+		x11ScreenNum,
+		i32Depth,
+		TrueColor,
+		x11Visual);
 
 	if (!x11Visual) {
 		ofLogError("ofAppEGLWindow") << "unable to acquire XVisualInfo";
@@ -2125,32 +2125,32 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 
 	// Creates the X11 window
 	x11Window = XCreateWindow(x11Display, // Specifies the connection to the X server.
-	    sRootWindow, // Specifies the parent window.
-	    (int)windowRect.x, (int)windowRect.y, // Specify the x and y coordinates,
-	    // which are the top-left outside corner
-	    // of the window's borders and are relative
-	    // to the inside of the parent window's borders.
-	    (unsigned int)windowRect.width, (unsigned int)windowRect.height, // Specify the width and height, which are the
-	    // created window's inside dimensions and do
-	    // not include the created window's borders.
-	    0, // Specifies the width of the created
-	    // window's border in pixels.
-	    CopyFromParent, // Specifies the window's depth.
-	    // A depth of CopyFromParent means
-	    // the depth is taken from the parent.
-	    InputOutput, // Specifies the created window's class.
-	    // You can pass InputOutput, InputOnly,
-	    // or CopyFromParent. A class of CopyFromParent
-	    // means the class is taken from the parent.
-	    CopyFromParent, // Specifies the visual type.
-	    // A visual of CopyFromParent means the visual type
-	    // is taken from the parent.
-	    ui32Mask, // Specifies which window attributes are
-	    // defined in the attributes argument. This mask is
-	    // the bitwise inclusive OR of the valid attribute
-	    // mask bits. If valuemask is zero, the attributes
-	    // are ignored and are not referenced.
-	    &sWA // Specifies the background pixel value of the window.
+		sRootWindow, // Specifies the parent window.
+		(int)windowRect.x, (int)windowRect.y, // Specify the x and y coordinates,
+		// which are the top-left outside corner
+		// of the window's borders and are relative
+		// to the inside of the parent window's borders.
+		(unsigned int)windowRect.width, (unsigned int)windowRect.height, // Specify the width and height, which are the
+		// created window's inside dimensions and do
+		// not include the created window's borders.
+		0, // Specifies the width of the created
+		// window's border in pixels.
+		CopyFromParent, // Specifies the window's depth.
+		// A depth of CopyFromParent means
+		// the depth is taken from the parent.
+		InputOutput, // Specifies the created window's class.
+		// You can pass InputOutput, InputOnly,
+		// or CopyFromParent. A class of CopyFromParent
+		// means the class is taken from the parent.
+		CopyFromParent, // Specifies the visual type.
+		// A visual of CopyFromParent means the visual type
+		// is taken from the parent.
+		ui32Mask, // Specifies which window attributes are
+		// defined in the attributes argument. This mask is
+		// the bitwise inclusive OR of the valid attribute
+		// mask bits. If valuemask is zero, the attributes
+		// are ignored and are not referenced.
+		&sWA // Specifies the background pixel value of the window.
 	);
 
 	XMapWindow(x11Display, x11Window);
@@ -2285,21 +2285,21 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event) {
 		instance->coreEvents.notifyWindowResized(event.xconfigure.width, event.xconfigure.height);
 		break;
 		/*case ClientMessage:{
-		    if (event.xclient.message_type == wmProtocols_ &&
-		    event.xclient.format == 32 &&
-		    event.xclient.data.l[0] == (long) wmDeleteWindow_)
-		    {
-		    if (listener())
-		    {
-		      if (listener()->onClose(wrapper() ? *wrapper() : *(WindowInterface*)this))
-		        isShuttingDown_ = true;
-		    }
-		    else
-		    {
-		      isShuttingDown_ = true;
-		    }
-		    }
-		    break;
+			if (event.xclient.message_type == wmProtocols_ &&
+			event.xclient.format == 32 &&
+			event.xclient.data.l[0] == (long) wmDeleteWindow_)
+			{
+			if (listener())
+			{
+			  if (listener()->onClose(wrapper() ? *wrapper() : *(WindowInterface*)this))
+				isShuttingDown_ = true;
+			}
+			else
+			{
+			  isShuttingDown_ = true;
+			}
+			}
+			break;
 		  }*/
 	}
 }

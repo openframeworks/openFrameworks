@@ -12,7 +12,7 @@ using std::vector;
 using std::weak_ptr;
 
 ofParameterGroup::ofParameterGroup()
-    : obj(new Value) {
+	: obj(new Value) {
 }
 
 void ofParameterGroup::add(ofAbstractParameter& parameter) {
@@ -434,7 +434,7 @@ void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter& param)
 			parent->notifyParameterChanged(param);
 		return !parent;
 	}),
-	    parents.end());
+		parents.end());
 }
 
 const ofParameterGroup ofParameterGroup::getFirstParent() const {

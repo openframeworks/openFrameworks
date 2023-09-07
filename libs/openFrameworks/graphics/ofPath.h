@@ -198,21 +198,21 @@ public:
 	void rectRounded(const glm::vec2& p, float w, float h, float r);
 	void rectRounded(float x, float y, float w, float h, float r);
 	void rectRounded(const glm::vec3& p, float w, float h, float topLeftRadius,
-	    float topRightRadius,
-	    float bottomRightRadius,
-	    float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	void rectRounded(const glm::vec2& p, float w, float h, float topLeftRadius,
-	    float topRightRadius,
-	    float bottomRightRadius,
-	    float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	void rectRounded(const ofRectangle& b, float topLeftRadius,
-	    float topRightRadius,
-	    float bottomRightRadius,
-	    float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	void rectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-	    float topRightRadius,
-	    float bottomRightRadius,
-	    float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	/// \}
 	/// \name Winding Mode
 	/// \{

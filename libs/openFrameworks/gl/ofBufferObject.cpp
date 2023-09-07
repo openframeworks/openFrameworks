@@ -4,14 +4,14 @@
 #include "ofPixels.h"
 
 ofBufferObject::Data::Data()
-    : id(0)
-    , size(0)
-    , lastTarget(GL_ARRAY_BUFFER)
+	: id(0)
+	, size(0)
+	, lastTarget(GL_ARRAY_BUFFER)
 
 #ifdef GLEW_VERSION_4_5
-    , isDSA(ofIsGLProgrammableRenderer() && GLEW_ARB_direct_state_access)
+	, isDSA(ofIsGLProgrammableRenderer() && GLEW_ARB_direct_state_access)
 #else
-    , isDSA(false)
+	, isDSA(false)
 #endif
 
 {

@@ -24,10 +24,10 @@ public:
 
 	/// \brief Construct a default white color.
 	ofColor_()
-	    : r(limit())
-	    , g(limit())
-	    , b(limit())
-	    , a(limit()) {};
+		: r(limit())
+		, g(limit())
+		, b(limit())
+		, a(limit()) {};
 
 	/// \brief Construct an ofColor_ by using channel values.
 	///
@@ -66,9 +66,9 @@ public:
 	/// \param brightness The brightness of the color.
 	/// \param alpha The alpha value of the color.
 	static ofColor_<PixelType> fromHsb(float hue,
-	    float saturation,
-	    float brightness,
-	    float alpha = limit());
+		float saturation,
+		float brightness,
+		float alpha = limit());
 
 	/// \brief Create an ofColor_ from a hexadecimal value.
 	///
@@ -159,9 +159,9 @@ public:
 	/// \param brightness A brightness value to set in the range of 0 - limit().
 	/// \param alpha An alpha value to set in the range of 0 - limit().
 	void setHsb(float hue,
-	    float saturation,
-	    float brightness,
-	    float alpha = limit());
+		float saturation,
+		float brightness,
+		float alpha = limit());
 
 	/// \}
 
@@ -240,7 +240,7 @@ public:
 	/// \returns A copy of this color, lerped.
 	/// \sa lerp()
 	ofColor_<PixelType> getLerped(const ofColor_<PixelType>& target,
-	    float amount) const;
+		float amount) const;
 
 	/// \brief Get a 24-bit hexadecimal representation of the RGB color.
 	///
@@ -590,24 +590,24 @@ public:
 	/// \{
 
 	static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta,
-	    yellow, aliceBlue, antiqueWhite, aqua, aquamarine, azure, beige, bisque, blanchedAlmond,
-	    blueViolet, brown, burlyWood, cadetBlue, chartreuse, chocolate, coral, cornflowerBlue, cornsilk,
-	    crimson, darkBlue, darkCyan, darkGoldenRod, darkGray, darkGrey, darkGreen, darkKhaki,
-	    darkMagenta, darkOliveGreen, darkOrange, darkOrchid, darkRed, darkSalmon, darkSeaGreen,
-	    darkSlateBlue, darkSlateGray, darkSlateGrey, darkTurquoise, darkViolet, deepPink,
-	    deepSkyBlue, dimGray, dimGrey, dodgerBlue, fireBrick, floralWhite, forestGreen, fuchsia,
-	    gainsboro, ghostWhite, gold, goldenRod, grey, greenYellow, honeyDew, hotPink, indianRed, indigo,
-	    ivory, khaki, lavender, lavenderBlush, lawnGreen, lemonChiffon, lightBlue, lightCoral,
-	    lightCyan, lightGoldenRodYellow, lightGray, lightGrey, lightGreen, lightPink, lightSalmon,
-	    lightSeaGreen, lightSkyBlue, lightSlateGray, lightSlateGrey, lightSteelBlue, lightYellow,
-	    lime, limeGreen, linen, maroon, mediumAquaMarine, mediumBlue, mediumOrchid, mediumPurple,
-	    mediumSeaGreen, mediumSlateBlue, mediumSpringGreen, mediumTurquoise, mediumVioletRed,
-	    midnightBlue, mintCream, mistyRose, moccasin, navajoWhite, navy, oldLace, olive, oliveDrab,
-	    orange, orangeRed, orchid, paleGoldenRod, paleGreen, paleTurquoise, paleVioletRed, papayaWhip,
-	    peachPuff, peru, pink, plum, powderBlue, purple, rosyBrown, royalBlue, saddleBrown, salmon,
-	    sandyBrown, seaGreen, seaShell, sienna, silver, skyBlue, slateBlue, slateGray, slateGrey, snow,
-	    springGreen, steelBlue, blueSteel, tan, teal, thistle, tomato, turquoise, violet, wheat, whiteSmoke,
-	    yellowGreen;
+		yellow, aliceBlue, antiqueWhite, aqua, aquamarine, azure, beige, bisque, blanchedAlmond,
+		blueViolet, brown, burlyWood, cadetBlue, chartreuse, chocolate, coral, cornflowerBlue, cornsilk,
+		crimson, darkBlue, darkCyan, darkGoldenRod, darkGray, darkGrey, darkGreen, darkKhaki,
+		darkMagenta, darkOliveGreen, darkOrange, darkOrchid, darkRed, darkSalmon, darkSeaGreen,
+		darkSlateBlue, darkSlateGray, darkSlateGrey, darkTurquoise, darkViolet, deepPink,
+		deepSkyBlue, dimGray, dimGrey, dodgerBlue, fireBrick, floralWhite, forestGreen, fuchsia,
+		gainsboro, ghostWhite, gold, goldenRod, grey, greenYellow, honeyDew, hotPink, indianRed, indigo,
+		ivory, khaki, lavender, lavenderBlush, lawnGreen, lemonChiffon, lightBlue, lightCoral,
+		lightCyan, lightGoldenRodYellow, lightGray, lightGrey, lightGreen, lightPink, lightSalmon,
+		lightSeaGreen, lightSkyBlue, lightSlateGray, lightSlateGrey, lightSteelBlue, lightYellow,
+		lime, limeGreen, linen, maroon, mediumAquaMarine, mediumBlue, mediumOrchid, mediumPurple,
+		mediumSeaGreen, mediumSlateBlue, mediumSpringGreen, mediumTurquoise, mediumVioletRed,
+		midnightBlue, mintCream, mistyRose, moccasin, navajoWhite, navy, oldLace, olive, oliveDrab,
+		orange, orangeRed, orchid, paleGoldenRod, paleGreen, paleTurquoise, paleVioletRed, papayaWhip,
+		peachPuff, peru, pink, plum, powderBlue, purple, rosyBrown, royalBlue, saddleBrown, salmon,
+		sandyBrown, seaGreen, seaShell, sienna, silver, skyBlue, slateBlue, slateGray, slateGrey, snow,
+		springGreen, steelBlue, blueSteel, tan, teal, thistle, tomato, turquoise, violet, wheat, whiteSmoke,
+		yellowGreen;
 
 	/// \}
 

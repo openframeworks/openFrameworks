@@ -122,6 +122,7 @@ IndentCaseLabels: false
 IndentCaseBlocks: false
 IndentGotoLabels: true
 IndentPPDirectives: BeforeHash
+IndentPPDirectives: BeforeHash
 IndentExternBlock: AfterExternBlock
 IndentRequiresClause: true
 IndentWidth:     4
@@ -205,7 +206,7 @@ StatementMacros:
   - QT_REQUIRE_VERSION
 TabWidth:        4
 UseCRLF:         false
-UseTab:          ForIndentation
+UseTab:          Always
 WhitespaceSensitiveMacros:
   - STRINGIZE
   - PP_STRINGIZE

@@ -1188,19 +1188,19 @@ void ofCubeMap::_createBrdfLUT() {
 	ofMesh quadMesh;
 	quadMesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	quadMesh.addVertices({ glm::vec3(0, 0, 0),
-	    glm::vec3(lutWidth, 0.0, 0.0),
-	    glm::vec3(lutWidth, lutHeight, 0.0),
-	    glm::vec3(0, lutHeight, 0.0f)
+		glm::vec3(lutWidth, 0.0, 0.0),
+		glm::vec3(lutWidth, lutHeight, 0.0),
+		glm::vec3(0, lutHeight, 0.0f)
 
 	});
 
 	quadMesh.addTexCoords({ glm::vec2(0.0f, 1.0f),
-	    glm::vec2(1.0f, 1.0f),
-	    glm::vec2(1.0f, 0.0f),
-	    glm::vec2(0.0f, 0.0f) });
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(0.0f, 0.0f) });
 
 	quadMesh.addIndices({ 0, 1, 3,
-	    1, 2, 3 });
+		1, 2, 3 });
 	quadMesh.disableColors();
 	quadMesh.disableNormals();
 	lutFbo.allocate(lutWidth, lutHeight, GL_RG32F);

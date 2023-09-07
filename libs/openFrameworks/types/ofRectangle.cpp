@@ -7,8 +7,8 @@ using std::istream;
 using std::ostream;
 //----------------------------------------------------------
 ofRectangle::ofRectangle()
-    : x(position.x)
-    , y(position.y) {
+	: x(position.x)
+	, y(position.y) {
 	set(0, 0, 0, 0);
 }
 
@@ -17,43 +17,43 @@ ofRectangle::~ofRectangle() { }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(float px, float py, float w, float h)
-    : x(position.x)
-    , y(position.y) {
+	: x(position.x)
+	, y(position.y) {
 	set(px, py, w, h);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const glm::vec3& p, float w, float h)
-    : x(position.x)
-    , y(position.y) {
+	: x(position.x)
+	, y(position.y) {
 	set(p, w, h);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const glm::vec2& p, float w, float h)
-    : x(position.x)
-    , y(position.y) {
+	: x(position.x)
+	, y(position.y) {
 	set(p, w, h);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const ofRectangle& rect)
-    : x(position.x)
-    , y(position.y) {
+	: x(position.x)
+	, y(position.y) {
 	set(rect);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const glm::vec3& p0, const glm::vec3& p1)
-    : x(position.x)
-    , y(position.y) {
+	: x(position.x)
+	, y(position.y) {
 	set(p0, p1);
 }
 
 //----------------------------------------------------------
 ofRectangle::ofRectangle(const glm::vec2& p0, const glm::vec2& p1)
-    : x(position.x)
-    , y(position.y) {
+	: x(position.x)
+	, y(position.y) {
 	set(p0, p1);
 }
 
@@ -245,53 +245,53 @@ void ofRectangle::scaleFromCenter(const glm::vec2& s) {
 
 //----------------------------------------------------------
 void ofRectangle::scaleTo(const ofRectangle& targetRect,
-    ofScaleMode scaleMode) {
+	ofScaleMode scaleMode) {
 
 	if (scaleMode == OF_SCALEMODE_FIT) {
 		scaleTo(targetRect,
-		    OF_ASPECT_RATIO_KEEP,
-		    OF_ALIGN_HORZ_CENTER,
-		    OF_ALIGN_VERT_CENTER);
+			OF_ASPECT_RATIO_KEEP,
+			OF_ALIGN_HORZ_CENTER,
+			OF_ALIGN_VERT_CENTER);
 	} else if (scaleMode == OF_SCALEMODE_FILL) {
 		scaleTo(targetRect,
-		    OF_ASPECT_RATIO_KEEP_BY_EXPANDING,
-		    OF_ALIGN_HORZ_CENTER,
-		    OF_ALIGN_VERT_CENTER);
+			OF_ASPECT_RATIO_KEEP_BY_EXPANDING,
+			OF_ALIGN_HORZ_CENTER,
+			OF_ALIGN_VERT_CENTER);
 	} else if (scaleMode == OF_SCALEMODE_CENTER) {
 		alignTo(targetRect,
-		    OF_ALIGN_HORZ_CENTER,
-		    OF_ALIGN_VERT_CENTER);
+			OF_ALIGN_HORZ_CENTER,
+			OF_ALIGN_VERT_CENTER);
 	} else if (scaleMode == OF_SCALEMODE_STRETCH_TO_FILL) {
 		scaleTo(targetRect,
-		    OF_ASPECT_RATIO_IGNORE,
-		    OF_ALIGN_HORZ_CENTER,
-		    OF_ALIGN_VERT_CENTER);
+			OF_ASPECT_RATIO_IGNORE,
+			OF_ALIGN_HORZ_CENTER,
+			OF_ALIGN_VERT_CENTER);
 	} else {
 		scaleTo(targetRect,
-		    OF_ASPECT_RATIO_KEEP);
+			OF_ASPECT_RATIO_KEEP);
 	}
 }
 
 //----------------------------------------------------------
 void ofRectangle::scaleTo(const ofRectangle& targetRect,
-    ofAspectRatioMode subjectAspectRatioMode,
-    ofAlignHorz sharedHorzAnchor,
-    ofAlignVert sharedVertAnchor) {
+	ofAspectRatioMode subjectAspectRatioMode,
+	ofAlignHorz sharedHorzAnchor,
+	ofAlignVert sharedVertAnchor) {
 	scaleTo(targetRect,
-	    subjectAspectRatioMode,
-	    sharedHorzAnchor,
-	    sharedVertAnchor,
-	    sharedHorzAnchor,
-	    sharedVertAnchor);
+		subjectAspectRatioMode,
+		sharedHorzAnchor,
+		sharedVertAnchor,
+		sharedHorzAnchor,
+		sharedVertAnchor);
 }
 
 //----------------------------------------------------------
 void ofRectangle::scaleTo(const ofRectangle& targetRect,
-    ofAspectRatioMode aspectRatioMode,
-    ofAlignHorz modelHorzAnchor,
-    ofAlignVert modelVertAnchor,
-    ofAlignHorz thisHorzAnchor,
-    ofAlignVert thisVertAnchor) {
+	ofAspectRatioMode aspectRatioMode,
+	ofAlignHorz modelHorzAnchor,
+	ofAlignVert modelVertAnchor,
+	ofAlignHorz thisHorzAnchor,
+	ofAlignVert thisVertAnchor) {
 
 	float tw = targetRect.getWidth(); // target width
 	float th = targetRect.getHeight(); // target height
@@ -321,15 +321,15 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
 
 	// now align if anchors are not ignored.
 	alignTo(targetRect,
-	    modelHorzAnchor,
-	    modelVertAnchor,
-	    thisHorzAnchor,
-	    thisVertAnchor);
+		modelHorzAnchor,
+		modelVertAnchor,
+		thisHorzAnchor,
+		thisVertAnchor);
 }
 
 //----------------------------------------------------------
 void ofRectangle::alignToHorz(const float& targetX,
-    ofAlignHorz thisHorzAnchor) {
+	ofAlignHorz thisHorzAnchor) {
 
 	if (thisHorzAnchor != OF_ALIGN_HORZ_IGNORE) {
 		translateX(targetX - getHorzAnchor(thisHorzAnchor));
@@ -340,15 +340,15 @@ void ofRectangle::alignToHorz(const float& targetX,
 
 //----------------------------------------------------------
 void ofRectangle::alignToHorz(const ofRectangle& targetRect,
-    ofAlignHorz sharedAnchor) {
+	ofAlignHorz sharedAnchor) {
 
 	alignToHorz(targetRect, sharedAnchor, sharedAnchor);
 }
 
 //----------------------------------------------------------
 void ofRectangle::alignToHorz(const ofRectangle& targetRect,
-    ofAlignHorz targetHorzAnchor,
-    ofAlignHorz thisHorzAnchor) {
+	ofAlignHorz targetHorzAnchor,
+	ofAlignHorz thisHorzAnchor) {
 
 	if (targetHorzAnchor != OF_ALIGN_HORZ_IGNORE && thisHorzAnchor != OF_ALIGN_HORZ_IGNORE) {
 		alignToHorz(targetRect.getHorzAnchor(targetHorzAnchor), thisHorzAnchor);
@@ -363,7 +363,7 @@ void ofRectangle::alignToHorz(const ofRectangle& targetRect,
 
 //----------------------------------------------------------
 void ofRectangle::alignToVert(const float& targetY,
-    ofAlignVert thisVertAnchor) {
+	ofAlignVert thisVertAnchor) {
 
 	if (thisVertAnchor != OF_ALIGN_VERT_IGNORE) {
 		translateY(targetY - getVertAnchor(thisVertAnchor));
@@ -374,15 +374,15 @@ void ofRectangle::alignToVert(const float& targetY,
 
 //----------------------------------------------------------
 void ofRectangle::alignToVert(const ofRectangle& targetRect,
-    ofAlignVert sharedAnchor) {
+	ofAlignVert sharedAnchor) {
 
 	alignToVert(targetRect, sharedAnchor, sharedAnchor);
 }
 
 //----------------------------------------------------------
 void ofRectangle::alignToVert(const ofRectangle& targetRect,
-    ofAlignVert targetVertAnchor,
-    ofAlignVert thisVertAnchor) {
+	ofAlignVert targetVertAnchor,
+	ofAlignVert thisVertAnchor) {
 
 	if (targetVertAnchor != OF_ALIGN_VERT_IGNORE && thisVertAnchor != OF_ALIGN_VERT_IGNORE) {
 		alignToVert(targetRect.getVertAnchor(targetVertAnchor), thisVertAnchor);
@@ -397,16 +397,16 @@ void ofRectangle::alignToVert(const ofRectangle& targetRect,
 
 //----------------------------------------------------------
 void ofRectangle::alignTo(const glm::vec3& targetPoint,
-    ofAlignHorz thisHorzAnchor,
-    ofAlignVert thisVertAnchor) {
+	ofAlignHorz thisHorzAnchor,
+	ofAlignVert thisVertAnchor) {
 
 	alignTo(glm::vec2(targetPoint), thisHorzAnchor, thisVertAnchor);
 }
 
 //----------------------------------------------------------
 void ofRectangle::alignTo(const glm::vec2& targetPoint,
-    ofAlignHorz thisHorzAnchor,
-    ofAlignVert thisVertAnchor) {
+	ofAlignHorz thisHorzAnchor,
+	ofAlignVert thisVertAnchor) {
 
 	alignToHorz(targetPoint.x, thisHorzAnchor);
 	alignToVert(targetPoint.y, thisVertAnchor);
@@ -414,21 +414,21 @@ void ofRectangle::alignTo(const glm::vec2& targetPoint,
 
 //----------------------------------------------------------
 void ofRectangle::alignTo(const ofRectangle& targetRect,
-    ofAlignHorz sharedHorzAnchor,
-    ofAlignVert sharedVertAnchor) {
+	ofAlignHorz sharedHorzAnchor,
+	ofAlignVert sharedVertAnchor) {
 	alignTo(targetRect,
-	    sharedHorzAnchor,
-	    sharedVertAnchor,
-	    sharedHorzAnchor,
-	    sharedVertAnchor);
+		sharedHorzAnchor,
+		sharedVertAnchor,
+		sharedHorzAnchor,
+		sharedVertAnchor);
 }
 
 //----------------------------------------------------------
 void ofRectangle::alignTo(const ofRectangle& targetRect,
-    ofAlignHorz targetHorzAnchor,
-    ofAlignVert targetVertAnchor,
-    ofAlignHorz thisHorzAnchor,
-    ofAlignVert thisVertAnchor) {
+	ofAlignHorz targetHorzAnchor,
+	ofAlignVert targetVertAnchor,
+	ofAlignHorz thisHorzAnchor,
+	ofAlignVert thisVertAnchor) {
 
 	alignToHorz(targetRect, targetHorzAnchor, thisHorzAnchor);
 	alignToVert(targetRect, targetVertAnchor, thisVertAnchor);
@@ -487,11 +487,11 @@ bool ofRectangle::intersects(const glm::vec2& p0, const glm::vec2& p1) const {
 	glm::vec2 bottomLeft(getBottomLeft());
 
 	return inside(p0) || // check end inside
-	    inside(p1) || // check end inside
-	    ofLineSegmentIntersection(p0, p1, topLeft, topRight, p) || // cross top
-	    ofLineSegmentIntersection(p0, p1, topRight, bottomRight, p) || // cross right
-	    ofLineSegmentIntersection(p0, p1, bottomRight, bottomLeft, p) || // cross bottom
-	    ofLineSegmentIntersection(p0, p1, bottomLeft, topLeft, p); // cross left
+		inside(p1) || // check end inside
+		ofLineSegmentIntersection(p0, p1, topLeft, topRight, p) || // cross top
+		ofLineSegmentIntersection(p0, p1, topRight, bottomRight, p) || // cross right
+		ofLineSegmentIntersection(p0, p1, bottomRight, bottomLeft, p) || // cross bottom
+		ofLineSegmentIntersection(p0, p1, bottomLeft, topLeft, p); // cross left
 }
 
 //----------------------------------------------------------
@@ -762,28 +762,28 @@ float ofRectangle::getHeight() const {
 //----------------------------------------------------------
 glm::vec2 ofRectangle::map(const glm::vec2& coeff) const {
 	return glm::vec2(
-	    ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), false),
-	    ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), false));
+		ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), false),
+		ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), false));
 }
 
 //----------------------------------------------------------
 
 ofRectangle ofRectangle::map(const ofRectangle& coeff) const {
 	return ofRectangle(
-	    map(glm::vec2(coeff.getMinX(), coeff.getMinY())),
-	    map(glm::vec2(coeff.getMaxX(), coeff.getMaxY())));
+		map(glm::vec2(coeff.getMinX(), coeff.getMinY())),
+		map(glm::vec2(coeff.getMaxX(), coeff.getMaxY())));
 }
 
 glm::vec2 ofRectangle::mapClamp(const glm::vec2& coeff) const {
 	return glm::vec2(
-	    ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), true),
-	    ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), true));
+		ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), true),
+		ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), true));
 }
 
 ofRectangle ofRectangle::mapClamp(const ofRectangle& coeff) const {
 	return ofRectangle(
-	    mapClamp(glm::vec2(coeff.getMinX(), coeff.getMinY())),
-	    mapClamp(glm::vec2(coeff.getMaxX(), coeff.getMaxY())));
+		mapClamp(glm::vec2(coeff.getMinX(), coeff.getMinY())),
+		mapClamp(glm::vec2(coeff.getMaxX(), coeff.getMaxY())));
 }
 
 //----------------------------------------------------------

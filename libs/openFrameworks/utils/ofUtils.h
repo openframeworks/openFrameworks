@@ -105,7 +105,7 @@ struct ofTime {
 		System,
 		FixedRate,
 	} mode
-	    = System;
+		= System;
 
 	uint64_t getAsMilliseconds() const;
 	uint64_t getAsMicroseconds() const;

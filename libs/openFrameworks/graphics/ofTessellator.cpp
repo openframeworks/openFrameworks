@@ -52,7 +52,7 @@ void memFree(void* userData, void* ptr) {
 
 //----------------------------------------------------------
 ofTessellator::ofTessellator()
-    : cacheTess(nullptr) {
+	: cacheTess(nullptr) {
 	init();
 }
 
@@ -63,7 +63,7 @@ ofTessellator::~ofTessellator() {
 
 //----------------------------------------------------------
 ofTessellator::ofTessellator(const ofTessellator& mom)
-    : cacheTess(nullptr) {
+	: cacheTess(nullptr) {
 	if (&mom != this) {
 		if (cacheTess)
 			tessDeleteTess(cacheTess);
@@ -160,8 +160,8 @@ void ofTessellator::performTessellation(ofPolyWindingMode polyWindingMode, ofMes
 	dstmesh.addIndices((ofIndexType*)tessGetElements(cacheTess), numIndices);
 	/*ofIndexType * tessElements = (ofIndexType *)tessGetElements(cacheTess);
 	for(int i=0;i<numIndices;i++){
-	    if(tessElements[i]!=TESS_UNDEF)
-	        dstmesh.addIndex(tessElements[i]);
+		if(tessElements[i]!=TESS_UNDEF)
+			dstmesh.addIndex(tessElements[i]);
 	}*/
 	dstmesh.setMode(OF_PRIMITIVE_TRIANGLES);
 }

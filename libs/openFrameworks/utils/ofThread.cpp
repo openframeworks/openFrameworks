@@ -8,10 +8,10 @@
 
 //-------------------------------------------------
 ofThread::ofThread()
-    : threadRunning(false)
-    , threadDone(true)
-    , mutexBlocks(true)
-    , name("") {
+	: threadRunning(false)
+	, threadDone(true)
+	, mutexBlocks(true)
+	, name("") {
 }
 
 //-------------------------------------------------

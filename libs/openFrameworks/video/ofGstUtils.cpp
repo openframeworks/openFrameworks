@@ -145,9 +145,9 @@ ofGstUtils::ofGstUtils() {
 	}
 	if (!plugin_registered) {
 		gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
-		    "appsink", (char*)"Element application sink",
-		    appsink_plugin_init, "0.1", "LGPL", "ofVideoPlayer", "openFrameworks",
-		    "http://openframeworks.cc/");
+			"appsink", (char*)"Element application sink",
+			appsink_plugin_init, "0.1", "LGPL", "ofVideoPlayer", "openFrameworks",
+			"http://openframeworks.cc/");
 		plugin_registered = true;
 	}
 }
@@ -464,27 +464,27 @@ void ofGstUtils::setPosition(float pct) {
 	gint64 pos = (guint64)((double)pct * (double)durationNanos);
 
 	/*if(bPaused){
-	    seek_lock();
-	    gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
-	    posChangingPaused=true;
-	    seek_unlock();
+		seek_lock();
+		gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
+		posChangingPaused=true;
+		seek_unlock();
 	}*/
 	if (speed > 0) {
 		if (!gst_element_seek(GST_ELEMENT(gstPipeline), speed, format,
-		        flags,
-		        GST_SEEK_TYPE_SET,
-		        pos,
-		        GST_SEEK_TYPE_SET,
-		        -1)) {
+				flags,
+				GST_SEEK_TYPE_SET,
+				pos,
+				GST_SEEK_TYPE_SET,
+				-1)) {
 			ofLogWarning("ofGstUtils") << "setPosition(): unable to seek";
 		}
 	} else {
 		if (!gst_element_seek(GST_ELEMENT(gstPipeline), speed, format,
-		        flags,
-		        GST_SEEK_TYPE_SET,
-		        0,
-		        GST_SEEK_TYPE_SET,
-		        pos)) {
+				flags,
+				GST_SEEK_TYPE_SET,
+				0,
+				GST_SEEK_TYPE_SET,
+				pos)) {
 			ofLogWarning("ofGstUtils") << "setPosition(): unable to seek";
 		}
 	}
@@ -543,20 +543,20 @@ void ofGstUtils::setSpeed(float _speed) {
 
 	if (speed > 0) {
 		if (!gst_element_seek(GST_ELEMENT(gstSink), speed, format,
-		        flags,
-		        seekType,
-		        pos,
-		        seekType,
-		        -1)) {
+				flags,
+				seekType,
+				pos,
+				seekType,
+				-1)) {
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	} else {
 		if (!gst_element_seek(GST_ELEMENT(gstSink), speed, format,
-		        flags,
-		        seekType,
-		        0,
-		        seekType,
-		        pos)) {
+				flags,
+				seekType,
+				0,
+				seekType,
+				pos)) {
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}
@@ -594,20 +594,20 @@ void ofGstUtils::close() {
 }
 
 /*static string getName(GstState state){
-    switch(state){
-    case   GST_STATE_VOID_PENDING:
-        return "void pending";
-    case   GST_STATE_NULL:
-        return "null";
-    case   GST_STATE_READY:
-        return "ready";
-    case   GST_STATE_PAUSED:
-        return "paused";
-    case   GST_STATE_PLAYING:
-        return "playing";
-    default:
-        return "";
-    }
+	switch(state){
+	case   GST_STATE_VOID_PENDING:
+		return "void pending";
+	case   GST_STATE_NULL:
+		return "null";
+	case   GST_STATE_READY:
+		return "ready";
+	case   GST_STATE_PAUSED:
+		return "paused";
+	case   GST_STATE_PLAYING:
+		return "playing";
+	default:
+		return "";
+	}
 }*/
 
 bool ofGstUtils::busFunction(GstBus* bus, GstMessage* message, ofGstUtils* gstUtils) {
@@ -619,7 +619,7 @@ bool ofGstUtils::gstHandleMessage(GstBus* bus, GstMessage* msg) {
 		return true;
 
 	/*ofLogVerbose("ofGstUtils") << "gstHandleMessage(): got " << GST_MESSAGE_TYPE_NAME(msg)
-	    << " message from " << GST_MESSAGE_SRC_NAME(msg);*/
+		<< " message from " << GST_MESSAGE_SRC_NAME(msg);*/
 
 	switch (GST_MESSAGE_TYPE(msg)) {
 
@@ -659,7 +659,7 @@ bool ofGstUtils::gstHandleMessage(GstBus* bus, GstMessage* msg) {
 		}
 
 		/*ofLogVerbose("ofGstUtils") << "gstHandleMessage(): " << GST_MESSAGE_SRC_NAME(msg) << " state changed from "
-		        << getName(oldstate) << " to " << getName(newstate) << " (" + getName(pendstate) << ")";*/
+				<< getName(oldstate) << " to " << getName(newstate) << " (" + getName(pendstate) << ")";*/
 	} break;
 
 	case GST_MESSAGE_ASYNC_DONE:
@@ -673,7 +673,7 @@ bool ofGstUtils::gstHandleMessage(GstBus* bus, GstMessage* msg) {
 		gchar* name = gst_element_get_name(GST_MESSAGE_SRC(msg));
 
 		ofLogError("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
-		                         << name << "  reported: " << err->message;
+								 << name << "  reported: " << err->message;
 
 		g_free(name);
 		g_error_free(err);
@@ -700,22 +700,22 @@ bool ofGstUtils::gstHandleMessage(GstBus* bus, GstMessage* msg) {
 			GstSeekFlags flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT);
 			if (speed > 0) {
 				if (!gst_element_seek(GST_ELEMENT(gstPipeline),
-				        speed,
-				        format,
-				        flags,
-				        GST_SEEK_TYPE_SET,
-				        0,
-				        GST_SEEK_TYPE_SET,
-				        -1)) {
+						speed,
+						format,
+						flags,
+						GST_SEEK_TYPE_SET,
+						0,
+						GST_SEEK_TYPE_SET,
+						-1)) {
 					ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
 				}
 			} else if (speed < 0) {
 				if (!gst_element_seek(GST_ELEMENT(gstPipeline), speed, format,
-				        flags,
-				        GST_SEEK_TYPE_SET,
-				        0,
-				        GST_SEEK_TYPE_SET,
-				        durationNanos - 1000000)) {
+						flags,
+						GST_SEEK_TYPE_SET,
+						0,
+						GST_SEEK_TYPE_SET,
+						durationNanos - 1000000)) {
 					ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
 				}
 			}
@@ -736,13 +736,13 @@ bool ofGstUtils::gstHandleMessage(GstBus* bus, GstMessage* msg) {
 			else
 				loopSpeed = speed;
 			if (!gst_element_seek(GST_ELEMENT(gstPipeline),
-			        loopSpeed,
-			        GST_FORMAT_UNDEFINED,
-			        flags,
-			        GST_SEEK_TYPE_NONE,
-			        0,
-			        GST_SEEK_TYPE_NONE,
-			        0)) {
+					loopSpeed,
+					GST_FORMAT_UNDEFINED,
+					flags,
+					GST_SEEK_TYPE_NONE,
+					0,
+					GST_SEEK_TYPE_NONE,
+					0)) {
 				ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
 			}
 		} break;
@@ -777,8 +777,8 @@ bool ofGstUtils::gstHandleMessage(GstBus* bus, GstMessage* msg) {
 		context_type = gst_context_get_context_type(context);
 		context_str = gst_structure_to_string(gst_context_get_structure(context));
 		ofLogNotice("ofGstUtils", "Got context from element '%s': %s=%s\n",
-		    GST_ELEMENT_NAME(GST_MESSAGE_SRC(msg)), context_type,
-		    context_str);
+			GST_ELEMENT_NAME(GST_MESSAGE_SRC(msg)), context_type,
+			context_str);
 		g_free(context_str);
 		gst_context_unref(context);
 		break;
@@ -1085,36 +1085,36 @@ ofPixelFormat ofGstVideoUtils::getOFFormat(GstVideoFormat format) {
 /*
 gboolean ofGstVideoUtils::sync_bus_call (GstBus * bus, GstMessage * msg, gpointer data)
 {
-    switch (GST_MESSAGE_TYPE (msg)) {
-        case GST_MESSAGE_NEED_CONTEXT:
-        {
-            ofGstVideoPlayer * player = (ofGstVideoPlayer*)data;
-            const gchar *context_type;
+	switch (GST_MESSAGE_TYPE (msg)) {
+		case GST_MESSAGE_NEED_CONTEXT:
+		{
+			ofGstVideoPlayer * player = (ofGstVideoPlayer*)data;
+			const gchar *context_type;
 
-            gst_message_parse_context_type (msg, &context_type);
-            ofLogNotice("ofGstVideoPlayer","got need context %s\n", context_type);
+			gst_message_parse_context_type (msg, &context_type);
+			ofLogNotice("ofGstVideoPlayer","got need context %s\n", context_type);
 
-            if (g_strcmp0 (context_type, GST_GL_DISPLAY_CONTEXT_TYPE) == 0) {
-                GstContext *display_context =
-                gst_context_new (GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
-                gst_context_set_gl_display (display_context, player->glDisplay);
-                //GstStructure *s = gst_context_writable_structure (display_context);
-                //gst_structure_set (s, "context", GST_GL_TYPE_CONTEXT, player->glContext,	NULL);
-                gst_element_set_context (GST_ELEMENT (msg->src), display_context);
-                return TRUE;
-            } else if (g_strcmp0 (context_type, "gst.gl.app_context") == 0) {
-                GstContext *app_context = gst_context_new ("gst.gl.app_context", TRUE);
-                GstStructure *s = gst_context_writable_structure (app_context);
-                gst_structure_set (s, "context", GST_GL_TYPE_CONTEXT, player->glContext,	NULL);
-                gst_element_set_context (GST_ELEMENT (msg->src), app_context);
-                return TRUE;
-            }
-            break;
-        }
-        default:
-        break;
-    }
-    return FALSE;
+			if (g_strcmp0 (context_type, GST_GL_DISPLAY_CONTEXT_TYPE) == 0) {
+				GstContext *display_context =
+				gst_context_new (GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
+				gst_context_set_gl_display (display_context, player->glDisplay);
+				//GstStructure *s = gst_context_writable_structure (display_context);
+				//gst_structure_set (s, "context", GST_GL_TYPE_CONTEXT, player->glContext,	NULL);
+				gst_element_set_context (GST_ELEMENT (msg->src), display_context);
+				return TRUE;
+			} else if (g_strcmp0 (context_type, "gst.gl.app_context") == 0) {
+				GstContext *app_context = gst_context_new ("gst.gl.app_context", TRUE);
+				GstStructure *s = gst_context_writable_structure (app_context);
+				gst_structure_set (s, "context", GST_GL_TYPE_CONTEXT, player->glContext,	NULL);
+				gst_element_set_context (GST_ELEMENT (msg->src), app_context);
+				return TRUE;
+			}
+			break;
+		}
+		default:
+		break;
+	}
+	return FALSE;
 }*/
 
 void ofGstVideoUtils::setCopyPixels(bool copy) {
@@ -1176,7 +1176,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	glXMakeCurrent(ofGetX11Display(), None, 0);
 	glDisplay = (GstGLDisplay*)gst_gl_display_x11_new_with_display(ofGetX11Display());
 	glContext = gst_gl_context_new_wrapped(glDisplay, (guintptr)ofGetGLXContext(),
-	    GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+		GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
 
 	g_object_set(G_OBJECT(glfilter), "other-context", glContext, NULL);
 	// FIXME: this seems to be the way to add the context in 1.4.5
@@ -1192,7 +1192,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	eglMakeCurrent(eglGetDisplay(EGL_DEFAULT_DISPLAY), 0, 0, 0);
 	glDisplay = (GstGLDisplay*)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 	glContext = gst_gl_context_new_wrapped(glDisplay, (guintptr)ofGetEGLContext(),
-	    GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
+		GST_GL_PLATFORM_EGL, GST_GL_API_GLES2);
 
 	g_object_set(G_OBJECT(glfilter), "other-context", glContext, NULL);
 	// FIXME: this seems to be the way to add the context in 1.4.5

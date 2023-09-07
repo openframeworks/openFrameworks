@@ -38,7 +38,7 @@ using std::vector;
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
-    : coreEvents(new ofCoreEvents) {
+	: coreEvents(new ofCoreEvents) {
 	bEnableSetupScreen = true;
 	buttonInUse = 0;
 	buttonPressed = false;
@@ -391,10 +391,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings& _settings) {
 		xim = XOpenIM(getX11Display(), 0, 0, 0);
 	}
 	xic = XCreateIC(xim,
-	    XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
-	    XNClientWindow, getX11Window(),
-	    XNFocusWindow, getX11Window(),
-	    NULL);
+		XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+		XNClientWindow, getX11Window(),
+		XNFocusWindow, getX11Window(),
+		NULL);
 #endif
 }
 
@@ -421,7 +421,7 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels& iconPixels) {
 	}
 
 	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
-	    PropModeReplace, (const unsigned char*)buffer.data(), length);
+		PropModeReplace, (const unsigned char*)buffer.data(), length);
 	XFlush(getX11Display());
 }
 #endif
@@ -795,7 +795,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 			xev.xclient.data.l[3] = monitorRight;
 			xev.xclient.data.l[4] = 1;
 			XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-			    False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+				False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 			currentW = maxx - minx;
 			currentH = maxy - minx;
 		} else {
@@ -833,7 +833,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	xev.xclient.data.l[3] = 0;
 	xev.xclient.data.l[4] = 0;
 	XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-	    False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+		False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 
 	// tell the window manager to bypass composition for this window in fullscreen for speed
 	// it'll probably help solving vsync issues
@@ -1324,10 +1324,10 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 	}
 
 	ofMouseEventArgs args(action,
-	    x * instance->pixelScreenCoordScale,
-	    y * instance->pixelScreenCoordScale,
-	    instance->buttonInUse,
-	    instance->events().getModifiers());
+		x * instance->pixelScreenCoordScale,
+		y * instance->pixelScreenCoordScale,
+		instance->buttonInUse,
+		instance->events().getModifiers());
 	instance->events().notifyMouseEvent(args);
 }
 
@@ -1342,10 +1342,10 @@ void ofAppGLFWWindow::entry_cb(GLFWwindow* windowP_, int entered) {
 	}
 
 	ofMouseEventArgs args(action,
-	    instance->events().getMouseX(),
-	    instance->events().getMouseY(),
-	    instance->buttonInUse,
-	    instance->events().getModifiers());
+		instance->events().getMouseX(),
+		instance->events().getMouseY(),
+		instance->buttonInUse,
+		instance->events().getModifiers());
 	instance->events().notifyMouseEvent(args);
 }
 
@@ -1355,10 +1355,10 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	ofMouseEventArgs args(ofMouseEventArgs::Scrolled,
-	    instance->events().getMouseX(),
-	    instance->events().getMouseY(),
-	    instance->buttonInUse,
-	    instance->events().getModifiers());
+		instance->events().getMouseX(),
+		instance->events().getMouseY(),
+		instance->buttonInUse,
+		instance->events().getModifiers());
 	args.scrollX = x;
 	args.scrollY = y;
 	instance->events().notifyMouseEvent(args);
@@ -1649,7 +1649,7 @@ void ofAppGLFWWindow::listVideoModes() {
 	const GLFWvidmode* vidModes = glfwGetVideoModes(nullptr, &numModes);
 	for (int i = 0; i < numModes; i++) {
 		ofLogNotice() << vidModes[i].width << " x " << vidModes[i].height
-		              << vidModes[i].redBits + vidModes[i].greenBits + vidModes[i].blueBits << "bit";
+					  << vidModes[i].redBits + vidModes[i].greenBits + vidModes[i].blueBits << "bit";
 	}
 }
 

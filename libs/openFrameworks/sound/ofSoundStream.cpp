@@ -155,7 +155,7 @@ void ofSoundStreamClose() {
 vector<ofSoundDevice> ofSoundStreamListDevices() {
 	vector<ofSoundDevice> deviceList = OF_SYSTEM_SS.getDeviceList();
 	ofLogNotice("ofSoundStreamListDevices") << std::endl
-	                                        << deviceList;
+											<< deviceList;
 	return deviceList;
 }
 
@@ -189,7 +189,7 @@ vector<ofSoundDevice> ofSoundStream::getDeviceList(ofSoundDevice::Api api) const
 vector<ofSoundDevice> ofSoundStream::listDevices() const {
 	vector<ofSoundDevice> deviceList = getDeviceList();
 	ofLogNotice("ofSoundStream::listDevices") << std::endl
-	                                          << deviceList;
+											  << deviceList;
 	return deviceList;
 }
 

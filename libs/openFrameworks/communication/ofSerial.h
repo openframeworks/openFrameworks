@@ -14,13 +14,13 @@ class ofBuffer;
 	#include <devpropdef.h>
 	#include <setupapi.h>
 	#include <regstr.h>
-    /// \cond INTERNAL
+	/// \cond INTERNAL
 	#define MAX_SERIAL_PORTS 256
-    /// \endcond
+	/// \endcond
 	#include <winioctl.h>
 /*#ifndef _MSC_VER
-    #define INITGUID
-    #include <initguid.h> // needed for dev-c++ & DEFINE_GUID
+	#define INITGUID
+	#include <initguid.h> // needed for dev-c++ & DEFINE_GUID
 #endif*/
 #endif
 

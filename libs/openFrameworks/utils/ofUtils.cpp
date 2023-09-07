@@ -204,7 +204,7 @@ std::chrono::time_point<std::chrono::nanoseconds> ofTime::getAsTimePoint() const
 	auto seconds = std::chrono::seconds(this->seconds);
 	auto nanoseconds = std::chrono::nanoseconds(this->nanoseconds);
 	return std::chrono::time_point<std::chrono::nanoseconds>(
-	    std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds);
+		std::chrono::duration_cast<std::chrono::nanoseconds>(seconds) + nanoseconds);
 }
 
 //--------------------------------------
@@ -925,7 +925,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery) {
 
 #ifdef TARGET_WIN32
 	ShellExecuteA(nullptr, "open", uriStr.c_str(),
-	    nullptr, nullptr, SW_SHOWNORMAL);
+		nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 
 #ifdef TARGET_OSX
