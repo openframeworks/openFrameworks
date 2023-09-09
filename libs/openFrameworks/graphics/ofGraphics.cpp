@@ -316,17 +316,52 @@ glm::mat4 ofGetCurrentViewMatrix(){
 
 //----------------------------------------------------------
 void ofClear(float r, float g, float b, float a){
-	ofGetCurrentRenderer()->clear(r,g,b,a);
+	ofGetCurrentRenderer()->clear(r/255.f,g/255.f,b/255.f,a/255.f);
+}
+
+//----------------------------------------------------------
+void ofClear(float r, float g, float b) {
+	ofClear( r, g, b, 255.f );
 }
 
 //----------------------------------------------------------
 void ofClear(float brightness, float a){
-	ofGetCurrentRenderer()->clear(brightness, brightness, brightness, a);
+	ofClear(brightness, brightness, brightness, a);
+}
+
+//----------------------------------------------------------
+void ofClear(float brightness){
+	ofClear(brightness, brightness, brightness, 255.f);
 }
 
 //----------------------------------------------------------
 void ofClear(const ofColor & c){
-	ofGetCurrentRenderer()->clear(c.r, c.g, c.b, c.a);
+	ofClear( c.r, c.g, c.b, c.a );
+}
+
+//----------------------------------------------------------
+void ofClear(const ofFloatColor & c) {
+	ofClearFloat(c.r,c.g,c.b,c.a);
+}
+
+//----------------------------------------------------------
+void ofClearFloat(float r, float g, float b) {
+	ofClearFloat(r,g,b,1.f);
+}
+
+//----------------------------------------------------------
+void ofClearFloat(float r, float g, float b, float a) {
+	ofGetCurrentRenderer()->clear(r,g,b,a);
+}
+
+//----------------------------------------------------------
+void ofClearFloat(float brightness, float a) {
+	ofClearFloat(brightness, brightness, brightness, a);
+}
+
+//----------------------------------------------------------
+void ofClearFloat(float brightness) {
+	ofClearFloat(brightness, brightness, brightness, 1.f);
 }
 
 //----------------------------------------------------------
@@ -339,6 +374,7 @@ void ofSetBackgroundAuto(bool bAuto){
 	ofGetCurrentRenderer()->setBackgroundAuto(bAuto);
 }
 
+
 bool ofGetBackgroundAuto(){
 	return ofGetCurrentRenderer()->getBackgroundAuto();
 }
@@ -349,12 +385,12 @@ bool ofbClearBg(){
 }
 
 //----------------------------------------------------------
-ofColor ofGetBackground(){
+ofFloatColor ofGetBackground(){
 	return ofGetCurrentRenderer()->getBackgroundColor();
 }
 
 //----------------------------------------------------------
-ofColor ofGetBackgroundColor(){
+ofFloatColor ofGetBackgroundColor(){
 	return ofGetCurrentRenderer()->getBackgroundColor();
 }
 
@@ -364,8 +400,13 @@ void ofBackground(int brightness, int alpha){
 }
 
 //----------------------------------------------------------
+void ofBackground(int r, int g, int b, int a){
+	ofGetCurrentRenderer()->background( r/255.f, g/255.f, b/255.f, a/255.f);
+}
+
+//----------------------------------------------------------
 void ofBackground(const ofColor & c){
-	ofBackground ( c.r, c.g, c.b, c.a);
+	ofBackground( c.r, c.g, c.b, c.a);
 }
 
 //----------------------------------------------------------
@@ -374,12 +415,7 @@ void ofBackgroundHex(int hexColor, int alpha){
 }
 
 //----------------------------------------------------------
-void ofBackground(int r, int g, int b, int a){
-	ofGetCurrentRenderer()->background(r,g,b,a);
-}
-
-//----------------------------------------------------------
-void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
+void ofBackgroundGradient(const ofFloatColor& start, const ofFloatColor& end, ofGradientMode mode) {
 	float w = ofGetViewportWidth(), h = ofGetViewportHeight();
 	gradientMesh.clear();
 	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
@@ -454,11 +490,11 @@ void ofSetBackgroundColorHex(int hexColor, int alpha){
 
 //----------------------------------------------------------
 void ofSetBackgroundColor(int r, int g, int b, int a){
-	ofSetBackgroundColor (ofColor(r,g,b,a));
+	ofSetBackgroundColor(ofFloatColor(r/255.f,g/255.f,b/255.f,a/255.f));
 }
 
 //----------------------------------------------------------
-void ofSetBackgroundColor(const ofColor & c){
+void ofSetBackgroundColor(const ofFloatColor & c){
 	ofGetCurrentRenderer()->setBackgroundColor(c);
 }
 
@@ -545,7 +581,7 @@ void ofSetColor(int r, int g, int b){
 
 //----------------------------------------------------------
 void ofSetColor(int r, int g, int b, int a){
-	ofGetCurrentRenderer()->setColor(r,g,b,a);
+	ofGetCurrentRenderer()->setColor(r/255.f, g/255.f, b/255.f, a/255.f );
 }
 
 //----------------------------------------------------------
@@ -557,6 +593,41 @@ void ofSetColor(int gray){
 }
 
 //----------------------------------------------------------
+void ofSetColor(const ofFloatColor & color) {
+	ofGetCurrentRenderer()->setColor(color.r,color.g,color.b,color.a);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofFloatColor & color, float _a) {
+	ofGetCurrentRenderer()->setColor(color.r,color.g,color.b,_a);
+}
+
+//----------------------------------------------------------
+void ofSetFloatColor(float r, float g, float b) {
+	ofSetFloatColor( r, g, b, 1.f);
+}
+
+//----------------------------------------------------------
+void ofSetFloatColor(float r, float g, float b, float a) {
+	ofGetCurrentRenderer()->setColor(r,g,b,a);
+}
+
+//----------------------------------------------------------
+void ofSetFloatColor(float gray) {
+	ofSetFloatColor( gray, gray, gray);
+}
+
+//----------------------------------------------------------
+void ofSetFloatColor(const ofFloatColor & color) {
+	ofSetFloatColor(color.r,color.g,color.b,color.a);
+}
+
+//----------------------------------------------------------
+void ofSetFloatColor(const ofFloatColor & color, float _a) {
+	ofSetFloatColor(color.r,color.g,color.b,_a);
+}
+
+//----------------------------------------------------------
 void ofSetHexColor(int hexColor){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;
@@ -565,7 +636,6 @@ void ofSetHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
-
 void ofEnableBlendMode(ofBlendMode blendMode){
 	ofGetCurrentRenderer()->setBlendMode(blendMode);
 }
