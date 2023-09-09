@@ -1,21 +1,19 @@
 #pragma once
-#include "ofMain.h"
 #include "Bug.h"
 #include "Bullet.h"
+#include "ofMain.h"
 
 class GameEvent : public ofEventArgs {
-	
-public:
 
+public:
 	Bullet * bullet;
-	Bug    * bug;
-	string   message;
-	
+	Bug * bug;
+	string message;
+
 	GameEvent() {
 		bullet = NULL;
-		bug    = NULL;
+		bug = NULL;
 	}
-	
-	static ofEvent <GameEvent> events;
-};
 
+	static ofEvent<GameEvent> events;
+};

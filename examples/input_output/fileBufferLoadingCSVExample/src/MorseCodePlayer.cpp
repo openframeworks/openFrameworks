@@ -7,13 +7,12 @@
 
 #include "MorseCodePlayer.h"
 
-
-MorseCodePlayer::MorseCodePlayer(){
+MorseCodePlayer::MorseCodePlayer() {
 	currentSoundIndex = 0;
 	isReady = false;
 }
 
-void MorseCodePlayer::setup(){
+void MorseCodePlayer::setup() {
 	dotPlayer.load("dot.wav", false);
 	dashPlayer.load("dash.wav", false);
 	//ofLogVerbose("dotPlayer duration: " + ofToString(dotPlayer.length/dotPlayer.internalFreq));
@@ -21,33 +20,29 @@ void MorseCodePlayer::setup(){
 	isReady = true;
 }
 
-void MorseCodePlayer::update(){
+void MorseCodePlayer::update() {
 	if (!dotPlayer.isPlaying() && !dashPlayer.isPlaying()) {
-		if (codes.size()>0){
-			
+		if (codes.size() > 0) {
+
 			currentCode = codes[0];
 			codes.erase(codes.begin());
-			
-			if (currentCode == "."){
+
+			if (currentCode == ".") {
 				dotPlayer.play();
 			}
-			if (currentCode == "-"){
+			if (currentCode == "-") {
 				dashPlayer.play();
 			}
 		}
 	}
-	
-	
 }
 
-void MorseCodePlayer::playCode(string morseCode){
+void MorseCodePlayer::playCode(string morseCode) {
 	isReady = false;
 	codes.clear();
-	for (unsigned int i =0; i<morseCode.size(); i++){
-		codes.push_back(morseCode[i]);		
+	for (unsigned int i = 0; i < morseCode.size(); i++) {
+		codes.push_back(morseCode[i]);
 	}
 	currentSoundIndex = 0;
 	isReady = true;
-	
 }
-

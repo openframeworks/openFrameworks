@@ -12,22 +12,20 @@ struct MorseCodeSymbol {
 	string code;
 };
 
-
 class MorseCodePlayer {
 public:
 	MorseCodePlayer();
 	void setup();
 	void update();
 	void playCode(string morseCode);
-	
-	
+
 	ofSoundPlayer dotPlayer;
 	ofSoundPlayer dashPlayer;
-	
+
 	int currentSoundIndex;
-	
+
 	vector<char> codes;
 	string currentCode;
-	
+
 	bool isReady;
 };

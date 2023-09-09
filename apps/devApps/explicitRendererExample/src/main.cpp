@@ -1,20 +1,20 @@
-#include "ofMain.h"
-#include "ofApp.h"
 #include "GuiApp.h"
+#include "ofApp.h"
 #include "ofAppGLFWWindow.h"
+#include "ofMain.h"
 
 //========================================================================
-int main( ){
+int main() {
 	ofGLFWWindowSettings settings;
 
 	settings.setSize(600, 600);
-	settings.setPosition(ofVec2f(300,0));
+	settings.setPosition(ofVec2f(300, 0));
 	settings.resizable = true;
 	settings.numSamples = 8;
 	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
-	
+
 	settings.setSize(300, 300);
-	settings.setPosition(ofVec2f(0,0));
+	settings.setPosition(ofVec2f(0, 0));
 	settings.resizable = false;
 	settings.numSamples = 4;
 	settings.shareContextWith = mainWindow;
@@ -30,5 +30,4 @@ int main( ){
 	ofRunApp(guiWindow, guiApp);
 	ofRunApp(mainWindow, mainApp);
 	ofRunMainLoop();
-
 }

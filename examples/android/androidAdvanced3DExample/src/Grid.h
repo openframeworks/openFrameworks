@@ -16,8 +16,7 @@
 
 #include "ofMain.h"
 
-class Grid : public ofNode
-{
+class Grid : public ofNode {
 public:
-	void	customDraw();
+	void customDraw();
 };

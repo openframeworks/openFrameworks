@@ -1,10 +1,9 @@
 #include "ofMatrix3x3.h"
 #include <iomanip>
 
-ofMatrix3x3::ofMatrix3x3( float _a, float _b, float _c,
-			  float _d, float _e, float _f,
-			  float _g, float _h, float _i )
-{
+ofMatrix3x3::ofMatrix3x3(float _a, float _b, float _c,
+	float _d, float _e, float _f,
+	float _g, float _h, float _i) {
 	a = _a;
 	b = _b;
 	c = _c;
@@ -16,13 +15,9 @@ ofMatrix3x3::ofMatrix3x3( float _a, float _b, float _c,
 	i = _i;
 }
 
-
-
-
-void ofMatrix3x3::set( float _a, float _b, float _c,
-		  float _d, float _e, float _f,
-		  float _g, float _h, float _i )
-{
+void ofMatrix3x3::set(float _a, float _b, float _c,
+	float _d, float _e, float _f,
+	float _g, float _h, float _i) {
 	a = _a;
 	b = _b;
 	c = _c;
@@ -34,22 +29,30 @@ void ofMatrix3x3::set( float _a, float _b, float _c,
 	i = _i;
 }
 
-
-float& ofMatrix3x3::operator[]( const int& index ) {
-	switch(index) {
-		case 0:  return a;
-		case 1:  return b;
-		case 2:  return c;
-		case 3:  return d;
-		case 4:  return e;
-		case 5:  return f;
-		case 6:  return g;
-		case 7:  return h;
-		case 8:  return i;
-		default: return a;
+float & ofMatrix3x3::operator[](const int & index) {
+	switch (index) {
+	case 0:
+		return a;
+	case 1:
+		return b;
+	case 2:
+		return c;
+	case 3:
+		return d;
+	case 4:
+		return e;
+	case 5:
+		return f;
+	case 6:
+		return g;
+	case 7:
+		return h;
+	case 8:
+		return i;
+	default:
+		return a;
 	}
 }
-
 
 /*
  * Transpose:
@@ -60,9 +63,15 @@ float& ofMatrix3x3::operator[]( const int& index ) {
  */
 
 void ofMatrix3x3::transpose() {
-	b += d; d = b - d; b -= d; //swap b and d
-	c += g; g = c - g; c -= g; //swap c and g
-	f += h; h = f - h; f -= h; //swap f and h
+	b += d;
+	d = b - d;
+	b -= d; //swap b and d
+	c += g;
+	g = c - g;
+	c -= g; //swap c and g
+	f += h;
+	h = f - h;
+	f -= h; //swap f and h
 }
 
 /*
@@ -71,13 +80,11 @@ void ofMatrix3x3::transpose() {
 * @return transposed matrix.
 */
 
-ofMatrix3x3 ofMatrix3x3::transpose(const ofMatrix3x3& A) {
+ofMatrix3x3 ofMatrix3x3::transpose(const ofMatrix3x3 & A) {
 	ofMatrix3x3 result = A;
 	result.transpose();
 	return result;
 }
-
-
 
 /*
 * Determinant: http://mathworld.wolfram.com/Determinant.html
@@ -85,19 +92,17 @@ ofMatrix3x3 ofMatrix3x3::transpose(const ofMatrix3x3& A) {
 
 float ofMatrix3x3::determinant() const {
 	float det = a * e * i
-			   + b * f * g
-			   + d * h * c
-			   - g * e * c
-			   - d * b * i
-			   - h * f * a;
+		+ b * f * g
+		+ d * h * c
+		- g * e * c
+		- d * b * i
+		- h * f * a;
 	return det;
 }
 
-float ofMatrix3x3::determinant(const ofMatrix3x3& A) {
+float ofMatrix3x3::determinant(const ofMatrix3x3 & A) {
 	return A.determinant();
 }
-
-
 
 /*
 * Inverse of a 3x3 matrix
@@ -109,35 +114,33 @@ float ofMatrix3x3::determinant(const ofMatrix3x3& A) {
 */
 
 void ofMatrix3x3::invert() {
-	 float det = determinant();
-	 ofMatrix3x3 B;
+	float det = determinant();
+	ofMatrix3x3 B;
 
-	 //included in these calculations: minor, cofactor (changed signs), transpose (by the order of "="), division through determinant
-	 B.a = ( e * i - h * f) / det;
-	 B.b = (-b * i + h * c) / det;
-	 B.c = ( b * f - e * c) / det;
-	 B.d = (-d * i + g * f) / det;
-	 B.e = ( a * i - g * c) / det;
-	 B.f = (-a * f + d * c) / det;
-	 B.g = ( d * h - g * e) / det;
-	 B.h = (-a * h + g * b) / det;
-	 B.i = ( a * e - d * b) / det;
+	//included in these calculations: minor, cofactor (changed signs), transpose (by the order of "="), division through determinant
+	B.a = (e * i - h * f) / det;
+	B.b = (-b * i + h * c) / det;
+	B.c = (b * f - e * c) / det;
+	B.d = (-d * i + g * f) / det;
+	B.e = (a * i - g * c) / det;
+	B.f = (-a * f + d * c) / det;
+	B.g = (d * h - g * e) / det;
+	B.h = (-a * h + g * b) / det;
+	B.i = (a * e - d * b) / det;
 
-	 *this = B;
+	*this = B;
 }
 
-ofMatrix3x3 ofMatrix3x3::inverse(const ofMatrix3x3& A) {
+ofMatrix3x3 ofMatrix3x3::inverse(const ofMatrix3x3 & A) {
 	ofMatrix3x3 result = A;
 	result.invert();
 	return result;
 }
 
-
-
 /*
 * Add two matrices
 */
-ofMatrix3x3 ofMatrix3x3::operator+(const ofMatrix3x3& B) {
+ofMatrix3x3 ofMatrix3x3::operator+(const ofMatrix3x3 & B) {
 	ofMatrix3x3 result;
 	result.a = a + B.a;
 	result.b = b + B.b;
@@ -151,7 +154,7 @@ ofMatrix3x3 ofMatrix3x3::operator+(const ofMatrix3x3& B) {
 	return result;
 }
 
-void ofMatrix3x3::operator+=(const ofMatrix3x3& B) {
+void ofMatrix3x3::operator+=(const ofMatrix3x3 & B) {
 	a += B.a;
 	b += B.b;
 	c += B.c;
@@ -166,7 +169,7 @@ void ofMatrix3x3::operator+=(const ofMatrix3x3& B) {
 /*
 * Subtract two matrices
 */
-ofMatrix3x3 ofMatrix3x3::operator-(const ofMatrix3x3& B) {
+ofMatrix3x3 ofMatrix3x3::operator-(const ofMatrix3x3 & B) {
 	ofMatrix3x3 result;
 	result.a = a - B.a;
 	result.b = b - B.b;
@@ -180,7 +183,7 @@ ofMatrix3x3 ofMatrix3x3::operator-(const ofMatrix3x3& B) {
 	return result;
 }
 
-void ofMatrix3x3::operator-=(const ofMatrix3x3& B) {
+void ofMatrix3x3::operator-=(const ofMatrix3x3 & B) {
 	a -= B.a;
 	b -= B.b;
 	c -= B.c;
@@ -191,7 +194,6 @@ void ofMatrix3x3::operator-=(const ofMatrix3x3& B) {
 	h -= B.h;
 	i -= B.i;
 }
-
 
 /*
 * Multiply a matrix with a scalar
@@ -210,13 +212,12 @@ ofMatrix3x3 ofMatrix3x3::operator*(float scalar) {
 	return result;
 }
 
-
-void ofMatrix3x3::operator*=(const ofMatrix3x3& B) {
-  *this = *this*B;
+void ofMatrix3x3::operator*=(const ofMatrix3x3 & B) {
+	*this = *this * B;
 }
 
-ofMatrix3x3 ofMatrix3x3::entrywiseTimes(const ofMatrix3x3& B){
-  ofMatrix3x3 C = *this;
+ofMatrix3x3 ofMatrix3x3::entrywiseTimes(const ofMatrix3x3 & B) {
+	ofMatrix3x3 C = *this;
 	C.a *= B.a;
 	C.b *= B.b;
 	C.c *= B.c;
@@ -226,7 +227,7 @@ ofMatrix3x3 ofMatrix3x3::entrywiseTimes(const ofMatrix3x3& B){
 	C.g *= B.g;
 	C.h *= B.h;
 	C.i *= B.i;
-  return C;
+	return C;
 }
 
 void ofMatrix3x3::operator*=(float scalar) {
@@ -241,10 +242,10 @@ void ofMatrix3x3::operator*=(float scalar) {
 	i *= scalar;
 }
 
- /*
+/*
  * Multiply a 3x3 matrix with a 3x3 matrix
  */
-ofMatrix3x3 ofMatrix3x3::operator*(const ofMatrix3x3& B) {
+ofMatrix3x3 ofMatrix3x3::operator*(const ofMatrix3x3 & B) {
 	ofMatrix3x3 C;
 	C.a = a * B.a + b * B.d + c * B.g;
 	C.b = a * B.b + b * B.e + c * B.h;
@@ -275,8 +276,7 @@ ofMatrix3x3 ofMatrix3x3::operator/(float scalar) {
 	return result;
 }
 
-
-void ofMatrix3x3::operator/=(const ofMatrix3x3& B) {
+void ofMatrix3x3::operator/=(const ofMatrix3x3 & B) {
 	a /= B.a;
 	b /= B.b;
 	c /= B.c;
@@ -300,39 +300,44 @@ void ofMatrix3x3::operator/=(float scalar) {
 	i /= scalar;
 }
 
-
-std::ostream& operator<<(std::ostream& os, const ofMatrix3x3& M) {
+std::ostream & operator<<(std::ostream & os, const ofMatrix3x3 & M) {
 	int w = 8;
-	os	<< std::setw(w)
-		<< M.a << ", " << std::setw(w)
-		<< M.b << ", " << std::setw(w)
-		<< M.c << std::endl;
+	os << std::setw(w)
+	   << M.a << ", " << std::setw(w)
+	   << M.b << ", " << std::setw(w)
+	   << M.c << std::endl;
 
-	os	<< std::setw(w)
-		<< M.d << ", " << std::setw(w)
-		<< M.e << ", " << std::setw(w)
-		<< M.f << std::endl;
+	os << std::setw(w)
+	   << M.d << ", " << std::setw(w)
+	   << M.e << ", " << std::setw(w)
+	   << M.f << std::endl;
 
-	os	<< std::setw(w)
-		<< M.g << ", " << std::setw(w)
-		<< M.h << ", " << std::setw(w)
-		<< M.i;
+	os << std::setw(w)
+	   << M.g << ", " << std::setw(w)
+	   << M.h << ", " << std::setw(w)
+	   << M.i;
 	return os;
 }
 
-std::istream& operator>>(std::istream& is, ofMatrix3x3& M) {
-	is >> M.a; is.ignore(2);
-	is >> M.b; is.ignore(2);
-	is >> M.c; is.ignore(1);
+std::istream & operator>>(std::istream & is, ofMatrix3x3 & M) {
+	is >> M.a;
+	is.ignore(2);
+	is >> M.b;
+	is.ignore(2);
+	is >> M.c;
+	is.ignore(1);
 
-	is >> M.d; is.ignore(2);
-	is >> M.e; is.ignore(2);
-	is >> M.f; is.ignore(1);
+	is >> M.d;
+	is.ignore(2);
+	is >> M.e;
+	is.ignore(2);
+	is >> M.f;
+	is.ignore(1);
 
-	is >> M.g; is.ignore(2);
-	is >> M.h; is.ignore(2);
+	is >> M.g;
+	is.ignore(2);
+	is >> M.h;
+	is.ignore(2);
 	is >> M.i;
 	return is;
 }
-
-

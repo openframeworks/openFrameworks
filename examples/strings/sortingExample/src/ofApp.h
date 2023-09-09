@@ -7,21 +7,18 @@
 // ---------------------------------------------
 class LyricWord {
 public:
-	string  word;
-	int     occurrences;
-	
+	string word;
+	int occurrences;
 };
-
 
 // ---------------------------------------------
 class ofApp : public ofBaseApp {
-	
+
 public:
-	
 	void setup();
 	void update();
 	void draw();
-	
+
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void mouseMoved(int x, int y);
@@ -33,14 +30,13 @@ public:
 	void windowResized(int w, int h);
 	void gotMessage(ofMessage msg);
 	void dragEvent(ofDragInfo dragInfo);
-	
-	static bool sortOnABC(const LyricWord &a, const LyricWord &b);
-	static bool sortOnOccurrences(const LyricWord &a, const LyricWord &b);
-	static bool sortOnLength(const LyricWord &a, const LyricWord &b);
-	static bool removeWordIf(LyricWord &wrd);
-	
-	
-	ofTrueTypeFont      font;
-	string              sortTypeInfo;
-	vector <LyricWord>  words;
+
+	static bool sortOnABC(const LyricWord & a, const LyricWord & b);
+	static bool sortOnOccurrences(const LyricWord & a, const LyricWord & b);
+	static bool sortOnLength(const LyricWord & a, const LyricWord & b);
+	static bool removeWordIf(LyricWord & wrd);
+
+	ofTrueTypeFont font;
+	string sortTypeInfo;
+	vector<LyricWord> words;
 };

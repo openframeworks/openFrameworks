@@ -1,9 +1,9 @@
-#include "ofMain.h"
 #include "ofApp.h"
+#include "ofMain.h"
 
 //========================================================================
-int main( ){
-	
+int main() {
+
 #ifdef TARGET_OPENGLES
 	ofGLESWindowSettings settings;
 	settings.glesVersion = 3;
@@ -14,15 +14,14 @@ int main( ){
 	settings.setSize(1200, 768);
 	// shadows only work with programmable renderer
 	// point lights work in 3.3, but is limited to 1
-//	settings.setGLVersion(3,3);
+	//	settings.setGLVersion(3,3);
 	// multiple point lights only work with OpenGL 4+
-	settings.setGLVersion(4,1);
+	settings.setGLVersion(4, 1);
 #endif
-	
+
 	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 	auto window = ofCreateWindow(settings);
-	
+
 	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
-
 }

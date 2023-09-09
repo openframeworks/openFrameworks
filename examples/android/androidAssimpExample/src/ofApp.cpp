@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofBackground(50, 0);
 
 	bAnimate = false;
@@ -10,10 +10,10 @@ void ofApp::setup(){
 	currentModel = 0;
 
 	model.loadModel("astroBoy_walk.dae", true);
-	model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
+	model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75, 0);
 	model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
 	model.playAllAnimations();
-	if(!bAnimate) {
+	if (!bAnimate) {
 		model.setPausedForAllAnimations(true);
 	}
 
@@ -28,10 +28,10 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	model.update();
 
-	if(bAnimateMouse) {
+	if (bAnimateMouse) {
 		model.setPositionForAllAnimations(animationPosition);
 	}
 
@@ -39,11 +39,11 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	ofSetColor(255);
 
 	ofPushMatrix();
-	ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
+	ofTranslate(model.getPosition().x + 100, model.getPosition().y, 0);
 	ofRotateDeg(-mouseX, 0, 1, 0);
 	ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
 	model.drawFaces();
@@ -52,7 +52,7 @@ void ofApp::draw(){
 	glEnable(GL_NORMALIZE);
 
 	ofPushMatrix();
-	ofTranslate(model.getPosition().x-300, model.getPosition().y, 0);
+	ofTranslate(model.getPosition().x - 300, model.getPosition().y, 0);
 	ofRotateDeg(-mouseX, 0, 1, 0);
 	ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
 
@@ -62,43 +62,40 @@ void ofApp::draw(){
 	ofMultMatrix(meshHelper.matrix);
 
 	ofMaterial & material = meshHelper.material;
-	if(meshHelper.hasTexture()){
+	if (meshHelper.hasTexture()) {
 		meshHelper.getTextureRef().bind();
 	}
 	material.begin();
 	mesh.drawWireframe();
 	material.end();
-	if(meshHelper.hasTexture()){
+	if (meshHelper.hasTexture()) {
 		meshHelper.getTextureRef().unbind();
 	}
 	ofPopMatrix();
 
-
-	ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
+	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate(), 2), 10, 15);
 	ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
 	ofDrawBitmapString("drag to control animation with mouseY", 10, 45);
 	ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 60);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void ofApp::keyReleased(int key) {
 	//
 }
 
 //--------------------------------------------------------------
-void ofApp::touchMoved(int x, int y, int id){
+void ofApp::touchMoved(int x, int y, int id) {
 	// scrub through aninations manually.
 	animationPosition = y / (float)ofGetHeight();
-
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDown(int x, int y, int id){
+void ofApp::touchDown(int x, int y, int id) {
 	// pause all animations, so we can scrub through them manually.
 	model.setPausedForAllAnimations(true);
 	animationPosition = y / (float)ofGetHeight();
@@ -106,62 +103,52 @@ void ofApp::touchDown(int x, int y, int id){
 }
 
 //--------------------------------------------------------------
-void ofApp::touchUp(int x, int y, int id){
+void ofApp::touchUp(int x, int y, int id) {
 	// unpause animations when finished scrubbing.
-	if(bAnimate) {
+	if (bAnimate) {
 		model.setPausedForAllAnimations(false);
 	}
 	bAnimateMouse = false;
 }
 
-void ofApp::touchDoubleTap(int x, int y, int id){
-
+void ofApp::touchDoubleTap(int x, int y, int id) {
 }
 
-void ofApp::touchCancelled(int x, int y, int id){
-
+void ofApp::touchCancelled(int x, int y, int id) {
 }
 
-void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
+void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id) {
 }
 
-void ofApp::pause(){
-
+void ofApp::pause() {
 }
 
-void ofApp::stop(){
-
+void ofApp::stop() {
 }
 
-void ofApp::resume(){
-
+void ofApp::resume() {
 }
 
-void ofApp::reloadTextures(){
+void ofApp::reloadTextures() {
 	model.loadModel("astroBoy_walk.dae", true);
-	model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
+	model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75, 0);
 	model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
 	model.playAllAnimations();
-	if(!bAnimate) {
+	if (!bAnimate) {
 		model.setPausedForAllAnimations(true);
 	}
 }
 
-
-bool ofApp::backPressed(){
+bool ofApp::backPressed() {
 	return false;
 }
 
-void ofApp::okPressed(){
-
+void ofApp::okPressed() {
 }
 
-void ofApp::cancelPressed(){
-
+void ofApp::cancelPressed() {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
-

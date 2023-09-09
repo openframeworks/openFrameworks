@@ -64,9 +64,9 @@ x) Close()
 --------------------------------------------------------------------------------*/
 #include "ofConstants.h"
 #include "ofxUDPSettings.h"
+#include <stdio.h>
 #include <string.h>
 #include <wchar.h>
-#include <stdio.h>
 
 #ifndef TARGET_WIN32
 
@@ -84,11 +84,10 @@ x) Close()
 	#include <sys/time.h>
 	#include <sys/ioctl.h>
 
-    //#ifdef TARGET_LINUX
-        // linux needs this:
-        #include <netinet/tcp.h>		/* for TCP_MAXSEG value */
-    //#endif
-
+//#ifdef TARGET_LINUX
+// linux needs this:
+	#include <netinet/tcp.h> /* for TCP_MAXSEG value */
+//#endif
 
 	#define SO_MAX_MSG_SIZE TCP_MAXSEG
 	#define INVALID_SOCKET -1
@@ -98,66 +97,63 @@ x) Close()
 #else
 	//windows includes
 	#include <winsock2.h>
-	#include <ws2tcpip.h>		// TCP/IP annex needed for multicasting
+	#include <ws2tcpip.h> // TCP/IP annex needed for multicasting
 #endif
 
 /// Socket constants.
-#define SOCKET_TIMEOUT			SOCKET_ERROR - 1
+#define SOCKET_TIMEOUT SOCKET_ERROR - 1
 
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
 // Implementation of a UDP socket.
-class ofxUDPManager
-{
+class ofxUDPManager {
 public:
-
 	//constructor
 	ofxUDPManager();
 
 	//destructor
-	virtual ~ofxUDPManager()
-	{
+	virtual ~ofxUDPManager() {
 		if (HasSocket()) Close();
 	}
 
-	bool	HasSocket() const	{	return (m_hSocket)&&(m_hSocket != INVALID_SOCKET);	}
+	bool HasSocket() const { return (m_hSocket) && (m_hSocket != INVALID_SOCKET); }
 	bool Close();
 	bool Setup(const ofxUDPSettings & settings);
 	bool Create();
-	bool Connect(const char *pHost, unsigned short usPort);
-	bool ConnectMcast(char *pMcast, unsigned short usPort);
+	bool Connect(const char * pHost, unsigned short usPort);
+	bool ConnectMcast(char * pMcast, unsigned short usPort);
 	bool Bind(unsigned short usPort);
-	bool BindMcast(char *pMcast, unsigned short usPort);
-	int  Send(const char* pBuff, const int iSize);
+	bool BindMcast(char * pMcast, unsigned short usPort);
+	int Send(const char * pBuff, const int iSize);
 	//all data will be sent guaranteed.
-	int  SendAll(const char* pBuff, const int iSize);
-	int  PeekReceive();			//	return number of bytes waiting
-	int  Receive(char* pBuff, const int iSize);
+	int SendAll(const char * pBuff, const int iSize);
+	int PeekReceive(); //	return number of bytes waiting
+	int Receive(char * pBuff, const int iSize);
 	void SetTimeoutSend(int timeoutInSeconds);
 	void SetTimeoutReceive(int timeoutInSeconds);
-	int  GetTimeoutSend();
-	int  GetTimeoutReceive();
-	bool GetRemoteAddr(std::string& address,int& port) const;	//	gets the IP and port of last received packet
-	bool GetListenAddr(std::string& address,int& port) const;	//	get our bound IP and port
+	int GetTimeoutSend();
+	int GetTimeoutReceive();
+	bool GetRemoteAddr(std::string & address, int & port) const; //	gets the IP and port of last received packet
+	bool GetListenAddr(std::string & address, int & port) const; //	get our bound IP and port
 	bool SetReceiveBufferSize(int sizeInByte);
 	bool SetSendBufferSize(int sizeInByte);
-	int  GetReceiveBufferSize();
-	int  GetSendBufferSize();
+	int GetReceiveBufferSize();
+	int GetSendBufferSize();
 	bool SetReuseAddress(bool allowReuse);
 	bool SetEnableBroadcast(bool enableBroadcast);
 	bool SetNonBlocking(bool useNonBlocking);
-	int  GetMaxMsgSize();
+	int GetMaxMsgSize();
 	/// returns -1 on failure
-	int  GetTTL();
+	int GetTTL();
 	bool SetTTL(int nTTL);
 
 protected:
-	#ifdef TARGET_WIN32
-		SOCKET m_hSocket;
-	#else
-		int m_hSocket;
-	#endif
+#ifdef TARGET_WIN32
+	SOCKET m_hSocket;
+#else
+	int m_hSocket;
+#endif
 
 	int WaitReceive(time_t timeoutSeconds, time_t timeoutMillis);
 	int WaitSend(time_t timeoutSeconds, time_t timeoutMillis);
@@ -172,5 +168,4 @@ protected:
 
 	static bool m_bWinsockInit;
 	bool canGetRemoteAddress;
-
 };

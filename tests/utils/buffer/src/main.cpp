@@ -1,12 +1,12 @@
 #include "ofFileUtils.h"
+#include "ofMath.h"
 #include "ofUtils.h"
 #include "ofxUnitTests.h"
-#include "ofMath.h"
 
-class ofApp: public ofxUnitTestsApp{
-	void run(){
+class ofApp : public ofxUnitTestsApp {
+	void run() {
 		std::vector<char> src(2048);
-		for(auto & c: src){
+		for (auto & c : src) {
 			c = ofRandom(255);
 		}
 
@@ -18,7 +18,7 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTest(buffer.end() == buffer.begin() + src.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = src.begin();
-			for(auto & c: buffer){
+			for (auto & c : buffer) {
 				bufferEqual &= c == *srcIt++;
 			}
 			ofxTest(bufferEqual, "data is correct");
@@ -34,7 +34,7 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTest(buffer.end() == buffer.begin() + text.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = text.begin();
-			for(auto & c: buffer){
+			for (auto & c : buffer) {
 				bufferEqual &= c == *srcIt++;
 			}
 			ofxTest(bufferEqual, "data is correct");
@@ -50,7 +50,7 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTest(buffer.end() == buffer.begin() + src.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = src.begin();
-			for(auto & c: buffer){
+			for (auto & c : buffer) {
 				bufferEqual &= c == *srcIt++;
 			}
 			ofxTest(bufferEqual, "data is correct");
@@ -66,7 +66,7 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTest(buffer.end() == buffer.begin() + text.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = text.begin();
-			for(auto & c: buffer){
+			for (auto & c : buffer) {
 				bufferEqual &= c == *srcIt++;
 			}
 			ofxTest(bufferEqual, "data is correct");
@@ -83,7 +83,7 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTest(buffer.end() == buffer.begin() + bufferSize, "correct boundaries");
 			bool bufferEqual = true;
 			buffer.setall(5);
-			for(auto & c: buffer){
+			for (auto & c : buffer) {
 				bufferEqual &= c == 5;
 			}
 			ofxTest(bufferEqual, "data is correct");
@@ -94,35 +94,35 @@ class ofApp: public ofxUnitTestsApp{
 			ofLogNotice() << "append text";
 			std::string text("This is a text test");
 			ofBuffer buffer;
-			for(int i=0;i<5;i++){
+			for (int i = 0; i < 5; i++) {
 				buffer.append(text);
 			}
 			ofxTestEq(buffer.size(), text.size() * 5, "text append does correct allocation");
 			ofxTest(buffer.end() == buffer.begin() + text.size() * 5, "correct boundaries");
 			bool bufferEqual = true;
 			auto bufferIt = buffer.begin();
-			for(int i=0;i<5;i++){
-				for(auto & c: text){
+			for (int i = 0; i < 5; i++) {
+				for (auto & c : text) {
 					bufferEqual &= c == *bufferIt++;
 				}
 			}
 			ofxTest(bufferEqual, "data is correct");
-			ofxTestEq(text+text+text+text+text, buffer.getText(), "getText");
+			ofxTestEq(text + text + text + text + text, buffer.getText(), "getText");
 		}
 
 		{
 			ofLogNotice() << "-------------------";
 			ofLogNotice() << "append raw data";
 			ofBuffer buffer;
-			for(int i=0;i<5;i++){
+			for (int i = 0; i < 5; i++) {
 				buffer.append(src.data(), src.size());
 			}
 			ofxTestEq(buffer.size(), src.size() * 5, "text append does correct allocation");
 			ofxTest(buffer.end() == buffer.begin() + src.size() * 5, "correct boundaries");
 			bool bufferEqual = true;
 			auto bufferIt = buffer.begin();
-			for(int i=0;i<5;i++){
-				for(auto & c: src){
+			for (int i = 0; i < 5; i++) {
+				for (auto & c : src) {
 					bufferEqual &= c == *bufferIt++;
 				}
 			}
@@ -133,10 +133,10 @@ class ofApp: public ofxUnitTestsApp{
 			ofLogNotice() << "-------------------";
 			ofLogNotice() << "append raw data";
 			ofBuffer buffer;
-			ofxTestEq((uint64_t)buffer.getData(),(uint64_t)nullptr,"unallocated buffer getData");
-			ofxTest(buffer.begin() == buffer.end(),"unallocated buffer begin");
+			ofxTestEq((uint64_t)buffer.getData(), (uint64_t) nullptr, "unallocated buffer getData");
+			ofxTest(buffer.begin() == buffer.end(), "unallocated buffer begin");
 			buffer.set(src.data(), src.size());
-			ofxTest(buffer.getData() == &*buffer.begin(),"getData == begin");
+			ofxTest(buffer.getData() == &*buffer.begin(), "getData == begin");
 		}
 
 		{
@@ -161,19 +161,19 @@ class ofApp: public ofxUnitTestsApp{
 			lines.push_back("a ornare nisl libero quis orci.");
 			lines.push_back("Fusce in nunc id orci lobortis semper.");
 			ofBuffer buffer;
-			for(auto & line: lines){
+			for (auto & line : lines) {
 				buffer.append(line + "\n"); // This should append one more line but the result should be correct
 			}
 
 			auto numLines = 0;
 			auto linesIt = lines.begin();
 			auto allLinesEqual = true;
-			for(auto line: buffer.getLines()){
+			for (auto line : buffer.getLines()) {
 				allLinesEqual &= line == *linesIt++;
 				++numLines;
 			}
 			ofxTest(allLinesEqual, "all lines are correct");
-			ofxTestEq(numLines,lines.size(),"lines iterator correct numLines");
+			ofxTestEq(numLines, lines.size(), "lines iterator correct numLines");
 		}
 
 		{
@@ -198,28 +198,27 @@ class ofApp: public ofxUnitTestsApp{
 			lines.push_back("a ornare nisl libero quis orci.");
 			lines.push_back("Fusce in nunc id orci lobortis semper.");
 			ofBuffer buffer;
-			for(auto & line: lines){
+			for (auto & line : lines) {
 				buffer.append(line + "\n"); // This should append one more line but the result should be correct
 			}
 
 			auto numLines = 0;
 			auto linesIt = lines.rbegin();
 			auto allLinesEqual = true;
-			for(auto rline : buffer.getReverseLines()){
+			for (auto rline : buffer.getReverseLines()) {
 				allLinesEqual &= rline == *linesIt++;
 				++numLines;
 			}
 			ofxTest(allLinesEqual, "all lines are correct");
-			ofxTestEq(numLines,lines.size(),"lines iterator correct numLines");
+			ofxTestEq(numLines, lines.size(), "lines iterator correct numLines");
 		}
 	}
 };
 
-
 #include "ofAppNoWindow.h"
 #include "ofAppRunner.h"
 //========================================================================
-int main( ){
+int main() {
 	ofInit();
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();

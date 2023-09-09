@@ -12,54 +12,52 @@
  */
 
 //--------------------------------------------------------------
-void ofApp::setup(){
-	
+void ofApp::setup() {
+
 	// initialize variables:
-	
-	isShaderDirty = true;  // this flag will tell us whether to reload our shader from disk.
-						   // this allows you to change your shaders without having to restart
-						   // your app. we'll set it up so that pressing the SPACE key on your
-						   // keyboard will reload the shader.
-	
+
+	isShaderDirty = true; // this flag will tell us whether to reload our shader from disk.
+		// this allows you to change your shaders without having to restart
+		// your app. we'll set it up so that pressing the SPACE key on your
+		// keyboard will reload the shader.
+
 	// initialize screen, lock framerate to vsync:
 
 	ofSetFrameRate(0);
 	ofSetVerticalSync(true);
 
-	
 	// generate a box vboMesh from a primitive.
-	
+
 	ofBoxPrimitive tmpBox;
 	// set the size to be 2 units.
 	tmpBox.set(2);
-	
+
 	mVboBox = tmpBox.getMesh();
-	
+
 	// load depth image
 	ofDisableArbTex();
 	// note that we disable arb tex, meaning we will use normalized texture coordinates,
 	// where a texture's x and y coordinate are each expressed as a normalized float.
 	// this makes things slightly easier in the shader.
-	
+
 	// load the depth image into our texture
 	ofLoadImage(mTexDepth, "depth_image.png");
 	ofEnableArbTex();
 
-	mCamMain.setupPerspective(false,60,0,10000);
-	
+	mCamMain.setupPerspective(false, 60, 0, 10000);
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-	
-	if (isShaderDirty){
-		
+void ofApp::update() {
+
+	if (isShaderDirty) {
+
 		// only reload the shader if it is 'dirty', i.e. the user has either requested reloading
 		// or the 'isShaderDirty' flag has been initialized to true in setup()
-		
+
 		// Since we are using a shared_ptr around the shader, the old shader will get destroyed
 		// automatically as soon as we assign a new shader object to our mShdInstanced.
-		
+
 		ofLogNotice() << "Reloading Shader.";
 		mShdInstanced = shared_ptr<ofShader>(new ofShader());
 		// most of the instanced drawing magic happens in the shaders:
@@ -71,30 +69,29 @@ void ofApp::update(){
 		mShdInstanced->load("shaders/instanced_120.vert", "shaders/instanced_120.frag");
 #endif
 		GLint err = glGetError();
-		if (err != GL_NO_ERROR){
+		if (err != GL_NO_ERROR) {
 			ofLogNotice() << "Load Shader came back with GL error:	" << err;
 		}
-		
+
 		isShaderDirty = false;
 	}
-	
+
 	ofSetWindowTitle(ofToString(ofGetFrameRate(), 2));
-	
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
-	
+void ofApp::draw() {
+
 	ofEnableDepthTest();
 	// we don't care about alpha blending in this example, and by default alpha blending is on in openFrameworks > 0.8.0
 	// so we de-activate it for now.
 	ofDisableAlphaBlending();
-	
-	ofBackgroundGradient(ofColor(18,33,54), ofColor(18,22,28));
-	
+
+	ofBackgroundGradient(ofColor(18, 33, 54), ofColor(18, 22, 28));
+
 	ofSetColor(ofColor::white);
 	mCamMain.begin();
-	
+
 	// bind the shader
 	mShdInstanced->begin();
 	// give the shader access to our texture
@@ -106,85 +103,73 @@ void ofApp::draw(){
 	glCullFace(GL_BACK);
 
 	// let's draw 128 * 128 == 16384 boxes !
-	mVboBox.drawInstanced(OF_MESH_FILL, 128*128);
+	mVboBox.drawInstanced(OF_MESH_FILL, 128 * 128);
 
 	glDisable(GL_CULL_FACE);
 	mShdInstanced->end();
-	
+
 	mCamMain.end();
 
 	ofDisableDepthTest();
 
 	ofSetColor(ofColor::white);
 	ofDrawBitmapString("Use mouse to move camera.\nPress 'f' to toggle fullscreen;\nSPACEBAR to reload shader.", 10, 20);
-	
+
 	ofEnableAlphaBlending();
-	
-	
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-	
+void ofApp::keyReleased(int key) {
+
 	switch (key) {
-		case ' ':
-			isShaderDirty = true;
-			// mark the shader as dirty - this will reload the shader.
-			break;
-		case 'f':
-			ofToggleFullscreen();
-			break;
-		default:
-			break;
+	case ' ':
+		isShaderDirty = true;
+		// mark the shader as dirty - this will reload the shader.
+		break;
+	case 'f':
+		ofToggleFullscreen();
+		break;
+	default:
+		break;
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-	
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-	
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-	
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-	
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-	
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-	
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-	
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

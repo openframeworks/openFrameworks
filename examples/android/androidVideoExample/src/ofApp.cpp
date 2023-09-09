@@ -1,103 +1,85 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
 	player.load("hands.mp4");
 	player.play();
-
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 	player.update();
-
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
-	player.draw(0,0);
-
+	player.draw(0, 0);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
-	
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDown(int x, int y, int id){
-
+void ofApp::touchDown(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchMoved(int x, int y, int id){
-
+void ofApp::touchMoved(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchUp(int x, int y, int id){
-
+void ofApp::touchUp(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDoubleTap(int x, int y, int id){
-
+void ofApp::touchDoubleTap(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchCancelled(int x, int y, int id){
-
+void ofApp::touchCancelled(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
-
+void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::pause(){
-
+void ofApp::pause() {
 }
 
 //--------------------------------------------------------------
-void ofApp::stop(){
-
+void ofApp::stop() {
 }
 
 //--------------------------------------------------------------
-void ofApp::resume(){
-
+void ofApp::resume() {
 }
 
 //--------------------------------------------------------------
-void ofApp::reloadTextures(){
-
+void ofApp::reloadTextures() {
 }
 
 //--------------------------------------------------------------
-bool ofApp::backPressed(){
+bool ofApp::backPressed() {
 	return false;
 }
 
 //--------------------------------------------------------------
-void ofApp::okPressed(){
-
+void ofApp::okPressed() {
 }
 
 //--------------------------------------------------------------
-void ofApp::cancelPressed(){
-
+void ofApp::cancelPressed() {
 }

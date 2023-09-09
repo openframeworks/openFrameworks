@@ -4,7 +4,7 @@
 
 /// \class ofFileDialogResult
 /// \brief file dialog box selection or save result
-class ofFileDialogResult{
+class ofFileDialogResult {
 public:
 	ofFileDialogResult();
 
@@ -28,7 +28,7 @@ void ofSystemAlertDialog(std::string errorMessage);
 /// \param bFolderSelection set to true to allow folder selection
 /// \param defaultPath optional default directory path to start the dialog in, ie. ofFilePath::getUserHomeDir()
 /// \return dialog result with selection (if any)
-ofFileDialogResult ofSystemLoadDialog(std::string windowTitle="", bool bFolderSelection = false, std::string defaultPath="");
+ofFileDialogResult ofSystemLoadDialog(std::string windowTitle = "", bool bFolderSelection = false, std::string defaultPath = "");
 
 /// \brief show a file save dialog box
 /// \param defaultName suggested filename to start dialog, ie "screenshot.png"
@@ -39,4 +39,4 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 /// \brief show a text entry dialog box
 /// \param question descriptive text for the text entry, ie. "What's your favorite color?"
 /// \param text optional default text entry string, ie. "blue"
-std::string ofSystemTextBoxDialog(std::string question, std::string text="");
+std::string ofSystemTextBoxDialog(std::string question, std::string text = "");

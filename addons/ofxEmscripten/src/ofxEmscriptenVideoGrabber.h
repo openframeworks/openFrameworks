@@ -6,28 +6,28 @@
  */
 #pragma once
 
-#include "ofVideoBaseTypes.h"
-#include "ofTexture.h"
 #include "ofPixels.h"
+#include "ofTexture.h"
+#include "ofVideoBaseTypes.h"
 
-class ofxEmscriptenVideoGrabber: public ofBaseVideoGrabber{
+class ofxEmscriptenVideoGrabber : public ofBaseVideoGrabber {
 public:
 	ofxEmscriptenVideoGrabber();
 	~ofxEmscriptenVideoGrabber();
 
-	std::vector<ofVideoDevice>	listDevices() const;
-	bool	setup(int w, int h);
-	bool	isInitialized() const;
-	void	update();
-	bool	isFrameNew() const;
+	std::vector<ofVideoDevice> listDevices() const;
+	bool setup(int w, int h);
+	bool isInitialized() const;
+	void update();
+	bool isFrameNew() const;
 
-	ofPixels &  getPixels();
+	ofPixels & getPixels();
 	const ofPixels & getPixels() const;
 
-	void	close();
+	void close();
 
-	float	getHeight() const;
-	float	getWidth() const;
+	float getHeight() const;
+	float getWidth() const;
 
 	bool setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat getPixelFormat() const;

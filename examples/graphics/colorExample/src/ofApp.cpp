@@ -1,9 +1,8 @@
 #include "ofApp.h"
 
-
 //--------------------------------------------------------------
-void ofApp::setup(){
-	ofBackground(0,0,0);
+void ofApp::setup() {
+	ofBackground(0, 0, 0);
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	ofSetWindowTitle("color example");
@@ -18,11 +17,11 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	// here we demonstrate setting colors using HSB (Hue/Saturation/Brightness) rather than the
 	// more well-known RGB (Red/Green/Blue).
@@ -49,33 +48,29 @@ void ofApp::draw(){
 	// for grays (and black and white) you can use any value for hue, set the saturation to 0 and
 	// control the level of gray with the brightness value: 255 is white, 0 is black, 128 is 50% gray.
 
-
-
 	// we want to draw a grid of 5 pixel x 5 pixel rectangles with a fixed hue, varying in
 	// saturation and brightness over X and Y
 
 	// we use one hue (value from 0..255) for the whole grid. it changes over time. we use f to
 	// keep the hue value between 0 and 255, it works just like integer modulo (the % operator) but
 	// for floats.
-	float hue = fmodf(ofGetElapsedTimef()*10,255);
+	float hue = fmodf(ofGetElapsedTimef() * 10, 255);
 
 	int step = 5;
 	// step through horizontally
-	for ( int i=0; i<ofGetWidth(); i+=step )
-	{
+	for (int i = 0; i < ofGetWidth(); i += step) {
 		// step through vertically
-		for ( int j=0; j<ofGetHeight(); j+=step )
-		{
+		for (int j = 0; j < ofGetHeight(); j += step) {
 			// set HSB using our hue value that changes over time, saturation from the X position (i),
 			// and brightness from the Y position (j). we also invert the Y value since it looks
 			// nicer if the dark/black colors are along the bottom.
 			ofColor c;
 			// the range of each of the arguments here is 0..255 so we map i and j to that range.
-			c.setHsb( hue, ofMap(i, 0,ofGetWidth(), 0,255), ofMap(j, ofGetHeight(),0, 0,255 ) );
+			c.setHsb(hue, ofMap(i, 0, ofGetWidth(), 0, 255), ofMap(j, ofGetHeight(), 0, 0, 255));
 
 			// assign the color and draw a rectangle
-			ofSetColor( c );
-			ofDrawRectangle( i, j, step-1, step-1 );
+			ofSetColor(c);
+			ofDrawRectangle(i, j, step - 1, step - 1);
 		}
 	}
 
@@ -85,84 +80,70 @@ void ofApp::draw(){
 	// using mouseX and mouseY in place of i and j; draw a rectangle with this color. here we use
 	// ofColor::fromHsb which allows us to set the HSB color in a single line of code.
 	ofColor color = ofColor::fromHsb(hue,
-									 ofMap( mouseX, 0,ofGetWidth(), 0,255 ),
-									 ofMap( mouseY, ofGetHeight(),0, 0,255 ) );
-	ofSetColor( color );
+		ofMap(mouseX, 0, ofGetWidth(), 0, 255),
+		ofMap(mouseY, ofGetHeight(), 0, 0, 255));
+	ofSetColor(color);
 	ofFill();
-	ofDrawRectangle( mouseX, mouseY, 100, 100 );
+	ofDrawRectangle(mouseX, mouseY, 100, 100);
 
 	// now draw a white border around the rectangle
 	ofNoFill();
 	ofSetHexColor(0xFFFFFF);
-	ofDrawRectangle( mouseX, mouseY, 100, 100 );
+	ofDrawRectangle(mouseX, mouseY, 100, 100);
 	ofFill();
 
 	// finally we draw text over the rectangle giving the resulting HSB and RGB values
 	// under the mouse
 	ofSetHexColor(0xFFFFFF);
-	ofDrawBitmapString("HSB: "+ofToString(int(hue))+
-					   " "+ofToString(int(color.getSaturation()))+
-					   " "+ofToString(int(color.getBrightness())),
-					   10, ofGetHeight()-13 );
-	ofDrawBitmapString("RGB: "+ofToString(int(color.r))+
-					   " "+ofToString(int(color.g))+
-					   " "+ofToString(int(color.b)),
-					   200, ofGetHeight()-13 );
-
-}
-
-
-//--------------------------------------------------------------
-void ofApp::keyPressed  (int key){
+	ofDrawBitmapString("HSB: " + ofToString(int(hue)) + " " + ofToString(int(color.getSaturation())) + " " + ofToString(int(color.getBrightness())),
+		10, ofGetHeight() - 13);
+	ofDrawBitmapString("RGB: " + ofToString(int(color.r)) + " " + ofToString(int(color.g)) + " " + ofToString(int(color.b)),
+		200, ofGetHeight() - 13);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased  (int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::keyReleased(int key) {
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y) {
 	// update mouse x and y percent when the mouse moves
 	mouseXPercent = float(x) / ofGetWidth();
 	mouseYPercent = float(y) / ofGetHeight();
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

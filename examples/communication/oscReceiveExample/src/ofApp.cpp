@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofSetWindowTitle("oscReceiveExample");
 	ofSetFrameRate(60); // run at 60 fps
 	ofSetVerticalSync(true);
@@ -12,31 +12,31 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 	// hide old messages
-	for(int i = 0; i < NUM_MSG_STRINGS; i++){
-		if(timers[i] < ofGetElapsedTimef()){
+	for (int i = 0; i < NUM_MSG_STRINGS; i++) {
+		if (timers[i] < ofGetElapsedTimef()) {
 			msgStrings[i] = "";
 		}
 	}
 
 	// check for waiting messages
-	while(receiver.hasWaitingMessages()){
+	while (receiver.hasWaitingMessages()) {
 
 		// get the next message
 		ofxOscMessage m;
 		receiver.getNextMessage(m);
 
 		// check for mouse moved message
-		if(m.getAddress() == "/mouse/position"){
+		if (m.getAddress() == "/mouse/position") {
 
 			// both the arguments are floats
 			mouseXf = m.getArgAsFloat(0);
 			mouseYf = m.getArgAsFloat(1);
 		}
 		// check for mouse button message
-		else if(m.getAddress() == "/mouse/button"){
+		else if (m.getAddress() == "/mouse/button") {
 
 			// first argument is int32, second is a string
 			mouseButtonInt = m.getArgAsInt32(0);
@@ -45,17 +45,16 @@ void ofApp::update(){
 		// check for an image being sent
 		// note: the size of the image depends greatly on your network buffer
 		// sizes, if an image is too big the message won't come through
-		else if(m.getAddress() == "/image"){
+		else if (m.getAddress() == "/image") {
 			ofBuffer buffer = m.getArgAsBlob(0);
 			receivedImage.load(buffer);
-		}
-		else{
+		} else {
 
 			// unrecognized message: display on the bottom of the screen
 			string msgString;
 			msgString = m.getAddress();
 			msgString += ":";
-			for(size_t i = 0; i < m.getNumArgs(); i++){
+			for (size_t i = 0; i < m.getNumArgs(); i++) {
 
 				// get the argument type
 				msgString += " ";
@@ -63,16 +62,13 @@ void ofApp::update(){
 				msgString += ":";
 
 				// display the argument - make sure we get the right type
-				if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+				if (m.getArgType(i) == OFXOSC_TYPE_INT32) {
 					msgString += ofToString(m.getArgAsInt32(i));
-				}
-				else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+				} else if (m.getArgType(i) == OFXOSC_TYPE_FLOAT) {
 					msgString += ofToString(m.getArgAsFloat(i));
-				}
-				else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+				} else if (m.getArgType(i) == OFXOSC_TYPE_STRING) {
 					msgString += m.getArgAsString(i);
-				}
-				else{
+				} else {
 					msgString += "unhandled argument type " + m.getArgTypeName(i);
 				}
 			}
@@ -88,21 +84,20 @@ void ofApp::update(){
 	}
 }
 
-
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	ofBackgroundGradient(100, 0);
 
 	// if image exists, draw it
-	if(receivedImage.getWidth() > 0){
+	if (receivedImage.getWidth() > 0) {
 		ofSetColor(255);
-		receivedImage.draw(ofGetWidth()/2 - receivedImage.getWidth()/2,
-		                   ofGetHeight()/2 - receivedImage.getHeight()/2);
+		receivedImage.draw(ofGetWidth() / 2 - receivedImage.getWidth() / 2,
+			ofGetHeight() / 2 - receivedImage.getHeight() / 2);
 	}
 
 	// draw recent unrecognized messages
-	for(int i = 0; i < NUM_MSG_STRINGS; i++){
+	for (int i = 0; i < NUM_MSG_STRINGS; i++) {
 		ofDrawBitmapStringHighlight(msgStrings[i], 10, 40 + 15 * i);
 	}
 
@@ -110,10 +105,10 @@ void ofApp::draw(){
 	ofDrawBitmapStringHighlight(buf, 10, 20);
 
 	// draw mouse state
-	glm::vec3 mouseIn(mouseXf*ofGetWidth(), mouseYf*ofGetHeight(),0);
-	if(mouseButtonInt == 0){
+	glm::vec3 mouseIn(mouseXf * ofGetWidth(), mouseYf * ofGetHeight(), 0);
+	if (mouseButtonInt == 0) {
 		ofSetColor(255);
-	} else{
+	} else {
 		ofSetColor(ofColor::salmon);
 	}
 	ofDrawCircle(mouseIn, 20);
@@ -121,56 +116,45 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

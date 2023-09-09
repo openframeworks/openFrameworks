@@ -7,23 +7,23 @@
 #pragma once
 
 #ifndef ofxtvOS_h
-#define ofxtvOS_h
+	#define ofxtvOS_h
 
-#include "ofMain.h"
+	#include "ofMain.h"
 
-#ifdef TARGET_OF_TVOS
+	#ifdef TARGET_OF_TVOS
 
-#include "ofAppiOSWindow.h"
-#include "ofxiOSConstants.h"
-#include "ofxiOSExtensions.h"
-#include "ofxtvOSAppDelegate.h"
-#include "ofxtvOSViewController.h"
-#include "ofxtvOSGLKViewController.h"
-#include "ofxiOSGLKView.h"
-#include "ofxiOSEAGLView.h"
-#include "ofxiOSApp.h"
-#include "ofxiOSExtras.h"
+		#include "ofAppiOSWindow.h"
+		#include "ofxiOSApp.h"
+		#include "ofxiOSConstants.h"
+		#include "ofxiOSEAGLView.h"
+		#include "ofxiOSExtensions.h"
+		#include "ofxiOSExtras.h"
+		#include "ofxiOSGLKView.h"
+		#include "ofxtvOSAppDelegate.h"
+		#include "ofxtvOSGLKViewController.h"
+		#include "ofxtvOSViewController.h"
 
-#endif
+	#endif
 
 #endif /* ofxtvOS_h */

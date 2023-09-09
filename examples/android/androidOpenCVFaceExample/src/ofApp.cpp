@@ -1,19 +1,19 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
-	ofBackground(255,255,255);
+void ofApp::setup() {
+	ofBackground(255, 255, 255);
 	ofSetLogLevel(OF_LOG_NOTICE);
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 
 	int grabberWidth = 320;
 	int grabberHeight = 240;
-	grabber.setup(grabberWidth,grabberHeight);
+	grabber.setup(grabberWidth, grabberHeight);
 
 	colorCv.allocate(grabberWidth, grabberHeight);
-	colorCvSmall.allocate(grabberWidth/4, grabberHeight/4);
-	grayCv.allocate(grabberWidth/4, grabberHeight/4);
-	
+	colorCvSmall.allocate(grabberWidth / 4, grabberHeight / 4);
+	grayCv.allocate(grabberWidth / 4, grabberHeight / 4);
+
 	faceFinder.setup("haarcascade_frontalface_default.xml");
 	faceFinder.setNeighbors(1);
 	faceFinder.setScaleHaar(1.5);
@@ -24,11 +24,11 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	grabber.update();
-	if(grabber.isFrameNew()){
+	if (grabber.isFrameNew()) {
 		frames_one_sec++;
-		if( ofGetSystemTime() - one_second_time >= 1000){
+		if (ofGetSystemTime() - one_second_time >= 1000) {
 			camera_fps = frames_one_sec;
 			frames_one_sec = 0;
 			one_second_time = ofGetSystemTime();
@@ -42,7 +42,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	ofSetHexColor(0xFFFFFF);
 
 	grabber.draw(0, 0);
@@ -52,93 +52,78 @@ void ofApp::draw(){
 	ofNoFill();
 	ofSetColor(255, 0, 255);
 	for (int i = 0; i < faces.size(); i++) {
-		ofxCvBlob& face = faces[i];
+		ofxCvBlob & face = faces[i];
 		ofRectangle rect(face.boundingRect.x * scaleFactor, face.boundingRect.y * scaleFactor, face.boundingRect.width * scaleFactor, face.boundingRect.height * scaleFactor);
 		ofDrawRectangle(rect);
 	}
 	ofPopStyle();
 
 	ofSetHexColor(0x000000);
-	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),330,10);
-	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),330,30);
+	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()), 330, 10);
+	ofDrawBitmapString("camera fps: " + ofToString(camera_fps), 330, 30);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
-	
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDown(int x, int y, int id){
-
+void ofApp::touchDown(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchMoved(int x, int y, int id){
-
+void ofApp::touchMoved(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchUp(int x, int y, int id){
-
+void ofApp::touchUp(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDoubleTap(int x, int y, int id){
-
+void ofApp::touchDoubleTap(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchCancelled(int x, int y, int id){
-
+void ofApp::touchCancelled(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
-
+void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::pause(){
-
+void ofApp::pause() {
 }
 
 //--------------------------------------------------------------
-void ofApp::stop(){
-
+void ofApp::stop() {
 }
 
 //--------------------------------------------------------------
-void ofApp::resume(){
-
+void ofApp::resume() {
 }
 
 //--------------------------------------------------------------
-void ofApp::reloadTextures(){
-
+void ofApp::reloadTextures() {
 }
 
 //--------------------------------------------------------------
-bool ofApp::backPressed(){
+bool ofApp::backPressed() {
 	return false;
 }
 
 //--------------------------------------------------------------
-void ofApp::okPressed(){
-
+void ofApp::okPressed() {
 }
 
 //--------------------------------------------------------------
-void ofApp::cancelPressed(){
-
+void ofApp::cancelPressed() {
 }

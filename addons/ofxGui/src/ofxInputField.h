@@ -10,19 +10,18 @@
 
 #include "ofxBaseGui.h"
 
-template<typename Type>
-class ofxInputField : public ofxBaseGui{
-	template<typename T>
+template <typename Type>
+class ofxInputField : public ofxBaseGui {
+	template <typename T>
 	friend class ofxSlider;
 
-	
-public:	
+public:
 	ofxInputField();
 	ofxInputField(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxInputField* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxInputField* setup(const std::string& _name, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
-	ofxInputField* setup(const std::string& _name, Type _val);
-	
+	ofxInputField * setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxInputField * setup(const std::string & _name, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+	ofxInputField * setup(const std::string & _name, Type _val);
+
 	void setMin(Type min);
 	Type getMin();
 	void setMax(Type max);
@@ -41,38 +40,38 @@ public:
 
 	bool containsValidValue() const;
 
-	template<class ListenerClass, typename ListenerMethod>
-	void addListener(ListenerClass * listener, ListenerMethod method){
-		value.addListener(listener,method);
+	template <class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method) {
+		value.addListener(listener, method);
 	}
 
-	template<class ListenerClass, typename ListenerMethod>
-	void removeListener(ListenerClass * listener, ListenerMethod method){
-		value.removeListener(listener,method);
+	template <class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method) {
+		value.removeListener(listener, method);
 	}
 
 	Type operator=(Type v);
-	operator const Type & ();
+	operator const Type &();
 
 	ofAbstractParameter & getParameter();
 
 protected:
-	enum Inside{
+	enum Inside {
 		InsideSlider,
 	};
-	void ofxSlider(Inside){
+	void ofxSlider(Inside) {
 		insideSlider = true;
 	}
 	virtual void render();
 	ofParameter<Type> value;
-	bool bGuiActive=false, bMousePressed=false, bMouseOver=false;
+	bool bGuiActive = false, bMousePressed = false, bMouseOver = false;
 	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
 	void valueChanged(Type & value);
 	ofVboMesh bg;
 	ofVboMesh textMesh;
 
-	std::string input;        // input text
+	std::string input; // input text
 	std::string visibleInput; // input text currently visible, i.e. not obscured by gui
 	int visibleInputStart = 0, visibleInputEnd = 0; // boundaries for visible input text
 
@@ -95,7 +94,7 @@ protected:
 	bool validValue = true;
 	bool showLabelWhileEditing = false;
 	bool overlappingLabel = false;
-	uint64_t errorTime = 0;  // time last input error occured, used for animations
+	uint64_t errorTime = 0; // time last input error occured, used for animations
 	uint64_t lastCursorMoveTime = 0; // last time cursor was moved, used to calculate whether to blink
 
 	void leaveFocus();

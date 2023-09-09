@@ -1,33 +1,33 @@
-#include "ofMain.h"
 #include "ofAppNoWindow.h"
+#include "ofMain.h"
 #include "ofxUnitTests.h"
 
 namespace {
-	int lastIntFromCFunc = 0;
-	int lastIntFromCFuncWithToken = 0;
-	int selfUnregisterValue = 0;
-	bool toggleVoidFunc = false;
-	ofEvent<const int> selfUnregisterEvent;
+int lastIntFromCFunc = 0;
+int lastIntFromCFuncWithToken = 0;
+int selfUnregisterValue = 0;
+bool toggleVoidFunc = false;
+ofEvent<const int> selfUnregisterEvent;
 
-	void intFunctListener(const int & i){
-		lastIntFromCFunc = i;
-	}
-
-	void intFunctListenerWithToken(const int & i){
-		lastIntFromCFuncWithToken = i;
-	}
-
-	void selfUnregister(const int & i){
-		selfUnregisterValue = i;
-		ofRemoveListener(selfUnregisterEvent, selfUnregister);
-	}
-
-	void voidFunc(){
-		toggleVoidFunc = !toggleVoidFunc;
-	}
+void intFunctListener(const int & i) {
+	lastIntFromCFunc = i;
 }
 
-class ofApp: public ofxUnitTestsApp{
+void intFunctListenerWithToken(const int & i) {
+	lastIntFromCFuncWithToken = i;
+}
+
+void selfUnregister(const int & i) {
+	selfUnregisterValue = i;
+	ofRemoveListener(selfUnregisterEvent, selfUnregister);
+}
+
+void voidFunc() {
+	toggleVoidFunc = !toggleVoidFunc;
+}
+}
+
+class ofApp : public ofxUnitTestsApp {
 	int lastInt = 0;
 	int lastIntFromLambda = 0;
 	int lastIntWithToken = 0;
@@ -35,30 +35,31 @@ class ofApp: public ofxUnitTestsApp{
 	bool toggleForVoidLambdaListener = false;
 	bool toggleForVoidListenerWithToken = false;
 
-	void intListener(const int & i){
+	void intListener(const int & i) {
 		lastInt = i;
 	}
 
-	void intListenerWithToken(const int & i){
+	void intListenerWithToken(const int & i) {
 		lastIntWithToken = i;
 	}
 
-	void voidListener(){
+	void voidListener() {
 		toggleForVoidListener = !toggleForVoidListener;
 	}
 
-	void voidListenerWithToken(){
+	void voidListenerWithToken() {
 		toggleForVoidListenerWithToken = !toggleForVoidListenerWithToken;
 	}
 
-	void run(){
+	void run() {
 		{
 			ofEvent<const int> intEvent;
 			ofAddListener(intEvent, this, &ofApp::intListener);
 			ofAddListener(intEvent, intFunctListener);
-			ofEventListener listenerLambda(intEvent.newListener([&](const int & i){
+			ofEventListener listenerLambda(intEvent.newListener([&](const int & i) {
 				lastIntFromLambda = i;
-			}, 0));
+			},
+				0));
 			ofEventListener listenerMember(intEvent.newListener(this, &ofApp::intListenerWithToken));
 			ofEventListener listenerFunc(intEvent.newListener(intFunctListenerWithToken));
 
@@ -102,9 +103,10 @@ class ofApp: public ofxUnitTestsApp{
 			ofEventListener listener;
 			{
 				ofEvent<const int> intEvent;
-				listener = intEvent.newListener([&](const int & i){
+				listener = intEvent.newListener([&](const int & i) {
 					lastIntFromLambda = i;
-				}, 0);
+				},
+					0);
 			}
 			listener.unsubscribe();
 		}
@@ -121,7 +123,7 @@ class ofApp: public ofxUnitTestsApp{
 		{
 			ofEvent<void> voidEvent;
 			ofAddListener(voidEvent, this, &ofApp::voidListener);
-			ofEventListener listenerVoidLambda(voidEvent.newListener([&]{
+			ofEventListener listenerVoidLambda(voidEvent.newListener([&] {
 				toggleForVoidLambdaListener = !toggleForVoidLambdaListener;
 			}));
 			ofEventListener listenerVoidMember(voidEvent.newListener(this, &ofApp::voidListenerWithToken));
@@ -157,23 +159,22 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTestEq(toggleVoidFunc, false, "Unregistered void event with c function");
 		}
 
-
 		{
 			ofEvent<const int> e;
-			auto listener = e.newListener([](const int & v){
+			auto listener = e.newListener([](const int & v) {
 			});
-			auto listenerSender = e.newListener([](const void * sender, const int & v){
+			auto listenerSender = e.newListener([](const void * sender, const int & v) {
 			});
-			auto listenerBool = e.newListener([](const int & v){
+			auto listenerBool = e.newListener([](const int & v) {
 				return false;
 			});
-			auto listenerSenderBool = e.newListener([](const void * sender, const int & v){
+			auto listenerSenderBool = e.newListener([](const void * sender, const int & v) {
 				return false;
 			});
 			e.notify(5);
 
 			ofEvent<void> voidE;
-			auto voidListener = voidE.newListener([]{
+			auto voidListener = voidE.newListener([] {
 
 			});
 		}
@@ -181,14 +182,13 @@ class ofApp: public ofxUnitTestsApp{
 };
 
 //========================================================================
-int main( ){
-    ofInit();
-    auto window = std::make_shared<ofAppNoWindow>();
-    auto app = std::make_shared<ofApp>();
-    // this kicks off the running of my app
-    // can be OF_WINDOW or OF_FULLSCREEN
-    // pass in width and height too:
-    ofRunApp(window, app);
-    return ofRunMainLoop();
-
+int main() {
+	ofInit();
+	auto window = std::make_shared<ofAppNoWindow>();
+	auto app = std::make_shared<ofApp>();
+	// this kicks off the running of my app
+	// can be OF_WINDOW or OF_FULLSCREEN
+	// pass in width and height too:
+	ofRunApp(window, app);
+	return ofRunMainLoop();
 }

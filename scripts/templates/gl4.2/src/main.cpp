@@ -1,11 +1,11 @@
-#include "ofMain.h"
 #include "ofApp.h"
+#include "ofMain.h"
 
 //========================================================================
-int main( ){
+int main() {
 
 	ofGLWindowSettings settings;
-	settings.setGLVersion(4,2);
+	settings.setGLVersion(4, 2);
 
 	auto window = ofCreateWindow(settings);
 

@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofEnableSmoothing();
 	ofSetVerticalSync(true);
 
@@ -23,14 +23,14 @@ void ofApp::setup(){
 	windowHeight = 0.2f;
 
 	windowTopLeft = glm::vec3(-windowWidth / 2.0f,
-							+windowHeight / 2.0f,
-							0.0f);
+		+windowHeight / 2.0f,
+		0.0f);
 	windowBottomLeft = glm::vec3(-windowWidth / 2.0f,
-							   - windowHeight / 2.0f,
-							   0.0f);
+		-windowHeight / 2.0f,
+		0.0f);
 	windowBottomRight = glm::vec3(+windowWidth / 2.0f,
-								-windowHeight / 2.0f,
-								0.0f);
+		-windowHeight / 2.0f,
+		0.0f);
 
 	//we use this constant since we're using a really hacky headtracking in this example
 	//if you use something that can properly locate the head in 3d (like a kinect), you don't need this fudge factor
@@ -38,11 +38,11 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	video.update();
 	finder.findHaarObjects(video.getPixels());
 
-	glm::vec3 headPosition(0,0,viewerDistance);
+	glm::vec3 headPosition(0, 0, viewerDistance);
 
 	if (finder.blobs.size() > 0) {
 		//get the head position in camera pixel coordinates
@@ -68,7 +68,7 @@ void ofApp::update(){
 	}
 
 	headPositionHistory.push_back(headPosition);
-	while (headPositionHistory.size() > 50.0f){
+	while (headPositionHistory.size() > 50.0f) {
 		headPositionHistory.pop_front();
 	}
 
@@ -78,7 +78,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::drawScene(bool isPreview){
+void ofApp::drawScene(bool isPreview) {
 
 	ofEnableDepthTest();
 
@@ -117,9 +117,9 @@ void ofApp::drawScene(bool isPreview){
 		window.addVertex(windowBottomRight);
 		window.setMode(OF_PRIMITIVE_LINE_STRIP);
 		window.draw();
-		#ifndef TARGET_EMSCRIPTEN
-			glPointSize(3.0f);
-		#endif
+#ifndef TARGET_EMSCRIPTEN
+		glPointSize(3.0f);
+#endif
 		window.drawVertices();
 		//
 		//--
@@ -128,8 +128,8 @@ void ofApp::drawScene(bool isPreview){
 
 	ofPushStyle();
 	ofNoFill();
-	ofColor col(200,100,100);
-	for (float z = 0.0f; z > -40.0f; z-= 0.1f){
+	ofColor col(200, 100, 100);
+	for (float z = 0.0f; z > -40.0f; z -= 0.1f) {
 		col.setHue(int(-z * 100.0f + ofGetElapsedTimef() * 10.0f) % 360);
 		ofSetColor(col);
 		ofDrawRectangle(-windowWidth / 2.0f, -windowHeight / 2.0f, z, windowWidth, windowHeight);
@@ -141,8 +141,8 @@ void ofApp::drawScene(bool isPreview){
 	ofSetColor(255);
 	ofSetLineWidth(5.0f);
 	ofBeginShape();
-	for (unsigned int i=0; i<headPositionHistory.size(); i++) {
-		glm::vec3 vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float( headPositionHistory.size() - i ) * 0.05f);
+	for (unsigned int i = 0; i < headPositionHistory.size(); i++) {
+		glm::vec3 vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float(headPositionHistory.size() - i) * 0.05f);
 		ofCurveVertex(vertex);
 	}
 	ofEndShape(false);
@@ -152,30 +152,27 @@ void ofApp::drawScene(bool isPreview){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	ofBackgroundGradient(ofColor(50), ofColor(0));
 	//------
 	//draw the scene
 	//
-	if (usePreview){
+	if (usePreview) {
 		previewCamera.begin();
-	}
-	else{
+	} else {
 		headTrackedCamera.begin();
 	}
 
 	drawScene(usePreview);
 
-	if (usePreview){
+	if (usePreview) {
 		previewCamera.end();
-	}
-	else{
+	} else {
 		headTrackedCamera.end();
 	}
 	//
 	//------
-
 
 	//------
 	//draw some overlays
@@ -183,7 +180,7 @@ void ofApp::draw(){
 	video.draw(0, 0);
 	ofPushStyle();
 	ofNoFill();
-	for(unsigned int i = 0; i < finder.blobs.size(); i++) {
+	for (unsigned int i = 0; i < finder.blobs.size(); i++) {
 		ofRectangle cur = finder.blobs[i].boundingRect;
 		ofDrawRectangle(cur.x, cur.y, cur.width, cur.height);
 	}
@@ -194,7 +191,7 @@ void ofApp::draw(){
 
 	ofDrawBitmapString(message.str(), video.getWidth() + 10, 20);
 
-	if (usePreview){
+	if (usePreview) {
 		ofRectangle bottomLeft(0, ofGetHeight() - 200.0f, 300.0f, 200.0f);
 
 		ofPushStyle();
@@ -211,57 +208,47 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
 	if (key == ' ')
 		usePreview = !usePreview;
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

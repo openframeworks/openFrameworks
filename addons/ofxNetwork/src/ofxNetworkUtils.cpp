@@ -2,20 +2,18 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
-
 //-----------------------------------------------------------------
-int ofxNetworkGetLastError(){
-	#ifdef TARGET_WIN32
-		return WSAGetLastError();
-	#else
-		return errno;
-	#endif
+int ofxNetworkGetLastError() {
+#ifdef TARGET_WIN32
+	return WSAGetLastError();
+#else
+	return errno;
+#endif
 }
 
-
 //-----------------------------------------------------------------
-void ofxNetworkLogError(int err, const char* file, int line){
-	switch(err){
+void ofxNetworkLogError(int err, const char * file, int line) {
+	switch (err) {
 	case 0:
 		break;
 	case OFXNETWORK_ERROR(BADF):
@@ -97,12 +95,12 @@ void ofxNetworkLogError(int err, const char* file, int line){
 		ofLogError("ofxNetwork") << file << ": " << line << " EINVAL: invalid argument";
 		break;
 #if !defined(TARGET_WIN32)
-#if !defined(EWOULDBLOCK) || EAGAIN != EWOULDBLOCK
+	#if !defined(EWOULDBLOCK) || EAGAIN != EWOULDBLOCK
 	case EAGAIN:
 		// Not an error worth reporting, this is normal if the socket is non-blocking
 		//ofLogError("ofxNetwork") << file << ": " << line << " EAGAIN: try again";
 		break;
-#endif
+	#endif
 #endif
 	case OFXNETWORK_ERROR(WOULDBLOCK):
 	case OFXNETWORK_ERROR(INPROGRESS):
@@ -118,10 +116,9 @@ void ofxNetworkLogError(int err, const char* file, int line){
 	}
 }
 
-
 //-----------------------------------------------------------------
-int ofxNetworkCheckErrno(const char* file, int line) {
+int ofxNetworkCheckErrno(const char * file, int line) {
 	int err = ofxNetworkGetLastError();
-	ofxNetworkLogError( err, file, line );
+	ofxNetworkLogError(err, file, line);
 	return err;
 }

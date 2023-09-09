@@ -50,78 +50,77 @@
 
 #if defined(OSC_HOST_LITTLE_ENDIAN) || defined(OSC_HOST_BIG_ENDIAN)
 
-// endianness defined on the command line. nothing to do here.
+	// endianness defined on the command line. nothing to do here.
 
 #elif defined(__WIN32__) || defined(WIN32) || defined(WINCE)
 
-// assume that __WIN32__ is only defined on little endian systems
+	// assume that __WIN32__ is only defined on little endian systems
 
-#define OSC_HOST_LITTLE_ENDIAN 1
-#undef OSC_HOST_BIG_ENDIAN
+	#define OSC_HOST_LITTLE_ENDIAN 1
+	#undef OSC_HOST_BIG_ENDIAN
 
 #elif defined(__APPLE__)
 
-#if defined(__LITTLE_ENDIAN__)
+	#if defined(__LITTLE_ENDIAN__)
 
-#define OSC_HOST_LITTLE_ENDIAN 1
-#undef OSC_HOST_BIG_ENDIAN
+		#define OSC_HOST_LITTLE_ENDIAN 1
+		#undef OSC_HOST_BIG_ENDIAN
 
-#elif defined(__BIG_ENDIAN__)
+	#elif defined(__BIG_ENDIAN__)
 
-#define OSC_HOST_BIG_ENDIAN 1
-#undef OSC_HOST_LITTLE_ENDIAN
+		#define OSC_HOST_BIG_ENDIAN 1
+		#undef OSC_HOST_LITTLE_ENDIAN
 
-#endif
+	#endif
 
 #elif defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && defined(__ORDER_BIG_ENDIAN__)
 
-// should cover gcc and clang
+	// should cover gcc and clang
 
-#if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+	#if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 
-#define OSC_HOST_LITTLE_ENDIAN 1
-#undef OSC_HOST_BIG_ENDIAN
+		#define OSC_HOST_LITTLE_ENDIAN 1
+		#undef OSC_HOST_BIG_ENDIAN
 
-#elif (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+	#elif (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 
-#define OSC_HOST_BIG_ENDIAN 1
-#undef OSC_HOST_LITTLE_ENDIAN
+		#define OSC_HOST_BIG_ENDIAN 1
+		#undef OSC_HOST_LITTLE_ENDIAN
 
-#endif
+	#endif
 
 #else
 
-// gcc defines __LITTLE_ENDIAN__ and __BIG_ENDIAN__
-// for others used here see http://sourceforge.net/p/predef/wiki/Endianness/
-#if (defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) \
-    || (defined(__ARMEL__) && !defined(__ARMEB__)) \
-    || (defined(__AARCH64EL__) && !defined(__AARCH64EB__)) \
-    || (defined(_MIPSEL) && !defined(_MIPSEB)) \
-    || (defined(__MIPSEL) && !defined(__MIPSEB)) \
-    || (defined(__MIPSEL__) && !defined(__MIPSEB__))
+	// gcc defines __LITTLE_ENDIAN__ and __BIG_ENDIAN__
+	// for others used here see http://sourceforge.net/p/predef/wiki/Endianness/
+	#if (defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) \
+		|| (defined(__ARMEL__) && !defined(__ARMEB__))           \
+		|| (defined(__AARCH64EL__) && !defined(__AARCH64EB__))   \
+		|| (defined(_MIPSEL) && !defined(_MIPSEB))               \
+		|| (defined(__MIPSEL) && !defined(__MIPSEB))             \
+		|| (defined(__MIPSEL__) && !defined(__MIPSEB__))
 
-#define OSC_HOST_LITTLE_ENDIAN 1
-#undef OSC_HOST_BIG_ENDIAN
+		#define OSC_HOST_LITTLE_ENDIAN 1
+		#undef OSC_HOST_BIG_ENDIAN
 
-#elif (defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)) \
-    || (defined(__ARMEB__) && !defined(__ARMEL__)) \
-    || (defined(__AARCH64EB__) && !defined(__AARCH64EL__)) \
-    || (defined(_MIPSEB) && !defined(_MIPSEL)) \
-    || (defined(__MIPSEB) && !defined(__MIPSEL)) \
-    || (defined(__MIPSEB__) && !defined(__MIPSEL__))
+	#elif (defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)) \
+		|| (defined(__ARMEB__) && !defined(__ARMEL__))             \
+		|| (defined(__AARCH64EB__) && !defined(__AARCH64EL__))     \
+		|| (defined(_MIPSEB) && !defined(_MIPSEL))                 \
+		|| (defined(__MIPSEB) && !defined(__MIPSEL))               \
+		|| (defined(__MIPSEB__) && !defined(__MIPSEL__))
 
-#define OSC_HOST_BIG_ENDIAN 1
-#undef OSC_HOST_LITTLE_ENDIAN
+		#define OSC_HOST_BIG_ENDIAN 1
+		#undef OSC_HOST_LITTLE_ENDIAN
 
-#endif
+	#endif
 
 #endif
 
 #if !defined(OSC_HOST_LITTLE_ENDIAN) && !defined(OSC_HOST_BIG_ENDIAN)
 
-#error please edit OSCHostEndianness.h or define one of {OSC_HOST_LITTLE_ENDIAN, OSC_HOST_BIG_ENDIAN} to configure endianness
+	#error please edit OSCHostEndianness.h or define one of {OSC_HOST_LITTLE_ENDIAN, OSC_HOST_BIG_ENDIAN} to configure endianness
 
 #endif
 
 #endif /* INCLUDED_OSCPACK_OSCHOSTENDIANNESS_H */
-

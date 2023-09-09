@@ -28,55 +28,56 @@
 ///   m - 4 byte midi packet (8 digits hexadecimal)
 ///   r - 32-bit RGBA color
 ///
-typedef enum _ofxOscArgType{
-	OFXOSC_TYPE_INT32            = 'i',
-	OFXOSC_TYPE_INT64            = 'h',
-	OFXOSC_TYPE_FLOAT            = 'f',
-	OFXOSC_TYPE_DOUBLE           = 'd',
-	OFXOSC_TYPE_STRING           = 's',
-	OFXOSC_TYPE_SYMBOL           = 'S',
-	OFXOSC_TYPE_CHAR             = 'c',
-	OFXOSC_TYPE_MIDI_MESSAGE     = 'm',
-	OFXOSC_TYPE_TRUE             = 'T',
-	OFXOSC_TYPE_FALSE            = 'F',
-	OFXOSC_TYPE_NONE             = 'N',
-	OFXOSC_TYPE_TRIGGER          = 'I',
-	OFXOSC_TYPE_TIMETAG          = 't',
-	OFXOSC_TYPE_BLOB             = 'b',
-	OFXOSC_TYPE_RGBA_COLOR       = 'r',
+typedef enum _ofxOscArgType {
+	OFXOSC_TYPE_INT32 = 'i',
+	OFXOSC_TYPE_INT64 = 'h',
+	OFXOSC_TYPE_FLOAT = 'f',
+	OFXOSC_TYPE_DOUBLE = 'd',
+	OFXOSC_TYPE_STRING = 's',
+	OFXOSC_TYPE_SYMBOL = 'S',
+	OFXOSC_TYPE_CHAR = 'c',
+	OFXOSC_TYPE_MIDI_MESSAGE = 'm',
+	OFXOSC_TYPE_TRUE = 'T',
+	OFXOSC_TYPE_FALSE = 'F',
+	OFXOSC_TYPE_NONE = 'N',
+	OFXOSC_TYPE_TRIGGER = 'I',
+	OFXOSC_TYPE_TIMETAG = 't',
+	OFXOSC_TYPE_BLOB = 'b',
+	OFXOSC_TYPE_RGBA_COLOR = 'r',
 	OFXOSC_TYPE_INDEXOUTOFBOUNDS = 0 ///< bad index value
 } ofxOscArgType;
 
 /// \class ofxOscArg
 /// \brief base class for arguments
-class ofxOscArg{
+class ofxOscArg {
 public:
-	virtual ~ofxOscArg() {}
+	virtual ~ofxOscArg() { }
 
 	/// \return argument type
-	virtual ofxOscArgType getType() const {return OFXOSC_TYPE_NONE;}
+	virtual ofxOscArgType getType() const { return OFXOSC_TYPE_NONE; }
 
 	/// \return type character as a string
-	virtual std::string getTypeName() const {return "N";}
+	virtual std::string getTypeName() const { return "N"; }
 };
 
 /// \class ofxOscArgInt32
 /// \brief a 32-bit integer argument, type name "i"
-class ofxOscArgInt32 : public ofxOscArg{
+class ofxOscArgInt32 : public ofxOscArg {
 public:
-	ofxOscArgInt32(std::int32_t value) : value(value) {}
+	ofxOscArgInt32(std::int32_t value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_INT32;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_INT32; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "i";}
+	std::string getTypeName() const { return "i"; }
 
 	/// \return value
-	std::int32_t get() const {return value;}
+	std::int32_t get() const { return value; }
 
 	/// set value
-	void set(std::int32_t value) {this->value = value;}
+	void set(std::int32_t value) { this->value = value; }
 
 private:
 	std::int32_t value;
@@ -84,28 +85,30 @@ private:
 
 /// \class ofxOscArgInt
 /// \brief a 32-bit integer argument, type name "i"
-class ofxOscArgInt : public ofxOscArgInt32{
+class ofxOscArgInt : public ofxOscArgInt32 {
 public:
-	ofxOscArgInt(std::int32_t value) : ofxOscArgInt32(value) {}
+	ofxOscArgInt(std::int32_t value)
+		: ofxOscArgInt32(value) { }
 };
 
 /// \class ofxOscArgInt64
 /// \brief a 64-bit integer argument, type name "h"
-class ofxOscArgInt64 : public ofxOscArg{
+class ofxOscArgInt64 : public ofxOscArg {
 public:
-	ofxOscArgInt64(std::int64_t value) : value(value) {}
+	ofxOscArgInt64(std::int64_t value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_INT64;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_INT64; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "h";}
+	std::string getTypeName() const { return "h"; }
 
 	/// \return value
-	std::int64_t get() const {return value;}
+	std::int64_t get() const { return value; }
 
 	/// set value
-	void set(std::int64_t value) {this->value = value;}
+	void set(std::int64_t value) { this->value = value; }
 
 private:
 	std::int64_t value;
@@ -113,21 +116,22 @@ private:
 
 /// \class ofxOscArgFloat
 /// \brief a 32-bit float argument, type name "f"
-class ofxOscArgFloat : public ofxOscArg{
+class ofxOscArgFloat : public ofxOscArg {
 public:
-	ofxOscArgFloat(float value) : value(value) {}
+	ofxOscArgFloat(float value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_FLOAT;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_FLOAT; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "f";}
+	std::string getTypeName() const { return "f"; }
 
 	/// \return value
-	float get() const {return value;}
+	float get() const { return value; }
 
 	/// set value
-	void set(float value) {this->value = value;}
+	void set(float value) { this->value = value; }
 
 private:
 	float value;
@@ -135,21 +139,22 @@ private:
 
 /// \class ofxOscArgDouble
 /// \brief a 64-bit double argument, type name "d"
-class ofxOscArgDouble : public ofxOscArg{
+class ofxOscArgDouble : public ofxOscArg {
 public:
-	ofxOscArgDouble(double value) : value(value) {}
+	ofxOscArgDouble(double value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_DOUBLE;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_DOUBLE; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "d";}
+	std::string getTypeName() const { return "d"; }
 
 	/// \return value
-	double get() const {return value;}
+	double get() const { return value; }
 
 	/// set value
-	void set(double value) {this->value = value;}
+	void set(double value) { this->value = value; }
 
 private:
 	double value;
@@ -157,24 +162,25 @@ private:
 
 /// \class ofxOscArgString
 /// \brief a null-terminated string argument, type name "s"
-class ofxOscArgString : public ofxOscArg{
+class ofxOscArgString : public ofxOscArg {
 public:
-	ofxOscArgString(const std::string &value ) : value(value) {}
+	ofxOscArgString(const std::string & value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_STRING;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_STRING; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "s";}
+	std::string getTypeName() const { return "s"; }
 
 	/// \return value
-	const std::string &get() const {return value;}
+	const std::string & get() const { return value; }
 
 	/// set value using C string
-	void set(const char *value) {this->value = value;}
+	void set(const char * value) { this->value = value; }
 
 	/// set value using string
-	void set(const std::string &value) {this->value = value;}
+	void set(const std::string & value) { this->value = value; }
 
 private:
 	std::string value;
@@ -182,34 +188,36 @@ private:
 
 /// \class ofxOscArgSymbol
 /// \brief a null-terminated symbol (string) argument, type name "S"
-class ofxOscArgSymbol : public ofxOscArgString{
+class ofxOscArgSymbol : public ofxOscArgString {
 public:
-	ofxOscArgSymbol(const std::string &value) : ofxOscArgString(value) {}
+	ofxOscArgSymbol(const std::string & value)
+		: ofxOscArgString(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_SYMBOL;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_SYMBOL; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "S";}
+	std::string getTypeName() const { return "S"; }
 };
 
 /// \class ofxOscArgChar
 /// \brief a null-terminated char argument, type name "c"
-class ofxOscArgChar : public ofxOscArg{
+class ofxOscArgChar : public ofxOscArg {
 public:
-	ofxOscArgChar(char value) : value(value) {}
+	ofxOscArgChar(char value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_CHAR;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_CHAR; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "c";}
+	std::string getTypeName() const { return "c"; }
 
 	/// return value
-	char get() const {return value;}
+	char get() const { return value; }
 
 	/// set value
-	void set(char value) {this->value = value;}
+	void set(char value) { this->value = value; }
 
 private:
 	char value;
@@ -217,21 +225,22 @@ private:
 
 /// \class ofxOscArgMidiMessage
 /// \brief a 4-byte MIDI message argument, type name "m"
-class ofxOscArgMidiMessage : public ofxOscArg{
+class ofxOscArgMidiMessage : public ofxOscArg {
 public:
-	ofxOscArgMidiMessage(std::uint32_t value) : value(value) {}
+	ofxOscArgMidiMessage(std::uint32_t value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_MIDI_MESSAGE;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_MIDI_MESSAGE; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "m";}
-	
+	std::string getTypeName() const { return "m"; }
+
 	/// return value
-	std::uint32_t get() const {return value;}
+	std::uint32_t get() const { return value; }
 
 	/// set value
-	void set(std::uint32_t value) {this->value = value;}
+	void set(std::uint32_t value) { this->value = value; }
 
 private:
 	std::uint32_t value;
@@ -239,9 +248,10 @@ private:
 
 /// \class ofxOscArgBool
 /// \brief a boolean argument, either type name "T" or "F" based on value
-class ofxOscArgBool : public ofxOscArg{
+class ofxOscArgBool : public ofxOscArg {
 public:
-	ofxOscArgBool(bool value) : value(value) {}
+	ofxOscArgBool(bool value)
+		: value(value) { }
 
 	/// \return argument type
 	ofxOscArgType getType() const {
@@ -254,10 +264,10 @@ public:
 	}
 
 	/// return value
-	bool get() const {return value;}
+	bool get() const { return value; }
 
 	/// set value
-	void set(bool value) {this->value = value;}
+	void set(bool value) { this->value = value; }
 
 private:
 	bool value;
@@ -265,47 +275,50 @@ private:
 
 /// \class ofxOscArgNone
 /// \brief a none/nil (has no value), type name "N"
-class ofxOscArgNone : public ofxOscArgBool{
+class ofxOscArgNone : public ofxOscArgBool {
 public:
-	ofxOscArgNone() : ofxOscArgBool(true) {}
+	ofxOscArgNone()
+		: ofxOscArgBool(true) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_NONE;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_NONE; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "N";}
+	std::string getTypeName() const { return "N"; }
 };
 
 /// \class ofxOscArgTrigger
 /// \brief a trigger impulse (has no value), type name "I"
-class ofxOscArgTrigger : public ofxOscArgBool{
+class ofxOscArgTrigger : public ofxOscArgBool {
 public:
-	ofxOscArgTrigger() : ofxOscArgBool(true) {}
+	ofxOscArgTrigger()
+		: ofxOscArgBool(true) { }
 
 	/// return the type of this argument
-	ofxOscArgType getType() const {return OFXOSC_TYPE_TRIGGER;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_TRIGGER; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "I";}
+	std::string getTypeName() const { return "I"; }
 };
 
 /// \class ofxOscArgTimetag
 /// \brief a 64-bit NTP time tag argument, type name "t"
-class ofxOscArgTimetag : public ofxOscArg{
+class ofxOscArgTimetag : public ofxOscArg {
 public:
-	ofxOscArgTimetag(std::uint64_t value) : value(value) {}
+	ofxOscArgTimetag(std::uint64_t value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_TIMETAG;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_TIMETAG; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "t";}
+	std::string getTypeName() const { return "t"; }
 
 	/// return value
-	std::uint64_t get() const {return value;}
+	std::uint64_t get() const { return value; }
 
 	/// set value
-	void set(std::uint64_t value) {this->value = value;}
+	void set(std::uint64_t value) { this->value = value; }
 
 private:
 	std::uint64_t value;
@@ -313,21 +326,22 @@ private:
 
 /// \class ofxOscArgBlob
 /// \brief a binary blob argument, type name "b"
-class ofxOscArgBlob : public ofxOscArg{
+class ofxOscArgBlob : public ofxOscArg {
 public:
-	ofxOscArgBlob(const ofBuffer &value) : value(value) {}
+	ofxOscArgBlob(const ofBuffer & value)
+		: value(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_BLOB;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_BLOB; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "b";}
+	std::string getTypeName() const { return "b"; }
 
 	/// return value
-	const ofBuffer &get() const {return value;}
+	const ofBuffer & get() const { return value; }
 
 	/// set value
-	void set(const char *value, unsigned int length) {
+	void set(const char * value, unsigned int length) {
 		this->value.set(value, length);
 	}
 
@@ -337,13 +351,14 @@ private:
 
 /// \class ofxOscArgRgbaColor
 /// \brief a 32-bit RGBA color argument, type name "r"
-class ofxOscArgRgbaColor : public ofxOscArgMidiMessage{
+class ofxOscArgRgbaColor : public ofxOscArgMidiMessage {
 public:
-	ofxOscArgRgbaColor(std::uint32_t value) : ofxOscArgMidiMessage(value) {}
+	ofxOscArgRgbaColor(std::uint32_t value)
+		: ofxOscArgMidiMessage(value) { }
 
 	/// \return argument type
-	ofxOscArgType getType() const {return OFXOSC_TYPE_RGBA_COLOR;}
+	ofxOscArgType getType() const { return OFXOSC_TYPE_RGBA_COLOR; }
 
 	/// \return argument type character as a string
-	std::string getTypeName() const {return "r";}
+	std::string getTypeName() const { return "r"; }
 };

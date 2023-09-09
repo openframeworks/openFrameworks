@@ -8,16 +8,16 @@
 #ifndef OFMATRIXSTACK_H_
 #define OFMATRIXSTACK_H_
 
-#include "ofRectangle.h"
-#include "ofGraphicsConstants.h"
-#include "ofConstants.h"
 #include "glm/mat4x4.hpp"
+#include "ofConstants.h"
+#include "ofGraphicsConstants.h"
+#include "ofRectangle.h"
 #include <stack>
 
 class ofBaseDraws;
 class ofAppBaseWindow;
 class ofFbo;
-enum ofOrientation: short;
+enum ofOrientation : short;
 
 class ofMatrixStack {
 public:
@@ -56,7 +56,7 @@ public:
 	bool customMatrixNeedsFlip() const;
 
 	void pushView();
-    void popView();
+	void popView();
 
 	void pushMatrix();
 	void popMatrix();
@@ -64,10 +64,10 @@ public:
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
 	void rotateRad(float radians, float vecX, float vecY, float vecZ);
 	void matrixMode(ofMatrixMode mode);
-	void loadIdentityMatrix (void);
-	
-	void loadMatrix (const glm::mat4 & m);
-	void multMatrix (const glm::mat4 & m);
+	void loadIdentityMatrix(void);
+
+	void loadMatrix(const glm::mat4 & m);
+	void multMatrix(const glm::mat4 & m);
 
 	void loadViewMatrix(const glm::mat4 & matrix);
 	void multViewMatrix(const glm::mat4 & matrix);
@@ -77,13 +77,13 @@ public:
 
 private:
 	bool vFlipped;
-    ofOrientation orientation;
+	ofOrientation orientation;
 	ofRectangle currentViewport;
 	ofHandednessType handedness;
 	ofBaseDraws * currentRenderSurface;
 	ofAppBaseWindow * currentWindow;
 
-    ofMatrixMode currentMatrixMode;
+	ofMatrixMode currentMatrixMode;
 
 	glm::mat4 * currentMatrix;
 	bool flipRenderSurfaceMatrix;
@@ -98,18 +98,17 @@ private:
 	glm::mat4 orientationMatrix;
 	glm::mat4 orientationMatrixInverse;
 
-	std::stack <ofRectangle> viewportHistory;
-	std::stack <glm::mat4> viewMatrixStack;
-	std::stack <glm::mat4> modelViewMatrixStack;
-	std::stack <glm::mat4> projectionMatrixStack;
-	std::stack <glm::mat4> textureMatrixStack;
-	std::stack <std::pair<ofOrientation,bool> > orientationStack;
+	std::stack<ofRectangle> viewportHistory;
+	std::stack<glm::mat4> viewMatrixStack;
+	std::stack<glm::mat4> modelViewMatrixStack;
+	std::stack<glm::mat4> projectionMatrixStack;
+	std::stack<glm::mat4> textureMatrixStack;
+	std::stack<std::pair<ofOrientation, bool>> orientationStack;
 
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;
 	bool doesHWOrientation() const;
 	inline void updatedRelatedMatrices();
-
 };
 
 #endif /* OFMATRIXSTACK_H_ */

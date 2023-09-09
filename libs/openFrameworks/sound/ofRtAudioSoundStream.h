@@ -1,8 +1,8 @@
 #pragma once
 
+#include "ofConstants.h"
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
-#include "ofConstants.h"
 
 typedef unsigned int RtAudioStreamStatus;
 class RtAudio;
@@ -31,15 +31,13 @@ public:
 	ofSoundDevice getInDevice() const;
 	ofSoundDevice getOutDevice() const;
 
-
 private:
 	long unsigned long tickCount;
-	std::shared_ptr<RtAudio>	audio;
+	std::shared_ptr<RtAudio> audio;
 
 	ofSoundBuffer inputBuffer;
 	ofSoundBuffer outputBuffer;
 	ofSoundStreamSettings settings;
 
-	static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
-
+	static int rtAudioCallback(void * outputBuffer, void * inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void * data);
 };

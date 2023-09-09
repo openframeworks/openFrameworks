@@ -4,10 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-
-
 // this example uses code from glew and from Brian Paul
 //
 /*
@@ -31,18 +27,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 struct token_name {
 	GLuint count;
 	GLenum token;
-	const char *name;
+	const char * name;
 };
 
-
-void
-print_extension_list(char *ext)
-{
-	const char *indentString = "    ";
+void print_extension_list(char * ext) {
+	const char * indentString = "    ";
 	const int indent = 4;
 	const int max = 79;
 	int width, i, j;
@@ -72,8 +64,7 @@ print_extension_list(char *ext)
 			width += len + 1;
 			if (ext[j] == 0) {
 				break;
-			}
-			else {
+			} else {
 				i++;
 				j++;
 				if (ext[j] == 0)
@@ -88,8 +79,7 @@ print_extension_list(char *ext)
 }
 
 static void
-print_limits(void)
-{
+print_limits(void) {
 
 	static const struct token_name openglLimits[] = {
 		{ 1, GL_MAX_ATTRIB_STACK_DEPTH, "GL_MAX_ATTRIB_STACK_DEPTH" },
@@ -119,7 +109,7 @@ print_limits(void)
 		{ 2, GL_SMOOTH_LINE_WIDTH_RANGE, "GL_SMOOTH_LINE_WIDTH_RANGE" },
 		{ 2, GL_ALIASED_POINT_SIZE_RANGE, "GL_ALIASED_POINT_SIZE_RANGE" },
 		{ 2, GL_SMOOTH_POINT_SIZE_RANGE, "GL_SMOOTH_POINT_SIZE_RANGE" },
-		{ 0, (GLenum) 0, NULL }
+		{ 0, (GLenum)0, NULL }
 	};
 	GLint i, max[2];
 	cout << "OpenGL limits:\n";
@@ -134,7 +124,7 @@ print_limits(void)
 	}
 }
 
-void printShaderLimits(){
+void printShaderLimits() {
 
 	static const struct token_name lll[] = {
 		{ 1, GL_MAX_VERTEX_ATTRIBS, "GL_MAX_VERTEX_ATTRIBS" },
@@ -142,7 +132,7 @@ void printShaderLimits(){
 		{ 1, GL_MAX_VARYING_FLOATS, "GL_MAX_VARYING_FLOATS" },
 		{ 1, GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS" },
 		{ 1, GL_MAX_TEXTURE_IMAGE_UNITS, "GL_MAX_TEXTURE_IMAGE_UNITS" },
-		{ 0, (GLenum) 0, NULL }
+		{ 0, (GLenum)0, NULL }
 	};
 
 	GLint i, max[2];
@@ -158,69 +148,61 @@ void printShaderLimits(){
 	}
 }
 
+void printGLInfo() {
 
-void printGLInfo(){
-
-	char *version = NULL;
-	char *vendor = NULL;
-	char *renderer = NULL;
-//    char *extensions = NULL;
-//    int   glutVersion;
+	char * version = NULL;
+	char * vendor = NULL;
+	char * renderer = NULL;
+	//    char *extensions = NULL;
+	//    int   glutVersion;
 
 	//glutVersion = glutGet(0x01FC);
-	version =     (char*)glGetString(GL_VERSION);
-	vendor =      (char*)glGetString(GL_VENDOR);
-	renderer =    (char*)glGetString(GL_RENDERER);
+	version = (char *)glGetString(GL_VERSION);
+	vendor = (char *)glGetString(GL_VENDOR);
+	renderer = (char *)glGetString(GL_RENDERER);
 
 	cout << "version=" << version << "\nvendor=" << vendor << "\nrenderer=" << renderer << "\n";
-
 }
 
-
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
-
-	info.version = (char*)glGetString(GL_VERSION);
-	info.vendor = (char*)glGetString(GL_VENDOR);
-	info.renderer = (char*)glGetString(GL_RENDERER);
+	info.version = (char *)glGetString(GL_VERSION);
+	info.vendor = (char *)glGetString(GL_VENDOR);
+	info.renderer = (char *)glGetString(GL_RENDERER);
 	info.bVboSupported = false;
 	info.bShadersSupported = false;
 	info.bPointSpritesSupported = false;
 
-
-	if(glewIsSupported("GL_VERSION_1_4  GL_ARB_point_sprite")) {
+	if (glewIsSupported("GL_VERSION_1_4  GL_ARB_point_sprite")) {
 		info.bPointSpritesSupported = true;
 	}
 
-	if(glewIsSupported("GL_ARB_vertex_buffer_object")) {
+	if (glewIsSupported("GL_ARB_vertex_buffer_object")) {
 		info.bVboSupported = true;
 	}
 
-	if(glewIsSupported("GL_ARB_vertex_shader")) {
+	if (glewIsSupported("GL_ARB_vertex_shader")) {
 		info.bShadersSupported = true;
 	}
 
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &info.maxTextureSize);
 	glGetIntegerv(GL_MAX_VIEWPORT_DIMS, info.maxDimensions);
 	glGetIntegerv(GL_MAX_LIGHTS, &info.maxLights);
-
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-
+void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	string output = "";
 
 	string pointSprites = ((info.bPointSpritesSupported == true) ? "yes" : "no");
 	string shaders = ((info.bShadersSupported == true) ? "yes" : "no");
 	string vbo = ((info.bVboSupported == true) ? "yes" : "no");
-
 
 	output += "opengl version: " + info.version + "\n";
 	output += "vendor: " + info.vendor + "\n";
@@ -231,31 +213,26 @@ void ofApp::draw(){
 	output += "vbo support: " + vbo + "\n";
 	output += "\n";
 	output += "max texture size: " + ofToString(info.maxTextureSize) + "\n";
-	output += "max viewport dimensions: " + ofToString(info.maxDimensions[0]) + "," +  ofToString(info.maxDimensions[1]) + "\n";
+	output += "max viewport dimensions: " + ofToString(info.maxDimensions[0]) + "," + ofToString(info.maxDimensions[1]) + "\n";
 	output += "max lights: " + ofToString(info.maxLights) + "\n";
-
-
 
 	ofDrawBitmapStringHighlight(output, 20, 20);
 	ofDrawBitmapStringHighlight("press ' ' to load full report", 20, 220, ofColor::magenta, ofColor::white);
-
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
 
-	if (key == ' '){
+	if (key == ' ') {
 
 		// todo: rewrite this with ofLog:
 
-		FILE *fp;
+		FILE * fp;
 
-
-		if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
+		if ((fp = freopen(ofToDataPath("openglReport.txt").c_str(), "w", stdout)) == NULL) {
 			cout << "Cannot open file.\n";
 			return;
 		}
-
 
 		cout << "-------------------------------------------------\n";
 		cout << "opengl info\n";
@@ -267,7 +244,6 @@ void ofApp::keyPressed(int key){
 		cout << "opengl limits\n";
 		cout << "-------------------------------------------------\n";
 
-
 		print_limits();
 
 		cout << "-------------------------------------------------\n";
@@ -276,17 +252,15 @@ void ofApp::keyPressed(int key){
 
 		printShaderLimits();
 
-
 		cout << "-------------------------------------------------\n";
 		cout << "available extensions\n";
 		cout << "-------------------------------------------------\n";
 
 		const GLubyte * strExt;
-		strExt = glGetString (GL_EXTENSIONS);
+		strExt = glGetString(GL_EXTENSIONS);
 
 		//cout << "extensions: " << strExt << endl;
 		print_extension_list((char *)strExt);
-
 
 		//isShade = gluCheckExtension ((const GLubyte*)"GL_ARB_shading_language_100", strExt);
 
@@ -294,71 +268,60 @@ void ofApp::keyPressed(int key){
 		cout << "opengl calls available\n";
 		cout << "-------------------------------------------------\n";
 
-
 		printGlewInfo();
 
 		fclose(fp);
 
-		#ifdef TARGET_WIN32
+#ifdef TARGET_WIN32
 		string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
-		#elif defined(TARGET_LINUX)
+#elif defined(TARGET_LINUX)
 		string command = "xdg-open " + ofToString(ofToDataPath("openglReport.txt").c_str());
-		#else
+#else
 		string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
-		#endif
+#endif
 
-		if (0 != system(command.c_str())){
+		if (0 != system(command.c_str())) {
 			ofLogWarning() << "Command " << command.c_str() << " did not return 0. Something may have gone wrong.";
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

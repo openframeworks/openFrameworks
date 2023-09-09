@@ -1,136 +1,125 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-	
+void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw()
-{
+void ofApp::draw() {
 	ofDrawBitmapString("Press spacebar to open an image, \"s\" to save the processed output", 20, 15);
-	
-	
-	for (unsigned int i=0; i<loadedImages.size(); i++){
+
+	for (unsigned int i = 0; i < loadedImages.size(); i++) {
 		loadedImages[i].draw(0, 20);
 	}
-	
-	for (unsigned int i=0; i<processedImages.size(); i++){
+
+	for (unsigned int i = 0; i < processedImages.size(); i++) {
 		processedImages[i].draw(processedImages[i].getWidth(), 20);
 	}
-	
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-	
-	if (key == ' '){
-		
+void ofApp::keyReleased(int key) {
+
+	if (key == ' ') {
+
 		//Open the Open File Dialog
-		ofFileDialogResult openFileResult= ofSystemLoadDialog("Select a jpg or png"); 
-		
+		ofFileDialogResult openFileResult = ofSystemLoadDialog("Select a jpg or png");
+
 		//Check if the user opened a file
-		if (openFileResult.bSuccess){
-			
+		if (openFileResult.bSuccess) {
+
 			ofLogVerbose("User selected a file");
-			
+
 			//We have a file, check it and process it
 			processOpenFileSelection(openFileResult);
-			
-		}else {
+
+		} else {
 			ofLogVerbose("User hit cancel");
 		}
 	}
-	
-	if (key == 's'){
-		
-		if (processedImages.size()==0){
+
+	if (key == 's') {
+
+		if (processedImages.size() == 0) {
 			//User is trying to save without anything to output - bail
 			return;
 		}
-		
+
 		//
 		ofFileDialogResult saveFileResult = ofSystemSaveDialog(ofGetTimestampString() + "." + ofToLower(originalFileExtension), "Save your file");
-		if (saveFileResult.bSuccess){
+		if (saveFileResult.bSuccess) {
 			processedImages[0].save(saveFileResult.filePath);
 		}
 	}
-	
-	
 }
 
 //Sort function for stl::sort http://www.cplusplus.com/reference/algorithm/sort/
-bool sortColorFunction (ofColor i,ofColor j) { 
-	return (i.getBrightness()<j.getBrightness()); 
+bool sortColorFunction(ofColor i, ofColor j) {
+	return (i.getBrightness() < j.getBrightness());
 }
 
+void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult) {
 
-void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult){
-	
-	ofLogVerbose("getName(): "  + openFileResult.getName());
-	ofLogVerbose("getPath(): "  + openFileResult.getPath());
-	
-	ofFile file (openFileResult.getPath()); 
-	
-	if (file.exists()){
+	ofLogVerbose("getName(): " + openFileResult.getName());
+	ofLogVerbose("getPath(): " + openFileResult.getPath());
+
+	ofFile file(openFileResult.getPath());
+
+	if (file.exists()) {
 		//Limiting this example to one image so we delete previous ones
 		processedImages.clear();
 		loadedImages.clear();
-		
+
 		ofLogVerbose("The file exists - now checking the type via file extension");
 		string fileExtension = ofToUpper(file.getExtension());
-		
+
 		//We only want images
 		if (fileExtension == "JPG" || fileExtension == "PNG") {
-			
+
 			//Save the file extension to use when we save out
 			originalFileExtension = fileExtension;
-			
+
 			//Load the selected image
 			ofImage image;
 			image.load(openFileResult.getPath());
-			if (image.getWidth()>ofGetWidth() || image.getHeight() > ofGetHeight()) 
-			{
-				image.resize(image.getWidth()/2, image.getHeight()/2);
+			if (image.getWidth() > ofGetWidth() || image.getHeight() > ofGetHeight()) {
+				image.resize(image.getWidth() / 2, image.getHeight() / 2);
 			}
 			loadedImages.push_back(image);
-			
-			//Make some short variables 
+
+			//Make some short variables
 			int w = image.getWidth();
 			int h = image.getHeight();
-			
+
 			//Make a new image to save manipulation by copying the source
 			ofImage processedImage = image;
-			
+
 			//Walk through the pixels
-			for (int y = 0; y < h; y++){
-				
+			for (int y = 0; y < h; y++) {
+
 				//Create a vector to store and sort the colors
 				vector<ofColor> colorsToSort;
-				
-				for (int x = 0; x < w; x++){
-					
+
+				for (int x = 0; x < w; x++) {
+
 					//Capture the colors for the row
-					ofColor color = image.getColor(x, y); 
-					colorsToSort.push_back(color);					
+					ofColor color = image.getColor(x, y);
+					colorsToSort.push_back(color);
 				}
-				
+
 				//Sort the colors for the row
-				sort (colorsToSort.begin(), colorsToSort.end(), sortColorFunction);
-				
-				for (int x = 0; x < w; x++)
-				{
+				sort(colorsToSort.begin(), colorsToSort.end(), sortColorFunction);
+
+				for (int x = 0; x < w; x++) {
 					//Put the sorted colors back in the new image
 					processedImage.setColor(x, y, colorsToSort[x]);
 				}
@@ -139,49 +128,39 @@ void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult){
 			processedImages.push_back(processedImage);
 		}
 	}
-	
 }
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-	
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-	
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-	
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-	
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-	
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-	
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-	
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

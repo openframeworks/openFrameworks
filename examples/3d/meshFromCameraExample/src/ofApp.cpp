@@ -9,65 +9,64 @@
  * Adapted during ofDevCon on 2/23/2012
  */
 
-
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
-	ofBackground(66,66,66);
-	
+	ofBackground(66, 66, 66);
+
 	int width = 320;
 	int height = 240;
 
 	//initialize the video grabber
 	vidGrabber.setVerbose(true);
-	vidGrabber.setup(width,height);
-	
+	vidGrabber.setup(width, height);
+
 	//add one vertex to the mesh for each pixel
-	for (int y = 0; y < height; y++){
-		for (int x = 0; x<width; x++){
-			mainMesh.addVertex(glm::vec3(x,y,0));	// mesh index = x + y*width
-												// this replicates the pixel array within the camera bitmap...
-			mainMesh.addColor(ofFloatColor(0,0,0));  // placeholder for colour data, we'll get this from the camera
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			mainMesh.addVertex(glm::vec3(x, y, 0)); // mesh index = x + y*width
+				// this replicates the pixel array within the camera bitmap...
+			mainMesh.addColor(ofFloatColor(0, 0, 0)); // placeholder for colour data, we'll get this from the camera
 		}
 	}
-	
-	for (int y = 0; y<height-1; y++){
-		for (int x=0; x<width-1; x++){
-			mainMesh.addIndex(x+y*width);				// 0
-			mainMesh.addIndex((x+1)+y*width);			// 1
-			mainMesh.addIndex(x+(y+1)*width);			// 10
-			
-			mainMesh.addIndex((x+1)+y*width);			// 1
-			mainMesh.addIndex((x+1)+(y+1)*width);		// 11
-			mainMesh.addIndex(x+(y+1)*width);			// 10
+
+	for (int y = 0; y < height - 1; y++) {
+		for (int x = 0; x < width - 1; x++) {
+			mainMesh.addIndex(x + y * width); // 0
+			mainMesh.addIndex((x + 1) + y * width); // 1
+			mainMesh.addIndex(x + (y + 1) * width); // 10
+
+			mainMesh.addIndex((x + 1) + y * width); // 1
+			mainMesh.addIndex((x + 1) + (y + 1) * width); // 11
+			mainMesh.addIndex(x + (y + 1) * width); // 10
 		}
 	}
-	
+
 	//this is an annoying thing that is used to flip the camera
-	cam.setScale(1,-1,1);
-	
+	cam.setScale(1, -1, 1);
+
 	//this determines how much we push the meshes out
 	extrusionAmount = 300.0;
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	//grab a new frame
 	vidGrabber.update();
-	
-	//update the mesh if we have a new frame
-	if (vidGrabber.isFrameNew()){
-		//this determines how far we extrude the mesh
-		for (int i=0; i<vidGrabber.getWidth()*vidGrabber.getHeight(); i++){
 
-			ofFloatColor sampleColor(vidGrabber.getPixels()[i*3]/255.f,				// r
-									 vidGrabber.getPixels()[i*3+1]/255.f,			// g
-									 vidGrabber.getPixels()[i*3+2]/255.f);			// b
-			
+	//update the mesh if we have a new frame
+	if (vidGrabber.isFrameNew()) {
+		//this determines how far we extrude the mesh
+		for (int i = 0; i < vidGrabber.getWidth() * vidGrabber.getHeight(); i++) {
+
+			ofFloatColor sampleColor(vidGrabber.getPixels()[i * 3] / 255.f, // r
+				vidGrabber.getPixels()[i * 3 + 1] / 255.f, // g
+				vidGrabber.getPixels()[i * 3 + 2] / 255.f); // b
+
 			//now we get the vertex aat this position
 			//we extrude the mesh based on it's brightness
 			glm::vec3 tmpVec = mainMesh.getVertex(i);
@@ -77,100 +76,86 @@ void ofApp::update(){
 			mainMesh.setColor(i, sampleColor);
 		}
 	}
-	
+
 	//let's move the camera when you move the mouse
 	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), -90, 90);
 
-	
 	//move the camera around the mesh
-	glm::vec3 camDirection(0,0,1);
-	glm::vec3 centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
-	glm::vec3 camDirectionRotated = glm::rotate(camDirection, ofDegToRad(rotateAmount), glm::vec3(1,0,0));
+	glm::vec3 camDirection(0, 0, 1);
+	glm::vec3 centre(vidGrabber.getWidth() / 2.f, vidGrabber.getHeight() / 2.f, 255 / 2.f);
+	glm::vec3 camDirectionRotated = glm::rotate(camDirection, ofDegToRad(rotateAmount), glm::vec3(1, 0, 0));
 	glm::vec3 camPosition = centre + camDirectionRotated * extrusionAmount;
-	
+
 	cam.setPosition(camPosition);
 	cam.lookAt(centre);
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	//we have to disable depth testing to draw the video frame
 	ofDisableDepthTest();
-//	vidGrabber.draw(20,20);
-	
+	//	vidGrabber.draw(20,20);
+
 	//but we want to enable it to show the mesh
 	ofEnableDepthTest();
-	cam.begin();		
+	cam.begin();
 
 	//You can either draw the mesh or the wireframe
 	// mainMesh.drawWireframe();
 	mainMesh.drawFaces();
 	cam.end();
-	
+
 	//draw framerate for fun
 	ofSetColor(255);
 	string msg = "fps: " + ofToString(ofGetFrameRate(), 2);
 	ofDrawBitmapString(msg, 10, 20);
-	
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	switch(key) {
-		case 'f':
-			ofToggleFullscreen();
-			break;
+void ofApp::keyPressed(int key) {
+	switch (key) {
+	case 'f':
+		ofToggleFullscreen();
+		break;
 	}
-
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-	
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

@@ -12,27 +12,27 @@
  vertices, or texture coordinates.
  */
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+void ofApp::addFace(ofMesh & mesh, const glm::vec3 & a, const glm::vec3 & b, const glm::vec3 & c) {
 	mesh.addVertex(a);
 	mesh.addVertex(b);
 	mesh.addVertex(c);
 }
 
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d) {
+void ofApp::addFace(ofMesh & mesh, const glm::vec3 & a, const glm::vec3 & b, const glm::vec3 & c, const glm::vec3 & d) {
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c) {
+void ofApp::addTexCoords(ofMesh & mesh, const glm::vec2 & a, const glm::vec2 & b, const glm::vec2 & c) {
 	mesh.addTexCoord(a);
 	mesh.addTexCoord(b);
 	mesh.addTexCoord(c);
 }
 
 //--------------------------------------------------------------
-void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d) {
+void ofApp::addTexCoords(ofMesh & mesh, const glm::vec2 & a, const glm::vec2 & b, const glm::vec2 & c, const glm::vec2 & d) {
 	addTexCoords(mesh, a, b, c);
 	addTexCoords(mesh, a, c, d);
 }
@@ -42,9 +42,9 @@ void ofApp::addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, c
  a 3d point from the current x,y image position.
  */
 //--------------------------------------------------------------
-glm::vec3 ofApp::getVertexFromImg(ofImage& img, int x, int y) {
+glm::vec3 ofApp::getVertexFromImg(ofImage & img, int x, int y) {
 	ofColor color = img.getColor(x, y);
-	if(color.a > 0) {
+	if (color.a > 0) {
 		float z = ofMap(color.a, 0, 255, -480, 480);
 		return glm::vec3(x - img.getWidth() / 2, y - img.getHeight() / 2, z);
 	} else {
@@ -55,28 +55,28 @@ glm::vec3 ofApp::getVertexFromImg(ofImage& img, int x, int y) {
 //--------------------------------------------------------------
 void ofApp::setup() {
 
-	#ifdef TARGET_OPENGLES
+#ifdef TARGET_OPENGLES
 	// While this will will work on normal OpenGL as well, it is
 	// required for OpenGL ES because ARB textures are not supported.
 	// If this IS set, then we conditionally normalize our
 	// texture coordinates below.
 	ofEnableNormalizedTexCoords();
-	#endif
+#endif
 
 	img.load("linzer.png");
 
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	int skip = 10;	// this controls the resolution of the mesh
+	int skip = 10; // this controls the resolution of the mesh
 
 	int width = img.getWidth();
 	int height = img.getHeight();
 
-	glm::vec2 imageSize(width,height);
+	glm::vec2 imageSize(width, height);
 
 	glm::vec3 zero(0, 0, 0);
-	for(int y = 0; y < height - skip; y += skip) {
-		for(int x = 0; x < width - skip; x += skip) {
+	for (int y = 0; y < height - skip; y += skip) {
+		for (int x = 0; x < width - skip; x += skip) {
 			/*
 			 To construct a mesh, we have to build a collection of quads made up of
 			 the current pixel, the one to the right, to the bottom right, and
@@ -93,12 +93,12 @@ void ofApp::setup() {
 			glm::vec2 sei(x + skip, y + skip);
 
 			// ignore any zero-data (where there is no depth info)
-			if(nw != zero && ne != zero && sw != zero && se != zero) {
+			if (nw != zero && ne != zero && sw != zero && se != zero) {
 				addFace(mesh, nw, ne, se, sw);
 
 				// Normalize our texture coordinates if normalized
 				// texture coordinates are currently enabled.
-				if(ofGetUsingNormalizedTexCoords()) {
+				if (ofGetUsingNormalizedTexCoords()) {
 					nwi /= imageSize;
 					nei /= imageSize;
 					sei /= imageSize;
@@ -115,7 +115,6 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-
 }
 
 //--------------------------------------------------------------
@@ -133,12 +132,12 @@ void ofApp::draw() {
 	int n = 5; // make a 5x5 grid
 	glm::vec2 spacing(img.getWidth(), img.getHeight()); // spacing between meshes
 	ofTranslate(-spacing.x * n / 2, -spacing.y * n / 2, 0); // center the grid
-	for(int i = 0; i < n; i++) { // loop through the rows
-		for(int j = 0; j < n; j++) { // loop through the columns
+	for (int i = 0; i < n; i++) { // loop through the rows
+		for (int j = 0; j < n; j++) { // loop through the columns
 			ofPushMatrix();
 			ofTranslate(i * spacing.x, j * spacing.y); // position the current mesh
 			ofTranslate(spacing.x / 2, spacing.y / 2); // center the mesh
-			if(ofGetKeyPressed()) {
+			if (ofGetKeyPressed()) {
 				vboMesh.draw(); // draw a vboMesh (faster) when a key is pressed
 			} else {
 				mesh.draw(); // draw an ofMesh (slower) when no key is pressed
@@ -152,63 +151,54 @@ void ofApp::draw() {
 	cam.end();
 
 	// draw the framerate in the top left corner
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()) + " fps", 10, 20);
+	ofDrawBitmapString(ofToString((int)ofGetFrameRate()) + " fps", 10, 20);
 	ofDrawBitmapString("Hold any key for ofVboMesh mode.", 10, 40);
 	string mode = (ofGetKeyPressed() ? "ofVboMesh" : "ofMesh");
 	ofDrawBitmapString("Current mode: " + mode, 10, 60);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){}
+void ofApp::keyPressed(int key) { }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-	if(key == ' ') {
+void ofApp::keyReleased(int key) {
+	if (key == ' ') {
 		ofToggleFullscreen();
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

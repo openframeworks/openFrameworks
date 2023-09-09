@@ -13,24 +13,23 @@
 
 #include "ofMain.h"
 
-class ofApp : public ofBaseApp{
-    
+class ofApp : public ofBaseApp {
+
 public:
-    
-    void setup();
-    void update();
-    void draw();
-    void keyPressed(int key);
-    void calculateTime();
-    
-    // initiate a videograbber object and objects to put image pixel data into
-    ofVideoGrabber vidGrabber;
-    ofPixels videoPixels, pixels;
-    ofTexture videoTexture;
-    
-    int xSteps, scanStyle, seconds, minutes, hours, numOfSecs, numOfMins, numOfHours;
-    bool b_radial, b_debug;
-    float currTime, camWidth, camHeight;
-    string scanName, time;
-    ofTrueTypeFont font;
+	void setup();
+	void update();
+	void draw();
+	void keyPressed(int key);
+	void calculateTime();
+
+	// initiate a videograbber object and objects to put image pixel data into
+	ofVideoGrabber vidGrabber;
+	ofPixels videoPixels, pixels;
+	ofTexture videoTexture;
+
+	int xSteps, scanStyle, seconds, minutes, hours, numOfSecs, numOfMins, numOfHours;
+	bool b_radial, b_debug;
+	float currTime, camWidth, camHeight;
+	string scanName, time;
+	ofTrueTypeFont font;
 };

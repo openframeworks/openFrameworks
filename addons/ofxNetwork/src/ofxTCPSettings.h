@@ -16,5 +16,4 @@ public:
 	bool reuse = false;
 
 	std::string messageDelimiter = "[/TCP]";
-
 };

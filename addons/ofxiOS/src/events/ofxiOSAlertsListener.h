@@ -26,7 +26,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
+ * ***********************************************************************/
 
 #pragma once
 
@@ -35,13 +35,13 @@
 /****** protocol, delegate, interface, whatever you want to call it ******/
 class ofxiOSAlertsListener {
 public:
-	virtual ~ofxiOSAlertsListener() {}				
-	
-	virtual void lostFocus(){};
-	virtual void gotFocus(){};
-	virtual void gotMemoryWarning(){};
-    virtual void deviceOrientationChanged(int newOrientation){};
-	virtual void launchedWithURL(std::string url){};
+	virtual ~ofxiOSAlertsListener() { }
+
+	virtual void lostFocus() {};
+	virtual void gotFocus() {};
+	virtual void gotMemoryWarning() {};
+	virtual void deviceOrientationChanged(int newOrientation) {};
+	virtual void launchedWithURL(std::string url) {};
 };
 
 #define ofxiPhoneAlertsListener ofxiOSAlertsListener

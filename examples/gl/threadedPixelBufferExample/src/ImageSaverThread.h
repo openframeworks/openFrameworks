@@ -6,7 +6,7 @@
  */
 #pragma once
 #include "ofMain.h"
-class ImageSaverThread: public ofThread{
+class ImageSaverThread : public ofThread {
 public:
 	ImageSaverThread();
 	~ImageSaverThread();

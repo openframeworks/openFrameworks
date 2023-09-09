@@ -9,30 +9,27 @@
 
 #include "OrthoCamera.h"
 
-OrthoCamera::OrthoCamera()
-{
+OrthoCamera::OrthoCamera() {
 	enableOrtho();
 	scale = 1;
 }
 
-void OrthoCamera::begin(ofRectangle rect)
-{
+void OrthoCamera::begin(ofRectangle rect) {
 	ofCamera::begin(rect);
-	
+
 	//////////////////////////////
 	// CALCULATE ASPECT RATIO
 	//////////////////////////////
 	//
 	float vw = ofGetViewportWidth();
 	float vh = ofGetViewportHeight();
-	
+
 	//aspect ratio
-	float ar = vw/vh;
-	
+	float ar = vw / vh;
+
 	float scalex, scaley;
-	
-	if (ar > 1.0f)
-	{
+
+	if (ar > 1.0f) {
 		//wide
 		scalex = scale * ar;
 		scaley = scale;
@@ -43,7 +40,7 @@ void OrthoCamera::begin(ofRectangle rect)
 	}
 	//
 	//////////////////////////////
-	
+
 	//////////////////////////////
 	// SETUP PROJECTION
 	//////////////////////////////
@@ -55,7 +52,7 @@ void OrthoCamera::begin(ofRectangle rect)
 #else
 	// note that bottom and top are switched compared to glOrtho
 	ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(-scalex, scalex, scaley, -scaley,
-			-20 * scale, 20 * scale);
+		-20 * scale, 20 * scale);
 	glMultMatrixf(ortho.getPtr());
 #endif
 	glMatrixMode(GL_MODELVIEW);

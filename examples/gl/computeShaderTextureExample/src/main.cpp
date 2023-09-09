@@ -1,19 +1,18 @@
-#include "ofMain.h"
 #include "ofApp.h"
+#include "ofMain.h"
 
 //========================================================================
-int main(){
-	
+int main() {
+
 	// this example uses compute shaders which are only supported since
 	// openGL 4.3
 	ofGLWindowSettings settings;
 	settings.setSize(1024, 768);
-	settings.setGLVersion(4,3);
+	settings.setGLVersion(4, 3);
 	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
 	auto window = ofCreateWindow(settings);
 
 	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
-
 }

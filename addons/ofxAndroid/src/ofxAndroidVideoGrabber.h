@@ -7,27 +7,27 @@
 
 #pragma once
 
-#include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
 #include "ofEvents.h"
-#include "ofTypes.h"
+#include "ofPixels.h"
 #include "ofTexture.h"
+#include "ofTypes.h"
+#include "ofVideoBaseTypes.h"
 #include <jni.h>
 
-class ofxAndroidVideoGrabber: public ofBaseVideoGrabber{
+class ofxAndroidVideoGrabber : public ofBaseVideoGrabber {
 public:
 	ofxAndroidVideoGrabber();
 	~ofxAndroidVideoGrabber();
 
-	std::vector<ofVideoDevice>	listDevices() const;
+	std::vector<ofVideoDevice> listDevices() const;
 	bool setup(int w, int h);
 	bool isInitialized() const;
 
 	bool isFrameNew() const;
 	void update();
 
-	ofPixels& getPixels();
-	const ofPixels&	getPixels() const;
+	ofPixels & getPixels();
+	const ofPixels & getPixels() const;
 
 	void setUsePixels(bool usePixels);
 
@@ -38,7 +38,6 @@ public:
 
 	//should implement!
 	void setVerbose(bool bTalkToMe);
-
 
 	/// Set desired frame rate of the camera.
 	/// By default will the camera pick the highest frame rate available
@@ -57,34 +56,35 @@ public:
 
 	/// Get device id of back facing camera.
 	/// Returns -1 if no match is found
-	int getBackCamera()const;
+	int getBackCamera() const;
 
 	/// Get device id of front facing (selfie) camera.
 	/// Returns -1 if no match is found
-	int getFrontCamera()const;
+	int getFrontCamera() const;
 
 	/// Get the physical orientation of the camera. Typically on a phone the camera mounted in
 	/// landscape mode, this returns 90
-	int getCameraOrientation(int device=-1)const;
+	int getCameraOrientation(int device = -1) const;
 
 	/// Get facing of camera.
 	/// Leave device = -1 to get selected cameras facing
 	///
 	/// Returns 0 on backfacing camera, and 1 on frontal facing camera.
-	int getFacingOfCamera(int device=-1)const;
+	int getFacingOfCamera(int device = -1) const;
 
 	bool setAutoFocus(bool autofocus);
 
-	ofTexture *	getTexturePtr();
+	ofTexture * getTexturePtr();
 
 	bool supportsTextureRendering();
 
 	struct Data;
+
 private:
-	int getCameraFacing(int facing)const;
+	int getCameraFacing(int facing) const;
 
 	/// Get number of cameras available
-	int getNumCameras()const;
+	int getNumCameras() const;
 
 	bool initCamera();
 

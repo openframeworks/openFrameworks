@@ -1,8 +1,8 @@
-#include "ofMain.h"
 #include "ofApp.h"
+#include "ofMain.h"
 
 //========================================================================
-int main( ){
+int main() {
 
 	ofGLESWindowSettings settings;
 	settings.setGLESVersion(2);
@@ -11,5 +11,4 @@ int main( ){
 
 	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
-
 }

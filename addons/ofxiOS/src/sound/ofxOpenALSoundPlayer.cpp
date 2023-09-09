@@ -20,28 +20,28 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  
- ************************************************************************/ 
+ ************************************************************************/
 
 #import "ofxOpenALSoundPlayer.h"
-#include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofMath.h"
+#include "ofUtils.h"
 
-using std::vector;
 using std::cerr;
 using std::endl;
 using std::string;
+using std::vector;
 
-namespace{
-	bool SoundEngineInitialized = false;
+namespace {
+bool SoundEngineInitialized = false;
 
-	UInt32	numSounds;
-	bool	mp3Loaded;
+UInt32 numSounds;
+bool mp3Loaded;
 }
 
-static std::mutex& soundPlayerLock() {
-  static std::mutex* m = new std::mutex;
-    return *m;
+static std::mutex & soundPlayerLock() {
+	static std::mutex * m = new std::mutex;
+	return *m;
 }
 
 vector<ofxOpenALSoundPlayer *> soundPlayers;
@@ -53,39 +53,37 @@ ofxOpenALSoundPlayer::ofxOpenALSoundPlayer() {
 	volume = 1.0f;
 	pitch = 1.0f;
 	pan = 0.0f;
-	stopped=true;
-	bPaused=false;
-	
-	myPrimedId=-1;
-	
+	stopped = true;
+	bPaused = false;
+
+	myPrimedId = -1;
+
 	myId = 0;
-	bLoadedOk=false;
+	bLoadedOk = false;
 	bLoop = false;
-	bMultiPlay=false;
-	iAmAnMp3=false;
-	
+	bMultiPlay = false;
+	iAmAnMp3 = false;
+
 	numSounds++;
 }
 
 //--------------------------------------------------------------
 
-ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() { 
-	
+ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
+
 	unload();
 	numSounds--;
-	
+
 	soundPlayerLock().lock();
-	for(int i=0;i<soundPlayers.size();i++)
-	{
-		if(soundPlayers[i] == this)
-		{
-			soundPlayers.erase(soundPlayers.begin()+i);
+	for (int i = 0; i < soundPlayers.size(); i++) {
+		if (soundPlayers[i] == this) {
+			soundPlayers.erase(soundPlayers.begin() + i);
 			break;
 		}
 	}
 	soundPlayerLock().unlock();
-	
-	if(numSounds==0) {
+
+	if (numSounds == 0) {
 		closeSoundEngine();
 		soundPlayers.clear();
 	}
@@ -93,53 +91,50 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::load(const of::filesystem::path& filePath, bool stream) {
-	
-	if(!SoundEngineInitialized) {
+bool ofxOpenALSoundPlayer::load(const of::filesystem::path & filePath, bool stream) {
+
+	if (!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();
 	}
-	
-    auto fileName = filePath.string();
-	if( fileName.length()-3 == fileName.rfind("mp3") )
-		iAmAnMp3=true;
-	
-	if(iAmAnMp3) {
+
+	auto fileName = filePath.string();
+	if (fileName.length() - 3 == fileName.rfind("mp3"))
+		iAmAnMp3 = true;
+
+	if (iAmAnMp3) {
 		bLoadedOk = loadBackgroundMusic(fileName, false, true);
 		setLoop(bLoop);
-		isStreaming=true;
-	}
-	else {
-		isStreaming=false;
+		isStreaming = true;
+	} else {
+		isStreaming = false;
 		myId = 0; //assigned by AL
-		
-		bLoadedOk=true;
-		
-		if(SoundEngine_LoadEffect(ofToDataPath(fileName).c_str(), &myId) == noErr) {
+
+		bLoadedOk = true;
+
+		if (SoundEngine_LoadEffect(ofToDataPath(fileName).c_str(), &myId) == noErr) {
 			length = SoundEngine_GetEffectLength(myId);
+		} else {
+			cerr << "faied to load sound " << fileName << endl;
+			bLoadedOk = false;
 		}
-		else {
-			cerr<<"faied to load sound "<<fileName<<endl;
-			bLoadedOk=false;
-		}
-		
+
 		soundPlayerLock().lock();
 		soundPlayers.push_back(this);
 		soundPlayerLock().unlock();
 	}
-	
+
 	return bLoadedOk;
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::unload() {
-	if(bLoadedOk)
-	{
-		if ( isPlaying() )
+	if (bLoadedOk) {
+		if (isPlaying())
 			stop();
-		
-		bLoadedOk=false;
-		if(iAmAnMp3)
+
+		bLoadedOk = false;
+		if (iAmAnMp3)
 			unloadAllBackgroundMusic();
 		else
 			SoundEngine_UnloadEffect(myId);
@@ -149,19 +144,18 @@ void ofxOpenALSoundPlayer::unload() {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::play() {
-	
-	if ( !bLoadedOk ) 
+
+	if (!bLoadedOk)
 		return;
-	
-	if(iAmAnMp3)
+
+	if (iAmAnMp3)
 		SoundEngine_StartBackgroundMusic();
-	else
-	{
-		if(myPrimedId==-1 || bMultiPlay)
+	else {
+		if (myPrimedId == -1 || bMultiPlay)
 			prime();
 		SoundEngine_StartEffect(myPrimedId);
 	}
-	
+
 	stopped = false;
 }
 
@@ -169,26 +163,26 @@ void ofxOpenALSoundPlayer::play() {
 
 void ofxOpenALSoundPlayer::stop() {
 
-	if ( !bLoadedOk )
+	if (!bLoadedOk)
 		return;
-	
-	if(iAmAnMp3)
+
+	if (iAmAnMp3)
 		SoundEngine_StopBackgroundMusic(false);
 	else
 		SoundEngine_StopEffect(myPrimedId);
-	
+
 	stopped = true;
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setVolume(float _vol) {
-	if ( !bLoadedOk )
+	if (!bLoadedOk)
 		return;
 
 	volume = _vol;
-	
-	if(iAmAnMp3)
+
+	if (iAmAnMp3)
 		SoundEngine_SetBackgroundMusicVolume(volume);
 	else
 		SoundEngine_SetEffectLevel(myPrimedId, (Float32)volume);
@@ -197,12 +191,12 @@ void ofxOpenALSoundPlayer::setVolume(float _vol) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPan(float _pan) {
-	
-	if ( !bLoadedOk )
+
+	if (!bLoadedOk)
 		return;
-	
-	if(iAmAnMp3)
-		cerr<<"error, cannot set pan on mp3s in openAL"<<endl;
+
+	if (iAmAnMp3)
+		cerr << "error, cannot set pan on mp3s in openAL" << endl;
 	else {
 		float locX = ofClamp(_pan, -1, 1);
 		setLocation(locX, location.y, location.z);
@@ -213,12 +207,12 @@ void ofxOpenALSoundPlayer::setPan(float _pan) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPitch(float _pitch) {
-	
-	if ( !bLoadedOk ) 
+
+	if (!bLoadedOk)
 		return;
 
-	if(iAmAnMp3)
-		cerr<<"error, cannot set pitch on mp3s in openAL"<<endl;
+	if (iAmAnMp3)
+		cerr << "error, cannot set pitch on mp3s in openAL" << endl;
 	else {
 		pitch = _pitch;
 		SoundEngine_SetEffectPitch(myPrimedId, (Float32)pitch);
@@ -228,19 +222,19 @@ void ofxOpenALSoundPlayer::setPitch(float _pitch) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPaused(bool bP) {
-	
-	if ( !bLoadedOk )
+
+	if (!bLoadedOk)
 		return;
-	
-	if(iAmAnMp3)
-		cerr<<"error, cannot set pause on mp3s in openAL"<<endl; // TODO
+
+	if (iAmAnMp3)
+		cerr << "error, cannot set pause on mp3s in openAL" << endl; // TODO
 	else {
 		bool bPlaying = isPlaying();
 		bPaused = bP;
-		
-		if(bPaused && bPlaying)
+
+		if (bPaused && bPlaying)
 			SoundEngine_PauseEffect(myPrimedId);
-		else if(!bPaused && !bPlaying)
+		else if (!bPaused && !bPlaying)
 			play();
 	}
 }
@@ -248,12 +242,12 @@ void ofxOpenALSoundPlayer::setPaused(bool bP) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setLoop(bool bLp) {
-	if ( !bLoadedOk )
+	if (!bLoadedOk)
 		return;
-	
+
 	bLoop = bLp;
-	
-	if(iAmAnMp3)
+
+	if (iAmAnMp3)
 		SoundEngine_SetBackgroundMusicLooping(bLoop);
 	else
 		SoundEngine_SetLooping(bLoop, myPrimedId);
@@ -261,12 +255,12 @@ void ofxOpenALSoundPlayer::setLoop(bool bLp) {
 
 //--------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::setMultiPlay(bool bMp) { 
-	if ( !bLoadedOk )
+void ofxOpenALSoundPlayer::setMultiPlay(bool bMp) {
+	if (!bLoadedOk)
 		return;
-	
-	if(iAmAnMp3)
-		cerr<<"error, cannot set multiplay on mp3s in openAL"<<endl;
+
+	if (iAmAnMp3)
+		cerr << "error, cannot set multiplay on mp3s in openAL" << endl;
 	else
 		bMultiPlay = bMp;
 }
@@ -274,55 +268,51 @@ void ofxOpenALSoundPlayer::setMultiPlay(bool bMp) {
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::setPosition(float pct) {
-	if ( !bLoadedOk ) 
+	if (!bLoadedOk)
 		return;
 
-	if(iAmAnMp3)
-		cerr<<"error, cannot set position on mp3s in openAL"<<endl;
+	if (iAmAnMp3)
+		cerr << "error, cannot set position on mp3s in openAL" << endl;
 	else
-		SoundEngine_SetEffectPosition(myPrimedId, pct*length);
+		SoundEngine_SetEffectPosition(myPrimedId, pct * length);
 }
 
 //--------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::setPositionMS(int ms){
-	if ( !bLoadedOk ) 
+void ofxOpenALSoundPlayer::setPositionMS(int ms) {
+	if (!bLoadedOk)
 		return;
 
-	if(iAmAnMp3)
-		cerr<<"error, cannot set position on mp3s in openAL"<<endl;
+	if (iAmAnMp3)
+		cerr << "error, cannot set position on mp3s in openAL" << endl;
 	else
-		SoundEngine_SetEffectPosition(myPrimedId, float(ms)/1000.f);
+		SoundEngine_SetEffectPosition(myPrimedId, float(ms) / 1000.f);
 }
 
 //--------------------------------------------------------------
 
 float ofxOpenALSoundPlayer::getPosition() const {
-	if ( !bLoadedOk ) 
+	if (!bLoadedOk)
 		return 0;
 
-	if(iAmAnMp3)
-	{
-		cerr<<"error, cannot get position on mp3s in openAL"<<endl;
-	}
-	else
-		return (float)SoundEngine_GetEffectPosition(myPrimedId)/length;
-	
+	if (iAmAnMp3) {
+		cerr << "error, cannot get position on mp3s in openAL" << endl;
+	} else
+		return (float)SoundEngine_GetEffectPosition(myPrimedId) / length;
+
 	return 0;
 }
 
 //--------------------------------------------------------------
 
-int ofxOpenALSoundPlayer::getPositionMS()  const{
-	if ( !bLoadedOk ) 
+int ofxOpenALSoundPlayer::getPositionMS() const {
+	if (!bLoadedOk)
 		return 0;
 
-	if(iAmAnMp3)
-	{
-		cerr<<"error, cannot get position on mp3s in openAL"<<endl;
-	}
-	else
-		return SoundEngine_GetEffectPosition(myPrimedId)*1000.f;
+	if (iAmAnMp3) {
+		cerr << "error, cannot get position on mp3s in openAL" << endl;
+	} else
+		return SoundEngine_GetEffectPosition(myPrimedId) * 1000.f;
 
 	return 0;
 }
@@ -330,16 +320,16 @@ int ofxOpenALSoundPlayer::getPositionMS()  const{
 //--------------------------------------------------------------
 
 bool ofxOpenALSoundPlayer::isPlaying() {
-	if ( !bLoadedOk ) 
+	if (!bLoadedOk)
 		return false;
 
-	if(iAmAnMp3)
+	if (iAmAnMp3)
 		stopped = SoundEngine_getBackgroundMusicStopped();
-	
-	if(!stopped) // if not stopped, run the update to see if maybe we should be...
+
+	if (!stopped) // if not stopped, run the update to see if maybe we should be...
 		update();
-	
-	if(stopped || bPaused)
+
+	if (stopped || bPaused)
 		return false;
 	else
 		return true;
@@ -347,56 +337,55 @@ bool ofxOpenALSoundPlayer::isPlaying() {
 
 //--------------------------------------------------------------
 
-float ofxOpenALSoundPlayer::getPitch()  const{
+float ofxOpenALSoundPlayer::getPitch() const {
 	return pitch;
 }
 
 //--------------------------------------------------------------
 
-float ofxOpenALSoundPlayer::getPan()  const{
+float ofxOpenALSoundPlayer::getPan() const {
 	return pan;
 }
 
 //--------------------------------------------------------------
 
-float ofxOpenALSoundPlayer::getVolume()  const{
-    return volume;
+float ofxOpenALSoundPlayer::getVolume() const {
+	return volume;
 }
 
 //--------------------------------------------------------------
-bool ofxOpenALSoundPlayer::isLoaded()  const{
-    return bLoadedOk;
+bool ofxOpenALSoundPlayer::isLoaded() const {
+	return bLoadedOk;
 }
 
 //--------------------------------------------------------------
-
 
 //static calls ---------------------------------------------------------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::initializeSoundEngine() {
-	if(!SoundEngineInitialized){
-		
+	if (!SoundEngineInitialized) {
+
 		OSStatus err = SoundEngine_Initialize(44100);
-				
-		if(err)
-			cerr<<"ERROR failed to initialize soundEngine."<<endl;
+
+		if (err)
+			cerr << "ERROR failed to initialize soundEngine." << endl;
 		else {
-			numSounds=1;
-			mp3Loaded=false;
-			
+			numSounds = 1;
+			mp3Loaded = false;
+
 			SoundEngineInitialized = true;
 			OSStatus err = SoundEngine_SetListenerPosition(0.0f, 0.0f, 0.0f);
-			if(err)
-				cerr<<"ERROR failed to set listener position in init..\n (if you are running in the simulator, this is normal, sounds won't work.)"<<endl;
+			if (err)
+				cerr << "ERROR failed to set listener position in init..\n (if you are running in the simulator, this is normal, sounds won't work.)" << endl;
 		}
 	}
 }
 
 //--------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::closeSoundEngine(){
-	if(SoundEngineInitialized){
-		
+void ofxOpenALSoundPlayer::closeSoundEngine() {
+	if (SoundEngineInitialized) {
+
 		SoundEngine_Teardown();
 
 		SoundEngineInitialized = false;
@@ -405,52 +394,49 @@ void ofxOpenALSoundPlayer::closeSoundEngine(){
 
 //--------------------------------------------------------------
 
-void ofxALSoundStopAll(){
+void ofxALSoundStopAll() {
 	soundPlayerLock().lock();
-	for(int i=0;i<soundPlayers.size();i++)
-			soundPlayers[i]->stop();
+	for (int i = 0; i < soundPlayers.size(); i++)
+		soundPlayers[i]->stop();
 	soundPlayerLock().unlock();
 }
 
 //--------------------------------------------------------------
 
-float * ofxALSoundGetSpectrum(){
-	cerr<<"unfortunately there is no way to get the sound spectrum out of openAL"<<endl;
+float * ofxALSoundGetSpectrum() {
+	cerr << "unfortunately there is no way to get the sound spectrum out of openAL" << endl;
 	return NULL;
 }
 
 //--------------------------------------------------------------
 
-void ofxALSoundSetVolume(float vol){
-	if(!SoundEngineInitialized)
+void ofxALSoundSetVolume(float vol) {
+	if (!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	if ( SoundEngineInitialized )
+	if (SoundEngineInitialized)
 		SoundEngine_SetMasterVolume((Float32)vol);
 }
 
 //--------------------------------------------------------------
 
-
-
 // internal ------------------------------------------------------------------------------------------------------------------
 
 bool ofxOpenALSoundPlayer::update() {
 
-	bool deletedAnything= false;
-	for(int i=retainedBuffers.size()-1;i>=0;i--) {
-		if(SoundEngine_Update(retainedBuffers[i]->primedID, retainedBuffers[i]->buffer)) {
+	bool deletedAnything = false;
+	for (int i = retainedBuffers.size() - 1; i >= 0; i--) {
+		if (SoundEngine_Update(retainedBuffers[i]->primedID, retainedBuffers[i]->buffer)) {
 			delete retainedBuffers[i];
-			retainedBuffers.erase(retainedBuffers.begin()+i);
+			retainedBuffers.erase(retainedBuffers.begin() + i);
 			deletedAnything = true;
 		}
 	}
-	
-	if(retainedBuffers.size()==0)
-	{
-		myPrimedId=-1;
-		stopped=true;
+
+	if (retainedBuffers.size() == 0) {
+		myPrimedId = -1;
+		stopped = true;
 	}
-	
+
 	return deletedAnything;
 }
 
@@ -459,53 +445,48 @@ bool ofxOpenALSoundPlayer::update() {
 bool ofxOpenALSoundPlayer::prime() {
 
 	soundPlayerLock().lock();
-	for(int i=0;i<soundPlayers.size();i++)
+	for (int i = 0; i < soundPlayers.size(); i++)
 		soundPlayers[i]->update();
 	soundPlayerLock().unlock();
-	
+
 	multiPlaySource * m;
 	m = new multiPlaySource();
 	ALuint newPrimedId;
 	m->buffer = SoundEngine_PrimeEffect(myId, &newPrimedId);
 
-	if(m->buffer != -1) {
+	if (m->buffer != -1) {
 		m->primedID = newPrimedId;
 		myPrimedId = newPrimedId;
 		retainedBuffers.push_back(m);
 		updateInternalsForNewPrime();
 		return true;
-	}
-	else
+	} else
 		delete m;
-	
+
 	return false;
 }
 
 //--------------------------------------------------------------
 bool ofxOpenALSoundPlayer::loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce) {
 	myId = 0;
-	
-	if(!mp3Loaded) {
-		if(SoundEngine_LoadBackgroundMusicTrack(ofToDataPath(fileName).c_str(), queue, loadAtOnce) == noErr )
-		{
+
+	if (!mp3Loaded) {
+		if (SoundEngine_LoadBackgroundMusicTrack(ofToDataPath(fileName).c_str(), queue, loadAtOnce) == noErr) {
 			length = SoundEngine_getBackgroundMusicLength();
-			bLoadedOk=true;
-			mp3Loaded=true;
-			
+			bLoadedOk = true;
+			mp3Loaded = true;
+
 			soundPlayerLock().lock();
-				soundPlayers.push_back(this);
+			soundPlayers.push_back(this);
 			soundPlayerLock().unlock();
+		} else {
+			bLoadedOk = false;
+			cerr << "faied to load sound " << fileName << endl;
 		}
-		else
-		{
-			bLoadedOk=false;
-			cerr<<"faied to load sound "<<fileName<<endl;
-		}
+	} else {
+		cerr << "more than one mp3 cannot be loaded at the same time" << endl;
 	}
-	else {
-		cerr<<"more than one mp3 cannot be loaded at the same time"<<endl;
-	}
-	
+
 	return bLoadedOk;
 }
 
@@ -545,85 +526,79 @@ void ofxOpenALSoundPlayer::setBackgroundMusicVolume(float bgVol) {
 
 //--------------------------------------------------------------
 
-
-
 // beyond ofSoundPlayer ------------------------------------------------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::vibrate() { 
+void ofxOpenALSoundPlayer::vibrate() {
 	SoundEngine_Vibrate();
 }
 
 //--------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::setLocation(float x, float y, float z) { 
-	
-	if ( !bLoadedOk )
+void ofxOpenALSoundPlayer::setLocation(float x, float y, float z) {
+
+	if (!bLoadedOk)
 		return;
 
-	if(iAmAnMp3)
-		cerr<<"error, cannot set location on mp3s in openAL"<<endl;
-	else
-	{
-		location = {x,y,z};
-		pan = ofClamp(x,-1,1); // assuming x clamp pan to -1..1
+	if (iAmAnMp3)
+		cerr << "error, cannot set location on mp3s in openAL" << endl;
+	else {
+		location = { x, y, z };
+		pan = ofClamp(x, -1, 1); // assuming x clamp pan to -1..1
 		SoundEngine_SetEffectLocation(myPrimedId, x, y, z);
 	}
 }
 
 //--------------------------------------------------------------
 
-
-
 // beyond ofSoundPlayer static -----------------------------------------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::ofxALSoundSetListenerLocation(float x, float y, float z){	
-	if(!SoundEngineInitialized)
+void ofxOpenALSoundPlayer::ofxALSoundSetListenerLocation(float x, float y, float z) {
+	if (!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	if ( SoundEngineInitialized )
+	if (SoundEngineInitialized)
 		SoundEngine_SetListenerPosition(x, y, z);
 }
 
 //--------------------------------------------------------------
-void ofxOpenALSoundPlayer::ofxALSoundSetListenerVelocity(float x, float y, float z){
-	if(!SoundEngineInitialized)
+void ofxOpenALSoundPlayer::ofxALSoundSetListenerVelocity(float x, float y, float z) {
+	if (!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	if ( SoundEngineInitialized )
+	if (SoundEngineInitialized)
 		SoundEngine_SetListenerVelocity(x, y, z); //deprecated
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetListenerGain(float gain) {
-	if(!SoundEngineInitialized)
+	if (!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	if ( SoundEngineInitialized )
+	if (SoundEngineInitialized)
 		SoundEngine_SetListenerGain(gain);
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetReferenceDistance(float dist) {
-	if(!SoundEngineInitialized)
+	if (!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	if ( SoundEngineInitialized )
+	if (SoundEngineInitialized)
 		SoundEngine_SetReferenceDistance(dist);
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetMaxDistance(float dist) {
-	if(!SoundEngineInitialized)
+	if (!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	if ( SoundEngineInitialized )
+	if (SoundEngineInitialized)
 		SoundEngine_SetMaxDistance(dist);
 }
 
 //--------------------------------------------------------------
 
 void ofxOpenALSoundPlayer::ofxALSoundSetDistanceModel(ALenum model) {
-	if(!SoundEngineInitialized)
+	if (!SoundEngineInitialized)
 		ofxOpenALSoundPlayer::initializeSoundEngine();
-	if ( SoundEngineInitialized )
+	if (SoundEngineInitialized)
 		alDistanceModel(model);
 }
-

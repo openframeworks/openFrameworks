@@ -13,32 +13,29 @@
 #include "ofxBaseGui.h"
 #include "ofxSlider.h"
 
+template <typename ColorType>
+class ofxColorPicker_ : public ofxBaseGui {
 
-
-template<typename ColorType>
-class ofxColorPicker_: public ofxBaseGui {
-
-public :
-	
+public:
 	ofxColorPicker_();
 	ofxColorPicker_(ofParameter<ofColor_<ColorType>> parameter, float w = defaultWidth, float h = defaultWidth / 9. * 16.);
 	ofxColorPicker_ * setup(ofParameter<ofColor_<ColorType>> parameter, float w = defaultWidth, float h = defaultWidth / 9. * 16.);
 
 	void setShape(float x, float y, float w, float h);
 	void setShape(ofRectangle r);
-    
-    void setColorScale(float value);
-    float getColorScale();
-    
-    void setColorRadius(float value);
-    float getColorRadius();
-    
-    void setColorAngle(float value);
+
+	void setColorScale(float value);
+	float getColorScale();
+
+	void setColorRadius(float value);
+	float getColorRadius();
+
+	void setColorAngle(float value);
 	float getColorAngle();
 
 	ofAbstractParameter & getParameter();
-	
-private :
+
+private:
 	void render();
 	bool setValue(float mx, float my, bool bCheckBounds);
 	void generateDraw();
@@ -54,16 +51,16 @@ private :
 	bool mouseReleased(ofMouseEventArgs & args);
 	bool mouseScrolled(ofMouseEventArgs & args);
 
-	bool mouseUpdate(ofMouseEventArgs& args);
-	
+	bool mouseUpdate(ofMouseEventArgs & args);
+
 	glm::vec2 colorPoint;
-    float colorScale;
-    float colorRadius;
+	float colorScale;
+	float colorRadius;
 	float colorAngle;
 	bool bSettingColor = false;
 
-    int colorWheelRadius;
-    int colorWheelPad;
+	int colorWheelRadius;
+	int colorWheelPad;
 
 	ofRectangle rectBackground;
 	ofRectangle rectColorWheel;
@@ -72,11 +69,12 @@ private :
 	ofVboMesh geometry;
 	ofParameter<ofColor_<ColorType>> color;
 
-	enum State{
+	enum State {
 		Waiting,
 		ChangingWheel,
 		ChangingScale,
-	}state = Waiting;
+	} state
+		= Waiting;
 
 	ofEventListener listener;
 };

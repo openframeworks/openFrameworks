@@ -1,35 +1,35 @@
 
 #include "glewOutput.h"
 
-
-void glewPrintExt (const char* name, GLboolean def1, GLboolean def2, GLboolean def3){
+void glewPrintExt(const char * name, GLboolean def1, GLboolean def2, GLboolean def3) {
 	unsigned int i;
-	cout << "\n" << name << ":";
-	for (i=0; i<62-strlen(name); i++) cout << " ";
-	cout << ( def1 ? "OK" : "MISSING" ) << " ";
+	cout << "\n"
+		 << name << ":";
+	for (i = 0; i < 62 - strlen(name); i++)
+		cout << " ";
+	cout << (def1 ? "OK" : "MISSING") << " ";
 	if (def1 != def2)
-		cout << "[" << ( def2 ? "OK" : "MISSING" ) << "] ";
+		cout << "[" << (def2 ? "OK" : "MISSING") << "] ";
 	if (def1 != def3)
-		cout << "[" << ( def3 ? "OK" : "MISSING" ) << "] ";
+		cout << "[" << (def3 ? "OK" : "MISSING") << "] ";
 	else
 		cout << "\n";
-	for (i=0; i<strlen(name)+1; i++) cout << "-";
+	for (i = 0; i < strlen(name) + 1; i++)
+		cout << "-";
 	cout << "\n";
 }
 
-void glewInfoFunc (const char* name, GLint undefined){
+void glewInfoFunc(const char * name, GLint undefined) {
 	unsigned int i;
-	printf( "  %s:", name);
-	for (i=0; i<60-strlen(name); i++) printf( " ");
-	printf( "%s\n", undefined ? "MISSING" : "OK");
-
+	printf("  %s:", name);
+	for (i = 0; i < 60 - strlen(name); i++)
+		printf(" ");
+	printf("%s\n", undefined ? "MISSING" : "OK");
 }
-
 
 #ifdef GL_VERSION_1_1
 
-void glewInfo_GL_VERSION_1_1 (void)
-{
+void glewInfo_GL_VERSION_1_1(void) {
 	glewPrintExt("GL_VERSION_1_1", GLEW_VERSION_1_1, GLEW_VERSION_1_1, GLEW_VERSION_1_1);
 }
 
@@ -37,8 +37,7 @@ void glewInfo_GL_VERSION_1_1 (void)
 
 #ifdef GL_VERSION_1_2
 
-void glewInfo_GL_VERSION_1_2 (void)
-{
+void glewInfo_GL_VERSION_1_2(void) {
 	glewPrintExt("GL_VERSION_1_2", GLEW_VERSION_1_2, GLEW_VERSION_1_2, GLEW_VERSION_1_2);
 
 	glewInfoFunc("glCopyTexSubImage3D", glCopyTexSubImage3D == NULL);
@@ -51,8 +50,7 @@ void glewInfo_GL_VERSION_1_2 (void)
 
 #ifdef GL_VERSION_1_2_1
 
-void glewInfo_GL_VERSION_1_2_1 (void)
-{
+void glewInfo_GL_VERSION_1_2_1(void) {
 	glewPrintExt("GL_VERSION_1_2_1", GLEW_VERSION_1_2_1, GLEW_VERSION_1_2_1, GLEW_VERSION_1_2_1);
 }
 
@@ -60,8 +58,7 @@ void glewInfo_GL_VERSION_1_2_1 (void)
 
 #ifdef GL_VERSION_1_3
 
-void glewInfo_GL_VERSION_1_3 (void)
-{
+void glewInfo_GL_VERSION_1_3(void) {
 	glewPrintExt("GL_VERSION_1_3", GLEW_VERSION_1_3, GLEW_VERSION_1_3, GLEW_VERSION_1_3);
 
 	glewInfoFunc("glActiveTexture", glActiveTexture == NULL);
@@ -116,8 +113,7 @@ void glewInfo_GL_VERSION_1_3 (void)
 
 #ifdef GL_VERSION_1_4
 
-void glewInfo_GL_VERSION_1_4 (void)
-{
+void glewInfo_GL_VERSION_1_4(void) {
 	glewPrintExt("GL_VERSION_1_4", GLEW_VERSION_1_4, GLEW_VERSION_1_4, GLEW_VERSION_1_4);
 
 	glewInfoFunc("glBlendColor", glBlendColor == NULL);
@@ -173,8 +169,7 @@ void glewInfo_GL_VERSION_1_4 (void)
 
 #ifdef GL_VERSION_1_5
 
-void glewInfo_GL_VERSION_1_5 (void)
-{
+void glewInfo_GL_VERSION_1_5(void) {
 	glewPrintExt("GL_VERSION_1_5", GLEW_VERSION_1_5, GLEW_VERSION_1_5, GLEW_VERSION_1_5);
 
 	glewInfoFunc("glBeginQuery", glBeginQuery == NULL);
@@ -202,8 +197,7 @@ void glewInfo_GL_VERSION_1_5 (void)
 
 #ifdef GL_VERSION_2_0
 
-void glewInfo_GL_VERSION_2_0 (void)
-{
+void glewInfo_GL_VERSION_2_0(void) {
 	glewPrintExt("GL_VERSION_2_0", GLEW_VERSION_2_0, GLEW_VERSION_2_0, GLEW_VERSION_2_0);
 
 	glewInfoFunc("glAttachShader", glAttachShader == NULL);
@@ -305,8 +299,7 @@ void glewInfo_GL_VERSION_2_0 (void)
 
 #ifdef GL_VERSION_2_1
 
-void glewInfo_GL_VERSION_2_1 (void)
-{
+void glewInfo_GL_VERSION_2_1(void) {
 	glewPrintExt("GL_VERSION_2_1", GLEW_VERSION_2_1, GLEW_VERSION_2_1, GLEW_VERSION_2_1);
 
 	glewInfoFunc("glUniformMatrix2x3fv", glUniformMatrix2x3fv == NULL);
@@ -321,8 +314,7 @@ void glewInfo_GL_VERSION_2_1 (void)
 
 #ifdef GL_VERSION_3_0
 
-void glewInfo_GL_VERSION_3_0 (void)
-{
+void glewInfo_GL_VERSION_3_0(void) {
 	glewPrintExt("GL_VERSION_3_0", GLEW_VERSION_3_0, GLEW_VERSION_3_0, GLEW_VERSION_3_0);
 
 	glewInfoFunc("glBeginConditionalRender", glBeginConditionalRender == NULL);
@@ -386,8 +378,7 @@ void glewInfo_GL_VERSION_3_0 (void)
 
 #ifdef GL_VERSION_3_1
 
-void glewInfo_GL_VERSION_3_1 (void)
-{
+void glewInfo_GL_VERSION_3_1(void) {
 	glewPrintExt("GL_VERSION_3_1", GLEW_VERSION_3_1, GLEW_VERSION_3_1, GLEW_VERSION_3_1);
 
 	glewInfoFunc("glDrawArraysInstanced", glDrawArraysInstanced == NULL);
@@ -400,8 +391,7 @@ void glewInfo_GL_VERSION_3_1 (void)
 
 #ifdef GL_VERSION_3_2
 
-void glewInfo_GL_VERSION_3_2 (void)
-{
+void glewInfo_GL_VERSION_3_2(void) {
 	glewPrintExt("GL_VERSION_3_2", GLEW_VERSION_3_2, GLEW_VERSION_3_2, GLEW_VERSION_3_2);
 
 	glewInfoFunc("glFramebufferTexture", glFramebufferTexture == NULL);
@@ -413,8 +403,7 @@ void glewInfo_GL_VERSION_3_2 (void)
 
 #ifdef GL_VERSION_3_3
 
-void glewInfo_GL_VERSION_3_3 (void)
-{
+void glewInfo_GL_VERSION_3_3(void) {
 	glewPrintExt("GL_VERSION_3_3", GLEW_VERSION_3_3, GLEW_VERSION_3_3, GLEW_VERSION_3_3);
 
 	glewInfoFunc("glVertexAttribDivisor", glVertexAttribDivisor == NULL);
@@ -424,8 +413,7 @@ void glewInfo_GL_VERSION_3_3 (void)
 
 #ifdef GL_VERSION_4_0
 
-void glewInfo_GL_VERSION_4_0 (void)
-{
+void glewInfo_GL_VERSION_4_0(void) {
 	glewPrintExt("GL_VERSION_4_0", GLEW_VERSION_4_0, GLEW_VERSION_4_0, GLEW_VERSION_4_0);
 
 	glewInfoFunc("glBlendEquationSeparatei", glBlendEquationSeparatei == NULL);
@@ -439,8 +427,7 @@ void glewInfo_GL_VERSION_4_0 (void)
 
 #ifdef GL_VERSION_4_1
 
-void glewInfo_GL_VERSION_4_1 (void)
-{
+void glewInfo_GL_VERSION_4_1(void) {
 	glewPrintExt("GL_VERSION_4_1", GLEW_VERSION_4_1, GLEW_VERSION_4_1, GLEW_VERSION_4_1);
 }
 
@@ -448,57 +435,56 @@ void glewInfo_GL_VERSION_4_1 (void)
 
 #ifdef GL_VERSION_4_2
 
-void glewInfo_GL_VERSION_4_2 (void)
-{
+void glewInfo_GL_VERSION_4_2(void) {
 	glewPrintExt("GL_VERSION_4_2", GLEW_VERSION_4_2, GLEW_VERSION_4_2, GLEW_VERSION_4_2);
 }
 #endif
 
-void printGlewInfo(){
+void printGlewInfo() {
 
-	#ifdef GL_VERSION_1_1
-		glewInfo_GL_VERSION_1_1();
-	#endif /* GL_VERSION_1_1 */
-	#ifdef GL_VERSION_1_2
-		glewInfo_GL_VERSION_1_2();
-	#endif /* GL_VERSION_1_2 */
-	#ifdef GL_VERSION_1_2_1
-		glewInfo_GL_VERSION_1_2_1();
-	#endif /* GL_VERSION_1_2_1 */
-	#ifdef GL_VERSION_1_3
-		glewInfo_GL_VERSION_1_3();
-	#endif /* GL_VERSION_1_3 */
-	#ifdef GL_VERSION_1_4
-		glewInfo_GL_VERSION_1_4();
-	#endif /* GL_VERSION_1_4 */
-	#ifdef GL_VERSION_1_5
-		glewInfo_GL_VERSION_1_5();
-	#endif /* GL_VERSION_1_5 */
-	#ifdef GL_VERSION_2_0
-		glewInfo_GL_VERSION_2_0();
-	#endif /* GL_VERSION_2_0 */
-	#ifdef GL_VERSION_2_1
-		glewInfo_GL_VERSION_2_1();
-	#endif /* GL_VERSION_2_1 */
-	#ifdef GL_VERSION_3_0
-		glewInfo_GL_VERSION_3_0();
-	#endif /* GL_VERSION_3_0 */
-	#ifdef GL_VERSION_3_1
-		glewInfo_GL_VERSION_3_1();
-	#endif /* GL_VERSION_3_1 */
-	#ifdef GL_VERSION_3_2
-		glewInfo_GL_VERSION_3_2();
-	#endif /* GL_VERSION_3_2 */
-	#ifdef GL_VERSION_3_3
-		glewInfo_GL_VERSION_3_3();
-	#endif /* GL_VERSION_3_3 */
-	#ifdef GL_VERSION_4_0
-		glewInfo_GL_VERSION_4_0();
-	#endif /* GL_VERSION_4_0 */
-	#ifdef GL_VERSION_4_1
-		glewInfo_GL_VERSION_4_1();
-	#endif /* GL_VERSION_4_1 */
-	#ifdef GL_VERSION_4_2
-		glewInfo_GL_VERSION_4_2();
-	#endif /* GL_VERSION_4_2 */
+#ifdef GL_VERSION_1_1
+	glewInfo_GL_VERSION_1_1();
+#endif /* GL_VERSION_1_1 */
+#ifdef GL_VERSION_1_2
+	glewInfo_GL_VERSION_1_2();
+#endif /* GL_VERSION_1_2 */
+#ifdef GL_VERSION_1_2_1
+	glewInfo_GL_VERSION_1_2_1();
+#endif /* GL_VERSION_1_2_1 */
+#ifdef GL_VERSION_1_3
+	glewInfo_GL_VERSION_1_3();
+#endif /* GL_VERSION_1_3 */
+#ifdef GL_VERSION_1_4
+	glewInfo_GL_VERSION_1_4();
+#endif /* GL_VERSION_1_4 */
+#ifdef GL_VERSION_1_5
+	glewInfo_GL_VERSION_1_5();
+#endif /* GL_VERSION_1_5 */
+#ifdef GL_VERSION_2_0
+	glewInfo_GL_VERSION_2_0();
+#endif /* GL_VERSION_2_0 */
+#ifdef GL_VERSION_2_1
+	glewInfo_GL_VERSION_2_1();
+#endif /* GL_VERSION_2_1 */
+#ifdef GL_VERSION_3_0
+	glewInfo_GL_VERSION_3_0();
+#endif /* GL_VERSION_3_0 */
+#ifdef GL_VERSION_3_1
+	glewInfo_GL_VERSION_3_1();
+#endif /* GL_VERSION_3_1 */
+#ifdef GL_VERSION_3_2
+	glewInfo_GL_VERSION_3_2();
+#endif /* GL_VERSION_3_2 */
+#ifdef GL_VERSION_3_3
+	glewInfo_GL_VERSION_3_3();
+#endif /* GL_VERSION_3_3 */
+#ifdef GL_VERSION_4_0
+	glewInfo_GL_VERSION_4_0();
+#endif /* GL_VERSION_4_0 */
+#ifdef GL_VERSION_4_1
+	glewInfo_GL_VERSION_4_1();
+#endif /* GL_VERSION_4_1 */
+#ifdef GL_VERSION_4_2
+	glewInfo_GL_VERSION_4_2();
+#endif /* GL_VERSION_4_2 */
 }

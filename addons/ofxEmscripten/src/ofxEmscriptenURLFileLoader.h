@@ -7,12 +7,12 @@
 #pragma once
 #include "ofURLFileLoader.h"
 
-class ofxEmscriptenURLFileLoader: public ofBaseURLFileLoader {
+class ofxEmscriptenURLFileLoader : public ofBaseURLFileLoader {
 public:
 	ofxEmscriptenURLFileLoader();
 	virtual ~ofxEmscriptenURLFileLoader();
 	ofHttpResponse get(const std::string & url);
-	int getAsync(const std::string & url, const std::string & name=""); // returns id
+	int getAsync(const std::string & url, const std::string & name = ""); // returns id
 	ofHttpResponse saveTo(const std::string & url, const of::filesystem::path & path);
 	int saveAsync(const std::string & url, const of::filesystem::path & path);
 	ofHttpResponse handleRequest(const ofHttpRequest & request);
@@ -22,8 +22,8 @@ public:
 	void stop();
 
 private:
-	static void onload_cb(unsigned, void* request, void* data, unsigned int size);
-	static void onerror_cb(unsigned, void* request, int status, const char* msg);
-	static void onload_file_cb(unsigned, void* request, const char* file);
-	static void onerror_file_cb(unsigned, void* request, int status);
+	static void onload_cb(unsigned, void * request, void * data, unsigned int size);
+	static void onerror_cb(unsigned, void * request, int status, const char * msg);
+	static void onload_file_cb(unsigned, void * request, const char * file);
+	static void onerror_file_cb(unsigned, void * request, int status);
 };

@@ -12,10 +12,10 @@ void ofApp::setup() {
 
 	// loop through the image in the x and y axes
 	int skip = 4; // load a subset of the points
-	for(int y = 0; y < img.getHeight(); y += skip) {
-		for(int x = 0; x < img.getWidth(); x += skip) {
+	for (int y = 0; y < img.getHeight(); y += skip) {
+		for (int x = 0; x < img.getWidth(); x += skip) {
 			ofColor cur = img.getColor(x, y);
-			if(cur.a > 0) {
+			if (cur.a > 0) {
 				// the alpha value encodes depth, let's remap it to a good depth range
 				float z = ofMap(cur.a, 0, 255, -300, 300);
 				cur.a = 255;
@@ -27,15 +27,14 @@ void ofApp::setup() {
 	}
 
 	ofEnableDepthTest();
-	#ifndef TARGET_EMSCRIPTEN
-		glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
-		glPointSize(3); // make the points bigger
-	#endif
+#ifndef TARGET_EMSCRIPTEN
+	glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
+	glPointSize(3); // make the points bigger
+#endif
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-
 }
 
 //--------------------------------------------------------------
@@ -52,56 +51,45 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

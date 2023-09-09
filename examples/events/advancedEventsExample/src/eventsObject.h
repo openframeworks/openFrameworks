@@ -8,28 +8,28 @@
 #ifndef OFXEVENTSADDON_H_
 #define OFXEVENTSADDON_H_
 
-#include "ofMain.h"
 #include "ofEvents.h"
+#include "ofMain.h"
 
-class eventsObject{
+class eventsObject {
 public:
-	eventsObject(){
-	    counter = 0;
+	eventsObject() {
+		counter = 0;
 	}
 
-	void enable(){
-	    ofAddListener(ofEvents().update, this, &eventsObject::update);
+	void enable() {
+		ofAddListener(ofEvents().update, this, &eventsObject::update);
 	}
 
-	void disable(){
-	    ofRemoveListener(ofEvents().update, this, &eventsObject::update);
+	void disable() {
+		ofRemoveListener(ofEvents().update, this, &eventsObject::update);
 	}
 
-	void update(ofEventArgs & args){
-		counter+=0.3;
-		int intCounter=(int)counter;
-		ofNotifyEvent(newFloatEvent,counter,this);
-		ofNotifyEvent(newIntEvent,intCounter,this);
+	void update(ofEventArgs & args) {
+		counter += 0.3;
+		int intCounter = (int)counter;
+		ofNotifyEvent(newFloatEvent, counter, this);
+		ofNotifyEvent(newIntEvent, intCounter, this);
 	}
 
 	ofEvent<float> newFloatEvent;

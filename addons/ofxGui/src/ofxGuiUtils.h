@@ -8,73 +8,73 @@
  * Internal helper to generate and cache rectangle meshes for ofxGui.
  */
 class ofxGuiRectMesh {
-	ofColor     mColorFill = {};
-	ofRectangle mRect      = {};
-	ofVboMesh   mMesh      = {};
-	bool        isDirty    = true;
-	bool        mHasMesh   = false;
+	ofColor mColorFill = {};
+	ofRectangle mRect = {};
+	ofVboMesh mMesh = {};
+	bool isDirty = true;
+	bool mHasMesh = false;
 
-  public:
+public:
 	void clear() {
 		mColorFill = {};
-		mRect      = {};
+		mRect = {};
 		mMesh.clear();
 		mHasMesh = false;
-		isDirty  = false;
+		isDirty = false;
 	}
 
 	void draw() {
 
-		if ( isDirty && mHasMesh ) {
+		if (isDirty && mHasMesh) {
 			mMesh.clear();
 			mHasMesh = false;
-			isDirty  = false;
+			isDirty = false;
 		}
 
-		if ( mRect.width < 1.f || mRect.height < 1.f ) {
+		if (mRect.width < 1.f || mRect.height < 1.f) {
 			// We will not draw a mesh for rectangles
 			// which are smaller than one pixel for
 			// either w, or height.
 			return;
 		}
 
-		if ( mHasMesh == false ) {
+		if (mHasMesh == false) {
 
-			mMesh.addVertex( mRect.getBottomLeft() );
-			mMesh.addVertex( mRect.getBottomRight() );
-			mMesh.addVertex( mRect.getTopLeft() );
-			mMesh.addVertex( mRect.getTopRight() );
+			mMesh.addVertex(mRect.getBottomLeft());
+			mMesh.addVertex(mRect.getBottomRight());
+			mMesh.addVertex(mRect.getTopLeft());
+			mMesh.addVertex(mRect.getTopRight());
 
-			mMesh.addColor( mColorFill );
-			mMesh.addColor( mColorFill );
-			mMesh.addColor( mColorFill );
-			mMesh.addColor( mColorFill );
+			mMesh.addColor(mColorFill);
+			mMesh.addColor(mColorFill);
+			mMesh.addColor(mColorFill);
+			mMesh.addColor(mColorFill);
 
-			mMesh.addIndex( 0 );
-			mMesh.addIndex( 1 );
-			mMesh.addIndex( 2 );
-			mMesh.addIndex( 2 );
-			mMesh.addIndex( 1 );
-			mMesh.addIndex( 3 );
+			mMesh.addIndex(0);
+			mMesh.addIndex(1);
+			mMesh.addIndex(2);
+			mMesh.addIndex(2);
+			mMesh.addIndex(1);
+			mMesh.addIndex(3);
 
-			mMesh.setMode( ofPrimitiveMode::OF_PRIMITIVE_TRIANGLES );
+			mMesh.setMode(ofPrimitiveMode::OF_PRIMITIVE_TRIANGLES);
 			mHasMesh = true;
 		}
 
 		mMesh.draw();
 	}
 
-	void setFillColor( ofColor const &color ) {
-		isDirty |= ( color != mColorFill );
+	void setFillColor(ofColor const & color) {
+		isDirty |= (color != mColorFill);
 		mColorFill = color;
 	}
 
-	void setExtents( ofRectangle const &rect ) {
-		isDirty |= ( rect != mRect );
+	void setExtents(ofRectangle const & rect) {
+		isDirty |= (rect != mRect);
 		mRect = rect;
 	}
 
-	void setExtents( float x, float y, float w, float h ) {
-		setExtents( {x, y, w, h} );
+	void setExtents(float x, float y, float w, float h) {
+		setExtents({ x, y, w, h });
 	}
 };

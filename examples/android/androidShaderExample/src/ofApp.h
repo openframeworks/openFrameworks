@@ -1,44 +1,40 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
-
 #include "ofMain.h"
 #include "ofxAndroid.h"
 
-class ofApp : public ofxAndroidApp{
-	
-	public:
-		
-		void setup();
-		void update();
-		void draw();
-		
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void windowResized(int w, int h);
+class ofApp : public ofxAndroidApp {
 
-		void touchDown(int x, int y, int id);
-		void touchMoved(int x, int y, int id);
-		void touchUp(int x, int y, int id);
-		void touchDoubleTap(int x, int y, int id);
-		void touchCancelled(int x, int y, int id);
-		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void pause();
-		void stop();
-		void resume();
-		void reloadTextures();
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-		bool backPressed();
-		void okPressed();
-		void cancelPressed();
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
 
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
 
-		ofPath text;
-		ofTrueTypeFont font;
-		ofShader shader;
-		bool doShader;
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
+
+	ofPath text;
+	ofTrueTypeFont font;
+	ofShader shader;
+	bool doShader;
 };
 
-#endif	
-
+#endif

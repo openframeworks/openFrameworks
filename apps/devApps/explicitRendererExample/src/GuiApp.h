@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 
-class GuiApp: public ofBaseApp {
+class GuiApp : public ofBaseApp {
 public:
 	void setup();
 	void update();
@@ -14,4 +14,3 @@ public:
 	ofParameter<ofColor> color;
 	ofxPanel gui;
 };
-

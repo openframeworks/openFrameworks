@@ -20,8 +20,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  
- ************************************************************************/ 
-
+ ************************************************************************/
 
 #ifndef OFX_OPEN_AL_SOUND_PLAYER_H
 #define OFX_OPEN_AL_SOUND_PLAYER_H
@@ -36,11 +35,10 @@
  
  */
 
-
 #include "SoundEngine.h"
+#include "glm/vec3.hpp"
 #include "ofSoundBaseTypes.h"
 #include "ofTypes.h"
-#include "glm/vec3.hpp"
 
 //globals
 
@@ -53,89 +51,87 @@ struct multiPlaySource {
 	int buffer;
 };
 
-class ofxOpenALSoundPlayer : public ofBaseSoundPlayer{
+class ofxOpenALSoundPlayer : public ofBaseSoundPlayer {
 public:
-	
-	static void initializeSoundEngine();				
-	static void closeSoundEngine();	
-	
+	static void initializeSoundEngine();
+	static void closeSoundEngine();
+
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
-	
-	bool	load(const of::filesystem::path& fileName, bool stream=false);
-	void	unload();
 
-	void	play();
-	void	stop();
-	void	setVolume(float _vol);
-	void	setPan(float _pan);
-	void	setPitch(float _pitch);
-	void	setSpeed(float _speed){setPitch(_speed);};// same as pitch. mapped for ofSoundPlayer compatibility
-	
-	void	setPaused(bool bP);
-	void	setLoop(bool bLp);
-	void	setMultiPlay(bool bMp);
-	void	setPosition(float pct);
-	void    setPositionMS(int ms);
+	bool load(const of::filesystem::path & fileName, bool stream = false);
+	void unload();
 
-	float	getPosition() const;
-	int	getPositionMS() const;
-	bool	isPlaying();
-	float	getPitch() const;
-	float	getSpeed() const{return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
-	float   getVolume() const;
-    
-	float	getPan() const;
+	void play();
+	void stop();
+	void setVolume(float _vol);
+	void setPan(float _pan);
+	void setPitch(float _pitch);
+	void setSpeed(float _speed) { setPitch(_speed); }; // same as pitch. mapped for ofSoundPlayer compatibility
 
-	bool    isLoaded() const;
-	
+	void setPaused(bool bP);
+	void setLoop(bool bLp);
+	void setMultiPlay(bool bMp);
+	void setPosition(float pct);
+	void setPositionMS(int ms);
+
+	float getPosition() const;
+	int getPositionMS() const;
+	bool isPlaying();
+	float getPitch() const;
+	float getSpeed() const { return getPitch(); }; // same as pitch. mapped for ofSoundPlayer compatibility
+	float getVolume() const;
+
+	float getPan() const;
+
+	bool isLoaded() const;
+
 	// IPHONE EXTRA FUNCTIONS
-	static void	vibrate();
-	
-	static void	ofxALSoundSetListenerLocation(float x, float y, float z);
-	static void	ofxALSoundSetListenerGain(float gain);
-	static void	ofxALSoundSetListenerVelocity(float x, float y, float z);
-	
-	static void	ofxALSoundSetReferenceDistance(float dist); // sets the distance after which attenuation is applied
-	static void	ofxALSoundSetMaxDistance(float dist); // sets the maximum distance for which attenuation is applied
-	
+	static void vibrate();
+
+	static void ofxALSoundSetListenerLocation(float x, float y, float z);
+	static void ofxALSoundSetListenerGain(float gain);
+	static void ofxALSoundSetListenerVelocity(float x, float y, float z);
+
+	static void ofxALSoundSetReferenceDistance(float dist); // sets the distance after which attenuation is applied
+	static void ofxALSoundSetMaxDistance(float dist); // sets the maximum distance for which attenuation is applied
+
 	static void ofxALSoundSetDistanceModel(ALenum model); // sets the formula which determines how attenuation is applied.
-														  // Note: the default distance model is AL_INVERSE_DISTANCE_CLAMPED,
-														  // but you may find AL_LINEAR_DISTANCE_CLAMPED to be more intuitive
-														  // (all sounds beyond the max distance will be silent)
-	
-	void	setLocation(float x, float y, float z); // x -1..1 gets mapped to pan -1..1
-	
-	bool	update(); // can this be called at a different time? maybe should be a static function
+		// Note: the default distance model is AL_INVERSE_DISTANCE_CLAMPED,
+		// but you may find AL_LINEAR_DISTANCE_CLAMPED to be more intuitive
+		// (all sounds beyond the max distance will be silent)
+
+	void setLocation(float x, float y, float z); // x -1..1 gets mapped to pan -1..1
+
+	bool update(); // can this be called at a different time? maybe should be a static function
 
 	bool isStreaming; //always false for openAL
 	bool bMultiPlay;
 	bool bLoop;
 	bool bLoadedOk;
-	
+
 	bool bPaused;
 
-	float	pan;
-	float	pitch;
-	float	volume;
+	float pan;
+	float pitch;
+	float volume;
 	unsigned int length;
 	glm::vec3 location;
-	
+
 protected: //internal
-	
-	bool    prime();
-	void	updateInternalsForNewPrime();
-	bool	loadBackgroundMusic(std::string fileName, bool queue, bool loadAtOnce);
-	void	unloadAllBackgroundMusic();
-	void	startBackgroundMusic();
-	void	stopBackgroundMusic(bool stopNow);
-	void	setBackgroundMusicVolume(float bgVol);
-	
+	bool prime();
+	void updateInternalsForNewPrime();
+	bool loadBackgroundMusic(std::string fileName, bool queue, bool loadAtOnce);
+	void unloadAllBackgroundMusic();
+	void startBackgroundMusic();
+	void stopBackgroundMusic(bool stopNow);
+	void setBackgroundMusicVolume(float bgVol);
+
 	UInt32 myId;
-	ALuint  myPrimedId;
-	bool	stopped; 	
-	bool	iAmAnMp3;
-	std::vector <multiPlaySource *> retainedBuffers;
+	ALuint myPrimedId;
+	bool stopped;
+	bool iAmAnMp3;
+	std::vector<multiPlaySource *> retainedBuffers;
 };
 
 #endif

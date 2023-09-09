@@ -7,13 +7,11 @@
 
 #pragma once
 
-#include <jni.h>
 #include "ofConstants.h"
 #include "ofEvent.h"
+#include <jni.h>
 
-
-
-enum ofxAndroidPermission{
+enum ofxAndroidPermission {
 	OFX_ANDROID_PERMISSION_READ_CALENDAR = 0,
 	OFX_ANDROID_PERMISSION_WRITE_CALENDAR,
 	OFX_ANDROID_PERMISSION_CAMERA,
@@ -40,8 +38,7 @@ enum ofxAndroidPermission{
 	OFX_ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE
 };
 
-enum ofOrientation: short;
-
+enum ofOrientation : short;
 
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
@@ -53,8 +50,8 @@ jmethodID ofxJavaGetStaticMethodID(jclass classID, std::string methodName, std::
 std::string ofxJavaGetClassName(jclass classID);
 jclass ofxJavaGetClassID(std::string className);
 jfieldID ofxJavaGetStaticFieldID(jclass classID, std::string fieldName, std::string fieldType);
-void ofxJavaGetJString(const std::string& str, jstring &jstr);
-void ofxJstringToString(JNIEnv * env, jstring jstr, std::string &str);
+void ofxJavaGetJString(const std::string & str, jstring & jstr);
+void ofxJstringToString(JNIEnv * env, jstring jstr, std::string & str);
 
 jobject ofxJavaGetStaticObjectField(jclass classID, std::string fieldName, std::string fieldType);
 jobject ofxJavaGetStaticObjectField(std::string className, std::string fieldName, std::string fieldType);
@@ -129,59 +126,59 @@ void ofxAndroidDisableMulticast();
 
 void ofxAndroidSetViewItemChecked(std::string item_name, bool checked);
 
-enum ofxAndroidSwipeDir{
-	OFX_ANDROID_SWIPE_UP    = 1,
-	OFX_ANDROID_SWIPE_DOWN  = 2,
-	OFX_ANDROID_SWIPE_LEFT  = 3,
+enum ofxAndroidSwipeDir {
+	OFX_ANDROID_SWIPE_UP = 1,
+	OFX_ANDROID_SWIPE_DOWN = 2,
+	OFX_ANDROID_SWIPE_LEFT = 3,
 	OFX_ANDROID_SWIPE_RIGHT = 4
 };
 
-struct ofxAndroidSwipeEventArgs{
+struct ofxAndroidSwipeEventArgs {
 	ofxAndroidSwipeDir dir;
 	int id;
 };
 
 /// pinch to zoom style gestures
 /// https://developer.android.com/reference/android/view/ScaleGestureDetector.html
-class ofxAndroidScaleEventArgs{
+class ofxAndroidScaleEventArgs {
 public:
 	ofxAndroidScaleEventArgs(jobject detector);
 
 	/// Return the average distance between each of the pointers forming the gesture in progress through the focal point.
-	float 	getCurrentSpan();
+	float getCurrentSpan();
 	/// Return the average X distance between each of the pointers forming the gesture in progress through the focal point.
-	float 	getCurrentSpanX();
+	float getCurrentSpanX();
 	/// Return the average Y distance between each of the pointers forming the gesture in progress through the focal point.
-	float 	getCurrentSpanY();
+	float getCurrentSpanY();
 	/// Return the event time of the current event being processed.
-	int64_t 	getEventTime();
+	int64_t getEventTime();
 	/// Get the X coordinate of the current gesture's focal point.
-	float 	getFocusX();
+	float getFocusX();
 	/// Get the Y coordinate of the current gesture's focal point.
-	float 	getFocusY();
+	float getFocusY();
 	/// Return the previous average distance between each of the pointers forming the gesture in progress through the focal point.
-	float 	getPreviousSpan();
+	float getPreviousSpan();
 	/// Return the previous average X distance between each of the pointers forming the gesture in progress through the focal point.
-	float 	getPreviousSpanX();
+	float getPreviousSpanX();
 	/// Return the previous average Y distance between each of the pointers forming the gesture in progress through the focal point.
-	float 	getPreviousSpanY();
+	float getPreviousSpanY();
 	/// Return the scaling factor from the previous scale event to the current event.
-	float 	getScaleFactor();
+	float getScaleFactor();
 	/// Return the time difference in milliseconds between the previous accepted scaling event and the current scaling event.
-	int64_t 	getTimeDelta();
+	int64_t getTimeDelta();
 
 private:
 	jobject detector;
 };
 
-class ofxAndroidEventsClass{
+class ofxAndroidEventsClass {
 public:
 	ofEvent<void> okPressed;
 	ofEvent<void> cancelPressed;
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
 	ofEvent<ofOrientation> deviceOrientationChanged;
-	
+
 	/**
 		The names start, stop, resume and pause correspond to Android Activity class lifecycle callbacks.
 		They are described in Android lifecycle guide (https://developer.android.com/guide/components/activities/activity-lifecycle).
@@ -193,7 +190,7 @@ public:
 	ofEvent<void> stop;
 	ofEvent<void> resume;
 	ofEvent<void> pause;
-	
+
 	/**
 		GL is loaded when app starts.
 		When unloadGL is called, the original opengl context is already lost (but new, fresh context might be already active).
@@ -201,7 +198,7 @@ public:
 	*/
 	ofEvent<void> unloadGL;
 	ofEvent<void> reloadGL;
-	
+
 	ofEvent<ofxAndroidSwipeEventArgs> swipe;
 	ofEvent<ofxAndroidScaleEventArgs> scale;
 	ofEvent<ofxAndroidScaleEventArgs> scaleBegin;
@@ -209,53 +206,52 @@ public:
 
 	ofEvent<std::string> menuItemSelected;
 	ofEvent<std::string> menuItemChecked;
-
 };
 
 ofxAndroidEventsClass & ofxAndroidEvents();
 
-enum ofxAndroidKeyCode{
-    KEYCODE_SOFT_LEFT       = 1,
-    /** Key code constant: Soft Right key.
+enum ofxAndroidKeyCode {
+	KEYCODE_SOFT_LEFT = 1,
+	/** Key code constant: Soft Right key.
      * Usually situated below the display on phones and used as a multi-function
      * feature key for selecting a software defined function shown on the bottom right
      * of the display. */
-    KEYCODE_SOFT_RIGHT      = 2,
-    /** Key code constant: Home key.
+	KEYCODE_SOFT_RIGHT = 2,
+	/** Key code constant: Home key.
      * This key is handled by the framework and is never delivered to applications. */
-    KEYCODE_HOME            = 3,
-    /** Key code constant: Back key. */
-    KEYCODE_BACK            = 4,
-    /** Key code constant: Call key. */
-    KEYCODE_CALL            = 5,
-    /** Key code constant: End Call key. */
-    KEYCODE_ENDCALL         = 6,
-    /** Key code constant: Directional Pad Up key.
+	KEYCODE_HOME = 3,
+	/** Key code constant: Back key. */
+	KEYCODE_BACK = 4,
+	/** Key code constant: Call key. */
+	KEYCODE_CALL = 5,
+	/** Key code constant: End Call key. */
+	KEYCODE_ENDCALL = 6,
+	/** Key code constant: Directional Pad Up key.
      * May also be synthesized from trackball motions. */
-    KEYCODE_DPAD_UP         = 19,
-    /** Key code constant: Directional Pad Down key.
+	KEYCODE_DPAD_UP = 19,
+	/** Key code constant: Directional Pad Down key.
      * May also be synthesized from trackball motions. */
-    KEYCODE_DPAD_DOWN       = 20,
-    /** Key code constant: Directional Pad Left key.
+	KEYCODE_DPAD_DOWN = 20,
+	/** Key code constant: Directional Pad Left key.
      * May also be synthesized from trackball motions. */
-    KEYCODE_DPAD_LEFT       = 21,
-    /** Key code constant: Directional Pad Right key.
+	KEYCODE_DPAD_LEFT = 21,
+	/** Key code constant: Directional Pad Right key.
      * May also be synthesized from trackball motions. */
-    KEYCODE_DPAD_RIGHT      = 22,
-    /** Key code constant: Directional Pad Center key.
+	KEYCODE_DPAD_RIGHT = 22,
+	/** Key code constant: Directional Pad Center key.
      * May also be synthesized from trackball motions. */
-    KEYCODE_DPAD_CENTER     = 23,
-    /** Key code constant: Volume Up key.
+	KEYCODE_DPAD_CENTER = 23,
+	/** Key code constant: Volume Up key.
      * Adjusts the speaker volume up. */
-    KEYCODE_VOLUME_UP       = 24,
-    /** Key code constant: Volume Down key.
+	KEYCODE_VOLUME_UP = 24,
+	/** Key code constant: Volume Down key.
      * Adjusts the speaker volume down. */
-    KEYCODE_VOLUME_DOWN     = 25,
-    /** Key code constant: Power key. */
-    KEYCODE_POWER           = 26,
-    /** Key code constant: Camera key.
+	KEYCODE_VOLUME_DOWN = 25,
+	/** Key code constant: Power key. */
+	KEYCODE_POWER = 26,
+	/** Key code constant: Camera key.
      * Used to launch a camera application or take pictures. */
-    KEYCODE_CAMERA          = 27,
-    /** Key code constant: Clear key. */
-    KEYCODE_CLEAR           = 28,
+	KEYCODE_CAMERA = 27,
+	/** Key code constant: Clear key. */
+	KEYCODE_CLEAR = 28,
 };

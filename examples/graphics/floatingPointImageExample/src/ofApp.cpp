@@ -2,8 +2,8 @@
 
 //Some helper functions
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
-	glm::vec3 normal = glm::normalize(glm::cross((b - a),(c - a)));
+void ofApp::addFace(ofMesh & mesh, const glm::vec3 & a, const glm::vec3 & b, const glm::vec3 & c) {
+	glm::vec3 normal = glm::normalize(glm::cross((b - a), (c - a)));
 	mesh.addNormal(normal);
 	mesh.addVertex(a);
 	mesh.addNormal(normal);
@@ -13,22 +13,22 @@ void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const 
 }
 
 //--------------------------------------------------------------
-void ofApp::addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d) {
+void ofApp::addFace(ofMesh & mesh, const glm::vec3 & a, const glm::vec3 & b, const glm::vec3 & c, const glm::vec3 & d) {
 	addFace(mesh, a, b, c);
 	addFace(mesh, a, c, d);
 }
 
 //--------------------------------------------------------------
-glm::vec3 ofApp::getVertexFromImg(ofFloatImage& img, int x, int y) {
+glm::vec3 ofApp::getVertexFromImg(ofFloatImage & img, int x, int y) {
 	return glm::vec3(x, y, 100 * img.getColor(x, y).getBrightness());
 }
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
 	//note: you can get nicer anti-aliased rendering ( with slower fps )
 	//if you uncomment the appropriate line in main.cpp
-	
+
 	img.setUseTexture(false);
 	img.load("nyc-small.exr");
 
@@ -41,8 +41,8 @@ void ofApp::setup(){
 	int skip = 1;
 	int width = img.getWidth();
 	int height = img.getHeight();
-	for(int y = 0; y < height - skip; y += skip) {
-		for(int x = 0; x < width - skip; x += skip) {
+	for (int y = 0; y < height - skip; y += skip) {
+		for (int x = 0; x < width - skip; x += skip) {
 			glm::vec3 nw = getVertexFromImg(img, x, y);
 			glm::vec3 ne = getVertexFromImg(img, x + skip, y);
 			glm::vec3 sw = getVertexFromImg(img, x, y + skip);
@@ -54,78 +54,66 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-
+void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	ofBackground(0);
 
 	easyCam.begin();
-		material.begin();
-		ofScale(1, -1, 1);
-		ofRotateXDeg(60);
-		ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2, 0);
-		ofSetColor(255);
-		ofEnableDepthTest();
-		mesh.draw();
-		ofDisableDepthTest();
-		material.end();
+	material.begin();
+	ofScale(1, -1, 1);
+	ofRotateXDeg(60);
+	ofTranslate(-img.getWidth() / 2, -img.getHeight() / 2, 0);
+	ofSetColor(255);
+	ofEnableDepthTest();
+	mesh.draw();
+	ofDisableDepthTest();
+	material.end();
 	easyCam.end();
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

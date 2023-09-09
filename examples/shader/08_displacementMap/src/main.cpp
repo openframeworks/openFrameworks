@@ -1,21 +1,19 @@
-#include "ofMain.h"
 #include "ofApp.h"
-
+#include "ofMain.h"
 
 //========================================================================
-int main( ){
+int main() {
 
 #ifdef TARGET_OPENGLES
 	ofGLESWindowSettings settings;
-	settings.glesVersion=2;
+	settings.glesVersion = 2;
 #else
 	ofGLWindowSettings settings;
-	settings.setGLVersion(3,2);
+	settings.setGLVersion(3, 2);
 #endif
 
 	auto window = ofCreateWindow(settings);
 
 	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
-
 }

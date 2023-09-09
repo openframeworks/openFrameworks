@@ -1,25 +1,24 @@
 #include "eventsObject.h"
 
 //--------------------------------------------------------------
-eventsObject::eventsObject(){
+eventsObject::eventsObject() {
 	counter = 0;
 }
 
 //--------------------------------------------------------------
-void eventsObject::enable(){
+void eventsObject::enable() {
 	ofAddListener(ofEvents().update, this, &eventsObject::update);
 }
 
 //--------------------------------------------------------------
-void eventsObject::disable(){
+void eventsObject::disable() {
 	ofRemoveListener(ofEvents().update, this, &eventsObject::update);
 }
 
 //--------------------------------------------------------------
-void eventsObject::update(ofEventArgs & args){
+void eventsObject::update(ofEventArgs & args) {
 	counter += 0.3;
 	int intCounter = (int)counter;
 	ofNotifyEvent(newFloatEvent, counter, this);
 	ofNotifyEvent(newIntEvent, intCounter, this);
 }
-

@@ -55,10 +55,10 @@ typedef struct {
  * @param mic4 Microphone data for the rightmost microphone: 32-bit PCM little-endian samples at 16kHz.
  * @param cancelled Noise-cancelled audio data: 16-bit PCM little-endian samples at 16kHz.
  */
-typedef void (*freenect_audio_in_cb)(freenect_device *dev, int num_samples,
-                                     int32_t* mic1, int32_t* mic2,
-                                     int32_t* mic3, int32_t* mic4,
-                                     int16_t* cancelled, void *unknown/*, timestamp_t timestamp*/);
+typedef void (*freenect_audio_in_cb)(freenect_device * dev, int num_samples,
+	int32_t * mic1, int32_t * mic2,
+	int32_t * mic3, int32_t * mic4,
+	int16_t * cancelled, void * unknown /*, timestamp_t timestamp*/);
 
 /**
  * Typedef for "you're playing audio, the library needs you to fill up the outgoing audio buffer" event callbacks
@@ -68,7 +68,7 @@ typedef void (*freenect_audio_in_cb)(freenect_device *dev, int num_samples,
  * @param samples Pointer to the memory where the library expects you to copy the next sample_count freenect_sample_51's to.
  * @param sample_count Bidirectional. in: maximum number of samples the driver wants (don't copy in more than this, you'll clobber memory).  out: actual number of samples provided to the driver.
  */
-typedef void (*freenect_audio_out_cb)(freenect_device *dev, freenect_sample_51* samples, int* sample_count);
+typedef void (*freenect_audio_out_cb)(freenect_device * dev, freenect_sample_51 * samples, int * sample_count);
 
 /**
  * Set the audio in callback.  This is the function called when the library
@@ -78,7 +78,7 @@ typedef void (*freenect_audio_out_cb)(freenect_device *dev, freenect_sample_51* 
  * @param dev Device for which to set the callback
  * @param callback Callback function to set
  */
-FREENECTAPI void freenect_set_audio_in_callback(freenect_device *dev, freenect_audio_in_cb callback);
+FREENECTAPI void freenect_set_audio_in_callback(freenect_device * dev, freenect_audio_in_cb callback);
 
 /**
  * Set the audio out callback.  This is the "tell me what audio you're about
@@ -89,7 +89,7 @@ FREENECTAPI void freenect_set_audio_in_callback(freenect_device *dev, freenect_a
  * @param dev Device for which to set the callback
  * @param callback Callback function to set
  */
-FREENECTAPI void freenect_set_audio_out_callback(freenect_device *dev, freenect_audio_out_cb callback);
+FREENECTAPI void freenect_set_audio_out_callback(freenect_device * dev, freenect_audio_out_cb callback);
 
 /**
  * Start streaming audio for the specified device.
@@ -98,7 +98,7 @@ FREENECTAPI void freenect_set_audio_out_callback(freenect_device *dev, freenect_
  *
  * @return 0 on success, < 0 if error
  */
-FREENECTAPI int freenect_start_audio(freenect_device* dev);
+FREENECTAPI int freenect_start_audio(freenect_device * dev);
 
 /**
  * Stop streaming audio for the specified device.
@@ -107,7 +107,7 @@ FREENECTAPI int freenect_start_audio(freenect_device* dev);
  *
  * @return 0 on success, < 0 if error
  */
-FREENECTAPI int freenect_stop_audio(freenect_device* dev);
+FREENECTAPI int freenect_stop_audio(freenect_device * dev);
 
 #ifdef __cplusplus
 }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ofBaseApp.h"
-#include "ofSoundBaseTypes.h"
 #include "ofConstants.h"
+#include "ofSoundBaseTypes.h"
 #include <climits>
 #include <functional>
 
@@ -93,7 +93,7 @@ public:
 	std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
 
 	/// \brief Get all devices which match the arguments (name can be a partial match)
-	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX, ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
+	std::vector<ofSoundDevice> getMatchingDevices(const std::string & name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX, ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
@@ -101,7 +101,7 @@ public:
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		void setDevice(const ofSoundDevice& device));
+		void setDevice(const ofSoundDevice & device));
 
 	bool setup(const ofSoundStreamSettings & settings);
 
@@ -134,13 +134,13 @@ public:
 	void setInput(ofBaseSoundInput * soundInput);
 
 	/// \brief Sets the object which will have audioIn() called when the device receives audio.
-	void setInput(ofBaseSoundInput &soundInput);
+	void setInput(ofBaseSoundInput & soundInput);
 
 	/// \brief Sets the object which will have audioOut() called when the device requests audio.
 	void setOutput(ofBaseSoundOutput * soundOutput);
 
 	/// \brief Sets the object which will have audioOut() called when the device requests audio.
-	void setOutput(ofBaseSoundOutput &soundOutput);
+	void setOutput(ofBaseSoundOutput & soundOutput);
 
 	/// \brief Starts a stream (note that setup() will start the stream on its own).
 	void start();
@@ -185,6 +185,4 @@ public:
 protected:
 	std::shared_ptr<ofBaseSoundStream> soundStream;
 	int tmpDeviceId = -1;
-
 };
-

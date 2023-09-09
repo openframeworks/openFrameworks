@@ -1,6 +1,5 @@
 #pragma once
 
-
 /*
  ** The OpenGL Extension Wrangler Library
  ** Copyright (C) 2002-2008, Milan Ikits <milan ikits[]ieee org>
@@ -32,11 +31,9 @@
  ** THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-
 #include "ofMain.h"
 
-void glewPrintExt (const char* name, GLboolean def1, GLboolean def2, GLboolean def3);
-void glewInfoFunc (const char* name, GLint undefined);
+void glewPrintExt(const char * name, GLboolean def1, GLboolean def2, GLboolean def3);
+void glewInfoFunc(const char * name, GLint undefined);
 
 void printGlewInfo();

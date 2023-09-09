@@ -27,16 +27,13 @@
 // 7. Understand how the 'frustrum preview' works
 //
 
-
-
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
 	ofSetVerticalSync(true);
 	ofBackground(70, 70, 70);
 	ofEnableSmoothing();
 	ofEnableDepthTest();
-
 
 	//--
 	// Setup cameras
@@ -58,8 +55,6 @@ void ofApp::setup(){
 	cameras[2] = &camTop;
 	cameras[3] = &camLeft;
 
-
-
 	for (size_t i = 1; i != N_CAMERAS; ++i) {
 		cameras[i]->enableOrtho();
 		cameras[i]->setNearClip(0.1);
@@ -75,13 +70,11 @@ void ofApp::setup(){
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	nodeSwarm.init(100, 50, 10);
-
 }
 
 //--------------------------------------------------------------
-void ofApp::setupViewports(){
+void ofApp::setupViewports() {
 	//call here whenever we resize the window
-
 
 	//--
 	// Define viewports
@@ -94,7 +87,7 @@ void ofApp::setupViewports(){
 	viewMain.width = xOffset * 2;
 	viewMain.height = ofGetHeight();
 
-	for(int i = 0; i < N_CAMERAS; i++){
+	for (int i = 0; i < N_CAMERAS; i++) {
 
 		viewGrid[i].x = 0;
 		viewGrid[i].y = yOffset * i;
@@ -107,13 +100,11 @@ void ofApp::setupViewports(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-
+void ofApp::update() {
 }
 
-
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	//--
 	// Highlight background of selected camera
 
@@ -128,8 +119,6 @@ void ofApp::draw(){
 	//
 	//--
 
-
-
 	//--
 	// Draw all viewports
 
@@ -143,7 +132,7 @@ void ofApp::draw(){
 	cameras[iMainCamera]->end();
 
 	// draw side viewports
-	for(int i = 0; i < N_CAMERAS; i++){
+	for (int i = 0; i < N_CAMERAS; i++) {
 		cameras[i]->begin(viewGrid[i]);
 		drawScene(i);
 		cameras[i]->end();
@@ -153,7 +142,6 @@ void ofApp::draw(){
 	//--
 
 	ofPopStyle();
-
 
 	//--
 	// Draw annotations (text, gui, etc)
@@ -168,17 +156,17 @@ void ofApp::draw(){
 	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
 	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
 
-	ofDrawBitmapString("EasyCam",   viewGrid[0].x + 20, viewGrid[0].y + 30);
-	ofDrawBitmapString("Front",     viewGrid[1].x + 20, viewGrid[1].y + 30);
-	ofDrawBitmapString("Top",       viewGrid[2].x + 20, viewGrid[2].y + 30);
-	ofDrawBitmapString("Left",      viewGrid[3].x + 20, viewGrid[3].y + 30);
+	ofDrawBitmapString("EasyCam", viewGrid[0].x + 20, viewGrid[0].y + 30);
+	ofDrawBitmapString("Front", viewGrid[1].x + 20, viewGrid[1].y + 30);
+	ofDrawBitmapString("Top", viewGrid[2].x + 20, viewGrid[2].y + 30);
+	ofDrawBitmapString("Left", viewGrid[3].x + 20, viewGrid[3].y + 30);
 
 	// draw outlines on views
 	ofSetLineWidth(5);
 	ofNoFill();
 	ofSetColor(255, 255, 255);
 	//
-	for(int i = 0; i < N_CAMERAS; i++){
+	for (int i = 0; i < N_CAMERAS; i++) {
 		ofDrawRectangle(viewGrid[i]);
 	}
 	//
@@ -192,7 +180,7 @@ void ofApp::draw(){
 	//--
 }
 
-void ofApp::drawScene(int cameraIndex){
+void ofApp::drawScene(int cameraIndex) {
 
 	nodeSwarm.draw();
 	nodeGrid.draw();
@@ -211,10 +199,9 @@ void ofApp::drawScene(int cameraIndex){
 	//	which can be seen by the
 	//	camera as 'the view frustum'.
 
-
 	// First check if we're already drawing the view through the easycam
 	// If so, don't draw the frustum preview.
-	if(cameraIndex != 0){
+	if (cameraIndex != 0) {
 
 		ofPushStyle();
 		ofPushMatrix();
@@ -246,10 +233,9 @@ void ofApp::drawScene(int cameraIndex){
 		// If this camera is fullscreen we'll use
 		//   viewMain, else we'll use viewGrid[0]
 		ofRectangle boundsToUse;
-		if(iMainCamera == 0){
+		if (iMainCamera == 0) {
 			boundsToUse = viewMain;
-		}
-		else{
+		} else {
 			boundsToUse = viewGrid[0];
 		}
 
@@ -278,12 +264,10 @@ void ofApp::drawScene(int cameraIndex){
 		//  from the inverseCameraMatrix object
 		//  to OpenGL, and apply that matrix to
 		//  the current OpenGL transform
-		ofMultMatrix( inverseCameraMatrix );
+		ofMultMatrix(inverseCameraMatrix);
 
 		//
 		//--
-
-
 
 		//--
 		// Draw box in camera space
@@ -308,14 +292,12 @@ void ofApp::drawScene(int cameraIndex){
 	//
 	//--
 
-
-
 	//--
 	// Draw mouse ray
 
 	// Draw the ray if ofEasyCam is in main view,
 	//  and we're not currently drawing in that view
-	if(iMainCamera == 0 && cameraIndex != 0){
+	if (iMainCamera == 0 && cameraIndex != 0) {
 		ofPushStyle();
 		ofSetColor(100, 100, 255);
 		ofDrawLine(ray[0], ray[1]);
@@ -327,7 +309,7 @@ void ofApp::drawScene(int cameraIndex){
 }
 
 //--------------------------------------------------------------
-void ofApp::updateMouseRay(){
+void ofApp::updateMouseRay() {
 	// Define ray in screen space
 	ray[0] = glm::vec3(ofGetMouseX(), ofGetMouseY(), -1);
 	ray[1] = glm::vec3(ofGetMouseX(), ofGetMouseY(), 1);
@@ -338,25 +320,24 @@ void ofApp::updateMouseRay(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
 
-	if(key >= '1' && key <= '4'){
+	if (key >= '1' && key <= '4') {
 		iMainCamera = key - '1';
 	}
 
-	if(key == 'f'){
+	if (key == 'f') {
 		ofToggleFullscreen();
 	}
 
-	if(key == 'p'){
-		if(bCamParent){
+	if (key == 'p') {
+		if (bCamParent) {
 			camFront.clearParent();
 			camTop.clearParent();
 			camLeft.clearParent();
 
 			bCamParent = false;
-		}
-		else{
+		} else {
 			camFront.setParent(nodeSwarm.light);
 			camTop.setParent(nodeSwarm.light);
 			camLeft.setParent(nodeSwarm.light);
@@ -367,37 +348,34 @@ void ofApp::keyPressed(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void ofApp::windowResized(int w, int h) {
 	setupViewports();
 }
-

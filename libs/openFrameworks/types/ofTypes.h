@@ -79,8 +79,6 @@ typedef std::mutex ofMutex;
 /// \sa ofMutex
 typedef std::unique_lock<std::mutex> ofScopedLock;
 
-
-
 //----------------------------------------------------------
 // ofPtr
 //----------------------------------------------------------

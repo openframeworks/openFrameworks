@@ -5,42 +5,40 @@
 
 #include "ofxOpenCv.h"
 
-class ofApp : public ofxAndroidApp{
-	
-	public:
-		
-		void setup();
-		void update();
-		void draw();
+class ofApp : public ofxAndroidApp {
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void windowResized(int w, int h);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void touchDown(int x, int y, int id);
-		void touchMoved(int x, int y, int id);
-		void touchUp(int x, int y, int id);
-		void touchDoubleTap(int x, int y, int id);
-		void touchCancelled(int x, int y, int id);
-		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-		void pause();
-		void stop();
-		void resume();
-		void reloadTextures();
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
 
-		bool backPressed();
-		void okPressed();
-		void cancelPressed();
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
 
-		ofVideoGrabber grabber;
-		ofxCvGrayscaleImage gray, bg;//, diff;
-		ofxCvContourFinder contourFinder;
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
 
-		bool captureBg;
+	ofVideoGrabber grabber;
+	ofxCvGrayscaleImage gray, bg; //, diff;
+	ofxCvContourFinder contourFinder;
 
-		float one_second_time;
-		float camera_fps;
-		float frames_one_sec;
+	bool captureBg;
 
+	float one_second_time;
+	float camera_fps;
+	float frames_one_sec;
 };

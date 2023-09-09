@@ -5,36 +5,35 @@
 #include "Bullet.h"
 #include "GameEvent.h"
 
-class ofApp : public ofBaseApp{
-			
-	public:
+class ofApp : public ofBaseApp {
 
-		void setup();
-		void update();
-		void draw();
-		
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y);
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-		
-		static bool shouldRemoveBullet(Bullet &b);
-		static bool shouldRemoveBug(Bug &b);
-		
-		void gameEvent(GameEvent &e);
-		
-		vector <Bullet> bullets;
-		vector <Bug> bugs;
-		vector <glm::vec2> holes;
-		
-		unsigned int maxBullets;
-		int bugsKilled;
-		bool bFire;
+public:
+	void setup();
+	void update();
+	void draw();
+
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void mouseMoved(int x, int y);
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
+	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
+
+	static bool shouldRemoveBullet(Bullet & b);
+	static bool shouldRemoveBug(Bug & b);
+
+	void gameEvent(GameEvent & e);
+
+	vector<Bullet> bullets;
+	vector<Bug> bugs;
+	vector<glm::vec2> holes;
+
+	unsigned int maxBullets;
+	int bugsKilled;
+	bool bFire;
 };

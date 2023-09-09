@@ -7,16 +7,15 @@
 
 #pragma once
 
-#include <cerrno>
 #include "ofConstants.h"
-
+#include <cerrno>
 
 #ifdef TARGET_WIN32
-#include <WinSock2.h>
-#define WSAENOMEM	WSA_NOT_ENOUGH_MEMORY
-#define OFXNETWORK_ERROR(name)	WSAE ## name
+	#include <WinSock2.h>
+	#define WSAENOMEM WSA_NOT_ENOUGH_MEMORY
+	#define OFXNETWORK_ERROR(name) WSAE##name
 #else
-#define OFXNETWORK_ERROR(name)	E ## name
+	#define OFXNETWORK_ERROR(name) E##name
 #endif
 
 /**
@@ -38,7 +37,6 @@
  */
 int ofxNetworkGetLastError();
 
-
 /**
  * @brief Logs the network error err using ofLogError.
  * 
@@ -46,7 +44,7 @@ int ofxNetworkGetLastError();
  * @param file the file where the error happened, generally __FILE__
  * @param line the line where the error happened, generally __LINE__
  */
-void ofxNetworkLogError(int err, const char* file=__FILE__, int line=__LINE__-1);
+void ofxNetworkLogError(int err, const char * file = __FILE__, int line = __LINE__ - 1);
 
 /**
  * @brief Logs the last network error and returns it; 
@@ -57,6 +55,4 @@ void ofxNetworkLogError(int err, const char* file=__FILE__, int line=__LINE__-1)
  * @param line the line where the error happened, generally __LINE__
  * @return int the last network error
  */
-OF_DEPRECATED_MSG("use ofxNetworkLogError(ofxNetworkGetLastError(), file, line) instead", int ofxNetworkCheckErrno(const char* file, int line) );
-
-
+OF_DEPRECATED_MSG("use ofxNetworkLogError(ofxNetworkGetLastError(), file, line) instead", int ofxNetworkCheckErrno(const char * file, int line));

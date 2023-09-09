@@ -15,7 +15,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
@@ -29,19 +29,18 @@ void ofApp::setup(){
 
 	//now we load our model
 	model.loadModel("dog/dog.3ds");
-	model.setPosition(ofGetWidth()*.5, ofGetHeight() * 0.75, 0);
+	model.setPosition(ofGetWidth() * .5, ofGetHeight() * 0.75, 0);
 
 	light.enable();
 	light.setPosition(model.getPosition() + glm::vec3(0, 0, 1600));
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-
+void ofApp::update() {
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	ofSetColor(255, 255, 255, 255);
 
 	//first let's just draw the model with the model object
@@ -52,7 +51,7 @@ void ofApp::draw(){
 }
 
 //draw the model the built-in way
-void ofApp::drawWithModel(){
+void ofApp::drawWithModel() {
 
 	//get the position of the model
 	glm::vec3 position = model.getPosition();
@@ -63,7 +62,7 @@ void ofApp::drawWithModel(){
 	//center ourselves there
 	ofTranslate(position);
 	ofRotateDeg(ofGetMouseX() + 270, 0, 1, 0);
-	ofRotateDeg(270,1,0,0);
+	ofRotateDeg(270, 1, 0, 0);
 	ofTranslate(-position);
 
 	//draw the model
@@ -74,7 +73,7 @@ void ofApp::drawWithModel(){
 }
 
 //draw the model manually
-void ofApp::drawWithMesh(){
+void ofApp::drawWithMesh() {
 
 	//get the model attributes we need
 	glm::vec3 scale = model.getScale();
@@ -82,9 +81,9 @@ void ofApp::drawWithMesh(){
 	float normalizedScale = model.getNormalizedScale();
 	ofVboMesh mesh = model.getMesh(0);
 	ofTexture texture;
-	ofxAssimpMeshHelper& meshHelper = model.getMeshHelper( 0 );
+	ofxAssimpMeshHelper & meshHelper = model.getMeshHelper(0);
 	bool bHasTexture = meshHelper.hasTexture();
-	if( bHasTexture ) {
+	if (bHasTexture) {
 		texture = model.getTextureForMesh(0);
 	}
 
@@ -95,87 +94,74 @@ void ofApp::drawWithMesh(){
 	//translate and scale based on the positioning.
 	ofTranslate(position);
 	ofRotateDeg(ofGetMouseX() + 270, 0, 1, 0);
-	ofRotateDeg(270,1,0,0);
-
+	ofRotateDeg(270, 1, 0, 0);
 
 	ofScale(normalizedScale, normalizedScale, normalizedScale);
-	ofScale(scale.x,scale.y,scale.z);
+	ofScale(scale.x, scale.y, scale.z);
 
 	//modify mesh with some noise
 	float liquidness = 5;
-	float amplitude = mouseY/100.0;
+	float amplitude = mouseY / 100.0;
 	float speedDampen = 5;
-	auto &verts = mesh.getVertices();
+	auto & verts = mesh.getVertices();
 
-	for(unsigned int i = 0; i < verts.size(); i++){
-		verts[i].x += ofSignedNoise(verts[i].x/liquidness, verts[i].y/liquidness,verts[i].z/liquidness, ofGetElapsedTimef()/speedDampen)*amplitude;
-		verts[i].y += ofSignedNoise(verts[i].z/liquidness, verts[i].x/liquidness,verts[i].y/liquidness, ofGetElapsedTimef()/speedDampen)*amplitude;
-		verts[i].z += ofSignedNoise(verts[i].y/liquidness, verts[i].z/liquidness,verts[i].x/liquidness, ofGetElapsedTimef()/speedDampen)*amplitude;
+	for (unsigned int i = 0; i < verts.size(); i++) {
+		verts[i].x += ofSignedNoise(verts[i].x / liquidness, verts[i].y / liquidness, verts[i].z / liquidness, ofGetElapsedTimef() / speedDampen) * amplitude;
+		verts[i].y += ofSignedNoise(verts[i].z / liquidness, verts[i].x / liquidness, verts[i].y / liquidness, ofGetElapsedTimef() / speedDampen) * amplitude;
+		verts[i].z += ofSignedNoise(verts[i].y / liquidness, verts[i].z / liquidness, verts[i].x / liquidness, ofGetElapsedTimef() / speedDampen) * amplitude;
 	}
 
 	//draw the model manually
-	if(bHasTexture) texture.bind();
+	if (bHasTexture) texture.bind();
 	material.begin();
 	//mesh.drawWireframe(); //you can draw wireframe too
 	mesh.drawFaces();
 	material.end();
-	if(bHasTexture) texture.unbind();
+	if (bHasTexture) texture.unbind();
 
 	ofPopMatrix();
-
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

@@ -7,25 +7,24 @@
 /// It contains data (count) that will be accessed from within and outside the
 /// thread and demonstrates several of the data protection mechanisms (aka
 /// mutexes).
-class ThreadedObject: public ofThread
-{
+class ThreadedObject : public ofThread {
 public:
 	/// On destruction wait for the thread to finish
 	/// so we don't destroy the pixels while they are
 	/// being used. Otherwise we would crash
-	~ThreadedObject(){
+	~ThreadedObject() {
 		stop();
 		waitForThread(false);
 	}
 
-	void setup(){
-		pixels.allocate(640,480,OF_IMAGE_COLOR_ALPHA);
+	void setup() {
+		pixels.allocate(640, 480, OF_IMAGE_COLOR_ALPHA);
 		tex.allocate(pixels);
 		start();
 	}
 
 	/// Start the thread.
-	void start(){
+	void start() {
 		startThread();
 	}
 
@@ -40,7 +39,7 @@ public:
 	/// whole while loop but when we call condition.wait, that
 	/// unlocks the mutex which ensures that we'll only call
 	/// stop and notify here once the condition is waiting
-	void stop(){
+	void stop() {
 		std::unique_lock<std::mutex> lck(mutex);
 		stopThread();
 		condition.notify_all();
@@ -49,8 +48,8 @@ public:
 	/// Everything in this function will happen in a different
 	/// thread which leaves the main thread completelty free for
 	/// other tasks.
-	void threadedFunction(){
-		while(isThreadRunning()){
+	void threadedFunction() {
+		while (isThreadRunning()) {
 			if (ofIsCurrentThreadTheMainThread()) {
 				// will never happen but to document the branch:
 				ofLogNotice("ThreadedObject::threadedFunction") << "processed in main thread";
@@ -69,11 +68,11 @@ public:
 			// The mutex is now locked so we can modify
 			// the shared memory without problem
 			auto t = ofGetElapsedTimef();
-			for(auto line: pixels.getLines()){
+			for (auto line : pixels.getLines()) {
 				auto x = 0;
-				for(auto pixel: line.getPixels()){
-					auto ux = x/float(pixels.getWidth());
-					auto uy = line.getLineNum()/float(pixels.getHeight());
+				for (auto pixel : line.getPixels()) {
+					auto ux = x / float(pixels.getWidth());
+					auto uy = line.getLineNum() / float(pixels.getHeight());
 					pixel[0] = ofNoise(ux, uy, t);
 					pixel[1] = ofNoise(ux, uy, t);
 					pixel[2] = ofNoise(ux, uy, t);
@@ -90,7 +89,7 @@ public:
 		}
 	}
 
-	void update(){
+	void update() {
 		// if we didn't lock here we would see
 		// tearing as the thread would be updating
 		// the pixels while we upload them to the texture
@@ -99,7 +98,7 @@ public:
 		condition.notify_all();
 	}
 
-	void updateNoLock(){
+	void updateNoLock() {
 		// we don't lock here so we will see
 		// tearing as the thread will update
 		// the pixels while we upload them to the texture
@@ -109,11 +108,11 @@ public:
 
 	/// This drawing function cannot be called from the thread itself because
 	/// it includes OpenGL calls
-	void draw(){
-		tex.draw(0,0);
+	void draw() {
+		tex.draw(0, 0);
 	}
 
-	int getThreadFrameNum(){
+	int getThreadFrameNum() {
 		return threadFrameNum;
 	}
 

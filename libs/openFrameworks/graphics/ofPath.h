@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ofPolyline.h"
-#include "ofVboMesh.h"
-#include "ofTessellator.h"
 #include "ofConstants.h"
+#include "ofPolyline.h"
+#include "ofTessellator.h"
+#include "ofVboMesh.h"
 
-template<typename T>
+template <typename T>
 class ofColor_;
 typedef ofColor_<unsigned char> ofColor;
 typedef ofColor_<float> ofFloatColor;
@@ -35,7 +35,7 @@ typedef ofColor_<unsigned short> ofShortColor;
 /// ~~~~{.cpp}
 /// path.setMode(POLYLINES);
 /// ~~~~
-class ofPath{
+class ofPath {
 public:
 	/// \name Create and remove paths and sub paths
 	/// \{
@@ -75,7 +75,6 @@ public:
 	/// location indicated by x,y,z.
 	void lineTo(float x, float y, float z);
 
-
 	/// \brief Move the drawing position to p. This means that a subsequent calls to,
 	/// for instance, lineTo() or curveTo() will connect the location p to the new
 	/// location.
@@ -85,7 +84,7 @@ public:
 	/// \brief Move the drawing position to x,y.z. This means that a subsequent
 	/// calls to, for instance, lineTo() or curveTo() will connect the
 	/// location x,y,z to the new location.
-	void moveTo(float x, float y, float z=0);
+	void moveTo(float x, float y, float z = 0);
 
 	/// \brief Draws a curve to p from the current drawing position
 	void curveTo(const glm::vec3 & p);
@@ -173,8 +172,8 @@ public:
 	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
-	void triangle(float x1,float y1,float x2,float y2,float x3, float y3);
-	void triangle(float x1,float y1,float z1,float x2,float y2,float z2,float x3, float y3,float z3);
+	void triangle(float x1, float y1, float x2, float y2, float x3, float y3);
+	void triangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 	void triangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
 	void triangle(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec2 & p3);
 
@@ -189,31 +188,31 @@ public:
 	void ellipse(const glm::vec2 & p, float width, float height);
 
 	void rectangle(const ofRectangle & r);
-	void rectangle(const glm::vec3 & p,float w,float h);
-	void rectangle(const glm::vec2 & p,float w,float h);
-	void rectangle(float x,float y,float w,float h);
-	void rectangle(float x,float y,float z,float w,float h);
+	void rectangle(const glm::vec3 & p, float w, float h);
+	void rectangle(const glm::vec2 & p, float w, float h);
+	void rectangle(float x, float y, float w, float h);
+	void rectangle(float x, float y, float z, float w, float h);
 
 	void rectRounded(const ofRectangle & b, float r);
 	void rectRounded(const glm::vec3 & p, float w, float h, float r);
 	void rectRounded(const glm::vec2 & p, float w, float h, float r);
 	void rectRounded(float x, float y, float w, float h, float r);
 	void rectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius,
-	                                                        float topRightRadius,
-	                                                        float bottomRightRadius,
-	                                                        float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	void rectRounded(const glm::vec2 & p, float w, float h, float topLeftRadius,
-															float topRightRadius,
-															float bottomRightRadius,
-															float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	void rectRounded(const ofRectangle & b, float topLeftRadius,
-	                                          float topRightRadius,
-	                                          float bottomRightRadius,
-	                                          float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	void rectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-                                                      float topRightRadius,
-                                                      float bottomRightRadius,
-                                                      float bottomLeftRadius);
+		float topRightRadius,
+		float bottomRightRadius,
+		float bottomLeftRadius);
 	/// \}
 	/// \name Winding Mode
 	/// \{
@@ -252,12 +251,12 @@ public:
 	/// \brief Set the color of the path. This affects both the line if the
 	/// path is drawn as wireframe and the fill if the path is drawn with
 	/// fill. All subpaths are affected.
-	void setColor( const ofColor& color );
+	void setColor(const ofColor & color);
 
 	/// \brief Set the color of the path. This affects both the line if the path is
 	/// drawn as wireframe and the fill if the path is drawn with fill. All
 	/// subpaths are affected.
-	void setHexColor( int hex );
+	void setHexColor(int hex);
 
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
@@ -265,7 +264,7 @@ public:
 
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
-	void setFillHexColor( int hex );
+	void setFillHexColor(int hex);
 
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
@@ -273,7 +272,7 @@ public:
 
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
-	void setStrokeHexColor( int hex );
+	void setStrokeHexColor(int hex);
 
 	/// \brief Get whether the path is using a fill or not.
 	///
@@ -291,7 +290,7 @@ public:
 	/// The default value is `0
 	float getStrokeWidth() const;
 
-	bool hasOutline() const { return strokeWidth>0; }
+	bool hasOutline() const { return strokeWidth > 0; }
 
 	void setCurveResolution(int curveResolution);
 	int getCurveResolution() const;
@@ -326,19 +325,19 @@ public:
 
 	const ofMesh & getTessellation() const;
 
-	void simplify(float tolerance=0.3f);
+	void simplify(float tolerance = 0.3f);
 
 	void translate(const glm::vec3 & p);
 
-	void rotateDeg(float degrees, const glm::vec3& axis);
-	void rotateRad(float radians, const glm::vec3& axis);
-	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec3& axis ));
+	void rotateDeg(float degrees, const glm::vec3 & axis);
+	void rotateRad(float radians, const glm::vec3 & axis);
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec3 & axis));
 
 	void translate(const glm::vec2 & p);
 
-	void rotateDeg(float degrees, const glm::vec2& axis);
-	void rotateRad(float radians, const glm::vec2& axis);
-	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec2& axis ));
+	void rotateDeg(float degrees, const glm::vec2 & axis);
+	void rotateRad(float radians, const glm::vec2 & axis);
+	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec2 & axis));
 
 	/// \brief Change the size of either the ofPolyline or ofSubPath instances that
 	/// the ofPath contains. These changes are non-reversible, so for instance
@@ -351,7 +350,7 @@ public:
 	/// \name Path Mode
 	/// \{
 
-	enum Mode{
+	enum Mode {
 		COMMANDS,
 		POLYLINES
 	};
@@ -363,8 +362,8 @@ public:
 	/// \name Path Commands
 	/// \{
 
-	struct Command{
-		enum Type{
+	struct Command {
+		enum Type {
 			moveTo,
 			lineTo,
 			curveTo,
@@ -379,14 +378,13 @@ public:
 		Command(Type type);
 
 		/// for lineTo and curveTo
-		Command(Type type , const glm::vec3 & p);
+		Command(Type type, const glm::vec3 & p);
 
 		/// for bezierTo
-		Command(Type type , const glm::vec3 & p, const glm::vec3 & cp1, const glm::vec3 & cp2);
+		Command(Type type, const glm::vec3 & p, const glm::vec3 & cp1, const glm::vec3 & cp2);
 
 		///for arc
-		Command(Type type , const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
-
+		Command(Type type, const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
 
 		Type type;
 		glm::vec3 to;
@@ -400,7 +398,6 @@ public:
 	/// \}
 
 private:
-
 	ofPolyline & lastPolyline();
 	void addCommand(const Command & command);
 	void generatePolylinesFromCommands();
@@ -411,22 +408,22 @@ private:
 
 	// path description
 	//vector<ofSubPath>		paths;
-	std::vector<Command> 	commands;
-	ofPolyWindingMode 	windingMode;
-	ofColor 			fillColor;
-	ofColor				strokeColor;
-	float				strokeWidth;
-	bool				bFill;
-	bool				bUseShapeColor;
+	std::vector<Command> commands;
+	ofPolyWindingMode windingMode;
+	ofColor fillColor;
+	ofColor strokeColor;
+	float strokeWidth;
+	bool bFill;
+	bool bUseShapeColor;
 
 	// polyline / tessellation
-	std::vector<ofPolyline>  polylines;
-	std::vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
+	std::vector<ofPolyline> polylines;
+	std::vector<ofPolyline> tessellatedContour; // if winding mode != ODD
 
 #ifdef TARGET_OPENGLES
-	ofMesh				cachedTessellation;
+	ofMesh cachedTessellation;
 #else
-	ofVboMesh			cachedTessellation;
+	ofVboMesh cachedTessellation;
 #endif
 #if defined(TARGET_EMSCRIPTEN)
 	static ofTessellator tessellator;
@@ -435,12 +432,12 @@ private:
 #else
 	ofTessellator tessellator;
 #endif
-	bool				bHasChanged;
-	int					prevCurveRes;
-	int					curveResolution;
-	int					circleResolution;
-	bool 				bNeedsTessellation;
-	bool				bNeedsPolylinesGeneration;
+	bool bHasChanged;
+	int prevCurveRes;
+	int curveResolution;
+	int circleResolution;
+	bool bNeedsTessellation;
+	bool bNeedsPolylinesGeneration;
 
-	Mode				mode;
+	Mode mode;
 };

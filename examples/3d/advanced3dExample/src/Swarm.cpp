@@ -3,30 +3,30 @@
 // This 'swarm' object demonstrates a simple particle system
 //  with 'simple harmonic motion'
 
-swarm::swarm(){
+swarm::swarm() {
 	light.setAmbientColor(ofColor(0, 0, 0));
 }
 
-void swarm::init(int nParticles, float positionDispersion, float velocityDispersion){
+void swarm::init(int nParticles, float positionDispersion, float velocityDispersion) {
 
 	// Check if we've already initialised
-	if(particles.size() != 0){
+	if (particles.size() != 0) {
 		// clear out old data
-		ofLogWarning("swarm") <<  "Swarm: Already initialised";
+		ofLogWarning("swarm") << "Swarm: Already initialised";
 
 		particles.clear();
 	}
 
 	glm::vec3 position, velocity;
 	ofColor color;
-	for(int i = 0; i < nParticles; i++){
-		position.x = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
-		position.y = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
-		position.z = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
+	for (int i = 0; i < nParticles; i++) {
+		position.x = (ofRandom(1.0f) - 0.5f) * positionDispersion;
+		position.y = (ofRandom(1.0f) - 0.5f) * positionDispersion;
+		position.z = (ofRandom(1.0f) - 0.5f) * positionDispersion;
 
-		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
-		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
-		velocity.z = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
+		velocity.x = (ofRandom(1.0f) - 0.5f) * velocityDispersion;
+		velocity.y = (ofRandom(1.0f) - 0.5f) * velocityDispersion;
+		velocity.z = (ofRandom(1.0f) - 0.5f) * velocityDispersion;
 
 		color.r = ofRandom(255.0f);
 		color.g = ofRandom(255.0f);
@@ -41,15 +41,12 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 		// add our new particle to the vector
 		particles.push_back(newParticle);
 	}
-
 }
 
-void swarm::customDraw(){
+void swarm::customDraw() {
 	// We run the update ourselves manually. ofNode does
 	//  not do this for us.
 	update();
-
-
 
 	//--
 	// Draw particles
@@ -61,7 +58,7 @@ void swarm::customDraw(){
 	light.enable();
 	light.setPosition(particles[0].position);
 
-	for(unsigned int i = 0; i < particles.size(); i++){
+	for (unsigned int i = 0; i < particles.size(); i++) {
 		//ofPushStyle();
 		//ofSetColor(particles[i].color);
 		material.setDiffuseColor(particles[i].color);
@@ -79,8 +76,6 @@ void swarm::customDraw(){
 	//
 	//--
 
-
-
 	// Render light as white sphere
 	ofSetColor(255, 255, 255);
 	ofDrawSphere(light.getPosition(), 2.0);
@@ -89,13 +84,13 @@ void swarm::customDraw(){
 	ofPopStyle();
 }
 
-void swarm::update(){
+void swarm::update() {
 
 	// Calculate time past per frame
 	float dt = ofGetLastFrameTime();
 
 	// Update positions, velocities
-	for(unsigned int i = 0; i < particles.size(); i++){
+	for (unsigned int i = 0; i < particles.size(); i++) {
 
 		// -----------
 		//
@@ -118,8 +113,6 @@ void swarm::update(){
 		// (velcotity is taken from previous frame)
 		particles[i].position += particles[i].velocity * dt;
 
-
-
 		// [2] apply spring force to velocity
 		//  (i.e. integrate acceleration)
 		//
@@ -134,21 +127,18 @@ void swarm::update(){
 		//
 		particles[i].velocity += -SPRING_CONSTANT * particles[i].position * dt;
 
-
 		// [3] to get a super simple kind of 'flocking' behaviour
 		//  we add a second spring force to velocity relative
 		//  to the position of the light
 		// NOTICE: THIS ISN'T REAL FLOCKING!
 		particles[i].velocity += -SPRING_CONSTANT * (particles[i].position - light.getPosition()) * dt;
 
-
 		// [4] Force a maximum velocity
-		if(glm::length(particles[i].velocity) > MAX_VELOCITY){
+		if (glm::length(particles[i].velocity) > MAX_VELOCITY) {
 			particles[i].velocity /= glm::length(particles[i].velocity) * MAX_VELOCITY;
 		}
 
 		//
 		// -----------
-
 	}
 }

@@ -19,49 +19,47 @@ bool isInitialized = false;
 
 jobject OFAndroidGPS;
 
-jobject& getJavaInstanceSafe()
-{
+jobject & getJavaInstanceSafe() {
 	if (!isInitialized)
 		OFAndroidGPS = ofxJavaCallStaticObjectMethod("cc/openframeworks/OFAndroidGPS", "getInstance", "()Lcc/openframeworks/OFAndroidGPS;");
 
 	return OFAndroidGPS;
 }
 
-bool ofxGPS::startLocation(){
+bool ofxGPS::startLocation() {
 
-	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "startGPS",  "()V");
+	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "startGPS", "()V");
 
 	m_locationStarted = true;
 
 	return true;
 }
 
-void ofxGPS::stopLocation(){
+void ofxGPS::stopLocation() {
 
-	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "stopGPS",  "()V");
+	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "stopGPS", "()V");
 
 	m_locationStarted = false;
 }
 
-bool ofxGPS::startHeading(){
+bool ofxGPS::startHeading() {
 
-	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "startCompass",  "()V");
+	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "startCompass", "()V");
 
 	m_headingStarted = true;
 
 	return true;
 }
 
-void ofxGPS::stopHeading(){
+void ofxGPS::stopHeading() {
 
-	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "stopCompass",  "()V");
+	ofxJavaCallVoidMethod(getJavaInstanceSafe(), "cc/openframeworks/OFAndroidGPS", "stopCompass", "()V");
 
 	m_headingStarted = false;
 }
 
-extern "C"{
-void
-Java_cc_openframeworks_OFAndroidGPS_locationChanged( JNIEnv*  env, jobject  thiz, jdouble altitude, jdouble latitude, jdouble longitude, jfloat speed, jfloat heading ){
+extern "C" {
+void Java_cc_openframeworks_OFAndroidGPS_locationChanged(JNIEnv * env, jobject thiz, jdouble altitude, jdouble latitude, jdouble longitude, jfloat speed, jfloat heading) {
 
 	ofxGPS::LocationData locationData;
 
@@ -75,8 +73,7 @@ Java_cc_openframeworks_OFAndroidGPS_locationChanged( JNIEnv*  env, jobject  thiz
 	ofNotifyEvent(ofxGPS::newLocationDataEvent, locationData);
 }
 
-void
-Java_cc_openframeworks_OFAndroidGPS_headingChanged( JNIEnv*  env, jobject  thiz, jdouble heading ){
+void Java_cc_openframeworks_OFAndroidGPS_headingChanged(JNIEnv * env, jobject thiz, jdouble heading) {
 
 	ofxGPS::HeadingData headingData;
 	headingData.hasHeading = true;
@@ -84,6 +81,4 @@ Java_cc_openframeworks_OFAndroidGPS_headingChanged( JNIEnv*  env, jobject  thiz,
 
 	ofNotifyEvent(ofxGPS::newHeadingDataEvent, headingData);
 }
-
 }
-

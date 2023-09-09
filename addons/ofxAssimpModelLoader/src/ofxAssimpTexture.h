@@ -13,7 +13,6 @@
 class ofxAssimpTexture {
 
 public:
-
 	void setup(const ofTexture & texture, const of::filesystem::path & texturePath, bool bTexRepeat = true);
 
 	ofTexture & getTextureRef();
@@ -25,7 +24,6 @@ public:
 	std::string getTextureTypeAsString() const;
 
 private:
-
 	ofTexture texture;
 	of::filesystem::path texturePath;
 	aiTextureType textureType;

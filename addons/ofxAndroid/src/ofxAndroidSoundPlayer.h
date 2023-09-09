@@ -3,12 +3,12 @@
 #include "ofSoundBaseTypes.h"
 #include <jni.h>
 
-class ofxAndroidSoundPlayer: public ofBaseSoundPlayer{
+class ofxAndroidSoundPlayer : public ofBaseSoundPlayer {
 public:
 	ofxAndroidSoundPlayer();
 	virtual ~ofxAndroidSoundPlayer();
 
-	bool load(const of::filesystem::path& fileName, bool stream = false);
+	bool load(const of::filesystem::path & fileName, bool stream = false);
 	void unload();
 	void play();
 	void stop();

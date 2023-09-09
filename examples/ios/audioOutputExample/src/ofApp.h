@@ -2,44 +2,42 @@
 
 #include "ofxiOS.h"
 
-class ofApp : public ofxiOSApp{
-	
-	public:
-		void setup();
-		void update();
-		void draw();
-	
-		void exit();
-	
-		void audioOut(ofSoundBuffer & buffer);
+class ofApp : public ofxiOSApp {
 
-		void touchDown(ofTouchEventArgs & touch);
-		void touchMoved(ofTouchEventArgs & touch);
-		void touchUp(ofTouchEventArgs & touch);
-		void touchDoubleTap(ofTouchEventArgs & touch);
-		void touchCancelled(ofTouchEventArgs & touch);
-	
-		void lostFocus();
-		void gotFocus();
-		void gotMemoryWarning();
-		void deviceOrientationChanged(int newOrientation);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		float pan;
-		int sampleRate;
-		bool bNoise;
-		float volume;
+	void exit();
 
-		float * lAudio;
-		float * rAudio;
+	void audioOut(ofSoundBuffer & buffer);
 
-		//------------------- for the simple sine wave synthesis
-		float targetFrequency;
-		float phase;
-		float phaseAdder;
-		float phaseAdderTarget;
-		int initialBufferSize;
+	void touchDown(ofTouchEventArgs & touch);
+	void touchMoved(ofTouchEventArgs & touch);
+	void touchUp(ofTouchEventArgs & touch);
+	void touchDoubleTap(ofTouchEventArgs & touch);
+	void touchCancelled(ofTouchEventArgs & touch);
+
+	void lostFocus();
+	void gotFocus();
+	void gotMemoryWarning();
+	void deviceOrientationChanged(int newOrientation);
+
+	float pan;
+	int sampleRate;
+	bool bNoise;
+	float volume;
+
+	float * lAudio;
+	float * rAudio;
+
+	//------------------- for the simple sine wave synthesis
+	float targetFrequency;
+	float phase;
+	float phaseAdder;
+	float phaseAdderTarget;
+	int initialBufferSize;
 
 	ofSoundStream soundStream;
-
 };
-

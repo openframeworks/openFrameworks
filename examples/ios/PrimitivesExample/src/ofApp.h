@@ -2,8 +2,8 @@
 
 #include "ofxiOS.h"
 
-class ofApp : public ofxiOSApp{
-	
+class ofApp : public ofxiOSApp {
+
 public:
 	void setup();
 	void update();
@@ -20,32 +20,29 @@ public:
 	void gotFocus();
 	void gotMemoryWarning();
 	void deviceOrientationChanged(int newOrientation);
-	
+
 	bool bFill;
 	bool bWireframe;
 	bool bDrawNormals;
 	bool bDrawLights;
 	bool bInfoText;
-	
+
 	ofImage texture;
 	int mode;
 	int numTouches;
-	
+
 	ofSpherePrimitive sphere;
 	ofIcoSpherePrimitive icoSphere;
 	ofPlanePrimitive plane;
 	ofCylinderPrimitive cylinder;
 	ofConePrimitive cone;
 	ofBoxPrimitive box;
-	
+
 	ofLight pointLight;
 	ofLight pointLight2;
 	ofLight pointLight3;
 	ofMaterial material;
-	
+
 	// place to store the sides of the box //
 	ofMesh boxSides[ofBoxPrimitive::SIDES_TOTAL];
-
 };
-
-

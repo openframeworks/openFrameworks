@@ -1,35 +1,35 @@
 #pragma once
 
-#include "ofGraphicsBaseTypes.h"
-#include "ofPolyline.h"
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
+#include "ofGLBaseTypes.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofMatrixStack.h"
 #include "ofPath.h"
-#include "ofGLBaseTypes.h"
+#include "ofPolyline.h"
 
 class ofShapeTessellation;
 class ofFbo;
 class of3dPrimitive;
 
-class ofGLRenderer: public ofBaseGLRenderer{
+class ofGLRenderer : public ofBaseGLRenderer {
 public:
 	ofGLRenderer(const ofAppBaseWindow * window);
-	~ofGLRenderer(){}
+	~ofGLRenderer() { }
 
 	static const std::string TYPE;
-	const std::string & getType(){ return TYPE; }
+	const std::string & getType() { return TYPE; }
 
-    void setup();
+	void setup();
 
 	void startRender();
 	void finishRender();
 
-	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
+	using ofBaseRenderer::draw;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
-    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
-    void draw(const ofNode& model) const;
+	void draw(const of3dPrimitive & model, ofPolyRenderMode renderType) const;
+	void draw(const ofNode & model) const;
 	void draw(const ofPolyline & poly) const;
 	void draw(const ofPath & path) const;
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -45,8 +45,6 @@ public:
 	void drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const;
 	ofPath & getPath();
 
-
-
 	//--------------------------------------------
 	// transformations
 	void pushView();
@@ -56,7 +54,7 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true);
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip = true);
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
@@ -87,11 +85,11 @@ public:
 	void rotateZRad(float radians);
 	void rotateRad(float radians);
 	void matrixMode(ofMatrixMode mode);
-	void loadIdentityMatrix (void);
-	void loadMatrix (const glm::mat4 & m);
-	void loadMatrix (const float * m);
-	void multMatrix (const glm::mat4 & m);
-	void multMatrix (const float * m);
+	void loadIdentityMatrix(void);
+	void loadMatrix(const glm::mat4 & m);
+	void loadMatrix(const float * m);
+	void multMatrix(const glm::mat4 & m);
+	void multMatrix(const float * m);
 	void loadViewMatrix(const glm::mat4 & m);
 	void multViewMatrix(const glm::mat4 & m);
 
@@ -99,7 +97,7 @@ public:
 	glm::mat4 getCurrentOrientationMatrix() const;
 	glm::mat4 getCurrentViewMatrix() const;
 	glm::mat4 getCurrentNormalMatrix() const;
-	
+
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();
@@ -125,7 +123,7 @@ public:
 	void setColor(const ofColor & color);
 	void setColor(const ofColor & color, int _a);
 	void setColor(int gray); // new set a color as grayscale with one argument
-	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
+	void setHexColor(int hexColor); // hex, like web 0xFF0033;
 
 	void setBitmapTextMode(ofDrawBitmapMode mode);
 
@@ -134,15 +132,15 @@ public:
 	void setBackgroundColor(const ofColor & c);
 	void background(const ofColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, float _a = 255.0f);
+	void background(int r, int g, int b, int a = 255);
 
-	void setBackgroundAuto(bool bManual);		// default is true
+	void setBackgroundAuto(bool bManual); // default is true
 	bool getBackgroundAuto();
 
 	void clear();
-	void clear(float r, float g, float b, float a=0);
-	void clear(float brightness, float a=0);
+	void clear(float r, float g, float b, float a = 0);
+	void clear(float brightness, float a = 0);
 	void clearAlpha();
 
 	ofStyle getStyle() const;
@@ -152,7 +150,6 @@ public:
 	void setCurveResolution(int resolution);
 	void setPolyMode(ofPolyWindingMode mode);
 
-
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const;
 	void drawRectangle(float x, float y, float z, float w, float h) const;
@@ -161,7 +158,6 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height) const;
 	void drawString(std::string text, float x, float y, float z) const;
 	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const;
-
 
 	// gl specifics
 	void enableTextureTarget(const ofTexture & tex, int textureLocation);
@@ -176,20 +172,19 @@ public:
 	void disableSeparateSpecularLight();
 	bool getLightingEnabled();
 	void setSmoothLighting(bool b);
-	void setGlobalAmbientColor(const ofColor& c);
+	void setGlobalAmbientColor(const ofColor & c);
 
 	// lighting per light
 	void enableLight(int lightIndex);
 	void disableLight(int lightIndex);
 	void setLightSpotlightCutOff(int lightIndex, float spotCutOff);
 	void setLightSpotConcentration(int lightIndex, float exponent);
-	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic );
-	void setLightAmbientColor(int lightIndex, const ofFloatColor& c);
-	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c);
-	void setLightSpecularColor(int lightIndex, const ofFloatColor& c);
+	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic);
+	void setLightAmbientColor(int lightIndex, const ofFloatColor & c);
+	void setLightDiffuseColor(int lightIndex, const ofFloatColor & c);
+	void setLightSpecularColor(int lightIndex, const ofFloatColor & c);
 	void setLightPosition(int lightIndex, const glm::vec4 & position);
 	void setLightSpotDirection(int lightIndex, const glm::vec4 & direction);
-
 
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofBaseMaterial & material);
@@ -206,7 +201,7 @@ public:
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofCamera & camera);
 
-    void begin(const ofFbo & fbo, ofFboMode mode);
+	void begin(const ofFbo & fbo, ofFboMode mode);
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
@@ -223,10 +218,10 @@ public:
 
 	const of3dGraphics & get3dGraphics() const;
 	of3dGraphics & get3dGraphics();
+
 private:
 	void startSmoothing();
 	void endSmoothing();
-
 
 	bool bBackgroundAuto;
 
@@ -239,20 +234,19 @@ private:
 	ofMatrixStack matrixStack;
 	bool normalsEnabled;
 	bool lightingEnabled;
-        bool materialBound;
+	bool materialBound;
 	std::set<int> textureLocationsEnabled;
 
 	int alphaMaskTextureTarget;
 
 	ofStyle currentStyle;
-	std::deque <ofStyle> styleHistory;
+	std::deque<ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofBitmapFont bitmapFont;
 	ofPath path;
 	const ofAppBaseWindow * window;
 
-	std::deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
-	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
-	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
-
+	std::deque<GLuint> framebufferIdStack; ///< keeps track of currently bound framebuffers
+	GLuint defaultFramebufferId; ///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
+	GLuint currentFramebufferId; ///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 };

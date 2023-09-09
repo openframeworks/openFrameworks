@@ -3,44 +3,42 @@
 #include "ofMain.h"
 #include "ofxAndroid.h"
 
-class ofApp : public ofxAndroidApp{
-	
-	public:
-		
-		void setup();
-		void update();
-		void draw();
+class ofApp : public ofxAndroidApp {
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void windowResized(int w, int h);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void touchDown(int x, int y, int id);
-		void touchMoved(int x, int y, int id);
-		void touchUp(int x, int y, int id);
-		void touchDoubleTap(int x, int y, int id);
-		void touchCancelled(int x, int y, int id);
-		void swipe(ofxAndroidSwipeDir swipeDir, int id);
-		void deviceOrientationChanged(ofOrientation newOrientation);
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-		void pause();
-		void stop();
-		void resume();
-		void reloadTextures();
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
+	void deviceOrientationChanged(ofOrientation newOrientation);
 
-		bool backPressed();
-		void okPressed();
-		void cancelPressed();
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
 
-		ofVideoGrabber grabber;
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
 
-		// Image storing a clone of the grabber image
-		ofTexture grabberImage;
-		ofFpsCounter cameraFps;
+	ofVideoGrabber grabber;
 
-		bool cameraFacingFront;
-		int cameraOrientation;
+	// Image storing a clone of the grabber image
+	ofTexture grabberImage;
+	ofFpsCounter cameraFps;
 
-		int appOrientation;
+	bool cameraFacingFront;
+	int cameraOrientation;
 
+	int appOrientation;
 };

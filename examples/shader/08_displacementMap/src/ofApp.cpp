@@ -1,11 +1,11 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofDisableArbTex();
-	if(ofIsGLProgrammableRenderer()){
+	if (ofIsGLProgrammableRenderer()) {
 		shader.load("shadersGL3/shader");
-	}else{
+	} else {
 		shader.load("shadersGL2/shader");
 	}
 
@@ -16,15 +16,15 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	float noiseScale = ofMap(mouseX, 0, ofGetWidth(), 0, 0.1);
 	float noiseVel = ofGetElapsedTimef();
 
 	ofPixels & pixels = img.getPixels();
 	int w = img.getWidth();
 	int h = img.getHeight();
-	for(int y=0; y<h; y++) {
-		for(int x=0; x<w; x++) {
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
 			int i = y * w + x;
 			float noiseVelue = ofNoise(x * noiseScale, y * noiseScale, noiseVel);
 			pixels[i] = 255 * noiseVelue;
@@ -34,7 +34,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	// bind our texture. in our shader this will now be tex0 by default
 	// so we can just go ahead and access it there.
@@ -65,46 +65,37 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

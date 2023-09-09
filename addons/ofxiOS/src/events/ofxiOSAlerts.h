@@ -26,72 +26,65 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
+ * ***********************************************************************/
 
 #pragma once
 
-#include <list>
 #include "ofxiOSAlertsListener.h"
+#include <list>
 
 class ofxiOSAlertsHandler : public ofxiOSAlertsListener {
 public:
-	void addListener(ofxiOSAlertsListener* o) {
+	void addListener(ofxiOSAlertsListener * o) {
 		listeners.push_back(o);
 	}
-	
-	void removeListener(ofxiOSAlertsListener* o) {
+
+	void removeListener(ofxiOSAlertsListener * o) {
 		listeners.remove(o);
 	}
-	
+
 	//alerts engine will call this when the program loses focus (e.g. the user receives a text message or phone call, or turns off the display)
-	void lostFocus()
-	{
-		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiOSAlertsListener* o = *it;
+	void lostFocus() {
+		for (std::list<ofxiOSAlertsListener *>::iterator it = listeners.begin(); it != listeners.end(); ++it) {
+			ofxiOSAlertsListener * o = *it;
 			o->lostFocus();
 		}
 	}
-	
+
 	//alerts engine will call this when the program regains focus
-	void gotFocus()
-	{
-		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiOSAlertsListener* o = *it;
+	void gotFocus() {
+		for (std::list<ofxiOSAlertsListener *>::iterator it = listeners.begin(); it != listeners.end(); ++it) {
+			ofxiOSAlertsListener * o = *it;
 			o->gotFocus();
 		}
 	}
-	
-	//alerts engine will call this when the program receives a memory warning 
-	void gotMemoryWarning()
-	{
-		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiOSAlertsListener* o = *it;
+
+	//alerts engine will call this when the program receives a memory warning
+	void gotMemoryWarning() {
+		for (std::list<ofxiOSAlertsListener *>::iterator it = listeners.begin(); it != listeners.end(); ++it) {
+			ofxiOSAlertsListener * o = *it;
 			o->gotMemoryWarning();
 		}
 	}
-    
-    //alerts engine will call this when the program receives an orientation changed notification 
-	void deviceOrientationChanged(int newOrientation)
-    {
-		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiOSAlertsListener* o = *it;
+
+	//alerts engine will call this when the program receives an orientation changed notification
+	void deviceOrientationChanged(int newOrientation) {
+		for (std::list<ofxiOSAlertsListener *>::iterator it = listeners.begin(); it != listeners.end(); ++it) {
+			ofxiOSAlertsListener * o = *it;
 			o->deviceOrientationChanged(newOrientation);
 		}
 	}
-	
+
 	//alerts engine will call this when the program is launched with a url
-	void launchedWithURL(std::string url)
-	{
-		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
-			ofxiOSAlertsListener* o = *it;
+	void launchedWithURL(std::string url) {
+		for (std::list<ofxiOSAlertsListener *>::iterator it = listeners.begin(); it != listeners.end(); ++it) {
+			ofxiOSAlertsListener * o = *it;
 			o->launchedWithURL(url);
 		}
 	}
-	
-	
+
 protected:
-	std::list<ofxiOSAlertsListener*> listeners;
-	
+	std::list<ofxiOSAlertsListener *> listeners;
 };
 
 #define ofxiPhoneAlerts ofxiOSAlerts
@@ -99,4 +92,3 @@ protected:
 extern ofxiOSAlertsHandler ofxiOSAlerts;
 
 #define ofxiPhoneAlertsHandler ofxiOSAlertsHandler
-

@@ -5,17 +5,16 @@
 
 typedef struct {
 
-	float 	x;
-	float 	y;
-	bool 	bBeingDragged;
-	bool 	bOver;
-	float 	radius;
-	
-}	draggableVertex;
+	float x;
+	float y;
+	bool bBeingDragged;
+	bool bOver;
+	float radius;
 
+} draggableVertex;
 
 class ofApp : public ofxAndroidApp {
-	
+
 public:
 	void setup();
 	void update();
@@ -46,5 +45,4 @@ public:
 	draggableVertex bezierVertices[4];
 
 	float appIphoneScale;
-
 };

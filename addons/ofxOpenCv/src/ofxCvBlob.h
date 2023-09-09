@@ -13,40 +13,38 @@
 
 #include "ofxCvConstants.h"
 
-
 class ofxCvBlob {
 
-    public:
+public:
+	float area;
+	float length;
+	ofRectangle boundingRect;
+	ofDefaultVec3 centroid;
+	bool hole;
 
-        float               area;
-        float               length;
-        ofRectangle         boundingRect;
-        ofDefaultVec3       centroid;
-        bool                hole;
+	std::vector<ofDefaultVec3> pts; // the contour of the blob
+	int nPts; // number of pts;
 
-        std::vector<ofDefaultVec3> pts;    // the contour of the blob
-        int                        nPts;   // number of pts;
+	//----------------------------------------
+	ofxCvBlob() {
+		area = 0.0f;
+		length = 0.0f;
+		hole = false;
+		nPts = 0;
+	}
 
-        //----------------------------------------
-        ofxCvBlob() {
-            area 		= 0.0f;
-            length 		= 0.0f;
-            hole 		= false;
-            nPts        = 0;
-        }
-
-        //----------------------------------------
-        void draw(float x = 0, float y = 0){
-            ofPushStyle();
-            ofNoFill();
-            ofSetHexColor(0x00FFFF);
-            ofBeginShape();
-            for (int i = 0; i < nPts; i++){
-                   ofVertex(x + pts[i].x, y + pts[i].y);
-            }
-            ofEndShape(true);
-            ofSetHexColor(0xff0099);
-            ofDrawRectangle(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
-            ofPopStyle();
-        }
+	//----------------------------------------
+	void draw(float x = 0, float y = 0) {
+		ofPushStyle();
+		ofNoFill();
+		ofSetHexColor(0x00FFFF);
+		ofBeginShape();
+		for (int i = 0; i < nPts; i++) {
+			ofVertex(x + pts[i].x, y + pts[i].y);
+		}
+		ofEndShape(true);
+		ofSetHexColor(0xff0099);
+		ofDrawRectangle(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
+		ofPopStyle();
+	}
 };

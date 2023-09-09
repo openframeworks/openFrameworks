@@ -1,8 +1,8 @@
 #pragma once
 
 /// Socket constants.
-#define NO_TIMEOUT            	0xFFFF
-#define OF_UDP_DEFAULT_TIMEOUT	NO_TIMEOUT
+#define NO_TIMEOUT 0xFFFF
+#define OF_UDP_DEFAULT_TIMEOUT NO_TIMEOUT
 
 class ofxUDPSettings {
 public:
@@ -34,5 +34,4 @@ public:
 
 	bool broadcast = false;
 	bool multicast = false;
-
 };

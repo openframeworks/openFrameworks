@@ -11,9 +11,9 @@
 
 void ofxAssimpTexture::setup(const ofTexture & texture, const of::filesystem::path & texturePath, bool bTexRepeat) {
 	this->texture = texture;
-	if( bTexRepeat ){
+	if (bTexRepeat) {
 		this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
-	}else{
+	} else {
 		this->texture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 	}
 	this->texturePath = texturePath;
@@ -21,19 +21,19 @@ void ofxAssimpTexture::setup(const ofTexture & texture, const of::filesystem::pa
 
 #ifndef TARGET_WIN32
 //this is a hack to allow for weak definations of functions that might not exist in older assimp versions
-const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
+const char * aiTextureTypeToString(enum aiTextureType in) __attribute__((weak));
 #endif
 
-void ofxAssimpTexture::setTextureType(aiTextureType aTexType){
+void ofxAssimpTexture::setTextureType(aiTextureType aTexType) {
 	textureType = aTexType;
 
-	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
-		if(aiTextureTypeToString){
+	if (textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX) {
+		if (aiTextureTypeToString) {
 			mTexTypeStr = aiTextureTypeToString(getTextureType());
-		}else{
-			mTexTypeStr = "textureType:"+ofToString(getTextureType());
+		} else {
+			mTexTypeStr = "textureType:" + ofToString(getTextureType());
 		}
-	}else{
+	} else {
 		ofLogError("ofxAssimpTexture::setTextureType") << ": unknown aiTextureType type " << aTexType;
 		mTexTypeStr = "NONE";
 	}
@@ -51,10 +51,10 @@ bool ofxAssimpTexture::hasTexture() {
 	return texture.isAllocated();
 }
 
-aiTextureType ofxAssimpTexture::getTextureType() const{
+aiTextureType ofxAssimpTexture::getTextureType() const {
 	return textureType;
 }
 
-std::string ofxAssimpTexture::getTextureTypeAsString() const{
+std::string ofxAssimpTexture::getTextureTypeAsString() const {
 	return mTexTypeStr;
 }

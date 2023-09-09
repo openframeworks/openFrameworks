@@ -1,19 +1,19 @@
-#include "ofMain.h"
-#include "ofApp.h"
 #include "GuiApp.h"
+#include "ofApp.h"
 #include "ofAppGLFWWindow.h"
+#include "ofMain.h"
 
 //========================================================================
-int main( ){
+int main() {
 
 	ofGLFWWindowSettings settings;
 	settings.setSize(600, 600);
-	settings.setPosition(glm::vec2(300,0));
+	settings.setPosition(glm::vec2(300, 0));
 	settings.resizable = true;
 	auto mainWindow = ofCreateWindow(settings);
 
 	settings.setSize(300, 300);
-	settings.setPosition(glm::vec2(0,0));
+	settings.setPosition(glm::vec2(0, 0));
 	settings.resizable = false;
 	auto guiWindow = ofCreateWindow(settings);
 
@@ -24,5 +24,4 @@ int main( ){
 	ofRunApp(guiWindow, guiApp);
 	ofRunApp(mainWindow, mainApp);
 	ofRunMainLoop();
-
 }

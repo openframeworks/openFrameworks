@@ -7,33 +7,32 @@
 
 #pragma once
 
-#include "ofGLUtils.h"
 #include "ofConstants.h"
+#include "ofGLUtils.h"
 
 class ofCubeMapShaders {
 public:
-	
 	struct ShaderSource {
 		std::string vertShader;
 		std::string fragShader;
 	};
-	
+
 	static std::string getGLSLHeader() {
 		std::string vstr = "#version 150\n";
-		if( ofGetGLRenderer() ) {
-			vstr = "#version "+ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor())+"\n";
+		if (ofGetGLRenderer()) {
+			vstr = "#version " + ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor()) + "\n";
 		}
-		#ifdef TARGET_OPENGLES
+#ifdef TARGET_OPENGLES
 		vstr += "#define TARGET_OPENGLES\n";
 		//vstr += "#extension GL_OES_standard_derivatives : enable\n";
 		vstr += "precision highp float;\n";
 		vstr += "precision highp int;\n";
 		vstr += "precision highp sampler2D;\n";
 		vstr += "precision highp samplerCube;\n";
-		#endif
+#endif
 		return vstr;
 	}
-	
+
 	static std::string defaultVertShader() {
 		std::string vshader = getGLSLHeader();
 		vshader += R"(in vec4 position;
@@ -47,14 +46,14 @@ public:
 									gl_Position = uProjection * uView * vec4(position.xyz, 1.0);
 								}
 					)";
-								
+
 		return vshader;
 	}
-	
+
 	static ShaderSource equiRectToCubeMap() {
 		ShaderSource rsource;
 		rsource.vertShader = defaultVertShader();
-		
+
 		rsource.fragShader = getGLSLHeader();
 		rsource.fragShader += R"(
 							 out vec4 FRAGCOLOR;
@@ -94,11 +93,11 @@ public:
 							 )";
 		return rsource;
 	}
-	
+
 	static ShaderSource irriadianceCubeMap() {
 		ShaderSource rsource;
 		rsource.vertShader = defaultVertShader();
-		
+
 		rsource.fragShader = getGLSLHeader();
 		rsource.fragShader += R"(
 							 out vec4 FRAGCOLOR;
@@ -145,7 +144,7 @@ public:
 							 )";
 		return rsource;
 	}
-	
+
 	static ShaderSource renderShader() {
 		ShaderSource rsource;
 		rsource.vertShader = getGLSLHeader();
@@ -212,10 +211,10 @@ public:
 							 }
 							 
 							 )";
-		
+
 		return rsource;
 	}
-	
+
 	static std::string hammersley() {
 		std::string ssrc = R"(
 									 // ----------------------------------------------------------------------------
@@ -270,12 +269,12 @@ public:
 									 )";
 		return ssrc;
 	}
-	
+
 	// https://learnopengl.com/PBR/IBL/Specular-IBL
 	static ShaderSource prefilter() {
 		ShaderSource rsource;
 		rsource.vertShader = defaultVertShader();
-		
+
 		rsource.fragShader = getGLSLHeader();
 		rsource.fragShader += R"(
 										out vec4 FragColor;
@@ -288,9 +287,9 @@ public:
 										const float PI = 3.14159265359;
 										
 										)";
-		
+
 		rsource.fragShader += hammersley();
-		
+
 		rsource.fragShader += R"(
 										// ----------------------------------------------------------------------------
 										float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -379,11 +378,10 @@ public:
 										}
 										
 										)";
-		
+
 		return rsource;
 	}
-	
-	
+
 	static ShaderSource brdfLUT() {
 		ShaderSource rsource;
 		rsource.vertShader = getGLSLHeader();
@@ -408,9 +406,9 @@ public:
 										const float PI = 3.14159265359;
 										
 										)";
-		
+
 		rsource.fragShader += hammersley();
-		
+
 		rsource.fragShader += R"(
 										// ----------------------------------------------------------------------------
 										vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness){
@@ -504,5 +502,4 @@ public:
 										)";
 		return rsource;
 	}
-    
 };

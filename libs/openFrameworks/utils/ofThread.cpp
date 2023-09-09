@@ -2,42 +2,42 @@
 #include "ofLog.h"
 
 #ifdef TARGET_ANDROID
-#include <jni.h>
-#include "ofxAndroidUtils.h"
+	#include "ofxAndroidUtils.h"
+	#include <jni.h>
 #endif
 
 //-------------------------------------------------
 ofThread::ofThread()
-:threadRunning(false)
-,threadDone(true)
-,mutexBlocks(true)
-,name(""){
+	: threadRunning(false)
+	, threadDone(true)
+	, mutexBlocks(true)
+	, name("") {
 }
 
 //-------------------------------------------------
-bool ofThread::isThreadRunning() const{
-    return threadRunning;
+bool ofThread::isThreadRunning() const {
+	return threadRunning;
 }
 
 //-------------------------------------------------
-std::thread::id ofThread::getThreadId() const{
+std::thread::id ofThread::getThreadId() const {
 	return thread.get_id();
 }
 
 //-------------------------------------------------
-std::string ofThread::getThreadName() const{
+std::string ofThread::getThreadName() const {
 	return name;
 }
 
 //-------------------------------------------------
-void ofThread::setThreadName(const std::string & name){
+void ofThread::setThreadName(const std::string & name) {
 	this->name = name;
 }
 
 //-------------------------------------------------
-void ofThread::startThread(){
+void ofThread::startThread() {
 	std::unique_lock<std::mutex> lck(mutex);
-	if(threadRunning || !threadDone){
+	if (threadRunning || !threadDone) {
 		ofLogWarning("ofThread") << "- name: " << getThreadName() << " - Cannot start, thread already running.";
 		return;
 	}
@@ -46,30 +46,30 @@ void ofThread::startThread(){
 	threadRunning = true;
 	this->mutexBlocks = true;
 
-	thread = std::thread(std::bind(&ofThread::run,this));
+	thread = std::thread(std::bind(&ofThread::run, this));
 }
 
 //-------------------------------------------------
-void ofThread::startThread(bool mutexBlocks){
-    std::unique_lock<std::mutex> lck(mutex);
-	if(threadRunning || !threadDone){
+void ofThread::startThread(bool mutexBlocks) {
+	std::unique_lock<std::mutex> lck(mutex);
+	if (threadRunning || !threadDone) {
 		ofLogWarning("ofThread") << "- name: " << getThreadName() << " - Cannot start, thread already running.";
 		return;
 	}
 
-    threadDone = false;
-    threadRunning = true;
-    this->mutexBlocks = mutexBlocks;
+	threadDone = false;
+	threadRunning = true;
+	this->mutexBlocks = mutexBlocks;
 
-	thread = std::thread(std::bind(&ofThread::run,this));
+	thread = std::thread(std::bind(&ofThread::run, this));
 }
 
 //-------------------------------------------------
-bool ofThread::lock(){
-	if(mutexBlocks){
+bool ofThread::lock() {
+	if (mutexBlocks) {
 		mutex.lock();
-	}else{
-		if(!mutex.try_lock()){
+	} else {
+		if (!mutex.try_lock()) {
 			return false; // mutex is locked, tryLock failed
 		}
 	}
@@ -77,106 +77,106 @@ bool ofThread::lock(){
 }
 
 //-------------------------------------------------
-bool ofThread::tryLock(){
+bool ofThread::tryLock() {
 	return mutex.try_lock();
 }
 
 //-------------------------------------------------
-void ofThread::unlock(){
+void ofThread::unlock() {
 	mutex.unlock();
 }
 
 //-------------------------------------------------
-void ofThread::stopThread(){
-    threadRunning = false;
+void ofThread::stopThread() {
+	threadRunning = false;
 }
 
 //-------------------------------------------------
-void ofThread::waitForThread(bool callStopThread, long milliseconds){
-	if(!threadDone){
+void ofThread::waitForThread(bool callStopThread, long milliseconds) {
+	if (!threadDone) {
 		// tell thread to stop
-        if(callStopThread){
-            stopThread();
+		if (callStopThread) {
+			stopThread();
 		}
 
 		// wait for the thread to finish
-        if(isCurrentThread()){
+		if (isCurrentThread()) {
 			return; // waitForThread should only be called outside thread
 		}
 
-        if (INFINITE_JOIN_TIMEOUT == milliseconds){
-            std::unique_lock<std::mutex> lck(mutex);
-            if(!threadDone){
-                condition.wait(lck);
-            }
-        }else{
-            // Wait for "joinWaitMillis" milliseconds for thread to finish
-            std::unique_lock<std::mutex> lck(mutex);
-            if(!threadDone && condition.wait_for(lck,std::chrono::milliseconds(milliseconds))==std::cv_status::timeout){
+		if (INFINITE_JOIN_TIMEOUT == milliseconds) {
+			std::unique_lock<std::mutex> lck(mutex);
+			if (!threadDone) {
+				condition.wait(lck);
+			}
+		} else {
+			// Wait for "joinWaitMillis" milliseconds for thread to finish
+			std::unique_lock<std::mutex> lck(mutex);
+			if (!threadDone && condition.wait_for(lck, std::chrono::milliseconds(milliseconds)) == std::cv_status::timeout) {
 				// unable to completely wait for thread
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 //-------------------------------------------------
-void ofThread::sleep(long milliseconds){
+void ofThread::sleep(long milliseconds) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
 
 //-------------------------------------------------
-void ofThread::yield(){
+void ofThread::yield() {
 	std::this_thread::yield();
 }
 
 //-------------------------------------------------
-bool ofThread::isCurrentThread() const{
-    return std::this_thread::get_id() == thread.get_id();
+bool ofThread::isCurrentThread() const {
+	return std::this_thread::get_id() == thread.get_id();
 }
 
 //-------------------------------------------------
-std::thread & ofThread::getNativeThread(){
+std::thread & ofThread::getNativeThread() {
 	return thread;
 }
 
 //-------------------------------------------------
-const std::thread & ofThread::getNativeThread() const{
+const std::thread & ofThread::getNativeThread() const {
 	return thread;
 }
 
 //-------------------------------------------------
-void ofThread::threadedFunction(){
+void ofThread::threadedFunction() {
 	ofLogWarning("ofThread") << "- name: " << getThreadName() << " - Override ofThread::threadedFunction() in your ofThread subclass.";
 }
 
 //-------------------------------------------------
-void ofThread::run(){
+void ofThread::run() {
 #ifdef TARGET_ANDROID
 	JNIEnv * env;
-	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,nullptr);
-	if(attachResult!=0){
+	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env, nullptr);
+	if (attachResult != 0) {
 		ofLogWarning() << "couldn't attach new thread to java vm";
 	}
 #endif
 
 	// user function
-    // should loop endlessly.
-	try{
+	// should loop endlessly.
+	try {
 		threadedFunction();
-	}catch(const std::exception& exc){
+	} catch (const std::exception & exc) {
 		ofLogFatalError("ofThreadErrorLogger::exception") << exc.what();
-	}catch(...){
+	} catch (...) {
 		ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
 	}
-	try{
+	try {
 		thread.detach();
-	}catch(...){}
+	} catch (...) { }
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
 
-    std::unique_lock<std::mutex> lck(mutex);
+	std::unique_lock<std::mutex> lck(mutex);
 	threadRunning = false;
 	threadDone = true;
-    condition.notify_all();
+	condition.notify_all();
 }

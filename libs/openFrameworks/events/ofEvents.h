@@ -1,23 +1,21 @@
 #pragma once
 
-#include "ofEventUtils.h"
-#include "ofTimer.h"
-#include "ofFpsCounter.h"
-#include "ofConstants.h"
 #include "glm/vec2.hpp"
+#include "ofConstants.h"
+#include "ofEventUtils.h"
+#include "ofFpsCounter.h"
+#include "ofTimer.h"
 #include <set>
 
 //-------------------------- mouse/key query
-bool ofGetMousePressed(int button=-1); //by default any button
-bool ofGetKeyPressed(int key=-1); //by default any key
+bool ofGetMousePressed(int button = -1); //by default any button
+bool ofGetKeyPressed(int key = -1); //by default any key
 
-int	ofGetMouseX();
-int	ofGetMouseY();
+int ofGetMouseX();
+int ofGetMouseY();
 
-int	ofGetPreviousMouseX();
-int	ofGetPreviousMouseY();
-
-
+int ofGetPreviousMouseX();
+int ofGetPreviousMouseY();
 
 //--------------------------------------------
 //
@@ -33,15 +31,13 @@ int	ofGetPreviousMouseY();
 // 	to avoid conflicts, before, values like "left, right up down" (ie, 104, 105, 106) were conflicting with
 // 	letters.. now they will be 256 + 104, 256 + 105....)
 
-enum ofKey{
-	OF_KEY_RETURN	=	13,
-	OF_KEY_ESC		=	27,
-	OF_KEY_TAB      =    9,
+enum ofKey {
+	OF_KEY_RETURN = 13,
+	OF_KEY_ESC = 27,
+	OF_KEY_TAB = 9,
 
-
-	OF_KEY_BACKSPACE =	8,
-	OF_KEY_DEL		 =	127,
-
+	OF_KEY_BACKSPACE = 8,
+	OF_KEY_DEL = 127,
 
 	// For legacy reasons we are mixing up control keys
 	// and unicode codepoints when sending key events,
@@ -50,108 +46,105 @@ enum ofKey{
 	// with the keys being represented and then 0x0ee0.. and 0x0e60...
 	// which are free in the unicode table
 
-	OF_KEY_SHIFT	=	 0x1,
-	OF_KEY_CONTROL	=	 0x2,
-	OF_KEY_ALT		=	 0x4,
-	OF_KEY_SUPER	=	 0x10,
-	OF_KEY_COMMAND  =    OF_KEY_SUPER,
-	OF_KEY_LEFT_SHIFT    =	 0xe60,
-	OF_KEY_RIGHT_SHIFT   =	 0xe61,
-	OF_KEY_LEFT_CONTROL  =	 0xe62,
+	OF_KEY_SHIFT = 0x1,
+	OF_KEY_CONTROL = 0x2,
+	OF_KEY_ALT = 0x4,
+	OF_KEY_SUPER = 0x10,
+	OF_KEY_COMMAND = OF_KEY_SUPER,
+	OF_KEY_LEFT_SHIFT = 0xe60,
+	OF_KEY_RIGHT_SHIFT = 0xe61,
+	OF_KEY_LEFT_CONTROL = 0xe62,
 	OF_KEY_RIGHT_CONTROL = 0xe63,
-	OF_KEY_LEFT_ALT		= 0xe64,
-	OF_KEY_RIGHT_ALT	= 0xe65,
-	OF_KEY_LEFT_SUPER	= 0xe66,
-	OF_KEY_RIGHT_SUPER	= 0xe67,
+	OF_KEY_LEFT_ALT = 0xe64,
+	OF_KEY_RIGHT_ALT = 0xe65,
+	OF_KEY_LEFT_SUPER = 0xe66,
+	OF_KEY_RIGHT_SUPER = 0xe67,
 	OF_KEY_LEFT_COMMAND = OF_KEY_LEFT_SUPER,
 	OF_KEY_RIGHT_COMMAND = OF_KEY_RIGHT_SUPER,
 
-	// Use values from the Unicode private use codepoint range E000 - F8FF. 
+	// Use values from the Unicode private use codepoint range E000 - F8FF.
 	// See https://www.unicode.org/faq/private_use.html
-	OF_KEY_F1        = 0xe000,
-	OF_KEY_F2        = 0xe001,
-	OF_KEY_F3        = 0xe002,
-	OF_KEY_F4        = 0xe003,
-	OF_KEY_F5        = 0xe004,
-	OF_KEY_F6        = 0xe005,
-	OF_KEY_F7        = 0xe006,
-	OF_KEY_F8        = 0xe007,
-	OF_KEY_F9        = 0xe008,
-	OF_KEY_F10       = 0xe009,
-	OF_KEY_F11       = 0xe00A,
-	OF_KEY_F12       = 0xe00B,
-	OF_KEY_LEFT      = 0xe00C,
-	OF_KEY_UP        = 0xe00D,
-	OF_KEY_RIGHT     = 0xe00E,
-	OF_KEY_DOWN      = 0xe00F,
-	OF_KEY_PAGE_UP   = 0xe010,
+	OF_KEY_F1 = 0xe000,
+	OF_KEY_F2 = 0xe001,
+	OF_KEY_F3 = 0xe002,
+	OF_KEY_F4 = 0xe003,
+	OF_KEY_F5 = 0xe004,
+	OF_KEY_F6 = 0xe005,
+	OF_KEY_F7 = 0xe006,
+	OF_KEY_F8 = 0xe007,
+	OF_KEY_F9 = 0xe008,
+	OF_KEY_F10 = 0xe009,
+	OF_KEY_F11 = 0xe00A,
+	OF_KEY_F12 = 0xe00B,
+	OF_KEY_LEFT = 0xe00C,
+	OF_KEY_UP = 0xe00D,
+	OF_KEY_RIGHT = 0xe00E,
+	OF_KEY_DOWN = 0xe00F,
+	OF_KEY_PAGE_UP = 0xe010,
 	OF_KEY_PAGE_DOWN = 0xe011,
-	OF_KEY_HOME      = 0xe012,
-	OF_KEY_END       = 0xe013,
-	OF_KEY_INSERT    = 0xe014,
+	OF_KEY_HOME = 0xe012,
+	OF_KEY_END = 0xe013,
+	OF_KEY_INSERT = 0xe014,
 
-	OF_MOUSE_BUTTON_1 =    0,
-	OF_MOUSE_BUTTON_2 =    1,
-	OF_MOUSE_BUTTON_3 =    2,
-	OF_MOUSE_BUTTON_4 =    3,
-	OF_MOUSE_BUTTON_5 =    4,
-	OF_MOUSE_BUTTON_6 =    5,
-	OF_MOUSE_BUTTON_7 =    6,
-	OF_MOUSE_BUTTON_8 =    7,
-	OF_MOUSE_BUTTON_LAST   = OF_MOUSE_BUTTON_8,
-	OF_MOUSE_BUTTON_LEFT   = OF_MOUSE_BUTTON_1,
+	OF_MOUSE_BUTTON_1 = 0,
+	OF_MOUSE_BUTTON_2 = 1,
+	OF_MOUSE_BUTTON_3 = 2,
+	OF_MOUSE_BUTTON_4 = 3,
+	OF_MOUSE_BUTTON_5 = 4,
+	OF_MOUSE_BUTTON_6 = 5,
+	OF_MOUSE_BUTTON_7 = 6,
+	OF_MOUSE_BUTTON_8 = 7,
+	OF_MOUSE_BUTTON_LAST = OF_MOUSE_BUTTON_8,
+	OF_MOUSE_BUTTON_LEFT = OF_MOUSE_BUTTON_1,
 	OF_MOUSE_BUTTON_MIDDLE = OF_MOUSE_BUTTON_2,
-	OF_MOUSE_BUTTON_RIGHT  = OF_MOUSE_BUTTON_3,
+	OF_MOUSE_BUTTON_RIGHT = OF_MOUSE_BUTTON_3,
 };
 
 //-----------------------------------------------
-class ofDragInfo{
-	public:
-		std::vector <std::string> files;
-		glm::vec2 position;
+class ofDragInfo {
+public:
+	std::vector<std::string> files;
+	glm::vec2 position;
 };
-
 
 //-----------------------------------------------
 // event arguments, this are used in oF to pass
 // the data when notifying events
 
-class ofEventArgs{};
+class ofEventArgs { };
 
 class ofKeyEventArgs : public ofEventArgs {
 public:
-	enum Type{
+	enum Type {
 		Pressed,
 		Released,
 	};
 
 	ofKeyEventArgs()
-  	:type(Pressed)
-  	,key(0)
-	,keycode(0)
-	,scancode(0)
-	,codepoint(0)
-	,isRepeat(false){}
+		: type(Pressed)
+		, key(0)
+		, keycode(0)
+		, scancode(0)
+		, codepoint(0)
+		, isRepeat(false) { }
 
 	ofKeyEventArgs(Type type, int key, int keycode, int scancode, unsigned int codepoint, int modifiers)
-	:type(type)
-	,key(key)
-	,keycode(keycode)
-	,scancode(scancode)
-	,codepoint(codepoint)
-	,isRepeat(false)
-	,modifiers(modifiers){
-
+		: type(type)
+		, key(key)
+		, keycode(keycode)
+		, scancode(scancode)
+		, codepoint(codepoint)
+		, isRepeat(false)
+		, modifiers(modifiers) {
 	}
 
 	ofKeyEventArgs(Type type, int key)
-	:type(type)
-	,key(key)
-	,keycode(0)
-	,scancode(0)
-	,codepoint(0)
-	,isRepeat(false){
-
+		: type(type)
+		, key(key)
+		, keycode(0)
+		, scancode(0)
+		, codepoint(0)
+		, isRepeat(false) {
 	}
 
 	Type type;
@@ -174,8 +167,8 @@ public:
 };
 
 class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
-  public:
-	enum Type{
+public:
+	enum Type {
 		Pressed,
 		Moved,
 		Released,
@@ -186,36 +179,32 @@ class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
 	};
 
 	ofMouseEventArgs()
-	:type(Pressed)
-	,button(OF_MOUSE_BUTTON_LEFT)
-	,scrollX(0.f)
-	,scrollY(0.f)
-	{}
+		: type(Pressed)
+		, button(OF_MOUSE_BUTTON_LEFT)
+		, scrollX(0.f)
+		, scrollY(0.f) { }
 
 	ofMouseEventArgs(Type type, float x, float y, int button)
-	:glm::vec2(x,y)
-	,type(type)
-	,button(button)
-	,scrollX(0.f)
-	,scrollY(0.f)
-	{}
+		: glm::vec2(x, y)
+		, type(type)
+		, button(button)
+		, scrollX(0.f)
+		, scrollY(0.f) { }
 
 	ofMouseEventArgs(Type type, float x, float y, int button, int modifiers)
-	:glm::vec2(x,y)
-	,type(type)
-	,button(button)
-	,scrollX(0.f)
-	,scrollY(0.f)
-	,modifiers(modifiers)
-	{}
+		: glm::vec2(x, y)
+		, type(type)
+		, button(button)
+		, scrollX(0.f)
+		, scrollY(0.f)
+		, modifiers(modifiers) { }
 
 	ofMouseEventArgs(Type type, float x, float y)
-	:glm::vec2(x,y)
-	,type(type)
-	,button(0)
-	,scrollX(0.f)
-	,scrollY(0.f)
-	{}
+		: glm::vec2(x, y)
+		, type(type)
+		, button(0)
+		, scrollX(0.f)
+		, scrollY(0.f) { }
 
 	Type type;
 	int button;
@@ -224,14 +213,14 @@ class ofMouseEventArgs : public ofEventArgs, public glm::vec2 {
 	/// Key modifiers
 	int modifiers = 0;
 
-	bool hasModifier(int modifier){
+	bool hasModifier(int modifier) {
 		return modifiers & modifier;
 	}
 };
 
 class ofTouchEventArgs : public ofEventArgs, public glm::vec2 {
-  public:
-	enum Type{
+public:
+	enum Type {
 		down,
 		up,
 		move,
@@ -240,40 +229,38 @@ class ofTouchEventArgs : public ofEventArgs, public glm::vec2 {
 	};
 
 	ofTouchEventArgs()
-	:type(down)
-	,id(0)
-	,time(0)
-	,numTouches(0)
-	,width(0)
-	,height(0)
-	,angle(0)
-	,minoraxis(0)
-	,majoraxis(0)
-	,pressure(0)
-	,xspeed(0)
-	,yspeed(0)
-	,xaccel(0)
-	,yaccel(0)
-	{
-
+		: type(down)
+		, id(0)
+		, time(0)
+		, numTouches(0)
+		, width(0)
+		, height(0)
+		, angle(0)
+		, minoraxis(0)
+		, majoraxis(0)
+		, pressure(0)
+		, xspeed(0)
+		, yspeed(0)
+		, xaccel(0)
+		, yaccel(0) {
 	}
 
 	ofTouchEventArgs(Type type, float x, float y, int id)
-	:glm::vec2(x,y)
-	,type(type)
-	,id(id)
-	,time(0)
-	,numTouches(0)
-	,width(0)
-	,height(0)
-	,angle(0)
-	,minoraxis(0)
-	,majoraxis(0)
-	,pressure(0)
-	,xspeed(0)
-	,yspeed(0)
-	,xaccel(0)
-	,yaccel(0){}
+		: glm::vec2(x, y)
+		, type(type)
+		, id(id)
+		, time(0)
+		, numTouches(0)
+		, width(0)
+		, height(0)
+		, angle(0)
+		, minoraxis(0)
+		, majoraxis(0)
+		, pressure(0)
+		, xspeed(0)
+		, yspeed(0)
+		, xaccel(0)
+		, yaccel(0) { }
 
 	Type type;
 	int id;
@@ -290,70 +277,70 @@ class ofTouchEventArgs : public ofEventArgs, public glm::vec2 {
 class ofResizeEventArgs : public ofEventArgs {
 public:
 	ofResizeEventArgs()
-  	:width(0)
-	,height(0){}
+		: width(0)
+		, height(0) { }
 
 	ofResizeEventArgs(int width, int height)
-	:width(width)
-	,height(height){}
+		: width(width)
+		, height(height) { }
 
 	int width;
 	int height;
 };
 
-class ofWindowPosEventArgs : public ofEventArgs, public glm::vec2  {
+class ofWindowPosEventArgs : public ofEventArgs, public glm::vec2 {
 public:
-	ofWindowPosEventArgs(){}
+	ofWindowPosEventArgs() { }
 
 	ofWindowPosEventArgs(int x, int y)
-	:glm::vec2(x,y){}
+		: glm::vec2(x, y) { }
 };
 
-class ofMessage : public ofEventArgs{
-	public:
-		ofMessage( std::string msg ){
-			message = msg;
-		}
-		std::string message;
+class ofMessage : public ofEventArgs {
+public:
+	ofMessage(std::string msg) {
+		message = msg;
+	}
+	std::string message;
 };
 
-enum ofTimeMode{
+enum ofTimeMode {
 	System,
 	FixedRate,
 	Filtered,
 };
 
 class ofCoreEvents {
-  public:
+public:
 	ofCoreEvents();
-	ofEvent<ofEventArgs> 		setup;
-	ofEvent<ofEventArgs> 		update;
-	ofEvent<ofEventArgs> 		draw;
-	ofEvent<ofEventArgs> 		exit;
+	ofEvent<ofEventArgs> setup;
+	ofEvent<ofEventArgs> update;
+	ofEvent<ofEventArgs> draw;
+	ofEvent<ofEventArgs> exit;
 
-	ofEvent<ofResizeEventArgs> 	windowResized;
-	ofEvent<ofWindowPosEventArgs> 	windowMoved;
+	ofEvent<ofResizeEventArgs> windowResized;
+	ofEvent<ofWindowPosEventArgs> windowMoved;
 
-	ofEvent<ofKeyEventArgs> 	keyPressed;
-	ofEvent<ofKeyEventArgs> 	keyReleased;
+	ofEvent<ofKeyEventArgs> keyPressed;
+	ofEvent<ofKeyEventArgs> keyReleased;
 
-	ofEvent<ofMouseEventArgs> 	mouseMoved;
-	ofEvent<ofMouseEventArgs> 	mouseDragged;
-	ofEvent<ofMouseEventArgs> 	mousePressed;
-	ofEvent<ofMouseEventArgs> 	mouseReleased;
-	ofEvent<ofMouseEventArgs> 	mouseScrolled;
-	ofEvent<ofMouseEventArgs> 	mouseEntered;
-	ofEvent<ofMouseEventArgs> 	mouseExited;
+	ofEvent<ofMouseEventArgs> mouseMoved;
+	ofEvent<ofMouseEventArgs> mouseDragged;
+	ofEvent<ofMouseEventArgs> mousePressed;
+	ofEvent<ofMouseEventArgs> mouseReleased;
+	ofEvent<ofMouseEventArgs> mouseScrolled;
+	ofEvent<ofMouseEventArgs> mouseEntered;
+	ofEvent<ofMouseEventArgs> mouseExited;
 
-	ofEvent<ofTouchEventArgs>	touchDown;
-	ofEvent<ofTouchEventArgs>	touchUp;
-	ofEvent<ofTouchEventArgs>	touchMoved;
-	ofEvent<ofTouchEventArgs>	touchDoubleTap;
-	ofEvent<ofTouchEventArgs>	touchCancelled;
+	ofEvent<ofTouchEventArgs> touchDown;
+	ofEvent<ofTouchEventArgs> touchUp;
+	ofEvent<ofTouchEventArgs> touchMoved;
+	ofEvent<ofTouchEventArgs> touchDoubleTap;
+	ofEvent<ofTouchEventArgs> touchCancelled;
 
-	ofEvent<ofMessage>			messageEvent;
-	ofEvent<ofDragInfo>			fileDragEvent;
-	ofEvent<uint32_t>			charEvent;
+	ofEvent<ofMessage> messageEvent;
+	ofEvent<ofDragInfo> fileDragEvent;
+	ofEvent<uint32_t> charEvent;
 
 	void disable();
 	void enable();
@@ -368,8 +355,8 @@ class ofCoreEvents {
 	double getLastFrameTime() const;
 	uint64_t getFrameNum() const;
 
-	bool getMousePressed(int button=-1) const;
-	bool getKeyPressed(int key=-1) const;
+	bool getMousePressed(int button = -1) const;
+	bool getKeyPressed(int key = -1) const;
 	int getMouseX() const;
 	int getMouseY() const;
 	int getPreviousMouseX() const;
@@ -381,8 +368,8 @@ class ofCoreEvents {
 	bool notifyUpdate();
 	bool notifyDraw();
 
-	bool notifyKeyPressed(int key, int keycode=-1, int scancode=-1, uint32_t codepoint=0);
-	bool notifyKeyReleased(int key, int keycode=-1, int scancode=-1, uint32_t codepoint=0);
+	bool notifyKeyPressed(int key, int keycode = -1, int scancode = -1, uint32_t codepoint = 0);
+	bool notifyKeyReleased(int key, int keycode = -1, int scancode = -1, uint32_t codepoint = 0);
 	bool notifyKeyEvent(ofKeyEventArgs & keyEvent);
 
 	bool notifyMousePressed(int x, int y, int button);
@@ -413,18 +400,19 @@ private:
 	ofTimer timer;
 	ofFpsCounter fps;
 
-	int	currentMouseX, currentMouseY;
-	int	previousMouseX, previousMouseY;
+	int currentMouseX, currentMouseY;
+	int previousMouseX, previousMouseY;
 	bool bPreMouseNotSet;
 	std::set<int> pressedMouseButtons;
 	std::set<int> pressedKeys;
 	int modifiers = 0;
 
-	enum TimeMode{
+	enum TimeMode {
 		System,
 		FixedRate,
 		Filtered,
-	} timeMode = System;
+	} timeMode
+		= System;
 	std::chrono::nanoseconds fixedRateTimeNanos;
 };
 
@@ -433,74 +421,74 @@ bool ofSendMessage(std::string messageString);
 
 ofCoreEvents & ofEvents();
 
-template<class ListenerClass>
-void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofAddListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged,prio);
-	ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
-	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
-	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
-	ofAddListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
-	ofAddListener(ofEvents().mouseEntered,listener,&ListenerClass::mouseEntered,prio);
-	ofAddListener(ofEvents().mouseExited,listener,&ListenerClass::mouseExited,prio);
+template <class ListenerClass>
+void ofRegisterMouseEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofAddListener(ofEvents().mouseDragged, listener, &ListenerClass::mouseDragged, prio);
+	ofAddListener(ofEvents().mouseMoved, listener, &ListenerClass::mouseMoved, prio);
+	ofAddListener(ofEvents().mousePressed, listener, &ListenerClass::mousePressed, prio);
+	ofAddListener(ofEvents().mouseReleased, listener, &ListenerClass::mouseReleased, prio);
+	ofAddListener(ofEvents().mouseScrolled, listener, &ListenerClass::mouseScrolled, prio);
+	ofAddListener(ofEvents().mouseEntered, listener, &ListenerClass::mouseEntered, prio);
+	ofAddListener(ofEvents().mouseExited, listener, &ListenerClass::mouseExited, prio);
 }
 
-template<class ListenerClass>
-void ofRegisterKeyEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofAddListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed,prio);
-	ofAddListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased,prio);
+template <class ListenerClass>
+void ofRegisterKeyEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofAddListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed, prio);
+	ofAddListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased, prio);
 }
 
-template<class ListenerClass>
-void ofRegisterTouchEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofAddListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap,prio);
-	ofAddListener(ofEvents().touchDown, listener, &ListenerClass::touchDown,prio);
-	ofAddListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved,prio);
-	ofAddListener(ofEvents().touchUp, listener, &ListenerClass::touchUp,prio);
-	ofAddListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled,prio);
+template <class ListenerClass>
+void ofRegisterTouchEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofAddListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap, prio);
+	ofAddListener(ofEvents().touchDown, listener, &ListenerClass::touchDown, prio);
+	ofAddListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved, prio);
+	ofAddListener(ofEvents().touchUp, listener, &ListenerClass::touchUp, prio);
+	ofAddListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled, prio);
 }
 
-template<class ListenerClass>
-void ofRegisterGetMessages(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofAddListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage,prio);
+template <class ListenerClass>
+void ofRegisterGetMessages(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofAddListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage, prio);
 }
 
-template<class ListenerClass>
-void ofRegisterDragEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofAddListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent,prio);
+template <class ListenerClass>
+void ofRegisterDragEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofAddListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent, prio);
 }
 
-template<class ListenerClass>
-void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofRemoveListener(ofEvents().mouseDragged,listener,&ListenerClass::mouseDragged,prio);
-	ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
-	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
-	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
-	ofRemoveListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
-	ofRemoveListener(ofEvents().mouseEntered,listener,&ListenerClass::mouseEntered,prio);
-	ofRemoveListener(ofEvents().mouseExited,listener,&ListenerClass::mouseExited,prio);
+template <class ListenerClass>
+void ofUnregisterMouseEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofRemoveListener(ofEvents().mouseDragged, listener, &ListenerClass::mouseDragged, prio);
+	ofRemoveListener(ofEvents().mouseMoved, listener, &ListenerClass::mouseMoved, prio);
+	ofRemoveListener(ofEvents().mousePressed, listener, &ListenerClass::mousePressed, prio);
+	ofRemoveListener(ofEvents().mouseReleased, listener, &ListenerClass::mouseReleased, prio);
+	ofRemoveListener(ofEvents().mouseScrolled, listener, &ListenerClass::mouseScrolled, prio);
+	ofRemoveListener(ofEvents().mouseEntered, listener, &ListenerClass::mouseEntered, prio);
+	ofRemoveListener(ofEvents().mouseExited, listener, &ListenerClass::mouseExited, prio);
 }
 
-template<class ListenerClass>
-void ofUnregisterKeyEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofRemoveListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed,prio);
-	ofRemoveListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased,prio);
+template <class ListenerClass>
+void ofUnregisterKeyEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofRemoveListener(ofEvents().keyPressed, listener, &ListenerClass::keyPressed, prio);
+	ofRemoveListener(ofEvents().keyReleased, listener, &ListenerClass::keyReleased, prio);
 }
 
-template<class ListenerClass>
-void ofUnregisterTouchEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofRemoveListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap,prio);
-	ofRemoveListener(ofEvents().touchDown, listener, &ListenerClass::touchDown,prio);
-	ofRemoveListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved,prio);
-	ofRemoveListener(ofEvents().touchUp, listener, &ListenerClass::touchUp,prio);
-	ofRemoveListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled,prio);
+template <class ListenerClass>
+void ofUnregisterTouchEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofRemoveListener(ofEvents().touchDoubleTap, listener, &ListenerClass::touchDoubleTap, prio);
+	ofRemoveListener(ofEvents().touchDown, listener, &ListenerClass::touchDown, prio);
+	ofRemoveListener(ofEvents().touchMoved, listener, &ListenerClass::touchMoved, prio);
+	ofRemoveListener(ofEvents().touchUp, listener, &ListenerClass::touchUp, prio);
+	ofRemoveListener(ofEvents().touchCancelled, listener, &ListenerClass::touchCancelled, prio);
 }
 
-template<class ListenerClass>
-void ofUnregisterGetMessages(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofRemoveListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage,prio);
+template <class ListenerClass>
+void ofUnregisterGetMessages(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofRemoveListener(ofEvents().messageEvent, listener, &ListenerClass::gotMessage, prio);
 }
 
-template<class ListenerClass>
-void ofUnregisterDragEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
-	ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent,prio);
+template <class ListenerClass>
+void ofUnregisterDragEvents(ListenerClass * listener, int prio = OF_EVENT_ORDER_AFTER_APP) {
+	ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent, prio);
 }

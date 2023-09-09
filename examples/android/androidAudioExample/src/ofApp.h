@@ -4,50 +4,49 @@
 #include "ofxAndroid.h"
 #include <map>
 
-class ofApp : public ofxAndroidApp{
-	
-	public:
-		
-		void setup();
-		void update();
-		void draw();
-		
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void windowResized(int w, int h);
+class ofApp : public ofxAndroidApp {
 
-		void touchDown(int x, int y, int id);
-		void touchMoved(int x, int y, int id);
-		void touchUp(int x, int y, int id);
-		void touchDoubleTap(int x, int y, int id);
-		void touchCancelled(int x, int y, int id);
-		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void pause();
-		void stop();
-		void resume();
-		void reloadTextures();
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-		bool backPressed();
-		void okPressed();
-		void cancelPressed();
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
 
-		void audioOut(ofSoundBuffer & buffer);
-		void audioIn(ofSoundBuffer & buffer);
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
 
-		float 	pan;
-		int		sampleRate;
-		bool 	bNoise;
-		float 	volume;
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
 
-		float 	* lAudio;
-		float   * rAudio;
+	void audioOut(ofSoundBuffer & buffer);
+	void audioIn(ofSoundBuffer & buffer);
 
-		//------------------- for the simple sine wave synthesis
-		float 	targetFrequency;
-		float 	phase;
-		float 	phaseAdder;
-		float 	phaseAdderTarget;
+	float pan;
+	int sampleRate;
+	bool bNoise;
+	float volume;
 
-		ofSoundStream soundStream;
+	float * lAudio;
+	float * rAudio;
+
+	//------------------- for the simple sine wave synthesis
+	float targetFrequency;
+	float phase;
+	float phaseAdder;
+	float phaseAdderTarget;
+
+	ofSoundStream soundStream;
 };

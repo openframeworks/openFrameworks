@@ -37,15 +37,15 @@
 #ifndef INCLUDED_OSCPACK_PACKETLISTENER_H
 #define INCLUDED_OSCPACK_PACKETLISTENER_H
 
-
-namespace osc{
+namespace osc {
 class IpEndpointName;
 
-class PacketListener{
+class PacketListener {
 public:
-    virtual ~PacketListener() {}
-    virtual void ProcessPacket( const char *data, int size, 
-			const IpEndpointName& remoteEndpoint ) = 0;
+	virtual ~PacketListener() { }
+	virtual void ProcessPacket(const char * data, int size,
+		const IpEndpointName & remoteEndpoint)
+		= 0;
 };
 }
 

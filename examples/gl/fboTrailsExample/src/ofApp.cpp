@@ -1,21 +1,21 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
-	ofBackground(0,0,0);
+	ofBackground(0, 0, 0);
 	ofSetFrameRate(60);
 
 	//allocate our fbos.
 	//providing the dimensions and the format for the,
 	rgbaFbo.allocate(400, 400, GL_RGBA); // with alpha, 8 bits red, 8 bits green, 8 bits blue, 8 bits alpha, from 0 to 255 in 256 steps
 
-	#ifdef TARGET_OPENGLES
-	rgbaFboFloat.allocate(400, 400, GL_RGBA ); // with alpha, 8 bits red, 8 bits green, 8 bits blue, 8 bits alpha, from 0 to 255 in 256 steps
-		ofLogWarning("ofApp") << "GL_RGBA32F_ARB is not available for OPENGLES.  Using RGBA.";
-	#else
-		rgbaFboFloat.allocate(400, 400, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
-	#endif
+#ifdef TARGET_OPENGLES
+	rgbaFboFloat.allocate(400, 400, GL_RGBA); // with alpha, 8 bits red, 8 bits green, 8 bits blue, 8 bits alpha, from 0 to 255 in 256 steps
+	ofLogWarning("ofApp") << "GL_RGBA32F_ARB is not available for OPENGLES.  Using RGBA.";
+#else
+	rgbaFboFloat.allocate(400, 400, GL_RGBA32F_ARB); // with alpha, 32 bits red, 32 bits green, 32 bits blue, 32 bits alpha, from 0 to 1 in 'infinite' steps
+#endif
 
 	// we can also define the fbo with ofFboSettings.
 	// this allows us so set more advanced options the width (400), the height (200) and the internal format like this
@@ -29,53 +29,50 @@ void ofApp::setup(){
 	 rgbaFbo.allocate(s);
 	 */
 
-
 	// we have to clear all the fbos so that we don't see any artefacts
 	// the clearing color does not matter here, as the alpha value is 0, that means the fbo is cleared from all colors
 	// whenever we want to draw/update something inside the fbo, we have to write that inbetween fbo.begin() and fbo.end()
 
 	rgbaFbo.begin();
-	ofClear(255,255,255, 0);
+	ofClear(255, 255, 255, 0);
 	rgbaFbo.end();
 
 	rgbaFboFloat.begin();
-	ofClear(255,255,255, 0);
+	ofClear(255, 255, 255, 0);
 	rgbaFboFloat.end();
-
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 	ofEnableAlphaBlending();
 
 	//lets draw some graphics into our two fbos
 	rgbaFbo.begin();
-		drawFboTest();
+	drawFboTest();
 	rgbaFbo.end();
 
 	rgbaFboFloat.begin();
-		drawFboTest();
+	drawFboTest();
 	rgbaFboFloat.end();
-
 }
 
 //--------------------------------------------------------------
-void ofApp::drawFboTest(){
+void ofApp::drawFboTest() {
 	//we clear the fbo if c is pressed.
 	//this completely clears the buffer so you won't see any trails
-	if( ofGetKeyPressed('c') ){
-		ofClear(255,255,255, 0);
+	if (ofGetKeyPressed('c')) {
+		ofClear(255, 255, 255, 0);
 	}
 
 	//some different alpha values for fading the fbo
 	//the lower the number, the longer the trails will take to fade away.
 	fadeAmnt = 40;
-	if(ofGetKeyPressed('1')){
+	if (ofGetKeyPressed('1')) {
 		fadeAmnt = 1;
-	}else if(ofGetKeyPressed('2')){
+	} else if (ofGetKeyPressed('2')) {
 		fadeAmnt = 5;
-	}else if(ofGetKeyPressed('3')){
+	} else if (ofGetKeyPressed('3')) {
 		fadeAmnt = 15;
 	}
 
@@ -84,19 +81,19 @@ void ofApp::drawFboTest(){
 	//this is where we fade the fbo
 	//by drawing a rectangle the size of the fbo with a small alpha value, we can slowly fade the current contents of the fbo.
 	ofFill();
-	ofSetColor(255,255,255, fadeAmnt);
-	ofDrawRectangle(0,0,400,400);
+	ofSetColor(255, 255, 255, fadeAmnt);
+	ofDrawRectangle(0, 0, 400, 400);
 
 	//2 - Draw graphics
 
 	ofNoFill();
-	ofSetColor(255,255,255);
+	ofSetColor(255, 255, 255);
 
 	//we draw a cube in the center of the fbo and rotate it based on time
 	ofPushMatrix();
-		ofTranslate(200,200,0);
-		ofRotateDeg(ofGetElapsedTimef()*30, 1,0,0.5);
-		ofDrawBox(0,0,0,100);
+	ofTranslate(200, 200, 0);
+	ofRotateDeg(ofGetElapsedTimef() * 30, 1, 0, 0.5);
+	ofDrawBox(0, 0, 0, 100);
 	ofPopMatrix();
 
 	//also draw based on our mouse position
@@ -105,14 +102,13 @@ void ofApp::drawFboTest(){
 
 	//we move a line across the screen based on the time
 	//the %400 makes the number stay in the 0-400 range.
-	int shiftX   = (ofGetElapsedTimeMillis() / 8 ) % 400;
+	int shiftX = (ofGetElapsedTimeMillis() / 8) % 400;
 
-	ofDrawRectangle(shiftX, rgbaFbo.getHeight()-30, 3, 30);
-
+	ofDrawRectangle(shiftX, rgbaFbo.getHeight() - 30, 3, 30);
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	ofSetColor(255, 255, 255);
 	rgbaFbo.draw(0, 0);
@@ -128,60 +124,48 @@ void ofApp::draw(){
 	alphaInfo += "\nHold 'c' to clear the fbo each frame\n\nMove mouse to draw with a circle";
 
 	ofDrawBitmapString(alphaInfo, 10, 430);
-
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

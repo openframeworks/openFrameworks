@@ -10,7 +10,7 @@
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
 
-class ofxEmscriptenSoundStream: public ofBaseSoundStream {
+class ofxEmscriptenSoundStream : public ofBaseSoundStream {
 public:
 	ofxEmscriptenSoundStream();
 	~ofxEmscriptenSoundStream();

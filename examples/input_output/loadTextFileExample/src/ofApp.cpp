@@ -7,13 +7,13 @@ void ofApp::setup() {
 	ofSetFrameRate(30);
 
 	nextLetterTime = ofGetElapsedTimeMillis();
-	lineCount      = 0;
-	letterCount    = 0;
+	lineCount = 0;
+	letterCount = 0;
 
 	// this is our buffer to stroe the text data
 	ofBuffer buffer = ofBufferFromFile("ohplaces.txt");
 
-	if(buffer.size()) {
+	if (buffer.size()) {
 
 		for (ofBuffer::Line it = buffer.getLines().begin(), end = buffer.getLines().end(); it != end; ++it) {
 
@@ -21,34 +21,29 @@ void ofApp::setup() {
 
 			// copy the line to draw later
 			// make sure its not a empty line
-			if(line.empty() == false) {
+			if (line.empty() == false) {
 				seussLines.push_back(line);
 			}
 
 			// print out the line
 			cout << line << endl;
-
 		}
-
 	}
-
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-
+void ofApp::update() {
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
 
 	// the total width on the line
-	int strWidth = (seussLines[lineCount].length()*8) + 5;
+	int strWidth = (seussLines[lineCount].length() * 8) + 5;
 
 	// x and y for the drawing
-	float x = (ofGetWidth()-strWidth)/2;
-	float y = ofGetHeight()/2;
-
+	float x = (ofGetWidth() - strWidth) / 2;
+	float y = ofGetHeight() / 2;
 
 	// we are slowy grabbing part of the line
 	string typedLine = seussLines[lineCount].substr(0, letterCount);
@@ -57,94 +52,78 @@ void ofApp::draw() {
 	ofSetColor(0);
 	ofDrawRectangle(x, y, strWidth, 15);
 	ofSetColor(255);
-	ofDrawBitmapString(typedLine, x+4, y+11);
-
+	ofDrawBitmapString(typedLine, x + 4, y + 11);
 
 	// this is our timer for grabbing the next letter
 	float time = ofGetElapsedTimeMillis() - nextLetterTime;
 
-	if(time > 9) {
+	if (time > 9) {
 
 		// increment the letter count until
 		// we reach the end of the line
-		if(letterCount < (int)seussLines[lineCount].size()) {
+		if (letterCount < (int)seussLines[lineCount].size()) {
 
 			// move on to the next letter
-			letterCount ++;
+			letterCount++;
 
 			// store time for next letter type
 			nextLetterTime = ofGetElapsedTimeMillis();
 
-		}
-		else {
+		} else {
 
 			// wait just a flash then move on
 			// to the next line...
-			if(time > 300) {
+			if (time > 300) {
 
 				nextLetterTime = ofGetElapsedTimeMillis();
 				letterCount = 0;
-				lineCount ++;
+				lineCount++;
 				lineCount %= seussLines.size();
 			}
-
 		}
 	}
-
-
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

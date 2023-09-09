@@ -8,4 +8,4 @@
 
 #include "GameEvent.h"
 
-ofEvent <GameEvent> GameEvent::events;
+ofEvent<GameEvent> GameEvent::events;

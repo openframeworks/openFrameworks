@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
-#include "ofEvents.h"
-#include "ofTypes.h"
-#include "ofPixels.h"
 #include "ofConstants.h"
+#include "ofEvents.h"
+#include "ofPixels.h"
+#include "ofTypes.h"
 
 class ofBaseApp;
 class ofBaseRenderer;
@@ -12,30 +12,29 @@ class ofBaseRenderer;
 class ofAppGlutWindow : public ofAppBaseGLWindow {
 
 public:
-
 	ofAppGlutWindow();
-	~ofAppGlutWindow(){}
+	~ofAppGlutWindow() { }
 
-	static bool doesLoop(){ return true; }
-	static bool allowsMultiWindow(){ return false; }
+	static bool doesLoop() { return true; }
+	static bool allowsMultiWindow() { return false; }
 	static void loop();
-	static bool needsPolling(){ return false; }
-	static void pollEvents(){  }
+	static bool needsPolling() { return false; }
+	static void pollEvents() { }
 
 	using ofAppBaseWindow::setup;
 	void setup(const ofGLWindowSettings & settings);
 	void update();
 	void draw();
 	void close();
-	
-	void setDoubleBuffering(bool _bDoubleBuffered); 
-	
+
+	void setDoubleBuffering(bool _bDoubleBuffered);
+
 	//note if you fail to set a compatible string the app will not launch
 	void setGlutDisplayString(std::string str);
 
 	void hideCursor();
 	void showCursor();
-	
+
 	void setFullscreen(bool fullScreen);
 	void toggleFullscreen();
 
@@ -43,22 +42,22 @@ public:
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
-	glm::vec2	getWindowPosition();
-	glm::vec2	getWindowSize();
-	glm::vec2	getScreenSize();
-	
-	void			setOrientation(ofOrientation orientation);
-	ofOrientation	getOrientation();
-	
-	int			getWidth();
-	int			getHeight();	
-	
-	ofWindowMode	getWindowMode();
+	glm::vec2 getWindowPosition();
+	glm::vec2 getWindowSize();
+	glm::vec2 getScreenSize();
 
-	void		enableSetupScreen();
-	void		disableSetupScreen();
+	void setOrientation(ofOrientation orientation);
+	ofOrientation getOrientation();
 
-	void		setVerticalSync(bool enabled);
+	int getWidth();
+	int getHeight();
+
+	ofWindowMode getWindowMode();
+
+	void enableSetupScreen();
+	void disableSetupScreen();
+
+	void setVerticalSync(bool enabled);
 	void swapBuffers();
 	void startRender();
 	void finishRender();
@@ -76,7 +75,7 @@ private:
 	static void keyboard_up_cb(unsigned char key, int x, int y);
 	static void special_key_cb(int key, int x, int y);
 	static void special_key_up_cb(int key, int x, int y);
-	static int  special_key_to_of(int key);
+	static int special_key_to_of(int key);
 	static void resize_cb(int w, int h);
 	static void entry_cb(int state);
 	static void exit_cb();
@@ -88,9 +87,8 @@ private:
 	void setWindowIcon(const std::string & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
-	
+
 	ofCoreEvents coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int windowId;
 };
-

@@ -10,7 +10,6 @@
 
 #include "ofConstants.h"
 
-
 /*! 
  
  @brief Buffer for audio samples and associated metadata.
@@ -80,17 +79,16 @@
 
  */
 
-
 class ofSoundBuffer {
 public:
 	ofSoundBuffer();
 	ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
 
-	enum InterpolationAlgorithm{
+	enum InterpolationAlgorithm {
 		Linear,
 		Hermite
 	};
-	static InterpolationAlgorithm defaultAlgorithm;  //defaults to Linear for mobile, Hermite for desktop
+	static InterpolationAlgorithm defaultAlgorithm; //defaults to Linear for mobile, Hermite for desktop
 
 	void allocate(size_t numSamples, size_t numChannels);
 
@@ -98,26 +96,26 @@ public:
 	unsigned int getSampleRate() const { return samplerate; }
 	void setSampleRate(unsigned int rate);
 	/// resample by changing the playback speed, keeping the same sampleRate
-	void resample(float speed, InterpolationAlgorithm algorithm=defaultAlgorithm);
+	void resample(float speed, InterpolationAlgorithm algorithm = defaultAlgorithm);
 	/// the number of channels per frame
 	std::size_t getNumChannels() const { return channels; }
 	/// set the number of channels. does not change the underlying data, ie causes getNumFrames() to return a different result.
 	void setNumChannels(int channels);
 	/// the number of frames, ie the number of sets of (getNumChannels()) samples
-	std::size_t getNumFrames() const { return size()/getNumChannels(); }
-	
+	std::size_t getNumFrames() const { return size() / getNumChannels(); }
+
 	/// return the tickCount that was assigned by ofSoundStream (if this buffer originated from an ofSoundStream).
 	uint64_t getTickCount() const { return tickCount; }
-	void setTickCount(uint64_t tick){ tickCount = tick; }
-	
+	void setTickCount(uint64_t tick) { tickCount = tick; }
+
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
 	uint64_t getDurationMS() const;
 	uint64_t getDurationMicros() const;
 	uint64_t getDurationNanos() const;
-	
+
 	/// return the ID of the device which generated this buffer
 	int getDeviceID() const { return soundStreamDeviceID; }
-	void setDeviceID(int id){ soundStreamDeviceID = id; }
+	void setDeviceID(int id) { soundStreamDeviceID = id; }
 
 	/// access the sample at the given position in the buffer.
 	/// to retrieve the sample for channel channelIndex of frame frameIndex, do the following:
@@ -126,7 +124,7 @@ public:
 	/// float sample = myBuffer[(frameIndex*myBuffer.getNumChannels()) + channelIndex];
 	float & operator[](std::size_t samplePos);
 	const float & operator[](std::size_t samplePos) const;
-	
+
 	/// access the sample at frameIndex on a soecific channel
 	float & getSample(std::size_t frameIndex, std::size_t channel);
 	const float & getSample(std::size_t frameIndex, std::size_t channel) const;
@@ -145,7 +143,7 @@ public:
 	void copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
 
 	void copyFrom(const std::vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate);
-	
+
 	void copyFrom(const std::vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate);
 
 	void toShortPCM(std::vector<short> & dst) const;
@@ -154,7 +152,7 @@ public:
 	/// resize outBuffer to outNumFrames with outNumChannels, and then copy outNumFrames of data from us to outBuffer.
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled outBuffer.
 	/// if outBuffer has fewer channels than our buffer, just copy the first outNumChannels of our data and skip the rest.
-	/// if outBuffer has more channels than our buffer, loop through our channels repeatedly until done. 
+	/// if outBuffer has more channels than our buffer, loop through our channels repeatedly until done.
 	void copyTo(ofSoundBuffer & outBuffer, std::size_t outNumFrames, std::size_t outNumChannels, std::size_t fromFrame, bool loop = false) const;
 	/// as copyTo but mixes source audio with audio in `outBuffer` by adding samples together (+), instead of overwriting.
 	void addTo(ofSoundBuffer & outBuffer, std::size_t outNumFrames, std::size_t outNumChannels, std::size_t fromFrame, bool loop = false) const;
@@ -177,30 +175,30 @@ public:
 	/// resample our data to outBuffer at the given target speed, starting at fromFrame and copying numFrames of data. resize outBuffer to fit.
 	/// speed is relative to current speed (ie 1.0f == no change). lower speeds will give a larger outBuffer, higher speeds a smaller outBuffer.
 	void resampleTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop = false, InterpolationAlgorithm algorithm = defaultAlgorithm) const;
-	
+
 	/// copy the requested channel of our data to outBuffer. resize outBuffer to fit.
 	void getChannel(ofSoundBuffer & outBuffer, std::size_t sourceChannel) const;
 	/// copy data from inBuffer to the given channel. resize ourselves to match inBuffer's getNumFrames().
 	void setChannel(const ofSoundBuffer & inBuffer, std::size_t channel);
-	
+
 	float getRMSAmplitude() const;
 	float getRMSAmplitudeChannel(std::size_t channel) const;
-	
+
 	void linearResampleTo(ofSoundBuffer & buffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const;
 	void hermiteResampleTo(ofSoundBuffer & buffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const;
-	
+
 	/// fills the buffer with random noise between -amplitude and amplitude. useful for debugging.
 	void fillWithNoise(float amplitude = 1.0f);
-	
+
 	/// fills the buffer with a sine wave. useful for debugging.
 	float fillWithTone(float pitchHz = 440.0f, float phase = 0.0f);
-	
+
 	/// amplifies samples so that the maximum amplitude is equal to 'level'
 	void normalize(float level = 1);
-	
+
 	/// removes initial / ending silence from the buffer
 	bool trimSilence(float threshold = 0.0001f, bool trimStart = true, bool trimEnd = true);
-	
+
 	/// return the total number of samples in this buffer (==getNumFrames()*getNumChannels())
 	std::size_t size() const { return buffer.size(); }
 	/// resize this buffer to exactly this many samples. it's up to you make sure samples matches the channel count.
@@ -211,15 +209,14 @@ public:
 	void swap(ofSoundBuffer & otherBuffer);
 	/// set everything in this buffer to value, preserving size, channel count and sample rate.
 	void set(float value);
-	
+
 	/// return the underlying buffer. careful!
 	std::vector<float> & getBuffer();
 	const std::vector<float> & getBuffer() const;
 
 protected:
-
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
-	bool checkSizeAndChannelsConsistency(const std::string& function="" );
+	bool checkSizeAndChannelsConsistency(const std::string & function = "");
 
 	std::vector<float> buffer;
 	std::size_t channels;
@@ -229,8 +226,8 @@ protected:
 	int soundStreamDeviceID;
 };
 
-namespace std{
-	void swap(ofSoundBuffer & src, ofSoundBuffer & dst);
+namespace std {
+void swap(ofSoundBuffer & src, ofSoundBuffer & dst);
 }
 
 #endif /* OFSOUNDBUFFER_H_ */

@@ -23,7 +23,7 @@ ofxAssimpAnimation::ofxAssimpAnimation(std::shared_ptr<const aiScene> scene, aiA
 	speed = 1;
 	speedFactor = 1;
 
-	if(animation != NULL) {
+	if (animation != NULL) {
 		durationInSeconds = animation->mDuration;
 		durationInMilliSeconds = durationInSeconds * 1000;
 	}
@@ -43,7 +43,7 @@ void ofxAssimpAnimation::update() {
 	double tps = animation->mTicksPerSecond ? animation->mTicksPerSecond : 25.f;
 	animationCurrTime *= tps;
 
-	if(!bPlay || bPause) {
+	if (!bPlay || bPause) {
 		return;
 	}
 
@@ -52,14 +52,14 @@ void ofxAssimpAnimation::update() {
 	float positionStep = timeStep / (float)duration;
 	float position = getPosition() + positionStep * speed * speedFactor;
 
-	if(position > 1.0 && loopType == OF_LOOP_NONE) {
+	if (position > 1.0 && loopType == OF_LOOP_NONE) {
 		position = 1.0;
 		stop();
-	} else if(position > 1.0 && loopType == OF_LOOP_NORMAL) {
+	} else if (position > 1.0 && loopType == OF_LOOP_NORMAL) {
 		position = fmod(position, 1.0f);
-	} else if(position > 1.0 && loopType == OF_LOOP_PALINDROME) {
+	} else if (position > 1.0 && loopType == OF_LOOP_PALINDROME) {
 		speedFactor *= -1;
-	} else if(position < 0.0 && loopType == OF_LOOP_PALINDROME) {
+	} else if (position < 0.0 && loopType == OF_LOOP_PALINDROME) {
 		speedFactor *= -1;
 	}
 
@@ -67,15 +67,15 @@ void ofxAssimpAnimation::update() {
 }
 
 void ofxAssimpAnimation::updateAnimationNodes() {
-	for(unsigned int i=0; i<animation->mNumChannels; i++) {
+	for (unsigned int i = 0; i < animation->mNumChannels; i++) {
 		const aiNodeAnim * channel = animation->mChannels[i];
 		aiNode * targetNode = scene->mRootNode->FindNode(channel->mNodeName);
 
 		aiVector3D presentPosition(0, 0, 0);
-		if(channel->mNumPositionKeys > 0) {
+		if (channel->mNumPositionKeys > 0) {
 			unsigned int frame = 0;
-			while(frame < channel->mNumPositionKeys - 1) {
-				if(progressInSeconds < channel->mPositionKeys[frame+1].mTime) {
+			while (frame < channel->mNumPositionKeys - 1) {
+				if (progressInSeconds < channel->mPositionKeys[frame + 1].mTime) {
 					break;
 				}
 				frame++;
@@ -85,10 +85,10 @@ void ofxAssimpAnimation::updateAnimationNodes() {
 			const aiVectorKey & key = channel->mPositionKeys[frame];
 			const aiVectorKey & nextKey = channel->mPositionKeys[nextFrame];
 			double diffTime = nextKey.mTime - key.mTime;
-			if(diffTime < 0.0) {
+			if (diffTime < 0.0) {
 				diffTime += getDurationInSeconds();
 			}
-			if(diffTime > 0) {
+			if (diffTime > 0) {
 				float factor = float((progressInSeconds - key.mTime) / diffTime);
 				presentPosition = key.mValue + (nextKey.mValue - key.mValue) * factor;
 			} else {
@@ -97,23 +97,23 @@ void ofxAssimpAnimation::updateAnimationNodes() {
 		}
 
 		aiQuaternion presentRotation(1, 0, 0, 0);
-		if(channel->mNumRotationKeys > 0) {
+		if (channel->mNumRotationKeys > 0) {
 			unsigned int frame = 0;
-			while(frame < channel->mNumRotationKeys - 1) {
-				if(progressInSeconds < channel->mRotationKeys[frame+1].mTime) {
+			while (frame < channel->mNumRotationKeys - 1) {
+				if (progressInSeconds < channel->mRotationKeys[frame + 1].mTime) {
 					break;
 				}
 				frame++;
 			}
 
 			unsigned int nextFrame = (frame + 1) % channel->mNumRotationKeys;
-			const aiQuatKey& key = channel->mRotationKeys[frame];
-			const aiQuatKey& nextKey = channel->mRotationKeys[nextFrame];
+			const aiQuatKey & key = channel->mRotationKeys[frame];
+			const aiQuatKey & nextKey = channel->mRotationKeys[nextFrame];
 			double diffTime = nextKey.mTime - key.mTime;
-			if(diffTime < 0.0) {
+			if (diffTime < 0.0) {
 				diffTime += getDurationInSeconds();
 			}
-			if(diffTime > 0) {
+			if (diffTime > 0) {
 				float factor = float((progressInSeconds - key.mTime) / diffTime);
 				aiQuaternion::Interpolate(presentRotation, key.mValue, nextKey.mValue, factor);
 			} else {
@@ -122,10 +122,10 @@ void ofxAssimpAnimation::updateAnimationNodes() {
 		}
 
 		aiVector3D presentScaling(1, 1, 1);
-		if(channel->mNumScalingKeys > 0) {
+		if (channel->mNumScalingKeys > 0) {
 			unsigned int frame = 0;
-			while(frame < channel->mNumScalingKeys - 1){
-				if(progressInSeconds < channel->mScalingKeys[frame+1].mTime) {
+			while (frame < channel->mNumScalingKeys - 1) {
+				if (progressInSeconds < channel->mScalingKeys[frame + 1].mTime) {
 					break;
 				}
 				frame++;
@@ -135,20 +135,28 @@ void ofxAssimpAnimation::updateAnimationNodes() {
 		}
 
 		aiMatrix4x4 mat = aiMatrix4x4(presentRotation.GetMatrix());
-		mat.a1 *= presentScaling.x; mat.b1 *= presentScaling.x; mat.c1 *= presentScaling.x;
-		mat.a2 *= presentScaling.y; mat.b2 *= presentScaling.y; mat.c2 *= presentScaling.y;
-		mat.a3 *= presentScaling.z; mat.b3 *= presentScaling.z; mat.c3 *= presentScaling.z;
-		mat.a4 = presentPosition.x; mat.b4 = presentPosition.y; mat.c4 = presentPosition.z;
+		mat.a1 *= presentScaling.x;
+		mat.b1 *= presentScaling.x;
+		mat.c1 *= presentScaling.x;
+		mat.a2 *= presentScaling.y;
+		mat.b2 *= presentScaling.y;
+		mat.c2 *= presentScaling.y;
+		mat.a3 *= presentScaling.z;
+		mat.b3 *= presentScaling.z;
+		mat.c3 *= presentScaling.z;
+		mat.a4 = presentPosition.x;
+		mat.b4 = presentPosition.y;
+		mat.c4 = presentPosition.z;
 
 		targetNode->mTransformation = mat;
 	}
 }
 
 void ofxAssimpAnimation::play() {
-	if(animation == NULL) {
+	if (animation == NULL) {
 		return;
 	}
-	if(bPlay) { // if already playing, ignore.
+	if (bPlay) { // if already playing, ignore.
 		bPause = false; // if paused, then unpause.
 		return;
 	}
@@ -160,7 +168,7 @@ void ofxAssimpAnimation::play() {
 
 void ofxAssimpAnimation::stop() {
 	speedFactor = 1.0;
-	if(!bPlay) {
+	if (!bPlay) {
 		return;
 	}
 	bPlay = false;
@@ -218,7 +226,7 @@ void ofxAssimpAnimation::setPaused(bool paused) {
 
 void ofxAssimpAnimation::setPosition(float position) {
 	position = ofClamp(position, 0.0f, 1.0f);
-	if(progress == position) {
+	if (progress == position) {
 		return;
 	}
 	progress = position;

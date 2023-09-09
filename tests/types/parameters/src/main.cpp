@@ -1,14 +1,14 @@
-#include "ofMain.h"
 #include "ofAppNoWindow.h"
+#include "ofMain.h"
 #include "ofxUnitTests.h"
 
-class ofApp: public ofxUnitTestsApp{
-	void run(){
-		ofParameter<float> p1{"p>1", 0, 0, 1000};
-		ofParameter<float> p2{"p>2", 0, 0, 1000};
-		ofParameter<float> p3{"p>3", 0, 0, 1000};
-		ofParameter<float> p4{"p>4", 0, 0, 1000};
-		ofParameterGroup group{
+class ofApp : public ofxUnitTestsApp {
+	void run() {
+		ofParameter<float> p1 { "p>1", 0, 0, 1000 };
+		ofParameter<float> p2 { "p>2", 0, 0, 1000 };
+		ofParameter<float> p3 { "p>3", 0, 0, 1000 };
+		ofParameter<float> p4 { "p>4", 0, 0, 1000 };
+		ofParameterGroup group {
 			"group",
 			p1, p2, p3, p4
 		};
@@ -28,14 +28,13 @@ class ofApp: public ofxUnitTestsApp{
 };
 
 //========================================================================
-int main( ){
-    ofInit();
-    auto window = std::make_shared<ofAppNoWindow>();
-    auto app = std::make_shared<ofApp>();
-    // this kicks off the running of my app
-    // can be OF_WINDOW or OF_FULLSCREEN
-    // pass in width and height too:
-    ofRunApp(window, app);
-    return ofRunMainLoop();
-
+int main() {
+	ofInit();
+	auto window = std::make_shared<ofAppNoWindow>();
+	auto app = std::make_shared<ofApp>();
+	// this kicks off the running of my app
+	// can be OF_WINDOW or OF_FULLSCREEN
+	// pass in width and height too:
+	ofRunApp(window, app);
+	return ofRunMainLoop();
 }

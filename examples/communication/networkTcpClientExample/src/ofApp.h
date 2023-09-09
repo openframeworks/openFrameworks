@@ -3,36 +3,34 @@
 #include "ofMain.h"
 #include "ofxNetwork.h"
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 
-	public:
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void setup();
-		void update();
-		void draw();
-		
-		void keyPressed(ofKeyEventArgs & key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);		
-		
-		ofxTCPClient tcpClient;
-		string msgTx, msgRx;
+	void keyPressed(ofKeyEventArgs & key);
+	void keyReleased(int key);
+	void mouseMoved(int x, int y);
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
+	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
 
-		ofTrueTypeFont  mono;
-		ofTrueTypeFont  monosm;
+	ofxTCPClient tcpClient;
+	string msgTx, msgRx;
 
-		float counter;
-		int connectTime;
-		int deltaTime;
+	ofTrueTypeFont mono;
+	ofTrueTypeFont monosm;
+
+	float counter;
+	int connectTime;
+	int deltaTime;
 
 	int size;
 };
-

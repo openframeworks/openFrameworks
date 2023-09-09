@@ -26,22 +26,20 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
-
+ * ***********************************************************************/
 
 #pragma once
 
-
 /****** protocol, delegate, interface, whatever you want to call it ******/
 
-class ofxiOSMapKitListener { 
+class ofxiOSMapKitListener {
 public:
-    virtual ~ofxiOSMapKitListener() {};
-	virtual void regionWillChange(bool animated) {}
-	virtual void regionDidChange(bool animated) {}
-	virtual void willStartLoadingMap() {}
-	virtual void didFinishLoadingMap() {}
-	virtual void errorLoadingMap(std::string errorDescription) {}
+	virtual ~ofxiOSMapKitListener() {};
+	virtual void regionWillChange(bool animated) { }
+	virtual void regionDidChange(bool animated) { }
+	virtual void willStartLoadingMap() { }
+	virtual void didFinishLoadingMap() { }
+	virtual void errorLoadingMap(std::string errorDescription) { }
 };
 
 #define ofxiPhoneMapKitListener ofxiOSMapKitListener

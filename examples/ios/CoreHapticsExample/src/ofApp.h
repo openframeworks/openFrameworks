@@ -4,8 +4,8 @@
 #include "ofxiOSCoreHaptics.h"
 
 class ofApp : public ofxiOSApp {
-    
-    ofxiOSCoreHaptics haptics_;
+
+	ofxiOSCoreHaptics haptics_;
 
 	void setup() override;
 	void update() override;
@@ -23,5 +23,4 @@ class ofApp : public ofxiOSApp {
 	void gotMemoryWarning() override;
 	void deviceOrientationChanged(int newOrientation) override;
 	void launchedWithURL(std::string url) override;
-	
 };

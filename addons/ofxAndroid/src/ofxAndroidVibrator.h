@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <jni.h>
 #include "ofConstants.h"
+#include <jni.h>
 
 class ofxAndroidVibrator {
 public:
@@ -17,6 +17,7 @@ public:
 
 	static void vibrate(unsigned long milliseconds);
 	static void stop();
+
 private:
 	static jobject getVibratorService();
 	static jmethodID getVibratorMethodID(std::string name, std::string signature);

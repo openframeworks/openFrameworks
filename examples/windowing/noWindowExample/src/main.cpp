@@ -1,6 +1,6 @@
-#include "ofMain.h"
 #include "ofApp.h"
 #include "ofAppNoWindow.h"
+#include "ofMain.h"
 
 int main() {
 
@@ -9,7 +9,7 @@ int main() {
 	//to have a normal windowed app comment the line above and uncomment the lines below
 	//ofGLWindowSettings settings;
 	//auto window = ofCreateWindow(settings);
-	
+
 	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
 }

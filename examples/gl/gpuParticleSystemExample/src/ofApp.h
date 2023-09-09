@@ -24,10 +24,10 @@
 //
 struct pingPongBuffer {
 public:
-	void allocate( int _width, int _height, int _internalformat = GL_RGBA){
+	void allocate(int _width, int _height, int _internalformat = GL_RGBA) {
 		// Allocate
-		for(int i = 0; i < 2; i++){
-			FBOs[i].allocate(_width,_height, _internalformat );
+		for (int i = 0; i < 2; i++) {
+			FBOs[i].allocate(_width, _height, _internalformat);
 			FBOs[i].getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 		}
 
@@ -39,36 +39,35 @@ public:
 		clear();
 	}
 
-	void swap(){
-		std::swap(src,dst);
+	void swap() {
+		std::swap(src, dst);
 	}
 
-	void clear(){
-		for(int i = 0; i < 2; i++){
+	void clear() {
+		for (int i = 0; i < 2; i++) {
 			FBOs[i].begin();
-			ofClear(0,255);
+			ofClear(0, 255);
 			FBOs[i].end();
 		}
 	}
 
-	ofFbo& operator[]( int n ){ return FBOs[n];}
-	ofFbo   *src;       // Source       ->  Ping
-	ofFbo   *dst;       // Destination  ->  Pong
+	ofFbo & operator[](int n) { return FBOs[n]; }
+	ofFbo * src; // Source       ->  Ping
+	ofFbo * dst; // Destination  ->  Pong
 
 private:
-	ofFbo   FBOs[2];    // Real addresses of ping/pong FBO«s
+	ofFbo FBOs[2]; // Real addresses of ping/pong FBO«s
 };
 
-
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 public:
 	void setup();
 	void update();
 	void draw();
 
-	void keyPressed  (int key);
+	void keyPressed(int key);
 	void keyReleased(int key);
-	void mouseMoved(int x, int y );
+	void mouseMoved(int x, int y);
 	void mouseDragged(int x, int y, int button);
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
@@ -78,25 +77,24 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	ofShader    updatePos;
-	ofShader    updateVel;
-	ofShader    updateRender;
+	ofShader updatePos;
+	ofShader updateVel;
+	ofShader updateRender;
 
 	pingPongBuffer posPingPong;
 	pingPongBuffer velPingPong;
 
-	ofFbo   renderFBO;
+	ofFbo renderFBO;
 
 	ofImage sparkImg;
 
-	float   timeStep;
-	float   particleSize;
+	float timeStep;
+	float particleSize;
 
-	int     width, height;
-	int     imgWidth, imgHeight;
-	int     numParticles;
-	int     textureRes;
-
+	int width, height;
+	int imgWidth, imgHeight;
+	int numParticles;
+	int textureRes;
 
 	ofVboMesh mesh;
 };

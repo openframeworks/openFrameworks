@@ -1,15 +1,15 @@
 #pragma once
 
-#include "ofSoundBaseTypes.h"
 #include "ofConstants.h"
+#include "ofSoundBaseTypes.h"
 
-class ofxEmscriptenSoundPlayer: public ofBaseSoundPlayer {
+class ofxEmscriptenSoundPlayer : public ofBaseSoundPlayer {
 public:
 	ofxEmscriptenSoundPlayer();
 	~ofxEmscriptenSoundPlayer();
 
-	bool load(const of::filesystem::path& fileName, bool stream = false);
-//	bool load(const std::string& fileName, bool stream = false);
+	bool load(const of::filesystem::path & fileName, bool stream = false);
+	//	bool load(const std::string& fileName, bool stream = false);
 	void unload();
 	void play();
 	void stop();

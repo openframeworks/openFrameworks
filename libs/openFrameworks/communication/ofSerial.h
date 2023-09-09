@@ -4,7 +4,7 @@
 
 class ofBuffer;
 
-#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+#if defined(TARGET_OSX) || defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 	#include <termios.h>
 #else
 	#include <winbase.h>
@@ -18,79 +18,77 @@ class ofBuffer;
 	#define MAX_SERIAL_PORTS 256
 	/// \endcond
 	#include <winioctl.h>
-	/*#ifndef _MSC_VER
+/*#ifndef _MSC_VER
 		#define INITGUID
 		#include <initguid.h> // needed for dev-c++ & DEFINE_GUID
 	#endif*/
 #endif
 
 // serial error codes
-#define OF_SERIAL_NO_DATA 	-2
-#define OF_SERIAL_ERROR		-1
-
-
+#define OF_SERIAL_NO_DATA -2
+#define OF_SERIAL_ERROR -1
 
 /// \brief Describes a Serial device, including ID, name and path.
-class ofSerialDeviceInfo{
+class ofSerialDeviceInfo {
 	friend class ofSerial;
 
-	public:
-		/// \brief Construct an ofSerialDeviceInfo with parameters.
-		/// \param devicePathIn The path to the device.
-		/// \param deviceNameIn The name of the device.
-		/// \param deviceIDIn The ID of the device.
-		ofSerialDeviceInfo(std::string devicePathIn, std::string deviceNameIn, int deviceIDIn){
-			devicePath = devicePathIn;
-			deviceName = deviceNameIn;
-			deviceID = deviceIDIn;
-		}
+public:
+	/// \brief Construct an ofSerialDeviceInfo with parameters.
+	/// \param devicePathIn The path to the device.
+	/// \param deviceNameIn The name of the device.
+	/// \param deviceIDIn The ID of the device.
+	ofSerialDeviceInfo(std::string devicePathIn, std::string deviceNameIn, int deviceIDIn) {
+		devicePath = devicePathIn;
+		deviceName = deviceNameIn;
+		deviceID = deviceIDIn;
+	}
 
-		/// \brief Construct an undefined serial device.
-		ofSerialDeviceInfo(){
-			deviceName = "device undefined";
-			deviceID   = -1;
-		}
+	/// \brief Construct an undefined serial device.
+	ofSerialDeviceInfo() {
+		deviceName = "device undefined";
+		deviceID = -1;
+	}
 
-		/// \brief Gets the path to the device
-		///
-		/// Example: `/dev/tty.cu/usbdevice-a440`.
-		///
-		/// \returns the device path.
-		std::string getDevicePath(){
-			return devicePath;
-		}
+	/// \brief Gets the path to the device
+	///
+	/// Example: `/dev/tty.cu/usbdevice-a440`.
+	///
+	/// \returns the device path.
+	std::string getDevicePath() {
+		return devicePath;
+	}
 
-		/// \brief Gets the name of the device
-		///
-		/// Example: `usbdevice-a440` or `COM4`.
-		///
-		/// \returns the device name.
-		std::string getDeviceName(){
-			return deviceName;
-		}
+	/// \brief Gets the name of the device
+	///
+	/// Example: `usbdevice-a440` or `COM4`.
+	///
+	/// \returns the device name.
+	std::string getDeviceName() {
+		return deviceName;
+	}
 
-		/// \brief Gets the ID of the device
-		///
-		/// Example: `0`,`1`,`2`,`3` etc.
-		///
-		/// \returns the device ID.
-		int getDeviceID(){
-			return deviceID;
-		}
+	/// \brief Gets the ID of the device
+	///
+	/// Example: `0`,`1`,`2`,`3` etc.
+	///
+	/// \returns the device ID.
+	int getDeviceID() {
+		return deviceID;
+	}
 
-	protected:
-		/// \cond INTERNAL
+protected:
+	/// \cond INTERNAL
 
-		/// \brief The device path (e.g /dev/tty.cu/usbdevice-a440).
-		std::string devicePath;
+	/// \brief The device path (e.g /dev/tty.cu/usbdevice-a440).
+	std::string devicePath;
 
-		/// \brief The device name (e.g. usbdevice-a440 / COM4).
-		std::string deviceName;
+	/// \brief The device name (e.g. usbdevice-a440 / COM4).
+	std::string deviceName;
 
-		/// \brief The device ID (e.g. 0, 1, 2, 3, etc).
-		int deviceID;
+	/// \brief The device ID (e.g. 0, 1, 2, 3, etc).
+	int deviceID;
 
-		/// \endcond
+	/// \endcond
 };
 
 /// \brief ofSerial provides a cross platform system for interfacing with the
@@ -153,7 +151,7 @@ public:
 
 	/// \brief Returns a vector of ofSerialDeviceInfo instances with the
 	/// devicePath, deviceName, deviceID set.
-	std::vector <ofSerialDeviceInfo> getDeviceList();
+	std::vector<ofSerialDeviceInfo> getDeviceList();
 
 	/// \}
 	/// \name Serial Connection
@@ -339,10 +337,10 @@ protected:
 	/// \see enumerateWin32Ports()
 	void buildDeviceList();
 
-	std::string deviceType;  ///\< \brief Name of the device on the other end of the serial connection.
-	std::vector <ofSerialDeviceInfo> devices;  ///\< This vector stores information about all serial devices found.
-	bool bHaveEnumeratedDevices;  ///\< \brief Indicate having enumerated devices (serial ports) available.
-	bool bInited;  ///\< \brief Indicate the successful initialization of the serial connection.
+	std::string deviceType; ///\< \brief Name of the device on the other end of the serial connection.
+	std::vector<ofSerialDeviceInfo> devices; ///\< This vector stores information about all serial devices found.
+	bool bHaveEnumeratedDevices; ///\< \brief Indicate having enumerated devices (serial ports) available.
+	bool bInited; ///\< \brief Indicate the successful initialization of the serial connection.
 
 #ifdef TARGET_WIN32
 
@@ -355,29 +353,28 @@ protected:
 	void enumerateWin32Ports();
 
 	COMMTIMEOUTS oldTimeout;
-		///\< \brief The old serial connection timeout.
-		/// This is needed to restore settings on Microsoft Windows
-		/// platforms upon closing the serial connection.
-	char** portNamesShort;
-		///\< \brief Short names of COM ports on Microsoft Windows.
-		/// Short names only identify/name the COM port. The length
-		/// of the array is limited to MAX_SERIAL_PORTS.
-		///\see ofSerial::portNamesFriendly
-	char** portNamesFriendly;
-		///\< \brief Friendly names of COM ports on Microsoft Windows.
-		/// The friendly names often describe/name the device attached to
-		/// a particular serial port. The length of the array is limited
-		/// to MAX_SERIAL_PORTS.
-		///\see ofSerial::portNamesShort
+	///\< \brief The old serial connection timeout.
+	/// This is needed to restore settings on Microsoft Windows
+	/// platforms upon closing the serial connection.
+	char ** portNamesShort;
+	///\< \brief Short names of COM ports on Microsoft Windows.
+	/// Short names only identify/name the COM port. The length
+	/// of the array is limited to MAX_SERIAL_PORTS.
+	///\see ofSerial::portNamesFriendly
+	char ** portNamesFriendly;
+	///\< \brief Friendly names of COM ports on Microsoft Windows.
+	/// The friendly names often describe/name the device attached to
+	/// a particular serial port. The length of the array is limited
+	/// to MAX_SERIAL_PORTS.
+	///\see ofSerial::portNamesShort
 	HANDLE hComm; ///\< This is the handler for the serial port on Microsoft Windows.
-	int nPorts;  ///\< \brief Number of serial devices (ports) on Microsoft Windows.
-	bool bPortsEnumerated;  ///\< \brief Indicate that all serial ports (on Microsoft Windows) have been enumerated.
+	int nPorts; ///\< \brief Number of serial devices (ports) on Microsoft Windows.
+	bool bPortsEnumerated; ///\< \brief Indicate that all serial ports (on Microsoft Windows) have been enumerated.
 
 #else
 	int fd; ///< \brief File descriptor for the serial port.
-	struct termios oldoptions;  ///< \brief This is the set of (current) terminal attributes to be reused when changing a subset of options.
+	struct termios oldoptions; ///< \brief This is the set of (current) terminal attributes to be reused when changing a subset of options.
 #endif
-
 };
 
 //----------------------------------------------------------------------

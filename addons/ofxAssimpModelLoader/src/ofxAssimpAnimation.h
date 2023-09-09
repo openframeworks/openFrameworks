@@ -8,13 +8,12 @@
 #include "ofVideoBaseTypes.h"
 
 #include <assimp/cimport.h>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 class ofxAssimpAnimation {
 
 public:
-
 	ofxAssimpAnimation(std::shared_ptr<const aiScene> scene, aiAnimation * animation);
 	~ofxAssimpAnimation();
 
@@ -44,7 +43,6 @@ public:
 	void setSpeed(float s);
 
 protected:
-
 	void updateAnimationNodes();
 
 	std::shared_ptr<const aiScene> scene;

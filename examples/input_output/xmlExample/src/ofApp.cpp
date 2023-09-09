@@ -1,24 +1,24 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	// load the file and check if it was loaded ok. Also check it's
 	// format is correct, it needs to have:
 	//
 	// - a root called drawing which
 	// - contains a background element which itself contains nodes
 	//   red, green and blue
-	if(!xml.load("points.xml")){
+	if (!xml.load("points.xml")) {
 		ofLogError() << "Couldn't load file";
 	}
 	auto drawing = xml.getChild("drawing");
-	if(!drawing){
+	if (!drawing) {
 		drawing = xml.appendChild("drawing");
 	}
 
 	// Look for a background tag with children red, green and blue
 	bg = drawing.findFirst("background[red and green and blue]");
-	if(!bg){
+	if (!bg) {
 		// remove any possible malformed background tag
 		drawing.removeChild("background");
 
@@ -27,7 +27,6 @@ void ofApp::setup(){
 		bg.appendChild("red").set(255);
 		bg.appendChild("green").set(255);
 		bg.appendChild("blue").set(255);
-
 
 		/*
 		// Load OF icon from svg into our custom xml format.
@@ -51,10 +50,9 @@ void ofApp::setup(){
 		}*/
 	}
 
-
 	// select background and read it's values
 	auto background = xml.findFirst("//background");
-	if(background){ // this will always be true, only to document how to search
+	if (background) { // this will always be true, only to document how to search
 		bgColor.r = background.getChild("red").getIntValue();
 		bgColor.g = background.getChild("green").getIntValue();
 		bgColor.b = background.getChild("blue").getIntValue();
@@ -63,17 +61,17 @@ void ofApp::setup(){
 	// select all strokes and iterate through them
 	// for each stroke, create a new mesh
 	auto strokesXml = xml.find("//drawing/stroke");
-	for(auto & stroke: strokesXml){
+	for (auto & stroke : strokesXml) {
 		strokes.emplace_back();
 		strokes.back().setMode(OF_PRIMITIVE_LINE_STRIP);
 
 		// for each pt in the stroke insert a new
 		// vertex in the mesh
 		auto pts = stroke.getChildren("pt");
-		for(auto & pt: pts){
+		for (auto & pt : pts) {
 			auto x = pt.getAttribute("x").getIntValue();
 			auto y = pt.getAttribute("y").getIntValue();
-			strokes.back().addVertex({x,y,0});
+			strokes.back().addVertex({ x, y, 0 });
 		}
 	}
 
@@ -85,26 +83,26 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-	if(xmlChanged){
+void ofApp::update() {
+	if (xmlChanged) {
 		ofBuffer auxBuffer;
 		auxBuffer.set(xml.toString("  "));
 		xmlText.clear();
 		auto i = 0;
-		for(auto & line: auxBuffer.getReverseLines()){
+		for (auto & line : auxBuffer.getReverseLines()) {
 			xmlText = line + "\n" + xmlText;
 			++i;
-			if(i>58) break;
+			if (i > 58) break;
 		}
 		xmlChanged = false;
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	ofClear(bgColor);
 	ofSetColor(0);
-	for(auto & stroke: strokes){
+	for (auto & stroke : strokes) {
 		stroke.draw();
 	}
 
@@ -126,8 +124,8 @@ void ofApp::draw(){
 	ofEnableAlphaBlending();
 	ofSetColor(0, 0, 0, 200);
 
-	ofDrawRectangle(160, 0, ofGetWidth()-160, 20);
-	ofDrawRectangle(160, ofGetHeight()-20, ofGetWidth()-160, 20);
+	ofDrawRectangle(160, 0, ofGetWidth() - 160, 20);
+	ofDrawRectangle(160, ofGetHeight() - 20, ofGetWidth() - 160, 20);
 
 	//we draw our status message at the top
 	ofSetColor(240, 240, 240);
@@ -138,34 +136,32 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	if(key == 's'){
-		if(!xml.save("points.xml")){
+void ofApp::keyPressed(int key) {
+	if (key == 's') {
+		if (!xml.save("points.xml")) {
 			ofLogError() << "Couldn't save points.xml";
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 	//-------
 	//we change the background color based on
 	//the two mouse coords coming in
 	float xpct = (float)x / ofGetWidth();
 	float ypct = (float)y / ofGetHeight();
-	bgColor.r		= xpct * 255.0f;
-	bgColor.g		= ypct * 255.0f;
-	bgColor.b		= (int)(bgColor.r - bgColor.g) % 255;
+	bgColor.r = xpct * 255.0f;
+	bgColor.g = ypct * 255.0f;
+	bgColor.b = (int)(bgColor.r - bgColor.g) % 255;
 
 	bg.getChild("red").set(bgColor.r);
 	bg.getChild("green").set(bgColor.g);
@@ -177,12 +173,12 @@ void ofApp::mouseDragged(int x, int y, int button){
 	auto pt = currentStroke.appendChild("pt");
 	pt.setAttribute("x", x);
 	pt.setAttribute("y", y);
-	strokes.back().addVertex({x,y,0});
+	strokes.back().addVertex({ x, y, 0 });
 	xmlChanged = true;
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 	// Insert a new stroke tag inside drawing before the background tag
 	currentStroke = xml.getChild("drawing").insertChildBefore("stroke", bg);
 	strokes.emplace_back();
@@ -191,31 +187,25 @@ void ofApp::mousePressed(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

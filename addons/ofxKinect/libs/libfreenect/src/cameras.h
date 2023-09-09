@@ -32,5 +32,5 @@
 
 // These are called by core.c to do camera-specific initialization that needs
 // camera-specific protocol support.
-int freenect_camera_init(freenect_device *dev);
-int freenect_camera_teardown(freenect_device *dev);
+int freenect_camera_init(freenect_device * dev);
+int freenect_camera_teardown(freenect_device * dev);

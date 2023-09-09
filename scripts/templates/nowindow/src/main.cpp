@@ -1,9 +1,9 @@
-#include "ofMain.h"
-#include "ofAppNoWindow.h"
 #include "ofApp.h"
+#include "ofAppNoWindow.h"
+#include "ofMain.h"
 
 //========================================================================
-int main( ){
+int main() {
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	// this kicks off the running of my app
@@ -11,5 +11,4 @@ int main( ){
 	// pass in width and height too:
 	ofRunApp(window, app);
 	ofRunMainLoop();
-
 }

@@ -1,6 +1,5 @@
 #include "ofApp.h"
 
-
 /*
 
  This example demonstrates a simple game. We have a GameEvent class that is
@@ -19,10 +18,9 @@
  */
 
 //--------------------------------------------------------------
-bool ofApp::shouldRemoveBullet(Bullet &b) {
+bool ofApp::shouldRemoveBullet(Bullet & b) {
 
-	if(b.bRemove) return true;
-
+	if (b.bRemove) return true;
 
 	bool bRemove = false;
 
@@ -30,17 +28,15 @@ bool ofApp::shouldRemoveBullet(Bullet &b) {
 	ofRectangle rec = ofGetCurrentViewport();
 
 	// check if the bullet is inside the world
-	if(rec.inside(b.pos) == false) {
+	if (rec.inside(b.pos) == false) {
 		bRemove = true;
 	}
-
-
 
 	return bRemove;
 }
 
 //--------------------------------------------------------------
-bool ofApp::shouldRemoveBug(Bug &b) {
+bool ofApp::shouldRemoveBug(Bug & b) {
 	return b.bRemove;
 }
 
@@ -56,32 +52,31 @@ void ofApp::setup() {
 
 	// add some random holes for the bugs to come out
 	int nHoldes = 10;
-	for(int i=0; i<nHoldes; i++) {
+	for (int i = 0; i < nHoldes; i++) {
 		glm::vec2 p(ofRandomWidth(), ofRandomHeight());
 		holes.push_back(p);
 	}
 
 	// listen to any of the events for the game
 	ofAddListener(GameEvent::events, this, &ofApp::gameEvent);
-
 }
 
 //--------------------------------------------------------------
-void ofApp::gameEvent(GameEvent &e) {
+void ofApp::gameEvent(GameEvent & e) {
 
-	cout << "Game Event: "+e.message << endl;
+	cout << "Game Event: " + e.message << endl;
 	e.bug->timeBugKilled = ofGetElapsedTimef();
 	e.bug->bSquashed = true;
 
 	e.bullet->bRemove = true;
 
-	bugsKilled ++;
+	bugsKilled++;
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
 
-	if((int)ofRandom(0, 20)==10) {
+	if ((int)ofRandom(0, 20) == 10) {
 
 		int randomHole = ofRandom(holes.size());
 
@@ -91,88 +86,80 @@ void ofApp::update() {
 		bugs.push_back(newBug);
 	}
 
-	for(unsigned int i=0; i<bugs.size(); i++) {
+	for (unsigned int i = 0; i < bugs.size(); i++) {
 
 		bugs[i].update();
 
 		// bug pos and size
-		float   size = bugs[i].size;
-		glm::vec2 pos  = bugs[i].pos;
+		float size = bugs[i].size;
+		glm::vec2 pos = bugs[i].pos;
 
 		// wrap the bugs around the screen
-		if(pos.x > ofGetWidth()-size)  bugs[i].pos.x = -size;
-		if(pos.x < -size)              bugs[i].pos.x = ofGetWidth()-size;
-		if(pos.y > ofGetHeight()+size) bugs[i].pos.y = -size;
-		if(pos.y < -size)              bugs[i].pos.y = ofGetHeight()-size;
-
+		if (pos.x > ofGetWidth() - size) bugs[i].pos.x = -size;
+		if (pos.x < -size) bugs[i].pos.x = ofGetWidth() - size;
+		if (pos.y > ofGetHeight() + size) bugs[i].pos.y = -size;
+		if (pos.y < -size) bugs[i].pos.y = ofGetHeight() - size;
 	}
 
 	// check if we should remove any bugs
 	ofRemove(bugs, shouldRemoveBug);
 
 	// update the bullets
-	for(unsigned int i=0; i<bullets.size(); i++) {
+	for (unsigned int i = 0; i < bullets.size(); i++) {
 		bullets[i].update();
 	}
 
 	// check if we want to remove the bullet
 	ofRemove(bullets, shouldRemoveBullet);
 
-
 	// did we hit a bug loop we are checking to see if a bullet
 	// hits a bug. if so we are going to launch an event for the game
-	for(unsigned int i=0; i<bullets.size(); i++) {
-		for(unsigned int j=0; j<bugs.size(); j++) {
+	for (unsigned int i = 0; i < bullets.size(); i++) {
+		for (unsigned int j = 0; j < bugs.size(); j++) {
 
-			glm::vec2 a       = bullets[i].pos;
-			glm::vec2 b       = bugs[j].pos;
-			float   minSize = bugs[j].size;
+			glm::vec2 a = bullets[i].pos;
+			glm::vec2 b = bugs[j].pos;
+			float minSize = bugs[j].size;
 
-			if(glm::distance(a,b) < minSize) {
+			if (glm::distance(a, b) < minSize) {
 
 				static GameEvent newEvent;
 				newEvent.message = "BUG HIT";
-				newEvent.bug     = &bugs[j];
-				newEvent.bullet  = &bullets[i];
+				newEvent.bug = &bugs[j];
+				newEvent.bullet = &bullets[i];
 
 				ofNotifyEvent(GameEvent::events, newEvent);
 			}
-
 		}
 	}
-
-
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	// draw the bug holes
-	for(unsigned int i=0; i<holes.size(); i++) {
+	for (unsigned int i = 0; i < holes.size(); i++) {
 		ofSetColor(100);
 		ofDrawCircle(holes[i], 10);
 		ofSetColor(40);
 		ofDrawCircle(holes[i], 7);
 	}
 
-	for(unsigned int i=0; i<bugs.size(); i++) {
+	for (unsigned int i = 0; i < bugs.size(); i++) {
 		bugs[i].draw();
 	}
 
 	// draw the bullets
-	for(unsigned int i=0; i<bullets.size(); i++) {
+	for (unsigned int i = 0; i < bullets.size(); i++) {
 		bullets[i].draw();
 	}
 
-
-
 	// game stats
 	ofSetColor(10);
-	ofDrawBitmapString("Bullets "+ofToString(bullets.size())+"\nBugs Killed: "+ofToString(bugsKilled), 20, 20);
-
+	ofDrawBitmapString("Bullets " + ofToString(bullets.size()) + "\nBugs Killed: " + ofToString(bugsKilled), 20, 20);
 
 	// gun
-	glm::vec2 gunPos(ofGetWidth()/2, ofGetHeight()-20);
+	glm::vec2 gunPos(ofGetWidth() / 2, ofGetHeight() - 20);
 	glm::vec2 mousePos(ofGetMouseX(), ofGetMouseY());
 
 	// get the vector from the mouse to gun
@@ -197,7 +184,7 @@ void ofApp::draw(){
 	ofSetColor(100);
 	ofDrawRectangle(-10, 90, 20, 10);
 
-	if(bFire) {
+	if (bFire) {
 		ofSetColor(220, 0, 0);
 		ofDrawRectangle(-10, 97, 20, 3);
 	}
@@ -205,19 +192,18 @@ void ofApp::draw(){
 
 	ofSetColor(255);
 	ofDrawCircle(gunPos.x, gunPos.y, 2);
-
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-	if(key == ' ') {
-		if(bullets.size() < maxBullets) {
+	if (key == ' ') {
+		if (bullets.size() < maxBullets) {
 			bFire = true;
 
 			Bullet b;
 
 			// the two points for the mouse and gun
-			glm::vec2 gunPt(ofGetWidth()/2, ofGetHeight()-20);
+			glm::vec2 gunPt(ofGetWidth() / 2, ofGetHeight() - 20);
 			glm::vec2 mousePt(ofGetMouseX(), ofGetMouseY());
 
 			// the vector between the two, and normalized = 0.0 - 1.0
@@ -227,8 +213,8 @@ void ofApp::keyPressed(int key) {
 			// and the vec scaled by 100
 			glm::vec2 bulletPos = gunPt + (vec * 100);
 
-			b.pos     = bulletPos;
-			b.vel     = vec * ofRandom(9, 12); // randomly make it faster
+			b.pos = bulletPos;
+			b.vel = vec * ofRandom(9, 12); // randomly make it faster
 			b.bRemove = false;
 
 			// add the bullets to the array
@@ -243,46 +229,37 @@ void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

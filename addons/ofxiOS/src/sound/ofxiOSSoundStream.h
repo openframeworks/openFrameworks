@@ -11,50 +11,49 @@
 
 class ofxiOSSoundStream : public ofBaseSoundStream {
 
-	public:
-		ofxiOSSoundStream();
-		~ofxiOSSoundStream();
-		
-		/// these are not implemented on iOS
-		std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api) const;
-		void setDeviceID(int deviceID);
+public:
+	ofxiOSSoundStream();
+	~ofxiOSSoundStream();
 
-		void setInput(ofBaseSoundInput * soundInput);
-		void setOutput(ofBaseSoundOutput * soundOutput);
-		
-		/// currently, the number of buffers is always 1 on iOS and setting nBuffers has no effect
-		/// the max buffersize is 4096 
-		bool setup(const ofSoundStreamSettings & settings);
-	
-		ofSoundDevice getInDevice() const{
-			return ofSoundDevice();
-		}
-		
-		ofSoundDevice getOutDevice() const{
-			return ofSoundDevice();
-		}
-	
-		void start();
-		void stop();
-		void close();
-		
-		// not implemented on iOS, always returns 0
-		long unsigned long getTickCount() const;
-	
-		int getNumInputChannels() const;
-		int getNumOutputChannels() const;
-		int getSampleRate() const;
-		int getBufferSize() const;
-		int getDeviceID() const;
-	
-		static bool setMixWithOtherApps(bool bMix);
-		
-	private:
+	/// these are not implemented on iOS
+	std::vector<ofSoundDevice> getDeviceList(ofSoundDevice::Api api) const;
+	void setDeviceID(int deviceID);
 
-		void * soundInputStream;
-		void * soundOutputStream;
+	void setInput(ofBaseSoundInput * soundInput);
+	void setOutput(ofBaseSoundOutput * soundOutput);
 
-		ofSoundStreamSettings settings;
+	/// currently, the number of buffers is always 1 on iOS and setting nBuffers has no effect
+	/// the max buffersize is 4096
+	bool setup(const ofSoundStreamSettings & settings);
+
+	ofSoundDevice getInDevice() const {
+		return ofSoundDevice();
+	}
+
+	ofSoundDevice getOutDevice() const {
+		return ofSoundDevice();
+	}
+
+	void start();
+	void stop();
+	void close();
+
+	// not implemented on iOS, always returns 0
+	long unsigned long getTickCount() const;
+
+	int getNumInputChannels() const;
+	int getNumOutputChannels() const;
+	int getSampleRate() const;
+	int getBufferSize() const;
+	int getDeviceID() const;
+
+	static bool setMixWithOtherApps(bool bMix);
+
+private:
+	void * soundInputStream;
+	void * soundOutputStream;
+
+	ofSoundStreamSettings settings;
 };
 
 #define ofxiPhoneSoundStream ofxiOSSoundStream

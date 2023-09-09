@@ -11,13 +11,13 @@
 
 class ofxiOSCoreHaptics {
 public:
-    bool sendParameters(float intensity, float sharpness);
-    void setup(); // will be lazy-called; usefull in ofApp::setup() to prevent small engine hiccup
-    
+	bool sendParameters(float intensity, float sharpness);
+	void setup(); // will be lazy-called; usefull in ofApp::setup() to prevent small engine hiccup
+
 private:
-    bool prepare_engine();
-    bool is_vibrating() ;
-    bool is_vibrating_ {false};
-    CHHapticEngine * engine_;
-    id<CHHapticAdvancedPatternPlayer> player_;
+	bool prepare_engine();
+	bool is_vibrating();
+	bool is_vibrating_ { false };
+	CHHapticEngine * engine_;
+	id<CHHapticAdvancedPatternPlayer> player_;
 };

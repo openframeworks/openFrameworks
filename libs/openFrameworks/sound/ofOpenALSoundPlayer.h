@@ -3,18 +3,18 @@
 #include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_OPENAL
-#include "ofSoundBaseTypes.h"
-#include "ofThread.h"
+	#include "ofSoundBaseTypes.h"
+	#include "ofThread.h"
 
 typedef unsigned int ALuint;
 
-#include "kiss_fft.h"
-#include "kiss_fftr.h"
-#include <sndfile.h>
+	#include "kiss_fft.h"
+	#include "kiss_fftr.h"
+	#include <sndfile.h>
 
-#ifdef OF_USING_MPG123
-	typedef struct mpg123_handle_struct mpg123_handle;
-#endif
+	#ifdef OF_USING_MPG123
+typedef struct mpg123_handle_struct mpg123_handle;
+	#endif
 
 class ofEventArgs;
 
@@ -28,124 +28,119 @@ class ofEventArgs;
 // 		interesting:
 //		http://www.compuphase.com/mp3/mp3loops.htm
 
-
 // ---------------------------------------------------------------------------- SOUND SYSTEM FMOD
 
 // --------------------- global functions:
 void ofFmodSoundStopAll();
 void ofFmodSoundSetVolume(float vol);
-void ofOpenALSoundUpdate();						// calls FMOD update.
-float * ofFmodSoundGetSpectrum(int nBands);		// max 512...
-
+void ofOpenALSoundUpdate(); // calls FMOD update.
+float * ofFmodSoundGetSpectrum(int nBands); // max 512...
 
 // --------------------- player functions:
 class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 
-	public:
+public:
+	ofOpenALSoundPlayer();
+	virtual ~ofOpenALSoundPlayer();
 
-		ofOpenALSoundPlayer();
-		virtual ~ofOpenALSoundPlayer();
+	bool load(const of::filesystem::path & fileName, bool stream = false);
+	void unload();
+	void play();
+	void stop();
 
-        bool load(const of::filesystem::path& fileName, bool stream = false);
-		void unload();
-		void play();
-		void stop();
+	void setVolume(float vol);
+	void setPan(float vol); // -1 to 1
+	void setSpeed(float spd);
+	void setPaused(bool bP);
+	void setLoop(bool bLp);
+	void setMultiPlay(bool bMp);
+	void setPosition(float pct); // 0 = start, 1 = end;
+	void setPositionMS(int ms);
 
-		void setVolume(float vol);
-		void setPan(float vol); // -1 to 1
-		void setSpeed(float spd);
-		void setPaused(bool bP);
-		void setLoop(bool bLp);
-		void setMultiPlay(bool bMp);
-		void setPosition(float pct); // 0 = start, 1 = end;
-		void setPositionMS(int ms);
+	float getPosition() const;
+	int getPositionMS() const;
+	bool isPlaying() const;
+	float getSpeed() const;
+	float getPan() const;
+	float getVolume() const;
+	bool isPaused() const;
+	bool isLoaded() const;
 
+	static void initialize();
+	static void close();
 
-		float getPosition() const;
-		int getPositionMS() const;
-		bool isPlaying() const;
-		float getSpeed() const;
-		float getPan() const;
-        float getVolume() const;
-		bool isPaused() const;
-		bool isLoaded() const;
+	float * getSpectrum(int bands);
 
-		static void initialize();
-		static void close();
+	static float * getSystemSpectrum(int bands);
 
-		float * getSpectrum(int bands);
+protected:
+	void threadedFunction();
 
-		static float * getSystemSpectrum(int bands);
+private:
+	friend void ofOpenALSoundUpdate();
+	void update(ofEventArgs & args);
+	void initFFT(int bands);
+	float * getCurrentBufferSum(int size);
 
-	protected:
-		void threadedFunction();
+	static void createWindow(int size);
+	static void runWindow(std::vector<float> & signal);
+	static void initSystemFFT(int bands);
 
-	private:
-		friend void ofOpenALSoundUpdate();
-		void update(ofEventArgs & args);
-		void initFFT(int bands);
-		float * getCurrentBufferSum(int size);
+	bool sfReadFile(const of::filesystem::path & path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer);
+	bool sfStream(const of::filesystem::path & path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer);
+	#ifdef OF_USING_MPG123
+	bool mpg123ReadFile(const of::filesystem::path & path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer);
+	bool mpg123Stream(const of::filesystem::path & path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer);
+	#endif
 
-		static void createWindow(int size);
-		static void runWindow(std::vector<float> & signal);
-		static void initSystemFFT(int bands);
+	bool readFile(const of::filesystem::path & fileName, std::vector<short> & buffer);
+	bool stream(const of::filesystem::path & fileName, std::vector<short> & buffer);
 
-        bool sfReadFile(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
-        bool sfStream(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
-#ifdef OF_USING_MPG123
-        bool mpg123ReadFile(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
-        bool mpg123Stream(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer);
-#endif
+	bool isStreaming;
+	bool bMultiPlay;
+	bool bLoop;
+	bool bLoadedOk;
+	bool bPaused;
+	float pan; // 0 - 1
+	float volume; // 0 - 1
+	float internalFreq; // 44100 ?
+	float speed; // -n to n, 1 = normal, -1 backwards
+	unsigned int length; // in samples;
 
-        bool readFile(const of::filesystem::path& fileName,std::vector<short> & buffer);
-        bool stream(const of::filesystem::path& fileName, std::vector<short> & buffer);
+	static std::vector<float> window;
+	static float windowSum;
 
-		bool isStreaming;
-		bool bMultiPlay;
-		bool bLoop;
-		bool bLoadedOk;
-		bool bPaused;
-		float pan; // 0 - 1
-		float volume; // 0 - 1
-		float internalFreq; // 44100 ?
-		float speed; // -n to n, 1 = normal, -1 backwards
-		unsigned int length; // in samples;
+	int channels;
+	float duration; //in secs
+	int samplerate;
+	std::vector<ALuint> buffers;
+	std::vector<ALuint> sources;
 
-		static std::vector<float> window;
-		static float windowSum;
+	// fft structures
+	std::vector<std::vector<float>> fftBuffers;
+	kiss_fftr_cfg fftCfg;
+	std::vector<float> windowedSignal;
+	std::vector<float> bins;
+	std::vector<kiss_fft_cpx> cx_out;
 
-		int channels;
-		float duration; //in secs
-		int samplerate;
-		std::vector<ALuint> buffers;
-		std::vector<ALuint> sources;
+	static kiss_fftr_cfg systemFftCfg;
+	static std::vector<float> systemWindowedSignal;
+	static std::vector<float> systemBins;
+	static std::vector<kiss_fft_cpx> systemCx_out;
 
-		// fft structures
-		std::vector<std::vector<float> > fftBuffers;
-		kiss_fftr_cfg fftCfg;
-		std::vector<float> windowedSignal;
-		std::vector<float> bins;
-		std::vector<kiss_fft_cpx> cx_out;
+	SNDFILE * streamf;
+	size_t stream_samples_read;
+	#ifdef OF_USING_MPG123
+	mpg123_handle * mp3streamf;
+	int stream_encoding;
+	#endif
+	int mp3_buffer_size;
+	int stream_subformat;
+	double stream_scale;
+	std::vector<short> buffer;
+	std::vector<float> fftAuxBuffer;
 
-
-		static kiss_fftr_cfg systemFftCfg;
-		static std::vector<float> systemWindowedSignal;
-		static std::vector<float> systemBins;
-		static std::vector<kiss_fft_cpx> systemCx_out;
-
-		SNDFILE* streamf;
-		size_t stream_samples_read;
-#ifdef OF_USING_MPG123
-		mpg123_handle * mp3streamf;
-		int stream_encoding;
-#endif
-		int mp3_buffer_size;
-		int stream_subformat;
-		double stream_scale;
-		std::vector<short> buffer;
-		std::vector<float> fftAuxBuffer;
-
-		bool stream_end;
+	bool stream_end;
 };
 
 #endif

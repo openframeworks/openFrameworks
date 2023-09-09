@@ -24,14 +24,13 @@
 
 #include "ofApp.h"
 
-
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
 
-	ofBackground(255,0,130);
+	ofBackground(255, 0, 130);
 
 	buttonState = "digital pin:";
 	potValue = "analog pin:";
@@ -49,14 +48,13 @@ void ofApp::setup(){
 	// the arduino is ready to receive commands and it is safe to
 	// call setupArduino()
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
-	bSetupArduino	= false;	// flag so we setup arduino when its ready, you don't need to touch this :)
+	bSetupArduino = false; // flag so we setup arduino when its ready, you don't need to touch this :)
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 	updateArduino();
-
 }
 
 //--------------------------------------------------------------
@@ -79,7 +77,7 @@ void ofApp::setupArduino(const int & version) {
 
 	// set pins D2 and A5 to digital input
 	ard.sendDigitalPinMode(2, ARD_INPUT);
-	ard.sendDigitalPinMode(19, ARD_INPUT);  // pin 21 if using StandardFirmata from Arduino 0022 or older
+	ard.sendDigitalPinMode(19, ARD_INPUT); // pin 21 if using StandardFirmata from Arduino 0022 or older
 
 	// set pin A0 to analog input
 	ard.sendAnalogPinReporting(0, ARD_ANALOG);
@@ -87,7 +85,7 @@ void ofApp::setupArduino(const int & version) {
 	// set pin D13 as digital output
 	ard.sendDigitalPinMode(13, ARD_OUTPUT);
 	// set pin A4 as digital output
-	ard.sendDigitalPinMode(18, ARD_OUTPUT);  // pin 20 if using StandardFirmata from Arduino 0022 or older
+	ard.sendDigitalPinMode(18, ARD_OUTPUT); // pin 20 if using StandardFirmata from Arduino 0022 or older
 
 	// set pin D11 as PWM (analog output)
 	ard.sendDigitalPinMode(11, ARD_PWM);
@@ -102,7 +100,7 @@ void ofApp::setupArduino(const int & version) {
 }
 
 //--------------------------------------------------------------
-void ofApp::updateArduino(){
+void ofApp::updateArduino() {
 
 	// update the arduino, get any data or messages.
 	// the call to ard.update() is required
@@ -111,9 +109,8 @@ void ofApp::updateArduino(){
 	// do not send anything until the arduino has been set up
 	if (bSetupArduino) {
 		// fade the led connected to pin D11
-		ard.sendPwm(11, (int)(128 + 128 * sin(ofGetElapsedTimef())));   // pwm...
+		ard.sendPwm(11, (int)(128 + 128 * sin(ofGetElapsedTimef()))); // pwm...
 	}
-
 }
 
 // digital pin event handler, called whenever a digital pin value has changed
@@ -136,10 +133,9 @@ void ofApp::analogPinChanged(const int & pinNum) {
 	potValue = "analog pin: " + ofToString(pinNum) + " = " + ofToString(ard.getAnalog(pinNum));
 }
 
-
 //--------------------------------------------------------------
-void ofApp::draw(){
-	bgImage.draw(0,0);
+void ofApp::draw() {
+	bgImage.draw(0, 0);
 
 	ofEnableAlphaBlending();
 	ofSetColor(0, 0, 0, 127);
@@ -147,86 +143,77 @@ void ofApp::draw(){
 	ofDisableAlphaBlending();
 
 	ofSetColor(255, 255, 255);
-	if (!bSetupArduino){
+	if (!bSetupArduino) {
 		font.drawString("arduino not ready...\n", 515, 40);
 	} else {
-		font.drawString(potValue + "\n" + buttonState +
-						"\nsending pwm: " + ofToString((int)(128 + 128 * sin(ofGetElapsedTimef()))), 515, 40);
+		font.drawString(potValue + "\n" + buttonState + "\nsending pwm: " + ofToString((int)(128 + 128 * sin(ofGetElapsedTimef()))), 515, 40);
 
 		ofSetColor(64, 64, 64);
 		smallFont.drawString("If a servo is attached, use the left arrow key to rotate "
-							 "\ncounterclockwise and the right arrow key to rotate clockwise.", 200, 550);
+							 "\ncounterclockwise and the right arrow key to rotate clockwise.",
+			200, 550);
 		ofSetColor(255, 255, 255);
-
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){
+void ofApp::keyPressed(int key) {
 	switch (key) {
-		case OF_KEY_RIGHT:
-			// rotate servo head to 180 degrees
-			ard.sendServo(9, 180, false);
-			ard.sendDigital(18, ARD_HIGH);  // pin 20 if using StandardFirmata from Arduino 0022 or older
-			break;
-		case OF_KEY_LEFT:
-			// rotate servo head to 0 degrees
-			ard.sendServo(9, 0, false);
-			ard.sendDigital(18, ARD_LOW);  // pin 20 if using StandardFirmata from Arduino 0022 or older
-			break;
-		default:
-			break;
+	case OF_KEY_RIGHT:
+		// rotate servo head to 180 degrees
+		ard.sendServo(9, 180, false);
+		ard.sendDigital(18, ARD_HIGH); // pin 20 if using StandardFirmata from Arduino 0022 or older
+		break;
+	case OF_KEY_LEFT:
+		// rotate servo head to 0 degrees
+		ard.sendServo(9, 0, false);
+		ard.sendDigital(18, ARD_LOW); // pin 20 if using StandardFirmata from Arduino 0022 or older
+		break;
+	default:
+		break;
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 	// turn on the onboard LED when the application window is clicked
 	ard.sendDigital(13, ARD_HIGH);
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void ofApp::mouseReleased(int x, int y, int button) {
 	// turn off the onboard LED when the application window is clicked
 	ard.sendDigital(13, ARD_LOW);
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

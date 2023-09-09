@@ -3,23 +3,22 @@
 #include "ofxtvOS.h"
 
 class ofApp : public ofxiOSApp {
-	public:
-		void setup();
-		void update();
-		void draw();
-		void exit();
-	
-		void touchDown(ofTouchEventArgs & touch);
-		void touchMoved(ofTouchEventArgs & touch);
-		void touchUp(ofTouchEventArgs & touch);
-		void touchDoubleTap(ofTouchEventArgs & touch);
-		void touchCancelled(ofTouchEventArgs & touch);
+public:
+	void setup();
+	void update();
+	void draw();
+	void exit();
 
+	void touchDown(ofTouchEventArgs & touch);
+	void touchMoved(ofTouchEventArgs & touch);
+	void touchUp(ofTouchEventArgs & touch);
+	void touchDoubleTap(ofTouchEventArgs & touch);
+	void touchCancelled(ofTouchEventArgs & touch);
 
-		void lostFocus();
-		void gotFocus();
-		void gotMemoryWarning();
-		
+	void lostFocus();
+	void gotFocus();
+	void gotMemoryWarning();
+
 	ofImage ofLogo; // the OF logo
 	ofLight light; // creates a light and enables lighting
 	ofEasyCam cam; // add mouse controls for camera movement

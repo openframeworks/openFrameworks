@@ -6,42 +6,41 @@
 #include "ofxOpenCv.h"
 #include <vector>
 
-class ofApp : public ofxAndroidApp{
-	
-	public:
-		
-		void setup();
-		void update();
-		void draw();
+class ofApp : public ofxAndroidApp {
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void windowResized(int w, int h);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void touchDown(int x, int y, int id);
-		void touchMoved(int x, int y, int id);
-		void touchUp(int x, int y, int id);
-		void touchDoubleTap(int x, int y, int id);
-		void touchCancelled(int x, int y, int id);
-		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-		void pause();
-		void stop();
-		void resume();
-		void reloadTextures();
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
 
-		bool backPressed();
-		void okPressed();
-		void cancelPressed();
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
 
-		ofVideoGrabber grabber;
-		ofxCvColorImage colorCv;
-		ofxCvColorImage colorCvSmall;
-		ofxCvGrayscaleImage grayCv;
-		ofxCvHaarFinder faceFinder;
-		std::vector<ofxCvBlob> faces;
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
 
-		int one_second_time;
-		int camera_fps;
-		int frames_one_sec;
+	ofVideoGrabber grabber;
+	ofxCvColorImage colorCv;
+	ofxCvColorImage colorCvSmall;
+	ofxCvGrayscaleImage grayCv;
+	ofxCvHaarFinder faceFinder;
+	std::vector<ofxCvBlob> faces;
+
+	int one_second_time;
+	int camera_fps;
+	int frames_one_sec;
 };

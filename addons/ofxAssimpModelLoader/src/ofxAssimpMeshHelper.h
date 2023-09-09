@@ -5,26 +5,25 @@
 
 #pragma once
 
-#include "ofMaterial.h"
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include "ofxAssimpTexture.h"
-#include "ofVbo.h"
-#include "ofMesh.h"
 #include "glm/mat4x4.hpp"
+#include "ofMaterial.h"
+#include "ofMesh.h"
+#include "ofVbo.h"
+#include "ofxAssimpTexture.h"
+#include <assimp/cimport.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 struct aiMesh;
 
 class ofxAssimpMeshHelper {
 
 public:
-
 	void addTexture(ofxAssimpTexture & aAssimpTex);
 	bool hasTexture(aiTextureType aTexType = aiTextureType_DIFFUSE);
 
 	ofTexture & getTextureRef(aiTextureType aTexType = aiTextureType_DIFFUSE);
-	std::vector<std::shared_ptr<ofxAssimpTexture>> & getAllMeshTextures(){ return meshTextures; }
+	std::vector<std::shared_ptr<ofxAssimpTexture>> & getAllMeshTextures() { return meshTextures; }
 
 	aiMesh * mesh = NULL; // pointer to the aiMesh we represent.
 
@@ -52,6 +51,5 @@ public:
 
 protected:
 	//for normal, specular, etc - we include the diffuse too with a null deleter
-	std::vector <std::shared_ptr<ofxAssimpTexture>> meshTextures;
-
+	std::vector<std::shared_ptr<ofxAssimpTexture>> meshTextures;
 };

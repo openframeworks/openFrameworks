@@ -5,35 +5,34 @@
 
 #include "ofxAccelerometer.h"
 
-class ofApp : public ofxAndroidApp{
-	
-	public:
-		
-		void setup();
-		void update();
-		void draw();
+class ofApp : public ofxAndroidApp {
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void windowResized(int w, int h);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void touchDown(int x, int y, int id);
-		void touchMoved(int x, int y, int id);
-		void touchUp(int x, int y, int id);
-		void touchDoubleTap(int x, int y, int id);
-		void touchCancelled(int x, int y, int id);
-		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-		void pause();
-		void stop();
-		void resume();
-		void reloadTextures();
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
 
-		bool backPressed();
-		void okPressed();
-		void cancelPressed();
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
 
-		ofTrueTypeFont font;
-		glm::vec3 accel, normAccel;
-		string messages[3];
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
+
+	ofTrueTypeFont font;
+	glm::vec3 accel, normAccel;
+	string messages[3];
 };

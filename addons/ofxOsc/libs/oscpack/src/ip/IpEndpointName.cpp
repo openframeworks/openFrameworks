@@ -40,51 +40,45 @@
 
 #include "NetworkingUtils.h"
 
-
-namespace osc{
-unsigned long IpEndpointName::GetHostByName( const char *s )
-{
+namespace osc {
+unsigned long IpEndpointName::GetHostByName(const char * s) {
 	return osc::GetHostByName(s);
 }
 
-
-void IpEndpointName::AddressAsString( char *s ) const
-{
-	if( address == ANY_ADDRESS ){
-		std::sprintf( s, "<any>" );
-	}else{
-		std::sprintf( s, "%d.%d.%d.%d",
-				(int)((address >> 24) & 0xFF),
-				(int)((address >> 16) & 0xFF),
-				(int)((address >> 8) & 0xFF),
-				(int)(address & 0xFF) );
+void IpEndpointName::AddressAsString(char * s) const {
+	if (address == ANY_ADDRESS) {
+		std::sprintf(s, "<any>");
+	} else {
+		std::sprintf(s, "%d.%d.%d.%d",
+			(int)((address >> 24) & 0xFF),
+			(int)((address >> 16) & 0xFF),
+			(int)((address >> 8) & 0xFF),
+			(int)(address & 0xFF));
 	}
 }
 
-
-void IpEndpointName::AddressAndPortAsString( char *s ) const
-{
-	if( port == ANY_PORT ){
-		if( address == ANY_ADDRESS ){
-			std::sprintf( s, "<any>:<any>" );
-		}else{
-			std::sprintf( s, "%d.%d.%d.%d:<any>",
+void IpEndpointName::AddressAndPortAsString(char * s) const {
+	if (port == ANY_PORT) {
+		if (address == ANY_ADDRESS) {
+			std::sprintf(s, "<any>:<any>");
+		} else {
+			std::sprintf(s, "%d.%d.%d.%d:<any>",
 				(int)((address >> 24) & 0xFF),
 				(int)((address >> 16) & 0xFF),
 				(int)((address >> 8) & 0xFF),
-				(int)(address & 0xFF) );
+				(int)(address & 0xFF));
 		}
-	}else{
-		if( address == ANY_ADDRESS ){
-			std::sprintf( s, "<any>:%d", port );
-		}else{
-			std::sprintf( s, "%d.%d.%d.%d:%d",
+	} else {
+		if (address == ANY_ADDRESS) {
+			std::sprintf(s, "<any>:%d", port);
+		} else {
+			std::sprintf(s, "%d.%d.%d.%d:%d",
 				(int)((address >> 24) & 0xFF),
 				(int)((address >> 16) & 0xFF),
 				(int)((address >> 8) & 0xFF),
 				(int)(address & 0xFF),
-				(int)port );
+				(int)port);
 		}
-	}	
+	}
 }
 }

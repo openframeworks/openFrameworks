@@ -1,36 +1,36 @@
 #pragma once
 
-#include "ofGraphicsBaseTypes.h"
 #include "of3dGraphics.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofPath.h"
 
-class ofRendererCollection: public ofBaseRenderer{
+class ofRendererCollection : public ofBaseRenderer {
 public:
-	 ofRendererCollection():graphics3d(this){}
-	 ~ofRendererCollection(){}
+	ofRendererCollection()
+		: graphics3d(this) { }
+	~ofRendererCollection() { }
 
-	 static const std::string TYPE;
-	 const std::string & getType(){ return TYPE; }
+	static const std::string TYPE;
+	const std::string & getType() { return TYPE; }
 
-	 std::shared_ptr<ofBaseGLRenderer> getGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> getGLRenderer();
 
-	 bool rendersPathPrimitives();
+	bool rendersPathPrimitives();
 
-	 void startRender();
+	void startRender();
 
-	 void finishRender();
+	void finishRender();
 
+	using ofBaseRenderer::draw;
 
-	 using ofBaseRenderer::draw;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofPath & shape) const;
 
-	 void draw(const ofPolyline & poly) const;
-	 void draw(const ofPath & shape) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
 
-	 void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const of3dPrimitive & model, ofPolyRenderMode renderType) const;
 
-	void draw(const  of3dPrimitive& model, ofPolyRenderMode renderType ) const ;
-
-	void draw(const  ofNode& node) const ;
+	void draw(const ofNode & node) const;
 
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
@@ -52,9 +52,7 @@ public:
 		}
 	}*/
 
-
 	glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
-
 
 	glm::mat4 getCurrentOrientationMatrix() const;
 
@@ -62,57 +60,57 @@ public:
 
 	//--------------------------------------------
 	// transformations
-	 void pushView();
+	void pushView();
 
-	 void popView();
+	void popView();
 	// setup matrices and viewport (upto you to push and pop view before and after)
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
 
-	 void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true);
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip = true);
 
-	 void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 
-	 void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
+	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 
-	 ofRectangle getCurrentViewport() const;
+	ofRectangle getCurrentViewport() const;
 
-	 ofRectangle getNativeViewport() const;
+	ofRectangle getNativeViewport() const;
 
-	 int getViewportWidth() const;
-	 int getViewportHeight() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
 
-	 void setCoordHandedness(ofHandednessType handedness);
-	 ofHandednessType getCoordHandedness() const;
+	void setCoordHandedness(ofHandednessType handedness);
+	ofHandednessType getCoordHandedness() const;
 
 	//our openGL wrappers
-	 void pushMatrix();
-	 void popMatrix();
-	 void translate(float x, float y, float z = 0);
-	 void translate(const glm::vec3 & p);
-	 void scale(float xAmnt, float yAmnt, float zAmnt = 1);
+	void pushMatrix();
+	void popMatrix();
+	void translate(float x, float y, float z = 0);
+	void translate(const glm::vec3 & p);
+	void scale(float xAmnt, float yAmnt, float zAmnt = 1);
 
-	 void rotateDeg(float degrees, float vecX, float vecY, float vecZ);
-	 void rotateXDeg(float degrees);
-	 void rotateYDeg(float degrees);
-	 void rotateZDeg(float degrees);
-	 void rotateDeg(float degrees);
+	void rotateDeg(float degrees, float vecX, float vecY, float vecZ);
+	void rotateXDeg(float degrees);
+	void rotateYDeg(float degrees);
+	void rotateZDeg(float degrees);
+	void rotateDeg(float degrees);
 
-	 void rotateRad(float radians, float vecX, float vecY, float vecZ);
-	 void rotateXRad(float radians);
-	 void rotateYRad(float radians);
-	 void rotateZRad(float radians);
-	 void rotateRad(float radians);
-	void loadIdentityMatrix (void);
+	void rotateRad(float radians, float vecX, float vecY, float vecZ);
+	void rotateXRad(float radians);
+	void rotateYRad(float radians);
+	void rotateZRad(float radians);
+	void rotateRad(float radians);
+	void loadIdentityMatrix(void);
 
-	void loadMatrix (const glm::mat4 & m);
+	void loadMatrix(const glm::mat4 & m);
 
-	void loadMatrix (const float * m);
+	void loadMatrix(const float * m);
 
-	void multMatrix (const glm::mat4 & m);
+	void multMatrix(const glm::mat4 & m);
 
-	void multMatrix (const float * m);
+	void multMatrix(const float * m);
 
 	void setOrientation(ofOrientation orientation, bool vflip);
 
@@ -120,17 +118,16 @@ public:
 
 	void matrixMode(ofMatrixMode mode);
 
-	void loadViewMatrix(const glm::mat4& m);
+	void loadViewMatrix(const glm::mat4 & m);
 
-	void multViewMatrix(const glm::mat4& m);
+	void multViewMatrix(const glm::mat4 & m);
 
 	glm::mat4 getCurrentViewMatrix() const;
 
-
 	// screen coordinate things / default gl values
-	 void setupGraphicDefaults();
+	void setupGraphicDefaults();
 
-	 void setupScreen();
+	void setupScreen();
 
 	// color options
 	void setColor(int r, int g, int b);
@@ -143,7 +140,7 @@ public:
 
 	void setColor(int gray);
 
-	void setHexColor( int hexColor );
+	void setHexColor(int hexColor);
 
 	// bg color
 	ofColor getBackgroundColor();
@@ -156,17 +153,17 @@ public:
 
 	void background(float brightness);
 
-	void background(int hexColor, float _a=255.0f);
+	void background(int hexColor, float _a = 255.0f);
 
-	void background(int r, int g, int b, int a=255);
+	void background(int r, int g, int b, int a = 255);
 
 	void setBackgroundAuto(bool bManual);
 
 	void clear();
 
-	void clear(float r, float g, float b, float a=0);
+	void clear(float r, float g, float b, float a = 0);
 
-	void clear(float brightness, float a=0);
+	void clear(float brightness, float a = 0);
 
 	void clearAlpha();
 
@@ -231,7 +228,7 @@ public:
 
 	ofPath & getPath();
 
-	std::vector<std::shared_ptr<ofBaseRenderer> > renderers;
+	std::vector<std::shared_ptr<ofBaseRenderer>> renderers;
 	of3dGraphics graphics3d;
 	ofPath path;
 };

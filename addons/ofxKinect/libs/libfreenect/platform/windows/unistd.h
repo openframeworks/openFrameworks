@@ -33,17 +33,15 @@
 // Redefining it causes an error.
 // MSVC does not define this.
 #ifndef _SSIZE_T_DEFINED
-#define _SSIZE_T_DEFINED
-#ifdef _WIN64
-	typedef __int64 ssize_t;
-#else
-	typedef int ssize_t;
-#endif
+	#define _SSIZE_T_DEFINED
+	#ifdef _WIN64
+typedef __int64 ssize_t;
+	#else
+typedef int ssize_t;
+	#endif
 #endif // _SSIZE_T_DEFINED
 
-
-static void usleep(__int64 usec)
-{
+static void usleep(__int64 usec) {
 	// Convert to 100 nanosecond interval, negative for relative time.
 	LARGE_INTEGER ft;
 	ft.QuadPart = -(10 * usec);

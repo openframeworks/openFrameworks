@@ -1,21 +1,21 @@
 #pragma once
 
-#include "ofxBaseGui.h"
 #include "ofParameter.h"
-#include "ofxInputField.h"
+#include "ofxBaseGui.h"
 #include "ofxGuiUtils.h"
+#include "ofxInputField.h"
 
-template<typename Type>
-class ofxSlider : public ofxBaseGui{
+template <typename Type>
+class ofxSlider : public ofxBaseGui {
 	friend class ofPanel;
-	
-public:	
+
+public:
 	ofxSlider();
 	~ofxSlider();
 	ofxSlider(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxSlider* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxSlider* setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
-	
+	ofxSlider * setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider * setup(const std::string & sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+
 	void setMin(Type min);
 	Type getMin();
 	void setMax(Type max);
@@ -25,37 +25,32 @@ public:
 	virtual bool mousePressed(ofMouseEventArgs & args);
 	virtual bool mouseDragged(ofMouseEventArgs & args);
 	virtual bool mouseReleased(ofMouseEventArgs & args);
-    virtual bool mouseScrolled(ofMouseEventArgs & args);
+	virtual bool mouseScrolled(ofMouseEventArgs & args);
 
 	void setUpdateOnReleaseOnly(bool bUpdateOnReleaseOnly);
 
-
-	template<class ListenerClass, typename ListenerMethod>
-	void addListener(ListenerClass * listener, ListenerMethod method){
-		value.addListener(listener,method);
+	template <class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method) {
+		value.addListener(listener, method);
 	}
 
-	template<class ListenerClass, typename ListenerMethod>
-	void removeListener(ListenerClass * listener, ListenerMethod method){
-		value.removeListener(listener,method);
+	template <class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method) {
+		value.removeListener(listener, method);
 	}
-
-
 
 	double operator=(Type v);
-	operator const Type & ();
-
+	operator const Type &();
 
 	virtual void setPosition(const glm::vec3 & p);
 	virtual void setPosition(float x, float y);
 	virtual void setSize(float w, float h);
 	virtual void setShape(ofRectangle r);
 	virtual void setShape(float x, float y, float w, float h);
-	
+
 	ofAbstractParameter & getParameter();
 
 private:
-
 	ofxGuiRectMesh bg, bar;
 
 protected:
@@ -71,12 +66,13 @@ protected:
 	void valueChanged(Type & value);
 
 	ofVboMesh textMesh;
-	ofxInputField<Type> input{ofxInputField<Type>::InsideSlider};
+	ofxInputField<Type> input { ofxInputField<Type>::InsideSlider };
 
-	enum State{
+	enum State {
 		Slider,
 		Input,
-	} state = Slider;
+	} state
+		= Slider;
 	ofEventListener listener;
 	float errorTime = 0;
 };

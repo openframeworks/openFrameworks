@@ -56,7 +56,7 @@ typedef struct {
 	int32_t dy_beta_start;
 
 	int32_t rollout_blank; // not used by mapping algorithm
-	int32_t rollout_size;  // not used by mapping algorithm
+	int32_t rollout_size; // not used by mapping algorithm
 
 	int32_t dx_beta_inc;
 	int32_t dy_beta_inc;
@@ -89,41 +89,40 @@ typedef struct {
 
 /// internal Kinect zero plane data
 typedef struct {
-	float dcmos_emitter_dist;    // Distance between IR camera and IR emitter, in cm.
-	float dcmos_rcmos_dist;      // Distance between IR camera and RGB camera, in cm.
-	float reference_distance;    // The focal length of the IR camera, in mm.
-	float reference_pixel_size;  // The size of a single pixel on the zero plane, in mm.
+	float dcmos_emitter_dist; // Distance between IR camera and IR emitter, in cm.
+	float dcmos_rcmos_dist; // Distance between IR camera and RGB camera, in cm.
+	float reference_distance; // The focal length of the IR camera, in mm.
+	float reference_pixel_size; // The size of a single pixel on the zero plane, in mm.
 } freenect_zero_plane_info;
 
 /// all data needed for depth->RGB mapping
 typedef struct {
-	freenect_reg_info        reg_info;
-	freenect_reg_pad_info    reg_pad_info;
+	freenect_reg_info reg_info;
+	freenect_reg_pad_info reg_pad_info;
 	freenect_zero_plane_info zero_plane_info;
 
 	double const_shift;
 
-	uint16_t* raw_to_mm_shift;
-	int32_t* depth_to_rgb_shift;
-	int32_t (*registration_table)[2];  // A table of 640*480 pairs of x,y values.
-	                                   // Index first by pixel, then x:0 and y:1.
+	uint16_t * raw_to_mm_shift;
+	int32_t * depth_to_rgb_shift;
+	int32_t (*registration_table)[2]; // A table of 640*480 pairs of x,y values.
+		// Index first by pixel, then x:0 and y:1.
 } freenect_registration;
-
 
 // These allow clients to export registration parameters; proper docs will
 // come later
-FREENECTAPI freenect_registration freenect_copy_registration(freenect_device* dev);
-FREENECTAPI int freenect_destroy_registration(freenect_registration* reg);
+FREENECTAPI freenect_registration freenect_copy_registration(freenect_device * dev);
+FREENECTAPI int freenect_destroy_registration(freenect_registration * reg);
 
 // convenience function to convert a single x-y coordinate pair from camera
 // to world coordinates
-FREENECTAPI void freenect_camera_to_world(freenect_device* dev,
-	int cx, int cy, int wz, double* wx, double* wy);
+FREENECTAPI void freenect_camera_to_world(freenect_device * dev,
+	int cx, int cy, int wz, double * wx, double * wy);
 
 // helper function to map one FREENECT_VIDEO_RGB image to a FREENECT_DEPTH_MM
 // image (inverse mapping to FREENECT_DEPTH_REGISTERED, which is depth -> RGB)
-FREENECTAPI void freenect_map_rgb_to_depth( freenect_device* dev,
-	uint16_t* depth_mm, uint8_t* rgb_raw, uint8_t* rgb_registered );
+FREENECTAPI void freenect_map_rgb_to_depth(freenect_device * dev,
+	uint16_t * depth_mm, uint8_t * rgb_raw, uint8_t * rgb_registered);
 
 #ifdef __cplusplus
 }

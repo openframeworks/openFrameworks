@@ -39,114 +39,113 @@
 
 #include <cstring> // size_t
 
-#include "OscTypes.h"
 #include "OscException.h"
+#include "OscTypes.h"
 
+namespace osc {
 
-namespace osc{
-
-class OutOfBufferMemoryException : public Exception{
+class OutOfBufferMemoryException : public Exception {
 public:
-    OutOfBufferMemoryException( const char *w="out of buffer memory" )
-        : Exception( w ) {}
+	OutOfBufferMemoryException(const char * w = "out of buffer memory")
+		: Exception(w) { }
 };
 
-class BundleNotInProgressException : public Exception{
+class BundleNotInProgressException : public Exception {
 public:
-    BundleNotInProgressException(
-            const char *w="call to EndBundle when bundle is not in progress" )
-        : Exception( w ) {}
+	BundleNotInProgressException(
+		const char * w = "call to EndBundle when bundle is not in progress")
+		: Exception(w) { }
 };
 
-class MessageInProgressException : public Exception{
+class MessageInProgressException : public Exception {
 public:
-    MessageInProgressException(
-            const char *w="opening or closing bundle or message while message is in progress" )
-        : Exception( w ) {}
+	MessageInProgressException(
+		const char * w = "opening or closing bundle or message while message is in progress")
+		: Exception(w) { }
 };
 
-class MessageNotInProgressException : public Exception{
+class MessageNotInProgressException : public Exception {
 public:
-    MessageNotInProgressException(
-            const char *w="call to EndMessage when message is not in progress" )
-        : Exception( w ) {}
+	MessageNotInProgressException(
+		const char * w = "call to EndMessage when message is not in progress")
+		: Exception(w) { }
 };
 
-
-class OutboundPacketStream{
+class OutboundPacketStream {
 public:
-	OutboundPacketStream( char *buffer, std::size_t capacity );
+	OutboundPacketStream(char * buffer, std::size_t capacity);
 	~OutboundPacketStream();
 
-    void Clear();
+	void Clear();
 
-    std::size_t Capacity() const;
+	std::size_t Capacity() const;
 
-    // invariant: size() is valid even while building a message.
-    std::size_t Size() const;
+	// invariant: size() is valid even while building a message.
+	std::size_t Size() const;
 
-    const char *Data() const;
+	const char * Data() const;
 
-    // indicates that all messages have been closed with a matching EndMessage
-    // and all bundles have been closed with a matching EndBundle
-    bool IsReady() const;
+	// indicates that all messages have been closed with a matching EndMessage
+	// and all bundles have been closed with a matching EndBundle
+	bool IsReady() const;
 
-    bool IsMessageInProgress() const;
-    bool IsBundleInProgress() const;
+	bool IsMessageInProgress() const;
+	bool IsBundleInProgress() const;
 
-    OutboundPacketStream& operator<<( const BundleInitiator& rhs );
-    OutboundPacketStream& operator<<( const BundleTerminator& rhs );
-    
-    OutboundPacketStream& operator<<( const BeginMessage& rhs );
-    OutboundPacketStream& operator<<( const MessageTerminator& rhs );
+	OutboundPacketStream & operator<<(const BundleInitiator & rhs);
+	OutboundPacketStream & operator<<(const BundleTerminator & rhs);
 
-    OutboundPacketStream& operator<<( bool rhs );
-    OutboundPacketStream& operator<<( const NilType& rhs );
-    OutboundPacketStream& operator<<( const InfinitumType& rhs );
-    OutboundPacketStream& operator<<( int32 rhs );
+	OutboundPacketStream & operator<<(const BeginMessage & rhs);
+	OutboundPacketStream & operator<<(const MessageTerminator & rhs);
+
+	OutboundPacketStream & operator<<(bool rhs);
+	OutboundPacketStream & operator<<(const NilType & rhs);
+	OutboundPacketStream & operator<<(const InfinitumType & rhs);
+	OutboundPacketStream & operator<<(int32 rhs);
 
 #if !(defined(__x86_64__) || defined(_M_X64) || defined(__LP64__))
-    OutboundPacketStream& operator<<( int rhs )
-            { *this << (int32)rhs; return *this; }
+	OutboundPacketStream & operator<<(int rhs) {
+		*this << (int32)rhs;
+		return *this;
+	}
 #endif
 
-    OutboundPacketStream& operator<<( float rhs );
-    OutboundPacketStream& operator<<( char rhs );
-    OutboundPacketStream& operator<<( const RgbaColor& rhs );
-    OutboundPacketStream& operator<<( const MidiMessage& rhs );
-    OutboundPacketStream& operator<<( int64 rhs );
-    OutboundPacketStream& operator<<( const TimeTag& rhs );
-    OutboundPacketStream& operator<<( double rhs );
-    OutboundPacketStream& operator<<( const char* rhs );
-    OutboundPacketStream& operator<<( const Symbol& rhs );
-    OutboundPacketStream& operator<<( const Blob& rhs );
+	OutboundPacketStream & operator<<(float rhs);
+	OutboundPacketStream & operator<<(char rhs);
+	OutboundPacketStream & operator<<(const RgbaColor & rhs);
+	OutboundPacketStream & operator<<(const MidiMessage & rhs);
+	OutboundPacketStream & operator<<(int64 rhs);
+	OutboundPacketStream & operator<<(const TimeTag & rhs);
+	OutboundPacketStream & operator<<(double rhs);
+	OutboundPacketStream & operator<<(const char * rhs);
+	OutboundPacketStream & operator<<(const Symbol & rhs);
+	OutboundPacketStream & operator<<(const Blob & rhs);
 
-    OutboundPacketStream& operator<<( const ArrayInitiator& rhs );
-    OutboundPacketStream& operator<<( const ArrayTerminator& rhs );
+	OutboundPacketStream & operator<<(const ArrayInitiator & rhs);
+	OutboundPacketStream & operator<<(const ArrayTerminator & rhs);
 
 private:
+	char * BeginElement(char * beginPtr);
+	void EndElement(char * endPtr);
 
-    char *BeginElement( char *beginPtr );
-    void EndElement( char *endPtr );
+	bool ElementSizeSlotRequired() const;
+	void CheckForAvailableBundleSpace();
+	void CheckForAvailableMessageSpace(const char * addressPattern);
+	void CheckForAvailableArgumentSpace(std::size_t argumentLength);
 
-    bool ElementSizeSlotRequired() const;
-    void CheckForAvailableBundleSpace();
-    void CheckForAvailableMessageSpace( const char *addressPattern );
-    void CheckForAvailableArgumentSpace( std::size_t argumentLength );
+	char * data_;
+	char * end_;
 
-    char *data_;
-    char *end_;
+	char * typeTagsCurrent_; // stored in reverse order
+	char * messageCursor_;
+	char * argumentCurrent_;
 
-    char *typeTagsCurrent_; // stored in reverse order
-    char *messageCursor_;
-    char *argumentCurrent_;
+	// elementSizePtr_ has two special values: 0 indicates that a bundle
+	// isn't open, and elementSizePtr_==data_ indicates that a bundle is
+	// open but that it doesn't have a size slot (ie the outermost bundle)
+	uint32 * elementSizePtr_;
 
-    // elementSizePtr_ has two special values: 0 indicates that a bundle
-    // isn't open, and elementSizePtr_==data_ indicates that a bundle is
-    // open but that it doesn't have a size slot (ie the outermost bundle)
-    uint32 *elementSizePtr_;
-
-    bool messageIsInProgress_;
+	bool messageIsInProgress_;
 };
 
 } // namespace osc

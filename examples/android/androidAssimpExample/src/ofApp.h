@@ -3,43 +3,43 @@
 #include "ofMain.h"
 #include "ofxAndroid.h"
 
-#include "ofxAssimpModelLoader.h"
 #include "ofVboMesh.h"
+#include "ofxAssimpModelLoader.h"
 
-class ofApp : public ofxAndroidApp{
+class ofApp : public ofxAndroidApp {
 
-	public:
-		void setup();
-		void update();
-		void draw();
-		
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void windowResized(int w, int h);
+public:
+	void setup();
+	void update();
+	void draw();
 
-		void touchDown(int x, int y, int id);
-		void touchMoved(int x, int y, int id);
-		void touchUp(int x, int y, int id);
-		void touchDoubleTap(int x, int y, int id);
-		void touchCancelled(int x, int y, int id);
-		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void windowResized(int w, int h);
 
-		void pause();
-		void stop();
-		void resume();
-		void reloadTextures();
+	void touchDown(int x, int y, int id);
+	void touchMoved(int x, int y, int id);
+	void touchUp(int x, int y, int id);
+	void touchDoubleTap(int x, int y, int id);
+	void touchCancelled(int x, int y, int id);
+	void swipe(ofxAndroidSwipeDir swipeDir, int id);
 
-		bool backPressed();
-		void okPressed();
-		void cancelPressed();
+	void pause();
+	void stop();
+	void resume();
+	void reloadTextures();
 
-		bool bAnimate;
-		bool bAnimateMouse;
-		float animationPosition;
-		ofxAssimpModelLoader model;
-		ofLight	light;
+	bool backPressed();
+	void okPressed();
+	void cancelPressed();
 
-		ofMesh mesh;
-		bool loaded;
-		int currentModel;
+	bool bAnimate;
+	bool bAnimateMouse;
+	float animationPosition;
+	ofxAssimpModelLoader model;
+	ofLight light;
+
+	ofMesh mesh;
+	bool loaded;
+	int currentModel;
 };

@@ -71,22 +71,21 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 	SoundEngine.h
 ==================================================================================================*/
 #if !defined(__SoundEngine_h__)
-#define __SoundEngine_h__
+	#define __SoundEngine_h__
 
-//==================================================================================================
-//	Includes
-//==================================================================================================
+	//==================================================================================================
+	//	Includes
+	//==================================================================================================
 
-//	System Includes
-#include <CoreAudio/CoreAudioTypes.h>
-#include <AudioToolbox/AudioToolbox.h>
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
+	//	System Includes
+	#include <AudioToolbox/AudioToolbox.h>
+	#include <CoreAudio/CoreAudioTypes.h>
+	#include <OpenAL/al.h>
+	#include <OpenAL/alc.h>
 
-#if defined(__cplusplus)
-extern "C"
-{
-#endif
+	#if defined(__cplusplus)
+extern "C" {
+	#endif
 
 //==================================================================================================
 //	Sound Engine
@@ -108,14 +107,13 @@ extern "C"
 
 */
 enum {
-		kSoundEngineErrUnitialized			= 1,
-		kSoundEngineErrInvalidID			= 2,
-		kSoundEngineErrFileNotFound			= 3,
-		kSoundEngineErrInvalidFileFormat	= 4,
-		kSoundEngineErrDeviceNotFound		= 5,
-		kSoundEngineErrNoSourcesAvailable   = 6,
+	kSoundEngineErrUnitialized = 1,
+	kSoundEngineErrInvalidID = 2,
+	kSoundEngineErrFileNotFound = 3,
+	kSoundEngineErrInvalidFileFormat = 4,
+	kSoundEngineErrDeviceNotFound = 5,
+	kSoundEngineErrNoSourcesAvailable = 6,
 };
-
 
 /*!
     @function       SoundEngine_Initialize
@@ -128,14 +126,14 @@ enum {
 						0 will use the default rate (the sample rate of the device)
 	@result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_Initialize(Float32 inMixerOutputRate);
+OSStatus SoundEngine_Initialize(Float32 inMixerOutputRate);
 
 /*!
     @function       SoundEngine_Teardown
     @abstract       Tearsdown the sound engine.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_Teardown();
+OSStatus SoundEngine_Teardown();
 
 /*!
     @function       SoundEngine_SetMasterVolume
@@ -144,7 +142,7 @@ OSStatus  SoundEngine_Teardown();
                         A Float32 that represents the level. The range is between 0.0 and 1.0 (inclusive).
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_SetMasterVolume(Float32 inValue);
+OSStatus SoundEngine_SetMasterVolume(Float32 inValue);
 
 /*!
     @function       SoundEngine_SetListenerPosition
@@ -157,9 +155,9 @@ OSStatus  SoundEngine_SetMasterVolume(Float32 inValue);
                         A Float32 that represents the listener's position along the Z axis.
     @result         A OSStatus indicating success or failure.
 */
-	OSStatus  SoundEngine_SetListenerVelocity(Float32 inX, Float32 inY, Float32 inZ);
+OSStatus SoundEngine_SetListenerVelocity(Float32 inX, Float32 inY, Float32 inZ);
 
-	OSStatus  SoundEngine_SetListenerPosition(Float32 inX, Float32 inY, Float32 inZ);
+OSStatus SoundEngine_SetListenerPosition(Float32 inX, Float32 inY, Float32 inZ);
 
 /*!
     @function       SoundEngine_SetListenerGain
@@ -168,7 +166,7 @@ OSStatus  SoundEngine_SetMasterVolume(Float32 inValue);
                         A Float32 that represents the listener's gain
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_SetListenerGain(Float32 inValue);
+OSStatus SoundEngine_SetListenerGain(Float32 inValue);
 
 /*!
     @function       SoundEngine_LoadBackgroundMusicTrack
@@ -184,21 +182,21 @@ OSStatus  SoundEngine_SetListenerGain(Float32 inValue);
 						small background music files, this can save memory access and improve power efficiency
 	@result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_LoadBackgroundMusicTrack(const char* inPath, Boolean inAddToQueue, Boolean inLoadAtOnce);
+OSStatus SoundEngine_LoadBackgroundMusicTrack(const char * inPath, Boolean inAddToQueue, Boolean inLoadAtOnce);
 
 /*!
     @function       SoundEngine_UnloadBackgroundMusicTrack
     @abstract       Tells the background music player to release all resources and stop playing.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_UnloadBackgroundMusicTrack();
+OSStatus SoundEngine_UnloadBackgroundMusicTrack();
 
 /*!
     @function       SoundEngine_StartBackgroundMusic
     @abstract       Tells the background music player to start playing.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_StartBackgroundMusic();
+OSStatus SoundEngine_StartBackgroundMusic();
 
 /*!
     @function       SoundEngine_StopBackgroundMusic
@@ -208,9 +206,9 @@ OSStatus  SoundEngine_StartBackgroundMusic();
 						will stop immediately.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_StopBackgroundMusic(Boolean inStopAtEnd);
-	
-void  SoundEngine_SetBackgroundMusicLooping(Boolean loop);
+OSStatus SoundEngine_StopBackgroundMusic(Boolean inStopAtEnd);
+
+void SoundEngine_SetBackgroundMusicLooping(Boolean loop);
 /*!
     @function       SoundEngine_SetBackgroundMusicVolume
     @abstract       Sets the volume for the background music player
@@ -218,10 +216,9 @@ void  SoundEngine_SetBackgroundMusicLooping(Boolean loop);
                         A Float32 that represents the level. The range is between 0.0 and 1.0 (inclusive).
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_SetBackgroundMusicVolume(Float32 inValue);
-	
-void	  SoundEngine_ClearSources();
+OSStatus SoundEngine_SetBackgroundMusicVolume(Float32 inValue);
 
+void SoundEngine_ClearSources();
 
 /*!
     @function       SoundEngine_LoadEffect
@@ -232,7 +229,7 @@ void	  SoundEngine_ClearSources();
 						A UInt32 ID that refers to the effect.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_LoadEffect(const char* inPath, UInt32* outEffectID);
+OSStatus SoundEngine_LoadEffect(const char * inPath, UInt32 * outEffectID);
 
 /*!
     @function       SoundEngine_UnloadEffect
@@ -241,9 +238,8 @@ OSStatus  SoundEngine_LoadEffect(const char* inPath, UInt32* outEffectID);
                         The ID of the effect to unload.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_UnloadEffect(UInt32 inEffectID);
+OSStatus SoundEngine_UnloadEffect(UInt32 inEffectID);
 
-	
 /*!
  @function       SoundEngine_StartEffect
  @abstract       Binds the sound effect buffer to a source
@@ -253,12 +249,12 @@ OSStatus  SoundEngine_UnloadEffect(UInt32 inEffectID);
 					A ALuint ID that refers to the OpenAL source.
  @result         The index of the primed effect in the map for unpriming later
  */
-int  SoundEngine_PrimeEffect(UInt32 inEffectID, ALuint *outSourceID); 
+int SoundEngine_PrimeEffect(UInt32 inEffectID, ALuint * outSourceID);
 
 void SoundEngine_SetEffectPosition(ALuint sourceID, float position);
 
 float SoundEngine_GetEffectPosition(ALuint sourceID);
-	
+
 unsigned long SoundEngine_GetEffectLength(ALint _id);
 
 /*!
@@ -270,9 +266,8 @@ unsigned long SoundEngine_GetEffectLength(ALint _id);
 the id of the buffer that has been used.
  @result         weather the sound is finished and the buffer has been released
  */
-bool  SoundEngine_Update(ALuint sourceID, int mSource); 
-	
-	
+bool SoundEngine_Update(ALuint sourceID, int mSource);
+
 /*!
     @function       SoundEngine_StartEffect
     @abstract       Starts playback of a source
@@ -280,9 +275,9 @@ bool  SoundEngine_Update(ALuint sourceID, int mSource);
                         The ID of the source to start.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_StartEffect(ALuint sourceID);
-	
-OSStatus  SoundEngine_PauseEffect(ALuint sourceID);
+OSStatus SoundEngine_StartEffect(ALuint sourceID);
+
+OSStatus SoundEngine_PauseEffect(ALuint sourceID);
 
 /*!
     @function       SoundEngine_StopEffect
@@ -291,15 +286,15 @@ OSStatus  SoundEngine_PauseEffect(ALuint sourceID);
 						The ID of the source to stop.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_StopEffect(ALuint sourceID);
+OSStatus SoundEngine_StopEffect(ALuint sourceID);
 
-/*!
+	/*!
     @function       SoundEngine_Vibrate
     @abstract       Tells the device to vibrate
 */
-#if TARGET_OS_IPHONE
-	#define SoundEngine_Vibrate() AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-#endif
+	#if TARGET_OS_IPHONE
+		#define SoundEngine_Vibrate() AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+	#endif
 
 /*!
     @function       SoundEngine_SetEffectPitch
@@ -311,7 +306,7 @@ OSStatus  SoundEngine_StopEffect(ALuint sourceID);
 						be greater than 0.
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_SetEffectPitch(ALuint sourceID, Float32 inValue);
+OSStatus SoundEngine_SetEffectPitch(ALuint sourceID, Float32 inValue);
 
 /*!
     @function       SoundEngine_SetEffectVolume
@@ -322,7 +317,7 @@ OSStatus  SoundEngine_SetEffectPitch(ALuint sourceID, Float32 inValue);
                         A Float32 that represents the level. The range is between 0.0 and 1.0 (inclusive).
     @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_SetEffectLevel(ALuint sourceID, Float32 inValue);
+OSStatus SoundEngine_SetEffectLevel(ALuint sourceID, Float32 inValue);
 
 /*!
     @function       SoundEngine_SetEffectLocation
@@ -344,7 +339,7 @@ OSStatus  SoundEngine_SetEffectLevel(ALuint sourceID, Float32 inValue);
 						which gain begins to attenuate) is 1.0
 	@result         A OSStatus indicating success or failure.
 */
-OSStatus	SoundEngine_SetEffectLocation(ALuint sourceID, Float32 inX, Float32 inY, Float32 inZ);
+OSStatus SoundEngine_SetEffectLocation(ALuint sourceID, Float32 inX, Float32 inY, Float32 inZ);
 
 /*!
    @function       SoundEngine_SetEffectsVolume
@@ -353,7 +348,7 @@ OSStatus	SoundEngine_SetEffectLocation(ALuint sourceID, Float32 inX, Float32 inY
                        A Float32 that represents the level. The range is between 0.0 and 1.0 (inclusive).
    @result         A OSStatus indicating success or failure.
 */
-OSStatus  SoundEngine_SetEffectsVolume(Float32 inValue);
+OSStatus SoundEngine_SetEffectsVolume(Float32 inValue);
 
 /*!
    @function       SoundEngine_SetMaxDistance
@@ -363,16 +358,15 @@ OSStatus  SoundEngine_SetEffectsVolume(Float32 inValue);
                        A Float32 that represents the level. Must be greater than 0.0.
    @result         A OSStatus indicating success or failure.
 */
-OSStatus	SoundEngine_SetMaxDistance(Float32 inValue);
-	
-UInt64  SoundEngine_getBackgroundMusicLength();
-	
-bool  SoundEngine_getBackgroundMusicStopped();
-	
+OSStatus SoundEngine_SetMaxDistance(Float32 inValue);
+
+UInt64 SoundEngine_getBackgroundMusicLength();
+
+bool SoundEngine_getBackgroundMusicStopped();
+
 void SoundEngine_setBackgroundMusicPosition(UInt64 pos);
 
-
-OSStatus	SoundEngine_SetLooping(bool looping, ALint _id);
+OSStatus SoundEngine_SetLooping(bool looping, ALint _id);
 
 /*!
    @function       SoundEngine_SetReferenceDistance
@@ -383,11 +377,10 @@ OSStatus	SoundEngine_SetLooping(bool looping, ALint _id);
                        A Float32 that represents the level. Must be greater than 0.0.
    @result         A OSStatus indicating success or failure.
 */
-OSStatus	SoundEngine_SetReferenceDistance(Float32 inValue);
-	
+OSStatus SoundEngine_SetReferenceDistance(Float32 inValue);
 
-#if defined(__cplusplus)
+	#if defined(__cplusplus)
 }
-#endif
+	#endif
 
 #endif

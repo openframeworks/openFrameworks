@@ -37,30 +37,26 @@
 #include "ip/NetworkingUtils.h"
 
 #include <netdb.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
 
 #include <cstring>
 
+namespace osc {
+NetworkInitializer::NetworkInitializer() { }
 
+NetworkInitializer::~NetworkInitializer() { }
 
-namespace osc{
-NetworkInitializer::NetworkInitializer() {}
+unsigned long GetHostByName(const char * name) {
+	unsigned long result = 0;
 
-NetworkInitializer::~NetworkInitializer() {}
+	struct hostent * h = gethostbyname(name);
+	if (h) {
+		struct in_addr a;
+		std::memcpy(&a, h->h_addr_list[0], h->h_length);
+		result = ntohl(a.s_addr);
+	}
 
-
-unsigned long GetHostByName( const char *name )
-{
-    unsigned long result = 0;
-
-    struct hostent *h = gethostbyname( name );
-    if( h ){
-        struct in_addr a;
-        std::memcpy( &a, h->h_addr_list[0], h->h_length );
-        result = ntohl(a.s_addr);
-    }
-
-    return result;
+	return result;
 }
 }

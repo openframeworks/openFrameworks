@@ -3,15 +3,14 @@
 #include "ofMain.h"
 #include "ofxAndroid.h"
 
-#include "ofxAccelerometer.h"
 #include "Ball.h"
+#include "ofxAccelerometer.h"
 
-#define NUM_POINTS				10
+#define NUM_POINTS 10
 
 class ofApp : public ofxAndroidApp {
-	
-public:
 
+public:
 	void setup();
 	void update();
 	void draw();
@@ -35,6 +34,5 @@ public:
 	void okPressed();
 	void cancelPressed();
 
-	
 	Ball balls[NUM_POINTS];
 };

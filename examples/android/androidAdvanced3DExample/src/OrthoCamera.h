@@ -15,12 +15,11 @@
 
 #include "ofMain.h"
 
-class OrthoCamera : public ofCamera
-{
+class OrthoCamera : public ofCamera {
 public:
 	OrthoCamera();
-	
-	void	begin(ofRectangle rect = ofGetWindowRect());
-	
-	float	scale;
+
+	void begin(ofRectangle rect = ofGetWindowRect());
+
+	float scale;
 };

@@ -35,84 +35,75 @@
 //
 ///////////////////////////////////////////////////
 
-
-
 //--------------------------------------------------------------
-void ofApp::setup(){
-	
+void ofApp::setup() {
+
 	ofSetVerticalSync(true);
 	ofBackground(70, 70, 70);
 	ofEnableSmoothing();
 	ofEnableDepthTest();
-	
-	
+
 	/////////////////////
 	// SETUP CAMERAS
-	/////////////////////	
+	/////////////////////
 	//
 	iMainCamera = 0;
 	bCamParent = false;
-	
+
 	// user camera
 	camEasyCam.setTarget(nodeSwarm);
 	camEasyCam.setDistance(100);
 	cameras[0] = &camEasyCam;
 
-	
 	// front
 	camFront.scale = 20;
 	cameras[1] = &camFront;
-	
+
 	// top
 	camTop.scale = 20;
 	camTop.tilt(-90);
 	cameras[2] = &camTop;
-	
+
 	// left
 	camLeft.scale = 20;
 	camLeft.pan(-90);
 	cameras[3] = &camLeft;
-	
-	
+
 	/////////////////////
 	// DEFINE VIEWPORTS
-	/////////////////////	
+	/////////////////////
 	//
 	setupViewports();
 	//
-	/////////////////////	
-	
-	
-	
+	/////////////////////
+
 	/////////////////////
 	// SETUP SWARM
-	/////////////////////	
+	/////////////////////
 	//
 	nodeSwarm.init(100, 50, 20);
 	//
-	/////////////////////	
-	
+	/////////////////////
 }
 
 //--------------------------------------------------------------
 
-void ofApp::setupViewports()
-{
+void ofApp::setupViewports() {
 	//call here whenever we resize the window
-	
+
 	/////////////////////
 	// DEFINE VIEWPORTS
-	/////////////////////	
+	/////////////////////
 	//
-	float xOffset = ofGetWidth()/3;
-	float yOffset = ofGetHeight()/N_CAMERAS;
-	
+	float xOffset = ofGetWidth() / 3;
+	float yOffset = ofGetHeight() / N_CAMERAS;
+
 	viewMain.x = xOffset;
 	viewMain.y = 0;
 	viewMain.width = xOffset * 2;
 	viewMain.height = ofGetHeight();
-	
-	for (int i=0; i<N_CAMERAS; i++) {
+
+	for (int i = 0; i < N_CAMERAS; i++) {
 
 		viewGrid[i].x = 0;
 		viewGrid[i].y = yOffset * i;
@@ -120,20 +111,18 @@ void ofApp::setupViewports()
 		viewGrid[i].height = yOffset;
 	}
 	//
-	/////////////////////	
+	/////////////////////
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-
+void ofApp::update() {
 }
 
-
 //--------------------------------------------------------------
-void ofApp::draw(){
-	
+void ofApp::draw() {
+
 	ofDrawBitmapString("test", 10, 10);
-	
+
 	//////////////////////////
 	// BACKGROUND HIGHLIGHT
 	//////////////////////////
@@ -146,76 +135,71 @@ void ofApp::draw(){
 	ofEnableDepthTest();
 	//
 	//////////////////////////
-	
-	
-	
+
 	//////////////////////////
 	// DRAW ALL VIEWPORTS
 	//////////////////////////
 	//
-	
+
 	//draw main viewport
 	cameras[iMainCamera]->begin(viewMain);
 	drawScene(iMainCamera);
-	
+
 	//calculate mouse ray whilst this camera is active
 	updateMouseRay();
-	
+
 	cameras[iMainCamera]->end();
-	
+
 	//draw side viewports
-	for (int i=0; i<N_CAMERAS; i++)
-	{
+	for (int i = 0; i < N_CAMERAS; i++) {
 		cameras[i]->begin(viewGrid[i]);
 		drawScene(i);
 		cameras[i]->end();
 	}
-	
+
 	//
 	//////////////////////////
-	
-	
-	
+
 	//////////////////////////
 	// DRAW STUFF ON TOP
 	//////////////////////////
 	//
 	ofPushStyle();
 	glDepthFunc(GL_ALWAYS); // draw on top of everything
-	
+
 	//draw some labels
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("Press keys 1-4 to select a camera for main view", viewMain.x + 20, 30);
-	ofDrawBitmapString("Camera selected: " + ofToString(iMainCamera+1), viewMain.x + 20, 50);
+	ofDrawBitmapString("Camera selected: " + ofToString(iMainCamera + 1), viewMain.x + 20, 50);
 	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
 	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
-	
-	ofDrawBitmapString("EasyCam",	viewGrid[0].x + 20, viewGrid[0].y + 30);
-	ofDrawBitmapString("Front",		viewGrid[1].x + 20, viewGrid[1].y + 30);
-	ofDrawBitmapString("Top",		viewGrid[2].x + 20, viewGrid[2].y + 30);
-	ofDrawBitmapString("Left",		viewGrid[3].x + 20, viewGrid[3].y + 30);
+
+	ofDrawBitmapString("EasyCam", viewGrid[0].x + 20, viewGrid[0].y + 30);
+	ofDrawBitmapString("Front", viewGrid[1].x + 20, viewGrid[1].y + 30);
+	ofDrawBitmapString("Top", viewGrid[2].x + 20, viewGrid[2].y + 30);
+	ofDrawBitmapString("Left", viewGrid[3].x + 20, viewGrid[3].y + 30);
 
 	//draw outlines on views
 	ofSetLineWidth(5);
 	ofNoFill();
 	ofSetColor(255, 255, 255);
 	//
-	for (int i=0; i<N_CAMERAS; i++)
+	for (int i = 0; i < N_CAMERAS; i++)
 		ofDrawRectangle(viewGrid[i]);
 	//
 	ofDrawRectangle(viewMain);
-	
+
 	glDepthFunc(GL_LESS);
 	ofPopStyle();
 	//
 	//////////////////////////
 }
 
-void ofApp::drawScene(int iCameraDraw){	
-	
+void ofApp::drawScene(int iCameraDraw) {
+
 	nodeSwarm.draw();
 	nodeGrid.draw();
-	
+
 	//////////////////////////////////
 	// DRAW EASYCAM FRUSTUM PREVIEW
 	//////////////////////////////////
@@ -231,14 +215,12 @@ void ofApp::drawScene(int iCameraDraw){
 	//	which can be seen by the
 	//	camera as 'the view frustum'.
 	//
-	
-	
+
 	//let's not draw the camera
 	//if we're looking through it
-	if (iCameraDraw != 0)
-	{
+	if (iCameraDraw != 0) {
 		ofPushStyle();
-				
+
 		//in 'camera space' this frustum
 		//is defined by a box with bounds
 		//-1->1 in each axis
@@ -251,16 +233,15 @@ void ofApp::drawScene(int iCameraDraw){
 		//our box in camera space is
 		//transformed into a frustum in
 		//world space.
-		
-		
+
 		//the camera's matricies are dependant on
 		//the aspect ratio of the viewport
 		//so we must send the viewport if it's not
 		//the same as fullscreen
 		//
 		//watch the aspect ratio of preview camera
-		glm::mat4 inverseCameraMatrix = glm::inverse(camEasyCam.getModelViewProjectionMatrix( (iMainCamera == 0 ? viewMain : viewGrid[0]) ));
-		
+		glm::mat4 inverseCameraMatrix = glm::inverse(camEasyCam.getModelViewProjectionMatrix((iMainCamera == 0 ? viewMain : viewGrid[0])));
+
 		// By default, we can say
 		//	'we are drawing in world space'
 		//
@@ -277,10 +258,9 @@ void ofApp::drawScene(int iCameraDraw){
 		//
 		ofPushMatrix();
 		ofMultMatrix(inverseCameraMatrix);
-		
-		
+
 		ofSetColor(255, 100, 100);
-		
+
 		//////////////////////
 		// DRAW WIREFRAME BOX
 		//
@@ -288,47 +268,47 @@ void ofApp::drawScene(int iCameraDraw){
 		// (small rectangle at camera position)
 		//
 		GLfloat vertices1[] = {
-				-1.0f, -1.0f, -1.0f,
-				-1.0f, 1.0f, -1.0f,
-				1.0f, 1.0f, -1.0f,
-				1.0f, -1.0f, -1.0f
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
+			1.0f, 1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f
 		};
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, vertices1);
 		glDrawArrays(GL_LINE_LOOP, 0, 4);
 		glDisableClientState(GL_VERTEX_ARRAY);
-		
-		
+
 		// xy plane at z=1 in camera space
 		// (generally invisible because so far away)
 		//
 		GLfloat vertices2[] = {
-						-1.0f, -1.0f, 1.0f,
-						-1.0f, 1.0f, 1.0f,
-						1.0f, 1.0f, 1.0f,
-						1.0f, -1.0f, 1.0f};
+			-1.0f, -1.0f, 1.0f,
+			-1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 1.0f
+		};
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, vertices2);
 		glDrawArrays(GL_LINE_LOOP, 0, 4);
 		glDisableClientState(GL_VERTEX_ARRAY);
-		
+
 		// connecting lines between above 2 planes
 		// (these are the long lines)
 		//
 		GLfloat vertices3[] = {
-				-1.0f, 1.0f, -1.0f,
-				-1.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, 1.0f,
 
-				1.0f, 1.0f, -1.0f,
-				1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, -1.0f,
+			1.0f, 1.0f, 1.0f,
 
-				-1.0f, -1.0f, -1.0f,
-				-1.0f, -1.0f, 1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f, 1.0f,
 
-				1.0f, -1.0f, -1.0f,
-				1.0f, -1.0f, 1.0f
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, 1.0f
 		};
 
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -341,20 +321,17 @@ void ofApp::drawScene(int iCameraDraw){
 		ofPopStyle();
 		ofPopMatrix();
 	}
-	
+
 	//
 	//////////////////////////////////
 
-	
-	
 	//////////////////////////////////
 	// DRAW RAY
 	//////////////////////////////////
 	//
 	//draw if we've got camEasyCam selected
 	//and we're not looking through it
-	if (iMainCamera == 0 && iCameraDraw != 0)
-	{
+	if (iMainCamera == 0 && iCameraDraw != 0) {
 		ofPushStyle();
 		ofSetColor(100, 100, 255);
 		ofDrawLine(ray[0], ray[1]);
@@ -366,118 +343,101 @@ void ofApp::drawScene(int iCameraDraw){
 
 //--------------------------------------------------------------
 
-void ofApp::updateMouseRay()
-{
-	
+void ofApp::updateMouseRay() {
+
 	//define ray in screen space
 	ray[0] = glm::vec3(ofGetMouseX(), ofGetMouseY(), -1);
 	ray[1] = glm::vec3(ofGetMouseX(), ofGetMouseY(), 1);
-	
+
 	//transform ray into world space
 	ray[0] = cameras[iMainCamera]->screenToWorld(ray[0], viewMain);
 	ray[1] = cameras[iMainCamera]->screenToWorld(ray[1], viewMain);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	
+void ofApp::keyPressed(int key) {
+
 	if (key >= '1' && key <= '4')
 		iMainCamera = key - '1';
-	
+
 	if (key == 'f')
 		ofToggleFullscreen();
-	
-	if (key == 'p')
-	{
-		if (bCamParent)
-		{
+
+	if (key == 'p') {
+		if (bCamParent) {
 			camFront.clearParent();
 			camTop.clearParent();
 			camLeft.clearParent();
-			
+
 			bCamParent = false;
 		} else {
 			camFront.setParent(nodeSwarm.light);
 			camTop.setParent(nodeSwarm.light);
 			camLeft.setParent(nodeSwarm.light);
-			
+
 			bCamParent = true;
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void ofApp::windowResized(int w, int h) {
 	setupViewports();
 }
 
-
 //--------------------------------------------------------------
-void ofApp::touchDown(int x, int y, int id){
-
+void ofApp::touchDown(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchMoved(int x, int y, int id){
-
+void ofApp::touchMoved(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchUp(int x, int y, int id){
-
+void ofApp::touchUp(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchDoubleTap(int x, int y, int id){
-
+void ofApp::touchDoubleTap(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::touchCancelled(int x, int y, int id){
-
+void ofApp::touchCancelled(int x, int y, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
-
+void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id) {
 }
 
 //--------------------------------------------------------------
-void ofApp::pause(){
-
+void ofApp::pause() {
 }
 
 //--------------------------------------------------------------
-void ofApp::stop(){
-
+void ofApp::stop() {
 }
 
 //--------------------------------------------------------------
-void ofApp::resume(){
-
+void ofApp::resume() {
 }
 
 //--------------------------------------------------------------
-void ofApp::reloadTextures(){
-
+void ofApp::reloadTextures() {
 }
 
 //--------------------------------------------------------------
-bool ofApp::backPressed(){
+bool ofApp::backPressed() {
 	return false;
 }
 
 //--------------------------------------------------------------
-void ofApp::okPressed(){
-
+void ofApp::okPressed() {
 }
 
 //--------------------------------------------------------------
-void ofApp::cancelPressed(){
-
+void ofApp::cancelPressed() {
 }

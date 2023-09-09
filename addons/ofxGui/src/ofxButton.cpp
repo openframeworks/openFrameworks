@@ -1,18 +1,18 @@
 #include "ofxButton.h"
 
-ofxButton::ofxButton(){
+ofxButton::ofxButton() {
 	value.setSerializable(false);
 }
 
-ofxButton::ofxButton(ofParameter<void> _bVal, float width, float height){
+ofxButton::ofxButton(ofParameter<void> _bVal, float width, float height) {
 	setup(_bVal, width, height);
 }
 
-ofxButton::~ofxButton(){
+ofxButton::~ofxButton() {
 	//
 }
 
-ofxButton* ofxButton::setup(ofParameter<void> _bVal, float width, float height){
+ofxButton * ofxButton::setup(ofParameter<void> _bVal, float width, float height) {
 	parameter = _bVal;
 	value = false;
 	b.x = 0;
@@ -24,12 +24,12 @@ ofxButton* ofxButton::setup(ofParameter<void> _bVal, float width, float height){
 
 	registerMouseEvents();
 
-	value.addListener(this,&ofxButton::valueChanged);
+	value.addListener(this, &ofxButton::valueChanged);
 
 	return this;
 }
 
-ofxButton* ofxButton::setup(const std::string& toggleName, float width, float height){
+ofxButton * ofxButton::setup(const std::string & toggleName, float width, float height) {
 	setName(toggleName);
 	value = false;
 	b.x = 0;
@@ -41,39 +41,39 @@ ofxButton* ofxButton::setup(const std::string& toggleName, float width, float he
 
 	registerMouseEvents();
 
-	value.addListener(this,&ofxButton::valueChanged);
+	value.addListener(this, &ofxButton::valueChanged);
 
 	return this;
 }
 
-bool ofxButton::mouseReleased(ofMouseEventArgs & args){
+bool ofxButton::mouseReleased(ofMouseEventArgs & args) {
 	bool attended = setValue(args.x, args.y, false);
 	bGuiActive = false;
-	if(attended){
+	if (attended) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 }
 
-bool ofxButton::mouseMoved(ofMouseEventArgs & args){
+bool ofxButton::mouseMoved(ofMouseEventArgs & args) {
 	return ofxToggle::mouseMoved(args);
 }
 
-bool ofxButton::mousePressed(ofMouseEventArgs & args){
+bool ofxButton::mousePressed(ofMouseEventArgs & args) {
 	return ofxToggle::mousePressed(args);
 }
 
-bool ofxButton::mouseDragged(ofMouseEventArgs & args){
+bool ofxButton::mouseDragged(ofMouseEventArgs & args) {
 	return ofxToggle::mouseDragged(args);
 }
 
-ofAbstractParameter & ofxButton::getParameter(){
+ofAbstractParameter & ofxButton::getParameter() {
 	return parameter;
 }
 
-void ofxButton::valueChanged(bool & v){
-	if(!v){
+void ofxButton::valueChanged(bool & v) {
+	if (!v) {
 		parameter.trigger();
 	}
 }

@@ -22,7 +22,7 @@ public:
 	std::vector<ofxCvBlob> blobs;
 
 	ofxCvHaarFinder();
-	ofxCvHaarFinder(const ofxCvHaarFinder& finder);
+	ofxCvHaarFinder(const ofxCvHaarFinder & finder);
 	~ofxCvHaarFinder();
 
 	void setup(std::string haarFile);
@@ -32,13 +32,13 @@ public:
 	// How many neighbors can be grouped into a face? Default value is 2. If set to 0, no grouping will be done.
 	void setNeighbors(unsigned neighbors);
 
-	int findHaarObjects(ofImage& input, int minWidth = 0, int minHeight = 0);
-	int findHaarObjects(const ofxCvGrayscaleImage& input, int minWidth = 0, int minHeight = 0);
+	int findHaarObjects(ofImage & input, int minWidth = 0, int minHeight = 0);
+	int findHaarObjects(const ofxCvGrayscaleImage & input, int minWidth = 0, int minHeight = 0);
 
-	int findHaarObjects(const ofxCvGrayscaleImage& input, ofRectangle& roi,	int minWidth = 0, int minHeight = 0);
-	int findHaarObjects(const ofxCvGrayscaleImage&, int x, int y, int w, int h,	int minWidth = 0, int minHeight = 0);
+	int findHaarObjects(const ofxCvGrayscaleImage & input, ofRectangle & roi, int minWidth = 0, int minHeight = 0);
+	int findHaarObjects(const ofxCvGrayscaleImage &, int x, int y, int w, int h, int minWidth = 0, int minHeight = 0);
 
-	int findHaarObjects(ofPixels& input, int minWidth = 0, int minHeight = 0);
+	int findHaarObjects(ofPixels & input, int minWidth = 0, int minHeight = 0);
 
 	float getWidth();
 	float getHeight();
@@ -47,7 +47,7 @@ public:
 
 protected:
 #ifdef USE_OLD_CV
-	CvHaarClassifierCascade* cascade;
+	CvHaarClassifierCascade * cascade;
 #else
 	cv::CascadeClassifier cascade;
 #endif //USE_OLD_CV

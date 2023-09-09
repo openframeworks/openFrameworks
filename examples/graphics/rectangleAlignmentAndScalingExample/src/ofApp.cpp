@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
 	// This example is designed to show all of the different aligning
 	// and scaling functions available in ofRectangle.
@@ -27,98 +27,100 @@ void ofApp::setup(){
 	isAligning = true;
 	isRectScaling = false;
 
-	scaleMode       = OF_SCALEMODE_FIT;
+	scaleMode = OF_SCALEMODE_FIT;
 	aspectRatioMode = OF_ASPECT_RATIO_KEEP;
 
-	target_hAlign   = OF_ALIGN_HORZ_CENTER;
-	target_vAlign   = OF_ALIGN_VERT_CENTER;
+	target_hAlign = OF_ALIGN_HORZ_CENTER;
+	target_vAlign = OF_ALIGN_VERT_CENTER;
 
-	subject_hAlign  = OF_ALIGN_HORZ_CENTER;
-	subject_vAlign  = OF_ALIGN_VERT_CENTER;
+	subject_hAlign = OF_ALIGN_HORZ_CENTER;
+	subject_vAlign = OF_ALIGN_VERT_CENTER;
 
 	bUseImage = true;
 
 	img.load("resolution_test_1080_mini.png");
 
-	targetColor  = ofColor(255,0,0);
-	subjectColor = ofColor(255,255,0);
+	targetColor = ofColor(255, 0, 0);
+	subjectColor = ofColor(255, 255, 0);
 
 	makeNewTarget();
 	makeNewSubject();
-
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 	workingSubjectRect = subjectRect;
 
 	// read the results of our keyboard input to determine
 	// the correct scaling and / or alignment operation.
 
-	if(!isRectScaling) {
-		if(isScaling) {
-			if(isAligning) {
+	if (!isRectScaling) {
+		if (isScaling) {
+			if (isAligning) {
 				workingSubjectRect.scaleTo(targetRect,
-										   aspectRatioMode,
-										   target_hAlign,
-										   target_vAlign,
-										   subject_hAlign,
-										   subject_vAlign);
+					aspectRatioMode,
+					target_hAlign,
+					target_vAlign,
+					subject_hAlign,
+					subject_vAlign);
 			} else {
 				workingSubjectRect.scaleTo(targetRect,
-										   aspectRatioMode);
+					aspectRatioMode);
 			}
 		} else {
-			if(isAligning) {
+			if (isAligning) {
 				workingSubjectRect.alignTo(targetRect,
-										   target_hAlign,
-										   target_vAlign,
-										   subject_hAlign,
-										   subject_vAlign);
+					target_hAlign,
+					target_vAlign,
+					subject_hAlign,
+					subject_vAlign);
 			} else {
 				workingSubjectRect.alignTo(targetRect);
 			}
 		}
 	} else {
 		workingSubjectRect.scaleTo(targetRect,
-								   scaleMode);
+			scaleMode);
 	}
-
-
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 	ofBackground(0);
 
 	// draw original subject in lower left-hand corner
-	if(!bUseImage) {
-		ofFill(); ofSetColor(subjectColor, 80);
+	if (!bUseImage) {
+		ofFill();
+		ofSetColor(subjectColor, 80);
 		ofDrawRectangle(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
 	} else {
-		ofFill(); ofSetColor(255);
+		ofFill();
+		ofSetColor(255);
 		img.draw(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
 	}
 	// draw original subject frame in lower left-hand corner
-	ofNoFill(); ofSetColor(subjectColor, 120);
+	ofNoFill();
+	ofSetColor(subjectColor, 120);
 	ofDrawRectangle(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
 	// draw original subject label
 	ofSetColor(255);
 	ofDrawBitmapStringHighlight("SUBJECT", 16, ofGetHeight() - 20);
 
 	// draw original target in lower right-hand corner
-	ofFill(); ofSetColor(targetColor, 80);
+	ofFill();
+	ofSetColor(targetColor, 80);
 	ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
 
 	// draw original target frame in lower right-hand corner
-	ofNoFill(); ofSetColor(targetColor, 120);
+	ofNoFill();
+	ofSetColor(targetColor, 120);
 	ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
 	ofSetColor(255);
 	ofDrawBitmapStringHighlight("TARGET", ofGetWidth() - 65, ofGetHeight() - 20);
 
 	// draw target rectangle in center
-	drawAlignRect(targetRect,  targetColor,  target_hAlign,  target_vAlign, false);
+	drawAlignRect(targetRect, targetColor, target_hAlign, target_vAlign, false);
 
 	// draw aligned / scaled subject with respect to the target
 	drawAlignRect(workingSubjectRect, subjectColor, subject_hAlign, subject_vAlign, bUseImage);
@@ -133,9 +135,9 @@ void ofApp::draw(){
 	ss << "----------------------------------------------------------" << endl;
 	ss << "  Enable Custom Align (A) = " << (isAligning && !isRectScaling ? "YES" : "NO") << endl;
 	ss << "  Subject ofAlignHorz (h) = " << (isAligning && !isRectScaling ? getHorzAlignString(subject_hAlign) : "-") << endl;
-	ss << "    Model ofAlignHorz (H) = " << (isAligning && !isRectScaling ? getHorzAlignString(target_hAlign)  : "-") << endl;
+	ss << "    Model ofAlignHorz (H) = " << (isAligning && !isRectScaling ? getHorzAlignString(target_hAlign) : "-") << endl;
 	ss << "  Subject ofAlignVert (v) = " << (isAligning && !isRectScaling ? getVertAlignString(subject_vAlign) : "-") << endl;
-	ss << "    Model ofAlignVert (V) = " << (isAligning && !isRectScaling ? getVertAlignString(target_vAlign)  : "-") << endl;
+	ss << "    Model ofAlignVert (V) = " << (isAligning && !isRectScaling ? getVertAlignString(target_vAlign) : "-") << endl;
 	ss << "----------------------------------------------------------" << endl;
 	ss << "Enable Custom Scaling (S) = " << (isScaling && !isRectScaling ? "YES" : "NO") << endl;
 	ss << "    ofAspectRatioMode (a) = " << (isScaling && !isRectScaling ? getAspectRatioModeString(aspectRatioMode) : "-") << endl;
@@ -146,51 +148,50 @@ void ofApp::draw(){
 	// draw the menu
 	ofSetColor(255);
 	ofDrawBitmapString(ss.str(), 10, 14);
-
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
 
 	// define keyboard interactions
-	if(key == ' ') {
+	if (key == ' ') {
 		makeNewTarget();
 		makeNewSubject();
-	} else if(key == 'h' && !isRectScaling && isAligning) {
+	} else if (key == 'h' && !isRectScaling && isAligning) {
 		subject_hAlign = getNextHorzAlign(subject_hAlign);
-	} else if(key == 'H' && !isRectScaling && isAligning) {
+	} else if (key == 'H' && !isRectScaling && isAligning) {
 		target_hAlign = getNextHorzAlign(target_hAlign);
-	} else if(key == 'v' && !isRectScaling && isAligning) {
+	} else if (key == 'v' && !isRectScaling && isAligning) {
 		subject_vAlign = getNextVertAlign(subject_vAlign);
-	} else if(key == 'V' && !isRectScaling && isAligning) {
+	} else if (key == 'V' && !isRectScaling && isAligning) {
 		target_vAlign = getNextVertAlign(target_vAlign);
-	} else if(key == 'a' && !isRectScaling && isScaling) {
+	} else if (key == 'a' && !isRectScaling && isScaling) {
 		aspectRatioMode = getNextAspectRatioMode(aspectRatioMode);
-	} else if(key == 's' && isRectScaling) {
+	} else if (key == 's' && isRectScaling) {
 		scaleMode = getNextScaleMode(scaleMode);
-	} else if(key == 'S') {
-		if(isRectScaling) {
+	} else if (key == 'S') {
+		if (isRectScaling) {
 			isScaling = true;
 			isRectScaling = false;
 		} else {
 			isScaling = !isScaling;
 		}
-	} else if(key == 'r') {
+	} else if (key == 'r') {
 		isRectScaling = !isRectScaling;
-		if(isRectScaling) {
+		if (isRectScaling) {
 			isScaling = false;
 			isAligning = false;
 		}
-	} else if(key == 'A') {
-		if(isRectScaling) {
+	} else if (key == 'A') {
+		if (isRectScaling) {
 			isRectScaling = false;
 			isAligning = true;
 		} else {
 			isAligning = !isAligning;
 		}
-	} else if(key == 'i') {
+	} else if (key == 'i') {
 		bUseImage = !bUseImage;
-		if(bUseImage) {
+		if (bUseImage) {
 			makeNewSubject();
 		}
 	}
@@ -199,45 +200,44 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::makeNewSubject() {
 	// if we are not using an image, make a random subject rectangle
-	if(!bUseImage) {
-		subjectRect.setFromCenter(ofGetWidth()  / 2.0f,
-								  ofGetHeight() / 2.0f,
-								  ofRandom(30.0f,300.0f),
-								  ofRandom(30.0f,300.0f));
+	if (!bUseImage) {
+		subjectRect.setFromCenter(ofGetWidth() / 2.0f,
+			ofGetHeight() / 2.0f,
+			ofRandom(30.0f, 300.0f),
+			ofRandom(30.0f, 300.0f));
 	} else {
 		// if we are using the image, then match the image size
-		subjectRect.setFromCenter(ofGetWidth()  / 2.0f,
-								  ofGetHeight() / 2.0f,
-								  img.getWidth(),
-								  img.getHeight());
+		subjectRect.setFromCenter(ofGetWidth() / 2.0f,
+			ofGetHeight() / 2.0f,
+			img.getWidth(),
+			img.getHeight());
 	}
 
 	// copy the subject to the working subject so it can be modified.
 	workingSubjectRect = subjectRect;
-
 }
 
 //--------------------------------------------------------------
 void ofApp::makeNewTarget() {
 
 	// create a random target rectangle aligned to the center of the screen
-	targetRect.setFromCenter(ofGetWidth()  / 2.0f,
-							 ofGetHeight() / 2.0f,
-							 ofRandom(30.0f,300.0f),
-							 ofRandom(30.0f,300.0f));
+	targetRect.setFromCenter(ofGetWidth() / 2.0f,
+		ofGetHeight() / 2.0f,
+		ofRandom(30.0f, 300.0f),
+		ofRandom(30.0f, 300.0f));
 }
 
 //--------------------------------------------------------------
-void ofApp::drawAlignRect(const ofRectangle& rect,
-							const ofColor& color,
-							ofAlignHorz hAlign,
-							ofAlignVert vAlign,
-							bool drawImage) {
+void ofApp::drawAlignRect(const ofRectangle & rect,
+	const ofColor & color,
+	ofAlignHorz hAlign,
+	ofAlignVert vAlign,
+	bool drawImage) {
 
 	// draw the rect -- draw the image if using an image
 	ofFill();
-	if(drawImage) {
-		ofSetColor(255,127);
+	if (drawImage) {
+		ofSetColor(255, 127);
 		img.draw(rect);
 	} else {
 		ofSetColor(color, 80);
@@ -249,41 +249,41 @@ void ofApp::drawAlignRect(const ofRectangle& rect,
 	ofDrawRectangle(rect);
 
 	// draw the alignment marks if applicable
-	if(isAligning && !isRectScaling) {
+	if (isAligning && !isRectScaling) {
 		drawHorzAlignMark(rect, color, hAlign);
 		drawVertAlignMark(rect, color, vAlign);
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::drawHorzAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignHorz hAlign) {
-	if(hAlign != OF_ALIGN_HORZ_IGNORE) {
+void ofApp::drawHorzAlignMark(const ofRectangle & rect, const ofColor & color, ofAlignHorz hAlign) {
+	if (hAlign != OF_ALIGN_HORZ_IGNORE) {
 		float hAnchor = rect.getHorzAnchor(hAlign);
-		ofSetColor(color,120);
-		ofDrawLine(hAnchor, rect.getTop()    - 13, hAnchor, rect.getTop()    - 3);
+		ofSetColor(color, 120);
+		ofDrawLine(hAnchor, rect.getTop() - 13, hAnchor, rect.getTop() - 3);
 		ofDrawLine(hAnchor, rect.getBottom() + 13, hAnchor, rect.getBottom() + 3);
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::drawVertAlignMark(const ofRectangle& rect, const ofColor& color, ofAlignVert vAlign) {
-	if(vAlign != OF_ALIGN_VERT_IGNORE) {
+void ofApp::drawVertAlignMark(const ofRectangle & rect, const ofColor & color, ofAlignVert vAlign) {
+	if (vAlign != OF_ALIGN_VERT_IGNORE) {
 		float vAnchor = rect.getVertAnchor(vAlign);
-		ofSetColor(color,120);
-		ofDrawLine(rect.getLeft()  - 13, vAnchor, rect.getLeft()  - 3, vAnchor);
+		ofSetColor(color, 120);
+		ofDrawLine(rect.getLeft() - 13, vAnchor, rect.getLeft() - 3, vAnchor);
 		ofDrawLine(rect.getRight() + 13, vAnchor, rect.getRight() + 3, vAnchor);
 	}
 }
 
 //--------------------------------------------------------------
 ofScaleMode ofApp::getNextScaleMode(ofScaleMode mode) {
-	if(mode == OF_SCALEMODE_FIT) {
+	if (mode == OF_SCALEMODE_FIT) {
 		mode = OF_SCALEMODE_FILL;
-	} else if(mode == OF_SCALEMODE_FILL) {
+	} else if (mode == OF_SCALEMODE_FILL) {
 		mode = OF_SCALEMODE_CENTER;
-	} else if(mode == OF_SCALEMODE_CENTER) {
+	} else if (mode == OF_SCALEMODE_CENTER) {
 		mode = OF_SCALEMODE_STRETCH_TO_FILL;
-	} else if(mode == OF_SCALEMODE_STRETCH_TO_FILL) {
+	} else if (mode == OF_SCALEMODE_STRETCH_TO_FILL) {
 		mode = OF_SCALEMODE_FIT;
 	}
 	return mode;
@@ -291,24 +291,23 @@ ofScaleMode ofApp::getNextScaleMode(ofScaleMode mode) {
 
 //--------------------------------------------------------------
 ofAspectRatioMode ofApp::getNextAspectRatioMode(ofAspectRatioMode mode) {
-	if(mode == OF_ASPECT_RATIO_IGNORE) {
+	if (mode == OF_ASPECT_RATIO_IGNORE) {
 		mode = OF_ASPECT_RATIO_KEEP;
-	} else if(mode == OF_ASPECT_RATIO_KEEP) {
+	} else if (mode == OF_ASPECT_RATIO_KEEP) {
 		mode = OF_ASPECT_RATIO_KEEP_BY_EXPANDING;
-	} else if(mode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
+	} else if (mode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
 		mode = OF_ASPECT_RATIO_IGNORE;
 	}
 	return mode;
 }
 
-
 //--------------------------------------------------------------
 ofAlignHorz ofApp::getNextHorzAlign(ofAlignHorz hAlign) {
-	if(hAlign == OF_ALIGN_HORZ_LEFT) {
+	if (hAlign == OF_ALIGN_HORZ_LEFT) {
 		hAlign = OF_ALIGN_HORZ_CENTER;
-	} else if(hAlign == OF_ALIGN_HORZ_CENTER) {
+	} else if (hAlign == OF_ALIGN_HORZ_CENTER) {
 		hAlign = OF_ALIGN_HORZ_RIGHT;
-	} else if(hAlign == OF_ALIGN_HORZ_RIGHT) {
+	} else if (hAlign == OF_ALIGN_HORZ_RIGHT) {
 		hAlign = OF_ALIGN_HORZ_LEFT;
 	}
 	return hAlign;
@@ -316,11 +315,11 @@ ofAlignHorz ofApp::getNextHorzAlign(ofAlignHorz hAlign) {
 
 //--------------------------------------------------------------
 ofAlignVert ofApp::getNextVertAlign(ofAlignVert vAlign) {
-	if(vAlign == OF_ALIGN_VERT_TOP) {
+	if (vAlign == OF_ALIGN_VERT_TOP) {
 		vAlign = OF_ALIGN_VERT_CENTER;
-	} else if(vAlign == OF_ALIGN_VERT_CENTER) {
+	} else if (vAlign == OF_ALIGN_VERT_CENTER) {
 		vAlign = OF_ALIGN_VERT_BOTTOM;
-	} else if(vAlign == OF_ALIGN_VERT_BOTTOM) {
+	} else if (vAlign == OF_ALIGN_VERT_BOTTOM) {
 		vAlign = OF_ALIGN_VERT_TOP;
 	}
 	return vAlign;
@@ -329,66 +328,65 @@ ofAlignVert ofApp::getNextVertAlign(ofAlignVert vAlign) {
 //--------------------------------------------------------------
 string ofApp::getHorzAlignString(ofAlignHorz hAlign) {
 	switch (hAlign) {
-		case OF_ALIGN_HORZ_LEFT:
-			return "OF_ALIGN_HORZ_LEFT";
-		case OF_ALIGN_HORZ_CENTER:
-			return "OF_ALIGN_HORZ_CENTER";
-		case OF_ALIGN_HORZ_RIGHT:
-			return "OF_ALIGN_HORZ_RIGHT";
-		case OF_ALIGN_HORZ_IGNORE:
-			return "OF_ALIGN_HORZ_IGNORE";
-		default:
-			ofLogError() << "Unknown ofAlignHorz: " << hAlign;
-			return "";
+	case OF_ALIGN_HORZ_LEFT:
+		return "OF_ALIGN_HORZ_LEFT";
+	case OF_ALIGN_HORZ_CENTER:
+		return "OF_ALIGN_HORZ_CENTER";
+	case OF_ALIGN_HORZ_RIGHT:
+		return "OF_ALIGN_HORZ_RIGHT";
+	case OF_ALIGN_HORZ_IGNORE:
+		return "OF_ALIGN_HORZ_IGNORE";
+	default:
+		ofLogError() << "Unknown ofAlignHorz: " << hAlign;
+		return "";
 	}
 }
 
 //--------------------------------------------------------------
 string ofApp::getVertAlignString(ofAlignVert vAlign) {
 	switch (vAlign) {
-		case OF_ALIGN_VERT_TOP:
-			return "OF_ALIGN_VERT_TOP";
-		case OF_ALIGN_VERT_CENTER:
-			return "OF_ALIGN_VERT_CENTER";
-		case OF_ALIGN_VERT_BOTTOM:
-			return "OF_ALIGN_VERT_BOTTOM";
-		case OF_ALIGN_VERT_IGNORE:
-			return "OF_ALIGN_VERT_IGNORE";
-		default:
-			ofLogError() << "Unknown ofAlignVert: " << vAlign;
-			return "";
+	case OF_ALIGN_VERT_TOP:
+		return "OF_ALIGN_VERT_TOP";
+	case OF_ALIGN_VERT_CENTER:
+		return "OF_ALIGN_VERT_CENTER";
+	case OF_ALIGN_VERT_BOTTOM:
+		return "OF_ALIGN_VERT_BOTTOM";
+	case OF_ALIGN_VERT_IGNORE:
+		return "OF_ALIGN_VERT_IGNORE";
+	default:
+		ofLogError() << "Unknown ofAlignVert: " << vAlign;
+		return "";
 	}
 }
 
 //--------------------------------------------------------------
 string ofApp::getAspectRatioModeString(ofAspectRatioMode mode) {
 	switch (mode) {
-		case OF_ASPECT_RATIO_IGNORE:
-			return "OF_ASPECT_RATIO_IGNORE";
-		case OF_ASPECT_RATIO_KEEP:
-			return "OF_ASPECT_RATIO_KEEP";
-		case OF_ASPECT_RATIO_KEEP_BY_EXPANDING:
-			return "OF_ASPECT_RATIO_KEEP_BY_EXPANDING";
-		default:
-			ofLogError() << "Unknown ofAspectRatioMode: " << mode;
-			return "";
+	case OF_ASPECT_RATIO_IGNORE:
+		return "OF_ASPECT_RATIO_IGNORE";
+	case OF_ASPECT_RATIO_KEEP:
+		return "OF_ASPECT_RATIO_KEEP";
+	case OF_ASPECT_RATIO_KEEP_BY_EXPANDING:
+		return "OF_ASPECT_RATIO_KEEP_BY_EXPANDING";
+	default:
+		ofLogError() << "Unknown ofAspectRatioMode: " << mode;
+		return "";
 	}
 }
 
 //--------------------------------------------------------------
 string ofApp::getScaleModeString(ofScaleMode mode) {
 	switch (mode) {
-		case OF_SCALEMODE_FIT:
-			return "OF_SCALEMODE_FIT";
-		case OF_SCALEMODE_FILL:
-			return "OF_SCALEMODE_FILL";
-		case OF_SCALEMODE_CENTER:
-			return "OF_SCALEMODE_CENTER";
-		case OF_SCALEMODE_STRETCH_TO_FILL:
-			return "OF_SCALEMODE_STRETCH_TO_FILL";
-		default:
-			ofLogError() << "Unknown ofScaleMode: " << mode;
-			return "";
+	case OF_SCALEMODE_FIT:
+		return "OF_SCALEMODE_FIT";
+	case OF_SCALEMODE_FILL:
+		return "OF_SCALEMODE_FILL";
+	case OF_SCALEMODE_CENTER:
+		return "OF_SCALEMODE_CENTER";
+	case OF_SCALEMODE_STRETCH_TO_FILL:
+		return "OF_SCALEMODE_STRETCH_TO_FILL";
+	default:
+		ofLogError() << "Unknown ofScaleMode: " << mode;
+		return "";
 	}
 }
-

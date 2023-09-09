@@ -1,6 +1,5 @@
 #include "ofApp.h"
 
-
 //--------------------------------------------------------------
 void ofApp::setup() {
 
@@ -23,23 +22,23 @@ void ofApp::threadedFunction() {
 
 	while (isThreadRunning()) {
 
-		// call the system command say
-		#ifdef TARGET_OSX
-			string cmd = "say " + words[step] + " "; // create the command
-		#endif
-		#ifdef TARGET_WIN32
-			string cmd = "data\\SayStatic.exe " + words[step];        // create the command
-		#endif
-		#ifdef TARGET_LINUX
-			string cmd = "echo " + words[step] + "|espeak";           // create the command
-		#endif
+// call the system command say
+#ifdef TARGET_OSX
+		string cmd = "say " + words[step] + " "; // create the command
+#endif
+#ifdef TARGET_WIN32
+		string cmd = "data\\SayStatic.exe " + words[step]; // create the command
+#endif
+#ifdef TARGET_LINUX
+		string cmd = "echo " + words[step] + "|espeak"; // create the command
+#endif
 
-				// print command and execute it
-				cout << cmd << endl;
-				ofSystem(cmd.c_str());
+		// print command and execute it
+		cout << cmd << endl;
+		ofSystem(cmd.c_str());
 
 		// step to the next word
-		step ++;
+		step++;
 		step %= words.size();
 
 		// slowdown boy
@@ -51,7 +50,6 @@ void ofApp::threadedFunction() {
 void ofApp::update() {
 	// get a random voice
 }
-
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -72,55 +70,44 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
+void ofApp::mouseMoved(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
+void ofApp::mousePressed(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
+void ofApp::mouseReleased(int x, int y, int button) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
+void ofApp::mouseEntered(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
+void ofApp::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
+void ofApp::windowResized(int w, int h) {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
+void ofApp::gotMessage(ofMessage msg) {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 }

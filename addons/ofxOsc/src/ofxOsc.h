@@ -4,5 +4,5 @@
 
 #include "ofxOscArg.h"
 #include "ofxOscMessage.h"
-#include "ofxOscSender.h"
 #include "ofxOscReceiver.h"
+#include "ofxOscSender.h"

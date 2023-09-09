@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class ImgAnalysisThread: public ofThread {
+class ImgAnalysisThread : public ofThread {
 public:
 	ImgAnalysisThread();
 	~ImgAnalysisThread();

@@ -13,7 +13,6 @@
 
 class Circle {
 public:
-
 	Circle();
 	~Circle();
 	// to be able to broadcast events from a class we must declare the ofEvent object that will be broadcasted.
@@ -41,7 +40,7 @@ public:
 	void mouseExited(ofMouseEventArgs & args);
 
 	//this function checks if the passed arguments are inside the circle.
-	bool inside(float _x, float _y );
+	bool inside(float _x, float _y);
 	int radius, x, y;
 	ofColor color;
 

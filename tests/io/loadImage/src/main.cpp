@@ -1,9 +1,9 @@
-#include "ofMain.h"
 #include "ofAppNoWindow.h"
+#include "ofMain.h"
 #include "ofxUnitTests.h"
 
-class ofApp: public ofxUnitTestsApp{
-	void run(){
+class ofApp : public ofxUnitTestsApp {
+	void run() {
 		ofImage img;
 		img.setUseTexture(false);
 		ofxTest(img.load("indispensable.jpg"), "load from fs");
@@ -14,7 +14,7 @@ class ofApp: public ofxUnitTestsApp{
 };
 
 //========================================================================
-int main( ){
+int main() {
 	ofInit();
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
@@ -23,5 +23,4 @@ int main( ){
 	// pass in width and height too:
 	ofRunApp(window, app);
 	return ofRunMainLoop();
-
 }

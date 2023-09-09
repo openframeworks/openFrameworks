@@ -32,7 +32,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ----------------------------------------------------------------------- */ 
+ * ----------------------------------------------------------------------- */
 
 #pragma once
 
@@ -40,15 +40,15 @@
 
 #ifndef TARGET_OF_TVOS
 
-#include "ofAppiOSWindow.h"
-#include "ofxiOSConstants.h"
-#include "ofxiOSExtensions.h"
-#include "ofxiOSAppDelegate.h"
-#include "ofxiOSViewController.h"
-#include "ofxiOSGLKViewController.h"
-#include "ofxiOSGLKView.h"
-#include "ofxiOSEAGLView.h"
-#include "ofxiOSApp.h"
-#include "ofxiOSExtras.h"
+	#include "ofAppiOSWindow.h"
+	#include "ofxiOSApp.h"
+	#include "ofxiOSAppDelegate.h"
+	#include "ofxiOSConstants.h"
+	#include "ofxiOSEAGLView.h"
+	#include "ofxiOSExtensions.h"
+	#include "ofxiOSExtras.h"
+	#include "ofxiOSGLKView.h"
+	#include "ofxiOSGLKViewController.h"
+	#include "ofxiOSViewController.h"
 
 #endif

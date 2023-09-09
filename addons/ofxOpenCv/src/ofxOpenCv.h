@@ -6,10 +6,10 @@
 
 //--------------------------
 // images
-#include "ofxCvImage.h"
-#include "ofxCvGrayscaleImage.h"
 #include "ofxCvColorImage.h"
 #include "ofxCvFloatImage.h"
+#include "ofxCvGrayscaleImage.h"
+#include "ofxCvImage.h"
 #include "ofxCvShortImage.h"
 
 //--------------------------

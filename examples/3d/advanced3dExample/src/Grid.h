@@ -9,6 +9,6 @@
 // We inherit from ofNode
 
 class grid : public ofNode {
-	public:
-		void    customDraw();
+public:
+	void customDraw();
 };

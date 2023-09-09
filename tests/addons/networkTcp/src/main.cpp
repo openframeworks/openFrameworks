@@ -1,21 +1,21 @@
-#include "ofMain.h"
 #include "ofAppNoWindow.h"
-#include "ofxUnitTests.h"
+#include "ofMain.h"
 #include "ofxNetwork.h"
+#include "ofxUnitTests.h"
 
-class ofApp: public ofxUnitTestsApp{
+class ofApp : public ofxUnitTestsApp {
 public:
-	void testNonBlocking(int timeout = 0){
+	void testNonBlocking(int timeout = 0) {
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testNonBlocking";
 
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
-		ofxTest(server.setup(port,false), "non blocking server");
+		ofxTest(server.setup(port, false), "non blocking server");
 
 		ofxTCPClient client;
-		ofxTest(client.setup("127.0.0.1",port,false), "non blocking client");
+		ofxTest(client.setup("127.0.0.1", port, false), "non blocking client");
 
 		server.waitConnectedClient(500);
 
@@ -24,30 +24,30 @@ public:
 		std::string messageReceived;
 
 		ofxTest(client.send(messageSent), "send non blocking from client");
-		for(int i=0;i<server.getLastID();i++){
-			if(!server.isClientConnected(i)){
+		for (int i = 0; i < server.getLastID(); i++) {
+			if (!server.isClientConnected(i)) {
 				continue;
 			}
-			for(int i=0;i<10 && !received;i++){
+			for (int i = 0; i < 10 && !received; i++) {
 				ofSleepMillis(200);
 				messageReceived = server.receive(i);
-				if(messageReceived == messageSent){
+				if (messageReceived == messageSent) {
 					received = true;
 				}
 			}
 			ofxTest(received, "receive non blocking from server");
 		}
 
-		for(int i=0;i<server.getLastID();i++){
-			if(!server.isClientConnected(i)){
+		for (int i = 0; i < server.getLastID(); i++) {
+			if (!server.isClientConnected(i)) {
 				continue;
 			}
-			ofxTest(server.send(i,messageSent), "send non blocking from server");
+			ofxTest(server.send(i, messageSent), "send non blocking from server");
 			messageReceived = "";
-			for(int i=0;i<10 && !received;i++){
+			for (int i = 0; i < 10 && !received; i++) {
 				ofSleepMillis(200);
 				messageReceived = client.receive();
-				if(messageReceived == messageSent){
+				if (messageReceived == messageSent) {
 					received = true;
 				}
 			}
@@ -56,7 +56,7 @@ public:
 		}
 	}
 
-	void testBlocking(){
+	void testBlocking() {
 		ofLogNotice() << "";
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testBlocking";
@@ -64,10 +64,10 @@ public:
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
-		ofxTest(server.setup(port,true), "blocking server");
+		ofxTest(server.setup(port, true), "blocking server");
 
 		ofxTCPClient client;
-		ofxTest(client.setup("127.0.0.1",port,true), "blocking client");
+		ofxTest(client.setup("127.0.0.1", port, true), "blocking client");
 
 		// wait for connection to be made
 		server.waitConnectedClient(500);
@@ -79,7 +79,7 @@ public:
 		ofxTestEq(client.receive(), messageSent, "receive blocking from client");
 	}
 
-	void disconnectionAutoDetection(){
+	void disconnectionAutoDetection() {
 		ofLogNotice() << "";
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "disconnectionAutoDetection";
@@ -87,10 +87,10 @@ public:
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
-		ofxTest(server.setup(port,true), "blocking server");
+		ofxTest(server.setup(port, true), "blocking server");
 
 		ofxTCPClient client;
-		ofxTest(client.setup("127.0.0.1",port,true), "blocking client");
+		ofxTest(client.setup("127.0.0.1", port, true), "blocking client");
 
 		// wait for connection to be made
 		server.waitConnectedClient(500);
@@ -101,14 +101,14 @@ public:
 		ofxTest(server.disconnectAllClients(), "server closes correctly");
 		ofxTest(!client.isConnected(), "client detects disconnection");
 
-		ofxTest(client.setup("127.0.0.1",port,true), "client reconnects");
+		ofxTest(client.setup("127.0.0.1", port, true), "client reconnects");
 
 		ofxTest(client.close(), "client disconnects");
 		ofxTest(!server.isClientConnected(0), "server detects disconnection");
 		ofxTest(!server.isClientConnected(1), "server detects disconnection");
 	}
 
-	void testSendRaw(){
+	void testSendRaw() {
 		ofLogNotice() << "";
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testSendRaw";
@@ -116,7 +116,7 @@ public:
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
-		ofxTest(server.setup(port,true), "blocking server");
+		ofxTest(server.setup(port, true), "blocking server");
 
 		ofxTCPClient client;
 		ofxTest(client.setup("127.0.0.1", port, true), "blocking client");
@@ -127,23 +127,22 @@ public:
 		// wait for connection to be made
 		server.waitConnectedClient(500);
 
-
-		std::vector<char> messageReceived(messageSent.size()+1, 0);
+		std::vector<char> messageReceived(messageSent.size() + 1, 0);
 		std::size_t received = 0;
-		do{
+		do {
 			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
-			ofxTest(ret>0, "received blocking from server");
-			if(ret>0){
+			ofxTest(ret > 0, "received blocking from server");
+			if (ret > 0) {
 				received += ret;
-			}else{
+			} else {
 				break;
 			}
-		}while(received<messageSent.size());
+		} while (received < messageSent.size());
 
 		ofxTestEq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
 	}
 
-	void testSendRawBytes(){
+	void testSendRawBytes() {
 		ofLogNotice() << "";
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testSendRawBytes";
@@ -151,7 +150,7 @@ public:
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
-		ofxTest(server.setup(port,true), "blocking server");
+		ofxTest(server.setup(port, true), "blocking server");
 
 		ofxTCPClient client;
 		ofxTest(client.setup("127.0.0.1", port, true), "blocking client");
@@ -159,26 +158,25 @@ public:
 		// wait for connection to be made
 		server.waitConnectedClient(500);
 
-
 		std::string messageSent = "message";
 		ofxTest(client.sendRawBytes(messageSent.c_str(), messageSent.size()), "send blocking from client");
 
-		std::vector<char> messageReceived(messageSent.size()+1, 0);
+		std::vector<char> messageReceived(messageSent.size() + 1, 0);
 		std::size_t received = 0;
-		do{
+		do {
 			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
-			ofxTest(ret>0, "received blocking from server");
-			if(ret>0){
+			ofxTest(ret > 0, "received blocking from server");
+			if (ret > 0) {
 				received += ret;
-			}else{
+			} else {
 				break;
 			}
-		}while(received<messageSent.size());
+		} while (received < messageSent.size());
 
 		ofxTestEq(messageSent, std::string(messageReceived.data()), "messageSent == messageReceived");
 	}
 
-	void testWrongConnect(){
+	void testWrongConnect() {
 		ofLogNotice() << "";
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testWrongConnect";
@@ -188,11 +186,11 @@ public:
 		ofxTest(client.Create(), "socket creation");
 		auto then = ofGetElapsedTimeMillis();
 		ofxTest(!client.Connect("127.0.0.1", 200), "connect to non open port, if this fails the port might be really open:");
-        auto now = ofGetElapsedTimeMillis();
-		ofxTest(now-then<6000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
+		auto now = ofGetElapsedTimeMillis();
+		ofxTest(now - then < 6000, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 	}
 
-	void testReceiveTimeout(){
+	void testReceiveTimeout() {
 		ofLogNotice() << "";
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testReceiveTimeout";
@@ -204,7 +202,7 @@ public:
 		ofxTest(server.Listen(1), "server socket listen");
 		std::condition_variable done;
 		std::mutex mtx;
-		std::thread serverThread([&]{
+		std::thread serverThread([&] {
 			ofxTCPManager client;
 			ofxTest(server.Accept(client), "server socket accept");
 			std::unique_lock<std::mutex> lck(mtx);
@@ -219,16 +217,16 @@ public:
 		client.SetTimeoutReceive(5);
 		auto then = ofGetElapsedTimeMillis();
 		char buffer;
-		ofxTestEq(client.Receive(&buffer,1), SOCKET_TIMEOUT, "socket timeouts on no receive");
+		ofxTestEq(client.Receive(&buffer, 1), SOCKET_TIMEOUT, "socket timeouts on no receive");
 		auto now = ofGetElapsedTimeMillis();
 		// seems timers in the test servers are not very accurate so
 		// we test this with a margin of 500ms
-		ofxTestGt(now-then, std::uint64_t(4500), "Connect waits 5s to timeout, waited: " + ofToString(now - then));
+		ofxTestGt(now - then, std::uint64_t(4500), "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 		done.notify_all();
 		serverThread.join();
 	}
 
-	void testSendMaxSize(){
+	void testSendMaxSize() {
 		ofLogNotice() << "";
 		ofLogNotice() << "---------------------------------------";
 		ofLogNotice() << "testSendMaxSize tests #3478";
@@ -236,7 +234,7 @@ public:
 		int port = ofRandom(15000, 65535);
 
 		ofxTCPServer server;
-		ofxTest(server.setup(port,true), "blocking server");
+		ofxTest(server.setup(port, true), "blocking server");
 
 		ofxTCPClient client;
 		ofxTest(client.setup("127.0.0.1", port, true), "blocking client");
@@ -246,17 +244,17 @@ public:
 
 		string str;
 		string received;
-		for(int i=0;i<TCP_MAX_MSG_SIZE;i++){
+		for (int i = 0; i < TCP_MAX_MSG_SIZE; i++) {
 			str.append(ofToString((int)ofRandom(10)));
 		}
 		ofxTest(server.sendRawMsg(0, str.c_str(), str.size()), "could send max size");
-		do{
+		do {
 			received += client.receiveRaw();
-		}while(received.size()<str.size());
+		} while (received.size() < str.size());
 		ofxTestEq(received, str, "received max size message == sent message");
 	}
 
-	void run(){
+	void run() {
 		testNonBlocking();
 		testBlocking();
 		disconnectionAutoDetection();
@@ -269,8 +267,8 @@ public:
 };
 
 //========================================================================
-int main( ){
-    ofInit();
+int main() {
+	ofInit();
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	// this kicks off the running of my app
@@ -279,4 +277,3 @@ int main( ){
 	ofRunApp(window, app);
 	return ofRunMainLoop();
 }
-
