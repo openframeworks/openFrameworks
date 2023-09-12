@@ -64,6 +64,7 @@ void ofSetColor(const ofColor& acolor, int _a);
 void ofSetFloatColor(float r, float g, float b);
 void ofSetFloatColor(float r, float g, float b, float a);
 void ofSetFloatColor(float gray);
+void ofSetFloatColor(float gray, float _a);
 
 template<typename T>
 void ofSetColor( const ofColor_<T>& acolor ) {

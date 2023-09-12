@@ -601,6 +601,11 @@ void ofSetFloatColor(float gray){
 }
 
 //----------------------------------------------------------
+void ofSetFloatColor(float gray, float _a) {
+	ofSetFloatColor(gray, gray, gray, _a);
+}
+
+//----------------------------------------------------------
 void ofSetHexColor(int hexColor){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;
