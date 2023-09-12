@@ -73,7 +73,6 @@ void ofSetColor( const ofColor_<T>& acolor ) {
 	ofSetFloatColor( acolor.r / limit, acolor.g / limit, acolor.b/limit, acolor.a / limit );
 }
 
-
 /// Sets the draw color with r,g,b, passed in as a hex. Hex is a conventient
 /// way to write colors.
 ///
@@ -301,6 +300,8 @@ void ofClearFloat(float r, float g, float b);
 void ofClearFloat(float r, float g, float b, float a);
 void ofClearFloat(float brightness, float a);
 void ofClearFloat(float brightness);
+void ofClearFloat(const ofFloatColor & c);
+
 
 // OF's access to settings (bgAuto, origin, corner mode):
 OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead",bool ofbClearBg());

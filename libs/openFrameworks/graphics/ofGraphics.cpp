@@ -319,7 +319,7 @@ void ofClear(float r, float g, float b, float a){
 }
 
 //----------------------------------------------------------
-void ofClear(float r, float g, float b) {
+void ofClear(float r, float g, float b){
 	ofClear( r, g, b, 255.f );
 }
 
@@ -339,17 +339,17 @@ void ofClear(const ofColor & c){
 }
 
 //----------------------------------------------------------
-void ofClear(const ofFloatColor & c) {
+void ofClear(const ofFloatColor & c){
 	ofClearFloat(c.r,c.g,c.b,c.a);
 }
 
 //----------------------------------------------------------
-void ofClearFloat(float r, float g, float b) {
+void ofClearFloat(float r, float g, float b){
 	ofClearFloat(r,g,b,1.f);
 }
 
 //----------------------------------------------------------
-void ofClearFloat(float r, float g, float b, float a) {
+void ofClearFloat(float r, float g, float b, float a){
 	ofGetCurrentRenderer()->clear(r,g,b,a);
 }
 
@@ -359,8 +359,13 @@ void ofClearFloat(float brightness, float a) {
 }
 
 //----------------------------------------------------------
-void ofClearFloat(float brightness) {
+void ofClearFloat(float brightness){
 	ofClearFloat(brightness, brightness, brightness, 1.f);
+}
+
+//----------------------------------------------------------
+void ofClearFloat(const ofFloatColor & c){
+	ofClearFloat(c.r, c.g, c.b, c.aX);
 }
 
 //----------------------------------------------------------
