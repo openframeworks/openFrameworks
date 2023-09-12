@@ -365,7 +365,7 @@ void ofClearFloat(float brightness){
 
 //----------------------------------------------------------
 void ofClearFloat(const ofFloatColor & c){
-	ofClearFloat(c.r, c.g, c.b, c.aX);
+	ofClearFloat(c.r, c.g, c.b, c.a);
 }
 
 //----------------------------------------------------------
