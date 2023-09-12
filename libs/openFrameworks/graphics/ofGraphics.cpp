@@ -2,7 +2,6 @@
 #include "ofRendererCollection.h"
 #include "ofGLRenderer.h"
 
-
 #ifndef TARGET_WIN32
     #define CALLBACK
 #endif
@@ -564,20 +563,9 @@ void ofSetCircleResolution(int res){
 }
 
 //----------------------------------------------------------
-void ofSetColor(const ofColor & color){
-	ofSetColor(color.r,color.g,color.b,color.a);
-}
-
-//----------------------------------------------------------
-void ofSetColor(const ofColor & color, int _a){
-	ofSetColor(color.r,color.g,color.b,_a);
-}
-
-//----------------------------------------------------------
 void ofSetColor(int r, int g, int b){
 	ofSetColor(r,g,b,255);
 }
-
 
 //----------------------------------------------------------
 void ofSetColor(int r, int g, int b, int a){
@@ -593,38 +581,23 @@ void ofSetColor(int gray){
 }
 
 //----------------------------------------------------------
-void ofSetColor(const ofFloatColor & color) {
-	ofGetCurrentRenderer()->setColor(color.r,color.g,color.b,color.a);
+void ofSetColor(const ofColor& acolor, int _a){
+	ofSetFloatColor( acolor.r / 255.f, acolor.g / 255.f, acolor.b/255.f, _a / 255.f );
 }
 
 //----------------------------------------------------------
-void ofSetColor(const ofFloatColor & color, float _a) {
-	ofGetCurrentRenderer()->setColor(color.r,color.g,color.b,_a);
-}
-
-//----------------------------------------------------------
-void ofSetFloatColor(float r, float g, float b) {
+void ofSetFloatColor(float r, float g, float b){
 	ofSetFloatColor( r, g, b, 1.f);
 }
 
 //----------------------------------------------------------
-void ofSetFloatColor(float r, float g, float b, float a) {
+void ofSetFloatColor(float r, float g, float b, float a){
 	ofGetCurrentRenderer()->setColor(r,g,b,a);
 }
 
 //----------------------------------------------------------
-void ofSetFloatColor(float gray) {
-	ofSetFloatColor( gray, gray, gray);
-}
-
-//----------------------------------------------------------
-void ofSetFloatColor(const ofFloatColor & color) {
-	ofSetFloatColor(color.r,color.g,color.b,color.a);
-}
-
-//----------------------------------------------------------
-void ofSetFloatColor(const ofFloatColor & color, float _a) {
-	ofSetFloatColor(color.r,color.g,color.b,_a);
+void ofSetFloatColor(float gray){
+	ofSetFloatColor( gray, gray, gray, 1.f);
 }
 
 //----------------------------------------------------------

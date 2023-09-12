@@ -53,17 +53,24 @@ void ofSetColor(int r, int g, int b);
 /// }
 /// ~~~~
 void ofSetColor(int r, int g, int b, int a);
-void ofSetColor(const ofColor & color);
-void ofSetColor(const ofColor & color, int _a);
 void ofSetColor(int gray);
-void ofSetColor(const ofFloatColor & color);
-void ofSetColor(const ofFloatColor & color, float _a);
+void ofSetColor(const ofColor& acolor, int _a);
 
+/// \brief Sets the draw color with r,g,b,a 0-1.
+///
+/// For alpha (transparency), you must first enable transparent blending
+/// (turned off by default for performance reasons) with
+/// ofEnableAlphaBlending()
 void ofSetFloatColor(float r, float g, float b);
 void ofSetFloatColor(float r, float g, float b, float a);
 void ofSetFloatColor(float gray);
-void ofSetFloatColor(const ofFloatColor & color);
-void ofSetFloatColor(const ofFloatColor & color, float _a);
+
+template<typename T>
+void ofSetColor( const ofColor_<T>& acolor ) {
+	float limit = ofColor_<T>::limit();
+	ofSetFloatColor( acolor.r / limit, acolor.g / limit, acolor.b/limit, acolor.a / limit );
+}
+
 
 /// Sets the draw color with r,g,b, passed in as a hex. Hex is a conventient
 /// way to write colors.
