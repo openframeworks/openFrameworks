@@ -70,7 +70,6 @@ void ofSetFloatColor(const ofFloatColor& acolor);
 template<typename T>
 void ofSetColor( const ofColor_<T>& acolor ) {
 	float limit = ofColor_<T>::limit();
-	std::cout << "ofSetColor :: limit : " << limit << " color: " << acolor << std::endl;
 	ofSetFloatColor( acolor.r / limit, acolor.g / limit, acolor.b/limit, acolor.a / limit );
 }
 
