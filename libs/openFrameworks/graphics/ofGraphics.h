@@ -54,7 +54,7 @@ void ofSetColor(int r, int g, int b);
 /// ~~~~
 void ofSetColor(int r, int g, int b, int a);
 void ofSetColor(int gray);
-void ofSetColor(const ofColor& acolor, int _a);
+void ofSetColor(const ofColor& acolor, int a);
 
 /// \brief Sets the draw color with r,g,b,a 0-1.
 ///
@@ -64,11 +64,13 @@ void ofSetColor(const ofColor& acolor, int _a);
 void ofSetFloatColor(float r, float g, float b);
 void ofSetFloatColor(float r, float g, float b, float a);
 void ofSetFloatColor(float gray);
-void ofSetFloatColor(float gray, float _a);
+void ofSetFloatColor(const ofFloatColor& acolor, float a);
+void ofSetFloatColor(const ofFloatColor& acolor);
 
 template<typename T>
 void ofSetColor( const ofColor_<T>& acolor ) {
 	float limit = ofColor_<T>::limit();
+	std::cout << "ofSetColor :: limit : " << limit << " color: " << acolor << std::endl;
 	ofSetFloatColor( acolor.r / limit, acolor.g / limit, acolor.b/limit, acolor.a / limit );
 }
 

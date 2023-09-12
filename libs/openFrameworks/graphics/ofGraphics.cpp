@@ -581,8 +581,8 @@ void ofSetColor(int gray){
 }
 
 //----------------------------------------------------------
-void ofSetColor(const ofColor& acolor, int _a){
-	ofSetFloatColor( acolor.r / 255.f, acolor.g / 255.f, acolor.b/255.f, _a / 255.f );
+void ofSetColor(const ofColor& acolor, int a){
+	ofSetFloatColor( acolor.r/255.f, acolor.g/255.f, acolor.b/255.f, a/255.f );
 }
 
 //----------------------------------------------------------
@@ -601,8 +601,13 @@ void ofSetFloatColor(float gray){
 }
 
 //----------------------------------------------------------
-void ofSetFloatColor(float gray, float _a) {
-	ofSetFloatColor(gray, gray, gray, _a);
+void ofSetFloatColor(const ofFloatColor& acolor, float a){
+	ofSetFloatColor( acolor.r, acolor.g, acolor.b, a);
+}
+
+//----------------------------------------------------------
+void ofSetFloatColor(const ofFloatColor& acolor){
+	ofSetFloatColor( acolor.r, acolor.g, acolor.b, acolor.a);
 }
 
 //----------------------------------------------------------
