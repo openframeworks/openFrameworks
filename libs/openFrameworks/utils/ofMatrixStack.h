@@ -26,6 +26,8 @@ public:
 	void setRenderSurface(const ofBaseDraws & fbo);
 	void setRenderSurfaceNoMatrixFlip(const ofBaseDraws & fbo);
 	void setRenderSurface(const ofAppBaseWindow & window);
+    const ofBaseDraws* getCurrentRenderSurface();
+    const ofAppBaseWindow* getCurrentWindow();
 
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	ofOrientation getOrientation() const;
