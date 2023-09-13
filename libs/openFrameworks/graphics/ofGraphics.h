@@ -1148,6 +1148,16 @@ void ofRotateYRad(float radians);
 /// \param degrees Specifies the angle of rotation, in radians.
 void ofRotateZRad(float radians);
 
+/// \brief Skews the current matrix with the given values.
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofSkew(ofVec2f(45, 20));
+///     ofDrawRectangle(20,20,100,100);
+/// }
+/// ~~~~
+/// \param skew Specifies the angle of skew, in degrees.
+void ofSkew(const ofVec2f& skew);
+
 /// \}
 /// \name Matrix Transformation
 /// \{
