@@ -37,6 +37,30 @@ using std::shared_ptr;
 using std::numeric_limits;
 
 //-------------------------------------------------------
+#if !defined(TARGET_LINUX) // Currently no support in GPU driver for Core 4.5, KHR_debug or ARB_debug_output.
+#if defined(TARGET_WIN32)
+void __stdcall	debugMessageCallback(GLenum /*source*/, GLenum /*type*/, GLuint /*id*/, GLenum severity, GLsizei /*length*/, const GLchar *message, void *userParam)
+#else
+void			debugMessageCallback(GLenum /*source*/, GLenum /*type*/, GLuint /*id*/, GLenum severity, GLsizei /*length*/, const GLchar *message, void *userParam)
+#endif
+{
+	switch( severity ) {
+		case GL_DEBUG_SEVERITY_HIGH:
+			std::cout << "OpenGL error: " << message << std::endl;
+		break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			std::cout << "OpenGL warning: " << message << std::endl;
+		break;
+		case GL_DEBUG_SEVERITY_LOW:
+			std::cout << "OpenGL message: " << message << std::endl;
+		break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+		break;
+	}
+}
+#endif
+
+//-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
 :coreEvents(new ofCoreEvents) {
 	bEnableSetupScreen	= true;
@@ -189,6 +213,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			currentRenderer = std::make_shared<ofGLRenderer>(this);
 		}
     #else
+#if !defined(TARGET_LINUX)
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, settings.debugContext);
+#endif
 	    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.glVersionMinor);
@@ -372,6 +399,13 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
 	}
 
+#if !defined(TARGET_LINUX)
+	if(settings.debugContext) {
+		glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
+		glDebugMessageCallback( (GLDEBUGPROC)debugMessageCallback, this );
+	}
+#endif
+	
 	setVerticalSync(true);
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);

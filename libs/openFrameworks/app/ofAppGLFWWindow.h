@@ -53,6 +53,7 @@ public:
 	bool transparent = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
+	bool debugContext = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
 };
 
