@@ -2,6 +2,7 @@
 #define DIST_HPP
 
 #include "ofMain.h"
+#include "ofxGui.h"
 
 struct Dist {
 
