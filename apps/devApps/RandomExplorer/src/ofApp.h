@@ -1,8 +1,8 @@
 #pragma once
 
+#include "ofMain.h"
 #include "Dist.hpp"
 #include "OKColor.h"
-#include "ofMain.h"
 #include "ofxGui.h"
 
 using namespace std::string_literals;
@@ -62,56 +62,76 @@ class ofApp : public ofBaseApp {
 	ofParameter<int> bin_p_ { "p", 5, 0, 40 };
 	ofParameter<float> bin_t_ { "t", .5, 0, .99 };
 	ofParameter<float> chi_n_ { "freedom", 4, 0, 10 };
-	
+
 	std::map<std::string, std::shared_ptr<DistGroup>> dists_ {
-	 { "old", std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
+		{ "old",
+			std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
 
-				  std::make_shared<ConcreteDist<float>>("rand()", "old-skool (thread risky)\nbased on srand()", std::nullopt, std::vector<ofAbstractParameter *> { &rand_min_, &rand_max_ }, [&] { return ofOldRandom(rand_min_, rand_max_); }) }) },
-		 { "core", std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
+				std::make_shared<ConcreteDist<float>>("rand()", "old-skool (thread risky)\nbased on srand()", std::nullopt, std::vector<ofAbstractParameter *> { &rand_min_, &rand_max_ },
+					[&] { return ofOldRandom(rand_min_, rand_max_); }) }) },
 
-					   std::make_shared<ConcreteDist<float>>("uniform <real>", "modern, thread safe\nright bound improbable", "uniform_real_distribution", std::vector<ofAbstractParameter *> { &uni_min_, &uni_max_ }, [&] { return of::random::uniform<float>(uni_min_, uni_max_); }),
+		{ "core",
+			std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
 
-					   std::make_shared<ConcreteDist<int>>(
-						   "uniform <int>", "unambiguously\nincludes bounds", "uniform_int_distribution", std::vector<ofAbstractParameter *> {
-							   &uni_int_min_, &uni_int_max_ }, [&] { return of::random::uniform<int>(uni_int_min_, uni_int_max_); }, 11, glm::vec2 { 0, 10 }, true),
+				std::make_shared<ConcreteDist<float>>("uniform <real>", "modern, thread safe\nright bound improbable", "uniform_real_distribution", std::vector<ofAbstractParameter *> { &uni_min_, &uni_max_ },
+					[&] { return of::random::uniform<float>(uni_min_, uni_max_); }),
 
-					   std::make_shared<ConcreteDist<double>>(
-						   "normal", "also aliased to random::gaussian\for stochastic familiarity", "normal_distribution", std::vector<ofAbstractParameter *> { &norm_mean_, &norm_dev_ }, [&] { return of::random::normal<double>(norm_mean_, norm_dev_); }, 101, glm::vec2 { 0, 200 }),
+				std::make_shared<ConcreteDist<int>>(
+					"uniform <int>", "unambiguously\nincludes bounds", "uniform_int_distribution", std::vector<ofAbstractParameter *> { &uni_int_min_, &uni_int_max_ },
+					[&] { return of::random::uniform<int>(uni_int_min_, uni_int_max_); }, 11, glm::vec2 { 0, 10 }, true),
 
-					   std::make_shared<ConcreteDist<float>>("exponential", "all in the title", "exponential_distribution", std::vector<ofAbstractParameter *> { &exp_lambda_ }, [&] { return of::random::exponential<float>(exp_lambda_); }),
+				std::make_shared<ConcreteDist<double>>(
+					"normal", "also aliased to random::gaussian\for stochastic familiarity", "normal_distribution", std::vector<ofAbstractParameter *> { &norm_mean_, &norm_dev_ },
+					[&] { return of::random::normal<double>(norm_mean_, norm_dev_); }, 101, glm::vec2 { 0, 200 }),
 
-					   std::make_shared<ConcreteDist<int>>(
-						   "poisson", "for sparse, \npositive discrete\n(if mean > 12: ~= normal)", "poisson_distribution", std::vector<ofAbstractParameter *> { &poiss_mean_ }, [&] { return of::random::poisson<int>(poiss_mean_); }, 21, glm::vec2 { 0, 20 }, true),
+				std::make_shared<ConcreteDist<float>>("exponential", "all in the title", "exponential_distribution", std::vector<ofAbstractParameter *> { &exp_lambda_ },
+					[&] { return of::random::exponential<float>(exp_lambda_); }),
 
-					   // note int is used here instead of bool because of compiler complaints about "bit values" whatever
-					   std::make_shared<ConcreteDist<int>>(
-						   "bernoulli", "binary prob\ne.g. toss of a coin\naliased to of::random::yes", "bernoulli_distribution", std::vector<ofAbstractParameter *> { &yes_ }, [&] { return of::random::bernoulli(yes_); }, 2, glm::vec2 { 0, 1 }, true) }) },
-	 { "special", std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
-		 std::make_shared<ConcreteDist<int>>(
-			 "lognormal", "like normal but log", "lognormal_distribution", std::vector<ofAbstractParameter *> { &log_mean_, &log_dev_ }, [&] { return of::random::lognormal<int>(log_mean_, log_dev_); }, 21, glm::vec2 { 0, 20 }, true),
-						 std::make_shared<ConcreteDist<float>>("gamma", "for special purposes", "gamma_distribution", std::vector<ofAbstractParameter *> { &gamma_alpha_, &gamma_beta_ }, [&] { return of::random::gamma<int>(gamma_alpha_, gamma_beta_); }),
+				std::make_shared<ConcreteDist<int>>(
+					"poisson", "for sparse, \npositive discrete\n(if mean > 12: ~= normal)", "poisson_distribution", std::vector<ofAbstractParameter *> { &poiss_mean_ },
+					[&] { return of::random::poisson<int>(poiss_mean_); }, 21, glm::vec2 { 0, 20 }, true),
 
-						 std::make_shared<ConcreteDist<float>>(
-							 "chi-squared", "cool energy bulge", "chi_squared_distribution", std::vector<ofAbstractParameter *> { &chi_n_ }, [&] { return of::random::chi_squared<float>(chi_n_); }, 101, glm::vec2 { 0, 20 }),
+				// note int is used here instead of bool because of compiler complaints about "bit values" whatever
+				std::make_shared<ConcreteDist<int>>(
+					"bernoulli", "binary prob\ne.g. toss of a coin\naliased to of::random::yes", "bernoulli_distribution", std::vector<ofAbstractParameter *> { &yes_ },
+					[&] { return of::random::bernoulli(yes_); }, 2, glm::vec2 { 0, 1 }, true) }) },
 
-						 std::make_shared<ConcreteDist<int>>(
-							 "binomial", "~normal for ints\nsquashes nicely on zero", "binomial_distribution", std::vector<ofAbstractParameter *> { &bin_p_, &bin_t_ }, [&] { return of::random::binomial(bin_p_, bin_t_); }, 21, glm::vec2 { 0, 20 }, true),
+		{ "special",
+			std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
 
-						 std::make_shared<ConcreteDist<int>>(
-							 "geometric", "~expon for sparse ints\nwith no parameter", "geometric_distribution", std::vector<ofAbstractParameter *> {}, [&] { return of::random::geometric<int>(); }, 21, glm::vec2 { 0, 20 }, true) }) },
-		{ "of", std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
+				std::make_shared<ConcreteDist<int>>(
+					"lognormal", "like normal but log", "lognormal_distribution", std::vector<ofAbstractParameter *> { &log_mean_, &log_dev_ },
+					[&] { return of::random::lognormal<int>(log_mean_, log_dev_); }, 21, glm::vec2 { 0, 20 }, true),
 
-					std::make_shared<ConcreteDist<float>>(
-						"bound normal", "practical min/max\nwith enforced limits\n(allows to \"focus\")\nintuitiver", "normal_distribution", std::vector<ofAbstractParameter *> { &bn_min_, &bn_max_, &bn_focus_ }, [&] { return ofRandomBoundNormal<int>(bn_min_, bn_max_, bn_focus_); }, 101, glm::vec2 { 0, 200 }),
+				std::make_shared<ConcreteDist<float>>("gamma", "for special purposes", "gamma_distribution", std::vector<ofAbstractParameter *> { &gamma_alpha_, &gamma_beta_ },
+					[&] { return of::random::gamma<int>(gamma_alpha_, gamma_beta_); }),
 
-					std::make_shared<ConcreteDist<glm::vec2>>(
-						"vec2 uniform/axis", "all generators can\nbe typed vec2, 3 or 4", "uniform_int_distribution", std::vector<ofAbstractParameter *> { &vec_min_, &vec_max_ }, [&] { return of::random::uniform<glm::vec2>(vec_min_, vec_max_); }, 101, glm::vec2 { 0, 200 }),
+				std::make_shared<ConcreteDist<float>>(
+					"chi-squared", "cool energy bulge", "chi_squared_distribution", std::vector<ofAbstractParameter *> { &chi_n_ },
+					[&] { return of::random::chi_squared<float>(chi_n_); }, 101, glm::vec2 { 0, 20 }),
 
-					std::make_shared<ConcreteDist<glm::vec2>>(
-						"vec2 normal/axis", "vecN version can be\nrefined to vecN axis", "normal_distribution", std::vector<ofAbstractParameter *> { &vec_mean_, &vec_dev_ }, [&] { return of::random::gaussian<glm::vec2>(vec_mean_, vec_dev_); }, 101, glm::vec2 { 0, 200 }),
+				std::make_shared<ConcreteDist<int>>(
+					"binomial", "~normal for ints\nsquashes nicely on zero", "binomial_distribution", std::vector<ofAbstractParameter *> { &bin_p_, &bin_t_ },
+					[&] { return of::random::binomial(bin_p_, bin_t_); }, 21, glm::vec2 { 0, 20 }, true),
 
-					std::make_shared<ConcreteDist<glm::vec3>>(
-						"vec3 gamma", "", "gamma_distribution", std::vector<ofAbstractParameter *> { &vec_gamma_a_, &vec_gamma_b_ }, [&] { return of::random::gamma<glm::vec3>(vec_gamma_a_, vec_gamma_b_); }, 101, glm::vec2 { 0, 200 }) }) }
+				std::make_shared<ConcreteDist<int>>(
+					"geometric", "~expon for sparse ints\nwith no parameter", "geometric_distribution", std::vector<ofAbstractParameter *> {},
+					[&] { return of::random::geometric<int>(); }, 21, glm::vec2 { 0, 20 }, true) }) },
+		
+		{ "of",
+			std::make_shared<DistGroup>(std::vector<std::shared_ptr<Dist>> {
+
+				std::make_shared<ConcreteDist<float>>(
+					"bound normal", "practical min/max\nwith enforced limits\n(allows to \"focus\")\nintuitiver", "normal_distribution", std::vector<ofAbstractParameter *> { &bn_min_, &bn_max_, &bn_focus_ }, [&] { return ofRandomBoundNormal<int>(bn_min_, bn_max_, bn_focus_); }, 101, glm::vec2 { 0, 200 }),
+
+				std::make_shared<ConcreteDist<glm::vec2>>(
+					"vec2 uniform/axis", "all generators can\nbe typed vec2, 3 or 4", "uniform_int_distribution", std::vector<ofAbstractParameter *> { &vec_min_, &vec_max_ }, [&] { return of::random::uniform<glm::vec2>(vec_min_, vec_max_); }, 101, glm::vec2 { 0, 200 }),
+
+				std::make_shared<ConcreteDist<glm::vec2>>(
+					"vec2 normal/axis", "vecN version can be\nrefined to vecN axis", "normal_distribution", std::vector<ofAbstractParameter *> { &vec_mean_, &vec_dev_ }, [&] { return of::random::gaussian<glm::vec2>(vec_mean_, vec_dev_); }, 101, glm::vec2 { 0, 200 }),
+
+				std::make_shared<ConcreteDist<glm::vec3>>(
+					"vec3 gamma", "", "gamma_distribution", std::vector<ofAbstractParameter *> { &vec_gamma_a_, &vec_gamma_b_ }, [&] { return of::random::gamma<glm::vec3>(vec_gamma_a_, vec_gamma_b_); }, 101, glm::vec2 { 0, 200 }) }) }
 	};
 
 public:
