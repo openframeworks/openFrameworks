@@ -70,6 +70,7 @@ void ofApp::draw() {
 	auto x = 220;
 	ofDrawBitmapStringHighlight(size_string_, x, 40);
 	ofDrawBitmapStringHighlight(dna_string_, x, 80);
+	ofDrawBitmapStringHighlight("<- these values will be deterministic for a given seed (on all platforms)\n<- otherwise always different for non-deterministic", x+400, 80, ofColor(40,40,40));
 	ofDrawBitmapStringHighlight(shuffle_string_, x, 100);
 	ofDrawBitmapStringHighlight("other random functions (like std::shuffle) can feed from the same thread-safe engine, ensuring coherence", x, 140);
 
