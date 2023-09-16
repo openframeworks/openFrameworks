@@ -42,7 +42,7 @@ public:
 	auto is_deterministic() const { return deterministic_; }
 };
 
-/// \returns a reference to the engine singleton instance
+/// \returns a reference to the engine instance
 inline auto engine() {
 	return of::random::Engine::instance();
 }
