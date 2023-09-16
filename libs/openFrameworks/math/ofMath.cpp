@@ -17,21 +17,8 @@ int ofNextPow2(int a){
 
 //--------------------------------------------------
 void ofSeedRandom() {
-
-	#ifdef TARGET_WIN32
-		srand(GetTickCount());
-	#elif !defined(TARGET_EMSCRIPTEN)
-		// use XOR'd second, microsecond precision AND pid as seed
-		struct timeval tv;
-		gettimeofday(&tv, 0);
-		long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
-		srand(n);
-	#else
-		struct timeval tv;
-		gettimeofday(&tv, 0);
-		long int n = (tv.tv_sec ^ tv.tv_usec);
-		srand(n);
-	#endif
+	of::random::Engine::destruct();
+	of::random::Engine::construct();
 }
 
 //--------------------------------------------------
@@ -45,28 +32,23 @@ void ofSeedRandom(int val) {
 
 //--------------------------------------------------
 float ofRandom(float max) {
-	return (max * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
+	return of::random::uniform<float>(0, max);
 }
 
 //--------------------------------------------------
-float ofRandom(float x, float y) {
-	float high = std::max(x, y);
-	float low = std::min(x, y);
-	return std::max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
+float ofRandom(float min, float max) {
+	return of::random::uniform<float>(min, max);
 }
 
 //--------------------------------------------------
 float ofRandomf() {
-	return -1.0f + (2.0f * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
+	return of::random::uniform<float>(-1, 1);
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
-	return (rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
+	return of::random::uniform<float>(0, 1);
 }
-
-//---- new to 006
-//from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
 float ofNormalize(float value, float min, float max){

@@ -29,10 +29,6 @@ class Engine: public of::utils::Singleton<Engine> {
     
 public:
     
-    Engine() {
-        ofSeedRandom(); // called to maintain "parallelism" until old-school srand() is phase-out of OF
-    }
-
     /// return the generator for use in random distributions or functions
     ///
     /// \returns a reference to the mt19937 generator
@@ -58,7 +54,7 @@ inline auto & gen() {
     return of::random::Engine::instance()->gen();
 }
 
-/// Passes a value to seed the mt19937 generator within the ending instance
+/// Passes a value to seed the mt19937 generator within the engine instance
 inline void seed(unsigned long seed) {
 	 of::random::Engine::instance()->seed(seed);
 }
