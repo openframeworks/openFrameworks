@@ -38,7 +38,7 @@ public:
 		gen_.seed(new_seed);
 	}
 
-	/// \returns true or fall depending if the engine is deterministic
+	/// \returns true or fall depending if the engine has been seeded with a deterministic value
 	auto is_deterministic() const { return deterministic_; }
 };
 
