@@ -35,7 +35,7 @@ void ofApp::setup() {
 	dists_["core"]->panel_.setPosition(10, y);
 	dists_["special"]->panel_.setPosition(10 + col_w_, y);
 	dists_["of"]->panel_.setPosition(10 + col_w_ * 2, y);
-	dists_["old"]->panel_.setPosition(10 + col_w_ * 2, y + ((square_ + gap_) * (dists_["of"]->dists_.size() + 1)));
+	dists_["old"]->panel_.setPosition(10 + col_w_ * 2, y + ((square_ + gap_) * (dists_["of"]->dists_.size() + 0.5f)));
 
 	seed_.addListener(this, &ofApp::seed);
 	reinit_.addListener(this, &ofApp::reinit);
@@ -84,4 +84,7 @@ void ofApp::draw() {
 	dists_["special"]->draw("more specialized distributions", square_, gap_);
 	dists_["of"]->draw("OF/art-centric wrappers/utils", square_, gap_);
 	dists_["old"]->draw("Previous implementation (reference)", square_, gap_);
+
+	ofDrawBitmapStringHighlight("Performance: e.g. on macOS M1,the old srand is faster\nthan uniform<float> in Debug, but slower in Release...\nPlease make sure to evaluate performance in Release!",
+		dists_["old"]->panel_.getPosition() + glm::vec2(0, square_ + gap_), ofColor(50, 0, 0), ofColor(ofColor::white));
 }
