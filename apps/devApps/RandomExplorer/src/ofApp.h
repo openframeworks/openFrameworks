@@ -144,7 +144,7 @@ public:
 
 		shuffle_string_ = "2. shuffled vector: ";
 		shuffle_ = { 1, 2, 3, 4, 5, 6, 7, 8 }; // initial order
-		of::random::shuffle(shuffle_);
+		of::shuffle(shuffle_);
 		for (size_t i = 0; i < shuffle_.size(); i++) {
 			shuffle_string_ += ofToUpper(ofToHex(shuffle_[i])) + " ";
 		}
