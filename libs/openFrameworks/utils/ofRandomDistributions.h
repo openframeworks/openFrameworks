@@ -2,7 +2,7 @@
 #define OF_RANDOM_DISTRIBUTIONS_H_
 
 #include <glm/glm.hpp>
-#include <random>
+#include "ofRandomEngine.h"
 
 // https://gist.github.com/imneme/540829265469e673d045
 // https://github.com/effolkronium/random/tree/master
