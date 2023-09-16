@@ -57,12 +57,6 @@ inline void seed(unsigned long seed) {
 	of::random::Engine::instance()->seed(seed);
 }
 
-/// Shuffles the order of the elements within the passed container, using the centralized random engine
-template <class T>
-void shuffle(T & values) {
-	std::shuffle(values.begin(), values.end(), of::random::gen());
-}
-
 } // end namespace of::random
 
 #endif // OF_RANDOM_HPP_
