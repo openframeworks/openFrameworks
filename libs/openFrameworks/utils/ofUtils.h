@@ -2,7 +2,7 @@
 
 #include "ofConstants.h"
 
-#if !defined(TARGET_MINGW) 
+#if !defined(TARGET_MINGW)
 	#include "utf8.h"
 #else
 	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
@@ -229,7 +229,7 @@ int ofGetWeekday();
 
 template<typename ... Args>
 void ofShuffle(Args&&... args) {
-    of::random::shuffle(std::forward<Args>(args)...);
+	of::random::shuffle(std::forward<Args>(args)...);
 }
 
 /// \section Vectors
@@ -239,7 +239,7 @@ void ofShuffle(Args&&... args) {
 
 template<class T>
 void ofRandomize(std::vector<T>& values) {
-    of::random::shuffle(values);
+	of::random::shuffle(values);
 }
 
 /// \brief Conditionally remove values from a vector.
@@ -1056,13 +1056,33 @@ void ofSaveViewport(const std::string& filename);
 
 /// \section System
 
-/// \brief Launch the given URL in the default browser.
+/// \brief Process the string into an actionable URL
+///
+/// \param url the URL to process.
+/// \param uriEncodeQuery true if the query parameters in the given URL have
+/// already been URL encoded.
+/// \returns a string if the preparation is successful, emtpy if not
+std::string ofSanitizeURLString(const std::string& url, bool uriEncodeQuery=false);
+
+#ifndef TARGET_EMSCRIPTEN
+
+/// \brief Launch the given URL in the default browser, or within itself in the case of emscripten.
 ///
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
-#ifndef TARGET_EMSCRIPTEN
 void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false);
+
+#else
+
+/// \brief Opens an URL in a new browser tab (or other behaviour depending on target value)
+///
+/// \param url the URL to open.
+/// \param uriEncodeQuery true if the query parameters in the given URL have
+/// already been URL encoded.
+/// \param target defaults to '_blank', behaves like the target of the javascript open function (e.g. use "_self" to replace content).
+void ofLaunchBrowser(const std::string& url, bool uriEncodeQuery=false, std::string target = "_blank");
+
 #endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
@@ -1142,8 +1162,8 @@ private:
 /*! \cond PRIVATE */
 namespace of{
 namespace priv{
-    void initutils();
-    void endutils();
+	void initutils();
+	void endutils();
 }
 }
 /*! \endcond */
