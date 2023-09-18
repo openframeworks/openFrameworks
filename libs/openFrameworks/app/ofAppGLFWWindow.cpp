@@ -6,9 +6,11 @@
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
+#include "ofIcon.h"
+#include "ofImage.h"
 #ifdef TARGET_LINUX
-    #include "ofIcon.h"
-    #include "ofImage.h"
+    
+    
     #define GLFW_EXPOSE_NATIVE_X11
     #ifndef TARGET_OPENGLES
         #define GLFW_EXPOSE_NATIVE_GLX
@@ -294,19 +296,12 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			}
 			glfwGetWindowSize( windowP, &currentW, &currentH );
 		}
-        #ifdef TARGET_LINUX
-		    if(!iconSet){
-				ofPixels iconPixels;
-                #ifdef DEBUG
-				    iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-                #else
-				    iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-                #endif
-				setWindowIcon(iconPixels);
+
+		#ifdef TARGET_HAS_WINDOW_ICON
+			if(!iconSet){
+				setWindowIcon(getIcon());
 			}
-        #endif
+		#endif
 		if(settings.iconified){
 			iconify(true);
 		}
@@ -401,7 +396,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 #endif
 }
 
-#ifdef TARGET_LINUX
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 	ofPixels iconPixels;
@@ -411,23 +405,29 @@ void ofAppGLFWWindow::setWindowIcon(const std::string & path){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
+	#ifndef TARGET_HAS_WINDOW_ICON
+		return;
+	#endif
 	iconSet = true;
-	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
-	vector<unsigned long> buffer(length);
-	buffer[0]=iconPixels.getWidth();
-	buffer[1]=iconPixels.getHeight();
-	for(size_t i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
-		buffer[i+2]  = iconPixels[i*4+3]<<24;
-		buffer[i+2] += iconPixels[i*4+0]<<16;
-		buffer[i+2] += iconPixels[i*4+1]<<8;
-		buffer[i+2] += iconPixels[i*4+2];
+	
+	// make sure we have a RGBA image
+	auto rgbaIcon = ofPixels(iconPixels);
+	rgbaIcon.setImageType(OF_IMAGE_COLOR_ALPHA);
+	if(rgbaIcon.getPixelFormat()==OF_PIXELS_BGRA){
+		rgbaIcon.swapRgb();
 	}
-
-	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
-	                     PropModeReplace,  (const unsigned char*)buffer.data(),  length);
-	XFlush(getX11Display());
+	// convert to a GLFW image
+	GLFWimage glfwIcon;
+	glfwIcon.width = rgbaIcon.getWidth();
+	glfwIcon.height = rgbaIcon.getHeight();
+	size_t iconByteSize = glfwIcon.width*glfwIcon.height*4;
+	glfwIcon.pixels = static_cast<unsigned char*>(malloc(iconByteSize));
+	std::memcpy(glfwIcon.pixels, rgbaIcon.getData(), iconByteSize);
+	// set icon(s) on window
+	glfwSetWindowIcon(windowP, 1, &glfwIcon);
+	// cleanup
+	free(glfwIcon.pixels);
 }
-#endif
 
 //--------------------------------------------
 ofCoreEvents & ofAppGLFWWindow::events(){

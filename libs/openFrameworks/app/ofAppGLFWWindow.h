@@ -151,14 +151,22 @@ public:
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDepthBits(int depth));
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setStencilBits(int stencil));
 	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setMultiDisplayFullscreen(bool bMultiFullscreen)); //note this just enables the mode, you have to toggle fullscreen to activate it.
+	
+	/// \brief Set current window icon.
+	///
+	/// \param path file to load icon from
+	void setWindowIcon(const std::string & path);
+
+	/// \brief Set current window icon.
+	///
+	/// \param iconPixels pixel definition of the icon
+	void setWindowIcon(const ofPixels & iconPixels);
+
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	Display* 	getX11Display();
 	Window  	getX11Window();
 	XIC			getX11XIC();
-
-	void setWindowIcon(const std::string & path);
-	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)

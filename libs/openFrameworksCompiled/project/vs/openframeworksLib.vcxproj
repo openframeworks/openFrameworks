@@ -90,6 +90,7 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h" />
+    <ClInclude Include="..\..\..\openFrameworks\app\ofIcon.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofMainLoop.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofWindowSettings.h" />
     <ClInclude Include="..\..\..\openFrameworks\events\ofEvent.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofBaseApp.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\app\ofIcon.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp" />
