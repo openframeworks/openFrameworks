@@ -9,7 +9,7 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 	
-		void renderScene();
+		void renderScene(bool bShadowPass);
 	
 		bool reloadShader();
 
@@ -35,9 +35,12 @@ class ofApp : public ofBaseApp{
 	
 		ofVboMesh meshPlySphere;
 	
+		ofShader mDepthShader;
+	
 		int mode = 0;
 	
 		ofLight light;
 		bool bDebug = false;
+		bool bWiggleVerts = false;
 		
 };

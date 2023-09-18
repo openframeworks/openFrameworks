@@ -24,7 +24,7 @@ void ofxAssimpMeshHelper::addTexture(ofxAssimpTexture & aAssimpTex){
 			meshTextures.push_back(shared_ptr<ofxAssimpTexture>(&assimpTexture,[](ofxAssimpTexture*){}));
 		}
 	}else{
-		auto otherTex = make_shared<ofxAssimpTexture>();
+		auto otherTex = std::make_shared<ofxAssimpTexture>();
 		(*otherTex.get()) = aAssimpTex;
 
 		meshTextures.push_back(otherTex);
