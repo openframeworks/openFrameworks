@@ -113,6 +113,28 @@
 #include "ofNode.h"
 
 //--------------------------
+#ifdef OF_LEGACY_INCLUDE_STD
 using namespace std;
+#else 
 
+// this will eventually be disabled by default 
+#define OF_USE_MINIMAL_STD 
+#ifdef OF_USE_MINIMAL_STD
+using std::string;
+using std::stringstream;
+using std::endl;
+using std::vector;
+using std::max;
+using std::make_shared;
+using std::deque;
+using std::cout;
+using std::swap;
+using std::pair;
+using std::map;
+using std::shared_ptr;
+using std::weak_ptr;
+using std::to_string;
 #endif
+#endif
+
+#endif // OF_MAIN_H
