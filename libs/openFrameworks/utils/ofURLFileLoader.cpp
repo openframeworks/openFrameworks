@@ -2,7 +2,6 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-using std::move;
 using std::set;
 using std::string;
 using std::map;
@@ -128,7 +127,7 @@ void ofURLFileLoaderImpl::threadedFunction() {
 			if(cancelledRequests.find(request.getId())==cancelledRequests.end()){
 				ofHttpResponse response(handleRequest(request));
 				int status = response.status;
-				if(!responses.send(move(response))){
+				if(!responses.send(std::move(response))){
 					break;
 				}
 				if(status==-1){
