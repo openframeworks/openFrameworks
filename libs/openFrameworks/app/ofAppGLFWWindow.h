@@ -194,6 +194,7 @@ private:
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString);
 	static void		error_cb(int errorCode, const char* errorDescription);
+	static void		refresh_cb(GLFWwindow* windowP_);
 
 	void close();
 

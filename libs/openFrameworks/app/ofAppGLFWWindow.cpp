@@ -383,6 +383,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb );
+	glfwSetWindowRefreshCallback(windowP, refresh_cb);
 
 
 #ifdef TARGET_LINUX
@@ -1586,6 +1587,12 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 void ofAppGLFWWindow::char_cb(GLFWwindow* windowP_, uint32_t key){
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().charEvent.notify(key);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::refresh_cb(GLFWwindow* windowP_){
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	instance->draw();
 }
 
 //------------------------------------------------------------
