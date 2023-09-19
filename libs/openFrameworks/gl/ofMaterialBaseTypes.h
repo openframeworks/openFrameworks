@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofColor.h"
+#include <memory>
 
 class ofShader;
 class ofGLProgrammableRenderer;
