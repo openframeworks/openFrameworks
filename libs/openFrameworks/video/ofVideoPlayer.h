@@ -28,12 +28,7 @@ class ofVideoPlayer : public ofBaseVideoDraws{
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat		getPixelFormat() const;
 
-		/// \brief Closes the movie file and releases its resources.
-		///
-		/// This is an alias for close().
-		///
-		/// \sa close()
-		void 				closeMovie();
+		[[deprecated("use close()")]] void closeMovie();
 		/// \brief Closes the movie file releases its resources.
 		///
 		/// This is an alias for closeMovie().

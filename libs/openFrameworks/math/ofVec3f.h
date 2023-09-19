@@ -249,34 +249,21 @@ public:
 	/// ~~~~
 	/// 
     bool match( const ofVec3f& vec, float tolerance = 0.0001f ) const;
-    /**
-	 * Checks if vectors look in the same direction.
-	 */
-    bool isAligned( const ofVec3f& vec, float tolerance = 0.0001f ) const;
+
+	/// \brief Determine if two vectors are aligned
+	/// \param vec The vector to compare alignment with
+	/// \param tolerance an angle tolerance/threshold (specified in degrees) for deciding if the vectors are sufficiently aligned.
+	/// \returns true if both vectors are aligned (pointing in the same direction).
+	bool isAligned( const ofVec3f& vec, float tolerance = 0.0001f ) const;
+	
+	/// \brief Determine if two vectors are aligned with tolerance in radians
+	/// \param vec The vector to compare alignment with
+	/// \param tolerance an angle tolerance/threshold (specified in radians) for deciding if the vectors are sufficiently aligned.
+	/// \sa isAligned()
     bool isAlignedRad( const ofVec3f& vec, float tolerance = 0.0001f ) const;
     
-	/// \brief Returns 'true' if this vector is pointing in the same direction as
-	/// 'vec', with an angle error threshold 'tolerance' in degrees (default
-	/// 0.0001 degrees).	
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec3f v1 = ofVec3f(40, 20, 70);
-	/// ofVec3f v2 = ofVec3f(4, 2, 7);
-	/// // v1.align(v2, 0.0) is true
-	/// ~~~~
-    bool align( const ofVec3f& vec, float tolerance = 0.0001f ) const;
-    
-	/// \brief Returns 'true' if this vector is pointing in the same direction
-	/// as 'vec', with an angle error threshold 'tolerance' in radians
-	/// (default 0.0001).
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec3f v1 = ofVec3f(40, 20, 70);
-	/// ofVec3f v2 = ofVec3f(4, 2, 7);
-	/// // v1.align(v2, 0.0) is true
-	/// ~~~~
-    bool alignRad( const ofVec3f& vec, float tolerance = 0.0001f ) const;
-	
+	[[deprecated("use isAligned")]] bool align( const ofVec3f& vec, float tolerance = 0.0001f ) const;
+	[[deprecated("use isAlignedRad")]] bool alignRad( const ofVec3f& vec, float tolerance = 0.0001f ) const;
 	
     /// \}
 

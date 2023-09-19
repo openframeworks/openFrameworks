@@ -277,23 +277,8 @@ public:
     /// \sa isAligned()
     bool isAlignedRad( const ofVec2f& vec, float tolerance = 0.0001f ) const;
 
-    /// \brief Determine if two vectors are aligned
-    /// 
-    /// ~~~~{.cpp}
-	/// ofVec2f v1 = ofVec2f(40, 20);
-	/// ofVec2f v2 = ofVec2f(4, 2);
-	/// v1.align(v2) // returns true
-	/// ~~~~
-    /// \param vec The vector to compare alignment with
-    /// \param tolerance an angle tolerance/threshold (specified in degrees) for deciding if the vectors are sufficiently aligned.
-    /// \returns true if both vectors are aligned (pointing in the same direction). 
-    bool align( const ofVec2f& vec, float tolerance = 0.0001f ) const;
-
-    /// \brief Determine if two vectors are aligned with tolerance in radians
-    /// \param vec The vector to compare alignment with
-    /// \param tolerance an angle tolerance/threshold (specified in radians) for deciding if the vectors are sufficiently aligned.
-    /// \sa align()
-    bool alignRad( const ofVec2f& vec, float tolerance = 0.0001f ) const;
+	[[deprecated("use isAligned()")]] bool align( const ofVec2f& vec, float tolerance = 0.0001f ) const;
+	[[deprecated("use isAlignedRad()")]] bool alignRad( const ofVec2f& vec, float tolerance = 0.0001f ) const;
 	
 	/// \}
 

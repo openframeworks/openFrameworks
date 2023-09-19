@@ -404,13 +404,12 @@ public:
 	/// \name Geometric Functions
 	/// \{
 
-	/// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
-	static bool inside(float x, float y, const ofPolyline_ & polyline);
+	[[deprecated("call inside() on the polygon")]] static bool inside(float x, float y, const ofPolyline_ & polyline);
+	[[deprecated("call inside() on the polygon")]] static bool inside(const T & p, const ofPolyline_ & polyline);
+
 	/// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
 	bool inside(float x, float y) const;
 
-	/// \brief Tests whether the T is within a closed ofPolyline.
-	static bool inside(const T & p, const ofPolyline_ & polyline);
 	/// \brief Tests whether the T is within a closed ofPolyline.
 	bool inside(const T & p) const;
 
