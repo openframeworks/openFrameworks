@@ -2,7 +2,7 @@
 #define OF_SINGLETON_HPP_
 
 // atomic C++17 DCLP CRTP singleton adapted by burton@artificiel.org from
-// https://github.com/jimmy-park/singleton/blob/main/include/singleton_dclp.hpp (1d26f91)
+// https://github.com/jimmy-park/singleton/blob/main/include/singleton_dclp.hpp (as of df5e4a2)
 
 #include <atomic>
 #include <cassert>
@@ -20,12 +20,12 @@ public:
 			using Derived::Derived;
 			void prohibit_construct_from_derived() const override { }
 		};
+		
 		using Instance = Dummy;
-
 		if (!instance_.load(std::memory_order_acquire)) {
 			std::lock_guard lock { mutex_ };
 			if (!instance_.load(std::memory_order_relaxed)) {
-				instance_.store(new Dummy { std::forward<Args>(args)... }, std::memory_order_release);
+				instance_.store(new Instance { std::forward<Args>(args)... }, std::memory_order_release);
 			}
 		}
 	}
