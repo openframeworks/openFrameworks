@@ -436,9 +436,9 @@ public:
 	/// height.
 	/// \param x The x coordinate of the viewport. Defaults to 0.
 	/// \param y The y coordinate of the viewport. Defaults to 0.
-	/// \param w The width of the viewport. Defaults to -1 setting its width
+	/// \param width The width of the viewport. Defaults to -1 setting its width
 	/// according to the rendering surface's width.
-	/// \param h The height of the viewport. Defaults to -1 setting its height
+	/// \param height The height of the viewport. Defaults to -1 setting its height
 	/// according to the rendering surface's height.
 	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true)=0;
 
@@ -789,13 +789,6 @@ public:
 	/// \brief Set this renderer's current blend mode.
 	///
 	/// Possible blend modes include:
-	/// \brief Rotate this renderer's current matrix by \p degrees about the z
-	/// axis.
-	///
-	/// This method is an alias of rotateZ().
-	///
-	/// \param degrees Degrees to rotate about the z axis.
-	/// \sa rotateZ()
 	///		OF_BLENDMODE_DISABLED
 	///		OF_BLENDMODE_ALPHA
 	///		OF_BLENDMODE_ADD
@@ -1494,8 +1487,8 @@ public:
 	/// \param labels True to draw the names and values of the axes.
 	virtual void drawGridPlane(float stepSize, size_t numberOfSteps, bool labels) const;
 	/// \brief Draw an arrow between two 3D points.
-	/// \brief start The 3D vector to use as the first point.
-	/// \brief end The 3D vector to use as the second point.
+	/// \param start The 3D vector to use as the first point.
+	/// \param end The 3D vector to use as the second point.
 	/// \float headSize The size of the arrowhead.
 	virtual void drawArrow(const glm::vec3& start, const glm::vec3& end, float headSize) const;
 	/// \brief Draw the coordinate system's axes with the renderer.

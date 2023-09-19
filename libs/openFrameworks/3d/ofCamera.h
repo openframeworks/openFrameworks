@@ -149,7 +149,6 @@ public:
     ///     camera.end();
     /// }
     /// ~~~~
-    /// \param viewport The camera's rendering viewport.
 	virtual void begin(){
 		begin(getViewport());
 	}

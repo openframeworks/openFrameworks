@@ -192,7 +192,7 @@ public:
 	/// \param oDiffuse the diffuse reflectance
 	/// \param oAmbient the ambient reflectance
 	/// \param oSpecular the specular reflectance
-	/// \param oEmmissive the emitted light intensity
+	/// \param emissive the emitted light intensity
 	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
 	
 	/// \brief set the diffuse reflectance. (Phong, PBR)
@@ -208,7 +208,7 @@ public:
 	void setSpecularColor(ofFloatColor oSpecular);
 	
 	/// \brief set the emitted light intensity. (Phong, PBR)
-	/// \param oEmmissive the emitted light intensity
+	/// \param oEmmisive the emitted light intensity
 	void setEmissiveColor(ofFloatColor oEmmisive);
 	
 	/// \brief set the specular exponent. (Phong)
@@ -316,7 +316,6 @@ public:
 	float getDisplacementNormalsStrength() const;
 	float getNormalGeomToNormalMapMix() const;
 	
-	/// \return material color properties data struct
 	typedef ofMaterialSettings Data;
 	OF_DEPRECATED_MSG("Use getSettings() instead", Data getData() const);
 	ofMaterialSettings getSettings() const;

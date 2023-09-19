@@ -224,9 +224,8 @@ int ofGetWeekday();
 
 /// \section Containers
 /// \brief Randomly reorder the values in a container.
-/// \tparam T Any container that meets std::shuffle's requirements
+/// \tparam Args Any container that meets std::shuffle's requirements
 /// which are: ValueSwappable and LegacyRandomAccessIterator.
-
 template<typename ... Args>
 void ofShuffle(Args&&... args) {
     of::random::shuffle(std::forward<Args>(args)...);
@@ -567,7 +566,6 @@ void ofUTF8Insert(std::string & utf8, size_t pos, uint32_t codepoint);
 /// \param utf8 The string to extract from.
 /// \param pos The codepoint position in the UTF8-encoded string.
 /// \param len The number of codepoints starting at \pos to extract.
-/// \returns a UTF8-encoded substring.
 void ofUTF8Erase(std::string & utf8, size_t pos, size_t len);
 
 /// \brief Extract a range of codepoints from as a std::string.
@@ -764,7 +762,7 @@ const char * ofFromString(const std::string & value);
 
 /// \brief Convert a string to a given data type.
 /// \tparam T The return type.
-/// \param value The string value to convert to a give type.
+/// \param str The string value to convert to a give type.
 /// \returns the string converted to the type.
 template<typename T>
 T ofTo(const std::string & str){

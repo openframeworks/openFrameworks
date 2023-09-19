@@ -364,7 +364,6 @@ public:
 	/// \param y Y position of shapes
 	void drawStringAsShapes(const std::string& s, float x, float y) const;
 	
-	/// \todo
 	ofPath getCharacterAsPoints(uint32_t character, bool vflip=true, bool filled=true) const;
 	std::vector<ofPath> getStringAsPoints(const std::string &  str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(const std::string &  s, float x, float y, bool vflip=true) const;
@@ -374,7 +373,6 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
-    /// \returns current font direction
 	void setDirection(ofTrueTypeFontDirection direction);
 
 	float getCharWidth(uint32_t c) const {

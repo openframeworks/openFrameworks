@@ -475,11 +475,11 @@ public:
 	
 	/// file access mode
 	enum Mode{
-		Reference,  //<
-		ReadOnly,  //< read only from the file, do not write
-		WriteOnly, //< write only to the file, do not read
-		ReadWrite, //< read from and write to the file
-		Append     //< append data to the end of the file, do not overwrite
+		Reference, ///<
+		ReadOnly,  ///< read only from the file, do not write
+		WriteOnly, ///< write only to the file, do not read
+		ReadWrite, ///< read from and write to the file
+		Append     ///< append data to the end of the file, do not overwrite
 	};
 
 	/// Create an ofFile instance.
@@ -869,7 +869,7 @@ public:
 	
 	/// Create a directory at the current path.
 	///
-	/// \param bRecursive set to true to automatically create nested directories
+	/// \param recursive set to true to automatically create nested directories
 	/// as required
 	bool create(bool recursive = false);
 
@@ -923,7 +923,7 @@ public:
 
 	/// Set the writable flag of the current path.
 	///
-	/// \param writable set to true to make path writable
+	/// \param writeable set to true to make path writable
 	void setWriteable(bool writeable=true);
 
 	OF_DEPRECATED_MSG("Use ofDirectory::setWriteable(!flag).", void setReadOnly(bool flag));
@@ -1111,7 +1111,7 @@ public:
 	///
 	/// \warning Call listDir() before using this function or there will be
 	/// nothing to sort.
-	/// \param SortMode options are SORT_FAST, SORT_NATURAL (default) or SORT_BY_DATE
+	/// \param mode options are SORT_FAST, SORT_NATURAL (default) or SORT_BY_DATE
 	void sort(const SortMode & mode = SORT_NATURAL);
 	
 	/// Sort the directory contents list by date.
@@ -1162,7 +1162,7 @@ public:
 	/// \param dirPath directory path
 	/// \param bRelativeToData set to false if you are working with paths that
 	/// are *not* in the data directory
-	/// \param bRecursive set to true to automatically create nested directories
+	/// \param recursive set to true to automatically create nested directories
 	/// as required
 	/// \returns true if directory was created successfully
 	static bool createDirectory(const of::filesystem::path& dirPath, bool bRelativeToData = true, bool recursive = false);

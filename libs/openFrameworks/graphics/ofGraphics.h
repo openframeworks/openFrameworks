@@ -1123,7 +1123,7 @@ void ofRotateRad(float radians);
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in radians.
+/// \param radians Specifies the angle of rotation, in radians.
 void ofRotateXRad(float radians);
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
@@ -1134,7 +1134,7 @@ void ofRotateXRad(float radians);
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in radians.
+/// \param radians Specifies the angle of rotation, in radians.
 void ofRotateYRad(float radians);
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
@@ -1145,7 +1145,7 @@ void ofRotateYRad(float radians);
 ///     ofDrawRectangle(20,20,100,100);
 /// }
 /// ~~~~
-/// \param degrees Specifies the angle of rotation, in radians.
+/// \param radians Specifies the angle of rotation, in radians.
 void ofRotateZRad(float radians);
 
 /// \}

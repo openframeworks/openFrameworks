@@ -203,7 +203,7 @@ public:
 	virtual int saveAsync(const std::string& url, const of::filesystem::path& path)=0;
 
 	/// \brief remove an active HTTP request from the queue
-	/// \param unique HTTP request id
+	/// \param id HTTP request id
 	virtual void remove(int id)=0;
 
 	/// \brief clear all active HTTP requests from the queue
