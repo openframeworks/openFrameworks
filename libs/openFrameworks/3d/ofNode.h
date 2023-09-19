@@ -494,7 +494,7 @@ private:
 
 	std::array<glm::vec3,3> axis;
 
-	glm::mat4 localTransformMatrix;
+	glm::mat4 localTransformMatrix {};
 	bool legacyCustomDrawOverrided;
 	std::set<ofNode*> children;
 
