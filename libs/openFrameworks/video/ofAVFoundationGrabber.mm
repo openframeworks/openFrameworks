@@ -266,7 +266,7 @@
 
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
-        deviceNames.push_back([captureDevice.localizedName UTF8String]);
+        deviceNames.emplace_back([captureDevice.localizedName UTF8String]);
 		 ofLogNotice() << "Device: " << i << ": " << deviceNames.back();
 		i++;
     }

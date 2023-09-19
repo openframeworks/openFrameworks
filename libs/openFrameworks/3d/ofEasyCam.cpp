@@ -479,7 +479,7 @@ void ofEasyCam::updateMouse(const glm::vec2 & mouse){
 //----------------------------------------
 void ofEasyCam::addInteraction(TransformType type, int mouseButton, int key){
 	if(!hasInteraction(mouseButton, key)){
-		interactions.push_back(interaction(type, mouseButton, key));
+		interactions.emplace_back(type, mouseButton, key);
 	}else{
 		ofLogNotice("ofEasyCam") << "Can not add interaction. It already exists";
 	}

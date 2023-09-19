@@ -946,7 +946,7 @@ void ofShadow::_checkSetup() {
 			}
 		}
 		if(!bShadowFound && ofIsGLProgrammableRenderer()){
-			ofShadowsData().push_back(data);
+			ofShadowsData().emplace_back(data);
 			data->index = ofShadowsData().size() - 1;
 			data->isEnabled = false;
 			bShadowFound = true;

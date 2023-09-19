@@ -620,7 +620,7 @@ void ofArduino::processData(unsigned char inputData) {
 		}
 		// still have data, collect it
 		else {
-			_sysExData.push_back((unsigned char)inputData);
+			_sysExData.emplace_back((unsigned char)inputData);
 		}
 	}
 	// we have a command
@@ -767,7 +767,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				encoderPos |= encBuffer[0];
 
 				tempEncoderReply.position = encoderPos;
-				encoderReply.push_back(tempEncoderReply);
+				encoderReply.emplace_back(tempEncoderReply);
 			}
 			ofNotifyEvent(EEncoderDataReceived, encoderReply, this);
 		}
@@ -1530,7 +1530,7 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 
 	if (dataToWrite.size() > 0) {
 		for (size_t i = 0; i < dataToWrite.size(); i++) {
-			bytes.push_back(dataToWrite[i]);
+			bytes.emplace_back(dataToWrite[i]);
 		}
 	}
 
