@@ -330,7 +330,7 @@ void ofClear(float brightness, float a){
 
 //----------------------------------------------------------
 void ofClear(float brightness){
-	ofClear(brightness, brightness, brightness, 255.f);
+	ofClear(brightness, brightness, brightness, 0.f);
 }
 
 //----------------------------------------------------------
@@ -356,11 +356,6 @@ void ofClearFloat(float r, float g, float b, float a){
 //----------------------------------------------------------
 void ofClearFloat(float brightness, float a) {
 	ofClearFloat(brightness, brightness, brightness, a);
-}
-
-//----------------------------------------------------------
-void ofClearFloat(float brightness){
-	ofClearFloat(brightness, brightness, brightness, 1.f);
 }
 
 //----------------------------------------------------------

@@ -280,7 +280,7 @@ void ofClear(float r, float g, float b);
 /// }
 /// ~~~~
 void ofClear(float brightness, float a);
-void ofClear(float brightness);
+OF_DEPRECATED_MSG("Use ofClear(brightness, alpha) instead",void ofClear(float brightness));
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
 /// an ofColor.
@@ -299,7 +299,6 @@ void ofClearAlpha();
 void ofClearFloat(float r, float g, float b);
 void ofClearFloat(float r, float g, float b, float a);
 void ofClearFloat(float brightness, float a);
-void ofClearFloat(float brightness);
 void ofClearFloat(const ofFloatColor & c);
 
 
