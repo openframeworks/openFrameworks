@@ -1,5 +1,5 @@
-#ifndef OF_SINGLETON_HPP_
-#define OF_SINGLETON_HPP_
+#ifndef OF_SINGLETON_H_
+#define OF_SINGLETON_H_
 
 // atomic C++17 DCLP CRTP singleton adapted by burton@artificiel.org from
 // https://github.com/jimmy-park/singleton/blob/main/include/singleton_dclp.hpp (as of df5e4a2)
@@ -65,4 +65,4 @@ private:
 };
 
 } // end namespace of::utils
-#endif // OF_SINGLETON_HPP_
+#endif // OF_SINGLETON_H_
