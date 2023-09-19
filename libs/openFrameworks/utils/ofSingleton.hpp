@@ -4,19 +4,18 @@
 // atomic C++17 DCLP CRTP singleton adapted by burton@artificiel.org from
 // https://github.com/jimmy-park/singleton/blob/main/include/singleton_dclp.hpp (1d26f91)
 
+#include <atomic>
 #include <cassert>
 #include <shared_mutex>
-#include <atomic>
 #include <utility>
 
-namespace of::utils
-{
+namespace of::utils {
 
 template <typename Derived>
 class Singleton {
 public:
 	template <typename... Args>
-	static void construct(Args&&... args) {
+	static void construct(Args &&... args) {
 		struct Dummy : public Derived {
 			using Derived::Derived;
 			void prohibit_construct_from_derived() const override { }
@@ -31,11 +30,10 @@ public:
 		}
 	}
 
-	static void destruct()
-	{
+	static void destruct() {
 		if (instance_.load(std::memory_order_acquire)) {
 			std::lock_guard lock { mutex_ };
-			if (auto* the_instance = instance_.load(std::memory_order_relaxed); the_instance) {
+			if (auto * the_instance = instance_.load(std::memory_order_relaxed); the_instance) {
 				delete the_instance;
 				instance_.store(nullptr, std::memory_order_release);
 			}
@@ -52,18 +50,17 @@ public:
 		return the_instance;
 	}
 
-
 protected:
 	Singleton() = default;
-	Singleton(const Singleton&) = delete;
-	Singleton(Singleton&&) noexcept = delete;
-	Singleton& operator=(const Singleton&) = delete;
-	Singleton& operator=(Singleton&&) noexcept = delete;
+	Singleton(const Singleton &) = delete;
+	Singleton(Singleton &&) noexcept = delete;
+	Singleton & operator=(const Singleton &) = delete;
+	Singleton & operator=(Singleton &&) noexcept = delete;
 	virtual ~Singleton() = default;
 
 private:
 	virtual void prohibit_construct_from_derived() const = 0;
-	inline static std::atomic<Derived*> instance_ { nullptr };
+	inline static std::atomic<Derived *> instance_ { nullptr };
 	inline static std::shared_mutex mutex_;
 };
 
