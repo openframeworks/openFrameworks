@@ -5,8 +5,9 @@
 // https://github.com/jimmy-park/singleton/blob/main/include/singleton_dclp.hpp (1d26f91)
 
 #include <cassert>
-#include <mutex>
+#include <shared_mutex>
 #include <atomic>
+#include <utility>
 
 namespace of::utils
 {
@@ -20,25 +21,37 @@ public:
 			using Derived::Derived;
 			void prohibit_construct_from_derived() const override { }
 		};
+		using Instance = Dummy;
 
 		if (!instance_.load(std::memory_order_acquire)) {
-			if (std::lock_guard lock { mutex_ }; !instance_.load(std::memory_order_relaxed)) {
+			std::lock_guard lock { mutex_ };
+			if (!instance_.load(std::memory_order_relaxed)) {
 				instance_.store(new Dummy { std::forward<Args>(args)... }, std::memory_order_release);
+			}
+		}
+	}
+
+	static void destruct()
+	{
+		if (instance_.load(std::memory_order_acquire)) {
+			std::lock_guard lock { mutex_ };
+			if (auto* the_instance = instance_.load(std::memory_order_relaxed); the_instance) {
+				delete the_instance;
+				instance_.store(nullptr, std::memory_order_release);
 			}
 		}
 	}
 
 	static Derived * instance() {
 		auto * the_instance = instance_.load(std::memory_order_acquire);
-		assert(the_instance);
+		if (!the_instance) {
+			std::shared_lock lock { mutex_ };
+			the_instance = instance_.load(std::memory_order_relaxed);
+			assert(the_instance);
+		}
 		return the_instance;
 	}
 
-	static void destruct() {
-		if (auto * the_instance = instance_.exchange(nullptr, std::memory_order_acq_rel)) {
-			delete the_instance;
-		}
-	}
 
 protected:
 	Singleton() = default;
@@ -51,7 +64,7 @@ protected:
 private:
 	virtual void prohibit_construct_from_derived() const = 0;
 	inline static std::atomic<Derived*> instance_ { nullptr };
-	inline static std::mutex mutex_;
+	inline static std::shared_mutex mutex_;
 };
 
 } // end namespace of::utils
