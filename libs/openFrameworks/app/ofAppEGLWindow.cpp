@@ -1,3 +1,8 @@
+
+#include "ofConstants.h"
+
+#ifdef TARGET_OPENGLES
+
 #include "ofAppEGLWindow.h"
 
 #include "ofGraphics.h" // used in runAppViaInfiniteLoop()
@@ -2300,3 +2305,5 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
 	  }*/
 	}
 }
+
+#endif // TARGET_OPENGLES

@@ -1,3 +1,7 @@
+
+#include "ofConstants.h"
+#ifdef OF_VIDEO_PLAYER_DIRECTSHOW
+
 #include "ofDirectShowPlayer.h"
 #include "ofPixels.h"
 #include "ofMath.h"
@@ -1350,3 +1354,5 @@ void ofDirectShowPlayer::previousFrame(){
         player->preFrame();
     }
 }
+
+#endif // OF_VIDEO_PLAYER_DIRECTSHOW

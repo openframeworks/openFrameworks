@@ -35,7 +35,7 @@
 		6678E96F19FEAFA900C00581 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */; };
 		6678E97019FEAFA900C00581 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */; };
 		6678E97F19FEB5A600C00581 /* ofSoundUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E97C19FEB5A600C00581 /* ofSoundUtils.h */; };
-		676672A31A749D1900400051 /* ofAVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */; };
+		676672A31A749D1900400051 /* ofAVFoundationVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.mm */; };
 		676672A41A749D1900400051 /* ofAVFoundationPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */; };
 		676672A51A749D1900400051 /* ofAVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */; };
 		676672A81A749D1900400051 /* ofAVFoundationPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */; };
@@ -192,7 +192,7 @@
 		6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
 		6678E97C19FEB5A600C00581 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
-		6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofAVFoundationVideoPlayer.m; sourceTree = "<group>"; };
+		6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objcpp; path = ofAVFoundationVideoPlayer.mm; sourceTree = "<group>"; };
 		6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationPlayer.h; sourceTree = "<group>"; };
 		6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationVideoPlayer.h; sourceTree = "<group>"; };
 		676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVFoundationPlayer.mm; sourceTree = "<group>"; };
@@ -454,7 +454,7 @@
 				E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */,
 				E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */,
 				6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */,
-				6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */,
+				6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.mm */,
 				6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */,
 				676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */,
 			);
@@ -797,7 +797,7 @@
 				E4F3BAC912F4C72F002D19BB /* ofVec2f.cpp in Sources */,
 				E4F3BACC12F4C72F002D19BB /* ofVec4f.cpp in Sources */,
 				E4F3BAD912F4C73C002D19BB /* ofBaseTypes.cpp in Sources */,
-				676672A31A749D1900400051 /* ofAVFoundationVideoPlayer.m in Sources */,
+				676672A31A749D1900400051 /* ofAVFoundationVideoPlayer.mm in Sources */,
 				E4F3BADB12F4C73C002D19BB /* ofColor.cpp in Sources */,
 				E4F3BADF12F4C73C002D19BB /* ofRectangle.cpp in Sources */,
 				E4F3BAF212F4C745002D19BB /* ofFileUtils.cpp in Sources */,

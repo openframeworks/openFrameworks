@@ -2,6 +2,10 @@
  *  ofAVFoundationGrabber.mm
  */
 
+#include "ofConstants.h"
+
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
+
 #include "ofAVFoundationGrabber.h"
 #include "ofVectorMath.h"
 #include "ofRectangle.h"
@@ -538,3 +542,5 @@ ofPixelFormat ofAVFoundationGrabber::getPixelFormat() const{
 }
 
 #endif
+
+#endif // OF_VIDEO_PLAYER_AVFOUNDATION

@@ -1,0 +1,2 @@
+define_example(androidAccelerometerExample)
+target_link_libraries(androidAccelerometerExample of::ofxAndroid of::ofxAccelerometer)

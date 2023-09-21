@@ -1,0 +1,2 @@
+define_example(modelNoiseExample)
+target_link_libraries(modelNoiseExample of::ofxAssimpModelLoader)

@@ -33,6 +33,7 @@ ofxAssimpModelLoader/libs
 ofxSvg/libs
 ofxPoco/libs
 ofxKinect/libs
+!CMakeLists.txt
 
 # don't ignore the .gitignore file
 !.gitignore

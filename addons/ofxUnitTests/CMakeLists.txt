@@ -1,0 +1,1 @@
+define_interface_addon(ofxUnitTests)

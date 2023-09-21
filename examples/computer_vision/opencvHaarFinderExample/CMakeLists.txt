@@ -1,0 +1,2 @@
+define_example(opencvHaarFinderExample)
+target_link_libraries(opencvHaarFinderExample of::ofxOpenCv)

@@ -1,0 +1,2 @@
+define_example(guiFromParametersExample)
+target_link_libraries(guiFromParametersExample of::ofxGui)

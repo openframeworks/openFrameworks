@@ -1,4 +1,7 @@
 
+#include "ofVideoPlayer.h"
+#ifdef OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+
 #include "ofPixels.h"
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
@@ -1384,3 +1387,4 @@ void ofMediaFoundationPlayer::updateDuration() {
     }
 }
 
+#endif // ifdef OF_VIDEO_PLAYER_MEDIA_FOUNDATION

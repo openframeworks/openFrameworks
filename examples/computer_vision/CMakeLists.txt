@@ -1,0 +1,7 @@
+
+add_subdirectory(kinectExample)
+add_subdirectory(opencvExample)
+add_subdirectory(opencvHaarFinderExample)
+add_subdirectory(opencvImageClassification)
+add_subdirectory(opencvOpticalFlowExample)
+add_subdirectory(opencvPeopleDetection)

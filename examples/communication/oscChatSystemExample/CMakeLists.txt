@@ -1,0 +1,2 @@
+define_example(oscChatSystemExample)
+target_link_libraries(oscChatSystemExample of::ofxOsc)

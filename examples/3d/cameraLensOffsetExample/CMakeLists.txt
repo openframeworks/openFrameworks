@@ -1,0 +1,2 @@
+define_example(cameraLensOffsetExample)
+target_link_libraries(cameraLensOffsetExample of::ofxOpenCv)

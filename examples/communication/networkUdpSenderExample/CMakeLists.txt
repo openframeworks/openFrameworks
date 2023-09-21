@@ -1,0 +1,2 @@
+define_example(networkUdpSenderExample)
+target_link_libraries(networkUdpSenderExample of::ofxNetwork)

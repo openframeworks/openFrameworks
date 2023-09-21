@@ -1,0 +1,2 @@
+define_test(test_networkUdp)
+target_link_libraries(test_networkUdp of::ofxNetwork)

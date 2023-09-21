@@ -1,0 +1,2 @@
+define_example(oscParametersReceiverExample)
+target_link_libraries(oscParametersReceiverExample of::ofxGui of::ofxOsc)

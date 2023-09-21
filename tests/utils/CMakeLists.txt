@@ -1,0 +1,5 @@
+add_subdirectory(buffer)
+add_subdirectory(fileUtils)
+add_subdirectory(logging)
+add_subdirectory(strings)
+add_subdirectory(xml)

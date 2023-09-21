@@ -1,0 +1,2 @@
+define_addon(ofxAssimpModelLoader)
+target_link_libraries(ofxAssimpModelLoader of::assimp)

@@ -1,8 +1,12 @@
 //
-//  ofAVFoundationVideoPlayer.m
+//  ofAVFoundationVideoPlayer.mm
 //  Created by Lukasz Karluk on 06/07/14.
 //	Merged with code by Sam Kronick, James George and Elie Zananiri.
 //
+
+#import "ofConstants.h"
+
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
 
 #import "ofAVFoundationVideoPlayer.h"
 
@@ -1447,3 +1451,5 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 @end
+
+#endif // OF_VIDEO_PLAYER_AVFOUNDATION

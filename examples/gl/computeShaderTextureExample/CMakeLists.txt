@@ -1,0 +1,2 @@
+define_example(computeShaderTextureExample)
+target_link_libraries(computeShaderTextureExample of::ofxOpenCv)

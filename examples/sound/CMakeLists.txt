@@ -1,0 +1,6 @@
+
+add_subdirectory(audioInputExample)
+add_subdirectory(audioOutputExample)
+add_subdirectory(soundBufferExample)
+add_subdirectory(soundPlayerExample)
+add_subdirectory(soundPlayerFFTExample)

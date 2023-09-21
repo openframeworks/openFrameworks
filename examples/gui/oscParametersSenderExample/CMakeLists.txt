@@ -1,0 +1,2 @@
+define_example(oscParametersSenderExample)
+target_link_libraries(oscParametersSenderExample of::ofxGui of::ofxOsc)

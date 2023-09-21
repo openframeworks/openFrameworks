@@ -1,0 +1,2 @@
+define_example(vectorGraphicsExample)
+target_link_libraries(vectorGraphicsExample of::ofxVectorGraphics)

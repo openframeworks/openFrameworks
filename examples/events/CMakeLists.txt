@@ -1,0 +1,7 @@
+
+add_subdirectory(advancedEventsExample)
+add_subdirectory(allEventsExample)
+add_subdirectory(customEventExample)
+add_subdirectory(rpiTouchExample)
+add_subdirectory(simpleEventsExample)
+add_subdirectory(simpleTimerEventExample)

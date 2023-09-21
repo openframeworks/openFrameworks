@@ -1,0 +1,7 @@
+
+add_subdirectory(guiExample)
+add_subdirectory(guiFromParametersExample)
+add_subdirectory(oscParametersReceiverExample)
+add_subdirectory(oscParametersSenderExample)
+add_subdirectory(parameterEdgeCasesExample)
+add_subdirectory(parameterGroupExample)

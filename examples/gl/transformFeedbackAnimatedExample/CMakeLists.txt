@@ -1,0 +1,2 @@
+define_example(transformFeedbackAnimatedExample)
+target_link_libraries(transformFeedbackAnimatedExample of::ofxGui)

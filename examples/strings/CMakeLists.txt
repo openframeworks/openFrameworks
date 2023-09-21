@@ -1,0 +1,5 @@
+
+add_subdirectory(conversionExample)
+add_subdirectory(ofLogExample)
+add_subdirectory(regularExpressionExample)
+add_subdirectory(sortingExample)

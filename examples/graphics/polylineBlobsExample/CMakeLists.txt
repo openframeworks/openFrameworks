@@ -1,0 +1,2 @@
+define_example(polylineBlobsExample)
+target_link_libraries(polylineBlobsExample of::ofxOpenCv)

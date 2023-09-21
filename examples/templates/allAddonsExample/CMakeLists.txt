@@ -1,0 +1,2 @@
+define_example(allAddonsExample)
+target_link_libraries(allAddonsExample of::ofxOpenCv of::ofxNetwork of::ofxOsc of::ofxXmlSettings of::ofxAssimpModelLoader of::ofxThreadedImageLoader of::ofxKinect of::ofxGui of::ofxSvg of::ofxPoco)

@@ -1,0 +1,2 @@
+define_example(opencvImageClassification)
+target_link_libraries(opencvImageClassification of::ofxOpenCv)

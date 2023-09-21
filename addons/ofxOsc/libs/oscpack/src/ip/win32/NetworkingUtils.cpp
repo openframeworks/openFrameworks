@@ -34,6 +34,9 @@
 	requested that these non-binding requests be included whenever the
 	above license is reproduced.
 */
+
+#ifdef _WIN32
+
 #include "ip/NetworkingUtils.h"
 
 #include <winsock2.h>   // this must come first to prevent errors with MSVC7
@@ -95,3 +98,5 @@ unsigned long GetHostByName( const char *name )
     return result;
 }
 }
+
+#endif // _WIN32
