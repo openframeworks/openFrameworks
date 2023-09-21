@@ -1148,6 +1148,10 @@ void ofMaterial::setCustomUniformTexture(const std::string & name, int textureTa
 	uniformstex[name] = {textureTarget, textureID, textureLocation, shaderDefine};
 }
 
+ofMaterial::Data ofMaterial::getData() const {
+	return ofMaterial::Data();
+}
+
 //--------------------------------------------------------
 bool ofMaterial::removeCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType) {
 	return removeCustomUniformTexture(getUniformName(aMaterialTextureType));
@@ -1294,6 +1298,7 @@ const std::string ofMaterial::getDefinesString() const {
 
 #include "shaders/pbr.vert"
 #include "shaders/pbr.frag"
+#include "ofMaterialBaseTypes.h"
 
 
 namespace{
@@ -1385,4 +1390,13 @@ namespace{
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + definesString + source;
         return source;
     }
+}
+
+void
+ofBaseMaterial::uploadMatrices(const ofShader &shader, ofGLProgrammableRenderer &renderer) const {
+
+}
+
+bool ofBaseMaterial::isBound() const {
+    return false;
 }

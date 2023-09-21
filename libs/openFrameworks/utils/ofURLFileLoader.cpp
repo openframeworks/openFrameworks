@@ -2,6 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
+#include "ofConstants.h"
+
+using namespace std;
+#if !defined(NO_URL_LOADER)
 using std::move;
 using std::set;
 using std::string;
@@ -414,3 +418,5 @@ void ofURLFileLoaderShutdown(){
 		ofStopURLLoader();
 	}
 }
+
+#endif

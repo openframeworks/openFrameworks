@@ -249,7 +249,9 @@ void ofExitCallback(){
 
 
 	// finish every library and subsystem
+#if !defined(NO_URL_LOADER)
 	ofURLFileLoaderShutdown();
+#endif
 
 	#ifndef TARGET_NO_SOUND
 		//------------------------

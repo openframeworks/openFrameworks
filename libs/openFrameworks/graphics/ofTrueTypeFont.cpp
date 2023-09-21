@@ -174,6 +174,7 @@ const size_t TAB_WIDTH = 4; /// Number of spaces per tab
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
 static bool librariesInitialized = false;
+static int fontsLoaded = 0;
 static FT_Library library;
 
 //--------------------------------------------------------
@@ -182,7 +183,12 @@ void ofTrueTypeShutdown(){
 	// This crashes if gtk was called at any time cause pango leaks
 	// its fc related objects: https://github.com/openframeworks/openFrameworks/issues/5061
 	//FcFini();
+#else
+    if(librariesInitialized && fontsLoaded == 0) {
+		FT_Done_FreeType(library);
+	}
 #endif
+
 }
 
 //--------------------------------------------------------
@@ -401,10 +407,13 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Courier New";
 		}
-		filename = winFontPathByName(fontname.string());
+        filename = winFontPathByName(fontname.string());
+#elif defined(TARGET_ANDROID)
+		filename = ofToDataPath(_fontname, true);
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
+			fontFile.close();
 			return false;
 		}
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
@@ -416,9 +425,10 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		string errorString = "unknown freetype";
 		if(err == 1) errorString = "INVALID FILENAME";
 		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
+		fontFile.close();
 		return false;
 	}
-
+	fontFile.close();
 	return true;
 }
 
@@ -435,11 +445,12 @@ void ofTrueTypeFont::setGlobalDpi(int newDpi){
 //------------------------------------------------------------------
 bool ofTrueTypeFont::initLibraries(){
 	if(!librariesInitialized){
+		ofLogNotice("ofTrueTypeFont") << "initLibraries";
 		FT_Error err;
 		err = FT_Init_FreeType( &library );
 
 		if (err){
-			ofLogError("ofTrueTypeFont") << "loadFont(): couldn't initialize Freetype lib: FT_Error " << err;
+			ofLogError("ofTrueTypeFont") << "initLibraries - loadFont(): couldn't initialize Freetype lib: FT_Error " << err;
 			return false;
 		}
 #ifdef TARGET_LINUX
@@ -468,6 +479,7 @@ ofTrueTypeFont::ofTrueTypeFont()
 	ascenderHeight = 0;
 	descenderHeight = 0;
 	lineHeight = 0;
+	fontsLoaded++;
 }
 
 //------------------------------------------------------------------
@@ -475,7 +487,25 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 	#if defined(TARGET_ANDROID)
 	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
-	#endif
+    #endif
+
+	texAtlas.clear();
+    fontsLoaded--;
+
+    if(face != nullptr) {
+    	ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+    	face.reset();
+        //FT_Done_Face(reset);
+		//face = nullptr;
+    }
+
+	if(librariesInitialized && fontsLoaded == 0 && library != nullptr) {
+		ofLogNotice("ofTrueTypeFont") << "FT_Done_FreeType";
+		FT_Done_FreeType(library);
+        library = nullptr;
+        librariesInitialized = false;
+	}
+
 }
 
 //------------------------------------------------------------------
@@ -608,12 +638,16 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::unloadTextures(){
-	if(!bLoadedOk) return;
+	ofLogNotice("ofTrueTypeFont") << "unloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
 	texAtlas.clear();
+	if(!bLoadedOk) return;
+
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::reloadTextures(){
+	ofLogNotice("ofTrueTypeFont") << "reloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
+	texAtlas.clear();
 	if(bLoadedOk) load(settings);
 }
 
@@ -706,14 +740,35 @@ bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bo
 	}else{
 		settings.ranges = {ofUnicode::Latin};
 	}
+//	std::cout << "ofTrueTypeFont::load - simplify : " << settings.simplifyAmt << std::endl;
 	return load(settings);
+}
+
+bool compareGlyphProps(const ofTrueTypeFont::glyphProps & c1, const ofTrueTypeFont::glyphProps & c2)
+{
+    if(c1.tH == c2.tH) {
+        return c1.tW > c2.tW;
+    }
+    else {
+        return c1.tH > c2.tH;
+    }
 }
 
 bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
-	#endif
+    #endif
+
+
+	static GLint maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+	if (maxSize <= 128) {
+		ofLogError("ofTruetypeFont") << "Max size is <=0 maybe queried GL Context before ready GL_MAX_TEXTURE_SIZE is garbage:[" << maxSize << "]";
+		return false;
+	} else {
+		ofLogNotice("ofTruetypeFont") << "GL_MAX_TEXTURE_SIZE is:[" << maxSize << "]";
+	}
 
 	initLibraries();
 	settings = _settings;
@@ -721,14 +776,22 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		settings.dpi = ttfGlobalDpi;
 	}
 
+	if(face != nullptr) {
+		ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+		face.reset();
+		//FT_Done_Face(face);
+		face = nullptr;
+	}
+
 	bLoadedOk = false;
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-	if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
+    if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
+        ofLogError("ofTruetypeFont") << " could not loadFontFace for " << settings.fontName;
 		return false;
 	}
-	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);
+	face = std::shared_ptr<struct FT_FaceRec_>(loadFace, FT_Done_Face);
 
 	if(settings.ranges.empty()){
 		settings.ranges.push_back(ofUnicode::Latin1Supplement);
@@ -747,10 +810,21 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 				  (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
 
 	//--------------- initialize character info and textures
-	auto nGlyphs = std::accumulate(settings.ranges.begin(), settings.ranges.end(), 0u,
-			[](uint32_t acc, ofUnicode::range range){
-				return acc + range.getNumGlyphs();
-			});
+	auto nGlyphs = 0u;
+	for(auto & range: settings.ranges){
+		nGlyphs += range.getNumGlyphs();
+	}
+
+    if(nGlyphs > 50000) {
+        ofLogError("ofTruetypeFont") << "With provided unicode ranges calculation of glyphs has failed with " << nGlyphs;
+		if(face != nullptr) {
+			ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+			//FT_Done_Face(face);
+			face.reset();
+			face = nullptr;
+		}
+        return false;
+    }
 	cps.resize(nGlyphs);
 	if(settings.contours){
 		charOutlines.resize(nGlyphs);
@@ -805,16 +879,15 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 			}
 		}
 	}
-
+    ofLogNotice("ofTrueTypeFont") << "loadFont(): sorting glyphs";
 	vector<ofTrueTypeFont::glyphProps> sortedCopy = cps;
-	sort(sortedCopy.begin(),sortedCopy.end(),[](const ofTrueTypeFont::glyphProps & c1, const ofTrueTypeFont::glyphProps & c2){
-		if(c1.tH == c2.tH) return c1.tW > c2.tW;
-		else return c1.tH > c2.tH;
-	});
+	sort(sortedCopy.begin(),sortedCopy.end(), compareGlyphProps);
+
+
 
 	// pack in a texture, algorithm to calculate min w/h from
 	// http://upcommons.upc.edu/pfc/bitstream/2099.1/7720/1/TesiMasterJonas.pdf
-	//ofLogNotice("ofTrueTypeFont") << "loadFont(): areaSum: " << areaSum
+	ofLogNotice("ofTrueTypeFont") << "loadFont(): areaSum: " << areaSum << " now packing";
 
 	bool packed = false;
 	float alpha = logf(areaSum)*1.44269f;
@@ -845,7 +918,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	}
 
 
-
+    ofLogNotice("ofTrueTypeFont") << "loadFont(): set luminance";
 	ofPixels atlasPixelsLuminanceAlpha;
 	atlasPixelsLuminanceAlpha.allocate(w,h,OF_PIXELS_GRAY_ALPHA);
 	atlasPixelsLuminanceAlpha.set(0,255);
@@ -872,12 +945,17 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		x+= glyph.tW + border*2.0;
 	}
 
-	int maxSize;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	if(w > maxSize || h > maxSize){
-		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
+        ofLogError("ofTrueTypeFont")  << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
+		if(face != nullptr) {
+			ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+			face.reset();
+			//FT_Done_Face(face);
+			face = nullptr;
+		}
 		return false;
 	}else{
+		texAtlas.clear();
 		texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
 		texAtlas.setRGToRGBASwizzles(true);
 
@@ -887,6 +965,19 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 		}
 		texAtlas.loadData(atlasPixelsLuminanceAlpha);
+		if(texAtlas.isAllocated()) {
+            ofLogNotice("ofTrueTypeFont")  << "texAtlas is allocated for font " << settings.fontName << " at " << settings.fontSize;
+        } else {
+            ofLogError("ofTrueTypeFont")  << "texAtlas is NOT allocated for font " << settings.fontName << " at " << settings.fontSize;
+            texAtlas.clear();
+			if(face != nullptr) {
+				ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
+				face.reset();
+				//FT_Done_Face(face);
+				face = nullptr;
+			}
+            return false;
+        }
 		bLoadedOk = true;
 		return true;
 	}
@@ -964,6 +1055,8 @@ ofPath ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vflip, bool
 		return ofPath();
 	}
 	if (!isValidGlyph(character)){
+		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints():!isValidGlyph" << character;
+
 		return ofPath();
 	}
 
@@ -986,8 +1079,9 @@ ofPath ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vflip, bool
 void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const{
 
 	if (!isValidGlyph(c)){
-		//ofLogError("ofTrueTypeFont") << "drawChar(): char " << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
-		return;
+		auto NUM_CHARACTER_TO_START = 0;
+		ofLogError("ofTrueTypeFont") << "drawChar(): char " << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
+		//return;
 	}
 
 	auto props = getGlyphProperties(c);
@@ -1119,11 +1213,11 @@ vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip
 }
 
 bool ofTrueTypeFont::isValidGlyph(uint32_t glyph) const{
-	//return glyphIndexMap.find(glyph) != glyphIndexMap.end();
-	return std::any_of(settings.ranges.begin(), settings.ranges.end(),
+	
+	return (std::any_of(settings.ranges.begin(), settings.ranges.end(),
 		[&](ofUnicode::range range){
 			return glyph >= range.begin && glyph <= range.end;
-	});
+    })) && glyphIndexMap.find(glyph) != glyphIndexMap.end();
 }
 
 size_t ofTrueTypeFont::indexForGlyph(uint32_t glyph) const{
@@ -1176,9 +1270,9 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 		return ofRectangle( x, y, 0.f, 0.f);
 	}
 
-	float minX = x;
 	float minY = y;
 	float maxY = y;
+	float minX = x;
 	// Calculate bounding box by iterating over glyph properties
 	// Meaning of props can be deduced from illustration at top of:
 	// https://www.freetype.org/freetype2/docs/tutorial/step2.html
@@ -1186,6 +1280,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 	// We deliberately not generate a mesh and iterate over its
 	// vertices, as this would not correctly return spacing for
 	// blank characters.
+	
 	
 	float w = 0;
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
@@ -1196,6 +1291,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 			w += props.advance;
 		}
 
+        
+        if( c == ' ') {
+            props.advance = spaceSize;
+        }
+//		maxX = max( maxX, pos.x + props.xmin + props.width);
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );

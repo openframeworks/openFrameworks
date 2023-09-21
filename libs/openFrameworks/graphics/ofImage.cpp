@@ -207,9 +207,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
 	uriFreeUriMembersA(&uri);
 
+#if !defined(NO_URL_LOADER)
 	if(scheme == "http" || scheme == "https"){
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
+#endif
 
 	auto fileName = ofToDataPath(_fileName, true);
 	bool bLoaded = false;
@@ -459,7 +461,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 	ofInitFreeImage();
 
 	if (_pix.isAllocated() == false){
-		ofLogError("ofImage","saveImage(): couldn't save to ofBuffer, pixels are not allocated");
+		ofLogError("ofImage") << "saveImage(): couldn't save to ofBuffer, pixels are not allocated";
 		return false;
 	}
 

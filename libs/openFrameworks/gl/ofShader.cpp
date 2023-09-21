@@ -435,7 +435,7 @@ string ofShader::parseForIncludes( const string& source, const of::filesystem::p
 string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const of::filesystem::path& sourceDirectoryPath) {
 
 	if ( level > 32 ) {
-		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+		ofLogError( "ofShader") << "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion";
 		return "";
 	}
 
@@ -1562,6 +1562,16 @@ string ofShader::nameForType(GLenum type){
 #endif
 		default: return "UNKNOWN SHADER TYPE";
 	}
+}
+
+template<typename T>
+void ofShader::setDefineConstantTemp(const string &name, T value) {
+
+}
+
+template<typename T>
+void ofShader::setConstantTemp(const string &name, const string &type, T value) {
+
 }
 
 

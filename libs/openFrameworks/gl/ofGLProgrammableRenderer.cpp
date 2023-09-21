@@ -1908,16 +1908,19 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
-	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
-	ofBlendMode blendMode = currentStyle.blendingMode;
-
-	mutThis->setBlendMode(OF_BLENDMODE_ALPHA);
-
-	mutThis->bind(font.getFontTexture(),0);
-	draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
-	mutThis->unbind(font.getFontTexture(),0);
-
-	mutThis->setBlendMode(blendMode);
+		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
+		mutThis->setAttributes(true,true,true,false);
+		const ofTexture& tex = font.getFontTexture();
+		ofBlendMode blendMode = currentStyle.blendingMode;
+		if(tex.isAllocated()) {
+		 	mutThis->setBlendMode(OF_BLENDMODE_ALPHA);
+		 	mutThis->bind(font.getFontTexture(),0);
+		 	draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
+		 	mutThis->unbind(font.getFontTexture(),0);
+		 	mutThis->setBlendMode(blendMode);
+		} else {
+			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
+		}
 }
 
 #define STRINGIFY(x) #x

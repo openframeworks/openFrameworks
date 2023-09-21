@@ -1142,6 +1142,7 @@ private:
 /*! \cond PRIVATE */
 namespace of{
 namespace priv{
+    void setWorkingDirectoryToDefault();
     void initutils();
     void endutils();
 }

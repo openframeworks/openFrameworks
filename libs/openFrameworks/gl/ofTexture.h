@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "ofGraphicsBaseTypes.h"
 #include "ofConstants.h"
 #include "glm/mat4x4.hpp"
@@ -247,6 +248,8 @@ void ofDisableTextureEdgeHack();
 /// \sa ofEnableTextureEdgeHack()
 /// \returns true if OF is currently using the texture "edge hack".
 bool ofIsTextureEdgeHackEnabled();
+
+
 
 /// \class ofTexture
 /// \brief A wrapper class for an OpenGL texture.
@@ -938,6 +941,17 @@ class ofTexture : public ofBaseDraws {
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.
 
+#ifdef TARGET_ANDROID
+	static std::set<ofTexture*> & allTextures();
+
+	static void registerTexture(ofTexture * texture);
+
+	static void unregisterTexture(ofTexture * texture);
+
+	static void ofRegenerateAllTextures();
+
+#endif
+
 protected:
 
 	/// \brief Enable a texture target.
@@ -957,3 +971,5 @@ private:
 	bool bWantsMipmap; ///< Should mipmaps be created?
 	
 };
+
+

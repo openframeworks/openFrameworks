@@ -95,7 +95,7 @@ enum ofTargetPlatform{
 	#if defined(__MINGW32__) || defined(__MINGW64__)
 		#define TARGET_MINGW
 	#endif
-#elif defined( __APPLE_CC__)
+#elif defined( __APPLE_CC__) && !defined(ANDROID)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
 	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
@@ -116,9 +116,12 @@ enum ofTargetPlatform{
 	#else
 		#define TARGET_OSX
 	#endif
-#elif defined (__ANDROID__)
+#elif defined(ANDROID) || defined(__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
+    #define NO_URL_LOADER
+	//#define NO_VIDEO_CAPTURE
+	#define OF_USING_STD_FS 1
 #elif defined(__ARMEL__)
 	#define TARGET_LINUX
 	#define TARGET_OPENGLES
@@ -133,6 +136,10 @@ enum ofTargetPlatform{
 #endif
 //-------------------------------
 
+// Set to 1 to use std filesystem instead of boost's
+//#ifndef OF_USING_STD_FS
+//#define OF_USING_STD_FS 0
+//#endif
 
 // then the the platform specific includes:
 #ifdef TARGET_WIN32
@@ -252,9 +259,9 @@ enum ofTargetPlatform{
 
 	#define TARGET_LITTLE_ENDIAN		// arm cpu
 
-	#if defined(__OBJC__) && !__has_feature(objc_arc)
-		#error "Please enable ARC (Automatic Reference Counting) at the project level"
-	#endif
+//	#if defined(__OBJC__) && !__has_feature(objc_arc)
+//		#error "Please enable ARC (Automatic Reference Counting) at the project level"
+//	#endif
 
 #endif
 
@@ -267,6 +274,9 @@ enum ofTargetPlatform{
 
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
+
+	#include <GLES3/gl3.h>
+	#include <GLES3/gl3ext.h>
 
 	#define TARGET_LITTLE_ENDIAN
 #endif
@@ -330,7 +340,9 @@ typedef TESSindex ofIndexType;
 
 	#elif defined(TARGET_ANDROID)
 
-		#define OF_VIDEO_CAPTURE_ANDROID
+		#if !defined(NO_VIDEO_CAPTURE)
+			#define OF_VIDEO_CAPTURE_ANDROID
+		#endif
 
 	#elif defined(TARGET_EMSCRIPTEN)
 
@@ -422,6 +434,10 @@ typedef TESSindex ofIndexType;
 #define HAS_CPP11 1
 #endif
 
+#if __cplusplus >= 201703L
+#define HAS_CPP17 1
+#endif
+
 //------------------------------------------------ thread local storage
 // clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
@@ -468,6 +484,16 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
+// Android NDK > 22 LIBC++ Fix for pthread issues
+#if defined(_LIBCPP_HAS_THREAD_API_PTHREAD)
+#if defined(__ANDROID__) && __ANDROID_API__ >= 30
+#define _LIBCPP_HAS_COND_CLOCKWAIT
+#elif defined(_LIBCPP_GLIBC_PREREQ)
+#if _LIBCPP_GLIBC_PREREQ(2, 30)
+#define _LIBCPP_HAS_COND_CLOCKWAIT
+#endif
+#endif
+#endif
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500

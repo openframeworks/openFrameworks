@@ -56,7 +56,7 @@ bool ofxAndroidSoundPlayer::load(const of::filesystem::path& fileName, bool stre
 		return false;
 	}
 
-	jstring javaFileName = ofGetJNIEnv()->NewStringUTF(ofToDataPath(fileName,true).c_str());
+	jstring javaFileName = ofGetJNIEnv()->NewStringUTF(fileName.c_str());
 	env->CallVoidMethod(javaSoundPlayer,javaLoadMethod,javaFileName,stream?1:0);
 	env->DeleteLocalRef((jobject)javaFileName);
 	return true;
@@ -473,3 +473,13 @@ bool ofxAndroidSoundPlayer::isLoaded() const{
 
 	return env->CallBooleanMethod(javaSoundPlayer,javaIsLoadedMethod);
 }
+
+void ofxAndroidSoundPlayer::audioIn(ofSoundBuffer &) const {
+
+}
+
+void ofxAndroidSoundPlayer::audioOut(ofSoundBuffer &) const {
+
+}
+
+

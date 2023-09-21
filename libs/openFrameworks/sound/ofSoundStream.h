@@ -82,7 +82,7 @@ std::vector<ofSoundDevice> ofSoundStreamListDevices();
 class ofSoundStream {
 public:
 	ofSoundStream();
-
+    ~ofSoundStream();
 	void setSoundStream(std::shared_ptr<ofBaseSoundStream> soundStreamPtr);
 	std::shared_ptr<ofBaseSoundStream> getSoundStream();
 

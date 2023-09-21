@@ -7,12 +7,11 @@
 
 #pragma once
 
-#include "ofConstants.h"
-
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 
 #include "ofSoundBaseTypes.h"
 #include "ofEvents.h"
+#include "ofConstants.h"
 
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
@@ -21,7 +20,6 @@
 #endif
 
 class ofAVEngineSoundPlayer : public ofBaseSoundPlayer {
-    
 public:
 
 //thanks to @bangnoise for this trick 
@@ -30,7 +28,6 @@ public:
 #else
     using ObjectType = void *;
 #endif
-
     ofAVEngineSoundPlayer();
     ~ofAVEngineSoundPlayer();
     
@@ -61,13 +58,12 @@ public:
     void * getAVEnginePlayer();
     
 protected:
-    
 	void updateFunction(ofEventArgs & args);
 	bool bAddedUpdate = false;
-	
-        void cleanupMultiplayers();
-        static bool removeMultiPlayer(void * aPlayer);
-        ObjectType soundPlayer;
+
+    void cleanupMultiplayers();
+    static bool removeMultiPlayer(void * aPlayer);
+    ObjectType soundPlayer;
 	std::vector <ObjectType> mMultiplayerSoundPlayers;
 	static std::vector<float> systemBins;
 

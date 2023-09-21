@@ -374,9 +374,21 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
-    /// \returns current font direction
+	/// \returns current font direction
 	void setDirection(ofTrueTypeFontDirection direction);
 
+
+	struct glyphProps{
+		std::size_t characterIndex;
+		uint32_t glyph;
+		float height;
+		float width;
+		float bearingX, bearingY;
+		float xmin, xmax, ymin, ymax;
+		float advance;
+		float tW,tH;
+		float t1,t2,v1,v2;
+	};
 	float getCharWidth(uint32_t c) const {
 		return getGlyphProperties(c).width;
 	}
@@ -393,10 +405,6 @@ public:
 	}
 
 protected:
-	/// \cond INTERNAL
-	
-
-	
 	bool bLoadedOk;
 	
 	std::vector <ofPath> charOutlines;
@@ -411,18 +419,6 @@ protected:
 	float letterSpacing;
 	float spaceSize;
 	float fontUnitScale;
-
-	struct glyphProps{
-		std::size_t characterIndex;
-		uint32_t glyph;
-		float height;
-		float width;
-		float bearingX, bearingY;
-		float xmin, xmax, ymin, ymax;
-		float advance;
-		float tW,tH;
-		float t1,t2,v1,v2;
-	};
 
 	struct glyph{
 		glyphProps props;
@@ -446,13 +442,7 @@ protected:
 	ofTexture texAtlas;
 	mutable ofMesh stringQuads;
 
-	/// \endcond
-
 private:
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-	friend void ofUnloadAllFontTextures();
-	friend void ofReloadAllFontTextures();
-#endif
 	std::shared_ptr<struct FT_FaceRec_>	face;
 	static const glyphProps invalidProps;
 	void		unloadTextures();

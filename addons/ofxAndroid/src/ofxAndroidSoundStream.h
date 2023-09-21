@@ -41,6 +41,8 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 
 		bool isHeadPhonesConnected() const;
 
+		void printDeviceList() const;
+
 		ofEvent<bool> headphonesConnectedE;
 
 	private:

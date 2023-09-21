@@ -66,11 +66,11 @@ static void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int wi
 ofxAndroidVideoGrabber::Data::Data()
 :bIsFrameNew(false)
 ,bGrabberInited(false)
+,bUsePixels(true)
 ,cameraId(-1)
 ,appPaused(false)
 ,newPixels(false)
 ,attemptFramerate(-1)
-,bUsePixels(true)
 ,javaVideoGrabber(nullptr){
 	JNIEnv *env = ofGetJNIEnv();
 
@@ -538,10 +538,10 @@ ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat() const{
  void ConvertYUV2RGB(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
 								  int width,int height)
  {
-	 register int y1,y2,u,v;
-	 register unsigned char *py1,*py2;
-	 register int i,j, c1, c2, c3, c4;
-	 register unsigned char *d1, *d2;
+	  int y1,y2,u,v;
+	  unsigned char *py1,*py2;
+	  int i,j, c1, c2, c3, c4;
+	  unsigned char *d1, *d2;
 
 	 int width3 = 3*width;
 	 py1=src0;
@@ -614,11 +614,11 @@ void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int width, in
 	int outPtr = 0;
 	//the end of the current luminance scanline
 	int lineEnd = width;
-	register int R, G, B;
-	register int Y1;
-	register int Y2;
-	register int Cr;
-	register int Cb;
+	int R, G, B;
+	int Y1;
+	int Y2;
+	int Cr;
+	int Cb;
 
 	while (true) {
 
@@ -662,11 +662,11 @@ void ConvertYUV2toRGB565(unsigned char* yuvs, unsigned char* rgbs, int width, in
 void ConvertYUV2toRGB565_2(unsigned char *src0,unsigned char *src1,unsigned char *dst_ori,
 								 int width,int height)
 {
-	register int y1,y2,u,v;
-	register unsigned char *py1,*py2;
-	register int i,j, c1, c2, c3, c4;
-	register unsigned char *d1, *d2;
-	register int R,G,B;
+	int y1,y2,u,v;
+	unsigned char *py1,*py2;
+	int i,j, c1, c2, c3, c4;
+	unsigned char *d1, *d2;
+	int R,G,B;
 	int width2 = 2*width;
 	py1=src0;
 	py2=py1+width;

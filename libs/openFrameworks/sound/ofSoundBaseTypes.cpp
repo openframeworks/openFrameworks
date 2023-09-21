@@ -2,31 +2,6 @@
 #include "ofSoundBuffer.h"
 #include "ofLog.h"
 
-
-std::string toString(ofSoundDevice::Api api){
-	switch(api){
-		case ofSoundDevice::ALSA:
-			return "Alsa";
-		case ofSoundDevice::PULSE:
-			return "Pulse";
-		case ofSoundDevice::OSS:
-			return "OSS";
-		case ofSoundDevice::JACK:
-			return "Jack";
-		case ofSoundDevice::OSX_CORE:
-			return "OSX Core Audio";
-		case ofSoundDevice::MS_WASAPI:
-			return "MS WASAPI";
-		case ofSoundDevice::MS_ASIO:
-			return "MS ASIO";
-		case ofSoundDevice::MS_DS:
-			return "MS DirectShow";
-		default:
-			return "Unkown API";
-	}
-}
-
-
 void ofBaseSoundStream::printDeviceList() const {
 	ofLogNotice("ofBaseSoundStream::printDeviceList") << std::endl;
 #ifndef TARGET_EMSCRIPTEN
@@ -34,8 +9,8 @@ void ofBaseSoundStream::printDeviceList() const {
 		ofSoundDevice::Api api = (ofSoundDevice::Api)i;
 		auto devices = getDeviceList(api);
 		if(!devices.empty()){
-			ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << toString(api);
-			ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
+				ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << api;
+//				ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
 		}
 	}
 #else
@@ -43,7 +18,9 @@ void ofBaseSoundStream::printDeviceList() const {
 	getDeviceList(api); // only trigger the java script function once.
 #endif
 }
+#ifndef TARGET_ANDROID
 
+std::string toString(ofSoundDevice::Api api){ switch(api){ case ofSoundDevice::ALSA: return "Alsa"; case ofSoundDevice::PULSE: return "Pulse"; case ofSoundDevice::OSS: return "OSS"; case ofSoundDevice::JACK: return "Jack"; case ofSoundDevice::OSX_CORE: return "OSX Core Audio"; case ofSoundDevice::MS_WASAPI: return "MS WASAPI"; case ofSoundDevice::MS_ASIO: return "MS ASIO"; case ofSoundDevice::MS_DS: return "MS DirectShow"; default: return "Unkown API"; } }
 //------------------------------------------------------------
 std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev) {
 	os << "[" << toString(dev.api) << ": " << dev.deviceID << "] " << dev.name;
@@ -53,10 +30,22 @@ std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev) {
 	return os;
 }
 
-//------------------------------------------------------------
+////------------------------------------------------------------
 std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs) {
 	for(std::size_t i = 0; i < devs.size(); i++) {
 		os << devs[i] << std::endl;
 	}
 	return os;
 }
+
+#endif
+
+void ofBaseSoundInput::audioIn(ofSoundBuffer &buffer) {
+
+}
+
+void ofBaseSoundOutput::audioOut(ofSoundBuffer &buffer) {
+
+}
+
+
