@@ -30,5 +30,6 @@ class ofApp : public ofBaseApp{
 		#endif
 	
 		int cubeMapMode = 1;
+		float prefilterRoughness = 0.25;
 		
 };
