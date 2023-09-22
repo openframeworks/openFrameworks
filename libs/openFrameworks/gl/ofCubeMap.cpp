@@ -333,12 +333,18 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 			bLoadOk = true;
 #if defined(TARGET_OPENGLES)
 			// GL_RGB32F, GL_RGBA32F and GL_RGB16F is not supported in Emscripten opengl es, so we need to set to GL_RGBA16F or GL_RGBA32F. But GL_RGBA32F is not supported via opengl es on most mobile devices as of right now.
+			#if defined(GL_RGBA16F)
 			mGLInternalFormat = GL_RGBA16F;
+			#endif
 #elif !defined(TARGET_OPENGLES)
+			#if defined(GL_RGB16F)
 			mGLInternalFormat = GL_RGB16F;
+			#endif
 			if(aSettings.useMaximumPrecision) {
+				#if defined(GL_RGB32F)
 				ofLogVerbose("ofCubeMap :: load : using maximum precision: GL_RGB32F");
 				mGLInternalFormat = GL_RGB32F;
+				#endif
 			}
 #endif
 			
