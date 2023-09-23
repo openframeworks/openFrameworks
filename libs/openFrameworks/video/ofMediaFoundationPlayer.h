@@ -189,6 +189,7 @@ protected:
     
     void handleMEEvent(DWORD aevent);
     void updateDuration();
+    bool updateDimensions();
 
     std::shared_ptr<METexture> mMeTexture;
 
