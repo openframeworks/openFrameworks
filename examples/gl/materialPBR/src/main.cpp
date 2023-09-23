@@ -4,7 +4,7 @@
 //========================================================================
 int main( ){
 // PBR only works with the programmable renderer
-#ifdef TARGET_OPENGLES
+#ifdef TARGET_EMSCRIPTEN
 	ofGLESWindowSettings settings;
 	settings.glesVersion = 3;
 #else
