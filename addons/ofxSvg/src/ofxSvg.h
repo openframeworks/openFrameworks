@@ -42,10 +42,10 @@ class ofxSvg {
 		ofPath & getPathAt(int n);
 	
 		const std::vector <ofPath> & getPaths() const;
+		static void fixSvgString(std::string& xmlstring);
 
 	private:
 
-		void fixSvgString(std::string& xmlstring);
 	
 		float width, height;
 

@@ -110,16 +110,42 @@ void ofxSvg::fixSvgString(std::string& xmlstring) {
 	// and makes it disappear because svgtiny stores strokewidth as an integer!
 	ofXml::Search strokeWidthElements = xml.find("//*[@stroke-width]");
 	if(!strokeWidthElements.empty()) {
-		
 		for(ofXml & element: strokeWidthElements){
 			//cout << element.toString() << endl;
 			float strokewidth = element.getAttribute("stroke-width").getFloatValue();
 			strokewidth = MAX(1,round(strokewidth));
 			element.getAttribute("stroke-width").set(strokewidth);
-			
 		}
 	}
 	
+	// Affinity Designer does not set width/height as pixels but as a percentage
+	// and relies on the "viewBox" to convey the size of things. this applies the
+	// viewBox to the width and height.
+	
+	std::vector<std::string> rect;
+	for (ofXml & element: xml.find("//*[@viewBox]")){
+		rect = ofSplitString(element.getAttribute("viewBox").getValue(), " ");
+	}
+	
+	if (rect.size() == 4) {
+		
+		for (ofXml & element: xml.find("//*[@width]")){
+			if (element.getAttribute("width").getValue()=="100%") {
+				auto w = ofToFloat(rect.at(2));
+				ofLogWarning("ofxSvg::fixSvgString()") << "the SVG size is provided as percentage, which svgtiny translates to 0. The width is corrected from the viewBox width: " << w;
+				element.getAttribute("width").set(w);
+			}
+		}
+		
+		for (ofXml & element: xml.find("//*[@height]")){
+			if (element.getAttribute("height").getValue()=="100%") {
+				auto w = ofToFloat(rect.at(3));
+				ofLogWarning("ofxSvg::fixSvgString()") << "the SVG size is provided as percentage, which svgtiny translates to 0. The height is corrected from the viewBox height: " << w;
+				element.getAttribute("height").set(w);
+			}
+		}
+	}
+
 	//lib svgtiny doesn't remove elements with display = none, so this code fixes that
 	
 	bool finished = false;
