@@ -2,6 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+//	ofSetLogLevel(OF_LOG_VERBOSE);
+	
 	ofSetVerticalSync(false);
 	
 	camera.setNearClip(200);
@@ -10,23 +12,43 @@ void ofApp::setup(){
 	// loading a cube map will enable image based lighting on PBR materials.
 	// cube map will create a prefiltered light cube map and an irradiance cube map
 	// cube map texture from https://polyhaven.com
-	#ifdef USE_CUBE_MAP
+#ifdef USE_CUBE_MAP
 	// comment out the loading of the cube map image to see added cube map lighting without image
 	// fake environment lighting is added in the pbr shader
-	cubeMap.load("modern_buildings_2_1k.exr", 512, true );
-	#endif
+	
+	ofCubeMap::ofCubeMapSettings csettings;
+	csettings.filePath = "modern_buildings_2_1k.exr";
+	// uncomment to load from a cache or make one if it doesn't exist
+//	csettings.useCache = true;
+	
+	// uncomment to use the maximum precision available. OpenGL ES is float16 and OpenGL is float32;
+//	csettings.useMaximumPrecision = true;
+	
+	// make sure the defaults are the same for making and loading the cache
+	// ie opengl es defaults are smaller and the file names to load are based on the resolution
+	csettings.irradianceRes = 32;
+	csettings.preFilterRes = 128;
+	
+	cubeMap.load(csettings);
+	// below is another method for loading a cube map without passing settings class
+	//	cubeMap.load("modern_buildings_2_1k.exr", 512, true );
+#endif
+	
+	ofEnableArbTex();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+	prefilterRoughness = ofMap( ofGetMouseX(), 0, ofGetWidth(), 0.0f, 1.0f, true );
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
 	ofEnableDepthTest();
+	
 	camera.begin();
+	
 	float tradius = 50.0;
 	int numCols = 5;
 	int numRows = 3;
@@ -73,7 +95,7 @@ void ofApp::draw(){
 	// this will allow for the benefit of depth clipping
 	if( cubeMapMode == 2 ) {
 		if( cubeMap.hasPrefilteredMap() ) {
-			cubeMap.drawPrefilteredCube(0.25f);
+			cubeMap.drawPrefilteredCube(prefilterRoughness);
 		} else {
 			ofLogNotice("DOES NOT HAVE PRE FILTERED CUBE MAP") << " " << ofGetFrameNum();
 		}
@@ -94,7 +116,7 @@ void ofApp::draw(){
 	stringstream ss;
 	string cmMode = "Cube Map";
 	if( cubeMapMode == 2 ) {
-		cmMode = "Prefiltered";
+		cmMode = "Prefiltered : roughness(mouse): " + ofToString(prefilterRoughness,2);
 	} else if(cubeMapMode == 3 ) {
 		cmMode = "Irradiance";
 	}

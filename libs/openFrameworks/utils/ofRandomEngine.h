@@ -4,8 +4,8 @@
 #include <glm/glm.hpp>
 #include <random>
 
+#include "ofSingleton.h"
 #include "ofMath.h"
-#include "ofSingleton.hpp"
 
 namespace of::random {
 

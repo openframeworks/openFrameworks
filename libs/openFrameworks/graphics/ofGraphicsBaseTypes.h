@@ -66,7 +66,7 @@ class ofStyle{
 			#else
 				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
 			#endif
-			bgColor.set(60, 60, 60);
+			bgColor.set(60.f/255.f, 60.f/255.f, 60.f/255.f);
 			//depthTest = false;
 		}
 
@@ -76,10 +76,10 @@ class ofStyle{
 		/// \brief The color used when rendering.
 		///
 		/// This style depends on the state of the ofStyle::bFill.
-		ofColor color;
+		ofFloatColor color;
 
 		/// \brief The background color used when rendering.
-		ofColor bgColor;
+		ofFloatColor bgColor;
 
 		/// \brief The current rendering mode for polygons.
 		///
@@ -826,42 +826,42 @@ public:
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
 	///
-	/// \param r The red value between 0 and 255 to use when drawing.
-	/// \param g The green value between 0 and 255 to use when drawing.
-	/// \param b The blue value between 0 and 255 to use when drawing.
-	virtual void setColor(int r, int g, int b)=0;
+	/// \param r The red value between 0 and 1 to use when drawing.
+	/// \param g The green value between 0 and 1 to use when drawing.
+	/// \param b The blue value between 0 and 1 to use when drawing.
+	virtual void setColor(float r, float g, float b)=0;
 	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
 	///
-	/// \param r The red value between 0 and 255 to use when drawing.
-	/// \param g The green value between 0 and 255 to use when drawing.
-	/// \param b The blue value between 0 and 255 to use when drawing.
-	/// \param a The alpha value between 0 and 255 to use when drawing.
-	virtual void setColor(int r, int g, int b, int a)=0;
-	/// \brief Set the global color this renderer will use when drawing.
-	///
-	/// The renderer will continue using a color set by setColor() until another
-	/// call to setColor() changes the drawing color.
-	///
-	/// \param color The color to use when drawing.
-	virtual void setColor(const ofColor & color)=0;
+	/// \param r The red value between 0 and 1 to use when drawing.
+	/// \param g The green value between 0 and 1 to use when drawing.
+	/// \param b The blue value between 0 and 1 to use when drawing.
+	/// \param a The alpha value between 0 and 1 to use when drawing.
+	virtual void setColor(float r, float g, float b, float a)=0;
 	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
 	///
 	/// \param color The color to use when drawing.
-	/// \param _a The alpha value between 0 and 255 to use when drawing.
-	virtual void setColor(const ofColor & color, int _a)=0;
+	virtual void setColor(const ofFloatColor & color)=0;
 	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
 	///
-	/// \param gray The grayscale value to use when drawing.
-	virtual void setColor(int gray)=0;
+	/// \param color The color to use when drawing.
+	/// \param _a The alpha value between 0 and 1 to use when drawing.
+	virtual void setColor(const ofFloatColor & color, float _a)=0;
+	/// \brief Set the global color this renderer will use when drawing.
+	///
+	/// The renderer will continue using a color set by setColor() until another
+	/// call to setColor() changes the drawing color.
+	///
+	/// \param gray The grayscale value from 0 and 1 to use when drawing.
+	virtual void setColor(float gray)=0;
 	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
@@ -886,10 +886,10 @@ public:
 
 	/// \brief Get this renderer's current background color.
 	/// \returns This renderer's current background color.
-	virtual ofColor getBackgroundColor()=0;
+	virtual ofFloatColor getBackgroundColor()=0;
 	/// \brief Set this renderer's background color.
 	/// \param c The color to request this renderer to use.
-	virtual void setBackgroundColor(const ofColor & c)=0;
+	virtual void setBackgroundColor(const ofFloatColor & c)=0;
 
 	/// \brief Immediately paint a background color to the screen.
 	///
@@ -898,14 +898,14 @@ public:
 	/// this color each frame.
 	///
 	/// \param c The color to paint the background with.
-	virtual void background(const ofColor & c)=0;
+	virtual void background(const ofFloatColor & c)=0;
 	/// \brief Immediately paint a grayscale background color to the screen.
 	///
 	/// If automatic background drawing is enabled (which it is by default) this
 	/// method called from ofApp::setup() will also repaint the background with
 	/// this color each frame.
 	///
-	/// \param brightness The grayscale value between 0 and 255 to paint the
+	/// \param brightness The grayscale value between 0 and 1 to paint the
 	/// background with.
 	virtual void background(float brightness)=0;
 	/// \brief Immediately paint a grayscale background color to the screen.
@@ -918,14 +918,14 @@ public:
 	/// background with.
 	/// \param _a The alpha value between 0 and 255 to apply to \p hexColor when
 	/// when painting the background.
-	virtual void background(int hexColor, float _a=255.0f)=0;
+	virtual void background(int hexColor, int _a=255)=0;
 	/// \brief Immediately paint a background color to the screen.
 	///
-	/// \param r The red value between 0 and 255 to use for the background.
-	/// \param g The green value between 0 and 255 to use for the background.
-	/// \param b The blue value between 0 and 255 to use for the background.
-	/// \param a The alpha value between 0 and 255 to use for the background.
-	virtual void background(int r, int g, int b, int a=255)=0;
+	/// \param r The red value between 0 and 1 to use for the background.
+	/// \param g The green value between 0 and 1 to use for the background.
+	/// \param b The blue value between 0 and 1 to use for the background.
+	/// \param a The alpha value between 0 and 1 to use for the background.
+	virtual void background(float r, float g, float b, float a=1.f)=0;
 
 	/// \brief Enable/disable automatic redrawing of the background each frame.
 	/// \param bManual False to disable automatic background redrawing.
@@ -944,21 +944,21 @@ public:
 	///
 	/// clear() will clear the screen entirely.
 	///
-	/// \param r The red value between 0 and 255 to use when clearing the
+	/// \param r The red value between 0 and 1 to use when clearing the
 	/// screen.
-	/// \param g The green value between 0 and 255 to use when clearing the
+	/// \param g The green value between 0 and 1 to use when clearing the
 	/// screen.
-	/// \param b The blue value between 0 and 255 use when clearing the screen.
-	/// \param a The alpha value between 0 and 255 use when clearing the screen.
+	/// \param b The blue value between 0 and 1 use when clearing the screen.
+	/// \param a The alpha value between 0 and 1 use when clearing the screen.
 	/// Defaults to 0.
 	virtual void clear(float r, float g, float b, float a=0)=0;
 	/// \brief Clear this renderer's color and bit depths replacing them.
 	///
 	/// clear() will clear the screen entirely.
 	///
-	/// \param brightness The grayscale value between 0 and 255 to use when
+	/// \param brightness The grayscale value between 0 and 1 to use when
 	/// clearing the screen.
-	/// \param a The alpha value between 0 and 255 to use when clearing the
+	/// \param a The alpha value between 0 and 1 to use when clearing the
 	/// screen. Defaults to 0.
 	virtual void clear(float brightness, float a=0)=0;
 	/// \brief Restore the alpha color to its full opacity value.
