@@ -53,9 +53,25 @@ void ofSetColor(int r, int g, int b);
 /// }
 /// ~~~~
 void ofSetColor(int r, int g, int b, int a);
-void ofSetColor(const ofColor & color);
-void ofSetColor(const ofColor & color, int _a);
 void ofSetColor(int gray);
+void ofSetColor(const ofColor& acolor, int a);
+
+/// \brief Sets the draw color with r,g,b,a 0-1.
+///
+/// For alpha (transparency), you must first enable transparent blending
+/// (turned off by default for performance reasons) with
+/// ofEnableAlphaBlending()
+void ofSetFloatColor(float r, float g, float b);
+void ofSetFloatColor(float r, float g, float b, float a);
+void ofSetFloatColor(float gray);
+void ofSetFloatColor(const ofFloatColor& acolor, float a);
+void ofSetFloatColor(const ofFloatColor& acolor);
+
+template<typename T>
+void ofSetColor( const ofColor_<T>& acolor ) {
+	float limit = ofColor_<T>::limit();
+	ofSetFloatColor( acolor.r / limit, acolor.g / limit, acolor.b/limit, acolor.a / limit );
+}
 
 /// Sets the draw color with r,g,b, passed in as a hex. Hex is a conventient
 /// way to write colors.
@@ -95,8 +111,8 @@ ofFillFlag ofGetFill();
 /// \{
 
 /// \brief Returns the current background color as an ofColor.
-ofColor ofGetBackgroundColor();
-OF_DEPRECATED_MSG("Use ofGetBackgroundColor instead",ofColor ofGetBackground());
+ofFloatColor ofGetBackgroundColor();
+OF_DEPRECATED_MSG("Use ofGetBackgroundColor instead",ofFloatColor ofGetBackground());
 
 
 /// \brief Sets the background color.
@@ -174,7 +190,7 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 ///       // Sets the background to a bar gradient
 /// }
 /// ~~~~
-void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode = OF_GRADIENT_CIRCULAR);
+void ofBackgroundGradient(const ofFloatColor& start, const ofFloatColor& end, ofGradientMode mode = OF_GRADIENT_CIRCULAR);
 
 /// \brief Sets the background color. It takes as input r,g,b (0-255). The
 /// background is cleared automatically, just before the draw() command, so
@@ -189,7 +205,7 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 /// ~~~~
 void ofSetBackgroundColor(int r, int g, int b, int a=255);
 void ofSetBackgroundColor(int brightness, int alpha = 255);
-void ofSetBackgroundColor(const ofColor & c);
+void ofSetBackgroundColor(const ofFloatColor & c);
 
 /// \brief Sets the background color using a hex color value.
 /// ~~~~{.cpp}
@@ -251,7 +267,8 @@ bool ofGetBackgroundAuto();
 ///
 /// [1]: http://www.openframeworks.cc/documentation/gl/ofFbo.html
 /// [2]: http://www.opengl.org/sdk/docs/man/xhtml/glClear.xml
-void ofClear(float r, float g, float b, float a=0);
+void ofClear(float r, float g, float b, float a);
+void ofClear(float r, float g, float b);
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with a
 /// grayscale value.
@@ -262,7 +279,8 @@ void ofClear(float r, float g, float b, float a=0);
 ///     // Clears current screen and replaces it with a grayscale value.
 /// }
 /// ~~~~
-void ofClear(float brightness, float a=0);
+void ofClear(float brightness, float a);
+OF_DEPRECATED_MSG("Use ofClear(brightness, alpha) instead",void ofClear(float brightness));
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
 /// an ofColor.
@@ -274,9 +292,15 @@ void ofClear(float brightness, float a=0);
 ///     // Clears current screen and replaces it with myColor.
 /// }
 /// ~~~~
-
 void ofClear(const ofColor & c);
+void ofClear(const ofFloatColor & c);
 void ofClearAlpha();
+
+void ofClearFloat(float r, float g, float b);
+void ofClearFloat(float r, float g, float b, float a);
+void ofClearFloat(float brightness, float a);
+void ofClearFloat(const ofFloatColor & c);
+
 
 // OF's access to settings (bgAuto, origin, corner mode):
 OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead",bool ofbClearBg());
