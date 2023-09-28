@@ -1,9 +1,8 @@
-
 #include "ofBitmapFont.h"
 #include "ofMesh.h"
 
 #ifdef TARGET_ANDROID
-#include "ofxAndroidUtils.h"
+	#include "ofxAndroidUtils.h"
 #endif
 
 // ==============================================================
@@ -34,7 +33,7 @@
  *
  * Copyright (c) 1999-2000 by Pawel W. Olszta
  * Written by Pawel W. Olszta, <olszta@sourceforge.net>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -47,7 +46,7 @@
  */
 // ==============================================================
 
-
+// clang-format off
 static const unsigned char bmpChar_8x13_000[] = {  8,  0,  0,  0,170,  0,130,  0,130,  0,130,  0,170,  0,  0};
 static const unsigned char bmpChar_8x13_001[] = {  8,  0,  0,  0,  0, 16, 56,124,254,124, 56, 16,  0,  0,  0};
 static const unsigned char bmpChar_8x13_002[] = {  8,  0,170, 85,170, 85,170, 85,170, 85,170, 85,170, 85,170};
@@ -323,78 +322,77 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 													bmpChar_8x13_224,bmpChar_8x13_225,bmpChar_8x13_226,bmpChar_8x13_227,bmpChar_8x13_228,bmpChar_8x13_229,bmpChar_8x13_230,bmpChar_8x13_231,bmpChar_8x13_232,bmpChar_8x13_233,bmpChar_8x13_234,bmpChar_8x13_235,bmpChar_8x13_236,bmpChar_8x13_237,bmpChar_8x13_238,bmpChar_8x13_239,
 													bmpChar_8x13_240,bmpChar_8x13_241,bmpChar_8x13_242,bmpChar_8x13_243,bmpChar_8x13_244,bmpChar_8x13_245,bmpChar_8x13_246,bmpChar_8x13_247,bmpChar_8x13_248,bmpChar_8x13_249,bmpChar_8x13_250,bmpChar_8x13_251,bmpChar_8x13_252,bmpChar_8x13_253,bmpChar_8x13_254,bmpChar_8x13_255,nullptr};
 
-
+// clang-format on
 
 #include "ofTexture.h"
-static const float widthTex = 8.0f/256.0f;
-static const float heightTex = 14.0f/256.0f;
+static const float widthTex = 8.0f / 256.0f;
+static const float heightTex = 14.0f / 256.0f;
 ofPixels ofBitmapFont::pixels;
 
 using std::numeric_limits;
 using std::string;
 
-void ofBitmapFont::init(){
-	if(pixels.isAllocated()) return;
-	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
+void ofBitmapFont::init() {
+	if (pixels.isAllocated()) return;
+	pixels.allocate(16 * 16, 16 * 16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
 	pixels.set(0);
 	for (size_t i = 0; i < 256; i++) {
 		const unsigned char * face = bmpChar_8x13_Map[i];
-		for (size_t j = 1; j < 15; j++){
-			for (size_t k = 0; k < 8; k++){
-				if ( ((face[15-j] << k) & (128)) > 0 ){
-					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
-					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+		for (size_t j = 1; j < 15; j++) {
+			for (size_t k = 0; k < 8; k++) {
+				if (((face[15 - j] << k) & (128)) > 0) {
+					pixels[(((i / 16)) * 16 * 16 * 16 + (i % 16) * 16 + (j - 1) * 16 * 16 + k) * 2] = 255;
+					pixels[(((i / 16)) * 16 * 16 * 16 + (i % 16) * 16 + (j - 1) * 16 * 16 + k) * 2 + 1] = 255;
 				}
 			}
 		}
 	}
-
 }
-		
-//---------------------------------------------------------------------
-static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int character, int x , int y, bool vFlipped){
-	if (character < 128) {		
 
-		float posTexW = (float)(character % 16)/16.0f;
-		float posTexH = ((int)(character / 16.0f))/16.0f;
+//---------------------------------------------------------------------
+static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int character, int x, int y, bool vFlipped) {
+	if (character < 128) {
+
+		float posTexW = (float)(character % 16) / 16.0f;
+		float posTexH = ((int)(character / 16.0f)) / 16.0f;
 
 		float texY1 = posTexH;
-		float texY2 = posTexH+heightTex;
+		float texY2 = posTexH + heightTex;
 
 		//TODO: look into a better fix.
 		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position.
 		//3 pixel adjustment corrects that when y is flpped 5 when it's not.
 		int yOffset = 14;
-		if(!vFlipped){
+		if (!vFlipped) {
 			y += 5;
 			y += yOffset;
 			yOffset *= -1;
-		}else{
+		} else {
 			y -= 3;
 		}
 
 		size_t vC = vertexCount;
-		charMesh.getTexCoords()[vC] = {posTexW,texY1};
-		charMesh.getTexCoords()[vC+1] = {posTexW + widthTex,texY1};
-		charMesh.getTexCoords()[vC+2] = {posTexW+widthTex,texY2};
+		charMesh.getTexCoords()[vC] = { posTexW, texY1 };
+		charMesh.getTexCoords()[vC + 1] = { posTexW + widthTex, texY1 };
+		charMesh.getTexCoords()[vC + 2] = { posTexW + widthTex, texY2 };
 
-		charMesh.getTexCoords()[vC+3] = {posTexW + widthTex,texY2};
-		charMesh.getTexCoords()[vC+4] = {posTexW,texY2};
-		charMesh.getTexCoords()[vC+5] = {posTexW,texY1};
+		charMesh.getTexCoords()[vC + 3] = { posTexW + widthTex, texY2 };
+		charMesh.getTexCoords()[vC + 4] = { posTexW, texY2 };
+		charMesh.getTexCoords()[vC + 5] = { posTexW, texY1 };
 
-		charMesh.getVertices()[vC] = glm::vec3(x,y,0.f);
-		charMesh.getVertices()[vC+1] = glm::vec3(x+8,y,0.f);
-		charMesh.getVertices()[vC+2] = glm::vec3(x+8,y+yOffset,0.f);
+		charMesh.getVertices()[vC] = glm::vec3(x, y, 0.f);
+		charMesh.getVertices()[vC + 1] = glm::vec3(x + 8, y, 0.f);
+		charMesh.getVertices()[vC + 2] = glm::vec3(x + 8, y + yOffset, 0.f);
 
-		charMesh.getVertices()[vC+3] = glm::vec3(x+8,y+yOffset,0.f);
-		charMesh.getVertices()[vC+4] = glm::vec3(x,y+yOffset,0.f);
-		charMesh.getVertices()[vC+5] = glm::vec3(x,y,0.f);
+		charMesh.getVertices()[vC + 3] = glm::vec3(x + 8, y + yOffset, 0.f);
+		charMesh.getVertices()[vC + 4] = glm::vec3(x, y + yOffset, 0.f);
+		charMesh.getVertices()[vC + 5] = glm::vec3(x, y, 0.f);
 
 		vertexCount += 6;
-	}	
+	}
 }
 
-ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofBitmapMode mode, bool vFlipped) const{
+ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofBitmapMode mode, bool vFlipped) const {
 	int len = (int)text.length();
 	float fontSize = 8.0f;
 
@@ -405,37 +403,37 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofBitmapMode mod
 
 	int vertexCount = 0;
 	int column = 0;
-	float lineHeight = fontSize*1.7f;
+	float lineHeight = fontSize * 1.7f;
 	int newLineDirection = 1.0f;
 
-	if(!vFlipped){
-		newLineDirection  = -1;
+	if (!vFlipped) {
+		newLineDirection = -1;
 		// this would align multiline texts to the last line when vflip is disabled
 		//int lines = ofStringTimesInString(textString,"\n");
 		//y = lines*lineHeight;
 	}
 
 	float sx = x;
-	float sy = y-fontSize;
+	float sy = y - fontSize;
 
-	for(int c = 0; c < len; c++){
-		if(text[c] == '\n'){
+	for (int c = 0; c < len; c++) {
+		if (text[c] == '\n') {
 
-			sy += lineHeight*newLineDirection;
-//			if(mode == OF_BITMAPMODE_SIMPLE) {
-				sx = x;
-//			} else {
-//				sx = 0;
-//			}
+			sy += lineHeight * newLineDirection;
+			//			if(mode == OF_BITMAPMODE_SIMPLE) {
+			sx = x;
+			//			} else {
+			//				sx = 0;
+			//			}
 
 			column = 0;
-		} else if (text[c] == '\t'){
+		} else if (text[c] == '\t') {
 			//move the cursor to the position of the next tab
 			//8 is the default tab spacing in osx terminal and windows	 command line
 			int out = column + 8 - (column % 8);
-			sx += fontSize * (out-column);
+			sx += fontSize * (out - column);
 			column = out;
-		} else if (text[c] >= 32){
+		} else if (text[c] >= 32) {
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
@@ -449,48 +447,46 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofBitmapMode mod
 	charMesh.getVertices().resize(vertexCount);
 	charMesh.getTexCoords().resize(vertexCount);
 	return charMesh;
-
 }
 
-ofBitmapFont::ofBitmapFont(){
+ofBitmapFont::ofBitmapFont() {
 #ifdef TARGET_ANDROID
-	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofBitmapFont::unloadTexture);
+	ofAddListener(ofxAndroidEvents().unloadGL, this, &ofBitmapFont::unloadTexture);
 #endif
 }
 
-ofBitmapFont::~ofBitmapFont(){
+ofBitmapFont::~ofBitmapFont() {
 #ifdef TARGET_ANDROID
-	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofBitmapFont::unloadTexture);
+	ofRemoveListener(ofxAndroidEvents().unloadGL, this, &ofBitmapFont::unloadTexture);
 #endif
 }
 
-void ofBitmapFont::unloadTexture(){
+void ofBitmapFont::unloadTexture() {
 	texture.clear();
 }
 
-const ofTexture & ofBitmapFont::getTexture() const{
-	if(!texture.isAllocated()){
+const ofTexture & ofBitmapFont::getTexture() const {
+	if (!texture.isAllocated()) {
 		ofBitmapFont::init();
-		texture.allocate(pixels,false);
-		texture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
+		texture.allocate(pixels, false);
+		texture.setTextureMinMagFilter(GL_LINEAR, GL_NEAREST);
 	}
 	return texture;
 }
 
-
-ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y, ofBitmapMode mode, bool vFlipped) const{
-    if(text.empty()){
-        return ofRectangle(x,y,0,0);
-    }
-
-	const ofMesh & mesh = getMesh(text,x,y, mode, vFlipped);
-	glm::vec2 max(numeric_limits<float>::lowest(),numeric_limits<float>::lowest());
-	glm::vec2 min(numeric_limits<float>::max(),numeric_limits<float>::max());
-	for(const auto & p : mesh.getVertices()){
-		if(p.x<min.x) min.x = p.x;
-		if(p.y<min.y) min.y = p.y;
-		if(p.x>max.x) max.x = p.x;
-		if(p.y>max.y) max.y = p.y;
+ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y, ofBitmapMode mode, bool vFlipped) const {
+	if (text.empty()) {
+		return ofRectangle(x, y, 0, 0);
 	}
-	return ofRectangle(min,max);
+
+	const ofMesh & mesh = getMesh(text, x, y, mode, vFlipped);
+	glm::vec2 max(numeric_limits<float>::lowest(), numeric_limits<float>::lowest());
+	glm::vec2 min(numeric_limits<float>::max(), numeric_limits<float>::max());
+	for (const auto & p : mesh.getVertices()) {
+		if (p.x < min.x) min.x = p.x;
+		if (p.y < min.y) min.y = p.y;
+		if (p.x > max.x) max.x = p.x;
+		if (p.y > max.y) max.y = p.y;
+	}
+	return ofRectangle(min, max);
 }
