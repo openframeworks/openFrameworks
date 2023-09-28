@@ -887,8 +887,8 @@ void ofGLProgrammableRenderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
-	currentStyle.drawBitmapMode = mode;
+void ofGLProgrammableRenderer::setBitmapTextMode(ofBitmapMode mode){
+	currentStyle.bitmapMode = mode;
 }
 
 //----------------------------------------------------------
@@ -1775,7 +1775,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	ofRectangle rViewport;
 	glm::mat4 modelView = glm::mat4(1.0);
 
-	switch (currentStyle.drawBitmapMode) {
+	switch (currentStyle.bitmapMode) {
 
 		case OF_BITMAPMODE_SIMPLE:
 
@@ -1886,7 +1886,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
 	mutThis->setAlphaBitmapText(true);
-	ofMesh charMesh = bitmapFont.getMesh(textString, sx, sy, currentStyle.drawBitmapMode, isVFlipped());
+	ofMesh charMesh = bitmapFont.getMesh(textString, sx, sy, currentStyle.bitmapMode, isVFlipped());
 	mutThis->bind(bitmapFont.getTexture(),0);
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	mutThis->unbind(bitmapFont.getTexture(),0);

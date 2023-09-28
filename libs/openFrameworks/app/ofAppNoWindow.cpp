@@ -186,7 +186,7 @@ private:
 	void drawString(std::string text, float x, float y, float z) const{}
 	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const{}
 
-	void setBitmapTextMode(ofDrawBitmapMode mode){}
+	void setBitmapTextMode(ofBitmapMode mode){}
 	ofStyle getStyle() const{ return ofStyle(); }
 	void pushStyle(){}
 	void popStyle(){}

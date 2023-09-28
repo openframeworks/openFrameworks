@@ -680,7 +680,7 @@ void ofDisableAntiAliasing(){
 }
 
 //----------------------------------------
-void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
+void ofSetBitmapMode(ofBitmapMode mode){
 	ofGetCurrentRenderer()->setBitmapTextMode(mode);
 }
 
@@ -1281,7 +1281,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 	ofFill();
 	ofPushMatrix();
 	
-	if(ofGetStyle().drawBitmapMode == OF_BITMAPMODE_MODEL) {
+	if(ofGetStyle().bitmapMode == OF_BITMAPMODE_MODEL) {
 		ofTranslate(x,y,0);
 		ofScale(1,-1,0);
 		ofTranslate(-(padding), + padding - fontSize - 2,0);

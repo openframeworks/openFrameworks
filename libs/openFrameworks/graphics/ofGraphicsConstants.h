@@ -121,15 +121,14 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 
 
 /// \brief Sets the bitmap drawing mode for text.
-/// \sa ofSetDrawBitmapMode()
-enum ofDrawBitmapMode{
+/// \sa ofSetBitmapMode()
+enum ofBitmapMode{
 	OF_BITMAPMODE_SIMPLE = 0,
 	OF_BITMAPMODE_SCREEN,
 	OF_BITMAPMODE_VIEWPORT,
 	OF_BITMAPMODE_MODEL,
 	OF_BITMAPMODE_MODEL_BILLBOARD
 };
-
 
 /// \brief Used to represent the available rectangle drawing modes.
 ///

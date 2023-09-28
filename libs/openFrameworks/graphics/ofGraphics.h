@@ -668,7 +668,8 @@ void ofNextContour(bool bClose = false);  // for multi contour shapes!
 /// OF_BITMAPMODE_SIMPLE: only does 2d and the z coordinate is just disacarded, so if z is not 0
 /// the position in which it'll be drawn will be wrong.
 ///
-void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
+void ofSetBitmapMode(ofBitmapMode mode);
+[[deprecated("use ofSetBitmapMode")]] void ofSetDrawBitmapMode(ofBitmapMode mode) { ofSetBitmapMode(mode); }
 
 /// \brief Draws a bitmapped string, on screen, at point (x,y).
 ///

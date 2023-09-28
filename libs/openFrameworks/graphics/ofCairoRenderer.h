@@ -135,7 +135,7 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
-	void setBitmapTextMode(ofDrawBitmapMode mode);
+	void setBitmapTextMode(ofBitmapMode mode);
 
 	ofStyle getStyle() const;
 	void pushStyle();

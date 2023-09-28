@@ -140,7 +140,7 @@ public:
 	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
-	void setBitmapTextMode(ofDrawBitmapMode mode);
+	void setBitmapTextMode(ofBitmapMode mode);
     
 	// bg color
 	ofFloatColor getBackgroundColor();

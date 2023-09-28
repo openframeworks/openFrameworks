@@ -410,7 +410,7 @@ void of3dGraphics::drawGrid(float stepSize, size_t numberOfSteps, bool labels, b
 	}
 
 	if (labels) {
-		ofDrawBitmapMode mode = renderer->getStyle().drawBitmapMode;
+		ofBitmapMode mode = renderer->getStyle().bitmapMode;
 		renderer->setColor(1.f, 1.f, 1.f);
 		float labelPos = stepSize * (numberOfSteps + 0.5);
 		renderer->setBitmapTextMode(OF_BITMAPMODE_MODEL_BILLBOARD);
@@ -456,7 +456,7 @@ void of3dGraphics::drawGridPlane(float stepSize, size_t numberOfSteps, bool labe
 	if (labels) {
 		//draw numbers on axes
 		ofFloatColor prevColor = renderer->getStyle().color;
-		ofDrawBitmapMode mode = renderer->getStyle().drawBitmapMode;
+		ofBitmapMode mode = renderer->getStyle().bitmapMode;
 
 		renderer->setColor(1.f, 1.f, 1.f);
 		renderer->setBitmapTextMode(OF_BITMAPMODE_MODEL_BILLBOARD);

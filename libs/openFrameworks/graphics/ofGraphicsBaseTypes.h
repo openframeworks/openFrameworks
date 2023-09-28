@@ -62,9 +62,9 @@ class ofStyle{
 			polyMode			= OF_POLY_WINDING_ODD;
 			rectMode			= OF_RECTMODE_CORNER;
 			#ifdef TARGET_OPENGLES
-				drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
+				bitmapMode		= OF_BITMAPMODE_SIMPLE;
 			#else
-				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
+				bitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
 			#endif
 			bgColor.set(60.f/255.f, 60.f/255.f, 60.f/255.f);
 			//depthTest = false;
@@ -108,7 +108,7 @@ class ofStyle{
 		/// \brief The render mode for bitmaps (e.g. ofDrawBitmapString).
 		///
 		/// \sa ofDrawBitmapString(const T& textString, float x, float y)
-		ofDrawBitmapMode drawBitmapMode;
+		ofBitmapMode bitmapMode;
 
 		/// \brief The blending mode.
 		ofBlendMode blendingMode;
@@ -881,8 +881,8 @@ public:
 	///		OF_BITMAPMODE_MODEL_BILLBOARD
 	///
 	/// \param mode The bitmap mode to request this renderer to use.
-	/// \sa ofDrawBitmapMode
-	virtual void setBitmapTextMode(ofDrawBitmapMode mode)=0;
+	/// \sa ofBitmapMode
+	virtual void setBitmapTextMode(ofBitmapMode mode)=0;
 
 	/// \brief Get this renderer's current background color.
 	/// \returns This renderer's current background color.

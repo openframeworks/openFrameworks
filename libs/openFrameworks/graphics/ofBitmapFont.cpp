@@ -394,7 +394,7 @@ static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int charact
 	}	
 }
 
-ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
+ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofBitmapMode mode, bool vFlipped) const{
 	int len = (int)text.length();
 	float fontSize = 8.0f;
 
@@ -478,7 +478,7 @@ const ofTexture & ofBitmapFont::getTexture() const{
 }
 
 
-ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
+ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y, ofBitmapMode mode, bool vFlipped) const{
     if(text.empty()){
         return ofRectangle(x,y,0,0);
     }

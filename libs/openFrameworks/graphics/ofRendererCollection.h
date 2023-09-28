@@ -193,7 +193,7 @@ public:
 
 	void disableAntiAliasing();
 
-	void setBitmapTextMode(ofDrawBitmapMode mode);
+	void setBitmapTextMode(ofBitmapMode mode);
 
 	ofStyle getStyle() const;
 

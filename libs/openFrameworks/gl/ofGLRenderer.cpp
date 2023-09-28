@@ -1307,8 +1307,8 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
-	currentStyle.drawBitmapMode = mode;
+void ofGLRenderer::setBitmapTextMode(ofBitmapMode mode){
+	currentStyle.bitmapMode = mode;
 }
 
 //----------------------------------------------------------
@@ -1545,7 +1545,7 @@ void ofGLRenderer::drawString(std::string textString, float x, float y, float z)
 	ofRectangle rViewport;
 	bool vflipped = isVFlipped();
 
-	switch (currentStyle.drawBitmapMode) {
+	switch (currentStyle.bitmapMode) {
 
 		case OF_BITMAPMODE_SIMPLE:
 
@@ -1675,7 +1675,7 @@ void ofGLRenderer::drawString(std::string textString, float x, float y, float z)
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = bitmapFont.getMesh(textString,sx,sy,currentStyle.drawBitmapMode,vflipped);
+	ofMesh charMesh = bitmapFont.getMesh(textString,sx,sy,currentStyle.bitmapMode,vflipped);
 	mutThis->bind(bitmapFont.getTexture(),0);
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	mutThis->unbind(bitmapFont.getTexture(),0);

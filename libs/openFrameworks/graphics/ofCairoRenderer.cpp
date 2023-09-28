@@ -188,7 +188,7 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 	setBlendMode(style.blendingMode);
 
 	//bitmap draw mode
-	//setDrawBitmapMode(style.drawBitmapMode);
+	//setBitmapMode(style.bitmapMode);
 	currentStyle = style;
 }
 
@@ -1185,8 +1185,8 @@ void ofCairoRenderer::clearAlpha() {
 }
 
 
-void ofCairoRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
-	currentStyle.drawBitmapMode = mode;
+void ofCairoRenderer::setBitmapTextMode(ofBitmapMode mode){
+	currentStyle.bitmapMode = mode;
 }
 
 ofStyle ofCairoRenderer::getStyle() const{

@@ -592,7 +592,7 @@ void ofRendererCollection::disableAntiAliasing(){
 	}
 }
 
-void ofRendererCollection::setBitmapTextMode(ofDrawBitmapMode mode){
+void ofRendererCollection::setBitmapTextMode(ofBitmapMode mode){
    for(auto renderer: renderers){
 	   renderer->setBitmapTextMode(mode);
 	}
