@@ -1,31 +1,30 @@
 #pragma once
 
 #include "cairo.h"
+#include "of3dGraphics.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofPath.h"
-#include "of3dGraphics.h"
-
 #include "ofPixels.h"
 #include <deque>
 #include <stack>
 
-class ofCairoRenderer: public ofBaseRenderer{
+class ofCairoRenderer : public ofBaseRenderer {
 public:
 	ofCairoRenderer();
 	~ofCairoRenderer();
 
 	static const std::string TYPE;
-	const std::string & getType(){ return TYPE; }
+	const std::string & getType() { return TYPE; }
 
-	enum Type{
+	enum Type {
 		PDF,
 		SVG,
 		IMAGE,
 		FROM_FILE_EXTENSION
 	};
 
-	void setup(const of::filesystem::path & filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
-	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
+	void setup(const of::filesystem::path & filename, Type type = ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage = true, bool b3D = false, ofRectangle outputsize = ofRectangle(0, 0, 0, 0));
+	void setupMemoryOnly(Type _type, bool multiPage = true, bool b3D = false, ofRectangle viewport = ofRectangle(0, 0, 0, 0));
 	void close();
 	void flush();
 
@@ -37,8 +36,8 @@ public:
 	void draw(const ofPath::Command & path) const;
 	void draw(const ofPolyline & poly) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
-    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
-    void draw(const ofNode& node) const;
+	void draw(const of3dPrimitive & model, ofPolyRenderMode renderType) const;
+	void draw(const ofNode & node) const;
 	void draw(const std::vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const;
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -72,7 +71,6 @@ public:
 	glm::mat4 getCurrentOrientationMatrix() const;
 	void setCircleResolution(int);
 
-
 	void setCoordHandedness(ofHandednessType handedness);
 	ofHandednessType getCoordHandedness() const;
 
@@ -101,11 +99,11 @@ public:
 	void rotateZRad(float radians);
 	void rotateRad(float radians);
 	void matrixMode(ofMatrixMode mode);
-	void loadIdentityMatrix (void);
-	void loadMatrix (const glm::mat4 & m);
-	void loadMatrix (const float * m);
-	void multMatrix (const glm::mat4 & m);
-	void multMatrix (const float * m);
+	void loadIdentityMatrix(void);
+	void loadMatrix(const glm::mat4 & m);
+	void loadMatrix(const float * m);
+	void multMatrix(const glm::mat4 & m);
+	void multMatrix(const float * m);
 
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -117,25 +115,25 @@ public:
 	void setColor(const ofFloatColor & color);
 	void setColor(const ofFloatColor & color, float _a);
 	void setColor(float gray); // new set a color as grayscale with one argument
-	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
+	void setHexColor(int hexColor); // hex, like web 0xFF0033;
 
 	// bg color
 	void setBackgroundColor(const ofFloatColor & c);
 	ofFloatColor getBackgroundColor();
 	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, int _a=255);
-	void background(float r, float g, float b, float a=1.f);
+	void background(int hexColor, int _a = 255);
+	void background(float r, float g, float b, float a = 1.f);
 
-	void setBackgroundAuto(bool bManual);		// default is true
+	void setBackgroundAuto(bool bManual); // default is true
 	bool getBackgroundAuto();
 
 	void clear();
-	void clear(float r, float g, float b, float a=0);
-	void clear(float brightness, float a=0);
+	void clear(float r, float g, float b, float a = 0);
+	void clear(float brightness, float a = 0);
 	void clearAlpha();
 
-	void setBitmapTextMode(ofDrawBitmapMode mode);
+	void setBitmapTextMode(ofBitmapMode mode);
 
 	ofStyle getStyle() const;
 	void pushStyle();
@@ -159,16 +157,15 @@ public:
 	ofPixels & getImageSurfacePixels();
 	ofBuffer & getContentBuffer();
 
-
-	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){}
-	virtual void unbind(const ofCamera & camera){}
+	virtual void bind(const ofCamera & camera, const ofRectangle & viewport) { }
+	virtual void unbind(const ofCamera & camera) { }
 
 	const of3dGraphics & get3dGraphics() const;
 	of3dGraphics & get3dGraphics();
 
 private:
 	glm::vec3 transform(glm::vec3 vec) const;
-	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
+	static _cairo_status stream_function(void * closure, const unsigned char * data, unsigned int length);
 	void draw(const ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	mutable std::deque<glm::vec3> curvePoints;
@@ -193,7 +190,7 @@ private:
 	std::stack<glm::mat4> projectionStack;
 	std::stack<glm::mat4> modelViewStack;
 	std::stack<ofRectangle> viewportStack;
-	
+
 	ofMatrixMode currentMatrixMode;
 
 	std::vector<glm::vec3> sphereVerts;
@@ -204,6 +201,6 @@ private:
 	ofPixels imageBuffer;
 
 	ofStyle currentStyle;
-	std::deque <ofStyle> styleHistory;
+	std::deque<ofStyle> styleHistory;
 	ofPath path;
 };
