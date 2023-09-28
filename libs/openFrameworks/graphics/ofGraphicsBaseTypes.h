@@ -816,14 +816,7 @@ public:
 	/// \param g The green value between 0 and 1 to use when drawing.
 	/// \param b The blue value between 0 and 1 to use when drawing.
 	virtual void setColor(float r, float g, float b)=0;
-  
-	/// \brief Set the global color this renderer will use when drawing.
-	///
-	/// The renderer will continue using a color set by setColor() until another
-	/// call to setColor() changes the drawing color.
-	///
-	virtual void setColor(int r, int g, int b, int a) = 0;
-  
+    
 	/// \param r The red value between 0 and 1 to use when drawing.
 	/// \param g The green value between 0 and 1 to use when drawing.
 	/// \param b The blue value between 0 and 1 to use when drawing.
