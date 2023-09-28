@@ -208,6 +208,7 @@ UseCRLF:         false
 UseTab:          Always
 WhitespaceSensitiveMacros:
   - STRINGIZE
+  - STRINGIFY
   - PP_STRINGIZE
   - BOOST_PP_STRINGIZE
   - NS_SWIFT_NAME
