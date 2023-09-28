@@ -24,6 +24,7 @@ public:
 		bool useCache = false;
 		bool useLutTex = false;
 		bool flipVertically = true;
+		bool useMaximumPrecision = false;
 				
 		int resolution = 512;
 #ifdef TARGET_OPENGLES
@@ -104,7 +105,9 @@ public:
 	
 	int getFaceResolution() { return data->settings.resolution; }
 	GLuint getTextureId();
+	bool doesSupportHdr();
 	bool isHdr();
+	bool isMediumPrecision();
 	
 	void setExposure(float aExposure);
 	float getExposure() { return data->exposure; }
@@ -123,9 +126,9 @@ protected:
 	void _drawCubeEnd();
 	
 	void _checkSetup();
-	void _createCubeMap(ofTexture& aSrcTex);
-	GLuint _createFloatCubeMap(ofTexture& aSrcTex, int aSrcRes);
-	void _equiRectToCubeMap( GLuint& aCubeTexId, ofTexture& aSrcTex, int aSrcRes, bool aBConvertToNonFloat );
+	void _createCubeMap(GLuint aSrcTexId);
+	GLuint _createFloatCubeMap(GLuint aSrcTexId, int aSrcRes);
+	void _equiRectToCubeMap( GLuint& aCubeTexId, GLuint aSrcTexId, int aSrcRes, bool aBConvertToNonFloat );
 	
 	void _createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, const of::filesystem::path & aCachePath);
 	bool _loadIrradianceMap( const of::filesystem::path & aCachePath );
@@ -135,30 +138,33 @@ protected:
 	
 	static void _createBrdfLUT();
 	
-	
 	void _configureCubeTextures(GLuint aCubeMapId,bool abLinearMipLinear);
 	void _initEmptyTextures(GLuint aCubeMapId, int aSize);
-	void _initEmptyTextures(GLuint aCubeMapId, GLuint aInternalFormat, int aSize, int aNumMipMaps );
+	void _initEmptyTextures(GLuint aCubeMapId, GLint aInternalFormat, int aSize, int aNumMipMaps );
 	void _allocateCubeMesh();
 	std::vector<glm::mat4> _getViewMatrices(const glm::vec3& apos);
 	
 	bool _loadRenderShader();
 	bool _loadEquiRectToCubeMapShader();
 	
-	GLuint getTexStorageFormat();
-	GLuint getTexStorageFormat( GLuint aInternalFormat );
+	/// \brief get the GL format from the internalFormat, ie. GL_RGB, GL_RGBA
+	/// \return the GL format as GLenum
+	GLenum getGLFormatFromInternalFormat();
+	GLenum getGLFormatFromInternalFormat(GLint aInternalFormat);
 	
-	GLuint getGlTypeFromInternalFormat();
-	GLuint getGlTypeFromInternalFormat(GLuint aInternalFormat);
+	/// \brief get the GL type from the internalFormat, ie. GL_FLOAT
+	/// \return the GL type as GLenum
+	GLenum getGLTypeFromInternalFormat();
+	GLenum getGLTypeFromInternalFormat( GLint aInternalFormat );
+	
 	int getNumPixelChannels();
 	
-	GLuint texFormat = GL_RGB;
+	GLint mGLInternalFormat;
 	
 	glm::mat4 projectionMat;
 	
 	static ofTexture sBrdfLutTex;
 	static ofVboMesh sCubeMesh;
-	//ofMesh sCubeMesh;
 	ofShader shaderEquiRectToCubeMap;
 	ofShader shaderRender;
 	ofShader shaderIrradianceMap;

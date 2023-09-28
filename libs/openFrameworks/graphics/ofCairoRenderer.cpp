@@ -157,7 +157,7 @@ void ofCairoRenderer::finishRender(){
 
 void ofCairoRenderer::setStyle(const ofStyle & style){
 	//color
-	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+	setColor(style.color.r, style.color.g, style.color.b, style.color.a);
 
 	//bg color
 	setBackgroundColor(style.bgColor);
@@ -211,16 +211,16 @@ void ofCairoRenderer::draw(const ofPath & shape) const{
 	cairo_set_fill_rule(cr,cairo_poly_mode);
 
 
-	ofColor prevColor;
+	ofFloatColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = currentStyle.color;
 	}
 
 	if(shape.isFilled()){
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getFillColor();
+			ofFloatColor c = shape.getFillColor();
 			c.a = shape.getFillColor().a;
-			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+			cairo_set_source_rgba(cr, c.r, c.g, c.b, c.a);
 		}
 
 		if(shape.hasOutline()){
@@ -232,9 +232,9 @@ void ofCairoRenderer::draw(const ofPath & shape) const{
 	if(shape.hasOutline()){
 		float lineWidth = currentStyle.lineWidth;
 		if(shape.getUseShapeColor()){
-			ofColor c = shape.getStrokeColor();
+			ofFloatColor c = shape.getStrokeColor();
 			c.a = shape.getStrokeColor().a;
-			cairo_set_source_rgba(cr, (float)c.r/255.0, (float)c.g/255.0, (float)c.b/255.0, (float)c.a/255.0);
+			cairo_set_source_rgba(cr, c.r, c.g, c.b, c.a);
 		}
 		cairo_set_line_width( cr, shape.getStrokeWidth() );
 		cairo_stroke( cr );
@@ -711,29 +711,29 @@ void ofCairoRenderer::setLineSmoothing(bool smooth){
 
 // color options
 //--------------------------------------------
-void ofCairoRenderer::setColor(int r, int g, int b){
-	setColor(r,g,b,255);
+void ofCairoRenderer::setColor(float r, float g, float b){
+	setColor(r,g,b,1.f);
 };
 
 //--------------------------------------------
-void ofCairoRenderer::setColor(int r, int g, int b, int a){
-	cairo_set_source_rgba(cr, (float)r/255.0, (float)g/255.0, (float)b/255.0, (float)a/255.0);
+void ofCairoRenderer::setColor(float r, float g, float b, float a){
+	cairo_set_source_rgba(cr, r, g, b, a);
 	currentStyle.color.set(r,g,b,a);
 };
 
 //--------------------------------------------
-void ofCairoRenderer::setColor(const ofColor & c){
+void ofCairoRenderer::setColor(const ofFloatColor & c){
 	setColor(c.r,c.g,c.b,c.a);
 };
 
 //--------------------------------------------
-void ofCairoRenderer::setColor(const ofColor & c, int _a){
+void ofCairoRenderer::setColor(const ofFloatColor & c, float _a){
 	setColor(c.r,c.g,c.b,_a);
 };
 
 //--------------------------------------------
-void ofCairoRenderer::setColor(int gray){
-	setColor(gray,gray,gray,255);
+void ofCairoRenderer::setColor(float gray){
+	setColor(gray,gray,gray,1.f);
 };
 
 //--------------------------------------------
@@ -741,7 +741,7 @@ void ofCairoRenderer::setHexColor( int hexColor ){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;
 	int b = (hexColor >> 0) & 0xff;
-	setColor(r,g,b);
+	setColor((float)r/255.f,(float)g/255.f,(float)b/255.f);
 };
 
 //--------------------------------------------
@@ -1161,7 +1161,7 @@ void ofCairoRenderer::setupGraphicDefaults(){
 //----------------------------------------------------------
 void ofCairoRenderer::clear(){
 	if(!surface || ! cr) return;
-	cairo_set_source_rgba(cr,currentStyle.bgColor.r/255., currentStyle.bgColor.g/255., currentStyle.bgColor.b/255., currentStyle.bgColor.a/255.);
+	cairo_set_source_rgba(cr,currentStyle.bgColor.r, currentStyle.bgColor.g, currentStyle.bgColor.b, currentStyle.bgColor.a);
 	cairo_paint(cr);
 	setColor(currentStyle.color);
 }
@@ -1169,7 +1169,7 @@ void ofCairoRenderer::clear(){
 //----------------------------------------------------------
 void ofCairoRenderer::clear(float r, float g, float b, float a) {
 	if(!surface || ! cr) return;
-	cairo_set_source_rgba(cr,r/255., g/255., b/255., a/255.);
+	cairo_set_source_rgba(cr,r, g, b, a);
 	cairo_paint(cr);
 	setColor(currentStyle.color);
 
@@ -1221,34 +1221,38 @@ bool ofCairoRenderer::getBackgroundAuto(){
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::setBackgroundColor(const ofColor & c){
+void ofCairoRenderer::setBackgroundColor(const ofFloatColor & c){
 	currentStyle.bgColor = c;
 }
 
 //----------------------------------------------------------
-ofColor ofCairoRenderer::getBackgroundColor(){
+ofFloatColor ofCairoRenderer::getBackgroundColor(){
 	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::background(const ofColor & c){
+void ofCairoRenderer::background(const ofFloatColor & c){
 	setBackgroundColor(c);
 	clear(c.r,c.g,c.b,c.a);
 }
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(float brightness) {
-	background(ofColor(brightness));
+	background(ofFloatColor(brightness));
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::background(int hexColor, float _a){
-	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
+void ofCairoRenderer::background(int hexColor, int _a){
+	int r = (hexColor >> 16) & 0xff;
+	int g = (hexColor >> 8) & 0xff;
+	int b = (hexColor >> 0) & 0xff;
+	background ( (float)r/255.f, (float)g/255.f, (float)b/255.f, _a/255.f);
+//	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::background(int r, int g, int b, int a){
-	background(ofColor(r,g,b,a));
+void ofCairoRenderer::background(float r, float g, float b, float a){
+	background(ofFloatColor(r,g,b,a));
 }
 
 

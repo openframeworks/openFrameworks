@@ -328,7 +328,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofPath & shape) const{
-	ofColor prevColor;
+	ofFloatColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = currentStyle.color;
 	}
@@ -848,33 +848,33 @@ glm::mat4 ofGLProgrammableRenderer::getCurrentOrientationMatrix() const {
 	return matrixStack.getOrientationMatrix();
 }
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setColor(const ofColor & color){
+void ofGLProgrammableRenderer::setColor(const ofFloatColor & color){
 	setColor(color.r,color.g,color.b,color.a);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setColor(const ofColor & color, int _a){
+void ofGLProgrammableRenderer::setColor(const ofFloatColor & color, float _a){
 	setColor(color.r,color.g,color.b,_a);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b){
-	setColor(_r, _g, _b, 255);
+void ofGLProgrammableRenderer::setColor(float _r, float _g, float _b){
+	setColor(_r, _g, _b, 1.f);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b, int _a){
-	ofColor newColor(_r,_g,_b,_a);
+void ofGLProgrammableRenderer::setColor(float _r, float _g, float _b, float _a){
+	ofFloatColor newColor(_r,_g,_b,_a);
 	if(newColor!=currentStyle.color){
         currentStyle.color = newColor;
 		if(currentShader){
-			currentShader->setUniform4f(COLOR_UNIFORM,_r/255.,_g/255.,_b/255.,_a/255.);
+			currentShader->setUniform4f(COLOR_UNIFORM,_r,_g,_b,_a);
 		}
 	}
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setColor(int gray){
+void ofGLProgrammableRenderer::setColor(float gray){
 	setColor(gray, gray, gray);
 }
 
@@ -883,7 +883,7 @@ void ofGLProgrammableRenderer::setHexColor(int hexColor){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;
 	int b = (hexColor >> 0) & 0xff;
-	setColor(r,g,b);
+	setColor((float)r/255.f,(float)g/255.f,(float)b/255.f);
 }
 
 //----------------------------------------------------------
@@ -898,7 +898,7 @@ void ofGLProgrammableRenderer::clear(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::clear(float r, float g, float b, float a) {
-	glClearColor(r / 255., g / 255., b / 255., a / 255.);
+	glClearColor(r, g, b, a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -926,35 +926,39 @@ bool ofGLProgrammableRenderer::getBackgroundAuto(){
 }
 
 //----------------------------------------------------------
-ofColor ofGLProgrammableRenderer::getBackgroundColor(){
+ofFloatColor ofGLProgrammableRenderer::getBackgroundColor(){
 	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setBackgroundColor(const ofColor & c){
+void ofGLProgrammableRenderer::setBackgroundColor(const ofFloatColor & c){
 	currentStyle.bgColor = c;
-	glClearColor(currentStyle.bgColor[0]/255., currentStyle.bgColor[1]/255., currentStyle.bgColor[2]/255., currentStyle.bgColor[3]/255.);
+	glClearColor(currentStyle.bgColor[0], currentStyle.bgColor[1], currentStyle.bgColor[2], currentStyle.bgColor[3]);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::background(const ofColor & c){
+void ofGLProgrammableRenderer::background(const ofFloatColor & c){
 	setBackgroundColor(c);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::background(float brightness) {
-	background(ofColor(brightness));
+	background(ofFloatColor(brightness));
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::background(int hexColor, float _a){
-	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
+void ofGLProgrammableRenderer::background(int hexColor, int _a){
+	int r = (hexColor >> 16) & 0xff;
+	int g = (hexColor >> 8) & 0xff;
+	int b = (hexColor >> 0) & 0xff;
+	background( (float)r/255.f, (float)g/255.f, (float)b/255.f, _a/255.f );
+//	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::background(int r, int g, int b, int a){
-	background(ofColor(r,g,b,a));
+void ofGLProgrammableRenderer::background(float r, float g, float b, float a){
+	background(ofFloatColor(r,g,b,a));
 }
 
 //----------------------------------------------------------
@@ -1562,7 +1566,7 @@ void ofGLProgrammableRenderer::uploadMatrices(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setDefaultUniforms(){
 	if(!currentShader) return;
-	currentShader->setUniform4f(COLOR_UNIFORM, currentStyle.color.r/255.,currentStyle.color.g/255.,currentStyle.color.b/255.,currentStyle.color.a/255.);
+	currentShader->setUniform4f(COLOR_UNIFORM, currentStyle.color.r,currentStyle.color.g,currentStyle.color.b,currentStyle.color.a);
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	currentShader->setUniform1f(USE_COLORS_UNIFORM,colorsEnabled);
