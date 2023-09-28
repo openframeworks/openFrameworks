@@ -959,8 +959,13 @@ float ofTrueTypeFont::getSpaceSize() const{
 
 //------------------------------------------------------------------
 ofPath ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vflip, bool filled) const{
+	return getCharacterAsPath(character, vflip, filled);
+}
+
+//------------------------------------------------------------------
+ofPath ofTrueTypeFont::getCharacterAsPath(uint32_t character, bool vflip, bool filled) const{
 	if( settings.contours == false ){
-		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
+		ofLogError("ofxTrueTypeFont") << "getCharacterAsPath(): contours not created, call loadFont() with makeContours set to true";
 		return ofPath();
 	}
 	if (!isValidGlyph(character)){
@@ -1103,11 +1108,11 @@ void ofTrueTypeFont::setDirection(ofTrueTypeFontDirection direction){
 }
 
 //-----------------------------------------------------------
-vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip, bool filled) const{
+vector<ofPath> ofTrueTypeFont::getStringAsPaths(const string &  str, bool vflip, bool filled) const{
 	vector<ofPath> shapes;
 
 	if (!bLoadedOk){
-		ofLogError("ofxTrueTypeFont") << "getStringAsPoints(): font not allocated: line " << __LINE__ << " in " << __FILE__;
+		ofLogError("ofxTrueTypeFont") << "getStringAsPaths(): font not allocated: line " << __LINE__ << " in " << __FILE__;
 		return shapes;
 	};
 	iterateString(str,0,0,vflip,[&](uint32_t c, glm::vec2 pos){
@@ -1116,6 +1121,10 @@ vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip
 	});
 	return shapes;
 
+}
+
+vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip, bool filled) const{
+	return getStringAsPaths(str, vflip, filled);
 }
 
 bool ofTrueTypeFont::isValidGlyph(uint32_t glyph) const{

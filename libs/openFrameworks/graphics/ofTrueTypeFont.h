@@ -365,8 +365,10 @@ public:
 	void drawStringAsShapes(const std::string& s, float x, float y) const;
 	
 	/// \todo
-	ofPath getCharacterAsPoints(uint32_t character, bool vflip=true, bool filled=true) const;
-	std::vector<ofPath> getStringAsPoints(const std::string &  str, bool vflip=true, bool filled=true) const;
+	ofPath getCharacterAsPath(uint32_t character, bool vflip=true, bool filled=true) const;
+	[[deprecated("use getCharacterAsPath()")]] ofPath getCharacterAsPoints(uint32_t character, bool vflip=true, bool filled=true) const;
+	std::vector<ofPath> getStringAsPaths(const std::string &  str, bool vflip=true, bool filled=true) const;
+	[[deprecated("use getStringAsPaths()")]] std::vector<ofPath> getStringAsPoints(const std::string &  str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(const std::string &  s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
 	ofTexture getStringTexture(const std::string &  s, bool vflip=true) const;
