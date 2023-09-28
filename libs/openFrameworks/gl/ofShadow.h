@@ -118,7 +118,8 @@ public:
 	void clear();
 	
 	const std::shared_ptr<ofShadow::Data>& getData() const { return data; }
-	bool getIsEnabled() { return data->isEnabled; }
+	bool isEnabled() { return data->isEnabled; }
+	[[deprecated("use isEnabled()")]] bool getIsEnabled() { return isEnabled(); }
 	void setEnabled( bool ab );
 	
 	float getNearClip() { return data->nearClip; }

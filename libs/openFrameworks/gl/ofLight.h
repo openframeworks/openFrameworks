@@ -45,8 +45,9 @@ public:
     void setup();
 	void enable();
 	void disable();
-	bool getIsEnabled() const;
-	
+	bool isEnabled() const;
+	[[deprecated("use isEnabled()")]] bool getIsEnabled() const;
+
 	void setDirectional();
 	bool getIsDirectional() const;
 	

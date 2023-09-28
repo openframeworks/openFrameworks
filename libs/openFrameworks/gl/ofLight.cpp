@@ -170,8 +170,13 @@ int ofLight::getLightID() const{
 }
 
 //----------------------------------------
-bool ofLight::getIsEnabled() const {
+bool ofLight::isEnabled() const {
 	return data->isEnabled;
+}
+
+//----------------------------------------
+bool ofLight::getIsEnabled() const {
+	return isEnabled();
 }
 
 //----------------------------------------
@@ -410,7 +415,7 @@ bool ofLight::shouldRenderShadowDepthPass() {
 	if( !ofIsGLProgrammableRenderer() ) {
 		return false;
 	}
-	return getIsEnabled() && shadow.getIsEnabled();
+	return isEnabled() && shadow.isEnabled();
 }
 
 //-------------------------------

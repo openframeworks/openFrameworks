@@ -377,7 +377,7 @@ void ofShadow::setLightType( int atype ) {
 	}
 	data->lightType = atype;
 	data->numDepthPasses = getNumShadowDepthPasses();
-	if( getIsEnabled() ) {
+	if( isEnabled() ) {
 		_checkFbos();
 		_allocate();
 	}
@@ -481,7 +481,7 @@ bool ofShadow::beginDepth() {
 		setEnabled(false);
 	}
 	
-	if( !getIsEnabled() ) {
+	if( !isEnabled() ) {
 		return false;
 	}
 	
@@ -542,7 +542,7 @@ bool ofShadow::beginDepth() {
 
 //--------------------------------------------------------------
 bool ofShadow::endDepth() {
-	if( !getIsEnabled() || !areShadowsSupported() ) {
+	if( !isEnabled() || !areShadowsSupported() ) {
 		return false;
 	}
 	if( isGlCullingEnabled() ) {
@@ -566,7 +566,7 @@ bool ofShadow::beginDepth(GLenum aCubeFace) {
 		setEnabled(false);
 	}
 	
-	if( !getIsEnabled() ) {
+	if( !isEnabled() ) {
 		return false;
 	}
 	
