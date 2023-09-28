@@ -726,7 +726,7 @@ public:
 	/// get the size of the file at the current file path
 	///
 	/// \returns size in bytes
-	uint64_t getSize() const;
+	std::uintmax_t getSize() const;
 
 	// this allows to compare files by their paths, also provides sorting
 	// and use as key in stl containers

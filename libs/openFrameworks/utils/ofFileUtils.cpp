@@ -1059,7 +1059,7 @@ bool ofFile::remove(bool recursive){
 }
 
 //------------------------------------------------------------------------------------------------------------
-uint64_t ofFile::getSize() const {
+std::uintmax_t ofFile::getSize() const {
 	try{
 		return of::filesystem::file_size(myFile);
 	}catch(std::exception & except){
