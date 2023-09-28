@@ -676,6 +676,11 @@ void ofSetBitmapMode(ofBitmapMode mode) {
 	ofGetCurrentRenderer()->setBitmapTextMode(mode);
 }
 
+//----------------------------------------
+void ofSetDrawBitmapMode(ofBitmapMode mode) {
+	ofSetBitmapMode(mode);
+}
+
 //----------------------------------------------------------
 void ofSetStyle(ofStyle style) {
 	ofGetCurrentRenderer()->setStyle(style);

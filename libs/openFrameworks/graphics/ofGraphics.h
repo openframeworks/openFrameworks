@@ -647,7 +647,7 @@ void ofNextContour(bool bClose = false); // for multi contour shapes!
 /// the position in which it'll be drawn will be wrong.
 ///
 void ofSetBitmapMode(ofBitmapMode mode);
-[[deprecated("use ofSetBitmapMode")]] void ofSetDrawBitmapMode(ofBitmapMode mode) { ofSetBitmapMode(mode); }
+[[deprecated("use ofSetBitmapMode")]] void ofSetDrawBitmapMode(ofBitmapMode mode);
 
 /// \brief Draws a bitmapped string, on screen, at point (x,y).
 ///
