@@ -111,7 +111,7 @@ public:
 	/// get the contents of the buffer as a string.
 	///
 	/// \returns buffer contents as a string
-	std::string getText() const;
+	[[deprecated("use string() operator")]] std::string getText() const;
 	
 	/// Use buffer as a string via cast.
 	///
