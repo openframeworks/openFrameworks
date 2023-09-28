@@ -4,7 +4,7 @@
 #include <random>
 #include <glm/glm.hpp>
 
-#include "ofSingleton.hpp"
+#include "ofSingleton.h"
 #include "ofMath.h"
 
 namespace of::random

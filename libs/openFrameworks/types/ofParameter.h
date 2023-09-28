@@ -56,6 +56,11 @@ public:
 		return static_cast<const ofReadOnlyParameter<ParameterType, Friend> &>(*this);
 	}
 
+	template<typename OtherType>
+	bool isOfType() const {
+		return typeid(*this) == typeid(ofParameter<OtherType>);
+	}
+	
 	ofParameterGroup & castGroup();
 	const ofParameterGroup & castGroup() const;
 

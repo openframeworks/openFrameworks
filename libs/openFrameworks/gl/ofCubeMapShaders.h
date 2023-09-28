@@ -31,6 +31,12 @@ public:
 		vstr += "precision highp sampler2D;\n";
 		vstr += "precision highp samplerCube;\n";
 		#endif
+		vstr += R"(
+		#ifndef MEDIUMP_FLT_MAX
+		#define MEDIUMP_FLT_MAX    65504.0
+		#endif
+		)";
+		
 		return vstr;
 	}
 	
@@ -76,11 +82,13 @@ public:
 								 }
 								 return uv;
 							 }
-							 
+		
+		
 							 void main() {
-								 vec2 uv = SampleSphericalMap(normalize(oLocalPos)); // make sure to normalize localPos
-								 vec3 color = texture(uEquirectangularTex, uv).rgb;
-						
+								vec2 uv = SampleSphericalMap(normalize(oLocalPos)); // make sure to normalize localPos
+								vec4 ecolor = texture(uEquirectangularTex, uv);
+								vec3 color = ecolor.rgb;// * ecolor.a;
+								//color = clamp(color, 0.001, MEDIUMP_FLT_MAX);
 								if(uConvertToNonFloat > 0.5) {
 									// hdr tone mapping
 									color = color / (color+vec3(1.0));
@@ -126,14 +134,18 @@ public:
 								 
 								 float sampleDelta = 0.025;
 								 float nrSamples = 0.0;
-								 for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta) {
-									 for(float theta = 0.0; theta < 0.5 * PI; theta += sampleDelta) {
+								float twoPI = 2.0 * PI;
+								float halfPI = 0.5 * PI;
+								 for(float phi = 0.0; phi < twoPI; phi += sampleDelta) {
+									 for(float theta = 0.0; theta < halfPI; theta += sampleDelta) {
+										float sinTheta = sin(theta);
+										float cosTheta = cos(theta);
 										 // spherical to cartesian (in tangent space)
-										 vec3 tangentSample = vec3(sin(theta) * cos(phi),  sin(theta) * sin(phi), cos(theta));
+										 vec3 tangentSample = vec3(sinTheta * cos(phi), sinTheta * sin(phi), cosTheta);
 										 // tangent space to world
 										 vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;
 										 
-										 irradiance += texture(environmentMap, sampleVec).rgb * cos(theta) * sin(theta);
+										 irradiance += texture(environmentMap, sampleVec).rgb * (cosTheta * sinTheta);
 										 //nrSamples++;
 										   nrSamples += 1.0;
 									 }

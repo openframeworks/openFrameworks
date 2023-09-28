@@ -319,7 +319,7 @@ public:
 	/// \brief Set the global ambient light color.
 	///
 	/// \param c The color to set this renderer to use as ambient lighting.
-	virtual void setGlobalAmbientColor(const ofColor& c)=0;
+	virtual void setGlobalAmbientColor(const ofFloatColor& c)=0;
 
 	/// \brief Enable a light at a specific index.
 	///

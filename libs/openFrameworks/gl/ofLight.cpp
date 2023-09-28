@@ -84,9 +84,9 @@ ofLight::Data::Data(){
 ofLight::Data::~Data(){
 	if(glIndex==-1) return;
 	if ( auto r = rendererP.lock() ){
-		r->setLightAmbientColor( glIndex, ofColor( 0, 0, 0, 255 ) );
-		r->setLightDiffuseColor( glIndex, ofColor( 0, 0, 0, 255 ) );
-		r->setLightSpecularColor( glIndex, ofColor( 0, 0, 0, 255 ) );
+		r->setLightAmbientColor( glIndex, ofFloatColor( 0.f, 0.f, 0.f, 1.f ) );
+		r->setLightDiffuseColor( glIndex, ofFloatColor( 0.f, 0.f, 0.f, 1.f ) );
+		r->setLightSpecularColor( glIndex, ofFloatColor( 0.f, 0.f, 0.f, 1.f ) );
 		r->setLightPosition( glIndex, glm::vec4( 0, 0, 1, 0 ) );
 		r->disableLight( glIndex );
 	}
@@ -95,9 +95,9 @@ ofLight::Data::~Data(){
 //----------------------------------------
 ofLight::ofLight()
 :data(new Data){
-    setAmbientColor(ofColor(0,0,0));
-    setDiffuseColor(ofColor(255,255,255));
-    setSpecularColor(ofColor(255,255,255));
+    setAmbientColor(ofFloatColor(0.f,0.f,0.f));
+    setDiffuseColor(ofFloatColor(1.f,1.f,1.f));
+    setSpecularColor(ofFloatColor(1.f,1.f,1.f));
 	setPointLight();
     
     // assume default attenuation factors //

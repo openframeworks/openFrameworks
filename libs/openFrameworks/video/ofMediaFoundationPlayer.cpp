@@ -335,7 +335,9 @@ bool SharedDXGLTexture::isLocked() {
 //----------------------------------------------
 bool SharedDXGLTexture::draw(ofPixels& apix) {
     if (lock()) {
-        mOfTex->draw(0, 0);
+        if (mOfTex->isAllocated()) {
+            mOfTex->draw(0, 0);
+        }
         unlock();
         return true;
     }
@@ -825,8 +827,11 @@ bool ofMediaFoundationPlayer::isInitialized() const {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) {
+
     if (aEvent == MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA) {
         if (!mBLoadAsync) {
+            updateDuration();
+            updateDimensions();
             mBIsDoneAtomic.store(true);
             mWaitCondition.notify_one();
         }
@@ -1218,12 +1223,13 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                 }
             }
             mBDone = false;
-            mWidth = 0.f;
-            mHeight = 0.f;
-            DWORD w, h;
-            if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
-                mWidth = w;
-                mHeight = h;
+            //mWidth = 0.f;
+            //mHeight = 0.f;
+            //DWORD w, h;
+            //if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+                //mWidth = w;
+                //mHeight = h;
+            if(updateDimensions()) {
 
                 if (mMeTexture) {
                     if (mMeTexture->getWidth() != mWidth || mMeTexture->getHeight() != mHeight) {
@@ -1382,5 +1388,18 @@ void ofMediaFoundationPlayer::updateDuration() {
             mEstimatedNumFrames = 1;
         }
     }
+}
+
+//-----------------------------------------
+bool ofMediaFoundationPlayer::updateDimensions() {
+    mWidth = 0.f;
+    mHeight = 0.f;
+    DWORD w, h;
+    if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+        mWidth = w;
+        mHeight = h;
+        return true;
+    }
+    return false;
 }
 
