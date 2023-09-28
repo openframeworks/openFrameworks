@@ -7,16 +7,16 @@
 #else
 	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
 #endif
+#include <algorithm>
 #include <bitset> // For ofToBinary.
 #include <chrono>
 #include <iomanip>  //for setprecision
-#include <algorithm>
+#include <random>
 #include <sstream>
 #include <type_traits>
-#include <random>
 
-#include "ofRandomEngine.h"
 #include "ofRandomDistributions.h"
+#include "ofRandomEngine.h"
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
@@ -223,13 +223,24 @@ int ofGetDay();
 int ofGetWeekday();
 
 /// \section Containers
+
+namespace of {
+
 /// \brief Randomly reorder the values in a container.
 /// \tparam T Any container that meets std::shuffle's requirements
 /// which are: ValueSwappable and LegacyRandomAccessIterator.
+template <class T>
+void shuffle(T & values) {
+	std::shuffle(values.begin(), values.end(), of::random::gen());
+}
+}
 
-template<typename ... Args>
-void ofShuffle(Args&&... args) {
-    of::random::shuffle(std::forward<Args>(args)...);
+/// \brief Randomly reorder the values in a container.
+/// \tparam T Any container that meets std::shuffle's requirements
+/// which are: ValueSwappable and LegacyRandomAccessIterator.
+template <typename... Args>
+void ofShuffle(Args &&... args) {
+	of::shuffle(std::forward<Args>(args)...);
 }
 
 /// \section Vectors
@@ -237,9 +248,9 @@ void ofShuffle(Args&&... args) {
 /// \tparam T the type contained by the vector.
 /// \param values The vector of values to modify.
 
-template<class T>
-void ofRandomize(std::vector<T>& values) {
-    of::random::shuffle(values);
+template <class T>
+[[deprecated("use ofShuffle or of::shuffle")]] void ofRandomize(std::vector<T> & values) {
+	of::shuffle(values);
 }
 
 /// \brief Conditionally remove values from a vector.

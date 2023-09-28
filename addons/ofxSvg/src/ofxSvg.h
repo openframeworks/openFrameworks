@@ -5,7 +5,6 @@
 #include "ofTypes.h"
 #include "ofXml.h"
 
-
 /// \file
 /// ofxSVG is used for loading and rendering SVG files. It's a wrapper
 /// for the open source C library [Libsvgtiny](https://www.netsurf-browser.org/projects/libsvgtiny/ "Libsvgtiny website"),
@@ -17,43 +16,41 @@
 /// SVG "use" element).
 
 class ofxSvg {
-	public: ~ofxSvg();
+public:
+	~ofxSvg();
 
-		float getWidth() const ;
-		float getHeight() const;
-	
-		/// \brief Loads an SVG file from the provided filename.
-		///
-		/// ~~~~
-		void load(of::filesystem::path fileName);
-	
-		/// \brief Loads an SVG from a text string.
-		///
-		/// Useful for parsing SVG text from sources other than a file. As the
-		/// underlying SVG parsing library requires a url, this method gives
-		/// you the option of providing one.
-		///
-		/// ~~~~
-		void loadFromString(std::string data, std::string url="local");
-	
-		void draw();
+	float getWidth() const;
+	float getHeight() const;
 
-		int getNumPath();
-		ofPath & getPathAt(int n);
-	
-		const std::vector <ofPath> & getPaths() const;
+	/// \brief Loads an SVG file from the provided filename.
+	///
+	/// ~~~~
+	void load(of::filesystem::path fileName);
 
-	private:
+	/// \brief Loads an SVG from a text string.
+	///
+	/// Useful for parsing SVG text from sources other than a file. As the
+	/// underlying SVG parsing library requires a url, this method gives
+	/// you the option of providing one.
+	///
+	/// ~~~~
+	void loadFromString(std::string data, std::string url = "local");
 
-		void fixSvgString(std::string& xmlstring);
-	
-		float width, height;
+	void draw();
 
-		std::vector <ofPath> paths;
+	int getNumPath();
+	ofPath & getPathAt(int n);
 
-		void setupDiagram(struct svgtiny_diagram * diagram);
-		void setupShape(struct svgtiny_shape * shape, ofPath & path);
+	const std::vector<ofPath> & getPaths() const;
+	static void fixSvgString(std::string & xmlstring);
 
+private:
+	float width, height;
+
+	std::vector<ofPath> paths;
+
+	void setupDiagram(struct svgtiny_diagram * diagram);
+	void setupShape(struct svgtiny_shape * shape, ofPath & path);
 };
 
 typedef ofxSvg ofxSVG;
