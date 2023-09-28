@@ -6,19 +6,18 @@
 // demonstrates the optional pattern as well as constructors and method chaining
 
 class ofApp : public ofBaseApp {
-	
+
 	const int port { 12345 };
 	ofxOscReceiver osc_receiver { port };
 	ofxOscSender osc_sender { "127.0.0.1", port };
-	
+
 public:
-	
 	void setup() override;
 	void update() override;
 	void draw() override;
-	
+
 	void keyPressed(int key) override;
-	
+
 	// MARK: - ofBaseApp interface boilerplate
 	//	void keyReleased(int key) override;
 	//	void mouseMoved(int x, int y) override;

@@ -1,16 +1,19 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
-	// look Ma, no hands!
+	// look Ma, no hands !
 }
 
 void ofApp::update() {
+	
 	// ofxOscMessage alloc is out of sight
 	while (const auto m = osc_receiver.getMessage()) {
+		
 		// valid optional is accessed like a pointer
-		ofLogNotice("<optional> received "s + m->getAddress()) 	<< m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << ", "
-																<< m->getArgTypeName(1) << ": " << m->getArgAsFloat(1) << ", "
-																<< m->getArgTypeName(2) << ": " << m->getArgAsInt(2);
+		ofLogNotice(std::string("<optional> received ") + m->getAddress())
+			<< m->getArgTypeName(0) << ": " << m->getArgAsInt(0) << ", "
+			<< m->getArgTypeName(1) << ": " << m->getArgAsFloat(1) << ", "
+			<< m->getArgTypeName(2) << ": " << m->getArgAsInt(2);
 	}
 }
 
@@ -20,9 +23,9 @@ void ofApp::draw() {
 
 void ofApp::keyPressed(int key) {
 	if (key == ' ') {
-		
+
 		ofLogNotice("sending messages") << ofGetElapsedTimef();
-		
+
 		// old-timer
 		ofxOscMessage m;
 		m.setAddress("/message");
@@ -32,8 +35,8 @@ void ofApp::keyPressed(int key) {
 		osc_sender.sendMessage(m);
 
 		// ctor, chaining, implicit types, variadic add, in-place, overloaded send
-		osc_sender.send(ofxOscMessage{"/terse"}.add(int(ofRandom(100)), ofGetElapsedTimef(), 1983));
-		
+		osc_sender.send(ofxOscMessage { "/terse" }.add(int(ofRandom(100)), ofGetElapsedTimef(), 1983));
+
 		// of course it's a spectrum — this is familiar yet refreshing:
 		ofxOscMessage m2 { "/comfortable" };
 		m2.add(int(ofRandom(100)), ofGetElapsedTimef(), 1984);
