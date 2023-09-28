@@ -68,7 +68,7 @@ float ofRandomHeight();
 /// This passes a seed value to the random engine;
 /// see of::random::Engine for details
 ///
-/// \param val The value with which to seed the generator.
+/// \param new_seed The value with which to seed the generator.
 void ofSetRandomSeed(unsigned long new_seed);
 
 /// \brief Resets the random engine to an non-deterministic state.
@@ -540,7 +540,7 @@ int ofSign(float n);
 ///
 /// \sa https://isocpp.org/wiki/faq/newbie#floating-point-arith
 /// \sa https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
-/// \tparam The floating point data type.
+/// \tparam Type  the floating point data type.
 /// \param a The first floating point type variable to compare.
 /// \param b The second floating point type variable to compare.
 /// \returns True if `std::abs(x - y) <= std::numeric_limits<Type>::epsilon() * std::abs(x)`.
