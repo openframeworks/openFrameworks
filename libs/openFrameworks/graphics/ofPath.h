@@ -252,7 +252,7 @@ public:
 	/// \brief Set the color of the path. This affects both the line if the
 	/// path is drawn as wireframe and the fill if the path is drawn with
 	/// fill. All subpaths are affected.
-	void setColor( const ofColor& color );
+	void setColor( const ofFloatColor& color );
 
 	/// \brief Set the color of the path. This affects both the line if the path is
 	/// drawn as wireframe and the fill if the path is drawn with fill. All
@@ -261,7 +261,7 @@ public:
 
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
-	void setFillColor(const ofColor & color);
+	void setFillColor(const ofFloatColor & color);
 
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
@@ -269,7 +269,7 @@ public:
 
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
-	void setStrokeColor(const ofColor & color);
+	void setStrokeColor(const ofFloatColor & color);
 
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
@@ -280,11 +280,11 @@ public:
 	/// The default value is `true`
 	bool isFilled() const;
 
-	/// \brief Get the ofColor fill of the ofPath
-	ofColor getFillColor() const;
+	/// \brief Get the ofFloatColor fill of the ofPath
+	ofFloatColor getFillColor() const;
 
-	/// \brief Get the stroke color of the ofPath
-	ofColor getStrokeColor() const;
+	/// \brief Get the stroke ofFloatColor of the ofPath
+	ofFloatColor getStrokeColor() const;
 
 	/// \brief Get the stroke width of the ofPath
 	///
@@ -413,8 +413,8 @@ private:
 	//vector<ofSubPath>		paths;
 	std::vector<Command> 	commands;
 	ofPolyWindingMode 	windingMode;
-	ofColor 			fillColor;
-	ofColor				strokeColor;
+	ofFloatColor 		fillColor;
+	ofFloatColor		strokeColor;
 	float				strokeWidth;
 	bool				bFill;
 	bool				bUseShapeColor;

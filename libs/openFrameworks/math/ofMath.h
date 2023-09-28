@@ -8,77 +8,59 @@
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.
 ///
-/// \warning Many ofRandom-style functions wrap `rand()` which is not reentrant
-/// or thread safe.  To generate random numbers simultaneously in multiple
-/// threads, consider using c++11 uniform_real_distribution.
-///
-/// \sa http://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
-
 /// \name Random Numbers
 /// \{
 
-/// \brief Get a random floating point number between 0 and max.
+/// \brief Get a uniform random floating point number between 0 and max.
 ///
 /// A random number in the range [0, max) will be returned.
 ///
 /// Example:
 ///	~~~~~{.cpp}
-/// // Return a random floating point number between 0 and 20.
+/// // Return a uniform random floating point number between 0 and 20.
 /// float randomNumber = ofRandom(20);
 /// ~~~~~
-///
-/// \warning ofRandom wraps C++'s `rand()` which is not reentrant or thread safe.
 ///
 /// \param max The maximum value of the random number.
 float ofRandom(float max);
 
-/// \brief Get a random number between two values.
+/// \brief Get a uniform random number between two values.
 ///
 /// A random number in the range [min, max) will be returned.
 ///
 /// Example:
 ///	~~~~~{.cpp}
-/// // Return a random floating point number between -30 and 20.
+/// // Return a uniform random floating point number between -30 and 20.
 /// float randomNumber = ofRandom(-30, 20);
 /// ~~~~~
 ///
-/// \warning ofRandom wraps `rand()` which is not reentrant or thread safe.
-///
 /// \param val0 the minimum value of the random number.
 /// \param val1 The maximum value of the random number.
-/// \returns A random floating point number between val0 and val1.
+/// \returns A uniform random floating point number between val0 and val1.
 float ofRandom(float val0, float val1);
 
-/// \brief Get a random floating point number.
+/// \brief Get a uniform random floating point number between -1 and 1.
 ///
-/// \warning ofRandom wraps `rand()` which is not reentrant or thread safe.
-///
-/// \returns A random floating point number between -1 and 1.
+/// \returns A uniform random floating point number between -1 and 1.
 float ofRandomf();
 
-/// \brief Get a random unsigned floating point number.
+/// \brief Get a uniform random unsigned floating point number.
 ///
-/// \warning ofRandom wraps `rand()` which is not reentrant or thread safe.
-///
-/// \returns A random floating point number between 0 and 1.
+/// \returns A uniform random floating point number between 0 and 1.
 float ofRandomuf();
 
-/// \brief Get a random floating point number between 0 and the screen width.
+/// \brief Get a uniform random floating point number between 0 and the screen width.
 ///
 /// A random number in the range [0, ofGetWidth()) will be returned.
 ///
-/// \warning ofRandom wraps `rand()` which is not reentrant or thread safe.
-///
-/// \returns a random number between 0 and ofGetWidth().
+/// \returns a uniform random number between 0 and ofGetWidth().
 float ofRandomWidth();
 
-/// \brief Get a random floating point number between 0 and the screen height.
+/// \brief Get a uniform random floating point number between 0 and the screen height.
 ///
-/// A random number in the range [0, ofGetHeight()) will be returned.
+/// A uniform random number in the range [0, ofGetHeight()) will be returned.
 ///
-/// \warning ofRandom wraps `rand()` which is not reentrant or thread safe.
-///
-/// \returns a random number between 0 and ofGetHeight().
+/// \returns a uniform random number between 0 and ofGetHeight().
 float ofRandomHeight();
 
 /// \brief Seed the random number generator.
@@ -89,16 +71,13 @@ float ofRandomHeight();
 /// \param new_seed The value with which to seed the generator.
 void ofSetRandomSeed(unsigned long new_seed);
 
-/// \brief Seeds the random number generator with a unique value.
+/// \brief Resets the random engine to an non-deterministic state.
 ///
-/// This seeds the old-school srand-based random number generator with an acceptably random value,
-/// generated from clock time and the PID.
-void ofSeedRandom();
+[[deprecated("If you need to reset the random engine; use of::random::Engine::destruct() and of::random::Engine::construct()")]] void ofSeedRandom();
 
-/// \brief Seed the random number generator.
+/// \brief Seed the random number generator to a deterministic state
 ///
-/// If the user would like to repeat the same random sequence, a known random
-/// seed can be used to initialize the random number generator during app
+/// A known seed can be used to initialize the random number generator during app
 /// setup.  This can be useful for debugging and testing.
 ///
 /// \param val The value with which to seed the generator.
