@@ -283,7 +283,7 @@ void ofGLRenderer::draw(const ofPolyline & poly) const{
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofPath & shape) const{
-	ofColor prevColor;
+	ofFloatColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = currentStyle.color;
 	}
@@ -1045,19 +1045,19 @@ glm::mat4 ofGLRenderer::getCurrentNormalMatrix() const{
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(const ofColor & color){
+void ofGLRenderer::setColor(const ofFloatColor & color){
 	setColor(color.r,color.g,color.b,color.a);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(const ofColor & color, int _a){
+void ofGLRenderer::setColor(const ofFloatColor & color, float _a){
 	setColor(color.r,color.g,color.b,_a);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(int r, int g, int b){
+void ofGLRenderer::setColor(float r, float g, float b){
 	currentStyle.color.set(r,g,b);
-	glColor4f(r/255.f,g/255.f,b/255.f,1.f);
+	glColor4f(r,g,b,1.f);
 	if(lightingEnabled && !materialBound){
 #ifndef TARGET_OPENGLES
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -1068,9 +1068,9 @@ void ofGLRenderer::setColor(int r, int g, int b){
 
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(int r, int g, int b, int a){
+void ofGLRenderer::setColor(float r, float g, float b, float a){
 	currentStyle.color.set(r,g,b,a);
-	glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
+	glColor4f(r,g,b,a);
 	if(lightingEnabled && !materialBound){
 #ifndef TARGET_OPENGLES
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -1080,7 +1080,7 @@ void ofGLRenderer::setColor(int r, int g, int b, int a){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(int gray){
+void ofGLRenderer::setColor(float gray){
 	setColor(gray, gray, gray);
 }
 
@@ -1089,7 +1089,7 @@ void ofGLRenderer::setHexColor(int hexColor){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;
 	int b = (hexColor >> 0) & 0xff;
-	setColor(r,g,b);
+	setColor((float)r/255.f,(float)g/255.f,(float)b/255.f);
 }
 
 //----------------------------------------------------------
@@ -1099,7 +1099,7 @@ void ofGLRenderer::clear(){
 
 //----------------------------------------------------------
 void ofGLRenderer::clear(float r, float g, float b, float a) {
-	glClearColor(r / 255., g / 255., b / 255., a / 255.);
+	glClearColor(r, g, b, a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -1127,35 +1127,38 @@ bool ofGLRenderer::getBackgroundAuto(){
 }
 
 //----------------------------------------------------------
-ofColor ofGLRenderer::getBackgroundColor(){
+ofFloatColor ofGLRenderer::getBackgroundColor(){
 	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setBackgroundColor(const ofColor & color){
+void ofGLRenderer::setBackgroundColor(const ofFloatColor & color){
 	currentStyle.bgColor = color;
-	glClearColor(currentStyle.bgColor[0]/255.,currentStyle.bgColor[1]/255.,currentStyle.bgColor[2]/255., currentStyle.bgColor[3]/255.);
+	glClearColor(currentStyle.bgColor[0],currentStyle.bgColor[1],currentStyle.bgColor[2], currentStyle.bgColor[3]);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::background(const ofColor & c){
+void ofGLRenderer::background(const ofFloatColor & c){
 	setBackgroundColor(c);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::background(float brightness) {
-	background(ofColor(brightness));
+	background(ofFloatColor(brightness));
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::background(int hexColor, float _a){
-	background ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, _a);
+void ofGLRenderer::background(int hexColor, int _a){
+	int r = (hexColor >> 16) & 0xff;
+	int g = (hexColor >> 8) & 0xff;
+	int b = (hexColor >> 0) & 0xff;
+	background ( (float)r/255.f, (float)g/255.f, (float)b/255.f, _a/255.f);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::background(int r, int g, int b, int a){
-	background(ofColor(r,g,b,a));
+void ofGLRenderer::background(float r, float g, float b, float a){
+	background(ofFloatColor(r,g,b,a));
 }
 
 //----------------------------------------------------------
@@ -1818,8 +1821,8 @@ void ofGLRenderer::setSmoothLighting(bool b){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setGlobalAmbientColor(const ofColor& c){
-	GLfloat cc[] = {c.r/255.f, c.g/255.f, c.b/255.f, c.a/255.f};
+void ofGLRenderer::setGlobalAmbientColor(const ofFloatColor& c){
+	GLfloat cc[] = {c.r, c.g, c.b, c.a};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, cc);
 }
 

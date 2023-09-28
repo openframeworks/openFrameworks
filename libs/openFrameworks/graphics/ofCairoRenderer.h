@@ -112,20 +112,20 @@ public:
 	void setupScreen();
 
 	// color options
-	void setColor(int r, int g, int b); // 0-255
-	void setColor(int r, int g, int b, int a); // 0-255
-	void setColor(const ofColor & color);
-	void setColor(const ofColor & color, int _a);
-	void setColor(int gray); // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b); // 0-1
+	void setColor(float r, float g, float b, float a); // 0-1
+	void setColor(const ofFloatColor & color);
+	void setColor(const ofFloatColor & color, float _a);
+	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	void setBackgroundColor(const ofColor & c);
-	ofColor getBackgroundColor();
-	void background(const ofColor & c);
+	void setBackgroundColor(const ofFloatColor & c);
+	ofFloatColor getBackgroundColor();
+	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, int _a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	void setBackgroundAuto(bool bManual);		// default is true
 	bool getBackgroundAuto();
