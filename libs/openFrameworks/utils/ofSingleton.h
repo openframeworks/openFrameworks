@@ -14,13 +14,14 @@ namespace of::utils {
 template <typename Derived>
 class Singleton {
 public:
+	/// \brief constructs the instance
 	template <typename... Args>
 	static void construct(Args &&... args) {
 		struct Dummy : public Derived {
 			using Derived::Derived;
 			void prohibit_construct_from_derived() const override { }
 		};
-		
+
 		using Instance = Dummy;
 		if (!instance_.load(std::memory_order_acquire)) {
 			std::lock_guard lock { mutex_ };
@@ -30,6 +31,7 @@ public:
 		}
 	}
 
+	/// \brief destroys the instance
 	static void destruct() {
 		if (instance_.load(std::memory_order_acquire)) {
 			std::lock_guard lock { mutex_ };
@@ -40,6 +42,7 @@ public:
 		}
 	}
 
+	/// \brief returns the instance
 	static Derived * instance() {
 		auto * the_instance = instance_.load(std::memory_order_acquire);
 		if (!the_instance) {

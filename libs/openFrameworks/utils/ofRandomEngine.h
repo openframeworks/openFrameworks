@@ -24,37 +24,41 @@ class Engine : public of::utils::Singleton<Engine> {
 	std::random_device rd_ {};
 	std::seed_seq seq_ { rd_(), rd_(), rd_(), rd_() }; // 4 is considered fine for non-cryptographic needs
 	std::mt19937 gen_ { seq_ };
-	bool deterministic_ { false }; // by default the degine is non-deterministic (unpredictable)
+	bool deterministic_ { false }; // by default the engine is non-deterministic (unpredictable)
 
 public:
-	/// return the generator for use in random distributions or functions
-	///
+	/// \brief return the generator for use in random distributions or functions
 	/// \returns a reference to the mt19937 generator
 	auto & gen() { return gen_; }
 
-	/// passes a value to seed the mt19937 generator
+	/// \brief seeds the the mt19937 generator
+	/// \param new_seed the seed value
 	void seed(unsigned long new_seed) {
 		deterministic_ = true;
 		gen_.seed(new_seed);
 	}
 
+	/// \brief return the generator for use in random distributions or functions
 	/// \returns true or fall depending if the engine has been seeded with a deterministic value
 	auto is_deterministic() const { return deterministic_; }
 };
 
+/// \brief retrieve the engine instance
 /// \returns a reference to the engine instance
 inline auto engine() {
 	return of::random::Engine::instance();
 }
 
+/// \brief retrieve the generator instance
 /// \returns a reference to the generator within the engine instance
 inline auto & gen() {
 	return of::random::Engine::instance()->gen();
 }
 
-/// Passes a value to seed the mt19937 generator within the engine instance
-inline void seed(unsigned long seed) {
-	of::random::Engine::instance()->seed(seed);
+/// \brief seeds the the mt19937 generator
+/// \param new_seed the seed value
+inline void seed(unsigned long new_seed) {
+	of::random::Engine::instance()->seed(new_seed);
 }
 
 } // end namespace of::random
