@@ -11,6 +11,6 @@ int main(){
 
 	auto window = ofCreateWindow(settings);
 
-	ofRunApp(window, make_shared<ofApp>());
+	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
 }
