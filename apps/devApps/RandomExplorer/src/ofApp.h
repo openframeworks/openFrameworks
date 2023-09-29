@@ -167,8 +167,9 @@ public:
 	auto colorize() {
 
 		size_t sum = 0;
-		for (auto & group : { dists_["core"], dists_["special"], dists_["of"] })
+		for (auto & group : { dists_["core"], dists_["special"], dists_["of"] }) {
 			sum += group->dists_.size();
+		}
 		auto chunk = 255.0 / sum;
 
 		size_t i = 0; // to spread the hue; order below matters
