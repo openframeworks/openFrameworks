@@ -457,6 +457,7 @@ function createPackage {
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
+		chmod +x projectGenerator-linux64/projectGenerator
 	fi
 
     if [ "$pkg_platform" = "android" ]; then
