@@ -896,14 +896,14 @@ size_t ofUTF8Length(const std::string & str) {
 	}
 }
 
-std::string ofSanitizeURLString(const std::string & url, bool uriEncodeQuery) {
+std::optional<std::string> ofSanitizeURLString(const std::string & url, bool uriEncodeQuery) {
 	UriParserStateA state;
 	UriUriA uri;
 	state.uri = &uri;
 	if (uriParseUriA(&state, url.c_str()) != URI_SUCCESS) {
 		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\"";
 		uriFreeUriMembersA(&uri);
-		return "";
+		return {};
 	}
 	if (uriEncodeQuery) {
 		uriNormalizeSyntaxA(&uri); // URI encodes during set
@@ -923,7 +923,7 @@ std::string ofSanitizeURLString(const std::string & url, bool uriEncodeQuery) {
 	//   Poco::URI automatically converts the scheme to lower case
 	if (scheme != "http" && scheme != "https") {
 		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uriStr << "\"";
-		return "";
+		return {};
 	}
 	return uriStr;
 }
@@ -939,15 +939,15 @@ void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target
 
 	auto uriStr = ofSanitizeURLString(url, uriEncodeQuery);
 	
-	if (uriStr != "") {
+	if (uriStr) {
 #ifdef TARGET_WIN32
-		ShellExecuteA(nullptr, "open", uriStr.c_str(),
+		ShellExecuteA(nullptr, "open", uriStr.value().c_str(),
 			nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 
 #ifdef TARGET_OSX
 		// could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uriStr + "\"";
+		string commandStr = "open \"" + uriStr.value() + "\"";
 		int ret = system(commandStr.c_str());
 		if (ret != 0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -955,7 +955,7 @@ void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target
 #endif
 
 #ifdef TARGET_LINUX
-		string commandStr = "xdg-open \"" + uriStr + "\"";
+		string commandStr = "xdg-open \"" + uriStr.value() + "\"";
 		int ret = system(commandStr.c_str());
 		if (ret != 0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -963,18 +963,18 @@ void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target
 #endif
 
 #ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(uriStr);
+		ofxiOSLaunchBrowser(uriStr.value());
 #endif
 
 #ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(uriStr);
+		ofxAndroidLaunchBrowser(uriStr.value());
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
 		EM_ASM_({
 			window.open(UTF8ToString($0), UTF8ToString($1));
 		},
-			uriStr.c_str(), target.c_str());
+			uriStr.value().c_str(), target.c_str());
 #endif
 	}
 }

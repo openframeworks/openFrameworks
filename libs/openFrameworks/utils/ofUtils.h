@@ -13,6 +13,7 @@
 #include <bitset> // For ofToBinary.
 #include <chrono>
 #include <iomanip>  //for setprecision
+#include <optional>
 
 #include <random>
 #include <sstream>
@@ -1069,8 +1070,8 @@ void ofSaveViewport(const std::string & filename);
 /// \param url the URL to process.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
-/// \returns a string if the preparation is successful, emtpy if not
-std::string ofSanitizeURLString(const std::string & url, bool uriEncodeQuery = false);
+/// \returns an optional string if the preparation is successful, nullopt if not
+std::optional<std::string> ofSanitizeURLString(const std::string & url, bool uriEncodeQuery = false);
 
 /// \brief Launch the given URL in the default browser.
 /// In Emscripten, opens the URL in a new browser tab (or other behaviour depending on target value)
