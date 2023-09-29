@@ -13,12 +13,16 @@
 #include <bitset> // For ofToBinary.
 #include <chrono>
 #include <iomanip>  //for setprecision
+#include <optional>
+
 #include <random>
 #include <sstream>
 #include <type_traits>
 
 #include "ofRandomDistributions.h"
 #include "ofRandomEngine.h"
+
+static const std::string OF_BROWSER_DEFAULT_TARGET { "_blank" };
 
 /// \section Elapsed Time
 /// \brief Reset the elapsed time counter.
@@ -1061,14 +1065,23 @@ void ofSaveViewport(const std::string & filename);
 
 /// \section System
 
+/// \brief Process the string into an actionable URL
+///
+/// \param url the URL to process.
+/// \param uriEncodeQuery true if the query parameters in the given URL have
+/// already been URL encoded.
+/// \returns an optional string if the preparation is successful, nullopt if not
+std::optional<std::string> ofSanitizeURLString(const std::string & url, bool uriEncodeQuery = false);
+
 /// \brief Launch the given URL in the default browser.
+/// In Emscripten, opens the URL in a new browser tab (or other behaviour depending on target value)
 ///
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
-#ifndef TARGET_EMSCRIPTEN
-void ofLaunchBrowser(const std::string & url, bool uriEncodeQuery = false);
-#endif
+/// \param target (only honored within emscripten) defaults to '_blank' with generally opens a new tab,
+/// behaves like the target of the javascript open function (e.g. use "_self" to replace content).
+void ofLaunchBrowser(const std::string & url, bool uriEncodeQuery = false, std::string target = OF_BROWSER_DEFAULT_TARGET);
 
 /// \brief Executes a system command. Similar to run a command in terminal.
 ///
