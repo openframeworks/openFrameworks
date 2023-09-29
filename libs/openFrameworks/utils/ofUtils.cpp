@@ -928,53 +928,56 @@ std::string ofSanitizeURLString(const std::string & url, bool uriEncodeQuery) {
 	return uriStr;
 }
 
-#ifndef TARGET_EMSCRIPTEN
 //--------------------------------------------------
-void ofLaunchBrowser(const string & url, bool uriEncodeQuery) {
+void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target) {
+
+#ifndef TARGET_EMSCRIPTEN
+	if (target != OF_BROWSER_DEFAULT_TARGET) {
+		ofLogWarning("ofLaunchBrowser()") << "called with a target value; specific to emscripten; no-op on this platform";
+	}
+#endif
+
 	auto uriStr = ofSanitizeURLString(url, uriEncodeQuery);
+	
 	if (uriStr != "") {
-	#ifdef TARGET_WIN32
+#ifdef TARGET_WIN32
 		ShellExecuteA(nullptr, "open", uriStr.c_str(),
 			nullptr, nullptr, SW_SHOWNORMAL);
-	#endif
+#endif
 
-	#ifdef TARGET_OSX
+#ifdef TARGET_OSX
 		// could also do with LSOpenCFURLRef
 		string commandStr = "open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
 		if (ret != 0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
 		}
-	#endif
+#endif
 
-	#ifdef TARGET_LINUX
+#ifdef TARGET_LINUX
 		string commandStr = "xdg-open \"" + uriStr + "\"";
 		int ret = system(commandStr.c_str());
 		if (ret != 0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
 		}
-	#endif
+#endif
 
-	#ifdef TARGET_OF_IOS
+#ifdef TARGET_OF_IOS
 		ofxiOSLaunchBrowser(uriStr);
-	#endif
+#endif
 
-	#ifdef TARGET_ANDROID
+#ifdef TARGET_ANDROID
 		ofxAndroidLaunchBrowser(uriStr);
-	#endif
-	}
-}
-#else
-void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target) {
-	auto uriStr = ofSanitizeURLString(url, uriEncodeQuery);
-	if (uriStr != "") {
+#endif
+
+#ifdef TARGET_EMSCRIPTEN
 		EM_ASM_({
 			window.open(UTF8ToString($0), UTF8ToString($1));
 		},
 			uriStr.c_str(), target.c_str());
+#endif
 	}
 }
-#endif
 
 //--------------------------------------------------
 string ofGetVersionInfo() {
