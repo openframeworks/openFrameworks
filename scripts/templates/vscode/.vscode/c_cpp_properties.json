@@ -1,9 +1,8 @@
 {
 	"env": {
-        "OF_INCLUDE": [
-            "${workspaceFolder}/../../../libs/openFrameworks/**"
-        ],
-        "OF_LIBS_ROOT" : "${workspaceFolder}/../../../libs",
+		"OF_ROOT" : "${workspaceFolder}/../../..",
+        "OF_LIBS_ROOT":"${OF_ROOT}/libs",
+        "OF_INCLUDE":["${OF_LIBS_ROOT}/openFrameworks/**"],
         "OF_LIBS_INCLUDE" : [
             "${OF_LIBS_ROOT}/boost/include",
             "${OF_LIBS_ROOT}/cairo/include/cairo",
@@ -114,8 +113,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:/msys64/mingw32/include/c++/**",
-                "C:/msys64/mingw32/i686-w64-mingw32/include",
+                "C:/msys64/mingw64/include/c++/**",
+                "C:/msys64/mingw64/i686-w64-mingw64/include",
                 "${OF_INCLUDE}",
                 "${OF_LIBS_INCLUDE}",
                 "${workspaceFolder}/src/**",
@@ -135,7 +134,7 @@
                 ]
             },
             "intelliSenseMode": "clang-x64",
-            "compilerPath": "C:/msys64/mingw32/bin/g++.exe",
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
 			"configurationProvider": "ms-vscode.makefile-tools",
             "mergeConfigurations":true,
             "cStandard": "c17",
