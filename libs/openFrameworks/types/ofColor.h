@@ -37,7 +37,7 @@ public:
     /// \param alpha The alpha component.
     ofColor_(float red, float green, float blue, float alpha = limit());
 
-    /// \brief Construct an ofColor_ by using channel values in a vector
+    /// \brief Construct an ofColor_ by using values in a vector
     ///
     /// \param list 1 item = The gray value (full alpha)
     /// \param list 2 items = The gray value + alpha
@@ -45,10 +45,10 @@ public:
     /// \param list 4 item = The RGB values + alpha
     template<typename InitType>
     ofColor_(std::vector<InitType> list): ofColor_() {
-        if (list.size() == 1) set(ofColor_(list[0]));
-        else if (list.size() == 2) set(ofColor_(list[0], list[1]));
-        else if (list.size() == 3) set(ofColor_(list[0], list[1], list[2]));
-        else if (list.size() == 4) set(ofColor_(list[0], list[1], list[2], list[3]));
+        if (list.size() == 1) set(list[0]);
+        if (list.size() == 2) set(list[0], list[1]);
+        if (list.size() == 3) set(list[0], list[1], list[2]);
+        if (list.size() == 4) set(list[0], list[1], list[2], list[3]);
     }
 
     /// \brief Construct a grayscale ofColor_ by specifying a single number.
