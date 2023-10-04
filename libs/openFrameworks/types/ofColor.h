@@ -45,7 +45,7 @@ public:
     /// \param list 2 items = The gray value + alpha
     /// \param list 3 items = The RGB values (full alpha)
     /// \param list 4 items = The RGB values + alpha
-    template<typename InitType>
+    template<class InitType>
     ofColor_(std::vector<InitType> list): ofColor_() {
         if (list.size() == 1) set(list[0]);
         if (list.size() == 2) set(list[0], list[1]);
