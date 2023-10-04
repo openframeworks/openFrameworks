@@ -5,6 +5,8 @@
 #include <typeinfo>
 #include <iostream>
 #include <limits>
+#include <vector>
+
 
 /// \class ofColor_
 ///
