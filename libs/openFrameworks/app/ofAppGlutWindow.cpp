@@ -886,27 +886,29 @@ int ofAppGlutWindow::special_key_to_of(int key) {
 //------------------------------------------------------------
 void ofAppGlutWindow::resize_cb(int w, int h) {
 
-	if (minimumWindowSize) {
-		if (w < minimumWindowSize.value().x) {
-			glutReshapeWindow(minimumWindowSize.value().x, windowH);
-			return;
-		}
-		if (h < minimumWindowSize.value().y) {
-			glutReshapeWindow(windowW, minimumWindowSize.value().y);
-			return;
-		}
-	}
-
-	if (maximumWindowSize) {
-		if (w > maximumWindowSize.value().x) {
-			glutReshapeWindow(maximumWindowSize.value().x, windowH);
-			return;
-		}
-		if (h > maximumWindowSize.value().y) {
-			glutReshapeWindow(windowW, maximumWindowSize.value().y);
-			return;
-		}
-	}
+// 	does not work because static // could be fixed but if GLUT is pulled out of OF no worries
+//
+//	if (minimumWindowSize) {
+//		if (w < minimumWindowSize.value().x) {
+//			glutReshapeWindow(minimumWindowSize.value().x, windowH);
+//			return;
+//		}
+//		if (h < minimumWindowSize.value().y) {
+//			glutReshapeWindow(windowW, minimumWindowSize.value().y);
+//			return;
+//		}
+//	}
+//
+//	if (maximumWindowSize) {
+//		if (w > maximumWindowSize.value().x) {
+//			glutReshapeWindow(maximumWindowSize.value().x, windowH);
+//			return;
+//		}
+//		if (h > maximumWindowSize.value().y) {
+//			glutReshapeWindow(windowW, maximumWindowSize.value().y);
+//			return;
+//		}
+//	}
 
 	windowW = w;
 	windowH = h;
