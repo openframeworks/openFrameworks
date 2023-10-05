@@ -89,9 +89,7 @@ public:
 	virtual void setWindowSize(int w, int h);
 	virtual void setWindowMinimumSize(int w, int h) { ofLogWarning("ofAppEGLWindow::") << "setWindowMinimumSize() not implemented" };
 	virtual void setWindowMaximumSize(int w, int h) { ofLogWarning("ofAppEGLWindow::") << "setWindowMaximumSize() not implemented" };
-	;
 	virtual void setWindowAspectRatio(int horizontal, int vertical) { ofLogWarning("ofAppEGLWindow::") << "setWindowAspectRatio() not implemented" };
-	;
 	virtual void setWindowShape(int w, int h);
 
 	virtual glm::vec2 getWindowPosition();
