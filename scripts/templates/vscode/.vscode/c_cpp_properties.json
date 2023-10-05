@@ -46,7 +46,6 @@
 					"/usr/local/include",
 					"/System/Library/Frameworks",
 					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/",
-					"${workspaceRoot}/../../../addons",
 					"${workspaceFolder}/src/**",
 					"${OF_INCLUDE}",
 					"${OF_LIBS_INCLUDE}",
@@ -95,7 +94,6 @@
 				"path": [
 					"/usr/local/include",
 					"/usr/include",
-					"${workspaceRoot}/../../../addons",
 					"${workspaceFolder}/src/**",
 					"${OF_INCLUDE}",
 					"${OF_LIBS_INCLUDE}",
@@ -125,7 +123,6 @@
 				"limitSymbolsToIncludedHeaders": true,
 				"databaseFilename": "",
 				"path": [
-					"${workspaceRoot}/../../../addons",
 					"${workspaceFolder}/src/**",
 					"${OF_INCLUDE}",
 					"${OF_LIBS_INCLUDE}",
