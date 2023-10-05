@@ -663,11 +663,11 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowSize(int w, int h) {
-	setWindowShape(w,h);
+	setWindowShape(w, h);
 }
-	
+
 void ofAppGLFWWindow::setWindowMinimumSize(int w, int h) {
-	
+
 	if (maximumWindowSize) {
 		glfwSetWindowSizeLimits(windowP, w, h, maximumWindowSize.value().x, maximumWindowSize.value().y);
 	} else {
@@ -677,11 +677,11 @@ void ofAppGLFWWindow::setWindowMinimumSize(int w, int h) {
 }
 
 void ofAppGLFWWindow::setWindowAspectRatio(int horizontal, int vertical) {
-	
+
 	glfwSetWindowAspectRatio(windowP, horizontal, vertical);
 	windowAspectRatio = { horizontal, vertical };
 }
-		
+
 void ofAppGLFWWindow::setWindowMaximumSize(int w, int h) {
 	if (minimumWindowSize) {
 		glfwSetWindowSizeLimits(windowP, minimumWindowSize.value().x, minimumWindowSize.value().y, w, h);
