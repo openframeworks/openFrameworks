@@ -457,6 +457,22 @@ void ofAppGlutWindow::setWindowPosition(int x, int y){
 }
 
 //------------------------------------------------------------
+void ofAppGlutWindow::setWindowSize(int w, int h){
+	setWindowShape(w, h);
+}
+
+
+void ofAppGlutWindow::setWindowMinimumSize(int width, int height){
+	minimumWindowSize = {width, height};
+}
+
+void ofAppGlutWindow::setWindowMaximumSize(int width, int height){
+	maximumWindowSize = {width, height};
+}
+
+
+
+//------------------------------------------------------------
 void ofAppGlutWindow::setWindowShape(int w, int h){
 	glutReshapeWindow(w, h);
 	// this is useful, esp if we are in the first frame (setup):
@@ -886,6 +902,29 @@ int ofAppGlutWindow::special_key_to_of(int key) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::resize_cb(int w, int h) {
+
+	if (minimumWindowSize) {
+		if (w < minimumWindowSize.value().x) {
+			glutReshapeWindow(minimumWindowSize.value().x, windowH);
+			return;
+		}
+		if (h < minimumWindowSize.value().y) {
+			glutReshapeWindow(windowW, minimumWindowSize.value().y);
+			return;
+		}
+	}
+	
+	if (maximumWindowSize) {
+		if (w > maximumWindowSize.value().x) {
+			glutReshapeWindow(maximumWindowSize.value().x, windowH);
+			return;
+		}
+		if (h > maximumWindowSize.value().y) {
+			glutReshapeWindow(windowW, maximumWindowSize.value().y);
+			return;
+		}
+	}
+
 	windowW = w;
 	windowH = h;
 

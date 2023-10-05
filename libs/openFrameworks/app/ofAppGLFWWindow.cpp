@@ -68,17 +68,17 @@ ofAppGLFWWindow::~ofAppGLFWWindow() {
 void ofAppGLFWWindow::close() {
 	if (windowP) {
 
-		glfwSetMouseButtonCallback( windowP, nullptr );
-		glfwSetCursorPosCallback( windowP, nullptr );
-		glfwSetCursorEnterCallback( windowP, nullptr );
-		glfwSetKeyCallback( windowP, nullptr );
-		glfwSetWindowSizeCallback( windowP, nullptr );
-    glfwSetWindowPosCallback(windowP, nullptr);
-		glfwSetFramebufferSizeCallback( windowP, nullptr);
-		glfwSetWindowCloseCallback( windowP, nullptr );
-		glfwSetScrollCallback( windowP, nullptr );
-		glfwSetDropCallback( windowP, nullptr );
-  	glfwSetWindowRefreshCallback(windowP, nullptr);
+		glfwSetMouseButtonCallback(windowP, nullptr);
+		glfwSetCursorPosCallback(windowP, nullptr);
+		glfwSetCursorEnterCallback(windowP, nullptr);
+		glfwSetKeyCallback(windowP, nullptr);
+		glfwSetWindowSizeCallback(windowP, nullptr);
+		glfwSetWindowPosCallback(windowP, nullptr);
+		glfwSetFramebufferSizeCallback(windowP, nullptr);
+		glfwSetWindowCloseCallback(windowP, nullptr);
+		glfwSetScrollCallback(windowP, nullptr);
+		glfwSetDropCallback(windowP, nullptr);
+		glfwSetWindowRefreshCallback(windowP, nullptr);
 
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
@@ -379,7 +379,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 	glfwSetKeyCallback(windowP, keyboard_cb);
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
-  glfwSetWindowPosCallback(windowP,position_cb);
+	glfwSetWindowPosCallback(windowP, position_cb);
 	glfwSetFramebufferSizeCallback(windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
@@ -662,6 +662,35 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y) {
 }
 
 //------------------------------------------------------------
+void ofAppGLFWWindow::setWindowSize(int w, int h) {
+	setWindowShape(w,h);
+}
+	
+void ofAppGLFWWindow::setWindowMinimumSize(int w, int h) {
+	
+	if (maximumWindowSize) {
+		glfwSetWindowSizeLimits(windowP, w, h, maximumWindowSize.value().x, maximumWindowSize.value().y);
+	} else {
+		glfwSetWindowSizeLimits(windowP, w, h, GLFW_DONT_CARE, GLFW_DONT_CARE);
+	}
+	minimumWindowSize = { w, h };
+}
+
+void ofAppGLFWWindow::setWindowAspectRatio(int horizontal, int vertical) {
+	
+	glfwSetWindowAspectRatio(windowP, horizontal, vertical);
+	windowAspectRatio = { horizontal, vertical };
+}
+		
+void ofAppGLFWWindow::setWindowMaximumSize(int w, int h) {
+	if (minimumWindowSize) {
+		glfwSetWindowSizeLimits(windowP, minimumWindowSize.value().x, minimumWindowSize.value().y, w, h);
+	} else {
+		glfwSetWindowSizeLimits(windowP, GLFW_DONT_CARE, GLFW_DONT_CARE, w, h);
+	}
+	maximumWindowSize = { w, h };
+}
+
 void ofAppGLFWWindow::setWindowShape(int w, int h) {
 	if (settings.windowMode == OF_WINDOW) {
 		windowW = w;
@@ -1573,12 +1602,12 @@ void ofAppGLFWWindow::char_cb(GLFWwindow * windowP_, uint32_t key) {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
-    ofAppGLFWWindow * instance = setCurrent(windowP_);
-    
-    x *= instance->pixelScreenCoordScale;
-    y *= instance->pixelScreenCoordScale;
-    instance->events().notifyWindowMoved(x,y);
+void ofAppGLFWWindow::position_cb(GLFWwindow * windowP_, int x, int y) {
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+
+	x *= instance->pixelScreenCoordScale;
+	y *= instance->pixelScreenCoordScale;
+	instance->events().notifyWindowMoved(x, y);
 }
 
 //------------------------------------------------------------

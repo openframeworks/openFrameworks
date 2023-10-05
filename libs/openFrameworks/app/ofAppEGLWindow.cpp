@@ -1220,6 +1220,11 @@ nonFullscreenWindowRect = currentWindowRect;
 }
 
 //------------------------------------------------------------
+
+void ofAppEGLWindow::setWindowSize(int w, int h){
+	setWindowShape(w, h);
+}
+
 void ofAppEGLWindow::setWindowShape(int w, int h){
 	if(!isWindowInited) {
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): window not inited";

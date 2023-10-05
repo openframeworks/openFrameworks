@@ -42,6 +42,9 @@ public:
 	void setWindowTitle(std::string title);
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
+	void setWindowSize(int w, int h);
+	void setWindowMinimumSize(int w, int h);
+	void setWindowMaximumSize(int w, int h);
 
 	glm::vec2	getWindowPosition();
 	glm::vec2	getWindowSize();

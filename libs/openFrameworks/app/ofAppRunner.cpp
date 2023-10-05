@@ -377,8 +377,28 @@ void ofSetWindowPosition(int x, int y){
 }
 
 //--------------------------------------
+void ofSetWindowSize(int width, int height){
+	ofSetWindowShape(width, height);
+}
+
+//--------------------------------------
 void ofSetWindowShape(int width, int height){
 	mainLoop()->getCurrentWindow()->setWindowShape(width, height);
+}
+
+//--------------------------------------
+void ofSetWindowAspectRatio(int horizontal, int vertical){
+	mainLoop()->getCurrentWindow()->setWindowAspectRatio(horizontal, vertical);
+}
+
+//--------------------------------------
+void ofSetWindowMinimumSize(int width, int height){
+	mainLoop()->getCurrentWindow()->setWindowMinimumSize(width, height);
+}
+
+//--------------------------------------
+void ofSetWindowMaximumSize(int width, int height){
+	mainLoop()->getCurrentWindow()->setWindowMaximumSize(width, height);
 }
 
 //--------------------------------------

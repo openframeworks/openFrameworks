@@ -108,7 +108,12 @@ public:
 
 	void setWindowTitle(std::string title);
 	void setWindowPosition(int x, int y);
+	void setWindowMinimumSize(int w, int h);
+	void setWindowMaximumSize(int w, int h);
+	void setWindowAspectRatio(int w, int h);
+	void setWindowSize(int w, int h);
 	void setWindowShape(int w, int h);
+
 
 	void setOrientation(ofOrientation orientation);
 	ofOrientation getOrientation();

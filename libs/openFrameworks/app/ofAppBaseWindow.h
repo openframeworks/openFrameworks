@@ -39,7 +39,15 @@ public:
 	virtual void showCursor(){}
 
 	virtual void setWindowPosition(int x, int y){}
+	virtual void setWindowSize(int w, int h){}
+	virtual void setWindowMinimumSize(int w, int h){}
+	virtual void setWindowMaximumSize(int w, int h){}
+	virtual void setWindowAspectRatio(int horizontal, int vertical){}
 	virtual void setWindowShape(int w, int h){}
+
+	std::optional<glm::vec2> minimumWindowSize;
+	std::optional<glm::vec2> maximumWindowSize;
+	std::optional<glm::vec2> windowAspectRatio;
 
 	virtual glm::vec2 getWindowPosition(){ return glm::vec2(); }
 	virtual glm::vec2 getWindowSize(){ return glm::vec2(); }

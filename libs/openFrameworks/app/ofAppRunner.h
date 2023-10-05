@@ -98,6 +98,10 @@ ofAppBaseWindow * ofGetWindowPtr();
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow();
 
 void 		ofSetWindowPosition(int x, int y);
+void 		ofSetWindowSize(int width, int height);
+void 		ofSetWindowMinimumSize(int width, int height);
+void 		ofSetWindowMaxmimumSize(int width, int height);
+void 		ofSetWindowAspectRatio(int horizontal, int vertical);
 void 		ofSetWindowShape(int width, int height);
 void 		ofSetWindowTitle(std::string title);
 void		ofEnableSetupScreen();
