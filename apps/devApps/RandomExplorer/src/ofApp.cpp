@@ -70,7 +70,7 @@ void ofApp::draw() {
 	auto x = 220;
 	ofDrawBitmapStringHighlight(size_string_, x, 40);
 	ofDrawBitmapStringHighlight(dna_string_, x, 80);
-	ofDrawBitmapStringHighlight("<- these values will be deterministic for a given seed (on all platforms)\n<- otherwise always different for non-deterministic", x+400, 80, ofColor(40,40,40));
+	ofDrawBitmapStringHighlight("<- these values will be deterministic for a given seed (on all platforms)\n<- otherwise always different for non-deterministic", x + 400, 80, ofColor(40, 40, 40));
 	ofDrawBitmapStringHighlight(shuffle_string_, x, 100);
 	ofDrawBitmapStringHighlight("other random functions (like std::shuffle) can feed from the same thread-safe engine, ensuring coherence", x, 140);
 
@@ -86,6 +86,6 @@ void ofApp::draw() {
 	dists_["of"]->draw("OF/art-centric wrappers/utils", square_, gap_);
 	dists_["old"]->draw("Previous implementation (reference)", square_, gap_);
 
-	ofDrawBitmapStringHighlight("Performance: e.g. on macOS M1,the old srand is faster\nthan uniform<float> in Debug, but slower in Release...\nPlease make sure to evaluate performance in Release!",
+	ofDrawBitmapStringHighlight("Performance: on M1/M2 processors, the old srand is faster\nthan uniform<float> in Debug, but slower in Release...\nPlease make sure to evaluate performance in Release!",
 		dists_["old"]->panel_.getPosition() + glm::vec2(0, square_ + gap_), ofColor(50, 0, 0), ofColor(ofColor::white));
 }
