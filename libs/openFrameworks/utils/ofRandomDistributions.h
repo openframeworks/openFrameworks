@@ -1,7 +1,6 @@
 #ifndef OF_RANDOM_DISTRIBUTIONS_H_
 #define OF_RANDOM_DISTRIBUTIONS_H_
 
-#include <glm/glm.hpp>
 #include "ofRandomEngine.h"
 
 // https://gist.github.com/imneme/540829265469e673d045
@@ -18,15 +17,29 @@ namespace of::random {
 
 template <typename T = float, typename... Args>
 std::enable_if_t<std::is_floating_point_v<T>, T>
-uniform(Args &&... args) {
-	std::uniform_real_distribution<T> distr(std::forward<Args>(args)...);
+uniform(T max = 1.0) {
+	std::uniform_real_distribution<T> distr(0, max);
 	return distr(of::random::gen());
 }
 
 template <typename T, typename... Args>
 std::enable_if_t<std::is_integral_v<T>, T>
-uniform(Args &&... args) {
-	std::uniform_int_distribution<T> distr(std::forward<Args>(args)...);
+uniform(T max) {
+	std::uniform_int_distribution<T> distr(0, max);
+	return distr(of::random::gen());
+}
+
+template <typename T = float, typename... Args>
+std::enable_if_t<std::is_floating_point_v<T>, T>
+uniform(T min, T max) {
+	std::uniform_real_distribution<T> distr(min, max);
+	return distr(of::random::gen());
+}
+
+template <typename T, typename... Args>
+std::enable_if_t<std::is_integral_v<T>, T>
+uniform(T min, T max) {
+	std::uniform_int_distribution<T> distr(min, max);
 	return distr(of::random::gen());
 }
 
