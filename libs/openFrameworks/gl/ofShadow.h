@@ -165,6 +165,8 @@ public:
 	std::string getShadowTypeAsString();
 		
 	const ofShader & getDepthShader(ofGLProgrammableRenderer & renderer) const;
+	bool setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain);
+	bool setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain);
 	void updateDepth(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgrammableRenderer & renderer) const;
 	

@@ -57,7 +57,7 @@ void ofApp::setup(){
 	colorNameMap["darkKhaki"] = ofColor::darkKhaki;
 	colorNameMap["darkMagenta"] = ofColor::darkMagenta;
 	colorNameMap["darkOliveGreen"] = ofColor::darkOliveGreen;
-	colorNameMap["darkorange"] = ofColor::darkorange;
+	colorNameMap["darkOrange"] = ofColor::darkOrange;
 	colorNameMap["darkOrchid"] = ofColor::darkOrchid;
 	colorNameMap["darkRed"] = ofColor::darkRed;
 	colorNameMap["darkSalmon"] = ofColor::darkSalmon;

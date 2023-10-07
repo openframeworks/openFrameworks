@@ -84,6 +84,8 @@
 		DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
 		DACFA8E9132D09E8008D4B7A /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
 		DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
+		E43EEAC329E66B78001C7596 /* ofAVEngineSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */; };
+		E43EEAC429E66B78001C7596 /* ofAVEngineSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */; };
 		E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */; };
 		E486629B1D8C61B000D1735C /* ofAVFoundationGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */; };
 		E495DF7D178896A900994238 /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7B178896A900994238 /* ofAppNoWindow.cpp */; };
@@ -242,6 +244,8 @@
 		E432815E138ABFDD0047C5CB /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		E432815F138AC0470047C5CB /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		E4328160138AC04A0047C5CB /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVEngineSoundPlayer.mm; sourceTree = "<group>"; };
+		E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVEngineSoundPlayer.h; sourceTree = "<group>"; };
 		E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ofAVFoundationGrabber.h; sourceTree = "<group>"; };
 		E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVFoundationGrabber.mm; sourceTree = "<group>"; };
 		E495DF7B178896A900994238 /* ofAppNoWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppNoWindow.cpp; sourceTree = "<group>"; };
@@ -496,6 +500,8 @@
 		E4F3BA7B12F4C4C9002D19BB /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */,
+				E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */,
 				6944251D1FE4548B00770088 /* ofSoundBaseTypes.cpp */,
 				6944251E1FE4548B00770088 /* ofSoundBaseTypes.h */,
 				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
@@ -699,6 +705,7 @@
 				E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */,
 				DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */,
 				DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */,
+				E43EEAC429E66B78001C7596 /* ofAVEngineSoundPlayer.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
@@ -781,6 +788,7 @@
 				E4F3BA8A12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp in Sources */,
 				E4F3BA8E12F4C4C9002D19BB /* ofSoundPlayer.cpp in Sources */,
 				E4F3BA9012F4C4C9002D19BB /* ofSoundStream.cpp in Sources */,
+				E43EEAC329E66B78001C7596 /* ofAVEngineSoundPlayer.mm in Sources */,
 				E4F3BAC112F4C72F002D19BB /* ofMath.cpp in Sources */,
 				E4F3BAC312F4C72F002D19BB /* ofMatrix3x3.cpp in Sources */,
 				6944251A1FE4547400770088 /* ofGraphicsBaseTypes.cpp in Sources */,

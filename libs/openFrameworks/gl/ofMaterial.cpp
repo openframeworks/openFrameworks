@@ -4,12 +4,13 @@
 #include "ofCubeMap.h"
 #include "ofImage.h"
 #include "ofGLProgrammableRenderer.h"
+
 #include <typeinfo>
 
 using std::shared_ptr;
 using std::string;
 
-std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
+std::unordered_map<ofGLProgrammableRenderer*, std::unordered_map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
 
 namespace{
 string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc,const ofMaterialSettings& adata);
@@ -571,7 +572,7 @@ void ofMaterial::mergeCustomUniformTextures(ofMaterialTextureType mainType, std:
 		bool bMatchingTextures = true;
 		int minTexLocation = 99999;
 		
-		for(int i = 0; i < mtsSize; i++ ) {
+		for(size_t i = 0; i < mtsSize; i++ ) {
 			if(!hasTexture(mergeTypes[i])){
 				bHasAllMergeTypes = false;
 				bMatchingTextures = false;
@@ -594,7 +595,7 @@ void ofMaterial::mergeCustomUniformTextures(ofMaterialTextureType mainType, std:
 		}
 		
 		if(bHasAllMergeTypes && bMatchingTextures && minTexLocation < 1000){
-			for(int i = 0; i < mtsSize; i++ ) {
+			for(size_t i = 0; i < mtsSize; i++ ) {
 				removeCustomUniformTexture(mergeTypes[i]);
 			}
 			setCustomUniformTexture( getUniformName(mainType), texTarget, texID, minTexLocation );
@@ -612,8 +613,7 @@ ofMaterial::TextureUnifom ofMaterial::getCustomUniformTexture(const std::string 
 	if(uniformstex.find(name) != uniformstex.end()){
 		return uniformstex[name];
 	}
-	TextureUnifom tu;
-	return tu;
+	return TextureUnifom{};
 }
 
 // called from ofGLProgrammableRenderer

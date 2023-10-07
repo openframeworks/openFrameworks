@@ -15,7 +15,7 @@
 #include <iostream>
 #include <array>
 
-// FIXME: deprecated only
+// FIXME: constants deprecated only
 #include "ofConstants.h"
 
 

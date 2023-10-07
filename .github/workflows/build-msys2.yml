@@ -1,14 +1,17 @@
 name: build-msys2
 
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
   push:
+    if: github.event_name == 'push' && github.event.pull_request == null
     paths-ignore:
     - '**/*.md'
     - 'examples/**'
   pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
     paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
+      - '**/*.md'
+      - 'examples/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,7 +22,9 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        mingw: [MINGW64]
+        msystem:
+        - mingw64
+        # - ucrt64
     defaults:
       run:
         shell: msys2 {0}
@@ -28,6 +33,7 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         update: true
+        msystem: ${{matrix.msystem}}
         install: >-
           git
           unzip
@@ -35,13 +41,7 @@ jobs:
           wget
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
-      env:
-        MSYSTEM: ${{ matrix.mingw }}
     - name: Build
       run: ./scripts/ci/msys2/build.sh
-      env:
-        MSYSTEM: ${{ matrix.mingw }}
     - name: Run tests
       run: ./scripts/ci/msys2/run_tests.sh
-      env:
-        MSYSTEM: ${{ matrix.mingw }}

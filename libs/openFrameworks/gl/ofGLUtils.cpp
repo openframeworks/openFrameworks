@@ -88,7 +88,7 @@ int ofGetGLInternalFormat(const ofShortPixels& pixels) {
 
 //---------------------------------
 int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
-#if not defined TARGET_OPENGLES || defined TARGET_EMSCRIPTEN
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB32F;
 		case 4: return GL_RGBA32F;

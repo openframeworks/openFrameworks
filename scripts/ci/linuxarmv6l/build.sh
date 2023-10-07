@@ -1,21 +1,11 @@
 #!/bin/bash
 set -ev
 OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
-PROJECTS=$OF_ROOT/libs/openFrameworksCompiled/project
-# source $OF_ROOT/scripts/ci/ccache.sh
 
-# Add compiler flag to reduce memory usage to enable builds to complete
-# see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
-# the "proper" way does not work currently:
-export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
-
-echo "**** Building OF core ****"
-cd $OF_ROOT
-# this carries over to subsequent compilations of examples
-sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" $PROJECTS/makefileCommon/config.linux.common.mk
-cd $PROJECTS
 export GCC_PREFIX=arm-linux-gnueabihf
 export GST_VERSION=1.0
+#NOTE: GCC_VERSION should match the version present in the downloaded toolchain
+export GCC_VERSION=9.4.0
 export RPI_ROOT=${OF_ROOT}/scripts/ci/$TARGET/raspbian
 export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain
 export PLATFORM_OS=Linux
@@ -25,10 +15,16 @@ export CXX="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
 export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
-make Debug -j2
+export CROSS_COMPILING=1
 
+export PATH=/rpi_toolchain/bin/:$PATH
+export LD_LIBRARY_PATH=/rpi_toolchain/lib:$LD_LIBRARY_PATH
+ 
 echo "**** Building emptyExample ****"
-cd $OF_ROOT/scripts/templates/linuxarmv6l
+cd $OF_ROOT
+cp scripts/templates/linuxarmv6l/Makefile examples/templates/emptyExample/
+cp scripts/templates/linuxarmv6l/config.make examples/templates/emptyExample/
+cd examples/templates/emptyExample/
 make Debug -j2
 
 echo "**** Building allAddonsExample ****"
@@ -37,6 +33,3 @@ cp scripts/templates/linuxarmv6l/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linuxarmv6l/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
 make Debug -j2
-
-git checkout $PROJECTS/makefileCommon/config.linux.common.mk
-git checkout $PROJECTS/linuxarmv6l/config.linuxarmv6l.default.mk
