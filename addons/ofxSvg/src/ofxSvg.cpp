@@ -3,11 +3,15 @@
 #include <locale>
 
 using std::string;
-using std::vector;
 
 extern "C" {
 #include "svgtiny.h"
 }
+
+ofxSvg::ofxSvg(const of::filesystem::path & fileName) {
+	load(fileName);
+}
+
 ofxSvg::~ofxSvg() {
 	paths.clear();
 }
@@ -27,7 +31,7 @@ ofPath & ofxSvg::getPathAt(int n) {
 	return paths[n];
 }
 
-void ofxSvg::load(of::filesystem::path fileName) {
+void ofxSvg::load(const of::filesystem::path & fileName) {
 	// fileName = ofToDataPath(fileName);
 	std::string file = ofToDataPath(fileName);
 
@@ -48,7 +52,6 @@ void ofxSvg::load(of::filesystem::path fileName) {
 	}
 
 	ofBuffer buffer = ofBufferFromFile(file);
-
 	loadFromString(buffer.getText(), file);
 }
 
@@ -69,7 +72,7 @@ void ofxSvg::loadFromString(std::string stringdata, std::string urlstring) {
 	std::locale::global(prev_locale);
 
 	if (code != svgtiny_OK) {
-		string msg;
+		std::string msg;
 		switch (code) {
 		case svgtiny_OUT_OF_MEMORY:
 			msg = "svgtiny_OUT_OF_MEMORY";
@@ -254,6 +257,6 @@ void ofxSvg::setupShape(struct svgtiny_shape * shape, ofPath & path) {
 	}
 }
 
-const vector<ofPath> & ofxSvg::getPaths() const {
+const std::vector<ofPath> & ofxSvg::getPaths() const {
 	return paths;
 }
