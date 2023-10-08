@@ -8,6 +8,8 @@ extern "C" {
 #include "svgtiny.h"
 }
 
+ofxSvg::ofxSvg() {}
+
 ofxSvg::ofxSvg(const of::filesystem::path & fileName) {
 	load(fileName);
 }
