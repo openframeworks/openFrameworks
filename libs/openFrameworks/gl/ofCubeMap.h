@@ -7,10 +7,10 @@
 #pragma once
 
 #include "glm/mat4x4.hpp"
+#include "ofShader.h"
 
 class ofVboMesh;
 
-class ofShader;
 class ofGLProgrammableRenderer;
 
 class ofCubeMap {
