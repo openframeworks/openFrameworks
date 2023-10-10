@@ -8,7 +8,6 @@
 #ifndef CIRCLESRENDERER_H_
 #define CIRCLESRENDERER_H_
 
-#include "ofParameterGroup.h"
 #include "ofParameter.h"
 #include "ofMain.h"
 
