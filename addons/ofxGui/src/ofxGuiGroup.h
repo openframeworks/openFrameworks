@@ -4,7 +4,6 @@
 #include "ofxSlider.h"
 #include "ofxButton.h"
 #include "ofxLabel.h"
-#include "ofParameterGroup.h"
 #include "ofParameter.h"
 
 class ofxGuiGroup : public ofxBaseGui {
