@@ -27,38 +27,11 @@
 ///         }
 ///     };
 ///
-/// ofThread is a convenient wrapper for Poco::Thread, Poco::Runnable and
-/// Poco::Mutex.  It represents a simplified (sometimes overly simplified -
-/// or simplified in ways that might not make sense for your project)
-/// pathway for quickly writing threaded classes.  Poco::Runnable represents
-/// a class that can be "run" via its void run() method.  Poco::Thread is
-/// able to spawn a thread and "run" the contents of a class that extends
-/// the Poco::Runnable interface (which ofThread does).  Poco::FastMutex,
-/// (aka ofMutex) is a "mutual exclusion" object that prevents two threads
-/// from accessing the same data at the same time.  It is important to know
-/// that Poco::FastMutex (aka ofMutex) is not "recursive" while Poco::Mutex
-/// is. This means that if the same thread attempts to lock a thread while
-/// it ALREADY has a lock on the mutex, the program will lock up and go
-/// nowhere.  Thus, it is important that ofThread subclasses carefully
-/// their use of the mutex.  Currently ofThread does not lock its own mutex
-/// at any point (e.g. ofThread's internal variables are not thread safe).
-/// This is a somewhat dangerous convenience that is (theoretically)
-/// supposed to make it easier for subclasses to avoid the recursive mutex
-/// "problem". The situation that arises from two threads simultanously
-/// reading or writing from the same shared data (shared data
-/// occupies the same physical location in memory) leads to something
-/// called a "race condition", which can lead to deadlocks.
+/// ofThread is a convenient wrapper for std::thread. It is a
+/// pathway for quickly writing threaded classes. Implementing
+/// threads that access shared data is tricky and can lead to deadlocks.
 /// A deadlock is as bad as it sounds.  It means your program
-/// just stops.  ofMutex prevents race conditions, deadlocks and crashes by
-/// permitting only one thread access to shared data at a time.  When using
-/// mutexes to protect data, the trick is to always be sure to unlock the
-/// mutex when finished.  This problem can often be avoided by using
-/// an Poco::FastMutex::ScopedLock (aka ofScopedLock).  See the
-/// the documentation for more information.  Finally, there are many cases
-/// where it might make more sense to use Poco::Thread, Poco::Runnable and
-/// Poco::FastMutex directly rather than using ofThread.  Further, cross
-/// platform thread management will be alleviated with the std::thread
-/// support library included with C++11.
+/// just stops.
 ///
 /// Uncaught Exceptions throw from within ofThread will cause the thread to stop
 /// and the Exception will be delivered to the default ofBaseThreadErrorHandler.
@@ -161,12 +134,8 @@ public:
     ///     encouraged to use the default INFINITE_JOIN_TIMEOUT.  If the user is
     ///     unhappy with the amount of time it takes to join a thread, the user
     ///     is encouraged to seek more expedient ways of signalling their desire
-    ///     for a thread to complete via other signalling methods such as
-    ///     Poco::Event, Poco::Condition, or Poco::Semaphore.
-    /// \sa http://pocoproject.org/slides/090-NotificationsEvents.pdf
-    /// \sa http://pocoproject.org/docs/Poco.Condition.html
-    /// \sa http://pocoproject.org/docs/Poco.Event.html
-    /// \sa http://pocoproject.org/docs/Poco.Semaphore.html
+    ///     for a thread to complete via other signalling methods.
+    
     void waitForThread(bool callStopThread = true,
                        long milliseconds = INFINITE_JOIN_TIMEOUT);
 
@@ -249,22 +218,12 @@ public:
     /// \returns True iff this ofThread the currently active thread.
     bool isCurrentThread() const;
 
-    /// \brief Get a reference to the underlying Poco thread.
-    ///
-    /// Poco::Thread provides a clean cross-platform wrapper for
-    /// threads.  On occasion, it may be useful to interact with the
-    /// underlying Poco::Thread directly.
-    ///
-    /// \returns A reference to the backing Poco thread.
+    /// \brief Get a reference to the underlying thread.
+    /// \returns A reference to the underlying thread.
     std::thread& getNativeThread();
 
-    /// \brief Get a const reference to the underlying Poco thread.
-    ///
-    /// Poco::Thread provides a clean cross-platform wrapper for
-    /// threads.  On occasion, it may be useful to interact with the
-    /// underlying Poco::Thread directly.
-    ///
-    /// \returns A reference to the backing Poco thread.
+    /// \brief Get a const reference to the underlying  thread.
+    /// \returns A reference to the backing thread.
     const std::thread & getNativeThread() const;
 
 
@@ -312,7 +271,7 @@ protected:
     ///
     virtual void threadedFunction();
 
-    /// \brief The Poco::Thread that runs the Poco::Runnable.
+    /// \brief The thread object
     std::thread thread;
 
     /// \brief The internal mutex called through lock() & unlock().
@@ -325,7 +284,7 @@ protected:
     mutable std::mutex mutex;
 
 private:
-    ///< \brief Implements Poco::Runnable::run().
+    ///< \brief runs the threadedFunction.
     void run();
 
     ///< \brief Is the thread running?
