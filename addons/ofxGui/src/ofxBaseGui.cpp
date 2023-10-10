@@ -483,3 +483,15 @@ void ofxBaseGui::disableHiDpi(){
 bool ofxBaseGui::isHiDpiEnabled(){
 	return hiDpiScale == 2;
 }
+
+void ofxBaseGui::nameChanged( std::string& )
+{
+	auto& p = getParameter();
+
+	setNeedsRedraw();
+	
+}
+void ofxBaseGui::setNameListener()
+{
+ 	nameChangeListener = getParameter().nameChangedEvent().newListener(this, &ofxBaseGui::nameChanged);
+}

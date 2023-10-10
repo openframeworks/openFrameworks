@@ -132,6 +132,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const str
 	parameters = _parameters;
 	registerMouseEvents();
 
+	setNameListener();
 	setNeedsRedraw();
 
 	return this;

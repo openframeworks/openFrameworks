@@ -351,8 +351,15 @@ string ofParameterGroup::getName() const{
 	return obj->name;
 }
 
-void ofParameterGroup::setName(const string & name){
+bool ofParameterGroup::setName(const string & name){
+	std::string oldName = getName();
+	if (escape(name) == escape(oldName)) return false;
+	if (!ofParameterGroup::changeChildName(this, obj->parents, escape(oldName), escape(name))) {
+		setName(oldName);
+		return false;
+	}
 	obj->name = name;
+	return true;
 }
 
 string ofParameterGroup::getEscapedName() const{
@@ -438,6 +445,28 @@ void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param
 		if(parent) parent->notifyParameterChanged(param);
 		return !parent;
 	}),parents.end());
+}
+
+void ofParameterGroup::Value::notifyParameterNameChanged(ofAbstractParameter & param)
+{
+	ofNotifyEvent(childNameChangedEvent,param);
+	parents.erase(std::remove_if(parents.begin(),parents.end(),[&param](const weak_ptr<Value> & p){
+		auto parent = p.lock();
+		if(parent) parent->notifyParameterNameChanged(param);
+		return !parent;
+	}),parents.end());
+}
+			
+bool ofParameterGroup::Value::updateParameterName(const std::string oldName, const std::string newName){
+	if(parametersIndex.find(newName) != parametersIndex.end()){
+		return false;
+	}
+	if(oldName != newName){
+		parametersIndex[newName] = parametersIndex[oldName];
+		parametersIndex.erase(oldName);
+		return true;
+	}
+	return false;
 }
 
 const ofParameterGroup ofParameterGroup::getFirstParent() const{
@@ -530,3 +559,58 @@ vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGrou
 }
 
 
+void ofParameterGroup::checkAndRemoveExpiredParents(std::vector<std::weak_ptr<Value>> & parents)
+{
+	parents.erase(std::remove_if(parents.begin(),
+				   parents.end(),
+				   [](const std::weak_ptr<Value> & p){ return p.expired(); }),
+	parents.end());
+}
+
+
+bool ofParameterGroup::changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName)
+{
+	if(!child) return false;
+	
+	// name has not change, no need to notify anything
+	if(oldName == newName) return false;
+	
+	checkAndRemoveExpiredParents(parents);
+	
+	for(auto parent = parents.begin(); parent != parents.end(); ++parent){
+		auto p = parent->lock();
+		if(p){
+			if(!p->updateParameterName(oldName, newName)){
+				// Undo the name change in the paremeters that we already did
+				for(auto reverseParent = parent-1; reverseParent != parents.begin()-1; --reverseParent){
+					auto rp = reverseParent->lock();
+					if(rp){
+						rp->updateParameterName(newName, oldName);
+					}
+				}
+				return false;
+			}
+		}
+	}
+		
+	ofNotifyEvent(child->nameChangedEvent(), newName, child);
+	
+
+	// we notify to the parents after updating the name in order to avoid any possible data race
+	for(auto & parent: parents){
+		auto p = parent.lock();
+		if(p){
+			p->notifyParameterNameChanged(*child);
+		}
+	}
+	return true;
+}
+
+ofEvent<std::string>& ofParameterGroup::nameChangedEvent()
+{
+	return obj->nameChangedEvent;
+}
+ofEvent<ofAbstractParameter>& ofParameterGroup::childNameChangedEvent()
+{
+	return obj->childNameChangedEvent;
+}

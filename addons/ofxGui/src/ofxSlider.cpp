@@ -58,7 +58,7 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 
 	value.addListener(this,&ofxSlider::valueChanged);
 	registerMouseEvents();
-
+	setNameListener();
 	input.setup(_val, width, height);
 	return this;
 }

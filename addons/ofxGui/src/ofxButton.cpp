@@ -25,7 +25,7 @@ ofxButton* ofxButton::setup(ofParameter<void> _bVal, float width, float height){
 	registerMouseEvents();
 
 	value.addListener(this,&ofxButton::valueChanged);
-
+	setNameListener();
 	return this;
 }
 
@@ -42,7 +42,7 @@ ofxButton* ofxButton::setup(const std::string& toggleName, float width, float he
 	registerMouseEvents();
 
 	value.addListener(this,&ofxButton::valueChanged);
-
+	setNameListener();
 	return this;
 }
 

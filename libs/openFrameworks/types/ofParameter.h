@@ -25,7 +25,7 @@ class ofAbstractParameter{
 public:
 	virtual ~ofAbstractParameter(){}
 	virtual std::string getName() const = 0;
-	virtual void setName(const std::string & name) = 0;
+	virtual bool setName(const std::string & name) = 0;
 	virtual std::string toString() const = 0;
 	virtual void fromString(const std::string & str) = 0;
 
@@ -73,11 +73,16 @@ public:
 
 	virtual bool isReferenceTo(const ofAbstractParameter& other) const;
 
+	virtual ofEvent<std::string>& nameChangedEvent() = 0;
+	
 protected:
 	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
 	virtual std::string escape(const std::string& str) const;
 	virtual const void* getInternalObject() const = 0;
+	
+	
+	
 };
 
 
@@ -229,7 +234,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const ofParameterGroup& group);
 
 	std::string getName() const;
-	void setName(const std::string& name);
+	bool setName(const std::string& name);
 	std::string getEscapedName() const;
 	std::string toString() const;
 	void fromString(const std::string& name);
@@ -251,7 +256,10 @@ public:
 	operator bool() const;
 
 	ofEvent<ofAbstractParameter> & parameterChangedE();
-
+	virtual ofEvent<std::string>& nameChangedEvent();
+	ofEvent<ofAbstractParameter>& childNameChangedEvent();
+	
+	
 	std::vector<std::shared_ptr<ofAbstractParameter> >::iterator begin();
 	std::vector<std::shared_ptr<ofAbstractParameter> >::iterator end();
 	std::vector<std::shared_ptr<ofAbstractParameter> >::const_iterator begin() const;
@@ -271,18 +279,27 @@ private:
 		:serializable(true){}
 
 		void notifyParameterChanged(ofAbstractParameter & param);
-
+		bool updateParameterName(const std::string oldName, const std::string newName);
+		void notifyParameterNameChanged(ofAbstractParameter & param);
+		
 		std::map<std::string,std::size_t> parametersIndex;
 		std::vector<std::shared_ptr<ofAbstractParameter> > parameters;
 		std::string name;
 		bool serializable;
 		std::vector<std::weak_ptr<Value>> parents;
 		ofEvent<ofAbstractParameter> parameterChangedE;
+		ofEvent<std::string> nameChangedEvent;
+		ofEvent<ofAbstractParameter> childNameChangedEvent;
 	};
 	std::shared_ptr<Value> obj;
 	ofParameterGroup(std::shared_ptr<Value> obj)
 	:obj(obj){}
 
+
+	static void checkAndRemoveExpiredParents(std::vector<std::weak_ptr<Value>> & parents);
+		
+	static bool changeChildName(ofAbstractParameter* child, std::vector<std::weak_ptr<Value>> & parents, const std::string& oldName, std::string newName);
+	
 	template<typename T>
 	friend class ofParameter;
 
@@ -506,7 +523,7 @@ public:
 	const ParameterType * operator->() const;
 	operator const ParameterType & () const;
 
-	void setName(const std::string & name);
+	bool setName(const std::string & name);
 	std::string getName() const;
 
 	ParameterType getMin() const;
@@ -589,9 +606,11 @@ public:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
-						   [](std::weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
-						obj->parents.end());
+//		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),
+//						   [](std::weak_ptr<ofParameterGroup::Value> p){return p.lock()==nullptr;}),
+//						obj->parents.end());
+//
+		ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
 		if(!obj->parents.empty()){
 			return obj->parents.front().lock();
 		}else{
@@ -599,6 +618,8 @@ public:
 		}
 	}
 
+	virtual ofEvent<std::string>& nameChangedEvent();
+	
 	size_t getNumListeners() const;
 	const void* getInternalObject() const;
 
@@ -643,6 +664,7 @@ private:
 		std::string name;
 		ParameterType init, value, min, max;
 		ofEvent<ParameterType> changedE;
+		ofEvent<std::string> nameChangedEvent;
 		bool bInNotify;
 		bool serializable;
 		std::vector<std::weak_ptr<ofParameterGroup::Value>> parents;
@@ -758,10 +780,7 @@ inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 		if(!obj->parents.empty())
 		{
 			// Erase each invalid parent
-			obj->parents.erase(std::remove_if(obj->parents.begin(),
-											  obj->parents.end(),
-											  [](const std::weak_ptr<ofParameterGroup::Value> & p){ return p.expired(); }),
-							   obj->parents.end());
+			ofParameterGroup::checkAndRemoveExpiredParents(obj->parents);
 
 			// notify all leftover (valid) parents of this object's changed value.
 			// this can't happen in the same iterator as above, because a notified listener
@@ -845,8 +864,20 @@ inline ofParameter<ParameterType>::operator const ParameterType & () const{
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::setName(const std::string & name){
+bool ofParameter<ParameterType>::setName(const std::string & name){
+	std::string oldName = getName();
+	if(escape(name) == escape(oldName)) return false;
+	if(!ofParameterGroup::changeChildName(this, obj->parents, escape(oldName), escape(name))){
+		setName(oldName);
+		return false;
+	}
 	obj->name = name;
+	return true;
+}
+template<typename ParameterType>
+ofEvent<std::string>& ofParameter<ParameterType>::nameChangedEvent()
+{
+	return obj->nameChangedEvent;
 }
 
 template<typename ParameterType>
@@ -1026,7 +1057,7 @@ public:
 
 	ofParameter<void>& set(const std::string & name);
 
-	void setName(const std::string & name);
+	bool setName(const std::string & name);
 	std::string getName() const;
 
 	std::string toString() const;
@@ -1076,6 +1107,9 @@ public:
 	const void* getInternalObject() const{
 		return obj.get();
 	}
+	
+	virtual ofEvent<std::string>& nameChangedEvent();
+	
 protected:
 
 private:
@@ -1090,6 +1124,7 @@ private:
 
 		std::string name;
 		ofEvent<void> changedE;
+		ofEvent<std::string> nameChangedEvent;
 		bool serializable;
 		std::vector<std::weak_ptr<ofParameterGroup::Value>> parents;
 	};
@@ -1146,7 +1181,8 @@ public:
 	std::string valueType() const;
 
 protected:
-	void setName(const std::string & name);
+	virtual ofEvent<std::string>& nameChangedEvent();
+	bool setName(const std::string & name);
 	void enableEvents();
 	void disableEvents();
 	void setSerializable(bool s);
@@ -1309,8 +1345,13 @@ inline std::unique_ptr<of::priv::AbstractEventToken> ofReadOnlyParameter<Paramet
 }
 
 template<typename ParameterType,typename Friend>
-inline void ofReadOnlyParameter<ParameterType,Friend>::setName(const std::string & name){
-	parameter.setName(name);
+inline bool ofReadOnlyParameter<ParameterType,Friend>::setName(const std::string & name){
+	return parameter.setName(name);
+}
+
+template<typename ParameterType,typename Friend>
+inline ofEvent<std::string>& ofReadOnlyParameter<ParameterType,Friend>::nameChangedEvent(){
+	return parameter.nameChangedEvent();
 }
 
 template<typename ParameterType,typename Friend>

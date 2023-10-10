@@ -168,6 +168,8 @@ ofxColorPicker_<ColorType> * ofxColorPicker_<ColorType>::setup(ofParameter<ofCol
     listener = color.newListener(colorChanged);
 	setShape(b.x, b.y, w, h);
 	colorChanged(color.get());//needs this so the color wheel shows the correct color once setup.
+	setNameListener();
+	
 	return this;
 }
 template<class ColorType>

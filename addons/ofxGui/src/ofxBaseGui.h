@@ -142,10 +142,17 @@ class ofxBaseGui {
 
 		void setNeedsRedraw();
 		ofCoreEvents * events = nullptr;
+		
+		void setNameListener();
+	
 	private:
 		bool needsRedraw;
 		unsigned long currentFrame;
 		bool bRegisteredForMouseEvents;
+	
+		ofEventListener nameChangeListener;
+	
+		void nameChanged( std::string& );
 	
 		//std::vector<ofEventListener> coreListeners;
 };
