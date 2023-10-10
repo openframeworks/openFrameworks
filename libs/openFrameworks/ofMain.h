@@ -27,7 +27,6 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofParameter.h"
-#include "ofParameterGroup.h"
 
 //--------------------------
 // math

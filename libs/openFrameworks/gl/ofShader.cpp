@@ -6,7 +6,6 @@
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
 #include "ofMatrix3x3.h"
-#include "ofParameterGroup.h"
 #include "ofParameter.h"
 #include "ofBufferObject.h"
 #include "ofShadow.h"

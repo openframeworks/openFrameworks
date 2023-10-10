@@ -1,5 +1,4 @@
 #include "ofParameter.h"
-#include "ofParameterGroup.h"
 
 using std::string;
 
