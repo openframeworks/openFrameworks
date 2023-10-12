@@ -77,7 +77,6 @@ void ofApp::draw(){
 		}
 	}
 	
-	
 	camera.begin(); {
 		
 		renderScene(false);
@@ -133,15 +132,7 @@ void ofApp::renderScene(bool bShadowPass) {
 	ofPopMatrix();
 	matPlywood.end();
 	
-	matSphere.begin();
-	ofPushMatrix();
-	ofTranslate( 700.0*cos(angle-PI), -20, sin(angle-PI)*300.0-100 );
-	ofScale(120);
-	meshPlySphere.draw();
-	ofPopMatrix();
-	matSphere.end();
-	
-	if( bShadowPass && bWiggleVerts ) {
+	if( !matLogo.hasDepthShader() && bShadowPass && bWiggleVerts ) {
 		mDepthShader.begin();
 		mDepthShader.setUniform1f("iElapsedTime", ofGetElapsedTimef());
 		mDepthShader.setUniform1f("uWiggleVerts", bWiggleVerts ? 1.0f : 0.0f);
@@ -157,9 +148,19 @@ void ofApp::renderScene(bool bShadowPass) {
 	meshLogoHollow.draw();
 	ofPopMatrix();
 	matLogo.end();
-	if(bShadowPass && bWiggleVerts ) {
+	if(!matLogo.hasDepthShader() && bShadowPass && bWiggleVerts ) {
 		mDepthShader.end();
 	}
+	
+	matSphere.begin();
+	ofPushMatrix();
+	ofTranslate( 700.0*cos(angle-PI), -20, sin(angle-PI)*300.0-100 );
+	ofScale(120);
+	meshPlySphere.draw();
+	ofPopMatrix();
+	matSphere.end();
+	
+	
 }
 
 //--------------------------------------------------------------
@@ -172,9 +173,10 @@ bool ofApp::reloadShader() {
 	if( vbuffer.size() && fbuffer.size() ) {
 		matLogo.setShaderMain(vbuffer.getText(), GL_VERTEX_SHADER, "main.vert");
 		matLogo.setShaderMain(fbuffer.getText(), GL_FRAGMENT_SHADER, "main.frag");
+		matLogo.setDepthShaderMain(vbuffer.getText(), "main.glsl");
 		// configure the shader to include shadow functions for passing depth
-		// declare a define so we can use the same shader file and run different bits of code
-		light.getShadow().setupShadowDepthShader(mDepthShader, "#define SHADOW_DEPTH_PASS\n"+vbuffer.getText());
+		// #define OF_SHADOW_DEPTH_PASS gets added by OF so we can use the same shader file and run different bits of code for the shadow pass
+//		light.getShadow().setupShadowDepthShader(mDepthShader, vbuffer.getText());
 		return true;
 	}
 	return false;
