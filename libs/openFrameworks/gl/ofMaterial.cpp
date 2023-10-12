@@ -11,6 +11,7 @@ using std::shared_ptr;
 using std::string;
 
 std::unordered_map<ofGLProgrammableRenderer*, std::unordered_map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
+std::unordered_map<ofGLProgrammableRenderer *, std::unordered_map<std::string, std::weak_ptr<ofMaterial::DepthShaders>>> ofMaterial::depthShadersMap;
 
 namespace{
 string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc,const ofMaterialSettings& adata);
@@ -154,6 +155,34 @@ void ofMaterial::setShaderMain(std::string aShaderSrc, GLenum atype, std::string
 		data.mainFragment = aShaderSrc;
 		data.mainFragmentKey = skey;
 	}
+}
+
+//----------------------------------------------------------
+void ofMaterial::setDepthShaderMain(std::string aShaderSrc, std::string akey) {
+	if(!isPBR()) {
+		ofLogWarning("ofMaterial::setDepthShaderMain") << "only available on PBR materials.";
+		return;
+	}
+	mBHasDepthShader = false;
+	if(akey.empty()){
+		data.mainDepthVertex = "";
+		data.mainDepthVertexKey = akey;
+		ofLogVerbose("ofMaterial::setDepthShaderMain") << "clearing depth shader, key is not set.";
+		return;
+	}
+	if( data.mainDepthVertexKey == akey) {
+		// delete previous shader here
+		std::string sid = getDepthShaderStringId();
+		mDepthShaderIdsToRemove[sid]++;
+	}
+	data.mainDepthVertex = aShaderSrc;
+	data.mainDepthVertexKey = akey;
+	mBHasDepthShader = true;
+}
+
+//----------------------------------------------------------
+bool ofMaterial::hasDepthShader() const {
+	return mBHasDepthShader;
 }
 
 //----------------------------------------------------------
@@ -633,6 +662,99 @@ const std::string ofMaterial::getShaderStringId() const {
 }
 
 //-----------------------------------------------------------
+const std::string ofMaterial::getDepthShaderStringId() const {
+	return data.mainDepthVertexKey;
+}
+
+//-----------------------------------------------------------
+void ofMaterial::initDepthShaders(ofGLProgrammableRenderer & renderer) const {
+	// check to remove any depth shaders //
+	{
+		if( mDepthShaderIdsToRemove.size() ) {
+			for( auto& sids : mDepthShaderIdsToRemove ) {
+				if(depthShadersMap[&renderer].find(sids.first)!=depthShadersMap[&renderer].end()){
+					auto newShaders = depthShadersMap[&renderer][sids.first].lock();
+					if( newShaders ) {
+						newShaders.reset();
+					}
+					depthShadersMap[&renderer].erase(sids.first);
+				}
+			}
+			
+			ofLogVerbose("ofMaterial :: initShaders : depth shaders: " ) << depthShadersMap.size() << " | " << ofGetFrameNum();
+			
+			auto trendererShaders = mDepthShaders.find(&renderer);
+			if( trendererShaders != mDepthShaders.end() ) {
+				if(trendererShaders->second) {
+					trendererShaders->second.reset();
+				}
+				mDepthShaders.erase(&renderer);
+			}
+			mDepthShaderIdsToRemove.clear();
+		}
+	}
+	
+	// now lets check the depth shaders
+	if( getDepthShaderStringId() != "" ) {
+		auto depthShaders = mDepthShaders.find(&renderer);
+		const std::string shaderId = getDepthShaderStringId();
+		
+		if(depthShaders == mDepthShaders.end() ||
+		   depthShaders->second->shaderId != shaderId ){
+			if(depthShadersMap[&renderer].find(shaderId) != depthShadersMap[&renderer].end()){
+				auto newShaders = depthShadersMap[&renderer][shaderId].lock();
+				if(newShaders == nullptr ){
+					depthShadersMap[&renderer].erase(shaderId);
+					mDepthShaders[&renderer] = nullptr;
+				}else{
+					ofLogVerbose("ofMaterial") << "initDepthShaders : swapping depth shaders | " << ofGetFrameNum();
+					mDepthShaders[&renderer] = newShaders;
+				}
+			} else {
+				mDepthShaders[&renderer] = nullptr;
+			}
+		}
+		
+		if(mDepthShaders[&renderer] == nullptr){
+			ofLogVerbose("ofMaterial") << "initDepthShaders : allocating depth shaders | " << ofGetFrameNum();
+			//add the custom uniforms to the shader header
+			auto customUniforms = data.customUniforms;
+			for( auto & custom : mCustomUniforms ){
+				customUniforms += custom.second + " " + custom.first + ";\n";
+			}
+			
+			std::string definesString = getDefinesString();
+			std::string extraVertString = definesString;
+			extraVertString += customUniforms;
+			
+			mDepthShaders[&renderer].reset(new DepthShaders);
+			mDepthShaders[&renderer]->shaderId = shaderId;
+			
+			depthShadersMap[&renderer][shaderId] = mDepthShaders[&renderer];
+		}
+	}
+	
+}
+
+//-----------------------------------------------------------
+const ofShader& ofMaterial::getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const {
+	initDepthShaders(renderer);
+//	std::string shadowId = ofToString(ashadow.getData()->lightType, 0)+"_"+ofToString(ashadow.getNumShadowDepthPasses(), 0);
+	unsigned int shadowShaderId = ashadow.getData()->lightType + ((ashadow.getNumShadowDepthPasses()+1)*100);
+	auto shadowShader = mDepthShaders[&renderer]->shaders.find(shadowShaderId);
+	
+	if(shadowShader == mDepthShaders[&renderer]->shaders.end() || !mDepthShaders[&renderer]->shaders[shadowShaderId] ) {
+		auto nDepthShader = std::make_shared<ofShader>();
+		// setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain)
+		if(!ashadow.setupShadowDepthShader( *nDepthShader, data.mainDepthVertex )) {
+			ofLogError("ofMaterial :: getShadowDepthShader() : error loading depth shader: ") << data.mainDepthVertexKey;
+		}
+		mDepthShaders[&renderer]->shaders[shadowShaderId] = nDepthShader;
+	}
+	return *mDepthShaders[&renderer]->shaders[shadowShaderId];
+}
+
+//-----------------------------------------------------------
 void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 	// remove any shaders that have their main source remove 
 	{
@@ -659,6 +781,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 			mShaderIdsToRemove.clear();
 		}
 	}
+	
 
     auto rendererShaders = shaders.find(&renderer);
 	

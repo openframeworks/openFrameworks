@@ -5,6 +5,7 @@
 
 class ofShader;
 class ofGLProgrammableRenderer;
+class ofShadow;
 
 // enum ofMaterialTextureType: short{
 // 	OF_MATERIAL_TEXTURE_NONE=0,
@@ -64,9 +65,17 @@ public:
 
 	/// \brief end using this material's properties
 	virtual void end() const = 0;
+	
+	virtual bool hasDepthShader() const { return false; }
+	
+	/// \brief create and return a shader used to render depth for a shadow pass, only queried if has a custom depth shader
+	/// \param textureTarget an implementation-specific value to specify the type of shader to use
+	/// \param renderer programmable renderer instance to create the depth shader for
+	virtual const ofShader & getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const = 0;
 
 	/// \brief create and return a shader used to implement the materials effect for a given renderer
-	/// \param textureTarget an implementation-specific value to specify the type of shader to use
+	/// \param textureTarget an implementation-specific value to specify the texture type of shader to use
+	/// \param geometryHasColor an implementation-specific value to specify the vert colors if any
 	/// \param renderer programmable renderer instance to create the material shader for
 	virtual const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const = 0;
 
