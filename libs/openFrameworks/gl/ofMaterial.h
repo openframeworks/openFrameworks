@@ -151,6 +151,9 @@ struct ofMaterialSettings {
 
 	std::string mainVertex = ""; /// override the default main function in the vertex shader
 	std::string mainVertexKey = ""; /// access vertex main function with this key make unique for new instances
+									///
+	std::string mainDepthVertex = ""; /// override the default depth shadow shader main function
+	std::string mainDepthVertexKey = ""; /// access depth vertex main function with this key make unique for new instances
 };
 
 /// \class ofMaterial
@@ -185,6 +188,16 @@ public:
 	/// \param atype GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
 	/// \param skey unique key to identify the vertex and fragment sources. If loading dynamically, use same key to overwrite previous instances.
 	void setShaderMain(std::string aShaderSrc, GLenum atype, std::string skey);
+	
+	/// \brief override the default depth main shader functions for vertex, ie for correct shadows if
+	/// displacement is happening on the vertex shader.
+	/// \param aShaderSrc the shader source as a string
+	/// \param skey unique key to identify the vertex source. If loading dynamically, use same key to overwrite previous instances.
+	void setDepthShaderMain(std::string aShaderSrc, std::string skey);
+	
+	/// \brief used by shadows to determine if this material has a unique depth shader.
+	/// \return if material has a unique depth shader.
+	bool hasDepthShader() const;
 
 	/// \brief set all material colors: reflectance type & light intensity. (Phong)
 	/// \param oDiffuse the diffuse reflectance
@@ -366,6 +379,10 @@ private:
 	void mergeCustomUniformTextures(ofMaterialTextureType mainType, std::vector<ofMaterialTextureType> mergeTypes);
 
 	const std::string getShaderStringId() const;
+	const std::string getDepthShaderStringId() const;
+	
+	void initDepthShaders(ofGLProgrammableRenderer& renderer) const;
+	const ofShader& getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const;
 
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
 	const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;
@@ -421,10 +438,20 @@ private:
 	// unordered_map works well here on modern compilers
 	// std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
 	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture>> mLocalTextures;
-
+	
+	// custom depth shaders for lighting
+	struct DepthShaders {
+		std::unordered_map<unsigned int, std::shared_ptr<ofShader> > shaders;
+		std::string shaderId;
+	};
+	mutable std::unordered_map<ofGLProgrammableRenderer *, std::shared_ptr<DepthShaders>> mDepthShaders;
+	static std::unordered_map<ofGLProgrammableRenderer *, std::unordered_map<std::string, std::weak_ptr<DepthShaders>>> depthShadersMap;
+	mutable std::unordered_map<std::string, int> mDepthShaderIdsToRemove;
+	
 	std::shared_ptr<ofShader> customShader;
 	bool bHasCustomShader = false;
 	bool mBDefinesDirty = true;
 	mutable const ofShader * currentRenderShader = nullptr;
 	bool bPrintedPBRRenderWarning = false;
+	bool mBHasDepthShader = false;
 };

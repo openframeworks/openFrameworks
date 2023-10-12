@@ -1406,7 +1406,7 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
-	if( bIsShadowDepthPass ) {
+	if( bIsShadowDepthPass && !material.hasDepthShader()) {
 //		currentMaterial = nullptr;
 		// we are the shadow depth pass right now, we don't need
 		// textures or lighting, etc.
@@ -1594,11 +1594,13 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 
 	if(!uniqueShader || currentMaterial || currentShadow ){
 		if(currentShadow) {
-			nextShader = &currentShadow->getDepthShader(*this);
+			if( currentMaterial && currentMaterial->hasDepthShader() ) {
+				nextShader = &currentMaterial->getShadowDepthShader(*currentShadow, *this);
+			} else {
+				nextShader = &currentShadow->getDepthShader(*this);
+			}
 		} else if(currentMaterial){
-//			std::cout << "ofGLProgrammableRenderer::beginDefaultShader: " << currentTextureTarget << " | " << ofGetFrameNum() << std::endl;
             nextShader = &currentMaterial->getShader(currentTextureTarget,colorsEnabled,*this);
-
 		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader;
 
