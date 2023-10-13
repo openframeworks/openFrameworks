@@ -627,7 +627,7 @@ namespace {
 // again, a few templates per function, for the convenience of implicit brace init of glm::vec parameters
 
 float ofRandomUniform() {
-	return of::random::uniform<float>(0,1);
+	return of::random::uniform<float>(0, 1);
 }
 
 template <class T, typename... Args>

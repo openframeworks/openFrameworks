@@ -35,7 +35,7 @@ void ofApp::perform() {
 		ofLogNotice("ofRandom(5.0)") << ofRandom(5.0);
 		ofLogNotice("ofRandom(5,10)") << ofRandom(5, 10);
 		ofLogNotice("ofRandom(5.0,10.0)") << ofRandom(5.0, 10.0);
-		
+
 		// ofRandomUniform honors type of args
 		ofLogNotice("uniform()") << uniform();
 		ofLogNotice("uniform(5)") << uniform(5);
@@ -118,7 +118,7 @@ void ofApp::perform() {
 		ofLogNotice("gaussian aka normal<glm::vec2>({10, 20},{2, 1})") << gaussian<glm::vec2>({ 10, 20 }, { 2, 1 });
 		ofLogNotice("gaussian aka normal<glm::vec3>(10,2)") << gaussian<glm::vec3>(10, 2);
 		ofLogNotice("gaussian aka normal<glm::vec3>({10,20,30},{2,1,.5})") << gaussian<glm::vec3>({ 10, 20, 30 }, { 2, 1, .5 });
-		
+
 		// exponential requires 1 args (no defaults)
 
 		ofLogNotice("exponential(2.5)") << exponential(2.5);
@@ -264,7 +264,7 @@ void ofApp::perform() {
 		ofLogNotice("geometric<int>()") << geometric<int>();
 		ofLogNotice("geometric<glm::vec2>()") << geometric<glm::vec2>();
 		ofLogNotice("geometric<glm::vec3>()") << geometric<glm::vec3>();
-		
+
 		ofLogNotice("ofRandomGeometric()") << ofRandomGeometric();
 		ofLogNotice("ofRandomGeometric<double>()") << ofRandomGeometric<double>();
 		ofLogNotice("ofRandomGeometric<int>()") << ofRandomGeometric<int>();
