@@ -37,7 +37,11 @@ public:
         perform_shuffle();
         panel_.getControl("seed")->setTextColor(ofColor::gray);
     }
-    
+	
+
+	void perform();
+	void keyPressed(int key) override;
+
     //  MARK: - ofBaseApp interface boilerplate:
     //  void update() override;
     //	void keyPressed(int key) override;
