@@ -11,76 +11,136 @@
 
 namespace of::random {
 
+// MARK: - TEMPLATES OF TEMPLATES
+
+template <typename T, typename Distribution>
+T make_vector(Distribution dist) {
+	if constexpr (std::is_same_v<T, glm::vec2>) {
+		return {
+			dist(of::random::gen()),
+			dist(of::random::gen())
+		};
+	} else if constexpr (std::is_same_v<T, glm::vec3>) {
+		return {
+			dist(of::random::gen()),
+			dist(of::random::gen()),
+			dist(of::random::gen())
+		};
+	} else if constexpr (std::is_same_v<T, glm::vec4>) {
+		return {
+			dist(of::random::gen()),
+			dist(of::random::gen()),
+			dist(of::random::gen()),
+			dist(of::random::gen())
+		};
+	}
+}
+
+template <typename T, typename Distribution, class Q>
+T make_vector(Q a) {
+	if constexpr (std::is_arithmetic_v<Q>) {
+		return make_vector<T>(Distribution { a });
+	} else {
+		if constexpr (std::is_same_v<T, glm::vec2>) {
+			return {
+				Distribution { a.x }(of::random::gen()),
+				Distribution { a.y }(of::random::gen())
+			};
+		} else if constexpr (std::is_same_v<T, glm::vec3>) {
+			return {
+				Distribution {
+					a.x,
+				}(of::random::gen()),
+				Distribution { a.y }(of::random::gen()),
+				Distribution { a.z }(of::random::gen())
+			};
+		} else if constexpr (std::is_same_v<T, glm::vec4>) {
+			return {
+				Distribution { a.x }(of::random::gen()),
+				Distribution { a.y }(of::random::gen()),
+				Distribution { a.z }(of::random::gen()),
+				Distribution { a.w }(of::random::gen())
+			};
+		}
+	}
+}
+
+template <typename T, typename Distribution, class Q, class R>
+T make_vector(Q a, R b) {
+	if constexpr (std::is_arithmetic_v<Q>) {
+		return make_vector<T>(Distribution { a, b });
+
+	} else {
+		if constexpr (std::is_same_v<T, glm::vec2>) {
+			return {
+				Distribution { a.x, b.x }(of::random::gen()),
+				Distribution { a.y, b.y }(of::random::gen())
+			};
+		} else if constexpr (std::is_same_v<T, glm::vec3>) {
+			return {
+				Distribution { a.x, b.x }(of::random::gen()),
+				Distribution { a.y, b.y }(of::random::gen()),
+				Distribution { a.z, b.z }(of::random::gen())
+			};
+		} else if constexpr (std::is_same_v<T, glm::vec4>) {
+			return {
+				Distribution { a.x, b.x }(of::random::gen()),
+				Distribution { a.y, b.y }(of::random::gen()),
+				Distribution { a.z, b.z }(of::random::gen()),
+				Distribution { a.w, b.w }(of::random::gen())
+			};
+		}
+	}
+}
+
 // MARK: - UNIFORM
 
 // special case of distinguishing real and integer for uniform distribution
 
-template <typename T = float, typename... Args>
+template <typename T = float>
 std::enable_if_t<std::is_floating_point_v<T>, T>
 uniform(T max = 1.0) {
 	std::uniform_real_distribution<T> distr(0, max);
 	return distr(of::random::gen());
 }
 
-template <typename T, typename... Args>
+template <typename T>
 std::enable_if_t<std::is_integral_v<T>, T>
 uniform(T max) {
 	std::uniform_int_distribution<T> distr(0, max);
 	return distr(of::random::gen());
 }
 
-template <typename T = float, typename... Args>
+template <typename T = float>
 std::enable_if_t<std::is_floating_point_v<T>, T>
 uniform(T min, T max) {
 	std::uniform_real_distribution<T> distr(min, max);
 	return distr(of::random::gen());
 }
 
-template <typename T, typename... Args>
+template <typename T>
 std::enable_if_t<std::is_integral_v<T>, T>
 uniform(T min, T max) {
 	std::uniform_int_distribution<T> distr(min, max);
 	return distr(of::random::gen());
 }
 
-template <typename T, typename... Args>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-uniform(Args &&... args) {
-	std::uniform_real_distribution<float> dist(std::forward<Args>(args)...);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+template <typename T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+uniform(float min, float max) {
+	return make_vector<T, std::uniform_real_distribution<float>>(min, max);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-uniform(T min, T max) {
-	return {
-		std::uniform_real_distribution<float> { min.x, max.x }(of::random::gen()),
-		std::uniform_real_distribution<float> { min.y, max.y }(of::random::gen())
-	};
-}
-
-template <typename T, typename... Args>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-uniform(Args &&... args) {
-	std::uniform_real_distribution<float> dist(std::forward<Args>(args)...);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+uniform(float max = 1.0) {
+	return make_vector<T, std::uniform_real_distribution<float>>(0.0f, max);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 uniform(T min, T max) {
-	return {
-		std::uniform_real_distribution<float> { min.x, max.x }(of::random::gen()),
-		std::uniform_real_distribution<float> { min.y, max.y }(of::random::gen()),
-		std::uniform_real_distribution<float> { min.z, max.z }(of::random::gen())
-	};
+	return make_vector<T, std::uniform_real_distribution<float>>(min, max);
 }
 
 // MARK: NORMAL (gaussian)
@@ -100,44 +160,16 @@ normal(double mean, double stddev) {
 	return std::normal_distribution<double>(mean, stddev)(of::random::gen());
 }
 
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-normal(double mean, double stddev) {
-	std::normal_distribution<float> dist(mean, stddev);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+template <typename T, typename... Args>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+normal(float mean, float stddev) {
+	return make_vector<T, std::normal_distribution<float>>(mean, stddev);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 normal(T mean, T stddev) {
-	return {
-		std::normal_distribution<float> { mean.x, stddev.x }(of::random::gen()),
-		std::normal_distribution<float> { mean.y, stddev.y }(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-normal(double mean, double stddev) {
-	std::normal_distribution<float> dist(mean, stddev);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-normal(T mean, T stddev) {
-	return {
-		std::normal_distribution<float> { mean.x, stddev.x }(of::random::gen()),
-		std::normal_distribution<float> { mean.y, stddev.y }(of::random::gen()),
-		std::normal_distribution<float> { mean.z, stddev.z }(of::random::gen())
-	};
+	return make_vector<T, std::normal_distribution<float>>(mean, stddev);
 }
 
 // MARK: LOGNORMAL
@@ -149,43 +181,15 @@ lognormal(double mean, double stddev) {
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-lognormal(double mean, double stddev) {
-	std::lognormal_distribution dist(mean, stddev);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+lognormal(float mean, float stddev) {
+	return make_vector<T, std::lognormal_distribution<float>>(mean, stddev);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 lognormal(T mean, T stddev) {
-	return {
-		std::lognormal_distribution { mean.x, stddev.x }(of::random::gen()),
-		std::lognormal_distribution { mean.y, stddev.y }(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-lognormal(double mean, double stddev) {
-	std::lognormal_distribution dist(mean, stddev);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-lognormal(T mean, T stddev) {
-	return {
-		std::lognormal_distribution { mean.x, stddev.x }(of::random::gen()),
-		std::lognormal_distribution { mean.y, stddev.y }(of::random::gen()),
-		std::lognormal_distribution { mean.z, stddev.z }(of::random::gen())
-	};
+	return make_vector<T, std::lognormal_distribution<float>>(mean, stddev);
 }
 
 // MARK: GAMMA
@@ -197,44 +201,17 @@ gamma(double alpha, double beta) {
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-gamma(double alpha, double beta) {
-	std::gamma_distribution dist(alpha, beta);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+gamma(float alpha, float beta) {
+	return make_vector<T, std::gamma_distribution<float>>(alpha, beta);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 gamma(T alpha, T beta) {
-	return {
-		std::gamma_distribution { alpha.x, beta.x }(of::random::gen()),
-		std::gamma_distribution { alpha.y, beta.y }(of::random::gen())
-	};
+	return make_vector<T, std::gamma_distribution<float>>(alpha, beta);
 }
 
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-gamma(double alpha, double beta) {
-	std::gamma_distribution dist(alpha, beta);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-gamma(T alpha, T beta) {
-	return {
-		std::gamma_distribution { alpha.x, beta.x }(of::random::gen()),
-		std::gamma_distribution { alpha.y, beta.y }(of::random::gen()),
-		std::gamma_distribution { alpha.z, beta.z }(of::random::gen())
-	};
-}
 // MARK: POISSON
 
 template <typename T = int>
@@ -244,43 +221,15 @@ poisson(double mean) {
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 poisson(double mean) {
-	std::poisson_distribution dist(mean);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+	return make_vector<T, std::poisson_distribution<int>>(mean);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 poisson(T mean) {
-	return {
-		std::poisson_distribution { mean.x }(of::random::gen()),
-		std::poisson_distribution { mean.y }(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-poisson(double mean) {
-	std::poisson_distribution dist(mean);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-poisson(T mean) {
-	return {
-		std::poisson_distribution { mean.x }(of::random::gen()),
-		std::poisson_distribution { mean.y }(of::random::gen()),
-		std::poisson_distribution { mean.z }(of::random::gen())
-	};
+	return make_vector<T, std::poisson_distribution<int>>(mean);
 }
 
 // MARK: EXPONENTIAL
@@ -292,43 +241,15 @@ exponential(T lambda) {
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-exponential(double lambda) {
-	std::exponential_distribution dist(lambda);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+exponential(float lambda) {
+	return make_vector<T, std::exponential_distribution<float>>(lambda);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 exponential(T lambda) {
-	return {
-		std::exponential_distribution { lambda.x }(of::random::gen()),
-		std::exponential_distribution { lambda.y }(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-exponential(double lambda) {
-	std::exponential_distribution dist(lambda);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-exponential(T lambda) {
-	return {
-		std::exponential_distribution { lambda.x }(of::random::gen()),
-		std::exponential_distribution { lambda.y }(of::random::gen()),
-		std::exponential_distribution { lambda.z }(of::random::gen())
-	};
+	return make_vector<T, std::exponential_distribution<float>>(lambda);
 }
 
 // MARK: CHI_SQUARED
@@ -341,43 +262,15 @@ chi_squared(double freedom) {
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-chi_squared(double freedom) {
-	std::chi_squared_distribution dist(freedom);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+chi_squared(float freedom) {
+	return make_vector<T, std::chi_squared_distribution<float>>(freedom);
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 chi_squared(T freedom) {
-	return {
-		std::chi_squared_distribution { freedom.x }(of::random::gen()),
-		std::chi_squared_distribution { freedom.y }(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-chi_squared(double freedom) {
-	std::chi_squared_distribution dist(freedom);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-chi_squared(T freedom) {
-	return {
-		std::chi_squared_distribution { freedom.x }(of::random::gen()),
-		std::chi_squared_distribution { freedom.y }(of::random::gen()),
-		std::chi_squared_distribution { freedom.z }(of::random::gen())
-	};
+	return make_vector<T, std::chi_squared_distribution<float>>(freedom);
 }
 
 // MARK: BINOMIAL
@@ -394,14 +287,12 @@ binomial(int p, double t) {
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 binomial(int p, double t) {
-	std::binomial_distribution<int> dist(p, t);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+	return make_vector<T, std::binomial_distribution<int>>(p, t);
 }
+
+// binomial is restrictive on param p and needs a bit of coercing vs glm::vec
 
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
@@ -409,17 +300,6 @@ binomial(T p, T t) {
 	return {
 		std::binomial_distribution { int(p.x), t.x }(of::random::gen()),
 		std::binomial_distribution { int(p.y), t.y }(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-binomial(int p, double t) {
-	std::binomial_distribution<int> dist(p, t);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
 	};
 }
 
@@ -433,6 +313,17 @@ binomial(T p, T t) {
 	};
 }
 
+template <typename T = int>
+std::enable_if_t<std::is_same_v<T, glm::vec4>, T>
+binomial(T p, T t) {
+	return {
+		std::binomial_distribution { int(p.x), t.x }(of::random::gen()),
+		std::binomial_distribution { int(p.y), t.y }(of::random::gen()),
+		std::binomial_distribution { int(p.z), t.z }(of::random::gen()),
+		std::binomial_distribution { int(p.w), t.w }(of::random::gen())
+	};
+}
+
 // MARK: GEOMETRIC
 
 template <typename T = int>
@@ -442,27 +333,12 @@ geometric() {
 }
 
 template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
 geometric() {
-	std::geometric_distribution<int> dist;
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+	return make_vector<T>(std::geometric_distribution<int> {});
 }
 
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-geometric() {
-	std::geometric_distribution<int> dist;
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-// MARK: BERNOUILLI
+// MARK: BERNOULLI
 
 template <typename T = bool>
 std::enable_if_t<std::is_arithmetic_v<T>, bool>
@@ -470,45 +346,12 @@ bernoulli(double p) {
 	return std::bernoulli_distribution(p)(of::random::gen());
 }
 
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-bernoulli(double p) {
-	std::bernoulli_distribution dist(p);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
+template <typename T, typename Q>
+std::enable_if_t<!std::is_arithmetic_v<T>, T>
+bernoulli(Q p) {
+	return make_vector<T, std::bernoulli_distribution>(p);
 }
 
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-bernoulli(T p) {
-	return {
-		std::bernoulli_distribution { p.x }(of::random::gen()),
-		std::bernoulli_distribution { p.y }(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-bernoulli(double p) {
-	std::bernoulli_distribution dist(p);
-	return {
-		dist(of::random::gen()),
-		dist(of::random::gen()),
-		dist(of::random::gen())
-	};
-}
-
-template <typename T>
-std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-bernoulli(T p) {
-	return {
-		std::bernoulli_distribution { p.x }(of::random::gen()),
-		std::bernoulli_distribution { p.y }(of::random::gen()),
-		std::bernoulli_distribution { p.z }(of::random::gen())
-	};
-}
 // MARK: - CONVENIENT FORWARDING ALIASES
 
 template <class T = float, typename... Args>
@@ -530,17 +373,6 @@ std::enable_if_t<!std::is_arithmetic_v<T>, T>
 gaussian(T min, T max) {
 	return normal<T>(min, max);
 }
-
-template <typename T>
-std::enable_if_t<!std::is_arithmetic_v<T>, T>
-yes(glm::vec3 p) {
-	return bernoulli<T>(p);
-}
-
-//template <class T>
-//auto yes(T p) -> decltype(bernoulli(p)) {
-//	return bernoulli(p);
-//}
 
 // MARK: - OTHER FUNCTIONS
 
@@ -618,6 +450,34 @@ bound_normal(T min, T max, T focus = { 4.0f, 4.0f, 4.0f }) {
 	}
 }
 
+template <typename T>
+std::enable_if_t<std::is_same_v<T, glm::vec4>, T>
+bound_normal(T min, T max, T focus = { 4.0f, 4.0f, 4.0f, 4.0f }) {
+	if (min.x >= max.x || min.y >= max.y || min.z >= max.z || min.w >= max.w) {
+		std::cout << "ofRandomNormalLimits()"
+				  << "max must be > than min\n";
+		return {};
+	} else {
+		if (focus.x < 1 || focus.y < 1 || focus.z < 1 || focus.w < 1) {
+			std::cout << "ofRandomNormalLimits()"
+					  << "focus must be at least 1\n";
+			return {};
+		} else {
+			T v;
+			do {
+				v.x = of::random::normal<float>((max.x + min.x) / 2.0f, (max.x - min.x) / (2 * focus.x));
+			} while (v.x < min.x || v.x > max.x);
+			do {
+				v.y = of::random::normal<float>((max.y + min.y) / 2.0f, (max.y - min.y) / (2 * focus.y));
+			} while (v.y < min.y || v.y > max.y);
+			do {
+				v.z = of::random::normal<float>((max.z + min.z) / 2.0f, (max.z - min.z) / (2 * focus.z));
+			} while (v.z < min.z || v.z > max.z);
+			return v;
+		}
+	}
+}
+
 } // end namespace of::random
 
 // MARK: - ANONYMOUS NAMESPACE FUNCTIONS
@@ -626,9 +486,7 @@ namespace {
 
 // again, a few templates per function, for the convenience of implicit brace init of glm::vec parameters
 
-float ofRandomUniform() {
-	return of::random::uniform<float>(0, 1);
-}
+float ofRandomUniform() { return of::random::uniform<float>(0, 1); }
 
 template <class T, typename... Args>
 std::enable_if_t<!std::is_arithmetic_v<T>, T>
@@ -720,6 +578,12 @@ ofRandomBoundNormal(T min, T max, T focus = { 4.0f, 4.0f }) {
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
 ofRandomBoundNormal(T min, T max, T focus = { 4.0f, 4.0f, 4.0f }) {
+	return of::random::bound_normal(min, max, focus);
+}
+
+template <typename T>
+std::enable_if_t<std::is_same_v<T, glm::vec4>, T>
+ofRandomBoundNormal(T min, T max, T focus = { 4.0f, 4.0f, 4.0f, 4.0f }) {
 	return of::random::bound_normal(min, max, focus);
 }
 
