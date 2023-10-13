@@ -334,6 +334,18 @@ void ofMaterial::setOcclusionTexture(const ofTexture & aTex){
 }
 
 //----------------------------------------------------
+void ofMaterial::removeTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	// if there was a previous instance, then erase it
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		if( mLocalTextures[aMaterialTextureType] ) {
+			mLocalTextures[aMaterialTextureType].reset();
+		}
+		mLocalTextures.erase(aMaterialTextureType);
+	}
+	removeCustomUniformTexture(aMaterialTextureType);
+}
+
+//----------------------------------------------------
 void ofMaterial::setAoRoughnessMetallicTexture(const ofTexture & aTex) {
 	// r: occlusion, g: roughness, b: metallic
 	setTexture(OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, aTex );
