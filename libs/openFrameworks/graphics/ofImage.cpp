@@ -97,7 +97,6 @@ FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
 //----------------------------------------------------
 template<typename PixelType>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLittleEndian = true, bool bUsePassedPixelFormat = false) {
-	
 	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = nullptr;
 	FREE_IMAGE_TYPE imgType = FreeImage_GetImageType(bmp);
@@ -105,15 +104,26 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLitt
 		(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8
 		||  imgType!=FIT_BITMAP)) {
 		
-		if(imgType == FIT_UINT16) {
-			bmpConverted = FreeImage_ConvertTo8Bits(bmp);
-		} else if(FreeImage_IsTransparent(bmp)) {
-			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
-		} else {
-			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		bool bDownsampling = false;
+		if( (int)imgType > (int)FIT_BITMAP && FreeImage_GetBPP(bmp) > 8 ) {
+			bDownsampling = true;
 		}
 		
-		bmp = bmpConverted;		
+		if(imgType == FIT_UINT16) {
+			ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling grayscale image to 8 bits");
+			bmpConverted = FreeImage_ConvertTo8Bits(bmp);
+		} else if(FreeImage_IsTransparent(bmp)) {
+			if(bDownsampling) {
+				ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling image to 32 bits");
+			}
+			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
+		} else {
+			if(bDownsampling) {
+				ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling image to 24 bits");
+			}
+			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		}
+		bmp = bmpConverted;
 	}else if(sizeof(PixelType)==2 && imgType!=FIT_UINT16 && imgType!=FIT_RGB16 && imgType!=FIT_RGBA16){
 		if(FreeImage_IsTransparent(bmp)) {
 			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBA16);
