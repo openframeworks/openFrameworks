@@ -259,6 +259,8 @@ public:
 	/// \brief set an occlusion texture. (Phong, PBR)
 	/// \param aTex texture with r = occlusion, g = n/a and b = n/a.
 	void setOcclusionTexture(const ofTexture & aTex);
+	/// \brief remove texture to use in the shader.
+	void removeTexture(const ofMaterialTextureType & aMaterialTextureType);
 
 	// PBR only textures //
 	/// \brief set an occlusion, roughness, metallic texture. (PBR)
