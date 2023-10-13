@@ -1,6 +1,6 @@
 # Contribute to openFrameworks
 
-Thank you for contributing! openFrameworks is a community-built, maintained and operated project that welcomes contributions from all members of the openFrameworks community in its broadest sense. 
+Thank you for contributing! openFrameworks is a community-built, maintained , and operated project that welcomes contributions from all members of the openFrameworks community in its broadest sense. 
 
 This document outlines the procedures and what to expect when contributing a bug report, a feature request, or new code via a pull request.
 If you want to contribute documentation have a look at the [ofSite git repository](https://github.com/openframeworks/ofSite). 
@@ -41,7 +41,7 @@ We're simply a busy group of people, but you will hear back eventually.
 ## <a id='feature-requests'></a>Request a feature
 
 At the moment we don't have a formal roadmap for the project, rather we are a community of people who each contributes to sections that we feel are important for the project.
-Feature requests are therefore mostly a way of us discussing/feeling out together where we'd like the project to go. 
+Feature requests are mostly a way of us discuss/feel out together where we'd like the project to go. 
 This can sometimes involve a lot of discussion, as everyone uses openFrameworks differently.
 
 Feature requests are created as Github Issues, just like bugs. 
@@ -54,9 +54,9 @@ Before opening a feature request, please search the issue tracker and confirm an
 - We are generally a friendly and open collection of people, but communication over the internet can be difficult, so please don't treat a lot of discussion as a negative point against your feature request. 
 Usually, a lot of discussions just means that we haven't thought about what you're requesting before, which is a good thing!
 - On the other hand, we are also busy people, often professionally involved in making large-scale projects ourselves, using openFrameworks. 
-If you feel like no-one is paying attention to your feature request, just be patient, it will be considered eventually.
-- And finally, a small reality check: please don't expect that a general agreement in the discussion that a feature request is a good idea means it will get made immediately! 
-As with most open source projects, the fastest way to get a feature made is to make it yourself, or if you are not a programmer, make friends with someone who is, introduce them to openFrameworks, and ask them to make it for you.
+If you feel like no-one is paying attention to your feature request, just be patient; it will be considered eventually.
+- And finally, a small reality check: please don't expect that general agreement in the discussion that a feature request is a good idea means it will get made immediately! 
+As with most open source-projects, the fastest way to get a feature made is to create it yourself, or if you are not a programmer, make friends with someone who is, introduce them to openFrameworks, and ask them to make it for you.
 
 ## <a id='contributing-code'></a>Contribute code
 
@@ -77,9 +77,9 @@ If you have multiple things to submit, make separate branches for each topic and
 - The branch name should start with either __feature-__ for features or __bugfix-__ for bug fixes.
   - For example, if your patch adds code to draw ellipses, your branch should be called something like __feature-draw-ellipses__.
   - Remember, _commit early, commit often_ - use commits to isolate small subsets of code. 
-This granularity makes the code easier to deal with in cases where some things have to be modified/isolated/removed from the pull request.
+ This granularity makes the code easier to work with in cases where some parts need to be modified, isolated, or removed from the pull request
 - When you commit your files and you find you can't do that without using `git add -f/--force`, this is because of the existing gitignore patterns. _Think about if those files really should be in the repo in the first place_. Then, instead of force-adding files which really should be in the repo (i.e. incorrectly match a gitignore pattern), correct the gitignore pattern (ask for help if necessary) and commit normally.
-- Don't mix code style/formatting changes with bugfixes or features. They should be separate commits or better still, separate branches and separate pull requests.
+- Don't mix code style/formatting changes with bug fixes or features. They should be separate commits or better still, separate branches and separate pull requests.
 - If you are able to do so, test your code on different platforms before submitting it, but at least test it on your platform to make sure it doesn't break anything.
 
 #### Submitting the pull request
