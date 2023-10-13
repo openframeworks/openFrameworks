@@ -163,13 +163,13 @@ normal(double mean, double stddev) {
 template <typename T, typename... Args>
 std::enable_if_t<!std::is_arithmetic_v<T>, T>
 normal(float mean, float stddev) {
-	return make_vector<T, std::uniform_real_distribution<float>>(mean, stddev);
+	return make_vector<T, std::normal_distribution<float>>(mean, stddev);
 }
 
 template <typename T>
 std::enable_if_t<!std::is_arithmetic_v<T>, T>
 normal(T mean, T stddev) {
-	return make_vector<T, std::uniform_real_distribution<float>>(mean, stddev);
+	return make_vector<T, std::normal_distribution<float>>(mean, stddev);
 }
 
 // MARK: LOGNORMAL
