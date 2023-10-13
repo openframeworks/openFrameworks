@@ -58,9 +58,11 @@ void ofApp::perform() {
 		ofLogNotice("uniform<glm::vec2>(5,10)") << uniform<glm::vec2>(5, 10);
 		ofLogNotice("uniform<glm::vec2>({0,10},{10,20})") << uniform<glm::vec2>({ 0, 10 }, { 10, 20 });
 		ofLogNotice("uniform<glm::vec3>()") << uniform<glm::vec3>();
-		ofLogNotice("uniform<glm::vec3>(5)") << uniform<glm::vec3>(5);
+		ofLogNotice("uniform<glm::vec3>(-1,1)") << uniform<glm::vec3>(5);
+		ofLogNotice("uniform<glm::vec4>(5)") << uniform<glm::vec4>(5);
 		ofLogNotice("uniform<glm::vec3>(5,10)") << uniform<glm::vec3>(5, 10);
 		ofLogNotice("uniform<glm::vec3>({0,10,20},{10,20,30})") << uniform<glm::vec3>({ 0, 10, 20 }, { 10, 20, 30 });
+		ofLogNotice("uniform<glm::vec4>({0,10,20,30},{10,20,30, 40})") << uniform<glm::vec4>({ 0, 10, 20, 30 }, { 10, 20, 30, 40 });
 
 		// ofRandomUniform honors type of args
 		ofLogNotice("ofRandomUniform()") << ofRandomUniform();
@@ -94,6 +96,7 @@ void ofApp::perform() {
 		ofLogNotice("normal<glm::vec2>({10, 20},{2, 1})") << of::random::normal<glm::vec2>({ 10, 20 }, { 2, 1 });
 		ofLogNotice("normal<glm::vec3>(10,2)") << of::random::normal<glm::vec3>(10, 2);
 		ofLogNotice("normal<glm::vec3>({10,20,30},{2,1,.5})") << of::random::normal<glm::vec3>({ 10, 20, 30 }, { 2, 1, .5 });
+		ofLogNotice("normal<glm::vec4>({10,20,30, 40},{2,1,.5, .25})") << of::random::normal<glm::vec4>({ 10, 20, 30, 40 }, { 2, 1, .5, .25 });
 		ofLogNotice("ofRandomNormal(10, 2)") << ofRandomNormal(10, 2);
 		ofLogNotice("ofRandomNormal<double>(10, 2)") << ofRandomNormal<double>(10, 2);
 		ofLogNotice("ofRandomNormal<int>(10, 2)") << ofRandomNormal<int>(10, 2);
@@ -101,6 +104,7 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomNormal<glm::vec2>({10, 20},{2, 1})") << ofRandomNormal<glm::vec2>({ 10, 20 }, { 2, 1 });
 		ofLogNotice("ofRandomNormal<glm::vec3>(10,2)") << ofRandomNormal<glm::vec3>(10, 2);
 		ofLogNotice("ofRandomNormal<glm::vec3>({10,20,30},{2,1,.5})") << ofRandomNormal<glm::vec3>({ 10, 20, 30 }, { 2, 1, .5 });
+		ofLogNotice("ofRandomNormal<glm::vec4>({10,20,30, 40},{2,1,.5, .25})") << ofRandomNormal<glm::vec4>({ 10, 20, 30, 40 }, { 2, 1, .5, .25 });
 
 		// testing the forwarding
 		ofLogNotice("ofRandomGaussian(10, 2)") << ofRandomGaussian(10, 2);
@@ -125,9 +129,11 @@ void ofApp::perform() {
 		ofLogNotice("exponential<double>(2.5)") << exponential<double>(2.5);
 		ofLogNotice("exponential<int>(2.5)") << exponential<int>(2.5);
 		ofLogNotice("exponential<glm::vec2>(2.5)") << exponential<glm::vec2>(2.5);
+		ofLogNotice("exponential<glm::vec4>(2.5)") << exponential<glm::vec4>(2.5);
 		ofLogNotice("exponential<glm::vec2>({2.5, 10})") << exponential<glm::vec2>({ 2.5, 10 });
 		ofLogNotice("exponential<glm::vec3>(2.5, 10, 0.1") << exponential<glm::vec3>(2.5);
 		ofLogNotice("exponential<glm::vec3>({2.5, 10, 0.1}") << exponential<glm::vec3>({ 2.5, 10, 0.1 });
+		ofLogNotice("exponential<glm::vec4>({2.5, 10, 0.1, 5}") << exponential<glm::vec4>({ 2.5, 10, 0., 5 });
 
 		ofLogNotice("ofRandomExponential(2.5)") << ofRandomExponential(2.5);
 		ofLogNotice("ofRandomExponential<double>(2.5)") << ofRandomExponential<double>(2.5);
@@ -148,6 +154,7 @@ void ofApp::perform() {
 		ofLogNotice("poisson<glm::vec2>({2.5, 10})") << poisson<glm::vec2>({ 5.5, 10 });
 		ofLogNotice("poisson<glm::vec3>(2.5, 10, 0.1") << poisson<glm::vec3>(5.5);
 		ofLogNotice("poisson<glm::vec3>({2.5, 10, 0.1}") << poisson<glm::vec3>({ 5.5, 10, 0.1 });
+		ofLogNotice("poisson<glm::vec4>({2.5, 10, 0.1, 5}") << poisson<glm::vec4>({ 5.5, 10, 0.1, 5 });
 
 		ofLogNotice("ofRandomPoisson(10)") << ofRandomPoisson(10);
 		// ofLogNotice("ofRandomPoisson<float>(2.5)") << ofRandomPoisson<float>(5.5);  // expected not to compile
@@ -193,6 +200,7 @@ void ofApp::perform() {
 		ofLogNotice("lognormal<glm::vec2>({10, 20},{2, 1})") << lognormal<glm::vec2>({ 10, 2 }, { 2, .5 });
 		ofLogNotice("lognormal<glm::vec3>(10,2)") << lognormal<glm::vec3>(10, 2);
 		ofLogNotice("lognormal<glm::vec3>({10,20,30},{2,1,.5})") << lognormal<glm::vec3>({ 10, 2, 1 }, { 2, .5, .25 });
+		ofLogNotice("lognormal<glm::vec4>({10,20,30, 40},{2,1,.5, .25})") << lognormal<glm::vec4>({ 10, 2, 1, 30 }, { 2,1, .5, .25 });
 
 		ofLogNotice("ofRandomLognormal(10, 2)") << ofRandomLognormal(10, 2);
 		ofLogNotice("ofRandomLognormal<double>(10, 2)") << ofRandomLognormal<double>(10, 2);
@@ -200,7 +208,7 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomLognormal<glm::vec2>(10, 2)") << ofRandomLognormal<glm::vec2>(10, 2);
 		ofLogNotice("ofRandomLognormal<glm::vec2>({10, 20},{2, 1})") << ofRandomLognormal<glm::vec2>({ 10, 2 }, { 2, .5 });
 		ofLogNotice("ofRandomLognormal<glm::vec3>(10,2)") << ofRandomLognormal<glm::vec3>(10, 2);
-		ofLogNotice("ofRandomLognormal<glm::vec3>({10,20,30},{2,1,.5})") << ofRandomLognormal<glm::vec3>({ 10, 2, 1 }, { 2, .5, .25 });
+		ofLogNotice("ofRandomLognormal<glm::vec3>({10,2,1},{2,.5,.25})") << ofRandomLognormal<glm::vec3>({ 10, 2, 1 }, { 2, .5, .25 });
 
 		// gamma requires 2 args (no defaults)
 
@@ -211,6 +219,7 @@ void ofApp::perform() {
 		ofLogNotice("gamma<glm::vec2>({3, 20},{5, 1})") << gamma<glm::vec2>({ 3, 20 }, { 5, 1 });
 		ofLogNotice("gamma<glm::vec3>(3, 5)") << gamma<glm::vec3>(3, 5);
 		ofLogNotice("gamma<glm::vec3>({3,20, 1},{5,1,.5})") << gamma<glm::vec3>({ 3, 20, 1 }, { 5, 1, .5 });
+		ofLogNotice("gamma<glm::vec4>({3,20, 1, .5},{5,1,.5, .25})") << gamma<glm::vec4>({ 3, 20, 1 , .5}, { 5, 1, .5, .25 });
 
 		ofLogNotice("ofRandomGamma(3, 5)") << ofRandomGamma(3, 5);
 		ofLogNotice("ofRandomGamma<double>(3, 5)") << ofRandomGamma<double>(3, 5);
@@ -228,7 +237,9 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomChiSquared<glm::vec2>(4)") << ofRandomChiSquared<glm::vec2>(4);
 		ofLogNotice("ofRandomChiSquared<glm::vec2>({4, 10})") << ofRandomChiSquared<glm::vec2>({ 4, 10 });
 		ofLogNotice("ofRandomChiSquared<glm::vec3>(4)") << ofRandomChiSquared<glm::vec3>(4);
+		ofLogNotice("ofRandomChiSquared<glm::vec4>(4)") << ofRandomChiSquared<glm::vec4>(4);
 		ofLogNotice("ofRandomChiSquared<glm::vec3>({4,10,100})") << ofRandomChiSquared<glm::vec3>({ 4, 10, 100 });
+		ofLogNotice("ofRandomChiSquared<glm::vec4>({4,10,100, 50})") << ofRandomChiSquared<glm::vec4>({ 4, 10, 100, 50 });
 
 		ofLogNotice("chi_squared(4)") << chi_squared(4);
 		ofLogNotice("chi_squared<double>(4)") << chi_squared<double>(4);
@@ -247,7 +258,9 @@ void ofApp::perform() {
 		ofLogNotice("binomial<glm::vec2>(20, .5)") << binomial<glm::vec2>(20, .5);
 		ofLogNotice("binomial<glm::vec2>({20, 20},{.5, .1})") << binomial<glm::vec2>({ 20, 20 }, { .5, .1 });
 		ofLogNotice("binomial<glm::vec3>(20, .5)") << binomial<glm::vec3>(20, .5);
+		ofLogNotice("binomial<glm::vec4>(20, .5)") << binomial<glm::vec4>(20, .5);
 		ofLogNotice("binomial<glm::vec3>({20,20, 1},{.5,.1,.05})") << binomial<glm::vec3>({ 20, 20, 1 }, { .5, .1, .05 });
+		ofLogNotice("binomial<glm::vec4>({20,20, 1, 1},{.5,.1,.05, .1})") << binomial<glm::vec4>({ 20, 20, 1, 1 }, { .5, .1, .05, .1 });
 
 		ofLogNotice("ofRandomBinomial(20, .5)") << ofRandomBinomial(20, .5);
 		ofLogNotice("ofRandomBinomial<double>(20, .5)") << ofRandomBinomial<double>(20, .5);
@@ -264,6 +277,7 @@ void ofApp::perform() {
 		ofLogNotice("geometric<int>()") << geometric<int>();
 		ofLogNotice("geometric<glm::vec2>()") << geometric<glm::vec2>();
 		ofLogNotice("geometric<glm::vec3>()") << geometric<glm::vec3>();
+		ofLogNotice("geometric<glm::vec4>()") << geometric<glm::vec4>();
 
 		ofLogNotice("ofRandomGeometric()") << ofRandomGeometric();
 		ofLogNotice("ofRandomGeometric<double>()") << ofRandomGeometric<double>();
