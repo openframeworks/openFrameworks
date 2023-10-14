@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 using namespace of::random; // OK in implementation files
+using namespace glm;
 
 void ofApp::setup() {
 
@@ -10,8 +11,11 @@ void ofApp::setup() {
 
 	seed_.addListener(this, &ofApp::seed);
 	reconstruct_.addListener(this, &ofApp::reconstruct);
-
 	reconstruct();
+	
+	vec4 aRandom(gaussian<vec2>(10.0, 1.0), exponential<vec2>({0.1, 0.5}));
+	ofLogNotice("assembled random vec4") << aRandom;
+	
 }
 
 void ofApp::draw() {
@@ -34,14 +38,17 @@ void ofApp::perform() {
 		ofLogNotice("ofRandom(5)") << ofRandom(5);
 		ofLogNotice("ofRandom(5.0)") << ofRandom(5.0);
 		ofLogNotice("ofRandom(5,10)") << ofRandom(5, 10);
+		ofLogNotice("ofRandom(-1,1)") << ofRandom(-1,1);
 		ofLogNotice("ofRandom(5.0,10.0)") << ofRandom(5.0, 10.0);
 
 		// ofRandomUniform honors type of args
-		ofLogNotice("uniform()") << uniform();
+		ofLogNotice("uniform()") << of::random::uniform();
 		ofLogNotice("uniform(5)") << uniform(5);
+		ofLogNotice("uniform(-10,10)") << uniform(-10,10);
 		ofLogNotice("uniform(5.0)") << uniform(5.0);
 		ofLogNotice("uniform(5,10)") << uniform(5, 10);
 		ofLogNotice("uniform(5.0,10.0)") << uniform(5.0, 10.0);
+		ofLogNotice("uniform(-5.0,-10.0)") << uniform(5.0, 10.0);
 
 		// but can be forced by specifying the <type>
 		ofLogNotice("uniform<double>()") << uniform<double>();
@@ -58,9 +65,9 @@ void ofApp::perform() {
 		ofLogNotice("uniform<glm::vec2>(5,10)") << uniform<glm::vec2>(5, 10);
 		ofLogNotice("uniform<glm::vec2>({0,10},{10,20})") << uniform<glm::vec2>({ 0, 10 }, { 10, 20 });
 		ofLogNotice("uniform<glm::vec3>()") << uniform<glm::vec3>();
-		ofLogNotice("uniform<glm::vec3>(-1,1)") << uniform<glm::vec3>(5);
 		ofLogNotice("uniform<glm::vec4>(5)") << uniform<glm::vec4>(5);
 		ofLogNotice("uniform<glm::vec3>(5,10)") << uniform<glm::vec3>(5, 10);
+		ofLogNotice("uniform<glm::vec3>(-1,1)") << uniform<glm::vec3>(-1,1);
 		ofLogNotice("uniform<glm::vec3>({0,10,20},{10,20,30})") << uniform<glm::vec3>({ 0, 10, 20 }, { 10, 20, 30 });
 		ofLogNotice("uniform<glm::vec4>({0,10,20,30},{10,20,30, 40})") << uniform<glm::vec4>({ 0, 10, 20, 30 }, { 10, 20, 30, 40 });
 
@@ -165,7 +172,7 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomPoisson<glm::vec3>({2.5, 10, 0.1}") << ofRandomPoisson<glm::vec3>({ 5.5, 10, 0.1 });
 
 		// bernoulli requires 1 arg (no defaults), and return type is bool
-		// again, glm usage case is cast
+		// again, glm usage case is cast to float
 
 		ofLogNotice("bernoulli<glm::vec3>(.33)") << bernoulli<glm::vec3>(.33);
 		ofLogNotice("bernoulli<glm::vec2>(.5)") << bernoulli<glm::vec2>(.5);
@@ -173,6 +180,7 @@ void ofApp::perform() {
 		ofLogNotice("bernoulli<bool>(.5)") << bernoulli<bool>(.5);
 		ofLogNotice("bernoulli(.5)") << bernoulli(.5);
 
+		ofLogNotice("ofRandomBernoulli<glm::vec3>({.1,.5,.9})") << ofRandomBernoulli<glm::vec3>({.1,.5,.9});
 		ofLogNotice("ofRandomBernoulli<glm::vec3>(.33)") << ofRandomBernoulli<glm::vec3>(.33);
 		ofLogNotice("ofRandomBernoulli<glm::vec2>(.5)") << ofRandomBernoulli<glm::vec2>(.5);
 		ofLogNotice("ofRandomBernoulli<float>(.5)") << ofRandomBernoulli<float>(.5);
