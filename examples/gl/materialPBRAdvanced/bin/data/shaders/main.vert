@@ -1,10 +1,11 @@
 // we set this define in the ofApp class
-#if defined(OF_SHADOW_DEPTH_PASS)
-uniform mat4 modelMatrix;
-in vec4 position;
-uniform float iElapsedTime;
-uniform float uWiggleVerts;
-#else
+//#if defined(OF_SHADOW_DEPTH_PASS)
+//uniform mat4 modelMatrix;
+//in vec4 position;
+//uniform float iElapsedTime;
+//uniform float uWiggleVerts;
+//#else
+#if !defined(OF_SHADOW_DEPTH_PASS)
 // the mesh we are using does not have texture coordinates
 // so we are going to send the local vertex positions to use for animation
 OUT vec3 v_localPos;
