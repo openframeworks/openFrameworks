@@ -16,6 +16,7 @@ std::unordered_map<ofGLProgrammableRenderer *, std::unordered_map<std::string, s
 namespace{
 string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc,const ofMaterialSettings& adata);
 string fragmentSource(bool bPBR, string defaultHeader, string customUniforms, const ofMaterialSettings& adata, int maxLights, bool hasTexture, bool hasColor, std::string definesString="");
+string shaderDepthVertexSource(const ofMaterialSettings& adata);
 }
 
 //----------------------------------------------------------
@@ -182,7 +183,7 @@ void ofMaterial::setDepthShaderMain(std::string aShaderSrc, std::string akey) {
 
 //----------------------------------------------------------
 bool ofMaterial::hasDepthShader() const {
-	return mBHasDepthShader;
+	return mBHasDepthShader || hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT);
 }
 
 //----------------------------------------------------------
@@ -675,7 +676,13 @@ const std::string ofMaterial::getShaderStringId() const {
 
 //-----------------------------------------------------------
 const std::string ofMaterial::getDepthShaderStringId() const {
-	return data.mainDepthVertexKey;
+	if( !data.mainDepthVertexKey.empty() ) {
+		return data.mainDepthVertexKey;
+	}
+	if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+		return "displacement_depth_id";
+	}
+	return "";
 }
 
 //-----------------------------------------------------------
@@ -729,15 +736,6 @@ void ofMaterial::initDepthShaders(ofGLProgrammableRenderer & renderer) const {
 		
 		if(mDepthShaders[&renderer] == nullptr){
 			ofLogVerbose("ofMaterial") << "initDepthShaders : allocating depth shaders | " << ofGetFrameNum();
-			//add the custom uniforms to the shader header
-			auto customUniforms = data.customUniforms;
-			for( auto & custom : mCustomUniforms ){
-				customUniforms += custom.second + " " + custom.first + ";\n";
-			}
-			
-			std::string definesString = getDefinesString();
-			std::string extraVertString = definesString;
-			extraVertString += customUniforms;
 			
 			mDepthShaders[&renderer].reset(new DepthShaders);
 			mDepthShaders[&renderer]->shaderId = shaderId;
@@ -757,10 +755,25 @@ const ofShader& ofMaterial::getShadowDepthShader( const ofShadow& ashadow, ofGLP
 	
 	if(shadowShader == mDepthShaders[&renderer]->shaders.end() || !mDepthShaders[&renderer]->shaders[shadowShaderId] ) {
 		auto nDepthShader = std::make_shared<ofShader>();
-		// setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain)
-		if(!ashadow.setupShadowDepthShader( *nDepthShader, data.mainDepthVertex )) {
+		
+		auto customUniforms = data.customUniforms;
+		for( auto & custom : mCustomUniforms ){
+			customUniforms += custom.second + " " + custom.first + ";\n";
+		}
+		
+		std::string definesString = getDefinesString();
+		definesString += "#define SAMPLER sampler2D\n";
+		definesString += "#define TEXTURE texture\n";
+		std::string extraVertString = definesString;
+		extraVertString += customUniforms;
+		
+		std::string srcMain = extraVertString+shaderDepthVertexSource(data);
+		ofLogVerbose("--ofMaterial::getShadowDepthShader--");
+		if(!ashadow.setupShadowDepthShader( *nDepthShader, srcMain )) {
 			ofLogError("ofMaterial :: getShadowDepthShader() : error loading depth shader: ") << data.mainDepthVertexKey;
 		}
+		ofLogVerbose(nDepthShader->getShaderSource(GL_VERTEX_SHADER));
+		
 		mDepthShaders[&renderer]->shaders[shadowShaderId] = nDepthShader;
 	}
 	return *mDepthShaders[&renderer]->shaders[shadowShaderId];
@@ -1520,4 +1533,34 @@ namespace{
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + definesString + source;
         return source;
     }
+
+	string shaderDepthVertexSource(const ofMaterialSettings& adata) {
+//		auto source = bPBR ? shader_pbr_vert : vertexShader;
+		string header = "#define IN in\n";
+		auto source = shader_pbr_vert;
+		
+		string mainVertex = adata.mainDepthVertex;
+		if( mainVertex.empty() ) {
+			mainVertex = shader_pbr_main_depth_vert;
+		}
+		ofStringReplace(source, "%mainVertex%", mainVertex);
+		ofStringReplace(source, "%additional_includes%", "");
+		
+//		if( bPBR ) {
+//			ofStringReplace(source, "%additional_includes%", addShaderSrc);
+//		} else {
+//			ofStringReplace(source, "%additional_includes%", "");
+//		}
+//
+//		if( bPBR ) {
+//			string mainVertex = adata.mainVertex;
+//			if( mainVertex.empty() ) {
+//				mainVertex = shader_pbr_main_vert;
+//			}
+//			ofStringReplace(source, "%mainVertex%", mainVertex);
+//		}
+//
+//		return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + source;
+		return header+source;
+	}
 }

@@ -108,6 +108,7 @@ void ofApp::draw(){
 	stringstream ss;
 	ss << "Reload shader(r): make changes to shader in data/shaders/main.frag and then press 'r' to see changes.";
 	ss << endl << "Wiggle verts(w): " << (bWiggleVerts ? "yes" : "no");
+	ss << endl << "Frame rate: " << ofGetFrameRate();
 	ofDrawBitmapStringHighlight(ss.str(), 40, 40);
 }
 
@@ -176,7 +177,9 @@ bool ofApp::reloadShader() {
 		matLogo.setDepthShaderMain(vbuffer.getText(), "main.glsl");
 		// configure the shader to include shadow functions for passing depth
 		// #define OF_SHADOW_DEPTH_PASS gets added by OF so we can use the same shader file and run different bits of code for the shadow pass
-//		light.getShadow().setupShadowDepthShader(mDepthShader, vbuffer.getText());
+		// we add #define NON_MATERIAL_DEPTH_PASS because ofMaterial adds variables that we need
+		// to add manually when not using a materil, see main.vert
+//		light.getShadow().setupShadowDepthShader(mDepthShader, "#define NON_MATERIAL_DEPTH_PASS\n"+vbuffer.getText());
 		return true;
 	}
 	return false;
@@ -184,6 +187,7 @@ bool ofApp::reloadShader() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+	cout << "key: " << key << endl;
 	if( key == 'r' ) {
 		reloadShader();
 	}
@@ -192,6 +196,12 @@ void ofApp::keyPressed(int key){
 	}
 	if( key == 'w') {
 		bWiggleVerts = !bWiggleVerts;
+	}
+	if( key == OF_KEY_DEL || key == 8 ) {
+		cout << "trying to remove texture from mat plywood" << endl;
+		matPlywood.removeTexture(OF_MATERIAL_TEXTURE_DIFFUSE);
+		matPlywood.removeTexture(OF_MATERIAL_TEXTURE_NORMAL );
+		matPlywood.removeTexture(OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC );
 	}
 }
 
