@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 using namespace of::random; // OK in implementation files
+using namespace glm;
 
 void ofApp::setup() {
 
@@ -10,13 +11,10 @@ void ofApp::setup() {
 
 	seed_.addListener(this, &ofApp::seed);
 	reconstruct_.addListener(this, &ofApp::reconstruct);
-
 	reconstruct();
 	
-	using namespace glm;
-	using namespace of::random;
-
 	vec4 aRandom(gaussian<vec2>(10.0, 1.0), exponential<vec2>({0.1, 0.5}));
+	ofLogNotice("assembled random vec4") << aRandom;
 	
 }
 
