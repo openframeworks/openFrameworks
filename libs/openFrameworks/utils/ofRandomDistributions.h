@@ -486,14 +486,13 @@ namespace {
 
 // again, a few templates per function, for the convenience of implicit brace init of glm::vec parameters
 
-float ofRandomUniform() { return of::random::uniform<float>(0, 1); }
-
 template <class T, typename... Args>
 std::enable_if_t<!std::is_arithmetic_v<T>, T>
 ofRandomUniform(Args &&... args) { return of::random::uniform<T>(std::forward<Args>(args)...); }
 
-template <class T>
-T ofRandomUniform(T max) { return of::random::uniform<T>(0, max); }
+template <class T = float>
+std::enable_if_t<std::is_arithmetic_v<T>, T>
+ofRandomUniform(T max = 1.0f) { return of::random::uniform<T>(0, max); }
 
 template <class T>
 T ofRandomUniform(T min, T max) { return of::random::uniform<T>(min, max); }
