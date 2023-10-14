@@ -19,7 +19,6 @@ class ofxSvg {
 public:
 	ofxSvg();
 	ofxSvg(const of::filesystem::path & fileName);
-	~ofxSvg();
 	
 	float getWidth() const;
 	float getHeight() const;
