@@ -17,7 +17,11 @@
 
 class ofxSvg {
 public:
-	ofxSvg();
+
+	ofxSvg() = default;
+	~ofxSvg() = default;
+	ofxSvg(const ofxSvg & a) = default;
+
 	ofxSvg(const of::filesystem::path & fileName);
 	
 	float getWidth() const;
