@@ -35,7 +35,7 @@ void ofxSvg::load(const of::filesystem::path & fileName) {
 	}
 
 	ofBuffer buffer = ofBufferFromFile(fileName);
-	loadFromString(buffer.getText(), file);
+	loadFromString(buffer.getText(), file.string());
 }
 
 void ofxSvg::loadFromString(std::string stringdata, std::string urlstring) {
