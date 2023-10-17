@@ -56,7 +56,7 @@ Usually, a lot of discussions just means that we haven't thought about what you'
 - On the other hand, we are also busy people, often professionally involved in making large-scale projects ourselves, using openFrameworks. 
 If you feel like no-one is paying attention to your feature request, just be patient; it will be considered eventually.
 - And finally, a small reality check: please don't expect that general agreement in the discussion that a feature request is a good idea means it will get made immediately! 
-As with most open source-projects, the fastest way to get a feature made is to create it yourself, or if you are not a programmer, make friends with someone who is, introduce them to openFrameworks, and ask them to make it for you.
+As with most open-source-projects, the fastest way to get a feature made is to create it yourself, or if you are not a programmer, make friends with someone who is, introduce them to openFrameworks, and ask them to make it for you.
 
 ## <a id='contributing-code'></a>Contribute code
 
