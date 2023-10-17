@@ -6,7 +6,7 @@
 #include "OscTypes.h"
 #include "UdpSocket.h"
 
-#include "ofParameterGroup.h"
+#include "ofParameter.h"
 #include "ofxOscBundle.h"
 
 /// \struct ofxOscSenderSettings
