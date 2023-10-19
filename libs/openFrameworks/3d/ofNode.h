@@ -236,6 +236,21 @@ public:
 	/// \param s Desired local scale for all axes as ref to 3D vector where 1 = 100%.
 	void setScale(const glm::vec3& s);
 	
+	/// \brief Set the local position, rotation and scale of the node.
+	///
+	/// \param p Desired local xyz coordinates as ref to 3D vector.
+	/// \param q Desired local orientation as ref to an glm::quat.
+	/// \param s Desired local scale for all axes as ref to 3D vector where 1 = 100%.
+	void setPositionRotationScale( const glm::vec3& p, const glm::quat& q, const glm::vec3& s );
+	
+	/// \brief Set the local position, rotation and scale of the node.
+	///
+	/// \param p Desired local xyz coordinates as ref to 3D vector.
+	/// \param eulerAngles Desired local xyz angles in degrees, as ref to 3D vector.
+	/// \param s Desired local scale for all axes as ref to 3D vector where 1 = 100%.
+	/// \note Using euler angles can cause gimbal lock.
+	void setPositionRotationScale( const glm::vec3& p, const glm::vec3& eulerAngles, const glm::vec3& s );
+	
 	/// \}
 	/// \name Modifiers
 	/// \{
