@@ -24,6 +24,7 @@ var LibraryHTML5Audio = {
         }
     },
 
+    html5audio_context_create__deps: ['$emscriptenRegisterAudioObject'],
     html5audio_context_create: function () {
        try {
             // Fix up for prefixing
