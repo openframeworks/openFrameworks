@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ofSoundBaseTypes.h"
+#include "ofSoundBuffer.h"
 #include "emscripten/webaudio.h"
 
 class ofxEmscriptenSoundStream: public ofBaseSoundStream {
