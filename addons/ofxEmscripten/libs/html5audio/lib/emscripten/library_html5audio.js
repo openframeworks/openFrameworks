@@ -29,6 +29,7 @@ var LibraryHTML5Audio = {
             // Fix up for prefixing
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             var context = new AudioContext({});
+            var id = emscriptenRegisterAudioObject(context);
 
             // Fix issue with chrome autoplay policy
             document.addEventListener('mousedown', function cb(event) {
@@ -44,7 +45,7 @@ var LibraryHTML5Audio = {
             fft.maxDecibels = 0;
             fft.minDecibels = -100;
             AUDIO.fft = fft;
-            return 0;
+            return id;
         } catch (e) {
             console.log('Web Audio API is not supported in this browser', e);
             return -1;
@@ -201,48 +202,35 @@ var LibraryHTML5Audio = {
 	}
     },
 
-    html5audio_stream_create: function(bufferSize, inputChannels, outputChannels, inbuffer, outbuffer, callback, userData) {
-            var stream = AUDIO.context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
-            var inbufferArray = Module.HEAPF32.subarray(inbuffer >> 2, (inbuffer >> 2) + bufferSize * inputChannels);
-            var outbufferArray = Module.HEAPF32.subarray(outbuffer >> 2, (outbuffer >> 2) + bufferSize * outputChannels);
-
-            stream.onaudioprocess = function(event) {
-                var i, j, c;
-                if (inputChannels > 0) {
-                    for (c = 0; c < inputChannels; ++c) {
-                        var inChannel = event.inputBuffer.getChannelData(c);
-                        for (i = 0, j = c; i < bufferSize; ++i, j += inputChannels) {
-                            inbufferArray[j] = inChannel[i];
+    html5audio_stream_create__deps: ['$emscriptenGetAudioObject'],
+    html5audio_stream_create: function(audioWorkletNode, numInputChannels){
+        var audioWorkletNode = emscriptenGetAudioObject(audioWorkletNode);
+        if(numInputChannels>0){
+            navigator.getUserMedia = navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia;
+            if(navigator.getUserMedia){
+                navigator.getUserMedia({
+                    audio: {
+                        autoGainControl: false,
+                        echoCancellation: false,
+                        noiseSuppression: false
                         }
-                    }
-                }
-
-                {{{ makeDynCall('viiii', 'callback') }}}(bufferSize, inputChannels, outputChannels, userData);
-
-                if (outputChannels > 0) {
-                    for (c = 0; c < outputChannels; ++c) {
-                        var outChannel = event.outputBuffer.getChannelData(c);
-                        for (i = 0, j = c; i < bufferSize; ++i, j += outputChannels) {
-                            outChannel[i] = outbufferArray[j];
-                        }
-                    }
-                }
-            };
-
-            if (inputChannels > 0) {
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(function (audioIn) {
+                    },
+                    function(audioIn) {
                         var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
-                        mediaElement.connect(stream);
+                        mediaElement.connect(audioWorkletNode);
                         AUDIO.mediaElement = mediaElement;
-                    })
-                    .catch(function (error) {
-                        console.log("Error creating audio in", error);
-                    });
+                    },
+                    function(error){
+                        console.log("error creating audio in",error);
+                    }
+                );
             }
-
-            stream.connect(AUDIO.fft);
-        },
+        }
+        audioWorkletNode.connect(AUDIO.fft);
+    },
 
     html5audio_stream_free: function () {
 
