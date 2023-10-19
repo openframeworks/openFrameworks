@@ -6,9 +6,11 @@
  */
 
 #include "ofxEmscriptenSoundStream.h"
-#include "html5audio.h"
+#include "ofSoundBuffer.h"
 #include "ofBaseApp.h"
 #include "ofLog.h"
+#include "html5audio.h"
+#include "emscripten/webaudio.h"
 
 using namespace std;
 
