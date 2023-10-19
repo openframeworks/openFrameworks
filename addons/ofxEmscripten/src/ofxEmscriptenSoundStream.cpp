@@ -9,7 +9,6 @@
 #include "html5audio.h"
 #include "ofBaseApp.h"
 #include "ofLog.h"
-#include "ofSoundBuffer.h"
 
 using namespace std;
 
@@ -52,7 +51,7 @@ void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL su
 		.outputChannelCounts = outputChannelCounts
 	};
 	EMSCRIPTEN_AUDIO_WORKLET_NODE_T audioWorklet = emscripten_create_wasm_audio_worklet_node(audioContext, "audio-processor", &options, &ProcessAudio, 0);
-	html5audio_stream_create(audioWorklet, static_cast<int>(stream->settings.numInputChannels));
+	html5audio_stream_create(audioWorklet, stream->settings.numInputChannels);
 }
 
 void WebAudioWorkletThreadInitialized(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData) {
