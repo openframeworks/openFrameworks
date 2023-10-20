@@ -37,7 +37,8 @@ public:
 	ofSoundBuffer outbuffer;
 
 private:
+	static void audio_cb(int bufferSize, int inputChannels, int outputChannels, void * userData);
+	void audioCB(int bufferSize, int inputChannels, int outputChannels);
 	int context;
-	int audioProcessedCount;
-	uint8_t wasmAudioWorkletStack[4096];
+	unsigned long long tickCount;
 };
