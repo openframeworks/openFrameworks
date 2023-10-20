@@ -12,7 +12,7 @@ void ofApp::setup(){
 	ofSoundStreamSettings settings;
 	settings.numOutputChannels = 2;
 	settings.sampleRate = 44100;
-	settings.bufferSize = 512;
+	settings.bufferSize = 128;
 	settings.numBuffers = 4;
 	settings.setOutListener(this);
 	soundStream.setup(settings);
