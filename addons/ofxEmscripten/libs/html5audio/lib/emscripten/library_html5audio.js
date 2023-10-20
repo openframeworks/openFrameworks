@@ -64,7 +64,11 @@ var LibraryHTML5Audio = {
     html5audio_context_spectrum: function (bands, spectrum) {
         AUDIO.fft.fftSize = bands * 2;
         var spectrumArray = Module.HEAPF32.subarray(spectrum >> 2, (spectrum >> 2) + bands);
-        AUDIO.fft.getFloatFrequencyData(spectrumArray);
+        var spectrumArrayCopy = new Float32Array (spectrumArray);
+        AUDIO.fft.getFloatFrequencyData(spectrumArrayCopy);
+        for (let i = 0; i < spectrumArrayCopy.length; i++) {
+            spectrumArray[i] = spectrumArrayCopy[i];
+        }
     },
 
     html5audio_context_samplerate: function () {
@@ -99,7 +103,7 @@ var LibraryHTML5Audio = {
                 var fileSizeInBytes = stats.size;
                     
                 var tag = ext; //this covers most types
-                if( ext == mp3 ){
+                if( ext == 'mp3'){
                     tag = 'mpeg';
                 }else if( ext == 'oga'){
                     tag = 'ogg';
