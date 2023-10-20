@@ -35,9 +35,9 @@ public:
 	ofSoundStreamSettings settings;
 	ofSoundBuffer inbuffer;
 	ofSoundBuffer outbuffer;
+	int audioProcessedCount;
 
 private:
 	int context;
-	int audioProcessedCount;
 	uint8_t wasmAudioWorkletStack[4096];
 };
