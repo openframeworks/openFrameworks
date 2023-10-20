@@ -80,6 +80,7 @@ std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice
 bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	inbuffer.allocate(settings.bufferSize, settings.numInputChannels);
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
+	audioProcessedCount = 0;
 	this->settings = settings;
 	stream = this;
 	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, 0);
