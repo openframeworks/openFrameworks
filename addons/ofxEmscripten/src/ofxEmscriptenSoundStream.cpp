@@ -86,7 +86,6 @@ bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
 	this->settings = settings;
 	stream_callback = reinterpret_cast<std::uintptr_t>(this);
-	uint8_t wasmAudioWorkletStack[4096];
 	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, 0);
 	return true;
 }
