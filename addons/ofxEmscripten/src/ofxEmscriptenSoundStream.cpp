@@ -18,10 +18,13 @@ int stream_callback;
 ofSoundBuffer inbuffer;
 ofSoundBuffer outbuffer;
 
+ofxEmscriptenSoundStream * stream;
+ofSoundBuffer inbuffer;
+ofSoundBuffer outbuffer;
+
 EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutputs, AudioSampleFrame *outputs, int numParams, const AudioParamFrame *params, void *userData) {
-	ofxEmscriptenSoundStream* stream = (ofxEmscriptenSoundStream*)stream_callback;
-	stream->ofxEmscriptenSoundStream::audioCB(stream->settings.bufferSize, stream->settings.numInputChannels, stream->settings.numOutputChannels);
 	if (stream->settings.numInputChannels > 0) {
+		stream->settings.inCallback(inbuffer);
 		for (int o = 0; o < numInputs; ++o) {
 			for (int i = 0; i < 128; ++i) {
 				for (int ch = 0; ch < inputs[o].numberOfChannels; ++ch) {
@@ -31,6 +34,7 @@ EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutpu
 		}
 	}
 	if (stream->settings.numOutputChannels > 0) {
+		stream->settings.outCallback(outbuffer);
 		for (int o = 0; o < numOutputs; ++o) {
 			for (int i = 0; i < 128; ++i) {
 				for (int ch = 0; ch < stream->settings.numOutputChannels; ++ch) {
@@ -44,7 +48,6 @@ EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutpu
 
 void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData) {
 	if (!success) return;
-	ofxEmscriptenSoundStream* stream = (ofxEmscriptenSoundStream*)stream_callback;
 	int outputChannelCounts[1] = { static_cast<int>(stream->settings.numOutputChannels) };
 	EmscriptenAudioWorkletNodeCreateOptions options = {
 		.numberOfInputs = 1,
@@ -85,7 +88,7 @@ bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	inbuffer.allocate(settings.bufferSize, settings.numInputChannels);
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
 	this->settings = settings;
-	stream_callback = reinterpret_cast<std::uintptr_t>(this);
+	stream = this;
 	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, 0);
 	return true;
 }
@@ -136,10 +139,4 @@ int ofxEmscriptenSoundStream::getSampleRate() const{
 
 int ofxEmscriptenSoundStream::getBufferSize() const{
 	return settings.bufferSize;
-}
-
-void ofxEmscriptenSoundStream::audioCB(int bufferSize, int inputChannels, int outputChannels){
-	if(inputChannels>0 && settings.inCallback) settings.inCallback(inbuffer);
-	if(outputChannels>0 && settings.outCallback) settings.outCallback(outbuffer);
-	tickCount++;
 }
