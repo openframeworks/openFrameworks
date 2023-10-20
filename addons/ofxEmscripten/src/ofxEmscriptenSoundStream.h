@@ -33,6 +33,7 @@ public:
 	int getBufferSize() const;
 	ofSoundStreamSettings settings;
 	void audioCB(int bufferSize, int inputChannels, int outputChannels);
+	uint8_t wasmAudioWorkletStack[4096];
 
 private:
 	int context;
