@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ofSoundBaseTypes.h"
+#include "ofSoundBuffer.h"
 
 class ofxEmscriptenSoundStream: public ofBaseSoundStream {
 public:
@@ -32,8 +33,11 @@ public:
 	int getSampleRate() const;
 	int getBufferSize() const;
 	ofSoundStreamSettings settings;
+	ofSoundBuffer inbuffer;
+	ofSoundBuffer outbuffer;
 
 private:
 	int context;
+	int audioProcessedCount;
 	uint8_t wasmAudioWorkletStack[4096];
 };
