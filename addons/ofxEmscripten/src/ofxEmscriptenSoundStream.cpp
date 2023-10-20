@@ -6,7 +6,6 @@
  */
 
 #include "ofxEmscriptenSoundStream.h"
-#include "ofSoundBuffer.h"
 #include "ofBaseApp.h"
 #include "ofLog.h"
 #include "html5audio.h"
@@ -15,28 +14,25 @@
 using namespace std;
 
 ofxEmscriptenSoundStream * stream;
-ofSoundBuffer inbuffer;
-ofSoundBuffer outbuffer;
-int audioProcessedCount = 0;
 
 EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutputs, AudioSampleFrame *outputs, int numParams, const AudioParamFrame *params, void *userData) {
-	++audioProcessedCount;
+	++stream->audioProcessedCount;
 	if (stream->settings.numInputChannels > 0 && stream->settings.inCallback) {
-		stream->settings.inCallback(inbuffer);
+		stream->settings.inCallback(stream->inbuffer);
 		for (int o = 0; o < numInputs; ++o) {
 			for (int i = 0; i < 128; ++i) {
 				for (int ch = 0; ch < inputs[o].numberOfChannels; ++ch) {
-					inbuffer[i * inputs[o].numberOfChannels + ch] = inputs[o].data[ch * 128 + i];
+					stream->inbuffer[i * inputs[o].numberOfChannels + ch] = inputs[o].data[ch * 128 + i];
 				}
 			}
 		}
 	}
 	if (stream->settings.numOutputChannels > 0 && stream->settings.outCallback) {
-		stream->settings.outCallback(outbuffer);
+		stream->settings.outCallback(stream->outbuffer);
 		for (int o = 0; o < numOutputs; ++o) {
 			for (int i = 0; i < 128; ++i) {
 				for (int ch = 0; ch < stream->settings.numOutputChannels; ++ch) {
-					outputs[o].data[ch * 128 + i] = outbuffer[i * outputs[o].numberOfChannels + ch];
+					outputs[o].data[ch * 128 + i] = stream->outbuffer[i * outputs[o].numberOfChannels + ch];
 				}
 			}
 		}
