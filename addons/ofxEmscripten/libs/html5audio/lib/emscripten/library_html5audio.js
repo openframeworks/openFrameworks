@@ -207,28 +207,14 @@ var LibraryHTML5Audio = {
     html5audio_stream_create: function(audioWorkletNode, numInputChannels){
         var audioWorkletNode = emscriptenGetAudioObject(audioWorkletNode);
         if(numInputChannels>0){
-            navigator.getUserMedia = navigator.getUserMedia ||
-            navigator.webkitGetUserMedia ||
-            navigator.mozGetUserMedia ||
-            navigator.msGetUserMedia;
-            if(navigator.getUserMedia){
-                navigator.getUserMedia({
-                    audio: {
-                        autoGainControl: false,
-                        echoCancellation: false,
-                        noiseSuppression: false
-                        }
-                    },
-                    function(audioIn) {
-                        var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
-                        mediaElement.connect(audioWorkletNode);
-                        AUDIO.mediaElement = mediaElement;
-                    },
-                    function(error){
-                        console.log("error creating audio in",error);
-                    }
-                );
-            }
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function (audioIn) {
+                    var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
+                    mediaElement.connect(audioWorkletNode);
+                })
+                .catch(function (error) {
+                    console.log("Error creating audio in", error);
+                });
         }
         audioWorkletNode.connect(AUDIO.fft);
     },
