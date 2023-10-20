@@ -17,10 +17,12 @@ using namespace std;
 ofxEmscriptenSoundStream * stream;
 ofSoundBuffer inbuffer;
 ofSoundBuffer outbuffer;
+int audioProcessedCount = 0;
 
 EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutputs, AudioSampleFrame *outputs, int numParams, const AudioParamFrame *params, void *userData) {
-	stream->ofxEmscriptenSoundStream::audioCB(stream->settings.bufferSize, stream->settings.numInputChannels, stream->settings.numOutputChannels);
-	if (stream->settings.numInputChannels > 0) {
+	++audioProcessedCount;
+	if (stream->settings.numInputChannels > 0 && stream->settings.inCallback) {
+		stream->settings.inCallback(inbuffer);
 		for (int o = 0; o < numInputs; ++o) {
 			for (int i = 0; i < 128; ++i) {
 				for (int ch = 0; ch < inputs[o].numberOfChannels; ++ch) {
@@ -29,7 +31,8 @@ EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutpu
 			}
 		}
 	}
-	if (stream->settings.numOutputChannels > 0) {
+	if (stream->settings.numOutputChannels > 0 && stream->settings.outCallback) {
+		stream->settings.outCallback(outbuffer);
 		for (int o = 0; o < numOutputs; ++o) {
 			for (int i = 0; i < 128; ++i) {
 				for (int ch = 0; ch < stream->settings.numOutputChannels; ++ch) {
@@ -65,7 +68,6 @@ int ofxEmscriptenAudioContext();
 
 ofxEmscriptenSoundStream::ofxEmscriptenSoundStream()
 :context(ofxEmscriptenAudioContext())
-,tickCount(0)
 {
 
 }
@@ -117,7 +119,7 @@ void ofxEmscriptenSoundStream::close() {
 }
 
 uint64_t ofxEmscriptenSoundStream::getTickCount() const{
-	return tickCount;
+	return audioProcessedCount;
 }
 
 int ofxEmscriptenSoundStream::getNumInputChannels() const{
@@ -134,10 +136,4 @@ int ofxEmscriptenSoundStream::getSampleRate() const{
 
 int ofxEmscriptenSoundStream::getBufferSize() const{
 	return settings.bufferSize;
-}
-
-void ofxEmscriptenSoundStream::audioCB(int bufferSize, int inputChannels, int outputChannels) {
-	if (inputChannels > 0 && settings.inCallback) settings.inCallback(inbuffer);
-	if (outputChannels > 0 && settings.outCallback) settings.outCallback(outbuffer);
-	tickCount++;
 }
