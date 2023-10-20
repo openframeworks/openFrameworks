@@ -31,7 +31,7 @@ EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutpu
 		stream->settings.outCallback(stream->outbuffer);
 		for (int o = 0; o < numOutputs; ++o) {
 			for (int i = 0; i < 128; ++i) {
-				for (int ch = 0; ch < stream->settings.numOutputChannels; ++ch) {
+				for (int ch = 0; ch < outputs[o].numberOfChannels; ++ch) {
 					outputs[o].data[ch * 128 + i] = stream->outbuffer[i * outputs[o].numberOfChannels + ch];
 				}
 			}
