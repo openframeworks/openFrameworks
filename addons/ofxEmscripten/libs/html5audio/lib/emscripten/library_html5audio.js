@@ -208,15 +208,14 @@ var LibraryHTML5Audio = {
         var audioWorkletNode = emscriptenGetAudioObject(audioWorkletNode);
         if(numInputChannels > 0){
             navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(function (audioIn) {
-                    var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
-                    mediaElement.connect(audioWorkletNode);
-                })
-                .catch(function (error) {
-                    console.log("Error creating audio in", error);
-                });
+            .then(function (audioIn) {
+                var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
+                mediaElement.connect(audioWorkletNode).connect(AUDIO.fft);
+            })
+            .catch(function (error) {
+                console.log("Error creating audio in", error);
+            });
         }
-        audioWorkletNode.connect(AUDIO.fft);
     },
 
     html5audio_stream_free: function () {
