@@ -36,5 +36,4 @@ public:
 
 private:
 	int context;
-	unsigned long long tickCount;
 };
