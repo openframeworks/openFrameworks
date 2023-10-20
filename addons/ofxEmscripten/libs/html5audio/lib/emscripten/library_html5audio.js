@@ -206,7 +206,7 @@ var LibraryHTML5Audio = {
     html5audio_stream_create__deps: ['$emscriptenGetAudioObject'],
     html5audio_stream_create: function(audioWorkletNode, numInputChannels){
         var audioWorkletNode = emscriptenGetAudioObject(audioWorkletNode);
-        if(numInputChannels>0){
+        if(numInputChannels > 0){
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(function (audioIn) {
                     var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
