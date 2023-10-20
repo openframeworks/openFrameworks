@@ -32,13 +32,12 @@ public:
 	int getNumOutputChannels() const;
 	int getSampleRate() const;
 	int getBufferSize() const;
-
-private:
-	static void audio_cb(int bufferSize, int inputChannels, int outputChannels, void * userData);
-	void audioCB(int bufferSize, int inputChannels, int outputChannels);
-	int context;
-	unsigned long long tickCount;
 	ofSoundStreamSettings settings;
 	ofSoundBuffer inbuffer;
 	ofSoundBuffer outbuffer;
+
+private:
+	int context;
+	int audioProcessedCount;
+	uint8_t wasmAudioWorkletStack[4096];
 };
