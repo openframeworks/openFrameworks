@@ -13,9 +13,8 @@
 
 using namespace std;
 
-ofxEmscriptenSoundStream * stream;
-
 EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutputs, AudioSampleFrame *outputs, int numParams, const AudioParamFrame *params, void *userData) {
+	ofxEmscriptenSoundStream * stream = (ofxEmscriptenSoundStream *)userData;
 	++stream->audioProcessedCount;
 	if (stream->settings.numInputChannels > 0 && stream->settings.inCallback) {
 		stream->settings.inCallback(stream->inbuffer);
@@ -42,13 +41,14 @@ EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutpu
 
 void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData) {
 	if (!success) return;
+	ofxEmscriptenSoundStream * stream = (ofxEmscriptenSoundStream *)userData;
 	int outputChannelCounts[1] = { static_cast<int>(stream->settings.numOutputChannels) };
 	EmscriptenAudioWorkletNodeCreateOptions options = {
 		.numberOfInputs = 1,
 		.numberOfOutputs = 1,
 		.outputChannelCounts = outputChannelCounts
 	};
-	EMSCRIPTEN_AUDIO_WORKLET_NODE_T audioWorklet = emscripten_create_wasm_audio_worklet_node(audioContext, "audio-processor", &options, &ProcessAudio, 0);
+	EMSCRIPTEN_AUDIO_WORKLET_NODE_T audioWorklet = emscripten_create_wasm_audio_worklet_node(audioContext, "audio-processor", &options, &ProcessAudio, userData);
 	html5audio_stream_create(audioWorklet, stream->settings.numInputChannels);
 }
 
@@ -82,8 +82,7 @@ bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
 	audioProcessedCount = 0;
 	this->settings = settings;
-	stream = this;
-	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, 0);
+	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, this);
 	return true;
 }
 
