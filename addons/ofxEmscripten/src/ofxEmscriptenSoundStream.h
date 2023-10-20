@@ -32,8 +32,8 @@ public:
 	int getSampleRate() const;
 	int getBufferSize() const;
 	ofSoundStreamSettings settings;
-	uint8_t wasmAudioWorkletStack[4096];
 
 private:
 	int context;
+	uint8_t wasmAudioWorkletStack[4096];
 };
