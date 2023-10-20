@@ -29,7 +29,7 @@ var LibraryHTML5Audio = {
        try {
             // Fix up for prefixing
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
-            var context = new AudioContext({});
+            var context = new AudioContext({ sampleRate: 44100 });
             var id = emscriptenRegisterAudioObject(context);
 
             // Fix issue with chrome autoplay policy
