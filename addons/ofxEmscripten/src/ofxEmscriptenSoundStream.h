@@ -39,5 +39,5 @@ public:
 
 private:
 	int context;
-	uint8_t wasmAudioWorkletStack[16384];
+	uint8_t wasmAudioWorkletStack[4096 * 4];
 };
