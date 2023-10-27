@@ -117,12 +117,15 @@ enum ofPolyWindingMode{
 ///
 /// \sa ofMatrixStack
 /// \sa http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/
-enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
+enum ofHandednessType { 
+	OF_LEFT_HANDED,
+	OF_RIGHT_HANDED };
 
 /// \brief represents the available matrix types used internally in ::ofMatrixStack.
-enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
-
-
+enum ofMatrixMode { 
+	OF_MATRIX_MODELVIEW = 0,
+	OF_MATRIX_PROJECTION,
+	OF_MATRIX_TEXTURE };
 
 /// \brief Sets the bitmap drawing mode for text.
 /// \sa ofSetDrawBitmapMode()

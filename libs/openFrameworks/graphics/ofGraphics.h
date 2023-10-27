@@ -54,7 +54,7 @@ void ofSetColor(int r, int g, int b);
 /// ~~~~
 void ofSetColor(int r, int g, int b, int a);
 void ofSetColor(int gray);
-void ofSetColor(const ofColor& acolor, int a);
+void ofSetColor(const ofColor & acolor, int a);
 
 /// \brief Sets the draw color with r,g,b,a 0-1.
 ///
@@ -64,13 +64,13 @@ void ofSetColor(const ofColor& acolor, int a);
 void ofSetFloatColor(float r, float g, float b);
 void ofSetFloatColor(float r, float g, float b, float a);
 void ofSetFloatColor(float gray);
-void ofSetFloatColor(const ofFloatColor& acolor, float a);
-void ofSetFloatColor(const ofFloatColor& acolor);
+void ofSetFloatColor(const ofFloatColor & acolor, float a);
+void ofSetFloatColor(const ofFloatColor & acolor);
 
-template<typename T>
-void ofSetColor( const ofColor_<T>& acolor ) {
+template <typename T>
+void ofSetColor(const ofColor_<T> & acolor) {
 	float limit = ofColor_<T>::limit();
-	ofSetFloatColor( acolor.r / limit, acolor.g / limit, acolor.b/limit, acolor.a / limit );
+	ofSetFloatColor(acolor.r / limit, acolor.g / limit, acolor.b / limit, acolor.a / limit);
 }
 
 /// Sets the draw color with r,g,b, passed in as a hex. Hex is a conventient
@@ -278,7 +278,7 @@ void ofClear(float r, float g, float b);
 /// }
 /// ~~~~
 void ofClear(float brightness, float a);
-OF_DEPRECATED_MSG("Use ofClear(brightness, alpha) instead",void ofClear(float brightness));
+OF_DEPRECATED_MSG("Use ofClear(brightness, alpha) instead", void ofClear(float brightness));
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
 /// an ofColor.
@@ -298,7 +298,6 @@ void ofClearFloat(float r, float g, float b);
 void ofClearFloat(float r, float g, float b, float a);
 void ofClearFloat(float brightness, float a);
 void ofClearFloat(const ofFloatColor & c);
-
 
 // OF's access to settings (bgAuto, origin, corner mode):
 OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead", bool ofbClearBg());
