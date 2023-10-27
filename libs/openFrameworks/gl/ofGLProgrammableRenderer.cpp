@@ -1068,12 +1068,21 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode) {
 
 	case OF_BLENDMODE_MAX:
 		glEnable(GL_BLEND);
+#ifdef TARGET_OPENGLES
+		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MAX not currently supported on OpenGL ES";
+#else
 		glBlendEquation(GL_MAX);
+#endif
+
 		break;
 
 	case OF_BLENDMODE_MIN:
 		glEnable(GL_BLEND);
+#ifdef TARGET_OPENGLES
+		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MIN not currently supported on OpenGL ES";
+#else
 		glBlendEquation(GL_MIN);
+#endif
 		break;
 
 	default:
