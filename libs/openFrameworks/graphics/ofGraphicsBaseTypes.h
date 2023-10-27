@@ -788,6 +788,8 @@ public:
 	///		OF_BLENDMODE_SUBTRACT
 	///		OF_BLENDMODE_MULTIPLY
 	///		OF_BLENDMODE_SCREEN
+	///		OF_BLENDMODE_MAX
+	///		OF_BLENDMODE_MIN
 	///
 	/// \param blendMode The blend mode to request this renderer to use.
 	/// \sa ofBlendMode

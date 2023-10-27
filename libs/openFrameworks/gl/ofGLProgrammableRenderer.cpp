@@ -1076,6 +1076,16 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			break;
 
+		case OF_BLENDMODE_MAX:
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_MAX);
+			break;
+
+		case OF_BLENDMODE_MIN:
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_MIN);
+			break;
+
 		default:
 			break;
 	}

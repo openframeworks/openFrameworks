@@ -66,7 +66,11 @@ enum ofBlendMode{
 	/// \brief Blend mode used for multiplicative blending.
 	OF_BLENDMODE_MULTIPLY = 4,
 	/// \brief Blend mode used for screen blending.
-	OF_BLENDMODE_SCREEN   = 5
+	OF_BLENDMODE_SCREEN   = 5,
+	/// \brief Blend mode used for max (lighten) blending.
+	OF_BLENDMODE_MAX   = 6,
+	/// \brief Blend mode used for max (darken) blending.
+	OF_BLENDMODE_MIN   = 7,
 };
 
 

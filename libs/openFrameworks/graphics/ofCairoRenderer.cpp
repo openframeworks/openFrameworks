@@ -697,6 +697,15 @@ void ofCairoRenderer::setBlendMode(ofBlendMode blendMode){
 			break;
 		}
 #endif
+		case OF_BLENDMODE_MAX:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_LIGHTEN);
+			break;
+		}
+
+		case OF_BLENDMODE_MIN:{
+			cairo_set_operator(cr,CAIRO_OPERATOR_DARKEN);
+			break;
+		}
 
 		default:
 			break;
