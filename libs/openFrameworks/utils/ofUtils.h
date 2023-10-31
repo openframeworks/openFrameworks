@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <bitset> // For ofToBinary.
 #include <chrono>
-#include <iomanip>  //for setprecision
+#include <iomanip> //for setprecision
 #include <optional>
 
 #include <random>
@@ -272,10 +272,10 @@ namespace of {
 /// \tparam Container the type of the underlying Container (only tested with vector; in place for future expansion)
 template <class T, class Container = std::vector<T>>
 class urn {
-	
+
 	Container values_;
 	typename Container::const_iterator phase_;
-	
+
 	auto prepare() {
 		if (valid()) {
 			if (auto_configure_edge_repeat_) {
@@ -288,113 +288,112 @@ class urn {
 			return false;
 		}
 	}
-	
+
 public:
-	
 	/// \brief if true, repetitions are not allowed for vectors of unique values
 	bool allow_edge_repeat_ { false };
-	
+
 	/// \brief if true, allow edge repeats if the vector contains duplicates
 	bool auto_configure_edge_repeat_ { true };
-	
+
 	/// \brief Construct an unitialized urn
 	urn() = default;
-	
+
 	/// \brief Copy-Construct an urn with contents of other urn
 	/// \param other the other Urn
-	urn(urn<T>& other) {
+	urn(urn<T> & other) {
 		values_ = other.get_values();
 		prepare();
 	}
-	
-	urn(urn<T>&& other) noexcept
-	: urn(std::exchange(other.values_, nullptr)) {
+
+	urn(urn<T> && other) noexcept
+		: urn(std::exchange(other.values_, nullptr)) {
 		prepare();
 	}
-	
+
 	/// \brief move-assign an urn with  another urn
 	/// \param other the other Urn
 	/// \return a new Urn
-	auto & operator=(urn<T>&& other) noexcept {
+	auto & operator=(urn<T> && other) noexcept {
 		std::swap(values_, other.values_);
 		prepare();
 		return *this;
 	}
-	
+
 	/// \brief Assign-Construct an urn with contents of other urn
 	/// \param other the other Urn
 	/// \return a new Urn
-	auto & operator=(urn<T>& other) {
+	auto & operator=(urn<T> & other) {
 		if (this == &other) return *this;
 		values_ = other.get_values();
 		prepare();
 		return *this;
 	}
-	
+
 	/// \brief Construct an urn initialized with contents
 	/// \param Args the values
 	template <typename... Args>
-	urn(Args&&... args) {
+	urn(Args &&... args) {
 		set(std::forward<Args>(args)...);
 	}
-	
+
 	~urn() = default;
-	
+
 	/// \brief Sets values by assignement and resets the phase
 	/// \param Args the values
 	/// \return void
 	template <typename... Args>
-	auto operator = (Args&&... args) {
+	auto operator=(Args &&... args) {
 		set(std::forward<Args>(args)...);
 	}
-	
+
 	/// \brief Assigns with values from another container and resets the phase
 	/// \param Container the container of values
 	/// \return void
-	auto set(const Container &values) {
+	auto set(const Container & values) {
 		values_ = values;
 		prepare();
 	}
-	
+
 	/// \brief Sets the values of the container from another Urn and resets the phase
 	/// \param urn the other urn
 	/// \return void
-	auto set(urn<T>& urn) {
+	auto set(urn<T> & urn) {
 		values_ = urn.get_values();
 		prepare();
 	}
-	
+
 	/// \brief Sets the values of the container and resets the phase
 	/// \param Args the values
 	/// \return void
 	template <typename... Args>
-	auto set(Args&&... args) {
+	auto set(Args &&... args) {
 		values_.clear();
 		values_.reserve(sizeof...(Args));
 		(values_.emplace_back(std::forward<Args>(args)), ...);
 		prepare();
 	}
-	
+
 	/// \brief Check if urn contains potential values
 	/// (not using the name empty to distinguish from depleted())
 	/// \return True if not empty
 	auto valid() const { return !values_.empty(); }
-	
+
 	/// \brief Check if urn is depleted
 	/// (not using the name empty to distinguish from valid())
 	/// \return true if the phase is at the end of the container
 	auto depleted() const { return phase_ == values_.cend(); }
-	
+
 	/// \brief Get the total number of elements given a full urn
 	/// (not using the name size to distinguish from remain())
 	/// \return number of elements
 	auto capacity() const { return values_.size(); }
-	
+
 	/// \brief Get the remaining number of elements in phase
 	/// (not using the name size to distinguish from capacity())
 	/// \return number of remaining elements in phase
 	auto remain() const { return std::distance(phase_, values_.cend()); }
-	
+
 	/// \brief Refills the urn with the original elements and resets the phase
 	/// \return void
 	auto refill() {
@@ -402,7 +401,8 @@ public:
 			auto last = *values_.end();
 			ofShuffle(values_);
 			if (!allow_edge_repeat_) {
-				while (last == *values_.begin()) ofShuffle(values_);
+				while (last == *values_.begin())
+					ofShuffle(values_);
 			}
 			phase_ = values_.begin();
 			return true;
@@ -411,10 +411,10 @@ public:
 			return false;
 		}
 	}
-	
+
 	/// \brief Get a random element from the urn, refilling as needed
 	/// \return a T from the urn (could be garbage if Urn is invalid)
-	auto pull()  {
+	auto pull() {
 		if (valid()) {
 			if (depleted()) refill();
 			return *phase_++;
@@ -424,34 +424,33 @@ public:
 			return v;
 		}
 	}
-	
+
 	/// \brief Get a random element from the urn
 	/// \return an optional<T> from the urn, nullopt if empty or invalid
 	auto pull_or_empty() {
 		if (valid()) {
-			if (depleted()) return std::optional<T>{};
+			if (depleted()) return std::optional<T> {};
 			return std::optional<T>(*phase_++);
 		} else {
 			// ofLogError("of::urn::pull_or_empty()") << "called on unitialized Urn -- returning nullopt";
-			return std::optional<T>{};
+			return std::optional<T> {};
 		}
 	}
-	
+
 	/// \brief Access the internals (advanced introspection)
 	/// \return a reference to the underlying stuff
 	auto & get_values() const { return values_; }
 	auto & get_phase() const { return phase_; }
-	
 };
 
 /// \brief CTAD (namely to help deduce references across the perfect forwarding)
-template<class T>
+template <class T>
 urn(T) -> urn<T>;
 }
 
 /// \brief alias to ofUrn
 /// note that not all deductions carry across the aliasing, so ofUrn is slightly disavantaged vs of::urn
-template<typename T, typename Container = std::vector<T>>
+template <typename T, typename Container = std::vector<T>>
 using ofUrn = typename of::urn<T, Container>;
 
 /// \section Vectors
@@ -1369,4 +1368,3 @@ void endutils();
 }
 }
 /*! \endcond */
- 
