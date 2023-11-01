@@ -146,9 +146,20 @@ struct ofTrueTypeFontSettings {
 	ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
 	std::vector<ofUnicode::range> ranges;
 
-	ofTrueTypeFontSettings(const of::filesystem::path & name, int size)
+	ofTrueTypeFontSettings(const of::filesystem::path & name, int size, bool _antialiased = true,
+		bool fullCharacterSet = true, bool _contours = false, float _simplifyAmt = 0.0f, int _dpi = 0)
 		: fontName(name)
-		, fontSize(size) { }
+		, fontSize(size)
+		, antialiased(_antialiased)
+		, contours(_contours)
+		, simplifyAmt(_simplifyAmt)
+		, dpi(_dpi) {
+		if (fullCharacterSet) {
+			ranges = { ofUnicode::Latin1Supplement };
+		} else {
+			ranges = { ofUnicode::Latin };
+		}
+	}
 
 	void addRanges(std::initializer_list<ofUnicode::range> alphabet) {
 		ranges.insert(ranges.end(), alphabet);
