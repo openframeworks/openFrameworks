@@ -352,6 +352,9 @@ public:
 	/// \param x X position of string
 	/// \param y Y position of string
 	void drawString(const std::string & s, float x, float y) const;
+	void drawString(const std::string & s, glm::vec2 pos) const {
+		drawString(s, pos.x, pos.y);
+	}
 
 	/// \brief Draws the string as if it was geometrical shapes.
 	///
@@ -360,6 +363,9 @@ public:
 	/// \param x X position of shapes
 	/// \param y Y position of shapes
 	void drawStringAsShapes(const std::string & s, float x, float y) const;
+	void drawStringAsShapes(const std::string & s, glm::vec2 pos) const {
+		drawStringAsShapes(s, pos.x, pos.y);
+	}
 
 	ofPath getCharacterAsPoints(uint32_t character, bool vflip = true, bool filled = true) const;
 	std::vector<ofPath> getStringAsPoints(const std::string & str, bool vflip = true, bool filled = true) const;
