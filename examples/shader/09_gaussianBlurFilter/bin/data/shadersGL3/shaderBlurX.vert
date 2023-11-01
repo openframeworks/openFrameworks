@@ -1,4 +1,4 @@
-#version 150
+OF_GLSL_SHADER_HEADER
 
 // these are for the programmable pipeline system
 uniform mat4 modelViewProjectionMatrix;

@@ -1,13 +1,14 @@
 #pragma once
 
-class ofVec3f;
-class ofVec4f;
-
-#include "ofConstants.h"
+#include "ofMath.h"
 #include "ofMathConstants.h"
+#include "ofConstants.h"
 #include "glm/vec2.hpp"
 #include "glm/fwd.hpp"
 #include <cmath>
+
+class ofVec3f;
+class ofVec4f;
 
 /// \brief
 /// ofVec2f is a class for storing a two dimensional vector. 
@@ -1211,7 +1212,7 @@ inline ofVec2f ofVec2f::rotated( float angle ) const {
 }
 
 inline ofVec2f ofVec2f::getRotated( float angle ) const {
-	float a = (float)(angle*DEG_TO_RAD);
+	float a = (float)(ofDegToRad(angle));
 	return ofVec2f( x*cos(a) - y*sin(a),
 				   x*sin(a) + y*cos(a) );
 }
@@ -1223,7 +1224,7 @@ inline ofVec2f ofVec2f::getRotatedRad( float angle ) const {
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle ) {
-	float a = (float)(angle * DEG_TO_RAD);
+	float a = (float)(ofDegToRad(angle));
 	float xrot = x*cos(a) - y*sin(a);
 	y = x*sin(a) + y*cos(a);
 	x = xrot;
@@ -1250,13 +1251,13 @@ inline ofVec2f ofVec2f::rotated( float angle, const ofVec2f& pivot ) const {
 }
 
 inline ofVec2f ofVec2f::getRotated( float angle, const ofVec2f& pivot ) const {
-	float a = (float)(angle * DEG_TO_RAD);
+	float a = (float)(ofDegToRad(angle));
 	return ofVec2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
 				   ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle, const ofVec2f& pivot ) {
-	float a = (float)(angle * DEG_TO_RAD);
+	float a = (float)(ofDegToRad(angle));
 	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
 	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
 	x = xrot;
@@ -1486,7 +1487,7 @@ inline float ofVec2f::lengthSquared() const {
 
 
 inline float ofVec2f::angle( const ofVec2f& vec ) const {
-	return (float)(atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y )*RAD_TO_DEG);
+	return ofRadToDeg(atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y ));
 }
 
 inline float ofVec2f::angleRad( const ofVec2f& vec ) const {

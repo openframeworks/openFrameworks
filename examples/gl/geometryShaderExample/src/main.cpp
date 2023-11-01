@@ -15,7 +15,7 @@ int main( ){
 		return 1;
 	}
 
-	ofRunApp(window, make_shared<ofApp>());
+	ofRunApp(window, std::make_shared<ofApp>());
 	ofRunMainLoop();
 
 }

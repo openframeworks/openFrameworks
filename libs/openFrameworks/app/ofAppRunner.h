@@ -1,13 +1,11 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofWindowSettings.h"
+#include "ofConstants.h"
 #include "ofMainLoop.h"
 
 class ofRectangle;
 class ofAppBaseWindow;
-class ofAppBaseGLWindow;
-class ofAppBaseGLESWindow;
 class ofAppGLFWWindow;
 class ofBaseApp;
 class ofBaseRenderer;
@@ -53,6 +51,9 @@ int ofRunMainLoop();
 ofBaseApp * ofGetAppPtr();
 
 void		ofExit(int status=0);
+
+bool 		ofIsCurrentThreadTheMainThread();
+std::thread::id ofGetMainThreadId();
 
 //-------------------------- time
 float 		ofGetFrameRate();

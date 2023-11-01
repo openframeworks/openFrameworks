@@ -8,11 +8,11 @@
 #ifndef OFMATRIXSTACK_H_
 #define OFMATRIXSTACK_H_
 
-#include <stack>
-#include "ofConstants.h"
 #include "ofRectangle.h"
-#include "glm/mat4x4.hpp"
 #include "ofGraphicsConstants.h"
+#include "ofConstants.h"
+#include "glm/mat4x4.hpp"
+#include <stack>
 
 class ofBaseDraws;
 class ofAppBaseWindow;

@@ -17,8 +17,6 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 		particles.clear();
 	}
 
-	ofSeedRandom();
-	//
 	glm::vec3 position, velocity;
 	ofColor color;
 	for(int i = 0; i < nParticles; i++){

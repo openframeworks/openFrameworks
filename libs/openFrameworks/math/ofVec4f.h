@@ -1,12 +1,12 @@
 #pragma once
 
-class ofVec2f;
-class ofVec3f;
-
 #include "ofConstants.h"
-#include <cmath>
 #include "glm/vec4.hpp"
 #include "glm/fwd.hpp"
+#include <cmath>
+
+class ofVec2f;
+class ofVec3f;
 
 class ofVec4f {
 public:

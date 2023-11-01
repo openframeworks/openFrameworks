@@ -1,11 +1,21 @@
 #pragma once
-#include <stdint.h>
 
-//-------------------------------
+// version: ------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 11
-#define OF_VERSION_PATCH 2
+#define OF_VERSION_MINOR 12
+#define OF_VERSION_PATCH 0
 #define OF_VERSION_PRE_RELEASE "master"
+
+// core: ---------------------------
+#include <stdint.h>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <functional>
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
 #ifndef OF_USE_LEGACY_VECTOR_MATH
@@ -39,7 +49,8 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUXARMV7L,
 	/// \brief Compiled to javascript using Emscripten.
 	/// \sa https://github.com/kripken/emscripten
-	OF_TARGET_EMSCRIPTEN
+	OF_TARGET_EMSCRIPTEN,
+	OF_TARGET_LINUXAARCH64
 };
 
 
@@ -76,6 +87,7 @@ enum ofTargetPlatform{
 // 		http://www.ogre3d.org/docs/api/html/OgrePlatform_8h-source.html
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
+	#define OF_OS_WINDOWS
 	#define TARGET_WIN32
 	#if defined(_MSC_VER)
 		#define TARGET_WINVS
@@ -114,7 +126,6 @@ enum ofTargetPlatform{
 #elif defined(__EMSCRIPTEN__)
 	#define TARGET_EMSCRIPTEN
 	#define TARGET_OPENGLES
-	#define TARGET_NO_THREADS
 	#define TARGET_PROGRAMMABLE_GL
 	#define TARGET_IMPLEMENTS_URL_LOADER
 #else
@@ -261,8 +272,14 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_EMSCRIPTEN
+	#define GL_GLEXT_PROTOTYPES
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
+	#include <GLES3/gl3.h>
+	#include <GL/glew.h>
+
 	#include "EGL/egl.h"
 	#include "EGL/eglext.h"
 
@@ -276,16 +293,6 @@ typedef TESSindex ofIndexType;
 
 #define OF_EXIT_APP(val)		std::exit(val);
 
-
-// core: ---------------------------
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <functional>
 
 
 //------------------------------------------------ capture
@@ -338,7 +345,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
     #ifdef TARGET_LINUX
         #define OF_VIDEO_PLAYER_GSTREAMER
     #elif defined(TARGET_ANDROID)
@@ -346,7 +353,11 @@ typedef TESSindex ofIndexType;
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
-        #define OF_VIDEO_PLAYER_DIRECTSHOW
+            #ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
+	        #define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+            #else
+	        #define OF_VIDEO_PLAYER_DIRECTSHOW
+            #endif
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
@@ -378,8 +389,20 @@ typedef TESSindex ofIndexType;
 #endif
 
 //------------------------------------------------ soundplayer
+//MAC_OS and IOS uncomment to enable AVEnginePlayer
+#ifdef OF_NO_FMOD
+    #undef USE_FMOD
+    #if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
+        #define OF_SOUND_PLAYER_AV_ENGINE
+    #elif defined(TARGET_WIN32)
+		#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
+	#endif
+#endif
+
 // check if any soundplayer api is defined from the compiler
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
+
+#if !defined(TARGET_NO_SOUND)
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE) && !defined(OF_SOUND_PLAYER_MEDIA_FOUNDATION)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
   #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
@@ -391,6 +414,7 @@ typedef TESSindex ofIndexType;
   #endif
 #endif
 
+#endif
 //------------------------------------------------ c++11
 // check if the compiler supports c++11. vs hasn't updated the value
 // of __cplusplus so we need to check for vs >= 2012 (1700)
@@ -444,12 +468,17 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 #endif
 
+
 // If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201703L
+#if __cplusplus >= 201500
     #define OF_HAS_CPP17 1
+    #if __cplusplus < 201703L
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #endif
 #else
     #define OF_HAS_CPP17 0
 #endif
+
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
@@ -508,47 +537,46 @@ std::unique_ptr<T> make_unique(Args&&... args) {
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            class path;
-                        }
-                        using v1::path;
+                        using path = v1::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
             }
         #else
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        namespace v1 {
-                            namespace __cxx11 {
-                                class path;
-                            }
-                        }
-                        using v1::__cxx11::path;
+                        using path = v1::__cxx11::path;
                     }
                 }
-                namespace filesystem = experimental::filesystem;
             }
         #endif
         
+		namespace of {
+			namespace filesystem = std::experimental::filesystem;
+		}
     #else
-        // Regular C++17 fs support
-        #include <filesystem>
+		#include <filesystem>
+		#if OF_HAS_CPP17
+			// Regular C++17 fs support
+			namespace of {
+				namespace filesystem = std::filesystem;
+			}
+		#else
+			namespace of {
+				namespace filesystem = std::filesystem;
+			}
+		#endif
     #endif
-#else
+#else //not OF_USING_STD_FS
     // No experimental or c++17 filesytem support use boost
     #if !_MSC_VER
         #define BOOST_NO_CXX11_SCOPED_ENUMS
         #define BOOST_NO_SCOPED_ENUMS
     #endif
+
     #include <boost/filesystem.hpp>
-	namespace boost {
-		namespace filesystem {
-			class path;
-		}
-	}
-	namespace std {
+	namespace of {
 		namespace filesystem = boost::filesystem;
 	}
+
 #endif

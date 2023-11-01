@@ -1,10 +1,16 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofUtils.h"
-#include "ofColor.h"
 #include "ofLog.h"
 #include "ofMath.h"
+#include "ofConstants.h"
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_<float> ofFloatColor;
+typedef ofColor_<unsigned short> ofShortColor;
+
 #include <limits>
 
 

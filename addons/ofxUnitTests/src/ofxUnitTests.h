@@ -228,9 +228,9 @@ private:
         const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
             //ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
-            auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+            auto projectDir = of::filesystem::canonical(of::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
             auto projectName = projectDir.stem();
-            auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+            auto exeName = of::filesystem::path(ofFilePath::getCurrentExePath()).filename();
             auto stdOut = logger->getStdOut();
             ofStringReplace(stdOut, "\\", "\\\\");
             ofStringReplace(stdOut, "\"", "\\\"");
@@ -276,7 +276,7 @@ private:
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;
 	int numTestsFailed = 0;
-    std::shared_ptr<ofColorsLoggerChannel> logger{new ofColorsLoggerChannel};
+    std::shared_ptr<ofColorsLoggerChannel> logger = std::make_shared<ofColorsLoggerChannel>();
 };
 
 #define ofxTest(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)

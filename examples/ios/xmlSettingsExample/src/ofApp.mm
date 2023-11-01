@@ -125,7 +125,7 @@ void ofApp::draw(){
 	}
 	ofEndShape(false);
 
-    ofFill();
+	ofFill();
 
 	//the message bars at the top and bottom of the app
 	//ofSetHexColor(0xDDDDDD);
@@ -146,7 +146,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -254,21 +254,21 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }
 
