@@ -341,7 +341,7 @@ public:
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
 	/// \returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(const std::string & s, float x, float y, bool vflip = true) const;
+	ofRectangle getStringBoundingBox(const std::string & s, float x = 0, float y = 0, bool vflip = true) const;
 
 	/// \}
 	/// \name Drawing
