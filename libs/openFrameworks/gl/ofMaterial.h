@@ -43,7 +43,7 @@ enum ofMaterialTextureType : short {
 class ofGLProgrammableRenderer;
 
 /// \class ofMaterialSettings
-/// wrapper for material color properties and other settings
+/// Wrapper for material color properties and other settings.
 ///
 /// customUniforms: adds some uniforms to the shader so they can be accessed
 /// from the postFragment function
@@ -157,9 +157,13 @@ struct ofMaterialSettings {
 };
 
 /// \class ofMaterial
-/// \brief material parameter properties that can be applied to vertices in the OpenGL lighting model
-/// used in determining both the intensity and color of reflected light based on the lighting model in use
-/// and if the vertices are on a front or back sided face
+///
+/// \brief Material parameter properties that can be applied to vertices in the
+/// OpenGL lighting model.
+///
+/// Used in determining both the intensity and color of reflected light based on
+/// the lighting model in use and if the vertices are on a front or back sided
+/// face.
 class ofMaterial : public ofBaseMaterial {
 public:
 	ofMaterial();
@@ -199,30 +203,30 @@ public:
 	/// \return if material has a unique depth shader.
 	bool hasDepthShader() const;
 
-	/// \brief set all material colors: reflectance type & light intensity. (Phong)
+	/// \brief Set all material colors: reflectance type & light intensity. (Phong)
 	/// \param oDiffuse the diffuse reflectance
 	/// \param oAmbient the ambient reflectance
 	/// \param oSpecular the specular reflectance
 	/// \param emissive the emitted light intensity
 	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
 
-	/// \brief set the diffuse reflectance. (Phong, PBR)
+	/// \brief Set the diffuse reflectance. (Phong, PBR)
 	/// \param oDiffuse the diffuse reflectance
 	void setDiffuseColor(ofFloatColor oDiffuse);
 
-	/// \brief set the ambient reflectance. (Phong)
+	/// \brief Set the ambient reflectance. (Phong)
 	/// \param oAmbient the ambient reflectance
 	void setAmbientColor(ofFloatColor oAmbient);
 
-	/// \brief set the specular reflectance. (Phong)
+	/// \brief Set the specular reflectance. (Phong)
 	/// \param oSpecular the specular reflectance
 	void setSpecularColor(ofFloatColor oSpecular);
 
-	/// \brief set the emitted light intensity. (Phong, PBR)
+	/// \brief Set the emitted light intensity. (Phong, PBR)
 	/// \param oEmmisive the emitted light intensity
 	void setEmissiveColor(ofFloatColor oEmmisive);
 
-	/// \brief set the specular exponent. (Phong)
+	/// \brief Set the specular exponent. (Phong)
 	void setShininess(float nShininess);
 
 	/// \brief set the tex coord scale used in the shader. (Phong, PBR)
