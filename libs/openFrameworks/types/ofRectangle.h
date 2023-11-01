@@ -370,13 +370,10 @@ public:
                  ofAlignVert modelVertAnchor,
                  ofAlignHorz subjectHorzAnchor,
                  ofAlignVert subjectVertAnchor);
-
     /// \}
 
     /// \name Alignment
     /// \{
-
-
     /// \brief Horizontally align a rectangle using a position and anchor edge.
     ///
     /// Aligns the horizontal position of the ofRectangle to the given x-
@@ -824,8 +821,11 @@ public:
     /// \brief Gets the height of the ofRectangle as float.
     /// \returns The height of the rectangle.
     float getHeight() const;
-
-    
+	
+	/// \brief Gets the size of the ofRectangle as glm::vec2.
+	/// \returns The size of the rectangle.
+	auto getSize() const { return glm::vec2{ getWidth(), getHeight() } ;}
+	
     /// \brief Maps a normalized coordinate into this rectangle
     /// 
     /// Normalized coordinates range from [0,1] inclusive. It is used to define a ratio
