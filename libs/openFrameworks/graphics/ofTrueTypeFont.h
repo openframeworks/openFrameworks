@@ -174,6 +174,12 @@ public:
 	ofTrueTypeFont(ofTrueTypeFont && mom);
 	ofTrueTypeFont & operator=(ofTrueTypeFont && mom);
 
+	ofTrueTypeFont(const of::filesystem::path & filename, int fontsize, bool antiAliased = true,
+				   bool fullCharacterSet = true, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0)
+	: ofTrueTypeFont() {
+		load(filename, fontsize, antiAliased, fullCharacterSet, makeContours, simplifyAmt, dpi);
+	}
+
 	/// \name Load Font
 	/// \{
 
