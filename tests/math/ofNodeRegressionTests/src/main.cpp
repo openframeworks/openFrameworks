@@ -43,7 +43,7 @@ public:
 		{
 			ofLogNotice() << "start orbit test";
 			ofNode n1;
-			n1.orbit(45, 45, 100);
+			n1.orbitDeg(45, 45, 100);
 			auto pos = n1.getGlobalPosition();
 			auto orient = n1.getGlobalOrientation();
 
@@ -58,9 +58,9 @@ public:
 			ofNode n1;
 			ofNode n2;
 			n2.setParent(n1);
-			n1.orbit(90, 0, 100);
+			n1.orbitDeg(90, 0, 100);
 			n2.truck(-100.f);
-			n2.orbit(90, 0, 100, n1);
+			n2.orbitDeg(90, 0, 100, n1);
 
 			auto pos1 = n1.getGlobalPosition();
 			auto orient1 = n1.getGlobalOrientation();
@@ -83,7 +83,7 @@ public:
 			mNode1 = mNode2;
 			float angle = 47;
 
-			mNode2.orbit(angle, 0, 100, mNode);
+			mNode2.orbitDeg(angle, 0, 100, mNode);
 
 			mNode1.dolly(100);
 			mNode1.rotateAround(ofQuaternion(angle, { 0.f,1.f,0.f }), mNode.getGlobalPosition());
@@ -152,8 +152,8 @@ public:
 //========================================================================
 int main( ){
     ofInit();
-    auto window = make_shared<ofAppNoWindow>();
-    auto app = make_shared<ofApp>();
+    auto window = std::make_shared<ofAppNoWindow>();
+    auto app = std::make_shared<ofApp>();
     // this kicks off the running of my app
     // can be OF_WINDOW or OF_FULLSCREEN
     // pass in width and height too:

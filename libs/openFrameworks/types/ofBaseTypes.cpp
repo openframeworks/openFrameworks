@@ -1,13 +1,8 @@
-#include "ofUtils.h"
-#include "ofGLUtils.h"
+#include "ofBaseTypes.h"
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"
 #include "ofSoundBuffer.h"
 #include "ofMesh.h"
-#include "ofVideoPlayer.h"
-#include "ofSoundBaseTypes.h"
-#include "ofVideoBaseTypes.h"
-#include "ofGraphicsBaseTypes.h"
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -332,6 +327,10 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
+}
+
+bool ofBaseMaterial::isBound() const {
+	return mBound;
 }
 
 

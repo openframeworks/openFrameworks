@@ -1,50 +1,15 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
 
+template<typename T>
+class ofPixels_;
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels& ofPixelsRef;
 
-#ifdef OF_VIDEO_CAPTURE_IOS
-	#include "ofxiOSVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofxiOSVideoGrabber
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_QUICKTIME
-	#include "ofQuickTimeGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_QTKIT
-	#include "ofQTKitGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofQTKitGrabber
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_AVF
-	#include "ofAVFoundationGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofAVFoundationGrabber
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
-	#include "ofDirectShowGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_GSTREAMER
-	#include "ofGstVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_ANDROID
-	#include "ofxAndroidVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
-#endif
-
-#ifdef OF_VIDEO_CAPTURE_EMSCRIPTEN
-	#include "ofxEmscriptenVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofxEmscriptenVideoGrabber
-#endif
 
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 

@@ -7,9 +7,9 @@
 #pragma once
 
 #include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofThread.h"
+#include "ofPixels.h"
 
 #ifdef __OBJC__
 #import "ofAVFoundationVideoPlayer.h"

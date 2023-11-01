@@ -7,10 +7,12 @@
 
 #include "ofMatrixStack.h"
 #include "ofAppBaseWindow.h"
-#include "glm/mat4x4.hpp"
-#include "glm/gtx/transform.hpp"
 #include "ofGraphicsBaseTypes.h"
 #include "ofLog.h"
+
+#define GLM_FORCE_CTOR_INIT
+#include "glm/mat4x4.hpp"
+#include "glm/gtx/transform.hpp"
 
 using std::swap;
 using std::make_pair;

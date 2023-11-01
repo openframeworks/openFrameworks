@@ -2,8 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
 	
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	
@@ -21,7 +19,7 @@ void ofApp::draw(){
 
 	ofTranslate(-60, -60, 0);
 
-    timeString  = ofGetTimestampString("%H:%M:%S.%i") + "\n";
+	timeString  = ofGetTimestampString("%H:%M:%S.%i") + "\n";
 	
 	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);
@@ -43,22 +41,22 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-    eventString = "touchDown = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
+	eventString = "touchDown = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
-    eventString = "touchMoved = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
+	eventString = "touchMoved = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-    eventString = "touchUp = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
+	eventString = "touchUp = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-    eventString = "doubleTap at = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2);
+	eventString = "doubleTap at = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2);
 }
 
 //--------------------------------------------------------------
@@ -68,21 +66,21 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    eventString = "alert - lost focus";
+	eventString = "alert - lost focus";
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    eventString = "alert - got focus";
+	eventString = "alert - got focus";
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    eventString = "alert - memory warning";
+	eventString = "alert - memory warning";
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    eventString = "alert - orientation change to " + ofToString(newOrientation);
+	eventString = "alert - orientation change to " + ofToString(newOrientation);
 }
 

@@ -1,0 +1,38 @@
+name: manual-nightly
+
+on: 
+  workflow_dispatch:
+    inputs:
+          release:
+            description: 'release'     
+            required: true
+            default: 'nightly'  
+jobs:
+  manual-nightly:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          cfg:
+          - {target: linux64, libs: 64gcc6}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install libunwind
+      run:  sudo apt-get install libunwind-dev
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh;
+    - name: Download libs
+      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+    - name: Create Package
+      run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
+      id: createpackage
+    - name: Update Release
+      uses: IsaacShelton/update-existing-release@v1.3.2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.event.inputs.release }}
+        release: ${{ github.event.inputs.release }}
+        prerelease: false
+        replace: true
+        files: ${{ steps.createpackage.outputs.FILES_OUT }}

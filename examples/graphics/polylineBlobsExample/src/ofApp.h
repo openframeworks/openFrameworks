@@ -27,7 +27,7 @@ class ofApp : public ofBaseApp {
 		ofxCvContourFinder contourFinder;
 		vector<ofPolyline> polylines, smoothed, resampled;
 		vector<ofRectangle> boundingBoxes;
-        vector<glm::vec3> closestPoints;
+		vector<glm::vec3> closestPoints;
 		vector<unsigned int> closestIndices;
 		int camWidth, camHeight;
 		

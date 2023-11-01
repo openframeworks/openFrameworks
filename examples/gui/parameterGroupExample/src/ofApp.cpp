@@ -15,7 +15,7 @@ void ofApp::setup(){
 
 	gui.loadFromFile("settings.xml");
 
-	font.load( OF_TTF_SANS,9,true,true);
+	font.load("frabk.ttf",9,true,true);
 	ofEnableAlphaBlending();
 }
 
@@ -34,7 +34,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::white, ofColor::gray);
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
 	renderer1.draw();
 	renderer2.draw();
 	ofSetColor(255);
@@ -46,12 +46,12 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	if(key=='s'){
-        ofSerialize(settings,parameters);
+		ofSerialize(settings,parameters);
 		settings.save("settings.xml");
 	}
 	if(key=='l'){
 		settings.load("settings.xml");
-        ofDeserialize(settings, parameters);
+		ofDeserialize(settings, parameters);
 	}
 	if(key=='o'){
 		cout << renderer1.parameters;

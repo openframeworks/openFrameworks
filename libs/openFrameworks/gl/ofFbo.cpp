@@ -1,10 +1,10 @@
-#include "ofConstants.h"
 #include "ofFbo.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofGLRenderer.h"
-#include <map>
+#include "ofConstants.h"
+#include <unordered_map>
 
 #ifdef TARGET_OPENGLES
 #include <dlfcn.h>
@@ -13,7 +13,7 @@
 #include "ofxAndroidUtils.h"
 #endif
 
-using std::map;
+using std::unordered_map;
 using std::vector;
 
 /*
@@ -165,8 +165,8 @@ bool ofFboSettings::operator!=(const ofFboSettings & other){
 }
 
 //--------------------------------------------------------------
-static map<GLuint,int> & getIdsFB(){
-	static map<GLuint,int> * idsFB = new map<GLuint,int>;
+static unordered_map<GLuint,int> & getIdsFB(){
+	static unordered_map<GLuint,int> * idsFB = new unordered_map<GLuint,int>;
 	return *idsFB;
 }
 
@@ -194,8 +194,8 @@ static void releaseFB(GLuint id){
 }
 
 //--------------------------------------------------------------
-static map<GLuint,int> & getIdsRB(){
-	static map<GLuint,int> * idsRB = new map<GLuint,int>;
+static unordered_map<GLuint,int> & getIdsRB(){
+	static unordered_map<GLuint,int> * idsRB = new unordered_map<GLuint,int>;
 	return *idsRB;
 }
 

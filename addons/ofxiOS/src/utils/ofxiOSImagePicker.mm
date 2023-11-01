@@ -11,8 +11,6 @@
 #include <TargetConditionals.h>
 #include "ofMathConstants.h"
 
-using namespace std;
-
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 //C++ class implementations
@@ -124,7 +122,7 @@ void ofxiOSImagePicker::loadPixels()
 	
 	photo = [imagePicker getCGImage];
     if(!photo){
-        ofLogError("ofxiOSImagePicker::loadPixels") << " photo is NULL " << endl;
+        ofLogError("ofxiOSImagePicker::loadPixels") << " photo is NULL " << std::endl;
         return;
     }
     

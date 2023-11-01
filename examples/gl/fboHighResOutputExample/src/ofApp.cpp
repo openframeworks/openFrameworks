@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    ofBackground(0,0,0);
+	ofBackground(0,0,0);
 	ofSetFrameRate(60);
 	int maxSize = 0;
 	// get the max texture size available for openGL
@@ -13,7 +13,11 @@ void ofApp::setup(){
 	int fboWidth = MIN(8192,maxSize);
 	int fboHeight = MIN(8192,maxSize);
 	//allocate our fbo with 3 color channels and 4x multisample
-	fboOutput.allocate(fboWidth, fboHeight, GL_RGB, 4);
+	#ifdef TARGET_EMSCRIPTEN
+		fboOutput.allocate(fboWidth, fboHeight, GL_RGB);
+	#else
+		fboOutput.allocate(fboWidth, fboHeight, GL_RGB, 4);
+	#endif
 	// another way to allocate an fbo is by using ofFboSettings
 //	ofFboSettings fboSettings;
 //	fboSettings.numSamples = 4;

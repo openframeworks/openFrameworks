@@ -27,7 +27,10 @@
 #include "ofFileUtils.h"
 #include "ofMath.h"
 
-using namespace std;
+using std::vector;
+using std::cerr;
+using std::endl;
+using std::string;
 
 namespace{
 	bool SoundEngineInitialized = false;
@@ -90,7 +93,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::load(const std::filesystem::path& filePath, bool stream) {
+bool ofxOpenALSoundPlayer::load(const of::filesystem::path& filePath, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();
@@ -479,7 +482,6 @@ bool ofxOpenALSoundPlayer::prime() {
 }
 
 //--------------------------------------------------------------
-
 bool ofxOpenALSoundPlayer::loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce) {
 	myId = 0;
 	

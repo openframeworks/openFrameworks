@@ -3,7 +3,7 @@
 
 //========================================================================
 int main( ){
-    
+	
 #ifdef OF_TARGET_OPENGLES
 	ofGLESWindowSettings settings;
 	settings.glesVersion=2;
@@ -14,7 +14,7 @@ int main( ){
 
 	auto window = ofCreateWindow(settings);
 
-	ofRunApp(window, make_shared<ofApp>());
-	ofRunMainLoop()
-    
+	ofRunApp(window, std::make_shared<ofApp>());
+	ofRunMainLoop();
+	
 }

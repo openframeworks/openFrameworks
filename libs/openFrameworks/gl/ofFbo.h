@@ -1,5 +1,6 @@
 #pragma once
 
+// depthBufferTex only
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
 

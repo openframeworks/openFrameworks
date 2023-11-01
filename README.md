@@ -3,7 +3,11 @@
 
 openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welcome!
 
-[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
+- [Grab the Nightly Release (to avoid submodule cloning)](https://github.com/openframeworks/openFrameworks/releases)
+- [Setup guides for different Platforms](https://openframeworks.cc/download/)
+- [Join Our Slack](https://join.slack.com/t/openframeworks/shared_invite/zt-1r2brqms0-dZMMFZgZhFTgomjJ0vlCjA)
+- [Discuss on the Forum](https://forum.openframeworks.cc) 
+- [Follow OF on Mastodon](https://fosstodon.org/@openframeworks)
 
 ## Build status
 
@@ -17,8 +21,9 @@ Windows Visual Studio  | [![Build status](https://github.com/openframeworks/open
 Linux 64 & Arm                    | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
 Emscripten                   | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions) 
 macos                        | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
-iOS & iOS                         | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
-Android Arm7                 | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+iOS & tvOS                         | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+
+<!-- Android Arm7                 | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions) -->
 
 
 

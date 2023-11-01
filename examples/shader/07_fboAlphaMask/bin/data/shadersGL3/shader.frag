@@ -1,4 +1,4 @@
-#version 150
+OF_GLSL_SHADER_HEADER
 
 // uniform set from a boolean in ofApp
 uniform float uUseTextures;
@@ -7,14 +7,14 @@ uniform vec2 uMaskSize;
 // width and height of sample textures
 uniform vec2 uTexSize;
 
-uniform sampler2DRect maskTex;
+uniform sampler2D maskTex;
 
 // these are our textures
-uniform sampler2DRect tex0;
-uniform sampler2DRect tex1;
-uniform sampler2DRect tex2;
-uniform sampler2DRect tex3;
-uniform sampler2DRect tex4;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform sampler2D tex2;
+uniform sampler2D tex3;
+uniform sampler2D tex4;
 
 // this comes from the vertex shader
 in vec2 texCoordVarying;

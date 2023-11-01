@@ -2,19 +2,15 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-#ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
-#else
+	ofDisableArbTex();
 	if(ofIsGLProgrammableRenderer()){
 		shader.load("shadersGL3/shader");
 	}else{
 		shader.load("shadersGL2/shader");
 	}
-#endif
 
-    image.load("img.jpg");
-    imageMask.load("img_mask.png");
+	image.load("img.jpg");
+	imageMask.load("img_mask.png");
 }
 
 //--------------------------------------------------------------
@@ -24,21 +20,22 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-    // draw a white rectangle for background.
-    ofDrawRectangle(0, 0, image.getWidth(), image.getHeight());
-    
-    shader.begin();
-    shader.setUniformTexture("imageMask", imageMask.getTexture(), 1);
+	
+	// draw a white rectangle for background.
+	ofDrawRectangle(0, 0, image.getWidth(), image.getHeight());
+	
+	shader.begin();
+	shader.setUniformTexture("imageMask", imageMask.getTexture(), 1);
+	shader.setUniform2f("resolution", image.getWidth(), image.getHeight());
 
-    image.draw(0, 0);
-    
-    shader.end();
+	image.draw(0, 0);
+	
+	shader.end();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -48,7 +45,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    
+	
 }
 
 //--------------------------------------------------------------

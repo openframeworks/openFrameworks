@@ -51,8 +51,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::white, ofColor::gray);
-    
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
+	
 	if( filled ){
 		ofFill();
 	}else{
@@ -124,7 +124,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    screenSize = ofToString(w) + "x" + ofToString(h);
+	screenSize = ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

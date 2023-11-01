@@ -1,5 +1,6 @@
 #pragma once
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
 
 /// \brief Draws x,y,z axes representing the current reference frame.

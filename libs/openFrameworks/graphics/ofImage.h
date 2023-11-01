@@ -1,15 +1,19 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
-#include "ofPixels.h"
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
 #include "ofGLUtils.h"
+#include "ofConstants.h"
+
+template<typename T>
+class ofPixels_;
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
 
 class ofFile;
 class ofBuffer;
-
 
 /// \file
 /// ofImage is used for loading, saving and drawing images in openFrameworks.
@@ -134,27 +138,27 @@ struct ofImageLoadSettings {
 
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofFloatPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
-bool ofLoadImage(ofShortPixels & pix, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, const std::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings = ofImageLoadSettings());
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofSaveImage(const ofPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+bool ofSaveImage(const ofPixels & pix, const of::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 bool ofSaveImage(const ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-bool ofSaveImage(const ofFloatPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+bool ofSaveImage(const ofFloatPixels & pix, const of::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 bool ofSaveImage(const ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \todo Needs documentation.
-bool ofSaveImage(const ofShortPixels & pix, const std::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+bool ofSaveImage(const ofShortPixels & pix, const of::filesystem::path& path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 bool ofSaveImage(const ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
 /// \brief Deallocates FreeImage resources.
@@ -173,7 +177,7 @@ public:
     ofImage_();
 
     ofImage_(const ofPixels_<PixelType> & pix);
-	ofImage_(const std::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
+	ofImage_(const of::filesystem::path & fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     ofImage_(const ofImage_<PixelType>& mom);
     ofImage_(ofImage_<PixelType>&& mom);
 
@@ -217,7 +221,7 @@ public:
     /// the data folder.
     /// \param settings Load options
     /// \returns true if image loaded correctly.
-	bool load(const std::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
+	bool load(const of::filesystem::path& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
@@ -599,7 +603,7 @@ public:
     ///
     /// \param fileName Saves image to this path, relative to the data folder.
     /// \param compressionLevel The ofImageQualityType.
-	bool save(const std::filesystem::path & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
+	bool save(const of::filesystem::path & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
 
     /// \brief This saves the image to the ofBuffer passed with the image
     /// quality specified by compressionLevel.

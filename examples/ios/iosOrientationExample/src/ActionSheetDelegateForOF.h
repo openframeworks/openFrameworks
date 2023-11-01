@@ -13,7 +13,7 @@
  */
 
 @interface ActionSheetDelegateForOF : NSObject <UIActionSheetDelegate> {
-    ofApp * app;
+	ofApp * app;
 }
 
 - (id)initWithApp:(ofApp *)app;

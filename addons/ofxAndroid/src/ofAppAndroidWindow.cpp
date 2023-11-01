@@ -129,9 +129,9 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	glesVersion = settings.glesVersion;
 	ofLogError() << "setup gles" << glesVersion;
 	if(glesVersion<2){
-		currentRenderer = make_shared<ofGLRenderer>(this);
+		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}else{
-		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
+		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}
 
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
@@ -266,7 +266,7 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
 	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
-    ofSetDataPathRoot(string(mfile)+"/");
+    ofSetDataPathRoot({ string(mfile)+"/" });
     env->ReleaseStringUTFChars(data_dir, mfile);
 }
 
