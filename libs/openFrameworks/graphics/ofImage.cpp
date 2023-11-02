@@ -723,7 +723,7 @@ bool ofImage_<PixelType>::load(const of::filesystem::path& fileName, const ofIma
 	#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName, settings);
 	if (!bLoadedOk) {
-		ofLogError("ofImage") << "loadImage(): couldn't load image from \"" << fileName << "\"";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from " << fileName << "";
 		clear();
 		return false;
 	}
