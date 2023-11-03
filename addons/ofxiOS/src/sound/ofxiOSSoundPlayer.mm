@@ -166,14 +166,14 @@ float ofxiOSSoundPlayer::getVolume()  const{
     return [(__bridge AVSoundPlayer *)soundPlayer volume];
 }
 
-float getDuration() const {
+float ofxiOSSoundPlayer::getDuration() const {
 	if(soundPlayer == NULL) {
 		return 0.f;
 	}
 	float tlen = [(__bridge AVSoundPlayer *)soundPlayer length];
 	return tlen / 1000.0f;
 }
-unsigned int getDurationMS() const {
+unsigned int ofxiOSSoundPlayer::getDurationMS() const {
 	if(soundPlayer == NULL) {
 		return 0;
 	}
