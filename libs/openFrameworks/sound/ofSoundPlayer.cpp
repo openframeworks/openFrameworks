@@ -279,3 +279,21 @@ float ofSoundPlayer::getVolume() const{
 		return 0;
 	}
 }
+
+//--------------------------------------------------------------------
+float ofSoundPlayer::getDuration() const {
+	if( player ){
+		return player->getDuration();
+	} else {
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------
+unsigned int ofSoundPlayer::getDurationMS() const {
+	if( player ){
+		return player->getDurationMS();
+	} else {
+		return 0;
+	}
+}
