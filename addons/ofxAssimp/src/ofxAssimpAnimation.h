@@ -21,6 +21,8 @@ public:
 	aiAnimation * getAnimation();
 	std::string getName() { return mName; }
 	
+	// TODO: Add start time, end time
+	
 	void update();
 	
 	void play();
@@ -43,6 +45,10 @@ public:
 	void setPosition(float position);
 	void setLoopState(ofLoopType state);
 	void setSpeed(float s);
+	
+//	unsigned int getCurrentFrame() const;
+//	unsigned int getTotalNumFrames() const;
+//	void setFrame( unsigned int aframe );
 	
 protected:
 	

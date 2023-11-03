@@ -77,10 +77,13 @@ protected:
 	bool isRootBone( aiNode* aAiNode );
 	aiBone* getAiBoneForAiNode( aiNode* aAiNode );
 	void recursiveAddSrcBones( std::shared_ptr<ofx::assimp::SrcBone> abone );
-//	std::shared_ptr<ofx::assimp::SrcBone> getSrcBone( aiBone* abone );
-//	std::shared_ptr<ofx::assimp::SrcBone> getSrcBone( aiNode* anode );
+	
+	std::shared_ptr<ofx::assimp::SrcNode> getSrcNodeForAiNodeName( const std::string& aAiNodeName );
 	
 	void processLights();
+	
+	void processAnimations();
+	void processKeyframes( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, int aAnimIndex );
 	
 	// Initial VBO creation, etc
 	void loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, aiMesh* amesh);
@@ -92,7 +95,6 @@ protected:
 	std::vector<ofx::assimp::Animation> mAnimations;
 	
 	std::vector< std::shared_ptr<ofx::assimp::SrcMesh> > mSrcMeshes;
-//	std::vector< std::shared_ptr<ofx::assimp::SrcBone> > mSrcBones;
 	std::vector< std::shared_ptr<ofx::assimp::SrcNode> > mSrcNodes;
 	
 	ImportSettings mSettings;

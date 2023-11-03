@@ -30,32 +30,30 @@ public:
 	~Model();
 	Model();
 	
+	virtual NodeType getType() { return OFX_ASSIMP_MODEL; }
+	
 	//use the default OF selected flags ( from the options above ) or pass in the exact assimp flags you want
 	//note: you will probably want to |= aiProcess_ConvertToLeftHanded to anything you pass in
 	bool load(std::string aPathToFile, int assimpOptimizeFlags=OFX_ASSIMP_OPTIMIZE_DEFAULT);
 	bool load(ofBuffer & buffer, int assimpOptimizeFlags=OFX_ASSIMP_OPTIMIZE_DEFAULT, const char * extension="");
 	bool load( const ImportSettings& asettings );
+	
 	bool setup( std::shared_ptr<ofx::assimp::SrcScene> ascene );
+	
 	void clear();
+	
 	std::string getHierarchyAsString();
 	
-	void centerAndScaleToWindow();
-	void centerAndScaleToViewRect( const ofRectangle& arect );
-	void centerAndScaleToViewRect( const ofRectangle& arect, float aNormalizeFactor);
-	void centerAndScaleToViewRect( float awidth, float aheight );
-	void centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight );
-	void centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight, float aNormalizeFactor);
+//	void createLightsFromAiModel();
 	
-	void createLightsFromAiModel();
 	
-	// GL_CW, GL_CCW
-	void enableCulling(int glCullType);
-	void disableCulling();
-	
+	// -- update ---------------------------------------
 	void earlyUpdate();
 	void update();
 	void lateUpdate();
 	
+	
+	// -- animations ---------------------------------------
 	bool hasAnimations();
 	unsigned int getAnimationCount();
 	ofx::assimp::Animation & getAnimation(int animationIndex);
@@ -66,15 +64,14 @@ public:
 	void setLoopStateForAllAnimations(ofLoopType state);
 	void setPositionForAllAnimations(float position);
 	
+	
+	// -- meshes ---------------------------------------
 	bool hasMeshes();
 	size_t getNumMeshes();
+	std::vector<std::string> getMeshNames();
 	std::shared_ptr<ofx::assimp::Mesh> getMesh(int meshIndex);
 	std::shared_ptr<ofx::assimp::Mesh> getMesh(const std::string& aname);
 	std::vector< std::shared_ptr<ofx::assimp::Mesh> > getMeshes() {return mMeshes;}
-	
-	float getNormalizedFactor(){ return normalizeFactor;}
-	
-	std::vector<std::string> getMeshNames();
 	
 	ofMesh& getMeshForMesh(const std::string& aname);
 	ofMesh& getMeshForMesh(unsigned int anum);
@@ -88,7 +85,8 @@ public:
 	ofTexture& getTextureForMesh(const std::string& aname);
 	ofTexture& getTextureForMesh(unsigned int anum);
 	
-	// skeletons / bones
+	
+	// -- skeletons / bones ---------------------------------------
 	bool hasSkeletons();
 	size_t getNumSkeletons();
 	std::shared_ptr<ofx::assimp::Skeleton> getSkeleton( const unsigned int& aindex );
@@ -97,10 +95,17 @@ public:
 	unsigned int getNumBones();
 	
 	
+	// -- draw ---------------------------------------
+	void draw(ofPolyRenderMode renderType);
 	void drawWireframe();
 	void drawFaces();
 	void drawVertices();
 	void drawBones();
+	
+	
+	// -- render settings ---------------------------------------
+	void enableCulling(int glCullType); // GL_CW, GL_CCW
+	void disableCulling();
 	
 	void enableTextures();
 	void disableTextures();
@@ -111,16 +116,24 @@ public:
 	void disableColors();
 	void disableMaterials();
 	
-	void draw(ofPolyRenderMode renderType);
 	
+	// -- scaling ---------------------------------------
+	void centerAndScaleToWindow();
+	void centerAndScaleToViewRect( const ofRectangle& arect );
+	void centerAndScaleToViewRect( const ofRectangle& arect, float aNormalizeFactor);
+	void centerAndScaleToViewRect( float awidth, float aheight );
+	void centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight );
+	void centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight, float aNormalizeFactor);
+	
+	float getNormalizedScale();
+	float getNormalizedFactor(){ return normalizeFactor;}
+	
+	
+	// -- bounds ---------------------------------------
 	ofx::assimp::Bounds getSceneBounds();
 	ofx::assimp::Bounds getSceneBoundsLocal();
 	std::shared_ptr<ofx::assimp::SrcScene> getSrcScene();
-	
-	float getNormalizedScale();
-	
 	void calculateDimensions();
-	
 	
 	
 //	const aiScene * getAssimpScene();
@@ -132,7 +145,7 @@ protected:
 	
 	bool processScene();
 	void processSceneNodesRecursive( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, std::shared_ptr<ofx::assimp::Node> aParentNode );
-	std::shared_ptr<ofx::assimp::Bone> getBoneForSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone );
+//	std::shared_ptr<ofx::assimp::Bone> getBoneForSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone );
 	
 	// updates the *actual GL resources* for the current animation
 	void updateGLResources();

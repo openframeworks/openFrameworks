@@ -195,6 +195,7 @@ bool SrcScene::processScene(const ImportSettings& asettings) {
 //		ofLogNotice("ofx::assimp::SrcScene::processScene : scale: ") << getScale() << " global Scale: " << getGlobalScale();
 		processNodes();
 //		processBones();
+		processAnimations();
 		
 //		std::stringstream ss;
 //		for( auto& srcNode : mSrcNodes ) {
@@ -365,7 +366,7 @@ void SrcScene::processMeshes(aiNode* anode, std::shared_ptr<SrcNode> aSrcNode) {
 }
 
 //-------------------------------------------
-void SrcScene::processBones() {
+//void SrcScene::processBones() {
 //	mSrcBones.clear();
 //
 //	ofLogNotice( "SrcScene processBones: " ) << scene->mRootNode->mName.data << " skeletons: " << scene->mNumSkeletons;
@@ -418,7 +419,7 @@ void SrcScene::processBones() {
 ////		std::cout << srcRootBone->getAsString() << std::endl;
 ////		std::cout << "----------------------------------------" << std::endl;
 ////	}
-}
+//}
 
 //-------------------------------------------
 bool SrcScene::isBone( aiNode* aAiNode ) {
@@ -515,18 +516,21 @@ void SrcScene::recursiveAddSrcBones( std::shared_ptr<ofx::assimp::SrcBone> abone
 	}
 }
 
-////-------------------------------------------
-//std::shared_ptr<ofx::assimp::SrcBone> SrcScene::getSrcBone( aiNode* anode ) {
-//	for( auto& sbone : mSrcBones ) {
-//		if( sbone->getAiNode() == anode ) {
-//			return sbone;
-//		}
-//		if(auto tbone = sbone->getBone(anode)) {
-//			return tbone;
-//		}
-//	}
-//	return std::shared_ptr<ofx::assimp::SrcBone>();
-//}
+//-------------------------------------------
+std::shared_ptr<ofx::assimp::SrcNode> SrcScene::getSrcNodeForAiNodeName( const std::string& aAiNodeName ) {
+	std::shared_ptr<ofx::assimp::SrcNode> rnode;
+	for( auto tnode : mSrcNodes ) {
+		if( tnode->getName() == aAiNodeName ) {
+			rnode = tnode;
+			break;
+		}
+		if( auto knode = tnode->getNode(aAiNodeName)) {
+			rnode = knode;
+			break;
+		}
+	}
+	return rnode;
+}
 
 //-------------------------------------------
 void SrcScene::processLights(){
@@ -546,6 +550,75 @@ void SrcScene::processLights(){
 		mLights[i].setDiffuseColor(aiColorToOfColor(scene->mLights[i]->mColorDiffuse));
 		mLights[i].setSpecularColor(aiColorToOfColor(scene->mLights[i]->mColorSpecular));
 	}
+}
+
+//-------------------------------------------
+void SrcScene::processAnimations() {
+	if( !mSettings.importAnimations || !scene ) {
+		mAnimations.clear();
+		return;
+	}
+	for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
+		aiAnimation* animation = scene->mAnimations[i];
+		// now lets parse the animation by getting all of the channels
+		for( unsigned int j = 0; j < animation->mNumChannels; j++ ) {
+			// grab the node animation that holds all of the key frames
+			aiNodeAnim* nodeAnim = animation->mChannels[j];
+			// the nodeAnim contains the name of the node it affects,
+			// according to the docs, it must exist and the name must be unique
+			std::string nodeName = nodeAnim->mNodeName.data;
+			if(std::shared_ptr<ofx::assimp::SrcNode> snode = getSrcNodeForAiNodeName( nodeName )) {
+				// SrcNode contains a pointer to the aiNode
+				processKeyframes(snode, nodeAnim, i);
+			} else {
+				ofLogWarning("SrcScene::processAnimations") << "unable to find node " << nodeName << " for animation: " << animation->mName.data;
+			}
+		}
+	}
+}
+
+//-------------------------------------------
+void SrcScene::processKeyframes(std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, int aAnimIndex) {
+	if(!aSrcNode || !aNodeAnim) {
+		return;
+	}
+	auto& anim = mAnimations[aAnimIndex];
+	ofx::assimp::SrcAnimKeyCollection& keyCollection = aSrcNode->getKeyCollection(aAnimIndex);
+	keyCollection.clear();
+	
+//	durationInTicks = animation->mDuration;
+//	double ticksPerSecond = 25.0;
+//	if( animation->mTicksPerSecond > 0.0 ) {
+//		ticksPerSecond = animation->mTicksPerSecond;
+//	}
+	
+	double startTime = 0.0; // seconds
+	double endTime = anim.getDurationInSeconds();// seconds;
+	
+//	getAnimVectorKeysForTime(const double& aStartTime, const double& aEndTime, unsigned int aNumKeys, aiVectorKey* aAiKeys)
+	keyCollection.positionKeys = keyCollection.getAnimVectorKeysForTime(startTime, endTime, aNodeAnim->mNumPositionKeys, aNodeAnim->mPositionKeys );
+	keyCollection.scaleKeys = keyCollection.getAnimVectorKeysForTime(startTime, endTime, aNodeAnim->mNumScalingKeys, aNodeAnim->mScalingKeys );
+	keyCollection.rotationKeys = keyCollection.getAnimRotationKeysForTime(startTime, endTime, aNodeAnim->mNumRotationKeys, aNodeAnim->mRotationKeys );
+	
+//	double currTime = startTime;
+////	double frameTime =
+	
+//	// get the first keyframe
+//	auto numPosKeys = aNodeAnim->mNumPositionKeys;
+//	for( unsigned int i = 0; i < numPosKeys-1; i++ ) {
+//		if( currTime < aNodeAnim->mPositionKeys[i+1].mTime ) {
+//			AnimVectorKey vkey;
+//			vkey.time = currTime;
+//			if( i == 0 && startTime <= 0.0 ) {
+//				vkey.value = aiVecToOfVec(aNodeAnim->mPositionKeys[i].mValue);
+//			} else {
+//				auto v1 = aiVecToOfVec(aNodeAnim->mPositionKeys[i].mValue);
+//				auto v2 = aiVecToOfVec(aNodeAnim->mPositionKeys[i+1].mValue);
+//
+//			}
+//		}
+//	}
+	
 }
 
 #ifndef TARGET_WIN32

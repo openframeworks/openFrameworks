@@ -29,6 +29,11 @@ inline ofDefaultVec3 aiVecToOfVec(const aiVector3D& v){
 }
 
 //--------------------------------------------------------------
+inline glm::quat aiQuatToOfQuat( const aiQuaternion& aq ) {
+	return glm::quat(aq.w, aq.x, aq.y, aq.z);
+}
+
+//--------------------------------------------------------------
 inline vector<ofDefaultVec3> aiVecVecToOfVecVec(const vector<aiVector3D>& v){
 	vector<ofDefaultVec3> ofv(v.size());
 	memcpy(ofv.data(),v.data(),v.size()*sizeof(ofDefaultVec3));

@@ -200,15 +200,15 @@ void Model::processSceneNodesRecursive( std::shared_ptr<ofx::assimp::SrcNode> aS
 	}
 }
 
-//-------------------------------------------
-std::shared_ptr<ofx::assimp::Bone> Model::getBoneForSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
-	for( auto bone : mBones ) {
-		if( bone->getSrcBone().get() == aSrcBone.get() ) {
-			return bone;
-		}
-	}
-	return std::shared_ptr<ofx::assimp::Bone>();
-}
+////-------------------------------------------
+//std::shared_ptr<ofx::assimp::Bone> Model::getBoneForSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
+//	for( auto bone : mBones ) {
+//		if( bone->getSrcBone().get() == aSrcBone.get() ) {
+//			return bone;
+//		}
+//	}
+//	return std::shared_ptr<ofx::assimp::Bone>();
+//}
 
 //-------------------------------------------
 std::string Model::getHierarchyAsString() {
@@ -690,9 +690,22 @@ bool Model::hasMeshes() {
 	return mMeshes.size() > 0;
 }
 
-//unsigned int Model::getNumMeshHelpers() {
-//	return mMeshes.size();
-//}
+//-------------------------------------------
+size_t Model::getNumMeshes(){
+	return mMeshes.size();
+}
+
+//-------------------------------------------
+vector<std::string> Model::getMeshNames(){
+	if( mMeshes.size() < 1 ) {
+		return std::vector<std::string>();
+	}
+	vector<string> names(mMeshes.size());
+	for( size_t i = 0; i < mMeshes.size(); i++ ) {
+		names[i] = mMeshes[i]->getName();
+	}
+	return names;
+}
 
 std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(int meshIndex) {
 	if( mMeshes.size() < 1 ) {
@@ -703,12 +716,144 @@ std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(int meshIndex) {
 }
 
 std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(const std::string& aname) {
-	for( auto& helper : mMeshes ) {
-		if( helper->getName() == aname ) {
-			return helper;
+//	return getNodeAsType<ofx::assimp::Mesh>("*:"+aname);
+	for( auto& mesh : mMeshes ) {
+		if( mesh->getName() == aname ) {
+			return mesh;
 		}
 	}
 	return std::shared_ptr<ofx::assimp::Mesh>();
+}
+
+//-------------------------------------------
+ofMesh& Model::getMeshForMesh( const std::string& aname ){
+	auto helper = getMesh(aname);
+	if( !helper ) {
+		ofLogError("Model::getMesh : unable to find mesh with name") << aname << " returning dummy mesh";
+		return dummyMesh;
+	}
+	return helper->getMesh();
+}
+
+//-------------------------------------------
+ofMesh& Model::getMeshForMesh(unsigned int anum){
+	auto helper = getMesh(anum);
+	if( !helper ) {
+		ofLogError("Model::getMesh : unable to find mesh with index") << anum << " returning dummy mesh";
+		return dummyMesh;
+	}
+	return helper->getMesh();
+}
+
+//-------------------------------------------
+ofMesh Model::getTransformedMeshForMesh(const std::string& aname) {
+	auto helper = getMesh(aname);
+	if( !helper ) {
+		ofLogError("ofx::assimp::Model") << "getTransformedMesh(): unable to find mesh with name: " << aname;
+		return dummyMesh;
+	}
+	return helper->getTransformedMesh();
+}
+
+//-------------------------------------------
+ofMesh Model::getTransformedMeshForMesh(unsigned int anum) {
+	auto helper = getMesh(anum);
+	if( !helper ) {
+		ofLogError("ofx::assimp::Model") << "getTransformedMesh(): unable to find mesh with index: " << anum;
+		return dummyMesh;
+	}
+	return helper->getTransformedMesh();
+}
+
+//-------------------------------------------
+std::shared_ptr<ofMaterial> Model::getMaterialForMesh(const std::string& aname){
+	auto helper = getMesh(aname);
+	if( !helper ) {
+		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): couldn't find mesh: \"" + aname << "\"";
+		return shared_ptr<ofMaterial>();
+	}
+	return helper->material;
+}
+
+//-------------------------------------------
+std::shared_ptr<ofMaterial> Model::getMaterialForMesh(unsigned int anum){
+	auto helper = getMesh(anum);
+	if(!helper) {
+		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): mesh id: " << anum << "out of range for total num meshes: " << mMeshes.size();
+		return shared_ptr<ofMaterial>();
+	}
+	return helper->material;
+}
+
+//-------------------------------------------
+ofTexture& Model::getTextureForMesh(const std::string& aname){
+	auto helper = getMesh(aname);
+	if( !helper ) {
+		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << aname << "\"";
+		return dummyTexture;
+	}
+	if(helper->hasTexture()) {
+		return helper->getTexture();
+	}
+	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << aname << "\" does not have a texture.";
+	return dummyTexture;
+}
+
+//-------------------------------------------
+ofTexture& Model::getTextureForMesh(unsigned int anum){
+	auto helper = getMesh(anum);
+	if(!helper) {
+		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << anum << "\" / " << getNumMeshes();
+		return dummyTexture;
+	}
+	if(helper->hasTexture()) {
+		return helper->getTexture();
+	}
+	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << anum << "\" does not have a texture.";
+	return dummyTexture;
+}
+
+//-- Skeletons -----------------------------------------
+bool Model::hasSkeletons() {
+	return (mSkeletons.size() > 0);
+}
+
+//-------------------------------------------
+size_t Model::getNumSkeletons() {
+	return mSkeletons.size();
+}
+
+//-------------------------------------------
+std::shared_ptr<ofx::assimp::Skeleton> Model::getSkeleton( const unsigned int& aindex ) {
+	if( mSkeletons.size() < 1 ) {
+		ofLogWarning("ofx::assimp::Model : no skeletons!!");
+		return std::shared_ptr<ofx::assimp::Skeleton>();
+	}
+	return mSkeletons[ofClamp(aindex, 0, mSkeletons.size()-1)];
+}
+
+//-------------------------------------------
+std::shared_ptr<ofx::assimp::Skeleton> Model::getSkeleton( const std::string& aname ) {
+	for( auto skel : mSkeletons ) {
+		if( skel->getName() == aname ) {
+			return skel;
+		}
+	}
+	return std::shared_ptr<ofx::assimp::Skeleton>();
+}
+
+//-------------------------------------------
+std::vector< std::shared_ptr<ofx::assimp::Skeleton> > Model::getSkeletons() {
+	return mSkeletons;
+}
+
+//-------------------------------------------
+unsigned int Model::getNumBones() {
+	unsigned int total = 0;
+	for( auto skel : mSkeletons ) {
+		total += skel->getAllNodesForType<ofx::assimp::Bone>().size();
+	}
+	return total;
 }
 
 //--------------------------------------------------------------
@@ -869,154 +1014,6 @@ ofx::assimp::Bounds Model::getSceneBoundsLocal() {
 //-------------------------------------------
 std::shared_ptr<ofx::assimp::SrcScene> Model::getSrcScene() {
 	return mSrcScene;
-}
-
-//-------------------------------------------
-vector<std::string> Model::getMeshNames(){
-	if( mMeshes.size() < 1 ) {
-		return std::vector<std::string>();
-	}
-	vector<string> names(mMeshes.size());
-	for( size_t i = 0; i < mMeshes.size(); i++ ) {
-		names[i] = mMeshes[i]->getName();
-	}
-	return names;
-}
-
-//-------------------------------------------
-size_t Model::getNumMeshes(){
-	return mMeshes.size();
-}
-
-//-------------------------------------------
-ofMesh& Model::getMeshForMesh( const std::string& aname ){
-	auto helper = getMesh(aname);
-	if( !helper ) {
-		ofLogError("Model::getMesh : unable to find mesh with name") << aname << " returning dummy mesh";
-		return dummyMesh;
-	}
-	return helper->getMesh();
-}
-
-//-------------------------------------------
-ofMesh& Model::getMeshForMesh(unsigned int anum){
-	auto helper = getMesh(anum);
-	if( !helper ) {
-		ofLogError("Model::getMesh : unable to find mesh with index") << anum << " returning dummy mesh";
-		return dummyMesh;
-	}
-	return helper->getMesh();
-}
-
-//-------------------------------------------
-ofMesh Model::getTransformedMeshForMesh(const std::string& aname) {
-	auto helper = getMesh(aname);
-	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTransformedMesh(): unable to find mesh with name: " << aname;
-		return dummyMesh;
-	}
-	return helper->getTransformedMesh();
-}
-
-//-------------------------------------------
-ofMesh Model::getTransformedMeshForMesh(unsigned int anum) {
-	auto helper = getMesh(anum);
-	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTransformedMesh(): unable to find mesh with index: " << anum;
-		return dummyMesh;
-	}
-	return helper->getTransformedMesh();
-}
-
-//-------------------------------------------
-std::shared_ptr<ofMaterial> Model::getMaterialForMesh(const std::string& aname){
-	auto helper = getMesh(aname);
-	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): couldn't find mesh: \"" + aname << "\"";
-		return shared_ptr<ofMaterial>();
-	}
-	return helper->material;
-}
-
-//-------------------------------------------
-std::shared_ptr<ofMaterial> Model::getMaterialForMesh(unsigned int anum){
-	auto helper = getMesh(anum);
-	if(!helper) {
-		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): mesh id: " << anum << "out of range for total num meshes: " << mMeshes.size();
-		return shared_ptr<ofMaterial>();
-	}
-	return helper->material;
-}
-
-//-------------------------------------------
-ofTexture& Model::getTextureForMesh(const std::string& aname){
-	auto helper = getMesh(aname);
-	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << aname << "\"";
-		return dummyTexture;
-	}
-	if(helper->hasTexture()) {
-		return helper->getTexture();
-	}
-	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << aname << "\" does not have a texture.";
-	return dummyTexture;
-}
-
-//-------------------------------------------
-ofTexture& Model::getTextureForMesh(unsigned int anum){
-	auto helper = getMesh(anum);
-	if(!helper) {
-		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << anum << "\" / " << getNumMeshes();
-		return dummyTexture;
-	}
-	if(helper->hasTexture()) {
-		return helper->getTexture();
-	}
-	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << anum << "\" does not have a texture.";
-	return dummyTexture;
-}
-
-//-------------------------------------------
-bool Model::hasSkeletons() {
-	return (mSkeletons.size() > 0);
-}
-
-//-------------------------------------------
-size_t Model::getNumSkeletons() {
-	return mSkeletons.size();
-}
-
-//-------------------------------------------
-std::shared_ptr<ofx::assimp::Skeleton> Model::getSkeleton( const unsigned int& aindex ) {
-	if( mSkeletons.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model : no skeletons!!");
-		return std::shared_ptr<ofx::assimp::Skeleton>();
-	}
-	return mSkeletons[ofClamp(aindex, 0, mSkeletons.size()-1)];
-}
-
-//-------------------------------------------
-std::shared_ptr<ofx::assimp::Skeleton> Model::getSkeleton( const std::string& aname ) {
-	for( auto skel : mSkeletons ) {
-		if( skel->getName() == aname ) {
-			return skel;
-		}
-	}
-	return std::shared_ptr<ofx::assimp::Skeleton>();
-}
-
-//-------------------------------------------
-std::vector< std::shared_ptr<ofx::assimp::Skeleton> > Model::getSkeletons() {
-	return mSkeletons;
-}
-
-//-------------------------------------------
-unsigned int Model::getNumBones() {
-	unsigned int total = 0;
-	for( auto skel : mSkeletons ) {
-		total += skel->getAllNodesForType<ofx::assimp::Bone>().size();
-	}
-	return total;
 }
 
 //-------------------------------------------

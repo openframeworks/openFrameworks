@@ -4,15 +4,17 @@
 //
 
 #pragma once
-#include "ofNode.h"
+#include "ofxAssimpSrcAnimKeyCollection.h"
 #include <assimp/scene.h>
+#include <unordered_map>
 
 namespace ofx::assimp {
 enum NodeType {
 	OFX_ASSIMP_MESH=0,
 	OFX_ASSIMP_BONE,
 	OFX_ASSIMP_SKELETON,
-	OFX_ASSIMP_NODE
+	OFX_ASSIMP_NODE,
+	OFX_ASSIMP_MODEL
 };
 
 class SrcNode {
@@ -29,7 +31,10 @@ public:
 	aiNode* getAiNode() { return mAiNode; }
 	
 	std::shared_ptr<ofx::assimp::SrcNode> getNode( aiNode* aAiNode );
-	void findNodeRecursive( aiNode* aAiNode, std::shared_ptr<SrcNode>& returnBone );
+	void findNodeRecursive( aiNode* aAiNode, std::shared_ptr<SrcNode>& aReturnNode );
+	
+	std::shared_ptr<ofx::assimp::SrcNode> getNode( const std::string& aAiNodeName );
+	void findNodeRecursive( const std::string& aAiNodeName, std::shared_ptr<SrcNode>& aReturnNode );
 	
 	void clearChildren();
 	void addChild( std::shared_ptr<ofx::assimp::SrcNode> akiddo );
@@ -38,9 +43,14 @@ public:
 	
 	virtual std::string getAsString( int aLevel=0 );
 	
+	// animation functions
+	ofx::assimp::SrcAnimKeyCollection& getKeyCollection( unsigned int aAnimId );
+	
 protected:
 	aiNode* mAiNode = nullptr;
 	std::string mName = "";
 	std::vector< std::shared_ptr<ofx::assimp::SrcNode> > mKids;
+	
+	std::unordered_map<int, ofx::assimp::SrcAnimKeyCollection> mKeyCollections;
 };
 }

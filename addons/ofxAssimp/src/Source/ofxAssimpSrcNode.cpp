@@ -12,6 +12,8 @@ std::string SrcNode::sGetNodeTypeAsString( const NodeType& atype ) {
 		return "OFX_ASSIMP_BONE";
 	} else if(atype == OFX_ASSIMP_SKELETON ) {
 		return "OFX_ASSIMP_SKELETON";
+	} else if(atype == OFX_ASSIMP_MODEL ) {
+		return "OFX_ASSIMP_MODEL";
 	}
 	return "OFX_ASSIMP_NODE";
 }
@@ -40,9 +42,6 @@ std::string SrcNode::getName() {
 std::shared_ptr<ofx::assimp::SrcNode> SrcNode::getNode( aiNode* aAiNode ) {
 	std::shared_ptr<ofx::assimp::SrcNode> tnode;
 	findNodeRecursive( aAiNode, tnode );
-	if( tnode ) {
-		return tnode;
-	}
 	return tnode;
 }
 
@@ -55,6 +54,26 @@ void SrcNode::findNodeRecursive( aiNode* aAiNode, std::shared_ptr<SrcNode>& aRet
 				break;
 			}
 			kid->findNodeRecursive( aAiNode, aReturnNode );
+		}
+	}
+}
+
+//----------------------------------------
+std::shared_ptr<ofx::assimp::SrcNode> SrcNode::getNode( const std::string& aAiNodeName ) {
+	std::shared_ptr<ofx::assimp::SrcNode> tnode;
+	findNodeRecursive( aAiNodeName, tnode );
+	return tnode;
+}
+
+//----------------------------------------
+void SrcNode::findNodeRecursive( const std::string& aAiNodeName, std::shared_ptr<SrcNode>& aReturnNode ) {
+	if( !aReturnNode ) {
+		for(auto& kid : mKids ) {
+			if( kid->getName() == aAiNodeName ) {
+				aReturnNode = kid;
+				break;
+			}
+			kid->findNodeRecursive( aAiNodeName, aReturnNode );
 		}
 	}
 }
@@ -114,6 +133,17 @@ std::string SrcNode::getAsString( int aLevel ) {
 	}
 	
 	return oStr.str();
+}
+
+// animation functions
+//--------------------------------------------------------------
+ofx::assimp::SrcAnimKeyCollection& SrcNode::getKeyCollection(unsigned int aAnimId){
+	if( mKeyCollections.count(aAnimId) < 1 ) {
+		SrcAnimKeyCollection temp;
+		temp.uId = aAnimId;
+		mKeyCollections[ aAnimId ] = temp;
+	}
+	return mKeyCollections[aAnimId];
 }
 
 
