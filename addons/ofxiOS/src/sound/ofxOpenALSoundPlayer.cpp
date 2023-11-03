@@ -144,6 +144,7 @@ void ofxOpenALSoundPlayer::unload() {
 		else
 			SoundEngine_UnloadEffect(myId);
 	}
+	length = 0;
 }
 
 //--------------------------------------------------------------
