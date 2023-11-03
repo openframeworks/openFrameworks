@@ -170,14 +170,13 @@ float ofxiOSSoundPlayer::getDuration() const {
 	if(soundPlayer == NULL) {
 		return 0.f;
 	}
-	float tlen = [(__bridge AVSoundPlayer *)soundPlayer length];
-	return tlen / 1000.0f;
+	return [(__bridge AVSoundPlayer *)soundPlayer duration];
 }
 unsigned int ofxiOSSoundPlayer::getDurationMS() const {
 	if(soundPlayer == NULL) {
 		return 0;
 	}
-	return [(__bridge AVSoundPlayer *)soundPlayer length];
+	return [(__bridge AVSoundPlayer *)soundPlayer duration] * 1000.0;
 }
 
 void * ofxiOSSoundPlayer::getAVSoundPlayer() {

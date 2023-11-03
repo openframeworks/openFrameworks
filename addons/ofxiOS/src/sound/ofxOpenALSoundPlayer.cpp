@@ -370,6 +370,16 @@ bool ofxOpenALSoundPlayer::isLoaded()  const{
 }
 
 //--------------------------------------------------------------
+float ofxOpenALSoundPlayer::getDuration() const {
+	return (float)length / 1000.0f;
+}
+
+//--------------------------------------------------------------
+unsigned int ofxOpenALSoundPlayer::getDurationMS() const {
+	return length;
+}
+
+//--------------------------------------------------------------
 
 
 //static calls ---------------------------------------------------------------------------------------------------------------
