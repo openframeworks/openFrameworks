@@ -44,13 +44,13 @@ public:
 	virtual std::string getAsString( int aLevel=0 );
 	
 	// animation functions
-	ofx::assimp::SrcAnimKeyCollection& getKeyCollection( unsigned int aAnimId );
+	ofx::assimp::SrcAnimKeyCollection& getKeyCollection( unsigned int aAnimUId );
 	
 protected:
 	aiNode* mAiNode = nullptr;
 	std::string mName = "";
 	std::vector< std::shared_ptr<ofx::assimp::SrcNode> > mKids;
 	
-	std::unordered_map<int, ofx::assimp::SrcAnimKeyCollection> mKeyCollections;
+	std::unordered_map<unsigned int, ofx::assimp::SrcAnimKeyCollection> mKeyCollections;
 };
 }

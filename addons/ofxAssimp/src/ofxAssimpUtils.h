@@ -9,6 +9,7 @@
 #include "ofxAssimpMesh.h"
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "ofNode.h"
 
 using std::string;
 using std::vector;
@@ -53,6 +54,25 @@ inline static aiMatrix4x4 glmMat4ToAiMatrix4x4(const glm::mat4& aMat4) {
 					   aMat4[0][2], aMat4[1][2], aMat4[2][2], aMat4[3][2],
 					   aMat4[0][3], aMat4[1][3], aMat4[2][3], aMat4[3][3]
 					   );
+}
+
+inline void getPositionOrientationScaleFromAiMatrix(aiMatrix4x4& aMat, glm::vec3& apos, glm::quat& aq, glm::vec3& ascale ) {
+	aiVector3t<float> tAiScale;
+	aiQuaterniont<float> tAiRotation;
+	aiVector3t<float> tAiPosition;
+	
+	aMat.Decompose( tAiScale, tAiRotation, tAiPosition );
+	
+	apos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
+	aq = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
+	ascale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
+}
+
+inline void setOfNodeFromAiMatrix(aiMatrix4x4& aMat, ofNode* anode) {
+	glm::vec3 tpos, tscale;
+	glm::quat tquat;
+	getPositionOrientationScaleFromAiMatrix(aMat, tpos, tquat, tscale );
+	anode->setPositionOrientationScale( tpos, tquat, tscale );
 }
 
 //--------------------------------------------------------------

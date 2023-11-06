@@ -23,6 +23,26 @@ std::unordered_map< int, std::shared_ptr<ofVboMesh> > Bone::sRenderMeshes;
 void Bone::setSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
 	mSrcBone = aSrcBone;
 	mOffsetMatrix = mSrcBone->getAiOffsetMatrix();
+	
+	setOfNodeFromAiMatrix( mSrcBone->getAiMatrix(), this );
+	
+//	aiVector3t<float> tAiScale;
+//	aiQuaterniont<float> tAiRotation;
+//	aiVector3t<float> tAiPosition;
+//	
+//	// TODO: These will get update via the animation keyframes
+//	// SO there won't be a decompose every frame
+//	//		mAiMatrixGlobal = mSrcBone->getAiMatrixGlobal();
+//	mAiMatrix = mSrcBone->getAiMatrix();
+//	// this is the local matrix
+//	mSrcBone->getAiMatrix().Decompose( tAiScale, tAiRotation, tAiPosition );
+//	
+//	glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
+//	glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
+//	//	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
+//	glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
+//	
+//	setPositionOrientationScale( tpos, tquat, tscale );
 }
 
 //--------------------------------------------------------------
@@ -73,8 +93,8 @@ void Bone::draw() {
 	// IE: get cached global position
 	// TODO: figure out bone axis to align drawing to
 	// should help avoid spinning when aligned to an axis to create rotation
-	auto gpos = getGlobalPositionCached();
-	auto gquat = getGlobalOrientationCached();
+	auto gpos = getGlobalPosition();
+	auto gquat = getGlobalOrientation();
 	
 	auto localTransformMatrix = glm::translate(glm::mat4(1.0f), gpos );
 	//		localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)gquat);
@@ -82,7 +102,8 @@ void Bone::draw() {
 	
 	auto gOrient = getGlobalOrientationCached();
 	for( auto& kid : mKids ) {
-		auto kgpos = kid->getGlobalPositionCached();
+//		auto kgpos = kid->getGlobalPositionCached();
+		auto kgpos = kid->getGlobalPosition();
 		float tlength = glm::distance( kgpos, gpos );
 		auto diffn = glm::normalize(kgpos-gpos);
 		//			if( mAlignAxis < 0 ) {

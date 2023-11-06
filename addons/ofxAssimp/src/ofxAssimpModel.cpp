@@ -75,18 +75,24 @@ bool Model::setup( std::shared_ptr<ofx::assimp::SrcScene> ascene ) {
 //------------------------------------------
 bool Model::processScene() {
 //	mSettings = asettings;
-	
+	mAnimationIndex = 0;
 	mBSceneBoundsDirty = true;
 	normalizeFactor = ofGetWidth() / 2.0;
 
 	if(mSrcScene){
-		// TODO: Populate animations from src scene
 		if( mSrcScene->getImportSettings().importAnimations ) {
-			auto scene = mSrcScene->getAiScene();
-			unsigned int numOfAnimations = scene->mNumAnimations;
-			for (unsigned int i = 0; i<numOfAnimations; i++) {
-				aiAnimation * animation = scene->mAnimations[i];
-				mAnimations.push_back(Animation(scene, animation));
+//			auto scene = mSrcScene->getAiScene();
+//			unsigned int numOfAnimations = scene->mNumAnimations;
+//			for (unsigned int i = 0; i<numOfAnimations; i++) {
+//				aiAnimation * animation = scene->mAnimations[i];
+//				mAnimations.push_back(Animation(scene, animation));
+//			}
+			mAnimations = mSrcScene->getAnimations();
+			if(mAnimations.size() > 0 ) {
+				// add a default mixer
+				mAnimMixer = std::make_shared<AnimationMixer>();
+				mAnimMixer->add( AnimationClip( mAnimations[0], 1.0f ));
+				mAnimMixer->getAnimationClip(0).animation.play();
 			}
 		}
 		
@@ -255,7 +261,8 @@ void Model::clear(){
 	bUsingNormals = true;
 	bUsingTextures = true;
 	bUsingColors = true;
-	//	mSrcBones.clear();
+	
+	removeAnimationMixer();
 }
 
 //-------------------------------------------
@@ -359,16 +366,16 @@ void Model::calculateDimensions(){
 void Model::earlyUpdate() {
 	if(!mSrcScene) return;
 	updateAnimations();
-	aiMatrix4x4 trafo;
-	aiIdentityMatrix4(&trafo);
-	updateMeshTransforms(mSrcScene->getAiScene()->mRootNode, trafo );
+//	aiMatrix4x4 trafo;
+//	aiIdentityMatrix4(&trafo);
+//	updateMeshTransforms(mSrcScene->getAiScene()->mRootNode, trafo );
 	
 	if(hasAnimations() == false) {
 		return;
 	}
-	for( auto& bone : mBones ) {
-		bone->updateFromSrcBone();
-	}
+//	for( auto& bone : mBones ) {
+//		bone->updateFromSrcBone();
+//	}
 }
 
 //------------------------------------------- update.
@@ -392,9 +399,15 @@ void Model::lateUpdate() {
 }
 
 void Model::updateAnimations() {
-	for(size_t i = 0; i < mAnimations.size(); i++) {
-		mAnimations[i].update();
+	if( mAnimMixer ) {
+		mAnimMixer->update();
+		for( auto& kid : mKids ) {
+			kid->update(mAnimMixer);
+		}
 	}
+//	for(size_t i = 0; i < mAnimations.size(); i++) {
+//		mAnimations[i].update();
+//	}
 }
 
 void Model::updateMeshTransforms(aiNode * node, const aiMatrix4x4& parentMatrix) {
@@ -546,32 +559,6 @@ void Model::updateMeshesFromBones() {
 //			gMat = globalInvMat * (glm::inverse(modelMeshes[i]->getGlobalTransformMatrix()) * sbone->getGlobalTransformMatrix());
 			
 			aiMatrix4x4 gBoneMat = glmMat4ToAiMatrix4x4(gMat);
-//			gBoneMat = sbone->getAiMatrixGlobal();
-			
-//			float f = gMat[0];
-//			aiMatrix4x4 gBoneMat(gMat[0][0], gMat[0][1], gMat[0][2], gMat[0][3],
-//								 gMat[1][0], gMat[1][1], gMat[1][2], gMat[1][3],
-//								 gMat[2][0], gMat[2][1], gMat[2][2], gMat[2][3],
-//								 gMat[3][0], gMat[3][1], gMat[3][2], gMat[3][3]
-//								 );
-			//		glm::mat4 	matrix(m.a1, m.a2, m.a3, m.a4,
-			//					   m.b1, m.b2, m.b3, m.b4,
-			//					   m.c1, m.c2, m.c3, m.c4,
-			//					   m.d1, m.d2, m.d3, m.d4);
-//			auto gpos = globalInvMat * glm::vec4(sbone->getGlobalPosition(), 1.0f);
-//			aiVector3t tscale( sbone->getScale().x,sbone->getScale().y,sbone->getScale().z );
-
-//			aiVector3t tscale( 1.f, 1.f, 1.f);
-//			aiVector3t tpos( gpos.x, gpos.y, gpos.z );
-//			auto oquat = glm::toQuat(globalInvMat) * sbone->getGlobalOrientation();
-//			glm::mat4 rotMat = globalInvMat * glm::mat4_cast(sbone->getGlobalOrientation());
-//			glm::quat oquat = glm::quat_cast(rotMat);
-//			aiQuaterniont tquat( oquat.w, oquat.x, oquat.y, oquat.z );
-//			aiMatrix4x4t gBoneMat(tscale, tquat, tpos );
-
-//			aiMatrix4x4 posTrafo = gBoneMat * sbone->getAiMatrix() * bone->mOffsetMatrix;
-//			aiMatrix4x4 posTrafo = gBoneMat * bone->mOffsetMatrix;
-//			aiMatrix4x4 posTrafo = gBoneMat * sbone->getAiOffsetMatrix();//bone->mOffsetMatrix;
 			aiMatrix4x4 posTrafo = gBoneMat * sbone->getAiOffsetMatrix();//bone->mOffsetMatrix;
 //			const aiMatrix4x4& posTrafo = boneMatrices[a];
 //			continue;
@@ -640,50 +627,148 @@ unsigned int Model::getAnimationCount(){
 	return mAnimations.size();
 }
 
-ofx::assimp::Animation & Model::getAnimation(int animationIndex) {
+unsigned int Model::getCurrentAnimationIndex() {
+	return mAnimationIndex;
+}
+
+ofx::assimp::Animation& Model::getCurrentAnimation() {
 	if( mAnimations.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model : no animations!!");
+		ofLogWarning("ofx::assimp::Model::getCurrentAnimation") << " no animations!!";
 		return dummyAnimation;
 	}
-	animationIndex = ofClamp(animationIndex, 0, mAnimations.size()-1);
-	return mAnimations[animationIndex];
+	if( mAnimMixer && mAnimMixer->getNumAnimationClips() > 0 ) {
+		return mAnimMixer->getAnimationClip(0).animation;
+	}
+	ofLogWarning("ofx::assimp::Model::getCurrentAnimation") << " does not have current animation!";
+	return dummyAnimation;
 }
 
-void Model::playAllAnimations() {
-	for(size_t i = 0; i < mAnimations.size(); i++) {
-		mAnimations[i].play();
+//ofx::assimp::Animation& Model::getAnimation(int aindex) {
+//	if( mAnimations.size() < 1 ) {
+//		ofLogWarning("ofx::assimp::Model : no animations!!");
+//		return dummyAnimation;
+//	}
+//}
+//
+//ofx::assimp::Animation& Model::getAnimation(const std::string& aname) {
+//	if( mAnimations.size() < 1 ) {
+//		ofLogWarning("ofx::assimp::Model : no animations!!");
+//		return dummyAnimation;
+//	}
+//}
+
+bool Model::setAnimation( int aindex ) {
+	if( mAnimations.size() < 1 ) {
+		ofLogWarning("ofx::assimp::Model::setAnimation") << " no animations!!";
+		return false;
 	}
+	if( aindex == mAnimationIndex ) {
+		ofLogWarning("ofx::assimp::Model::setAnimation") << " already have this as the index!";
+		return false;
+	}
+	mAnimationIndex = ofClamp(aindex, 0, mAnimations.size()-1);
+	mAnimMixer->removeAll();
+	mAnimMixer->add( AnimationClip( mAnimations[mAnimationIndex], 1.0f ));
+	mAnimMixer->getAnimationClip(0).animation.reset();
+	return true;
 }
 
-void Model::stopAllAnimations() {
-	for(size_t i = 0; i < mAnimations.size(); i++) {
-		mAnimations[i].stop();
+bool Model::setAnimation( const std::string& aname ) {
+	int tindex = -1;
+	for( int i = 0; i < (int)mAnimations.size(); i++ ) {
+		if( mAnimations[i].getName() == aname ) {
+			tindex = i;
+			break;
+		}
 	}
+	if( tindex < 0 ) {
+		ofLogWarning("ofx::assimp::Model::setAnimation") << " could not find animation with name" << aname;
+		return false;
+	}
+	return setAnimation(tindex);
 }
 
-void Model::resetAllAnimations() {
-	for(size_t i = 0; i < mAnimations.size(); i++) {
-		mAnimations[i].reset();
+ofx::assimp::Animation& Model::getAnimation(int aindex) {
+	if( mAnimations.size() < 1 ) {
+		ofLogWarning("ofx::assimp::Model::getAnimation") << " no animations!!";
+		return dummyAnimation;
 	}
+	aindex = ofClamp(aindex, 0, mAnimations.size()-1);
+	return mAnimations[aindex];
 }
 
-void Model::setPausedForAllAnimations(bool pause) {
-	for(size_t i = 0; i < mAnimations.size(); i++) {
-		mAnimations[i].setPaused(pause);
+ofx::assimp::Animation& Model::getAnimation(const std::string& aname) {
+	int tindex = -1;
+	for( int i = 0; i < (int)mAnimations.size(); i++ ) {
+		if( mAnimations[i].getName() == aname ) {
+			tindex = i;
+			break;
+		}
 	}
+	if( tindex < 0 ) {
+		ofLogWarning("ofx::assimp::Model::getAnimation") << " could not find animation with name" << aname;
+		return dummyAnimation;
+	}
+	return getAnimation(tindex);
 }
 
-void Model::setLoopStateForAllAnimations(ofLoopType state) {
-	for(size_t i = 0; i < mAnimations.size(); i++) {
-		mAnimations[i].setLoopState(state);
-	}
+bool Model::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick ) {
+	return addAnimation( aSrcAnimIndex, aNewAnimName, aStartTick, aEndTick, OF_LOOP_NONE );
 }
 
-void Model::setPositionForAllAnimations(float position) {
-	for(size_t i = 0; i < mAnimations.size(); i++) {
-		mAnimations[i].setPosition(position);
+bool Model::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick, ofLoopType aLoopType ) {
+	if( mAnimations.size() < 1 ) {
+		ofLogWarning("ofx::assimp::Model::addAnimation") << " no animations!!";
+		return false;
 	}
+	if(aSrcAnimIndex < 0 || aSrcAnimIndex >= mAnimations.size() ) {
+		ofLogWarning("ofx::assimp::Model::addAnimation") << " aSrcAnimIndex out of range!!";
+		return false;
+	}
+	auto& canim = mAnimations[aSrcAnimIndex];
+	ofx::assimp::Animation nanim = mAnimations[aSrcAnimIndex];
+	nanim.setup(aStartTick, aEndTick);
+	nanim.setName(aNewAnimName);
+	nanim.setLoopType(aLoopType);
+	mAnimations.push_back(nanim);
+	return true;
 }
+
+//void Model::playAllAnimations() {
+//	for(size_t i = 0; i < mAnimations.size(); i++) {
+//		mAnimations[i].play();
+//	}
+//}
+//
+//void Model::stopAllAnimations() {
+//	for(size_t i = 0; i < mAnimations.size(); i++) {
+//		mAnimations[i].stop();
+//	}
+//}
+//
+//void Model::resetAllAnimations() {
+//	for(size_t i = 0; i < mAnimations.size(); i++) {
+//		mAnimations[i].reset();
+//	}
+//}
+//
+//void Model::setPausedForAllAnimations(bool pause) {
+//	for(size_t i = 0; i < mAnimations.size(); i++) {
+//		mAnimations[i].setPaused(pause);
+//	}
+//}
+//
+//void Model::setLoopStateForAllAnimations(ofLoopType state) {
+//	for(size_t i = 0; i < mAnimations.size(); i++) {
+//		mAnimations[i].setLoopState(state);
+//	}
+//}
+//
+//void Model::setPositionForAllAnimations(float position) {
+//	for(size_t i = 0; i < mAnimations.size(); i++) {
+//		mAnimations[i].setPosition(position);
+//	}
+//}
 
 //------------------------------------------- meshes.
 bool Model::hasMeshes() {

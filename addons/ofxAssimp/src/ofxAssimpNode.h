@@ -5,6 +5,7 @@
 
 #pragma once
 #include "ofNode.h"
+#include "ofxAssimpAnimationMixer.h"
 #include "ofxAssimpSrcNode.h"
 #include <assimp/scene.h>
 
@@ -17,6 +18,14 @@ public:
 	virtual NodeType getType() { return OFX_ASSIMP_NODE; }
 	
 	virtual void update() {};
+	virtual void update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixer );
+	
+	virtual void drawNodes();
+	
+	bool hasAnimationMixer();
+	void setAnimationMixer( std::shared_ptr<AnimationMixer> amixer );
+	void removeAnimationMixer();
+	std::shared_ptr<ofx::assimp::AnimationMixer> getAnimationMixer() {return mAnimMixer;}
 	
 	void setParentNode( std::shared_ptr<ofx::assimp::Node> anode );
 	bool hasParentNode();
@@ -92,6 +101,8 @@ protected:
 	std::shared_ptr<ofx::assimp::SrcNode> mSrcNode;
 	std::vector< std::shared_ptr<ofx::assimp::Node> > mKids;
 	std::shared_ptr<ofx::assimp::Node> mParentNode;
+	
+	std::shared_ptr<ofx::assimp::AnimationMixer> mAnimMixer;
 	
 	glm::vec3 mCachedGPos = {0.0f,0.0f,0.0f};
 	glm::quat mCachedGQuat;

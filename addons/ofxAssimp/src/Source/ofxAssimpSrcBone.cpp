@@ -20,6 +20,8 @@ void SrcBone::setAiBone(aiBone* aAiBone, aiNode* aAiNode) {
 		std::cout << "SrcBone::setAiBone : aiBone is NULL - " << getName() << std::endl;
 	}
 	
+	mAiMatrix = mAiNode->mTransformation;
+	
 //	mWeights.assign( bone->mNumWeights, aiVertexWeight() );
 //	weights.clear();
 //	

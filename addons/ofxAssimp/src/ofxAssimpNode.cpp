@@ -4,6 +4,8 @@
 //
 
 #include "ofxAssimpNode.h"
+#include "ofxAssimpUtils.h"
+#include "of3dGraphics.h"
 
 using namespace ofx::assimp;
 
@@ -14,6 +16,9 @@ using std::cout;
 //--------------------------------------------------------------
 void Node::setSrcNode( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode ) {
 	mSrcNode = aSrcNode;
+	if( getType() == OFX_ASSIMP_BONE ) {
+//		setOfNodeFromAiMatrix(mSrcNode->getAiNode()->mTransformation, this );
+	}
 }
 
 //--------------------------------------------------------------
@@ -22,6 +27,108 @@ std::string Node::getName() {
 		return mSrcNode->getName();
 	}
 	return "Default";
+}
+
+//--------------------------------------------------------------
+void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixer ) {
+	std::shared_ptr<ofx::assimp::AnimationMixer> mixer;
+	if( hasAnimationMixer() ) {
+		mixer = mAnimMixer;
+	} else {
+		mixer = aAnimMixer;
+	}
+
+	if( !mixer ) {
+		ofLogError("ofx::assimp::Node:update") << "not a valid AnimationMixer!";
+		return;
+	}
+	
+	// we have an animation mixer, override the incoming mixer //
+	// first get the appropriate key collection
+	if( mSrcNode ) {
+		
+		auto numClips = mixer->getNumAnimationClips();
+		if( numClips > 0 ) {
+			glm::vec3 tempPos = {0.f, 0.f, 0.f};
+			glm::vec3 tempScale = {0.f, 0.f, 0.f};
+			glm::quat tempQuat = glm::quat(1.f, 0.f, 0.f, 0.f);
+			bool bHasSomeKeys = false;
+			
+			for( auto& animClip : mixer->getAnimationClips() ) {
+				auto& keyCollection = mSrcNode->getKeyCollection(animClip.animation.getUid());
+				if( keyCollection.hasKeys() ) {
+					auto animTime = animClip.animation.getPositionInTicks() + animClip.animation.getStartTick();
+					tempPos += animClip.weight * keyCollection.getPosition( animTime );
+					tempScale += animClip.weight * keyCollection.getScale( animTime );
+					// TODO: Keep an eye on this :O
+					tempQuat = glm::slerp(tempQuat, keyCollection.getRotation(animTime), animClip.weight );
+//					}
+//					auto tAiMat = keyCollection.getAiMatrix( animTime );
+//					setPositionOrientationScale( keyCollection.getPosition( animTime ), keyCollection.getRotation(animTime), keyCollection.getScale( animTime ) );
+//					setPosition( tempPos );
+//					setScale( tempScale );
+//					if( keyCollection.rotationKeys.size() > 1 ) {
+//						ofLogNotice("Assimp NOde :: setting quat from animation: ") << " name: " << getName() << " time: " << animTime;
+//						setOrientation(tempQuat);
+//					}
+					bHasSomeKeys = true;
+//					break;
+//					if( mSrcNode ) {
+//						mSrcNode->getAiNode()->mTransformation = tAiMat;
+//					}
+				}
+			}
+			if( bHasSomeKeys ) {
+				setPositionOrientationScale( tempPos, tempQuat, tempScale );
+			}
+		}
+				
+//				aiVector3t<float> tAiScale;
+//				aiQuaterniont<float> tAiRotation;
+//				aiVector3t<float> tAiPosition;
+//				tAiMat.Decompose( tAiScale, tAiRotation, tAiPosition );
+//
+//				glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
+//				glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
+//				glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
+//
+//				setPositionOrientationScale( tpos, tquat, tscale );
+//			}
+//		}
+		
+		
+		//setPositionOrientationScale( tempPos, tempQuat, tempScale );
+	}
+	
+	for( auto& kid : mKids ) {
+		kid->update(mixer);
+	}
+}
+
+//----------------------------------------
+void Node::drawNodes() {
+	ofDrawSphere( getGlobalPositionCached(), 5.0);
+	for( auto& kid : mKids ) {
+		kid->drawNodes();
+	}
+}
+
+//----------------------------------------
+bool Node::hasAnimationMixer() {
+	if(mAnimMixer) {
+		return true;
+	}
+	return false;
+}
+
+//----------------------------------------
+void Node::setAnimationMixer( std::shared_ptr<AnimationMixer> amixer ) {
+	mAnimMixer = amixer;
+}
+
+//----------------------------------------
+void Node::removeAnimationMixer() {
+	mAnimMixer.reset();
 }
 
 //----------------------------------------

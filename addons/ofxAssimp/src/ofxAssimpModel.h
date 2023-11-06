@@ -56,13 +56,23 @@ public:
 	// -- animations ---------------------------------------
 	bool hasAnimations();
 	unsigned int getAnimationCount();
-	ofx::assimp::Animation & getAnimation(int animationIndex);
-	void playAllAnimations();
-	void stopAllAnimations();
-	void resetAllAnimations();
-	void setPausedForAllAnimations(bool pause);
-	void setLoopStateForAllAnimations(ofLoopType state);
-	void setPositionForAllAnimations(float position);
+	unsigned int getCurrentAnimationIndex();
+	ofx::assimp::Animation& getCurrentAnimation();
+	bool setAnimation( int aindex );
+	bool setAnimation( const std::string& aname );
+	
+	ofx::assimp::Animation& getAnimation(int aindex);
+	ofx::assimp::Animation& getAnimation(const std::string& aname);
+	
+	bool addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick );
+	bool addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick, ofLoopType aLoopType );
+	
+//	void playAllAnimations();
+//	void stopAllAnimations();
+//	void resetAllAnimations();
+//	void setPausedForAllAnimations(bool pause);
+//	void setLoopStateForAllAnimations(ofLoopType state);
+//	void setPositionForAllAnimations(float position);
 	
 	
 	// -- meshes ---------------------------------------
@@ -160,8 +170,9 @@ protected:
 	// the skeletons are the root bones
 	std::vector< std::shared_ptr<ofx::assimp::Skeleton> > mSkeletons;
 	std::vector< std::shared_ptr<ofx::assimp::Node> > mNullNodes;
-//	std::vector< std::shared_ptr<ofx::assimp::Node> > mRootNodes;
 	std::vector<ofx::assimp::Animation> mAnimations;
+	
+	int mAnimationIndex = 0;
 	
 	int mCullType = -1;
 	

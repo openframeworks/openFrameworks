@@ -168,7 +168,6 @@ void SrcScene::clear(){
 	mAnimations.clear();
 	mLights.clear();
 	mSrcNodes.clear();
-//	mSrcBones.clear();
 	mAssimpTextures.clear();
 }
 
@@ -184,13 +183,13 @@ bool SrcScene::processScene(const ImportSettings& asettings) {
 //	normalizeFactor = ofGetWidth() / 2.0;
 	
 	if(scene){
-		if( mSettings.importAnimations ) {
-			unsigned int numOfAnimations = scene->mNumAnimations;
-			for (unsigned int i = 0; i<numOfAnimations; i++) {
-				aiAnimation * animation = scene->mAnimations[i];
-				mAnimations.push_back(Animation(scene, animation));
-			}
-		}
+//		if( mSettings.importAnimations ) {
+//			unsigned int numOfAnimations = scene->mNumAnimations;
+//			for (unsigned int i = 0; i<numOfAnimations; i++) {
+//				aiAnimation * animation = scene->mAnimations[i];
+//				mAnimations.push_back(Animation(scene, animation));
+//			}
+//		}
 		
 //		ofLogNotice("ofx::assimp::SrcScene::processScene : scale: ") << getScale() << " global Scale: " << getGlobalScale();
 		processNodes();
@@ -558,8 +557,22 @@ void SrcScene::processAnimations() {
 		mAnimations.clear();
 		return;
 	}
+	
+//	unsigned int numOfAnimations = scene->mNumAnimations;
+//	for (unsigned int i = 0; i<numOfAnimations; i++) {
+//		aiAnimation * animation = scene->mAnimations[i];
+////		mAnimations.push_back(Animation(scene, animation));
+//	}
+	
 	for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
 		aiAnimation* animation = scene->mAnimations[i];
+		if(animation == nullptr) {
+			continue;
+		}
+//		mAnimations.push_back(Animation(scene, animation));
+		mAnimations.push_back(Animation(i, animation));
+//		auto srcAnim = std::make_shared<ofx::assimp::Animation>( scene, animation );
+//		mAnimations.push_back(srcAnim);
 		// now lets parse the animation by getting all of the channels
 		for( unsigned int j = 0; j < animation->mNumChannels; j++ ) {
 			// grab the node animation that holds all of the key frames
@@ -578,13 +591,16 @@ void SrcScene::processAnimations() {
 }
 
 //-------------------------------------------
-void SrcScene::processKeyframes(std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, int aAnimIndex) {
+void SrcScene::processKeyframes(std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, unsigned int aAnimIndex) {
 	if(!aSrcNode || !aNodeAnim) {
 		return;
 	}
 	auto& anim = mAnimations[aAnimIndex];
 	ofx::assimp::SrcAnimKeyCollection& keyCollection = aSrcNode->getKeyCollection(aAnimIndex);
 	keyCollection.clear();
+	keyCollection.setup( aNodeAnim, anim.getDurationInTicks() );
+	
+	ofLogNotice("SrcScene processKeyframes: ") << aSrcNode->getName() << " node anim: " << aNodeAnim->mNodeName.data << " node anim num pos keyframes: " << aNodeAnim->mNumPositionKeys << " scale: " << aNodeAnim->mNumScalingKeys << " rot: " << aNodeAnim->mNumRotationKeys;
 	
 //	durationInTicks = animation->mDuration;
 //	double ticksPerSecond = 25.0;
@@ -593,7 +609,7 @@ void SrcScene::processKeyframes(std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, 
 //	}
 	
 	double startTime = 0.0; // seconds
-	double endTime = anim.getDurationInSeconds();// seconds;
+	double endTime = anim.getDurationInTicks();// seconds;
 	
 //	getAnimVectorKeysForTime(const double& aStartTime, const double& aEndTime, unsigned int aNumKeys, aiVectorKey* aAiKeys)
 	keyCollection.positionKeys = keyCollection.getAnimVectorKeysForTime(startTime, endTime, aNodeAnim->mNumPositionKeys, aNodeAnim->mPositionKeys );

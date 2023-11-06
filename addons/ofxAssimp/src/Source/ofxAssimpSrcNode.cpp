@@ -137,13 +137,13 @@ std::string SrcNode::getAsString( int aLevel ) {
 
 // animation functions
 //--------------------------------------------------------------
-ofx::assimp::SrcAnimKeyCollection& SrcNode::getKeyCollection(unsigned int aAnimId){
-	if( mKeyCollections.count(aAnimId) < 1 ) {
+ofx::assimp::SrcAnimKeyCollection& SrcNode::getKeyCollection(unsigned int aAnimUId){
+	if( mKeyCollections.count(aAnimUId) < 1 ) {
 		SrcAnimKeyCollection temp;
-		temp.uId = aAnimId;
-		mKeyCollections[ aAnimId ] = temp;
+		temp.uId = aAnimUId;
+		mKeyCollections[ aAnimUId ] = temp;
 	}
-	return mKeyCollections[aAnimId];
+	return mKeyCollections[aAnimUId];
 }
 
 

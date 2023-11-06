@@ -28,7 +28,7 @@ public:
 //	std::shared_ptr<ofx::assimp::Bone> getBone( const std::string& aName );
 //	void findBoneRecursive( const std::string& aName, std::shared_ptr<Bone>& returnBone );
 	
-	aiMatrix4x4& getAiMatrix() { return mAiMatrix; }
+//	aiMatrix4x4& getAiMatrix() { return mAiMatrix; }
 //	aiMatrix4x4& getAiMatrixGlobal() { return mAiMatrixGlobal; }
 	aiMatrix4x4& getAiOffsetMatrix() { return mOffsetMatrix;}
 //	const glm::mat4& getCachedGlobalMat() { return mCachedGlobalMat; }
@@ -43,7 +43,7 @@ protected:
 //	glm::quat mOffsetOrientation;
 	
 	aiMatrix4x4 mAiMatrix;
-	aiMatrix4x4 mAiMatrixGlobal;
+//	aiMatrix4x4 mAiMatrixGlobal;
 	aiMatrix4x4 mOffsetMatrix;
 	
 	// 0: +x

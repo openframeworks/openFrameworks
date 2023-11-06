@@ -56,6 +56,8 @@ public:
 	
 	std::vector< std::shared_ptr<ofx::assimp::SrcNode> > getRootNodes() { return mSrcNodes; }
 	
+	std::vector< ofx::assimp::Animation >& getAnimations() {return mAnimations;}
+	
 	ImportSettings getImportSettings() { return mSettings; }
 	
 	const aiScene* getAiScenePtr() { return scene.get(); }
@@ -83,7 +85,7 @@ protected:
 	void processLights();
 	
 	void processAnimations();
-	void processKeyframes( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, int aAnimIndex );
+	void processKeyframes( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, unsigned int aAnimIndex );
 	
 	// Initial VBO creation, etc
 	void loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, aiMesh* amesh);
@@ -92,7 +94,7 @@ protected:
 	
 	std::vector<ofLight> mLights;
 	std::map<of::filesystem::path, std::shared_ptr<ofx::assimp::Texture> > mAssimpTextures;
-	std::vector<ofx::assimp::Animation> mAnimations;
+	std::vector< ofx::assimp::Animation > mAnimations;
 	
 	std::vector< std::shared_ptr<ofx::assimp::SrcMesh> > mSrcMeshes;
 	std::vector< std::shared_ptr<ofx::assimp::SrcNode> > mSrcNodes;
