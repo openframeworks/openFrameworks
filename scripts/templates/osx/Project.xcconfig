@@ -18,16 +18,16 @@ DEVELOPMENT_LANGUAGE = English
 CODE_SIGN_IDENTITY = -
 INFOPLIST_FILE = openFrameworks-Info.plist
 
-// VERSIONING - uncomment to override settings in Xcode UI
+// VERSIONING - overridden if changed in Xcode UI
 
 // this is "Version" in the Xcode target Identity UI
 // suggested to use semantic versioning format ala #.#.#
-//MARKETING_VERSION = 0.1.0
+MARKETING_VERSION = 0.1.0
 
 // this is "Build" in the Xcode target Identity UI, an incremental build number
 // important for the App Store as new build submissions need a diff number even
 // if MARKETING_VERSION is the same
-//CURRENT_PRODUCT_VERSION = 1
+CURRENT_PROJECT_VERSION = 1
 
 // ICONS
 
