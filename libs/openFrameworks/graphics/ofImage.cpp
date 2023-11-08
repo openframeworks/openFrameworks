@@ -97,16 +97,30 @@ FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
 //----------------------------------------------------
 template<typename PixelType>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLittleEndian = true, bool bUsePassedPixelFormat = false) {
-
 	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = nullptr;
 	FREE_IMAGE_TYPE imgType = FreeImage_GetImageType(bmp);
 	if(sizeof(PixelType)==1 &&
 		(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8
 		||  imgType!=FIT_BITMAP)) {
-		if(FreeImage_IsTransparent(bmp)) {
+		
+		bool bDownsampling = false;
+		if( (int)imgType > (int)FIT_BITMAP && FreeImage_GetBPP(bmp) > 8 ) {
+			bDownsampling = true;
+		}
+		
+		if(imgType == FIT_UINT16) {
+			ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling grayscale image to 8 bits");
+			bmpConverted = FreeImage_ConvertTo8Bits(bmp);
+		} else if(FreeImage_IsTransparent(bmp)) {
+			if(bDownsampling) {
+				ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling image to 32 bits");
+			}
 			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
 		} else {
+			if(bDownsampling) {
+				ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling image to 24 bits");
+			}
 			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
 		}
 		bmp = bmpConverted;
@@ -709,7 +723,7 @@ bool ofImage_<PixelType>::load(const of::filesystem::path& fileName, const ofIma
 	#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName, settings);
 	if (!bLoadedOk) {
-		ofLogError("ofImage") << "loadImage(): couldn't load image from \"" << fileName << "\"";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from " << fileName << "";
 		clear();
 		return false;
 	}

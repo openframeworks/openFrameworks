@@ -283,6 +283,39 @@ glm::vec3 ofNode::getScale() const {
 }
 
 //----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::quat& q, const glm::vec3& s ) {
+	this->position = p;
+	this->orientation = q;
+	this->scale = s;
+	createMatrix();
+	onPositionChanged();
+	onOrientationChanged();
+	onScaleChanged();
+}
+
+//----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::quat& q, const float& s ) {
+	setPositionOrientationScale( p, q, {s,s,s} );
+}
+
+//----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::vec3& eulerAnglesDeg, const glm::vec3& s ) {
+	this->position = p;
+	glm::quat q(glm::radians(eulerAnglesDeg));
+	this->orientation = q;
+	this->scale = s;
+	createMatrix();
+	onPositionChanged();
+	onOrientationChanged();
+	onScaleChanged();
+}
+
+//----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::vec3& eulerAnglesDeg, const float& s ) {
+	setPositionOrientationScale( p, eulerAnglesDeg, {s,s,s} );
+}
+
+//----------------------------------------
 void ofNode::move(float x, float y, float z) {
 	move({x, y, z});
 }

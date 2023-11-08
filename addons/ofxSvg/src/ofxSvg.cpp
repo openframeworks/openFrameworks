@@ -3,13 +3,13 @@
 #include <locale>
 
 using std::string;
-using std::vector;
 
 extern "C" {
 #include "svgtiny.h"
 }
-ofxSvg::~ofxSvg() {
-	paths.clear();
+
+ofxSvg::ofxSvg(const of::filesystem::path & fileName) {
+	load(fileName);
 }
 
 float ofxSvg::getWidth() const {
@@ -27,29 +27,15 @@ ofPath & ofxSvg::getPathAt(int n) {
 	return paths[n];
 }
 
-void ofxSvg::load(of::filesystem::path fileName) {
-	// fileName = ofToDataPath(fileName);
-	std::string file = ofToDataPath(fileName);
-
-	// FIXME: I think this is the equivalent of .empty() which is simpler.
-	// maybe use file exists to check instead?
-	// if(fileName.compare("") == 0){
-	// 	ofLogError("ofxSVG") << "load(): path does not exist: \"" << fileName << "\"";
-	// 	return;
-	// }
-
-	// ofBuffer buffer = ofBufferFromFile(fileName);
-
-	// loadFromString(buffer.getText(), fileName);
-
-	if (file.compare("") == 0) {
+void ofxSvg::load(const of::filesystem::path & fileName) {
+	of::filesystem::path file = ofToDataPath(fileName);
+	if (!of::filesystem::exists(file)) {
 		ofLogError("ofxSVG") << "load(): path does not exist: \"" << file << "\"";
 		return;
 	}
 
-	ofBuffer buffer = ofBufferFromFile(file);
-
-	loadFromString(buffer.getText(), file);
+	ofBuffer buffer = ofBufferFromFile(fileName);
+	loadFromString(buffer.getText(), file.string());
 }
 
 void ofxSvg::loadFromString(std::string stringdata, std::string urlstring) {
@@ -69,7 +55,7 @@ void ofxSvg::loadFromString(std::string stringdata, std::string urlstring) {
 	std::locale::global(prev_locale);
 
 	if (code != svgtiny_OK) {
-		string msg;
+		std::string msg;
 		switch (code) {
 		case svgtiny_OUT_OF_MEMORY:
 			msg = "svgtiny_OUT_OF_MEMORY";
@@ -254,6 +240,6 @@ void ofxSvg::setupShape(struct svgtiny_shape * shape, ofPath & path) {
 	}
 }
 
-const vector<ofPath> & ofxSvg::getPaths() const {
+const std::vector<ofPath> & ofxSvg::getPaths() const {
 	return paths;
 }

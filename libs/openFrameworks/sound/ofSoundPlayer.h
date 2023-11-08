@@ -119,6 +119,14 @@ public:
     /// \brief Queries the player to see if its file was loaded successfully.
     /// \return whether or not the player is ready to begin playback.
     bool isLoaded() const;
+	
+	/// \brief Gets duration in seconds.
+	/// \return duration in seconds.
+	float getDuration() const;
+	
+	/// \brief Gets duration in milliseconds.
+	/// \return duration in milliseconds.
+	unsigned int getDurationMS() const;
 
 protected:
     std::shared_ptr<ofBaseSoundPlayer> player;

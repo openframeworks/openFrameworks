@@ -46,88 +46,88 @@ enum ofOrientation : short;
 
 /// \brief Contains general information about the style of ofGraphics
 /// elements such as color, line width and others.
-class ofStyle{
-	public:
-		/// \brief Create a default ofStyle.
-		ofStyle(){
-			bFill				= true;
-			blendingMode		= OF_BLENDMODE_ALPHA;
-			smoothing			= false;
-			circleResolution	= 20;
-			sphereResolution	= 20;
-			curveResolution		= 20;
-			lineWidth			= 1.0;
-			polyMode			= OF_POLY_WINDING_ODD;
-			rectMode			= OF_RECTMODE_CORNER;
-			#ifdef TARGET_OPENGLES
-				drawBitmapMode		= OF_BITMAPMODE_SIMPLE;
-			#else
-				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
-			#endif
-			bgColor.set(60.f/255.f, 60.f/255.f, 60.f/255.f);
-			//depthTest = false;
-		}
+class ofStyle {
+public:
+	/// \brief Create a default ofStyle.
+	ofStyle() {
+		bFill = true;
+		blendingMode = OF_BLENDMODE_ALPHA;
+		smoothing = false;
+		circleResolution = 20;
+		sphereResolution = 20;
+		curveResolution = 20;
+		lineWidth = 1.0;
+		polyMode = OF_POLY_WINDING_ODD;
+		rectMode = OF_RECTMODE_CORNER;
+#ifdef TARGET_OPENGLES
+		drawBitmapMode = OF_BITMAPMODE_SIMPLE;
+#else
+		drawBitmapMode = OF_BITMAPMODE_MODEL_BILLBOARD;
+#endif
+		bgColor.set(60.f / 255.f, 60.f / 255.f, 60.f / 255.f);
+		//depthTest = false;
+	}
 
-		/// \brief Destroy the ofStyle.
-		virtual ~ofStyle(){}
+	/// \brief Destroy the ofStyle.
+	virtual ~ofStyle() { }
 
-		/// \brief The color used when rendering.
-		///
-		/// This style depends on the state of the ofStyle::bFill.
-		ofFloatColor color;
+	/// \brief The color used when rendering.
+	///
+	/// This style depends on the state of the ofStyle::bFill.
+	ofFloatColor color;
 
-		/// \brief The background color used when rendering.
-		ofFloatColor bgColor;
+	/// \brief The background color used when rendering.
+	ofFloatColor bgColor;
 
-		/// \brief The current rendering mode for polygons.
-		///
-		/// ofPolyWindingMode determines how ovelapping parts of the same
-		/// polygon are rendered.
-		///
-		/// \sa ofPolyWindingMode
-		ofPolyWindingMode polyMode;
+	/// \brief The current rendering mode for polygons.
+	///
+	/// ofPolyWindingMode determines how ovelapping parts of the same
+	/// polygon are rendered.
+	///
+	/// \sa ofPolyWindingMode
+	ofPolyWindingMode polyMode;
 
-		/// \brief Determine how some shapes are anchored (e.g. ofDrawEllipse).
-		///
-		/// The rectMode applies to several shapes, including ofDrawRectangle
-		/// and ofDrawEllipse.  If the current rectMode is `OF_RECTMODE_CENTER`,
-		/// the rendered shape will be drawn with x, y in the center of the
-		/// shape. If the current rectMode is `OF_RECTMODE_CORNER`, the
-		/// rendered shape will be drawn with the x, y in the upper-left-hand
-		/// corner of the shape.
-		ofRectMode rectMode;
+	/// \brief Determine how some shapes are anchored (e.g. ofDrawEllipse).
+	///
+	/// The rectMode applies to several shapes, including ofDrawRectangle
+	/// and ofDrawEllipse.  If the current rectMode is `OF_RECTMODE_CENTER`,
+	/// the rendered shape will be drawn with x, y in the center of the
+	/// shape. If the current rectMode is `OF_RECTMODE_CORNER`, the
+	/// rendered shape will be drawn with the x, y in the upper-left-hand
+	/// corner of the shape.
+	ofRectMode rectMode;
 
-		/// \brief True if the renderer should fill a rendered shape.
-		///
-		/// If true, the renderer will fill the rendered shape.  If false, the
-		/// renderer will draw the outline of the rendered shape.
-		bool bFill;
+	/// \brief True if the renderer should fill a rendered shape.
+	///
+	/// If true, the renderer will fill the rendered shape.  If false, the
+	/// renderer will draw the outline of the rendered shape.
+	bool bFill;
 
-		/// \brief The render mode for bitmaps (e.g. ofDrawBitmapString).
-		///
-		/// \sa ofDrawBitmapString(const T& textString, float x, float y)
-		ofDrawBitmapMode drawBitmapMode;
+	/// \brief The render mode for bitmaps (e.g. ofDrawBitmapString).
+	///
+	/// \sa ofDrawBitmapString(const T& textString, float x, float y)
+	ofDrawBitmapMode drawBitmapMode;
 
-		/// \brief The blending mode.
-		ofBlendMode blendingMode;
+	/// \brief The blending mode.
+	ofBlendMode blendingMode;
 
-		/// \brief True if anti-aliasing is enabled.
-		bool smoothing;
+	/// \brief True if anti-aliasing is enabled.
+	bool smoothing;
 
-		// \brief The resolution of rendered circles and arcs (e.g. ofCircle).
-		int circleResolution;
+	// \brief The resolution of rendered circles and arcs (e.g. ofCircle).
+	int circleResolution;
 
-		// \brief The resolution of rendered spheres (e.g. ofSphere).
-		int sphereResolution;
+	// \brief The resolution of rendered spheres (e.g. ofSphere).
+	int sphereResolution;
 
-		// \brief The resolution of rendered curves.
-		int curveResolution;
+	// \brief The resolution of rendered curves.
+	int curveResolution;
 
-		/// \brief The width of rendered lines.
-		/// \warning This is not currently implemented in modern OF renderers.
-		float lineWidth;
+	/// \brief The width of rendered lines.
+	/// \warning This is not currently implemented in modern OF renderers.
+	float lineWidth;
 
-		//bool depthTest; removed since it'll break old projects setting depth test through glEnable
+	//bool depthTest; removed since it'll break old projects setting depth test through glEnable
 };
 
 //----------------------------------------------------------
@@ -788,6 +788,8 @@ public:
 	///		OF_BLENDMODE_SUBTRACT
 	///		OF_BLENDMODE_MULTIPLY
 	///		OF_BLENDMODE_SCREEN
+	///		OF_BLENDMODE_MAX
+	///		OF_BLENDMODE_MIN
 	///
 	/// \param blendMode The blend mode to request this renderer to use.
 	/// \sa ofBlendMode
@@ -815,40 +817,40 @@ public:
 	/// \param r The red value between 0 and 1 to use when drawing.
 	/// \param g The green value between 0 and 1 to use when drawing.
 	/// \param b The blue value between 0 and 1 to use when drawing.
-	virtual void setColor(float r, float g, float b)=0;
-    
+	virtual void setColor(float r, float g, float b) = 0;
+
 	/// \param r The red value between 0 and 1 to use when drawing.
 	/// \param g The green value between 0 and 1 to use when drawing.
 	/// \param b The blue value between 0 and 1 to use when drawing.
 	/// \param a The alpha value between 0 and 1 to use when drawing.
-	virtual void setColor(float r, float g, float b, float a)=0;
+	virtual void setColor(float r, float g, float b, float a) = 0;
 
-  /// \brief Set the global color this renderer will use when drawing.
+	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
 	///
 	/// \param color The color to use when drawing.
-	virtual void setColor(const ofFloatColor & color)=0;
+	virtual void setColor(const ofFloatColor & color) = 0;
 
-  /// \brief Set the global color this renderer will use when drawing.
+	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
 	///
 	/// \param color The color to use when drawing.
 	/// \param _a The alpha value between 0 and 1 to use when drawing.
-	virtual void setColor(const ofFloatColor & color, float _a)=0;
+	virtual void setColor(const ofFloatColor & color, float _a) = 0;
 
-  /// \brief Set the global color this renderer will use when drawing.
+	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
 	///
 	/// \param gray The grayscale value from 0 and 1 to use when drawing.
-	virtual void setColor(float gray)=0;
+	virtual void setColor(float gray) = 0;
 
-  /// \brief Set the global color this renderer will use when drawing.
+	/// \brief Set the global color this renderer will use when drawing.
 	///
 	/// The renderer will continue using a color set by setColor() until another
 	/// call to setColor() changes the drawing color.
@@ -872,10 +874,10 @@ public:
 
 	/// \brief Get this renderer's current background color.
 	/// \returns This renderer's current background color.
-	virtual ofFloatColor getBackgroundColor()=0;
+	virtual ofFloatColor getBackgroundColor() = 0;
 	/// \brief Set this renderer's background color.
 	/// \param c The color to request this renderer to use.
-	virtual void setBackgroundColor(const ofFloatColor & c)=0;
+	virtual void setBackgroundColor(const ofFloatColor & c) = 0;
 
 	/// \brief Immediately paint a background color to the screen.
 	///
@@ -884,9 +886,9 @@ public:
 	/// this color each frame.
 	///
 	/// \param c The color to paint the background with.
-	virtual void background(const ofFloatColor & c)=0;
+	virtual void background(const ofFloatColor & c) = 0;
 
-  /// \brief Immediately paint a grayscale background color to the screen.
+	/// \brief Immediately paint a grayscale background color to the screen.
 	///
 	/// If automatic background drawing is enabled (which it is by default) this
 	/// method called from ofApp::setup() will also repaint the background with
@@ -895,7 +897,7 @@ public:
 	/// \param brightness The grayscale value between 0 and 1 to paint the
 	/// background with.
 	virtual void background(float brightness) = 0;
-  
+
 	/// \brief Immediately paint a grayscale background color to the screen.
 	///
 	/// If automatic background drawing is enabled (which it is by default) this
@@ -906,20 +908,20 @@ public:
 	/// background with.
 	/// \param _a The alpha value between 0 and 255 to apply to \p hexColor when
 	/// when painting the background.
-	virtual void background(int hexColor, int _a=255)=0;
-  
+	virtual void background(int hexColor, int _a = 255) = 0;
+
 	/// \brief Immediately paint a background color to the screen.
 	///
 	/// \param r The red value between 0 and 1 to use for the background.
 	/// \param g The green value between 0 and 1 to use for the background.
 	/// \param b The blue value between 0 and 1 to use for the background.
 	/// \param a The alpha value between 0 and 1 to use for the background.
-	virtual void background(float r, float g, float b, float a=1.f)=0;
+	virtual void background(float r, float g, float b, float a = 1.f) = 0;
 
 	/// \brief Enable/disable automatic redrawing of the background each frame.
 	/// \param bManual False to disable automatic background redrawing.
 	virtual void setBackgroundAuto(bool bManual) = 0;
-  
+
 	/// \brief Get the current auto redraw background setting for this renderer.
 	/// \returns True if this renderer is set to redraw the background each
 	/// frame.
