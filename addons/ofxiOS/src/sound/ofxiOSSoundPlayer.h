@@ -36,6 +36,9 @@ public:
     float getPan() const;
     bool isLoaded() const;
     float getVolume() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
     
     void * getAVSoundPlayer();
     

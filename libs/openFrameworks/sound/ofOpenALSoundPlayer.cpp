@@ -237,7 +237,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vect
 		ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): couldn't read \"" << path << "\"";
 		return false;
 	}
-
+	duration = 0.0f;
 	buffer.resize(sfInfo.frames*sfInfo.channels);
 	fftAuxBuffer.resize(sfInfo.frames*sfInfo.channels);
 
@@ -286,6 +286,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vect
 //------------------------------------------------------------
 bool ofOpenALSoundPlayer::mpg123ReadFile(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
+	duration = 0.0f;
 	mpg123_handle * f = mpg123_new(nullptr,&err);
 	if(mpg123_open(f,path.string().c_str())!=MPG123_OK){
 		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): couldn't read \"" << path << "\"";
@@ -624,6 +625,16 @@ bool ofOpenALSoundPlayer::isLoaded() const{
 }
 
 //------------------------------------------------------------
+float ofOpenALSoundPlayer::getDuration() const {
+	return duration;
+}
+
+//------------------------------------------------------------
+unsigned int ofOpenALSoundPlayer::getDurationMS() const {
+	return duration * 1000.0f;
+}
+
+//------------------------------------------------------------
 void ofOpenALSoundPlayer::threadedFunction(){
 	std::vector<std::vector<short> > multibuffer;
 	multibuffer.resize(channels);
@@ -695,6 +706,7 @@ void ofOpenALSoundPlayer::update(ofEventArgs & args){
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::unload(){
+	
 	stop();
 	ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 
@@ -723,7 +735,7 @@ void ofOpenALSoundPlayer::unload(){
 		sf_close(streamf);
 	}
 	streamf = 0;
-
+	duration = 0.0f;
 	bLoadedOk = false;
 }
 

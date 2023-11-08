@@ -2,7 +2,7 @@
 
 #include "ofMathConstants.h"
 
-template<typename T>
+template <typename T>
 class ofColor_;
 typedef ofColor_<float> ofFloatColor;
 using ofDefaultVertexType = ofDefaultVec3;
@@ -10,14 +10,13 @@ using ofDefaultNormalType = ofDefaultVec3;
 using ofDefaultColorType = ofFloatColor;
 using ofDefaultTexCoordType = ofDefaultVec2;
 
-enum ofPolyRenderMode{
+enum ofPolyRenderMode {
 	OF_MESH_POINTS,
 	OF_MESH_WIREFRAME,
 	OF_MESH_FILL
 };
 
-
-enum ofPrimitiveMode{
+enum ofPrimitiveMode {
 	OF_PRIMITIVE_TRIANGLES,
 	OF_PRIMITIVE_TRIANGLE_STRIP,
 	OF_PRIMITIVE_TRIANGLE_FAN,
@@ -34,41 +33,43 @@ enum ofPrimitiveMode{
 #endif
 };
 
-
 /// \brief Used to represent the available fill modes.
 ///
 /// \sa ofBaseRenderer
-enum ofFillFlag{
+enum ofFillFlag {
 	/// \brief Draw shapes as outlines, unfilled.
-	OF_OUTLINE=	0,
+	OF_OUTLINE = 0,
 	/// \brief Draw shapes filled with the current draw color.
 	OF_FILLED = 1,
 };
 
-#define		OF_MAX_STYLE_HISTORY	32
+#define OF_MAX_STYLE_HISTORY 32
 
 /// \deprecated Not currently used in the OF codebase.
-#define		OF_MAX_VIEWPORT_HISTORY	32
+#define OF_MAX_VIEWPORT_HISTORY 32
 
 /// \deprecated Not currently used in the OF codebase.
-#define		OF_MAX_CIRCLE_PTS 1024
+#define OF_MAX_CIRCLE_PTS 1024
 
 /// \brief Used to represent the available blending modes for drawing.
-enum ofBlendMode{
+enum ofBlendMode {
 	/// \brief Blend mode is disabled.
 	OF_BLENDMODE_DISABLED = 0,
 	/// \brief Blend mode used for alpha blending.
-	OF_BLENDMODE_ALPHA 	  = 1,
+	OF_BLENDMODE_ALPHA = 1,
 	/// \brief Blend mode used for additive blending.
-	OF_BLENDMODE_ADD 	  = 2,
+	OF_BLENDMODE_ADD = 2,
 	/// \brief Blend mode used for subtractive blending.
 	OF_BLENDMODE_SUBTRACT = 3,
 	/// \brief Blend mode used for multiplicative blending.
 	OF_BLENDMODE_MULTIPLY = 4,
 	/// \brief Blend mode used for screen blending.
-	OF_BLENDMODE_SCREEN   = 5
+	OF_BLENDMODE_SCREEN = 5,
+	/// \brief Blend mode used for max (lighten) blending.
+	OF_BLENDMODE_MAX = 6,
+	/// \brief Blend mode used for max (darken) blending.
+	OF_BLENDMODE_MIN = 7,
 };
-
 
 /// \brief Represents the gradient types available to ofBackgroundGradient().
 enum ofGradientMode {
@@ -94,15 +95,15 @@ enum ofGradientMode {
 /// \sa ofTessellator::performTessellation()
 /// \sa http://glprogramming.com/red/images/Image128.gif
 /// \sa http://glprogramming.com/red/chapter11.html
-enum ofPolyWindingMode{
+enum ofPolyWindingMode {
 	/// \brief Fill odd winding numbers.
-	OF_POLY_WINDING_ODD 	        ,
+	OF_POLY_WINDING_ODD,
 	/// \brief Fill all non-zero winding numbers.
-	OF_POLY_WINDING_NONZERO         ,
+	OF_POLY_WINDING_NONZERO,
 	/// \brief Fill all winding numbers greater than zero.
-	OF_POLY_WINDING_POSITIVE        ,
+	OF_POLY_WINDING_POSITIVE,
 	/// \brief Fill all winding numbers less than zero.
-	OF_POLY_WINDING_NEGATIVE        ,
+	OF_POLY_WINDING_NEGATIVE,
 	/// \brief Fill all winding numbers greater than 1 or less than -1.
 	///
 	/// This stands for "Fill ABSolute values Greater than EQual to TWO".
@@ -113,16 +114,21 @@ enum ofPolyWindingMode{
 ///
 /// \sa ofMatrixStack
 /// \sa http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/
-enum ofHandednessType {OF_LEFT_HANDED, OF_RIGHT_HANDED};
+enum ofHandednessType {
+	OF_LEFT_HANDED,
+	OF_RIGHT_HANDED
+};
 
 /// \brief represents the available matrix types used internally in ::ofMatrixStack.
-enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTURE};
-
-
+enum ofMatrixMode {
+	OF_MATRIX_MODELVIEW = 0,
+	OF_MATRIX_PROJECTION,
+	OF_MATRIX_TEXTURE
+};
 
 /// \brief Sets the bitmap drawing mode for text.
 /// \sa ofSetDrawBitmapMode()
-enum ofDrawBitmapMode{
+enum ofDrawBitmapMode {
 	OF_BITMAPMODE_SIMPLE = 0,
 	OF_BITMAPMODE_SCREEN,
 	OF_BITMAPMODE_VIEWPORT,
@@ -130,19 +136,17 @@ enum ofDrawBitmapMode{
 	OF_BITMAPMODE_MODEL_BILLBOARD
 };
 
-
 /// \brief Used to represent the available rectangle drawing modes.
 ///
 /// \sa ofRectangle
 /// \sa ofTexture
 /// \sa ofImage
-enum ofRectMode{
+enum ofRectMode {
 	/// \brief Represents the mode where rectangles draw from the top left.
-	OF_RECTMODE_CORNER=0,
+	OF_RECTMODE_CORNER = 0,
 	/// \brief Represents the mode where rectangles draw from the center.
-	OF_RECTMODE_CENTER=1
+	OF_RECTMODE_CENTER = 1
 };
-
 
 /// \brief Used to represent the available channel types in ofImage.
 ///
@@ -151,21 +155,21 @@ enum ofRectMode{
 /// ::ofImageType for a more precise description of channel types.
 ///
 /// \sa ofImage
-enum ofImageType: short{
+enum ofImageType : short {
 	/// \brief A single channel (or monochrome) image.
 	///
 	/// \sa OF_PIXELS_GRAY
-	OF_IMAGE_GRAYSCALE		= 0x00,
+	OF_IMAGE_GRAYSCALE = 0x00,
 	/// \brief A three channel (or RGB) image.
 	///
 	/// \sa OF_PIXELS_RGB
-	OF_IMAGE_COLOR			= 0x01,
+	OF_IMAGE_COLOR = 0x01,
 	/// \brief A four channel (or RGBA) image.
 	///
 	/// \sa OF_PIXELS_RGBA
-	OF_IMAGE_COLOR_ALPHA	= 0x02,
+	OF_IMAGE_COLOR_ALPHA = 0x02,
 	/// \brief An unknown and unsupported image type.
 	///
 	/// \sa OF_PIXELS_UNKNOWN
-	OF_IMAGE_UNDEFINED		= 0x03
+	OF_IMAGE_UNDEFINED = 0x03
 };

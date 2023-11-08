@@ -187,4 +187,6 @@ public:
 	virtual bool isLoaded() const = 0;
 	virtual float getVolume() const = 0;
 
+	virtual float getDuration() const = 0;
+	virtual unsigned int getDurationMS() const = 0;
 };
