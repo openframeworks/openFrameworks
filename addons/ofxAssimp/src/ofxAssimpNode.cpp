@@ -53,51 +53,32 @@ void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixe
 			glm::vec3 tempScale = {0.f, 0.f, 0.f};
 			glm::quat tempQuat = glm::quat(1.f, 0.f, 0.f, 0.f);
 			bool bHasSomeKeys = false;
-			
+			int clipWithKeysIndex = 0;
 			for( auto& animClip : mixer->getAnimationClips() ) {
 				auto& keyCollection = mSrcNode->getKeyCollection(animClip.animation.getUid());
+				
 				if( keyCollection.hasKeys() ) {
 					auto animTime = animClip.animation.getPositionInTicks() + animClip.animation.getStartTick();
 					tempPos += animClip.weight * keyCollection.getPosition( animTime );
 					tempScale += animClip.weight * keyCollection.getScale( animTime );
 					// TODO: Keep an eye on this :O
-					tempQuat = glm::slerp(tempQuat, keyCollection.getRotation(animTime), animClip.weight );
-//					}
-//					auto tAiMat = keyCollection.getAiMatrix( animTime );
-//					setPositionOrientationScale( keyCollection.getPosition( animTime ), keyCollection.getRotation(animTime), keyCollection.getScale( animTime ) );
-//					setPosition( tempPos );
-//					setScale( tempScale );
-//					if( keyCollection.rotationKeys.size() > 1 ) {
-//						ofLogNotice("Assimp NOde :: setting quat from animation: ") << " name: " << getName() << " time: " << animTime;
-//						setOrientation(tempQuat);
-//					}
+					if(clipWithKeysIndex == 0 ) {
+						tempQuat = keyCollection.getRotation(animTime);
+					} else {
+						tempQuat = glm::slerp(tempQuat, keyCollection.getRotation(animTime), animClip.weight );
+					}
+					
+					clipWithKeysIndex++;
 					bHasSomeKeys = true;
-//					break;
-//					if( mSrcNode ) {
-//						mSrcNode->getAiNode()->mTransformation = tAiMat;
-//					}
 				}
 			}
 			if( bHasSomeKeys ) {
+//				if( getName() == "astroBoy_newSkeleton_R_middle_01") {
+//					ofLogNotice("ofx::assimp::Node::update") << " has keys: " << bHasSomeKeys;
+//				}
 				setPositionOrientationScale( tempPos, tempQuat, tempScale );
 			}
 		}
-				
-//				aiVector3t<float> tAiScale;
-//				aiQuaterniont<float> tAiRotation;
-//				aiVector3t<float> tAiPosition;
-//				tAiMat.Decompose( tAiScale, tAiRotation, tAiPosition );
-//
-//				glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
-//				glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-//				glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-//
-//				setPositionOrientationScale( tpos, tquat, tscale );
-//			}
-//		}
-		
-		
-		//setPositionOrientationScale( tempPos, tempQuat, tempScale );
 	}
 	
 	for( auto& kid : mKids ) {
@@ -107,7 +88,7 @@ void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixe
 
 //----------------------------------------
 void Node::drawNodes() {
-	ofDrawSphere( getGlobalPositionCached(), 5.0);
+	ofDrawSphere( getGlobalPosition(), 5.0);
 	for( auto& kid : mKids ) {
 		kid->drawNodes();
 	}
@@ -290,11 +271,11 @@ std::string Node::getAsString( int aLevel ) {
 //	if(mSrcNode) {
 //		oStr << mSrcNode->getTypeAsString();
 //	}
-	oStr << ofx::assimp::SrcNode::sGetNodeTypeAsString( getType() );
+	oStr << ofx::assimp::SrcNode::sGetNodeTypeShortAsString( getType() );
 	oStr << ": " << getName();
-	if( getNumChildren() > 0 ) {
-		oStr << " kids: " << mKids.size();
-	}
+//	if( getNumChildren() > 0 ) {
+//		oStr << " kids: " << mKids.size();
+//	}
 	//	if(usingKeyFrames()) {
 	//		oStr << " num keys collections: " << mKeyCollections.size();
 	//	}
@@ -307,41 +288,41 @@ std::string Node::getAsString( int aLevel ) {
 	return oStr.str();
 }
 
-//--------------------------------------------------------------
-glm::mat4& Node::getGlobalTransformCached() {
-	if(bCachedGTransformDirty) {
-		bCachedGTransformDirty = false;
-		mCachedGlobalTransform = getGlobalTransformMatrix();
-	}
-	return mCachedGlobalTransform;
-}
-
-//--------------------------------------------------------------
-glm::vec3& Node::getGlobalPositionCached() {
-	if(bCachedGPosDirty) {
-		bCachedGPosDirty = false;
-		mCachedGPos = glm::vec3(getGlobalTransformCached()[3]);
-	}
-	return mCachedGPos;
-}
-
-//--------------------------------------------------------------
-glm::quat& Node::getGlobalOrientationCached() {
-	if(bCachedGOrientationDirty) {
-		bCachedGOrientationDirty = false;
-		mCachedGQuat = getGlobalOrientation();
-	}
-	return mCachedGQuat;
-}
-
-//--------------------------------------------------------------
-glm::vec3& Node::getGlobalScaleCached() {
-	if(bCachedGScaleDirty) {
-		bCachedGScaleDirty = false;
-		mCachedGScale = getGlobalScale();
-	}
-	return mCachedGScale;
-}
+////--------------------------------------------------------------
+//glm::mat4& Node::getGlobalTransformCached() {
+//	if(bCachedGTransformDirty) {
+//		bCachedGTransformDirty = false;
+//		mCachedGlobalTransform = getGlobalTransformMatrix();
+//	}
+//	return mCachedGlobalTransform;
+//}
+//
+////--------------------------------------------------------------
+//glm::vec3& Node::getGlobalPositionCached() {
+//	if(bCachedGPosDirty) {
+//		bCachedGPosDirty = false;
+//		mCachedGPos = glm::vec3(getGlobalTransformCached()[3]);
+//	}
+//	return mCachedGPos;
+//}
+//
+////--------------------------------------------------------------
+//glm::quat& Node::getGlobalOrientationCached() {
+//	if(bCachedGOrientationDirty) {
+//		bCachedGOrientationDirty = false;
+//		mCachedGQuat = getGlobalOrientation();
+//	}
+//	return mCachedGQuat;
+//}
+//
+////--------------------------------------------------------------
+//glm::vec3& Node::getGlobalScaleCached() {
+//	if(bCachedGScaleDirty) {
+//		bCachedGScaleDirty = false;
+//		mCachedGScale = getGlobalScale();
+//	}
+//	return mCachedGScale;
+//}
 
 //--------------------------------------------------------------
 void Node::onPositionChanged() {

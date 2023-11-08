@@ -38,11 +38,11 @@ public:
 	
 	virtual std::string getAsString( int aLevel=0 );
 	
-	glm::mat4& getGlobalTransformCached();
-	
-	glm::vec3& getGlobalPositionCached();
-	glm::quat& getGlobalOrientationCached();
-	glm::vec3& getGlobalScaleCached();
+//	glm::mat4& getGlobalTransformCached();
+//
+//	glm::vec3& getGlobalPositionCached();
+//	glm::quat& getGlobalOrientationCached();
+//	glm::vec3& getGlobalScaleCached();
 	
 	std::shared_ptr<ofx::assimp::Node> getNode( const std::string& aPath, bool bStrict );
 	

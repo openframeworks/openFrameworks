@@ -40,6 +40,8 @@ public:
 	
 	bool setup( std::shared_ptr<ofx::assimp::SrcScene> ascene );
 	
+	bool isLoaded();
+	
 	void clear();
 	
 	std::string getHierarchyAsString();
@@ -55,12 +57,17 @@ public:
 	
 	// -- animations ---------------------------------------
 	bool hasAnimations();
-	unsigned int getAnimationCount();
+	unsigned int getNumAnimations();
 	unsigned int getCurrentAnimationIndex();
 	ofx::assimp::Animation& getCurrentAnimation();
-	bool setAnimation( int aindex );
-	bool setAnimation( const std::string& aname );
+	bool setCurrentAnimation( int aindex );
+	bool setCurrentAnimation( const std::string& aname );
 	
+	bool transitionCurrentAnimation( int aTargetAnimIndex, float aduration );
+	bool transitionCurrentAnimation( const std::string& aTargetAnimName, float aduration );
+	
+	bool hasAnimation( const std::string& aname );
+	int getAnimationIndex( const std::string& aname );
 	ofx::assimp::Animation& getAnimation(int aindex);
 	ofx::assimp::Animation& getAnimation(const std::string& aname);
 	
@@ -183,6 +190,7 @@ protected:
 	float normalizeFactor;
 	
 	bool bLoadedSrcScene = false;
+	bool bProcessedSceneSuccessfully = false;
 	
 	bool mBSceneBoundsDirty=true;
 	ofx::assimp::Bounds mSceneBoundsGlobal;

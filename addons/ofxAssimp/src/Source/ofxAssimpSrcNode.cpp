@@ -19,6 +19,20 @@ std::string SrcNode::sGetNodeTypeAsString( const NodeType& atype ) {
 }
 
 //--------------------------------------------------------------
+std::string SrcNode::sGetNodeTypeShortAsString( const NodeType& atype ) {
+	if( atype == OFX_ASSIMP_MESH ) {
+		return "MESH";
+	} else if(atype == OFX_ASSIMP_BONE ) {
+		return "BONE";
+	} else if(atype == OFX_ASSIMP_SKELETON ) {
+		return "SKELETON";
+	} else if(atype == OFX_ASSIMP_MODEL ) {
+		return "MODEL";
+	}
+	return "NODE";
+}
+
+//--------------------------------------------------------------
 void SrcNode::setAiNode( aiNode* aAiNode ) {
 	mAiNode = aAiNode;
 }

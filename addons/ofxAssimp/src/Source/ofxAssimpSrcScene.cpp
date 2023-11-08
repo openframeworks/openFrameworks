@@ -314,6 +314,7 @@ void SrcScene::processNodesRecursive(aiNode* anode, std::shared_ptr<SrcNode> aPa
 		auto sBone = std::make_shared<ofx::assimp::SrcBone>();
 		sBone->setAiBone(tAiBone, anode);
 		sBone->bRoot = isRootBone(anode) || !isBone(anode);
+//		sBone->bRoot = isArmature(anode);
 		if(tAiBone && tAiBone->mArmature) {
 //			std::cout << "SrcScene :: processNodes: " << tAiBone->mArmature->mName.data << std::endl;
 		}
@@ -602,38 +603,12 @@ void SrcScene::processKeyframes(std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, 
 	
 	ofLogNotice("SrcScene processKeyframes: ") << aSrcNode->getName() << " node anim: " << aNodeAnim->mNodeName.data << " node anim num pos keyframes: " << aNodeAnim->mNumPositionKeys << " scale: " << aNodeAnim->mNumScalingKeys << " rot: " << aNodeAnim->mNumRotationKeys;
 	
-//	durationInTicks = animation->mDuration;
-//	double ticksPerSecond = 25.0;
-//	if( animation->mTicksPerSecond > 0.0 ) {
-//		ticksPerSecond = animation->mTicksPerSecond;
-//	}
-	
 	double startTime = 0.0; // seconds
 	double endTime = anim.getDurationInTicks();// seconds;
 	
-//	getAnimVectorKeysForTime(const double& aStartTime, const double& aEndTime, unsigned int aNumKeys, aiVectorKey* aAiKeys)
 	keyCollection.positionKeys = keyCollection.getAnimVectorKeysForTime(startTime, endTime, aNodeAnim->mNumPositionKeys, aNodeAnim->mPositionKeys );
 	keyCollection.scaleKeys = keyCollection.getAnimVectorKeysForTime(startTime, endTime, aNodeAnim->mNumScalingKeys, aNodeAnim->mScalingKeys );
 	keyCollection.rotationKeys = keyCollection.getAnimRotationKeysForTime(startTime, endTime, aNodeAnim->mNumRotationKeys, aNodeAnim->mRotationKeys );
-	
-//	double currTime = startTime;
-////	double frameTime =
-	
-//	// get the first keyframe
-//	auto numPosKeys = aNodeAnim->mNumPositionKeys;
-//	for( unsigned int i = 0; i < numPosKeys-1; i++ ) {
-//		if( currTime < aNodeAnim->mPositionKeys[i+1].mTime ) {
-//			AnimVectorKey vkey;
-//			vkey.time = currTime;
-//			if( i == 0 && startTime <= 0.0 ) {
-//				vkey.value = aiVecToOfVec(aNodeAnim->mPositionKeys[i].mValue);
-//			} else {
-//				auto v1 = aiVecToOfVec(aNodeAnim->mPositionKeys[i].mValue);
-//				auto v2 = aiVecToOfVec(aNodeAnim->mPositionKeys[i+1].mValue);
-//
-//			}
-//		}
-//	}
 	
 }
 

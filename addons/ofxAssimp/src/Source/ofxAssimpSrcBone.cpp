@@ -19,6 +19,7 @@ void SrcBone::setAiBone(aiBone* aAiBone, aiNode* aAiNode) {
 	} else {
 		std::cout << "SrcBone::setAiBone : aiBone is NULL - " << getName() << std::endl;
 	}
+	mAiBone = aAiBone;
 	
 	mAiMatrix = mAiNode->mTransformation;
 	

@@ -21,6 +21,7 @@ class SrcNode {
 public:
 	
 	static std::string sGetNodeTypeAsString( const NodeType& atype );
+	static std::string sGetNodeTypeShortAsString( const NodeType& atype );
 	
 	virtual NodeType getType() { return OFX_ASSIMP_NODE; }
 	

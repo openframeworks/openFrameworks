@@ -29,7 +29,7 @@ public:
 	
 	unsigned int getNumBones();
 	
-//	aiBone* getAiBone() { return mAiBone; }
+	aiBone* getAiBone() { return mAiBone; }
 	
 	bool bRoot = false;
 	
@@ -41,7 +41,7 @@ public:
 	std::vector< std::shared_ptr<ofx::assimp::SrcBone> > childBones;
 	
 protected:
-//	aiBone* mAiBone = nullptr;
+	aiBone* mAiBone = nullptr;
 	aiMatrix4x4 mAiMatrix;
 //	aiMatrix4x4 mAiMatrixGlobal;
 	aiMatrix4x4 mOffsetMatrix;

@@ -100,7 +100,7 @@ void Bone::draw() {
 	//		localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)gquat);
 	
 	
-	auto gOrient = getGlobalOrientationCached();
+	auto gOrient = getGlobalOrientation();
 	for( auto& kid : mKids ) {
 //		auto kgpos = kid->getGlobalPositionCached();
 		auto kgpos = kid->getGlobalPosition();

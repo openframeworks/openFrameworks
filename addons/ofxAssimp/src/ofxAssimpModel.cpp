@@ -69,7 +69,13 @@ bool Model::setup( std::shared_ptr<ofx::assimp::SrcScene> ascene ) {
 	clear();
 	
 	mSrcScene = ascene;
-	return processScene();
+	bProcessedSceneSuccessfully = processScene();
+	return bProcessedSceneSuccessfully;
+}
+
+//------------------------------------------
+bool Model::isLoaded() {
+	return bProcessedSceneSuccessfully;
 }
 
 //------------------------------------------
@@ -143,8 +149,8 @@ bool Model::processScene() {
 		update();
 		calculateDimensions();
 
-		if(getAnimationCount()) {
-			ofLogVerbose("ofx::assimp::Model") << "load(): scene has " << getAnimationCount() << "animations";
+		if(hasAnimations()) {
+			ofLogVerbose("ofx::assimp::Model") << "load(): scene has " << getNumAnimations() << "animations";
 		} else {
 			ofLogVerbose("ofx::assimp::Model") << "load(): no animations";
 		}
@@ -233,6 +239,7 @@ void Model::clear(){
 		mSrcScene.reset();
 	}
 	bLoadedSrcScene = false;
+	bProcessedSceneSuccessfully = false;
 	
 	ofLogVerbose("ofx::assimp::Model") << "clear(): deleting GL resources";
 	
@@ -400,7 +407,7 @@ void Model::lateUpdate() {
 
 void Model::updateAnimations() {
 	if( mAnimMixer ) {
-		mAnimMixer->update();
+		mAnimMixer->update(ofGetElapsedTimef());
 		for( auto& kid : mKids ) {
 			kid->update(mAnimMixer);
 		}
@@ -543,16 +550,16 @@ void Model::updateMeshesFromBones() {
 				continue;
 			}
 
-//			aiBone* bone = sbone->getAiBone();
+			aiBone* tabone = sbone->getSrcBone()->getAiBone();
 
-//			if( !bone) {
-//				ofLogError("Update Bones: ") << mesh->mNumBones << " bone is NULL: " << mesh->mBones[a]->mName.data;
-//				continue;
-//			}
+			if( !tabone) {
+				ofLogError("Update Bones: ") << mesh->mNumBones << " bone is NULL: " << mesh->mBones[a]->mName.data;
+				continue;
+			}
 
 //			const aiMatrix4x4& posTrafo = boneMatrices[a];
 
-			glm::mat4 gMat = globalInvMat * sbone->getGlobalTransformCached();//sbone->getGlobalTransformMatrix();
+			glm::mat4 gMat = globalInvMat * sbone->getGlobalTransformMatrix();//sbone->getGlobalTransformCached();//sbone->getGlobalTransformMatrix();
 //			gMat = (globalInvMat * modelMeshes[i]->getGlobalTransformMatrix()) * gMat;
 			
 			// puts the bones in the correct place, but not the vertices
@@ -623,7 +630,7 @@ bool Model::hasAnimations() {
 	return mAnimations.size() > 0;
 }
 
-unsigned int Model::getAnimationCount(){
+unsigned int Model::getNumAnimations(){
 	return mAnimations.size();
 }
 
@@ -637,7 +644,7 @@ ofx::assimp::Animation& Model::getCurrentAnimation() {
 		return dummyAnimation;
 	}
 	if( mAnimMixer && mAnimMixer->getNumAnimationClips() > 0 ) {
-		return mAnimMixer->getAnimationClip(0).animation;
+		return mAnimMixer->getAnimationClips().back().animation;
 	}
 	ofLogWarning("ofx::assimp::Model::getCurrentAnimation") << " does not have current animation!";
 	return dummyAnimation;
@@ -657,7 +664,7 @@ ofx::assimp::Animation& Model::getCurrentAnimation() {
 //	}
 //}
 
-bool Model::setAnimation( int aindex ) {
+bool Model::setCurrentAnimation( int aindex ) {
 	if( mAnimations.size() < 1 ) {
 		ofLogWarning("ofx::assimp::Model::setAnimation") << " no animations!!";
 		return false;
@@ -669,11 +676,45 @@ bool Model::setAnimation( int aindex ) {
 	mAnimationIndex = ofClamp(aindex, 0, mAnimations.size()-1);
 	mAnimMixer->removeAll();
 	mAnimMixer->add( AnimationClip( mAnimations[mAnimationIndex], 1.0f ));
-	mAnimMixer->getAnimationClip(0).animation.reset();
+	mAnimMixer->getAnimationClips().back().animation.reset();
 	return true;
 }
 
-bool Model::setAnimation( const std::string& aname ) {
+bool Model::setCurrentAnimation( const std::string& aname ) {
+	int tindex = getAnimationIndex(aname);
+	if( tindex < 0 ) {
+		ofLogWarning("ofx::assimp::Model::setAnimation") << " could not find animation with name" << aname;
+		return false;
+	}
+	return setCurrentAnimation(tindex);
+}
+
+bool Model::transitionCurrentAnimation( int aTargetAnimIndex, float aduration ) {
+	if( mAnimations.size() < 1 ) {
+		ofLogWarning("ofx::assimp::Model::setAnimation") << " no animations!!";
+		return false;
+	}
+	mAnimationIndex = ofClamp(aTargetAnimIndex, 0, mAnimations.size()-1);
+	mAnimMixer->add( AnimationClip( mAnimations[mAnimationIndex], 1.f-mAnimMixer->getTotalClipWeights() ));
+	mAnimMixer->transition(mAnimations[mAnimationIndex].getName(), aduration );
+	mAnimMixer->getAnimationClips().back().animation.reset();
+	return true;
+}
+
+bool Model::transitionCurrentAnimation( const std::string& aTargetAnimName, float aduration ) {
+	int tindex = getAnimationIndex(aTargetAnimName);
+	if( tindex < 0 ) {
+		ofLogWarning("ofx::assimp::Model::transitionCurrentAnimation") << " could not find animation with name" << aTargetAnimName;
+		return false;
+	}
+	return transitionCurrentAnimation(tindex, aduration);
+}
+
+bool Model::hasAnimation( const std::string& aname ) {
+	return getAnimationIndex(aname) > -1;
+}
+
+int Model::getAnimationIndex( const std::string& aname ) {
 	int tindex = -1;
 	for( int i = 0; i < (int)mAnimations.size(); i++ ) {
 		if( mAnimations[i].getName() == aname ) {
@@ -681,11 +722,7 @@ bool Model::setAnimation( const std::string& aname ) {
 			break;
 		}
 	}
-	if( tindex < 0 ) {
-		ofLogWarning("ofx::assimp::Model::setAnimation") << " could not find animation with name" << aname;
-		return false;
-	}
-	return setAnimation(tindex);
+	return tindex;
 }
 
 ofx::assimp::Animation& Model::getAnimation(int aindex) {
@@ -698,13 +735,7 @@ ofx::assimp::Animation& Model::getAnimation(int aindex) {
 }
 
 ofx::assimp::Animation& Model::getAnimation(const std::string& aname) {
-	int tindex = -1;
-	for( int i = 0; i < (int)mAnimations.size(); i++ ) {
-		if( mAnimations[i].getName() == aname ) {
-			tindex = i;
-			break;
-		}
-	}
+	int tindex = getAnimationIndex(aname);
 	if( tindex < 0 ) {
 		ofLogWarning("ofx::assimp::Model::getAnimation") << " could not find animation with name" << aname;
 		return dummyAnimation;
