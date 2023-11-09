@@ -613,7 +613,7 @@ void SrcScene::processKeyframes(std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, 
 	keyCollection.clear();
 	keyCollection.setup( aNodeAnim, anim.getDurationInTicks() );
 	
-	ofLogNotice("SrcScene processKeyframes: ") << aSrcNode->getName() << " node anim: " << aNodeAnim->mNodeName.data << " node anim num pos keyframes: " << aNodeAnim->mNumPositionKeys << " scale: " << aNodeAnim->mNumScalingKeys << " rot: " << aNodeAnim->mNumRotationKeys;
+//	ofLogNotice("SrcScene processKeyframes: ") << aSrcNode->getName() << " node anim: " << aNodeAnim->mNodeName.data << " node anim num pos keyframes: " << aNodeAnim->mNumPositionKeys << " scale: " << aNodeAnim->mNumScalingKeys << " rot: " << aNodeAnim->mNumRotationKeys;
 	
 	double startTime = 0.0; // seconds
 	double endTime = anim.getDurationInTicks();// seconds;
