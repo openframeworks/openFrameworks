@@ -37,7 +37,9 @@ struct ImportSettings {
 	bool importAsTex2d = true;
 	bool importTextures = true;
 	bool importAnimations = true;
-	bool importLights = false;
+//	bool importLights = false;
+	
+	std::vector<std::string> excludeNodesContainingStrings;
 };
 
 class SrcScene {

@@ -27,6 +27,12 @@ public:
 	void removeAnimationMixer();
 	std::shared_ptr<ofx::assimp::AnimationMixer> getAnimationMixer() {return mAnimMixer;}
 	
+	bool areAnimationsEnabled() const;
+	void setAnimationsEnabled(bool aBEnable, bool aBRecursively=true);
+	
+	bool isEnabled() const;
+	void setEnabled( bool aBEnable, bool aBRecursively=true);
+	
 	void setParentNode( std::shared_ptr<ofx::assimp::Node> anode );
 	bool hasParentNode();
 	std::shared_ptr<ofx::assimp::Node> getParentNode();
@@ -103,6 +109,9 @@ protected:
 	std::shared_ptr<ofx::assimp::Node> mParentNode;
 	
 	std::shared_ptr<ofx::assimp::AnimationMixer> mAnimMixer;
+	
+	bool mBAnimationsEnabled = true;
+	bool mBEnabled = true;
 	
 	glm::vec3 mCachedGPos = {0.0f,0.0f,0.0f};
 	glm::quat mCachedGQuat;

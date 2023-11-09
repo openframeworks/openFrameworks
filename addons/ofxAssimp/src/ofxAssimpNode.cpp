@@ -32,7 +32,7 @@ std::string Node::getName() {
 //--------------------------------------------------------------
 void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixer ) {
 	std::shared_ptr<ofx::assimp::AnimationMixer> mixer;
-	if( hasAnimationMixer() ) {
+	if( hasAnimationMixer() && areAnimationsEnabled() ) {
 		mixer = mAnimMixer;
 	} else {
 		mixer = aAnimMixer;
@@ -45,7 +45,7 @@ void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixe
 	
 	// we have an animation mixer, override the incoming mixer //
 	// first get the appropriate key collection
-	if( mSrcNode ) {
+	if( mSrcNode && areAnimationsEnabled() ) {
 		
 		auto numClips = mixer->getNumAnimationClips();
 		if( numClips > 0 ) {
@@ -73,9 +73,6 @@ void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixe
 				}
 			}
 			if( bHasSomeKeys ) {
-//				if( getName() == "astroBoy_newSkeleton_R_middle_01") {
-//					ofLogNotice("ofx::assimp::Node::update") << " has keys: " << bHasSomeKeys;
-//				}
 				setPositionOrientationScale( tempPos, tempQuat, tempScale );
 			}
 		}
@@ -110,6 +107,38 @@ void Node::setAnimationMixer( std::shared_ptr<AnimationMixer> amixer ) {
 //----------------------------------------
 void Node::removeAnimationMixer() {
 	mAnimMixer.reset();
+}
+
+//----------------------------------------
+bool Node::areAnimationsEnabled() const {
+	return mBAnimationsEnabled && isEnabled();
+}
+
+//----------------------------------------
+void Node::setAnimationsEnabled(bool aBEnable,bool aBRecursively) {
+	mBAnimationsEnabled = aBEnable;
+	if(aBRecursively) {
+		// loop through children //
+		for( auto& kid : mKids ) {
+			kid->setAnimationsEnabled(aBEnable);
+		}
+	}
+}
+
+//----------------------------------------
+bool Node::isEnabled() const {
+	return mBEnabled;
+}
+
+//----------------------------------------
+void Node::setEnabled( bool aBEnable, bool aBRecursively) {
+	mBEnabled = aBEnable;
+	if(aBRecursively) {
+		// loop through children //
+		for( auto& kid : mKids ) {
+			kid->setEnabled(aBEnable);
+		}
+	}
 }
 
 //----------------------------------------
@@ -247,39 +276,19 @@ void Node::_getNodesForTypeRecursive( int atype, const std::string& aNameToConta
 std::string Node::getAsString( int aLevel ) {
 	std::stringstream oStr;// = "";
 	for( unsigned int i = 0; i < aLevel; i++ ) {
-//		if( i == aLevel -1 ) {
-//			oStr << "-";
-//		} else {
-			oStr << " ";
-//		}
+		oStr << " ";
 		if( i < aLevel-1 ) {
 			oStr << "|";
 		}
-	}
-	if( aLevel > 0 ) {
-		//		oStr <<" '";
 	}
 	if( mKids.size() ) {
 		oStr << "+ ";
 	} else {
 		oStr << "- ";
 	}
-	//    string pname = "";
-	//    if( getParent() != NULL ) {
-	//        pname = " parent: " + parentBoneName;
-	//    }
-//	if(mSrcNode) {
-//		oStr << mSrcNode->getTypeAsString();
-//	}
 	oStr << ofx::assimp::SrcNode::sGetNodeTypeShortAsString( getType() );
 	oStr << ": " << getName();
-//	if( getNumChildren() > 0 ) {
-//		oStr << " kids: " << mKids.size();
-//	}
-	//	if(usingKeyFrames()) {
-	//		oStr << " num keys collections: " << mKeyCollections.size();
-	//	}
-	oStr << std::endl;// "\n";
+	oStr << std::endl;
 	
 	for( auto& kid : mKids ) {
 		oStr << kid->getAsString( aLevel + 1);

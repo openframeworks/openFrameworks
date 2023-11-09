@@ -55,6 +55,9 @@ using namespace ofx::assimp;
 //	}
 //}
 //
+
+
+
 //-------------------------------------------
 bool Mesh::hasTexture() {
 	if(mSrcMesh) {
@@ -128,6 +131,14 @@ ofTexture& Mesh::getTexture() {
 //		}
 //	}
 //}
+
+//-------------------------------------------
+size_t Mesh::getNumVertices() {
+	if(mSrcMesh && mSrcMesh->getAiMesh()) {
+		return mSrcMesh->getAiMesh()->mNumVertices;
+	}
+	return 0;
+}
 
 //-------------------------------------------
 bool Mesh::hasNormals() {

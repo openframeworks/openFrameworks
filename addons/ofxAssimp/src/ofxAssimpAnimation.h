@@ -4,9 +4,7 @@
 //
 
 #pragma once
-
 #include "ofVideoBaseTypes.h"
-
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -72,8 +70,7 @@ protected:
 	std::string mName = "";
 	unsigned int mUid = 0;
 	
-	void updateAnimationNodes();
-	
+	//void updateAnimationNodes();
 	
 	float mSrcDurationInTicks = 0.f;
 //	std::shared_ptr<const aiScene> scene;

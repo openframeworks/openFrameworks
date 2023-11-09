@@ -107,14 +107,16 @@ bool Model::processScene() {
 		for( auto sceneSrcNode : sceneSrcNodes ) {
 			processSceneNodesRecursive(sceneSrcNode, tempParent);
 		}
-				
+		
+		
+		auto numberOfBones = getNumBones();
 //		now associate the meshes with the bones
 		for( auto& modelMesh : mMeshes ) {
 			ofLogNotice("model mesh") << modelMesh->getName() << " indices: " << modelMesh->getNumIndices() << " vbo: " << modelMesh->vbo->getNumVertices();
 			
 			auto* mesh = modelMesh->getAiMesh();
 			
-			if(mAnimations.size()){
+			if(mAnimations.size() > 0 || numberOfBones > 0 ){
 				modelMesh->animatedPos.resize(mesh->mNumVertices);
 				if(mesh->HasNormals()){
 					modelMesh->animatedNorm.resize(mesh->mNumVertices);
@@ -377,9 +379,9 @@ void Model::earlyUpdate() {
 //	aiIdentityMatrix4(&trafo);
 //	updateMeshTransforms(mSrcScene->getAiScene()->mRootNode, trafo );
 	
-	if(hasAnimations() == false) {
-		return;
-	}
+//	if(hasAnimations() == false) {
+//		return;
+//	}
 //	for( auto& bone : mBones ) {
 //		bone->updateFromSrcBone();
 //	}
@@ -392,7 +394,7 @@ void Model::update() {
 }
 
 void Model::lateUpdate() {
-	if(hasAnimations() == false) {
+	if(!hasAnimations() && !mBSceneDirty) {
 		return;
 	}
 	
@@ -403,6 +405,12 @@ void Model::lateUpdate() {
 	mBSceneBoundsDirty = true;
 	updateMeshesFromBones();
 	updateGLResources();
+	
+	mBSceneDirty = false;
+}
+
+void Model::flagSceneDirty() {
+	mBSceneDirty = true;
 }
 
 void Model::updateAnimations() {
@@ -495,7 +503,7 @@ void Model::updateMeshTransforms(aiNode * node, const aiMatrix4x4& parentMatrix)
 }
 
 void Model::updateMeshesFromBones() {
-	if (!hasAnimations()){
+	if (!hasAnimations() && !mBSceneDirty){
 		return;
 	}
 //	auto gmat = getGlobalTransformMatrix();
@@ -515,6 +523,11 @@ void Model::updateMeshesFromBones() {
 	
 	// update mesh position for the animation
 	for(size_t i = 0; i < mMeshes.size(); ++i) {
+		
+		if( !mMeshes[i]->isEnabled() ) {
+			continue;
+		}
+		
 		// current mesh we are introspecting
 		const aiMesh* mesh = mMeshes[i]->getAiMesh();
 		if( mesh == nullptr ) {
@@ -538,10 +551,10 @@ void Model::updateMeshesFromBones() {
 
 			const aiBone* bone = mesh->mBones[a];
 //			const aiMatrix4x4& posTrafo = boneMatrices[a];
-			if( a >= mMeshes[i]->mBones.size() ) {
-				ofLogError("Update Bones: ") << mesh->mNumBones << " src bones: " << mesh->mBones[a]->mName.data;
-				continue;
-			}
+//			if( a >= mMeshes[i]->mBones.size() ) {
+//				ofLogError("Update Bones: ") << mesh->mNumBones << " src bones: " << mesh->mBones[a]->mName.data;
+//				continue;
+//			}
 //
 			auto sbone = mMeshes[i]->mBones[a];
 //			ofLogNotice("Update sbone: ") << sbone->getName();
@@ -559,7 +572,7 @@ void Model::updateMeshesFromBones() {
 
 //			const aiMatrix4x4& posTrafo = boneMatrices[a];
 
-			glm::mat4 gMat = globalInvMat * sbone->getGlobalTransformMatrix();//sbone->getGlobalTransformCached();//sbone->getGlobalTransformMatrix();
+			glm::mat4 gMat = globalInvMat * sbone->getGlobalTransformMatrix();//sbone->getGlobalTransformCached();
 //			gMat = (globalInvMat * modelMeshes[i]->getGlobalTransformMatrix()) * gMat;
 			
 			// puts the bones in the correct place, but not the vertices
@@ -614,7 +627,7 @@ void Model::updateGLResources(){
 				continue;
 			}
 
-			if(hasAnimations()){
+			if(hasAnimations() || mBSceneDirty ){
 				mMeshes[i]->vbo->updateVertexData(&mMeshes[i]->animatedPos[0].x,mesh->mNumVertices);
 				if(mesh->HasNormals()){
 					mMeshes[i]->vbo->updateNormalData(&mMeshes[i]->animatedNorm[0].x,mesh->mNumVertices);
@@ -802,6 +815,14 @@ bool Model::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, fl
 //}
 
 //------------------------------------------- meshes.
+size_t Model::getNumVertices() {
+	size_t totalVs = 0;
+	for( auto& mh : mMeshes ) {
+		totalVs += mh->getNumVertices();
+	}
+	return totalVs;
+}
+
 bool Model::hasMeshes() {
 	return mMeshes.size() > 0;
 }
@@ -1027,7 +1048,10 @@ void Model::draw(ofPolyRenderMode renderType) {
 
 	for(size_t i = 0; i < mMeshes.size(); i++) {
 		auto& mesh = mMeshes[i];
-
+		if( !mesh->isEnabled() ) {
+			// we are not enabled, so keep on carrying on
+			continue;
+		}
 		mesh->transformGL();
 //		ofPushMatrix();
 //		ofMultMatrix(mesh.matrix);

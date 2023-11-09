@@ -37,6 +37,7 @@ public:
 //	ofTexture& getTexture(ofMaterialTextureType aType);
 //	std::vector<std::shared_ptr<ofx::assimp::Texture>> & getAllMeshTextures(){ return meshTextures; }
 	
+	size_t getNumVertices();
 	bool hasNormals();
 	aiMesh* getAiMesh();
 	std::size_t getNumIndices();

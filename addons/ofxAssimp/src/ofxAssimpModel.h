@@ -54,6 +54,8 @@ public:
 	void update();
 	void lateUpdate();
 	
+	void flagSceneDirty();
+	
 	
 	// -- animations ---------------------------------------
 	bool hasAnimations();
@@ -83,6 +85,7 @@ public:
 	
 	
 	// -- meshes ---------------------------------------
+	size_t getNumVertices();
 	bool hasMeshes();
 	size_t getNumMeshes();
 	std::vector<std::string> getMeshNames();
@@ -153,8 +156,6 @@ public:
 	void calculateDimensions();
 	
 	
-//	const aiScene * getAssimpScene();
-	
 protected:
 	void updateAnimations();
 	void updateMeshTransforms(aiNode * node, const aiMatrix4x4& parentMatrix);
@@ -162,7 +163,6 @@ protected:
 	
 	bool processScene();
 	void processSceneNodesRecursive( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, std::shared_ptr<ofx::assimp::Node> aParentNode );
-//	std::shared_ptr<ofx::assimp::Bone> getBoneForSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone );
 	
 	// updates the *actual GL resources* for the current animation
 	void updateGLResources();
@@ -182,6 +182,8 @@ protected:
 	int mAnimationIndex = 0;
 	
 	int mCullType = -1;
+	
+	bool mBSceneDirty = false;
 	
 	bool bUsingTextures;
 	bool bUsingNormals;

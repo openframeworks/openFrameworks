@@ -201,6 +201,11 @@ void Animation::play() {
 		bPause = false; // if paused, then unpause.
 		return;
 	}
+	
+	if( isFinished() ) {
+		setPosition(0);
+	}
+	
 	bPlay = true;
 	bPause = false;
 

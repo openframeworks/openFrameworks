@@ -320,18 +320,30 @@ void SrcScene::processNodesRecursive(aiNode* anode, std::shared_ptr<SrcNode> aPa
 		}
 		sNode = sBone;
 	} else {
-		sNode = std::make_shared<ofx::assimp::SrcNode>();
-		sNode->setAiNode(anode);
+		
+		std::string sname = anode->mName.data;
+		bool bExclude = false;
+		for( auto& es : mSettings.excludeNodesContainingStrings ) {
+			if( ofIsStringInString(sname, es) ) {
+				bExclude = true;
+				break;
+			}
+		}
+		if(!bExclude) {
+			sNode = std::make_shared<ofx::assimp::SrcNode>();
+			sNode->setAiNode(anode);
+		}
 	}
 	
-	if( aParentNode ) {
-		aParentNode->addChild(sNode);
-	} else {
-		// lets add to the srcNodes vector
-		mSrcNodes.push_back(sNode);
+	if(sNode) {
+		if( aParentNode ) {
+			aParentNode->addChild(sNode);
+		} else {
+			// lets add to the srcNodes vector
+			mSrcNodes.push_back(sNode);
+		}
+		processMeshes(anode, sNode);
 	}
-	
-	processMeshes(anode, sNode);
 	
 	for (unsigned int i = 0; i < anode->mNumChildren; i++ ){
 		processNodesRecursive(anode->mChildren[i], sNode );
