@@ -118,9 +118,14 @@ public:
 	ofOrientation getOrientation();
 
 	ofWindowMode getWindowMode();
-
+	
+	int getNativeWindowMode();
+	int getWindowingIsAttached();
+	
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
+	void toggleOSFullscreen();
+	void toggleWindowingFullscreen();
 
 	void enableSetupScreen();
 	void disableSetupScreen();

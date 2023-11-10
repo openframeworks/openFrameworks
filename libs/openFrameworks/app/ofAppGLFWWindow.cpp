@@ -679,10 +679,12 @@ void ofAppGLFWWindow::setWindowMinimumSize(int w, int h) {
 void ofAppGLFWWindow::setWindowAspectRatio(int horizontal, int vertical) {
 
 	glfwSetWindowAspectRatio(windowP, horizontal, vertical);
+	ofLogNotice("setting aspect ratio");
 	windowAspectRatio = { horizontal, vertical };
 }
 
 void ofAppGLFWWindow::setWindowMaximumSize(int w, int h) {
+	ofLogNotice("setting maximum size");
 	if (minimumWindowSize) {
 		glfwSetWindowSizeLimits(windowP, minimumWindowSize.value().x, minimumWindowSize.value().y, w, h);
 	} else {
@@ -692,7 +694,33 @@ void ofAppGLFWWindow::setWindowMaximumSize(int w, int h) {
 }
 
 void ofAppGLFWWindow::setWindowShape(int w, int h) {
+	
+	ofLogNotice("Setting window shape") << "OK" << settings.windowMode;
+	std::cout << "whut2" << std::endl;
+
 	if (settings.windowMode == OF_WINDOW) {
+		if (minimumWindowSize) {
+			w = std::max(w, int((*minimumWindowSize).x));
+			h = std::max(h, int((*minimumWindowSize).y));
+		}
+	
+		if (maximumWindowSize) {
+			ofLogNotice("enforcing max size")  << int((*maximumWindowSize).x);
+	
+			w = std::min(w, int((*maximumWindowSize).x));
+			h = std::min(h, int((*maximumWindowSize).y));
+		}
+	
+		if (windowAspectRatio) {
+			auto ratio = (*windowAspectRatio).x / (*windowAspectRatio).y;
+			ofLogNotice("enforcing ratio")  << ratio;
+			if (ratio >= 1.0) {
+				h = w/ratio;
+			} else {
+				w = h*ratio;
+			}
+			setWindowAspectRatio(windowAspectRatio->x, windowAspectRatio->y); // refresh GLFW
+		}
 		windowW = w;
 		windowH = h;
 	}
@@ -708,6 +736,10 @@ void ofAppGLFWWindow::setWindowShape(int w, int h) {
 #else
 	glfwSetWindowSize(windowP, currentW, currentH);
 #endif
+
+	if (windowAspectRatio) {
+		setWindowAspectRatio(windowAspectRatio->x, windowAspectRatio->y);
+	}
 }
 
 //------------------------------------------------------------
@@ -717,7 +749,7 @@ void ofAppGLFWWindow::hideCursor() {
 	} else {
 		glfwSetInputMode(windowP, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	}
-};
+}
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::showCursor() {
@@ -734,6 +766,35 @@ void ofAppGLFWWindow::disableSetupScreen() {
 	bEnableSetupScreen = false;
 };
 
+	void ofAppGLFWWindow::toggleOSFullscreen() {
+	#if defined(TARGET_OSX)
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+		[cocoaWindow toggleFullScreen:nil];
+	#endif
+	}
+		
+	void ofAppGLFWWindow::toggleWindowingFullscreen() {
+		if (glfwGetWindowMonitor(windowP)) {
+			// currently full screen; restored saved info
+			glfwSetWindowMonitor(windowP, NULL,
+								 windowRect.x, windowRect.y,
+								 windowRect.width, windowRect.height, 0);
+			
+		} else {
+			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+			// currently window, store saved info
+			  if (monitor)
+			  {
+				  const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+				  int x, y, w, h;
+				  glfwGetWindowPos(windowP, &x, &y);
+				  glfwGetWindowSize(windowP, &w, &h);
+				  windowRect = ofRectangle(x,y,w,h);
+				  glfwSetWindowMonitor(windowP, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+			  }
+		}
+	}
+		
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	if (fullscreen) {
@@ -743,20 +804,45 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 
 #if defined(TARGET_OSX)
+	NSLog(@"INFO");
+	NSArray *windows = CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListOptionAll, kCGNullWindowID));
+	for (NSDictionary *d in windows) {
+		NSLog(@"WINDOW");
+
+		for (id key in d) {
+
+			NSLog(@"key: %@, value: %@", key, [d objectForKey:key]);
+		}
+	}
+	
 	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+		ofLogNotice("A");
 		settings.windowMode = OF_FULLSCREEN;
 		if (targetWindowMode == OF_WINDOW) {
+			ofLogNotice("B");
 			[cocoaWindow toggleFullScreen:nil];
 		}
 	} else {
 		[cocoaWindow setHasShadow:NO];
 	}
+	
+//	if (targetWindowMode == OF_FULLSCREEN) {
+//		ofLogNotice("AAAA");
+//		[cocoaWindow toggleFullScreen:nil];
+//	} else {
+//		ofLogNotice("BBBB");
+//		[cocoaWindow toggleFullScreen:nil];
+//	}
+//	settings.windowMode = targetWindowMode;
+//	return;
+	
 #endif
 
 	//we only want to change window mode if the requested window is different to the current one.
 	bool bChanged = targetWindowMode != settings.windowMode;
 	if (!bChanged) {
+		ofLogNotice("NO CHANGE");
 		return;
 	}
 
@@ -1078,7 +1164,12 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 #endif
 
+	ofLogNotice("ending sss");
 	settings.windowMode = targetWindowMode;
+	
+	if (windowAspectRatio) {
+		setWindowAspectRatio(windowAspectRatio->x, windowAspectRatio->y); // not sure why the min/max are persisting but but not the aspect
+	}
 }
 
 //------------------------------------------------------------
@@ -1616,6 +1707,19 @@ void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 	instance->draw();
 }
 
+	int ofAppGLFWWindow::getNativeWindowMode() {
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(getGLFWWindow());
+		return 0 != ([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen);
+	}
+	
+	int ofAppGLFWWindow::getWindowingIsAttached() {
+		if (glfwGetWindowMonitor(windowP)) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
@@ -1645,8 +1749,10 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 #if defined(TARGET_OSX)
 	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP_);
 	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+		ofLogNotice("FULLOKOKOK");
 		instance->settings.windowMode = OF_FULLSCREEN;
 	} else {
+		ofLogNotice("NO FULLOKOKOK");
 		instance->settings.windowMode = OF_WINDOW;
 	}
 #endif

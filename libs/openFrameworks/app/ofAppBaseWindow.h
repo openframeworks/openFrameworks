@@ -62,11 +62,15 @@ public:
 	virtual int getHeight() { return 0; }
 
 	virtual void setWindowTitle(std::string title) { }
+	virtual int getNativeWindowMode() {return -1;};
+	virtual int getWindowingIsAttached() {return -1;};
 
 	virtual ofWindowMode getWindowMode() { return OF_WINDOW; }
 
 	virtual void setFullscreen(bool fullscreen) { }
 	virtual void toggleFullscreen() { }
+	virtual void toggleOSFullscreen() { }
+	virtual void toggleWindowingFullscreen() { }
 
 	virtual void enableSetupScreen() { }
 	virtual void disableSetupScreen() { }
