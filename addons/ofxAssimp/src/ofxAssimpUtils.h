@@ -76,7 +76,7 @@ inline void setOfNodeFromAiMatrix(aiMatrix4x4& aMat, ofNode* anode) {
 }
 
 //--------------------------------------------------------------
-inline void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofTexture* aTex=nullptr){
+inline void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, bool bInvertYTexCoord, ofTexture* aTex=nullptr){
 
 	// default to triangle mode
 	ofm.clear();
@@ -101,6 +101,9 @@ inline void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofTexture* aTex=nullp
 			if( aTex && aTex->isAllocated() ) {
 //				ofTexture& tex = helper->getTexture();
 				glm::vec2 texCoord = aTex->getCoordFromPercent(aim->mTextureCoords[0][i].x, aim->mTextureCoords[0][i].y);
+				if(bInvertYTexCoord) {
+					texCoord.y = aTex->getCoordFromPercent(0.0f, 1.0f).y - texCoord.y;
+				}
 				ofm.addTexCoord(texCoord);
 			}else{
 				glm::vec2 texCoord(aim->mTextureCoords[0][i].x, aim->mTextureCoords[0][i].y);

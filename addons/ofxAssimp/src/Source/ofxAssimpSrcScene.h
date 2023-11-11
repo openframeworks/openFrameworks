@@ -38,6 +38,7 @@ struct ImportSettings {
 	bool importTextures = true;
 	bool importAnimations = true;
 //	bool importLights = false;
+	bool convertToLeftHanded = true; // aiProcess_ConvertToLeftHanded
 	
 	std::vector<std::string> excludeNodesContainingStrings;
 };
@@ -68,7 +69,7 @@ public:
 protected:
 	
 	// ai scene setup
-	unsigned int initImportProperties(int assimpOptimizeFlags);
+	unsigned int initImportProperties(int assimpOptimizeFlags, bool aBConvertToLeftHand);
 	bool processScene(const ImportSettings& asettings);
 	void printAllNodeNames( aiNode* anode, int alevel );
 	void processNodes();

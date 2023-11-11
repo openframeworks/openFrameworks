@@ -51,7 +51,7 @@ bool SrcScene::load(ofBuffer & buffer, int assimpOptimizeFlags, const char * ext
 	}
 	
 	// sets various properties & flags to a default preference
-	unsigned int flags = initImportProperties(assimpOptimizeFlags);
+	unsigned int flags = initImportProperties(assimpOptimizeFlags,true);
 	
 	// 	//enable assimp logging based on ofGetLogLevel
 	//	if( ofGetLogLevel() < OF_LOG_NOTICE ){
@@ -89,7 +89,7 @@ bool SrcScene::load( const ImportSettings& asettings ) {
 	}
 	
 	// sets various properties & flags to a default preference
-	unsigned int flags = initImportProperties(asettings.assimpOptimizeFlags);
+	unsigned int flags = initImportProperties(asettings.assimpOptimizeFlags, asettings.convertToLeftHanded);
 	// loads scene from file
 	std::string path = mFile.getAbsolutePath();
 	const aiScene * scenePtr = importer.ReadFile(path.c_str(), flags);
@@ -101,7 +101,7 @@ bool SrcScene::load( const ImportSettings& asettings ) {
 	return bOk;
 }
 
-unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags) {
+unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, bool aBConvertToLeftHand) {
 	store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
 	
 	// only ever give us triangles.
@@ -139,7 +139,9 @@ unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags) {
 		// we need the armature data to help with bone parsing
 		flags |= aiProcess_PopulateArmatureData;
 		// this fixes things for OF both tex uvs and model not flipped in z
-		flags |= aiProcess_ConvertToLeftHanded;
+		if(aBConvertToLeftHand) {
+			flags |= aiProcess_ConvertToLeftHanded;
+		}
 	}
 	
 	return flags;
@@ -669,6 +671,7 @@ void SrcScene::loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, a
 //			continue;
 //		}
 	if( amesh ) {
+		aSrcMesh->bConvertedToLeftHand = mSettings.convertToLeftHanded;
 		
 		// the current meshHelper we will be populating data into.
 		//		modelMeshes.push_back( std::make_shared<MeshHelper>());
@@ -894,9 +897,9 @@ void SrcScene::loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, a
 		
 		ofMesh tempMesh;
 		if( aSrcMesh->hasTexture() ) {
-			aiMeshToOfMesh(amesh, tempMesh, &aSrcMesh->getTexture() );
+			aiMeshToOfMesh(amesh, tempMesh, !mSettings.convertToLeftHanded, &aSrcMesh->getTexture() );
 		} else {
-			aiMeshToOfMesh(amesh, tempMesh, nullptr);
+			aiMeshToOfMesh(amesh, tempMesh, !mSettings.convertToLeftHanded, nullptr);
 		}
 		
 		aSrcMesh->calculateLocalBounds(tempMesh);

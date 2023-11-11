@@ -71,6 +71,7 @@ public:
 	
 	bool hasChanged = false;
 	bool validCache = false;
+	bool bConvertedToLeftHand = true;
 	
 	std::vector<aiVector3D> animatedPos;
 	std::vector<aiVector3D> animatedNorm;

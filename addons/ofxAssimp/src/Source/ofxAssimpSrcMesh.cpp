@@ -131,9 +131,9 @@ void SrcMesh::setAiMesh( aiMesh* amesh, aiNode* aAiNode ) {
 void SrcMesh::setMeshFromAiMesh( ofMesh& amesh ) {
 	if( mAiMesh != NULL && amesh.getNumVertices() < 1 ) {
 		if( hasTexture() ) {
-			aiMeshToOfMesh(mAiMesh, amesh, &getTexture());
+			aiMeshToOfMesh(mAiMesh, amesh, !bConvertedToLeftHand, &getTexture());
 		} else {
-			aiMeshToOfMesh(mAiMesh, amesh, nullptr);
+			aiMeshToOfMesh(mAiMesh, amesh, !bConvertedToLeftHand, nullptr);
 		}
 	}
 }

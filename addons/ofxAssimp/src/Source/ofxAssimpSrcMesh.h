@@ -42,6 +42,7 @@ public:
 	
 	ofBlendMode blendMode = OF_BLENDMODE_ALPHA;
 	bool twoSided = false;
+	bool bConvertedToLeftHand = true;
 	
 protected:
 	aiMesh* mAiMesh = nullptr; // pointer to the aiMesh we represent.

@@ -180,6 +180,7 @@ void Mesh::setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh ) {
 		blendMode = mSrcMesh->blendMode;
 		vbo = mSrcMesh->vbo;
 		mLocalBounds = mSrcMesh->getLocalBounds();
+		bConvertedToLeftHand = mSrcMesh->bConvertedToLeftHand;
 	}
 }
 
@@ -187,9 +188,9 @@ void Mesh::setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh ) {
 ofMesh& Mesh::getStaticMesh() {
 	if( mSrcMesh && mSrcMesh->getAiMesh() && mMesh.getNumVertices() < 1 ) {
 		if( hasTexture() ) {
-			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, &getTexture() );
+			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, &getTexture() );
 		} else {
-			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, nullptr);
+			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, nullptr);
 		}
 	}
 	return mMesh;
@@ -203,9 +204,9 @@ ofMesh& Mesh::getMesh() {
 				mBInitedAnimatedMesh=true;
 				if(mSrcMesh && mSrcMesh->getAiMesh()) {
 					if( hasTexture() ) {
-						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, &getTexture() );
+						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, &getTexture() );
 					} else {
-						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, nullptr);
+						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, nullptr);
 					}
 				}
 			}
