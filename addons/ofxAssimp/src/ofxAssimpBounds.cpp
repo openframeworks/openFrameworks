@@ -13,6 +13,30 @@ using namespace ofx::assimp;
 ofMesh Bounds::mLinesMesh;
 
 //--------------------------------------------------------------
+Bounds::Bounds() {
+	
+}
+
+//--------------------------------------------------------------
+Bounds::Bounds( const glm::vec2& amin, const glm::vec2& amax ) {
+	min = glm::vec3( amin, 0.f );
+	max = glm::vec3( amax, 0.0f );
+	update();
+}
+
+//--------------------------------------------------------------
+Bounds::Bounds( const glm::vec3& amin, const glm::vec3& amax ) {
+	min = amin;
+	max = amax;
+	update();
+}
+
+//--------------------------------------------------------------
+Bounds::~Bounds() {
+	
+}
+
+//--------------------------------------------------------------
 void Bounds::clear() {
 	min = glm::vec3( 0.f, 0.f, 0.f);
 	max = glm::vec3(0.f, 0.f, 0.f );
@@ -191,6 +215,107 @@ float Bounds::getDepth() {
 //--------------------------------------------------------------
 glm::vec3 Bounds::getDimensions() {
 	return glm::vec3( getWidth(), getHeight(), getDepth() );
+}
+
+//--------------------------------------------------------------
+bool Bounds::operator==( const Bounds& aob ) const {
+	if((min.x == aob.min.x) && (min.y == aob.min.y) && (min.z == aob.min.z)) {
+		if((max.x == aob.max.x) && (max.y == aob.max.y) && (max.z == aob.max.z)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+//--------------------------------------------------------------
+bool Bounds::operator!=( const Bounds& aob ) const {
+	if((min.x != aob.min.x) || (min.y != aob.min.y) || (min.z != aob.min.z)) return true;
+	if((max.x != aob.max.x) || (max.y != aob.max.y) || (max.z != aob.max.z)) return true;
+	return false;
+}
+
+//--------------------------------------------------------------
+Bounds Bounds::operator+( const glm::vec2& apnt ) const {
+	return Bounds( min + glm::vec3(apnt, 0.0f), max + glm::vec3(apnt, 0.0f));
+}
+
+//--------------------------------------------------------------
+Bounds Bounds::operator+( const glm::vec3& apnt ) const {
+	return Bounds( min + apnt, max + apnt );
+}
+
+//--------------------------------------------------------------
+Bounds& Bounds::operator+=( const glm::vec2& aPos2 ) {
+	min += glm::vec3(aPos2, 0.0f );
+	max += glm::vec3(aPos2, 0.0f );
+	update();
+	return *this;
+}
+
+//--------------------------------------------------------------
+Bounds& Bounds::operator+=( const glm::vec3& aPos3 ) {
+	min += aPos3;
+	max += aPos3;
+	update();
+	return *this;
+}
+
+//--------------------------------------------------------------
+Bounds Bounds::operator-( const glm::vec2& apnt ) const {
+	return Bounds( min - glm::vec3(apnt, 0.0f), max - glm::vec3(apnt, 0.0f));
+}
+
+//--------------------------------------------------------------
+Bounds Bounds::operator-( const glm::vec3& apnt ) const {
+	return Bounds( min - apnt, max - apnt );
+}
+
+//--------------------------------------------------------------
+Bounds& Bounds::operator-=( const glm::vec2& aPos2 ) {
+	min -= glm::vec3(aPos2, 0.0f );
+	max -= glm::vec3(aPos2, 0.0f );
+	update();
+	return *this;
+}
+
+//--------------------------------------------------------------
+Bounds& Bounds::operator-=( const glm::vec3& aPos3 ) {
+	min -= aPos3;
+	max -= aPos3;
+	update();
+	return *this;
+}
+
+//--------------------------------------------------------------
+Bounds Bounds::operator*( const float& ascale ) const {
+	return Bounds( min * ascale, max * ascale );
+}
+
+//--------------------------------------------------------------
+Bounds& Bounds::operator*=( const float& ascale ) {
+	min *= ascale;
+	max *= ascale;
+	update();
+	return *this;
+}
+
+//--------------------------------------------------------------
+Bounds Bounds::operator*( const glm::vec3& ascale ) const {
+	return Bounds( min * ascale, max * ascale );
+}
+
+//--------------------------------------------------------------
+Bounds& Bounds::operator*=( const glm::vec3& ascale ) {
+	min *= ascale;
+	max *= ascale;
+	update();
+	return *this;
+}
+
+//----------------------------------------------------------
+std::ostream& operator<<(std::ostream& os, const ofx::assimp::Bounds& ab){
+	os << " min: " << ab.min << ", max: " << ab.max << ", center: " << ab.radius;
+	return os;
 }
 
 //--------------------------------------------------------------

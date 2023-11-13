@@ -13,7 +13,7 @@ using namespace ofx::assimp;
 
 std::unordered_map< int, ofMaterialTextureType > ofx::assimp::Texture::sAiTexTypeToOfTexTypeMap;
 
-//void ofxAssimpTexture::setup(const ofTexture & texture, const of::filesystem::path & texturePath, bool bTexRepeat) {
+//-------------------------------------------
 void ofx::assimp::Texture::setup(const of::filesystem::path & texturePath, bool bTexRepeat) {
 //	this->texture = texture;
 	if( bTexRepeat ){
@@ -29,6 +29,7 @@ void ofx::assimp::Texture::setup(const of::filesystem::path & texturePath, bool 
 const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
 #endif
 
+//-------------------------------------------
 void ofx::assimp::Texture::setAiTextureType(aiTextureType aTexType){
 	textureType = aTexType;
 
@@ -44,28 +45,39 @@ void ofx::assimp::Texture::setAiTextureType(aiTextureType aTexType){
 	}
 }
 
+//-------------------------------------------
 ofTexture & Texture::getTextureRef() {
 	return texture;
 }
 
+//-------------------------------------------
 of::filesystem::path Texture::getTexturePath() {
 	return texturePath;
 }
 
+//-------------------------------------------
 bool Texture::hasTexture() {
 	return texture.isAllocated();
 }
 
+//-------------------------------------------
 aiTextureType Texture::getAiTextureType() const{
 	return textureType;
 }
 
+//-------------------------------------------
 std::string Texture::getAiTextureTypeAsString() const{
 	return mTexTypeStr;
 }
 
+//-------------------------------------------
 ofMaterialTextureType Texture::getOfTextureType() {
 	return ofTextureTypeForAiType(textureType);
+}
+
+//-------------------------------------------
+std::string Texture::getOfTextureTypeAsString() {
+	return ofMaterial::getTextureTypeAsString(getOfTextureType());
 }
 
 //-------------------------------------------
@@ -95,6 +107,8 @@ void Texture::_initTextureTypeMap() {
 		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_EMISSIVE] = OF_MATERIAL_TEXTURE_EMISSIVE;
 		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_NORMALS] = OF_MATERIAL_TEXTURE_NORMAL;
 		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_LIGHTMAP] = OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC;
+		// aiTextureType_SHININESS // probably should be used with phong, but going to map to roughness
+		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_SHININESS] = OF_MATERIAL_TEXTURE_ROUGHNESS;
 		//17 = aiTextureType_AMBIENT_OCCLUSION; //use this when we want to support newer assimp only
 		sAiTexTypeToOfTexTypeMap[17] = OF_MATERIAL_TEXTURE_OCCLUSION;
 		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_AMBIENT] = OF_MATERIAL_TEXTURE_AMBIENT;

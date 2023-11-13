@@ -19,6 +19,11 @@ protected:
 	
 public:
 	
+	Bounds();
+	Bounds( const glm::vec2& amin, const glm::vec2& amax );
+	Bounds( const glm::vec3& amin, const glm::vec3& amax );
+	~Bounds();
+	
 	void clear();
 	
 	void include( glm::mat4& amat, const std::vector<aiVector3D>& averts);
@@ -37,6 +42,24 @@ public:
 	float getDepth();
 	glm::vec3 getDimensions();
 	
+	bool operator==( const Bounds& aob ) const;
+	bool operator!=( const Bounds& aob ) const;
+	
+	Bounds  operator+( const glm::vec2& apnt ) const;
+	Bounds  operator+( const glm::vec3& apnt ) const;
+	Bounds& operator+=( const glm::vec2& aPos2 );
+	Bounds& operator+=( const glm::vec3& aPos3 );
+	
+	Bounds  operator-( const glm::vec2& apnt ) const;
+	Bounds  operator-( const glm::vec3& apnt ) const;
+	Bounds& operator-=( const glm::vec2& aPos2 );
+	Bounds& operator-=( const glm::vec3& aPos3 );
+	
+	Bounds  operator*( const float& ascale ) const;
+	Bounds& operator*=( const float& ascale );
+	Bounds  operator*( const glm::vec3& ascale ) const;
+	Bounds& operator*=( const glm::vec3& ascale );
+	
 	glm::vec3 min = {0.f, 0.f, 0.f };
 	glm::vec3 max = {0.f,0.f,0.f};
 	glm::vec3 center = {0.f, 0.f, 0.f };
@@ -54,3 +77,5 @@ protected:
 	bool bCalced = false;
 };
 }
+
+std::ostream& operator<<(std::ostream& os, const ofx::assimp::Bounds& ab);

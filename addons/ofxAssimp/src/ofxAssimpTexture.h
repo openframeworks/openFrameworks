@@ -27,6 +27,7 @@ public:
 	std::string getAiTextureTypeAsString() const;
 	
 	ofMaterialTextureType getOfTextureType();
+	std::string getOfTextureTypeAsString();
 	
 	static ofMaterialTextureType ofTextureTypeForAiType(aiTextureType aTexType);
 	static aiTextureType aiTextureTypeForOfType(ofMaterialTextureType aTexType);
