@@ -13,57 +13,31 @@ using std::shared_ptr;
 
 using namespace ofx::assimp;
 
-//ofTexture Mesh::sDummyTex;
-////static unsigned int sUniqueMeshCounter = 0;
-////std::unordered_map< int, ofMaterialTextureType > Mesh::sAiTexTypeToOfTexTypeMap;
-//
-//
-////-------------------------------------------
-//void Mesh::addTexture( std::shared_ptr<ofx::assimp::Texture> aAssimpTex){
-//	
-//	if(!material) {
-//		material = std::make_shared<ofMaterial>();
-//	}
-//	
-////	material->setPBR(true);
-//
-//	auto tAiType = aAssimpTex->getTextureType();
-//	auto tofType = _getOfTypeForAiType(tAiType);
-//	
-//	if(tofType == OF_MATERIAL_TEXTURE_NONE ) {
-//		ofLogError("ofx::assimp::Mesh::addTexture") << aAssimpTex->getTextureTypeAsString();
-//		return;
-//	}
-//	
-//	bool bGoAheadAndAdd = false;
-//	
-//	if( tofType == OF_MATERIAL_TEXTURE_DIFFUSE) {
-//		if(!hasTexture(OF_MATERIAL_TEXTURE_DIFFUSE)) {
-//			bGoAheadAndAdd = true;
-//		}
-//	} else {
-//		if( tofType != OF_MATERIAL_TEXTURE_NONE ) {
-//			bGoAheadAndAdd = true;
-//		}
-//	}
-//	
-//	if(bGoAheadAndAdd) {
-////		auto nAssimpTex = std::make_shared<ofxAssimpTexture>();
-////		(*nAssimpTex.get()) = aAssimpTex;
-//		meshTextures.push_back(aAssimpTex);
-//		material->setTexture(tofType, aAssimpTex->getTextureRef());
-//	}
-//}
-//
-
-
-
 //-------------------------------------------
 bool Mesh::hasTexture() {
 	if(mSrcMesh) {
 		return mSrcMesh->hasTexture();
 	}
+	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
 	return false;
+}
+
+//-------------------------------------------
+bool Mesh::hasTexture(ofMaterialTextureType aType){
+	if(mSrcMesh) {
+		return mSrcMesh->hasTexture(aType);
+	}
+	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
+	return false;
+}
+
+//-------------------------------------------
+std::size_t Mesh::getNumTextures() {
+	if(mSrcMesh) {
+		return mSrcMesh->getNumTextures();
+	}
+	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
+	return 0;
 }
 
 //-------------------------------------------
@@ -71,66 +45,30 @@ ofTexture& Mesh::getTexture() {
 	if(mSrcMesh) {
 		return mSrcMesh->getTexture();
 	}
+	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
 	return ofx::assimp::SrcMesh::sDummyTex;
-//	_initTextureTypeMap();
-//	for( auto iter = sAiTexTypeToOfTexTypeMap.begin(); iter != sAiTexTypeToOfTexTypeMap.end(); iter++ ) {
-//		if( hasTexture((aiTextureType)iter->first) ) {
-//			return getTexture((aiTextureType)iter->first);
-//		}
-//	}
-//	ofLogWarning("ofx::assimp::Mesh::getTexture") << " unable to find any allocated texture";
-//	return sDummyTex;
 }
-//
-////-------------------------------------------
-//bool Mesh::hasTexture(aiTextureType aTexType){
-//	for( auto& tex : meshTextures ){
-//		if( tex && tex->getTextureType() == aTexType){
-//			return tex->hasTexture();
-//		}
-//	}
-//	return false;
-//}
-//
-////-------------------------------------------
-//bool Mesh::hasTexture(ofMaterialTextureType aType){
-//	return hasTexture(_getAiTypeForOfType(aType));
-//}
-//
-////-------------------------------------------
-//ofTexture& Mesh::getTexture(aiTextureType aTexType){
-//	for( auto & tex : meshTextures ){
-//		if( tex && tex->getTextureType() == aTexType){
-//			return tex->getTextureRef();
-//		}
-//	}
-//	ofLogWarning("ofx::assimp::Mesh::getTexture : unable to find texture ref for ") << aTexType;
-//	return sDummyTex;
-//}
-//
-////-------------------------------------------
-//ofTexture& Mesh::getTexture(ofMaterialTextureType aType){
-//	return getTexture( _getAiTypeForOfType(aType) );
-//}
 
-////-------------------------------------------
-//void Mesh::setup( mSrcMesh ) {
-//	mAiMesh = amesh;
-//	if( mAiMesh != NULL ) {
-//		getName(); // forces setting of the name
-//		material = std::make_shared<ofMaterial>();
-//		recalculateBounds(true);
-//
-//		mName = mAiMesh->mName.data;
-//		if(mName.empty() ) {
-//			// the mesh is not named or we were unable to detect one
-//			mName = "Default Mesh "+ofToString(sUniqueMeshCounter,0);
-//			if( sUniqueMeshCounter > std::numeric_limits<unsigned int>().max()-3) {
-//				sUniqueMeshCounter = 0;
-//			}
-//		}
-//	}
-//}
+//-------------------------------------------
+ofTexture& Mesh::getTexture(ofMaterialTextureType aType){
+	if(mSrcMesh) {
+		return mSrcMesh->getTexture( aType );
+	}
+	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
+	return ofx::assimp::SrcMesh::sDummyTex;
+}
+
+//-------------------------------------------
+std::shared_ptr<ofx::assimp::Texture> Mesh::getTexture( unsigned int aindex ) {
+	if(mSrcMesh) {
+		if( aindex < 0 || aindex >= getNumTextures() ) {
+			ofLogWarning("ofx::assimp::Mesh::getTexture") << "out of bounds: " << aindex << " - " << getNumTextures();
+		}
+		return mSrcMesh->getAllMeshTextures()[aindex];
+	}
+	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
+	return std::shared_ptr<ofx::assimp::Texture>();
+}
 
 //-------------------------------------------
 size_t Mesh::getNumVertices() {
@@ -169,9 +107,9 @@ void Mesh::setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh ) {
 	mSrcMesh = aSrcMesh;
 	
 	// if we have bones, no offset, since we are controlled by the bones //
-	if( mSrcMesh->getAiMesh() && mSrcMesh->getAiMesh()->mNumBones < 1 ) {
+//	if( mSrcMesh->getAiMesh() && mSrcMesh->getAiMesh()->mNumBones < 1 ) {
 //		setOfNodeFromAiMatrix(mSrcMesh->getAiNode()->mTransformation, this );
-	}
+//	}
 	
 	if( mSrcMesh ) {
 		//TODO: something fancy
@@ -306,45 +244,6 @@ void Mesh::recalculateBounds(bool abForce) {
 	}
 	bBoundsDirty=false;
 }
-
-////-------------------------------------------
-//void Mesh::_initTextureTypeMap() {
-//	if(sAiTexTypeToOfTexTypeMap.size() < 1 ) {
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_DIFFUSE] = OF_MATERIAL_TEXTURE_DIFFUSE;
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_EMISSIVE] = OF_MATERIAL_TEXTURE_EMISSIVE;
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_NORMALS] = OF_MATERIAL_TEXTURE_NORMAL;
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_LIGHTMAP] = OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC;
-//		//17 = aiTextureType_AMBIENT_OCCLUSION; //use this when we want to support newer assimp only
-//		sAiTexTypeToOfTexTypeMap[17] = OF_MATERIAL_TEXTURE_OCCLUSION;
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_AMBIENT] = OF_MATERIAL_TEXTURE_AMBIENT;
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_SPECULAR] = OF_MATERIAL_TEXTURE_SPECULAR;
-//		sAiTexTypeToOfTexTypeMap[15] = OF_MATERIAL_TEXTURE_METALLIC; //aiTextureType_METALNESS
-//		sAiTexTypeToOfTexTypeMap[16] = OF_MATERIAL_TEXTURE_ROUGHNESS; //aiTextureType_DIFFUSE_ROUGHNESS
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_DISPLACEMENT] = OF_MATERIAL_TEXTURE_DISPLACEMENT;
-//		sAiTexTypeToOfTexTypeMap[20] = OF_MATERIAL_TEXTURE_CLEARCOAT; // aiTextureType_CLEARCOAT = 20,
-//		sAiTexTypeToOfTexTypeMap[(int)aiTextureType_NONE] = OF_MATERIAL_TEXTURE_NONE;
-//	}
-//}
-//
-////-------------------------------------------
-//ofMaterialTextureType Mesh::_getOfTypeForAiType(aiTextureType aTexType) {
-//	_initTextureTypeMap();
-//	if( sAiTexTypeToOfTexTypeMap.count(aTexType) > 0 ) {
-//		return sAiTexTypeToOfTexTypeMap[(int)aTexType];
-//	}
-//	return OF_MATERIAL_TEXTURE_NONE;
-//}
-//
-////-------------------------------------------
-//aiTextureType Mesh::_getAiTypeForOfType(ofMaterialTextureType aTexType) {
-//	_initTextureTypeMap();
-//	for( auto iter = sAiTexTypeToOfTexTypeMap.begin(); iter != sAiTexTypeToOfTexTypeMap.end(); iter++ ) {
-//		if( iter->second == aTexType ) {
-//			return (aiTextureType)iter->first;
-//		}
-//	}
-//	return aiTextureType_NONE;
-//}
 
 //-------------------------------------------
 void Mesh::onPositionChanged() {

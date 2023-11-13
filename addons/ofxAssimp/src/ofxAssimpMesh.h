@@ -27,25 +27,20 @@ public:
 	
 	virtual NodeType getType() override { return OFX_ASSIMP_MESH; }
 	
-//	void addTexture( std::shared_ptr<ofx::assimp::Texture> aAssimpTex);
 	bool hasTexture();
-//	bool hasTexture(aiTextureType aTexType);
-//	bool hasTexture( ofMaterialTextureType aType );
+	bool hasTexture( ofMaterialTextureType aType );
 	
+	std::size_t getNumTextures();
 	ofTexture& getTexture();
-//	ofTexture& getTexture(aiTextureType aTexType);
-//	ofTexture& getTexture(ofMaterialTextureType aType);
-//	std::vector<std::shared_ptr<ofx::assimp::Texture>> & getAllMeshTextures(){ return meshTextures; }
+	ofTexture& getTexture(ofMaterialTextureType aType);
+	std::shared_ptr<ofx::assimp::Texture> getTexture( unsigned int aindex );
 	
-	size_t getNumVertices();
+	std::size_t getNumVertices();
 	bool hasNormals();
 	aiMesh* getAiMesh();
 	std::size_t getNumIndices();
 	
 	void setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh );
-//	void setup(aiMesh* amesh);
-//	aiMesh* getAiMesh() { return mAiMesh; }
-//	const aiMesh* getAiMesh() const { return mAiMesh; }
 	
 	ofMesh& getStaticMesh();
 	ofMesh& getMesh();
@@ -58,10 +53,6 @@ public:
 	Bounds getGlobalBounds();
 	
 	void recalculateBounds(bool abForce=false);
-	
-//	ofVbo vbo;
-	
-//	std::vector<ofIndexType> indices;
 	
 	std::shared_ptr<ofMaterial> material;
 	std::shared_ptr<ofVbo> vbo;
@@ -87,16 +78,6 @@ protected:
 	
 	std::shared_ptr<ofx::assimp::SrcMesh> mSrcMesh;
 	
-//	static std::unordered_map< int, ofMaterialTextureType > sAiTexTypeToOfTexTypeMap;
-//	
-////	std::string mName = "";
-//	void _initTextureTypeMap();
-//	ofMaterialTextureType _getOfTypeForAiType(aiTextureType aTexType);
-//	aiTextureType _getAiTypeForOfType(ofMaterialTextureType aTexType);
-//	//for normal, specular, etc - we include the diffuse too with a null deleter
-//	std::vector<std::shared_ptr<ofx::assimp::Texture>> meshTextures;
-//	static ofTexture sDummyTex;
-	
 	// calculate the local bounds for all of the vertices
 	// has no position, scale or rotations applied
 	// TODO: Do this for animated vertices as well
@@ -109,9 +90,7 @@ protected:
 	// should be updated when any transformations are changed or vertices, bones, etc.
 	bool bBoundsDirty = false;
 	
-	
-//	aiMesh* mAiMesh = nullptr; // pointer to the aiMesh we represent.
-	
+		
 	ofMesh mMesh;
 	ofMesh mAnimatedMesh;
 	bool mBInitedAnimatedMesh = false;

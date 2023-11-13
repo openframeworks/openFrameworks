@@ -805,7 +805,7 @@ void SrcScene::loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, a
 						aSrcMesh->addTexture(assimpTexture);
 						
 						ofLogVerbose("ofx::assimp::SrcScene") << "loadGLResource(): texture already loaded: \""
-						<< mFile.getFileName() + "\" from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture->getTextureTypeAsString() ;
+						<< mFile.getFileName() + "\" from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture->getAiTextureTypeAsString() ;
 					} else {
 						
 						//					shared_ptr<ofTexture> texture = std::make_shared<ofTexture>();
@@ -836,20 +836,33 @@ void SrcScene::loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, a
 #endif
 						}else{
 							//						ofLoadImage(*texture.get(), realPath);
-							ofLoadImage(assimpTexture->getTextureRef(), realPath );
+							
+							std::string ext = ofFilePath::getFileExt( realPath );
+							ext = ofToLower(ext);
+							bool bExists = ofFile::doesFileExist( realPath );
+							ofLogNotice("AssimpSrcScene :: loadGLResources : loading texture hdr: ") << ext << " exists: " << bExists << " path: " << realPath;
+							bool hdr = (ext == "hdr" || ext == "exr");
+							if( hdr ) {
+								ofFloatPixels fpix;
+								if(ofLoadImage(fpix, realPath)) {
+									assimpTexture->getTextureRef().loadData(fpix);
+								}
+							} else {
+								ofLoadImage(assimpTexture->getTextureRef(), realPath );
+							}
 						}
 						
 						if(assimpTexture && assimpTexture->getTextureRef().isAllocated()){
 							//						ofxAssimpTexture tmpTex;
 							//						tmpTex.setup(*texture.get(), realPath, bWrap);
 							assimpTexture->setup( realPath, bWrap );
-							assimpTexture->setTextureType((aiTextureType)d);
+							assimpTexture->setAiTextureType((aiTextureType)d);
 							mAssimpTextures[realPath] = assimpTexture;
-							ofLogNotice( "ofx::assimp::SrcScene") << " assimpTexture type: " << assimpTexture->getTextureTypeAsString() << " path: " << assimpTexture->getTexturePath();
+							ofLogNotice( "ofx::assimp::SrcScene") << " assimpTexture type: " << assimpTexture->getAiTextureTypeAsString() << " path: " << assimpTexture->getTexturePath();
 							//						tmpTex.setTextureType((aiTextureType)d);
 							aSrcMesh->addTexture( assimpTexture );
 							
-							ofLogVerbose("ofx::assimp::SrcScene") << "loadGLResource(): texture " << assimpTexture->getTextureTypeAsString() << " loaded, dimensions: " << assimpTexture->getTextureRef().getWidth() << "x" << assimpTexture->getTextureRef().getHeight();
+							ofLogVerbose("ofx::assimp::SrcScene") << "loadGLResource(): texture " << assimpTexture->getAiTextureTypeAsString() << " loaded, dimensions: " << assimpTexture->getTextureRef().getWidth() << "x" << assimpTexture->getTextureRef().getHeight();
 						}else{
 							ofLogError("ofx::assimp::SrcScene") << "loadGLResource(): couldn't load texture: \""
 							<< mFile.getFileName() + "\" from \"" << realPath.string() << "\"";

@@ -23,6 +23,7 @@ public:
 	bool hasTexture(aiTextureType aTexType);
 	bool hasTexture( ofMaterialTextureType aType );
 	
+	std::size_t getNumTextures();
 	ofTexture& getTexture();
 	ofTexture& getTexture(aiTextureType aTexType);
 	ofTexture& getTexture(ofMaterialTextureType aType);
@@ -48,12 +49,12 @@ protected:
 	aiMesh* mAiMesh = nullptr; // pointer to the aiMesh we represent.
 	Bounds mLocalBounds;
 	
-	static std::unordered_map< int, ofMaterialTextureType > sAiTexTypeToOfTexTypeMap;
+//	static std::unordered_map< int, ofMaterialTextureType > sAiTexTypeToOfTexTypeMap;
 	
 	//	std::string mName = "";
-	void _initTextureTypeMap();
-	ofMaterialTextureType _getOfTypeForAiType(aiTextureType aTexType);
-	aiTextureType _getAiTypeForOfType(ofMaterialTextureType aTexType);
+//	void _initTextureTypeMap();
+//	ofMaterialTextureType _getOfTypeForAiType(aiTextureType aTexType);
+//	aiTextureType _getAiTypeForOfType(ofMaterialTextureType aTexType);
 	//for normal, specular, etc - we include the diffuse too with a null deleter
 	std::vector<std::shared_ptr<ofx::assimp::Texture>> meshTextures;
 	
