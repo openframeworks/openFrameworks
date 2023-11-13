@@ -20,9 +20,6 @@ void ofApp::setup(){
 	
 //    ofSetLogLevel(OF_LOG_VERBOSE);
     ofBackground(50);
-    //loadModel("securityCamera/security_camera_01_1k.gltf");
-//	loadModel("securityCamera2/security_camera_02_1k.fbx");
-//	loadModel("securityCamera.glb");
 	// https://polyhaven.com/a/security_camera_02
 	loadModel("securityCamera.fbx");
 	light.enable();
@@ -32,8 +29,6 @@ void ofApp::setup(){
 	light.getShadow().setDirectionalBounds( 1500, 1500 );
 	light.getShadow().setNearClip(200);
 	light.getShadow().setFarClip(2000);
-//	light.lookAt( glm::vec3(0,0,0));
-	
 	glm::quat xq = glm::angleAxis(glm::radians(-50.0f), glm::vec3(1,0,0));
 	glm::quat yq = glm::angleAxis(glm::radians(-20.0f), glm::vec3(0,1,0));
 	light.setOrientation(yq*xq);
@@ -83,7 +78,6 @@ void ofApp::loadModel(string filename){
     
 	if( model.load(tsettings)) {
 		model.centerAndScaleToWindow();
-//		mesh.clear();
 		cout << endl << endl << endl << endl;
 		stringstream ss;
 		ss << "Num Meshes: " << model.getNumMeshes() << endl;
@@ -142,6 +136,26 @@ void ofApp::update(){
 //		meshCameraNode->setPosition( tpos.x, bottomOffsetY, bottomOffsetZ );
 	}
 	
+	if( model.getNumMeshes() > 1 ) {
+		auto camMesh = model.getMesh(1);
+		auto camBounds = camMesh->getLocalBounds();
+		// local bounds do not have transforms applied
+		// this will provide us with a more accurate size of the mesh
+		// so we need to scale it to the global size
+		camBounds *= camMesh->getGlobalScale();
+		auto nCamPos = camMesh->getYAxis() * camBounds.getHeight() * 0.52f + camMesh->getZAxis() * (camBounds.getDepth() * 0.45f);
+		
+		// we need to flip upside down //
+		auto camMeshQ = camMesh->getGlobalOrientation();
+		nCamPos = camMeshQ * nCamPos;
+		camOnSecurityCam.setPosition( nCamPos + camMesh->getGlobalPosition() );
+		
+		
+		camOnSecurityCam.setOrientation( camMesh->getGlobalOrientation() );
+		camOnSecurityCam.panDeg(180);
+	}
+		
+	 
 }
 
 //--------------------------------------------------------------
@@ -196,6 +210,7 @@ void ofApp::draw(){
 	if( bDebug ) {
 		light.getShadow().drawFrustum();
 		light.draw();
+		camOnSecurityCam.draw();
 	}
 	
 	cam.end();
@@ -217,7 +232,8 @@ void ofApp::draw(){
 				auto texture = mesh->getTexture(i);
 				if( texture ) {
 					texture->getTextureRef().draw(meshTexRect);
-					ofDrawBitmapString(texture->getAiTextureTypeAsString(), meshTexRect.x, meshTexRect.y-4);
+//					ofDrawBitmapString(texture->getAiTextureTypeAsString(), meshTexRect.x, meshTexRect.y-4);
+					ofDrawBitmapString(texture->getOfTextureTypeAsString(), meshTexRect.x, meshTexRect.y-4);
 					meshTexRect.x += texPadding + meshTexRect.getWidth();
 					if( i % 2 == 1 ) {
 						meshTexRect.x = mTextRect.x + texPadding;
@@ -230,6 +246,16 @@ void ofApp::draw(){
 	
 	ofSetColor( 225 );
 	ofDrawBitmapString(mSceneString, mTextRect.x + 12, mTextRect.y + 24 );
+	
+//	auto camRect = ofRectangle( gui.getPosition().x, gui.getPosition().y+gui.getHeight()+10.f, gui.getWidth(), gui.getWidth() );
+	float camRectW = (mTextRect.getWidth() - texPadding*2.0f);
+	float ratio = 480.f / 640.f;
+	auto camRect = ofRectangle( mTextRect.x+texPadding, meshTexRect.y+texPadding, camRectW, camRectW * ratio );
+	ofSetColor(255);
+	ofDrawBitmapString("Camera feed, control with arrow keys.", camRect.x, camRect.y-texPadding * 0.5 );
+	camOnSecurityCam.begin(camRect);
+	cubeMap.draw();
+	camOnSecurityCam.end();
 	
 	gui.draw();
 }
@@ -288,8 +314,12 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	panDirection = 0.f;
-	tiltDirection = 0.f;
+	if( key == OF_KEY_RIGHT || key == OF_KEY_LEFT ) {
+		panDirection = 0.f;
+	}
+	if( key == OF_KEY_DOWN || key == OF_KEY_UP ) {
+		tiltDirection = 0.f;
+	}
 }
 
 //--------------------------------------------------------------

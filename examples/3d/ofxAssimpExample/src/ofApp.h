@@ -31,39 +31,33 @@ class ofApp : public ofBaseApp{
 
 		ofx::assimp::Model model;
 
-//		bool bHelpText = false;
-//		bool bDrawBones = false;
 		bool bDrawWireframe = false;
 		bool bDrawMeshes = true;
 		bool bDrawBounds = true;
-//		bool bFollowTarget = true;
-//		bool bAutoRotate = true;
-        
-//		ofMesh mesh;
+		
 		ofLight	light;
         ofEasyCam cam;
+		ofCamera camOnSecurityCam;
 		ofCubeMap cubeMap;
 	
 		ofRectangle mTextRect, mViewRect;
 		std::string mSceneString;
 	
 		glm::quat mLocalQuat;
-//		float lookStrength = 0.f;
-//		glm::vec3 mLookAtPos = {0.f, 0.f, 0.f};
 	
-	ofxPanel gui;
-	
-	ofParameter<float> shadowStrength;
-	ofParameter<float> panDeg,tiltDeg;
-	ofParameter<float> cameraOffsetZ, bottomOffsetY,bottomOffsetZ;
-	ofParameter<bool> bDebug;
-	ofParameter<float> shadowBias, shadowNormalBias;
-	
-	ofVboMesh wallMesh;
-	ofMaterial wallMaterial;
-	
-	float panDirection = 0.f;
-	float tiltDirection = 0.f;
+		ofxPanel gui;
+		
+		ofParameter<float> shadowStrength;
+		ofParameter<float> panDeg,tiltDeg;
+		ofParameter<float> cameraOffsetZ, bottomOffsetY,bottomOffsetZ;
+		ofParameter<bool> bDebug;
+		ofParameter<float> shadowBias, shadowNormalBias;
+		
+		ofVboMesh wallMesh;
+		ofMaterial wallMaterial;
+		
+		float panDirection = 0.f;
+		float tiltDirection = 0.f;
 		
 };
 
