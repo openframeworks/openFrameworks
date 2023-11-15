@@ -2,6 +2,7 @@
 // copyright (c) Damian Stewart 2007-2009
 #pragma once
 
+#define OFX_OSC_DEFAULT_DESTINATION_HOST "127.0.0.1"
 #define OFX_OSC_DEFAULT_DESTINATION_PORT 7970
 
 #include "OscOutboundPacketStream.h"
@@ -14,7 +15,7 @@
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
 struct ofxOscSenderSettings {
-	std::string host = "localhost"; ///< destination host name/ip
+	std::string host = OFX_OSC_DEFAULT_DESTINATION_HOST; ///< destination host name/ip
 	int port = OFX_OSC_DEFAULT_DESTINATION_PORT; ///< destination port
 	bool broadcast = true; ///< broadcast (aka multicast) ip range support?
 	bool silent = false; ///< does not complain if msgs not received
@@ -24,7 +25,7 @@ struct ofxOscSenderSettings {
 /// \brief OSC message sender which sends to a specific host & port
 class ofxOscSender {
 public:
-	ofxOscSender(std::string host = "127.0.0.1", int port = OFX_OSC_DEFAULT_DESTINATION_PORT, bool silent = false) {
+	ofxOscSender(std::string host = OFX_OSC_DEFAULT_DESTINATION_HOST, int port = OFX_OSC_DEFAULT_DESTINATION_PORT, bool silent = false) {
 		setup(host, port, silent);
 	}
 	~ofxOscSender();
