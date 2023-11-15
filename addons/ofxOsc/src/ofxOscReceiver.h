@@ -2,6 +2,8 @@
 // copyright (c) Damian Stewart 2007-2009
 #pragma once
 
+#define OFX_OSC_DEFAULT_LISTENING_PORT 7970
+
 #include <optional>
 
 #include "ofParameter.h"
@@ -12,10 +14,11 @@
 #include "OscTypes.h"
 #include "UdpSocket.h"
 
+
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
 struct ofxOscReceiverSettings {
-	int port = 0; ///< port to listen on
+	int port = OFX_OSC_DEFAULT_LISTENING_PORT; ///< port to listen on
 	std::string host = "0.0.0.0"; ///< host to listen on
 	bool reuse = true; ///< should the port be reused by other receivers?
 	bool start = true; ///< start listening after setup?
@@ -25,7 +28,7 @@ struct ofxOscReceiverSettings {
 /// \brief OSC message receiver which listens on a network port
 class ofxOscReceiver : public osc::OscPacketListener {
 public:
-	ofxOscReceiver(int port = 7970) {
+	ofxOscReceiver(int port = OFX_OSC_DEFAULT_LISTENING_PORT) {
 		setup(port);
 	};
 	ofxOscReceiver(std::string host, int port) {
