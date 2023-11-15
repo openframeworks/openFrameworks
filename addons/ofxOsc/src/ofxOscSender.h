@@ -17,7 +17,7 @@
 struct ofxOscSenderSettings {
 	std::string host = OFX_OSC_DEFAULT_DESTINATION_HOST; ///< destination host name/ip
 	int port = OFX_OSC_DEFAULT_DESTINATION_PORT; ///< destination port
-	bool broadcast = true; ///< broadcast (aka multicast) ip range support?
+	bool broadcast = true; ///< broadcast support?
 	bool silent = false; ///< does not complain if msgs not received
 };
 
