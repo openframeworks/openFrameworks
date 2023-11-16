@@ -629,7 +629,7 @@ bool ofFile::writeFromBuffer(const ofBuffer & buffer){
 		return false;
 	}
 	if(!isWriteMode()){
-		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file \"" << myFile.string() << "\"";
+		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file " << myFile ;
 	}
 	return buffer.writeTo(*this);
 }
@@ -946,7 +946,7 @@ bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 			if(overwrite){
 				ofFile::removeFile(path, false);
 			}else{
-				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+				ofLogWarning("ofFile") << "copyTo(): destination file " << path << " already exists, set bool overwrite to true if you want to overwrite it";
 			}
 		}
 	}
@@ -960,7 +960,7 @@ bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 		}
 		of::filesystem::copy_file(myFile,path);
 	}catch(std::exception & except){
-		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\": " << except.what();
+		ofLogError("ofFile") <<  "copyTo(): unable to copy " << path << ": " << except.what();
 		return false;
 	}
 
@@ -996,7 +996,7 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 			if(overwrite){
 				ofFile::removeFile(path, false);
 			}else{
-				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+				ofLogWarning("ofFile") << "copyTo(): destination file " << path << " already exists, set bool overwrite to true if you want to overwrite it";
 			}
 		}
 	}
@@ -1018,7 +1018,7 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 		}
 	}
 	catch(std::exception & except){
-		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\": " << except.what();
+		ofLogError("ofFile") << "moveTo(): unable to move " << path << ": " << except.what();
 		return false;
 	}
 
@@ -1051,7 +1051,7 @@ bool ofFile::remove(bool recursive){
 			of::filesystem::remove(myFile);
 		}
 	}catch(std::exception & except){
-		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile << "\": " << except.what();
+		ofLogError("ofFile") << "remove(): unable to remove " << myFile << ": " << except.what();
 		return false;
 	}
 
@@ -1063,7 +1063,7 @@ uint64_t ofFile::getSize() const {
 	try{
 		return of::filesystem::file_size(myFile);
 	}catch(std::exception & except){
-		ofLogError("ofFile") << "getSize(): unable to get size of \"" << myFile << "\": " << except.what();
+		ofLogError("ofFile") << "getSize(): unable to get size of " << myFile << ": " << except.what();
 		return 0;
 	}
 }
@@ -1309,7 +1309,7 @@ bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData
 		if(overwrite){
 			ofDirectory::removeDirectory(path, true, false);
 		}else{
-			ofLogWarning("ofDirectory") << "copyTo(): dest \"" << path << "\" already exists, set bool overwrite to true to overwrite it";
+			ofLogWarning("ofDirectory") << "copyTo(): dest " << path << " already exists, set bool overwrite to true to overwrite it";
 			return false;
 		}
 	}
@@ -1395,7 +1395,7 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 	if(!of::filesystem::exists(myDir)){
-		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: " << myDir ;
 		return 0;
 	}
 
@@ -1405,7 +1405,7 @@ std::size_t ofDirectory::listDir(){
 			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
 		}
 	}else{
-		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: " << myDir ;
 		return 0;
 	}
 
@@ -1626,7 +1626,7 @@ bool ofDirectory::createDirectory(const of::filesystem::path& _dirPath, bool bRe
 				success = of::filesystem::create_directories(dirPath);
 			}
 		} catch(std::exception & except){
-			ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
+			ofLogError("ofDirectory") << "createDirectory(): couldn't create directory " << dirPath << ": " << except.what();
 			return false;
 		}
 		return success;
@@ -1646,7 +1646,7 @@ bool ofDirectory::doesDirectoryExist(const of::filesystem::path& _dirPath, bool 
 		return of::filesystem::exists(dirPath) && of::filesystem::is_directory(dirPath);
 	}
 	catch (std::exception & except) {
-		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << std::endl;
+		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory " << dirPath << ": " << except.what() << std::endl;
 		return false;
 	}
 }
