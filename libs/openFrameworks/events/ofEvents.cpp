@@ -26,6 +26,13 @@ float ofGetFrameRate(){
 	}
 }
 
+bool ofGetTargetFrameRateEnabled() {
+	if (auto window = ofGetMainLoop()->getCurrentWindow()) {
+		return window->events().getTargetFrameRateEnabled();
+	}
+	return false;
+}
+
 //--------------------------------------
 float ofGetTargetFrameRate(){
 	auto window = ofGetMainLoop()->getCurrentWindow();
@@ -180,6 +187,10 @@ void ofCoreEvents::setTimeModeSystem(){
 	timeMode = System;
 }
 
+ofTimeMode ofCoreEvents::getTimeMode() const {
+	return ofTimeMode(timeMode);
+}
+
 void ofCoreEvents::setTimeModeFixedRate(uint64_t nanosecsPerFrame){
 	timeMode = FixedRate;
 	fixedRateTimeNanos = std::chrono::nanoseconds(nanosecsPerFrame);
@@ -205,6 +216,10 @@ void ofCoreEvents::setFrameRate(int _targetRate){
 		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
 		timer.setPeriodicEvent(nanosPerFrame);
 	}
+}
+
+bool ofCoreEvents::getTargetFrameRateEnabled() const {
+	return bFrameRateSet;
 }
 
 //--------------------------------------

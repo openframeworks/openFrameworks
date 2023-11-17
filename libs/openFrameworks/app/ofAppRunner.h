@@ -58,10 +58,12 @@ std::thread::id ofGetMainThreadId();
 //-------------------------- time
 float 		ofGetFrameRate();
 float 		ofGetTargetFrameRate();
+bool 		ofGetTargetFrameRateEnabled();
 uint64_t	ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
 double		ofGetLastFrameTime();
 void		ofSetTimeModeSystem();
+ofTimeMode	ofGetTimeMode();
 uint64_t	ofGetFixedStepForFps(double fps);
 void		ofSetTimeModeFixedRate(uint64_t stepNanos = ofGetFixedStepForFps(60)); //default nanos for 1 frame at 60fps
 void		ofSetTimeModeFiltered(float alpha = 0.9);

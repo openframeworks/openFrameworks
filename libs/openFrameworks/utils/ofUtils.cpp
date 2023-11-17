@@ -240,7 +240,16 @@ bool ofTime::operator>=(const ofTime & other) const {
 
 //--------------------------------------
 uint64_t ofGetFixedStepForFps(double fps) {
-	return 1000000000 / fps;
+	return 1'000'000'000 / fps;
+}
+
+ofTimeMode ofGetTimeMode() {
+	if (auto mainLoop = ofGetMainLoop()) {
+		if (auto window = mainLoop->getCurrentWindow())	{
+			return window->events().getTimeMode();
+		}
+	}
+	return ofTimeMode(0);
 }
 
 //--------------------------------------

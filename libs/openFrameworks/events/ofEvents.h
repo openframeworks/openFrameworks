@@ -361,9 +361,11 @@ class ofCoreEvents {
 	void setTimeModeSystem();
 	void setTimeModeFixedRate(uint64_t nanosecsPerFrame);
 	void setTimeModeFiltered(float alpha);
+	ofTimeMode getTimeMode() const;
 
 	void setFrameRate(int _targetRate);
 	float getFrameRate() const;
+	bool getTargetFrameRateEnabled() const;
 	float getTargetFrameRate() const;
 	double getLastFrameTime() const;
 	uint64_t getFrameNum() const;
