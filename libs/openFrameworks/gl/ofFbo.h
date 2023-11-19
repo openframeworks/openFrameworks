@@ -49,6 +49,7 @@ public:
 	ofFbo();
 	ofFbo(const ofFbo & mom);
 	ofFbo & operator=(const ofFbo & fbo);
+	void operator+=(const ofFbo & fbo);
     ofFbo(ofFbo && mom);
     ofFbo & operator=(ofFbo && fbo);
 	virtual ~ofFbo();
