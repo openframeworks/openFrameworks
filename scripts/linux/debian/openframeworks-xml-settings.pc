@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/openframeworks
+includedir=${prefix}/include/openframeworks
+
+Name: openframeworks-xml-settings
+Description: OpenFrameworks ofxXmlSettings addon
+Version: 0.10.0
+
+Requires: openframeworks
+Libs: -lofxXmlSettings
+Cflags: -I${includedir}/ofxXmlSettings

@@ -1,0 +1,4 @@
+debhelper-build-stamp
+files
+openframeworks-*.substvars
+openframeworks-*/

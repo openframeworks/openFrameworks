@@ -1,0 +1,13 @@
+../../addons/ofxOpenCv/src/ofxCvBlob.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvColorImage.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvConstants.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvContourFinder.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvFloatImage.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvGrayscaleImage.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvHaarFinder.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvImage.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxCvShortImage.h usr/include/openframeworks/ofxOpenCv
+../../addons/ofxOpenCv/src/ofxOpenCv.h usr/include/openframeworks/ofxOpenCv
+
+../../addons/libofxOpenCv.a usr/lib/openframeworks
+debian/openframeworks-opencv.pc usr/share/pkgconfig

@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/openframeworks
+includedir=${prefix}/include/openframeworks
+
+Name: openframeworks-osc
+Description: OpenFrameworks ofxOsc addon
+Version: 0.10.0
+
+Requires: assimp openframeworks
+Libs: -lofxOsc
+Cflags: -I${includedir}/ofxOsc -I${includedir}/ofxOsc/oscpack/ip -I${includedir}/ofxOsc/oscpack/osc
