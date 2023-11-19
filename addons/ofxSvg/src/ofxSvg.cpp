@@ -30,7 +30,7 @@ ofPath & ofxSvg::getPathAt(int n) {
 void ofxSvg::load(const of::filesystem::path & fileName) {
 	of::filesystem::path file = ofToDataPath(fileName);
 	if (!of::filesystem::exists(file)) {
-		ofLogError("ofxSVG") << "load(): path does not exist: \"" << file << "\"";
+		ofLogError("ofxSVG") << "load(): path does not exist: " << file ;
 		return;
 	}
 

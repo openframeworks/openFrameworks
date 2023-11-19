@@ -369,7 +369,7 @@ template<typename PixelType>
 static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (_pix.isAllocated() == false){
-		ofLogError("ofImage") << "saveImage(): couldn't save \"" << _fileName << "\", pixels are not allocated";
+		ofLogError("ofImage") << "saveImage(): couldn't save " << _fileName << ", pixels are not allocated";
 		return false;
 	}
 
@@ -723,7 +723,7 @@ bool ofImage_<PixelType>::load(const of::filesystem::path& fileName, const ofIma
 	#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName, settings);
 	if (!bLoadedOk) {
-		ofLogError("ofImage") << "loadImage(): couldn't load image from \"" << fileName << "\"";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from " << fileName << "";
 		clear();
 		return false;
 	}

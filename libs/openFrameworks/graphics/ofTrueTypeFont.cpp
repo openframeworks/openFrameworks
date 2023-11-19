@@ -399,19 +399,19 @@ static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face,
 		}
 		filename = winFontPathByName(fontname.string());
 #endif
-		if (filename == "") {
-			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
+		if(filename == "" ){
+			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
 			return false;
 		}
-		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
+		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): " << fontname << " not a file in data loading system font from \"" << filename << "\"";
 	}
 	FT_Error err;
 	err = FT_New_Face(library, filename.string().c_str(), fontID, &face);
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
-		if (err == 1) errorString = "INVALID FILENAME";
-		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
+		if(err == 1) errorString = "INVALID FILENAME";
+		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for " << fontname << ": FT_Error " << err << " " << errorString;
 		return false;
 	}
 
