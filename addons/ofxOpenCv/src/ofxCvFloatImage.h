@@ -61,6 +61,7 @@ class ofxCvFloatImage : public ofxCvImage {
 	      
     virtual void  setFromPixels( const unsigned char* _pixels, int w, int h);
     virtual void  setFromPixels( float * _pixels, int w, int h );  //no scaling
+    using ofxCvImage::setRoiFromPixels;
     virtual void  setRoiFromPixels( const unsigned char* _pixels, int w, int h);
     virtual void  setRoiFromPixels( float * _pixels, int w, int h );  //no scaling
     virtual void  operator = ( unsigned char* _pixels );
