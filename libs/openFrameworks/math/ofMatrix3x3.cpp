@@ -34,6 +34,51 @@ void ofMatrix3x3::set( float _a, float _b, float _c,
 	i = _i;
 }
 
+void ofMatrix3x3::setRow(int row, float v1, float v2, float v3)
+{
+	switch(row){
+		case 1:
+			a = v1;
+			b = v2;
+			c = v3;
+			break;
+		case 2:
+			d = v1;
+			e = v2;
+			f = v3;
+			break;
+		case 3:
+			g = v1;
+			h = v2;
+			i = v3;
+			break;
+			
+	}
+}
+
+void ofMatrix3x3::setRow(int row, const ofVec3f& rowValues)
+{
+	setRow(row, rowValues.x, rowValues.y, rowValues.z);
+}
+
+ofVec3f ofMatrix3x3::getRow(int row)
+{
+	ofVec3f output;
+	switch(row){
+		case 1:
+			output = ofVec3f(a, b, c);
+			break;
+		case 2:
+			output = ofVec3f(d, e, f);
+			break;
+		case 3:
+			output = ofVec3f(g, h, i);
+			break;
+	}
+	
+	return output;
+}
+
 
 float& ofMatrix3x3::operator[]( const int& index ) {
 	switch(index) {

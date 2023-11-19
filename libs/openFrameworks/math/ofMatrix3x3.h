@@ -7,7 +7,7 @@
 
 #include "ofConstants.h"
 #include <glm/mat3x3.hpp>
-
+#include "ofVec3f.h"
 
 /// \brief A 3x3 Matrix
 ///
@@ -63,6 +63,12 @@ public:
 	
 	
 	float& operator[]( const int& index );
+    
+    void setRow(int row, float v1, float v2, float v3);
+    
+    void setRow(int row, const ofVec3f& rowValues);
+    
+    ofVec3f getRow(int row);
 
 	
 	/// \}
