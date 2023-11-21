@@ -26,7 +26,8 @@ enum ofMaterialTextureType : short {
 	OF_MATERIAL_TEXTURE_CLEARCOAT, // INTENSITY
 	OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS,
 	OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS,
-	OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL
+	OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL,
+	OF_MATERIAL_TEXTURE_TYPE_TOTAL // useful for debugging and looping through types
 };
 
 // Material concept: "Anything graphical applied to the polygons"
@@ -173,6 +174,8 @@ public:
 	/// \param aMaterialTextureType the material texture type to query
 	/// \return the shader uniform name
 	static std::string getUniformName(const ofMaterialTextureType & aMaterialTextureType);
+	
+	static std::string getTextureTypeAsString(const ofMaterialTextureType & aMaterialTextureType);
 
 	/// \is PBR supported on this platform.
 	static bool isPBRSupported();
@@ -240,6 +243,14 @@ public:
 	/// \return if the load was successful.
 	bool loadTexture(const ofMaterialTextureType & aMaterialTextureType, std::string apath);
 	bool loadTexture(const ofMaterialTextureType & aMaterialTextureType, std::string apath, bool bTex2d, bool mirrorY);
+	/// \brief retrieve if a texture is available and valid internally, created using the loadTexture() function.
+	/// \param aMaterialTextureType type of texture.
+	/// \return bool, true if the texture exists and is valid.
+	bool hasLoadedTexture(const ofMaterialTextureType & aMaterialTextureType);
+	/// \brief retrieve a texture that was loaded with loadTexture.
+	/// \param aMaterialTextureType type of texture.
+	/// \return a shared_ptr to an ofTexture. Check the shared_ptr to determine if it's valid.
+	std::shared_ptr<ofTexture> getLoadedTexture(const ofMaterialTextureType & aMaterialTextureType);
 	/// \brief check if texture is PBR only.
 	/// \return is texture only PBR.
 	bool isPBRTexture(const ofMaterialTextureType & aMaterialTextureType);
@@ -442,8 +453,8 @@ private:
 	mutable std::unordered_map<std::string, int> mShaderIdsToRemove;
 
 	// unordered_map works well here on modern compilers
-	// std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
-	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture>> mLocalTextures;
+	std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+//	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture>> mLocalTextures;
 	
 	// custom depth shaders for lighting
 	struct DepthShaders {

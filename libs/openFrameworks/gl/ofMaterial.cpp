@@ -63,6 +63,45 @@ std::string ofMaterial::getUniformName( const ofMaterialTextureType& aMaterialTe
 }
 
 //----------------------------------------------------------
+std::string ofMaterial::getTextureTypeAsString(const ofMaterialTextureType & aMaterialTextureType) {
+	switch(aMaterialTextureType) {
+		case OF_MATERIAL_TEXTURE_DIFFUSE:
+			return "DIFFUSE";
+		case OF_MATERIAL_TEXTURE_SPECULAR:
+			return "SPECULAR";
+		case OF_MATERIAL_TEXTURE_AMBIENT:
+			return "AMBIENT";
+		case OF_MATERIAL_TEXTURE_EMISSIVE:
+			return "EMISSIVE";
+		case OF_MATERIAL_TEXTURE_NORMAL:
+			return "NORMAL";
+		case OF_MATERIAL_TEXTURE_OCCLUSION:
+			return "OCCLUSION";
+		case OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC:
+			return "AO_ROUGHNESS_METALLIC";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC:
+			return "ROUGHNESS_METALLIC";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS:
+			return "ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_METALLIC:
+			return "METALLIC";
+		case OF_MATERIAL_TEXTURE_DISPLACEMENT:
+			return "DISPLACEMENT";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT:
+			return "CLEARCOAT";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS:
+			return "CLEARCOAT_ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS:
+			return "CLEARCOAT_INTENSITY_ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL:
+			return "CLEARCOAT_NORMAL";
+		default:
+			break;
+	}
+	return "NONE";
+}
+
+//----------------------------------------------------------
 bool ofMaterial::isPBRSupported() {
 	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	return false;
@@ -242,27 +281,21 @@ bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType,
 
 //----------------------------------------------------------
 bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath, bool bTex2d, bool mirrorY ) {
-	ofPixels tpix;
+	
 	bool bWasUsingArb = ofGetUsingArbTex();
-	bTex2d ? ofEnableArbTex() : ofDisableArbTex();
+	bTex2d ? ofDisableArbTex() : ofEnableArbTex();
 	
-	bool bLoadOk = false;
+	auto tex = std::make_shared<ofTexture>();
+	bool bLoadOk = ofLoadImage(*tex, apath, mirrorY );
 	
-	if( ofLoadImage( tpix, apath )) {
-		if( mirrorY ) {
-			tpix.mirror(mirrorY, false);
-		}
-		bLoadOk = true;
-		// if there was a previous instance, then erase it, then replace it 
+	if( bLoadOk ) {
+		// if there was a previous instance, then erase it, then replace it
 		if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
 			if( mLocalTextures[aMaterialTextureType] ) {
 				mLocalTextures[aMaterialTextureType].reset();
 			}
 			mLocalTextures.erase(aMaterialTextureType);
 		}
-		
-		auto tex = std::make_shared<ofTexture>();
-		tex->loadData(tpix);
 		mLocalTextures[aMaterialTextureType] = tex;
 		setTexture( aMaterialTextureType, *tex );
 	} else {
@@ -271,6 +304,24 @@ bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType,
 	
 	bWasUsingArb ? ofEnableArbTex() : ofDisableArbTex();
 	return bLoadOk;
+}
+
+//----------------------------------------------------------
+bool ofMaterial::hasLoadedTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		if(mLocalTextures[aMaterialTextureType]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+//----------------------------------------------------------
+std::shared_ptr<ofTexture> ofMaterial::getLoadedTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		return mLocalTextures[aMaterialTextureType];
+	}
+	return std::shared_ptr<ofTexture>();
 }
 
 //----------------------------------------------------------
