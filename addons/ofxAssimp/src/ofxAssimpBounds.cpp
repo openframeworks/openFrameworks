@@ -150,15 +150,9 @@ void Bounds::draw() {
 		mLinesMesh.addIndex(6);
 		mLinesMesh.addIndex(2);
 		
-		//        mLinesMesh.addIndex(2);
-		//        mLinesMesh.addIndex(0);
-		
 		// right
 		mLinesMesh.addIndex(5);
 		mLinesMesh.addIndex(1);
-		
-		//        mLinesMesh.addIndex(1);
-		//        mLinesMesh.addIndex(3);
 		
 		mLinesMesh.addIndex(3);
 		mLinesMesh.addIndex(7);
@@ -170,14 +164,8 @@ void Bounds::draw() {
 		mLinesMesh.addIndex(5);
 		mLinesMesh.addIndex(4);
 		
-		//        mLinesMesh.addIndex(4);
-		//        mLinesMesh.addIndex(6);
-		
 		mLinesMesh.addIndex(6);
 		mLinesMesh.addIndex(7);
-		
-		//        mLinesMesh.addIndex(7);
-		//        mLinesMesh.addIndex(5);
 	}
 	
 	ofPushMatrix(); {
@@ -185,16 +173,6 @@ void Bounds::draw() {
 		ofScale( fabs(max.x-min.x), fabs(max.y-min.y), fabs(max.z-min.z) );
 		mLinesMesh.draw();
 	} ofPopMatrix();
-	//
-	//    ofPushMatrix(); {
-	//        ofTranslate( center );
-	//        ofDrawSphere(0, 0, 0, 10);
-	//    } ofPopMatrix();
-	
-	//    cout << "center: " << center << " min.x: " << min.x << " max.x: " << max.x << endl;
-	
-	//    ofDrawSphere(min, 5);
-	//    ofDrawSphere(max, 5);
 }
 
 //--------------------------------------------------------------

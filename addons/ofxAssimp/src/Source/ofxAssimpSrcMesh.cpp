@@ -16,8 +16,6 @@ using std::shared_ptr;
 using namespace ofx::assimp;
 
 static unsigned int sUniqueMeshCounter = 0;
-//std::unordered_map< int, ofMaterialTextureType > SrcMesh::sAiTexTypeToOfTexTypeMap;
-
 ofTexture SrcMesh::sDummyTex;
 
 //-------------------------------------------
@@ -88,12 +86,6 @@ ofTexture& SrcMesh::getTexture() {
 		}
 	}
 	
-//	_initTextureTypeMap();
-//	for( auto iter = sAiTexTypeToOfTexTypeMap.begin(); iter != sAiTexTypeToOfTexTypeMap.end(); iter++ ) {
-//		if( hasTexture((aiTextureType)iter->first) ) {
-//			return getTexture((aiTextureType)iter->first);
-//		}
-//	}
 	ofLogWarning("ofx::assimp::Mesh::getTexture") << " unable to find any allocated texture";
 	return sDummyTex;
 }
@@ -111,7 +103,6 @@ ofTexture& SrcMesh::getTexture(aiTextureType aTexType){
 
 //-------------------------------------------
 ofTexture& SrcMesh::getTexture(ofMaterialTextureType aType){
-//	return getTexture( _getAiTypeForOfType(aType) );
 	return getTexture( ofx::assimp::Texture::aiTextureTypeForOfType(aType) );
 }
 
@@ -126,8 +117,6 @@ void SrcMesh::setAiMesh( aiMesh* amesh, aiNode* aAiNode ) {
 		if(!material) {
 			material = std::make_shared<ofMaterial>();
 		}
-//		recalculateBounds(true);
-		
 		mName = mAiMesh->mName.data;
 		if(mName.empty() ) {
 			// the mesh is not named or we were unable to detect one
@@ -137,6 +126,38 @@ void SrcMesh::setAiMesh( aiMesh* amesh, aiNode* aAiNode ) {
 			}
 		}
 	}
+}
+
+//-------------------------------------------
+void SrcMesh::setupVbo( std::shared_ptr<ofVbo> avbo ) {
+	ofMesh tempMesh;
+	if( hasTexture() ) {
+		aiMeshToOfMesh(mAiMesh, tempMesh, !bConvertedToLeftHand, &getTexture() );
+	} else {
+		aiMeshToOfMesh(mAiMesh, tempMesh, !bConvertedToLeftHand, nullptr);
+	}
+		
+	avbo->setVertexData(&mAiMesh->mVertices[0].x,3,mAiMesh->mNumVertices,usage,sizeof(aiVector3D));
+	if(mAiMesh->HasVertexColors(0)){
+		avbo->setColorData(&mAiMesh->mColors[0][0].r,mAiMesh->mNumVertices,GL_STATIC_DRAW,sizeof(aiColor4D));
+	}
+	if(mAiMesh->HasNormals()){
+		avbo->setNormalData(&mAiMesh->mNormals[0].x,mAiMesh->mNumVertices,usage,sizeof(aiVector3D));
+	}
+	if (tempMesh.hasTexCoords()){
+		avbo->setTexCoordData(&tempMesh.getTexCoords()[0].x, mAiMesh->mNumVertices,GL_STATIC_DRAW,sizeof(glm::vec2));
+	}
+	
+	std::vector<ofIndexType> tempIndices;
+	tempIndices.resize(mAiMesh->mNumFaces * 3);
+	int j=0;
+	for (unsigned int x = 0; x < mAiMesh->mNumFaces; ++x){
+		for (unsigned int a = 0; a < mAiMesh->mFaces[x].mNumIndices; ++a){
+			tempIndices[j++] = mAiMesh->mFaces[x].mIndices[a];
+		}
+	}
+	
+	avbo->setIndexData(&tempIndices[0],tempIndices.size(),GL_STATIC_DRAW);
 }
 
 //-------------------------------------------

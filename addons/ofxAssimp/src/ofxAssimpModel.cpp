@@ -117,9 +117,9 @@ bool Model::processScene() {
 			auto* mesh = modelMesh->getAiMesh();
 			
 			if(mAnimations.size() > 0 || numberOfBones > 0 ){
-				modelMesh->animatedPos.resize(mesh->mNumVertices);
+				modelMesh->animatedVertices.resize(mesh->mNumVertices);
 				if(mesh->HasNormals()){
-					modelMesh->animatedNorm.resize(mesh->mNumVertices);
+					modelMesh->animatedNormals.resize(mesh->mNumVertices);
 				}
 			}
 			
@@ -403,9 +403,13 @@ void Model::lateUpdate() {
 //	}
 	
 	mBSceneBoundsDirty = true;
+	auto globalInvMat = glm::inverse(getGlobalTransformMatrix());
+	for( auto& bone : mBones ) {
+		bone->cacheGlobalBoneMat(globalInvMat);
+	}
 	updateMeshesFromBones();
 	updateGLResources();
-	
+//
 	mBSceneDirty = false;
 }
 
@@ -425,101 +429,10 @@ void Model::updateAnimations() {
 //	}
 }
 
-void Model::updateMeshTransforms(aiNode * node, const aiMatrix4x4& parentMatrix) {
-//	glm::mat4 globalInvMat = glm::inverse( getGlobalTransformMatrix() );
-//	glm::mat4 gMat = globalInvMat * getGlobalTransformMatrix();
-//	aiMatrix4x4 gBoneMat = glm2Assimp(gMat);
-	
-	// Not sure what is going on here ....
-
-	aiMatrix4x4 m = node->mTransformation;
-	m.Transpose();
-//	ofMatrix4x4 matrix(m.a1, m.a2, m.a3, m.a4,
-//					   m.b1, m.b2, m.b3, m.b4,
-//					   m.c1, m.c2, m.c3, m.c4,
-//					   m.d1, m.d2, m.d3, m.d4);
-//	glm::mat4 	matrix(m.a1, m.a2, m.a3, m.a4,
-//					   m.b1, m.b2, m.b3, m.b4,
-//					   m.c1, m.c2, m.c3, m.c4,
-//					   m.d1, m.d2, m.d3, m.d4);
-	m *= parentMatrix;
-//	matrix *= parentMatrix;
-	
-//	m = gBoneMat * m;
-	
-	// Decompose (aiVector3t<TReal>& scaling, aiQuaterniont<TReal>& rotation, aiVector3t<TReal>& position) const;
-	
-	aiVector3t<float> tAiScale;
-	aiQuaterniont<float> tAiRotation;
-	aiVector3t<float> tAiPosition;
-
-	m.Decompose( tAiScale, tAiRotation, tAiPosition );
-
-	glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
-	glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-	glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-	
-	
-//	glm::vec3 tscale;
-//    glm::quat tquat;
-//    glm::vec3 tpos;
-//	glm::vec3 skew;
-//	glm::vec4 perspective;
-//
-//	glm::decompose(matrix, tscale, tquat, tpos, skew, perspective);
-//	tquat=glm::conjugate(tquat);
-
-	for(unsigned int i = 0; i < node->mNumMeshes; i++) {
-		int meshIndex = node->mMeshes[i];
-		if( meshIndex >= mMeshes.size() ) {
-			ofLogError("Model::updateMeshes") << " mesh index out of range: " << meshIndex << " / " << mMeshes.size();
-			continue;
-		}
-		
-		auto meshHelper = mMeshes[meshIndex];
-		
-		const aiMesh* mesh = meshHelper->getAiMesh();
-		if( mesh && mesh->mNumBones > 0 ) {
-			//TODO: When this applied in addition to bone animation, the bones don't account for the mesh
-			//transforms and the bones are given incorrect matrices even though the mesh renders
-			continue;
-		}
-		
-//		mesh.matrix = matrix;
-//		meshHelper->setPosition( {0.f,0.f,0.f});
-//		meshHelper->setOrientation( {0.f,0.f,0.f} );
-//		meshHelper->setScale( {0.35f,0.35f,0.35f} );
-		meshHelper->setPositionOrientationScale( tpos, tquat, tscale );
-//		meshHelper->getGlobalTransformMatrix();
-//		meshHelper->setGlobalPosition( gmat * tpos );
-//		meshHelper->setGlobalOrientation( gmat * tquat );
-//		meshHelper->setScale( gmat * tscale );
-	}
-
-	for(unsigned int i = 0; i < node->mNumChildren; i++) {
-//		updateMeshes(node->mChildren[i], matrix);
-		updateMeshTransforms(node->mChildren[i], m);
-	}
-}
-
 void Model::updateMeshesFromBones() {
 	if (!hasAnimations() && !mBSceneDirty){
 		return;
 	}
-//	auto gmat = getGlobalTransformMatrix();
-//	auto globalInverse = scene->mRootNode->mTransformation;
-//	globalInverse = globalInverse.Inverse();
-	// try to update the src bones as a test //
-//	for( auto& bone : mBones ) {
-////		ofLogNotice("src bone: ") << srcBone->getName() << " scale: " << srcBone->getScale() << " global scale: " << srcBone->getGlobalScale();
-//		bone->update();
-//
-//	}
-	
-	auto globalInvMat = glm::inverse(getGlobalTransformMatrix());
-//	auto globalInvQuat = glm::inverse(getGlobalOrientation());
-//	globalInvMat = getGlobalTransformMatrix();
-//	globalInvMat = glm::mat4();
 	
 	// update mesh position for the animation
 	for(size_t i = 0; i < mMeshes.size(); ++i) {
@@ -534,16 +447,14 @@ void Model::updateMeshesFromBones() {
 			continue;
 		}
 
-		mMeshes[i]->animatedPos.assign(mMeshes[i]->animatedPos.size(), aiVector3D(0.0f));
-//		if(mesh->HasNormals()){
+		mMeshes[i]->animatedVertices.assign(mMeshes[i]->animatedVertices.size(), aiVector3D(0.f));
 		if(mMeshes[i]->hasNormals()) {
-			mMeshes[i]->animatedNorm.assign(mMeshes[i]->animatedNorm.size(), aiVector3D(0.0f));
+			mMeshes[i]->animatedNormals.assign(mMeshes[i]->animatedNormals.size(), aiVector3D(0.f));
 		}
 		
 		
 		//-------------
 		// loop through all vertex weights of all bones
-//		ofLogNotice("Update Bones: ") << mesh->mNumBones << " src bones: " << modelMeshes[i]->mBones.size();
 //		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
 		for( unsigned int a = 0; a < mMeshes[i]->mBones.size(); ++a) {
 			mMeshes[i]->hasChanged = true;
@@ -557,7 +468,6 @@ void Model::updateMeshesFromBones() {
 //			}
 //
 			auto sbone = mMeshes[i]->mBones[a];
-//			ofLogNotice("Update sbone: ") << sbone->getName();
 			if( !sbone ) {
 				ofLogError("Update Bones: ") << mesh->mNumBones << " sbone is NULL: " << mesh->mBones[a]->mName.data;
 				continue;
@@ -569,68 +479,44 @@ void Model::updateMeshesFromBones() {
 				ofLogError("Update Bones: ") << mesh->mNumBones << " bone is NULL: " << mesh->mBones[a]->mName.data;
 				continue;
 			}
-
-//			const aiMatrix4x4& posTrafo = boneMatrices[a];
-
-			glm::mat4 gMat = globalInvMat * sbone->getGlobalTransformMatrix();//sbone->getGlobalTransformCached();
-//			gMat = (globalInvMat * modelMeshes[i]->getGlobalTransformMatrix()) * gMat;
 			
-			// puts the bones in the correct place, but not the vertices
-//			gMat = globalInvMat * (glm::inverse(modelMeshes[i]->getGlobalTransformMatrix()) * sbone->getGlobalTransformMatrix());
-			
-			aiMatrix4x4 gBoneMat = glmMat4ToAiMatrix4x4(gMat);
-			aiMatrix4x4 posTrafo = gBoneMat * sbone->getAiOffsetMatrix();//bone->mOffsetMatrix;
-//			const aiMatrix4x4& posTrafo = boneMatrices[a];
-//			continue;
-			
-//			for(unsigned int b = 0; b < sbone->numWeights; ++b) {
-//				const aiVertexWeight& weight = sbone->weights[b];
-//
-//				size_t vertexId = weight.mVertexId;
-//				const aiVector3D& srcPos = mesh->mVertices[vertexId];
-//
-//				modelMeshes[i]->animatedPos[vertexId] += weight.mWeight * (posTrafo * srcPos);
-//			}
-			
+			const aiMatrix4x4& posTrafo = sbone->getAiCachedGlobalBoneMat();
 			for(unsigned int b = 0; b < bone->mNumWeights; ++b) {
 				const aiVertexWeight& weight = bone->mWeights[b];
 
 				size_t vertexId = weight.mVertexId;
 				const aiVector3D& srcPos = mesh->mVertices[vertexId];
-
-				mMeshes[i]->animatedPos[vertexId] += weight.mWeight * (posTrafo * srcPos);
+				mMeshes[i]->animatedVertices[vertexId] += weight.mWeight * (posTrafo * srcPos);
 			}
 			if(mesh->HasNormals()){
 				// 3x3 matrix, contains the bone matrix without the translation, only with rotation and possibly scaling
-				aiMatrix3x3 normTrafo = aiMatrix3x3( posTrafo);
+				aiMatrix3x3 normTrafo = aiMatrix3x3(posTrafo);
 				for(unsigned int b = 0; b < bone->mNumWeights; ++b) {
 					const aiVertexWeight& weight = bone->mWeights[b];
 					size_t vertexId = weight.mVertexId;
 
 					const aiVector3D& srcNorm = mesh->mNormals[vertexId];
-					mMeshes[i]->animatedNorm[vertexId] += weight.mWeight * (normTrafo * srcNorm);
+					mMeshes[i]->animatedNormals[vertexId] += weight.mWeight * (normTrafo * srcNorm);
 				}
 			}
 		}
-//		--------------
-		
 	}
 }
 
 void Model::updateGLResources(){
 	// now upload the result position and normal along with the other vertex attributes into a dynamic vertex buffer, VBO or whatever
 	for (size_t i = 0; i < mMeshes.size(); ++i){
-		if(mMeshes[i]->hasChanged){
+		if(mMeshes[i]->hasChanged ){
 			const aiMesh* mesh = mMeshes[i]->getAiMesh();
-			if( mMeshes[i]->animatedPos.size() != mesh->mNumVertices ) {
-				ofLogError( mMeshes[i]->getName() ) << " modelMeshes[i]->animatedPos.size(): " << mMeshes[i]->animatedPos.size() << " num verts: " <<mesh->mNumVertices ;
+			if( mMeshes[i]->animatedVertices.size() != mesh->mNumVertices ) {
+				ofLogError( mMeshes[i]->getName() ) << " modelMeshes[i]->animatedPos.size(): " << mMeshes[i]->animatedVertices.size() << " num verts: " <<mesh->mNumVertices ;
 				continue;
 			}
 
 			if(hasAnimations() || mBSceneDirty ){
-				mMeshes[i]->vbo->updateVertexData(&mMeshes[i]->animatedPos[0].x,mesh->mNumVertices);
+				mMeshes[i]->vbo->updateVertexData(&mMeshes[i]->animatedVertices[0].x,mesh->mNumVertices);
 				if(mesh->HasNormals()){
-					mMeshes[i]->vbo->updateNormalData(&mMeshes[i]->animatedNorm[0].x,mesh->mNumVertices);
+					mMeshes[i]->vbo->updateNormalData(&mMeshes[i]->animatedNormals[0].x,mesh->mNumVertices);
 				}
 			}
 			mMeshes[i]->hasChanged = false;
@@ -662,20 +548,6 @@ ofx::assimp::Animation& Model::getCurrentAnimation() {
 	ofLogWarning("ofx::assimp::Model::getCurrentAnimation") << " does not have current animation!";
 	return dummyAnimation;
 }
-
-//ofx::assimp::Animation& Model::getAnimation(int aindex) {
-//	if( mAnimations.size() < 1 ) {
-//		ofLogWarning("ofx::assimp::Model : no animations!!");
-//		return dummyAnimation;
-//	}
-//}
-//
-//ofx::assimp::Animation& Model::getAnimation(const std::string& aname) {
-//	if( mAnimations.size() < 1 ) {
-//		ofLogWarning("ofx::assimp::Model : no animations!!");
-//		return dummyAnimation;
-//	}
-//}
 
 bool Model::setCurrentAnimation( int aindex ) {
 	if( mAnimations.size() < 1 ) {
@@ -853,7 +725,6 @@ std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(int meshIndex) {
 }
 
 std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(const std::string& aname) {
-//	return getNodeAsType<ofx::assimp::Mesh>("*:"+aname);
 	for( auto& mesh : mMeshes ) {
 		if( mesh->getName() == aname ) {
 			return mesh;
@@ -994,6 +865,11 @@ unsigned int Model::getNumBones() {
 }
 
 //--------------------------------------------------------------
+void Model::draw(){
+	drawFaces();
+}
+
+//--------------------------------------------------------------
 void Model::drawWireframe(){
 	draw(OF_MESH_WIREFRAME);
 }
@@ -1031,16 +907,7 @@ void Model::draw(ofPolyRenderMode renderType) {
 		return;
 	}
 	
-//	transformGL();
-//	for( auto& srcBone : mSrcBones ) {
-//		srcBone->draw();
-//	}
-//	restoreTransformGL();
 	ofPushStyle();
-
-//	transformGL();
-//	ofPushMatrix();
-//	ofMultMatrix(modelMatrix);
 
 #ifndef TARGET_OPENGLES
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -1053,8 +920,6 @@ void Model::draw(ofPolyRenderMode renderType) {
 			continue;
 		}
 		mesh->transformGL();
-//		ofPushMatrix();
-//		ofMultMatrix(mesh.matrix);
 
 		if(bUsingTextures && !bUsingMaterials){
 			if(mesh->hasTexture()) {
@@ -1066,7 +931,7 @@ void Model::draw(ofPolyRenderMode renderType) {
 			mesh->material->begin();
 		}
 
-		//		this was broken / backwards
+//		this was broken / backwards
 		if(!mesh->twoSided && mCullType >= 0) {
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
@@ -1112,7 +977,6 @@ void Model::draw(ofPolyRenderMode renderType) {
 		}
 		
 		mesh->restoreTransformGL();
-//		ofPopMatrix();
 	}
 
 #ifndef TARGET_OPENGLES
@@ -1122,13 +986,6 @@ void Model::draw(ofPolyRenderMode renderType) {
 	}
 #endif
 	
-//	ofPushMatrix();
-//	ofTranslate(-200, 0, 0);
-	
-//	ofPopMatrix();
-
-//	ofPopMatrix();
-//	restoreTransformGL();
 	ofPopStyle();
 }
 

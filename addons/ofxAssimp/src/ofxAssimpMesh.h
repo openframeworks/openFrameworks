@@ -64,8 +64,8 @@ public:
 	bool validCache = false;
 	bool bConvertedToLeftHand = true;
 	
-	std::vector<aiVector3D> animatedPos;
-	std::vector<aiVector3D> animatedNorm;
+	std::vector<aiVector3D> animatedVertices;
+	std::vector<aiVector3D> animatedNormals;
 	
 	std::vector< std::shared_ptr<ofx::assimp::Bone> > mBones;
 	
@@ -80,7 +80,6 @@ protected:
 	
 	// calculate the local bounds for all of the vertices
 	// has no position, scale or rotations applied
-	// TODO: Do this for animated vertices as well
 	// to account for all animated frames
 	Bounds mLocalBounds;
 	// bounds relative to local translation, rotation and scale

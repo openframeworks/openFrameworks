@@ -19,7 +19,7 @@
 struct aiScene;
 struct aiNode;
 
-// This class loads and stores all of the resources used by the scene
+// This class loads and stores all of the resources used by a ofxAssimpModel
 // It is not intended for rendering
 
 namespace ofx::assimp {

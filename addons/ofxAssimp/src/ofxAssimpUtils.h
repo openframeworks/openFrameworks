@@ -30,6 +30,11 @@ inline ofDefaultVec3 aiVecToOfVec(const aiVector3D& v){
 }
 
 //--------------------------------------------------------------
+inline void aiVecToOfVec(const aiVector3D& v, glm::vec3& fv){
+	fv = glm::vec3(v.x,v.y,v.z);
+}
+
+//--------------------------------------------------------------
 inline glm::quat aiQuatToOfQuat( const aiQuaternion& aq ) {
 	return glm::quat(aq.w, aq.x, aq.y, aq.z);
 }
@@ -54,6 +59,18 @@ inline static aiMatrix4x4 glmMat4ToAiMatrix4x4(const glm::mat4& aMat4) {
 					   aMat4[0][2], aMat4[1][2], aMat4[2][2], aMat4[3][2],
 					   aMat4[0][3], aMat4[1][3], aMat4[2][3], aMat4[3][3]
 					   );
+}
+
+inline static glm::mat4 aiMatrix4x4ToGlmMatrix(const aiMatrix4x4& amat ) {
+//	glm::mat4 tmatrix(amat.a1, amat.a2, amat.a3, amat.a4,
+//					   amat.b1, amat.b2, amat.b3, amat.b4,
+//					   amat.c1, amat.c2, amat.c3, amat.c4,
+//					   amat.d1, amat.d2, amat.d3, amat.d4);
+	glm::mat4 tmatrix(amat.a1, amat.b1, amat.c1, amat.d1,
+					  amat.a2, amat.b2, amat.c2, amat.d2,
+					  amat.a3, amat.b3, amat.c3, amat.d3,
+					  amat.a4, amat.b4, amat.c4, amat.d4);
+	return tmatrix;
 }
 
 inline void getPositionOrientationScaleFromAiMatrix(aiMatrix4x4& aMat, glm::vec3& apos, glm::quat& aq, glm::vec3& ascale ) {

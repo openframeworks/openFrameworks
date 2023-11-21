@@ -32,6 +32,7 @@ public:
 	void setAiMesh(aiMesh* amesh, aiNode* aAiNode);
 	aiMesh* getAiMesh() { return mAiMesh; }
 	const aiMesh* getAiMesh() const { return mAiMesh; }
+	void setupVbo( std::shared_ptr<ofVbo> avbo );
 	
 	void setMeshFromAiMesh( ofMesh& amesh );
 	void calculateLocalBounds(ofMesh& amesh);
@@ -44,20 +45,12 @@ public:
 	ofBlendMode blendMode = OF_BLENDMODE_ALPHA;
 	bool twoSided = false;
 	bool bConvertedToLeftHand = true;
+	bool bHasVboChanged = true;
+	int usage = GL_STATIC_DRAW;
 	
 protected:
 	aiMesh* mAiMesh = nullptr; // pointer to the aiMesh we represent.
 	Bounds mLocalBounds;
-	
-//	static std::unordered_map< int, ofMaterialTextureType > sAiTexTypeToOfTexTypeMap;
-	
-	//	std::string mName = "";
-//	void _initTextureTypeMap();
-//	ofMaterialTextureType _getOfTypeForAiType(aiTextureType aTexType);
-//	aiTextureType _getAiTypeForOfType(ofMaterialTextureType aTexType);
-	//for normal, specular, etc - we include the diffuse too with a null deleter
 	std::vector<std::shared_ptr<ofx::assimp::Texture>> meshTextures;
-	
-	
 };
 }

@@ -12,15 +12,7 @@ public:
 	virtual NodeType getType() override { return OFX_ASSIMP_BONE; }
 	
 	void setAiBone(aiBone* aAiBone, aiNode* aAiNode);
-//	void parentRecursive( ofNode* aParentNode );
-	void update();
-//	void draw();
-	
-//	std::shared_ptr<ofx::assimp::SrcBone> getBone( std::string aName );
-//	void findBoneRecursive( std::string aName, std::shared_ptr<SrcBone>& returnBone );
-	
-//	std::shared_ptr<ofx::assimp::SrcBone> getBone( aiBone* aAiBone );
-//	void findBoneRecursive( aiBone* aAiBone, std::shared_ptr<SrcBone>& returnBone );
+//	void update();
 	
 	std::shared_ptr<ofx::assimp::SrcBone> getBone( aiNode* aAiNode );
 	void findBoneRecursive( aiNode* aAiNode, std::shared_ptr<SrcBone>& returnBone );
@@ -37,7 +29,6 @@ public:
 //	aiMatrix4x4& getAiMatrixGlobal() { return mAiMatrixGlobal; }
 	aiMatrix4x4& getAiOffsetMatrix() { return mOffsetMatrix;}
 	
-//	std::map< std::string, std::shared_ptr<ofx::assimp::SrcBone> > childBones;
 	std::vector< std::shared_ptr<ofx::assimp::SrcBone> > childBones;
 	
 protected:
@@ -46,8 +37,5 @@ protected:
 //	aiMatrix4x4 mAiMatrixGlobal;
 	aiMatrix4x4 mOffsetMatrix;
 	glm::mat4 mBoneLocalTransform = glm::mat4(1.0);
-	
-	
-//	glm::vec3 mPos = {0,0,0};
 };
 }

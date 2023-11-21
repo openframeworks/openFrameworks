@@ -24,66 +24,51 @@ void Bone::setSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
 	mSrcBone = aSrcBone;
 	mOffsetMatrix = mSrcBone->getAiOffsetMatrix();
 	
+	mGlmOffsetMat = aiMatrix4x4ToGlmMatrix(mOffsetMatrix);
+	
 	setOfNodeFromAiMatrix( mSrcBone->getAiMatrix(), this );
-	
-//	aiVector3t<float> tAiScale;
-//	aiQuaterniont<float> tAiRotation;
-//	aiVector3t<float> tAiPosition;
-//	
-//	// TODO: These will get update via the animation keyframes
-//	// SO there won't be a decompose every frame
-//	//		mAiMatrixGlobal = mSrcBone->getAiMatrixGlobal();
-//	mAiMatrix = mSrcBone->getAiMatrix();
-//	// this is the local matrix
-//	mSrcBone->getAiMatrix().Decompose( tAiScale, tAiRotation, tAiPosition );
-//	
-//	glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
-//	glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-//	//	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
-//	glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-//	
-//	setPositionOrientationScale( tpos, tquat, tscale );
-}
-
-//--------------------------------------------------------------
-void Bone::updateFromSrcBone() {
-	if( mSrcBone ) {
-		mSrcBone->update();
-		
-		aiVector3t<float> tAiScale;
-		aiQuaterniont<float> tAiRotation;
-		aiVector3t<float> tAiPosition;
-		
-		// TODO: These will get update via the animation keyframes
-		// SO there won't be a decompose every frame 
-//		mAiMatrixGlobal = mSrcBone->getAiMatrixGlobal();
-		mAiMatrix = mSrcBone->getAiMatrix();
-		// this is the local matrix
-		mSrcBone->getAiMatrix().Decompose( tAiScale, tAiRotation, tAiPosition );
-	
-		glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
-		glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-	//	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
-		glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-		
-		setPositionOrientationScale( tpos, tquat, tscale );
-		
-		
-		
-//		mOffsetMatrix.Decompose(tAiScale, tAiRotation, tAiPosition);
-		
-//		mOffsetOrientation = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-		
-//		setPosition( mSrcBone->getPosition() );
-//		setOrientation( mSrcBone->getOrientationQuat() );
-//		setScale( mSrcBone->getScale() );
-	}
 }
 
 ////--------------------------------------------------------------
-//void Bone::cacheGlobalMat() {
-//	mCachedGlobalMat = getGlobalTransformMatrix();
+//void Bone::updateFromSrcBone() {
+//	if( mSrcBone ) {
+//		
+//		aiVector3t<float> tAiScale;
+//		aiQuaterniont<float> tAiRotation;
+//		aiVector3t<float> tAiPosition;
+//		
+//		// TODO: These will get update via the animation keyframes
+//		// SO there won't be a decompose every frame 
+////		mAiMatrixGlobal = mSrcBone->getAiMatrixGlobal();
+//		mAiMatrix = mSrcBone->getAiMatrix();
+//		// this is the local matrix
+//		mSrcBone->getAiMatrix().Decompose( tAiScale, tAiRotation, tAiPosition );
+//	
+//		glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
+//		glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
+//	//	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
+//		glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
+//		
+//		setPositionOrientationScale( tpos, tquat, tscale );
+//		
+////		mOffsetMatrix.Decompose(tAiScale, tAiRotation, tAiPosition);
+//		
+////		mOffsetOrientation = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
+//		
+////		setPosition( mSrcBone->getPosition() );
+////		setOrientation( mSrcBone->getOrientationQuat() );
+////		setScale( mSrcBone->getScale() );
+//	}
 //}
+
+//--------------------------------------------------------------
+void Bone::cacheGlobalBoneMat(glm::mat4& aInvMat) {
+//	glmMat4ToAiMatrix4x4(gMat);
+//	aiMatrix4x4 posTrafo = gBoneMat * sbone->getAiOffsetMatrix();
+	mCachedGlobalBoneMat = aInvMat * getGlobalTransformMatrix();
+	mCachedGlobalBoneMat = mCachedGlobalBoneMat * mGlmOffsetMat;
+	mAiCachedGlobalBoneMat = glmMat4ToAiMatrix4x4(mCachedGlobalBoneMat);
+}
 
 //--------------------------------------------------------------
 void Bone::draw() {
@@ -177,29 +162,6 @@ void Bone::draw() {
 		ofDrawAxis(30);
 	} ofPopMatrix();
 }
-
-////--------------------------------------------------------------
-//std::shared_ptr<ofx::assimp::Bone> Bone::getBone( const std::string& aName ) {
-//	std::shared_ptr<ofx::assimp::Bone> tbone;
-//	findBoneRecursive( aName, tbone );
-//	if( tbone ) {
-//		return tbone;
-//	}
-//	return tbone;
-//}
-//
-////--------------------------------------------------------------
-//void Bone::findBoneRecursive( const std::string& aName, std::shared_ptr<Bone>& returnBone ) {
-//	if( !returnBone ) {
-//		for(auto& kid : mChildBones) {
-//			if( kid->getName() == aName ) {
-//				returnBone = kid;
-//				break;
-//			}
-//			kid->findBoneRecursive( aName, returnBone );
-//		}
-//	}
-//}
 
 //--------------------------------------------------------------
 void Bone::_initRenderMesh() {

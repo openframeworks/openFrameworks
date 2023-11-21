@@ -69,9 +69,7 @@ protected:
 	
 	std::string mName = "";
 	unsigned int mUid = 0;
-	
-	//void updateAnimationNodes();
-	
+		
 	float mSrcDurationInTicks = 0.f;
 //	std::shared_ptr<const aiScene> scene;
 //	aiAnimation * animation;

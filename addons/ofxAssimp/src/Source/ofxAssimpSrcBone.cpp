@@ -22,214 +22,99 @@ void SrcBone::setAiBone(aiBone* aAiBone, aiNode* aAiNode) {
 	mAiBone = aAiBone;
 	
 	mAiMatrix = mAiNode->mTransformation;
-	
-//	mWeights.assign( bone->mNumWeights, aiVertexWeight() );
-//	weights.clear();
-//	
-////	numWeights = aAiBone->mNumWeights;
-//	
-//	for(unsigned int b = 0; b < aAiBone->mNumWeights; ++b) {
-////		const aiVertexWeight& weight = bone->mWeights[b];
-//		weights.push_back(aAiBone->mWeights[b]);
-//		
-////		size_t vertexId = weight.mVertexId;
-////		const aiVector3D& srcPos = mesh->mVertices[vertexId];
-//		
-////		modelMeshes[i]->animatedPos[vertexId] += weight.mWeight * (posTrafo * srcPos);
-//	}
-//	numWeights = weights.size();
 }
 
 ////--------------------------------------------------------------
-//void SrcBone::parentRecursive( ofNode* aParentNode ) {
-//	setParent( *aParentNode, false );
-////	for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
-////		it->second->setParent(*aParentBone, false);
-////		it->second->parentRecursive(this);
-////	}
-//	for( auto& kid : childBones ) {
-//		kid->parentRecursive(this);
-//	}
-//}
-
-//--------------------------------------------------------------
-void SrcBone::update() {
-	if( mAiNode == nullptr ) {
-		ofLogWarning("SrcBone::update mAiNode nullptr!!!");
-		return;
-	}
-	
-//	if( mAiBone == nullptr ) {
-//		ofLogWarning("SrcBone::update mAiBone nullptr!!!");
+//void SrcBone::update() {
+//	if( mAiNode == nullptr ) {
+//		ofLogWarning("SrcBone::update mAiNode nullptr!!!");
 //		return;
 //	}
-	
-	if( bRoot ) {
-//		std::cout << "Bone: " << getName() << " has parent: " << (getParent() != nullptr) << " | " << ofGetFrameNum() << std::endl;
-	}
-	// update //
-//	mAiMatrix = mAiBone->mOffsetMatrix;
-	mAiMatrix = mAiNode->mTransformation;
-	
-//	mAiMatrixGlobal = mAiNode->mTransformation;
-//	mBoneLocalTransform = glmMat4ToAiMatrix4x4(mAiMatrix);
-	// and now append all node transformations down the parent chain until we're back at mesh coordinates again
-//	if( bRoot ) {
-//		const aiNode* tempNode = mAiNode;
-//		aiNode* node = scene->mRootNode->FindNode(mAiBone->mName);
-//		const aiNode* tempNode = mAiNode->mParent;
-//		while(tempNode) {
-////			aiMatrix4x4 m = tempNode->mTransformation;
-////			m.Transpose();
-//		// check your matrix multiplication order here!!!
-////			mAiMatrix = m * mAiMatrix;//boneMatrices[a];
-////			ofLogNotice("SrcBone name: ") << getName() << " parent: " << tempNode->mName.data;
-////			mAiMatrixGlobal = tempNode->mTransformation * mAiMatrixGlobal;
-//			mAiMatrixGlobal = tempNode->mTransformation * mAiMatrixGlobal;
-//														 // boneMatrices[a] = boneMatrices[a] * tempNode->mTransformation;
-////			mAiMatrix = tempNode->mTransformation * mAiMatrix;
-////			mAiMatrix = mAiMatrix * tempNode->mTransformation;
-//			tempNode = tempNode->mParent;
-//		}
-//		mAiMatrix = aGlobalInv * mAiMatrix;
-//	} else {
-//		mAiMatrix = mAiNode->mTransformation * mAiMatrix;
-//		mAiMatrix = mAiMatrix * mAiNode->mTransformation;
-//	}
-	if( bRoot) {
-//		mAiMatrix = mAiMatrixGlobal;
-	}
-	
-//	mAiMatrix *= (mOffsetMatrix);
-	
-//	aiVector3t<float> tAiScale;
-//	aiQuaterniont<float> tAiRotation;
-//	aiVector3t<float> tAiPosition;
-//	
-//	// this is the local matrix
-//	mAiMatrix.Decompose( tAiScale, tAiRotation, tAiPosition );
-//	
-//	glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
-//	glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-////	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
-//	glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-//	
-////	if( bRoot ) {
-////		std::cout << "Bone: " << getName() << " tscale: " << tscale << " | " << ofGetFrameNum() << std::endl;
+//
+////	if( mAiBone == nullptr ) {
+////		ofLogWarning("SrcBone::update mAiBone nullptr!!!");
+////		return;
 ////	}
-//	
-////	if(bRoot) {
-////		setGlobalPosition( tpos );
-////		setGlobalOrientation( tquat );
-////		setScale( tscale );
+//
+////	if( bRoot ) {
+////		std::cout << "Bone: " << getName() << " has parent: " << (getParent() != nullptr) << " | " << ofGetFrameNum() << std::endl;
+////	}
+//	// update //
+////	mAiMatrix = mAiBone->mOffsetMatrix;
+//	mAiMatrix = mAiNode->mTransformation;
+//
+////	mAiMatrixGlobal = mAiNode->mTransformation;
+////	mBoneLocalTransform = glmMat4ToAiMatrix4x4(mAiMatrix);
+//	// and now append all node transformations down the parent chain until we're back at mesh coordinates again
+////	if( bRoot ) {
+////		const aiNode* tempNode = mAiNode;
+////		aiNode* node = scene->mRootNode->FindNode(mAiBone->mName);
+////		const aiNode* tempNode = mAiNode->mParent;
+////		while(tempNode) {
+//////			aiMatrix4x4 m = tempNode->mTransformation;
+//////			m.Transpose();
+////		// check your matrix multiplication order here!!!
+//////			mAiMatrix = m * mAiMatrix;//boneMatrices[a];
+//////			ofLogNotice("SrcBone name: ") << getName() << " parent: " << tempNode->mName.data;
+//////			mAiMatrixGlobal = tempNode->mTransformation * mAiMatrixGlobal;
+////			mAiMatrixGlobal = tempNode->mTransformation * mAiMatrixGlobal;
+////														 // boneMatrices[a] = boneMatrices[a] * tempNode->mTransformation;
+//////			mAiMatrix = tempNode->mTransformation * mAiMatrix;
+//////			mAiMatrix = mAiMatrix * tempNode->mTransformation;
+////			tempNode = tempNode->mParent;
+////		}
+////		mAiMatrix = aGlobalInv * mAiMatrix;
 ////	} else {
-//		setPositionOrientationScale( tpos, tquat, tscale );
-//	setPosition(tpos);
-//	setOrientation(tquat);
-//	setScale(tscale);
-	
-//	setGlobalPosition(tpos);
-//	setGlobalOrientation(tquat);
-//	setScale(tscale);
-	
-//	mPos = getGlobalPosition();
+////		mAiMatrix = mAiNode->mTransformation * mAiMatrix;
+////		mAiMatrix = mAiMatrix * mAiNode->mTransformation;
+////	}
+//	if( bRoot) {
+////		mAiMatrix = mAiMatrixGlobal;
 //	}
-	
-//	for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
-//		it->second->update();
-//	}
-//	for( auto& kid : childBones ) {
-//		kid->update();
-//	}
-	
-//	getGlobalTransformMatrix();
-}
-
-////--------------------------------------------------------------
-//void SrcBone::draw() {
-//	
-//	if( bRoot ) {
-////		std::cout << "Bone: " << getName() << " tscale: " << " | " << ofGetFrameNum() << std::endl;
-//		ofDrawSphere( getGlobalPosition(), 4 );
-//	}
-////	ofDrawLine( glm::vec3(0,0,0),  getGlobalPosition() );
-//	
-////	transformGL();
-////	ofDrawAxis(2);
-////	restoreTransformGL();
-//	ofPushMatrix(); {
-////		ofTranslate( getGlobalPosition() );
-//		// ofMultMatrix(mat4);
-//		auto localTransformMatrix = glm::translate(glm::mat4(1.0f), toGlm(getGlobalPosition()));
-//		localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)getGlobalOrientation());
-//		ofMultMatrix(localTransformMatrix);
-//		ofDrawAxis(30);
-//	} ofPopMatrix();
-//	
-//	for( auto& kid : childBones ) {
-//		ofDrawLine( getGlobalPosition(), kid->getGlobalPosition() );
-//		kid->draw();
-//	}
-//}
-
-////--------------------------------------------------------------
-//std::shared_ptr<ofx::assimp::SrcBone> SrcBone::getBone( std::string aName ) {
-//	std::shared_ptr<ofx::assimp::SrcBone> tbone;
-//	findBoneRecursive( aName, tbone );
-//	if( tbone ) {
-//		return tbone;
-//	}
-//	return tbone;
-//}
 //
-////--------------------------------------------------------------
-//void SrcBone::findBoneRecursive( std::string aName, std::shared_ptr<SrcBone>& returnBone ) {
-//	if( !returnBone ) {
-////		for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
-////			if( it->second->getName() == aName ) {
-////				returnBone = (it->second);
-////				break;
-////			}
-////			it->second->findBoneRecursive( aName, returnBone );
-////		}
-//		for(auto& kid : childBones) {
-//			if( kid->getName() == aName ) {
-//				returnBone = kid;//(it->second);
-//				break;
-//			}
-//			kid->findBoneRecursive( aName, returnBone );
-//		}
-//	}
-//}
-
-////--------------------------------------------------------------
-//std::shared_ptr<ofx::assimp::SrcBone> SrcBone::getBone( aiBone* aAiBone ) {
-//	std::shared_ptr<ofx::assimp::SrcBone> tbone;
-//	findBoneRecursive( aAiBone, tbone );
-//	if( tbone ) {
-//		return tbone;
-//	}
-//	return tbone;
-//}
+////	mAiMatrix *= (mOffsetMatrix);
 //
-////--------------------------------------------------------------
-//void SrcBone::findBoneRecursive( aiBone* aAiBone, std::shared_ptr<SrcBone>& returnBone ) {
-//	if( !returnBone ) {
-////		for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
-////			if( it->second->getAiBone() == aAiBone ) {
-////				returnBone = (it->second);
-////				break;
-////			}
-////			it->second->findBoneRecursive( aAiBone, returnBone );
-////		}
-//		for(auto& kid : childBones ) {
-//			if( kid->getAiBone() == aAiBone ) {
-//				returnBone = kid;//(it->second);
-//				break;
-//			}
-//			kid->findBoneRecursive( aAiBone, returnBone );
-//		}
-//	}
+////	aiVector3t<float> tAiScale;
+////	aiQuaterniont<float> tAiRotation;
+////	aiVector3t<float> tAiPosition;
+////
+////	// this is the local matrix
+////	mAiMatrix.Decompose( tAiScale, tAiRotation, tAiPosition );
+////
+////	glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
+////	glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
+//////	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
+////	glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
+////
+//////	if( bRoot ) {
+//////		std::cout << "Bone: " << getName() << " tscale: " << tscale << " | " << ofGetFrameNum() << std::endl;
+//////	}
+////
+//////	if(bRoot) {
+//////		setGlobalPosition( tpos );
+//////		setGlobalOrientation( tquat );
+//////		setScale( tscale );
+//////	} else {
+////		setPositionOrientationScale( tpos, tquat, tscale );
+////	setPosition(tpos);
+////	setOrientation(tquat);
+////	setScale(tscale);
+//
+////	setGlobalPosition(tpos);
+////	setGlobalOrientation(tquat);
+////	setScale(tscale);
+//
+////	mPos = getGlobalPosition();
+////	}
+//
+////	for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
+////		it->second->update();
+////	}
+////	for( auto& kid : childBones ) {
+////		kid->update();
+////	}
+//
+////	getGlobalTransformMatrix();
 //}
 
 //--------------------------------------------------------------

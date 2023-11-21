@@ -112,11 +112,15 @@ void Mesh::setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh ) {
 //	}
 	
 	if( mSrcMesh ) {
-		//TODO: something fancy
 		material = mSrcMesh->material;
 		twoSided = mSrcMesh->twoSided;
 		blendMode = mSrcMesh->blendMode;
-		vbo = mSrcMesh->vbo;
+		vbo = make_shared<ofVbo>();
+		mSrcMesh->setupVbo(vbo);
+//		ofVbo temp = *mSrcMesh->vbo;
+//		vbo = std::make_shared<ofVbo>(temp);
+//		vbo = make_shared<ofVbo>();
+		
 		mLocalBounds = mSrcMesh->getLocalBounds();
 		bConvertedToLeftHand = mSrcMesh->bConvertedToLeftHand;
 	}
@@ -136,7 +140,7 @@ ofMesh& Mesh::getStaticMesh() {
 
 //-------------------------------------------
 ofMesh& Mesh::getMesh() {
-	if( animatedPos.size() > 0 ) {
+	if( animatedVertices.size() > 0 ) {
 		if(!validCache){
 			if( !mBInitedAnimatedMesh ) {
 				mBInitedAnimatedMesh=true;
@@ -151,9 +155,11 @@ ofMesh& Mesh::getMesh() {
 			
 			mAnimatedMesh.clearVertices();
 			mAnimatedMesh.clearNormals();
-			mAnimatedMesh.addVertices(aiVecVecToOfVecVec(animatedPos));
-			if(animatedNorm.size() == animatedPos.size() ) {
-				mAnimatedMesh.addNormals(aiVecVecToOfVecVec(animatedNorm));
+			mAnimatedMesh.addVertices(aiVecVecToOfVecVec(animatedVertices));
+//			mAnimatedMesh.addVertices(animatedVertices);
+			if(animatedNormals.size() == animatedVertices.size() ) {
+				mAnimatedMesh.addNormals(aiVecVecToOfVecVec(animatedNormals));
+//				mAnimatedMesh.addNormals(animatedNormals);
 			}
 			validCache = true;
 		}
@@ -220,8 +226,8 @@ void Mesh::recalculateBounds(bool abForce) {
 		// calculate local bounds since verts have changed //
 		mLocalBounds.clear();
 //		mLocalBounds.include( cachedMesh.getVertices() );
-		if( animatedPos.size() > 3 ) {
-			mLocalBounds.include(animatedPos);
+		if( animatedVertices.size() > 3 ) {
+			mLocalBounds.include(animatedVertices);
 		} else {
 //			mLocalBounds.include( getStaticMesh().getVertices() );
 			if( mSrcMesh ) {

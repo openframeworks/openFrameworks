@@ -19,8 +19,8 @@ public:
 	
 	void setSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone );
 	
-	virtual void updateFromSrcBone();
-//	void cacheGlobalMat();
+//	virtual void updateFromSrcBone();
+	void cacheGlobalBoneMat(glm::mat4& aInvMat);
 	virtual void draw();
 	
 	std::shared_ptr<ofx::assimp::SrcBone> getSrcBone() { return mSrcBone; }
@@ -31,7 +31,8 @@ public:
 //	aiMatrix4x4& getAiMatrix() { return mAiMatrix; }
 //	aiMatrix4x4& getAiMatrixGlobal() { return mAiMatrixGlobal; }
 	aiMatrix4x4& getAiOffsetMatrix() { return mOffsetMatrix;}
-//	const glm::mat4& getCachedGlobalMat() { return mCachedGlobalMat; }
+	const glm::mat4& getCachedGlobalBoneMat() { return mCachedGlobalBoneMat; }
+	const aiMatrix4x4& getAiCachedGlobalBoneMat() { return mAiCachedGlobalBoneMat; }
 	
 protected:
 	std::vector< std::shared_ptr<ofx::assimp::Bone> > mChildBones;
@@ -39,12 +40,13 @@ protected:
 	
 	void _initRenderMesh();
 	
-//	glm::mat4 mCachedGlobalMat = glm::mat4(1.0f);
+	glm::mat4 mCachedGlobalBoneMat = glm::mat4(1.0f);
 //	glm::quat mOffsetOrientation;
 	
-	aiMatrix4x4 mAiMatrix;
+	aiMatrix4x4 mAiMatrix, mAiCachedGlobalBoneMat;
 //	aiMatrix4x4 mAiMatrixGlobal;
 	aiMatrix4x4 mOffsetMatrix;
+	glm::mat4 mGlmOffsetMat;
 	
 	// 0: +x
 	// 1: +y

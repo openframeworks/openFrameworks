@@ -116,6 +116,7 @@ public:
 	
 	
 	// -- draw ---------------------------------------
+	void draw();
 	void draw(ofPolyRenderMode renderType);
 	void drawWireframe();
 	void drawFaces();
@@ -158,7 +159,6 @@ public:
 	
 protected:
 	void updateAnimations();
-	void updateMeshTransforms(aiNode * node, const aiMatrix4x4& parentMatrix);
 	void updateMeshesFromBones();
 	
 	bool processScene();
