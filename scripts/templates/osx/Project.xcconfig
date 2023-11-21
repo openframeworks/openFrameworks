@@ -17,6 +17,7 @@ PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.${TARGET_NAME:rfc1034identifier}
 DEVELOPMENT_LANGUAGE = English
 CODE_SIGN_IDENTITY = -
 INFOPLIST_FILE = openFrameworks-Info.plist
+GENERATE_INFOPLIST_FILE = YES
 
 // set application category to games, this is required to enable Game mode
 // note: this sets the initial value in the Xcode UI
