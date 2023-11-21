@@ -18,6 +18,10 @@ DEVELOPMENT_LANGUAGE = English
 CODE_SIGN_IDENTITY = -
 INFOPLIST_FILE = openFrameworks-Info.plist
 
+// set application category to games, this is required to enable Game mode
+// note: this sets the initial value in the Xcode UI
+INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.games
+
 // VERSIONING - overridden if changed in Xcode UI
 
 // this is "Version" in the Xcode target Identity UI

@@ -22,8 +22,6 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.graphics-design</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs to access the camera</string>
 	<key>NSMicrophoneUsageDescription</key>
