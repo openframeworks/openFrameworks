@@ -1720,8 +1720,8 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - deprecate / phase out / remove from core
-string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
+//	FIXME: - reavail
+string ofFilePath::addLeadingSlash(const of::filesystem::path & _path){
 	auto path = _path.string();
 	auto sep = of::filesystem::path("/").make_preferred();
 	if(!path.empty()){
@@ -1733,10 +1733,10 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - deprecate / phase out / remove from core
+//	FIXME: - reavail
 std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
-	if(_path.string().empty()) return "";
+	if(_path.empty()) return "";
 	return (of::filesystem::path(_path).make_preferred() / "").string();
 #else
 	auto path = of::filesystem::path(_path).make_preferred();
@@ -1752,22 +1752,20 @@ std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - deprecate and suggest using of::filesystem::path.extension() instead
-string ofFilePath::getFileExt(const of::filesystem::path& filename){
+// FIXME: - start using of::filesystem::path.extension() 
+string ofFilePath::getFileExt(const of::filesystem::path & filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
-	// doesn't work because it returns extension starting with a dot.
-	//	return filename.extension().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: deprecate and suggest replace_extension instead
-std::string ofFilePath::removeExt(const of::filesystem::path& _filename){
+// FIXME: - suggest replace_extension instead
+std::string ofFilePath::removeExt(const of::filesystem::path & _filename){
 	auto filename = _filename;
 	return filename.replace_extension().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
+string ofFilePath::getPathForDirectory(const of::filesystem::path & path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
@@ -1789,8 +1787,8 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: convert to of::filesystem::path
-string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
+// FIXME: - reavail
+string ofFilePath::removeTrailingSlash(const of::filesystem::path & _path){
 	auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
@@ -1800,7 +1798,7 @@ string ofFilePath::removeTrailingSlash(const of::filesystem::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: is this still useful? if yes convert to of::filesystem::path
+// FIXME: - re-avail
 string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRelativeToData){
 	auto filePath = _filePath;
 
@@ -1813,8 +1811,8 @@ string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRela
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: deprecate - indicate using stem() instead
-string ofFilePath::getBaseName(const of::filesystem::path& filePath){
+// FIXME: - suggest using stem() instead
+string ofFilePath::getBaseName(const of::filesystem::path & filePath){
 	return filePath.stem().string();
 }
 
