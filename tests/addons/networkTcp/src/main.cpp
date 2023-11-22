@@ -86,6 +86,7 @@ public:
 		ofLogNotice() << "disconnectionAutoDetection";
 
 		int port = ofRandom(15000, 65535);
+		cout << "port = " << port << endl;
 
 		ofxTCPServer server;
 		ofxTest(server.setup(port,true), "blocking server");
@@ -115,6 +116,7 @@ public:
 		ofLogNotice() << "testSendRaw";
 
 		int port = ofRandom(15000, 65535);
+		cout << "port = " << port << endl;
 
 		ofxTCPServer server;
 		ofxTest(server.setup(port,true), "blocking server");
@@ -150,6 +152,7 @@ public:
 		ofLogNotice() << "testSendRawBytes";
 
 		int port = ofRandom(15000, 65535);
+		cout << "port = " << port << endl;
 
 		ofxTCPServer server;
 		ofxTest(server.setup(port,true), "blocking server");
@@ -199,6 +202,8 @@ public:
 		ofLogNotice() << "testReceiveTimeout";
 
 		int port = ofRandom(15000, 65535);
+		cout << "port = " << port << endl;
+
 		ofxTCPManager server;
 		ofxTest(server.Create(), "server socket creation");
 		ofxTest(server.Bind(port), "server socket bind");
@@ -235,6 +240,7 @@ public:
 		ofLogNotice() << "testSendMaxSize tests #3478";
 
 		int port = ofRandom(15000, 65535);
+		cout << "port = " << port << endl;
 
 		ofxTCPServer server;
 		ofxTest(server.setup(port,true), "blocking server");
