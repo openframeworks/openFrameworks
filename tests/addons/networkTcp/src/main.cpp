@@ -62,6 +62,7 @@ public:
 		ofLogNotice() << "testBlocking";
 
 		int port = ofRandom(15000, 65535);
+		cout << "port = " << port << endl;
 
 		ofxTCPServer server;
 		ofxTest(server.setup(port,true), "blocking server");
