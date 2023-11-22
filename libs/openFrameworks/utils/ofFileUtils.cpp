@@ -1720,7 +1720,7 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - reavail
+// FIXME: - re-avail
 string ofFilePath::addLeadingSlash(const of::filesystem::path & _path){
 	auto path = _path.string();
 	auto sep = of::filesystem::path("/").make_preferred();
@@ -1733,7 +1733,7 @@ string ofFilePath::addLeadingSlash(const of::filesystem::path & _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - reavail
+// FIXME: - re-avail
 std::string ofFilePath::addTrailingSlash(const of::filesystem::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
 	if(_path.empty()) return "";
@@ -1787,7 +1787,7 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path & path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - reavail
+// FIXME: - re-avail
 string ofFilePath::removeTrailingSlash(const of::filesystem::path & _path){
 	auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
