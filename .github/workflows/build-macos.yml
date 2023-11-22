@@ -90,7 +90,7 @@ jobs:
 
     - name: Build
       run:
-        if [ "$TARGET" = "osx" ] && [ "$OPT" = "xcode" ]; then
+        if [ "$OPT" = "xcode" ]; then
           scripts/ci/$TARGET/build.sh $OPT;
         else
           scripts/ci/$TARGET/run_tests.sh;
