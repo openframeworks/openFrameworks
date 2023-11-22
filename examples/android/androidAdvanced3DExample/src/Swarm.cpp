@@ -56,8 +56,6 @@ void Swarm::init(int _nParticles, float positionDispersion, float velocityDisper
 	// INITIALISE VALUES
 	///////////////////////////////////////////
 	//
-	ofSeedRandom();
-	//
 	for (int i=0; i< nParticles; i++)
 	{
 		positions[i].x = (ofRandom(1.0f)-0.5f)  * positionDispersion;

@@ -1,13 +1,12 @@
 #include "ofFileUtils.h"
+#include "ofLog.h"
+#include "ofUtils.h"
+
 #ifndef TARGET_WIN32
 	#include <pwd.h>
 	#include <sys/stat.h>
 	#include <unistd.h>
 #endif
-
-#include "ofUtils.h"
-#include "ofLog.h"
-
 
 #ifdef TARGET_OSX
 	#include <mach-o/dyld.h>       /* _NSGetExecutablePath */
@@ -628,7 +627,7 @@ bool ofFile::writeFromBuffer(const ofBuffer & buffer){
 		return false;
 	}
 	if(!isWriteMode()){
-		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file \"" << myFile.string() << "\"";
+		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file " << myFile ;
 	}
 	return buffer.writeTo(*this);
 }
@@ -691,7 +690,7 @@ std::string ofFile::getAbsolutePath() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
-	auto perm = of::filesystem::status(myFile).permissions();
+	
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES)
@@ -702,6 +701,7 @@ bool ofFile::canRead() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
+	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_read) != of::filesystem::perms::none;
@@ -724,7 +724,6 @@ bool ofFile::canRead() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canWrite() const {
-	auto perm = of::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES){
@@ -735,6 +734,7 @@ bool ofFile::canWrite() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
+	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_write) != of::filesystem::perms::none;
@@ -757,12 +757,12 @@ bool ofFile::canWrite() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canExecute() const {
-	auto perm = of::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	return getExtension() == "exe";
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
+	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & of::filesystem::perms::owner_exec) != of::filesystem::perms::none;
@@ -944,7 +944,7 @@ bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 			if(overwrite){
 				ofFile::removeFile(path, false);
 			}else{
-				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+				ofLogWarning("ofFile") << "copyTo(): destination file " << path << " already exists, set bool overwrite to true if you want to overwrite it";
 			}
 		}
 	}
@@ -958,7 +958,7 @@ bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 		}
 		of::filesystem::copy_file(myFile,path);
 	}catch(std::exception & except){
-		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\": " << except.what();
+		ofLogError("ofFile") <<  "copyTo(): unable to copy " << path << ": " << except.what();
 		return false;
 	}
 
@@ -994,7 +994,7 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 			if(overwrite){
 				ofFile::removeFile(path, false);
 			}else{
-				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+				ofLogWarning("ofFile") << "copyTo(): destination file " << path << " already exists, set bool overwrite to true if you want to overwrite it";
 			}
 		}
 	}
@@ -1016,7 +1016,7 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 		}
 	}
 	catch(std::exception & except){
-		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\": " << except.what();
+		ofLogError("ofFile") << "moveTo(): unable to move " << path << ": " << except.what();
 		return false;
 	}
 
@@ -1049,7 +1049,7 @@ bool ofFile::remove(bool recursive){
 			of::filesystem::remove(myFile);
 		}
 	}catch(std::exception & except){
-		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile << "\": " << except.what();
+		ofLogError("ofFile") << "remove(): unable to remove " << myFile << ": " << except.what();
 		return false;
 	}
 
@@ -1061,7 +1061,7 @@ uint64_t ofFile::getSize() const {
 	try{
 		return of::filesystem::file_size(myFile);
 	}catch(std::exception & except){
-		ofLogError("ofFile") << "getSize(): unable to get size of \"" << myFile << "\": " << except.what();
+		ofLogError("ofFile") << "getSize(): unable to get size of " << myFile << ": " << except.what();
 		return 0;
 	}
 }
@@ -1307,7 +1307,7 @@ bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData
 		if(overwrite){
 			ofDirectory::removeDirectory(path, true, false);
 		}else{
-			ofLogWarning("ofDirectory") << "copyTo(): dest \"" << path << "\" already exists, set bool overwrite to true to overwrite it";
+			ofLogWarning("ofDirectory") << "copyTo(): dest " << path << " already exists, set bool overwrite to true to overwrite it";
 			return false;
 		}
 	}
@@ -1393,7 +1393,7 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 	if(!of::filesystem::exists(myDir)){
-		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: " << myDir ;
 		return 0;
 	}
 
@@ -1402,7 +1402,7 @@ std::size_t ofDirectory::listDir(){
 			files.emplace_back(f.path(), ofFile::Reference);
 		}
 	}else{
-		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: " << myDir ;
 		return 0;
 	}
 
@@ -1484,6 +1484,24 @@ static bool natural(const ofFile& a, const ofFile& b) {
 	}
 }
 
+
+//------------------------------------------------------------------------------------------------------------
+struct StringSort{
+    of::filesystem::path path;
+    string basename;
+    int nameInt;
+    string stringInt;
+};
+
+//------------------------------------------------------------------------------------------------------------
+static bool naturalStr(const StringSort& a, const StringSort& b) {
+    if(a.stringInt == a.basename && b.stringInt == b.basename) {
+        return a.nameInt < b.nameInt;
+    } else {
+        return a.path < b.path;
+    }
+}
+
 //------------------------------------------------------------------------------------------------------------
 static bool byDate(const ofFile& a, const ofFile& b) {
 	auto ta = of::filesystem::last_write_time(a);
@@ -1500,11 +1518,49 @@ void ofDirectory::sortByDate() {
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::sort(){
+void ofDirectory::sort(const SortMode & mode){
 	if(files.empty() && !myDir.empty()){
 		listDir();
 	}
-	ofSort(files, natural);
+
+    if( mode == ofDirectory::SORT_NATURAL ){
+        vector <StringSort> sort;
+        sort.reserve(files.size());
+
+        for( auto & f : files ){
+            StringSort ss;
+            ss.path = f.path();
+            ss.basename = f.getBaseName();
+            ss.nameInt = ofToInt(ss.basename);
+            ss.stringInt = ofToString(ss.nameInt);
+            sort.push_back(ss);
+        }
+        
+        ofSort(sort, naturalStr);
+        files.clear();
+        files.reserve(sort.size());
+        for( auto & s : sort ){
+            files.emplace_back( s.path , ofFile::Reference);
+        }
+    }
+    else if(mode == ofDirectory::SORT_FAST){
+        std::vector <string> sort;
+        sort.reserve(files.size());
+        
+        for( auto & f : files ){
+            string ss = f.getFileName();
+            sort.push_back(ss);
+        }
+
+        std::sort(sort.begin(), sort.end());
+        files.clear();
+        files.reserve(sort.size());
+        for( auto & s : sort ){
+            files.emplace_back( myDir / of::filesystem::path(s), ofFile::Reference);
+        }
+    }else if(mode == ofDirectory::SORT_BY_DATE){
+        sortByDate();
+    }
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1567,7 +1623,7 @@ bool ofDirectory::createDirectory(const of::filesystem::path& _dirPath, bool bRe
 				success = of::filesystem::create_directories(dirPath);
 			}
 		} catch(std::exception & except){
-			ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
+			ofLogError("ofDirectory") << "createDirectory(): couldn't create directory " << dirPath << ": " << except.what();
 			return false;
 		}
 		return success;
@@ -1587,7 +1643,7 @@ bool ofDirectory::doesDirectoryExist(const of::filesystem::path& _dirPath, bool 
 		return of::filesystem::exists(dirPath) && of::filesystem::is_directory(dirPath);
 	}
 	catch (std::exception & except) {
-		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory \"" << dirPath << "\": " << except.what() << std::endl;
+		ofLogError("ofDirectory") << "doesDirectoryExist(): couldn't find directory " << dirPath << ": " << except.what() << std::endl;
 		return false;
 	}
 }

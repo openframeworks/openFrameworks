@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ofParameter.h"
+#include <glm/gtc/quaternion.hpp>
 #include "ofConstants.h"
 #include "glm/mat4x4.hpp"
 #include <array>
@@ -234,6 +235,37 @@ public:
 	///
 	/// \param s Desired local scale for all axes as ref to 3D vector where 1 = 100%.
 	void setScale(const glm::vec3& s);
+	
+	/// \brief Set the local position, rotation and scale of the node.
+	///
+	/// \param p Desired local xyz coordinates as ref to 3D vector.
+	/// \param q Desired local orientation as ref to an glm::quat.
+	/// \param s Desired local scale for all axes as ref to 3D vector where 1 = 100%.
+	void setPositionOrientationScale( const glm::vec3& p, const glm::quat& q, const glm::vec3& s );
+	
+	/// \brief Set the local position, rotation and scale of the node.
+	///
+	/// \param p Desired local xyz coordinates as ref to 3D vector.
+	/// \param q Desired local orientation as ref to an glm::quat.
+	/// \param s Desired local scale for all axes as float where 1 = 100%.
+	void setPositionOrientationScale(const glm::vec3& p, const glm::quat& q, const float& s );
+	
+	/// \brief Set the local position, rotation and scale of the node.
+	///
+	/// \param p Desired local xyz coordinates as ref to 3D vector.
+	/// \param eulerAnglesDeg Desired local xyz angles in degrees, as ref to 3D vector.
+	/// \param s Desired local scale for all axes as ref to 3D vector where 1 = 100%.
+	/// \note Using euler angles can cause gimbal lock.
+	void setPositionOrientationScale( const glm::vec3& p, const glm::vec3& eulerAnglesDeg, const glm::vec3& s );
+	
+	/// \brief Set the local position, rotation and scale of the node.
+	///
+	/// \param p Desired local xyz coordinates as ref to 3D vector.
+	/// \param eulerAnglesDeg Desired local xyz angles in degrees, as ref to 3D vector.
+	/// \param s Desired local scale for all axes as ref to 3D vector where 1 = 100%.
+	/// \note Using euler angles can cause gimbal lock.
+	void setPositionOrientationScale( const glm::vec3& p, const glm::vec3& eulerAnglesDeg, const float& s );
+	
 	
 	/// \}
 	/// \name Modifiers

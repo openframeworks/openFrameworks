@@ -47,7 +47,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	  
     makeCurrent();
 
-    _renderer = make_shared<ofGLProgrammableRenderer>(this);
+    _renderer = std::make_shared<ofGLProgrammableRenderer>(this);
     ((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
     emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,1,&keydown_cb);
@@ -96,6 +96,9 @@ void ofxAppEmscriptenWindow::update(){
 	if (bSetMainLoopTiming) {
 		// choose the render speed with the second argument. 1 is for every screen refresh, 2 for every second, 3 for every third. and so on...
 		emscripten_set_main_loop_timing(1, 2);
+		// disable default touch behaviour 
+		preventDefaultBrowserTouchMoveBehavior();
+		
 		bSetMainLoopTiming = false;
 	}
 	events().notifyUpdate();
@@ -534,6 +537,7 @@ void ofxAppEmscriptenWindow::setFullscreen(bool fullscreen){
 		if(mFullscreenScaleStrategy > -1 || mStartWindowMode == OF_GAME_MODE || mStartWindowMode == OF_FULLSCREEN ) {
 			// we want the canvas to resize to fill the screen //
 			EmscriptenFullscreenStrategy strategy;
+			// TODO: this should probably be EMSCRIPTEN_FULLSCREEN_SCALE_STRETCH
 			strategy.scaleMode = EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_STDDEF;
 			strategy.filteringMode = EMSCRIPTEN_FULLSCREEN_FILTERING_DEFAULT;
 			if( mFullscreenScaleStrategy > -1 ) {
