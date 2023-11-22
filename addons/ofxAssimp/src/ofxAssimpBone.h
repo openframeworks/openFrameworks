@@ -21,7 +21,7 @@ public:
 	
 //	virtual void updateFromSrcBone();
 	void cacheGlobalBoneMat(glm::mat4& aInvMat);
-	virtual void draw();
+	virtual void draw(float aAxisSize=30.0f);
 	
 	std::shared_ptr<ofx::assimp::SrcBone> getSrcBone() { return mSrcBone; }
 	

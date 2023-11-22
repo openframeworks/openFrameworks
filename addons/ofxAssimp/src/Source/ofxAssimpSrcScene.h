@@ -37,10 +37,13 @@ struct ImportSettings {
 	bool importAsTex2d = true;
 	bool importTextures = true;
 	bool importAnimations = true;
+	bool importMaterials = true;
+	bool fixInfacingNormals = false; // aiProcess_FixInfacingNormals
 //	bool importLights = false;
 	bool convertToLeftHanded = true; // aiProcess_ConvertToLeftHanded
 	
 	std::vector<std::string> excludeNodesContainingStrings;
+	unsigned int aiFlags = 0; // ai process flags, ie. aiProcess_FixInfacingNormals
 };
 
 class SrcScene {
@@ -69,7 +72,7 @@ public:
 protected:
 	
 	// ai scene setup
-	unsigned int initImportProperties(int assimpOptimizeFlags, bool aBConvertToLeftHand);
+	unsigned int initImportProperties(int assimpOptimizeFlags, const ImportSettings& asettings );
 	bool processScene(const ImportSettings& asettings);
 	void printAllNodeNames( aiNode* anode, int alevel );
 	void processNodes();

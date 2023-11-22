@@ -446,7 +446,7 @@ void Model::updateMeshesFromBones() {
 		if( mesh == nullptr ) {
 			continue;
 		}
-
+		
 		mMeshes[i]->animatedVertices.assign(mMeshes[i]->animatedVertices.size(), aiVector3D(0.f));
 		if(mMeshes[i]->hasNormals()) {
 			mMeshes[i]->animatedNormals.assign(mMeshes[i]->animatedNormals.size(), aiVector3D(0.f));
@@ -455,26 +455,26 @@ void Model::updateMeshesFromBones() {
 		
 		//-------------
 		// loop through all vertex weights of all bones
-//		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
+		//		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
 		for( unsigned int a = 0; a < mMeshes[i]->mBones.size(); ++a) {
 			mMeshes[i]->hasChanged = true;
 			mMeshes[i]->validCache = false;
-
+			
 			const aiBone* bone = mesh->mBones[a];
-//			const aiMatrix4x4& posTrafo = boneMatrices[a];
-//			if( a >= mMeshes[i]->mBones.size() ) {
-//				ofLogError("Update Bones: ") << mesh->mNumBones << " src bones: " << mesh->mBones[a]->mName.data;
-//				continue;
-//			}
-//
+			//			const aiMatrix4x4& posTrafo = boneMatrices[a];
+			//			if( a >= mMeshes[i]->mBones.size() ) {
+			//				ofLogError("Update Bones: ") << mesh->mNumBones << " src bones: " << mesh->mBones[a]->mName.data;
+			//				continue;
+			//			}
+			//
 			auto sbone = mMeshes[i]->mBones[a];
 			if( !sbone ) {
 				ofLogError("Update Bones: ") << mesh->mNumBones << " sbone is NULL: " << mesh->mBones[a]->mName.data;
 				continue;
 			}
-
+			
 			aiBone* tabone = sbone->getSrcBone()->getAiBone();
-
+			
 			if( !tabone) {
 				ofLogError("Update Bones: ") << mesh->mNumBones << " bone is NULL: " << mesh->mBones[a]->mName.data;
 				continue;
@@ -483,18 +483,18 @@ void Model::updateMeshesFromBones() {
 			const aiMatrix4x4& posTrafo = sbone->getAiCachedGlobalBoneMat();
 			for(unsigned int b = 0; b < bone->mNumWeights; ++b) {
 				const aiVertexWeight& weight = bone->mWeights[b];
-
+				
 				size_t vertexId = weight.mVertexId;
 				const aiVector3D& srcPos = mesh->mVertices[vertexId];
 				mMeshes[i]->animatedVertices[vertexId] += weight.mWeight * (posTrafo * srcPos);
-			}
+				}
 			if(mesh->HasNormals()){
 				// 3x3 matrix, contains the bone matrix without the translation, only with rotation and possibly scaling
 				aiMatrix3x3 normTrafo = aiMatrix3x3(posTrafo);
 				for(unsigned int b = 0; b < bone->mNumWeights; ++b) {
 					const aiVertexWeight& weight = bone->mWeights[b];
 					size_t vertexId = weight.mVertexId;
-
+					
 					const aiVector3D& srcNorm = mesh->mNormals[vertexId];
 					mMeshes[i]->animatedNormals[vertexId] += weight.mWeight * (normTrafo * srcNorm);
 				}
@@ -512,7 +512,7 @@ void Model::updateGLResources(){
 				ofLogError( mMeshes[i]->getName() ) << " modelMeshes[i]->animatedPos.size(): " << mMeshes[i]->animatedVertices.size() << " num verts: " <<mesh->mNumVertices ;
 				continue;
 			}
-
+			
 			if(hasAnimations() || mBSceneDirty ){
 				mMeshes[i]->vbo->updateVertexData(&mMeshes[i]->animatedVertices[0].x,mesh->mNumVertices);
 				if(mesh->HasNormals()){
@@ -891,6 +891,13 @@ void Model::drawBones() {
 	}
 }
 
+//--------------------------------------------------------------
+void Model::drawBones(float aAxisSize) {
+	for( auto& bone : mBones ) {
+		bone->draw(aAxisSize);
+	}
+}
+
 //-------------------------------------------
 void Model::enableCulling(int glCullType){
 	mCullType = glCullType;
@@ -927,7 +934,7 @@ void Model::draw(ofPolyRenderMode renderType) {
 			}
 		}
 
-		if(bUsingMaterials){
+		if(bUsingMaterials && mesh->material ){
 			mesh->material->begin();
 		}
 
@@ -972,7 +979,7 @@ void Model::draw(ofPolyRenderMode renderType) {
 			glDisable(GL_CULL_FACE);
 		}
 
-		if(bUsingMaterials){
+		if(bUsingMaterials && mesh->material){
 			mesh->material->end();
 		}
 		

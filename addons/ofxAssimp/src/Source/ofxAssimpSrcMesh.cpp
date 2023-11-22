@@ -114,9 +114,9 @@ void SrcMesh::setAiMesh( aiMesh* amesh, aiNode* aAiNode ) {
 		vbo = std::make_shared<ofVbo>();
 		mName = mAiMesh->mName.data;
 		getName(); // forces setting of the name
-		if(!material) {
-			material = std::make_shared<ofMaterial>();
-		}
+//		if(!material) {
+//			material = std::make_shared<ofMaterial>();
+//		}
 		mName = mAiMesh->mName.data;
 		if(mName.empty() ) {
 			// the mesh is not named or we were unable to detect one

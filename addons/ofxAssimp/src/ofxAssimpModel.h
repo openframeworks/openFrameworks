@@ -122,6 +122,7 @@ public:
 	void drawFaces();
 	void drawVertices();
 	void drawBones();
+	void drawBones(float aAxisSize);
 	
 	
 	// -- render settings ---------------------------------------

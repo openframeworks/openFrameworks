@@ -32,29 +32,29 @@ void Bone::setSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
 ////--------------------------------------------------------------
 //void Bone::updateFromSrcBone() {
 //	if( mSrcBone ) {
-//		
+//
 //		aiVector3t<float> tAiScale;
 //		aiQuaterniont<float> tAiRotation;
 //		aiVector3t<float> tAiPosition;
-//		
+//
 //		// TODO: These will get update via the animation keyframes
-//		// SO there won't be a decompose every frame 
+//		// SO there won't be a decompose every frame
 ////		mAiMatrixGlobal = mSrcBone->getAiMatrixGlobal();
 //		mAiMatrix = mSrcBone->getAiMatrix();
 //		// this is the local matrix
 //		mSrcBone->getAiMatrix().Decompose( tAiScale, tAiRotation, tAiPosition );
-//	
+//
 //		glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
 //		glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
 //	//	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
 //		glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-//		
+//
 //		setPositionOrientationScale( tpos, tquat, tscale );
-//		
+//
 ////		mOffsetMatrix.Decompose(tAiScale, tAiRotation, tAiPosition);
-//		
+//
 ////		mOffsetOrientation = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-//		
+//
 ////		setPosition( mSrcBone->getPosition() );
 ////		setOrientation( mSrcBone->getOrientationQuat() );
 ////		setScale( mSrcBone->getScale() );
@@ -71,7 +71,7 @@ void Bone::cacheGlobalBoneMat(glm::mat4& aInvMat) {
 }
 
 //--------------------------------------------------------------
-void Bone::draw() {
+void Bone::draw(float aAxisSize) {
 	_initRenderMesh();
 	
 	// TODO: Cache this length and position
@@ -84,58 +84,20 @@ void Bone::draw() {
 	auto localTransformMatrix = glm::translate(glm::mat4(1.0f), gpos );
 	//		localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)gquat);
 	
-	
-	auto gOrient = getGlobalOrientation();
+//	auto gOrient = getGlobalOrientation();
 	for( auto& kid : mKids ) {
 //		auto kgpos = kid->getGlobalPositionCached();
 		auto kgpos = kid->getGlobalPosition();
 		float tlength = glm::distance( kgpos, gpos );
 		auto diffn = glm::normalize(kgpos-gpos);
-		//			if( mAlignAxis < 0 ) {
-		//				// try to guess the align axis //
-		//				mAlignAxis = 0; // +x
-		//
-		//				glm::vec3 xaxis = gOrient * getXAxis();
-		//				glm::vec3 yaxis = gOrient * getYAxis();
-		//				glm::vec3 zaxis = gOrient * getZAxis();
-		//				vector<float> tdots = {
-		//					glm::dot(xaxis, diffn),
-		//					glm::dot(yaxis, diffn),
-		//					glm::dot(zaxis, diffn),
-		//					glm::dot(-xaxis, diffn),
-		//					glm::dot(-yaxis, diffn),
-		//					glm::dot(-zaxis, diffn)
-		//				};
-		//
-		//				float cdot = std::numeric_limits<float>().min();
-		//				for( int i = 0; i < tdots.size(); i++ ) {
-		//					if( tdots[i] > cdot ) {
-		//						cdot = tdots[i];
-		//						mAlignAxis = i;
-		//					}
-		//				}
-		//			}
 		mAlignAxis = 2;
-		
-		//			auto trot = glm::rotation( );
-		//			ofQuaternion tq;
-		//			tq.makeRotate(glm::rotation(glm::vec3(0.f,1.f,0.f), diffn) );
-		//			ofMatrix4x4 tmat;
-		//			tmat.makeRotationMatrix(glm::vec3(0.f,1.f,0.f), diffn);
-		
-		//			const glm::mat4 cone_rotation = glm::mat4_cast(glm::rotation(glm::vec3(0.f,1.f,0.f), diffn));
-		//			const glm::mat4 up_rotation = glm::inverse(glm::mat4_cast(glm::rotation(glm::vec3(0.f,1.f,0.f), getYAxis())));
-		
-		//			localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)gquat) * cone_rotation;
-		//			gtrans = localTransformMatrix * glm::mat4(tmat);// (cone_rotation);
-		//			gtrans = glm::scale(gtrans, glm::vec3(tlength,tlength,tlength));
 		
 		ofNode tnode;
 		glm::quat lquat;
 		// taken from ofNode::lookAt, copied here to save some length and normalize calculations
 		auto zaxis = diffn;//glm::normalize(getGlobalPosition() - lookAtPosition);
 		if (tlength > 0) {
-			auto xaxis = glm::normalize(glm::cross(gOrient * glm::vec3(0.f, 0.f, 1.0f), zaxis));
+			auto xaxis = glm::normalize(glm::cross(gquat * glm::vec3(0.f, 0.f, 1.0f), zaxis));
 			auto yaxis = glm::cross(zaxis, xaxis);
 			glm::mat3 m;
 			m[0] = xaxis;
@@ -159,7 +121,7 @@ void Bone::draw() {
 	localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)gquat);
 	ofPushMatrix(); {
 		ofMultMatrix(localTransformMatrix);
-		ofDrawAxis(30);
+		ofDrawAxis(aAxisSize);
 	} ofPopMatrix();
 }
 

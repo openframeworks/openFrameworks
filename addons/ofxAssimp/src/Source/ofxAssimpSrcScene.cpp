@@ -50,8 +50,11 @@ bool SrcScene::load(ofBuffer & buffer, int assimpOptimizeFlags, const char * ext
 		scene.reset();
 	}
 	
+	ImportSettings tsettings;
+	tsettings.assimpOptimizeFlags = assimpOptimizeFlags;
+	
 	// sets various properties & flags to a default preference
-	unsigned int flags = initImportProperties(assimpOptimizeFlags,true);
+	unsigned int flags = initImportProperties(assimpOptimizeFlags,tsettings);
 	
 	// 	//enable assimp logging based on ofGetLogLevel
 	//	if( ofGetLogLevel() < OF_LOG_NOTICE ){
@@ -64,9 +67,6 @@ bool SrcScene::load(ofBuffer & buffer, int assimpOptimizeFlags, const char * ext
 	
 	// this is funky but the scenePtr is managed by assimp and so we can't put it in our shared_ptr without disabling the deleter with: [](const aiScene*){}
 	scene = shared_ptr<const aiScene>(scenePtr,[](const aiScene*){});
-	
-	ImportSettings tsettings;
-	tsettings.assimpOptimizeFlags = assimpOptimizeFlags;
 	bool bOk = processScene(tsettings);
 	return bOk;
 }
@@ -89,7 +89,7 @@ bool SrcScene::load( const ImportSettings& asettings ) {
 	}
 	
 	// sets various properties & flags to a default preference
-	unsigned int flags = initImportProperties(asettings.assimpOptimizeFlags, asettings.convertToLeftHanded);
+	unsigned int flags = initImportProperties(asettings.assimpOptimizeFlags, asettings);
 	// loads scene from file
 	std::string path = mFile.getAbsolutePath();
 	const aiScene * scenePtr = importer.ReadFile(path.c_str(), flags);
@@ -101,7 +101,7 @@ bool SrcScene::load( const ImportSettings& asettings ) {
 	return bOk;
 }
 
-unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, bool aBConvertToLeftHand) {
+unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, const ImportSettings& asettings ) {
 	store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
 	
 	// only ever give us triangles.
@@ -135,11 +135,18 @@ unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, bool aBConv
 			aiProcess_FindInstances |  \
 			aiProcess_ValidateDataStructure;
 		}
+		if( asettings.fixInfacingNormals ) {
+			flags |= aiProcess_FixInfacingNormals;
+		}
+		
+		if( asettings.aiFlags > 0 ) {
+			flags |= asettings.aiFlags;
+		}
 		
 		// we need the armature data to help with bone parsing
 		flags |= aiProcess_PopulateArmatureData;
 		// this fixes things for OF both tex uvs and model not flipped in z
-		if(aBConvertToLeftHand) {
+		if(asettings.convertToLeftHanded) {
 			flags |= aiProcess_ConvertToLeftHanded;
 		}
 	}
@@ -527,42 +534,48 @@ void SrcScene::loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, a
 	// create OpenGL buffers and populate them based on each meshes pertinant info.
 	if( amesh ) {
 		aSrcMesh->bConvertedToLeftHand = mSettings.convertToLeftHanded;
+		if( mSettings.importMaterials ) {
+			if( !aSrcMesh->material ) {
+				aSrcMesh->material = std::make_shared<ofMaterial>();
+			}
+		}
 		
 		// Handle material info
 		aiMaterial* mtl = scene->mMaterials[amesh->mMaterialIndex];
 		aiColor4D tcolor;
-		
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			aSrcMesh->material->setDiffuseColor(col);
-		}
-		
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			aSrcMesh->material->setSpecularColor(col);
-		}
-		
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			aSrcMesh->material->setAmbientColor(col);
-		}
-		
-		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
-			auto col = aiColorToOfColor(tcolor);
-			aSrcMesh->material->setEmissiveColor(col);
-		}
-		
-		float shininess;
-		if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
-			aSrcMesh->material->setShininess(shininess);
-		}
-		
-		int blendMode;
-		if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
-			if(blendMode==aiBlendMode_Default){
-				aSrcMesh->blendMode=OF_BLENDMODE_ALPHA;
-			}else{
-				aSrcMesh->blendMode=OF_BLENDMODE_ADD;
+		if( mSettings.importMaterials ) {
+			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &tcolor)){
+				auto col = aiColorToOfColor(tcolor);
+				aSrcMesh->material->setDiffuseColor(col);
+			}
+			
+			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &tcolor)){
+				auto col = aiColorToOfColor(tcolor);
+				aSrcMesh->material->setSpecularColor(col);
+			}
+			
+			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &tcolor)){
+				auto col = aiColorToOfColor(tcolor);
+				aSrcMesh->material->setAmbientColor(col);
+			}
+			
+			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
+				auto col = aiColorToOfColor(tcolor);
+				aSrcMesh->material->setEmissiveColor(col);
+			}
+			
+			float shininess;
+			if(AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_SHININESS, &shininess)){
+				aSrcMesh->material->setShininess(shininess);
+			}
+			
+			int blendMode;
+			if(AI_SUCCESS == aiGetMaterialInteger(mtl, AI_MATKEY_BLEND_FUNC, &blendMode)){
+				if(blendMode==aiBlendMode_Default){
+					aSrcMesh->blendMode=OF_BLENDMODE_ALPHA;
+				}else{
+					aSrcMesh->blendMode=OF_BLENDMODE_ADD;
+				}
 			}
 		}
 		
