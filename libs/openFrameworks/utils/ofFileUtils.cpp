@@ -1892,9 +1892,9 @@ of::filesystem::path ofFilePath::getCurrentExePathFS(){
 	#elif defined(TARGET_WIN32)
 		vector<char> executablePath(MAX_PATH);
 		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
-		if(result == 0) {
+		if (result == 0) {
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
-		}else{
+		} else {
 			return string(executablePath.begin(), executablePath.begin() + result);
 		}
 	#endif
