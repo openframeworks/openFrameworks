@@ -3,15 +3,16 @@
  */
 
 #pragma once
+
 #include "ofConstants.h"
 
 #ifdef OF_VIDEO_CAPTURE_AVF
 
 //------
 #include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofThread.h"
+#include "ofPixels.h"
 #include <mutex>
 
 #ifdef __OBJC__

@@ -48,6 +48,7 @@
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofLog.h"
+#include <climits>
 
 using std::vector;
 using std::string;
@@ -951,7 +952,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		it = data.begin();
 		it++;    // skip the first byte, which is the string command
 		int pin = *it++;
-		Firmata_Pin_Modes mode;
+		Firmata_Pin_Modes mode{Firmata_Pin_Modes::MODE_INPUT};
 		switch (*it++) {
 		case ARD_INPUT:
 			mode = Firmata_Pin_Modes::MODE_INPUT;

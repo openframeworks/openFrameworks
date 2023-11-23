@@ -96,38 +96,66 @@
         outline: none;
       }
     </style>
+    <script>
+      function goEmscriptenFullscreen(resize){
+          Module.requestFullscreen(0, resize);
+      }
+      function tryFullScreen(aspect, resize){
+          var canvas = document.getElementById("canvas");
+          if( resize ){
+              canvas.width=screen.width; 
+              canvas.height=screen.height;
+          }
+          if(canvas.requestFullScreen){
+              if( aspect )goEmscriptenFullscreen(resize);
+              else canvas.requestFullScreen();
+          }
+          else if(canvas.webkitRequestFullScreen){
+              if( aspect )goEmscriptenFullscreen(resize);
+              else canvas.webkitRequestFullScreen();
+          }
+          else if(canvas.mozRequestFullScreen){
+              if( aspect )goEmscriptenFullscreen(resize);
+              else canvas.mozRequestFullScreen();
+          }
+          else{
+              canvas.width=window.innerWidth; 
+              canvas.height=window.innerHeight;
+              document.getElementById('header').style.display = 'none'; 
+              document.getElementById('output').style.display = 'none';  
+          }
+      }
+  </script>
   </head>
   <body>
-    <a id="logo" href="http://emscripten.org">
-        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <svg width="110px" height="58px" viewBox="0 0 110 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <title>openFrameworks Logo</title>
-            <defs></defs>
-            <g id="Page-1" stroke="none" stroke-width="1" fill="#000000" fill-rule="evenodd">
-                <path id="Oval-1" d="M58,29 C58,13 45,0 29,0 C13,0 0,13 0,29 C0,45 13,58 29,58 C45,58 58,45 58,29 Z"></path>
-                <rect id="Rectangle-1" x="59" y="0" width="25" height="58"></rect>
-                <rect id="Rectangle-2" x="85" y="26" width="15" height="15"></rect>
-                <path id="Path-2" d="M85,0 L110,0 L85,25 L85,0 Z"></path>
-            </g>
-        </svg>
-    </a>
+    <div id="header">
+      <a id="logo" href="http://emscripten.org">
+          <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+          <svg width="110px" height="58px" viewBox="0 0 110 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <title>openFrameworks Logo</title>
+              <defs></defs>
+              <g id="Page-1" stroke="none" stroke-width="1" fill="#000000" fill-rule="evenodd">
+                  <path id="Oval-1" d="M58,29 C58,13 45,0 29,0 C13,0 0,13 0,29 C0,45 13,58 29,58 C45,58 58,45 58,29 Z"></path>
+                  <rect id="Rectangle-1" x="59" y="0" width="25" height="58"></rect>
+                  <rect id="Rectangle-2" x="85" y="26" width="15" height="15"></rect>
+                  <path id="Path-2" d="M85,0 L110,0 L85,25 L85,0 Z"></path>
+              </g>
+          </svg>
+      </a>
 
-    <div class="spinner" id='spinner'></div>
-    <div class="emscripten" id="status">Downloading...</div>
+      <div class="spinner" id='spinner'></div>
+      <div class="emscripten" id="status">Downloading...</div>
 
-<span id='controls'>
-  <span><input type="checkbox" id="resize">Resize canvas</span>
-  <span><input type="checkbox" id="pointerLock">Lock/hide mouse pointer &nbsp;&nbsp;&nbsp;</span>
-  <span><input type="button" value="Fullscreen" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked, 
-                                                                            document.getElementById('resize').checked)">
-  </span>
-</span>
-
-    <div class="emscripten">
-      <progress value="0" max="100" id="progress" hidden=1></progress>
+      <span id='controls'>
+        Fullscreen options:
+        <span><input type=checkbox id=resize>resize</span>
+        <span><input type=checkbox id=keepAspect>keep aspect</span>
+        <span><input type=button onclick="tryFullScreen(document.getElementById('keepAspect').checked, document.getElementById('resize').checked)" value=Fullscreen></span>
+      </span>
+      <div class="emscripten">
+        <progress value="0" max="100" id="progress" hidden=1></progress>
+      </div>
     </div>
-
-    
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     </div>

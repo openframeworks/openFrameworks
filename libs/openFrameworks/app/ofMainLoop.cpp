@@ -6,8 +6,6 @@
  */
 
 #include "ofMainLoop.h"
-#include "ofWindowSettings.h"
-#include "ofAppBaseWindow.h"
 #include "ofBaseApp.h"
 #include "ofConstants.h"
 
@@ -66,23 +64,6 @@ std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings
 	addWindow(window);
 	window->setup(settings);
 	return window;
-}
-
-template<typename Window>
-void ofMainLoop::addWindow(const std::shared_ptr<Window> & window){
-	allowMultiWindow = Window::allowsMultiWindow();
-	if(Window::doesLoop()){
-		windowLoop = Window::loop;
-	}
-	if(Window::needsPolling()){
-		windowPollEvents = Window::pollEvents;
-	}
-	if(!allowMultiWindow){
-		windowsApps.clear();
-	}
-	windowsApps[window] = std::shared_ptr<ofBaseApp>();
-	currentWindow = window;
-	ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
 }
 
 void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app){

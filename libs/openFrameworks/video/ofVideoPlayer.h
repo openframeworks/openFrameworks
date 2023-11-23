@@ -1,48 +1,9 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
+#include "ofConstants.h"
 
-#ifdef OF_VIDEO_PLAYER_GSTREAMER
-	#include "ofGstVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_QUICKTIME
-	#include "ofQuickTimePlayer.h"
-	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_QTKIT
-	#include "ofQTKitPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
-    #include "ofAVFoundationPlayer.h"
-    #define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_DIRECTSHOW
-    #include "ofDirectShowPlayer.h"
-    #define OF_VID_PLAYER_TYPE ofDirectShowPlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_IOS
-	#include "ofxiOSVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_ANDROID
-	#include "ofxAndroidVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_EMSCRIPTEN
-	#include "ofxEmscriptenVideoPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
-#endif
 
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoDraws{

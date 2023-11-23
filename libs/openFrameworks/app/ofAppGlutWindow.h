@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
 #include "ofTypes.h"
 #include "ofPixels.h"
+#include "ofConstants.h"
 
 class ofBaseApp;
 class ofBaseRenderer;

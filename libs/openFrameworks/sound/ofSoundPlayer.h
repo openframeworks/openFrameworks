@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofSoundBaseTypes.h"
+#include "ofConstants.h"
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
 void ofSoundStopAll();
@@ -25,42 +25,6 @@ void ofSoundUpdate();
 /// \return pointer to an FFT sample, sample size is equal to the nBands parameter.
 float * ofSoundGetSpectrum(int nBands);
 
-
-
-#ifdef OF_SOUND_PLAYER_QUICKTIME
-#include "ofQuicktimeSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer
-#endif
-
-#ifdef OF_SOUND_PLAYER_FMOD
-#include "ofFmodSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofFmodSoundPlayer
-#endif
-
-#ifdef OF_SOUND_PLAYER_OPENAL
-#include "ofOpenALSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
-#endif
-
-#ifdef TARGET_OF_IOS
-#include "ofxiOSSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
-#endif
-
-#ifdef TARGET_ANDROID
-#include "ofxAndroidSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
-inline void ofSoundShutdown(){}
-#endif
-
-#ifdef OF_SOUND_PLAYER_EMSCRIPTEN
-#include "ofxEmscriptenSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxEmscriptenSoundPlayer
-#endif
-
-#ifdef TARGET_LINUX_ARM
-inline void ofSoundShutdown(){}
-#endif
 
 /// \class ofSoundPlayer
 /// \brief Plays sound files.
@@ -155,6 +119,14 @@ public:
     /// \brief Queries the player to see if its file was loaded successfully.
     /// \return whether or not the player is ready to begin playback.
     bool isLoaded() const;
+	
+	/// \brief Gets duration in seconds.
+	/// \return duration in seconds.
+	float getDuration() const;
+	
+	/// \brief Gets duration in milliseconds.
+	/// \return duration in milliseconds.
+	unsigned int getDurationMS() const;
 
 protected:
     std::shared_ptr<ofBaseSoundPlayer> player;

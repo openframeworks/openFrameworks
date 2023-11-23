@@ -1,10 +1,8 @@
 #pragma once
 
-
 #include <mutex>
 #include <queue>
 #include <condition_variable>
-
 
 /// \brief Safely send data between threads without additional synchronization.
 ///

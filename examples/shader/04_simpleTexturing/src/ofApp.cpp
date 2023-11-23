@@ -2,17 +2,16 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-#ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
-#else
+	ofDisableArbTex();
 	if(ofIsGLProgrammableRenderer()){
 		shader.load("shadersGL3/shader");
 	}else{
 		shader.load("shadersGL2/shader");
 	}
-#endif
 
-	img.load("img.jpg");
+	if(img.load("img.jpg")) {
+		img.getTexture().setTextureWrap(GL_REPEAT, GL_REPEAT);
+	}
 
 	plane.set(800, 600, 10, 10);
 	plane.mapTexCoords(0, 0, img.getWidth(), img.getHeight());

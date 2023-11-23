@@ -11,6 +11,13 @@
 #include <functional>
 #include <deque>
 
+#include <cstddef>
+#include <iostream>
+#include <array>
+
+// FIXME: constants deprecated only
+#include "ofConstants.h"
+
 
 /*! \cond PRIVATE */
 namespace of{

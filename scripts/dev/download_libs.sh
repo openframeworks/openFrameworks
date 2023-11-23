@@ -5,6 +5,7 @@ PLATFORM=""
 ARCH=""
 OVERWRITE=1
 SILENT_ARGS=""
+BLEEDING_EDGE=0
 
 printHelp(){
 cat << EOF
@@ -34,8 +35,13 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 download(){
     echo "Downloading $1"
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
-    echo downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
-    downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        echo downloader https://github.com/openframeworks/apothecary/releases/download/bleeding/$1 $SILENT_ARGS
+        downloader https://github.com/openframeworks/apothecary/releases/download/bleeding/$1 $SILENT_ARGS
+    else
+        echo downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
+        downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
+    fi
 }
 
 # trap any script errors and exit
@@ -79,6 +85,9 @@ while [[ $# -gt 0 ]]; do
         -n|--no-overwrite)
         OVERWRITE=0
         ;;
+        -b|--bleeding-edge)
+        BLEEDING_EDGE=1
+        ;;
         -s|--silent)
         SILENT_ARGS=-nv
         ;;
@@ -115,9 +124,9 @@ if [ "$ARCH" == "" ]; then
         if [ "$ARCH" == "x86_64" ]; then
             GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
             if [ $GCC_VERSION -eq 4 ]; then
-                ARCH=64gcc4
+                ARCH=64gcc6
             elif [ $GCC_VERSION -eq 5 ]; then
-                ARCH=64gcc5
+                ARCH=64gcc6
             else
                 ARCH=64gcc6
             fi

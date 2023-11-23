@@ -48,8 +48,6 @@ public:
 	int		getWidth();
 	int		getHeight();
 
-	
-
 	ofWindowMode 	getWindowMode();
 
 	void	setFullscreen(bool fullscreen);
@@ -59,12 +57,19 @@ public:
 	void	disableSetupScreen();
 
 	void	setVerticalSync(bool enabled){}
-
+	
+	/// \brief enable the first touch to also pass as mouse events.
+	/// \param ab enable or
+	void 	setTouchSimulatesMouse(bool abEnable);
+	/// \brief prevent the browser from using the touch move behavior; call the function to disable the touch and drag that moves the entire web page.
+	void 	preventDefaultBrowserTouchMoveBehavior();
+	//https://emscripten.org/docs/api_reference/html5.h.html?highlight=emscripten_fullscreen_filtering_default#c.EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT
+	/// \brief set the full screen scale strategy using Emscripten defines;
+	/// set to -1 to use default OF strategy. Must apply before entering full screen.
+	void 	setFullscreenScaleStrategy(int aStrategy);
 
 	ofCoreEvents & events();
 	std::shared_ptr<ofBaseRenderer> & renderer();
-
-
 	
 	void update();
 	void draw();
@@ -73,11 +78,9 @@ public:
 	virtual void startRender();
 	virtual void finishRender();
 
-
 	bool bIsSetup = false;
 private:
 	static ofxAppEmscriptenWindow * instance;
-
 
 	// static int getUniqueId();
 	static void display_cb();
@@ -93,7 +96,8 @@ private:
 	static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
 	
 	static int mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData);
-
+		
+	static EM_BOOL emscripten_game_window_resized_callback(int eventType, const void *reserved, void *userData);
 
 	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE  context = 0;
 
@@ -101,6 +105,20 @@ private:
 	bool bEnableSetupScreen = true;
 	ofCoreEvents _events;
 	std::shared_ptr<ofBaseRenderer> _renderer;
+	
+	unsigned int nFramesSinceWindowResized = 0;
+	
+	ofWindowMode mStartWindowMode = OF_WINDOW;
+	ofWindowMode mCurrentWindowMode = OF_WINDOW;
+	ofWindowMode mTargetWindowMode = OF_WINDOW;
+	bool bHasResizeListeners = false;
+	uint64_t mLastResizeFrameNum = 0;
+	
+	int mCachedWidth = -1;
+	int mCachedHeight = -1;
+	
+	bool mBTouchSimulatesMouse = true;
+	int mFullscreenScaleStrategy = -1;
 };
 
 #endif /* OFAPPEMSCRIPTENWINDOW_H_ */

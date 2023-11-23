@@ -70,6 +70,11 @@ linuxarmv7l:
 	ADDON_LIBS_EXCLUDE = libs/assimp
 	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
 
+linuxaarch64:
+	ADDON_PKG_CONFIG_LIBRARIES = assimp
+	ADDON_LIBS_EXCLUDE = libs/assimp
+	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+
 linux:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
 	ADDON_LIBS_EXCLUDE = libs/assimp

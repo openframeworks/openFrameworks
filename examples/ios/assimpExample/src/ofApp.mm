@@ -24,31 +24,31 @@ void ofApp::loadModel(int modelIndex) {
 	
 	switch(modelIndex){
 		case 0:
-			model.loadModel("astroBoy_walk.dae");
+			model.load("astroBoy_walk.dae");
 			model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
 			ofEnableSeparateSpecularLight();
 			break;
 		case 1:
-			model.loadModel("TurbochiFromXSI.dae");
+			model.load("TurbochiFromXSI.dae");
 			model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
 			model.setRotation(0, -180, 1, 0, 0);
 			model.setScale(1.2, 1.2, 1.2);
 			ofEnableSeparateSpecularLight();
 			break;
 		case 2:
-			model.loadModel("dwarf.x");
+			model.load("dwarf.x");
 			model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
 			model.setScale(1.2, 1.2, 1.2);
 			ofDisableSeparateSpecularLight();
 			break;
 		case 3:
-			model.loadModel("monster-animated-character-X.X");
+			model.load("monster-animated-character-X.X");
 			model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
 			model.setRotation(0, -90, 0, 0, 1);
 			ofDisableSeparateSpecularLight();
 			break;
 		case 4:
-			model.loadModel("squirrel/NewSquirrel.3ds");
+			model.load("squirrel/NewSquirrel.3ds");
 			model.setPosition(modelPosition.x, modelPosition.y, modelPosition.z);
 			ofDisableSeparateSpecularLight();
 			break;

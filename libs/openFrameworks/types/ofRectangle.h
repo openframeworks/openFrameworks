@@ -1,11 +1,8 @@
-    #pragma once
-
+#pragma once
 
 #include "ofConstants.h"
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
-
-
 
 /// \brief Used to represent the available rectangle aspect ratio scaling modes.
 ///

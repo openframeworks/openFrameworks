@@ -225,6 +225,9 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofMediaFoundationSoundPlayer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h">
       <Filter>libs\openFrameworks\types</Filter>
     </ClInclude>
@@ -265,6 +268,9 @@
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofMediaFoundationPlayer.h">
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\app\ofMainLoop.h">
@@ -437,6 +443,9 @@
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofMediaFoundationSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
@@ -489,6 +498,9 @@
       <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofMediaFoundationPlayer.cpp">
       <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBuffer.cpp">
