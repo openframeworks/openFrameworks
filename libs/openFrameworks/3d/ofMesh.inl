@@ -2205,18 +2205,20 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			vertices.push_back(glm::normalize(toGlm(v2+v3)));
 			vertices.push_back(glm::normalize(toGlm(v1+v3)));
 			//now recreate indices
-			newFaces.push_back(i1);
-			newFaces.push_back(i12);
-			newFaces.push_back(i13);
-			newFaces.push_back(i2);
-			newFaces.push_back(i23);
-			newFaces.push_back(i12);
-			newFaces.push_back(i3);
-			newFaces.push_back(i13);
-			newFaces.push_back(i23);
-			newFaces.push_back(i12);
-			newFaces.push_back(i23);
-			newFaces.push_back(i13);
+			newFaces.insert(newFaces.end(), {
+				i1,
+				i12,
+				i13,
+				i2,
+				i23,
+				i12,
+				i3,
+				i13,
+				i23,
+				i12,
+				i23,
+				i13
+			});
 		}
 		faces.swap(newFaces);
 	}
