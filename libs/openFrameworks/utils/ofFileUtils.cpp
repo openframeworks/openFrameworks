@@ -706,7 +706,6 @@ bool ofFile::canRead() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_read) != fs::perms::none;
@@ -742,7 +741,6 @@ bool ofFile::canWrite() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_write) != fs::perms::none;
@@ -772,7 +770,6 @@ bool ofFile::canExecute() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-	auto perm = of::filesystem::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_exec) != fs::perms::none;
