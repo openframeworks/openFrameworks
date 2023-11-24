@@ -580,17 +580,7 @@ public:
 	}
 
 	inline bool notify(T & param){
-		if(ofEvent<T,Mutex>::self->enabled && !ofEvent<T,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<T,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(nullptr,param)){
-					return true;
-				}
-			}
-		}
-		return false;
+		return this->notify(nullptr, param);
 	}
 };
 
