@@ -728,17 +728,7 @@ public:
 	}
 
 	bool notify(){
-		if(ofEvent<void,Mutex>::self->enabled && !ofEvent<void,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<void,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(nullptr)){
-					return true;
-				}
-			}
-		}
-		return false;
+		return this->notify(nullptr);
 	}
 };
 
