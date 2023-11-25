@@ -568,18 +568,18 @@ public:
 	/// \brief checks the state of the event
 	/// \returns true if the Event's state was notified since the last check
 	bool did_notify() {
-		if (notified.load(std::memory_order_relaxed)) {
-			notified.store(false, std::memory_order_seq_cst);
+		if (notified_.load(std::memory_order_relaxed)) {
+			notified_.store(false, std::memory_order_seq_cst);
 			return true;
 		} else {
 			return false;
 		}
 	}
-	std::atomic<bool> notified;
+	std::atomic<bool> notified_;
 
 	inline bool notify(const void* sender, T & param) {
 		if (ofEvent<T,Mutex>::self->enabled) {
-			notified.store(true, std::memory_order_relaxed);
+			notified_.store(true, std::memory_order_relaxed);
 			if (!ofEvent<T,Mutex>::self->functions.empty()) {
 				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
 				auto functions_copy = ofEvent<T,Mutex>::self->functions;
