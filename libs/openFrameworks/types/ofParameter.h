@@ -516,6 +516,12 @@ public:
     ParameterType getInit() const;
     void reInit();
 
+	/// \brief queries the parameter's event about its notification state
+	/// \returns true if the event was notified since last check
+	auto did_notify() {
+		return obj->changedE.did_notify();
+	}
+	
 	std::string toString() const;
 	void fromString(const std::string & name);
 
@@ -1047,6 +1053,12 @@ public:
 		return obj->changedE.newListener(args...);
 	}
 
+	/// \brief queries the parameter's event about its notification state
+	/// \returns true if the event was notified since last check
+	auto did_notify() {
+		return obj->changedE.did_notify();
+	}
+	
 	void trigger();
 	void trigger(const void * sender);
 
