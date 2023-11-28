@@ -509,7 +509,7 @@ public:
 	/// \brief queries the parameter's event about its notification state
 	/// \returns true if the event was notified since last check
 	auto didNotify() {
-		return obj->changedE.did_notify();
+		return obj->changedE.didNotify();
 	}
 
 	std::string toString() const;

@@ -575,7 +575,6 @@ public:
 			return false;
 		}
 	}
-	std::atomic<bool> notified_;
 	std::atomic<bool> notified_ { false };
 
 	inline bool notify(const void* sender, T & param) {
