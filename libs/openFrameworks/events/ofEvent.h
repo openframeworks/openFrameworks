@@ -576,6 +576,7 @@ public:
 		}
 	}
 	std::atomic<bool> notified_;
+	std::atomic<bool> notified_ { false };
 
 	inline bool notify(const void* sender, T & param) {
 		if (ofEvent<T,Mutex>::self->enabled) {
