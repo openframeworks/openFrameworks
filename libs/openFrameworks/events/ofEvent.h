@@ -567,7 +567,7 @@ public:
 
 	/// \brief checks the state of the event
 	/// \returns true if the Event's state was notified since the last check
-	bool did_notify() {
+	bool didNotify() {
 		if (notified_.load(std::memory_order_relaxed)) {
 			notified_.store(false, std::memory_order_seq_cst);
 			return true;
@@ -730,7 +730,7 @@ public:
 
 	/// \brief checks the state of the event
 	/// \returns true if the Event's state was notified since the last check
-	bool did_notify() {
+	bool didNotify() {
 		if (notified_.load(std::memory_order_relaxed)) {
 			notified_.store(false, std::memory_order_seq_cst);
 			return true;

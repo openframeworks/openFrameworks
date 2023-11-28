@@ -6,16 +6,16 @@ void ofApp::update() {
 	// (wrapper around it's own "hidden Event")
 	// no listeners/callbacks are required
 
-	if (size.did_notify()) {
+	if (size.didNotify()) {
 		ofLogNotice("new size") << size;
 	}
 
-	if (refresh.did_notify()) {
+	if (refresh.didNotify()) {
 		color = ofColor::fromHsb(ofRandom(360), 128, 128);
 		ofLogNotice("boosch") << color;
 	}
 
-	if (animate.did_notify()) { // this is the ofAbstractParameter::did_notify()
+	if (animate.didNotify()) { // this is the ofAbstractParameter::did_notify()
 		if (animate != animating) { // sanity check
 			animating = animate;
 			if (animating) {
