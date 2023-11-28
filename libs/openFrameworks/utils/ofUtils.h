@@ -330,6 +330,15 @@ public:
 		return *this;
 	}
 
+	/// \brief Assigns with values from compatibe container and resets the phase
+	/// \param Container the container of values
+	/// \return void
+	auto & operator=(Container & values) {
+		values_ = values;
+		prepare();
+		return *this;
+	}
+	
 	/// \brief Construct an urn initialized with contents
 	/// \param Args the values
 	template <typename... Args>
@@ -350,7 +359,7 @@ public:
 	/// \brief Assigns with values from another container and resets the phase
 	/// \param Container the container of values
 	/// \return void
-	auto set(const Container & values) {
+	auto set(Container & values) {
 		values_ = values;
 		prepare();
 	}
@@ -370,6 +379,7 @@ public:
 	auto set(Args &&... args) {
 		values_.clear();
 		values_.reserve(sizeof...(Args));
+		std::cout << ("preparing for") << sizeof...(Args) << std::endl;
 		(values_.emplace_back(std::forward<Args>(args)), ...);
 		prepare();
 	}
