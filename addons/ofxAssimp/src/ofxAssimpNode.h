@@ -43,16 +43,18 @@ public:
 	std::vector< std::shared_ptr<ofx::assimp::Node> >& getChildren();
 	
 	virtual std::string getAsString( int aLevel=0 );
-	
-//	glm::mat4& getGlobalTransformCached();
-//
-//	glm::vec3& getGlobalPositionCached();
-//	glm::quat& getGlobalOrientationCached();
-//	glm::vec3& getGlobalScaleCached();
-	
+	/// \brief Get a node for path.
+	/// \param aPath path in heirarchy to the desired node.\nUse direct path, ie. 'root:someNode:myNode' or recursively using asterik ie. '*:myNode'.
+	/// \param bStrict if true, name must match. If not, apath search name is contained in node string.
+	/// \return ofx::assimp::Node as shared_ptr. Valid ptr if found.
 	std::shared_ptr<ofx::assimp::Node> getNode( const std::string& aPath, bool bStrict );
 	
 	// some getter functions to help with the search on the kids
+	
+	/// \brief Get a node cast as template type. ie. getNodeAsType<ofx::assimp::Bone>('root:someNode:myNode', true);
+	/// \param aPath path in heirarchy to the desired node.\nUse direct path, ie. 'root:someNode:myNode' or recursively using asterik ie. '*:myNode'.
+	/// \param bStrict if true, name must match. If not, apath search name is contained in node string.
+	/// \return ofx::assimp::Node cast to ofxAssimpNodeType as shared_ptr. Valid ptr if found.
 	template<typename ofxAssimpNodeType>
 	std::shared_ptr<ofxAssimpNodeType> getNodeAsType( const std::string& aPath, bool bStrict = false ) {
 		auto stemp = getNode( aPath, bStrict );
@@ -66,12 +68,12 @@ public:
 		}
 		return std::shared_ptr<ofxAssimpNodeType>();
 	}
-	
+	/// \brief Get child nodes for template type ie. getNodesForType<ofx::assimp::Bone>(); (non-recursive).
+	/// \param aNameToContain To be returned, name of node must contain this string.\nDefault is return all nodes for type.
+	/// \return vector of shared_ptrs of ofx::assimp::Node cast to ofxAssimpNodeType.
 	template<typename ofxAssimpNodeType>
 	std::vector< std::shared_ptr<ofxAssimpNodeType> > getNodesForType( const std::string& aNameToContain="" ) {
 		int sType = std::make_shared<ofxAssimpNodeType>()->getType();
-		auto stype = typeid(ofxAssimpNodeType).name();
-		
 		std::vector< std::shared_ptr<ofxAssimpNodeType> > telements;
 		for( size_t i = 0; i < mKids.size(); i++ ) {
 			if( mKids[i]->getType() == sType ) {
@@ -82,7 +84,9 @@ public:
 		}
 		return telements;
 	}
-	
+	/// \brief Get nodes for template type ie. getNodesForType<ofx::assimp::Bone>(); (recursive).
+	/// \param aNameToContain To be returned, name of node must contain this string.\nDefault is return all nodes for type.
+	/// \return vector of shared_ptrs of ofx::assimp::Node cast to ofxAssimpNodeType.
 	template<typename ofxAssimpNodeType>
 	std::vector< std::shared_ptr<ofxAssimpNodeType> > getAllNodesForType( const std::string& aNameToContain="" ) {
 		int sType = std::make_shared<ofxAssimpNodeType>()->getType();
@@ -113,26 +117,5 @@ protected:
 	bool mBAnimationsEnabled = true;
 	bool mBEnabled = true;
 	
-	glm::vec3 mCachedGPos = {0.0f,0.0f,0.0f};
-	glm::quat mCachedGQuat;
-	glm::vec3 mCachedGScale = {1.0f,1.0f,1.0f};
-	glm::mat4 mCachedGlobalTransform = glm::mat4(1.0f);
-	
-	bool bCachedGTransformDirty = true;
-	bool bCachedGPosDirty = true;
-	bool bCachedGOrientationDirty = true;
-	bool bCachedGScaleDirty = true;
-	
-	
-	// ofNode functions called when it changes
-	virtual void onPositionChanged() override;
-	
-	/// \brief Classes extending ofNode can override this methods to get notified
-	///        when the orientation changed.
-	virtual void onOrientationChanged() override;
-	
-	/// \brief Classes extending ofNode can override this methods to get notified
-	///        when the scale changed.
-	virtual void onScaleChanged() override;
 };
 }

@@ -274,7 +274,7 @@ void Node::_getNodesForTypeRecursive( int atype, const std::string& aNameToConta
 
 //--------------------------------------------------------------
 std::string Node::getAsString( int aLevel ) {
-	std::stringstream oStr;// = "";
+	std::stringstream oStr;
 	for( unsigned int i = 0; i < aLevel; i++ ) {
 		oStr << " ";
 		if( i < aLevel-1 ) {
@@ -295,58 +295,4 @@ std::string Node::getAsString( int aLevel ) {
 	}
 	
 	return oStr.str();
-}
-
-////--------------------------------------------------------------
-//glm::mat4& Node::getGlobalTransformCached() {
-//	if(bCachedGTransformDirty) {
-//		bCachedGTransformDirty = false;
-//		mCachedGlobalTransform = getGlobalTransformMatrix();
-//	}
-//	return mCachedGlobalTransform;
-//}
-//
-////--------------------------------------------------------------
-//glm::vec3& Node::getGlobalPositionCached() {
-//	if(bCachedGPosDirty) {
-//		bCachedGPosDirty = false;
-//		mCachedGPos = glm::vec3(getGlobalTransformCached()[3]);
-//	}
-//	return mCachedGPos;
-//}
-//
-////--------------------------------------------------------------
-//glm::quat& Node::getGlobalOrientationCached() {
-//	if(bCachedGOrientationDirty) {
-//		bCachedGOrientationDirty = false;
-//		mCachedGQuat = getGlobalOrientation();
-//	}
-//	return mCachedGQuat;
-//}
-//
-////--------------------------------------------------------------
-//glm::vec3& Node::getGlobalScaleCached() {
-//	if(bCachedGScaleDirty) {
-//		bCachedGScaleDirty = false;
-//		mCachedGScale = getGlobalScale();
-//	}
-//	return mCachedGScale;
-//}
-
-//--------------------------------------------------------------
-void Node::onPositionChanged() {
-	bCachedGTransformDirty=true;
-	bCachedGPosDirty = true;
-}
-
-//--------------------------------------------------------------
-void Node::onOrientationChanged() {
-	bCachedGTransformDirty=true;
-	bCachedGOrientationDirty = true;
-}
-
-//--------------------------------------------------------------
-void Node::onScaleChanged() {
-	bCachedGTransformDirty=true;
-	bCachedGScaleDirty = true;
 }

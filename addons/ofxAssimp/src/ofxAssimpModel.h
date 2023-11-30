@@ -1,19 +1,12 @@
 #pragma once
 
+// based on the original ofxAssimpModelLoader
 // ofDevCon
 // Written by Anton Marini (http://vade.info)
 // With massive help from Memo Akten for GL optimizing and pushing this faster than I expected
 // Kyle McDonald and Arturo Castro for C++ nuances
 // Lukasz Karluk additions Dec 2012.
-// Nicholas Hardeman additions 2023.
-
-// TODO:
-// 1) Path issues - not all models:
-//      a) reference images current working dir
-//      b) properly describe sub-folders
-//      c) reference absolute paths for images that dont exist.
-// 2) convert to ofMesh (?) in OF 007 ?
-// 3) Ability to ease *between* two animations. Maybe later folks.
+// Nicholas Hardeman restructure and additions 2023.
 
 #include "ofxAssimpMesh.h"
 #include "ofxAssimpSrcScene.h"
@@ -40,40 +33,89 @@ public:
 	
 	bool setup( std::shared_ptr<ofx::assimp::SrcScene> ascene );
 	
+	/// \brief Check to see if the scene is valid and loaded.
+	/// \return If the scene has been loaded or setup successfully.
 	bool isLoaded();
 	
 	void clear();
-	
+	/// \brief Helpful for debugging.
+	/// \return The node hierararchy as string.
 	std::string getHierarchyAsString();
 	
 //	void createLightsFromAiModel();
 	
 	
 	// -- update ---------------------------------------
+	/// \brief Update bones and meshes based on imported animation. Must call lateUpdate after.
 	void earlyUpdate();
+	/// \brief Internally calls both earlyUpdate() and then lateUpdate().
 	void update();
+	/// \brief Update meshes from bones.
 	void lateUpdate();
-	
+	/// \brief Force updating of meshes. Helpful if animations are disabled and bones are manipulated externally.
 	void flagSceneDirty();
 	
 	
 	// -- animations ---------------------------------------
+	/// \brief Does the scene have animations.
+	/// \return true if the scene has at least 1 animation.
 	bool hasAnimations();
+	/// \brief The total number of animations.
 	unsigned int getNumAnimations();
+	/// \brief The current active animation that is influencing the bones / meshes.
+	/// \return The vector index of the current animation.
 	unsigned int getCurrentAnimationIndex();
+	/// \brief The current active animation that is influencing the bones / meshes.
+	/// \return The current animation.
 	ofx::assimp::Animation& getCurrentAnimation();
+	/// \brief Immediately sets the current active animation that is influencing the bones / meshes.
+	/// \param aindex vector index of the desired animation.
+	/// \return True if the current index is not the same as aindex and there is at least 1 animation.
 	bool setCurrentAnimation( int aindex );
+	/// \brief Immediately sets the current active animation that is influencing the bones / meshes.
+	/// \param aname name of the desired animation.
+	/// \return True if the current animation is not the same as the desired animation and there is at least 1 animation.
 	bool setCurrentAnimation( const std::string& aname );
-	
+	/// \brief Transition from the current animation to another animation with set duration.
+	/// \param aTargetAnimIndex vector index of the desired animation.
+	/// \param aduration duration of the transition.
+	/// \return True if there is at least 1 animation.
 	bool transitionCurrentAnimation( int aTargetAnimIndex, float aduration );
+	/// \brief Transition from the current animation to another animation with set duration.
+	/// \param aTargetAnimName name of the desired animation.
+	/// \param aduration duration of the transition.
+	/// \return True if there is at least 1 animation and the animation is found by the desired name.
 	bool transitionCurrentAnimation( const std::string& aTargetAnimName, float aduration );
-	
+	/// \brief Check if the animation exists.
+	/// \param aname name of the animation to check.
+	/// \return True if the animation is found by the desired name.
 	bool hasAnimation( const std::string& aname );
+	/// \brief Get the vector index of an animation by name.
+	/// \param aname name of the animation to find.
+	/// \return Vector index of the animation if found, -1 if not found.
 	int getAnimationIndex( const std::string& aname );
+	/// \brief Get an animation by vector index.
+	/// \param aindex vector index of animation to retrieve.
+	/// \return Animation if found, dummy animation if no animations.
 	ofx::assimp::Animation& getAnimation(int aindex);
+	/// \brief Get an animation by aname.
+	/// \param aname name of the animation to retrieve.
+	/// \return Animation if found, dummy animation if no animations.
 	ofx::assimp::Animation& getAnimation(const std::string& aname);
-	
+	/// \brief Add a new animation based on an existing animation.
+	/// \param aSrcAnimIndex name of the animation to copy.
+	/// \param aNewAnimName name of the new animation.
+	/// \param aStartTick frame/tick of the source animation to use as the first frame of the new animation.
+	/// \param aEndTick frame/tick of the source animation to use as the last frame of the new animation.
+	/// \return true if a valid source animation index is used.
 	bool addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick );
+	/// \brief Add a new animation based on an existing animation.
+	/// \param aSrcAnimIndex name of the animation to copy.
+	/// \param aNewAnimName name of the new animation.
+	/// \param aStartTick frame/tick of the source animation to use as the first frame of the new animation.
+	/// \param aEndTick frame/tick of the source animation to use as the last frame of the new animation.
+	/// \param aLoopType set the loop type of the new animation.
+	/// \return true if a valid source animation index is used.
 	bool addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick, ofLoopType aLoopType );
 	
 //	void playAllAnimations();
@@ -85,33 +127,83 @@ public:
 	
 	
 	// -- meshes ---------------------------------------
+	/// \brief The number of vertices in the model.
+	/// \return The total number of vertices from all meshes in the model.
 	size_t getNumVertices();
+	/// \brief Does the model have meshes.
+	/// \return true If the model has at least one mesh.
 	bool hasMeshes();
+	/// \brief Total number of meshes.
+	/// \return The number of meshes in the model.
 	size_t getNumMeshes();
+	/// \brief The names of the meshes in the model.
+	/// \return A vector<string> populated with the names of the meshes in the model.
 	std::vector<std::string> getMeshNames();
+	/// \brief Get a mesh based on index. Clamps to valid index range.
+	/// \param meshIndex vector index of the desired mesh.
+	/// \return ofx::assimp::Mesh as a shared_ptr. Valid ptr if at least one mesh.
 	std::shared_ptr<ofx::assimp::Mesh> getMesh(int meshIndex);
+	/// \brief Get a mesh based on name.
+	/// \param aname name of the desired mesh.
+	/// \return ofx::assimp::Mesh as a shared_ptr. Valid ptr if mesh was found by name.
 	std::shared_ptr<ofx::assimp::Mesh> getMesh(const std::string& aname);
+	/// \brief Get all the meshes in the model.
+	/// \return vector of ofx::assimp::Mesh as shared_ptr.
 	std::vector< std::shared_ptr<ofx::assimp::Mesh> > getMeshes() {return mMeshes;}
-	
-	ofMesh& getMeshForMesh(const std::string& aname);
-	ofMesh& getMeshForMesh(unsigned int anum);
-	
-	ofMesh getTransformedMeshForMesh(const std::string& aname);
-	ofMesh getTransformedMeshForMesh(unsigned int anum);
-	
+	/// \brief Get an OF mesh based on name of assimp mesh.
+	/// \param aname name of the desired assimp mesh.
+	/// \return ofMesh that is not transformed.
+	ofMesh& getOFMeshForMesh(const std::string& aname);
+	/// \brief Get an OF mesh based on the vector index of the assimp mesh.
+	/// \param ameshIndex vector index of the assimp mesh.
+	/// \return ofMesh that is not transformed.
+	ofMesh& getOFMeshForMesh(unsigned int ameshIndex);
+	/// \brief Get a transformed OF mesh based on name of assimp mesh.
+	/// \param aname name of the desired assimp mesh.
+	/// \return Transformed ofMesh.
+	ofMesh getTransformedOFMeshForMesh(const std::string& aname);
+	/// \brief Get a transformed OF mesh based on the vector index of the assimp mesh.
+	/// \param ameshIndex vector index of the assimp mesh.
+	/// \return Transformed ofMesh.
+	ofMesh getTransformedOFMeshForMesh(unsigned int ameshIndex);
+	/// \brief Get an ofMaterial from an assimp mesh.
+	/// \param aname name of the desired assimp mesh.
+	/// \return ofMaterial that is applied to the assimp mesh.
 	std::shared_ptr<ofMaterial> getMaterialForMesh(const std::string& aname);
-	std::shared_ptr<ofMaterial> getMaterialForMesh(unsigned int anum);
-	
+	/// \brief Get an ofMaterial from an assimp mesh.
+	/// \param ameshIndex vector index of the assimp mesh.
+	/// \return ofMaterial that is applied to the assimp mesh.
+	std::shared_ptr<ofMaterial> getMaterialForMesh(unsigned int ameshIndex);
+	/// \brief Get the first valid ofTexture from an assimp mesh (starts with diffuse).\nWill return dummy texture if there is no texture found on the mesh.
+	/// \param aname name of the desired assimp mesh.
+	/// \return First valid ofTexture on the assimp mesh, if found.
 	ofTexture& getTextureForMesh(const std::string& aname);
-	ofTexture& getTextureForMesh(unsigned int anum);
+	/// \brief Get the first valid ofTexture from an assimp mesh (starts with diffuse).\nWill return dummy texture if there is no texture found on the mesh.
+	/// \param ameshIndex vector index of the assimp mesh.
+	/// \return First valid ofTexture on the assimp mesh, if found.
+	ofTexture& getTextureForMesh(unsigned int ameshIndex);
 	
 	
 	// -- skeletons / bones ---------------------------------------
+	/// \brief Does the model have skeletons.
+	/// \return true If the model has at least one skeleton.
 	bool hasSkeletons();
+	/// \brief Total number of skeletons.
+	/// \return The number of skeletons in the model.
 	size_t getNumSkeletons();
+	/// \brief Get a skeleton based on index. Clamps to valid index range.
+	/// \param aindex vector index of the desired skeleton.
+	/// \return ofx::assimp::Skeleton as a shared_ptr. Valid ptr if at least one skeleton.
 	std::shared_ptr<ofx::assimp::Skeleton> getSkeleton( const unsigned int& aindex );
+	/// \brief Get a skeleton based on aname.
+	/// \param aname name of the desired skeleton.
+	/// \return ofx::assimp::Skeleton as a shared_ptr. Valid ptr if skeleton was found by name.
 	std::shared_ptr<ofx::assimp::Skeleton> getSkeleton( const std::string& aname );
+	/// \brief Get all the skeletons in the model.
+	/// \return vector of ofx::assimp::Skeleton as shared_ptr.
 	std::vector< std::shared_ptr<ofx::assimp::Skeleton> > getSkeletons();
+	/// \brief Total number of bones in the model.
+	/// \return The number of bones.
 	unsigned int getNumBones();
 	
 	

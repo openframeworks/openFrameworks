@@ -87,12 +87,6 @@ bool Model::processScene() {
 
 	if(mSrcScene){
 		if( mSrcScene->getImportSettings().importAnimations ) {
-//			auto scene = mSrcScene->getAiScene();
-//			unsigned int numOfAnimations = scene->mNumAnimations;
-//			for (unsigned int i = 0; i<numOfAnimations; i++) {
-//				aiAnimation * animation = scene->mAnimations[i];
-//				mAnimations.push_back(Animation(scene, animation));
-//			}
 			mAnimations = mSrcScene->getAnimations();
 			if(mAnimations.size() > 0 ) {
 				// add a default mixer
@@ -214,16 +208,6 @@ void Model::processSceneNodesRecursive( std::shared_ptr<ofx::assimp::SrcNode> aS
 	}
 }
 
-////-------------------------------------------
-//std::shared_ptr<ofx::assimp::Bone> Model::getBoneForSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
-//	for( auto bone : mBones ) {
-//		if( bone->getSrcBone().get() == aSrcBone.get() ) {
-//			return bone;
-//		}
-//	}
-//	return std::shared_ptr<ofx::assimp::Bone>();
-//}
-
 //-------------------------------------------
 std::string Model::getHierarchyAsString() {
 	std::stringstream ss;
@@ -325,11 +309,6 @@ void Model::centerAndScaleToViewRect( float ax, float ay, float awidth, float ah
 	
 }
 
-////-------------------------------------------
-//void Model::setNormalizationFactor(float factor){
-//	normalizeFactor = factor;
-//}
-
 //-------------------------------------------
 void Model::calculateDimensions(){
 	if(!mSrcScene) return;
@@ -343,48 +322,13 @@ void Model::calculateDimensions(){
 	for( auto& meshHelper : mMeshes ) {
 		meshHelper->recalculateBounds(true);
 		mSceneBoundsLocal.include(globalInvMat, meshHelper->getGlobalBounds().getBoundingVerts());
-//		tMeshBoundsVerts.push_back(meshHelper->getGlobalBounds().min);
-//		tMeshBoundsVerts.push_back(meshHelper->getGlobalBounds().max);
-//		tMeshBoundsVerts.insert(  tMeshBoundsVerts.end(), meshHelper->getLocalBounds().getBoundingVerts().begin(), meshHelper->getLocalBounds().getBoundingVerts().end() );
 	}
-//	mSceneBoundsLocal.include( tMeshBoundsVerts );
-
-//	getBoundingBoxWithMinVector(&scene_min, &scene_max);
-//	scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
-//	scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
-//	scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
-//
-//	// optional normalized scaling
-//	normalizedScale = scene_max.x-scene_min.x;
-//	normalizedScale = std::max(double(scene_max.y - scene_min.y), normalizedScale);
-//	normalizedScale = std::max(double(scene_max.z - scene_min.z), normalizedScale);
-//	if (fabs(normalizedScale) < std::numeric_limits<float>::epsilon()){
-//		ofLogWarning("ofx::assimp::Model") << "Error calculating normalized scale of scene" << std::endl;
-//		normalizedScale = 1.0;
-//	} else {
-//		if( normalizedScale != 0.0f ) {
-//			normalizedScale = 1.f / normalizedScale;
-//		}
-//		normalizedScale *= normalizeFactor;
-//	}
-
-//	updateModelMatrix();
 }
 
-//------------------------------------------- update.
+//------------------------------------------- early update.
 void Model::earlyUpdate() {
 	if(!mSrcScene) return;
 	updateAnimations();
-//	aiMatrix4x4 trafo;
-//	aiIdentityMatrix4(&trafo);
-//	updateMeshTransforms(mSrcScene->getAiScene()->mRootNode, trafo );
-	
-//	if(hasAnimations() == false) {
-//		return;
-//	}
-//	for( auto& bone : mBones ) {
-//		bone->updateFromSrcBone();
-//	}
 }
 
 //------------------------------------------- update.
@@ -393,14 +337,11 @@ void Model::update() {
 	lateUpdate();
 }
 
+//------------------------------------------- late update.
 void Model::lateUpdate() {
 	if(!hasAnimations() && !mBSceneDirty) {
 		return;
 	}
-	
-//	for( auto& bone : mBones ) {
-//		bone->cacheGlobalMat();
-//	}
 	
 	mBSceneBoundsDirty = true;
 	auto globalInvMat = glm::inverse(getGlobalTransformMatrix());
@@ -409,7 +350,6 @@ void Model::lateUpdate() {
 	}
 	updateMeshesFromBones();
 	updateGLResources();
-//
 	mBSceneDirty = false;
 }
 
@@ -716,12 +656,12 @@ vector<std::string> Model::getMeshNames(){
 	return names;
 }
 
-std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(int meshIndex) {
+std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(int ameshIndex) {
 	if( mMeshes.size() < 1 ) {
 		return std::shared_ptr<ofx::assimp::Mesh>();
 	}
-	meshIndex = ofClamp(meshIndex, 0, mMeshes.size()-1);
-	return mMeshes[meshIndex];
+	ameshIndex = ofClamp(ameshIndex, 0, mMeshes.size()-1);
+	return mMeshes[ameshIndex];
 }
 
 std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(const std::string& aname) {
@@ -734,40 +674,40 @@ std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(const std::string& aname) {
 }
 
 //-------------------------------------------
-ofMesh& Model::getMeshForMesh( const std::string& aname ){
+ofMesh& Model::getOFMeshForMesh( const std::string& aname ){
 	auto helper = getMesh(aname);
 	if( !helper ) {
-		ofLogError("Model::getMesh : unable to find mesh with name") << aname << " returning dummy mesh";
+		ofLogError("Model::getOFMeshForMesh : unable to find mesh with name") << aname << " returning dummy mesh";
 		return dummyMesh;
 	}
 	return helper->getMesh();
 }
 
 //-------------------------------------------
-ofMesh& Model::getMeshForMesh(unsigned int anum){
-	auto helper = getMesh(anum);
+ofMesh& Model::getOFMeshForMesh(unsigned int ameshIndex){
+	auto helper = getMesh(ameshIndex);
 	if( !helper ) {
-		ofLogError("Model::getMesh : unable to find mesh with index") << anum << " returning dummy mesh";
+		ofLogError("Model::getOFMeshForMesh : unable to find mesh with index") << ameshIndex << " returning dummy mesh";
 		return dummyMesh;
 	}
 	return helper->getMesh();
 }
 
 //-------------------------------------------
-ofMesh Model::getTransformedMeshForMesh(const std::string& aname) {
+ofMesh Model::getTransformedOFMeshForMesh(const std::string& aname) {
 	auto helper = getMesh(aname);
 	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTransformedMesh(): unable to find mesh with name: " << aname;
+		ofLogError("ofx::assimp::Model") << "getTransformedOFMeshForMesh(): unable to find mesh with name: " << aname;
 		return dummyMesh;
 	}
 	return helper->getTransformedMesh();
 }
 
 //-------------------------------------------
-ofMesh Model::getTransformedMeshForMesh(unsigned int anum) {
-	auto helper = getMesh(anum);
+ofMesh Model::getTransformedOFMeshForMesh(unsigned int ameshIndex) {
+	auto helper = getMesh(ameshIndex);
 	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTransformedMesh(): unable to find mesh with index: " << anum;
+		ofLogError("ofx::assimp::Model") << "getTransformedOFMeshForMesh(): unable to find mesh with index: " << ameshIndex;
 		return dummyMesh;
 	}
 	return helper->getTransformedMesh();
@@ -784,10 +724,10 @@ std::shared_ptr<ofMaterial> Model::getMaterialForMesh(const std::string& aname){
 }
 
 //-------------------------------------------
-std::shared_ptr<ofMaterial> Model::getMaterialForMesh(unsigned int anum){
-	auto helper = getMesh(anum);
+std::shared_ptr<ofMaterial> Model::getMaterialForMesh(unsigned int ameshIndex){
+	auto helper = getMesh(ameshIndex);
 	if(!helper) {
-		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): mesh id: " << anum << "out of range for total num meshes: " << mMeshes.size();
+		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): mesh id: " << ameshIndex << "out of range for total num meshes: " << mMeshes.size();
 		return shared_ptr<ofMaterial>();
 	}
 	return helper->material;
@@ -808,16 +748,16 @@ ofTexture& Model::getTextureForMesh(const std::string& aname){
 }
 
 //-------------------------------------------
-ofTexture& Model::getTextureForMesh(unsigned int anum){
-	auto helper = getMesh(anum);
+ofTexture& Model::getTextureForMesh(unsigned int ameshIndex){
+	auto helper = getMesh(ameshIndex);
 	if(!helper) {
-		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << anum << "\" / " << getNumMeshes();
+		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << ameshIndex << "\" / " << getNumMeshes();
 		return dummyTexture;
 	}
 	if(helper->hasTexture()) {
 		return helper->getTexture();
 	}
-	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << anum << "\" does not have a texture.";
+	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << ameshIndex << "\" does not have a texture.";
 	return dummyTexture;
 }
 
