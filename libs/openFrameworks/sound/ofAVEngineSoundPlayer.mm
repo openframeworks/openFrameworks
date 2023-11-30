@@ -1219,6 +1219,20 @@ float ofAVEngineSoundPlayer::getVolume()  const{
     return [(AVEnginePlayer *)soundPlayer volume];
 }
 
+float ofAVEngineSoundPlayer::getDuration() const {
+	if(soundPlayer == NULL) {
+		return 0.0f;
+	}
+	return [(AVEnginePlayer *)soundPlayer soundDurationSeconds];
+}
+
+unsigned int ofAVEngineSoundPlayer::getDurationMS() const {
+	if(soundPlayer == NULL) {
+		return 0;
+	}
+	return ([(AVEnginePlayer *)soundPlayer soundDurationSeconds] * 1000.0f);
+}
+
 void * ofAVEngineSoundPlayer::getAVEnginePlayer() {
     return (__bridge void *)soundPlayer;
 }

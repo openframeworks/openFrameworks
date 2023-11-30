@@ -2,7 +2,6 @@
 #pragma once
 
 #include "ofParameter.h"
-#include "ofParameterGroup.h"
 #include "ofxOscReceiver.h"
 #include "ofxOscSender.h"
 
