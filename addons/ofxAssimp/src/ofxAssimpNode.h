@@ -23,8 +23,13 @@ public:
 	virtual void drawNodes();
 	
 	bool hasAnimationMixer();
+	/// \brief Set animation mixer on node propogates down children (recursive).
+	/// \param amixer AnimationMixer to set on the node.
 	void setAnimationMixer( std::shared_ptr<AnimationMixer> amixer );
+	/// \brief Remove the animation mixer from this node.
 	void removeAnimationMixer();
+	/// \brief Get the animation mixer on the node.
+	/// \return AnimationMixer as a shared ptr.
 	std::shared_ptr<ofx::assimp::AnimationMixer> getAnimationMixer() {return mAnimMixer;}
 	
 	bool areAnimationsEnabled() const;
@@ -48,9 +53,7 @@ public:
 	/// \param bStrict if true, name must match. If not, apath search name is contained in node string.
 	/// \return ofx::assimp::Node as shared_ptr. Valid ptr if found.
 	std::shared_ptr<ofx::assimp::Node> getNode( const std::string& aPath, bool bStrict );
-	
-	// some getter functions to help with the search on the kids
-	
+		
 	/// \brief Get a node cast as template type. ie. getNodeAsType<ofx::assimp::Bone>('root:someNode:myNode', true);
 	/// \param aPath path in heirarchy to the desired node.\nUse direct path, ie. 'root:someNode:myNode' or recursively using asterik ie. '*:myNode'.
 	/// \param bStrict if true, name must match. If not, apath search name is contained in node string.

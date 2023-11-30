@@ -6,7 +6,7 @@
 // With massive help from Memo Akten for GL optimizing and pushing this faster than I expected
 // Kyle McDonald and Arturo Castro for C++ nuances
 // Lukasz Karluk additions Dec 2012.
-// Nicholas Hardeman restructure and additions 2023.
+
 
 #include "ofxAssimpMesh.h"
 #include "ofxAssimpSrcScene.h"
@@ -27,10 +27,24 @@ public:
 	
 	//use the default OF selected flags ( from the options above ) or pass in the exact assimp flags you want
 	//note: you will probably want to |= aiProcess_ConvertToLeftHanded to anything you pass in
-	bool load(std::string aPathToFile, int assimpOptimizeFlags=OFX_ASSIMP_OPTIMIZE_DEFAULT);
-	bool load(ofBuffer & buffer, int assimpOptimizeFlags=OFX_ASSIMP_OPTIMIZE_DEFAULT, const char * extension="");
-	bool load( const ImportSettings& asettings );
 	
+	/// \brief Load a model from disk.
+	/// \param aPathToFile path to the file to load.
+	/// \param assimpOptimizeFlags optimization flags, OFX_ASSIMP_OPTIMIZE_NONE, OFX_ASSIMP_OPTIMIZE_DEFAULT, OFX_ASSIMP_OPTIMIZE_HIGH.
+	/// \return True if the scene is loaded and processed successfully.
+	bool load(std::string aPathToFile, int assimpOptimizeFlags=OFX_ASSIMP_OPTIMIZE_DEFAULT);
+	/// \brief Load a model from buffer.
+	/// \param buffer path to the file to load.
+	/// \param assimpOptimizeFlags optimization flags, OFX_ASSIMP_OPTIMIZE_NONE, OFX_ASSIMP_OPTIMIZE_DEFAULT, OFX_ASSIMP_OPTIMIZE_HIGH.
+	/// \return True if the scene is loaded and processed successfully.
+	bool load(ofBuffer & buffer, int assimpOptimizeFlags=OFX_ASSIMP_OPTIMIZE_DEFAULT, const char * extension="");
+	/// \brief Load a model from settings.
+	/// \param asettings Import settings.
+	/// \return True if the scene is loaded and processed successfully.
+	bool load( const ImportSettings& asettings );
+	/// \brief Setup a model from a SrcScene.
+	/// \param ascene shared ptr of a SrcScene setup model with.
+	/// \return True if the scene is processed successfully.
 	bool setup( std::shared_ptr<ofx::assimp::SrcScene> ascene );
 	
 	/// \brief Check to see if the scene is valid and loaded.
