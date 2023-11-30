@@ -76,6 +76,10 @@ void ofApp::setup(){
 	}
 	
 	groundMesh = ofMesh::box( 1500, 40, 1500, 24, 2, 24 );
+	for( auto& tc : groundMesh.getTexCoords() ) {
+		tc.x *= 4.f;
+		tc.y *= 4.f;
+	}
 	groundMaterial.setPBR(true);
 	
 	light.enable();

@@ -15,8 +15,8 @@ void ofApp::setup(){
 	gui.add( bottomOffsetZ.set( "BottomOffsetZ", -15.25, -20, 20 ));
 	gui.add( shadowStrength.set("ShadowStrength", 1.3, 0.0, 10.0));
 	
-	gui.add( shadowBias.set("ShadowBias", 0.02, 0.001, 0.1 ));
-	gui.add( shadowNormalBias.set("ShadowNormalBias", 0, -5, 5));
+	gui.add( shadowBias.set("ShadowBias", 0.025, 0.001, 0.1 ));
+	gui.add( shadowNormalBias.set("ShadowNormalBias", 0.5, -3, 3));
 	
 //    ofSetLogLevel(OF_LOG_VERBOSE);
     ofBackground(50);
@@ -123,17 +123,15 @@ void ofApp::update(){
 		auto tpos = meshMountNode->getPosition();
 		meshMountNode->setPosition( tpos.x, bottomOffsetY, bottomOffsetZ+cameraOffsetZ );
 	}
-
+	// Notice that we pass true for the second argument which strictly searches for the string
+	// because the string security_camera_02 is also contained in security_camera_02_mount
 	auto meshCameraNode = model.getNode("security_camera_02", true);
 	if( meshCameraNode ) {
 		auto tpos = meshCameraNode->getPosition();
 		meshCameraNode->setPosition( tpos.x, tpos.y, cameraOffsetZ );
-		
 		meshCameraNode->setOrientation({0.0f, 0.f, 0.f});
 		meshCameraNode->panDeg( panDeg );
 		meshCameraNode->tiltDeg( tiltDeg );
-
-//		meshCameraNode->setPosition( tpos.x, bottomOffsetY, bottomOffsetZ );
 	}
 	
 	if( model.getNumMeshes() > 1 ) {
@@ -145,13 +143,12 @@ void ofApp::update(){
 		camBounds *= camMesh->getGlobalScale();
 		auto nCamPos = camMesh->getYAxis() * camBounds.getHeight() * 0.52f + camMesh->getZAxis() * (camBounds.getDepth() * 0.45f);
 		
-		// we need to flip upside down //
 		auto camMeshQ = camMesh->getGlobalOrientation();
 		nCamPos = camMeshQ * nCamPos;
 		camOnSecurityCam.setPosition( nCamPos + camMesh->getGlobalPosition() );
-		
-		
 		camOnSecurityCam.setOrientation( camMesh->getGlobalOrientation() );
+		
+		// we need to rotate the ofCamera in the opposite direction //
 		camOnSecurityCam.panDeg(180);
 	}
 		
@@ -177,17 +174,10 @@ void ofApp::draw(){
 			light.beginShadowDepthPass(j);
 //			// Shadows have the following gl culling enabled by default
 //			// this helps reduce z fighting by only rendering the rear facing triangles to the depth map
-//			// enables face culling
-//			//glEnable(GL_CULL_FACE);
-//			// sets the gl triangle winding order, default for ofShadow is GL_CW
-//			//glFrontFace(mGlFrontFaceWindingOrder);
-//			// tells OpenGL to cull front faces
-//			//glCullFace(GL_FRONT);
-//
 //			// the culling can be disabled by calling
-//			//light->getShadow().setGlCullingEnabled(false);
+//			light.getShadow().setGlCullingEnabled(false);
 //			// or the culling winding order can be changed by calling
-//			//light->getShadow().setFrontFaceWindingOrder(GL_CCW); // default is GL_CW
+//			light.getShadow().setFrontFaceWindingOrder(GL_CCW); // default is GL_CW
 			renderScene();
 			light.endShadowDepthPass(j);
 		}
@@ -232,7 +222,6 @@ void ofApp::draw(){
 				auto texture = mesh->getTexture(i);
 				if( texture ) {
 					texture->getTextureRef().draw(meshTexRect);
-//					ofDrawBitmapString(texture->getAiTextureTypeAsString(), meshTexRect.x, meshTexRect.y-4);
 					ofDrawBitmapString(texture->getOfTextureTypeAsString(), meshTexRect.x, meshTexRect.y-4);
 					meshTexRect.x += texPadding + meshTexRect.getWidth();
 					if( i % 2 == 1 ) {
@@ -247,7 +236,6 @@ void ofApp::draw(){
 	ofSetColor( 225 );
 	ofDrawBitmapString(mSceneString, mTextRect.x + 12, mTextRect.y + 24 );
 	
-//	auto camRect = ofRectangle( gui.getPosition().x, gui.getPosition().y+gui.getHeight()+10.f, gui.getWidth(), gui.getWidth() );
 	float camRectW = (mTextRect.getWidth() - texPadding*2.0f);
 	float ratio = 480.f / 640.f;
 	auto camRect = ofRectangle( mTextRect.x+texPadding, meshTexRect.y+texPadding, camRectW, camRectW * ratio );
