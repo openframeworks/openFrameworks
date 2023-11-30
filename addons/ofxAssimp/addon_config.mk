@@ -29,7 +29,7 @@ common:
 	# include search paths, this will be usually parsed from the file system
 	# but if the addon or addon libraries need special search paths they can be
 	# specified here separated by spaces or one per line using +=
-	# ADDON_INCLUDES =
+	 ADDON_INCLUDES+=../ofxAssimpModelLoader/libs/assimp/include/
 
 	# any special flag that should be passed to the compiler when using this
 	# addon
@@ -62,44 +62,52 @@ common:
 
 linuxarmv6l:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
-	ADDON_LIBS_EXCLUDE = libs/assimp
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
+	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
 linuxarmv7l:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
-	ADDON_LIBS_EXCLUDE = libs/assimp
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
+	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
 linuxaarch64:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
-	ADDON_LIBS_EXCLUDE = libs/assimp
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
+	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
 linux:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
-	ADDON_LIBS_EXCLUDE = libs/assimp
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
+	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
 linux64:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
-	ADDON_LIBS_EXCLUDE = libs/assimp
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
+	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
 msys2:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
-	ADDON_LIBS_EXCLUDE = libs/assimp
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
+	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
 android/armeabi-v7a:
 	ADDON_LIBS=
-	ADDON_LIBS+=libs/assimp/lib/android/armeabi-v7a/libassimp.a
-	ADDON_LIBS+=libs/assimp/lib/android/armeabi-v7a/libIrrXML.a
+	ADDON_LIBS+=../ofxAssimpModelLoader/libs/assimp/lib/android/armeabi-v7a/libassimp.a
+	ADDON_LIBS+=../ofxAssimpModelLoader/libs/assimp/lib/android/armeabi-v7a/libIrrXML.a
 
 android/x86:
 	ADDON_LIBS=
-	ADDON_LIBS+=libs/assimp/lib/android/x86/libassimp.a
-	ADDON_LIBS+=libs/assimp/lib/android/x86/libIrrXML.a
+	ADDON_LIBS+=../ofxAssimpModelLoader/libs/assimp/lib/android/x86/libassimp.a
+	ADDON_LIBS+=../ofxAssimpModelLoader/libs/assimp/lib/android/x86/libIrrXML.a
 
 ios:
 	ADDON_LIBS=
-	ADDON_LIBS=libs/assimp/lib/ios/assimp.a
+	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/ios/assimp.a
+	
+osx:
+	ADDON_LIBS=
+	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/osx/assimp.a
+	
+emscripten:
+	ADDON_LIBS=
+	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/emscripten/libassimp.a
