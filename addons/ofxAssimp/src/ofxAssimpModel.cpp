@@ -825,6 +825,106 @@ void Model::drawVertices(){
 }
 
 //--------------------------------------------------------------
+void Model::_drawMesh( const shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType, bool bWithinLoop  ) {
+//	auto mesh = getMesh(aMeshIndex);
+	if(!amesh || !amesh->isEnabled() ) {
+		// we are not enabled, dont draw
+		return;
+	}
+	
+	if(!bWithinLoop) {
+		#ifndef TARGET_OPENGLES
+		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(aRenderType));
+		#endif
+	}
+	
+	amesh->transformGL();
+	
+	if(bUsingTextures && !bUsingMaterials){
+		if(amesh->hasTexture()) {
+			amesh->getTexture().bind();
+		}
+	}
+	
+	if(bUsingMaterials && amesh->material ){
+		amesh->material->begin();
+	}
+	
+//	this was broken / backwards
+	if(!amesh->twoSided && mCullType >= 0) {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(mCullType);
+	}
+	else {
+		glDisable(GL_CULL_FACE);
+	}
+	
+	
+	ofEnableBlendMode(amesh->blendMode);
+	
+#ifndef TARGET_OPENGLES
+	amesh->vbo->drawElements(GL_TRIANGLES,amesh->getNumIndices());
+#else
+	switch(aRenderType){
+		case OF_MESH_FILL:
+			amesh->vbo->drawElements(GL_TRIANGLES,amesh->getNumIndices());
+			break;
+		case OF_MESH_WIREFRAME:
+			//note this won't look the same as on non ES renderers.
+			//there is no easy way to convert GL_TRIANGLES to outlines for each triangle
+			amesh->vbo->drawElements(GL_LINES,amesh->getNumIndices());
+			break;
+		case OF_MESH_POINTS:
+			amesh->vbo->drawElements(GL_POINTS,amesh->getNumIndices());
+			break;
+	}
+#endif
+	
+	if(bUsingTextures && !bUsingMaterials){
+		if(amesh->hasTexture()) {
+			amesh->getTexture().unbind();
+		}
+	}
+	
+	if(!amesh->twoSided) {
+		glDisable(GL_CULL_FACE);
+	}
+	
+	if(bUsingMaterials && amesh->material){
+		amesh->material->end();
+	}
+	
+	amesh->restoreTransformGL();
+	
+	#ifndef TARGET_OPENGLES
+	//set the drawing mode back to FILL if its drawn the model with a different mode.
+	if(!bWithinLoop && aRenderType != OF_MESH_FILL ){
+		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(OF_MESH_FILL));
+	}
+	#endif
+}
+
+//--------------------------------------------------------------
+void Model::drawMesh(const std::shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType ) {
+	_drawMesh(amesh, aRenderType, false);
+}
+
+//--------------------------------------------------------------
+void Model::drawMesh(int aMeshIndex, ofPolyRenderMode aRenderType) {
+	if( aMeshIndex > -1 && aMeshIndex < mMeshes.size() ) {
+		_drawMesh(mMeshes[aMeshIndex], aRenderType, false);
+	}
+}
+
+//--------------------------------------------------------------
+void Model::drawMesh(const std::string& aMeshName, ofPolyRenderMode aRenderType) {
+	if( auto mesh = getMesh(aMeshName) ) {
+		_drawMesh(mesh, aRenderType, false);
+	}
+}
+
+//--------------------------------------------------------------
 void Model::drawBones() {
 	for( auto& bone : mBones ) {
 		bone->draw();
@@ -866,64 +966,7 @@ void Model::draw(ofPolyRenderMode renderType) {
 			// we are not enabled, so keep on carrying on
 			continue;
 		}
-		mesh->transformGL();
-
-		if(bUsingTextures && !bUsingMaterials){
-			if(mesh->hasTexture()) {
-				mesh->getTexture().bind();
-			}
-		}
-
-		if(bUsingMaterials && mesh->material ){
-			mesh->material->begin();
-		}
-
-//		this was broken / backwards
-		if(!mesh->twoSided && mCullType >= 0) {
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_BACK);
-			glFrontFace(mCullType);
-		}
-		else {
-			glDisable(GL_CULL_FACE);
-		}
-		
-		
-		ofEnableBlendMode(mesh->blendMode);
-
-#ifndef TARGET_OPENGLES
-		mesh->vbo->drawElements(GL_TRIANGLES,mesh->getNumIndices());
-#else
-		switch(renderType){
-			case OF_MESH_FILL:
-				mesh->vbo->drawElements(GL_TRIANGLES,mesh->getNumIndices());
-				break;
-			case OF_MESH_WIREFRAME:
-				//note this won't look the same as on non ES renderers.
-				//there is no easy way to convert GL_TRIANGLES to outlines for each triangle
-				mesh->vbo->drawElements(GL_LINES,mesh->getNumIndices());
-				break;
-			case OF_MESH_POINTS:
-				mesh->vbo->drawElements(GL_POINTS,mesh->getNumIndices());
-				break;
-		}
-#endif
-
-		if(bUsingTextures && !bUsingMaterials){
-			if(mesh->hasTexture()) {
-				mesh->getTexture().unbind();
-			}
-		}
-
-		if(!mesh->twoSided) {
-			glDisable(GL_CULL_FACE);
-		}
-
-		if(bUsingMaterials && mesh->material){
-			mesh->material->end();
-		}
-		
-		mesh->restoreTransformGL();
+		_drawMesh(mesh, renderType, true);
 	}
 
 #ifndef TARGET_OPENGLES

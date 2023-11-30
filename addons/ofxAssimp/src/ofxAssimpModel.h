@@ -213,8 +213,15 @@ public:
 	void drawWireframe();
 	void drawFaces();
 	void drawVertices();
+	
+	void _drawMesh(const std::shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType, bool bSetRenderType );
+	void drawMesh(const std::shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType=OF_MESH_FILL );
+	void drawMesh(int aMeshIndex, ofPolyRenderMode aRenderType=OF_MESH_FILL );
+	void drawMesh(const std::string& aMeshName, ofPolyRenderMode aRenderType=OF_MESH_FILL );
+	
 	void drawBones();
 	void drawBones(float aAxisSize);
+	
 	
 	
 	// -- render settings ---------------------------------------
