@@ -45,39 +45,39 @@ jobs:
 #        restore-keys: |
 #          ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
 
-    - name: Cache libs
-      id: cache-libs
-      uses: actions/cache@v3
-      env:
-        cache-name: cache-install-libs
-      with:
-        path: |
-          libs/boost/**
-          libs/cairo/**
-          libs/curl/**
-          libs/fmod/**
-          libs/FreeImage/**
-          libs/freetype/**
-          libs/glew/**
-          libs/glfw/**
-          libs/glm/**
-          libs/json/**
-          libs/pugixml/**
-          libs/rtAudio/**
-          libs/tess2/**
-          libs/uriparser/**
-          libs/utf8/**
-          addons/ofxAssimpModelLoader/libs/**/
-          addons/ofxKinect/libs/**/
-          addons/ofxOpenCv/libs/**/
-          addons/ofxSvg/libs/**/
-          addons/ofxPoco/libs/**/
-
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-    - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
-      # name: Download libs
+#    - name: Cache libs
+#      id: cache-libs
+#      uses: actions/cache@v3
+#      env:
+#        cache-name: cache-install-libs
+#      with:
+#        path: |
+#          libs/boost/**
+#          libs/cairo/**
+#          libs/curl/**
+#          libs/fmod/**
+#          libs/FreeImage/**
+#          libs/freetype/**
+#          libs/glew/**
+#          libs/glfw/**
+#          libs/glm/**
+#          libs/json/**
+#          libs/pugixml/**
+#          libs/rtAudio/**
+#          libs/tess2/**
+#          libs/uriparser/**
+#          libs/utf8/**
+#          addons/ofxAssimpModelLoader/libs/**/
+#          addons/ofxKinect/libs/**/
+#          addons/ofxOpenCv/libs/**/
+#          addons/ofxSvg/libs/**/
+#          addons/ofxPoco/libs/**/
+#
+#        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
+#        restore-keys: |
+#          ${{ runner.os }}-build-${{ env.cache-name }}-
+#    - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
+    - name: Download libs
       # continue-on-error: true
       run: ./scripts/$TARGET/download_libs.sh
     - name: rm-dev
@@ -95,6 +95,5 @@ jobs:
           scripts/ci/$TARGET/run_tests.sh;
         fi
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
-        SDKROOT: "/Applications/Xcode_13.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
-
+        DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
