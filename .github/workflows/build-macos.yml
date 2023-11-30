@@ -80,8 +80,8 @@ jobs:
     - name: Download libs
       # continue-on-error: true
       run: ./scripts/$TARGET/download_libs.sh
-    - name: rm-dev
-      run: sudo rm -rf /Library/Developer
+#    - name: rm-dev
+#      run: sudo rm -rf /Library/Developer
 
     # this step is not needed here because the script is empty
     # - name: install
