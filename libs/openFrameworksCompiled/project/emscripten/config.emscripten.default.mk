@@ -14,8 +14,8 @@
 #   ifdefs within the openFrameworks core source code.
 ################################################################################
 
-PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME).html
-PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME).html
+PLATFORM_PROJECT_RELEASE_TARGET = bin/em/$(BIN_NAME)/index.html
+PLATFORM_PROJECT_DEBUG_TARGET = bin/em/$(BIN_NAME)/index.html
 BYTECODECORE=1
 PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.bc
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
@@ -144,8 +144,6 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
-
 # core sources
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
@@ -157,7 +155,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.h
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofMediaFoundationSoundPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/communication/%.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
@@ -277,7 +275,7 @@ afterplatform: $(TARGET_NAME)
 	@echo "     compiling done"
 	@echo "     to launch the application on the default browser, run:"
 	@echo
-	@echo "     emrun bin/$(BIN_NAME).html"
+	@echo "     emrun bin/em/$(BIN_NAME)"
 	@echo "     "
 	@echo "     some browsers, like safari, don't support webgl"
 	@echo "     "

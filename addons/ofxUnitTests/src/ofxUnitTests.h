@@ -276,7 +276,7 @@ private:
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;
 	int numTestsFailed = 0;
-    std::shared_ptr<ofColorsLoggerChannel> logger{new ofColorsLoggerChannel};
+    std::shared_ptr<ofColorsLoggerChannel> logger = std::make_shared<ofColorsLoggerChannel>();
 };
 
 #define ofxTest(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)

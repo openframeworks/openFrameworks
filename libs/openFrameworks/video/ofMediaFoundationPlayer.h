@@ -1,3 +1,33 @@
+/*
+ -----------------------------------------------------------------------------
+ Based on code by Andrew Wright
+ https://github.com/axjxwright/AX-MediaPlayer/
+ 
+ MIT License
+ 
+ Copyright (c) 2021 Andrew Wright / AX Interactive
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ -----------------------------------------------------------------------------
+ */
+
+
 #pragma once
 
 #include <mfmediaengine.h>
@@ -22,6 +52,7 @@ namespace of {
 
 class ofMediaFoundationPlayer : public ofBaseVideoPlayer, public of::MediaEngineNotifyCallback {
 protected:
+    friend class ofMediaFoundationSoundPlayer;
     
     // MediaEngineNotify: Implements the callback for Media Engine event notification.
     class ofMEEventProcessor : public IMFMediaEngineNotify {
@@ -166,12 +197,14 @@ public:
         virtual bool create(DXGI_FORMAT aDxFormat) = 0; 
         virtual bool isValid() = 0;
         virtual bool draw(ofPixels& apix) = 0;
-        virtual bool updatePixels(ofTexture& aSrcTex, ofPixels& apix) = 0;
+        virtual bool updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) = 0;
         
         int getWidth() { return mWidth; }
         int getHeight() { return mHeight; }
 
     protected:
+        bool _swapPixelsFromSrc4ChannelTo3(ofPixels& aDstPix);
+
         unsigned int mWidth = 0;
         unsigned int mHeight = 0;
 
@@ -179,17 +212,19 @@ public:
         MFVideoNormalizedRect mNormalizedVidRect{ 0.0f, 0.0f, 1.0f, 1.0f };
         ofPixelFormat mOfPixFmt;
         std::shared_ptr<ofTexture> mOfTex;
+        ofPixels mSrcPixels;
     };
 
 protected:
     
     void handleMEEvent(DWORD aevent);
     void updateDuration();
+    bool updateDimensions();
 
     std::shared_ptr<METexture> mMeTexture;
 
     bool mBUseHWAccel = true;
-    static bool sBAllowDurationHack;// = true;
+    static bool sBAllowDurationHack;
 
     bool mBReady = false;
     bool mBLoaded = false;
@@ -221,11 +256,6 @@ protected:
 
     CRITICAL_SECTION m_critSec;
 
-    static int sNumInstances;
-
-    static bool sInitMediaFoundation();
-    static void sCloseMediaFoundation();
-
     std::queue<DWORD> mEventsQueue;
     std::mutex mMutexEvents;
     // needed to copy the pixels while in lock()
@@ -234,8 +264,7 @@ protected:
     ofTexture mCopyTex;
     ofPixels mPixels;
     mutable bool mBUpdatePixels = false;
-
-    //std::mutex mMutexLoad;
+	
     bool mBLoadAsync = false;
     std::atomic_bool mBIsDoneAtomic;
     std::atomic_bool mBIsClosedAtomic;
