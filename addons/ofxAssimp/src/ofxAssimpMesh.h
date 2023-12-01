@@ -12,7 +12,6 @@
 #include "ofxAssimpTexture.h"
 #include "ofVbo.h"
 #include "ofMesh.h"
-#include "glm/mat4x4.hpp"
 #include "ofxAssimpNode.h"
 #include "ofxAssimpBounds.h"
 #include <unordered_map>

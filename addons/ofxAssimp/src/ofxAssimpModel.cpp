@@ -12,8 +12,6 @@
 #include <assimp/config.h>
 #include <assimp/DefaultLogger.hpp>
 
-#include <glm/gtx/matrix_decompose.hpp>
-
 using std::shared_ptr;
 using std::vector;
 using std::make_shared;
