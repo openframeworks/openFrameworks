@@ -313,7 +313,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path + slash
-	static std::string addTrailingSlash(const of::filesystem::path& path);
+	static std::string addTrailingSlash(const of::filesystem::path & path);
 
 	/// Remove a path's trailing slash (if found),
 	/// ie. "images/" -> "images".
@@ -430,7 +430,7 @@ public:
 	/// \returns current executable path
 	static of::filesystem::path getCurrentExePathFS();
 	static std::string getCurrentExePath();
-	
+
 	/// Get the full path to the application's parent directory.
 	///
 	/// Windows & Linux: the application's parent directory
