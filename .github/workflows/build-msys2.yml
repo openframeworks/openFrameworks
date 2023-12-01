@@ -24,12 +24,12 @@ jobs:
       matrix:
         msystem:
         - mingw64
-        - ucrt64
+        # - ucrt64
     defaults:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
         update: true

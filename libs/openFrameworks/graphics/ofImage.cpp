@@ -1,5 +1,7 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
+#include "ofPixels.h"
+
 #include "FreeImage.h"
 
 #include "ofURLFileLoader.h"
@@ -95,16 +97,30 @@ FIBITMAP* getBmpFromPixels(const ofPixels_<PixelType> &pix){
 //----------------------------------------------------
 template<typename PixelType>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType>& pix, bool swapOnLittleEndian = true, bool bUsePassedPixelFormat = false) {
-
 	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = nullptr;
 	FREE_IMAGE_TYPE imgType = FreeImage_GetImageType(bmp);
 	if(sizeof(PixelType)==1 &&
 		(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8
 		||  imgType!=FIT_BITMAP)) {
-		if(FreeImage_IsTransparent(bmp)) {
+		
+		bool bDownsampling = false;
+		if( (int)imgType > (int)FIT_BITMAP && FreeImage_GetBPP(bmp) > 8 ) {
+			bDownsampling = true;
+		}
+		
+		if(imgType == FIT_UINT16) {
+			ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling grayscale image to 8 bits");
+			bmpConverted = FreeImage_ConvertTo8Bits(bmp);
+		} else if(FreeImage_IsTransparent(bmp)) {
+			if(bDownsampling) {
+				ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling image to 32 bits");
+			}
 			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
 		} else {
+			if(bDownsampling) {
+				ofLogVerbose("ofImage :: putBmpIntoPixels : downsampling image to 24 bits");
+			}
 			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
 		}
 		bmp = bmpConverted;
@@ -343,12 +359,42 @@ bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoad
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings){
-	ofPixels pixels;
-	bool loaded = ofLoadImage(pixels, path, settings);
-	if(loaded){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
-		tex.loadData(pixels);
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings ) {
+	return ofLoadImage( tex, path, false, settings );
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, bool bFlipInY, const ofImageLoadSettings &settings){
+	bool loaded = false;
+	std::string ext = ofToLower(path.extension().string());
+	bool hdr = (ext == ".hdr" || ext == ".exr");
+	if( hdr ) {
+		ofFloatPixels pixels;
+		loaded = ofLoadImage(pixels, path, settings);
+		if(loaded){
+			#if defined(TARGET_OPENGLES)
+			// GL_RGB32F, GL_RGBA32F and GL_RGB16F is not supported in Emscripten opengl es, so we need to set to GL_RGBA16F or GL_RGBA32F. But GL_RGBA32F is not supported via opengl es on most mobile devices as of right now.
+			if(pixels.getNumChannels() != 4 ) {
+				// set alpha to 1.
+				ofLogVerbose("ofLoadImage") << "changing number of loaded pixel channels from " << pixels.getNumChannels() << " to 4 for more broad support on OpenGL ES.";
+				pixels.setImageType( OF_IMAGE_COLOR_ALPHA );
+			}
+			#endif
+			if(bFlipInY) {
+				pixels.mirror(true, false);
+			}
+			tex.loadData(pixels);
+		}
+	} else {
+		ofPixels pixels;
+		loaded = ofLoadImage(pixels, path, settings);
+		if(loaded){
+			if(bFlipInY) {
+				pixels.mirror(true, false);
+			}
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
+			tex.loadData(pixels);
+		}
 	}
 	return loaded;
 }
@@ -369,7 +415,7 @@ template<typename PixelType>
 static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (_pix.isAllocated() == false){
-		ofLogError("ofImage") << "saveImage(): couldn't save \"" << _fileName << "\", pixels are not allocated";
+		ofLogError("ofImage") << "saveImage(): couldn't save " << _fileName << ", pixels are not allocated";
 		return false;
 	}
 
@@ -724,7 +770,7 @@ bool ofImage_<PixelType>::load(const of::filesystem::path& fileName, const ofIma
 	#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName, settings);
 	if (!bLoadedOk) {
-		ofLogError("ofImage") << "loadImage(): couldn't load image from \"" << fileName << "\"";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from " << fileName << "";
 		clear();
 		return false;
 	}

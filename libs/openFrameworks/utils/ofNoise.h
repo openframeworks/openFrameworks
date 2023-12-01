@@ -230,8 +230,8 @@ inline float _slang_library_noise2 (float x, float y)
     y2 = y0 - 1.0f + 2.0f * G2;
 
     /* Wrap the integer indices at 256, to avoid indexing perm[] out of bounds */
-    ii = i % 256;
-    jj = j % 256;
+    ii = i &0xFF;
+    jj = j &0xFF;
 
     /* Calculate the contribution from the three corners */
     t0 = 0.5f - x0*x0-y0*y0;
@@ -324,9 +324,9 @@ inline float _slang_library_noise3 (float x, float y, float z)
     z3 = z0 - 1.0f + 3.0f*G3;
 
     /* Wrap the integer indices at 256, to avoid indexing perm[] out of bounds */
-    ii = i % 256;
-    jj = j % 256;
-    kk = k % 256;
+    ii = i &0xFF;
+    jj = j &0xFF;
+    kk = k &0xFF;
 
     /* Calculate the contribution from the four corners */
     t0 = 0.6f - x0*x0 - y0*y0 - z0*z0;
@@ -456,10 +456,10 @@ inline float _slang_library_noise4 (float x, float y, float z, float w)
     w4 = w0 - 1.0f + 4.0f*G4;
 
     /* Wrap the integer indices at 256, to avoid indexing perm[] out of bounds */
-    ii = i % 256;
-    jj = j % 256;
-    kk = k % 256;
-    ll = l % 256;
+    ii = i &0xFF;
+    jj = j &0xFF;
+    kk = k &0xFF;
+    ll = l &0xFF;
 
     /* Calculate the contribution from the five corners */
     t0 = 0.6f - x0*x0 - y0*y0 - z0*z0 - w0*w0;

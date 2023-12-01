@@ -1,4 +1,34 @@
 
+/*
+ -----------------------------------------------------------------------------
+ Based on code by Andrew Wright
+ https://github.com/axjxwright/AX-MediaPlayer/
+ 
+ MIT License
+ 
+ Copyright (c) 2021 Andrew Wright / AX Interactive
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ -----------------------------------------------------------------------------
+ */
+
+
 #include "ofPixels.h"
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
@@ -10,9 +40,11 @@
 #include "ofGraphics.h"
 #include "ofEventUtils.h"
 
+// declares some shared Media Foundation code
+#include "ofMediaFoundationSoundPlayer.h"
+
 using namespace Microsoft::WRL;
 
-int ofMediaFoundationPlayer::sNumInstances = 0;
 std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPlayer::sDeviceManager;
 
 bool ofMediaFoundationPlayer::sBAllowDurationHack = true;
@@ -20,116 +52,6 @@ bool ofMediaFoundationPlayer::sBAllowDurationHack = true;
 //----------------------------------------------
 void ofMediaFoundationPlayer::setDurationHackEnabled(bool ab) {
     sBAllowDurationHack = ab;
-}
-
-class AsyncCallback : public IMFAsyncCallback {
-public:
-    AsyncCallback(std::function<void()> aCallBack) {
-        mCallBack = aCallBack;
-    }
-    virtual ~AsyncCallback() = default;
-
-    IFACEMETHODIMP GetParameters(_Out_ DWORD* flags, _Out_ DWORD* queue) {
-        *flags = 0;// MFASYNC_BLOCKING_CALLBACK;
-        *queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED;
-        return S_OK;
-    }
-
-    STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
-        //m_hrStatus = m_pStream->EndRead(pResult, &m_cbRead);
-        //SetEvent(m_hEvent);
-        mCallBack();
-        //Release();
-        return S_OK;
-    }
-
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID* ppvObj) {
-        if (!ppvObj) return E_INVALIDARG;
-        *ppvObj = NULL;
-        if (riid == IID_IMFAsyncCallback) {
-            *ppvObj = (LPVOID)this;
-            AddRef();
-            return NOERROR;
-        }
-        return E_NOINTERFACE;
-    }
-
-    ULONG STDMETHODCALLTYPE AddRef() {
-        InterlockedIncrement(&m_refCount);
-        return m_refCount;
-    }
-
-    ULONG STDMETHODCALLTYPE Release() {
-        ULONG count = InterlockedDecrement(&m_refCount);
-        if (0 == m_refCount) {
-            delete this;
-        }
-        return count;
-    }
-
-protected:
-    std::function<void()> mCallBack;
-    ULONG m_refCount = 0;
-};
-
-//----------------------------------------------
-void callAsyncBlocking(std::function<void()> aCallBack) {
-    std::mutex lock;
-    std::condition_variable wait;
-    std::atomic_bool isDone(false);
-
-    HRESULT hr = S_OK;
-
-    ComPtr<AsyncCallback> pCB(
-        new AsyncCallback(
-            [&] {
-        aCallBack();
-        isDone.store(true);
-        wait.notify_one();
-    }
-    ));
-
-    hr = MFPutWorkItem(MFASYNC_CALLBACK_QUEUE_MULTITHREADED, pCB.Get(), NULL);
-    if (hr == S_OK) {
-        std::unique_lock lk{ lock };
-        wait.wait(lk, [&] { return isDone.load(); });
-    } else {
-        if (pCB) {
-            pCB->Release();
-            pCB = nullptr;
-        }
-    }
-}
-
-//----------------------------------------------
-bool ofMediaFoundationPlayer::sInitMediaFoundation() {
-    
-    if (sNumInstances == 0) {
-        HRESULT hr = MFStartup(MF_VERSION);
-        if (SUCCEEDED(hr)) {
-            //sMFInited = true;
-        }
-        ofLogVerbose("ofMEVideoPlayer :: sInitMediaFoundation : init ok ") << SUCCEEDED(hr);
-        hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED); 
-        //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-        //ofLogVerbose("ofMEVideoPlayer :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
-    }
-    sNumInstances++;
-    return sNumInstances > 0;
-}
-
-//----------------------------------------------
-void ofMediaFoundationPlayer::sCloseMediaFoundation() {
-    sNumInstances--;
-    if (sNumInstances <= 0) {
-        // Shut down Media Foundation.
-        CoUninitialize();
-        ofLogVerbose("ofMEVideoPlayer") << " calling MFShutdown.";
-        MFShutdown();
-    }
-    if (sNumInstances < 0) {
-        sNumInstances = 0;
-    }
 }
 
 //----------------------------------------------
@@ -252,7 +174,6 @@ bool ofMediaFoundationPlayer::METexture::allocate( ofPixelFormat afmt, int aw, i
     mWidth = aw;
     mHeight = ah;
     mOfPixFmt = afmt;
-    //auto glFormat = ofGetGLInternalFormatFromPixelFormat(OF_PIXELS_BGRA);
     auto glFormat = ofGetGLInternalFormatFromPixelFormat(afmt);
     // make a GL_TEXTURE2D
     mOfTex->allocate(mWidth, mHeight, glFormat, false);
@@ -443,7 +364,9 @@ bool SharedDXGLTexture::isLocked() {
 //----------------------------------------------
 bool SharedDXGLTexture::draw(ofPixels& apix) {
     if (lock()) {
-        mOfTex->draw(0, 0);
+        if (mOfTex->isAllocated()) {
+            mOfTex->draw(0, 0);
+        }
         unlock();
         return true;
     }
@@ -710,7 +633,9 @@ std::string ofMediaFoundationPlayer::MFErrorToString(MF_MEDIA_ENGINE_ERR aerror)
 
 //----------------------------------------------
 ofMediaFoundationPlayer::ofMediaFoundationPlayer() {
-    sInitMediaFoundation();
+    //sInitMediaFoundation();
+    // TODO: this is currently located in ofMediaFoundationSoundPlayer
+    ofMediaFoundationUtils::InitMediaFoundation();
 	InitializeCriticalSectionEx(&m_critSec, 0, 0);
     mPixFormat = OF_PIXELS_RGB;
 }
@@ -718,7 +643,7 @@ ofMediaFoundationPlayer::ofMediaFoundationPlayer() {
 //----------------------------------------------
 ofMediaFoundationPlayer::~ofMediaFoundationPlayer() {
     close();
-    sCloseMediaFoundation();
+    ofMediaFoundationUtils::CloseMediaFoundation();
     DeleteCriticalSection(&m_critSec);
 }
 
@@ -880,7 +805,7 @@ void ofMediaFoundationPlayer::close() {
     EnterCriticalSection(&m_critSec);
 
     if (m_spMediaEngine) {
-        callAsyncBlocking(
+        ofMediaFoundationUtils::CallAsyncBlocking(
             [&] { m_spMediaEngine->Shutdown(); }
         );
     }
@@ -931,8 +856,11 @@ bool ofMediaFoundationPlayer::isInitialized() const {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) {
+
     if (aEvent == MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA) {
         if (!mBLoadAsync) {
+            updateDuration();
+            updateDimensions();
             mBIsDoneAtomic.store(true);
             mWaitCondition.notify_one();
         }
@@ -1157,7 +1085,9 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 //----------------------------------------------
 void ofMediaFoundationPlayer::setVolume(float volume) {
     if (m_spMediaEngine) {
-        callAsyncBlocking([&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); });
+        ofMediaFoundationUtils::CallAsyncBlocking(
+            [&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); 
+        });
     }
 }
 
@@ -1322,12 +1252,13 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                 }
             }
             mBDone = false;
-            mWidth = 0.f;
-            mHeight = 0.f;
-            DWORD w, h;
-            if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
-                mWidth = w;
-                mHeight = h;
+            //mWidth = 0.f;
+            //mHeight = 0.f;
+            //DWORD w, h;
+            //if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+                //mWidth = w;
+                //mHeight = h;
+            if(updateDimensions()) {
 
                 if (mMeTexture) {
                     if (mMeTexture->getWidth() != mWidth || mMeTexture->getHeight() != mHeight) {
@@ -1486,5 +1417,18 @@ void ofMediaFoundationPlayer::updateDuration() {
             mEstimatedNumFrames = 1;
         }
     }
+}
+
+//-----------------------------------------
+bool ofMediaFoundationPlayer::updateDimensions() {
+    mWidth = 0.f;
+    mHeight = 0.f;
+    DWORD w, h;
+    if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+        mWidth = w;
+        mHeight = h;
+        return true;
+    }
+    return false;
 }
 

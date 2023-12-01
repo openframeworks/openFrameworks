@@ -31,6 +31,8 @@
 
 
 #include "ofxiOSExtras.h"
+#include "ofLog.h"
+#include "ofPixels.h"
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 

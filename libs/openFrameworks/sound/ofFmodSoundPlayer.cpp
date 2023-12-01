@@ -214,6 +214,7 @@ bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream)
 	} else {
 		bLoadedOk = true;
 		FMOD_Sound_GetLength(sound, &length, FMOD_TIMEUNIT_PCM);
+		FMOD_Sound_GetLength(sound, &durationMS, FMOD_TIMEUNIT_MS);
 		isStreaming = stream;
 	}
 
@@ -222,6 +223,7 @@ bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream)
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::unload(){
+	durationMS = 0;
 	if (bLoadedOk){
 		stop();						// try to stop the sound
 		FMOD_Sound_Release(sound);
@@ -257,6 +259,16 @@ float ofFmodSoundPlayer::getVolume() const{
 //------------------------------------------------------------
 bool ofFmodSoundPlayer::isLoaded() const{
 	return bLoadedOk;
+}
+
+//------------------------------------------------------------
+float ofFmodSoundPlayer::getDuration() const {
+	return (float)durationMS / 1000.f;
+}
+
+//------------------------------------------------------------
+unsigned int ofFmodSoundPlayer::getDurationMS() const {
+	return durationMS;
 }
 
 //------------------------------------------------------------
