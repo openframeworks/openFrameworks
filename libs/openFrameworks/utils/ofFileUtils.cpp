@@ -26,13 +26,12 @@ namespace fs = of::filesystem;
 namespace{
 	bool enableDataPath = true;
 
-
-	of::filesystem::path defaultDataPath(){
+	fs::path defaultDataPath(){
 	#if defined TARGET_OSX
 		try{
-			return of::filesystem::canonical(ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
+			return of::filesystem::canonical(ofFilePath::getCurrentExeDirFS() / fs::path("../../../data/"));
 		}catch(...){
-			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
+			return (ofFilePath::getCurrentExeDirFS() / fs::path("../../../data/"));
 		}
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
@@ -40,14 +39,14 @@ namespace{
 		try{
             return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDirFS(),  "data/")).make_preferred();
         }catch(...){
-			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("data/"));
+			return (ofFilePath::getCurrentExeDirFS() / fs::path("data/"));
 		}
 	#endif
 	}
 
 	//--------------------------------------------------
-	of::filesystem::path & defaultWorkingDirectory(){
-		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDirFS());
+	fs::path & defaultWorkingDirectory(){
+		static auto * defaultWorkingDirectory = new fs::path(ofFilePath::getCurrentExeDirFS());
 		return * defaultWorkingDirectory;
 	}
 
@@ -1506,7 +1505,7 @@ static bool natural(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 struct StringSort{
-    of::filesystem::path path;
+    fs::path path;
     string basename;
     int nameInt;
     string stringInt;
@@ -1575,7 +1574,7 @@ void ofDirectory::sort(const SortMode & mode){
         files.clear();
         files.reserve(sort.size());
         for( auto & s : sort ){
-            files.emplace_back( myDir / of::filesystem::path(s), ofFile::Reference);
+            files.emplace_back( myDir / fs::path(s), ofFile::Reference);
         }
     }else if(mode == ofDirectory::SORT_BY_DATE){
         sortByDate();
@@ -1771,7 +1770,7 @@ std::string ofFilePath::addTrailingSlash(const fs::path & _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - start using of::filesystem::path.extension() 
+// FIXME: - start using fs::path.extension() 
 string ofFilePath::getFileExt(const fs::path& filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
 }
@@ -1924,8 +1923,8 @@ fs::path ofFilePath::getCurrentExeDirFS(){
 
 //------------------------------------------------------------------------------------------------------------
 std::string ofFilePath::getCurrentExeDir(){
-	// std::string sep = of::filesystem::path::preferred_separator;
-	return getCurrentExeDirFS().string() + of::filesystem::path("/").make_preferred().string();
+	// std::string sep = fs::path::preferred_separator;
+	return getCurrentExeDirFS().string() + fs::path("/").make_preferred().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
