@@ -1912,6 +1912,7 @@ of::filesystem::path ofFilePath::getCurrentExeDirFS(){
 
 //------------------------------------------------------------------------------------------------------------
 std::string ofFilePath::getCurrentExeDir(){
+
 	// std::string sep = of::filesystem::path::preferred_separator;
 	return getCurrentExeDirFS().string() + of::filesystem::path("/").make_preferred().string();
 }
