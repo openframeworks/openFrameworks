@@ -441,7 +441,6 @@ public:
 	/// \returns current executable directory
 	static of::filesystem::path getCurrentExeDirFS();
 	static std::string getCurrentExeDir();
-	static of::filesystem::path getCurrentExeDirFS();
 
 	/// Get the absolute path to the user's home directory.
 	///
