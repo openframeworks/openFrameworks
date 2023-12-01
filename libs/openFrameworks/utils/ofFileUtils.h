@@ -430,7 +430,6 @@ public:
 	/// \returns current executable path
 	static of::filesystem::path getCurrentExePathFS();
 	static std::string getCurrentExePath();
-	static of::filesystem::path getCurrentExePathFS();
 	
 	/// Get the full path to the application's parent directory.
 	///
