@@ -26,28 +26,28 @@ namespace fs = of::filesystem;
 namespace{
 	bool enableDataPath = true;
 
-	//--------------------------------------------------
-	fs::path defaultDataPath(){
-#if defined TARGET_OSX
-		
-	// three levels up because is a directory with path App.app/Contents/MacOS/App
-	fs::path data { ofFilePath::getCurrentExeDir().parent_path().parent_path().parent_path() / "data" };
-	if (!fs::is_directory(data)) {
-		// bundle data folder inside app = one level up : MacOS/../Resources/data
-		data = ofFilePath::getCurrentExeDir().parent_path() / "Resources/data";
-	}
-	return data;
-	
-#elif defined TARGET_ANDROID
-	return { "sdcard/" };
-#else
-	return ofFilePath::getCurrentExeDir() / "data";
-#endif
+
+	of::filesystem::path defaultDataPath(){
+	#if defined TARGET_OSX
+		try{
+			return of::filesystem::canonical(ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
+		}catch(...){
+			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
+		}
+	#elif defined TARGET_ANDROID
+		return string("sdcard/");
+	#else
+		try{
+            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDirFS(),  "data/")).make_preferred();
+        }catch(...){
+			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("data/"));
+		}
+	#endif
 	}
 
 	//--------------------------------------------------
-	fs::path & defaultWorkingDirectory(){
-		static auto * defaultWorkingDirectory = new fs::path(ofFilePath::getCurrentExeDir());
+	of::filesystem::path & defaultWorkingDirectory(){
+		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDirFS());
 		return * defaultWorkingDirectory;
 	}
 
@@ -1416,10 +1416,9 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 
-	fs::directory_iterator end_iter;
-	if ( fs::exists(myDir) && fs::is_directory(myDir)){
-		for( fs::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
-			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
+	if ( fs::exists(myDir) && fs::is_directory(myDir) ){
+		for (const auto & f : fs::directory_iterator{ myDir }) {
+			files.emplace_back(f.path(), ofFile::Reference);
 		}
 	}else{
 		ofLogError("ofDirectory") << "listDir:() source directory does not exist: " << myDir ;
@@ -1740,7 +1739,7 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - Deprecate
+// FIXME: - re-avail
 string ofFilePath::addLeadingSlash(const fs::path& _path){
 	auto path = _path.string();
 	auto sep = fs::path("/").make_preferred();
@@ -1753,7 +1752,7 @@ string ofFilePath::addLeadingSlash(const fs::path& _path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - Deprecate
+//	FIXME: - re-avail
 std::string ofFilePath::addTrailingSlash(const fs::path & _path){
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
 	if(_path.string().empty()) return "";
@@ -1772,21 +1771,19 @@ std::string ofFilePath::addTrailingSlash(const fs::path & _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-//	FIXME: - Deprecate
+// FIXME: - start using of::filesystem::path.extension() 
 string ofFilePath::getFileExt(const fs::path& filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: Deprecate
+// FIXME: - suggest replace_extension instead
 std::string ofFilePath::removeExt(const fs::path& _filename){
 	auto filename = _filename;
-//	return filename.replace_extension();
 	return filename.replace_extension().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: Deprecate
 string ofFilePath::getPathForDirectory(const fs::path& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
@@ -1809,7 +1806,7 @@ string ofFilePath::getPathForDirectory(const fs::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: Deprecate
+// FIXME: - re-avail
 string ofFilePath::removeTrailingSlash(const fs::path& _path){
 	auto path = _path.string();
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
@@ -1820,7 +1817,6 @@ string ofFilePath::removeTrailingSlash(const fs::path& _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: Deprecate
 string ofFilePath::getFileName(const fs::path& _filePath, bool bRelativeToData){
 	auto filePath = _filePath;
 
@@ -1833,9 +1829,9 @@ string ofFilePath::getFileName(const fs::path& _filePath, bool bRelativeToData){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: Deprecate
+// FIXME: - suggest using stem() instead
 string ofFilePath::getBaseName(const fs::path& filePath){
-	return ofFile(filePath,ofFile::Reference).getBaseName();
+	return filePath.stem().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1886,11 +1882,6 @@ std::string ofFilePath::join(const fs::path& path1, const fs::path& path2){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getCurrentExePath(){
-	return getCurrentExePathFS().string();
-}
-
-//------------------------------------------------------------------------------------------------------------
 fs::path ofFilePath::getCurrentExePathFS(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
@@ -1912,7 +1903,7 @@ fs::path ofFilePath::getCurrentExePathFS(){
 	#elif defined(TARGET_WIN32)
 		vector<wchar_t> executablePath(MAX_PATH);
 		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
-		if(result == 0) {
+		if (result == 0) {
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
 		}else{
 			return { executablePath.begin(), executablePath.begin() + result };
@@ -1922,9 +1913,19 @@ fs::path ofFilePath::getCurrentExePathFS(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// Can be changed to be unneeded in near future
-fs::path ofFilePath::getCurrentExeDir(){
-	return getCurrentExePathFS().parent_path();
+std::string ofFilePath::getCurrentExePath(){
+	return getCurrentExePathFS().string();
+}
+
+//------------------------------------------------------------------------------------------------------------
+fs::path ofFilePath::getCurrentExeDirFS(){
+	return ofFilePath::getCurrentExePathFS().parent_path();
+}
+
+//------------------------------------------------------------------------------------------------------------
+std::string ofFilePath::getCurrentExeDir(){
+	// std::string sep = of::filesystem::path::preferred_separator;
+	return getCurrentExeDirFS().string() + of::filesystem::path("/").make_preferred().string();
 }
 
 //------------------------------------------------------------------------------------------------------------

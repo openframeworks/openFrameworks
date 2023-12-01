@@ -361,7 +361,7 @@ public:
 	/// "../../"
 	/// \returns filename
 	///
-	// FIXME: Deprecate / Remove this.
+	// FIXME: Deprecate / Remove this. Find instances in OF Core to remove
 	static std::string getFileName(const of::filesystem::path & filePath, bool bRelativeToData = true);
 
 	/// Get a file name without its extension,
@@ -370,6 +370,8 @@ public:
 	///
 	/// \param filePath file path
 	/// \returns basename
+
+  // FIXME: Deprecate / Remove this. Find instances in OF Core to remove
 	static std::string getBaseName(const of::filesystem::path & filePath);
 
 	/// Get the enclosing parent directory of a path,
@@ -426,6 +428,7 @@ public:
 	/// Linux: the binary file itself
 	///
 	/// \returns current executable path
+	static of::filesystem::path getCurrentExePathFS();
 	static std::string getCurrentExePath();
 	static of::filesystem::path getCurrentExePathFS();
 	
@@ -435,7 +438,8 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-	static of::filesystem::path getCurrentExeDir();
+	static of::filesystem::path getCurrentExeDirFS();
+	static std::string getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
