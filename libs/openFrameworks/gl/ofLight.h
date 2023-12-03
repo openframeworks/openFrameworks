@@ -80,7 +80,7 @@ public:
 	bool beginShadowDepthPass( GLenum aPassIndex );
 	bool endShadowDepthPass( GLenum aPassIndex );
 	
-	ofShadow& getShadow() { return shadow; }
+	ofShadow & getShadow() { return shadow; }
 
 	class Data{
 	public:

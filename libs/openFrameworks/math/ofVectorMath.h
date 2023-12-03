@@ -1,19 +1,20 @@
 #pragma once
 
-#include "ofVec2f.h"
+//#include "ofVec2f.h"
 #include "ofVec3f.h"
-#include "ofVec4f.h"
-#include "ofMatrix3x3.h"
-#include "ofMatrix4x4.h"
+//#include "ofVec4f.h"
+class ofVec4f;
+class ofVec2f;
+class ofMatrix3x3;
+class ofMatrix4x4;
+//#include "ofMatrix3x3.h"
+//#include "ofMatrix4x4.h"
+//class ofQuaternion;
 #include "ofQuaternion.h"
 
 #include "ofMathConstants.h"
-#include "ofConstants.h"
-//#include "glm/glm.hpp"
-
-//#include "glm/detail/setup.hpp"
-//#include "glm/detail/_swizzle.hpp"
-//#include "glm/detail/_swizzle_func.hpp"
+//#include "ofConstants.h"
+#define GLM_FORCE_CTOR_INIT
 
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"

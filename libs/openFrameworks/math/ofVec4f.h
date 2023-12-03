@@ -1,5 +1,6 @@
 #pragma once
 
+// FIXME: Deprecated and CTOR only
 #include "ofConstants.h"
 #include "glm/vec4.hpp"
 #include "glm/fwd.hpp"
