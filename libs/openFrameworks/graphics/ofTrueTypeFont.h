@@ -2,6 +2,7 @@
 
 #include "ofMesh.h"
 #include "ofPath.h"
+// FIXME: Template
 #include "ofPixels.h"
 #include "ofRectangle.h"
 #include "ofTexture.h"

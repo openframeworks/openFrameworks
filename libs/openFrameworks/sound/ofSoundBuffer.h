@@ -8,7 +8,10 @@
 #ifndef OFSOUNDBUFFER_H_
 #define OFSOUNDBUFFER_H_
 
-#include "ofConstants.h"
+#include <cstdint>
+#include <cstddef>
+#include <vector>
+#include <string>
 
 
 /*! 

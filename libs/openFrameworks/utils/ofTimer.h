@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofConstants.h"
+// #include "ofConstants.h"
 #include "ofUtils.h"
 
 class ofTimer {

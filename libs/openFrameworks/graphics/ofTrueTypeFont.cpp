@@ -1,7 +1,9 @@
 #include "ofTrueTypeFont.h"
-//--------------------------
+#include "ofGraphics.h"
 
 #include <ft2build.h>
+#include <algorithm>
+#include <numeric>
 
 #ifdef TARGET_LINUX
 #include <fontconfig/fontconfig.h>
@@ -11,11 +13,6 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 #include FT_TRIGONOMETRY_H
-
-#include <algorithm>
-#include <numeric>
-
-#include "ofGraphics.h"
 
 using std::max;
 using std::vector;

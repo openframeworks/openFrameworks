@@ -4,7 +4,7 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofLog.h"
-#include "ofConstants.h"
+// #include "ofConstants.h"
 #include "ofColor.h"
 
 #include <map>

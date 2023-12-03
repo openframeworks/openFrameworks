@@ -13,7 +13,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofCubeMapShaders.h"
 #include "ofFbo.h"
-#include "ofConstants.h"
 #include "ofTexture.h"
 
 #define GLM_FORCE_CTOR_INIT

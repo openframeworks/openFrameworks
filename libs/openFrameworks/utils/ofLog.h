@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofFileUtils.h"
-#include "ofConstants.h"
+// #include "ofConstants.h"
 #include "ofUtils.h" // ofVAArgsToString
 #include <sstream>
 
