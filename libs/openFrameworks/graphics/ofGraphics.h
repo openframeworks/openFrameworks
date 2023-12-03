@@ -3,7 +3,8 @@
 #include "glm/fwd.hpp"
 #include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
-#include "ofRectangle.h"
+//#include "ofRectangle.h"
+class ofRectangle;
 
 class ofVec3f;
 class ofVec2f;

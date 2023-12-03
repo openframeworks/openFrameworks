@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFMATRIXSTACK_H_
-#define OFMATRIXSTACK_H_
+#pragma once
 
 #include "ofRectangle.h"
 #include "ofGraphicsConstants.h"
@@ -111,5 +110,3 @@ private:
 	inline void updatedRelatedMatrices();
 
 };
-
-#endif /* OFMATRIXSTACK_H_ */

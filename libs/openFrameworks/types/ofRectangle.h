@@ -2,6 +2,7 @@
 
 // FIXME: Deprecated only
 #include "ofConstants.h"
+
 #define GLM_FORCE_CTOR_INIT
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>

@@ -1,5 +1,7 @@
 #include "ofTrueTypeFont.h"
 #include "ofGraphics.h"
+#include "ofPixels.h"
+#include "ofPath.h"
 
 #include <ft2build.h>
 #include <algorithm>
