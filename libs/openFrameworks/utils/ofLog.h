@@ -1,5 +1,6 @@
 #pragma once
 
+// Only private ofFile file;
 #include "ofFileUtils.h"
 // #include "ofConstants.h"
 #include "ofUtils.h" // ofVAArgsToString

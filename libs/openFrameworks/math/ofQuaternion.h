@@ -12,7 +12,8 @@
 
 // MARK: Optimization possible if moving functionality to cpp files in operators, forward declarator in ofVec3f
 #include "ofVec3f.h"
-class ofVec4f;
+#include "ofVec4f.h"
+//class ofVec4f;
 #include "ofConstants.h"
 #include <cmath>
 

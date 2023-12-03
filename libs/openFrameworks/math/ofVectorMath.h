@@ -3,13 +3,10 @@
 //#include "ofVec2f.h"
 #include "ofVec3f.h"
 //#include "ofVec4f.h"
-class ofVec4f;
-class ofVec2f;
 class ofMatrix3x3;
-class ofMatrix4x4;
 //#include "ofMatrix3x3.h"
-//#include "ofMatrix4x4.h"
-//class ofQuaternion;
+// MARK: ofMatrix4x4 already contains some of commented out includes here.
+#include "ofMatrix4x4.h"
 #include "ofQuaternion.h"
 
 #include "ofMathConstants.h"
