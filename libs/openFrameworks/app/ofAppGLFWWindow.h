@@ -1,9 +1,8 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
-// MARK: Optimize to Pointer
-#include "ofRectangle.h"
 #include "ofConstants.h"
+#include "ofRectangle.h"
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef struct _XIM * XIM;
@@ -52,6 +51,7 @@ public:
 	bool decorated = true;
 	bool resizable = true;
 	bool transparent = false;
+	bool maximized = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
