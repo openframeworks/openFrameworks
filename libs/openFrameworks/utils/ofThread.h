@@ -2,10 +2,11 @@
 
 #ifndef TARGET_NO_THREADS
 
-	#include <atomic>
-	#include <condition_variable>
-	#include <mutex>
-	#include <thread>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+#include <string>
 
 /// \class ofThread
 /// \brief A threaded base class with a built in mutex for convenience.
