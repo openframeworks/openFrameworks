@@ -2,9 +2,8 @@
 
 #include "ofMaterialBaseTypes.h"
 #include "ofShader.h"
-// FIXME: constants deprecated only and ctor
-#include "ofConstants.h"
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
 #include "glm/vec2.hpp"
 #include <map>

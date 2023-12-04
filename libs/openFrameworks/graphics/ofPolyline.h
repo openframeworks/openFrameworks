@@ -3,6 +3,7 @@
 #ifndef OF_POLYLINE_H
 #define OF_POLYLINE_H
 
+// FIXME: Deprecated only
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
 #include <deque>

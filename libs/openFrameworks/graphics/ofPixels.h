@@ -3,6 +3,7 @@
 #include "ofUtils.h"
 #include "ofLog.h"
 #include "ofMath.h"
+// FIXME: Deprecated only
 #include "ofConstants.h"
 
 template<typename T>

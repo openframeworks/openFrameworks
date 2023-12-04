@@ -3,6 +3,7 @@
 #include "ofPolyline.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
+// FIXME: deprecated and targets
 #include "ofConstants.h"
 
 template<typename T>
