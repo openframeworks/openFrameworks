@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofAppBaseWindow.h"
 // MARK: Optimize to Pointer
 #include "ofRectangle.h"
 #include "ofAppBaseWindow.h"
