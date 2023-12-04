@@ -1,11 +1,12 @@
 #pragma once
 
-// FIXME: Deprecated only
-#include "ofConstants.h"
-
 #define GLM_FORCE_CTOR_INIT
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
+#include <ostream>
+#include <istream>
+
 
 /// \brief Used to represent the available rectangle aspect ratio scaling modes.
 ///
@@ -769,7 +770,8 @@ public:
 	/// \returns The rectangle's position.
 	const glm::vec3 & getPosition() const;
 
-	OF_DEPRECATED_MSG("Use getPosition() instead.", glm::vec3 & getPositionRef());
+	[[deprecated("Use getPosition() instead.")]]
+	glm::vec3 & getPositionRef();
 
 	/// \brief Get the coordiantes of the ofRectangle's center as glm::vec3.
 	///

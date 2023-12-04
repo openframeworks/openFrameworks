@@ -15,9 +15,6 @@
 #include <iostream>
 #include <array>
 
-// FIXME: constants deprecated only
-#include "ofConstants.h"
-
 
 /*! \cond PRIVATE */
 namespace of{
@@ -421,7 +418,8 @@ public:
 		listeners.emplace_back(std::move(listener));
 	}
 
-	OF_DEPRECATED_MSG("Don't use this method. If you need granular control over each listener, then use individual ofEventListener instances for each.", void unsubscribe(std::size_t pos));
+	[[deprecated("Don't use this method. If you need granular control over each listener, then use individual ofEventListener instances for each.")]]
+	void unsubscribe(std::size_t pos);
 
 	void unsubscribeAll(){
 		listeners.clear();
