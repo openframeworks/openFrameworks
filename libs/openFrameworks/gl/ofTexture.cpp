@@ -5,6 +5,7 @@
 #include "ofGLBaseTypes.h"
 #include "ofBufferObject.h"
 #include "ofMesh.h"
+#include "ofRectangle.h"
 #include <unordered_map>
 
 #ifdef TARGET_ANDROID

@@ -3,7 +3,6 @@
 #include "ofMaterialBaseTypes.h"
 #include "ofShader.h"
 // FIXME: constants deprecated only and ctor
-#include "ofColor.h"
 #include "ofConstants.h"
 
 #include "glm/fwd.hpp"
@@ -399,7 +398,7 @@ private:
 	const std::string getDepthShaderStringId() const;
 	
 	void initDepthShaders(ofGLProgrammableRenderer& renderer) const;
-	const ofShader& getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const;
+	const ofShader & getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const;
 
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
 	const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;

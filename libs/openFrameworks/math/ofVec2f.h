@@ -2,6 +2,7 @@
 
 #include "ofMath.h"
 #include "ofMathConstants.h"
+// FIXME: Deprecated and CTOR only
 #include "ofConstants.h"
 #include "glm/vec2.hpp"
 #include "glm/fwd.hpp"

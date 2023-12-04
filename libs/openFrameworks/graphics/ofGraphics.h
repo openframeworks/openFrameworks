@@ -3,17 +3,10 @@
 #include "glm/fwd.hpp"
 #include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
-#include "ofRectangle.h"
 
 class ofVec3f;
 class ofVec2f;
 
-template <typename T>
-class ofColor_;
-
-typedef ofColor_<unsigned char> ofColor;
-typedef ofColor_<float> ofFloatColor;
-typedef ofColor_<unsigned short> ofShortColor;
 
 template <typename T>
 std::string ofToString(const T &);

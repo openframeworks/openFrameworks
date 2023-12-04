@@ -1,6 +1,7 @@
 #include "ofGLRenderer.h"
 #include "ofGraphics.h"
 #include "ofRendererCollection.h"
+#include "ofRectangle.h"
 
 #ifndef TARGET_WIN32
 	#define CALLBACK

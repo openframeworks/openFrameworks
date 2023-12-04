@@ -5,6 +5,7 @@
 #include "ofPixels.h"
 #include "ofGraphics.h"
 #include "ofConstants.h"
+#include "ofMatrix4x4.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>

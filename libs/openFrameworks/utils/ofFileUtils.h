@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: constants deprecated only
+// FIXME: Deprecated and FS
 #include "ofConstants.h"
 #include <fstream>
 

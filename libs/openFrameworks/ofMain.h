@@ -1,5 +1,4 @@
-#ifndef OF_MAIN_H
-#define OF_MAIN_H
+#pragma once
 
 //--------------------------
 // utils
@@ -135,5 +134,3 @@ using std::vector;
 using std::weak_ptr;
     #endif
 #endif
-
-#endif // OF_MAIN_H
