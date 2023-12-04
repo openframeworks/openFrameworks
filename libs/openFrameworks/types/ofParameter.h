@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ofEvents.h"
+// FIXME: crossed references. ofPoint adds ofVec3f which adds ofVec2f and ofVec4f
 #include "ofPoint.h"
+
 #include "ofRectangle.h"
 #include "ofLog.h"
 // #include "ofConstants.h"
