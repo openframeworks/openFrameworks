@@ -3,8 +3,6 @@
 #include "ofUtils.h"
 #include "ofLog.h"
 #include "ofMath.h"
-// FIXME: Deprecated only
-#include "ofConstants.h"
 
 template<typename T>
 class ofColor_;
@@ -316,8 +314,12 @@ public:
 	/// \returns A raw pointer to the pixel data.
 	PixelType * getData();
 	const PixelType * getData() const;
-	OF_DEPRECATED_MSG("Use getData instead",PixelType * getPixels());
-	OF_DEPRECATED_MSG("Use getData instead",const PixelType * getPixels() const);
+
+	[[deprecated("Use getData instead")]]
+	PixelType * getPixels();
+
+	[[deprecated("Use getData instead")]]
+	const PixelType * getPixels() const;
 
 	/// \brief Get the pixel index at a x,y position
 	///
