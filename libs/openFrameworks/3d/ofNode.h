@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ofParameter.h"
+
 #define GLM_FORCE_CTOR_INIT
 #include "glm/mat4x4.hpp"
 #include <glm/gtc/quaternion.hpp>
