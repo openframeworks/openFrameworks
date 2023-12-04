@@ -1,5 +1,6 @@
 #pragma once
 
+// FIXME: Deprecated
 #include "ofConstants.h"
 #ifndef TARGET_NO_THREADS
 

@@ -3,7 +3,6 @@
 #include "ofMaterialBaseTypes.h"
 #include "ofShader.h"
 // FIXME: constants deprecated only and ctor
-#include "ofColor.h"
 #include "ofConstants.h"
 
 #include "glm/fwd.hpp"
@@ -26,7 +25,8 @@ enum ofMaterialTextureType : short {
 	OF_MATERIAL_TEXTURE_CLEARCOAT, // INTENSITY
 	OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS,
 	OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS,
-	OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL
+	OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL,
+	OF_MATERIAL_TEXTURE_TYPE_TOTAL // useful for debugging and looping through types
 };
 
 // Material concept: "Anything graphical applied to the polygons"
@@ -43,7 +43,7 @@ enum ofMaterialTextureType : short {
 class ofGLProgrammableRenderer;
 
 /// \class ofMaterialSettings
-/// wrapper for material color properties and other settings
+/// Wrapper for material color properties and other settings.
 ///
 /// customUniforms: adds some uniforms to the shader so they can be accessed
 /// from the postFragment function
@@ -157,9 +157,13 @@ struct ofMaterialSettings {
 };
 
 /// \class ofMaterial
-/// \brief material parameter properties that can be applied to vertices in the OpenGL lighting model
-/// used in determining both the intensity and color of reflected light based on the lighting model in use
-/// and if the vertices are on a front or back sided face
+///
+/// \brief Material parameter properties that can be applied to vertices in the
+/// OpenGL lighting model.
+///
+/// Used in determining both the intensity and color of reflected light based on
+/// the lighting model in use and if the vertices are on a front or back sided
+/// face.
 class ofMaterial : public ofBaseMaterial {
 public:
 	ofMaterial();
@@ -169,6 +173,8 @@ public:
 	/// \param aMaterialTextureType the material texture type to query
 	/// \return the shader uniform name
 	static std::string getUniformName(const ofMaterialTextureType & aMaterialTextureType);
+	
+	static std::string getTextureTypeAsString(const ofMaterialTextureType & aMaterialTextureType);
 
 	/// \is PBR supported on this platform.
 	static bool isPBRSupported();
@@ -199,30 +205,30 @@ public:
 	/// \return if material has a unique depth shader.
 	bool hasDepthShader() const;
 
-	/// \brief set all material colors: reflectance type & light intensity. (Phong)
+	/// \brief Set all material colors: reflectance type & light intensity. (Phong)
 	/// \param oDiffuse the diffuse reflectance
 	/// \param oAmbient the ambient reflectance
 	/// \param oSpecular the specular reflectance
 	/// \param emissive the emitted light intensity
 	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
 
-	/// \brief set the diffuse reflectance. (Phong, PBR)
+	/// \brief Set the diffuse reflectance. (Phong, PBR)
 	/// \param oDiffuse the diffuse reflectance
 	void setDiffuseColor(ofFloatColor oDiffuse);
 
-	/// \brief set the ambient reflectance. (Phong)
+	/// \brief Set the ambient reflectance. (Phong)
 	/// \param oAmbient the ambient reflectance
 	void setAmbientColor(ofFloatColor oAmbient);
 
-	/// \brief set the specular reflectance. (Phong)
+	/// \brief Set the specular reflectance. (Phong)
 	/// \param oSpecular the specular reflectance
 	void setSpecularColor(ofFloatColor oSpecular);
 
-	/// \brief set the emitted light intensity. (Phong, PBR)
+	/// \brief Set the emitted light intensity. (Phong, PBR)
 	/// \param oEmmisive the emitted light intensity
 	void setEmissiveColor(ofFloatColor oEmmisive);
 
-	/// \brief set the specular exponent. (Phong)
+	/// \brief Set the specular exponent. (Phong)
 	void setShininess(float nShininess);
 
 	/// \brief set the tex coord scale used in the shader. (Phong, PBR)
@@ -236,6 +242,14 @@ public:
 	/// \return if the load was successful.
 	bool loadTexture(const ofMaterialTextureType & aMaterialTextureType, std::string apath);
 	bool loadTexture(const ofMaterialTextureType & aMaterialTextureType, std::string apath, bool bTex2d, bool mirrorY);
+	/// \brief retrieve if a texture is available and valid internally, created using the loadTexture() function.
+	/// \param aMaterialTextureType type of texture.
+	/// \return bool, true if the texture exists and is valid.
+	bool hasLoadedTexture(const ofMaterialTextureType & aMaterialTextureType);
+	/// \brief retrieve a texture that was loaded with loadTexture.
+	/// \param aMaterialTextureType type of texture.
+	/// \return a shared_ptr to an ofTexture. Check the shared_ptr to determine if it's valid.
+	std::shared_ptr<ofTexture> getLoadedTexture(const ofMaterialTextureType & aMaterialTextureType);
 	/// \brief check if texture is PBR only.
 	/// \return is texture only PBR.
 	bool isPBRTexture(const ofMaterialTextureType & aMaterialTextureType);
@@ -384,7 +398,7 @@ private:
 	const std::string getDepthShaderStringId() const;
 	
 	void initDepthShaders(ofGLProgrammableRenderer& renderer) const;
-	const ofShader& getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const;
+	const ofShader & getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const;
 
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
 	const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;
@@ -438,8 +452,8 @@ private:
 	mutable std::unordered_map<std::string, int> mShaderIdsToRemove;
 
 	// unordered_map works well here on modern compilers
-	// std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
-	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture>> mLocalTextures;
+	std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+//	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture>> mLocalTextures;
 	
 	// custom depth shaders for lighting
 	struct DepthShaders {

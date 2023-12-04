@@ -9,6 +9,7 @@
 
 
 #include "ofLight.h"
+#include "ofColor.h"
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"

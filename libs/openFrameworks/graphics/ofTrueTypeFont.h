@@ -1,11 +1,13 @@
 #pragma once
 
+// MARK: optimization opportunity: unique pointer and remove ofMesh, ofPixels, ofRectangle, ofTexture
 #include "ofMesh.h"
-#include "ofPath.h"
 #include "ofPixels.h"
 #include "ofRectangle.h"
 #include "ofTexture.h"
 #include <unordered_map>
+
+class ofPath;
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into

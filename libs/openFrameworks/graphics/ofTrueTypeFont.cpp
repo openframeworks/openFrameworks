@@ -1,7 +1,11 @@
 #include "ofTrueTypeFont.h"
-//--------------------------
+#include "ofGraphics.h"
+#include "ofPixels.h"
+#include "ofPath.h"
 
 #include <ft2build.h>
+#include <algorithm>
+#include <numeric>
 
 #ifdef TARGET_LINUX
 #include <fontconfig/fontconfig.h>
@@ -11,11 +15,6 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 #include FT_TRIGONOMETRY_H
-
-#include <algorithm>
-#include <numeric>
-
-#include "ofGraphics.h"
 
 using std::max;
 using std::vector;
@@ -404,10 +403,10 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		filename = winFontPathByName(fontname.string());
 #endif
 		if(filename == "" ){
-			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
+			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
 			return false;
 		}
-		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
+		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): " << fontname << " not a file in data loading system font from \"" << filename << "\"";
 	}
 	FT_Error err;
 	err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
@@ -415,7 +414,7 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
 		if(err == 1) errorString = "INVALID FILENAME";
-		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
+		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for " << fontname << ": FT_Error " << err << " " << errorString;
 		return false;
 	}
 

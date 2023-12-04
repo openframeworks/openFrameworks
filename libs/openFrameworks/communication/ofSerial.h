@@ -1,5 +1,6 @@
 #pragma once
 
+// FIXME: deprecated / targets
 #include "ofConstants.h"
 
 class ofBuffer;

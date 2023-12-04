@@ -1,7 +1,3 @@
-
-
-
-
 #include "ofMatrix4x4.h"
 
 #include <limits>

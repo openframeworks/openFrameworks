@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ofConstants.h"
-#include <cmath>
 #include <glm/fwd.hpp>
 #include <glm/gtc/constants.hpp>
+#include <cmath>
 
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.

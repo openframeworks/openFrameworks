@@ -90,10 +90,10 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 		surface = cairo_image_surface_create_for_data(imageBuffer.getData(), CAIRO_FORMAT_ARGB32, outputsize.width, outputsize.height, outputsize.width * 4);
 		break;
 	case FROM_FILE_EXTENSION:
-		ofLogFatalError("ofCairoRenderer") << "setup(): couldn't determine type from extension for filename: \"" << _filename << "\"!";
+		ofLogFatalError("ofCairoRenderer") << "setup(): couldn't determine type from extension for filename: " << _filename << "!";
 		break;
 	default:
-		ofLogError("ofCairoRenderer") << "setup(): encountered unknown type for filename \"" << _filename << "\"";
+		ofLogError("ofCairoRenderer") << "setup(): encountered unknown type for filename " << _filename;
 		break;
 	}
 

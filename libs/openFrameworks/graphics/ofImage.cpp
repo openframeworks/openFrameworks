@@ -343,12 +343,42 @@ bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoad
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings){
-	ofPixels pixels;
-	bool loaded = ofLoadImage(pixels, path, settings);
-	if(loaded){
-		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
-		tex.loadData(pixels);
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings ) {
+	return ofLoadImage( tex, path, false, settings );
+}
+
+//----------------------------------------------------------------
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, bool bFlipInY, const ofImageLoadSettings &settings){
+	bool loaded = false;
+	std::string ext = ofToLower(path.extension().string());
+	bool hdr = (ext == ".hdr" || ext == ".exr");
+	if( hdr ) {
+		ofFloatPixels pixels;
+		loaded = ofLoadImage(pixels, path, settings);
+		if(loaded){
+			#if defined(TARGET_OPENGLES)
+			// GL_RGB32F, GL_RGBA32F and GL_RGB16F is not supported in Emscripten opengl es, so we need to set to GL_RGBA16F or GL_RGBA32F. But GL_RGBA32F is not supported via opengl es on most mobile devices as of right now.
+			if(pixels.getNumChannels() != 4 ) {
+				// set alpha to 1.
+				ofLogVerbose("ofLoadImage") << "changing number of loaded pixel channels from " << pixels.getNumChannels() << " to 4 for more broad support on OpenGL ES.";
+				pixels.setImageType( OF_IMAGE_COLOR_ALPHA );
+			}
+			#endif
+			if(bFlipInY) {
+				pixels.mirror(true, false);
+			}
+			tex.loadData(pixels);
+		}
+	} else {
+		ofPixels pixels;
+		loaded = ofLoadImage(pixels, path, settings);
+		if(loaded){
+			if(bFlipInY) {
+				pixels.mirror(true, false);
+			}
+			tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGLInternalFormat(pixels));
+			tex.loadData(pixels);
+		}
 	}
 	return loaded;
 }
@@ -369,7 +399,7 @@ template<typename PixelType>
 static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (_pix.isAllocated() == false){
-		ofLogError("ofImage") << "saveImage(): couldn't save \"" << _fileName << "\", pixels are not allocated";
+		ofLogError("ofImage") << "saveImage(): couldn't save " << _fileName << ", pixels are not allocated";
 		return false;
 	}
 

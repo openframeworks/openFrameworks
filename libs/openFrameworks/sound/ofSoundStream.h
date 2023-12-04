@@ -2,6 +2,7 @@
 
 #include "ofBaseApp.h"
 #include "ofSoundBaseTypes.h"
+// FIXME: Deprecated
 #include "ofConstants.h"
 #include <climits>
 #include <functional>
