@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofConstants.h"
+#define GLM_FORCE_CTOR_INIT
 #include <glm/fwd.hpp>
 #include <glm/gtc/constants.hpp>
 #include <cmath>

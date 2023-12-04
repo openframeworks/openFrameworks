@@ -1,13 +1,12 @@
 #pragma once
 
-// FIXME: Deprecated
-#include "ofConstants.h"
 #ifndef TARGET_NO_THREADS
 
-	#include <atomic>
-	#include <condition_variable>
-	#include <mutex>
-	#include <thread>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+#include <string>
 
 /// \class ofThread
 /// \brief A threaded base class with a built in mutex for convenience.
@@ -69,8 +68,8 @@ public:
 	///        block when lock() is called.
 	/// \note Subclasses can directly access the mutex and employ thier
 	///       own locking strategy.
-	OF_DEPRECATED_MSG("Use tryLock instead of setting the type of lock on startThread",
-		void startThread(bool mutexBlocks));
+	[[deprecated("Use tryLock instead of setting the type of lock on startThread")]]
+	void startThread(bool mutexBlocks);
 
 	/// \brief Lock the mutex.
 	///

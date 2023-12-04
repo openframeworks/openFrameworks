@@ -261,7 +261,7 @@ void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, cons
 ofFileLoggerChannel::ofFileLoggerChannel(){
 }
 
-ofFileLoggerChannel::ofFileLoggerChannel(const of::filesystem::path & path, bool append){
+ofFileLoggerChannel::ofFileLoggerChannel(const of::filesystem::path & path, bool append) {
 	setFile(path,append);
 }
 
@@ -273,8 +273,8 @@ void ofFileLoggerChannel::close(){
 	file.close();
 }
 
-void ofFileLoggerChannel::setFile(const of::filesystem::path & path,bool append){
-	file.open(path,append?ofFile::Append:ofFile::WriteOnly);
+void ofFileLoggerChannel::setFile(const of::filesystem::path & path, bool append) {
+	file.open(path,append ? ofFile::Append:ofFile::WriteOnly);
 	file << std::endl;
 	file << std::endl;
 	file << "--------------------------------------- " << ofGetTimestampString() << std::endl;
