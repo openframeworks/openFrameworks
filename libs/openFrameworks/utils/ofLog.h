@@ -721,7 +721,6 @@ public:
 
 private:
 	ofFile file; ///< The location of the log file.
-	
 };
 
 /// \endcond
