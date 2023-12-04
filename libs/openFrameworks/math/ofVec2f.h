@@ -940,7 +940,7 @@ public:
 	/// \cond INTERNAL
 
     [[deprecated("Use member method getScaled() instead.")]]
-					  ofVec2f rescaled( const float length ) const;
+	ofVec2f rescaled( const float length ) const;
 	
     [[deprecated("Use member method scale() instead.")]]
 	ofVec2f& rescale( const float length );
