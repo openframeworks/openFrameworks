@@ -225,7 +225,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
-	auto fileName = ofToDataPath(_fileName, true);
+	auto fileName = ofToDataPathFS(_fileName, true);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
@@ -233,7 +233,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
+		fif = FreeImage_GetFIFFromFilename(fileName);
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
@@ -404,12 +404,12 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPath(_fileName);
+	auto fileName = ofToDataPathFS(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
+		fif = FreeImage_GetFIFFromFilename(fileName);
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;

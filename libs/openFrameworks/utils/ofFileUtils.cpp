@@ -1985,17 +1985,13 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 }
 
 //--------------------------------------------------
-// MARK: - near future
-//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
-std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool makeAbsolute){
 	if (makeAbsolute && path.is_absolute()) {
-//		return path;
-		return path.string();
+		return path;
 	}
 
 	if (!enableDataPath) {
-//		return path;
-		return path.string();
+		return path;
 	}
 
 	bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
@@ -2023,13 +2019,11 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 			if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
 				return ofFilePath::addTrailingSlash(outpath);
 			}else{
-				return outpath.string();
-				// return outpath;
+				return outpath;
 			}
 		}
 		catch (...) {
-			return inputPath.string();
-			// return inputPath;
+			return inputPath;
 		}
 	}
 
@@ -2065,17 +2059,19 @@ std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 			if(of::filesystem::is_directory(outpath) && hasTrailingSlash){
 				return ofFilePath::addTrailingSlash(outpath);
 			}else{
-//				return outpath;
-				return outpath.string();
+				return outpath;
 			}
 		}
 		catch (std::exception &) {
-		   return of::filesystem::absolute(outputPath).string();
-			// return of::filesystem::absolute(outputPath);
+			return of::filesystem::absolute(outputPath);
 		}
 	}else{
 		// or output the relative path
-//		return outputPath;
-		return outputPath.string();
+		return outputPath;
 	}
+}
+
+//--------------------------------------------------
+std::string ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
+	return ofToDataPathFS(path, makeAbsolute).string();
 }

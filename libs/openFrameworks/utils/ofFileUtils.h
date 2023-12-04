@@ -1231,8 +1231,9 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
-//	MARK: - near future
-//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute=false);
+
+of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute=false);
+
 std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);
 
 /// \brief Reset the working directory to the platform default.
