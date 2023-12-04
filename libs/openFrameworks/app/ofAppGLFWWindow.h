@@ -3,7 +3,6 @@
 #include "ofAppBaseWindow.h"
 // MARK: Optimize to Pointer
 #include "ofRectangle.h"
-#include "ofAppBaseWindow.h"
 #include "ofConstants.h"
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
