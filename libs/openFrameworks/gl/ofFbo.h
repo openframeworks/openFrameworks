@@ -1,6 +1,6 @@
 #pragma once
 
-// depthBufferTex only
+// MARK: optimization pointer - used in depthBufferTex only
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
 

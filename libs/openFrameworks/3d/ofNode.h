@@ -2,9 +2,10 @@
 #pragma once
 
 #include "ofParameter.h"
-#include <glm/gtc/quaternion.hpp>
+// FIXME: deprecated and ctor
 #include "ofConstants.h"
 #include "glm/mat4x4.hpp"
+#include <glm/gtc/quaternion.hpp>
 #include <array>
 
 class ofBaseRenderer;

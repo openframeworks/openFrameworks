@@ -8,7 +8,6 @@
 #pragma once
 
 #include "ofGLUtils.h"
-#include "ofConstants.h"
 
 class ofCubeMapShaders {
 public:
