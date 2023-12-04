@@ -6,6 +6,7 @@
 #define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
 #include <deque>
+#include <vector>
 
 /// \file
 /// ofPolyLine allows you to combine multiple points into a single vector data
