@@ -118,8 +118,6 @@ class ofApp: public ofxUnitTestsApp{
 			ofxTest(ofDirectory("d1").canExecute(),"ofDirectory::canExecute");
 		}
 
-//		std::exit(0);
-
 		ofDirectory("noreaddir").create();
 		ofDirectory("noreaddir").setWriteable(false);
 		ofxTest(ofDirectory("noreaddir").canRead(),"ofDirectory::canRead readonly");
@@ -138,9 +136,6 @@ class ofApp: public ofxUnitTestsApp{
 		ofxTest(ofDirectory("d5/d3").isDirectory(),"ofDirectory::moveTo recursive dir exists");
 		ofxTest(ofFile("d5/f1").isFile(),"ofDirectory::moveTo f1 exists");
 		ofxTest(ofFile("d5/d3/f2").isFile(),"ofDirectory::moveTo f2 exists");
-
-
-		std::exit(0);
 
 		ofxTest(ofDirectory("d5").renameTo("d4"),"ofDirectory::renameTo");
 		ofxTest(ofDirectory("d4").isDirectory(),"ofDirectory::renameTo dir exists");
@@ -209,15 +204,12 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "tests #4299";
         ofxTestEq(of::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
 		if(ofGetTargetPlatform()==OF_TARGET_OSX){
-			ofxTestEq(ofToDataPath("",false),"../../../data","ofToDataPath relative");
+			ofxTestEq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
 		}else if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
-			ofxTestEq(ofToDataPath("",false),"data","ofToDataPath relative");
+			ofxTestEq(ofToDataPath("",false),"data\\","ofToDataPath relative");
 		}else{
-			ofxTestEq(ofToDataPath("",false),"data","ofToDataPath relative");
+			ofxTestEq(ofToDataPath("",false),"data/","ofToDataPath relative");
 		}
-
-		std::exit(0);
-
 
 
         //========================================================================

@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: constants deprecated only
+// FIXME: Deprecated and FS
 #include "ofConstants.h"
 #include <fstream>
 
@@ -313,6 +313,8 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path + slash
+	//	MARK: - near future
+	//	static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
 	static std::string addTrailingSlash(const of::filesystem::path & path);
 
 	/// Remove a path's trailing slash (if found),
@@ -1229,6 +1231,8 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
+//	MARK: - near future
+//of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute=false);
 std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);
 
 /// \brief Reset the working directory to the platform default.
