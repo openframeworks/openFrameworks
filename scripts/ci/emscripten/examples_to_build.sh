@@ -1,5 +1,4 @@
 #!/bin/bash
-OF_ROOT="$( cd "$(dirname "$0")/../../.." ; pwd -P )"
 
 # List of folder paths to iterate through make sure there is no trailing slash
 folders=(
@@ -11,7 +10,7 @@ folders=(
     # Add more paths as needed
 )
 
-cur_root=$OF_ROOT;
+cur_root=$(pwd);
 cd cur_root;
 mkdir out
 out_folder="$OF_ROOT/out"

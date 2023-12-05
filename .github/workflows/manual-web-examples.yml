@@ -1,4 +1,4 @@
-name: build-emscripten
+name: build-web-examples
 
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 #on: 
