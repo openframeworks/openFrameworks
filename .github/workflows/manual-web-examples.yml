@@ -21,7 +21,7 @@ on:
       - '**/*.md'
       - 'examples/**'
 jobs:
-  build-emscripten:
+  build-web-examples:
     runs-on: ubuntu-20.04
     strategy:
         matrix:
