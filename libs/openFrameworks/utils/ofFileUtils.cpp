@@ -1441,7 +1441,7 @@ string ofDirectory::getName(std::size_t position) const{
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getPath(std::size_t position) const{
-	return originalDirectory + getName(position);
+	return originalDirectory.string() + getName(position);
 }
 
 //------------------------------------------------------------------------------------------------------------
