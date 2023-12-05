@@ -163,6 +163,10 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
+if [[ $BLEEDING_EDGE = 1 ]] ; then
+VER=bleeding
+fi
+
 if [ "$PLATFORM" == "msys2" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
