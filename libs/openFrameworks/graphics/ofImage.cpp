@@ -196,7 +196,7 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 }
 
 template<typename PixelType>
-static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _fileName, const ofImageLoadSettings& settings){
+static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _fileName, const ofImageLoadSettings & settings){
 	ofInitFreeImage();
 
 	auto uriStr = _fileName.string();
@@ -225,22 +225,22 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path& _f
 		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
-	auto fileName = ofToDataPathFS(_fileName, true).c_str();
+	auto fileName = ofToDataPathFS(_fileName, true);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-	fif = FreeImage_GetFileType(fileName, 0);
+	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(_fileName.stem().c_str());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
 			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName, option | settings.freeImageFlags);
+			bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 		} else {
-			bmp = FreeImage_Load(fif, fileName, 0 | settings.freeImageFlags);
+			bmp = FreeImage_Load(fif, fileName.c_str(), 0 | settings.freeImageFlags);
 		}
 
 		if (bmp != nullptr){
@@ -313,37 +313,37 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofPixels & pix, const of::filesystem::path & path, const ofImageLoadSettings & settings) {
 	return loadImage(pix, path, settings);
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings & settings) {
 	return loadImage(pix, buffer, settings);
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofShortPixels & pix, const of::filesystem::path & path, const ofImageLoadSettings & settings) {
 	return loadImage(pix, path, settings);
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings & settings) {
 	return loadImage(pix, buffer, settings);
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, const of::filesystem::path& path, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofFloatPixels & pix, const of::filesystem::path & path, const ofImageLoadSettings & settings) {
 	return loadImage(pix, path, settings);
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings & settings) {
 	return loadImage(pix, buffer, settings);
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, const ofImageLoadSettings &settings ) {
+bool ofLoadImage(ofTexture & tex, const of::filesystem::path & path, const ofImageLoadSettings & settings ) {
 	return ofLoadImage( tex, path, false, settings );
 }
 
@@ -409,7 +409,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	fif = FreeImage_GetFileType(fileName, 0);
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(_fileName.stem().c_str());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
@@ -746,14 +746,14 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::load(const of::filesystem::path& fileName, const ofImageLoadSettings &settings){
+bool ofImage_<PixelType>::load(const of::filesystem::path & fileName, const ofImageLoadSettings & settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
 	#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName, settings);
 	if (!bLoadedOk) {
-		ofLogError("ofImage") << "loadImage(): couldn't load image from " << fileName << "";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from " << fileName;
 		clear();
 		return false;
 	}
