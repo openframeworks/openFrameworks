@@ -10,6 +10,10 @@ folders=(
     # Add more paths as needed
 )
 
+if [[ "$CI" = true ]]; then
+	echo "RUNNING IN CI!!!!"
+fi
+
 cur_root=$(pwd);
 cd $cur_root;
 mkdir -p out
@@ -44,7 +48,7 @@ cd $cur_root;
 DO_UPLOAD="false"
 
 #if [[ "$GITHUB_ACTIONS" = true && "${GITHUB_REF##*/}" == "master" && -z "${GITHUB_HEAD_REF}" ]]; then
-if [[ "$GITHUB_ACTIONS" = true ]]; then
+if [[ "$CI" = true ]]; then
 	echo "upload 1/2 - make key file"
     # Temporary file to store the private key
 	key_file=$(mktemp)
