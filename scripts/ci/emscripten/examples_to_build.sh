@@ -11,6 +11,7 @@ folders=(
 )
 
 echo "RUNNING IN CI ${GH_BRANCH} ${GH_ACTIONS}"
+echo "TRYING USER/SERVER ${GA_EXAMPLES_USER}@${GA_EXAMPLES_SERVER}" 
 
 cur_root=$(pwd);
 cd $cur_root;
