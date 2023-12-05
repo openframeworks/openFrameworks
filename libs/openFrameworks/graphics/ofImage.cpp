@@ -465,7 +465,6 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
 				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 			}
-			// FIXME: ow
 #ifdef OF_OS_WINDOWS
 			retValue = FreeImage_SaveU(fif, bmp, fileName.wstring().c_str(), quality);
 #else
@@ -486,8 +485,6 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 					// this will create a 256-color palette from the image
 					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
 				}
-				// FIXME: ow
-				//				retValue = FreeImage_Save(fif, convertedBmp, fileName);
 #ifdef OF_OS_WINDOWS
 				retValue = FreeImage_SaveU(fif, convertedBmp, fileName.wstring().c_str());
 #else
@@ -497,8 +494,6 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 					FreeImage_Unload(convertedBmp);
 				}
 			} else {
-				// FIXME: ow
-//				retValue = FreeImage_Save(fif, bmp, fileName);
 #ifdef OF_OS_WINDOWS
 				retValue = FreeImage_SaveU(fif, bmp, fileName.wstring().c_str());
 #else
