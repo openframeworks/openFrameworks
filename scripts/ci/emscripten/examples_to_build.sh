@@ -3,9 +3,9 @@
 # List of folder paths to iterate through make sure there is no trailing slash
 folders=(
     "examples/3d/pointCloudExample"
-    "examples/3d/3DPrimitivesExample"
-    "examples/3d/ofxAssimpBoneControlExample"
-    "examples/3d/ofxAssimpAdvancedExample"
+#    "examples/3d/3DPrimitivesExample"
+#    "examples/3d/ofxAssimpBoneControlExample"
+#    "examples/3d/ofxAssimpAdvancedExample"
     # Add more paths as needed
 )
 
@@ -56,12 +56,8 @@ if [[ "$GH_ACTIONS" = "true" ]]; then
 fi
 
 if [ "$DO_UPLOAD" = "true" ]; then
-	echo "upload 2/2 - time for rsync"
-	
-	SERVER_PUBLIC_KEY=$(ssh-keyscan -p 22 openFrameworks.cc)
-	echo "$SERVER_PUBLIC_KEY" >> "$HOME/.ssh/known_hosts"
-	
+	echo "upload 2/2 - time for rsync"	
 	remote_path="/home/ofadmin/openFrameworks.cc/examples/"
-	rsync --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rw,Fg=rw,Fo=r -avz -e "ssh -i $key_file" "$out_folder/" "$GA_EXAMPLES_USER@$GA_EXAMPLES_SERVER:$remote_path"
+	rsync --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rw,Fg=rw,Fo=r -avz -e "ssh -o 'StrictHostKeyChecking no' -i $key_file" "$out_folder/" "$GA_EXAMPLES_USER@$GA_EXAMPLES_SERVER:$remote_path"
     rm -f "$key_file"
 fi
