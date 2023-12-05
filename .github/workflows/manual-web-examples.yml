@@ -36,7 +36,7 @@ jobs:
       - name: Download libs
         run: ./scripts/$TARGET/download_libs.sh
       - name: Install dependencies
-        run: docker exec -i emscripten apt install -y rsync
+        run: ./scripts/ci/$TARGET/install_web_examples.sh
       - name: Build
         run: |
           docker exec -i \
