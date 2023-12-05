@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Docker Step
         run:  |
-          docker run -i \
+          docker run -di \
           --env GA_EXAMPLES_USER \
           --env GA_EXAMPLES_SERVER \
           --env GA_EXAMPLES_KEY \
@@ -49,8 +49,8 @@ jobs:
           GH_BRANCH: ${{ github.ref_name }}
           GH_ACTIONS: "true"
       - name: Download libs
-        run: docker exec -i emscripten sh -c "./scripts/$TARGET/download_libs.sh"
+        run: ./scripts/$TARGET/download_libs.sh
       - name: Install dependencies
-        run: docker exec -i emscripten sh -c "./scripts/ci/$TARGET/install_web_examples.sh"
+        run: ./scripts/ci/$TARGET/install_web_examples.sh
       - name: Build
         run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
