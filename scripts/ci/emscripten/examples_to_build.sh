@@ -30,7 +30,7 @@ for folder in "${folders[@]}"; do
 			echo "Couldn't build emscripten example: $folder"
 		else
 			folder_name=$(basename "$folder")
-			cp -r "bin/em/$folder_name" "$cur_root/out/"
+			cp -r "bin/em/$folder_name" "$out_folder/"
 		fi
 		
 		cd $cur_root
