@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/install_web_examples.sh
       - name: Build
-        run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
+        run: docker exec -e GA_EXAMPLES_USER=${{ secrets.SSH_USER }} -e GA_EXAMPLES_SERVER=${{ secrets.SSH_SERVER }} -e GA_EXAMPLES_KEY=${{ secrets.SSH_KEY }} -e GH_HEAD_REF=${{ github.head_ref }} -e GH_BRANCH=${{ github.ref_name }} -e GH_ACTIONS=true -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
         env:
           GA_EXAMPLES_USER: ${{ secrets.SSH_USER }}
           GA_EXAMPLES_SERVER: ${{ secrets.SSH_SERVER }}
