@@ -57,7 +57,11 @@ fi
 
 if [ "$DO_UPLOAD" = "true" ]; then
 	echo "upload 2/2 - time for rsync"
+	
+	SERVER_PUBLIC_KEY=$(ssh-keyscan -p 22 openFrameworks.cc)
+	echo "$SERVER_PUBLIC_KEY" >> "$HOME/.ssh/known_hosts"
+	
 	remote_path="/home/ofadmin/openFrameworks.cc/examples/"
-	rsync -avz -e "ssh -i $key_file" "$out_folder/" "$GA_EXAMPLES_USER@$GA_EXAMPLES_SERVER:$remote_path"
+	rsync --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rw,Fg=rw,Fo=r -avz -e "ssh -i $key_file" "$out_folder/" "$GA_EXAMPLES_USER@$GA_EXAMPLES_SERVER:$remote_path"
     rm -f "$key_file"
 fi
