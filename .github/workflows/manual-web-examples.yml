@@ -1,13 +1,24 @@
 name: build-emscripten
 
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
-on: 
-  workflow_dispatch:
-    inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'nightly'
+#on: 
+#  workflow_dispatch:
+#    inputs:
+#          release:
+#            description: 'release'     
+#            required: true
+#            default: 'nightly'
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
 jobs:
   build-emscripten:
     runs-on: ubuntu-20.04
@@ -28,4 +39,6 @@ jobs:
     - name: Build
       run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh";
       env:
-          GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+          GA_EXAMPLES_USER: ${{ secrets.SSH_USER }}
+          GA_EXAMPLES_SERVER: ${{ secrets.SSH_SERVER }}
+          GA_EXAMPLES_KEY: ${{ secrets.SSH_KEY }}

@@ -1,6 +1,5 @@
 #!/bin/bash
-
-#!/bin/bash
+OF_ROOT="$( cd "$(dirname "$0")/../../.." ; pwd -P )"
 
 # List of folder paths to iterate through make sure there is no trailing slash
 folders=(
@@ -12,8 +11,10 @@ folders=(
     # Add more paths as needed
 )
 
+cur_root=$OF_ROOT;
+cd cur_root;
 mkdir out
-cur_root=$(pwd);
+out_folder="$OF_ROOT/out"
 
 # Iterate through the folder paths
 for folder in "${folders[@]}"; do
@@ -38,3 +39,22 @@ for folder in "${folders[@]}"; do
     fi
 done
 
+cd cur_root;
+DO_UPLOAD="false"
+
+#if [[ "$GITHUB_ACTIONS" = true && "${GITHUB_REF##*/}" == "master" && -z "${GITHUB_HEAD_REF}" ]]; then
+if [[ "$GITHUB_ACTIONS" = true && -z "${GITHUB_HEAD_REF}" ]]; then
+    # Temporary file to store the private key
+	key_file=$(mktemp)
+	echo -e "$GA_EXAMPLES_KEY" > "$key_file"
+	chmod 600 "$key_file"
+    DO_UPLOAD="true";
+fi
+
+if [ "$DO_UPLOAD" = "true" ]; then
+    if [ "$TARGET" = "emscripten" ]; then
+		remote_path="/home/ofadmin/openFrameworks.cc/examples/"
+		rsync -avz -e "ssh -i $key_file" "$out_folder/" "$GA_EXAMPLES_USER@$GA_EXAMPLES_SERVER:$remote_path"
+    fi
+    rm -f "$key_file"
+fi
