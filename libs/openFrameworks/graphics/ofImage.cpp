@@ -240,7 +240,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 #ifdef OF_OS_WINDOWS
 		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().wstring().c_str());
 #else
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().string().c_str());
 #endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
