@@ -467,9 +467,9 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 			}
 			// FIXME: ow
 #ifdef OF_OS_WINDOWS
-			retValue = FreeImage_SaveU(fif, bmp, fileName.wstring(), quality);
+			retValue = FreeImage_SaveU(fif, bmp, fileName.wstring().c_str(), quality);
 #else
-			retValue = FreeImage_Save(fif, bmp, fileName.string(), quality);
+			retValue = FreeImage_Save(fif, bmp, fileName.string().c_str(), quality);
 #endif
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
@@ -489,9 +489,9 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				// FIXME: ow
 				//				retValue = FreeImage_Save(fif, convertedBmp, fileName);
 #ifdef OF_OS_WINDOWS
-				retValue = FreeImage_SaveU(fif, convertedBmp, fileName.wstring());
+				retValue = FreeImage_SaveU(fif, convertedBmp, fileName.wstring().c_str());
 #else
-				retValue = FreeImage_Save(fif, convertedBmp, fileName.string());
+				retValue = FreeImage_Save(fif, convertedBmp, fileName.string().c_str());
 #endif
 				if (convertedBmp != nullptr){
 					FreeImage_Unload(convertedBmp);
@@ -500,9 +500,9 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				// FIXME: ow
 //				retValue = FreeImage_Save(fif, bmp, fileName);
 #ifdef OF_OS_WINDOWS
-				retValue = FreeImage_SaveU(fif, bmp, fileName.wstring());
+				retValue = FreeImage_SaveU(fif, bmp, fileName.wstring().c_str());
 #else
-				retValue = FreeImage_Save(fif, bmp, fileName.string());
+				retValue = FreeImage_Save(fif, bmp, fileName.string().c_str());
 #endif
 			}
 		}
