@@ -466,7 +466,11 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 			}
 			// FIXME: ow
-			retValue = FreeImage_Save(fif, bmp, fileName, quality);
+#ifdef OF_OS_WINDOWS
+			retValue = FreeImage_SaveU(fif, bmp, fileName.wstring(), quality);
+#else
+			retValue = FreeImage_Save(fif, bmp, fileName.string(), quality);
+#endif
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
 				ofLogWarning("ofImage") << "saveImage(): ofImageCompressionType only applies to JPEGs,"
@@ -483,13 +487,23 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
 				}
 				// FIXME: ow
-				retValue = FreeImage_Save(fif, convertedBmp, fileName);
+				//				retValue = FreeImage_Save(fif, convertedBmp, fileName);
+#ifdef OF_OS_WINDOWS
+				retValue = FreeImage_SaveU(fif, convertedBmp, fileName.wstring());
+#else
+				retValue = FreeImage_Save(fif, convertedBmp, fileName.string());
+#endif
 				if (convertedBmp != nullptr){
 					FreeImage_Unload(convertedBmp);
 				}
 			} else {
 				// FIXME: ow
-				retValue = FreeImage_Save(fif, bmp, fileName);
+//				retValue = FreeImage_Save(fif, bmp, fileName);
+#ifdef OF_OS_WINDOWS
+				retValue = FreeImage_SaveU(fif, bmp, fileName.wstring());
+#else
+				retValue = FreeImage_Save(fif, bmp, fileName.string());
+#endif
 			}
 		}
 	}
