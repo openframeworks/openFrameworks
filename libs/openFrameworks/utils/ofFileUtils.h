@@ -338,6 +338,7 @@ public:
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
 	static std::string getPathForDirectory(const of::filesystem::path & path);
+	static of::filesystem::path getPathForDirectoryFS(const of::filesystem::path & path);
 
 	/// Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
@@ -391,8 +392,6 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-	//	MARK: - near future
-	//	static of::filesystem::path getEnclosingDirectory(const of::filesystem::path& filePath, bool bRelativeToData = true);
 	static std::string getEnclosingDirectory(const of::filesystem::path & filePath, bool bRelativeToData = true);
 
 	/// Create the enclosing parent directory of a path, ie.
@@ -425,8 +424,6 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-	//	MARK: - near future
-	//	static of::filesystem::path join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 	static std::string join(const of::filesystem::path & path1, const of::filesystem::path & path2);
 
 	/// Get the full path to the application's executable file.
@@ -464,8 +461,6 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-	//	MARK: - near future
-	//    static of::filesystem::path makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
 	static std::string makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
 };
 
@@ -1210,7 +1205,7 @@ public:
 	std::vector<ofFile>::const_reverse_iterator rend() const;
 
 	of::filesystem::path myDir;
-	std::string originalDirectory;
+	of::filesystem::path originalDirectory;
 	std::vector<std::string> extensions;
 	std::vector<ofFile> files;
 	bool showHidden;

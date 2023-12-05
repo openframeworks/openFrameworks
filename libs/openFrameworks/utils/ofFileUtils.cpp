@@ -556,7 +556,7 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::open(const of::filesystem::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = ofToDataPath(_path);
+	myFile = ofToDataPathFS(_path);
 	return openStream(_mode, binary);
 }
 
@@ -909,7 +909,7 @@ void ofFile::setExecutable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, bool overwrite) const{
+bool ofFile::copyTo(const of::filesystem::path & _path, bool bRelativeToData, bool overwrite) const{
 	auto path = _path;
 
 	if(path.empty()){
@@ -929,7 +929,7 @@ bool ofFile::copyTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 
 	//bRelativeToData is handled here for the destination path - so we pass false to static functions below
 	if(bRelativeToData){
-		path = ofToDataPath(path);
+		path = ofToDataPathFS(path);
 	}
 
 	if(ofFile::doesFileExist(path, false)){
@@ -979,7 +979,7 @@ bool ofFile::moveTo(const of::filesystem::path& _path, bool bRelativeToData, boo
 	}
 
 	if(bRelativeToData){
-		path = ofToDataPath(path);
+		path = ofToDataPathFS(path);
 	}
 	if(ofFile::doesFileExist(path, false)){
 
@@ -1164,16 +1164,16 @@ ofDirectory::ofDirectory(const of::filesystem::path & path){
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::open(const of::filesystem::path & path){
-	originalDirectory = ofFilePath::getPathForDirectory(path.string());
+	originalDirectory = ofFilePath::getPathForDirectoryFS(path);
 	files.clear();
-	myDir = of::filesystem::path(ofToDataPath(originalDirectory));
+	myDir = ofToDataPathFS(originalDirectory);
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::openFromCWD(const of::filesystem::path & path){
-	originalDirectory = ofFilePath::getPathForDirectory(path.string());
+	originalDirectory = ofFilePath::getPathForDirectoryFS(path);
 	files.clear();
-	myDir = of::filesystem::path(originalDirectory);
+	myDir = originalDirectory;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1184,7 +1184,7 @@ void ofDirectory::close(){
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::create(bool recursive){
 
-	if(!myDir.string().empty()){
+	if(!myDir.empty()){
 		try{
 			if(recursive){
 				of::filesystem::create_directories(myDir);
@@ -1283,7 +1283,7 @@ bool ofDirectory::isDirectory() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData, bool overwrite){
+bool ofDirectory::copyTo(const of::filesystem::path & _path, bool bRelativeToData, bool overwrite){
 	auto path = _path;
 
 	if(myDir.string().empty()){
@@ -1300,7 +1300,7 @@ bool ofDirectory::copyTo(const of::filesystem::path& _path, bool bRelativeToData
 	}
 
 	if(bRelativeToData){
-		path = ofToDataPath(path, bRelativeToData);
+		path = ofToDataPathFS(path, bRelativeToData);
 	}
 
 	if(ofDirectory::doesDirectoryExist(path, false)){
@@ -1604,7 +1604,7 @@ bool ofDirectory::createDirectory(const of::filesystem::path& _dirPath, bool bRe
 	auto dirPath = _dirPath;
 
 	if(bRelativeToData){
-		dirPath = ofToDataPath(dirPath);
+		dirPath = ofToDataPathFS(dirPath);
 	}
 
 	// on OSX,of::filesystem::create_directories seems to return false *if* the path has folders that already exist
@@ -1638,7 +1638,7 @@ bool ofDirectory::doesDirectoryExist(const of::filesystem::path& _dirPath, bool 
 	auto dirPath = _dirPath;
 	try {
 		if (bRelativeToData) {
-			dirPath = ofToDataPath(dirPath);
+			dirPath = ofToDataPathFS(dirPath);
 		}
 		return of::filesystem::exists(dirPath) && of::filesystem::is_directory(dirPath);
 	}
@@ -1652,7 +1652,7 @@ bool ofDirectory::doesDirectoryExist(const of::filesystem::path& _dirPath, bool 
 bool ofDirectory::isDirectoryEmpty(const of::filesystem::path& _dirPath, bool bRelativeToData){
 	auto dirPath = _dirPath;
 	if(bRelativeToData){
-		dirPath = ofToDataPath(dirPath);
+		dirPath = ofToDataPathFS(dirPath);
 	}
 
 	if(!dirPath.empty() && of::filesystem::exists(dirPath) && of::filesystem::is_directory(dirPath)){
@@ -1765,7 +1765,7 @@ std::string ofFilePath::removeExt(const of::filesystem::path & _filename){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getPathForDirectory(const of::filesystem::path & path){
+string ofFilePath::getPathForDirectoryFS(const of::filesystem::path & path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
@@ -1774,17 +1774,23 @@ string ofFilePath::getPathForDirectory(const of::filesystem::path & path){
 	// FIXME: this seems over complicated and not useful anymore, using filesystem
 
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
-	if(path.string().empty()) return "";
-	return (path / "").string();
+	if(path.empty()) return {};
+	return (path / "");
 #else
 	auto sep = of::filesystem::path("/").make_preferred();
-	if(!path.empty() && ofToString(path.string().back())!=sep.string()){
-		return (path / sep).string();
+	if(!path.empty() && ofToString(path.back()) != sep.string()){
+		return path / sep;
 	}else{
-		return path.string();
+		return path;
 	}
 #endif
 }
+
+//------------------------------------------------------------------------------------------------------------
+string ofFilePath::getPathForDirectory(const of::filesystem::path & path){
+	return ofFilePath::getPathForDirectoryFS(path).string();
+}
+
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - re-avail
@@ -1803,7 +1809,7 @@ string ofFilePath::getFileName(const of::filesystem::path& _filePath, bool bRela
 	auto filePath = _filePath;
 
 	if(bRelativeToData){
-		filePath = ofToDataPath(filePath);
+		filePath = ofToDataPathFS(filePath);
 	}
 
 	// FIXME: this is probably over complicated
