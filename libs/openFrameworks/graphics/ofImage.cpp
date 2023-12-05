@@ -249,9 +249,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 			option = getJpegOptionFromImageLoadSetting(settings);
 		}
 #ifdef OF_OS_WINDOWS
-		bmp = FreeImage_LoadU(fif, fileName.wstring(), option | settings.freeImageFlags);
+		bmp = FreeImage_LoadU(fif, fileName.wstring().c_str(), option | settings.freeImageFlags);
 #else
-		bmp = FreeImage_Load(fif, fileName.string(), option | settings.freeImageFlags);
+		bmp = FreeImage_Load(fif, fileName.string().c_str(), option | settings.freeImageFlags);
 #endif
 
 		if (bmp != nullptr){
