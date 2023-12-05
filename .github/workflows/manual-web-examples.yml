@@ -38,10 +38,14 @@ jobs:
     - name: Install dependencies
       run: ./scripts/ci/$TARGET/install.sh
     - name: Build
-      run: docker exec -i emscripten sh -c "export GA_EXAMPLES_USER='${{ secrets.SSH_USER }}' \
-        && export GA_EXAMPLES_SERVER='${{ secrets.SSH_SERVER }}' \
-        && export GA_EXAMPLES_KEY='${{ secrets.SSH_KEY }}' \
+      run: docker exec -i emscripten sh -c "export GA_EXAMPLES_USER='${GA_EXAMPLES_USER}' \
+        && export GA_EXAMPLES_SERVER='${GA_EXAMPLES_SERVER}' \
+        && export GA_EXAMPLES_KEY='${GA_EXAMPLES_KEY}' \
         && export GH_HEAD_REF='${{ github.head_ref }}' \
         && export GH_BRANCH='${{ github.ref_name }}' \
         && export GH_ACTIONS='true' \
         && scripts/ci/$TARGET/examples_to_build.sh"
+      env:
+          GA_EXAMPLES_USER: ${{ secrets.SSH_USER }}
+          GA_EXAMPLES_SERVER: ${{ secrets.SSH_SERVER }}
+          GA_EXAMPLES_KEY: ${{ secrets.SSH_KEY }}
