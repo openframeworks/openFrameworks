@@ -1,16 +1,24 @@
 #!/bin/bash
 
-# List of folder paths to iterate through make sure there is no trailing slash
+# List of examples to build - add emscripten compatible examples to this list
+# NOTE: make sure there is no trailing slash!!!
 folders=(
+#3d
     "examples/3d/pointCloudExample"
     "examples/3d/3DPrimitivesExample"
-#    "examples/3d/ofxAssimpBoneControlExample"
-#    "examples/3d/ofxAssimpAdvancedExample"
+    "examples/3d/ofxAssimpBoneControlExample"
+#   "examples/3d/ofxAssimpAdvancedExample" #broken currently
+    "examples/3d/ofNodeExample"
+    "examples/3d/modelNoiseExample"
+#gl
+    "examples/gl/shadowsExample"
+    "examples/gl/materialPBR"
+    "examples/gl/materialPBRAdvanced"
+    "examples/gl/vboMeshDrawInstancedExample"
+#math
+    "examples/math/noise1dOctaveExample"
     # Add more paths as needed
 )
-
-#echo "RUNNING IN CI ${GH_BRANCH} ${GH_ACTIONS}"
-#echo "TRYING USER/SERVER ${GA_EXAMPLES_USER}@${GA_EXAMPLES_SERVER}" 
 
 cur_root=$(pwd);
 cd $cur_root;
@@ -45,8 +53,7 @@ done
 cd $cur_root;
 DO_UPLOAD="false"
 
-#if [[ "$GH_ACTIONS" = true && "${GH_BRANCH}" == "master" && -z "${GH_HEAD_REF}" ]]; then
-if [[ "$GH_ACTIONS" = "true" ]]; then
+if [[ "$GH_ACTIONS" = true && "${GH_BRANCH}" == "master" && -z "${GH_HEAD_REF}" ]]; then
 	echo "upload 1/2 - make key file"
     # Temporary file to store the private key
 	key_file=$(mktemp)
