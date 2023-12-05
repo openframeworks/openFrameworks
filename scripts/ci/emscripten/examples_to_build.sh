@@ -56,10 +56,8 @@ if [[ "$GH_ACTIONS" = "true" ]]; then
 fi
 
 if [ "$DO_UPLOAD" = "true" ]; then
-    if [ "$TARGET" = "emscripten" ]; then
-    	echo "upload 2/2 - time for rsync"
-		remote_path="/home/ofadmin/openFrameworks.cc/examples/"
-		rsync -avz -e "ssh -i $key_file" "$out_folder/" "$GA_EXAMPLES_USER@$GA_EXAMPLES_SERVER:$remote_path"
-    fi
+	echo "upload 2/2 - time for rsync"
+	remote_path="/home/ofadmin/openFrameworks.cc/examples/"
+	rsync -avz -e "ssh -i $key_file" "$out_folder/" "$GA_EXAMPLES_USER@$GA_EXAMPLES_SERVER:$remote_path"
     rm -f "$key_file"
 fi
