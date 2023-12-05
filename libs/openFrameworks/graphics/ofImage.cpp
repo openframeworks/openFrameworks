@@ -238,9 +238,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().wstring().c_str());
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().wstring());
 #else
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension().string().c_str());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().string());
 #endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
@@ -249,9 +249,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 			option = getJpegOptionFromImageLoadSetting(settings);
 		}
 #ifdef OF_OS_WINDOWS
-		bmp = FreeImage_LoadU(fif, fileName, option | settings.freeImageFlags);
+		bmp = FreeImage_LoadU(fif, fileName.wstring(), option | settings.freeImageFlags);
 #else
-		bmp = FreeImage_Load(fif, fileName, option | settings.freeImageFlags);
+		bmp = FreeImage_Load(fif, fileName.string(), option | settings.freeImageFlags);
 #endif
 
 		if (bmp != nullptr){
