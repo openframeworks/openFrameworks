@@ -647,7 +647,7 @@ bool ofFile::exists() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-std::string ofFile::pathFS() const {
+of::filesystem::path ofFile::pathFS() const {
 	return myFile;
 }
 
