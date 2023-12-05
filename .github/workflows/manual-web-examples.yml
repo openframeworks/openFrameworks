@@ -53,4 +53,4 @@ jobs:
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/install_web_examples.sh
       - name: Build
-        run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
+        run: docker exec --env GA_EXAMPLES_USER=${{ secrets.SSH_USER }} -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
