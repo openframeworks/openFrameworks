@@ -1765,7 +1765,7 @@ std::string ofFilePath::removeExt(const of::filesystem::path & _filename){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getPathForDirectoryFS(const of::filesystem::path & path){
+of::filesystem::path ofFilePath::getPathForDirectoryFS(const of::filesystem::path & path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
