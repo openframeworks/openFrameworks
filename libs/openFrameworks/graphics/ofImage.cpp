@@ -231,16 +231,16 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
-	fif = FreeImage_GetFileTypeU(fileName, 0);
+	fif = FreeImage_GetFileTypeU(fileName.wstring().c_str(), 0);
 #else
-	fif = FreeImage_GetFileType(fileName, 0);
+	fif = FreeImage_GetFileType(fileName.string().c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().wstring().c_str());
 #else
-		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
 #endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
@@ -424,9 +424,9 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
-#else
 		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension());
+#else
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
 #endif
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
