@@ -43,6 +43,6 @@ jobs:
           GA_EXAMPLES_USER: ${{ secrets.SSH_USER }}
           GA_EXAMPLES_SERVER: ${{ secrets.SSH_SERVER }}
           GA_EXAMPLES_KEY: ${{ secrets.SSH_KEY }}
-          GH_HEAD_REF: ${GITHUB_HEAD_REF}
-          GH_BRANCH: ${${GITHUB_REF##*/}
-          GH_ACTIONS: "true"
+		  GH_HEAD_REF: ${{ github.head_ref }}
+		  GH_BRANCH: ${{ github.ref_name }}
+		  GH_ACTIONS: "true"
