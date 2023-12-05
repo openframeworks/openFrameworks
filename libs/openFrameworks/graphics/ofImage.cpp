@@ -414,19 +414,19 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPathFS(_fileName).c_str();
+	auto fileName = ofToDataPathFS(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
-	fif = FreeImage_GetFileTypeU(fileName, 0);
+	fif = FreeImage_GetFileTypeU(fileName.wstring().c_str(), 0);
 #else
-	fif = FreeImage_GetFileType(fileName, 0);
+	fif = FreeImage_GetFileType(fileName.string().c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension());
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().wstring().c_str());
 #else
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().string().c_str());
 #endif
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
@@ -435,7 +435,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
             pix3.swapRgb();
         }
 		pix3.setNumChannels(3);
-		return saveImage(pix3,_fileName,qualityLevel);
+		return saveImage(pix3, _fileName, qualityLevel);
 	}
 
 	FIBITMAP * bmp = nullptr;
@@ -465,6 +465,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				case OF_IMAGE_QUALITY_HIGH: quality = JPEG_QUALITYGOOD; break;
 				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 			}
+			// FIXME: ow
 			retValue = FreeImage_Save(fif, bmp, fileName, quality);
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
@@ -481,11 +482,13 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 					// this will create a 256-color palette from the image
 					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
 				}
+				// FIXME: ow
 				retValue = FreeImage_Save(fif, convertedBmp, fileName);
 				if (convertedBmp != nullptr){
 					FreeImage_Unload(convertedBmp);
 				}
 			} else {
+				// FIXME: ow
 				retValue = FreeImage_Save(fif, bmp, fileName);
 			}
 		}
