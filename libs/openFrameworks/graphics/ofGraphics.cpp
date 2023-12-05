@@ -602,6 +602,23 @@ void ofSetFloatColor(const ofFloatColor& acolor){
 }
 
 //----------------------------------------------------------
+void ofSetColor(const ofColor & acolor) {
+	float limit = ofColor::limit();
+	ofSetFloatColor((float)acolor.r / limit, (float)acolor.g / limit, (float)acolor.b / limit, (float)acolor.a / limit);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofFloatColor & acolor) {
+	ofSetFloatColor(acolor);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofShortColor & acolor) {
+	float limit = ofShortColor::limit();
+	ofSetFloatColor((float)acolor.r / limit, (float)acolor.g / limit, (float)acolor.b / limit, (float)acolor.a / limit);
+}
+
+//----------------------------------------------------------
 void ofSetHexColor(int hexColor){
 	int r = (hexColor >> 16) & 0xff;
 	int g = (hexColor >> 8) & 0xff;

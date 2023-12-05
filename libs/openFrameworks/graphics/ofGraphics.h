@@ -60,11 +60,11 @@ void ofSetFloatColor(float gray);
 void ofSetFloatColor(const ofFloatColor & acolor, float a);
 void ofSetFloatColor(const ofFloatColor & acolor);
 
-template <typename T>
-void ofSetColor(const ofColor_<T> & acolor) {
-	float limit = ofColor_<T>::limit();
-	ofSetFloatColor(acolor.r / limit, acolor.g / limit, acolor.b / limit, acolor.a / limit);
-}
+
+void ofSetColor(const ofColor & acolor);
+void ofSetColor(const ofFloatColor & acolor);
+void ofSetColor(const ofShortColor & acolor);
+
 
 /// Sets the draw color with r,g,b, passed in as a hex. Hex is a conventient
 /// way to write colors.
