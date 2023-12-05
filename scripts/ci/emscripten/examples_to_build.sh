@@ -11,7 +11,7 @@ folders=(
 )
 
 cur_root=$(pwd);
-cd cur_root;
+cd $cur_root;
 mkdir out
 out_folder="$OF_ROOT/out"
 
