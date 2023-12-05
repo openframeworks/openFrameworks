@@ -230,18 +230,29 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	FIBITMAP * bmp = nullptr;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-	fif = FreeImage_GetFileType(fileName.c_str(), 0);
+#ifdef OF_OS_WINDOWS
+	fif = FreeImage_GetFileTypeU(fileName, 0);
+#else
+	fif = FreeImage_GetFileType(fileName, 0);
+#endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
+#ifdef OF_OS_WINDOWS
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
+#else
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension());
+#endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
+		int option = 0;
 		if(fif == FIF_JPEG) {
-			int option = getJpegOptionFromImageLoadSetting(settings);
-			bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
-		} else {
-			bmp = FreeImage_Load(fif, fileName.c_str(), 0 | settings.freeImageFlags);
+			option = getJpegOptionFromImageLoadSetting(settings);
 		}
+#ifdef OF_OS_WINDOWS
+		bmp = FreeImage_LoadU(fif, fileName, option | settings.freeImageFlags);
+#else
+		bmp = FreeImage_Load(fif, fileName, option | settings.freeImageFlags);
+#endif
 
 		if (bmp != nullptr){
 			bLoaded = true;
@@ -284,12 +295,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 
 
 	//make the image!!
+	int option = 0;
 	if(fif == FIF_JPEG) {
-		int option = getJpegOptionFromImageLoadSetting(settings);
-		bmp = FreeImage_LoadFromMemory(fif, hmem, option | settings.freeImageFlags);
-	} else {
-		bmp = FreeImage_LoadFromMemory(fif, hmem, settings.freeImageFlags);
+		option = getJpegOptionFromImageLoadSetting(settings);
 	}
+	bmp = FreeImage_LoadFromMemory(fif, hmem, option | settings.freeImageFlags);
 
 	if( bmp != nullptr ){
 		bLoaded = true;
@@ -406,10 +416,18 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	ofFilePath::createEnclosingDirectory(_fileName);
 	auto fileName = ofToDataPathFS(_fileName).c_str();
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+#ifdef OF_OS_WINDOWS
+	fif = FreeImage_GetFileTypeU(fileName, 0);
+#else
 	fif = FreeImage_GetFileType(fileName, 0);
+#endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
+#ifdef OF_OS_WINDOWS
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
+#else
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension());
+#endif
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
 		ofPixels pix3 = _pix;
