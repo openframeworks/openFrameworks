@@ -32,15 +32,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run:  |
-          docker run -di \
-          --env GA_EXAMPLES_USER \
-          --env GA_EXAMPLES_SERVER \
-          --env GA_EXAMPLES_KEY \
-          --env GH_HEAD_REF \
-          --env GH_BRANCH \
-          --env GH_ACTIONS \
-          --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash
+        run:  docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash
+      - name: Download libs
+        run: ./scripts/$TARGET/download_libs.sh
+      - name: Install dependencies
+        run: ./scripts/ci/$TARGET/install_web_examples.sh
+      - name: Build
+        run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
         env:
           GA_EXAMPLES_USER: ${{ secrets.SSH_USER }}
           GA_EXAMPLES_SERVER: ${{ secrets.SSH_SERVER }}
@@ -48,9 +46,3 @@ jobs:
           GH_HEAD_REF: ${{ github.head_ref }}
           GH_BRANCH: ${{ github.ref_name }}
           GH_ACTIONS: "true"
-      - name: Download libs
-        run: ./scripts/$TARGET/download_libs.sh
-      - name: Install dependencies
-        run: ./scripts/ci/$TARGET/install_web_examples.sh
-      - name: Build
-        run: docker exec --env GA_EXAMPLES_USER=${{ secrets.SSH_USER }} -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
