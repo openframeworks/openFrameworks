@@ -22,7 +22,9 @@ for folder in "${folders[@]}"; do
 
         # Change to the directory
         cd $folder
-        emmake make Release
+        cp ../../../scripts/templates/emscripten/Makefile .
+		cp ../../../scripts/templates/emscripten/config.make .
+        emmake make -j2 Release
         
         errorcode=$?
 		if [[ $errorcode -ne 0 ]]; then
