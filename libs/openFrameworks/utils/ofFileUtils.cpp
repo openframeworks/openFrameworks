@@ -1441,7 +1441,7 @@ std::size_t ofDirectory::listDir(){
 		for(int i = 0; i < (int)size(); i++){
 			ofLogVerbose() << "\t" << getName(i);
 		}
-		ofLogVerbose() << "listed " << size() << " files in \"" << originalDirectory << "\"";
+		ofLogVerbose() << "listed " << size() << " files in \"" << originalDirectory.string() << "\"";
 	}
 
 	return size();
