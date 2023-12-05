@@ -12,8 +12,8 @@ folders=(
 
 cur_root=$(pwd);
 cd $cur_root;
-mkdir out
-out_folder="$OF_ROOT/out"
+mkdir -p out
+out_folder="$cur_root/out"
 
 # Iterate through the folder paths
 for folder in "${folders[@]}"; do
@@ -38,7 +38,7 @@ for folder in "${folders[@]}"; do
     fi
 done
 
-cd cur_root;
+cd $cur_root;
 DO_UPLOAD="false"
 
 #if [[ "$GITHUB_ACTIONS" = true && "${GITHUB_REF##*/}" == "master" && -z "${GITHUB_HEAD_REF}" ]]; then
