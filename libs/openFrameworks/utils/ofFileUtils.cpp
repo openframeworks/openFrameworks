@@ -27,30 +27,30 @@ namespace{
 	//--------------------------------------------------
 	of::filesystem::path defaultDataPath(){
 	#if defined TARGET_OSX
-		try{
-			return of::filesystem::canonical(ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
-		}catch(...){
-			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("../../../data/"));
+		try {
+			return of::filesystem::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/");
+		} catch(...) {
+			return ofFilePath::getCurrentExeDirFS() / "../../../data/";
 		}
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
 	#else
-		try{
-            return of::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDirFS(),  "data/")).make_preferred();
-        }catch(...){
-			return (ofFilePath::getCurrentExeDirFS() / of::filesystem::path("data/"));
+		try {
+            return of::filesystem::canonical(ofFilePath::getCurrentExeDirFS() / "data/").make_preferred();
+        } catch(...) {
+			return (ofFilePath::getCurrentExeDirFS() / "data/");
 		}
 	#endif
 	}
 
 	//--------------------------------------------------
-	of::filesystem::path & defaultWorkingDirectory(){
+	of::filesystem::path & defaultWorkingDirectory() {
 		static auto * defaultWorkingDirectory = new of::filesystem::path(ofFilePath::getCurrentExeDirFS());
 		return * defaultWorkingDirectory;
 	}
 
 	//--------------------------------------------------
-	of::filesystem::path & dataPathRoot(){
+	of::filesystem::path & dataPathRoot() {
 		static auto * dataPathRoot = new of::filesystem::path(defaultDataPath());
 		return *dataPathRoot;
 	}
@@ -58,7 +58,8 @@ namespace{
 
 namespace of{
 	namespace priv{
-		void initfileutils(){
+		void initfileutils() {
+			// FIXME: Why absolute?
 			defaultWorkingDirectory() = of::filesystem::absolute(of::filesystem::current_path());
 		}
 	}
@@ -506,7 +507,7 @@ void ofFile::copyFrom(const ofFile & mom){
 			new_mode = ReadOnly;
 			ofLogWarning("ofFile") << "copyFrom(): copying a writable file, opening new copy as read only";
 		}
-		open(mom.myFile.string(), new_mode, mom.binary);
+		open(mom.myFile, new_mode, mom.binary);
 	}
 }
 
@@ -614,7 +615,7 @@ bool ofFile::create(const of::filesystem::path & path){
 
 //------------------------------------------------------------------------------------------------------------
 ofBuffer ofFile::readToBuffer(){
-	if(myFile.string().empty() || !of::filesystem::exists(myFile)){
+	if(myFile.empty() || !of::filesystem::exists(myFile)){
 		return ofBuffer();
 	}
 
@@ -623,7 +624,7 @@ ofBuffer ofFile::readToBuffer(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::writeFromBuffer(const ofBuffer & buffer){
-	if(myFile.string().empty()){
+	if(myFile.empty()){
 		return false;
 	}
 	if(!isWriteMode()){
@@ -646,14 +647,17 @@ bool ofFile::exists() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofFile::path() const {
-//return myFile;
-std::string ofFile::path() const {
-	return myFile.string();
+std::string ofFile::pathFS() const {
+	return myFile;
 }
 
 //------------------------------------------------------------------------------------------------------------
+std::string ofFile::path() const {
+	return pathFS().string();
+}
+
+//------------------------------------------------------------------------------------------------------------
+// FIXME: FS
 string ofFile::getExtension() const {
 	auto dotext = myFile.extension().string();
 	// FIXME: probably not needed;
@@ -675,15 +679,13 @@ string ofFile::getBaseName() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofFile::getEnclosingDirectory() const {
+// MARK: - near future FS
 std::string ofFile::getEnclosingDirectory() const {
 	return ofFilePath::getEnclosingDirectory(path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofFile::getAbsolutePath() const {
+// MARK: - near future FS
 std::string ofFile::getAbsolutePath() const {
 	return ofFilePath::getAbsolutePath(path());
 }
@@ -1207,16 +1209,14 @@ bool ofDirectory::exists() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofDirectory::path() const {
-//	return myDir;
+// MARK: - near future FS
 std::string ofDirectory::path() const {
 	return myDir.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofDirectory::getAbsolutePath() const {
+// MARK: - near future FS
+//of::filesystem::path ofDirectory::getAbsolutePathFS() const {
 //	try{
 //		return of::filesystem::canonical(of::filesystem::absolute(myDir));
 //	}catch(...){
@@ -1823,8 +1823,8 @@ string ofFilePath::getBaseName(const of::filesystem::path & filePath){
 }
 
 //------------------------------------------------------------------------------------------------------------
-//	MARK: - near future
-//of::filesystem::path ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
+// MARK: - near future FS
+//of::filesystem::path ofFilePath::getEnclosingDirectoryFS(const of::filesystem::path & _filePath, bool bRelativeToData){
 std::string ofFilePath::getEnclosingDirectory(const of::filesystem::path & _filePath, bool bRelativeToData){
 	auto fp = _filePath;
 	if(bRelativeToData){
@@ -1839,7 +1839,7 @@ bool ofFilePath::createEnclosingDirectory(const of::filesystem::path& filePath, 
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - near future
+// MARK: - near future FS
 //of::filesystem::path ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
 std::string ofFilePath::getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData){
 	if(bRelativeToData){

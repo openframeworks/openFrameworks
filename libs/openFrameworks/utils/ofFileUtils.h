@@ -305,8 +305,7 @@ public:
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-	//	MARK: - near future
-	//	static of::filesystem::path removeExt(const of::filesystem::path& filename);
+	// MARK: - near future FS
 	static std::string removeExt(const of::filesystem::path & filename);
 
 	/// Prepend path with a slash, ie. "images" -> "/images".
@@ -319,8 +318,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path + slash
-	//	MARK: - near future
-	//	static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
+	// MARK: - near future FS
 	static std::string addTrailingSlash(const of::filesystem::path & path);
 
 	/// Remove a path's trailing slash (if found),
@@ -348,8 +346,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	// MARK - near future
-	// static of::filesystem::path getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
+	// MARK: - near future FS
 	static std::string getAbsolutePath(const of::filesystem::path & path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
@@ -573,9 +570,8 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	//	MARK: - near future
-	//	of::filesystem::path path() const;
 	std::string path() const;
+	of::filesystem::path path() const;
 
 	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
@@ -601,16 +597,14 @@ public:
 	/// directory.
 	///
 	/// \returns current path's enclosing directory
-	//	MARK: - near future
-	//	of::filesystem::path getEnclosingDirectory() const;
+	// MARK: - near future FS
 	std::string getEnclosingDirectory() const;
 
 	/// \biref Get the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \returns current path as an absolute path
-	//	MARK: - near future
-	//	of::filesystem::path getAbsolutePath() const;
+	// MARK: - near future FS
 	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
@@ -881,16 +875,14 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	//	MARK: - near future
-	//	of::filesystem::path path() const;
+	// MARK: - near future FS
 	std::string path() const;
 
 	/// Get the absolute, full path of the directory,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
-	//	MARK: - near future
-	//	of::filesystem::path getAbsolutePath() const;
+	// MARK: - near future FS
 	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
