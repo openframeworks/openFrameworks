@@ -150,7 +150,7 @@ public:
 	/// device 0 - COM2
 	/// device 1 - COM4
 	/// ~~~~
-	[[deprecated("Use listDevices() instead")]]
+	[[deprecated("Use listDevices()")]]
 	void enumerateDevices();
 
 	/// \brief Returns a vector of ofSerialDeviceInfo instances with the

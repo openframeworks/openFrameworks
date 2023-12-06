@@ -203,7 +203,7 @@ public:
 		float simplifyAmt = 0.0f,
 		int dpi = 0);
 
-	[[deprecated("Use load instead")]]
+	[[deprecated("Use load")]]
 	bool loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0);
 
 	bool load(const ofTrueTypeFontSettings & settings);

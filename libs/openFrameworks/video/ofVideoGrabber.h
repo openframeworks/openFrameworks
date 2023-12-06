@@ -22,9 +22,9 @@ public:
 	void				close();
 	bool				setup(int w, int h){return setup(w,h,bUseTexture);}
 	bool				setup(int w, int h, bool bTexture);
-	[[deprecated("Use setup instead")]]
+	[[deprecated("Use setup")]]
 	bool initGrabber(int w, int h){return setup(w,h);}
-	[[deprecated("Use setup instead")]]
+	[[deprecated("Use setup")]]
 	bool initGrabber(int w, int h, bool bTexture);
 	
 	bool				setPixelFormat(ofPixelFormat pixelFormat);
@@ -33,9 +33,9 @@ public:
 	void				videoSettings();
 	ofPixels& 			getPixels();
 	const ofPixels&		getPixels() const;
-	[[deprecated("Use getPixels() instead")]]
+	[[deprecated("Use getPixels()")]]
 	ofPixels&	getPixelsRef();
-	[[deprecated("Use getPixels() instead")]]
+	[[deprecated("Use getPixels()")]]
 	const ofPixels&  getPixelsRef() const;
 	ofTexture &			getTexture();
 	const ofTexture &	getTexture() const;

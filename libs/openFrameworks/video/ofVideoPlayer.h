@@ -11,7 +11,7 @@ public:
 
 	bool 				load(std::string name);
 	void				loadAsync(std::string name);
-	[[deprecated("Use load instead")]]
+	[[deprecated("Use load")]]
 	bool loadMovie(std::string name);
 
 
@@ -49,9 +49,9 @@ public:
 	bool 				isFrameNew() const;
 	ofPixels& 			getPixels();
 	const ofPixels&		getPixels() const;
-	[[deprecated("Use getPixels() instead")]]
+	[[deprecated("Use getPixels()")]]
 	ofPixels&	getPixelsRef();
-	[[deprecated("Use getPixels() instead")]]
+	[[deprecated("Use getPixels()")]]
 	const ofPixels&  getPixelsRef() const;
 	float 				getPosition() const;
 	float 				getSpeed() const;

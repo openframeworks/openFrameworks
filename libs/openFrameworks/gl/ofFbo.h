@@ -61,7 +61,7 @@ public:
 	void allocate(ofFboSettings settings = ofFboSettings(nullptr));
 	bool isAllocated() const;
 
-	[[deprecated("Use clear() instead")]]
+	[[deprecated("Use clear()")]]
 	void destroy();
 	void clear();
 
@@ -128,7 +128,7 @@ public:
 	///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
 	///           method instead.
 	/// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
-	[[deprecated("Use begin(OF_FBOMODE_NODEFAULTS) instead")]]
+	[[deprecated("Use begin(OF_FBOMODE_NODEFAULTS)")]]
 	void begin(bool setupScreen) const;
 
 	/// Sets up the framebuffer and binds it for rendering.

@@ -429,7 +429,7 @@ class ofTexture : public ofBaseDraws {
 	/// Legacy function for backwards compatibility.
 	///
 	/// \returns true if the texture has been allocated.
-	[[deprecated("Use isAllocated instead")]]
+	[[deprecated("Use isAllocated")]]
 	bool bAllocated() const;
 
 	/// \brief Destroy an ofTexture instance.

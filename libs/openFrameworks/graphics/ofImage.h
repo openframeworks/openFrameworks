@@ -232,11 +232,11 @@ public:
     /// into the texture.
 	bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
-    [[deprecated("Use load instead")]]
+    [[deprecated("Use load")]]
 	bool loadImage(const std::string& fileName);
-    [[deprecated("Use load instead")]]
+    [[deprecated("Use load")]]
 	bool loadImage(const ofBuffer & buffer);
-    [[deprecated("Use load instead")]]
+    [[deprecated("Use load")]]
 	bool loadImage(const ofFile & file);
 
     virtual ~ofImage_();
@@ -621,11 +621,11 @@ public:
     /// \param compressionLevel The ofImageQualityType.
 	bool save(ofBuffer & buffer, ofImageFormat imageFormat = OF_IMAGE_FORMAT_PNG, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
 
-    [[deprecated("Use save instead")]]
+    [[deprecated("Use save")]]
 	void saveImage(const std::string& fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
-    [[deprecated("Use save instead")]]
+    [[deprecated("Use save")]]
 	void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
-    [[deprecated("Use save instead")]]
+    [[deprecated("Use save")]]
 	void saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
 
     /// \}

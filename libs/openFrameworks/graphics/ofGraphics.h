@@ -105,7 +105,7 @@ ofFillFlag ofGetFill();
 
 /// \brief Returns the current background color as an ofColor.
 ofFloatColor ofGetBackgroundColor();
-[[deprecated("Use ofGetBackgroundColor instead")]]
+[[deprecated("Use ofGetBackgroundColor")]]
 ofFloatColor ofGetBackground();
 
 /// \brief Sets the background color.
@@ -272,7 +272,7 @@ void ofClear(float r, float g, float b);
 /// }
 /// ~~~~
 void ofClear(float brightness, float a);
-[[deprecated("Use ofClear(brightness, alpha) instead")]]
+[[deprecated("Use ofClear(brightness, alpha)")]]
 void ofClear(float brightness);
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
@@ -295,7 +295,7 @@ void ofClearFloat(float brightness, float a);
 void ofClearFloat(const ofFloatColor & c);
 
 // OF's access to settings (bgAuto, origin, corner mode):
-[[deprecated("Use ofGetBackgroundAuto instead")]]
+[[deprecated("Use ofGetBackgroundAuto")]]
 bool ofbClearBg();
 
 /// \}
@@ -502,69 +502,69 @@ void ofDrawCurve(float x0, float y0, float z0, float x1, float y1, float z1, flo
 void ofDrawBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofDrawBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
-[[deprecated("Use ofDrawTriangle instead")]]
+[[deprecated("Use ofDrawTriangle")]]
 void ofTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
-[[deprecated("Use ofDrawTriangle instead")]]
+[[deprecated("Use ofDrawTriangle")]]
 void ofTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
-[[deprecated("Use ofDrawTriangle instead")]]
+[[deprecated("Use ofDrawTriangle")]]
 void ofTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
 
-[[deprecated("Use ofDrawCircle instead")]]
+[[deprecated("Use ofDrawCircle")]]
 void ofCircle(float x, float y, float radius);
-[[deprecated("Use ofDrawCircle instead")]]
+[[deprecated("Use ofDrawCircle")]]
 void ofCircle(float x, float y, float z, float radius);
-[[deprecated("Use ofDrawCircle instead")]]
+[[deprecated("Use ofDrawCircle")]]
 void ofCircle(const glm::vec3 & p, float radius);
 
-[[deprecated("Use ofDrawEllipse instead")]]
+[[deprecated("Use ofDrawEllipse")]]
 void ofEllipse(float x, float y, float width, float height);
-[[deprecated("Use ofDrawEllipse instead")]]
+[[deprecated("Use ofDrawEllipse")]]
 void ofEllipse(float x, float y, float z, float width, float height);
-[[deprecated("Use ofDrawEllipse instead")]]
+[[deprecated("Use ofDrawEllipse")]]
 void ofEllipse(const glm::vec3 & p, float width, float height);
 
-[[deprecated("Use ofDrawLine instead")]]
+[[deprecated("Use ofDrawLine")]]
 void ofLine(float x1, float y1, float x2, float y2);
-[[deprecated("Use ofDrawLine instead")]]
+[[deprecated("Use ofDrawLine")]]
 void ofLine(float x1, float y1, float z1, float x2, float y2, float z2);
-[[deprecated("Use ofDrawLine instead")]]
+[[deprecated("Use ofDrawLine")]]
 void ofLine(const glm::vec3 & p1, const glm::vec3 & p2);
 
-[[deprecated("Use ofDrawRectangle instead")]]
+[[deprecated("Use ofDrawRectangle")]]
 void ofRect(float x1, float y1, float w, float h);
-[[deprecated("Use ofDrawRectangle instead")]]
+[[deprecated("Use ofDrawRectangle")]]
 void ofRect(const ofRectangle & r);
-[[deprecated("Use ofDrawRectangle instead")]]
+[[deprecated("Use ofDrawRectangle")]]
 void ofRect(const glm::vec3 & p, float w, float h);
-[[deprecated("Use ofDrawRectangle instead")]]
+[[deprecated("Use ofDrawRectangle")]]
 void ofRect(float x, float y, float z, float w, float h);
 
-[[deprecated("Use ofDrawRectRounded instead")]]
+[[deprecated("Use ofDrawRectRounded")]]
 void ofRectRounded(const ofRectangle & b, float r);
-[[deprecated("Use ofDrawRectRounded instead")]]
+[[deprecated("Use ofDrawRectRounded")]]
 void ofRectRounded(const glm::vec3 & p, float w, float h, float r);
-[[deprecated("Use ofDrawRectRounded instead")]]
+[[deprecated("Use ofDrawRectRounded")]]
 void ofRectRounded(float x, float y, float w, float h, float r);
-[[deprecated("Use ofDrawRectRounded instead")]]
+[[deprecated("Use ofDrawRectRounded")]]
 void ofRectRounded(float x, float y, float z, float w, float h, float r);
 
 //----------------------------------------------------------
-[[deprecated("Use ofDrawRectRounded instead")]]
+[[deprecated("Use ofDrawRectRounded")]]
 void ofRectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 
-[[deprecated("Use ofDrawRectRounded instead")]]
+[[deprecated("Use ofDrawRectRounded")]]
 void ofRectRounded(const ofRectangle & b, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 
-[[deprecated("Use ofDrawRectRounded instead")]]
+[[deprecated("Use ofDrawRectRounded")]]
 void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 
-[[deprecated("Use ofDrawCurve instead")]]
+[[deprecated("Use ofDrawCurve")]]
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-[[deprecated("Use ofDrawCurve instead")]]
+[[deprecated("Use ofDrawCurve")]]
 void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
-[[deprecated("Use ofDrawBezier instead")]]
+[[deprecated("Use ofDrawBezier")]]
 void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-[[deprecated("Use ofDrawBezier instead")]]
+[[deprecated("Use ofDrawBezier")]]
 void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 /// \}

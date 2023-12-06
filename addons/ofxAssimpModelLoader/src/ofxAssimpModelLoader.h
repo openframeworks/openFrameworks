@@ -76,13 +76,13 @@ class ofxAssimpModelLoader{
 		void setPausedForAllAnimations(bool pause);
 		void setLoopStateForAllAnimations(ofLoopType state);
 		void setPositionForAllAnimations(float position);
-		[[deprecated("Use ofxAssimpAnimation instead")]]
+		[[deprecated("Use ofxAssimpAnimation")]]
 		void setAnimation(int animationIndex);
-		[[deprecated("Use ofxAssimpAnimation instead")]]
+		[[deprecated("Use ofxAssimpAnimation")]]
 		void setNormalizedTime(float time);
-		[[deprecated("Use ofxAssimpAnimation instead")]]
+		[[deprecated("Use ofxAssimpAnimation")]]
 		void setTime(float time);
-		[[deprecated("Use ofxAssimpAnimation instead")]]
+		[[deprecated("Use ofxAssimpAnimation")]]
 		float getDuration(int animationIndex);
 
 		bool hasMeshes();

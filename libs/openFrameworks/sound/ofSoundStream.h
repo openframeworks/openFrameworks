@@ -179,7 +179,7 @@ public:
 	int getBufferSize() const;
 
 	/// \brief Retrieves a list of available audio devices and prints device descriptions to the console
-	[[deprecated("Use printDeviceList instead")]]
+	[[deprecated("Use printDeviceList")]]
 	std::vector<ofSoundDevice> listDevices() const;
 
 protected:
