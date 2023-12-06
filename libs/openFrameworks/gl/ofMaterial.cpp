@@ -276,7 +276,7 @@ void ofMaterial::setTexCoordScale( float xscale, float yscale ) {
 
 //----------------------------------------------------------
 bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath ) {
-	return loadTexture(aMaterialTextureType, apath, ofGetUsingArbTex(), false);
+	return loadTexture(aMaterialTextureType, apath, !ofGetUsingArbTex(), false);
 }
 
 //----------------------------------------------------------
