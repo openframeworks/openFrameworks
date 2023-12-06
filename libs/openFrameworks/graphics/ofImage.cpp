@@ -222,7 +222,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	uriFreeUriMembersA(&uri);
 
 	if(scheme == "http" || scheme == "https"){
-		return ofLoadImage(pix, ofLoadURL(_fileName).data);
+		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
 	}
 
 	auto fileName = ofToDataPathFS(_fileName, true);
