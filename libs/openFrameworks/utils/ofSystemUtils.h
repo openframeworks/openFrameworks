@@ -5,20 +5,20 @@
 
 /// \class ofFileDialogResult
 /// \brief file dialog box selection or save result
-class ofFileDialogResult{
-	public:
-		ofFileDialogResult();
-		
-		/// \return the name of the selected file or directory, if set
-		/// currently returns only 1 file, this may change in the future
-		of::filesystem::path getName();
+class ofFileDialogResult {
+public:
+	ofFileDialogResult();
 	
-		/// \return the full path of the selected file or directory, if set
-		of::filesystem::path getPath();
-	
-		of::filesystem::path filePath; ///< full path to selected file or directory
-		of::filesystem::path fileName; ///< selected file or directory name
-		bool bSuccess; ///< true if the dialog action was successful, aka file select not cancel
+	/// \return the name of the selected file or directory, if set
+	/// currently returns only 1 file, this may change in the future
+	of::filesystem::path getName();
+
+	/// \return the full path of the selected file or directory, if set
+	of::filesystem::path getPath();
+
+	of::filesystem::path filePath; ///< full path to selected file or directory
+	of::filesystem::path fileName; ///< selected file or directory name
+	bool bSuccess; ///< true if the dialog action was successful, aka file select not cancel
 };
 
 /// \brief show an error message in an alert dialog box
