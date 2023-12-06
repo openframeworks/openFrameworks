@@ -8,7 +8,7 @@
 class ofFileDialogResult {
 public:
 	ofFileDialogResult();
-	
+
 	/// \return the name of the selected file or directory, if set
 	/// currently returns only 1 file, this may change in the future
 	of::filesystem::path getName();
