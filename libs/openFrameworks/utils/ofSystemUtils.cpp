@@ -33,6 +33,9 @@
 #include <sstream>
 #include <string>
 
+#include <codecvt>
+#include <iostream>
+
 #endif
 
 #if defined( TARGET_OSX )
@@ -374,7 +377,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		
 		// FIXME: check if it is not empty
 		if(defaultPath!=""){
-			wcscpy(szDir, converter.from_bytes(ofToDataPath(defaultPath)).c_str());
+			// wcscpy(szDir, converter.from_bytes(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szDir, ofToDataPath(defaultPath).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
 
