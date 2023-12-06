@@ -33,9 +33,6 @@
 #include <sstream>
 #include <string>
 
-#include <codecvt>
-#include <iostream>
-
 #endif
 
 #if defined( TARGET_OSX )
@@ -295,9 +292,6 @@ static int CALLBACK loadDialogBrowseCallback(
 ){
     std::wstring defaultPath { *(std::wstring*)lpData };
     if(!defaultPath.empty() && uMsg==BFFM_INITIALIZED) {
-		// wchar_t wideCharacterBuffer[MAX_PATH];
-		// std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-		// wcscpy(wideCharacterBuffer, converter.from_bytes(ofToDataPathFS(defaultPath)).c_str());
         SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPathFS(defaultPath).c_str());
     }
 
