@@ -239,9 +239,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	if(fif == FIF_UNKNOWN) {
 		// or guess via file extension
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension());
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().c_str());
 #else
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
 #endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
