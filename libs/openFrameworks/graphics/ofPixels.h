@@ -315,10 +315,10 @@ public:
 	PixelType * getData();
 	const PixelType * getData() const;
 
-	[[deprecated("Use getData instead")]]
+	[[deprecated("Use getData")]]
 	PixelType * getPixels();
 
-	[[deprecated("Use getData instead")]]
+	[[deprecated("Use getData")]]
 	const PixelType * getPixels() const;
 
 	/// \brief Get the pixel index at a x,y position

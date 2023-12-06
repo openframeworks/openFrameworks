@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: FS
+// FIXME: ofConstants FS
 #include "ofConstants.h"
 #include <fstream>
 
@@ -105,9 +105,9 @@ public:
 	/// \warning Do not access bytes at indices beyond size()!
 	/// \returns const pointer to internal raw bytes
 	const char * getData() const;
-	[[deprecated("Use getData instead")]]
+	[[deprecated("Use getData")]]
 	char * getBinaryBuffer();
-	[[deprecated("Use getData instead")]]
+	[[deprecated("Use getData")]]
 	const char * getBinaryBuffer() const;
 
 	/// get the contents of the buffer as a string.
@@ -128,13 +128,13 @@ public:
 	/// \returns the size of the buffer's content in bytes
 	std::size_t size() const;
 
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	std::string getNextLine();
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	std::string getFirstLine();
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	bool isLastLine();
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	void resetLineReader();
 
 	friend std::ostream & operator<<(std::ostream & ostr, const ofBuffer & buf);
@@ -305,8 +305,7 @@ public:
 	///
 	/// \param filename file path
 	/// \returns filename without extension
-	//	MARK: - near future
-	//	static of::filesystem::path removeExt(const of::filesystem::path& filename);
+	// MARK: - near future FS
 	static std::string removeExt(const of::filesystem::path & filename);
 
 	/// Prepend path with a slash, ie. "images" -> "/images".
@@ -319,8 +318,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path + slash
-	//	MARK: - near future
-	//	static of::filesystem::path addTrailingSlash(const of::filesystem::path& path);
+	// MARK: - near future FS
 	static std::string addTrailingSlash(const of::filesystem::path & path);
 
 	/// Remove a path's trailing slash (if found),
@@ -338,6 +336,7 @@ public:
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
 	static std::string getPathForDirectory(const of::filesystem::path & path);
+	static of::filesystem::path getPathForDirectoryFS(const of::filesystem::path & path);
 
 	/// Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
@@ -347,8 +346,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	// MARK - near future
-	// static of::filesystem::path getAbsolutePath(const of::filesystem::path& path, bool bRelativeToData = true);
+	// MARK: - near future FS
 	static std::string getAbsolutePath(const of::filesystem::path & path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
@@ -391,8 +389,6 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-	//	MARK: - near future
-	//	static of::filesystem::path getEnclosingDirectory(const of::filesystem::path& filePath, bool bRelativeToData = true);
 	static std::string getEnclosingDirectory(const of::filesystem::path & filePath, bool bRelativeToData = true);
 
 	/// Create the enclosing parent directory of a path, ie.
@@ -425,8 +421,6 @@ public:
 	/// \param path1 left half of the path to join
 	/// \param path2 right half of the path to join
 	/// \returns joined path
-	//	MARK: - near future
-	//	static of::filesystem::path join(const of::filesystem::path& path1, const of::filesystem::path& path2);
 	static std::string join(const of::filesystem::path & path1, const of::filesystem::path & path2);
 
 	/// Get the full path to the application's executable file.
@@ -464,8 +458,6 @@ public:
 	/// \param from starting path
 	/// \param to destination path
 	/// \returns relative path
-	//	MARK: - near future
-	//    static of::filesystem::path makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
 	static std::string makeRelative(const of::filesystem::path & from, const of::filesystem::path & to);
 };
 
@@ -578,9 +570,8 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	//	MARK: - near future
-	//	of::filesystem::path path() const;
 	std::string path() const;
+	of::filesystem::path pathFS() const;
 
 	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
@@ -606,16 +597,14 @@ public:
 	/// directory.
 	///
 	/// \returns current path's enclosing directory
-	//	MARK: - near future
-	//	of::filesystem::path getEnclosingDirectory() const;
+	// MARK: - near future FS
 	std::string getEnclosingDirectory() const;
 
 	/// \biref Get the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \returns current path as an absolute path
-	//	MARK: - near future
-	//	of::filesystem::path getAbsolutePath() const;
+	// MARK: - near future FS
 	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
@@ -886,16 +875,14 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	//	MARK: - near future
-	//	of::filesystem::path path() const;
+	// MARK: - near future FS
 	std::string path() const;
 
 	/// Get the absolute, full path of the directory,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
-	//	MARK: - near future
-	//	of::filesystem::path getAbsolutePath() const;
+	// MARK: - near future FS
 	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
@@ -1138,7 +1125,7 @@ public:
 	/// \returns number of paths
 	std::size_t size() const;
 
-	[[deprecated("Use size() instead.")]]
+	[[deprecated("Use size()")]]
 	int numFiles();
 
 	// this allows to compare directories by their paths, also provides sorting
@@ -1210,7 +1197,7 @@ public:
 	std::vector<ofFile>::const_reverse_iterator rend() const;
 
 	of::filesystem::path myDir;
-	std::string originalDirectory;
+	of::filesystem::path originalDirectory;
 	std::vector<std::string> extensions;
 	std::vector<ofFile> files;
 	bool showHidden;
@@ -1240,10 +1227,11 @@ void ofDisableDataPath();
 /// \param path The path to make relative to the data/ folder.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
-/// 
-//	MARK: - near future
-of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute=false);
-std::string ofToDataPath(const of::filesystem::path & path, bool absolute=false);
+
+of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute = false);
+
+std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);
+
 
 /// \brief Reset the working directory to the platform default.
 ///
