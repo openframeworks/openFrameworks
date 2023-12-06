@@ -294,7 +294,7 @@ static int CALLBACK loadDialogBrowseCallback(
   LPARAM lpData
 ){
     of::filesystem::path defaultPath { *(of::filesystem::path*)lpData };
-    if(!empty(defaultPath) && uMsg==BFFM_INITIALIZED) {
+    if(!defaultPath.empty() && uMsg==BFFM_INITIALIZED) {
 		wchar_t wideCharacterBuffer[MAX_PATH];
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		wcscpy(wideCharacterBuffer, converter.from_bytes(ofToDataPathFS(defaultPath)).c_str());
