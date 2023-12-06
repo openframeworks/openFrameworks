@@ -293,7 +293,7 @@ static int CALLBACK loadDialogBrowseCallback(
   LPARAM lParam,
   LPARAM lpData
 ){
-	of::filesystem::path defaultPath { reinterpret_cast(lpData) };
+	of::filesystem::path defaultPath { reinterpret_cast<of::filesystem::path>(lpData) };
     // std::string defaultPath = *(std::string*)lpData;
     if(!empty(defaultPath) && uMsg==BFFM_INITIALIZED) {
 		// wchar_t wideCharacterBuffer[MAX_PATH];
