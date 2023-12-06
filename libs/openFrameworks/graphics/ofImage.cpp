@@ -599,8 +599,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 		but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
 		length of the buffer, and the buffer memory address.
 		*/
-// FIXME: Change to OF_OS_WINDOWS soon		
-		#ifdef TARGET_WIN32
+		#ifdef OF_OS_WINDOWS
 		   DWORD size_in_bytes = 0;
 		#else
 		   std::uint32_t size_in_bytes = 0;
