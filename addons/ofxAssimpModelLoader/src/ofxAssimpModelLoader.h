@@ -48,14 +48,14 @@ class ofxAssimpModelLoader{
 		bool load(ofBuffer & buffer, int assimpOptimizeFlags=OPTIMIZE_DEFAULT, const char * extension="");
 
 		[[deprecated("ofxAssimpModelLoader::load(std::string modelName, bool bOptimize) is deprecated, use load(std::string modelName, int assimpOptimizeFlags) instead.")]]
-bool load(std::string modelName, bool optimize);
+		bool load(std::string modelName, bool optimize);
 		[[deprecated("ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize=false, const char * extension="") is deprecated, use load(std::string modelName, int assimpOptimizeFlags) instead.")]]
-bool load(ofBuffer & buffer, bool optimize, const char * extension);
+		bool load(ofBuffer & buffer, bool optimize, const char * extension);
 
 		[[deprecated("ofxAssimpModelLoader::loadModel() is deprecated, use load() instead.")]]
-bool loadModel(std::string modelName, bool optimize=false);
+		bool loadModel(std::string modelName, bool optimize=false);
 		[[deprecated("ofxAssimpModelLoader::loadModel() is deprecated, use load() instead.")]]
-bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");
+		bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");
 
 		void createEmptyModel();
 		void createLightsFromAiModel();
@@ -77,13 +77,13 @@ bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension=""
 		void setLoopStateForAllAnimations(ofLoopType state);
 		void setPositionForAllAnimations(float position);
 		[[deprecated("Use ofxAssimpAnimation instead")]]
-void setAnimation(int animationIndex);
+		void setAnimation(int animationIndex);
 		[[deprecated("Use ofxAssimpAnimation instead")]]
-void setNormalizedTime(float time);
+		void setNormalizedTime(float time);
 		[[deprecated("Use ofxAssimpAnimation instead")]]
-void setTime(float time);
+		void setTime(float time);
 		[[deprecated("Use ofxAssimpAnimation instead")]]
-float getDuration(int animationIndex);
+		float getDuration(int animationIndex);
 
 		bool hasMeshes();
 		unsigned int getMeshCount();

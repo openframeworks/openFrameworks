@@ -29,9 +29,8 @@ public:
 	/// \return the OSC address
 	std::string getAddress() const;
 
-	/// \return the remote host name/ip (deprecated)
 	[[deprecated("Use getRemoteHost() instead")]]
-std::string getRemoteIp() const;
+	std::string getRemoteIp() const;
 
 	/// \return the remote host name/ip or "" if not set
 	std::string getRemoteHost() const;

@@ -86,7 +86,7 @@ public:
 	/// \return false if there are no waiting messages, otherwise return true
 	bool getNextMessage(ofxOscMessage & msg);
 	[[deprecated("Pass a reference instead of a pointer")]]
-bool getNextMessage(ofxOscMessage * msg);
+	bool getNextMessage(ofxOscMessage * msg);
 
 	/// if there is at tleast 1 message in the queue, pop and swap it into an optional message
 	/// \return the std::optional<ofxOscMessage> if there was a message; std::nullopt otherwise

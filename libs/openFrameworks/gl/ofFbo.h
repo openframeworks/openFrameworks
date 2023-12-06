@@ -218,7 +218,7 @@ public:
 	void activateAllDrawBuffers();
 
 	[[deprecated("Use getId()")]]
-	 GLuint getFbo() const;
+	GLuint getFbo() const;
 
 	/// returns id of the underlying GL object for advanced actions
 	GLuint getId() const;

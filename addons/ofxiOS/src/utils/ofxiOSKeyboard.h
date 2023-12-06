@@ -69,7 +69,7 @@ public:
 	
 	std::string getText();
     [[deprecated("Use getText() instead.")]]
-std::string getLabelText();
+	std::string getLabelText();
 	bool isKeyboardShowing();
 	
     UITextField * getKeyboardTextField();
