@@ -254,8 +254,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
 #endif
 
-// FIXME: Change to OF_OS_WINDOWS soon		
-#ifdef TARGET_WIN32
+#ifdef OF_OS_WINDOWS
 		bmp = FreeImage_LoadU(fif, fileName.c_str(), option | settings.freeImageFlags);
 #else
 		bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
