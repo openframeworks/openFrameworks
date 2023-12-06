@@ -281,7 +281,7 @@ protected:
 	bool hasExited;
 };
 
-[[deprecated("ofAppiPhoneWindow is deprecated, use ofAppiOSWindow instead.")]]
+[[deprecated("use ofAppiOSWindow instead.")]]
 typedef ofAppiOSWindow ofAppiPhoneWindow;
 
 

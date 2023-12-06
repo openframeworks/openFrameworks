@@ -60,13 +60,13 @@ public:
 	
 	void * getAVFoundationVideoPlayer();
 	
-	[[deprecated("ofxiOSVideoPlayer::loadMovie() is deprecated, use load() instead.")]]
+	[[deprecated("use load() instead.")]]
 	bool loadMovie(std::string name);
-	[[deprecated("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.")]]
+	[[deprecated("use getPixels() instead.")]]
 	ofPixels & getPixelsRef();
-	[[deprecated("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.")]]
+	[[deprecated("use getPixels() instead.")]]
 	const ofPixels & getPixelsRef() const;
-	[[deprecated("ofxiOSVideoPlayer::getTexture() is deprecated, use getTexturePtr() instead.")]]
+	[[deprecated("use getTexturePtr() instead.")]]
 	ofTexture * getTexture();
 	
 protected:

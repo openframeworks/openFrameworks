@@ -59,13 +59,13 @@ public:
 	// deprecated.
 	//---------------------------------------
 	
-	[[deprecated("ofxiOSVideoGrabber::initGrabber(int w, int h) is deprecated, use setup(int w, int h) instead.")]]
+	[[deprecated("use setup(int w, int h) instead.")]]
 	bool initGrabber(int w, int h);
-	[[deprecated("ofxiOSVideoGrabber::getDeviceList() is deprecated, use listDevices() instead.")]]
+	[[deprecated("use listDevices() instead.")]]
 	void getDeviceList() const;
-	[[deprecated("ofxiOSVideoGrabber::getPixelsRef() is deprecated, use getPixels() instead.")]]
+	[[deprecated("use getPixels() instead.")]]
 	ofPixels&	getPixelsRef();
-	[[deprecated("ofxiOSVideoGrabber::getPixelsRef() is deprecated, use getPixels() instead.")]]
+	[[deprecated("use getPixels() instead.")]]
 	const ofPixels&  getPixelsRef() const;
 	
 protected:

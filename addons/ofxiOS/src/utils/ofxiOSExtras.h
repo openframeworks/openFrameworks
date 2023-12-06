@@ -163,9 +163,9 @@ void ofxiOSUnlockGLContext();
 void ofxiOSEnableLoopInThread();
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-[[deprecated("ofxiOSSetOrientation is deprecated, use ofSetOrientation instead.")]]
+[[deprecated("use ofSetOrientation instead.")]]
 void ofxiOSSetOrientation(ofOrientation orientation);
-[[deprecated("ofxiOSGetOrientation is deprecated, use ofGetOrientation instead.")]]
+[[deprecated("use ofGetOrientation instead.")]]
 UIDeviceOrientation ofxiOSGetOrientation();
 #endif
 

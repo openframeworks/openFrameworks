@@ -54,11 +54,11 @@ public:
 
 	void setVerbose(bool _verbose);
 
-	[[deprecated("ofxXmlSettings::loadFile() is deprecated, use load() instead.")]]
+	[[deprecated("use load() instead.")]]
 	bool loadFile(const std::string& xmlFile);
-	[[deprecated("ofxXmlSettings::saveFile() is deprecated, use save() instead.")]]
+	[[deprecated("use save() instead.")]]
 	bool saveFile(const std::string& xmlFile);
-	[[deprecated("ofxXmlSettings::saveFile() is deprecated, use save() instead.")]]
+	[[deprecated("use save() instead.")]]
 	bool saveFile();
 
 	bool load(const std::string & path);
