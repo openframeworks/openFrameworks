@@ -198,8 +198,8 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _fileName, const ofImageLoadSettings & settings){
 	ofInitFreeImage();
-	
-	auto uriStr = _fileName;
+
+	auto uriStr = _fileName.string();
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
@@ -207,12 +207,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
 		const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
 		std::vector<char> absUri(bytesNeeded);
-// FIXME: Change to OF_OS_WINDOWS soon		
-	#ifdef TARGET_WIN32
+#ifdef OF_OS_WINDOWS
 		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
-	#else
+#else
 		uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
-	#endif
+#endif
 		if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
 			ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
 			uriFreeUriMembersA(&uri);
