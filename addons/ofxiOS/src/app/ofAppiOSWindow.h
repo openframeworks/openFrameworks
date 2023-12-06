@@ -184,7 +184,7 @@ public:
 	void setup();
 	
 	void run(ofBaseApp * appPtr);
-	[[deprecated("Use setup(const ofiOSWindowSettings & settings); instead.")]]
+	[[deprecated("Use setup(const ofiOSWindowSettings & settings);")]]
 	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) ;
 	static void startAppWithDelegate(std::string appDelegateClassName);
 	void update();
@@ -281,7 +281,7 @@ protected:
 	bool hasExited;
 };
 
-[[deprecated("use ofAppiOSWindow instead.")]]
+[[deprecated("use ofAppiOSWindow")]]
 typedef ofAppiOSWindow ofAppiPhoneWindow;
 
 

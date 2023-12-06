@@ -1138,7 +1138,7 @@ public:
 	/// \returns number of paths
 	std::size_t size() const;
 
-	[[deprecated("Use size() instead.")]]
+	[[deprecated("Use size()")]]
 	int numFiles();
 
 	// this allows to compare directories by their paths, also provides sorting

@@ -300,9 +300,9 @@ public:
 	void setCircleResolution(int circleResolution);
 	int getCircleResolution() const;
 
-	[[deprecated("Use setCircleResolution instead.")]]
+	[[deprecated("Use setCircleResolution")]]
 	void setArcResolution(int res);
-	[[deprecated("Use getCircleResolution instead.")]]
+	[[deprecated("Use getCircleResolution")]]
 	int getArcResolution() const;
 
 	void setUseShapeColor(bool useColor);

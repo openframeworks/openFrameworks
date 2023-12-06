@@ -992,46 +992,46 @@ public:
     // this methods are deprecated in 006 please use:
 	/// \cond INTERNAL
 
-	[[deprecated("Use member method getScaled() instead.")]]
+	[[deprecated("Use member method getScaled()")]]
 	ofVec3f rescaled( const float length ) const;
 
-	[[deprecated("Use member method scale() instead.")]]
+	[[deprecated("Use member method scale()")]]
 	ofVec3f& rescale( const float length );
 
-	[[deprecated("Use member method getRotated() instead.")]]
+	[[deprecated("Use member method getRotated()")]]
 	ofVec3f rotated( float angle, const ofVec3f& axis ) const;
 
-	[[deprecated("Use member method getRotated() instead.")]]
+	[[deprecated("Use member method getRotated()")]]
 	ofVec3f rotated(float ax, float ay, float az);
 
-	[[deprecated("Use member method getNormalized() instead.")]]
+	[[deprecated("Use member method getNormalized()")]]
 	ofVec3f normalized() const;
 
-	[[deprecated("Use member method getLimited() instead.")]]
+	[[deprecated("Use member method getLimited()")]]
 	ofVec3f limited(float max) const;
 
-	[[deprecated("Use member method getCrossed() instead.")]]
+	[[deprecated("Use member method getCrossed()")]]
 	ofVec3f crossed( const ofVec3f& vec ) const;
 
-	[[deprecated("Use member method getPerpendicular() instead.")]]
+	[[deprecated("Use member method getPerpendicular()")]]
 	ofVec3f perpendiculared( const ofVec3f& vec ) const;
     
-    [[deprecated("Use member method getMapped() instead.")]]
+    [[deprecated("Use member method getMapped()")]]
 	ofVec3f mapped( const ofVec3f& origin,
 					const ofVec3f& vx,
 					const ofVec3f& vy,
 					const ofVec3f& vz ) const;
 	
-	[[deprecated("Use member method squareDistance() instead.")]]
+	[[deprecated("Use member method squareDistance()")]]
 	float distanceSquared( const ofVec3f & pnt ) const;
 
-	[[deprecated("Use member method getInterpolated() instead.")]]
+	[[deprecated("Use member method getInterpolated()")]]
 	ofVec3f interpolated( const ofVec3f & pnt, float p ) const;
 
-	[[deprecated("Use member method getMiddle() instead.")]]
+	[[deprecated("Use member method getMiddle()")]]
 	ofVec3f middled( const ofVec3f & pnt ) const;
     
-    [[deprecated("Use member method getRotated() instead.")]]
+    [[deprecated("Use member method getRotated()")]]
 	ofVec3f rotated(float angle,
 					const ofVec3f & pivot,
 					const ofVec3f & axis ) const;

@@ -68,7 +68,7 @@ public:
 	void setMaxChars(int max);
 	
 	std::string getText();
-    [[deprecated("Use getText() instead.")]]
+    [[deprecated("Use getText()")]]
 	std::string getLabelText();
 	bool isKeyboardShowing();
 	

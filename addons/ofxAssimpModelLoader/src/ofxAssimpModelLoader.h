@@ -47,14 +47,14 @@ class ofxAssimpModelLoader{
 		bool load(std::string modelName, int assimpOptimizeFlags=OPTIMIZE_DEFAULT);
 		bool load(ofBuffer & buffer, int assimpOptimizeFlags=OPTIMIZE_DEFAULT, const char * extension="");
 
-		[[deprecated("use load(std::string modelName, int assimpOptimizeFlags) instead.")]]
+		[[deprecated("use load(std::string modelName, int assimpOptimizeFlags)")]]
 		bool load(std::string modelName, bool optimize);
-		[[deprecated("use load(std::string modelName, int assimpOptimizeFlags) instead.")]]
+		[[deprecated("use load(std::string modelName, int assimpOptimizeFlags)")]]
 		bool load(ofBuffer & buffer, bool optimize, const char * extension);
 
-		[[deprecated("use load() instead.")]]
+		[[deprecated("use load()")]]
 		bool loadModel(std::string modelName, bool optimize=false);
-		[[deprecated("use load() instead.")]]
+		[[deprecated("use load()")]]
 		bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");
 
 		void createEmptyModel();

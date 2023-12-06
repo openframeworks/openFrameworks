@@ -49,5 +49,5 @@ public:
 
 };
 
-[[deprecated("use ofxiOSApp instead.")]]
+[[deprecated("use ofxiOSApp")]]
 typedef ofxiOSApp ofxiPhoneApp;

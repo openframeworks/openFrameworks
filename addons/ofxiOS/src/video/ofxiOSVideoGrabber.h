@@ -59,13 +59,13 @@ public:
 	// deprecated.
 	//---------------------------------------
 	
-	[[deprecated("use setup(int w, int h) instead.")]]
+	[[deprecated("use setup(int w, int h)")]]
 	bool initGrabber(int w, int h);
-	[[deprecated("use listDevices() instead.")]]
+	[[deprecated("use listDevices()")]]
 	void getDeviceList() const;
-	[[deprecated("use getPixels() instead.")]]
+	[[deprecated("use getPixels()")]]
 	ofPixels&	getPixelsRef();
-	[[deprecated("use getPixels() instead.")]]
+	[[deprecated("use getPixels()")]]
 	const ofPixels&  getPixelsRef() const;
 	
 protected:

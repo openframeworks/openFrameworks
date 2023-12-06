@@ -60,13 +60,13 @@ public:
 	
 	void * getAVFoundationVideoPlayer();
 	
-	[[deprecated("use load() instead.")]]
+	[[deprecated("use load()")]]
 	bool loadMovie(std::string name);
-	[[deprecated("use getPixels() instead.")]]
+	[[deprecated("use getPixels()")]]
 	ofPixels & getPixelsRef();
-	[[deprecated("use getPixels() instead.")]]
+	[[deprecated("use getPixels()")]]
 	const ofPixels & getPixelsRef() const;
-	[[deprecated("use getTexturePtr() instead.")]]
+	[[deprecated("use getTexturePtr()")]]
 	ofTexture * getTexture();
 	
 protected:

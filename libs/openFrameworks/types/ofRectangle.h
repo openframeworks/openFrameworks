@@ -770,7 +770,7 @@ public:
 	/// \returns The rectangle's position.
 	const glm::vec3 & getPosition() const;
 
-	[[deprecated("Use getPosition() instead.")]]
+	[[deprecated("Use getPosition()")]]
 	glm::vec3 & getPositionRef();
 
 	/// \brief Get the coordiantes of the ofRectangle's center as glm::vec3.
