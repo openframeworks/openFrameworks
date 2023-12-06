@@ -192,6 +192,7 @@ void ofGstVideoPlayer::loadAsync(std::string name){
 	load(name);
 }
 
+// FIXME: fs::path
 bool ofGstVideoPlayer::load(std::string name){
 	if( name.find( "file://",0 ) != std::string::npos){
 		bIsStream = bAsyncLoad;

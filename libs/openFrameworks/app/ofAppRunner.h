@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofConstants.h"
+// #include "ofConstants.h"
 #include "ofMainLoop.h"
 #include "ofWindowSettings.h"
 
