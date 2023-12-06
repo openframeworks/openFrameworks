@@ -293,14 +293,13 @@ static int CALLBACK loadDialogBrowseCallback(
   LPARAM lParam,
   LPARAM lpData
 ){
-    std::string defaultPath = *(std::string*)lpData;
-    if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
-		wchar_t         wideCharacterBuffer[MAX_PATH];
-		
-		
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-		wcscpy(wideCharacterBuffer, converter.from_bytes(ofToDataPath(defaultPath)).c_str());
-        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
+	of::filesystem::path defaultPath { reinterpret_cast(lpData) };
+    // std::string defaultPath = *(std::string*)lpData;
+    if(!empty(defaultPath) && uMsg==BFFM_INITIALIZED) {
+		// wchar_t wideCharacterBuffer[MAX_PATH];
+		// std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		// wcscpy(wideCharacterBuffer, converter.from_bytes(ofToDataPathFS(defaultPath)).c_str());
+        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPathFS(defaultPath));
     }
 
 	return 0;
