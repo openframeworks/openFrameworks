@@ -199,7 +199,7 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _fileName, const ofImageLoadSettings & settings){
 	ofInitFreeImage();
 
-	auto uriStr = _fileName;
+	auto uriStr = _fileName.string();
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
