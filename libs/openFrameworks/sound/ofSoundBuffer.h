@@ -5,10 +5,12 @@
  *      Author: arturo
  */
 
-#ifndef OFSOUNDBUFFER_H_
-#define OFSOUNDBUFFER_H_
+#pragma once
 
-#include "ofConstants.h"
+#include <cstdint>
+#include <cstddef>
+#include <vector>
+#include <string>
 
 
 /*! 
@@ -232,5 +234,3 @@ protected:
 namespace std{
 	void swap(ofSoundBuffer & src, ofSoundBuffer & dst);
 }
-
-#endif /* OFSOUNDBUFFER_H_ */

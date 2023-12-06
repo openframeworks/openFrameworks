@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: constants deprecated only
+// FIXME: FS
 #include "ofConstants.h"
 #include <fstream>
 
@@ -105,8 +105,10 @@ public:
 	/// \warning Do not access bytes at indices beyond size()!
 	/// \returns const pointer to internal raw bytes
 	const char * getData() const;
-	OF_DEPRECATED_MSG("Use getData instead", char * getBinaryBuffer());
-	OF_DEPRECATED_MSG("Use getData instead", const char * getBinaryBuffer() const);
+	[[deprecated("Use getData instead")]]
+	char * getBinaryBuffer();
+	[[deprecated("Use getData instead")]]
+	const char * getBinaryBuffer() const;
 
 	/// get the contents of the buffer as a string.
 	///
@@ -126,10 +128,14 @@ public:
 	/// \returns the size of the buffer's content in bytes
 	std::size_t size() const;
 
-	OF_DEPRECATED_MSG("use a lines iterator instead", std::string getNextLine());
-	OF_DEPRECATED_MSG("use a lines iterator instead", std::string getFirstLine());
-	OF_DEPRECATED_MSG("use a lines iterator instead", bool isLastLine());
-	OF_DEPRECATED_MSG("use a lines iterator instead", void resetLineReader());
+	[[deprecated("use a lines iterator instead")]]
+	std::string getNextLine();
+	[[deprecated("use a lines iterator instead")]]
+	std::string getFirstLine();
+	[[deprecated("use a lines iterator instead")]]
+	bool isLastLine();
+	[[deprecated("use a lines iterator instead")]]
+	void resetLineReader();
 
 	friend std::ostream & operator<<(std::ostream & ostr, const ofBuffer & buf);
 	friend std::istream & operator>>(std::istream & istr, ofBuffer & buf);
@@ -662,7 +668,8 @@ public:
 	/// Set the writable flag of the current path.
 	void setWriteable(bool writeable = true);
 
-	OF_DEPRECATED_MSG("Use ofFile::setWriteable(!flag).", void setReadOnly(bool flag));
+	[[deprecated("Use ofFile::setWriteable(!flag).")]]
+	void setReadOnly(bool flag);
 
 	/// Set the readable flag of the current path.
 	void setReadable(bool readable = true);
@@ -924,7 +931,8 @@ public:
 	/// \param writeable set to true to make path writable
 	void setWriteable(bool writeable = true);
 
-	OF_DEPRECATED_MSG("Use ofDirectory::setWriteable(!flag).", void setReadOnly(bool flag));
+	[[deprecated("Use ofDirectory::setWriteable(!flag).")]]
+	void setReadOnly(bool flag);
 
 	/// Set the readable flag of the current path.
 	///
@@ -1130,7 +1138,8 @@ public:
 	/// \returns number of paths
 	std::size_t size() const;
 
-	OF_DEPRECATED_MSG("Use size() instead.", int numFiles());
+	[[deprecated("Use size() instead.")]]
+	int numFiles();
 
 	// this allows to compare directories by their paths, also provides sorting
 	// and use as key in stl containers

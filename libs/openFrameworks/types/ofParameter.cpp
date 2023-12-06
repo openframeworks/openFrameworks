@@ -1,4 +1,5 @@
 #include "ofParameter.h"
+#include "ofPoint.h"
 
 using std::string;
 

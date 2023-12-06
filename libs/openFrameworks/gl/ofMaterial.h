@@ -2,10 +2,8 @@
 
 #include "ofMaterialBaseTypes.h"
 #include "ofShader.h"
-// FIXME: constants deprecated only and ctor
-#include "ofColor.h"
-#include "ofConstants.h"
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
 #include "glm/vec2.hpp"
 #include <map>
@@ -345,11 +343,13 @@ public:
 	float getNormalGeomToNormalMapMix() const;
 
 	typedef ofMaterialSettings Data;
-	OF_DEPRECATED_MSG("Use getSettings() instead", Data getData() const);
+	[[deprecated("Use getSettings() instead")]]
+	Data getData() const;
 	ofMaterialSettings getSettings() const;
 
 	/// \brief set the material color properties data struct
-	OF_DEPRECATED_MSG("Use setup(settings) instead", void setData(const ofMaterial::Data & data));
+	[[deprecated("Use setup(settings) instead")]]
+	void setData(const ofMaterial::Data & data);
 
 	// documented in ofBaseMaterial
 	void begin() const;
@@ -399,7 +399,7 @@ private:
 	const std::string getDepthShaderStringId() const;
 	
 	void initDepthShaders(ofGLProgrammableRenderer& renderer) const;
-	const ofShader& getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const;
+	const ofShader & getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const;
 
 	void initShaders(ofGLProgrammableRenderer & renderer) const;
 	const ofShader & getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const;

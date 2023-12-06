@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
-#include "ofConstants.h"
+// MARK: Optimize to Pointer
 #include "ofRectangle.h"
+#include "ofConstants.h"
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef struct _XIM * XIM;
