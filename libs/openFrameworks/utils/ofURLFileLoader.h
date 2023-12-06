@@ -25,7 +25,8 @@ public:
 
 	/// \return the unique id for this request
 	int getId() const;
-	OF_DEPRECATED_MSG("Use getId().", int getID());
+	[[deprecated("Use getId().")]]
+	 int getID();
 
 	/// HTTP request type
 	enum Method {

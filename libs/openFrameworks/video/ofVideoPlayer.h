@@ -15,7 +15,8 @@ class ofVideoPlayer : public ofBaseVideoDraws{
 
 		bool 				load(std::string name);
 		void				loadAsync(std::string name);
-		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(std::string name));
+		[[deprecated("Use load instead")]]
+	bool loadMovie(std::string name);
 
 
 		/// \brief Get the path to the loaded video file.
@@ -52,8 +53,10 @@ class ofVideoPlayer : public ofBaseVideoDraws{
 		bool 				isFrameNew() const;
 		ofPixels& 			getPixels();
 		const ofPixels&		getPixels() const;
-        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
-        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
+        [[deprecated("Use getPixels() instead")]]
+	 ofPixels&	getPixelsRef();
+        [[deprecated("Use getPixels() instead")]]
+	 const ofPixels&  getPixelsRef() const;
 		float 				getPosition() const;
 		float 				getSpeed() const;
 		float 				getDuration() const;
@@ -70,8 +73,10 @@ class ofVideoPlayer : public ofBaseVideoDraws{
 		bool 				isUsingTexture() const;
 		ofTexture &			getTexture();
 		const ofTexture &	getTexture() const;
-		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
-		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
+		[[deprecated("Use getTexture")]]
+	ofTexture &			getTextureReference();
+		[[deprecated("Use getTexture")]]
+	const ofTexture &	getTextureReference() const;
 		std::vector<ofTexture> & getTexturePlanes();
 		const std::vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;

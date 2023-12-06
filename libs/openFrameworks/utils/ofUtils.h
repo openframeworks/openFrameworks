@@ -93,7 +93,8 @@ uint64_t ofGetUnixTime();
 
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
-OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
+[[deprecated("Use ofGetSystemTimeMillis() instead")]]
+	 uint64_t ofGetSystemTime();
 
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
@@ -542,7 +543,8 @@ std::string ofTrimBack(const std::string & src, const std::string & locale = "")
 /// \returns a front-trimmed std::string.
 std::string ofTrim(const std::string & src, const std::string & locale = "");
 
-OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(std::string & str, uint32_t utf8));
+[[deprecated("Use ofUTF8Append instead")]]
+	 void ofAppendUTF8(std::string & str, uint32_t utf8);
 
 /// \brief Append a Unicode codepoint to a UTF8-encoded std::string.
 ///

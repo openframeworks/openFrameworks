@@ -61,7 +61,8 @@ public:
 	void allocate(ofFboSettings settings = ofFboSettings(nullptr));
 	bool isAllocated() const;
 
-	OF_DEPRECATED_MSG("Use clear() instead",void destroy());
+	[[deprecated("Use clear() instead")]]
+	void destroy();
 	void clear();
 
 #ifndef TARGET_OPENGLES
@@ -102,13 +103,17 @@ public:
 	void setDefaultTextureIndex(int defaultTexture);
 	int getDefaultTextureIndex() const;
 
-	OF_DEPRECATED_MSG("Use getTexture()",ofTexture & getTextureReference());
-	OF_DEPRECATED_MSG("Use getTexture()",ofTexture & getTextureReference(int attachmentPoint));
+	[[deprecated("Use getTexture()")]]
+	ofTexture & getTextureReference();
+	[[deprecated("Use getTexture()")]]
+	ofTexture & getTextureReference(int attachmentPoint);
 	ofTexture & getTexture();
 	ofTexture & getTexture(int attachmentPoint);
 	ofTexture & getDepthTexture();
-	OF_DEPRECATED_MSG("Use getTexture()",const ofTexture & getTextureReference() const);
-	OF_DEPRECATED_MSG("Use getTexture()",const ofTexture & getTextureReference(int attachmentPoint) const);
+	[[deprecated("Use getTexture()")]]
+	const ofTexture & getTextureReference() const;
+	[[deprecated("Use getTexture()")]]
+	const ofTexture & getTextureReference(int attachmentPoint) const;
 	const ofTexture & getTexture() const ;
 	const ofTexture & getTexture(int attachmentPoint) const;
 	const ofTexture & getDepthTexture() const;
@@ -123,7 +128,8 @@ public:
     ///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
 	///           method instead.
     /// \sa       void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
-    OF_DEPRECATED_MSG("Use begin(OF_FBOMODE_NODEFAULTS) instead", void begin(bool setupScreen) const);
+    [[deprecated("Use begin(OF_FBOMODE_NODEFAULTS) instead")]]
+	 void begin(bool setupScreen) const;
 
     /// Sets up the framebuffer and binds it for rendering.
     ///
@@ -211,7 +217,8 @@ public:
 	void setActiveDrawBuffers(const std::vector<int>& i);
 	void activateAllDrawBuffers();
 
-	OF_DEPRECATED_MSG("Use getId()", GLuint getFbo() const);
+	[[deprecated("Use getId()")]]
+	 GLuint getFbo() const;
 
 	/// returns id of the underlying GL object for advanced actions
 	GLuint getId() const;

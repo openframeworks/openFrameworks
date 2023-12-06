@@ -86,10 +86,14 @@ public:
 	void * getAVFoundationVideoPlayer();
 #endif
     
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(std::string name));
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels & getPixelsRef());
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::getPixelsRef() is deprecated, use getPixels() instead.", const ofPixels & getPixelsRef() const);
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::getTexture() is deprecated, use getTexturePtr() instead.", ofTexture * getTexture());
+    [[deprecated("ofAVFoundationPlayer::loadMovie() is deprecated, use load() instead.")]]
+	 bool loadMovie(std::string name);
+    [[deprecated("ofAVFoundationPlayer::getPixelsRef() is deprecated, use getPixels() instead.")]]
+	 ofPixels & getPixelsRef();
+    [[deprecated("ofAVFoundationPlayer::getPixelsRef() is deprecated, use getPixels() instead.")]]
+	 const ofPixels & getPixelsRef() const;
+    [[deprecated("ofAVFoundationPlayer::getTexture() is deprecated, use getTexturePtr() instead.")]]
+	 ofTexture * getTexture();
     
 protected:
 	
