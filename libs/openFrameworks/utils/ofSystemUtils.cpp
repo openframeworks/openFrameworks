@@ -33,6 +33,9 @@
 #include <sstream>
 #include <string>
 
+#include <codecvt>
+#include <iostream>
+
 #endif
 
 #if defined( TARGET_OSX )
