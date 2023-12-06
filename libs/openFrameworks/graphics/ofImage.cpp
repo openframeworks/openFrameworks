@@ -199,7 +199,7 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _fileName, const ofImageLoadSettings & settings){
 	ofInitFreeImage();
 
-	auto uriStr = _fileName.string();
+	auto uriStr = _fileName;
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
@@ -238,9 +238,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().wstring().c_str());
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().c_str());
 #else
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension().string().c_str());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
 #endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
@@ -417,16 +417,16 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	auto fileName = ofToDataPathFS(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
-	fif = FreeImage_GetFileTypeU(fileName.wstring().c_str(), 0);
+	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);
 #else
-	fif = FreeImage_GetFileType(fileName.string().c_str(), 0);
+	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().wstring().c_str());
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().c_str());
 #else
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension().string().c_str());
+		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
 #endif
 	}
 	if(fif==FIF_JPEG && (_pix.getNumChannels()==4 || _pix.getBitsPerChannel() > 8)){
@@ -466,9 +466,9 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 				case OF_IMAGE_QUALITY_BEST: quality = JPEG_QUALITYSUPERB; break;
 			}
 #ifdef OF_OS_WINDOWS
-			retValue = FreeImage_SaveU(fif, bmp, fileName.wstring().c_str(), quality);
+			retValue = FreeImage_SaveU(fif, bmp, fileName.c_str(), quality);
 #else
-			retValue = FreeImage_Save(fif, bmp, fileName.string().c_str(), quality);
+			retValue = FreeImage_Save(fif, bmp, fileName.c_str(), quality);
 #endif
 		} else {
 			if(qualityLevel != OF_IMAGE_QUALITY_BEST) {
@@ -486,18 +486,18 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 					convertedBmp = FreeImage_ColorQuantize(bmp, FIQ_NNQUANT);
 				}
 #ifdef OF_OS_WINDOWS
-				retValue = FreeImage_SaveU(fif, convertedBmp, fileName.wstring().c_str());
+				retValue = FreeImage_SaveU(fif, convertedBmp, fileName.c_str());
 #else
-				retValue = FreeImage_Save(fif, convertedBmp, fileName.string().c_str());
+				retValue = FreeImage_Save(fif, convertedBmp, fileName.c_str());
 #endif
 				if (convertedBmp != nullptr){
 					FreeImage_Unload(convertedBmp);
 				}
 			} else {
 #ifdef OF_OS_WINDOWS
-				retValue = FreeImage_SaveU(fif, bmp, fileName.wstring().c_str());
+				retValue = FreeImage_SaveU(fif, bmp, fileName.c_str());
 #else
-				retValue = FreeImage_Save(fif, bmp, fileName.string().c_str());
+				retValue = FreeImage_Save(fif, bmp, fileName.c_str());
 #endif
 			}
 		}
