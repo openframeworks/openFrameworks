@@ -213,7 +213,7 @@ public:
     /// \deprecated Use isAllocated() instead
     /// \returns true if the image has been allocated.
     [[deprecated("Use isAllocated()")]]
-	 bool bAllocated();
+    bool bAllocated();
 
     /// \brief This clears the texture and pixels contained within the ofImage.
 	void clear();
@@ -421,9 +421,9 @@ public:
     ///
     /// \returns An ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
     [[deprecated("Use getPixels() instead ")]]
-	 ofPixels_<PixelType> & getPixelsRef();
+    ofPixels_<PixelType> & getPixelsRef();
     [[deprecated("Use getPixels() instead ")]]
-	 const ofPixels_<PixelType> & getPixelsRef() const;
+    const ofPixels_<PixelType> & getPixelsRef() const;
 
     operator ofPixels_<PixelType>&();
 

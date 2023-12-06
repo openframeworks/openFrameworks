@@ -94,7 +94,7 @@ uint64_t ofGetUnixTime();
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
 [[deprecated("Use ofGetSystemTimeMillis() instead")]]
-	 uint64_t ofGetSystemTime();
+uint64_t ofGetSystemTime();
 
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
@@ -256,7 +256,8 @@ void ofShuffle(Args &&... args) {
 /// \param values The vector of values to modify.
 
 template <class T>
-[[deprecated("use ofShuffle or of::shuffle")]] void ofRandomize(std::vector<T> & values) {
+[[deprecated("use ofShuffle or of::shuffle")]]
+void ofRandomize(std::vector<T> & values) {
 	of::shuffle(values);
 }
 
@@ -544,7 +545,7 @@ std::string ofTrimBack(const std::string & src, const std::string & locale = "")
 std::string ofTrim(const std::string & src, const std::string & locale = "");
 
 [[deprecated("Use ofUTF8Append instead")]]
-	 void ofAppendUTF8(std::string & str, uint32_t utf8);
+void ofAppendUTF8(std::string & str, uint32_t utf8);
 
 /// \brief Append a Unicode codepoint to a UTF8-encoded std::string.
 ///

@@ -54,9 +54,12 @@ class ofxXmlSettings{
 
 		void setVerbose(bool _verbose);
 
-		OF_DEPRECATED_MSG("ofxXmlSettings::loadFile() is deprecated, use load() instead.", bool loadFile(const std::string& xmlFile));
-		OF_DEPRECATED_MSG("ofxXmlSettings::saveFile() is deprecated, use save() instead.", bool saveFile(const std::string& xmlFile));
-		OF_DEPRECATED_MSG("ofxXmlSettings::saveFile() is deprecated, use save() instead.", bool saveFile());
+		[[deprecated("ofxXmlSettings::loadFile() is deprecated, use load() instead.")]]
+bool loadFile(const std::string& xmlFile);
+		[[deprecated("ofxXmlSettings::saveFile() is deprecated, use save() instead.")]]
+bool saveFile(const std::string& xmlFile);
+		[[deprecated("ofxXmlSettings::saveFile() is deprecated, use save() instead.")]]
+bool saveFile();
 
 		bool load(const std::string & path);
 		bool save(const std::string & path);

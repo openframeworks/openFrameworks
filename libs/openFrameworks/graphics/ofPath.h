@@ -3,7 +3,7 @@
 #include "ofPolyline.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
-// FIXME: deprecated and targets
+// FIXME: ofConstants targets
 #include "ofConstants.h"
 
 template<typename T>
@@ -301,9 +301,9 @@ public:
 	int getCircleResolution() const;
 
 	[[deprecated("Use setCircleResolution instead.")]]
-	 void setArcResolution(int res);
+	void setArcResolution(int res);
 	[[deprecated("Use getCircleResolution instead.")]]
-	 int getArcResolution() const;
+	int getArcResolution() const;
 
 	void setUseShapeColor(bool useColor);
 	bool getUseShapeColor() const;
@@ -336,14 +336,14 @@ public:
 	void rotateDeg(float degrees, const glm::vec3& axis);
 	void rotateRad(float radians, const glm::vec3& axis);
 	[[deprecated("Use Deg/Rad versions.")]]
-	 void rotate(float degrees, const glm::vec3& axis );
+	void rotate(float degrees, const glm::vec3& axis );
 
 	void translate(const glm::vec2 & p);
 
 	void rotateDeg(float degrees, const glm::vec2& axis);
 	void rotateRad(float radians, const glm::vec2& axis);
 	[[deprecated("Use Deg/Rad versions.")]]
-	 void rotate(float degrees, const glm::vec2& axis );
+	void rotate(float degrees, const glm::vec2& axis );
 
 	/// \brief Change the size of either the ofPolyline or ofSubPath instances that
 	/// the ofPath contains. These changes are non-reversible, so for instance

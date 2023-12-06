@@ -30,7 +30,8 @@ public:
 	std::string getAddress() const;
 
 	/// \return the remote host name/ip (deprecated)
-	OF_DEPRECATED_MSG("Use getRemoteHost() instead", std::string getRemoteIp() const);
+	[[deprecated("Use getRemoteHost() instead")]]
+std::string getRemoteIp() const;
 
 	/// \return the remote host name/ip or "" if not set
 	std::string getRemoteHost() const;

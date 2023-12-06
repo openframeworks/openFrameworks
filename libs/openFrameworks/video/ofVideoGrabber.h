@@ -10,7 +10,7 @@ typedef ofPixels_<float> ofFloatPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;
 typedef ofPixels& ofPixelsRef;
 
-class ofVideoGrabber : public ofBaseVideoGrabber, public ofBaseVideoDraws{
+class ofVideoGrabber : public ofBaseVideoGrabber, public ofBaseVideoDraws {
 public:
 
 	ofVideoGrabber();
@@ -34,9 +34,9 @@ public:
 	ofPixels& 			getPixels();
 	const ofPixels&		getPixels() const;
 	[[deprecated("Use getPixels() instead")]]
-	 ofPixels&	getPixelsRef();
+	ofPixels&	getPixelsRef();
 	[[deprecated("Use getPixels() instead")]]
-	 const ofPixels&  getPixelsRef() const;
+	const ofPixels&  getPixelsRef() const;
 	ofTexture &			getTexture();
 	const ofTexture &	getTexture() const;
 	[[deprecated("Use getTexture")]]
@@ -92,6 +92,3 @@ private:
 	mutable ofPixelFormat internalPixelFormat;
 	int desiredFramerate;
 };
-
-
-

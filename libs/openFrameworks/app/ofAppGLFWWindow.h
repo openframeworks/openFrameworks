@@ -144,19 +144,19 @@ public:
 	// window settings, this functions can only be called from main before calling ofSetupOpenGL
 	// TODO: remove specialized version of ofSetupOpenGL when these go away
 	[[deprecated("use ofGLFWWindowSettings to create the window instead")]]
-	 void setNumSamples(int samples);
+	void setNumSamples(int samples);
 	[[deprecated("use ofGLFWWindowSettings to create the window instead")]]
-	 void setDoubleBuffering(bool doubleBuff);
+	void setDoubleBuffering(bool doubleBuff);
 	[[deprecated("use ofGLFWWindowSettings to create the window instead")]]
-	 void setColorBits(int r, int g, int b);
+	void setColorBits(int r, int g, int b);
 	[[deprecated("use ofGLFWWindowSettings to create the window instead")]]
-	 void setAlphaBits(int a);
+	void setAlphaBits(int a);
 	[[deprecated("use ofGLFWWindowSettings to create the window instead")]]
-	 void setDepthBits(int depth);
+	void setDepthBits(int depth);
 	[[deprecated("use ofGLFWWindowSettings to create the window instead")]]
-	 void setStencilBits(int stencil);
+	void setStencilBits(int stencil);
 	[[deprecated("use ofGLFWWindowSettings to create the window instead")]]
-	 void setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it.
+	void setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it.
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	Display * getX11Display();

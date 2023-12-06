@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: deprecated / targets
+// FIXME: ofConstants targets
 #include "ofConstants.h"
 
 class ofBuffer;
@@ -151,7 +151,7 @@ public:
 	/// device 1 - COM4
 	/// ~~~~
 	[[deprecated("Use listDevices() instead")]]
-	 void enumerateDevices();
+	void enumerateDevices();
 
 	/// \brief Returns a vector of ofSerialDeviceInfo instances with the
 	/// devicePath, deviceName, deviceID set.

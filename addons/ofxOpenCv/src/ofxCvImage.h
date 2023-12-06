@@ -40,8 +40,10 @@ class ofxCvImage : public ofBaseImage {
     virtual bool isUsingTexture() const;
     virtual ofTexture&  getTexture();
 	virtual const ofTexture & getTexture() const;
-	OF_DEPRECATED_MSG("Use getTexture",virtual ofTexture&  getTextureReference());
-	OF_DEPRECATED_MSG("Use getTexture",virtual const ofTexture & getTextureReference() const);
+	[[deprecated("Use getTexture")]]
+virtual ofTexture&  getTextureReference();
+	[[deprecated("Use getTexture")]]
+virtual const ofTexture & getTextureReference() const;
     virtual void flagImageChanged();  //mostly used internally
 
     

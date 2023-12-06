@@ -177,14 +177,18 @@ public:
 	/// get the video (ir or rgb) texture
 	ofTexture& getTexture();
 	const ofTexture& getTexture() const;
-	OF_DEPRECATED_MSG("Use getTexture() instead", ofTexture& getTextureReference());
-	OF_DEPRECATED_MSG("Use getTexture() instead", const ofTexture& getTextureReference() const);
+	[[deprecated("Use getTexture() instead")]]
+ofTexture& getTextureReference();
+	[[deprecated("Use getTexture() instead")]]
+const ofTexture& getTextureReference() const;
 
 	/// get the grayscale depth texture
 	ofTexture& getDepthTexture();
 	const ofTexture& getDepthTexture() const;
-	OF_DEPRECATED_MSG("Use getDepthTexture() instead", ofTexture& getDepthTextureReference());
-	OF_DEPRECATED_MSG("Use getDepthTexture() instead", const ofTexture& getDepthTextureReference() const);
+	[[deprecated("Use getDepthTexture() instead")]]
+ofTexture& getDepthTextureReference();
+	[[deprecated("Use getDepthTexture() instead")]]
+const ofTexture& getDepthTextureReference() const;
 
 /// \section Grayscale Depth Value
 

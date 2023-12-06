@@ -11,7 +11,7 @@
 #include "ofGLUtils.h"
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
-// FIXME: Targets
+// FIXME: ofConstants Targets
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT

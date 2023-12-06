@@ -122,13 +122,13 @@ void ofDrawSphere(const glm::vec3& position, float radius);
 void ofDrawSphere(float radius);
 
 [[deprecated("Use ofDrawSphere instead.")]]
-	 void ofSphere(float x, float y, float radius) ;
+void ofSphere(float x, float y, float radius) ;
 [[deprecated("Use ofDrawSphere instead.")]]
-	 void ofSphere(float x, float y, float z, float radius) ;
+void ofSphere(float x, float y, float z, float radius) ;
 [[deprecated("Use ofDrawSphere instead.")]]
-	 void ofSphere(const glm::vec3& position, float radius) ;
+void ofSphere(const glm::vec3& position, float radius) ;
 [[deprecated("Use ofDrawSphere instead.")]]
-	 void ofSphere(float radius) ;
+void ofSphere(float radius) ;
 
 /// \brief Set the icosphere resolution for the current renderer.
 ///
@@ -329,13 +329,13 @@ void ofDrawCone(const glm::vec3& position, float radius, float height);
 void ofDrawCone(float radius, float height);
 
 [[deprecated("Use ofDrawCone instead.")]]
-	 void ofCone(float x, float y, float z, float radius, float height) ;
+void ofCone(float x, float y, float z, float radius, float height) ;
 [[deprecated("Use ofDrawCone instead.")]]
-	 void ofCone(float x, float y, float radius, float height) ;
+void ofCone(float x, float y, float radius, float height) ;
 [[deprecated("Use ofDrawCone instead.")]]
-	 void ofCone(const glm::vec3& position, float radius, float height) ;
+void ofCone(const glm::vec3& position, float radius, float height) ;
 [[deprecated("Use ofDrawCone instead.")]]
-	 void ofCone(float radius, float height) ;
+void ofCone(float radius, float height) ;
 
 /// \section Boxes
 
@@ -444,17 +444,17 @@ void ofDrawBox( float width, float height, float depth );
 
 // deprecated methods //
 [[deprecated("Use ofDrawBox instead.")]]
-	 void ofBox( float x, float y, float z, float width, float height, float depth) ;
+void ofBox( float x, float y, float z, float width, float height, float depth) ;
 [[deprecated("Use ofDrawBox instead.")]]
-	 void ofBox(float x, float y, float z, float size) ;
+void ofBox(float x, float y, float z, float size) ;
 [[deprecated("Use ofDrawBox instead.")]]
-	 void ofBox(const glm::vec3& position, float width, float height, float depth) ;
+void ofBox(const glm::vec3& position, float width, float height, float depth) ;
 [[deprecated("Use ofDrawBox instead.")]]
-	 void ofBox(const glm::vec3& position, float size) ;
+void ofBox(const glm::vec3& position, float size) ;
 [[deprecated("Use ofDrawBox instead.")]]
-	 void ofBox(float size) ;
+void ofBox(float size) ;
 [[deprecated("Use ofDrawBox instead.")]]
-	 void ofBox( float width, float height, float depth ) ;
+void ofBox( float width, float height, float depth ) ;
 
 class of3dGraphics{
 public:

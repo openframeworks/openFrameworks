@@ -31,11 +31,11 @@ int ofGetGLInternalFormat(const ofShortPixels & pixels);
 int ofGetGLInternalFormat(const ofFloatPixels & pixels);
 
 [[deprecated("Use ofGetGLInternalFormat() instead")]]
-	 int ofGetGlInternalFormat(const ofPixels & pixels);
+int ofGetGlInternalFormat(const ofPixels & pixels);
 [[deprecated("Use ofGetGLInternalFormat() instead")]]
-	 int ofGetGlInternalFormat(const ofShortPixels & pixels);
+int ofGetGlInternalFormat(const ofShortPixels & pixels);
 [[deprecated("Use ofGetGLInternalFormat() instead")]]
-	 int ofGetGlInternalFormat(const ofFloatPixels & pixels);
+int ofGetGlInternalFormat(const ofFloatPixels & pixels);
 
 //---------------------------------
 // this is helpful for debugging ofTexture
@@ -45,9 +45,9 @@ int ofGetGLFormatFromInternal(int gInternalFormat);
 int ofGetGLTypeFromInternal(int glInternalFormat);
 
 [[deprecated("Use ofGetGLInternalFormatName() instead")]]
-	 std::string ofGetGlInternalFormatName(int glInternalFormat);
+std::string ofGetGlInternalFormatName(int glInternalFormat);
 [[deprecated("Use ofGetGLTypeFromInternal() instead")]]
-	 int ofGetGlTypeFromInternal(int glInternalFormat);
+int ofGetGlTypeFromInternal(int glInternalFormat);
 
 std::shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
@@ -56,11 +56,11 @@ int ofGetGLType(const ofShortPixels & pixels);
 int ofGetGLType(const ofFloatPixels & pixels);
 
 [[deprecated("Use ofGetGLType() instead")]]
-	 int ofGetGlType(const ofPixels & pixels);
+int ofGetGlType(const ofPixels & pixels);
 [[deprecated("Use ofGetGLType() instead")]]
-	 int ofGetGlType(const ofShortPixels & pixels);
+int ofGetGlType(const ofShortPixels & pixels);
 [[deprecated("Use ofGetGLType() instead")]]
-	 int ofGetGlType(const ofFloatPixels & pixels);
+int ofGetGlType(const ofFloatPixels & pixels);
 
 ofImageType ofGetImageTypeFromGLType(int glType);
 
@@ -85,7 +85,7 @@ bool ofIsGLProgrammableRenderer();
 
 template<class T>
 [[deprecated("Use ofGetGLFormat() instead")]]
-	 int ofGetGlFormat(const ofPixels_<T> & pixels);
+int ofGetGlFormat(const ofPixels_<T> & pixels);
 
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {
