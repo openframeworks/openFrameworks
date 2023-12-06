@@ -143,13 +143,20 @@ public:
 
 	// window settings, this functions can only be called from main before calling ofSetupOpenGL
 	// TODO: remove specialized version of ofSetupOpenGL when these go away
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setNumSamples(int samples));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDoubleBuffering(bool doubleBuff));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setColorBits(int r, int g, int b));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setAlphaBits(int a));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDepthBits(int depth));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setStencilBits(int stencil));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setMultiDisplayFullscreen(bool bMultiFullscreen)); //note this just enables the mode, you have to toggle fullscreen to activate it.
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setNumSamples(int samples);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setDoubleBuffering(bool doubleBuff);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setColorBits(int r, int g, int b);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setAlphaBits(int a);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setDepthBits(int depth);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setStencilBits(int stencil);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it.
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	Display * getX11Display();

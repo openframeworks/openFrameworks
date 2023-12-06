@@ -343,12 +343,12 @@ public:
 	float getNormalGeomToNormalMapMix() const;
 
 	typedef ofMaterialSettings Data;
-	[[deprecated("Use getSettings() instead")]]
+	[[deprecated("Use getSettings()")]]
 	Data getData() const;
 	ofMaterialSettings getSettings() const;
 
 	/// \brief set the material color properties data struct
-	[[deprecated("Use setup(settings) instead")]]
+	[[deprecated("Use setup(settings)")]]
 	void setData(const ofMaterial::Data & data);
 
 	// documented in ofBaseMaterial

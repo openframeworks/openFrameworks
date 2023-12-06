@@ -59,6 +59,7 @@ enum ofTargetPlatform{
 #endif
 
 
+// FIXME: not used anymore in OF Core. Only kept for addons compatibility - 20231206
 // Cross-platform deprecation warning
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5

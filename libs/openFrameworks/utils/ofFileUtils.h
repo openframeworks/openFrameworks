@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: FS
+// FIXME: ofConstants FS
 #include "ofConstants.h"
 #include <fstream>
 
@@ -105,9 +105,9 @@ public:
 	/// \warning Do not access bytes at indices beyond size()!
 	/// \returns const pointer to internal raw bytes
 	const char * getData() const;
-	[[deprecated("Use getData instead")]]
+	[[deprecated("Use getData")]]
 	char * getBinaryBuffer();
-	[[deprecated("Use getData instead")]]
+	[[deprecated("Use getData")]]
 	const char * getBinaryBuffer() const;
 
 	/// get the contents of the buffer as a string.
@@ -128,13 +128,13 @@ public:
 	/// \returns the size of the buffer's content in bytes
 	std::size_t size() const;
 
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	std::string getNextLine();
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	std::string getFirstLine();
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	bool isLastLine();
-	[[deprecated("use a lines iterator instead")]]
+	[[deprecated("use a lines iterator")]]
 	void resetLineReader();
 
 	friend std::ostream & operator<<(std::ostream & ostr, const ofBuffer & buf);
@@ -1125,7 +1125,7 @@ public:
 	/// \returns number of paths
 	std::size_t size() const;
 
-	[[deprecated("Use size() instead.")]]
+	[[deprecated("Use size()")]]
 	int numFiles();
 
 	// this allows to compare directories by their paths, also provides sorting

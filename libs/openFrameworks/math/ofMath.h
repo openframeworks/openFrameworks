@@ -81,7 +81,7 @@ void ofSetRandomSeed(unsigned long new_seed);
 /// setup.  This can be useful for debugging and testing.
 ///
 /// \param val The value with which to seed the generator.
-[[deprecated("use ofSetRandomSeed() or of::random::seed() instead")]] void ofSeedRandom(int val);
+[[deprecated("use ofSetRandomSeed() or of::random::seed()")]] void ofSeedRandom(int val);
 
 /// \}
 

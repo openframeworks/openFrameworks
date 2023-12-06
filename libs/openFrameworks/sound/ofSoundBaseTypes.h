@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: FS only
+// FIXME: ofConstants FS
 #include "ofConstants.h"
 #include <functional>
 
