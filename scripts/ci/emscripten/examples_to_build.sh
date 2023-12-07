@@ -58,6 +58,16 @@ for folder in "${folders[@]}"; do
 			mkdir -p "$out_folder/$parent_folder_name"
 			cp -r "bin/em/$folder_name" "$out_folder/$parent_folder_name/"
 			
+			example_index="$out_folder/$parent_folder_name/$folder_name/index.html"
+			
+			#replace the index.html with one that can show src/main.cpp / src/ofApp.cpp etc
+			cp -r $script_path/example-index.html $example_index
+			cp -r src/* "$out_folder/$parent_folder_name/$folder_name/"
+			
+			#Github Link
+			sed -i "s|EXAMPLE_PARENT_FOLDER|$parent_folder_name|g" "$example_index"
+			sed -i "s|EXAMPLE_FOLDER|$folder_name|g" "$example_index"
+
 			thumb_png="$folder_name.png"
 			thumb_gif="$folder_name.gif"
 			thumb_jpg="$folder_name.jpg"
@@ -109,6 +119,10 @@ echo "html is $htmlFile"
 cp -r $script_path/index.html $htmlFile
 sed -i "s|REPLACE_ME|$outPaths|g" $htmlFile
 sed -i "s|REPLACE_FILES|$outThumbs|g" $htmlFile
+
+# Grab the code snippet js / css
+cp -r $script_path/prism.* $out_folder
+
 
 DO_UPLOAD="false"
 
