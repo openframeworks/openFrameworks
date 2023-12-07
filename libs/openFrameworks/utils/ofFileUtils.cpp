@@ -658,7 +658,7 @@ std::string ofFile::path() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: FS
+// FIXME: Deprecate
 string ofFile::getExtension() const {
 	auto dotext = myFile.extension().string();
 	// FIXME: probably not needed;
@@ -671,12 +671,12 @@ string ofFile::getExtension() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getFileName() const {
-	return myFile.filename().string();
+	return ofPathToString(myFile.filename());
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getBaseName() const {
-	return myFile.stem().string();
+	return ofPathToString(myFile.stem());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1033,7 +1033,7 @@ bool ofFile::renameTo(const fs::path& path, bool bRelativeToData, bool overwrite
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::remove(bool recursive){
-	if(myFile.string().empty()){
+	if(myFile.empty()){
 		ofLogError("ofFile") << "remove(): file path is empty";
 		return false;
 	}
@@ -1212,24 +1212,22 @@ bool ofDirectory::exists() const {
 //------------------------------------------------------------------------------------------------------------
 // MARK: - near future FS
 std::string ofDirectory::path() const {
-	return myDir.string();
+	return ofPathToString(myDir);
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future FS
-//fs::path ofDirectory::getAbsolutePathFS() const {
-//	try{
-//		return fs::canonical(fs::absolute(myDir));
-//	}catch(...){
-//		return fs::absolute(myDir);
-//	}
-//}
-std::string ofDirectory::getAbsolutePath() const {
-	try{
-		return fs::canonical(fs::absolute(myDir)).string();
-	}catch(...){
-		return fs::absolute(myDir).string();
+fs::path ofDirectory::getAbsolutePathFS() const {
+	try {
+		return fs::canonical(fs::absolute(myDir));
+	} catch(...) {
+		return fs::absolute(myDir);
 	}
+}
+
+// MARK: - near future FS
+//------------------------------------------------------------------------------------------------------------
+std::string ofDirectory::getAbsolutePath() const {
+	return ofPathToString(ofDirectory::getAbsolutePathFS());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1287,7 +1285,7 @@ bool ofDirectory::isDirectory() const {
 bool ofDirectory::copyTo(const fs::path & _path, bool bRelativeToData, bool overwrite){
 	auto path = _path;
 
-	if(myDir.string().empty()){
+	if(myDir.empty()){
 		ofLogError("ofDirectory") << "copyTo(): source path is empty";
 		return false;
 	}
@@ -1331,7 +1329,7 @@ bool ofDirectory::copyTo(const fs::path & _path, bool bRelativeToData, bool over
 		}else{
 			ofFile tmp;
 			tmp.openFromCWD(file->path(),ofFile::Reference);
-			tmp.copyTo(dst.string(),false,overwrite);
+			tmp.copyTo(dst,false,overwrite);
 		}
 	}
 
@@ -1432,7 +1430,7 @@ std::size_t ofDirectory::listDir(){
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getOriginalDirectory() const {
-	return originalDirectory.string();
+	return ofPathToString(originalDirectory);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1442,7 +1440,7 @@ string ofDirectory::getName(std::size_t position) const{
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getPath(std::size_t position) const{
-	return originalDirectory.string() + getName(position);
+	return ofPathToString(originalDirectory / getName(position));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1723,11 +1721,11 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - re-avail
 string ofFilePath::addLeadingSlash(const fs::path & _path){
-	auto path = _path.string();
+	auto path = ofPathToString(_path);
 	auto sep = fs::path("/").make_preferred();
 	if(!path.empty()){
-		if(ofToString(path[0]) != sep.string()){
-			path = (sep / path).string();
+		if(ofToString(path[0]) != sep.string()) {
+			return ofPathToString(sep / path);
 		}
 	}
 	return path;
@@ -1749,7 +1747,7 @@ std::string ofFilePath::addTrailingSlash(const fs::path & _path){
 			path = path / sep;
 		}
 	}
-	return path.string();
+	return ofPathToString(path);
 #endif
 }
 
@@ -1761,10 +1759,10 @@ string ofFilePath::getFileExt(const fs::path & filename){
 }
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - suggest replace_extension instead
+// FIXME: - Deprecate and suggest replace_extension instead
 std::string ofFilePath::removeExt(const fs::path & _filename){
 	auto filename = _filename;
-	return filename.replace_extension().string();
+	return ofPathToString(filename.replace_extension());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1772,9 +1770,6 @@ fs::path ofFilePath::getPathForDirectoryFS(const fs::path & path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
-
-	// FIXME: Remove .string() here and following
-	// FIXME: this seems over complicated and not useful anymore, using filesystem
 
 #if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
 	if(path.empty()) return {};
@@ -1789,16 +1784,18 @@ fs::path ofFilePath::getPathForDirectoryFS(const fs::path & path){
 #endif
 }
 
+
 //------------------------------------------------------------------------------------------------------------
+// FIXME: Deprecate this seems over complicated and not useful anymore, using filesystem
 string ofFilePath::getPathForDirectory(const fs::path & path){
-	return ofFilePath::getPathForDirectoryFS(path).string();
+	return ofPathToString(ofFilePath::getPathForDirectoryFS(path));
 }
 
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - re-avail
 string ofFilePath::removeTrailingSlash(const fs::path & _path){
-	auto path = _path.string();
+	auto path = ofPathToString(_path);
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
@@ -1807,22 +1804,15 @@ string ofFilePath::removeTrailingSlash(const fs::path & _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - re-avail
-string ofFilePath::getFileName(const fs::path& _filePath, bool bRelativeToData){
-	auto filePath = _filePath;
-
-	if(bRelativeToData){
-		filePath = ofToDataPathFS(filePath);
-	}
-
-	// FIXME: this is probably over complicated
-	return fs::path(filePath).filename().string();
+// FIXME: - Deprecate in favor of fs::path.filename()
+string ofFilePath::getFileName(const fs::path & filePath, bool bRelativeToData){
+	return ofPathToString(filePath.filename());
 }
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - suggest using stem() instead
 string ofFilePath::getBaseName(const fs::path & filePath){
-	return filePath.stem().string();
+	return ofPathToString(filePath.stem());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1843,19 +1833,21 @@ bool ofFilePath::createEnclosingDirectory(const fs::path& filePath, bool bRelati
 
 //------------------------------------------------------------------------------------------------------------
 // MARK: - near future FS
-//fs::path ofFilePath::getAbsolutePath(const fs::path& path, bool bRelativeToData){
-std::string ofFilePath::getAbsolutePath(const fs::path& path, bool bRelativeToData){
+fs::path ofFilePath::getAbsolutePathFS(const fs::path & path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
 	}else{
 		try{
-//			return fs::canonical(fs::absolute(path));
-			return fs::canonical(fs::absolute(path)).string();
+			return fs::canonical(fs::absolute(path));
 		}catch(...){
-//			return fs::absolute(path);
-			return fs::absolute(path).string();
+			return fs::absolute(path);
 		}
 	}
+}
+
+//------------------------------------------------------------------------------------------------------------
+std::string ofFilePath::getAbsolutePath(const fs::path& path, bool bRelativeToData){
+	return ofPathToString(ofFilePath::getAbsolutePathFS(path, bRelativeToData));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1865,18 +1857,14 @@ bool ofFilePath::isAbsolute(const fs::path& path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
-	return fs::current_path().string();
+	return ofPathToString(fs::current_path());
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future
-//fs::path ofFilePath::join(const fs::path& path1, const fs::path& path2){
-//	// FIXME: deprecate when possible. helper function more complex than actual solution
-//	return (path1 / path2);
-//}
+// FIXME: deprecate. helper function more complex than actual solution
 std::string ofFilePath::join(const fs::path& path1, const fs::path& path2){
 	// FIXME: deprecate when possible. helper function more complex than actual solution
-	return (path1 / path2).string();
+	return ofPathToString(path1 / path2);
 }
 
 //------------------------------------------------------------------------------------------------------------
