@@ -1,10 +1,15 @@
-name: nightly-linux64
+name: manual-nightly
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+          release:
+            description: 'release'     
+            required: true
+            default: 'nightly'  
 jobs:
-  build-linux-platforms:
-    runs-on: ubuntu-22.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+  manual-nightly:
+    runs-on: ubuntu-latest
     strategy:
         matrix:
           cfg:
@@ -12,22 +17,22 @@ jobs:
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install libunwind
       run:  sudo apt-get install libunwind-dev
     - name: Install dependencies
-      run:  sudo ./scripts/linux/ubuntu/install_dependencies.sh -y;
+      run: ./scripts/ci/$TARGET/install.sh;
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Create Package
-      run: scripts/ci/package_builds.sh;
+      run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
       id: createpackage
     - name: Update Release
-      uses: IsaacShelton/update-existing-release@v1.3.2
+      uses: IsaacShelton/update-existing-release@v1.3.3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag: nightly
-        release: nightly
+        tag: ${{ github.event.inputs.release }}
+        release: ${{ github.event.inputs.release }}
         prerelease: false
         replace: true
         files: ${{ steps.createpackage.outputs.FILES_OUT }}

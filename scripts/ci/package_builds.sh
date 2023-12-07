@@ -5,9 +5,9 @@ ROOT=${GITHUB_WORKSPACE}
 sudo apt-get -y install aptitude
 
 #for ubuntu 22.04 we need to install wine32
-sudo dpkg --add-architecture i386
+#sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo aptitude -y install wine32
+sudo aptitude -y install wine64
 
 cd $ROOT
 
@@ -15,6 +15,9 @@ OUTPUT_FOLDER=$ROOT/out
 mkdir $OUTPUT_FOLDER
 
 lastversion=$(date +%Y%m%d)
+if [ -n "$1" ] && [ "$1" != "nightly" ]; then
+    lastversion=$1
+fi
 
 git submodule update --init --recursive
 git submodule update --recursive --remote

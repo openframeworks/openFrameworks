@@ -422,7 +422,7 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "osx" ]; then
-		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip 2> /dev/null
+		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         	unzip projectGenerator-osx.zip
         	mv projectGenerator-osx projectGenerator
         	rm projectGenerator-osx.zip
@@ -433,7 +433,7 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "ios" ]; then
-		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-ios.zip 2> /dev/null
+		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-ios.zip 2> /dev/null
         	unzip projectGenerator-ios.zip
         	mv projectGenerator-ios projectGenerator
         	rm projectGenerator-ios.zip
@@ -457,6 +457,7 @@ function createPackage {
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
+		chmod +x projectGenerator-linux64/projectGenerator
 	fi
 
     if [ "$pkg_platform" = "android" ]; then

@@ -10,7 +10,6 @@
 #pragma once
 
 #include "ofNode.h"
-#include "ofColor.h"
 #include "ofShadow.h"
 
 class ofBaseGLRenderer;
@@ -81,7 +80,7 @@ public:
 	bool beginShadowDepthPass( GLenum aPassIndex );
 	bool endShadowDepthPass( GLenum aPassIndex );
 	
-	ofShadow& getShadow() { return shadow; }
+	ofShadow & getShadow() { return shadow; }
 
 	class Data{
 	public:

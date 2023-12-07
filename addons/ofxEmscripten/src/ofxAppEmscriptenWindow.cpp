@@ -47,7 +47,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	  
     makeCurrent();
 
-    _renderer = make_shared<ofGLProgrammableRenderer>(this);
+    _renderer = std::make_shared<ofGLProgrammableRenderer>(this);
     ((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
     emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,1,&keydown_cb);

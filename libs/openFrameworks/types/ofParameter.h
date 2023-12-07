@@ -1,11 +1,14 @@
 #pragma once
 
 #include "ofEvents.h"
+// FIXME: crossed references. ofPoint adds ofVec3f which adds ofVec2f and ofVec4f
 #include "ofPoint.h"
+
 #include "ofRectangle.h"
-#include "ofColor.h"
 #include "ofLog.h"
-#include "ofConstants.h"
+// #include "ofConstants.h"
+#include "ofColor.h"
+
 #include <map>
 
 template<typename ParameterType>
@@ -55,6 +58,11 @@ public:
 		return static_cast<const ofReadOnlyParameter<ParameterType, Friend> &>(*this);
 	}
 
+	template<typename OtherType>
+	bool isOfType() const {
+		return typeid(*this) == typeid(ofParameter<OtherType>);
+	}
+	
 	ofParameterGroup & castGroup();
 	const ofParameterGroup & castGroup() const;
 
@@ -602,7 +610,8 @@ private:
 	class Value{
 	public:
 		Value()
-		:min(of::priv::TypeInfo<ParameterType>::min())
+		:init(of::priv::TypeInfo<ParameterType>::min())
+		,min(of::priv::TypeInfo<ParameterType>::min())
 		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){}
@@ -829,7 +838,7 @@ ParameterType ofParameter<ParameterType>::getInit() const {
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::reInit() {
-    set(obj->init);
+    setMethod(obj->init);
 }
 
 template<typename ParameterType>

@@ -63,8 +63,11 @@ public:
 
 	void				setUsePixels(bool usePixels);
 private:
-	int id;
+	int player_id;
 	ofTexture texture;
 	ofPixels pixels;
 	bool usePixels;
+        float timePlayRequested = 0;
+        bool bHadValidFrame = false;
+        bool bWarnBlocked = false; 
 };
