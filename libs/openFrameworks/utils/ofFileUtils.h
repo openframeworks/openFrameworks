@@ -1251,6 +1251,9 @@ bool ofRestoreWorkingDirectoryToDefault();
 /// \param root The path to the data/ folder relative to the app executable.
 void ofSetDataPathRoot(const of::filesystem::path & root);
 
+std::string ofPathToString(const of::filesystem::path & path);
+
+
 /*! \cond PRIVATE */
 namespace of {
 namespace priv {
