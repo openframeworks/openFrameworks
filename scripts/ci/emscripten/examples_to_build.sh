@@ -69,13 +69,14 @@ for folder in "${folders[@]}"; do
 				cp -r $thumb_gif "$out_folder/$parent_folder_name/$folder_name/"
 				outThumbs+="$thumb_gif,"
 			elif [ -e "$thumb_jpg" ]; then
-					cp -r $thumb_jpg "$out_folder/$parent_folder_name/$folder_name/"
+				cp -r $thumb_jpg "$out_folder/$parent_folder_name/$folder_name/"
 				outThumbs+="$thumb_jpg,"
 			else
 				#try any image file
 				first_file=$(find . -maxdepth 1 \( -name "*.gif" -o -name "*.png" -o -name "*.jpg" \) -print -quit)
 				# Check if a file was found
 				if [ -n "$first_file" ]; then
+					cp -r $first_file "$out_folder/$parent_folder_name/$folder_name/"
 					outThumbs+="$first_file,"
 				else
 					#default file
@@ -100,6 +101,7 @@ outThumbs=${outThumbs%,}
 
 htmlFile="$out_folder/index.html"
 
+echo "outThumbs is $outThumbs"
 echo "outPaths is $outPaths"
 echo "html is $htmlFile"
 
