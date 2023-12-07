@@ -232,7 +232,7 @@ void ofOpenALSoundPlayer::close(){
 // ----------------------------------------------------------------------------
 bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
 	SF_INFO sfInfo;
-	SNDFILE* f = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
+	SNDFILE* f = sf_open(path.c_str(),SFM_READ,&sfInfo);
 	if(!f){
 		ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): couldn't read " << path;
 		return false;
@@ -326,7 +326,7 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const of::filesystem::path& path,std::v
 bool ofOpenALSoundPlayer::sfStream(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!streamf){
 		SF_INFO sfInfo;
-		streamf = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
+		streamf = sf_open(path.c_str(),SFM_READ,&sfInfo);
 		if(!streamf){
 			ofLogError("ofOpenALSoundPlayer") << "sfStream(): couldn't read " << path ;
 			return false;
@@ -390,7 +390,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(const of::filesystem::path& path,std::vec
 	if(!mp3streamf){
 		int err = MPG123_OK;
 		mp3streamf = mpg123_new(nullptr,&err);
-		if(mpg123_open(mp3streamf,path.string().c_str())!=MPG123_OK){
+		if(mpg123_open(mp3streamf,path.c_str())!=MPG123_OK){
 			mpg123_close(mp3streamf);
 			mpg123_delete(mp3streamf);
 			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): couldn't read " << path ;

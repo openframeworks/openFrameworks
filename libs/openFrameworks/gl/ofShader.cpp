@@ -198,7 +198,12 @@ ofShader & ofShader::operator=(ofShader && mom) {
 
 //--------------------------------------------------------------
 bool ofShader::load(const of::filesystem::path & shaderName) {
-    return load(shaderName + ".vert", shaderName + ".frag");
+	auto vertFile = shaderName;
+	auto fragFile = shaderName;
+	vertFile += ".vert";
+	fragFile += ".frag";
+//    return load(shaderName + ".vert", shaderName + ".frag");
+	return load(vertFile, fragFile);
 }
 
 //--------------------------------------------------------------
