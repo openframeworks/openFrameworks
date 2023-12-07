@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofParameter.h"
-#include "ofConstants.h"
 #include "pugixml.hpp"
 
 template<typename It>

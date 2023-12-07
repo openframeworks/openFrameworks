@@ -12,7 +12,7 @@ void ofApp::setup(){
 		
 		colorImg.allocate(vidGrabber.getWidth(),vidGrabber.getHeight());
 	}else{
-		vidPlayer.load("people.mov");
+		vidPlayer.load("people.mp4");
 		vidPlayer.play();
 		vidPlayer.setLoopState(OF_LOOP_NORMAL);
 

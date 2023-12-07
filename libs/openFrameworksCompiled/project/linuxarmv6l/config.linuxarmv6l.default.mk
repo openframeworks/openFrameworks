@@ -57,7 +57,7 @@ endif
 
 #check if we are newer than Stretch and use the new system
 ifeq ($(shell expr $(VER_ID) \>= 9), 1)
-	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only 
+	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only
 	USE_PI_LEGACY = 0
 	USE_ATOMIC = 1
 endif
@@ -127,6 +127,7 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #c++ 17 support - comment out two lines below to use c++11
 PLATFORM_CFLAGS += -std=c++17
 PLATFORM_LDFLAGS += -lstdc++fs
+PLATFORM_CXXVER = -std=c++17
 
 PLATFORM_CFLAGS += -march=armv6
 PLATFORM_CFLAGS += -mfpu=vfp
@@ -190,7 +191,7 @@ PLATFORM_LDFLAGS += -pthread
 
 ifdef USE_ATOMIC
 	PLATFORM_LDFLAGS += -latomic
-endif 
+endif
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -219,7 +220,6 @@ PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/l
 ##########################################################################################
 
 PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
-
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -270,10 +270,11 @@ endif
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 
 	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/$(GCC_PREFIX)/c++/7
+	PLATFORM_HEADER_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)/include
 
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/gcc/$(GCC_PREFIX)/7
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX)

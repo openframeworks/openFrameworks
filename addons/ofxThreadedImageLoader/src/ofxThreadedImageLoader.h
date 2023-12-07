@@ -2,6 +2,7 @@
 
 #include "ofThread.h"
 #include "ofImage.h"
+#include "ofPixels.h"
 #include "ofURLFileLoader.h"
 #include "ofTypes.h"
 #include "ofThreadChannel.h"

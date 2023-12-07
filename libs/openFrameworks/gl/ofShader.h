@@ -7,11 +7,12 @@
  make sure to catch and report that error.
  */
 
-#include "ofFileUtils.h"
+// FIXME: ofConstants Targets
 #include "ofConstants.h"
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
 #include <unordered_map>
-#include <map>
 
 class ofTexture;
 class ofMatrix3x3;
@@ -26,10 +27,10 @@ typedef ofColor_<float> ofFloatColor;
 enum ofLogLevel: short;
 
 struct ofShaderSettings {
-    std::map<GLuint, of::filesystem::path> shaderFiles;
-    std::map<GLuint, std::string> shaderSources;
-    std::map<std::string, int> intDefines;
-    std::map<std::string, float> floatDefines;
+    std::unordered_map<GLuint, of::filesystem::path> shaderFiles;
+    std::unordered_map<GLuint, std::string> shaderSources;
+    std::unordered_map<std::string, int> intDefines;
+    std::unordered_map<std::string, float> floatDefines;
     of::filesystem::path sourceDirectoryPath;
     bool bindDefaults = true;
 };
@@ -49,8 +50,8 @@ class ofShader {
 		std::string source;
 		std::string expandedSource;
 		of::filesystem::path directoryPath;
-		std::map<std::string, int>   intDefines;
-		std::map<std::string, float> floatDefines;
+		std::unordered_map<std::string, int>   intDefines;
+		std::unordered_map<std::string, float> floatDefines;
 	};
 
 public:
@@ -69,11 +70,11 @@ public:
 
 #if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	struct TransformFeedbackSettings {
-		std::map<GLuint, of::filesystem::path> shaderFiles;
-		std::map<GLuint, std::string> shaderSources;
+		std::unordered_map<GLuint, of::filesystem::path> shaderFiles;
+		std::unordered_map<GLuint, std::string> shaderSources;
 		std::vector<std::string> varyingsToCapture;
-		std::map<std::string, int> intDefines;
-		std::map<std::string, float> floatDefines;
+		std::unordered_map<std::string, int> intDefines;
+		std::unordered_map<std::string, float> floatDefines;
 		of::filesystem::path sourceDirectoryPath;
 		bool bindDefaults = true;
 		GLuint bufferMode = GL_INTERLEAVED_ATTRIBS; // GL_INTERLEAVED_ATTRIBS or GL_SEPARATE_ATTRIBS
