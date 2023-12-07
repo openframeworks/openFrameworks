@@ -939,37 +939,37 @@ public:
     // this methods are deprecated in 006 please dont use:
 	/// \cond INTERNAL
 
-    [[deprecated("Use member method getScaled() instead.")]]
+    [[deprecated("Use member method getScaled()")]]
 	ofVec2f rescaled( const float length ) const;
 	
-    [[deprecated("Use member method scale() instead.")]]
+    [[deprecated("Use member method scale()")]]
 	ofVec2f& rescale( const float length );
 	
-    [[deprecated("Use member method getRotated() instead.")]]
+    [[deprecated("Use member method getRotated()")]]
 	ofVec2f rotated( float angle ) const;
 	
-    [[deprecated("Use member method getNormalized() instead.")]]
+    [[deprecated("Use member method getNormalized()")]]
 	ofVec2f normalized() const;
 	
-    [[deprecated("Use member method getLimited() instead.")]]
+    [[deprecated("Use member method getLimited()")]]
 	ofVec2f limited(float max) const;
 	
-    [[deprecated("Use member method getPerpendicular() instead.")]]
+    [[deprecated("Use member method getPerpendicular()")]]
 	ofVec2f perpendiculared() const;
 	
-    [[deprecated("Use member method getInterpolated() instead.")]]
+    [[deprecated("Use member method getInterpolated()")]]
 	ofVec2f interpolated( const ofVec2f& pnt, float p ) const;
     
-    [[deprecated("Use member method getMiddled() instead.")]]
+    [[deprecated("Use member method getMiddled()")]]
 	ofVec2f middled( const ofVec2f& pnt ) const;
     
-    [[deprecated("Use member method getMapped() instead.")]]
+    [[deprecated("Use member method getMapped()")]]
 	ofVec2f mapped( const ofVec2f& origin, const ofVec2f& vx, const ofVec2f& vy ) const;
     
-    [[deprecated("Use member method squareDistance() instead.")]]
+    [[deprecated("Use member method squareDistance()")]]
 	float distanceSquared( const ofVec2f& pnt ) const;
     
-    [[deprecated("Use member method getRotated() instead.")]]
+    [[deprecated("Use member method getRotated()")]]
 	ofVec2f rotated( float angle, const ofVec2f& pivot ) const;   
     
     // return all zero vector

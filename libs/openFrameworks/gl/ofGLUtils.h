@@ -30,9 +30,12 @@ int ofGetGLInternalFormat(const ofPixels & pixels);
 int ofGetGLInternalFormat(const ofShortPixels & pixels);
 int ofGetGLInternalFormat(const ofFloatPixels & pixels);
 
-OF_DEPRECATED_MSG("Use ofGetGLInternalFormat() instead", int ofGetGlInternalFormat(const ofPixels & pixels));
-OF_DEPRECATED_MSG("Use ofGetGLInternalFormat() instead", int ofGetGlInternalFormat(const ofShortPixels & pixels));
-OF_DEPRECATED_MSG("Use ofGetGLInternalFormat() instead", int ofGetGlInternalFormat(const ofFloatPixels & pixels));
+[[deprecated("Use ofGetGLInternalFormat()")]]
+int ofGetGlInternalFormat(const ofPixels & pixels);
+[[deprecated("Use ofGetGLInternalFormat()")]]
+int ofGetGlInternalFormat(const ofShortPixels & pixels);
+[[deprecated("Use ofGetGLInternalFormat()")]]
+int ofGetGlInternalFormat(const ofFloatPixels & pixels);
 
 //---------------------------------
 // this is helpful for debugging ofTexture
@@ -41,8 +44,10 @@ std::string ofGetGLInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int gInternalFormat);
 int ofGetGLTypeFromInternal(int glInternalFormat);
 
-OF_DEPRECATED_MSG("Use ofGetGLInternalFormatName() instead", std::string ofGetGlInternalFormatName(int glInternalFormat));
-OF_DEPRECATED_MSG("Use ofGetGLTypeFromInternal() instead", int ofGetGlTypeFromInternal(int glInternalFormat));
+[[deprecated("Use ofGetGLInternalFormatName()")]]
+std::string ofGetGlInternalFormatName(int glInternalFormat);
+[[deprecated("Use ofGetGLTypeFromInternal()")]]
+int ofGetGlTypeFromInternal(int glInternalFormat);
 
 std::shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
@@ -50,9 +55,12 @@ int ofGetGLType(const ofPixels & pixels);
 int ofGetGLType(const ofShortPixels & pixels);
 int ofGetGLType(const ofFloatPixels & pixels);
 
-OF_DEPRECATED_MSG("Use ofGetGLType() instead", int ofGetGlType(const ofPixels & pixels));
-OF_DEPRECATED_MSG("Use ofGetGLType() instead", int ofGetGlType(const ofShortPixels & pixels));
-OF_DEPRECATED_MSG("Use ofGetGLType() instead", int ofGetGlType(const ofFloatPixels & pixels));
+[[deprecated("Use ofGetGLType()")]]
+int ofGetGlType(const ofPixels & pixels);
+[[deprecated("Use ofGetGLType()")]]
+int ofGetGlType(const ofShortPixels & pixels);
+[[deprecated("Use ofGetGLType()")]]
+int ofGetGlType(const ofFloatPixels & pixels);
 
 ofImageType ofGetImageTypeFromGLType(int glType);
 
@@ -76,7 +84,8 @@ bool ofGLSupportsNPOTTextures();
 bool ofIsGLProgrammableRenderer();
 
 template<class T>
-OF_DEPRECATED_MSG("Use ofGetGLFormat() instead", int ofGetGlFormat(const ofPixels_<T> & pixels));
+[[deprecated("Use ofGetGLFormat()")]]
+int ofGetGlFormat(const ofPixels_<T> & pixels);
 
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {

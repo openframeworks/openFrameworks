@@ -248,31 +248,31 @@ public:
 	/// \cond INTERNAL
 	
 	// getScaled
-	[[deprecated("Use member method getScaled() instead.")]]
+	[[deprecated("Use member method getScaled()")]]
 	ofVec4f rescaled( const float length ) const;
 	
 	// scale
-	[[deprecated("Use member method scale() instead.")]]
+	[[deprecated("Use member method scale()")]]
 	ofVec4f& rescale( const float length );
 	
 	// getNormalized
-	[[deprecated("Use member method getNormalized() instead.")]]
+	[[deprecated("Use member method getNormalized()")]]
 	ofVec4f normalized() const;
 	
 	// getLimited
-	[[deprecated("Use member method getLimited() instead.")]]
+	[[deprecated("Use member method getLimited()")]]
 	ofVec4f limited(float max) const;
 	
 	// use squareDistance
-	[[deprecated("Use member method squareDistance() instead.")]]
+	[[deprecated("Use member method squareDistance()")]]
 	float  distanceSquared( const ofVec4f& pnt ) const;
 	
 	// use getInterpolated
-	[[deprecated("Use member method getInterpolated() instead.")]]
+	[[deprecated("Use member method getInterpolated()")]]
 	ofVec4f interpolated( const ofVec4f& pnt, float p ) const;
 	
 	// use getMiddle
-	[[deprecated("Use member method getMiddle() instead.")]]
+	[[deprecated("Use member method getMiddle()")]]
 	ofVec4f middled( const ofVec4f& pnt ) const;
 	
 	// return all zero vector
