@@ -885,6 +885,7 @@ public:
 	/// \return current path as an absolute path
 	// MARK: - near future FS
 	std::string getAbsolutePath() const;
+	of::filesystem::path getAbsolutePathFS() const;
 
 	/// Check if the current path is readable.
 	///
