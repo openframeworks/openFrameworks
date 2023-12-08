@@ -1,6 +1,6 @@
 # About Gaussian Blue Filter Example
 
-![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](gaussianBlurFilterExample.png)
+![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](09_gaussianBlurFilterExample.png)
 
 ### Learning Objectives
 

@@ -1,7 +1,7 @@
-# About 02_simpleVertexDisplacement
+# About 02_simpleVertexDisplacementExample
 
 
-![Screenshot of 02_simpleVertexDisplacement](02_simpleVertexDisplacement.png)
+![Screenshot of 02_simpleVertexDisplacement](02_simpleVertexDisplacementExample.png)
 
 ### Learning Objectives
 

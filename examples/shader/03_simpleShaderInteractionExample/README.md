@@ -1,7 +1,7 @@
-# About 03_simpleShaderInteraction
+# About 03_simpleShaderInteractionExample
 
 
-![Screenshot of 03_simpleShaderInteraction](03_simpleShaderInteraction.png)
+![Screenshot of 03_simpleShaderInteraction](03_simpleShaderInteractionExample.png)
 
 ### Learning Objectives
 
