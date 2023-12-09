@@ -16,11 +16,10 @@
 #include "ofAppAndroidWindow.h"
 #endif
 
+using std::unordered_map;
 
 bool ofVbo::vaoSupported=true;
 bool ofVbo::vaoChecked=false;
-
-using std::map;
 
 #ifdef TARGET_OPENGLES
 	#include <dlfcn.h>
@@ -37,8 +36,8 @@ using std::map;
 	#define glBindVertexArray								glBindVertexArrayFunc
 #endif
 
-static map<GLuint,int> & getVAOIds(){
-	static map<GLuint,int> * ids = new map<GLuint,int>;
+static unordered_map<GLuint,int> & getVAOIds(){
+	static unordered_map<GLuint,int> * ids = new unordered_map<GLuint,int>;
 	return *ids;
 }
 
@@ -781,6 +780,17 @@ ofBufferObject & ofVbo::getIndexBuffer(){
 
 //--------------------------------------------------------------
 ofBufferObject & ofVbo::getAttributeBuffer(int attributePos_) {
+	
+	if( attributePos_ == ofShader::POSITION_ATTRIBUTE ) {
+		return getVertexBuffer();
+	} else if( attributePos_ == ofShader::COLOR_ATTRIBUTE ) {
+		return getColorBuffer();
+	} else if( attributePos_ == ofShader::NORMAL_ATTRIBUTE ) {
+		return getNormalBuffer();
+	} else if( attributePos_ == ofShader::TEXCOORD_ATTRIBUTE ) {
+		return getTexCoordBuffer();
+	}
+	
 	return customAttributes.at(attributePos_).buffer;
 }
 
@@ -806,6 +816,16 @@ const ofBufferObject & ofVbo::getTexCoordBuffer() const{
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getAttributeBuffer(int attributePos_) const{
+	if( attributePos_ == ofShader::POSITION_ATTRIBUTE ) {
+		return getVertexBuffer();
+	} else if( attributePos_ == ofShader::COLOR_ATTRIBUTE ) {
+		return getColorBuffer();
+	} else if( attributePos_ == ofShader::NORMAL_ATTRIBUTE ) {
+		return getNormalBuffer();
+	} else if( attributePos_ == ofShader::TEXCOORD_ATTRIBUTE ) {
+		return getTexCoordBuffer();
+	}
+	
 	return customAttributes.at(attributePos_).buffer;
 }
 
@@ -914,7 +934,7 @@ void ofVbo::bind() const{
             indexAttribute.bind();
         }
 
-		map<int,VertexAttribute>::const_iterator it;
+		unordered_map<int,VertexAttribute>::const_iterator it;
 		for(it = customAttributes.begin();it!=customAttributes.end();it++){
 			it->second.enable();
 		}

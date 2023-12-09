@@ -57,6 +57,7 @@ void ofxNetworkLogError(int err, const char* file=__FILE__, int line=__LINE__-1)
  * @param line the line where the error happened, generally __LINE__
  * @return int the last network error
  */
-OF_DEPRECATED_MSG("use ofxNetworkLogError(ofxNetworkGetLastError(), file, line) instead", int ofxNetworkCheckErrno(const char* file, int line) );
+[[deprecated("use ofxNetworkLogError(ofxNetworkGetLastError(), file, line)")]]
+int ofxNetworkCheckErrno(const char* file, int line) ;
 
 

@@ -8,8 +8,9 @@
 #include "ofSoundBuffer.h"
 #include "ofSoundUtils.h"
 #include "ofLog.h"
-#include <limits>
+#define GLM_FORCE_CTOR_INIT
 #include "glm/trigonometric.hpp"
+#include <limits>
 
 using std::vector;
 using std::string;

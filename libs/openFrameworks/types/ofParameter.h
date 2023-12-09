@@ -1,11 +1,14 @@
 #pragma once
 
 #include "ofEvents.h"
-#include "ofConstants.h"
+// FIXME: crossed references. ofPoint adds ofVec3f which adds ofVec2f and ofVec4f
 #include "ofPoint.h"
+
 #include "ofRectangle.h"
-#include "ofColor.h"
 #include "ofLog.h"
+// #include "ofConstants.h"
+#include "ofColor.h"
+
 #include <map>
 
 template<typename ParameterType>
@@ -55,6 +58,11 @@ public:
 		return static_cast<const ofReadOnlyParameter<ParameterType, Friend> &>(*this);
 	}
 
+	template<typename OtherType>
+	bool isOfType() const {
+		return typeid(*this) == typeid(ofParameter<OtherType>);
+	}
+	
 	ofParameterGroup & castGroup();
 	const ofParameterGroup & castGroup() const;
 
@@ -505,8 +513,10 @@ public:
 
 	ParameterType getMin() const;
 
-	ParameterType getMax() const;
+    ParameterType getMax() const;
 
+    ParameterType getInit() const;
+    void reInit();
 
 	std::string toString() const;
 	void fromString(const std::string & name);
@@ -572,7 +582,8 @@ public:
 	ofParameter<ParameterType> & setWithoutEventNotifications(const ParameterType & v);
 
 	void setMin(const ParameterType & min);
-	void setMax(const ParameterType & max);
+    void setMax(const ParameterType & max);
+    void setInit(const ParameterType & init);
 
 	void setSerializable(bool serializable);
 	std::shared_ptr<ofAbstractParameter> newReference() const;
@@ -599,13 +610,15 @@ private:
 	class Value{
 	public:
 		Value()
-		:min(of::priv::TypeInfo<ParameterType>::min())
+		:init(of::priv::TypeInfo<ParameterType>::min())
+		,min(of::priv::TypeInfo<ParameterType>::min())
 		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
 		,serializable(true){}
 
 		Value(ParameterType v)
-		:value(v)
+		:init(v)
+		,value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
 		,max(of::priv::TypeInfo<ParameterType>::max())
 		,bInNotify(false)
@@ -613,6 +626,7 @@ private:
 
 		Value(std::string name, ParameterType v)
 		:name(name)
+        ,init(v)
 		,value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
 		,max(of::priv::TypeInfo<ParameterType>::max())
@@ -621,6 +635,7 @@ private:
 
 		Value(std::string name, ParameterType v, ParameterType min, ParameterType max)
 		:name(name)
+        ,init(v)
 		,value(v)
 		,min(min)
 		,max(max)
@@ -628,8 +643,7 @@ private:
 		,serializable(true){}
 
 		std::string name;
-		ParameterType value;
-		ParameterType min, max;
+		ParameterType init, value, min, max;
 		ofEvent<ParameterType> changedE;
 		bool bInNotify;
 		bool serializable;
@@ -697,6 +711,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const std::string& 
 	set(value);
 	setMin(min);
 	setMax(max);
+    setInit(value);
 	return *this;
 }
 
@@ -803,12 +818,27 @@ ParameterType ofParameter<ParameterType>::getMin() const {
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::setMax(const ParameterType & max){
-	obj->max = max;
+    obj->max = max;
 }
 
 template<typename ParameterType>
 ParameterType ofParameter<ParameterType>::getMax() const {
-	return obj->max;
+    return obj->max;
+}
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::setInit(const ParameterType & init){
+    obj->init = init;
+}
+
+template<typename ParameterType>
+ParameterType ofParameter<ParameterType>::getInit() const {
+    return obj->init;
+}
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::reInit() {
+    setMethod(obj->init);
 }
 
 template<typename ParameterType>
@@ -1165,7 +1195,8 @@ protected:
 	ofReadOnlyParameter<ParameterType,Friend>& set(const std::string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max);
 
 	void setMin(const ParameterType & min);
-	void setMax(const ParameterType & max);
+    void setMax(const ParameterType & max);
+    void setInit(const ParameterType & init);
 
 	void fromString(const std::string & str);
 
@@ -1462,6 +1493,10 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::setMax(const ParameterTyp
 	parameter.setMax(max);
 }
 
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::setInit(const ParameterType & init){
+    parameter.setInit(init);
+}
 
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(const std::string & str){

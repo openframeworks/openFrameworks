@@ -407,6 +407,28 @@ float ofGstUtils::getPosition() const{
 	}
 }
 
+int64_t ofGstUtils::getPositionNanos() const{
+	if(gstPipeline){
+		gint64 pos=0;
+#if GST_VERSION_MAJOR==0
+		GstFormat format=GST_FORMAT_TIME;
+		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos)){
+			ofLogVerbose("ofGstUtils") << "getPosition(): couldn't query position";
+			return -1;
+		}
+#else
+		if(!gst_element_query_position(GST_ELEMENT(gstPipeline),GST_FORMAT_TIME,&pos)){
+			ofLogVerbose("ofGstUtils") << "getPosition(): couldn't query position";
+			return -1;
+		}
+#endif
+		return pos;
+	}else{
+		return -1;
+	}
+}
+
+
 float ofGstUtils::getSpeed() const{
 	return speed;
 }
@@ -487,30 +509,40 @@ void ofGstUtils::setSpeed(float _speed){
 
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
+
+    bool needPos = true;
+    #if GST_VERSION_MAJOR >= 1 && GST_VERSION_MINOR >= 18
+        //if requested speed is the same direction as we are already going we can do a fast rate change
+        if( speed * _speed > 0 ){
+            flags = GST_SEEK_FLAG_INSTANT_RATE_CHANGE;
+            needPos = false;
+        }
+    #endif
+    
 	if(_speed > 1 || _speed < -1){
 		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
 	}
-
-	gint64 pos;
 
 	if(_speed==0){
 		gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
 		return;
 	}
-#if GST_VERSION_MAJOR==0
-	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos) || pos<0){
-		//ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
-		return;
-	}
-#else
-	if(!gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos) || pos<0){
-		//ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
-		return;
-	}
-#endif
+  
+
+	gint64 pos = 0;
+    GstSeekType seekType = GST_SEEK_TYPE_NONE;
+    if( needPos ){
+        seekType = GST_SEEK_TYPE_SET;
+
+        pos = getPositionNanos();
+        if( pos == -1 ){
+            ofLogError("ofGstUtils") << "setSpeed(): couldn't query position";
+            return;
+        }
+
+    }
 
 	speed = _speed;
-	//pos = (float)gstData.lastFrame * (float)fps_d / (float)fps_n * GST_SECOND;
 
 	if(!bPaused)
 		gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
@@ -518,18 +550,18 @@ void ofGstUtils::setSpeed(float _speed){
 	if(speed>0){
 		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				pos,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				-1)) {
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}
 	}else{
 		if(!gst_element_seek(GST_ELEMENT(gstSink), speed, 	format,
 				flags,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				0,
-				GST_SEEK_TYPE_SET,
+				seekType,
 				pos)) {
 			ofLogWarning("ofGstUtils") << "setSpeed(): unable to change speed";
 		}

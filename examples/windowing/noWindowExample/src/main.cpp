@@ -3,12 +3,13 @@
 #include "ofAppNoWindow.h"
 
 int main() {
-	// if you want to see the window	
-	// comment these two lines 
-	ofAppNoWindow window;
-	ofSetupOpenGL(&window, 1024, 768, OF_WINDOW);
 
-	// and uncomment this line
-	// ofSetupOpenGL(300, 300, OF_WINDOW);
-	ofRunApp(new ofApp());
+	auto window = std::make_shared<ofAppNoWindow>();
+
+	//to have a normal windowed app comment the line above and uncomment the lines below
+	//ofGLWindowSettings settings;
+	//auto window = ofCreateWindow(settings);
+	
+	ofRunApp(window, std::make_shared<ofApp>());
+	ofRunMainLoop();
 }

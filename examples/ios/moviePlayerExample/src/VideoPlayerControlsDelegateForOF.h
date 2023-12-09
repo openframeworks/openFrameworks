@@ -15,7 +15,7 @@
  */
 
 @interface VideoPlayerControlsDelegateForOF : NSObject <VideoPlayerControlsDelegate> {
-    ofApp * app;
+	ofApp * app;
 }
 
 - (id)initWithApp:(ofApp *)app;

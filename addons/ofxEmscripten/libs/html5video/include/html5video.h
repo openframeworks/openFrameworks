@@ -4,6 +4,7 @@ extern "C"{
     extern int html5video_player_create();
     extern void html5video_player_delete(int id);
     extern void html5video_player_load(int id,const char* src);
+    extern void html5video_player_load_url(int id,const char* src);
     extern const char* html5video_player_pixel_format(int it);
     extern void html5video_player_set_pixel_format(int it, const char* format);
     extern int html5video_player_update(int id, int update_pixels, unsigned char* pixels);
@@ -26,8 +27,10 @@ extern "C"{
     extern double html5video_player_volume(int id);
     extern void html5video_player_set_loop(int id, int loop);
     extern int html5video_player_loop(int id);
+    extern double html5video_player_pan(int id);
+    extern void html5video_player_set_pan(int id, double pan);
 
-
+    extern void html5video_list_devices();
     extern int html5video_grabber_create();
     extern void html5video_grabber_init(int id, int w, int h, int framerate=-1);
     extern const char* html5video_grabber_pixel_format(int it);

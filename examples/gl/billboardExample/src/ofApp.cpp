@@ -16,10 +16,10 @@ void ofApp::setup() {
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
 
 		billboardVels[i] = {ofRandomf(), -1.0, ofRandomf()};
-        billboards.getVertices()[i] = {ofRandom(-500, 500),ofRandom(-500, 500),ofRandom(-500, 500)};
+		billboards.getVertices()[i] = {ofRandom(-500, 500),ofRandom(-500, 500),ofRandom(-500, 500)};
 		
 		billboards.getColors()[i].set(ofColor::fromHsb(ofRandom(96, 160), 255, 255));
-	    billboardSizeTarget[i] = ofRandom(4, 64);
+		billboardSizeTarget[i] = ofRandom(4, 64);
 
 	}
 
@@ -32,11 +32,15 @@ void ofApp::setup() {
 	// load the billboard shader
 	// this is used to change the
 	// size of the particle
-	if(ofIsGLProgrammableRenderer()){
-		billboardShader.load("shadersGL3/Billboard");
-	}else{
-		billboardShader.load("shadersGL2/Billboard");
-	}
+	#ifdef TARGET_EMSCRIPTEN
+		billboardShader.load("shadersGLES3/Billboard");
+	#else
+		if(ofIsGLProgrammableRenderer()){
+			billboardShader.load("shadersGL3/Billboard");
+		}else{
+			billboardShader.load("shadersGL2/Billboard");
+		}
+	#endif
 
 	// we need to disable ARB textures in order to use normalized texcoords
 	ofDisableArbTex();
@@ -61,7 +65,7 @@ void ofApp::update() {
 		billboardVels[i] += vec;
 		billboards.getVertices()[i] += billboardVels[i];
 		billboardVels[i] *= 0.94f;
-    	billboards.setNormal(i,glm::vec3(12 + billboardSizeTarget[i] * ofNoise(t+i),0,0));
+		billboards.setNormal(i,glm::vec3(12 + billboardSizeTarget[i] * ofNoise(t+i),0,0));
 	}
 
 
