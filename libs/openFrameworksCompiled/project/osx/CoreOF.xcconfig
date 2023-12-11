@@ -1,10 +1,10 @@
 //// define which C++ library is required to build, based on target architecture
 CLANG_CXX_LIBRARY = libc++
-CLANG_CXX_LANGUAGE_STANDARD = c++11
+CLANG_CXX_LANGUAGE_STANDARD = c++14
 
 CLANG_ENABLE_OBJC_ARC = YES
 
-MACOSX_DEPLOYMENT_TARGET = 10.9
+MACOSX_DEPLOYMENT_TARGET = 10.13
 
 
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"

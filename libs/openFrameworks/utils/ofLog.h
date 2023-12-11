@@ -1,7 +1,8 @@
 #pragma once
 
+// Only private ofFile file;
 #include "ofFileUtils.h"
-#include "ofConstants.h"
+// #include "ofConstants.h"
 #include "ofUtils.h" // ofVAArgsToString
 #include <sstream>
 
@@ -720,7 +721,6 @@ public:
 
 private:
 	ofFile file; ///< The location of the log file.
-	
 };
 
 /// \endcond

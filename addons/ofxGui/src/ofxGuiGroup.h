@@ -5,6 +5,7 @@
 #include "ofxButton.h"
 #include "ofxLabel.h"
 #include "ofxSlider.h"
+#include "ofPath.h"
 
 class ofxGuiGroup : public ofxBaseGui {
 public:

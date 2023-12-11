@@ -5,13 +5,9 @@
  *      Author: arturo
  */
 
-#ifndef OFSOUNDUTILS_H_
-#define OFSOUNDUTILS_H_
+#pragma once
 
 #include "ofMath.h"
-#include "ofSoundBuffer.h"
-#include <glm/gtc/constants.hpp>
-#include "glm/common.hpp"
 
 inline void ofStereoVolumes(float volume, float pan, float & left, float & right){
 	pan = ofClamp(pan, -1, 1);
@@ -27,5 +23,3 @@ inline void ofStereoVolumes(float volume, float pan, float & left, float & right
 	left  = (cosAngle - sinAngle) * glm::one_over_root_two<float>() * volume; // multiplied by sqrt(2)/2
 	right = (cosAngle + sinAngle) * glm::one_over_root_two<float>() * volume; // multiplied by sqrt(2)/2
 }
-
-#endif /* OFSOUNDUTILS_H_ */

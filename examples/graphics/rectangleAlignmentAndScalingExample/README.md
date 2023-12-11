@@ -1,6 +1,6 @@
 #Level2_rectangleAlignmentAndScaling
 --
-![Screenshot of Example](rectangleAlignmentAndScaling.png)
+![Screenshot of Example](rectangleAlignmentAndScalingExample.png)
 
 ### Learning Objectives
 

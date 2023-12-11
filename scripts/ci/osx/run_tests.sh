@@ -31,32 +31,11 @@ for group in *; do
                 cp ../../../scripts/templates/osx/Makefile .
                 cp ../../../scripts/templates/osx/config.make .
                 make -j2 -s Debug
-                binname=$(basename ${test})
-
-                if [ "${binname}" == "networkTcp" ] || [ "${binname}" == "networkUdp" ]; then
-                    counter=0
-                    errorcode=1
-                    cd bin/${binname}_debug.app/Contents/MacOS/
-                    while [ $counter -lt 5 ] && [ $errorcode -ne 0 ]
-                    do
-                        echo "Running ${text} $counter"
-                        #sudo gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
-                        ./${binname}_debug
-                        errorcode=$?
-                        counter=$[$counter +1]
-                    done
-                    if [[ $errorcode -ne 0 ]]; then
-                        exit $errorcode
-                    fi
-                else
-                    cd bin/${binname}_debug.app/Contents/MacOS/
-                    #sudo gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
-                    ./${binname}_debug
-                    errorcode=$?
-                    if [[ $errorcode -ne 0 ]]; then
-                        exit $errorcode
-                    fi
-                fi
+                make RunDebug
+				errorcode=$?
+				if [[ $errorcode -ne 0 ]]; then
+					exit $errorcode
+				fi
                 cd $ROOT/tests
             fi
         done
