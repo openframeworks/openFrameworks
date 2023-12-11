@@ -2,7 +2,7 @@
 
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 typedef unsigned int RtAudioStreamStatus;
 class RtAudio;

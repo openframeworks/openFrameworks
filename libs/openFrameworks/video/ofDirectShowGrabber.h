@@ -1,5 +1,6 @@
 #pragma once
 
+// MARK: OF_VIDEO_CAPTURE_DIRECTSHOW
 #include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
