@@ -1,6 +1,6 @@
-# About allEventsExample
+# About rpiTouchExample
 
-![Screenshot of rpiTouchExample](rpiTouchExampleScreenshot.jpg)
+![Screenshot of rpiTouchExample](rpiTouchExample.jpg)
 
 
 ### Learning Objectives

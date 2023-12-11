@@ -52,6 +52,7 @@ public:
 	bool decorated = true;
 	bool resizable = true;
 	bool transparent = false;
+	bool maximized = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
