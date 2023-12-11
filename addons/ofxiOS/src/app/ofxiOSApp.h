@@ -14,8 +14,8 @@
 #include "ofEvents.h"
 
 class ofxiOSApp : public ofBaseApp, public ofxiOSAlertsListener {
-	
 public:
+
 	virtual void setup() {};
 	virtual void update() {};
 	virtual void draw() {};
@@ -49,5 +49,5 @@ public:
 
 };
 
-OF_DEPRECATED_MSG("ofxiPhoneApp is deprecated, use ofxiOSApp instead.", typedef ofxiOSApp ofxiPhoneApp);
-
+[[deprecated("use ofxiOSApp")]]
+typedef ofxiOSApp ofxiPhoneApp;

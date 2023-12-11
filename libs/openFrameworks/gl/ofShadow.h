@@ -101,7 +101,7 @@ public:
 	static std::string getShaderDefinesAsString();
 	
 	static bool areShadowsSupported();
-	
+		
 	ofShadow();
 	~ofShadow();
 	
@@ -165,8 +165,8 @@ public:
 	std::string getShadowTypeAsString();
 		
 	const ofShader & getDepthShader(ofGLProgrammableRenderer & renderer) const;
-	bool setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain);
-	bool setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain);
+	const bool setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) const;
+	const bool setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) const;
 	void updateDepth(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgrammableRenderer & renderer) const;
 	
