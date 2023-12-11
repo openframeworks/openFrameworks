@@ -370,11 +370,9 @@ static string linuxFontPathByName(const string & fontname){
 #endif
 
 //-----------------------------------------------------------
-// FIXME: it makes no sense to have _fontname and filename if filename will be rewritten inside this function
 // FIXME: it seems first parameter is string because it represents the font name only
 static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face, of::filesystem::path & filename, int index){
 	auto fontname = _fontname;
-	// FIXME: ALERT : review this, it seems font name and filename are confused here.
 	filename = ofToDataPathFS(_fontname, true);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
