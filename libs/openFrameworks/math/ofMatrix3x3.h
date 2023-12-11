@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
+#define GLM_FORCE_CTOR_INIT
 #include <glm/mat3x3.hpp>
 
 

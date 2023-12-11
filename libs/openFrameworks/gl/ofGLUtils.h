@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ofGraphicsConstants.h"
+// MARK: Targets / Defines
 #include "ofConstants.h"
 
 class ofShader;
