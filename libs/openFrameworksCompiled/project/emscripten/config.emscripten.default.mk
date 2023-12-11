@@ -14,8 +14,8 @@
 #   ifdefs within the openFrameworks core source code.
 ################################################################################
 
-PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME)/index.html
-PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME)/index.html
+PLATFORM_PROJECT_RELEASE_TARGET = bin/em/$(BIN_NAME)/index.html
+PLATFORM_PROJECT_DEBUG_TARGET = bin/em/$(BIN_NAME)/index.html
 BYTECODECORE=1
 PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.bc
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
@@ -64,8 +64,8 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS =
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths
+PLATFORM_CFLAGS = -s USE_PTHREADS=1
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths -s USE_PTHREADS=1
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -93,9 +93,10 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_FREETYPE=1 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -sFULL_ES3=1
+PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_PTHREADS=1 -s USE_FREETYPE=1 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -sFULL_ES3=1
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/cors/coi-serviceworker.js 
 
 ifdef PROJECT_EMSCRIPTEN_TEMPLATE
 	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
@@ -275,7 +276,7 @@ afterplatform: $(TARGET_NAME)
 	@echo "     compiling done"
 	@echo "     to launch the application on the default browser, run:"
 	@echo
-	@echo "     emrun bin/$(BIN_NAME)"
+	@echo "     emrun bin/em/$(BIN_NAME)"
 	@echo "     "
 	@echo "     some browsers, like safari, don't support webgl"
 	@echo "     "

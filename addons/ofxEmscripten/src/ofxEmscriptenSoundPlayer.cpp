@@ -135,7 +135,11 @@ float ofxEmscriptenSoundPlayer::getVolume() const{
 	return html5audio_sound_volume(player_id);
 }
 
-int ofxEmscriptenSoundPlayer::getDurationMS() const{
+float ofxEmscriptenSoundPlayer::getDuration() const {
+	return html5audio_sound_duration(player_id);
+}
+
+unsigned int ofxEmscriptenSoundPlayer::getDurationMS() const{
 	return html5audio_sound_duration(player_id) * 1000;
 }
 

@@ -1,11 +1,13 @@
 #pragma once
 
+// MARK: optimization opportunity: unique pointer and remove ofMesh, ofPixels, ofRectangle, ofTexture
 #include "ofMesh.h"
-#include "ofPath.h"
 #include "ofPixels.h"
 #include "ofRectangle.h"
 #include "ofTexture.h"
 #include <unordered_map>
+
+class ofPath;
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into
@@ -201,7 +203,8 @@ public:
 		float simplifyAmt = 0.0f,
 		int dpi = 0);
 
-	OF_DEPRECATED_MSG("Use load instead", bool loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0));
+	[[deprecated("Use load")]]
+	bool loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0);
 
 	bool load(const ofTrueTypeFontSettings & settings);
 

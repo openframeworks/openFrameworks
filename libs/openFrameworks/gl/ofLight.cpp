@@ -9,11 +9,12 @@
 
 
 #include "ofLight.h"
+#include "ofColor.h"
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
-#include "ofConstants.h"
 #include "ofColor.h"
+#define GLM_FORCE_CTOR_INIT
 #include <glm/gtc/quaternion.hpp>
 #include <map>
 

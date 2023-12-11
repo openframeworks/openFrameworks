@@ -9,7 +9,7 @@ void ofApp::setup(){
         vidGrabber.setVerbose(true);
         vidGrabber.setup(1280,720);
 	#else
-        vidPlayer.load("Hand3s.mov");
+        vidPlayer.load("Hand3s.mp4");
         vidPlayer.play();
         vidPlayer.setLoopState(OF_LOOP_NORMAL);
 	#endif
@@ -266,8 +266,7 @@ void ofApp::draw(){
 	
 	ofSetColor( 255 );
 	float scale = grayImage.getWidth() / MAX(1,currentImage.getWidth());
-	
-	
+		
 	if(grayImage.bAllocated){
 		if( mode == MODE_SPIN_CUBES ){
 			ofEnableDepthTest();
