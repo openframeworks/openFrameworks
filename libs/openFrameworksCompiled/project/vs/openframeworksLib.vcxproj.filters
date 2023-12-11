@@ -309,6 +309,7 @@
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoBaseTypes.h">
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp">
@@ -521,6 +522,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofBaseApp.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\openFrameworks\3d\ofMesh.inl">
