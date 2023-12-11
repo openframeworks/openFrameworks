@@ -168,8 +168,8 @@ public:
 	void 			reallocateOnNextFrame();
 
 	bool 			isFrameNew() const;
-	ofPixels&		getPixels();
-	const ofPixels&	getPixels() const;
+	ofPixels &		getPixels();
+	const ofPixels &	getPixels() const;
 	ofTexture * 	getTexture();
 	void 			update();
 

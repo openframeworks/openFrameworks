@@ -3,7 +3,6 @@
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
 #include "ofTypes.h"
-//#include "ofPixels.h"
 // MARK: Target but optional
 #include "ofConstants.h"
 

@@ -36,7 +36,7 @@
 #include <wincodec.h>
 //#include "ofConstants.h"
 #include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
+#include "ofPixels.h" //mSrcPixels
 #include "ofFbo.h"
 #include "ofEvent.h"
 
