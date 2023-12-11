@@ -6,7 +6,7 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
 #include "ofMath.h"
-#include "ofMathConstants.h"
+// #include "ofMathConstants.h"
 #include "ofLog.h"
 #include "ofColor.h"
 

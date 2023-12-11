@@ -56,7 +56,7 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 		}
 	}
 
-	if (filename != "") {
+	if (!filename.empty()) {
 		switch (type) {
 		case PDF:
 		case SVG:
@@ -69,18 +69,16 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 
 	switch (type) {
 	case PDF:
-		if (filename == "") {
+		if (filename.empty()) {
 			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function, this, outputsize.width, outputsize.height);
 		} else {
-			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(), outputsize.width, outputsize.height);
 		}
 		break;
 	case SVG:
-		if (filename == "") {
+		if (filename.empty()) {
 			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function, this, outputsize.width, outputsize.height);
 		} else {
-			// FIXME: Future - once ofToDataPath returns fs::path, remove c_str()
 			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(), outputsize.width, outputsize.height);
 		}
 		break;
@@ -121,7 +119,7 @@ void ofCairoRenderer::flush() {
 void ofCairoRenderer::close() {
 	if (surface) {
 		cairo_surface_flush(surface);
-		if (type == IMAGE && filename != "") {
+		if (type == IMAGE && !filename.empty()) {
 			ofSaveImage(imageBuffer, filename);
 		}
 		cairo_surface_finish(surface);
@@ -1376,7 +1374,7 @@ ofPixels & ofCairoRenderer::getImageSurfacePixels() {
 }
 
 ofBuffer & ofCairoRenderer::getContentBuffer() {
-	if (filename != "" || (type != SVG && type != PDF)) {
+	if (!filename.empty() || (type != SVG && type != PDF)) {
 		ofLogError("ofCairoRenderer") << "getContentBuffer(): can only get buffer from memory allocated renderer for svg or pdf";
 	}
 	return streamBuffer;

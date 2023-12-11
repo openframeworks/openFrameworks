@@ -3,9 +3,12 @@
 #include "ofColor.h"
 #include "ofConstants.h"
 #include "ofEvents.h"
-#include "ofLog.h"
+
+// FIXME: crossed references. ofPoint adds ofVec3f which adds ofVec2f and ofVec4f
 #include "ofPoint.h"
+
 #include "ofRectangle.h"
+
 
 #include <map>
 

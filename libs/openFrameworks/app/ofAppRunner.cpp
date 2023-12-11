@@ -3,21 +3,10 @@
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
 
-// IDEA BRANCH - remove this comment
 #include "ofLog.h"
 #include "ofMath.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
-
-// MASTER - TODO: Remove commented out code
-// #ifndef TARGET_NO_SOUND
-// #include "ofSoundPlayer.h"
-// #endif
-
-// #include "ofImage.h"
-// #include "ofTrueTypeFont.h"
-
-
 #include "ofMainLoop.h"
 
 using std::shared_ptr;

@@ -1,9 +1,11 @@
 #pragma once
 
-#include "ofConstants.h"
+#define GLM_FORCE_CTOR_INIT
 #include "glm/vec4.hpp"
 #include "glm/fwd.hpp"
 #include <cmath>
+#include <ostream>
+#include <istream>
 
 class ofVec2f;
 class ofVec3f;
@@ -246,25 +248,32 @@ public:
 	/// \cond INTERNAL
 	
 	// getScaled
-	OF_DEPRECATED_MSG("Use member method getScaled() instead.", ofVec4f rescaled( const float length ) const);
+	[[deprecated("Use member method getScaled()")]]
+	ofVec4f rescaled( const float length ) const;
 	
 	// scale
-	OF_DEPRECATED_MSG("Use member method scale() instead.", ofVec4f& rescale( const float length ));
+	[[deprecated("Use member method scale()")]]
+	ofVec4f& rescale( const float length );
 	
 	// getNormalized
-	OF_DEPRECATED_MSG("Use member method getNormalized() instead.", ofVec4f normalized() const);
+	[[deprecated("Use member method getNormalized()")]]
+	ofVec4f normalized() const;
 	
 	// getLimited
-	OF_DEPRECATED_MSG("Use member method getLimited() instead.", ofVec4f limited(float max) const);
+	[[deprecated("Use member method getLimited()")]]
+	ofVec4f limited(float max) const;
 	
 	// use squareDistance
-	OF_DEPRECATED_MSG("Use member method squareDistance() instead.", float  distanceSquared( const ofVec4f& pnt ) const);
+	[[deprecated("Use member method squareDistance()")]]
+	float  distanceSquared( const ofVec4f& pnt ) const;
 	
 	// use getInterpolated
-	OF_DEPRECATED_MSG("Use member method getInterpolated() instead.", ofVec4f interpolated( const ofVec4f& pnt, float p ) const);
+	[[deprecated("Use member method getInterpolated()")]]
+	ofVec4f interpolated( const ofVec4f& pnt, float p ) const;
 	
 	// use getMiddle
-	OF_DEPRECATED_MSG("Use member method getMiddle() instead.", ofVec4f middled( const ofVec4f& pnt ) const);
+	[[deprecated("Use member method getMiddle()")]]
+	ofVec4f middled( const ofVec4f& pnt ) const;
 	
 	// return all zero vector
 	static ofVec4f zero() { return ofVec4f(0, 0, 0, 0); }
