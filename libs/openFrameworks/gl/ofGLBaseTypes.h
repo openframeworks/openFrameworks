@@ -7,34 +7,40 @@ class ofTexture;
 class ofShader;
 class ofShadow;
 
+/// \class ofBaseHasTexture
+///
 /// \brief An abstract class representing an object that can have an ofTexture.
 class ofBaseHasTexture{
 public:
+
 	/// \brief Destroy the ofBaseHasTexture.
 	virtual ~ofBaseHasTexture(){}
 
-	/// \returns a reference to the ofTexture.
+	/// \return a reference to the ofTexture.
 	virtual ofTexture & getTexture()=0;
 
-	/// \returns a const reference to the ofTexture.
+	/// \return a const reference to the ofTexture.
 	virtual const ofTexture & getTexture() const=0;
 
 	/// \brief Enable or disable internal ofTexture use.
 	/// \param bUseTex true if an ofTexture should be used.
 	virtual void setUseTexture(bool bUseTex)=0;
 
-	/// \returns true if an internal ofTexture is being used.
+	/// \return true if an internal ofTexture is being used.
 	virtual bool isUsingTexture() const=0;
 };
 
 
+/// \class ofBaseHasTexturePlanes
+///
 /// \brief An abstract class representing an object that ofTexture planes.
 class ofBaseHasTexturePlanes: public ofBaseHasTexture{
 public:
+
 	/// \brief Destroy the ofBaseHasTexturePlanes.
 	virtual ~ofBaseHasTexturePlanes(){}
 
-	/// \returns a reference to a std::vector containing the ofTexture planes.
+	/// \return a reference to a std::vector containing the ofTexture planes.
 	virtual std::vector<ofTexture> & getTexturePlanes()=0;
 
 	/// \returns a const reference to a std::vector containing the ofTexture planes.
@@ -42,6 +48,8 @@ public:
 };
 
 
+/// \class ofAbstractImage
+///
 /// \brief An abstract class representing an image.
 ///
 /// This empty class primarily exists to allow templated subclasses of different
@@ -70,6 +78,7 @@ public:
 	virtual ~ofAbstractImage(){}
 };
 
+/// \class ofBaseImage_
 /// \brief A base class represeting an image.
 /// \tparam T The pixel data type.
 template<typename T>
@@ -306,7 +315,7 @@ public:
 
 	/// \brief Returns true if lighting is enabled with this renderer.
 	///
-	/// \returns True if lighting is enabled with this renderer.
+	/// \return True if lighting is enabled with this renderer.
 	/// \sa enableLighting()
 	/// \sa disableLighting()
 	virtual bool getLightingEnabled()=0;
@@ -399,12 +408,12 @@ public:
 
 	/// \brief Get the major OpenGL version number this renderer is using.
 	///
-	/// \returns The major OpenGL version number this renderer is using.
+	/// \return The major OpenGL version number this renderer is using.
 	virtual int getGLVersionMajor()=0;
 
 	/// \brief Get the minor OpenGL version number this renderer is using.
 	///
-	/// \returns The minor OpenGL version number this renderer is using.
+	/// \return The minor OpenGL version number this renderer is using.
 	virtual int getGLVersionMinor()=0;
 
 	/// \section Saving Screen Pixels

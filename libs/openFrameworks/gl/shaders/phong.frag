@@ -300,7 +300,7 @@ float SpotShadow(in lightData light, in vec3 ecPosition3, in shadowData aShadowD
         
         vec3 tNormal = v_transformedNormal;
         #ifdef HAS_TEX_NORMAL
-        	tNormal = PerturbNormal(TEXTURE(tex_normal, v_texcoord).rgb, N, V, v_texcoord);
+		tNormal = PerturbNormal(TEXTURE(tex_normal, v_texcoord).rgb, v_worldNormal, -v_worldPosition, v_texcoord);
         #endif
 			
         vec3 transformedNormal = normalize(tNormal);

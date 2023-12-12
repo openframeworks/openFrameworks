@@ -1,9 +1,7 @@
 // copyright (c) openFrameworks team 2010-2023
 // copyright (c) Damian Stewart 2007-2009
-#include "ofParameterGroup.h"
 #include "ofUtils.h"
 #include "ofxOscSender.h"
-#include "UdpSocket.h"
 
 //--------------------------------------------------------------
 ofxOscSender::~ofxOscSender() {

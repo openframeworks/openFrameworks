@@ -167,6 +167,7 @@ endif
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 #PLATFORM_LDFLAGS += -arch i386
+PLATFORM_LDFLAGS += -lcurl
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
@@ -363,15 +364,15 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
 # Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
-	@if [ ! -a openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
+	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
 	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
 	
 # App icons
  ifeq ($(RUN_TARGET), RunRelease)
-	@if [ -a of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@if [ -f of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
 	@sed -i '' 's/\$$(ICON_NAME)/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  else
-	@if [ -a of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@if [ -f of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
 	@sed -i '' 's/\$$(ICON_NAME)/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  endif
  

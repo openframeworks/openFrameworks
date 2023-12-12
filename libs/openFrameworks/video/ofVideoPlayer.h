@@ -2,16 +2,18 @@
 
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
+#include "ofConstants.h"
 
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoDraws {
-
 public:
-	ofVideoPlayer();
+	ofVideoPlayer ();
 
-	bool load(std::string name);
-	void loadAsync(std::string name);
-	OF_DEPRECATED_MSG("Use load instead", bool loadMovie(std::string name));
+	bool 				load(std::string name);
+	void				loadAsync(std::string name);
+	[[deprecated("Use load")]]
+	bool loadMovie(std::string name);
+
 
 	/// \brief Get the path to the loaded video file.
 	///
@@ -23,7 +25,13 @@ public:
 	bool setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat getPixelFormat() const;
 
-	[[deprecated("use close()")]] void closeMovie();
+	/// \brief Closes the movie file and releases its resources.
+	///
+	/// This is an alias for close().
+	///
+	/// \sa close()
+	[[deprecated("use close()")]] 
+	void 				closeMovie();
 	/// \brief Closes the movie file releases its resources.
 	///
 	/// This is an alias for closeMovie().
@@ -35,37 +43,42 @@ public:
 	///
 	/// If normal video playback is desired, this method is usually called
 	/// once per animation frame inside of ofApp::update().
-	void update();
-	void play();
-	void stop();
 
-	bool isFrameNew() const;
-	ofPixels & getPixels();
-	const ofPixels & getPixels() const;
-	OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels & getPixelsRef());
-	OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels & getPixelsRef() const);
-	float getPosition() const;
-	float getSpeed() const;
-	float getDuration() const;
-	bool getIsMovieDone() const;
+	void				update();
+	void 				play();
+	void 				stop();
 
-	void setPosition(float pct);
-	void setVolume(float volume);
-	void setLoopState(ofLoopType state);
-	ofLoopType getLoopState() const;
-	void setSpeed(float speed);
-	void setFrame(int frame);
+	bool 				isFrameNew() const;
+	ofPixels& 			getPixels();
+	const ofPixels&		getPixels() const;
+	[[deprecated("Use getPixels()")]]
+	ofPixels&	getPixelsRef();
+	[[deprecated("Use getPixels()")]]
+	const ofPixels&  getPixelsRef() const;
+	float 				getPosition() const;
+	float 				getSpeed() const;
+	float 				getDuration() const;
+	bool				getIsMovieDone() const;
 
-	void setUseTexture(bool bUse);
-	bool isUsingTexture() const;
-	ofTexture & getTexture();
-	const ofTexture & getTexture() const;
-	OF_DEPRECATED_MSG("Use getTexture", ofTexture & getTextureReference());
-	OF_DEPRECATED_MSG("Use getTexture", const ofTexture & getTextureReference() const);
+	void 				setPosition(float pct);
+	void 				setVolume(float volume);
+	void 				setLoopState(ofLoopType state);
+	ofLoopType			getLoopState() const;
+	void   				setSpeed(float speed);
+	void				setFrame(int frame);
+
+	void 				setUseTexture(bool bUse);
+	bool 				isUsingTexture() const;
+	ofTexture &			getTexture();
+	const ofTexture &	getTexture() const;
+	[[deprecated("Use getTexture")]]
+	ofTexture &			getTextureReference();
+	[[deprecated("Use getTexture")]]
+	const ofTexture &	getTextureReference() const;
 	std::vector<ofTexture> & getTexturePlanes();
 	const std::vector<ofTexture> & getTexturePlanes() const;
-	void draw(float x, float y, float w, float h) const;
-	void draw(float x, float y) const;
+	void 				draw(float x, float y, float w, float h) const;
+	void 				draw(float x, float y) const;
 	using ofBaseDraws::draw;
 	/// \brief Binds the video texture to the current rendering context.
 	///
@@ -75,12 +88,14 @@ public:
 	/// \sa ofTexture::bind()
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	void bind() const;
+
 	/// \brief Unbinds the video texture from the current rendering context.
 	///
 	/// For advanced users who need to manually manage texture drawing
 	/// without calling draw(). Only binds the texture if one exists.
 	///
 	/// \sa ofTexture::unbind()
+<<<<<< deprecations
 	void unbind() const;
 
 	void setAnchorPercent(float xPct, float yPct);
@@ -104,6 +119,7 @@ public:
 	bool isPlaying() const;
 	bool isInitialized() const;
 
+
 	/// \brief Set the internal video player implementation.
 	///
 	/// Advanced users may find it useful to set a custom internal video
@@ -113,6 +129,7 @@ public:
 	/// \param newPlayer Shared pointer to the new video player that extends
 	/// from ofBaseVideoPlayer.
 	void setPlayer(std::shared_ptr<ofBaseVideoPlayer> newPlayer);
+
 	/// \brief Get a pointer to the internal video player implementation.
 	///
 	/// This returns a pointer to the ofBaseVideoPlayer interface. For
@@ -122,6 +139,7 @@ public:
 	///
 	/// \returns A pointer to the internal video player implementation.
 	std::shared_ptr<ofBaseVideoPlayer> getPlayer();
+
 	/// \brief Get a const pointer to the internal video player implementation.
 	///
 	/// This returns a pointer to the ofBaseVideoPlayer interface. For
@@ -161,6 +179,7 @@ private:
 	void initDefaultPlayer();
 	/// \brief A pointer to the internal video player implementation.
 	std::shared_ptr<ofBaseVideoPlayer> player;
+
 	/// \brief A collection of texture planes used by the video player.
 	std::vector<ofTexture> tex;
 	/// \brief A pointer to the internal player's texture if available.

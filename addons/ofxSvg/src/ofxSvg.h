@@ -17,15 +17,20 @@
 
 class ofxSvg {
 public:
-	~ofxSvg();
 
+	ofxSvg() = default;
+	~ofxSvg() = default;
+	ofxSvg(const ofxSvg & a) = default;
+
+	ofxSvg(const of::filesystem::path & fileName);
+	
 	float getWidth() const;
 	float getHeight() const;
 
 	/// \brief Loads an SVG file from the provided filename.
 	///
 	/// ~~~~
-	void load(of::filesystem::path fileName);
+	void load(const of::filesystem::path & fileName);
 
 	/// \brief Loads an SVG from a text string.
 	///
