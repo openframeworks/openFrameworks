@@ -504,7 +504,6 @@ typedef TESSindex ofIndexType;
 			}
 		}
 
-        
 		namespace of {
 			namespace filesystem = std::experimental::filesystem;
 		}
