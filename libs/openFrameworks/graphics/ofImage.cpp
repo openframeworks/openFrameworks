@@ -225,7 +225,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		return ofLoadImage(pix, ofLoadURL(ofPathToString(_fileName)).data);
 	}
 
-	auto fileName = ofToDataPathFS(_fileName, true);
+	auto fileName = ofToDataPath(_fileName, true);
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
@@ -414,7 +414,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPathFS(_fileName);
+	auto fileName = ofToDataPath(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
 	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);

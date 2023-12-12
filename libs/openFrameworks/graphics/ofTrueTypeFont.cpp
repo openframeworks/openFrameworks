@@ -373,7 +373,7 @@ static string linuxFontPathByName(const string & fontname){
 // FIXME: it seems first parameter is string because it represents the font name only
 static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face, of::filesystem::path & filename, int index){
 	auto fontname = _fontname;
-	filename = ofToDataPathFS(_fontname, true);
+	filename = ofToDataPath(_fontname, true);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX

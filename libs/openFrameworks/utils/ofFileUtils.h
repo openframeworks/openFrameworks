@@ -443,8 +443,8 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-	static of::filesystem::path getCurrentExeDirFS();
-	static std::string getCurrentExeDir();
+	static of::filesystem::path getCurrentExeDir();
+//	static std::string getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
@@ -1233,7 +1233,7 @@ void ofDisableDataPath();
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
 
-of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute=false);
+//of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute=false);
 
 of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute = false);
 //std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);

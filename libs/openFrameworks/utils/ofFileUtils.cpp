@@ -29,24 +29,24 @@ namespace{
 	fs::path defaultDataPath(){
 	#if defined TARGET_OSX
 		try {
-			return fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/");
+			return fs::canonical(ofFilePath::getCurrentExeDir() / "../../../data/");
 		} catch(...) {
-			return ofFilePath::getCurrentExeDirFS() / "../../../data/";
+			return ofFilePath::getCurrentExeDir() / "../../../data/";
 		}
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
 	#else
 		try {
-            return fs::canonical(ofFilePath::getCurrentExeDirFS() / "data/").make_preferred();
+            return fs::canonical(ofFilePath::getCurrentExeDir() / "data/").make_preferred();
         } catch(...) {
-			return (ofFilePath::getCurrentExeDirFS() / "data/");
+			return (ofFilePath::getCurrentExeDir() / "data/");
 		}
 	#endif
 	}
 
 	//--------------------------------------------------
 	fs::path & defaultWorkingDirectory() {
-		static auto * defaultWorkingDirectory = new fs::path(ofFilePath::getCurrentExeDirFS());
+		static auto * defaultWorkingDirectory = new fs::path(ofFilePath::getCurrentExeDir());
 		return * defaultWorkingDirectory;
 	}
 
@@ -558,7 +558,7 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::open(const fs::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = ofToDataPathFS(_path);
+	myFile = ofToDataPath(_path);
 	return openStream(_mode, binary);
 }
 
@@ -932,7 +932,7 @@ bool ofFile::copyTo(const fs::path & _path, bool bRelativeToData, bool overwrite
 
 	//bRelativeToData is handled here for the destination path - so we pass false to static functions below
 	if(bRelativeToData){
-		path = ofToDataPathFS(path);
+		path = ofToDataPath(path);
 	}
 
 	if(ofFile::doesFileExist(path, false)){
@@ -982,7 +982,7 @@ bool ofFile::moveTo(const fs::path& _path, bool bRelativeToData, bool overwrite)
 	}
 
 	if(bRelativeToData){
-		path = ofToDataPathFS(path);
+		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, false)){
 
@@ -1169,7 +1169,7 @@ ofDirectory::ofDirectory(const fs::path & path){
 void ofDirectory::open(const fs::path & path){
 	originalDirectory = ofFilePath::getPathForDirectoryFS(path);
 	files.clear();
-	myDir = ofToDataPathFS(originalDirectory);
+	myDir = ofToDataPath(originalDirectory);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1299,7 +1299,7 @@ bool ofDirectory::copyTo(const fs::path & _path, bool bRelativeToData, bool over
 	}
 
 	if(bRelativeToData){
-		path = ofToDataPathFS(path, bRelativeToData);
+		path = ofToDataPath(path, bRelativeToData);
 	}
 
 	if(ofDirectory::doesDirectoryExist(path, false)){
@@ -1603,7 +1603,7 @@ bool ofDirectory::createDirectory(const fs::path& _dirPath, bool bRelativeToData
 	auto dirPath = _dirPath;
 
 	if(bRelativeToData){
-		dirPath = ofToDataPathFS(dirPath);
+		dirPath = ofToDataPath(dirPath);
 	}
 
 	// on OSX,fs::create_directories seems to return false *if* the path has folders that already exist
@@ -1637,7 +1637,7 @@ bool ofDirectory::doesDirectoryExist(const fs::path& _dirPath, bool bRelativeToD
 	auto dirPath = _dirPath;
 	try {
 		if (bRelativeToData) {
-			dirPath = ofToDataPathFS(dirPath);
+			dirPath = ofToDataPath(dirPath);
 		}
 		return fs::exists(dirPath) && fs::is_directory(dirPath);
 	}
@@ -1651,7 +1651,7 @@ bool ofDirectory::doesDirectoryExist(const fs::path& _dirPath, bool bRelativeToD
 bool ofDirectory::isDirectoryEmpty(const fs::path& _dirPath, bool bRelativeToData){
 	auto dirPath = _dirPath;
 	if(bRelativeToData){
-		dirPath = ofToDataPathFS(dirPath);
+		dirPath = ofToDataPath(dirPath);
 	}
 
 	if(!dirPath.empty() && fs::exists(dirPath) && fs::is_directory(dirPath)){
@@ -1907,14 +1907,14 @@ std::string ofFilePath::getCurrentExePath(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-fs::path ofFilePath::getCurrentExeDirFS(){
+fs::path ofFilePath::getCurrentExeDir(){
 	return ofFilePath::getCurrentExePathFS().parent_path() / "";
 }
 
-//------------------------------------------------------------------------------------------------------------
-std::string ofFilePath::getCurrentExeDir(){
-	return ofPathToString(getCurrentExeDirFS());
-}
+////------------------------------------------------------------------------------------------------------------
+//std::string ofFilePath::getCurrentExeDir(){
+//	return ofPathToString(getCurrentExeDirFS());
+//}
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getUserHomeDir(){
@@ -1963,7 +1963,7 @@ void ofSetDataPathRoot(const fs::path& newRoot){
 }
 
 //--------------------------------------------------
-fs::path ofToDataPathFS(const fs::path & path, bool makeAbsolute){
+fs::path ofToDataPath(const fs::path & path, bool makeAbsolute){
 	if (makeAbsolute && path.is_absolute()) {
 		return path;
 	}
@@ -2058,10 +2058,10 @@ fs::path ofToDataPathFS(const fs::path & path, bool makeAbsolute){
 //	return ofPathToString(ofToDataPathFS(path, makeAbsolute));
 //}
 
-//--------------------------------------------------
-of::filesystem::path ofToDataPath(const fs::path & path, bool makeAbsolute){
-	return ofToDataPathFS(path, makeAbsolute);
-}
+////--------------------------------------------------
+//of::filesystem::path ofToDataPath(const fs::path & path, bool makeAbsolute){
+//	return ofToDataPathFS(path, makeAbsolute);
+//}
 
 
 //--------------------------------------------------
