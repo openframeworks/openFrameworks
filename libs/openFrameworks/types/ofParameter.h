@@ -1,16 +1,15 @@
 #pragma once
 
-#include "ofColor.h"
-#include "ofConstants.h"
-#include "ofEvents.h"
+#include <map>
 
+#include "ofEvents.h"
 // FIXME: crossed references. ofPoint adds ofVec3f which adds ofVec2f and ofVec4f
 #include "ofPoint.h"
 
 #include "ofRectangle.h"
-
-
-#include <map>
+#include "ofLog.h"
+// #include "ofConstants.h"
+#include "ofColor.h"
 
 template <typename ParameterType>
 class ofParameter;
