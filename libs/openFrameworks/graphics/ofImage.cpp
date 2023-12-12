@@ -231,9 +231,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
-	fif = FreeImage_GetFileTypeU(fileName, 0);
+	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);
 #else
-	fif = FreeImage_GetFileType(fileName, 0);
+	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename

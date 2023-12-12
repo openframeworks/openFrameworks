@@ -1235,7 +1235,8 @@ void ofDisableDataPath();
 
 of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute=false);
 
-std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);
+of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute = false);
+//std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);
 
 /// \brief Reset the working directory to the platform default.
 ///

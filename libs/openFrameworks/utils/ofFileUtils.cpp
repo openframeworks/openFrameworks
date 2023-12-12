@@ -2054,9 +2054,15 @@ fs::path ofToDataPathFS(const fs::path & path, bool makeAbsolute){
 }
 
 //--------------------------------------------------
-std::string ofToDataPath(const fs::path & path, bool makeAbsolute){
-	return ofPathToString(ofToDataPathFS(path, makeAbsolute));
+//std::string ofToDataPath(const fs::path & path, bool makeAbsolute){
+//	return ofPathToString(ofToDataPathFS(path, makeAbsolute));
+//}
+
+//--------------------------------------------------
+of::filesystem::path ofToDataPath(const fs::path & path, bool makeAbsolute){
+	return ofToDataPathFS(path, makeAbsolute);
 }
+
 
 //--------------------------------------------------
 // Function used internally in OF core. API can change later
