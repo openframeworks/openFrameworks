@@ -370,7 +370,7 @@ public:
 	///
 	// FIXME: Deprecate / Remove this. Find instances in OF Core to remove
 	[[deprecated("use getFileName(const of::filesystem::path & filePath) or of::filesystem::path .filename()")]]
-	static std::string getFileName(const of::filesystem::path & filePath, bool bRelativeToData = true);
+	static std::string getFileName(const of::filesystem::path & filePath, bool bRelativeToData);
 	
 	static std::string getFileName(const of::filesystem::path & filePath);
 
