@@ -2059,6 +2059,7 @@ std::string ofToDataPath(const fs::path & path, bool makeAbsolute){
 }
 
 //--------------------------------------------------
+// Function used internally in OF core. API can change later
 std::string ofPathToString(const fs::path & path) {
 	try {
 		return path.string();
