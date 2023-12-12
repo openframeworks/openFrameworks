@@ -263,10 +263,11 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
         mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
         if ! command -v rsync &> /dev/null
         then      
-            cp -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}     
+            cp -a ${addonslibs[i]}/* ../addons/${addons[i]}/libs/${addonslibs[i]}    
         else
-            rsync -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}
+            rsync -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}/
         fi
         rm -rf ${addonslibs[i]}
     fi
 done
+
