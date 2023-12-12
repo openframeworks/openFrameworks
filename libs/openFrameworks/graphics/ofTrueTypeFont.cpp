@@ -370,10 +370,10 @@ static string linuxFontPathByName(const string & fontname){
 #endif
 
 //-----------------------------------------------------------
-// FIXME: it makes no sense to have _fontname and filename if filename will be rewritten inside this function
-static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, of::filesystem::path & filename, int index){
+// FIXME: it seems first parameter is string because it represents the font name only
+static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face, of::filesystem::path & filename, int index){
 	auto fontname = _fontname;
-	filename = ofToDataPathFS(_fontname,true);
+	filename = ofToDataPathFS(_fontname, true);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
@@ -403,7 +403,7 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 			fontname = "Courier New";
 		}
 		// FIXME: fs::path in input and output
-		filename = winFontPathByName(fontname.string());
+		filename = winFontPathByName(ofPathToString(fontname));
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
@@ -412,7 +412,7 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): " << fontname << " not a file in data loading system font from " << filename;
 	}
 	FT_Error err;
-	err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
+	err = FT_New_Face( library, ofPathToString(filename).c_str(), fontID, &face );
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";

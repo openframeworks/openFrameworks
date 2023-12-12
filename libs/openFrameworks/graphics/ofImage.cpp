@@ -199,7 +199,7 @@ template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _fileName, const ofImageLoadSettings & settings){
 	ofInitFreeImage();
 
-	auto uriStr = _fileName.string();
+	auto uriStr = ofPathToString(_fileName);
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
@@ -222,7 +222,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	uriFreeUriMembersA(&uri);
 
 	if(scheme == "http" || scheme == "https"){
-		return ofLoadImage(pix, ofLoadURL(_fileName.string()).data);
+		return ofLoadImage(pix, ofLoadURL(ofPathToString(_fileName)).data);
 	}
 
 	auto fileName = ofToDataPathFS(_fileName, true);
