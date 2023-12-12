@@ -1,13 +1,14 @@
 #pragma once
 
-#include "ofConstants.h"
-
+// MARK: optimization opportunity: unique pointer and remove ofMesh, ofPixels, ofRectangle, ofTexture
 #include "ofMesh.h"
 #include "ofPath.h"
 #include "ofPixels.h"
 #include "ofRectangle.h"
 #include "ofTexture.h"
 #include <unordered_map>
+
+class ofPath;
 
 /// \file
 /// The ofTrueTypeFont class provides an interface to load fonts into
@@ -203,7 +204,8 @@ public:
 		float simplifyAmt = 0.0f,
 		int dpi = 0);
 
-	OF_DEPRECATED_MSG("Use load instead", bool loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0));
+	[[deprecated("Use load")]]
+	bool loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0);
 
 	bool load(const ofTrueTypeFontSettings & settings);
 
@@ -357,11 +359,8 @@ public:
 	/// \param y Y position of shapes
 	void drawStringAsShapes(const std::string & s, float x, float y) const;
 
-	/// \todo
-	ofPath getCharacterAsPath(uint32_t character, bool vflip = true, bool filled = true) const;
-	[[deprecated("use getCharacterAsPath()")]] ofPath getCharacterAsPoints(uint32_t character, bool vflip = true, bool filled = true) const;
-	std::vector<ofPath> getStringAsPaths(const std::string & str, bool vflip = true, bool filled = true) const;
-	[[deprecated("use getStringAsPaths()")]] std::vector<ofPath> getStringAsPoints(const std::string & str, bool vflip = true, bool filled = true) const;
+	ofPath getCharacterAsPoints(uint32_t character, bool vflip = true, bool filled = true) const;
+	std::vector<ofPath> getStringAsPoints(const std::string & str, bool vflip = true, bool filled = true) const;
 	const ofMesh & getStringMesh(const std::string & s, float x, float y, bool vflip = true) const;
 	const ofTexture & getFontTexture() const;
 	ofTexture getStringTexture(const std::string & s, bool vflip = true) const;

@@ -68,15 +68,17 @@ ofAppGLFWWindow::~ofAppGLFWWindow() {
 void ofAppGLFWWindow::close() {
 	if (windowP) {
 
-		glfwSetMouseButtonCallback(windowP, nullptr);
-		glfwSetCursorPosCallback(windowP, nullptr);
-		glfwSetCursorEnterCallback(windowP, nullptr);
-		glfwSetKeyCallback(windowP, nullptr);
-		glfwSetWindowSizeCallback(windowP, nullptr);
-		glfwSetFramebufferSizeCallback(windowP, nullptr);
-		glfwSetWindowCloseCallback(windowP, nullptr);
-		glfwSetScrollCallback(windowP, nullptr);
-		glfwSetDropCallback(windowP, nullptr);
+		glfwSetMouseButtonCallback( windowP, nullptr );
+		glfwSetCursorPosCallback( windowP, nullptr );
+		glfwSetCursorEnterCallback( windowP, nullptr );
+		glfwSetKeyCallback( windowP, nullptr );
+		glfwSetWindowSizeCallback( windowP, nullptr );
+    glfwSetWindowPosCallback(windowP, nullptr);
+		glfwSetFramebufferSizeCallback( windowP, nullptr);
+		glfwSetWindowCloseCallback( windowP, nullptr );
+		glfwSetScrollCallback( windowP, nullptr );
+		glfwSetDropCallback( windowP, nullptr );
+  	glfwSetWindowRefreshCallback(windowP, nullptr);
 
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
@@ -169,6 +171,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.stencilBits);
 	glfwWindowHint(GLFW_STEREO, settings.stereo);
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+	glfwWindowHint(GLFW_MAXIMIZED, settings.maximized);
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering ? 1 : 0);
 #else
@@ -287,6 +290,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 			}
 			targetWindowMode = settings.windowMode;
 			settings.windowMode = OF_WINDOW;
+			if (settings.maximized) {
+				glfwMaximizeWindow(windowP);
+			}
 		} else {
 			if (settings.isPositionSet()) {
 				setWindowPosition(settings.getPosition().x, settings.getPosition().y);
@@ -377,6 +383,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 	glfwSetKeyCallback(windowP, keyboard_cb);
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
+  glfwSetWindowPosCallback(windowP,position_cb);
 	glfwSetFramebufferSizeCallback(windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
@@ -1370,7 +1377,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow * windowP_, int numFiles, const char **
 	drag.position = { instance->events().getMouseX(), instance->events().getMouseY() };
 	drag.files.resize(numFiles);
 	for (int i = 0; i < (int)drag.files.size(); i++) {
-		drag.files[i] = of::filesystem::path(dropString[i]).string();
+		drag.files[i] = dropString[i];
 	}
 	instance->events().notifyDragEvent(drag);
 }
@@ -1567,6 +1574,15 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow * windowP_, int keycode, int scanco
 void ofAppGLFWWindow::char_cb(GLFWwindow * windowP_, uint32_t key) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().charEvent.notify(key);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
+    ofAppGLFWWindow * instance = setCurrent(windowP_);
+    
+    x *= instance->pixelScreenCoordScale;
+    y *= instance->pixelScreenCoordScale;
+    instance->events().notifyWindowMoved(x,y);
 }
 
 //------------------------------------------------------------

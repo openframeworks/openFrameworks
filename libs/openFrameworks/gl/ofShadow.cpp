@@ -11,6 +11,7 @@
 #include "ofGLUtils.h"
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
+// FIXME: ofConstants Targets
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
@@ -1140,40 +1141,57 @@ void ofShadow::_updateNumShadows() {
 #include "shaders/shadowDepth.frag"
 #include "shaders/shadowDepthCubeGeom.glsl"
 
-bool ofShadow::setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) {
-	return setupShadowDepthShader( ashader, data->lightType, aShaderMain );
+const bool ofShadow::setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) const {
+	return setupShadowDepthShader( ashader, data->lightType, aShaderMain, isSingleOmniPass() );
 }
 
-bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain) {
+const bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) const {
 	std::string gversion = "#version 150\n";
+	
 	#ifdef TARGET_OPENGLES
-	gversion = "#version 300 es\nprecision highp float;\n";
+	gversion = "#version 300 es\n";
 	#endif
+	
+	std::string nShaderMain = aShaderMain;
+	if (ofIsStringInString(nShaderMain, "#version")) {
+		size_t vpos = nShaderMain.find("#version");
+		if (vpos != std::string::npos) {
+			size_t rpos = nShaderMain.find_first_of("\n", vpos);
+			if (rpos != std::string::npos) {
+				std::string versionString = nShaderMain.substr(vpos, rpos - vpos);
+				gversion = versionString+"\n";
+//				vtext = versionString + "\n" + definesString + aShaderSource.substr(rpos + 1, string::npos);
+				if(vpos > 0 ) {
+					nShaderMain = aShaderMain.substr(0, vpos);
+				} else {
+					nShaderMain = "";
+				}
+				nShaderMain += aShaderMain.substr(rpos + 1, std::string::npos);
+			}
+		}
+	}
+	#ifdef TARGET_OPENGLES
+	gversion += "precision highp float;\n";
+	#endif
+	
 	std::string tdefines = "#define SINGLE_PASS\n";
 
 	bool bDepthCubeSinglePass = false;
 
 	if( aLightType == OF_LIGHT_POINT ) {
 		#ifndef TARGET_OPENGLES
-		if(isSingleOmniPass()) {
-			//return shaders[&renderer]->depthCube;
+		if(abSinglePass) {
 			tdefines = "#define CUBE_MAP_SINGLE_PASS\n";
 			bDepthCubeSinglePass = true;
 		} else {
-			//return shaders[&renderer]->depthCubeMultiPass;
 			tdefines = "#define CUBE_MAP_MULTI_PASS\n";
 		}
 		#else
-		//return shaders[&renderer]->depthCubeMultiPass;
 		tdefines = "#define CUBE_MAP_MULTI_PASS\n";
 		#endif
-	} else if( aLightType == OF_LIGHT_AREA ) {
-		//return shaders[&renderer]->depth;
-	} else {
-		//return shaders[&renderer]->depth;
 	}
-
-	ashader.setupShaderFromSource(GL_VERTEX_SHADER,gversion+tdefines+depthVertexShaderSource+aShaderMain);
+	tdefines += "#define OF_SHADOW_DEPTH_PASS\n";
+	ashader.setupShaderFromSource(GL_VERTEX_SHADER,gversion+tdefines+depthVertexShaderSource+nShaderMain);
 	ashader.setupShaderFromSource(GL_FRAGMENT_SHADER,gversion+tdefines+depthFragShaderSource);
 
 	#ifndef TARGET_OPENGLES

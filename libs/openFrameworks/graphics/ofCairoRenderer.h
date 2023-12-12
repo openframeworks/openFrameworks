@@ -2,10 +2,11 @@
 
 #include "cairo.h"
 #include "ofGraphicsBaseTypes.h"
+// MARK: Optimization opportunity in ofPath, ofPixels pointer.
 #include "ofPath.h"
+#include "ofPixels.h"
 #include "of3dGraphics.h"
 
-#include "ofPixels.h"
 #include <deque>
 #include <stack>
 
