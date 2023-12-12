@@ -1804,8 +1804,11 @@ string ofFilePath::removeTrailingSlash(const fs::path & _path){
 
 
 //------------------------------------------------------------------------------------------------------------
-// FIXME: - Deprecate in favor of fs::path.filename()
 string ofFilePath::getFileName(const fs::path & filePath, bool bRelativeToData){
+	return ofPathToString(filePath.filename());
+}
+
+string ofFilePath::getFileName(const fs::path & filePath){
 	return ofPathToString(filePath.filename());
 }
 
