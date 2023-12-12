@@ -1,6 +1,7 @@
 #include "ofGLRenderer.h"
 #include "ofGraphics.h"
 #include "ofRendererCollection.h"
+#include "ofRectangle.h"
 
 #ifndef TARGET_WIN32
 	#define CALLBACK
@@ -598,6 +599,23 @@ void ofSetFloatColor(const ofFloatColor& acolor, float a){
 //----------------------------------------------------------
 void ofSetFloatColor(const ofFloatColor& acolor){
 	ofSetFloatColor( acolor.r, acolor.g, acolor.b, acolor.a);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofColor & acolor) {
+	float limit = ofColor::limit();
+	ofSetFloatColor((float)acolor.r / limit, (float)acolor.g / limit, (float)acolor.b / limit, (float)acolor.a / limit);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofFloatColor & acolor) {
+	ofSetFloatColor(acolor);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofShortColor & acolor) {
+	float limit = ofShortColor::limit();
+	ofSetFloatColor((float)acolor.r / limit, (float)acolor.g / limit, (float)acolor.b / limit, (float)acolor.a / limit);
 }
 
 //----------------------------------------------------------

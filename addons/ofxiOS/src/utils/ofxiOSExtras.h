@@ -163,8 +163,10 @@ void ofxiOSUnlockGLContext();
 void ofxiOSEnableLoopInThread();
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-OF_DEPRECATED_MSG("ofxiOSSetOrientation is deprecated, use ofSetOrientation instead.", void ofxiOSSetOrientation(ofOrientation orientation));
-OF_DEPRECATED_MSG("ofxiOSGetOrientation is deprecated, use ofGetOrientation instead.", UIDeviceOrientation ofxiOSGetOrientation());
+[[deprecated("use ofSetOrientation")]]
+void ofxiOSSetOrientation(ofOrientation orientation);
+[[deprecated("use ofGetOrientation")]]
+UIDeviceOrientation ofxiOSGetOrientation();
 #endif
 
 // load an image from the app bundle into a texture

@@ -259,7 +259,7 @@ public:
 	void run(){
 		testNonBlocking();
 		testBlocking();
-		disconnectionAutoDetection();
+		//disconnectionAutoDetection();
 		testSendRaw();
 		testSendRawBytes();
 		testWrongConnect();

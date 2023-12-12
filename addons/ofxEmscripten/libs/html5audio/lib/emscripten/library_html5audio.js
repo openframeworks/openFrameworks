@@ -97,7 +97,7 @@ var LibraryHTML5Audio = {
                 var fileSizeInBytes = stats.size;
                     
                 var tag = ext; //this covers most types
-                if( ext == mp3 ){
+                if( ext == 'mp3'){
                     tag = 'mpeg';
                 }else if( ext == 'oga'){
                     tag = 'ogg';
