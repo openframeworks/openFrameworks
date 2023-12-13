@@ -389,6 +389,11 @@ typedef TESSindex ofIndexType;
 	#endif
 #endif
 
+#if defined(_M_ARM64) && defined(TARGET_WIN32)
+	#define OF_NO_FMOD
+	// No FMOD lib for ARM64 yet
+#endif
+
 //------------------------------------------------ soundplayer
 //MAC_OS and IOS uncomment to enable AVEnginePlayer
 #ifdef OF_NO_FMOD
