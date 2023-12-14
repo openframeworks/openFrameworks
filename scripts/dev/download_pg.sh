@@ -170,22 +170,12 @@ else
     EXT=".app"
 fi
 OUTPUT=projectGenerator-$PLATFORM
-
 PKG="projectGenerator-$PLATFORM.zip"
 download $PKG
 
-
-if [ $OVERWRITE -eq 1 ]; then
-    echo "Removing old projectGenerator"
-
-    if [ -e $OUTDIR/$OUTPUT$EXT ]; then
-        rm -rf $OUTDIR/$OUTPUT$EXT
-    fi
-fi
-
 echo "Uncompressing Project Generator for $PLATFORM from $PKG"
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-    unzip -q "$PKG"
+    unzip -q "$PKG" -d "$OUTPUT"
     rm $PKG
 else
     tar xjf "$PKG"
@@ -193,13 +183,25 @@ else
 fi
 
 
-if ! command -v rsync &> /dev/null
-then      
-    cp -a $OUTPUT/projectGenerator$EXT $OUTDIR/ 
+if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+    if ! command -v rsync &> /dev/null
+    then      
+        cp -ar ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+    else
+        rsync -a ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+    fi
+    rm -rf $OUTPUT
 else
-    rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR/  
+    if ! command -v rsync &> /dev/null
+    then      
+        cp -ar $OUTPUT/projectGenerator$EXT $OUTDIR/ 
+    else
+        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR  
+    fi
+    rm -rf $OUTPUT/projectGenerator$EXT
+
 fi
-rm -rf $OUTPUT/projectGenerator$EXT
+
 rm -rf $PKG
 
 echo "Completed projectGenerator in place"
