@@ -11,10 +11,14 @@ folders=(
     "examples/3d/ofNodeExample"
     "examples/3d/multiTexture3dExample"
     "examples/3d/modelNoiseExample"
+    "examples/3d/pathsToMeshesExample"
+    "examples/3d/quaternionLatLongExample"
 #gl
     "examples/gl/shadowsExample"
-    "examples/gl/materialPBR"
-    "examples/gl/materialPBRAdvanced"
+    "examples/gl/materialPBRExample"
+    "examples/gl/materialPBRAdvancedExample"
+	"examples/gl/transformFeedbackAnimatedExample"
+    "examples/gl/pointLightsExample"
     "examples/gl/vboMeshDrawInstancedExample"
 #math
     "examples/math/noise1dOctaveExample"
