@@ -157,17 +157,13 @@ folders=(
 "examples/strings/ofLogExample/"
 "examples/strings/regularExpressionExample/"
 "examples/strings/sortingExample/"
-"examples/threads/threadChannelExample/"
-"examples/threads/threadExample/"
-"examples/threads/threadedImageLoaderExample/"
+#"examples/threads/threadChannelExample/"
+#"examples/threads/threadExample/"
+#"examples/threads/threadedImageLoaderExample/"
 "examples/video/asciiVideoExample/"
 "examples/video/slitscanRadialClockExample/"
 "examples/video/videoGrabberExample/"
 "examples/video/videoPlayerExample/"
-"examples/windowing/multiWindowExample/"
-"examples/windowing/multiWindowOneAppExample/"
-"examples/windowing/noWindowExample/"
-"examples/windowing/windowExample/"
 )
 
 cur_root=$(pwd);
@@ -179,6 +175,9 @@ out_folder="$cur_root/out"
 
 outPaths=""
 outThumbs=""
+
+code_file_path="$script_path/example-code-preview.html"
+code_preview=$(cat "$code_file_path")
 
 # Iterate through the folder paths
 for folder in "${folders[@]}"; do
@@ -204,13 +203,30 @@ for folder in "${folders[@]}"; do
 			
 			example_index="$out_folder/$parent_folder_name/$folder_name/index.html"
 			
-			#replace the index.html with one that can show src/main.cpp / src/ofApp.cpp etc
-			cp -r $script_path/example-index.html $example_index
+			#get the src/ file list so we can show the code
+			file_list=""
+			for file in "src"/*; do
+				# Check if the file is a regular file
+				if [ -f "$file" ]; then
+					# Append the filename with single quotes to the string
+					file_list+="'$(basename "$file")',"
+				fi
+			done
+			file_list=${file_list%,}
+			echo $file_list
+			
+			#append the code preview to the index.html with src/main.cpp / src/ofApp.cpp etc
+			sed -i  -e "s#</body></html>##" "$example_index"
+			echo "$code_preview" >> "$example_index"
+			echo "</body></html>" >> "$example_index"
+
 			cp -r src/* "$out_folder/$parent_folder_name/$folder_name/"
 			
-			#Github Link
-			sed -i "s|EXAMPLE_PARENT_FOLDER|$parent_folder_name|g" "$example_index"
-			sed -i "s|EXAMPLE_FOLDER|$folder_name|g" "$example_index"
+			#Github Link and file src replacement
+			sed -i  "s|EXAMPLE_PARENT_FOLDER|$parent_folder_name|g" "$example_index"
+			sed -i  "s|EXAMPLE_FOLDER|$folder_name|g" "$example_index"
+			sed -i  "s|EXAMPLE_FILES|$file_list|g" "$example_index"
+
 
 			thumb_png="$folder_name.png"
 			thumb_gif="$folder_name.gif"
@@ -261,12 +277,11 @@ echo "html is $htmlFile"
 
 # Replace the placeholder in the template file
 cp -r $script_path/index.html $htmlFile
-sed -i "s|REPLACE_ME|$outPaths|g" $htmlFile
-sed -i "s|REPLACE_FILES|$outThumbs|g" $htmlFile
+sed -i  "s|REPLACE_ME|$outPaths|g" $htmlFile
+sed -i  "s|REPLACE_FILES|$outThumbs|g" $htmlFile
 
 # Grab the code snippet js / css
 cp -r $script_path/prism.* $out_folder
-
 
 DO_UPLOAD="false"
 
