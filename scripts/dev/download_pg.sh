@@ -106,8 +106,8 @@ if [ "$PLATFORM" == "" ]; then
     elif [ "${OS:0:5}" == "MINGW" ]; then
         PLATFORM="msys2"
     else
-        # otherwise we are on windows and will download 32bit msys2
-        PLATFORM="msys2"
+        # otherwise we are on windows and will download vs
+        PLATFORM="vs"
     fi
 fi
 
@@ -170,7 +170,12 @@ else
     EXT=".app"
 fi
 OUTPUT=projectGenerator-$PLATFORM
-PKG="projectGenerator-$PLATFORM.zip"
+if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+    GUI="-gui"
+else
+    GUI=""
+fi
+PKG="projectGenerator-${PLATFORM}${GUI}.zip"
 download $PKG
 
 echo "Uncompressing Project Generator for $PLATFORM from $PKG"
@@ -182,8 +187,12 @@ else
     rm $PKG
 fi
 
+if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
+        rm -rf "${OUTDIR}/${OUTPUT}"
+fi
 
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+
     if ! command -v rsync &> /dev/null
     then      
         cp -ar ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
@@ -202,6 +211,7 @@ else
 
 fi
 
+rm -rf $OUTPUT
 rm -rf $PKG
 
 echo "Completed projectGenerator in place"
