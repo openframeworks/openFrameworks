@@ -17,7 +17,7 @@ function(define_test TARGET_NAME)                          # A CMake function li
     set_target_properties(${TARGET_NAME} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}")
     set_property(TARGET ${TARGET_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${BIN_DIR}")
-    of_copy_runtime_to_bin_dir_after_build(${TARGET_NAME} "${BIN_DIR}")
+    # of_copy_runtime_to_bin_dir_after_build(${TARGET_NAME} "${BIN_DIR}")
 
     get_filename_component(parent_path ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
     get_filename_component(test_name ${parent_path} NAME)

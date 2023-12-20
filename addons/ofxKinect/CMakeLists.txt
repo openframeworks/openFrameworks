@@ -8,4 +8,5 @@ if (WIN32)
     target_include_directories(ofxKinect PUBLIC libs/libfreenect/platform/windows)
 endif ()
 
-target_link_libraries(ofxKinect of::libusb)
+find_package(libusb REQUIRED)
+target_link_libraries(ofxKinect libusb::libusb)

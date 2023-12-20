@@ -23,7 +23,30 @@ add_library(of::openframeworks ALIAS openframeworks)
 include(${CMAKE_CURRENT_LIST_DIR}/libs/openFrameworks/CMakeLists.txt)
 
 # This downloads and configures the dependencies for us
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_and_link_deps.cmake)
+# include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_and_link_deps.cmake)
+
+
+#     of::tess2 
+#     of::glm 
+#     of::utf8
+#     of::FreeImage
+#     of::uriparser
+#     of::openssl
+#     of::curl
+#     of::freetype
+#     of::pugixml
+#     of::json
+
+# find_package(unofficial-libtess2 CONFIG REQUIRED)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_BINARY_DIR}")
+find_package(glm CONFIG REQUIRED)
+find_package(utf8cpp CONFIG REQUIRED)
+find_package(FreeImage CONFIG REQUIRED)
+find_package(uriparser CONFIG REQUIRED)
+find_package(curl CONFIG REQUIRED)
+find_package(freetype CONFIG REQUIRED)
+find_package(pugixml CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 # C++ standard version and disabling non-standard compiler specific features
 target_compile_features(openframeworks PUBLIC cxx_std_17)
@@ -44,9 +67,9 @@ target_compile_definitions(openframeworks PUBLIC
 if(MSVC)
     target_compile_options(openframeworks PUBLIC "/Zc:__cplusplus")     # Force MSVC to set __cplusplus macro correctly
     target_compile_options(openframeworks PUBLIC "/MP")                 # Enable multi-core compilation
-    target_link_options(openframeworks PUBLIC "/ignore:4099")           # Suppress compiler warning that no .pdb file is available for debugging (in third-party libraries)
-    target_link_options(openframeworks PUBLIC "/NODEFAULTLIB:LIBCMT")      # Don't link to the default C runtime library (Conflicting with third-party libraries)
-    target_link_options(openframeworks PUBLIC "/NODEFAULTLIB:$<IF:$<CONFIG:Debug>,MSVCRT,MSVCRTd>")     # Don't link to the default C++ standard library (Conflicting with third-party libraries)
+    # target_link_options(openframeworks PUBLIC "/ignore:4099")           # Suppress compiler warning that no .pdb file is available for debugging (in third-party libraries)
+    # target_link_options(openframeworks PUBLIC "/NODEFAULTLIB:LIBCMT")      # Don't link to the default C runtime library (Conflicting with third-party libraries)
+    # target_link_options(openframeworks PUBLIC "/NODEFAULTLIB:$<IF:$<CONFIG:Debug>,MSVCRT,MSVCRTd>")     # Don't link to the default C++ standard library (Conflicting with third-party libraries)
 endif()
 
 # Where compiled binaries should be placed

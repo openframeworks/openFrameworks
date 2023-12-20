@@ -1,2 +1,4 @@
 define_addon(ofxAssimpModelLoader)
-target_link_libraries(ofxAssimpModelLoader of::assimp)
+
+find_package(assimp CONFIG REQUIRED)
+target_link_libraries(ofxAssimpModelLoader assimp::assimp)

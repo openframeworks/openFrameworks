@@ -1,2 +1,2 @@
 define_example(pdfExample)
-target_link_libraries(pdfExample of::cairo)
+target_link_libraries(pdfExample)
