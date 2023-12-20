@@ -56,11 +56,18 @@ using std::string;
 
 
 //---------------------------------------------------------------------------
-ofVideoPlayer::ofVideoPlayer (){
-	bUseTexture			= true;
-	playerTex			= nullptr;
+ofVideoPlayer::ofVideoPlayer() {
+	bUseTexture = true;
+	playerTex = nullptr;
 	internalPixelFormat = OF_PIXELS_RGB;
 	tex.resize(1);
+}
+
+//---------------------------------------------------------------------------
+ofVideoPlayer::ofVideoPlayer(const of::filesystem::path & fileName) {
+	ofVideoPlayer();
+	// FIXME: Convert internally everything to FS
+	load(ofPathToString(fileName));
 }
 
 //---------------------------------------------------------------------------
