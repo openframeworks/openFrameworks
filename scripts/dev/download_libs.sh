@@ -204,7 +204,7 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
