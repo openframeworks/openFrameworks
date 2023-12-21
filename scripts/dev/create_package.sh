@@ -415,8 +415,8 @@ function createPackage {
   
   		# use prepackaged gui
     		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-    		unzip projectGenerator-vs-gui.zip 2> /dev/null
-		mv projectGenerator-vs-gui projectGenerator
+    		mkdir projectGenerator
+      		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		if [ "$pkg_platform" = "msys2" ]; then
 			sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
 		else
