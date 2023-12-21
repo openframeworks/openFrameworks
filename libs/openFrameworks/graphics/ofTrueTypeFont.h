@@ -2,6 +2,7 @@
 
 // MARK: optimization opportunity: unique pointer and remove ofMesh, ofPixels, ofRectangle, ofTexture
 #include "ofMesh.h"
+#include "ofPath.h"
 #include "ofPixels.h"
 #include "ofRectangle.h"
 #include "ofTexture.h"
@@ -367,6 +368,7 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
+	/// \returns current font direction
 	void setDirection(ofTrueTypeFontDirection direction);
 
 	float getCharWidth(uint32_t c) const {
