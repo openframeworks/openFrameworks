@@ -1,5 +1,5 @@
 #include "ofDirectShowPlayer.h"
-#include "ofPixels.h"
+#include "ofPixels.h" // MARK: pixels, srcBuffer
 #include "ofMath.h"
 
 #ifdef _MSC_VER
