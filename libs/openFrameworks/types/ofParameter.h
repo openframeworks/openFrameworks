@@ -8,7 +8,6 @@
 
 #include "ofRectangle.h"
 #include "ofLog.h"
-// #include "ofConstants.h"
 #include "ofColor.h"
 
 template <typename ParameterType>

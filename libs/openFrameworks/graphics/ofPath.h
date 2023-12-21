@@ -3,7 +3,7 @@
 #include "ofPolyline.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
-// FIXME: ofConstants targets
+// MARK: ofConstants targets
 #include "ofConstants.h"
 
 template<typename T>

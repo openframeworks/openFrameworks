@@ -840,7 +840,7 @@ bool ofGstVideoGrabber::isFrameNew() const {
 }
 
 
-ofPixels& ofGstVideoGrabber::getPixels(){
+ofPixels & ofGstVideoGrabber::getPixels(){
 	return videoUtils.getPixels();
 }
 

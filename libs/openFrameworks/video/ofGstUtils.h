@@ -1,5 +1,6 @@
 #pragma once
 
+// MARK: TARGET_ANDROID - maybe it can be removed
 #include "ofConstants.h"
 #ifndef TARGET_ANDROID
 #include "ofPixels.h"
@@ -167,8 +168,8 @@ public:
 	void 			reallocateOnNextFrame();
 
 	bool 			isFrameNew() const;
-	ofPixels&		getPixels();
-	const ofPixels&	getPixels() const;
+	ofPixels &		getPixels();
+	const ofPixels &	getPixels() const;
 	ofTexture * 	getTexture();
 	void 			update();
 
