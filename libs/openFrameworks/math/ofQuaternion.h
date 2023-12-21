@@ -30,7 +30,7 @@ class ofQuaternion {
 public:
     //    float _v[4];
     /// \cond INTERNAL
-    ofVec4f _v;
+	ofVec4f _v {};
     /// \endcond
     
 

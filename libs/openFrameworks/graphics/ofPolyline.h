@@ -5,6 +5,7 @@
 
 #define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
+#include "ofConstants.h"
 #include <deque>
 #include <vector>
 
@@ -49,15 +50,13 @@
 /// next. Storing this position means that you can easily create continuous
 /// drawings without difficulty.
 
-
-
 class ofRectangle;
 
-template<class T>
+template <class T>
 class ofPolyline_ {
 public:
-    using VertexType = T;
-    
+	using VertexType = T;
+
 	/// \name Constructors
 	/// \{
 
@@ -65,22 +64,22 @@ public:
 	ofPolyline_();
 
 	/// \brief Creates an ofPolyline from a vector of glm::vec2 or T objects.
-	ofPolyline_(const std::vector<T>& verts);
+	ofPolyline_(const std::vector<T> & verts);
 
-	static ofPolyline_ fromRectangle(const ofRectangle& rect);
+	static ofPolyline_ fromRectangle(const ofRectangle & rect);
 
-    /// \}
-    /// \name Add and Remove Vertices
-    /// \{
+	/// \}
+	/// \name Add and Remove Vertices
+	/// \{
 
 	/// \brief Removes all the points from the ofPolyline.
 	void clear();
 
 	/// \brief Adds a point using an T at the end of the ofPolyline.
-	void addVertex( const T& p );
+	void addVertex(const T & p);
 
-    /// \brief Adds a point using floats at the end of the ofPolyline.
-	void addVertex( float x, float y, float z=0 );
+	/// \brief Adds a point using floats at the end of the ofPolyline.
+	void addVertex(float x, float y, float z = 0);
 
 	/// \brief Add multiple points at the end of the ofPolyline using a vector of
 	/// T objects
@@ -102,15 +101,14 @@ public:
 	/// 	ofPolyline p;
 	/// 	p.addVertices(verts);
 	/// ~~~~
-	void addVertices( const std::vector<T>& verts );
+	void addVertices(const std::vector<T> & verts);
 
 	/// \brief Adds multiple points at the end of the ofPolyline using a pointer to
 	/// an array of T objects.
-	void addVertices(const T* verts, int numverts);
+	void addVertices(const T * verts, int numverts);
 
-	void insertVertex(const T &p, int index);
+	void insertVertex(const T & p, int index);
 	void insertVertex(float x, float y, float z, int index);
-
 
 	/// \brief Remove a vertex at a given index.
 	///
@@ -144,8 +142,8 @@ public:
 	/// 	i++;
 	/// }
 	/// ~~~~
-	const T& operator[] (int index) const;
-	T& operator[] (int index);
+	const T & operator[](int index) const;
+	T & operator[](int index);
 
 	/// \brief Gets a vector of vertices that the line contains
 	std::vector<T> & getVertices();
@@ -166,12 +164,12 @@ public:
 
 	/// \brief Add a straight line from the last point added, or from 0,0 if no point
 	/// is set, to the point indicated by the T passesd in.
-	void lineTo(const T & to ){ addVertex(to); }
+	void lineTo(const T & to) { addVertex(to); }
 
 	/// \brief Add a straight line from the last point added, or from 0,0 if no point
 	/// is set, to the point indicated by the floats x,y,z passesd in.
-	void lineTo(float x, float y, float z=0){
-		addVertex(x,y,z);
+	void lineTo(float x, float y, float z = 0) {
+		addVertex(x, y, z);
 	}
 
 	/// \brief Adds an arc around the T `center` with the width of `radiusX`
@@ -218,7 +216,7 @@ public:
 	///
 	/// ![Arc Example](graphics/ofpolyline_arc.jpg)
 	void arc(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
-		arc(center, radiusX,  radiusY,  angleBegin,  angleEnd, true,  circleResolution);
+		arc(center, radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
 
 	/// \brief Adds an arc around the coordinates (`x`,`y`) with the width of
@@ -229,7 +227,7 @@ public:
 	///
 	/// Optionally, you can specify `circleResolution`, which is the number
 	/// of line segments a circle would be drawn with.
-	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
 		arc(T(x, y, 0.f), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
 
@@ -241,20 +239,18 @@ public:
 	///
 	/// Optionally, you can specify `circleResolution`, which is the number of
 	/// line segments a circle would be drawn with.
-	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+	void arc(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
 		arc(T(x, y, z), radiusX, radiusY, angleBegin, angleEnd, true, circleResolution);
 	}
 	void arcNegative(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
 		arc(center, radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
 	}
-	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
-		arc(T(x,y,0.f), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
+	void arcNegative(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
+		arc(T(x, y, 0.f), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
 	}
-	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20){
+	void arcNegative(float x, float y, float z, float radiusX, float radiusY, float angleBegin, float angleEnd, int circleResolution = 20) {
 		arc(T(x, y, z), radiusX, radiusY, angleBegin, angleEnd, false, circleResolution);
 	}
-
-
 
 	/// \brief Adds a curve to an T object passed in
 	///
@@ -269,12 +265,12 @@ public:
 	///
 	/// \note You need at least 4 points to be able to use curveTo()
 	/// \sa [Catmull-Rom splines wiki](http://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline)
-	void curveTo( const T & to, int curveResolution = 20 );
+	void curveTo(const T & to, int curveResolution = 20);
 
 	/// \brief Adds a curve to the x,y,z points passed in with the optional
 	/// resolution.
-	void curveTo(float x, float y, float z = 0,  int curveResolution = 20 ){
-		curveTo({x,y,z},curveResolution);
+	void curveTo(float x, float y, float z = 0, int curveResolution = 20) {
+		curveTo({ x, y, z }, curveResolution);
 	}
 
 	/// \brief Adds a cubic bezier line from the current drawing point with the 2
@@ -287,20 +283,20 @@ public:
 	/// ~~~~
 	/// ![polyline bezier](bezier.jpg)
 	/// The control points are shown in red.
-	void bezierTo( const T & cp1, const T & cp2, const T & to, int curveResolution = 20);
+	void bezierTo(const T & cp1, const T & cp2, const T & to, int curveResolution = 20);
 
 	/// \brief Adds a cubic bezier line from the current drawing point with the 2
 	/// control points indicated by the coordinates cx1, cy1 and cx2, cy2,
 	/// that ends at the coordinates x, y.
-	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
-		bezierTo({cx1,cy1,0.f}, {cx2,cy2,0.f}, {x,y,0.f}, curveResolution);
+	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20) {
+		bezierTo({ cx1, cy1, 0.f }, { cx2, cy2, 0.f }, { x, y, 0.f }, curveResolution);
 	}
 
 	/// \brief Adds a cubic bezier line in 3D space from the current drawing point
 	/// with the 2 control points indicated by the coordinates cx1, cy1, cz1
 	/// and cx2, cy2, cz2, that ends at the coordinates x, y, z.
-	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20){
-		bezierTo({cx1,cy1,cz1}, {cx2,cy2,cz2}, {x,y,z}, curveResolution);
+	void bezierTo(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z, int curveResolution = 20) {
+		bezierTo({ cx1, cy1, cz1 }, { cx2, cy2, cz2 }, { x, y, z }, curveResolution);
 	}
 
 	/// \brief Adds a quadratic bezier line in 3D space from the current drawing
@@ -314,15 +310,15 @@ public:
 	/// \brief Adds a quadratic bezier line in 2D space from the current drawing
 	/// point with the beginning indicated by the point p1, the control point
 	/// at p2, and that ends at the point p3.
-	void quadBezierTo(  const T & p1, const T & p2, const T & p3,  int curveResolution = 20 ){
-		quadBezierTo(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z,p3.x,p3.y,p3.z,curveResolution);
+	void quadBezierTo(const T & p1, const T & p2, const T & p3, int curveResolution = 20) {
+		quadBezierTo(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, p3.x, p3.y, p3.z, curveResolution);
 	}
 
 	/// \brief Adds a quadratic bezier line in 2D space from the current drawing
 	/// point with the beginning indicated by the coordinates cx1, cy1, the
 	/// control point at cx2, cy2, and that ends at the coordinates x, y.
-	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20){
-		quadBezierTo(cx1,cy1,0,cx2,cy2,0,x,y,0,curveResolution);
+	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y, int curveResolution = 20) {
+		quadBezierTo(cx1, cy1, 0, cx2, cy2, 0, x, y, 0, curveResolution);
 	}
 
 	/// \}
@@ -360,7 +356,7 @@ public:
 	/// \param tolerance determines how dis-similar points need to be to stay in the line.
 	/// Higher tolerance means more points removed, lower tolerance means less
 	/// points removed.
-	void simplify(float tolerance=0.3f);
+	void simplify(float tolerance = 0.3f);
 
 	/// \}
 	/// \name Transform polyline
@@ -395,9 +391,8 @@ public:
 
 	/// \brief Closes the ofPolyline, meaning that all the vertices will be linked
 	/// and can be "walked".
-	void setClosed( bool tf );
+	void setClosed(bool tf);
 	bool isClosed() const;
-
 
 	/// \brief Returns whether the vertices within the line have changed.
 	bool hasChanged();
@@ -407,13 +402,12 @@ public:
 	/// \name Geometric Functions
 	/// \{
 
-	/// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
-	static bool inside(float x, float y, const ofPolyline_ & polyline);
+	[[deprecated("call inside() on the polygon")]] static bool inside(float x, float y, const ofPolyline_ & polyline);
+	[[deprecated("call inside() on the polygon")]] static bool inside(const T & p, const ofPolyline_ & polyline);
+
 	/// \brief Tests whether the x,y coordinates are within a closed ofPolyline.
 	bool inside(float x, float y) const;
 
-	/// \brief Tests whether the T is within a closed ofPolyline.
-	static bool inside(const T & p, const ofPolyline_ & polyline);
 	/// \brief Tests whether the T is within a closed ofPolyline.
 	bool inside(const T & p) const;
 
@@ -435,8 +429,7 @@ public:
 	/// \brief Gets the point on the line closest to the target. You can also
 	/// optionally pass a pointer to/address of an unsigned int to get the
 	/// index of the closest vertex
-	T getClosestPoint(const T& target, unsigned int* nearestIndex = nullptr) const;
-
+	T getClosestPoint(const T & target, unsigned int * nearestIndex = nullptr) const;
 
 	/// \}
 	/// \name Other Functions
@@ -533,7 +526,6 @@ public:
 
 	/// \}
 
-
 private:
 	void setCircleResolution(int res);
 	float wrapAngle(float angleRad);
@@ -542,28 +534,27 @@ private:
 	T rightVector;
 
 	// cache
-	mutable std::vector<float> lengths;    // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
-	mutable std::vector<T> tangents;       // tangent at vertex, stored per point
-	mutable std::vector<T> normals;        //
-	mutable std::vector<T> rotations;      // rotation axes between adjacent segments, stored per point (cross product)
-	mutable std::vector<float> angles;     // angle (rad) between adjacent segments, stored per point (asin(cross product))
+	mutable std::vector<float> lengths; // cumulative lengths, stored per point (lengths[n] is the distance to the n'th point, zero based)
+	mutable std::vector<T> tangents; // tangent at vertex, stored per point
+	mutable std::vector<T> normals; //
+	mutable std::vector<T> rotations; // rotation axes between adjacent segments, stored per point (cross product)
+	mutable std::vector<float> angles; // angle (rad) between adjacent segments, stored per point (asin(cross product))
 	mutable T centroid2D;
 	mutable float area;
-
 
 	std::deque<T> curveVertices;
 	std::vector<T> circlePoints;
 
 	bool bClosed;
-	bool bHasChanged;   // public API has access to this
-	mutable bool bCacheIsDirty;   // used only internally, no public API to read
+	bool bHasChanged; // public API has access to this
+	mutable bool bCacheIsDirty; // used only internally, no public API to read
 
 	void updateCache(bool bForceUpdate = false) const;
 
 	// given an interpolated index (e.g. 5.75) return neighboring indices and interolation factor (e.g. 5, 6, 0.75)
-	void getInterpolationParams(float findex, int &i1, int &i2, float &t) const;
+	void getInterpolationParams(float findex, int & i1, int & i2, float & t) const;
 
-	void calcData(int index, T &tangent, float &angle, T &rotation, T &normal) const;
+	void calcData(int index, T & tangent, float & angle, T & rotation, T & normal) const;
 };
 
 #include "ofPolyline.inl"
@@ -575,19 +566,18 @@ using ofPolyline = ofPolyline_<ofDefaultVertexType>;
 /// \param y The y dimension of the coordinate.
 /// \param polygon a vector of glm::vec3s defining a polygon.
 /// \returns True if the point defined by the coordinates is enclosed, false otherwise.
-template<class T>
-bool ofInsidePoly(float x, float y, const std::vector<T>& polygon){
-	return ofPolyline_<T>::inside(x,y, ofPolyline_<T>(polygon));
+template <class T>
+bool ofInsidePoly(float x, float y, const std::vector<T> & polygon) {
+	return ofPolyline_<T>::inside(x, y, ofPolyline_<T>(polygon));
 }
-
 
 /// \brief Determine if an glm::vec3 is within the polygon defined by a vector of glm::vec3s.
 /// \param p A point to check.
 /// \param poly A vector of glm::vec3s defining a polygon.
 /// \returns True if the glm::vec3 is enclosed, false otherwise.
-template<class T>
-bool ofInsidePoly(const T& p, const std::vector<T>& poly){
-	return ofPolyline_<T>::inside(p.x,p.y, ofPolyline_<T>(poly));
+template <class T>
+bool ofInsidePoly(const T & p, const std::vector<T> & poly) {
+	return ofPolyline_<T>::inside(p.x, p.y, ofPolyline_<T>(poly));
 }
 
 #endif

@@ -20,28 +20,30 @@ public:
 	/// If no video file is loaded this returns an empty string.
 	///
 	/// \returns A path to the loaded video or an empty string if not loaded.
-	std::string				getMoviePath() const;
+	std::string getMoviePath() const;
 
-	bool				setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat		getPixelFormat() const;
+	bool setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat getPixelFormat() const;
 
 	/// \brief Closes the movie file and releases its resources.
 	///
 	/// This is an alias for close().
 	///
 	/// \sa close()
+	[[deprecated("use close()")]] 
 	void 				closeMovie();
 	/// \brief Closes the movie file releases its resources.
 	///
 	/// This is an alias for closeMovie().
 	///
 	/// \sa closeMovie()
-	void 				close();
+	void close();
 
 	/// \brief Update the video player's internal state to continue playback.
 	///
 	/// If normal video playback is desired, this method is usually called
 	/// once per animation frame inside of ofApp::update().
+
 	void				update();
 	void 				play();
 	void 				stop();
@@ -85,35 +87,38 @@ public:
 	///
 	/// \sa ofTexture::bind()
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
-	void 				bind() const;
+	void bind() const;
+
 	/// \brief Unbinds the video texture from the current rendering context.
 	///
 	/// For advanced users who need to manually manage texture drawing
 	/// without calling draw(). Only binds the texture if one exists.
 	///
 	/// \sa ofTexture::unbind()
-	void 				unbind() const;
+<<<<<< deprecations
+	void unbind() const;
 
-	void				setAnchorPercent(float xPct, float yPct);
-	void				setAnchorPoint(float x, float y);
-	void				resetAnchor();
+	void setAnchorPercent(float xPct, float yPct);
+	void setAnchorPoint(float x, float y);
+	void resetAnchor();
 
-	void 				setPaused(bool bPause);
+	void setPaused(bool bPause);
 
-	int					getCurrentFrame() const;
-	int					getTotalNumFrames() const;
+	int getCurrentFrame() const;
+	int getTotalNumFrames() const;
 
-	void				firstFrame();
-	void				nextFrame();
-	void				previousFrame();
+	void firstFrame();
+	void nextFrame();
+	void previousFrame();
 
-	float 				getHeight() const;
-	float 				getWidth() const;
+	float getHeight() const;
+	float getWidth() const;
 
-	bool				isPaused() const;
-	bool				isLoaded() const;
-	bool				isPlaying() const;
-	bool 				isInitialized() const;
+	bool isPaused() const;
+	bool isLoaded() const;
+	bool isPlaying() const;
+	bool isInitialized() const;
+
 
 	/// \brief Set the internal video player implementation.
 	///
@@ -123,7 +128,8 @@ public:
 	///
 	/// \param newPlayer Shared pointer to the new video player that extends
 	/// from ofBaseVideoPlayer.
-	void				setPlayer(std::shared_ptr<ofBaseVideoPlayer> newPlayer);
+	void setPlayer(std::shared_ptr<ofBaseVideoPlayer> newPlayer);
+
 	/// \brief Get a pointer to the internal video player implementation.
 	///
 	/// This returns a pointer to the ofBaseVideoPlayer interface. For
@@ -132,7 +138,8 @@ public:
 	/// templated getPlayer<MyVideoPlayerImplementation>() method.
 	///
 	/// \returns A pointer to the internal video player implementation.
-	std::shared_ptr<ofBaseVideoPlayer>	getPlayer();
+	std::shared_ptr<ofBaseVideoPlayer> getPlayer();
+
 	/// \brief Get a const pointer to the internal video player implementation.
 	///
 	/// This returns a pointer to the ofBaseVideoPlayer interface. For
@@ -141,7 +148,7 @@ public:
 	/// or the templated getPlayer<MyVideoPlayerImplementation>() method.
 	///
 	/// \returns A const pointer to the internal video player implementation.
-	const std::shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
+	const std::shared_ptr<ofBaseVideoPlayer> getPlayer() const;
 
 	/// \brief Get a pointer to the internal video player implementation.
 	///
@@ -150,8 +157,8 @@ public:
 	///
 	/// \returns A pointer to the internal video player implementation or
 	///			 nullptr if the cast fails.
-	template<typename PlayerType>
-	std::shared_ptr<PlayerType> getPlayer(){
+	template <typename PlayerType>
+	std::shared_ptr<PlayerType> getPlayer() {
 		return std::dynamic_pointer_cast<PlayerType>(getPlayer());
 	}
 
@@ -162,8 +169,8 @@ public:
 	///
 	/// \returns A const pointer to the internal video player implementation
 	///			 or nullptr if the cast fails.
-	template<typename PlayerType>
-	const std::shared_ptr<PlayerType> getPlayer() const{
+	template <typename PlayerType>
+	const std::shared_ptr<PlayerType> getPlayer() const {
 		return std::dynamic_pointer_cast<PlayerType>(getPlayer());
 	}
 
@@ -171,7 +178,8 @@ private:
 	/// \brief Initialize the default player implementations.
 	void initDefaultPlayer();
 	/// \brief A pointer to the internal video player implementation.
-	std::shared_ptr<ofBaseVideoPlayer>		player;
+	std::shared_ptr<ofBaseVideoPlayer> player;
+
 	/// \brief A collection of texture planes used by the video player.
 	std::vector<ofTexture> tex;
 	/// \brief A pointer to the internal player's texture if available.
