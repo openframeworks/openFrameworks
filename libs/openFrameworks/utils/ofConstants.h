@@ -136,7 +136,9 @@ enum ofTargetPlatform{
 
 // then the the platform specific includes:
 #ifdef TARGET_WIN32
-	#define GLEW_STATIC
+	#ifndef GLEW_STATIC
+		#define GLEW_STATIC
+	#endif
 	#define GLEW_NO_GLU
 	#include "GL/glew.h"
 	#include "GL/wglew.h"

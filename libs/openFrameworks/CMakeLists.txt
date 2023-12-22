@@ -11,6 +11,8 @@ foreach(objc ${OBJC_FILES})
     list(REMOVE_ITEM SOURCES ${objc})
 endforeach()
 
+list(REMOVE_ITEM SOURCES ${CMAKE_CURRENT_LIST_DIR}/app/ofAppGlutWindow.cpp)
+
 target_sources(openframeworks PRIVATE ${SOURCES})
 target_include_directories(openframeworks PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/" PREFIX "src" FILES ${SOURCES})

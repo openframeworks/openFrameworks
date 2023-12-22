@@ -22,23 +22,7 @@ add_library(of::openframeworks ALIAS openframeworks)
 # This is another CMake script that adds the header locations and source files
 include(${CMAKE_CURRENT_LIST_DIR}/libs/openFrameworks/CMakeLists.txt)
 
-# This downloads and configures the dependencies for us
-# include(${CMAKE_CURRENT_LIST_DIR}/cmake/download_and_link_deps.cmake)
-
-
-#     of::tess2 
-#     of::glm 
-#     of::utf8
-#     of::FreeImage
-#     of::uriparser
-#     of::openssl
-#     of::curl
-#     of::freetype
-#     of::pugixml
-#     of::json
-
 # find_package(unofficial-libtess2 CONFIG REQUIRED)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_BINARY_DIR}")
 find_package(glm CONFIG REQUIRED)
 find_package(utf8cpp CONFIG REQUIRED)
 find_package(FreeImage CONFIG REQUIRED)
@@ -47,6 +31,27 @@ find_package(curl CONFIG REQUIRED)
 find_package(freetype CONFIG REQUIRED)
 find_package(pugixml CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(glew CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(cairo CONFIG REQUIRED)
+find_package(libtess2 CONFIG REQUIRED)
+
+target_link_libraries(openframeworks PUBLIC 
+    glm::glm
+    utf8cpp
+    freeimage::freeimage
+    uriparser::uriparser
+    CURL::libcurl
+    Freetype::Freetype
+    pugixml::pugixml
+    nlohmann_json::nlohmann_json
+    GLEW::GLEW
+    glfw
+    cairo::cairo
+    libtess2::libtess2
+)
+message(STATUS "glm_INCLUDE_DIRS_RELEASE: ${glm_INCLUDE_DIRS_RELEASE}")
+target_include_directories(openframeworks PUBLIC ${glm_INCLUDE_DIRS_RELEASE})
 
 # C++ standard version and disabling non-standard compiler specific features
 target_compile_features(openframeworks PUBLIC cxx_std_17)
@@ -58,9 +63,6 @@ target_compile_definitions(openframeworks PUBLIC
     OF_USING_STD_FS         # Use the new C++17 filesystem library instead of boost
     UNICODE                 # WinAPI setup
     _UNICODE
-    CURL_STATICLIB
-    POCO_STATIC
-    CAIRO_WIN32_STATIC_BUILD
 )
 
 # Compiler flags specific to MSVC

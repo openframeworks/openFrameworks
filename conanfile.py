@@ -11,7 +11,7 @@ class OFConan(ConanFile):
     generators = "CMakeDeps", "CMakeToolchain"
     settings = "os", "compiler", "build_type", "arch"
     
-    def include_package(self, name, version):
+    def include_package(self, name):
         thisfilepath = os.path.dirname(os.path.realpath(__file__))
         recipes_path = os.path.join(thisfilepath, "conan", name)
         self.run("conan export --user=user --channel=stable conanfile.py", cwd=recipes_path)
@@ -40,15 +40,13 @@ class OFConan(ConanFile):
         self.requires("libusb/1.0.26")
         self.requires("poco/1.12.5p2")
         self.requires("libxml2/2.12.2")
+        self.requires("glew/2.2.0")
+        self.requires("glfw/3.3.8")
+        self.requires("cairo/1.18.0")
 
-        # self.include_package("svgtiny", "0.1.7")
-        # self.include_package("libdom", "0.4.1")
-        # self.include_package("libparserutils", "0.2.4")
+        # self.include_package("svgtiny")
+        # self.include_package("libdom")
+        # self.include_package("libparserutils")
+        self.include_package("libtess2")
+        self.requires("libtess2/1.0.2@user/stable")
         #self.requires("svgtiny/0.1.7@user/stable")
-
-    def build(self):
-        cmake = CMake(self)
-        cmake.configure()  # equivalent to self.run("cmake . <other args>")
-        cmake.build() # equivalent to self.run("cmake --build . <other args>")
-        cmake.test()  # equivalent to self.run("cmake --target=RUN_TESTS")
-
