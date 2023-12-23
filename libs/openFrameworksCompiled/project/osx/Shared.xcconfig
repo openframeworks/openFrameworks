@@ -29,8 +29,11 @@ GCC_WARN_ABOUT_RETURN_TYPE = YES
 COPY_PHASE_STRIP[config=Debug] = NO
 COPY_PHASE_STRIP[config=Release] = YES
 
-OTHER_CPLUSPLUSFLAGS = -D__MACOSX_CORE__
-OTHER_CPLUSPLUSFLAGS[config=Release] = $(inherited) -DNDEBUG 
+OTHER_CPLUSPLUSFLAGS[config=Debug] = $(inherited) -D__MACOSX_CORE__
+OTHER_CPLUSPLUSFLAGS[config=Release] = $(inherited) -DNDEBUG
+
+GCC_OPTIMIZATION_LEVEL[config=Debug] = 0
 GCC_OPTIMIZATION_LEVEL[config=Release] = 3
+
 GCC_UNROLL_LOOPS[config=Release] = YES
 ZERO_LINK[config=Release] = NO
