@@ -17,7 +17,7 @@ jobs:
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@latest
     - name: Install libunwind
       run:  sudo apt-get install libunwind-dev
     - name: Install dependencies
