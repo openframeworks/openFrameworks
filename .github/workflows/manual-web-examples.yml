@@ -30,11 +30,11 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@latest
+      - uses: actions/checkout@v4
       - name: Docker Step
-        run:  docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.50 bash
+        run:  docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash
       - name: Download libs
-        run: ./scripts/dev/download_libs.sh -p emscripten
+        run: ./scripts/$TARGET/download_libs.sh
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/install_web_examples.sh
       - name: Build
