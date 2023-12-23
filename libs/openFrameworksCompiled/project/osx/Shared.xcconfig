@@ -22,3 +22,4 @@ OTHER_CPLUSPLUSFLAGS[config=Release] = $(inherited) -DNDEBUG
 
 GCC_UNROLL_LOOPS[config=Release] = YES
 ZERO_LINK[config=Release] = NO
+GCC_FAST_MATH[config=Release] = NO

@@ -111,3 +111,5 @@ INSTALL_PATH = /Applications
 SDKROOT = macosx
 WRAPPER_EXTENSION = app
 
+
+SKIP_INSTALL = YES
