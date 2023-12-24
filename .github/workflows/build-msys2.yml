@@ -44,6 +44,7 @@ jobs:
         # boost:p tools:p
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
+
     - name: Build
       run: ./scripts/ci/msys2/build.sh
     - name: Run tests
