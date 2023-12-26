@@ -22,9 +22,7 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        include:
-          - platform: x64
-            bits: 64
+        platform: [x64, ARM64]
     env:
       BITS: ${{ matrix.bits }}
     steps:
