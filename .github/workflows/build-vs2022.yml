@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         shell: msys2 {0}
         run:
-          ./scripts/ci/vs/install.sh
+          ./scripts/ci/vs/install_bleeding.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
       - name: Build emptyExample
