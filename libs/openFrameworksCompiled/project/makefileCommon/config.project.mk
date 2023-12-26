@@ -2,8 +2,6 @@
 # configuration work basically means creating lots of
 # lists of source files, search paths, libraries, etc.
 #
-MAKEFILE_DEBUG=1
-
 ifndef OF_ROOT
 	OF_ROOT= $(realpath ../../..)
 endif

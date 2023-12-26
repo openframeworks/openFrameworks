@@ -332,9 +332,9 @@ endif
 PLATFORM_LIBRARIES += freeimage
 ifeq ($(OF_USING_STD_FS),1)
 PLATFORM_LIBRARIES += stdc++fs
-# else
-# PLATFORM_LIBRARIES += boost_filesystem
-# PLATFORM_LIBRARIES += boost_system
+else
+PLATFORM_LIBRARIES += boost_filesystem
+PLATFORM_LIBRARIES += boost_system
 endif
 PLATFORM_LIBRARIES += pugixml
 PLATFORM_LIBRARIES += uriparser
