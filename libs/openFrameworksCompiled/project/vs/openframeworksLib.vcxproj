@@ -84,7 +84,6 @@
       <BrowseInformation>false</BrowseInformation>
       <CompileAs>CompileAsCpp</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
@@ -103,7 +102,6 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>
