@@ -1,22 +1,19 @@
 #!/bin/bash
 set -ev
 ROOT="$PWD"
-# source $ROOT/scripts/ci/ccache.sh
+source $ROOT/scripts/ci/ccache.sh
 
 echo "**** Building OF core ****"
 cd $ROOT/libs/openFrameworksCompiled/project
-# make ${USE_CCACHE} -j2 -s Debug
-make -j2 -s Debug
+make ${USE_CCACHE} -j2 -s Debug
 
 echo "**** Building emptyExample ****"
 cd $ROOT/scripts/templates/msys2
-# make ${USE_CCACHE} -j2 -s Debug
-make -j2 Debug
+make ${USE_CCACHE} -j2 -s Debug
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
 cp scripts/templates/msys2/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/msys2/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-# make ${USE_CCACHE} -j2 Debug
-make -j2 Debug
+make ${USE_CCACHE} -j2 -s Debug
