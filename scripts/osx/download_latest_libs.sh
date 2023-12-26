@@ -5,6 +5,6 @@ cd $SCRIPT_DIR
 if [ ! -z ${BITS+x} ]; then
     ../dev/download_libs.sh -p osx -b -a $BITS -n $@
 else
-    ../dev/download_libs.sh -p osx -b -a x86_64 $@
-    ../dev/download_libs.sh -p osx -b -a arm64 $@
+    ../dev/download_libs.sh -p osx -b -a x86_64 -n $@
+    ../dev/download_libs.sh -p osx -b -a arm64 -n $@
 fi
