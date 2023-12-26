@@ -4,14 +4,14 @@ SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
 
-${OF_ROOT}/scripts/vs/download_latest_libs.sh -p vs --silent
+${OF_ROOT}/scripts/vs/download_latest_libs.sh
 
 cd ~/
 rm -rf projectGenerator
 mkdir -p ~/projectGenerator
 cd ~/projectGenerator
 
-echo "Downloading projectGenerator from Github Nightly"
+echo "Downloading projectGenerator from Github Bleeding"
 downloader https://github.com/openframeworks/projectGenerator/releases/download/bleeding/projectGenerator-vs.zip 2> /dev/null
 unzip projectGenerator-vs.zip 2> /dev/null
 rm projectGenerator-vs.zip
