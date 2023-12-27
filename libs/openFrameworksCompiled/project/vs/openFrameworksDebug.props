@@ -22,14 +22,14 @@
       <IgnoreSpecificDefaultLibraries>atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\$(Platform_Actual)\*.dll" ( robocopy "%%f\lib\vs\$(Platform_Actual)" "$(ProjectDir)bin" "*.dll" /njs /njh /np /fp /bytes ))
+        <Command>for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\x64\*.dll" ( robocopy "%%f\lib\vs\x64" "$(ProjectDir)dll\x64" "*.dll" /njs /njh /np /fp /bytes ))
 if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworks;$(OF_ROOT)\libs\openFrameworks\graphics;$(OF_ROOT)\libs\openFrameworks\app;$(OF_ROOT)\libs\openFrameworks\sound;$(OF_ROOT)\libs\openFrameworks\utils;$(OF_ROOT)\libs\openFrameworks\communication;$(OF_ROOT)\libs\openFrameworks\video;$(OF_ROOT)\libs\openFrameworks\types;$(OF_ROOT)\libs\openFrameworks\math;$(OF_ROOT)\libs\openFrameworks\3d;$(OF_ROOT)\libs\openFrameworks\gl;$(OF_ROOT)\libs\openFrameworks\events;$(OF_ROOT)\libs\glm\include;$(OF_ROOT)\libs\rtAudio\include;$(OF_ROOT)\libs\quicktime\include;$(OF_ROOT)\libs\freetype\include;$(OF_ROOT)\libs\freetype\include\freetype2;$(OF_ROOT)\libs\freeImage\include;$(OF_ROOT)\libs\fmod\include;$(OF_ROOT)\libs\videoInput\include;$(OF_ROOT)\libs\glew\include\;$(OF_ROOT)\libs\glu\include;$(OF_ROOT)\libs\tess2\include;$(OF_ROOT)\libs\cairo\include\cairo;$(OF_ROOT)\libs\pixman\include\pixman;$(OF_ROOT)\libs\libpng\include;$(OF_ROOT)\libs\zlib\include;$(OF_ROOT)\libs\glfw\include;$(OF_ROOT)\libs\openssl\include;$(OF_ROOT)\libs\utf8\include;$(OF_ROOT)\libs\boost\include;$(OF_ROOT)\libs\json\include;$(OF_ROOT)\libs\curl\include;$(OF_ROOT)\libs\uriparser\include;$(OF_ROOT)\libs\pugixml\include;$(OF_ROOT)\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;CURL_STATICLIB;URI_STATIC_BUILD;TARGET_NO_SOUND;OF_NO_FMOD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;CURL_STATICLIB;URI_STATIC_BUILD;TARGET_NO_SOUND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -40,14 +40,14 @@ if errorlevel 1 exit 0 else exit %errorlevel%</Command>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\$(Platform_Actual)\*.dll" ( robocopy "%%f\lib\vs\$(Platform_Actual)" "$(ProjectDir)bin" "*.dll" /njs /njh /np /fp /bytes ))
+        <Command>for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\ARM64\*.dll" ( robocopy "%%f\lib\vs\ARM64" "$(ProjectDir)dll\ARM64" "*.dll" /njs /njh /np /fp /bytes ))
 if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64EC'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworks;$(OF_ROOT)\libs\openFrameworks\graphics;$(OF_ROOT)\libs\openFrameworks\app;$(OF_ROOT)\libs\openFrameworks\sound;$(OF_ROOT)\libs\openFrameworks\utils;$(OF_ROOT)\libs\openFrameworks\communication;$(OF_ROOT)\libs\openFrameworks\video;$(OF_ROOT)\libs\openFrameworks\types;$(OF_ROOT)\libs\openFrameworks\math;$(OF_ROOT)\libs\openFrameworks\3d;$(OF_ROOT)\libs\openFrameworks\gl;$(OF_ROOT)\libs\openFrameworks\events;$(OF_ROOT)\libs\glm\include;$(OF_ROOT)\libs\rtAudio\include;$(OF_ROOT)\libs\quicktime\include;$(OF_ROOT)\libs\freetype\include;$(OF_ROOT)\libs\freetype\include\freetype2;$(OF_ROOT)\libs\freeImage\include;$(OF_ROOT)\libs\fmod\include;$(OF_ROOT)\libs\videoInput\include;$(OF_ROOT)\libs\glew\include\;$(OF_ROOT)\libs\glu\include;$(OF_ROOT)\libs\tess2\include;$(OF_ROOT)\libs\cairo\include\cairo;$(OF_ROOT)\libs\pixman\include\pixman;$(OF_ROOT)\libs\libpng\include;$(OF_ROOT)\libs\zlib\include;$(OF_ROOT)\libs\glfw\include;$(OF_ROOT)\libs\openssl\include;$(OF_ROOT)\libs\utf8\include;$(OF_ROOT)\libs\boost\include;$(OF_ROOT)\libs\json\include;$(OF_ROOT)\libs\curl\include;$(OF_ROOT)\libs\uriparser\include;$(OF_ROOT)\libs\pugixml\include;$(OF_ROOT)\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;CURL_STATICLIB;URI_STATIC_BUILD;TARGET_NO_SOUND;OF_NO_FMOD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;CURL_STATICLIB;URI_STATIC_BUILD;TARGET_NO_SOUND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -58,7 +58,7 @@ if errorlevel 1 exit 0 else exit %errorlevel%</Command>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\$(Platform_Actual)\*.dll" ( robocopy "%%f\lib\vs\$(Platform_Actual)" "$(ProjectDir)bin" "*.dll" /njs /njh /np /fp /bytes ))
+        <Command>for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\ARM64EC\*.dll" ( robocopy "%%f\lib\vs\ARM64EC" "$(ProjectDir)dll\ARM64EC" "*.dll" /njs /njh /np /fp /bytes ))
 if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

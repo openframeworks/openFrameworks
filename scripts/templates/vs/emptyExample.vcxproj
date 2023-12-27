@@ -176,6 +176,29 @@
       <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <PostBuildEvent>
+        <Command>
+            xcopy /Y /E "$(ProjectDir)dll\x64\*.dll" "$(TargetDir)"
+        </Command>
+    </PostBuildEvent>
+</ItemDefinitionGroup>
+
+<ItemDefinitionGroup Condition="'$(Platform)'=='ARM64'">
+    <PostBuildEvent>
+        <Command>
+            xcopy /Y /E "$(ProjectDir)dll\ARM64\*.dll" "$(TargetDir)"
+        </Command>
+    </PostBuildEvent>
+</ItemDefinitionGroup>
+
+<ItemDefinitionGroup Condition="'$(Platform)'=='ARM64EC'">
+    <PostBuildEvent>
+        <Command>
+            xcopy /Y /E "$(ProjectDir)dll\ARM64EC\*.dll" "$(TargetDir)"
+        </Command>
+    </PostBuildEvent>
+</ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
