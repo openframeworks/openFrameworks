@@ -154,17 +154,27 @@ EOF
             ARCH=clang64
         fi
     fi
+
+    if [ "$PLATFORM" == "osx" ]; then
+        ARCH=x86_64
+    fi
 fi
 
-if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
-    ARCH=64gcc6
-fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
-VER=bleeding
+    VER=bleeding
+fi
+
+
+if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        ARCH=64_gcc6
+    else
+        ARCH=64gcc6
+    fi
 fi
 
 if [ "$PLATFORM" == "msys2" ]; then
@@ -179,12 +189,12 @@ elif [ "$PLATFORM" == "vs" ]; then
           openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
-elif [ "$ARCH" == "" ] && [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
+elif [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_1.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_2.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_3.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_4.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.tar.bz2"
     else    
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 \
