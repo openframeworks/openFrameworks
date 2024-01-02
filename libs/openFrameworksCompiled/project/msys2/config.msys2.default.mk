@@ -239,7 +239,7 @@ PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdl
 PLATFORM_LIBRARIES += freeimage 
 # PLATFORM_LIBRARIES += boost_filesystem-mt boost_system-mt
 PLATFORM_LIBRARIES += mf mfplat mfuuid mfreadwrite
-PLATFORM_LIBRARIES += glfw3
+# PLATFORM_LIBRARIES += glfw3
 
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
 #PLATFORM_LIBRARIES += mf mfplat mfuuid d3d11 #xaudio2
@@ -253,7 +253,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
-# PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 PLATFORM_PKG_CONFIG_LIBRARIES += glm
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
