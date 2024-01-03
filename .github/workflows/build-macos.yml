@@ -33,6 +33,13 @@ jobs:
       OPT: ${{matrix.cfg.opt}}
     steps:
     - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.11
+      with:
+        # key: ${{ matrix.os }}-${{ matrix.type }}
+        key: ${{ matrix.target }}-${{ matrix.opt }}
+        # key: ${{ matrix.msystem }}
+
 
     - name: Download libs
       # continue-on-error: true
