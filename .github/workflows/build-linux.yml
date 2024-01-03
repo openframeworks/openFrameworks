@@ -13,6 +13,8 @@ on:
       - '**/*.md'
       - 'examples/**'
 
+env:
+  USE_CCACHE: USE_CCACHE=1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,6 +42,11 @@ jobs:
         version: 1.0
 
     - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.11
+      with:
+        key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Install dependencies
