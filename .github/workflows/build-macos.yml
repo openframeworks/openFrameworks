@@ -13,6 +13,9 @@ on:
       - '**/*.md'
       - 'examples/**'
 
+env:
+  USE_CCACHE: USE_CCACHE=1
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -30,53 +33,7 @@ jobs:
       OPT: ${{matrix.cfg.opt}}
     steps:
     - uses: actions/checkout@v4
-#    - name: Cache compile
-#      id: cache-compile
-#      uses: actions/cache@v3
-#      env:
-#        cache-name: cache-keep-compile
-#      with:
-#        path: |
-#          libs/openFrameworksCompiled/lib/osx/**/
-#          addons/obj/osx/**/
-#
-#        # key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
-#        key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
-#        restore-keys: |
-#          ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
 
-#    - name: Cache libs
-#      id: cache-libs
-#      uses: actions/cache@v3
-#      env:
-#        cache-name: cache-install-libs
-#      with:
-#        path: |
-#          libs/boost/**
-#          libs/cairo/**
-#          libs/curl/**
-#          libs/fmod/**
-#          libs/FreeImage/**
-#          libs/freetype/**
-#          libs/glew/**
-#          libs/glfw/**
-#          libs/glm/**
-#          libs/json/**
-#          libs/pugixml/**
-#          libs/rtAudio/**
-#          libs/tess2/**
-#          libs/uriparser/**
-#          libs/utf8/**
-#          addons/ofxAssimpModelLoader/libs/**/
-#          addons/ofxKinect/libs/**/
-#          addons/ofxOpenCv/libs/**/
-#          addons/ofxSvg/libs/**/
-#          addons/ofxPoco/libs/**/
-#
-#        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
-#        restore-keys: |
-#          ${{ runner.os }}-build-${{ env.cache-name }}-
-#    - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
     - name: Download libs
       # continue-on-error: true
       run: ./scripts/$TARGET/download_libs.sh
