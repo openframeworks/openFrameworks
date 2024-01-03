@@ -15,7 +15,8 @@ else
 					cd $test
 					cp ../../../scripts/templates/linux/Makefile .
 					cp ../../../scripts/templates/linux/config.make .
-					make ${USE_CCACHE} -j Debug
+					# make ${USE_CCACHE} -j Debug
+					make -j Debug
 					cd bin
 					binname=$(basename ${test})
 	                #gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
