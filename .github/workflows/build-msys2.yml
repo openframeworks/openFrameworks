@@ -13,6 +13,9 @@ on:
       - '**/*.md'
       - 'examples/**'
 
+env:
+  USE_CCACHE: USE_CCACHE=1
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -30,6 +33,11 @@ jobs:
         shell: msys2 {0}
     steps:
     - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@latest
+      with:
+        # key: ${{ matrix.os }}-${{ matrix.type }}
+        key: ${{ matrix.msystem }}
     - uses: msys2/setup-msys2@v2
       with:
         cache: true
