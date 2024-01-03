@@ -25,16 +25,16 @@ else
     echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux64/config.linux64.default.mk
     sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
     cd libs/openFrameworksCompiled/project
-    ccache make -j
+    make -j CXX='ccache g++'
 
     echo "**** Building emptyExample ****"
     cd $ROOT/scripts/templates/linux64
-    ccache make -j
+    make -j CXX='ccache g++'
 
     echo "**** Building allAddonsExample ****"
     cd $ROOT
     cp scripts/templates/linux64/Makefile examples/templates/allAddonsExample/
     cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
     cd examples/templates/allAddonsExample/
-    ccache make -j
+    make -j CXX='ccache g++'
 fi
