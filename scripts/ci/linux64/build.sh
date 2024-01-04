@@ -7,8 +7,6 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
 CUSTOMFLAGS="-ftrack-macro-expansion=0 -fpic"
 
-source $ROOT/scripts/ci/ccache.sh
-
 if [ "$OPT" == "qbs" ]; then
     echo "building with qbs"
     export PATH="$TRAVIS_BUILD_DIR/linuxbrew/.linuxbrew/bin:$HOME/linuxbrew/.linuxbrew/sbin:$PATH"
