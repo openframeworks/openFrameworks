@@ -37,9 +37,9 @@ endif
 
 $(info Compile.core.mk )
 ifdef ${ccache}
-$(info Using Ccache )
-	CXX = ${ccache} $(CXX)
-	CC = ${ccache} $(CXX)
+$(info USING CCACHE )
+	CXX := ${ccache} $(CXX)
+	CC := ${ccache} $(CXX)
 endif	
 
 ################################################################################
