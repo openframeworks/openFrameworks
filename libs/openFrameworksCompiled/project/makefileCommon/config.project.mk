@@ -390,7 +390,7 @@ ifdef PLATFORM_CC
 endif
 
 ifdef ${ccache} 
-$(info >>> Using CCACHE -- config.project.mk )
+$(info 💿 Using CCACHE -- config.project.mk )
 	CXX := ${ccache} $(CXX)
 	CC := ${ccache} $(CXX)
 endif	

@@ -36,7 +36,7 @@ else
 endif
 
 ifdef ${ccache}
-$(info Using CCACHE - Compile.core.mk )
+$(info 💿 Using CCACHE - Compile.core.mk )
 	CXX := ${ccache} $(CXX)
 	CC := ${ccache} $(CXX)
 endif	
