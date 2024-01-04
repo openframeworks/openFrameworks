@@ -392,8 +392,8 @@ endif
 $(info config.project.mk )
 ifdef ${ccache}
 	$(info Using Ccache )
-	CXX = ${ccache} $CXX
-	CC = ${ccache} $CC
+	CXX = ${ccache} CXX
+	CC = ${ccache} CC
 endif	
 
 ifdef PROJECT_RESOURCE_COMPILER
