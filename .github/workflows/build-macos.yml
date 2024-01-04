@@ -14,7 +14,7 @@ on:
       - 'examples/**'
 
 env:
-  USE_CCACHE: USE_CCACHE=1
+  ccache: ccache
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
