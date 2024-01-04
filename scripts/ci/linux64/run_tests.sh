@@ -1,11 +1,11 @@
 #!/bin/bash
 set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
-source $ROOT/scripts/ci/ccache.sh
+# source $ROOT/scripts/ci/ccache.sh
 
-if [ "$OPT" == "qbs" ]; then
-	exit 0
-else
+# if [ "$OPT" == "qbs" ]; then
+	# exit 0
+# else
 	echo "**** Running unit tests ****"
 	cd $ROOT/tests
 	for group in *; do
@@ -15,7 +15,6 @@ else
 					cd $test
 					cp ../../../scripts/templates/linux/Makefile .
 					cp ../../../scripts/templates/linux/config.make .
-					# make ${USE_CCACHE} -j Debug
 					make -j Debug
 					cd bin
 					binname=$(basename ${test})
@@ -30,4 +29,4 @@ else
 			done
 		fi
 	done
-fi
+# fi
