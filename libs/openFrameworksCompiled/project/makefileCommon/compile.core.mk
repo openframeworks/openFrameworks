@@ -38,8 +38,8 @@ endif
 $(info Compile.core.mk )
 ifdef ${ccache}
 $(info Using Ccache )
-	CXX = ${ccache} CXX
-	CC = ${ccache} CC
+	CXX = ${ccache} $(CXX)
+	CC = ${ccache} $(CXX)
 endif	
 
 ################################################################################

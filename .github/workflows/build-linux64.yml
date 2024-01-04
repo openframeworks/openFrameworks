@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-linux-platforms:
+  build-linux64-platforms:
     runs-on: ubuntu-latest
     strategy:
         matrix:

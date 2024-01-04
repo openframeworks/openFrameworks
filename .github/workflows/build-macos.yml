@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-osx:
+  build-macos:
     runs-on: macos-13
     strategy:
         matrix:
