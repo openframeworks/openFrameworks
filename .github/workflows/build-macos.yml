@@ -28,9 +28,6 @@ jobs:
           cfg:
           - {target: osx, opt: "xcode"}
           - {target: osx, opt: "makefiles"}
-    env:
-      TARGET: ${{matrix.cfg.target}}
-      OPT: ${{matrix.cfg.opt}}
     steps:
     - uses: actions/checkout@v4
     - name: ccache
@@ -43,7 +40,7 @@ jobs:
 
     - name: Download libs
       # continue-on-error: true
-      run: ./scripts/$TARGET/download_libs.sh
+      run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
 #    - name: rm-dev
 #      run: sudo rm -rf /Library/Developer
 
@@ -53,10 +50,10 @@ jobs:
 
     - name: Build
       run:
-        if [ "$OPT" = "xcode" ]; then
-          scripts/ci/$TARGET/build.sh $OPT;
+        if [ ${{ matrix.cfg.opt }} = "xcode" ]; then
+          scripts/ci/${{ matrix.cfg.target }}/build.sh ${{ matrix.cfg.opt }};
         else
-          scripts/ci/$TARGET/run_tests.sh;
+          scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
         fi
       env:
         DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
