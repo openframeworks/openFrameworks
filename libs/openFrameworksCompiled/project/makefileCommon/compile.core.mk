@@ -35,9 +35,8 @@ else
 	ARFLAGS = -cr
 endif
 
-$(info Compile.core.mk )
 ifdef ${ccache}
-$(info USING CCACHE )
+$(info Using CCACHE - Compile.core.mk )
 	CXX := ${ccache} $(CXX)
 	CC := ${ccache} $(CXX)
 endif	
