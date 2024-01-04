@@ -391,7 +391,7 @@ endif
 
 $(info config.project.mk )
 ifdef ${ccache}
-	$(info Using Ccache )
+$(info Using Ccache )
 	CXX = ${ccache} CXX
 	CC = ${ccache} CC
 endif	
