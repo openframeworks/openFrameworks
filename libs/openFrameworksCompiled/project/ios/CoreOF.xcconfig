@@ -96,3 +96,6 @@ ENABLE_BITCODE = NO
 ENABLE_STRICT_OBJC_MSGSEND = YES
 
 CONFIGURATION_BUILD_DIR = $(SRCROOT)/bin/
+
+CC = $(OF_PATH)/scripts/osx/cc.sh
+CXX = $(OF_PATH)/scripts/osx/cxx.sh
