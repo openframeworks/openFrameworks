@@ -59,3 +59,4 @@ jobs:
 
     - name: Run tests
       run: ./scripts/ci/msys2/run_tests.sh
+
