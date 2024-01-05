@@ -41,10 +41,10 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         cache: true
-        update: true
+        update: false
         msystem: ${{matrix.msystem}}
         install: >-
-          unzip
+        # unzip
         # git
         # rsync
         # wget
