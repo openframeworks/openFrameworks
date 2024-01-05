@@ -129,7 +129,7 @@ Release:
 ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) -j ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) -j ReleaseABI ABI=$(abi) &&) echo
 endif
 
 

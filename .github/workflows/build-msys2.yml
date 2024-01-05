@@ -41,15 +41,15 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         cache: true
-        update: true
+        update: false
         msystem: ${{matrix.msystem}}
-        install: >-
-          unzip
+        pacboy: assimp:p cairo:p curl:p freeglut:p FreeImage:p gcc:p gdb:p glew:p glfw:p glm:p harfbuzz:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p ntldd-git:p openal:p opencv:p pkgconf:p pugixml:p rtaudio:p uriparser:p utf8cpp:p zlib:p poco:p
+        # boost:p tools:p
+        # install: >-
+        # unzip
         # git
         # rsync
         # wget
-        pacboy: assimp:p cairo:p curl:p freeglut:p FreeImage:p gcc:p gdb:p glew:p glfw:p glm:p harfbuzz:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p ntldd-git:p openal:p opencv:p pkgconf:p pugixml:p rtaudio:p uriparser:p utf8cpp:p zlib:p poco:p
-        # boost:p tools:p
         
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
@@ -59,3 +59,4 @@ jobs:
 
     - name: Run tests
       run: ./scripts/ci/msys2/run_tests.sh
+
