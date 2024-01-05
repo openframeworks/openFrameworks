@@ -7,7 +7,7 @@
  make sure to catch and report that error.
  */
 
-// FIXME: ofConstants Targets
+// MARK: ofConstants Targets
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT

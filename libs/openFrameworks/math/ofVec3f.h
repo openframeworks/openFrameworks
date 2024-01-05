@@ -3,7 +3,8 @@
 #include "ofVec2f.h"
 #include "ofVec4f.h"
 #include "ofMathConstants.h"
-#include "ofConstants.h"
+//#include "ofConstants.h"
+#define GLM_FORCE_CTOR_INIT
 #include "glm/vec3.hpp"
 #include <cmath>
 #include <iostream>

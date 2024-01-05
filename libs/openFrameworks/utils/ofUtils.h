@@ -1,6 +1,6 @@
 #pragma once
 
-// this must be included before the TARGET_MINGW test
+// MARK: TARGET_MINGW test
 #include "ofConstants.h"
 
 #if !defined(TARGET_MINGW)

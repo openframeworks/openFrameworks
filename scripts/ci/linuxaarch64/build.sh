@@ -23,7 +23,7 @@ cd $OF_ROOT
 cp scripts/templates/linuxaarch64/Makefile examples/templates/emptyExample/
 cp scripts/templates/linuxaarch64/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
-make Debug -j2
+make Debug -j
 
 #TODO:
 #echo "**** Building allAddonsExample ****"
@@ -31,4 +31,4 @@ make Debug -j2
 #cp scripts/templates/linuxaarch64/Makefile examples/templates/allAddonsExample/
 #cp scripts/templates/linuxaarch64/config.make examples/templates/allAddonsExample/
 #cd examples/templates/allAddonsExample/
-#make Debug -j2
+#make Debug -j
