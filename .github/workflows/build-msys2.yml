@@ -43,13 +43,13 @@ jobs:
         cache: true
         update: false
         msystem: ${{matrix.msystem}}
-        install: >-
+        pacboy: assimp:p cairo:p curl:p freeglut:p FreeImage:p gcc:p gdb:p glew:p glfw:p glm:p harfbuzz:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p ntldd-git:p openal:p opencv:p pkgconf:p pugixml:p rtaudio:p uriparser:p utf8cpp:p zlib:p poco:p
+        # boost:p tools:p
+        # install: >-
         # unzip
         # git
         # rsync
         # wget
-        pacboy: assimp:p cairo:p curl:p freeglut:p FreeImage:p gcc:p gdb:p glew:p glfw:p glm:p harfbuzz:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p ntldd-git:p openal:p opencv:p pkgconf:p pugixml:p rtaudio:p uriparser:p utf8cpp:p zlib:p poco:p
-        # boost:p tools:p
         
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh
