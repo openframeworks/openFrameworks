@@ -61,8 +61,8 @@ public:
 	[[deprecated("use save()")]]
 	bool saveFile();
 
-	bool load(const std::string & path);
-	bool save(const std::string & path);
+	bool load(const of::filesystem::path & path);
+	bool save(const of::filesystem::path & path);
 	bool save();
 
 
