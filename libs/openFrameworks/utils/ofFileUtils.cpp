@@ -680,8 +680,7 @@ fs::path ofFile::getEnclosingDirectory() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future FS
-std::string ofFile::getAbsolutePath() const {
+fs::path ofFile::getAbsolutePath() const {
 	return ofFilePath::getAbsolutePath(path());
 }
 

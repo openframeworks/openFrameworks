@@ -601,8 +601,7 @@ public:
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \returns current path as an absolute path
-	// MARK: - near future FS
-	std::string getAbsolutePath() const;
+	of::filesystem::path getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
