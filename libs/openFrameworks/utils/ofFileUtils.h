@@ -335,8 +335,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
-	static std::string getPathForDirectory(const of::filesystem::path & path);
-	static of::filesystem::path getPathForDirectoryFS(const of::filesystem::path & path);
+	static of::filesystem::path getPathForDirectory(const of::filesystem::path & path);
 
 	/// Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
@@ -346,9 +345,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	// FIXME: - Deprecate
-	static std::string getAbsolutePath(const of::filesystem::path & path, bool bRelativeToData = true);
-	static of::filesystem::path getAbsolutePathFS(const of::filesystem::path & path, bool bRelativeToData = true);
+	static of::filesystem::path getAbsolutePath(const of::filesystem::path & path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
@@ -434,8 +431,7 @@ public:
 	/// Linux: the binary file itself
 	///
 	/// \returns current executable path
-	static of::filesystem::path getCurrentExePathFS();
-	static std::string getCurrentExePath();
+	static of::filesystem::path getCurrentExePath();
 
 	/// Get the full path to the application's parent directory.
 	///
@@ -574,8 +570,7 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	std::string path() const;
-	of::filesystem::path pathFS() const;
+	of::filesystem::path path() const;
 
 	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
@@ -886,9 +881,7 @@ public:
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
-	// MARK: - near future FS
-	std::string getAbsolutePath() const;
-	of::filesystem::path getAbsolutePathFS() const;
+	of::filesystem::path getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -1233,10 +1226,7 @@ void ofDisableDataPath();
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
 
-//of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute=false);
-
 of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute = false);
-//std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);
 
 /// \brief Reset the working directory to the platform default.
 ///
