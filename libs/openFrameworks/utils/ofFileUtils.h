@@ -378,7 +378,7 @@ public:
 	/// \param filePath file path
 	/// \returns basename
 
-	static of::filesystem::path getBaseName(const of::filesystem::path & filePath);
+	static std::string getBaseName(const of::filesystem::path & filePath);
 
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data

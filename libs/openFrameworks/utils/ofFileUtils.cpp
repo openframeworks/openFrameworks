@@ -670,8 +670,8 @@ string ofFile::getFileName() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-fs::path ofFile::getBaseName() const {
-	return myFile.stem();
+string ofFile::getBaseName() const {
+	return ofPathToString(myFile.stem());
 }
 
 //------------------------------------------------------------------------------------------------------------
