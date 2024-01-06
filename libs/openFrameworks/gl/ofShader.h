@@ -299,8 +299,8 @@ private:
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-	static std::string parseForIncludes( const std::string& source, const of::filesystem::path& sourceDirectoryPath = "");
-	static std::string parseForIncludes( const std::string& source, std::vector<std::string>& included, int level = 0, const of::filesystem::path& sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string & source, const of::filesystem::path & sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string & source, std::vector<of::filesystem::path> & included, int level = 0, const of::filesystem::path & sourceDirectoryPath = "");
 
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID

@@ -430,13 +430,13 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source) {
 
 //--------------------------------------------------------------
 string ofShader::parseForIncludes(const string & source, const of::filesystem::path & sourceDirectoryPath) {
-    vector<string> included;
+    vector<of::filesystem::path> included;
     return parseForIncludes(source, included, 0, sourceDirectoryPath);
 }
 
 //--------------------------------------------------------------
 // FIXME: update to use fs::path in vector and source
-string ofShader::parseForIncludes(const string & source, vector<string> & included, int level, const of::filesystem::path & sourceDirectoryPath) {
+string ofShader::parseForIncludes(const string & source, vector<of::filesystem::path> & included, int level, const of::filesystem::path & sourceDirectoryPath) {
 
     if (level > 32) {
         ofLogError("ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion");
@@ -503,28 +503,24 @@ string ofShader::parseForIncludes(const string & source, vector<string> & includ
 
         // --------| invariant: '#pragma include' has been requested
 
-        if (std::find(included.begin(), included.end(), include) != included.end()) {
+		of::filesystem::path includeFS { sourceDirectoryPath / include };
+		of::filesystem::path includeFSAbsolute { of::filesystem::absolute(includeFS) };
+
+        if (std::find(included.begin(), included.end(), includeFSAbsolute) != included.end()) {
             ofLogVerbose("ofShader") << include << " already included";
             continue;
         }
 
         // we store the absolute paths so as have (more) unique file identifiers.
-        // FIXME: Included can be a vector of of::filesystem::path in near future
-        include = ofFile(
-            sourceDirectoryPath / include
-            // ).getAbsolutePath().string();
-            )
-                      .getAbsolutePath();
+        included.push_back(includeFSAbsolute);
 
-        included.push_back(include);
-
-        ofBuffer buffer = ofBufferFromFile(include);
+        ofBuffer buffer = ofBufferFromFile(includeFS);
         if (!buffer.size()) {
-            ofLogError("ofShader") << "Could not open glsl include file " << include;
+            ofLogError("ofShader") << "Could not open glsl include file " << includeFS;
             continue;
         }
 
-        auto currentDir = ofFile(include).getEnclosingDirectory();
+		auto currentDir = includeFS.parent_path();
         output << parseForIncludes(buffer.getText(), included, level + 1, currentDir) << endl;
     }
 
