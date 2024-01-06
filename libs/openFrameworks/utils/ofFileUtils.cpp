@@ -1796,7 +1796,7 @@ string ofFilePath::getFileName(const fs::path & filePath){
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - suggest using stem() instead
-fs::path ofFilePath::getBaseName(const fs::path & filePath){
+string ofFilePath::getBaseName(const fs::path & filePath){
 	return ofPathToString(filePath.stem());
 }
 
