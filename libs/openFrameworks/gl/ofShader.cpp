@@ -332,7 +332,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const of::filesystem::pat
 
 //--------------------------------------------------------------
 // FIXME: change to of::filesystem
-bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
+bool ofShader::setupShaderFromSource(GLenum type, string source, of::filesystem::path sourceDirectoryPath) {
     return setupShaderFromSource({ type, source, sourceDirectoryPath });
 }
 

@@ -232,8 +232,8 @@ public:
 
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
-	bool setupShaderFromSource(GLenum type, std::string source, std::string sourceDirectoryPath = "");
-	bool setupShaderFromFile(GLenum type, const of::filesystem::path& filename);
+	bool setupShaderFromSource(GLenum type, std::string source, of::filesystem::path sourceDirectoryPath = "");
+	bool setupShaderFromFile(GLenum type, const of::filesystem::path & filename);
 
 	// links program with all compiled shaders
 	bool linkProgram();
