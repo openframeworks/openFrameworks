@@ -670,13 +670,12 @@ string ofFile::getFileName() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFile::getBaseName() const {
-	return ofPathToString(myFile.stem());
+fs::path ofFile::getBaseName() const {
+	return myFile.stem();
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future FS
-std::string ofFile::getEnclosingDirectory() const {
+fs::path ofFile::getEnclosingDirectory() const {
 	return ofFilePath::getEnclosingDirectory(path());
 }
 
@@ -1796,13 +1795,12 @@ string ofFilePath::getFileName(const fs::path & filePath){
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - suggest using stem() instead
-string ofFilePath::getBaseName(const fs::path & filePath){
+fs::path ofFilePath::getBaseName(const fs::path & filePath){
 	return ofPathToString(filePath.stem());
 }
 
 //------------------------------------------------------------------------------------------------------------
-// MARK: - near future FS
-std::string ofFilePath::getEnclosingDirectory(const fs::path & _filePath, bool bRelativeToData){
+fs::path ofFilePath::getEnclosingDirectory(const fs::path & _filePath, bool bRelativeToData){
 	auto fp = _filePath;
 	if(bRelativeToData){
 		fp = ofToDataPath(fp);

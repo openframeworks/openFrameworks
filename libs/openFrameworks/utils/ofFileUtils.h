@@ -378,8 +378,7 @@ public:
 	/// \param filePath file path
 	/// \returns basename
 
-  // FIXME: Deprecate / Remove this. Find instances in OF Core to remove
-	static std::string getBaseName(const of::filesystem::path & filePath);
+	static of::filesystem::path getBaseName(const of::filesystem::path & filePath);
 
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
@@ -390,7 +389,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-	static std::string getEnclosingDirectory(const of::filesystem::path & filePath, bool bRelativeToData = true);
+	static of::filesystem::path getEnclosingDirectory(const of::filesystem::path & filePath, bool bRelativeToData = true);
 
 	/// Create the enclosing parent directory of a path, ie.
 	/// "images" is the enclosing directory of "duck.jpg" = "images/duck.jpg".
@@ -589,15 +588,14 @@ public:
 	/// "images/some/folder" -> "images/some".
 	///
 	/// \returns current path basename
-	std::string getBaseName() const;
+	of::filesystem::path getBaseName() const;
 
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
 	/// directory.
 	///
 	/// \returns current path's enclosing directory
-	// MARK: - near future FS
-	std::string getEnclosingDirectory() const;
+	of::filesystem::path getEnclosingDirectory() const;
 
 	/// \biref Get the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
