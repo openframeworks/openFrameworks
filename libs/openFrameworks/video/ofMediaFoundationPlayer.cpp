@@ -758,7 +758,8 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     m_spMediaEngine->SetAutoPlay(FALSE);
 
     // now lets make a BSTR 
-    m_spMediaEngine->SetSource(BstrURL(absPath));
+//    m_spMediaEngine->SetSource(BstrURL(absPath));
+	m_spMediaEngine->SetSource(absPath);
 
     hr = m_spMediaEngine->Load();
 
