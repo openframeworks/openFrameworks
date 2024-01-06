@@ -146,8 +146,9 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 
 class BstrURL {
 public:
-    BstrURL(std::string aurl) {
-        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+    BstrURL(const of::filesystem::path & aurl) {
+//        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+		std::wstring ws { aurl.wstring() };
         assert(!ws.empty());
         _bstrStr = SysAllocStringLen(ws.data(), ws.size());
     }
@@ -758,8 +759,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     m_spMediaEngine->SetAutoPlay(FALSE);
 
     // now lets make a BSTR 
-//    m_spMediaEngine->SetSource(BstrURL(absPath));
-	m_spMediaEngine->SetSource(absPath);
+    m_spMediaEngine->SetSource(BstrURL(absPath));
 
     hr = m_spMediaEngine->Load();
 
