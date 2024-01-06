@@ -678,7 +678,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     bStream = bStream || ofIsStringInString(name, "rtsp://");
     bStream = bStream || ofIsStringInString(name, "rtmp://");
 
-    std::string absPath = name;
+    of::filesystem::path absPath = name;
 
     if (!bStream) {
         if (ofFile::doesFileExist(absPath)) {
