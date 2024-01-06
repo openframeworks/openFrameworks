@@ -588,7 +588,7 @@ public:
 	/// "images/some/folder" -> "images/some".
 	///
 	/// \returns current path basename
-	of::filesystem::path getBaseName() const;
+	std::string getBaseName() const;
 
 	/// Get the enclosing parent directory of a path,
 	/// ie. "images/duck.jpg" -> "images", assumes the path is in the data
