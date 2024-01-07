@@ -1,10 +1,6 @@
 #pragma once
 
-<<<<<<< HEAD
-// FIXME: Deprecated and FS
-=======
 // MARK: ofConstants FS
->>>>>>> master
 #include "ofConstants.h"
 #include <fstream>
 
