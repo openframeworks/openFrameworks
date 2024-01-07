@@ -2,7 +2,7 @@
 
 // MARK: optimization opportunity: unique pointer and remove ofMesh, ofPixels, ofRectangle, ofTexture
 #include "ofMesh.h"
-#include "ofPixels.h"
+#include "ofPixels.h" // Glyph ofPixels pixels
 #include "ofRectangle.h"
 #include "ofTexture.h"
 #include <unordered_map>

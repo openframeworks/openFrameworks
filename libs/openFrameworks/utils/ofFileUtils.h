@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: ofConstants FS
+// MARK: ofConstants FS
 #include "ofConstants.h"
 #include <fstream>
 
@@ -346,8 +346,9 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	// MARK: - near future FS
+	// FIXME: - Deprecate
 	static std::string getAbsolutePath(const of::filesystem::path & path, bool bRelativeToData = true);
+	static of::filesystem::path getAbsolutePathFS(const of::filesystem::path & path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
@@ -368,7 +369,10 @@ public:
 	/// \returns filename
 	///
 	// FIXME: Deprecate / Remove this. Find instances in OF Core to remove
-	static std::string getFileName(const of::filesystem::path & filePath, bool bRelativeToData = true);
+	[[deprecated("use getFileName(const of::filesystem::path & filePath) or of::filesystem::path .filename()")]]
+	static std::string getFileName(const of::filesystem::path & filePath, bool bRelativeToData);
+	
+	static std::string getFileName(const of::filesystem::path & filePath);
 
 	/// Get a file name without its extension,
 	/// ie. "images/duck.jpg" -> "duck" and
@@ -884,6 +888,7 @@ public:
 	/// \return current path as an absolute path
 	// MARK: - near future FS
 	std::string getAbsolutePath() const;
+	of::filesystem::path getAbsolutePathFS() const;
 
 	/// Check if the current path is readable.
 	///
@@ -1250,6 +1255,9 @@ bool ofRestoreWorkingDirectoryToDefault();
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
 void ofSetDataPathRoot(const of::filesystem::path & root);
+
+std::string ofPathToString(const of::filesystem::path & path);
+
 
 /*! \cond PRIVATE */
 namespace of {
