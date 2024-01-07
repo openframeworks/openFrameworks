@@ -56,7 +56,7 @@ namespace{
 	fs::path & dataPathRoot() {
 		static auto * dataPathRoot = new fs::path(defaultDataPath());
 		// This is the most important change in the way OF handles paths.
-		fs::current_path(*dataPathRoot);
+//		fs::current_path(*dataPathRoot);
 		return *dataPathRoot;
 	}
 }
