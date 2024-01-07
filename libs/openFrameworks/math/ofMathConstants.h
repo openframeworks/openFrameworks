@@ -1,5 +1,6 @@
 #pragma once
 
+// MARK: if OF_USE_LEGACY_VECTOR_MATH
 #include "ofConstants.h"
 #include "glm/fwd.hpp"
 

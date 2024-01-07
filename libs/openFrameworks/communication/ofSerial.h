@@ -1,6 +1,6 @@
 #pragma once
 
-// FIXME: ofConstants targets
+// MARK: ofConstants targets
 #include "ofConstants.h"
 
 class ofBuffer;
