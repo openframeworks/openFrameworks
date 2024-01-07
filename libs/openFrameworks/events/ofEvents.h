@@ -1,7 +1,7 @@
 #pragma once
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/vec2.hpp"
-#include "ofConstants.h"
 #include "ofEventUtils.h"
 #include "ofFpsCounter.h"
 #include "ofTimer.h"
@@ -107,7 +107,7 @@ enum ofKey{
 //-----------------------------------------------
 class ofDragInfo {
 public:
-	std::vector<std::string> files;
+	std::vector<of::filesystem::path> files;
 	glm::vec2 position;
 };
 

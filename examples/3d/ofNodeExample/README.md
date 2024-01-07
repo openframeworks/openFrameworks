@@ -1,6 +1,6 @@
 # About ofNodeExample
 
-![Screenshot of ofNodeExample](ofNodeExample.jpg)
+![Screenshot of ofNodeExample](ofNodeExample.png)
 
 ### Learning Objectives
 

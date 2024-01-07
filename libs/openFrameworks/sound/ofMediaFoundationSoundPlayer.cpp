@@ -189,7 +189,7 @@ ofMediaFoundationSoundPlayer::~ofMediaFoundationSoundPlayer() {
 bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
     unload();
     
-    std::string fileStr = fileName.string();
+    std::string fileStr = ofPathToString(fileName);
     bool bStream = false;
     bStream = bStream || ofIsStringInString(fileStr, "http://");
     bStream = bStream || ofIsStringInString(fileStr, "https://");
