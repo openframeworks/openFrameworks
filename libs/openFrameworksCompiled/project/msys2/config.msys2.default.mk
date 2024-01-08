@@ -28,13 +28,10 @@
 MINGW_PREFIX ?= /mingw32
 PLATFORM_CFLAGS += -std=gnu++17 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
-ifdef USE_CCACHE
-	CC = ccache $(MINGW_PREFIX)/bin/gcc
-	CXX = ccache $(MINGW_PREFIX)/bin/g++
-else
-	CC = $(MINGW_PREFIX)/bin/gcc
-	CXX = $(MINGW_PREFIX)/bin/g++
-endif
+
+CC = $(MINGW_PREFIX)/bin/gcc
+CXX = $(MINGW_PREFIX)/bin/g++
+
 FIND ?= /usr/bin/find
 PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
 PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
@@ -239,7 +236,7 @@ PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdl
 PLATFORM_LIBRARIES += freeimage 
 # PLATFORM_LIBRARIES += boost_filesystem-mt boost_system-mt
 PLATFORM_LIBRARIES += mf mfplat mfuuid mfreadwrite
-PLATFORM_LIBRARIES += glfw3
+# PLATFORM_LIBRARIES += glfw3
 
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
 #PLATFORM_LIBRARIES += mf mfplat mfuuid d3d11 #xaudio2
@@ -253,7 +250,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
-# PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 PLATFORM_PKG_CONFIG_LIBRARIES += glm
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
