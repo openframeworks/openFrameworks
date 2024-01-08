@@ -6,8 +6,10 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
 #include "ofMath.h"
-#include "ofMathConstants.h"
+// #include "ofMathConstants.h"
 #include "ofLog.h"
+#include "ofColor.h"
+
 #include <unordered_map>
 
 //--------------------------------------------------------------
@@ -1217,7 +1219,7 @@ void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
 				goto clean;
 			}
 			if(!data.hasVertices()){
-				ofLogWarning("ofMesh") << "load(): mesh loaded from \"" << path << "\" has no vertices";
+				ofLogWarning("ofMesh") << "load(): mesh loaded from " << path << " has no vertices";
 			}
 			if(orderVertices==-1) orderVertices=9999;
 			if(orderIndices==-1) orderIndices=9999;

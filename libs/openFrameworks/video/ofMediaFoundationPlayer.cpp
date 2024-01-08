@@ -1,4 +1,34 @@
 
+/*
+ -----------------------------------------------------------------------------
+ Based on code by Andrew Wright
+ https://github.com/axjxwright/AX-MediaPlayer/
+ 
+ MIT License
+ 
+ Copyright (c) 2021 Andrew Wright / AX Interactive
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ -----------------------------------------------------------------------------
+ */
+
+
 #include "ofPixels.h"
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
@@ -10,9 +40,11 @@
 #include "ofGraphics.h"
 #include "ofEventUtils.h"
 
+// declares some shared Media Foundation code
+#include "ofMediaFoundationSoundPlayer.h"
+
 using namespace Microsoft::WRL;
 
-int ofMediaFoundationPlayer::sNumInstances = 0;
 std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPlayer::sDeviceManager;
 
 bool ofMediaFoundationPlayer::sBAllowDurationHack = true;
@@ -20,124 +52,6 @@ bool ofMediaFoundationPlayer::sBAllowDurationHack = true;
 //----------------------------------------------
 void ofMediaFoundationPlayer::setDurationHackEnabled(bool ab) {
     sBAllowDurationHack = ab;
-}
-
-class AsyncCallback : public IMFAsyncCallback {
-public:
-    AsyncCallback(std::function<void()> aCallBack) {
-        mCallBack = aCallBack;
-    }
-    virtual ~AsyncCallback() = default;
-
-    IFACEMETHODIMP GetParameters(_Out_ DWORD* flags, _Out_ DWORD* queue) {
-        *flags = 0;// MFASYNC_BLOCKING_CALLBACK;
-        *queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED;
-        return S_OK;
-    }
-
-    STDMETHODIMP Invoke(IMFAsyncResult* pResult) {
-        //m_hrStatus = m_pStream->EndRead(pResult, &m_cbRead);
-
-        //SetEvent(m_hEvent);
-        //std::cout << " CALLING ASYNC INVOKE! START" << std::endl;
-        mCallBack();
-        //ofLogNotice("Calling ASYNC INVOKEEEEE") << "RELEASED";
-        //std::cout << " CALLING ASYNC INVOKE! DONE" << std::endl;
-        //Release();
-        return S_OK;
-    }
-
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID* ppvObj) {
-        if (!ppvObj) return E_INVALIDARG;
-        *ppvObj = NULL;
-        if (riid == IID_IMFAsyncCallback) {
-            *ppvObj = (LPVOID)this;
-            AddRef();
-            return NOERROR;
-        }
-        return E_NOINTERFACE;
-    }
-
-    ULONG STDMETHODCALLTYPE AddRef() {
-        InterlockedIncrement(&m_refCount);
-        return m_refCount;
-    }
-
-    ULONG STDMETHODCALLTYPE Release() {
-        ULONG count = InterlockedDecrement(&m_refCount);
-        if (0 == m_refCount) {
-            delete this;
-        }
-        return count;
-    }
-
-protected:
-    std::function<void()> mCallBack;
-    ULONG m_refCount = 0;
-};
-
-//----------------------------------------------
-void callAsyncBlocking(std::function<void()> aCallBack) {
-    std::mutex lock;
-    std::condition_variable wait;
-    std::atomic_bool isDone(false);
-
-    HRESULT hr = S_OK;
-
-    ComPtr<AsyncCallback> pCB(
-        new AsyncCallback(
-            [&] {
-        aCallBack();
-        //std::cout << " CALLING SHUTDOWN ASYNC INVOKE! DONE" << std::endl;
-        isDone.store(true);
-        wait.notify_one();
-    }
-    ));
-
-    hr = MFPutWorkItem(MFASYNC_CALLBACK_QUEUE_MULTITHREADED, pCB.Get(), NULL);
-    if (hr == S_OK) {
-        std::unique_lock lk{ lock };
-        wait.wait(lk, [&] { return isDone.load(); });
-    } else {
-        if (pCB) {
-            pCB->Release();
-            pCB = nullptr;
-        }
-    }
-
-    //std::cout << "AFTER thread lock destroy " << std::endl;
-}
-
-//----------------------------------------------
-bool ofMediaFoundationPlayer::sInitMediaFoundation() {
-    
-    if (sNumInstances == 0) {
-        HRESULT hr = MFStartup(MF_VERSION);
-        if (SUCCEEDED(hr)) {
-            //sMFInited = true;
-        }
-        ofLogVerbose("ofMEVideoPlayer :: sInitMediaFoundation : init ok ") << SUCCEEDED(hr);
-        hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED); 
-        //hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-        //ofLogVerbose("ofMEVideoPlayer :: CoInitializeEx : init ok ") << SUCCEEDED(hr);
-    }
-    sNumInstances++;
-    return sNumInstances > 0;
-}
-
-//----------------------------------------------
-void ofMediaFoundationPlayer::sCloseMediaFoundation() {
-    sNumInstances--;
-    if (sNumInstances <= 0) {
-        // Shut down Media Foundation.
-        CoUninitialize();
-        ofLogNotice("ofMEVideoPlayer") << " calling MFShutdown.";
-        std::cout << "calling MFShutdown. " << std::endl;
-        MFShutdown();
-    }
-    if (sNumInstances < 0) {
-        sNumInstances = 0;
-    }
 }
 
 //----------------------------------------------
@@ -260,10 +174,46 @@ bool ofMediaFoundationPlayer::METexture::allocate( ofPixelFormat afmt, int aw, i
     mWidth = aw;
     mHeight = ah;
     mOfPixFmt = afmt;
-    //auto glFormat = ofGetGLInternalFormatFromPixelFormat(OF_PIXELS_BGRA);
     auto glFormat = ofGetGLInternalFormatFromPixelFormat(afmt);
     // make a GL_TEXTURE2D
     mOfTex->allocate(mWidth, mHeight, glFormat, false);
+    return true;
+}
+
+//----------------------------------------------
+bool ofMediaFoundationPlayer::METexture::_swapPixelsFromSrc4ChannelTo3(ofPixels& aDstPix) {
+    const auto targetPixFormat = aDstPix.getPixelFormat();
+    const auto srcPixFormat = mSrcPixels.getPixelFormat();
+
+    bool bNeedsSwap = (srcPixFormat == OF_PIXELS_BGRA && targetPixFormat == OF_PIXELS_RGB);
+    if (srcPixFormat == OF_PIXELS_RGBA && targetPixFormat == OF_PIXELS_BGR) {
+        bNeedsSwap = true;
+    }
+
+    if (bNeedsSwap) {
+        auto srcPixels = mSrcPixels.getPixelsIter();
+        auto dstPixels = aDstPix.getPixelsIter();
+        auto srcPixel = srcPixels.begin();
+        auto dstPixel = dstPixels.begin();
+        auto endPixel = srcPixels.end();
+        for (; srcPixel != srcPixels.end(); srcPixel++, dstPixel++) {
+            dstPixel[0] = srcPixel[2];
+            dstPixel[1] = srcPixel[1];
+            dstPixel[2] = srcPixel[0];
+        }
+    } else {
+        // straight copy, removing the alpha channel
+        auto srcPixels = mSrcPixels.getPixelsIter();
+        auto dstPixels = aDstPix.getPixelsIter();
+        auto srcPixel = srcPixels.begin();
+        auto dstPixel = dstPixels.begin();
+        auto endPixel = srcPixels.end();
+        for (; srcPixel != srcPixels.end(); srcPixel++, dstPixel++) {
+            dstPixel[0] = srcPixel[0];
+            dstPixel[1] = srcPixel[1];
+            dstPixel[2] = srcPixel[2];
+        }
+    }
     return true;
 }
 
@@ -281,7 +231,7 @@ public:
     ID3D11Texture2D* getDXTexture() { return mDXTex.Get(); }
 
     bool draw(ofPixels& apix) override;
-    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix) override;
+    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) override;
 
     bool lock();
     bool unlock();
@@ -305,7 +255,7 @@ public:
 
     bool transferFrame(IMFMediaEngine* aengine) override;
     bool draw(ofPixels& apix) override;
-    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix) override;
+    bool updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) override;
 
 protected:
     Microsoft::WRL::ComPtr<IWICBitmap> mWicBitmap = nullptr;
@@ -315,7 +265,11 @@ protected:
 
 //----------------------------------------------
 bool SharedDXGLTexture::allocate(ofPixelFormat afmt, int aw, int ah) {
-    return METexture::allocate(OF_PIXELS_BGRA, aw, ah);
+    ofPixelFormat outfmt = OF_PIXELS_BGRA;
+    if (afmt == OF_PIXELS_RGBA || afmt == OF_PIXELS_RGB) {
+        outfmt = OF_PIXELS_RGBA;
+    }
+    return METexture::allocate(outfmt, aw, ah);
 }
 
 //----------------------------------------------
@@ -410,7 +364,9 @@ bool SharedDXGLTexture::isLocked() {
 //----------------------------------------------
 bool SharedDXGLTexture::draw(ofPixels& apix) {
     if (lock()) {
-        mOfTex->draw(0, 0);
+        if (mOfTex->isAllocated()) {
+            mOfTex->draw(0, 0);
+        }
         unlock();
         return true;
     }
@@ -418,9 +374,7 @@ bool SharedDXGLTexture::draw(ofPixels& apix) {
 }
 
 //----------------------------------------------
-bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix) {
-
-    //aSrcTex.readToPixels(apix);
+bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) {
 
     auto deviceMan = ofMediaFoundationPlayer::getDxDeviceManager();
     auto immediateContext = deviceMan->getContext();
@@ -458,11 +412,25 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix) {
         aSrcTex.readToPixels(apix);
         return apix.getWidth() > 0;
     }
-    apix.setFromPixels(reinterpret_cast<unsigned char*>(mapInfo.pData), getWidth(), getHeight(), mOfPixFmt);
-    if (mOfPixFmt == OF_PIXELS_RGB || mOfPixFmt == OF_PIXELS_RGBA) {
-        apix.swapRgb();
+    // the mOfPixFmt is always going to be BGRA || RGBA
+    bool bSetStraightOnPix = (mOfPixFmt == aTargetPixFormat);
+    if (mOfPixFmt == OF_PIXELS_BGRA && aTargetPixFormat == OF_PIXELS_RGBA) {
+        bSetStraightOnPix = true;
     }
+    if (mOfPixFmt == OF_PIXELS_RGBA && aTargetPixFormat == OF_PIXELS_BGRA) {
+        bSetStraightOnPix = true;
+    }
+    if (bSetStraightOnPix) {
+        apix.setFromPixels(reinterpret_cast<unsigned char*>(mapInfo.pData), getWidth(), getHeight(), mOfPixFmt);
+        if (aTargetPixFormat != mOfPixFmt) {
+            apix.swapRgb();
+        }
+    } else {
+        mSrcPixels.setFromPixels(reinterpret_cast<unsigned char*>(mapInfo.pData), getWidth(), getHeight(), mOfPixFmt);
 
+        apix.allocate(mSrcPixels.getWidth(), mSrcPixels.getHeight(), aTargetPixFormat);
+        _swapPixelsFromSrc4ChannelTo3(apix);
+    }
     return apix.getWidth() > 0 && apix.getHeight() > 0;
 }
 
@@ -483,7 +451,7 @@ SharedDXGLTexture::~SharedDXGLTexture() {
 //----------------------------------------------
 bool WICTextureManager::allocate(ofPixelFormat afmt, int aw, int ah) {
     ofLogVerbose("ofMediaFoundationVideoPlayer :: WICTextureManager") << " allocate.";
-    METexture::allocate(afmt, aw, ah);
+    METexture::allocate(OF_PIXELS_BGRA, aw, ah);
     mBValid = false;
     HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&mWicFactory));
     if (hr == S_OK && mWicFactory) {
@@ -563,7 +531,7 @@ bool WICTextureManager::draw(ofPixels& apix) {
         return false;
     }
 
-    apix.setFromAlignedPixels(data, getWidth(), getHeight(), OF_PIXELS_BGRA, stride);
+    mSrcPixels.setFromAlignedPixels(data, getWidth(), getHeight(), mOfPixFmt, stride);
     mOfTex->loadData(apix);
     //mOfTex->loadData(data, mWidth, mHeight, GL_BGRA);
     mOfTex->draw(0, 0);
@@ -574,9 +542,21 @@ bool WICTextureManager::draw(ofPixels& apix) {
 }
 
 //----------------------------------------------
-bool WICTextureManager::updatePixels(ofTexture& aSrcTex, ofPixels& apix) {
-    if (mOfPixFmt == OF_PIXELS_RGB || mOfPixFmt == OF_PIXELS_RGBA) {
-        apix.swapRgb();
+bool WICTextureManager::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixelFormat aTargetPixFormat) {
+    // always has mOfPixFmt == OF_PIXELS_BGRA
+    bool bSetStraightOnPix = (mOfPixFmt == aTargetPixFormat);
+    if (mOfPixFmt == OF_PIXELS_BGRA && aTargetPixFormat == OF_PIXELS_RGBA) {
+        bSetStraightOnPix = true;
+    }
+    if (bSetStraightOnPix) {
+        apix = mSrcPixels;
+        if (aTargetPixFormat != mOfPixFmt) {
+            apix.swapRgb();
+        }
+    } else {
+        // swap around pixels 
+        apix.allocate(mSrcPixels.getWidth(), mSrcPixels.getHeight(), aTargetPixFormat);
+        _swapPixelsFromSrc4ChannelTo3(apix);
     }
     return true;
 }
@@ -653,15 +633,17 @@ std::string ofMediaFoundationPlayer::MFErrorToString(MF_MEDIA_ENGINE_ERR aerror)
 
 //----------------------------------------------
 ofMediaFoundationPlayer::ofMediaFoundationPlayer() {
-    sInitMediaFoundation();
+    //sInitMediaFoundation();
+    // TODO: this is currently located in ofMediaFoundationSoundPlayer
+    ofMediaFoundationUtils::InitMediaFoundation();
 	InitializeCriticalSectionEx(&m_critSec, 0, 0);
-    mPixFormat = OF_PIXELS_BGRA;
+    mPixFormat = OF_PIXELS_RGB;
 }
 
 //----------------------------------------------
 ofMediaFoundationPlayer::~ofMediaFoundationPlayer() {
     close();
-    sCloseMediaFoundation();
+    ofMediaFoundationUtils::CloseMediaFoundation();
     DeleteCriticalSection(&m_critSec);
 }
 
@@ -773,17 +755,12 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
         }
     }
 
-    // now lets make a BSTR 
-    //std::string tPathToLoad = name;
-    
     m_spMediaEngine->SetAutoPlay(FALSE);
 
-    //callAsyncBlocking([&] {
+    // now lets make a BSTR 
     m_spMediaEngine->SetSource(BstrURL(absPath));
 
-    //callAsyncBlocking([&] {
     hr = m_spMediaEngine->Load();
-    //});
 
     //mBLoaded = (hr == S_OK);
 
@@ -807,7 +784,6 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
 
             std::mutex lock;
             std::unique_lock lk{ lock };
-            //std::unique_lock<std::mutex> lk(mMutexLoad);
             mWaitCondition.wait(lk, [&] { return mBIsDoneAtomic.load() || mBIsClosedAtomic.load();  });
         }
     }
@@ -829,7 +805,7 @@ void ofMediaFoundationPlayer::close() {
     EnterCriticalSection(&m_critSec);
 
     if (m_spMediaEngine) {
-        callAsyncBlocking(
+        ofMediaFoundationUtils::CallAsyncBlocking(
             [&] { m_spMediaEngine->Shutdown(); }
         );
     }
@@ -880,8 +856,11 @@ bool ofMediaFoundationPlayer::isInitialized() const {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) {
+
     if (aEvent == MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA) {
         if (!mBLoadAsync) {
+            updateDuration();
+            updateDimensions();
             mBIsDoneAtomic.store(true);
             mWaitCondition.notify_one();
         }
@@ -925,7 +904,7 @@ void ofMediaFoundationPlayer::update() {
                         if (bValidDraw) {
                             mCopyTex = mFbo.getTexture();
                             if (mBUpdatePixels) {
-                                mMeTexture->updatePixels(mCopyTex, mPixels);
+                                mMeTexture->updatePixels(mCopyTex, mPixels,mPixFormat);
                             }
                             mBNewFrame = true;
                         }
@@ -1106,7 +1085,9 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 //----------------------------------------------
 void ofMediaFoundationPlayer::setVolume(float volume) {
     if (m_spMediaEngine) {
-        callAsyncBlocking([&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); });
+        ofMediaFoundationUtils::CallAsyncBlocking(
+            [&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); 
+        });
     }
 }
 
@@ -1211,6 +1192,12 @@ void ofMediaFoundationPlayer::previousFrame() {
 
 //----------------------------------------------
 bool ofMediaFoundationPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
+    if (pixelFormat == OF_PIXELS_BGRA || pixelFormat == OF_PIXELS_BGR ) {
+        m_d3dFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+    } else if(pixelFormat == OF_PIXELS_RGBA || pixelFormat == OF_PIXELS_RGB ) {
+        m_d3dFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    }
+
     switch (pixelFormat) {
     case OF_PIXELS_RGB:
     case OF_PIXELS_BGR:
@@ -1265,12 +1252,13 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                 }
             }
             mBDone = false;
-            mWidth = 0.f;
-            mHeight = 0.f;
-            DWORD w, h;
-            if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
-                mWidth = w;
-                mHeight = h;
+            //mWidth = 0.f;
+            //mHeight = 0.f;
+            //DWORD w, h;
+            //if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+                //mWidth = w;
+                //mHeight = h;
+            if(updateDimensions()) {
 
                 if (mMeTexture) {
                     if (mMeTexture->getWidth() != mWidth || mMeTexture->getHeight() != mHeight) {
@@ -1312,7 +1300,6 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
         }
         case MF_MEDIA_ENGINE_EVENT_LOADEDDATA:
         {
-
             //IMFMediaEngineEx::GetStreamAttribute
             //HRESULT GetStreamAttribute(
             //    [in]  DWORD       dwStreamIndex,
@@ -1338,9 +1325,6 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                         }
                         PropVariantClear(&pvar);
                     }
-
-                    //std::cout << "DURATION: " << mDuration << std::endl;
-
                     updateDuration();
                 }
             }
@@ -1433,5 +1417,18 @@ void ofMediaFoundationPlayer::updateDuration() {
             mEstimatedNumFrames = 1;
         }
     }
+}
+
+//-----------------------------------------
+bool ofMediaFoundationPlayer::updateDimensions() {
+    mWidth = 0.f;
+    mHeight = 0.f;
+    DWORD w, h;
+    if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+        mWidth = w;
+        mHeight = h;
+        return true;
+    }
+    return false;
 }
 

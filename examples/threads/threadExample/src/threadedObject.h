@@ -51,6 +51,12 @@ public:
 	/// other tasks.
 	void threadedFunction(){
 		while(isThreadRunning()){
+			if (ofIsCurrentThreadTheMainThread()) {
+				// will never happen but to document the branch:
+				ofLogNotice("ThreadedObject::threadedFunction") << "processed in main thread";
+			} else {
+				ofLogNotice("ThreadedObject::threadedFunction") << "processed in other thread";
+			}
 			// since we are only writting to the frame number from one thread
 			// and there's no calculations that depend on it we can just write to
 			// it without locking

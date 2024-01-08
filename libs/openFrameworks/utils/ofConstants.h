@@ -2,8 +2,8 @@
 
 // version: ------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 11
-#define OF_VERSION_PATCH 2
+#define OF_VERSION_MINOR 12
+#define OF_VERSION_PATCH 0
 #define OF_VERSION_PRE_RELEASE "master"
 
 // core: ---------------------------
@@ -49,7 +49,8 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUXARMV7L,
 	/// \brief Compiled to javascript using Emscripten.
 	/// \sa https://github.com/kripken/emscripten
-	OF_TARGET_EMSCRIPTEN
+	OF_TARGET_EMSCRIPTEN,
+	OF_TARGET_LINUXAARCH64
 };
 
 
@@ -58,6 +59,7 @@ enum ofTargetPlatform{
 #endif
 
 
+// FIXME: not used anymore in OF Core. Only kept for addons compatibility - 20231206
 // Cross-platform deprecation warning
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5
@@ -86,6 +88,7 @@ enum ofTargetPlatform{
 // 		http://www.ogre3d.org/docs/api/html/OgrePlatform_8h-source.html
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
+	#define OF_OS_WINDOWS
 	#define TARGET_WIN32
 	#if defined(_MSC_VER)
 		#define TARGET_WINVS
@@ -351,7 +354,11 @@ typedef TESSindex ofIndexType;
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
-		#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+            #ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
+	        #define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+            #else
+	        #define OF_VIDEO_PLAYER_DIRECTSHOW
+            #endif
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
@@ -383,8 +390,20 @@ typedef TESSindex ofIndexType;
 #endif
 
 //------------------------------------------------ soundplayer
+//MAC_OS and IOS uncomment to enable AVEnginePlayer
+#ifdef OF_NO_FMOD
+    #undef USE_FMOD
+    #if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
+        #define OF_SOUND_PLAYER_AV_ENGINE
+    #elif defined(TARGET_WIN32)
+		#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
+	#endif
+#endif
+
 // check if any soundplayer api is defined from the compiler
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
+
+#if !defined(TARGET_NO_SOUND)
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE) && !defined(OF_SOUND_PLAYER_MEDIA_FOUNDATION)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
   #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
@@ -396,11 +415,6 @@ typedef TESSindex ofIndexType;
   #endif
 #endif
 
-//------------------------------------------------ c++11
-// check if the compiler supports c++11. vs hasn't updated the value
-// of __cplusplus so we need to check for vs >= 2012 (1700)
-#if __cplusplus>=201103 || _MSC_VER >= 1700
-#define HAS_CPP11 1
 #endif
 
 //------------------------------------------------ thread local storage
@@ -416,42 +430,14 @@ typedef TESSindex ofIndexType;
 	#endif
 #endif
 
-//------------------------------------------------ make_unique
-// This is a helper method for make unique on platforms that support C++11, but not C++14.
-#if !defined(NO_OF_MAKE_UNIQUE) && (defined(_MSC_VER) && _MSC_VER < 1800) || (!defined(_MSC_VER) && __cplusplus <= 201103L)
 
-// Implementation for C++11 platforms that do not yet have std::make_unique.
-// Implementation from http://stackoverflow.com/a/13512344/1518329
-namespace std {
-
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique_helper(std::false_type, Args&&... args) {
-	return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique_helper(std::true_type, Args&&... args) {
-	static_assert(std::extent<T>::value == 0,
-				  "make_unique<T[N]>() is forbidden, please use make_unique<T[]>().");
-
-	typedef typename std::remove_extent<T>::type U;
-	return std::unique_ptr<T>(new U[sizeof...(Args)]{std::forward<Args>(args)...});
-}
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
-	return make_unique_helper<T>(std::is_array<T>(), std::forward<Args>(args)...);
-}
-
-
-} // namespace std
-
-#endif
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201703L
+#if __cplusplus >= 201500
     #define OF_HAS_CPP17 1
+    #if __cplusplus < 201703L
+        #define OF_USE_EXPERIMENTAL_FS 1
+    #endif
 #else
     #define OF_HAS_CPP17 0
 #endif

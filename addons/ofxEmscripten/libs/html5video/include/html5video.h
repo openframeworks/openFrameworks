@@ -4,6 +4,7 @@ extern "C"{
     extern int html5video_player_create();
     extern void html5video_player_delete(int id);
     extern void html5video_player_load(int id,const char* src);
+    extern void html5video_player_load_url(int id,const char* src);
     extern const char* html5video_player_pixel_format(int it);
     extern void html5video_player_set_pixel_format(int it, const char* format);
     extern int html5video_player_update(int id, int update_pixels, unsigned char* pixels);

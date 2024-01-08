@@ -3,6 +3,7 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
+// FIXME: ofConstants Targets
 #include "ofConstants.h"
 
 #include <condition_variable>
@@ -271,17 +272,9 @@ std::string ofFileDialogResult::getPath(){
 void ofSystemAlertDialog(std::string errorMessage){
 	#ifdef TARGET_WIN32
 		// we need to convert error message to a wide char message.
-		// first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
-		int length = strlen(errorMessage.c_str());
-		wchar_t * widearray = new wchar_t[length+1];
-		memset(widearray, 0, sizeof(wchar_t)*(length+1));
-		// then, call mbstowcs:
-		// http://www.cplusplus.com/reference/clibrary/cstdlib/mbstowcs/
-		mbstowcs(widearray, errorMessage.c_str(), length);
+		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
 		// launch the alert:
-		MessageBoxW(nullptr, widearray, L"alert", MB_OK);
-		// clear the allocated memory:
-		delete widearray;
+		MessageBoxW(nullptr, errorMessageW.c_str(), L"alert", MB_OK);
 	#endif
 
 	#ifdef TARGET_OSX
@@ -387,8 +380,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-	std::wstring windowTitleW;
-	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
+	std::wstring windowTitleW{windowTitle.begin(), windowTitle.end()};
 
 	if (bFolderSelection == false){
 
@@ -432,7 +424,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 		else {
 			//this should throw an error on failure unless its just the user canceling out
-			DWORD err = CommDlgExtendedError();
+			//DWORD err = CommDlgExtendedError();
 		}
 
 	} else {
@@ -462,7 +454,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.lParam           =   (LPARAM) &defaultPath;
 		bi.lpszTitle        =   windowTitleW.c_str();
 
-		if(pidl = SHBrowseForFolderW(&bi)){
+		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
 			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
 				results.filePath = convertWideToNarrow(wideCharacterBuffer);

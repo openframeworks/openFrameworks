@@ -12,7 +12,7 @@
 #include "ofVideoBaseTypes.h"
 #include "ofTexture.h"
 #include "ofThread.h"
-// FIXME: template
+// MARK: Template, if 
 #include "ofPixels.h"
 #include <mutex>
 

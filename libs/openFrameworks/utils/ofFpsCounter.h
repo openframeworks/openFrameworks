@@ -1,7 +1,7 @@
 #pragma once
 
+// ofTime only
 #include "ofUtils.h"
-#include "ofConstants.h"
 #include <queue>
 
 class ofFpsCounter {
