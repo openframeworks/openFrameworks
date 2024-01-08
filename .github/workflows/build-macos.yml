@@ -16,70 +16,6 @@ concurrency:
 
 jobs:
   clone:
-<<<<<<< Updated upstream
-    timeout-minutes: 20
-    runs-on: macos-12
-    steps:
-      - uses: actions/checkout@v3
-  cache-compile:
-    timeout-minutes: 20
-    runs-on: macos-12
-    steps:
-      - name: Cache compile
-        id: cache-compile
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-keep-compile
-        with:
-          path: |
-            libs/openFrameworksCompiled/lib/osx/*.a
-            libs/openFrameworksCompiled/lib/osx/**/
-            addons/obj/osx/**/
-            scripts/templates/osx/build/**/
-
-          key: ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-${{ hashFiles('**/*.cpp') }}
-          restore-keys: |
-            ${{ runner.os }}-${{matrix.cfg.opt}}-${{ env.cache-name }}-
-  cache-libs:
-    timeout-minutes: 20
-    runs-on: macos-12
-    steps:
-      - name: Cache libs
-        id: cache-libs
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-install-libs
-        with:
-          path: |
-            libs/boost/**
-            libs/cairo/**
-            libs/curl/**
-            libs/fmod/**
-            libs/FreeImage/**
-            libs/freetype/**
-            libs/glew/**
-            libs/glfw/**
-            libs/glm/**
-            libs/json/**
-            libs/pugixml/**
-            libs/rtAudio/**
-            libs/tess2/**
-            libs/uriparser/**
-            libs/utf8/**
-            addons/ofxAssimpModelLoader/libs/**/
-            addons/ofxKinect/libs/**/
-            addons/ofxOpenCv/libs/**/
-            addons/ofxSvg/libs/**/
-            addons/ofxPoco/libs/**/
-
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('scripts/apothecary/apothecary/formulas/**/*.sh') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-
-  build-osx:
-    runs-on: macos-12
-    needs: [clone, cache-libs, cache-compile]
-=======
     timeout-minutes: 4
     runs-on: macos-13
     steps:
@@ -103,7 +39,6 @@ jobs:
   build-macos:
     runs-on: macos-13
     needs: [download-libs, ccache]
->>>>>>> Stashed changes
     strategy:
         matrix:
           cfg:
@@ -113,20 +48,6 @@ jobs:
       TARGET: ${{matrix.cfg.target}}
       OPT: ${{matrix.cfg.opt}}
     steps:
-<<<<<<< Updated upstream
-    - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
-      # name: Download libs
-      # continue-on-error: true
-      run: ./scripts/$TARGET/download_libs.sh
-    - name: rm-dev
-      run: sudo rm -rf /Library/Developer
-
-    # this step is not needed here because the script is empty
-    # - name: install
-    # run: ./scripts/ci/$TARGET/install.sh
-
-=======
->>>>>>> Stashed changes
     - name: Build
       run:
         if [ "$TARGET" = "osx" ] && [ "$OPT" = "xcode" ]; then
