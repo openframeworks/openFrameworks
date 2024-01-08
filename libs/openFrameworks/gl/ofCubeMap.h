@@ -6,6 +6,7 @@
 
 #pragma once
 
+#define GLM_FORCE_CTOR_INIT
 #include "glm/mat4x4.hpp"
 #include "ofShader.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-// this must be included before the TARGET_MINGW test
+// MARK: TARGET_MINGW test
 #include "ofConstants.h"
 
 #if !defined(TARGET_MINGW)
@@ -93,7 +93,8 @@ uint64_t ofGetUnixTime();
 
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
-OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
+[[deprecated("Use ofGetSystemTimeMillis()")]]
+uint64_t ofGetSystemTime();
 
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
@@ -255,7 +256,8 @@ void ofShuffle(Args &&... args) {
 /// \param values The vector of values to modify.
 
 template <class T>
-[[deprecated("use ofShuffle or of::shuffle")]] void ofRandomize(std::vector<T> & values) {
+[[deprecated("use ofShuffle or of::shuffle")]]
+void ofRandomize(std::vector<T> & values) {
 	of::shuffle(values);
 }
 
@@ -542,7 +544,8 @@ std::string ofTrimBack(const std::string & src, const std::string & locale = "")
 /// \returns a front-trimmed std::string.
 std::string ofTrim(const std::string & src, const std::string & locale = "");
 
-OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(std::string & str, uint32_t utf8));
+[[deprecated("Use ofUTF8Append")]]
+void ofAppendUTF8(std::string & str, uint32_t utf8);
 
 /// \brief Append a Unicode codepoint to a UTF8-encoded std::string.
 ///

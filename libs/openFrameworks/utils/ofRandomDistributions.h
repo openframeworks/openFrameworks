@@ -363,7 +363,7 @@ poisson(double mean) {
 }
 
 /// \brief Generates a vector of random non-negative integer values according to poisson distribution
-/// https://en.cppreference.com/w/cpp/numeric/random/poisson_distribution\
+/// https://en.cppreference.com/w/cpp/numeric/random/poisson_distribution
 /// note that this distribution produces int, which are cast into floats for glm
 /// \tparam T the desired output vector type
 /// \param mean the mean
@@ -375,7 +375,7 @@ poisson(double mean) {
 }
 
 /// \brief Generates a vector of random non-negative integer values according to poisson distribution
-/// https://en.cppreference.com/w/cpp/numeric/random/poisson_distribution\
+/// https://en.cppreference.com/w/cpp/numeric/random/poisson_distribution
 /// (note that this distribution produces int, which are cast into floats for glm)
 /// with specialized parameters (different params for members of the vector)
 /// \tparam T the desired output vector type

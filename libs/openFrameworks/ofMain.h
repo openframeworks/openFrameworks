@@ -1,5 +1,4 @@
-#ifndef OF_MAIN_H
-#define OF_MAIN_H
+#pragma once
 
 //--------------------------
 // utils
@@ -116,8 +115,8 @@
 using namespace std;
 #else
 
-    // this will eventually be disabled by default
-    #define OF_USE_MINIMAL_STD
+// this will eventually be disabled by default
+#define OF_USE_MINIMAL_STD
     #ifdef OF_USE_MINIMAL_STD
 using std::cout;
 using std::deque;
@@ -135,5 +134,3 @@ using std::vector;
 using std::weak_ptr;
     #endif
 #endif
-
-#endif // OF_MAIN_H
