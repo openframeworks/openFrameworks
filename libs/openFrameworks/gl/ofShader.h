@@ -7,8 +7,10 @@
  make sure to catch and report that error.
  */
 
-#include "ofFileUtils.h"
+// MARK: ofConstants Targets
 #include "ofConstants.h"
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/fwd.hpp"
 #include <unordered_map>
 

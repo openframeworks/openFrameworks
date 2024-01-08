@@ -1,3 +1,5 @@
+OF_GLSL_SHADER_HEADER
+
 //
 //     _____    ___
 //    /    /   /  /     vboMeshDrawInstancedExample
@@ -24,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#version 150
+//#version 150
 
 in vec4 colorVarying;
 in vec2 texCoordVarying;
@@ -35,6 +37,6 @@ out vec4 fragColor;
 
 void main(){
 
-	fragColor = colorVarying;
+	fragColor = vec4(colorVarying.rgb, 1.0);
 	
 }

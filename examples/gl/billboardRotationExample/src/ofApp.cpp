@@ -52,7 +52,7 @@ void ofApp::update() {
 
 	
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
-		ofSeedRandom(i);
+		ofSetRandomSeed(i);
 		if(glm::distance(mouse,pos[i]) < ofRandom(100, 200)) {
 			vel[i] -= mouseVec; 
 		}

@@ -1,6 +1,6 @@
 # About systemSpeakExample
 
-![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](systemSpeak.png)
+![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](systemSpeakExample.png)
 
 
 ### Learning Objectives

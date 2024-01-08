@@ -4,6 +4,7 @@
 
 #if defined(OF_SOUND_PLAYER_FMOD)
 #include "ofSoundPlayer.h"
+#include "ofFmodSoundPlayer.h"
 #endif
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
@@ -20,6 +21,8 @@
 #define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
 #endif
 
+void ofFmodSetBuffersize(unsigned int bs);
+float * ofFmodSoundGetSpectrum(int nBands);
 
 //FIXME: this is needed to make video work on emscripten
 //See: https://github.com/openframeworks/openFrameworks/issues/7377 

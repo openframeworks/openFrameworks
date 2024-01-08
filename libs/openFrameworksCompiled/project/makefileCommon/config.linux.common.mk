@@ -342,10 +342,9 @@ endif
 ifeq ($(OF_USING_STD_FS),1)
 $(info $(shell tput setaf 1)Using std fs$(shell tput sgr0))
 PLATFORM_LIBRARIES += stdc++fs
-else
-$(info $(shell tput setaf 1)Not using std fs$(shell tput sgr0))
-PLATFORM_LIBRARIES += boost_filesystem
-PLATFORM_LIBRARIES += boost_system
+# else
+# PLATFORM_LIBRARIES += boost_filesystem
+# PLATFORM_LIBRARIES += boost_system
 endif
 PLATFORM_LIBRARIES += pugixml
 PLATFORM_LIBRARIES += uriparser
