@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   clone:
+<<<<<<< Updated upstream
     timeout-minutes: 20
     runs-on: macos-12
     steps:
@@ -78,6 +79,31 @@ jobs:
   build-osx:
     runs-on: macos-12
     needs: [clone, cache-libs, cache-compile]
+=======
+    timeout-minutes: 4
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+  ccache:
+    timeout-minutes: 8
+    runs-on: macos-13
+    steps:
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.11
+      with:
+        key: ${{ runner.os }}-${{ matrix.cfg.opt }}
+  download-libs:
+    timeout-minutes: 8
+    runs-on: macos-13
+    needs: [clone]
+    steps:
+    - name: Download libs
+      run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
+
+  build-macos:
+    runs-on: macos-13
+    needs: [download-libs, ccache]
+>>>>>>> Stashed changes
     strategy:
         matrix:
           cfg:
@@ -87,6 +113,7 @@ jobs:
       TARGET: ${{matrix.cfg.target}}
       OPT: ${{matrix.cfg.opt}}
     steps:
+<<<<<<< Updated upstream
     - if: ${{ steps.cache-libs.outputs.cache-hit != 'true' }}
       # name: Download libs
       # continue-on-error: true
@@ -98,6 +125,8 @@ jobs:
     # - name: install
     # run: ./scripts/ci/$TARGET/install.sh
 
+=======
+>>>>>>> Stashed changes
     - name: Build
       run:
         if [ "$TARGET" = "osx" ] && [ "$OPT" = "xcode" ]; then
