@@ -1,5 +1,8 @@
 #pragma once
 
+#ifdef NO
+    #undef NO
+#endif
 #ifdef MIN 
 	#undef MIN
 #endif 

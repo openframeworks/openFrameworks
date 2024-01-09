@@ -31,6 +31,7 @@ ofxEmscriptenVideoGrabber::~ofxEmscriptenVideoGrabber() {
 }
 
 vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
+	html5video_list_devices();
 	return vector<ofVideoDevice>();
 }
 
@@ -59,7 +60,7 @@ bool ofxEmscriptenVideoGrabber::setup(int w, int h){
 }
 
 bool ofxEmscriptenVideoGrabber::isInitialized() const{
-	return texture.isAllocated();
+	return html5video_grabber_ready_state(id)>=HAVE_ENOUGH_DATA;
 }
 
 void ofxEmscriptenVideoGrabber::update(){
@@ -94,7 +95,12 @@ void ofxEmscriptenVideoGrabber::update(){
 }
 
 bool ofxEmscriptenVideoGrabber::isFrameNew() const{
-	return html5video_grabber_ready_state(id)>=HAVE_METADATA;
+	// does not work with Emscripten
+	if (pixels.isAllocated() || texture.isAllocated()){
+		return true;
+	} else{
+		return false;
+	}
 }
 
 ofPixels & ofxEmscriptenVideoGrabber::getPixels(){

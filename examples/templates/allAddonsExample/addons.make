@@ -8,4 +8,3 @@ ofxGui
 ofxKinect
 ofxSvg
 ofxPoco
-

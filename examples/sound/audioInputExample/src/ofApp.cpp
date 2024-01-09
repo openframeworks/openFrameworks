@@ -42,8 +42,12 @@ void ofApp::setup(){
 
 	settings.setInListener(this);
 	settings.sampleRate = 44100;
-	settings.numOutputChannels = 0;
-	settings.numInputChannels = 2;
+	#ifdef TARGET_EMSCRIPTEN
+		settings.numOutputChannels = 2;
+	#else
+		settings.numOutputChannels = 0;
+	#endif
+	settings.numInputChannels = 1;
 	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
 

@@ -214,6 +214,13 @@
     return self.player.currentTime * 1000;
 }
 
+- (float)duration {
+	if(self.player == nil) {
+		return 0.f;
+	}
+	return self.player.duration;
+}
+
 //----------------------------------------------------------- timer.
 - (void)updateTimer {
     if([self.delegate respondsToSelector:@selector(soundPlayerDidChange)]) {

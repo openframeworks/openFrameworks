@@ -23,7 +23,7 @@ class ofApp : public ofxiOSApp{
 
 		ofTrueTypeFont testFont;
 		ofTrueTypeFont testFont2;
-		ofTTFCharacter testChar;
+		ofPath testChar;
 
 		int letter;
 	

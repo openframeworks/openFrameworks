@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "ofMain.h"
 #include <atomic>
 
@@ -20,7 +19,7 @@ public:
 	}
 
 	void setup(){
-		pixels.allocate(640,480,OF_PIXELS_GRAY);
+		pixels.allocate(640,480,OF_IMAGE_COLOR_ALPHA);
 		tex.allocate(pixels);
 		start();
 	}
@@ -52,6 +51,12 @@ public:
 	/// other tasks.
 	void threadedFunction(){
 		while(isThreadRunning()){
+			if (ofIsCurrentThreadTheMainThread()) {
+				// will never happen but to document the branch:
+				ofLogNotice("ThreadedObject::threadedFunction") << "processed in main thread";
+			} else {
+				ofLogNotice("ThreadedObject::threadedFunction") << "processed in other thread";
+			}
 			// since we are only writting to the frame number from one thread
 			// and there's no calculations that depend on it we can just write to
 			// it without locking
@@ -70,6 +75,9 @@ public:
 					auto ux = x/float(pixels.getWidth());
 					auto uy = line.getLineNum()/float(pixels.getHeight());
 					pixel[0] = ofNoise(ux, uy, t);
+					pixel[1] = ofNoise(ux, uy, t);
+					pixel[2] = ofNoise(ux, uy, t);
+					pixel[3] = 1;
 					x++;
 				}
 			}

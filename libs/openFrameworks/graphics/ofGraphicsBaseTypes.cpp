@@ -1,17 +1,17 @@
 #include "ofGraphicsBaseTypes.h"
+#include "ofRectangle.h"
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/vec2.hpp"
 #include "glm/trigonometric.hpp"
-#include "ofRectangle.h"
 
 void ofBaseDraws::draw(const glm::vec2 & point) const {
 	draw(point.x, point.y);
 }
 
-
 void ofBaseDraws::draw(const ofRectangle & rect) const {
 	draw(rect.x, rect.y, rect.width, rect.height);
 }
-
 
 void ofBaseDraws::draw(const glm::vec2 & point, float w, float h) const {
 	draw(point.x, point.y, w, h);

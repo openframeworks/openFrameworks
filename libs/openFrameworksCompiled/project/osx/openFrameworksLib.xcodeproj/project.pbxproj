@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		19662F2E2834A44400B622ED /* ofGraphicsCairo.h in Headers */ = {isa = PBXBuildFile; fileRef = 19662F2C2834A44400B622ED /* ofGraphicsCairo.h */; };
+		19662F2F2834A44400B622ED /* ofGraphicsCairo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */; };
 		22246D93176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */; };
 		22246D94176C9987008A8AF4 /* ofGLProgrammableRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */; };
 		22769591170D9DD200604FC3 /* ofMatrixStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */; };
@@ -19,6 +21,11 @@
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
 		27DEA3121796F578000A9E90 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = 27DEA3101796F578000A9E90 /* ofXml.h */; };
+		2E498914292C96340096EC56 /* ofCubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E498911292C96340096EC56 /* ofCubeMap.cpp */; };
+		2E498915292C96340096EC56 /* ofCubeMapShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498912292C96340096EC56 /* ofCubeMapShaders.h */; };
+		2E498916292C96340096EC56 /* ofCubeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498913292C96340096EC56 /* ofCubeMap.h */; };
+		2E4D30C128F5BA9C0074D450 /* ofShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4D30BF28F5BA9C0074D450 /* ofShadow.h */; };
+		2E4D30C228F5BA9C0074D450 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
@@ -77,6 +84,8 @@
 		DACFA8E8132D09E8008D4B7A /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
 		DACFA8E9132D09E8008D4B7A /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
 		DACFA8EA132D09E8008D4B7A /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
+		E43EEAC329E66B78001C7596 /* ofAVEngineSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */; };
+		E43EEAC429E66B78001C7596 /* ofAVEngineSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */; };
 		E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */; };
 		E486629B1D8C61B000D1735C /* ofAVFoundationGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */; };
 		E495DF7D178896A900994238 /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7B178896A900994238 /* ofAppNoWindow.cpp */; };
@@ -153,6 +162,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		19662F2C2834A44400B622ED /* ofGraphicsCairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphicsCairo.h; sourceTree = "<group>"; };
+		19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGraphicsCairo.cpp; sourceTree = "<group>"; };
 		22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLProgrammableRenderer.cpp; path = gl/ofGLProgrammableRenderer.cpp; sourceTree = "<group>"; };
 		22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofGLProgrammableRenderer.h; path = gl/ofGLProgrammableRenderer.h; sourceTree = "<group>"; };
 		2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMatrixStack.cpp; sourceTree = "<group>"; };
@@ -165,6 +176,11 @@
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		27DEA30F1796F578000A9E90 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
 		27DEA3101796F578000A9E90 /* ofXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofXml.h; sourceTree = "<group>"; };
+		2E498911292C96340096EC56 /* ofCubeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofCubeMap.cpp; path = gl/ofCubeMap.cpp; sourceTree = "<group>"; };
+		2E498912292C96340096EC56 /* ofCubeMapShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofCubeMapShaders.h; path = gl/ofCubeMapShaders.h; sourceTree = "<group>"; };
+		2E498913292C96340096EC56 /* ofCubeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofCubeMap.h; path = gl/ofCubeMap.h; sourceTree = "<group>"; };
+		2E4D30BF28F5BA9C0074D450 /* ofShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofShadow.h; path = gl/ofShadow.h; sourceTree = "<group>"; };
+		2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofShadow.cpp; path = gl/ofShadow.cpp; sourceTree = "<group>"; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
@@ -228,6 +244,8 @@
 		E432815E138ABFDD0047C5CB /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		E432815F138AC0470047C5CB /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		E4328160138AC04A0047C5CB /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVEngineSoundPlayer.mm; sourceTree = "<group>"; };
+		E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVEngineSoundPlayer.h; sourceTree = "<group>"; };
 		E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ofAVFoundationGrabber.h; sourceTree = "<group>"; };
 		E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVFoundationGrabber.mm; sourceTree = "<group>"; };
 		E495DF7B178896A900994238 /* ofAppNoWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppNoWindow.cpp; sourceTree = "<group>"; };
@@ -332,6 +350,9 @@
 				694425151FE4544C00770088 /* ofGLBaseTypes.h */,
 				2292E73C19E3049700DE9411 /* ofBufferObject.cpp */,
 				2292E73D19E3049700DE9411 /* ofBufferObject.h */,
+				2E498911292C96340096EC56 /* ofCubeMap.cpp */,
+				2E498913292C96340096EC56 /* ofCubeMap.h */,
+				2E498912292C96340096EC56 /* ofCubeMapShaders.h */,
 				22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */,
 				22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */,
 				DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */,
@@ -342,6 +363,8 @@
 				DACFA8CD132D09E8008D4B7A /* ofGLUtils.h */,
 				DACFA8CE132D09E8008D4B7A /* ofLight.cpp */,
 				DACFA8CF132D09E8008D4B7A /* ofLight.h */,
+				2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */,
+				2E4D30BF28F5BA9C0074D450 /* ofShadow.h */,
 				DACFA8D0132D09E8008D4B7A /* ofMaterial.cpp */,
 				DACFA8D1132D09E8008D4B7A /* ofMaterial.h */,
 				DACFA8D2132D09E8008D4B7A /* ofShader.cpp */,
@@ -442,8 +465,8 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
-				E432815E138ABFDD0047C5CB /* Shared.xcconfig */,
 				E4EB6916138AFC8500A09F29 /* CoreOF.xcconfig */,
+				E432815E138ABFDD0047C5CB /* Shared.xcconfig */,
 				E432815F138AC0470047C5CB /* Debug.xcconfig */,
 				E4328160138AC04A0047C5CB /* Release.xcconfig */,
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
@@ -477,6 +500,8 @@
 		E4F3BA7B12F4C4C9002D19BB /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */,
+				E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */,
 				6944251D1FE4548B00770088 /* ofSoundBaseTypes.cpp */,
 				6944251E1FE4548B00770088 /* ofSoundBaseTypes.h */,
 				E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */,
@@ -587,6 +612,8 @@
 				E4F3BB0112F4C751002D19BB /* ofBitmapFont.h */,
 				E4F3BB0412F4C752002D19BB /* ofGraphics.cpp */,
 				E4F3BB0512F4C752002D19BB /* ofGraphics.h */,
+				19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */,
+				19662F2C2834A44400B622ED /* ofGraphicsCairo.h */,
 				2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */,
 				2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */,
 				E4F3BB0612F4C752002D19BB /* ofImage.cpp */,
@@ -636,6 +663,7 @@
 				694425161FE4544C00770088 /* ofGLBaseTypes.h in Headers */,
 				E4F3BADE12F4C73C002D19BB /* ofPoint.h in Headers */,
 				E4F3BAE012F4C73C002D19BB /* ofRectangle.h in Headers */,
+				19662F2E2834A44400B622ED /* ofGraphicsCairo.h in Headers */,
 				E4F3BAE112F4C73C002D19BB /* ofTypes.h in Headers */,
 				6944251C1FE4547400770088 /* ofGraphicsConstants.h in Headers */,
 				E4F3BAF112F4C745002D19BB /* ofConstants.h in Headers */,
@@ -648,10 +676,12 @@
 				E4F3BAFC12F4C745002D19BB /* ofURLFileLoader.h in Headers */,
 				E4F3BAFE12F4C745002D19BB /* ofUtils.h in Headers */,
 				E4F3BB1912F4C752002D19BB /* ofBitmapFont.h in Headers */,
+				2E498915292C96340096EC56 /* ofCubeMapShaders.h in Headers */,
 				E4F3BB1D12F4C752002D19BB /* ofGraphics.h in Headers */,
 				E4F3BB1F12F4C752002D19BB /* ofImage.h in Headers */,
 				E4F3BB2112F4C752002D19BB /* ofPixels.h in Headers */,
 				E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */,
+				2E498916292C96340096EC56 /* ofCubeMap.h in Headers */,
 				E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */,
 				DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */,
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
@@ -675,11 +705,13 @@
 				E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */,
 				DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */,
 				DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */,
+				E43EEAC429E66B78001C7596 /* ofAVEngineSoundPlayer.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
 				229EB9A61B3181C800FF7B5F /* ofEvent.h in Headers */,
 				22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */,
+				2E4D30C128F5BA9C0074D450 /* ofShadow.h in Headers */,
 				22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */,
 				22246D94176C9987008A8AF4 /* ofGLProgrammableRenderer.h in Headers */,
 				E495DF7E178896A900994238 /* ofAppNoWindow.h in Headers */,
@@ -756,6 +788,7 @@
 				E4F3BA8A12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp in Sources */,
 				E4F3BA8E12F4C4C9002D19BB /* ofSoundPlayer.cpp in Sources */,
 				E4F3BA9012F4C4C9002D19BB /* ofSoundStream.cpp in Sources */,
+				E43EEAC329E66B78001C7596 /* ofAVEngineSoundPlayer.mm in Sources */,
 				E4F3BAC112F4C72F002D19BB /* ofMath.cpp in Sources */,
 				E4F3BAC312F4C72F002D19BB /* ofMatrix3x3.cpp in Sources */,
 				6944251A1FE4547400770088 /* ofGraphicsBaseTypes.cpp in Sources */,
@@ -768,6 +801,7 @@
 				E4F3BADB12F4C73C002D19BB /* ofColor.cpp in Sources */,
 				E4F3BADF12F4C73C002D19BB /* ofRectangle.cpp in Sources */,
 				E4F3BAF212F4C745002D19BB /* ofFileUtils.cpp in Sources */,
+				2E498914292C96340096EC56 /* ofCubeMap.cpp in Sources */,
 				E4F3BAF412F4C745002D19BB /* ofLog.cpp in Sources */,
 				BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */,
 				9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */,
@@ -786,6 +820,7 @@
 				DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */,
 				E486629B1D8C61B000D1735C /* ofAVFoundationGrabber.mm in Sources */,
 				DACFA8DC132D09E8008D4B7A /* ofGLRenderer.cpp in Sources */,
+				2E4D30C228F5BA9C0074D450 /* ofShadow.cpp in Sources */,
 				2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */,
 				DACFA8DF132D09E8008D4B7A /* ofLight.cpp in Sources */,
 				692C298D19DC5C5500C27C5D /* ofTimer.cpp in Sources */,
@@ -808,6 +843,7 @@
 				E495DF7D178896A900994238 /* ofAppNoWindow.cpp in Sources */,
 				27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */,
 				692C298B19DC5C5500C27C5D /* ofFpsCounter.cpp in Sources */,
+				19662F2F2834A44400B622ED /* ofGraphicsCairo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -818,10 +854,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS)";
-				CLANG_X86_VECTOR_INSTRUCTIONS = default;
-				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
-				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
@@ -839,7 +872,6 @@
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -847,13 +879,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS)";
-				CLANG_X86_VECTOR_INSTRUCTIONS = default;
-				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
-				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = "";
-				GCC_FAST_MATH = NO;
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -870,7 +898,6 @@
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release/";
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

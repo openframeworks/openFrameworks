@@ -9,7 +9,7 @@
 #include "ofLog.h"
 #import "AVSoundPlayer.h"
 
-using namespace std;
+using std::string;
 
 ofxiOSSoundPlayer::ofxiOSSoundPlayer() {
     soundPlayer = NULL;
@@ -19,21 +19,25 @@ ofxiOSSoundPlayer::~ofxiOSSoundPlayer() {
     unload();
 }
 
-bool ofxiOSSoundPlayer::load(const std::filesystem::path& fileName, bool stream) {
+bool ofxiOSSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }
 
     string filePath = ofToDataPath(fileName);
-    soundPlayer = (__bridge void *)[[AVSoundPlayer alloc] init];
-    BOOL bOk = [(__bridge AVSoundPlayer *)soundPlayer loadWithPath:[NSString stringWithUTF8String:filePath.c_str()]];
-    
+    __autoreleasing AVSoundPlayer *player = [[AVSoundPlayer alloc] init];
+    BOOL bOk = [player loadWithPath:[NSString stringWithUTF8String:filePath.c_str()]];
+    if(bOk) {
+        soundPlayer = (__bridge_retained void *)player;
+    }
+
     return bOk;
 }
 
 void ofxiOSSoundPlayer::unload() {
     if(soundPlayer != NULL) {
-        [(__bridge AVSoundPlayer *)soundPlayer unloadSound];
+        __autoreleasing AVSoundPlayer *player = (__bridge_transfer AVSoundPlayer *)soundPlayer;
+        [player unloadSound];
         soundPlayer = NULL;
     }
 }
@@ -160,6 +164,19 @@ float ofxiOSSoundPlayer::getVolume()  const{
         return false;
     }
     return [(__bridge AVSoundPlayer *)soundPlayer volume];
+}
+
+float ofxiOSSoundPlayer::getDuration() const {
+	if(soundPlayer == NULL) {
+		return 0.f;
+	}
+	return [(__bridge AVSoundPlayer *)soundPlayer duration];
+}
+unsigned int ofxiOSSoundPlayer::getDurationMS() const {
+	if(soundPlayer == NULL) {
+		return 0;
+	}
+	return [(__bridge AVSoundPlayer *)soundPlayer duration] * 1000.0;
 }
 
 void * ofxiOSSoundPlayer::getAVSoundPlayer() {
