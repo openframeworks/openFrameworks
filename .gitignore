@@ -38,7 +38,6 @@ examples/**/[Dd]ebug*/
 examples/**/[Rr]elease*/
 examples/**/gcc-debug/
 examples/**/gcc-release/
-examples/**/of.entitlements
 tests/**/[Dd]ebug*/
 tests/**/[Rr]elease*/
 tests/**/gcc-debug/
@@ -56,7 +55,19 @@ tests/**/gcc-release/
 # IDE
 #########################
 
+# VSCode
+*.code-workspace
+.vscode
+
 # XCode
+examples/**/*.entitlements
+examples/**/*.xcconfig
+examples/**/*.plist
+examples/**/*.yml
+tests/**/*.entitlements
+tests/**/*.xcconfig
+tests/**/*.plist
+tests/**/*.yml
 *.pbxuser
 *.perspective
 *.perspectivev3
@@ -136,3 +147,6 @@ Desktop.ini
 /apps*/
 projectGenerator*/
 .cxx/
+
+examples/**/Makefile
+examples/**/config.make
