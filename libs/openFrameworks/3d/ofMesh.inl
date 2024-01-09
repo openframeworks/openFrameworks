@@ -6,9 +6,11 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
 #include "ofMath.h"
-#include "ofMathConstants.h"
+// #include "ofMathConstants.h"
 #include "ofLog.h"
-#include <map>
+#include "ofColor.h"
+
+#include <unordered_map>
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
@@ -359,6 +361,17 @@ void ofMesh_<V,N,C,T>::removeVertex(ofIndexType index){
   }
 }
 
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeVertices(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= vertices.size() || endIndex > vertices.size()){
+		ofLogError("ofMesh") << "removeVertex(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of vertices is" << vertices.size();
+	}else{
+		vertices.erase(vertices.begin() + startIndex, vertices.begin() + endIndex);
+		bVertsChanged = true;
+		bFacesDirty = true;
+	}
+}
+
 
 
 //--------------------------------------------------------------
@@ -373,6 +386,16 @@ void ofMesh_<V,N,C,T>::removeNormal(ofIndexType index){
   }
 }
 
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeNormals(ofIndexType startIndex, ofIndexType endIndex){
+    if(startIndex >= normals.size() || endIndex > normals.size()){
+        ofLogError("ofMesh") << "removeNormal(): ignoring out of range beginIndex " << startIndex << " endIndex " << endIndex << ", number of normals is" << normals.size();
+    }else{
+        normals.erase(normals.begin() + startIndex, normals.begin() + endIndex);
+        bNormalsChanged = true;
+        bFacesDirty = true;
+    }
+}
 
 
 //--------------------------------------------------------------
@@ -385,6 +408,17 @@ void ofMesh_<V,N,C,T>::removeColor(ofIndexType index){
 	bColorsChanged = true;
 	bFacesDirty = true;
   }
+}
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeColors(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= colors.size() || endIndex > colors.size()){
+		ofLogError("ofMesh") << "removeColor(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of colors is" << colors.size();
+	}else{
+		colors.erase(colors.begin() + startIndex, colors.begin() + endIndex);
+		bColorsChanged = true;
+		bFacesDirty = true;
+	}
 }
 
 
@@ -401,6 +435,18 @@ void ofMesh_<V,N,C,T>::removeTexCoord(ofIndexType index){
   }
 }
 
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeTexCoords(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= texCoords.size() || endIndex >= texCoords.size()){
+		ofLogError("ofMesh") << "removeTexCoord(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of tex coords is" << texCoords.size();
+	}else{
+		texCoords.erase(texCoords.begin() + startIndex, texCoords.begin() + endIndex);
+		bTexCoordsChanged = true;
+		bFacesDirty = true;
+	}
+}
+
+
 
 
 //--------------------------------------------------------------
@@ -414,6 +460,18 @@ void ofMesh_<V,N,C,T>::removeIndex(ofIndexType index){
 	bFacesDirty = true;
   }
 }
+
+template<class V, class N, class C, class T>
+void ofMesh_<V,N,C,T>::removeIndices(ofIndexType startIndex, ofIndexType endIndex){
+	if(startIndex >= indices.size() || endIndex > indices.size()){
+		ofLogError("ofMesh") << "removeIndex(): ignoring out of range startIndex " << startIndex << " endIndex " << endIndex << ", number of indices is" << indices.size();;
+	}else{
+		indices.erase(indices.begin() + startIndex, indices.begin() + endIndex);
+		bIndicesChanged = true;
+		bFacesDirty = true;
+	}
+}
+
 
 
 //GETTERS
@@ -1030,10 +1088,9 @@ void ofMesh_<V,N,C,T>::append(const ofMesh_<V,N,C,T> & mesh){
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
-	ofFile is(path, ofFile::ReadOnly);
+void ofMesh_<V,N,C,T>::load(const of::filesystem::path& path){
+	ofFile is = {path, ofFile::ReadOnly};
 	auto & data = *this;
-
 
 	std::string error;
 	ofBuffer buffer(is);
@@ -1099,14 +1156,14 @@ void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
 
 		if((state==Header || state==FaceDef) && lineStr.find("element vertex")==0){
 			state = VertexDef;
-			orderVertices = MAX(orderIndices, 0)+1;
+			orderVertices = std::max(orderIndices, 0)+1;
 			data.getVertices().resize(ofTo<size_t>(lineStr.substr(15)));
 			continue;
 		}
 
 		if((state==Header || state==VertexDef) && lineStr.find("element face")==0){
 			state = FaceDef;
-			orderIndices = MAX(orderVertices, 0)+1;
+			orderIndices = std::max(orderVertices, 0)+1;
 			data.getIndices().resize(ofTo<size_t>(lineStr.substr(13))*3);
 			continue;
 		}
@@ -1162,7 +1219,7 @@ void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
 				goto clean;
 			}
 			if(!data.hasVertices()){
-				ofLogWarning("ofMesh") << "load(): mesh loaded from \"" << path << "\" has no vertices";
+				ofLogWarning("ofMesh") << "load(): mesh loaded from " << path << " has no vertices";
 			}
 			if(orderVertices==-1) orderVertices=9999;
 			if(orderIndices==-1) orderIndices=9999;
@@ -1271,7 +1328,7 @@ void ofMesh_<V,N,C,T>::load(const std::filesystem::path& path){
 
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
-void ofMesh_<V,N,C,T>::save(const std::filesystem::path& path, bool useBinary) const{
+void ofMesh_<V,N,C,T>::save(const of::filesystem::path& path, bool useBinary) const{
 	ofFile os(path, ofFile::WriteOnly);
 	const auto & data = *this;
 
@@ -1505,8 +1562,8 @@ void ofMesh_<V,N,C,T>::mergeDuplicateVertices() {
 	//so we are going to create a new list of points and new indexes - we will use a map to map old index values to the new ones
 	std::vector <V> newPoints;
 	std::vector <ofIndexType> newIndexes;
-	std::map <ofIndexType, bool> ptCreated;
-	std::map <ofIndexType, ofIndexType> oldIndexNewIndex;
+	std::unordered_map <ofIndexType, bool> ptCreated;
+	std::unordered_map <ofIndexType, ofIndexType> oldIndexNewIndex;
 
 	std::vector<ofFloatColor> newColors;
 	std::vector<ofFloatColor>& colors = getColors();
@@ -1733,7 +1790,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 			}
 		}
 
-		std::map<int, int> removeIds;
+		std::unordered_map<int, int> removeIds;
 
 		float epsilon = .01f;
 		for(ofIndexType i = 0; i < verts.size()-1; i++) {
@@ -1752,7 +1809,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 		}
 
 		// string of vertex in 3d space to triangle index //
-		std::map<std::string, std::vector<int> > vertHash;
+		std::unordered_map<std::string, std::vector<int> > vertHash;
 
 		//ofLogNotice("ofMesh") << "smoothNormals(): num verts = " << verts.size() << " tris size = " << triangles.size();
 
@@ -1778,14 +1835,14 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 			}
 		}
 
-//		for( std::map<std::string, std::vector<int> >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
-//			//for( std::map<std::string, int >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
+//		for( std::unordered_map<std::string, std::vector<int> >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
+//			//for( std::unordered_map<std::string, int >::iterator it = vertHash.begin(); it != vertHash.end(); ++it) {
 //			ofLogNotice("ofMesh") << "smoothNormals(): " << it->first << "  num = " << it->second.size();
 //		}
 
 		V vert;
 		N normal;
-		float angleCos = cos(angle * DEG_TO_RAD );
+		float angleCos = cos(ofDegToRad(angle));
 		float numNormals=0;
 
 		for(ofIndexType j = 0; j < triangles.size(); j++) {
@@ -1951,8 +2008,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 	ofMesh_<V,N,C,T> mesh;
 
 	float doubleRes = res*2.f;
-	float polarInc = PI/(res); // ringAngle
-	float azimInc = TWO_PI/(doubleRes); // segAngle //
+	float polarInc = glm::pi<float>()/(res); // ringAngle
+	float azimInc = glm::two_pi<float>()/(doubleRes); // segAngle //
 
 	if(mode != OF_PRIMITIVE_TRIANGLE_STRIP && mode != OF_PRIMITIVE_TRIANGLES) {
 		mode = OF_PRIMITIVE_TRIANGLE_STRIP;
@@ -1964,8 +2021,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 
 	for(float i = 0; i < res+1; i++) {
 
-		float tr = sin( PI-i * polarInc );
-		float ny = cos( PI-i * polarInc );
+		float tr = sin( glm::pi<float>()-i * polarInc );
+		float ny = cos( glm::pi<float>()-i * polarInc );
 
 		tcoord.y = 1.f - (i / res);
 
@@ -2173,8 +2230,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		float r0 = sqrtf(vec.x*vec.x+vec.z*vec.z);
 		float alpha;
 		alpha = atan2f(vec.z,vec.x);
-		u = alpha/TWO_PI+.5f;
-		v = atan2f(vec.y, r0)/PI + .5f;
+		u = alpha/glm::two_pi<float>()+.5f;
+		v = atan2f(vec.y, r0)/glm::pi<float>() + .5f;
 		// reverse the u coord, so the default is texture mapped left to
 		// right on the outside of a sphere 
 		// reverse the v coord, so that texture origin is at top left
@@ -2283,7 +2340,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 	if( capSegs < 2 ) bCapped = false;
 	if(!bCapped) capSegs=1;
 
-	float angleIncRadius = -1 * (TWO_PI/((float)radiusSegments-1.f));
+	float angleIncRadius = -1 * (glm::two_pi<float>()/((float)radiusSegments-1.f));
 	float heightInc = height/((float)heightSegments-1.f);
 	float halfH = height*.5f;
 
@@ -2478,7 +2535,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 	}
 
 
-	float angleIncRadius = -1.f * ((TWO_PI/((float)radiusSegments-1.f)));
+	float angleIncRadius = -1.f * ((glm::two_pi<float>()/((float)radiusSegments-1.f)));
 	float heightInc = height/((float)heightSegments-1);
 	float halfH = height*.5f;
 

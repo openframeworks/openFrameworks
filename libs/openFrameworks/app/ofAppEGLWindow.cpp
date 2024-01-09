@@ -473,9 +473,9 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	nFramesSinceWindowResized = 0;
 
 	if(settings.glesVersion>1){
-		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
+		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}else{
-		currentRenderer = make_shared<ofGLRenderer>(this);
+		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}
 
 	makeCurrent();
@@ -1745,7 +1745,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				axisValuePending = true;
 				break;
 			default:
-				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?) : axis " << axis << " amount " << amount << endl;
+				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << endl;
 				break;
 			}
 		}else if (ev.type == EV_ABS){
@@ -1803,7 +1803,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					touchAxisValuePending = true;
 					break;
 				default:
-					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis : axis " << axis << " amount " << amount << endl;
+					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){

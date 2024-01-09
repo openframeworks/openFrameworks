@@ -22,14 +22,27 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 		ofTrueTypeFont		font;
-
-		bool		bSendSerialMessage;			// a flag for sending serial
-		char		bytesRead[3];				// data from serial, we will be trying to read 3
-		char		bytesReadString[4];			// a string needs a null terminator, so we need 3 + 1 bytes
-		int			nBytesRead;					// how much did we read?
-		int			nTimesRead;					// how many times did we read?
-		float		readTime;					// when did we last read?				
+		ofTrueTypeFont		fontSmall;
 		
-		ofSerial	serial;
+		// a flag for sending serial
+		bool bSendSerialMessage;
+		// when did we last read?
+		float readTime;
+		
+		ofSerial serial;
+		ofBuffer serialReadBuffer;
+		// store all of the received messages
+		vector<string> receivedSerialMessages;
+		// store a message to send
+		string messageToSend;
+		// if the device is not connected, when is the last time we tried to connect to it
+		float timeLastTryConnect = 0.;
+		// store the device list so we can print it out in the draw function
+		vector <ofSerialDeviceInfo> deviceList;
+		// set this to the device path that you would like to connect to
+		// the default will be the first device in the list
+		string serialDevicePathToConnectTo = "";
+		// keep a history of the bytes read from the serial device so we can split it based on a character
+		string serialReadString = "";
 };
 

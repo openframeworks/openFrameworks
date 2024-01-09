@@ -135,3 +135,4 @@ Desktop.ini
 .mailmap
 /apps*/
 projectGenerator*/
+.cxx/

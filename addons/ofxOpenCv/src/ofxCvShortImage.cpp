@@ -97,10 +97,10 @@ void ofxCvShortImage::setFromPixels( const unsigned char* _pixels, int w, int h 
     if( !bAllocated || w != width || h != height ) {
 		if ( !bAllocated ){
 			ofLogNotice("ofxCvShortImage") << "setFromPixels(): allocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}else{
 			ofLogNotice("ofxCvShortImage") << "setFromPixels(): reallocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}
 		allocate(w,h);
 	}

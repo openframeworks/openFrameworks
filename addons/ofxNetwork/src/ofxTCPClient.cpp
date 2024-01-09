@@ -3,7 +3,7 @@
 #include "ofxNetworkUtils.h"
 #include "ofLog.h"
 
-using namespace std;
+using std::string;
 
 //--------------------------
 ofxTCPClient::ofxTCPClient(){

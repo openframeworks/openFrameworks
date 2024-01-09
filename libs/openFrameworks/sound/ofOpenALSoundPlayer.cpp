@@ -2,7 +2,8 @@
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 
-#include "glm/gtc/constants.hpp"
+#define GLM_FORCE_CTOR_INIT
+#include <glm/gtc/constants.hpp>
 #include "glm/common.hpp"
 #include "ofLog.h"
 #include "ofEvents.h"
@@ -176,14 +177,14 @@ void ofOpenALSoundPlayer::initialize(){
 		alContext = alcCreateContext( alDevice, nullptr );
 		if( !alContext ){
 			ALCenum err = alcGetError( alDevice ); 
-			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not create OpenAL context : "<< getALCErrorString( err );
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not create OpenAL context: "<< getALCErrorString( err );
 			close();
 			return;
 		}
 
 		if( alcMakeContextCurrent( alContext )==ALC_FALSE ){
 			ALCenum err = alcGetError( alDevice ); 
-			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not make current the create OpenAL context : "<< getALCErrorString( err );
+			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not make current the create OpenAL context: "<< getALCErrorString( err );
 			close();
 			return;
 		};
@@ -222,21 +223,21 @@ void ofOpenALSoundPlayer::close(){
 			alContext = nullptr;
 		}
 		if( alcCloseDevice( alDevice )==ALC_FALSE ){
-			ofLogNotice("ofOpenALSoundPlayer") << "initialize(): error closing OpenAL device.";
+			ofLogNotice("ofOpenALSoundPlayer") << "initialize(): error closing OpenAL device";
 		}
 		alDevice = nullptr;
 	}
 }
 
 // ----------------------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
 	SF_INFO sfInfo;
 	SNDFILE* f = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
 	if(!f){
-		ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): couldn't read \"" << path << "\"";
+		ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): couldn't read " << path;
 		return false;
 	}
-
+	duration = 0.0f;
 	buffer.resize(sfInfo.frames*sfInfo.channels);
 	fftAuxBuffer.resize(sfInfo.frames*sfInfo.channels);
 
@@ -252,7 +253,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, std::vec
 		sf_count_t samples_read = sf_read_float (f, &fftAuxBuffer[0], fftAuxBuffer.size());
 		if(samples_read<(int)fftAuxBuffer.size()){
 			ofLogWarning("ofOpenALSoundPlayer") << "sfReadFile(): read " << samples_read << " float samples, expected "
-			<< fftAuxBuffer.size() << " for \"" << path << "\"";
+			<< fftAuxBuffer.size() << " for " << path;
 		}
 		for (int i = 0 ; i < int(fftAuxBuffer.size()) ; i++){
 			fftAuxBuffer[i] *= scale ;
@@ -262,14 +263,14 @@ bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, std::vec
 		sf_count_t frames_read = sf_readf_short(f,&buffer[0],sfInfo.frames);
 		if(frames_read<sfInfo.frames){
 			ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): read " << frames_read << " frames from buffer, expected "
-			<< sfInfo.frames << " for \"" << path << "\"";
+			<< sfInfo.frames << " for " << path ;
 			return false;
 		}
 		sf_seek(f,0,SEEK_SET);
 		frames_read = sf_readf_float(f,&fftAuxBuffer[0],sfInfo.frames);
 		if(frames_read<sfInfo.frames){
 			ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): read " << frames_read << " frames from fft buffer, expected "
-			<< sfInfo.frames << " for \"" << path << "\"";
+			<< sfInfo.frames << " for " << path ;
 			return false;
 		}
 	}
@@ -283,11 +284,12 @@ bool ofOpenALSoundPlayer::sfReadFile(const std::filesystem::path& path, std::vec
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123ReadFile(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
+	duration = 0.0f;
 	mpg123_handle * f = mpg123_new(nullptr,&err);
 	if(mpg123_open(f,path.string().c_str())!=MPG123_OK){
-		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): couldn't read \"" << path << "\"";
+		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): couldn't read " << path ;
 		return false;
 	}
 
@@ -296,7 +298,7 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,std::
 	mpg123_getformat(f,&rate,&channels,(int*)&encoding);
 	if(encoding!=MPG123_ENC_SIGNED_16){
 		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): " << getMpg123EncodingString(encoding)
-			<< " encoding for \"" << path << "\"" << " unsupported, expecting MPG123_ENC_SIGNED_16";
+			<< " encoding for " << path << " unsupported, expecting MPG123_ENC_SIGNED_16";
 		return false;
 	}
 	samplerate = rate;
@@ -321,12 +323,12 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const std::filesystem::path& path,std::
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfStream(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!streamf){
 		SF_INFO sfInfo;
 		streamf = sf_open(path.string().c_str(),SFM_READ,&sfInfo);
 		if(!streamf){
-			ofLogError("ofOpenALSoundPlayer") << "sfStream(): couldn't read \"" << path << "\"";
+			ofLogError("ofOpenALSoundPlayer") << "sfStream(): couldn't read " << path ;
 			return false;
 		}
 
@@ -384,14 +386,14 @@ bool ofOpenALSoundPlayer::sfStream(const std::filesystem::path& path,std::vector
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123Stream(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!mp3streamf){
 		int err = MPG123_OK;
 		mp3streamf = mpg123_new(nullptr,&err);
 		if(mpg123_open(mp3streamf,path.string().c_str())!=MPG123_OK){
 			mpg123_close(mp3streamf);
 			mpg123_delete(mp3streamf);
-			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): couldn't read \"" << path << "\"";
+			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): couldn't read " << path ;
 			return false;
 		}
 
@@ -399,7 +401,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,std::ve
 		mpg123_getformat(mp3streamf,&rate,&channels,(int*)&stream_encoding);
 		if(stream_encoding!=MPG123_ENC_SIGNED_16){
 			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): " << getMpg123EncodingString(stream_encoding)
-			<< " encoding for \"" << path << "\"" << " unsupported, expecting MPG123_ENC_SIGNED_16";
+			<< " encoding for " << path << " unsupported, expecting MPG123_ENC_SIGNED_16";
 			return false;
 		}
 		samplerate = rate;
@@ -435,7 +437,7 @@ bool ofOpenALSoundPlayer::mpg123Stream(const std::filesystem::path& path,std::ve
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::stream(const std::filesystem::path& fileName, std::vector<short> & buffer){
+bool ofOpenALSoundPlayer::stream(const of::filesystem::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)=="mp3" || ofFilePath::getFileExt(fileName)=="MP3" || mp3streamf){
 		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return false;
@@ -455,7 +457,7 @@ bool ofOpenALSoundPlayer::stream(const std::filesystem::path& fileName, std::vec
 	return true;
 }
 
-bool ofOpenALSoundPlayer::readFile(const std::filesystem::path& fileName, std::vector<short> & buffer){
+bool ofOpenALSoundPlayer::readFile(const of::filesystem::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	if(ofFilePath::getFileExt(fileName)!="mp3" && ofFilePath::getFileExt(fileName)!="MP3"){
 		if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return false;
@@ -478,9 +480,9 @@ bool ofOpenALSoundPlayer::readFile(const std::filesystem::path& fileName, std::v
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_stream){
+bool ofOpenALSoundPlayer::load(const of::filesystem::path& _fileName, bool is_stream){
 
-	std::filesystem::path fileName = ofToDataPath(_fileName);
+	auto fileName = ofToDataPath(_fileName);
 
 	bMultiPlay = false;
 	isStreaming = is_stream;
@@ -498,9 +500,13 @@ bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_s
 	bLoadedOk = false;
 
 	if(!isStreaming){
-		readFile(fileName, buffer);
+		bLoadedOk = readFile(fileName, buffer);
 	}else{
-		stream(fileName, buffer);
+		bLoadedOk = stream(fileName, buffer);
+	}
+	if( !bLoadedOk ) {
+		ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't read \"" << fileName << "\"";
+		return false;
 	}
 
 	int numFrames = buffer.size()/channels;
@@ -527,7 +533,7 @@ bool ofOpenALSoundPlayer::load(const std::filesystem::path& _fileName, bool is_s
 			alBufferData(buffers[i],format,&buffer[0],buffer.size()*2,samplerate);
 			err = alGetError();
 			if (err != AL_NO_ERROR){
-				ofLogError("ofOpenALSoundPlayer:") << "loadSound(): couldn't create buffer for \"" << fileName << "\": "
+				ofLogError("ofOpenALSoundPlayer") << "loadSound(): couldn't create buffer for \"" << fileName << "\": "
 				<< (int) err << " " << getALErrorString(err);
 				return false;
 			}
@@ -619,6 +625,16 @@ bool ofOpenALSoundPlayer::isLoaded() const{
 }
 
 //------------------------------------------------------------
+float ofOpenALSoundPlayer::getDuration() const {
+	return duration;
+}
+
+//------------------------------------------------------------
+unsigned int ofOpenALSoundPlayer::getDurationMS() const {
+	return duration * 1000.0f;
+}
+
+//------------------------------------------------------------
 void ofOpenALSoundPlayer::threadedFunction(){
 	std::vector<std::vector<short> > multibuffer;
 	multibuffer.resize(channels);
@@ -690,6 +706,7 @@ void ofOpenALSoundPlayer::update(ofEventArgs & args){
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::unload(){
+	
 	stop();
 	ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 
@@ -718,7 +735,7 @@ void ofOpenALSoundPlayer::unload(){
 		sf_close(streamf);
 	}
 	streamf = 0;
-
+	duration = 0.0f;
 	bLoadedOk = false;
 }
 
@@ -832,11 +849,13 @@ void ofOpenALSoundPlayer::setPan(float p){
         // calculates left/right volumes from pan-value (constant panning law)
         // see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
-        float angle = p * 0.7853981633974483f; // in radians from -45. to +45.
+		
+        float angle = p * glm::quarter_pi<float>(); // in radians from -45. to +45.
         float cosAngle = cos(angle);
         float sinAngle = sin(angle);
-        float leftVol  = (cosAngle - sinAngle) * 0.7071067811865475; // multiplied by sqrt(2)/2
-        float rightVol = (cosAngle + sinAngle) * 0.7071067811865475; // multiplied by sqrt(2)/2
+
+		float leftVol  = (cosAngle - sinAngle) * glm::one_over_root_two<float>(); //// multiplied by 1/sqrt(2)
+		float rightVol = (cosAngle + sinAngle) * glm::one_over_root_two<float>(); // multiplied by 1/sqrt(2)
 		for(int i=0;i<(int)channels;i++){
 			if(i==0){
 				alSourcef(sources[sources.size()-channels+i],AL_GAIN,leftVol*volume);
@@ -933,7 +952,7 @@ void ofOpenALSoundPlayer::play(){
 		    alSourcei (sources[sources.size()-channels+i], AL_SOURCE_RELATIVE, AL_TRUE);
 		}
 
-		err = glGetError();
+		err = alGetError();
 		if (err != AL_NO_ERROR){
 			ofLogError("ofOpenALSoundPlayer") << "play(): couldn't assign multiplay buffers: "
 			<< (int) err << " " << getALErrorString(err);

@@ -1,10 +1,15 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofUtils.h"
-#include "ofColor.h"
 #include "ofLog.h"
 #include "ofMath.h"
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_<float> ofFloatColor;
+typedef ofColor_<unsigned short> ofShortColor;
+
 #include <limits>
 
 
@@ -309,8 +314,12 @@ public:
 	/// \returns A raw pointer to the pixel data.
 	PixelType * getData();
 	const PixelType * getData() const;
-	OF_DEPRECATED_MSG("Use getData instead",PixelType * getPixels());
-	OF_DEPRECATED_MSG("Use getData instead",const PixelType * getPixels() const);
+
+	[[deprecated("Use getData")]]
+	PixelType * getPixels();
+
+	[[deprecated("Use getData")]]
+	const PixelType * getPixels() const;
 
 	/// \brief Get the pixel index at a x,y position
 	///

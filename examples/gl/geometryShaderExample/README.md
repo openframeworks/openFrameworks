@@ -8,7 +8,6 @@ This example demonstrates how to use [geometry shaders](https://open.gl/geometry
 
 You will learn how to..
 * draw a line from a random set of points
-* rotate a scene based on the cursor position
 * enable or disable a shader
 * load a geometry shader additionally to the vertex and fragment shader
 * define attributes of a geometry shader like the input type, output type and output count
@@ -24,7 +23,9 @@ When launching this app, you should see a window displaying a random set of stri
 Instructions for use:
 
 * Press the `s` key to enable or disable the shader
-* Move the cursor to rotate the strips / lines
+* Click and drag to move the camera
+* Press the `up` and `down` keys to increase speed
+* Press `spacebar` to enable or disable rendering with a single mesh
 
 ### Other classes used in this file
 

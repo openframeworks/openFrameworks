@@ -25,6 +25,18 @@ class ofApp : public ofBaseApp{
 			
 		ofShader shader;
 		bool doShader;
-		vector<glm::vec3> points;	
+		vector<glm::vec3> points;
+		vector<ofColor> colors;
+		ofEasyCam camera;
+		ofMesh mesh;
+	
+		float baseAngleSpeed = 1.0;
+		float baseAngle = 0;
+		bool bUseMesh = false;
+		bool bUseColors = false;
+	
+		float xAngleIncrement = 0.1;
+		float yAngleIncrement = 0.05;
+		float zAngleIncrement = 0.15;
 };
 

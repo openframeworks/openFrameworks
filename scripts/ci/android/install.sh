@@ -53,7 +53,7 @@ else
     cd $OF_ROOT/
     scripts/linux/download_libs.sh
     cd $OF_ROOT/apps/projectGenerator/commandLine
-    make Debug -C .
+    make -j Debug -C .
     ret=$?
     if [ $ret -ne 0 ]; then
           echo "Failed building Project Generator"

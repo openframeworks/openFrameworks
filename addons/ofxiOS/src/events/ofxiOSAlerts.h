@@ -33,8 +33,6 @@
 #include <list>
 #include "ofxiOSAlertsListener.h"
 
-using namespace std;
-
 class ofxiOSAlertsHandler : public ofxiOSAlertsListener {
 public:
 	void addListener(ofxiOSAlertsListener* o) {
@@ -82,7 +80,7 @@ public:
 	}
 	
 	//alerts engine will call this when the program is launched with a url
-	void launchedWithURL(string url)
+	void launchedWithURL(std::string url)
 	{
 		for(std::list<ofxiOSAlertsListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
 			ofxiOSAlertsListener* o = *it;

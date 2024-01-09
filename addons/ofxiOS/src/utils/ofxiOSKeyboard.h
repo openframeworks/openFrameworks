@@ -68,7 +68,8 @@ public:
 	void setMaxChars(int max);
 	
 	std::string getText();
-    OF_DEPRECATED_MSG("Use getText() instead.", std::string getLabelText());
+    [[deprecated("Use getText()")]]
+	std::string getLabelText();
 	bool isKeyboardShowing();
 	
     UITextField * getKeyboardTextField();

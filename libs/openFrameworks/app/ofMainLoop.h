@@ -1,8 +1,7 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofEvents.h"
-#include <map>
+#include <unordered_map>
 
 class ofBaseApp;
 class ofAppBaseWindow;
@@ -14,17 +13,18 @@ public:
 	virtual ~ofMainLoop();
 
 	std::shared_ptr<ofAppBaseWindow> createWindow(const ofWindowSettings & settings);
+
 	template<typename Window>
 	void addWindow(const std::shared_ptr<Window> & window){
 		allowMultiWindow = Window::allowsMultiWindow();
 		if(Window::doesLoop()){
-		    windowLoop = Window::loop;
+			windowLoop = Window::loop;
 		}
 		if(Window::needsPolling()){
 			windowPollEvents = Window::pollEvents;
 		}
 		if(!allowMultiWindow){
-		    windowsApps.clear();
+			windowsApps.clear();
 		}
 		windowsApps[window] = std::shared_ptr<ofBaseApp>();
 		currentWindow = window;
@@ -46,9 +46,14 @@ public:
 
 	ofEvent<void> exitEvent;
 	ofEvent<void> loopEvent;
+	
+	std::thread::id get_thread_id() { return thread_id; };
+
 private:
+	std::thread::id thread_id { std::this_thread::get_id() };
+
 	void keyPressed(ofKeyEventArgs & key);
-	std::map<std::shared_ptr<ofAppBaseWindow>,std::shared_ptr<ofBaseApp> > windowsApps;
+	std::unordered_map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
 	bool bShouldClose;
 	std::weak_ptr<ofAppBaseWindow> currentWindow;
 	int status;

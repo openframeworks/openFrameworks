@@ -1,40 +1,48 @@
 #pragma once
 
+// MARK: ofConstants FS
 #include "ofConstants.h"
-#include "ofFileUtils.h"
 #include <functional>
 
 class ofSoundBuffer;
 
-
-
+/// \class ofBaseSoundInput
 /// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
 	public:
+
 		/// \brief Destroy the ofBaseSoundInput.
 		virtual ~ofBaseSoundInput() {};
 
 		/// \brief Receive an audio buffer.
+		///
 		/// \param buffer An audio buffer.
 		virtual void audioIn( ofSoundBuffer& buffer );
 
+		/// \brief Use void audioIn(ofSoundBuffer& buffer) instead.
+		///
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount );
 
+		/// \brief Use void audioIn(ofSoundBuffer& buffer) instead.
+		///
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioIn( float * input, int bufferSize, int nChannels );
 
+		/// \brief Use void audioIn(ofSoundBuffer& buffer) instead.
+		///
 		/// \deprecated This legacy method is deprecated and will be removed.
 		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
 };
 
-
+/// \class ofBaseSoundOutput
 /// \brief A base class representing a sound output stream.
 class ofBaseSoundOutput{
 	public:
+
 		/// \brief Destroy the ofBaseSoundOutput.
 		virtual ~ofBaseSoundOutput() {};
 
@@ -168,7 +176,7 @@ public:
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
 
-	virtual bool load(const std::filesystem::path& fileName, bool stream = false)=0;
+	virtual bool load(const of::filesystem::path& fileName, bool stream = false)=0;
 	virtual void unload()=0;
 	virtual void play() = 0;
 	virtual void stop() = 0;
@@ -190,4 +198,6 @@ public:
 	virtual bool isLoaded() const = 0;
 	virtual float getVolume() const = 0;
 
+	virtual float getDuration() const = 0;
+	virtual unsigned int getDurationMS() const = 0;
 };

@@ -2,11 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-    ofSetOrientation(OF_ORIENTATION_DEFAULT);
-        
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
+	
+	ofSetOrientation(OF_ORIENTATION_DEFAULT);
 	
 	keyboard = new ofxiOSKeyboard(2,40,320,32);
 	keyboard->setVisible(true);
@@ -68,7 +65,7 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------

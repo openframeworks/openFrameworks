@@ -14,8 +14,8 @@
 #   ifdefs within the openFrameworks core source code.
 ################################################################################
 
-PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME).html
-PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME).html
+PLATFORM_PROJECT_RELEASE_TARGET = bin/em/$(BIN_NAME)/index.html
+PLATFORM_PROJECT_DEBUG_TARGET = bin/em/$(BIN_NAME)/index.html
 BYTECODECORE=1
 PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.bc
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
@@ -64,8 +64,8 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths
-
+PLATFORM_CFLAGS = -s USE_PTHREADS=0
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths -s USE_PTHREADS=0
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -81,6 +81,9 @@ else
 	PLATFORM_EMSCRIPTEN_TOTAL_MEMORY=134217728
 endif
 
+CUR_CC = $(CC)
+CC := $(CUR_CC) -r
+
 ifdef USE_CCACHE
 	ifeq ($(findstring ccache, $(CC)),)
 		ORIGINAL_CC = $(CC)
@@ -90,7 +93,7 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
+PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_FREETYPE=1 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -sFULL_ES3=1 -s USE_PTHREADS=0
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
@@ -141,19 +144,18 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
-
 # core sources
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofGraphicsCairo.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofMediaFoundationSoundPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/communication/%.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofOpenALSoundPlayer.cpp
@@ -163,15 +165,12 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.c
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/graphics/ofCairoRenderer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/gl/ofGLRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofThread.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/utils/ofThreadChannel.cpp
-
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/lib/%
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -276,7 +275,7 @@ afterplatform: $(TARGET_NAME)
 	@echo "     compiling done"
 	@echo "     to launch the application on the default browser, run:"
 	@echo
-	@echo "     emrun bin/$(BIN_NAME).html"
+	@echo "     emrun bin/em/$(BIN_NAME)"
 	@echo "     "
 	@echo "     some browsers, like safari, don't support webgl"
 	@echo "     "

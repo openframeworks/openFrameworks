@@ -1,8 +1,7 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofRectangle.h"
-#include "ofPixels.h"
+#include "ofPixels.h" //MARK: unique_ptr
 #include "ofTexture.h"
 #include "ofGraphics.h"
 
