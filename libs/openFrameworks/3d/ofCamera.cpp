@@ -1,5 +1,7 @@
 #include "ofCamera.h"
 #include "ofGraphics.h"
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "of3dGraphics.h"
@@ -58,7 +60,7 @@ void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float fa
 	ofRectangle orientedViewport = getRenderer()->getNativeViewport();
 	float eyeX = orientedViewport.width / 2;
 	float eyeY = orientedViewport.height / 2;
-	float halfFov = PI * fov / 360;
+	float halfFov = glm::pi<float>() * fov / 360.0f;
 	float theTan = tanf(halfFov);
 	float dist = eyeY / theTan;
 
@@ -96,7 +98,7 @@ void ofCamera::setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3
 	setLensOffset(lensOffset);
 	setAspectRatio( glm::length(bottomEdge) / glm::length(leftEdge) );
 	auto distanceAlongOpticalAxis = fabs(glm::dot(bottomLeftToCam, cameraLookVector));
-	setFov(2.0f * RAD_TO_DEG * atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis));
+	setFov(2.0f * glm::degrees( atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis) ) );
 }
 
 
@@ -127,7 +129,7 @@ bool ofCamera::getOrtho() const {
 
 //----------------------------------------
 float ofCamera::getImagePlaneDistance(const ofRectangle & viewport) const {
-	return viewport.height / (2.0f * tanf(PI * fov / 360.0f));
+	return viewport.height / (2.0f * tanf(glm::pi<float>() * fov / 360.0f));
 }
 
 //----------------------------------------

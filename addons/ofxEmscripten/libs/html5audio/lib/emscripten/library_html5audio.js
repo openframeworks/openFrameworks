@@ -1,255 +1,260 @@
 var LibraryHTML5Audio = {
     $AUDIO: {
-    	contexts: [],
-    	ffts: [],
-    	lastContextID: 0,
+        player: [],
+        lastPlayerID: 0,
+    },
 
-    	soundBuffers: [],
-    	soundSources: [],
-    	soundStartTimes: [],
-    	soundGains: [],
-    	lastSoundID: 0,
+    html5audio_list_devices: function () {
+        if (!navigator.mediaDevices.enumerateDevices) {
+            console.log("enumerateDevices() not supported.");
+        } else {
+            // List cameras and microphones.
+            navigator.mediaDevices.enumerateDevices()
+            .then((devices) => {
+                devices.forEach((device) => {
+                    if(device.kind == "audioinput"){
+                        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+                    }
+                });
+                return devices;
+            })
+            .catch((err) => {
+                console.error(`${err.name}: ${err.message}`);
+            });
+        }
+    },
 
-    	streams: [],
-    	mediaElements: [],
-    	lastStreamID: 0,
+    html5audio_context_create: function () {
+       try {
+            // Fix up for prefixing
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            var context = new AudioContext({});
 
-    	soundPosition: function(sound_id){
-    		var source = AUDIO.soundSources[sound_id];
-        	if(source!=undefined){
-        		var context = source.context;
-        		var playTime = context.currentTime - source.startTime;
-        		var duration = AUDIO.soundBuffers[sound_id].duration / AUDIO.soundSources[sound_id].playbackRate.value ;
-        		return Math.min(duration,playTime);
-        	}else{
-        		return 0;
+            // Fix issue with chrome autoplay policy
+            document.addEventListener('mousedown', function cb(event) {
+		context.resume();
+		event.currentTarget.removeEventListener(event.type, cb);
+            });
+
+            AUDIO.context = context;
+            
+            var fft = context.createAnalyser();
+            fft.smoothingTimeConstant = 0;
+            fft.connect(AUDIO.context.destination);
+            fft.maxDecibels = 0;
+            fft.minDecibels = -100;
+            AUDIO.fft = fft;
+            return 0;
+        } catch (e) {
+            console.log('Web Audio API is not supported in this browser', e);
+            return -1;
+        }
+    },
+
+    html5audio_context_start: function () {
+        AUDIO.context.resume();
+    },
+
+    html5audio_context_stop: function () {
+        AUDIO.context.suspend();
+    },
+
+    html5audio_context_spectrum: function (bands, spectrum) {
+        AUDIO.fft.fftSize = bands * 2;
+        var spectrumArray = Module.HEAPF32.subarray(spectrum >> 2, (spectrum >> 2) + bands);
+        AUDIO.fft.getFloatFrequencyData(spectrumArray);
+    },
+
+    html5audio_context_samplerate: function () {
+        return AUDIO.context.sampleRate.value;
+    },
+
+   html5audio_player_create: function () {
+	var audio = document.createElement('audio');
+	var player_id = AUDIO.lastPlayerID++;
+	AUDIO.player[player_id] = audio;
+	var source = AUDIO.context.createMediaElementSource(AUDIO.player[player_id]); 
+	AUDIO.player[player_id].soundPan = AUDIO.context.createStereoPanner();
+	source.connect(AUDIO.player[player_id].soundPan).connect(AUDIO.fft);
+	return player_id;
+    },
+    
+    html5audio_sound_load: function (player_id, url) {
+        try {
+            var filePath = UTF8ToString(url); 
+
+            if( filePath.indexOf("http") == 0 ) {
+                AUDIO.player[player_id].src = filePath;
+            }else{
+
+                //console.log("file path is" + filePath);
+                
+                var data = FS.readFile(filePath, { encoding: 'binary' });
+                
+                var ext = filePath.split('.').pop();
+                
+                var stats = FS.stat(filePath)
+                var fileSizeInBytes = stats.size;
+                    
+                var tag = ext; //this covers most types
+                if( ext == 'mp3'){
+                    tag = 'mpeg';
+                }else if( ext == 'oga'){
+                    tag = 'ogg';
+                }else if( ext == 'weba'){
+                    tag = 'webm';
+                }
+                
+                const blob = new Blob([data], { type: 'audio/' + tag });
+                const audioSrc = URL.createObjectURL(blob);
+            
+                AUDIO.player[player_id].src = audioSrc;
+            }
+
+        } catch (error) {
+            console.error('Error reading file:' + filePath + " " + error);
+        }
+        
+    },
+
+    html5audio_sound_play: function (player_id, multiplay, volume, speed, pan, offset) {
+        if (AUDIO.player[player_id].src != "") {
+        	if (multiplay) {
+        		const clone = AUDIO.player[player_id].cloneNode();
+			clone.soundPan = AUDIO.context.createStereoPanner();
+			clone.volume = volume;
+        		clone.playbackRate = speed;
+        		clone.soundPan.pan.value = pan;
+        		AUDIO.player[player_id] = clone;
         	}
-    	}
-    },
-
-    html5audio_context_create: function(){
-    	try {
-			// Fix up for prefixing
-			window.AudioContext = window.AudioContext || window.webkitAudioContext;
-			var context = new AudioContext();
-
-			// Fix issue with chrome autoplay policy
-			document.addEventListener('mousedown', function cb(event) {
-				context.resume();
-				event.currentTarget.removeEventListener(event.type, cb);
-			});
-
-			var id = AUDIO.lastContextID++;
-			AUDIO.contexts[id] = context;
-			var fft = context.createAnalyser();
-			fft.smoothingTimeConstant = 0;
-			fft.connect(AUDIO.contexts[id].destination);
-			fft.maxDecibels = 0;
-			fft.minDecibels = -100;
-			AUDIO.ffts[id] = fft;
-			return id;
-    	} catch(e) {
-    		console.log('Web Audio API is not supported in this browser',e);
-    		return -1;
-    	}
-    },
-
-    html5audio_context_start: function(context_id){
-    	AUDIO.contexts[context_id].resume();
-    },
-
-    html5audio_context_stop: function(context_id){
-    	AUDIO.contexts[context_id].suspend();
-    },
-
-    html5audio_context_spectrum: function(context_id, bands, spectrum){
-    	AUDIO.ffts[context_id].fftSize = bands*2;
-    	var spectrumArray = Module.HEAPF32.subarray(spectrum>>2, (spectrum>>2)+bands);
-    	AUDIO.ffts[context_id].getFloatFrequencyData(spectrumArray);
-    },
-
-    html5audio_context_samplerate: function(context_id){
-    	return AUDIO.contexts[context_id].sampleRate.value;
-    },
-
-    html5audio_sound_load: function(context_id, url){
-		var request = new XMLHttpRequest();
-		request.open('GET', UTF8ToString(url), true);
-		request.responseType = 'arraybuffer';
-
-		var id = AUDIO.lastSoundID++;
-		AUDIO.soundGains[id] = AUDIO.contexts[context_id].createGain();
-		AUDIO.soundGains[id].connect(AUDIO.ffts[context_id]);
-
-		// Decode asynchronously
-		request.onload = function() {
-			AUDIO.contexts[context_id].decodeAudioData(request.response,
-				function(buffer) {
-					AUDIO.soundBuffers[id] = buffer;
-				},
-				function(e){
-					console.log("couldn't decode sound " + id, e);
-				}
-			);
-    	};
-    	request.send();
-    	return id;
-    },
-
-    html5audio_sound_play: function(context_id, sound_id, offset){
-    	if(AUDIO.soundBuffers[sound_id]!=undefined){
-    		if(AUDIO.contexts[context_id]!=undefined && AUDIO.contexts[context_id].paused){
-    			AUDIO.contexts[context_id].paused = false;
-    			AUDIO.contexts[context_id].start(offset);
-    		}else{
-		    	var source = AUDIO.contexts[context_id].createBufferSource();
-		    	source.buffer = AUDIO.soundBuffers[sound_id];
-		    	source.connect(AUDIO.soundGains[sound_id]);
-		    	source.name = sound_id;
-		    	source.done = false;
-		    	source.paused = false;
-		    	source.onended = function(event){
-		    		event.target.done = true;
-		    	}
-		    	AUDIO.soundSources[sound_id] = source;
-		    	source.startTime = AUDIO.contexts[context_id].currentTime - offset;
-	    		source.start(offset);
-    		}
-    	}
-    },
-
-    html5audio_sound_stop: function(sound_id){
-    	AUDIO.soundSources[sound_id].stop();
-    },
-
-    html5audio_sound_pause: function(sound_id){
-    	AUDIO.soundSources[sound_id].stop();
-    	AUDIO.soundSources[sound_id].paused = true;
-    },
-
-    html5audio_sound_rate: function(sound_id){
-    	if(AUDIO.soundSources[sound_id]!=undefined){
-    		return AUDIO.soundSources[sound_id].playbackRate.value;
-    	}
-    },
-
-    html5audio_sound_set_rate: function(sound_id,rate){
-    	var source = AUDIO.soundSources[sound_id];
-    	if(source!=undefined){
-    		var offset = AUDIO.soundPosition(sound_id);
-    		source.startTime = source.context.currentTime - offset;
-    		AUDIO.soundSources[sound_id].playbackRate.value = rate;
-    	}
-    },
-
-    html5audio_sound_done: function(sound_id){
-    	if(AUDIO.soundSources[sound_id]!=undefined){
-    		return AUDIO.soundSources[sound_id].done;
-    	}else{
-    		return false;
-    	}
-    },
-
-    html5audio_sound_duration: function(sound_id){
-    	if(AUDIO.soundBuffers[sound_id]!=undefined){
-    		return AUDIO.soundBuffers[sound_id].duration;
-    	}else{
-    		return 0;
-    	}
-    },
-
-	html5audio_sound_position: function(sound_id){
-		return AUDIO.soundPosition(sound_id);
-	},
-
-	html5audio_sound_set_loop: function(sound_id, loop){
-		AUDIO.soundSources[sound_id].loop = loop;
-	},
-
-	html5audio_sound_set_gain: function(sound_id, gain){
-		AUDIO.soundGains[sound_id].gain = gain;
-	},
-
-	html5audio_sound_gain: function(sound_id){
-		return AUDIO.soundGains[sound_id].gain;
-	},
-
-	html5audio_sound_free: function(sound_id){
-		return AUDIO.soundBuffers[sound_id] = null;
-		return AUDIO.soundSources[sound_id] = null;
-		return AUDIO.soundStartTimes[sound_id] = 0;
-		return AUDIO.soundGains[sound_id] = null;
-	},
-
-	html5audio_stream_create: function(context_id, bufferSize, inputChannels, outputChannels, inbuffer, outbuffer, callback, userData){
-		var stream = AUDIO.contexts[context_id].createScriptProcessor(bufferSize,inputChannels,outputChannels);
-		var inbufferArray = Module.HEAPF32.subarray(inbuffer>>2,(inbuffer>>2)+bufferSize*inputChannels);
-		var outbufferArray = Module.HEAPF32.subarray(outbuffer>>2,(outbuffer>>2)+bufferSize*outputChannels);
-
-		var id = AUDIO.lastStreamID++;
-
-		stream.onaudioprocess = function(event){
-			var i,j,c;
-			if(inputChannels>0){
-				for(c=0;c<inputChannels;++c){
-					var inChannel = event.inputBuffer.getChannelData(c);
-					for(i=0,j=c;i<bufferSize;++i,j+=inputChannels){
-						inbufferArray[j] = inChannel[i];
-					}
-				}
-			}
-
-			dynCall('viiii',callback, [bufferSize,inputChannels,outputChannels,userData]);
-
-			if(outputChannels>0){
-				for(c=0;c<outputChannels;++c){
-					var outChannel = event.outputBuffer.getChannelData(c);
-					for(i=0,j=c;i<bufferSize;++i,j+=outputChannels){
-						outChannel[i] = outbufferArray[j];
-					}
-				}
-			}
-		};
-
-		if(inputChannels>0){
-			navigator.getUserMedia = navigator.getUserMedia ||
-							    	    navigator.webkitGetUserMedia ||
-							    	    navigator.mozGetUserMedia ||
-							    	    navigator.msGetUserMedia;
-
-			if(navigator.getUserMedia){
-				navigator.getUserMedia(
-					{audio: true},
-					function(audioIn) {
-						var mediaElement = AUDIO.contexts[context_id].createMediaStreamSource(audioIn);
-						mediaElement.connect(stream);
-						AUDIO.mediaElements[id] = mediaElement;
-					},
-					function(error){
-						console.log("error creating audio in",error);
-					}
-				);
-			}
-		}
-
-		stream.connect(AUDIO.ffts[context_id]);
-		AUDIO.streams[id] = stream;
-		return id;
-	},
-
-	html5audio_stream_free: function(stream_id){
-		return AUDIO.streams[stream_id] = null;
-		return AUDIO.mediaElements[stream_id] = null;
-	},
-
-  html5audio_sound_is_loaded: function(sound){
-    if(sound!=-1 && AUDIO.soundBuffers[sound] != undefined){
-		  return true;
-    }
-    return false;
+            	AUDIO.player[player_id].play(offset);
 	}
-}
+    },
 
+    html5audio_sound_stop: function (player_id) {
+        AUDIO.player[player_id].currentTime = 0;
+        AUDIO.player[player_id].pause();
+    },
+
+    html5audio_sound_pause: function (player_id) {
+        AUDIO.player[player_id].pause();
+    },
+
+    html5audio_sound_rate: function (player_id) {
+	return AUDIO.player[player_id].playbackRate;
+    },
+
+    html5audio_sound_set_rate: function (player_id, rate) {
+	AUDIO.player[player_id].playbackRate = rate;
+    },
+
+    html5audio_sound_done: function (player_id) {
+	return AUDIO.player[player_id].done;
+    },
+
+    html5audio_sound_duration: function (player_id) {
+        if (AUDIO.player[player_id].src != "") {
+	    return AUDIO.player[player_id].duration;
+	} else {
+	    return 0;
+	}
+    },
+
+    html5audio_sound_position: function (player_id) {
+        if (AUDIO.player[player_id].src != "") {
+            return AUDIO.player[player_id].currentTime;
+	} else {
+	    return 0;
+	}
+    },
+    
+    html5audio_sound_set_position: function (player_id, position) {
+        if (AUDIO.player[player_id].src != "") {
+            AUDIO.player[player_id].currentTime = position * AUDIO.player[player_id].duration;
+        }
+    },
+
+    html5audio_sound_set_loop: function (player_id, loop) {
+        AUDIO.player[player_id].loop = true;
+    },
+
+    html5audio_sound_set_volume: function (player_id, volume) {
+        AUDIO.player[player_id].volume = volume;
+    },
+
+    html5audio_sound_volume: function (player_id) {
+        return AUDIO.player[player_id].volume;
+    },
+
+    html5audio_sound_set_pan: function (player_id, pan) {
+    	AUDIO.player[player_id].soundPan.pan.value = pan;
+    },
+
+    html5audio_sound_pan: function (player_id) {
+        return AUDIO.player[player_id].soundPan.pan.value;
+    },
+    
+    html5audio_sound_free: function (player_id) {
+	if (AUDIO.player[player_id].src != "") {
+            AUDIO.player[player_id].pause();
+            URL.revokeObjectURL(AUDIO.player[player_id].src);
+	}
+    },
+
+    html5audio_stream_create: function(bufferSize, inputChannels, outputChannels, inbuffer, outbuffer, callback, userData) {
+            var stream = AUDIO.context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
+            var inbufferArray = Module.HEAPF32.subarray(inbuffer >> 2, (inbuffer >> 2) + bufferSize * inputChannels);
+            var outbufferArray = Module.HEAPF32.subarray(outbuffer >> 2, (outbuffer >> 2) + bufferSize * outputChannels);
+
+            stream.onaudioprocess = function(event) {
+                var i, j, c;
+                if (inputChannels > 0) {
+                    for (c = 0; c < inputChannels; ++c) {
+                        var inChannel = event.inputBuffer.getChannelData(c);
+                        for (i = 0, j = c; i < bufferSize; ++i, j += inputChannels) {
+                            inbufferArray[j] = inChannel[i];
+                        }
+                    }
+                }
+
+                {{{ makeDynCall('viiii', 'callback') }}}(bufferSize, inputChannels, outputChannels, userData);
+
+                if (outputChannels > 0) {
+                    for (c = 0; c < outputChannels; ++c) {
+                        var outChannel = event.outputBuffer.getChannelData(c);
+                        for (i = 0, j = c; i < bufferSize; ++i, j += outputChannels) {
+                            outChannel[i] = outbufferArray[j];
+                        }
+                    }
+                }
+            };
+
+            if (inputChannels > 0) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function (audioIn) {
+                        var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
+                        mediaElement.connect(stream);
+                        AUDIO.mediaElement = mediaElement;
+                    })
+                    .catch(function (error) {
+                        console.log("Error creating audio in", error);
+                    });
+            }
+
+            stream.connect(AUDIO.fft);
+        },
+
+    html5audio_stream_free: function () {
+
+    },
+
+    html5audio_sound_is_loaded: function (player_id) {
+        if (AUDIO.player[player_id].readyState > 0) {
+            return true;
+        }
+        return false;
+    }
+}
 
 autoAddDeps(LibraryHTML5Audio, '$AUDIO');
 mergeInto(LibraryManager.library, LibraryHTML5Audio);

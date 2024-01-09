@@ -5,14 +5,14 @@
  *      Author: arturo
  */
 
-#ifndef OFMATRIXSTACK_H_
-#define OFMATRIXSTACK_H_
+#pragma once
 
-#include <stack>
-#include "ofConstants.h"
+// ofRectangle currentViewport only
 #include "ofRectangle.h"
-#include "glm/mat4x4.hpp"
 #include "ofGraphicsConstants.h"
+#define GLM_FORCE_CTOR_INIT
+#include "glm/mat4x4.hpp"
+#include <stack>
 
 class ofBaseDraws;
 class ofAppBaseWindow;
@@ -111,5 +111,3 @@ private:
 	inline void updatedRelatedMatrices();
 
 };
-
-#endif /* OFMATRIXSTACK_H_ */

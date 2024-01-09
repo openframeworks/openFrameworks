@@ -15,7 +15,7 @@ public:
     ofxiOSSoundPlayer();
     ~ofxiOSSoundPlayer();
     
-    bool load(const std::filesystem::path& fileName, bool stream = false);
+    bool load(const of::filesystem::path& fileName, bool stream = false);
     void unload();
     void play();
     void stop();
@@ -36,6 +36,9 @@ public:
     float getPan() const;
     bool isLoaded() const;
     float getVolume() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
     
     void * getAVSoundPlayer();
     

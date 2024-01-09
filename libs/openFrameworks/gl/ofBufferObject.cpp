@@ -1,6 +1,6 @@
 #include "ofBufferObject.h"
 #include "ofAppRunner.h"
-#include "ofPixels.h"
+//#include "ofPixels.h"
 #include "ofGLUtils.h"
 
 
@@ -82,7 +82,7 @@ void ofBufferObject::unbind(GLenum target) const{
 	}
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);

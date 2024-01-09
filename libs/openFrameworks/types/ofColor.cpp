@@ -36,7 +36,7 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::dark
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkKhaki(0.741176*limit(),0.717647*limit(),0.419608*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkMagenta(0.545098*limit(),0*limit(),0.545098*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkOliveGreen(0.333333*limit(),0.419608*limit(),0.184314*limit());
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkorange(1*limit(),0.54902*limit(),0*limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkOrange(1*limit(),0.54902*limit(),0*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkOrchid(0.6*limit(),0.196078*limit(),0.8*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkRed(0.545098*limit(),0*limit(),0*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkSalmon(0.913725*limit(),0.588235*limit(),0.478431*limit());
@@ -396,7 +396,7 @@ void ofColor_<PixelType>::setHue(float hue) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHueAngle(float angle) {
-	setHue(angle / 360. * limit());
+	setHue(angle / 360.0f * limit());
 }
 
 template<typename PixelType>

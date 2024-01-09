@@ -1,4 +1,4 @@
-#version 330
+OF_GLSL_SHADER_HEADER
 
 // we are going to use 2 lights
 // we also have 2 ofLights in ofApp
@@ -9,6 +9,8 @@ uniform sampler2D mapNormal;
 uniform sampler2D mapDisplacement;
 uniform sampler2D mapAORoughMetal;
 uniform sampler2D mapInfluence;
+
+uniform float uIsDrawingInto;
 
 //-- coming in from vertex shader ------//
 in vec2 v_texcoord;
@@ -199,7 +201,13 @@ void main() {
 	innerColor = diffuse * innerColor + (specular.rgb * mat_specular.a).rgb;
 	innerColor = innerColor * (1.0-mat_emissive.a) + mat_emissive.rgb * mat_emissive.a;
 	
-	color = mix( innerColor, color, pow(texture(mapInfluence, newTexcoord).r, 0.5) * pow(clamp(bumpColor.r*2.0, 0.0, 1.0), 0.3) );
+	vec4 mapInfValue = texture(mapInfluence, newTexcoord);
+	
+	color = mix( innerColor, color, pow(mapInfValue.r, 0.5) * pow(clamp(bumpColor.r*2.0, 0.0, 1.0), 0.3) );
+	
+	float mixAmnt = mapInfValue.g;
+	color.rgb = mix(color.rgb, vec3(1,1,1), mixAmnt * uIsDrawingInto );
+	
 	FRAGCOLOR = vec4(color, 1.0);
 }
 

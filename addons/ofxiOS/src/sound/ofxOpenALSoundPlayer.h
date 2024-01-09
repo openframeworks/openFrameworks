@@ -62,7 +62,7 @@ public:
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
 	
-	bool	load(const std::filesystem::path& fileName, bool stream=false);
+	bool	load(const of::filesystem::path& fileName, bool stream=false);
 	void	unload();
 
 	void	play();
@@ -88,6 +88,9 @@ public:
 	float	getPan() const;
 
 	bool    isLoaded() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
 	
 	// IPHONE EXTRA FUNCTIONS
 	static void	vibrate();
