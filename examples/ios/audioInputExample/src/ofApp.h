@@ -24,14 +24,15 @@ public:
 	void gotMemoryWarning();
 	void deviceOrientationChanged(int newOrientation);
 
-	void audioIn(float * input, int bufferSize, int nChannels);
+	void audioIn(ofSoundBuffer & input);
 
-	int	initialBufferSize;
-	int	sampleRate;
+	int	bufferSize = 512;
 	int	drawCounter;
 	int bufferCounter;
-	float * buffer;
+	float buffer[512] = { 0 };
 	
 	ofSoundPlayer sound;
+	ofSoundStream soundStream;
+
 };
 

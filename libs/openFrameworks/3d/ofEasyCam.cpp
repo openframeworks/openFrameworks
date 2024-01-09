@@ -2,8 +2,10 @@
 #include "ofMath.h"
 #include "ofUtils.h"
 #include "ofGraphicsBaseTypes.h"
-#include <limits>
+
+#define GLM_FORCE_CTOR_INIT
 #include "glm/gtx/vector_angle.hpp"
+#include <limits>
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.

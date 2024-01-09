@@ -1,14 +1,14 @@
 #pragma once
+
 #include "ofGLBaseTypes.h"
-#include "ofPolyline.h"
 #include "ofShader.h"
-#include "ofMatrixStack.h"
-#include "ofVboMesh.h"
 #include "of3dGraphics.h"
+// MARK: Optimization pointers in next four objects
+#include "ofMatrixStack.h"
+#include "ofPolyline.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
-#include "ofMaterial.h"
-
+//#include "ofMaterialBaseTypes.h"
 
 class ofShapeTessellation;
 class ofFbo;
@@ -110,6 +110,9 @@ public:
 	glm::mat4 getCurrentOrientationMatrix() const;
 	glm::mat4 getCurrentViewMatrix() const;
 	glm::mat4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentModelMatrix() const;
+	
+	glm::vec3 getCurrentEyePosition() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -131,29 +134,29 @@ public:
 	void disableAntiAliasing();
     
 	// color options
-	void setColor(int r, int g, int b); // 0-255
-	void setColor(int r, int g, int b, int a); // 0-255
-	void setColor(const ofColor & color);
-	void setColor(const ofColor & color, int _a);
-	void setColor(int gray); // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b); // 0-1
+	void setColor(float r, float g, float b, float a); // 0-1
+	void setColor(const ofFloatColor & color);
+	void setColor(const ofFloatColor & color, float _a);
+	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	void setBitmapTextMode(ofDrawBitmapMode mode);
     
 	// bg color
-	ofColor getBackgroundColor();
-	void setBackgroundColor(const ofColor & c);
-	void background(const ofColor & c);
+	ofFloatColor getBackgroundColor();
+	void setBackgroundColor(const ofFloatColor & c);
+	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, int _a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	bool getBackgroundAuto();
 	void setBackgroundAuto(bool bManual);		// default is true
     
 	void clear();
-	void clear(float r, float g, float b, float a=0);
-	void clear(float brightness, float a=0);
+	void clear(float r, float g, float b, float a=0.f);
+	void clear(float brightness, float a=0.f);
 	void clearAlpha();
     
     
@@ -176,11 +179,15 @@ public:
 	const ofShader & getCurrentShader() const;
 
 	void bind(const ofBaseMaterial & material);
+	void bind(const ofShadow & shadow);
+	void bind(const ofShadow & shadow, GLenum aCubeFace);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseMaterial & material);
+	void unbind(const ofShadow & shadow);
+	void unbind(const ofShadow & shadow, GLenum aCubeFace);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofBaseVideoDraws & video);
@@ -211,7 +218,7 @@ public:
     void enableSeparateSpecularLight(){}
     void disableSeparateSpecularLight(){}
 	void setSmoothLighting(bool b){}
-	void setGlobalAmbientColor(const ofColor& c){}
+	void setGlobalAmbientColor(const ofFloatColor& c){}
     void enableLight(int lightIndex);
     void disableLight(int lightIndex);
 	void setLightSpotlightCutOff(int lightIndex, float spotCutOff){}
@@ -275,6 +282,11 @@ private:
 
 	const ofBaseMaterial * currentMaterial;
 	int alphaMaskTextureTarget;
+	
+	const ofShadow* currentShadow;
+	bool bIsShadowDepthPass;
+	GLenum shadowCubeFace;
+	bool bCustomShadowShader = false;
 
 	ofStyle currentStyle;
 	std::deque <ofStyle> styleHistory;
@@ -308,6 +320,8 @@ private:
 	ofShader shaderNV12Rect;
 	ofShader shaderNV21Rect;
 	ofShader shaderPlanarYUVRect;
+	
+	glm::vec3 currentEyePos;
 
 	//void setDefaultFramebufferId(const GLuint& fboId_); ///< windowing systems might use this to set the default framebuffer for this renderer.
 

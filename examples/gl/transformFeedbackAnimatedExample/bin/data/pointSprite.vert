@@ -1,4 +1,4 @@
-#version 330
+OF_GLSL_SHADER_HEADER
 
 #ifndef PI
 #define PI 3.14159265359

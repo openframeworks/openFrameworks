@@ -7,7 +7,7 @@ void ofApp::setup(){
 	classify.setup("yolov5n.onnx", "classes.txt", false);
 	
 	//open the webcam
-	grabber.initGrabber(640, 480);
+	grabber.setup(640, 480);
 	
 }
 

@@ -64,3 +64,8 @@ void ofApp::gotMemoryWarning(){
 void ofApp::deviceOrientationChanged(int newOrientation){
 
 }
+
+//--------------------------------------------------------------
+void ofApp::launchedWithURL(std::string url){
+
+}

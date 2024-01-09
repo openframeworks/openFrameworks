@@ -5,7 +5,8 @@
 #include "ofGLBaseTypes.h"
 #include "ofBufferObject.h"
 #include "ofMesh.h"
-#include <map>
+#include "ofRectangle.h"
+#include <unordered_map>
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
@@ -121,8 +122,8 @@ void ofDisableArbTex(){
 }
 
 
-static std::map<GLuint,int> & getTexturesIndex(){
-	static std::map<GLuint,int> * textureReferences = new std::map<GLuint,int>;
+static std::unordered_map<GLuint,int> & getTexturesIndex(){
+	static std::unordered_map<GLuint,int> * textureReferences = new std::unordered_map<GLuint,int>;
 	return *textureReferences;
 }
 

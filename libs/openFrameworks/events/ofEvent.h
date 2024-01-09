@@ -11,6 +11,10 @@
 #include <functional>
 #include <deque>
 
+#include <cstddef>
+#include <iostream>
+#include <array>
+
 
 /*! \cond PRIVATE */
 namespace of{
@@ -50,9 +54,8 @@ namespace priv{
 		StdFunctionId(uint64_t id)
 		:id(id){}
 	public:
-		StdFunctionId(){
-			id = nextId++;
-		}
+		StdFunctionId()
+		:id(nextId++){}
 
 		virtual ~StdFunctionId();
 
@@ -415,7 +418,8 @@ public:
 		listeners.emplace_back(std::move(listener));
 	}
 
-	OF_DEPRECATED_MSG("Don't use this method. If you need granular control over each listener, then use individual ofEventListener instances for each.", void unsubscribe(std::size_t pos));
+	[[deprecated("Don't use this method. If you need granular control over each listener, then use individual ofEventListener instances for each.")]]
+	void unsubscribe(std::size_t pos);
 
 	void unsubscribeAll(){
 		listeners.clear();
@@ -559,32 +563,37 @@ public:
 		 ofEvent<T,Mutex>::self->remove(*make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority)->id);
 	}
 
-	inline bool notify(const void* sender, T & param){
-		if(ofEvent<T,Mutex>::self->enabled && !ofEvent<T,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<T,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-                if(f->notify(sender,param)){
-					return true;
-                }
+	/// \brief checks the state of the event
+	/// \returns true if the Event's state was notified since the last check
+	bool didNotify() {
+		if (notified_.load(std::memory_order_relaxed)) {
+			notified_.store(false, std::memory_order_seq_cst);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	std::atomic<bool> notified_ { false };
+
+	inline bool notify(const void* sender, T & param) {
+		if (ofEvent<T,Mutex>::self->enabled) {
+			notified_.store(true, std::memory_order_relaxed);
+			if (!ofEvent<T,Mutex>::self->functions.empty()) {
+				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
+				auto functions_copy = ofEvent<T,Mutex>::self->functions;
+				lck.unlock();
+				for (auto & f: functions_copy) {
+					if (f->notify(sender,param)) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
 	}
 
 	inline bool notify(T & param){
-		if(ofEvent<T,Mutex>::self->enabled && !ofEvent<T,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<T,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(nullptr,param)){
-					return true;
-				}
-			}
-		}
-		return false;
+		return this->notify(nullptr, param);
 	}
 };
 
@@ -717,14 +726,29 @@ public:
 		 ofEvent<void,Mutex>::self->remove(*make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function),priority)->id);
 	}
 
+	/// \brief checks the state of the event
+	/// \returns true if the Event's state was notified since the last check
+	bool didNotify() {
+		if (notified_.load(std::memory_order_relaxed)) {
+			notified_.store(false, std::memory_order_seq_cst);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	std::atomic<bool> notified_;
+
 	bool notify(const void* sender){
-		if(ofEvent<void,Mutex>::self->enabled && !ofEvent<void,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<void,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(sender)){
-					return true;
+		if(ofEvent<void,Mutex>::self->enabled) {
+			notified_.store(true, std::memory_order_relaxed);
+			if (!ofEvent<void,Mutex>::self->functions.empty()) {
+				std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
+				auto functions_copy = ofEvent<void,Mutex>::self->functions;
+				lck.unlock();
+				for (auto & f: functions_copy) {
+					if (f->notify(sender)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -732,17 +756,7 @@ public:
 	}
 
 	bool notify(){
-		if(ofEvent<void,Mutex>::self->enabled && !ofEvent<void,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<void,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(nullptr)){
-					return true;
-				}
-			}
-		}
-		return false;
+		return this->notify(nullptr);
 	}
 };
 
