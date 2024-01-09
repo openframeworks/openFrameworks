@@ -2,7 +2,9 @@
 
 #include "ofSoundBaseTypes.h"
 // MARK: ofConstants FS
-#include "ofConstants.h"
+//#include "ofConstants.h"
+namespace of { namespace filesystem { class path; } }
+
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
 void ofSoundStopAll();

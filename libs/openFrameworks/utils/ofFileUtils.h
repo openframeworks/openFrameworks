@@ -1,7 +1,9 @@
 #pragma once
 
 // MARK: ofConstants FS
-#include "ofConstants.h"
+//#include "ofConstants.h"
+namespace of { namespace filesystem { class path; } }
+
 #include <fstream>
 
 //----------------------------------------------------------
