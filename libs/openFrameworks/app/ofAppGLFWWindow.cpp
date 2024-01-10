@@ -133,11 +133,7 @@ void ofAppGLFWWindow::setStencilBits(int stencil) {
 }
 
 //------------------------------------------------------------
-#ifdef TARGET_OPENGLES
-void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
-#else
-void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings) {
-#endif
+void ofAppGLFWWindow::setup(const ofSetupWindowSettings & settings) {
 	const ofGLFWWindowSettings * glSettings = dynamic_cast<const ofGLFWWindowSettings *>(&settings);
 	if (glSettings) {
 		setup(*glSettings);

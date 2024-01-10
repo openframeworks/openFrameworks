@@ -18,21 +18,19 @@ template <typename T>
 class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
 
+
 #ifdef TARGET_OPENGLES
-class ofGLFWWindowSettings : public ofGLESWindowSettings {
+typedef ofGLESWindowSettings ofSetupWindowSettings;
 #else
-class ofGLFWWindowSettings : public ofGLWindowSettings {
+typedef ofGLWindowSettings ofSetupWindowSettings;
 #endif
+
+class ofGLFWWindowSettings: public ofSetupWindowSettings {
 public:
 	ofGLFWWindowSettings() { }
 
-#ifdef TARGET_OPENGLES
-	ofGLFWWindowSettings(const ofGLESWindowSettings & settings)
-		: ofGLESWindowSettings(settings) { }
-#else
-	ofGLFWWindowSettings(const ofGLWindowSettings & settings)
-		: ofGLWindowSettings(settings) { }
-#endif
+	ofGLFWWindowSettings(const ofSetupWindowSettings & settings)
+	:ofSetupWindowSettings(settings){}
 
 #ifdef TARGET_RASPBERRY_PI
 	int numSamples = 0;
@@ -81,11 +79,8 @@ public:
 
 	// this functions are only meant to be called from inside OF don't call them from your code
 	using ofAppBaseWindow::setup;
-#ifdef TARGET_OPENGLES
-	void setup(const ofGLESWindowSettings & settings);
-#else
-	void setup(const ofGLWindowSettings & settings);
-#endif
+
+	void setup(const ofSetupWindowSettings & settings);
 	void setup(const ofGLFWWindowSettings & settings);
 	void update();
 	void draw();
