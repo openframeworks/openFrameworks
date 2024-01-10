@@ -191,7 +191,7 @@ for folder in "${folders[@]}"; do
         cd $folder
         cp ../../../scripts/templates/emscripten/Makefile .
 		cp ../../../scripts/templates/emscripten/config.make .
-        emmake make -j2 Release
+        emmake make -j Release
         
         errorcode=$?
 		if [[ $errorcode -ne 0 ]]; then
