@@ -546,7 +546,7 @@ void ofAppGLFWWindow::setWindowShouldClose() {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowTitle(std::string title) {
+void ofAppGLFWWindow::setWindowTitle(const std::string & title) {
 	settings.title = title;
 	glfwSetWindowTitle(windowP, settings.title.c_str());
 }
@@ -654,6 +654,20 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 //------------------------------------------------------------
 ofWindowMode ofAppGLFWWindow::getWindowMode() {
 	return settings.windowMode;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setWindowRectangle(const ofRectangle & rect) {
+//	cout << "setWindowRectangle " << rect << endl;
+	if(settings.windowMode == OF_WINDOW){
+		windowW = rect.width;
+		windowH = rect.height;
+	}
+	currentW = rect.width;
+	currentH = rect.height;
+
+	// Now using just one GLFW call to set the entire rectangle.
+	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, currentW, currentH, GLFW_DONT_CARE);
 }
 
 //------------------------------------------------------------

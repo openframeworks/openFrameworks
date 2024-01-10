@@ -104,7 +104,9 @@ public:
 	glm::vec2 getScreenSize();
 	glm::vec2 getWindowPosition();
 
-	void setWindowTitle(std::string title);
+	void setWindowTitle(const std::string & title);
+
+	void setWindowRectangle(const ofRectangle & rect);
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
