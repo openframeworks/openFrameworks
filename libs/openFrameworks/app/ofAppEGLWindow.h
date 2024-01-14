@@ -103,8 +103,6 @@ public:
 
 	void setWindowTitle(const std::string & title); // TODO const correct
 
-	ofWindowMode getWindowMode();
-
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
 
@@ -141,7 +139,6 @@ protected:
 	int getWindowWidth();
 	int getWindowHeight();
 
-	ofWindowMode windowMode;
 	bool bNewScreenMode;  ///< \brief This indicates if a (new) window rectangle has to be adjusted.
 	int	buttonInUse;  ///< \brief Mouse button currently in use.
 	bool bEnableSetupScreen;  ///< \brief This indicates the need/intent to draw a setup screen.

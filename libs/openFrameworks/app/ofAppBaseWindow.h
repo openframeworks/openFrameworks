@@ -58,7 +58,7 @@ public:
 
 	virtual void setWindowTitle(const std::string & title){}
 
-	virtual ofWindowMode getWindowMode(){ return OF_WINDOW; }
+	virtual ofWindowMode getWindowMode() { return OF_WINDOW; }
 
 	virtual void setFullscreen(bool fullscreen){}
 	virtual void toggleFullscreen(){}
@@ -102,7 +102,10 @@ public:
 	virtual HWND getWin32Window(){ return 0; }
 #endif
 	
-	ofOrientation orientation;
+private:
+	ofOrientation orientation = OF_ORIENTATION_DEFAULT;
+	ofWindowMode windowMode = OF_WINDOW;
+
 };
 
 class ofAppBaseGLWindow: public ofAppBaseWindow {

@@ -47,7 +47,6 @@ ofAppGLFWWindow::ofAppGLFWWindow()
 	buttonPressed = false;
 	bWindowNeedsShowing = true;
 
-	orientation = OF_ORIENTATION_DEFAULT;
 	targetWindowMode = OF_WINDOW;
 
 	ofAppPtr = nullptr;

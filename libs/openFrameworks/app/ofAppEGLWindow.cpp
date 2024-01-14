@@ -387,7 +387,6 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	buttonInUse	= 0;
 	bEnableSetupScreen = true;
 	eglDisplayString = "";
-	orientation = OF_ORIENTATION_DEFAULT;
 
 	//TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
 	// to be totally correct we might need to take into account screen size
@@ -1238,11 +1237,6 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
 #endif
 	}
-}
-
-//------------------------------------------------------------
-ofWindowMode ofAppEGLWindow::getWindowMode(){
-	return windowMode;
 }
 
 //------------------------------------------------------------

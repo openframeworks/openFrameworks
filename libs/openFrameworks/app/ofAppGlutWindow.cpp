@@ -473,11 +473,6 @@ void ofAppGlutWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-ofWindowMode ofAppGlutWindow::getWindowMode(){
-	return windowMode;
-}
-
-//------------------------------------------------------------
 void ofAppGlutWindow::toggleFullscreen(){
 	if( windowMode == OF_GAME_MODE)return;
 

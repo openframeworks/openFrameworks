@@ -113,8 +113,6 @@ public:
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
-	ofWindowMode getWindowMode();
-
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
 

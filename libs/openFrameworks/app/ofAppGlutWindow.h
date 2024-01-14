@@ -57,8 +57,6 @@ public:
 	int			getWidth();
 	int			getHeight();	
 	
-	ofWindowMode	getWindowMode();
-
 	void		enableSetupScreen();
 	void		disableSetupScreen();
 
