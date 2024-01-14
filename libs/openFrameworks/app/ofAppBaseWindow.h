@@ -48,8 +48,8 @@ public:
 	virtual glm::ivec2 getWindowSize() { return glm::vec2(); }
 	virtual glm::ivec2 getScreenSize() { return glm::vec2(); }
 
-	virtual void setOrientation(ofOrientation orientation){ }
-	virtual ofOrientation getOrientation(){ return OF_ORIENTATION_DEFAULT; }
+	virtual void setOrientation(ofOrientation orientationIn) { orientation = orientationIn; }
+	virtual ofOrientation getOrientation() { return orientation; }
 	virtual bool doesHWOrientation(){ return false; }
 
 	//this is used by ofGetWidth and now determines the window width based on orientation
@@ -101,6 +101,8 @@ public:
 	virtual HGLRC getWGLContext(){ return 0; }
 	virtual HWND getWin32Window(){ return 0; }
 #endif
+	
+	ofOrientation orientation;
 };
 
 class ofAppBaseGLWindow: public ofAppBaseWindow {

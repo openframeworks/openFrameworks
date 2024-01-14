@@ -113,9 +113,6 @@ public:
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
-	void setOrientation(ofOrientation orientation);
-	ofOrientation getOrientation();
-
 	ofWindowMode getWindowMode();
 
 	void setFullscreen(bool fullscreen);
@@ -240,8 +237,6 @@ private:
 	int getCurrentMonitor();
 
 	ofBaseApp * ofAppPtr;
-
-	ofOrientation orientation;
 
 	bool iconSet;
 

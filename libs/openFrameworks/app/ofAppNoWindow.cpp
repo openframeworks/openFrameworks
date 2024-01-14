@@ -119,6 +119,7 @@ private:
 	void setupGraphicDefaults(){};
 	void setupScreen(){};
 
+	// FIXME: this is not standard with the other window modes.
 	void setOrientation(ofOrientation, bool){}
 	bool isVFlipped() const{return true;}
 	glm::mat4 getCurrentMatrix(ofMatrixMode) const{return glm::mat4(1.0);};

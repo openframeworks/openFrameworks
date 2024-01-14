@@ -347,6 +347,7 @@ void ofShowCursor(){
 }
 
 //--------------------------------------
+// FIXME: this is not standard with the other window modes.
 void ofSetOrientation(ofOrientation orientation, bool vFlip){
 	mainLoop()->getCurrentWindow()->setOrientation(orientation);
 	// TODO: every window should set orientation on it's renderer
@@ -399,6 +400,7 @@ int ofGetScreenHeight(){
 int ofGetWidth(){
 	return (int)mainLoop()->getCurrentWindow()->getWidth();
 }
+
 //--------------------------------------------------
 int ofGetHeight(){
 	return (int)mainLoop()->getCurrentWindow()->getHeight();

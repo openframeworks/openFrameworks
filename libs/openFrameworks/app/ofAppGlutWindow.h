@@ -53,10 +53,7 @@ public:
 	glm::ivec2 getWindowPosition();
 	glm::ivec2 getWindowSize();
 	glm::ivec2 getScreenSize();
-	
-	void			setOrientation(ofOrientation orientation);
-	ofOrientation	getOrientation();
-	
+		
 	int			getWidth();
 	int			getHeight();	
 	

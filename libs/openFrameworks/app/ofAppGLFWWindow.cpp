@@ -1080,16 +1080,6 @@ void ofAppGLFWWindow::toggleFullscreen() {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setOrientation(ofOrientation orientation) {
-	this->orientation = orientation;
-}
-
-//------------------------------------------------------------
-ofOrientation ofAppGLFWWindow::getOrientation() {
-	return orientation;
-}
-
-//------------------------------------------------------------
 static void rotateMouseXY(ofOrientation orientation, int w, int h, double & x, double & y) {
 	int savedY;
 	switch (orientation) {

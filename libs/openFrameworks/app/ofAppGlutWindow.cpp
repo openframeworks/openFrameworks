@@ -442,16 +442,6 @@ int ofAppGlutWindow::getHeight(){
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setOrientation(ofOrientation orientationIn){
-	orientation = orientationIn;
-}
-
-//------------------------------------------------------------
-ofOrientation ofAppGlutWindow::getOrientation(){
-	return orientation;
-}
-
-//------------------------------------------------------------
 void ofAppGlutWindow::setWindowPosition(int x, int y){
 	glutPositionWindow(x,y);
 }

@@ -95,8 +95,6 @@ public:
 	glm::ivec2 getWindowSize();
 	glm::ivec2 getScreenSize();
 
-	void setOrientation(ofOrientation orientation);
-	ofOrientation getOrientation();
 	bool doesHWOrientation();
 
 	//this is used by ofGetWidth and now determines the window width based on orientation
@@ -151,7 +149,6 @@ protected:
 
 	std::string eglDisplayString;
 	int nFramesSinceWindowResized;  ///< \brief The number of frames passed/shown since the window got resized.
-	ofOrientation orientation;
 
 
 	void threadedFunction();

@@ -1144,16 +1144,6 @@ int ofAppEGLWindow::getHeight(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setOrientation(ofOrientation orientationIn){
-	orientation = orientationIn;
-}
-
-//------------------------------------------------------------
-ofOrientation ofAppEGLWindow::getOrientation(){
-	return orientation;
-}
-
-//------------------------------------------------------------
 bool ofAppEGLWindow::doesHWOrientation() {
 	return false;
 }
