@@ -341,6 +341,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 
 		if (targetWindowMode == OF_WINDOW) {
 			auto position = getWindowPosition();
+
 			setWindowShape(windowW, windowH);
 			setWindowPosition(position.x, position.y);
 		}
@@ -477,7 +478,9 @@ void ofAppGLFWWindow::pollEvents() {
 //--------------------------------------------
 void ofAppGLFWWindow::draw() {
 	currentRenderer->startRender();
-	if (bEnableSetupScreen) currentRenderer->setupScreen();
+	if (bEnableSetupScreen) {
+		currentRenderer->setupScreen();
+	}
 
 	events().notifyDraw();
 
@@ -572,17 +575,13 @@ glm::vec2 ofAppGLFWWindow::getWindowSize() {
 
 //------------------------------------------------------------
 glm::vec2 ofAppGLFWWindow::getWindowPosition() {
-	int x, y;
-	glfwGetWindowPos(windowP, &x, &y);
-
-	x *= pixelScreenCoordScale;
-	y *= pixelScreenCoordScale;
-
-	if (orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180) {
-		return glm::vec2 { x, y };
-	} else {
-		return glm::vec2(x, y); //NOTE: shouldn't this be (y,x) ??????
-	}
+	glm::ivec2 pos { 0, 0 };
+	glfwGetWindowPos(windowP, &pos.x, &pos.y);
+	// if ( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ) {
+	// 	std::swap(pos.x, pos.y);
+	// }
+	// return pos * glm::vec2 { pixelScreenCoordScale, pixelScreenCoordScale };
+	return pos;
 }
 
 //------------------------------------------------------------
