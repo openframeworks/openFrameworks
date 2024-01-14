@@ -46,13 +46,13 @@ public:
 	void setFullscreen(bool fullScreen);
 	void toggleFullscreen();
 
-	void setWindowTitle(std::string title);
+	void setWindowTitle(const std::string & title);
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
-	glm::vec2	getWindowPosition();
-	glm::vec2	getWindowSize();
-	glm::vec2	getScreenSize();
+	glm::ivec2 getWindowPosition();
+	glm::ivec2 getWindowSize();
+	glm::ivec2 getScreenSize();
 	
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();

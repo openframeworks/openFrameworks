@@ -279,17 +279,17 @@ void ofAppNoWindow::exitApp(){
 }
 
 //----------------------------------------------------------
-glm::vec2 ofAppNoWindow::getWindowPosition(){
+glm::ivec2 ofAppNoWindow::getWindowPosition(){
 	return {0.f, 0.f};
 }
 
 //----------------------------------------------------------
-glm::vec2 ofAppNoWindow::getWindowSize(){
+glm::ivec2 ofAppNoWindow::getWindowSize(){
 	return {width, height};
 }
 
 //----------------------------------------------------------
-glm::vec2 ofAppNoWindow::getScreenSize(){
+glm::ivec2 ofAppNoWindow::getScreenSize(){
 	return {width, height};
 }
 

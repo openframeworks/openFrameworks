@@ -90,13 +90,14 @@ float ofRandomWidth();
 /// \returns a random number between 0 and the height of the window.
 float ofRandomHeight();
 bool ofDoesHWOrientation();
-glm::vec2 ofGetWindowSize();
+glm::ivec2 ofGetWindowSize();
 ofRectangle ofGetWindowRect();
 ofAppBaseWindow * ofGetWindowPtr();
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow();
 
 void ofSetWindowPosition(int x, int y);
 void ofSetWindowShape(int width, int height);
+void ofSetWindowRectangle(const ofRectangle & rect);
 void ofSetWindowTitle(std::string title);
 void ofEnableSetupScreen();
 void ofDisableSetupScreen();

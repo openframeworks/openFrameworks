@@ -59,7 +59,7 @@ public:
 	typedef ofAppEGLWindowSettings Settings;
 
 	ofAppEGLWindow();
-	virtual ~ofAppEGLWindow();
+	~ofAppEGLWindow();
 
 	static void loop(){};
 	static bool doesLoop(){ return false; }
@@ -84,35 +84,36 @@ public:
 
 	void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
 
-	virtual void hideCursor();
-	virtual void showCursor();
+	void hideCursor();
+	void showCursor();
 
-	virtual void setWindowPosition(int x, int y);
-	virtual void setWindowShape(int w, int h);
+	void setWindowPosition(int x, int y);
+	void setWindowShape(int w, int h);
+	void setWindowRectangle(const ofRectangle & rect);
 
-	virtual glm::vec2 getWindowPosition();
-	virtual glm::vec2 getWindowSize();
-	virtual glm::vec2 getScreenSize();
+	glm::ivec2 getWindowPosition();
+	glm::ivec2 getWindowSize();
+	glm::ivec2 getScreenSize();
 
-	virtual void setOrientation(ofOrientation orientation);
-	virtual ofOrientation getOrientation();
-	virtual bool doesHWOrientation();
+	void setOrientation(ofOrientation orientation);
+	ofOrientation getOrientation();
+	bool doesHWOrientation();
 
 	//this is used by ofGetWidth and now determines the window width based on orientation
-	virtual int	getWidth();
-	virtual int	getHeight();
+	int getWidth();
+	int getHeight();
 
-	virtual void setWindowTitle(std::string title); // TODO const correct
+	void setWindowTitle(const std::string & title); // TODO const correct
 
-	virtual ofWindowMode getWindowMode();
+	ofWindowMode getWindowMode();
 
-	virtual void setFullscreen(bool fullscreen);
-	virtual void toggleFullscreen();
+	void setFullscreen(bool fullscreen);
+	void toggleFullscreen();
 
-	virtual void enableSetupScreen();
-	virtual void disableSetupScreen();
+	void enableSetupScreen();
+	void disableSetupScreen();
 
-	virtual void setVerticalSync(bool enabled);
+	void setVerticalSync(bool enabled);
 
 	EGLDisplay getEglDisplay() const;
 	EGLSurface getEglSurface() const;
@@ -130,14 +131,14 @@ public:
 
 
 protected:
-	void setWindowRect(const ofRectangle& requestedWindowRect);
+	void setWindowRect(const ofRectangle & requestedWindowRect);
 
+	ofRectangle getScreenRect();
 
 //	bool create
 
-	virtual void setupPeripherals();
+	void setupPeripherals();
 
-	virtual ofRectangle getScreenRect();
 
 	int getWindowWidth();
 	int getWindowHeight();

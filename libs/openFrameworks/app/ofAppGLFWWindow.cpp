@@ -35,6 +35,9 @@
 using std::numeric_limits;
 using std::shared_ptr;
 using std::vector;
+using std::cout;
+using std::endl;
+
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
@@ -560,7 +563,7 @@ int ofAppGLFWWindow::getPixelScreenCoordScale() {
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppGLFWWindow::getWindowSize() {
+glm::ivec2 ofAppGLFWWindow::getWindowSize() {
 	if (settings.windowMode == OF_GAME_MODE) {
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
 		if (desktopMode) {
@@ -574,9 +577,9 @@ glm::vec2 ofAppGLFWWindow::getWindowSize() {
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppGLFWWindow::getWindowPosition() {
+glm::ivec2 ofAppGLFWWindow::getWindowPosition() {
 	glm::ivec2 pos { 0, 0 };
-	glfwGetWindowPos(windowP, &pos.x, &pos.y);
+	glfwGetWindowPos( windowP, &pos.x, &pos.y );
 	// if ( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ) {
 	// 	std::swap(pos.x, pos.y);
 	// }
@@ -610,7 +613,7 @@ int ofAppGLFWWindow::getCurrentMonitor() {
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppGLFWWindow::getScreenSize() {
+glm::ivec2 ofAppGLFWWindow::getScreenSize() {
 	int count;
 	GLFWmonitor ** monitors = glfwGetMonitors(&count);
 	if (count > 0) {

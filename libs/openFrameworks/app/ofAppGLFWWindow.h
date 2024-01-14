@@ -103,9 +103,9 @@ public:
 	void * getWindowContext() { return getGLFWWindow(); }
 	ofGLFWWindowSettings getSettings() { return settings; }
 
-	glm::vec2 getWindowSize();
-	glm::vec2 getScreenSize();
-	glm::vec2 getWindowPosition();
+	glm::ivec2 getWindowSize();
+	glm::ivec2 getScreenSize();
+	glm::ivec2 getWindowPosition();
 
 	void setWindowTitle(const std::string & title);
 

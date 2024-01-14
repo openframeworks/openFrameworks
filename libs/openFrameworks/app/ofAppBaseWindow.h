@@ -7,6 +7,7 @@
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
+class ofRectangle;
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 struct __GLXcontextRec;
@@ -41,10 +42,11 @@ public:
 
 	virtual void setWindowPosition(int x, int y){}
 	virtual void setWindowShape(int w, int h){}
+	virtual void setWindowRectangle(const ofRectangle & rect){}
 
-	virtual glm::vec2 getWindowPosition(){ return glm::vec2(); }
-	virtual glm::vec2 getWindowSize(){ return glm::vec2(); }
-	virtual glm::vec2 getScreenSize(){ return glm::vec2(); }
+	virtual glm::ivec2 getWindowPosition() { return glm::vec2(); }
+	virtual glm::ivec2 getWindowSize() { return glm::vec2(); }
+	virtual glm::ivec2 getScreenSize() { return glm::vec2(); }
 
 	virtual void setOrientation(ofOrientation orientation){ }
 	virtual ofOrientation getOrientation(){ return OF_ORIENTATION_DEFAULT; }
@@ -54,7 +56,7 @@ public:
 	virtual int getWidth(){ return 0; }
 	virtual int getHeight(){ return 0; }
 
-	virtual void setWindowTitle(std::string title){}
+	virtual void setWindowTitle(const std::string & title){}
 
 	virtual ofWindowMode getWindowMode(){ return OF_WINDOW; }
 
@@ -101,7 +103,7 @@ public:
 #endif
 };
 
-class ofAppBaseGLWindow: public ofAppBaseWindow{
+class ofAppBaseGLWindow: public ofAppBaseWindow {
 public:
 	virtual ~ofAppBaseGLWindow(){}
 	virtual void setup(const ofGLWindowSettings & settings)=0;
@@ -115,7 +117,7 @@ public:
 	}
 };
 
-class ofAppBaseGLESWindow: public ofAppBaseWindow{
+class ofAppBaseGLESWindow: public ofAppBaseWindow {
 public:
 	virtual ~ofAppBaseGLESWindow(){}
 	virtual void setup(const ofGLESWindowSettings & settings)=0;

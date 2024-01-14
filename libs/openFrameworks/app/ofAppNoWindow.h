@@ -24,9 +24,9 @@ public:
 	void update();
 	void draw();
 
-	glm::vec2	getWindowPosition();
-	glm::vec2	getWindowSize();
-	glm::vec2	getScreenSize();
+	glm::ivec2 getWindowPosition();
+	glm::ivec2 getWindowSize();
+	glm::ivec2 getScreenSize();
 
 	int			getWidth();
 	int			getHeight();

@@ -371,6 +371,11 @@ void ofSetWindowShape(int width, int height){
 }
 
 //--------------------------------------
+void ofSetWindowRectangle(const ofRectangle & rect){
+	mainLoop()->getCurrentWindow()->setWindowRectangle(rect);
+}
+
+//--------------------------------------
 int ofGetWindowPositionX(){
 	return (int)mainLoop()->getCurrentWindow()->getWindowPosition().x;
 }
@@ -424,7 +429,7 @@ bool ofDoesHWOrientation(){
 }
 
 //--------------------------------------------------
-glm::vec2 ofGetWindowSize() {
+glm::ivec2 ofGetWindowSize() {
 	//this can't return glm::vec2(ofGetWidth(), ofGetHeight()) as width and height change based on orientation.
 	return mainLoop()->getCurrentWindow()->getWindowSize();
 }

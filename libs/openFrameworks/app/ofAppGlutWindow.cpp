@@ -394,17 +394,17 @@ void ofAppGlutWindow::loop(){
 }
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setWindowTitle(std::string title){
+void ofAppGlutWindow::setWindowTitle(const std::string & title){
 	glutSetWindowTitle(title.c_str());
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppGlutWindow::getWindowSize(){
+glm::ivec2 ofAppGlutWindow::getWindowSize(){
 	return {windowW, windowH};
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppGlutWindow::getWindowPosition(){
+glm::ivec2 ofAppGlutWindow::getWindowPosition(){
 	int x = glutGet(GLUT_WINDOW_X);
 	int y = glutGet(GLUT_WINDOW_Y);
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
@@ -415,7 +415,7 @@ glm::vec2 ofAppGlutWindow::getWindowPosition(){
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppGlutWindow::getScreenSize(){
+glm::ivec2 ofAppGlutWindow::getScreenSize(){
 	int width = glutGet(GLUT_SCREEN_WIDTH);
 	int height = glutGet(GLUT_SCREEN_HEIGHT);
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){

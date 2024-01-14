@@ -839,9 +839,9 @@ void ofAppEGLWindow::draw() {
 	// take care of any requests for a new screen mode
 	if (windowMode != OF_GAME_MODE && bNewScreenMode){
 		if( windowMode == OF_FULLSCREEN){
-			setWindowRect(getScreenRect());
+			setWindowRectangle(getScreenRect());
 		} else if( windowMode == OF_WINDOW ){
-			setWindowRect(nonFullscreenWindowRect);
+			setWindowRectangle(nonFullscreenWindowRect);
 		}
 		bNewScreenMode = false;
 	}
@@ -918,9 +918,9 @@ void ofAppEGLWindow::destroyNativeEvents() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
+void ofAppEGLWindow::setWindowRectangle(const ofRectangle& requestedWindowRect) {
 	if(!isWindowInited) {
-		ofLogError("ofAppEGLWindow") << "setWindowRect(): window not inited";
+		ofLogError("ofAppEGLWindow") << "setWindowRectangle(): window not inited";
 		return;
 	}
 
@@ -937,9 +937,9 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 					(unsigned int)newRect.width,
 					(unsigned int)newRect.height);
 			if(ret == BadValue) {
-				ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadValue";
+				ofLogError("ofAppEGLWindow") << "setWindowRectangle(): XMoveResizeWindow returned BadValue";
 			} else if(ret == BadWindow) {
-				ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadWindow";
+				ofLogError("ofAppEGLWindow") << "setWindowRectangle(): XMoveResizeWindow returned BadWindow";
 			} else {
 				// all is good
 				currentWindowRect = newRect;
@@ -1083,22 +1083,22 @@ void ofAppEGLWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowTitle(string title) {
+void ofAppEGLWindow::setWindowTitle(const string & title) {
 	ofLogNotice("ofAppEGLWindow") << "setWindowTitle(): not implemented";
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getWindowSize(){
+glm::ivec2 ofAppEGLWindow::getWindowSize(){
 	return {currentWindowRect.width, currentWindowRect.height};
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getWindowPosition(){
+glm::ivec2 ofAppEGLWindow::getWindowPosition(){
 	return glm::vec2(currentWindowRect.getPosition());
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getScreenSize(){
+glm::ivec2 ofAppEGLWindow::getScreenSize(){
 	unsigned int screenWidth = 0;
 	unsigned int screenHeight = 0;
 
@@ -1242,7 +1242,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 		}
 	} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
-		setWindowRect(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
+		setWindowRectangle(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
 		nonFullscreenWindowRect = currentWindowRect;
 #else
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
