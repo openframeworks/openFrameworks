@@ -174,7 +174,7 @@ private:
 	int currentW, currentH; /// Extents of the window client area, which may be scaled by pixelsScreenCoordScale to map to physical framebuffer pixels.
 	float pixelScreenCoordScale; /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
-	ofRectangle windowRect;
+	ofRectangle windowRect { 20, 20, 1024, 768 };
 
 	int buttonInUse;
 	bool buttonPressed;
