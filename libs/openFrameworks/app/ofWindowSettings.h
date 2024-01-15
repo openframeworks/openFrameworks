@@ -124,3 +124,6 @@ protected:
 	glm::ivec2 position { 0, 0 };
 	bool positionSet { false };
 };
+
+typedef ofWindowSettings ofGLWindowSettings;
+typedef ofWindowSettings ofGLESWindowSettings;

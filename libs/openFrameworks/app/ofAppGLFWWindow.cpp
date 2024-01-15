@@ -230,6 +230,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 			return;
 		}
+		
 		if (settings.windowMode == OF_FULLSCREEN) {
 			int count = 0;
 			auto monitors = glfwGetMonitors(&count);
@@ -642,37 +643,17 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-	// Now using just one GLFW call to set the entire rectangle.
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y) {
-//	glfwSetWindowPos(windowP, x / pixelScreenCoordScale, y / pixelScreenCoordScale);
 	glfwSetWindowPos(windowP, x, y);
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h) {
-//	if (settings.windowMode == OF_WINDOW) {
-//		windowW = w;
-//		windowH = h;
-//	}
-//	currentW = w / pixelScreenCoordScale;
-//	currentH = h / pixelScreenCoordScale;
-//
-//#ifdef TARGET_OSX
-//	auto pos = getWindowPosition();
-//	glfwSetWindowSize(windowP, currentW, currentH);
-//	if (pos != getWindowPosition()) {
-//		setWindowPosition(pos.x, pos.y);
-//	}
-//#else
-//	glfwSetWindowSize(windowP, currentW, currentH);
-//#endif
-	
 	glfwSetWindowSize(windowP, w, h);
-
 }
 
 //------------------------------------------------------------
