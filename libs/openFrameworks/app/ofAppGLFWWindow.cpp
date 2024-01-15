@@ -643,6 +643,8 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
+	cout << "setWindowRect " << rect << endl;
+
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 
@@ -653,6 +655,7 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h) {
+	cout << "setWindowShape " << w << " : " <<  h << endl;
 	glfwSetWindowSize(windowP, w, h);
 }
 
@@ -684,14 +687,17 @@ void ofAppGLFWWindow::disableSetupScreen() {
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	if (fullscreen) {
 		targetWindowMode = OF_FULLSCREEN;
-		// save window shape before going fullscreen
-		windowRect = getWindowRect();
 	} else {
 		targetWindowMode = OF_WINDOW;
 	}
 
 	//we only want to change window mode if the requested window is different to the current one.
 	if (targetWindowMode == settings.windowMode) return;
+	
+	if (targetWindowMode == OF_FULLSCREEN) {
+		// save window shape before going fullscreen
+		windowRect = getWindowRect();
+	}
 
 #ifdef TARGET_LINUX
 	#include <X11/Xatom.h>
@@ -832,21 +838,19 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 	
 	if (targetWindowMode == OF_FULLSCREEN) {
-		cout << "xx " <<  &windowP << " xx" << endl;
-		if (windowP == nullptr) {
-			cout << "windowP is nullptr" << endl;
-		}
+//		cout << "xx " <<  &windowP << " xx" << endl;
 		GLFWmonitor* monitor = glfwGetWindowMonitor(windowP);
 		if (!monitor) {
 			monitor = glfwGetPrimaryMonitor();
 		}
 		if (monitor) {
-			
 			const GLFWvidmode * desktopMode = glfwGetVideoMode(monitor);
 			glm::ivec2 pos;
 			glfwGetMonitorPos(monitor, &pos.x, &pos.y);
+//			cout << "monitor pos " << pos << endl;
 			
 			ofRectangle fsRect { (float)pos.x, (float)pos.y, (float)desktopMode->width, (float)desktopMode->height };
+			cout << "fsRect " << fsRect << endl;
 			// FIXME: TODO: Get rectangle for multiple windows.
 			//		if (settings.multiMonitorFullScreen && monitorCount > 1) {
 			////			fsRect =
@@ -856,6 +860,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 	
 	else if (targetWindowMode == OF_WINDOW) {
+		cout << "OF_WINDOW, windowRect = " << windowRect << endl;
 		setWindowRect(windowRect);
 		setWindowTitle(settings.title);
 	}
