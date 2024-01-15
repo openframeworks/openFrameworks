@@ -75,12 +75,13 @@ void ofAppGLFWWindow::close() {
 		glfwSetCursorEnterCallback( windowP, nullptr );
 		glfwSetKeyCallback( windowP, nullptr );
 		glfwSetWindowSizeCallback( windowP, nullptr );
-    glfwSetWindowPosCallback(windowP, nullptr);
+		glfwSetWindowPosCallback(windowP, nullptr);
 		glfwSetFramebufferSizeCallback( windowP, nullptr);
 		glfwSetWindowCloseCallback( windowP, nullptr );
 		glfwSetScrollCallback( windowP, nullptr );
 		glfwSetDropCallback( windowP, nullptr );
-  	glfwSetWindowRefreshCallback(windowP, nullptr);
+		glfwSetWindowRefreshCallback(windowP, nullptr);
+		glfwSetMonitorCallback(monitor_cb);
 
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
@@ -143,12 +144,18 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		ofLogError() << "calling window->setup() after ofCreateWindow() is not necessary and won't do anything";
 		return;
 	}
+	
 	settings = _settings;
 
 	if (!glfwInit()) {
 		ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
 		return;
 	}
+
+	updateMonitorProperties();
+	cout << "allScreensSpace " << allMonitors.allScreensSpace << endl;
+	
+	
 
 	//	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
@@ -435,6 +442,11 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer() {
 void ofAppGLFWWindow::update() {
 	events().notifyUpdate();
 
+	if (allMonitors.updateMonitor) {
+		updateMonitorProperties();
+		allMonitors.updateMonitor = false;
+	}
+	
 	//show the window right before the first draw call.
 	if (bWindowNeedsShowing && windowP) {
 		glfwShowWindow(windowP);
@@ -1471,6 +1483,11 @@ void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 }
 
 //------------------------------------------------------------
+void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
+	allMonitors.updateMonitor = true;
+}
+
+//------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 
@@ -1649,3 +1666,23 @@ HWND ofAppGLFWWindow::getWin32Window() {
 }
 
 #endif
+
+
+
+void ofAppGLFWWindow::updateMonitorProperties() {
+	allMonitors.rects.clear();
+	allMonitors.allScreensSpace = { 0,0,0,0 }; // reset ofRectangle;
+
+	int numberOfMonitors;
+//	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
+	allMonitors.monitors = glfwGetMonitors(&numberOfMonitors);
+
+	for (int i=0; i < numberOfMonitors; i++){
+		glm::ivec2 pos;
+		glfwGetMonitorPos(allMonitors.monitors[i], &pos.x, &pos.y);
+		const GLFWvidmode * desktopMode = glfwGetVideoMode(allMonitors.monitors[i]);
+		ofRectangle rect = ofRectangle( pos.x, pos.y, desktopMode->width, desktopMode->height );
+		allMonitors.rects.emplace_back(rect);
+		allMonitors.allScreensSpace = allMonitors.allScreensSpace.getUnion(rect);
+	}
+}

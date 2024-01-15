@@ -13,6 +13,7 @@ typedef struct _XIC * XIC;
 
 class ofBaseApp;
 struct GLFWwindow;
+struct GLFWmonitor;
 class ofCoreEvents;
 
 template <typename T>
@@ -151,12 +152,13 @@ private:
 	static void resize_cb(GLFWwindow* windowP_, int w, int h);
 	static void position_cb(GLFWwindow* windowP_, int x, int y);
 	static void framebuffer_size_cb(GLFWwindow* windowP_, int w, int h);
-	static void exit_cb(GLFWwindow* windowP_);
-	static void scroll_cb(GLFWwindow* windowP_, double x, double y);
+	static void exit_cb(GLFWwindow * windowP_);
+	static void scroll_cb(GLFWwindow * windowP_, double x, double y);
 	static void drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString);
-	static void error_cb(int errorCode, const char* errorDescription);
+	static void error_cb(int errorCode, const char * errorDescription);
 	static void refresh_cb(GLFWwindow * windowP_);
-
+	static void monitor_cb(GLFWmonitor * monitor, int event);
+	
 	void close();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
@@ -197,6 +199,29 @@ private:
 #ifdef TARGET_WIN32
 	LONG lExStyle, lStyle;
 #endif // TARGET_WIN32
+	
+	
+	void updateMonitorProperties();
 };
+
+
+static struct ofMonitors {
+public:
+	ofMonitors() {}
+	~ofMonitors() {}
+	std::vector <ofRectangle> rects;
+	ofRectangle allScreensSpace;
+	ofRectangle rectWindow;
+	bool changed = true;
+	GLFWmonitor** monitors;
+	bool updateMonitor = true;
+
+} allMonitors;
+
+// TODO: Remove.
+
+//static bool updateMonitor = true;
+//static bool updatePixelScreenCoordScale = true;
+
 
 //#endif
