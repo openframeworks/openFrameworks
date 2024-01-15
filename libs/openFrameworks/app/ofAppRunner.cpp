@@ -371,8 +371,8 @@ void ofSetWindowShape(int width, int height){
 }
 
 //--------------------------------------
-void ofSetWindowRectangle(const ofRectangle & rect){
-	mainLoop()->getCurrentWindow()->setWindowRectangle(rect);
+void ofSetWindowRect(const ofRectangle & rect){
+	mainLoop()->getCurrentWindow()->setWindowRect(rect);
 }
 
 //--------------------------------------

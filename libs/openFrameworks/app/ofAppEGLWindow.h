@@ -89,7 +89,7 @@ public:
 
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
-	void setWindowRectangle(const ofRectangle & rect);
+	void setWindowRect(const ofRectangle & rect);
 
 	glm::ivec2 getWindowPosition();
 	glm::ivec2 getWindowSize();

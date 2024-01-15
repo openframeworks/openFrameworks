@@ -14,6 +14,7 @@ typedef struct _XIC * XIC;
 class ofBaseApp;
 struct GLFWwindow;
 class ofCoreEvents;
+
 template <typename T>
 class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
@@ -24,8 +25,6 @@ public:
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow();
 	
-
-
 //	ofWindowMode getWindowMode() { return settings.windowMode; }
 	
 	// Can't be copied, use shared_ptr
@@ -39,7 +38,7 @@ public:
 	static void pollEvents();
 
 	// this functions are only meant to be called from inside OF don't call them from your code
-	using ofAppBaseWindow::setup;
+//	using ofAppBaseWindow::setup;
 
 	void setup(const ofWindowSettings & settings);
 	void update();
@@ -60,13 +59,14 @@ public:
 	void * getWindowContext() { return getGLFWWindow(); }
 	ofWindowSettings getSettings() { return settings; }
 
-	glm::ivec2 getWindowSize();
 	glm::ivec2 getScreenSize();
+	glm::ivec2 getWindowSize();
 	glm::ivec2 getWindowPosition();
+	ofRectangle getWindowRect();
 
 	void setWindowTitle(const std::string & title);
 
-	void setWindowRectangle(const ofRectangle & rect);
+	void setWindowRect(const ofRectangle & rect);
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 

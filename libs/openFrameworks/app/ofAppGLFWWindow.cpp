@@ -557,32 +557,25 @@ int ofAppGLFWWindow::getPixelScreenCoordScale() {
 }
 
 //------------------------------------------------------------
-glm::ivec2 ofAppGLFWWindow::getWindowSize() {
-//	glm::ivec2 ws;
-//	glfwGetWindowPos(windowP, &ws.x, &ws.y);
-//	cout << ws << endl;
-//	return ws;
+ofRectangle ofAppGLFWWindow::getWindowRect() {
+	glm::ivec2 pos;
+	glfwGetWindowPos( windowP, &pos.x, &pos.y );
+	glm::ivec2 size;
+	glfwGetWindowSize(windowP, &size.x, &size.y);
+	return ofRectangle(pos.x, pos.y, size.x, size.y);
+}
 
-	if (settings.windowMode == OF_GAME_MODE) {
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
-		if (desktopMode) {
-			return { desktopMode->width * pixelScreenCoordScale, desktopMode->height * pixelScreenCoordScale };
-		} else {
-			return { currentW * pixelScreenCoordScale, currentH * pixelScreenCoordScale };
-		}
-	} else {
-		return { currentW * pixelScreenCoordScale, currentH * pixelScreenCoordScale };
-	}
+//------------------------------------------------------------
+glm::ivec2 ofAppGLFWWindow::getWindowSize() {
+	glm::ivec2 size;
+	glfwGetWindowSize(windowP, &size.x, &size.y);
+	return size;
 }
 
 //------------------------------------------------------------
 glm::ivec2 ofAppGLFWWindow::getWindowPosition() {
 	glm::ivec2 pos;
 	glfwGetWindowPos( windowP, &pos.x, &pos.y );
-	// if ( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ) {
-	// 	std::swap(pos.x, pos.y);
-	// }
-	// return pos * glm::vec2 { pixelScreenCoordScale, pixelScreenCoordScale };
 	return pos;
 }
 
@@ -653,8 +646,8 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowRectangle(const ofRectangle & rect) {
-//	cout << "setWindowRectangle " << rect << endl;
+void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
+//	cout << "setWindowRect " << rect << endl;
 	if(settings.windowMode == OF_WINDOW){
 		windowW = rect.width;
 		windowH = rect.height;
@@ -723,17 +716,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 		targetWindowMode = OF_WINDOW;
 	}
 
-#if defined(TARGET_OSX)
-	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
-		settings.windowMode = OF_FULLSCREEN;
-		if (targetWindowMode == OF_WINDOW) {
-			[cocoaWindow toggleFullScreen:nil];
-		}
-	} else {
-		[cocoaWindow setHasShadow:NO];
-	}
-#endif
+
 
 	//we only want to change window mode if the requested window is different to the current one.
 	bool bChanged = targetWindowMode != settings.windowMode;
@@ -864,14 +847,31 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 
 	//	setWindowShape(windowW, windowH);
 
+
+	
 #elif defined(TARGET_OSX)
 
+	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+		if (targetWindowMode == OF_WINDOW) {
+			[cocoaWindow toggleFullScreen:nil];
+		} else {
+			settings.windowMode = OF_FULLSCREEN;
+		}
+	}
+
+	if (targetWindowMode == OF_FULLSCREEN) {
+		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
+		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
+		[cocoaWindow setHasShadow:YES];
+	} else {
+		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
+		[cocoaWindow setStyleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
+		[cocoaWindow setHasShadow:NO];
+	}
+	
 	if (targetWindowMode == OF_FULLSCREEN) {
 		//----------------------------------------------------
-		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
-		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-
-		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 
 		int monitorCount;
 		GLFWmonitor ** monitors = glfwGetMonitors(&monitorCount);
@@ -879,19 +879,11 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 		int currentMonitor = getCurrentMonitor();
 		auto screenSize = getScreenSize();
 
-		if (orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT) {
-			std::swap(screenSize.x, screenSize.y);
-		}
-
 		ofRectangle allScreensSpace;
 
 		// save window shape before going fullscreen
-		auto pos = getWindowPosition();
-		auto size = getWindowSize();
-		windowRect.x = pos.x;
-		windowRect.y = pos.y;
-		windowRect.width = size.x;
-		windowRect.height = size.y;
+		windowRect = getWindowRect();
+		cout << "windowRect " << windowRect << endl;
 
 		if (settings.multiMonitorFullScreen && monitorCount > 1) {
 
@@ -936,10 +928,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 			// FIXME: This is a little absurd
 			settings.setPosition(getWindowPosition());
 		}
-
-		//make sure the window is getting the mouse/key events
-		[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
-
 	} else if (targetWindowMode == OF_WINDOW) {
 
 		// set window shape if started in fullscreen
@@ -953,10 +941,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 		setWindowShape(windowRect.width, windowRect.height);
 		setWindowTitle(settings.title);
 
-		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
-		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-		[cocoaWindow setStyleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
-
 		//----------------------------------------------------
 		// if we have recorded the screen position, put it there
 		// if not, better to let the system do it (and put it where it wants)
@@ -964,10 +948,12 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 			setWindowPosition(windowRect.x, windowRect.y);
 		}
 
-		//----------------------------------------------------
-		//make sure the window is getting the mouse/key events
-		[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
 	}
+
+	//----------------------------------------------------
+	//make sure the window is getting the mouse/key events
+	[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
+
 #elif defined(TARGET_WIN32)
 	if (targetWindowMode == OF_FULLSCREEN) {
 		// save window shape before going fullscreen
@@ -987,10 +973,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 
 		float fullscreenW = getScreenSize().x;
 		float fullscreenH = getScreenSize().y;
-
-		if (orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT) {
-			std::swap(fullscreenW, fullscreenH);
-		}
 
 		int xpos = 0;
 		int ypos = 0;

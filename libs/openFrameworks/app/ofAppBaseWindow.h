@@ -3,11 +3,12 @@
 #include "ofWindowSettings.h"
 // MARK: Target
 #include "ofConstants.h"
+//class ofRectangle;
+#include "ofRectangle.h"
 
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
-class ofRectangle;
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 struct __GLXcontextRec;
@@ -24,33 +25,41 @@ class ofAppBaseWindow {
 public:
 
 	ofAppBaseWindow(){}
-	virtual ~ofAppBaseWindow(){}
+//	virtual ~ofAppBaseWindow(){}
+	~ofAppBaseWindow(){}
 
 //	virtual void setup(const ofWindowSettings & settings);
 	
-	virtual void setup(const ofWindowSettings & settings){
-		
-	}
+	virtual void setup(const ofWindowSettings & settings)=0;
 	virtual void update()=0;
 	virtual void draw()=0;
+	virtual std::shared_ptr<ofBaseRenderer> & renderer() = 0;
+	virtual ofCoreEvents & events() = 0;
+
+//	virtual void setup(const ofWindowSettings & settings) {};
+//	virtual void update() {};
+//	virtual void draw() {};
+//	virtual std::shared_ptr<ofBaseRenderer> & renderer() =0;
+//	virtual ofCoreEvents & events() =0;
+
+
 	virtual bool getWindowShouldClose(){
 		return false;
 	}
 	virtual void setWindowShouldClose(){}
 	virtual void close(){}
-	virtual ofCoreEvents & events() = 0;
-	virtual std::shared_ptr<ofBaseRenderer> & renderer() = 0;
 
 	virtual void hideCursor(){}
 	virtual void showCursor(){}
 
 	virtual void setWindowPosition(int x, int y){}
 	virtual void setWindowShape(int w, int h){}
-	virtual void setWindowRectangle(const ofRectangle & rect){}
+	virtual void setWindowRect(const ofRectangle & rect){}
 
 	virtual glm::ivec2 getWindowPosition() { return glm::vec2(); }
 	virtual glm::ivec2 getWindowSize() { return glm::vec2(); }
 	virtual glm::ivec2 getScreenSize() { return glm::vec2(); }
+	virtual ofRectangle getWindowRect() { return ofRectangle(); }
 
 	virtual void setOrientation(ofOrientation orientationIn) { orientation = orientationIn; }
 	virtual ofOrientation getOrientation() { return orientation; }
@@ -63,7 +72,6 @@ public:
 	virtual void setWindowTitle(const std::string & title){}
 
 	virtual ofWindowMode getWindowMode() { return settings.windowMode; }
-	
 
 	virtual void setFullscreen(bool fullscreen){}
 	virtual void toggleFullscreen(){}

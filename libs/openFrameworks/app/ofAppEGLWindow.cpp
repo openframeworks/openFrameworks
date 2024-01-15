@@ -838,9 +838,9 @@ void ofAppEGLWindow::draw() {
 	// take care of any requests for a new screen mode
 	if (windowMode != OF_GAME_MODE && bNewScreenMode){
 		if( windowMode == OF_FULLSCREEN){
-			setWindowRectangle(getScreenRect());
+			setWindowRect(getScreenRect());
 		} else if( windowMode == OF_WINDOW ){
-			setWindowRectangle(nonFullscreenWindowRect);
+			setWindowRect(nonFullscreenWindowRect);
 		}
 		bNewScreenMode = false;
 	}
@@ -917,9 +917,9 @@ void ofAppEGLWindow::destroyNativeEvents() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowRectangle(const ofRectangle& requestedWindowRect) {
+void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
 	if(!isWindowInited) {
-		ofLogError("ofAppEGLWindow") << "setWindowRectangle(): window not inited";
+		ofLogError("ofAppEGLWindow") << "setWindowRect(): window not inited";
 		return;
 	}
 
@@ -936,9 +936,9 @@ void ofAppEGLWindow::setWindowRectangle(const ofRectangle& requestedWindowRect) 
 					(unsigned int)newRect.width,
 					(unsigned int)newRect.height);
 			if(ret == BadValue) {
-				ofLogError("ofAppEGLWindow") << "setWindowRectangle(): XMoveResizeWindow returned BadValue";
+				ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadValue";
 			} else if(ret == BadWindow) {
-				ofLogError("ofAppEGLWindow") << "setWindowRectangle(): XMoveResizeWindow returned BadWindow";
+				ofLogError("ofAppEGLWindow") << "setWindowRect(): XMoveResizeWindow returned BadWindow";
 			} else {
 				// all is good
 				currentWindowRect = newRect;
@@ -1231,7 +1231,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 		}
 	} else {
 #ifdef TARGET_RASPBERRY_PI_LEGACY
-		setWindowRectangle(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
+		setWindowRect(ofRectangle(currentWindowRect.x,currentWindowRect.y,w,h));
 		nonFullscreenWindowRect = currentWindowRect;
 #else
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
