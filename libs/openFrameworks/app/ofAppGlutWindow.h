@@ -16,8 +16,7 @@ typedef ofPixels & ofPixelsRef;
 class ofBaseApp;
 class ofBaseRenderer;
 
-class ofAppGlutWindow : public ofAppBaseGLWindow {
-
+class ofAppGlutWindow : public ofAppBaseWindow {
 public:
 
 	ofAppGlutWindow();
@@ -30,7 +29,7 @@ public:
 	static void pollEvents(){  }
 
 	using ofAppBaseWindow::setup;
-	void setup(const ofGLWindowSettings & settings);
+	void setup(const ofWindowSettings & settings);
 	void update();
 	void draw();
 	void close();

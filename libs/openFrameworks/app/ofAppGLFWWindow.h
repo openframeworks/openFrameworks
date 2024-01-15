@@ -19,57 +19,15 @@ class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
 
 
-#ifdef TARGET_OPENGLES
-// FIXME: Rever o nome ofAppBaseXWindow, aplicar no resto do codigo o typedef
-typedef ofAppBaseGLESWindow ofAppBaseXWindow;
-typedef ofGLESWindowSettings ofSetupWindowSettings;
-#else
-typedef ofAppBaseGLWindow ofAppBaseXWindow;
-typedef ofGLWindowSettings ofSetupWindowSettings;
-#endif
-
-class ofGLFWWindowSettings: public ofSetupWindowSettings {
-public:
-	ofGLFWWindowSettings() { }
-
-	ofGLFWWindowSettings(const ofSetupWindowSettings & settings)
-	:ofSetupWindowSettings(settings){}
-
-#ifdef TARGET_RASPBERRY_PI
-	int numSamples = 0;
-#else
-	int numSamples = 4;
-#endif
-
-	bool doubleBuffering = true;
-	int redBits = 8;
-	int greenBits = 8;
-	int blueBits = 8;
-	int alphaBits = 8;
-	int depthBits = 24;
-	int stencilBits = 0;
-	bool stereo = false;
-	bool visible = true;
-	bool iconified = false;
-	bool decorated = true;
-	bool resizable = true;
-	bool transparent = false;
-	bool maximized = false;
-	int monitor = 0;
-	bool multiMonitorFullScreen = false;
-	std::shared_ptr<ofAppBaseWindow> shareContextWith;
-};
-
-#ifdef TARGET_OPENGLES
-class ofAppGLFWWindow : public ofAppBaseGLESWindow {
-#else
-class ofAppGLFWWindow : public ofAppBaseGLWindow {
-#endif
-
+class ofAppGLFWWindow : public ofAppBaseWindow {
 public:
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow();
+	
 
+
+//	ofWindowMode getWindowMode() { return settings.windowMode; }
+	
 	// Can't be copied, use shared_ptr
 	ofAppGLFWWindow(ofAppGLFWWindow & w) = delete;
 	ofAppGLFWWindow & operator=(ofAppGLFWWindow & w) = delete;
@@ -83,8 +41,7 @@ public:
 	// this functions are only meant to be called from inside OF don't call them from your code
 	using ofAppBaseWindow::setup;
 
-	void setup(const ofSetupWindowSettings & settings);
-	void setup(const ofGLFWWindowSettings & settings);
+	void setup(const ofWindowSettings & settings);
 	void update();
 	void draw();
 	bool getWindowShouldClose();
@@ -101,7 +58,7 @@ public:
 
 	GLFWwindow * getGLFWWindow();
 	void * getWindowContext() { return getGLFWWindow(); }
-	ofGLFWWindowSettings getSettings() { return settings; }
+	ofWindowSettings getSettings() { return settings; }
 
 	glm::ivec2 getWindowSize();
 	glm::ivec2 getScreenSize();
@@ -160,7 +117,7 @@ public:
 	Window getX11Window();
 	XIC getX11XIC();
 
-	void setWindowIcon(const std::string & path);
+	void setWindowIcon(const of::filesystem::path & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
@@ -209,7 +166,6 @@ private:
 
 	std::unique_ptr<ofCoreEvents> coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
-	ofGLFWWindowSettings settings;
 
 	ofWindowMode targetWindowMode;
 

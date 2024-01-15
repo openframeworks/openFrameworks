@@ -203,11 +203,10 @@ int ofRunMainLoop(){
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
+	ofWindowSettings settings;
 #ifdef TARGET_OPENGLES
-	ofGLESWindowSettings settings;
 	settings.glesVersion = 1;
 #else
-	ofGLWindowSettings settings;
 	settings.glVersionMajor = 2;
 	settings.glVersionMinor = 1;
 #endif
@@ -447,6 +446,7 @@ float ofRandomHeight() {
 }
 
 //--------------------------------------------------
+// FIXME: This is wrong. doesn't consider window offset.
 ofRectangle	ofGetWindowRect() {
 	return ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 }

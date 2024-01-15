@@ -135,16 +135,8 @@ void ofAppGLFWWindow::setStencilBits(int stencil) {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setup(const ofSetupWindowSettings & settings) {
-	const ofGLFWWindowSettings * glSettings = dynamic_cast<const ofGLFWWindowSettings *>(&settings);
-	if (glSettings) {
-		setup(*glSettings);
-	} else {
-		setup(ofGLFWWindowSettings(settings));
-	}
-}
+void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
-void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 	if (windowP) {
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
@@ -407,7 +399,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
-void ofAppGLFWWindow::setWindowIcon(const std::string & path) {
+void ofAppGLFWWindow::setWindowIcon(const of::filesystem::path & path) {
 	ofPixels iconPixels;
 	ofLoadImage(iconPixels, path);
 	setWindowIcon(iconPixels);
@@ -558,11 +550,19 @@ void ofAppGLFWWindow::setWindowTitle(const std::string & title) {
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getPixelScreenCoordScale() {
+	
+	// TODO:
+	// discover which monitor this window 
 	return pixelScreenCoordScale;
 }
 
 //------------------------------------------------------------
 glm::ivec2 ofAppGLFWWindow::getWindowSize() {
+//	glm::ivec2 ws;
+//	glfwGetWindowPos(windowP, &ws.x, &ws.y);
+//	cout << ws << endl;
+//	return ws;
+
 	if (settings.windowMode == OF_GAME_MODE) {
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
 		if (desktopMode) {
@@ -577,7 +577,7 @@ glm::ivec2 ofAppGLFWWindow::getWindowSize() {
 
 //------------------------------------------------------------
 glm::ivec2 ofAppGLFWWindow::getWindowPosition() {
-	glm::ivec2 pos { 0, 0 };
+	glm::ivec2 pos;
 	glfwGetWindowPos( windowP, &pos.x, &pos.y );
 	// if ( orientation == OF_ORIENTATION_90_LEFT || orientation == OF_ORIENTATION_90_RIGHT ) {
 	// 	std::swap(pos.x, pos.y);
@@ -650,11 +650,6 @@ int ofAppGLFWWindow::getHeight() {
 //------------------------------------------------------------
 GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 	return windowP;
-}
-
-//------------------------------------------------------------
-ofWindowMode ofAppGLFWWindow::getWindowMode() {
-	return settings.windowMode;
 }
 
 //------------------------------------------------------------
@@ -938,8 +933,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 
 		// make sure to save current pos if not specified in settings
 		if (settings.isPositionSet()) {
-			auto pos = getWindowPosition();
-			settings.setPosition(ofVec2f(pos.x, pos.y));
+			// FIXME: This is a little absurd
+			settings.setPosition(getWindowPosition());
 		}
 
 		//make sure the window is getting the mouse/key events

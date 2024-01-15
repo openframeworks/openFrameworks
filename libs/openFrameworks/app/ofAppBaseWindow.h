@@ -20,13 +20,17 @@ struct _XDisplay;
 typedef struct _XDisplay Display;
 #endif
 
-class ofAppBaseWindow{
+class ofAppBaseWindow {
 public:
 
 	ofAppBaseWindow(){}
 	virtual ~ofAppBaseWindow(){}
 
-	virtual void setup(const ofWindowSettings & settings)=0;
+//	virtual void setup(const ofWindowSettings & settings);
+	
+	virtual void setup(const ofWindowSettings & settings){
+		
+	}
 	virtual void update()=0;
 	virtual void draw()=0;
 	virtual bool getWindowShouldClose(){
@@ -58,7 +62,8 @@ public:
 
 	virtual void setWindowTitle(const std::string & title){}
 
-	virtual ofWindowMode getWindowMode() { return OF_WINDOW; }
+	virtual ofWindowMode getWindowMode() { return settings.windowMode; }
+	
 
 	virtual void setFullscreen(bool fullscreen){}
 	virtual void toggleFullscreen(){}
@@ -102,36 +107,37 @@ public:
 	virtual HWND getWin32Window(){ return 0; }
 #endif
 	
-private:
+	ofWindowSettings settings;
+
+//private:
 	ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 	ofWindowMode windowMode = OF_WINDOW;
-
 };
 
-class ofAppBaseGLWindow: public ofAppBaseWindow {
-public:
-	virtual ~ofAppBaseGLWindow(){}
-	virtual void setup(const ofGLWindowSettings & settings)=0;
-	void setup(const ofWindowSettings & settings){
-		const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
-		if(glSettings){
-			setup(*glSettings);
-		}else{
-			setup(ofGLWindowSettings(settings));
-		}
-	}
-};
-
-class ofAppBaseGLESWindow: public ofAppBaseWindow {
-public:
-	virtual ~ofAppBaseGLESWindow(){}
-	virtual void setup(const ofGLESWindowSettings & settings)=0;
-	void setup(const ofWindowSettings & settings){
-		const ofGLESWindowSettings * glSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
-		if(glSettings){
-			setup(*glSettings);
-		}else{
-			setup(ofGLESWindowSettings(settings));
-		}
-	}
-};
+//class ofAppBaseGLWindow: public ofAppBaseWindow {
+//public:
+//	virtual ~ofAppBaseGLWindow(){}
+//	virtual void setup(const ofWindowSettings & settings)=0;
+//	void setup(const ofWindowSettings & settings){
+//		const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
+//		if(glSettings){
+//			setup(*glSettings);
+//		}else{
+//			setup(ofGLWindowSettings(settings));
+//		}
+//	}
+//};
+//
+//class ofAppBaseGLESWindow: public ofAppBaseWindow {
+//public:
+//	virtual ~ofAppBaseGLESWindow(){}
+//	virtual void setup(const ofGLESWindowSettings & settings)=0;
+//	void setup(const ofWindowSettings & settings){
+//		const ofGLESWindowSettings * glSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
+//		if(glSettings){
+//			setup(*glSettings);
+//		}else{
+//			setup(ofGLESWindowSettings(settings));
+//		}
+//	}
+//};
