@@ -71,6 +71,7 @@ ofOrientation ofGetOrientation();
 void ofHideCursor();
 void ofShowCursor();
 //-------------------------- window / screen
+glm::ivec2 ofGetWindowPosition();
 int ofGetWindowPositionX();
 int ofGetWindowPositionY();
 int ofGetScreenWidth();

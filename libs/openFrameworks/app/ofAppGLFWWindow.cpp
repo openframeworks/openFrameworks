@@ -832,18 +832,27 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 	
 	if (targetWindowMode == OF_FULLSCREEN) {
+		cout << "xx " <<  &windowP << " xx" << endl;
+		if (windowP == nullptr) {
+			cout << "windowP is nullptr" << endl;
+		}
 		GLFWmonitor* monitor = glfwGetWindowMonitor(windowP);
-		
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitor);
-		glm::ivec2 pos;
-		glfwGetMonitorPos(monitor, &pos.x, &pos.y);
-		
-		ofRectangle fsRect { (float)pos.x, (float)pos.y, (float)desktopMode->width, (float)desktopMode->height };
-		// FIXME: TODO: Get rectangle for multiple windows.
-//		if (settings.multiMonitorFullScreen && monitorCount > 1) {
-////			fsRect =
-//		}
-		setWindowRect(fsRect);
+		if (!monitor) {
+			monitor = glfwGetPrimaryMonitor();
+		}
+		if (monitor) {
+			
+			const GLFWvidmode * desktopMode = glfwGetVideoMode(monitor);
+			glm::ivec2 pos;
+			glfwGetMonitorPos(monitor, &pos.x, &pos.y);
+			
+			ofRectangle fsRect { (float)pos.x, (float)pos.y, (float)desktopMode->width, (float)desktopMode->height };
+			// FIXME: TODO: Get rectangle for multiple windows.
+			//		if (settings.multiMonitorFullScreen && monitorCount > 1) {
+			////			fsRect =
+			//		}
+			setWindowRect(fsRect);
+		}
 	}
 	
 	else if (targetWindowMode == OF_WINDOW) {

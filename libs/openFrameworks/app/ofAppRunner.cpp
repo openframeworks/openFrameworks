@@ -371,8 +371,13 @@ void ofSetWindowShape(int width, int height){
 }
 
 //--------------------------------------
-void ofSetWindowRect(const ofRectangle & rect){
+void ofSetWindowRect(const ofRectangle & rect) {
 	mainLoop()->getCurrentWindow()->setWindowRect(rect);
+}
+
+//--------------------------------------
+glm::ivec2 ofGetWindowPosition() {
+	return mainLoop()->getCurrentWindow()->getWindowPosition();
 }
 
 //--------------------------------------

@@ -121,31 +121,3 @@ public:
 	ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 	ofWindowMode windowMode = OF_WINDOW;
 };
-
-//class ofAppBaseGLWindow: public ofAppBaseWindow {
-//public:
-//	virtual ~ofAppBaseGLWindow(){}
-//	virtual void setup(const ofWindowSettings & settings)=0;
-//	void setup(const ofWindowSettings & settings){
-//		const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
-//		if(glSettings){
-//			setup(*glSettings);
-//		}else{
-//			setup(ofGLWindowSettings(settings));
-//		}
-//	}
-//};
-//
-//class ofAppBaseGLESWindow: public ofAppBaseWindow {
-//public:
-//	virtual ~ofAppBaseGLESWindow(){}
-//	virtual void setup(const ofGLESWindowSettings & settings)=0;
-//	void setup(const ofWindowSettings & settings){
-//		const ofGLESWindowSettings * glSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
-//		if(glSettings){
-//			setup(*glSettings);
-//		}else{
-//			setup(ofGLESWindowSettings(settings));
-//		}
-//	}
-//};
