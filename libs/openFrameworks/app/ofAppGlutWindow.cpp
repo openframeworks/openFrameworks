@@ -29,7 +29,6 @@
 
 // glut works with static callbacks UGH, so we need static variables here:
 
-static ofWindowMode windowMode;
 static bool			bNewScreenMode;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
@@ -42,7 +41,8 @@ static int 			nonFullScreenY;
 static int			windowW;
 static int			windowH;
 static int          nFramesSinceWindowResized;
-static ofOrientation	orientation;
+//static ofWindowMode windowMode;
+//static ofOrientation	orientation;
 static ofAppGlutWindow * instance;
 
 #ifdef TARGET_WIN32
