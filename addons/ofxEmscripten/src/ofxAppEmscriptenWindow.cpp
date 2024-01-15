@@ -27,7 +27,7 @@ ofxAppEmscriptenWindow::~ofxAppEmscriptenWindow() {
 }
 
 //------------------------------------------------------------
-void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
+void ofxAppEmscriptenWindow::setup(const ofWindowSettings & settings){
     setWindowShape(settings.getWidth(),settings.getHeight());
 	
     EmscriptenWebGLContextAttributes attrs;
