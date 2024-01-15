@@ -683,20 +683,15 @@ void ofAppGLFWWindow::disableSetupScreen() {
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	if (fullscreen) {
+		targetWindowMode = OF_FULLSCREEN;
 		// save window shape before going fullscreen
 		windowRect = getWindowRect();
-		targetWindowMode = OF_FULLSCREEN;
 	} else {
 		targetWindowMode = OF_WINDOW;
 	}
 
-
-
 	//we only want to change window mode if the requested window is different to the current one.
-	bool bChanged = targetWindowMode != settings.windowMode;
-	if (!bChanged) {
-		return;
-	}
+	if (targetWindowMode == settings.windowMode) return;
 
 #ifdef TARGET_LINUX
 	#include <X11/Xatom.h>
@@ -837,9 +832,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 	
 	if (targetWindowMode == OF_FULLSCREEN) {
-		//----------------------------------------------------
-		
 		GLFWmonitor* monitor = glfwGetWindowMonitor(windowP);
+		
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitor);
 		glm::ivec2 pos;
 		glfwGetMonitorPos(monitor, &pos.x, &pos.y);

@@ -5,6 +5,7 @@ class ofAppBaseWindow;
 #define GLM_FORCE_CTOR_INIT
 #include "glm/vec2.hpp"
 #include <string>
+#include <memory>
 
 /// \brief Used to represent the available windowing modes for the application.
 enum ofWindowMode{
@@ -115,7 +116,6 @@ public:
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
-	
 	
 protected:
 	int width { 1024 };
