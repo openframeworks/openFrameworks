@@ -179,7 +179,6 @@ public:
 	static void pollEvents(){ }
 	
 	void setup(const ofWindowSettings & _settings);
-	void setup(const ofGLESWindowSettings & _settings);
 	void setup(const ofiOSWindowSettings & _settings);
 	void setup();
 	
@@ -198,9 +197,9 @@ public:
 	virtual void setWindowPosition(int x, int y);
 	virtual void setWindowShape(int w, int h);
 		
-	virtual glm::vec2 getWindowPosition();
-	virtual glm::vec2 getWindowSize();
-	virtual glm::vec2 getScreenSize();
+	virtual glm::ivec2 getWindowPosition();
+	virtual glm::ivec2 getWindowSize();
+	virtual glm::ivec2 getScreenSize();
 	
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 	virtual void setOrientation(ofOrientation orientation);
