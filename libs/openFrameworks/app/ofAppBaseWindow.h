@@ -56,9 +56,9 @@ public:
 	virtual void setWindowShape(int w, int h){}
 	virtual void setWindowRect(const ofRectangle & rect){}
 
-	virtual glm::ivec2 getWindowPosition() { return glm::vec2(); }
-	virtual glm::ivec2 getWindowSize() { return glm::vec2(); }
-	virtual glm::ivec2 getScreenSize() { return glm::vec2(); }
+	virtual glm::ivec2 getWindowPosition() { return glm::ivec2(); }
+	virtual glm::ivec2 getWindowSize() { return glm::ivec2(); }
+	virtual glm::ivec2 getScreenSize() { return glm::ivec2(); }
 	virtual ofRectangle getWindowRect() { return ofRectangle(); }
 
 	virtual void setOrientation(ofOrientation orientationIn) { orientation = orientationIn; }
