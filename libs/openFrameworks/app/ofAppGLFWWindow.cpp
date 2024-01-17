@@ -224,14 +224,14 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		monitor = allMonitors.monitors[monitorIndex];
 	}
 	else if (settings.windowMode == OF_WINDOW) {
-		cout << "rects size " << allMonitors.rects.size() << endl;
-		cout << "window mode monitorindex = " << monitorIndex << endl;
-		cout << "settings.monitor = " << settings.monitor << endl;
+//		cout << "rects size " << allMonitors.rects.size() << endl;
+//		cout << "window mode monitorindex = " << monitorIndex << endl;
+//		cout << "settings.monitor = " << settings.monitor << endl;
 		windowRect.x += allMonitors.rects[monitorIndex].x;
 		windowRect.y += allMonitors.rects[monitorIndex].y;
 	}
 
-	cout << "GLFW Will create windowRect " << windowRect << endl;
+//	cout << "GLFW Will create windowRect " << windowRect << endl;
 	// MARK: - WINDOW
 	windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
 
@@ -240,7 +240,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		return;
 	}
-	cout << "GLFW window created OK" << endl;
+//	cout << "GLFW window created OK" << endl;
 
 
 	// MARK: -
@@ -332,7 +332,15 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		NULL);
 #endif
 	
-	cout << "GLFW end setup" << endl;
+//	cout << "GLFW end setup" << endl;
+//	cout << "GLFW TEST " << allMonitors.getRectFromMonitors() << endl;
+//	allMonitors.getRectFromMonitors({ 0, 1 });
+//	allMonitors.getRectFromMonitors({ 0, 2 });
+//	allMonitors.getRectFromMonitors({ 0, 1, 2 });
+//	allMonitors.getRectFromMonitors({ 0, 3 });
+//	allMonitors.getRectFromMonitors({ 1, 2 });
+//	allMonitors.getRectFromMonitors({ 1, 3 });
+//	allMonitors.getRectFromMonitors({ 2, 3 });
 }
 
 #ifdef TARGET_LINUX
@@ -547,7 +555,7 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-	cout << "setWindowRect " << rect << endl;
+//	cout << "setWindowRect " << rect << endl;
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 
@@ -558,7 +566,7 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h) {
-	cout << "setWindowShape " << w << " : " <<  h << endl;
+//	cout << "setWindowShape " << w << " : " <<  h << endl;
 	glfwSetWindowSize(windowP, w, h);
 }
 
@@ -591,7 +599,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 	if (targetWindowMode == OF_FULLSCREEN) {
 		// save window shape before going fullscreen
 		windowRect = getWindowRect();
-		cout << "saving window rect " << windowRect << endl;
+//		cout << "saving window rect " << windowRect << endl;
 
 		if (settings.multiMonitorFullScreen) {
 			setWindowRect(allMonitors.getRectForAllMonitors());
@@ -608,7 +616,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
-	cout << "setFullScreen " << fullscreen << endl;
+//	cout << "setFullScreen " << fullscreen << endl;
 	if (fullscreen) {
 		targetWindowMode = OF_FULLSCREEN;
 	} else {
@@ -620,21 +628,18 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 
 #ifdef TARGET_OSX
 	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-	// This one is to correct if somebody entered fullscreen with green button and is disabling fullscreen
-	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
-		if (targetWindowMode == OF_WINDOW) {
-			[cocoaWindow toggleFullScreen:nil];
-			settings.windowMode = OF_WINDOW;
-		} else {
-			settings.windowMode = OF_FULLSCREEN;
-		}
-	}
 
 	if (targetWindowMode == OF_FULLSCREEN) {
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 		[cocoaWindow setHasShadow:NO];
 	} else {
+		
+		// to recover correctly from a green button fullscreen
+		if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+			[cocoaWindow toggleFullScreen:nil];
+		}
+		
 		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
 		[cocoaWindow setStyleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 		[cocoaWindow setHasShadow:YES];
@@ -793,8 +798,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	XFlush(display);
 
 	//	setWindowShape(windowW, windowH);
-
-
 #endif
 
 	settings.windowMode = targetWindowMode;
@@ -1334,24 +1337,6 @@ void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
-//	if (instance->settings.windowMode == OF_WINDOW) {
-//		instance->windowRect.width = w;
-//		instance->windowRect.height = h;
-//	}
-	// Detect if the window is running in a retina mode
-
-
-	// Find scale factor needed to transform from screen coordinates
-	// to physical pixel coordinates
-//	instance->pixelScreenCoordScale = (float)framebufferW / (float)windowSize.x;
-
-//	if (instance->settings.windowMode == OF_WINDOW) {
-//		instance->windowW = framebufferW;
-//		instance->windowH = framebufferH;
-//	}
-
-//	instance->currentW = w;
-//	instance->currentH = h;
 	instance->events().notifyWindowResized(w, h);
 	instance->nFramesSinceWindowResized = 0;
 

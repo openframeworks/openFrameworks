@@ -175,7 +175,7 @@ private:
 	// FIXME remove
 	float pixelScreenCoordScale; /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
-	ofRectangle windowRect { 20, 20, 1024, 768 };
+	ofRectangle windowRect { 20, 20, 800, 600 };
 
 	int buttonInUse;
 	bool buttonPressed;
@@ -205,7 +205,9 @@ using std::endl;
 
 // TEMPORARY
 #include "GLFW/glfw3.h"
-
+// TEMP oftostring
+#include "ofUtils.h"
+#include <vector>
 
 static struct ofMonitors {
 public:
@@ -249,6 +251,39 @@ public:
 		}
 	}
 
+	std::vector <ofRectangle> rectTests {
+		{ 0, 0, 400, 200 },
+		{ 400, 0, 400, 200 },
+		{ 800, 0, 400, 200 },
+		{ 1200, 0, 400, 200 },
+	};
+
+	ofRectangle getRectFromMonitors(const std::vector<int> monitors) {
+		bool first = true;
+		ofRectangle r;
+		std::string str { "" };
+		for (auto & i : monitors) {
+			str += ofToString(i) + " ";
+			if (i < rectTests.size()) {
+				if (first) {
+					first = false;
+					r = rectTests[i];
+				} else {
+					r = r.getUnion(rectTests[i]);
+				}
+			}
+		}
+		cout << "getRectFromMonitors " << str << " :: " << r << endl;
+		return r;
+	}
+	
+	ofRectangle getRectFromMonitorsX() {
+		ofRectangle r;
+		ofRectangle r2 { 30, 30, 30, 30 };
+		r = r.getUnion(r2);
+		return r;
+	}
+	
 } allMonitors;
 
 // TODO: Remove.
