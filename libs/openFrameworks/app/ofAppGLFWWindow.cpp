@@ -55,10 +55,7 @@ ofAppGLFWWindow::ofAppGLFWWindow()
 	nFramesSinceWindowResized = 0;
 	iconSet = false;
 	windowP = nullptr;
-	windowW = 0;
-	windowH = 0;
-	currentW = 0;
-	currentH = 0;
+
 
 	glfwSetErrorCallback(error_cb);
 }
@@ -205,6 +202,8 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		sharedContext = (GLFWwindow *)settings.shareContextWith->getWindowContext();
 	}
 
+	
+	
 	if (settings.windowMode == OF_GAME_MODE) {
 		int count;
 		GLFWmonitor ** monitors = glfwGetMonitors(&count);
@@ -213,26 +212,48 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		}
 		settings.monitor = ofClamp(settings.monitor, 0, count - 1);
 		if (settings.isSizeSet()) {
-			currentW = settings.getWidth();
-			currentH = settings.getHeight();
+			windowRect.width = settings.getWidth();
+			windowRect.height = settings.getHeight();
 		} else {
 			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-			currentW = mode->width;
-			currentH = mode->height;
+			windowRect.width = mode->width;
+			windowRect.height = mode->height;
 		}
 		if (count > settings.monitor) {
-			windowP = glfwCreateWindow(currentW, currentH, settings.title.c_str(), monitors[settings.monitor], sharedContext);
+			// MARK: - WINDOW
+			windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitors[settings.monitor], sharedContext);
 		} else {
 			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
 			return;
 		}
 	} else {
-		windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), nullptr, sharedContext);
+		
+		// TODO: move up, outside windowmode
+		// HACK: asdf
+		windowRect.width = settings.getWidth();
+		windowRect.height = settings.getHeight();
+		GLFWmonitor *monitor = nullptr;
+		
+		if (settings.windowMode == OF_FULLSCREEN) {
+			int monitorIndex = 0;
+			// Check to see if desired monitor is connected.
+			if (allMonitors.rects.size() >= settings.monitor) {
+				int monitorIndex = settings.monitor;
+			} else {
+				ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
+			}
+			windowRect = allMonitors.rects[monitorIndex];
+			monitor = allMonitors.monitors[monitorIndex];
+		}
+		// MARK: - WINDOW
+		windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
+
 		if (!windowP) {
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 			return;
 		}
-		
+	
+#ifdef WREMBLES
 		if (settings.windowMode == OF_FULLSCREEN) {
 			int count = 0;
 			auto monitors = glfwGetMonitors(&count);
@@ -292,6 +313,10 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 			}
 			glfwGetWindowSize(windowP, &currentW, &currentH);
 		}
+		
+#endif //WREMBLES
+		
+		
 #ifdef TARGET_LINUX
 		if (!iconSet) {
 			ofPixels iconPixels;
@@ -315,8 +340,8 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	glfwSetWindowUserPointer(windowP, this);
 
-	windowW = settings.getWidth();
-	windowH = settings.getHeight();
+//	windowW = settings.getWidth();
+//	windowH = settings.getHeight();
 
 	glfwMakeContextCurrent(windowP);
 
@@ -324,20 +349,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
 	glfwGetWindowSize(windowP, &tmpWindowW, &tmpWindowH);
 
-	//this lets us detect if the window is running in a retina mode
-	if (framebufferW != tmpWindowW) {
-		pixelScreenCoordScale = (float)framebufferW / (float)tmpWindowW;
-		if (pixelScreenCoordScale < 1) {
-			pixelScreenCoordScale = 1;
-		}
 
-		if (targetWindowMode == OF_WINDOW) {
-			auto position = getWindowPosition();
-
-			setWindowShape(windowW, windowH);
-			setWindowPosition(position.x, position.y);
-		}
-	}
 
 #ifndef TARGET_OPENGLES
 	static bool inited = false;
@@ -608,20 +620,12 @@ glm::ivec2 ofAppGLFWWindow::getScreenSize() {
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getWidth() {
-	if (orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180) {
-		return currentW * pixelScreenCoordScale;
-	} else {
-		return currentH * pixelScreenCoordScale;
-	}
+	return windowRect.width;
 }
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getHeight() {
-	if (orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180) {
-		return currentH * pixelScreenCoordScale;
-	} else {
-		return currentW * pixelScreenCoordScale;
-	}
+	return windowRect.height;
 }
 
 //------------------------------------------------------------
@@ -1431,8 +1435,8 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 //		instance->windowH = framebufferH;
 //	}
 
-	instance->currentW = w;
-	instance->currentH = h;
+//	instance->currentW = w;
+//	instance->currentH = h;
 	instance->events().notifyWindowResized(w, h);
 	instance->nFramesSinceWindowResized = 0;
 

@@ -172,8 +172,7 @@ private:
 	ofWindowMode targetWindowMode;
 
 	bool bEnableSetupScreen;
-	int windowW, windowH; /// Physical framebuffer pixels extents
-	int currentW, currentH; /// Extents of the window client area, which may be scaled by pixelsScreenCoordScale to map to physical framebuffer pixels.
+	// FIXME remove
 	float pixelScreenCoordScale; /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
 	ofRectangle windowRect { 20, 20, 1024, 768 };
@@ -218,8 +217,8 @@ public:
 	~ofMonitors() {}
 	std::vector <ofRectangle> rects;
 	ofRectangle allMonitorsRect { 0, 0, 0, 0 };
-	ofRectangle rectWindow;
-	bool changed = true;
+//	ofRectangle rectWindow;
+//	bool changed = true;
 	GLFWmonitor** monitors;
 
 	ofRectangle getRectMonitorForScreenRect(const ofRectangle & rect) {

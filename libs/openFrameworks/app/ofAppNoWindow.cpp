@@ -291,7 +291,7 @@ glm::ivec2 ofAppNoWindow::getWindowSize(){
 
 //----------------------------------------------------------
 glm::ivec2 ofAppNoWindow::getScreenSize(){
-	return {width, height};
+	return { width, height };
 }
 
 
