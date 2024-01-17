@@ -381,19 +381,23 @@ void ofAppGLFWWindow::update() {
 	if (bWindowNeedsShowing && windowP) {
 		
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-		[cocoaWindow setLevel:NSScreenSaverWindowLevel + 1];
+//		[cocoaWindow setLevel:NSScreenSaverWindowLevel + 1];
 		[cocoaWindow orderFrontRegardless];
 		
 		cout << "FIRST" << endl;
 		glfwShowWindow(windowP);
 		bWindowNeedsShowing = false;
 		
+		cout << "FS" << endl;
+		
 		if (settings.windowMode == OF_FULLSCREEN) {
+			// Meant to trigger fullscreen forced
+			settings.windowMode = OF_WINDOWMODE_UNDEFINED;
 			setFullscreen(true);
 		} else {
 			setFullscreen(false);
 		}
-		cout << "AFTER FIRST" << endl;
+		cout << "AFTER" << endl;
 //		if (targetWindowMode == OF_FULLSCREEN) {
 //			setFullscreen(true);
 //		}
@@ -518,7 +522,8 @@ glm::ivec2 ofAppGLFWWindow::getWindowPosition() {
 
 //------------------------------------------------------------
 glm::ivec2 ofAppGLFWWindow::getScreenSize() {
-	// FIXME: is this correct? if screen = monitor and screensize is actual monitor from the window it is.
+	// FIXME: if screen = monitor and screensize is actual monitor from the window it is correct.
+	windowRect = getWindowRect();
 	return allMonitors.getRectMonitorForScreenRect(windowRect).getSize();
 }
 
@@ -539,8 +544,7 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-//	cout << "setWindowRect " << rect << endl;
-
+	cout << "setWindowRect " << rect << endl;
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 
@@ -1304,19 +1308,6 @@ void ofAppGLFWWindow::char_cb(GLFWwindow * windowP_, uint32_t key) {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
-//	if (instance->targetWindowMode != OF_WINDOW) {
-//		instance->windowRect.x = x;
-//		instance->windowRect.y = y;
-//	}
-
-	x *= instance->pixelScreenCoordScale;
-	y *= instance->pixelScreenCoordScale;
-	instance->events().notifyWindowMoved(x,y);
-}
-
-//------------------------------------------------------------
 void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->draw();
@@ -1329,9 +1320,18 @@ void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
 }
 
 //------------------------------------------------------------
+void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	if (instance->settings.windowMode == OF_WINDOW) {
+//		instance->windowRect.x = x;
+//		instance->windowRect.y = y;
+//	}
+	instance->events().notifyWindowMoved(x, y);
+}
+//------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
-//	if (instance->targetWindowMode == OF_WINDOW) {
+//	if (instance->settings.windowMode == OF_WINDOW) {
 //		instance->windowRect.width = w;
 //		instance->windowRect.height = h;
 //	}

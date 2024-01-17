@@ -14,7 +14,9 @@ enum ofWindowMode{
 	/// \brief A fullscreen application window.
 	OF_FULLSCREEN 	= 1,
 	/// \brief A fullscreen application window with a custom width and height.
-	OF_GAME_MODE	= 2
+	OF_GAME_MODE	= 2,
+	
+	OF_WINDOWMODE_UNDEFINED	= 3
 };
 
 
@@ -121,9 +123,9 @@ public:
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
-	
+	std::vector <int> fullscreenDisplays;
+
 protected:
-//	ofRectangle rect { 0, 0, 1024, 768 };
 	bool sizeSet { false };
 	bool positionSet { false };
 	int width { 1024 };
