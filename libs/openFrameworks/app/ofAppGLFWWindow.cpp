@@ -140,7 +140,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		ofLogError() << "calling window->setup() after ofCreateWindow() is not necessary and won't do anything";
 		return;
 	}
-	
+
 	settings = _settings;
 
 	if (!glfwInit()) {
@@ -202,121 +202,44 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		sharedContext = (GLFWwindow *)settings.shareContextWith->getWindowContext();
 	}
 
-	
-	
+
+
+	// TODO: move up, outside windowmode
+	// HACK: asdf
+	windowRect.width = settings.getWidth();
+	windowRect.height = settings.getHeight();
+	GLFWmonitor *monitor = nullptr;
+
 	if (settings.windowMode == OF_GAME_MODE) {
-		int count;
-		GLFWmonitor ** monitors = glfwGetMonitors(&count);
-		if (settings.monitor >= count) {
-			ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << count;
-		}
-		settings.monitor = ofClamp(settings.monitor, 0, count - 1);
-		if (settings.isSizeSet()) {
-			windowRect.width = settings.getWidth();
-			windowRect.height = settings.getHeight();
+		int monitorIndex = 0;
+		// Check to see if desired monitor is connected.
+		if (allMonitors.rects.size() >= settings.monitor) {
+			int monitorIndex = settings.monitor;
 		} else {
-			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-			windowRect.width = mode->width;
-			windowRect.height = mode->height;
+			ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
 		}
-		if (count > settings.monitor) {
-			// MARK: - WINDOW
-			windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitors[settings.monitor], sharedContext);
-		} else {
-			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
-			return;
-		}
-	} else {
-		
-		// TODO: move up, outside windowmode
-		// HACK: asdf
-		windowRect.width = settings.getWidth();
-		windowRect.height = settings.getHeight();
-		GLFWmonitor *monitor = nullptr;
-		
-		if (settings.windowMode == OF_FULLSCREEN) {
-			int monitorIndex = 0;
-			// Check to see if desired monitor is connected.
-			if (allMonitors.rects.size() >= settings.monitor) {
-				int monitorIndex = settings.monitor;
-			} else {
-				ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
-			}
-			windowRect = allMonitors.rects[monitorIndex];
-			monitor = allMonitors.monitors[monitorIndex];
-		}
-		// MARK: - WINDOW
-		windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
+		windowRect = allMonitors.rects[monitorIndex];
+		monitor = allMonitors.monitors[monitorIndex];
+	}
 
-		if (!windowP) {
-			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
-			return;
-		}
-	
-#ifdef WREMBLES
-		if (settings.windowMode == OF_FULLSCREEN) {
-			int count = 0;
-			auto monitors = glfwGetMonitors(&count);
-			if (settings.monitor >= count) {
-				ofLogError("ofAppGLFWWindow") << "requested fullscreen monitor is: " << settings.monitor << " monitor count is: " << count;
-			}
-			settings.monitor = ofClamp(settings.monitor, 0, count - 1);
+	cout << "GLFW Will create" << endl;
+	// MARK: - WINDOW
+	windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
+	cout << "GLFW created" << endl;
 
-			auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-			currentW = mode->width;
-			currentH = mode->height;
-			if (!settings.isPositionSet()) {
-				if (count > 0) {
-					int x = 0, y = 0;
-					glfwGetMonitorPos(monitors[settings.monitor], &x, &y);
-					settings.setPosition(glm::vec2(x, y));
-					setWindowPosition(settings.getPosition().x, settings.getPosition().y);
-					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
-#ifdef TARGET_OSX
-					//for OS X we need to set this first as the window size affects the window positon
-					settings.setSize(mode->width, mode->height);
-#endif
-					setWindowPosition(settings.getPosition().x, settings.getPosition().y);
-					currentW = mode->width;
-					currentH = mode->height;
-				}
-			} else {
-				setWindowPosition(settings.getPosition().x, settings.getPosition().y);
-#ifdef TARGET_OSX
-				auto size = getScreenSize();
-				settings.setSize(size.x, size.y);
-#endif
-				currentW = settings.getWidth();
-				currentH = settings.getHeight();
-				for (int i = 0; i < count; i++) {
-					int x = 0, y = 0;
-					glfwGetMonitorPos(monitors[i], &x, &y);
-					auto mode = glfwGetVideoMode(monitors[i]);
-					int w = mode->width;
-					int h = mode->height;
-					ofRectangle rect(x - 1, y - 1, w + 1, h + 1);
-					if (rect.inside(settings.getPosition())) {
-						currentW = mode->width;
-						currentH = mode->height;
-						break;
-					}
-				}
-			}
-			targetWindowMode = settings.windowMode;
-			settings.windowMode = OF_WINDOW;
-			if (settings.maximized) {
-				glfwMaximizeWindow(windowP);
-			}
-		} else {
-			if (settings.isPositionSet()) {
-				setWindowPosition(settings.getPosition().x, settings.getPosition().y);
-			}
-			glfwGetWindowSize(windowP, &currentW, &currentH);
-		}
-		
-#endif //WREMBLES
-		
-		
+	if (!windowP) {
+		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
+		return;
+	}
+
+	if (settings.windowMode == OF_FULLSCREEN) {
+		setFullscreen(true);
+	}
+
+	// MARK: -
+
+	if (settings.windowMode != OF_GAME_MODE) {
+
 #ifdef TARGET_LINUX
 		if (!iconSet) {
 			ofPixels iconPixels;
@@ -333,22 +256,17 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		if (settings.iconified) {
 			iconify(true);
 		}
+
+		if (settings.maximized) {
+			glfwMaximizeWindow(windowP);
+		}
 	}
 
 	//don't try and show a window if its been requsted to be hidden
 	bWindowNeedsShowing = settings.visible;
 
 	glfwSetWindowUserPointer(windowP, this);
-
-//	windowW = settings.getWidth();
-//	windowH = settings.getHeight();
-
 	glfwMakeContextCurrent(windowP);
-
-	int framebufferW, framebufferH, tmpWindowW, tmpWindowH;
-	glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
-	glfwGetWindowSize(windowP, &tmpWindowW, &tmpWindowH);
-
 
 
 #ifndef TARGET_OPENGLES
@@ -384,7 +302,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	glfwSetKeyCallback(windowP, keyboard_cb);
 	glfwSetCharCallback(windowP, char_cb);
 	glfwSetWindowSizeCallback(windowP, resize_cb);
-  glfwSetWindowPosCallback(windowP,position_cb);
+	glfwSetWindowPosCallback(windowP,position_cb);
 	glfwSetFramebufferSizeCallback(windowP, framebuffer_size_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
@@ -448,7 +366,7 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer() {
 //--------------------------------------------
 void ofAppGLFWWindow::update() {
 	events().notifyUpdate();
-	
+
 	//show the window right before the first draw call.
 	if (bWindowNeedsShowing && windowP) {
 		glfwShowWindow(windowP);
@@ -546,9 +464,9 @@ void ofAppGLFWWindow::setWindowTitle(const std::string & title) {
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getPixelScreenCoordScale() {
-	
+
 	// TODO:
-	// discover which monitor this window 
+	// discover which monitor this window
 	return pixelScreenCoordScale;
 }
 
@@ -687,7 +605,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 			setWindowRect(allMonitors.getRectMonitorForScreenRect(windowRect));
 		}
 	}
-	
+
 	else if (targetWindowMode == OF_WINDOW) {
 		setWindowRect(windowRect);
 		setWindowTitle(settings.title);
@@ -705,7 +623,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 
 	//we only want to change window mode if the requested window is different to the current one.
 	if (targetWindowMode == settings.windowMode) return;
-	
+
 #ifdef TARGET_OSX
 	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 	// This one is to correct if somebody entered fullscreen with green button and is disabling fullscreen
@@ -727,13 +645,13 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 		[cocoaWindow setStyleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 		[cocoaWindow setHasShadow:YES];
 	}
-	
+
 	setFSTarget(targetWindowMode);
 
 	//----------------------------------------------------
 	//make sure the window is getting the mouse/key events
 	[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
-	
+
 #elif defined(TARGET_WIN32)
 
 	HWND hwnd = glfwGetWin32Window(windowP);
@@ -745,7 +663,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 
 		// TODO: Here discover windows dimensions
 		// set window position, shape here.
-	
+
 //		SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
 
 	} else if (targetWindowMode == OF_WINDOW) {
@@ -763,10 +681,10 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 //		setWindowPosition(windowRect.x - 2, windowRect.y - 2);
 //		setWindowShape(windowRect.width + 4, windowRect.height + 4);
 	}
-	
+
 	SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
 
-	
+
 #elif defined(TARGET_LINUX)
 	#include <X11/Xatom.h>
 
@@ -1394,15 +1312,15 @@ void ofAppGLFWWindow::char_cb(GLFWwindow * windowP_, uint32_t key) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
-    ofAppGLFWWindow * instance = setCurrent(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 //	if (instance->targetWindowMode != OF_WINDOW) {
 //		instance->windowRect.x = x;
 //		instance->windowRect.y = y;
 //	}
 
 	x *= instance->pixelScreenCoordScale;
-    y *= instance->pixelScreenCoordScale;
-    instance->events().notifyWindowMoved(x,y);
+	y *= instance->pixelScreenCoordScale;
+	instance->events().notifyWindowMoved(x,y);
 }
 
 //------------------------------------------------------------
