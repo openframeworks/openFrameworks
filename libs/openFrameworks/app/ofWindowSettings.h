@@ -6,6 +6,7 @@ class ofAppBaseWindow;
 #include "glm/vec2.hpp"
 #include <string>
 #include <memory>
+#include <vector>
 
 /// \brief Used to represent the available windowing modes for the application.
 enum ofWindowMode{
