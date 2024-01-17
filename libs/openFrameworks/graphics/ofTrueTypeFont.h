@@ -148,9 +148,20 @@ struct ofTrueTypeFontSettings {
 	ofTrueTypeFontDirection direction = OF_TTF_LEFT_TO_RIGHT;
 	std::vector<ofUnicode::range> ranges;
 
-	ofTrueTypeFontSettings(const of::filesystem::path & name, int size)
+	ofTrueTypeFontSettings(const of::filesystem::path & name, int size, bool _antialiased = true,
+		bool fullCharacterSet = true, bool _contours = false, float _simplifyAmt = 0.0f, int _dpi = 0)
 		: fontName(name)
-		, fontSize(size) { }
+		, fontSize(size)
+		, antialiased(_antialiased)
+		, contours(_contours)
+		, simplifyAmt(_simplifyAmt)
+		, dpi(_dpi) {
+		if (fullCharacterSet) {
+			ranges = { ofUnicode::Latin1Supplement };
+		} else {
+			ranges = { ofUnicode::Latin };
+		}
+	}
 
 	void addRanges(std::initializer_list<ofUnicode::range> alphabet) {
 		ranges.insert(ranges.end(), alphabet);
@@ -175,6 +186,12 @@ public:
 
 	ofTrueTypeFont(ofTrueTypeFont && mom);
 	ofTrueTypeFont & operator=(ofTrueTypeFont && mom);
+
+	ofTrueTypeFont(const of::filesystem::path & filename, int fontsize, bool antiAliased = true,
+		bool fullCharacterSet = true, bool makeContours = false, float simplifyAmt = 0.0f, int dpi = 0)
+		: ofTrueTypeFont() {
+		load(filename, fontsize, antiAliased, fullCharacterSet, makeContours, simplifyAmt, dpi);
+	}
 
 	/// \name Load Font
 	/// \{
@@ -338,7 +355,7 @@ public:
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
 	/// \returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(const std::string & s, float x, float y, bool vflip = true) const;
+	ofRectangle getStringBoundingBox(const std::string & s, float x = 0, float y = 0, bool vflip = true) const;
 
 	/// \}
 	/// \name Drawing
@@ -349,6 +366,9 @@ public:
 	/// \param x X position of string
 	/// \param y Y position of string
 	void drawString(const std::string & s, float x, float y) const;
+	void drawString(const std::string & s, glm::vec2 pos) const {
+		drawString(s, pos.x, pos.y);
+	}
 
 	/// \brief Draws the string as if it was geometrical shapes.
 	///
@@ -357,6 +377,9 @@ public:
 	/// \param x X position of shapes
 	/// \param y Y position of shapes
 	void drawStringAsShapes(const std::string & s, float x, float y) const;
+	void drawStringAsShapes(const std::string & s, glm::vec2 pos) const {
+		drawStringAsShapes(s, pos.x, pos.y);
+	}
 
 	ofPath getCharacterAsPoints(uint32_t character, bool vflip = true, bool filled = true) const;
 	std::vector<ofPath> getStringAsPoints(const std::string & str, bool vflip = true, bool filled = true) const;
