@@ -137,7 +137,6 @@ void ofAppGLFWWindow::setStencilBits(int stencil) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
-
 	if (windowP) {
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
@@ -152,11 +151,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		return;
 	}
 
-	updateMonitorProperties();
-	cout << "allScreensSpace " << allMonitors.allScreensSpace << endl;
-	
-	
-
+	allMonitors.update();
 	//	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
 	glfwDefaultWindowHints();
@@ -441,11 +436,6 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer() {
 //--------------------------------------------
 void ofAppGLFWWindow::update() {
 	events().notifyUpdate();
-
-	if (allMonitors.updateMonitor) {
-		updateMonitorProperties();
-		allMonitors.updateMonitor = false;
-	}
 	
 	//show the window right before the first draw call.
 	if (bWindowNeedsShowing && windowP) {
@@ -853,7 +843,11 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 	
 	if (targetWindowMode == OF_FULLSCREEN) {
-		setWindowRect(allMonitors.getRectMonitorForScreenRect(windowRect));
+		if (settings.multiMonitorFullScreen) {
+			setWindowRect(allMonitors.getRectForAllMonitors());
+		} else {
+			setWindowRect(allMonitors.getRectMonitorForScreenRect(windowRect));
+		}
 	}
 	
 	else if (targetWindowMode == OF_WINDOW) {
@@ -1472,7 +1466,7 @@ void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
-	allMonitors.updateMonitor = true;
+	allMonitors.update();
 }
 
 //------------------------------------------------------------
@@ -1654,23 +1648,3 @@ HWND ofAppGLFWWindow::getWin32Window() {
 }
 
 #endif
-
-
-
-void ofAppGLFWWindow::updateMonitorProperties() {
-	allMonitors.rects.clear();
-	allMonitors.allScreensSpace = { 0,0,0,0 }; // reset ofRectangle;
-
-	int numberOfMonitors;
-//	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
-	allMonitors.monitors = glfwGetMonitors(&numberOfMonitors);
-
-	for (int i=0; i < numberOfMonitors; i++){
-		glm::ivec2 pos;
-		glfwGetMonitorPos(allMonitors.monitors[i], &pos.x, &pos.y);
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(allMonitors.monitors[i]);
-		ofRectangle rect = ofRectangle( pos.x, pos.y, desktopMode->width, desktopMode->height );
-		allMonitors.rects.emplace_back(rect);
-		allMonitors.allScreensSpace = allMonitors.allScreensSpace.getUnion(rect);
-	}
-}

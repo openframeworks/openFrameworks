@@ -199,38 +199,29 @@ private:
 #ifdef TARGET_WIN32
 	LONG lExStyle, lStyle;
 #endif // TARGET_WIN32
-	
-	
-	void updateMonitorProperties();
 };
+
+
+
+
 
 
 using std::cout;
 using std::endl;
+
+// TEMPORARY
+#include "GLFW/glfw3.h"
+
 
 static struct ofMonitors {
 public:
 	ofMonitors() {}
 	~ofMonitors() {}
 	std::vector <ofRectangle> rects;
-	ofRectangle allScreensSpace;
+	ofRectangle allMonitorsRect { 0, 0, 0, 0 };
 	ofRectangle rectWindow;
 	bool changed = true;
 	GLFWmonitor** monitors;
-	bool updateMonitor = true;
-	
-	int getWindowMonitorIndex(const ofRectangle & rect) {
-//		cout << "ini rect : " << rect << endl;
-		for (unsigned int a=0; a<rects.size(); a++) {
-//			cout << "rect " << a << rects[a] << endl;
-//			cout << rects[a].inside(rect) << endl;
-			if (rects[a].inside(rect)) {
-				return a;
-				break;
-			}
-		}
-		return -1;
-	}
 
 	ofRectangle getRectMonitorForScreenRect(const ofRectangle & rect) {
 		for (unsigned int a=0; a<rects.size(); a++) {
@@ -241,13 +232,31 @@ public:
 		}
 		return { 0, 0, 0, 0 };
 	}
+	
+	ofRectangle getRectForAllMonitors() {
+//		cout << "getRectForAllMonitors " << allMonitorsRect << endl;
+		return allMonitorsRect;
+	}
+	
+	void update() {
+		rects.clear();
+		allMonitorsRect = { 0, 0, 0, 0 }; // reset ofRectangle;
+
+		int numberOfMonitors;
+		monitors = glfwGetMonitors(&numberOfMonitors);
+
+		for (int i=0; i < numberOfMonitors; i++){
+			glm::ivec2 pos;
+			glfwGetMonitorPos(monitors[i], &pos.x, &pos.y);
+			const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+			ofRectangle rect = ofRectangle( pos.x, pos.y, desktopMode->width, desktopMode->height );
+			rects.emplace_back(rect);
+			allMonitorsRect = allMonitorsRect.getUnion(rect);
+		}
+	}
 
 } allMonitors;
 
 // TODO: Remove.
-
-//static bool updateMonitor = true;
 //static bool updatePixelScreenCoordScale = true;
-
-
 //#endif
