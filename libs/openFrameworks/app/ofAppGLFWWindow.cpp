@@ -206,6 +206,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	// TODO: move up, outside windowmode
 	// HACK: asdf
+	windowRect.setPosition(settings.getPosition().x, settings.getPosition().y);
 	windowRect.width = settings.getWidth();
 	windowRect.height = settings.getHeight();
 	GLFWmonitor *monitor = nullptr;
@@ -224,9 +225,12 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	cout << "GLFW Will create" << endl;
 	// MARK: - WINDOW
+	cout << "windowRect " << windowRect << endl;
+	
 	windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
 	cout << "GLFW created" << endl;
 
+	setWindowRect(windowRect);
 	if (!windowP) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		return;
@@ -494,46 +498,9 @@ glm::ivec2 ofAppGLFWWindow::getWindowPosition() {
 }
 
 //------------------------------------------------------------
-int ofAppGLFWWindow::getCurrentMonitor() {
-	int numberOfMonitors;
-	GLFWmonitor ** monitors = glfwGetMonitors(&numberOfMonitors);
-
-	int xW;
-	int yW;
-	glfwGetWindowPos(windowP, &xW, &yW);
-
-	for (int iC = 0; iC < numberOfMonitors; iC++) {
-		int xM;
-		int yM;
-		glfwGetMonitorPos(monitors[iC], &xM, &yM);
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[iC]);
-		ofRectangle monitorRect(xM, yM, desktopMode->width, desktopMode->height);
-		bool bPointMatch = xW >= monitorRect.getMinX() && yW >= monitorRect.getMinY() && xW < monitorRect.getMaxX() && yW < monitorRect.getMaxY();
-		//		if (monitorRect.inside(xW, yW)){
-		if (bPointMatch) {
-			return iC;
-			break;
-		}
-	}
-	return 0;
-}
-
-//------------------------------------------------------------
 glm::ivec2 ofAppGLFWWindow::getScreenSize() {
-	int count;
-	GLFWmonitor ** monitors = glfwGetMonitors(&count);
-	if (count > 0) {
-		int currentMonitor = getCurrentMonitor();
-		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[currentMonitor]);
-		if (desktopMode) {
-			if (orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180) {
-				return { desktopMode->width * pixelScreenCoordScale, desktopMode->height * pixelScreenCoordScale };
-			} else {
-				return { desktopMode->height * pixelScreenCoordScale, desktopMode->width * pixelScreenCoordScale };
-			}
-		}
-	}
-	return glm::vec2();
+	// FIXME: is this correct? if screen = monitor and screensize is actual monitor from the window it is.
+	return allMonitors.getRectMonitorForScreenRect(windowRect).getSize();
 }
 
 //------------------------------------------------------------
@@ -745,15 +712,21 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 			xev.xclient.data.l[4] = 1;
 			XSendEvent(display, RootWindow(display, DefaultScreen(display)),
 				False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-			currentW = maxx - minx;
-			currentH = maxy - minx;
+			
+			// FIXME: review
+			windowRect.width = maxx - minx;
+			windowRect.height = maxy - minx;
+//			currentW = maxx - minx;
+//			currentH = maxy - minx;
 		} else {
 			auto monitor = glfwGetWindowMonitor(windowP);
 			if (monitor) {
 				auto videoMode = glfwGetVideoMode(monitor);
 				if (videoMode) {
-					currentW = videoMode->width;
-					currentH = videoMode->height;
+					windowRect.width = videoMode->width;
+					windowRect.height = videoMode->height;
+//					currentW = videoMode->width;
+//					currentH = videoMode->height;
 				}
 			}
 		}
@@ -1331,6 +1304,7 @@ void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
+	cout << "monitor_cb!" << endl;
 	allMonitors.update();
 }
 

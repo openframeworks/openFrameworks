@@ -183,11 +183,7 @@ private:
 	int nFramesSinceWindowResized;
 	bool bWindowNeedsShowing;
 
-
 	GLFWwindow * windowP;
-
-	int getCurrentMonitor();
-
 	ofBaseApp * ofAppPtr;
 
 	bool iconSet;
@@ -223,7 +219,7 @@ public:
 
 	ofRectangle getRectMonitorForScreenRect(const ofRectangle & rect) {
 		for (unsigned int a=0; a<rects.size(); a++) {
-			if (rects[a].inside(rect)) {
+			if (rects[a].inside(rect.getCenter())) {
 				return rects[a];
 				break;
 			}
