@@ -380,9 +380,12 @@ void ofAppGLFWWindow::update() {
 	//show the window right before the first draw call.
 	if (bWindowNeedsShowing && windowP) {
 		
+		// not working.
+#ifdef TARGET_OSX
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 //		[cocoaWindow setLevel:NSScreenSaverWindowLevel + 1];
 		[cocoaWindow orderFrontRegardless];
+#endif
 		
 		cout << "FIRST" << endl;
 		glfwShowWindow(windowP);
