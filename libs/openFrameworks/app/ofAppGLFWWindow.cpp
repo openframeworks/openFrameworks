@@ -397,6 +397,11 @@ void ofAppGLFWWindow::update() {
 		
 		cout << "FIRST" << endl;
 		glfwShowWindow(windowP);
+		
+		
+		glm::vec2 contentScale;
+		glfwGetWindowContentScale(windowP, &contentScale.x, &contentScale.y);
+		cout << "glfwGetWindowContentScale " << contentScale << endl;
 		bWindowNeedsShowing = false;
 		
 		cout << "FS" << endl;
