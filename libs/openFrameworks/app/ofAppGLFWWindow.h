@@ -184,9 +184,6 @@ private:
 	int nFramesSinceWindowResized;
 	bool bWindowNeedsShowing;
 
-#ifdef TARGET_RASPBERRY_PI
-	bool needsResizeCheck = false; /// Just for RPI at this point
-#endif
 
 	GLFWwindow * windowP;
 
@@ -199,6 +196,8 @@ private:
 #ifdef TARGET_WIN32
 	LONG lExStyle, lStyle;
 #endif // TARGET_WIN32
+	
+	void setFSTarget(ofWindowMode targetWindowMode);
 };
 
 

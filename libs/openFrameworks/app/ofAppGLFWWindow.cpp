@@ -446,20 +446,6 @@ void ofAppGLFWWindow::update() {
 		}
 	}
 
-#ifdef TARGET_RASPBERRY_PI
-	//needed for rpi. as good values don't come into resize_cb when coming out of fullscreen
-	if (needsResizeCheck && windowP) {
-		int winW, winH;
-		glfwGetWindowSize(windowP, &winW, &winH);
-
-		//wait until the window size is the size it was before going fullscreen
-		//then stop the resize check
-		if (winW == windowRect.getWidth() && winH == windowRect.getHeight()) {
-			resize_cb(windowP, currentW, currentH);
-			needsResizeCheck = false;
-		}
-	}
-#endif
 }
 
 //--------------------------------------------
@@ -686,6 +672,25 @@ void ofAppGLFWWindow::disableSetupScreen() {
 };
 
 //------------------------------------------------------------
+void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
+	if (targetWindowMode == OF_FULLSCREEN) {
+		// save window shape before going fullscreen
+		windowRect = getWindowRect();
+
+		if (settings.multiMonitorFullScreen) {
+			setWindowRect(allMonitors.getRectForAllMonitors());
+		} else {
+			setWindowRect(allMonitors.getRectMonitorForScreenRect(windowRect));
+		}
+	}
+	
+	else if (targetWindowMode == OF_WINDOW) {
+		setWindowRect(windowRect);
+		setWindowTitle(settings.title);
+	}
+}
+
+//------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 //	cout << "setFullScreen " << fullscreen << endl;
 	if (fullscreen) {
@@ -697,12 +702,68 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	//we only want to change window mode if the requested window is different to the current one.
 	if (targetWindowMode == settings.windowMode) return;
 	
-	if (targetWindowMode == OF_FULLSCREEN) {
-		// save window shape before going fullscreen
-		windowRect = getWindowRect();
+#ifdef TARGET_OSX
+	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+	// This one is to correct if somebody entered fullscreen with green button and is disabling fullscreen
+	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+		if (targetWindowMode == OF_WINDOW) {
+			[cocoaWindow toggleFullScreen:nil];
+			settings.windowMode = OF_WINDOW;
+		} else {
+			settings.windowMode = OF_FULLSCREEN;
+		}
 	}
 
-#ifdef TARGET_LINUX
+	if (targetWindowMode == OF_FULLSCREEN) {
+		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
+		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
+		[cocoaWindow setHasShadow:NO];
+	} else {
+		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
+		[cocoaWindow setStyleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
+		[cocoaWindow setHasShadow:YES];
+	}
+	
+	setFSTarget(targetWindowMode);
+
+	//----------------------------------------------------
+	//make sure the window is getting the mouse/key events
+	[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
+	
+#elif defined(TARGET_WIN32)
+
+	HWND hwnd = glfwGetWin32Window(windowP);
+
+	if (targetWindowMode == OF_FULLSCREEN) {
+		SetWindowLong(hwnd, GWL_EXSTYLE, 0);
+		SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+		// TODO: Here discover windows dimensions
+		// set window position, shape here.
+	
+//		SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
+
+	} else if (targetWindowMode == OF_WINDOW) {
+
+		DWORD EX_STYLE = WS_EX_OVERLAPPEDWINDOW;
+		DWORD STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_SIZEBOX;
+
+		ChangeDisplaySettings(0, 0);
+		SetWindowLong(hwnd, GWL_EXSTYLE, EX_STYLE);
+		SetWindowLong(hwnd, GWL_STYLE, STYLE);
+		SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+		//not sure why this is - but if we don't do this the window shrinks by 4 pixels in x and y
+		//should look for a better fix.
+//		setWindowPosition(windowRect.x - 2, windowRect.y - 2);
+//		setWindowShape(windowRect.width + 4, windowRect.height + 4);
+	}
+	
+	SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
+
+	
+#elif defined(TARGET_LINUX)
 	#include <X11/Xatom.h>
 
 	Window nativeWin = glfwGetX11Window(windowP);
@@ -809,127 +870,9 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 
 	XFlush(display);
 
-	#ifdef TARGET_RASPBERRY_PI
-	if (!fullscreen) {
-		needsResizeCheck = true;
-	}
-	#endif
-
 	//	setWindowShape(windowW, windowH);
 
 
-	
-#elif defined(TARGET_OSX)
-
-	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
-	// This one is to correct if somebody entered fullscreen with green button and is disabling fullscreen
-	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
-		if (targetWindowMode == OF_WINDOW) {
-			[cocoaWindow toggleFullScreen:nil];
-			settings.windowMode = OF_WINDOW;
-		} else {
-			settings.windowMode = OF_FULLSCREEN;
-		}
-	}
-
-	if (targetWindowMode == OF_FULLSCREEN) {
-		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
-		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
-		[cocoaWindow setHasShadow:NO];
-	} else {
-		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
-		[cocoaWindow setStyleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
-		[cocoaWindow setHasShadow:YES];
-	}
-	
-	if (targetWindowMode == OF_FULLSCREEN) {
-		if (settings.multiMonitorFullScreen) {
-			setWindowRect(allMonitors.getRectForAllMonitors());
-		} else {
-			setWindowRect(allMonitors.getRectMonitorForScreenRect(windowRect));
-		}
-	}
-	
-	else if (targetWindowMode == OF_WINDOW) {
-		setWindowRect(windowRect);
-		setWindowTitle(settings.title);
-	}
-
-	//----------------------------------------------------
-	//make sure the window is getting the mouse/key events
-	[cocoaWindow makeFirstResponder:cocoaWindow.contentView];
-
-#elif defined(TARGET_WIN32)
-	if (targetWindowMode == OF_FULLSCREEN) {
-
-		//----------------------------------------------------
-		HWND hwnd = glfwGetWin32Window(windowP);
-
-		SetWindowLong(hwnd, GWL_EXSTYLE, 0);
-		SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-		float fullscreenW = getScreenSize().x;
-		float fullscreenH = getScreenSize().y;
-
-		int xpos = 0;
-		int ypos = 0;
-
-		if (settings.multiMonitorFullScreen) {
-
-			int minX = 0;
-			int maxX = 0;
-			int minY = 0;
-			int maxY = 0;
-			int monitorCount;
-			GLFWmonitor ** monitors = glfwGetMonitors(&monitorCount);
-			int tempXPos = 0;
-			int tempYPos = 0;
-			//lets find the total width of all the monitors
-			//and we'll make the window height the height of the largest monitor.
-			for (int i = 0; i < monitorCount; i++) {
-				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
-				glfwGetMonitorPos(monitors[i], &tempXPos, &tempYPos);
-				minX = std::min(tempXPos, minX);
-				minY = std::min(tempYPos, minY);
-				maxX = std::max(maxX, tempXPos + desktopMode->width);
-				maxY = std::max(maxY, tempYPos + desktopMode->height);
-
-				xpos = std::min(xpos, tempXPos);
-				ypos = std::min(ypos, tempYPos);
-			}
-
-			fullscreenW = maxX - minX;
-			fullscreenH = maxY - minY;
-		} else {
-
-			int monitorCount;
-			GLFWmonitor ** monitors = glfwGetMonitors(&monitorCount);
-			int currentMonitor = getCurrentMonitor();
-			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);
-		}
-
-		SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
-		currentW = fullscreenW;
-		currentH = fullscreenH;
-
-	} else if (targetWindowMode == OF_WINDOW) {
-
-		HWND hwnd = glfwGetWin32Window(windowP);
-
-		DWORD EX_STYLE = WS_EX_OVERLAPPEDWINDOW;
-		DWORD STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_SIZEBOX;
-
-		ChangeDisplaySettings(0, 0);
-		SetWindowLong(hwnd, GWL_EXSTYLE, EX_STYLE);
-		SetWindowLong(hwnd, GWL_STYLE, STYLE);
-		SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-
-		//not sure why this is - but if we don't do this the window shrinks by 4 pixels in x and y
-		//should look for a better fix.
-		setWindowPosition(windowRect.x - 2, windowRect.y - 2);
-		setWindowShape(windowRect.width + 4, windowRect.height + 4);
-	}
 #endif
 
 	settings.windowMode = targetWindowMode;
