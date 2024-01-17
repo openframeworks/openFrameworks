@@ -46,6 +46,11 @@ public:
 	std::string title;
 	ofWindowMode windowMode = OF_WINDOW;
 
+//	void setRect(const ofRectangle & rect) {
+//		setPosition(rect.getPosition());
+//		setSize(rect.width, rect.height);
+//	}
+	
 	void setPosition(const glm::ivec2 & position) {
 		this->position = position;
 		this->positionSet = true;
@@ -118,11 +123,12 @@ public:
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
 	
 protected:
+//	ofRectangle rect { 0, 0, 1024, 768 };
+	bool sizeSet { false };
+	bool positionSet { false };
 	int width { 1024 };
 	int height { 768 };
-	bool sizeSet { false };
 	glm::ivec2 position { 0, 0 };
-	bool positionSet { false };
 };
 
 typedef ofWindowSettings ofGLWindowSettings;

@@ -655,7 +655,7 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-	cout << "setWindowRect " << rect << endl;
+//	cout << "setWindowRect " << rect << endl;
 
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
@@ -697,6 +697,7 @@ void ofAppGLFWWindow::disableSetupScreen() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
+//	cout << "setFullScreen " << fullscreen << endl;
 	if (fullscreen) {
 		targetWindowMode = OF_FULLSCREEN;
 	} else {
@@ -831,9 +832,11 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 #elif defined(TARGET_OSX)
 
 	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+	// This one is to correct if somebody entered fullscreen with green button and is disabling fullscreen
 	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
 		if (targetWindowMode == OF_WINDOW) {
 			[cocoaWindow toggleFullScreen:nil];
+			settings.windowMode = OF_WINDOW;
 		} else {
 			settings.windowMode = OF_FULLSCREEN;
 		}
@@ -850,29 +853,10 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	}
 	
 	if (targetWindowMode == OF_FULLSCREEN) {
-//		cout << "xx " <<  &windowP << " xx" << endl;
-		GLFWmonitor* monitor = glfwGetWindowMonitor(windowP);
-		if (!monitor) {
-			monitor = glfwGetPrimaryMonitor();
-		}
-		if (monitor) {
-			const GLFWvidmode * desktopMode = glfwGetVideoMode(monitor);
-			glm::ivec2 pos;
-			glfwGetMonitorPos(monitor, &pos.x, &pos.y);
-//			cout << "monitor pos " << pos << endl;
-			
-			ofRectangle fsRect { (float)pos.x, (float)pos.y, (float)desktopMode->width, (float)desktopMode->height };
-			cout << "fsRect " << fsRect << endl;
-			// FIXME: TODO: Get rectangle for multiple windows.
-			//		if (settings.multiMonitorFullScreen && monitorCount > 1) {
-			////			fsRect =
-			//		}
-			setWindowRect(fsRect);
-		}
+		setWindowRect(allMonitors.getRectMonitorForScreenRect(windowRect));
 	}
 	
 	else if (targetWindowMode == OF_WINDOW) {
-		cout << "OF_WINDOW, windowRect = " << windowRect << endl;
 		setWindowRect(windowRect);
 		setWindowTitle(settings.title);
 	}
@@ -1470,8 +1454,12 @@ void ofAppGLFWWindow::char_cb(GLFWwindow * windowP_, uint32_t key) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
     ofAppGLFWWindow * instance = setCurrent(windowP_);
-    
-    x *= instance->pixelScreenCoordScale;
+//	if (instance->targetWindowMode != OF_WINDOW) {
+//		instance->windowRect.x = x;
+//		instance->windowRect.y = y;
+//	}
+
+	x *= instance->pixelScreenCoordScale;
     y *= instance->pixelScreenCoordScale;
     instance->events().notifyWindowMoved(x,y);
 }
@@ -1489,35 +1477,26 @@ void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
-	
-	glm::ivec2 windowSize;
-	glfwGetWindowSize(windowP_, &windowSize.x, &windowSize.y);
-//	cout << "resize_cb a " << w << " : " << h << endl;
-//	cout << "resize_cb b " << windowSize << endl;
-
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
-
+//	if (instance->targetWindowMode == OF_WINDOW) {
+//		instance->windowRect.width = w;
+//		instance->windowRect.height = h;
+//	}
 	// Detect if the window is running in a retina mode
-
-	int framebufferW, framebufferH; // <- physical pixel extents
-	glfwGetFramebufferSize(windowP_, &framebufferW, &framebufferH);
-
-	
-
 
 
 	// Find scale factor needed to transform from screen coordinates
 	// to physical pixel coordinates
-	instance->pixelScreenCoordScale = (float)framebufferW / (float)windowSize.x;
+//	instance->pixelScreenCoordScale = (float)framebufferW / (float)windowSize.x;
 
-	if (instance->settings.windowMode == OF_WINDOW) {
-		instance->windowW = framebufferW;
-		instance->windowH = framebufferH;
-	}
+//	if (instance->settings.windowMode == OF_WINDOW) {
+//		instance->windowW = framebufferW;
+//		instance->windowH = framebufferH;
+//	}
 
-	instance->currentW = windowSize.x;
-	instance->currentH = windowSize.y;
-	instance->events().notifyWindowResized(framebufferW, framebufferH);
+	instance->currentW = w;
+	instance->currentH = h;
+	instance->events().notifyWindowResized(w, h);
 	instance->nFramesSinceWindowResized = 0;
 
 #if defined(TARGET_OSX)
@@ -1532,8 +1511,9 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow * windowP_, int w, int h) {
-	cout << "framebuffer_size_cb " << w << " : " << h << endl;
-	resize_cb(windowP_, w, h);
+//	cout << "framebuffer_size_cb " << w << " : " << h << endl;
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	instance->events().notifyFramebufferResized(w, h);
 }
 
 //--------------------------------------------

@@ -798,7 +798,7 @@ public:
 
 	/// \brief Gets the size of the ofRectangle as glm::vec2.
 	/// \returns The size of the rectangle.
-	glm::vec2 getSize() const { return glm::vec2 { getWidth(), getHeight() }; }
+	glm::vec2 getSize() const { return { getWidth(), getHeight() }; }
 
 	/// \brief Maps a normalized coordinate into this rectangle
 	///

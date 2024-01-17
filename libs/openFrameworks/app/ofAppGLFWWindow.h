@@ -205,6 +205,9 @@ private:
 };
 
 
+using std::cout;
+using std::endl;
+
 static struct ofMonitors {
 public:
 	ofMonitors() {}
@@ -215,6 +218,29 @@ public:
 	bool changed = true;
 	GLFWmonitor** monitors;
 	bool updateMonitor = true;
+	
+	int getWindowMonitorIndex(const ofRectangle & rect) {
+//		cout << "ini rect : " << rect << endl;
+		for (unsigned int a=0; a<rects.size(); a++) {
+//			cout << "rect " << a << rects[a] << endl;
+//			cout << rects[a].inside(rect) << endl;
+			if (rects[a].inside(rect)) {
+				return a;
+				break;
+			}
+		}
+		return -1;
+	}
+
+	ofRectangle getRectMonitorForScreenRect(const ofRectangle & rect) {
+		for (unsigned int a=0; a<rects.size(); a++) {
+			if (rects[a].inside(rect)) {
+				return rects[a];
+				break;
+			}
+		}
+		return { 0, 0, 0, 0 };
+	}
 
 } allMonitors;
 

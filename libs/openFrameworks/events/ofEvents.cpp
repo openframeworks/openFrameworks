@@ -601,6 +601,12 @@ bool ofCoreEvents::notifyWindowResized(int width, int height) {
 }
 
 //------------------------------------------
+bool ofCoreEvents::notifyFramebufferResized(int width, int height) {
+	ofResizeEventArgs resizeEventArgs(width, height);
+	return ofNotifyEvent(framebufferResized, resizeEventArgs);
+}
+
+//------------------------------------------
 bool ofCoreEvents::notifyWindowMoved(int x, int y) {
 	ofWindowPosEventArgs windowPosEventArgs(x, y);
 	return ofNotifyEvent(windowMoved, windowPosEventArgs);
