@@ -35,7 +35,7 @@
 #include "ofxiOSConstants.h"
 #include "ofEvents.h"
 
-class ofiOSWindowSettings: public ofGLESWindowSettings{
+class ofiOSWindowSettings: public ofWindowSettings{
 public:
 	ofiOSWindowSettings()
 	:enableRetina(true)
@@ -110,7 +110,7 @@ public:
 		}
 	}
 
-	ofiOSWindowSettings(const ofGLESWindowSettings & settings)
+	ofiOSWindowSettings(const ofWindowSettings & settings)
 	:ofGLESWindowSettings(settings)
 	,enableRetina(true)
 	,retinaScale(0)
