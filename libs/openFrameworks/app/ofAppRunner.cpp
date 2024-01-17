@@ -392,12 +392,17 @@ int ofGetWindowPositionY(){
 
 //--------------------------------------
 int ofGetScreenWidth(){
-	return (int)mainLoop()->getCurrentWindow()->getScreenSize().x;
+	return mainLoop()->getCurrentWindow()->getScreenSize().x;
 }
 
 //--------------------------------------
 int ofGetScreenHeight(){
-	return (int)mainLoop()->getCurrentWindow()->getScreenSize().y;
+	return mainLoop()->getCurrentWindow()->getScreenSize().y;
+}
+
+//--------------------------------------
+glm::ivec2 ofGetScreenSize() {
+	return mainLoop()->getCurrentWindow()->getScreenSize();
 }
 
 //--------------------------------------------------

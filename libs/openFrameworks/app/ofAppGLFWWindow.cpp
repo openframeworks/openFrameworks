@@ -211,34 +211,37 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	windowRect.height = settings.getHeight();
 	GLFWmonitor *monitor = nullptr;
 
+	int monitorIndex = 0;
+	// Check to see if desired monitor is connected.
+	if (allMonitors.rects.size() > settings.monitor) {
+		monitorIndex = settings.monitor;
+	} else {
+		ofLogError("ofAppGLFWWindow") << "requested monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
+	}
+	
 	if (settings.windowMode == OF_GAME_MODE) {
-		int monitorIndex = 0;
-		// Check to see if desired monitor is connected.
-		if (allMonitors.rects.size() >= settings.monitor) {
-			int monitorIndex = settings.monitor;
-		} else {
-			ofLogError("ofAppGLFWWindow") << "requested game mode monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
-		}
 		windowRect = allMonitors.rects[monitorIndex];
 		monitor = allMonitors.monitors[monitorIndex];
 	}
+	else if (settings.windowMode == OF_WINDOW) {
+		cout << "rects size " << allMonitors.rects.size() << endl;
+		cout << "window mode monitorindex = " << monitorIndex << endl;
+		cout << "settings.monitor = " << settings.monitor << endl;
+		windowRect.x += allMonitors.rects[monitorIndex].x;
+		windowRect.y += allMonitors.rects[monitorIndex].y;
+	}
 
-	cout << "GLFW Will create" << endl;
+	cout << "GLFW Will create windowRect " << windowRect << endl;
 	// MARK: - WINDOW
-	cout << "windowRect " << windowRect << endl;
-	
 	windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
-	cout << "GLFW created" << endl;
 
 	setWindowRect(windowRect);
 	if (!windowP) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		return;
 	}
+	cout << "GLFW window created OK" << endl;
 
-	if (settings.windowMode == OF_FULLSCREEN) {
-		setFullscreen(true);
-	}
 
 	// MARK: -
 
@@ -272,7 +275,8 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	glfwSetWindowUserPointer(windowP, this);
 	glfwMakeContextCurrent(windowP);
 
-
+//	windowMode = settings.windowMode;
+	
 #ifndef TARGET_OPENGLES
 	static bool inited = false;
 	if (!inited) {
@@ -327,6 +331,8 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		XNFocusWindow, getX11Window(),
 		NULL);
 #endif
+	
+	cout << "GLFW end setup" << endl;
 }
 
 #ifdef TARGET_LINUX
@@ -373,11 +379,24 @@ void ofAppGLFWWindow::update() {
 
 	//show the window right before the first draw call.
 	if (bWindowNeedsShowing && windowP) {
+		
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
+		[cocoaWindow setLevel:NSScreenSaverWindowLevel + 1];
+		[cocoaWindow orderFrontRegardless];
+		
+		cout << "FIRST" << endl;
 		glfwShowWindow(windowP);
 		bWindowNeedsShowing = false;
-		if (targetWindowMode == OF_FULLSCREEN) {
+		
+		if (settings.windowMode == OF_FULLSCREEN) {
 			setFullscreen(true);
+		} else {
+			setFullscreen(false);
 		}
+		cout << "AFTER FIRST" << endl;
+//		if (targetWindowMode == OF_FULLSCREEN) {
+//			setFullscreen(true);
+//		}
 	}
 
 }
@@ -565,6 +584,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 	if (targetWindowMode == OF_FULLSCREEN) {
 		// save window shape before going fullscreen
 		windowRect = getWindowRect();
+		cout << "saving window rect " << windowRect << endl;
 
 		if (settings.multiMonitorFullScreen) {
 			setWindowRect(allMonitors.getRectForAllMonitors());
@@ -581,7 +601,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
-//	cout << "setFullScreen " << fullscreen << endl;
+	cout << "setFullScreen " << fullscreen << endl;
 	if (fullscreen) {
 		targetWindowMode = OF_FULLSCREEN;
 	} else {

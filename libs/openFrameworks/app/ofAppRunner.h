@@ -76,10 +76,11 @@ int ofGetWindowPositionX();
 int ofGetWindowPositionY();
 int ofGetScreenWidth();
 int ofGetScreenHeight();
+glm::ivec2 ofGetScreenSize();
 int ofGetWindowMode();
-int ofGetWidth(); // ofGetWidth is correct for orientation
+int ofGetWidth();
 int ofGetHeight();
-int ofGetWindowWidth(); // ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
+int ofGetWindowWidth();
 int ofGetWindowHeight();
 
 std::string ofGetClipboardString();
