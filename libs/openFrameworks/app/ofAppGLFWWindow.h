@@ -21,6 +21,8 @@ class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
 
 
+typedef ofWindowSettings ofGLFWWindowSettings;
+
 class ofAppGLFWWindow : public ofAppBaseWindow {
 public:
 	ofAppGLFWWindow();

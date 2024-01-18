@@ -303,7 +303,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		static_cast<ofGLRenderer *>(currentRenderer.get())->setup();
 	}
 
-	setVerticalSync(true);
+//	setVerticalSync(true);
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetCursorEnterCallback(windowP, entry_cb);
