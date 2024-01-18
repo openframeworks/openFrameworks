@@ -234,7 +234,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 //	cout << "GLFW Will create windowRect " << windowRect << endl;
 	// MARK: - WINDOW
 	windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
-
+	cout << windowRect << endl;
 	setWindowRect(windowRect);
 	if (!windowP) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
@@ -430,6 +430,7 @@ void ofAppGLFWWindow::pollEvents() {
 void ofAppGLFWWindow::draw() {
 	currentRenderer->startRender();
 	if (bEnableSetupScreen) {
+//		cout << "ow currentRenderer->setupScreen()" << endl;
 		currentRenderer->setupScreen();
 	}
 
@@ -560,7 +561,7 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-//	cout << "setWindowRect " << rect << endl;
+	cout << "setWindowRect " << rect << endl;
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 

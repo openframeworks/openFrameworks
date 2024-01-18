@@ -18,6 +18,10 @@ using std::swap;
 using std::make_pair;
 using std::pair;
 
+// TEMPORARY
+using std::cout;
+using std::endl;
+
 ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)
@@ -133,6 +137,17 @@ int ofMatrixStack::getRenderSurfaceHeight() const{
 	}
 }
 
+glm::ivec2 ofMatrixStack::getRenderSurfaceSize() const {
+	if (currentRenderSurface) {
+		return currentRenderSurface->getSize();
+	} else if (currentWindow) {
+		// FIXME: FramebufferSize
+		return currentWindow->getWindowSize();
+	} else {
+		return {};
+	}
+}
+
 ofMatrixMode ofMatrixStack::getCurrentMatrixMode() const{
 	return currentMatrixMode;
 }
@@ -152,14 +167,19 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 		swap(x,y);
 	}
 
+	auto xy = getRenderSurfaceSize();
+
 	if(width < 0 || height < 0){
-		width = getRenderSurfaceWidth();
-		height = getRenderSurfaceHeight();
+		width = xy.x;
+		height = xy.y;
+//		width = getRenderSurfaceWidth();
+//		height = getRenderSurfaceHeight();
 		vflip = isVFlipped();
 	}
 
 	if (vflip){
-		y = getRenderSurfaceHeight() - (y + height);
+//		y = getRenderSurfaceHeight() - (y + height);
+		y = xy.y - (y + height);
 	}
 
 	currentViewport.set(x,y,width,height);

@@ -107,6 +107,7 @@ private:
 
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;
+	glm::ivec2 getRenderSurfaceSize() const;
 	bool doesHWOrientation() const;
 	inline void updatedRelatedMatrices();
 

@@ -3,7 +3,6 @@
 #include "ofWindowSettings.h"
 // MARK: Target
 #include "ofConstants.h"
-//class ofRectangle;
 #include "ofRectangle.h"
 
 class ofBaseApp;
@@ -28,20 +27,11 @@ public:
 //	virtual ~ofAppBaseWindow(){}
 	~ofAppBaseWindow(){}
 
-//	virtual void setup(const ofWindowSettings & settings);
-	
 	virtual void setup(const ofWindowSettings & settings)=0;
 	virtual void update()=0;
 	virtual void draw()=0;
 	virtual std::shared_ptr<ofBaseRenderer> & renderer() = 0;
 	virtual ofCoreEvents & events() = 0;
-
-//	virtual void setup(const ofWindowSettings & settings) {};
-//	virtual void update() {};
-//	virtual void draw() {};
-//	virtual std::shared_ptr<ofBaseRenderer> & renderer() =0;
-//	virtual ofCoreEvents & events() =0;
-
 
 	virtual bool getWindowShouldClose(){
 		return false;

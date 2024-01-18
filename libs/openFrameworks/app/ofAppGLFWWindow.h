@@ -286,6 +286,4 @@ public:
 	
 } allMonitors;
 
-// TODO: Remove.
-//static bool updatePixelScreenCoordScale = true;
 //#endif
