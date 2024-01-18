@@ -2,6 +2,40 @@
 
 #include "ofUtils.h"
 
+#include <chrono>
+#include <ctime>
+#include <iostream>
+#include <thread>
+
+using namespace std::chrono;
+using namespace std::chrono_literals;
+
+class ofTimerFps {
+public:
+	ofTimerFps(){
+		reset();
+	};
+
+	using space = std::chrono::duration<long long, std::micro>;
+	space interval;
+	time_point<steady_clock> wakeTime;
+	
+	// FIXME: double? float?
+	void setFps(int fps) {
+		interval = duration_cast<microseconds>(1s) / fps;
+	}
+
+	void reset() {
+		wakeTime = steady_clock::now();
+	}
+	
+	void waitNext(){
+		std::this_thread::sleep_until(wakeTime);
+		wakeTime += interval;
+	}
+};
+
+
 class ofTimer {
 public:
 	
