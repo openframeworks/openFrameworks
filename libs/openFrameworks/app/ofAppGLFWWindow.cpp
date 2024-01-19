@@ -423,6 +423,7 @@ void ofAppGLFWWindow::update() {
 
 //--------------------------------------------
 void ofAppGLFWWindow::pollEvents() {
+//	cout << "pollEvents " << ofGetFrameNum() << endl;
 	glfwPollEvents();
 }
 
@@ -465,6 +466,7 @@ void ofAppGLFWWindow::draw() {
 	}
 	if (settings.doubleBuffering) {
 		glfwSwapBuffers(windowP);
+//		std::cout << "swap buffers " << ofGetFrameNum() << std::endl;
 	} else {
 		glFlush();
 	}

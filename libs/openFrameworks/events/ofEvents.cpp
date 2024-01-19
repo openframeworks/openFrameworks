@@ -211,8 +211,9 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 	} else {
 		bFrameRateSet = true;
 		targetRate = _targetRate;
-		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
-		timer.setPeriodicEvent(nanosPerFrame);
+//		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
+//		timer.setPeriodicEvent(nanosPerFrame);
+		timer.setFps(targetRate);
 	}
 }
 
@@ -301,6 +302,7 @@ bool ofCoreEvents::notifyDraw() {
 	auto attended = ofNotifyEvent(draw, voidEventArgs);
 
 	if (bFrameRateSet) {
+//		std::cout << "timer wait " << ofGetFrameNum() << std::endl;
 		timer.waitNext();
 	}
 
