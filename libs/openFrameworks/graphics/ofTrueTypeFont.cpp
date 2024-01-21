@@ -1160,13 +1160,16 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringWidth(const string& c) const{
 //	return getStringBoundingBox(c, 0,0).width;
-	int w = 0;
+	float w = 0;
 	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
-		if ( c == '\t' ){
-			w += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+        float cWidth = 0;
+        if ( c == '\t' ){
+            cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
 		} else {
-			w += getGlyphProperties( c ).advance;
+            cWidth = getGlyphProperties( c ).advance;
 		}
+        
+        w = std::max(w, std::abs(pos.x + cWidth));
 	});
 	return w;
 }
