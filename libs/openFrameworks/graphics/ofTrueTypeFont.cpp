@@ -1163,12 +1163,14 @@ float ofTrueTypeFont::stringWidth(const string& c) const{
 	float w = 0;
 	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
         float cWidth = 0;
-        if ( c == '\t' ){
-            cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
-		} else {
-            cWidth = getGlyphProperties( c ).advance;
-		}
         
+        if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+            if ( c == '\t' ){
+                cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+            } else {
+                cWidth = getGlyphProperties( c ).advance;
+            }
+        }
         w = std::max(w, std::abs(pos.x + cWidth));
 	});
 	return w;
@@ -1195,11 +1197,15 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 	float w = 0;
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
 		auto props = getGlyphProperties( c );
+
         float cWidth = 0;
-        if ( c == '\t' ){
-            cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
-        } else {
-            cWidth = getGlyphProperties( c ).advance;
+
+        if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+            if ( c == '\t' ){
+                cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+            } else {
+                cWidth = getGlyphProperties( c ).advance;
+            }
         }
         
         w = std::max(w, std::abs(pos.x - x) + cWidth);
