@@ -1192,11 +1192,14 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 	float w = 0;
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
 		auto props = getGlyphProperties( c );
-		if ( c == '\t' ){
-			w += props.advance * spaceSize * TAB_WIDTH;
-		} else {
-			w += props.advance;
-		}
+        float cWidth = 0;
+        if ( c == '\t' ){
+            cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+        } else {
+            cWidth = getGlyphProperties( c ).advance;
+        }
+        
+        w = std::max(w, std::abs(pos.x - x) + cWidth);
 
 		minX = min( minX, pos.x );
 		if ( vflip ){
