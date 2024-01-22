@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-android:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         cfg:
@@ -45,7 +45,5 @@ jobs:
       run: ./scripts/$TARGET/download_libs.sh
     - name: Build
       run: ./scripts/ci/$TARGET/build.sh
-    - name: Upload Libs
-      run: scripts/ci/upload_of_lib.sh;
       env:
         GA_CI_SECRET: ${{ secrets.CI_SECRET }}

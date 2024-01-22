@@ -3,6 +3,7 @@
 #include "ofColor.h"
 
 #define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/common.hpp"
 #include <cstring>
 

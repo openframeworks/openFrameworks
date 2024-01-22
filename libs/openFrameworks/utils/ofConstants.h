@@ -389,6 +389,12 @@ typedef TESSindex ofIndexType;
 	#endif
 #endif
 
+#if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
+	#undef USE_FMOD // No FMOD lib for ARM64 yet
+	#define OF_NO_FMOD
+	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
+#endif
+
 //------------------------------------------------ soundplayer
 //MAC_OS and IOS uncomment to enable AVEnginePlayer
 #ifdef OF_NO_FMOD
