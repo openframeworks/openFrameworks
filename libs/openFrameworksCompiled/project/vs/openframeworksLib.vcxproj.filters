@@ -310,6 +310,13 @@
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofMaterialBaseTypes.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundBuffer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofSingleton.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofRandomDistributions.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofRandomEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp">
