@@ -16,11 +16,11 @@ public:
 		reset();
 	};
 
-	using space = std::chrono::duration<long long, std::micro>;
+	using space = std::chrono::duration<long long, std::nano>;
 	space interval;
 	time_point<steady_clock> wakeTime;
-	
-	// FIXME: double? float?
+	time_point<steady_clock> lastWakeTime;
+
 	void setFps(int fps) {
 		interval = duration_cast<microseconds>(1s) / fps;
 	}
@@ -30,10 +30,16 @@ public:
 	}
 	
 	void waitNext(){
+//		std::cout << "interval:" << duration_cast<microseconds>(wakeTime - lastWakeTime).count() << std::endl;
+//		std::cout << "ellapsed:" << duration_cast<microseconds>(steady_clock::now() - lastWakeTime).count() << std::endl;
+//		std::cout << "will sleep:" << duration_cast<microseconds>(wakeTime - steady_clock::now()).count() << std::endl;
+//		std::cout << "----" << std::endl;
 		std::this_thread::sleep_until(wakeTime);
+		lastWakeTime = wakeTime;
 		wakeTime += interval;
 	}
 };
+
 
 
 class ofTimer {
