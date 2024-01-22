@@ -49,9 +49,10 @@ done
 
 # Install packages
 if [[ "${confirm}" == "yes" ]]; then
-	for pkg in ${packages}; do
-		pacman -Su --confirm --needed ${pkg}
-	done
+	pacman -Su --confirm --needed ${packages}
+	# for pkg in ${packages}; do
+		# pacman -Su --confirm --needed ${pkg}
+	# done
 else
 	pacman -Su --noconfirm --needed ${packages}
 fi

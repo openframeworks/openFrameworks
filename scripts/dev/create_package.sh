@@ -194,20 +194,13 @@ function createProjectFiles {
 
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
-        if [ "$pkg_platform" == "vs" ]; then
-            pg_platform="vs"
-        else
+        if [ "$pkg_platform" == "vs" ] || [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
             pg_platform=$pkg_platform
-        fi
-        
-        #add vscode to all platforms apart from ios/tvos/android
-        if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
-            pg_template=" "
         else
-            pg_template="-tvscode"
+            pg_platform="$pkg_platform,vscode"
         fi
         
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} ${pg_template} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
         
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
