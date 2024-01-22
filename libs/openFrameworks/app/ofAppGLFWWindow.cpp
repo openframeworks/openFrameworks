@@ -134,6 +134,10 @@ void ofAppGLFWWindow::setStencilBits(int stencil) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
+
+	
+	
+	
 	if (windowP) {
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
@@ -142,6 +146,20 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	}
 
 	settings = _settings;
+	
+//	if (_settings.windowMode == OF_WINDOW) {
+//		cout << "_settings.windowMode OF_WINDOW" << endl;
+//	} else if (_settings.windowMode == OF_FULLSCREEN) {
+//		cout << "_settings.windowMode OF_FULLSCREEN" << endl;
+//	}
+//	
+//	
+//	if (settings.windowMode == OF_WINDOW) {
+//		cout << "settings.windowMode OF_WINDOW" << endl;
+//	} else if (settings.windowMode == OF_FULLSCREEN) {
+//		cout << "settings.windowMode OF_FULLSCREEN" << endl;
+//	}
+	
 
 	if (!glfwInit()) {
 		ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
@@ -209,8 +227,10 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	windowRect.setPosition(settings.getPosition().x, settings.getPosition().y);
 	windowRect.width = settings.getWidth();
 	windowRect.height = settings.getHeight();
+	
 	GLFWmonitor *monitor = nullptr;
 
+	// FIXME: maybe use as a global variable for the window?
 	int monitorIndex = 0;
 	// Check to see if desired monitor is connected.
 	if (allMonitors.rects.size() > settings.monitor) {
@@ -223,19 +243,34 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		windowRect = allMonitors.rects[monitorIndex];
 		monitor = allMonitors.monitors[monitorIndex];
 	}
-	else if (settings.windowMode == OF_WINDOW) {
+	else if (settings.windowMode == OF_WINDOW || settings.windowMode == OF_FULLSCREEN) {
 //		cout << "rects size " << allMonitors.rects.size() << endl;
 //		cout << "window mode monitorindex = " << monitorIndex << endl;
 //		cout << "settings.monitor = " << settings.monitor << endl;
+		
+		cout << settings.windowName << " windowRect before " << windowRect << endl;
 		windowRect.x += allMonitors.rects[monitorIndex].x;
 		windowRect.y += allMonitors.rects[monitorIndex].y;
+		// OK, this is just so isPositionSet is ok in next few lines.
+		// FIXME: there is a problem here, position will be zeroed if setposition is called before window creation.
+		{
+			settings.setPosition({windowRect.x, windowRect.y});
+		}
+		cout << settings.windowName << " windowRect after " << windowRect << endl;
 	}
 
 //	cout << "GLFW Will create windowRect " << windowRect << endl;
 	// MARK: - WINDOW
 	windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
-	cout << windowRect << endl;
-	setWindowRect(windowRect);
+	
+	cout << "GLFW windowRect " << windowRect << " : " << settings.windowName << endl;
+
+	if (settings.isPositionSet()) {
+		setWindowRect(windowRect);
+	} else {
+		setWindowShape(windowRect.width, windowRect.height);
+	}
+	
 	if (!windowP) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		return;
@@ -405,7 +440,6 @@ void ofAppGLFWWindow::update() {
 		bWindowNeedsShowing = false;
 		
 		cout << "FS" << endl;
-		
 		if (settings.windowMode == OF_FULLSCREEN) {
 			// Meant to trigger fullscreen forced
 			settings.windowMode = OF_WINDOWMODE_UNDEFINED;
@@ -563,7 +597,8 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-	cout << "setWindowRect " << rect << endl;
+	cout << settings.windowName << " setWindowRect " << rect << endl;
+	
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 
@@ -1349,11 +1384,14 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 	instance->nFramesSinceWindowResized = 0;
 
 #if defined(TARGET_OSX)
-	NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP_);
-	if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
-		instance->settings.windowMode = OF_FULLSCREEN;
-	} else {
-		instance->settings.windowMode = OF_WINDOW;
+	if (!instance->bWindowNeedsShowing) {
+//		 FIXME - only after first update
+		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP_);
+		if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
+			instance->settings.windowMode = OF_FULLSCREEN;
+		} else {
+			instance->settings.windowMode = OF_WINDOW;
+		}
 	}
 #endif
 }

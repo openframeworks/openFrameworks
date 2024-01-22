@@ -195,6 +195,7 @@ private:
 #endif // TARGET_WIN32
 	
 	void setFSTarget(ofWindowMode targetWindowMode);
+	
 };
 
 

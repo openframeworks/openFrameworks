@@ -47,6 +47,7 @@ public:
 	virtual ~ofWindowSettings(){};
 	
 	std::string title;
+	std::string windowName { "main" };
 	ofWindowMode windowMode = OF_WINDOW;
 
 //	void setRect(const ofRectangle & rect) {

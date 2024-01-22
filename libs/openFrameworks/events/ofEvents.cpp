@@ -211,9 +211,9 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 	} else {
 		bFrameRateSet = true;
 		targetRate = _targetRate;
-//		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
-//		timer.setPeriodicEvent(nanosPerFrame);
-		timer.setFps(targetRate);
+		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
+		timer.setPeriodicEvent(nanosPerFrame);
+//		timer.setFps(targetRate);
 	}
 }
 
