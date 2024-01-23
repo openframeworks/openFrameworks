@@ -178,6 +178,7 @@ private:
 	float pixelScreenCoordScale; /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
 	ofRectangle windowRect { 20, 20, 800, 600 };
+	ofRectangle windowRectFS { 0, 0, 1920, 1080 };
 
 	int buttonInUse;
 	bool buttonPressed;

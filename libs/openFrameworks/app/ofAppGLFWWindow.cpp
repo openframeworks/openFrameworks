@@ -222,11 +222,6 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 
 
-	// TODO: move up, outside windowmode
-	// HACK: asdf
-	windowRect.setPosition(settings.getPosition().x, settings.getPosition().y);
-	windowRect.width = settings.getWidth();
-	windowRect.height = settings.getHeight();
 	
 	GLFWmonitor *monitor = nullptr;
 
@@ -239,35 +234,48 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		ofLogError("ofAppGLFWWindow") << "requested monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
 	}
 	
-	if (settings.windowMode == OF_GAME_MODE) {
+
+	if (settings.windowMode == OF_GAME_MODE)
+	{
 		windowRect = allMonitors.rects[monitorIndex];
 		monitor = allMonitors.monitors[monitorIndex];
-	}
-	else if (settings.windowMode == OF_WINDOW || settings.windowMode == OF_FULLSCREEN) {
-//		cout << "rects size " << allMonitors.rects.size() << endl;
-//		cout << "window mode monitorindex = " << monitorIndex << endl;
-//		cout << "settings.monitor = " << settings.monitor << endl;
-		
-		cout << settings.windowName << " windowRect before " << windowRect << endl;
-		windowRect.x += allMonitors.rects[monitorIndex].x;
-		windowRect.y += allMonitors.rects[monitorIndex].y;
-		// OK, this is just so isPositionSet is ok in next few lines.
-		// FIXME: there is a problem here, position will be zeroed if setposition is called before window creation.
-		{
-			settings.setPosition({windowRect.x, windowRect.y});
-		}
-		cout << settings.windowName << " windowRect after " << windowRect << endl;
 	}
 
 //	cout << "GLFW Will create windowRect " << windowRect << endl;
 	// MARK: - WINDOW
-	windowP = glfwCreateWindow(windowRect.width, windowRect.height, settings.title.c_str(), monitor, sharedContext);
+	
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
+	windowRect = getWindowRect();
+//	windowRect =
+	if (settings.windowMode == OF_WINDOW || settings.windowMode == OF_FULLSCREEN) {
+//		cout << "rects size " << allMonitors.rects.size() << endl;
+//		cout << "window mode monitorindex = " << monitorIndex << endl;
+//		cout << "settings.monitor = " << settings.monitor << endl;
+		
+//		cout << settings.windowName << " windowRect before " << windowRect << endl;
+		if (monitorIndex > 0) {
+			windowRect.x += allMonitors.rects[monitorIndex].x;
+			windowRect.y += allMonitors.rects[monitorIndex].y;
+			setWindowRect(windowRect);
+		}
+		// OK, this is just so isPositionSet is ok in next few lines.
+		// FIXME: there is a problem here, position will be zeroed if setposition is called before window creation.
+//		{
+//			settings.setPosition({windowRect.x, windowRect.y});
+//		}
+//		cout << settings.windowName << " windowRect after " << windowRect << endl;
+	}
+
+	
 	
 	cout << "GLFW windowRect " << windowRect << " : " << settings.windowName << endl;
 
 	if (settings.isPositionSet()) {
+		cout << "GLFW isPosition set true : " << settings.windowName << endl;
 		setWindowRect(windowRect);
 	} else {
+		cout << "GLFW isPosition set false : " << settings.windowName << endl;
 		setWindowShape(windowRect.width, windowRect.height);
 	}
 	
@@ -419,10 +427,8 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer() {
 //--------------------------------------------
 void ofAppGLFWWindow::update() {
 	events().notifyUpdate();
-
 	//show the window right before the first draw call.
 	if (bWindowNeedsShowing && windowP) {
-		
 		// not working.
 #ifdef TARGET_OSX
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
@@ -430,16 +436,8 @@ void ofAppGLFWWindow::update() {
 		[cocoaWindow orderFrontRegardless];
 #endif
 		
-		cout << "FIRST" << endl;
-		glfwShowWindow(windowP);
-		
-		
-		glm::vec2 contentScale;
-		glfwGetWindowContentScale(windowP, &contentScale.x, &contentScale.y);
-		cout << "glfwGetWindowContentScale " << contentScale << endl;
 		bWindowNeedsShowing = false;
 		
-		cout << "FS" << endl;
 		if (settings.windowMode == OF_FULLSCREEN) {
 			// Meant to trigger fullscreen forced
 			settings.windowMode = OF_WINDOWMODE_UNDEFINED;
@@ -447,12 +445,9 @@ void ofAppGLFWWindow::update() {
 		} else {
 			setFullscreen(false);
 		}
-		cout << "AFTER" << endl;
-//		if (targetWindowMode == OF_FULLSCREEN) {
-//			setFullscreen(true);
-//		}
-	}
 
+		glfwShowWindow(windowP);
+	}
 }
 
 //--------------------------------------------
@@ -645,10 +640,11 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 //		cout << "saving window rect " << windowRect << endl;
 
 		if (settings.multiMonitorFullScreen) {
-			setWindowRect(allMonitors.getRectForAllMonitors());
+			windowRectFS = allMonitors.getRectForAllMonitors();
 		} else {
-			setWindowRect(allMonitors.getRectMonitorForScreenRect(windowRect));
+			windowRectFS = allMonitors.getRectMonitorForScreenRect(windowRect);
 		}
+		setWindowRect(windowRectFS);
 	}
 
 	else if (targetWindowMode == OF_WINDOW) {
@@ -677,7 +673,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 		[cocoaWindow setStyleMask:NSWindowStyleMaskBorderless];
 		[cocoaWindow setHasShadow:NO];
 	} else {
-		
 		// to recover correctly from a green button fullscreen
 		if (([cocoaWindow styleMask] & NSWindowStyleMaskFullScreen) == NSWindowStyleMaskFullScreen) {
 			[cocoaWindow toggleFullScreen:nil];
@@ -687,7 +682,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 		[cocoaWindow setStyleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable];
 		[cocoaWindow setHasShadow:YES];
 	}
-
 	setFSTarget(targetWindowMode);
 
 	//----------------------------------------------------
@@ -697,6 +691,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 #elif defined(TARGET_WIN32)
 
 	HWND hwnd = glfwGetWin32Window(windowP);
+
+	setFSTarget(targetWindowMode);
 
 	if (targetWindowMode == OF_FULLSCREEN) {
 		SetWindowLong(hwnd, GWL_EXSTYLE, 0);
@@ -724,7 +720,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 //		setWindowShape(windowRect.width + 4, windowRect.height + 4);
 	}
 
-	SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
+//	SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
+	SetWindowPos(hwnd, HWND_TOPMOST, windowRectFS.x, windowRectFS.y, windowRectFS.width, windowRectFS.height, SWP_SHOWWINDOW);
 
 
 #elif defined(TARGET_LINUX)
@@ -858,6 +855,7 @@ void ofAppGLFWWindow::toggleFullscreen() {
 }
 
 //------------------------------------------------------------
+// FIXME: this can be up on base class. it is not GLFW exclusive
 static void rotateMouseXY(ofOrientation orientation, int w, int h, double & x, double & y) {
 	int savedY;
 	switch (orientation) {
