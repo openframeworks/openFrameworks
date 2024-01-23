@@ -51,7 +51,7 @@ public:
 	ofAppEGLWindowSettings(const ofGLESWindowSettings & settings);
 };
 
-class ofAppEGLWindow : public ofAppBaseGLESWindow, public ofThread {
+class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
 public:
 
 	/// ofAppEGLWindow::Settings is currently deprecated in favor of
@@ -67,7 +67,7 @@ public:
 	static bool needsPolling(){ return true; }
 	static void pollEvents();
 
-	using ofAppBaseGLESWindow::setup;
+//	using ofAppBaseWindow::setup;
 	void setup(const ofAppEGLWindowSettings & settings);
 	void setup(const ofGLESWindowSettings & settings);
 
