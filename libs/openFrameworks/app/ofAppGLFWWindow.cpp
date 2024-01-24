@@ -269,13 +269,13 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	
 	
-	cout << "GLFW windowRect " << windowRect << " : " << settings.windowName << endl;
+//	cout << "GLFW windowRect " << windowRect << " : " << settings.windowName << endl;
 
 	if (settings.isPositionSet()) {
-		cout << "GLFW isPosition set true : " << settings.windowName << endl;
+//		cout << "GLFW isPosition set true : " << settings.windowName << endl;
 		setWindowRect(windowRect);
 	} else {
-		cout << "GLFW isPosition set false : " << settings.windowName << endl;
+//		cout << "GLFW isPosition set false : " << settings.windowName << endl;
 		setWindowShape(windowRect.width, windowRect.height);
 	}
 	
@@ -374,16 +374,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		XNFocusWindow, getX11Window(),
 		NULL);
 #endif
-	
-//	cout << "GLFW end setup" << endl;
-//	cout << "GLFW TEST allMonitors.getRectFromMonitors()" << endl;
-//	allMonitors.getRectFromMonitors({ 0, 1 });
-//	allMonitors.getRectFromMonitors({ 0, 2 });
-//	allMonitors.getRectFromMonitors({ 0, 1, 2 });
-//	allMonitors.getRectFromMonitors({ 0, 3 });
-//	allMonitors.getRectFromMonitors({ 1, 2 });
-//	allMonitors.getRectFromMonitors({ 1, 3 });
-//	allMonitors.getRectFromMonitors({ 2, 3 });
+
 }
 
 #ifdef TARGET_LINUX
@@ -593,7 +584,6 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
 	cout << settings.windowName << " setWindowRect " << rect << endl;
-	
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 

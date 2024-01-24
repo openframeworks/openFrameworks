@@ -255,13 +255,6 @@ public:
 		}
 	}
 
-//	std::vector <ofRectangle> rectTests {
-//		{ 0, 0, 400, 200 },
-//		{ 400, 0, 400, 200 },
-//		{ 800, 0, 400, 200 },
-//		{ 1200, 0, 400, 200 },
-//	};
-
 	ofRectangle getRectFromMonitors(const std::vector<int> monitors) {
 		bool first = true;
 		ofRectangle r;
@@ -277,7 +270,7 @@ public:
 				}
 			}
 		}
-		cout << "getRectFromMonitors " << str << " :: " << r << endl;
+//		cout << "getRectFromMonitors " << str << " :: " << r << endl;
 		return r;
 	}
 	

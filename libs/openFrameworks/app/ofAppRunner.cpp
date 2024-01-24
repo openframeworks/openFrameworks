@@ -107,6 +107,8 @@ void ofInit(){
 	if(initialized()) return;
 	initialized() = true;
 	exiting() = false;
+	
+	std::cout << "ofInit() " << std::endl;
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
