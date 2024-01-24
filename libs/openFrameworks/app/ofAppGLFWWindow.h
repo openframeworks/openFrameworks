@@ -94,6 +94,9 @@ public:
 
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
+	typedef struct _XIM * XIM;
+	typedef struct _XIC * XIC;
+	
 	Display * getX11Display();
 	Window getX11Window();
 	XIC getX11XIC();
@@ -142,8 +145,7 @@ private:
 	void close();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-	typedef struct _XIM * XIM;
-	typedef struct _XIC * XIC;
+
 
 	XIM xim;
 	XIC xic;
