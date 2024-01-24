@@ -164,7 +164,7 @@ public:
 };
 
 
-class ofAppiOSWindow : public ofAppBaseGLESWindow {
+class ofAppiOSWindow : public ofAppBaseWindow {
 public:
 
 	static ofAppiOSWindow * getInstance();
