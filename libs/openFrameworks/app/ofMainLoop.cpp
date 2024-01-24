@@ -41,22 +41,22 @@ ofMainLoop::~ofMainLoop() {
 
 std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
 #ifdef TARGET_NODISPLAY
-	shared_ptr<ofAppNoWindow> window = std::make_shared<ofAppNoWindow>();
+	shared_ptr<ofAppNoWindow> window { std::make_shared<ofAppNoWindow>() };
 #else
-	#if defined(TARGET_OF_IOS)
-	std::shared_ptr<ofAppiOSWindow> window = std::make_shared<ofAppiOSWindow>();
-	#elif defined(TARGET_ANDROID)
-	std::shared_ptr<ofAppAndroidWindow> window = std::make_shared<ofAppAndroidWindow>();
+#if defined(TARGET_OF_IOS)
+	std::shared_ptr<ofAppiOSWindow> window { std::make_shared<ofAppiOSWindow>() };
+#elif defined(TARGET_ANDROID)
+	std::shared_ptr<ofAppAndroidWindow> window { std::make_shared<ofAppAndroidWindow>() };
 	#elif (defined(TARGET_RASPBERRY_PI) && defined(TARGET_GLFW_WINDOW))
-	std::shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
+	std::shared_ptr<ofAppGLFWWindow> window { std::make_shared<ofAppGLFWWindow>() };
 //	#elif defined(TARGET_RASPBERRY_PI)
-//	std::shared_ptr<ofAppEGLWindow> window = std::make_shared<ofAppEGLWindow>();
+//	std::shared_ptr<ofAppEGLWindow> window { std::make_shared<ofAppEGLWindow>() };
 	#elif defined(TARGET_EMSCRIPTEN)
-	std::shared_ptr<ofxAppEmscriptenWindow> window = std::make_shared<ofxAppEmscriptenWindow>();
+	std::shared_ptr<ofxAppEmscriptenWindow> window { std::make_shared<ofxAppEmscriptenWindow>() };
 	#elif defined(TARGET_OPENGLES)
-	std::shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
+	std::shared_ptr<ofAppGLFWWindow> window { std::make_shared<ofAppGLFWWindow>() };
 	#else
-	std::shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
+	std::shared_ptr<ofAppGLFWWindow> window { std::make_shared<ofAppGLFWWindow>() };
 	#endif
 #endif
 	addWindow(window);
