@@ -3,6 +3,7 @@
 #include "ofVec4f.h"
 
 #define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 

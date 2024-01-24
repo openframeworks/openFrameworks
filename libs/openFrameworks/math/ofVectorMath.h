@@ -12,7 +12,7 @@ class ofMatrix3x3;
 #include "ofMathConstants.h"
 //#include "ofConstants.h"
 #define GLM_FORCE_CTOR_INIT
-
+#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
