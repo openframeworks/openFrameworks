@@ -9,7 +9,6 @@ class ofRectangle;
 
 template<typename T>
 class ofPixels_;
-
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;
 typedef ofPixels_<float> ofFloatPixels;
