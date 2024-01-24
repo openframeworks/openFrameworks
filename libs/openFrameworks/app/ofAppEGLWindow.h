@@ -127,7 +127,7 @@ public:
 
 
 protected:
-	void setWindowRect(const ofRectangle & requestedWindowRect);
+//	void setWindowRect(const ofRectangle & requestedWindowRect);
 
 	ofRectangle getScreenRect();
 

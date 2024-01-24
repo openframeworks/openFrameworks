@@ -917,7 +917,7 @@ void ofAppEGLWindow::destroyNativeEvents() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
+void ofAppEGLWindow::setWindowRect(const ofRectangle & requestedWindowRect) {
 	if(!isWindowInited) {
 		ofLogError("ofAppEGLWindow") << "setWindowRect(): window not inited";
 		return;
