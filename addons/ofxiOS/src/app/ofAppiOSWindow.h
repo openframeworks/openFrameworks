@@ -110,39 +110,39 @@ public:
 		}
 	}
 
-	ofiOSWindowSettings(const ofWindowSettings & settings)
-	:ofGLESWindowSettings(settings)
-	,enableRetina(true)
-	,retinaScale(0)
-	,enableDepth(false)
-	,enableAntiAliasing(false)
-	,numOfAntiAliasingSamples(0)
-	,enableHardwareOrientation(false)
-	,enableHardwareOrientationAnimation(false)
-	,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
-	,colorType(ofxiOSRendererColorFormat::RGBA8888)
-	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
-	,enableMultiTouch(false){
-		const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
-		if(iosSettings){
-			enableRetina = iosSettings->enableRetina;
-			retinaScale = iosSettings->retinaScale;
-			enableDepth = iosSettings->enableDepth;
-			enableAntiAliasing = iosSettings->enableAntiAliasing;
-			numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
-			enableHardwareOrientation = iosSettings->enableHardwareOrientation;
-			enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
-			enableSetupScreen = iosSettings->enableSetupScreen;
-			setupOrientation = iosSettings->setupOrientation;
-			windowControllerType = iosSettings->windowControllerType;
-			colorType = iosSettings->colorType;
-			depthType = iosSettings->depthType;
-			stencilType = iosSettings->stencilType;
-			enableMultiTouch = iosSettings->enableMultiTouch;
-		}
-	}
+	// ofiOSWindowSettings(const ofWindowSettings & settings)
+	// :ofGLESWindowSettings(settings)
+	// ,enableRetina(true)
+	// ,retinaScale(0)
+	// ,enableDepth(false)
+	// ,enableAntiAliasing(false)
+	// ,numOfAntiAliasingSamples(0)
+	// ,enableHardwareOrientation(false)
+	// ,enableHardwareOrientationAnimation(false)
+	// ,enableSetupScreen(true)
+	// ,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
+	// ,colorType(ofxiOSRendererColorFormat::RGBA8888)
+	// ,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
+	// ,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
+	// ,enableMultiTouch(false){
+	// 	const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
+	// 	if(iosSettings){
+	// 		enableRetina = iosSettings->enableRetina;
+	// 		retinaScale = iosSettings->retinaScale;
+	// 		enableDepth = iosSettings->enableDepth;
+	// 		enableAntiAliasing = iosSettings->enableAntiAliasing;
+	// 		numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
+	// 		enableHardwareOrientation = iosSettings->enableHardwareOrientation;
+	// 		enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
+	// 		enableSetupScreen = iosSettings->enableSetupScreen;
+	// 		setupOrientation = iosSettings->setupOrientation;
+	// 		windowControllerType = iosSettings->windowControllerType;
+	// 		colorType = iosSettings->colorType;
+	// 		depthType = iosSettings->depthType;
+	// 		stencilType = iosSettings->stencilType;
+	// 		enableMultiTouch = iosSettings->enableMultiTouch;
+	// 	}
+	// }
 
 	virtual ~ofiOSWindowSettings(){};
 	
