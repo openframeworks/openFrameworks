@@ -1,15 +1,14 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
-// MARK: Optimize to Pointer
 #include "ofRectangle.h"
 // MARK: Target
 #include "ofConstants.h"
 
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-typedef struct _XIM * XIM;
-typedef struct _XIC * XIC;
-#endif
+//#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
+//typedef struct _XIM * XIM;
+//typedef struct _XIC * XIC;
+//#endif
 
 class ofBaseApp;
 struct GLFWwindow;
@@ -19,7 +18,6 @@ class ofCoreEvents;
 template <typename T>
 class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
-
 
 typedef ofWindowSettings ofGLFWWindowSettings;
 
@@ -174,11 +172,13 @@ private:
 	ofWindowMode targetWindowMode;
 
 	bool bEnableSetupScreen;
+	
 	// FIXME remove
 	float pixelScreenCoordScale; /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
 	ofRectangle windowRect { 20, 20, 800, 600 };
 	ofRectangle windowRectFS { 0, 0, 1920, 1080 };
+	void setFSTarget(ofWindowMode targetWindowMode);
 
 	int buttonInUse;
 	bool buttonPressed;
@@ -191,21 +191,14 @@ private:
 
 	bool iconSet;
 
-#ifdef TARGET_WIN32
-	LONG lExStyle, lStyle;
-#endif // TARGET_WIN32
+//#ifdef TARGET_WIN32
+//	LONG lExStyle, lStyle;
+//#endif // TARGET_WIN32
 	
-	void setFSTarget(ofWindowMode targetWindowMode);
 	
 };
 
 
-
-
-
-
-using std::cout;
-using std::endl;
 
 // TEMPORARY
 #include "GLFW/glfw3.h"
@@ -219,8 +212,6 @@ public:
 	~ofMonitors() {}
 	std::vector <ofRectangle> rects;
 	ofRectangle allMonitorsRect { 0, 0, 0, 0 };
-//	ofRectangle rectWindow;
-//	bool changed = true;
 	GLFWmonitor** monitors;
 
 	ofRectangle getRectMonitorForScreenRect(const ofRectangle & rect) {
@@ -240,7 +231,7 @@ public:
 	
 	void update() {
 		rects.clear();
-		allMonitorsRect = { 0, 0, 0, 0 }; // reset ofRectangle;
+		allMonitorsRect = { 0, 0, 0, 0 };
 
 		int numberOfMonitors;
 		monitors = glfwGetMonitors(&numberOfMonitors);

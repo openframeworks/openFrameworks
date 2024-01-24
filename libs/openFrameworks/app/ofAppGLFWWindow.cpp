@@ -38,10 +38,8 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-
 //-------------------------------------------------------
-ofAppGLFWWindow::ofAppGLFWWindow()
-	: coreEvents(new ofCoreEvents) {
+ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(new ofCoreEvents){
 	bEnableSetupScreen = true;
 	buttonInUse = 0;
 	buttonPressed = false;
@@ -134,10 +132,6 @@ void ofAppGLFWWindow::setStencilBits(int stencil) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
-
-	
-	
-	
 	if (windowP) {
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
@@ -147,20 +141,6 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	settings = _settings;
 	
-//	if (_settings.windowMode == OF_WINDOW) {
-//		cout << "_settings.windowMode OF_WINDOW" << endl;
-//	} else if (_settings.windowMode == OF_FULLSCREEN) {
-//		cout << "_settings.windowMode OF_FULLSCREEN" << endl;
-//	}
-//	
-//	
-//	if (settings.windowMode == OF_WINDOW) {
-//		cout << "settings.windowMode OF_WINDOW" << endl;
-//	} else if (settings.windowMode == OF_FULLSCREEN) {
-//		cout << "settings.windowMode OF_FULLSCREEN" << endl;
-//	}
-	
-
 	if (!glfwInit()) {
 		ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
 		return;
