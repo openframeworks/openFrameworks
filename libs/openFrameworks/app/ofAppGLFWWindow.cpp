@@ -376,7 +376,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 #endif
 	
 //	cout << "GLFW end setup" << endl;
-//	cout << "GLFW TEST " << allMonitors.getRectFromMonitors() << endl;
+//	cout << "GLFW TEST allMonitors.getRectFromMonitors()" << endl;
 //	allMonitors.getRectFromMonitors({ 0, 1 });
 //	allMonitors.getRectFromMonitors({ 0, 2 });
 //	allMonitors.getRectFromMonitors({ 0, 1, 2 });
@@ -643,6 +643,11 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 			windowRectFS = allMonitors.getRectForAllMonitors();
 		} else {
 			windowRectFS = allMonitors.getRectMonitorForScreenRect(windowRect);
+		}
+		
+		// 
+		if (settings.fullscreenDisplays.size()) {
+			windowRectFS = allMonitors.getRectFromMonitors(settings.fullscreenDisplays);
 		}
 		setWindowRect(windowRectFS);
 	}

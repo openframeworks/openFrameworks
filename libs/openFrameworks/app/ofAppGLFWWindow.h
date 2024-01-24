@@ -255,12 +255,12 @@ public:
 		}
 	}
 
-	std::vector <ofRectangle> rectTests {
-		{ 0, 0, 400, 200 },
-		{ 400, 0, 400, 200 },
-		{ 800, 0, 400, 200 },
-		{ 1200, 0, 400, 200 },
-	};
+//	std::vector <ofRectangle> rectTests {
+//		{ 0, 0, 400, 200 },
+//		{ 400, 0, 400, 200 },
+//		{ 800, 0, 400, 200 },
+//		{ 1200, 0, 400, 200 },
+//	};
 
 	ofRectangle getRectFromMonitors(const std::vector<int> monitors) {
 		bool first = true;
@@ -268,12 +268,12 @@ public:
 		std::string str { "" };
 		for (auto & i : monitors) {
 			str += ofToString(i) + " ";
-			if (i < rectTests.size()) {
+			if (i < rects.size()) {
 				if (first) {
 					first = false;
-					r = rectTests[i];
+					r = rects[i];
 				} else {
-					r = r.getUnion(rectTests[i]);
+					r = r.getUnion(rects[i]);
 				}
 			}
 		}
