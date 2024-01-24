@@ -1,5 +1,4 @@
 #include "ofAppGLFWWindow.h"
-
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
 
@@ -15,7 +14,7 @@
 	#else
 		#define GLFW_EXPOSE_NATIVE_EGL
 	#endif
-	#include "GLFW/glfw3native.h"
+//	#include "GLFW/glfw3native.h"
 	#include <X11/XKBlib.h>
 	#include <X11/Xatom.h>
 	#include <X11/extensions/Xrandr.h>
@@ -25,12 +24,15 @@
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
 	#define GLFW_EXPOSE_NATIVE_NSGL
-	#include "GLFW/glfw3native.h"
+//	#include "GLFW/glfw3native.h"
 #elif defined(TARGET_WIN32)
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#define GLFW_EXPOSE_NATIVE_WGL
-	#include <GLFW/glfw3native.h>
+//	#include <GLFW/glfw3native.h>
 #endif
+
+#include "GLFW/glfw3native.h"
+
 
 using std::numeric_limits;
 using std::shared_ptr;
