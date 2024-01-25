@@ -122,7 +122,7 @@ int ofMatrixStack::getRenderSurfaceWidth() const{
 	if(currentRenderSurface){
 		return currentRenderSurface->getWidth();
 	}else if(currentWindow){
-		return currentWindow->getWindowSize().x;
+		return currentWindow->getFramebufferSize().x;
 	}else{
 		return 0;
 	}
@@ -132,7 +132,7 @@ int ofMatrixStack::getRenderSurfaceHeight() const{
 	if(currentRenderSurface){
 		return currentRenderSurface->getHeight();
 	}else if(currentWindow){
-		return currentWindow->getWindowSize().y;
+		return currentWindow->getFramebufferSize().y;
 	}else{
 		return 0;
 	}
@@ -143,7 +143,9 @@ glm::ivec2 ofMatrixStack::getRenderSurfaceSize() const {
 		return currentRenderSurface->getSize();
 	} else if (currentWindow) {
 		// FIXME: FramebufferSize
-		return currentWindow->getWindowSize();
+		// return currentWindow->getWindowSize();
+		return currentWindow->getFramebufferSize();
+		
 	} else {
 		return {};
 	}
@@ -203,13 +205,13 @@ ofRectangle ofMatrixStack::getNativeViewport() const{
 	return currentViewport;
 }
 
-ofRectangle ofMatrixStack::getFullSurfaceViewport() const{
-	if(currentRenderSurface){
-		return ofRectangle(0,0,currentRenderSurface->getWidth(),currentRenderSurface->getHeight());
-	}else if(currentWindow){
-		return ofRectangle(0,0,currentWindow->getWidth(),currentWindow->getHeight());
-	}else{
-		return ofRectangle();
+ofRectangle ofMatrixStack::getFullSurfaceViewport() const {
+	if (currentRenderSurface) {
+		return { 0.0f, 0.0f, currentRenderSurface->getWidth(),currentRenderSurface->getHeight() };
+	} else if (currentWindow) {
+		return { 0, 0, currentWindow->getWidth(), currentWindow->getHeight() };
+	} else {
+		return {}; //ofRectangle();
 	}
 }
 

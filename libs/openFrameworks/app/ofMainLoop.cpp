@@ -27,12 +27,7 @@
 	#include "ofAppGLFWWindow.h"
 #endif
 
-ofMainLoop::ofMainLoop()
-:bShouldClose(false)
-,status(0)
-,allowMultiWindow(true)
-,escapeQuits(true){
-
+ofMainLoop::ofMainLoop() : bShouldClose(false), status(0), allowMultiWindow(true), escapeQuits(true) {
 }
 
 ofMainLoop::~ofMainLoop() {

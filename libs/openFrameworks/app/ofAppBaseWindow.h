@@ -48,6 +48,7 @@ public:
 
 	virtual glm::ivec2 getWindowPosition() { return glm::ivec2(); }
 	virtual glm::ivec2 getWindowSize() { return glm::ivec2(); }
+	virtual glm::ivec2 getFramebufferSize() { return glm::ivec2(); }
 	virtual glm::ivec2 getScreenSize() { return glm::ivec2(); }
 	virtual ofRectangle getWindowRect() { return ofRectangle(); }
 

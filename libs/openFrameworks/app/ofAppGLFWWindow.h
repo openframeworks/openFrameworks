@@ -57,6 +57,7 @@ public:
 
 	glm::ivec2 getScreenSize();
 	glm::ivec2 getWindowSize();
+	glm::ivec2 getFramebufferSize();
 	glm::ivec2 getWindowPosition();
 	ofRectangle getWindowRect();
 
@@ -90,8 +91,6 @@ public:
 	bool isWindowActive();
 	bool isWindowResizeable();
 	void iconify(bool bIconify);
-
-
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	typedef struct _XIM * XIM;
@@ -145,8 +144,6 @@ private:
 	void close();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-
-
 	XIM xim;
 	XIC xic;
 #endif
@@ -157,9 +154,6 @@ private:
 	ofWindowMode targetWindowMode;
 
 	bool bEnableSetupScreen;
-	
-	// FIXME remove
-	float pixelScreenCoordScale; /// Scale factor from virtual operating-system defined client area extents (as seen in currentW, currentH) to physical framebuffer pixel coordinates (as seen in windowW, windowH).
 
 	ofRectangle windowRect { 20, 20, 800, 600 };
 	ofRectangle windowRectFS { 0, 0, 1920, 1080 };
@@ -168,18 +162,13 @@ private:
 	int buttonInUse;
 	bool buttonPressed;
 
-	int nFramesSinceWindowResized;
+//	int nFramesSinceWindowResized;
 	bool bWindowNeedsShowing;
 
 	GLFWwindow * windowP;
 	ofBaseApp * ofAppPtr;
 
 	bool iconSet;
-
-//#ifdef TARGET_WIN32
-//	LONG lExStyle, lStyle;
-//#endif // TARGET_WIN32
-	
 	
 	
 	// window settings, this functions can only be called from main before calling ofSetupOpenGL
@@ -228,7 +217,6 @@ public:
 	}
 	
 	ofRectangle getRectForAllMonitors() {
-//		cout << "getRectForAllMonitors " << allMonitorsRect << endl;
 		return allMonitorsRect;
 	}
 	
@@ -264,17 +252,7 @@ public:
 				}
 			}
 		}
-//		cout << "getRectFromMonitors " << str << " :: " << r << endl;
 		return r;
 	}
-	
-	ofRectangle getRectFromMonitorsX() {
-		ofRectangle r;
-		ofRectangle r2 { 30, 30, 30, 30 };
-		r = r.getUnion(r2);
-		return r;
-	}
-	
 } allMonitors;
 
-//#endif

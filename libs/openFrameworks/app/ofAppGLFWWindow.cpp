@@ -51,8 +51,7 @@ ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(new ofCoreEvents){
 
 	ofAppPtr = nullptr;
 
-	pixelScreenCoordScale = 1;
-	nFramesSinceWindowResized = 0;
+//	nFramesSinceWindowResized = 0;
 	iconSet = false;
 	windowP = nullptr;
 
@@ -96,11 +95,6 @@ void ofAppGLFWWindow::close() {
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setMultiDisplayFullscreen(bool bMultiFullscreen) {
-	settings.multiMonitorFullScreen = bMultiFullscreen;
-}
-
-//------------------------------------------------------------
 void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	if (windowP) {
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
@@ -129,6 +123,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	glfwWindowHint(GLFW_STEREO, settings.stereo);
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 	glfwWindowHint(GLFW_MAXIMIZED, settings.maximized);
+	// FIXME: Review this.
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering ? 1 : 0);
 #else
@@ -170,9 +165,6 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		sharedContext = (GLFWwindow *)settings.shareContextWith->getWindowContext();
 	}
 
-
-
-	
 	GLFWmonitor *monitor = nullptr;
 
 	// FIXME: maybe use as a global variable for the window?
@@ -184,48 +176,29 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		ofLogError("ofAppGLFWWindow") << "requested monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
 	}
 	
-
 	if (settings.windowMode == OF_GAME_MODE)
 	{
 		windowRect = allMonitors.rects[monitorIndex];
 		monitor = allMonitors.monitors[monitorIndex];
 	}
 
-//	cout << "GLFW Will create windowRect " << windowRect << endl;
 	// MARK: - WINDOW
 	
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
 	windowRect = getWindowRect();
-//	windowRect =
+
 	if (settings.windowMode == OF_WINDOW || settings.windowMode == OF_FULLSCREEN) {
-//		cout << "rects size " << allMonitors.rects.size() << endl;
-//		cout << "window mode monitorindex = " << monitorIndex << endl;
-//		cout << "settings.monitor = " << settings.monitor << endl;
-		
-//		cout << settings.windowName << " windowRect before " << windowRect << endl;
 		if (monitorIndex > 0) {
 			windowRect.x += allMonitors.rects[monitorIndex].x;
 			windowRect.y += allMonitors.rects[monitorIndex].y;
 			setWindowRect(windowRect);
 		}
-		// OK, this is just so isPositionSet is ok in next few lines.
-		// FIXME: there is a problem here, position will be zeroed if setposition is called before window creation.
-//		{
-//			settings.setPosition({windowRect.x, windowRect.y});
-//		}
-//		cout << settings.windowName << " windowRect after " << windowRect << endl;
 	}
 
-	
-	
-//	cout << "GLFW windowRect " << windowRect << " : " << settings.windowName << endl;
-
 	if (settings.isPositionSet()) {
-//		cout << "GLFW isPosition set true : " << settings.windowName << endl;
 		setWindowRect(windowRect);
 	} else {
-//		cout << "GLFW isPosition set false : " << settings.windowName << endl;
 		setWindowShape(windowRect.width, windowRect.height);
 	}
 	
@@ -233,7 +206,6 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		return;
 	}
-//	cout << "GLFW window created OK" << endl;
 
 
 	// MARK: -
@@ -253,10 +225,13 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 			setWindowIcon(iconPixels);
 		}
 #endif
+
+		//FIXME: check if it works with hint GLFW_AUTO_ICONIFY
 		if (settings.iconified) {
 			iconify(true);
 		}
 
+		//FIXME: check if it works with hint GLFW_MAXIMIZED
 		if (settings.maximized) {
 			glfwMaximizeWindow(windowP);
 		}
@@ -401,50 +376,49 @@ void ofAppGLFWWindow::pollEvents() {
 void ofAppGLFWWindow::draw() {
 	currentRenderer->startRender();
 	if (bEnableSetupScreen) {
-//		cout << "ow currentRenderer->setupScreen()" << endl;
 		currentRenderer->setupScreen();
 	}
 
 	events().notifyDraw();
 
-#ifdef TARGET_WIN32
-	if (currentRenderer->getBackgroundAuto() == false) {
-		// on a PC resizing a window with this method of accumulation (essentially single buffering)
-		// is BAD, so we clear on resize events.
-		if (nFramesSinceWindowResized < 3) {
-			currentRenderer->clear();
-		} else {
-			if ((events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && settings.doubleBuffering) {
-				glfwSwapBuffers(windowP);
-			} else {
-				glFlush();
-			}
-		}
-	} else {
-		if (settings.doubleBuffering) {
-			glfwSwapBuffers(windowP);
-		} else {
-			glFlush();
-		}
-	}
-#else
-	if (currentRenderer->getBackgroundAuto() == false) {
-		// in accum mode resizing a window is BAD, so we clear on resize events.
-		if (nFramesSinceWindowResized < 3) {
-			currentRenderer->clear();
-		}
-	}
+//#ifdef TARGET_WIN32
+//	if (currentRenderer->getBackgroundAuto() == false) {
+//		// on a PC resizing a window with this method of accumulation (essentially single buffering)
+//		// is BAD, so we clear on resize events.
+//		if (nFramesSinceWindowResized < 3) {
+//			currentRenderer->clear();
+//		} 
+//		
+//		else {
+//			if ((events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && settings.doubleBuffering) {
+//				glfwSwapBuffers(windowP);
+//			} else {
+//				glFlush();
+//			}
+//		}
+//	} else {
+//		if (settings.doubleBuffering) {
+//			glfwSwapBuffers(windowP);
+//		} else {
+//			glFlush();
+//		}
+//	}
+//#else
+//
+//
+//#endif
+
 	if (settings.doubleBuffering) {
 		glfwSwapBuffers(windowP);
-//		std::cout << "swap buffers " << ofGetFrameNum() << std::endl;
+		//		std::cout << "swap buffers " << ofGetFrameNum() << std::endl;
 	} else {
 		glFlush();
 	}
-#endif
-
+	
+	
 	currentRenderer->finishRender();
 
-	nFramesSinceWindowResized++;
+//	nFramesSinceWindowResized++;
 }
 
 //--------------------------------------------
@@ -480,10 +454,10 @@ void ofAppGLFWWindow::setWindowTitle(const std::string & title) {
 
 //------------------------------------------------------------
 int ofAppGLFWWindow::getPixelScreenCoordScale() {
-
-	// TODO:
-	// discover which monitor this window
-	return pixelScreenCoordScale;
+	// FIXME: cache?
+	glm::vec2 contentScale;
+	glfwGetWindowContentScale(windowP, &contentScale.x, &contentScale.y);
+	return contentScale.x;
 }
 
 //------------------------------------------------------------
@@ -503,6 +477,14 @@ glm::ivec2 ofAppGLFWWindow::getWindowSize() {
 }
 
 //------------------------------------------------------------
+glm::ivec2 ofAppGLFWWindow::getFramebufferSize() {
+	// FIXME: cache size and handle in framebuffer_size_cb
+	glm::ivec2 size;
+	glfwGetFramebufferSize(windowP, &size.x, &size.y);
+	return size;
+}
+
+//------------------------------------------------------------
 glm::ivec2 ofAppGLFWWindow::getWindowPosition() {
 	glm::ivec2 pos;
 	glfwGetWindowPos( windowP, &pos.x, &pos.y );
@@ -511,7 +493,7 @@ glm::ivec2 ofAppGLFWWindow::getWindowPosition() {
 
 //------------------------------------------------------------
 glm::ivec2 ofAppGLFWWindow::getScreenSize() {
-	// FIXME: if screen = monitor and screensize is actual monitor from the window it is correct.
+	// it will return the monitor/screen size where the windows sit.
 	windowRect = getWindowRect();
 	return allMonitors.getRectMonitorForScreenRect(windowRect).getSize();
 }
@@ -676,6 +658,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	Display * display = glfwGetX11Display();
 	if (targetWindowMode == OF_FULLSCREEN) {
 
+		// FIXME: Remove legacy code here
 
 		int monitorCount;
 		GLFWmonitor ** monitors = glfwGetMonitors(&monitorCount);
@@ -1053,8 +1036,8 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow * windowP_, double x, double y) {
 	}
 
 	ofMouseEventArgs args(action,
-		x * instance->pixelScreenCoordScale,
-		y * instance->pixelScreenCoordScale,
+		x,
+		y,
 		instance->buttonInUse,
 		instance->events().getModifiers());
 	instance->events().notifyMouseEvent(args);
@@ -1307,7 +1290,7 @@ void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
-	cout << "monitor_cb!" << endl;
+//	cout << "monitor_cb!" << endl;
 	allMonitors.update();
 }
 
@@ -1324,7 +1307,7 @@ void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().notifyWindowResized(w, h);
-	instance->nFramesSinceWindowResized = 0;
+//	instance->nFramesSinceWindowResized = 0;
 
 #if defined(TARGET_OSX)
 	if (!instance->bWindowNeedsShowing) {
@@ -1343,6 +1326,8 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow * windowP_, int w, int h) {
 //	cout << "framebuffer_size_cb " << w << " : " << h << endl;
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	
+	instance->currentRenderer->clear();
 	instance->events().notifyFramebufferResized(w, h);
 }
 
@@ -1512,4 +1497,8 @@ void ofAppGLFWWindow::setDepthBits(int depth) {
 
 void ofAppGLFWWindow::setStencilBits(int stencil) {
 	settings.stencilBits = stencil;
+}
+
+void ofAppGLFWWindow::setMultiDisplayFullscreen(bool bMultiFullscreen) {
+	settings.multiMonitorFullScreen = bMultiFullscreen;
 }
