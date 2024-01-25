@@ -60,7 +60,8 @@ std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings
 }
 
 void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app){
-	windowsApps[window] = app;
+	mainApp = app;
+//	windowsApps[window] = app;
 	if(app){
 		ofAddListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
 		ofAddListener(window->events().update,app.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -107,14 +108,18 @@ void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::share
 }
 
 void ofMainLoop::run(std::shared_ptr<ofBaseApp> && app){
-	if(!windowsApps.empty()){
-		run(windowsApps.begin()->first, std::move(app));
+//	if(!windowsApps.empty()){
+//		run(windowsApps.begin()->first, std::move(app));
+//	}
+	if(!windows.empty()){
+		run(windows[0], std::move(app));
 	}
 }
 
 int ofMainLoop::loop(){
 	if(!windowLoop){
-		while(!bShouldClose && !windowsApps.empty()){
+//		while(!bShouldClose && !windowsApps.empty()){
+		while(!bShouldClose && !windows.empty()){
 			loopOnce();
 			pollEvents();
 		}
@@ -126,19 +131,47 @@ int ofMainLoop::loop(){
 
 void ofMainLoop::loopOnce(){
 	if(bShouldClose) return;
-	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
-		if(i->first->getWindowShouldClose()){
-			const auto & window = i->first;
-			window->close();
-			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
-		}else{
-			currentWindow = i->first;
-			i->first->makeCurrent();
-			i->first->update();
-			i->first->draw();
-			i++; ///< continue to next window
+	
+//	std::cout << "ofMainLoop::loopOnce()" << std::endl;
+	auto i = windows.begin();
+	for ( ; i != windows.end(); ) {
+		if (i->get()->getWindowShouldClose()) {
+			i = windows.erase(i);
+		} else {
+			currentWindow = (*i);
+			i->get()->makeCurrent();
+			i->get()->update();
+			i->get()->draw();
+		++i;
 		}
 	}
+	
+//	for(auto i = windows.begin(); !windows.empty() && i != windows.end();){
+//		if(i->get()->getWindowShouldClose()){
+////			const auto & window = i->first;
+//			i->get()->close();
+//			windows.erase(i++);
+//		} else {
+//			currentWindow = i;
+//			i->makeCurrent();
+//			i->update();
+//			i->draw();
+//			i++; ///< continue to next window
+//		}
+//	}
+//	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
+//		if(i->first->getWindowShouldClose()){
+//			const auto & window = i->first;
+//			window->close();
+//			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
+//		}else{
+//			currentWindow = i->first;
+//			i->first->makeCurrent();
+//			i->first->update();
+//			i->first->draw();
+//			i++; ///< continue to next window
+//		}
+//	}
 	loopEvent.notify(this);
 }
 
@@ -151,55 +184,59 @@ void ofMainLoop::pollEvents(){
 void ofMainLoop::exit(){
 	exitEvent.notify(this);
 
-	for(auto i: windowsApps){
-		std::shared_ptr<ofAppBaseWindow> window = i.first;
-		std::shared_ptr<ofBaseApp> app = i.second;
+	for (auto window : windows) {
+//	for(auto i: windowsApps){
+//		std::shared_ptr<ofAppBaseWindow> window = i.first;
+//		std::shared_ptr<ofBaseApp> app = i.second;
+//		if(app == nullptr) {
+//			continue;
+//		}
 
 		if(window == nullptr) {
 			continue;
 		}
-		if(app == nullptr) {
-			continue;
-		}
+
 
 		ofEventArgs args;
 		ofNotifyEvent(window->events().exit, args, this);
 
-		ofRemoveListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().update,app.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().draw,app.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().exit,app.get(),&ofBaseApp::exit,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().keyPressed,app.get(),&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().keyReleased,app.get(),&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().mouseMoved,app.get(),&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().mouseDragged,app.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().mousePressed,app.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().mouseReleased,app.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().mouseScrolled,app.get(),&ofBaseApp::mouseScrolled,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().mouseEntered,app.get(),&ofBaseApp::mouseEntered,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().mouseExited,app.get(),&ofBaseApp::mouseExited,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().windowResized,app.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().messageEvent,app.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().fileDragEvent,app.get(),&ofBaseApp::dragged,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().touchCancelled,app.get(),&ofBaseApp::touchCancelled,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().touchDoubleTap,app.get(),&ofBaseApp::touchDoubleTap,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().touchDown,app.get(),&ofBaseApp::touchDown,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().touchMoved,app.get(),&ofBaseApp::touchMoved,OF_EVENT_ORDER_APP);
-		ofRemoveListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().update,app.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().draw,app.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().exit,app.get(),&ofBaseApp::exit,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().keyPressed,app.get(),&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().keyReleased,app.get(),&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().mouseMoved,app.get(),&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().mouseDragged,app.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().mousePressed,app.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().mouseReleased,app.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().mouseScrolled,app.get(),&ofBaseApp::mouseScrolled,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().mouseEntered,app.get(),&ofBaseApp::mouseEntered,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().mouseExited,app.get(),&ofBaseApp::mouseExited,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().windowResized,app.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().messageEvent,app.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().fileDragEvent,app.get(),&ofBaseApp::dragged,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().touchCancelled,app.get(),&ofBaseApp::touchCancelled,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().touchDoubleTap,app.get(),&ofBaseApp::touchDoubleTap,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().touchDown,app.get(),&ofBaseApp::touchDown,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().touchMoved,app.get(),&ofBaseApp::touchMoved,OF_EVENT_ORDER_APP);
+//		ofRemoveListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
 #ifdef TARGET_ANDROID
-		auto androidApp = dynamic_cast<ofxAndroidApp*>(app.get());
-		if(androidApp){
-			ofRemoveListener(ofxAndroidEvents().okPressed,androidApp,&ofxAndroidApp::okPressed,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().cancelPressed,androidApp,&ofxAndroidApp::cancelPressed,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().backPressed,androidApp,&ofxAndroidApp::backPressed,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().networkConnected,androidApp,&ofxAndroidApp::networkConnectedEvent,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().pause,androidApp,&ofxAndroidApp::pause,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().resume,androidApp,&ofxAndroidApp::resume,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
-			ofRemoveListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
-		}
+		
+		// FIXME: how will this work with Android?
+//		auto androidApp = dynamic_cast<ofxAndroidApp*>(app.get());
+//		if(androidApp){
+//			ofRemoveListener(ofxAndroidEvents().okPressed,androidApp,&ofxAndroidApp::okPressed,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().cancelPressed,androidApp,&ofxAndroidApp::cancelPressed,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().backPressed,androidApp,&ofxAndroidApp::backPressed,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().networkConnected,androidApp,&ofxAndroidApp::networkConnectedEvent,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().pause,androidApp,&ofxAndroidApp::pause,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().resume,androidApp,&ofxAndroidApp::resume,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().unloadGL,androidApp,&ofxAndroidApp::unloadGL,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
+//			ofRemoveListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
+//		}
 #endif
 	}
 
@@ -207,10 +244,13 @@ void ofMainLoop::exit(){
 	// reset applications then windows
 	// so events are present until the
 	// end of the application
-	for(auto & window_app: windowsApps){
-		window_app.second.reset();
-	}
-	windowsApps.clear();
+//	for(auto & window_app: windowsApps){
+//		window_app.second.reset();
+//	}
+//	windowsApps.clear();
+	
+	mainApp.reset();
+	windows.clear();
 }
 
 std::shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
@@ -225,21 +265,32 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 	if(currentWindow.lock().get() == window){
 		return;
 	}
-	for(auto i: windowsApps){
-		if(i.first.get() == window){
-			currentWindow = i.first;
+	
+	for (const auto & w : windows) {
+		if (w.get() == window) {
+			currentWindow = w;
 			break;
 		}
 	}
+//	for(auto i: windowsApps){
+//		if(i.first.get() == window){
+//			currentWindow = i.first;
+//			break;
+//		}
+//	}
 }
 
 std::shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
-	return windowsApps[currentWindow.lock()];
+//	return windowsApps[currentWindow.lock()];
+	return mainApp;
 }
 
 void ofMainLoop::shouldClose(int _status){
-	for(auto i: windowsApps){
-		i.first->setWindowShouldClose();
+//	for(auto i: windowsApps){
+//		i.first->setWindowShouldClose();
+//	}
+	for(auto w : windows){
+		w->setWindowShouldClose();
 	}
 	bShouldClose = true;
 	status = _status;

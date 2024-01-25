@@ -127,6 +127,7 @@ public:
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
 	std::vector <int> fullscreenDisplays;
+	bool showInSelectedMonitor = false;
 
 protected:
 	bool sizeSet { false };
