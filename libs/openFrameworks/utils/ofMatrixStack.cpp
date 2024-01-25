@@ -209,7 +209,8 @@ ofRectangle ofMatrixStack::getFullSurfaceViewport() const {
 	if (currentRenderSurface) {
 		return { 0.0f, 0.0f, currentRenderSurface->getWidth(),currentRenderSurface->getHeight() };
 	} else if (currentWindow) {
-		return { 0, 0, currentWindow->getWidth(), currentWindow->getHeight() };
+		// FIXME: ofRectangle accepting int as parameter.
+		return { 0, 0, (float)currentWindow->getWidth(), (float)currentWindow->getHeight() };
 	} else {
 		return {}; //ofRectangle();
 	}
