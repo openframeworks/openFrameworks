@@ -70,7 +70,6 @@ void ofAppGLFWWindow::close() {
 		glfwSetScrollCallback( windowP, nullptr );
 		glfwSetDropCallback( windowP, nullptr );
 		glfwSetWindowRefreshCallback(windowP, nullptr);
-		glfwSetMonitorCallback(monitor_cb);
 
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
@@ -89,6 +88,7 @@ void ofAppGLFWWindow::close() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
+	cout << "yes recompile OK" << endl;
 	if (windowP) {
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
@@ -270,6 +270,8 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	}
 
 //	setVerticalSync(true);
+	glfwSetMonitorCallback( monitor_cb );
+
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetCursorEnterCallback(windowP, entry_cb);
@@ -1257,7 +1259,7 @@ void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
-//	cout << "monitor_cb!" << endl;
+	cout << "monitor_cb!" << endl;
 	allMonitors.update();
 }
 
