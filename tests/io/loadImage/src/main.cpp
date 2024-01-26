@@ -9,11 +9,7 @@ class ofApp: public ofxUnitTestsApp{
 		ofxTest(img.load("indispensable.jpg"), "load from fs");
 		ofxTest(img.load(ofToDataPath("indispensable.jpg", true)), "load from fs");
 		ofxTest(img.load("http://openframeworks.cc/about/0.jpg"), "load from http");
-		// https://avatars.githubusercontent.com/u/48240?v=4 //ar
-		// https://avatars.githubusercontent.com/u/144000?v=4 //th
-		// https://avatars.githubusercontent.com/u/58289?v=4 //dm
-		// ofxTest(img.load("https://forum.openframeworks.cc/user_avatar/forum.openframeworks.cc/arturo/45/3965_1.png"), "load from https");
-		ofxTest(img.load("https://avatars.githubusercontent.com/u/48240?v=4"), "load from https");
+		ofxTest(img.load("https://forum.openframeworks.cc/user_avatar/forum.openframeworks.cc/arturo/45/3965_1.png"), "load from https");
 	}
 };
 

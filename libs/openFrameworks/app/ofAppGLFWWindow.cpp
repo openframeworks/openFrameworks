@@ -14,7 +14,6 @@
 	#else
 		#define GLFW_EXPOSE_NATIVE_EGL
 	#endif
-//	#include "GLFW/glfw3native.h"
 	#include <X11/XKBlib.h>
 	#include <X11/Xatom.h>
 	#include <X11/extensions/Xrandr.h>
@@ -24,15 +23,12 @@
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
 	#define GLFW_EXPOSE_NATIVE_NSGL
-//	#include "GLFW/glfw3native.h"
 #elif defined(TARGET_WIN32)
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#define GLFW_EXPOSE_NATIVE_WGL
-//	#include <GLFW/glfw3native.h>
 #endif
 
 #include "GLFW/glfw3native.h"
-
 
 using std::numeric_limits;
 using std::shared_ptr;
@@ -51,10 +47,8 @@ ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(new ofCoreEvents){
 
 	ofAppPtr = nullptr;
 
-//	nFramesSinceWindowResized = 0;
 	iconSet = false;
 	windowP = nullptr;
-
 
 	glfwSetErrorCallback(error_cb);
 }
@@ -65,7 +59,6 @@ ofAppGLFWWindow::~ofAppGLFWWindow() {
 
 void ofAppGLFWWindow::close() {
 	if (windowP) {
-
 		glfwSetMouseButtonCallback( windowP, nullptr );
 		glfwSetCursorPosCallback( windowP, nullptr );
 		glfwSetCursorEnterCallback( windowP, nullptr );
@@ -186,6 +179,8 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
+	
+	// saves window rectangle just created.
 	windowRect = getWindowRect();
 
 	if (settings.windowMode == OF_WINDOW || settings.windowMode == OF_FULLSCREEN) {
@@ -197,6 +192,8 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	}
 
 	if (settings.isPositionSet()) {
+		windowRect.x = settings.getPosition().x;
+		windowRect.y = settings.getPosition().y;
 		setWindowRect(windowRect);
 	} else {
 		setWindowShape(windowRect.width, windowRect.height);
@@ -215,6 +212,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 #ifdef TARGET_LINUX
 		if (!iconSet) {
 			ofPixels iconPixels;
+			// FIXME: we can have this define in ofIcon.h instead
 	#ifdef DEBUG
 			iconPixels.allocate(ofIconDebug.width, ofIconDebug.height, ofIconDebug.bytes_per_pixel);
 			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(), ofIconDebug.rle_pixel_data, iconPixels.getWidth() * iconPixels.getHeight(), ofIconDebug.bytes_per_pixel);
@@ -368,7 +366,6 @@ void ofAppGLFWWindow::update() {
 
 //--------------------------------------------
 void ofAppGLFWWindow::pollEvents() {
-//	cout << "pollEvents " << ofGetFrameNum() << endl;
 	glfwPollEvents();
 }
 
@@ -381,33 +378,6 @@ void ofAppGLFWWindow::draw() {
 
 	events().notifyDraw();
 
-//#ifdef TARGET_WIN32
-//	if (currentRenderer->getBackgroundAuto() == false) {
-//		// on a PC resizing a window with this method of accumulation (essentially single buffering)
-//		// is BAD, so we clear on resize events.
-//		if (nFramesSinceWindowResized < 3) {
-//			currentRenderer->clear();
-//		} 
-//		
-//		else {
-//			if ((events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && settings.doubleBuffering) {
-//				glfwSwapBuffers(windowP);
-//			} else {
-//				glFlush();
-//			}
-//		}
-//	} else {
-//		if (settings.doubleBuffering) {
-//			glfwSwapBuffers(windowP);
-//		} else {
-//			glFlush();
-//		}
-//	}
-//#else
-//
-//
-//#endif
-
 	if (settings.doubleBuffering) {
 		glfwSwapBuffers(windowP);
 		//		std::cout << "swap buffers " << ofGetFrameNum() << std::endl;
@@ -415,10 +385,7 @@ void ofAppGLFWWindow::draw() {
 		glFlush();
 	}
 	
-	
 	currentRenderer->finishRender();
-
-//	nFramesSinceWindowResized++;
 }
 
 //--------------------------------------------
@@ -515,7 +482,7 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-	cout << settings.windowName << " setWindowRect " << rect << endl;
+//	cout << settings.windowName << " setWindowRect " << rect << endl;
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 
