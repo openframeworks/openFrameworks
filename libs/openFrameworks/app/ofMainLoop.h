@@ -50,6 +50,9 @@ public:
 	ofEvent<void> loopEvent;
 	
 	std::thread::id get_thread_id() { return thread_id; };
+	
+	// Testing
+	std::vector <std::shared_ptr<ofAppBaseWindow> > getWindows() { return windows; }
 
 private:
 	std::thread::id thread_id { std::this_thread::get_id() };

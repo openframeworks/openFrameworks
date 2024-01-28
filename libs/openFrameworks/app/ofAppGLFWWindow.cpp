@@ -88,7 +88,7 @@ void ofAppGLFWWindow::close() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
-	cout << "yes recompile OK" << endl;
+//	cout << "yes recompile OK" << endl;
 	if (windowP) {
 		ofLogError() << "window already setup, probably you are mixing old and new style setup";
 		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
@@ -103,8 +103,6 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		return;
 	}
 
-	allMonitors.update();
-	//	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RED_BITS, settings.redBits);
@@ -158,6 +156,10 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		sharedContext = (GLFWwindow *)settings.shareContextWith->getWindowContext();
 	}
 
+	allMonitors.update();
+	//	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
+
+	
 	GLFWmonitor *monitor = nullptr;
 
 	// FIXME: maybe use as a global variable for the window?
@@ -175,29 +177,46 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		monitor = allMonitors.monitors[monitorIndex];
 	}
 
+
 	// MARK: - WINDOW
-	
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+//	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
 	
 	// saves window rectangle just created.
 	windowRect = getWindowRect();
 
+
+	cout << "------------------------------" << endl;
+	cout << "allMonitors.rects.size() " << allMonitors.rects.size() << endl;
+	cout << "settings.monitor " << settings.monitor << endl;
+	cout << "monitor window = " << monitorIndex << endl;
+	
 	if (settings.windowMode == OF_WINDOW || settings.windowMode == OF_FULLSCREEN) {
+		if (settings.isPositionSet()) {
+			windowRect.x = settings.getPosition().x;
+			windowRect.y = settings.getPosition().y;
+		}
+		
 		if (monitorIndex > 0) {
+			cout << "before windowRect : " << windowRect << endl;
 			windowRect.x += allMonitors.rects[monitorIndex].x;
 			windowRect.y += allMonitors.rects[monitorIndex].y;
+			// now it will trigger isPositionSet() as true
+			settings.setPosition({ windowRect.x, windowRect.y });
+			cout << "new windowRect : " << windowRect << endl;
+//			setWindowRect(windowRect);
+
+		}
+		
+		if (settings.isPositionSet()) {
+	//		windowRect.x = settings.getPosition().x;
+	//		windowRect.y = settings.getPosition().y;
 			setWindowRect(windowRect);
+		} else {
+			setWindowShape(windowRect.width, windowRect.height);
 		}
 	}
 
-	if (settings.isPositionSet()) {
-		windowRect.x = settings.getPosition().x;
-		windowRect.y = settings.getPosition().y;
-		setWindowRect(windowRect);
-	} else {
-		setWindowShape(windowRect.width, windowRect.height);
-	}
 	
 	if (!windowP) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
@@ -363,6 +382,7 @@ void ofAppGLFWWindow::update() {
 		}
 
 		glfwShowWindow(windowP);
+		cout << "after show window rect " << getWindowRect() << endl;
 	}
 }
 
@@ -781,8 +801,8 @@ static void rotateMouseXY(ofOrientation orientation, int w, int h, double & x, d
 
 //------------------------------------------------------------
 ofAppGLFWWindow * ofAppGLFWWindow::setCurrent(GLFWwindow * windowP) {
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
-	shared_ptr<ofMainLoop> mainLoop = ofGetMainLoop();
+	auto instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+	auto mainLoop = ofGetMainLoop();
 	if (mainLoop) {
 		mainLoop->setCurrentWindow(instance);
 	}
@@ -1261,6 +1281,18 @@ void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
 void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
 	cout << "monitor_cb!" << endl;
 	allMonitors.update();
+	
+	for (auto & w : ofGetMainLoop()->getWindows()) {
+		if (w->settings.showOnlyInSelectedMonitor) {
+			if (allMonitors.rects.size() > w->settings.monitor) {
+				glfwShowWindow(((ofAppGLFWWindow*)&w)->windowP);
+				// TODO: set window to monitor
+			} else {
+				glfwHideWindow(((ofAppGLFWWindow*)&w)->windowP);
+			}
+		}
+	}
+//	ofGetMainLoop()->getWindows().size()
 }
 
 //------------------------------------------------------------
