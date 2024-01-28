@@ -54,10 +54,13 @@ ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(new ofCoreEvents){
 }
 
 ofAppGLFWWindow::~ofAppGLFWWindow() {
+	cout << "DISTRUKT! " << settings.windowName << endl;
 	close();
 }
 
 void ofAppGLFWWindow::close() {
+	cout << "ofAppGLFWWindow::close! " << settings.windowName << endl;
+
 	if (windowP) {
 		glfwSetMouseButtonCallback( windowP, nullptr );
 		glfwSetCursorPosCallback( windowP, nullptr );
@@ -161,13 +164,19 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	
 	GLFWmonitor *monitor = nullptr;
+	
 
 	// FIXME: maybe use as a global variable for the window?
+	bool hideWindow = false;
+	
 	int monitorIndex = 0;
 	// Check to see if desired monitor is connected.
 	if (allMonitors.rects.size() > settings.monitor) {
 		monitorIndex = settings.monitor;
 	} else {
+		if (settings.showOnlyInSelectedMonitor) {
+			hideWindow = true;
+		}
 		ofLogError("ofAppGLFWWindow") << "requested monitor is: " << settings.monitor << " monitor count is: " << allMonitors.rects.size();
 	}
 	
@@ -179,17 +188,12 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 
 	// MARK: - WINDOW
-//	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
 	
 	// saves window rectangle just created.
 	windowRect = getWindowRect();
 
-
-	cout << "------------------------------" << endl;
-	cout << "allMonitors.rects.size() " << allMonitors.rects.size() << endl;
-	cout << "settings.monitor " << settings.monitor << endl;
-	cout << "monitor window = " << monitorIndex << endl;
 	
 	if (settings.windowMode == OF_WINDOW || settings.windowMode == OF_FULLSCREEN) {
 		if (settings.isPositionSet()) {
@@ -198,25 +202,18 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		}
 		
 		if (monitorIndex > 0) {
-			cout << "before windowRect : " << windowRect << endl;
 			windowRect.x += allMonitors.rects[monitorIndex].x;
 			windowRect.y += allMonitors.rects[monitorIndex].y;
 			// now it will trigger isPositionSet() as true
 			settings.setPosition({ windowRect.x, windowRect.y });
-			cout << "new windowRect : " << windowRect << endl;
-//			setWindowRect(windowRect);
-
 		}
 		
 		if (settings.isPositionSet()) {
-	//		windowRect.x = settings.getPosition().x;
-	//		windowRect.y = settings.getPosition().y;
 			setWindowRect(windowRect);
 		} else {
 			setWindowShape(windowRect.width, windowRect.height);
 		}
 	}
-
 	
 	if (!windowP) {
 		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
@@ -225,7 +222,6 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 
 	// MARK: -
-
 	if (settings.windowMode != OF_GAME_MODE) {
 
 #ifdef TARGET_LINUX
@@ -256,6 +252,10 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	//don't try and show a window if its been requsted to be hidden
 	bWindowNeedsShowing = settings.visible;
+	if (hideWindow) {
+		bWindowNeedsShowing = false;
+//		cout << "HIDE U" << endl;
+	}
 
 	glfwSetWindowUserPointer(windowP, this);
 	glfwMakeContextCurrent(windowP);
@@ -381,8 +381,14 @@ void ofAppGLFWWindow::update() {
 			setFullscreen(false);
 		}
 
+		// FIXME: Test only
+		if (settings.opacity != 1.0) {
+			glfwSetWindowOpacity(windowP, settings.opacity);
+		}
+
 		glfwShowWindow(windowP);
-		cout << "after show window rect " << getWindowRect() << endl;
+		
+//		cout << "after show window rect " << getWindowRect() << endl;
 	}
 }
 
@@ -810,6 +816,11 @@ ofAppGLFWWindow * ofAppGLFWWindow::setCurrent(GLFWwindow * windowP) {
 	return instance;
 }
 
+//------------------------------------------------------------
+ofAppGLFWWindow * ofAppGLFWWindow::getWindow(GLFWwindow * windowP) {
+	return static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+}
+
 namespace {
 int glfwtToOFModifiers(int mods) {
 	int modifiers = 0;
@@ -971,7 +982,8 @@ unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modif
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow * windowP_, int button, int state, int mods) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
 
 #ifdef TARGET_OSX
 	//we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click
@@ -1014,7 +1026,8 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow * windowP_, int button, int state, int
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::motion_cb(GLFWwindow * windowP_, double x, double y) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	ofMouseEventArgs::Type action;
@@ -1034,7 +1047,9 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow * windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::entry_cb(GLFWwindow * windowP_, int entered) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
+
 	ofMouseEventArgs::Type action;
 	if (entered) {
 		action = ofMouseEventArgs::Entered;
@@ -1052,7 +1067,8 @@ void ofAppGLFWWindow::entry_cb(GLFWwindow * windowP_, int entered) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow * windowP_, double x, double y) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	ofMouseEventArgs args(ofMouseEventArgs::Scrolled,
@@ -1067,7 +1083,8 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow * windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow * windowP_, int numFiles, const char ** dropString) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	ofDragInfo drag;
 	drag.position = { instance->events().getMouseX(), instance->events().getMouseY() };
 	drag.files.resize(numFiles);
@@ -1086,7 +1103,9 @@ void ofAppGLFWWindow::error_cb(int errorCode, const char * errorDescription) {
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow * windowP_, int keycode, int scancode, int action, int mods) {
 	int key = 0;
 	uint32_t codepoint = 0;
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
+	cout << "keyboard_cb " << instance->settings.windowName << endl;
 	switch (keycode) {
 	case GLFW_KEY_ESCAPE:
 		key = OF_KEY_ESC;
@@ -1267,28 +1286,37 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow * windowP_, int keycode, int scanco
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::char_cb(GLFWwindow * windowP_, uint32_t key) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
 	instance->events().charEvent.notify(key);
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->draw();
+//	thisWindow->draw();
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
-	cout << "monitor_cb!" << endl;
 	allMonitors.update();
-	
+//	cout << "monitor_cb!" << endl;
+//	cout << "monitors rect size: " << allMonitors.rects.size() << endl;
+
 	for (auto & w : ofGetMainLoop()->getWindows()) {
 		if (w->settings.showOnlyInSelectedMonitor) {
+//			cout << "monitor_cb windowName " << w->settings.windowName << endl;
+			auto win = static_cast<ofAppGLFWWindow *>(w.get());
 			if (allMonitors.rects.size() > w->settings.monitor) {
-				glfwShowWindow(((ofAppGLFWWindow*)&w)->windowP);
-				// TODO: set window to monitor
+				if (w->settings.windowMode == OF_FULLSCREEN) {
+					w->setWindowRect(allMonitors.rects[w->settings.monitor]);
+				}
+				// TODO: set window to monitor, if it is windowed.
+				glfwShowWindow(win->getGLFWWindow());
 			} else {
-				glfwHideWindow(((ofAppGLFWWindow*)&w)->windowP);
+				glfwHideWindow(win->getGLFWWindow());
 			}
 		}
 	}
@@ -1297,7 +1325,8 @@ void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
 //	if (instance->settings.windowMode == OF_WINDOW) {
 //		instance->windowRect.x = x;
 //		instance->windowRect.y = y;
@@ -1306,7 +1335,8 @@ void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
 }
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().notifyWindowResized(w, h);
 //	instance->nFramesSinceWindowResized = 0;
 
@@ -1326,7 +1356,8 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow * windowP_, int w, int h) {
 //	cout << "framebuffer_size_cb " << w << " : " << h << endl;
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+	auto instance = getWindow(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	
 	instance->currentRenderer->clear();
 	instance->events().notifyFramebufferResized(w, h);
@@ -1334,8 +1365,14 @@ void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow * windowP_, int w, int h) {
 
 //--------------------------------------------
 void ofAppGLFWWindow::exit_cb(GLFWwindow * windowP_) {
-	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	cout << "exit_cb " <<  endl;
+	auto instance = getWindow(windowP_);
+//	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().notifyExit();
+	
+	// TODO: handle window closing correctly here.
+//	instance->close();
+//	instance->setWindowShouldClose();
 }
 
 //------------------------------------------------------------

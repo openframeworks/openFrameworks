@@ -74,6 +74,35 @@ void endutils() {
 	//#endif
 }
 
+class timeCounterOF {
+public:
+	time_point<steady_clock> startTime;
+	typedef std::chrono::duration<float, std::ratio<1>> duration;
+
+	timeCounterOF() {
+		reset();
+	}
+	
+	void reset() {
+		startTime = steady_clock::now();
+	}
+	
+	std::chrono::duration<long long, std::nano> getElapsedTime() {
+		return steady_clock::now() - startTime;
+	}
+	
+//	std::chrono::nanoseconds getElapsedTime() {
+//		return duration_cast<nanoseconds>(steady_clock::now() - startTime);
+//	}
+	
+	float getElapsedTimef() {
+		duration d = steady_clock::now() - startTime;
+		return d.count();
+	}
+} timeCounter;
+
+
+
 class Clock {
 public:
 	Clock() {
@@ -307,22 +336,27 @@ ofTime ofGetCurrentTime() {
 
 //--------------------------------------
 uint64_t ofGetElapsedTimeMillis() {
-	return std::chrono::duration_cast<std::chrono::milliseconds>(of::priv::getClock().getElapsedTime()).count();
+	return std::chrono::duration_cast<std::chrono::milliseconds>(of::priv::timeCounter.getElapsedTime()).count();
+//	return std::chrono::duration_cast<std::chrono::milliseconds>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 uint64_t ofGetElapsedTimeMicros() {
-	return std::chrono::duration_cast<std::chrono::microseconds>(of::priv::getClock().getElapsedTime()).count();
+	return std::chrono::duration_cast<std::chrono::microseconds>(of::priv::timeCounter.getElapsedTime()).count();
+//	return std::chrono::duration_cast<std::chrono::microseconds>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 float ofGetElapsedTimef() {
-	return std::chrono::duration<double>(of::priv::getClock().getElapsedTime()).count();
+//	std::cout << of::priv::timeCounter.getElapsedTimef() << std::endl;
+	return of::priv::timeCounter.getElapsedTimef();
+//	return std::chrono::duration<double>(of::priv::getClock().getElapsedTime()).count();
 }
 
 //--------------------------------------
 void ofResetElapsedTimeCounter() {
-	of::priv::getClock().resetElapsedTimeCounter();
+	of::priv::timeCounter.reset();
+//	of::priv::getClock().resetElapsedTimeCounter();
 }
 
 //--------------------------------------
@@ -1020,6 +1054,7 @@ std::string ofGetVersionPreRelease() {
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
+// FIXME: filesystem
 void ofSaveScreen(const string & filename) {
 	/*ofImage screen;
    screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
@@ -1031,6 +1066,7 @@ void ofSaveScreen(const string & filename) {
 }
 
 //--------------------------------------------------
+// FIXME: filesystem
 void ofSaveViewport(const string & filename) {
 	// because ofSaveScreen doesn't related to viewports
 	/*ofImage screen;

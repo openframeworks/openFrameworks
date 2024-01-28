@@ -129,6 +129,7 @@ public:
 	std::vector <int> fullscreenDisplays;
 	// FIXME: Define proper variable name
 	bool showOnlyInSelectedMonitor = false;
+	float opacity { 1.0 }; 
 
 protected:
 	bool sizeSet { false };

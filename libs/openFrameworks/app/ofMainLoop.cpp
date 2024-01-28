@@ -101,7 +101,7 @@ void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::share
 #endif
 	}
 	currentWindow = window;
-	window->makeCurrent();
+//	window->makeCurrent();
 	if(!windowLoop){
 		window->events().notifySetup();
 	}

@@ -126,6 +126,7 @@ public:
 
 private:
 	static ofAppGLFWWindow * setCurrent(GLFWwindow* windowP);
+	static ofAppGLFWWindow * getWindow(GLFWwindow* windowP);
 	static void mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
 	static void motion_cb(GLFWwindow* windowP_, double x, double y);
 	static void entry_cb(GLFWwindow* windowP_, int entered);
@@ -170,6 +171,8 @@ private:
 
 	bool iconSet;
 	
+	
+//	static ofAppGLFWWindow * thisWindow = static_cast<ofAppGLFWWindow *>(this);
 	
 	// window settings, this functions can only be called from main before calling ofSetupOpenGL
 	// TODO: remove specialized version of ofSetupOpenGL when these go away
