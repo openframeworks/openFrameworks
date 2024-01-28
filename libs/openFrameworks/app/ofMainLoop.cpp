@@ -101,6 +101,8 @@ void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::share
 #endif
 	}
 	currentWindow = window;
+	
+	// FIXME: remove?
 //	window->makeCurrent();
 	if(!windowLoop){
 		window->events().notifySetup();

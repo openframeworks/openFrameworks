@@ -818,7 +818,15 @@ ofAppGLFWWindow * ofAppGLFWWindow::setCurrent(GLFWwindow * windowP) {
 
 //------------------------------------------------------------
 ofAppGLFWWindow * ofAppGLFWWindow::getWindow(GLFWwindow * windowP) {
-	return static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+//	return static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+	
+	auto instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+	auto mainLoop = ofGetMainLoop();
+	if (mainLoop) {
+		mainLoop->setCurrentWindow(instance);
+	}
+	instance->makeCurrent();
+	return instance;
 }
 
 namespace {
