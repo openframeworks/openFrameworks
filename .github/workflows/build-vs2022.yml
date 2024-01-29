@@ -41,7 +41,7 @@ jobs:
         run:
           ./scripts/ci/vs/install_bleeding.sh
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.3.1
+        uses: microsoft/setup-msbuild@v1.3.2
       - name: Build emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
