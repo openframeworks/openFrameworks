@@ -9,10 +9,11 @@
 #include "ofApp.h"
 
 @interface MyGuiView : UIViewController {
-	IBOutlet UILabel *displayText;
+    IBOutlet UILabel *displayText;
     IBOutlet UIStackView *animationSlideView;
-	ofApp *myApp;		// points to our instance of ofApp
+    ofApp *myApp;
 }
+
 
 -(void)setStatusString:(NSString *)trackStr;
 

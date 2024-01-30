@@ -6,7 +6,6 @@
 class ofApp : public ofxiOSApp{
     
 public:
-    
     void setup();
     void update();
     void draw();
@@ -35,6 +34,8 @@ public:
     ofxAssimpModelLoader model;
     ofLight    light;
     ofEasyCam cam;
+    
+    vector<string> modelPaths;
     
     int animationIndex = 0;
     int modelIndex;

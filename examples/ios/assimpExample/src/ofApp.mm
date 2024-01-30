@@ -9,11 +9,17 @@ void ofApp::setup(){
     myGuiViewController    =  [storyboard instantiateViewControllerWithIdentifier:@"MyGuiView"];
     [ofxiOSGetGLParentView() addSubview:myGuiViewController.view];
     
+    modelPaths = {
+        "Fox/Fox_05.fbx",
+        "FlightHelmet/FlightHelmet.gltf",
+        "Druid/druid.gltf",
+        "Astroboy/astroBoy_walk.dae"
+    };
+    
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofBackground(50, 0);
 	
 	ofDisableArbTex(); // we need GL_TEXTURE_2D for our models coords.
-	
 	modelIndex = 0;
 	loadModel(modelIndex);
     bUseCamera = true;
@@ -22,13 +28,6 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::loadModel(int aindex) {
-    vector<string> modelPaths = {
-        "Fox/Fox_05.fbx",
-        "FlightHelmet/FlightHelmet.gltf",
-        "Druid/druid.gltf",
-        "Astroboy/astroBoy_walk.dae"
-    };
-    
     loadModel( modelPaths[modelIndex] );
 }
 
@@ -48,12 +47,10 @@ void ofApp::loadModel(string filename){
 
 //--------------------------------------------------------------
 void ofApp::loadModel(bool decrease){
-    int val = 1;
-    if(decrease) { val *= -1; }
-    modelIndex+=val;
+    modelIndex += decrease ? -1 : 1;
     if(modelIndex < 0){
-        modelIndex = 3;
-    }else if(modelIndex >= 4){
+        modelIndex = modelPaths.size() - 1;
+    }else if(modelIndex >= modelPaths.size()){
         modelIndex = 0;
     }
     loadModel(modelIndex);
