@@ -54,6 +54,11 @@ public:
 	// Testing
 	std::vector <std::shared_ptr<ofAppBaseWindow> > getWindows() { return windows; }
 
+	void ofBeginWindow(int n);
+	void ofEndWindow();
+
+	
+	
 private:
 	std::thread::id thread_id { std::this_thread::get_id() };
 
@@ -70,4 +75,6 @@ private:
 	std::function<void()> windowLoop;
 	std::function<void()> windowPollEvents;
 	bool escapeQuits;
+	
+
 };

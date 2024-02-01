@@ -172,6 +172,9 @@ private:
 	bool iconSet;
 	
 	
+	void beginDraw();
+	void endDraw();
+	
 //	static ofAppGLFWWindow * thisWindow = static_cast<ofAppGLFWWindow *>(this);
 	
 	// window settings, this functions can only be called from main before calling ofSetupOpenGL

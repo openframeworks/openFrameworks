@@ -397,6 +397,28 @@ void ofAppGLFWWindow::pollEvents() {
 	glfwPollEvents();
 }
 
+
+//--------------------------------------------
+void ofAppGLFWWindow::beginDraw() {
+	currentRenderer->startRender();
+	if (bEnableSetupScreen) {
+		currentRenderer->setupScreen();
+	}
+}
+
+//--------------------------------------------
+void ofAppGLFWWindow::endDraw() {
+	if (settings.doubleBuffering) {
+		glfwSwapBuffers(windowP);
+		//		std::cout << "swap buffers " << ofGetFrameNum() << std::endl;
+	} else {
+		std::cout << "flush " << ofGetFrameNum()  << " : " << settings.windowName << std::endl;
+		glFlush();
+	}
+	
+	currentRenderer->finishRender();
+}
+
 //--------------------------------------------
 void ofAppGLFWWindow::draw() {
 	currentRenderer->startRender();
@@ -818,15 +840,15 @@ ofAppGLFWWindow * ofAppGLFWWindow::setCurrent(GLFWwindow * windowP) {
 
 //------------------------------------------------------------
 ofAppGLFWWindow * ofAppGLFWWindow::getWindow(GLFWwindow * windowP) {
-//	return static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+	return static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
 	
-	auto instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
-	auto mainLoop = ofGetMainLoop();
-	if (mainLoop) {
-		mainLoop->setCurrentWindow(instance);
-	}
-	instance->makeCurrent();
-	return instance;
+//	auto instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+//	auto mainLoop = ofGetMainLoop();
+//	if (mainLoop) {
+//		mainLoop->setCurrentWindow(instance);
+//	}
+//	instance->makeCurrent();
+//	return instance;
 }
 
 namespace {

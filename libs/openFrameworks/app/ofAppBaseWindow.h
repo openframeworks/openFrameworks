@@ -80,6 +80,9 @@ public:
 	virtual void finishRender(){}
 
 	virtual void * getWindowContext(){ return nullptr; }
+	
+	virtual void beginDraw(){}
+	virtual void endDraw(){}
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	virtual Display* getX11Display(){ return nullptr; }
