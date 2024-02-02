@@ -9,17 +9,12 @@
 // check if any video capture system is already defined from the compiler
 #if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
 	#ifdef TARGET_LINUX
-
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
 	#elif defined(TARGET_OSX)
-//		#include <ApplicationServices/ApplicationServices.h>
-
-
 		#define OF_VIDEO_CAPTURE_AVF
 
 	#elif defined (TARGET_WIN32)
-
 		// comment out this following line, if you'd like to use the
 		// quicktime capture interface on windows
 		// if not, we default to videoInput library for
