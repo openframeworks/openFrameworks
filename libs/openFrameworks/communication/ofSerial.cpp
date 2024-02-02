@@ -1,7 +1,15 @@
 #include "ofSerial.h"
 #include "ofUtils.h"
 #include "ofLog.h"
-#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <ctype.h>
+#include <algorithm>
+#include <cstring>
+
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif	
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <sys/ioctl.h>
@@ -9,16 +17,34 @@
 	#include <dirent.h>
 #endif
 
-
-#include <fcntl.h>
-#include <errno.h>
-#include <ctype.h>
-#include <algorithm>
-#include <cstring>
-
 #ifdef TARGET_LINUX
 	#include <linux/serial.h>
 #endif
+
+
+#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+	#include <termios.h>
+#else
+	#include <winbase.h>
+	#include <tchar.h>
+	#include <iostream>
+	#include <string.h>
+	#include <devpropdef.h>
+	#include <setupapi.h>
+	#include <regstr.h>
+	/// \cond INTERNAL
+	#define MAX_SERIAL_PORTS 256
+	/// \endcond
+	#include <winioctl.h>
+	/*#ifndef _MSC_VER
+		#define INITGUID
+		#include <initguid.h> // needed for dev-c++ & DEFINE_GUID
+	#endif*/
+#endif
+
+// serial error codes
+#define OF_SERIAL_NO_DATA 	-2
+#define OF_SERIAL_ERROR		-1
 
 using std::vector;
 using std::string;

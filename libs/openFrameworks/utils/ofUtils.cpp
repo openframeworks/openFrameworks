@@ -14,7 +14,10 @@
 #include <chrono>
 #include <locale>
 #include <numeric>
-#include <unistd.h>
+
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif
 
 
 #ifdef TARGET_WIN32 // For ofLaunchBrowser.
