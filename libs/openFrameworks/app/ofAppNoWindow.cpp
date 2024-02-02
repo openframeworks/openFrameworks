@@ -3,6 +3,7 @@
 #include "ofPath.h"
 #include "of3dGraphics.h"
 #include <memory>
+#include <unistd.h>
 
 
 #if defined TARGET_OSX || defined TARGET_LINUX

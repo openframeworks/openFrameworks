@@ -99,7 +99,7 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-	#include <unistd.h>
+	// #include <unistd.h>
 
 	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
         #define TARGET_OF_IPHONE
@@ -204,7 +204,7 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-	#include <unistd.h>
+	// #include <unistd.h>
 
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
@@ -259,7 +259,7 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
-	#include <unistd.h>
+	// #include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
