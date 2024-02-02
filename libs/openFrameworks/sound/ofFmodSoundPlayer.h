@@ -9,8 +9,8 @@
 
 
 extern "C" {
-#include "fmod.h"
-#include "fmod_errors.h"
+#include <fmod.h>
+#include <fmod_errors.h>
 }
 
 //		TO DO :

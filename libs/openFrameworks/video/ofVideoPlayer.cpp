@@ -41,15 +41,15 @@
 	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
 #endif
 
-#ifdef OF_VIDEO_PLAYER_QUICKTIME
-	#include "ofQuickTimePlayer.h"
-	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
-#endif
-
-#ifdef OF_VIDEO_PLAYER_QTKIT
-	#include "ofQTKitPlayer.h"
-	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
-#endif
+//#ifdef OF_VIDEO_PLAYER_QUICKTIME
+//	#include "ofQuickTimePlayer.h"
+//	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
+//#endif
+//
+//#ifdef OF_VIDEO_PLAYER_QTKIT
+//	#include "ofQTKitPlayer.h"
+//	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
+//#endif
 
 #ifdef OF_VIDEO_PLAYER_AVFOUNDATION
 	#include "ofAVFoundationPlayer.h"

@@ -21,7 +21,7 @@
 
 
 #ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
-	#include "videoInput.h"
+	#include <videoInput.h>
 #endif
 
 

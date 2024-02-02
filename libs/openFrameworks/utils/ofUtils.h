@@ -4,9 +4,9 @@
 #include "ofConstants.h"
 
 #if !defined(TARGET_MINGW)
-	#include "utf8.h"
+	#include <utf8.h>
 #else
-	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
+	#include <utf8cpp/utf8.h> // MSYS2 : use of system-installed include
 #endif
 
 #include <algorithm>

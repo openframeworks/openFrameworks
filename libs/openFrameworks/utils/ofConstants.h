@@ -208,20 +208,20 @@ enum ofTargetPlatform{
 
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
-			#include "bcm_host.h"
+			#include <bcm_host.h>
 			// rpi firmware headers define countof
 			// which messes up other libraries like glm
 			#undef countof
 		#endif
 
-		#include "GLES/gl.h"
-		#include "GLES/glext.h"
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
+		#include <GLES/gl.h>
+		#include <GLES/glext.h>
+		#include <GLES2/gl2.h>
+		#include <GLES2/gl2ext.h>
 
 		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
+		#include <EGL/egl.h>
+		#include <EGL/eglext.h>
 	#else // desktop linux
 		#include <GL/glew.h> 
 	#endif
@@ -285,7 +285,7 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#include "tesselator.h"
+#include <tesselator.h>
 typedef TESSindex ofIndexType;
 
 
