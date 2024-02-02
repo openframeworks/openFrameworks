@@ -3,8 +3,11 @@
 #include "ofPath.h"
 #include "of3dGraphics.h"
 #include <memory>
-#include <unistd.h>
 
+#include "ofConstants.h"
+#ifndef TARGET_WIN32
+#include <unistd.h>
+#endif
 
 #if defined TARGET_OSX || defined TARGET_LINUX
 #include <stdlib.h>

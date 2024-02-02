@@ -1,6 +1,7 @@
 #include "ofSerial.h"
 #include "ofUtils.h"
 #include "ofLog.h"
+#include <unistd.h>
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <sys/ioctl.h>
