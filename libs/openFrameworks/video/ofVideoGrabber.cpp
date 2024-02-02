@@ -5,7 +5,7 @@
 #include "ofPixels.h"
 #include "ofConstants.h"
 
------------------------------------------------- capture
+// ------------------------------------------------ capture
 // check if any video capture system is already defined from the compiler
 #if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
 	#ifdef TARGET_LINUX

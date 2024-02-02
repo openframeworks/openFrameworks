@@ -4,7 +4,7 @@
 // #include "ofGraphics.h"
 
 // #include "ofGLRenderer.h"
-include "ofBufferObject.h"
+#include "ofBufferObject.h"
 #include "ofGLUtils.h"
 #include "ofLog.h"
 
