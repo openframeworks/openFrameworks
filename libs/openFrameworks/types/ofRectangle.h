@@ -4,9 +4,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-
-#include <ostream>
-#include <istream>
+#include <iostream>
 
 
 /// \brief Used to represent the available rectangle aspect ratio scaling modes.
@@ -799,7 +797,7 @@ public:
 
 	/// \brief Gets the size of the ofRectangle as glm::vec2.
 	/// \returns The size of the rectangle.
-	glm::vec2 getSize() const { return glm::vec2 { getWidth(), getHeight() }; }
+	glm::vec2 getSize() const { return { getWidth(), getHeight() }; }
 
 	/// \brief Maps a normalized coordinate into this rectangle
 	///

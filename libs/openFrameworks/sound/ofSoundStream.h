@@ -2,8 +2,8 @@
 
 #include "ofBaseApp.h"
 #include "ofSoundBaseTypes.h"
-#include <climits>
-#include <functional>
+//#include <climits>
+//#include <functional>
 
 class ofSoundStreamSettings;
 
