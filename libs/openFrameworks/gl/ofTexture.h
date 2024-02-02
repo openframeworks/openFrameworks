@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofGraphicsBaseTypes.h"
-// MARK: Targets, some can be moved to cpp
+// MARK: Targets, some can be moved to cpp, GLEW also
 #include "ofConstants.h"
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL

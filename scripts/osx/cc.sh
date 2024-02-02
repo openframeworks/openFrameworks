@@ -1,3 +1,3 @@
 #!/bin/zsh
-${ccache} clang "$@"
+time ${ccache} clang "$@"
 # clang "$@"

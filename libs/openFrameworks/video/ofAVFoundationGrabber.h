@@ -6,7 +6,6 @@
 
 #include "ofConstants.h"
 
-#ifdef OF_VIDEO_CAPTURE_AVF
 
 //------
 #include "ofVideoBaseTypes.h"
@@ -120,4 +119,3 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 
 };
 
-#endif

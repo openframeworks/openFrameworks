@@ -7,7 +7,6 @@
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
 
-#ifdef OF_VIDEO_CAPTURE_AVF
 
 #import <Accelerate/Accelerate.h>
 
@@ -537,4 +536,3 @@ ofPixelFormat ofAVFoundationGrabber::getPixelFormat() const{
 	return pixelFormat;
 }
 
-#endif

@@ -9,7 +9,7 @@
 
 #include "ofGraphicsConstants.h"
 // MARK: Targets / Defines
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 class ofShader;
 class ofGLProgrammableRenderer;

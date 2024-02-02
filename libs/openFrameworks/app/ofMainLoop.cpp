@@ -7,7 +7,8 @@
 
 #include "ofMainLoop.h"
 #include "ofBaseApp.h"
-#include "ofConstants.h"
+// TEST WITHOUT
+//#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 
 //========================================================================
