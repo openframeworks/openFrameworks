@@ -12,7 +12,6 @@
 #include "ofShader.h"
 
 class ofVboMesh;
-
 class ofGLProgrammableRenderer;
 
 class ofCubeMap {

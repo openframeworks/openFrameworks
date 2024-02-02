@@ -21,10 +21,11 @@
 	#include <linux/serial.h>
 #endif
 
-
-#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
-	#include <termios.h>
-#else
+// FIXME: check if this i sexclusive to windows and move to the right target if yes.
+//#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+//	#include <termios.h>
+//#else
+#ifdef TARGET_WIN32
 	#include <winbase.h>
 	#include <tchar.h>
 	#include <iostream>
