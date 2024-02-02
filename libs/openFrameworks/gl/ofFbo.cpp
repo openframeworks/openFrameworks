@@ -7,6 +7,7 @@
 #include "ofBufferObject.h"
 #include "ofGLUtils.h"
 #include "ofLog.h"
+#include "ofPixels.h"
 
 // MARK: Targets
 // #include "ofConstants.h"
