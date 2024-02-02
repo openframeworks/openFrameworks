@@ -2,7 +2,7 @@
 #include "ofLog.h"
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/common.hpp"
+#include <glm/common.hpp>
 
 
 #ifdef OF_SOUND_PLAYER_AV_ENGINE

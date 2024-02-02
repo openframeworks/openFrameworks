@@ -7,8 +7,8 @@
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "glm/vec2.hpp"
-#include "glm/fwd.hpp"
+#include <glm/vec2.hpp>
+#include <glm/fwd.hpp>
 //#include <cmath>
 
 class ofVec3f;
@@ -192,7 +192,7 @@ public:
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1;//#include "ofConstants.h"
-	//#include "glm/fwd.hpp"
+	//#include <glm/fwd.hpp>
 	/// v1.set(40, 20);
 	/// ~~~~
 	/// 

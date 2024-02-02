@@ -12,7 +12,7 @@
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/fwd.hpp"
+#include <glm/fwd.hpp>
 #include <unordered_map>
 
 class ofTexture;
