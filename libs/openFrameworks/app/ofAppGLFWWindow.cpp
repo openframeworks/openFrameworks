@@ -1498,9 +1498,9 @@ void ofAppGLFWWindow::makeCurrent() {
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
-GLXContext ofAppGLFWWindow::getGLXContext() {
-	return glfwGetGLXContext(windowP);
-}
+//GLXContext ofAppGLFWWindow::getGLXContext() {
+//	return glfwGetGLXContext(windowP);
+//}
 #endif
 
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
