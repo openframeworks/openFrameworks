@@ -93,9 +93,9 @@ public:
 	void iconify(bool bIconify);
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-//	typedef struct _XIM * XIM;
-//	typedef struct _XIC * XIC;
-//	
+	typedef struct _XIM * XIM;
+	typedef struct _XIC * XIC;
+	
 	Display * getX11Display();
 	Window getX11Window();
 	XIC getX11XIC();
@@ -145,8 +145,8 @@ private:
 	void close();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-//	XIM xim;
-//	XIC xic;
+	XIM xim;
+	XIC xic;
 #endif
 
 	std::unique_ptr<ofCoreEvents> coreEvents;
