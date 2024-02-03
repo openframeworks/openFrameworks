@@ -93,15 +93,15 @@ public:
 	void iconify(bool bIconify);
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-	typedef struct _XIM * XIM;
-	typedef struct _XIC * XIC;
-	
-	Display * getX11Display();
-	Window getX11Window();
-	XIC getX11XIC();
-
-	void setWindowIcon(const of::filesystem::path & path);
-	void setWindowIcon(const ofPixels & iconPixels);
+//	typedef struct _XIM * XIM;
+//	typedef struct _XIC * XIC;
+//	
+//	Display * getX11Display();
+//	Window getX11Window();
+//	XIC getX11XIC();
+//
+//	void setWindowIcon(const of::filesystem::path & path);
+//	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
@@ -145,8 +145,8 @@ private:
 	void close();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
-	XIM xim;
-	XIC xic;
+//	XIM xim;
+//	XIC xic;
 #endif
 
 	std::unique_ptr<ofCoreEvents> coreEvents;
