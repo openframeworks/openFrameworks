@@ -96,9 +96,9 @@ public:
 //	typedef struct _XIM * XIM;
 //	typedef struct _XIC * XIC;
 //	
-//	Display * getX11Display();
-//	Window getX11Window();
-//	XIC getX11XIC();
+	Display * getX11Display();
+	Window getX11Window();
+	XIC getX11XIC();
 //
 //	void setWindowIcon(const of::filesystem::path & path);
 //	void setWindowIcon(const ofPixels & iconPixels);

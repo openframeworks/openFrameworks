@@ -1485,17 +1485,17 @@ void ofAppGLFWWindow::makeCurrent() {
 }
 
 #if defined(TARGET_LINUX)
-//Display * ofAppGLFWWindow::getX11Display() {
-//	return glfwGetX11Display();
-//}
-//
-//Window ofAppGLFWWindow::getX11Window() {
-//	return glfwGetX11Window(windowP);
-//}
-//
-//XIC ofAppGLFWWindow::getX11XIC() {
-//	return xic;
-//}
+Display * ofAppGLFWWindow::getX11Display() {
+	return glfwGetX11Display();
+}
+
+Window ofAppGLFWWindow::getX11Window() {
+	return glfwGetX11Window(windowP);
+}
+
+XIC ofAppGLFWWindow::getX11XIC() {
+	return xic;
+}
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
