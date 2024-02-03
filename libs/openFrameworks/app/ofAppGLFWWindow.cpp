@@ -871,40 +871,40 @@ int glfwtToOFModifiers(int mods) {
 
 unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modifier) {
 #ifdef TARGET_LINUX
-	XkbStateRec xkb_state = {};
-	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
-	XEvent ev = { 0 };
-	ev.xkey.keycode = scancode;
-	ev.xkey.state = xkb_state.mods & ~ControlMask;
-	ev.xkey.display = window->getX11Display();
-	ev.xkey.type = KeyPress;
-	KeySym keysym = NoSymbol;
-	int status;
-	char buffer[32] = { 0 };
-	char * chars = buffer;
-	auto count = Xutf8LookupString(window->getX11XIC(), &ev.xkey, chars, sizeof(buffer) - 1, &keysym, &status);
-	if ((count > 0 && (status == XLookupChars || status == XLookupBoth)) || status == XLookupKeySym) {
-		char ** c = &chars;
-		unsigned int ch = 0, count = 0;
-		static const unsigned int offsets[] = {
-			0x00000000u, 0x00003080u, 0x000e2080u,
-			0x03c82080u, 0xfa082080u, 0x82082080u
-		};
-
-		do {
-			ch = (ch << 6) + (unsigned char)**c;
-			(*c)++;
-			count++;
-		} while ((**c & 0xc0) == 0x80);
-
-		if (count > 6) {
-			return 0;
-		} else {
-			return ch - offsets[count - 1];
-		}
-	} else {
-		return 0;
-	}
+//	XkbStateRec xkb_state = {};
+//	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
+//	XEvent ev = { 0 };
+//	ev.xkey.keycode = scancode;
+//	ev.xkey.state = xkb_state.mods & ~ControlMask;
+//	ev.xkey.display = window->getX11Display();
+//	ev.xkey.type = KeyPress;
+//	KeySym keysym = NoSymbol;
+//	int status;
+//	char buffer[32] = { 0 };
+//	char * chars = buffer;
+//	auto count = Xutf8LookupString(window->getX11XIC(), &ev.xkey, chars, sizeof(buffer) - 1, &keysym, &status);
+//	if ((count > 0 && (status == XLookupChars || status == XLookupBoth)) || status == XLookupKeySym) {
+//		char ** c = &chars;
+//		unsigned int ch = 0, count = 0;
+//		static const unsigned int offsets[] = {
+//			0x00000000u, 0x00003080u, 0x000e2080u,
+//			0x03c82080u, 0xfa082080u, 0x82082080u
+//		};
+//
+//		do {
+//			ch = (ch << 6) + (unsigned char)**c;
+//			(*c)++;
+//			count++;
+//		} while ((**c & 0xc0) == 0x80);
+//
+//		if (count > 6) {
+//			return 0;
+//		} else {
+//			return ch - offsets[count - 1];
+//		}
+//	} else {
+//		return 0;
+//	}
 #endif
 #ifdef TARGET_WIN32
 	static WCHAR buf[2];
