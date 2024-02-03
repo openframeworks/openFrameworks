@@ -15,10 +15,12 @@
 		#define GLFW_EXPOSE_NATIVE_EGL
 	#endif
 	#include <X11/XKBlib.h>
-//	#include <X11/Xatom.h>
-//	#include <X11/extensions/Xrandr.h>
-//	#include <xcb/xcb.h>
-//	#include <xcb/xcbext.h>
+	#include <X11/Xatom.h>
+	#include <X11/extensions/Xrandr.h>
+	#include <xcb/xcb.h>
+	#include <xcb/xcbext.h>
+
+
 #elif defined(TARGET_OSX)
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
