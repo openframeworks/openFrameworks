@@ -42,25 +42,15 @@ PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_LDFLAGS += -no-pie
 # PLATFORM_LDFLAGS += -nostartfiles
 
-# -mcpu=cortex-a72 -mfloat-abi=hard -mfpu=neon-fp-armv8 -mneon-for-64bits
-# PLATFORM_CFLAGS += -march=armv8-a
+PLATFORM_CFLAGS += -march=armv8-a
 PLATFORM_CFLAGS += -mcpu=cortex-a72
-
-# begin new tests
-# PLATFORM_CFLAGS += -mtune=cortex-a72
-# PLATFORM_CFLAGS += -mfloat-abi=hard
-# PLATFORM_CFLAGS += -mfpu=neon-fp-armv8
-# PLATFORM_CFLAGS += -mneon-for-64bits
-
-# end new tests
-
-
+PLATFORM_CFLAGS += -mtune=cortex-a72
 # PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
-PLATFORM_CFLAGS += -fPIC
-PLATFORM_CFLAGS += -ftree-vectorize
-PLATFORM_CFLAGS += -Wno-psabi
-PLATFORM_CFLAGS += -pipe
+# PLATFORM_CFLAGS += -fPIC
+# PLATFORM_CFLAGS += -ftree-vectorize
+# PLATFORM_CFLAGS += -Wno-psabi
+# PLATFORM_CFLAGS += -pipe
 
 ################################################################################
 # PLATFORM LIBRARIES
@@ -85,7 +75,11 @@ PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
 PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
 PLATFORM_PKG_CONFIG_LIBRARIES += egl
 
-
+## TEST
+PLATFORM_PKG_CONFIG_LIBRARIES += gl
+PLATFORM_PKG_CONFIG_LIBRARIES += glu
+PLATFORM_PKG_CONFIG_LIBRARIES += glew
+PLATFORM_LIBRARIES += glfw
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers
