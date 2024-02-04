@@ -12,6 +12,7 @@
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofLog.h"
+#include "ofConstants.h"
 
 //REFS: https://github.com/ooper-shlab/AVAEMixerSample-Swift/blob/master/AVAEMixerSample/AudioEngine.m
 // https://developer.apple.com/documentation/avfaudio/avaudioengine
@@ -996,7 +997,7 @@ ofAVEngineSoundPlayer::~ofAVEngineSoundPlayer() {
     unload();
 }
 
-bool ofAVEngineSoundPlayer::load(const std::filesystem::path& fileName, bool stream) {
+bool ofAVEngineSoundPlayer::load(const of::filesystem::path & fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }

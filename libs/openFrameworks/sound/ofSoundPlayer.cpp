@@ -1,4 +1,6 @@
 #include "ofSoundPlayer.h"
+#include "ofConstants.h"
+
 #include "ofLog.h"
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL

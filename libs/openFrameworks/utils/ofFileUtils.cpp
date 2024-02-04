@@ -1,4 +1,5 @@
 #include "ofFileUtils.h"
+#include "ofConstants.h"
 #include "ofLog.h"
 #include "ofUtils.h"
 

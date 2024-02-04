@@ -7,8 +7,7 @@
 
 #pragma once
 
-// MARK: Review later
-#include "ofConstants.h"
+namespace of { namespace filesystem { class path; } }
 
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 
@@ -37,7 +36,7 @@ public:
     
     static std::vector <float> getSystemSpectrum(int bands);
 
-    bool load(const std::filesystem::path& fileName, bool stream = false);
+    bool load(const of::filesystem::path & fileName, bool stream = false);
     void unload();
     void play();
     void stop();
