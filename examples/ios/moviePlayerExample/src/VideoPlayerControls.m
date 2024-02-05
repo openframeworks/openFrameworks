@@ -19,8 +19,6 @@ static NSString * kMuteOnButtonLabelText = @"MUTE ON";
 static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
 
 @interface VideoPlayerControls () {
-	IBOutlet UIView * cover;
-	IBOutlet UIView * controls;
 	IBOutlet UIButton * playPauseButton;
 	IBOutlet UIButton * loadButton;
 	IBOutlet UIButton * loopButton;
@@ -40,56 +38,20 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
 
 @implementation VideoPlayerControls
 
-@synthesize delegate;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-	if (self) {
-		bShow = YES;
-	}
-	return self;
-}
-
 - (void)dealloc {
-	[cover release];
-	[controls release];
-	[playPauseButton release];
-	[loadButton release];
-	[loopButton release];
-	[nativeButton release];
-	[muteButton release];
-	[slider release];
-	[timeLabel release];
-	[topLabel release];
-	[bottomLabel release];
-	[newFrameLabel release];
-	
-	[super dealloc];
+
 }
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	
+    app = (ofApp*)ofGetAppPtr();
 	[self setLoad:YES];
 	[self setPlay:YES];
 	[self setNative:NO];
 	[self setLoop:NO];
-	
+    delegate = [[VideoPlayerControlsDelegateForOF alloc] initWithApp:app];
 	CGRect screenRect = [UIScreen mainScreen].bounds;
 	self.view.frame = screenRect;
-	
-	controlsFrameShow = controls.frame;
-	controlsFrameShow.origin.y = screenRect.size.height - controlsFrameShow.size.height;
-	controlsFrameHide = controlsFrameShow;
-	if(screenRect.size.height <= 640) {
-		controlsFrameHide.origin.y += controlsFrameHide.size.height;
-	}
-	
-	UITapGestureRecognizer * tapGesture;
-	tapGesture = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognised:)] autorelease];
-	tapGesture.numberOfTapsRequired = 1;
-	tapGesture.delegate = self;
-	[cover addGestureRecognizer:tapGesture];
 }
 
 - (void)viewDidUnload {
@@ -191,32 +153,32 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
 	UIButton * button = (UIButton *)sender;
 	
 	if([button.titleLabel.text isEqualToString:kPauseButtonLabelText]) {
-		[self.delegate pausePressed];
+        [self->delegate pausePressed];
 	} else if([button.titleLabel.text isEqualToString:kPlayButtonLabelText]) {
-		[self.delegate playPressed];
+        [self->delegate playPressed];
 	}
 }
 
 - (IBAction)scrubBegin:(id)sender {
-	[self.delegate scrubBegin];
+	[self->delegate scrubBegin];
 }
 
 - (IBAction)scrub:(id)sender {
 	float position = slider.value;
-	[self.delegate scrubToPosition:position];
+    [self->delegate scrubToPosition:position];
 }
 
 - (IBAction)scrubEnd:(id)sender {
-	[self.delegate scrubEnd];
+	[self->delegate scrubEnd];
 }
 
 - (IBAction)loadButtonPressed:(id)sender {
 	UIButton * button = (UIButton *)sender;
 	
 	if([button.titleLabel.text isEqualToString:kLoadButtonLabelText]) {
-		[self.delegate loadPressed];
+        [self->delegate loadPressed];
 	} else if([button.titleLabel.text isEqualToString:kUnloadButtonLabelText]) {
-		[self.delegate unloadPressed];
+        [self->delegate unloadPressed];
 	}
 }
 
@@ -224,19 +186,19 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
 	UIButton * button = (UIButton *)sender;
 	
 	if([button.titleLabel.text isEqualToString:kLoopOffButtonLabelText]) {
-		[self.delegate loopOnPressed];
+		[self->delegate loopOnPressed];
 	} else if([button.titleLabel.text isEqualToString:kLoopOnButtonLabelText]) {
-		[self.delegate loopOffPressed];
+		[self->delegate loopOffPressed];
 	}
 }
 
 - (IBAction)nativeButtonPressed:(id)sender {
 	UIButton * button = (UIButton *)sender;
-	
+    
 	if([button.titleLabel.text isEqualToString:kNativeOffButtonLabelText]) {
-		[self.delegate nativeOnPressed];
+		[self->delegate nativeOnPressed];
 	} else if([button.titleLabel.text isEqualToString:kNativeOnButtonLabelText]) {
-		[self.delegate nativeOffPressed];
+		[self->delegate nativeOffPressed];
 	}
 }
 
@@ -244,29 +206,10 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
 	UIButton * button = (UIButton *)sender;
 	
 	if([button.titleLabel.text isEqualToString:kMuteOffButtonLabelText]) {
-		[self.delegate muteOnPressed];
+        [self->delegate muteOnPressed];
 	} else if([button.titleLabel.text isEqualToString:kMuteOnButtonLabelText]) {
-		[self.delegate muteOffPressed];
+        [self->delegate muteOffPressed];
 	}
-}
-
-//-----------------------------------------------------
-- (void)tapGestureRecognised:(id)sender {
-	bShow = !bShow;
-	if(bShow) {
-		[UIView animateWithDuration:0.3 animations:^{
-			controls.frame = controlsFrameShow;
-		}];
-	} else {
-		[UIView animateWithDuration:0.3 animations:^{
-			controls.frame = controlsFrameHide;
-		}];
-	}
-}
-
-//-----------------------------------------------------
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 @end
