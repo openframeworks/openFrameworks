@@ -16,8 +16,9 @@
 #include "ofTexture.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/quaternion.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <map>
 
 #ifdef TARGET_ANDROID

@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cstddef>
+#include <cstdint> // MARK: uint64_t msys2 only complain about this one it seems.
+//#include <cstddef>
 #include <vector>
 #include <string>
 
