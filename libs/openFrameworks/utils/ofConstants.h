@@ -296,10 +296,6 @@ typedef TESSindex ofIndexType;
 
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin
 #if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
 	#undef USE_FMOD // No FMOD lib for ARM64 yet
 	#define OF_NO_FMOD

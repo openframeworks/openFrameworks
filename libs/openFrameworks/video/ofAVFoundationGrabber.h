@@ -116,7 +116,3 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		std::mutex capMutex;
 
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> origin

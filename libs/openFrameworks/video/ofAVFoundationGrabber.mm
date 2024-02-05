@@ -534,7 +534,3 @@ bool ofAVFoundationGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 ofPixelFormat ofAVFoundationGrabber::getPixelFormat() const{
 	return pixelFormat;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin
