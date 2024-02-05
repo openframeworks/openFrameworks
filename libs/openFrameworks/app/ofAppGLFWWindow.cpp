@@ -388,6 +388,7 @@ void ofAppGLFWWindow::update() {
 			glfwSetWindowOpacity(windowP, settings.opacity);
 		}
 
+		cout << "SHOW WINDOW! " << settings.windowName << endl;
 		glfwShowWindow(windowP);
 		
 //		cout << "after show window rect " << getWindowRect() << endl;
@@ -500,6 +501,7 @@ glm::ivec2 ofAppGLFWWindow::getFramebufferSize() {
 	// FIXME: cache size and handle in framebuffer_size_cb
 	glm::ivec2 size;
 	glfwGetFramebufferSize(windowP, &size.x, &size.y);
+//	cout << "getFramebufferSize " << settings.windowName << " : " << size << " : " << ofGetFrameNum() << endl;
 	return size;
 }
 
@@ -590,6 +592,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 		if (settings.fullscreenDisplays.size()) {
 			windowRectFS = allMonitors.getRectFromMonitors(settings.fullscreenDisplays);
 		}
+		cout << "windowRectFS " << windowRectFS << " : " << settings.windowName << endl;
 		setWindowRect(windowRectFS);
 	}
 
@@ -601,7 +604,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
-//	cout << "setFullScreen " << fullscreen << endl;
+	cout << "setFullScreen " << fullscreen << " : " << settings.windowName << endl;
 	if (fullscreen) {
 		targetWindowMode = OF_FULLSCREEN;
 	} else {
@@ -1373,6 +1376,7 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 	instance->events().notifyWindowResized(w, h);
 //	instance->nFramesSinceWindowResized = 0;
 
+	
 #if defined(TARGET_OSX)
 	if (!instance->bWindowNeedsShowing) {
 //		 FIXME - only after first update
