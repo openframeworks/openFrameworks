@@ -6,8 +6,6 @@
 
 #include "ofConstants.h"
 
-
-//------
 #include "ofVideoBaseTypes.h"
 #include "ofTexture.h"
 #include "ofThread.h"
@@ -118,4 +116,7 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		std::mutex capMutex;
 
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin

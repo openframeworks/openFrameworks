@@ -22,9 +22,9 @@
 #include <unistd.h> // read close
 #include <linux/joystick.h>
 
-#include "linux/kd.h"	// keyboard stuff...
-#include "termios.h"
-#include "sys/ioctl.h"
+#include <linux/kd.h>	// keyboard stuff...
+#include <termios.h>
+#include <sys/ioctl.h>
 
 #include <string.h> // strlen
 

@@ -2,7 +2,6 @@
 #include "ofAppRunner.h"
 #include "ofLog.h"
 
-
 //------------------------------------------------ soundstream
 // check if any soundstream api is defined from the compiler
 #if !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID) && !defined(OF_SOUNDSTREAM_IOS) && !defined(OF_SOUNDSTREAM_EMSCRIPTEN)
@@ -16,7 +15,6 @@
 		#define OF_SOUNDSTREAM_EMSCRIPTEN
 	#endif
 #endif
-
 
 #if defined(OF_SOUND_PLAYER_FMOD)
 #include "ofSoundPlayer.h"

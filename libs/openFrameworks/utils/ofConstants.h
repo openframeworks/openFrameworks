@@ -100,7 +100,7 @@ enum ofTargetPlatform{
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
 
     #include <TargetConditionals.h>
-
+	// #include <unistd.h>
 
 	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
         #define TARGET_OF_IPHONE
@@ -193,7 +193,7 @@ enum ofTargetPlatform{
 		#define __MACOSX_CORE__
 	#endif
 	#include "GL/glew.h"
-//	#include <ApplicationServices/ApplicationServices.h>
+	// #include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
@@ -206,24 +206,24 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-	#include <unistd.h>
+	// #include <unistd.h>
 
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
-			#include "bcm_host.h"
+			#include <bcm_host.h>
 			// rpi firmware headers define countof
 			// which messes up other libraries like glm
 			#undef countof
 		#endif
 
-		#include "GLES/gl.h"
-		#include "GLES/glext.h"
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
+		#include <GLES/gl.h>
+		#include <GLES/glext.h>
+		#include <GLES2/gl2.h>
+		#include <GLES2/gl2ext.h>
 
 		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
+		#include <EGL/egl.h>
+		#include <EGL/eglext.h>
 	#else // desktop linux
 		#include <GL/glew.h> 
 	#endif
@@ -261,7 +261,7 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
-	#include <unistd.h>
+	// #include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
@@ -287,7 +287,7 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#include "tesselator.h"
+#include <tesselator.h>
 typedef TESSindex ofIndexType;
 
 
@@ -296,7 +296,10 @@ typedef TESSindex ofIndexType;
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin
 #if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
 	#undef USE_FMOD // No FMOD lib for ARM64 yet
 	#define OF_NO_FMOD

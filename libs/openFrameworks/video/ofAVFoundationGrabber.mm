@@ -7,7 +7,6 @@
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
 
-
 #import <Accelerate/Accelerate.h>
 
 @interface OSXVideoGrabber ()
@@ -535,4 +534,7 @@ bool ofAVFoundationGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 ofPixelFormat ofAVFoundationGrabber::getPixelFormat() const{
 	return pixelFormat;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin
