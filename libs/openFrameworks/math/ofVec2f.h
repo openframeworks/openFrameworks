@@ -1,13 +1,15 @@
 #pragma once
 
 #include "ofMath.h"
-#include "ofMathConstants.h"
+//#include "ofMathConstants.h"
+#include <iostream>
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/vec2.hpp"
-#include "glm/fwd.hpp"
-#include <cmath>
+
+#include <glm/vec2.hpp>
+#include <glm/fwd.hpp>
+//#include <cmath>
 
 class ofVec3f;
 class ofVec4f;
@@ -190,7 +192,7 @@ public:
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1;//#include "ofConstants.h"
-	//#include "glm/fwd.hpp"
+	//#include <glm/fwd.hpp>
 	/// v1.set(40, 20);
 	/// ~~~~
 	/// 
@@ -1006,9 +1008,9 @@ ofVec2f operator/( float f, const ofVec2f& vec );
 
 
 inline ofVec2f::ofVec2f(): x(0), y(0) {}
-inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {}
-inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
-inline ofVec2f::ofVec2f(const glm::vec2 & v): x(v.x), y(v.y) {}
+inline ofVec2f::ofVec2f( float _scalar ) : x(_scalar), y(_scalar) {}
+inline ofVec2f::ofVec2f( float _x, float _y ) : x(_x), y(_y) {}
+inline ofVec2f::ofVec2f(const glm::vec2 & v) : x(v.x), y(v.y) {}
 
 // Getters and Setters.
 //

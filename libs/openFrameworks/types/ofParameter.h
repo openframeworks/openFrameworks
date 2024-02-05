@@ -10,6 +10,8 @@
 #include "ofLog.h"
 #include "ofColor.h"
 
+#include "ofMathConstants.h"
+
 template <typename ParameterType>
 class ofParameter;
 
