@@ -99,21 +99,20 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
+	// #include <unistd.h>
+
 	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
         #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
         #define TARGET_OPENGLES
-        #include <unistd.h>
     #elif TARGET_OS_TV
         #define TARGET_OF_IOS
         #define TARGET_OF_TVOS
         #define TARGET_OPENGLES
-        #include <unistd.h>
     #elif TARGET_OS_WATCH
         #define TARGET_OF_IOS
         #define TARGET_OF_WATCHOS
         #define TARGET_OPENGLES
-        #include <unistd.h>
 	#else
 		#define TARGET_OSX
 	#endif
@@ -191,9 +190,8 @@ enum ofTargetPlatform{
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
-	#include <unistd.h>
 	#include "GL/glew.h"
-	#include <ApplicationServices/ApplicationServices.h>
+	// #include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
@@ -206,24 +204,24 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-	#include <unistd.h>
+	// #include <unistd.h>
 
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
-			#include "bcm_host.h"
+			#include <bcm_host.h>
 			// rpi firmware headers define countof
 			// which messes up other libraries like glm
 			#undef countof
 		#endif
 
-		#include "GLES/gl.h"
-		#include "GLES/glext.h"
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
+		#include <GLES/gl.h>
+		#include <GLES/glext.h>
+		#include <GLES2/gl2.h>
+		#include <GLES2/gl2ext.h>
 
 		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
+		#include <EGL/egl.h>
+		#include <EGL/eglext.h>
 	#else // desktop linux
 		#include <GL/glew.h> 
 	#endif
@@ -261,7 +259,7 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
-	#include <unistd.h>
+	// #include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
@@ -287,7 +285,7 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#include "tesselator.h"
+#include <tesselator.h>
 typedef TESSindex ofIndexType;
 
 
@@ -296,97 +294,10 @@ typedef TESSindex ofIndexType;
 
 
 
-//------------------------------------------------ capture
-// check if any video capture system is already defined from the compiler
-#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
-	#ifdef TARGET_LINUX
-
-		#define OF_VIDEO_CAPTURE_GSTREAMER
-
-	#elif defined(TARGET_OSX)
-		//on 10.6 and below we can use the old grabber
-		#ifndef MAC_OS_X_VERSION_10_7
-			#define OF_VIDEO_CAPTURE_QUICKTIME
-		//if we are below 10.12 or targeting below 10.12 we use QTKit
-		#elif !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
-			#define OF_VIDEO_CAPTURE_QTKIT
-		#else
-			#define OF_VIDEO_CAPTURE_AVF
-        #endif
-
-	#elif defined (TARGET_WIN32)
-
-		// comment out this following line, if you'd like to use the
-		// quicktime capture interface on windows
-		// if not, we default to videoInput library for
-		// direct show capture...
-
-		#define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-
-		#ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-			#define OF_VIDEO_CAPTURE_DIRECTSHOW
-		#else
-			#define OF_VIDEO_CAPTURE_QUICKTIME
-		#endif
-
-	#elif defined(TARGET_ANDROID)
-
-		#define OF_VIDEO_CAPTURE_ANDROID
-
-	#elif defined(TARGET_EMSCRIPTEN)
-
-		#define OF_VIDEO_CAPTURE_EMSCRIPTEN
-
-	#elif defined(TARGET_OF_IOS)
-
-		#define OF_VIDEO_CAPTURE_IOS
-
-	#endif
-#endif
-
-//------------------------------------------------  video player
-// check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
-    #ifdef TARGET_LINUX
-        #define OF_VIDEO_PLAYER_GSTREAMER
-    #elif defined(TARGET_ANDROID)
-        #define OF_VIDEO_PLAYER_ANDROID
-    #elif defined(TARGET_OF_IOS)
-        #define OF_VIDEO_PLAYER_IOS
-	#elif defined(TARGET_WIN32)
-            #ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
-	        #define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
-            #else
-	        #define OF_VIDEO_PLAYER_DIRECTSHOW
-            #endif
-    #elif defined(TARGET_OSX)
-        //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
-        #ifndef MAC_OS_X_VERSION_10_7
-            #define OF_VIDEO_PLAYER_QUICKTIME
-        #elif !defined(MAC_OS_X_VERSION_10_8)
-            #define OF_VIDEO_PLAYER_QTKIT
-        #else
-            #define OF_VIDEO_PLAYER_AVFOUNDATION
-        #endif
-    #elif defined(TARGET_EMSCRIPTEN)
-        #define OF_VIDEO_PLAYER_EMSCRIPTEN
-    #else
-        #define OF_VIDEO_PLAYER_QUICKTIME
-    #endif
-#endif
-
-//------------------------------------------------ soundstream
-// check if any soundstream api is defined from the compiler
-#if !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID) && !defined(OF_SOUNDSTREAM_IOS) && !defined(OF_SOUNDSTREAM_EMSCRIPTEN)
-	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
-		#define OF_SOUNDSTREAM_RTAUDIO
-	#elif defined(TARGET_ANDROID)
-		#define OF_SOUNDSTREAM_ANDROID
-	#elif defined(TARGET_OF_IOS)
-		#define OF_SOUNDSTREAM_IOS
-	#elif defined(TARGET_EMSCRIPTEN)
-		#define OF_SOUNDSTREAM_EMSCRIPTEN
-	#endif
+#if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
+	#undef USE_FMOD // No FMOD lib for ARM64 yet
+	#define OF_NO_FMOD
+	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 
 //------------------------------------------------ soundplayer

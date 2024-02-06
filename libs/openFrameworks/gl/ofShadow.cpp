@@ -15,8 +15,9 @@
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/quaternion.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 using std::weak_ptr;
 using std::vector;
