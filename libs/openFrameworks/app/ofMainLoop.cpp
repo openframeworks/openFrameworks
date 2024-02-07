@@ -16,9 +16,11 @@
 #ifdef TARGET_NODISPLAY
 	#include "ofAppNoWindow.h"
 	typedef ofAppNoWindow ofWindow;
+
 #elif defined(TARGET_OF_IOS)
 	#include "ofAppiOSWindow.h"
 	typedef ofAppiOSWindow ofWindow;
+
 
 #elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
@@ -26,7 +28,8 @@
 	#include "ofxAndroidApp.h"
 	typedef ofAppAndroidWindow ofWindow;
 
-#elif defined(TARGET_RASPBERRY_PI)
+// Raspi removed to use GLFW
+//#elif defined(TARGET_RASPBERRY_PI)
 //	#include "ofAppEGLWindow.h"
 #elif defined(TARGET_EMSCRIPTEN)
 	#include "ofxAppEmscriptenWindow.h"
