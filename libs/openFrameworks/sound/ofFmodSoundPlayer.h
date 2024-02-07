@@ -1,6 +1,6 @@
 #pragma once
 
-// MARK: Review later
+// MARK: this is to define the constant OF_SOUND_PLAYER_FMOD
 #include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_FMOD
@@ -9,8 +9,8 @@
 
 
 extern "C" {
-#include "fmod.h"
-#include "fmod_errors.h"
+#include <fmod.h>
+#include <fmod_errors.h>
 }
 
 //		TO DO :

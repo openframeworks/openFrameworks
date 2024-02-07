@@ -17,8 +17,8 @@
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/quaternion.hpp"
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <map>
 
 #ifdef TARGET_ANDROID

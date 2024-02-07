@@ -2,12 +2,12 @@
 
 #include "ofVec2f.h"
 #include "ofVec4f.h"
-#include "ofMathConstants.h"
+//#include "ofMathConstants.h"
 //#include "ofConstants.h"
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/vec3.hpp"
-#include <cmath>
+#include <glm/vec3.hpp>
+//#include <cmath>
 #include <iostream>
 
 /// \brief  ofVec3f is a class for storing a three dimensional vector.
@@ -1066,8 +1066,8 @@ ofVec3f operator/( float f, const ofVec3f& vec );
 /////////////////
 
 
-inline ofVec3f::ofVec3f( const ofVec2f& vec ):x(vec.x), y(vec.y), z(0) {}
-inline ofVec3f::ofVec3f( const ofVec4f& vec ):x(vec.x), y(vec.y), z(vec.z) {}
+inline ofVec3f::ofVec3f( const ofVec2f& vec ) : x(vec.x), y(vec.y), z(0) {}
+inline ofVec3f::ofVec3f( const ofVec4f& vec ) : x(vec.x), y(vec.y), z(vec.z) {}
 inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {}
 inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {}
 inline ofVec3f::ofVec3f( float _x, float _y, float _z ):x(_x), y(_y), z(_z) {}
