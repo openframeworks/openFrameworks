@@ -50,7 +50,7 @@ jobs:
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-       - name: Build DEBUG emptyExample
+      - name: Build DEBUG emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
           msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
@@ -58,6 +58,4 @@ jobs:
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-          
 
-          
