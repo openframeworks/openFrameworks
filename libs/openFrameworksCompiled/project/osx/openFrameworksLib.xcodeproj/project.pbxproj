@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -59,6 +59,18 @@
 		9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */; };
 		9979E8241A1CCC44007E55D1 /* ofMainLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
 		BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */; };
+		BF5BF8402B737C0A0049DEF6 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */; };
+		BF5BF8422B737C700049DEF6 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8412B737C700049DEF6 /* uriparser.xcframework */; };
+		BF5BF8442B737C7C0049DEF6 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */; };
+		BF5BF8462B737C870049DEF6 /* rtAudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8452B737C870049DEF6 /* rtAudio.xcframework */; };
+		BF5BF8482B737D280049DEF6 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8472B737D280049DEF6 /* pugixml.xcframework */; };
+		BF5BF84A2B737E260049DEF6 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8492B737E260049DEF6 /* cairo.xcframework */; };
+		BF5BF84C2B737E320049DEF6 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */; };
+		BF5BF84E2B737E3B0049DEF6 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84D2B737E3B0049DEF6 /* freetype.xcframework */; };
+		BF5BF8502B737E440049DEF6 /* glew.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84F2B737E440049DEF6 /* glew.xcframework */; };
+		BF5BF8522B737E4E0049DEF6 /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */; };
+		BF5BF8542B737E880049DEF6 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8532B737E880049DEF6 /* libpng.xcframework */; };
+		BF5BF8562B737E930049DEF6 /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8552B737E930049DEF6 /* pixman.xcframework */; };
 		DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
 		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
@@ -216,6 +228,18 @@
 		9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMainLoop.cpp; sourceTree = "<group>"; };
 		9979E8211A1CCC44007E55D1 /* ofMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMainLoop.h; sourceTree = "<group>"; };
 		BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseApp.cpp; sourceTree = "<group>"; };
+		BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/osx/zlib.xcframework; sourceTree = "<group>"; };
+		BF5BF8412B737C700049DEF6 /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/osx/uriparser.xcframework; sourceTree = "<group>"; };
+		BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/osx/tess2.xcframework; sourceTree = "<group>"; };
+		BF5BF8452B737C870049DEF6 /* rtAudio.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = rtAudio.xcframework; path = ../../../rtAudio/lib/osx/rtAudio.xcframework; sourceTree = "<group>"; };
+		BF5BF8472B737D280049DEF6 /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/osx/pugixml.xcframework; sourceTree = "<group>"; };
+		BF5BF8492B737E260049DEF6 /* cairo.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cairo.xcframework; path = ../../../cairo/lib/osx/cairo.xcframework; sourceTree = "<group>"; };
+		BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/osx/FreeImage.xcframework; sourceTree = "<group>"; };
+		BF5BF84D2B737E3B0049DEF6 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/osx/freetype.xcframework; sourceTree = "<group>"; };
+		BF5BF84F2B737E440049DEF6 /* glew.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glew.xcframework; path = ../../../glew/lib/osx/glew.xcframework; sourceTree = "<group>"; };
+		BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glfw.xcframework; path = ../../../glfw/lib/osx/glfw.xcframework; sourceTree = "<group>"; };
+		BF5BF8532B737E880049DEF6 /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/osx/libpng.xcframework; sourceTree = "<group>"; };
+		BF5BF8552B737E930049DEF6 /* pixman.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pixman.xcframework; path = ../../../pixman/lib/osx/pixman.xcframework; sourceTree = "<group>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
@@ -338,12 +362,43 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF5BF8502B737E440049DEF6 /* glew.xcframework in Frameworks */,
+				BF5BF8542B737E880049DEF6 /* libpng.xcframework in Frameworks */,
+				BF5BF84A2B737E260049DEF6 /* cairo.xcframework in Frameworks */,
+				BF5BF8442B737C7C0049DEF6 /* tess2.xcframework in Frameworks */,
+				BF5BF8402B737C0A0049DEF6 /* zlib.xcframework in Frameworks */,
+				BF5BF84C2B737E320049DEF6 /* FreeImage.xcframework in Frameworks */,
+				BF5BF8462B737C870049DEF6 /* rtAudio.xcframework in Frameworks */,
+				BF5BF8422B737C700049DEF6 /* uriparser.xcframework in Frameworks */,
+				BF5BF8522B737E4E0049DEF6 /* glfw.xcframework in Frameworks */,
+				BF5BF8482B737D280049DEF6 /* pugixml.xcframework in Frameworks */,
+				BF5BF8562B737E930049DEF6 /* pixman.xcframework in Frameworks */,
+				BF5BF84E2B737E3B0049DEF6 /* freetype.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BF5BF83E2B7378ED0049DEF6 /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BF5BF8552B737E930049DEF6 /* pixman.xcframework */,
+				BF5BF8532B737E880049DEF6 /* libpng.xcframework */,
+				BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */,
+				BF5BF84F2B737E440049DEF6 /* glew.xcframework */,
+				BF5BF84D2B737E3B0049DEF6 /* freetype.xcframework */,
+				BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */,
+				BF5BF8492B737E260049DEF6 /* cairo.xcframework */,
+				BF5BF8472B737D280049DEF6 /* pugixml.xcframework */,
+				BF5BF8452B737C870049DEF6 /* rtAudio.xcframework */,
+				BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */,
+				BF5BF8412B737C700049DEF6 /* uriparser.xcframework */,
+				BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */,
+			);
+			name = frameworks;
+			sourceTree = "<group>";
+		};
 		DACFA8C8132D09C7008D4B7A /* gl */ = {
 			isa = PBXGroup;
 			children = (
@@ -471,6 +526,7 @@
 				E4328160138AC04A0047C5CB /* Release.xcconfig */,
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
+				BF5BF83E2B7378ED0049DEF6 /* frameworks */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
