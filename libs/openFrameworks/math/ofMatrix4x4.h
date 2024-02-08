@@ -15,8 +15,9 @@
 #include "ofMathConstants.h"
 //#include "ofConstants.h"
 #define GLM_FORCE_CTOR_INIT
-#include "glm/mat4x4.hpp"
-#include <cmath>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/mat4x4.hpp>
+//#include <cmath>
 
 class ofVec3f;
 
