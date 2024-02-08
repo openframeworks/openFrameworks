@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   build-macos:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
         matrix:
           cfg:
@@ -40,7 +40,7 @@ jobs:
 
     - name: Download libs
       # continue-on-error: true
-      run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
+      run: ./scripts/${{ matrix.cfg.target }}/download_latest_libs.sh
 #    - name: rm-dev
 #      run: sudo rm -rf /Library/Developer
 
