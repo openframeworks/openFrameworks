@@ -2,10 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofPixels.h"
 
-#include "FreeImage.h"
+#include <FreeImage.h>
 
 #include "ofURLFileLoader.h"
-#include "uriparser/Uri.h"
+#include <uriparser/Uri.h>
 
 #if defined(TARGET_ANDROID)
 #include "ofxAndroidUtils.h"

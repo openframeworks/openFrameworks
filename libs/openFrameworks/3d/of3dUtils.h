@@ -1,7 +1,8 @@
 #pragma once
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/vec3.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/vec3.hpp>
 
 /// \brief Draws x,y,z axes representing the current reference frame.
 ///
