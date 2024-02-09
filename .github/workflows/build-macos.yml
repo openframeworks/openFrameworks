@@ -37,13 +37,9 @@ jobs:
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
         # key: ${{ matrix.msystem }}
 
-
     - name: Download libs
       # continue-on-error: true
       run: ./scripts/${{ matrix.cfg.target }}/download_latest_libs.sh
-#    - name: rm-dev
-#      run: sudo rm -rf /Library/Developer
-
     # this step is not needed here because the script is empty
     # - name: install
     # run: ./scripts/ci/$TARGET/install.sh
