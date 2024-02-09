@@ -337,7 +337,7 @@ function createPackage {
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         scripts/vs/download_latest_libs.sh 
-        scripts/emscripten/download_libs.sh -n
+        # scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
