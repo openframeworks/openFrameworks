@@ -27,7 +27,7 @@ jobs:
         matrix:
           cfg:
           - {target: osx, opt: "xcode"}
-          - {target: osx, opt: "makefiles"}
+          # - {target: osx, opt: "makefiles"}
     steps:
     - uses: actions/checkout@v4
     - name: ccache
