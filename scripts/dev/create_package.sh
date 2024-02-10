@@ -336,8 +336,8 @@ function createPackage {
         scripts/msys2/download_libs.sh -a $libs_abi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
-        scripts/dev/download_libs.sh -p vs
-        scripts/emscripten/download_libs.sh -n
+        scripts/vs/download_latest_libs.sh 
+        # scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
