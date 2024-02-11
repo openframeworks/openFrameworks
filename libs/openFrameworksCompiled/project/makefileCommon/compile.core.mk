@@ -37,9 +37,11 @@ endif
 
 
 # $(info ⚡️ CCACHE - compile.core.mk ${ccache} )
-CC := time ${ccache} $(CC)
-CXX := time ${ccache} $(CXX)
+# CC := time ${ccache} $(CC)
+# CXX := time ${ccache} $(CXX)
 
+CC := ${ccache} $(CC)
+CXX := ${ccache} $(CXX)
 ################################################################################
 # CFLAGS
 ################################################################################

@@ -389,8 +389,10 @@ ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
 
-CXX := time ${ccache} $(CXX)
-CC := time ${ccache} $(CXX)
+# CXX := time ${ccache} $(CXX)
+# CC := time ${ccache} $(CXX)
+CXX := ${ccache} $(CXX)
+CC := ${ccache} $(CXX)
 
 ifdef PROJECT_RESOURCE_COMPILER
     RESOURCE_COMPILER ?= $(PROJECT_RESOURCE_COMPILER)
