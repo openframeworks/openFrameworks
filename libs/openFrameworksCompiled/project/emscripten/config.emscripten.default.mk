@@ -84,8 +84,10 @@ endif
 CUR_CC = $(CC)
 CC := $(CUR_CC) -r
 
-CC := time ${ccache} $(CC)
-CXX := time ${ccache} $(CXX)
+# CC := time ${ccache} $(CC)
+# CXX := time ${ccache} $(CXX)
+CC := ${ccache} $(CC)
+CXX := ${ccache} $(CXX)
 
 
 PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_FREETYPE=1 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -sFULL_ES3=1 -s USE_PTHREADS=0
