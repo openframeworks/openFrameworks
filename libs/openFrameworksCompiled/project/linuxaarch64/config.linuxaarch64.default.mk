@@ -47,10 +47,10 @@ PLATFORM_CFLAGS += -mcpu=cortex-a72
 PLATFORM_CFLAGS += -mtune=cortex-a72
 # PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
-# PLATFORM_CFLAGS += -fPIC
-# PLATFORM_CFLAGS += -ftree-vectorize
-# PLATFORM_CFLAGS += -Wno-psabi
-# PLATFORM_CFLAGS += -pipe
+PLATFORM_CFLAGS += -fPIC
+PLATFORM_CFLAGS += -ftree-vectorize
+PLATFORM_CFLAGS += -Wno-psabi
+PLATFORM_CFLAGS += -pipe
 
 ################################################################################
 # PLATFORM LIBRARIES

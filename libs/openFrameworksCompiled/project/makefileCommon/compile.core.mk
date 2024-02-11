@@ -40,8 +40,8 @@ ifdef ${ccache}
 	CXX := time ${ccache} $(CXX)
 	CC := time ${ccache} $(CXX)
 # else	
-	# CXX := time $(CXX)
-	# CC := time $(CXX)
+# CXX := time $(CXX)
+# CC := time $(CXX)
 endif	
 
 ################################################################################
@@ -145,7 +145,7 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 endif
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifdef _DEBUG
+	ifdef ABIS_TO_COMPILE_DEBUG
 		ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 			ifdef ABIS_TO_COMPILE_RELEASE
 				ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
