@@ -84,14 +84,9 @@ endif
 CUR_CC = $(CC)
 CC := $(CUR_CC) -r
 
-ifdef USE_CCACHE
-	ifeq ($(findstring ccache, $(CC)),)
-		ORIGINAL_CC = $(CC)
-		CC := ccache $(ORIGINAL_CC)
-		ORIGINAL_CXX = $(CXX)
-		CXX := ccache $(ORIGINAL_CXX)
-	endif
-endif
+CC := time ${ccache} $(CC)
+CXX := time ${ccache} $(CXX)
+
 
 PLATFORM_LDFLAGS = -Wl --gc-sections --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_FREETYPE=1 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -sFULL_ES3=1 -s USE_PTHREADS=0
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
