@@ -36,7 +36,7 @@ else
 endif
 
 
-# $(info ⚡️ CCACHE - compile.core.mk ${ccache} )
+$(info ⚡️ CCACHE - compile.core.mk ${ccache} )
 # CC := time ${ccache} $(CC)
 # CXX := time ${ccache} $(CXX)
 
