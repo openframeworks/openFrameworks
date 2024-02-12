@@ -7,14 +7,14 @@ trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
 
 echo "**** Building emptyExample ****"
 cd $ROOT
-cp scripts/templates/macos/{Makefile,config.make} examples/templates/emptyExample/
 cd examples/templates/emptyExample/
+cp scripts/templates/macos/{Makefile,config.make} .
 make -j Debug
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
-cp scripts/templates/macos/{Makefile,config.make} examples/templates/emptyExample/
 cd examples/templates/allAddonsExample/
+cp scripts/templates/macos/{Makefile,config.make} .
 make -j Debug
 
 echo "**** Running unit tests ****"
