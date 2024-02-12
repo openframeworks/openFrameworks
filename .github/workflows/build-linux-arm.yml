@@ -44,11 +44,11 @@ jobs:
         # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.cfg.target }}
     - name: New Keys
-      run:
-        - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
-        - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
-        - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 605C66F00D6C9793
-        # sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 
+      run: |
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 605C66F00D6C9793
+# sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Install dependencies
