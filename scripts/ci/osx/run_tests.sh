@@ -8,13 +8,13 @@ trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
 echo "**** Building emptyExample ****"
 cd $ROOT
 cd examples/templates/emptyExample/
-cp scripts/templates/macos/{Makefile,config.make} .
+cp ../../../scripts/templates/macos/{Makefile,config.make} .
 make -j Debug
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
 cd examples/templates/allAddonsExample/
-cp scripts/templates/macos/{Makefile,config.make} .
+cp ../../../scripts/templates/macos/{Makefile,config.make} .
 make -j Debug
 
 echo "**** Running unit tests ****"
