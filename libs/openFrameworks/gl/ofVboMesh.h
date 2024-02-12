@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMesh.h"
+// MARK: vbo object only;
 #include "ofVbo.h"
 
 class ofVboMesh: public ofMesh{

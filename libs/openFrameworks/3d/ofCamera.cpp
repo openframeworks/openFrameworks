@@ -2,8 +2,9 @@
 #include "ofGraphics.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/quaternion.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include "of3dGraphics.h"
 
 using std::shared_ptr;

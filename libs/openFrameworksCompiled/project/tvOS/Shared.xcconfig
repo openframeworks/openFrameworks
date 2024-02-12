@@ -2,13 +2,22 @@
 //THIS NEEDS TO BE DEFINED BEFORE CoreOF.xcconfig IS INCLUDED
 OF_PATH = ../../../..
 
-//THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
+// All headers and libs for OF Core
 #include "CoreOF.xcconfig"
 
+// Missing OTHER_CFLAGS. needed?
 OTHER_LDFLAGS = $(OF_CORE_LIBS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
 
-CONFIGURATION_BUILD_DIR = $(SRCROOT)/bin/
-DEAD_CODE_STRIPPING = YES
-GCC_AUTO_VECTORIZATION = YES
-ENABLE_BITCODE = YES
+COPY_PHASE_STRIP[config=Debug] = NO
+COPY_PHASE_STRIP[config=Release] = YES
+
+GCC_OPTIMIZATION_LEVEL[config=Debug] = 0
+GCC_OPTIMIZATION_LEVEL[config=Release] = s
+
+OTHER_CPLUSPLUSFLAGS[config=Debug] = $(inherited) -D__MACOSX_CORE__ -fembed-bitcode $(OF_CORE_CFLAGS)
+OTHER_CPLUSPLUSFLAGS[config=Release] = $(inherited) -D__MACOSX_CORE__ -DNDEBUG -fembed-bitcode $(OF_CORE_CFLAGS)
+
+GCC_UNROLL_LOOPS[config=Release] = YES
+ZERO_LINK[config=Release] = NO
+

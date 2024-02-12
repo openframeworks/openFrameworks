@@ -115,8 +115,8 @@
 using namespace std;
 #else
 
-    // this will eventually be disabled by default
-    #define OF_USE_MINIMAL_STD
+// this will eventually be disabled by default
+#define OF_USE_MINIMAL_STD
     #ifdef OF_USE_MINIMAL_STD
 using std::cout;
 using std::deque;

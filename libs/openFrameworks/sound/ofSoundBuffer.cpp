@@ -9,7 +9,8 @@
 #include "ofSoundUtils.h"
 #include "ofLog.h"
 #define GLM_FORCE_CTOR_INIT
-#include "glm/trigonometric.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/trigonometric.hpp>
 #include <limits>
 
 using std::vector;

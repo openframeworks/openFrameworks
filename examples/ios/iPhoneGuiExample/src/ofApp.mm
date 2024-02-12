@@ -1,24 +1,20 @@
 #include "ofApp.h"
 #include "MyGuiView.h"
 
-//  Note:
-//      If the app is not compiling, try removing the MyGuiView.xib reference
-//      from the xcode project and adding it back to the project.
-//      Set the deployment target in project / General / Deployment Target >= 5.1
-
 MyGuiView * myGuiViewController;
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
 	//NOTE WE WON'T RECEIVE TOUCH EVENTS INSIDE OUR APP WHEN THERE IS A VIEW ON TOP OF THE OF VIEW
+    //However, if you resize the GUI view in MyGuiView, you will receive touch events in areas outside the GUI view.
 
 	lengthRatio	= 0.5;
 	numPoints	= 5;
 	bFill		= true;
 	
-
 	//Our Gui setup
-	myGuiViewController	= [[MyGuiView alloc] initWithNibName:@"MyGuiView" bundle:nil];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MyGuiView" bundle:nil];
+    myGuiViewController	=  [storyboard instantiateViewControllerWithIdentifier:@"MyGuiView"];
 	[ofxiOSGetGLParentView() addSubview:myGuiViewController.view];
 
 	ofBackground(255,255,255);
@@ -67,11 +63,8 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-
-	//IF THE VIEW IS HIDDEN LETS BRING IT BACK!
-	if( myGuiViewController.view.hidden ){
-		myGuiViewController.view.hidden = NO;
-	}
+    //You can check the touch event.
+    cout<<"touchDown:"<<touch.id<<endl;
 }
 
 //--------------------------------------------------------------
@@ -86,7 +79,10 @@ void ofApp::touchUp(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-
+    //IF THE VIEW IS HIDDEN LETS BRING IT BACK!
+    if( myGuiViewController.view.hidden ){
+        myGuiViewController.view.hidden = NO;
+    }
 }
 
 //--------------------------------------------------------------
