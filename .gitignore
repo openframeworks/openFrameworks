@@ -137,3 +137,4 @@ projectGenerator*/
 .cxx/
 libs/openFrameworksCompiled/project/vs/.vs/
 scripts/templates/vs/.vs/
+**/.vs/
