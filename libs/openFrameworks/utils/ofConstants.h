@@ -110,10 +110,12 @@ enum ofTargetPlatform{
         #define TARGET_OF_IOS
         #define TARGET_OF_TVOS
         #define TARGET_OPENGLES
+        #define TARGET_IMPLEMENTS_URL_LOADER
     #elif TARGET_OS_WATCH
         #define TARGET_OF_IOS
         #define TARGET_OF_WATCHOS
         #define TARGET_OPENGLES
+        #define TARGET_IMPLEMENTS_URL_LOADER
 	#else
 		#define TARGET_OSX
 	#endif
