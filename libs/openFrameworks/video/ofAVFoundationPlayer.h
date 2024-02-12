@@ -9,7 +9,7 @@
 #include "ofVideoBaseTypes.h"
 #include "ofTexture.h"
 #include "ofThread.h"
-// FIXME: Template
+// MARK: Template if pixels is changed to unique_ptr
 #include "ofPixels.h"
 
 #ifdef __OBJC__

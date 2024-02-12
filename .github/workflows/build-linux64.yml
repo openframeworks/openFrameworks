@@ -1,0 +1,64 @@
+name: build-linux64
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+env:
+  ccache: ccache
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-linux64-platforms:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          cfg:
+          - {target: linux64, libs: 64gcc6}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - name: Remove Old lib-unwind
+      run: if [ "$TARGET" = "linux64" ]; then
+            sudo apt-get remove libunwind-14 -y;
+           fi
+    - name: Cache Packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: make curl libunwind-dev libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+        version: 1.0
+
+    - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.12
+      with:
+        key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
+    - name: Download libs
+      run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh;
+    - name: Build
+      run: if [ "$TARGET" = "linux64" ]; then
+            scripts/ci/linux64/build.sh;
+            scripts/ci/$TARGET/run_tests.sh;
+           else
+            scripts/ci/$TARGET/build.sh;
+           fi
+    # - name: Upload Libs
+    #   run: scripts/ci/upload_of_lib.sh;
+    #   env:
+    #     GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+
