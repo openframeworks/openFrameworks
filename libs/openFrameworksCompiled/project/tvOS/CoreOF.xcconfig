@@ -2,7 +2,9 @@
 CLANG_CXX_LIBRARY = libc++
 CLANG_ENABLE_OBJC_ARC = YES
 CLANG_CXX_LANGUAGE_STANDARD = c++17
-TVOS_DEPLOYMENT_TARGET = 13.0
+TVOS_DEPLOYMENT_TARGET = 15.0
+
+OF_USING_STD_FS = YES
 
 
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
@@ -24,17 +26,10 @@ HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 
 //------- Libraries
 LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/tvos/libtvOS+OFLib_${CONFIGURATION}.a"
-LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/tvos/freeimage.a"
-LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/tvos/freetype.a"
-LIB_TESS = "$(OF_PATH)/libs/tess2/lib/tvos/tess2.a"
-LIB_CURL = "$(OF_PATH)/libs/curl/lib/tvos/curl.a"
-LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/tvos/uriparser.a"
-LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/tvos/pugixml.a"
-
 
 MISC_FLAGS = "-ObjC"
 
-OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_OPENSSL) $(LIB_TESS) $(LIB_CURL) $(LIB_URIPARSER) $(LIB_PUGIXML) $(LIB_OF)
+OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_OF)
 
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMOD) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
 

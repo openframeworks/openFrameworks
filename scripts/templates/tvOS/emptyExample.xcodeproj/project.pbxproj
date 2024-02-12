@@ -20,6 +20,7 @@
 				<string>84C8DBA81BC37F72001606C1</string>
 				<string>84C8DB611BC37247001606C1</string>
 				<string>84463AC71BC370DF00F24926</string>
+				<string>BFF25F7D2B7A90DF002E37FF</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -115,6 +116,8 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
+				<string>BFF25F812B7A90E9002E37FF</string>
+				<string>BFF25F7F2B7A90DF002E37FF</string>
 				<string>99752D361BF220CC0026316A</string>
 				<string>84C8DB801BC3732E001606C1</string>
 				<string>84C8DB811BC3732E001606C1</string>
@@ -211,7 +214,7 @@
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>c++0x</string>
+				<string>c++17</string>
 				<key>CLANG_CXX_LIBRARY</key>
 				<string>libc++</string>
 				<key>CLANG_ENABLE_MODULES</key>
@@ -280,7 +283,7 @@
 				<key>TARGETED_DEVICE_FAMILY</key>
 				<string>3</string>
 				<key>TVOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
+				<string>17.2</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -296,7 +299,7 @@
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>c++0x</string>
+				<string>c++17</string>
 				<key>CLANG_CXX_LIBRARY</key>
 				<string>libc++</string>
 				<key>CLANG_ENABLE_MODULES</key>
@@ -354,7 +357,7 @@
 				<key>TARGETED_DEVICE_FAMILY</key>
 				<string>3</string>
 				<key>TVOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
+				<string>17.2</string>
 				<key>VALIDATE_PRODUCT</key>
 				<string>YES</string>
 			</dict>
@@ -386,9 +389,11 @@
 				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
 				<string>Launch Image</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>c++0x</string>
+				<string>c++17</string>
 				<key>DEBUG_INFORMATION_FORMAT</key>
 				<string>dwarf</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>KM34QPF66V</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxtvOS_Prefix.pch</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -398,9 +403,11 @@
 				<key>LD_RUNPATH_SEARCH_PATHS</key>
 				<string>$(inherited) @executable_path/Frameworks</string>
 				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
-				<string>emptyExample</string>
+				<string>cc.openFrameworks.emptyExample.danoli3</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>TVOS_DEPLOYMENT_TARGET</key>
+				<string>17.2</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -416,9 +423,11 @@
 				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
 				<string>Launch Image</string>
 				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>c++0x</string>
+				<string>c++17</string>
 				<key>DEBUG_INFORMATION_FORMAT</key>
 				<string>dwarf</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>KM34QPF66V</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxtvOS_Prefix.pch</string>
 				<key>HEADER_SEARCH_PATHS</key>
@@ -428,9 +437,11 @@
 				<key>LD_RUNPATH_SEARCH_PATHS</key>
 				<string>$(inherited) @executable_path/Frameworks</string>
 				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
-				<string>emptyExample</string>
+				<string>cc.openFrameworks.emptyExample.danoli3</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>TVOS_DEPLOYMENT_TARGET</key>
+				<string>17.2</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -983,6 +994,60 @@
 		<dict>
 			<key>fileRef</key>
 			<string>9998920B1BF4D40400DCECB0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>BFF25F7D2B7A90DF002E37FF</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>BFF25F802B7A90E9002E37FF</string>
+				<string>BFF25F7E2B7A90DF002E37FF</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>BFF25F7E2B7A90DF002E37FF</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>CoreAudioTypes.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/CoreAudioTypes.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>BFF25F7F2B7A90DF002E37FF</key>
+		<dict>
+			<key>fileRef</key>
+			<string>BFF25F7E2B7A90DF002E37FF</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>BFF25F802B7A90E9002E37FF</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>CoreAudio.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/CoreAudio.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>BFF25F812B7A90E9002E37FF</key>
+		<dict>
+			<key>fileRef</key>
+			<string>BFF25F802B7A90E9002E37FF</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
