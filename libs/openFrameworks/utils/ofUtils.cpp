@@ -15,6 +15,11 @@
 #include <locale>
 #include <numeric>
 
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif
+
+
 #ifdef TARGET_WIN32 // For ofLaunchBrowser.
 	#include <shellapi.h>
 	#ifndef _MSC_VER

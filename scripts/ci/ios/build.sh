@@ -5,6 +5,5 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 if [[ "$GITHUB_ACTIONS" = true ]]; then
     ROOT=$GITHUB_WORKSPACE
 fi
-#source $ROOT/scripts/ci/ccache.sh
 
 xcodebuild -configuration Release -project "$ROOT/scripts/templates/ios/emptyExample.xcodeproj"  -target emptyExample -sdk 'iphonesimulator' ARCHS='x86_64'

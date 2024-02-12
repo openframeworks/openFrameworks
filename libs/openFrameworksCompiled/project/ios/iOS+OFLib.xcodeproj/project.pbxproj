@@ -634,9 +634,9 @@
 			isa = PBXGroup;
 			children = (
 				E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */,
+				E41D3E9313B38BE900A75A5D /* Shared.xcconfig */,
 				E41D3E9113B38BE900A75A5D /* Debug.xcconfig */,
 				E41D3E9213B38BE900A75A5D /* Release.xcconfig */,
-				E41D3E9313B38BE900A75A5D /* Shared.xcconfig */,
 				BB16F26B0F2B646B00518274 /* addons */,
 				E4F76D69176CB27200798745 /* openFrameworks */,
 				BB16E9930F2B1E5900518274 /* libs */,

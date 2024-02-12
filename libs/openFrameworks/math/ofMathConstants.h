@@ -1,7 +1,10 @@
 #pragma once
 
+// MARK: if OF_USE_LEGACY_VECTOR_MATH
 #include "ofConstants.h"
-#include "glm/fwd.hpp"
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/fwd.hpp>
 
 #if OF_USE_LEGACY_VECTOR_MATH
 class ofVec2f;

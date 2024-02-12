@@ -1,12 +1,12 @@
 #pragma once
 
-// this must be included before the TARGET_MINGW test
+// MARK: TARGET_MINGW test
 #include "ofConstants.h"
 
 #if !defined(TARGET_MINGW)
-	#include "utf8.h"
+	#include <utf8.h>
 #else
-	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
+	#include <utf8cpp/utf8.h> // MSYS2 : use of system-installed include
 #endif
 
 #include <algorithm>
@@ -15,9 +15,9 @@
 #include <iomanip> //for setprecision
 #include <optional>
 
-#include <random>
+// #include <random>
 #include <sstream>
-#include <type_traits>
+// #include <type_traits>
 
 #include "ofRandomDistributions.h"
 #include "ofRandomEngine.h"
