@@ -1038,8 +1038,8 @@ public:
 	ofParameter(const std::string & name);
 
 	bool isInit() const {
-		ofLogVerbose("ofParameter<void>::isInit()") << "isInit() called on ofParameter<void>, where it always returns false";
-		return false;
+		ofLogVerbose("ofParameter<void>::isInit()") << "isInit() called on ofParameter<void>, where it always returns true";
+		return true;
 	}
 
 	void reInit() {
