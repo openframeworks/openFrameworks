@@ -3,11 +3,11 @@
 # lists of source files, search paths, libraries, etc.
 #
 ifndef OF_ROOT
-	OF_ROOT= $(realpath ../../..)
+	OF_ROOT= ../../..
 endif
 
 ifndef PROJECT_ROOT
-	PROJECT_ROOT= $(realpath .)
+	PROJECT_ROOT= .
 endif
 
 
