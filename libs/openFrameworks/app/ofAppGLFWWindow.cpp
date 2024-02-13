@@ -1138,8 +1138,8 @@ void ofAppGLFWWindow::error_cb(int errorCode, const char * errorDescription) {
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow * windowP_, int keycode, int scancode, int action, int mods) {
 	int key = 0;
 	uint32_t codepoint = 0;
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
 	cout << "keyboard_cb " << instance->settings.windowName << endl;
 	switch (keycode) {
 	case GLFW_KEY_ESCAPE:
@@ -1299,8 +1299,8 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow * windowP_, int keycode, int scanco
 		key = codepoint = '=';
 		break;
 	default:
-//		codepoint = keycodeToUnicode(instance, scancode, mods);
-		codepoint = scancode;
+		codepoint = keycodeToUnicode(instance, scancode, mods);
+//		codepoint = scancode;
 		key = codepoint;
 		break;
 	}
