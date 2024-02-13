@@ -35,14 +35,8 @@ else
 	ARFLAGS = -cr
 endif
 
-ifdef ${ccache}
-$(info 💿 Using CCACHE - compile.core.mk )
-	CXX := time ${ccache} $(CXX)
-	CC := time ${ccache} $(CXX)
-# else	
-# CXX := time $(CXX)
-# CC := time $(CXX)
-endif	
+CXX := time ${ccache} $(CXX)
+CC := time ${ccache} $(CXX)
 
 ################################################################################
 # CFLAGS
@@ -208,7 +202,7 @@ endif
 # avoid conflict with files of the same name and to improve performance.
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help force
 
-# USE_CORES=-j 
+USE_CORES=-j1 
 
 # ifeq ($(PLATFORM_ARCH),armv6l)
 # 	USE_CORES=-j2
