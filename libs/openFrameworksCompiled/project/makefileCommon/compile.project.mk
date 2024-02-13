@@ -119,19 +119,19 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help force
 
-USE_CORES=-j 
+# USE_CORES=-j 
 
-ifeq ($(PLATFORM_ARCH),armv6l)
-	USE_CORES=-j2
-endif
+# ifeq ($(PLATFORM_ARCH),armv6l)
+# 	USE_CORES=-j2
+# endif
 
-ifeq ($(PLATFORM_ARCH),armv7l)
-	USE_CORES=-j2
-endif
+# ifeq ($(PLATFORM_ARCH),armv7l)
+# 	USE_CORES=-j2
+# endif
 
-ifeq ($(PLATFORM_ARCH),aarch64)
-	USE_CORES=-j3
-endif
+# ifeq ($(PLATFORM_ARCH),aarch64)
+# 	USE_CORES=-j3
+# endif
 
 Release:
 	@echo Compiling OF library for Release
