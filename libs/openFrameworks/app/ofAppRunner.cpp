@@ -104,6 +104,7 @@ void ofCloseFreeImage();
 
 
 void ofInit(){
+	std::cout << "ofINIT!!!" << std::endl;
 	if(initialized()) return;
 	initialized() = true;
 	exiting() = false;

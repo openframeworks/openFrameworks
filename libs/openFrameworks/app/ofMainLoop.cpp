@@ -8,7 +8,7 @@
 #include "ofMainLoop.h"
 #include "ofBaseApp.h"
 // TEST WITHOUT
-//#include "ofConstants.h"
+#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 
 //========================================================================
@@ -20,7 +20,6 @@
 #elif defined(TARGET_OF_IOS)
 	#include "ofAppiOSWindow.h"
 	typedef ofAppiOSWindow ofWindow;
-
 
 #elif defined(TARGET_ANDROID)
 	#include "ofAppAndroidWindow.h"
