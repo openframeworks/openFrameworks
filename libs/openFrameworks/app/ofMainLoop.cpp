@@ -97,7 +97,7 @@ void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::share
 	currentWindow = window;
 	
 	// FIXME: remove?
-//	window->makeCurrent();
+	window->makeCurrent();
 	if(!windowLoop){
 		window->events().notifySetup();
 	}
@@ -131,21 +131,21 @@ void ofMainLoop::loopOnce(){
 //	std::cout << "ofMainLoop::loopOnce()" << std::endl;
 	auto i = windows.begin();
 	
-	currentWindow = (*i);
-	// here, not looping all windows
-	i->get()->makeCurrent();
-	i->get()->update();
-	i->get()->draw();
+//	currentWindow = (*i);
+//	// here, not looping all windows
+//	i->get()->makeCurrent();
+//	i->get()->update();
+//	i->get()->draw();
 	
 	for ( ; i != windows.end(); ) {
 		if (i->get()->getWindowShouldClose()) {
 			i = windows.erase(i);
 		} 
 		else {
-//			currentWindow = (*i);
-//			i->get()->makeCurrent();
-//			i->get()->update();
-//			i->get()->draw();
+			currentWindow = (*i);
+			i->get()->makeCurrent();
+			i->get()->update();
+			i->get()->draw();
 		++i;
 		}
 	}

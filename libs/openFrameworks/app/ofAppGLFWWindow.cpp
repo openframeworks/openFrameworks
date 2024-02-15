@@ -1061,8 +1061,8 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow * windowP_, int button, int state, int
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::motion_cb(GLFWwindow * windowP_, double x, double y) {
-	auto instance = getWindow(windowP_);
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	ofMouseEventArgs::Type action;
@@ -1082,8 +1082,8 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow * windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::entry_cb(GLFWwindow * windowP_, int entered) {
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
 
 	ofMouseEventArgs::Type action;
 	if (entered) {
@@ -1102,8 +1102,8 @@ void ofAppGLFWWindow::entry_cb(GLFWwindow * windowP_, int entered) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow * windowP_, double x, double y) {
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	ofMouseEventArgs args(ofMouseEventArgs::Scrolled,
@@ -1118,8 +1118,8 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow * windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow * windowP_, int numFiles, const char ** dropString) {
-	auto instance = getWindow(windowP_);
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	ofDragInfo drag;
 	drag.position = { instance->events().getMouseX(), instance->events().getMouseY() };
 	drag.files.resize(numFiles);
@@ -1322,15 +1322,15 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow * windowP_, int keycode, int scanco
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::char_cb(GLFWwindow * windowP_, uint32_t key) {
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
 	instance->events().charEvent.notify(key);
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::refresh_cb(GLFWwindow * windowP_) {
-	auto instance = getWindow(windowP_);
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->draw();
 //	thisWindow->draw();
 }
@@ -1361,8 +1361,8 @@ void ofAppGLFWWindow::monitor_cb(GLFWmonitor * monitor, int event) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
-	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
 //	if (instance->settings.windowMode == OF_WINDOW) {
 //		instance->windowRect.x = x;
 //		instance->windowRect.y = y;
@@ -1371,8 +1371,8 @@ void ofAppGLFWWindow::position_cb(GLFWwindow* windowP_, int x, int y){
 }
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
-	auto instance = getWindow(windowP_);
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().notifyWindowResized(w, h);
 //	instance->nFramesSinceWindowResized = 0;
 
@@ -1393,8 +1393,8 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow * windowP_, int w, int h) {
 //	cout << "framebuffer_size_cb " << w << " : " << h << endl;
-	auto instance = getWindow(windowP_);
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	
 	instance->currentRenderer->clear();
 	instance->events().notifyFramebufferResized(w, h);
@@ -1403,8 +1403,8 @@ void ofAppGLFWWindow::framebuffer_size_cb(GLFWwindow * windowP_, int w, int h) {
 //--------------------------------------------
 void ofAppGLFWWindow::exit_cb(GLFWwindow * windowP_) {
 //	cout << "exit_cb " <<  endl;
-	auto instance = getWindow(windowP_);
-//	ofAppGLFWWindow * instance = setCurrent(windowP_);
+//	auto instance = getWindow(windowP_);
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().notifyExit();
 	
 	// TODO: handle window closing correctly here.
