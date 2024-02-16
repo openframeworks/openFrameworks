@@ -151,11 +151,10 @@ EOF
 }
 
 downloadFirmware(){
-    echo "try no firmware"
-    # cd ~
-    # wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
-    # unzip firmware.zip
-    # cp -r ~/firmware-master/opt archlinux/    
+	cd ~
+	wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+	unzip firmware.zip
+	cp -r ~/firmware-master/opt archlinux/    
 }
 
 

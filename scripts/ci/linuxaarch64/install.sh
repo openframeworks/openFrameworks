@@ -37,12 +37,11 @@ downloadToolchain(){
 }
 
 downloadFirmware(){
-    echo "try no firmware"
-    # wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
-    # unzip firmware.zip
-    # cp -r firmware-master/opt raspbian/
-    # rm -r firmware-master
-    # rm firmware.zip
+     wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+     unzip firmware.zip
+     cp -r firmware-master/opt raspbian/
+     rm -r firmware-master
+     rm firmware.zip
 }
 
 relativeSoftLinks(){
