@@ -1,4 +1,4 @@
-name: build-linux64
+name: build-linux-arm
 
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
@@ -21,19 +21,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-linux64-platforms:
+  build-linux-arm-platforms:
     runs-on: ubuntu-latest
     strategy:
         matrix:
           cfg:
-          - {target: linux64, libs: 64gcc6}
+          - {target: linuxarmv6l, libs: armv6l}
+          - {target: linuxaarch64, libs: aarch64}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
-    - name: Remove Old lib-unwind
-      run: if [ "$TARGET" = "linux64" ]; then
-            sudo apt-get remove libunwind-14 -y;
-           fi
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
@@ -44,21 +41,11 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.12
       with:
-        key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
-
+        # key: ${{ matrix.os }}-${{ matrix.type }}
+        key: ${{ matrix.cfg.target }}
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Install dependencies
       run: ./scripts/ci/$TARGET/install.sh;
     - name: Build
-      run: if [ "$TARGET" = "linux64" ]; then
-            scripts/ci/linux64/build.sh;
-            scripts/ci/$TARGET/run_tests.sh;
-           else
-            scripts/ci/$TARGET/build.sh;
-           fi
-    # - name: Upload Libs
-    #   run: scripts/ci/upload_of_lib.sh;
-    #   env:
-    #     GA_CI_SECRET: ${{ secrets.CI_SECRET }}
-
+      run: ./scripts/ci/$TARGET/build.sh;
