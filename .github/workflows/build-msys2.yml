@@ -1,0 +1,62 @@
+name: build-msys2
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+env:
+  ccache: ccache
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-msys2:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        msystem:
+        - mingw64
+        # - ucrt64
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.12
+      with:
+        # key: ${{ matrix.os }}-${{ matrix.type }}
+        key: ${{ matrix.msystem }}
+    - uses: msys2/setup-msys2@v2
+      with:
+        cache: true
+        update: false
+        msystem: ${{matrix.msystem}}
+        pacboy: assimp:p cairo:p curl:p freeglut:p FreeImage:p gcc:p gdb:p glew:p glfw:p glm:p harfbuzz:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p ntldd-git:p openal:p opencv:p pkgconf:p pugixml:p rtaudio:p uriparser:p utf8cpp:p zlib:p poco:p
+        # boost:p tools:p
+        # install: >-
+        # unzip
+        # git
+        # rsync
+        # wget
+        
+    - name: Install dependencies
+      run: ./scripts/ci/msys2/install.sh
+
+    - name: Build
+      run: ./scripts/ci/msys2/build.sh
+
+    - name: Run tests
+      run: ./scripts/ci/msys2/run_tests.sh
+
