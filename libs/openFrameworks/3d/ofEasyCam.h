@@ -5,7 +5,8 @@
 #include "ofRectangle.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtc/quaternion.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/quaternion.hpp>
 
 /// \brief A super simple camera for interacting with objects in 3D space.
 class ofEasyCam : public ofCamera {

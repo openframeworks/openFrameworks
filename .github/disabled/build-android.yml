@@ -1,0 +1,49 @@
+name: build-android
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        cfg:
+        - {target: android, gradle_target: compileArm7DebugSources}
+        - {target: android, gradle_target: compileX86DebugSources}
+
+    env:
+      TARGET: ${{matrix.cfg.target}}
+      GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
+      NDK_DIR: android-ndk-r15c
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache projectGenerator folder
+      uses: actions/cache@v3
+      with:
+        path: '~/projectGenerator'
+        key: ${{ runner.os }}-pg-${{matrix.cfg.gradle_target}}
+    - name: Cache NDK
+      uses: actions/cache@v3
+      with:
+        path: '~/android-ndk-r15c'
+        key: ${{ runner.os }}-android-ndk-${{matrix.cfg.gradle_target}}
+    - name: install
+      run: ./scripts/ci/$TARGET/install.sh
+    - name: Download libs
+      run: ./scripts/$TARGET/download_libs.sh
+    - name: Build
+      run: ./scripts/ci/$TARGET/build.sh
+      env:
+        GA_CI_SECRET: ${{ secrets.CI_SECRET }}
