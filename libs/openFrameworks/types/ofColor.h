@@ -2,8 +2,8 @@
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/gtx/wrap.hpp"
-#include <typeinfo>
+#include <glm/gtx/wrap.hpp>
+//#include <typeinfo>
 #include <iostream>
 #include <limits>
 

@@ -5,7 +5,7 @@
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/gtx/vector_angle.hpp"
+#include <glm/gtx/vector_angle.hpp>
 #include <limits>
 
 // when an ofEasyCam is moving due to momentum, this keeps it
