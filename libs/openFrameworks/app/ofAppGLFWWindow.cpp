@@ -788,6 +788,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 //	XFlush(display);
 //
 //	//	setWindowShape(windowW, windowH);
+	setFSTarget(targetWindowMode);
+
 #endif
 
 	settings.windowMode = targetWindowMode;
