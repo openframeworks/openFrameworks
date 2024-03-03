@@ -193,6 +193,12 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
 	
+	
+	if (!windowP) {
+		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
+		return;
+	}
+	
 	// saves window rectangle just created.
 	windowRect = getWindowRect();
 
@@ -217,10 +223,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		}
 	}
 	
-	if (!windowP) {
-		ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
-		return;
-	}
+
 
 
 	// MARK: -
@@ -307,18 +310,18 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	glfwSetWindowRefreshCallback(windowP, refresh_cb);
 
 #ifdef TARGET_LINUX
-//	XSetLocaleModifiers("");
-//	xim = XOpenIM(getX11Display(), 0, 0, 0);
-//	if (!xim) {
-//		// fallback to internal input method
-//		XSetLocaleModifiers("@im=none");
-//		xim = XOpenIM(getX11Display(), 0, 0, 0);
-//	}
-//	xic = XCreateIC(xim,
-//		XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
-//		XNClientWindow, getX11Window(),
-//		XNFocusWindow, getX11Window(),
-//		NULL);
+	XSetLocaleModifiers("");
+	xim = XOpenIM(getX11Display(), 0, 0, 0);
+	if (!xim) {
+		// fallback to internal input method
+		XSetLocaleModifiers("@im=none");
+		xim = XOpenIM(getX11Display(), 0, 0, 0);
+	}
+	xic = XCreateIC(xim,
+		XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+		XNClientWindow, getX11Window(),
+		XNFocusWindow, getX11Window(),
+		NULL);
 #endif
 
 }
@@ -388,7 +391,7 @@ void ofAppGLFWWindow::update() {
 			glfwSetWindowOpacity(windowP, settings.opacity);
 		}
 
-		cout << "SHOW WINDOW! " << settings.windowName << endl;
+//		cout << "SHOW WINDOW! " << settings.windowName << endl;
 		glfwShowWindow(windowP);
 		
 //		cout << "after show window rect " << getWindowRect() << endl;
@@ -536,7 +539,8 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-//	cout << settings.windowName << " setWindowRect " << rect << endl;
+	cout << settings.windowName << " setWindowRect " << rect << endl;
+	
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
 
@@ -577,6 +581,7 @@ void ofAppGLFWWindow::disableSetupScreen() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
+	cout << "setFSTarget " << targetWindowMode << endl;
 	if (targetWindowMode == OF_FULLSCREEN) {
 		// save window shape before going fullscreen
 		windowRect = getWindowRect();
@@ -592,7 +597,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 		if (settings.fullscreenDisplays.size()) {
 			windowRectFS = allMonitors.getRectFromMonitors(settings.fullscreenDisplays);
 		}
-		cout << "windowRectFS " << windowRectFS << " : " << settings.windowName << endl;
+//		cout << "windowRectFS " << windowRectFS << " : " << settings.windowName << endl;
 		setWindowRect(windowRectFS);
 	}
 
@@ -785,7 +790,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 //	unsigned long value = fullscreen ? 1 : 0;
 //	XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&value, 1);
 //
-//	XFlush(display);
+//	-(display);
 //
 //	//	setWindowShape(windowW, windowH);
 	setFSTarget(targetWindowMode);
