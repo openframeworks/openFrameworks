@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   build-ios-tvos:
-    runs-on: macos-12
+    runs-on: macos-13
     strategy:
         matrix:
           cfg:
@@ -45,4 +45,4 @@ jobs:
       run: ./scripts/ci/$TARGET/build.sh;
 
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
+        DEVELOPER_DIR: "/Applications/Xcode_15.2.app/Contents/Developer"
