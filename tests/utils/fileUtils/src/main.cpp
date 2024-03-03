@@ -203,6 +203,9 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "";
         ofLogNotice() << "tests #4299";
         ofxTestEq(of::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
+
+		std::cout << ofToDataPath("",false) << std::endl;
+
 		if(ofGetTargetPlatform()==OF_TARGET_OSX){
 			ofxTestEq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
 		}else if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
@@ -283,8 +286,8 @@ class ofApp: public ofxUnitTestsApp{
 #include "ofAppRunner.h"
 //========================================================================
 int main( ){
-    initial_cwd = of::filesystem::current_path();
 	ofInit();
+    initial_cwd = of::filesystem::current_path();
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	ofRunApp(window, app);
