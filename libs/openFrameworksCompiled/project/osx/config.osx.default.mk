@@ -134,7 +134,7 @@ endif
 
 #PLATFORM_CFLAGS += -arch i386
 
-# other osx
+# other macos
 PLATFORM_CFLAGS += -fpascal-strings
 
 ifdef MAC_OS_SDK_ROOT
@@ -291,7 +291,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ##########################################################################################
 # PLATFORM FRAMEWORKS
 #   These are a list of platform frameworks.
-#   These are used exclusively with Darwin/OSX.
+#   These are used exclusively with Darwin/macOS.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
@@ -320,7 +320,7 @@ endif
 ##########################################################################################
 # PLATFORM FRAMEWORK SEARCH PATHS
 #   These are a list of platform framework search paths.
-#   These are used exclusively with Darwin/OSX.
+#   These are used exclusively with Darwin/macOS.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
@@ -364,7 +364,7 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
 # Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
-	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
+	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/macos/openFrameworks-Info.plist openFrameworks-Info.plist; fi
 	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
 
 # App icons
