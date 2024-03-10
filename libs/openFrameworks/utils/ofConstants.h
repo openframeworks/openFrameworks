@@ -343,6 +343,13 @@ typedef TESSindex ofIndexType;
 
 
 
+
+ #define Stringize( L )     #L 
+ #define MakeString( M, L ) M(L)
+ #define $Line MakeString( Stringize, __LINE__ )
+ #define Reminder __FILE__ "(" $Line ") : Reminder: "
+
+
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
     #define OF_HAS_CPP17 1
@@ -356,8 +363,11 @@ typedef TESSindex ofIndexType;
 
 #ifndef OF_USING_STD_FS
 	#if OF_HAS_CPP17
+		#pragma message(Reminder "has cpp17, defining OF_USING_STD_FS 1") 
+
 		#define OF_USING_STD_FS 1
 	#else
+		#pragma message(Reminder "no cpp17, defining OF_USING_STD_FS 0") 
 		// Set to 1 to force std filesystem instead of boost's
 		#define OF_USING_STD_FS 0
 	#endif
@@ -407,7 +417,10 @@ typedef TESSindex ofIndexType;
         // C++17 experimental fs support
         #include <experimental/filesystem>
         
+
         #if OF_HAS_CPP17
+			#pragma message(Reminder "has cpp17") 
+
             namespace std {
                 namespace experimental{
                     namespace filesystem {
@@ -416,10 +429,14 @@ typedef TESSindex ofIndexType;
                 }
             }
         #else
+			#pragma message(Reminder "false - has cpp17") 
+
             namespace std {
                 namespace experimental{
                     namespace filesystem {
-                        using path = v1::__cxx11::path;
+                        using path = v1::path;
+
+                        // using path = v1::__cxx11::path;
                     }
                 }
             }

@@ -452,6 +452,12 @@ private:
 	std::unordered_map<std::string, std::string> mDefines;
 
 	mutable std::unordered_map<std::string, int> mShaderIdsToRemove;
+<<<<<<< HEAD
+	
+	// unordered_map works well here on modern compilers
+	// std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+	std::map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
+=======
 
 	// unordered_map works well here on modern compilers
 	std::unordered_map<ofMaterialTextureType, std::shared_ptr<ofTexture> > mLocalTextures;
@@ -465,6 +471,7 @@ private:
 	mutable std::unordered_map<ofGLProgrammableRenderer *, std::shared_ptr<DepthShaders>> mDepthShaders;
 	static std::unordered_map<ofGLProgrammableRenderer *, std::unordered_map<std::string, std::weak_ptr<DepthShaders>>> depthShadersMap;
 	mutable std::unordered_map<std::string, int> mDepthShaderIdsToRemove;
+>>>>>>> master
 	
 	std::shared_ptr<ofShader> customShader;
 	bool bHasCustomShader = false;
