@@ -1890,15 +1890,19 @@ fs::path ofFilePath::getCurrentExePathFS(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+		wchar_t filename[MAX_PATH];
+		DWORD result = ::GetModuleFileName(
+			nullptr,    // retrieve path of current process .EXE
+			filename,
+			_countof(filename)
+		);
 		if (result == 0) {
+			// Error
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
-		} else {
-			return string(executablePath.begin(), executablePath.begin() + result);
 		}
+		return filename;
 	#endif
-	return "";
+	return {};
 }
 
 //------------------------------------------------------------------------------------------------------------
