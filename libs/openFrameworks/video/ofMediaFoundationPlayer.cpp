@@ -146,8 +146,9 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 
 class BstrURL {
 public:
-    BstrURL(std::string aurl) {
-        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+    BstrURL(const of::filesystem::path & aurl) {
+//        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+		std::wstring ws { aurl.wstring() };
         assert(!ws.empty());
         _bstrStr = SysAllocStringLen(ws.data(), ws.size());
     }
@@ -678,7 +679,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     bStream = bStream || ofIsStringInString(name, "rtsp://");
     bStream = bStream || ofIsStringInString(name, "rtmp://");
 
-    std::string absPath = name;
+    of::filesystem::path absPath = name;
 
     if (!bStream) {
         if (ofFile::doesFileExist(absPath)) {
