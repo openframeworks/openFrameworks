@@ -75,7 +75,11 @@ PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
 PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
 PLATFORM_PKG_CONFIG_LIBRARIES += egl
 
-
+## TEST
+PLATFORM_PKG_CONFIG_LIBRARIES += gl
+PLATFORM_PKG_CONFIG_LIBRARIES += glu
+PLATFORM_PKG_CONFIG_LIBRARIES += glew
+PLATFORM_LIBRARIES += glfw
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers

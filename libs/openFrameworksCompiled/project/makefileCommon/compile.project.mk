@@ -119,65 +119,79 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help force
 
+USE_CORES=-j 
+
+ifeq ($(PLATFORM_ARCH),armv6l)
+	USE_CORES=-j2
+endif
+
+ifeq ($(PLATFORM_ARCH),armv7l)
+	USE_CORES=-j2
+endif
+
+ifeq ($(PLATFORM_ARCH),aarch64)
+	USE_CORES=-j3
+endif
 
 Release:
 	@echo Compiling OF library for Release
-	@$(MAKE) -j -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
+	@echo $(MAKE) $(USE_CORES) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
+	@$(MAKE) $(USE_CORES) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Release
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) -j ReleaseABI
+	@$(MAKE) $(USE_CORES) ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) -j ReleaseABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(USE_CORES) ReleaseABI ABI=$(abi) &&) echo
 endif
 
 
 
 Debug:
 	@echo Compiling OF library for Debug
-	$(MAKE) -j -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+	$(MAKE) $(USE_CORES) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Debug
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) -j DebugABI
+	@$(MAKE) $(USE_CORES) DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) DebugABI ABI=$(abi) &&) echo
 endif
 
 ReleaseNoOF:
 	@echo Compiling $(APPNAME) for Release
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) -j ReleaseABI
+	@$(MAKE) $(USE_CORES) ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(USE_CORES) ReleaseABI ABI=$(abi) &&) echo
 endif
 
 DebugNoOF:
 	@echo Compiling $(APPNAME) for Debug
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) -j DebugABI
+	@$(MAKE) $(USE_CORES) DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) DebugABI ABI=$(abi) &&) echo
 endif
 
 ReleaseABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) -j copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+	@$(MAKE) $(USE_CORES) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
-	@$(MAKE) -j afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+	@$(MAKE) $(USE_CORES) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
 DebugABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) -j copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+	@$(MAKE) $(USE_CORES) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
-	@$(MAKE) -j afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+	@$(MAKE) $(USE_CORES) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
 all:
-	$(MAKE) -j Debug
+	$(MAKE) $(USE_CORES) Debug
 
 run:
 ifeq ($(PLATFORM_RUN_COMMAND),)
