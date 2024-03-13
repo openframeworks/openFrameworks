@@ -98,8 +98,44 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
-			MAC_OS_SDK=10.15
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.4.sdk)
+            MAC_OS_SDK=14.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.3.sdk)
+            MAC_OS_SDK=14.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.2.sdk)
+            MAC_OS_SDK=14.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.1.sdk)
+            MAC_OS_SDK=14.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.0.sdk)
+            MAC_OS_SDK=14.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.2.sdk)
+            MAC_OS_SDK=13.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.1.sdk)
+            MAC_OS_SDK=13.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.0.sdk)
+            MAC_OS_SDK=13.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.4.sdk)
+            MAC_OS_SDK=12.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.3.sdk)
+            MAC_OS_SDK=12.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.2.sdk)
+            MAC_OS_SDK=12.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.1.sdk)
+            MAC_OS_SDK=12.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.0.sdk)
+            MAC_OS_SDK=12.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.4.sdk)
+            MAC_OS_SDK=11.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.3.sdk)
+            MAC_OS_SDK=11.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.2.sdk)
+            MAC_OS_SDK=11.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.1.sdk)
+            MAC_OS_SDK=11.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.0.sdk)
+            MAC_OS_SDK=11.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
+            MAC_OS_SDK=10.15
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.14.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.14.sdk)
 			MAC_OS_SDK=10.14
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.13.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.13.sdk)
@@ -166,7 +202,6 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-#PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -lcurl
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
@@ -364,15 +399,15 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
 # Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
-	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
+	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/macos/openFrameworks-Info.plist openFrameworks-Info.plist; fi
 	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
 
 # App icons
  ifeq ($(RUN_TARGET), RunRelease)
-	@if [ -f of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@if [ -f of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/macos/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
 	@sed -i '' 's/\$$(ICON_NAME)/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  else
-	@if [ -f of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@if [ -f of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/macos/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
 	@sed -i '' 's/\$$(ICON_NAME)/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  endif
 

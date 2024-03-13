@@ -98,7 +98,43 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.4.sdk)
+            MAC_OS_SDK=14.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.3.sdk)
+            MAC_OS_SDK=14.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.2.sdk)
+            MAC_OS_SDK=14.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.1.sdk)
+            MAC_OS_SDK=14.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.0.sdk)
+            MAC_OS_SDK=14.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.2.sdk)
+            MAC_OS_SDK=13.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.1.sdk)
+            MAC_OS_SDK=13.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.0.sdk)
+            MAC_OS_SDK=13.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.4.sdk)
+            MAC_OS_SDK=12.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.3.sdk)
+            MAC_OS_SDK=12.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.2.sdk)
+            MAC_OS_SDK=12.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.1.sdk)
+            MAC_OS_SDK=12.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.0.sdk)
+            MAC_OS_SDK=12.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.4.sdk)
+            MAC_OS_SDK=11.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.3.sdk)
+            MAC_OS_SDK=11.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.2.sdk)
+            MAC_OS_SDK=11.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.1.sdk)
+            MAC_OS_SDK=11.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.0.sdk)
+            MAC_OS_SDK=11.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
 			MAC_OS_SDK=10.15
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.14.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.14.sdk)
 			MAC_OS_SDK=10.14
