@@ -56,7 +56,7 @@ ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(new ofCoreEvents){
 }
 
 ofAppGLFWWindow::~ofAppGLFWWindow() {
-	cout << "DISTRUKT! " << settings.windowName << endl;
+	cout << "ofAppGLFWWindow::~ofAppGLFWWindow() " << settings.windowName << endl;
 	close();
 }
 
@@ -189,9 +189,32 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	}
 
 
-	// MARK: - WINDOW
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	
+//	cout << "will create window" << endl;
+//	cout << "monitors size: " << allMonitors.rects.size() << endl;
+	bool displayOK = false;
+	if (settings.fullscreenDisplays.size()) {
+		for (auto & d : settings.fullscreenDisplays) {
+			cout << "GLFWWindow fullscreenDisplays " << d << " : " << allMonitors.rects.size() << endl;
+			if (d <= (allMonitors.rects.size()-1)) {
+				displayOK = true;
+				break;
+			}
+//			cout << d << endl;
+		}
+	} else {
+		displayOK = true;
+	}
+
 	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
+
+
+	if (displayOK) {
+	} else {
+		// MARK: - WINDOW
+		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+//		return;
+	}
 	
 	
 	if (!windowP) {
@@ -539,7 +562,7 @@ GLFWwindow * ofAppGLFWWindow::getGLFWWindow() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowRect(const ofRectangle & rect) {
-	cout << settings.windowName << " setWindowRect " << rect << endl;
+//	cout << settings.windowName << " setWindowRect " << rect << endl;
 	
 	glfwSetWindowMonitor(windowP, NULL, rect.x, rect.y, rect.width, rect.height, GLFW_DONT_CARE);
 }
@@ -581,7 +604,7 @@ void ofAppGLFWWindow::disableSetupScreen() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
-	cout << "setFSTarget " << targetWindowMode << endl;
+//	cout << "setFSTarget " << targetWindowMode << endl;
 	if (targetWindowMode == OF_FULLSCREEN) {
 		// save window shape before going fullscreen
 		windowRect = getWindowRect();
@@ -609,7 +632,7 @@ void ofAppGLFWWindow::setFSTarget(ofWindowMode targetWindowMode) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
-	cout << "setFullScreen " << fullscreen << " : " << settings.windowName << endl;
+//	cout << "setFullScreen " << fullscreen << " : " << settings.windowName << endl;
 	if (fullscreen) {
 		targetWindowMode = OF_FULLSCREEN;
 	} else {
@@ -1147,7 +1170,7 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow * windowP_, int keycode, int scanco
 	uint32_t codepoint = 0;
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 //	auto instance = getWindow(windowP_);
-	cout << "keyboard_cb " << instance->settings.windowName << endl;
+//	cout << "keyboard_cb " << instance->settings.windowName << endl;
 	switch (keycode) {
 	case GLFW_KEY_ESCAPE:
 		key = OF_KEY_ESC;

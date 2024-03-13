@@ -4,6 +4,7 @@
 #include "ofUtils.h"
 #include <queue>
 
+
 class ofFpsCounter {
 public:
 	ofFpsCounter();
@@ -33,4 +34,54 @@ private:
 	std::chrono::nanoseconds filteredTime;
 	double filterAlpha;
 	std::queue<double> timestamps;
+};
+
+
+
+
+
+#include <chrono>
+using namespace std::chrono;
+using namespace std::chrono_literals;
+
+struct fpsCounter {
+public:
+	int nAverages = 20;
+	using space = std::chrono::duration<long double, std::nano>;
+	time_point<steady_clock> lastTick;
+	steady_clock::duration onesec = 1s;
+	std::vector <space> intervals;
+	space interval;
+	space average;
+	bool firstTick = true;
+	int cursor = 0;
+
+	void tick() {
+		if (firstTick) {
+			firstTick = false;
+			lastTick = steady_clock::now();
+			return;
+		}
+
+		interval = steady_clock::now() - lastTick;
+		lastTick = steady_clock::now();
+		if (intervals.size() < nAverages) {
+			intervals.emplace_back(interval);
+		} else {
+			intervals[cursor] = interval;
+			cursor = (cursor+1)%nAverages;
+		}
+	}
+	
+	double getFps()  {
+		average = std::reduce(intervals.begin(), intervals.end());
+		return intervals.size() * onesec / average;
+	}
+	
+	float get() {
+//		average = std::reduce(intervals.begin(), intervals.end())/intervals.size();
+//		return onesec / average;
+		average = std::reduce(intervals.begin(), intervals.end());
+		return intervals.size() * onesec / average;
+	}
 };

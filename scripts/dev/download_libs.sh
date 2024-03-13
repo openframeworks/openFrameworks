@@ -33,15 +33,21 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/downloader.sh"
 
 download(){
+    echo '-----'
     echo "Downloading $1"
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
+
+    COMMAND=" "
+    REPO="nightly"
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        echo downloader https://github.com/openframeworks/apothecary/releases/download/bleeding/$1 $SILENT_ARGS
-        downloader https://github.com/openframeworks/apothecary/releases/download/bleeding/$1 $SILENT_ARGS
-    else
-        echo downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
-        downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
+        REPO="bleeding"
     fi
+
+    for PKG in $1; do
+        COMMAND+="https://github.com/openframeworks/apothecary/releases/download/$REPO/$PKG "
+    done
+    echo $COMMAND;
+    downloader $COMMAND $SILENT_ARGS
 }
 
 # trap any script errors and exit
@@ -195,9 +201,9 @@ elif [ "$PLATFORM" == "vs" ]; then
     fi
 elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos)$ ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_1.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_2.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_3.tar.bz2"
     else    
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 \
@@ -223,9 +229,11 @@ else # Linux
     fi
 fi
 
-for PKG in $PKGS; do
-    download $PKG
-done
+# for PKG in $PKGS; do
+#     download $PKG
+# done
+# echo $PKGS
+download "${PKGS[@]}"
 
 cd ../../
 mkdir -p libs

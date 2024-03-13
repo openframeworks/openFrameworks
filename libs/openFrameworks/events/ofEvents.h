@@ -407,8 +407,8 @@ public:
 private:
 	float targetRate;
 	bool bFrameRateSet;
-//	ofTimerFps timer;
-	ofTimer timer;
+	ofTimerFps timer;
+//	ofTimer timer;
 	ofFpsCounter fps;
 
 	int currentMouseX, currentMouseY;
