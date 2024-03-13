@@ -8,7 +8,6 @@
 
 template<typename T>
 class ofPixels_;
-
 typedef ofPixels_<unsigned char> ofPixels;
 
 class DirectShowVideo; 

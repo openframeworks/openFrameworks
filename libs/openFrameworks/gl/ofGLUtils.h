@@ -9,7 +9,7 @@
 
 #include "ofGraphicsConstants.h"
 // MARK: Targets / Defines
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 class ofShader;
 class ofGLProgrammableRenderer;
@@ -18,7 +18,6 @@ class ofTexture;
 
 template<typename T>
 class ofPixels_;
-
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<float> ofFloatPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;

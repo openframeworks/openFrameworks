@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofGraphicsBaseTypes.h"
-// MARK: Targets, some can be moved to cpp
+// MARK: Targets, some can be moved to cpp, GLEW also
 #include "ofConstants.h"
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
@@ -11,7 +12,6 @@ class ofRectangle;
 
 template<typename T>
 class ofPixels_;
-
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;
 typedef ofPixels_<float> ofFloatPixels;

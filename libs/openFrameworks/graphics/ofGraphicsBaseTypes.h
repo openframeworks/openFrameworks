@@ -189,6 +189,11 @@ public:
 	///
 	/// \return the width.
 	virtual float getWidth() const = 0;
+	
+	// TODO: Implement correctly for texture, videos, etc.
+	virtual glm::vec2 getSize() {
+		return { getWidth(), getHeight() };
+	}
 
 	/// \brief Set the anchor point the item is drawn around as a percentage.
 	///

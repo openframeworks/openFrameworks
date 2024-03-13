@@ -30,7 +30,6 @@
     
 ==============================================================================*/
 #include "ofxKinect.h"
-#include "ofMain.h"
 
 #include "libfreenect_registration.h"
 #include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info

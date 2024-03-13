@@ -1597,6 +1597,14 @@ void ofGLProgrammableRenderer::setDefaultUniforms() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::beginDefaultShader() {
+	// piece of code to avoid begin multiple times the same shader
+//	std::cout << "2 " << std::endl;
+//	if (ofGetFrameNum() == beginDefaultShaderFrame) {
+//		return;
+//	}
+//	beginDefaultShaderFrame = ofGetFrameNum();
+//	
+//	std::cout << "ofGLProgrammableRenderer::beginDefaultShader() " << ofGetFrameNum() << std::endl;
 	if (usingCustomShader && !currentMaterial && !currentShadow) return;
 	if (currentShadow && bCustomShadowShader) return;
 

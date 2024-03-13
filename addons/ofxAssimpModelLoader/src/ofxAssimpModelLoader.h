@@ -76,6 +76,8 @@ class ofxAssimpModelLoader{
 		void setPausedForAllAnimations(bool pause);
 		void setLoopStateForAllAnimations(ofLoopType state);
 		void setPositionForAllAnimations(float position);
+		void setSpeedForAllAnimations(float speed);
+	
 		[[deprecated("Use ofxAssimpAnimation")]]
 		void setAnimation(int animationIndex);
 		[[deprecated("Use ofxAssimpAnimation")]]

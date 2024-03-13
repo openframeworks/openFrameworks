@@ -211,8 +211,9 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 	} else {
 		bFrameRateSet = true;
 		targetRate = _targetRate;
-		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
-		timer.setPeriodicEvent(nanosPerFrame);
+//		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
+//		timer.setPeriodicEvent(nanosPerFrame);
+		timer.setFps(targetRate);
 	}
 }
 
@@ -223,6 +224,7 @@ bool ofCoreEvents::getTargetFrameRateEnabled() const {
 //--------------------------------------
 float ofCoreEvents::getFrameRate() const {
 	return fps.getFps();
+//	return fps2.getFps();
 }
 
 //--------------------------------------
@@ -301,6 +303,7 @@ bool ofCoreEvents::notifyDraw() {
 	auto attended = ofNotifyEvent(draw, voidEventArgs);
 
 	if (bFrameRateSet) {
+//		std::cout << "timer wait " << ofGetFrameNum() << std::endl;
 		timer.waitNext();
 	}
 
@@ -598,6 +601,12 @@ bool ofCoreEvents::notifyExit() {
 bool ofCoreEvents::notifyWindowResized(int width, int height) {
 	ofResizeEventArgs resizeEventArgs(width, height);
 	return ofNotifyEvent(windowResized, resizeEventArgs);
+}
+
+//------------------------------------------
+bool ofCoreEvents::notifyFramebufferResized(int width, int height) {
+	ofResizeEventArgs resizeEventArgs(width, height);
+	return ofNotifyEvent(framebufferResized, resizeEventArgs);
 }
 
 //------------------------------------------

@@ -853,6 +853,8 @@
 		E4B27C1610CBEB8E00536013 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS)";
+				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
@@ -877,6 +879,8 @@
 		E4B27C1710CBEB8E00536013 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS)";
+				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = "";
