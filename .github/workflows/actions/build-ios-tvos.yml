@@ -26,8 +26,8 @@ jobs:
     strategy:
         matrix:
           cfg:
-          - {target: ios, libs: ios}
-          - {target: tvos, libs: ios/tvos}
+          - {target: ios, libs: macos}
+          - {target: tvos, libs: macos}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
