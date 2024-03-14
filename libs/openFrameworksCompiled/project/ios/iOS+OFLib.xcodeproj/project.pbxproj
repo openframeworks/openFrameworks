@@ -125,13 +125,16 @@
 		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
-		BFF3CF912B7A59F400890937 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF3CF902B7A59F400890937 /* FreeImage.xcframework */; };
-		BFF3CF932B7A5A0000890937 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF3CF922B7A5A0000890937 /* freetype.xcframework */; };
-		BFF3CF952B7A5A3300890937 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF3CF942B7A5A3300890937 /* libpng.xcframework */; };
-		BFF3CF972B7A5B8200890937 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF3CF962B7A5B8200890937 /* pugixml.xcframework */; };
-		BFF3CF992B7A5B9400890937 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF3CF982B7A5B9400890937 /* tess2.xcframework */; };
-		BFF3CF9B2B7A5B9E00890937 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF3CF9A2B7A5B9E00890937 /* uriparser.xcframework */; };
-		BFF3CF9D2B7A5BA900890937 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF3CF9C2B7A5BA900890937 /* zlib.xcframework */; };
+		BF7E59062BA203BC00E5C52E /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */; };
+		BF7E590C2BA204BC00E5C52E /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
+		BF7E590E2BA204D300E5C52E /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
+		BF7E59142BA2050B00E5C52E /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59132BA2050B00E5C52E /* libpng.xcframework */; };
+		BF7E59182BA2052D00E5C52E /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59172BA2052D00E5C52E /* pugixml.xcframework */; };
+		BF7E591A2BA2054700E5C52E /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59192BA2054700E5C52E /* tess2.xcframework */; };
+		BF7E591C2BA2056600E5C52E /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591B2BA2056600E5C52E /* uriparser.xcframework */; };
+		BF7E591E2BA2057A00E5C52E /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591D2BA2057900E5C52E /* zlib.xcframework */; };
+		BF7E59202BA2068200E5C52E /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591F2BA2068200E5C52E /* CoreHaptics.framework */; };
+		BF7E59222BA206BD00E5C52E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59212BA206BD00E5C52E /* Metal.framework */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -241,7 +244,6 @@
 		E4F76EB8176CB27200798745 /* ofVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76E18176CB27200798745 /* ofVideoPlayer.h */; };
 		E999E70E299D53FC00649F18 /* ofxiOSCoreHaptics.h in Headers */ = {isa = PBXBuildFile; fileRef = E999E70C299D53FC00649F18 /* ofxiOSCoreHaptics.h */; };
 		E999E70F299D53FC00649F18 /* ofxiOSCoreHaptics.mm in Sources */ = {isa = PBXBuildFile; fileRef = E999E70D299D53FC00649F18 /* ofxiOSCoreHaptics.mm */; };
-		E9F39183299E892200280B58 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9F39182299E892200280B58 /* CoreHaptics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -368,13 +370,16 @@
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiOS_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		BFF3CF902B7A59F400890937 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/ios/FreeImage.xcframework; sourceTree = "<group>"; };
-		BFF3CF922B7A5A0000890937 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/ios/freetype.xcframework; sourceTree = "<group>"; };
-		BFF3CF942B7A5A3300890937 /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/ios/libpng.xcframework; sourceTree = "<group>"; };
-		BFF3CF962B7A5B8200890937 /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/ios/pugixml.xcframework; sourceTree = "<group>"; };
-		BFF3CF982B7A5B9400890937 /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/ios/tess2.xcframework; sourceTree = "<group>"; };
-		BFF3CF9A2B7A5B9E00890937 /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/ios/uriparser.xcframework; sourceTree = "<group>"; };
-		BFF3CF9C2B7A5BA900890937 /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/ios/zlib.xcframework; sourceTree = "<group>"; };
+		BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
+		BF7E590B2BA204BC00E5C52E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
+		BF7E590D2BA204D300E5C52E /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
+		BF7E59132BA2050B00E5C52E /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/macos/libpng.xcframework; sourceTree = "<group>"; };
+		BF7E59172BA2052D00E5C52E /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/macos/pugixml.xcframework; sourceTree = "<group>"; };
+		BF7E59192BA2054700E5C52E /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
+		BF7E591B2BA2056600E5C52E /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
+		BF7E591D2BA2057900E5C52E /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
+		BF7E591F2BA2068200E5C52E /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
+		BF7E59212BA206BD00E5C52E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9113B38BE900A75A5D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9213B38BE900A75A5D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -488,7 +493,6 @@
 		E4F76E18176CB27200798745 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoPlayer.h; sourceTree = "<group>"; };
 		E999E70C299D53FC00649F18 /* ofxiOSCoreHaptics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreHaptics.h; sourceTree = "<group>"; };
 		E999E70D299D53FC00649F18 /* ofxiOSCoreHaptics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreHaptics.mm; sourceTree = "<group>"; };
-		E9F39182299E892200280B58 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -496,30 +500,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFF3CF9D2B7A5BA900890937 /* zlib.xcframework in Frameworks */,
-				E9F39183299E892200280B58 /* CoreHaptics.framework in Frameworks */,
+				BF7E59222BA206BD00E5C52E /* Metal.framework in Frameworks */,
+				BF7E59202BA2068200E5C52E /* CoreHaptics.framework in Frameworks */,
+				BF7E591E2BA2057A00E5C52E /* zlib.xcframework in Frameworks */,
 				99752D331BF21EEE0026316A /* GameController.framework in Frameworks */,
 				67D48ED01C10399900F719BC /* CoreMotion.framework in Frameworks */,
 				BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */,
 				BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */,
-				BFF3CF952B7A5A3300890937 /* libpng.xcframework in Frameworks */,
+				BF7E59142BA2050B00E5C52E /* libpng.xcframework in Frameworks */,
 				BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */,
 				BB24DECD10DA7A3F00E9C588 /* OpenAL.framework in Frameworks */,
-				BFF3CF972B7A5B8200890937 /* pugixml.xcframework in Frameworks */,
 				901808B9205362D7004A7774 /* GLKit.framework in Frameworks */,
+				BF7E59182BA2052D00E5C52E /* pugixml.xcframework in Frameworks */,
 				BB24DECE10DA7A3F00E9C588 /* Foundation.framework in Frameworks */,
-				BFF3CF912B7A59F400890937 /* FreeImage.xcframework in Frameworks */,
+				BF7E590C2BA204BC00E5C52E /* fmt.xcframework in Frameworks */,
+				BF7E59062BA203BC00E5C52E /* FreeImage.xcframework in Frameworks */,
 				BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */,
+				BF7E591A2BA2054700E5C52E /* tess2.xcframework in Frameworks */,
+				BF7E591C2BA2056600E5C52E /* uriparser.xcframework in Frameworks */,
 				BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */,
 				BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */,
-				BFF3CF9B2B7A5B9E00890937 /* uriparser.xcframework in Frameworks */,
-				BFF3CF992B7A5B9400890937 /* tess2.xcframework in Frameworks */,
 				5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */,
 				53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */,
 				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
 				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
 				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
-				BFF3CF932B7A5A0000890937 /* freetype.xcframework in Frameworks */,
+				BF7E590E2BA204D300E5C52E /* freetype.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -986,14 +992,16 @@
 		E9F39181299E892200280B58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BFF3CF9C2B7A5BA900890937 /* zlib.xcframework */,
-				BFF3CF9A2B7A5B9E00890937 /* uriparser.xcframework */,
-				BFF3CF982B7A5B9400890937 /* tess2.xcframework */,
-				BFF3CF962B7A5B8200890937 /* pugixml.xcframework */,
-				BFF3CF942B7A5A3300890937 /* libpng.xcframework */,
-				BFF3CF922B7A5A0000890937 /* freetype.xcframework */,
-				BFF3CF902B7A59F400890937 /* FreeImage.xcframework */,
-				E9F39182299E892200280B58 /* CoreHaptics.framework */,
+				BF7E59212BA206BD00E5C52E /* Metal.framework */,
+				BF7E591F2BA2068200E5C52E /* CoreHaptics.framework */,
+				BF7E591D2BA2057900E5C52E /* zlib.xcframework */,
+				BF7E591B2BA2056600E5C52E /* uriparser.xcframework */,
+				BF7E59192BA2054700E5C52E /* tess2.xcframework */,
+				BF7E59172BA2052D00E5C52E /* pugixml.xcframework */,
+				BF7E59132BA2050B00E5C52E /* libpng.xcframework */,
+				BF7E590D2BA204D300E5C52E /* freetype.xcframework */,
+				BF7E590B2BA204BC00E5C52E /* fmt.xcframework */,
+				BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
