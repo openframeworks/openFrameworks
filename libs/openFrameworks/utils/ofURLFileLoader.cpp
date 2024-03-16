@@ -24,7 +24,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent() {
 class ofURLFileLoaderImpl : public ofThread, public ofBaseURLFileLoader {
 public:
 	ofURLFileLoaderImpl();
-	~ofURLFileLoaderImpl();
+	~ofURLFil eLoaderImpl();
 	ofHttpResponse get(const string & url);
 	int getAsync(const string & url, const string & name = ""); // returns id
 	ofHttpResponse saveTo(const string & url, const of::filesystem::path & path);
@@ -273,6 +273,12 @@ ofURLFileLoader::ofURLFileLoader()
 	#include "ofxEmscriptenURLFileLoader.h"
 ofURLFileLoader::ofURLFileLoader()
 	: impl(new ofxEmscriptenURLFileLoader) { }
+#endif
+
+#ifdef TARGET_OS_TV
+#include "ofxtvOSURLFileLoader.h"
+ofURLFileLoader::ofURLFileLoader()
+: impl(new ofxtvOSURLFileLoader) { }
 #endif
 
 ofHttpResponse ofURLFileLoader::get(const string & url) {
