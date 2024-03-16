@@ -24,7 +24,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent() {
 class ofURLFileLoaderImpl : public ofThread, public ofBaseURLFileLoader {
 public:
 	ofURLFileLoaderImpl();
-	~ofURLFil eLoaderImpl();
+	~ofURLFileLoaderImpl();
 	ofHttpResponse get(const string & url);
 	int getAsync(const string & url, const string & name = ""); // returns id
 	ofHttpResponse saveTo(const string & url, const of::filesystem::path & path);
