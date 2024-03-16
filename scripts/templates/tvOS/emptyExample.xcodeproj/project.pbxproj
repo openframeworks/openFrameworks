@@ -24,7 +24,6 @@
 		84C8DBAD1BC37F72001606C1 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBAB1BC37F72001606C1 /* ofApp.mm */; };
 		99752D361BF220CC0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D351BF220CC0026316A /* GameController.framework */; };
 		9998920C1BF4D40400DCECB0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9998920B1BF4D40400DCECB0 /* Images.xcassets */; };
-		BFF25F812B7A90E9002E37FF /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF25F802B7A90E9002E37FF /* CoreAudio.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,8 +64,18 @@
 		84C8DBAB1BC37F72001606C1 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
 		99752D351BF220CC0026316A /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		9998920B1BF4D40400DCECB0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		BFF25F7E2B7A90DF002E37FF /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
-		BFF25F802B7A90E9002E37FF /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		BF94EDF22BA58548009EF752 /* TVUIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVUIKit.framework; path = System/Library/Frameworks/TVUIKit.framework; sourceTree = SDKROOT; };
+		BF94EDF32BA58548009EF752 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		BF94EDF42BA58548009EF752 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		BF94EDF52BA58548009EF752 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
+		BF94EDF62BA58548009EF752 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		BF94EDF72BA58548009EF752 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		BF94EDF82BA58548009EF752 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
+		BF94EDF92BA58548009EF752 /* CoreMediaIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMediaIO.framework; path = System/Library/Frameworks/CoreMediaIO.framework; sourceTree = SDKROOT; };
+		BF94EDFA2BA58548009EF752 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		BF94EDFB2BA58548009EF752 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
+		BF94EDFC2BA58548009EF752 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		BF94EDFD2BA58548009EF752 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = System/Library/Frameworks/TVServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +83,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFF25F812B7A90E9002E37FF /* CoreAudio.framework in Frameworks */,
+				84C8DB871BC3732E001606C1 /* Foundation.framework in Frameworks */,
+				84C8DB891BC3732E001606C1 /* OpenGLES.framework in Frameworks */,
 				99752D361BF220CC0026316A /* GameController.framework in Frameworks */,
 				84C8DB801BC3732E001606C1 /* Accelerate.framework in Frameworks */,
 				84C8DB811BC3732E001606C1 /* AudioToolbox.framework in Frameworks */,
@@ -83,9 +93,7 @@
 				84C8DB841BC3732E001606C1 /* CoreLocation.framework in Frameworks */,
 				84C8DB851BC3732E001606C1 /* CoreMedia.framework in Frameworks */,
 				84C8DB861BC3732E001606C1 /* CoreVideo.framework in Frameworks */,
-				84C8DB871BC3732E001606C1 /* Foundation.framework in Frameworks */,
 				84C8DB881BC3732E001606C1 /* OpenAL.framework in Frameworks */,
-				84C8DB891BC3732E001606C1 /* OpenGLES.framework in Frameworks */,
 				84C8DB8A1BC3732E001606C1 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -152,6 +160,18 @@
 		84C8DB8D1BC37366001606C1 /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF94EDF52BA58548009EF752 /* CoreAudioTypes.framework */,
+				BF94EDF92BA58548009EF752 /* CoreMediaIO.framework */,
+				BF94EDF82BA58548009EF752 /* CoreMIDI.framework */,
+				BF94EDF32BA58548009EF752 /* CoreText.framework */,
+				BF94EDFA2BA58548009EF752 /* GLKit.framework */,
+				BF94EDFB2BA58548009EF752 /* AVFAudio.framework */,
+				BF94EDFC2BA58548009EF752 /* Security.framework */,
+				BF94EDFD2BA58548009EF752 /* TVServices.framework */,
+				BF94EDF22BA58548009EF752 /* TVUIKit.framework */,
+				BF94EDF72BA58548009EF752 /* VideoToolbox.framework */,
+				BF94EDF42BA58548009EF752 /* ImageIO.framework */,
+				BF94EDF62BA58548009EF752 /* CoreAudio.framework */,
 				99752D351BF220CC0026316A /* GameController.framework */,
 				84C8DB751BC3732E001606C1 /* Accelerate.framework */,
 				84C8DB761BC3732E001606C1 /* AudioToolbox.framework */,
@@ -196,8 +216,6 @@
 		BFF25F7D2B7A90DF002E37FF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BFF25F802B7A90E9002E37FF /* CoreAudio.framework */,
-				BFF25F7E2B7A90DF002E37FF /* CoreAudioTypes.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -235,7 +253,6 @@
 				TargetAttributes = {
 					84463AC51BC370DF00F24926 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = KM34QPF66V;
 					};
 				};
 			};
@@ -365,7 +382,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.2;
+				TVOS_DEPLOYMENT_TARGET = 17.4;
 			};
 			name = Debug;
 		};
@@ -403,7 +420,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.2;
+				TVOS_DEPLOYMENT_TARGET = 17.4;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -415,10 +432,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Launch Image";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = KM34QPF66V;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREFIX_HEADER = ofxtvOS_Prefix.pch;
 				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
 				INFOPLIST_FILE = "ofxtvOS-Info.plist";
+				LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.emptyExample.danoli3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -433,10 +451,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Launch Image";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = KM34QPF66V;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREFIX_HEADER = ofxtvOS_Prefix.pch;
 				HEADER_SEARCH_PATHS = "$(OF_CORE_HEADERS)";
 				INFOPLIST_FILE = "ofxtvOS-Info.plist";
+				LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.emptyExample.danoli3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
