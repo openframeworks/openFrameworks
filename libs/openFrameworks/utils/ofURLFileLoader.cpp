@@ -275,7 +275,7 @@ ofURLFileLoader::ofURLFileLoader()
 	: impl(new ofxEmscriptenURLFileLoader) { }
 #endif
 
-#ifdef TARGET_OS_TV
+#ifdef TARGET_OF_TVOS
 #include "ofxtvOSURLFileLoader.h"
 ofURLFileLoader::ofURLFileLoader()
 : impl(new ofxtvOSURLFileLoader) { }
