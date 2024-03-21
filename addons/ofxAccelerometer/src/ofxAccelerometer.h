@@ -34,6 +34,7 @@
 #include "ofTypes.h"
 #include "ofPoint.h"
 #include "ofEvents.h"
+#include "ofMathConstants.h"
 
 typedef void (*ofxAccelCB)(ofPoint&);			// typedef for accelerometer callback
 

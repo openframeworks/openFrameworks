@@ -61,8 +61,8 @@ common:
 	# ADDON_LIBS_EXCLUDE =
 	
 osx:
-	ADDON_LIBS = libs/svgtiny/lib/osx/svgtiny.a
-	ADDON_LIBS += libs/libxml2/lib/osx/xml2.a
+# 	ADDON_LIBS = libs/svgtiny/lib/osx/svgtiny.a
+# 	ADDON_LIBS += libs/libxml2/lib/osx/xml2.a
 
 ios:
 	ADDON_LIBS = libs/svgtiny/lib/ios/svgtiny.a

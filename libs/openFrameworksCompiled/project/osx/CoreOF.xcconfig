@@ -1,8 +1,8 @@
 // define which C++ library is required to build, based on target architecture
 CLANG_CXX_LIBRARY = libc++
 CLANG_ENABLE_OBJC_ARC = YES
-CLANG_CXX_LANGUAGE_STANDARD = c++14
-MACOSX_DEPLOYMENT_TARGET = 10.13
+CLANG_CXX_LANGUAGE_STANDARD = c++17
+MACOSX_DEPLOYMENT_TARGET = 10.15
 
 
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
@@ -27,21 +27,21 @@ LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
 LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a"
 
 LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/osx/libfmod.dylib"
-LIB_GLFW = "$(OF_PATH)/libs/glfw/lib/osx/glfw3.a"
-LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
-LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/osx/freetype.a"
-LIB_GLEW = "$(OF_PATH)/libs/glew/lib/osx/glew.a"
-LIB_RTAUDIO = "$(OF_PATH)/libs/rtAudio/lib/osx/rtaudio.a"
-LIB_TESS = "$(OF_PATH)/libs/tess2/lib/osx/tess2.a"
-LIB_CAIRO1 = "$(OF_PATH)/libs/cairo/lib/osx/cairo-script-interpreter.a"
-LIB_CAIRO2 = "$(OF_PATH)/libs/cairo/lib/osx/cairo.a"
-LIB_CAIRO3 = "$(OF_PATH)/libs/cairo/lib/osx/pixman-1.a"
+//LIB_GLFW = "$(OF_PATH)/libs/glfw/lib/osx/glfw3.a"
+//LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
+//LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/osx/freetype.a"
+//LIB_GLEW = "$(OF_PATH)/libs/glew/lib/osx/glew.a"
+//LIB_RTAUDIO = "$(OF_PATH)/libs/rtAudio/lib/osx/rtaudio.a"
+//LIB_TESS = "$(OF_PATH)/libs/tess2/lib/osx/tess2.a"
+//LIB_CAIRO1 = "$(OF_PATH)/libs/cairo/lib/osx/cairo-script-interpreter.a"
+//LIB_CAIRO2 = "$(OF_PATH)/libs/cairo/lib/osx/cairo.a"
+//LIB_CAIRO3 = "$(OF_PATH)/libs/cairo/lib/osx/pixman-1.a"
 LIB_CURL = "-lcurl"
-LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/osx/uriparser.a"
-LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/osx/pugixml.a"
+//LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/osx/uriparser.a"
+//LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/osx/pugixml.a"
 
 
-OF_CORE_LIBS = $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMOD) $(LIB_RTAUDIO) $(LIB_GLFW) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_CURL) $(LIB_URIPARSER) $(LIB_PUGIXML)
+OF_CORE_LIBS =  $(LIB_FMOD) $(LIB_CURL)
 
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMOD) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
 

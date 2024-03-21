@@ -67,6 +67,10 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 */
 
+#include "ofConstants.h"
+
+#if !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
+
 /*==================================================================================================
 	SoundEngine.h
 ==================================================================================================*/
@@ -388,6 +392,8 @@ OSStatus	SoundEngine_SetReferenceDistance(Float32 inValue);
 
 #if defined(__cplusplus)
 }
+#endif
+
 #endif
 
 #endif

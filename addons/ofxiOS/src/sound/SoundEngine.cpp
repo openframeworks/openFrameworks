@@ -67,7 +67,9 @@
  
  */
 
-#if !TARGET_IPHONE_SIMULATOR
+#include "SoundEngine.h"
+
+#if !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 /*==================================================================================================
 	SoundEngine.cpp
 ==================================================================================================*/
@@ -90,8 +92,7 @@
 using std::cout;
 using std::endl;
 
-// Local Includes
-#include "SoundEngine.h"
+
 
 #define	AssertNoError(inMessage, inHandler)						\
 			if(result != noErr)									\

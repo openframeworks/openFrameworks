@@ -220,6 +220,7 @@ ofAppNoWindow::ofAppNoWindow()
 :coreEvents(new ofCoreEvents)
 ,currentRenderer(new ofNoopRenderer){
 	ofAppPtr = nullptr;
+    ofInit();
 	width = 0;
 	height = 0;
 }
