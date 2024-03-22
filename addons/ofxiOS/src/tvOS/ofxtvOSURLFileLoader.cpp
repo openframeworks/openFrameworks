@@ -1,5 +1,6 @@
 
 #include "ofxtvOSURLFileLoader.h"
+#if defined(TARGET_OF_IOS) && defined(TARGET_OF_TVOS) && !defined(TARGET_OF_WATCHOS) && !defined(TARGET_OF_XROS)
 #include "ofLog.h"
 
 using namespace std;
@@ -85,3 +86,4 @@ void ofxtvOSURLFileLoader::onerror_file_cb(unsigned, void* request, int status){
 	ofNotifyEvent(ofURLResponseEvent(),response);
 	delete (ofHttpRequest*)request;
 }
+#endif

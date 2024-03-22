@@ -4,14 +4,16 @@
 //
 
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-
+#include "ofxiOSConstants.h"
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV) && !defined(TARGET_OF_MACOS)
+#if defined(OF_UI_KIT)
 #import <QuartzCore/QuartzCore.h>
 
 #include "ofxiOSViewController.h"
 #include "ofxiOSEAGLView.h"
 #include "ofAppiOSWindow.h"
 #import "ofxiOSExtras.h"
+
 
 @interface ofxiOSViewController() <EAGLViewDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
@@ -385,4 +387,5 @@
 
 @end
 
+#endif
 #endif

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "ofxiOSConstants.h"
+
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioToolbox.h>
 

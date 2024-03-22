@@ -28,8 +28,8 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/ 
-
-
+#include "ofxiOSConstants.h"
+#if TARGET_OS_IOS && defined(OF_UI_KIT)
 #include "ofxiOSExtras.h"
 #include "ofLog.h"
 #include "ofPixels.h"
@@ -618,5 +618,5 @@ void ofxiOSScreenGrab(id delegate) {
     UIImageWriteToSavedPhotosAlbum(imageLossless, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 #endif
-
+#endif
 

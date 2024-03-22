@@ -6,8 +6,9 @@
 //
 
 #include <TargetConditionals.h>
-
 #import "EAGLKView.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
@@ -183,3 +184,5 @@
 
 
 @end
+
+#endif

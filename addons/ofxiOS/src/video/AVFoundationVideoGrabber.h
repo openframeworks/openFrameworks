@@ -4,7 +4,9 @@
 
 #pragma once
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
+#if TARGET_OS_IOS || (TARGET_OS_IOS && !TARGET_OS_TV)
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
@@ -95,6 +97,4 @@ class AVFoundationVideoGrabber{
 };
 
 #endif
-
-
-
+#endif

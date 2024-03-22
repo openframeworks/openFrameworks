@@ -2,6 +2,9 @@
 
 #include "ofxiOSCoreHaptics.h"
 
+#include "ofxiOSConstants.h"
+#if defined(OF_HAPTICS)
+
 bool ofxiOSCoreHaptics::prepare_engine() {
     
     // this starts the engine and primes it with an instance of CHHapticAdvancedPatternPlayer
@@ -87,3 +90,5 @@ bool ofxiOSCoreHaptics::sendParameters(float i, float s) {
     }
     return false;
 }
+
+#endif

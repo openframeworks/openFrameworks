@@ -29,13 +29,11 @@
  *
  * ***********************************************************************/ 
 
-
-#import <QuartzCore/QuartzCore.h>
-
-#include <TargetConditionals.h>
-
 #import "EAGLView.h"
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
+#import <QuartzCore/QuartzCore.h>
+#include <TargetConditionals.h>
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
 
@@ -344,3 +342,4 @@
 
 
 @end
+#endif

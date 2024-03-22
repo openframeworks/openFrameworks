@@ -1,5 +1,6 @@
 #pragma once
-
+#include "ofConstants.h"
+#if defined(OF_CAIRO)
 #include <cairo.h>
 #include "ofGraphicsBaseTypes.h"
 // MARK: Optimization opportunity in ofPath, ofPixels pointer.
@@ -208,3 +209,4 @@ private:
 	std::deque <ofStyle> styleHistory;
 	ofPath path;
 };
+#endif

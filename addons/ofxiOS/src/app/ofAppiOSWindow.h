@@ -30,6 +30,9 @@
  * ***********************************************************************/
 
 #pragma once
+#include "ofxiOSConstants.h"
+#if !defined(TARGET_OF_MACOS)
+
 #include <TargetConditionals.h>
 #include "ofAppBaseWindow.h"
 #include "ofxiOSConstants.h"
@@ -284,5 +287,5 @@ protected:
 [[deprecated("use ofAppiOSWindow")]]
 typedef ofAppiOSWindow ofAppiPhoneWindow;
 
-
+#endif
 

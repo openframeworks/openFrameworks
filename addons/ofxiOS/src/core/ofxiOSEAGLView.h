@@ -7,6 +7,8 @@
 
 #pragma once
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
 #include <glm/glm.hpp>
@@ -40,3 +42,4 @@ class ofAppiOSWindow;
 @end
 
 #define ofxiPhoneEAGLView ofxiOSEAGLView
+#endif

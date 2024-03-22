@@ -5,6 +5,8 @@
 #include "AVFoundationVideoGrabber.h"
 #include <TargetConditionals.h>
 
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSExtras.h"
@@ -556,5 +558,5 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
 }
 
 #endif
-
+#endif
 

@@ -30,6 +30,9 @@
  * ***********************************************************************/ 
 #include <TargetConditionals.h>
 #include "ofAppiOSWindow.h"
+#include "ofxiOSConstants.h"
+#if !defined(TARGET_OF_MACOS)
+
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
@@ -486,3 +489,5 @@ std::shared_ptr<ofBaseRenderer> & ofAppiOSWindow::renderer(){
 ofiOSWindowSettings & ofAppiOSWindow::getSettings() {
     return settings;
 }
+
+#endif

@@ -68,8 +68,8 @@
  */
 
 #include "SoundEngine.h"
-
-#if !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
+#include "ofxiOSConstants.h"
+#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 /*==================================================================================================
 	SoundEngine.cpp
 ==================================================================================================*/

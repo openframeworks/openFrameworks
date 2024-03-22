@@ -6,6 +6,8 @@
 //
 
 #include "ofxiOSEAGLView.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #include "ofxiOSApp.h"
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
@@ -389,3 +391,4 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 
 @end
+#endif

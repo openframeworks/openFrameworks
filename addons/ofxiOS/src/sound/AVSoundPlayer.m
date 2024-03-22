@@ -5,8 +5,9 @@
 //
 
 #import "AVSoundPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_IOS_AVSOUNDPLAYER)
 #include <TargetConditionals.h>
-
 @interface AVSoundPlayer() {
     BOOL bMultiPlay;
 }
@@ -270,3 +271,4 @@
 }
 
 @end
+#endif

@@ -27,7 +27,8 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/
-
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
@@ -77,4 +78,5 @@
 
 @end
 
+#endif
 #endif

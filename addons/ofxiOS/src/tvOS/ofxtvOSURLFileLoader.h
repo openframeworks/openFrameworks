@@ -1,6 +1,9 @@
 
 #pragma once
+
 #include "ofURLFileLoader.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && defined(TARGET_OF_TVOS) && !defined(TARGET_OF_WATCHOS) && !defined(TARGET_OF_XROS)
 
 class ofxtvOSURLFileLoader: public ofBaseURLFileLoader {
 public:
@@ -22,3 +25,5 @@ private:
 	static void onload_file_cb(unsigned, void* request, const char* file);
 	static void onerror_file_cb(unsigned, void* request, int status);
 };
+
+#endif

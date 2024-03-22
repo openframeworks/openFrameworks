@@ -99,7 +99,7 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST && !TARGET_OS_VISION
         #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
         #define TARGET_OPENGLES
@@ -114,8 +114,16 @@ enum ofTargetPlatform{
         #define TARGET_OF_WATCHOS
         #define TARGET_OPENGLES
         #define TARGET_IMPLEMENTS_URL_LOADER
+    #elif TARGET_OS_VISION
+        #define TARGET_OF_IOS
+        #define TARGET_OF_XROS
+    #elif TARGET_OS_MACCATALYST
+        #define TARGET_OF_IOS
+        #define TARGET_OF_MACCATALYST
 	#else
 		#define TARGET_OSX
+        #define TARGET_MAC
+        #define TARGET_OF_MAC
 	#endif
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
@@ -139,6 +147,8 @@ enum ofTargetPlatform{
 #ifdef TARGET_WIN32
 	#define GLEW_STATIC
 	#define GLEW_NO_GLU
+    #define TARGET_GLFW_WINDOW
+    #define OF_CAIRO
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define __WINDOWS_DS__
@@ -187,10 +197,12 @@ enum ofTargetPlatform{
 
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_OSX) && !defined(TARGET_OF_IOS)
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
+    #define TARGET_GLFW_WINDOW
+    #define OF_CAIRO
 	#include "GL/glew.h"
 
 	#if defined(__LITTLE_ENDIAN__)
@@ -221,7 +233,8 @@ enum ofTargetPlatform{
 		#include <EGL/egl.h>
 		#include <EGL/eglext.h>
 	#else // desktop linux
-		#include <GL/glew.h> 
+        #define TARGET_GLFW_WINDOW
+		#include <GL/glew.h>
 	#endif
 
 	// for some reason, this isn't defined at compile time,

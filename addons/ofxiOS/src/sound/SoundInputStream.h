@@ -7,6 +7,7 @@
 #pragma once
 
 #import "SoundStream.h"
+#include "ofxiOSConstants.h"
 
 @interface SoundInputStream : SoundStream {
 

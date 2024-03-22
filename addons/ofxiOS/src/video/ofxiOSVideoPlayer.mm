@@ -54,19 +54,11 @@ bool ofxiOSVideoPlayer::load(string name) {
     
     if(bTextureCacheSupported == true && bTextureCacheEnabled == true) {
         if(_videoTextureCache == NULL) {
-#ifdef __IPHONE_6_0
             CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
                                                         NULL,
                                                         ofxiOSGetGLView().context,
                                                         NULL,
                                                         &_videoTextureCache);
-#else
-            CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                                        NULL,
-                                                        (__bridge void *)ofxiOSGetGLView().context,
-                                                        NULL,
-                                                        &_videoTextureCache);
-#endif
             if(err) {
                 ofLogWarning("ofxiOSVideoPlayer::load()") << "Error at CVOpenGLESTextureCacheCreate " << err;
             }

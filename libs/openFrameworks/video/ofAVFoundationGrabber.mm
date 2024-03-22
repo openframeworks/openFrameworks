@@ -38,13 +38,20 @@
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
+#if TARGET_OF_MACOS
 		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
 			AVCaptureDeviceTypeBuiltInWideAngleCamera,
 			AVCaptureDeviceTypeExternalUnknown,
 		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
 		devices = [session devices];
+#endif
 	} else {
-		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+            mediaType:AVMediaTypeVideo
+            position:AVCaptureDevicePositionUnspecified];
+        devices = [session devices];
+
 	}
 	
 	if([devices count] > 0) {
@@ -140,7 +147,7 @@
 
 			[device unlockForConfiguration];
 		} else {
-			NSLog(@"OSXVideoGrabber Init Error: %@", error);
+			NSLog(@"ofAVFoundationVideoGrabber Init Error: %@", error);
 		}
 
 		// We setup the input
@@ -253,13 +260,19 @@
 
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
+#if TARGET_OF_MACOS
 		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
 			AVCaptureDeviceTypeBuiltInWideAngleCamera,
 			AVCaptureDeviceTypeExternalUnknown,
 		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
 		devices = [session devices];
+#endif
 	} else {
-		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+            mediaType:AVMediaTypeVideo
+            position:AVCaptureDevicePositionUnspecified];
+        devices = [session devices];
 	}
 
 	int i=0;

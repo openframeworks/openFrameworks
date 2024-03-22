@@ -10,6 +10,7 @@
 #define ofxtvOS_h
 
 #include "ofMain.h"
+#include "ofiOSConstants.h"
 
 #ifdef TARGET_OF_TVOS
 

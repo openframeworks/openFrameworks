@@ -35,9 +35,12 @@
  * ----------------------------------------------------------------------- */ 
 
 #pragma once
-
-#import <UIKit/UIKit.h>
+#include "ofxiOSConstants.h"
+#if TARGET_OS_IOS
 #include <TargetConditionals.h>
+#if defined(OF_UI_KIT)
+#import <UIKit/UIKit.h>
+#import <CoreMotion/CoreMotion.h>
 
 #include "ofxiOSConstants.h"
 #include "ofConstants.h"
@@ -252,3 +255,6 @@ std::string ofxiOSGetClipboardString();
 #define ofxiPhoneLaunchBrowser ofxiOSLaunchBrowser
 #define ofxNSStringToString ofxiOSNSStringToString
 #define ofxStringToNSString ofxiOSStringToNSString
+
+#endif
+#endif
