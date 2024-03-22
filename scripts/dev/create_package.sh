@@ -72,11 +72,11 @@ echoDots(){
     done
 }
 
-if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
+if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "macos" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
     echo usage:
     echo ./create_package.sh platform version
     echo platform:
-    echo msys2, linux, linux64, linuxarmv6l, linuxaarch64, linuxarmv7l, vs, osx, android, ios, all
+    echo msys2, linux, linux64, linuxarmv6l, linuxaarch64, linuxarmv7l, vs, osx, macos, android, ios, all
     exit 1
 fi
 
@@ -84,7 +84,7 @@ if [ "$version" == "" ]; then
     echo usage:
     echo ./create_package.sh platform version [branch]
     echo platform:
-    echo msys2, linux, linux64, vs, osx, android, ios, all
+    echo msys2, linux, linux64, vs, osx, android, ios, macos, all
     echo
     echo branch:
     echo master, stable
@@ -236,7 +236,7 @@ function createPackage {
 	cd $pkg_ofroot/examples
 
 	#delete ios examples in other platforms
-	if [ "$pkg_platform" != "ios" ]; then
+	if [ "$pkg_platform" != "ios" ] && [ "$pkg_platform" != "macos" ]; then
 		rm -Rf ios
 		rm -Rf tvOS
 	fi
@@ -321,7 +321,10 @@ function createPackage {
     #download external dependencies
     cd $pkg_ofroot/
     if [ "$pkg_platform" = "osx" ]; then
-        scripts/osx/download_libs.sh
+        scripts/osx/download_latest_libs.sh
+        scripts/emscripten/download_libs.sh -n
+    elif [ "$pkg_platform" = "macos" ]; then
+        scripts/macos/download_latest_libs.sh
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$libs_abi
@@ -341,7 +344,7 @@ function createPackage {
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
-        scripts/ios/download_libs.sh
+        scripts/ios/download_latest_libs.sh
     fi
 
     #create project files for platform
@@ -371,6 +374,10 @@ function createPackage {
 
     if [ "$pkg_platform" = "osx" ]; then
         otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 msys2 vs ios tvos android"
+    fi
+
+    if [ "$pkg_platform" = "macos" ]; then
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 msys2 osx ios tvos vs android"
     fi
 
     if [ "$pkg_platform" = "msys2" ]; then
@@ -419,7 +426,7 @@ function createPackage {
 		rm -rf apps/projectGenerator
 	fi
 
-    if [ "$pkg_platform" = "osx" ]; then
+    if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "macos" ] || [ "$pkg_platform" = "ios" ]; then
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         	unzip projectGenerator-osx.zip
         	mv projectGenerator-osx projectGenerator
@@ -430,14 +437,14 @@ function createPackage {
 
 	fi
 
-    if [ "$pkg_platform" = "ios" ]; then
-		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-ios.zip 2> /dev/null
-        	unzip projectGenerator-ios.zip
-        	mv projectGenerator-ios projectGenerator
-        	rm projectGenerator-ios.zip
-		rm -rf apps/projectGenerator
-		# sed -i "s/osx/ios/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
-	fi
+    # if [ "$pkg_platform" = "ios" ]; then
+	# 	downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-ios.zip 2> /dev/null
+    #     	unzip projectGenerator-ios.zip
+    #     	mv projectGenerator-ios projectGenerator
+    #     	rm projectGenerator-ios.zip
+	# 	rm -rf apps/projectGenerator
+	# 	# sed -i "s/osx/ios/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
+	# fi
 
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
@@ -504,7 +511,7 @@ function createPackage {
 		rm -Rf ofxUnitTests
 	fi
 	#delete ofxiPhone in non ios
-	if [ "$pkg_platform" != "ios" ]; then
+	if [ "$pkg_platform" != "ios" ] || [ "$pkg_platform" != "macos" ]; then
 		rm -Rf ofxiPhone
 		rm -Rf ofxiOS
 		rm -Rf ofxUnitTests
@@ -544,7 +551,7 @@ function createPackage {
     	rm -Rf $otherplatforms
         rm -Rf ci dev apothecary
 	else
-    	rm -Rf msys2 vs osx ios android ci dev apothecary
+    	rm -Rf msys2 vs osx macos ios android ci dev apothecary
 	fi
 
     if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ]; then
@@ -579,7 +586,7 @@ function createPackage {
 
 	#delete xcode templates in other platforms
 	cd $pkg_ofroot
-	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "ios" ]; then
+	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "ios" ] && [ "$pkg_platform" != "macos" ]; then
 		rm -Rf "xcode templates"
 	fi
     echo ----------------------------------------------------------------------
@@ -600,7 +607,7 @@ function createPackage {
         cp docs/msys2.md INSTALL.md
     fi
 
-    if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then
+    if [ "$platform" = "osx" ] || [ "$platform" = "ios" ] || [ "$platform" = "macos" ]; then
         cp docs/osx.md INSTALL.md
     fi
 
@@ -618,6 +625,8 @@ function createPackage {
         cp -r examples/android/androidEmptyExample apps/myApps/
     elif [ "$pkg_platform" = "ios" ]; then
         cp -r examples/ios/emptyExample apps/myApps/
+    elif [ "$pkg_platform" = "macos" ]; then
+        cp -r examples/macos/emptyExample apps/myApps/
     else
         cp -r examples/templates/emptyExample apps/myApps/
     fi
