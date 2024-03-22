@@ -26,7 +26,7 @@ HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworks.a"
 LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworksDebug.a"
 
-LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/osx/libfmod.dylib"
+//LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/osx/libfmod.dylib"
 //LIB_GLFW = "$(OF_PATH)/libs/glfw/lib/osx/glfw3.a"
 //LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
 //LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/osx/freetype.a"
@@ -36,16 +36,18 @@ LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/osx/libfmod.dylib"
 //LIB_CAIRO1 = "$(OF_PATH)/libs/cairo/lib/osx/cairo-script-interpreter.a"
 //LIB_CAIRO2 = "$(OF_PATH)/libs/cairo/lib/osx/cairo.a"
 //LIB_CAIRO3 = "$(OF_PATH)/libs/cairo/lib/osx/pixman-1.a"
-LIB_CURL = "-lcurl"
+//LIB_CURL = "-lcurl"
 //LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/osx/uriparser.a"
 //LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/osx/pugixml.a"
 
 
-OF_CORE_LIBS =  $(LIB_FMOD) $(LIB_CURL)
+//OF_CORE_LIBS =  $(LIB_FMOD)
 
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMOD) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREEIMAGE)  $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_FMOD)
+//$(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_GLEW)
 
-OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework Security
+OF_CORE_FRAMEWORKS = 
+//-framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework Security
 
 
 // BOOST can be enabled in OF Core by uncommenting this block
@@ -108,8 +110,8 @@ ONLY_ACTIVE_ARCH = YES
 OTHER_CODE_SIGN_FLAGS = --deep
 COMBINE_HIDPI_IMAGES = YES
 INSTALL_PATH = /Applications
-SDKROOT = macosx
-WRAPPER_EXTENSION = app
+//SDKROOT = macosx
+//WRAPPER_EXTENSION = app
 
 SKIP_INSTALL = YES
 CONFIGURATION_BUILD_DIR = $(SRCROOT)/bin/
