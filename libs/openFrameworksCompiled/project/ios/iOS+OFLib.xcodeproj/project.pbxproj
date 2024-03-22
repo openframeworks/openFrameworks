@@ -26,9 +26,7 @@
 		15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */; };
 		15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */; };
 		15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */; };
-		15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */; };
 		15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */; };
-		15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */; };
 		15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */; };
 		15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */; };
 		15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */; };
@@ -265,9 +263,7 @@
 		15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAppDelegate.h; sourceTree = "<group>"; };
 		15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSViewController.h; sourceTree = "<group>"; };
 		15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
-		15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
-		15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
 		15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAlerts.mm; sourceTree = "<group>"; };
 		15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlerts.h; sourceTree = "<group>"; };
 		15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlertsListener.h; sourceTree = "<group>"; };
@@ -623,8 +619,6 @@
 		15594F0315C55A5700727FF2 /* video */ = {
 			isa = PBXGroup;
 			children = (
-				15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */,
-				15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */,
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
 				1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */,
@@ -1103,7 +1097,6 @@
 				6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */,
 				2E6E258328F73C2C00EC8E22 /* ofShadow.h in Headers */,
 				15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */,
-				15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */,
 				15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */,
 				15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */,
 				15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */,
@@ -1136,9 +1129,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */ = {
+		BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */;
+			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */;
 			buildPhases = (
 				BB24DE5D10DA7A3F00E9C588 /* Headers */,
 				BB24DEB110DA7A3F00E9C588 /* Sources */,
@@ -1148,7 +1141,7 @@
 			);
 			dependencies = (
 			);
-			name = "iPhone+OF Static Library";
+			name = "iOS+OF Static Library";
 			productName = "Static Library";
 			productReference = BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1159,7 +1152,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1530;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1173,7 +1167,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */,
+				BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */,
 			);
 		};
 /* End PBXProject section */
@@ -1251,7 +1245,6 @@
 				15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */,
 				9008001D204EDC0F00DC786A /* EAGLKView.m in Sources */,
 				15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */,
-				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */,
 				15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */,
 				15594FBE15C56D1E00727FF2 /* ofxiOSCoreLocation.mm in Sources */,
 				15594FBF15C56D1E00727FF2 /* ofxiOSExternalDisplay.mm in Sources */,
@@ -1288,7 +1281,6 @@
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1315,7 +1307,6 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -1341,6 +1332,7 @@
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1360,6 +1352,7 @@
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
@@ -1384,6 +1377,7 @@
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1402,6 +1396,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
@@ -1424,7 +1419,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */ = {
+		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB24DED310DA7A3F00E9C588 /* Debug */,

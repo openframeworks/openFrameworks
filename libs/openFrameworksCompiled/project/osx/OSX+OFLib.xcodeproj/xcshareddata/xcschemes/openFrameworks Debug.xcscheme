@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1520"
+   LastUpgradeVersion = "1530"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -17,7 +17,7 @@
                BlueprintIdentifier = "E4B27C1410CBEB8E00536013"
                BuildableName = "openFrameworks.a"
                BlueprintName = "openFrameworks"
-               ReferencedContainer = "container:openFrameworksLib.xcodeproj">
+               ReferencedContainer = "container:OSX+OFLib.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -52,7 +52,7 @@
             BlueprintIdentifier = "E4B27C1410CBEB8E00536013"
             BuildableName = "openFrameworks.a"
             BlueprintName = "openFrameworks"
-            ReferencedContainer = "container:openFrameworksLib.xcodeproj">
+            ReferencedContainer = "container:OSX+OFLib.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

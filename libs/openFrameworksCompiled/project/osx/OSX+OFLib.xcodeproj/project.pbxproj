@@ -73,6 +73,9 @@
 		BF5BF8522B737E4E0049DEF6 /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */; };
 		BF5BF8542B737E880049DEF6 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8532B737E880049DEF6 /* libpng.xcframework */; };
 		BF5BF8562B737E930049DEF6 /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8552B737E930049DEF6 /* pixman.xcframework */; };
+		BF6276A22BAD6619008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A12BAD6619008864C1 /* openssl.xcframework */; };
+		BF6276A42BAD6639008864C1 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A32BAD6639008864C1 /* curl.xcframework */; };
+		BF6276A62BAD9900008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276A52BAD9900008864C1 /* ofBaseTypes.h */; };
 		DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
 		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
@@ -80,7 +83,6 @@
 		DAC22D3F16E7A4AF0020226D /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */; };
 		DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = DAC22D3C16E7A4AF0020226D /* ofParameter.h */; };
 		DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */; };
-		DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */; };
 		DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */; };
 		DACFA8DB132D09E8008D4B7A /* ofFbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8CA132D09E8008D4B7A /* ofFbo.h */; };
 		DACFA8DC132D09E8008D4B7A /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */; };
@@ -244,6 +246,9 @@
 		BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glfw.xcframework; path = ../../../glfw/lib/osx/glfw.xcframework; sourceTree = "<group>"; };
 		BF5BF8532B737E880049DEF6 /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/osx/libpng.xcframework; sourceTree = "<group>"; };
 		BF5BF8552B737E930049DEF6 /* pixman.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pixman.xcframework; path = ../../../pixman/lib/osx/pixman.xcframework; sourceTree = "<group>"; };
+		BF6276A12BAD6619008864C1 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/osx/openssl.xcframework; sourceTree = "<group>"; };
+		BF6276A32BAD6639008864C1 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/osx/curl.xcframework; sourceTree = "<group>"; };
+		BF6276A52BAD9900008864C1 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
@@ -251,7 +256,6 @@
 		DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameter.cpp; sourceTree = "<group>"; };
 		DAC22D3C16E7A4AF0020226D /* ofParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameter.h; sourceTree = "<group>"; };
 		DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameterGroup.cpp; sourceTree = "<group>"; };
-		DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameterGroup.h; sourceTree = "<group>"; };
 		DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofFbo.cpp; path = gl/ofFbo.cpp; sourceTree = "<group>"; };
 		DACFA8CA132D09E8008D4B7A /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofFbo.h; path = gl/ofFbo.h; sourceTree = "<group>"; };
 		DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLRenderer.cpp; path = gl/ofGLRenderer.cpp; sourceTree = "<group>"; };
@@ -374,10 +378,12 @@
 				BF5BF84C2B737E320049DEF6 /* FreeImage.xcframework in Frameworks */,
 				BF5BF8462B737C870049DEF6 /* rtAudio.xcframework in Frameworks */,
 				BF5BF8422B737C700049DEF6 /* uriparser.xcframework in Frameworks */,
+				BF6276A22BAD6619008864C1 /* openssl.xcframework in Frameworks */,
 				BF5BF8522B737E4E0049DEF6 /* glfw.xcframework in Frameworks */,
 				BF5BF8482B737D280049DEF6 /* pugixml.xcframework in Frameworks */,
 				BF5BF8562B737E930049DEF6 /* pixman.xcframework in Frameworks */,
 				BF5BF84E2B737E3B0049DEF6 /* freetype.xcframework in Frameworks */,
+				BF6276A42BAD6639008864C1 /* curl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,6 +393,8 @@
 		BF5BF83E2B7378ED0049DEF6 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF6276A32BAD6639008864C1 /* curl.xcframework */,
+				BF6276A12BAD6619008864C1 /* openssl.xcframework */,
 				BF5BF8552B737E930049DEF6 /* pixman.xcframework */,
 				BF5BF8532B737E880049DEF6 /* libpng.xcframework */,
 				BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */,
@@ -608,10 +616,10 @@
 		E4F3BACF12F4C73C002D19BB /* types */ = {
 			isa = PBXGroup;
 			children = (
+				BF6276A52BAD9900008864C1 /* ofBaseTypes.h */,
 				DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */,
 				DAC22D3C16E7A4AF0020226D /* ofParameter.h */,
 				DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */,
-				DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */,
 				E4F3BAD012F4C73C002D19BB /* ofBaseTypes.cpp */,
 				E4F3BAD212F4C73C002D19BB /* ofColor.cpp */,
 				E4F3BAD312F4C73C002D19BB /* ofColor.h */,
@@ -767,8 +775,8 @@
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
 				E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */,
 				DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */,
-				DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */,
 				E43EEAC429E66B78001C7596 /* ofAVEngineSoundPlayer.h in Headers */,
+				BF6276A62BAD9900008864C1 /* ofBaseTypes.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
@@ -808,9 +816,10 @@
 		E4B69B4C0A3A1720003C02F2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1530;
 			};
-			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
+			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "OSX+OFLib" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -999,7 +1008,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */ = {
+		E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "OSX+OFLib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E4B69B4E0A3A1720003C02F2 /* Debug */,

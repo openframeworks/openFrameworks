@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1520"
+   LastUpgradeVersion = "1530"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BB24DE5C10DA7A3F00E9C588"
                BuildableName = "libofxiOS_iphoneos_Debug.a"
-               BlueprintName = "iPhone+OF Static Library"
+               BlueprintName = "iOS+OF Static Library"
                ReferencedContainer = "container:iOS+OFLib.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,7 +51,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB24DE5C10DA7A3F00E9C588"
             BuildableName = "libofxiOS_iphoneos_Debug.a"
-            BlueprintName = "iPhone+OF Static Library"
+            BlueprintName = "iOS+OF Static Library"
             ReferencedContainer = "container:iOS+OFLib.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
