@@ -29,7 +29,7 @@
  *
  * ***********************************************************************/ 
 #include "ofxiOSConstants.h"
-#if TARGET_OS_IOS && defined(OF_UI_KIT)
+#if defined(TARGET_OS_IOS) && defined(OF_UI_KIT)
 #include "ofxiOSExtras.h"
 #include "ofLog.h"
 #include "ofPixels.h"

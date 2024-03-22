@@ -5,7 +5,7 @@
 //  Created by Dan Rosser on 7/3/18.
 //
 #include "ofxiOSConstants.h"
-#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT) && defined(TARGET_OF_IOS)
 #include "ofxiOSGLKView.h"
 #include "ofxiOSApp.h"
 #include "ofAppiOSWindow.h"

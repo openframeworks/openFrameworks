@@ -42,8 +42,6 @@
 #else
     #define TARGET_OSX
     #define TARGET_MACOS
-    #define OF_CORE_MOTION
-    #define OF_OPEN_AL
 #endif
 
 // iOS Device Types.

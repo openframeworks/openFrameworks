@@ -29,9 +29,9 @@
  *
  * ***********************************************************************/ 
 
-#import "EAGLView.h"
 #include "ofxiOSConstants.h"
 #if defined(OF_UI_KIT) && defined(OF_GL_KIT)
+#import "EAGLView.h"
 #import <QuartzCore/QuartzCore.h>
 #include <TargetConditionals.h>
 #import "ES1Renderer.h"

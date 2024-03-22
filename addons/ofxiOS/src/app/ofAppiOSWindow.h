@@ -31,8 +31,7 @@
 
 #pragma once
 #include "ofxiOSConstants.h"
-#if !defined(TARGET_OF_MACOS)
-
+#if defined(TARGET_OF_IOS)
 #include <TargetConditionals.h>
 #include "ofAppBaseWindow.h"
 #include "ofxiOSConstants.h"

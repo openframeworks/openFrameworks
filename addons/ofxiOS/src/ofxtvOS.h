@@ -11,7 +11,6 @@
 
 #include "ofMain.h"
 #include "ofiOSConstants.h"
-
 #ifdef TARGET_OF_TVOS
 
 #include "ofAppiOSWindow.h"

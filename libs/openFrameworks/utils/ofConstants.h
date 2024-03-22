@@ -103,7 +103,6 @@ enum ofTargetPlatform{
         #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
         #define TARGET_OPENGLES
-        #define TARGET_IMPLEMENTS_URL_LOADER
     #elif TARGET_OS_TV
         #define TARGET_OF_IOS
         #define TARGET_OF_TVOS
@@ -149,6 +148,7 @@ enum ofTargetPlatform{
 	#define GLEW_NO_GLU
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
+    #define OF_RTAUDIO
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define __WINDOWS_DS__
@@ -203,7 +203,10 @@ enum ofTargetPlatform{
 	#endif
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
+    #define OF_RTAUDIO
+    
 	#include "GL/glew.h"
+    #include "OpenGL/OpenGL.h"
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
@@ -244,7 +247,6 @@ enum ofTargetPlatform{
 	//#if defined(__LITTLE_ENDIAN__)
 	#define TARGET_LITTLE_ENDIAN		// intel cpu
 	//#endif
-
 	// some things for serial compilation:
 	#define B14400	14400
 	#define B28800	28800
@@ -255,13 +257,9 @@ enum ofTargetPlatform{
 #ifdef TARGET_OF_IOS
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
-
 	#import <OpenGLES/ES2/gl.h>
 	#import <OpenGLES/ES2/glext.h>
-
-
 	#define TARGET_LITTLE_ENDIAN		// arm cpu
-
 	#if defined(__OBJC__) && !__has_feature(objc_arc)
 		#error "Please enable ARC (Automatic Reference Counting) at the project level"
 	#endif

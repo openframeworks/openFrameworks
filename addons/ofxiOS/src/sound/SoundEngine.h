@@ -68,7 +68,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 */
 
 #include "ofxiOSConstants.h"
-#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
+#if defined(TARGET_OF_IOS) && defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 
 /*==================================================================================================
 	SoundEngine.h

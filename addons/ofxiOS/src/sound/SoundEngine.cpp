@@ -67,9 +67,10 @@
  
  */
 
-#include "SoundEngine.h"
+
 #include "ofxiOSConstants.h"
 #if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
+#include "SoundEngine.h"
 /*==================================================================================================
 	SoundEngine.cpp
 ==================================================================================================*/

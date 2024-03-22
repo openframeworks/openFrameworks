@@ -1,3 +1,7 @@
+
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
+
 #include "ofxiOSVideoGrabber.h"
 #include "AVFoundationVideoGrabber.h"
 #include "ofLog.h"
@@ -124,4 +128,4 @@ const ofPixels& ofxiOSVideoGrabber::getPixelsRef() const{
 }
 
 #endif
-
+#endif

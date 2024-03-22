@@ -6,9 +6,10 @@
 //
 
 #pragma once
-#include <TargetConditionals.h>
+
 #include "ofxiOSConstants.h"
 #if defined(OF_UI_KIT)
+#include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
 #import "EAGLView.h"
 #include <glm/glm.hpp>

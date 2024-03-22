@@ -38,8 +38,7 @@
 
 #include "ofMain.h"
 #include "ofiOSConstants.h"
-
-#if defined(TARGET_OF_IOS) && !defined(TARGET_OF_TVOS) && !defined(TARGET_OF_WATCHOS) && !defined(TARGET_OF_XROS)
+#if defined(TARGET_OF_IOS) && !TARGET_OF_TVOS && !TARGET_OF_WATCHOS && !TARGET_OF_XROS
 
 #include "ofAppiOSWindow.h"
 #include "ofxiOSConstants.h"

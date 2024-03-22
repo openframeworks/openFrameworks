@@ -29,10 +29,9 @@
  *
  * ***********************************************************************/ 
 #include <TargetConditionals.h>
-#include "ofAppiOSWindow.h"
 #include "ofxiOSConstants.h"
-#if !defined(TARGET_OF_MACOS)
-
+#if defined(TARGET_OF_IOS)
+#include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)

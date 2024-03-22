@@ -62,17 +62,17 @@
 		BF23BD9C2BAC792F000E2E0E /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */; };
 		BF23BD9D2BAC792F000E2E0E /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A442BA1DD04005FA2B1 /* uriparser.xcframework */; };
 		BF23BD9E2BAC792F000E2E0E /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EE2BA1DC91005FA2B1 /* libpng.xcframework */; };
-		BF23BD9F2BAC792F000E2E0E /* glew.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EA2BA1DC57005FA2B1 /* glew.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF23BD9F2BAC792F000E2E0E /* glew.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EA2BA1DC57005FA2B1 /* glew.xcframework */; };
 		BF23BDA02BAC792F000E2E0E /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
-		BF23BDA12BAC792F000E2E0E /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */; platformFilters = (macos, ); };
+		BF23BDA12BAC792F000E2E0E /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		BF23BDA22BAC792F000E2E0E /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */; };
-		BF23BDA32BAC792F000E2E0E /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF23BDA32BAC792F000E2E0E /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */; };
 		BF23BDA42BAC792F000E2E0E /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		BF23BDA52BAC792F000E2E0E /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
 		BF23BDA62BAC792F000E2E0E /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A422BA1DCF9005FA2B1 /* tess2.xcframework */; };
 		BF23BDA72BAC792F000E2E0E /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F22BA1DCAD005FA2B1 /* pugixml.xcframework */; };
-		BF23BDA82BAC792F000E2E0E /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EC2BA1DC6B005FA2B1 /* glfw.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		BF23BDA92BAC792F000E2E0E /* rtAudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F42BA1DCBB005FA2B1 /* rtAudio.xcframework */; platformFilters = (macos, ); };
+		BF23BDA82BAC792F000E2E0E /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EC2BA1DC6B005FA2B1 /* glfw.xcframework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF23BDA92BAC792F000E2E0E /* rtAudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F42BA1DCBB005FA2B1 /* rtAudio.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		BF23BDB22BAC7A70000E2E0E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAB2BAC7A6F000E2E0E /* AudioToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		BF23BDB32BAC7A70000E2E0E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAC2BAC7A6F000E2E0E /* AVFoundation.framework */; };
 		BF23BDB42BAC7A70000E2E0E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAD2BAC7A6F000E2E0E /* CoreFoundation.framework */; };
@@ -83,7 +83,7 @@
 		BF23BDCA2BAC7DDF000E2E0E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB92BAC7DD0000E2E0E /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		BF23BDCB2BAC7DDF000E2E0E /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBA2BAC7DD0000E2E0E /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		BF23BDCC2BAC7DDF000E2E0E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBB2BAC7DD0000E2E0E /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF23BDCD2BAC7DDF000E2E0E /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBC2BAC7DD0000E2E0E /* GLKit.framework */; platformFilters = (ios, macos, tvos, ); };
+		BF23BDCD2BAC7DDF000E2E0E /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBC2BAC7DD0000E2E0E /* GLKit.framework */; platformFilters = (ios, tvos, ); };
 		BF23BDCE2BAC7DDF000E2E0E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBE2BAC7DD0000E2E0E /* QuartzCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		BF23BDD12BAC7DDF000E2E0E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC12BAC7DD0000E2E0E /* Foundation.framework */; };
 		BF23BDD22BAC7DDF000E2E0E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC22BAC7DD0000E2E0E /* CoreGraphics.framework */; };
@@ -91,7 +91,6 @@
 		BF23BDD42BAC7DDF000E2E0E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC42BAC7DD0000E2E0E /* CoreLocation.framework */; };
 		BF23BDD52BAC7DDF000E2E0E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC72BAC7DD0000E2E0E /* CoreMedia.framework */; };
 		BF23BDD62BAC7DDF000E2E0E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC82BAC7DD0000E2E0E /* CoreVideo.framework */; };
-		BF23BDD72BAC7DDF000E2E0E /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC92BAC7DD0000E2E0E /* CoreMotion.framework */; platformFilters = (ios, maccatalyst, macos, watchos, xros, ); };
 		BF23BDD92BAC7E74000E2E0E /* libfmod.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDD82BAC7E74000E2E0E /* libfmod.dylib */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		BF23BDDB2BAC8484000E2E0E /* ofMain.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AC710CBE92A00536013 /* ofMain.h */; };
 		BF23BDDC2BAC8484000E2E0E /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */; };
@@ -216,7 +215,6 @@
 		BF23BE532BAC8484000E2E0E /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */; };
 		BF23BE542BAC8484000E2E0E /* ofParameter.h in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3C16E7A4AF0020226D /* ofParameter.h */; };
 		BF23BE552BAC8484000E2E0E /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */; };
-		BF23BE562BAC8484000E2E0E /* ofParameterGroup.h in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */; };
 		BF23BE572BAC8484000E2E0E /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD012F4C73C002D19BB /* ofBaseTypes.cpp */; };
 		BF23BE582BAC8484000E2E0E /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD212F4C73C002D19BB /* ofColor.cpp */; };
 		BF23BE592BAC8484000E2E0E /* ofColor.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD312F4C73C002D19BB /* ofColor.h */; };
@@ -347,12 +345,10 @@
 		BF23C0002BAC872D000E2E0E /* ofxAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BFA42BAC872D000E2E0E /* ofxAccelerometer.h */; };
 		BF23C0042BAC8A1C000E2E0E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0032BAC8A1C000E2E0E /* GameController.framework */; };
 		BF23C0062BAC8A1C000E2E0E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0052BAC8A1C000E2E0E /* MapKit.framework */; };
-		BF23C0082BAC8A1C000E2E0E /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0072BAC8A1C000E2E0E /* GLKit.framework */; };
 		BF23C00A2BAC8A1C000E2E0E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0092BAC8A1C000E2E0E /* AudioToolbox.framework */; };
 		BF23C00C2BAC8A1C000E2E0E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C00B2BAC8A1C000E2E0E /* QuartzCore.framework */; };
 		BF23C0122BAC8A1C000E2E0E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0112BAC8A1C000E2E0E /* Foundation.framework */; };
 		BF23C0142BAC8A1C000E2E0E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0132BAC8A1C000E2E0E /* CoreGraphics.framework */; };
-		BF23C0162BAC8A1C000E2E0E /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0152BAC8A1C000E2E0E /* OpenAL.framework */; };
 		BF23C0182BAC8A1C000E2E0E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0172BAC8A1C000E2E0E /* CoreLocation.framework */; };
 		BF23C01A2BAC8A1C000E2E0E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0192BAC8A1C000E2E0E /* AVFoundation.framework */; };
 		BF23C01C2BAC8A1C000E2E0E /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01B2BAC8A1C000E2E0E /* CoreAudio.framework */; };
@@ -362,6 +358,12 @@
 		BF23C0282BAD02DE000E2E0E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0272BAD02DE000E2E0E /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		BF23C02B2BAD0955000E2E0E /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0292BAD0954000E2E0E /* TVUIKit.framework */; platformFilters = (tvos, ); };
 		BF23C02C2BAD0955000E2E0E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C02A2BAD0955000E2E0E /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
+		BF6276AA2BADB16E008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A92BADB16E008864C1 /* openssl.xcframework */; };
+		BF6276AB2BADB16E008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A92BADB16E008864C1 /* openssl.xcframework */; };
+		BF6276B52BADC774008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276B42BADC774008864C1 /* ofBaseTypes.h */; };
+		BF6276B62BADC774008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276B42BADC774008864C1 /* ofBaseTypes.h */; };
+		BF6276B72BADCC13008864C1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276B32BADC6C9008864C1 /* Cocoa.framework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Required, ); }; };
+		BF6276B82BADCC27008864C1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276B22BADC6C9008864C1 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Required, ); }; };
 		BF6609E52BA1DB6F005FA2B1 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
 		BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; };
 		BF6609E92BA1DC4B005FA2B1 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
@@ -383,7 +385,6 @@
 		DAC22D3F16E7A4AF0020226D /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */; };
 		DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = DAC22D3C16E7A4AF0020226D /* ofParameter.h */; };
 		DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */; };
-		DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */; };
 		DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */; };
 		DACFA8DB132D09E8008D4B7A /* ofFbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8CA132D09E8008D4B7A /* ofFbo.h */; };
 		DACFA8DC132D09E8008D4B7A /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */; };
@@ -504,8 +505,8 @@
 		2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
 		30CC5384207A36FD008234AF /* ofMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMathConstants.h; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
-		6448E6FB1CAD7679000877BC /* ofMesh.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofMesh.inl; sourceTree = "<group>"; };
-		6448E6FC1CAD771D000877BC /* ofPolyline.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ofPolyline.inl; sourceTree = "<group>"; };
+		6448E6FB1CAD7679000877BC /* ofMesh.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ofMesh.inl; sourceTree = "<group>"; };
+		6448E6FC1CAD771D000877BC /* ofPolyline.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ofPolyline.inl; sourceTree = "<group>"; };
 		6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
 		6678E97C19FEB5A600C00581 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
@@ -662,6 +663,11 @@
 		BF23C0272BAD02DE000E2E0E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		BF23C0292BAD0954000E2E0E /* TVUIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVUIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS17.4.sdk/System/Library/Frameworks/TVUIKit.framework; sourceTree = DEVELOPER_DIR; };
 		BF23C02A2BAD0955000E2E0E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BF6276A92BADB16E008864C1 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/macos/openssl.xcframework; sourceTree = "<group>"; };
+		BF6276AF2BADB855008864C1 /* openFrameworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF6276B22BADC6C9008864C1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		BF6276B32BADC6C9008864C1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		BF6276B42BADC774008864C1 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cairo.xcframework; path = ../../../cairo/lib/macos/cairo.xcframework; sourceTree = "<group>"; };
 		BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
@@ -676,7 +682,6 @@
 		BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
 		BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
 		BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
-		BF7E59042BA1F06A00E5C52E /* openFrameworks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = openFrameworks.a; path = /Users/one/SOURCE/openFrameworksmacOS/libs/openFrameworksCompiled/project/macos/../../lib/macos/openFrameworks.a; sourceTree = "<absolute>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
@@ -684,7 +689,6 @@
 		DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameter.cpp; sourceTree = "<group>"; };
 		DAC22D3C16E7A4AF0020226D /* ofParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameter.h; sourceTree = "<group>"; };
 		DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameterGroup.cpp; sourceTree = "<group>"; };
-		DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameterGroup.h; sourceTree = "<group>"; };
 		DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofFbo.cpp; path = gl/ofFbo.cpp; sourceTree = "<group>"; };
 		DACFA8CA132D09E8008D4B7A /* ofFbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofFbo.h; path = gl/ofFbo.h; sourceTree = "<group>"; };
 		DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLRenderer.cpp; path = gl/ofGLRenderer.cpp; sourceTree = "<group>"; };
@@ -798,6 +802,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF6276B82BADCC27008864C1 /* OpenGL.framework in Frameworks */,
+				BF6276B72BADCC13008864C1 /* Cocoa.framework in Frameworks */,
+				BF23BDA12BAC792F000E2E0E /* pixman.xcframework in Frameworks */,
+				BF23BDA22BAC792F000E2E0E /* zlib.xcframework in Frameworks */,
+				BF23BDA32BAC792F000E2E0E /* curl.xcframework in Frameworks */,
+				BF23BDA42BAC792F000E2E0E /* cairo.xcframework in Frameworks */,
+				BF23BDA52BAC792F000E2E0E /* FreeImage.xcframework in Frameworks */,
+				BF23BDA62BAC792F000E2E0E /* tess2.xcframework in Frameworks */,
+				BF23BDA72BAC792F000E2E0E /* pugixml.xcframework in Frameworks */,
+				BF23BD9F2BAC792F000E2E0E /* glew.xcframework in Frameworks */,
+				BF23BDA82BAC792F000E2E0E /* glfw.xcframework in Frameworks */,
+				BF23BDA92BAC792F000E2E0E /* rtAudio.xcframework in Frameworks */,
+				BF23BD9C2BAC792F000E2E0E /* fmt.xcframework in Frameworks */,
+				BF23BD9D2BAC792F000E2E0E /* uriparser.xcframework in Frameworks */,
+				BF23BD9E2BAC792F000E2E0E /* libpng.xcframework in Frameworks */,
+				BF23BDA02BAC792F000E2E0E /* freetype.xcframework in Frameworks */,
+				BF6276AB2BADB16E008864C1 /* openssl.xcframework in Frameworks */,
 				BF23C02B2BAD0955000E2E0E /* TVUIKit.framework in Frameworks */,
 				BF23C02C2BAD0955000E2E0E /* UIKit.framework in Frameworks */,
 				BF23C0282BAD02DE000E2E0E /* IOKit.framework in Frameworks */,
@@ -816,18 +837,12 @@
 				BF23BDCD2BAC7DDF000E2E0E /* GLKit.framework in Frameworks */,
 				BF23C01E2BAC8A1C000E2E0E /* CoreMedia.framework in Frameworks */,
 				BF23BDB82BAC7A70000E2E0E /* CoreAudio.framework in Frameworks */,
-				BF23BD9C2BAC792F000E2E0E /* fmt.xcframework in Frameworks */,
 				BF23BDD52BAC7DDF000E2E0E /* CoreMedia.framework in Frameworks */,
-				BF23BDD72BAC7DDF000E2E0E /* CoreMotion.framework in Frameworks */,
 				BF23C0222BAC8A1C000E2E0E /* CoreMotion.framework in Frameworks */,
 				BF23BDD62BAC7DDF000E2E0E /* CoreVideo.framework in Frameworks */,
-				BF23BD9D2BAC792F000E2E0E /* uriparser.xcframework in Frameworks */,
-				BF23BD9E2BAC792F000E2E0E /* libpng.xcframework in Frameworks */,
 				BF23C01C2BAC8A1C000E2E0E /* CoreAudio.framework in Frameworks */,
-				BF23BD9F2BAC792F000E2E0E /* glew.xcframework in Frameworks */,
 				BF23BDCE2BAC7DDF000E2E0E /* QuartzCore.framework in Frameworks */,
 				BF23C0182BAC8A1C000E2E0E /* CoreLocation.framework in Frameworks */,
-				BF23BDA02BAC792F000E2E0E /* freetype.xcframework in Frameworks */,
 				BF23BDD12BAC7DDF000E2E0E /* Foundation.framework in Frameworks */,
 				BF23BDD22BAC7DDF000E2E0E /* CoreGraphics.framework in Frameworks */,
 				BF23BDCA2BAC7DDF000E2E0E /* Metal.framework in Frameworks */,
@@ -835,19 +850,8 @@
 				BF23C0042BAC8A1C000E2E0E /* GameController.framework in Frameworks */,
 				BF23C00A2BAC8A1C000E2E0E /* AudioToolbox.framework in Frameworks */,
 				BF23C01A2BAC8A1C000E2E0E /* AVFoundation.framework in Frameworks */,
-				BF23BDA12BAC792F000E2E0E /* pixman.xcframework in Frameworks */,
-				BF23BDA22BAC792F000E2E0E /* zlib.xcframework in Frameworks */,
-				BF23BDA32BAC792F000E2E0E /* curl.xcframework in Frameworks */,
-				BF23BDA42BAC792F000E2E0E /* cairo.xcframework in Frameworks */,
-				BF23BDA52BAC792F000E2E0E /* FreeImage.xcframework in Frameworks */,
 				BF23BDD32BAC7DDF000E2E0E /* OpenAL.framework in Frameworks */,
-				BF23BDA62BAC792F000E2E0E /* tess2.xcframework in Frameworks */,
-				BF23BDA72BAC792F000E2E0E /* pugixml.xcframework in Frameworks */,
-				BF23C0162BAC8A1C000E2E0E /* OpenAL.framework in Frameworks */,
-				BF23BDA82BAC792F000E2E0E /* glfw.xcframework in Frameworks */,
 				BF23C0202BAC8A1C000E2E0E /* CoreVideo.framework in Frameworks */,
-				BF23C0082BAC8A1C000E2E0E /* GLKit.framework in Frameworks */,
-				BF23BDA92BAC792F000E2E0E /* rtAudio.xcframework in Frameworks */,
 				BF23C0122BAC8A1C000E2E0E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -858,6 +862,7 @@
 			files = (
 				BF660A472BA1DD1D005FA2B1 /* zlib.xcframework in Frameworks */,
 				BF6609F32BA1DCAD005FA2B1 /* pugixml.xcframework in Frameworks */,
+				BF6276AA2BADB16E008864C1 /* openssl.xcframework in Frameworks */,
 				BF6609F12BA1DC9F005FA2B1 /* pixman.xcframework in Frameworks */,
 				BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */,
 				BF660A492BA1DD2E005FA2B1 /* fmt.xcframework in Frameworks */,
@@ -919,6 +924,8 @@
 				BF23BDAF2BAC7A6F000E2E0E /* CoreAudioTypes.framework */,
 				BF23BDB02BAC7A6F000E2E0E /* CoreData.framework */,
 				BF23BDAD2BAC7A6F000E2E0E /* CoreFoundation.framework */,
+				BF6276B32BADC6C9008864C1 /* Cocoa.framework */,
+				BF6276B22BADC6C9008864C1 /* OpenGL.framework */,
 			);
 			name = frameworks;
 			sourceTree = "<group>";
@@ -1119,6 +1126,7 @@
 		BF5BF83E2B7378ED0049DEF6 /* xcframeworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF6276A92BADB16E008864C1 /* openssl.xcframework */,
 				BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */,
 				BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */,
 				BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */,
@@ -1135,6 +1143,13 @@
 				BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */,
 			);
 			name = xcframeworks;
+			sourceTree = "<group>";
+		};
+		BF6276AC2BADB202008864C1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		DACFA8C8132D09C7008D4B7A /* gl */ = {
@@ -1267,6 +1282,8 @@
 				BF5BF83E2B7378ED0049DEF6 /* xcframeworks */,
 				BF23BDAA2BAC7A6F000E2E0E /* frameworks */,
 				BF23BDDA2BAC81B1000E2E0E /* macOS_openFrameworks.framework */,
+				BF6276AC2BADB202008864C1 /* Frameworks */,
+				BF6276AF2BADB855008864C1 /* openFrameworksDebug.a */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -1344,10 +1361,10 @@
 		E4F3BACF12F4C73C002D19BB /* types */ = {
 			isa = PBXGroup;
 			children = (
+				BF6276B42BADC774008864C1 /* ofBaseTypes.h */,
 				DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */,
 				DAC22D3C16E7A4AF0020226D /* ofParameter.h */,
 				DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */,
-				DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */,
 				E4F3BAD012F4C73C002D19BB /* ofBaseTypes.cpp */,
 				E4F3BAD212F4C73C002D19BB /* ofColor.cpp */,
 				E4F3BAD312F4C73C002D19BB /* ofColor.h */,
@@ -1470,6 +1487,7 @@
 				BF23BFEC2BAC872D000E2E0E /* ofxiOSMapKit.h in Headers */,
 				BF23BFB42BAC872D000E2E0E /* ofxiOSViewController.h in Headers */,
 				BF23BFBB2BAC872D000E2E0E /* EAGLView.h in Headers */,
+				BF6276B62BADC774008864C1 /* ofBaseTypes.h in Headers */,
 				BF23BFEE2BAC872D000E2E0E /* ofxiOSMapKitDelegate.h in Headers */,
 				BF23BFF82BAC872D000E2E0E /* ofxiOSVideoPlayer.h in Headers */,
 				BF23BFB92BAC872D000E2E0E /* EAGLKView.h in Headers */,
@@ -1496,6 +1514,7 @@
 				E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */,
 				E4F3BA8B12F4C4C9002D19BB /* ofFmodSoundPlayer.h in Headers */,
 				E4F3BA8F12F4C4C9002D19BB /* ofSoundPlayer.h in Headers */,
+				BF6276B52BADC774008864C1 /* ofBaseTypes.h in Headers */,
 				E4F3BA9112F4C4C9002D19BB /* ofSoundStream.h in Headers */,
 				E4F3BAC212F4C72F002D19BB /* ofMath.h in Headers */,
 				E4F3BAC412F4C72F002D19BB /* ofMatrix3x3.h in Headers */,
@@ -1556,7 +1575,6 @@
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
 				E486629A1D8C61B000D1735C /* ofAVFoundationGrabber.h in Headers */,
 				DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */,
-				DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */,
 				E43EEAC429E66B78001C7596 /* ofAVEngineSoundPlayer.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */,
@@ -1606,7 +1624,7 @@
 			);
 			name = openFrameworks;
 			productName = openFrameworksLib;
-			productReference = BF7E59042BA1F06A00E5C52E /* openFrameworks.a */;
+			productReference = BF6276AF2BADB855008864C1 /* openFrameworksDebug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1815,7 +1833,6 @@
 				BF23BFFF2BAC872D000E2E0E /* ofxAccelerometer.cpp in Sources */,
 				BF23BE542BAC8484000E2E0E /* ofParameter.h in Sources */,
 				BF23BE552BAC8484000E2E0E /* ofParameterGroup.cpp in Sources */,
-				BF23BE562BAC8484000E2E0E /* ofParameterGroup.h in Sources */,
 				BF23BFEB2BAC872D000E2E0E /* ofxiOSKeyboard.mm in Sources */,
 				BF23BFF32BAC872D000E2E0E /* AVFoundationVideoGrabber.mm in Sources */,
 				BF23BE572BAC8484000E2E0E /* ofBaseTypes.cpp in Sources */,

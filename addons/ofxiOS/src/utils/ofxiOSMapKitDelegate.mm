@@ -31,7 +31,7 @@
 #if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
 
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSMapKit.h"
