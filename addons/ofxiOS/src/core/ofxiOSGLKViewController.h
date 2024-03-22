@@ -13,7 +13,7 @@
 #include <TargetConditionals.h>
 #include "ofxiOSConstants.h"
 #if defined(OF_UI_KIT) && defined(OF_GL_KIT)
-#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>

@@ -1,7 +1,7 @@
 
 #include "ofxiOSCoreMotion.h"
 #include "ofxiOSConstants.h"
-#if defined(OF_CORE_MOTION)
+#if defined(OF_CORE_MOTION) && !TARGET_OS_SIMULATOR
 ofxiOSCoreMotion::ofxiOSCoreMotion() {
     
     motionManager = [[CMMotionManager alloc] init];

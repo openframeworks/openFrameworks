@@ -10,6 +10,10 @@
 
 #include <TargetConditionals.h>
 // #include <unistd.h>
+#if TARGET_OS_SIMULATOR
+#define TARGET_OF_SIMULATOR
+#endif
+
 #if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
     #define TARGET_OF_IOS
     #define CORE_MOTION
@@ -31,7 +35,7 @@
     #define TARGET_OF_IOS
     #define TARGET_OF_WATCHOS
     #define OF_UI_KIT
-#elif TARGET_OS_VISIONOS
+#elif defined(TARGET_OS_VISIONOS)
     #define TARGET_OF_XROS
     #define TARGET_OF_IOS
     #define CORE_MOTION

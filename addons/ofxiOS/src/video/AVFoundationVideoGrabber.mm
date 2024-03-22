@@ -7,7 +7,7 @@
 
 #include "ofxiOSConstants.h"
 #if defined(OF_UI_KIT)
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#if defined(TARGET_OS_IOS)
 
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
@@ -53,8 +53,20 @@
 }
 
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-	
+    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera,
+        AVCaptureDeviceTypeBuiltInTelephotoCamera,
+        AVCaptureDeviceTypeBuiltInUltraWideCamera,
+        AVCaptureDeviceTypeBuiltInDualCamera,
+        AVCaptureDeviceTypeBuiltInDualWideCamera,
+        AVCaptureDeviceTypeBuiltInTripleCamera,
+#if !defined(TARGET_OF_TVOS)
+        AVCaptureDeviceTypeBuiltInLiDARScanner,
+#endif
+        AVCaptureDeviceTypeExternal
+    ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+
+    NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
 	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
@@ -170,21 +182,16 @@
 		// In this example we set a min frame duration of 1/10 seconds so a maximum framerate of 10fps. We say that
 		// we are not able to process more than 10 frames per second.
 		// Called after added to captureSession
-        
-        if(IS_IOS_7_OR_LATER == false) {
-            if(IS_IOS_6_OR_LATER) {
-                #ifdef __IPHONE_6_0
-                AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
-                if ([conn isVideoMinFrameDurationSupported] == YES &&
-                    [conn isVideoMaxFrameDurationSupported] == YES) { // iOS 6+
-                        [conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
-                        [conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
-                }
-                #endif
-            } else { // iOS 5 or earlier
-                [captureOutput setMinFrameDuration:CMTimeMake(1, framerate)];
-            }
+        AVCaptureConnection *connection = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+        NSError *error = nil;
+        if ([device lockForConfiguration:&error]) {
+            device.activeVideoMinFrameDuration = CMTimeMake(1, framerate);
+            device.activeVideoMaxFrameDuration = CMTimeMake(1, framerate);
+            [device unlockForConfiguration];
+        } else {
+            NSLog(@"Error locking device for configuration: %@", error);
         }
+
 		// We start the capture Session
 		[self.captureSession commitConfiguration];		
 		[self.captureSession startRunning];
@@ -246,7 +253,20 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera,
+        AVCaptureDeviceTypeBuiltInTelephotoCamera,
+        AVCaptureDeviceTypeBuiltInUltraWideCamera,
+        AVCaptureDeviceTypeBuiltInDualCamera,
+        AVCaptureDeviceTypeBuiltInDualWideCamera,
+        AVCaptureDeviceTypeBuiltInTripleCamera,
+#if !defined(TARGET_OF_TVOS)
+        AVCaptureDeviceTypeBuiltInLiDARScanner,
+#endif
+        AVCaptureDeviceTypeExternal
+    ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+
+    NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back([captureDevice.localizedName UTF8String]);

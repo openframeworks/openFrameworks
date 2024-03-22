@@ -36,11 +36,13 @@
 
 #pragma once
 #include "ofxiOSConstants.h"
-#if TARGET_OS_IOS
+#if defined(TARGET_OS_IOS)
 #include <TargetConditionals.h>
 #if defined(OF_UI_KIT)
 #import <UIKit/UIKit.h>
+#if defined(OF_CORE_MOTION) && !TARGET_OS_SIMULATOR
 #import <CoreMotion/CoreMotion.h>
+#endif
 
 #include "ofxiOSConstants.h"
 #include "ofConstants.h"
@@ -115,12 +117,16 @@ ofxiOSAppDelegate * ofxiOSGetAppDelegate();
 
 // return iphone view controller.
 ofxiOSViewController * ofxiOSGetViewController();
+
+ofxiOSGLKViewController * ofxiOSGetGLKViewController();
 #elif TARGET_OS_TV
 // return application delegate
 ofxtvOSAppDelegate * ofxiOSGetAppDelegate();
 
 // return iphone view controller.
 ofxtvOSViewController * ofxiOSGetViewController();
+
+ofxtvOSGLKViewController * ofxtvOSGetGLKViewController();
 #endif
 
 

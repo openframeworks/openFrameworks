@@ -6,7 +6,7 @@
 #include <TargetConditionals.h>
 #include "ofxiOSConstants.h"
 #if defined(OF_UI_KIT)
-#if TARGET_OS_IOS || (TARGET_OS_IOS && !TARGET_OS_TV)
+#if defined(TARGET_OS_IOS)
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
@@ -27,7 +27,7 @@ class AVFoundationVideoGrabber;
 	int height;
 	
 	BOOL bInitCalled;
-	int deviceID;
+	unsigned long deviceID;
 
 	AVFoundationVideoGrabber * grabberPtr;
 }

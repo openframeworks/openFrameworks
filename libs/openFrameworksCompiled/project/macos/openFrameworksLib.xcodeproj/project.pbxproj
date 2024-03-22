@@ -59,311 +59,310 @@
 		9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */; };
 		9979E8241A1CCC44007E55D1 /* ofMainLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
 		BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */; };
-		BF23BD9C2BAC792F000E2E0E /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */; };
-		BF23BD9D2BAC792F000E2E0E /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A442BA1DD04005FA2B1 /* uriparser.xcframework */; };
-		BF23BD9E2BAC792F000E2E0E /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EE2BA1DC91005FA2B1 /* libpng.xcframework */; };
-		BF23BD9F2BAC792F000E2E0E /* glew.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EA2BA1DC57005FA2B1 /* glew.xcframework */; };
-		BF23BDA02BAC792F000E2E0E /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
-		BF23BDA12BAC792F000E2E0E /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		BF23BDA22BAC792F000E2E0E /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */; };
-		BF23BDA32BAC792F000E2E0E /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */; };
-		BF23BDA42BAC792F000E2E0E /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		BF23BDA52BAC792F000E2E0E /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
-		BF23BDA62BAC792F000E2E0E /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A422BA1DCF9005FA2B1 /* tess2.xcframework */; };
-		BF23BDA72BAC792F000E2E0E /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F22BA1DCAD005FA2B1 /* pugixml.xcframework */; };
-		BF23BDA82BAC792F000E2E0E /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EC2BA1DC6B005FA2B1 /* glfw.xcframework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		BF23BDA92BAC792F000E2E0E /* rtAudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F42BA1DCBB005FA2B1 /* rtAudio.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		BF23BDB22BAC7A70000E2E0E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAB2BAC7A6F000E2E0E /* AudioToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF23BDB32BAC7A70000E2E0E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAC2BAC7A6F000E2E0E /* AVFoundation.framework */; };
-		BF23BDB42BAC7A70000E2E0E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAD2BAC7A6F000E2E0E /* CoreFoundation.framework */; };
-		BF23BDB52BAC7A70000E2E0E /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAE2BAC7A6F000E2E0E /* Accelerate.framework */; };
-		BF23BDB62BAC7A70000E2E0E /* CoreAudioTypes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAF2BAC7A6F000E2E0E /* CoreAudioTypes.framework */; platformFilters = (macos, ); };
-		BF23BDB72BAC7A70000E2E0E /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB02BAC7A6F000E2E0E /* CoreData.framework */; };
-		BF23BDB82BAC7A70000E2E0E /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB12BAC7A6F000E2E0E /* CoreAudio.framework */; };
-		BF23BDCA2BAC7DDF000E2E0E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB92BAC7DD0000E2E0E /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF23BDCB2BAC7DDF000E2E0E /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBA2BAC7DD0000E2E0E /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF23BDCC2BAC7DDF000E2E0E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBB2BAC7DD0000E2E0E /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF23BDCD2BAC7DDF000E2E0E /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBC2BAC7DD0000E2E0E /* GLKit.framework */; platformFilters = (ios, tvos, ); };
-		BF23BDCE2BAC7DDF000E2E0E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBE2BAC7DD0000E2E0E /* QuartzCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF23BDD12BAC7DDF000E2E0E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC12BAC7DD0000E2E0E /* Foundation.framework */; };
-		BF23BDD22BAC7DDF000E2E0E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC22BAC7DD0000E2E0E /* CoreGraphics.framework */; };
-		BF23BDD32BAC7DDF000E2E0E /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC32BAC7DD0000E2E0E /* OpenAL.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
-		BF23BDD42BAC7DDF000E2E0E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC42BAC7DD0000E2E0E /* CoreLocation.framework */; };
-		BF23BDD52BAC7DDF000E2E0E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC72BAC7DD0000E2E0E /* CoreMedia.framework */; };
-		BF23BDD62BAC7DDF000E2E0E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC82BAC7DD0000E2E0E /* CoreVideo.framework */; };
-		BF23BDD92BAC7E74000E2E0E /* libfmod.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDD82BAC7E74000E2E0E /* libfmod.dylib */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		BF23BDDB2BAC8484000E2E0E /* ofMain.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AC710CBE92A00536013 /* ofMain.h */; };
-		BF23BDDC2BAC8484000E2E0E /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */; };
-		BF23BDDD2BAC8484000E2E0E /* of3dUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */; };
-		BF23BDDE2BAC8484000E2E0E /* ofCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */; };
-		BF23BDDF2BAC8484000E2E0E /* ofCamera.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5612F4C4BF002D19BB /* ofCamera.h */; };
-		BF23BDE02BAC8484000E2E0E /* ofEasyCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5712F4C4BF002D19BB /* ofEasyCam.cpp */; };
-		BF23BDE12BAC8484000E2E0E /* ofEasyCam.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5812F4C4BF002D19BB /* ofEasyCam.h */; };
-		BF23BDE22BAC8484000E2E0E /* ofMesh.inl in Sources */ = {isa = PBXBuildFile; fileRef = 6448E6FB1CAD7679000877BC /* ofMesh.inl */; };
-		BF23BDE32BAC8484000E2E0E /* ofMesh.h in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
-		BF23BDE42BAC8484000E2E0E /* ofNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */; };
-		BF23BDE52BAC8484000E2E0E /* ofNode.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA6012F4C4BF002D19BB /* ofNode.h */; };
-		BF23BDE62BAC8484000E2E0E /* of3dPrimitives.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
-		BF23BDE72BAC8484000E2E0E /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
-		BF23BDE82BAC8484000E2E0E /* ofWindowSettings.h in Sources */ = {isa = PBXBuildFile; fileRef = 9979E81F1A1CCC44007E55D1 /* ofWindowSettings.h */; };
-		BF23BDE92BAC8484000E2E0E /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */; };
-		BF23BDEA2BAC8484000E2E0E /* ofMainLoop.h in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
-		BF23BDEB2BAC8484000E2E0E /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7B178896A900994238 /* ofAppNoWindow.cpp */; };
-		BF23BDEC2BAC8484000E2E0E /* ofAppNoWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7C178896A900994238 /* ofAppNoWindow.h */; };
-		BF23BDED2BAC8484000E2E0E /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
-		BF23BDEE2BAC8484000E2E0E /* ofAppGLFWWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
-		BF23BDEF2BAC8484000E2E0E /* ofAppBaseWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAC10CBE92A00536013 /* ofAppBaseWindow.h */; };
-		BF23BDF02BAC8484000E2E0E /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
-		BF23BDF12BAC8484000E2E0E /* ofAppRunner.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB010CBE92A00536013 /* ofAppRunner.h */; };
-		BF23BDF22BAC8484000E2E0E /* ofBaseApp.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB110CBE92A00536013 /* ofBaseApp.h */; };
-		BF23BDF32BAC8484000E2E0E /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */; };
-		BF23BDF42BAC8484000E2E0E /* ofArduino.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB310CBE92A00536013 /* ofArduino.cpp */; };
-		BF23BDF52BAC8484000E2E0E /* ofArduino.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB410CBE92A00536013 /* ofArduino.h */; };
-		BF23BDF62BAC8484000E2E0E /* ofSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB510CBE92A00536013 /* ofSerial.cpp */; };
-		BF23BDF72BAC8484000E2E0E /* ofSerial.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB610CBE92A00536013 /* ofSerial.h */; };
-		BF23BDF82BAC8484000E2E0E /* ofEvent.h in Sources */ = {isa = PBXBuildFile; fileRef = 229EB9A51B3181C800FF7B5F /* ofEvent.h */; };
-		BF23BDF92BAC8484000E2E0E /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
-		BF23BDFA2BAC8484000E2E0E /* ofEvents.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ABA10CBE92A00536013 /* ofEvents.h */; };
-		BF23BDFB2BAC8484000E2E0E /* ofEventUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ABB10CBE92A00536013 /* ofEventUtils.h */; };
-		BF23BDFC2BAC8484000E2E0E /* ofGLBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425151FE4544C00770088 /* ofGLBaseTypes.h */; };
-		BF23BDFD2BAC8484000E2E0E /* ofBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2292E73C19E3049700DE9411 /* ofBufferObject.cpp */; };
-		BF23BDFE2BAC8484000E2E0E /* ofBufferObject.h in Sources */ = {isa = PBXBuildFile; fileRef = 2292E73D19E3049700DE9411 /* ofBufferObject.h */; };
-		BF23BDFF2BAC8484000E2E0E /* ofCubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E498911292C96340096EC56 /* ofCubeMap.cpp */; };
-		BF23BE002BAC8484000E2E0E /* ofCubeMap.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E498913292C96340096EC56 /* ofCubeMap.h */; };
-		BF23BE012BAC8484000E2E0E /* ofCubeMapShaders.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E498912292C96340096EC56 /* ofCubeMapShaders.h */; };
-		BF23BE022BAC8484000E2E0E /* ofGLProgrammableRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */; };
-		BF23BE032BAC8484000E2E0E /* ofGLProgrammableRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = 22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */; };
-		BF23BE042BAC8484000E2E0E /* ofFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */; };
-		BF23BE052BAC8484000E2E0E /* ofFbo.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CA132D09E8008D4B7A /* ofFbo.h */; };
-		BF23BE062BAC8484000E2E0E /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */; };
-		BF23BE072BAC8484000E2E0E /* ofGLRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CC132D09E8008D4B7A /* ofGLRenderer.h */; };
-		BF23BE082BAC8484000E2E0E /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
-		BF23BE092BAC8484000E2E0E /* ofGLUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CD132D09E8008D4B7A /* ofGLUtils.h */; };
-		BF23BE0A2BAC8484000E2E0E /* ofLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CE132D09E8008D4B7A /* ofLight.cpp */; };
-		BF23BE0B2BAC8484000E2E0E /* ofLight.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CF132D09E8008D4B7A /* ofLight.h */; };
-		BF23BE0C2BAC8484000E2E0E /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */; };
-		BF23BE0D2BAC8484000E2E0E /* ofShadow.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E4D30BF28F5BA9C0074D450 /* ofShadow.h */; };
-		BF23BE0E2BAC8484000E2E0E /* ofMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D0132D09E8008D4B7A /* ofMaterial.cpp */; };
-		BF23BE0F2BAC8484000E2E0E /* ofMaterial.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D1132D09E8008D4B7A /* ofMaterial.h */; };
-		BF23BE102BAC8484000E2E0E /* ofShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D2132D09E8008D4B7A /* ofShader.cpp */; };
-		BF23BE112BAC8484000E2E0E /* ofShader.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D3132D09E8008D4B7A /* ofShader.h */; };
-		BF23BE122BAC8484000E2E0E /* ofTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D4132D09E8008D4B7A /* ofTexture.cpp */; };
-		BF23BE132BAC8484000E2E0E /* ofTexture.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D5132D09E8008D4B7A /* ofTexture.h */; };
-		BF23BE142BAC8484000E2E0E /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D6132D09E8008D4B7A /* ofVbo.cpp */; };
-		BF23BE152BAC8484000E2E0E /* ofVbo.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
-		BF23BE162BAC8484000E2E0E /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
-		BF23BE172BAC8484000E2E0E /* ofVboMesh.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
-		BF23BE182BAC8484000E2E0E /* ofGraphicsBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 694425171FE4547400770088 /* ofGraphicsBaseTypes.cpp */; };
-		BF23BE192BAC8484000E2E0E /* ofGraphicsBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425181FE4547400770088 /* ofGraphicsBaseTypes.h */; };
-		BF23BE1A2BAC8484000E2E0E /* ofGraphicsConstants.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425191FE4547400770088 /* ofGraphicsConstants.h */; };
-		BF23BE1B2BAC8484000E2E0E /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F86132DA7DD00EC2631 /* ofPath.cpp */; };
-		BF23BE1C2BAC8484000E2E0E /* ofPath.h in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F87132DA7DD00EC2631 /* ofPath.h */; };
-		BF23BE1D2BAC8484000E2E0E /* ofPolyline.inl in Sources */ = {isa = PBXBuildFile; fileRef = 6448E6FC1CAD771D000877BC /* ofPolyline.inl */; };
-		BF23BE1E2BAC8484000E2E0E /* ofPolyline.h in Sources */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
-		BF23BE1F2BAC8484000E2E0E /* ofRendererCollection.h in Sources */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
-		BF23BE202BAC8484000E2E0E /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
-		BF23BE212BAC8484000E2E0E /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
-		BF23BE222BAC8484000E2E0E /* ofCairoRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */; };
-		BF23BE232BAC8484000E2E0E /* ofBitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */; };
-		BF23BE242BAC8484000E2E0E /* ofBitmapFont.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0112F4C751002D19BB /* ofBitmapFont.h */; };
-		BF23BE252BAC8484000E2E0E /* ofGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0412F4C752002D19BB /* ofGraphics.cpp */; };
-		BF23BE262BAC8484000E2E0E /* ofGraphics.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0512F4C752002D19BB /* ofGraphics.h */; };
-		BF23BE272BAC8484000E2E0E /* ofGraphicsCairo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */; };
-		BF23BE282BAC8484000E2E0E /* ofGraphicsCairo.h in Sources */ = {isa = PBXBuildFile; fileRef = 19662F2C2834A44400B622ED /* ofGraphicsCairo.h */; };
-		BF23BE292BAC8484000E2E0E /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
-		BF23BE2A2BAC8484000E2E0E /* of3dGraphics.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
-		BF23BE2B2BAC8484000E2E0E /* ofImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0612F4C752002D19BB /* ofImage.cpp */; };
-		BF23BE2C2BAC8484000E2E0E /* ofImage.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0712F4C752002D19BB /* ofImage.h */; };
-		BF23BE2D2BAC8484000E2E0E /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0812F4C752002D19BB /* ofPixels.cpp */; };
-		BF23BE2E2BAC8484000E2E0E /* ofPixels.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0912F4C752002D19BB /* ofPixels.h */; };
-		BF23BE2F2BAC8484000E2E0E /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */; };
-		BF23BE302BAC8484000E2E0E /* ofTessellator.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
-		BF23BE312BAC8484000E2E0E /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
-		BF23BE322BAC8484000E2E0E /* ofTrueTypeFont.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
-		BF23BE332BAC8484000E2E0E /* ofAVEngineSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */; };
-		BF23BE342BAC8484000E2E0E /* ofAVEngineSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */; };
-		BF23BE352BAC8484000E2E0E /* ofSoundBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6944251D1FE4548B00770088 /* ofSoundBaseTypes.cpp */; };
-		BF23BE362BAC8484000E2E0E /* ofSoundBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 6944251E1FE4548B00770088 /* ofSoundBaseTypes.h */; };
-		BF23BE372BAC8484000E2E0E /* ofFmodSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */; };
-		BF23BE382BAC8484000E2E0E /* ofFmodSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */; };
-		BF23BE392BAC8484000E2E0E /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
-		BF23BE3A2BAC8484000E2E0E /* ofOpenALSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
-		BF23BE3B2BAC8484000E2E0E /* ofRtAudioSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */; };
-		BF23BE3C2BAC8484000E2E0E /* ofRtAudioSoundStream.h in Sources */ = {isa = PBXBuildFile; fileRef = E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */; };
-		BF23BE3D2BAC8484000E2E0E /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */; };
-		BF23BE3E2BAC8484000E2E0E /* ofSoundBuffer.h in Sources */ = {isa = PBXBuildFile; fileRef = 6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */; };
-		BF23BE3F2BAC8484000E2E0E /* ofSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */; };
-		BF23BE402BAC8484000E2E0E /* ofSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */; };
-		BF23BE412BAC8484000E2E0E /* ofSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */; };
-		BF23BE422BAC8484000E2E0E /* ofSoundStream.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */; };
-		BF23BE432BAC8484000E2E0E /* ofSoundUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = 6678E97C19FEB5A600C00581 /* ofSoundUtils.h */; };
-		BF23BE442BAC8484000E2E0E /* ofMathConstants.h in Sources */ = {isa = PBXBuildFile; fileRef = 30CC5384207A36FD008234AF /* ofMathConstants.h */; };
-		BF23BE452BAC8484000E2E0E /* ofMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB312F4C72E002D19BB /* ofMath.cpp */; };
-		BF23BE462BAC8484000E2E0E /* ofMath.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB412F4C72E002D19BB /* ofMath.h */; };
-		BF23BE472BAC8484000E2E0E /* ofMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB512F4C72E002D19BB /* ofMatrix3x3.cpp */; };
-		BF23BE482BAC8484000E2E0E /* ofMatrix3x3.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB612F4C72E002D19BB /* ofMatrix3x3.h */; };
-		BF23BE492BAC8484000E2E0E /* ofMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB712F4C72E002D19BB /* ofMatrix4x4.cpp */; };
-		BF23BE4A2BAC8484000E2E0E /* ofMatrix4x4.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB812F4C72E002D19BB /* ofMatrix4x4.h */; };
-		BF23BE4B2BAC8484000E2E0E /* ofQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB912F4C72F002D19BB /* ofQuaternion.cpp */; };
-		BF23BE4C2BAC8484000E2E0E /* ofQuaternion.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABA12F4C72F002D19BB /* ofQuaternion.h */; };
-		BF23BE4D2BAC8484000E2E0E /* ofVec2f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABB12F4C72F002D19BB /* ofVec2f.cpp */; };
-		BF23BE4E2BAC8484000E2E0E /* ofVec2f.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABC12F4C72F002D19BB /* ofVec2f.h */; };
-		BF23BE4F2BAC8484000E2E0E /* ofVec3f.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABD12F4C72F002D19BB /* ofVec3f.h */; };
-		BF23BE502BAC8484000E2E0E /* ofVec4f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABE12F4C72F002D19BB /* ofVec4f.cpp */; };
-		BF23BE512BAC8484000E2E0E /* ofVec4f.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABF12F4C72F002D19BB /* ofVec4f.h */; };
-		BF23BE522BAC8484000E2E0E /* ofVectorMath.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAC012F4C72F002D19BB /* ofVectorMath.h */; };
-		BF23BE532BAC8484000E2E0E /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */; };
-		BF23BE542BAC8484000E2E0E /* ofParameter.h in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3C16E7A4AF0020226D /* ofParameter.h */; };
-		BF23BE552BAC8484000E2E0E /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */; };
-		BF23BE572BAC8484000E2E0E /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD012F4C73C002D19BB /* ofBaseTypes.cpp */; };
-		BF23BE582BAC8484000E2E0E /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD212F4C73C002D19BB /* ofColor.cpp */; };
-		BF23BE592BAC8484000E2E0E /* ofColor.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD312F4C73C002D19BB /* ofColor.h */; };
-		BF23BE5A2BAC8484000E2E0E /* ofPoint.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD512F4C73C002D19BB /* ofPoint.h */; };
-		BF23BE5B2BAC8484000E2E0E /* ofRectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD612F4C73C002D19BB /* ofRectangle.cpp */; };
-		BF23BE5C2BAC8484000E2E0E /* ofRectangle.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD712F4C73C002D19BB /* ofRectangle.h */; };
-		BF23BE5D2BAC8484000E2E0E /* ofTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD812F4C73C002D19BB /* ofTypes.h */; };
-		BF23BE5E2BAC8484000E2E0E /* ofFpsCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 692C298719DC5C5500C27C5D /* ofFpsCounter.cpp */; };
-		BF23BE5F2BAC8484000E2E0E /* ofFpsCounter.h in Sources */ = {isa = PBXBuildFile; fileRef = 692C298819DC5C5500C27C5D /* ofFpsCounter.h */; };
-		BF23BE602BAC8484000E2E0E /* ofTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 692C298919DC5C5500C27C5D /* ofTimer.cpp */; };
-		BF23BE612BAC8484000E2E0E /* ofTimer.h in Sources */ = {isa = PBXBuildFile; fileRef = 692C298A19DC5C5500C27C5D /* ofTimer.h */; };
-		BF23BE622BAC8484000E2E0E /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
-		BF23BE632BAC8484000E2E0E /* ofXml.h in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA3101796F578000A9E90 /* ofXml.h */; };
-		BF23BE642BAC8484000E2E0E /* ofMatrixStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */; };
-		BF23BE652BAC8484000E2E0E /* ofMatrixStack.h in Sources */ = {isa = PBXBuildFile; fileRef = 22769590170D9DD200604FC3 /* ofMatrixStack.h */; };
-		BF23BE662BAC8484000E2E0E /* ofConstants.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE312F4C745002D19BB /* ofConstants.h */; };
-		BF23BE672BAC8484000E2E0E /* ofFileUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE412F4C745002D19BB /* ofFileUtils.cpp */; };
-		BF23BE682BAC8484000E2E0E /* ofFileUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE512F4C745002D19BB /* ofFileUtils.h */; };
-		BF23BE692BAC8484000E2E0E /* ofLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE612F4C745002D19BB /* ofLog.cpp */; };
-		BF23BE6A2BAC8484000E2E0E /* ofLog.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE712F4C745002D19BB /* ofLog.h */; };
-		BF23BE6B2BAC8484000E2E0E /* ofNoise.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE812F4C745002D19BB /* ofNoise.h */; };
-		BF23BE6C2BAC8484000E2E0E /* ofSystemUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE912F4C745002D19BB /* ofSystemUtils.cpp */; };
-		BF23BE6D2BAC8484000E2E0E /* ofSystemUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEA12F4C745002D19BB /* ofSystemUtils.h */; };
-		BF23BE6E2BAC8484000E2E0E /* ofThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEB12F4C745002D19BB /* ofThread.cpp */; };
-		BF23BE6F2BAC8484000E2E0E /* ofThread.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEC12F4C745002D19BB /* ofThread.h */; };
-		BF23BE702BAC8484000E2E0E /* ofURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAED12F4C745002D19BB /* ofURLFileLoader.cpp */; };
-		BF23BE712BAC8484000E2E0E /* ofURLFileLoader.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEE12F4C745002D19BB /* ofURLFileLoader.h */; };
-		BF23BE722BAC8484000E2E0E /* ofUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEF12F4C745002D19BB /* ofUtils.cpp */; };
-		BF23BE732BAC8484000E2E0E /* ofUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAF012F4C745002D19BB /* ofUtils.h */; };
-		BF23BE742BAC8484000E2E0E /* ofVideoBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425211FE456AF00770088 /* ofVideoBaseTypes.h */; };
-		BF23BE752BAC8484000E2E0E /* ofVideoGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADB10CBE92A00536013 /* ofVideoGrabber.cpp */; };
-		BF23BE762BAC8484000E2E0E /* ofVideoGrabber.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADC10CBE92A00536013 /* ofVideoGrabber.h */; };
-		BF23BE772BAC8484000E2E0E /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */; };
-		BF23BE782BAC8484000E2E0E /* ofVideoPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADE10CBE92A00536013 /* ofVideoPlayer.h */; };
-		BF23BE792BAC8484000E2E0E /* ofAVFoundationGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */; };
-		BF23BE7A2BAC8484000E2E0E /* ofAVFoundationGrabber.h in Sources */ = {isa = PBXBuildFile; fileRef = E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */; };
-		BF23BE7B2BAC8484000E2E0E /* ofAVFoundationVideoPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */; };
-		BF23BE7C2BAC8484000E2E0E /* ofAVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */; };
-		BF23BE7D2BAC8484000E2E0E /* ofAVFoundationPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */; };
-		BF23BE7E2BAC8484000E2E0E /* ofAVFoundationPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */; };
-		BF23BFA92BAC872D000E2E0E /* ofAppiOSWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF432BAC872D000E2E0E /* ofAppiOSWindow.h */; };
-		BF23BFAA2BAC872D000E2E0E /* ofAppiOSWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF442BAC872D000E2E0E /* ofAppiOSWindow.mm */; };
-		BF23BFAB2BAC872D000E2E0E /* ofxiOSApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF452BAC872D000E2E0E /* ofxiOSApp.h */; };
-		BF23BFAC2BAC872D000E2E0E /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF472BAC872D000E2E0E /* ofxiOSAppDelegate.h */; };
-		BF23BFAD2BAC872D000E2E0E /* ofxiOSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF482BAC872D000E2E0E /* ofxiOSAppDelegate.mm */; };
-		BF23BFAE2BAC872D000E2E0E /* ofxiOSEAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF492BAC872D000E2E0E /* ofxiOSEAGLView.h */; };
-		BF23BFAF2BAC872D000E2E0E /* ofxiOSEAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF4A2BAC872D000E2E0E /* ofxiOSEAGLView.mm */; };
-		BF23BFB02BAC872D000E2E0E /* ofxiOSGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF4B2BAC872D000E2E0E /* ofxiOSGLKView.h */; };
-		BF23BFB12BAC872D000E2E0E /* ofxiOSGLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF4C2BAC872D000E2E0E /* ofxiOSGLKView.mm */; };
-		BF23BFB22BAC872D000E2E0E /* ofxiOSGLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF4D2BAC872D000E2E0E /* ofxiOSGLKViewController.h */; };
-		BF23BFB32BAC872D000E2E0E /* ofxiOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF4E2BAC872D000E2E0E /* ofxiOSGLKViewController.mm */; };
-		BF23BFB42BAC872D000E2E0E /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF4F2BAC872D000E2E0E /* ofxiOSViewController.h */; };
-		BF23BFB52BAC872D000E2E0E /* ofxiOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF502BAC872D000E2E0E /* ofxiOSViewController.mm */; };
-		BF23BFB62BAC872D000E2E0E /* ofxiOSAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF522BAC872D000E2E0E /* ofxiOSAlerts.h */; };
-		BF23BFB72BAC872D000E2E0E /* ofxiOSAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF532BAC872D000E2E0E /* ofxiOSAlerts.mm */; };
-		BF23BFB82BAC872D000E2E0E /* ofxiOSAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF542BAC872D000E2E0E /* ofxiOSAlertsListener.h */; };
-		BF23BFB92BAC872D000E2E0E /* EAGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF562BAC872D000E2E0E /* EAGLKView.h */; };
-		BF23BFBA2BAC872D000E2E0E /* EAGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF572BAC872D000E2E0E /* EAGLKView.m */; };
-		BF23BFBB2BAC872D000E2E0E /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF582BAC872D000E2E0E /* EAGLView.h */; };
-		BF23BFBC2BAC872D000E2E0E /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF592BAC872D000E2E0E /* EAGLView.m */; };
-		BF23BFBD2BAC872D000E2E0E /* ES1Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF5A2BAC872D000E2E0E /* ES1Renderer.h */; };
-		BF23BFBE2BAC872D000E2E0E /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF5B2BAC872D000E2E0E /* ES1Renderer.m */; };
-		BF23BFBF2BAC872D000E2E0E /* ES2Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF5C2BAC872D000E2E0E /* ES2Renderer.h */; };
-		BF23BFC02BAC872D000E2E0E /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF5D2BAC872D000E2E0E /* ES2Renderer.m */; };
-		BF23BFC12BAC872D000E2E0E /* ESRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF5E2BAC872D000E2E0E /* ESRenderer.h */; };
-		BF23BFC22BAC872D000E2E0E /* AVSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF602BAC872D000E2E0E /* AVSoundPlayer.h */; };
-		BF23BFC32BAC872D000E2E0E /* AVSoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF612BAC872D000E2E0E /* AVSoundPlayer.m */; };
-		BF23BFC42BAC872D000E2E0E /* ofxiOSSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF622BAC872D000E2E0E /* ofxiOSSoundPlayer.h */; };
-		BF23BFC52BAC872D000E2E0E /* ofxiOSSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF632BAC872D000E2E0E /* ofxiOSSoundPlayer.mm */; };
-		BF23BFC62BAC872D000E2E0E /* ofxiOSSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF642BAC872D000E2E0E /* ofxiOSSoundStream.h */; };
-		BF23BFC72BAC872D000E2E0E /* ofxiOSSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF652BAC872D000E2E0E /* ofxiOSSoundStream.mm */; };
-		BF23BFC82BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF662BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.h */; };
-		BF23BFC92BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF672BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.mm */; };
-		BF23BFCA2BAC872D000E2E0E /* ofxOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF682BAC872D000E2E0E /* ofxOpenALSoundPlayer.cpp */; };
-		BF23BFCB2BAC872D000E2E0E /* ofxOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF692BAC872D000E2E0E /* ofxOpenALSoundPlayer.h */; };
-		BF23BFCC2BAC872D000E2E0E /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF6A2BAC872D000E2E0E /* SoundEngine.cpp */; };
-		BF23BFCD2BAC872D000E2E0E /* SoundEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF6B2BAC872D000E2E0E /* SoundEngine.h */; };
-		BF23BFCE2BAC872D000E2E0E /* SoundInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF6C2BAC872D000E2E0E /* SoundInputStream.h */; };
-		BF23BFCF2BAC872D000E2E0E /* SoundInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF6D2BAC872D000E2E0E /* SoundInputStream.m */; };
-		BF23BFD02BAC872D000E2E0E /* SoundOutputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF6E2BAC872D000E2E0E /* SoundOutputStream.h */; };
-		BF23BFD12BAC872D000E2E0E /* SoundOutputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF6F2BAC872D000E2E0E /* SoundOutputStream.m */; };
-		BF23BFD22BAC872D000E2E0E /* SoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF702BAC872D000E2E0E /* SoundStream.h */; };
-		BF23BFD32BAC872D000E2E0E /* SoundStream.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF712BAC872D000E2E0E /* SoundStream.m */; };
-		BF23BFD42BAC872D000E2E0E /* ofxtvOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF732BAC872D000E2E0E /* ofxtvOSAppDelegate.h */; };
-		BF23BFD52BAC872D000E2E0E /* ofxtvOSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF742BAC872D000E2E0E /* ofxtvOSAppDelegate.mm */; };
-		BF23BFD62BAC872D000E2E0E /* ofxtvOSGLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF752BAC872D000E2E0E /* ofxtvOSGLKViewController.h */; };
-		BF23BFD72BAC872D000E2E0E /* ofxtvOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF762BAC872D000E2E0E /* ofxtvOSGLKViewController.mm */; };
-		BF23BFD82BAC872D000E2E0E /* ofxtvOSURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF772BAC872D000E2E0E /* ofxtvOSURLFileLoader.cpp */; };
-		BF23BFD92BAC872D000E2E0E /* ofxtvOSURLFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF782BAC872D000E2E0E /* ofxtvOSURLFileLoader.h */; };
-		BF23BFDA2BAC872D000E2E0E /* ofxtvOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF792BAC872D000E2E0E /* ofxtvOSViewController.h */; };
-		BF23BFDB2BAC872D000E2E0E /* ofxtvOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF7A2BAC872D000E2E0E /* ofxtvOSViewController.mm */; };
-		BF23BFDC2BAC872D000E2E0E /* ofxiOSCoreHaptics.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF7C2BAC872D000E2E0E /* ofxiOSCoreHaptics.h */; };
-		BF23BFDD2BAC872D000E2E0E /* ofxiOSCoreHaptics.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF7D2BAC872D000E2E0E /* ofxiOSCoreHaptics.mm */; };
-		BF23BFDE2BAC872D000E2E0E /* ofxiOSCoreLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF7E2BAC872D000E2E0E /* ofxiOSCoreLocation.h */; };
-		BF23BFDF2BAC872D000E2E0E /* ofxiOSCoreLocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF7F2BAC872D000E2E0E /* ofxiOSCoreLocation.mm */; };
-		BF23BFE02BAC872D000E2E0E /* ofxiOSCoreMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF802BAC872D000E2E0E /* ofxiOSCoreMotion.h */; };
-		BF23BFE12BAC872D000E2E0E /* ofxiOSCoreMotion.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF812BAC872D000E2E0E /* ofxiOSCoreMotion.mm */; };
-		BF23BFE22BAC872D000E2E0E /* ofxiOSEventAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF822BAC872D000E2E0E /* ofxiOSEventAdapter.h */; };
-		BF23BFE32BAC872D000E2E0E /* ofxiOSEventAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF832BAC872D000E2E0E /* ofxiOSEventAdapter.mm */; };
-		BF23BFE42BAC872D000E2E0E /* ofxiOSExternalDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF842BAC872D000E2E0E /* ofxiOSExternalDisplay.h */; };
-		BF23BFE52BAC872D000E2E0E /* ofxiOSExternalDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF852BAC872D000E2E0E /* ofxiOSExternalDisplay.mm */; };
-		BF23BFE62BAC872D000E2E0E /* ofxiOSExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF862BAC872D000E2E0E /* ofxiOSExtras.h */; };
-		BF23BFE72BAC872D000E2E0E /* ofxiOSExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF872BAC872D000E2E0E /* ofxiOSExtras.mm */; };
-		BF23BFE82BAC872D000E2E0E /* ofxiOSImagePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF882BAC872D000E2E0E /* ofxiOSImagePicker.h */; };
-		BF23BFE92BAC872D000E2E0E /* ofxiOSImagePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF892BAC872D000E2E0E /* ofxiOSImagePicker.mm */; };
-		BF23BFEA2BAC872D000E2E0E /* ofxiOSKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF8A2BAC872D000E2E0E /* ofxiOSKeyboard.h */; };
-		BF23BFEB2BAC872D000E2E0E /* ofxiOSKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF8B2BAC872D000E2E0E /* ofxiOSKeyboard.mm */; };
-		BF23BFEC2BAC872D000E2E0E /* ofxiOSMapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF8C2BAC872D000E2E0E /* ofxiOSMapKit.h */; };
-		BF23BFED2BAC872D000E2E0E /* ofxiOSMapKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF8D2BAC872D000E2E0E /* ofxiOSMapKit.mm */; };
-		BF23BFEE2BAC872D000E2E0E /* ofxiOSMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF8E2BAC872D000E2E0E /* ofxiOSMapKitDelegate.h */; };
-		BF23BFEF2BAC872D000E2E0E /* ofxiOSMapKitDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF8F2BAC872D000E2E0E /* ofxiOSMapKitDelegate.mm */; };
-		BF23BFF02BAC872D000E2E0E /* ofxiOSMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF902BAC872D000E2E0E /* ofxiOSMapKitListener.h */; };
-		BF23BFF12BAC872D000E2E0E /* ofxiPhoneExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF912BAC872D000E2E0E /* ofxiPhoneExtras.h */; };
-		BF23BFF22BAC872D000E2E0E /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF932BAC872D000E2E0E /* AVFoundationVideoGrabber.h */; };
-		BF23BFF32BAC872D000E2E0E /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF942BAC872D000E2E0E /* AVFoundationVideoGrabber.mm */; };
-		BF23BFF42BAC872D000E2E0E /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF952BAC872D000E2E0E /* AVFoundationVideoPlayer.h */; };
-		BF23BFF52BAC872D000E2E0E /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF962BAC872D000E2E0E /* AVFoundationVideoPlayer.m */; };
-		BF23BFF62BAC872D000E2E0E /* ofxiOSVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF972BAC872D000E2E0E /* ofxiOSVideoGrabber.h */; };
-		BF23BFF72BAC872D000E2E0E /* ofxiOSVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF982BAC872D000E2E0E /* ofxiOSVideoGrabber.mm */; };
-		BF23BFF82BAC872D000E2E0E /* ofxiOSVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF992BAC872D000E2E0E /* ofxiOSVideoPlayer.h */; };
-		BF23BFF92BAC872D000E2E0E /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF9A2BAC872D000E2E0E /* ofxiOSVideoPlayer.mm */; };
-		BF23BFFA2BAC872D000E2E0E /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9C2BAC872D000E2E0E /* ofxiOS.h */; };
-		BF23BFFB2BAC872D000E2E0E /* ofxiOSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9D2BAC872D000E2E0E /* ofxiOSConstants.h */; };
-		BF23BFFC2BAC872D000E2E0E /* ofxiOSExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9E2BAC872D000E2E0E /* ofxiOSExtensions.h */; };
-		BF23BFFD2BAC872D000E2E0E /* ofxiPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9F2BAC872D000E2E0E /* ofxiPhone.h */; };
-		BF23BFFE2BAC872D000E2E0E /* ofxtvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BFA02BAC872D000E2E0E /* ofxtvOS.h */; };
-		BF23BFFF2BAC872D000E2E0E /* ofxAccelerometer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BFA32BAC872D000E2E0E /* ofxAccelerometer.cpp */; };
-		BF23C0002BAC872D000E2E0E /* ofxAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BFA42BAC872D000E2E0E /* ofxAccelerometer.h */; };
-		BF23C0042BAC8A1C000E2E0E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0032BAC8A1C000E2E0E /* GameController.framework */; };
-		BF23C0062BAC8A1C000E2E0E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0052BAC8A1C000E2E0E /* MapKit.framework */; };
-		BF23C00A2BAC8A1C000E2E0E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0092BAC8A1C000E2E0E /* AudioToolbox.framework */; };
-		BF23C00C2BAC8A1C000E2E0E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C00B2BAC8A1C000E2E0E /* QuartzCore.framework */; };
-		BF23C0122BAC8A1C000E2E0E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0112BAC8A1C000E2E0E /* Foundation.framework */; };
-		BF23C0142BAC8A1C000E2E0E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0132BAC8A1C000E2E0E /* CoreGraphics.framework */; };
-		BF23C0182BAC8A1C000E2E0E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0172BAC8A1C000E2E0E /* CoreLocation.framework */; };
-		BF23C01A2BAC8A1C000E2E0E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0192BAC8A1C000E2E0E /* AVFoundation.framework */; };
-		BF23C01C2BAC8A1C000E2E0E /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01B2BAC8A1C000E2E0E /* CoreAudio.framework */; };
-		BF23C01E2BAC8A1C000E2E0E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01D2BAC8A1C000E2E0E /* CoreMedia.framework */; };
-		BF23C0202BAC8A1C000E2E0E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01F2BAC8A1C000E2E0E /* CoreVideo.framework */; };
-		BF23C0222BAC8A1C000E2E0E /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0212BAC8A1C000E2E0E /* CoreMotion.framework */; };
-		BF23C0282BAD02DE000E2E0E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0272BAD02DE000E2E0E /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF23C02B2BAD0955000E2E0E /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0292BAD0954000E2E0E /* TVUIKit.framework */; platformFilters = (tvos, ); };
-		BF23C02C2BAD0955000E2E0E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C02A2BAD0955000E2E0E /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		BF6276AA2BADB16E008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A92BADB16E008864C1 /* openssl.xcframework */; };
-		BF6276AB2BADB16E008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A92BADB16E008864C1 /* openssl.xcframework */; };
 		BF6276B52BADC774008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276B42BADC774008864C1 /* ofBaseTypes.h */; };
-		BF6276B62BADC774008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276B42BADC774008864C1 /* ofBaseTypes.h */; };
-		BF6276B72BADCC13008864C1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276B32BADC6C9008864C1 /* Cocoa.framework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Required, ); }; };
-		BF6276B82BADCC27008864C1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276B22BADC6C9008864C1 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Required, ); }; };
+		BF6276BB2BADCF7C008864C1 /* ofxiOSSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF642BAC872D000E2E0E /* ofxiOSSoundStream.h */; };
+		BF6276BC2BADCF7C008864C1 /* ofxiOSExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF862BAC872D000E2E0E /* ofxiOSExtras.h */; };
+		BF6276BD2BADCF7C008864C1 /* ofxiOSSoundStreamDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF662BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.h */; };
+		BF6276BE2BADCF7C008864C1 /* ofxOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF692BAC872D000E2E0E /* ofxOpenALSoundPlayer.h */; };
+		BF6276BF2BADCF7C008864C1 /* ofxiOSGLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF4D2BAC872D000E2E0E /* ofxiOSGLKViewController.h */; };
+		BF6276C02BADCF7C008864C1 /* ESRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF5E2BAC872D000E2E0E /* ESRenderer.h */; };
+		BF6276C12BADCF7C008864C1 /* ofxiOSExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9E2BAC872D000E2E0E /* ofxiOSExtensions.h */; };
+		BF6276C22BADCF7C008864C1 /* ofxiPhoneExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF912BAC872D000E2E0E /* ofxiPhoneExtras.h */; };
+		BF6276C32BADCF7C008864C1 /* SoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF702BAC872D000E2E0E /* SoundStream.h */; };
+		BF6276C42BADCF7C008864C1 /* ofxiOSVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF972BAC872D000E2E0E /* ofxiOSVideoGrabber.h */; };
+		BF6276C52BADCF7C008864C1 /* ofxiOSApp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF452BAC872D000E2E0E /* ofxiOSApp.h */; };
+		BF6276C62BADCF7C008864C1 /* ofxtvOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF732BAC872D000E2E0E /* ofxtvOSAppDelegate.h */; };
+		BF6276C72BADCF7C008864C1 /* SoundEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF6B2BAC872D000E2E0E /* SoundEngine.h */; };
+		BF6276C82BADCF7C008864C1 /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF472BAC872D000E2E0E /* ofxiOSAppDelegate.h */; };
+		BF6276C92BADCF7C008864C1 /* ofxAccelerometer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BFA42BAC872D000E2E0E /* ofxAccelerometer.h */; };
+		BF6276CA2BADCF7C008864C1 /* ES1Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF5A2BAC872D000E2E0E /* ES1Renderer.h */; };
+		BF6276CB2BADCF7C008864C1 /* ofxiOSGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF4B2BAC872D000E2E0E /* ofxiOSGLKView.h */; };
+		BF6276CC2BADCF7C008864C1 /* ofxiOSKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF8A2BAC872D000E2E0E /* ofxiOSKeyboard.h */; };
+		BF6276CD2BADCF7C008864C1 /* SoundInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF6C2BAC872D000E2E0E /* SoundInputStream.h */; };
+		BF6276CE2BADCF7C008864C1 /* ofxiOSEAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF492BAC872D000E2E0E /* ofxiOSEAGLView.h */; };
+		BF6276CF2BADCF7C008864C1 /* ofxiOSSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF622BAC872D000E2E0E /* ofxiOSSoundPlayer.h */; };
+		BF6276D02BADCF7C008864C1 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF952BAC872D000E2E0E /* AVFoundationVideoPlayer.h */; };
+		BF6276D12BADCF7C008864C1 /* ofxiPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9F2BAC872D000E2E0E /* ofxiPhone.h */; };
+		BF6276D22BADCF7C008864C1 /* ofxtvOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF792BAC872D000E2E0E /* ofxtvOSViewController.h */; };
+		BF6276D32BADCF7C008864C1 /* ofxtvOSURLFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF782BAC872D000E2E0E /* ofxtvOSURLFileLoader.h */; };
+		BF6276D42BADCF7C008864C1 /* ES2Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF5C2BAC872D000E2E0E /* ES2Renderer.h */; };
+		BF6276D52BADCF7C008864C1 /* ofAppiOSWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF432BAC872D000E2E0E /* ofAppiOSWindow.h */; };
+		BF6276D62BADCF7C008864C1 /* ofxiOSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9D2BAC872D000E2E0E /* ofxiOSConstants.h */; };
+		BF6276D72BADCF7C008864C1 /* SoundOutputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF6E2BAC872D000E2E0E /* SoundOutputStream.h */; };
+		BF6276D82BADCF7C008864C1 /* AVSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF602BAC872D000E2E0E /* AVSoundPlayer.h */; };
+		BF6276D92BADCF7C008864C1 /* ofxiOSAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF542BAC872D000E2E0E /* ofxiOSAlertsListener.h */; };
+		BF6276DA2BADCF7C008864C1 /* ofxiOSCoreLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF7E2BAC872D000E2E0E /* ofxiOSCoreLocation.h */; };
+		BF6276DB2BADCF7C008864C1 /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF932BAC872D000E2E0E /* AVFoundationVideoGrabber.h */; };
+		BF6276DC2BADCF7C008864C1 /* ofxtvOSGLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF752BAC872D000E2E0E /* ofxtvOSGLKViewController.h */; };
+		BF6276DD2BADCF7C008864C1 /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF9C2BAC872D000E2E0E /* ofxiOS.h */; };
+		BF6276DE2BADCF7C008864C1 /* ofxiOSMapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF8C2BAC872D000E2E0E /* ofxiOSMapKit.h */; };
+		BF6276DF2BADCF7C008864C1 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF4F2BAC872D000E2E0E /* ofxiOSViewController.h */; };
+		BF6276E02BADCF7C008864C1 /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF582BAC872D000E2E0E /* EAGLView.h */; };
+		BF6276E12BADCF7C008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276B42BADC774008864C1 /* ofBaseTypes.h */; };
+		BF6276E22BADCF7C008864C1 /* ofxiOSMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF8E2BAC872D000E2E0E /* ofxiOSMapKitDelegate.h */; };
+		BF6276E32BADCF7C008864C1 /* ofxiOSVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF992BAC872D000E2E0E /* ofxiOSVideoPlayer.h */; };
+		BF6276E42BADCF7C008864C1 /* EAGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF562BAC872D000E2E0E /* EAGLKView.h */; };
+		BF6276E52BADCF7C008864C1 /* ofxtvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BFA02BAC872D000E2E0E /* ofxtvOS.h */; };
+		BF6276E62BADCF7C008864C1 /* ofxiOSImagePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF882BAC872D000E2E0E /* ofxiOSImagePicker.h */; };
+		BF6276E72BADCF7C008864C1 /* ofxiOSEventAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF822BAC872D000E2E0E /* ofxiOSEventAdapter.h */; };
+		BF6276E82BADCF7C008864C1 /* ofxiOSCoreMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF802BAC872D000E2E0E /* ofxiOSCoreMotion.h */; };
+		BF6276E92BADCF7C008864C1 /* ofxiOSMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF902BAC872D000E2E0E /* ofxiOSMapKitListener.h */; };
+		BF6276EA2BADCF7C008864C1 /* ofxiOSCoreHaptics.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF7C2BAC872D000E2E0E /* ofxiOSCoreHaptics.h */; };
+		BF6276EB2BADCF7C008864C1 /* ofxiOSExternalDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF842BAC872D000E2E0E /* ofxiOSExternalDisplay.h */; };
+		BF6276EC2BADCF7C008864C1 /* ofxiOSAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF522BAC872D000E2E0E /* ofxiOSAlerts.h */; };
+		BF6276EE2BADCF7C008864C1 /* ofMain.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AC710CBE92A00536013 /* ofMain.h */; };
+		BF6276EF2BADCF7C008864C1 /* ofxiOSExternalDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF852BAC872D000E2E0E /* ofxiOSExternalDisplay.mm */; };
+		BF6276F02BADCF7C008864C1 /* EAGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF572BAC872D000E2E0E /* EAGLKView.m */; };
+		BF6276F12BADCF7C008864C1 /* ofxiOSGLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF4C2BAC872D000E2E0E /* ofxiOSGLKView.mm */; };
+		BF6276F22BADCF7C008864C1 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */; };
+		BF6276F32BADCF7C008864C1 /* ofxtvOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF7A2BAC872D000E2E0E /* ofxtvOSViewController.mm */; };
+		BF6276F42BADCF7C008864C1 /* of3dUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */; };
+		BF6276F52BADCF7C008864C1 /* ofCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */; };
+		BF6276F62BADCF7C008864C1 /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF5B2BAC872D000E2E0E /* ES1Renderer.m */; };
+		BF6276F72BADCF7C008864C1 /* ofCamera.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5612F4C4BF002D19BB /* ofCamera.h */; };
+		BF6276F82BADCF7C008864C1 /* ofEasyCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5712F4C4BF002D19BB /* ofEasyCam.cpp */; };
+		BF6276F92BADCF7C008864C1 /* ofEasyCam.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5812F4C4BF002D19BB /* ofEasyCam.h */; };
+		BF6276FA2BADCF7C008864C1 /* ofMesh.inl in Sources */ = {isa = PBXBuildFile; fileRef = 6448E6FB1CAD7679000877BC /* ofMesh.inl */; };
+		BF6276FB2BADCF7C008864C1 /* ofMesh.h in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
+		BF6276FC2BADCF7C008864C1 /* ofxtvOSURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF772BAC872D000E2E0E /* ofxtvOSURLFileLoader.cpp */; };
+		BF6276FD2BADCF7C008864C1 /* ofNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */; };
+		BF6276FE2BADCF7C008864C1 /* ofNode.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA6012F4C4BF002D19BB /* ofNode.h */; };
+		BF6276FF2BADCF7C008864C1 /* of3dPrimitives.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
+		BF6277002BADCF7C008864C1 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
+		BF6277012BADCF7C008864C1 /* ofWindowSettings.h in Sources */ = {isa = PBXBuildFile; fileRef = 9979E81F1A1CCC44007E55D1 /* ofWindowSettings.h */; };
+		BF6277022BADCF7C008864C1 /* ofxiOSImagePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF892BAC872D000E2E0E /* ofxiOSImagePicker.mm */; };
+		BF6277032BADCF7C008864C1 /* ofxiOSSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF652BAC872D000E2E0E /* ofxiOSSoundStream.mm */; };
+		BF6277042BADCF7C008864C1 /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */; };
+		BF6277052BADCF7C008864C1 /* ofMainLoop.h in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
+		BF6277062BADCF7C008864C1 /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7B178896A900994238 /* ofAppNoWindow.cpp */; };
+		BF6277072BADCF7C008864C1 /* ofAppNoWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7C178896A900994238 /* ofAppNoWindow.h */; };
+		BF6277082BADCF7C008864C1 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
+		BF6277092BADCF7C008864C1 /* ofxOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF682BAC872D000E2E0E /* ofxOpenALSoundPlayer.cpp */; };
+		BF62770A2BADCF7C008864C1 /* ofAppGLFWWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
+		BF62770B2BADCF7C008864C1 /* SoundOutputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF6F2BAC872D000E2E0E /* SoundOutputStream.m */; };
+		BF62770C2BADCF7C008864C1 /* AVSoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF612BAC872D000E2E0E /* AVSoundPlayer.m */; };
+		BF62770D2BADCF7C008864C1 /* ofxtvOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF762BAC872D000E2E0E /* ofxtvOSGLKViewController.mm */; };
+		BF62770E2BADCF7C008864C1 /* ofAppBaseWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAC10CBE92A00536013 /* ofAppBaseWindow.h */; };
+		BF62770F2BADCF7C008864C1 /* ofxiOSEAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF4A2BAC872D000E2E0E /* ofxiOSEAGLView.mm */; };
+		BF6277102BADCF7C008864C1 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
+		BF6277112BADCF7C008864C1 /* ofAppRunner.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB010CBE92A00536013 /* ofAppRunner.h */; };
+		BF6277122BADCF7C008864C1 /* ofBaseApp.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB110CBE92A00536013 /* ofBaseApp.h */; };
+		BF6277132BADCF7C008864C1 /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */; };
+		BF6277142BADCF7C008864C1 /* ofArduino.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB310CBE92A00536013 /* ofArduino.cpp */; };
+		BF6277152BADCF7C008864C1 /* ofArduino.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB410CBE92A00536013 /* ofArduino.h */; };
+		BF6277162BADCF7C008864C1 /* ofSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB510CBE92A00536013 /* ofSerial.cpp */; };
+		BF6277172BADCF7C008864C1 /* ofSerial.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB610CBE92A00536013 /* ofSerial.h */; };
+		BF6277182BADCF7C008864C1 /* ofEvent.h in Sources */ = {isa = PBXBuildFile; fileRef = 229EB9A51B3181C800FF7B5F /* ofEvent.h */; };
+		BF6277192BADCF7C008864C1 /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
+		BF62771A2BADCF7C008864C1 /* ofEvents.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ABA10CBE92A00536013 /* ofEvents.h */; };
+		BF62771B2BADCF7C008864C1 /* ofEventUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ABB10CBE92A00536013 /* ofEventUtils.h */; };
+		BF62771C2BADCF7C008864C1 /* ofGLBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425151FE4544C00770088 /* ofGLBaseTypes.h */; };
+		BF62771D2BADCF7C008864C1 /* ofBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2292E73C19E3049700DE9411 /* ofBufferObject.cpp */; };
+		BF62771E2BADCF7C008864C1 /* ofBufferObject.h in Sources */ = {isa = PBXBuildFile; fileRef = 2292E73D19E3049700DE9411 /* ofBufferObject.h */; };
+		BF62771F2BADCF7C008864C1 /* ofCubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E498911292C96340096EC56 /* ofCubeMap.cpp */; };
+		BF6277202BADCF7C008864C1 /* ofCubeMap.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E498913292C96340096EC56 /* ofCubeMap.h */; };
+		BF6277212BADCF7C008864C1 /* ofCubeMapShaders.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E498912292C96340096EC56 /* ofCubeMapShaders.h */; };
+		BF6277222BADCF7C008864C1 /* ofGLProgrammableRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */; };
+		BF6277232BADCF7C008864C1 /* ofGLProgrammableRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = 22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */; };
+		BF6277242BADCF7C008864C1 /* ofFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */; };
+		BF6277252BADCF7C008864C1 /* ofFbo.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CA132D09E8008D4B7A /* ofFbo.h */; };
+		BF6277262BADCF7C008864C1 /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF6A2BAC872D000E2E0E /* SoundEngine.cpp */; };
+		BF6277272BADCF7C008864C1 /* ofAppiOSWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF442BAC872D000E2E0E /* ofAppiOSWindow.mm */; };
+		BF6277282BADCF7C008864C1 /* SoundStream.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF712BAC872D000E2E0E /* SoundStream.m */; };
+		BF6277292BADCF7C008864C1 /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */; };
+		BF62772A2BADCF7C008864C1 /* ofGLRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CC132D09E8008D4B7A /* ofGLRenderer.h */; };
+		BF62772B2BADCF7C008864C1 /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
+		BF62772C2BADCF7C008864C1 /* ofGLUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CD132D09E8008D4B7A /* ofGLUtils.h */; };
+		BF62772D2BADCF7C008864C1 /* ofLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CE132D09E8008D4B7A /* ofLight.cpp */; };
+		BF62772E2BADCF7C008864C1 /* ofxiOSAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF532BAC872D000E2E0E /* ofxiOSAlerts.mm */; };
+		BF62772F2BADCF7C008864C1 /* ofLight.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CF132D09E8008D4B7A /* ofLight.h */; };
+		BF6277302BADCF7C008864C1 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4D30C028F5BA9C0074D450 /* ofShadow.cpp */; };
+		BF6277312BADCF7C008864C1 /* ofShadow.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E4D30BF28F5BA9C0074D450 /* ofShadow.h */; };
+		BF6277322BADCF7C008864C1 /* ofxiOSViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF502BAC872D000E2E0E /* ofxiOSViewController.mm */; };
+		BF6277332BADCF7C008864C1 /* ofMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D0132D09E8008D4B7A /* ofMaterial.cpp */; };
+		BF6277342BADCF7C008864C1 /* ofMaterial.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D1132D09E8008D4B7A /* ofMaterial.h */; };
+		BF6277352BADCF7C008864C1 /* ofxiOSCoreLocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF7F2BAC872D000E2E0E /* ofxiOSCoreLocation.mm */; };
+		BF6277362BADCF7C008864C1 /* ofShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D2132D09E8008D4B7A /* ofShader.cpp */; };
+		BF6277372BADCF7C008864C1 /* ofShader.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D3132D09E8008D4B7A /* ofShader.h */; };
+		BF6277382BADCF7C008864C1 /* ofTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D4132D09E8008D4B7A /* ofTexture.cpp */; };
+		BF6277392BADCF7C008864C1 /* ofTexture.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D5132D09E8008D4B7A /* ofTexture.h */; };
+		BF62773A2BADCF7C008864C1 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D6132D09E8008D4B7A /* ofVbo.cpp */; };
+		BF62773B2BADCF7C008864C1 /* ofxiOSExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF872BAC872D000E2E0E /* ofxiOSExtras.mm */; };
+		BF62773C2BADCF7C008864C1 /* ofxiOSMapKitDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF8F2BAC872D000E2E0E /* ofxiOSMapKitDelegate.mm */; };
+		BF62773D2BADCF7C008864C1 /* ofVbo.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
+		BF62773E2BADCF7C008864C1 /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
+		BF62773F2BADCF7C008864C1 /* ofVboMesh.h in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
+		BF6277402BADCF7C008864C1 /* ofGraphicsBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 694425171FE4547400770088 /* ofGraphicsBaseTypes.cpp */; };
+		BF6277412BADCF7C008864C1 /* ofGraphicsBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425181FE4547400770088 /* ofGraphicsBaseTypes.h */; };
+		BF6277422BADCF7C008864C1 /* ofGraphicsConstants.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425191FE4547400770088 /* ofGraphicsConstants.h */; };
+		BF6277432BADCF7C008864C1 /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F86132DA7DD00EC2631 /* ofPath.cpp */; };
+		BF6277442BADCF7C008864C1 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF962BAC872D000E2E0E /* AVFoundationVideoPlayer.m */; };
+		BF6277452BADCF7C008864C1 /* SoundInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF6D2BAC872D000E2E0E /* SoundInputStream.m */; };
+		BF6277462BADCF7C008864C1 /* ofPath.h in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F87132DA7DD00EC2631 /* ofPath.h */; };
+		BF6277472BADCF7C008864C1 /* ofPolyline.inl in Sources */ = {isa = PBXBuildFile; fileRef = 6448E6FC1CAD771D000877BC /* ofPolyline.inl */; };
+		BF6277482BADCF7C008864C1 /* ofPolyline.h in Sources */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
+		BF6277492BADCF7C008864C1 /* ofRendererCollection.h in Sources */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
+		BF62774A2BADCF7C008864C1 /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
+		BF62774B2BADCF7C008864C1 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
+		BF62774C2BADCF7C008864C1 /* ofCairoRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */; };
+		BF62774D2BADCF7C008864C1 /* ofBitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */; };
+		BF62774E2BADCF7C008864C1 /* ofBitmapFont.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0112F4C751002D19BB /* ofBitmapFont.h */; };
+		BF62774F2BADCF7C008864C1 /* ofGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0412F4C752002D19BB /* ofGraphics.cpp */; };
+		BF6277502BADCF7C008864C1 /* ofGraphics.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0512F4C752002D19BB /* ofGraphics.h */; };
+		BF6277512BADCF7C008864C1 /* ofGraphicsCairo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */; };
+		BF6277522BADCF7C008864C1 /* ofxiOSMapKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF8D2BAC872D000E2E0E /* ofxiOSMapKit.mm */; };
+		BF6277532BADCF7C008864C1 /* ofGraphicsCairo.h in Sources */ = {isa = PBXBuildFile; fileRef = 19662F2C2834A44400B622ED /* ofGraphicsCairo.h */; };
+		BF6277542BADCF7C008864C1 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
+		BF6277552BADCF7C008864C1 /* of3dGraphics.h in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
+		BF6277562BADCF7C008864C1 /* ofImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0612F4C752002D19BB /* ofImage.cpp */; };
+		BF6277572BADCF7C008864C1 /* ofImage.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0712F4C752002D19BB /* ofImage.h */; };
+		BF6277582BADCF7C008864C1 /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0812F4C752002D19BB /* ofPixels.cpp */; };
+		BF6277592BADCF7C008864C1 /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF5D2BAC872D000E2E0E /* ES2Renderer.m */; };
+		BF62775A2BADCF7C008864C1 /* ofPixels.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0912F4C752002D19BB /* ofPixels.h */; };
+		BF62775B2BADCF7C008864C1 /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */; };
+		BF62775C2BADCF7C008864C1 /* ofxiOSSoundStreamDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF672BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.mm */; };
+		BF62775D2BADCF7C008864C1 /* ofTessellator.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
+		BF62775E2BADCF7C008864C1 /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
+		BF62775F2BADCF7C008864C1 /* ofTrueTypeFont.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
+		BF6277602BADCF7C008864C1 /* ofAVEngineSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E43EEAC229E66B78001C7596 /* ofAVEngineSoundPlayer.h */; };
+		BF6277612BADCF7C008864C1 /* ofAVEngineSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E43EEAC129E66B78001C7596 /* ofAVEngineSoundPlayer.mm */; };
+		BF6277622BADCF7C008864C1 /* ofSoundBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6944251D1FE4548B00770088 /* ofSoundBaseTypes.cpp */; };
+		BF6277632BADCF7C008864C1 /* ofSoundBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 6944251E1FE4548B00770088 /* ofSoundBaseTypes.h */; };
+		BF6277642BADCF7C008864C1 /* ofxiOSCoreMotion.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF812BAC872D000E2E0E /* ofxiOSCoreMotion.mm */; };
+		BF6277652BADCF7C008864C1 /* ofFmodSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */; };
+		BF6277662BADCF7C008864C1 /* ofFmodSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */; };
+		BF6277672BADCF7C008864C1 /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
+		BF6277682BADCF7C008864C1 /* ofOpenALSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
+		BF6277692BADCF7C008864C1 /* ofRtAudioSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */; };
+		BF62776A2BADCF7C008864C1 /* ofRtAudioSoundStream.h in Sources */ = {isa = PBXBuildFile; fileRef = E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */; };
+		BF62776B2BADCF7C008864C1 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E96D19FEAFA900C00581 /* ofSoundBuffer.cpp */; };
+		BF62776C2BADCF7C008864C1 /* ofSoundBuffer.h in Sources */ = {isa = PBXBuildFile; fileRef = 6678E96E19FEAFA900C00581 /* ofSoundBuffer.h */; };
+		BF62776D2BADCF7C008864C1 /* ofxiOSVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF982BAC872D000E2E0E /* ofxiOSVideoGrabber.mm */; };
+		BF62776E2BADCF7C008864C1 /* ofSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */; };
+		BF62776F2BADCF7C008864C1 /* ofSoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */; };
+		BF6277702BADCF7C008864C1 /* ofSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */; };
+		BF6277712BADCF7C008864C1 /* ofxiOSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF482BAC872D000E2E0E /* ofxiOSAppDelegate.mm */; };
+		BF6277722BADCF7C008864C1 /* ofSoundStream.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */; };
+		BF6277732BADCF7C008864C1 /* ofSoundUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = 6678E97C19FEB5A600C00581 /* ofSoundUtils.h */; };
+		BF6277742BADCF7C008864C1 /* ofMathConstants.h in Sources */ = {isa = PBXBuildFile; fileRef = 30CC5384207A36FD008234AF /* ofMathConstants.h */; };
+		BF6277752BADCF7C008864C1 /* ofMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB312F4C72E002D19BB /* ofMath.cpp */; };
+		BF6277762BADCF7C008864C1 /* ofMath.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB412F4C72E002D19BB /* ofMath.h */; };
+		BF6277772BADCF7C008864C1 /* ofMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB512F4C72E002D19BB /* ofMatrix3x3.cpp */; };
+		BF6277782BADCF7C008864C1 /* ofMatrix3x3.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB612F4C72E002D19BB /* ofMatrix3x3.h */; };
+		BF6277792BADCF7C008864C1 /* ofMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB712F4C72E002D19BB /* ofMatrix4x4.cpp */; };
+		BF62777A2BADCF7C008864C1 /* ofMatrix4x4.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB812F4C72E002D19BB /* ofMatrix4x4.h */; };
+		BF62777B2BADCF7C008864C1 /* ofxtvOSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF742BAC872D000E2E0E /* ofxtvOSAppDelegate.mm */; };
+		BF62777C2BADCF7C008864C1 /* ofQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB912F4C72F002D19BB /* ofQuaternion.cpp */; };
+		BF62777D2BADCF7C008864C1 /* ofQuaternion.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABA12F4C72F002D19BB /* ofQuaternion.h */; };
+		BF62777E2BADCF7C008864C1 /* ofVec2f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABB12F4C72F002D19BB /* ofVec2f.cpp */; };
+		BF62777F2BADCF7C008864C1 /* ofVec2f.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABC12F4C72F002D19BB /* ofVec2f.h */; };
+		BF6277802BADCF7C008864C1 /* ofVec3f.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABD12F4C72F002D19BB /* ofVec3f.h */; };
+		BF6277812BADCF7C008864C1 /* ofVec4f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABE12F4C72F002D19BB /* ofVec4f.cpp */; };
+		BF6277822BADCF7C008864C1 /* ofVec4f.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABF12F4C72F002D19BB /* ofVec4f.h */; };
+		BF6277832BADCF7C008864C1 /* ofVectorMath.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAC012F4C72F002D19BB /* ofVectorMath.h */; };
+		BF6277842BADCF7C008864C1 /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */; };
+		BF6277852BADCF7C008864C1 /* ofxAccelerometer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BFA32BAC872D000E2E0E /* ofxAccelerometer.cpp */; };
+		BF6277862BADCF7C008864C1 /* ofParameter.h in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3C16E7A4AF0020226D /* ofParameter.h */; };
+		BF6277872BADCF7C008864C1 /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */; };
+		BF6277882BADCF7C008864C1 /* ofxiOSKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF8B2BAC872D000E2E0E /* ofxiOSKeyboard.mm */; };
+		BF6277892BADCF7C008864C1 /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF942BAC872D000E2E0E /* AVFoundationVideoGrabber.mm */; };
+		BF62778A2BADCF7C008864C1 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD012F4C73C002D19BB /* ofBaseTypes.cpp */; };
+		BF62778B2BADCF7C008864C1 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF592BAC872D000E2E0E /* EAGLView.m */; };
+		BF62778C2BADCF7C008864C1 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD212F4C73C002D19BB /* ofColor.cpp */; };
+		BF62778D2BADCF7C008864C1 /* ofColor.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD312F4C73C002D19BB /* ofColor.h */; };
+		BF62778E2BADCF7C008864C1 /* ofPoint.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD512F4C73C002D19BB /* ofPoint.h */; };
+		BF62778F2BADCF7C008864C1 /* ofRectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD612F4C73C002D19BB /* ofRectangle.cpp */; };
+		BF6277902BADCF7C008864C1 /* ofRectangle.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD712F4C73C002D19BB /* ofRectangle.h */; };
+		BF6277912BADCF7C008864C1 /* ofxiOSCoreHaptics.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF7D2BAC872D000E2E0E /* ofxiOSCoreHaptics.mm */; };
+		BF6277922BADCF7C008864C1 /* ofTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD812F4C73C002D19BB /* ofTypes.h */; };
+		BF6277932BADCF7C008864C1 /* ofFpsCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 692C298719DC5C5500C27C5D /* ofFpsCounter.cpp */; };
+		BF6277942BADCF7C008864C1 /* ofFpsCounter.h in Sources */ = {isa = PBXBuildFile; fileRef = 692C298819DC5C5500C27C5D /* ofFpsCounter.h */; };
+		BF6277952BADCF7C008864C1 /* ofTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 692C298919DC5C5500C27C5D /* ofTimer.cpp */; };
+		BF6277962BADCF7C008864C1 /* ofxiOSSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF632BAC872D000E2E0E /* ofxiOSSoundPlayer.mm */; };
+		BF6277972BADCF7C008864C1 /* ofTimer.h in Sources */ = {isa = PBXBuildFile; fileRef = 692C298A19DC5C5500C27C5D /* ofTimer.h */; };
+		BF6277982BADCF7C008864C1 /* ofxiOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF4E2BAC872D000E2E0E /* ofxiOSGLKViewController.mm */; };
+		BF6277992BADCF7C008864C1 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
+		BF62779A2BADCF7C008864C1 /* ofXml.h in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA3101796F578000A9E90 /* ofXml.h */; };
+		BF62779B2BADCF7C008864C1 /* ofMatrixStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */; };
+		BF62779C2BADCF7C008864C1 /* ofMatrixStack.h in Sources */ = {isa = PBXBuildFile; fileRef = 22769590170D9DD200604FC3 /* ofMatrixStack.h */; };
+		BF62779D2BADCF7C008864C1 /* ofConstants.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE312F4C745002D19BB /* ofConstants.h */; };
+		BF62779E2BADCF7C008864C1 /* ofFileUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE412F4C745002D19BB /* ofFileUtils.cpp */; };
+		BF62779F2BADCF7C008864C1 /* ofFileUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE512F4C745002D19BB /* ofFileUtils.h */; };
+		BF6277A02BADCF7C008864C1 /* ofLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE612F4C745002D19BB /* ofLog.cpp */; };
+		BF6277A12BADCF7C008864C1 /* ofLog.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE712F4C745002D19BB /* ofLog.h */; };
+		BF6277A22BADCF7C008864C1 /* ofNoise.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE812F4C745002D19BB /* ofNoise.h */; };
+		BF6277A32BADCF7C008864C1 /* ofSystemUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE912F4C745002D19BB /* ofSystemUtils.cpp */; };
+		BF6277A42BADCF7C008864C1 /* ofSystemUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEA12F4C745002D19BB /* ofSystemUtils.h */; };
+		BF6277A52BADCF7C008864C1 /* ofThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEB12F4C745002D19BB /* ofThread.cpp */; };
+		BF6277A62BADCF7C008864C1 /* ofThread.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEC12F4C745002D19BB /* ofThread.h */; };
+		BF6277A72BADCF7C008864C1 /* ofURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAED12F4C745002D19BB /* ofURLFileLoader.cpp */; };
+		BF6277A82BADCF7C008864C1 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF9A2BAC872D000E2E0E /* ofxiOSVideoPlayer.mm */; };
+		BF6277A92BADCF7C008864C1 /* ofURLFileLoader.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEE12F4C745002D19BB /* ofURLFileLoader.h */; };
+		BF6277AA2BADCF7C008864C1 /* ofUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEF12F4C745002D19BB /* ofUtils.cpp */; };
+		BF6277AB2BADCF7C008864C1 /* ofUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAF012F4C745002D19BB /* ofUtils.h */; };
+		BF6277AC2BADCF7C008864C1 /* ofVideoBaseTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 694425211FE456AF00770088 /* ofVideoBaseTypes.h */; };
+		BF6277AD2BADCF7C008864C1 /* ofVideoGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADB10CBE92A00536013 /* ofVideoGrabber.cpp */; };
+		BF6277AE2BADCF7C008864C1 /* ofVideoGrabber.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADC10CBE92A00536013 /* ofVideoGrabber.h */; };
+		BF6277AF2BADCF7C008864C1 /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */; };
+		BF6277B02BADCF7C008864C1 /* ofxiOSEventAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF832BAC872D000E2E0E /* ofxiOSEventAdapter.mm */; };
+		BF6277B12BADCF7C008864C1 /* ofVideoPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADE10CBE92A00536013 /* ofVideoPlayer.h */; };
+		BF6277B22BADCF7C008864C1 /* ofAVFoundationGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E48662991D8C61B000D1735C /* ofAVFoundationGrabber.mm */; };
+		BF6277B32BADCF7C008864C1 /* ofAVFoundationGrabber.h in Sources */ = {isa = PBXBuildFile; fileRef = E48662981D8C61B000D1735C /* ofAVFoundationGrabber.h */; };
+		BF6277B42BADCF7C008864C1 /* ofAVFoundationVideoPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */; };
+		BF6277B52BADCF7C008864C1 /* ofAVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */; };
+		BF6277B62BADCF7C008864C1 /* ofAVFoundationPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */; };
+		BF6277B72BADCF7C008864C1 /* ofAVFoundationPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */; };
+		BF6277B92BADCF7C008864C1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276B22BADC6C9008864C1 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Required, ); }; };
+		BF6277BA2BADCF7C008864C1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276B32BADC6C9008864C1 /* Cocoa.framework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Required, ); }; };
+		BF6277BB2BADCF7C008864C1 /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277BC2BADCF7C008864C1 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */; };
+		BF6277BD2BADCF7C008864C1 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */; platformFilters = (ios, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277BE2BADCF7C008864C1 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277BF2BADCF7C008864C1 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
+		BF6277C02BADCF7C008864C1 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A422BA1DCF9005FA2B1 /* tess2.xcframework */; };
+		BF6277C12BADCF7C008864C1 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F22BA1DCAD005FA2B1 /* pugixml.xcframework */; };
+		BF6277C22BADCF7C008864C1 /* glew.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EA2BA1DC57005FA2B1 /* glew.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277C32BADCF7C008864C1 /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EC2BA1DC6B005FA2B1 /* glfw.xcframework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277C42BADCF7C008864C1 /* rtAudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609F42BA1DCBB005FA2B1 /* rtAudio.xcframework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277C52BADCF7C008864C1 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */; };
+		BF6277C62BADCF7C008864C1 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A442BA1DD04005FA2B1 /* uriparser.xcframework */; };
+		BF6277C72BADCF7C008864C1 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EE2BA1DC91005FA2B1 /* libpng.xcframework */; };
+		BF6277C82BADCF7C008864C1 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
+		BF6277C92BADCF7C008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A92BADB16E008864C1 /* openssl.xcframework */; platformFilters = (ios, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277CA2BADCF7C008864C1 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0292BAD0954000E2E0E /* TVUIKit.framework */; platformFilters = (tvos, ); };
+		BF6277CB2BADCF7C008864C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C02A2BAD0955000E2E0E /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
+		BF6277CC2BADCF7C008864C1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0272BAD02DE000E2E0E /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277CD2BADCF7C008864C1 /* libfmod.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDD82BAC7E74000E2E0E /* libfmod.dylib */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277CE2BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAB2BAC7A6F000E2E0E /* AudioToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
+		BF6277CF2BADCF7C008864C1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAC2BAC7A6F000E2E0E /* AVFoundation.framework */; };
+		BF6277D02BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0132BAC8A1C000E2E0E /* CoreGraphics.framework */; };
+		BF6277D12BADCF7C008864C1 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBB2BAC7DD0000E2E0E /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
+		BF6277D22BADCF7C008864C1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C00B2BAC8A1C000E2E0E /* QuartzCore.framework */; };
+		BF6277D32BADCF7C008864C1 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAD2BAC7A6F000E2E0E /* CoreFoundation.framework */; };
+		BF6277D42BADCF7C008864C1 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAE2BAC7A6F000E2E0E /* Accelerate.framework */; };
+		BF6277D52BADCF7C008864C1 /* CoreAudioTypes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAF2BAC7A6F000E2E0E /* CoreAudioTypes.framework */; platformFilters = (macos, ); };
+		BF6277D62BADCF7C008864C1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0052BAC8A1C000E2E0E /* MapKit.framework */; };
+		BF6277D72BADCF7C008864C1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB02BAC7A6F000E2E0E /* CoreData.framework */; };
+		BF6277D82BADCF7C008864C1 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBA2BAC7DD0000E2E0E /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
+		BF6277D92BADCF7C008864C1 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBC2BAC7DD0000E2E0E /* GLKit.framework */; platformFilters = (ios, tvos, ); };
+		BF6277DA2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01D2BAC8A1C000E2E0E /* CoreMedia.framework */; };
+		BF6277DB2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB12BAC7A6F000E2E0E /* CoreAudio.framework */; };
+		BF6277DC2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC72BAC7DD0000E2E0E /* CoreMedia.framework */; };
+		BF6277DD2BADCF7C008864C1 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0212BAC8A1C000E2E0E /* CoreMotion.framework */; platformFilters = (ios, maccatalyst, macos, watchos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF6277DE2BADCF7C008864C1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC82BAC7DD0000E2E0E /* CoreVideo.framework */; };
+		BF6277DF2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01B2BAC8A1C000E2E0E /* CoreAudio.framework */; };
+		BF6277E02BADCF7C008864C1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBE2BAC7DD0000E2E0E /* QuartzCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
+		BF6277E12BADCF7C008864C1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0172BAC8A1C000E2E0E /* CoreLocation.framework */; };
+		BF6277E22BADCF7C008864C1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC12BAC7DD0000E2E0E /* Foundation.framework */; };
+		BF6277E32BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC22BAC7DD0000E2E0E /* CoreGraphics.framework */; };
+		BF6277E42BADCF7C008864C1 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB92BAC7DD0000E2E0E /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
+		BF6277E52BADCF7C008864C1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC42BAC7DD0000E2E0E /* CoreLocation.framework */; };
+		BF6277E62BADCF7C008864C1 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0032BAC8A1C000E2E0E /* GameController.framework */; };
+		BF6277E72BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0092BAC8A1C000E2E0E /* AudioToolbox.framework */; };
+		BF6277E82BADCF7C008864C1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0192BAC8A1C000E2E0E /* AVFoundation.framework */; };
+		BF6277E92BADCF7C008864C1 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC32BAC7DD0000E2E0E /* OpenAL.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		BF6277F22BADD5A9008864C1 /* AVFAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6277F12BADD5A9008864C1 /* AVFAudio.framework */; };
 		BF6609E52BA1DB6F005FA2B1 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
 		BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; };
 		BF6609E92BA1DC4B005FA2B1 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
@@ -557,7 +556,6 @@
 		BF23BDC82BAC7DD0000E2E0E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		BF23BDC92BAC7DD0000E2E0E /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		BF23BDD82BAC7E74000E2E0E /* libfmod.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfmod.dylib; path = ../../../fmod/lib/osx/libfmod.dylib; sourceTree = "<group>"; };
-		BF23BDDA2BAC81B1000E2E0E /* macOS_openFrameworks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = macOS_openFrameworks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF23BF432BAC872D000E2E0E /* ofAppiOSWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppiOSWindow.h; sourceTree = "<group>"; };
 		BF23BF442BAC872D000E2E0E /* ofAppiOSWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAppiOSWindow.mm; sourceTree = "<group>"; };
 		BF23BF452BAC872D000E2E0E /* ofxiOSApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSApp.h; sourceTree = "<group>"; };
@@ -668,6 +666,8 @@
 		BF6276B22BADC6C9008864C1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		BF6276B32BADC6C9008864C1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BF6276B42BADC774008864C1 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
+		BF6277F02BADCF7C008864C1 /* openFrameworks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = openFrameworks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF6277F12BADD5A9008864C1 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
 		BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cairo.xcframework; path = ../../../cairo/lib/macos/cairo.xcframework; sourceTree = "<group>"; };
 		BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
@@ -798,61 +798,60 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		BF23BD842BAC78E3000E2E0E /* Frameworks */ = {
+		BF6277B82BADCF7C008864C1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF6276B82BADCC27008864C1 /* OpenGL.framework in Frameworks */,
-				BF6276B72BADCC13008864C1 /* Cocoa.framework in Frameworks */,
-				BF23BDA12BAC792F000E2E0E /* pixman.xcframework in Frameworks */,
-				BF23BDA22BAC792F000E2E0E /* zlib.xcframework in Frameworks */,
-				BF23BDA32BAC792F000E2E0E /* curl.xcframework in Frameworks */,
-				BF23BDA42BAC792F000E2E0E /* cairo.xcframework in Frameworks */,
-				BF23BDA52BAC792F000E2E0E /* FreeImage.xcframework in Frameworks */,
-				BF23BDA62BAC792F000E2E0E /* tess2.xcframework in Frameworks */,
-				BF23BDA72BAC792F000E2E0E /* pugixml.xcframework in Frameworks */,
-				BF23BD9F2BAC792F000E2E0E /* glew.xcframework in Frameworks */,
-				BF23BDA82BAC792F000E2E0E /* glfw.xcframework in Frameworks */,
-				BF23BDA92BAC792F000E2E0E /* rtAudio.xcframework in Frameworks */,
-				BF23BD9C2BAC792F000E2E0E /* fmt.xcframework in Frameworks */,
-				BF23BD9D2BAC792F000E2E0E /* uriparser.xcframework in Frameworks */,
-				BF23BD9E2BAC792F000E2E0E /* libpng.xcframework in Frameworks */,
-				BF23BDA02BAC792F000E2E0E /* freetype.xcframework in Frameworks */,
-				BF6276AB2BADB16E008864C1 /* openssl.xcframework in Frameworks */,
-				BF23C02B2BAD0955000E2E0E /* TVUIKit.framework in Frameworks */,
-				BF23C02C2BAD0955000E2E0E /* UIKit.framework in Frameworks */,
-				BF23C0282BAD02DE000E2E0E /* IOKit.framework in Frameworks */,
-				BF23BDD92BAC7E74000E2E0E /* libfmod.dylib in Frameworks */,
-				BF23BDB22BAC7A70000E2E0E /* AudioToolbox.framework in Frameworks */,
-				BF23BDB32BAC7A70000E2E0E /* AVFoundation.framework in Frameworks */,
-				BF23C0142BAC8A1C000E2E0E /* CoreGraphics.framework in Frameworks */,
-				BF23BDCC2BAC7DDF000E2E0E /* GameController.framework in Frameworks */,
-				BF23C00C2BAC8A1C000E2E0E /* QuartzCore.framework in Frameworks */,
-				BF23BDB42BAC7A70000E2E0E /* CoreFoundation.framework in Frameworks */,
-				BF23BDB52BAC7A70000E2E0E /* Accelerate.framework in Frameworks */,
-				BF23BDB62BAC7A70000E2E0E /* CoreAudioTypes.framework in Frameworks */,
-				BF23C0062BAC8A1C000E2E0E /* MapKit.framework in Frameworks */,
-				BF23BDB72BAC7A70000E2E0E /* CoreData.framework in Frameworks */,
-				BF23BDCB2BAC7DDF000E2E0E /* CoreHaptics.framework in Frameworks */,
-				BF23BDCD2BAC7DDF000E2E0E /* GLKit.framework in Frameworks */,
-				BF23C01E2BAC8A1C000E2E0E /* CoreMedia.framework in Frameworks */,
-				BF23BDB82BAC7A70000E2E0E /* CoreAudio.framework in Frameworks */,
-				BF23BDD52BAC7DDF000E2E0E /* CoreMedia.framework in Frameworks */,
-				BF23C0222BAC8A1C000E2E0E /* CoreMotion.framework in Frameworks */,
-				BF23BDD62BAC7DDF000E2E0E /* CoreVideo.framework in Frameworks */,
-				BF23C01C2BAC8A1C000E2E0E /* CoreAudio.framework in Frameworks */,
-				BF23BDCE2BAC7DDF000E2E0E /* QuartzCore.framework in Frameworks */,
-				BF23C0182BAC8A1C000E2E0E /* CoreLocation.framework in Frameworks */,
-				BF23BDD12BAC7DDF000E2E0E /* Foundation.framework in Frameworks */,
-				BF23BDD22BAC7DDF000E2E0E /* CoreGraphics.framework in Frameworks */,
-				BF23BDCA2BAC7DDF000E2E0E /* Metal.framework in Frameworks */,
-				BF23BDD42BAC7DDF000E2E0E /* CoreLocation.framework in Frameworks */,
-				BF23C0042BAC8A1C000E2E0E /* GameController.framework in Frameworks */,
-				BF23C00A2BAC8A1C000E2E0E /* AudioToolbox.framework in Frameworks */,
-				BF23C01A2BAC8A1C000E2E0E /* AVFoundation.framework in Frameworks */,
-				BF23BDD32BAC7DDF000E2E0E /* OpenAL.framework in Frameworks */,
-				BF23C0202BAC8A1C000E2E0E /* CoreVideo.framework in Frameworks */,
-				BF23C0122BAC8A1C000E2E0E /* Foundation.framework in Frameworks */,
+				BF6277F22BADD5A9008864C1 /* AVFAudio.framework in Frameworks */,
+				BF6277B92BADCF7C008864C1 /* OpenGL.framework in Frameworks */,
+				BF6277BA2BADCF7C008864C1 /* Cocoa.framework in Frameworks */,
+				BF6277BB2BADCF7C008864C1 /* pixman.xcframework in Frameworks */,
+				BF6277BC2BADCF7C008864C1 /* zlib.xcframework in Frameworks */,
+				BF6277BD2BADCF7C008864C1 /* curl.xcframework in Frameworks */,
+				BF6277BE2BADCF7C008864C1 /* cairo.xcframework in Frameworks */,
+				BF6277BF2BADCF7C008864C1 /* FreeImage.xcframework in Frameworks */,
+				BF6277C02BADCF7C008864C1 /* tess2.xcframework in Frameworks */,
+				BF6277C12BADCF7C008864C1 /* pugixml.xcframework in Frameworks */,
+				BF6277C22BADCF7C008864C1 /* glew.xcframework in Frameworks */,
+				BF6277C32BADCF7C008864C1 /* glfw.xcframework in Frameworks */,
+				BF6277C42BADCF7C008864C1 /* rtAudio.xcframework in Frameworks */,
+				BF6277C52BADCF7C008864C1 /* fmt.xcframework in Frameworks */,
+				BF6277C62BADCF7C008864C1 /* uriparser.xcframework in Frameworks */,
+				BF6277C72BADCF7C008864C1 /* libpng.xcframework in Frameworks */,
+				BF6277C82BADCF7C008864C1 /* freetype.xcframework in Frameworks */,
+				BF6277C92BADCF7C008864C1 /* openssl.xcframework in Frameworks */,
+				BF6277CA2BADCF7C008864C1 /* TVUIKit.framework in Frameworks */,
+				BF6277CB2BADCF7C008864C1 /* UIKit.framework in Frameworks */,
+				BF6277CC2BADCF7C008864C1 /* IOKit.framework in Frameworks */,
+				BF6277CD2BADCF7C008864C1 /* libfmod.dylib in Frameworks */,
+				BF6277CE2BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */,
+				BF6277CF2BADCF7C008864C1 /* AVFoundation.framework in Frameworks */,
+				BF6277D02BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */,
+				BF6277D12BADCF7C008864C1 /* GameController.framework in Frameworks */,
+				BF6277D22BADCF7C008864C1 /* QuartzCore.framework in Frameworks */,
+				BF6277D32BADCF7C008864C1 /* CoreFoundation.framework in Frameworks */,
+				BF6277D42BADCF7C008864C1 /* Accelerate.framework in Frameworks */,
+				BF6277D52BADCF7C008864C1 /* CoreAudioTypes.framework in Frameworks */,
+				BF6277D62BADCF7C008864C1 /* MapKit.framework in Frameworks */,
+				BF6277D72BADCF7C008864C1 /* CoreData.framework in Frameworks */,
+				BF6277D82BADCF7C008864C1 /* CoreHaptics.framework in Frameworks */,
+				BF6277D92BADCF7C008864C1 /* GLKit.framework in Frameworks */,
+				BF6277DA2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */,
+				BF6277DB2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */,
+				BF6277DC2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */,
+				BF6277DD2BADCF7C008864C1 /* CoreMotion.framework in Frameworks */,
+				BF6277DE2BADCF7C008864C1 /* CoreVideo.framework in Frameworks */,
+				BF6277DF2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */,
+				BF6277E02BADCF7C008864C1 /* QuartzCore.framework in Frameworks */,
+				BF6277E12BADCF7C008864C1 /* CoreLocation.framework in Frameworks */,
+				BF6277E22BADCF7C008864C1 /* Foundation.framework in Frameworks */,
+				BF6277E32BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */,
+				BF6277E42BADCF7C008864C1 /* Metal.framework in Frameworks */,
+				BF6277E52BADCF7C008864C1 /* CoreLocation.framework in Frameworks */,
+				BF6277E62BADCF7C008864C1 /* GameController.framework in Frameworks */,
+				BF6277E72BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */,
+				BF6277E82BADCF7C008864C1 /* AVFoundation.framework in Frameworks */,
+				BF6277E92BADCF7C008864C1 /* OpenAL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1148,6 +1147,7 @@
 		BF6276AC2BADB202008864C1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF6277F12BADD5A9008864C1 /* AVFAudio.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1281,9 +1281,9 @@
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				BF5BF83E2B7378ED0049DEF6 /* xcframeworks */,
 				BF23BDAA2BAC7A6F000E2E0E /* frameworks */,
-				BF23BDDA2BAC81B1000E2E0E /* macOS_openFrameworks.framework */,
 				BF6276AC2BADB202008864C1 /* Frameworks */,
 				BF6276AF2BADB855008864C1 /* openFrameworksDebug.a */,
+				BF6277F02BADCF7C008864C1 /* openFrameworks.framework */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -1445,60 +1445,60 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		BF23BD822BAC78E3000E2E0E /* Headers */ = {
+		BF6276BA2BADCF7C008864C1 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF23BFC62BAC872D000E2E0E /* ofxiOSSoundStream.h in Headers */,
-				BF23BFE62BAC872D000E2E0E /* ofxiOSExtras.h in Headers */,
-				BF23BFC82BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.h in Headers */,
-				BF23BFCB2BAC872D000E2E0E /* ofxOpenALSoundPlayer.h in Headers */,
-				BF23BFB22BAC872D000E2E0E /* ofxiOSGLKViewController.h in Headers */,
-				BF23BFC12BAC872D000E2E0E /* ESRenderer.h in Headers */,
-				BF23BFFC2BAC872D000E2E0E /* ofxiOSExtensions.h in Headers */,
-				BF23BFF12BAC872D000E2E0E /* ofxiPhoneExtras.h in Headers */,
-				BF23BFD22BAC872D000E2E0E /* SoundStream.h in Headers */,
-				BF23BFF62BAC872D000E2E0E /* ofxiOSVideoGrabber.h in Headers */,
-				BF23BFAB2BAC872D000E2E0E /* ofxiOSApp.h in Headers */,
-				BF23BFD42BAC872D000E2E0E /* ofxtvOSAppDelegate.h in Headers */,
-				BF23BFCD2BAC872D000E2E0E /* SoundEngine.h in Headers */,
-				BF23BFAC2BAC872D000E2E0E /* ofxiOSAppDelegate.h in Headers */,
-				BF23C0002BAC872D000E2E0E /* ofxAccelerometer.h in Headers */,
-				BF23BFBD2BAC872D000E2E0E /* ES1Renderer.h in Headers */,
-				BF23BFB02BAC872D000E2E0E /* ofxiOSGLKView.h in Headers */,
-				BF23BFEA2BAC872D000E2E0E /* ofxiOSKeyboard.h in Headers */,
-				BF23BFCE2BAC872D000E2E0E /* SoundInputStream.h in Headers */,
-				BF23BFAE2BAC872D000E2E0E /* ofxiOSEAGLView.h in Headers */,
-				BF23BFC42BAC872D000E2E0E /* ofxiOSSoundPlayer.h in Headers */,
-				BF23BFF42BAC872D000E2E0E /* AVFoundationVideoPlayer.h in Headers */,
-				BF23BFFD2BAC872D000E2E0E /* ofxiPhone.h in Headers */,
-				BF23BFDA2BAC872D000E2E0E /* ofxtvOSViewController.h in Headers */,
-				BF23BFD92BAC872D000E2E0E /* ofxtvOSURLFileLoader.h in Headers */,
-				BF23BFBF2BAC872D000E2E0E /* ES2Renderer.h in Headers */,
-				BF23BFA92BAC872D000E2E0E /* ofAppiOSWindow.h in Headers */,
-				BF23BFFB2BAC872D000E2E0E /* ofxiOSConstants.h in Headers */,
-				BF23BFD02BAC872D000E2E0E /* SoundOutputStream.h in Headers */,
-				BF23BFC22BAC872D000E2E0E /* AVSoundPlayer.h in Headers */,
-				BF23BFB82BAC872D000E2E0E /* ofxiOSAlertsListener.h in Headers */,
-				BF23BFDE2BAC872D000E2E0E /* ofxiOSCoreLocation.h in Headers */,
-				BF23BFF22BAC872D000E2E0E /* AVFoundationVideoGrabber.h in Headers */,
-				BF23BFD62BAC872D000E2E0E /* ofxtvOSGLKViewController.h in Headers */,
-				BF23BFFA2BAC872D000E2E0E /* ofxiOS.h in Headers */,
-				BF23BFEC2BAC872D000E2E0E /* ofxiOSMapKit.h in Headers */,
-				BF23BFB42BAC872D000E2E0E /* ofxiOSViewController.h in Headers */,
-				BF23BFBB2BAC872D000E2E0E /* EAGLView.h in Headers */,
-				BF6276B62BADC774008864C1 /* ofBaseTypes.h in Headers */,
-				BF23BFEE2BAC872D000E2E0E /* ofxiOSMapKitDelegate.h in Headers */,
-				BF23BFF82BAC872D000E2E0E /* ofxiOSVideoPlayer.h in Headers */,
-				BF23BFB92BAC872D000E2E0E /* EAGLKView.h in Headers */,
-				BF23BFFE2BAC872D000E2E0E /* ofxtvOS.h in Headers */,
-				BF23BFE82BAC872D000E2E0E /* ofxiOSImagePicker.h in Headers */,
-				BF23BFE22BAC872D000E2E0E /* ofxiOSEventAdapter.h in Headers */,
-				BF23BFE02BAC872D000E2E0E /* ofxiOSCoreMotion.h in Headers */,
-				BF23BFF02BAC872D000E2E0E /* ofxiOSMapKitListener.h in Headers */,
-				BF23BFDC2BAC872D000E2E0E /* ofxiOSCoreHaptics.h in Headers */,
-				BF23BFE42BAC872D000E2E0E /* ofxiOSExternalDisplay.h in Headers */,
-				BF23BFB62BAC872D000E2E0E /* ofxiOSAlerts.h in Headers */,
+				BF6276BB2BADCF7C008864C1 /* ofxiOSSoundStream.h in Headers */,
+				BF6276BC2BADCF7C008864C1 /* ofxiOSExtras.h in Headers */,
+				BF6276BD2BADCF7C008864C1 /* ofxiOSSoundStreamDelegate.h in Headers */,
+				BF6276BE2BADCF7C008864C1 /* ofxOpenALSoundPlayer.h in Headers */,
+				BF6276BF2BADCF7C008864C1 /* ofxiOSGLKViewController.h in Headers */,
+				BF6276C02BADCF7C008864C1 /* ESRenderer.h in Headers */,
+				BF6276C12BADCF7C008864C1 /* ofxiOSExtensions.h in Headers */,
+				BF6276C22BADCF7C008864C1 /* ofxiPhoneExtras.h in Headers */,
+				BF6276C32BADCF7C008864C1 /* SoundStream.h in Headers */,
+				BF6276C42BADCF7C008864C1 /* ofxiOSVideoGrabber.h in Headers */,
+				BF6276C52BADCF7C008864C1 /* ofxiOSApp.h in Headers */,
+				BF6276C62BADCF7C008864C1 /* ofxtvOSAppDelegate.h in Headers */,
+				BF6276C72BADCF7C008864C1 /* SoundEngine.h in Headers */,
+				BF6276C82BADCF7C008864C1 /* ofxiOSAppDelegate.h in Headers */,
+				BF6276C92BADCF7C008864C1 /* ofxAccelerometer.h in Headers */,
+				BF6276CA2BADCF7C008864C1 /* ES1Renderer.h in Headers */,
+				BF6276CB2BADCF7C008864C1 /* ofxiOSGLKView.h in Headers */,
+				BF6276CC2BADCF7C008864C1 /* ofxiOSKeyboard.h in Headers */,
+				BF6276CD2BADCF7C008864C1 /* SoundInputStream.h in Headers */,
+				BF6276CE2BADCF7C008864C1 /* ofxiOSEAGLView.h in Headers */,
+				BF6276CF2BADCF7C008864C1 /* ofxiOSSoundPlayer.h in Headers */,
+				BF6276D02BADCF7C008864C1 /* AVFoundationVideoPlayer.h in Headers */,
+				BF6276D12BADCF7C008864C1 /* ofxiPhone.h in Headers */,
+				BF6276D22BADCF7C008864C1 /* ofxtvOSViewController.h in Headers */,
+				BF6276D32BADCF7C008864C1 /* ofxtvOSURLFileLoader.h in Headers */,
+				BF6276D42BADCF7C008864C1 /* ES2Renderer.h in Headers */,
+				BF6276D52BADCF7C008864C1 /* ofAppiOSWindow.h in Headers */,
+				BF6276D62BADCF7C008864C1 /* ofxiOSConstants.h in Headers */,
+				BF6276D72BADCF7C008864C1 /* SoundOutputStream.h in Headers */,
+				BF6276D82BADCF7C008864C1 /* AVSoundPlayer.h in Headers */,
+				BF6276D92BADCF7C008864C1 /* ofxiOSAlertsListener.h in Headers */,
+				BF6276DA2BADCF7C008864C1 /* ofxiOSCoreLocation.h in Headers */,
+				BF6276DB2BADCF7C008864C1 /* AVFoundationVideoGrabber.h in Headers */,
+				BF6276DC2BADCF7C008864C1 /* ofxtvOSGLKViewController.h in Headers */,
+				BF6276DD2BADCF7C008864C1 /* ofxiOS.h in Headers */,
+				BF6276DE2BADCF7C008864C1 /* ofxiOSMapKit.h in Headers */,
+				BF6276DF2BADCF7C008864C1 /* ofxiOSViewController.h in Headers */,
+				BF6276E02BADCF7C008864C1 /* EAGLView.h in Headers */,
+				BF6276E12BADCF7C008864C1 /* ofBaseTypes.h in Headers */,
+				BF6276E22BADCF7C008864C1 /* ofxiOSMapKitDelegate.h in Headers */,
+				BF6276E32BADCF7C008864C1 /* ofxiOSVideoPlayer.h in Headers */,
+				BF6276E42BADCF7C008864C1 /* EAGLKView.h in Headers */,
+				BF6276E52BADCF7C008864C1 /* ofxtvOS.h in Headers */,
+				BF6276E62BADCF7C008864C1 /* ofxiOSImagePicker.h in Headers */,
+				BF6276E72BADCF7C008864C1 /* ofxiOSEventAdapter.h in Headers */,
+				BF6276E82BADCF7C008864C1 /* ofxiOSCoreMotion.h in Headers */,
+				BF6276E92BADCF7C008864C1 /* ofxiOSMapKitListener.h in Headers */,
+				BF6276EA2BADCF7C008864C1 /* ofxiOSCoreHaptics.h in Headers */,
+				BF6276EB2BADCF7C008864C1 /* ofxiOSExternalDisplay.h in Headers */,
+				BF6276EC2BADCF7C008864C1 /* ofxiOSAlerts.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1592,27 +1592,27 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BF23BD862BAC78E3000E2E0E /* macOS-openFrameworks */ = {
+		BF6276B92BADCF7C008864C1 /* openFrameworks */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BF23BD9A2BAC78E3000E2E0E /* Build configuration list for PBXNativeTarget "macOS-openFrameworks" */;
+			buildConfigurationList = BF6277ED2BADCF7C008864C1 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
 			buildPhases = (
-				BF23BD822BAC78E3000E2E0E /* Headers */,
-				BF23BD832BAC78E3000E2E0E /* Sources */,
-				BF23BD842BAC78E3000E2E0E /* Frameworks */,
-				BF23BD852BAC78E3000E2E0E /* Resources */,
+				BF6276BA2BADCF7C008864C1 /* Headers */,
+				BF6276ED2BADCF7C008864C1 /* Sources */,
+				BF6277B82BADCF7C008864C1 /* Frameworks */,
+				BF6277EC2BADCF7C008864C1 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "macOS-openFrameworks";
+			name = openFrameworks;
 			productName = "macOS-openFrameworks";
-			productReference = BF23BDDA2BAC81B1000E2E0E /* macOS_openFrameworks.framework */;
+			productReference = BF6277F02BADCF7C008864C1 /* openFrameworks.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		E4B27C1410CBEB8E00536013 /* openFrameworks */ = {
+		E4B27C1410CBEB8E00536013 /* openFrameworks-static */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
+			buildConfigurationList = E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks-static" */;
 			buildPhases = (
 				E4B27C1110CBEB8E00536013 /* Headers */,
 				E4B27C1210CBEB8E00536013 /* Sources */,
@@ -1622,7 +1622,7 @@
 			);
 			dependencies = (
 			);
-			name = openFrameworks;
+			name = "openFrameworks-static";
 			productName = openFrameworksLib;
 			productReference = BF6276AF2BADB855008864C1 /* openFrameworksDebug.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1636,11 +1636,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1530;
 				LastUpgradeCheck = 1530;
-				TargetAttributes = {
-					BF23BD862BAC78E3000E2E0E = {
-						CreatedOnToolsVersion = 15.3;
-					};
-				};
 			};
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1658,14 +1653,14 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E4B27C1410CBEB8E00536013 /* openFrameworks */,
-				BF23BD862BAC78E3000E2E0E /* macOS-openFrameworks */,
+				E4B27C1410CBEB8E00536013 /* openFrameworks-static */,
+				BF6276B92BADCF7C008864C1 /* openFrameworks */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		BF23BD852BAC78E3000E2E0E /* Resources */ = {
+		BF6277EC2BADCF7C008864C1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1675,212 +1670,212 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		BF23BD832BAC78E3000E2E0E /* Sources */ = {
+		BF6276ED2BADCF7C008864C1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF23BDDB2BAC8484000E2E0E /* ofMain.h in Sources */,
-				BF23BFE52BAC872D000E2E0E /* ofxiOSExternalDisplay.mm in Sources */,
-				BF23BFBA2BAC872D000E2E0E /* EAGLKView.m in Sources */,
-				BF23BFB12BAC872D000E2E0E /* ofxiOSGLKView.mm in Sources */,
-				BF23BDDC2BAC8484000E2E0E /* of3dUtils.cpp in Sources */,
-				BF23BFDB2BAC872D000E2E0E /* ofxtvOSViewController.mm in Sources */,
-				BF23BDDD2BAC8484000E2E0E /* of3dUtils.h in Sources */,
-				BF23BDDE2BAC8484000E2E0E /* ofCamera.cpp in Sources */,
-				BF23BFBE2BAC872D000E2E0E /* ES1Renderer.m in Sources */,
-				BF23BDDF2BAC8484000E2E0E /* ofCamera.h in Sources */,
-				BF23BDE02BAC8484000E2E0E /* ofEasyCam.cpp in Sources */,
-				BF23BDE12BAC8484000E2E0E /* ofEasyCam.h in Sources */,
-				BF23BDE22BAC8484000E2E0E /* ofMesh.inl in Sources */,
-				BF23BDE32BAC8484000E2E0E /* ofMesh.h in Sources */,
-				BF23BFD82BAC872D000E2E0E /* ofxtvOSURLFileLoader.cpp in Sources */,
-				BF23BDE42BAC8484000E2E0E /* ofNode.cpp in Sources */,
-				BF23BDE52BAC8484000E2E0E /* ofNode.h in Sources */,
-				BF23BDE62BAC8484000E2E0E /* of3dPrimitives.h in Sources */,
-				BF23BDE72BAC8484000E2E0E /* of3dPrimitives.cpp in Sources */,
-				BF23BDE82BAC8484000E2E0E /* ofWindowSettings.h in Sources */,
-				BF23BFE92BAC872D000E2E0E /* ofxiOSImagePicker.mm in Sources */,
-				BF23BFC72BAC872D000E2E0E /* ofxiOSSoundStream.mm in Sources */,
-				BF23BDE92BAC8484000E2E0E /* ofMainLoop.cpp in Sources */,
-				BF23BDEA2BAC8484000E2E0E /* ofMainLoop.h in Sources */,
-				BF23BDEB2BAC8484000E2E0E /* ofAppNoWindow.cpp in Sources */,
-				BF23BDEC2BAC8484000E2E0E /* ofAppNoWindow.h in Sources */,
-				BF23BDED2BAC8484000E2E0E /* ofAppGLFWWindow.cpp in Sources */,
-				BF23BFCA2BAC872D000E2E0E /* ofxOpenALSoundPlayer.cpp in Sources */,
-				BF23BDEE2BAC8484000E2E0E /* ofAppGLFWWindow.h in Sources */,
-				BF23BFD12BAC872D000E2E0E /* SoundOutputStream.m in Sources */,
-				BF23BFC32BAC872D000E2E0E /* AVSoundPlayer.m in Sources */,
-				BF23BFD72BAC872D000E2E0E /* ofxtvOSGLKViewController.mm in Sources */,
-				BF23BDEF2BAC8484000E2E0E /* ofAppBaseWindow.h in Sources */,
-				BF23BFAF2BAC872D000E2E0E /* ofxiOSEAGLView.mm in Sources */,
-				BF23BDF02BAC8484000E2E0E /* ofAppRunner.cpp in Sources */,
-				BF23BDF12BAC8484000E2E0E /* ofAppRunner.h in Sources */,
-				BF23BDF22BAC8484000E2E0E /* ofBaseApp.h in Sources */,
-				BF23BDF32BAC8484000E2E0E /* ofBaseApp.cpp in Sources */,
-				BF23BDF42BAC8484000E2E0E /* ofArduino.cpp in Sources */,
-				BF23BDF52BAC8484000E2E0E /* ofArduino.h in Sources */,
-				BF23BDF62BAC8484000E2E0E /* ofSerial.cpp in Sources */,
-				BF23BDF72BAC8484000E2E0E /* ofSerial.h in Sources */,
-				BF23BDF82BAC8484000E2E0E /* ofEvent.h in Sources */,
-				BF23BDF92BAC8484000E2E0E /* ofEvents.cpp in Sources */,
-				BF23BDFA2BAC8484000E2E0E /* ofEvents.h in Sources */,
-				BF23BDFB2BAC8484000E2E0E /* ofEventUtils.h in Sources */,
-				BF23BDFC2BAC8484000E2E0E /* ofGLBaseTypes.h in Sources */,
-				BF23BDFD2BAC8484000E2E0E /* ofBufferObject.cpp in Sources */,
-				BF23BDFE2BAC8484000E2E0E /* ofBufferObject.h in Sources */,
-				BF23BDFF2BAC8484000E2E0E /* ofCubeMap.cpp in Sources */,
-				BF23BE002BAC8484000E2E0E /* ofCubeMap.h in Sources */,
-				BF23BE012BAC8484000E2E0E /* ofCubeMapShaders.h in Sources */,
-				BF23BE022BAC8484000E2E0E /* ofGLProgrammableRenderer.cpp in Sources */,
-				BF23BE032BAC8484000E2E0E /* ofGLProgrammableRenderer.h in Sources */,
-				BF23BE042BAC8484000E2E0E /* ofFbo.cpp in Sources */,
-				BF23BE052BAC8484000E2E0E /* ofFbo.h in Sources */,
-				BF23BFCC2BAC872D000E2E0E /* SoundEngine.cpp in Sources */,
-				BF23BFAA2BAC872D000E2E0E /* ofAppiOSWindow.mm in Sources */,
-				BF23BFD32BAC872D000E2E0E /* SoundStream.m in Sources */,
-				BF23BE062BAC8484000E2E0E /* ofGLRenderer.cpp in Sources */,
-				BF23BE072BAC8484000E2E0E /* ofGLRenderer.h in Sources */,
-				BF23BE082BAC8484000E2E0E /* ofGLUtils.cpp in Sources */,
-				BF23BE092BAC8484000E2E0E /* ofGLUtils.h in Sources */,
-				BF23BE0A2BAC8484000E2E0E /* ofLight.cpp in Sources */,
-				BF23BFB72BAC872D000E2E0E /* ofxiOSAlerts.mm in Sources */,
-				BF23BE0B2BAC8484000E2E0E /* ofLight.h in Sources */,
-				BF23BE0C2BAC8484000E2E0E /* ofShadow.cpp in Sources */,
-				BF23BE0D2BAC8484000E2E0E /* ofShadow.h in Sources */,
-				BF23BFB52BAC872D000E2E0E /* ofxiOSViewController.mm in Sources */,
-				BF23BE0E2BAC8484000E2E0E /* ofMaterial.cpp in Sources */,
-				BF23BE0F2BAC8484000E2E0E /* ofMaterial.h in Sources */,
-				BF23BFDF2BAC872D000E2E0E /* ofxiOSCoreLocation.mm in Sources */,
-				BF23BE102BAC8484000E2E0E /* ofShader.cpp in Sources */,
-				BF23BE112BAC8484000E2E0E /* ofShader.h in Sources */,
-				BF23BE122BAC8484000E2E0E /* ofTexture.cpp in Sources */,
-				BF23BE132BAC8484000E2E0E /* ofTexture.h in Sources */,
-				BF23BE142BAC8484000E2E0E /* ofVbo.cpp in Sources */,
-				BF23BFE72BAC872D000E2E0E /* ofxiOSExtras.mm in Sources */,
-				BF23BFEF2BAC872D000E2E0E /* ofxiOSMapKitDelegate.mm in Sources */,
-				BF23BE152BAC8484000E2E0E /* ofVbo.h in Sources */,
-				BF23BE162BAC8484000E2E0E /* ofVboMesh.cpp in Sources */,
-				BF23BE172BAC8484000E2E0E /* ofVboMesh.h in Sources */,
-				BF23BE182BAC8484000E2E0E /* ofGraphicsBaseTypes.cpp in Sources */,
-				BF23BE192BAC8484000E2E0E /* ofGraphicsBaseTypes.h in Sources */,
-				BF23BE1A2BAC8484000E2E0E /* ofGraphicsConstants.h in Sources */,
-				BF23BE1B2BAC8484000E2E0E /* ofPath.cpp in Sources */,
-				BF23BFF52BAC872D000E2E0E /* AVFoundationVideoPlayer.m in Sources */,
-				BF23BFCF2BAC872D000E2E0E /* SoundInputStream.m in Sources */,
-				BF23BE1C2BAC8484000E2E0E /* ofPath.h in Sources */,
-				BF23BE1D2BAC8484000E2E0E /* ofPolyline.inl in Sources */,
-				BF23BE1E2BAC8484000E2E0E /* ofPolyline.h in Sources */,
-				BF23BE1F2BAC8484000E2E0E /* ofRendererCollection.h in Sources */,
-				BF23BE202BAC8484000E2E0E /* ofRendererCollection.cpp in Sources */,
-				BF23BE212BAC8484000E2E0E /* ofCairoRenderer.cpp in Sources */,
-				BF23BE222BAC8484000E2E0E /* ofCairoRenderer.h in Sources */,
-				BF23BE232BAC8484000E2E0E /* ofBitmapFont.cpp in Sources */,
-				BF23BE242BAC8484000E2E0E /* ofBitmapFont.h in Sources */,
-				BF23BE252BAC8484000E2E0E /* ofGraphics.cpp in Sources */,
-				BF23BE262BAC8484000E2E0E /* ofGraphics.h in Sources */,
-				BF23BE272BAC8484000E2E0E /* ofGraphicsCairo.cpp in Sources */,
-				BF23BFED2BAC872D000E2E0E /* ofxiOSMapKit.mm in Sources */,
-				BF23BE282BAC8484000E2E0E /* ofGraphicsCairo.h in Sources */,
-				BF23BE292BAC8484000E2E0E /* of3dGraphics.cpp in Sources */,
-				BF23BE2A2BAC8484000E2E0E /* of3dGraphics.h in Sources */,
-				BF23BE2B2BAC8484000E2E0E /* ofImage.cpp in Sources */,
-				BF23BE2C2BAC8484000E2E0E /* ofImage.h in Sources */,
-				BF23BE2D2BAC8484000E2E0E /* ofPixels.cpp in Sources */,
-				BF23BFC02BAC872D000E2E0E /* ES2Renderer.m in Sources */,
-				BF23BE2E2BAC8484000E2E0E /* ofPixels.h in Sources */,
-				BF23BE2F2BAC8484000E2E0E /* ofTessellator.cpp in Sources */,
-				BF23BFC92BAC872D000E2E0E /* ofxiOSSoundStreamDelegate.mm in Sources */,
-				BF23BE302BAC8484000E2E0E /* ofTessellator.h in Sources */,
-				BF23BE312BAC8484000E2E0E /* ofTrueTypeFont.cpp in Sources */,
-				BF23BE322BAC8484000E2E0E /* ofTrueTypeFont.h in Sources */,
-				BF23BE332BAC8484000E2E0E /* ofAVEngineSoundPlayer.h in Sources */,
-				BF23BE342BAC8484000E2E0E /* ofAVEngineSoundPlayer.mm in Sources */,
-				BF23BE352BAC8484000E2E0E /* ofSoundBaseTypes.cpp in Sources */,
-				BF23BE362BAC8484000E2E0E /* ofSoundBaseTypes.h in Sources */,
-				BF23BFE12BAC872D000E2E0E /* ofxiOSCoreMotion.mm in Sources */,
-				BF23BE372BAC8484000E2E0E /* ofFmodSoundPlayer.cpp in Sources */,
-				BF23BE382BAC8484000E2E0E /* ofFmodSoundPlayer.h in Sources */,
-				BF23BE392BAC8484000E2E0E /* ofOpenALSoundPlayer.cpp in Sources */,
-				BF23BE3A2BAC8484000E2E0E /* ofOpenALSoundPlayer.h in Sources */,
-				BF23BE3B2BAC8484000E2E0E /* ofRtAudioSoundStream.cpp in Sources */,
-				BF23BE3C2BAC8484000E2E0E /* ofRtAudioSoundStream.h in Sources */,
-				BF23BE3D2BAC8484000E2E0E /* ofSoundBuffer.cpp in Sources */,
-				BF23BE3E2BAC8484000E2E0E /* ofSoundBuffer.h in Sources */,
-				BF23BFF72BAC872D000E2E0E /* ofxiOSVideoGrabber.mm in Sources */,
-				BF23BE3F2BAC8484000E2E0E /* ofSoundPlayer.cpp in Sources */,
-				BF23BE402BAC8484000E2E0E /* ofSoundPlayer.h in Sources */,
-				BF23BE412BAC8484000E2E0E /* ofSoundStream.cpp in Sources */,
-				BF23BFAD2BAC872D000E2E0E /* ofxiOSAppDelegate.mm in Sources */,
-				BF23BE422BAC8484000E2E0E /* ofSoundStream.h in Sources */,
-				BF23BE432BAC8484000E2E0E /* ofSoundUtils.h in Sources */,
-				BF23BE442BAC8484000E2E0E /* ofMathConstants.h in Sources */,
-				BF23BE452BAC8484000E2E0E /* ofMath.cpp in Sources */,
-				BF23BE462BAC8484000E2E0E /* ofMath.h in Sources */,
-				BF23BE472BAC8484000E2E0E /* ofMatrix3x3.cpp in Sources */,
-				BF23BE482BAC8484000E2E0E /* ofMatrix3x3.h in Sources */,
-				BF23BE492BAC8484000E2E0E /* ofMatrix4x4.cpp in Sources */,
-				BF23BE4A2BAC8484000E2E0E /* ofMatrix4x4.h in Sources */,
-				BF23BFD52BAC872D000E2E0E /* ofxtvOSAppDelegate.mm in Sources */,
-				BF23BE4B2BAC8484000E2E0E /* ofQuaternion.cpp in Sources */,
-				BF23BE4C2BAC8484000E2E0E /* ofQuaternion.h in Sources */,
-				BF23BE4D2BAC8484000E2E0E /* ofVec2f.cpp in Sources */,
-				BF23BE4E2BAC8484000E2E0E /* ofVec2f.h in Sources */,
-				BF23BE4F2BAC8484000E2E0E /* ofVec3f.h in Sources */,
-				BF23BE502BAC8484000E2E0E /* ofVec4f.cpp in Sources */,
-				BF23BE512BAC8484000E2E0E /* ofVec4f.h in Sources */,
-				BF23BE522BAC8484000E2E0E /* ofVectorMath.h in Sources */,
-				BF23BE532BAC8484000E2E0E /* ofParameter.cpp in Sources */,
-				BF23BFFF2BAC872D000E2E0E /* ofxAccelerometer.cpp in Sources */,
-				BF23BE542BAC8484000E2E0E /* ofParameter.h in Sources */,
-				BF23BE552BAC8484000E2E0E /* ofParameterGroup.cpp in Sources */,
-				BF23BFEB2BAC872D000E2E0E /* ofxiOSKeyboard.mm in Sources */,
-				BF23BFF32BAC872D000E2E0E /* AVFoundationVideoGrabber.mm in Sources */,
-				BF23BE572BAC8484000E2E0E /* ofBaseTypes.cpp in Sources */,
-				BF23BFBC2BAC872D000E2E0E /* EAGLView.m in Sources */,
-				BF23BE582BAC8484000E2E0E /* ofColor.cpp in Sources */,
-				BF23BE592BAC8484000E2E0E /* ofColor.h in Sources */,
-				BF23BE5A2BAC8484000E2E0E /* ofPoint.h in Sources */,
-				BF23BE5B2BAC8484000E2E0E /* ofRectangle.cpp in Sources */,
-				BF23BE5C2BAC8484000E2E0E /* ofRectangle.h in Sources */,
-				BF23BFDD2BAC872D000E2E0E /* ofxiOSCoreHaptics.mm in Sources */,
-				BF23BE5D2BAC8484000E2E0E /* ofTypes.h in Sources */,
-				BF23BE5E2BAC8484000E2E0E /* ofFpsCounter.cpp in Sources */,
-				BF23BE5F2BAC8484000E2E0E /* ofFpsCounter.h in Sources */,
-				BF23BE602BAC8484000E2E0E /* ofTimer.cpp in Sources */,
-				BF23BFC52BAC872D000E2E0E /* ofxiOSSoundPlayer.mm in Sources */,
-				BF23BE612BAC8484000E2E0E /* ofTimer.h in Sources */,
-				BF23BFB32BAC872D000E2E0E /* ofxiOSGLKViewController.mm in Sources */,
-				BF23BE622BAC8484000E2E0E /* ofXml.cpp in Sources */,
-				BF23BE632BAC8484000E2E0E /* ofXml.h in Sources */,
-				BF23BE642BAC8484000E2E0E /* ofMatrixStack.cpp in Sources */,
-				BF23BE652BAC8484000E2E0E /* ofMatrixStack.h in Sources */,
-				BF23BE662BAC8484000E2E0E /* ofConstants.h in Sources */,
-				BF23BE672BAC8484000E2E0E /* ofFileUtils.cpp in Sources */,
-				BF23BE682BAC8484000E2E0E /* ofFileUtils.h in Sources */,
-				BF23BE692BAC8484000E2E0E /* ofLog.cpp in Sources */,
-				BF23BE6A2BAC8484000E2E0E /* ofLog.h in Sources */,
-				BF23BE6B2BAC8484000E2E0E /* ofNoise.h in Sources */,
-				BF23BE6C2BAC8484000E2E0E /* ofSystemUtils.cpp in Sources */,
-				BF23BE6D2BAC8484000E2E0E /* ofSystemUtils.h in Sources */,
-				BF23BE6E2BAC8484000E2E0E /* ofThread.cpp in Sources */,
-				BF23BE6F2BAC8484000E2E0E /* ofThread.h in Sources */,
-				BF23BE702BAC8484000E2E0E /* ofURLFileLoader.cpp in Sources */,
-				BF23BFF92BAC872D000E2E0E /* ofxiOSVideoPlayer.mm in Sources */,
-				BF23BE712BAC8484000E2E0E /* ofURLFileLoader.h in Sources */,
-				BF23BE722BAC8484000E2E0E /* ofUtils.cpp in Sources */,
-				BF23BE732BAC8484000E2E0E /* ofUtils.h in Sources */,
-				BF23BE742BAC8484000E2E0E /* ofVideoBaseTypes.h in Sources */,
-				BF23BE752BAC8484000E2E0E /* ofVideoGrabber.cpp in Sources */,
-				BF23BE762BAC8484000E2E0E /* ofVideoGrabber.h in Sources */,
-				BF23BE772BAC8484000E2E0E /* ofVideoPlayer.cpp in Sources */,
-				BF23BFE32BAC872D000E2E0E /* ofxiOSEventAdapter.mm in Sources */,
-				BF23BE782BAC8484000E2E0E /* ofVideoPlayer.h in Sources */,
-				BF23BE792BAC8484000E2E0E /* ofAVFoundationGrabber.mm in Sources */,
-				BF23BE7A2BAC8484000E2E0E /* ofAVFoundationGrabber.h in Sources */,
-				BF23BE7B2BAC8484000E2E0E /* ofAVFoundationVideoPlayer.h in Sources */,
-				BF23BE7C2BAC8484000E2E0E /* ofAVFoundationVideoPlayer.m in Sources */,
-				BF23BE7D2BAC8484000E2E0E /* ofAVFoundationPlayer.h in Sources */,
-				BF23BE7E2BAC8484000E2E0E /* ofAVFoundationPlayer.mm in Sources */,
+				BF6276EE2BADCF7C008864C1 /* ofMain.h in Sources */,
+				BF6276EF2BADCF7C008864C1 /* ofxiOSExternalDisplay.mm in Sources */,
+				BF6276F02BADCF7C008864C1 /* EAGLKView.m in Sources */,
+				BF6276F12BADCF7C008864C1 /* ofxiOSGLKView.mm in Sources */,
+				BF6276F22BADCF7C008864C1 /* of3dUtils.cpp in Sources */,
+				BF6276F32BADCF7C008864C1 /* ofxtvOSViewController.mm in Sources */,
+				BF6276F42BADCF7C008864C1 /* of3dUtils.h in Sources */,
+				BF6276F52BADCF7C008864C1 /* ofCamera.cpp in Sources */,
+				BF6276F62BADCF7C008864C1 /* ES1Renderer.m in Sources */,
+				BF6276F72BADCF7C008864C1 /* ofCamera.h in Sources */,
+				BF6276F82BADCF7C008864C1 /* ofEasyCam.cpp in Sources */,
+				BF6276F92BADCF7C008864C1 /* ofEasyCam.h in Sources */,
+				BF6276FA2BADCF7C008864C1 /* ofMesh.inl in Sources */,
+				BF6276FB2BADCF7C008864C1 /* ofMesh.h in Sources */,
+				BF6276FC2BADCF7C008864C1 /* ofxtvOSURLFileLoader.cpp in Sources */,
+				BF6276FD2BADCF7C008864C1 /* ofNode.cpp in Sources */,
+				BF6276FE2BADCF7C008864C1 /* ofNode.h in Sources */,
+				BF6276FF2BADCF7C008864C1 /* of3dPrimitives.h in Sources */,
+				BF6277002BADCF7C008864C1 /* of3dPrimitives.cpp in Sources */,
+				BF6277012BADCF7C008864C1 /* ofWindowSettings.h in Sources */,
+				BF6277022BADCF7C008864C1 /* ofxiOSImagePicker.mm in Sources */,
+				BF6277032BADCF7C008864C1 /* ofxiOSSoundStream.mm in Sources */,
+				BF6277042BADCF7C008864C1 /* ofMainLoop.cpp in Sources */,
+				BF6277052BADCF7C008864C1 /* ofMainLoop.h in Sources */,
+				BF6277062BADCF7C008864C1 /* ofAppNoWindow.cpp in Sources */,
+				BF6277072BADCF7C008864C1 /* ofAppNoWindow.h in Sources */,
+				BF6277082BADCF7C008864C1 /* ofAppGLFWWindow.cpp in Sources */,
+				BF6277092BADCF7C008864C1 /* ofxOpenALSoundPlayer.cpp in Sources */,
+				BF62770A2BADCF7C008864C1 /* ofAppGLFWWindow.h in Sources */,
+				BF62770B2BADCF7C008864C1 /* SoundOutputStream.m in Sources */,
+				BF62770C2BADCF7C008864C1 /* AVSoundPlayer.m in Sources */,
+				BF62770D2BADCF7C008864C1 /* ofxtvOSGLKViewController.mm in Sources */,
+				BF62770E2BADCF7C008864C1 /* ofAppBaseWindow.h in Sources */,
+				BF62770F2BADCF7C008864C1 /* ofxiOSEAGLView.mm in Sources */,
+				BF6277102BADCF7C008864C1 /* ofAppRunner.cpp in Sources */,
+				BF6277112BADCF7C008864C1 /* ofAppRunner.h in Sources */,
+				BF6277122BADCF7C008864C1 /* ofBaseApp.h in Sources */,
+				BF6277132BADCF7C008864C1 /* ofBaseApp.cpp in Sources */,
+				BF6277142BADCF7C008864C1 /* ofArduino.cpp in Sources */,
+				BF6277152BADCF7C008864C1 /* ofArduino.h in Sources */,
+				BF6277162BADCF7C008864C1 /* ofSerial.cpp in Sources */,
+				BF6277172BADCF7C008864C1 /* ofSerial.h in Sources */,
+				BF6277182BADCF7C008864C1 /* ofEvent.h in Sources */,
+				BF6277192BADCF7C008864C1 /* ofEvents.cpp in Sources */,
+				BF62771A2BADCF7C008864C1 /* ofEvents.h in Sources */,
+				BF62771B2BADCF7C008864C1 /* ofEventUtils.h in Sources */,
+				BF62771C2BADCF7C008864C1 /* ofGLBaseTypes.h in Sources */,
+				BF62771D2BADCF7C008864C1 /* ofBufferObject.cpp in Sources */,
+				BF62771E2BADCF7C008864C1 /* ofBufferObject.h in Sources */,
+				BF62771F2BADCF7C008864C1 /* ofCubeMap.cpp in Sources */,
+				BF6277202BADCF7C008864C1 /* ofCubeMap.h in Sources */,
+				BF6277212BADCF7C008864C1 /* ofCubeMapShaders.h in Sources */,
+				BF6277222BADCF7C008864C1 /* ofGLProgrammableRenderer.cpp in Sources */,
+				BF6277232BADCF7C008864C1 /* ofGLProgrammableRenderer.h in Sources */,
+				BF6277242BADCF7C008864C1 /* ofFbo.cpp in Sources */,
+				BF6277252BADCF7C008864C1 /* ofFbo.h in Sources */,
+				BF6277262BADCF7C008864C1 /* SoundEngine.cpp in Sources */,
+				BF6277272BADCF7C008864C1 /* ofAppiOSWindow.mm in Sources */,
+				BF6277282BADCF7C008864C1 /* SoundStream.m in Sources */,
+				BF6277292BADCF7C008864C1 /* ofGLRenderer.cpp in Sources */,
+				BF62772A2BADCF7C008864C1 /* ofGLRenderer.h in Sources */,
+				BF62772B2BADCF7C008864C1 /* ofGLUtils.cpp in Sources */,
+				BF62772C2BADCF7C008864C1 /* ofGLUtils.h in Sources */,
+				BF62772D2BADCF7C008864C1 /* ofLight.cpp in Sources */,
+				BF62772E2BADCF7C008864C1 /* ofxiOSAlerts.mm in Sources */,
+				BF62772F2BADCF7C008864C1 /* ofLight.h in Sources */,
+				BF6277302BADCF7C008864C1 /* ofShadow.cpp in Sources */,
+				BF6277312BADCF7C008864C1 /* ofShadow.h in Sources */,
+				BF6277322BADCF7C008864C1 /* ofxiOSViewController.mm in Sources */,
+				BF6277332BADCF7C008864C1 /* ofMaterial.cpp in Sources */,
+				BF6277342BADCF7C008864C1 /* ofMaterial.h in Sources */,
+				BF6277352BADCF7C008864C1 /* ofxiOSCoreLocation.mm in Sources */,
+				BF6277362BADCF7C008864C1 /* ofShader.cpp in Sources */,
+				BF6277372BADCF7C008864C1 /* ofShader.h in Sources */,
+				BF6277382BADCF7C008864C1 /* ofTexture.cpp in Sources */,
+				BF6277392BADCF7C008864C1 /* ofTexture.h in Sources */,
+				BF62773A2BADCF7C008864C1 /* ofVbo.cpp in Sources */,
+				BF62773B2BADCF7C008864C1 /* ofxiOSExtras.mm in Sources */,
+				BF62773C2BADCF7C008864C1 /* ofxiOSMapKitDelegate.mm in Sources */,
+				BF62773D2BADCF7C008864C1 /* ofVbo.h in Sources */,
+				BF62773E2BADCF7C008864C1 /* ofVboMesh.cpp in Sources */,
+				BF62773F2BADCF7C008864C1 /* ofVboMesh.h in Sources */,
+				BF6277402BADCF7C008864C1 /* ofGraphicsBaseTypes.cpp in Sources */,
+				BF6277412BADCF7C008864C1 /* ofGraphicsBaseTypes.h in Sources */,
+				BF6277422BADCF7C008864C1 /* ofGraphicsConstants.h in Sources */,
+				BF6277432BADCF7C008864C1 /* ofPath.cpp in Sources */,
+				BF6277442BADCF7C008864C1 /* AVFoundationVideoPlayer.m in Sources */,
+				BF6277452BADCF7C008864C1 /* SoundInputStream.m in Sources */,
+				BF6277462BADCF7C008864C1 /* ofPath.h in Sources */,
+				BF6277472BADCF7C008864C1 /* ofPolyline.inl in Sources */,
+				BF6277482BADCF7C008864C1 /* ofPolyline.h in Sources */,
+				BF6277492BADCF7C008864C1 /* ofRendererCollection.h in Sources */,
+				BF62774A2BADCF7C008864C1 /* ofRendererCollection.cpp in Sources */,
+				BF62774B2BADCF7C008864C1 /* ofCairoRenderer.cpp in Sources */,
+				BF62774C2BADCF7C008864C1 /* ofCairoRenderer.h in Sources */,
+				BF62774D2BADCF7C008864C1 /* ofBitmapFont.cpp in Sources */,
+				BF62774E2BADCF7C008864C1 /* ofBitmapFont.h in Sources */,
+				BF62774F2BADCF7C008864C1 /* ofGraphics.cpp in Sources */,
+				BF6277502BADCF7C008864C1 /* ofGraphics.h in Sources */,
+				BF6277512BADCF7C008864C1 /* ofGraphicsCairo.cpp in Sources */,
+				BF6277522BADCF7C008864C1 /* ofxiOSMapKit.mm in Sources */,
+				BF6277532BADCF7C008864C1 /* ofGraphicsCairo.h in Sources */,
+				BF6277542BADCF7C008864C1 /* of3dGraphics.cpp in Sources */,
+				BF6277552BADCF7C008864C1 /* of3dGraphics.h in Sources */,
+				BF6277562BADCF7C008864C1 /* ofImage.cpp in Sources */,
+				BF6277572BADCF7C008864C1 /* ofImage.h in Sources */,
+				BF6277582BADCF7C008864C1 /* ofPixels.cpp in Sources */,
+				BF6277592BADCF7C008864C1 /* ES2Renderer.m in Sources */,
+				BF62775A2BADCF7C008864C1 /* ofPixels.h in Sources */,
+				BF62775B2BADCF7C008864C1 /* ofTessellator.cpp in Sources */,
+				BF62775C2BADCF7C008864C1 /* ofxiOSSoundStreamDelegate.mm in Sources */,
+				BF62775D2BADCF7C008864C1 /* ofTessellator.h in Sources */,
+				BF62775E2BADCF7C008864C1 /* ofTrueTypeFont.cpp in Sources */,
+				BF62775F2BADCF7C008864C1 /* ofTrueTypeFont.h in Sources */,
+				BF6277602BADCF7C008864C1 /* ofAVEngineSoundPlayer.h in Sources */,
+				BF6277612BADCF7C008864C1 /* ofAVEngineSoundPlayer.mm in Sources */,
+				BF6277622BADCF7C008864C1 /* ofSoundBaseTypes.cpp in Sources */,
+				BF6277632BADCF7C008864C1 /* ofSoundBaseTypes.h in Sources */,
+				BF6277642BADCF7C008864C1 /* ofxiOSCoreMotion.mm in Sources */,
+				BF6277652BADCF7C008864C1 /* ofFmodSoundPlayer.cpp in Sources */,
+				BF6277662BADCF7C008864C1 /* ofFmodSoundPlayer.h in Sources */,
+				BF6277672BADCF7C008864C1 /* ofOpenALSoundPlayer.cpp in Sources */,
+				BF6277682BADCF7C008864C1 /* ofOpenALSoundPlayer.h in Sources */,
+				BF6277692BADCF7C008864C1 /* ofRtAudioSoundStream.cpp in Sources */,
+				BF62776A2BADCF7C008864C1 /* ofRtAudioSoundStream.h in Sources */,
+				BF62776B2BADCF7C008864C1 /* ofSoundBuffer.cpp in Sources */,
+				BF62776C2BADCF7C008864C1 /* ofSoundBuffer.h in Sources */,
+				BF62776D2BADCF7C008864C1 /* ofxiOSVideoGrabber.mm in Sources */,
+				BF62776E2BADCF7C008864C1 /* ofSoundPlayer.cpp in Sources */,
+				BF62776F2BADCF7C008864C1 /* ofSoundPlayer.h in Sources */,
+				BF6277702BADCF7C008864C1 /* ofSoundStream.cpp in Sources */,
+				BF6277712BADCF7C008864C1 /* ofxiOSAppDelegate.mm in Sources */,
+				BF6277722BADCF7C008864C1 /* ofSoundStream.h in Sources */,
+				BF6277732BADCF7C008864C1 /* ofSoundUtils.h in Sources */,
+				BF6277742BADCF7C008864C1 /* ofMathConstants.h in Sources */,
+				BF6277752BADCF7C008864C1 /* ofMath.cpp in Sources */,
+				BF6277762BADCF7C008864C1 /* ofMath.h in Sources */,
+				BF6277772BADCF7C008864C1 /* ofMatrix3x3.cpp in Sources */,
+				BF6277782BADCF7C008864C1 /* ofMatrix3x3.h in Sources */,
+				BF6277792BADCF7C008864C1 /* ofMatrix4x4.cpp in Sources */,
+				BF62777A2BADCF7C008864C1 /* ofMatrix4x4.h in Sources */,
+				BF62777B2BADCF7C008864C1 /* ofxtvOSAppDelegate.mm in Sources */,
+				BF62777C2BADCF7C008864C1 /* ofQuaternion.cpp in Sources */,
+				BF62777D2BADCF7C008864C1 /* ofQuaternion.h in Sources */,
+				BF62777E2BADCF7C008864C1 /* ofVec2f.cpp in Sources */,
+				BF62777F2BADCF7C008864C1 /* ofVec2f.h in Sources */,
+				BF6277802BADCF7C008864C1 /* ofVec3f.h in Sources */,
+				BF6277812BADCF7C008864C1 /* ofVec4f.cpp in Sources */,
+				BF6277822BADCF7C008864C1 /* ofVec4f.h in Sources */,
+				BF6277832BADCF7C008864C1 /* ofVectorMath.h in Sources */,
+				BF6277842BADCF7C008864C1 /* ofParameter.cpp in Sources */,
+				BF6277852BADCF7C008864C1 /* ofxAccelerometer.cpp in Sources */,
+				BF6277862BADCF7C008864C1 /* ofParameter.h in Sources */,
+				BF6277872BADCF7C008864C1 /* ofParameterGroup.cpp in Sources */,
+				BF6277882BADCF7C008864C1 /* ofxiOSKeyboard.mm in Sources */,
+				BF6277892BADCF7C008864C1 /* AVFoundationVideoGrabber.mm in Sources */,
+				BF62778A2BADCF7C008864C1 /* ofBaseTypes.cpp in Sources */,
+				BF62778B2BADCF7C008864C1 /* EAGLView.m in Sources */,
+				BF62778C2BADCF7C008864C1 /* ofColor.cpp in Sources */,
+				BF62778D2BADCF7C008864C1 /* ofColor.h in Sources */,
+				BF62778E2BADCF7C008864C1 /* ofPoint.h in Sources */,
+				BF62778F2BADCF7C008864C1 /* ofRectangle.cpp in Sources */,
+				BF6277902BADCF7C008864C1 /* ofRectangle.h in Sources */,
+				BF6277912BADCF7C008864C1 /* ofxiOSCoreHaptics.mm in Sources */,
+				BF6277922BADCF7C008864C1 /* ofTypes.h in Sources */,
+				BF6277932BADCF7C008864C1 /* ofFpsCounter.cpp in Sources */,
+				BF6277942BADCF7C008864C1 /* ofFpsCounter.h in Sources */,
+				BF6277952BADCF7C008864C1 /* ofTimer.cpp in Sources */,
+				BF6277962BADCF7C008864C1 /* ofxiOSSoundPlayer.mm in Sources */,
+				BF6277972BADCF7C008864C1 /* ofTimer.h in Sources */,
+				BF6277982BADCF7C008864C1 /* ofxiOSGLKViewController.mm in Sources */,
+				BF6277992BADCF7C008864C1 /* ofXml.cpp in Sources */,
+				BF62779A2BADCF7C008864C1 /* ofXml.h in Sources */,
+				BF62779B2BADCF7C008864C1 /* ofMatrixStack.cpp in Sources */,
+				BF62779C2BADCF7C008864C1 /* ofMatrixStack.h in Sources */,
+				BF62779D2BADCF7C008864C1 /* ofConstants.h in Sources */,
+				BF62779E2BADCF7C008864C1 /* ofFileUtils.cpp in Sources */,
+				BF62779F2BADCF7C008864C1 /* ofFileUtils.h in Sources */,
+				BF6277A02BADCF7C008864C1 /* ofLog.cpp in Sources */,
+				BF6277A12BADCF7C008864C1 /* ofLog.h in Sources */,
+				BF6277A22BADCF7C008864C1 /* ofNoise.h in Sources */,
+				BF6277A32BADCF7C008864C1 /* ofSystemUtils.cpp in Sources */,
+				BF6277A42BADCF7C008864C1 /* ofSystemUtils.h in Sources */,
+				BF6277A52BADCF7C008864C1 /* ofThread.cpp in Sources */,
+				BF6277A62BADCF7C008864C1 /* ofThread.h in Sources */,
+				BF6277A72BADCF7C008864C1 /* ofURLFileLoader.cpp in Sources */,
+				BF6277A82BADCF7C008864C1 /* ofxiOSVideoPlayer.mm in Sources */,
+				BF6277A92BADCF7C008864C1 /* ofURLFileLoader.h in Sources */,
+				BF6277AA2BADCF7C008864C1 /* ofUtils.cpp in Sources */,
+				BF6277AB2BADCF7C008864C1 /* ofUtils.h in Sources */,
+				BF6277AC2BADCF7C008864C1 /* ofVideoBaseTypes.h in Sources */,
+				BF6277AD2BADCF7C008864C1 /* ofVideoGrabber.cpp in Sources */,
+				BF6277AE2BADCF7C008864C1 /* ofVideoGrabber.h in Sources */,
+				BF6277AF2BADCF7C008864C1 /* ofVideoPlayer.cpp in Sources */,
+				BF6277B02BADCF7C008864C1 /* ofxiOSEventAdapter.mm in Sources */,
+				BF6277B12BADCF7C008864C1 /* ofVideoPlayer.h in Sources */,
+				BF6277B22BADCF7C008864C1 /* ofAVFoundationGrabber.mm in Sources */,
+				BF6277B32BADCF7C008864C1 /* ofAVFoundationGrabber.h in Sources */,
+				BF6277B42BADCF7C008864C1 /* ofAVFoundationVideoPlayer.h in Sources */,
+				BF6277B52BADCF7C008864C1 /* ofAVFoundationVideoPlayer.m in Sources */,
+				BF6277B62BADCF7C008864C1 /* ofAVFoundationPlayer.h in Sources */,
+				BF6277B72BADCF7C008864C1 /* ofAVFoundationPlayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1966,7 +1961,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		BF23BD962BAC78E3000E2E0E /* Debug */ = {
+		BF6277EE2BADCF7C008864C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
@@ -2007,8 +2002,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = 11.0;
+				DYLIB_CURRENT_VERSION = 11.0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2053,7 +2048,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.openFrameworks.macOS;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
@@ -2066,14 +2061,14 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
-				TVOS_DEPLOYMENT_TARGET = 15.0;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
-		BF23BD972BAC78E3000E2E0E /* Release */ = {
+		BF6277EF2BADCF7C008864C1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
@@ -2114,8 +2109,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = 11.0;
+				DYLIB_CURRENT_VERSION = 11.0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -2153,7 +2148,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.openFrameworks.macOS;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
@@ -2165,7 +2160,7 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
-				TVOS_DEPLOYMENT_TARGET = 15.0;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WATCHOS_DEPLOYMENT_TARGET = 9.0;
@@ -2253,16 +2248,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BF23BD9A2BAC78E3000E2E0E /* Build configuration list for PBXNativeTarget "macOS-openFrameworks" */ = {
+		BF6277ED2BADCF7C008864C1 /* Build configuration list for PBXNativeTarget "openFrameworks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BF23BD962BAC78E3000E2E0E /* Debug */,
-				BF23BD972BAC78E3000E2E0E /* Release */,
+				BF6277EE2BADCF7C008864C1 /* Debug */,
+				BF6277EF2BADCF7C008864C1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks" */ = {
+		E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks-static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E4B27C1610CBEB8E00536013 /* Debug */,

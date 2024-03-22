@@ -1,6 +1,6 @@
 #include "ofxiOSVideoPlayer.h"
 #include "ofxiOSConstants.h"
-#if TARGET_OS_IOS
+#if defined(TARGET_OS_IOS)
 #include "ofxiOSExtras.h"
 #include "ofxiOSEAGLView.h"
 #import "AVFoundationVideoPlayer.h"

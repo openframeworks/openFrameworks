@@ -8,7 +8,7 @@
 #pragma once
 
 #include "ofxiOSConstants.h"
-#if defined(OF_CORE_MOTION)
+#if defined(OF_CORE_MOTION) && !TARGET_OS_SIMULATOR
 #import <CoreMotion/CoreMotion.h>
 #include "ofVectorMath.h"
 

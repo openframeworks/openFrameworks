@@ -5,7 +5,7 @@
 
 #include <TargetConditionals.h>
 #include "ofxiOSConstants.h"
-#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV) && !defined(TARGET_OF_MACOS)
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV) && !defined(TARGET_OF_MACOS)
 #if defined(OF_UI_KIT)
 #import <QuartzCore/QuartzCore.h>
 

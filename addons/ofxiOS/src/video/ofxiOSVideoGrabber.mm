@@ -11,7 +11,6 @@
 using std::shared_ptr;
 using std::vector;
 
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
 	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
@@ -127,5 +126,4 @@ const ofPixels& ofxiOSVideoGrabber::getPixelsRef() const{
 	return getPixels();
 }
 
-#endif
 #endif

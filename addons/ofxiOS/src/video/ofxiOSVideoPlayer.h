@@ -1,6 +1,6 @@
 #pragma once
 #include "ofxiOSConstants.h"
-#if TARGET_OS_IOS
+#if defined(TARGET_OS_IOS)
 #include "ofVideoBaseTypes.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
