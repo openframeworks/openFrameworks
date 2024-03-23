@@ -29,6 +29,7 @@ var LibraryHTML5Audio = {
             // Fix up for prefixing
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             var context = new AudioContext({});
+	    var mediaStreamAudioDestinationNode = new MediaStreamAudioDestinationNode(context);
 
             // Fix issue with chrome autoplay policy
             document.addEventListener('mousedown', function cb(event) {
@@ -37,10 +38,12 @@ var LibraryHTML5Audio = {
             });
 
             AUDIO.context = context;
+	    AUDIO.contextStream = mediaStreamAudioDestinationNode;
             
             var fft = context.createAnalyser();
             fft.smoothingTimeConstant = 0;
             fft.connect(AUDIO.context.destination);
+	    fft.connect(AUDIO.contextStream);
             fft.maxDecibels = 0;
             fft.minDecibels = -100;
             AUDIO.fft = fft;
