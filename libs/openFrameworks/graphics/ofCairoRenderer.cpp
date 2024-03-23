@@ -1,8 +1,8 @@
 #include "ofConstants.h"
 #if defined(OF_CAIRO)
-#include <cairo-features.h>
-#include <cairo-pdf.h>
-#include <cairo-svg.h>
+#include <cairo/cairo-features.h>
+#include <cairo/cairo-pdf.h>
+#include <cairo/cairo-svg.h>
 #include "ofCairoRenderer.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
