@@ -60,9 +60,6 @@
         AVCaptureDeviceTypeBuiltInDualCamera,
         AVCaptureDeviceTypeBuiltInDualWideCamera,
         AVCaptureDeviceTypeBuiltInTripleCamera,
-#if !defined(TARGET_OF_TVOS)
-        AVCaptureDeviceTypeBuiltInLiDARScanner,
-#endif
         AVCaptureDeviceTypeExternal
     ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
 
@@ -253,20 +250,29 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-        AVCaptureDeviceTypeBuiltInWideAngleCamera,
-        AVCaptureDeviceTypeBuiltInTelephotoCamera,
-        AVCaptureDeviceTypeBuiltInUltraWideCamera,
-        AVCaptureDeviceTypeBuiltInDualCamera,
-        AVCaptureDeviceTypeBuiltInDualWideCamera,
-        AVCaptureDeviceTypeBuiltInTripleCamera,
-#if !defined(TARGET_OF_TVOS)
-        AVCaptureDeviceTypeBuiltInLiDARScanner,
-#endif
-        AVCaptureDeviceTypeExternal
-    ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-
-    NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
+    NSArray<AVCaptureDevice *> *devices;
+    if (@available(iOS 17.0, *)) {
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+            AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera,
+            AVCaptureDeviceTypeBuiltInUltraWideCamera,
+            AVCaptureDeviceTypeBuiltInDualCamera,
+            AVCaptureDeviceTypeBuiltInDualWideCamera,
+            AVCaptureDeviceTypeBuiltInTripleCamera,
+            AVCaptureDeviceTypeExternal
+        ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+        devices = session.devices;
+    } else {
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+            AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera,
+            AVCaptureDeviceTypeBuiltInUltraWideCamera,
+            AVCaptureDeviceTypeBuiltInDualCamera,
+            AVCaptureDeviceTypeBuiltInDualWideCamera,
+            AVCaptureDeviceTypeBuiltInTripleCamera,
+        ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+        devices = session.devices;
+    }
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back([captureDevice.localizedName UTF8String]);

@@ -37,14 +37,13 @@
 #pragma once
 #include "ofxiOSConstants.h"
 #if defined(TARGET_OS_IOS)
+#ifdef __OBJC__
 #include <TargetConditionals.h>
 #if defined(OF_UI_KIT)
 #import <UIKit/UIKit.h>
 #if defined(OF_CORE_MOTION) && !TARGET_OS_SIMULATOR
 #import <CoreMotion/CoreMotion.h>
 #endif
-
-#include "ofxiOSConstants.h"
 #include "ofConstants.h"
 
 enum ofOrientation: short;
@@ -55,7 +54,7 @@ template<typename T>
 class ofImage_;
 
 typedef ofImage_<unsigned char> ofImage;
-
+#ifdef __OBJC__
 class ofAppiOSWindow;
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 @class ofxiOSAppDelegate;
@@ -68,7 +67,7 @@ class ofAppiOSWindow;
 #endif
 @class ofxiOSEAGLView;
 @class ofxiOSGLKView;
-
+#endif
 // this is the new way for getting device info.
 // we can add other parameters later.
 // maybe also methods for checking if device is newer or older than a certain model.
@@ -262,5 +261,6 @@ std::string ofxiOSGetClipboardString();
 #define ofxNSStringToString ofxiOSNSStringToString
 #define ofxStringToNSString ofxiOSStringToNSString
 
+#endif
 #endif
 #endif

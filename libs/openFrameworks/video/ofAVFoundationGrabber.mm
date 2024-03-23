@@ -40,11 +40,6 @@
 	if (@available(macOS 10.15, *)) {
         AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
             AVCaptureDeviceTypeBuiltInWideAngleCamera,
-            AVCaptureDeviceTypeBuiltInTelephotoCamera,
-            AVCaptureDeviceTypeBuiltInUltraWideCamera,
-            AVCaptureDeviceTypeBuiltInDualCamera,
-            AVCaptureDeviceTypeBuiltInDualWideCamera,
-            AVCaptureDeviceTypeBuiltInTripleCamera,
             AVCaptureDeviceTypeExternal
         ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
         devices = [session devices];
@@ -266,11 +261,6 @@
 	if (@available(macOS 10.15, *)) {
         AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
             AVCaptureDeviceTypeBuiltInWideAngleCamera,
-            AVCaptureDeviceTypeBuiltInTelephotoCamera,
-            AVCaptureDeviceTypeBuiltInUltraWideCamera,
-            AVCaptureDeviceTypeBuiltInDualCamera,
-            AVCaptureDeviceTypeBuiltInDualWideCamera,
-            AVCaptureDeviceTypeBuiltInTripleCamera,
             AVCaptureDeviceTypeExternal
         ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
 		devices = [session devices];

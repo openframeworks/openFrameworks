@@ -366,9 +366,13 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (void) handleMediaServicesReset:(NSNotification *)notification {
-#ifndef TARGET_OSX
 
-    NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    
+    NSUInteger interruptionType;
+    UInt8 reasonValue;
+#ifndef TARGET_OSX
+    interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+#endif
     
         NSLog(@"Media services have been reset!");
        NSLog(@"Re-wiring connections and starting once again");
@@ -394,13 +398,13 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (void) handleRouteChange:(NSNotification *)notification {
-#ifndef TARGET_OSX
 
-    NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
-    
-    UInt8 reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
-    
+    NSUInteger interruptionType;
+    UInt8 reasonValue;
+
 #ifndef TARGET_OSX
+    interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
         AVAudioSessionRouteDescription *routeDescription = [notification.userInfo valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
 #endif
     
@@ -439,11 +443,10 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (void) handleInterruption:(NSNotification *)notification {
-#ifndef TARGET_OSX
 
+#ifndef TARGET_OSX
     NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
 
-    
     NSLog(@"AVEnginePlayer::handleInterruption: notification:%@ %@ interruptionType: %lu", notification.name, notification.description, (unsigned long)interruptionType);
        
 
@@ -455,6 +458,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         [self startEngine];
     }
 #endif
+
 }
 
 - (void)beginInterruption {

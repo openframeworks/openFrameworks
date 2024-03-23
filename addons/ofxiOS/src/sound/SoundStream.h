@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && defined(OF_UI_KIT)
 
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioToolbox.h>
@@ -65,3 +66,4 @@ typedef enum {
 + (BOOL)shouldUseAudioSessionNotifications;
 
 @end
+#endif
