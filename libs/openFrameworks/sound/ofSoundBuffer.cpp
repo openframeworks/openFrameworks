@@ -329,66 +329,57 @@ static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &o
 	return true;
 }
 
-// based on maximilian optimized for performance.
-// might lose 1 or 2 samples when it reaches the end of the buffer
-void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const {
-	
-	std::size_t inChannels = getNumChannels();
-	std::size_t inFrames = getNumFrames();
+void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const
+{
 	bool bufferReady = prepareBufferForResampling(*this, outBuffer, numFrames);
 	
 	if(!bufferReady) {
 		outBuffer = *this;
 		return;
 	}
-	
-	std::size_t start = fromFrame;
-	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
-	double position = start;
-	std::size_t intPosition = position;
-	float increment = speed;
-	std::size_t copySize = inChannels*sizeof(float);
-	std::size_t to;
-	
-	if(end<size()-2*inChannels){
-		to = numFrames;
-	}else if(fromFrame+2>inFrames){
-		to = 0;
-	}else{
-		to = ceil(float(inFrames-2-fromFrame)/speed);
-	}
-	
-	float remainder = position - intPosition;
-	float * resBufferPtr = &outBuffer[0];
-	float a, b;
-	
-	for(std::size_t i=0;i<to;i++){
-		intPosition *= inChannels;
-		for(std::size_t j=0;j<inChannels;j++){
-			a = buffer[intPosition+j];
-			b = buffer[intPosition+inChannels+j];
-			*resBufferPtr++ = ofLerp(a,b,remainder);
-		}
-		position += increment;
-		intPosition = position;
-		remainder = position - intPosition;
-	}
-	if(end>=size()-2*inChannels){
-		to = numFrames-to;
-		if(loop){
-			intPosition %= inFrames;
-			for(std::size_t i=0;i<to;i++){
-				intPosition *= inChannels;
-				for(std::size_t j=0;j<inChannels;j++){
-					a = buffer[intPosition+j];
-					b = buffer[intPosition+inChannels+j];
-					*resBufferPtr++ = ofLerp(a,b,remainder);
+
+	size_t inChannels = getNumChannels();
+	size_t inFrames = getNumFrames();
+
+	for (size_t ch=0; ch<inChannels; ch++)
+	{
+		double position = fromFrame;
+		unsigned writeIdx = ch;
+		
+		while (writeIdx < numFrames*inChannels)
+		{
+			int aReadIdx = (int)position;
+			double remainder = position - aReadIdx;
+
+			// check if aReadIdx is at the end of the buffer
+			int bReadIdx = (aReadIdx == inFrames-1) ? 0 : aReadIdx + 1;
+			
+			float a = buffer[aReadIdx*inChannels+ch];
+			float b = buffer[bReadIdx*inChannels+ch];
+			outBuffer[writeIdx] = ofLerp(a,b,remainder);
+			
+			position += speed;
+
+			if (position >= inFrames) 
+            {
+				if (loop==false && ch == inChannels-1)
+				{
+					// End of input buffer, last channel done, no looping so pad zero to complete
+					writeIdx -= ch;
+					while (writeIdx < numFrames*inChannels)
+					{
+						outBuffer[writeIdx] = 0;
+						writeIdx ++;
+					}
+					return;
 				}
-				position += increment;
-				intPosition = position;
-			}
-		}else{
-			memset(resBufferPtr,0,to*copySize);
+
+				do {
+					position -= inFrames;
+				} while (position >= inFrames);
+            }
+			
+			writeIdx += inChannels;
 		}
 	}
 }
@@ -525,7 +516,7 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, std::size_t targe
 	resize(inBuffer.getNumFrames() * channels);
 	// copy from inBuffer to targetChannel
 	float * bufferPtr = &this->buffer[targetChannel];
-	const float * inBufferPtr = &(inBuffer[0]);
+	const float * inBufferPtr = &(inBuffer[targetChannel]);
 	for(std::size_t i = 0; i < getNumFrames(); i++){
 		*bufferPtr = *inBufferPtr;
 		bufferPtr += channels;
@@ -607,7 +598,7 @@ void ofSoundBuffer::fillWithNoise(float amplitude){
 }
 
 float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
-	float step = glm::two_pi<float>()*(pitchHz/samplerate);
+    float step = glm::two_pi<float>()*(pitchHz/samplerate);
 	for (std::size_t i=0; i<size()/channels; i++ ) {
 		std::size_t base = i*channels;
 		for (std::size_t j=0; j<channels; j++)
