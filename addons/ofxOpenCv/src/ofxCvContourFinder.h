@@ -37,12 +37,14 @@ class ofxCvContourFinder : public ofBaseDraws {
                                // of the contour, if the contour runs
                                // along a straight line, for example...
 
+    using ofBaseDraws::draw;
     virtual void  draw() const { draw(0,0, _width, _height); };
     virtual void  draw( float x, float y ) const { draw(x,y, _width, _height); };
     virtual void  draw( float x, float y, float w, float h ) const;
 	virtual void  draw(const glm::vec2 & point) const;
 	virtual void  draw(const ofRectangle & rect) const;
 	virtual void setAnchorPercent(float xPct, float yPct);
+    using ofBaseDraws::setAnchorPoint;
     virtual void setAnchorPoint(int x, int y);
 	virtual void resetAnchor();      
     //virtual ofxCvBlob  getBlob(int num);
