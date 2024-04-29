@@ -7,10 +7,18 @@
 
 #pragma once
 
-#include "ofMath.h"
+//#include "ofMath.h"
+
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/constants.hpp>
+#include <glm/ext/scalar_common.hpp>
+
+#include <cmath>
+
 
 inline void ofStereoVolumes(float volume, float pan, float & left, float & right){
-	pan = ofClamp(pan, -1, 1);
+	pan = glm::clamp(pan, -1.0f, 1.0f);
 	// calculates left/right volumes from pan-value (constant panning law)
 	// see: Curtis Roads: Computer Music Tutorial p 460
 	// thanks to jasch

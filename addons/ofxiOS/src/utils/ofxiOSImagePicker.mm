@@ -484,14 +484,14 @@ bool ofxiOSImagePicker::getImageUpdated(){
 			bounds.size.height = bounds.size.width;
 			bounds.size.width = boundHeight;
 			transform = CGAffineTransformMakeScale(-1.0, 1.0);
-			transform = CGAffineTransformRotate(transform, * glm::half_pi<float>());
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>());
 			break;
 		case UIImageOrientationRight:
 			boundHeight = bounds.size.height;
 			bounds.size.height = bounds.size.width;
 			bounds.size.width = boundHeight;
 			transform = CGAffineTransformMakeTranslation(imageSize.height, 0.0);
-			transform = CGAffineTransformRotate(transform, * glm::half_pi<float>());
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>());
 			break;
 		default:
 			[NSException raise:NSInternalInconsistencyException format:@"Invalid image orientation"];

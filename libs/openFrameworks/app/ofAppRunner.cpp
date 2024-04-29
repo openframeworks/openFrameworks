@@ -4,7 +4,7 @@
 #include "ofAppBaseWindow.h"
 
 #include "ofLog.h"
-#include "ofMath.h"
+//#include "ofMath.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
 #include "ofMainLoop.h"

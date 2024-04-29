@@ -7,7 +7,7 @@
 #include "ofImage.h"
 #include "ofLog.h"
 #include "ofMainLoop.h"
-#include "ofMath.h"
+//#include "ofMath.h"
 #include "ofPixels.h"
 
 #include "uriparser/Uri.h"

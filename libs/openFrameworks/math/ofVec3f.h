@@ -1846,7 +1846,7 @@ inline float ofVec3f::lengthSquared() const {
 inline float ofVec3f::angle( const ofVec3f& vec ) const {
 	ofVec3f n1 = this->getNormalized();
 	ofVec3f n2 = vec.getNormalized();
-	return ofRadToDeg(std::acos( n1.dot(n2) ));
+	return glm::degrees(std::acos( n1.dot(n2) ));
 }
 
 inline float ofVec3f::angleRad( const ofVec3f& vec ) const {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofMath.h"
+//#include "ofMath.h"
 //#include "ofMathConstants.h"
 #include <iostream>
 

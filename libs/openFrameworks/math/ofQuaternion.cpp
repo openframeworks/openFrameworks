@@ -1,6 +1,6 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
-#include "ofMath.h"
+//#include "ofMath.h"
 #include "ofMathConstants.h"
 //#include "ofVec4f.h"
 
