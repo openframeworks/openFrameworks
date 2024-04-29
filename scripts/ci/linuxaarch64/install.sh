@@ -37,10 +37,11 @@ downloadToolchain(){
 }
 
 downloadFirmware(){
-    wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+    #kicking the can down the road - stable still containts /opt/vc includes
+    wget https://github.com/raspberrypi/firmware/archive/stable.zip -O firmware.zip
     unzip firmware.zip
-    cp -r firmware-master/opt raspbian/
-    rm -r firmware-master
+    cp -r firmware-stable/opt raspbian/
+    rm -r firmware-stable
     rm firmware.zip
 }
 

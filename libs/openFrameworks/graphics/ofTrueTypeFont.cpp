@@ -229,6 +229,9 @@ static ofPath makeContoursForCharacter(FT_Face face) {
 }
 
 #ifdef TARGET_OSX
+
+#include <ApplicationServices/ApplicationServices.h>
+
 //------------------------------------------------------------------
 static string osxFontPathByName(const string & fontname) {
 	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
@@ -1148,15 +1151,20 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::stringWidth(const string & c) const {
-	//	return getStringBoundingBox(c, 0,0).width;
-	int w = 0;
-	iterateString(c, 0, 0, false, [&](uint32_t c, glm::vec2 pos) {
-		if (c == '\t') {
-			w += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
-		} else {
-			w += getGlyphProperties(c).advance;
+float ofTrueTypeFont::stringWidth(const string& c) const{
+//	return getStringBoundingBox(c, 0,0).width;
+	float w = 0;
+	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
+		float cWidth = 0;
+
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+			if ( c == '\t' ){
+				cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+			} else {
+				cWidth = getGlyphProperties( c ).advance;
+			}
 		}
+		w = std::max(w, std::abs(pos.x + cWidth));
 	});
 	return w;
 }
@@ -1180,22 +1188,29 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string & c, float x, floa
 	// blank characters.
 
 	float w = 0;
-	iterateString(c, x, y, vflip, [&](uint32_t c, glm::vec2 pos) {
-		auto props = getGlyphProperties(c);
-		if (c == '\t') {
-			w += props.advance * spaceSize * TAB_WIDTH;
-		} else {
-			w += props.advance;
+	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
+		auto props = getGlyphProperties( c );
+
+		float cWidth = 0;
+
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+			if ( c == '\t' ){
+				cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+			} else {
+				cWidth = getGlyphProperties( c ).advance;
+			}
 		}
 
-		minX = min(minX, pos.x);
-		if (vflip) {
-			minY = min(minY, pos.y - (props.ymax - props.ymin));
-			maxY = max(maxY, pos.y - (props.bearingY - props.height));
-		} else {
-			minY = min(minY, pos.y - (props.ymax));
-			maxY = max(maxY, pos.y - (props.ymin));
-		}
+		w = std::max(w, std::abs(pos.x - x) + cWidth);
+
+		minX = min( minX, pos.x );
+		if ( vflip ){
+			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );
+			maxY = max( maxY, pos.y - ( props.bearingY - props.height ) );
+		} else{
+			minY = min( minY, pos.y - ( props.ymax) );
+			maxY = max( maxY, pos.y - ( props.ymin ) );
+ 		}
 	});
 
 	float height = maxY - minY;

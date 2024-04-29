@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofSoundBaseTypes.h"
-// FIXME: ofConstants FS
+// MARK: ofConstants FS
 #include "ofConstants.h"
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).

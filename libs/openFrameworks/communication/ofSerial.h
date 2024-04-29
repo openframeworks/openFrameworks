@@ -1,34 +1,14 @@
 #pragma once
 
-// FIXME: ofConstants targets
+// MARK: ofConstants targets
 #include "ofConstants.h"
 
 class ofBuffer;
 
-#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+
+#ifndef TARGET_WIN32
 	#include <termios.h>
-#else
-	#include <winbase.h>
-	#include <tchar.h>
-	#include <iostream>
-	#include <string.h>
-	#include <devpropdef.h>
-	#include <setupapi.h>
-	#include <regstr.h>
-	/// \cond INTERNAL
-	#define MAX_SERIAL_PORTS 256
-	/// \endcond
-	#include <winioctl.h>
-	/*#ifndef _MSC_VER
-		#define INITGUID
-		#include <initguid.h> // needed for dev-c++ & DEFINE_GUID
-	#endif*/
 #endif
-
-// serial error codes
-#define OF_SERIAL_NO_DATA 	-2
-#define OF_SERIAL_ERROR		-1
-
 
 
 /// \brief Describes a Serial device, including ID, name and path.

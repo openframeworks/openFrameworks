@@ -4,7 +4,6 @@
 #include "ofGLBaseTypes.h"
 #include "ofGraphicsConstants.h"
 #include "ofGLUtils.h"
-#include "ofConstants.h"
 
 template<typename T>
 class ofPixels_;

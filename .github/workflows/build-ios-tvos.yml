@@ -1,6 +1,5 @@
 name: build-ios-tvos
 
-
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
   push:
@@ -14,14 +13,16 @@ on:
       - '**/*.md'
       - 'examples/**'
 
+env:
+  ccache: ccache
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-osx:
-    runs-on: macos-12
+  build-ios-tvos:
+    runs-on: macos-13
     strategy:
         matrix:
           cfg:
@@ -31,6 +32,11 @@ jobs:
      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.12
+      with:
+        key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
     - name: Download libs
       run: ./scripts/${{matrix.cfg.libs}}/download_libs.sh
     - name: install
@@ -39,4 +45,4 @@ jobs:
       run: ./scripts/ci/$TARGET/build.sh;
 
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_13.4.1.app/Contents/Developer"
+        DEVELOPER_DIR: "/Applications/Xcode_15.2.app/Contents/Developer"

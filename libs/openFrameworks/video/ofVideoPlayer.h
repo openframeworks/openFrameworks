@@ -2,7 +2,7 @@
 
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoDraws {
