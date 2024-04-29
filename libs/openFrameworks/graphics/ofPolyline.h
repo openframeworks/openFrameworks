@@ -19,12 +19,12 @@
 /// You can add points to an ofPolyline by adding vertices:
 /// ~~~~{.cpp}
 /// float i = 0;
-/// while (i < TWO_PI) { // make a heart
+/// while (i < glm::two_pi<float>()) { // make a heart
 /// 	float r = (2-2*sin(i) + sin(i)*sqrt(abs(cos(i))) / (sin(i)+1.4)) * -80;
 /// 	float x = ofGetWidth()/2 + cos(i) * r;
 /// 	float y = ofGetHeight()/2 + sin(i) * r;
 /// 	line.addVertex(glm::vec2(x,y));
-/// 	i+=0.005*HALF_PI*0.5;
+/// 	i+=0.005*glm::half_pi<float>()*0.5;
 /// }
 /// line.close(); // close the shape
 /// ~~~~
@@ -32,10 +32,10 @@
 /// Or you can draw lines or curves:
 /// ~~~~{.cpp}
 /// float angle = 0;
-/// while (angle < TWO_PI ) {
+/// while (angle < glm::two_pi<float>() ) {
 /// 	b.curveTo(100*cos(angle), 0, 100*sin(angle));
 /// 	b.curveTo(300*cos(angle), 300, 300*sin(angle));
-/// 	angle += TWO_PI / 30;
+/// 	angle += glm::two_pi<float>() / 30;
 /// }
 /// ~~~~
 ///
@@ -261,10 +261,10 @@ public:
 	///
 	/// ~~~~{.cpp}
 	/// float angle = 0;
-	/// while (angle < TWO_PI ) {
+	/// while (angle < glm::two_pi<float>() ) {
 	/// 	b.curveTo( T(100*cos(angle), 100*sin(angle)));
 	/// 	b.curveTo( T(300*cos(angle), 300*sin(angle)));
-	/// 	angle += TWO_PI / 30;
+	/// 	angle += glm::two_pi<float>() / 30;
 	/// }
 	/// ~~~~
 	///

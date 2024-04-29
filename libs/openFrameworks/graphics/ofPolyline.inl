@@ -339,7 +339,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     const size_t nCirclePoints = circlePoints.size();
     float segmentArcSize  = glm::two_pi<float>() / (float)nCirclePoints;
     
-    // convert angles to radians and wrap them into the range 0-M_TWO_PI and
+    // convert angles to radians and wrap them into the range 0 - glm::two_pi<float>() and
     float angleBeginRad = wrapAngle(ofDegToRad(angleBegin));
     float angleEndRad =   wrapAngle(ofDegToRad(angleEnd));
     
