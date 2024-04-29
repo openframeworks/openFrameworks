@@ -470,14 +470,14 @@ bool ofxiOSImagePicker::getImageUpdated(){
 			bounds.size.width = boundHeight;
 			transform = CGAffineTransformMakeTranslation(imageSize.height, imageSize.width);
 			transform = CGAffineTransformScale(transform, -1.0, 1.0);
-			transform = CGAffineTransformRotate(transform, 3.0 * glm::half_pi<float>());
+			transform = CGAffineTransformRotate(transform, glm::pi<float>() + glm::half_pi<float>());
 			break;
 		case UIImageOrientationLeft:
 			boundHeight = bounds.size.height;
 			bounds.size.height = bounds.size.width;
 			bounds.size.width = boundHeight;
 			transform = CGAffineTransformMakeTranslation(0.0, imageSize.width);
-			transform = CGAffineTransformRotate(transform, 3.0 * glm::half_pi<float>());
+			transform = CGAffineTransformRotate(transform, glm::pi<float>() + glm::half_pi<float>());
 			break;
 		case UIImageOrientationRightMirrored:
 			boundHeight = bounds.size.height;
