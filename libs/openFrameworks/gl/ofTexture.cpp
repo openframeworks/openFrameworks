@@ -574,6 +574,8 @@ void ofTexture::loadData(const int16_t * data, int w, int h, int glFormat){
 
 //----------------------------------------------------------
 void ofTexture::loadData(const int32_t * data, int w, int h, int glFormat){
+	
+	// FIXME: should w,2 be w,4?
 	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_INT);
 }
@@ -883,14 +885,19 @@ glm::vec2 ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 		// non arb textures are 0 to 1, so we 
 		// (a) convert to a pct: 
 		
-		float pctx = xPos / texData.width;
-		float pcty = yPos / texData.height;
-		
-		// (b) mult by our internal pct (since we might not be 0-1 internally)
-		
-		pctx *= texData.tex_t;
-		pcty *= texData.tex_u;
-		
+//		float pctx = xPos / texData.width;
+//		float pcty = yPos / texData.height;
+//		
+//		// (b) mult by our internal pct (since we might not be 0-1 internally)
+//		
+//		pctx *= texData.tex_t;
+//		pcty *= texData.tex_u;
+
+
+		// more straight, with multiplication first
+		float pctx = texData.tex_t * xPos / texData.width;
+		float pcty = texData.tex_u * yPos / texData.height;
+
 		temp = {pctx, pcty};
 		
 #ifndef TARGET_OPENGLES	
@@ -1078,15 +1085,21 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 //------------------------------------
 ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh, bool vflipped, ofRectMode rectMode) const{
-	ofMesh quad;
+
 	if(!texData.bAllocated){
-		return quad;
+		return {};
 	}
 
-	GLfloat px0 = x;		// up to you to get the aspect ratio right
-	GLfloat py0 = y;
-	GLfloat px1 = w+x;
-	GLfloat py1 = h+y;
+	ofMesh quad;
+//	if (quad.hasVertices()) {
+//		return quad;
+//	}
+//	std::cout << "getMeshForSubsection " << ofGetFrameNum() <<  std::endl;
+
+	GLfloat px0 { x };		// up to you to get the aspect ratio right
+	GLfloat py0 { y };
+	GLfloat px1 { w+x };
+	GLfloat py1 { h+y };
 
 	if (texData.bFlipTexture == vflipped){
 		std::swap(py0,py1);
@@ -1094,10 +1107,10 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 
 	// for rect mode center, let's do this:
 	if (rectMode == OF_RECTMODE_CENTER){
-		px0 -= w/2;
-		py0 -= h/2;
-		px1 -= w/2;
-		py1 -= h/2;
+		px0 -= w*0.5;
+		py0 -= h*0.5;
+		px1 -= w*0.5;
+		py1 -= h*0.5;
 	}
 
 	//we translate our drawing points by our anchor point.
@@ -1128,8 +1141,8 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	// to constantly add a 2 pixel border on all uploaded images
 	// is insane..
 
-	GLfloat offsetw = 0.0f;
-	GLfloat offseth = 0.0f;
+	GLfloat offsetw { 0.0f };
+	GLfloat offseth { 0.0f };
 
 	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
@@ -1137,26 +1150,41 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	}
 	// -------------------------------------------------
 
-	auto topLeft = getCoordFromPoint(sx, sy);
-	auto bottomRight = getCoordFromPoint(sx + sw, sy + sh);
+	auto topLeft { getCoordFromPoint(sx, sy) };
+	auto bottomRight { getCoordFromPoint(sx + sw, sy + sh) };
 
-	GLfloat tx0 = topLeft.x + offsetw;
-	GLfloat ty0 = topLeft.y + offseth;
-	GLfloat tx1 = bottomRight.x - offsetw;
-	GLfloat ty1 = bottomRight.y - offseth;
+	GLfloat tx0 { topLeft.x + offsetw };
+	GLfloat ty0 { topLeft.y + offseth };
+	GLfloat tx1 { bottomRight.x - offsetw };
+	GLfloat ty1 { bottomRight.y - offseth };
 
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
-	quad.getVertices()[0] = {px0,py0,z};
-	quad.getVertices()[1] = {px1,py0,z};
-	quad.getVertices()[2] = {px1,py1,z};
-	quad.getVertices()[3] = {px0,py1,z};
+	
+	quad.getVertices() = {
+		{px0,py0,z},
+		{px1,py0,z},
+		{px1,py1,z},
+		{px0,py1,z},
+	};
 
-	quad.getTexCoords()[0] = {tx0,ty0};
-	quad.getTexCoords()[1] = {tx1,ty0};
-	quad.getTexCoords()[2] = {tx1,ty1};
-	quad.getTexCoords()[3] = {tx0,ty1};
+	quad.getTexCoords() = {
+		{tx0,ty0},
+		{tx1,ty0},
+		{tx1,ty1},
+		{tx0,ty1},
+	};
+
+	//	quad.getVertices()[0] = {px0,py0,z};
+//	quad.getVertices()[1] = {px1,py0,z};
+//	quad.getVertices()[2] = {px1,py1,z};
+//	quad.getVertices()[3] = {px0,py1,z};
+
+//	quad.getTexCoords()[0] = {tx0,ty0};
+//	quad.getTexCoords()[1] = {tx1,ty0};
+//	quad.getTexCoords()[2] = {tx1,ty1};
+//	quad.getTexCoords()[3] = {tx0,ty1};
 
 	return quad;
 }

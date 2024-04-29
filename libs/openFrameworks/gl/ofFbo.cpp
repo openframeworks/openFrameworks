@@ -1,4 +1,5 @@
 #include "ofFbo.h"
+
 // #include "ofAppRunner.h"
 // #include "ofUtils.h"
 // #include "ofGraphics.h"
@@ -22,6 +23,8 @@
 
 using std::unordered_map;
 using std::vector;
+
+ofTexture			depthBufferTex;
 
 /*
 

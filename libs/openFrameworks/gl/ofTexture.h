@@ -8,6 +8,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
 
+
 class ofRectangle;
 
 template<typename T>
@@ -947,6 +948,7 @@ class ofTexture : public ofBaseDraws {
 	/// \internal
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.
+
 
 protected:
 
