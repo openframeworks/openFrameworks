@@ -252,7 +252,7 @@ glm::vec3 ofNode::getOrientationEuler() const {
 //----------------------------------------
 glm::vec3 ofNode::getOrientationEulerDeg() const {
 	auto euler = glm::eulerAngles(orientation.get());
-	return {ofRadToDeg(euler.x), ofRadToDeg(euler.y), ofRadToDeg(euler.z)};
+	return glm::degrees( euler );
 }
 
 //----------------------------------------

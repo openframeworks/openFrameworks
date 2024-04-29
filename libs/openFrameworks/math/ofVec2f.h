@@ -9,6 +9,8 @@
 
 #include <glm/vec2.hpp>
 #include <glm/fwd.hpp>
+#include <glm/trigonometric.hpp>
+
 //#include <cmath>
 
 class ofVec3f;
@@ -1491,7 +1493,7 @@ inline float ofVec2f::lengthSquared() const {
 
 
 inline float ofVec2f::angle( const ofVec2f& vec ) const {
-	return ofRadToDeg(std::atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y ));
+	return glm::degrees(std::atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y ));
 }
 
 inline float ofVec2f::angleRad( const ofVec2f& vec ) const {

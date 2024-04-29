@@ -892,28 +892,28 @@ void ofGLRenderer::rotateDeg(float degrees) {
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateRad(float radians, float vecX, float vecY, float vecZ) {
-	glRotatef(ofRadToDeg(radians), vecX, vecY, vecZ);
+	glRotatef(glm::degrees(radians), vecX, vecY, vecZ);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateXRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 1, 0, 0);
+	glRotatef(glm::degrees(radians), 1, 0, 0);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateYRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 0, 1, 0);
+	glRotatef(glm::degrees(radians), 0, 1, 0);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateZRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 0, 0, 1);
+	glRotatef(glm::degrees(radians), 0, 0, 1);
 }
 
 //same as ofRotateZ
 //----------------------------------------------------------
 void ofGLRenderer::rotateRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 0, 0, 1);
+	glRotatef(glm::degrees(radians), 0, 0, 1);
 }
 
 //----------------------------------------------------------

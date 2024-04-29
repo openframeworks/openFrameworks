@@ -233,7 +233,7 @@ void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const
 		z = 1.0;
 	}
 	
-	angle = ofRadToDeg(angle);
+	angle = glm::degrees(angle);
 }
 
 
@@ -303,7 +303,10 @@ ofVec3f ofQuaternion::getEuler() const {
 		bank = std::atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
 	}
 	
-	return ofVec3f(ofRadToDeg(bank), ofRadToDeg(heading), ofRadToDeg(attitude));
+//	return ofVec3f(ofRadToDeg(bank), ofRadToDeg(heading), ofRadToDeg(attitude));
+	// FIXME: OK - Optimization opportunity by using glm::degrees in all vector at the same time
+	// But returning glm::vec3
+	return glm::degrees(glm::vec3 { bank, heading, attitude });
 }
 
 #define QX  _v.x

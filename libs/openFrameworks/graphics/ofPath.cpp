@@ -836,7 +836,7 @@ void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
 
 //----------------------------------------------------------
 void ofPath::rotateRad(float radians, const glm::vec3& axis ){
-    rotateDeg(ofRadToDeg(radians), axis);
+    rotateDeg(glm::degrees(radians), axis);
 }
 
 //----------------------------------------------------------

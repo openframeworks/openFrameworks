@@ -993,7 +993,7 @@ template<class T>
 float ofPolyline_<T>::getDegreesAtIndex(int index) const {
 	if(points.size() < 2) return 0;
 	updateCache();
-	return ofRadToDeg(angles[getWrappedIndex(index)]);
+	return glm::degrees(angles[getWrappedIndex(index)]);
 }
 
 //--------------------------------------------------
@@ -1003,7 +1003,7 @@ float ofPolyline_<T>::getDegreesAtIndexInterpolated(float findex) const {
 	int i1, i2;
 	float t;
 	getInterpolationParams(findex, i1, i2, t);
-	return ofRadToDeg(ofLerp(getDegreesAtIndex(i1), getDegreesAtIndex(i2), t));
+	return glm::degrees(ofLerp(getDegreesAtIndex(i1), getDegreesAtIndex(i2), t));
 }
 
 

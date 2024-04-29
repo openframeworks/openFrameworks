@@ -904,7 +904,7 @@ bool ofMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
     double bottom =  0.0;
     if (getFrustum(left,right,bottom,top,zNear,zFar))
     {
-        fovy = ofRadToDeg(std::atan(top/zNear) - std::atan(bottom/zNear));
+        fovy = glm::degrees(std::atan(top/zNear) - std::atan(bottom/zNear));
         aspectRatio = (right-left)/(top-bottom);
         return true;
     }
