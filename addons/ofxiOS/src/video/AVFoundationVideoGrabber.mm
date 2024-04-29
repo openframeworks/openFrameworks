@@ -456,13 +456,13 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 		
 		if(ofGetOrientation() == OF_ORIENTATION_DEFAULT) {
 			transform = CGAffineTransformMakeTranslation(0.0, height);
-			transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>() + glm::pi<float>());
 				
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
 		} else if(ofGetOrientation() == OF_ORIENTATION_180) {
 			transform = CGAffineTransformMakeTranslation(width, 0.0);
-			transform = CGAffineTransformRotate(transform, M_PI / 2.0);
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>());
 			
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
