@@ -5,7 +5,7 @@
 #include "ofAppRunner.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
-#include "ofMath.h"
+//#include "ofMath.h"
 // #include "ofMathConstants.h"
 #include "ofLog.h"
 #include "ofColor.h"
@@ -1842,7 +1842,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 
 		V vert;
 		N normal;
-		float angleCos = std::cos(ofDegToRad(angle));
+		float angleCos = std::cos(glm::radians(angle));
 		float numNormals=0;
 
 		for(ofIndexType j = 0; j < triangles.size(); j++) {

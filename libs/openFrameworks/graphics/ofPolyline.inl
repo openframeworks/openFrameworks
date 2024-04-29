@@ -340,8 +340,8 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     float segmentArcSize  = glm::two_pi<float>() / (float)nCirclePoints;
     
     // convert angles to radians and wrap them into the range 0 - glm::two_pi<float>() and
-    float angleBeginRad = wrapAngle(ofDegToRad(angleBegin));
-    float angleEndRad =   wrapAngle(ofDegToRad(angleEnd));
+    float angleBeginRad = wrapAngle(glm::radians(angleBegin));
+    float angleEndRad =   wrapAngle(glm::radians(angleEnd));
     
     while(angleBeginRad >= angleEndRad) angleEndRad += glm::two_pi<float>();
     
@@ -819,7 +819,7 @@ void ofPolyline_<T>::translate(const glm::vec2 &p){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec3& axis){
-    rotateRad(ofDegToRad(degrees), axis);
+    rotateRad(glm::radians(degrees), axis);
 }
 
 //--------------------------------------------------
@@ -840,7 +840,7 @@ void ofPolyline_<T>::rotate(float degrees, const glm::vec3 &axis){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec2& axis){
-    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+    rotateRad(glm::radians(degrees), glm::vec3(axis, 0.0));
 }
 
 //--------------------------------------------------
@@ -852,7 +852,7 @@ void ofPolyline_<T>::rotateRad(float radians, const glm::vec2& axis){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotate(float degrees, const glm::vec2 &axis){
-    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+    rotateRad(glm::radians(degrees), glm::vec3(axis, 0.0));
 }
 
 //--------------------------------------------------

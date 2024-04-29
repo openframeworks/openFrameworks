@@ -28,7 +28,7 @@ void ofQuaternion::get(ofMatrix4x4& matrix) const {
 /// Set the elements of the Quat to represent a rotation of angle
 /// (degrees) around the axis (x,y,z)
 void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
-	angle = ofDegToRad(angle);
+	angle = glm::radians(angle);
 	
 	// FIXME: why not using std::numeric_limits<float>::epsilon() ?
 	const float epsilon = 0.0000001f;

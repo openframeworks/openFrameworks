@@ -811,7 +811,7 @@ void ofPath::translate(const glm::vec2 & p){
 //----------------------------------------------------------
 
 void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
-    auto radians = ofDegToRad(degrees);
+    auto radians = glm::radians(degrees);
     if(mode==COMMANDS){
         for(int j=0;j<(int)commands.size();j++){
             commands[j].to = glm::rotate(commands[j].to, radians, axis);

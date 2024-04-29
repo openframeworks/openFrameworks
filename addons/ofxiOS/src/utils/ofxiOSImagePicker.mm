@@ -198,11 +198,11 @@ bool ofxiOSImagePicker::getImageUpdated(){
              */
             UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
             if(orientation == UIInterfaceOrientationLandscapeLeft) {
-                _imagePicker.view.transform = CGAffineTransformMakeRotation(-PI*0.5);
+                _imagePicker.view.transform = CGAffineTransformMakeRotation(-glm::half_pi<float>());
             } else if(orientation == UIInterfaceOrientationLandscapeRight) {
-                _imagePicker.view.transform = CGAffineTransformMakeRotation(PI*0.5);
+                _imagePicker.view.transform = CGAffineTransformMakeRotation(glm::half_pi<float>());
             } else if(orientation == UIInterfaceOrientationPortraitUpsideDown) {
-                _imagePicker.view.transform = CGAffineTransformMakeRotation(PI);
+                _imagePicker.view.transform = CGAffineTransformMakeRotation(glm::pi<float>());
             }
         }
 	
@@ -334,7 +334,7 @@ bool ofxiOSImagePicker::getImageUpdated(){
         } else if(orientation == UIInterfaceOrientationLandscapeRight) {
             overlay.transform = CGAffineTransformMakeRotation(glm::half_pi<float>());
         } else if(orientation == UIInterfaceOrientationPortraitUpsideDown) {
-            overlay.transform = CGAffineTransformMakeRotation(PI);
+            overlay.transform = CGAffineTransformMakeRotation(glm::pi<float>());
         }
     }
     
@@ -458,7 +458,7 @@ bool ofxiOSImagePicker::getImageUpdated(){
 			break;
 		case UIImageOrientationDown:
 			transform = CGAffineTransformMakeTranslation(imageSize.width, imageSize.height);
-			transform = CGAffineTransformRotate(transform, M_PI);
+			transform = CGAffineTransformRotate(transform, glm::pi<float>());
 			break;
 		case UIImageOrientationDownMirrored:
 			transform = CGAffineTransformMakeTranslation(0.0, imageSize.height);

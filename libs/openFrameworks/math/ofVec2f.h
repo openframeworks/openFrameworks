@@ -1218,7 +1218,7 @@ inline ofVec2f ofVec2f::rotated( float angle ) const {
 }
 
 inline ofVec2f ofVec2f::getRotated( float angle ) const {
-	float a = (float)(ofDegToRad(angle));
+	float a { glm::radians(angle) };
 	return ofVec2f( x * std::cos(a) - y * std::sin(a),
 				   x * std::sin(a) + y * std::cos(a) );
 }
@@ -1230,7 +1230,7 @@ inline ofVec2f ofVec2f::getRotatedRad( float angle ) const {
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle ) {
-	float a = (float)(ofDegToRad(angle));
+	float a { glm::radians(angle) };
 	float xrot = x * std::cos(a) - y * std::sin(a);
 	y = x * std::sin(a) + y * std::cos(a);
 	x = xrot;
@@ -1257,13 +1257,13 @@ inline ofVec2f ofVec2f::rotated( float angle, const ofVec2f& pivot ) const {
 }
 
 inline ofVec2f ofVec2f::getRotated( float angle, const ofVec2f& pivot ) const {
-	float a = (float)(ofDegToRad(angle));
+	float a { glm::radians(angle) };
 	return ofVec2f( ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x,
 				   ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y );
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle, const ofVec2f& pivot ) {
-	float a = (float)(ofDegToRad(angle));
+	float a { glm::radians(angle) };
 	float xrot = ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x;
 	y = ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y;
 	x = xrot;

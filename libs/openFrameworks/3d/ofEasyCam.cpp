@@ -1,5 +1,5 @@
 #include "ofEasyCam.h"
-#include "ofMath.h"
+//#include "ofMath.h"
 #include "ofUtils.h"
 #include "ofGraphicsBaseTypes.h"
 

@@ -775,7 +775,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 	if (farDist == 0) farDist = dist * 10.0f;
 
 	matrixMode(OF_MATRIX_PROJECTION);
-	glm::mat4 persp = glm::perspective(ofDegToRad(fov), aspect, nearDist, farDist);
+	glm::mat4 persp = glm::perspective(glm::radians(fov), aspect, nearDist, farDist);
 	loadMatrix(persp);
 
 	matrixMode(OF_MATRIX_MODELVIEW);

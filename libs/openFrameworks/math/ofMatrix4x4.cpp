@@ -887,7 +887,7 @@ void ofMatrix4x4::makePerspectiveMatrix(double fovy,double aspectRatio,
                                             double zNear, double zFar)
 {
     // calculate the appropriate left, right etc.
-    double tan_fovy = std::tan(ofDegToRad(fovy*0.5));
+    double tan_fovy = std::tan(glm::radians(fovy*0.5));
     double right  =  tan_fovy * aspectRatio * zNear;
     double left   = -right;
     double top    =  tan_fovy * zNear;
