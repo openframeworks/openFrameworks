@@ -149,7 +149,7 @@ float ofWrap(float value, float from, float to) {
 	if (ofIsFloatEqual(cycle, 0.0f)) {
 		return to;
 	}
-	return value - cycle * floor((value - from) / cycle);
+	return value - cycle * std::floor((value - from) / cycle);
 }
 
 //--------------------------------------------------

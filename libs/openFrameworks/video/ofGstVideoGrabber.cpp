@@ -695,7 +695,7 @@ ofGstVideoFormat & ofGstVideoGrabber::selectFormat(int w, int h, int desired_fra
 			mostSimilarFormat = i;
 			break;
 		}
-		int diff = abs(camData.webcam_devices[deviceID].video_formats[i].width + camData.webcam_devices[deviceID].video_formats[i].height - w - h);
+		int diff = std::abs(camData.webcam_devices[deviceID].video_formats[i].width + camData.webcam_devices[deviceID].video_formats[i].height - w - h);
 		if(diff<minDiff){
 			minDiff = diff;
 			mostSimilarFormat = i;

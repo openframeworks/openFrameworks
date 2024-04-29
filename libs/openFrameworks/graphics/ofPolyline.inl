@@ -192,8 +192,8 @@ void ofPolyline_<T>::setCircleResolution(int res){
 		float angle = 0.0f;
 		const float angleAdder = glm::two_pi<float>() / (float)res;
 		for (int i = 0; i < res; i++){
-			circlePoints[i].x = cos(angle);
-			circlePoints[i].y = sin(angle);
+			circlePoints[i].x = std::cos(angle);
+			circlePoints[i].y = std::sin(angle);
 			circlePoints[i].z = 0.0f;
 			angle += angleAdder;
 		}
@@ -348,7 +348,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     // determine the directional angle delta
     float d = clockwise ? angleEndRad - angleBeginRad : angleBeginRad - angleEndRad;
     // find the shortest angle delta, clockwise delta direction yeilds POSITIVE values
-    float deltaAngle = atan2(sin(d),cos(d));
+    float deltaAngle = std::atan2(std::sin(d),std::cos(d));
     
     // establish the remaining angle that we have to work through
     float remainingAngle = deltaAngle;
@@ -371,14 +371,14 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
             //
             // get the EXACT first point requested (for points that
             // don't fall precisely on a LUT entry)
-			point = T(cos(angleBeginRad), sin(angleBeginRad), 0.f);
+			point = T(std::cos(angleBeginRad), std::sin(angleBeginRad), 0.f);
             // set up the get any in between points from the LUT
             float ratio = angleBeginRad / glm::two_pi<float>() * (float)nCirclePoints;
-            currentLUTIndex = clockwise ? (int)ceil(ratio) : (int)floor(ratio);
+            currentLUTIndex = clockwise ? (int)std::ceil(ratio) : (int)std::floor(ratio);
             float lutAngleAtIndex = currentLUTIndex * segmentArcSize;
             // the angle between the beginning angle and the next angle in the LUT table
             float d = clockwise ? (lutAngleAtIndex - angleBeginRad) : (angleBeginRad - lutAngleAtIndex);
-            float firstPointDelta = atan2(sin(d),cos(d)); // negative is in the clockwise direction
+            float firstPointDelta = std::atan2(std::sin(d),std::cos(d)); // negative is in the clockwise direction
             
             // if the are "equal", get the next one CCW
             if(std::abs(firstPointDelta) < epsilon) {
@@ -416,7 +416,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
         // if the next LUT point moves us past the end angle then
         // add a a point a the exact end angle and call it finished
         if(remainingAngle < epsilon) {
-			point = T(cos(angleEndRad), sin(angleEndRad), 0.f);
+			point = T(std::cos(angleEndRad), std::sin(angleEndRad), 0.f);
             point = point * radii + center;
             points.push_back(point);
             remainingAngle = 0; // call it finished, the next while loop test will fail
@@ -895,7 +895,7 @@ float ofPolyline_<T>::getIndexAtLength(float length) const {
     
     int lastPointIndex = isClosed() ? points.size() : points.size()-1;
     
-    int i1 = ofClamp(floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
+    int i1 = ofClamp(std::floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
     int leftLimit = 0;
     int rightLimit = lastPointIndex;
     
@@ -1128,7 +1128,7 @@ int ofPolyline_<T>::getWrappedIndex(int index) const {
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::getInterpolationParams(float findex, int &i1, int &i2, float &t) const {
-    i1 = floor(findex);
+    i1 = std::floor(findex);
     t = findex - i1;
     i1 = getWrappedIndex(i1);
     i2 = getWrappedIndex(i1 + 1);

@@ -16,8 +16,8 @@ inline void ofStereoVolumes(float volume, float pan, float & left, float & right
 	// thanks to jasch
 	
 	float angle = pan * glm::quarter_pi<float>(); // in radians from -45. to +45.
-	float cosAngle = cos(angle);
-	float sinAngle = sin(angle);
+	float cosAngle = std::cos(angle);
+	float sinAngle = std::sin(angle);
 	
 	
 	left  = (cosAngle - sinAngle) * glm::one_over_root_two<float>() * volume; // multiplied by sqrt(2)/2

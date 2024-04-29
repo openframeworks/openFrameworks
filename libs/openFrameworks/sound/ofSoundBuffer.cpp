@@ -355,7 +355,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	}else if(fromFrame+2>inFrames){
 		to = 0;
 	}else{
-		to = ceil(float(inFrames-2-fromFrame)/speed);
+		to = std::ceil(float(inFrames-2-fromFrame)/speed);
 	}
 	
 	float remainder = position - intPosition;

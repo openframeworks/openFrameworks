@@ -920,15 +920,15 @@ public:
 	/// ~~~~{.cpp}
 	/// ofVec2f a1(2, 0); // magnitude 2, parallel to x-axis
 	/// ofVec2f b1(3, 4); // magnitude 5, 53.13 degree angle to a1
-	/// float dot = a1.dot(b1); // dot is 2 * 5 * cos(53.13) = 6.0
+	/// float dot = a1.dot(b1); // dot is 2 * 5 * std::cos(53.13) = 6.0
 	///
 	/// ofVec2f a2(1, 0); // magnitude 1, parallel to x-axis
 	/// ofVec2f b2(0, 1); // magnitude 1, 90 degree angle to a2
-	/// dot = a2.dot(b2); // dot is 1 * 1 * cos(90) = 0.0
+	/// dot = a2.dot(b2); // dot is 1 * 1 * std::cos(90) = 0.0
 	///
 	/// ofVec2f a3(0, 1); // magnitude 1, parallel to y-axis
 	/// ofVec2f b3(0, -1); // magnitude 1, 180 degree angle to a3
-	/// dot = a3.dot(b3); // dot is 1 * 1 * cos(180) = -1.0
+	/// dot = a3.dot(b3); // dot is 1 * 1 * std::cos(180) = -1.0
 	/// ~~~~
 	/// 
     float dot( const ofVec2f& vec ) const;
@@ -1217,28 +1217,28 @@ inline ofVec2f ofVec2f::rotated( float angle ) const {
 
 inline ofVec2f ofVec2f::getRotated( float angle ) const {
 	float a = (float)(ofDegToRad(angle));
-	return ofVec2f( x*cos(a) - y*sin(a),
-				   x*sin(a) + y*cos(a) );
+	return ofVec2f( x * std::cos(a) - y * std::sin(a),
+				   x * std::sin(a) + y * std::cos(a) );
 }
 
 inline ofVec2f ofVec2f::getRotatedRad( float angle ) const {
 	float a = angle;
-	return ofVec2f( x*cos(a) - y*sin(a),
-				   x*sin(a) + y*cos(a) );
+	return ofVec2f( x * std::cos(a) - y * std::sin(a),
+				   x * std::sin(a) + y * std::cos(a) );
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle ) {
 	float a = (float)(ofDegToRad(angle));
-	float xrot = x*cos(a) - y*sin(a);
-	y = x*sin(a) + y*cos(a);
+	float xrot = x * std::cos(a) - y * std::sin(a);
+	y = x * std::sin(a) + y * std::cos(a);
 	x = xrot;
 	return *this;
 }
 
 inline ofVec2f& ofVec2f::rotateRad( float angle ) {
 	float a = angle;
-	float xrot = x*cos(a) - y*sin(a);
-	y = x*sin(a) + y*cos(a);
+	float xrot = x * std::cos(a) - y * std::sin(a);
+	y = x * std::sin(a) + y * std::cos(a);
 	x = xrot;
 	return *this;
 }
@@ -1256,28 +1256,28 @@ inline ofVec2f ofVec2f::rotated( float angle, const ofVec2f& pivot ) const {
 
 inline ofVec2f ofVec2f::getRotated( float angle, const ofVec2f& pivot ) const {
 	float a = (float)(ofDegToRad(angle));
-	return ofVec2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
-				   ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
+	return ofVec2f( ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x,
+				   ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y );
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle, const ofVec2f& pivot ) {
 	float a = (float)(ofDegToRad(angle));
-	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
-	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
+	float xrot = ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x;
+	y = ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y;
 	x = xrot;
 	return *this;
 }
 
 inline ofVec2f ofVec2f::getRotatedRad( float angle, const ofVec2f& pivot ) const {
 	float a = angle;
-	return ofVec2f( ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x,
-				   ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y );
+	return ofVec2f( ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x,
+				   ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y );
 }
 
 inline ofVec2f& ofVec2f::rotateRad( float angle, const ofVec2f& pivot ) {
 	float a = angle;
-	float xrot = ((x-pivot.x)*cos(a) - (y-pivot.y)*sin(a)) + pivot.x;
-	y = ((x-pivot.x)*sin(a) + (y-pivot.y)*cos(a)) + pivot.y;
+	float xrot = ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x;
+	y = ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y;
 	x = xrot;
 	return *this;
 }
@@ -1491,11 +1491,11 @@ inline float ofVec2f::lengthSquared() const {
 
 
 inline float ofVec2f::angle( const ofVec2f& vec ) const {
-	return ofRadToDeg(atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y ));
+	return ofRadToDeg(std::atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y ));
 }
 
 inline float ofVec2f::angleRad( const ofVec2f& vec ) const {
-	return atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y );
+	return std::atan2( x*vec.y-y*vec.x, x*vec.x + y*vec.y );
 }
 
 

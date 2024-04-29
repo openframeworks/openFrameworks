@@ -204,7 +204,7 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 			// This is the usual situation - take a cross-product of vec1 and vec2
 			// and that is the axis around which to rotate.
 			ofVec3f axis(from.getCrossed(to));
-			float angle = acos( cosangle );
+			float angle = std::acos( cosangle );
 			makeRotate( angle, axis );
 		}
 }
@@ -222,7 +222,7 @@ void ofQuaternion::getRotate( float& angle, ofVec3f& vec ) const {
 void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const {
 	float sinhalfangle = sqrt( _v.x * _v.x + _v.y * _v.y + _v.z * _v.z );
 
-	angle = 2.0 * atan2( sinhalfangle, _v.w );
+	angle = 2.0 * std::atan2( sinhalfangle, _v.w );
 	if (sinhalfangle) {
 		x = _v.x / sinhalfangle;
 		y = _v.y / sinhalfangle;
@@ -259,11 +259,11 @@ void ofQuaternion::slerp( float t, const ofQuaternion& from, const ofQuaternion&
 	}
 
 	if ( (1.0 - cosomega) > epsilon ) {
-		omega = acos(cosomega) ; // 0 <= omega <= Pi (see man acos)
-		sinomega = sin(omega) ;  // this sinomega should always be +ve so
-		// could try sinomega=sqrt(1-cosomega*cosomega) to avoid a sin()?
-		scale_from = sin((1.0 - t) * omega) / sinomega ;
-		scale_to = sin(t * omega) / sinomega ;
+		omega = std::acos(cosomega) ; // 0 <= omega <= Pi (see man acos)
+		sinomega = std::sin(omega) ;  // this sinomega should always be +ve so
+		// could try sinomega=sqrt(1-cosomega*cosomega) to avoid a std::sin()?
+		scale_from = std::sin((1.0 - t) * omega) / sinomega ;
+		scale_to = std::sin(t * omega) / sinomega ;
 	} else {
 		/* --------------------------------------------------
 		The ends of the vectors are very close
@@ -287,20 +287,20 @@ ofVec3f ofQuaternion::getEuler() const {
 	float attitude;
 	float bank;
 	if (test > 0.499) { // singularity at north pole
-		heading = 2.0f * atan2(x(), w());
+		heading = 2.0f * std::atan2(x(), w());
 		attitude = glm::half_pi<float>();
 		bank = 0;
 	} else if (test < -0.499) { // singularity at south pole
-		heading = -2.0f * atan2(x(), w());
+		heading = -2.0f * std::atan2(x(), w());
 		attitude = - glm::half_pi<float>();
 		bank = 0;
 	} else {
 		float sqx = x() * x();
 		float sqy = y() * y();
 		float sqz = z() * z();
-		heading = atan2(2.0f * y() * w() - 2.0f * x() * z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
-		attitude = asin(2*test);
-		bank = atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
+		heading = std::atan2(2.0f * y() * w() - 2.0f * x() * z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
+		attitude = std::asin(2*test);
+		bank = std::atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
 	}
 	
 	return ofVec3f(ofRadToDeg(bank), ofRadToDeg(heading), ofRadToDeg(attitude));

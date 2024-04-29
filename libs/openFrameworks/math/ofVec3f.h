@@ -973,15 +973,15 @@ public:
 	/// ~~~~{.cpp}
 	/// ofVec3f a1(2, 0, 0); // magnitude 2, parallel to x-axis
 	/// ofVec3f b1(3, 4, 0); // magnitude 5, 53.13 degree angle to a1
-	/// float dot = a1.dot(b1); // dot is 2 * 5 * cos(53.13) = 6.0
+	/// float dot = a1.dot(b1); // dot is 2 * 5 * std::cos(53.13) = 6.0
 	///
 	/// ofVec3f a2(1, 0, 0); // magnitude 1, parallel to x-axis
 	/// ofVec3f b2(0, 0, 1); // magnitude 1, 90 degree angle to a2
-	/// dot = a2.dot(b2); // dot is 1 * 1 * cos(90) = 0.0
+	/// dot = a2.dot(b2); // dot is 1 * 1 * std::cos(90) = 0.0
 	///
 	/// ofVec3f a3(0, 1, 0); // magnitude 1, parallel to y-axis
 	/// ofVec3f b3(0, -1, 0); // magnitude 1, 180 degree angle to a3
-	/// dot = a3.dot(b3); // dot is 1 * 1 * cos(180) = -1.0
+	/// dot = a3.dot(b3); // dot is 1 * 1 * std::cos(180) = -1.0
 	/// ~~~~
 	/// 
     float dot( const ofVec3f& vec ) const;
@@ -1302,8 +1302,8 @@ inline ofVec3f ofVec3f::rotated( float angle, const ofVec3f& axis ) const {
 inline ofVec3f ofVec3f::getRotated( float angle, const ofVec3f& axis ) const {
 	ofVec3f ax = axis.getNormalized();
 	float a = (float)(ofDegToRad(angle));
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	return ofVec3f( x*(ax.x*ax.x*cosb + cosa)
@@ -1320,8 +1320,8 @@ inline ofVec3f ofVec3f::getRotated( float angle, const ofVec3f& axis ) const {
 inline ofVec3f ofVec3f::getRotatedRad( float angle, const ofVec3f& axis ) const {
 	ofVec3f ax = axis.getNormalized();
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	return ofVec3f( x*(ax.x*ax.x*cosb + cosa)
@@ -1338,8 +1338,8 @@ inline ofVec3f ofVec3f::getRotatedRad( float angle, const ofVec3f& axis ) const 
 inline ofVec3f& ofVec3f::rotate( float angle, const ofVec3f& axis ) {
 	ofVec3f ax = axis.getNormalized();
 	float a = (float)(ofDegToRad(angle));
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float nx = x*(ax.x*ax.x*cosb + cosa)
@@ -1359,8 +1359,8 @@ inline ofVec3f& ofVec3f::rotate( float angle, const ofVec3f& axis ) {
 inline ofVec3f& ofVec3f::rotateRad(float angle, const ofVec3f& axis ) {
 	ofVec3f ax = axis.getNormalized();
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float nx = x*(ax.x*ax.x*cosb + cosa)
@@ -1382,12 +1382,12 @@ inline ofVec3f ofVec3f::rotated(float ax, float ay, float az) {
 }
 
 inline ofVec3f ofVec3f::getRotated(float ax, float ay, float az) const {
-	float a = (float)cos(ofDegToRad(ax));
-	float b = (float)sin(ofDegToRad(ax));
-	float c = (float)cos(ofDegToRad(ay));
-	float d = (float)sin(ofDegToRad(ay));
-	float e = (float)cos(ofDegToRad(az));
-	float f = (float)sin(ofDegToRad(az));
+	float a = std::cos(ofDegToRad(ax));
+	float b = std::sin(ofDegToRad(ax));
+	float c = std::cos(ofDegToRad(ay));
+	float d = std::sin(ofDegToRad(ay));
+	float e = std::cos(ofDegToRad(az));
+	float f = std::sin(ofDegToRad(az));
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1397,12 +1397,12 @@ inline ofVec3f ofVec3f::getRotated(float ax, float ay, float az) const {
 }
 
 inline ofVec3f ofVec3f::getRotatedRad(float ax, float ay, float az) const {
-	float a = cos(ax);
-	float b = sin(ax);
-	float c = cos(ay);
-	float d = sin(ay);
-	float e = cos(az);
-	float f = sin(az);
+	float a = std::cos(ax);
+	float b = std::sin(ax);
+	float c = std::cos(ay);
+	float d = std::sin(ay);
+	float e = std::cos(az);
+	float f = std::sin(az);
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1413,12 +1413,12 @@ inline ofVec3f ofVec3f::getRotatedRad(float ax, float ay, float az) const {
 
 
 inline ofVec3f& ofVec3f::rotate(float ax, float ay, float az) {
-	float a = (float)cos(ofDegToRad(ax));
-	float b = (float)sin(ofDegToRad(ax));
-	float c = (float)cos(ofDegToRad(ay));
-	float d = (float)sin(ofDegToRad(ay));
-	float e = (float)cos(ofDegToRad(az));
-	float f = (float)sin(ofDegToRad(az));
+	float a = std::cos(ofDegToRad(ax));
+	float b = std::sin(ofDegToRad(ax));
+	float c = std::cos(ofDegToRad(ay));
+	float d = std::sin(ofDegToRad(ay));
+	float e = std::cos(ofDegToRad(az));
+	float f = std::sin(ofDegToRad(az));
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1430,12 +1430,12 @@ inline ofVec3f& ofVec3f::rotate(float ax, float ay, float az) {
 
 
 inline ofVec3f& ofVec3f::rotateRad(float ax, float ay, float az) {
-	float a = cos(ax);
-	float b = sin(ax);
-	float c = cos(ay);
-	float d = sin(ay);
-	float e = cos(az);
-	float f = sin(az);
+	float a = std::cos(ax);
+	float b = std::sin(ax);
+	float c = std::cos(ay);
+	float d = std::sin(ay);
+	float e = std::cos(az);
+	float f = std::sin(az);
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1465,8 +1465,8 @@ inline ofVec3f ofVec3f::getRotated( float angle,
 	float tz = z - pivot.z;
 	
 	float a = ofDegToRad(angle);
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = tx*(ax.x*ax.x*cosb + cosa)
@@ -1494,8 +1494,8 @@ inline ofVec3f ofVec3f::getRotatedRad( float angle,
 	float tz = z - pivot.z;
 	
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = tx*(ax.x*ax.x*cosb + cosa)
@@ -1523,8 +1523,8 @@ inline ofVec3f& ofVec3f::rotate( float angle,
 	z -= pivot.z;
 	
 	float a = ofDegToRad(angle);
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = x*(ax.x*ax.x*cosb + cosa)
@@ -1555,8 +1555,8 @@ inline ofVec3f& ofVec3f::rotateRad( float angle,
 	z -= pivot.z;
 	
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = x*(ax.x*ax.x*cosb + cosa)
@@ -1846,13 +1846,13 @@ inline float ofVec3f::lengthSquared() const {
 inline float ofVec3f::angle( const ofVec3f& vec ) const {
 	ofVec3f n1 = this->getNormalized();
 	ofVec3f n2 = vec.getNormalized();
-	return ofRadToDeg(acos( n1.dot(n2) ));
+	return ofRadToDeg(std::acos( n1.dot(n2) ));
 }
 
 inline float ofVec3f::angleRad( const ofVec3f& vec ) const {
 	ofVec3f n1 = this->getNormalized();
 	ofVec3f n2 = vec.getNormalized();
-	return (float)acos( n1.dot(n2) );
+	return std::acos( n1.dot(n2) );
 }
 
 

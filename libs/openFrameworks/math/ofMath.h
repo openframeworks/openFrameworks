@@ -558,7 +558,7 @@ template <typename Type>
 Type ofInterpolateCosine(const Type & y1, const Type & y2, float pct) {
 	float pct2;
 
-	pct2 = (1 - cos(pct * glm::pi<float>())) / 2;
+	pct2 = (1 - std::cos(pct * glm::pi<float>())) / 2;
 	return (y1 * (1 - pct2) + y2 * pct2);
 }
 
