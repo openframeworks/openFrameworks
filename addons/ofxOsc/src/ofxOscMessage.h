@@ -9,13 +9,11 @@
 class ofxOscMessage {
 public:
 	ofxOscMessage();
-	ofxOscMessage(std::string address)
-		: ofxOscMessage() {
-		setAddress(address);
-	}
 	~ofxOscMessage();
 	ofxOscMessage(const ofxOscMessage & other);
-	ofxOscMessage(std::string & address);
+	ofxOscMessage(const std::string address) { setAddress(address); }
+	ofxOscMessage(std::string && address) { setAddress(std::move(address)); }
+	ofxOscMessage(const char* address) { setAddress(address); }
 	ofxOscMessage & operator=(const ofxOscMessage & other);
 	/// for operator= and copy constructor
 	ofxOscMessage & copy(const ofxOscMessage & other);
