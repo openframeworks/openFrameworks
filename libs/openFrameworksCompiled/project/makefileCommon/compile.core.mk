@@ -1,5 +1,7 @@
 .DEFAULT_GOAL=all
 
+$(info  OWWWW )
+
 ################################################################################
 ifdef MAKEFILE_DEBUG
 $(info ===================compile.core.make================================)
@@ -39,7 +41,13 @@ ifdef ${ccache}
 $(info 💿 Using CCACHE - compile.core.mk )
 	CXX := ${ccache} $(CXX)
 	CC := ${ccache} $(CXX)
-endif	
+endif
+
+ifdef ${iwyu}
+CXX := ${iwyu}
+CC := ${iwyu}
+endif
+
 
 ################################################################################
 # CFLAGS
