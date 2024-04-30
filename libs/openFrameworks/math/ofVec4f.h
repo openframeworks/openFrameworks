@@ -5,6 +5,7 @@
 #include <glm/vec4.hpp>
 #include <glm/fwd.hpp>
 #include <iostream>
+#include <cmath>
 
 class ofVec2f;
 class ofVec3f;
