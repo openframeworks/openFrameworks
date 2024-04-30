@@ -46,7 +46,6 @@
 
 #include "ofArduino.h"
 #include "ofUtils.h"
-//#include "ofMath.h"
 #include "ofLog.h"
 #include <climits>
 

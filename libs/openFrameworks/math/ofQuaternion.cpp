@@ -1,8 +1,6 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
-//#include "ofMath.h"
 #include "ofMathConstants.h"
-//#include "ofVec4f.h"
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
@@ -299,7 +297,7 @@ ofVec3f ofQuaternion::getEuler() const {
 		float sqy = y() * y();
 		float sqz = z() * z();
 		heading = std::atan2(2.0f * y() * w() - 2.0f * x() * z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
-		attitude = std::asin(2*test);
+		attitude = std::asin(2.0f*test);
 		bank = std::atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
 	}
 	

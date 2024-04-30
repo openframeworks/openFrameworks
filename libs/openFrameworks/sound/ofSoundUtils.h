@@ -7,8 +7,6 @@
 
 #pragma once
 
-//#include "ofMath.h"
-
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/constants.hpp>
@@ -27,7 +25,7 @@ inline void ofStereoVolumes(float volume, float pan, float & left, float & right
 	float cosAngle = std::cos(angle);
 	float sinAngle = std::sin(angle);
 	
-	
-	left  = (cosAngle - sinAngle) * glm::one_over_root_two<float>() * volume; // multiplied by sqrt(2)/2
-	right = (cosAngle + sinAngle) * glm::one_over_root_two<float>() * volume; // multiplied by sqrt(2)/2
+	float v = glm::one_over_root_two<float>() * volume; // multiplied by sqrt(2)/2
+	left  = (cosAngle - sinAngle) * v;
+	right = (cosAngle + sinAngle) * v;
 }

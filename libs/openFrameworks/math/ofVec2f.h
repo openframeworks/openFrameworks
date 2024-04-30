@@ -1,7 +1,5 @@
 #pragma once
 
-//#include "ofMath.h"
-//#include "ofMathConstants.h"
 #include <iostream>
 
 #define GLM_FORCE_CTOR_INIT
@@ -10,8 +8,6 @@
 #include <glm/vec2.hpp>
 #include <glm/fwd.hpp>
 #include <glm/trigonometric.hpp>
-
-//#include <cmath>
 
 class ofVec3f;
 class ofVec4f;
@@ -978,10 +974,10 @@ public:
 	ofVec2f rotated( float angle, const ofVec2f& pivot ) const;   
     
     // return all zero vector
-    static ofVec2f zero() { return ofVec2f(0, 0); }
+    static ofVec2f zero() { return { 0.f, 0.f }; }
 
     // return all one vector
-    static ofVec2f one() { return ofVec2f(1, 1); }
+    static ofVec2f one() { return { 1.f, 1.f }; }
 
     /// \endcond
 };
@@ -1076,7 +1072,7 @@ inline bool ofVec2f::alignRad( const ofVec2f& vec, float tolerance ) const {
 //
 
 inline ofVec2f ofVec2f::operator+( const ofVec2f& vec ) const {
-	return ofVec2f( x+vec.x, y+vec.y);
+	return { x+vec.x, y+vec.y };
 }
 
 inline ofVec2f& ofVec2f::operator+=( const ofVec2f& vec ) {
@@ -1086,7 +1082,7 @@ inline ofVec2f& ofVec2f::operator+=( const ofVec2f& vec ) {
 }
 
 inline ofVec2f ofVec2f::operator-( const ofVec2f& vec ) const {
-	return ofVec2f(x-vec.x, y-vec.y);
+	return { x-vec.x, y-vec.y };
 }
 
 inline ofVec2f& ofVec2f::operator-=( const ofVec2f& vec ) {
@@ -1096,7 +1092,7 @@ inline ofVec2f& ofVec2f::operator-=( const ofVec2f& vec ) {
 }
 
 inline ofVec2f ofVec2f::operator*( const ofVec2f& vec ) const {
-	return ofVec2f(x*vec.x, y*vec.y);
+	return { x*vec.x, y*vec.y };
 }
 
 inline ofVec2f& ofVec2f::operator*=( const ofVec2f& vec ) {
@@ -1106,7 +1102,7 @@ inline ofVec2f& ofVec2f::operator*=( const ofVec2f& vec ) {
 }
 
 inline ofVec2f ofVec2f::operator/( const ofVec2f& vec ) const {
-	return ofVec2f( vec.x!=0 ? x/vec.x : x , vec.y!=0 ? y/vec.y : y);
+	return { vec.x!=0 ? x/vec.x : x , vec.y!=0 ? y/vec.y : y };
 }
 
 inline ofVec2f& ofVec2f::operator/=( const ofVec2f& vec ) {
@@ -1136,7 +1132,7 @@ inline std::istream& operator>>(std::istream& is, ofVec2f& vec) {
 //}
 
 inline ofVec2f ofVec2f::operator+( const float f ) const {
-	return ofVec2f( x+f, y+f);
+	return { x+f, y+f };
 }
 
 inline ofVec2f& ofVec2f::operator+=( const float f ) {
@@ -1146,7 +1142,7 @@ inline ofVec2f& ofVec2f::operator+=( const float f ) {
 }
 
 inline ofVec2f ofVec2f::operator-( const float f ) const {
-	return ofVec2f( x-f, y-f);
+	return { x-f, y-f };
 }
 
 inline ofVec2f& ofVec2f::operator-=( const float f ) {
@@ -1156,7 +1152,7 @@ inline ofVec2f& ofVec2f::operator-=( const float f ) {
 }
 
 inline ofVec2f ofVec2f::operator-() const {
-	return ofVec2f(-x, -y);
+	return { -x, -y };
 }
 
 inline ofVec2f ofVec2f::operator*( const float f ) const {
@@ -1170,9 +1166,9 @@ inline ofVec2f& ofVec2f::operator*=( const float f ) {
 }
 
 inline ofVec2f ofVec2f::operator/( const float f ) const {
-	if(f == 0) return ofVec2f(x, y);
+	if(f == 0) return { x, y };
 	
-	return ofVec2f(x/f, y/f);
+	return { x/f, y/f };
 }
 
 inline ofVec2f& ofVec2f::operator/=( const float f ) {
@@ -1190,9 +1186,9 @@ inline ofVec2f ofVec2f::rescaled( const float length ) const {
 inline ofVec2f ofVec2f::getScaled( const float length ) const {
 	float l = (float)sqrt(x*x + y*y);
 	if( l > 0 )
-		return ofVec2f( (x/l)*length, (y/l)*length );
+		return { (x/l)*length, (y/l)*length };
 	else
-		return ofVec2f();
+		return {};
 }
 
 inline ofVec2f& ofVec2f::rescale( const float length ){
@@ -1219,14 +1215,12 @@ inline ofVec2f ofVec2f::rotated( float angle ) const {
 
 inline ofVec2f ofVec2f::getRotated( float angle ) const {
 	float a { glm::radians(angle) };
-	return ofVec2f( x * std::cos(a) - y * std::sin(a),
-				   x * std::sin(a) + y * std::cos(a) );
+	return { x * std::cos(a) - y * std::sin(a), x * std::sin(a) + y * std::cos(a) };
 }
 
 inline ofVec2f ofVec2f::getRotatedRad( float angle ) const {
 	float a = angle;
-	return ofVec2f( x * std::cos(a) - y * std::sin(a),
-				   x * std::sin(a) + y * std::cos(a) );
+	return { x * std::cos(a) - y * std::sin(a), x * std::sin(a) + y * std::cos(a) };
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle ) {
@@ -1258,8 +1252,8 @@ inline ofVec2f ofVec2f::rotated( float angle, const ofVec2f& pivot ) const {
 
 inline ofVec2f ofVec2f::getRotated( float angle, const ofVec2f& pivot ) const {
 	float a { glm::radians(angle) };
-	return ofVec2f( ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x,
-				   ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y );
+	return { ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x,
+			 ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y };
 }
 
 inline ofVec2f& ofVec2f::rotate( float angle, const ofVec2f& pivot ) {
@@ -1272,8 +1266,8 @@ inline ofVec2f& ofVec2f::rotate( float angle, const ofVec2f& pivot ) {
 
 inline ofVec2f ofVec2f::getRotatedRad( float angle, const ofVec2f& pivot ) const {
 	float a = angle;
-	return ofVec2f( ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x,
-				   ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y );
+	return { ((x-pivot.x) * std::cos(a) - (y-pivot.y) * std::sin(a)) + pivot.x,
+			 ((x-pivot.x) * std::sin(a) + (y-pivot.y) * std::cos(a)) + pivot.y };
 }
 
 inline ofVec2f& ofVec2f::rotateRad( float angle, const ofVec2f& pivot ) {
@@ -1301,8 +1295,7 @@ inline ofVec2f ofVec2f::getMapped( const ofVec2f& origin,
 								  const ofVec2f& vx,
 								  const ofVec2f& vy ) const
 {
-	return ofVec2f( origin.x + x*vx.x + y*vy.x,
-				   origin.y + x*vx.y + y*vy.y );
+	return { origin.x + x*vx.x + y*vy.x, origin.y + x*vx.y + y*vy.y };
 }
 
 inline ofVec2f& ofVec2f::map( const ofVec2f& origin,
@@ -1351,7 +1344,7 @@ inline ofVec2f ofVec2f::interpolated( const ofVec2f& pnt, float p ) const{
 }
 
 inline ofVec2f ofVec2f::getInterpolated( const ofVec2f& pnt, float p ) const {
-	return ofVec2f( x*(1-p) + pnt.x*p, y*(1-p) + pnt.y*p );
+	return { x*(1-p) + pnt.x*p, y*(1-p) + pnt.y*p };
 }
 
 inline ofVec2f& ofVec2f::interpolate( const ofVec2f& pnt, float p ) {
@@ -1366,7 +1359,7 @@ inline ofVec2f ofVec2f::middled( const ofVec2f& pnt ) const{
 }
 
 inline ofVec2f ofVec2f::getMiddle( const ofVec2f& pnt ) const {
-	return ofVec2f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f );
+	return { (x+pnt.x)/2.0f, (y+pnt.y)/2.0f };
 }
 
 inline ofVec2f& ofVec2f::middle( const ofVec2f& pnt ) {
@@ -1406,9 +1399,9 @@ inline ofVec2f ofVec2f::normalized() const {
 inline ofVec2f ofVec2f::getNormalized() const {
 	float length = (float)sqrt(x*x + y*y);
 	if( length > 0 ) {
-		return ofVec2f( x/length, y/length );
+		return { x/length, y/length };
 	} else {
-		return ofVec2f();
+		return {};
 	}
 }
 
@@ -1464,9 +1457,9 @@ inline ofVec2f ofVec2f::perpendiculared() const {
 inline ofVec2f ofVec2f::getPerpendicular() const {
 	float length = (float)sqrt( x*x + y*y );
 	if( length > 0 )
-		return ofVec2f( -(y/length), x/length );
+		return { -(y/length), x/length };
 	else
-		return ofVec2f();
+		return {};
 }
 
 inline ofVec2f& ofVec2f::perpendicular() {
@@ -1515,19 +1508,19 @@ inline float ofVec2f::dot( const ofVec2f& vec ) const {
 //
 //
 inline ofVec2f operator+( float f, const ofVec2f& vec ) {
-    return ofVec2f( f+vec.x, f+vec.y);
+    return { f+vec.x, f+vec.y };
 }
 
 inline ofVec2f operator-( float f, const ofVec2f& vec ) {
-    return ofVec2f( f-vec.x, f-vec.y);
+    return { f-vec.x, f-vec.y };
 }
 
 inline ofVec2f operator*( float f, const ofVec2f& vec ) {
-    return ofVec2f( f*vec.x, f*vec.y);
+    return { f*vec.x, f*vec.y };
 }
 
 inline ofVec2f operator/( float f, const ofVec2f& vec ) {
-    return ofVec2f( f/vec.x, f/vec.y);
+    return { f/vec.x, f/vec.y };
 }
 
 

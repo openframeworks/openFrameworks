@@ -98,7 +98,7 @@ void ofxSvg::fixSvgString(std::string & xmlstring) {
 		for (ofXml & element : strokeWidthElements) {
 			//cout << element.toString() << endl;
 			float strokewidth = element.getAttribute("stroke-width").getFloatValue();
-			strokewidth = std::fmax(1, round(strokewidth));
+			strokewidth = std::max(1.0, round(strokewidth));
 			element.getAttribute("stroke-width").set(strokewidth);
 		}
 	}

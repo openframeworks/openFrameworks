@@ -1,5 +1,4 @@
 #include "ofRectangle.h"
-//#include "ofMath.h"
 #include "ofLog.h"
 #include "ofVectorMath.h"
 
