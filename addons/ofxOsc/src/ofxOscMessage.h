@@ -202,6 +202,7 @@ public:
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addStringArg(const std::string & argument);
 	ofxOscMessage & add(const std::string & argument) { return addStringArg(argument); }
+	ofxOscMessage & add(const char * argument) { return addStringArg(argument); }
 
 	/// add a symbol (string)
 	/// \return a reference to this ofxOscMessage
