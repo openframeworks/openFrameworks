@@ -495,7 +495,7 @@ inline ofVec4f ofVec4f::rescaled( const float length ) const {
 }
 
 inline ofVec4f ofVec4f::getScaled( const float length ) const {
-	float l = std::sqrtf(x*x + y*y + z*z + w*w);
+	float l = std::sqrt( x*x + y*y + z*z + w*w);
 	if( l > 0 )
 		return { (x/l)*length, (y/l)*length,
 					   (z/l)*length, (w/l)*length };
@@ -508,7 +508,7 @@ inline ofVec4f& ofVec4f::rescale( const float length ) {
 }
 
 inline ofVec4f& ofVec4f::scale( const float length ) {
-	float l = std::sqrtf(x*x + y*y + z*z + w*w);
+	float l = std::sqrt(x*x + y*y + z*z + w*w);
 	if (l > 0) {
 		x = (x/l)*length;
 		y = (y/l)*length;
@@ -528,7 +528,7 @@ inline float ofVec4f::distance( const ofVec4f& pnt) const {
 	float vy = y-pnt.y;
 	float vz = z-pnt.z;
 	float vw = w-pnt.w;
-	return std::sqrtf( vx*vx + vy*vy + vz*vz + vw*vw );
+	return std::sqrt( vx*vx + vy*vy + vz*vz + vw*vw );
 }
 
 inline float ofVec4f::distanceSquared( const ofVec4f& pnt ) const {
@@ -621,7 +621,7 @@ inline ofVec4f ofVec4f::normalized() const {
 }
 
 inline ofVec4f ofVec4f::getNormalized() const {
-	float length = std::sqrtf(x*x + y*y + z*z + w*w);
+	float length = std::sqrt(x*x + y*y + z*z + w*w);
 	if( length > 0 ) {
 		return { x/length, y/length, z/length, w/length };
 	} else {
@@ -630,7 +630,7 @@ inline ofVec4f ofVec4f::getNormalized() const {
 }
 
 inline ofVec4f& ofVec4f::normalize() {
-	float lenght = std::sqrtf(x*x + y*y + z*z + w*w);
+	float lenght = std::sqrt(x*x + y*y + z*z + w*w);
 	if( lenght > 0 ) {
 		x /= lenght;
 		y /= lenght;
@@ -653,7 +653,7 @@ inline ofVec4f ofVec4f::getLimited(float max) const {
 	ofVec4f limited;
 	float lengthSquared = (x*x + y*y + z*z + w*w);
 	if( lengthSquared > max*max && lengthSquared > 0 ) {
-		float ratio = max/std::sqrtf(lengthSquared);
+		float ratio = max/std::sqrt(lengthSquared);
 		limited.set( x*ratio, y*ratio, z*ratio, w*ratio );
 	} else {
 		limited.set(x,y,z,w);
@@ -664,7 +664,7 @@ inline ofVec4f ofVec4f::getLimited(float max) const {
 inline ofVec4f& ofVec4f::limit(float max) {
 	float lengthSquared = (x*x + y*y + z*z + w*w);
 	if( lengthSquared > max*max && lengthSquared > 0 ) {
-		float ratio = max/std::sqrtf(lengthSquared);
+		float ratio = max/std::sqrt(lengthSquared);
 		x *= ratio;
 		y *= ratio;
 		z *= ratio;
@@ -679,7 +679,7 @@ inline ofVec4f& ofVec4f::limit(float max) {
 //
 //
 inline float ofVec4f::length() const {
-	return std::sqrtf( x*x + y*y + z*z + w*w );
+	return std::sqrt( x*x + y*y + z*z + w*w );
 }
 
 inline float ofVec4f::lengthSquared() const {

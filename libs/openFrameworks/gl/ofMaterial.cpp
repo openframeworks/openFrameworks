@@ -5,7 +5,7 @@
 #include "ofImage.h"
 #include "ofGLProgrammableRenderer.h"
 
-#include <typeinfo>
+//#include <typeinfo>
 
 using std::shared_ptr;
 using std::string;
