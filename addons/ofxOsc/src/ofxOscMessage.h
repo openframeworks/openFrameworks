@@ -11,7 +11,7 @@ public:
 	ofxOscMessage();
 	~ofxOscMessage();
 	ofxOscMessage(const ofxOscMessage & other);
-	ofxOscMessage(const std::string address) { setAddress(address); }
+	ofxOscMessage(const std::string & address) { setAddress(address); }
 	ofxOscMessage(std::string && address) { setAddress(std::move(address)); }
 	ofxOscMessage(const char* address) { setAddress(address); }
 	ofxOscMessage & operator=(const ofxOscMessage & other);
