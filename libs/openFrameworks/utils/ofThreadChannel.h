@@ -271,7 +271,7 @@ public:
 	/// Clears the queue (useful if only the latest
 	/// data is meant to be transferred (i.e. no queue))
 	void clear() {
-		if (!queue.empty) {
+		if (!queue.empty()) {
 			std::unique_lock<std::mutex> lock(mutex);
 			queue = {};
 		}
