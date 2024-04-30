@@ -4,7 +4,7 @@
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm/common.hpp>
+//#include <glm/common.hpp>
 #include <cstring>
 
 static ofImageType getImageTypeFromChannels(size_t channels){

@@ -4,7 +4,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec4.hpp>
 #include <glm/fwd.hpp>
-//#include <cmath>
 #include <iostream>
 
 class ofVec2f;

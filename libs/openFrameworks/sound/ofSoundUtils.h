@@ -12,8 +12,6 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/scalar_common.hpp>
 
-//#include <cmath>
-
 
 inline void ofStereoVolumes(float volume, float pan, float & left, float & right){
 	pan = glm::clamp(pan, -1.0f, 1.0f);
