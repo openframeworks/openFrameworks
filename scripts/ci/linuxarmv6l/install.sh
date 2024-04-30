@@ -69,7 +69,7 @@ cd $ROOT
 installPackages
 createRaspbianImg
 downloadToolchain
-downloadFirmware
+# downloadFirmware
 
 #needed for some of the toolchain libs
 cp -rn rpi_toolchain/arm-linux-gnueabihf/libc/lib/* $ROOT/raspbian/usr/lib/
