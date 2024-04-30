@@ -15,16 +15,14 @@
 #include "ofVec4f.h"
 //class ofVec4f;
 //#include "ofConstants.h"
-#include <cmath>
+//#include <cmath>
 
 #if (_MSC_VER)       
 // make microsoft visual studio complain less about double / float conversion.
 #pragma warning(disable : 4244)
 #endif
 
-
 class ofMatrix4x4;
-
 
 class ofQuaternion {
 public:

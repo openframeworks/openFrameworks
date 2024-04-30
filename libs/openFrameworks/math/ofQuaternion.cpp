@@ -1,6 +1,6 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
-#include "ofMathConstants.h"
+//#include "ofMathConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL

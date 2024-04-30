@@ -12,7 +12,7 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/scalar_common.hpp>
 
-#include <cmath>
+//#include <cmath>
 
 
 inline void ofStereoVolumes(float volume, float pan, float & left, float & right){

@@ -1,9 +1,9 @@
 #include "ofMath.h"
 #include "ofNoise.h"
 #include "ofPolyline.h"
-#include <float.h>
-
 #include "ofRandomDistributions.h"
+
+#include <float.h>
 
 #ifndef TARGET_WIN32
 	#include <sys/time.h>
