@@ -1,6 +1,5 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
-//#include "ofMathConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
@@ -121,13 +120,13 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		// in a plane with maximum vector coordinates.
 		// Then use it as quaternion axis with pi angle
 		// Trick is to realize one value at least is >0.6 for a normalized vector.
-		if (fabs(sourceVector.x) < 0.6) {
+		if (std::abs(sourceVector.x) < 0.6) {
 			const double norm = sqrt(1.0 - sourceVector.x * sourceVector.x);
 			_v.x = 0.0;
 			_v.y = sourceVector.z / norm;
 			_v.z = -sourceVector.y / norm;
 			_v.w = 0.0;
-		} else if (fabs(sourceVector.y) < 0.6) {
+		} else if (std::abs(sourceVector.y) < 0.6) {
 			const double norm = sqrt(1.0 - sourceVector.y * sourceVector.y);
 			_v.x = -sourceVector.z / norm;
 			_v.y = 0.0;
@@ -169,22 +168,22 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 	// dot product vec1*vec2
 	float cosangle = from.dot(to) / (length1 * length2);
 
-	if ( fabs(cosangle - 1) < epsilon ) {
-		//osg::notify(osg::INFO)<<"*** Quat::makeRotate(from,to) with near co-linear vectors, epsilon= "<<fabs(cosangle-1)<<std::endl;
+	if ( std::abs(cosangle - 1) < epsilon ) {
+		//osg::notify(osg::INFO)<<"*** Quat::makeRotate(from,to) with near co-linear vectors, epsilon= "<<std::abs(cosangle-1)<<std::endl;
 
 		// cosangle is close to 1, so the vectors are close to being coincident
 		// Need to generate an angle of zero with any vector we like
 		// We'll choose (1,0,0)
 		makeRotate( 0.0, 0.0, 0.0, 1.0 );
 	} else
-		if ( fabs(cosangle + 1.0) < epsilon ) {
+		if ( std::abs(cosangle + 1.0) < epsilon ) {
 			// vectors are close to being opposite, so will need to find a
 			// vector orthongonal to from to rotate about.
 			ofVec3f tmp;
-			if (fabs(from.x) < fabs(from.y))
-				if (fabs(from.x) < fabs(from.z)) tmp.set(1.0, 0.0, 0.0); // use x axis.
+			if (std::abs(from.x) < std::abs(from.y))
+				if (std::abs(from.x) < std::abs(from.z)) tmp.set(1.0, 0.0, 0.0); // use x axis.
 				else tmp.set(0.0, 0.0, 1.0);
-			else if (fabs(from.y) < fabs(from.z)) tmp.set(0.0, 1.0, 0.0);
+			else if (std::abs(from.y) < std::abs(from.z)) tmp.set(0.0, 1.0, 0.0);
 			else tmp.set(0.0, 0.0, 1.0);
 
 			ofVec3f fromd(from.x, from.y, from.z);

@@ -62,7 +62,7 @@ float ofNormalize(float value, float min, float max) {
 //--------------------------------------------------
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
-	if (fabs(inputMin - inputMax) < std::numeric_limits<float>::epsilon()) {
+	if (std::abs(inputMin - inputMax) < std::numeric_limits<float>::epsilon()) {
 		return outputMin;
 	} else {
 		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);

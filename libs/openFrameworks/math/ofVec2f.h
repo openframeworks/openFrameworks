@@ -1029,7 +1029,7 @@ inline void ofVec2f::set( const ofVec2f& vec ) {
 }
 
 inline ofVec2f::operator glm::vec2() const{
-	return glm::vec2(x,y);
+	return { x, y };
 }
 
 // Check similarity/equality.
@@ -1044,8 +1044,8 @@ inline bool ofVec2f::operator!=( const ofVec2f& vec ) const {
 }
 
 inline bool ofVec2f::match( const ofVec2f& vec, float tolerance ) const {
-	return (fabs(x - vec.x) < tolerance)
-	&& (fabs(y - vec.y) < tolerance);
+	return (std::abs(x - vec.x) < tolerance)
+	&& (std::abs(y - vec.y) < tolerance);
 }
 
 //
@@ -1053,14 +1053,14 @@ inline bool ofVec2f::match( const ofVec2f& vec, float tolerance ) const {
 // Tolerance is specified in degree.
  
 inline bool ofVec2f::isAligned( const ofVec2f& vec, float tolerance ) const { 
-	return  fabs( this->angle( vec ) ) < tolerance;
+	return std::abs( this->angle( vec ) ) < tolerance;
 }
 inline bool ofVec2f::align( const ofVec2f& vec, float tolerance ) const {
     return isAligned( vec, tolerance );
 }
 
 inline bool ofVec2f::isAlignedRad( const ofVec2f& vec, float tolerance ) const {
-	return  fabs( this->angleRad( vec ) ) < tolerance;
+	return std::abs( this->angleRad( vec ) ) < tolerance;
 }
 inline bool ofVec2f::alignRad( const ofVec2f& vec, float tolerance ) const {
     return isAlignedRad( vec, tolerance );

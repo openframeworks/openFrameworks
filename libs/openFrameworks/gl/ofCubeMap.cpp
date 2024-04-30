@@ -15,15 +15,17 @@
 #include "ofFbo.h"
 #include "ofTexture.h"
 
+#ifdef TARGET_ANDROID
+#include "ofAppAndroidWindow.h"
+#endif
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <map>
 
-#ifdef TARGET_ANDROID
-#include "ofAppAndroidWindow.h"
-#endif
+
 
 using std::weak_ptr;
 using std::vector;

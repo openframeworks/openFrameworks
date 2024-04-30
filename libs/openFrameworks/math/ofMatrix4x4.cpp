@@ -57,7 +57,7 @@ void ofMatrix4x4::set( float a00, float a01, float a02, float a03,
 void ofMatrix4x4::setRotate(const ofQuaternion& q)
 {
     double length2 = q.length2();
-    if (fabs(length2) <= std::numeric_limits<double>::min())
+    if (std::abs(length2) <= std::numeric_limits<double>::min())
     {
         _mat[0][0] = 1.0; _mat[1][0] = 0.0; _mat[2][0] = 0.0;
         _mat[0][1] = 0.0; _mat[1][1] = 1.0; _mat[2][1] = 0.0;
@@ -1006,8 +1006,8 @@ double mat_norm(_HMatrix M, int tpose)
     double sum, max;
     max = 0.0;
     for (i=0; i<3; i++) {
-        if (tpose) sum = fabs(M[0][i])+fabs(M[1][i])+fabs(M[2][i]);
-        else       sum = fabs(M[i][0])+fabs(M[i][1])+fabs(M[i][2]);
+        if (tpose) sum = std::abs(M[0][i]) + std::abs(M[1][i]) + std::abs(M[2][i]);
+        else       sum = std::abs(M[i][0]) + std::abs(M[i][1]) + std::abs(M[i][2]);
         if (max<sum) max = sum;
     }
     return max;
@@ -1219,7 +1219,7 @@ double polarDecomp( _HMatrix M, _HMatrix Q, _HMatrix S)
 		MadjT_one = norm_one(MadjTk);
 		MadjT_inf = norm_inf(MadjTk);
 
-		gamma = sqrt(sqrt((MadjT_one*MadjT_inf)/(M_one*M_inf))/fabs(det));
+		gamma = sqrt(sqrt((MadjT_one*MadjT_inf)/(M_one*M_inf))/std::abs(det));
 		g1 = gamma*0.5;
 		g2 = 0.5/(gamma*det);
 		matrixCopy(Ek,=,Mk,3);
@@ -1257,20 +1257,20 @@ HVect spectDecomp(_HMatrix S, _HMatrix U)
    Diag[X] = S[X][X]; Diag[Y] = S[Y][Y]; Diag[Z] = S[Z][Z];
    OffD[X] = S[Y][Z]; OffD[Y] = S[Z][X]; OffD[Z] = S[X][Y];
    for (sweep=20; sweep>0; sweep--) {
-	   double sm = fabs(OffD[X])+fabs(OffD[Y])+fabs(OffD[Z]);
+	   double sm = std::abs(OffD[X]) + std::abs(OffD[Y]) + std::abs(OffD[Z]);
 	   if (sm==0.0) break;
 	   for (i=Z; i>=X; i--) {
 		   int p = nxt[i]; int q = nxt[p];
-		   fabsOffDi = fabs(OffD[i]);
+		   fabsOffDi = std::abs(OffD[i]);
 		   g = 100.0*fabsOffDi;
 		   if (fabsOffDi>0.0) {
 			   h = Diag[q] - Diag[p];
-			   fabsh = fabs(h);
+			   fabsh = std::abs(h);
 			   if (fabsh+g==fabsh) {
 				   t = OffD[i]/h;
 			   } else {
 				   theta = 0.5*h/OffD[i];
-				   t = 1.0/(fabs(theta)+sqrt(theta*theta+1.0));
+				   t = 1.0/(std::abs(theta)+sqrt(theta*theta+1.0));
 				   if (theta<0.0) t = -t;
 			   }
 			   c = 1.0/sqrt(t*t+1.0); s = t*c;

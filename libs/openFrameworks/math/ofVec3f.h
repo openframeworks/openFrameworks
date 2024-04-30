@@ -6,7 +6,8 @@
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec3.hpp>
-#include <iostream>
+
+//#include <iostream>
 
 /// \brief  ofVec3f is a class for storing a three dimensional vector.
 /// 
@@ -1075,7 +1076,7 @@ inline ofVec3f::ofVec3f( const glm::vec3 & vec ):x(vec.x), y(vec.y), z(vec.z){}
 inline ofVec3f::ofVec3f( const glm::vec4 & vec ):x(vec.x), y(vec.y), z(vec.z){}
 
 inline ofVec3f::operator glm::vec3() const{
-	return glm::vec3(x,y,z);
+	return { x,y,z };
 }
 
 
@@ -1113,9 +1114,9 @@ inline bool ofVec3f::operator!=( const ofVec3f& vec ) const {
 }
 
 inline bool ofVec3f::match( const ofVec3f& vec, float tolerance ) const{
-	return (fabs(x - vec.x) < tolerance)
-	&& (fabs(y - vec.y) < tolerance)
-	&& (fabs(z - vec.z) < tolerance);
+	return (std::abs(x - vec.x) < tolerance)
+	&& (std::abs(y - vec.y) < tolerance)
+	&& (std::abs(z - vec.z) < tolerance);
 }
 
 /**

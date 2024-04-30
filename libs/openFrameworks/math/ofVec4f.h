@@ -352,10 +352,10 @@ inline bool ofVec4f::operator!=( const ofVec4f& vec ) const {
 }
 
 inline bool ofVec4f::match( const ofVec4f& vec, float tolerance) const {
-	return (fabs(x - vec.x) < tolerance)
-	&& (fabs(y - vec.y) < tolerance)
-	&& (fabs(z - vec.z) < tolerance)
-	&& (fabs(w - vec.w) < tolerance);
+	return (std::abs(x - vec.x) < tolerance)
+	&& (std::abs(y - vec.y) < tolerance)
+	&& (std::abs(z - vec.z) < tolerance)
+	&& (std::abs(w - vec.w) < tolerance);
 }
 
 

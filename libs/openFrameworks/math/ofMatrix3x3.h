@@ -8,8 +8,8 @@
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat3x3.hpp>
-#include <iostream>
 
+#include <iostream>
 
 /// \brief A 3x3 Matrix
 ///

@@ -14,9 +14,11 @@
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
 #include "ofColor.h"
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/quaternion.hpp>
+
 #include <map>
 
 using std::weak_ptr;

@@ -4,6 +4,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/fwd.hpp>
 #include <glm/gtc/constants.hpp>
+
+#include <cstdlib>
 #include <cmath>
 
 /// \file
