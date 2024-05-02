@@ -37,8 +37,8 @@ class ofApp : public ofxAndroidApp{
         void deviceRefreshRateChangedEvent(int &refreshRate);
         void deviceHighestRefreshRateChangedEvent(int & refreshRate);
 
-
-	    ofTrueTypeFont font;
-
-
+		ofPath text;
+		ofTrueTypeFont font;
+		ofShader shader;
+		bool doShader;
 };
