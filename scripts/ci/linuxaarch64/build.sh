@@ -11,6 +11,7 @@ export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/raspbian/usr/bin
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=aarch64
 export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
+export PKG_CONFIG_PATH=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export CXX="${TOOLCHAIN_ROOT}/${GCC_PREFIX}-g++"
 export CC="${TOOLCHAIN_ROOT}/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/${GCC_PREFIX}-ar
