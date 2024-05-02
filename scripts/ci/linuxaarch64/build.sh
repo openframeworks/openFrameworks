@@ -2,7 +2,7 @@
 set -ev
 OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
-export RPI_ROOT=~/raspbian
+export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxaarch64/raspbian
 export GCC_PREFIX=aarch64-linux-gnu
 export GST_VERSION=1.0
 export TOOLCHAIN_ROOT=/usr/bin
