@@ -38,7 +38,8 @@ jobs:
         packages: multistrap unzip
         version: 1.0
 
-    # - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    
     # - name: ccache
     #   uses: hendrikmuhs/ccache-action@v1.2.12
     #   with:
