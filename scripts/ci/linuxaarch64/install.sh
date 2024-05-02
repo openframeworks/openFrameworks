@@ -70,7 +70,7 @@ cd $ROOT
 installPackages
 createRaspbianImg
 # downloadToolchain
-downloadFirmware
+# downloadFirmware
 
 # cp -rn rpi_toolchain/aarch64-linux-gnu/libc/lib/* $ROOT/raspbian/usr/lib/
 # cp -rn rpi_toolchain/aarch64-linux-gnu/libc/usr/lib/* $ROOT/raspbian/usr/lib/
