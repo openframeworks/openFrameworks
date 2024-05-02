@@ -20,7 +20,7 @@ installPackages(){
 
 createRaspbianImg(){
     #needed since Ubuntu 18.04 - allow non https repositories 
-    mkdir -p raspbian/etc/apt/apt.conf.d/
+    mkdir -p /opt/raspbian/etc/apt/apt.conf.d/
     echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
     multistrap -a arm64 -d raspbian -f multistrap.conf
 }

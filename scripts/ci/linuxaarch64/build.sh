@@ -5,12 +5,12 @@ OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 export GCC_PREFIX=aarch64-linux-gnu
 export GCC_VERSION=10.3.0
 export GST_VERSION=1.0
-export RPI_ROOT=${OF_ROOT}/scripts/ci/$TARGET/raspbian
+export RPI_ROOT=/opt/raspbian
 # export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/rpi_toolchain
-export TOOLCHAIN_ROOT=${OF_ROOT}/scripts/ci/$TARGET/raspbian/usr/bin
+export TOOLCHAIN_ROOT=${RPI_ROOT}/usr/bin
 export PLATFORM_OS=Linux
 export PLATFORM_ARCH=aarch64
-export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
+export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export PKG_CONFIG_PATH=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export CXX="${TOOLCHAIN_ROOT}/${GCC_PREFIX}-g++"
 export CC="${TOOLCHAIN_ROOT}/${GCC_PREFIX}-gcc"
@@ -24,8 +24,8 @@ echo "${CXX}"
 # export AR=${GCC_PREFIX}-ar
 # export LD=${GCC_PREFIX}-ld
 
-export PATH=/rpi_toolchain/bin/:$PATH
-export LD_LIBRARY_PATH=/rpi_toolchain/lib:$LD_LIBRARY_PATH
+export PATH=${RPI_ROOT}/bin/:$PATH
+export LD_LIBRARY_PATH=${RPI_ROOT}/lib:$LD_LIBRARY_PATH
 
 echo "**** Building emptyExample ****"
 cd $OF_ROOT
