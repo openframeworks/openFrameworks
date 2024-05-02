@@ -13,8 +13,8 @@ on:
       - '**/*.md'
       - 'examples/**'
 
-env:
-  ccache: ccache
+# env:
+  # ccache: ccache
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
