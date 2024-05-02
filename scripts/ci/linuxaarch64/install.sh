@@ -15,7 +15,7 @@ installPackages(){
     sudo apt-get -y update
     # sudo apt-get -y install multistrap unzip
     #workaround for https://bugs.launchpad.net/ubuntu/+source/multistrap/+bug/1313787
-    # sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
+    sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
 }
 
 createRaspbianImg(){
@@ -25,9 +25,9 @@ createRaspbianImg(){
     multistrap -a arm64 -d raspbian -f multistrap.conf
 }
 
-# SCRIPT_DIR="${BASH_SOURCE%/*}"
-# if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
-# . "$SCRIPT_DIR/../../dev/downloader.sh"
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
 
 downloadToolchain(){
     # wget https://github.com/openframeworks/openFrameworks/releases/download/tools/cross-gcc-10.3.0-pi_64.tar.gz
