@@ -36,7 +36,7 @@ downloadToolchain(){
     # rm cross-gcc-10.3.0-pi_64.tar.gz
     # sudo apt-get install gcc-aarch64-linux-gnu -y
     # sudo apt-get install g++-aarch64-linux-gnu -y
-
+    echo 'XX'
 }
 
 downloadFirmware(){
