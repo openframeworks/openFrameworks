@@ -25,9 +25,9 @@ createRaspbianImg(){
     multistrap -a arm64 -d raspbian -f multistrap.conf
 }
 
-SCRIPT_DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
-. "$SCRIPT_DIR/../../dev/downloader.sh"
+# SCRIPT_DIR="${BASH_SOURCE%/*}"
+# if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+# . "$SCRIPT_DIR/../../dev/downloader.sh"
 
 downloadToolchain(){
     # wget https://github.com/openframeworks/openFrameworks/releases/download/tools/cross-gcc-10.3.0-pi_64.tar.gz
