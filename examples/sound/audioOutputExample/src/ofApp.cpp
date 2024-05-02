@@ -170,7 +170,7 @@ void ofApp::mouseMoved(int x, int y ){
 	float height = (float)ofGetHeight();
 	float heightPct = ((height-y) / height);
 	targetFrequency = 2000.0f * heightPct;
-	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
+	phaseAdderTarget = (targetFrequency / (float) sampleRate) * glm::two_pi<float>();
 }
 
 //--------------------------------------------------------------
@@ -212,9 +212,9 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
-	// keep phase in the range of 0-TWO_PI like this:
-	while (phase > TWO_PI){
-		phase -= TWO_PI;
+	// keep phase in the range of 0-glm::two_pi<float>() like this:
+	while (phase > glm::two_pi<float>()){
+		phase -= glm::two_pi<float>();
 	}
 
 	if ( bNoise == true){

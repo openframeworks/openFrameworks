@@ -150,7 +150,7 @@ void ofApp::draw(){
 		numSteps = MAX(3, numSteps);
 
 
-		float step		= TWO_PI / (numSteps);
+		float step		= glm::two_pi<float>() / (numSteps);
 		float angle		= 0.0;
 		float cenX		= 110;
 		float cenY		= 430;
@@ -184,7 +184,7 @@ void ofApp::draw(){
 		//make sure we don't go bellow 3 sides
 		numSteps = MAX(3, numSteps);
 
-		step		= TWO_PI / (numSteps);
+		step		= glm::two_pi<float>() / (numSteps);
 		angle		= 0.0;
 		cenX		= 340;
 		cenY		= 430;
