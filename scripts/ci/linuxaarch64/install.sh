@@ -30,10 +30,11 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
 
 downloadToolchain(){
-    wget https://github.com/openframeworks/openFrameworks/releases/download/tools/cross-gcc-10.3.0-pi_64.tar.gz
-    tar xvf cross-gcc-10.3.0-pi_64.tar.gz
-    mv cross-pi-gcc-10.3.0-64 rpi_toolchain
-    rm cross-gcc-10.3.0-pi_64.tar.gz
+    # wget https://github.com/openframeworks/openFrameworks/releases/download/tools/cross-gcc-10.3.0-pi_64.tar.gz
+    # tar xvf cross-gcc-10.3.0-pi_64.tar.gz
+    # mv cross-pi-gcc-10.3.0-64 rpi_toolchain
+    # rm cross-gcc-10.3.0-pi_64.tar.gz
+    sudo apt-get install gcc-aarch64-linux-gnu -y
 }
 
 downloadFirmware(){
@@ -68,15 +69,15 @@ echo $ROOT
 cd $ROOT
 installPackages
 createRaspbianImg
-downloadToolchain
+# downloadToolchain
 downloadFirmware
 
-cp -rn rpi_toolchain/aarch64-linux-gnu/libc/lib/* $ROOT/raspbian/usr/lib/
-cp -rn rpi_toolchain/aarch64-linux-gnu/libc/usr/lib/* $ROOT/raspbian/usr/lib/
-cp -rn rpi_toolchain/aarch64-linux-gnu/lib/* $ROOT/raspbian/usr/lib/
+# cp -rn rpi_toolchain/aarch64-linux-gnu/libc/lib/* $ROOT/raspbian/usr/lib/
+# cp -rn rpi_toolchain/aarch64-linux-gnu/libc/usr/lib/* $ROOT/raspbian/usr/lib/
+# cp -rn rpi_toolchain/aarch64-linux-gnu/lib/* $ROOT/raspbian/usr/lib/
 
-cd $ROOT/raspbian/usr/lib
-relativeSoftLinks
-cd $ROOT/raspbian/usr/lib/aarch64-linux-gnu
-relativeSoftLinks
+# cd $ROOT/raspbian/usr/lib
+# relativeSoftLinks
+# cd $ROOT/raspbian/usr/lib/aarch64-linux-gnu
+# relativeSoftLinks
 
