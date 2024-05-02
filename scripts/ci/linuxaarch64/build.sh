@@ -16,6 +16,9 @@ export CXX="${TOOLCHAIN_ROOT}/${GCC_PREFIX}-g++"
 export CC="${TOOLCHAIN_ROOT}/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/${GCC_PREFIX}-ld
+
+echo 'XXXX'
+echo ${CXX}
 # export CXX="${GCC_PREFIX}-g++"
 # export CC="${GCC_PREFIX}-gcc"
 # export AR=${GCC_PREFIX}-ar
