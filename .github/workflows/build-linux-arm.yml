@@ -27,14 +27,17 @@ jobs:
         matrix:
           cfg:
           # - {target: linuxarmv6l, libs: armv6l}
-          - {target: linuxaarch64, libs: aarch64}
+          # - {target: linuxaarch64, libs: aarch64}
+          - { libs: armv6l, multistrap_arch: armhf }
+          - { libs: aarch64,  multistrap_arch: arm64 }
     env:
-     TARGET: ${{matrix.cfg.target}}
+     ARCH: ${{matrix.cfg.libs}}
+     MULTISTRAP_ARCH: ${{matrix.cfg.multistrap_arch}}
     steps:
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: multistrap unzip gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        packages: multistrap unzip gcc-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
         version: 1.0
 
     - uses: actions/checkout@v4
@@ -42,11 +45,11 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.12
       with:
-        # key: ${{ matrix.os }}-${{ matrix.type }}
-        key: ${{ matrix.cfg.target }}
+        key: ${{ matrix.cfg.libs }}
+
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Install dependencies
-      run: ./scripts/ci/$TARGET/install.sh;
+      run: ./scripts/ci/linux${{matrix.cfg.libs}}/install.sh;
     - name: Build
-      run: ./scripts/ci/$TARGET/build.sh;
+      run: ./scripts/ci/linux${{matrix.cfg.libs}}/build.sh;
