@@ -36,7 +36,7 @@ jobs:
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
+        packages: multistrap unzip libraspberrypi-dev raspberrypi-kernel-headers gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
         version: 1.0
 
     - uses: actions/checkout@v4
