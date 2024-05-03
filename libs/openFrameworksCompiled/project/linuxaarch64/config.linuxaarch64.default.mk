@@ -38,6 +38,12 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+#c++ 17 support - comment out two lines below to use c++11
+PLATFORM_CFLAGS += -std=c++17
+PLATFORM_LDFLAGS += -lstdc++fs
+PLATFORM_CXXVER = -std=c++17
+
+
 PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_LDFLAGS += -no-pie
 # PLATFORM_LDFLAGS += -nostartfiles
@@ -119,19 +125,21 @@ endif
 
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
-	PLATFORM_HEADER_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)/include
+	# PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
+	# PLATFORM_HEADER_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)/include
 
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)
+	PLATFORM_LIBRARY_SEARCH_PATHS += /usr/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += /lib/$(GCC_PREFIX)
+	# PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/opt/vc/lib
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pulseaudio
+	# no need to prefix with sysroot, once sysroot is already set.
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/lib/$(GCC_PREFIX)
+	# PLATFORM_LDFLAGS += -Xlinker -rpath-link=/opt/vc/lib
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	# PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR=/usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif

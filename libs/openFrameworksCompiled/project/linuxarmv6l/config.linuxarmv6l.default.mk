@@ -269,19 +269,21 @@ endif
 
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
-	PLATFORM_HEADER_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)/include
+	# PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
+	# PLATFORM_HEADER_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)/include
 
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)
+	PLATFORM_LIBRARY_SEARCH_PATHS += /usr/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += /lib/$(GCC_PREFIX)
+	# PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/opt/vc/lib
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pulseaudio
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/lib/$(GCC_PREFIX)
+	# PLATFORM_LDFLAGS += -Xlinker -rpath-link=/opt/vc/lib
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=../userland/host_applications/linux/libs/bcm_host/include
 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	# PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR=/usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
