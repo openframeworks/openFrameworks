@@ -1,4 +1,4 @@
-name: build-linux-arm
+name: build-rpi
 
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
@@ -21,18 +21,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  raspberry-pi:
+  rpi-aarch64-alladdons:
     runs-on: ubuntu-latest
     strategy:
         matrix:
           cfg:
-          # - {target: linuxarmv6l, libs: armv6l}
-          # - {target: linuxaarch64, libs: aarch64}
-          # - { libs: armv6l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf }
-          - { libs: aarch64,  multistrap_arch: arm64, suffix: aarch64-linux-gnu }
+          # - { libs: armv6l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf, alladdons: 0 }
+          - { libs: aarch64,  multistrap_arch: arm64, suffix: aarch64-linux-gnu, alladdons: 1 }
     env:
      ARCH: ${{matrix.cfg.libs}}
      MULTISTRAP_ARCH: ${{matrix.cfg.multistrap_arch}}
+     ALLADDONSEXAMPLE: ${{matrix.cfg.alladdons}}
     steps:
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
@@ -50,8 +49,7 @@ jobs:
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Install dependencies
-      # run: ./scripts/ci/linux${{matrix.cfg.libs}}/install.sh;
-      run: ./scripts/ci/linuxaarch64/install.sh;
+      run: ./scripts/ci/linuxrpi/install.sh;
     - name: Build
       # run: ./scripts/ci/linux${{matrix.cfg.libs}}/build.sh;
-      run: ./scripts/ci/linuxaarch64/build.sh;
+      run: ./scripts/ci/linuxrpi/build.sh;

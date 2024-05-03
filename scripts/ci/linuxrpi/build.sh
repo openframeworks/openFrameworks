@@ -13,7 +13,7 @@ fi
 echo "${PLATFORM_ARCH}"
 
 # export RPI_ROOT=${OF_ROOT}/scripts/ci/linux${PLATFORM_ARCH}/raspbian
-export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxaarch64/raspbian
+export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxrpi/raspbian
 if [ ${PLATFORM_ARCH} = "aarch64" ]; then
 export GCC_PREFIX=aarch64-linux-gnu
 else
@@ -39,9 +39,12 @@ cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/emptyE
 cd examples/templates/emptyExample/
 make Debug -j
 
+# if [ -n "$ALLADDONSEXAMPLE" ]; then
+if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
 echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
 cp scripts/templates/linux${PLATFORM_ARCH}/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
 make Debug -j
+fi
