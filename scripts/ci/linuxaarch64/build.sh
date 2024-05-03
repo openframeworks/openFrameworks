@@ -13,8 +13,12 @@ fi
 # export GCC_PREFIX=aarch64-linux-gnu
 export GST_VERSION=1.0
 export PLATFORM_OS=Linux
-# export PLATFORM_ARCH=aarch64
+
+if [ -z ${var+x} ]; then 
+export PLATFORM_ARCH=aarch64
+else
 export PLATFORM_ARCH=${ARCH}
+fi
 export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export PKG_CONFIG_PATH=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export TOOLCHAIN_ROOT=/usr
