@@ -20,7 +20,7 @@ installPackages(){
 createRaspbianImg(){
 
 if [ -n "$MULTISTRAP_ARCH" ]; then
-# nada
+#nada
 else
 export MULTISTRAP_ARCH=aarch64
 fi
