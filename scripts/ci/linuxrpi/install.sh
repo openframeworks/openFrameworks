@@ -17,6 +17,12 @@ installPackages(){
     sudo sed -i s/\$forceyes//g /usr/sbin/multistrap
 }
 
+downloadFirmware(){
+    # FIXME: only if it is not aarch64
+    git clone https://github.com/raspberrypi/userland --depth 1
+    # cp -r userland/opt raspbian/
+}
+
 createRaspbianImg(){
 
 if [ -n "$MULTISTRAP_ARCH" ]; then
@@ -40,3 +46,4 @@ echo $ROOT
 cd $ROOT
 # installPackages
 createRaspbianImg
+downloadFirmware
