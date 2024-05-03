@@ -1,4 +1,4 @@
-name: build-rpi
+name: rpi-armv6l
 
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  rpi-armv6l:
+  rpi-build:
     runs-on: ubuntu-latest
     strategy:
         matrix:
