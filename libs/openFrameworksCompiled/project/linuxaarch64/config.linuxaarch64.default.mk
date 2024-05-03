@@ -136,10 +136,9 @@ endif
 	# no need to prefix with sysroot, once sysroot is already set.
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/lib/$(GCC_PREFIX)
-	# PLATFORM_LDFLAGS += -Xlinker -rpath-link=/opt/vc/lib
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/lapack
 
-	# PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	PKG_CONFIG_LIBDIR=/usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
