@@ -19,6 +19,9 @@ export PLATFORM_ARCH=${ARCH}
 else
 export PLATFORM_ARCH=aarch64
 fi
+
+echo ${PLATFORM_ARCH}
+
 export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export PKG_CONFIG_PATH=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export TOOLCHAIN_ROOT=/usr
