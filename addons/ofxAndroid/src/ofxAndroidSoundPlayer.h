@@ -3,8 +3,6 @@
 #include "ofSoundBaseTypes.h"
 #include <jni.h>
 
-class ofSoundBuffer;
-
 class ofxAndroidSoundPlayer: public ofBaseSoundPlayer{
 public:
 	ofxAndroidSoundPlayer();
@@ -32,9 +30,6 @@ public:
 	bool isPaused() const;
 	float getVolume() const;
 	bool isLoaded() const;
-
-	void audioIn(ofSoundBuffer&) const;
-	void audioOut(ofSoundBuffer&) const;
 
 private:
 	jobject javaSoundPlayer;
