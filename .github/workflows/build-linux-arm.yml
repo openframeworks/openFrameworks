@@ -28,8 +28,8 @@ jobs:
           cfg:
           # - {target: linuxarmv6l, libs: armv6l}
           # - {target: linuxaarch64, libs: aarch64}
-          - { libs: armv6l, multistrap_arch: armhf }
-          - { libs: aarch64,  multistrap_arch: arm64 }
+          - { libs: armv6l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf }
+          - { libs: aarch64,  multistrap_arch: arm64, suffix: aarch64-linux-gnu }
     env:
      ARCH: ${{matrix.cfg.libs}}
      MULTISTRAP_ARCH: ${{matrix.cfg.multistrap_arch}}
@@ -37,7 +37,7 @@ jobs:
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: multistrap unzip gcc-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+        packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
         version: 1.0
 
     - uses: actions/checkout@v4
