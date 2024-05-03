@@ -24,6 +24,10 @@
 
     <uses-feature android:glEsVersion="0x00020000"/>
 
+    <!-- Audio Systems -->
+    <uses-feature android:name="android.hardware.audio.output" android:required="true" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
     <supports-screens android:resizeable="false"
         android:smallScreens="true"
         android:normalScreens="true"

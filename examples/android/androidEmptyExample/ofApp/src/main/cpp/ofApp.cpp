@@ -27,6 +27,21 @@ void ofApp::setup(){
 	text.setFillColor(ofColor(245, 58, 135));
 
 	doShader = false;
+
+
+    // SOUND
+    // ofSetOrientation(OF_ORIENTATION_90_LEFT);
+	loadok = synth.loadSound("sounds/synth.wav");
+	loadok = beats.loadSound("sounds/1085.mp3");
+	loadok = vocals.loadSound("sounds/Violet.mp3");
+    synth.setVolume(1.0f);
+    beats.setVolume(0.75f);
+    vocals.setVolume(1.0f);
+    synth.setMultiPlay(true);
+    beats.setMultiPlay(false);
+    vocals.setMultiPlay(true);
+
+
 }
 
 void ofApp::exit(){
@@ -35,7 +50,8 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    // update the sound playing system:
+    ofSoundUpdate();
 }
 
 //--------------------------------------------------------------
@@ -46,10 +62,6 @@ void ofApp::draw(){
     int b = 128 + 50 * sinf(ofGetElapsedTimef());
 
     ofBackground(r,g,b);
-
-    //ofSetColor(245, 58, 135);
-    //ofFill();
-    //font.drawStringAsShapes("meditate", 300, 400);
 	
 	if( doShader ){
 		shader.begin();
@@ -69,9 +81,6 @@ void ofApp::draw(){
 	if( doShader ){
 		shader.end();
 	}
-
-
-
 }
 
 //--------------------------------------------------------------
@@ -92,11 +101,32 @@ void ofApp::windowResized(int w, int h){
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
 	doShader = true;
+
+    float widthStep = ofGetWidth() / 3.0f;
+    if (x < widthStep){
+        float pct = x / widthStep;
+        synth.play();
+        synth.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*2.0f);
+        synth.setPan(2.0*pct-1.0);
+    }
+    else if (x >= widthStep && x < widthStep*2){
+        beats.play();
+    }
+    else {
+        vocals.play();
+        vocals.setSpeed( 0.1f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*2.0f);
+        vocals.setPan(2.0*(float)(x - widthStep*2) / (float)widthStep-1.0);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(int x, int y, int id){
-
+	// continuously control the speed of the beat sample via drag,
+	// when in the "beat" region:
+	float widthStep = ofGetWidth() / 3.0f;
+	if (x >= widthStep && x < widthStep*2){
+		beats.setSpeed( 0.5f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*1.0f);
+	}
 }
 
 //--------------------------------------------------------------
