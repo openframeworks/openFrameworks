@@ -18,6 +18,12 @@ installPackages(){
 }
 
 createRaspbianImg(){
+
+if [ -n "$MULTISTRAP_ARCH" ]; then
+# nada
+else
+export MULTISTRAP_ARCH=aarch64
+fi
     #needed since Ubuntu 18.04 - allow non https repositories 
     mkdir -p raspbian/etc/apt/apt.conf.d/
     echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
