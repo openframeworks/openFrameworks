@@ -26,8 +26,9 @@ export PLATFORM_OS=Linux
 
 
 # export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
+export PKG_CONFIG_LIBDIR=${BCM_FOLDER}:${RPI_ROOT}/usr/lib/aarch64-linux-gnu
 
-export PKG_CONFIG_PATH=${BCM_FOLDER}:${RPI_ROOT}/usr/lib/aarch64-linux-gnu:${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
+export PKG_CONFIG_PATH=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export TOOLCHAIN_ROOT=/usr
 export CXX="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
 export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
