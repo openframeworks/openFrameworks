@@ -28,7 +28,7 @@ jobs:
           cfg:
           # - {target: linuxarmv6l, libs: armv6l}
           # - {target: linuxaarch64, libs: aarch64}
-          # - { libs: armv6l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf }
+          - { libs: armv6l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf }
           - { libs: aarch64,  multistrap_arch: arm64, suffix: aarch64-linux-gnu }
     env:
      ARCH: ${{matrix.cfg.libs}}
