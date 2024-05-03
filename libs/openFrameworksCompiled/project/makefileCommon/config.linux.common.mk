@@ -363,7 +363,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openal
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 
 # TEST
-PLATFORM_PKG_CONFIG_LIBRARIES += lapack
+PLATFORM_PKG_CONFIG_LIBRARIES += liblapack
 
 ifeq ($(CROSS_COMPILING),1)
 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"
