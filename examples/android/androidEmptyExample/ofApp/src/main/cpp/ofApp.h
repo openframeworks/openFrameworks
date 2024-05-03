@@ -41,4 +41,8 @@ class ofApp : public ofxAndroidApp{
 		ofTrueTypeFont font;
 		ofShader shader;
 		bool doShader;
+
+	    ofSoundPlayer  beats;
+	    ofSoundPlayer  synth;
+	    ofSoundPlayer  vocals;
 };
