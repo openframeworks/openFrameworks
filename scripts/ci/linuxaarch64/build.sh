@@ -4,8 +4,14 @@ OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
 export CROSS_COMPILING=1
 
-export RPI_ROOT=${OF_ROOT}/scripts/ci/linux${ARCH}/raspbian
-if [ ${ARCH} = "aarch64" ]; then
+if [ -n "$ARCH" ]; then
+export PLATFORM_ARCH=${ARCH}
+else
+export PLATFORM_ARCH=aarch64
+fi
+
+export RPI_ROOT=${OF_ROOT}/scripts/ci/linux${PLATFORM_ARCH}/raspbian
+if [ ${PLATFORM_ARCH} = "aarch64" ]; then
 export GCC_PREFIX=aarch64-linux-gnu
 else
 export GCC_PREFIX=arm-linux-gnueabihf
@@ -14,11 +20,6 @@ fi
 export GST_VERSION=1.0
 export PLATFORM_OS=Linux
 
-if [ -n "$ARCH" ]; then
-export PLATFORM_ARCH=${ARCH}
-else
-export PLATFORM_ARCH=aarch64
-fi
 
 echo ${PLATFORM_ARCH}
 
