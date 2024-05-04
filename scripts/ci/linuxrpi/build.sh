@@ -12,7 +12,6 @@ fi
 
 echo "${PLATFORM_ARCH}"
 
-# export RPI_ROOT=${OF_ROOT}/scripts/ci/linux${PLATFORM_ARCH}/raspbian
 export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxrpi/raspbian
 export BCM_FOLDER=${RPI_ROOT}/../userland/host_applications/linux/libs/bcm_host/include
 if [ ${PLATFORM_ARCH} = "aarch64" ]; then
