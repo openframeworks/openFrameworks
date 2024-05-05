@@ -792,7 +792,8 @@ size_t ofPixels_<PixelType>::getBytesPerPixel() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerPixel() const{
-	return getBytesFromPixelFormat(pixelFormat) * 8;
+	return getBitsPerChannel() * getNumChannels();
+//	return getBytesFromPixelFormat(pixelFormat) * 8;
 }
 
 template<typename PixelType>
@@ -802,15 +803,15 @@ size_t ofPixels_<PixelType>::getBytesPerChannel() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerChannel() const{
-//	FIXME: Still wrong here because of 12 bits formats
-	// TODO: A Switch case with exception
-	//case OF_PIXELS_NV12:
-	//case OF_PIXELS_NV21:
-	//case OF_PIXELS_YV12:
-	//case OF_PIXELS_I420:
-	//	return 12;
-	
-	return getBytesPerChannel() * 8;
+	switch(format){
+		case OF_PIXELS_NV12:
+		case OF_PIXELS_NV21:
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+			return 12;
+			break;
+		default:
+			return getBytesPerChannel() * 8;
 }
 
 template<typename PixelType>
