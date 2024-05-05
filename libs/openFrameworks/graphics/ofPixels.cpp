@@ -791,6 +791,14 @@ size_t ofPixels_<PixelType>::getBytesPerChannel() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerChannel() const{
+//	FIXME: Still wrong here because of 12 bits formats
+	// TODO: A Switch case with exception
+	//case OF_PIXELS_NV12:
+	//case OF_PIXELS_NV21:
+	//case OF_PIXELS_YV12:
+	//case OF_PIXELS_I420:
+	//	return 12;
+	
 	return getBytesPerChannel() * 8;
 }
 
@@ -1313,7 +1321,18 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 	size_t dstWidth	  = dst.getWidth();
 	size_t dstHeight	  = dst.getHeight();
 	size_t bytesPerPixel = getBytesPerPixel();
-
+	
+	using std::cout;
+	using std::endl;
+	cout << srcWidth << ":" << srcHeight << endl;
+	cout << dstWidth << ":" << dstHeight << endl;
+	std::cout << "bytesPerPixel " << bytesPerPixel << std::endl;
+	
+//	std::cout << sizeof(float) << std::endl;
+//	std::cout << sizeof(PixelType) << std::endl;
+//	std::cout << getNumChannels() << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << "px " << sizeof(pixels) << std::endl;
 
 	PixelType * dstPixels = dst.getData();
 
@@ -1329,12 +1348,15 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 				float srcx = 0.5;
 				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
-					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
-					for (size_t k=0; k<bytesPerPixel; k++){
-						dstPixels[dstIndex] = pixels[pixelIndex];
-						dstIndex++;
-						pixelIndex++;
-					}
+					size_t pixelIndex = srcIndex * bytesPerPixel;
+					// memcpy here
+//					void* memcpy( void* dest, const void* src, std::size_t count );
+					memcpy(&pixels[pixelIndex], &dstPixels[dstIndex], bytesPerPixel);
+//					for (size_t k=0; k<bytesPerPixel; k++){
+//						dstPixels[dstIndex] = pixels[pixelIndex];
+//						dstIndex++;
+//						pixelIndex++;
+//					}
 					srcx+=srcxFactor;
 				}
 				srcy+=srcyFactor;
