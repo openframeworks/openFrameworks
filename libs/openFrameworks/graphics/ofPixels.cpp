@@ -6,6 +6,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/common.hpp>
 #include <cstring>
+#include <unordered_map>
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
