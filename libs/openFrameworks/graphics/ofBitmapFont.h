@@ -25,7 +25,7 @@ public:
 	ofRectangle getBoundingBox(const std::string & text, int x, int y, ofDrawBitmapMode mode = ofGetStyle().drawBitmapMode, bool vFlipped = ofIsVFlipped()) const;
 private:
 	static void init();
-	static ofPixels pixels;
+	static ofPixels pixelsBitmapFont;
 	void unloadTexture();
 	mutable ofTexture texture;
 };

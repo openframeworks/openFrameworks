@@ -369,8 +369,11 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w
 	width= w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat) / sizeof(PixelType);
-
+	// THIS DOESNT MAKES SENSE
+//	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat) / sizeof(PixelType);
+	// XAXA
+	pixelsSize = w * h * channelsFromPixelFormat(pixelFormat);
+		
 	pixels = newPixels;
 	pixelsOwner = false;
 	bAllocated = true;
@@ -488,6 +491,13 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 
 	size_t newSize = bytesFromPixelFormat(w,h,format);
 	size_t oldSize = getTotalBytes();
+	
+//	using std::cout;
+//	using std::endl;
+//	cout << " newSize  " << newSize << endl;
+//	cout << " oldSize  " << oldSize << endl;
+//	
+//	cout << ofToString(format) << endl;
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
 		pixelFormat = format;
@@ -503,7 +513,8 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize / sizeof(PixelType);
+	pixelsSize = w * h * getBytesFromPixelFormat(format);
+
 
 	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
@@ -1321,45 +1332,24 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 	size_t dstWidth	  = dst.getWidth();
 	size_t dstHeight	  = dst.getHeight();
 	size_t bytesPerPixel = getBytesPerPixel();
-	
-	using std::cout;
-	using std::endl;
-	cout << srcWidth << ":" << srcHeight << endl;
-	cout << dstWidth << ":" << dstHeight << endl;
-	std::cout << "bytesPerPixel " << bytesPerPixel << std::endl;
-	
-//	std::cout << sizeof(float) << std::endl;
-//	std::cout << sizeof(PixelType) << std::endl;
-//	std::cout << getNumChannels() << std::endl;
-	std::cout << "-----" << std::endl;
-	std::cout << "px " << sizeof(pixels) << std::endl;
 
-	PixelType * dstPixels = dst.getData();
+	auto dstPixels = dst.getData();
 
 	switch (interpMethod){
-
 			//----------------------------------------
 		case OF_INTERPOLATE_NEAREST_NEIGHBOR:{
 			size_t dstIndex = 0;
 			float srcxFactor = (float)srcWidth/dstWidth;
 			float srcyFactor = (float)srcHeight/dstHeight;
-			float srcy = 0.5;
 			for (size_t dsty=0; dsty<dstHeight; dsty++){
-				float srcx = 0.5;
-				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
+				size_t srcIndex = static_cast<size_t>(dsty * srcyFactor * srcWidth);
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
-					size_t pixelIndex = srcIndex * bytesPerPixel;
-					// memcpy here
-//					void* memcpy( void* dest, const void* src, std::size_t count );
-					memcpy(&pixels[pixelIndex], &dstPixels[dstIndex], bytesPerPixel);
-//					for (size_t k=0; k<bytesPerPixel; k++){
-//						dstPixels[dstIndex] = pixels[pixelIndex];
-//						dstIndex++;
-//						pixelIndex++;
-//					}
-					srcx+=srcxFactor;
+					size_t pixelIndex = static_cast<size_t>(srcIndex + dstx * srcxFactor) * bytesPerPixel;
+
+					memcpy(&pixels[pixelIndex],
+						   &dstPixels[dstIndex],
+						   bytesPerPixel);
 				}
-				srcy+=srcyFactor;
 			}
 		}break;
 
