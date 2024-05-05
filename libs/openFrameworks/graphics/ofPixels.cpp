@@ -20,6 +20,58 @@ static ofImageType getImageTypeFromChannels(size_t channels){
 	}
 }
 
+template<typename PixelType>
+static size_t numChannelsFromPixelFormat(ofPixelFormat format) {
+	std::unordered_map<ofPixelFormat, size_t> pixelFormatChannels {
+		{ OF_PIXELS_RGB, 3 },
+		{ OF_PIXELS_BGR, 3 },
+		{ OF_PIXELS_RGBA, 4 },
+		{ OF_PIXELS_RGBA, 4 },
+		{ OF_PIXELS_GRAY, 1 },
+		{ OF_PIXELS_Y, 1 },
+		{ OF_PIXELS_U, 1 },
+		{ OF_PIXELS_V, 1 },
+		{ OF_PIXELS_UV, 2 },
+		{ OF_PIXELS_VU, 2 },
+		{ OF_PIXELS_GRAY_ALPHA, 2 },
+	};
+	return pixelFormatChannels[format];
+}
+
+template<typename PixelType>
+size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat format){
+	switch(format){
+		case OF_PIXELS_NV12:
+		case OF_PIXELS_NV21:
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+			return 12;
+			break;
+			
+		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_RGB565:
+			return 16;
+			break;
+		default:
+			
+			return
+			std::unordered_map<ofPixelFormat, size_t>  {
+				{ OF_PIXELS_RGB, 3 },
+				{ OF_PIXELS_BGR, 3 },
+				{ OF_PIXELS_RGBA, 4 },
+				{ OF_PIXELS_RGBA, 4 },
+				{ OF_PIXELS_GRAY, 1 },
+				{ OF_PIXELS_Y, 1 },
+				{ OF_PIXELS_U, 1 },
+				{ OF_PIXELS_V, 1 },
+				{ OF_PIXELS_UV, 2 },
+				{ OF_PIXELS_VU, 2 },
+				{ OF_PIXELS_GRAY_ALPHA, 2 },
+			}[format] * sizeof(PixelType) * 8;
+//			return numChannelsFromPixelFormat(format) * sizeof(PixelType) * 8;
+	}
+}
 
 template<>
 std::string ofToString(const ofPixelFormat & p) {
@@ -93,7 +145,7 @@ std::string ofToString(const ofPixelFormat & p) {
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::bytesFromPixelFormat(size_t w, size_t h, ofPixelFormat format){
-	return w * h * getBytesFromPixelFormat(format);
+	return w * h * pixelBitsFromPixelFormat(format)/8;
 }
 
 static size_t channelsFromPixelFormat(ofPixelFormat format){
@@ -133,7 +185,7 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		return 2;
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: format doesn't support channels");
+		ofLog(OF_LOG_ERROR, "ofPixels: format doesn't support channels " + ofToString(format) );
 		return 1;
 	}
 }
@@ -783,7 +835,6 @@ size_t ofPixels_<PixelType>::getBytesPerPixel() const{
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerPixel() const{
 	return getBitsPerChannel() * getNumChannels();
-//	return getBytesFromPixelFormat(pixelFormat) * 8;
 }
 
 template<typename PixelType>
@@ -793,15 +844,21 @@ size_t ofPixels_<PixelType>::getBytesPerChannel() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerChannel() const{
-	switch(format){
+	switch(getPixelFormat()){
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 			return 12;
 			break;
+		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_RGB565:
+			return 16;
+			break;
 		default:
-			return getBytesPerChannel() * 8;
+			return sizeof(PixelType);
+	}
 }
 
 template<typename PixelType>
@@ -1329,6 +1386,24 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 	switch (interpMethod){
 			//----------------------------------------
 		case OF_INTERPOLATE_NEAREST_NEIGHBOR:{
+//			size_t dstIndex = 0;
+//			float srcxFactor = (float)srcWidth/dstWidth;
+//			float srcyFactor = (float)srcHeight/dstHeight;
+//			float srcy = 0.5;
+//			for (size_t dsty=0; dsty<dstHeight; dsty++){
+//				float srcx = 0.5;
+//				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
+//				for (size_t dstx=0; dstx<dstWidth; dstx++){
+//					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
+//					for (size_t k=0; k<bytesPerPixel; k++){
+//						dstPixels[dstIndex] = pixels[pixelIndex];
+//						dstIndex++;
+//						pixelIndex++;
+//					}
+//					srcx+=srcxFactor;
+//				}
+//				srcy+=srcyFactor;
+//			}
 			size_t dstIndex = 0;
 			float srcxFactor = (float)srcWidth/dstWidth;
 			float srcyFactor = (float)srcHeight/dstHeight;
