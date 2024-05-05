@@ -369,9 +369,6 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w
 	width= w;
 	height = h;
 
-	// THIS DOESNT MAKES SENSE
-//	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat) / sizeof(PixelType);
-	// XAXA
 	pixelsSize = w * h * channelsFromPixelFormat(pixelFormat);
 		
 	pixels = newPixels;
@@ -492,12 +489,6 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	size_t newSize = bytesFromPixelFormat(w,h,format);
 	size_t oldSize = getTotalBytes();
 	
-//	using std::cout;
-//	using std::endl;
-//	cout << " newSize  " << newSize << endl;
-//	cout << " oldSize  " << oldSize << endl;
-//	
-//	cout << ofToString(format) << endl;
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
 		pixelFormat = format;
@@ -514,7 +505,6 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	height 		= h;
 
 	pixelsSize = w * h * getBytesFromPixelFormat(format);
-
 
 	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
