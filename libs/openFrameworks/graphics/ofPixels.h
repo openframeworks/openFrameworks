@@ -443,7 +443,7 @@ public:
 
 	void setNumChannels(size_t numChannels);
 
-    static size_t pixelBitsFromPixelFormat(ofPixelFormat format);
+	static size_t getBytesFromPixelFormat(ofPixelFormat format);
     static size_t bytesFromPixelFormat(size_t w, size_t h, ofPixelFormat format);
 
 	/// \}

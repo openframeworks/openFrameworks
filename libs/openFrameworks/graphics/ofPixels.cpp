@@ -21,42 +21,8 @@ static ofImageType getImageTypeFromChannels(size_t channels){
 }
 
 template<typename PixelType>
-size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat format){
-	switch(format){
-		case OF_PIXELS_RGB:
-		case OF_PIXELS_BGR:
-			return 3 * sizeof(PixelType) * 8;
-
-		case OF_PIXELS_RGBA:
-		case OF_PIXELS_BGRA:
-			return 4 * sizeof(PixelType) * 8;
-
-		case OF_PIXELS_GRAY:
-		case OF_PIXELS_Y:
-		case OF_PIXELS_U:
-		case OF_PIXELS_V:
-			return 1 * sizeof(PixelType) * 8;
-
-		case OF_PIXELS_NV12:
-		case OF_PIXELS_NV21:
-		case OF_PIXELS_YV12:
-		case OF_PIXELS_I420:
-			return 12;
-
-		case OF_PIXELS_UV:
-		case OF_PIXELS_VU:
-		case OF_PIXELS_GRAY_ALPHA:
-			return 2 * sizeof(PixelType) * 8;
-
-		case OF_PIXELS_YUY2:
-		case OF_PIXELS_UYVY:
-		case OF_PIXELS_RGB565:
-			return 16;
-			break;
-		default:
-			return 0;
-	}
-
+size_t ofPixels_<PixelType>::getBytesFromPixelFormat(ofPixelFormat format){
+	return channelsFromPixelFormat(format) * sizeof(PixelType);
 }
 
 template<>
@@ -131,7 +97,7 @@ std::string ofToString(const ofPixelFormat & p) {
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::bytesFromPixelFormat(size_t w, size_t h, ofPixelFormat format){
-	return w * h * pixelBitsFromPixelFormat(format) / 8;
+	return w * h * getBytesFromPixelFormat(format);
 }
 
 static size_t channelsFromPixelFormat(ofPixelFormat format){
@@ -423,7 +389,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, siz
 		return;
 	}
 	allocate(width, height, _pixelFormat);
-	size_t dstStride = width * pixelBitsFromPixelFormat(_pixelFormat)/8;
+	size_t dstStride = width * getBytesFromPixelFormat(_pixelFormat);
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
 	for(size_t i = 0; i < height; i++) {
@@ -808,12 +774,12 @@ size_t ofPixels_<PixelType>::getHeight() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBytesPerPixel() const{
-	return pixelBitsFromPixelFormat(pixelFormat)/8;
+	return getBytesFromPixelFormat(pixelFormat);
 }
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerPixel() const{
-	return pixelBitsFromPixelFormat(pixelFormat);
+	return getBytesFromPixelFormat(pixelFormat) * 8;
 }
 
 template<typename PixelType>
@@ -828,7 +794,7 @@ size_t ofPixels_<PixelType>::getBitsPerChannel() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBytesStride() const{
-	return pixelBitsFromPixelFormat(pixelFormat) * width / 8;
+	return getBytesFromPixelFormat(pixelFormat) * width;
 }
 
 template<typename PixelType>
