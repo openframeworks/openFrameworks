@@ -130,7 +130,9 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 		}
 		
 		try {
-			thread.join();
+			if (thread!=null) {
+				thread.join();
+			}
 		} catch (InterruptedException e) {
 			Log.e("OF", "error finishing audio thread ", e);
 		}
