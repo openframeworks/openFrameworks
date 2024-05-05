@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxAndroid.h"
+#include <map>
 
 class ofApp : public ofxAndroidApp{
 	
@@ -37,12 +38,33 @@ class ofApp : public ofxAndroidApp{
         void deviceRefreshRateChangedEvent(int &refreshRate);
         void deviceHighestRefreshRateChangedEvent(int & refreshRate);
 
+		// Using Shaders and fonts
 		ofPath text;
 		ofTrueTypeFont font;
 		ofShader shader;
 		bool doShader;
 
+		// Using ofSoundPlayer
 	    ofSoundPlayer  beats;
 	    ofSoundPlayer  synth;
 	    ofSoundPlayer  vocals;
+
+		// Using ofSoundStream
+	    void audioOut(ofSoundBuffer & buffer);
+		void audioIn(ofSoundBuffer & buffer);
+
+	    float pan;
+		int	sampleRate;
+		bool bNoise;
+		float volume;
+		int initialBufferSize;
+		float * lAudio;
+		float * rAudio;
+		// For the simple sine wave synthesis
+		float targetFrequency;
+		float phase;
+		float phaseAdder;
+		float phaseAdderTarget;
+
+		ofSoundStream soundStream;
 };

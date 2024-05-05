@@ -7,6 +7,9 @@ void ofApp::setup(){
 	ofSetVerticalSync(false);
 	ofEnableAlphaBlending();
 
+    // ofSetOrientation(OF_ORIENTATION_90_LEFT);
+
+    // SHADERS
     bool loadok = font.load("verdana.ttf", 200, true, false, true, 0.4, 72);
 	shader.load("shaders/noise.vert", "shaders/noise.frag");
 
@@ -29,8 +32,7 @@ void ofApp::setup(){
 	doShader = false;
 
 
-    // SOUND
-    // ofSetOrientation(OF_ORIENTATION_90_LEFT);
+    // SOUNDPLAYER
 	loadok = synth.loadSound("sounds/synth.wav");
 	loadok = beats.loadSound("sounds/1085.mp3");
 	loadok = vocals.loadSound("sounds/Violet.mp3");
@@ -42,6 +44,37 @@ void ofApp::setup(){
     vocals.setMultiPlay(true);
 
 
+    // SOUNDSTREAM
+
+//     Ask for permission to record audio,
+//     not needed if no in channels used
+    ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_RECORD_AUDIO);
+    bool ok = ofxAndroidCheckPermission(OFX_ANDROID_PERMISSION_RECORD_AUDIO);
+
+    sampleRate 			= 44100;
+    phase 				= 0;
+    phaseAdder 			= 0.0f;
+    phaseAdderTarget 	= 0.0f;
+    volume				= 0.1f;
+    bNoise 				= false;
+	initialBufferSize = 256;
+		
+	lAudio = new float[initialBufferSize];
+	rAudio = new float[initialBufferSize];
+	
+	memset(lAudio, 0, initialBufferSize * sizeof(float));
+	memset(rAudio, 0, initialBufferSize * sizeof(float));
+
+
+    ofSoundStreamSettings settings;
+    settings.setOutListener(this);
+    settings.setInListener(this);
+    settings.numOutputChannels = 2;
+    settings.numInputChannels = 2;
+    settings.numBuffers = 4;
+    settings.bufferSize = initialBufferSize;
+    soundStream.setup(settings);
+
 }
 
 void ofApp::exit(){
@@ -51,7 +84,7 @@ void ofApp::exit(){
 //--------------------------------------------------------------
 void ofApp::update(){
     // update the sound playing system:
-    ofSoundUpdate();
+    //ofSoundUpdate();
 }
 
 //--------------------------------------------------------------
@@ -75,12 +108,28 @@ void ofApp::draw(){
 
 	}
 
-	//finally draw our text
-	text.draw();
 
-	if( doShader ){
-		shader.end();
-	}
+    // draw the SoudStream audio waves
+    // draw the left:
+    ofBeginShape();
+    for (int i = 0; i < initialBufferSize; i++){
+        ofVertex(20+i*10,ofGetHeight() / 2 - 250 + lAudio[i]*500.0f);
+    }
+    ofEndShape(false);
+
+    ofBeginShape();
+    for (int i = 0; i < initialBufferSize; i++){
+        ofVertex(20+i*10,ofGetHeight() / 2 + 250 + rAudio[i]*500.0f);
+    }
+    ofEndShape(false);
+    
+    //finally draw our text
+    text.draw();
+
+    if( doShader ){
+        shader.end();
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -127,11 +176,18 @@ void ofApp::touchMoved(int x, int y, int id){
 	if (x >= widthStep && x < widthStep*2){
 		beats.setSpeed( 0.5f + ((float)(ofGetHeight() - y) / (float)ofGetHeight())*1.0f);
 	}
+
+	int width = ofGetWidth();
+	pan = (float)x / (float)width;
+	float height = (float)ofGetHeight();
+	float heightPct = ((height-y) / height);
+	targetFrequency = 2000.0f * heightPct;
+	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(int x, int y, int id){
-	doShader = false;
+	//doShader = false;
 
 }
 
@@ -183,6 +239,42 @@ void ofApp::okPressed(){
 //--------------------------------------------------------------
 void ofApp::cancelPressed(){
 
+}
+
+void ofApp::audioOut(ofSoundBuffer & buffer){
+	//pan = 0.5f;
+	float leftScale = 1 - pan;
+	float rightScale = pan;
+
+	// sin (n) seems to have trouble when n is very large, so we
+	// keep phase in the range of 0-TWO_PI like this:
+	while (phase > TWO_PI){
+		phase -= TWO_PI;
+	}
+
+	if ( bNoise == true){
+		// ---------------------- noise --------------
+		for (int i = 0; i < buffer.getNumFrames(); i++){
+			lAudio[i] = buffer.getSample(i, 0) = ofRandomf() * volume * leftScale;
+			rAudio[i] = buffer.getSample(i, 1) = ofRandomf() * volume * rightScale;
+		}
+	} else {
+
+		for (int i = 0; i < buffer.getNumFrames(); i++){
+			phaseAdder = 0.6f * phaseAdder + 0.4f * phaseAdderTarget;
+			phase += phaseAdder;
+			float sample = sin(phase);
+			lAudio[i%256] = buffer.getSample(i, 0) = sample * volume * leftScale;
+			buffer.getSample(i, 1) = sample * volume * rightScale;
+		}
+	}
+}
+
+
+void ofApp::audioIn(ofSoundBuffer & buffer){
+	for (int i = 0; i < buffer.getNumFrames(); i++){
+		rAudio[i%256] = buffer.getSample(i, 0) + buffer.getSample(i, 1) ;
+	}
 }
 
 void ofApp::deviceRefreshRateChanged(int refreshRate) {
