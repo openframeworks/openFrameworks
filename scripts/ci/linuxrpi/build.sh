@@ -4,10 +4,12 @@ OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
 export CROSS_COMPILING=1
 
+# Allows test locally without github actions env variables.
 if [ -n "$ARCH" ]; then
 export PLATFORM_ARCH=${ARCH}
 else
-export PLATFORM_ARCH=aarch64
+# export PLATFORM_ARCH=aarch64
+export PLATFORM_ARCH=armv6l
 fi
 
 echo "${PLATFORM_ARCH}"
