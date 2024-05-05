@@ -20,10 +20,6 @@ static ofImageType getImageTypeFromChannels(size_t channels){
 	}
 }
 
-template<typename PixelType>
-size_t ofPixels_<PixelType>::getBytesFromPixelFormat(ofPixelFormat format){
-	return channelsFromPixelFormat(format) * sizeof(PixelType);
-}
 
 template<>
 std::string ofToString(const ofPixelFormat & p) {
@@ -140,6 +136,12 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		ofLog(OF_LOG_ERROR,"ofPixels: format doesn't support channels");
 		return 1;
 	}
+}
+
+
+template<typename PixelType>
+size_t ofPixels_<PixelType>::getBytesFromPixelFormat(ofPixelFormat format){
+	return channelsFromPixelFormat(format) * sizeof(PixelType);
 }
 
 static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
