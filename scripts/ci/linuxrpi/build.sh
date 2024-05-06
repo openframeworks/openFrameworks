@@ -26,8 +26,6 @@ fi
 export GST_VERSION=1.0
 export PLATFORM_OS=Linux
 
-
-# export BCM_FOLDER=${RPI_ROOT}/../userland/host_applications/linux/libs/bcm_host/include
 # export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 # export PKG_CONFIG_LIBDIR=${BCM_FOLDER}:${RPI_ROOT}/usr/lib/aarch64-linux-gnu
 
