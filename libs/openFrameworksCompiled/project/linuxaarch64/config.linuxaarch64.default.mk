@@ -120,7 +120,6 @@ endif
 
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 
-
 	# PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
 	# PLATFORM_HEADER_SEARCH_PATHS += /usr/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)/include
 
@@ -138,7 +137,6 @@ endif
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
 	# PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/lapack
 
-	PLATFORM_LIBRARY_SEARCH_PATHS += ../userland/host_applications/linux/libs/bcm_host/include
 	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
