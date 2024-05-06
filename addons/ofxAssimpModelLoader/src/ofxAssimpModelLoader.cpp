@@ -750,8 +750,8 @@ void ofxAssimpModelLoader::setPositionForAllAnimations(float position) {
 }
 
 void ofxAssimpModelLoader::setSpeedForAllAnimations(float speed) {
-	for(size_t i = 0; i < animations.size(); i++) {
-		animations[i].setSpeed(speed);
+	for (auto & a : animations) {
+		a.setSpeed(speed);
 	}
 }
 
