@@ -284,6 +284,7 @@ endif
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
 	# PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/lapack
 	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland/host_applications/linux/libs/bcm_host/include
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland/interface/vmcs_host
 
 	# PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
