@@ -1004,7 +1004,7 @@ ofAVEngineSoundPlayer::~ofAVEngineSoundPlayer() {
     unload();
 }
 
-bool ofAVEngineSoundPlayer::load(const std::filesystem::path& fileName, bool stream) {
+bool ofAVEngineSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }
