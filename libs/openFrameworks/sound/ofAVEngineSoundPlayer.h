@@ -12,8 +12,10 @@ namespace of { namespace filesystem { class path; } }
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 
 #include "ofSoundBaseTypes.h"
-#include "ofEvents.h"
+//#include "ofEvents.h"
+class ofEventArgs;
 
+// FIXME: some can be moved to .mm
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
     #import <AVFoundation/AVFoundation.h>

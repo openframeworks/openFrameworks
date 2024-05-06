@@ -11,7 +11,8 @@
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/fwd.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/fwd.hpp>
 #include <unordered_map>
 
 class ofTexture;

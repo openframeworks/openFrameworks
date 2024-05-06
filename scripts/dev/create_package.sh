@@ -194,20 +194,13 @@ function createProjectFiles {
 
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
-        if [ "$pkg_platform" == "vs" ]; then
-            pg_platform="vs"
-        else
+        if [ "$pkg_platform" == "vs" ] || [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
             pg_platform=$pkg_platform
-        fi
-        
-        #add vscode to all platforms apart from ios/tvos/android
-        if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
-            pg_template=" "
         else
-            pg_template="-tvscode"
+            pg_platform="$pkg_platform,vscode"
         fi
         
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} ${pg_template} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator_debug --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
         
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
@@ -343,8 +336,8 @@ function createPackage {
         scripts/msys2/download_libs.sh -a $libs_abi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
-        scripts/dev/download_libs.sh -p vs
-        scripts/emscripten/download_libs.sh -n
+        scripts/vs/download_latest_libs.sh 
+        # scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
@@ -417,11 +410,11 @@ function createPackage {
     		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
     		mkdir projectGenerator
       		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
-		if [ "$pkg_platform" = "msys2" ]; then
-			sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
-		else
-			sed -i "s/osx/vs/g" projectGenerator/resources/app/settings.json
-		fi
+		# if [ "$pkg_platform" = "msys2" ]; then
+		# 	sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
+		# else
+		# 	sed -i "s/osx/vs/g" projectGenerator/resources/app/settings.json
+		# fi
 		rm projectGenerator-vs-gui.zip
 		rm -rf apps/projectGenerator
 	fi
@@ -431,7 +424,7 @@ function createPackage {
         	unzip projectGenerator-osx.zip
         	mv projectGenerator-osx projectGenerator
         	rm projectGenerator-osx.zip
-        	sed -i "s/osx/$pkg_platform/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
+        	# sed -i "s/osx/$pkg_platform/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
 		rm -rf apps/projectGenerator
 
 
@@ -443,7 +436,7 @@ function createPackage {
         	mv projectGenerator-ios projectGenerator
         	rm projectGenerator-ios.zip
 		rm -rf apps/projectGenerator
-		sed -i "s/osx/ios/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
+		# sed -i "s/osx/ios/g" projectGenerator/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 
 	if [ "$pkg_platform" = "linux" ]; then
@@ -452,7 +445,7 @@ function createPackage {
 		npm run build:linux32 > /dev/null
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
 		cd ${pkg_ofroot}
-		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
+		# sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
 	fi
 
 	if [ "$pkg_platform" = "linux64" ]; then
@@ -461,7 +454,7 @@ function createPackage {
 		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
-		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
+		# sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
 		chmod +x projectGenerator-linux64/projectGenerator
 	fi
 
@@ -475,7 +468,7 @@ function createPackage {
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
-		sed -i "s/osx/android/g" projectGenerator-windows/resources/app/settings.json
+		# sed -i "s/osx/android/g" projectGenerator-windows/resources/app/settings.json
 
 		downloader http://ci.openframeworks.cc/projectGenerator/projectGenerator-android.zip 2> /dev/null
         unzip projectGenerator-android.zip
@@ -487,7 +480,7 @@ function createPackage {
 		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
-		sed -i "s/osx/android/g" projectGenerator-linux64/resources/app/settings.json
+		# sed -i "s/osx/android/g" projectGenerator-linux64/resources/app/settings.json
 	fi
 
 	# linux remove other platform projects from PG source and copy ofxGui

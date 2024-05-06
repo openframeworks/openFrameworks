@@ -5,7 +5,8 @@
 //#include "ofVec4f.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtc/quaternion.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/quaternion.hpp>
 
 //----------------------------------------
 ofQuaternion::ofQuaternion(const glm::quat & q):_v(q.x, q.y, q.z, q.w){}
