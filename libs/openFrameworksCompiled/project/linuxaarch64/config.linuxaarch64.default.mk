@@ -138,6 +138,6 @@ endif
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
 	# PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/lapack
 
-	PKG_CONFIG_LIBDIR=/usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
