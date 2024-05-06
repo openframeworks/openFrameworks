@@ -278,6 +278,7 @@ endif
 
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
+	PLATFORM_LDFLAGS += -lblas -llapack
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/lib/$(GCC_PREFIX)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
