@@ -39,7 +39,10 @@ ifdef ${ccache}
 $(info 💿 Using CCACHE - compile.core.mk )
 	CXX := ${ccache} $(CXX)
 	CC := ${ccache} $(CXX)
-endif	
+endif
+
+$(info 💾 CXX = $(CXX))
+$(info 💾 CC = $(CC))
 
 ################################################################################
 # CFLAGS
