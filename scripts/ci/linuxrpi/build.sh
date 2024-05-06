@@ -45,13 +45,13 @@ cd examples/templates/emptyExample/
 make Debug -j
 
 # if [ -n "$ALLADDONSEXAMPLE" ]; then
-ALLADDONSEXAMPLE = 1
+# ALLADDONSEXAMPLE = 1
 
-if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
+# if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
 echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
 cp scripts/templates/linux${PLATFORM_ARCH}/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
 make Debug -j
-fi
+# fi
