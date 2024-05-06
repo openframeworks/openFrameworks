@@ -8,11 +8,10 @@ export CROSS_COMPILING=1
 if [ -n "$ARCH" ]; then
 export PLATFORM_ARCH=${ARCH}
 else
-# export PLATFORM_ARCH=aarch64
+# github actions will be defining this one, next line will set if we are working locally
 export PLATFORM_ARCH=armv6l
+# export PLATFORM_ARCH=aarch64
 fi
-
-echo "${PLATFORM_ARCH}"
 
 export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxrpi/raspbian
 echo "${RPI_ROOT}"
@@ -22,14 +21,11 @@ export GCC_PREFIX=aarch64-linux-gnu
 else
 export GCC_PREFIX=arm-linux-gnueabihf
 fi
-# export GCC_PREFIX=aarch64-linux-gnu
+
 export GST_VERSION=1.0
 export PLATFORM_OS=Linux
 
-# export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
-# export PKG_CONFIG_LIBDIR=${BCM_FOLDER}:${RPI_ROOT}/usr/lib/aarch64-linux-gnu
-
-# export PKG_CONFIG_LIBDIR=${BCM_FOLDER}:${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
+# export PKG_CONFIG_LIBDIR=
 export PKG_CONFIG_PATH=${BCM_FOLDER}:${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 export TOOLCHAIN_ROOT=/usr
 export CXX="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-g++"
@@ -43,9 +39,6 @@ cp scripts/templates/linux${PLATFORM_ARCH}/Makefile examples/templates/emptyExam
 cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
 make Debug -j
-
-# if [ -n "$ALLADDONSEXAMPLE" ]; then
-# ALLADDONSEXAMPLE = 1
 
 # if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
 echo "**** Building allAddonsExample ****"
