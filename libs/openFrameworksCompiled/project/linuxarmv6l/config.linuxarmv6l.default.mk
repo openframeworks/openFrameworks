@@ -171,6 +171,7 @@ ifeq ($(USE_PI_LEGACY), 0)
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
 	PLATFORM_LIBRARIES += EGL
+# FIXME: update to what is possible now.
 else ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
@@ -207,10 +208,8 @@ endif
 ################################################################################
 
 # Broadcom hardware interface library
-PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
-PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/IL
-PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
-PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland/host_applications/linux/libs/bcm_host/include
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATH
@@ -274,13 +273,15 @@ endif
 	PLATFORM_LIBRARY_SEARCH_PATHS += /usr/lib/$(GCC_PREFIX)
 	PLATFORM_LIBRARY_SEARCH_PATHS += /lib/$(GCC_PREFIX)
 
+	PLATFORM_LIBRARY_SEARCH_PATHS += /usr/lib/$(GCC_PREFIX)/blas
+	PLATFORM_LIBRARY_SEARCH_PATHS += /usr/lib/$(GCC_PREFIX)/lapack
+
+
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/lib/$(GCC_PREFIX)
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
 	# PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/lapack
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland/host_applications/linux/libs/bcm_host/include
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland
 
 	# PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
