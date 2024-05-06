@@ -362,9 +362,6 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openal
 # PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 
-# TEST
-# PLATFORM_PKG_CONFIG_LIBRARIES += lapack
-# PLATFORM_PKG_CONFIG_LIBRARIES += blas
 
 ifeq ($(CROSS_COMPILING),1)
 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"
@@ -391,41 +388,6 @@ else
 		PLATFORM_LIBRARIES += rtaudio
 	endif
 endif
-
-
-
-# ifeq ($(CROSS_COMPILING),1)
-# 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists lapack && echo 1)" "1"
-# 		PLATFORM_PKG_CONFIG_LIBRARIES += lapack
-# 		PLATFORM_LIBRARIES += lapack
-
-# 	else
-# 		PLATFORM_PKG_CONFIG_LIBRARIES += lapack
-# 		PLATFORM_LIBRARIES += lapack
-# 	endif
-# else
-# 	ifeq "$(shell pkg-config --exists lapack && echo 1)" "1"
-# 		PLATFORM_PKG_CONFIG_LIBRARIES += lapack
-# 		PLATFORM_LIBRARIES += lapack
-# 	else
-# 		PLATFORM_PKG_CONFIG_LIBRARIES += lapack
-# 		PLATFORM_LIBRARIES += lapack
-# 	endif
-# endif
-
-# ifeq ($(CROSS_COMPILING),1)
-# 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists blas && echo 1)" "1"
-# 		PLATFORM_PKG_CONFIG_LIBRARIES += blas
-# 	else
-# 		PLATFORM_LIBRARIES += blas
-# 	endif
-# else
-# 	ifeq "$(shell pkg-config --exists blas && echo 1)" "1"
-# 		PLATFORM_PKG_CONFIG_LIBRARIES += blas
-# 	else
-# 		PLATFORM_LIBRARIES += blas
-# 	endif
-# endif
 
 
 ifneq ($(LINUX_ARM),1)
