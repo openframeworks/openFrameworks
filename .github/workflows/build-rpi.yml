@@ -1,4 +1,4 @@
-name: rpi-aarch64-alladdons
+name: rpi-alladdons
 
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
