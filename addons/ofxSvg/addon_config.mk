@@ -59,7 +59,7 @@ common:
 	# when parsing the file system looking for libraries exclude this for all or
 	# a specific platform
 	# ADDON_LIBS_EXCLUDE =
-	
+
 osx:
 	ADDON_LIBS = libs/svgtiny/lib/osx/svgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/osx/xml2.a
@@ -67,7 +67,7 @@ osx:
 ios:
 	ADDON_LIBS = libs/svgtiny/lib/ios/svgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/ios/xml2.a
-	
+
 linux64:
 	ADDON_LIBS = libs/svgtiny/lib/linux64/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linux64/libxml2.a
@@ -79,6 +79,10 @@ linuxarmv6l:
 linuxarmv7l:
 	ADDON_LIBS = libs/svgtiny/lib/linuxarmv7l/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linuxarmv7l/libxml2.a
+
+linuxaarch64:
+	ADDON_LIBS = libs/svgtiny/lib/linuxaarch64/libsvgtiny.a
+	ADDON_LIBS += libs/libxml2/lib/linuxaarch64/libxml2.a
 
 msys2:
 	ADDON_PKG_CONFIG_LIBRARIES = libxml-2.0
