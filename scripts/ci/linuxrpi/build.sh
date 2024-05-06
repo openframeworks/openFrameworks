@@ -17,7 +17,6 @@ echo "${PLATFORM_ARCH}"
 export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxrpi/raspbian
 echo "${RPI_ROOT}"
 
-export BCM_FOLDER=${RPI_ROOT}/../userland/host_applications/linux/libs/bcm_host/include
 if [ ${PLATFORM_ARCH} = "aarch64" ]; then
 export GCC_PREFIX=aarch64-linux-gnu
 else
@@ -28,6 +27,7 @@ export GST_VERSION=1.0
 export PLATFORM_OS=Linux
 
 
+export BCM_FOLDER=${RPI_ROOT}/../userland/host_applications/linux/libs/bcm_host/include
 # export PKG_CONFIG_LIBDIR=${RPI_ROOT}/usr/include:${RPI_ROOT}/usr/lib/pkgconfig:${RPI_ROOT}/usr/lib/${GCC_PREFIX}/pkgconfig:${RPI_ROOT}/usr/share/pkgconfig
 # export PKG_CONFIG_LIBDIR=${BCM_FOLDER}:${RPI_ROOT}/usr/lib/aarch64-linux-gnu
 
