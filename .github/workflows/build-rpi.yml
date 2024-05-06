@@ -52,3 +52,4 @@ jobs:
       run: ./scripts/ci/linuxrpi/install.sh;
     - name: Build
       run: ./scripts/ci/linuxrpi/build.sh;
+
