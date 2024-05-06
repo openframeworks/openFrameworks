@@ -197,6 +197,12 @@ size_t ofPixels_<PixelType>::getBytesFromPixelFormat(ofPixelFormat format){
 	return channelsFromPixelFormat(format) * sizeof(PixelType);
 }
 
+//static unordered_map <ofImageType, ofPixelFormat> imageType2pixelFormat {
+//	{ OF_IMAGE_GRAYSCALE, OF_PIXELS_GRAY },
+//	{ OF_IMAGE_COLOR, OF_PIXELS_RGB },
+//	{ OF_IMAGE_COLOR_ALPHA, OF_PIXELS_RGBA },
+//};
+
 static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
 	switch(type){
 	case OF_IMAGE_GRAYSCALE:
@@ -419,7 +425,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w, size_t h, ofPixelFormat _pixelFormat){
 	clear();
 	pixelFormat = _pixelFormat;
-	width= w;
+	width = w;
 	height = h;
 
 	pixelsSize = w * h * channelsFromPixelFormat(pixelFormat);
@@ -534,6 +540,11 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, size_t _channels){
 }
 
 template<typename PixelType>
+void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofImageType type){
+	allocate(w,h,ofPixelFormatFromImageType(type));
+}
+
+template<typename PixelType>
 void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	if (w == 0 || h == 0 || format == OF_PIXELS_UNKNOWN) {
 		return;
@@ -562,11 +573,6 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
 	pixelsOwner = true;
-}
-
-template<typename PixelType>
-void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofImageType type){
-	allocate(w,h,ofPixelFormatFromImageType(type));
 }
 
 template<typename PixelType>
@@ -1201,7 +1207,7 @@ void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 
 	ofPixels_<PixelType> newPixels;
 	rotate90To(newPixels,nClockwiseRotations);
-	std::swap(newPixels.pixels,pixels);
+	std::swap(newPixels.pixels, pixels);
 	width = newPixels.width;
 	height = newPixels.height;
 	pixelsSize = newPixels.size();
