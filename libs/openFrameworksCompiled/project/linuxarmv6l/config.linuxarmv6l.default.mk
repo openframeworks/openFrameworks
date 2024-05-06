@@ -276,7 +276,6 @@ endif
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/blas
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/lapack
 
-
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
 	PLATFORM_LDFLAGS += -lblas -llapack
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
@@ -285,7 +284,6 @@ endif
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/lapack
 	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/blas
 
-	# PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
