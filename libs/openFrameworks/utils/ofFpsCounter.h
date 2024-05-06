@@ -75,13 +75,11 @@ public:
 	
 	double getFps()  {
 		average = std::reduce(intervals.begin(), intervals.end());
-		return intervals.size() * onesec / average;
+		return (double)intervals.size() * onesec / average;
 	}
 	
 	float get() {
-//		average = std::reduce(intervals.begin(), intervals.end())/intervals.size();
-//		return onesec / average;
 		average = std::reduce(intervals.begin(), intervals.end());
-		return intervals.size() * onesec / average;
+		return (float)intervals.size() * onesec / average;
 	}
 };
