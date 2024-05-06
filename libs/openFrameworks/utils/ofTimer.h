@@ -30,10 +30,6 @@ public:
 	}
 	
 	void waitNext(){
-//		std::cout << "interval:" << duration_cast<microseconds>(wakeTime - lastWakeTime).count() << std::endl;
-//		std::cout << "ellapsed:" << duration_cast<microseconds>(steady_clock::now() - lastWakeTime).count() << std::endl;
-//		std::cout << "will sleep:" << duration_cast<microseconds>(wakeTime - steady_clock::now()).count() << std::endl;
-//		std::cout << "----" << std::endl;
 		std::this_thread::sleep_until(wakeTime);
 		lastWakeTime = wakeTime;
 		wakeTime += interval;
