@@ -46,6 +46,7 @@ make Debug -j
 
 # if [ -n "$ALLADDONSEXAMPLE" ]; then
 ALLADDONSEXAMPLE = 1
+
 if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
 echo "**** Building allAddonsExample ****"
 cd $OF_ROOT
