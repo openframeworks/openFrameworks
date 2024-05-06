@@ -129,7 +129,9 @@ PLATFORM_CFLAGS += -std=c++17
 PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_CXXVER = -std=c++17
 
-PLATFORM_CFLAGS += -march=armv6
+# PLATFORM_CFLAGS += -march=armv6
+PLATFORM_CFLAGS += -marm
+
 PLATFORM_CFLAGS += -mfpu=vfp
 PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -fPIC
