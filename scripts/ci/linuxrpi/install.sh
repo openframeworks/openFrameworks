@@ -19,7 +19,7 @@ installPackages(){
 
 downloadFirmware(){
 	# FIXME: only if it is not aarch64
-	git clone https://github.com/raspberrypi/userland --depth 1
+	git clone https://github.com/raspberrypi/userland --depth 1 raspbian
 	# cp -r userland/opt raspbian/
 }
 
