@@ -25,8 +25,8 @@ ROOT=$( cd "$(dirname "$0")" ; pwd -P )
 echo $ROOT
 cd $ROOT
 
-# mkdir -p raspbian/etc/apt/apt.conf.d/
-# echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
+mkdir -p raspbian/etc/apt/apt.conf.d/
+echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
 multistrap -a ${MULTISTRAP_ARCH} -d raspbian -f multistrap.conf   
 
 if [ ${MULTISTRAP_ARCH} = "armhf" ]; then
