@@ -749,6 +749,12 @@ void ofxAssimpModelLoader::setPositionForAllAnimations(float position) {
 	}
 }
 
+void ofxAssimpModelLoader::setSpeedForAllAnimations(float speed) {
+	for (auto & a : animations) {
+		a.setSpeed(speed);
+	}
+}
+
 // DEPRECATED.
 void ofxAssimpModelLoader::setAnimation(int animationIndex) {
 	if(!hasAnimations()) {
