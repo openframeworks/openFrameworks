@@ -41,10 +41,11 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         cache: true
-        release: false
+        release: true
         update: false
         msystem: ${{matrix.msystem}}
-        pacboy: assimp:p cairo:p curl:p freeglut:p FreeImage:p gcc:p gdb:p glew:p glfw:p glm:p harfbuzz:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p ntldd-git:p openal:p opencv:p pkgconf:p pugixml:p rtaudio:p uriparser:p utf8cpp:p zlib:p poco:p
+        pacboy: assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+        # gcc:p gdb:p zlib:p poco:p pkgconf:p harfbuzz:p ntldd-git:p 
         # boost:p tools:p
         # install: >-
         # unzip
