@@ -1,6 +1,7 @@
 #include "ofRectangle.h"
 #include "ofLog.h"
 #include "ofVectorMath.h"
+#include "ofMath.h"
 
 using std::ostream;
 using std::istream;
