@@ -133,7 +133,7 @@ void ofApp::keyPressed(int key){
 	if(key == 't')            bFrameIndependent = !bFrameIndependent;
 
 	// check for less than zero...
-	sequenceFPS = std::max(sequenceFPS, 1);
+	sequenceFPS = std::max(sequenceFPS, 1.f);
 	appFPS      = std::max(appFPS, 1);
 
 	ofSetFrameRate(appFPS);

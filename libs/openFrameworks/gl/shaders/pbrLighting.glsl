@@ -129,7 +129,7 @@ void calcLight(in PbrLightData light, in int aLightIndex, inout PbrData adata, i
 			float spotCut = radians(clamp(light.spotCutoff, 0.0, 89.9));
 			float spotInner = clamp(spotCut - ((light.spotExponent/128.0) * HALF_PI), 0.0, spotCut-0.001);
 			
-			attenuation = smoothstep(spotCut, spotInner, std::acos(spotEffect));
+			attenuation = smoothstep(spotCut, spotInner, acos(spotEffect));
 			if( light.radius > 0.0 ) {
 				float distanceSquare = dot(posToLight, posToLight);
 				attenuation *= GetDistanceAttenuation( distanceSquare, light.radius );

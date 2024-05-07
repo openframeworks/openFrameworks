@@ -142,10 +142,10 @@ void ofApp::draw(){
 void ofApp::keyPressed  (int key){
 	if (key == '-' || key == '_' ){
 		volume -= 0.05;
-		volume = std::max(volume, 0);
+		volume = std::max(volume, 0.f);
 	} else if (key == '+' || key == '=' ){
 		volume += 0.05;
-		volume = std::min(volume, 1);
+		volume = std::min(volume, 1.f);
 	}
 	
 	if( key == 's' ){
