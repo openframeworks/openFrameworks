@@ -153,15 +153,17 @@ protected:
 	bool do_test_eq(T1 t1, T2 t2, const std::string & v1, const std::string & v2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1==t2){
-			ofLogNotice() << testName << " passed";
+			// ofLogNotice() << testName << " passed";
 			numTestsPassed++;
 			return true;
 		}else{
 			ofLogError() << testName << " failed " << msg;
-			ofLogError() << "test_eq(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
-			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
-			ofLogError() << file << ": " << line;
+			// ofLogError() << "test_eq(" << v1 << ", " << v2 << ")";
+			ofLogError() << "expected: " <<ofToString(t2) << "  returned: " << ofToString(t1);
+			ofLogError();
+			// ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			// ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
+			// ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
 		}

@@ -61,7 +61,7 @@ size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat _pixelFormat
 				{ OF_PIXELS_RGB, 3 },
 				{ OF_PIXELS_BGR, 3 },
 				{ OF_PIXELS_RGBA, 4 },
-				{ OF_PIXELS_RGBA, 4 },
+				{ OF_PIXELS_BGRA, 4 },
 				{ OF_PIXELS_GRAY, 1 },
 				{ OF_PIXELS_Y, 1 },
 				{ OF_PIXELS_U, 1 },
@@ -798,7 +798,7 @@ size_t ofPixels_<PixelType>::getBytesPerPixel() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerPixel() const{
-	return getBitsPerChannel() * getNumChannels();
+	return pixelBitsFromPixelFormat(pixelFormat);
 }
 
 template<typename PixelType>
@@ -808,26 +808,12 @@ size_t ofPixels_<PixelType>::getBytesPerChannel() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBitsPerChannel() const{
-	switch(getPixelFormat()){
-		case OF_PIXELS_NV12:
-		case OF_PIXELS_NV21:
-		case OF_PIXELS_YV12:
-		case OF_PIXELS_I420:
-			return 12;
-			break;
-		case OF_PIXELS_YUY2:
-		case OF_PIXELS_UYVY:
-		case OF_PIXELS_RGB565:
-			return 16;
-			break;
-		default:
-			return sizeof(PixelType);
-	}
+	return getBytesPerChannel() * 8;
 }
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBytesStride() const{
-	return getBytesFromPixelFormat(pixelFormat) * width;
+	return pixelBitsFromPixelFormat(pixelFormat) * width / 8;
 }
 
 template<typename PixelType>
