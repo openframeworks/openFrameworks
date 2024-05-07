@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace of { namespace filesystem { class path; } }
+//namespace of { namespace filesystem { class path; } }
 
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 

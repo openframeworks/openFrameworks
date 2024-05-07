@@ -1,11 +1,11 @@
 #pragma once
 
+#include "ofSoundBaseTypes.h"
 // MARK: this is to define the constant OF_SOUND_PLAYER_FMOD
 #include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_FMOD
 
-#include "ofSoundBaseTypes.h"
 
 
 extern "C" {
@@ -42,7 +42,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		ofFmodSoundPlayer();
 		virtual ~ofFmodSoundPlayer();
 
-        bool load(const of::filesystem::path& fileName, bool stream = false);
+        bool load(const of::filesystem::path & fileName, bool stream = false);
 		void unload();
 		void play();
 		void stop();

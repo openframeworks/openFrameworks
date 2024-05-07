@@ -116,7 +116,7 @@ public:
 	ofMediaFoundationSoundPlayer();
 	~ofMediaFoundationSoundPlayer();
 
-	bool load(const of::filesystem::path& fileName, bool stream = false) override;
+	bool load(const of::filesystem::path & fileName, bool stream = false) override;
 	void unload() override;
 
 	void play() override;

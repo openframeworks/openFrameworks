@@ -657,6 +657,7 @@ std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPla
 }
 
 //----------------------------------------------
+// FIXME: FS Path? URL?
 bool ofMediaFoundationPlayer::load(std::string name) {
     return _load(name, false);
 }

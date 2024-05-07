@@ -1,3 +1,4 @@
+#include "ofFileUtils.h"
 #include "ofBufferObject.h"
 #include "ofCubeMap.h"
 // #include "ofFileUtils.h"

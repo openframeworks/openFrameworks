@@ -5,6 +5,7 @@
 //namespace of { namespace filesystem { class path; } }
 
 #include <functional>
+#include <string>
 
 class ofSoundBuffer;
 
@@ -88,7 +89,7 @@ public:
 
 	/// \brief Descriptive name for the device
 	/// This is the same string that ofSoundStream::getMatchingDevices() will be looking for
-	std::string name{"Unknown"};
+	std::string name { "Unknown" };
 
 	/// \brief The device's unique ID (to be used in ofSoundStream::setDeviceID() )
 	int deviceID = -1;
@@ -178,8 +179,8 @@ public:
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
 
-	virtual bool load(const of::filesystem::path & fileName, bool stream = false)=0;
-	virtual void unload()=0;
+	virtual bool load(const of::filesystem::path & fileName, bool stream = false) = 0;
+	virtual void unload() = 0;
 	virtual void play() = 0;
 	virtual void stop() = 0;
 
