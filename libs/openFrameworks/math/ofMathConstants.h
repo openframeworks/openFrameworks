@@ -19,8 +19,9 @@ using ofDefaultVec3 = glm::vec3;
 using ofDefaultVec4 = glm::vec4;
 #endif
 
+#define OF_USE_LEGACY_MATH_MACROS
 
-#if OF_USE_LEGACY_MATH_MACROS
+#ifdef OF_USE_LEGACY_MATH_MACROS
 	#include <glm/gtc/constants.hpp>
 
 	#ifndef PI
