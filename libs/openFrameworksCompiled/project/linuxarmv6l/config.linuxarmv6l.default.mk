@@ -208,6 +208,13 @@ endif
 ################################################################################
 
 # Broadcom hardware interface library
+ifneq ($(CROSS_COMPILING),1)
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/IL
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
+endif
+
 PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland/host_applications/linux/libs/bcm_host/include
 PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland
 

@@ -366,7 +366,8 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (void) handleMediaServicesReset:(NSNotification *)notification {
-    
+#ifndef TARGET_OSX
+
     NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     
         NSLog(@"Media services have been reset!");
@@ -389,11 +390,12 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     
     
     [self startEngine];
-    
+#endif
 }
 
 - (void) handleRouteChange:(NSNotification *)notification {
-    
+#ifndef TARGET_OSX
+
     NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     
     UInt8 reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
@@ -433,10 +435,12 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         NSLog(@"Previous route:\n");
         NSLog(@"%@", routeDescription);
 #endif
+#endif
 }
 
 - (void) handleInterruption:(NSNotification *)notification {
-    
+#ifndef TARGET_OSX
+
     NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
 
     
@@ -450,7 +454,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         
         [self startEngine];
     }
-
+#endif
 }
 
 - (void)beginInterruption {
@@ -1003,7 +1007,7 @@ ofAVEngineSoundPlayer::~ofAVEngineSoundPlayer() {
     unload();
 }
 
-bool ofAVEngineSoundPlayer::load(const std::filesystem::path& fileName, bool stream) {
+bool ofAVEngineSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }
