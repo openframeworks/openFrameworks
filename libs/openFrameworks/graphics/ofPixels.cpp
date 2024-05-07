@@ -401,7 +401,7 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w
 	width= w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat) / sizeof(PixelType);
+	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat);
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -535,7 +535,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize / sizeof(PixelType);
+	pixelsSize = newSize;
 
 	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
