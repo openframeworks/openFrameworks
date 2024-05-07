@@ -32,16 +32,16 @@ done
 
 # List of MSYS packages to be installed
 # msyspackages="make rsync zip unzip wget"
-msyspackages="unzip make gcc"
+msyspackages="unzip make"
 
 # List of MINGW packages to be installed (without prefix)
-mingwPackages="assimp cairo curl freeglut FreeImage \
+mingwPackages="gcc assimp cairo curl freeglut FreeImage \
 	glew glfw glm \
 	harfbuzz libsndfile libusb libxml2 mpg123 \
 	nlohmann-json openal opencv \
 	pkgconf pugixml rtaudio \
 	uriparser utf8cpp "
-# gcc gdb zlib ntldd-git
+# gdb zlib ntldd-git
 # boost poco tools
 # Build the full list of packages adding prefix to MINGW packages
 packages=${msyspackages}
