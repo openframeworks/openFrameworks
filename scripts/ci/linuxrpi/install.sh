@@ -25,10 +25,14 @@ ROOT=$( cd "$(dirname "$0")" ; pwd -P )
 echo $ROOT
 cd $ROOT
 
+echo "##[group] Setup Multistrap ${MULTISTRAP_ARCH}"
 mkdir -p raspbian/etc/apt/apt.conf.d/
 echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee raspbian/etc/apt/apt.conf.d/90insecure
 multistrap -a ${MULTISTRAP_ARCH} -d raspbian -f multistrap.conf   
+echo "##[endgroup]"
 
 if [ ${MULTISTRAP_ARCH} = "armhf" ]; then
+echo "##[group] Clone Userland"
 	git clone https://github.com/raspberrypi/userland --depth 1 raspbian/userland
+echo "##[endgroup]"	
 fi
