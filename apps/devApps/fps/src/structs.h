@@ -118,32 +118,32 @@ public:
 using std::cout;
 using std::endl;
 
-
-class ofTimerFps {
-public:
-	ofTimerFps(){
-		reset();
-	};
-
-	using space = std::chrono::duration<long long, std::nano>;
-	space interval;
-	time_point<steady_clock> wakeTime;
-	time_point<steady_clock> lastWakeTime;
-
-	void setFps(int fps) {
-		interval = duration_cast<microseconds>(1s) / fps;
-	}
-
-	void reset() {
-		wakeTime = steady_clock::now();
-	}
-	
-	void waitNext(){
-		std::this_thread::sleep_until(wakeTime);
-		lastWakeTime = wakeTime;
-		wakeTime += interval;
-	}
-};
+//
+//class ofTimerFps {
+//public:
+//	ofTimerFps(){
+//		reset();
+//	};
+//
+//	using space = std::chrono::duration<long long, std::nano>;
+//	space interval;
+//	time_point<steady_clock> wakeTime;
+//	time_point<steady_clock> lastWakeTime;
+//
+//	void setFps(int fps) {
+//		interval = duration_cast<microseconds>(1s) / fps;
+//	}
+//
+//	void reset() {
+//		wakeTime = steady_clock::now();
+//	}
+//	
+//	void waitNext(){
+//		std::this_thread::sleep_until(wakeTime);
+//		lastWakeTime = wakeTime;
+//		wakeTime += interval;
+//	}
+//};
 
 struct fpsToggler {
 public:
