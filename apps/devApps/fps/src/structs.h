@@ -28,7 +28,7 @@ struct grapher {
 				vals.emplace_back(v);
 			} else {
 				vals[cursor] = v;
-				cursor = (cursor+1)%(nVals-1);
+				cursor = (cursor+1)%(nVals);
 			}
 		}
 	}
