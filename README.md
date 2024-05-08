@@ -1,3 +1,38 @@
+This is a fork of **Dan Rosser (@danoli3)** own fork of openFrameworks [https://github.com/danoli3/openFrameworks](https://github.com/danoli3/openFrameworks) that I've used to experiment with OF on Android with **modern Android tools**. Dan has indeed rearchitectured the way the OF build for Android can be done.
+
+Default branch is **Android_fixes_thierry**, starting from Dan's **Android_fixes**.
+
+I added :
+- a few corrections and completions
+- a composite example under (examples/Android) which works on my Android phone 
+- the binaries of the initial libs used by OF (boost, freeimage, openCV...)
+
+I have added these binaries for convenience because current **download_libs.sh** under **scripts/android** does not fully work and I had to manually include some the binaries in the right places with the right names. That will need to be fixed.
+
+The composite example includes ofShaderExample, ofSoundPlayerExample, ofSoundStreamExample. It was constructed starting by **manually copying** the following project : **scripts/template/android** under example/android. **ProjectGenerator was not used.**
+
+To make a build, start by **building the openFrameworks lib** for Android by :
+- opening the following project in Android Studio : **libs/openFrameworksCompiled/project/android**
+- gradle starts to configure the project
+- launch **Build / make module android.openframeworksAndroid**
+- if gradle stops asking for another version of Gradle JDK do as stated below and sync
+- rebuild
+- **libopenFrameworksAndroid.so binaries** are created for **arm64-v8a  -  armeabi-v7a  -  x86** in **libs/openFrameworksCompiled/lib/android**
+
+Changing the version of the Gradle JDK : in **Settings / Build, Execution, Deployment / Build Tools / Gradle** (I use the JetBrains 17.0.6 version).
+
+It is then possible to build the example and generate the corresponding APK / bundle by :
+- opening  **examples/android/androidCompositeExample** in Android Studio
+- in the Android view : select **build / make module androidCompositeExample.ofApp** 
+- then launch **build / build bundle / apk / your choice** to **generate an apk or a bundle** in **ofApp/build/output**
+- with a connected device you can upload and lauch the app
+
+
+The version of Android Studio that I have used is **Android Studio Flamingo | 2022.2.1 Patch 1**
+
+That was tested on a Xiaomi MI lite 10 from 2020, runnning **Android 10, SDK 29**.
+
+
 [openFrameworks](http://openframeworks.cc/)
 ================
 
