@@ -1,0 +1,14 @@
+//NSHighResolutionCapable = YES
+//VALID_ARCHS = arm64 arm64e i386 x86_64
+//VALID_ARCHS = arm64e
+
+
+
+// Where to find embedded frameworks
+// Search `Frameworks` in the .app.
+// If app is cli at `/usr/local/bin/foo`, `@executable_path/../Frameworks`
+// means `/usr/local/Frameworks`.
+//LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
+
+//DEAD_CODE_STRIPPING[config=Release] = YES
+//SKIP_INSTALL = YES

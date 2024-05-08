@@ -1,0 +1,15 @@
+ofpath: ../../..
+
+addons:
+# - ofxMicroUI
+# - ofxTools
+# - ofxAssimpModelLoader
+# - ofxOpenCv
+# - ofxNetwork
+# - ofxPoco
+# - ofxLaser
+# - ofxNDI
+# - ofxLaser
+# - ofxOrbbec
+
+# platforms: ["vs", "linux64"]
