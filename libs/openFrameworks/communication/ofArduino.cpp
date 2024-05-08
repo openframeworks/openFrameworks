@@ -46,7 +46,6 @@
 
 #include "ofArduino.h"
 #include "ofUtils.h"
-#include "ofMath.h"
 #include "ofLog.h"
 #include <climits>
 
@@ -1042,7 +1041,7 @@ void ofArduino::sendDigitalPortReporting(int port, int mode) {
 
 void ofArduino::sendDigitalPinReporting(int pin, int mode) {
 
-	int port = floor(pin / 8);
+	int port = std::floor(pin / 8);
 	if (mode == ARD_OFF || mode == ARD_ON) {
 		_digitalPinReporting[pin] = mode;
 		sendDigitalPortReporting(port, mode);
@@ -1242,8 +1241,8 @@ void ofArduino::sendStepperMove(int stepperID, int direction, int numSteps, int 
 
 		// the stepper interface expects decimal expressed an an integer
 		if (acceleration != 0 && deceleration != 0) {
-			int accel = floor(acceleration * 100);
-			int decel = floor(deceleration * 100);
+			int accel = std::floor(acceleration * 100);
+			int decel = std::floor(deceleration * 100);
 
 			sendByte(START_SYSEX);
 			sendByte(STEPPER_DATA);
@@ -1465,7 +1464,7 @@ void  ofArduino::sendOneWireSearch(char type, int pin) {
 }
 
 void  ofArduino::sendOneWireRead(int pin, vector<unsigned char> devices, int numBytesToRead) {
-	int correlationId = floor(ofRandomuf() * 255);
+	int correlationId = std::floor(ofRandomuf() * 255);
 	vector<unsigned char> b;
 	sendOneWireRequest(pin, ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, b);
 }
@@ -1485,7 +1484,7 @@ void  ofArduino::sendOneWireDelay(int pin, unsigned int delay) {
 };
 
 void  ofArduino::sendOneWireWriteAndRead(int pin, vector<unsigned char> devices, vector<unsigned char> data, int numBytesToRead) {
-	int correlationId = floor(ofRandomuf() * 255);
+	int correlationId = std::floor(ofRandomuf() * 255);
 	sendOneWireRequest(pin, ONEWIRE_WRITE_REQUEST_BIT | ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, data);
 }
 
