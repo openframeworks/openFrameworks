@@ -308,7 +308,7 @@ bool ofCoreEvents::notifyDraw() {
 	} else {
 		/*if(ofIsVerticalSyncEnabled()){
 			float rate = ofGetRefreshRate();
-			int intervals = round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
+			int intervals = std::round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
 			//vsyncedIntervalsRemainder = lastFrameTime*rate/1000000.+vsyncedIntervalsRemainder - intervals;
 			lastFrameTime = intervals*1000000/rate;
 		}*/

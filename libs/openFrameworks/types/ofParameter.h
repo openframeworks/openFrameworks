@@ -183,7 +183,7 @@ public:
 	ofParameterGroup & getGroup(std::size_t pos);
 
 	bool isInit() const {
-		for (int i = 0; i < size(); i++) {
+		for (std::size_t i = 0; i < size(); i++) {
 			if (!get(i).isInit()) return false;
 		}
 		return true;

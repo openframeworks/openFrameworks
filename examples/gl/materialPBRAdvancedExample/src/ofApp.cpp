@@ -155,7 +155,7 @@ void ofApp::renderScene(bool bShadowPass) {
 	
 	matSphere.begin();
 	ofPushMatrix();
-	ofTranslate( 700.0*cos(angle-PI), -20, sin(angle-PI)*300.0-100 );
+	ofTranslate( 700.0 * std::cos(angle - glm::pi<float>()), -20, std::sin(angle - glm::pi<float>())*300.0-100 );
 	ofScale(120);
 	meshPlySphere.draw();
 	ofPopMatrix();
