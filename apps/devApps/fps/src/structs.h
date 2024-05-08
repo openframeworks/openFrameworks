@@ -47,6 +47,7 @@ struct grapher {
 			float min = *std::min_element (vals.begin(), vals.end()); //          ^
 			float max = *std::max_element (vals.begin(), vals.end()); //
 			float minmax = (std::abs(min) + std::abs(max))/2.0f;
+			float avg = 1.0f * std::accumulate( vals.begin(), vals.end(), 0 )/vals.size();
 			
 			int x = 0;
 			for (auto & v : vals) {
@@ -63,7 +64,9 @@ struct grapher {
 			string s {
 				name + "\n" +
 				"min:"+ofToString(min) + "\n" +
-				"max:"+ofToString(max)
+				"max:"+ofToString(max) + "\n" +
+				"avg:"+ofToString(avg) + "\n" +
+				""
 			};
 			ofSetColor(255);
 			ofDrawBitmapString(s, rect.x + 30, rect.y + 50);
