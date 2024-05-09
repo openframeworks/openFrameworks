@@ -75,7 +75,7 @@ void ofxXmlSettings::clear(){
 
 //---------------------------------------------------------
 bool ofxXmlSettings::load(const of::filesystem::path & fileName){
-	auto fullXmlFile = ofToDataPathFS(fileName);
+	auto fullXmlFile = ofToDataPath(fileName);
 	// bool loadOkay = doc.LoadFile(ofPathToString(fullXmlFile).c_str());
 	bool loadOkay = doc.LoadFile(ofPathToString(fullXmlFile));
 
@@ -92,7 +92,7 @@ bool ofxXmlSettings::load(const of::filesystem::path & fileName){
 
 //---------------------------------------------------------
 bool ofxXmlSettings::save(const of::filesystem::path & fileName){
-	auto fullXmlFile = ofToDataPathFS(fileName);
+	auto fullXmlFile = ofToDataPath(fileName);
 	return doc.SaveFile(ofPathToString(fullXmlFile).c_str());
 }
 
