@@ -44,7 +44,6 @@ PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_CXXVER = -std=c++17
 
 
-PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_LDFLAGS += -no-pie
 # PLATFORM_LDFLAGS += -nostartfiles
 
