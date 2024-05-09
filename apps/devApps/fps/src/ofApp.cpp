@@ -10,22 +10,29 @@ void ofApp::setup(){
 }
 
 void ofApp::update() {
-	count.tick();
 }
 
 void ofApp::draw(){
+	
+	float ratio = (float)ofGetMouseX() / ofGetWindowWidth();
+	count.valRatio = ratio;
+	
 	ofSetColor(0, 0, 255, 3);
+	float fpsNeue = count.get();
 	ofDrawRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 	float driftOF = fpsToggle.fps - ofGetFrameRate();
-	float drift = fpsToggle.fps - count.get();
-	g1.add(driftOF);
-	g2.add(drift);
+	float drift = fpsToggle.fps - fpsNeue;
+	
+	if (ofGetFrameNum() > 5) {
+		g1.add(driftOF);
+		g2.add(drift);
+	}
 	g1.draw();
 	g2.draw();
 
 	string t = 	"of fRate: " + ofToString(ofGetFrameRate()) + "\n" +
 //				"of fps difference: " + ofToString(driftOF) + "\n" +
-				"new fRate: " + ofToString(count.get()) + " \n" +
+				"new fRate: " + ofToString(fpsNeue) + " \n" +
 //				"new fps difference: " + ofToString(drift) + "\n" +
 	"new fps: " + ofToString(fpsToggle.isNew) + "\n" +
 
@@ -37,9 +44,12 @@ void ofApp::draw(){
 	ofDrawBitmapString(t, 10, ofGetWindowHeight() - 85);
 	
 	fpsToggle.update();
+	count.tick();
 }
 
 void ofApp::keyPressed(int key) {
+	count.reset();
+
 	if (key == '1') {
 		fpsToggle.setFps(30);
 	}
@@ -49,10 +59,17 @@ void ofApp::keyPressed(int key) {
 	if (key == '3') {
 		fpsToggle.setFps(120);
 	}
+	if (key == '4') {
+		fpsToggle.setFps(20);
+	}
+	if (key == '5') {
+		fpsToggle.setFps(15);
+	}
 	if (key == 't') {
 		fpsToggle.toggle();
 		g1.reset();
 		g2.reset();
+//		count.reset();
 	}
 	
 	if (key == 'r') {

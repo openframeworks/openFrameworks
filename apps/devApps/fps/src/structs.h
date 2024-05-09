@@ -16,13 +16,17 @@ struct grapher {
 	int divider = 3;
 	
 	void setRect(ofRectangle r) {
+		vals.reserve(nVals);
 		rect = r;
 		nVals = rect.width/divider;
-		vals.reserve(nVals);
 		isSetup = true;
 	}
 	
 	void add(float v) {
+		if (std::isnan(v)) {
+			return;
+		}
+//		cout << name << " : " << v << " : " << vals.size() << endl;
 		if (isSetup) {
 			if (vals.size() < nVals) {
 				vals.emplace_back(v);
@@ -41,14 +45,13 @@ struct grapher {
 	void draw() {
 		if (isSetup) {
 			ofSetColor(color);
-			ofNoFill();
-			ofDrawRectangle(rect);
 			
 			float min = *std::min_element (vals.begin(), vals.end()); //          ^
 			float max = *std::max_element (vals.begin(), vals.end()); //
 			float minmax = (std::abs(min) + std::abs(max))/2.0f;
-			float avg = 1.0f * std::accumulate( vals.begin(), vals.end(), 0 )/vals.size();
-			
+//			float avg = 1.0f * std::accumulate( vals.begin(), vals.end(), 0 )/vals.size();
+			float avg = 1.0f * std::reduce( vals.begin(), vals.end(), 0 )/vals.size();
+
 			int x = 0;
 			for (auto & v : vals) {
 				float y = ofMap(v, -minmax, minmax, 0, rect.height);
@@ -60,6 +63,8 @@ struct grapher {
 
 			ofSetColor(255);
 			ofDrawLine(rect.x, rect.y + y, rect.x+rect.width, rect.y + y);
+			ofNoFill();
+			ofDrawRectangle(rect);
 
 			string s {
 				name + "\n" +
@@ -68,7 +73,6 @@ struct grapher {
 				"avg:"+ofToString(avg) + "\n" +
 				""
 			};
-			ofSetColor(255);
 			ofDrawBitmapString(s, rect.x + 30, rect.y + 50);
 		}
 	}
@@ -76,7 +80,7 @@ struct grapher {
 
 struct fpsCounter {
 public:
-	int nAverages = 40;
+	int nAverages = 60;
 	using space = std::chrono::duration<long double, std::nano>;
 	time_point<steady_clock> lastTick;
 	steady_clock::duration onesec = 1s;
@@ -85,6 +89,20 @@ public:
 	space average;
 	bool firstTick = true;
 	int cursor = 0;
+	vector<float> results;
+	int cur = 0;
+	
+	fpsCounter() {
+		for (int a=0; a<4; a++) {
+			results.emplace_back(0.0f);
+		}
+	}
+	
+	void reset() {
+
+		intervals.clear();
+		cursor = 0;
+	}
 
 	void tick() {
 		if (firstTick) {
@@ -94,20 +112,35 @@ public:
 		}
 
 		interval = steady_clock::now() - lastTick;
-		lastTick = steady_clock::now();
 		if (intervals.size() < nAverages) {
 			intervals.emplace_back(interval);
 		} else {
 			intervals[cursor] = interval;
 			cursor = (cursor+1)%nAverages;
 		}
+		lastTick = steady_clock::now();
 	}
 	
+	float lastVal = 1;
+	float valRatio = 1.0;
+	
 	float get() {
-//		average = std::reduce(intervals.begin(), intervals.end())/intervals.size();
-//		return onesec / average;
-		average = std::reduce(intervals.begin(), intervals.end());
-		return intervals.size() * onesec / average;
+		if (intervals.size()) {
+			average = std::reduce(intervals.begin(), intervals.end());
+			//		cout << ofGetFrameNum() << " : " << intervals.size() << endl;
+			float val = intervals.size() * onesec / average;
+			results[cur] = val;
+			cur = (cur+1)%4;
+			return std::reduce(results.begin(), results.end())/4.0f;
+//			lastVal *= (1.0f - valRatio);
+//			lastVal += val * valRatio;
+//			return lastVal;
+		}
+		return 1;
+		//		float res = val * . + lastVal * .5;
+//		lastVal = val;
+//		return val;
+//		return intervals.size() * onesec / average;
 	}
 };
 
@@ -161,6 +194,7 @@ public:
 			t.setFps(fps);
 			t.reset();
 		} else {
+			ofSetVerticalSync(0);
 			ofSetFrameRate(fps);
 		}
 	}
