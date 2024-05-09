@@ -32,9 +32,11 @@ void ofApp::draw(){
 
 	string t = 	"of fRate: " + ofToString(ofGetFrameRate()) + "\n" +
 //				"of fps difference: " + ofToString(driftOF) + "\n" +
-				"new fRate: " + ofToString(fpsNeue) + " \n" +
+				"new fRate: " + ofToString(fpsNeue) + " \n\n" +
 //				"new fps difference: " + ofToString(drift) + "\n" +
-	"new fps: " + ofToString(fpsToggle.isNew) + "\n" +
+				(fpsToggle.isNew ? "OF New Framerate Control" : "OF Classic Framerate Control") + "\n" +
+				"press T to toggle classic/new"
+	// "new fps: " + ofToString(fpsToggle.isNew) + "\n" +
 
 				""
 //				"vsync:" + ofToString(vs) + "\n"
