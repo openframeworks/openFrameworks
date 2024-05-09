@@ -4,8 +4,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec4.hpp>
 #include <glm/fwd.hpp>
-#include <cmath>
 #include <iostream>
+#include <cmath>
 
 class ofVec2f;
 class ofVec3f;
@@ -276,10 +276,10 @@ public:
 	ofVec4f middled( const ofVec4f& pnt ) const;
 	
 	// return all zero vector
-	static ofVec4f zero() { return ofVec4f(0, 0, 0, 0); }
+	static ofVec4f zero() { return { 0.f, 0.f, 0.f, 0.f }; }
 	
 	// return all one vector
-	static ofVec4f one() { return ofVec4f(1, 1, 1, 1); }
+	static ofVec4f one() { return { 1.f, 1.f, 1.f, 1.f }; }
 	/// \endcond
 };
 
@@ -353,10 +353,10 @@ inline bool ofVec4f::operator!=( const ofVec4f& vec ) const {
 }
 
 inline bool ofVec4f::match( const ofVec4f& vec, float tolerance) const {
-	return (fabs(x - vec.x) < tolerance)
-	&& (fabs(y - vec.y) < tolerance)
-	&& (fabs(z - vec.z) < tolerance)
-	&& (fabs(w - vec.w) < tolerance);
+	return (std::abs(x - vec.x) < tolerance)
+	&& (std::abs(y - vec.y) < tolerance)
+	&& (std::abs(z - vec.z) < tolerance)
+	&& (std::abs(w - vec.w) < tolerance);
 }
 
 
@@ -366,7 +366,7 @@ inline bool ofVec4f::match( const ofVec4f& vec, float tolerance) const {
 //
 //
 inline ofVec4f ofVec4f::operator+( const ofVec4f& vec ) const {
-	return ofVec4f( x+vec.x, y+vec.y, z+vec.z, w+vec.w);
+	return { x+vec.x, y+vec.y, z+vec.z, w+vec.w };
 }
 
 inline ofVec4f& ofVec4f::operator+=( const ofVec4f& vec ) {
@@ -378,7 +378,7 @@ inline ofVec4f& ofVec4f::operator+=( const ofVec4f& vec ) {
 }
 
 inline ofVec4f ofVec4f::operator-( const float f ) const {
-	return ofVec4f( x-f, y-f, z-f, w-f );
+	return { x-f, y-f, z-f, w-f };
 }
 
 inline ofVec4f& ofVec4f::operator-=( const float f ) {
@@ -390,7 +390,7 @@ inline ofVec4f& ofVec4f::operator-=( const float f ) {
 }
 
 inline ofVec4f ofVec4f::operator-( const ofVec4f& vec ) const {
-	return ofVec4f( x-vec.x, y-vec.y, z-vec.z, w-vec.w );
+	return { x-vec.x, y-vec.y, z-vec.z, w-vec.w };
 }
 
 inline ofVec4f& ofVec4f::operator-=( const ofVec4f& vec ) {
@@ -402,7 +402,7 @@ inline ofVec4f& ofVec4f::operator-=( const ofVec4f& vec ) {
 }
 
 inline ofVec4f ofVec4f::operator+( const float f ) const {
-	return ofVec4f( x+f, y+f, z+f, w+f );
+	return { x+f, y+f, z+f, w+f };
 }
 
 inline ofVec4f& ofVec4f::operator+=( const float f ) {
@@ -414,7 +414,7 @@ inline ofVec4f& ofVec4f::operator+=( const float f ) {
 }
 
 inline ofVec4f ofVec4f::operator-() const {
-	return ofVec4f( -x, -y, -z, -w );
+	return { -x, -y, -z, -w };
 }
 
 
@@ -422,7 +422,7 @@ inline ofVec4f ofVec4f::operator-() const {
 //
 //
 inline ofVec4f ofVec4f::operator*( const ofVec4f& vec ) const {
-	return ofVec4f( x*vec.x, y*vec.y, z*vec.z, w*vec.w );
+	return { x*vec.x, y*vec.y, z*vec.z, w*vec.w };
 }
 
 inline ofVec4f& ofVec4f::operator*=( const ofVec4f& vec ) {
@@ -434,7 +434,7 @@ inline ofVec4f& ofVec4f::operator*=( const ofVec4f& vec ) {
 }
 
 inline ofVec4f ofVec4f::operator*( const float f ) const {
-	return ofVec4f( x*f, y*f, z*f, w*f );
+	return { x*f, y*f, z*f, w*f };
 }
 
 inline ofVec4f& ofVec4f::operator*=( const float f ) {
@@ -446,7 +446,7 @@ inline ofVec4f& ofVec4f::operator*=( const float f ) {
 }
 
 inline ofVec4f ofVec4f::operator/( const ofVec4f& vec ) const {
-	return ofVec4f( vec.x!=0 ? x/vec.x : x , vec.y!=0 ? y/vec.y : y, vec.z!=0 ? z/vec.z : z, vec.w!=0 ? w/vec.w : w  );
+	return { vec.x!=0 ? x/vec.x : x , vec.y!=0 ? y/vec.y : y, vec.z!=0 ? z/vec.z : z, vec.w!=0 ? w/vec.w : w  };
 }
 
 inline ofVec4f& ofVec4f::operator/=( const ofVec4f& vec ) {
@@ -458,13 +458,13 @@ inline ofVec4f& ofVec4f::operator/=( const ofVec4f& vec ) {
 }
 
 inline ofVec4f ofVec4f::operator/( const float f ) const {
-	if(f == 0) return ofVec4f(x, y, z, w);
+	if(f == 0) return { x, y, z, w };
 	
-	return ofVec4f( x/f, y/f, z/f, w/f );
+	return { x/f, y/f, z/f, w/f };
 }
 
 inline ofVec4f& ofVec4f::operator/=( const float f ) {
-	if(f == 0)return *this;
+	if(f == 0) return *this;
 	
 	x /= f;
 	y /= f;
@@ -496,12 +496,12 @@ inline ofVec4f ofVec4f::rescaled( const float length ) const {
 }
 
 inline ofVec4f ofVec4f::getScaled( const float length ) const {
-	float l = (float)sqrt(x*x + y*y + z*z + w*w);
+	float l = std::sqrt( x*x + y*y + z*z + w*w);
 	if( l > 0 )
-		return ofVec4f( (x/l)*length, (y/l)*length,
-					   (z/l)*length, (w/l)*length );
+		return { (x/l)*length, (y/l)*length,
+					   (z/l)*length, (w/l)*length };
 	else
-		return ofVec4f();
+		return {};
 }
 
 inline ofVec4f& ofVec4f::rescale( const float length ) {
@@ -509,7 +509,7 @@ inline ofVec4f& ofVec4f::rescale( const float length ) {
 }
 
 inline ofVec4f& ofVec4f::scale( const float length ) {
-	float l = (float)sqrt(x*x + y*y + z*z + w*w);
+	float l = std::sqrt(x*x + y*y + z*z + w*w);
 	if (l > 0) {
 		x = (x/l)*length;
 		y = (y/l)*length;
@@ -529,7 +529,7 @@ inline float ofVec4f::distance( const ofVec4f& pnt) const {
 	float vy = y-pnt.y;
 	float vz = z-pnt.z;
 	float vw = w-pnt.w;
-	return (float)sqrt( vx*vx + vy*vy + vz*vz + vw*vw );
+	return std::sqrt( vx*vx + vy*vy + vz*vz + vw*vw );
 }
 
 inline float ofVec4f::distanceSquared( const ofVec4f& pnt ) const {
@@ -558,10 +558,10 @@ inline ofVec4f ofVec4f::interpolated( const ofVec4f& pnt, float p ) const{
 }
 
 inline ofVec4f ofVec4f::getInterpolated( const ofVec4f& pnt, float p ) const {
-	return ofVec4f( x*(1-p) + pnt.x*p,
-				   y*(1-p) + pnt.y*p,
-				   z*(1-p) + pnt.z*p,
-				   w*(1-p) + pnt.w*p );
+	return { x*(1-p) + pnt.x*p,
+			y*(1-p) + pnt.y*p,
+			z*(1-p) + pnt.z*p,
+			w*(1-p) + pnt.w*p };
 }
 
 inline ofVec4f& ofVec4f::interpolate( const ofVec4f& pnt, float p ) {
@@ -577,8 +577,8 @@ inline ofVec4f ofVec4f::middled( const ofVec4f& pnt ) const {
 }
 
 inline ofVec4f ofVec4f::getMiddle( const ofVec4f& pnt ) const {
-	return ofVec4f( (x+pnt.x)/2.0f, (y+pnt.y)/2.0f,
-				   (z+pnt.z)/2.0f, (w+pnt.w)/2.0f );
+	return { (x+pnt.x)/2.0f, (y+pnt.y)/2.0f,
+				   (z+pnt.z)/2.0f, (w+pnt.w)/2.0f };
 }
 
 inline ofVec4f& ofVec4f::middle( const ofVec4f& pnt ) {
@@ -622,16 +622,16 @@ inline ofVec4f ofVec4f::normalized() const {
 }
 
 inline ofVec4f ofVec4f::getNormalized() const {
-	float length = (float)sqrt(x*x + y*y + z*z + w*w);
+	float length = std::sqrt(x*x + y*y + z*z + w*w);
 	if( length > 0 ) {
-		return ofVec4f( x/length, y/length, z/length, w/length );
+		return { x/length, y/length, z/length, w/length };
 	} else {
-		return ofVec4f();
+		return {};
 	}
 }
 
 inline ofVec4f& ofVec4f::normalize() {
-	float lenght = (float)sqrt(x*x + y*y + z*z + w*w);
+	float lenght = std::sqrt(x*x + y*y + z*z + w*w);
 	if( lenght > 0 ) {
 		x /= lenght;
 		y /= lenght;
@@ -654,7 +654,7 @@ inline ofVec4f ofVec4f::getLimited(float max) const {
 	ofVec4f limited;
 	float lengthSquared = (x*x + y*y + z*z + w*w);
 	if( lengthSquared > max*max && lengthSquared > 0 ) {
-		float ratio = max/(float)sqrt(lengthSquared);
+		float ratio = max/std::sqrt(lengthSquared);
 		limited.set( x*ratio, y*ratio, z*ratio, w*ratio );
 	} else {
 		limited.set(x,y,z,w);
@@ -665,7 +665,7 @@ inline ofVec4f ofVec4f::getLimited(float max) const {
 inline ofVec4f& ofVec4f::limit(float max) {
 	float lengthSquared = (x*x + y*y + z*z + w*w);
 	if( lengthSquared > max*max && lengthSquared > 0 ) {
-		float ratio = max/(float)sqrt(lengthSquared);
+		float ratio = max/std::sqrt(lengthSquared);
 		x *= ratio;
 		y *= ratio;
 		z *= ratio;
@@ -680,7 +680,7 @@ inline ofVec4f& ofVec4f::limit(float max) {
 //
 //
 inline float ofVec4f::length() const {
-	return (float)sqrt( x*x + y*y + z*z + w*w );
+	return std::sqrt( x*x + y*y + z*z + w*w );
 }
 
 inline float ofVec4f::lengthSquared() const {
@@ -705,19 +705,19 @@ inline float ofVec4f::dot( const ofVec4f& vec ) const {
 //
 //
 inline ofVec4f operator+( float f, const ofVec4f& vec ) {
-	return ofVec4f( f+vec.x, f+vec.y, f+vec.z, f+vec.w );
+	return { f+vec.x, f+vec.y, f+vec.z, f+vec.w };
 }
 
 inline ofVec4f operator-( float f, const ofVec4f& vec ) {
-	return ofVec4f( f-vec.x, f-vec.y, f-vec.z, f-vec.w );
+	return { f-vec.x, f-vec.y, f-vec.z, f-vec.w };
 }
 
 inline ofVec4f operator*( float f, const ofVec4f& vec ) {
-	return ofVec4f( f*vec.x, f*vec.y, f*vec.z, f*vec.w );
+	return { f*vec.x, f*vec.y, f*vec.z, f*vec.w };
 }
 
 inline ofVec4f operator/( float f, const ofVec4f& vec ) {
-	return ofVec4f( f/vec.x, f/vec.y, f/vec.z, f/vec.w);
+	return { f/vec.x, f/vec.y, f/vec.z, f/vec.w};
 }
 
 
