@@ -124,9 +124,12 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-# PLATFORM_CFLAGS += -march=armv6
+#c++ 17 support - comment out two lines below to use c++11
+PLATFORM_CFLAGS += -std=c++17
 PLATFORM_LDFLAGS += -lstdc++fs
+PLATFORM_CXXVER = -std=c++17
 
+# PLATFORM_CFLAGS += -march=armv6
 PLATFORM_CFLAGS += -marm
 
 PLATFORM_CFLAGS += -mfpu=vfp
