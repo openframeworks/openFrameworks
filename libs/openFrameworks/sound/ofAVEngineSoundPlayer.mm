@@ -10,6 +10,7 @@
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 
 #include "ofUtils.h"
+#include "ofMath.h"
 #include "ofLog.h"
 #include "ofEvents.h"
 
@@ -846,11 +847,8 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stop) object: self.soundPlayer];
 }
 
-- (void)stop { //FIXME: 
-	if (!_bIsPlaying) {
-		NSLog(@"stop() called before play()");
-		return;
-	}
+- (void)stop {
+    
     __typeof(self) __weak weak_self = self;
 
     if(_isSessionInterrupted || _isConfigChangePending){
