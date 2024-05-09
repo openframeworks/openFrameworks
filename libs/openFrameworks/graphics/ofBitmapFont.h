@@ -3,6 +3,7 @@
 #include "ofRectangle.h"
 #include "ofPixels.h" //MARK: unique_ptr
 #include "ofTexture.h"
+// MARK: ofGetStyle / ofIsVFlipped
 #include "ofGraphics.h"
 
 

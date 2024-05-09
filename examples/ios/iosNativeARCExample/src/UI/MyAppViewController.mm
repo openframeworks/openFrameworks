@@ -170,8 +170,8 @@
     string currentOrientation;
 
     CGRect rect;
-    int longSide = MAX([[UIScreen mainScreen] bounds].size.width,[[UIScreen mainScreen] bounds].size.height);
-    int shortSide = MIN([[UIScreen mainScreen] bounds].size.width,[[UIScreen mainScreen] bounds].size.height);
+    int longSide = std::max([[UIScreen mainScreen] bounds].size.width,[[UIScreen mainScreen] bounds].size.height);
+    int shortSide = std::min([[UIScreen mainScreen] bounds].size.width,[[UIScreen mainScreen] bounds].size.height);
     if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)){
          // code for landscape orientation
         currentOrientation = "Landscape";

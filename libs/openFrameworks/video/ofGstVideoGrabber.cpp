@@ -267,8 +267,8 @@ static void find_framerate (ofGstVideoFormat &format, int desired_framerate = -1
 		float diff = 9999;
 		for(unsigned i=0; i<format.framerates.size(); i++){
 			framerate = (float)format.framerates[i].numerator / (float)format.framerates[i].denominator;
-			if( fabs((float)desired_framerate - framerate) < diff){
-				diff = fabs((float)desired_framerate - framerate );
+			if( std::abs((float)desired_framerate - framerate) < diff){
+				diff = std::abs((float)desired_framerate - framerate );
 				framerate_numerator   = format.framerates[i].numerator;
 				framerate_denominator = format.framerates[i].denominator;
 			}
@@ -352,7 +352,7 @@ static void add_video_format (ofGstDevice &webcam_device,
 				ofLog(OF_LOG_VERBOSE,"already added, skipping\n");
 			}
 		}else{
-			if(fabs(new_framerate - desired_framerate) < fabs(curr_framerate - desired_framerate) ){
+			if(std::abs(new_framerate - desired_framerate) < std::abs(curr_framerate - desired_framerate) ){
 				ofLog(OF_LOG_VERBOSE,"more similar framerate replacing existing format\n");
 				webcam_device.video_formats[i] = video_format;
 #ifdef PREFER_NON_COMPRESSED
@@ -421,7 +421,7 @@ static void add_video_format (ofGstDevice &webcam_device,
 
 			}
 		}else{
-			if(fabs(new_framerate - desired_framerate) < fabs(curr_framerate - desired_framerate) ){
+			if(std::abs(new_framerate - desired_framerate) < std::abs(curr_framerate - desired_framerate) ){
 				ofLogVerbose("ofGstVideoGrabber") << "add_video_format(): more similar framerate replacing existing format";
 				webcam_device.video_formats[i] = video_format;
 			}else{
@@ -695,7 +695,7 @@ ofGstVideoFormat & ofGstVideoGrabber::selectFormat(int w, int h, int desired_fra
 			mostSimilarFormat = i;
 			break;
 		}
-		int diff = abs(camData.webcam_devices[deviceID].video_formats[i].width + camData.webcam_devices[deviceID].video_formats[i].height - w - h);
+		int diff = std::abs(camData.webcam_devices[deviceID].video_formats[i].width + camData.webcam_devices[deviceID].video_formats[i].height - w - h);
 		if(diff<minDiff){
 			minDiff = diff;
 			mostSimilarFormat = i;

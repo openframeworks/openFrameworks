@@ -35,7 +35,7 @@ PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_DEFINES = __EMSCRIPTEN__
+PLATFORM_DEFINES = __EMSCRIPTEN__ URI_STATIC_BUILD
 
 ################################################################################
 # PLATFORM REQUIRED ADDON
