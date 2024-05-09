@@ -290,11 +290,13 @@ bool ofOpenALSoundPlayer::sfReadFile(const fs::path & path, std::vector<short> &
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123ReadFile(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123ReadFile(const fs::path & path, std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
 	duration = 0.0f;
 	mpg123_handle * f = mpg123_new(nullptr,&err);
-	if(mpg123_open(f,path.c_str())!=MPG123_OK){
+
+	// FIXME: Alternative, open the file separately use mpg123_open_fd() instead
+	if(mpg123_open(f, ofPathToString(path).c_str() )!=MPG123_OK){
 		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): couldn't read " << path ;
 		return false;
 	}
@@ -329,7 +331,7 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const fs::path& path,std::vector<short>
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfStream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfStream(const fs::path & path, std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!streamf){
 		SF_INFO sfInfo;
 #ifdef OF_OS_WINDOWS
@@ -397,11 +399,12 @@ bool ofOpenALSoundPlayer::sfStream(const fs::path& path,std::vector<short> & buf
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123Stream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123Stream(const fs::path & path, std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!mp3streamf){
 		int err = MPG123_OK;
 		mp3streamf = mpg123_new(nullptr,&err);
-		if(mpg123_open(mp3streamf,path.c_str())!=MPG123_OK){
+		// FIXME: Alternative, open the file separately use mpg123_open_fd() instead
+		if(mpg123_open(mp3streamf, ofPathToString(path).c_str())!=MPG123_OK){
 			mpg123_close(mp3streamf);
 			mpg123_delete(mp3streamf);
 			ofLogError("ofOpenALSoundPlayer") << "mpg123Stream(): couldn't read " << path ;
