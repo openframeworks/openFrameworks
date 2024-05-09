@@ -20,6 +20,8 @@
 #include <mpg123.h>
 #endif
 
+namespace fs = of::filesystem;
+
 static ALCdevice * alDevice = nullptr;
 static ALCcontext * alContext = nullptr;
 std::vector<float> ofOpenALSoundPlayer::window;
@@ -230,12 +232,12 @@ void ofOpenALSoundPlayer::close(){
 }
 
 // ----------------------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfReadFile(const fs::path & path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
 	SF_INFO sfInfo;
 #ifdef OF_OS_WINDOWS
-	SNDFILE* f = sf_wchar_open(path.c_str(),SFM_READ,&sfInfo);
+	SNDFILE* f = sf_wchar_open(path.c_str(), SFM_READ,&sfInfo);
 #else
-	SNDFILE* f = sf_open(path.c_str(),SFM_READ,&sfInfo);
+	SNDFILE* f = sf_open(path.c_str(), SFM_READ,&sfInfo);
 #endif
 	if(!f){
 		ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): couldn't read " << path;
@@ -288,7 +290,7 @@ bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vect
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123ReadFile(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123ReadFile(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
 	duration = 0.0f;
 	mpg123_handle * f = mpg123_new(nullptr,&err);
@@ -327,10 +329,15 @@ bool ofOpenALSoundPlayer::mpg123ReadFile(const of::filesystem::path& path,std::v
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::sfStream(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::sfStream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!streamf){
 		SF_INFO sfInfo;
-		streamf = sf_open(path.c_str(),SFM_READ,&sfInfo);
+#ifdef OF_OS_WINDOWS
+		streamf = sf_wchar_open(path.c_str(), SFM_READ,&sfInfo);
+#else
+		streamf = sf_open(path.c_str(), SFM_READ,&sfInfo);
+#endif
+
 		if(!streamf){
 			ofLogError("ofOpenALSoundPlayer") << "sfStream(): couldn't read " << path ;
 			return false;
@@ -390,7 +397,7 @@ bool ofOpenALSoundPlayer::sfStream(const of::filesystem::path& path,std::vector<
 
 #ifdef OF_USING_MPG123
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::mpg123Stream(const of::filesystem::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
+bool ofOpenALSoundPlayer::mpg123Stream(const fs::path& path,std::vector<short> & buffer,std::vector<float> & fftAuxBuffer){
 	if(!mp3streamf){
 		int err = MPG123_OK;
 		mp3streamf = mpg123_new(nullptr,&err);
@@ -441,11 +448,13 @@ bool ofOpenALSoundPlayer::mpg123Stream(const of::filesystem::path& path,std::vec
 #endif
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::stream(const of::filesystem::path& fileName, std::vector<short> & buffer){
+bool ofOpenALSoundPlayer::stream(const fs::path & fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
-	if (fileName.extension() == of::filesystem::path{".mp3"} || fileName.extension() == of::filesystem::path{".MP3"} || mp3streamf) {
+	auto ext { ofToLower(ofPathToString(fileName.extension())) };
+	if (ext == ".mp3" || mp3streamf) {
+	// if (fileName.extension() == fs::path{".mp3"} || fileName.extension() == fs::path{".MP3"} || mp3streamf) {
 		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return false;
-	}else
+	} else
 #endif
 	if(!sfStream(fileName,buffer,fftAuxBuffer)) return false;
 
@@ -461,9 +470,10 @@ bool ofOpenALSoundPlayer::stream(const of::filesystem::path& fileName, std::vect
 	return true;
 }
 
-bool ofOpenALSoundPlayer::readFile(const of::filesystem::path& fileName, std::vector<short> & buffer){
+bool ofOpenALSoundPlayer::readFile(const fs::path& fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
-	if(fileName.extension() == of::filesystem::path{".mp3"} || fileName.extension() == of::filesystem::path{".MP3"}){
+	auto ext { ofToLower(ofPathToString(fileName.extension())) };
+	if (ext == ".mp3") {
 		if(!mpg123ReadFile(fileName,buffer,fftAuxBuffer)) return false;
 	}else{
 		if(!sfReadFile(fileName,buffer,fftAuxBuffer)) return false;
@@ -484,7 +494,7 @@ bool ofOpenALSoundPlayer::readFile(const of::filesystem::path& fileName, std::ve
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::load(const of::filesystem::path& _fileName, bool is_stream){
+bool ofOpenALSoundPlayer::load(const fs::path& _fileName, bool is_stream){
 
 	auto fileName = ofToDataPath(_fileName);
 
