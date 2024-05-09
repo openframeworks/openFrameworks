@@ -29,6 +29,9 @@ INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.games
 // suggested to use semantic versioning format ala #.#.#
 MARKETING_VERSION = 0.1.0
 
+// If users upgrade project to recommended settings it enables script sandboxing which breaks our post build script 
+ENABLE_USER_SCRIPT_SANDBOXING=NO
+
 // this is "Build" in the Xcode target Identity UI, an incremental build number
 // important for the App Store as new build submissions need a diff number even
 // if MARKETING_VERSION is the same
@@ -54,11 +57,6 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 // ex. change ICON_FILE_PATH = bin/data/ -> ICON_FILE = bin/data/$(ICON_NAME) &
 // in a custom openFrameworks-Info.plist, set CFBundleIconFile to ICON_NAME
 
-//FOR AV ENGINE SOUND PLAYER UNCOMMENT TWO LINES BELOW
-//OF_NO_FMOD=1
-//USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
-GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
-
 //APPSTORE, uncomment next lines to bundle data folder and code sign
 //OF_CODESIGN = 1
 //OF_BUNDLE_DATA_FOLDER = 1
@@ -73,6 +71,11 @@ GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
 
 // Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
 #include? "App.xcconfig"
+
+//FOR AV ENGINE SOUND PLAYER UNCOMMENT TWO LINES BELOW
+//OF_NO_FMOD=1
+//USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
+GCC_PREPROCESSOR_DEFINITIONS=$(inherited) $(USER_PREPROCESSOR_DEFINITIONS)
 
 OTHER_CFLAGS = $(OF_CORE_CFLAGS)
 OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS)

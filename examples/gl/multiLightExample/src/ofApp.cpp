@@ -80,7 +80,7 @@ void ofApp::update() {
 						   sin(ofGetElapsedTimef()*.8f) * radius * 2 + center.y,
 						   -cos(ofGetElapsedTimef()*.8f) * radius * 2 + center.z);
 
-	spotLight.setOrientation( { 0, cos(ofGetElapsedTimef()) * RAD_TO_DEG, 0 } );
+	spotLight.setOrientation( { 0, glm::degrees(cos(ofGetElapsedTimef())), 0 } );
 	spotLight.setPosition( mouseX, mouseY, 200);
 }
 

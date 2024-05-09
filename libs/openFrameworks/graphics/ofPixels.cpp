@@ -2,10 +2,6 @@
 #include "ofPixels.h"
 #include "ofColor.h"
 
-#define GLM_FORCE_CTOR_INIT
-#include "glm/common.hpp"
-#include <cstring>
-
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
 	case 1:
