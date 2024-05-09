@@ -342,37 +342,49 @@ typedef TESSindex ofIndexType;
 #endif
 
 
+//#pragma message ( "começando a bagunça " )
+
+#define STRING2(x) #x
+#define STRING(x) STRING2(x)
+#pragma message("__cplusplus " STRING(__cplusplus) )
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
-    #define OF_HAS_CPP17 1
+#pragma message ( "__cplusplus >= 201500 " )
+    #define OF_HAS_CPP17
     #if __cplusplus < 201703L
-        #define OF_USE_EXPERIMENTAL_FS 1
+		#pragma message ( "__cplusplus < 201703L" )
+        #define OF_USE_EXPERIMENTAL_FS
     #endif
 #else
-    #define OF_HAS_CPP17 0
+    #undef OF_HAS_CPP17
 #endif
 
 
 #ifndef OF_USING_STD_FS
-	#if OF_HAS_CPP17
-		#define OF_USING_STD_FS 1
+	#if defined(OF_HAS_CPP17)
+		#define OF_USING_STD_FS
 	#else
-		// Set to 1 to force std filesystem instead of boost's
-		#define OF_USING_STD_FS 0
+		#undef OF_USING_STD_FS
 	#endif
 #endif
 
 // Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
 // This may be okay but we need to test for the way C++17 is including the filesystem
 
-#if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
+#if defined(OF_USING_STD_FS) && !defined(OF_USE_EXPERIMENTAL_FS)
+
     #if defined(__cpp_lib_filesystem)
-        #define OF_USE_EXPERIMENTAL_FS 0
+		#pragma message ( "ok __cpp_lib_filesystem" )
+        #undef OF_USE_EXPERIMENTAL_FS
     #elif defined(__cpp_lib_experimental_filesystem)
-        #define OF_USE_EXPERIMENTAL_FS 1
+		#pragma message ( "ok __cpp_lib_experimental_filesystem" )
+        #define OF_USE_EXPERIMENTAL_FS
     #elif !defined(__has_include)
-        #define OF_USE_EXPERIMENTAL_FS 1
+		#pragma message ( "not __has_include so we add OF_USE_EXPERIMENTAL_FS? seems wrong" )
+
+		/// MMMM CHECK THIS ONE
+        #define OF_USE_EXPERIMENTAL_FS
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
         #ifdef _MSC_VER
@@ -384,26 +396,30 @@ typedef TESSindex ofIndexType;
                 // Check for enabled C++17 support
                 #if defined(_HAS_CXX17) && _HAS_CXX17
                 // We're using C++17, so let's use the normal version
-                    #define OF_USE_EXPERIMENTAL_FS 0
+                    #undef OF_USE_EXPERIMENTAL_FS
                 #endif
             #endif
 
             // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
             #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
-                #define OF_USE_EXPERIMENTAL_FS 1
+                #define OF_USE_EXPERIMENTAL_FS
             #endif
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
-            #define OF_USE_EXPERIMENTAL_FS 0
+            #undef OF_USE_EXPERIMENTAL_FS
         #endif
     #else
-        #define OF_USE_EXPERIMENTAL_FS 0
+        #undef OF_USE_EXPERIMENTAL_FS
     #endif
 #endif
 
-#if OF_USING_STD_FS
-    #if OF_USE_EXPERIMENTAL_FS
+
+//#pragma message #defined(OF_USE_EXPERIMENTAL_FS)
+//#pragma message ( "começando a bagunça " #defined(OF_USE_EXPERIMENTAL_FS) "--")
+
+#if defined(OF_USING_STD_FS)
+    #if defined(OF_USE_EXPERIMENTAL_FS)
         // C++17 experimental fs support
         #include <experimental/filesystem>
         
@@ -420,7 +436,7 @@ typedef TESSindex ofIndexType;
 		}
     #else
 		#include <filesystem>
-		#if OF_HAS_CPP17
+		#if defined(OF_HAS_CPP17)
 			// Regular C++17 fs support
 			namespace of {
 				namespace filesystem = std::filesystem;
@@ -443,4 +459,16 @@ typedef TESSindex ofIndexType;
 		namespace filesystem = boost::filesystem;
 	}
 
+#endif
+
+#if defined(OF_HAS_CPP17)
+#pragma message (">> OF_HAS_CPP17")
+#endif
+
+#if defined(OF_USING_STD_FS)
+#pragma message (">> OF_USING_STD_FS")
+#endif
+
+#if defined(OF_USE_EXPERIMENTAL_FS)
+#pragma message (">> OF_USE_EXPERIMENTAL_FS")
 #endif

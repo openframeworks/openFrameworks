@@ -698,7 +698,7 @@ bool ofFile::canRead() const {
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 	auto perm = fs::status(myFile).permissions();
-#if OF_USING_STD_FS
+#if defined(OF_USING_STD_FS)
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_read) != fs::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -731,7 +731,7 @@ bool ofFile::canWrite() const {
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 	auto perm = fs::status(myFile).permissions();
-#if OF_USING_STD_FS
+#if defined(OF_USING_STD_FS)
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_write) != fs::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -759,7 +759,7 @@ bool ofFile::canExecute() const {
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
 	auto perm = fs::status(myFile).permissions();
-#if OF_USING_STD_FS
+#if defined(OF_USING_STD_FS)
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_exec) != fs::perms::none;
 	}else if (getegid() == info.st_gid){
@@ -798,7 +798,7 @@ bool ofFile::isDevice() const {
 #ifdef TARGET_WIN32
 	return false;
 #else
-#if OF_USING_STD_FS
+#if defined(OF_USING_STD_FS)
 	return fs::is_block_file(fs::status(myFile));
 #else
 	return fs::status(myFile).type() == fs::block_file;
@@ -818,7 +818,7 @@ bool ofFile::isHidden() const {
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
 	try{
-#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
+#if !defined(OF_USING_STD_FS) || (defined(OF_USING_STD_FS) && defined(OF_USE_EXPERIMENTAL_FS))
 		if(flag){
 			fs::permissions(myFile,fs::perms::owner_write | fs::perms::add_perms);
 		}else{
@@ -826,13 +826,9 @@ void ofFile::setWriteable(bool flag){
 		}
 #else
 		if(flag){
-			fs::permissions(myFile,
-										 fs::perms::owner_write,
-										 fs::perm_options::add);
+			fs::permissions(myFile, fs::perms::owner_write, fs::perm_options::add);
 		}else{
-			fs::permissions(myFile,
-										 fs::perms::owner_write,
-										 fs::perm_options::remove);
+			fs::permissions(myFile, fs::perms::owner_write, fs::perm_options::remove);
 		}
 #endif
 	}catch(std::exception & e){
@@ -849,7 +845,7 @@ void ofFile::setReadOnly(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setReadable(bool flag){
 	try{
-#if !OF_USING_STD_FS || (OF_USING_STD_FS && OF_USE_EXPERIMENTAL_FS)
+#if !defined(OF_USING_STD_FS) || (defined(OF_USING_STD_FS) && defined(OF_USE_EXPERIMENTAL_FS))
 		if(flag){
 			fs::permissions(myFile,fs::perms::owner_read | fs::perms::add_perms);
 		}else{
@@ -874,8 +870,8 @@ void ofFile::setReadable(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-#if OF_USING_STD_FS
-#   if OF_USE_EXPERIMENTAL_FS
+#if defined(OF_USING_STD_FS)
+#   if defined(OF_USE_EXPERIMENTAL_FS)
 		if(flag){
 			fs::permissions(myFile, fs::perms::owner_exec | fs::perms::add_perms);
 		} else{
@@ -1721,7 +1717,7 @@ string ofFilePath::addLeadingSlash(const fs::path & _path){
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - re-avail - this function have to be completely rewritten, so I'll keep string conversions as it is
 std::string ofFilePath::addTrailingSlash(const fs::path & _path){
-#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
+#if defined(OF_USING_STD_FS) && !defined(OF_USE_EXPERIMENTAL_FS)
 	if(_path.empty()) {
 		return {};
 	}
@@ -1758,7 +1754,7 @@ fs::path ofFilePath::getPathForDirectory(const fs::path & path){
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
 
-#if OF_USING_STD_FS && !OF_USE_EXPERIMENTAL_FS
+#if defined(OF_USING_STD_FS) && !defined(OF_USE_EXPERIMENTAL_FS)
 	if(path.empty()) return {};
 	return path / "";
 #else
