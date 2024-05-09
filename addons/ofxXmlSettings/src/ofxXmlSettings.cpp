@@ -43,14 +43,14 @@ ofxXmlSettings::ofxXmlSettings():
 }
 
 //----------------------------------------
-ofxXmlSettings::ofxXmlSettings(const string& xmlFile):
+ofxXmlSettings::ofxXmlSettings(const of::filesystem::path & fileName):
     storedHandle(NULL)
 {
 	level			= 0;
 	//we do this so that we have a valid handle
 	//without the need for loadFile
 	storedHandle   = TiXmlHandle(&doc);
-	load(xmlFile);
+	load(fileName);
 }
 
 //---------------------------------------------------------
@@ -74,9 +74,10 @@ void ofxXmlSettings::clear(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::load(const of::filesystem::path & xmlFile){
-	auto fullXmlFile = ofToDataPath(xmlFile);
-	bool loadOkay = doc.LoadFile(ofPathToString(fullXmlFile).c_str());
+bool ofxXmlSettings::load(const of::filesystem::path & fileName){
+	auto fullXmlFile = ofToDataPathFS(fileName);
+	// bool loadOkay = doc.LoadFile(ofPathToString(fullXmlFile).c_str());
+	bool loadOkay = doc.LoadFile(ofPathToString(fullXmlFile));
 
 	//theo removed bool check as it would
 	//return false if the file exists but was
@@ -90,8 +91,8 @@ bool ofxXmlSettings::load(const of::filesystem::path & xmlFile){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::save(const of::filesystem::path & xmlFile){
-	auto fullXmlFile = ofToDataPath(xmlFile);
+bool ofxXmlSettings::save(const of::filesystem::path & fileName){
+	auto fullXmlFile = ofToDataPathFS(fileName);
 	return doc.SaveFile(ofPathToString(fullXmlFile).c_str());
 }
 

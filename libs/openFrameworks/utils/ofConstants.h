@@ -346,7 +346,7 @@ typedef TESSindex ofIndexType;
 
 #define STRING2(x) #x
 #define STRING(x) STRING2(x)
-#pragma message("__cplusplus " STRING(__cplusplus) )
+#pragma message("__cplusplus version = " STRING(__cplusplus) )
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500

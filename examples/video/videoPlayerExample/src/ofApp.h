@@ -22,7 +22,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-		ofVideoPlayer fingerMovie { "movies/fingers.mp4" };
+		ofVideoPlayer 		fingerMovie;
 		bool                frameByframe;
 };
 
