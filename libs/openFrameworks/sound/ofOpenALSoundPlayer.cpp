@@ -232,7 +232,11 @@ void ofOpenALSoundPlayer::close(){
 // ----------------------------------------------------------------------------
 bool ofOpenALSoundPlayer::sfReadFile(const of::filesystem::path& path, std::vector<short> & buffer, std::vector<float> & fftAuxBuffer){
 	SF_INFO sfInfo;
+#ifdef OF_OS_WINDOWS
+	SNDFILE* f = sf_wchar_open(path.c_str(),SFM_READ,&sfInfo);
+#else
 	SNDFILE* f = sf_open(path.c_str(),SFM_READ,&sfInfo);
+#endif
 	if(!f){
 		ofLogError("ofOpenALSoundPlayer") << "sfReadFile(): couldn't read " << path;
 		return false;

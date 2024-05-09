@@ -846,8 +846,11 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stop) object: self.soundPlayer];
 }
 
-- (void)stop {
-    
+- (void)stop { //FIXME: 
+	if (!_bIsPlaying) {
+		NSLog(@"stop() called before play()");
+		return;
+	}
     __typeof(self) __weak weak_self = self;
 
     if(_isSessionInterrupted || _isConfigChangePending){
