@@ -2,7 +2,6 @@
 #ifdef OF_SOUND_PLAYER_FMOD
 
 #include "ofUtils.h"
-#include "ofMath.h"
 #include "ofLog.h"
 
 

@@ -219,7 +219,7 @@ void ofxAssimpModelLoader::calculateDimensions(){
 	normalizedScale = scene_max.x-scene_min.x;
 	normalizedScale = std::max(double(scene_max.y - scene_min.y), normalizedScale);
 	normalizedScale = std::max(double(scene_max.z - scene_min.z), normalizedScale);
-	if (fabs(normalizedScale) < std::numeric_limits<float>::epsilon()){
+	if (std::abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
 		ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << std::endl;
 		normalizedScale = 1.0;
 	} else {
@@ -746,6 +746,12 @@ void ofxAssimpModelLoader::setLoopStateForAllAnimations(ofLoopType state) {
 void ofxAssimpModelLoader::setPositionForAllAnimations(float position) {
 	for(size_t i = 0; i < animations.size(); i++) {
 		animations[i].setPosition(position);
+	}
+}
+
+void ofxAssimpModelLoader::setSpeedForAllAnimations(float speed) {
+	for (auto & a : animations) {
+		a.setSpeed(speed);
 	}
 }
 

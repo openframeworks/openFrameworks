@@ -4,7 +4,7 @@
 
 #define GLM_FORCE_CTOR_INIT
 #include <glm/gtc/constants.hpp>
-#include <glm/common.hpp>
+#include <glm/ext/scalar_common.hpp>
 #include "ofLog.h"
 #include "ofEvents.h"
 
@@ -204,7 +204,7 @@ void ofOpenALSoundPlayer::createWindow(int size){
 		window.resize(size);
 		// hanning window
 		for(int i = 0; i < size; i++){
-			window[i] = .54 - .46 * cos((glm::two_pi<float>() * i) / (size - 1));
+			window[i] = .54 - .46 * std::cos((glm::two_pi<float>() * i) / (size - 1));
 			windowSum += window[i];
 		}
 	}
@@ -851,8 +851,8 @@ void ofOpenALSoundPlayer::setPan(float p){
 		// thanks to jasch
 		
         float angle = p * glm::quarter_pi<float>(); // in radians from -45. to +45.
-        float cosAngle = cos(angle);
-        float sinAngle = sin(angle);
+        float cosAngle = std::cos(angle);
+        float sinAngle = std::sin(angle);
 
 		float leftVol  = (cosAngle - sinAngle) * glm::one_over_root_two<float>(); //// multiplied by 1/sqrt(2)
 		float rightVol = (cosAngle + sinAngle) * glm::one_over_root_two<float>(); // multiplied by 1/sqrt(2)
