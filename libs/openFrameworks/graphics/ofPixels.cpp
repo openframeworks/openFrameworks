@@ -1328,6 +1328,9 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
 	a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
 	a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
 
+	if (std::is_floating_point<PixelType>::value) {
+		return std::min(1.0f, std::max(out, 0.0f));
+	}
 	return std::min(static_cast<size_t>(255), std::max(static_cast<size_t>(out), static_cast<size_t>(0)));
 }
 
