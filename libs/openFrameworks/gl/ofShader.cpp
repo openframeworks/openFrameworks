@@ -514,7 +514,7 @@ string ofShader::parseForIncludes(const string & source, vector<of::filesystem::
         // we store the absolute paths so as have (more) unique file identifiers.
         included.push_back(includeFSAbsolute);
 
-        ofBuffer buffer = ofBufferFromFile(includeFS);
+        ofBuffer buffer { ofBufferFromFile(includeFS) };
         if (!buffer.size()) {
             ofLogError("ofShader") << "Could not open glsl include file " << includeFS;
             continue;
