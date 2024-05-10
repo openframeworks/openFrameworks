@@ -342,11 +342,6 @@ typedef TESSindex ofIndexType;
 #endif
 
 
-//#pragma message ( "começando a bagunça " )
-
-#define STRING2(x) #x
-#define STRING(x) STRING2(x)
-#pragma message("__cplusplus version = " STRING(__cplusplus) )
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
@@ -453,16 +448,4 @@ typedef TESSindex ofIndexType;
 		namespace filesystem = boost::filesystem;
 	}
 
-#endif
-
-#if defined(OF_HAS_CPP17)
-#pragma message (">> OF_HAS_CPP17")
-#endif
-
-#if defined(OF_USING_STD_FS)
-#pragma message (">> OF_USING_STD_FS")
-#endif
-
-#if defined(OF_USE_EXPERIMENTAL_FS)
-#pragma message (">> OF_USE_EXPERIMENTAL_FS")
 #endif
