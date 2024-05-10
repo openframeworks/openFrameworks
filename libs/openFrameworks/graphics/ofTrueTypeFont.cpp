@@ -731,7 +731,8 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-	if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
+	// FIXME: no need to pass two different parameters for the same variable
+	if(!loadFontFace(ofPathToString(settings.fontName), loadFace, settings.fontName, settings.index)){
 		return false;
 	}
 	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);
