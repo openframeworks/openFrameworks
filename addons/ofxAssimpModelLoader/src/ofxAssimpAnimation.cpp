@@ -56,7 +56,7 @@ void ofxAssimpAnimation::update() {
 		position = 1.0;
 		stop();
 	} else if(position > 1.0 && loopType == OF_LOOP_NORMAL) {
-		position = fmod(position, 1.0f);
+		position = std::fmod(position, 1.0f);
 	} else if(position > 1.0 && loopType == OF_LOOP_PALINDROME) {
 		speedFactor *= -1;
 	} else if(position < 0.0 && loopType == OF_LOOP_PALINDROME) {
