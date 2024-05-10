@@ -55,9 +55,9 @@ public:
 	void setVerbose(bool _verbose);
 
 	[[deprecated("use load()")]]
-	bool loadFile(const std::string & fileName);
+	bool loadFile(const of::filesystem::path & fileName);
 	[[deprecated("use save()")]]
-	bool saveFile(const std::string & fileName);
+	bool saveFile(const of::filesystem::path & fileName);
 	[[deprecated("use save()")]]
 	bool saveFile();
 
