@@ -321,7 +321,8 @@ static int CALLBACK loadDialogBrowseCallback(
     std::string defaultPath = *(std::string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wcscpy(wideCharacterBuffer, ofToDataPath(defaultPath).c_str());
+		// wcscpy(wideCharacterBuffer, ofToDataPath(defaultPath).c_str());
+		wcscpy(wideCharacterBuffer, ofToDataPath(defaultPath));
         SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
     }
 
@@ -401,12 +402,14 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szDir, ofToDataPath(defaultPath).c_str());
+			// wcscpy(szDir, ofToDataPath(defaultPath).c_str());
+			wcscpy(szDir, ofToDataPath(defaultPath));
 			ofn.lpstrInitialDir = szDir;
 		}
 
 		if (windowTitle != "") {
-			wcscpy(szTitle, convertNarrowToWide(windowTitle).c_str());
+			// wcscpy(szTitle, convertNarrowToWide(windowTitle).c_str());
+			wcscpy(szTitle, convertNarrowToWide(windowTitle));
 			ofn.lpstrTitle = szTitle;
 		} else {
 			ofn.lpstrTitle = nullptr;
@@ -417,7 +420,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
-		ofn.lpstrTitle = windowTitleW.c_str();
+		// ofn.lpstrTitle = windowTitleW.c_str();
+		ofn.lpstrTitle = windowTitleW;
 
 		if(GetOpenFileName(&ofn)) {
 			results.filePath = convertWideToNarrow(szFileName);

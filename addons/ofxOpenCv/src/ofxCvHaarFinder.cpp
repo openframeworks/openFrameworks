@@ -54,8 +54,7 @@ void ofxCvHaarFinder::setup(const of::filesystem::path & fileName) {
 #ifdef USE_OLD_CV
 	if(cascade != NULL)
 		cvReleaseHaarClassifierCascade(&cascade);
-	// cascade = (CvHaarClassifierCascade*) cvLoad(haarFile.c_str(), 0, 0, 0);
-	cascade.load(haarFile);
+	cascade = (CvHaarClassifierCascade*) cvLoad(haarFile.c_str(), 0, 0, 0);
 
 	#ifdef HAAR_HACK
 		// http://thread.gmane.org/gmane.comp.lib.opencv/16540/focus=17400
@@ -71,7 +70,7 @@ void ofxCvHaarFinder::setup(const of::filesystem::path & fileName) {
 	if (!cascade)
         ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: " << haarFile;
 #else
-	cascade.load( ofPathToString(haarFile) );
+	cascade.load( haarFile );
 	if( cascade.empty() )
 		ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: " << haarFile ;
 #endif //USE_OLD_CV

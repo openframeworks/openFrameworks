@@ -76,8 +76,7 @@ void ofxXmlSettings::clear(){
 //---------------------------------------------------------
 bool ofxXmlSettings::load(const of::filesystem::path & fileName){
 	auto fullXmlFile = ofToDataPath(fileName);
-	// bool loadOkay = doc.LoadFile(ofPathToString(fullXmlFile).c_str());
-	bool loadOkay = doc.LoadFile(ofPathToString(fullXmlFile));
+	bool loadOkay = doc.LoadFile(fullXmlFile);
 
 	//theo removed bool check as it would
 	//return false if the file exists but was
@@ -93,7 +92,7 @@ bool ofxXmlSettings::load(const of::filesystem::path & fileName){
 //---------------------------------------------------------
 bool ofxXmlSettings::save(const of::filesystem::path & fileName){
 	auto fullXmlFile = ofToDataPath(fileName);
-	return doc.SaveFile(ofPathToString(fullXmlFile));
+	return doc.SaveFile(fullXmlFile);
 }
 
 //---------------------------------------------------------

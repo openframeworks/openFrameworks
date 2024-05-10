@@ -350,10 +350,10 @@ typedef TESSindex ofIndexType;
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
-#pragma message ( "__cplusplus >= 201500 " )
+// #pragma message ( "__cplusplus >= 201500 " )
     #define OF_HAS_CPP17
     #if __cplusplus < 201703L
-		#pragma message ( "__cplusplus < 201703L" )
+		// #pragma message ( "__cplusplus < 201703L" )
         #define OF_USE_EXPERIMENTAL_FS
     #endif
 #else
@@ -373,17 +373,14 @@ typedef TESSindex ofIndexType;
 // This may be okay but we need to test for the way C++17 is including the filesystem
 
 #if defined(OF_USING_STD_FS) && !defined(OF_USE_EXPERIMENTAL_FS)
-
     #if defined(__cpp_lib_filesystem)
-		#pragma message ( "ok __cpp_lib_filesystem" )
+		// #pragma message ( "ok __cpp_lib_filesystem" )
         #undef OF_USE_EXPERIMENTAL_FS
     #elif defined(__cpp_lib_experimental_filesystem)
-		#pragma message ( "ok __cpp_lib_experimental_filesystem" )
+		// #pragma message ( "ok __cpp_lib_experimental_filesystem" )
         #define OF_USE_EXPERIMENTAL_FS
     #elif !defined(__has_include)
-		#pragma message ( "not __has_include so we add OF_USE_EXPERIMENTAL_FS? seems wrong" )
-
-		/// MMMM CHECK THIS ONE
+		// #pragma message ( "not __has_include so we add OF_USE_EXPERIMENTAL_FS? seems wrong" )
         #define OF_USE_EXPERIMENTAL_FS
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
@@ -414,9 +411,6 @@ typedef TESSindex ofIndexType;
     #endif
 #endif
 
-
-//#pragma message #defined(OF_USE_EXPERIMENTAL_FS)
-//#pragma message ( "começando a bagunça " #defined(OF_USE_EXPERIMENTAL_FS) "--")
 
 #if defined(OF_USING_STD_FS)
     #if defined(OF_USE_EXPERIMENTAL_FS)
