@@ -972,6 +972,23 @@ void ofPushMatrix();
 /// \sa ofPushMatrix()
 void ofPopMatrix();
 
+struct ofScopedMatrix {
+	ofScopedMatrix() { ofPushMatrix(); }
+	~ofScopedMatrix() { ofPopMatrix(); }
+	ofScopedMatrix(std::function<void()> f): ofScopedMatrix() {f();}
+};
+
+struct ofScopedStyle {
+	ofScopedStyle() { ofPushStyle(); }
+	~ofScopedStyle() { ofPopStyle(); }
+	ofScopedStyle(std::function<void()> f): ofScopedStyle() {f();}
+};
+
+struct ofScopedMatrixStyle: public ofScopedMatrix, public ofScopedStyle {
+	ofScopedMatrixStyle(std::function<void()> f): ofScopedStyle(), ofScopedMatrix() {f();}
+	ofScopedMatrixStyle() {}
+};
+
 /// \brief Query the current (oF internal) Transformation Matrix state.
 glm::mat4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
 
