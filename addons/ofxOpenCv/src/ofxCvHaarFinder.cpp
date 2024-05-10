@@ -70,7 +70,7 @@ void ofxCvHaarFinder::setup(const of::filesystem::path & fileName) {
 	if (!cascade)
         ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: " << haarFile;
 #else
-	cascade.load( haarFile );
+	cascade.load( ofPathToString(haarFile) );
 	if( cascade.empty() )
 		ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: " << haarFile ;
 #endif //USE_OLD_CV
