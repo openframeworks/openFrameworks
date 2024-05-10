@@ -13,7 +13,8 @@ void ofApp::update() {
 }
 
 void ofApp::draw(){
-	
+	count.tick();
+
 	float ratio = (float)ofGetMouseX() / ofGetWindowWidth();
 	count.valRatio = ratio;
 	
@@ -46,7 +47,6 @@ void ofApp::draw(){
 	ofDrawBitmapString(t, 10, ofGetWindowHeight() - 85);
 	
 	fpsToggle.update();
-	count.tick();
 }
 
 void ofApp::keyPressed(int key) {

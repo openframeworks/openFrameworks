@@ -15,7 +15,6 @@ public:
 	ofPolyline poly;
 	ofPath path;
 	ofPolyline p1, p2;
-	
 
 	fpsCounter count;
 	fpsToggler fpsToggle;

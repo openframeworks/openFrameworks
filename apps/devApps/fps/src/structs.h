@@ -4,6 +4,42 @@
 using namespace std::chrono;
 using namespace std::chrono_literals;
 
+class ofTimerFpsX {
+public:
+	ofTimerFpsX(){
+		reset();
+	};
+
+	using space = std::chrono::duration<long long, std::nano>;
+	space interval;
+	time_point<steady_clock> wakeTime;
+	time_point<steady_clock> lastWakeTime;
+
+	void setFps(int fps) {
+		interval = duration_cast<microseconds>(1s) / fps;
+	}
+
+	void reset() {
+		wakeTime = steady_clock::now();
+	}
+	
+	void waitNext(){
+		std::this_thread::sleep_until(wakeTime - 2ms);
+		lastWakeTime = wakeTime;
+		wakeTime += interval;
+		
+		int count = 0;
+		while(steady_clock::now() < wakeTime - 1ms) {
+			count ++ ;
+		}
+		std::cout << "waitNext() " << ofGetFrameNum() << " : " << count << std::endl;
+	}
+};
+
+
+
+
+
 
 struct grapher {
 	string name {""};
@@ -77,6 +113,8 @@ struct grapher {
 		}
 	}
 };
+
+
 
 struct fpsCounter {
 public:
@@ -154,37 +192,12 @@ public:
 using std::cout;
 using std::endl;
 
-//
-//class ofTimerFps {
-//public:
-//	ofTimerFps(){
-//		reset();
-//	};
-//
-//	using space = std::chrono::duration<long long, std::nano>;
-//	space interval;
-//	time_point<steady_clock> wakeTime;
-//	time_point<steady_clock> lastWakeTime;
-//
-//	void setFps(int fps) {
-//		interval = duration_cast<microseconds>(1s) / fps;
-//	}
-//
-//	void reset() {
-//		wakeTime = steady_clock::now();
-//	}
-//	
-//	void waitNext(){
-//		std::this_thread::sleep_until(wakeTime);
-//		lastWakeTime = wakeTime;
-//		wakeTime += interval;
-//	}
-//};
+
 
 struct fpsToggler {
 public:
-	bool isNew = false;
-	ofTimerFps t;
+	bool isNew = true;
+	ofTimerFpsX t;
 	int fps = 30;
 	
 	void updateFps() {
@@ -218,6 +231,8 @@ public:
 		}
 	}
 } ;
+
+
 
 
 

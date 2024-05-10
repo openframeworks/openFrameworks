@@ -30,9 +30,15 @@ public:
 	}
 	
 	void waitNext(){
-		std::this_thread::sleep_until(wakeTime);
+		std::this_thread::sleep_until(wakeTime - 20ms);
 		lastWakeTime = wakeTime;
 		wakeTime += interval;
+		
+		int count = 0;
+		while(steady_clock::now() < wakeTime) {
+			count ++ ;
+		}
+		std::cout << "waitNext() " << ofGetFrameNum() << " : " << count << std::endl;
 	}
 };
 
