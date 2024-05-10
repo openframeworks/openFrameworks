@@ -963,7 +963,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		
 		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader------------------- ";
 		ofLogVerbose() << fragment2DHeader;
-		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader xxxxxxx ";
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader ";
 
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
