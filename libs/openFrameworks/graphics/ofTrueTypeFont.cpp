@@ -233,8 +233,8 @@ static ofPath makeContoursForCharacter(FT_Face face){
 #include <ApplicationServices/ApplicationServices.h>
 
 //------------------------------------------------------------------
-static string osxFontPathByName(const string& fontname){
-	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
+static string osxFontPathByName(const of::filesystem::path & fileName){
+	CFStringRef targetName = CFStringCreateWithCString(nullptr, fileName.c_str(), kCFStringEncodingUTF8);
 	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
 	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
 	string fontPath = "";
@@ -397,7 +397,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 			fontname = "Menlo Regular";
 		}
 		// FIXME: fs::path in input and output
-		filename = osxFontPathByName(fontname.string());
+		filename = osxFontPathByName(_filename.string());
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Arial";
