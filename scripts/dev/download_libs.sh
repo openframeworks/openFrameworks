@@ -195,9 +195,9 @@ elif [ "$PLATFORM" == "vs" ]; then
     fi
 elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos)$ ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_1.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_2.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_3.tar.bz2"
     else    
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 \

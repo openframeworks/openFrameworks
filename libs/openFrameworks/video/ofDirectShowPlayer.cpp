@@ -1,6 +1,5 @@
 #include "ofDirectShowPlayer.h"
 #include "ofPixels.h" // MARK: pixels, srcBuffer
-#include "ofMath.h"
 
 #ifdef _MSC_VER
 #pragma comment(lib,"Strmiids.lib")
@@ -11,7 +10,6 @@
 // DirectShow includes and helper methods 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 #include <dshow.h>
 #ifdef _MSC_VER
