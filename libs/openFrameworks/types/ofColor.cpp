@@ -426,7 +426,7 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 	} else {
 		float hueSix = hue * 6.f / limit();
 		float saturationNorm = saturation / limit();
-		int hueSixCategory = (int) floorf(hueSix);
+		int hueSixCategory = (int)std::floor( hueSix );
 		float hueSixRemainder = hueSix - hueSixCategory;
 		PixelType pv = (PixelType) ((1.f - saturationNorm) * brightness);
 		PixelType qv = (PixelType) ((1.f - saturationNorm * hueSixRemainder) * brightness);

@@ -6,12 +6,13 @@
 
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#include "glm/mat4x4.hpp"
 #include "ofShader.h"
 
-class ofVboMesh;
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/mat4x4.hpp>
 
+class ofVboMesh;
 class ofGLProgrammableRenderer;
 
 class ofCubeMap {

@@ -59,8 +59,8 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 	float frequency = 172.5;
 	
 	// mapping frequencies from Hz into full oscillations of sin() (two pi)
-	float wavePhaseStep = (frequency / outBuffer.getSampleRate()) * TWO_PI;
-	float pulsePhaseStep = (0.5 / outBuffer.getSampleRate()) * TWO_PI;
+	float wavePhaseStep = (frequency / outBuffer.getSampleRate()) * glm::two_pi<float>();
+	float pulsePhaseStep = (0.5 / outBuffer.getSampleRate()) * glm::two_pi<float>();
 	
 	// this loop builds a buffer of audio containing 3 sine waves at different
 	// frequencies, and pulses the volume of each sine wave individually. In
@@ -69,14 +69,14 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 	for(size_t i = 0; i < outBuffer.getNumFrames(); i++) {
 		
 		// build up a chord out of sine waves at 3 different frequencies
-		float sampleLow = sin(wavePhase);
-		float sampleMid = sin(wavePhase * 1.5);
-		float sampleHi = sin(wavePhase * 2.0);
+		float sampleLow = std::sin(wavePhase);
+		float sampleMid = std::sin(wavePhase * 1.5);
+		float sampleHi = std::sin(wavePhase * 2.0);
 		
 		// pulse each sample's volume
-		sampleLow *= sin(pulsePhase);
-		sampleMid *= sin(pulsePhase * 1.04);
-		sampleHi *= sin(pulsePhase * 1.09);
+		sampleLow *= std::sin(pulsePhase);
+		sampleMid *= std::sin(pulsePhase * 1.04);
+		sampleHi *= std::sin(pulsePhase * 1.09);
 		
 		float fullSample = (sampleLow + sampleMid + sampleHi);
 		

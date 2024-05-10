@@ -2,8 +2,9 @@
 #include "ofRectangle.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/vec2.hpp"
-#include "glm/trigonometric.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/vec2.hpp>
+#include <glm/trigonometric.hpp>
 
 void ofBaseDraws::draw(const glm::vec2 & point) const {
 	draw(point.x, point.y);

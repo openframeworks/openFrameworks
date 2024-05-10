@@ -8,8 +8,10 @@
 #include "ofSoundBuffer.h"
 #include "ofSoundUtils.h"
 #include "ofLog.h"
+#include "ofMath.h"
 #define GLM_FORCE_CTOR_INIT
-#include "glm/trigonometric.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/trigonometric.hpp>
 #include <limits>
 
 using std::vector;
@@ -354,7 +356,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	}else if(fromFrame+2>inFrames){
 		to = 0;
 	}else{
-		to = ceil(float(inFrames-2-fromFrame)/speed);
+		to = std::ceil(float(inFrames-2-fromFrame)/speed);
 	}
 	
 	float remainder = position - intPosition;
