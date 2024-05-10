@@ -382,7 +382,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
 		// FIXME: fs::path in input and output
-		filename = linuxFontPathByName(_fontname.string());
+		filename = linuxFontPathByName(_fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
@@ -397,7 +397,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 			fontname = "Menlo Regular";
 		}
 		// FIXME: fs::path in input and output
-		filename = osxFontPathByName(_filename.string());
+		filename = osxFontPathByName(_fontname);
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Arial";
@@ -407,7 +407,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 			fontname = "Courier New";
 		}
 		// FIXME: fs::path in input and output
-		filename = winFontPathByName(ofPathToString(fontname));
+		filename = winFontPathByName(_fontname);
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
