@@ -29,19 +29,19 @@ public:
 		wakeTime = steady_clock::now();
 	}
 	
-	void waitNext(){
-		std::this_thread::sleep_until(wakeTime - 20ms);
+	void waitNext() {
+		// Lazy wakeup
+		std::this_thread::sleep_until(wakeTime - 4ms);
+		
+		// Processor Coffee
+		while(steady_clock::now() < (wakeTime)) { // 0.05ms 0.5us // - 0.5us  - 1ns
+			std::this_thread::yield();
+		}
+	
 		lastWakeTime = wakeTime;
 		wakeTime += interval;
-		
-		int count = 0;
-		while(steady_clock::now() < wakeTime) {
-			count ++ ;
-		}
-		std::cout << "waitNext() " << ofGetFrameNum() << " : " << count << std::endl;
 	}
 };
-
 
 
 class ofTimer {
