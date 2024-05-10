@@ -26,12 +26,12 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 
 
 // DEPRECATED
-bool ofxAssimpModelLoader::load(const of::filesystem::path & fileName, bool optimize){
+bool ofxAssimpModelLoader::load(string modelName, bool optimize){
 	int optimizeFlags = OPTIMIZE_DEFAULT;
 	if( optimize ){
 		optimizeFlags = OPTIMIZE_HIGH;
 	}
-	return load(fileName, optimizeFlags);
+	return load(modelName, optimizeFlags);
 }
 
 // DEPRECATED
@@ -44,8 +44,8 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 }
 
 // DEPRECATED
-bool ofxAssimpModelLoader::loadModel(const of::filesystem::path & fileName, bool optimize){
-	return load(fileName, optimize);
+bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
+	return load(modelName, optimize);
 }
 
 // DEPRECATED
@@ -54,14 +54,16 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 }
 
 //------------------------------------------
-bool ofxAssimpModelLoader::load(const of::filesystem::path & fileName, int assimpOptimizeFlags){
-	file = ofToDataPath(fileName);
-	if (!of::filesystem::exists(file)) {
-		ofLogVerbose("ofxAssimpModelLoader") << "load(): model does not exist: " << fileName ;
+bool ofxAssimpModelLoader::load(string modelName, int assimpOptimizeFlags){
+
+	file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -Ed
+	if(!file.exists()) {
+		ofLogVerbose("ofxAssimpModelLoader") << "load(): model does not exist: \"" << modelName << "\"";
 		return false;
 	}
-		
-	ofLogVerbose("ofxAssimpModelLoader") << "load(): loading " << fileName;
+
+	ofLogVerbose("ofxAssimpModelLoader") << "load(): loading \"" << file.getFileName()
+	<< "\" from \"" << file.getEnclosingDirectory() << "\"";
 
 	if(scene.get() != nullptr){
 		clear();
@@ -80,7 +82,8 @@ bool ofxAssimpModelLoader::load(const of::filesystem::path & fileName, int assim
 	//	}
 
 	// loads scene from file
-	const aiScene * scenePtr = importer.ReadFile(file, flags);
+	std::string path = file.getAbsolutePath();
+	const aiScene * scenePtr = importer.ReadFile(path.c_str(), flags);
 
 	//this is funky but the scenePtr is managed by assimp and so we can't put it in our shared_ptr without disabling the deleter with: [](const aiScene*){}
 	scene = shared_ptr<const aiScene>(scenePtr,[](const aiScene*){});
@@ -371,7 +374,6 @@ void ofxAssimpModelLoader::loadGLResources(){
 				bool bWrap = (texMapMode[0]==aiTextureMapMode_Wrap);
 
 				std::string texPathStr = texPath.C_Str();
-				
 
 				//deal with Blender putting "//" in front of local file paths
 				if( texPathStr.size() > 2 && texPathStr.substr(0, 2) == "//" ){
@@ -388,8 +390,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 				auto ogPath = texPathStr;
 				bool bHasEmbeddedTexture = false;
 
-				auto modelFolder { file.parent_path() };
-				// auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
+				auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
 				auto relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
 				auto realPath = modelFolder / of::filesystem::path{ texPathStr };
 				
@@ -401,8 +402,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 						bHasEmbeddedTexture = true;
 						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << realPath.filename() << " is embedded ";
 					}else{
-						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: "
-						<< file << " in \"" << realPath.string() << "\"";
+						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
+						<< file.getFileName() + "\" in \"" << realPath.string() << "\"";
 					}
 				}
 #endif
@@ -419,8 +420,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 					assimpTexture.setTextureType((aiTextureType)d);
 					meshHelper.addTexture(assimpTexture);
 
-					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: "
-					<< file << " from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
+					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: \""
+					<< file.getFileName() + "\" from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
 				} else {
 
 					shared_ptr<ofTexture> texture = std::make_shared<ofTexture>();
@@ -463,8 +464,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture " << tmpTex.getTextureTypeAsString() << " loaded, dimensions: " << texture->getWidth() << "x" << texture->getHeight();
 					}else{
-						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: "
-						<< file << " from \"" << realPath.string() << "\"";
+						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: \""
+						<< file.getFileName() + "\" from \"" << realPath.string() << "\"";
 					}
 				}
 			}
