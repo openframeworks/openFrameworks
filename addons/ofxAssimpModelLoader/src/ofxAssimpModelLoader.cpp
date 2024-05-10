@@ -80,7 +80,7 @@ bool ofxAssimpModelLoader::load(const of::filesystem::path & fileName, int assim
 	//	}
 
 	// loads scene from file
-	const aiScene * scenePtr = importer.ReadFile(file, flags);
+	const aiScene * scenePtr = importer.ReadFile(ofPathToString(file), flags);
 
 	//this is funky but the scenePtr is managed by assimp and so we can't put it in our shared_ptr without disabling the deleter with: [](const aiScene*){}
 	scene = shared_ptr<const aiScene>(scenePtr,[](const aiScene*){});
