@@ -23,16 +23,20 @@ public:
 		wakeTime = steady_clock::now();
 	}
 	
-	void waitNext(){
+	void waitNext() {
 		std::this_thread::sleep_until(wakeTime - 2ms);
+		
+
+		
+		while(steady_clock::now() < (wakeTime - 0.01ns)) { // 0.05ms 0.5us // - 0.5us
+			std::this_thread::yield();
+		}
+	
+		
+		
 		lastWakeTime = wakeTime;
 		wakeTime += interval;
-		
-		int count = 0;
-		while(steady_clock::now() < wakeTime - 1ms) {
-			count ++ ;
-		}
-		std::cout << "waitNext() " << ofGetFrameNum() << " : " << count << std::endl;
+//		std::cout << "waitNext() " << ofGetFrameNum() << " : " << count << std::endl;
 	}
 };
 
@@ -49,7 +53,7 @@ struct grapher {
 	std::vector<float> vals;
 	ofRectangle rect;
 	bool isSetup = false;
-	int divider = 3;
+	int divider = 10;
 	
 	void setRect(ofRectangle r) {
 		vals.reserve(nVals);
@@ -86,7 +90,7 @@ struct grapher {
 			float max = *std::max_element (vals.begin(), vals.end()); //
 			float minmax = (std::abs(min) + std::abs(max))/2.0f;
 //			float avg = 1.0f * std::accumulate( vals.begin(), vals.end(), 0 )/vals.size();
-			float avg = 1.0f * std::reduce( vals.begin(), vals.end(), 0 )/vals.size();
+			float avg = 1.0f * std::reduce( vals.begin(), vals.end(), 0 ) / (float)vals.size();
 
 			int x = 0;
 			for (auto & v : vals) {
@@ -130,8 +134,10 @@ public:
 	vector<float> results;
 	int cur = 0;
 	
+	float filterAverages = 32.0f;
+	
 	fpsCounter() {
-		for (int a=0; a<4; a++) {
+		for (int a=0; a<filterAverages; a++) {
 			results.emplace_back(0.0f);
 		}
 	}
@@ -168,8 +174,8 @@ public:
 			//		cout << ofGetFrameNum() << " : " << intervals.size() << endl;
 			float val = intervals.size() * onesec / average;
 			results[cur] = val;
-			cur = (cur+1)%4;
-			return std::reduce(results.begin(), results.end())/4.0f;
+			cur = (cur+1)% (int)filterAverages;
+			return std::reduce(results.begin(), results.end())/filterAverages;
 //			lastVal *= (1.0f - valRatio);
 //			lastVal += val * valRatio;
 //			return lastVal;
