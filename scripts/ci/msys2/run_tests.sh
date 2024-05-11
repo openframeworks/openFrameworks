@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+# set -ev
 ROOT=$(pwd -P)
 # source $ROOT/scripts/ci/ccache.sh
 
