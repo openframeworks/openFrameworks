@@ -2,46 +2,6 @@
 
 #include "ofUtils.h"
 
-#include <chrono>
-#include <ctime>
-#include <iostream>
-#include <thread>
-
-using namespace std::chrono;
-using namespace std::chrono_literals;
-
-class ofTimerFps {
-public:
-	ofTimerFps(){
-		reset();
-	};
-
-	using space = std::chrono::duration<long long, std::nano>;
-	space interval;
-	time_point<steady_clock> wakeTime;
-	time_point<steady_clock> lastWakeTime;
-
-	void setFps(int fps) {
-		interval = duration_cast<microseconds>(1s) / fps;
-	}
-
-	void reset() {
-		wakeTime = steady_clock::now();
-	}
-	
-	void waitNext() {
-		// Lazy wakeup
-		std::this_thread::sleep_until(wakeTime - 4ms);
-		
-		// Processor Coffee
-		while(steady_clock::now() < (wakeTime)) { // 0.05ms 0.5us // - 0.5us  - 1ns
-			std::this_thread::yield();
-		}
-	
-		lastWakeTime = wakeTime;
-		wakeTime += interval;
-	}
-};
 
 
 class ofTimer {

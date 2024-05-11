@@ -2,7 +2,8 @@
 
 #include "ofEventUtils.h"
 #include "ofFpsCounter.h"
-#include "ofTimer.h"
+//#include "ofTimer.h"
+#include "ofTimerFps.h"
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
@@ -407,7 +408,7 @@ private:
 	float targetRate;
 	bool bFrameRateSet;
 	ofTimerFps timerFps;
-	ofTimer timer;
+//	ofTimer timer;
 	ofFpsCounter fps;
 
 	int currentMouseX, currentMouseY;
