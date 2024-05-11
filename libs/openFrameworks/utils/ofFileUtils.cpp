@@ -22,15 +22,20 @@ using std::istream;
 using std::ostream;
 using std::ios;
 
+using std::cout;
+using std::endl;
+
 namespace fs = of::filesystem;
 
-namespace{
+namespace {
 	bool enableDataPath = true;
 
 	//--------------------------------------------------
 	fs::path defaultDataPath(){
+		cout << "fs::path defaultDataPath()" << endl;
 	#if defined TARGET_OSX
 		try {
+			cout << "xx" << fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/") << endl;
 			return fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/");
 		} catch(...) {
 			return ofFilePath::getCurrentExeDirFS() / "../../../data/";
@@ -56,7 +61,7 @@ namespace{
 	fs::path & dataPathRoot() {
 		static auto * dataPathRoot = new fs::path(defaultDataPath());
 		// This is the most important change in the way OF handles paths.
-//		fs::current_path(*dataPathRoot);
+		fs::current_path(*dataPathRoot);
 		return *dataPathRoot;
 	}
 }
