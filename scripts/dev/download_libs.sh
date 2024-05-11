@@ -46,7 +46,7 @@ download(){
     for PKG in $1; do
         COMMAND+="https://github.com/openframeworks/apothecary/releases/download/$REPO/$PKG "
     done
-    echo $COMMAND;
+    echo "COMMAND = $COMMAND"
     downloader $COMMAND $SILENT_ARGS
 }
 
