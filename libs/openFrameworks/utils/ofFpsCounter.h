@@ -44,7 +44,7 @@ private:
 using namespace std::chrono;
 using namespace std::chrono_literals;
 
-struct fpsCounter {
+struct fpsCounterX {
 public:
 	int nAverages = 20;
 	using space = std::chrono::duration<long double, std::nano>;
