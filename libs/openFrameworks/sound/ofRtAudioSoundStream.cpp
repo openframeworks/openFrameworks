@@ -1,5 +1,4 @@
 #include "ofRtAudioSoundStream.h"
-#include "ofMath.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofLog.h"

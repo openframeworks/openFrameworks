@@ -321,7 +321,7 @@ void ofApp::draw(){
 			glPushMatrix();
 			if(bottomCap.getNumNormals() > 0 ) {
 				ofTranslate( bottomCap.getNormal(0) * cone.getHeight()*.5 );
-				glRotatef( sin(ofGetElapsedTimef()*5) * RAD_TO_DEG, 1, 0, 0);
+				glRotatef( glm::degrees( sin(ofGetElapsedTimef()*5) ), 1, 0, 0);
 				bottomCap.draw();
 			}
 			glPopMatrix();

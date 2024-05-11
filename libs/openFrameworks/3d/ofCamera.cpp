@@ -1,11 +1,11 @@
 #include "ofCamera.h"
 #include "ofGraphics.h"
+#include "of3dGraphics.h"
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include "of3dGraphics.h"
 
 using std::shared_ptr;
 
@@ -98,8 +98,8 @@ void ofCamera::setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3
 	lensOffset.y = -glm::dot(bottomLeftToCam, leftEdgeNorm) * 2.0f / glm::length(leftEdge) + 1.0f;
 	setLensOffset(lensOffset);
 	setAspectRatio( glm::length(bottomEdge) / glm::length(leftEdge) );
-	auto distanceAlongOpticalAxis = fabs(glm::dot(bottomLeftToCam, cameraLookVector));
-	setFov(2.0f * glm::degrees( atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis) ) );
+	auto distanceAlongOpticalAxis = std::abs(glm::dot(bottomLeftToCam, cameraLookVector));
+	setFov(2.0f * glm::degrees( std::atan( (glm::length(leftEdge) / 2.0f) / distanceAlongOpticalAxis) ) );
 }
 
 
