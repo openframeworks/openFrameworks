@@ -850,10 +850,10 @@ std::vector<glm::vec3> ofShadow::getFrustumCorners( const glm::vec3& aup, const 
 		ratio = mAreaLightWidth / mAreaLightHeight;
 	}
 	
-	float Hnear = 2.f * tan( ofDegToRad( mFov ) / 2.f ) * getNearClip();
+	float Hnear = 2.f * std::tan( glm::radians( mFov ) / 2.f ) * getNearClip();
 	float Wnear = Hnear * ratio;
 	
-	float Hfar = 2.f * tanf( ofDegToRad( mFov ) / 2.f ) * getFarClip();
+	float Hfar = 2.f * std::tan( glm::radians( mFov ) / 2.f ) * getFarClip();
 	float Wfar = Hfar * ratio;
 	
 	std::vector<glm::vec3> corners(8);

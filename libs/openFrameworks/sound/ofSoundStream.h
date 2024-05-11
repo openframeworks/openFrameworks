@@ -2,7 +2,6 @@
 
 #include "ofSoundBaseTypes.h"
 #include <climits> // UINT_MAX only?
-//#include <functional>
 
 class ofSoundStreamSettings;
 
