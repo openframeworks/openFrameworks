@@ -26,13 +26,13 @@ downloader() {
 			wget2 -q $@;
 		elif command -v curl 2>/dev/null; then 
 			for PKG in $@; do
-				if [[-z "$PKG"]]; then
+				if [[ -z "$PKG" ]]; then
 					curl -LO --retry 20 -s $PKG
 				fi
 			done
 		else 
 			for PKG in $@; do
-				if [[-z "$PKG"]]; then
+				if [[ -z "$PKG" ]]; then
 					wget -q $PKG@ 2> /dev/null
 				fi
 			done
@@ -43,13 +43,13 @@ downloader() {
 		elif 
 		 command -v curl 2>/dev/null; then 
 			for PKG in $@; do
-				if [[-z "$PKG"]]; then
+				if [[ -z "$PKG" ]]; then
 					curl -L --retry 20 --progress-bar -O $PKG
 				fi
 			done
 		else 
 			for PKG in $@; do
-				if [[-z "$PKG"]]; then
+				if [[ -z "$PKG" ]]; then
 					wget $PKG 2> /dev/null
 				fi
 			done
