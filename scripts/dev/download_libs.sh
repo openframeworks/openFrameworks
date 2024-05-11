@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ev
+set -e
 VER=master
 PLATFORM=""
 ARCH=""

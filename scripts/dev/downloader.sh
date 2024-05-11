@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+# set -ev
 
 printDownloaderHelp(){
 cat << EOF
@@ -21,32 +21,37 @@ downloader() {
 	if [ $# -ge 2  ]; then
 		SILENTARGS=$2
 	fi
-	# if [[ "${SILENTARGS}" == "-s" ]]; then
-	# 	if command -v wget2 2>/dev/null; then 
-	# 		wget2 -q $@;
-	# 	elif command -v curl 2>/dev/null; then 
-	# 		for PKG in $@; do
-	# 			curl -LO --retry 20 -O -s $PKG; 
-	# 		done
-	# 	else 
-	# 		for PKG in $@; do
-	# 			wget -q $PKG@ 2> /dev/null; 
-	# 		done
-	# 	fi;
-	# else
+	if [[ "${SILENTARGS}" == "-s" ]]; then
+		if command -v wget2 2>/dev/null; then 
+			wget2 -q $@;
+		elif command -v curl 2>/dev/null; then 
+			for PKG in $@; do
+				if [[-z "$PKG"]]; then
+					curl -LO --retry 20 -s $PKG
+				fi
+			done
+		else 
+			for PKG in $@; do
+				if [[-z "$PKG"]]; then
+					wget -q $PKG@ 2> /dev/null
+				fi
+			done
+		fi;
+	else
 		if command -v wget2 2>/dev/null; then 
 			wget2 $@;
 		elif 
 		 command -v curl 2>/dev/null; then 
 			for PKG in $@; do
 				if [[-z "$PKG"]]; then
-					echo "curl -LO --progress-bar $PKG"
 					curl -L --retry 20 --progress-bar -O $PKG
 				fi
 			done
 		else 
 			for PKG in $@; do
-				wget $PKG 2> /dev/null; 
+				if [[-z "$PKG"]]; then
+					wget $PKG 2> /dev/null
+				fi
 			done
 		fi;
 	# fi
