@@ -22,7 +22,7 @@ void ofApp::setup(){
 	
 	//we do this because we don't have a mouse move function to work with:
 	targetFrequency = 444.0;
-	phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
+	phaseAdderTarget = (targetFrequency / (float)sampleRate) * glm::two_pi<float>();
 	
 	ofSoundStreamSettings settings;
 	settings.setOutListener(this);
@@ -88,9 +88,9 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
-	// keep phase in the range of 0-TWO_PI like this:
-	while (phase > TWO_PI){
-		phase -= TWO_PI;
+	// keep phase in the range of 0-glm::two_pi<float>() like this:
+	while (phase > glm::two_pi<float>()){
+		phase -= glm::two_pi<float>();
 	}
 
 	if (bNoise == true){
@@ -103,7 +103,7 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 		phaseAdder = 0.95f * phaseAdder + 0.05f * phaseAdderTarget;
 		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			phase += phaseAdder;
-			float sample = sin(phase);
+			float sample = std::sin(phase);
 			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = sample * volume * leftScale;
 			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = sample * volume * rightScale;
 		}
@@ -123,7 +123,7 @@ void ofApp::touchMoved(ofTouchEventArgs & touch){
 		
 		int height = ofGetHeight();
 		targetFrequency = ((float)touch.y / (float)height) * 1000;
-		phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
+		phaseAdderTarget = (targetFrequency / (float)sampleRate) * glm::two_pi<float>();
 	}
 }
 

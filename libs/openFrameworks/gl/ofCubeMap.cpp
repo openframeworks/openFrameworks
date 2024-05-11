@@ -15,15 +15,17 @@
 #include "ofFbo.h"
 #include "ofTexture.h"
 
+#ifdef TARGET_ANDROID
+#include "ofAppAndroidWindow.h"
+#endif
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <map>
 
-#ifdef TARGET_ANDROID
-#include "ofAppAndroidWindow.h"
-#endif
+
 
 using std::weak_ptr;
 using std::vector;
@@ -923,7 +925,7 @@ void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, const
 				ofTexture ftex;
 				for (unsigned int j = 0; j < 6; j++) {
 					ftex.loadData( fpixels[j] );
-					ftex.draw((j % 3) * texSize, floor(j / 3) * texSize, texSize, texSize);
+					ftex.draw((j % 3) * texSize, std::floor(j / 3) * texSize, texSize, texSize);
 				}
 			} tfbo.end();
 			
@@ -1020,7 +1022,7 @@ bool ofCubeMap::_loadIrradianceMap(const of::filesystem::path & aCachePath) {
 	
 	for(unsigned int j = 0; j < 6; j++ ) {
 		//cropTo(ofPixels_<PixelType> &toPix, size_t x, size_t y, size_t _width, size_t _height)
-		fullPix.cropTo( fpix, (j % 3) * texSize, floor(j / 3) * texSize, texSize, texSize );
+		fullPix.cropTo( fpix, (j % 3) * texSize, std::floor(j / 3) * texSize, texSize, texSize );
 		if( fpix.getNumChannels() != numChannels ) {
 			fpix.setNumChannels(numChannels);
 		}
@@ -1128,7 +1130,7 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 					// bAllPixelsCreated = false;
 				} else {
 					cacheFbo.begin();
-					tfbo.getTexture().draw( (i%3) * mipWidth + shiftX, floor(i/3) * mipWidth + shiftY, mipWidth, mipWidth );
+					tfbo.getTexture().draw( (i%3) * mipWidth + shiftX, std::floor(i/3) * mipWidth + shiftY, mipWidth, mipWidth );
 					cacheFbo.end();
 				}
 			}
@@ -1243,7 +1245,7 @@ bool ofCubeMap::_loadPrefilterMap( const of::filesystem::path & aCachePath ) {
 		}
 		
 		for (unsigned int i = 0; i < 6; ++i) {
-			fullPix.cropTo( fpix, (i % 3) * mipWidth + shiftX, floor(i / 3) * mipWidth + shiftY, mipWidth, mipWidth );
+			fullPix.cropTo( fpix, (i % 3) * mipWidth + shiftX, std::floor(i / 3) * mipWidth + shiftY, mipWidth, mipWidth );
 			if( fpix.getNumChannels() != numChannels ) {
 				fpix.setNumChannels(numChannels);
 			}

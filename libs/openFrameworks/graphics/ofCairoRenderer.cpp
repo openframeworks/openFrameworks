@@ -472,11 +472,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const {
 			mut_this->translate(0, -command.to.y * ellipse_ratio);
 			mut_this->scale(1, ellipse_ratio);
 			mut_this->translate(0, command.to.y / ellipse_ratio);
-			cairo_arc(cr, command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
+			cairo_arc(cr, command.to.x, command.to.y, command.radiusX, glm::radians(command.angleBegin), glm::radians(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		} else {
-			cairo_arc(cr, command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
+			cairo_arc(cr, command.to.x, command.to.y, command.radiusX, glm::radians(command.angleBegin), glm::radians(command.angleEnd));
 		}
 		break;
 
@@ -489,11 +489,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const {
 			mut_this->translate(0, -command.to.y * ellipse_ratio);
 			mut_this->scale(1, ellipse_ratio);
 			mut_this->translate(0, command.to.y / ellipse_ratio);
-			cairo_arc_negative(cr, command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
+			cairo_arc_negative(cr, command.to.x, command.to.y, command.radiusX, glm::radians(command.angleBegin), glm::radians(command.angleEnd));
 			//cairo_set_matrix(cr,&stored_matrix);
 			mut_this->popMatrix();
 		} else {
-			cairo_arc_negative(cr, command.to.x, command.to.y, command.radiusX, ofDegToRad(command.angleBegin), ofDegToRad(command.angleEnd));
+			cairo_arc_negative(cr, command.to.x, command.to.y, command.radiusX, glm::radians(command.angleBegin), glm::radians(command.angleEnd));
 		}
 		break;
 
@@ -962,7 +962,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 	if (nearDist == 0) nearDist = dist / 10.0f;
 	if (farDist == 0) farDist = dist * 10.0f;
 
-	projection = glm::perspective(ofDegToRad(fov), aspect, nearDist, farDist);
+	projection = glm::perspective(glm::radians(fov), aspect, nearDist, farDist);
 	modelView = glm::lookAt(glm::vec3(eyeX, eyeY, dist), glm::vec3(eyeX, eyeY, 0), glm::vec3(0, 1, 0));
 
 	switch (orientation) {

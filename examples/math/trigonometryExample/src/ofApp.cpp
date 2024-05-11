@@ -39,12 +39,12 @@ void ofApp::update(){
 		angle+=rotationSpeed;//at each update the angle get's incremented 
 	}
 	 //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
-	angle = ofWrap(angle, 0, TWO_PI);
+	angle = ofWrap(angle, 0, glm::two_pi<float>());
 	
 	//here we get the sine and cosine values for the angle
-	cosine=cos(angle);
-	sine=sin(angle);
-	tangent=tan(angle);
+	cosine = std::cos(angle);
+	sine = std::sin(angle);
+	tangent = std::tan(angle);
 	
 	point = { cosine * radius, sine * radius, 0 };//here we set the cyan circle position
 	
@@ -147,8 +147,8 @@ void ofApp::checkMouse(float x, float y){
 	if (glm::length(mousePos) < radius ) {//if the mouse is inside the circle
 		// get the angle between the line from the mouse to the center of the circle and the positive x axis
 		angle = atan2( mousePos.y , mousePos.x);
-		// wrap the angle so it is always between 0 and TWO_PI (one full rotation)
-		angle = ofWrap(angle, 0, TWO_PI);
+		// wrap the angle so it is always between 0 and glm::two_pi<float>() (one full rotation)
+		angle = ofWrap(angle, 0, glm::two_pi<float>());
 	}
 }
 //--------------------------------------------------------------
