@@ -4,7 +4,7 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 
 trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
 
-echo "##[group] **** Building emptyExample ****"
+echo "##[group]**** Building emptyExample ****"
 cd $ROOT
 cp scripts/templates/osx/Makefile examples/templates/emptyExample/
 cp scripts/templates/osx/config.make examples/templates/emptyExample/
