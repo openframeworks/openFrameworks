@@ -17,6 +17,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# env:
+#   ccache: ccache
+
 jobs:
   build-vs2022:
     runs-on: windows-2022
@@ -58,4 +61,3 @@ jobs:
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-
