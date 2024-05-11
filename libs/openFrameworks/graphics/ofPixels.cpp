@@ -2,10 +2,6 @@
 #include "ofPixels.h"
 #include "ofColor.h"
 
-#define GLM_FORCE_CTOR_INIT
-#include "glm/common.hpp"
-#include <cstring>
-
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
 	case 1:
@@ -400,7 +396,7 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w
 	width= w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat) / sizeof(PixelType);
+	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat);
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -534,7 +530,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize / sizeof(PixelType);
+	pixelsSize = newSize;
 
 	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
@@ -1327,6 +1323,9 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
 	a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
 	a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
 
+	if (std::is_floating_point<PixelType>::value) {
+		return std::min(1.0f, std::max(out, 0.0f));
+	}
 	return std::min(static_cast<size_t>(255), std::max(static_cast<size_t>(out), static_cast<size_t>(0)));
 }
 

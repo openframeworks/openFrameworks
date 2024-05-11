@@ -148,5 +148,10 @@ Desktop.ini
 projectGenerator*/
 .cxx/
 
+
 examples/**/Makefile
 examples/**/config.make
+
+libs/openFrameworksCompiled/project/vs/.vs/
+scripts/templates/vs/.vs/
+**/.vs/

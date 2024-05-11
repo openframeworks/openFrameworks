@@ -15,8 +15,9 @@
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/quaternion.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 using std::weak_ptr;
 using std::vector;
@@ -849,10 +850,10 @@ std::vector<glm::vec3> ofShadow::getFrustumCorners( const glm::vec3& aup, const 
 		ratio = mAreaLightWidth / mAreaLightHeight;
 	}
 	
-	float Hnear = 2.f * tan( ofDegToRad( mFov ) / 2.f ) * getNearClip();
+	float Hnear = 2.f * std::tan( glm::radians( mFov ) / 2.f ) * getNearClip();
 	float Wnear = Hnear * ratio;
 	
-	float Hfar = 2.f * tanf( ofDegToRad( mFov ) / 2.f ) * getFarClip();
+	float Hfar = 2.f * std::tan( glm::radians( mFov ) / 2.f ) * getFarClip();
 	float Wfar = Hfar * ratio;
 	
 	std::vector<glm::vec3> corners(8);

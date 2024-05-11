@@ -129,9 +129,6 @@ ifeq ($(findstring MINGW64,$(MSYSTEM)),MINGW64)
 	PLATFORM_LDFLAGS += -Wl,--disable-dynamicbase,--disable-high-entropy-va,--default-image-base-low
 endif
 
-ifndef DEBUG
-	PLATFORM_LDFLAGS += -mwindows
-endif
 ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
 	PLATFORM_LDFLAGS += -lstdc++fs
 endif
@@ -151,7 +148,7 @@ endif
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
@@ -233,7 +230,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/utf8/%
 
 PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
-PLATFORM_LIBRARIES += freeimage 
+PLATFORM_LIBRARIES += freeimage
 # PLATFORM_LIBRARIES += boost_filesystem-mt boost_system-mt
 PLATFORM_LIBRARIES += mf mfplat mfuuid mfreadwrite
 # PLATFORM_LIBRARIES += glfw3
@@ -251,7 +248,6 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
-PLATFORM_PKG_CONFIG_LIBRARIES += glm
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 PLATFORM_PKG_CONFIG_LIBRARIES += liburiparser
@@ -324,13 +320,13 @@ copy_dlls:
 	@echo "     copying dlls to bin"
 
 	@ntldd --recursive $(wildcard bin/$(APPNAME)*.exe) | sed -e 's:\\:/:g' | grep -F "$(MINGW_PREFIX)" | cut -d">" -f2 |cut -d" " -f2 >dlllist
-	
+
 	@while read -r dll; do \
 		test -e "$$dll" && cp "$$dll" ./bin; \
     done <dlllist
 	@echo "     `wc -l <dlllist` dlls copied"
 	@rm dlllist
-	
+
 afterplatform: $(TARGET_NAME)
 	-cp ${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION} bin/ ; true
 	@echo

@@ -20,7 +20,7 @@
 }
 
 - (void)dealloc {
-	[super dealloc];
+//	[super dealloc];
 }
 
 - (void)playPressed {

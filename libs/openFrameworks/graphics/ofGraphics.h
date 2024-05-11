@@ -1,8 +1,11 @@
 #pragma once
 
-#include "glm/fwd.hpp"
 #include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
+
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/fwd.hpp>
 
 class ofVec3f;
 class ofVec2f;

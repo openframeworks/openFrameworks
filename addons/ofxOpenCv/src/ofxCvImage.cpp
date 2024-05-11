@@ -620,8 +620,8 @@ void ofxCvImage::transform( float angle, float centerX, float centerY,
 		return;		
 	}	
 													
-    float sina = sin(angle * DEG_TO_RAD);
-    float cosa = cos(angle * DEG_TO_RAD);
+    float sina = std::sin(glm::radians(angle));
+    float cosa = std::cos(glm::radians(angle));
     CvMat*  transmat = cvCreateMat( 2,3, CV_32F );
     cvmSet( transmat, 0,0, scaleX*cosa );
     cvmSet( transmat, 0,1, scaleY*sina );
