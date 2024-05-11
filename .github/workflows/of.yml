@@ -1,3 +1,4 @@
+name: OF
 # make the action not run on the local repo if the branch is also in a pull request to OF/OF
 on:
   push:
@@ -14,6 +15,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+# env:
+#   ccache: ccache
 
 jobs:
   build-emscripten:
@@ -40,29 +44,8 @@ jobs:
           GA_CI_SECRET: ${{ secrets.CI_SECRET }}
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
-# make the action not run on the local repo if the branch is also in a pull request to OF/OF
-on:
-  push:
-    if: github.event_name == 'push' && github.event.pull_request == null
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-  pull_request:
-    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
-    paths-ignore:
-      - '**/*.md'
-      - 'examples/**'
-
-env:
-  ccache: ccache
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
   build-msys2:
     runs-on: windows-latest
     strategy:
@@ -108,28 +91,8 @@ jobs:
       run: ./scripts/ci/msys2/run_tests.sh
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
-
-
-# make the action not run on the local repo if the branch is also in a pull request to OF/OF
-on:
-  push:
-    if: github.event_name == 'push' && github.event.pull_request == null
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-  pull_request:
-    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
-    paths-ignore:
-      - '**/*.md'
-      - 'examples/**'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
   build-vs2022:
     runs-on: windows-2022
     strategy:
@@ -172,30 +135,8 @@ jobs:
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
-
-# make the action not run on the local repo if the branch is also in a pull request to OF/OF
-on:
-  push:
-    if: github.event_name == 'push' && github.event.pull_request == null
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-  pull_request:
-    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
-    paths-ignore:
-      - '**/*.md'
-      - 'examples/**'
-
-env:
-  ccache: ccache
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
   rpi-build:
     runs-on: ubuntu-latest
     strategy:
@@ -229,30 +170,8 @@ jobs:
       run: ./scripts/ci/linuxrpi/build.sh;
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
-
-# make the action not run on the local repo if the branch is also in a pull request to OF/OF
-on:
-  push:
-    if: github.event_name == 'push' && github.event.pull_request == null
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-  pull_request:
-    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
-    paths-ignore:
-      - '**/*.md'
-      - 'examples/**'
-
-env:
-  ccache: ccache
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
   build-ios-tvos:
     runs-on: macos-13
     strategy:
@@ -280,29 +199,8 @@ jobs:
         DEVELOPER_DIR: "/Applications/Xcode_15.2.app/Contents/Developer"
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
-# make the action not run on the local repo if the branch is also in a pull request to OF/OF
-on:
-  push:
-    if: github.event_name == 'push' && github.event.pull_request == null
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-  pull_request:
-    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
-    paths-ignore:
-      - '**/*.md'
-      - 'examples/**'
-
-env:
-  ccache: ccache
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
   build-linux64-platforms:
     runs-on: ubuntu-latest
     strategy:
@@ -345,30 +243,8 @@ jobs:
     #     GA_CI_SECRET: ${{ secrets.CI_SECRET }}
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
-
-# make the action not run on the local repo if the branch is also in a pull request to OF/OF
-on:
-  push:
-    if: github.event_name == 'push' && github.event.pull_request == null
-    paths-ignore:
-    - '**/*.md'
-    - 'examples/**'
-  pull_request:
-    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
-    paths-ignore:
-      - '**/*.md'
-      - 'examples/**'
-
-env:
-  ccache: ccache
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
   build-macos:
     runs-on: macos-13
     strategy:
@@ -408,5 +284,5 @@ jobs:
         SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 

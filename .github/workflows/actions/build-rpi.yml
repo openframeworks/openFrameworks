@@ -13,12 +13,12 @@ on:
       - '**/*.md'
       - 'examples/**'
 
-env:
-  ccache: ccache
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  ccache: ccache
 
 jobs:
   rpi-build:
@@ -52,4 +52,3 @@ jobs:
       run: ./scripts/ci/linuxrpi/install.sh;
     - name: Build
       run: ./scripts/ci/linuxrpi/build.sh;
-
