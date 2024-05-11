@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */; };
+		035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */; };
 		15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0515C55AC900727FF2 /* EAGLView.m */; };
 		15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0615C55AC900727FF2 /* ES1Renderer.m */; };
 		15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0715C55AC900727FF2 /* ES2Renderer.m */; };
@@ -236,6 +238,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
+		035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
 		15594F0515C55AC900727FF2 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		15594F0615C55AC900727FF2 /* ES1Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES1Renderer.m; sourceTree = "<group>"; };
 		15594F0715C55AC900727FF2 /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
@@ -935,6 +939,8 @@
 				67833F8019F8990D00DBE7AA /* ofThreadChannel.h */,
 				67833F8119F8990D00DBE7AA /* ofTimer.cpp */,
 				67833F8219F8990D00DBE7AA /* ofTimer.h */,
+				035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */,
+				0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */,
 				E4F76DFC176CB27200798745 /* ofURLFileLoader.cpp */,
 				E4F76DFD176CB27200798745 /* ofURLFileLoader.h */,
 				E4F76DFE176CB27200798745 /* ofUtils.cpp */,
@@ -1057,6 +1063,7 @@
 				15594F9415C56A8A00727FF2 /* ofxiOSEAGLView.h in Headers */,
 				15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */,
 				15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */,
+				035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */,
 				6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */,
 				2E6E258328F73C2C00EC8E22 /* ofShadow.h in Headers */,
 				15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */,
@@ -1216,6 +1223,7 @@
 				15594FC115C56D1E00727FF2 /* ofxiOSImagePicker.mm in Sources */,
 				15594FC215C56D1E00727FF2 /* ofxiOSKeyboard.mm in Sources */,
 				15594FC315C56D1E00727FF2 /* ofxiOSMapKit.mm in Sources */,
+				035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */,
 				15594FC415C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm in Sources */,
 				69433CC31FE45BAC004D5B73 /* ofBaseApp.cpp in Sources */,
 				67833F8A19F8996300DBE7AA /* ofBufferObject.cpp in Sources */,
