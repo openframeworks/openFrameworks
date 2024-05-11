@@ -21,19 +21,19 @@ downloader() {
 	if [ $# -ge 2  ]; then
 		SILENTARGS=$2
 	fi
-	if [[ "${SILENTARGS}" == "-s" ]]; then
-		if command -v wget2 2>/dev/null; then 
-			wget2 -q $@;
-		elif command -v curl 2>/dev/null; then 
-			for PKG in $@; do
-				curl -LO --retry 20 -O -s $PKG; 
-			done
-		else 
-			for PKG in $@; do
-				wget -q $PKG@ 2> /dev/null; 
-			done
-		fi;
-	else
+	# if [[ "${SILENTARGS}" == "-s" ]]; then
+	# 	if command -v wget2 2>/dev/null; then 
+	# 		wget2 -q $@;
+	# 	elif command -v curl 2>/dev/null; then 
+	# 		for PKG in $@; do
+	# 			curl -LO --retry 20 -O -s $PKG; 
+	# 		done
+	# 	else 
+	# 		for PKG in $@; do
+	# 			wget -q $PKG@ 2> /dev/null; 
+	# 		done
+	# 	fi;
+	# else
 		if command -v wget2 2>/dev/null; then 
 			wget2 $@;
 		elif command -v curl 2>/dev/null; then 
@@ -45,7 +45,7 @@ downloader() {
 				wget $PKG 2> /dev/null; 
 			done
 		fi;
-	fi
+	# fi
 
  
 }
