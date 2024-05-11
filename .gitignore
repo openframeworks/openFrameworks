@@ -148,7 +148,6 @@ Desktop.ini
 projectGenerator*/
 .cxx/
 
-
 examples/**/Makefile
 examples/**/config.make
 
