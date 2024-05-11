@@ -522,8 +522,6 @@ void ofAppGLFWWindow::draw() {
 	currentRenderer->finishRender();
 
 	nFramesSinceWindowResized++;
-	
-
 }
 
 //--------------------------------------------
