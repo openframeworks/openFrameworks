@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Video Player Controls-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="VideoPlayerControls" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="VideoPlayerControls" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Video Pixels" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CmN-Hv-Ntg">
+                                <rect key="frame" x="5" y="459" width="92" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemYellowColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="tintColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Video Texture" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Ru-54-fQx">
+                                <rect key="frame" x="5" y="219.66666666666666" width="105" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemYellowColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="tintColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1" verticalHuggingPriority="1" horizontalCompressionResistancePriority="1" verticalCompressionResistancePriority="1" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="aqd-d6-kPI">
+                                <rect key="frame" x="22" y="709.33333333333337" width="349" height="98.666666666666629"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="36" translatesAutoresizingMaskIntoConstraints="NO" id="NYz-CT-t2J">
+                                        <rect key="frame" x="0.0" y="0.0" width="349" height="34.333333333333336"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dAo-cI-lXb">
+                                                <rect key="frame" x="0.0" y="0.0" width="76.666666666666671" height="34.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="PAUSE"/>
+                                                <connections>
+                                                    <action selector="playPauseButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="d3V-fJ-DwZ"/>
+                                                </connections>
+                                            </button>
+                                            <slider opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1" verticalHuggingPriority="1" horizontalCompressionResistancePriority="1" verticalCompressionResistancePriority="1" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Ng9-kp-V2O">
+                                                <rect key="frame" x="110.66666666666664" y="0.0" width="158.33333333333337" height="35.333333333333336"/>
+                                                <connections>
+                                                    <action selector="scrub:" destination="Y6W-OH-hqX" eventType="valueChanged" id="Hrx-92-ePi"/>
+                                                    <action selector="scrubBegin:" destination="Y6W-OH-hqX" eventType="touchDown" id="rdU-4p-vHj"/>
+                                                    <action selector="scrubEnd:" destination="Y6W-OH-hqX" eventType="touchCancel" id="Bfi-Om-pzO"/>
+                                                    <action selector="scrubEnd:" destination="Y6W-OH-hqX" eventType="touchUpOutside" id="Fn9-x4-t8a"/>
+                                                    <action selector="scrubEnd:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="VKR-u6-qrA"/>
+                                                </connections>
+                                            </slider>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jz6-YT-a1n">
+                                                <rect key="frame" x="303" y="0.0" width="46" height="34.333333333333336"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" systemColor="tintColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OGS-ww-0Jj">
+                                        <rect key="frame" x="0.0" y="44.333333333333258" width="349" height="54.333333333333343"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1qq-an-BCh">
+                                                <rect key="frame" x="0.0" y="0.0" width="87.333333333333329" height="54.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="LOAD"/>
+                                                <connections>
+                                                    <action selector="loadButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="bwN-Dh-0hk"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZUA-6P-R6i">
+                                                <rect key="frame" x="87.333333333333343" y="0.0" width="87.333333333333343" height="54.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="LOOP ON"/>
+                                                <connections>
+                                                    <action selector="loopButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="xMw-dA-0hM"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4dL-S9-zYY">
+                                                <rect key="frame" x="174.66666666666666" y="0.0" width="86.999999999999972" height="54.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="MUTE ON"/>
+                                                <connections>
+                                                    <action selector="muteButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="2MB-hr-idP"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V84-lz-xnZ">
+                                                <rect key="frame" x="261.66666666666669" y="0.0" width="87.333333333333314" height="54.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="NATIVE ON"/>
+                                                <connections>
+                                                    <action selector="nativeButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="9Ih-fM-6Gd"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="newFrame" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wxA-aZ-xhd">
+                                <rect key="frame" x="5" y="488" width="182" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemYellowColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="tintColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="aqd-d6-kPI" secondAttribute="trailing" constant="22" id="2FU-3W-14q"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="aqd-d6-kPI" secondAttribute="bottom" constant="10" id="Ia2-Wo-SMe"/>
+                            <constraint firstItem="aqd-d6-kPI" firstAttribute="leading" secondItem="5EZ-qb-Rvc" secondAttribute="leading" constant="22" id="MHL-2T-GSv"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="bottomLabel" destination="CmN-Hv-Ntg" id="YFi-SR-4FA"/>
+                        <outlet property="loadButton" destination="1qq-an-BCh" id="Eyp-mA-sZ1"/>
+                        <outlet property="loopButton" destination="ZUA-6P-R6i" id="JZz-MW-tYc"/>
+                        <outlet property="muteButton" destination="4dL-S9-zYY" id="6TO-vw-zAa"/>
+                        <outlet property="nativeButton" destination="V84-lz-xnZ" id="Zp6-Lk-acM"/>
+                        <outlet property="newFrameLabel" destination="wxA-aZ-xhd" id="ZXB-jw-ehM"/>
+                        <outlet property="playPauseButton" destination="dAo-cI-lXb" id="lcF-M0-eVU"/>
+                        <outlet property="slider" destination="Ng9-kp-V2O" id="vIs-Dp-jTN"/>
+                        <outlet property="timeLabel" destination="Jz6-YT-a1n" id="a3a-g5-xOQ"/>
+                        <outlet property="topLabel" destination="7Ru-54-fQx" id="1qm-vA-t8g"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="101.5267175572519" y="3.5211267605633805"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemYellowColor">
+            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="tintColor">
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

@@ -22,7 +22,7 @@ on:
 #      - 'examples/**'
 jobs:
   build-web-examples:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         cfg:

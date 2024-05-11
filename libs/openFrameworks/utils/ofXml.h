@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofParameter.h"
-#include "pugixml.hpp"
+#include <pugixml.hpp>
 
 template<typename It>
 class ofXmlIterator;
