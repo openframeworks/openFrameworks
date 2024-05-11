@@ -188,17 +188,19 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		monitor = allMonitors.monitors[monitorIndex];
 	}
 
-
-	
 //	cout << "will create window" << endl;
 //	cout << "monitors size: " << allMonitors.rects.size() << endl;
 	bool displayOK = false;
 	if (settings.fullscreenDisplays.size()) {
 		for (auto & d : settings.fullscreenDisplays) {
 			cout << "GLFWWindow fullscreenDisplays " << d << " : " << allMonitors.rects.size() << endl;
-			if (d <= (allMonitors.rects.size()-1)) {
+			if (d < allMonitors.rects.size()) {
+//				cout << "glfw ok opening " << endl;
 				displayOK = true;
-				break;
+//				break;
+			} else {
+//				cout << "glfw not enough displays" << endl;
+//				return nullptr;
 			}
 //			cout << d << endl;
 		}
@@ -206,13 +208,15 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 		displayOK = true;
 	}
 
+//	cout << "glfw displayok " << displayOK << endl;
 	windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), monitor, sharedContext);
 
-
 	if (displayOK) {
+		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 	} else {
 		// MARK: - WINDOW
-		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+//		cout << "glfw hint visible false" << endl;
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 //		return;
 	}
 	
