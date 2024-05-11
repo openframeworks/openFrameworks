@@ -54,8 +54,5 @@ downloader() {
 				fi
 			done
 		fi;
-	# fi
-
- 
+	fi
 }
-
