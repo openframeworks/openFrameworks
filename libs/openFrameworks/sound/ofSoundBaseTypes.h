@@ -2,7 +2,7 @@
 
 // MARK: ofConstants FS
 //#include "ofConstants.h"
-//namespace of { namespace filesystem { class path; } }
+namespace of { namespace filesystem { class path; } }
 
 #include <functional>
 #include <string>
