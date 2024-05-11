@@ -1,15 +1,15 @@
 #include "ofTimerFps.h"
 
+void ofTimerFps::reset() {
+   wakeTime = steady_clock::now();
+}
+
 ofTimerFps::ofTimerFps(){
 	reset();
 };
 
 void ofTimerFps::setFps(int fps) {
    interval = duration_cast<microseconds>(1s) / fps;
-}
-
-void ofTimerFps::reset() {
-   wakeTime = steady_clock::now();
 }
 
 void ofTimerFps::waitNext() {
