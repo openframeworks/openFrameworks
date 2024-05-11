@@ -1,7 +1,6 @@
 #!/bin/bash
-set -ev
+#set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
-# source $ROOT/scripts/ci/ccache.sh
 
 trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
 
