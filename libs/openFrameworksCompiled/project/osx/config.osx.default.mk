@@ -185,7 +185,7 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -226,7 +226,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
 
 ifeq ($(USE_FMOD),0)
@@ -366,7 +366,7 @@ afterplatform: $(TARGET_NAME)
 # Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
 	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
 	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
-	
+
 # App icons
  ifeq ($(RUN_TARGET), RunRelease)
 	@if [ -f of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
@@ -375,13 +375,13 @@ afterplatform: $(TARGET_NAME)
 	@if [ -f of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
 	@sed -i '' 's/\$$(ICON_NAME)/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  endif
- 
+
 	@sed -i '' 's/\$$(DEVELOPMENT_LANGUAGE)/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(EXECUTABLE_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(TARGET_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(PRODUCT_BUNDLE_IDENTIFIER)/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(VERSION)/1.0/g' bin/$(BIN_NAME).app/Contents/Info.plist
-		
+
 	@echo TARGET=$(TARGET)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 

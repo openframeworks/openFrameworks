@@ -168,7 +168,6 @@ if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=bleeding
 fi
 
-
 if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         ARCH=64_gcc6
@@ -185,16 +184,20 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
           openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
 elif [ "$PLATFORM" == "vs" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
-elif [[ "$PLATFORM" == "osx" || "$PLATFORM" == "ios" || "$PLATFORM" == "tvos" ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip"
+    else       
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
+    fi
+elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos)$ ]]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_1.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_2.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_3.tar.bz2"
     else    
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}1.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}2.tar.bz2 \

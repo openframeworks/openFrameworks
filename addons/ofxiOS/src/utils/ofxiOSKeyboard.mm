@@ -370,7 +370,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
         switch (ofGetOrientation())
         {
             case OF_ORIENTATION_90_LEFT:
-                _textField.transform = CGAffineTransformMakeRotation(M_PI_2);
+                _textField.transform = CGAffineTransformMakeRotation(glm::half_pi<float>());
                 x = rect.origin.y-rect.size.height;
                 y = s.height-rect.size.width-rect.origin.x;
                 w = rect.size.height;
@@ -378,7 +378,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
                 break;
                 
             case OF_ORIENTATION_90_RIGHT:
-                _textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
+                _textField.transform = CGAffineTransformMakeRotation(-glm::half_pi<float>());
                 x = s.width-rect.origin.y;
                 y = rect.origin.x;
                 w = rect.size.height;
@@ -386,7 +386,7 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
                 break;
                 
             case OF_ORIENTATION_180:
-                _textField.transform = CGAffineTransformMakeRotation(M_PI);
+                _textField.transform = CGAffineTransformMakeRotation(glm::pi<float>());
                 x = rect.origin.x;
                 y = rect.origin.y-rect.size.height;
                 w = rect.size.width;

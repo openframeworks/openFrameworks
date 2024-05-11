@@ -1,9 +1,9 @@
 #include "ofMath.h"
 #include "ofNoise.h"
 #include "ofPolyline.h"
-#include <float.h>
-
 #include "ofRandomDistributions.h"
+
+#include <float.h>
 
 #ifndef TARGET_WIN32
 	#include <sys/time.h>
@@ -62,7 +62,7 @@ float ofNormalize(float value, float min, float max) {
 //--------------------------------------------------
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
-	if (fabs(inputMin - inputMax) < std::numeric_limits<float>::epsilon()) {
+	if (std::abs(inputMin - inputMax) < std::numeric_limits<float>::epsilon()) {
 		return outputMin;
 	} else {
 		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
@@ -149,7 +149,7 @@ float ofWrap(float value, float from, float to) {
 	if (ofIsFloatEqual(cycle, 0.0f)) {
 		return to;
 	}
-	return value - cycle * floor((value - from) / cycle);
+	return value - cycle * std::floor((value - from) / cycle);
 }
 
 //--------------------------------------------------

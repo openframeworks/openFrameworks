@@ -7,8 +7,6 @@
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
 
-#ifdef OF_VIDEO_CAPTURE_AVF
-
 #import <Accelerate/Accelerate.h>
 
 @interface OSXVideoGrabber ()
@@ -119,7 +117,7 @@
 				int numMatch = 0;
 				for(AVFrameRateRange * range in supportedFrameRates){
 
-					if( (floor(range.minFrameRate) <= framerate && ceil(range.maxFrameRate) >= framerate) ){
+					if( (std::floor(range.minFrameRate) <= framerate && std::ceil(range.maxFrameRate) >= framerate) ){
 						ofLogVerbose("ofAvFoundationGrabber") << "found good framerate range, min: " << range.minFrameRate << " max: " << range.maxFrameRate << " for requested fps: " << framerate;
 						desiredRange = range;
 						numMatch++;
@@ -536,5 +534,3 @@ bool ofAVFoundationGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 ofPixelFormat ofAVFoundationGrabber::getPixelFormat() const{
 	return pixelFormat;
 }
-
-#endif
