@@ -182,6 +182,7 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
+# if [ "$PLATFORM" == "osx" ]; then
 if [ "$PLATFORM" == "msys2" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
@@ -248,6 +249,8 @@ if [ $OVERWRITE -eq 1 ]; then
         fi
     done
 fi
+
+echo "PKGS $PKGS"
 
 for PKG in $PKGS; do
     echo "Uncompressing libraries ${PLATFORM}${ARCH} from $PKG"

@@ -36,9 +36,11 @@ downloader() {
 	# else
 		if command -v wget2 2>/dev/null; then 
 			wget2 $@;
-		elif command -v curl 2>/dev/null; then 
+		elif 
+		 command -v curl 2>/dev/null; then 
 			for PKG in $@; do
-				curl -LO --retry 20 -O --progress-bar $PKG;
+				echo "curl -LO --progress-bar $PKG"
+				curl -L --retry 20 --progress-bar -O $PKG
 			done
 		else 
 			for PKG in $@; do
