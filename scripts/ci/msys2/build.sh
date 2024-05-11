@@ -1,18 +1,21 @@
 #!/bin/bash
-set -ev
+# set -ev
 ROOT="$PWD"
 
-echo "**** Building OF core ****"
+echo "##[group]**** Building OF core ****"
 cd $ROOT/libs/openFrameworksCompiled/project
-make -j -s Debug
+make -j2 -s Debug
+echo "##[endgroup]"
 
-echo "**** Building emptyExample ****"
+echo "##[group]**** Building emptyExample ****"
 cd $ROOT/scripts/templates/msys2
-make -j -s Debug
+make -j2 -s Debug
+echo "##[endgroup]"
 
-echo "**** Building allAddonsExample ****"
+echo "##[group]**** Building allAddonsExample ****"
 cd $ROOT
 cp scripts/templates/msys2/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/msys2/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-make -j -s Debug
+make -j2 -s Debug
+echo "##[endgroup]"
