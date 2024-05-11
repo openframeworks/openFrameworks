@@ -593,7 +593,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         self.soundFile = nil;
 		return NO;
     }else{
-		NSLog(@"Sound file %@ loaded!", url);
+		//NSLog(@"Sound file %@ loaded!", url);
 	}
 	
 	return [self loadWithSoundFile:self.soundFile];
@@ -614,7 +614,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             problem = YES;
             
         } else {
-            NSLog(@"Engine start successful");
+            //NSLog(@"Engine start successful");
             if(self.resetAudioEngine) {
 //                [self engineReset];
                 if(self.resetAudioEngine == NO)
@@ -847,11 +847,13 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (void)stop {
-    
-    __typeof(self) __weak weak_self = self;
+    if (!_bIsPlaying) {
+		return;
+	}
 
     if(_isSessionInterrupted || _isConfigChangePending){
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
+            __typeof(self) __weak weak_self = self;
             [weak_self stop];
         });
         return;
@@ -867,6 +869,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
     self.startedSampleOffset = 0;
 }
+
 
 //----------------------------------------------------------- states.
 - (BOOL)isLoaded {
