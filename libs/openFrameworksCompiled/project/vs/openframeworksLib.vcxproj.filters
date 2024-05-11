@@ -267,6 +267,9 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofTimer.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofTimerFps.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.h">
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
@@ -497,6 +500,9 @@
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofTimer.cpp">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofTimerFps.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp">
