@@ -13,12 +13,12 @@ on:
       - '**/*.md'
       - 'examples/**'
 
-env:
-  ccache: ccache
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  ccache: ccache  
 
 jobs:
   build-linux64-platforms:
@@ -61,4 +61,3 @@ jobs:
     #   run: scripts/ci/upload_of_lib.sh;
     #   env:
     #     GA_CI_SECRET: ${{ secrets.CI_SECRET }}
-
