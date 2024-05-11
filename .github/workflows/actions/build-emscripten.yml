@@ -1,0 +1,42 @@
+name: build-emscripten
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-emscripten:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          cfg:
+          - {target: emscripten}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Docker Step
+      run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash"
+    - name: Download libs
+      run: ./scripts/$TARGET/download_libs.sh
+    - name: Install dependencies
+      run: ./scripts/ci/$TARGET/install.sh
+    - name: Build
+      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
+    - name: Upload Libs
+      run: scripts/ci/upload_of_lib.sh;
+      env:
+          GA_CI_SECRET: ${{ secrets.CI_SECRET }}
