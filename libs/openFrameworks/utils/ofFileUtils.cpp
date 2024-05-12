@@ -32,10 +32,9 @@ namespace {
 
 	//--------------------------------------------------
 	fs::path defaultDataPath(){
-		cout << "fs::path defaultDataPath()" << endl;
 	#if defined TARGET_OSX
 		try {
-			cout << "xx" << fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/") << endl;
+//			cout << "xx" << fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/") << endl;
 			return fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/");
 		} catch(...) {
 			return ofFilePath::getCurrentExeDirFS() / "../../../data/";
