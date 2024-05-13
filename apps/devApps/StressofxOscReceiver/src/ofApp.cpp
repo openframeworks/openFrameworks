@@ -2,15 +2,24 @@
 
 #define USE_EXPLICIT_FUNCTION 1
 
+#define INSTANTLY_OUT_OF_SCOPE 1
+
 void ofApp::setup(){
 	for (size_t i = 0; i < testers_.size(); i++) {
 		testers_[i] = std::make_shared<Tester>();
 	}
-	ofLogNotice("ready to roll");
 	ofSetVerticalSync(false);
+	
+#ifdef INSTANTLY_OUT_OF_SCOPE
+	ofLogNotice("will hang");
+	ofxOscReceiver r;
+#endif
+	ofLogNotice("ready to roll");
+	
 }
 
 void ofApp::update(){
+	ofLogNotice("up");
 
 	if (mode_ == STOP) {
 		if (ofGetFrameNum()%6==0) {
