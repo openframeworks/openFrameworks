@@ -76,7 +76,7 @@ void ofApp::draw() {
 	ofDrawBitmapString("mode 1: dynamic reallocation every 3 frames (<5% loss)", 10, 200);
 	ofDrawBitmapString("mode 2: open/close every 3 frames (normal to have 50% loss)", 10, 220);
 	ofDrawBitmapString("mode 3: stable (should have 0% loss)", 10, 240);
-	ofDrawBitmapString("current mode: "+ofToString(mode_), 10, 260);
+	ofDrawBitmapString("current mode: "+ofToString(mode_+1), 10, 260);
 
 	ofDrawBitmapString("FPS (unsync'ed to stress things):   " + ofToString(ofGetFrameRate(), 2), 10, ofGetHeight()-30);
 }
