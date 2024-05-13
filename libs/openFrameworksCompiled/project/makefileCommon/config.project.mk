@@ -553,9 +553,6 @@ ifeq ($(findstring msys2,$(PLATFORM_LIB_SUBPATH)),msys2)
     OF_PROJECT_RESOURCES += $(addprefix $(OF_PROJECT_OBJ_OUTPUT_PATH), $(notdir $(patsubst %.ico, %.res, $(ICON))))
 endif
 
-$(info OF_PROJECT_RESOURCES $(OF_PROJECT_RESOURCES))
-$(info OF_PROJECT_OBJ_OUTPUT_PATH $(OF_PROJECT_OBJ_OUTPUT_PATH))
-
 OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
 # TODO: deal with shared libs?
