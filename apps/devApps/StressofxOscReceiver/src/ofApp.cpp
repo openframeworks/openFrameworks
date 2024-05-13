@@ -1,5 +1,7 @@
 #include "ofApp.h"
 
+#define USE_EXPLICIT_FUNCTION 1
+
 void ofApp::setup(){
 	for (size_t i = 0; i < testers_.size(); i++) {
 		testers_[i] = std::make_shared<Tester>();
@@ -10,22 +12,43 @@ void ofApp::setup(){
 
 void ofApp::update(){
 
-	if (dyna_ && ofGetFrameNum()%3==0) {
-		for (const auto & tester: testers_) {
-			tester->receiver_ = std::make_shared<ofxOscReceiver>(port_);
-			if (tester->receiver_->isListening()) {
-				tester->sender_ = std::make_shared<ofxOscSender>("127.0.0.1", port_);
-				receivers_++;
+	if (mode_ == STOP) {
+		if (ofGetFrameNum()%6==0) {
+			for (const auto & tester: testers_) {
+				tester->receiver_->stop();
 			}
-			if (port_++ > high_port_) port_ = low_port_;
+		} if (ofGetFrameNum()%6==3) {
+			for (const auto & tester: testers_) {
+				tester->receiver_->start();
+			}
+		}
+	} else if (mode_ == DYNA) {
+		if (ofGetFrameNum()%3==0) {
+			for (const auto & tester: testers_) {
+				tester->receiver_ = std::make_shared<ofxOscReceiver>(port_);
+				if (tester->receiver_->isListening()) {
+					tester->sender_ = std::make_shared<ofxOscSender>("127.0.0.1", port_);
+					receivers_++;
+				}
+				if (port_++ > high_port_) port_ = low_port_;
+			}
 		}
 	}
 
 	for (const auto & tester: testers_) {
 		for (size_t i=0; i<10; i++) {
-			ofxOscMessage m{"/test"};
-			m.add(i);
-			tester->sender_->sendMessage(m.add(port_).add(i));
+#if defined(USE_EXPLICIT_FUNCTION)
+		ofxOscMessage m;
+		m.setAddress("/test");
+		m.addIntArg(std::int32_t(i));
+		m.addIntArg(port_);
+		m.addIntArg(i);
+		tester->sender_->sendMessage(m);
+#else
+		ofxOscMessage m{"/test"};
+		m.add(i);
+		tester->sender_->sendMessage(m.add(port_).add(i));
+#endif
 			msgs_out_++;
 		}
 	}
@@ -37,7 +60,7 @@ void ofApp::update(){
 	}
 }
 
-void ofApp::draw(){
+void ofApp::draw() {
 	for (int i = 0; i < 1000; i++) {
 		ofSetColor(ofRandom(0,255), ofRandom(0, 255), ofRandom(0, 255));
 		ofDrawRectangle(i *15, 10, 10, 50);
@@ -50,14 +73,19 @@ void ofApp::draw(){
 	auto miss = msgs_out_-msgs_;
 	ofDrawBitmapString("= lost:   " + ofToString(miss) + " (" + ofToString((float(miss)/(msgs_out_))*100.0f, 2)+"%)", 10, 140);
 	
-	ofDrawBitmapString("FPS:   " + ofToString(ofGetFrameRate(), 2), 10, ofGetHeight()-30);
+	ofDrawBitmapString("mode 1: dynamic reallocation every 3 frames (<5% loss)", 10, 200);
+	ofDrawBitmapString("mode 2: open/close every 3 frames (normal to have 50% loss)", 10, 220);
+	ofDrawBitmapString("mode 3: stable (should have 0% loss)", 10, 240);
+	ofDrawBitmapString("current mode: "+ofToString(mode_), 10, 260);
+
+	ofDrawBitmapString("FPS (unsync'ed to stress things):   " + ofToString(ofGetFrameRate(), 2), 10, ofGetHeight()-30);
 }
 
 void ofApp::keyPressed(int key){
-	if (key==' ' ) {
-		dyna_ = !dyna_;
-		msgs_ = 0;
-		msgs_out_ = 0;
-	}
+	if (key=='1' ) mode_ = DYNA;
+	if (key=='2' ) mode_ = STOP;
+	if (key=='3' ) mode_ = STABLE;
+	msgs_ = 0;
+	msgs_out_ = 0;
 }
 

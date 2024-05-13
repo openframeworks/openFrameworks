@@ -10,6 +10,13 @@ struct Tester {
 
 class ofApp : public ofBaseApp{
 	
+	enum Mode {
+		DYNA,
+		STOP,
+		STABLE
+	};
+	
+	Mode mode_ { DYNA };
 	long msgs_ { 0 };
 	long msgs_out_ { 0 };
 	long receivers_ { 0 };
@@ -20,6 +27,7 @@ class ofApp : public ofBaseApp{
 	size_t port_ { low_port_ };
 	
 	std::array<std::shared_ptr<Tester>, 10> testers_;
+	
 	
 public:
 	void setup() override;
