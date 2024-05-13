@@ -22,10 +22,6 @@ ifeq ($(PLATFORM_ARCH),armv7l)
 	LINUX_ARM=1
 endif
 
-ifeq ($(PLATFORM_ARCH),aarch64)
-	LINUX_ARM=1
-endif
-
 #check if gtk exists and add it
 ifeq ($(CROSS_COMPILING),1)
 	HAS_SYSTEM_GTK3 = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-3.0 --exists; echo $$?)
@@ -259,7 +255,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofMediaFoundati
 
 ifeq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 else
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
@@ -400,9 +395,6 @@ ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += alsa
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
-	PLATFORM_PKG_CONFIG_LIBRARIES += glew
-## TEST
-else	
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
 endif
 

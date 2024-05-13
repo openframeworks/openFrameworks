@@ -145,7 +145,7 @@ Debug:
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) $(JOBS) DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) DebugABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
 endif
 
 ReleaseNoOF:
@@ -153,7 +153,7 @@ ReleaseNoOF:
 ifndef ABIS_TO_COMPILE_RELEASE
 	@$(MAKE) $(JOBS) ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(USE_CORES) ReleaseABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo
 endif
 
 DebugNoOF:
@@ -161,7 +161,7 @@ DebugNoOF:
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) $(JOBS) DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) DebugABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo
 endif
 
 ReleaseABI: $(TARGET)

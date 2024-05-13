@@ -53,10 +53,10 @@ PLATFORM_CFLAGS += -mcpu=cortex-a72
 PLATFORM_CFLAGS += -mtune=cortex-a72
 # PLATFORM_CFLAGS += -Wall
 # PLATFORM_CFLAGS += -Werror
-# PLATFORM_CFLAGS += -fPIC
-# PLATFORM_CFLAGS += -ftree-vectorize
-# PLATFORM_CFLAGS += -Wno-psabi
-# PLATFORM_CFLAGS += -pipe
+PLATFORM_CFLAGS += -fPIC
+PLATFORM_CFLAGS += -ftree-vectorize
+PLATFORM_CFLAGS += -Wno-psabi
+PLATFORM_CFLAGS += -pipe
 
 ################################################################################
 # PLATFORM LIBRARIES
@@ -81,11 +81,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
 PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
 PLATFORM_PKG_CONFIG_LIBRARIES += egl
 
-## TEST
-PLATFORM_PKG_CONFIG_LIBRARIES += gl
-PLATFORM_PKG_CONFIG_LIBRARIES += glu
-PLATFORM_PKG_CONFIG_LIBRARIES += glew
-PLATFORM_LIBRARIES += glfw
+
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
 #   During compilation, these makefiles will generate lists of sources, headers

@@ -1,9 +1,5 @@
 #!/bin/bash
-<<<<<<< HEAD
-set -ev
-=======
 # set -ev
->>>>>>> master
 OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
 export CROSS_COMPILING=1
@@ -37,35 +33,20 @@ export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
 
-<<<<<<< HEAD
-echo "**** Building emptyExample ****"
-=======
 echo "##[group]**** Building emptyExample ****"
->>>>>>> master
 cd $OF_ROOT
 cp scripts/templates/linux${PLATFORM_ARCH}/Makefile examples/templates/emptyExample/
 cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
-<<<<<<< HEAD
-make Debug -j
-
-# if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
-echo "**** Building allAddonsExample ****"
-=======
 make Debug -j2
 echo "##[endgroup]"
 
 # if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
 echo "##[group]**** Building allAddonsExample ****"
->>>>>>> master
 cd $OF_ROOT
 cp scripts/templates/linux${PLATFORM_ARCH}/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-<<<<<<< HEAD
-make Debug -j
-=======
 make Debug -j2
 echo "##[endgroup]"
->>>>>>> master
 # fi

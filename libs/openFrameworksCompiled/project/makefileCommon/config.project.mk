@@ -389,8 +389,11 @@ ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
 
-CXX := time ${ccache} $(CXX)
-CC := time ${ccache} $(CXX)
+ifdef ${ccache} 
+$(info 💿 Using CCACHE -- config.project.mk )
+	CXX := ${ccache} $(CXX)
+	CC := ${ccache} $(CXX)
+endif	
 
 ifdef PROJECT_RESOURCE_COMPILER
     RESOURCE_COMPILER ?= $(PROJECT_RESOURCE_COMPILER)

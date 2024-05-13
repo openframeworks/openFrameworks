@@ -145,7 +145,7 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 endif
 
 ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
-	ifdef _DEBUG
+	ifdef ABIS_TO_COMPILE_DEBUG
 		ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 			ifdef ABIS_TO_COMPILE_RELEASE
 				ABIS_TO_COMPILE = $(filter-out $(ABIS_TO_COMPILE_DEBUG),$(ABIS_TO_COMPILE_RELEASE))
@@ -208,35 +208,21 @@ endif
 # avoid conflict with files of the same name and to improve performance.
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help force
 
-USE_CORES=-j1 
-
-# ifeq ($(PLATFORM_ARCH),armv6l)
-# 	USE_CORES=-j2
-# endif
-
-# ifeq ($(PLATFORM_ARCH),armv7l)
-# 	USE_CORES=-j2
-# endif
-
-# ifeq ($(PLATFORM_ARCH),aarch64)
-# 	USE_CORES=-j3
-# endif
-
 Release:
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) $(USE_CORES) --no-print-directory ReleaseABI
+	@$(MAKE) --no-print-directory ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(USE_CORES) --no-print-directory ReleaseABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo
 endif
-	@$(MAKE) $(USE_CORES) --no-print-directory after
+	@$(MAKE) --no-print-directory after
 
 Debug:
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) $(USE_CORES) --no-print-directory DebugABI
+	@$(MAKE) --no-print-directory DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) --no-print-directory DebugABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo
 endif
-	@$(MAKE) $(USE_CORES) --no-print-directory after
+	@$(MAKE) --no-print-directory after
 
 # Release will pass the library name (i.e. ... libopenFrameworks.a)
 # down the the @(TARGET) target
@@ -248,8 +234,8 @@ DebugABI: $(TARGET)
 
 # all will first run the debug target, then the release target
 all:
-	@$(MAKE) $(USE_CORES) --no-print-directory Debug
-	@$(MAKE) $(USE_CORES) --no-print-directory Release
+	@$(MAKE) --no-print-directory Debug
+	@$(MAKE) --no-print-directory Release
 
 $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags: force
 	@mkdir -p $(OF_CORE_OBJ_OUTPUT_PATH)
@@ -308,12 +294,12 @@ $(CLEANTARGET)ABI:
 
 $(CLEANTARGET):
 ifndef ABIS_TO_COMPILE
-	$(MAKE) $(USE_CORES) --no-print-directory $(CLEANTARGET)ABI
+	$(MAKE) --no-print-directory $(CLEANTARGET)ABI
 else
 ifeq ($(TARGET_NAME),Debug)
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(USE_CORES) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 endif
 endif
 

@@ -33,21 +33,15 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/downloader.sh"
 
 download(){
-    echo '-----'
     echo "Downloading $1"
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
-
-    COMMAND=" "
-    REPO="nightly"
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        REPO="bleeding"
+        echo downloader https://github.com/openframeworks/apothecary/releases/download/bleeding/$1 $SILENT_ARGS
+        downloader https://github.com/openframeworks/apothecary/releases/download/bleeding/$1 $SILENT_ARGS
+    else
+        echo downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
+        downloader https://github.com/openframeworks/apothecary/releases/download/nightly/$1 $SILENT_ARGS
     fi
-
-    for PKG in $1; do
-        COMMAND+="https://github.com/openframeworks/apothecary/releases/download/$REPO/$PKG "
-    done
-    echo $COMMAND;
-    downloader $COMMAND $SILENT_ARGS
 }
 
 # trap any script errors and exit
@@ -229,11 +223,9 @@ else # Linux
     fi
 fi
 
-# for PKG in $PKGS; do
-#     download $PKG
-# done
-# echo $PKGS
-download "${PKGS[@]}"
+for PKG in $PKGS; do
+    download $PKG
+done
 
 cd ../../
 mkdir -p libs
