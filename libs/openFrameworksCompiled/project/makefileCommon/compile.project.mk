@@ -258,7 +258,7 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.res: $(ICON)
 	@echo MAINICON ICON \"$(shell cygpath -m $<)\" > $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.rc
 	@$(RESOURCE_COMPILER) $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.rc -O coff -o $@
 
-
+$(info PWD DMTR $(shell pwd))
 
 
 # Rules to compile the project external sources
