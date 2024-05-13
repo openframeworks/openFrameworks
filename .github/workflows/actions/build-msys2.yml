@@ -13,12 +13,12 @@ on:
       - '**/*.md'
       - 'examples/**'
 
-env:
-  ccache: ccache
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  ccache: ccache
 
 jobs:
   build-msys2:
@@ -64,5 +64,3 @@ jobs:
 
     - name: Run tests
       run: ./scripts/ci/msys2/run_tests.sh
-
-
