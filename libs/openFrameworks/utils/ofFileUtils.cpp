@@ -1898,7 +1898,7 @@ fs::path ofFilePath::getCurrentExePathFS(){
 		);
 		if (result == 0) {
 			// Error
-			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
+			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileName failed";
 		}
 		return filename;
 	#endif
