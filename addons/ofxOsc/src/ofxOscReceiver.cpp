@@ -2,6 +2,8 @@
 // copyright (c) Damian Stewart 2007-2009
 #include "ofxOscReceiver.h"
 
+#define OSC_NO_DETACH 1
+
 //--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver() {
 	stop();
@@ -101,13 +103,15 @@ bool ofxOscReceiver::start() {
 	// or on destruction, the custom deleter for the socket unique_ptr already
 	// does the right thing
 	
-//	listenThread.detach();
-
+#ifndef OSC_NO_DETACH
+	listenThread.detach();
+#endif
 	return true;
 }
 
 //--------------------------------------------------------------
 void ofxOscReceiver::stop() {
+#ifdef OSC_NO_DETACH
 	if (listenSocket) {
 		listenSocket->AsynchronousBreak();
 	} else {
@@ -119,6 +123,7 @@ void ofxOscReceiver::stop() {
 	} else {
 		listenThread.join();
 	}
+#endif
 	listenSocket.reset();
 }
 
