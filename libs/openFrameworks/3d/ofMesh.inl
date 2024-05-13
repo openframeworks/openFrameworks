@@ -5,8 +5,6 @@
 #include "ofAppRunner.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
-#include "ofMath.h"
-// #include "ofMathConstants.h"
 #include "ofLog.h"
 #include "ofColor.h"
 
@@ -1845,7 +1843,7 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 
 		V vert;
 		N normal;
-		float angleCos = cos(ofDegToRad(angle));
+		float angleCos = std::cos(glm::radians(angle));
 		float numNormals=0;
 
 		for(ofIndexType j = 0; j < triangles.size(); j++) {
@@ -2025,15 +2023,15 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 
 	for(float i = 0; i < res+1; i++) {
 
-		float tr = sin( glm::pi<float>()-i * polarInc );
-		float ny = cos( glm::pi<float>()-i * polarInc );
+		float tr = std::sin( glm::pi<float>()-i * polarInc );
+		float ny = std::cos( glm::pi<float>()-i * polarInc );
 
 		tcoord.y = 1.f - (i / res);
 
 		for(float j = 0; j <= doubleRes; j++) {
 
-			float nx = tr * sin(j * azimInc);
-			float nz = tr * cos(j * azimInc);
+			float nx = tr * std::sin(j * azimInc);
+			float nz = tr * std::cos(j * azimInc);
 
 			tcoord.x = j / (doubleRes);
 
@@ -2370,8 +2368,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 		for(int iy = 0; iy < capSegs; iy++) {
 			for(int ix = 0; ix < radiusSegments; ix++) {
 				newRad = ofMap((float)iy, 0, capSegs-1, 0.0, radius);
-				vert.x = cos((float)ix*angleIncRadius) * newRad;
-				vert.z = sin((float)ix*angleIncRadius) * newRad;
+				vert.x = std::cos((float)ix*angleIncRadius) * newRad;
+				vert.z = std::sin((float)ix*angleIncRadius) * newRad;
 				vert.y = -halfH;
 
 				tcoord.x = (float)ix/((float)radiusSegments-1.f);
@@ -2424,9 +2422,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 		for(int ix = 0; ix < radiusSegments; ix++) {
 
 			//newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
-			vert.x = cos(ix*angleIncRadius) * radius;
+			vert.x = std::cos(ix*angleIncRadius) * radius;
 			vert.y = heightInc*float(iy) - halfH;
-			vert.z = sin(ix*angleIncRadius) * radius;
+			vert.z = std::sin(ix*angleIncRadius) * radius;
 
 			tcoord.x = float(ix)/(float(radiusSegments)-1.f);
 			tcoord.y = 1.f - ofMap(iy, 0, heightSegments-1, minTexYNormalized, maxTexYNormalized );
@@ -2474,8 +2472,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 		for(int iy = 0; iy < capSegs; iy++) {
 			for(int ix = 0; ix < radiusSegments; ix++) {
 				newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
-				vert.x = cos((float)ix*angleIncRadius) * newRad;
-				vert.z = sin((float)ix*angleIncRadius) * newRad;
+				vert.x = std::cos((float)ix*angleIncRadius) * newRad;
+				vert.z = std::sin((float)ix*angleIncRadius) * newRad;
 				vert.y = halfH;
 
 				tcoord.x = (float)ix/((float)radiusSegments-1.f);
@@ -2565,9 +2563,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 		for(int ix = 0; ix < radiusSegments; ix++) {
 
 			newRad = ofMap((float)iy, 0, heightSegments-1, 0.0, radius);
-			vert.x = cos((float)ix*angleIncRadius) * newRad;
+			vert.x = std::cos((float)ix*angleIncRadius) * newRad;
 			vert.y = heightInc*((float)iy) - halfH;
-			vert.z = sin((float)ix*angleIncRadius) * newRad;
+			vert.z = std::sin((float)ix*angleIncRadius) * newRad;
 
 			tcoord.x = (float)ix/((float)radiusSegments-1.f);
 			tcoord.y = 1.f - (float)iy/((float)maxTexY);
@@ -2577,9 +2575,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 
 			if(iy == 0) {
 				newRad = 1.f;
-				vert.x = cos((float)ix*angleIncRadius) * newRad;
+				vert.x = std::cos((float)ix*angleIncRadius) * newRad;
 				vert.y = heightInc*((float)iy) - halfH;
-				vert.z = sin((float)ix*angleIncRadius) * newRad;
+				vert.z = std::sin((float)ix*angleIncRadius) * newRad;
 			}
 
 			auto diff = toGlm(vert - startVec);
@@ -2623,8 +2621,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 	for(int iy = 0; iy < capSegs; iy++) {
 		for(int ix = 0; ix < radiusSegments; ix++) {
 			newRad = ofMap((float)iy, 0, capSegs-1, radius, 0.0);
-			vert.x = cos((float)ix*angleIncRadius) * newRad;
-			vert.z = sin((float)ix*angleIncRadius) * newRad;
+			vert.x = std::cos((float)ix*angleIncRadius) * newRad;
+			vert.z = std::sin((float)ix*angleIncRadius) * newRad;
 			vert.y = halfH;
 
 			tcoord.x = (float)ix/((float)radiusSegments-1.f);

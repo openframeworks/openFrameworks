@@ -35,8 +35,14 @@ else
 	ARFLAGS = -cr
 endif
 
-CXX := time ${ccache} $(CXX)
-CC := time ${ccache} $(CXX)
+ifdef ${ccache}
+$(info 💿 Using CCACHE - compile.core.mk )
+	CXX := ${ccache} $(CXX)
+	CC := ${ccache} $(CXX)
+endif
+
+$(info 💾 CXX = $(CXX))
+$(info 💾 CC = $(CC))
 
 ################################################################################
 # CFLAGS

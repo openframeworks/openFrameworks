@@ -211,9 +211,11 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 	} else {
 		bFrameRateSet = true;
 		targetRate = _targetRate;
+		
 //		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
 //		timer.setPeriodicEvent(nanosPerFrame);
-		timer.setFps(targetRate);
+		
+		timerFps.setFps(targetRate);
 	}
 }
 
@@ -303,8 +305,8 @@ bool ofCoreEvents::notifyDraw() {
 	auto attended = ofNotifyEvent(draw, voidEventArgs);
 
 	if (bFrameRateSet) {
-//		std::cout << "timer wait " << ofGetFrameNum() << std::endl;
-		timer.waitNext();
+//		timer.waitNext();
+		timerFps.waitNext();
 	}
 
 	if (fps.getNumFrames() == 0) {
@@ -312,7 +314,7 @@ bool ofCoreEvents::notifyDraw() {
 	} else {
 		/*if(ofIsVerticalSyncEnabled()){
 			float rate = ofGetRefreshRate();
-			int intervals = round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
+			int intervals = std::round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
 			//vsyncedIntervalsRemainder = lastFrameTime*rate/1000000.+vsyncedIntervalsRemainder - intervals;
 			lastFrameTime = intervals*1000000/rate;
 		}*/

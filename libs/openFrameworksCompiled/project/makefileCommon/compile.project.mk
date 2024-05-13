@@ -5,7 +5,7 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
-	APPNAME = $(shell basename `pwd`)
+	APPNAME = $(shell basename "`pwd`")
 endif
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
@@ -119,43 +119,31 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help force
 
-# USE_CORES=-j 
-
-# ifeq ($(PLATFORM_ARCH),armv6l)
-# 	USE_CORES=-j2
-# endif
-
-# ifeq ($(PLATFORM_ARCH),armv7l)
-# 	USE_CORES=-j2
-# endif
-
-# ifeq ($(PLATFORM_ARCH),aarch64)
-# 	USE_CORES=-j3
-# endif
+# $(info MAKEFLAGS XXX = ${MAKEFLAGS})
+JOBS = -j2
 
 Release:
 	@echo Compiling OF library for Release
-	@echo $(MAKE) $(USE_CORES) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
-	@$(MAKE) $(USE_CORES) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
+	@$(MAKE) $(JOBS) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Release
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) $(USE_CORES) ReleaseABI
+	@$(MAKE) $(JOBS) ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(USE_CORES) ReleaseABI ABI=$(abi) &&) echo
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(JOBS) ReleaseABI ABI=$(abi) &&) echo
 endif
 
 
 
 Debug:
 	@echo Compiling OF library for Debug
-	$(MAKE) $(USE_CORES) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+	$(MAKE) $(JOBS) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Debug
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) $(USE_CORES) DebugABI
+	@$(MAKE) $(JOBS) DebugABI
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) DebugABI ABI=$(abi) &&) echo
 endif
@@ -163,7 +151,7 @@ endif
 ReleaseNoOF:
 	@echo Compiling $(APPNAME) for Release
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) $(USE_CORES) ReleaseABI
+	@$(MAKE) $(JOBS) ReleaseABI
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(USE_CORES) ReleaseABI ABI=$(abi) &&) echo
 endif
@@ -171,27 +159,27 @@ endif
 DebugNoOF:
 	@echo Compiling $(APPNAME) for Debug
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) $(USE_CORES) DebugABI
+	@$(MAKE) $(JOBS) DebugABI
 else
 	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(USE_CORES) DebugABI ABI=$(abi) &&) echo
 endif
 
 ReleaseABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) $(USE_CORES) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+	@$(MAKE) $(JOBS) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
-	@$(MAKE) $(USE_CORES) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+	@$(MAKE) $(JOBS) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
 DebugABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
-	@$(MAKE) $(USE_CORES) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
+	@$(MAKE) $(JOBS) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
-	@$(MAKE) $(USE_CORES) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+	@$(MAKE) $(JOBS) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
 all:
-	$(MAKE) $(USE_CORES) Debug
+	$(MAKE) $(JOBS) Debug
 
 run:
 ifeq ($(PLATFORM_RUN_COMMAND),)
@@ -313,7 +301,8 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S $(OF_PROJ
 
 
 #Rules to compile the addons sources when the addon path is specified explicitly
-PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
+# PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
+PROJECT_ADDONS_OBJ_PATH=./$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<

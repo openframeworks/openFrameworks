@@ -5,7 +5,12 @@
 #include "ofImage.h"
 #include "ofGLProgrammableRenderer.h"
 
-#include <typeinfo>
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/vec2.hpp>
+#include <glm/gtx/transform.hpp>
+
+//#include <typeinfo>
 
 using std::shared_ptr;
 using std::string;
@@ -1184,7 +1189,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			//shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
-			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
+			shader.setUniform1f("lights["+idx+"].spotCosCutoff", std::cos(glm::radians(light->spotCutOff)));
 		}else if(light->lightType==OF_LIGHT_DIRECTIONAL){
 			if( !isPBR() ) {
 				glm::vec3 halfVector(glm::normalize(glm::vec4(0.f, 0.f, 1.f, 0.f) + lightEyePosition));

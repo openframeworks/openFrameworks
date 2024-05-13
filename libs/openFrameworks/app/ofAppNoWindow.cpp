@@ -99,13 +99,13 @@ private:
 	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
 	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
 	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){};
-	ofRectangle getCurrentViewport() const{return ofRectangle();};
-	ofRectangle getNativeViewport() const{return ofRectangle();};
+	ofRectangle getCurrentViewport() const{ return ofRectangle(); };
+	ofRectangle getNativeViewport() const{ return ofRectangle(); };
 	int getViewportWidth() const{return 0;};
 	int getViewportHeight() const{return 0;};
 
 	void setCoordHandedness(ofHandednessType handedness){};
-	ofHandednessType getCoordHandedness() const{return OF_LEFT_HANDED;};
+	ofHandednessType getCoordHandedness() const{ return OF_LEFT_HANDED; };
 
 	//our openGL wrappers
 	void pushMatrix(){};

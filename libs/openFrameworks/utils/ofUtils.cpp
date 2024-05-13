@@ -7,7 +7,6 @@
 #include "ofImage.h"
 #include "ofLog.h"
 #include "ofMainLoop.h"
-#include "ofMath.h"
 #include "ofPixels.h"
 
 #include "uriparser/Uri.h"
@@ -18,7 +17,6 @@
 #ifndef TARGET_WIN32
 	#include <unistd.h>
 #endif
-
 
 #ifdef TARGET_WIN32 // For ofLaunchBrowser.
 	#include <shellapi.h>

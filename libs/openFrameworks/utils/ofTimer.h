@@ -2,51 +2,8 @@
 
 #include "ofUtils.h"
 
-#include <chrono>
-#include <ctime>
-#include <iostream>
-#include <thread>
-
-using namespace std::chrono;
-using namespace std::chrono_literals;
-
-class ofTimerFps {
-public:
-	ofTimerFps(){
-		reset();
-	};
-
-//	using space = std::chrono::duration<long long, std::micro>;
-	using space = std::chrono::duration<long long, std::nano>;
-	space interval;
-	time_point<steady_clock> wakeTime;
-	time_point<steady_clock> lastWakeTime;
-
-	// FIXME: double? float?
-	void setFps(int fps) {
-//		std::cout << "ofTimerFps " << fps << std::endl;
-		interval = duration_cast<microseconds>(1s) / fps;
-	}
-
-	void reset() {
-		wakeTime = steady_clock::now();
-	}
-	
-	void waitNext(){
-//		std::cout << "interval:" << duration_cast<microseconds>(wakeTime - lastWakeTime).count() << std::endl;
-//		std::cout << "ellapsed:" << duration_cast<microseconds>(steady_clock::now() - lastWakeTime).count() << std::endl;
-//		std::cout << "will sleep:" << duration_cast<microseconds>(wakeTime - steady_clock::now()).count() << std::endl;
-//		std::cout << "----" << std::endl;
-		std::this_thread::sleep_until(wakeTime);
-		lastWakeTime = wakeTime;
-		wakeTime += interval;
-	}
-};
-
-
 class ofTimer {
 public:
-	
 	/// \brief Constructs the default ofTimer().
 	ofTimer();
 
