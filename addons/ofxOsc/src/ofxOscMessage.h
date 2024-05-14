@@ -191,6 +191,7 @@ public:
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addInt64Arg(std::int64_t argument);
 	ofxOscMessage & add(std::int64_t argument) { return addInt64Arg(argument); }
+	ofxOscMessage & add(size_t argument) { return addInt64Arg(argument); }
 
 	/// add a 32-bit float
 	/// \return a reference to this ofxOscMessage
