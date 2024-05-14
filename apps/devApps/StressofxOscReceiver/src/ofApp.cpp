@@ -19,7 +19,6 @@ void ofApp::setup(){
 }
 
 void ofApp::update(){
-	ofLogNotice("up");
 
 	if (mode_ == STOP) {
 		if (ofGetFrameNum()%6==0) {
