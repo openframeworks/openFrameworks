@@ -356,7 +356,8 @@ class SocketReceiveMultiplexer::Implementation{
 	std::vector< std::pair< PacketListener*, UdpSocket* > > socketListeners_;
 	std::vector< AttachedTimerListener > timerListeners_;
 
-	volatile bool break_;
+	std::atomic<bool> break_ = false;
+
 	int breakPipe_[2]; // [0] is the reader descriptor and [1] the writer
 
 	double GetCurrentTimeMs() const
