@@ -424,7 +424,6 @@ public:
 
     void Run()
 	{
-		break_ = false;
         char *data = 0;
         
         try{
@@ -541,11 +540,16 @@ public:
             }
 
             delete [] data;
+			break_ = false;
+
         }catch(...){
             if( data )
                 delete [] data;
+			break_ = false;
+
             throw;
         }
+		
 	}
 
     void Break()
