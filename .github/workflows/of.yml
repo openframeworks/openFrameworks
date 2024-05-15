@@ -16,8 +16,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# env:
-#   ccache: ccache
+env:
+  ccache: ccache
 
 jobs:
   build-emscripten:
