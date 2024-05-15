@@ -2,8 +2,6 @@
 // copyright (c) Damian Stewart 2007-2009
 #include "ofxOscReceiver.h"
 
-#define OSC_NO_DETACH 1
-
 //--------------------------------------------------------------
 ofxOscReceiver::~ofxOscReceiver() {
 	stop();
