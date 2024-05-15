@@ -25,15 +25,15 @@ using ofDefaultVec4 = glm::vec4;
 	#include <glm/gtc/constants.hpp>
 
 	#ifndef PI
-	#define PI glm::pi<float>();
+	#define PI glm::pi<float>()
 	#endif
 
 	#ifndef TWO_PI
-	#define TWO_PI glm::two_pi<float>();
+	#define TWO_PI glm::two_pi<float>()
 	#endif
 
 	#ifndef M_TWO_PI
-	#define M_TWO_PI glm::two_pi<float>();
+	#define M_TWO_PI glm::two_pi<float>()
 	#endif
 
 	#ifndef FOUR_PI
@@ -41,7 +41,7 @@ using ofDefaultVec4 = glm::vec4;
 	#endif
 
 	#ifndef HALF_PI
-	#define HALF_PI glm::half_pi<float>();
+	#define HALF_PI glm::half_pi<float>()
 	#endif
 
 	#ifndef DEG_TO_RAD
