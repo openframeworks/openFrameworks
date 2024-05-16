@@ -4,3 +4,9 @@
 [submodule "scripts/apothecary"]
 	path = scripts/apothecary
 	url = https://github.com/openframeworks/apothecary
+[submodule "addons/ofxSoundObject"]
+	path = addons/ofxSoundObject
+	url = git@github.com:roymacdonald/ofxSoundObjects.git
+[submodule "addons/ofxAudioFile"]
+	path = addons/ofxAudioFile
+	url = git@github.com:npisanti/ofxAudioFile.git
