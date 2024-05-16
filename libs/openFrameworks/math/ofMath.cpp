@@ -86,12 +86,12 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float x2, float y2) {
-	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	return std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float z1, float x2, float y2, float z2) {
-	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
+	return std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
 }
 
 //--------------------------------------------------

@@ -2137,9 +2137,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 	ofMesh_<V,N,C,T> sphere;
 
 	/// Step 1 : Generate icosahedron
-	const float sqrt5 = sqrt(5.0f);
+	const float sqrt5 = std::sqrt(5.0f);
 	const float phi = (1.0f + sqrt5) * 0.5f;
-	const float invnorm = 1/sqrt(phi*phi+1);
+	const float invnorm = 1/std::sqrt(phi*phi+1);
 
 	
 	// FIXME: addvertices XAXA
@@ -2156,7 +2156,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 	sphere.addVertex(invnorm * V(-1,  -phi,0));//10
 	sphere.addVertex(invnorm * V( 1,  -phi,0));//11
        
-        ofIndexType firstFaces[] = {
+    ofIndexType firstFaces[] = {
 		0,1,2,
 		0,3,1,
 		0,4,5,
@@ -2198,16 +2198,18 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			auto i1 = faces[i*3];
 			auto i2 = faces[i*3+1];
 			auto i3 = faces[i*3+2];
-			auto i12 = vertices.size();
+			auto i12 = static_cast<ofIndexType>(vertices.size());
 			auto i23 = i12+1;
 			auto i13 = i12+2;
 			auto v1 = vertices[i1];
 			auto v2 = vertices[i2];
 			auto v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
-			vertices.push_back(glm::normalize(toGlm(v1+v2)));
-			vertices.push_back(glm::normalize(toGlm(v2+v3)));
-			vertices.push_back(glm::normalize(toGlm(v1+v3)));
+			vertices.insert(vertices.end(), {
+				glm::normalize(toGlm(v1+v2)),
+				glm::normalize(toGlm(v2+v3)),
+				glm::normalize(toGlm(v1+v3)),
+			});
 			//now recreate indices
 			newFaces.insert(newFaces.end(), {
 				i1,
