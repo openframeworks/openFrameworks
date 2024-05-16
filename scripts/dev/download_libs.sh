@@ -229,7 +229,7 @@ done
 
 if command -v wget2 2>/dev/null; then 
 	wget2 $PARAMS
-elif command -v curl 2>/dev/null; then 
+else command -v curl 2>/dev/null; then 
 	curl --parallel -L --progress-bar -OOOO $PARAMS
 else 
 	wget $PARAMS 2> /dev/null
