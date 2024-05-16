@@ -2,11 +2,6 @@
 
 #include "ofxiOS.h"
 
-//  Note:
-//      If the app is not compiling, try removing the MyGuiView.xib reference
-//      from the xcode project and adding it back to the project.
-//      Set the deployment target in project / General / Deployment Target >= 5.1
-
 class ofApp : public ofxiOSApp{
 	
 	public:

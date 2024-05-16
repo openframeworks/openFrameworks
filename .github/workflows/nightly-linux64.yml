@@ -32,7 +32,7 @@ jobs:
       run: scripts/ci/package_builds.sh;
       id: createpackage
     - name: Update Release
-      uses: IsaacShelton/update-existing-release@v1.3.3
+      uses: IsaacShelton/update-existing-release@v1.3.4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: nightly
