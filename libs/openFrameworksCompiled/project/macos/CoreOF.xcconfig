@@ -4,6 +4,8 @@ CLANG_ENABLE_OBJC_ARC = YES
 CLANG_CXX_LANGUAGE_STANDARD = c++17
 MACOSX_DEPLOYMENT_TARGET = 10.15
 
+MISC_FLAGS = "-ObjC"
+
 
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
@@ -41,13 +43,15 @@ LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworksD
 //LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/osx/pugixml.a"
 
 
-//OF_CORE_LIBS =  $(LIB_FMOD)
+OF_CORE_LIBS = $(MISC_FLAGS)
+//$(LIB_FMOD)
 
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREEIMAGE)  $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_FMOD)
 //$(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_GLEW)
 
-OF_CORE_FRAMEWORKS = 
-//-framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework Security
+OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework Security
+//-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics
+//
 
 
 // BOOST can be enabled in OF Core by uncommenting this block
@@ -61,7 +65,7 @@ OF_CORE_FRAMEWORKS =
 
 ALWAYS_SEARCH_USER_PATHS = NO
 DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING = YES
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1 GLES_SILENCE_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1 GLES_SILENCE_DEPRECATION=1 OF_NO_FMOD
 
 
 //COMPILER SETTINGS WHICH CAN BE OVERRIDDEN BY XCODE BUILD SETTINGS

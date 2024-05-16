@@ -204,6 +204,7 @@ enum ofTargetPlatform{
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
+    #define OF_NO_FMOD
     
 	#include "GL/glew.h"
     #include "OpenGL/OpenGL.h"

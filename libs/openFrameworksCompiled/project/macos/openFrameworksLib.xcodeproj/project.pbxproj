@@ -333,7 +333,6 @@
 		BF6277CA2BADCF7C008864C1 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0292BAD0954000E2E0E /* TVUIKit.framework */; platformFilters = (tvos, ); };
 		BF6277CB2BADCF7C008864C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C02A2BAD0955000E2E0E /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		BF6277CC2BADCF7C008864C1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0272BAD02DE000E2E0E /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		BF6277CD2BADCF7C008864C1 /* libfmod.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDD82BAC7E74000E2E0E /* libfmod.dylib */; platformFilters = (macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		BF6277CE2BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAB2BAC7A6F000E2E0E /* AudioToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		BF6277CF2BADCF7C008864C1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAC2BAC7A6F000E2E0E /* AVFoundation.framework */; };
 		BF6277D02BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0132BAC8A1C000E2E0E /* CoreGraphics.framework */; };
@@ -341,7 +340,7 @@
 		BF6277D22BADCF7C008864C1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C00B2BAC8A1C000E2E0E /* QuartzCore.framework */; };
 		BF6277D32BADCF7C008864C1 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAD2BAC7A6F000E2E0E /* CoreFoundation.framework */; };
 		BF6277D42BADCF7C008864C1 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAE2BAC7A6F000E2E0E /* Accelerate.framework */; };
-		BF6277D52BADCF7C008864C1 /* CoreAudioTypes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAF2BAC7A6F000E2E0E /* CoreAudioTypes.framework */; platformFilters = (macos, ); };
+		BF6277D52BADCF7C008864C1 /* CoreAudioTypes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAF2BAC7A6F000E2E0E /* CoreAudioTypes.framework */; };
 		BF6277D62BADCF7C008864C1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0052BAC8A1C000E2E0E /* MapKit.framework */; };
 		BF6277D72BADCF7C008864C1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB02BAC7A6F000E2E0E /* CoreData.framework */; };
 		BF6277D82BADCF7C008864C1 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBA2BAC7DD0000E2E0E /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
@@ -363,6 +362,9 @@
 		BF6277E82BADCF7C008864C1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0192BAC8A1C000E2E0E /* AVFoundation.framework */; };
 		BF6277E92BADCF7C008864C1 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC32BAC7DD0000E2E0E /* OpenAL.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		BF6277F22BADD5A9008864C1 /* AVFAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6277F12BADD5A9008864C1 /* AVFAudio.framework */; };
+		BF6279EE2BB075A6008864C1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279ED2BB075A6008864C1 /* Security.framework */; platformFilters = (maccatalyst, macos, watchos, xros, ); };
+		BF6279F02BB075DB008864C1 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279EF2BB075DB008864C1 /* ApplicationServices.framework */; platformFilters = (maccatalyst, macos, ); };
+		BF6279F22BB07B37008864C1 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279F12BB07B37008864C1 /* pugixml.xcframework */; };
 		BF6609E52BA1DB6F005FA2B1 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
 		BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; };
 		BF6609E92BA1DC4B005FA2B1 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
@@ -555,7 +557,6 @@
 		BF23BDC72BAC7DD0000E2E0E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		BF23BDC82BAC7DD0000E2E0E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		BF23BDC92BAC7DD0000E2E0E /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
-		BF23BDD82BAC7E74000E2E0E /* libfmod.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfmod.dylib; path = ../../../fmod/lib/osx/libfmod.dylib; sourceTree = "<group>"; };
 		BF23BF432BAC872D000E2E0E /* ofAppiOSWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppiOSWindow.h; sourceTree = "<group>"; };
 		BF23BF442BAC872D000E2E0E /* ofAppiOSWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAppiOSWindow.mm; sourceTree = "<group>"; };
 		BF23BF452BAC872D000E2E0E /* ofxiOSApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSApp.h; sourceTree = "<group>"; };
@@ -668,6 +669,9 @@
 		BF6276B42BADC774008864C1 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		BF6277F02BADCF7C008864C1 /* openFrameworks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = openFrameworks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF6277F12BADD5A9008864C1 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
+		BF6279ED2BB075A6008864C1 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		BF6279EF2BB075DB008864C1 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		BF6279F12BB07B37008864C1 /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/macos/pugixml.xcframework; sourceTree = "<group>"; };
 		BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cairo.xcframework; path = ../../../cairo/lib/macos/cairo.xcframework; sourceTree = "<group>"; };
 		BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
@@ -802,6 +806,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF6279F02BB075DB008864C1 /* ApplicationServices.framework in Frameworks */,
+				BF6279EE2BB075A6008864C1 /* Security.framework in Frameworks */,
 				BF6277F22BADD5A9008864C1 /* AVFAudio.framework in Frameworks */,
 				BF6277B92BADCF7C008864C1 /* OpenGL.framework in Frameworks */,
 				BF6277BA2BADCF7C008864C1 /* Cocoa.framework in Frameworks */,
@@ -812,6 +818,7 @@
 				BF6277BF2BADCF7C008864C1 /* FreeImage.xcframework in Frameworks */,
 				BF6277C02BADCF7C008864C1 /* tess2.xcframework in Frameworks */,
 				BF6277C12BADCF7C008864C1 /* pugixml.xcframework in Frameworks */,
+				BF6279F22BB07B37008864C1 /* pugixml.xcframework in Frameworks */,
 				BF6277C22BADCF7C008864C1 /* glew.xcframework in Frameworks */,
 				BF6277C32BADCF7C008864C1 /* glfw.xcframework in Frameworks */,
 				BF6277C42BADCF7C008864C1 /* rtAudio.xcframework in Frameworks */,
@@ -823,7 +830,6 @@
 				BF6277CA2BADCF7C008864C1 /* TVUIKit.framework in Frameworks */,
 				BF6277CB2BADCF7C008864C1 /* UIKit.framework in Frameworks */,
 				BF6277CC2BADCF7C008864C1 /* IOKit.framework in Frameworks */,
-				BF6277CD2BADCF7C008864C1 /* libfmod.dylib in Frameworks */,
 				BF6277CE2BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */,
 				BF6277CF2BADCF7C008864C1 /* AVFoundation.framework in Frameworks */,
 				BF6277D02BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */,
@@ -886,7 +892,6 @@
 				BF23C0292BAD0954000E2E0E /* TVUIKit.framework */,
 				BF23C02A2BAD0955000E2E0E /* UIKit.framework */,
 				BF23C0272BAD02DE000E2E0E /* IOKit.framework */,
-				BF23BDD82BAC7E74000E2E0E /* libfmod.dylib */,
 				BF23BDAE2BAC7A6F000E2E0E /* Accelerate.framework */,
 				BF23BDB92BAC7DD0000E2E0E /* Metal.framework */,
 				BF23BDBA2BAC7DD0000E2E0E /* CoreHaptics.framework */,
@@ -1125,21 +1130,22 @@
 		BF5BF83E2B7378ED0049DEF6 /* xcframeworks */ = {
 			isa = PBXGroup;
 			children = (
-				BF6276A92BADB16E008864C1 /* openssl.xcframework */,
+				BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */,
 				BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */,
 				BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */,
-				BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */,
+				BF6609EE2BA1DC91005FA2B1 /* libpng.xcframework */,
+				BF6609EA2BA1DC57005FA2B1 /* glew.xcframework */,
+				BF6609EC2BA1DC6B005FA2B1 /* glfw.xcframework */,
+				BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */,
+				BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */,
+				BF6276A92BADB16E008864C1 /* openssl.xcframework */,
+				BF6609F22BA1DCAD005FA2B1 /* pugixml.xcframework */,
+				BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */,
+				BF6279F12BB07B37008864C1 /* pugixml.xcframework */,
 				BF660A442BA1DD04005FA2B1 /* uriparser.xcframework */,
 				BF660A422BA1DCF9005FA2B1 /* tess2.xcframework */,
 				BF6609F42BA1DCBB005FA2B1 /* rtAudio.xcframework */,
-				BF6609F22BA1DCAD005FA2B1 /* pugixml.xcframework */,
-				BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */,
-				BF6609EE2BA1DC91005FA2B1 /* libpng.xcframework */,
-				BF6609EC2BA1DC6B005FA2B1 /* glfw.xcframework */,
-				BF6609EA2BA1DC57005FA2B1 /* glew.xcframework */,
-				BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */,
-				BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */,
-				BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */,
+				BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */,
 			);
 			name = xcframeworks;
 			sourceTree = "<group>";
@@ -1147,6 +1153,8 @@
 		BF6276AC2BADB202008864C1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF6279EF2BB075DB008864C1 /* ApplicationServices.framework */,
+				BF6279ED2BB075A6008864C1 /* Security.framework */,
 				BF6277F12BADD5A9008864C1 /* AVFAudio.framework */,
 			);
 			name = Frameworks;
@@ -1965,7 +1973,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2009,10 +2017,16 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
+				FRAMEWORK_SEARCH_PATHS = "";
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
 					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
 				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"$(SDKROOT)/System/Library/Frameworks",
+				);
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GCC_C_LANGUAGE_STANDARD = c17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2072,7 +2086,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2120,6 +2134,11 @@
 					"$(inherited)",
 					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
 				);
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
+					"$(inherited)",
+					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
+				);
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GCC_C_LANGUAGE_STANDARD = c17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -2220,14 +2239,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E432815F138AC0470047C5CB /* Debug.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/debug/";
 				ENABLE_TESTABILITY = YES;
+				MERGEABLE_LIBRARY = YES;
+				MERGED_BINARY_TYPE = automatic;
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/debug/";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -2235,13 +2258,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4328160138AC04A0047C5CB /* Release.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/release/";
+				MERGEABLE_LIBRARY = YES;
+				MERGED_BINARY_TYPE = automatic;
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
