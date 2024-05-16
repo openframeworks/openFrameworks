@@ -1076,7 +1076,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 //----------------------------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer { ofGetGLRenderer() };
 	if(renderer){
 		renderer->draw(*this,x,y,z,w,h,sx,sy,sw,sh);
 	}
@@ -1085,7 +1085,6 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 //------------------------------------
 ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh, bool vflipped, ofRectMode rectMode) const{
-
 	if(!texData.bAllocated){
 		return {};
 	}
@@ -1096,13 +1095,13 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 //	}
 //	std::cout << "getMeshForSubsection " << ofGetFrameNum() <<  std::endl;
 
-	GLfloat px0 { x };		// up to you to get the aspect ratio right
-	GLfloat py0 { y };
-	GLfloat px1 { w+x };
-	GLfloat py1 { h+y };
+	GLfloat px0 = x;		// up to you to get the aspect ratio right
+	GLfloat py0 = y;
+	GLfloat px1 = w+x;
+	GLfloat py1 = h+y;
 
 	if (texData.bFlipTexture == vflipped){
-		std::swap(py0,py1);
+		std::swap(py0, py1);
 	}
 
 	// for rect mode center, let's do this:
@@ -1163,28 +1162,18 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	quad.getTexCoords().resize(4);
 	
 	quad.getVertices() = {
-		{px0,py0,z},
-		{px1,py0,z},
-		{px1,py1,z},
-		{px0,py1,z},
+		{px0, py0, z},
+		{px1, py0, z},
+		{px1, py1, z},
+		{px0, py1, z},
 	};
 
 	quad.getTexCoords() = {
-		{tx0,ty0},
-		{tx1,ty0},
-		{tx1,ty1},
-		{tx0,ty1},
+		{tx0, ty0},
+		{tx1, ty0},
+		{tx1, ty1},
+		{tx0, ty1},
 	};
-
-	//	quad.getVertices()[0] = {px0,py0,z};
-//	quad.getVertices()[1] = {px1,py0,z};
-//	quad.getVertices()[2] = {px1,py1,z};
-//	quad.getVertices()[3] = {px0,py1,z};
-
-//	quad.getTexCoords()[0] = {tx0,ty0};
-//	quad.getTexCoords()[1] = {tx1,ty0};
-//	quad.getTexCoords()[2] = {tx1,ty1};
-//	quad.getTexCoords()[3] = {tx0,ty1};
 
 	return quad;
 }
@@ -1197,7 +1186,7 @@ void ofTexture::draw(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3
 	// before glEnable or else the shader gets confused
 	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
 	//glActiveTexture(GL_TEXTURE0);
-	std::shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	std::shared_ptr<ofBaseGLRenderer> renderer { ofGetGLRenderer() };
 	if(renderer){
 		bind(0);
 		renderer->draw(getQuad(p1,p2,p3,p4),OF_MESH_FILL);
@@ -1232,15 +1221,21 @@ ofMesh ofTexture::getQuad(const glm::vec3 & p1, const glm::vec3 & p2, const glm:
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-	quad.getVertices()[0] = {p1.x, p1.y, p1.z};
-	quad.getVertices()[1] = {p2.x, p2.y, p2.z};
-	quad.getVertices()[2] = {p3.x, p3.y, p3.z};
-	quad.getVertices()[3] = {p4.x, p4.y, p4.z};
-	
-	quad.getTexCoords()[0] = {tx0,ty0};
-	quad.getTexCoords()[1] = {tx1,ty0};
-	quad.getTexCoords()[2] = {tx1,ty1};
-	quad.getTexCoords()[3] = {tx0,ty1};
+
+	quad.getVertices() = {
+		{p1.x, p1.y, p1.z},
+		{p2.x, p2.y, p2.z},
+		{p3.x, p3.y, p3.z},
+		{p4.x, p4.y, p4.z}
+	};
+
+	quad.getTexCoords() = {
+		{tx0,ty0},
+		{tx1,ty0},
+		{tx1,ty1},
+		{tx0,ty1}
+	};
+
 	return quad;
 }
 
