@@ -16,12 +16,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# env:
-#   ccache: ccache
+env:
+  ccache: ccache
 
 jobs:
   build-emscripten:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
         matrix:
           cfg:
@@ -138,7 +138,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   rpi-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
         matrix:
           cfg:
@@ -202,7 +202,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   build-linux64-platforms:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
         matrix:
           cfg:
