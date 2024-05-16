@@ -36,13 +36,13 @@ jobs:
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
+        packages: wget2 multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
         version: 1.0
 
     - uses: actions/checkout@v4
 
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2
+      uses: hendrikmuhs/ccache-action@v1.2.13
       with:
         key: ${{ matrix.cfg.libs }}
 
