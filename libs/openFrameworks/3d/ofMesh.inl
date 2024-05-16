@@ -2199,8 +2199,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			auto i2 = faces[i*3+1];
 			auto i3 = faces[i*3+2];
 			auto i12 = static_cast<ofIndexType>(vertices.size());
-			auto i23 = i12+1;
-			auto i13 = i12+2;
+			auto i23 = static_cast<ofIndexType>(i12 + 1);
+			auto i13 = static_cast<ofIndexType>(i12 + 2);
 			auto v1 = vertices[i1];
 			auto v2 = vertices[i2];
 			auto v3 = vertices[i3];
