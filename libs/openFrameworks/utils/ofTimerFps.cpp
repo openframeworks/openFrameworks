@@ -9,6 +9,7 @@ ofTimerFps::ofTimerFps(){
 };
 
 void ofTimerFps::setFps(int fps) {
+//	interval = std::ratio<1s, fps>;
    interval = duration_cast<microseconds>(1s) / fps;
 }
 

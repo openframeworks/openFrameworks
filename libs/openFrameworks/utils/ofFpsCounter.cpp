@@ -2,7 +2,7 @@
 
 ofFpsCounter::ofFpsCounter()
 :nFrameCount(0)
-,then(ofGetCurrentTime())
+,then(steady_clock::now())
 ,fps(0)
 ,lastFrameTime(0)
 ,filteredTime(0)
@@ -12,40 +12,43 @@ ofFpsCounter::ofFpsCounter()
 
 ofFpsCounter::ofFpsCounter(double targetFPS)
 :nFrameCount(0)
-,then(ofGetCurrentTime())
+,then(steady_clock::now())
 ,fps(targetFPS)
 ,lastFrameTime(0)
 ,filteredTime(0)
 ,filterAlpha(0.9){}
 
 void ofFpsCounter::newFrame(){
-	auto now = ofGetCurrentTime();
-	update(now.getAsSeconds());
-	timestamps.push(now.getAsSeconds());
+	now = steady_clock::now();
+
+//	auto now = ofGetCurrentTime();
+	update(now);
+	timestamps.push(now);
 
 	lastFrameTime = now - then;
-	uint64_t filtered = filteredTime.count() * filterAlpha + lastFrameTime.count() * (1-filterAlpha);
-	filteredTime = std::chrono::nanoseconds(filtered);
+//	auto filtered =
+//	filteredTime * filterAlpha + lastFrameTime * (1-filterAlpha);
+//	filteredTime = filteredTime * filterAlpha + lastFrameTime * (1-filterAlpha);
 	then = now;
 	nFrameCount++;
 }
 
 void ofFpsCounter::update(){
-	auto now = ofGetCurrentTime();
-	update(now.getAsSeconds());
+	now = steady_clock::now();
+	update(now);
 }
 
-void ofFpsCounter::update(double now){
-	while(!timestamps.empty() && timestamps.front() + 2 < now){
+void ofFpsCounter::update(time_point<steady_clock> now){
+	while(!timestamps.empty() && timestamps.front() + 2s < now){
 		timestamps.pop();
 	}
 
-	auto diff = 0.0;
-	if(!timestamps.empty() && timestamps.front() + 0.5 < now){
+	space diff;
+	if(!timestamps.empty() && timestamps.front() + 0.5s < now){
 		diff = now - timestamps.front();
 	}
-	if(diff>0.0){
-		fps = timestamps.size() / diff;
+	if(diff > 0.0s){
+		fps = (double)timestamps.size() / std::chrono::duration<double>(diff).count();
 	}else{
 		fps = timestamps.size();
 	}

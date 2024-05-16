@@ -4,6 +4,17 @@
 #include "ofUtils.h"
 #include <queue>
 
+#include <chrono>
+#include <ctime>
+#include <iostream>
+#include <thread>
+
+using namespace std::chrono;
+using namespace std::chrono_literals;
+
+using std::cout;
+using std::endl;
+
 class ofFpsCounter {
 public:
 	ofFpsCounter();
@@ -25,12 +36,17 @@ public:
 	void setFilterAlpha(float alpha);
 
 private:
-	void update(double now);
+	void update(time_point<steady_clock> now);
 	uint64_t nFrameCount;
-	ofTime then;
+//	ofTime then;
+	
+	time_point<steady_clock> now;
+	time_point<steady_clock> then;
 	double fps;
-	std::chrono::nanoseconds lastFrameTime;
-	std::chrono::nanoseconds filteredTime;
+	
+	using space = std::chrono::duration<long long, std::nano>;
+	space lastFrameTime;
+	space filteredTime;
 	double filterAlpha;
-	std::queue<double> timestamps;
+	std::queue<time_point<steady_clock>> timestamps;
 };
