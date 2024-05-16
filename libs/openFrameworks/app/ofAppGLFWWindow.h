@@ -14,6 +14,7 @@ template <typename T>
 class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
 
+[[deprecated ("In This Branch ~ use ofWindowSettings instead")]]
 typedef ofWindowSettings ofGLFWWindowSettings;
 
 class ofAppGLFWWindow : public ofAppBaseWindow {
