@@ -823,7 +823,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings) {
 	int w;
 	int h;
 	while (!packed) {
-		w = pow(2, floor((alpha / 2.f) + 0.5f)); // there doesn't seem to be a round in cmath for windows.
+		w = std::pow(2, std::floor((alpha / 2.f) + 0.5f)); // there doesn't seem to be a round in cmath for windows.
 		//w = pow(2,round(alpha/2.f));
 		h = w; //pow(2,round(alpha - round(alpha/2.f)));
 		int x = 0;

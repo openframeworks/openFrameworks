@@ -266,6 +266,16 @@ public:
 		condition.notify_all();
 	}
 
+	/// \brief Clear  channel.
+	///
+	/// Clears the queue (useful if only the latest
+	/// data is meant to be transferred (i.e. no queue))
+	void clear() {
+		if (!queue.empty()) {
+			std::unique_lock<std::mutex> lock(mutex);
+			queue = {};
+		}
+	}
 
 	/// \brief Queries empty channel.
 	///
