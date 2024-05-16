@@ -3,9 +3,13 @@ name: nightly-linux64
 on:
  schedule:
    - cron: "0 6 * * *"
+
+env:
+  ccache: ccache
+
 jobs:
   build-nightly:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
@@ -24,6 +28,10 @@ jobs:
         version: 1.0
 
     - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.13
+      with:
+        key: ${{ matrix.cfg.target }}
     - name: Install dependencies
       run: ./scripts/ci/$TARGET/install.sh;
     - name: Download libs
