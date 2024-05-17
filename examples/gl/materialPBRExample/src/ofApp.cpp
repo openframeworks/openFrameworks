@@ -11,13 +11,14 @@ void ofApp::setup(){
 	
 	// loading a cube map will enable image based lighting on PBR materials.
 	// cube map will create a prefiltered light cube map and an irradiance cube map
-	// cube map texture from https://polyhaven.com
+	// cube map texture from https://polyhaven.com : https://polyhaven.com/a/modern_buildings_2
+	// EXRs are not loading on Windows, so lets use a hdr
 #ifdef USE_CUBE_MAP
 	// comment out the loading of the cube map image to see added cube map lighting without image
 	// fake environment lighting is added in the pbr shader
 	
 	ofCubeMap::ofCubeMapSettings csettings;
-	csettings.filePath = "modern_buildings_2_1k.exr";
+	csettings.filePath = "modern_buildings_2_1k.hdr";
 	// uncomment to load from a cache or make one if it doesn't exist
 //	csettings.useCache = true;
 	
