@@ -541,7 +541,7 @@ float ofSoundBuffer::getRMSAmplitude() const {
 	for(size_t i = 0; i < buffer.size(); i++){
 		acc += buffer[i] * buffer[i];
 	}
-	return sqrt(acc / (double)buffer.size());
+	return std::sqrt(acc / (double)buffer.size());
 }
 
 float ofSoundBuffer::getRMSAmplitudeChannel(std::size_t channel) const {
@@ -554,7 +554,7 @@ float ofSoundBuffer::getRMSAmplitudeChannel(std::size_t channel) const {
 		float sample = getSample(i, channel);
 		acc += sample * sample;
 	}
-	return sqrt(acc / (double)getNumFrames());
+	return std::sqrt(acc / (double)getNumFrames());
 }
 
 void ofSoundBuffer::normalize(float level){
