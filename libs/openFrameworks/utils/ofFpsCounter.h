@@ -39,12 +39,15 @@ private:
 	void update(time_point<steady_clock> now);
 	uint64_t nFrameCount;
 //	ofTime then;
-	
-	time_point<steady_clock> now;
-	time_point<steady_clock> then;
 	double fps;
+
 	
 	using space = std::chrono::duration<long long, std::nano>;
+//	space lastFrameTime;
+//	space filteredTime;
+	
+	time_point<steady_clock> now;
+	time_point<steady_clock> then = steady_clock::now();
 	space lastFrameTime;
 	space filteredTime;
 	double filterAlpha;
