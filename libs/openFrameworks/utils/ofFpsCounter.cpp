@@ -1,4 +1,5 @@
 #include "ofFpsCounter.h"
+using namespace std::chrono;
 
 ofFpsCounter::ofFpsCounter()
 :nFrameCount(0)
@@ -26,6 +27,10 @@ void ofFpsCounter::newFrame(){
 	timestamps.push(now);
 	lastFrameTime = now - then;
 
+	// std::lerp will be possible from c++20 on
+//	filteredTime = std::lerp(filteredTime, lastFrameTime, filterAlpha);
+	filteredTime = filteredTime * filterAlpha +
+	getLastFrameSecs() * (1-filterAlpha);
 //	filteredTime = std::ratio<9, 10> * (lastFrameTime);
 //	filteredTime = filteredTime * filterAlpha + lastFrameTime * (1-filterAlpha);
 	then = now;
@@ -74,7 +79,7 @@ uint64_t ofFpsCounter::getLastFrameFilteredNanos() const{
 }
 
 double ofFpsCounter::getLastFrameFilteredSecs() const{
-	return duration_cast<seconds>(filteredTime).count();
+	return filteredTime;
 }
 
 void ofFpsCounter::setFilterAlpha(float alpha){

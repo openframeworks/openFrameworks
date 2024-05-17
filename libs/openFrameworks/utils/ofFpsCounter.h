@@ -1,19 +1,7 @@
 #pragma once
 
-// ofTime only
-#include "ofUtils.h"
 #include <queue>
-
 #include <chrono>
-#include <ctime>
-#include <iostream>
-#include <thread>
-
-using namespace std::chrono;
-using namespace std::chrono_literals;
-
-using std::cout;
-using std::endl;
 
 class ofFpsCounter {
 public:
@@ -36,20 +24,15 @@ public:
 	void setFilterAlpha(float alpha);
 
 private:
-	void update(time_point<steady_clock> now);
+	void update(std::chrono::time_point<std::chrono::steady_clock> now);
 	uint64_t nFrameCount;
-//	ofTime then;
 	double fps;
 
-	
 	using space = std::chrono::duration<long long, std::nano>;
-//	space lastFrameTime;
-//	space filteredTime;
-	
-	time_point<steady_clock> now;
-	time_point<steady_clock> then = steady_clock::now();
+	std::chrono::time_point<std::chrono::steady_clock> now;
+	std::chrono::time_point<std::chrono::steady_clock> then;
 	space lastFrameTime;
-	space filteredTime;
+	double filteredTime;
 	double filterAlpha;
-	std::queue<time_point<steady_clock>> timestamps;
+	std::queue<std::chrono::time_point<std::chrono::steady_clock>> timestamps;
 };
