@@ -12,6 +12,7 @@
 #include "ofxiOSEAGLView.h"
 #include "ofAppiOSWindow.h"
 #import "ofxiOSExtras.h"
+#include <glm/gtc/constants.hpp>
 
 @interface ofxiOSViewController() <EAGLViewDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
