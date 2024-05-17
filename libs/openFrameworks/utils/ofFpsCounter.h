@@ -25,14 +25,14 @@ public:
 
 private:
 	void update(std::chrono::time_point<std::chrono::steady_clock> now);
-	uint64_t nFrameCount;
-	double fps;
+	uint64_t nFrameCount = 0;
+	double fps = 0;
 
 	using space = std::chrono::duration<long long, std::nano>;
-	std::chrono::time_point<std::chrono::steady_clock> now;
-	std::chrono::time_point<std::chrono::steady_clock> then;
+	std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
+	std::chrono::time_point<std::chrono::steady_clock> then = std::chrono::steady_clock::now();
 	space lastFrameTime;
-	double filteredTime;
-	double filterAlpha;
+	double filteredTime = 0;
+	double filterAlpha = 0.9;
 	std::queue<std::chrono::time_point<std::chrono::steady_clock>> timestamps;
 };
