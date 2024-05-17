@@ -27,7 +27,7 @@ void ofApp::update() {
 		}
 	}
 
-	if (auto what = params.parameterChangedE().did_notify()) { // this is the Events::did_notify()
+	if (auto what = params.parameterChangedE().didNotify()) { // this is the Events::did_notify()
 		// something happended in params, but you don't know what
 	}
 }
@@ -41,7 +41,7 @@ void ofApp::draw() {
 		if (size > 100) size -= 100;
 	}
 	ofDrawBitmapString("<a> to toggle automation", 10, 10);
-	ofDrawBitmapString("<s> to randomize size", 10, 20);
+	ofDrawBitmapString("<r> to randomize size", 10, 20);
 	ofDrawBitmapString("<c> to change color", 10, 30);
 }
 
