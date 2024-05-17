@@ -26,7 +26,7 @@ void ofFpsCounter::newFrame(){
 	timestamps.push(now);
 	lastFrameTime = now - then;
 
-	filteredTime = std::ratio<9, 10>(lastFrameTime);
+//	filteredTime = std::ratio<9, 10> * (lastFrameTime);
 //	filteredTime = filteredTime * filterAlpha + lastFrameTime * (1-filterAlpha);
 	then = now;
 	nFrameCount++;
