@@ -456,7 +456,7 @@ const ofQuaternion ofQuaternion::operator -() const {
 
 //----------------------------------------
 float ofQuaternion::length() const {
-    return sqrt(_v.x*_v.x + _v.y*_v.y + _v.z*_v.z + _v.w*_v.w);
+    return std::sqrt(_v.x*_v.x + _v.y*_v.y + _v.z*_v.z + _v.w*_v.w);
 }
 
 
@@ -493,7 +493,7 @@ ofVec3f ofQuaternion::operator*(const ofVec3f& v) const {
 
 void ofQuaternion::normalize(){
 	float len = _v.w*_v.w + _v.x*_v.x + _v.y*_v.y + _v.z*_v.z;
-	float factor = 1.0f / sqrt(len);
+	float factor = 1.0f / std::sqrt(len);
 	_v.x *= factor;
 	_v.y *= factor;
 	_v.z *= factor;
