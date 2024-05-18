@@ -4,7 +4,7 @@
 #include "ofGLRenderer.h"
 
 #define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 #ifdef TARGET_LINUX
 	#include "ofIcon.h"
@@ -15,7 +15,7 @@
 	#else
 		#define GLFW_EXPOSE_NATIVE_EGL
 	#endif
-	#include "GLFW/glfw3native.h"
+	#include <GLFW/glfw3native.h>
 	#include <X11/XKBlib.h>
 	#include <X11/Xatom.h>
 	#include <X11/extensions/Xrandr.h>
@@ -25,7 +25,7 @@
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
 	#define GLFW_EXPOSE_NATIVE_NSGL
-	#include "GLFW/glfw3native.h"
+	#include <GLFW/glfw3native.h>
 #elif defined(TARGET_WIN32)
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#define GLFW_EXPOSE_NATIVE_WGL
