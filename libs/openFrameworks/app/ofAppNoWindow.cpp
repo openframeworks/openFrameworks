@@ -1,10 +1,13 @@
 #include "ofAppNoWindow.h"
-#include "ofBaseApp.h"
 #include "ofGraphics.h"
 #include "ofPath.h"
 #include "of3dGraphics.h"
 #include <memory>
 
+#include "ofConstants.h"
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif
 
 #if defined TARGET_OSX || defined TARGET_LINUX
 #include <stdlib.h>
@@ -96,13 +99,13 @@ private:
 	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
 	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
 	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){};
-	ofRectangle getCurrentViewport() const{return ofRectangle();};
-	ofRectangle getNativeViewport() const{return ofRectangle();};
+	ofRectangle getCurrentViewport() const{ return ofRectangle(); };
+	ofRectangle getNativeViewport() const{ return ofRectangle(); };
 	int getViewportWidth() const{return 0;};
 	int getViewportHeight() const{return 0;};
 
 	void setCoordHandedness(ofHandednessType handedness){};
-	ofHandednessType getCoordHandedness() const{return OF_LEFT_HANDED;};
+	ofHandednessType getCoordHandedness() const{ return OF_LEFT_HANDED; };
 
 	//our openGL wrappers
 	void pushMatrix(){};
@@ -152,23 +155,23 @@ private:
 	void setDepthTest(bool){};
 
 	// color options
-	void setColor(int r, int g, int b){}; // 0-255
-	void setColor(int r, int g, int b, int a){}; // 0-255
-	void setColor(const ofColor & color){};
-	void setColor(const ofColor & color, int _a){};
-	void setColor(int gray){}; // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b){}; // 0-1
+	void setColor(float r, float g, float b, float a){}; // 0-1
+	void setColor(const ofFloatColor & color){};
+	void setColor(const ofFloatColor & color, float _a){};
+	void setColor(float gray){}; // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ){}; // hex, like web 0xFF0033;
 
 	// bg color
-	ofColor getBackgroundColor(){return ofColor(200);}
-	void setBackgroundColor(const ofColor & color){}
+	ofFloatColor getBackgroundColor(){return ofFloatColor(200.f/255.f);}
+	void setBackgroundColor(const ofFloatColor & color){}
 	bool getBackgroundAuto(){
 		return true;
 	}
-	void background(const ofColor & c){};
+	void background(const ofFloatColor & c){};
 	void background(float brightness){};
-	void background(int hexColor, float _a=255.0f){};
-	void background(int r, int g, int b, int a=255){};
+	void background(int hexColor, int _a=255){};
+	void background(float r, float g, float b, float a=1.f){};
 
 	void setBackgroundAuto(bool bManual){};		// default is true
 

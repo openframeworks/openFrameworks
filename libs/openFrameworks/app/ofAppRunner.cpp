@@ -3,19 +3,15 @@
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
 
-#ifndef TARGET_NO_SOUND
-#include "ofSoundPlayer.h"
-#include "ofSoundStream.h"
-#endif
-
-#include "ofImage.h"
-#include "ofTrueTypeFont.h"
-
+#include "ofLog.h"
+#include "ofGraphicsBaseTypes.h"
+#include "ofRectangle.h"
 #include "ofMainLoop.h"
 
 using std::shared_ptr;
 
-#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
+#if !defined(TARGET_NODISPLAY)
+	#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
 	#include "ofAppGLFWWindow.h"
 	//special case so we preserve supplied settngs
 	//TODO: remove me when we remove the ofAppGLFWWindow setters.
@@ -28,6 +24,7 @@ using std::shared_ptr;
 		ofGetMainLoop()->addWindow(windowPtr);
 		windowPtr->setup(settings);
 	}
+	#endif
 #endif
 
 #ifdef TARGET_LINUX
@@ -46,6 +43,7 @@ using std::shared_ptr;
 
 //--------------------------------------
 namespace{
+
     shared_ptr<ofMainLoop> & mainLoop(){
         static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
         return *mainLoop;
@@ -92,9 +90,17 @@ namespace{
 }
 
 
-
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
+void ofTrueTypeShutdown();
+void ofCloseFreeImage();
+
+#if defined(TARGET_ANDROID) || defined (TARGET_LINUX_ARM)
+	inline void ofSoundShutdown(){}
+#else
+	void ofSoundShutdown();
+#endif
+
 
 void ofInit(){
 	if(initialized()) return;
@@ -306,6 +312,15 @@ ofBaseApp * ofGetAppPtr(){
 }
 
 //--------------------------------------
+std::thread::id ofGetMainThreadId() {
+	return ofGetMainLoop()->get_thread_id() ;
+}
+
+bool ofIsCurrentThreadTheMainThread() {
+	return ofGetMainThreadId() == std::this_thread::get_id();
+}
+
+//--------------------------------------
 ofAppBaseWindow * ofGetWindowPtr(){
 	return mainLoop()->getCurrentWindow().get();
 }
@@ -415,12 +430,12 @@ glm::vec2 ofGetWindowSize() {
 
 //--------------------------------------------------
 float ofRandomWidth() {
-	return ofRandom(0.f, ofGetWidth());
+	return of::random::uniform<float>(0.f, ofGetWidth());
 }
 
 //--------------------------------------------------
 float ofRandomHeight() {
-	return ofRandom(0.f, ofGetHeight());
+	return of::random::uniform<float>(0.f, ofGetHeight());
 }
 
 //--------------------------------------------------

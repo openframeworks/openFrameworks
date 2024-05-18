@@ -52,7 +52,7 @@ void ofApp::update() {
 
 	
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
-		ofSeedRandom(i);
+		ofSetRandomSeed(i);
 		if(glm::distance(mouse,pos[i]) < ofRandom(100, 200)) {
 			vel[i] -= mouseVec; 
 		}
@@ -74,7 +74,7 @@ void ofApp::update() {
 		}
 		
 		// get the 2d heading
-		float angle = (float)atan2(-vel[i].y, vel[i].x) + PI;
+		float angle = std::atan2(-vel[i].y, vel[i].x) + glm::pi<float>();
 		rotations[i] = (angle * -1.0);
 	}
 }

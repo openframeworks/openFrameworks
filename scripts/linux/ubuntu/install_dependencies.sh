@@ -87,17 +87,17 @@ if [ $MAJOR_VERSION -lt 12 ]; then
 elif [ $MAJOR_VERSION -lt 13 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:gstreamer-developers/ppa --yes
-    add-apt-repository ppa:boost-latest/ppa --yes
+    # add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
-    BOOST_VER=1.55
+    # BOOST_VER=1.55
 elif [[ $MAJOR_VERSION -lt 14 || ($MAJOR_VERSION -eq 14 && $MINOR_VERSION -eq 4) ]]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
-    add-apt-repository ppa:boost-latest/ppa --yes
+    # add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=-4.9
-    BOOST_VER=1.55
+    # BOOST_VER=1.55
 else
     CXX_VER=
-    BOOST_VER=
+    # BOOST_VER=
 fi
 
 apt-get update
@@ -137,13 +137,13 @@ if [ $exit_code = 0 ]; then
     GSTREAMER_FFMPEG=gstreamer${GSTREAMER_VERSION}-libav
 fi
 
-GTK_VERSION=2.0
+LIB_GTK_DEV=libgtk2.0-dev 
 echo "detecting latest gtk version"
 apt-cache show libgtk-3-dev
 exit_code=$?
 if [ $exit_code = 0 ]; then
-    echo selecting gtk 3
-    GTK_VERSION=-3
+    echo adding gtk 3
+    LIB_GTK_DEV+=" libgtk-3-dev" 
 fi
 
 #checking for distrib tagged xserver-xorg
@@ -191,7 +191,9 @@ else
     GLFW_PKG=
 fi
 
-PACKAGES="curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem${BOOST_VER}-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev"
+
+PACKAGES="make curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev libassimp-dev librtaudio-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev"
+# libgconf-2-4 libboost-filesystem${BOOST_VER}-dev
 
 echo "installing OF dependencies"
 echo "OF needs to install the following packages using apt-get:"
@@ -206,7 +208,20 @@ if [ "$1" != "-y" ]; then
     echo "Installing..."
     echo
 fi
-installPackages ${PACKAGES}
+
+#jammy needs libunwind-dev installed before gstreamer
+#and some additional packages
+if [ $MAJOR_VERSION -gt 21 ]; then
+installPackages "libunwind-dev"
+
+PACKAGES+=" libharfbuzz-dev"
+PACKAGES+=" gstreamer1.0-vaapi"
+PACKAGES+=" gstreamer1.0-libav"
+fi
+
+
+apt-get -y -qq install ${PACKAGES}
+# installPackages ${PACKAGES}
 
 if [[ $MAJOR_VERSION -lt 18 ]]; then
     cp $ROOT/../extra/poco_config.mk $ROOT/../../../addons/ofxPoco/addon_config.mk

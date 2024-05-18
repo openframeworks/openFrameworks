@@ -30,7 +30,6 @@
     
 ==============================================================================*/
 #include "ofxKinect.h"
-#include "ofMain.h"
 
 #include "libfreenect_registration.h"
 #include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
@@ -382,9 +381,9 @@ void ofxKinect::update() {
 		tryCount = 0;
 		if(this->lock()) {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
-                swap(videoPixels,videoPixelsIntra);
+                std::swap(videoPixels,videoPixelsIntra);
             }else{
-				int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
+				int minimumSize = std::min(videoPixels.size(), videoPixelsIntra.size());
 				memcpy(videoPixels.getData(), videoPixelsIntra.getData(), minimumSize);
             }
 			bNeedsUpdateVideo = false;
@@ -402,7 +401,7 @@ void ofxKinect::update() {
 		bIsFrameNewDepth = true;
 		tryCount = 0;
 		if(this->lock()) {
-			swap(depthPixelsRaw, depthPixelsRawIntra);
+			std::swap(depthPixelsRaw, depthPixelsRawIntra);
 			bNeedsUpdateDepth = false;
 			this->unlock();
 
@@ -807,7 +806,7 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
+		std::swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
 		kinect->bNeedsUpdateDepth = true;
 		kinect->unlock();
 		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getData());
@@ -821,7 +820,7 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
+		std::swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
 		kinect->bNeedsUpdateVideo = true;
 		kinect->unlock();
 		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getData());
@@ -972,7 +971,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 		ofLogError("ofxKinect") << "could not open device " <<  id;
 		return false;
 	}
-	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
+	kinects.insert(std::pair<int,ofxKinect*>(id, &kinect));
 	
 	// set kinect id & serial from bus id
 	kinect.deviceId = id;
@@ -1003,7 +1002,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 		return false;
 	}
 	int index = getDeviceIndex(serial);
-	kinects.insert(pair<int,ofxKinect*>(deviceList[index].id, &kinect));
+	kinects.insert(std::pair<int,ofxKinect*>(deviceList[index].id, &kinect));
 	kinect.deviceId = deviceList[index].id;
 	kinect.serial = serial;
 	
@@ -1068,7 +1067,7 @@ void ofxKinectContext::listDevices(bool verbose) {
     if(!isInited())
 		init();
 	
-	stringstream stream;
+	std::stringstream stream;
 	
 	if(numTotal() == 0) {
 		stream << "no devices found";

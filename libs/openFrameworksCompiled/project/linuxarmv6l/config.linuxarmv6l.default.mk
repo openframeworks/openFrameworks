@@ -57,7 +57,7 @@ endif
 
 #check if we are newer than Stretch and use the new system
 ifeq ($(shell expr $(VER_ID) \>= 9), 1)
-	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only 
+	# comment the line below if you want to use the non X window based system - currently compatible with RPi 1-3 only
 	USE_PI_LEGACY = 0
 	USE_ATOMIC = 1
 endif
@@ -127,8 +127,11 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #c++ 17 support - comment out two lines below to use c++11
 PLATFORM_CFLAGS += -std=c++17
 PLATFORM_LDFLAGS += -lstdc++fs
+PLATFORM_CXXVER = -std=c++17
 
-PLATFORM_CFLAGS += -march=armv6
+# PLATFORM_CFLAGS += -march=armv6
+PLATFORM_CFLAGS += -marm
+
 PLATFORM_CFLAGS += -mfpu=vfp
 PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -fPIC
@@ -168,6 +171,7 @@ ifeq ($(USE_PI_LEGACY), 0)
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
 	PLATFORM_LIBRARIES += EGL
+# FIXME: update to what is possible now.
 else ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
@@ -177,10 +181,10 @@ else
 	PLATFORM_LIBRARIES += brcmEGL
 endif
 
-PLATFORM_LIBRARIES += openmaxil
-PLATFORM_LIBRARIES += bcm_host
-PLATFORM_LIBRARIES += vcos
-PLATFORM_LIBRARIES += vchiq_arm
+# PLATFORM_LIBRARIES += openmaxil
+# PLATFORM_LIBRARIES += bcm_host
+# PLATFORM_LIBRARIES += vcos
+# PLATFORM_LIBRARIES += vchiq_arm
 PLATFORM_LIBRARIES += pcre
 PLATFORM_LIBRARIES += rt
 PLATFORM_LIBRARIES += X11
@@ -190,7 +194,7 @@ PLATFORM_LDFLAGS += -pthread
 
 ifdef USE_ATOMIC
 	PLATFORM_LDFLAGS += -latomic
-endif 
+endif
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -204,10 +208,15 @@ endif
 ################################################################################
 
 # Broadcom hardware interface library
+ifneq ($(CROSS_COMPILING),1)
 PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
 PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/IL
 PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
 PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
+endif
+
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland/host_applications/linux/libs/bcm_host/include
+PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/userland
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATH
@@ -219,7 +228,6 @@ PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/l
 ##########################################################################################
 
 PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
-
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -269,18 +277,19 @@ endif
 
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/$(GCC_PREFIX)/c++/7
-
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/gcc/$(GCC_PREFIX)/7
+	PLATFORM_LIBRARY_SEARCH_PATHS += /usr/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += /lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/blas
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/lapack
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/opt/vc/lib
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pulseaudio
+	PLATFORM_LDFLAGS += -lblas -llapack
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/lapack
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/blas
 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif

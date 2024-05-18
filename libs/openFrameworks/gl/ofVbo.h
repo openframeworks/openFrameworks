@@ -4,8 +4,9 @@
 
 #include "ofGraphicsConstants.h"
 #include "ofBufferObject.h"
+// FIXME: Targets but it can be optional
 #include "ofConstants.h"
-#include <map>
+#include <unordered_map>
 
 template<typename T>
 class ofColor_;
@@ -205,7 +206,7 @@ private:
 	VertexAttribute colorAttribute;
 	VertexAttribute texCoordAttribute;
 	VertexAttribute normalAttribute;
-	std::map<int,VertexAttribute> customAttributes;
+	std::unordered_map<int,VertexAttribute> customAttributes;
 	
 	static bool vaoChecked;
 	static bool vaoSupported;

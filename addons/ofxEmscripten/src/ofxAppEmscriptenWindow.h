@@ -117,7 +117,7 @@ private:
 	int mCachedWidth = -1;
 	int mCachedHeight = -1;
 	
-	bool mBTouchSimulatesMouse = false;
+	bool mBTouchSimulatesMouse = true;
 	int mFullscreenScaleStrategy = -1;
 };
 

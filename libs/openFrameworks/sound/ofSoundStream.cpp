@@ -2,8 +2,23 @@
 #include "ofAppRunner.h"
 #include "ofLog.h"
 
+//------------------------------------------------ soundstream
+// check if any soundstream api is defined from the compiler
+#if !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID) && !defined(OF_SOUNDSTREAM_IOS) && !defined(OF_SOUNDSTREAM_EMSCRIPTEN)
+	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
+		#define OF_SOUNDSTREAM_RTAUDIO
+	#elif defined(TARGET_ANDROID)
+		#define OF_SOUNDSTREAM_ANDROID
+	#elif defined(TARGET_OF_IOS)
+		#define OF_SOUNDSTREAM_IOS
+	#elif defined(TARGET_EMSCRIPTEN)
+		#define OF_SOUNDSTREAM_EMSCRIPTEN
+	#endif
+#endif
+
 #if defined(OF_SOUND_PLAYER_FMOD)
 #include "ofSoundPlayer.h"
+#include "ofFmodSoundPlayer.h"
 #endif
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
@@ -20,12 +35,26 @@
 #define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
 #endif
 
-namespace{
-    ofSoundStream &getSystemSoundStream() {
-        static ofSoundStream _;
-        return _;
+void ofFmodSetBuffersize(unsigned int bs);
+float * ofFmodSoundGetSpectrum(int nBands);
+
+//FIXME: this is needed to make video work on emscripten
+//See: https://github.com/openframeworks/openFrameworks/issues/7377 
+#ifdef OF_SOUNDSTREAM_EMSCRIPTEN
+    namespace{
+        ofSoundStream systemSoundStream;
     }
-}
+    #define OF_SYSTEM_SS systemSoundStream
+#else
+    namespace{
+        ofSoundStream &getSystemSoundStream() {
+            static ofSoundStream _;
+            return _;
+        }
+    }
+    #define OF_SYSTEM_SS getSystemSoundStream()
+#endif
+
 
 using std::shared_ptr;
 using std::vector;
@@ -121,27 +150,27 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(ofSoundStreamSettings & settings) {
-    getSystemSoundStream().setup(settings);
+    OF_SYSTEM_SS.setup(settings);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-    getSystemSoundStream().stop();
+    OF_SYSTEM_SS.stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-    getSystemSoundStream().start();
+    OF_SYSTEM_SS.start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-    getSystemSoundStream().close();
+    OF_SYSTEM_SS.close();
 }
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
-	vector<ofSoundDevice> deviceList = getSystemSoundStream().getDeviceList();
+	vector<ofSoundDevice> deviceList = OF_SYSTEM_SS.getDeviceList();
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }
@@ -190,7 +219,7 @@ void ofSoundStream::printDeviceList()  const{
 void ofSoundStream::setDeviceID(int deviceID){
 	if( soundStream ){
 		tmpDeviceId = deviceID;
-	}	
+	}
 }
 
 //------------------------------------------------------------

@@ -1,4 +1,5 @@
 #include "ofPath.h"
+#include "ofColor.h"
 
 using std::vector;
 
@@ -457,10 +458,10 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 	bottomLeftRadius     = std::min(bottomLeftRadius,  maxRadius);
 
 	// if all radii are ~= 0.0f, then render as a normal rectangle
-	if((fabs(topLeftRadius)     < std::numeric_limits<float>::epsilon()) &&
-	   (fabs(topRightRadius)    < std::numeric_limits<float>::epsilon()) &&
-	   (fabs(bottomRightRadius) < std::numeric_limits<float>::epsilon()) &&
-	   (fabs(bottomLeftRadius)  < std::numeric_limits<float>::epsilon())) {
+	if((std::abs(topLeftRadius)     < std::numeric_limits<float>::epsilon()) &&
+	   (std::abs(topRightRadius)    < std::numeric_limits<float>::epsilon()) &&
+	   (std::abs(bottomRightRadius) < std::numeric_limits<float>::epsilon()) &&
+	   (std::abs(bottomLeftRadius)  < std::numeric_limits<float>::epsilon())) {
 
 		// rect mode respect happens in ofRect
 		rectangle(x, y, z, w, h);
@@ -474,7 +475,7 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 		moveTo(left + topLeftRadius, top, z);
 
 		// top right
-		if(fabs(topRightRadius) >= std::numeric_limits<float>::epsilon()) {
+		if(std::abs(topRightRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(right - topRightRadius, top + topRightRadius, z, topRightRadius, topRightRadius, 270, 360);
 		} else {
 			lineTo(right, top, z);
@@ -482,21 +483,21 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 
 		lineTo(right, bottom - bottomRightRadius);
 		// bottom right
-		if(fabs(bottomRightRadius) >= std::numeric_limits<float>::epsilon()) {
+		if(std::abs(bottomRightRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(right - bottomRightRadius, bottom - bottomRightRadius, z, bottomRightRadius, bottomRightRadius, 0, 90);
 		}
 
 		lineTo(left + bottomLeftRadius, bottom, z);
 
 		// bottom left
-		if(fabs(bottomLeftRadius) >= std::numeric_limits<float>::epsilon()) {
+		if(std::abs(bottomLeftRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(left + bottomLeftRadius, bottom - bottomLeftRadius, z, bottomLeftRadius, bottomLeftRadius, 90, 180);
 		}
 
 		lineTo(left, top + topLeftRadius, z);
 
 		// top left
-		if(fabs(topLeftRadius) >= std::numeric_limits<float>::epsilon()) {
+		if(std::abs(topLeftRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
 		}
 		close();
@@ -572,12 +573,12 @@ bool ofPath::isFilled() const{
 }
 
 //----------------------------------------------------------
-ofColor ofPath::getFillColor() const{
+ofFloatColor ofPath::getFillColor() const{
 	return fillColor;
 }
 
 //----------------------------------------------------------
-ofColor ofPath::getStrokeColor() const{
+ofFloatColor ofPath::getStrokeColor() const{
 	return strokeColor;
 }
 
@@ -742,7 +743,7 @@ bool ofPath::getUseShapeColor() const {
 }
 
 //----------------------------------------------------------
-void ofPath::setColor( const ofColor& color ) {
+void ofPath::setColor( const ofFloatColor& color ) {
 	setFillColor( color );
 	setStrokeColor( color );
 }
@@ -753,7 +754,7 @@ void ofPath::setHexColor( int hex ) {
 }
 
 //----------------------------------------------------------
-void ofPath::setFillColor(const ofColor & color){
+void ofPath::setFillColor(const ofFloatColor & color){
 	setUseShapeColor(true);
 	fillColor = color;
 }
@@ -764,7 +765,7 @@ void ofPath::setFillHexColor( int hex ) {
 }
 
 //----------------------------------------------------------
-void ofPath::setStrokeColor(const ofColor & color){
+void ofPath::setStrokeColor(const ofFloatColor & color){
 	setUseShapeColor(true);
 	strokeColor = color;
 }
@@ -810,7 +811,7 @@ void ofPath::translate(const glm::vec2 & p){
 //----------------------------------------------------------
 
 void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
-    auto radians = ofDegToRad(degrees);
+    auto radians = glm::radians(degrees);
     if(mode==COMMANDS){
         for(int j=0;j<(int)commands.size();j++){
             commands[j].to = glm::rotate(commands[j].to, radians, axis);
@@ -835,7 +836,7 @@ void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
 
 //----------------------------------------------------------
 void ofPath::rotateRad(float radians, const glm::vec3& axis ){
-    rotateDeg(ofRadToDeg(radians), axis);
+    rotateDeg(glm::degrees(radians), axis);
 }
 
 //----------------------------------------------------------

@@ -9,11 +9,16 @@
 
 
 #include "ofLight.h"
+#include "ofColor.h"
 #include "of3dUtils.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
-#include "ofConstants.h"
+#include "ofColor.h"
+
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/quaternion.hpp>
+
 #include <map>
 
 using std::weak_ptr;
@@ -83,9 +88,9 @@ ofLight::Data::Data(){
 ofLight::Data::~Data(){
 	if(glIndex==-1) return;
 	if ( auto r = rendererP.lock() ){
-		r->setLightAmbientColor( glIndex, ofColor( 0, 0, 0, 255 ) );
-		r->setLightDiffuseColor( glIndex, ofColor( 0, 0, 0, 255 ) );
-		r->setLightSpecularColor( glIndex, ofColor( 0, 0, 0, 255 ) );
+		r->setLightAmbientColor( glIndex, ofFloatColor( 0.f, 0.f, 0.f, 1.f ) );
+		r->setLightDiffuseColor( glIndex, ofFloatColor( 0.f, 0.f, 0.f, 1.f ) );
+		r->setLightSpecularColor( glIndex, ofFloatColor( 0.f, 0.f, 0.f, 1.f ) );
 		r->setLightPosition( glIndex, glm::vec4( 0, 0, 1, 0 ) );
 		r->disableLight( glIndex );
 	}
@@ -94,9 +99,9 @@ ofLight::Data::~Data(){
 //----------------------------------------
 ofLight::ofLight()
 :data(new Data){
-    setAmbientColor(ofColor(0,0,0));
-    setDiffuseColor(ofColor(255,255,255));
-    setSpecularColor(ofColor(255,255,255));
+    setAmbientColor(ofFloatColor(0.f,0.f,0.f));
+    setDiffuseColor(ofFloatColor(1.f,1.f,1.f));
+    setSpecularColor(ofFloatColor(1.f,1.f,1.f));
 	setPointLight();
     
     // assume default attenuation factors //
@@ -348,8 +353,8 @@ void ofLight::customDraw(const ofBaseRenderer * renderer) const{
         renderer->drawSphere( 0,0,0, 10);
 		ofDrawAxis(20);
     } else if (getIsSpotlight()) {
-        float coneHeight = (sin(ofDegToRad(data->spotCutOff)) * 30.f) + 1;
-        float coneRadius = (cos(ofDegToRad(data->spotCutOff)) * 30.f) + 8;
+        float coneHeight = (std::sin(glm::radians(data->spotCutOff)) * 30.f) + 1;
+        float coneRadius = (std::cos(glm::radians(data->spotCutOff)) * 30.f) + 8;
 		const_cast<ofBaseRenderer*>(renderer)->rotateDeg(-90,1,0,0);
 		renderer->drawCone(0, -(coneHeight*.5), 0, coneHeight, coneRadius);
     } else  if (getIsAreaLight()) {

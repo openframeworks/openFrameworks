@@ -8,14 +8,13 @@
 #ifndef CIRCLESRENDERER_H_
 #define CIRCLESRENDERER_H_
 
-#include "ofParameterGroup.h"
-#include "ofParameter.h"
 #include "ofMain.h"
+#include "ofParameter.h"
 
 class CirclesRenderer;
 
-template<typename ParameterType>
-class ofCirclesRendererParam: public ofReadOnlyParameter<ParameterType,CirclesRenderer>{
+template <typename ParameterType>
+class ofCirclesRendererParam : public ofReadOnlyParameter<ParameterType, CirclesRenderer> {
 	friend class CirclesRenderer;
 };
 
