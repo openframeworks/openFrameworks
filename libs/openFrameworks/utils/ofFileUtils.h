@@ -813,7 +813,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns true if a file or directory exists
-	static bool doesFileExist(const of::filesystem::path & fPath, bool bRelativeToData = true);
+	static bool doesFileExist(const of::filesystem::path & _path, bool bRelativeToData = true);
 
 	/// Remove a file or directory at a given path.
 	///

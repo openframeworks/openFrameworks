@@ -1126,7 +1126,7 @@ bool ofFile::moveFromTo(const fs::path& pathSrc, const fs::path& pathDst, bool b
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::doesFileExist(const fs::path & _fPath, bool bRelativeToData){
+bool ofFile::doesFileExist(const fs::path & _path, bool bRelativeToData){
 	auto path = _path;
 	if (path.empty()) {
 		return false;
