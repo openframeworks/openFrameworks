@@ -285,9 +285,13 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#include <tesselator.h>
-typedef TESSindex ofIndexType;
-
+//#include <tesselator.h>
+//typedef TESSindex ofIndexType;
+#if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || EMSCRIPTEN
+	typedef unsigned short ofIndexType;
+#else
+	typedef unsigned int ofIndexType;
+#endif
 
 
 #define OF_EXIT_APP(val)		std::exit(val);

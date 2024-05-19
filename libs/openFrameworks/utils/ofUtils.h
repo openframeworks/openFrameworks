@@ -1,7 +1,7 @@
 #pragma once
 
-// MARK: TARGET_MINGW test
-#include "ofConstants.h"
+// MARK: TARGET_MINGW test 
+#include "ofConstants.h" //ofTargetPlatform
 
 #if !defined(TARGET_MINGW)
 	#include <utf8.h>

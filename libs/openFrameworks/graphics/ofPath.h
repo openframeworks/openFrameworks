@@ -2,9 +2,9 @@
 
 #include "ofPolyline.h"
 #include "ofVboMesh.h"
-#include "ofTessellator.h"
+#include "ofTessellator.h" //shared_ptr
 // MARK: ofConstants targets
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 template<typename T>
 class ofColor_;

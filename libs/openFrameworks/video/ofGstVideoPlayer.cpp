@@ -9,7 +9,7 @@
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/app/gstappsink.h>
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "ofGstUtils.h"
 
 ofGstVideoPlayer::ofGstVideoPlayer(){

@@ -1,7 +1,7 @@
 #pragma once
 
 // MARK: TARGET_ANDROID - maybe it can be removed
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #ifndef TARGET_ANDROID
 #include "ofPixels.h"
 #include "ofEvents.h"

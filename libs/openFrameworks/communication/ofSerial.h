@@ -1,7 +1,9 @@
 #pragma once
 
 // MARK: ofConstants targets
-#include "ofConstants.h"
+//#include "ofConstants.h"
+
+#include <string>
 
 class ofBuffer;
 

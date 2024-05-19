@@ -2,7 +2,7 @@
 
 #include "ofSoundBaseTypes.h"
 // MARK: this is to define the constant OF_SOUND_PLAYER_FMOD
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_FMOD
 

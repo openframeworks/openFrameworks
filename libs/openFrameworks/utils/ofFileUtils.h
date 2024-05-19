@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+//namespace of { namespace filesystem { class path; }}
 
 #include <fstream>
 

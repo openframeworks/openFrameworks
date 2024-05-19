@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
 
 #define GLM_FORCE_CTOR_INIT

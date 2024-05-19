@@ -1,8 +1,13 @@
 #pragma once
 
 // MARK: ofConstants FS
+// XAXA
 #include "ofConstants.h"
 #include <functional>
+// new
+#include <string>
+//class ofPath;
+//namespace of { namespace filesystem {  } }
 
 class ofSoundBuffer;
 

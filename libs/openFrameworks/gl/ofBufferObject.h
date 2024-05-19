@@ -1,6 +1,6 @@
 #pragma once
 
-// MARK: Targets plus GL/ headers
+// MARK: Targets plus GL/ headers GLsizeiptr GLenum, etc
 #include "ofConstants.h"
 
 template<typename T>
