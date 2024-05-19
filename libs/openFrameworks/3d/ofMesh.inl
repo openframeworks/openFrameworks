@@ -1782,9 +1782,11 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 	if( getMode() == OF_PRIMITIVE_TRIANGLES) {
 		std::vector<ofMeshFace_<V,N,C,T>> triangles = getUniqueFaces();
 		std::vector<V> verts;
+		verts.reserve( triangles.size() * 3 );
+		
 		for(ofIndexType i = 0; i < triangles.size(); i++) {
 			for(ofIndexType j = 0; j < 3; j++) {
-				verts.push_back( triangles[i].getVertex(j) );
+				verts.emplace_back( triangles[i].getVertex(j) );
 			}
 		}
 
@@ -1811,20 +1813,21 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 
 		//ofLogNotice("ofMesh") << "smoothNormals(): num verts = " << verts.size() << " tris size = " << triangles.size();
 
-		std::string xStr, yStr, zStr;
 
 		for(ofIndexType i = 0; i < verts.size(); i++ ) {
-			xStr = "x"+ofToString(verts[i].x==-0?0:verts[i].x);
-			yStr = "y"+ofToString(verts[i].y==-0?0:verts[i].y);
-			zStr = "z"+ofToString(verts[i].z==-0?0:verts[i].z);
-			std::string vstring = xStr+yStr+zStr;
+			std::string vstring {
+				"x"+ofToString(verts[i].x==-0?0:verts[i].x) +
+				"y"+ofToString(verts[i].y==-0?0:verts[i].y) +
+				"z"+ofToString(verts[i].z==-0?0:verts[i].z)
+			};
+			
 			if(vertHash.find(vstring) == vertHash.end()) {
 				for(ofIndexType j = 0; j < triangles.size(); j++) {
 					for(ofIndexType k = 0; k < 3; k++) {
 						if(verts[i].x == triangles[j].getVertex(k).x) {
 							if(verts[i].y == triangles[j].getVertex(k).y) {
 								if(verts[i].z == triangles[j].getVertex(k).z) {
-									vertHash[vstring].push_back( j );
+									vertHash[vstring].emplace_back( j );
 								}
 							}
 						}
@@ -1846,11 +1849,12 @@ void ofMesh_<V,N,C,T>::smoothNormals( float angle ) {
 		for(ofIndexType j = 0; j < triangles.size(); j++) {
 			for(ofIndexType k = 0; k < 3; k++) {
 				vert = triangles[j].getVertex(k);
-				xStr = "x"+ofToString(vert.x==-0?0:vert.x);
-				yStr = "y"+ofToString(vert.y==-0?0:vert.y);
-				zStr = "z"+ofToString(vert.z==-0?0:vert.z);
-
-				std::string vstring = xStr+yStr+zStr;
+				std::string vstring {
+					"x"+ofToString(vert.x==-0?0:vert.x) +
+					"y"+ofToString(vert.y==-0?0:vert.y) +
+					"z"+ofToString(vert.z==-0?0:vert.z)
+				};
+				
 				numNormals=0;
 				normal = {0.f,0.f,0.f};
 				if(vertHash.find(vstring) != vertHash.end()) {
@@ -2118,8 +2122,8 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::sphere( float radius, int res, ofPrimitiveMod
 //--------------------------------------------------------------
 template<class V, class N, class C, class T>
 ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosahedron(float radius) {
-        auto mesh = icosphere(radius, 0);
-        mesh.flatNormals();
+	auto mesh { icosphere(radius, 0) };
+	mesh.flatNormals();
 	return mesh;
 }
 
@@ -2133,10 +2137,12 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 	ofMesh_<V,N,C,T> sphere;
 
 	/// Step 1 : Generate icosahedron
-	const float sqrt5 = sqrt(5.0f);
+	const float sqrt5 = std::sqrt(5.0f);
 	const float phi = (1.0f + sqrt5) * 0.5f;
-	const float invnorm = 1/sqrt(phi*phi+1);
+	const float invnorm = 1/std::sqrt(phi*phi+1);
 
+	
+	// FIXME: addvertices XAXA
     sphere.addVertex(invnorm * V(-1,  phi, 0));//0
 	sphere.addVertex(invnorm * V( 1,  phi, 0));//1
 	sphere.addVertex(invnorm * V(0,   1,  -phi));//2
@@ -2150,7 +2156,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 	sphere.addVertex(invnorm * V(-1,  -phi,0));//10
 	sphere.addVertex(invnorm * V( 1,  -phi,0));//11
        
-        ofIndexType firstFaces[] = {
+    ofIndexType firstFaces[] = {
 		0,1,2,
 		0,3,1,
 		0,4,5,
@@ -2173,7 +2179,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 		10,11,9
 	};
 
-        for(ofIndexType i = 0; i < 60; i+=3) {
+    for(ofIndexType i = 0; i < 60; i+=3) {
 		sphere.addTriangle(firstFaces[i], firstFaces[i+1], firstFaces[i+2]);
 	}
         
@@ -2192,29 +2198,33 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			auto i1 = faces[i*3];
 			auto i2 = faces[i*3+1];
 			auto i3 = faces[i*3+2];
-			auto i12 = vertices.size();
-			auto i23 = i12+1;
-			auto i13 = i12+2;
+			auto i12 = static_cast<ofIndexType>(vertices.size());
+			auto i23 = static_cast<ofIndexType>(i12 + 1);
+			auto i13 = static_cast<ofIndexType>(i12 + 2);
 			auto v1 = vertices[i1];
 			auto v2 = vertices[i2];
 			auto v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
-			vertices.push_back(glm::normalize(toGlm(v1+v2)));
-			vertices.push_back(glm::normalize(toGlm(v2+v3)));
-			vertices.push_back(glm::normalize(toGlm(v1+v3)));
+			vertices.insert(vertices.end(), {
+				glm::normalize(toGlm(v1+v2)),
+				glm::normalize(toGlm(v2+v3)),
+				glm::normalize(toGlm(v1+v3)),
+			});
 			//now recreate indices
-			newFaces.push_back(i1);
-			newFaces.push_back(i12);
-			newFaces.push_back(i13);
-			newFaces.push_back(i2);
-			newFaces.push_back(i23);
-			newFaces.push_back(i12);
-			newFaces.push_back(i3);
-			newFaces.push_back(i13);
-			newFaces.push_back(i23);
-			newFaces.push_back(i12);
-			newFaces.push_back(i23);
-			newFaces.push_back(i13);
+			newFaces.insert(newFaces.end(), {
+				i1,
+				i12,
+				i13,
+				i2,
+				i23,
+				i12,
+				i3,
+				i13,
+				i23,
+				i12,
+				i23,
+				i13
+			});
 		}
 		faces.swap(newFaces);
 	}
