@@ -46,10 +46,19 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 	streamBuffer.clear();
 
 	if (type == FROM_FILE_EXTENSION) {
-		auto ext = filename.extension();
-		if (ext == of::filesystem::path { ".svg" } || ext == of::filesystem::path { ".SVG" }) {
+//		auto ext = filename.extension();
+//		if (ext == of::filesystem::path { ".svg" } || ext == of::filesystem::path { ".SVG" }) {
+//			type = SVG;
+//		} else if (ext == of::filesystem::path { ".pdf" } || ext == of::filesystem::path { ".PDF" }) {
+//			type = PDF;
+//		} else { // default to image
+//			type = IMAGE;
+//		}
+
+		auto ext = ofGetExtensionLower(filename);
+		if (ext == ".svg") {
 			type = SVG;
-		} else if (ext == of::filesystem::path { ".pdf" } || ext == of::filesystem::path { ".PDF" }) {
+		} else if (ext == ".svg") {
 			type = PDF;
 		} else { // default to image
 			type = IMAGE;
