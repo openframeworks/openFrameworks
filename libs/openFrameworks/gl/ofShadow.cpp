@@ -12,7 +12,7 @@
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
 // MARK: ofConstants Targets
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL

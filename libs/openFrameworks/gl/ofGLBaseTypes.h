@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofGraphicsBaseTypes.h"
+#include "ofConstants.h" //GLuint
 #include <vector>
 
 class ofTexture;

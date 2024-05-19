@@ -1,7 +1,7 @@
 #pragma once
 
 // MARK: Review later
-//#include "ofConstants.h"
+#include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 #include "ofSoundBaseTypes.h"
@@ -47,7 +47,7 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		ofOpenALSoundPlayer();
 		virtual ~ofOpenALSoundPlayer();
 
-        bool load(const of::filesystem::path & fileName, bool stream = false);
+        bool load(const of::filesystem::path& fileName, bool stream = false);
 		void unload();
 		void play();
 		void stop();

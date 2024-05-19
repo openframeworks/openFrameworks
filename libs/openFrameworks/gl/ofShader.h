@@ -7,7 +7,7 @@
  make sure to catch and report that error.
  */
 
-// MARK: ofConstants Targets
+// MARK: ofConstants Targets GLuint
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT

@@ -4,7 +4,7 @@
 #include "of3dGraphics.h"
 #include <memory>
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #ifndef TARGET_WIN32
 	#include <unistd.h>
 #endif

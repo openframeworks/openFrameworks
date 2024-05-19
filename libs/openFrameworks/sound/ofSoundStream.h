@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofBaseApp.h"
 #include "ofSoundBaseTypes.h"
 #include <climits> // UINT_MAX only?
 
