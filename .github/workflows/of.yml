@@ -258,20 +258,11 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.13
       with:
-        # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
-        # key: ${{ matrix.msystem }}
 
 
     - name: Download libs
-      # continue-on-error: true
       run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
-#    - name: rm-dev
-#      run: sudo rm -rf /Library/Developer
-
-    # this step is not needed here because the script is empty
-    # - name: install
-    # run: ./scripts/ci/$TARGET/install.sh
 
     - name: Build
       run:
@@ -281,9 +272,7 @@ jobs:
           scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
         fi
       env:
-        # DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
         DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
-        # SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
         SDKROOT: "/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 
