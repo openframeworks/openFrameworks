@@ -29,6 +29,10 @@ ifdef PLATFORM_LD
 	LD ?= $(PLATFORM_LD)
 endif
 
+ifdef PLATFORM_LD
+	LD ?= $(CXX)
+endif
+
 ifdef PROJECT_AR
 	AR ?= $(PROJECT_AR)
 endif
