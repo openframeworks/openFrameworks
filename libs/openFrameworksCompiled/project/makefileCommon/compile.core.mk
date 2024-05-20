@@ -21,6 +21,14 @@ ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
 
+ifdef PROJECT_LD
+	LD ?= $(PROJECT_LD)
+endif
+
+ifdef PLATFORM_LD
+	LD ?= $(PLATFORM_LD)
+endif
+
 ifdef PROJECT_AR
 	AR ?= $(PROJECT_AR)
 endif
@@ -43,6 +51,7 @@ endif
 
 $(info 💾 CXX = $(CXX))
 $(info 💾 CC = $(CC))
+$(info 💾 LD = $(LD))
 
 ################################################################################
 # CFLAGS
