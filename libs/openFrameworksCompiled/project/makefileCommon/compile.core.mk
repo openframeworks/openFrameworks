@@ -21,20 +21,24 @@ ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
 
-ifdef PROJECT_LD
-$(info LD from PROJECT_LD)
-	LD ?= $(PROJECT_LD)
-endif
+ifdef LD
+$(info LD is defined)
+else
+	ifdef PROJECT_LD
+	$(info LD from PROJECT_LD)
+		LD ?= $(PROJECT_LD)
+	endif
 
-ifdef PLATFORM_LD
-$(info LD from PLATFORM_LD)
-	LD ?= $(PLATFORM_LD)
-endif
+	ifdef PLATFORM_LD
+	$(info LD from PLATFORM_LD)
+		LD ?= $(PLATFORM_LD)
+	endif
 
-ifdef CXX
-$(info LD from CXX)
-	LD ?= $(CXX)
-endif
+	ifdef CXX
+	$(info LD from CXX)
+		LD ?= $(CXX)
+	endif
+endif	
 
 ifdef PROJECT_AR
 	AR ?= $(PROJECT_AR)
