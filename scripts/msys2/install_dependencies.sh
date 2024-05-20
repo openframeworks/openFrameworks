@@ -32,7 +32,7 @@ done
 
 # List of MSYS packages to be installed
 # msyspackages="make rsync zip unzip wget"
-msyspackages="unzip make"
+msyspackages="unzip make lld"
 
 # List of MINGW packages to be installed (without prefix)
 mingwPackages="gcc assimp cairo curl freeglut FreeImage \
