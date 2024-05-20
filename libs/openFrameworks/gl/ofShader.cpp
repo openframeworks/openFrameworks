@@ -439,7 +439,7 @@ string ofShader::parseForIncludes(const string & source, const of::filesystem::p
 string ofShader::parseForIncludes(const string & source, vector<string> & included, int level, const of::filesystem::path & sourceDirectoryPath) {
 
     if (level > 32) {
-        ofLogError("ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion");
+        ofLogError("ofShader") << "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion";
         return "";
     }
 
