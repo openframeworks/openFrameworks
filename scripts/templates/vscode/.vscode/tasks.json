@@ -52,7 +52,10 @@
 		{
 			"type": "shell",
 			"label": "Run RELEASE",
-			"command": "make RunRelease >&1"
+			"command": "make RunRelease >&1",
+			"windows" : {
+				"command" : "bin/*.exe"
+			}
 		},
 		{
 			"label": "Build and Run Release",
