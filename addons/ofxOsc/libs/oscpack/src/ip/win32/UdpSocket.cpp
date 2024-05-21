@@ -48,6 +48,7 @@
 #include <cstring> // for memset
 #include <stdexcept>
 #include <vector>
+#include <atomic>
 
 #include "ip/UdpSocket.h" // usually I'd include the module header first
                           // but this is causing conflicts with BCB4 due to
