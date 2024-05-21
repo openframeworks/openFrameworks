@@ -45,11 +45,14 @@
 			"type": "shell",
 			"label": "Build RELEASE",
 			"command": "make -j -s 2>&1"
+			// "windows" : {
+			// 	"command" : "msbuild"
+			// }
 		},
 		{
 			"type": "shell",
 			"label": "Run RELEASE",
-			"command": "make RunRelease",
+			"command": "make RunRelease >&1"
 		},
 		{
 			"label": "Build and Run Release",
@@ -63,10 +66,6 @@
 		{
 			"type": "shell",
 			"label": "Build DEBUG",
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
 			"command": "make Debug -j -s 2>&1 || exit 1"
 		},
 
