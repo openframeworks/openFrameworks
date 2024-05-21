@@ -111,7 +111,7 @@ jobs:
             unzip
             # rsync
             # wget
-            wget2
+            # wget2
       - name: Install dependencies
         shell: msys2 {0}
         run:
