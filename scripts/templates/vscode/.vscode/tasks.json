@@ -3,6 +3,18 @@
     "shell":{
         "task": true
     },
+    "windows" : {
+        "shell": {
+            "executable": "C:\\msys64\\msys2_shell.cmd",
+            "args": [
+                "-defterm",
+                "-mingw64",
+                "-no-start",
+                "-here",
+                "-shell bash -c"
+            ]
+        }
+    },
     "tasks": [
         {
             "type": "shell",
@@ -11,21 +23,9 @@
                 "reveal": "always",
                 "panel": "shared"
             },
-            "command": "make -j -s 2>&1 && make RunRelease",
+            "command": "make -j -s 2>&1",
             "windows" : {
                 "command": "make -j;make RunRelease",
-                "options": {
-                    "shell": {
-                        "executable": "C:\\msys64\\msys2_shell.cmd",
-                        "args": [
-                            "-defterm",
-                            "-mingw64",
-                            "-no-start",
-                            "-here",
-                            "-shell bash -c"
-                        ]
-                    }
-                },
             },            
             "group": {
                 "kind": "build",
@@ -43,6 +43,24 @@
                   "message": 5
                 }
               }
+        },
+        {
+            "type": "shell",
+            "label": "Run RELEASE",
+            "command": "make RunRelease",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Build and Run Release",
+            "dependsOn": ["Build RELEASE", "Run RELEASE"],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "type": "shell",
