@@ -28,6 +28,13 @@ class ofApp: public ofxUnitTestsApp {
 		std::string mv { "/string_for_move" };
 		ofxOscMessage m_mv {std::move(mv)};
 		ofxTest(m_mv.getAddress() ==  "/string_for_move","ofxOscMessage{std::string &&}");
+		
+		std::unique_ptr<ofxOscReceiver> r = std::make_unique<ofxOscReceiver>();
+		r = std::make_unique<ofxOscReceiver>();
+		ofxTest(r.get()->isListening() == true, "ofxOscReceiver: scope test");
+		r->setup(2222);
+		ofxTest(r.get()->getPort() == 2222, "ofxOscReceiver: port test");
+		
 	}
 
 	void run(){
