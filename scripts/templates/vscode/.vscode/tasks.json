@@ -13,7 +13,7 @@
             },
             "command": "make -j -s 2>&1 && make RunRelease",
             "windows" : {
-                "command": "make -j -s 2>&1 && make RunRelease",
+                "command": "make -j ; make RunRelease",
                 "options": {
                     "shell": {
                         "executable": "C:\\msys64\\msys2_shell.cmd",
