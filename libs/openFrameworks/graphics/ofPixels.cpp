@@ -1,6 +1,7 @@
 #include "ofGraphicsConstants.h"
 #include "ofPixels.h"
 #include "ofColor.h"
+#include <unordered_map>
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
@@ -16,121 +17,92 @@ static ofImageType getImageTypeFromChannels(size_t channels){
 }
 
 template<typename PixelType>
-size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat format){
-	switch(format){
-		case OF_PIXELS_RGB:
-		case OF_PIXELS_BGR:
-			return 3 * sizeof(PixelType) * 8;
+static size_t numChannelsFromPixelFormat(ofPixelFormat _pixelFormat) {
+	std::unordered_map<ofPixelFormat, size_t> pixelFormatChannels {
+		{ OF_PIXELS_RGB, 3 },
+		{ OF_PIXELS_BGR, 3 },
+		{ OF_PIXELS_RGBA, 4 },
+		{ OF_PIXELS_RGBA, 4 },
+		{ OF_PIXELS_GRAY, 1 },
+		{ OF_PIXELS_Y, 1 },
+		{ OF_PIXELS_U, 1 },
+		{ OF_PIXELS_V, 1 },
+		{ OF_PIXELS_UV, 2 },
+		{ OF_PIXELS_VU, 2 },
+		{ OF_PIXELS_GRAY_ALPHA, 2 },
+	};
+	return pixelFormatChannels[_pixelFormat];
+}
 
-		case OF_PIXELS_RGBA:
-		case OF_PIXELS_BGRA:
-			return 4 * sizeof(PixelType) * 8;
-
-		case OF_PIXELS_GRAY:
-		case OF_PIXELS_Y:
-		case OF_PIXELS_U:
-		case OF_PIXELS_V:
-			return 1 * sizeof(PixelType) * 8;
-
+template<typename PixelType>
+size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat _pixelFormat){
+	switch(_pixelFormat){
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 			return 12;
-
-		case OF_PIXELS_UV:
-		case OF_PIXELS_VU:
-		case OF_PIXELS_GRAY_ALPHA:
-			return 2 * sizeof(PixelType) * 8;
-
+			break;
+			
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
 		case OF_PIXELS_RGB565:
 			return 16;
 			break;
 		default:
-			return 0;
+			
+			return
+			std::unordered_map<ofPixelFormat, size_t>  {
+				{ OF_PIXELS_RGB, 3 },
+				{ OF_PIXELS_BGR, 3 },
+				{ OF_PIXELS_RGBA, 4 },
+				{ OF_PIXELS_BGRA, 4 },
+				{ OF_PIXELS_GRAY, 1 },
+				{ OF_PIXELS_Y, 1 },
+				{ OF_PIXELS_U, 1 },
+				{ OF_PIXELS_V, 1 },
+				{ OF_PIXELS_UV, 2 },
+				{ OF_PIXELS_VU, 2 },
+				{ OF_PIXELS_GRAY_ALPHA, 2 },
+			}[_pixelFormat] * sizeof(PixelType) * 8;
+//			return numChannelsFromPixelFormat(format) * sizeof(PixelType) * 8;
 	}
-
 }
 
 template<>
-std::string ofToString(const ofPixelFormat & p) {
-	switch (p){
-		case OF_PIXELS_GRAY:
-			return "OF_PIXELS_GRAY";
-		break;
-		case OF_PIXELS_GRAY_ALPHA:
-			return "OF_PIXELS_GRAY_ALPHA";
-		break;
-		case OF_PIXELS_RGB:
-			return "OF_PIXELS_RGB";
-		break;
-		case OF_PIXELS_BGR:
-			return "OF_PIXELS_BGR";
-		break;
-		case OF_PIXELS_RGBA:
-			return "OF_PIXELS_RGBA";
-		break;
-		case OF_PIXELS_BGRA:
-			return "OF_PIXELS_BGRA";
-		break;
-		case OF_PIXELS_RGB565:
-			return "OF_PIXELS_RGB565";
-		break;
-		case OF_PIXELS_NV12:
-			return "OF_PIXELS_NV12";
-		break;
-		case OF_PIXELS_NV21:
-			return "OF_PIXELS_NV21";
-		break;
-		case OF_PIXELS_YV12:
-			return "OF_PIXELS_YV12";
-		break;
-		case OF_PIXELS_I420:
-			return "OF_PIXELS_I420";
-		break;
-		case OF_PIXELS_YUY2:
-			return "OF_PIXELS_YUY2";
-		break;
-		case OF_PIXELS_UYVY:
-			return "OF_PIXELS_UYVY";
-		break;
-		case OF_PIXELS_Y:
-			return "OF_PIXELS_Y";
-		break;
-		case OF_PIXELS_U:
-			return "OF_PIXELS_U";
-		break;
-		case OF_PIXELS_V:
-			return "OF_PIXELS_V";
-		break;
-		case OF_PIXELS_UV:
-			return "OF_PIXELS_UV";
-		break;
-		case OF_PIXELS_VU:
-			return "OF_PIXELS_VU";
-		break;
-		case OF_PIXELS_NUM_FORMATS:
-			return "OF_PIXELS_NUM_FORMATS";
-		break;
-		case OF_PIXELS_UNKNOWN:
-			return "OF_PIXELS_UNKNOWN";
-		break;
-		case OF_PIXELS_NATIVE:
-			return "OF_PIXELS_NATIVE";
-		break;
-	}
-	return "OF_PIXELS_UNKNOWN";
+std::string ofToString(const ofPixelFormat & _pixelFormat) {
+	return
+	std::unordered_map<ofPixelFormat, std::string>  {
+		{ OF_PIXELS_GRAY, "OF_PIXELS_GRAY" },
+		{ OF_PIXELS_GRAY_ALPHA, "OF_PIXELS_GRAY_ALPHA" },
+		{ OF_PIXELS_RGB, "OF_PIXELS_RGB" },
+		{ OF_PIXELS_BGR, "OF_PIXELS_BGR" },
+		{ OF_PIXELS_RGBA, "OF_PIXELS_RGBA" },
+		{ OF_PIXELS_BGRA, "OF_PIXELS_BGRA" },
+		{ OF_PIXELS_RGB565, "OF_PIXELS_RGB565" },
+		{ OF_PIXELS_NV12, "OF_PIXELS_NV12" },
+		{ OF_PIXELS_NV21, "OF_PIXELS_NV21" },
+		{ OF_PIXELS_YV12, "OF_PIXELS_YV12" },
+		{ OF_PIXELS_YUY2, "OF_PIXELS_YUY2" },
+		{ OF_PIXELS_UYVY, "OF_PIXELS_UYVY" },
+		{ OF_PIXELS_Y, "OF_PIXELS_Y" },
+		{ OF_PIXELS_U, "OF_PIXELS_U" },
+		{ OF_PIXELS_V, "OF_PIXELS_V" },
+		{ OF_PIXELS_UV, "OF_PIXELS_UV" },
+		{ OF_PIXELS_VU, "OF_PIXELS_VU" },
+		{ OF_PIXELS_NUM_FORMATS, "OF_PIXELS_NUM_FORMATS" },
+		{ OF_PIXELS_UNKNOWN, "OF_PIXELS_UNKNOWN" },
+		{ OF_PIXELS_NATIVE, "OF_PIXELS_NATIVE" },
+	}[_pixelFormat];
 }
 
 template<typename PixelType>
-size_t ofPixels_<PixelType>::bytesFromPixelFormat(size_t w, size_t h, ofPixelFormat format){
-	return w * h * pixelBitsFromPixelFormat(format) / 8;
+size_t ofPixels_<PixelType>::bytesFromPixelFormat(size_t w, size_t h, ofPixelFormat _pixelFormat){
+	return w * h * pixelBitsFromPixelFormat(_pixelFormat)/8;
 }
 
-static size_t channelsFromPixelFormat(ofPixelFormat format){
-	switch(format){
+static size_t channelsFromPixelFormat(ofPixelFormat _pixelFormat){
+	switch(_pixelFormat){
 	case OF_PIXELS_RGB:
 	case OF_PIXELS_BGR:
 		return 3;
@@ -166,10 +138,22 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		return 2;
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: format doesn't support channels");
+		ofLog(OF_LOG_ERROR, "ofPixels: format doesn't support channels " + ofToString(_pixelFormat) );
 		return 1;
 	}
 }
+
+
+template<typename PixelType>
+size_t ofPixels_<PixelType>::getBytesFromPixelFormat(ofPixelFormat _pixelFormat){
+	return channelsFromPixelFormat(_pixelFormat) * sizeof(PixelType);
+}
+
+//static unordered_map <ofImageType, ofPixelFormat> imageType2pixelFormat {
+//	{ OF_IMAGE_GRAYSCALE, OF_PIXELS_GRAY },
+//	{ OF_IMAGE_COLOR, OF_PIXELS_RGB },
+//	{ OF_IMAGE_COLOR_ALPHA, OF_PIXELS_RGBA },
+//};
 
 static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
 	switch(type){
@@ -188,8 +172,8 @@ static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
 	}
 }
 
-static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
-	switch(pixelFormat){
+static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat _pixelFormat){
+	switch(_pixelFormat){
 	case OF_PIXELS_GRAY:
 		return OF_IMAGE_GRAYSCALE;
 		break;
@@ -210,8 +194,8 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	}
 }
 
-std::string ofToString(ofPixelFormat pixelFormat){
-	switch(pixelFormat){
+std::string ofToString(ofPixelFormat _pixelFormat){
+	switch(_pixelFormat){
 		case OF_PIXELS_RGB:
 			return "RGB";
 		case OF_PIXELS_BGR:
@@ -378,8 +362,8 @@ void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, size_t w, 
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, size_t w, size_t h, ofPixelFormat format){
-	allocate(w,h,format);
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, size_t w, size_t h, ofPixelFormat _pixelFormat){
+	allocate(w,h,_pixelFormat);
 	memcpy(pixels, newPixels, getTotalBytes());
 }
 
@@ -393,11 +377,11 @@ template<typename PixelType>
 void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w, size_t h, ofPixelFormat _pixelFormat){
 	clear();
 	pixelFormat = _pixelFormat;
-	width= w;
+	width = w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat);
-
+	pixelsSize = bytesFromPixelFormat(w, h, _pixelFormat);
+		
 	pixels = newPixels;
 	pixelsOwner = false;
 	bAllocated = true;
@@ -418,7 +402,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, siz
 		return;
 	}
 	allocate(width, height, _pixelFormat);
-	size_t dstStride = width * pixelBitsFromPixelFormat(_pixelFormat)/8;
+	size_t dstStride = width * getBytesFromPixelFormat(_pixelFormat);
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
 	for(size_t i = 0; i < height; i++) {
@@ -508,6 +492,11 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, size_t _channels){
 }
 
 template<typename PixelType>
+void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofImageType type){
+	allocate(w,h,ofPixelFormatFromImageType(type));
+}
+
+template<typename PixelType>
 void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	if (w == 0 || h == 0 || format == OF_PIXELS_UNKNOWN) {
 		return;
@@ -515,6 +504,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 
 	size_t newSize = bytesFromPixelFormat(w,h,format);
 	size_t oldSize = getTotalBytes();
+	
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
 		pixelFormat = format;
@@ -526,20 +516,15 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	//we do need to allocate, clear the data
 	clear();
 
-	pixelFormat	= format;
-	width 		= w;
-	height 		= h;
+	pixelFormat = format;
+	width = w;
+	height = h;
 
 	pixelsSize = newSize;
 
 	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
 	pixelsOwner = true;
-}
-
-template<typename PixelType>
-void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofImageType type){
-	allocate(w,h,ofPixelFormatFromImageType(type));
 }
 
 template<typename PixelType>
@@ -583,11 +568,11 @@ void ofPixels_<PixelType>::clear(){
 		pixels = nullptr;
 	}
 
-	width			= 0;
-	height			= 0;
-	pixelFormat		= OF_PIXELS_UNKNOWN;
-	pixelsSize		= 0;
-	bAllocated		= false;
+	width = 0;
+	height = 0;
+	pixelFormat = OF_PIXELS_UNKNOWN;
+	pixelsSize = 0;
+	bAllocated = false;
 }
 
 template<typename PixelType>
@@ -803,7 +788,7 @@ size_t ofPixels_<PixelType>::getHeight() const{
 
 template<typename PixelType>
 size_t ofPixels_<PixelType>::getBytesPerPixel() const{
-	return pixelBitsFromPixelFormat(pixelFormat)/8;
+	return getBytesFromPixelFormat(pixelFormat);
 }
 
 template<typename PixelType>
@@ -1160,10 +1145,13 @@ void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 
 	ofPixels_<PixelType> newPixels;
 	rotate90To(newPixels,nClockwiseRotations);
-	std::swap(newPixels.pixels,pixels);
-	width = newPixels.width;
-	height = newPixels.height;
-	pixelsSize = newPixels.size();
+	std::swap(newPixels.pixels, pixels);
+	std::swap(newPixels.width, width);
+	std::swap(newPixels.height, height);
+//	width = newPixels.width;
+//	height = newPixels.height;
+	// not needed really because w*h = h*w
+//	pixelsSize = newPixels.size();
 
 }
 
@@ -1344,30 +1332,41 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 	size_t dstHeight	  = dst.getHeight();
 	size_t bytesPerPixel = getBytesPerPixel();
 
-
-	PixelType * dstPixels = dst.getData();
+	auto dstPixels = dst.getData();
 
 	switch (interpMethod){
-
 			//----------------------------------------
 		case OF_INTERPOLATE_NEAREST_NEIGHBOR:{
+//			size_t dstIndex = 0;
+//			float srcxFactor = (float)srcWidth/dstWidth;
+//			float srcyFactor = (float)srcHeight/dstHeight;
+//			float srcy = 0.5;
+//			for (size_t dsty=0; dsty<dstHeight; dsty++){
+//				float srcx = 0.5;
+//				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
+//				for (size_t dstx=0; dstx<dstWidth; dstx++){
+//					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
+//					for (size_t k=0; k<bytesPerPixel; k++){
+//						dstPixels[dstIndex] = pixels[pixelIndex];
+//						dstIndex++;
+//						pixelIndex++;
+//					}
+//					srcx+=srcxFactor;
+//				}
+//				srcy+=srcyFactor;
+//			}
 			size_t dstIndex = 0;
 			float srcxFactor = (float)srcWidth/dstWidth;
 			float srcyFactor = (float)srcHeight/dstHeight;
-			float srcy = 0.5;
 			for (size_t dsty=0; dsty<dstHeight; dsty++){
-				float srcx = 0.5;
-				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
+				size_t srcIndex = static_cast<size_t>(dsty * srcyFactor * srcWidth);
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
-					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
-					for (size_t k=0; k<bytesPerPixel; k++){
-						dstPixels[dstIndex] = pixels[pixelIndex];
-						dstIndex++;
-						pixelIndex++;
-					}
-					srcx+=srcxFactor;
+					size_t pixelIndex = static_cast<size_t>(srcIndex + dstx * srcxFactor) * bytesPerPixel;
+
+					memcpy(&pixels[pixelIndex],
+						   &dstPixels[dstIndex],
+						   bytesPerPixel);
 				}
-				srcy+=srcyFactor;
 			}
 		}break;
 
