@@ -120,7 +120,6 @@ void ofxOscReceiver::stop() {
 	} else {
 		listenThread.join();
 	}
-#endif
 	listenSocket.reset();
 }
 
