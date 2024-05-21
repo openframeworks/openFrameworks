@@ -109,9 +109,6 @@ jobs:
           install: >-
             git
             unzip
-            # rsync
-            # wget
-            # wget2
       - name: Install dependencies
         shell: msys2 {0}
         run:
