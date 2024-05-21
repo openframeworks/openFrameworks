@@ -551,7 +551,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofBaseApp.cpp">
       <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.cpp">
       <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
   </ItemGroup>
