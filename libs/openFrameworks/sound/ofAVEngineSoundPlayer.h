@@ -39,7 +39,7 @@ public:
     
     static std::vector <float> getSystemSpectrum(int bands);
 
-    bool load(const std::filesystem::path& fileName, bool stream = false);
+    bool load(const of::filesystem::path& fileName, bool stream = false);
     void unload();
     void play();
     void stop();

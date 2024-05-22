@@ -22,7 +22,8 @@ struct ofxOscSenderSettings {
 /// \brief OSC message sender which sends to a specific host & port
 class ofxOscSender {
 public:
-	ofxOscSender(std::string host = "127.0.0.1", int port = 7970, bool silent = false) {
+	ofxOscSender() = default;
+	ofxOscSender(std::string host, int port, bool silent = false) {
 		setup(host, port, silent);
 	}
 	~ofxOscSender();
