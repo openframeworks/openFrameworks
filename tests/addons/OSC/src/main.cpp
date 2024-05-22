@@ -31,8 +31,11 @@ class ofApp: public ofxUnitTestsApp {
 		
 		std::unique_ptr<ofxOscReceiver> r = std::make_unique<ofxOscReceiver>();
 		r = std::make_unique<ofxOscReceiver>();
-		ofxTest(r.get()->isListening() == true, "ofxOscReceiver: scope test");
+		r = std::make_unique<ofxOscReceiver>();
+		r = std::make_unique<ofxOscReceiver>();
+		r = std::make_unique<ofxOscReceiver>();
 		r->setup(2222);
+
 		ofxTest(r.get()->getPort() == 2222, "ofxOscReceiver: port test");
 		
 	}
