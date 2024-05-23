@@ -5,7 +5,7 @@ SRC_DIR="examples/android/androidEmptyExample"
 
 rm -r $DEST_DIR
 
-mkdir -p $DEST_DIR/{gradle/wrapper,ofApp/{gradle/wrapper,src/main/{cpp,bin/data,java/cc/openframeworks/android,res/{drawable-hdpi,drawable-mdpi,drawable-xhdpi,drawable,layout,menu,mipmap-anydpi-v26,mipmap-hdpi,mipmap-mdpi,mipmap-xhdpi,mipmap-xxhdpi,mipmap-xxxhdpi,values-v11,values-v14,values}}}}
+mkdir -p $DEST_DIR/{gradle/wrapper,ofApp/src/main/{cpp,bin/data,java/cc/openframeworks/android,res/{drawable-hdpi,drawable-mdpi,drawable-xhdpi,drawable,layout,menu,mipmap-anydpi-v26,mipmap-hdpi,mipmap-mdpi,mipmap-xhdpi,mipmap-xxhdpi,mipmap-xxxhdpi,values-v11,values-v14,values}}}
 
 tree $DEST_DIR
 
@@ -24,10 +24,6 @@ cp $SRC_DIR/gradle/wrapper/gradle-wrapper.properties $DEST_DIR/gradle/wrapper
 cp $SRC_DIR/ofApp/build.gradle $DEST_DIR/ofApp
 cp $SRC_DIR/ofApp/gradle.properties $DEST_DIR/ofApp
 cp $SRC_DIR/ofApp/proguard-rules.pro $DEST_DIR/ofApp
-cp $SRC_DIR/ofApp/gradlew $DEST_DIR/ofApp
-cp $SRC_DIR/ofApp/gradlew.bat $DEST_DIR/ofApp
-
-cp $SRC_DIR/ofApp/gradle/wrapper/* $DEST_DIR/ofApp/gradle/wrapper
 
 cp $SRC_DIR/ofApp/src/main/AndroidManifest.xml $DEST_DIR/ofApp/src/main
 cp $SRC_DIR/ofApp/src/main/ic_launcher-playstore.png $DEST_DIR/ofApp/src/main
