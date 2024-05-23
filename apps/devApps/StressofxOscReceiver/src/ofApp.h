@@ -6,6 +6,8 @@
 struct Tester {
 	std::shared_ptr<ofxOscSender> sender_;
 	std::shared_ptr<ofxOscReceiver> receiver_;
+	long last_receiving_port_;
+	long last_sending_port_;
 };
 
 class ofApp : public ofBaseApp{
@@ -15,6 +17,7 @@ class ofApp : public ofBaseApp{
 		STOP,
 		STABLE
 	};
+	
 	
 	Mode mode_ { DYNA };
 	long msgs_ { 0 };
@@ -28,6 +31,10 @@ class ofApp : public ofBaseApp{
 	
 	std::array<std::shared_ptr<Tester>, 10> testers_;
 	
+	auto reset_stats() {
+		msgs_ = 0;
+		msgs_out_ = 0;
+	}
 	
 public:
 	void setup() override;
