@@ -216,7 +216,7 @@ public:
 	/// add a char
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addCharArg(char argument);
-	ofxOscMessage & add(char & argument) { return addCharArg(argument); }
+	ofxOscMessage & add(char argument) { return addCharArg(argument); }
 
 	/// add a 4-byte MIDI message
 	/// \return a reference to this ofxOscMessage
@@ -226,7 +226,7 @@ public:
 	/// true sends a OFXOSC_TYPE_TRUE & false sends a OFXOSC_TYPE_FALSE
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addBoolArg(bool argument);
-	ofxOscMessage & add(bool & argument) { return addBoolArg(argument); }
+	ofxOscMessage & add(bool argument) { return addBoolArg(argument); }
 
 	/// add a none/nil (has no value)
 	/// \return a reference to this ofxOscMessage

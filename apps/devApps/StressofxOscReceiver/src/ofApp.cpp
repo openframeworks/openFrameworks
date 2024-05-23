@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-#define USE_EXPLICIT_FUNCTION 1
+//#define USE_EXPLICIT_FUNCTION 1
 
 #define INSTANTLY_OUT_OF_SCOPE 1
 
@@ -11,8 +11,9 @@ void ofApp::setup(){
 	ofSetVerticalSync(false);
 	
 #ifdef INSTANTLY_OUT_OF_SCOPE
-	ofLogNotice("will hang");
-	ofxOscReceiver r;
+	ofLogNotice("will hang if thread problem");
+	std::unique_ptr<ofxOscReceiver> r = std::make_unique<ofxOscReceiver>();
+	r = std::make_unique<ofxOscReceiver>();
 #endif
 	ofLogNotice("ready to roll");
 	
