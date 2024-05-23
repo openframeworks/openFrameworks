@@ -66,14 +66,6 @@ void ofApp::update(){
 		while (auto m = tester->receiver_->getMessage()) {
 			msgs_++;
 		}
-		if (tester->last_receiving_port_ != tester->receiver_->getPort()) {
-			tester->last_receiving_port_ = tester->receiver_->getPort();
-			ofLogNotice("listening on ") << tester->last_receiving_port_;
-		}
-		if (tester->last_sending_port_ != tester->sender_->getPort()) {
-			tester->last_sending_port_ = tester->sender_->getPort();
-			ofLogNotice("sending on ") << tester->last_sending_port_;
-		}
 	}
 }
 

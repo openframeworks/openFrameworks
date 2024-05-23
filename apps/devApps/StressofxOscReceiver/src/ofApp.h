@@ -6,8 +6,6 @@
 struct Tester {
 	std::shared_ptr<ofxOscSender> sender_;
 	std::shared_ptr<ofxOscReceiver> receiver_;
-	long last_receiving_port_;
-	long last_sending_port_;
 };
 
 class ofApp : public ofBaseApp{
