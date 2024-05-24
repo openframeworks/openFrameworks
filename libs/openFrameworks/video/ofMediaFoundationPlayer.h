@@ -34,7 +34,6 @@
 #include <d3d11_1.h>
 #include <wrl.h>
 #include <wincodec.h>
-//#include "ofConstants.h"
 #include "ofVideoBaseTypes.h"
 #include "ofPixels.h" //mSrcPixels
 #include "ofFbo.h"
