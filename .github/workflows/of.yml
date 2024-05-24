@@ -69,10 +69,11 @@ jobs:
         release: true
         update: false
         msystem: ${{matrix.msystem}}
-        pacboy: gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+        pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
         install: >-
           unzip
           make
+        # lld
         # gcc:p gdb:p zlib:p poco:p pkgconf:p harfbuzz:p ntldd-git:p 
         # boost:p tools:p
         # install: >-
@@ -171,7 +172,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   build-ios-tvos:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
         matrix:
           cfg:
@@ -194,7 +195,7 @@ jobs:
       run: ./scripts/ci/$TARGET/build.sh;
 
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_15.2.app/Contents/Developer"
+        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -244,7 +245,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   build-macos:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
         matrix:
           cfg:
@@ -255,20 +256,11 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.13
       with:
-        # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
-        # key: ${{ matrix.msystem }}
 
 
     - name: Download libs
-      # continue-on-error: true
       run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
-#    - name: rm-dev
-#      run: sudo rm -rf /Library/Developer
-
-    # this step is not needed here because the script is empty
-    # - name: install
-    # run: ./scripts/ci/$TARGET/install.sh
 
     - name: Build
       run:
@@ -278,8 +270,8 @@ jobs:
           scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
         fi
       env:
-        DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
-        SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
