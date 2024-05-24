@@ -1359,8 +1359,8 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 				float srcx = 0.5;
 				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
-					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
-					for (size_t k=0; k<bytesPerPixel; k++){
+					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * channelsFromPixelFormat(pixelFormat);
+					for (size_t k=0; k< channelsFromPixelFormat(pixelFormat); k++){
 						dstPixels[dstIndex] = pixels[pixelIndex];
 						dstIndex++;
 						pixelIndex++;
@@ -1389,19 +1389,19 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			size_t patchIndex;
 			float patch[16];
 
-			size_t srcRowBytes = srcWidth*bytesPerPixel;
+			size_t srcRowBytes = srcWidth*channelsFromPixelFormat(pixelFormat);
 			size_t loIndex = (srcRowBytes)+1;
-			size_t hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
+			size_t hiIndex = (srcWidth*srcHeight*channelsFromPixelFormat(pixelFormat))-(srcRowBytes)-1;
 
 			for (size_t dsty=0; dsty<dstHeight; dsty++){
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
 
-					size_t   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
+					size_t   dstIndex0 = (dsty*dstWidth + dstx) * channelsFromPixelFormat(pixelFormat);
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
 					size_t   srcx = static_cast<size_t>(std::min(srcWidth-1, static_cast<size_t>(srcxf)));
 					size_t   srcy = static_cast<size_t>(std::min(srcHeight-1, static_cast<size_t>(srcyf)));
-					size_t   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
+					size_t   srcIndex0 = (srcy*srcWidth + srcx) * channelsFromPixelFormat(pixelFormat);
 
 					px1 = srcxf - srcx;
 					py1 = srcyf - srcy;
@@ -1410,14 +1410,14 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 					py2 = py1 * py1;
 					py3 = py2 * py1;
 
-					for (size_t k=0; k<bytesPerPixel; k++){
+					for (size_t k=0; k<channelsFromPixelFormat(pixelFormat); k++){
 						size_t   dstIndex = dstIndex0+k;
 						size_t   srcIndex = srcIndex0+k;
 
 						for (size_t dy=0; dy<4; dy++) {
 							patchRow = srcIndex + ((dy-1)*srcRowBytes);
 							for (size_t dx=0; dx<4; dx++) {
-								patchIndex = patchRow + (dx-1)*bytesPerPixel;
+								patchIndex = patchRow + (dx-1)*channelsFromPixelFormat(pixelFormat);
 								if ((patchIndex >= loIndex) && (patchIndex < hiIndex)) {
 									srcColor = pixels[patchIndex];
 								}
