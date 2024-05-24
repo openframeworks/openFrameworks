@@ -100,7 +100,7 @@ else
     # BOOST_VER=
 fi
 
-apt-get update
+# apt-get update
 
 if [ -x "$(command -v /usr/lib/update-notifier/apt-check)" ]; then
 	REGULAR_UPDATES=$(/usr/lib/update-notifier/apt-check 2>&1 | cut -d ';' -f 1)
