@@ -1,16 +1,9 @@
 #include "ofBufferObject.h"
 #include "ofCubeMap.h"
-// #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
-// #include "ofGraphics.h"
 #include "ofLight.h"
-// #include "ofMatrix3x3.h"
-// #include "ofMatrix4x4.h"
-// #include "ofParameter.h"
 #include "ofShader.h"
 #include "ofShadow.h"
-// #include "ofTexture.h"
-// #include "ofUtils.h"
 #ifdef TARGET_ANDROID
     #include "ofxAndroidUtils.h"
 #endif
