@@ -13,6 +13,7 @@ ifdef PLATFORM_CXX
 	CXX ?= $(PLATFORM_CXX)
 endif
 
+
 ifdef PROJECT_CC
 	CC ?= $(PROJECT_CC)
 endif
@@ -21,6 +22,14 @@ ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
 
+# ifdef PROJECT_LD
+# 	LD ?= $(PROJECT_LD)
+# endif
+
+# ifdef PLATFORM_LD
+# 	LD = $(PLATFORM_LD)
+# endif
+
 ifdef PROJECT_AR
 	AR ?= $(PROJECT_AR)
 endif
@@ -28,6 +37,7 @@ endif
 ifdef PLATFORM_AR
 	AR ?= $(PLATFORM_AR)
 endif
+
 
 ifdef PLATFORM_ARFLAGS
 	ARFLAGS = $(PLATFORM_ARFLAGS)
@@ -39,7 +49,11 @@ ifdef ${ccache}
 $(info 💿 Using CCACHE - compile.core.mk )
 	CXX := ${ccache} $(CXX)
 	CC := ${ccache} $(CXX)
-endif	
+endif
+
+$(info 💾 CXX = $(CXX))
+$(info 💾 CC = $(CC))
+# $(info 💾 LD = $(LD))
 
 ################################################################################
 # CFLAGS

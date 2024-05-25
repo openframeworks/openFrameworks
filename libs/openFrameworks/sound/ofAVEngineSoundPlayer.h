@@ -13,7 +13,6 @@
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 
 #include "ofSoundBaseTypes.h"
-//#include "ofEvents.h"
 class ofEventArgs;
 
 // FIXME: some can be moved to .mm
@@ -39,7 +38,7 @@ public:
     
     static std::vector <float> getSystemSpectrum(int bands);
 
-    bool load(const std::filesystem::path& fileName, bool stream = false);
+    bool load(const of::filesystem::path& fileName, bool stream = false);
     void unload();
     void play();
     void stop();

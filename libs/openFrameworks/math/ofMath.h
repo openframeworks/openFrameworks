@@ -4,7 +4,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/fwd.hpp>
 #include <glm/gtc/constants.hpp>
+
+#include <cstdlib>
 #include <cmath>
+#include <algorithm>
 
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.
@@ -155,6 +158,104 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 /// \param max The upper bound of the range.
 /// \returns a floating point number in the range [min, max].
 float ofClamp(float value, float min, float max);
+
+/// \brief return the smallest of 2 values of same type
+///
+/// \param a first value to compare
+/// \param b second value to compare
+
+template<typename T>
+T ofMin(const T & t1, const T & t2) { return std::min(t1, t2); }
+
+/// \brief return the smallest of 2 values of different types
+///
+/// Leverages 'std::common_type' to efficiently cast the values in compatible types
+/// special case for comparisons when signed and unsigned are mixed
+/// special case for comparisons when size_t / uint64_t are involved
+///
+/// \param a first value to compare
+/// \param b second value to compare
+
+template<typename T, typename Q>
+auto ofMin(const T & t, const Q & q) {
+	using CommonType = typename std::common_type<T, Q>::type;
+	if constexpr ((std::is_same_v<T, uint64_t> or std::is_same_v<T, size_t>) && std::is_signed_v<Q>) {
+		if (q < 0) {
+			return q;
+		} else {
+			return std::min<Q>(static_cast<Q>(t), q);
+		}
+	} else if constexpr ((std::is_same_v<Q, uint64_t> or std::is_same_v<Q, size_t>) && std::is_signed_v<T>) {
+		if (t < 0) {
+			return t;
+		} else {
+			return std::min<T>(t, static_cast<T>(q));
+		}
+	} else if constexpr (std::is_signed_v<T> && std::is_unsigned_v<Q>) {
+		if (t < 0 || q > static_cast<Q>(std::numeric_limits<T>::max())) {
+			return static_cast<CommonType>(t);
+		} else {
+			return std::min(static_cast<CommonType>(t), static_cast<CommonType>(q));
+		}
+	} else if constexpr (std::is_signed_v<Q> && std::is_unsigned_v<T>){
+		if (q < 0 || t > static_cast<T>(std::numeric_limits<Q>::max())) {
+			return static_cast<CommonType>(q);
+		} else {
+			return std::min(static_cast<CommonType>(t), static_cast<CommonType>(q));
+		}
+	} else {
+		return std::min(static_cast<CommonType>(t), static_cast<CommonType>(q));
+	}
+}
+
+/// \brief return the largest of 2 values of same type
+///
+/// \param a first value to compare
+/// \param b second value to compare
+
+template<typename T>
+T ofMax(const T & t1, const T & t2) { return std::max(t1, t2); }
+
+/// \brief return the largest of 2 values of different types
+///
+/// Leverages 'std::common_type' to efficiently cast the values in compatible types
+/// special case for comparisons when signed and unsigned are mixed
+/// special case for comparisons when size_t / uint64_t are involved
+///
+/// \param a first value to compare
+/// \param b second value to compare
+
+template<typename T, typename Q>
+auto ofMax(const T & t, const Q & q) {
+	using CommonType = typename std::common_type<T, Q>::type;
+	if constexpr ((std::is_same_v<T, uint64_t> or std::is_same_v<T, size_t>) && std::is_signed_v<Q>) {
+		if (q < 0) {
+			return t;
+		} else {
+			return std::max<T>(t, static_cast<T>(q));
+		}
+	} else if constexpr ((std::is_same_v<Q, uint64_t> or std::is_same_v<Q, size_t>) && std::is_signed_v<T>) {
+		if (t < 0) {
+			return q;
+		} else {
+			return std::max<Q>(static_cast<Q>(t), q);
+		}
+	} else if constexpr (std::is_signed_v<T> && std::is_unsigned_v<Q>) {
+		if (t < 0) {
+			return static_cast<CommonType>(q);
+		} else {
+			return std::max(static_cast<CommonType>(t), static_cast<CommonType>(q));
+		}
+	} else if constexpr (std::is_signed_v<Q> && std::is_unsigned_v<T>){
+		if (q < 0) {
+			return static_cast<CommonType>(t);
+		} else {
+			return std::max(static_cast<CommonType>(t), static_cast<CommonType>(q));
+		}
+	} else {
+		return std::max(static_cast<CommonType>(t), static_cast<CommonType>(q));
+	}
+}
 
 /// \brief Determine if a number is inside of a giv(float)(en range.
 /// \param t The value to test.
@@ -558,7 +659,7 @@ template <typename Type>
 Type ofInterpolateCosine(const Type & y1, const Type & y2, float pct) {
 	float pct2;
 
-	pct2 = (1 - cos(pct * glm::pi<float>())) / 2;
+	pct2 = (1 - std::cos(pct * glm::pi<float>())) / 2;
 	return (y1 * (1 - pct2) + y2 * pct2);
 }
 

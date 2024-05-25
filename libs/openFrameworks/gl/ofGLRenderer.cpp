@@ -775,7 +775,7 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 	if (farDist == 0) farDist = dist * 10.0f;
 
 	matrixMode(OF_MATRIX_PROJECTION);
-	glm::mat4 persp = glm::perspective(ofDegToRad(fov), aspect, nearDist, farDist);
+	glm::mat4 persp = glm::perspective(glm::radians(fov), aspect, nearDist, farDist);
 	loadMatrix(persp);
 
 	matrixMode(OF_MATRIX_MODELVIEW);
@@ -892,28 +892,28 @@ void ofGLRenderer::rotateDeg(float degrees) {
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateRad(float radians, float vecX, float vecY, float vecZ) {
-	glRotatef(ofRadToDeg(radians), vecX, vecY, vecZ);
+	glRotatef(glm::degrees(radians), vecX, vecY, vecZ);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateXRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 1, 0, 0);
+	glRotatef(glm::degrees(radians), 1, 0, 0);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateYRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 0, 1, 0);
+	glRotatef(glm::degrees(radians), 0, 1, 0);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::rotateZRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 0, 0, 1);
+	glRotatef(glm::degrees(radians), 0, 0, 1);
 }
 
 //same as ofRotateZ
 //----------------------------------------------------------
 void ofGLRenderer::rotateRad(float radians) {
-	glRotatef(ofRadToDeg(radians), 0, 0, 1);
+	glRotatef(glm::degrees(radians), 0, 0, 1);
 }
 
 //----------------------------------------------------------

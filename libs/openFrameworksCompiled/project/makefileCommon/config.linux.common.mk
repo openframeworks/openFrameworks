@@ -362,6 +362,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += openal
 # PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 
+
 ifeq ($(CROSS_COMPILING),1)
 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"
 		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
