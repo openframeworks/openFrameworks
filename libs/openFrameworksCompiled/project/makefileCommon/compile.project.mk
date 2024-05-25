@@ -404,10 +404,10 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/%.o: $(OF_ROOT)/libs/openFramew
 
 # Rules to link the project
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_RESOURCES) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TARGET_LIBS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
-	@echo 'Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
+	@echo '🔗 Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
 	@mkdir -p $(@D)
+# $(LD)
 	$(CXX) -o $@ $(OPTIMIZATION_LDFLAGS) $(OF_PROJECT_OBJS) $(OF_PROJECT_RESOURCES) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(LDFLAGS) $(OF_CORE_LIBS)
-
 
 clean:
 	@$(MAKE) CleanDebug

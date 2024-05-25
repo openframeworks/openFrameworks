@@ -7,8 +7,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec3.hpp>
 
-//#include <iostream>
-
 /// \brief  ofVec3f is a class for storing a three dimensional vector.
 /// 
 /// Moving through space requires knowledge of where things are and where they are
