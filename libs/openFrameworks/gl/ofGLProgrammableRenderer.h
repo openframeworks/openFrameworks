@@ -1,13 +1,13 @@
 #pragma once
 
 #include "ofGLBaseTypes.h"
-#include "ofPolyline.h"
 #include "ofShader.h"
-#include "ofMatrixStack.h"
 #include "of3dGraphics.h"
+// MARK: Optimization pointers in next four objects
+#include "ofMatrixStack.h"
+#include "ofPolyline.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
-//#include "ofMaterialBaseTypes.h"
 
 class ofShapeTessellation;
 class ofFbo;

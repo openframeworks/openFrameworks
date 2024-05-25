@@ -1,21 +1,18 @@
-# clipboardExample
+# conversionExample
 
-![Screenshot of clipboardExample](clipboardExample.png)
+![Screenshot of conversionExample](conversionExample.png)
 
 ### Learning Objectives
 
-This example demonstrates how to access clipboard content. It teaches you the use of the following functions:
-* ```ofGetWindowPtr()->getClipboardString()```
-* ```ofGetWindowPtr()->setClipboardString(std::string)```
+This example demonstrates how convert to and from strings for different data types.
 
 ### Expected Behavior
 
-When launching this app, you should see a screen with instructions on how to access the clipboard content.
+When launching this app, you should see a screen directing your attention to the console.
 
 Instructions for use:
 
-* Press ```1``` to send "Hello Works" to the clipboard
-* Press ```2``` to show the clipboard content
+* Check the console for the output of the functions in ```setup().```
 
 ### Other classes used in this file
 

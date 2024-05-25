@@ -1,11 +1,9 @@
 #ifndef OF_RANDOM_HPP_
 #define OF_RANDOM_HPP_
 
-#include <glm/glm.hpp>
-#include <random>
-
 #include "ofSingleton.h"
 #include "ofMath.h"
+#include <random>
 
 namespace of::random {
 

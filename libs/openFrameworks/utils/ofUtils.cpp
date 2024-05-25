@@ -7,13 +7,16 @@
 #include "ofImage.h"
 #include "ofLog.h"
 #include "ofMainLoop.h"
-#include "ofMath.h"
 #include "ofPixels.h"
 
 #include "uriparser/Uri.h"
 #include <chrono>
 #include <locale>
 #include <numeric>
+
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif
 
 #ifdef TARGET_WIN32 // For ofLaunchBrowser.
 	#include <shellapi.h>
@@ -240,7 +243,16 @@ bool ofTime::operator>=(const ofTime & other) const {
 
 //--------------------------------------
 uint64_t ofGetFixedStepForFps(double fps) {
-	return 1000000000 / fps;
+	return 1'000'000'000 / fps;
+}
+
+ofTimeMode ofGetTimeMode() {
+	if (auto mainLoop = ofGetMainLoop()) {
+		if (auto window = mainLoop->getCurrentWindow()) {
+			return window->events().getTimeMode();
+		}
+	}
+	return ofTimeMode(0);
 }
 
 //--------------------------------------
@@ -938,7 +950,7 @@ void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target
 #endif
 
 	auto uriStr = ofSanitizeURLString(url, uriEncodeQuery);
-	
+
 	if (uriStr) {
 #ifdef TARGET_WIN32
 		ShellExecuteA(nullptr, "open", uriStr.value().c_str(),

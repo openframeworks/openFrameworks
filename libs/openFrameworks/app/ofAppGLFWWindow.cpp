@@ -4,7 +4,7 @@
 #include "ofGLRenderer.h"
 
 #define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 #ifdef TARGET_LINUX
 	#include "ofIcon.h"
@@ -15,7 +15,7 @@
 	#else
 		#define GLFW_EXPOSE_NATIVE_EGL
 	#endif
-	#include "GLFW/glfw3native.h"
+	#include <GLFW/glfw3native.h>
 	#include <X11/XKBlib.h>
 	#include <X11/Xatom.h>
 	#include <X11/extensions/Xrandr.h>
@@ -25,7 +25,7 @@
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
 	#define GLFW_EXPOSE_NATIVE_NSGL
-	#include "GLFW/glfw3native.h"
+	#include <GLFW/glfw3native.h>
 #elif defined(TARGET_WIN32)
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#define GLFW_EXPOSE_NATIVE_WGL
@@ -171,6 +171,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.stencilBits);
 	glfwWindowHint(GLFW_STEREO, settings.stereo);
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+	glfwWindowHint(GLFW_MAXIMIZED, settings.maximized);
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS, settings.doubleBuffering ? 1 : 0);
 #else
@@ -289,6 +290,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings) {
 			}
 			targetWindowMode = settings.windowMode;
 			settings.windowMode = OF_WINDOW;
+			if (settings.maximized) {
+				glfwMaximizeWindow(windowP);
+			}
 		} else {
 			if (settings.isPositionSet()) {
 				setWindowPosition(settings.getPosition().x, settings.getPosition().y);
@@ -1373,7 +1377,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow * windowP_, int numFiles, const char **
 	drag.position = { instance->events().getMouseX(), instance->events().getMouseY() };
 	drag.files.resize(numFiles);
 	for (int i = 0; i < (int)drag.files.size(); i++) {
-		drag.files[i] = of::filesystem::path(dropString[i]).string();
+		drag.files[i] = dropString[i];
 	}
 	instance->events().notifyDragEvent(drag);
 }

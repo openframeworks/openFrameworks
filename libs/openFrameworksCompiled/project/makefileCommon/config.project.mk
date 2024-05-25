@@ -3,11 +3,11 @@
 # lists of source files, search paths, libraries, etc.
 #
 ifndef OF_ROOT
-	OF_ROOT= $(realpath ../../..)
+	OF_ROOT= ../../..
 endif
 
 ifndef PROJECT_ROOT
-	PROJECT_ROOT= $(realpath .)
+	PROJECT_ROOT= .
 endif
 
 
@@ -388,6 +388,12 @@ endif
 ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
+
+ifdef ${ccache} 
+$(info 💿 Using CCACHE -- config.project.mk )
+	CXX := ${ccache} $(CXX)
+	CC := ${ccache} $(CXX)
+endif	
 
 ifdef PROJECT_RESOURCE_COMPILER
     RESOURCE_COMPILER ?= $(PROJECT_RESOURCE_COMPILER)

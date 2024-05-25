@@ -1,8 +1,8 @@
 #pragma once
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtx/wrap.hpp"
-#include <typeinfo>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/wrap.hpp>
 #include <iostream>
 #include <limits>
 
