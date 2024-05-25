@@ -1,6 +1,5 @@
 #include "ofDirectShowPlayer.h"
-#include "ofPixels.h"
-#include "ofMath.h"
+#include "ofPixels.h" // MARK: pixels, srcBuffer
 
 #ifdef _MSC_VER
 #pragma comment(lib,"Strmiids.lib")
@@ -11,7 +10,6 @@
 // DirectShow includes and helper methods 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 #include <dshow.h>
 #ifdef _MSC_VER
@@ -1150,7 +1148,7 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-// FIXME: convert to filesystem::path in near future
+// FIXME: fs::path
 bool ofDirectShowPlayer::load(std::string stringPath){
     auto path = ofToDataPath(of::filesystem::path(stringPath));
 

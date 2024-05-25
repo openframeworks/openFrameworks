@@ -332,9 +332,9 @@ endif
 PLATFORM_LIBRARIES += freeimage
 ifeq ($(OF_USING_STD_FS),1)
 PLATFORM_LIBRARIES += stdc++fs
-else
-PLATFORM_LIBRARIES += boost_filesystem
-PLATFORM_LIBRARIES += boost_system
+# else
+# PLATFORM_LIBRARIES += boost_filesystem
+# PLATFORM_LIBRARIES += boost_system
 endif
 PLATFORM_LIBRARIES += pugixml
 PLATFORM_LIBRARIES += uriparser
@@ -361,6 +361,7 @@ PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
 # PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+
 
 ifeq ($(CROSS_COMPILING),1)
 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"

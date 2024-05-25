@@ -7,13 +7,15 @@
 
 #pragma once
 
+// MARK: Review later
 #include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 
 #include "ofSoundBaseTypes.h"
-#include "ofEvents.h"
+class ofEventArgs;
 
+// FIXME: some can be moved to .mm
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
     #import <AVFoundation/AVFoundation.h>
@@ -36,7 +38,7 @@ public:
     
     static std::vector <float> getSystemSpectrum(int bands);
 
-    bool load(const std::filesystem::path& fileName, bool stream = false);
+    bool load(const of::filesystem::path& fileName, bool stream = false);
     void unload();
     void play();
     void stop();
@@ -57,6 +59,9 @@ public:
     float getPan() const;
     bool isLoaded() const;
     float getVolume() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
     
     void * getAVEnginePlayer();
     

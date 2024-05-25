@@ -62,6 +62,7 @@ bool ofAVFoundationPlayer::load(std::string name) {
 }
 
 //--------------------------------------------------------------
+// FIXME: fs::path
 bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
 	if( ofGetUsingArbTex() == false ){
         killTextureCache();
@@ -69,7 +70,7 @@ bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
     }
 
 	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPathFS(name).c_str()];
 
 	BOOL bStream = NO;
 
