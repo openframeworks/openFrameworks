@@ -27,18 +27,16 @@ jobs:
         matrix:
           cfg:
           - {target: emscripten}
-    env:
-     TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v4
     - name: Docker Step
       run:  "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash"
     - name: Download libs
-      run: ./scripts/$TARGET/download_libs.sh
+      run: ./scripts/${{matrix.cfg.target}}/download_libs.sh
     - name: Install dependencies
-      run: ./scripts/ci/$TARGET/install.sh
+      run: ./scripts/ci/${{matrix.cfg.target}}/install.sh
     - name: Build
-      run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
+      run: docker exec -i emscripten sh -c "scripts/ci/${{matrix.cfg.target}}/build.sh";
     - name: Upload Libs
       run: scripts/ci/upload_of_lib.sh;
       env:

@@ -205,7 +205,20 @@ namespace priv{
 		struct Data{
 			Mutex mtx;
 			std::vector<std::shared_ptr<Function>> functions;
+			std::atomic<bool> notified_ { false };
 			bool enabled = true;
+			
+			bool didNotify() {
+				if (notified_.load(std::memory_order_relaxed)) {
+					notified_.store(false, std::memory_order_seq_cst);
+					return true;
+				} else {
+					return false;
+				}
+			}
+			void setNotified(bool state) {
+				notified_.store(state, std::memory_order_relaxed);
+			}
 
 			void remove(const BaseFunctionId & id){
 				std::unique_lock<Mutex> lck(mtx);
@@ -425,9 +438,9 @@ public:
 		listeners.clear();
 	}
 
-    bool empty() const {
-        return listeners.size() == 0 ;
-    }
+	bool empty() const {
+		return listeners.size() == 0 ;
+	}
 private:
 	std::deque<ofEventListener> listeners;
 };
@@ -566,18 +579,12 @@ public:
 	/// \brief checks the state of the event
 	/// \returns true if the Event's state was notified since the last check
 	bool didNotify() {
-		if (notified_.load(std::memory_order_relaxed)) {
-			notified_.store(false, std::memory_order_seq_cst);
-			return true;
-		} else {
-			return false;
-		}
+		return ofEvent<T,Mutex>::self->didNotify();
 	}
-	std::atomic<bool> notified_ { false };
-
+	
 	inline bool notify(const void* sender, T & param) {
 		if (ofEvent<T,Mutex>::self->enabled) {
-			notified_.store(true, std::memory_order_relaxed);
+			ofEvent<T,Mutex>::self->setNotified(true);
 			if (!ofEvent<T,Mutex>::self->functions.empty()) {
 				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
 				auto functions_copy = ofEvent<T,Mutex>::self->functions;
@@ -729,18 +736,12 @@ public:
 	/// \brief checks the state of the event
 	/// \returns true if the Event's state was notified since the last check
 	bool didNotify() {
-		if (notified_.load(std::memory_order_relaxed)) {
-			notified_.store(false, std::memory_order_seq_cst);
-			return true;
-		} else {
-			return false;
-		}
+		return ofEvent<void,Mutex>::self->didNotify();
 	}
-	std::atomic<bool> notified_;
 
 	bool notify(const void* sender){
 		if(ofEvent<void,Mutex>::self->enabled) {
-			notified_.store(true, std::memory_order_relaxed);
+			ofEvent<void,Mutex>::self->setNotified(true);
 			if (!ofEvent<void,Mutex>::self->functions.empty()) {
 				std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
 				auto functions_copy = ofEvent<void,Mutex>::self->functions;
