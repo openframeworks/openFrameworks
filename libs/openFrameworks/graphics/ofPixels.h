@@ -2,7 +2,6 @@
 
 #include "ofUtils.h"
 #include "ofLog.h"
-#include "ofMath.h"
 
 template<typename T>
 class ofColor_;

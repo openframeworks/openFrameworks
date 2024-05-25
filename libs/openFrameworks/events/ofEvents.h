@@ -1,11 +1,13 @@
 #pragma once
 
+#include "ofEventUtils.h"
+#include "ofFpsCounter.h"
+#include "ofTimerFps.h"
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec2.hpp>
-#include "ofEventUtils.h"
-#include "ofFpsCounter.h"
-#include "ofTimer.h"
+
 #include <set>
 
 //-------------------------- mouse/key query
@@ -404,7 +406,8 @@ public:
 private:
 	float targetRate;
 	bool bFrameRateSet;
-	ofTimer timer;
+	ofTimerFps timerFps;
+//	ofTimer timer;
 	ofFpsCounter fps;
 
 	int currentMouseX, currentMouseY;

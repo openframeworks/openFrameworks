@@ -62,7 +62,7 @@ void ofApp::setup(){
 	wallMaterial.setDisplacementStrength( 2.0 );
 	
 	// https://polyhaven.com/a/abandoned_construction
-	cubeMap.load("abandoned_construction_2k.exr", 512);
+	cubeMap.load("abandoned_construction_2k.hdr", 512);
 }
 
 //--------------------------------------------------------------

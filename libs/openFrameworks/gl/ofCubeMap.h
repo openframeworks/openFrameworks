@@ -6,10 +6,11 @@
 
 #pragma once
 
+#include "ofShader.h"
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
-#include "ofShader.h"
 
 class ofVboMesh;
 class ofGLProgrammableRenderer;
@@ -96,7 +97,7 @@ public:
 	void drawPrefilteredCube(float aRoughness);
 
 	bool isEnabled() { return data->isEnabled; }
-	const bool isEnabled() const { return data->isEnabled; }
+	bool isEnabled() const { return data->isEnabled; }
 	void setEnabled(bool ab) { data->isEnabled = ab; }
 
 	bool hasCubeMap();
