@@ -10,8 +10,6 @@
 #include <glm/vec2.hpp>
 #include <glm/gtx/transform.hpp>
 
-//#include <typeinfo>
-
 using std::shared_ptr;
 using std::string;
 
