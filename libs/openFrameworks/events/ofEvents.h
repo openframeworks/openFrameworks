@@ -2,7 +2,6 @@
 
 #include "ofEventUtils.h"
 #include "ofFpsCounter.h"
-//#include "ofTimer.h"
 #include "ofTimerFps.h"
 
 #define GLM_FORCE_CTOR_INIT
