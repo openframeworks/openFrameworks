@@ -70,12 +70,12 @@ endef
 # 6: if PROCESS_NEXT eval the line to put the variable in the makefile space
 define parse_addon
 	$(if $(wildcard $(PROJECT_ROOT)/$1), \
-		$(eval addon=$(realpath $(addprefix $(PROJECT_ROOT)/, $1))) \
+		$(eval addon=$(addprefix $(PROJECT_ROOT)/, $1)) \
 		$(eval addon_obj_path=$(PROJECT_ROOT)) \
 		$(eval ADDON_PATHS+= $(dir $(addon))) \
 		$(eval obj_prefix=$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/) \
 	, \
-		$(eval addon=$(realpath $(addprefix $(OF_ADDONS_PATH)/, $1))) \
+		$(eval addon=$(addprefix $(OF_ADDONS_PATH)/, $1)) \
 		$(eval addon_obj_path=$(OF_ADDONS_PATH)) \
 		$(eval obj_prefix=$(OF_PROJECT_OBJ_OUTPUT_PATH)) \
 	) \

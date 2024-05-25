@@ -649,7 +649,7 @@ void ofShadow::setEnabled( bool ab ) {
 }
 
 //--------------------------------------------------------------
-const bool ofShadow::isMultiCubeFacePass() const {
+bool ofShadow::isMultiCubeFacePass() const {
 	if( data->lightType == OF_LIGHT_POINT ) {
 		return !isSingleOmniPass();
 	}
@@ -657,12 +657,12 @@ const bool ofShadow::isMultiCubeFacePass() const {
 }
 
 //--------------------------------------------------------------
-const bool ofShadow::isSingleOmniPass() const {
+bool ofShadow::isSingleOmniPass() const {
 	return mBSinglePass;
 }
 
 //--------------------------------------------------------------
-const int ofShadow::getNumShadowDepthPasses() const {
+int ofShadow::getNumShadowDepthPasses() const {
 	if(isMultiCubeFacePass()) {
 		return 6;
 	}
@@ -850,10 +850,10 @@ std::vector<glm::vec3> ofShadow::getFrustumCorners( const glm::vec3& aup, const 
 		ratio = mAreaLightWidth / mAreaLightHeight;
 	}
 	
-	float Hnear = 2.f * tan( ofDegToRad( mFov ) / 2.f ) * getNearClip();
+	float Hnear = 2.f * std::tan( glm::radians( mFov ) / 2.f ) * getNearClip();
 	float Wnear = Hnear * ratio;
 	
-	float Hfar = 2.f * tanf( ofDegToRad( mFov ) / 2.f ) * getFarClip();
+	float Hfar = 2.f * std::tan( glm::radians( mFov ) / 2.f ) * getFarClip();
 	float Wfar = Hfar * ratio;
 	
 	std::vector<glm::vec3> corners(8);
@@ -1142,11 +1142,11 @@ void ofShadow::_updateNumShadows() {
 #include "shaders/shadowDepth.frag"
 #include "shaders/shadowDepthCubeGeom.glsl"
 
-const bool ofShadow::setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) const {
+bool ofShadow::setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) const {
 	return setupShadowDepthShader( ashader, data->lightType, aShaderMain, isSingleOmniPass() );
 }
 
-const bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) const {
+bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) const {
 	std::string gversion = "#version 150\n";
 	
 	#ifdef TARGET_OPENGLES

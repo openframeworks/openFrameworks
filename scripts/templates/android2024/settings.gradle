@@ -1,0 +1,11 @@
+include ':ofApp'
+
+// Define the relative path to the openFrameworks project
+def openFrameworksProjectPath = '../../../libs/openFrameworksCompiled/project'
+
+// Convert the relative path to an absolute path
+def openFrameworksProjectAbsolutePath = new File(rootDir, openFrameworksProjectPath).absolutePath
+
+// Include the openFrameworks project
+include ':openFrameworksProject'
+project(':openFrameworksProject').projectDir = new File(openFrameworksProjectAbsolutePath)

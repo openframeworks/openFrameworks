@@ -8,7 +8,6 @@
 #include "ofPolyline.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
-//#include "ofMaterialBaseTypes.h"
 
 class ofShapeTessellation;
 class ofFbo;

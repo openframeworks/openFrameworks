@@ -1,9 +1,11 @@
 #pragma once
+
+#include "ofConstants.h"
+#include "ofGraphicsBaseTypes.h"
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/fwd.hpp>
-#include "ofConstants.h"
-#include "ofGraphicsBaseTypes.h"
 
 class ofVec3f;
 class ofVec2f;
@@ -969,6 +971,24 @@ void ofPushMatrix();
 ///
 /// \sa ofPushMatrix()
 void ofPopMatrix();
+
+/// \brief Manages a an ofPush/Pop Matrix cycle with an anonymous scoped object
+///
+struct ofScopedMatrix {
+	ofScopedMatrix() { ofPushMatrix(); }
+	~ofScopedMatrix() { ofPopMatrix(); }
+};
+
+/// \brief Manages a an ofPush/Pop Style cycle with an anonymous scoped object
+///
+struct ofScopedStyle {
+	ofScopedStyle() { ofPushStyle(); }
+	~ofScopedStyle() { ofPopStyle(); }
+};
+
+/// \brief Combines ofScopeMatrix and Style
+///
+struct ofScopedMatrixStyle: public ofScopedMatrix, public ofScopedStyle { };
 
 /// \brief Query the current (oF internal) Transformation Matrix state.
 glm::mat4 ofGetCurrentMatrix(ofMatrixMode matrixMode);

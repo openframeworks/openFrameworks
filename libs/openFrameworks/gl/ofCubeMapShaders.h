@@ -18,7 +18,7 @@ public:
 	};
 	
 	static std::string getGLSLHeader() {
-		std::string vstr = "#version 150\n";
+		std::string vstr { "#version 150\n" };
 		if( ofGetGLRenderer() ) {
 			vstr = "#version "+ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor())+"\n";
 		}
@@ -40,18 +40,19 @@ public:
 	}
 	
 	static std::string defaultVertShader() {
-		std::string vshader = getGLSLHeader();
+		
+		std::string vshader { getGLSLHeader() };
 		vshader += R"(in vec4 position;
 					uniform mat4 uProjection;
-								uniform mat4 uView;
-								
-								out vec3 oLocalPos;
-								
-								void main() {
-									oLocalPos = position.xyz;
-									gl_Position = uProjection * uView * vec4(position.xyz, 1.0);
-								}
-					)";
+					uniform mat4 uView;
+					
+					out vec3 oLocalPos;
+					
+					void main() {
+						oLocalPos = position.xyz;
+						gl_Position = uProjection * uView * vec4(position.xyz, 1.0);
+					}
+		)";
 								
 		return vshader;
 	}

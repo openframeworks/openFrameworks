@@ -6,6 +6,7 @@
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/fwd.hpp>
+
 #include <deque>
 #include <vector>
 
@@ -19,12 +20,12 @@
 /// You can add points to an ofPolyline by adding vertices:
 /// ~~~~{.cpp}
 /// float i = 0;
-/// while (i < TWO_PI) { // make a heart
-/// 	float r = (2-2*sin(i) + sin(i)*sqrt(abs(cos(i))) / (sin(i)+1.4)) * -80;
-/// 	float x = ofGetWidth()/2 + cos(i) * r;
-/// 	float y = ofGetHeight()/2 + sin(i) * r;
+/// while (i < glm::two_pi<float>()) { // make a heart
+/// 	float r = (2-2*sin(i) + std::sin(i)*sqrt(abs(std::cos(i))) / (std::sin(i)+1.4)) * -80;
+/// 	float x = ofGetWidth()/2 + std::cos(i) * r;
+/// 	float y = ofGetHeight()/2 + std::sin(i) * r;
 /// 	line.addVertex(glm::vec2(x,y));
-/// 	i+=0.005*HALF_PI*0.5;
+/// 	i+=0.005*glm::half_pi<float>()*0.5;
 /// }
 /// line.close(); // close the shape
 /// ~~~~
@@ -32,10 +33,10 @@
 /// Or you can draw lines or curves:
 /// ~~~~{.cpp}
 /// float angle = 0;
-/// while (angle < TWO_PI ) {
-/// 	b.curveTo(100*cos(angle), 0, 100*sin(angle));
-/// 	b.curveTo(300*cos(angle), 300, 300*sin(angle));
-/// 	angle += TWO_PI / 30;
+/// while (angle < glm::two_pi<float>() ) {
+/// 	b.curveTo(100*std::cos(angle), 0, 100*std::sin(angle));
+/// 	b.curveTo(300*std::cos(angle), 300, 300*std::sin(angle));
+/// 	angle += glm::two_pi<float>() / 30;
 /// }
 /// ~~~~
 ///
@@ -140,8 +141,8 @@ public:
 	/// line[0].set(mouseX, mouseY);
 	/// int i = 1;
 	/// while ( i<bounds.size()) {
-	/// 	float angle = atan2(line[i-1].y - line[i].y, line[i-1].x - line[i].x);
-	/// 	bounds[i].set(bounds[i-1].x - cos(angle) * 20, bounds[i-1].y - sin(angle) * 20);
+	/// 	float angle = std::atan2(line[i-1].y - line[i].y, line[i-1].x - line[i].x);
+	/// 	bounds[i].set(bounds[i-1].x - std::cos(angle) * 20, bounds[i-1].y - std::sin(angle) * 20);
 	/// 	i++;
 	/// }
 	/// ~~~~
@@ -261,10 +262,10 @@ public:
 	///
 	/// ~~~~{.cpp}
 	/// float angle = 0;
-	/// while (angle < TWO_PI ) {
-	/// 	b.curveTo( T(100*cos(angle), 100*sin(angle)));
-	/// 	b.curveTo( T(300*cos(angle), 300*sin(angle)));
-	/// 	angle += TWO_PI / 30;
+	/// while (angle < glm::two_pi<float>() ) {
+	/// 	b.curveTo( T(100*std::cos(angle), 100*std::sin(angle)));
+	/// 	b.curveTo( T(300*std::cos(angle), 300*std::sin(angle)));
+	/// 	angle += glm::two_pi<float>() / 30;
 	/// }
 	/// ~~~~
 	///
