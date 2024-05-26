@@ -47,9 +47,9 @@ void ofApp::draw(){
 	
 	ofBeginShape();
 	for(int k = 0; k < numPoints*2; k++){
-		float angle = -HALF_PI + ofMap(k, 0, numPoints*2, 0, TWO_PI, true);
-		float tx = cos(angle) * rad[k % 2];
-		float ty = sin(angle) * rad[k % 2];
+		float angle = -glm::half_pi<float>() + ofMap(k, 0, numPoints*2, 0, glm::two_pi<float>(), true);
+		float tx = std::cos(angle) * rad[k % 2];
+		float ty = std::sin(angle) * rad[k % 2];
 		ofVertex(x + tx, y + ty);
 	}
 	ofEndShape(true);

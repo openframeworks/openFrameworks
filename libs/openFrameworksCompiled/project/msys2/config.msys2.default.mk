@@ -25,7 +25,8 @@
 #   core source code.
 ##########################################################################################
 
-MINGW_PREFIX ?= /mingw32
+#MINGW_PREFIX ?= /mingw32
+MINGW_PREFIX ?= /mingw64
 PLATFORM_CFLAGS += -std=gnu++17 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 
@@ -34,7 +35,8 @@ CXX = $(MINGW_PREFIX)/bin/g++
 
 FIND ?= /usr/bin/find
 PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
-PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+#PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+PLATFORM_LD = /usr/bin/lld
 PLATFORM_RESOURCE_COMPILER = $(MINGW_PREFIX)/bin/windres
 PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkgconf
 
@@ -124,6 +126,7 @@ PLATFORM_CFLAGS += -fexceptions
 
 #PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -lpthread
+
 
 ifeq ($(findstring MINGW64,$(MSYSTEM)),MINGW64)
 	PLATFORM_LDFLAGS += -Wl,--disable-dynamicbase,--disable-high-entropy-va,--default-image-base-low

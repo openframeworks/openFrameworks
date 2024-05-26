@@ -36,7 +36,8 @@ void ofApp::setup(){
 	
 	// try commenting this out to see the effect that cube maps have on lighting
 	// https://polyhaven.com/a/kloppenheim_06_puresky
-	cubeMap.load( "kloppenheim_06_puresky_1k.exr", 512 );
+	// Windows is not loading .exr files at the moment, so lets do hdr instead
+	cubeMap.load( "kloppenheim_06_puresky_1k.hdr", 512 );
 	
 	matPlywood.setPBR(true);
 	matPlywood.loadTexture(OF_MATERIAL_TEXTURE_DIFFUSE, "plywood/plywood_diff_2k.jpg" );
@@ -155,7 +156,7 @@ void ofApp::renderScene(bool bShadowPass) {
 	
 	matSphere.begin();
 	ofPushMatrix();
-	ofTranslate( 700.0*cos(angle-PI), -20, sin(angle-PI)*300.0-100 );
+	ofTranslate( 700.0 * std::cos(angle - glm::pi<float>()), -20, std::sin(angle - glm::pi<float>())*300.0-100 );
 	ofScale(120);
 	meshPlySphere.draw();
 	ofPopMatrix();

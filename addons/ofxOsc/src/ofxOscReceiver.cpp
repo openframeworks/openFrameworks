@@ -30,6 +30,7 @@ ofxOscReceiver & ofxOscReceiver::copy(const ofxOscReceiver & other) {
 //--------------------------------------------------------------
 bool ofxOscReceiver::setup(std::string host, int port) {
 	if (listenSocket) { // already running
+		ofLogVerbose("ofxOscReceiver::setup()") << "socket already listening";
 		stop();
 	}
 	settings.port = port;
@@ -78,7 +79,7 @@ bool ofxOscReceiver::start() {
 		if (!what.empty() && what.back() == '\n') {
 			what = what.substr(0, what.size() - 1);
 		}
-		ofLogError("ofxOscReceiver") << "couldn't create receiver on port "
+		ofLogError("ofxOscReceiver::start()") << "couldn't create receiver on port "
 									 << settings.port << ": " << what;
 		if (socket != nullptr) {
 			delete socket;
@@ -88,25 +89,29 @@ bool ofxOscReceiver::start() {
 	}
 
 	listenThread = std::thread([this] {
-		while (listenSocket) {
-			try {
-				listenSocket->Run();
-			} catch (std::exception & e) {
-				ofLogWarning("ofxOscReceiver") << e.what();
-			}
+		try {
+			listenSocket->Run();
+		} catch (std::exception & e) {
+			ofLogWarning("ofxOscReceiver::listenSocket->Run()") << e.what();
 		}
 	});
-
-	// detach thread so we don't have to wait on it before creating a new socket
-	// or on destruction, the custom deleter for the socket unique_ptr already
-	// does the right thing
-	listenThread.detach();
 
 	return true;
 }
 
 //--------------------------------------------------------------
 void ofxOscReceiver::stop() {
+	if (listenSocket) {
+		listenSocket->AsynchronousBreak();
+	} else {
+		ofLogNotice("socket already torn down ");
+	}
+	
+	if (!listenThread.joinable()) {
+		ofLogNotice("not joinable");
+	} else {
+		listenThread.join();
+	}
 	listenSocket.reset();
 }
 

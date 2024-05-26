@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0353245D2BEFEC7B00B50A35 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0353245B2BEFEC7A00B50A35 /* ofTimerFps.h */; };
+		0353245E2BEFEC7B00B50A35 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0353245C2BEFEC7B00B50A35 /* ofTimerFps.cpp */; };
 		19662F2E2834A44400B622ED /* ofGraphicsCairo.h in Headers */ = {isa = PBXBuildFile; fileRef = 19662F2C2834A44400B622ED /* ofGraphicsCairo.h */; };
 		19662F2F2834A44400B622ED /* ofGraphicsCairo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */; };
 		22246D93176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */; };
@@ -162,6 +164,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0353245B2BEFEC7A00B50A35 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
+		0353245C2BEFEC7B00B50A35 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
 		19662F2C2834A44400B622ED /* ofGraphicsCairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphicsCairo.h; sourceTree = "<group>"; };
 		19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGraphicsCairo.cpp; sourceTree = "<group>"; };
 		22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLProgrammableRenderer.cpp; path = gl/ofGLProgrammableRenderer.cpp; sourceTree = "<group>"; };
@@ -571,6 +575,8 @@
 				692C298819DC5C5500C27C5D /* ofFpsCounter.h */,
 				692C298919DC5C5500C27C5D /* ofTimer.cpp */,
 				692C298A19DC5C5500C27C5D /* ofTimer.h */,
+				0353245C2BEFEC7B00B50A35 /* ofTimerFps.cpp */,
+				0353245B2BEFEC7A00B50A35 /* ofTimerFps.h */,
 				27DEA30F1796F578000A9E90 /* ofXml.cpp */,
 				27DEA3101796F578000A9E90 /* ofXml.h */,
 				2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */,
@@ -641,6 +647,7 @@
 				30CC5385207A36FD008234AF /* ofMathConstants.h in Headers */,
 				E4F3BA6A12F4C4BF002D19BB /* ofCamera.h in Headers */,
 				E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */,
+				0353245D2BEFEC7B00B50A35 /* ofTimerFps.h in Headers */,
 				E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */,
 				E4F3BA8B12F4C4C9002D19BB /* ofFmodSoundPlayer.h in Headers */,
 				E4F3BA8F12F4C4C9002D19BB /* ofSoundPlayer.h in Headers */,
@@ -812,6 +819,7 @@
 				E4F3BB1812F4C752002D19BB /* ofBitmapFont.cpp in Sources */,
 				E4F3BB1C12F4C752002D19BB /* ofGraphics.cpp in Sources */,
 				2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */,
+				0353245E2BEFEC7B00B50A35 /* ofTimerFps.cpp in Sources */,
 				E4F3BB1E12F4C752002D19BB /* ofImage.cpp in Sources */,
 				E4F3BB2012F4C752002D19BB /* ofPixels.cpp in Sources */,
 				E4F3BB2A12F4C752002D19BB /* ofTessellator.cpp in Sources */,

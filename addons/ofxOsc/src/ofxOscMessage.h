@@ -191,6 +191,7 @@ public:
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addInt64Arg(std::int64_t argument);
 	ofxOscMessage & add(std::int64_t argument) { return addInt64Arg(argument); }
+	ofxOscMessage & add(size_t argument) { return addInt64Arg(argument); }
 
 	/// add a 32-bit float
 	/// \return a reference to this ofxOscMessage
@@ -206,6 +207,7 @@ public:
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addStringArg(const std::string & argument);
 	ofxOscMessage & add(const std::string & argument) { return addStringArg(argument); }
+	ofxOscMessage & add(const char * argument) { return addStringArg(argument); }
 
 	/// add a symbol (string)
 	/// \return a reference to this ofxOscMessage
@@ -214,7 +216,7 @@ public:
 	/// add a char
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addCharArg(char argument);
-	ofxOscMessage & add(char & argument) { return addCharArg(argument); }
+	ofxOscMessage & add(char argument) { return addCharArg(argument); }
 
 	/// add a 4-byte MIDI message
 	/// \return a reference to this ofxOscMessage
@@ -224,7 +226,7 @@ public:
 	/// true sends a OFXOSC_TYPE_TRUE & false sends a OFXOSC_TYPE_FALSE
 	/// \return a reference to this ofxOscMessage
 	ofxOscMessage & addBoolArg(bool argument);
-	ofxOscMessage & add(bool & argument) { return addBoolArg(argument); }
+	ofxOscMessage & add(bool argument) { return addBoolArg(argument); }
 
 	/// add a none/nil (has no value)
 	/// \return a reference to this ofxOscMessage
