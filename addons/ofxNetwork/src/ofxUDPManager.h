@@ -62,11 +62,7 @@ UDP Multicast (receiving):
 x) Close()
 
 --------------------------------------------------------------------------------*/
-#include "ofConstants.h"
-#include "ofxUDPSettings.h"
-#include <string.h>
-#include <wchar.h>
-#include <stdio.h>
+
 
 #ifndef TARGET_WIN32
 
@@ -104,6 +100,11 @@ x) Close()
 /// Socket constants.
 #define SOCKET_TIMEOUT			SOCKET_ERROR - 1
 
+#include "ofConstants.h"
+#include "ofxUDPSettings.h"
+#include <string.h>
+#include <wchar.h>
+#include <stdio.h>
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
