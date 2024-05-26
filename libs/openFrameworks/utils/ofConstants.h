@@ -88,6 +88,7 @@ enum ofTargetPlatform{
 // 		http://www.ogre3d.org/docs/api/html/OgrePlatform_8h-source.html
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
+	#include <windows.h>
 	#define OF_OS_WINDOWS
 	#define TARGET_WIN32
 	#if defined(_MSC_VER)
