@@ -95,6 +95,7 @@ x) Close()
 	//windows includes
 	#include <winsock2.h>
 	#include <ws2tcpip.h>		// TCP/IP annex needed for multicasting
+	#include <netdb.h>
 #endif
 
 /// Socket constants.
