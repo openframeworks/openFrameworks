@@ -42,6 +42,8 @@ SetTimeoutAccept()
 SetTimeoutReceive()
 
 ****************************************************************/
+#include "ofConstants.h"
+
 #include <string.h>
 #include <wchar.h>
 #include <stdio.h>
@@ -81,8 +83,7 @@ SetTimeoutReceive()
 	#include <ws2tcpip.h>		// TCP/IP annex needed for multicasting
 #endif
 
-// windows.h after winsock2.h
-#include "ofConstants.h"
+
 
 
 //--------------------------------------------------------------------------------
