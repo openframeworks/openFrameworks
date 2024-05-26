@@ -89,6 +89,7 @@ enum ofTargetPlatform{
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 #define WIN32_LEAN_AND_MEAN
+#define _WINSOCKAPI_
 	#include <windows.h>
 	#define OF_OS_WINDOWS
 	#define TARGET_WIN32
