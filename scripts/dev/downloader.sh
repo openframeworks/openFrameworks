@@ -2,9 +2,14 @@
 
 printDownloaderHelp(){
 cat << EOF
-    Usage: download.sh [URL] [OPTIONS]
+    
+    Usage: 
+    ."$SCRIPT_DIR/downloader.sh"
+    downloader [URL] [OPTIONS]
 
-    Example: download.sh http://ci.openframeworks.cc/libs/file.zip -s
+    Example: downloader http://ci.openframeworks.cc/libs/file.zip -s
+
+    This script fixes downloads to use wget or curl depending if have package
 
     Options:
     -s, --silent                Silent download progress
@@ -13,39 +18,26 @@ EOF
 }
 
 downloader() { 
-	if [ -z "$1" ]
-	then printDownloaderHelp; fi
-
+    echo "Downloading... $1"
+	if [ -z "$1" ]; then printDownloaderHelp; fi
 	SILENTARGS="";
-	if [ $# -ge 2  ]; then
-		SILENTARGS=$2
-	fi
-	if [[ "${SILENTARGS}" == "-s" ]]; then
-		if command -v wget2 2>/dev/null; then 
-			wget2 -q $@;
-		elif command -v curl 2>/dev/null; then 
-			for PKG in $@; do
-				curl -LO --retry 20 -O -s $PKG; 
-			done
-		else 
-			for PKG in $@; do
-				wget -q $PKG@ 2> /dev/null; 
-			done
-		fi;
+    if [ $# -ge 2  ]; then SILENTARGS=$2; fi
+    if [[ "${SILENTARGS}" == "-s" ]]; then
+        if command -v wget2 2>/dev/null; then
+            wget2 -q $@ 2> /dev/null;
+		elif command -v curl 2>/dev/null; then
+            curl -OL --parallel --retry 20 -s -N -L $@;
+        else
+            wget -q $@ 2> /dev/null;
+        fi;
 	else
-		if command -v wget2 2>/dev/null; then 
-			wget2 $@;
-		elif command -v curl 2>/dev/null; then 
-			for PKG in $@; do
-				curl -LO --retry 20 -O --progress-bar $PKG;
-			done
-		else 
-			for PKG in $@; do
-				wget $PKG 2> /dev/null; 
-			done
-		fi;
+        if command -v wget2 2>/dev/null; then
+            wget2 --progress=bar $@ 2> /dev/null;
+		elif command -v curl 2>/dev/null; then
+            curl -OL --parallel --retry 20 --progress-bar -N -L $@ || echo $?;
+        else
+            wget --progress=bar $@ 2> /dev/null; fi;
 	fi
 
- 
 }
 
