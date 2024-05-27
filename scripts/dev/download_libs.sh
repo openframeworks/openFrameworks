@@ -5,6 +5,7 @@ PLATFORM=""
 ARCH=""
 OVERWRITE=1
 SILENT_ARGS=""
+NO_SSL=""
 BLEEDING_EDGE=0
 
 printHelp(){
@@ -25,6 +26,7 @@ cat << EOF
                                 If not set deletes any existing libraries
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
+    -k, --no-ssl                Allow no SSL validation
 EOF
 }
 
@@ -33,8 +35,8 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/downloader.sh"
 
 download(){
-    echo '-----'
-    echo "Downloading $1"
+    echo ' -----'
+    #echo " Downloading $1"
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 
     COMMAND=" "
@@ -47,7 +49,7 @@ download(){
         COMMAND+="https://github.com/openframeworks/apothecary/releases/download/$REPO/$PKG "
     done
     echo $COMMAND;
-    downloader $COMMAND $SILENT_ARGS
+    downloader $COMMAND $SILENT_ARGS $NO_SSL
 }
 
 # trap any script errors and exit
@@ -96,6 +98,9 @@ while [[ $# -gt 0 ]]; do
         ;;
         -s|--silent)
         SILENT_ARGS=-nv
+        ;;
+        -k|--no-ssl)
+        NO_SSL=1
         ;;
         -h|--help)
         printHelp
@@ -229,10 +234,6 @@ else # Linux
     fi
 fi
 
-# for PKG in $PKGS; do
-#     download $PKG
-# done
-# echo $PKGS
 download "${PKGS[@]}"
 
 cd ../../
@@ -240,24 +241,34 @@ mkdir -p libs
 cd libs
 
 if [ $OVERWRITE -eq 1 ]; then
-    echo "Removing old libraries"
+    echo " "
+    echo " Removing old libraries"
     libs=("boost" "cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "README.md")
     for lib in $libs; do
-        if [ -e $lib ]; then
-            rm -rf $lib
+        if [ -e "$lib/$PLATFORM" ]; then
+            echo "Removing old binaries: $lib/$PLATFORM"
+            rm -rfv "$lib/$PLATFORM"
+        fi
+        if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+            if [ -e "$lib/$PLATFORM" ]; then
+                echo "Removing old binaries: $lib/$PLATFORM"
+                rm -rfv "$lib/$PLATFORM"
+            fi
         fi
     done
 fi
 
+echo " ------ "
 for PKG in $PKGS; do
-    echo "Uncompressing libraries ${PLATFORM}${ARCH} from $PKG"
+    echo " Uncompressing libraries [${PLATFORM}]_[${ARCH}] from [$PKG]"
     if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
         unzip -qo ../scripts/dev/$PKG
-        rm ../scripts/dev/$PKG
+        rm -r ../scripts/dev/$PKG
     else
         tar xjf ../scripts/dev/$PKG
-        rm ../scripts/dev/$PKG
+        rm -r ../scripts/dev/$PKG
     fi
+    echo " Deployed libraries from [$PKG] to [/libs]"
 done
 
 if [ "$PLATFORM" == "osx" ]; then
@@ -274,13 +285,20 @@ else
     addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
 fi
 
+echo " ------ "
 for ((i=0;i<${#addonslibs[@]};++i)); do
     if [ -e ${addonslibs[i]} ]; then
-        echo "Copying ${addonslibs[i]} to ${addons[i]}"
-        if [ $OVERWRITE -eq 1 ] && [ -e ../addons/${addons[i]}/libs/${addonslibs[i]} ]; then
-            echo "Removing old opencv libraries"
-            rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}
+       
+        if [ $OVERWRITE -eq 1 ]; then 
+            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM ]; then
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM
+            fi
+            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/bin ]; then
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
+            fi
         fi
+        echo " "
+        echo " Deploying [${addonslibs[i]}] to [${addons[i]}]/libs"
         mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
         if ! command -v rsync &> /dev/null
         then      
@@ -292,3 +310,5 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
     fi
 done
 
+echo " ------ "
+echo " openFrameworks download libs and install complete!"
