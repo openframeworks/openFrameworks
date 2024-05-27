@@ -6,9 +6,7 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
 #include "ofAppRunner.h"
-//#include "ofMath.h"
 #include "ofLog.h"
-//#include "ofConstants.h"
 
 //----------------------------------------------------------
 template<class T>

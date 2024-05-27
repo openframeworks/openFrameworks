@@ -25,7 +25,9 @@ struct ofxOscReceiverSettings {
 /// \brief OSC message receiver which listens on a network port
 class ofxOscReceiver : public osc::OscPacketListener {
 public:
-	ofxOscReceiver(int port = 7970) {
+	ofxOscReceiver() = default;
+	
+	ofxOscReceiver(int port) {
 		setup(port);
 	};
 	ofxOscReceiver(std::string host, int port) {

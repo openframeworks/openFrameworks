@@ -97,7 +97,7 @@ public:
 	void drawPrefilteredCube(float aRoughness);
 
 	bool isEnabled() { return data->isEnabled; }
-	const bool isEnabled() const { return data->isEnabled; }
+	bool isEnabled() const { return data->isEnabled; }
 	void setEnabled(bool ab) { data->isEnabled = ab; }
 
 	bool hasCubeMap();

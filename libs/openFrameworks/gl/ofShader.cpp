@@ -1,16 +1,9 @@
 #include "ofBufferObject.h"
 #include "ofCubeMap.h"
-// #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
-// #include "ofGraphics.h"
 #include "ofLight.h"
-// #include "ofMatrix3x3.h"
-// #include "ofMatrix4x4.h"
-// #include "ofParameter.h"
 #include "ofShader.h"
 #include "ofShadow.h"
-// #include "ofTexture.h"
-// #include "ofUtils.h"
 #ifdef TARGET_ANDROID
     #include "ofxAndroidUtils.h"
 #endif
@@ -439,7 +432,7 @@ string ofShader::parseForIncludes(const string & source, const of::filesystem::p
 string ofShader::parseForIncludes(const string & source, vector<string> & included, int level, const of::filesystem::path & sourceDirectoryPath) {
 
     if (level > 32) {
-        ofLogError("ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion");
+        ofLogError("ofShader") << "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion";
         return "";
     }
 
