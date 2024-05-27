@@ -63,15 +63,14 @@ downloader() {
             ;;
         esac
     done
-    WGET2=0
+    WGET2=1
     CURL=1
 
     SSL_ARGS=""
     if [[ "$NO_SSL" == "1" ]]; then 
-        echo "no SSL == 1"
-        if  [[ $WGET2 == 1 ]] && command -v wget2 2>/dev/null; then
+        if  [[ $WGET2 == 1 ]] && command -v wget2 2>/dev/null 2>&1; then
             SSL_ARGS="--no-check-certificate"
-        elif command -v curl > /dev/null 2>&1; then
+        elif [[ $CURL == 1 ]] && command -v curl > /dev/null 2>&1; then
             SSL_ARGS="--insecure"
         else
             SSL_ARGS="--no-check-certificate"
@@ -82,38 +81,39 @@ downloader() {
     for ((i = 0; i < ${#URLS[@]}; i++)); do
         URL="${URLS[$i]}"
         FILENAME=$(basename "$URL")
-        echo "Downloading [$FILENAME] @ [$URL]"
-        if  [[ $WGET2 == 1 ]] && command -v wget2 2>/dev/null; then
+        #echo "Downloading [$FILENAME] @ [$URL]"
+        if  [[ $WGET2 == 1 ]] && command -v wget2 /dev/null 2>&1; then
             URLS_TO_DOWNLOAD+="${URL} "
-        elif [[ $CURL == 1 ]] && command -v curl 2>/dev/null; then
+        elif [[ $CURL == 1 ]] && command -v curl /dev/null 2>&1; then
            URLS_TO_DOWNLOAD+="${URL} -o ${FILENAME} "
+            if [ -n "${URLS[$i+1]}" ]; then
+                URLS_TO_DOWNLOAD+="-k ";
+            fi
         else
            URLS_TO_DOWNLOAD+="${URL} "
         fi
-        if [ -n "${URLS[$i+1]}" ]; then
-            URLS_TO_DOWNLOAD+="-k ";
-        fi
+        
     done
     echo
     if [[ "${SILENT}" == "1" ]]; then
-        if  [[ $WGET2 == 1 ]] && command -v wget2 2>/dev/null; then
-            echo " Downloading [silent] using wget urls [$URLS_TO_DOWNLOAD]"
+        if  [[ $WGET2 == 1 ]] && command -v wget2 /dev/null 2>&1; then
+            #echo " Downloading [silent] using wget urls [$URLS_TO_DOWNLOAD]"
             wget2 -q $URLS_TO_DOWNLOAD
-        elif [[ $CURL == 1 ]] && command -v curl 2>/dev/null; then
-            echo " Downloading [silent] using cURL urls [$URLS_TO_DOWNLOAD]"
+        elif [[ $CURL == 1 ]] && command -v curl /dev/null 2>&1; then
+            #echo " Downloading [silent] using cURL urls [$URLS_TO_DOWNLOAD]"
             curl -L --parallel --retry 20 -s ${SSL_ARGS} -N ${URLS_TO_DOWNLOAD}
         else
-            echo " Downloading [silent] using wget urls [$URLS_TO_DOWNLOAD]"
+            #echo " Downloading [silent] using wget urls [$URLS_TO_DOWNLOAD]"
             wget -q ${URLS_TO_DOWNLOAD} 
         fi;
     else
-        if  [[ $WGET2 == 1 ]] && command -v wget2 2>/dev/null; then
+        if  [[ $WGET2 == 1 ]] && command -v wget2 /dev/null 2>&1; then
             wget2 --progress=bar ${URLS_TO_DOWNLOAD}
-        elif [[ $CURL == 1 ]] && command -v curl 2>/dev/null; then
-            echo " --Downloading using cURL urls [$URLS_TO_DOWNLOAD]"
+        elif [[ $CURL == 1 ]] && command -v curl /dev/null 2>&1; then
+            #echo " Downloading using cURL urls [$URLS_TO_DOWNLOAD]"
             curl -L --parallel --retry 20 ${SSL_ARGS} -N ${URLS_TO_DOWNLOAD}
         else
-            echo " Downloading using wget [$FILENAME] urls [$URLS_TO_DOWNLOAD]"
+            #echo " Downloading using wget [$FILENAME] urls [$URLS_TO_DOWNLOAD]"
             wget --progress=bar $URLS_TO_DOWNLOAD
         fi
     fi
