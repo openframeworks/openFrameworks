@@ -80,22 +80,33 @@ downloader() {
     for URL in "${URLS[@]}"; do
         FILENAME=$(basename "$URL")
         echo "Downloading [$FILENAME] @ [$URL]"
-        if [[ "${SILENT}" == "1" ]]; then
-            if command -v wget2 2>/dev/null; then
-                wget2 -q $URL 2> /dev/null;
-            elif command -v curl 2>/dev/null; then
-                curl -L --parallel --retry 20 -s $SSL_ARGS -N -O $URL;
-            else
-                wget -q $URL 2> /dev/null;
-            fi;
+        if command -v wget2 2>/dev/null; then
+            echo " [wget2]"
+            URLS_TO_DOWNLOAD+=("$URL")
+        elif command -v curl 2>/dev/null; then
+           echo " [cURL]"
+           URLS_TO_DOWNLOAD+=("-O $URL")
         else
-             if command -v wget2 2>/dev/null; then
-                wget2 --progress=bar $URL 2> /dev/null;
-            elif command -v curl 2>/dev/null; then
-                curl -L --parallel --retry 20 --progress-bar -N $SSL_ARGS -O $URL || echo $?;
-            else
-                wget --progress=bar $URL 2> /dev/null;
-            fi
-        fi
+           echo " [wget]"
+           URLS_TO_DOWNLOAD+=("$URL")
+        fi;
     done
+    if [[ "${SILENT}" == "1" ]]; then
+        if command -v wget2 2>/dev/null; then
+            wget2 -q $URLS_TO_DOWNLOAD 2> /dev/null;
+        elif command -v curl 2>/dev/null; then
+            curl -L --parallel --retry 20 -s $SSL_ARGS -N $URLS_TO_DOWNLOAD;
+        else
+            wget -q $URLS_TO_DOWNLOAD 2> /dev/null;
+        fi;
+    else
+         if command -v wget2 2>/dev/null; then
+            wget2 --progress=bar $URLS_TO_DOWNLOAD 2> /dev/null;
+        elif command -v curl 2>/dev/null; then
+            curl -L --parallel --retry 20 --progress-bar -N $SSL_ARGS $URLS_TO_DOWNLOAD || echo $?;
+        else
+            wget --progress=bar $URLS_TO_DOWNLOAD 2> /dev/null;
+        fi
+    fi
+    
 }
