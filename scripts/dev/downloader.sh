@@ -67,7 +67,7 @@ downloader() {
     CURL_INSTALLED=$(command -v curl > /dev/null 2>&1; echo $?)
     WGET_INSTALLED=$(command -v wget > /dev/null 2>&1; echo $?)
     WGET2=0
-    CURL=1
+    CURL=0
     WGET=1
     SSL_ARGS=""
     if [[ "$NO_SSL" == "1" ]]; then 
