@@ -33,8 +33,8 @@ downloader() {
         exit 1
     fi
     ERROR_MSG=" Downloading failed: No Installed: wget2, curl or wget. Please install (via homebrew, winget, apt-get) and try again. "
-    SILENT=0
-    NO_SSL=1
+    SILENT=1
+    NO_SSL=0
     URLS=()
     while [[ $# -gt 0 ]]; do
         key="$1"
