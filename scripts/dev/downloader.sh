@@ -66,7 +66,7 @@ downloader() {
     WGET2_INSTALLED=$(command -v wget2 > /dev/null 2>&1; echo $?)
     CURL_INSTALLED=$(command -v curl > /dev/null 2>&1; echo $?)
     WGET_INSTALLED=$(command -v wget > /dev/null 2>&1; echo $?)
-    WGET2=1
+    WGET2=0
     CURL=1
     WGET=1
     SSL_ARGS=""
