@@ -85,12 +85,11 @@ endif
 PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS += -Wall
+PLATFORM_CFLAGS += -Wall -Werror=return-type
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-PLATFORM_CFLAGS += -Werror=return-type
 
 ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
