@@ -260,7 +260,7 @@ fi
 
 echo " ------ "
 for PKG in $PKGS; do
-    echo " Uncompressing libraries [${PLATFORM}]_[${ARCH}] from [$PKG]"
+    echo " Uncompressing libraries [${PLATFORM}] from [$PKG]"
     if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
         unzip -qo ../scripts/dev/$PKG
         rm -r ../scripts/dev/$PKG
