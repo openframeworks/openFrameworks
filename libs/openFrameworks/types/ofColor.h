@@ -162,7 +162,13 @@ public:
                 float saturation,
                 float brightness,
                 float alpha = limit());
-
+	void setHsb(glm::vec3 hsb) {
+		setHsb(hsb.x, hsb.y, hsb.z);
+	}
+	void setNormalizedHsb(glm::vec3 hsb) {
+		hsb *= limit();
+		setHsb(hsb.x, hsb.y, hsb.z);
+	}
     /// \}
 
     /// \name Modifiers
