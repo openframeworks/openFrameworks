@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=3.0.1
+VERSION=3.1.0
 printDownloaderHelp(){
 cat << EOF
     
@@ -99,13 +99,13 @@ downloader() {
     if [[ "${SILENT}" == 1 ]]; then
         if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then
             echo
-            wget2 -nv --progress=bar -nc -t20 $URLS_TO_DOWNLOAD
+            wget2 -nv --progress=bar -N -t20 $URLS_TO_DOWNLOAD
         elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
             echo
             curl -L --parallel --retry 20 -# -N ${URLS_TO_DOWNLOAD}
         elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
             echo
-            wget -nv -qnc -t20 ${URLS_TO_DOWNLOAD} 
+            wget -nv -N -t20 ${URLS_TO_DOWNLOAD} 
         else 
             echo $ERROR_MSG;
             exit 1;
@@ -114,7 +114,7 @@ downloader() {
         if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then # 0 means true in this context
             echo " Downloading [wget2] urls:[$URLS_TO_DOWNLOAD]"
             echo
-            wget2 -nv --progress=bar -nc -t20 ${URLS_TO_DOWNLOAD}
+            wget2 -N -nv --progress=bar -t20 ${URLS_TO_DOWNLOAD}
         elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
             echo " Downloading [cURL] urls:[$URLS_TO_DOWNLOAD]"
             echo
@@ -122,7 +122,7 @@ downloader() {
         elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
             echo " Downloading [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD]"
             echo
-            wget -nv --progress=bar -nc -t20 $URLS_TO_DOWNLOAD
+            wget -nv --progress=bar -N -t20 $URLS_TO_DOWNLOAD
         else 
             echo $ERROR_MSG;
             exit 1;
