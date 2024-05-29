@@ -7,6 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
+DL_VERSION=2.0
 
 printHelp(){
 cat << EOF
@@ -187,6 +188,8 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
+echo " openFrameworks download_libs.sh v$DL_VERSION"
+
 if [ "$PLATFORM" == "msys2" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
@@ -218,9 +221,9 @@ elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos)$ ]]; then
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_armv7.tar.bz2 \
-          openFrameworksLibs_${VER}_${PLATFORM}_arm64.tar.bz2 \
-           openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2
-          openFrameworksLibs_${VER}_${PLATFORM}_x86.tar.bz2"
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64.tar.bz2 \
+              openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2
+              openFrameworksLibs_${VER}_${PLATFORM}_x86.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
@@ -242,18 +245,16 @@ cd libs
 
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
-    echo " Removing old libraries"
-    libs=("boost" "cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "README.md")
-    for lib in $libs; do
-        if [ -e "$lib/$PLATFORM" ]; then
-            echo "Removing old binaries: $lib/$PLATFORM"
-            rm -rfv "$lib/$PLATFORM"
+    echo " Overwrite - Removing old libraries for [$PLATFORM]"
+    libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" )
+    for ((i=0;i<${#libs[@]};++i)); do
+        if [ -e "${libs[i]}/lib/$PLATFORM" ]; then
+            echo " Removing old libraries: [${libs[i]}/lib/$PLATFORM]"
+            rm -rf "${libs[i]}/lib/$PLATFORM"
         fi
-        if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-            if [ -e "$lib/$PLATFORM" ]; then
-                echo "Removing old binaries: $lib/$PLATFORM"
-                rm -rfv "$lib/$PLATFORM"
-            fi
+        if [ -e "${libs[i]}/bin/$PLATFORM" ]; then
+            echo " Removing old binaries: [${libs[i]}/lib/$PLATFORM]"
+            rm -rf "${libs[i]}/lib/$PLATFORM"
         fi
     done
 fi
@@ -286,19 +287,25 @@ else
 fi
 
 echo " ------ "
-for ((i=0;i<${#addonslibs[@]};++i)); do
-    if [ -e ${addonslibs[i]} ]; then
-       
-        if [ $OVERWRITE -eq 1 ]; then 
+if [ $OVERWRITE -eq 1 ]; then 
+    for ((i=0;i<${#addonslibs[@]};++i)); do
+        if [ -e ${addonslibs[i]} ] ; then
+            echo " Overwrite - Checking old binaries: [${addons[i]}]"
             if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM ]; then
-                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM
+                echo " Removing old binaries: [${addons[i]}/$PLATFORM]"
+                rm -rfv ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM
             fi
             if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/bin ]; then
-                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
+                echo " Removing old binaries: [${addons[i]}/$PLATFORM]"
+                rm -rfv ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
             fi
         fi
+    done
+fi
+
+for ((i=0;i<${#addonslibs[@]};++i)); do
+    if [ -e "${addonslibs[i]}" ]; then
         echo " "
-        echo " Deploying [${addonslibs[i]}] to [${addons[i]}]/libs"
         mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
         if ! command -v rsync &> /dev/null
         then      
@@ -311,4 +318,4 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
 done
 
 echo " ------ "
-echo " openFrameworks download libs and install complete!"
+echo " openFrameworks download_libs and install complete!"
