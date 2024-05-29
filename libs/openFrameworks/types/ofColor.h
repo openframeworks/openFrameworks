@@ -308,14 +308,14 @@ public:
 	///
 	/// \returns the 3 color-native values in a glm::vec3
 	glm::vec3 getHsb() const {
-		return { getHueAngle(), getSaturation(), getBrightness() };
+		return { getHue(), getSaturation(), getBrightness() };
 	}
 
 	/// \brief Extract the hue, saturation and brightness (HSB) from this color.
 	///
 	/// \returns the 3 values normalized 0-1 in a glm::vec3
 	glm::vec3 getNormalizedHsb() const {
-		return { getHueAngle()/limit(), getSaturation()/limit(), getBrightness()/limit() };
+		return { getHue()/limit(), getSaturation()/limit(), getBrightness()/limit() };
 	}
 
     /// \brief Get the maximum value of a color component.
