@@ -48,7 +48,7 @@ download(){
     for PKG in $1; do
         COMMAND+="https://github.com/openframeworks/apothecary/releases/download/$REPO/$PKG "
     done
-    echo $COMMAND;
+    # echo $COMMAND;
     downloader $COMMAND $SILENT_ARGS $NO_SSL
 }
 
@@ -97,7 +97,7 @@ while [[ $# -gt 0 ]]; do
         BLEEDING_EDGE=1
         ;;
         -s|--silent)
-        SILENT_ARGS=-nv
+        SILENT_ARGS=1
         ;;
         -k|--no-ssl)
         NO_SSL=1

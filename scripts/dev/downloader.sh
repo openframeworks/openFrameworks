@@ -1,5 +1,5 @@
 #!/bin/bash
-
+VERSION=3.0.1
 printDownloaderHelp(){
 cat << EOF
     
@@ -27,7 +27,7 @@ validate_url(){
 }
 
 downloader() { 
-    echo " [openFrameworks downloader] ... "
+    echo " [openFrameworks downloader v${VERSION}] ... "
     if [ -z "$1" ]; then 
         printDownloaderHelp
         exit 1
@@ -96,29 +96,33 @@ downloader() {
         fi
     done
     echo
-    if [[ "${SILENT}" == "1" ]]; then
+    if [[ "${SILENT}" == 1 ]]; then
         if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then
-            wget2 --progress=none -nc -t20 $URLS_TO_DOWNLOAD
+            echo
+            wget2 -nv --progress=bar -nc -t20 $URLS_TO_DOWNLOAD
         elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
-            curl -L --parallel --retry 20 -s ${SSL_ARGS} -N ${URLS_TO_DOWNLOAD}
+            echo
+            curl -L --parallel --retry 20 -# -N ${URLS_TO_DOWNLOAD}
         elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
-            wget -qnc -t20 ${URLS_TO_DOWNLOAD} 
+            echo
+            wget -nv -qnc -t20 ${URLS_TO_DOWNLOAD} 
         else 
             echo $ERROR_MSG;
+            exit 1;
         fi;
     else
         if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then # 0 means true in this context
             echo " Downloading [wget2] urls:[$URLS_TO_DOWNLOAD]"
             echo
-            wget2 --progress=bar -vnc -t20 ${URLS_TO_DOWNLOAD}
+            wget2 -nv --progress=bar -nc -t20 ${URLS_TO_DOWNLOAD}
         elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
             echo " Downloading [cURL] urls:[$URLS_TO_DOWNLOAD]"
             echo
-            curl -L --parallel --retry 20 ${SSL_ARGS} -N ${URLS_TO_DOWNLOAD}
+            curl -L --parallel --retry 20 -# -N ${URLS_TO_DOWNLOAD}
         elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
             echo " Downloading [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD]"
             echo
-            wget --progress=bar -nc -t20 $URLS_TO_DOWNLOAD
+            wget -nv --progress=bar -nc -t20 $URLS_TO_DOWNLOAD
         else 
             echo $ERROR_MSG;
             exit 1;
