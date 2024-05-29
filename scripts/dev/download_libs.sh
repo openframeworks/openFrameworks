@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.1
+DL_VERSION=2.2
 
 printHelp(){
 cat << EOF
@@ -115,6 +115,10 @@ while [[ $# -gt 0 ]]; do
     esac
     shift # past argument or value
 done
+
+if [[ "$TARGET" != "" ]] && [[ "$PLATFORM" == "" ]]; then
+    PLATFORM=$TARGET
+fi
 
 if [ "$PLATFORM" == "" ]; then
     OS=$(uname)
@@ -263,7 +267,7 @@ cd ../ # back to libs
 
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
-    echo " Overwrite - Removing old libraries for [$PLATFORM]"
+    echo " Overwrite - Removing prior libraries for [$PLATFORM]"
     libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
     for ((i=0;i<${#libs[@]};++i)); do
         if [ -e "${libs[i]}/lib/$PLATFORM" ]; then
@@ -276,10 +280,10 @@ if [ $OVERWRITE -eq 1 ]; then
                 rm -rf "${libs[i]}/bin"
             fi
         fi
-        if [ -e "${libs[i]}/include" ]; then
-            echo "  Removing: [${libs[i]}/include]"
-            rm -rf "${libs[i]}/include"
-        fi
+        # if [ -e "${libs[i]}/include" ]; then
+        #     echo "  Removing: [${libs[i]}/include]"
+        #     rm -rf "${libs[i]}/include"
+        # fi
     done
 fi
 
@@ -323,10 +327,10 @@ if [ $OVERWRITE -eq 1 ]; then
                 echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/bin]"
                 rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
             fi
-            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
-                echo "   Remove include: [${addons[i]}/libs/include]"
-                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
-            fi
+            # if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
+            #     echo "   Remove include: [${addons[i]}/libs/include]"
+            #     rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
+            # fi
         fi
     done
     echo "   ------ "
@@ -334,10 +338,8 @@ fi
 
 for ((i=0;i<${#addonslibs[@]};++i)); do
     if [ -e "${addonslibs[i]}" ]; then
-        echo "   Deploying [${addonslibs[i]}] to [../addons/${addons[i]}]/libs]"
-        if [ -e "../addons/${addons[i]}/libs/${addonslibs[i]}" ]; then
-            mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
-        fi
+        echo "   Deploying [${addonslibs[i]}] to [../addons/${addons[i]}/libs]"
+        mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
         if ! command -v rsync &> /dev/null
         then      
             cp -a ${addonslibs[i]}/* ../addons/${addons[i]}/libs/${addonslibs[i]}    
