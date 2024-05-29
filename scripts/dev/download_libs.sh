@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.0
+DL_VERSION=2.1
 
 printHelp(){
 cat << EOF
@@ -237,24 +237,48 @@ else # Linux
     fi
 fi
 
-download "${PKGS[@]}"
-
 cd ../../
 mkdir -p libs
 cd libs
 
+mkdir -p download
+cd download
+
+# IFS=' ' read -r -a PKGS_DATA <<< "$PKGS"
+# if [ $OVERWRITE -eq 1 ]; then
+#     for ((i = 0; i < ${#PKGS_DATA[@]}; i++)); do
+#         FILE_CHECK="${PKGS_DATA[$i]}"
+#         # Check if the file exists
+#         if [ -e "${FILE_CHECK}" ]; then
+#             echo " Removing Prior Download:[${FILE_CHECK}]"
+#             # Remove the file or directory
+#             rm -rf "${FILE_CHECK}"
+#         fi
+#     done
+# fi
+
+download "${PKGS[@]}"
+
+cd ../ # back to libs
+
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     echo " Overwrite - Removing old libraries for [$PLATFORM]"
-    libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" )
+    libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
     for ((i=0;i<${#libs[@]};++i)); do
         if [ -e "${libs[i]}/lib/$PLATFORM" ]; then
-            echo " Removing old libraries: [${libs[i]}/lib/$PLATFORM]"
+            echo "  Removing: [${libs[i]}/lib/$PLATFORM]"
             rm -rf "${libs[i]}/lib/$PLATFORM"
         fi
-        if [ -e "${libs[i]}/bin/$PLATFORM" ]; then
-            echo " Removing old binaries: [${libs[i]}/lib/$PLATFORM]"
-            rm -rf "${libs[i]}/lib/$PLATFORM"
+        if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+            if [ -e "${libs[i]}/bin" ]; then
+                echo "  Removing: [${libs[i]}/bin]"
+                rm -rf "${libs[i]}/bin"
+            fi
+        fi
+        if [ -e "${libs[i]}/include" ]; then
+            echo "  Removing: [${libs[i]}/include]"
+            rm -rf "${libs[i]}/include"
         fi
     done
 fi
@@ -263,13 +287,13 @@ echo " ------ "
 for PKG in $PKGS; do
     echo " Uncompressing libraries [${PLATFORM}] from [$PKG]"
     if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-        unzip -qo ../scripts/dev/$PKG
-        rm -r ../scripts/dev/$PKG
+        unzip -qo download/$PKG
+        # rm -r download/$PKG
     else
-        tar xjf ../scripts/dev/$PKG
-        rm -r ../scripts/dev/$PKG
+        tar xjf download/$PKG
+        # rm -r download/$PKG
     fi
-    echo " Deployed libraries from [$PKG] to [/libs]"
+    echo " Deployed libraries from [download/$PKG]to [/libs]"
 done
 
 if [ "$PLATFORM" == "osx" ]; then
@@ -286,27 +310,34 @@ else
     addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
 fi
 
-echo " ------ "
+echo "   ------ "
 if [ $OVERWRITE -eq 1 ]; then 
     for ((i=0;i<${#addonslibs[@]};++i)); do
         if [ -e ${addonslibs[i]} ] ; then
-            echo " Overwrite - Checking old binaries: [${addons[i]}]"
+            echo " Overwrite - addon: [${addons[i]} - ${addonslibs[i]}]"
             if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM ]; then
-                echo " Removing old binaries: [${addons[i]}/$PLATFORM]"
-                rm -rfv ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM
+                echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM]"
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM
             fi
             if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/bin ]; then
-                echo " Removing old binaries: [${addons[i]}/$PLATFORM]"
-                rm -rfv ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
+                echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/bin]"
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
+            fi
+            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
+                echo "   Remove include: [${addons[i]}/libs/include]"
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
             fi
         fi
     done
+    echo "   ------ "
 fi
 
 for ((i=0;i<${#addonslibs[@]};++i)); do
     if [ -e "${addonslibs[i]}" ]; then
-        echo " "
-        mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
+        echo "   Deploying [${addonslibs[i]}] to [../addons/${addons[i]}]/libs]"
+        if [ -e "../addons/${addons[i]}/libs/${addonslibs[i]}" ]; then
+            mkdir -p ../addons/${addons[i]}/libs/${addonslibs[i]}
+        fi
         if ! command -v rsync &> /dev/null
         then      
             cp -a ${addonslibs[i]}/* ../addons/${addons[i]}/libs/${addonslibs[i]}    
