@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=3.1.1
+VERSION=3.2.0
 printDownloaderHelp(){
 cat << EOF
     
@@ -26,6 +26,54 @@ validate_url(){
     fi
 }
 
+#!/bin/bash
+
+CHECK_RESULT=0
+check_remote_vs_local() {
+  LOCAL_FILE="$1"
+  REMOTE_URL="$2"
+
+  if [ ! -f "$LOCAL_FILE" ]; then
+    echo "  cURL [check_remote_vs_local] - LOCAL_FILE:[$LOCAL_FILE] not found. Download"
+    CHECK_RESULT=0
+    return
+  else
+    echo "  cURL [check_remote_vs_local] - LOCAL_FILE:[$LOCAL_FILE] exists"
+  fi
+
+  # Get local file size
+  LocalSize=$(wc -c < "$LOCAL_FILE")
+
+  # Get remote file size
+  RemoteSize=$(curl -sI -L --retry 20 "$REMOTE_URL" | awk '/Content-Length/ {print $2}' | tr -d '\r' | tail -n 1)
+
+  # Get remote file modification time
+  modified=$(curl -L --retry 20 --silent --head "$REMOTE_URL" | awk '/^Last-Modified/{print $0}' | sed 's/^Last-Modified: //')
+  remote_ctime=$(date --date="$modified" +%s)
+
+  # Get local file modification time
+  local_ctime=$(stat -c %z "$LOCAL_FILE")
+  local_ctime=$(date --date="$local_ctime" +%s)
+
+  # Check size
+  if [ "$LocalSize" != "$RemoteSize" ]; then
+    echo "  File sizes differ. Run the cURL. LocalSize:[$LocalSize] RemoteSize:[$RemoteSize]"
+    CHECK_RESULT=0
+    return
+  fi
+
+  # Check modification time
+  if [ "$local_ctime" -lt "$remote_ctime" ]; then
+    echo "  Remote file is newer. Run the cURL. local_ctime[$local_ctime] remote_ctime:[$remote_ctime]"
+    CHECK_RESULT=0
+    return
+  fi
+
+  echo "  Files are the same. Do not run the cURL."
+  CHECK_RESULT=1
+  return
+}
+
 downloader() { 
     echo " [openFrameworks downloader v${VERSION}] ... "
     if [ -z "$1" ]; then 
@@ -33,7 +81,7 @@ downloader() {
         exit 1
     fi
     ERROR_MSG=" Downloading failed: No Installed: wget2, curl or wget. Please install (via homebrew, winget, apt-get) and try again. "
-    SILENT=1
+    SILENT=0
     NO_SSL=0
     URLS=()
     while [[ $# -gt 0 ]]; do
@@ -41,11 +89,11 @@ downloader() {
         case $key in
             -s|--silent)
             SILENT=1
-            shift # past argument
+            shift
             ;;
             -k|--no-ssl)
             NO_SSL=1
-            shift # past argument
+            shift
             ;;
             -h|--help)
             printDownloaderHelp
@@ -59,14 +107,14 @@ downloader() {
                     echo " Invalid URL: [$1]"
                 fi
             fi
-            shift # past argument
+            shift
             ;;
         esac
     done
     WGET2_INSTALLED=$(command -v wget2 > /dev/null 2>&1; echo $?)
     CURL_INSTALLED=$(command -v curl > /dev/null 2>&1; echo $?)
     WGET_INSTALLED=$(command -v wget > /dev/null 2>&1; echo $?)
-    WGET2=1
+    WGET2=0
     CURL=1
     WGET=1
     SSL_ARGS=""
@@ -87,45 +135,56 @@ downloader() {
         if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then
             URLS_TO_DOWNLOAD+="${URL} "
         elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
-            URLS_TO_DOWNLOAD+="${URL} -o ${FILENAME} "
-            if [ -n "${URLS[$i+1]}" ]; then
-                URLS_TO_DOWNLOAD+="-k ";
+            LOCAL_FILE=$FILENAME
+            REMOTE_URL=$URL
+            check_remote_vs_local "$LOCAL_FILE" "$REMOTE_URL"
+            if [ $CHECK_RESULT -eq 0 ]; then
+                URLS_TO_DOWNLOAD+="${URL} -o ${FILENAME} "
+                if [ -n "${URLS[$i+1]}" ]; then
+                    URLS_TO_DOWNLOAD+="-k ";
+                fi
+            else
+                echo "  LOCAL_FILE:[${LOCAL_FILE}] is same as remote - skipping download"
             fi
         else
            URLS_TO_DOWNLOAD+="${URL} "
         fi
     done
     echo
-    if [[ "${SILENT}" == 1 ]]; then
-        if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then
-            echo
-            wget2 -nv --progress=bar -N -t20 $SSL_ARGS $URLS_TO_DOWNLOAD
-        elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
-            echo
-            curl -L --retry 20 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
-        elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
-            echo
-            wget -nv -N -t20 ${URLS_TO_DOWNLOAD} 
-        else 
-            echo $ERROR_MSG;
-            exit 1;
-        fi;
+    if [ -z "$URLS_TO_DOWNLOAD" ]; then
+        echo "  No URLS to download, continue"
     else
-        if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then # 0 means true in this context
-            echo " Downloading [wget2] urls:[$URLS_TO_DOWNLOAD]"
-            echo
-            wget2 -N -nv --progress=bar -t20 $SSL_ARGS ${URLS_TO_DOWNLOAD}
-        elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
-            echo " Downloading [cURL] urls:[$URLS_TO_DOWNLOAD]"
-            echo
-            curl -L --retry 20 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
-        elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
-            echo " Downloading [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD]"
-            echo
-            wget -nv --progress=bar -N -t20 $SSL_ARGS $URLS_TO_DOWNLOAD
-        else 
-            echo $ERROR_MSG;
-            exit 1;
+        if [[ "${SILENT}" == 1 ]]; then
+            if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then
+                echo
+                wget2 -nv --progress=bar -N -t20 $SSL_ARGS $URLS_TO_DOWNLOAD
+            elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
+                echo
+                curl -L --retry 20 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
+            elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
+                echo
+                wget -nv -N -t20 ${URLS_TO_DOWNLOAD} 
+            else 
+                echo $ERROR_MSG;
+                exit 1;
+            fi;
+        else
+            if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then # 0 means true in this context
+                echo " Downloading [wget2] urls:[$URLS_TO_DOWNLOAD]"
+                echo
+                wget2 -N -nv --progress=bar -t20 $SSL_ARGS ${URLS_TO_DOWNLOAD}
+            elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 0 ]]; then
+                echo " Downloading [cURL] urls:[$URLS_TO_DOWNLOAD]"
+                echo
+                curl -L --retry 20 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
+            elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 0 ]]; then
+                echo " Downloading [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD]"
+                echo
+                wget -nv --progress=bar -N -t20 $SSL_ARGS $URLS_TO_DOWNLOAD
+            else 
+                echo $ERROR_MSG;
+                exit 1;
+            fi
         fi
     fi
     echo
