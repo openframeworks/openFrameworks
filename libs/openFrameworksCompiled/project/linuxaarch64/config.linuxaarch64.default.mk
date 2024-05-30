@@ -38,13 +38,6 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-#c++ 17 support - comment out two lines below to use c++11
-PLATFORM_CFLAGS += -std=c++17
-PLATFORM_LDFLAGS += -lstdc++fs
-PLATFORM_CXXVER = -std=c++17
-
-
-PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_LDFLAGS += -no-pie
 # PLATFORM_LDFLAGS += -nostartfiles
 
