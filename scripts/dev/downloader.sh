@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=3.2.0
+VERSION=3.2.1
 printDownloaderHelp(){
 cat << EOF
     
@@ -114,7 +114,7 @@ downloader() {
     WGET2_INSTALLED=$(command -v wget2 > /dev/null 2>&1; echo $?)
     CURL_INSTALLED=$(command -v curl > /dev/null 2>&1; echo $?)
     WGET_INSTALLED=$(command -v wget > /dev/null 2>&1; echo $?)
-    WGET2=0
+    WGET2=1
     CURL=1
     WGET=1
     SSL_ARGS=""
