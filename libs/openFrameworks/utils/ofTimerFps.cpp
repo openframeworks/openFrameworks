@@ -1,5 +1,8 @@
 #include "ofTimerFps.h"
 
+using namespace std::chrono;
+using namespace std::chrono_literals;
+
 void ofTimerFps::reset() {
    wakeTime = steady_clock::now();
 }
