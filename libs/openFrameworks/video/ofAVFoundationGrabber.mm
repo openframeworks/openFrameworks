@@ -38,11 +38,19 @@
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-            AVCaptureDeviceTypeBuiltInWideAngleCamera,
-            AVCaptureDeviceTypeExternal
-        ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-        devices = [session devices];
+        if (@available(macOS 14.0, *)) {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+                AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                AVCaptureDeviceTypeExternal
+            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        } else {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+                discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+                mediaType:AVMediaTypeVideo
+                position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        }
 	} else {
         AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
             discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]

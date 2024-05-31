@@ -394,7 +394,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     
     
     [self startEngine];
-#endif
+
 }
 
 - (void) handleRouteChange:(NSNotification *)notification {
@@ -438,7 +438,6 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 #ifndef TARGET_OSX
         NSLog(@"Previous route:\n");
         NSLog(@"%@", routeDescription);
-#endif
 #endif
 }
 
