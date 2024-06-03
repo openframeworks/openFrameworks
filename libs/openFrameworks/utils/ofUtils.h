@@ -14,10 +14,7 @@
 #include <chrono>
 #include <iomanip>  //for setprecision
 #include <optional>
-
-// #include <random>
 #include <sstream>
-// #include <type_traits>
 
 #include "ofRandomDistributions.h"
 #include "ofRandomEngine.h"

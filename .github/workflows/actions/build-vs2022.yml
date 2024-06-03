@@ -38,6 +38,7 @@ jobs:
             git
             unzip
             rsync
+            wget2
             wget
       - name: Install dependencies
         shell: msys2 {0}
