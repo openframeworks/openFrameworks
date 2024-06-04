@@ -76,6 +76,7 @@
 		BF6276A22BAD6619008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A12BAD6619008864C1 /* openssl.xcframework */; };
 		BF6276A42BAD6639008864C1 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A32BAD6639008864C1 /* curl.xcframework */; };
 		BF6276A62BAD9900008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276A52BAD9900008864C1 /* ofBaseTypes.h */; };
+		BF7C462E2C097CCE00461163 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7C462D2C097CCE00461163 /* brotli.xcframework */; };
 		DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
 		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
@@ -249,6 +250,7 @@
 		BF6276A12BAD6619008864C1 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/osx/openssl.xcframework; sourceTree = "<group>"; };
 		BF6276A32BAD6639008864C1 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/osx/curl.xcframework; sourceTree = "<group>"; };
 		BF6276A52BAD9900008864C1 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
+		BF7C462D2C097CCE00461163 /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../brotli/lib/osx/brotli.xcframework; sourceTree = "<group>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF5BF8502B737E440049DEF6 /* glew.xcframework in Frameworks */,
+				BF7C462E2C097CCE00461163 /* brotli.xcframework in Frameworks */,
 				BF5BF8542B737E880049DEF6 /* libpng.xcframework in Frameworks */,
 				BF5BF84A2B737E260049DEF6 /* cairo.xcframework in Frameworks */,
 				BF5BF8442B737C7C0049DEF6 /* tess2.xcframework in Frameworks */,
@@ -393,6 +396,7 @@
 		BF5BF83E2B7378ED0049DEF6 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF7C462D2C097CCE00461163 /* brotli.xcframework */,
 				BF6276A32BAD6639008864C1 /* curl.xcframework */,
 				BF6276A12BAD6619008864C1 /* openssl.xcframework */,
 				BF5BF8552B737E930049DEF6 /* pixman.xcframework */,
@@ -539,6 +543,7 @@
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
 				BF5BF83E2B7378ED0049DEF6 /* frameworks */,
+				BF7C462F2C09806B00461163 /* Frameworks */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
