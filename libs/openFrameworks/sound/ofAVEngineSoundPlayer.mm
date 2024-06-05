@@ -400,7 +400,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 - (void) handleRouteChange:(NSNotification *)notification {
 
     NSUInteger interruptionType;
-    UInt8 reasonValue;
+    UInt8 reasonValue = 0;
 
 #ifndef TARGET_OSX
     interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
