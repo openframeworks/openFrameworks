@@ -157,7 +157,7 @@
 			"isa": "PBXGroup",
 			"name": "addons",
 			"children": [],
-			"sourceTree": "<group>"
+			"sourceTree": "SOURCE_ROOT"
 		},
 		"E4B69B4A0A3A1720003C02F2": {
 			"isa": "PBXGroup",

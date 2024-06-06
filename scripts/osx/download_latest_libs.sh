@@ -5,5 +5,5 @@ cd $SCRIPT_DIR
 if [ ! -z ${BITS+x} ]; then
     ../dev/download_libs.sh -p osx -b -a $BITS $@
 else
-    ../dev/download_libs.sh -p osx -b -n $@
+    ../dev/download_libs.sh -p osx -b $@
 fi
