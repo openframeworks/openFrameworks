@@ -297,21 +297,37 @@ for PKG in $PKGS; do
         tar xjf download/$PKG
         # rm -r download/$PKG
     fi
-    echo " Deployed libraries from [download/$PKG]to [/libs]"
+    echo " Deployed libraries from [download/$PKG] to [/libs]"
 done
 
-if [ "$PLATFORM" == "osx" ]; then
-    addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco" "openssl")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
-elif [ "$PLATFORM" == "vs" ]; then
-    addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
-elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
-    addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco" "openssl")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
+if [[ $BLEEDING_EDGE = 1 ]] ; then
+    if [ "$PLATFORM" == "osx" ]; then
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" )
+    elif [ "$PLATFORM" == "vs" ]; then
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
+        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco" )
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    else
+        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    fi
 else
-    addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    if [ "$PLATFORM" == "osx" ]; then
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco" "openssl")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
+    elif [ "$PLATFORM" == "vs" ]; then
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
+        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco" )
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    else
+        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    fi
 fi
 
 echo "   ------ "
