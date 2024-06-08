@@ -54,7 +54,7 @@ trapError() {
 
     if [ -e openFrameworksLibs* ]; then
         echo "removing packages"
-    	rm openFrameworksLibs*
+        rm openFrameworksLibs*
     fi
     exit "${code}"
 }
@@ -157,7 +157,7 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
-OUTDIR=../../../../
+OUTDIR=../../
 
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
@@ -190,7 +190,7 @@ cd download
 
 download $PKG
 
-echo " Uncompressing Project Generator for $PLATFORM from $PKG"
+echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/$OUTPUT]"
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     unzip -q "$PKG" -d "$OUTPUT"
     #rm $PKG
@@ -207,7 +207,7 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 
     if ! command -v rsync &> /dev/null
     then      
-        cp -ar ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+        cp -arX ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
     else
         rsync -a ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
     fi
@@ -215,9 +215,9 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 else
     if ! command -v rsync &> /dev/null
     then      
-        cp -ar $OUTPUT/projectGenerator$EXT $OUTDIR/ 
+        cp -arX $OUTPUT/projectGenerator$EXT $OUTDIR/
     else
-        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR  
+        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR
     fi
     rm -rf $OUTPUT/projectGenerator$EXT
 
@@ -228,6 +228,3 @@ rm -rf $OUTPUT
 
 echo " ------ "
 echo " openFrameworks download projectGenerator and install complete!"
-
-
-
