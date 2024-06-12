@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
 
-if [ $EUID != 0 ]; then
-	echo "this script must be run as root"
-	echo ""
-	echo "usage:"
-	echo "sudo ./install_dependencies.sh"
-	exit $exit_code
-   exit 1
-fi
-
 ROOT=$(cd $(dirname $0); pwd -P)
 
+SUDO_CMD=(sudo
 pacman -S --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml rtaudio poco
+)
+echo ${SUDO_CMD[@]}
+${SUDO_CMD[@]}
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
