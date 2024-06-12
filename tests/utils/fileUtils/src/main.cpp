@@ -216,24 +216,24 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "";
         ofLogNotice() << "tests #4462";
 		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
-			ofxTestEq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+			ofxTestEq(ofPathToString(ofToDataPath("movies\\",true)).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			ofxTestEq(ofPathToString(ofToDataPath("movies",true)).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
 			ofDirectory("movies").create();
-			ofxTestEq(ofToDataPath("movies\\",true).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
+			ofxTestEq(ofPathToString(ofToDataPath("movies\\",true)).back(), '\\', "absolute ofToDataPath with \\ should end in \\");
+			ofxTestEq(ofPathToString(ofToDataPath("movies",true)).back(), 's', "absolute ofToDataPath without \\ should not end in \\");
 		}else{
-			ofxTestEq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+			ofxTestEq(ofPathToString(ofToDataPath("movies/",true)).back(), '/', "absolute ofToDataPath with / should end in /");
+			ofxTestEq(ofPathToString(ofToDataPath("movies",true)).back(), 's', "absolute ofToDataPath without / should not end in /");
 			ofDirectory("movies").create();
-			ofxTestEq(ofToDataPath("movies/",true).back(), '/', "absolute ofToDataPath with / should end in /");
-			ofxTestEq(ofToDataPath("movies",true).back(), 's', "absolute ofToDataPath without / should not end in /");
+			ofxTestEq(ofPathToString(ofToDataPath("movies/",true)).back(), '/', "absolute ofToDataPath with / should end in /");
+			ofxTestEq(ofPathToString(ofToDataPath("movies",true)).back(), 's', "absolute ofToDataPath without / should not end in /");
 		}
 
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4598";
-		ofxTestEq(ofToDataPath("").back(), of::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
+		ofxTestEq(ofPathToString(ofToDataPath("")).back(), of::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
 
         //========================================================================
         ofLogNotice() << "";
