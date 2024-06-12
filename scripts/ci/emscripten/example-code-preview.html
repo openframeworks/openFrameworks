@@ -1,0 +1,39 @@
+	<!-- Containers for code -->
+	<div id="code-containers" style="margin-left:15px">
+		<h3><a href="https://github.com/openframeworks/openFrameworks/tree/master/examples/EXAMPLE_PARENT_FOLDER/EXAMPLE_FOLDER">EXAMPLE_FOLDER on Github</a></h3>
+	</div>
+	<link href="../../prism.css" rel="stylesheet" />
+	<script src="../../prism.js"></script>
+
+	<script>
+		const files = [EXAMPLE_FILES]; //Todo: add files via listing src/
+
+		// Create containers for each code file
+		const codeContainers = document.getElementById('code-containers');
+
+		files.forEach((filePath, index) => {
+			// Create a unique ID for each container
+			const containerId = `code-container-${index}`;
+			
+			// Create a <pre><code> structure for each file
+			const codeContainer = document.createElement('pre');
+			codeContainer.innerHTML = `<code id="${containerId}" class="language-cpp"></code>`;
+
+			const fileTitle = document.createElement('h3');
+			fileTitle.innerHTML = filePath + ":";
+
+			// Append the container to the main code containers div
+			codeContainers.appendChild(fileTitle);
+			codeContainers.appendChild(codeContainer);
+			
+			// Fetch and display code for each file
+			fetch(filePath)
+				.then(response => response.text())
+				.then(code => {
+					const specificCodeContainer = document.getElementById(containerId);
+					specificCodeContainer.textContent = code;
+					Prism.highlightElement(specificCodeContainer);
+				})
+				.catch(error => console.error(`Error fetching ${filePath}:`, error));
+		});
+	</script>

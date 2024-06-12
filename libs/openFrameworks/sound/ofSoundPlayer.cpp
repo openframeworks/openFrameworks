@@ -1,17 +1,12 @@
 #include "ofSoundPlayer.h"
 #include "ofLog.h"
 #define GLM_FORCE_CTOR_INIT
-#include "glm/common.hpp"
-
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext/scalar_common.hpp>
 
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 #include "ofAVEngineSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofAVEngineSoundPlayer
-#endif
-
-#ifdef OF_SOUND_PLAYER_QUICKTIME
-#include "ofQuicktimeSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofQuicktimeSoundPlayer
 #endif
 
 #ifdef OF_SOUND_PLAYER_FMOD
@@ -275,6 +270,24 @@ float ofSoundPlayer::getPan() const{
 float ofSoundPlayer::getVolume() const{
 	if( player ){
 		return player->getVolume();
+	} else {
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------
+float ofSoundPlayer::getDuration() const {
+	if( player ){
+		return player->getDuration();
+	} else {
+		return 0;
+	}
+}
+
+//--------------------------------------------------------------------
+unsigned int ofSoundPlayer::getDurationMS() const {
+	if( player ){
+		return player->getDurationMS();
 	} else {
 		return 0;
 	}

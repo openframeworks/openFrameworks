@@ -26,6 +26,18 @@ class ofBaseSoundOutput{
 		/// \brief Output an audio buffer.
 		/// \param buffer An audio buffer.
 		virtual void audioOut( ofSoundBuffer& buffer );
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioOut(ofSoundBuffer& buffer) instead.
+		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  );
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioOut(ofSoundBuffer& buffer) instead.
+		virtual void audioOut( float * output, int bufferSize, int nChannels );
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioOut(ofSoundBuffer& buffer) instead.
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
 };
 
 /// \class ofSoundDevice
@@ -163,4 +175,6 @@ public:
 	virtual bool isLoaded() const = 0;
 	virtual float getVolume() const = 0;
 
+	virtual float getDuration() const = 0;
+	virtual unsigned int getDurationMS() const = 0;
 };

@@ -1,5 +1,6 @@
 #include "ofTrueTypeFont.h"
-//--------------------------
+#include "ofPixels.h"
+#include "ofPath.h"
 
 #include <ft2build.h>
 
@@ -188,7 +189,6 @@ void ofTrueTypeShutdown(){
 		FT_Done_FreeType(library);
 	}
 #endif
-
 }
 
 //--------------------------------------------------------
@@ -236,6 +236,9 @@ static ofPath makeContoursForCharacter(FT_Face face){
 }
 
 #ifdef TARGET_OSX
+
+#include <ApplicationServices/ApplicationServices.h>
+
 //------------------------------------------------------------------
 static string osxFontPathByName(const string& fontname){
 	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
@@ -260,6 +263,7 @@ static string osxFontPathByName(const string& fontname){
 #ifdef TARGET_WIN32
 #include <unordered_map>
 // font font face -> file name name mapping
+// FIXME: second -> fs::path
 static std::unordered_map<string, string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
@@ -334,14 +338,14 @@ void initWindows(){
 }
 
 
-static string winFontPathByName(const string& fontname ){
+static string winFontPathByName(const string & fontname){
 	return fonts_table[fontname];
 }
 #endif
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------------
-static string linuxFontPathByName(const string& fontname){
+static string linuxFontPathByName(const string & fontname){
 	string filename;
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
@@ -376,15 +380,15 @@ static string linuxFontPathByName(const string& fontname){
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, of::filesystem::path & filename, int index){
-	of::filesystem::path fontname = _fontname;
-	filename = ofToDataPath(_fontname,true);
-	ofFile fontFile(filename,ofFile::Reference);
+// FIXME: it seems first parameter is string because it represents the font name only
+static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face, of::filesystem::path & filename, int index){
+	auto fontname = _fontname;
+	filename = ofToDataPathFS(_fontname, true);
 	int fontID = index;
-	if(!fontFile.exists()){
+	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
-		// FIXME: update function linuxFontPathByName to use path instead of string
-		filename = linuxFontPathByName(fontname.string());
+		// FIXME: fs::path in input and output
+		filename = linuxFontPathByName(_fontname.string());
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
@@ -398,6 +402,7 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Menlo Regular";
 		}
+		// FIXME: fs::path in input and output
 		filename = osxFontPathByName(fontname.string());
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
@@ -407,25 +412,23 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Courier New";
 		}
-        filename = winFontPathByName(fontname.string());
+        filename = winFontPathByName(ofPathToString(fontname));
 #elif defined(TARGET_ANDROID)
 		filename = ofToDataPath(_fontname, true);
 #endif
 		if(filename == "" ){
-			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
-			fontFile.close();
+			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
 			return false;
 		}
-		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
+		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): " << fontname << " not a file in data loading system font from " << filename;
 	}
 	FT_Error err;
-	err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
+	err = FT_New_Face( library, ofPathToString(filename).c_str(), fontID, &face );
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
 		if(err == 1) errorString = "INVALID FILENAME";
-		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
-		fontFile.close();
+		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for " << fontname << ": FT_Error " << err << " " << errorString;
 		return false;
 	}
 	fontFile.close();
@@ -894,9 +897,9 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	int w;
 	int h;
 	while(!packed){
-		w = pow(2,floor((alpha/2.f) + 0.5f)); // there doesn't seem to be a round in cmath for windows.
-		//w = pow(2,round(alpha/2.f));
-		h = w;//pow(2,round(alpha - round(alpha/2.f)));
+		w = std::pow(2,std::floor((alpha/2.f) + 0.5f)); // there doesn't seem to be a round in cmath for windows.
+		//w = std::pow(2, std::round(alpha/2.f));
+		h = w;//std::pow(2, std::round(alpha - std::round(alpha/2.f)));
 		int x=0;
 		int y=0;
 		auto maxRowHeight = sortedCopy[0].tH + border*2;
@@ -1252,13 +1255,18 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringWidth(const string& c) const{
 //	return getStringBoundingBox(c, 0,0).width;
-	int w = 0;
+	float w = 0;
 	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
-		if ( c == '\t' ){
-			w += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
-		} else {
-			w += getGlyphProperties( c ).advance;
+		float cWidth = 0;
+
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+			if ( c == '\t' ){
+				cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+			} else {
+				cWidth = getGlyphProperties( c ).advance;
+			}
 		}
+		w = std::max(w, std::abs(pos.x + cWidth));
 	});
 	return w;
 }
@@ -1281,14 +1289,18 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 	// vertices, as this would not correctly return spacing for
 	// blank characters.
 	
-	
 	float w = 0;
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
 		auto props = getGlyphProperties( c );
-		if ( c == '\t' ){
-			w += props.advance * spaceSize * TAB_WIDTH;
-		} else {
-			w += props.advance;
+
+		float cWidth = 0;
+
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+			if ( c == '\t' ){
+				cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+			} else {
+				cWidth = getGlyphProperties( c ).advance;
+			}
 		}
 
         
@@ -1296,6 +1308,9 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
             props.advance = spaceSize;
         }
 //		maxX = max( maxX, pos.x + props.xmin + props.width);
+        // review this again @danoli3
+		w = std::max(w, std::abs(pos.x - x) + cWidth);
+
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );

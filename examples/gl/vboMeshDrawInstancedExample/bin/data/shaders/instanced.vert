@@ -1,3 +1,4 @@
+OF_GLSL_SHADER_HEADER
 //
 //     _____    ___
 //    /    /   /  /     vboMeshDrawInstancedExample
@@ -24,14 +25,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#version 150
+
+//#version 150
+
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 modelViewProjectionMatrix;
-uniform vec4 globalColor = vec4(1.0);
+uniform vec4 globalColor;// = vec4(1.0);
 uniform	sampler2D tex0;			// we use this to sample depth data for our boxes.
-uniform float timeValue=0.0;	// we get this from our ofApp, it's a time value moving from 0 to 1 every 30 seconds
+uniform float timeValue;//=0.0;	// we get this from our ofApp, it's a time value moving from 0 to 1 every 30 seconds
 
 
 in vec4  position;
@@ -134,13 +137,18 @@ void main()
 	// we would like to spread our primitives out evenly along the x and an y coordinates
 	// we calculate an x and an y coordinate value based on the current instance ID
 	
-	float instanceX = float(gl_InstanceID%(iCount) - iCount/2) / 128.0;
-	float instanceY = float(gl_InstanceID/(iCount) - iCount/2) / 128.0;
+	float instanceX = float(gl_InstanceID%(iCount) - (iCount/2)) / 128.0;
+	float instanceY = float(gl_InstanceID/(iCount) - (iCount/2)) / 128.0;
+	
+//	float instanceX = float(gl_InstanceID)/128.0-0.5;
+//	float instanceY = float(gl_InstanceID)/128.0-0.5;
+	
+	texCoordVarying = vec2(0.5,0.5);
 	
 	// next we get a mix-value, based on the current instance x coordinate and time, which
 	// will help us to achieve some animation happiness.
 	
-	float timeDependentInstanceXValue = mod(instanceX * 0.25 + timeValue *2, 1.0);
+	float timeDependentInstanceXValue = mod(instanceX * 0.25 + timeValue * 2.0, 1.0);
 	
 	
 	// get pixel depth by sampling from our depth texture.
@@ -153,6 +161,7 @@ void main()
 	
 	// set the color for this primitive based on the current pixelDepth modified by the time dependent instance x value.
 	colorVarying = vec4(globalColor.rgb * pixelDepth, globalColor.a) * vec4(1.0,1.0-timeDependentInstanceXValue,(instanceX + 0.5) ,1.0);
+//	colorVarying = vec4(1.0);
 	
 	vec4 vPos = position;
 	
@@ -164,9 +173,9 @@ void main()
 	vPos.x = vPos.x * 4.0 + snoise(vec2(instanceX,instanceY)) * 20.0;
 	vPos.y = vPos.y * 4.0 + snoise(vec2(1.0-instanceX,instanceY)) * 300.0;
 	// this will distribute our boxes in space,
-	vPos = vPos + vec4(instanceX*20*128,instanceY*10*128, 0,0);
+	vPos = vPos + vec4(instanceX*20.0*128.0,instanceY*10.0*128.0, 0.0,0.0);
 	vPos.z = vPos.z + snoise(vec2(instanceX,instanceY)) * 100.0;
 
 
-	gl_Position = projectionMatrix * modelViewMatrix * vPos  ;
+	gl_Position = projectionMatrix * modelViewMatrix * vPos;
 }

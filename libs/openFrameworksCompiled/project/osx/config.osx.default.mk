@@ -85,12 +85,11 @@ endif
 PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS += -Wall
+PLATFORM_CFLAGS += -Wall -Werror=return-type
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-PLATFORM_CFLAGS += -Werror=return-type
 
 ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
@@ -167,6 +166,7 @@ endif
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 #PLATFORM_LDFLAGS += -arch i386
+PLATFORM_LDFLAGS += -lcurl
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
@@ -184,7 +184,7 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -225,7 +225,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
 
 ifeq ($(USE_FMOD),0)
@@ -363,24 +363,24 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
 # Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
-	@if [ ! -a openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
+	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
 	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
-	
+
 # App icons
  ifeq ($(RUN_TARGET), RunRelease)
-	@if [ -a of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@if [ -f of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
 	@sed -i '' 's/\$$(ICON_NAME)/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  else
-	@if [ -a of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@if [ -f of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
 	@sed -i '' 's/\$$(ICON_NAME)/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  endif
- 
+
 	@sed -i '' 's/\$$(DEVELOPMENT_LANGUAGE)/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(EXECUTABLE_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(TARGET_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(PRODUCT_BUNDLE_IDENTIFIER)/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$$(VERSION)/1.0/g' bin/$(BIN_NAME).app/Contents/Info.plist
-		
+
 	@echo TARGET=$(TARGET)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 

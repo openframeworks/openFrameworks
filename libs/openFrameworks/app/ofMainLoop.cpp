@@ -7,7 +7,7 @@
 
 #include "ofMainLoop.h"
 #include "ofBaseApp.h"
-#include "ofConstants.h"
+// #include "ofConstants.h"
 
 //========================================================================
 // default windowing

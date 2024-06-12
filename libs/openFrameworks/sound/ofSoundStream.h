@@ -2,9 +2,7 @@
 
 #include "ofBaseApp.h"
 #include "ofSoundBaseTypes.h"
-#include "ofConstants.h"
-#include <climits>
-#include <functional>
+#include <climits> // UINT_MAX only?
 
 class ofSoundStreamSettings;
 
@@ -16,8 +14,8 @@ class ofSoundStreamSettings;
 ///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
 ///// \param nInputChannels number of requested input channels.
 ///// \param appPtr pointer to the app which will own the sound stream (optional).
-OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-	void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = nullptr));
+[[deprecated("Use an ofSoundStreamSettings object instead of directly passing the parameters")]]
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = nullptr);
 
 ///// \brief Sets up and starts a global ofSoundStream.
 ///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
@@ -26,8 +24,8 @@ OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passi
 ///// \param bufferSize requested buffer size (256 is typical). Smaller values
 /////        will be more responsive, but less stable.
 ///// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
-OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-	void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers));
+[[deprecated("Use an ofSoundStreamSettings object instead of directly passing the parameters")]]
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
 
 ///// \brief Sets up and starts a global ofSoundStream.
 ///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
@@ -38,8 +36,8 @@ OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passi
 /////        will be more responsive, but less stable.
 ///// \param nBuffers number of buffers to queue. Less buffers will be more
 /////        responsive, but less stable.
-OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-	void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers));
+[[deprecated("Use an ofSoundStreamSettings object instead of directly passing the parameters")]]
+void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
 
 void ofSoundStreamSetup(ofSoundStreamSettings & settings);
 
@@ -96,12 +94,12 @@ public:
 	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX, ofSoundDevice::Api api = ofSoundDevice::Api::DEFAULT) const;
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
-	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		void setDeviceID(int deviceID));
+	[[deprecated("Use an ofSoundStreamSettings object instead of directly passing the parameters")]]
+	void setDeviceID(int deviceID);
 
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
-	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		void setDevice(const ofSoundDevice& device));
+	[[deprecated("Use an ofSoundStreamSettings object instead of directly passing the parameters")]]
+	void setDevice(const ofSoundDevice& device);
 
 	bool setup(const ofSoundStreamSettings & settings);
 
@@ -115,8 +113,8 @@ public:
 	///// \param nBuffers number of buffers to queue. Less buffers will be more
 	/////        responsive, but less stable.
 	///// \return true on success
-	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers));
+	[[deprecated("Use an ofSoundStreamSettings object instead of directly passing the parameters")]]
+	bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 
 	///// \brief Sets up and starts the stream.
 	///// \param outChannels number of requested output channels (i.e. 2 for stereo).
@@ -127,8 +125,8 @@ public:
 	///// \param nBuffers number of buffers to queue. Less buffers will be more
 	/////        responsive, but less stable.
 	///// \return true on success
-	OF_DEPRECATED_MSG("Use an ofSoundStreamSettings object instead of directly passing the parameters",
-		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers));
+	[[deprecated("Use an ofSoundStreamSettings object instead of directly passing the parameters")]]
+	bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 
 	/// \brief Sets the object which will have audioIn() called when the device receives audio.
 	void setInput(ofBaseSoundInput * soundInput);
@@ -180,7 +178,8 @@ public:
 	int getBufferSize() const;
 
 	/// \brief Retrieves a list of available audio devices and prints device descriptions to the console
-	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices() const);
+	[[deprecated("Use printDeviceList")]]
+	std::vector<ofSoundDevice> listDevices() const;
 
 protected:
 	std::shared_ptr<ofBaseSoundStream> soundStream;

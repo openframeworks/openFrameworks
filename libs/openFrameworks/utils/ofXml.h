@@ -1,10 +1,14 @@
 #pragma once
 
 #include "ofParameter.h"
+<<<<<<< HEAD
 #if defined(PUGI_NEW)
 #include "pugiconfig.hpp"
 #endif
 #include "pugixml.hpp"
+=======
+#include <pugixml.hpp>
+>>>>>>> master
 
 template<typename It>
 class ofXmlIterator;

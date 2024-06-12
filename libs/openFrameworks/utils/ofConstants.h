@@ -59,6 +59,7 @@ enum ofTargetPlatform{
 #endif
 
 
+// FIXME: not used anymore in OF Core. Only kept for addons compatibility - 20231206
 // Cross-platform deprecation warning
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5
@@ -197,9 +198,7 @@ enum ofTargetPlatform{
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
-	#include <unistd.h>
 	#include "GL/glew.h"
-	#include <ApplicationServices/ApplicationServices.h>
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
@@ -212,24 +211,22 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-	#include <unistd.h>
-
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
-			#include "bcm_host.h"
+			#include <bcm_host.h>
 			// rpi firmware headers define countof
 			// which messes up other libraries like glm
 			#undef countof
 		#endif
 
-		#include "GLES/gl.h"
-		#include "GLES/glext.h"
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
+		#include <GLES/gl.h>
+		#include <GLES/glext.h>
+		#include <GLES2/gl2.h>
+		#include <GLES2/gl2ext.h>
 
 		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
+		#include <EGL/egl.h>
+		#include <EGL/eglext.h>
 	#else // desktop linux
 		#include <GL/glew.h> 
 	#endif
@@ -267,7 +264,6 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
-	#include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
@@ -296,7 +292,7 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#include "tesselator.h"
+#include <tesselator.h>
 typedef TESSindex ofIndexType;
 
 
@@ -398,6 +394,10 @@ typedef TESSindex ofIndexType;
 	#elif defined(TARGET_EMSCRIPTEN)
 		#define OF_SOUNDSTREAM_EMSCRIPTEN
 	#endif
+#if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
+	#undef USE_FMOD // No FMOD lib for ARM64 yet
+	#define OF_NO_FMOD
+	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 
 //------------------------------------------------ soundplayer
@@ -451,38 +451,6 @@ typedef TESSindex ofIndexType;
 	#endif
 #endif
 
-//------------------------------------------------ make_unique
-// This is a helper method for make unique on platforms that support C++11, but not C++14.
-#if !defined(NO_OF_MAKE_UNIQUE) && (defined(_MSC_VER) && _MSC_VER < 1800) || (!defined(_MSC_VER) && __cplusplus <= 201103L)
-
-// Implementation for C++11 platforms that do not yet have std::make_unique.
-// Implementation from http://stackoverflow.com/a/13512344/1518329
-namespace std {
-
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique_helper(std::false_type, Args&&... args) {
-	return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique_helper(std::true_type, Args&&... args) {
-	static_assert(std::extent<T>::value == 0,
-				  "make_unique<T[N]>() is forbidden, please use make_unique<T[]>().");
-
-	typedef typename std::remove_extent<T>::type U;
-	return std::unique_ptr<T>(new U[sizeof...(Args)]{std::forward<Args>(args)...});
-}
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
-	return make_unique_helper<T>(std::is_array<T>(), std::forward<Args>(args)...);
-}
-
-
-} // namespace std
-
-#endif
 
 // Android NDK > 22 LIBC++ Fix for pthread issues
 #if defined(_LIBCPP_HAS_THREAD_API_PTHREAD)

@@ -1,0 +1,3 @@
+#!/bin/zsh
+${ccache} clang++ "$@"
+

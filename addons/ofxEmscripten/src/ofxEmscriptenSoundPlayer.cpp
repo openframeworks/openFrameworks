@@ -37,15 +37,19 @@ ofxEmscriptenSoundPlayer::~ofxEmscriptenSoundPlayer(){
 	html5audio_sound_free(player_id);
 }
 
-bool ofxEmscriptenSoundPlayer::load(const std::filesystem::path& fileName, bool stream){
-	html5audio_sound_load(player_id, ofToDataPath(fileName).c_str());
+bool ofxEmscriptenSoundPlayer::load(const of::filesystem::path& filePath, bool stream){
+        auto soundFilePath = filePath.string();
+        if ( soundFilePath.substr(0, 7) != "http://" && soundFilePath.substr(0, 8) != "https://"){
+            soundFilePath = ofToDataPath(soundFilePath);
+	}
+	html5audio_sound_load(player_id, soundFilePath.c_str());
 	return true;
 }
 
-bool ofxEmscriptenSoundPlayer::load(const std::string& fileName, bool stream){
-	html5audio_sound_load(player_id, fileName.c_str());
-	return true;
-}
+//bool ofxEmscriptenSoundPlayer::load(const std::string& fileName, bool stream){
+//	html5audio_sound_load(player_id, fileName.c_str());
+//	return true;
+//}
 
 void ofxEmscriptenSoundPlayer::unload(){
 	html5audio_sound_free(player_id);
@@ -131,7 +135,11 @@ float ofxEmscriptenSoundPlayer::getVolume() const{
 	return html5audio_sound_volume(player_id);
 }
 
-int ofxEmscriptenSoundPlayer::getDurationMS() const{
+float ofxEmscriptenSoundPlayer::getDuration() const {
+	return html5audio_sound_duration(player_id);
+}
+
+unsigned int ofxEmscriptenSoundPlayer::getDurationMS() const{
 	return html5audio_sound_duration(player_id) * 1000;
 }
 

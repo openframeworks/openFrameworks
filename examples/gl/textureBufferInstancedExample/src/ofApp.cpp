@@ -25,6 +25,19 @@ void ofApp::setup(){
 	shader.begin();
 	shader.setUniformTexture("tex",tex,0);
 	shader.end();
+	
+	// load the shader main functions //
+	string vname = "vert.glsl";
+	ofBuffer vbuffer = ofBufferFromFile(vname);
+	if( vbuffer.size()) {
+		// configure the shader to include shadow functions for passing depth
+		// #define OF_SHADOW_DEPTH_PASS gets added to the shader file in the setupShadowDepthShader function
+		light.getShadow().setupShadowDepthShader(mDepthShader, vbuffer.getText());
+	}
+	
+	mDepthShader.begin();
+	mDepthShader.setUniformTexture("tex",tex,0);
+	mDepthShader.end();
 
 	// we are going to use instanced drawing so we
 	// only need one geometry
@@ -45,16 +58,36 @@ void ofApp::setup(){
 
 	// lots of boxes, let's move the camera backwards
 	camera.setDistance(ofGetWidth()*6);
-	camera.setFarClip(ofGetWidth()*12);
+	camera.setFarClip(ofGetWidth()*15);
+	
+	light.setDirectional();
+	light.enable();
+	light.setPosition(0.0, 3600, 600 );
+	light.lookAt( glm::vec3(0,0,0) );
+	light.getShadow().setEnabled(true);
+	light.getShadow().setGlCullingEnabled(true);
+	light.getShadow().setStrength(0.2);
+	light.getShadow().setNearClip(200);
+	light.getShadow().setFarClip(7500);
+	light.getShadow().setDirectionalBounds(7000, 7000);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	if( light.shouldRenderShadowDepthPass() ) {
+		int numShadowPasses = light.getNumShadowDepthPasses();
+		for( int j = 0; j < numShadowPasses; j++ ) {
+			light.beginShadowDepthPass(j);
+			renderScene(true);
+			light.endShadowDepthPass(j);
+		}
+	}
+	
 	// update each box transformation
 	float movementSpeed = .1;
-	float spacing = 0.5;
+	float spacing = 0.25;
 	float now = ofGetElapsedTimef();
-	float cloudSize = ofGetWidth()*4;
+	float cloudSize = ofGetWidth()*3;
 	for(size_t i=0;i<matrices.size();i++){
 		ofNode node;
 
@@ -76,13 +109,53 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	ofEnableDepthTest();
+	if( light.shouldRenderShadowDepthPass() ) {
+		int numShadowPasses = light.getNumShadowDepthPasses();
+		for( int j = 0; j < numShadowPasses; j++ ) {
+			light.beginShadowDepthPass(j);
+			renderScene(true);
+			light.endShadowDepthPass(j);
+		}
+	}
+	
 	// use drawInstanced to draw lots of instances of the same geometry
 	camera.begin();
-	shader.begin();
-	mesh.drawInstanced(OF_MESH_WIREFRAME,matrices.size());
-	shader.end();
+//	shader.begin();
+	//mesh.drawInstanced(OF_MESH_WIREFRAME,matrices.size());
+//	mesh.drawInstanced(OF_MESH_FILL,matrices.size());
+	renderScene(false);
+	
+	light.draw();
+	
+	if( light.getIsEnabled() && light.getShadow().getIsEnabled() ) {
+		light.getShadow().drawFrustum();
+	}
+//	shader.end();
 	camera.end();
+	ofDisableDepthTest();
 	ofDrawBitmapString(ofGetFrameRate(),20,20);
+}
+
+//--------------------------------------------------------------
+void ofApp::renderScene(bool bShadowPass) {
+	if( bShadowPass ) {
+		mDepthShader.begin();
+	} else {
+		shader.begin();
+	}
+	
+	mesh.drawInstanced(OF_MESH_FILL,matrices.size());
+	
+	if(bShadowPass) {
+		mDepthShader.end();
+	} else {
+		shader.end();
+	}
+	ofSetColor( 180 );
+	matFloor.begin();
+	ofDrawBox( 0, -(float)ofGetWidth()*3.f, 0, 7000, 50, 7000 );
+	matFloor.end();
 }
 
 //--------------------------------------------------------------

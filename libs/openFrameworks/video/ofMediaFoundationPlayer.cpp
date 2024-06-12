@@ -1,4 +1,34 @@
 
+/*
+ -----------------------------------------------------------------------------
+ Based on code by Andrew Wright
+ https://github.com/axjxwright/AX-MediaPlayer/
+ 
+ MIT License
+ 
+ Copyright (c) 2021 Andrew Wright / AX Interactive
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ -----------------------------------------------------------------------------
+ */
+
+
 #include "ofPixels.h"
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
@@ -144,7 +174,6 @@ bool ofMediaFoundationPlayer::METexture::allocate( ofPixelFormat afmt, int aw, i
     mWidth = aw;
     mHeight = ah;
     mOfPixFmt = afmt;
-    //auto glFormat = ofGetGLInternalFormatFromPixelFormat(OF_PIXELS_BGRA);
     auto glFormat = ofGetGLInternalFormatFromPixelFormat(afmt);
     // make a GL_TEXTURE2D
     mOfTex->allocate(mWidth, mHeight, glFormat, false);
@@ -335,7 +364,9 @@ bool SharedDXGLTexture::isLocked() {
 //----------------------------------------------
 bool SharedDXGLTexture::draw(ofPixels& apix) {
     if (lock()) {
-        mOfTex->draw(0, 0);
+        if (mOfTex->isAllocated()) {
+            mOfTex->draw(0, 0);
+        }
         unlock();
         return true;
     }
@@ -825,8 +856,11 @@ bool ofMediaFoundationPlayer::isInitialized() const {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) {
+
     if (aEvent == MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA) {
         if (!mBLoadAsync) {
+            updateDuration();
+            updateDimensions();
             mBIsDoneAtomic.store(true);
             mWaitCondition.notify_one();
         }
@@ -1218,12 +1252,13 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                 }
             }
             mBDone = false;
-            mWidth = 0.f;
-            mHeight = 0.f;
-            DWORD w, h;
-            if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
-                mWidth = w;
-                mHeight = h;
+            //mWidth = 0.f;
+            //mHeight = 0.f;
+            //DWORD w, h;
+            //if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+                //mWidth = w;
+                //mHeight = h;
+            if(updateDimensions()) {
 
                 if (mMeTexture) {
                     if (mMeTexture->getWidth() != mWidth || mMeTexture->getHeight() != mHeight) {
@@ -1382,5 +1417,18 @@ void ofMediaFoundationPlayer::updateDuration() {
             mEstimatedNumFrames = 1;
         }
     }
+}
+
+//-----------------------------------------
+bool ofMediaFoundationPlayer::updateDimensions() {
+    mWidth = 0.f;
+    mHeight = 0.f;
+    DWORD w, h;
+    if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+        mWidth = w;
+        mHeight = h;
+        return true;
+    }
+    return false;
 }
 

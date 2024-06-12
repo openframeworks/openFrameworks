@@ -88,7 +88,18 @@ int ofGetGLInternalFormat(const ofShortPixels& pixels) {
 
 //---------------------------------
 int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if defined(TARGET_EMSCRIPTEN)
+	switch(pixels.getNumChannels()) {
+		case 3: return GL_RGB16F;
+		case 4: return GL_RGBA16F;
+		case 2:
+			ofLogWarning("ofGLUtils") << "ofGetGLInternalFormat(): two channel float textures not supported.";
+			return GL_RG16F;
+		default:
+			ofLogWarning("ofGLUtils") << "ofGetGLInternalFormat(): single channel float textures not supported.";
+			return GL_R16F;
+	}
+#elif !defined(TARGET_OPENGLES)
 	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB32F;
 		case 4: return GL_RGBA32F;
@@ -169,7 +180,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 
 
 			case GL_RGB:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_RGB8:
 			case GL_RGB16:
 		    case GL_RGB16F:
@@ -183,7 +194,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 
 
 			case GL_LUMINANCE:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES)
 			case GL_LUMINANCE8:
 			case GL_LUMINANCE16:
 			case GL_LUMINANCE32F_ARB:
@@ -191,7 +202,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				 return GL_LUMINANCE;
 
 			case GL_LUMINANCE_ALPHA:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES)
 			case GL_LUMINANCE8_ALPHA8:
 			case GL_LUMINANCE16_ALPHA16:
 			case GL_LUMINANCE_ALPHA32F_ARB:
@@ -213,7 +224,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 			case GL_STENCIL_INDEX:
 				return GL_STENCIL_INDEX;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_R8:
 			case GL_R16:
 		    case GL_R16I:
@@ -372,7 +383,7 @@ int ofGetGLType(const ofFloatPixels & pixels) {
 ofImageType ofGetImageTypeFromGLType(int glType){
 	switch(glType){
 	case GL_LUMINANCE:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	case GL_LUMINANCE8:
 	case GL_LUMINANCE16:
 	case GL_LUMINANCE32F_ARB:
@@ -394,7 +405,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 
 
 	case GL_RGB:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	case GL_RGB8:
 	case GL_RGB16:
 	case GL_RGB16F:

@@ -12,7 +12,9 @@
 #include "ofSoundBaseTypes.h"
 #include "ofEvents.h"
 #include "ofConstants.h"
+class ofEventArgs;
 
+// FIXME: some can be moved to .mm
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
     #import <AVFoundation/AVFoundation.h>
@@ -54,6 +56,9 @@ public:
     float getPan() const;
     bool isLoaded() const;
     float getVolume() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
     
     void * getAVEnginePlayer();
     

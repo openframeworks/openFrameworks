@@ -1,9 +1,8 @@
 #include "ofRtAudioSoundStream.h"
-#include "ofMath.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofLog.h"
-#include "RtAudio.h"
+#include <RtAudio.h>
 
 using std::vector;
 using std::shared_ptr;
