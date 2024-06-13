@@ -19,9 +19,11 @@ public:
 
 	/// add another bundle to the bundle
 	void addBundle(const ofxOscBundle & element);
+	void add(const ofxOscBundle & element) { addBundle(element); }
 
 	/// add a message to the bundle
 	void addMessage(const ofxOscMessage & message);
+	void add(const ofxOscMessage & message) {addMessage(message); }
 
 	/// \return the current bundle count
 	std::size_t getBundleCount() const;
