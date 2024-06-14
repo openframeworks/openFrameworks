@@ -17,6 +17,7 @@
 #include <unordered_map>
 
 class ofTexture;
+class ofTextureData;
 class ofMatrix3x3;
 class ofParameterGroup;
 class ofBufferObject;
@@ -150,6 +151,7 @@ public:
 	void setUniformTexture(const std::string & name, const ofBaseHasTexture& img, int textureLocation) const;
 	void setUniformTexture(const std::string & name, const ofTexture& img, int textureLocation) const;
 	void setUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation) const;
+	void setUniformTexture(const std::string & name, const ofTextureData& texData, int textureLocation) const;
 
 	// set a single uniform value
 	void setUniform1i(const std::string & name, int v1) const;
