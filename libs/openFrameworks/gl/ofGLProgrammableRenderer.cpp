@@ -181,7 +181,8 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	}
 #else
 	
-//	ofVbo* vboToRender = nullptr;
+	ofVbo* vboToRender = nullptr;
+	bool tGoingToRenderLines = false;
 #ifndef TARGET_OPENGLES
 //	meshVbo.setMesh(vertexData, GL_STREAM_DRAW, useColors, useTextures, useNormals);
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -198,26 +199,33 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	
 	if(areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP) ) {
 		mDrawMode = drawMode;
+		tGoingToRenderLines = true;
 		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
 		if( drawMode == GL_LINES ) {
 			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINES], drawMode, vertexData);
-			//TODO: setting a bool here so that the setAttributes function does not try to switch the shaders because
+			// Setting a bool here so that the setAttributes function does not try to switch the shaders because
 			// we are going to draw the mesh as triangles and we need the lines shader
 			mBRenderingLines = true;
+			#if defined(OF_LINES_USE_OFVBOMESH)
 			mutThis->mLinesBundleMap[GL_LINES].vboMesh.draw();
+			#else
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINES].vbo;
+			#endif
 			mBRenderingLines = false;
-//			vboToRender = &mutThis->mLinesBundleMap[GL_LINES].vboMesh.getVbo();
 		} else {
 //			ofLogNotice("GL PROGRAMMABLE :: draw mesh : ") << drawMode << " | " << ofGetFrameNum();
 			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINE_STRIP], drawMode, vertexData);
 			mBRenderingLines = true;
+			#if defined(OF_LINES_USE_OFVBOMESH)
 			mutThis->mLinesBundleMap[GL_LINE_STRIP].vboMesh.draw();
+			#else
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINE_STRIP].vbo;
+			#endif
 			mBRenderingLines = false;
-//			vboToRender = &mutThis->mLinesBundleMap[GL_LINE_STRIP].vboMesh.getVbo();
 		}
 	} else {
 		meshVbo.setMesh(vertexData, GL_STREAM_DRAW, useColors, useTextures, useNormals);
-//		vboToRender = &meshVbo;
+		vboToRender = &meshVbo;
 	}
 
 	// ofLogNotice("GL PROGRAMMABLE :: draw mesh : ") << drawMode << " mesh indices: " << meshVbo.getUsingIndices() << " | " << ofGetFrameNum();
@@ -242,25 +250,38 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	
 	if(areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP) ) {
 		mDrawMode = drawMode;
+		tGoingToRenderLines = true;
 		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
 		if( drawMode == GL_LINES ) {
 			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINES], drawMode, vertexData);
+			// Setting a bool here so that the setAttributes function does not try to switch the shaders because
+			// we are going to draw the mesh as triangles and we need the lines shader
 			mBRenderingLines = true;
+			#if defined(OF_LINES_USE_OFVBOMESH)
 			mutThis->mLinesBundleMap[GL_LINES].vboMesh.draw();
+			#else
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINES].vbo;
+			#endif
 			mBRenderingLines = false;
 		} else {
 			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINE_STRIP], drawMode, vertexData);
 			mBRenderingLines = true;
+			#if defined(OF_LINES_USE_OFVBOMESH)
 			mutThis->mLinesBundleMap[GL_LINE_STRIP].vboMesh.draw();
+			#else
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINE_STRIP].vbo;
+			#endif
 			mBRenderingLines = false;
 		}
 	} else {
 		meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
+		vboToRender = &meshVbo;
 	}
 	
 	#endif
 	
-	if( !areLinesShadersEnabled() || (drawMode != GL_LINES && drawMode != GL_LINE_STRIP && drawMode != GL_LINE_LOOP) ) {
+#if defined(OF_LINES_USE_OFVBOMESH)
+	if( !tGoingToRenderLines ) {
 //		ofLogNotice("GL PROGRAMMABLE :: draw mesh that is not LINES : ") << drawMode << " | " << ofGetFrameNum();
 		if (meshVbo.getUsingIndices()) {
 			drawElements(meshVbo, drawMode, meshVbo.getNumIndices());
@@ -268,16 +289,31 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 			draw(meshVbo, drawMode, 0, vertexData.getNumVertices());
 		}
 	}
+#else
+	if( vboToRender != nullptr ) {
+		if( tGoingToRenderLines ) {
+			mBRenderingLines = true;
+			// we are rendering lines, and the meshes we constructed
+			// are made of triangles
+			if( renderType == OF_MESH_FILL ) {
+				drawMode = GL_TRIANGLES;
+			}
+		}
+		
+		if (vboToRender->getUsingIndices()) {
+			drawElements(*vboToRender, drawMode, vboToRender->getNumIndices());
+		} else {
+			draw(*vboToRender, drawMode, 0, vboToRender->getNumVertices());
+		}
+		
+		if( tGoingToRenderLines ) {
+			mBRenderingLines = false;
+		}
+		
+	}
+#endif
 		
 		
-	
-//	if(vboToRender) {
-//		if (vboToRender->getUsingIndices()) {
-//			drawElements(*vboToRender, drawMode, vboToRender->getNumIndices());
-//		} else {
-//			draw(*vboToRender, drawMode, 0, vboToRender->getNumVertices());
-//		}
-//	}
 //	if (meshVbo.getUsingIndices()) {
 //		drawElements(meshVbo, drawMode, meshVbo.getNumIndices());
 //	} else {
@@ -409,8 +445,16 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	polylineMesh.getVertices() = poly.getVertices();
 	
 	if( currentTextureTarget != OF_NO_TEXTURE ) {
-		// TODO: Should we be able to set tex coords on polylines somehow
+		// TODO: Should we be able to set tex coords on polylines somehow??
 		polylineMesh.getTexCoords().resize( polylineMesh.getNumVertices(), glm::vec2(0.f, 0.f));
+		auto& tcs = polylineMesh.getTexCoords();
+		int numtxs = (int)polylineMesh.getNumVertices();
+		float numTxsF = (float)numtxs - 1.f;
+		if( numTxsF > 0.0f ) {
+			for( int ix = 0; ix < numtxs; ix++ ) {
+				tcs[ix].x = (float)ix / numTxsF;
+			}
+		}
 		polylineMesh.enableTextures();
 	} else {
 		polylineMesh.disableTextures();
@@ -1422,7 +1466,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 			// set all of the texture uniforms
 			// setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const {
 			for (auto &texUniform : mUniformsTex ) {
-				// added a function to ofTexture to support setting a texture via tex data 
+				// added a function to ofTexture to support setting a texture via tex data
 				currentShader->setUniformTexture(texUniform.uniformName, texUniform.texData, texUniform.textureLocation);
 			}
 
@@ -2524,6 +2568,9 @@ R"(
 #endif
 			// fwidth is not availabe on some opengl es
 	#ifndef TARGET_OPENGLES
+			//smoothing with fwidth based on
+			// https://rubendv.be/posts/fwidth/
+			
 			float delta = fwidth( dist_sq );
 //			//float delta = abs(dFdx(dist_sq)) + abs(dFdy(dist_sq));
 			FRAG_COLOR.a *= clamp( (1.0-smoothing) + 1.0-(smoothstep( 0.25-delta, 0.25, dist_sq )), 0.0, 1.0);
@@ -3100,6 +3147,24 @@ void ofGLProgrammableRenderer::ShaderCollection::setupAllVertexShaders(const std
 	noTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER, aShaderSrc);
 };
 
+#if !defined(OF_LINES_USE_OFVBOMESH)
+// ----------------------------------------------------------------------
+void ofGLProgrammableRenderer::LinesBundle::setMeshDataToVbo() {
+	if( mesh.getNumVertices() > 0 ) {
+		// void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
+		vbo.setMesh( mesh, GL_DYNAMIC_DRAW, mesh.hasColors() && mesh.usingColors(), mesh.hasTexCoords() && mesh.usingTextures(), mesh.hasNormals() && mesh.usingNormals() );
+		
+		if( lineMeshPrevVerts.size() > 0 ) {
+			vbo.setAttributeData(vertAttribPrev, &lineMeshPrevVerts[0].x, 4, mesh.getNumVertices(), GL_DYNAMIC_DRAW);
+		}
+		if( lineMeshNextVerts.size() > 0 ) {
+			vbo.setAttributeData(vertAttribNext, &lineMeshNextVerts[0].x, 4, mesh.getNumVertices(), GL_DYNAMIC_DRAW);
+		}
+	}
+}
+#endif
+
+// ----------------------------------------------------------------------
 void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 	glGetError();
 #ifdef TARGET_OPENGLES
@@ -3126,13 +3191,21 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 	mLinesBundleMap.clear();
 	if( mLinesBundleMap.count(GL_LINES) < 1 ) {
 		mLinesBundleMap[GL_LINES] = LinesBundle();
+		#if defined(OF_LINES_USE_OFVBOMESH)
 		mLinesBundleMap[GL_LINES].vboMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+		#else
+		mLinesBundleMap[GL_LINES].mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+		#endif
 		// we will only be using the next vertex attribute for GL_LINES
 		mLinesBundleMap[GL_LINES].vertAttribNext = 4;//ofShader::TEXCOORD_ATTRIBUTE+1;
 	}
 	if (mLinesBundleMap.count(GL_LINE_STRIP) < 1) {
 		mLinesBundleMap[GL_LINE_STRIP] = LinesBundle();
+		#if defined(OF_LINES_USE_OFVBOMESH)
 		mLinesBundleMap[GL_LINE_STRIP].vboMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+		#else
+		mLinesBundleMap[GL_LINE_STRIP].mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+		#endif
 		mLinesBundleMap[GL_LINE_STRIP].vertAttribPrev = 4;//ofShader::TEXCOORD_ATTRIBUTE+1;
 		mLinesBundleMap[GL_LINE_STRIP].vertAttribNext = 5;//ofShader::TEXCOORD_ATTRIBUTE+2;
 	}
@@ -3595,7 +3668,11 @@ of3dGraphics & ofGLProgrammableRenderer::get3dGraphics() {
 }
 
 //----------------------------------------------------------
+#if defined(OF_LINES_USE_OFVBOMESH)
 void ofGLProgrammableRenderer::configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofVboMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices) {
+#else
+	void ofGLProgrammableRenderer::configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices) {
+#endif
 	bool bUseColors     = aSrcMesh.hasColors() && aSrcMesh.usingColors() && (aSrcMesh.getNumColors() == aSrcMesh.getNumVertices());
 	bool bUseNormals    = aSrcMesh.hasNormals() && aSrcMesh.usingNormals() && (aSrcMesh.getNumNormals() == aSrcMesh.getNumVertices());
 	bool bUseTexCoords  = aSrcMesh.hasTexCoords() && aSrcMesh.usingTextures() && (aSrcMesh.getNumTexCoords() == aSrcMesh.getNumVertices());
@@ -3637,8 +3714,11 @@ void ofGLProgrammableRenderer::configureMeshToMatchWithNewVertsAndIndices(const 
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesBundle, GLuint drawMode, const ofMesh& amesh) {
-	
+#if defined(OF_LINES_USE_OFVBOMESH)
 	auto& polyMesh = aLinesBundle.vboMesh;
+#else
+	auto& polyMesh = aLinesBundle.mesh;
+#endif
 	auto& nextVerts = aLinesBundle.lineMeshNextVerts;
 	auto& prevVerts = aLinesBundle.lineMeshPrevVerts;
 	
@@ -3765,9 +3845,13 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 			pmIndices[newIndex + 5] = pmIndex + 3;
 		}
 		
+		#if defined(OF_LINES_USE_OFVBOMESH)
 		auto &lvbo = polyMesh.getVbo();
 		// lvbo.setAttributeData(4, &prevVerts[0].x, 4, targetNumVs, GL_DYNAMIC_DRAW);
 		lvbo.setAttributeData(aLinesBundle.vertAttribNext, &nextVerts[0].x, 4, targetNumVs, GL_DYNAMIC_DRAW);
+		#else
+		aLinesBundle.setMeshDataToVbo();
+		#endif
 //		ofLogNotice("GL: configureLinesBundleFromMesh :: ") << "num verts: " << (pmIndex+3);
 	} else {
 		std::size_t nindex, pindex, cindex;
@@ -3870,8 +3954,12 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 			}
 		}
 		
+		#if defined(OF_LINES_USE_OFVBOMESH)
 		auto &lvbo = polyMesh.getVbo();
 		lvbo.setAttributeData(aLinesBundle.vertAttribPrev, &prevVerts[0].x, 4, targetNumVs, GL_DYNAMIC_DRAW);
 		lvbo.setAttributeData(aLinesBundle.vertAttribNext, &nextVerts[0].x, 4, targetNumVs, GL_DYNAMIC_DRAW);
+		#else
+		aLinesBundle.setMeshDataToVbo();
+		#endif
 	}
 }

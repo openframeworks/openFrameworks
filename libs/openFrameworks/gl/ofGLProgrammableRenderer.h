@@ -9,6 +9,8 @@
 #include "ofBitmapFont.h"
 #include "ofPath.h"
 
+//#define OF_LINES_USE_OFVBOMESH
+
 class ofShapeTessellation;
 class ofFbo;
 class ofVbo;
@@ -281,9 +283,18 @@ private:
 	// useful for lines //
 	class LinesBundle {
 	public:
+#if !defined(OF_LINES_USE_OFVBOMESH)
+		void setMeshDataToVbo();
+#endif
+		
 		std::vector<glm::vec4> lineMeshNextVerts;
 		std::vector<glm::vec4> lineMeshPrevVerts;
+#if defined(OF_LINES_USE_OFVBOMESH)
 		ofVboMesh vboMesh;
+#else
+		ofVbo vbo;
+		ofMesh mesh;
+#endif
 		int vertAttribPrev = 4;
 		int vertAttribNext = 5;
 	};
@@ -314,7 +325,11 @@ private:
 	
 	
 	// LINES
+#if defined(OF_LINES_USE_OFVBOMESH)
 	void configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofVboMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices);
+#else
+	void configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices);
+#endif
 	void configureLinesBundleFromMesh(LinesBundle& aLinesBundle, GLuint drawMode, const ofMesh& amesh);
 	
     
