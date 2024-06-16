@@ -25,12 +25,21 @@ class ofApp : public ofBaseApp {
 		// vector to store all values
 		vector <glm::vec3> points;
 		vector <glm::vec3> sizes;
-		
+		vector<ofFloatColor> colors;
+
 		ofVbo vbo;
+		ofMesh mesh;
+		bool bUseShader = true;
 		ofShader shader;
 		ofEasyCam camera;
 		
 		float camDist;
+		bool bUseColors = false;
+
+		float pointSize = 10.0f;
+		bool bSmoothing = false;
 		
-		ofTexture texture;
+		ofTexture texture, logoTexture;
+		int texIndex = 1;
+	
 };
