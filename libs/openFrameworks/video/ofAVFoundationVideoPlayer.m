@@ -170,7 +170,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if(bAsync == YES){
 		queue = dispatch_get_main_queue();
 	} else {
-		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 	}
 	
 	dispatch_async(queue, ^{
