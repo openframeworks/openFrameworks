@@ -6,10 +6,11 @@
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoDraws {
 public:
-	ofVideoPlayer ();
+	ofVideoPlayer();
+	ofVideoPlayer(const of::filesystem::path & fileName);
 
-	bool 				load(std::string name);
-	void				loadAsync(std::string name);
+	bool load(std::string name);
+	void loadAsync(std::string name);
 	[[deprecated("Use load")]]
 	bool loadMovie(std::string name);
 
