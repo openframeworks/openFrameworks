@@ -1,0 +1,184 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#export DH_VERBOSE = 1
+
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+
+%:
+	dh $@
+
+
+ADDON_CXXFLAGS=-I../libs \
+             -I../../../libs/glm/include \
+             -I../../../libs/json/include \
+             -I../../../libs/kiss/include \
+             -I../../../libs/openFrameworks \
+             -I../../../libs/openFrameworks/3d \
+             -I../../../libs/openFrameworks/app \
+             -I../../../libs/openFrameworks/communication \
+             -I../../../libs/openFrameworks/events \
+             -I../../../libs/openFrameworks/gl \
+             -I../../../libs/openFrameworks/graphics \
+             -I../../../libs/openFrameworks/math \
+             -I../../../libs/openFrameworks/sound \
+             -I../../../libs/openFrameworks/types \
+             -I../../../libs/openFrameworks/utils \
+             -I../../../libs/openFrameworks/video \
+             -I../../../libs/tess2/include \
+             -I../../../libs/utf8/include \
+	     `pkg-config --cflags cairo gstreamer-1.0`
+
+
+override_dh_auto_build:
+	./download_libs.sh
+	./compileOF.sh
+	# ofxAccelerometer addon
+	make -C ../../addons/ofxAccelerometer/src ofxAccelerometer.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxAccelerometer.a \
+		ofxAccelerometer/src/ofxAccelerometer.o)
+	# ofxAssimpModelLoader addon
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpAnimation.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpMeshHelper.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpModelLoader.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxAssimpModelLoader/src ofxAssimpTexture.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxAssimpModelLoader.a \
+		ofxAssimpModelLoader/src/ofxAssimpAnimation.o \
+		ofxAssimpModelLoader/src/ofxAssimpMeshHelper.o \
+		ofxAssimpModelLoader/src/ofxAssimpModelLoader.o \
+		ofxAssimpModelLoader/src/ofxAssimpTexture.o)
+	# ofxGui addon
+	make -C ../../addons/ofxGui/src ofxBaseGui.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxButton.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxColorPicker.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxGuiGroup.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxInputField.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxLabel.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxPanel.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxSlider.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxSliderGroup.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxGui/src ofxToggle.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxGui.a \
+		ofxGui/src/ofxBaseGui.o \
+		ofxGui/src/ofxButton.o \
+		ofxGui/src/ofxColorPicker.o \
+		ofxGui/src/ofxGuiGroup.o \
+		ofxGui/src/ofxInputField.o \
+		ofxGui/src/ofxLabel.o \
+		ofxGui/src/ofxPanel.o \
+		ofxGui/src/ofxSlider.o \
+		ofxGui/src/ofxSliderGroup.o \
+		ofxGui/src/ofxToggle.o)
+	# ofxKinect addon
+	make -C ../../addons/ofxKinect/libs/libfreenect/src audio.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src cameras.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src core.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src flags.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src loader.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src registration.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src tilt.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/libs/libfreenect/src usb_libusb10.o "CFLAGS=-I../include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/src ofxKinect.o "CXXFLAGS=${ADDON_CXXFLAGS} -Iextra -I../libs/libfreenect/src -I../libs/libfreenect/include `pkg-config --cflags libusb-1.0`"
+	make -C ../../addons/ofxKinect/src/extra ofxKinectExtras.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../../libs/libfreenect/include `pkg-config --cflags libusb-1.0`"
+	(cd ../../addons && ar rcs libofxKinect.a \
+		ofxKinect/libs/libfreenect/src/audio.o \
+		ofxKinect/libs/libfreenect/src/cameras.o \
+		ofxKinect/libs/libfreenect/src/core.o \
+		ofxKinect/libs/libfreenect/src/flags.o \
+		ofxKinect/libs/libfreenect/src/loader.o \
+		ofxKinect/libs/libfreenect/src/registration.o \
+		ofxKinect/libs/libfreenect/src/tilt.o \
+		ofxKinect/libs/libfreenect/src/usb_libusb10.o \
+		ofxKinect/src/ofxKinect.o \
+		ofxKinect/src/extra/ofxKinectExtras.o)
+	# ofxNetwork addon
+	make -C ../../addons/ofxNetwork/src ofxNetworkUtils.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxTCPClient.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxTCPManager.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxTCPServer.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxNetwork/src ofxUDPManager.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxNetwork.a \
+		ofxNetwork/src/ofxNetworkUtils.o \
+		ofxNetwork/src/ofxTCPClient.o \
+		ofxNetwork/src/ofxTCPManager.o \
+		ofxNetwork/src/ofxTCPServer.o \
+		ofxNetwork/src/ofxUDPManager.o)
+	# ofxOpenCv addon
+	make -C ../../addons/ofxOpenCv/src ofxCvColorImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvContourFinder.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvFloatImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvGrayscaleImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvHaarFinder.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	make -C ../../addons/ofxOpenCv/src ofxCvShortImage.o "CXXFLAGS=${ADDON_CXXFLAGS} `pkg-config --cflags opencv`"
+	(cd ../../addons && ar rcs libofxOpenCv.a \
+		ofxOpenCv/src/ofxCvColorImage.o \
+		ofxOpenCv/src/ofxCvContourFinder.o \
+		ofxOpenCv/src/ofxCvFloatImage.o \
+		ofxOpenCv/src/ofxCvGrayscaleImage.o \
+		ofxOpenCv/src/ofxCvHaarFinder.o \
+		ofxOpenCv/src/ofxCvImage.o \
+		ofxOpenCv/src/ofxCvShortImage.o)
+	# ofxOsc addon
+	make -C ../../addons/ofxOsc/libs/oscpack/src/ip IpEndpointName.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/ip/posix NetworkingUtils.o "CXXFLAGS=-I../.."
+	make -C ../../addons/ofxOsc/libs/oscpack/src/ip/posix UdpSocket.o "CXXFLAGS=-I../.."
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscOutboundPacketStream.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscPrintReceivedElements.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscReceivedElements.o
+	make -C ../../addons/ofxOsc/libs/oscpack/src/osc OscTypes.o
+	make -C ../../addons/ofxOsc/src ofxOscBundle.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxOsc/src ofxOscMessage.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxOsc/src ofxOscParameterSync.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/oscpack/src/osc -I../libs/oscpack/src/ip"
+	make -C ../../addons/ofxOsc/src ofxOscReceiver.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/oscpack/src/osc -I../libs/oscpack/src/ip"
+	make -C ../../addons/ofxOsc/src ofxOscSender.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/oscpack/src/osc -I../libs/oscpack/src/ip"
+	(cd ../../addons && ar rcs libofxOsc.a \
+		ofxOsc/libs/oscpack/src/ip/IpEndpointName.o \
+		ofxOsc/libs/oscpack/src/ip/posix/NetworkingUtils.o \
+		ofxOsc/libs/oscpack/src/ip/posix/UdpSocket.o \
+		ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.o \
+		ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.o \
+		ofxOsc/libs/oscpack/src/osc/OscReceivedElements.o \
+		ofxOsc/libs/oscpack/src/osc/OscTypes.o \
+		ofxOsc/src/ofxOscBundle.o \
+		ofxOsc/src/ofxOscMessage.o \
+		ofxOsc/src/ofxOscParameterSync.o \
+		ofxOsc/src/ofxOscReceiver.o \
+		ofxOsc/src/ofxOscSender.o)
+	# ofxPoco addon
+	make -C ../../addons/ofxPoco/src ofxXmlPoco.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/poco/include"
+	(cd ../../addons && ar rcs libofxPoco.a \
+		ofxPoco/src/ofxXmlPoco.o)
+	# ofxSvg addon
+	make -C ../../addons/ofxSvg/src ofxSvg.o "CXXFLAGS=${ADDON_CXXFLAGS} -I../libs/svgtiny/include"
+	(cd ../../addons && ar rcs libofxSvg.a \
+		ofxSvg/src/ofxSvg.o)
+	# ofxThreadedImageLoader addon
+	make -C ../../addons/ofxThreadedImageLoader/src ofxThreadedImageLoader.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	(cd ../../addons && ar rcs libofxThreadedImageLoader.a \
+		ofxThreadedImageLoader/src/ofxThreadedImageLoader.o)
+	# ofxVectorGraphics addon
+	make -C ../../addons/ofxVectorGraphics/src ofxVectorGraphics.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxVectorGraphics/libs CreEPS.o
+	(cd ../../addons && ar rcs libofxVectorGraphics.a \
+		ofxVectorGraphics/src/ofxVectorGraphics.o \
+		ofxVectorGraphics/libs/CreEPS.o)
+	# ofxXmlSettings addon
+	make -C ../../addons/ofxXmlSettings/src ofxXmlSettings.o "CXXFLAGS=${ADDON_CXXFLAGS}"
+	make -C ../../addons/ofxXmlSettings/libs tinyxml.o
+	make -C ../../addons/ofxXmlSettings/libs tinyxmlerror.o
+	make -C ../../addons/ofxXmlSettings/libs tinyxmlparser.o
+	(cd ../../addons && ar rcs libofxXmlSettings.a \
+		ofxXmlSettings/src/ofxXmlSettings.o \
+		ofxXmlSettings/libs/tinyxml.o \
+		ofxXmlSettings/libs/tinyxmlerror.o \
+		ofxXmlSettings/libs/tinyxmlparser.o)

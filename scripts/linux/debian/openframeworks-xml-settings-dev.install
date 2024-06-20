@@ -1,0 +1,5 @@
+../../addons/ofxXmlSettings/src/ofxXmlSettings.h usr/include/openframeworks/ofxXmlSettings
+../../addons/ofxXmlSettings/libs/tinyxml.h usr/include/openframeworks/ofxXmlSettings
+
+../../addons/libofxXmlSettings.a usr/lib/openframeworks
+debian/openframeworks-xml-settings.pc usr/share/pkgconfig
