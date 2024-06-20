@@ -255,7 +255,8 @@ private:
 
 
 	ofPolyline circlePolyline;
-	mutable ofMesh circleMesh;
+	ofPolyline circleOutlinePolyline;
+	mutable ofMesh circleMesh, circleOutlineMesh;
 	mutable ofMesh triangleMesh;
 	mutable ofMesh rectMesh;
 	mutable ofMesh lineMesh;

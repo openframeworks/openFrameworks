@@ -825,6 +825,19 @@ void ofGLProgrammableRenderer::setCircleResolution(int res) {
 		circlePolyline.arc(0, 0, 0, 1, 1, 0, 360, res);
 		circleMesh.getVertices() = circlePolyline.getVertices();
 		path.setCircleResolution(res);
+		
+		// for the outline polyline, we need a closed loop
+		// so we make another line that is closed, excluding the same start and end points
+		circleOutlinePolyline.clear();
+		for( int i = 0; i < res; i++ ) {
+			float ta = ((float)i / (float)res) * glm::two_pi<float>();
+			circleOutlinePolyline.addVertex(glm::vec3(cosf(ta),sinf(ta), 0.0f));
+		}
+//		circleOutlinePolyline.setClosed(true);
+		
+		circleOutlineMesh.getVertices() = circleOutlinePolyline.getVertices();
+		
+		
 	}
 	currentStyle.circleResolution = res;
 }
@@ -1340,10 +1353,12 @@ void ofGLProgrammableRenderer::setAlphaBitmapText(bool bitmapText) {
 	}
 }
 
+//----------------------------------------------------------
 ofStyle ofGLProgrammableRenderer::getStyle() const {
 	return currentStyle;
 }
 
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::pushStyle() {
 	styleHistory.push_back(currentStyle);
 	//if we are over the max number of styles we have set, then delete the oldest styles.
@@ -1364,7 +1379,7 @@ void ofGLProgrammableRenderer::popStyle() {
 void ofGLProgrammableRenderer::setStyle(const ofStyle & style) {
 
 	//color
-	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+	setColor(style.color.r, style.color.g, style.color.b, style.color.a);
 
 	//bg color
 	setBackgroundColor(style.bgColor);
@@ -1376,6 +1391,8 @@ void ofGLProgrammableRenderer::setStyle(const ofStyle & style) {
 
 	//line width - finally!
 	setLineWidth(style.lineWidth);
+	
+	setPointSize(style.pointSize);
 
 	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
 
@@ -1440,7 +1457,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 		mDrawMode = GL_TRIANGLES;
 	}
 
-//	 ofLogNotice("ofGLProgrammableRenderer::setAttributes : drawMode") << drawMode << " prevMode: " << prevDrawMode << " points: " << GL_POINTS << " tris: " << GL_TRIANGLES << " LINES: " << GL_LINES << " GL_LINE_STRIP: " << GL_LINE_STRIP << " LOOP: " << GL_LINE_LOOP << " using tex: " << texCoordsEnabled << " | " << ofGetFrameNum();
+//	 ofLogNotice("ofGLProgrammableRenderer::setAttributes : drawMode") << drawMode << " prevMode: " << prevDrawMode << " mDrawMode: " << mDrawMode << " points: " << GL_POINTS << " tris: " << GL_TRIANGLES << " LINES: " << GL_LINES << " GL_LINE_STRIP: " << GL_LINE_STRIP << " LOOP: " << GL_LINE_LOOP << " using tex: " << texCoordsEnabled << " | " << ofGetFrameNum();
 
 	if (!uniqueShader || currentMaterial) {
 		beginDefaultShader();
@@ -1453,6 +1470,11 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	if (wasColorsEnabled != color) {
 		if (currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM, color);
 	}
+//	if( prevDrawMode != mDrawMode ) {
+//	if (currentShader) {
+//		currentShader->setUniform4f(COLOR_UNIFORM, currentStyle.color.r, currentStyle.color.g, currentStyle.color.b, currentStyle.color.a);
+//	}
+//	}
 
 	// if we switch the draw mode, lets set the textures 
 	if( prevDrawMode != mDrawMode ) {
@@ -1967,6 +1989,7 @@ void ofGLProgrammableRenderer::beginDefaultShader() {
 
 	if (nextShader) {
 		if (!currentShader || *currentShader != *nextShader) {
+//			ofLogNotice("ofGL :: beginDefaultShader ") << "switching shader! " << mDrawMode << " | " << ofGetFrameNum();
 			settingDefaultShader = true;
 			bind(*nextShader);
 			settingDefaultShader = false;
@@ -2046,16 +2069,27 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawCircle(float x, float y, float z, float radius) const {
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
-	const auto & circleCache = circlePolyline.getVertices();
-	for (int i = 0; i < (int)circleCache.size(); i++) {
-		circleMesh.getVertices()[i] = { radius * circleCache[i].x + x, radius * circleCache[i].y + y, z };
-	}
-
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
-
-	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	draw(circleMesh, OF_MESH_FILL, false, false, false);
+		
+	if( !currentStyle.bFill ) {
+		const auto & circleCache = circleOutlinePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleOutlineMesh.getVertices()[i] = { radius * circleCache[i].x + x, radius * circleCache[i].y + y, z };
+		}
+		circleOutlineMesh.setMode(OF_PRIMITIVE_LINE_LOOP);
+		draw(circleOutlineMesh, OF_MESH_FILL, false, false, false);
+	} else {
+		const auto & circleCache = circlePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleMesh.getVertices()[i] = { radius * circleCache[i].x + x, radius * circleCache[i].y + y, z };
+		}
+		circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+		draw(circleMesh, OF_MESH_FILL, false, false, false);
+	}
+	
+//	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+//	draw(circleMesh, OF_MESH_FILL, false, false, false);
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -2066,16 +2100,32 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
 	float radiusX = width * 0.5;
 	float radiusY = height * 0.5;
-	const auto & circleCache = circlePolyline.getVertices();
-	for (int i = 0; i < (int)circleCache.size(); i++) {
-		circleMesh.getVertices()[i] = { radiusX * circlePolyline[i].x + x, radiusY * circlePolyline[i].y + y, z };
-	}
+//	const auto & circleCache = circlePolyline.getVertices();
+//	for (int i = 0; i < (int)circleCache.size(); i++) {
+//		circleMesh.getVertices()[i] = { radiusX * circlePolyline[i].x + x, radiusY * circlePolyline[i].y + y, z };
+//	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
+	
+	if( !currentStyle.bFill ) {
+		const auto & circleCache = circleOutlinePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleOutlineMesh.getVertices()[i] = { radiusX * circleCache[i].x + x, radiusY * circleCache[i].y + y, z };
+		}
+		circleOutlineMesh.setMode(OF_PRIMITIVE_LINE_LOOP);
+		draw(circleOutlineMesh, OF_MESH_FILL, false, false, false);
+	} else {
+		const auto & circleCache = circlePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleMesh.getVertices()[i] = { radiusX * circleCache[i].x + x, radiusY * circleCache[i].y + y, z };
+		}
+		circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+		draw(circleMesh, OF_MESH_FILL, false, false, false);
+	}
 
-	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	draw(circleMesh, OF_MESH_FILL, false, false, false);
+//	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+//	draw(circleMesh, OF_MESH_FILL, false, false, false);
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -2463,14 +2513,20 @@ STRINGIFY(
 				  // this is the last point
 				  dir = normalize( cNdcPos - pNdcPos );
 				  dir = vec2(-dir.y, dir.x);
+				  dir = dir * pushDir;
 			  } else if( position.xyz == prevVertex.xyz ) {
 				  // this is the first point
 				  dir = normalize( nNdcPos - cNdcPos );
 				  dir = vec2(-dir.y, dir.x);
+				  dir = dir * pushDir;
 			  } else {
 				  vec2 pdir = normalize( cNdcPos-pNdcPos );
 				  vec2 ndir = normalize( nNdcPos-cNdcPos );
 				  vec2 tangent = normalize(pdir+ndir);
+				  
+//				  if( dot(pdir, ndir) < -0.8) {
+//					  tangent = vec2(0.0, 1.0);
+//				  }
 				  
 				  // Miter code based on
 				  // https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html
@@ -2479,24 +2535,53 @@ STRINGIFY(
 				  vec2 miter = vec2(-tangent.y, tangent.x);
 				  vec2 normalA = vec2(-pdir.y, pdir.x);
 				  dir = miter;
-				  
 				  float miterLength = 1.0 / clamp(abs(dot(miter, normalA)), 0.01, 2.0);
-				  miterLength = min( miterLength, uLineWidth * 0.5 );
-				  thickness = miterLength * uLineWidth;// * 0.5;
-				  float pstr = mapClamp( clamp(dot( pdir, ndir ), -1.0, 0.0), -0.25, -0.99, 0.0, 1.0 );
-				  thickness = mix( thickness, uLineWidth, pstr );
-				  dir = mix( dir, normalA * pushDirY + miter * 0.5, pstr );
+				  thickness = miterLength * thickness;
+				  
+				  vec2 point = normalize(pdir-ndir);
+				  float dmp = dot(miter, point);
+				  
+				  
+//				  float miterTooLongMix = clamp(step( 2.0, miterLength) * sign(pushDir * dmp), 0.0, 1.0);
+				  float miterTooLongMix = clamp(step( 2.0, miterLength), 0.0, 1.0);
+				  float pstr = mapClamp( miterLength, 2.0, 3.0, 0.0, 1.0 );
+				  float thicknessL = mix( miterLength * uLineWidth, uLineWidth, pstr );
+				  
+				  dir = mix( dir * pushDir, (pushDir * pushDirY) * normalA, pstr * miterTooLongMix );
+				  thickness = mix( clamp(miterLength, 0.0, 3.0) * uLineWidth, thicknessL, miterTooLongMix );
+				  
+////				  if(miterLength > 2.0 && sign(pushDir * dmp) > 0.0 ) {
+//				  if(miterLength > 2.0 ) {
+////				  if( step( 2.0, miterLength) > 0.0 && sign(pushDir * dmp) > 0.0) {
+////				  if( miterTooLongMix > 0.0 ) {
+////					  float pstr = mapClamp( clamp(dot( pdir, ndir ), -1.0, 0.0), -0.25, -0.99, 0.0, 1.0 );
+//					  float pstr = mapClamp( miterLength, 2.0, 3.0, 0.0, 1.0 );
+////					  thickness = min( miterLength, uLineWidth * 0.5 );
+////					  miterLength = min( miterLength, uLineWidth * 0.5 );
+//					  thickness = mix( miterLength * uLineWidth, uLineWidth, pstr );
+//					  dir = mix( dir * pushDir, (pushDir * pushDirY) * normalA, pstr );
+////					  dir = (pushDir * pushDirY * normalA );
+////					  thickness = uLineWidth;
+//				  } else {
+//					  dir = dir * pushDir;
+//					  thickness = clamp(miterLength, 0.0, 3.0) * uLineWidth;
+//				  }
+				  
+//				  float pstr = mapClamp( clamp(dot( pdir, ndir ), -1.0, 0.0), -0.25, -0.99, 0.0, 1.0 );
+//				  thickness = mix( thickness, uLineWidth, pstr );
+//				  dir = mix( dir, normalA * pushDirY + miter * 0.5, pstr );
 				  
 //				  tcoordY *= pstr;
 				  
 			  }
 			  
-			  thickness = mix(max(0.5, thickness * 0.5), thickness, uUsePerspective);
+//			  thickness = mix(max(0.5, thickness * 0.5), thickness, uUsePerspective);
+//			  thickness = min( thickness, uLineWidth * 10.0 );
 			  
 			// not sure if this is the best approach...
-			  tcoordY = mapClamp( thickness * clamp(pushDir, 0.0, 1.0), 0.0	, uLineWidth * 0.5, 0.0, 1.0 );
+			  tcoordY = mapClamp( thickness * clamp(pushDir, 0.0, 1.0), 0.0	, uLineWidth, 0.0, 1.0 );
 			  
-			  dir = dir * (thickness * pushDir);
+			  dir = dir * (thickness * 0.5 );
 			  
 			  texCoordVarying = (textureMatrix*vec4(texcoord.x, tcoordY, 0.0,1.0)).xy;
 			  
@@ -2575,10 +2660,6 @@ R"(
 //			//float delta = abs(dFdx(dist_sq)) + abs(dFdy(dist_sq));
 			FRAG_COLOR.a *= clamp( (1.0-smoothing) + 1.0-(smoothstep( 0.25-delta, 0.25, dist_sq )), 0.0, 1.0);
 	#endif
-			// FRAG_COLOR.a *= (1.0-step( 0.25, dist_sq ));
-			// if( dist_sq > 0.25 ) {
-			// 	discard;
-			// }
 		  }
 )";
 
