@@ -22,13 +22,19 @@ using std::istream;
 using std::ostream;
 using std::ios;
 
-namespace{
+using std::cout;
+using std::endl;
+
+namespace fs = of::filesystem;
+
+namespace {
 	bool enableDataPath = true;
 
 	//--------------------------------------------------
 	fs::path defaultDataPath(){
 	#if defined TARGET_OSX
 		try {
+//			cout << "xx" << fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/") << endl;
 			return fs::canonical(ofFilePath::getCurrentExeDirFS() / "../../../data/");
 		} catch(...) {
 			return ofFilePath::getCurrentExeDirFS() / "../../../data/";
@@ -53,15 +59,16 @@ namespace{
 	//--------------------------------------------------
 	fs::path & dataPathRoot() {
 		static auto * dataPathRoot = new fs::path(defaultDataPath());
+		// This is the most important change in the way OF handles paths.
+		fs::current_path(*dataPathRoot);
 		return *dataPathRoot;
 	}
 }
 
 namespace of{
 	namespace priv{
-		void initfileutils() {
-			// FIXME: Why absolute?
-			defaultWorkingDirectory() = fs::absolute(fs::current_path());
+		void initfileutils(){
+			defaultWorkingDirectory() = dataPathRoot();
 		}
 	}
 }
@@ -693,7 +700,8 @@ std::string ofFile::getAbsolutePath() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
-	
+	auto perm = fs::status(myFile).permissions();
+
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES)
@@ -704,7 +712,6 @@ bool ofFile::canRead() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-	auto perm = fs::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_read) != fs::perms::none;
@@ -727,6 +734,9 @@ bool ofFile::canRead() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canWrite() const {
+
+	auto perm = fs::status(myFile).permissions();
+
 #ifdef TARGET_WIN32
 	DWORD attr = GetFileAttributes(myFile.native().c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES){
@@ -737,7 +747,6 @@ bool ofFile::canWrite() const {
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-	auto perm = fs::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_write) != fs::perms::none;
@@ -760,12 +769,13 @@ bool ofFile::canWrite() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canExecute() const {
+
+	auto perm = fs::status(myFile).permissions();
 #ifdef TARGET_WIN32
 	return getExtension() == "exe";
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
-	auto perm = fs::status(myFile).permissions();
 #if OF_USING_STD_FS
 	if(geteuid() == info.st_uid){
 		return (perm & fs::perms::owner_exec) != fs::perms::none;
@@ -1339,11 +1349,24 @@ bool ofDirectory::copyTo(const fs::path & _path, bool bRelativeToData, bool over
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::moveTo(const fs::path& path, bool bRelativeToData, bool overwrite){
-	if(copyTo(path,bRelativeToData,overwrite)){
-		return remove(true);
+	if (fs::exists(path)) {
+		if (overwrite) {
+			fs::remove_all(path);
+		}
+		else {
+			ofLogError("ofDirectory") << "moveTo(): destination folder exists, overwrite = false " << std::endl;
+			return false;
+		}
 	}
-
-	return false;
+	const fs::path & old = myDir;
+	try {
+		fs::rename(old, path);
+	} catch (fs::filesystem_error const& ex) {
+		ofLogError("ofDirectory") << "moveTo(): can't rename folder " << ex.code().message() << std::endl;
+		return false;
+	}
+	myDir = path;
+	return true;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1397,7 +1420,7 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 
-	if ( fs::exists(myDir) && fs::is_directory(myDir)){
+	if (fs::exists(myDir) && fs::is_directory(myDir)){
 		for (const auto & f : fs::directory_iterator{ myDir }) {
 			files.emplace_back(f.path(), ofFile::Reference);
 		}
@@ -1777,6 +1800,7 @@ fs::path ofFilePath::getPathForDirectoryFS(const fs::path & path){
 	return path / "";
 #else
 	auto sep = fs::path("/").make_preferred();
+	// FIXME: ALERT funny path.back here()
 	if(!path.empty() && ofToString(path.back()) != sep.string()){
 		return path / sep;
 	}else{
@@ -1827,7 +1851,7 @@ std::string ofFilePath::getEnclosingDirectory(const fs::path & _filePath, bool b
 	if(bRelativeToData){
 		fp = ofToDataPath(fp);
 	}
-	return addTrailingSlash(fp.parent_path());
+	return fp.parent_path().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1860,6 +1884,7 @@ bool ofFilePath::isAbsolute(const fs::path& path){
 }
 
 //------------------------------------------------------------------------------------------------------------
+// FIXME: Deprecate
 string ofFilePath::getCurrentWorkingDirectory(){
 	return ofPathToString(fs::current_path());
 }
@@ -1891,13 +1916,27 @@ fs::path ofFilePath::getCurrentExePathFS(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+
+		wchar_t filename[MAX_PATH];
+		DWORD result = ::GetModuleFileName(
+			nullptr,    // retrieve path of current process .EXE
+			filename,
+			_countof(filename)
+		);
 		if (result == 0) {
+			// Error
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
 		} else {
-			return string(executablePath.begin(), executablePath.begin() + result);
+			return { executablePath.begin(), executablePath.begin() + result };
 		}
+	
+		// vector<wchar_t> executablePath(MAX_PATH);
+		// DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+		// if (result == 0) {
+		// 	ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
+		// }else{
+		// 	return { executablePath.begin(), executablePath.begin() + result };
+		// }
 	#endif
 	return "";
 }
@@ -1965,93 +2004,34 @@ void ofSetDataPathRoot(const fs::path& newRoot){
 
 //--------------------------------------------------
 fs::path ofToDataPathFS(const fs::path & path, bool makeAbsolute){
-	if (makeAbsolute && path.is_absolute()) {
-		return path;
-	}
-
-	if (!enableDataPath) {
-		return path;
-	}
-
-	bool hasTrailingSlash = !path.empty() && path.generic_string().back()=='/';
-
-	// if our Current Working Directory has changed (e.g. file open dialog)
-#ifdef TARGET_WIN32
-	if (defaultWorkingDirectory() != fs::current_path()) {
-		// change our cwd back to where it was on app load
-		bool ret = ofRestoreWorkingDirectoryToDefault();
-		if(!ret){
-			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
-		}
-	}
-#endif
-
-	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
-	const auto & dataPath = dataPathRoot();
-	fs::path inputPath(path);
-	fs::path outputPath;
-
-	// if path is already absolute, just return it
-	if (inputPath.is_absolute()) {
-		try {
-			auto outpath = fs::canonical(inputPath).make_preferred();
-			if(fs::is_directory(outpath) && hasTrailingSlash){
-				return ofFilePath::addTrailingSlash(outpath);
-			}else{
-				return outpath;
-			}
-		}
-		catch (...) {
-			return inputPath;
-		}
-	}
-
-	// here we check whether path already refers to the data folder by looking for common elements
-	// if the path begins with the full contents of dataPathRoot then the data path has already been added
-	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-	auto dirDataPath = dataPath;
-	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
-	
-	// FIXME: unneeded after we remove string operations
-	dirDataPath = ofFilePath::addTrailingSlash(dataPath);
-
-	auto relativeDirDataPath = ofFilePath::makeRelative(fs::current_path(), dataPath);
-	
-	// FIXME: unneeded after we remove string operations
-	relativeDirDataPath = ofFilePath::addTrailingSlash(relativeDirDataPath);
-
-	// FIXME: this can be simplified without using string conversion
-	// if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath.string())!=0) {
-	if (inputPath.string().find(dirDataPath.string()) != 0 && inputPath.string().find(relativeDirDataPath)!=0) {
-		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
-		if(makeAbsolute){
-			outputPath = dirDataPath / inputPath;
-		}else{
-			outputPath = relativeDirDataPath / inputPath;
+	fs::path outPath { path };
+	if (path.is_absolute()) {
+		if (makeAbsolute) {
+			// nothing needed here. outPath is already path
+		} else {
+			auto current = fs::current_path();
+			outPath = fs::relative(path, current);
 		}
 	} else {
-		// inputPath already contains data path, so no need to change
-		outputPath = inputPath;
+		if (makeAbsolute) {
+			outPath = dataPathRoot() / path;
+		} else {
+			auto current = fs::current_path();
+			outPath = fs::relative(dataPathRoot() / path, current);
+		}
 	}
 
-	// finally, if we do want an absolute path and we don't already have one
-	if(makeAbsolute){
-		// then we return the absolute form of the path
-		try {
-			auto outpath = fs::canonical(fs::absolute(outputPath)).make_preferred();
-			if(fs::is_directory(outpath) && hasTrailingSlash){
-				return ofFilePath::addTrailingSlash(outpath);
-			}else{
-				return outpath;
-			}
-		}
-		catch (std::exception &) {
-			return fs::absolute(outputPath);
-		}
-	}else{
-		// or output the relative path
-		return outputPath;
-	}
+	return outPath.string();
+//// if our Current Working Directory has changed (e.g. file open dialog)
+//#ifdef TARGET_WIN32
+//	if (defaultWorkingDirectory() != fs::current_path()) {
+//		// change our cwd back to where it was on app load
+//		bool ret = ofRestoreWorkingDirectoryToDefault();
+//		if(!ret){
+//			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
+//		}
+//	}
+//#endif
 }
 
 //--------------------------------------------------
