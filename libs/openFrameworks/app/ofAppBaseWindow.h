@@ -2,7 +2,7 @@
 
 #include "ofWindowSettings.h"
 // MARK: Target
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 class ofBaseApp;
 class ofBaseRenderer;

@@ -57,6 +57,7 @@ void ofAVFoundationPlayer::loadAsync(std::string name){
 }
 
 //--------------------------------------------------------------
+// FIXME: FS Path? URL?
 bool ofAVFoundationPlayer::load(std::string name) {
     return loadPlayer(name, false);
 }

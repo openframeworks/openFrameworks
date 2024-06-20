@@ -4,7 +4,7 @@
 // MARK: Optimize to Pointer
 #include "ofRectangle.h"
 // MARK: Target
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef struct _XIM * XIM;
@@ -179,10 +179,10 @@ public:
 	EGLSurface getEGLSurface();
 #endif
 
-#if defined(TARGET_OSX)
+//#if defined(TARGET_OSX)
 	void * getNSGLContext();
 	void * getCocoaWindow();
-#endif
+//#endif
 
 #if defined(TARGET_WIN32)
 	HGLRC getWGLContext();

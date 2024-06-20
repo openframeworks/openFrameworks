@@ -11,6 +11,7 @@
 
 #include "ofUtils.h"
 #include "ofLog.h"
+// #include "ofConstants.h"
 #include "ofEvents.h"
 
 //#ifdef __OBJC__
@@ -1010,7 +1011,7 @@ ofAVEngineSoundPlayer::~ofAVEngineSoundPlayer() {
     unload();
 }
 
-bool ofAVEngineSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
+bool ofAVEngineSoundPlayer::load(const of::filesystem::path & fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }

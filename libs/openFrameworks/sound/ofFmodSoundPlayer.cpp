@@ -176,7 +176,7 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream){
+bool ofFmodSoundPlayer::load(const of::filesystem::path & _fileName, bool stream){
 
 	auto fileName = ofToDataPath(_fileName);
 

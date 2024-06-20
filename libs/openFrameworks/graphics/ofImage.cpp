@@ -1,6 +1,8 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofPixels.h"
+#include "ofGLUtils.h"
+//#include "ofTexture.h"
 
 #include <FreeImage.h>
 
