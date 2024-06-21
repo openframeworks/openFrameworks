@@ -196,8 +196,13 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		}
 	}
 	
+	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
+	if( usingCustomShader || usingCustomShader || currentMaterial) {
+		bConfigureForLinesShader = false;
+	}
 	
-	if(areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP) ) {
+//	if(areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP) ) {
+	if( bConfigureForLinesShader ) {
 		mDrawMode = drawMode;
 		tGoingToRenderLines = true;
 		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
@@ -248,7 +253,13 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		break;
 	}
 	
-	if(areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP) ) {
+	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
+	if( usingCustomShader || usingCustomShader || currentMaterial) {
+		bConfigureForLinesShader = false;
+	}
+	
+//	if(areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP) ) {
+	if(bConfigureForLinesShader) {
 		mDrawMode = drawMode;
 		tGoingToRenderLines = true;
 		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
@@ -443,6 +454,12 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	
 	
 	polylineMesh.getVertices() = poly.getVertices();
+	// check if it is closed and the last point is the same as the first
+	if( poly.isClosed() ) {
+		if(polylineMesh.getNumVertices() > 1 && polylineMesh.getVertices().front() == polylineMesh.getVertices().back() ) {
+			polylineMesh.getVertices().pop_back();
+		}
+	}
 	
 	if( currentTextureTarget != OF_NO_TEXTURE ) {
 		// TODO: Should we be able to set tex coords on polylines somehow??
@@ -2408,7 +2425,8 @@ STRINGIFY(
 //			  texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
 //			  lets push the tex coord down if in the positive y direction
 			  float pushDir = nextVertex.w;
-			  texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y + (pushDir * 0.5 + 0.5) * texcoord.y, 0.0,1.0)).xy;
+//			  texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y + (pushDir * 0.5 + 0.5) * texcoord.y, 0.0,1.0)).xy;
+			  texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y, 0.0,1.0)).xy;
 			  
 			  // clip space
 			  vec4 cClipPos = modelViewProjectionMatrix * vec4(position.xyz, 1.0);
@@ -2579,7 +2597,9 @@ STRINGIFY(
 //			  thickness = min( thickness, uLineWidth * 10.0 );
 			  
 			// not sure if this is the best approach...
-			  tcoordY = mapClamp( thickness * clamp(pushDir, 0.0, 1.0), 0.0	, uLineWidth, 0.0, 1.0 );
+//			  tcoordY = mapClamp( thickness * clamp(pushDir, 0.0, 1.0), 0.0	, uLineWidth, 0.0, texcoord.y );
+//			  tcoordY = mapClamp( pushDir, -1.0, 1.0, 0.0, texcoord.y );
+			  tcoordY = texcoord.y;
 			  
 			  dir = dir * (thickness * 0.5 );
 			  
@@ -3857,6 +3877,8 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 	}
 	
 	
+	glm::vec3 EPSILON_VEC3 = glm::vec3(0.00005f);
+	
 	
 	if( drawMode == GL_LINES ) {
 		std::size_t cindex1 = 0;
@@ -3901,14 +3923,12 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 //					pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
 					if( k == 1 || k == 2 ) {
 						// move the tex y coord down
-						pmTexCoords[pmIndex + k] = glm::vec2(srcTexCoords[kindex].x, texU-srcTexCoords[kindex].y);
+						pmTexCoords[pmIndex + k] = glm::vec2(srcTexCoords[kindex].x, texU);
 					} else {
 						pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
 					}
 				}
 			}
-			
-			
 			
 			nextVerts[pmIndex + 0] = glm::vec4(srcVerts[cindex2], -1.0f);
 			nextVerts[pmIndex + 1] = glm::vec4(srcVerts[cindex2], 1.0f);
@@ -3944,6 +3964,12 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 		std::size_t newIndex = 0;
 		std::size_t nextIndex = 0;
 		
+		// if we have vertices lying on top of each other,
+		// lets create some way to store valid ones
+		// might not be the best approach, but easier / faster than removing the vertices from the src mesh
+		glm::vec3 cachedPrevVert = {0.f, 0.f, 0.f};
+		glm::vec3 cachedNextVert = {0.f, 0.f, 0.f};
+		
 		for (size_t i = 0; i < targetNumPs; i++) {
 			cindex = (i % numPs);
 			nindex = (i + 1) % numPs;
@@ -3970,11 +3996,62 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 				pindex = srcIndices[pindex];
 			}
 			
+			if( i == 0 ) {
+				// just in case, lets init the cached verts to use
+				cachedPrevVert = srcVerts[cindex];
+				cachedNextVert = srcVerts[cindex];
+			}
+			
 			// duplicate the vertices //
 			pmIndex = i * numVertsPer;
 			
 			pvert = glm::vec4(srcVerts[pindex], 1.0f);
 			nvert = glm::vec4(srcVerts[nindex], 1.0f);
+			
+			if( glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[pindex]), EPSILON_VEC3 ))) {
+				if( i != 0 || (i == 0 && bClosed )) {
+					// loop through and find a good next vert //
+					for( int pi = i-2; pi >= 0; pi-- ) {
+						pindex = (pi) % numPs;
+						if (srcHasIndices) {
+							pindex = srcIndices[pindex];
+						}
+						if( !glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[pindex]), EPSILON_VEC3 ) )) {
+							pvert = glm::vec4(srcVerts[pindex], 1.f);
+//							ofLogNotice("ofGLPro :: we found another good prev vert") << " index: " << i << " pi: " << pi << " | " <<ofGetFrameNum();
+							break;
+						}
+					}
+				} else {
+					pvert = glm::vec4(cachedPrevVert, 1.0f);
+				}
+			} else {
+				cachedPrevVert = srcVerts[pindex];
+			}
+			
+			
+			
+			if(glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[nindex]), EPSILON_VEC3 )) ) {
+//				nvert = glm::vec4(cachedNextVert, 1.f);
+				if( i != targetNumPs - 1 || (i == targetNumPs - 1 && bClosed) ) {
+					// loop through and find a good next vert //
+					for( int ni = i+2; ni < targetNumPs; ni++ ) {
+						nindex = (ni) % numPs;
+						if (srcHasIndices) {
+							nindex = srcIndices[nindex];
+						}
+						if( !glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[nindex]), EPSILON_VEC3 ) )) {
+							nvert = glm::vec4(srcVerts[nindex], 1.f);
+//							ofLogNotice("ofGLPro :: we found another good next vert") << " index: " << i << " ni: " << ni << " | " <<ofGetFrameNum();
+							break;
+						}
+					}
+				} else {
+					nvert = glm::vec4(cachedNextVert, 1.f);
+				}
+			} else {
+				cachedNextVert = srcVerts[nindex];
+			}
 			
 			for(k = 0; k < numVertsPer; k++) {
 				pmVerts[pmIndex + k] = srcVerts[cindex];
@@ -4003,7 +4080,7 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 						pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
 					} else {
 						// lets go down to the bottom of the texture 
-						pmTexCoords[pmIndex + k] = glm::vec2(srcTexCoords[kindex].x, 0.5f);
+						pmTexCoords[pmIndex + k] = glm::vec2(srcTexCoords[kindex].x, texU);
 					}
 //					pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
 				}
