@@ -1258,6 +1258,8 @@ void ofSetDataPathRoot(const of::filesystem::path & root);
 
 std::string ofPathToString(const of::filesystem::path & path);
 
+// ugly name, maybe ofGetLowerExtensionString ?
+//std::string ofPathExtensionToLowerString(const of::filesystem::path & path);
 
 /*! \cond PRIVATE */
 namespace of {

@@ -360,7 +360,7 @@ bool ofLoadImage(ofTexture & tex, const of::filesystem::path & path, const ofIma
 //----------------------------------------------------------------
 bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, bool bFlipInY, const ofImageLoadSettings &settings){
 	bool loaded = false;
-	std::string ext = ofToLower(path.extension().string());
+	auto ext { ofToLower(ofPathToString(path.extension())) };
 	bool hdr = (ext == ".hdr" || ext == ".exr");
 	if( hdr ) {
 		ofFloatPixels pixels;
