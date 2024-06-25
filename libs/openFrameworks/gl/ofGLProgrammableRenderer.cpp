@@ -344,7 +344,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	#if defined(TARGET_EMSCRIPTEN)
 	} // close the if for checking for wireframe
 	#endif
-	
+  
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
 	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
 	// after we're finished drawing, following the principle of least surprise.
