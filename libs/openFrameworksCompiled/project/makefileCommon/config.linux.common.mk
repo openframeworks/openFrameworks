@@ -359,8 +359,15 @@ PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
 PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
-# PLATFORM_PKG_CONFIG_LIBRARIES += openssl
-PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+
+
+ifeq "$(shell pkg-config --exists openssl && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+endif
+
+ifeq "$(shell pkg-config --exists libcurl && echo 1)" "1"
+		PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+endif
 
 
 ifeq ($(CROSS_COMPILING),1)
