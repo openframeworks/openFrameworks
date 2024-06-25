@@ -9,8 +9,6 @@
 #include "ofBitmapFont.h"
 #include "ofPath.h"
 
-//#define OF_LINES_USE_OFVBOMESH
-
 class ofShapeTessellation;
 class ofFbo;
 class ofVbo;
@@ -135,10 +133,13 @@ public:
 	void enableAntiAliasing();
 	void disableAntiAliasing();
 	
-	// lines
+	/// \brief Enable size attenuation for line widths. Width changes based on distance from camera.
 	void enableLineSizeAttenuation();
+	/// \brief Disable size attenuation for line widths. Consistent width based on pixels in screen space (default).
 	void disableLineSizeAttenuation();
+	/// \brief Enable OF's line shaders for rendering lines of varying widths, set by ofSetLineWidth( width ); (default).
 	void enableLinesShaders();
+	/// \brief Disable OF's line shaders to enable openGL rendering. Does not support varying line widths.
 	void disableLinesShaders();
 	bool areLinesShadersEnabled() const;
     
@@ -264,7 +265,7 @@ private:
 	mutable ofMesh polylineMesh;
 
 	// when adding more draw modes, POINTS, LINES, etc.
-	// store in a structure so we don't have to make a lot of variables
+	// store in a structure so we don't have to create a lot of variables
 	// this structure if based on the one from ofMaterial
 	class ShaderCollection {
 	public:
@@ -284,25 +285,18 @@ private:
 	// useful for lines //
 	class LinesBundle {
 	public:
-#if !defined(OF_LINES_USE_OFVBOMESH)
 		void setMeshDataToVbo();
-#endif
-		
 		std::vector<glm::vec4> lineMeshNextVerts;
 		std::vector<glm::vec4> lineMeshPrevVerts;
-#if defined(OF_LINES_USE_OFVBOMESH)
-		ofVboMesh vboMesh;
-#else
 		ofVbo vbo;
 		ofMesh mesh;
-#endif
 		int vertAttribPrev = 4;
 		int vertAttribNext = 5;
 	};
 
 	struct TextureUniform {
 		ofTextureData texData;
-		// not going to store a texture since we don't want to retain the texture here
+		// nh: not going to store a texture since we don't want to retain the texture here
 		// ofTexture texture;
 		int textureLocation;
 		std::string uniformName;
@@ -326,11 +320,7 @@ private:
 	
 	
 	// LINES
-#if defined(OF_LINES_USE_OFVBOMESH)
-	void configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofVboMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices);
-#else
 	void configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices);
-#endif
 	void configureLinesBundleFromMesh(LinesBundle& aLinesBundle, GLuint drawMode, const ofMesh& amesh);
 	
     
