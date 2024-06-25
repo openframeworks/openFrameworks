@@ -365,6 +365,10 @@ ifeq "$(shell pkg-config --exists openssl && echo 1)" "1"
 	PLATFORM_PKG_CONFIG_LIBRARIES += openssl
 endif
 
+ifeq "$(shell pkg-config --exists libssl3 && echo 1)" "1"
+	PLATFORM_PKG_CONFIG_LIBRARIES += libssl3
+endif
+
 ifeq "$(shell pkg-config --exists libcurl && echo 1)" "1"
 	PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
 endif
