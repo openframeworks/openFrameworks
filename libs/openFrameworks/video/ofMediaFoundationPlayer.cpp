@@ -1084,11 +1084,17 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::setVolume(float volume) {
-    if (m_spMediaEngine) {
-        ofMediaFoundationUtils::CallAsyncBlocking(
-            [&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); 
-        });
-    }
+	if (m_spMediaEngine) {
+		double cvolume = ofClamp(volume, 0.0f, 1.0f);
+		HRESULT hr = m_spMediaEngine->SetVolume(cvolume);
+		if (hr != S_OK) {
+			ofLogVerbose("ofMediaFoundationPlayer :: setVolume : Unable to set volume to ") << volume << ".";
+		}
+		//ofMediaFoundationUtils::CallAsyncBlocking(
+		//[&] {m_spMediaEngine->SetVolume(static_cast<double>(volume));
+		//[&] {m_spMediaEngine->SetVolume(cvolume);
+		//});
+	}
 }
 
 //----------------------------------------------
