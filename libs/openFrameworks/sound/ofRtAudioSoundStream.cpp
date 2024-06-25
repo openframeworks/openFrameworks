@@ -3,6 +3,7 @@
 #include "ofAppRunner.h"
 #include "ofLog.h"
 #include <RtAudio.h>
+#include "ofConstants.h"
 
 using std::vector;
 using std::shared_ptr;

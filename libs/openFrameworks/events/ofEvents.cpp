@@ -226,6 +226,7 @@ bool ofCoreEvents::getTargetFrameRateEnabled() const {
 //--------------------------------------
 float ofCoreEvents::getFrameRate() const {
 	return fps.getFps();
+//	return fps2.getFps();
 }
 
 //--------------------------------------
@@ -602,6 +603,12 @@ bool ofCoreEvents::notifyExit() {
 bool ofCoreEvents::notifyWindowResized(int width, int height) {
 	ofResizeEventArgs resizeEventArgs(width, height);
 	return ofNotifyEvent(windowResized, resizeEventArgs);
+}
+
+//------------------------------------------
+bool ofCoreEvents::notifyFramebufferResized(int width, int height) {
+	ofResizeEventArgs resizeEventArgs(width, height);
+	return ofNotifyEvent(framebufferResized, resizeEventArgs);
 }
 
 //------------------------------------------
