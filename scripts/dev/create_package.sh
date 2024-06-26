@@ -344,7 +344,7 @@ function createPackage {
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
-        scripts/ios/download_latest_libs.sh
+        scripts/macos/download_latest_libs.sh
     fi
 
     #create project files for platform
@@ -353,27 +353,27 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android"
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android"
+        otherplatforms="linux linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "linuxarmv6l" ]; then
-        otherplatforms="linux64 linux linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android"
+        otherplatforms="linux64 linux linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "linuxarmv7l" ]; then
-        otherplatforms="linux64 linux linuxarmv6l linuxaarch64 osx msys2 vs ios tvos android"
+        otherplatforms="linux64 linux linuxarmv6l linuxaarch64 osx msys2 vs ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "linuxaarch64" ]; then
-        otherplatforms="linux64 linux linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android"
+        otherplatforms="linux64 linux linuxarmv6l linuxarmv7l osx msys2 vs ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 msys2 vs ios tvos android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 msys2 vs ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "macos" ]; then
@@ -381,11 +381,11 @@ function createPackage {
     fi
 
     if [ "$pkg_platform" = "msys2" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx vs ios tvos android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx vs ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "vs" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 ios tvos android"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 ios tvos android macos"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
@@ -393,7 +393,7 @@ function createPackage {
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos macos"
     fi
 
 
