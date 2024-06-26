@@ -92,9 +92,9 @@ osx:
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
-android:
-	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
-	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
+# android:
+# 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
+# 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
 emscripten:
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
