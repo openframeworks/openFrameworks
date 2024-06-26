@@ -31,6 +31,7 @@ $ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
 $ROOT/scripts/dev/create_package.sh linuxaarch64 $lastversion master
 $ROOT/scripts/dev/create_package.sh osx $lastversion master
 $ROOT/scripts/dev/create_package.sh ios $lastversion master
+$ROOT/scripts/dev/create_package.sh macos $lastversion master
 $ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
 $ROOT/scripts/dev/create_package.sh vs $lastversion master
 

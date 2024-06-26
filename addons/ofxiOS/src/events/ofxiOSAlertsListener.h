@@ -29,7 +29,6 @@
  * ***********************************************************************/ 
 
 #pragma once
-
 #include <string>
 
 /****** protocol, delegate, interface, whatever you want to call it ******/

@@ -77,7 +77,7 @@ code_sign() {
 		FRAMEWORKS_DIR="${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
 		echo "$FRAMEWORKS_DIR"
 		if [ -d "$FRAMEWORKS_DIR" ] ; then
-			FRAMEWORKS=$(find "${FRAMEWORKS_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
+			FRAMEWORKS=$(find "${FRAMEWORKS_DIR}" -depth -type d -name "*.framework" -or -name "*.xcframework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
 			RESULT=$?
 			if [[ $RESULT != 0 ]] ; then
 				exit 1

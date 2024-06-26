@@ -1,7 +1,8 @@
 
 
 #import "ES2Renderer.h"
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 @implementation ES2Renderer
 
 // Create an OpenGL ES 2.0 context
@@ -184,3 +185,4 @@
 }
 
 @end
+#endif

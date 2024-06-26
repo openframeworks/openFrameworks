@@ -1,6 +1,8 @@
-#include <cairo-features.h>
-#include <cairo-pdf.h>
-#include <cairo-svg.h>
+#include "ofConstants.h"
+#if defined(OF_CAIRO)
+#include <cairo/cairo-features.h>
+#include <cairo/cairo-pdf.h>
+#include <cairo/cairo-svg.h>
 #include "ofCairoRenderer.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
@@ -1387,3 +1389,4 @@ const of3dGraphics & ofCairoRenderer::get3dGraphics() const {
 of3dGraphics & ofCairoRenderer::get3dGraphics() {
 	return graphics3d;
 }
+#endif

@@ -154,3 +154,6 @@ examples/**/config.make
 libs/openFrameworksCompiled/project/vs/.vs/
 scripts/templates/vs/.vs/
 **/.vs/
+libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj/xcshareddata
+scripts/templates/ios/bin
+libs/openFrameworksCompiled/project/tvOS/tvOS+OFLib.xcodeproj/xcshareddata
