@@ -24,6 +24,7 @@
 		84C8DBAD1BC37F72001606C1 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84C8DBAB1BC37F72001606C1 /* ofApp.mm */; };
 		99752D361BF220CC0026316A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99752D351BF220CC0026316A /* GameController.framework */; };
 		9998920C1BF4D40400DCECB0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9998920B1BF4D40400DCECB0 /* Images.xcassets */; };
+		BFDAFEA42C2C8AE0006B0AE0 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF94EDFC2BA58548009EF752 /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFDAFEA42C2C8AE0006B0AE0 /* Security.framework in Frameworks */,
 				84C8DB871BC3732E001606C1 /* Foundation.framework in Frameworks */,
 				84C8DB891BC3732E001606C1 /* OpenGLES.framework in Frameworks */,
 				99752D361BF220CC0026316A /* GameController.framework in Frameworks */,

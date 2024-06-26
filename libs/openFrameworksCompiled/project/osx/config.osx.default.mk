@@ -97,7 +97,9 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.4.sdk)
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.5.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.5.sdk)
+            MAC_OS_SDK=14.5
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.4.sdk)
             MAC_OS_SDK=14.4
         else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.3.sdk)
             MAC_OS_SDK=14.3
@@ -200,10 +202,7 @@ endif
 ################################################################################
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
-
 #PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -lcurl
-
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################
@@ -334,19 +333,24 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
 PLATFORM_FRAMEWORKS += AGL
+PLATFORM_FRAMEWORKS += AppKit
 PLATFORM_FRAMEWORKS += ApplicationServices
+PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += AudioToolbox
-PLATFORM_FRAMEWORKS += CoreAudio
-PLATFORM_FRAMEWORKS += CoreFoundation
-PLATFORM_FRAMEWORKS += CoreServices
-PLATFORM_FRAMEWORKS += OpenGL
-PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
 PLATFORM_FRAMEWORKS += CoreVideo
-PLATFORM_FRAMEWORKS += AVFoundation
+PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreMedia
+PLATFORM_FRAMEWORKS += CoreFoundation
+PLATFORM_FRAMEWORKS += CoreServices
+PLATFORM_FRAMEWORKS += Metal
+PLATFORM_FRAMEWORKS += Foundation
+PLATFORM_FRAMEWORKS += IOKit
+PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
+PLATFORM_FRAMEWORKS += SystemConfiguration
+
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
