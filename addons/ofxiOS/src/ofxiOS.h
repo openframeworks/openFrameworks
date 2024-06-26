@@ -37,7 +37,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofiOSConstants.h"
+#include "ofxiOSConstants.h"
 #if defined(TARGET_OF_IOS) && !TARGET_OF_TVOS && !TARGET_OF_WATCHOS && !TARGET_OF_XROS
 
 #include "ofAppiOSWindow.h"

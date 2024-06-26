@@ -114,6 +114,8 @@
 		BF4730A02BA3D3A800E6E3C6 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF47309E2BA3D3A800E6E3C6 /* ofShadow.cpp */; };
 		BF4730AC2BA3D41700E6E3C6 /* ofAVEngineSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF4730A62BA3D41700E6E3C6 /* ofAVEngineSoundPlayer.mm */; };
 		BF94EE002BA58C08009EF752 /* ofxtvOSURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF94EDFF2BA58C08009EF752 /* ofxtvOSURLFileLoader.cpp */; };
+		BFDAFE972C2C7E04006B0AE0 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFDAFE962C2C7E04006B0AE0 /* brotli.xcframework */; };
+		BFDAFE9B2C2C7E8A006B0AE0 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFDAFE9A2C2C7E8A006B0AE0 /* ofTimerFps.cpp */; };
 		BFF25F6D2B7A892D002E37FF /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF25F6C2B7A892D002E37FF /* FreeImage.xcframework */; };
 		BFF25F6F2B7A893D002E37FF /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF25F6E2B7A893D002E37FF /* freetype.xcframework */; };
 		BFF25F712B7A8950002E37FF /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF25F702B7A8950002E37FF /* libpng.xcframework */; };
@@ -377,6 +379,9 @@
 		BF94EDF02BA584D8009EF752 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		BF94EDFE2BA58C08009EF752 /* ofxtvOSURLFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxtvOSURLFileLoader.h; sourceTree = "<group>"; };
 		BF94EDFF2BA58C08009EF752 /* ofxtvOSURLFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxtvOSURLFileLoader.cpp; sourceTree = "<group>"; };
+		BFDAFE962C2C7E04006B0AE0 /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../../brotli/lib/macos/brotli.xcframework; sourceTree = "<group>"; };
+		BFDAFE992C2C7E8A006B0AE0 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
+		BFDAFE9A2C2C7E8A006B0AE0 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
 		BFF25F6C2B7A892D002E37FF /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BFF25F6E2B7A893D002E37FF /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
 		BFF25F702B7A8950002E37FF /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../../libpng/lib/macos/libpng.xcframework; sourceTree = "<group>"; };
@@ -398,6 +403,7 @@
 				84463AB01BC3452400F24926 /* AVFoundation.framework in Frameworks */,
 				84463AB11BC3452400F24926 /* CoreAudio.framework in Frameworks */,
 				BFF25F6F2B7A893D002E37FF /* freetype.xcframework in Frameworks */,
+				BFDAFE972C2C7E04006B0AE0 /* brotli.xcframework in Frameworks */,
 				84463AB21BC3452400F24926 /* CoreGraphics.framework in Frameworks */,
 				84463AB31BC3452400F24926 /* CoreMedia.framework in Frameworks */,
 				BF16CE782BA32DF2001A9C25 /* fmt.xcframework in Frameworks */,
@@ -855,6 +861,8 @@
 				9957D8EB1BDDDC9B0002D53C /* ofSystemUtils.h */,
 				9957D8EC1BDDDC9B0002D53C /* ofThread.cpp */,
 				9957D8ED1BDDDC9B0002D53C /* ofThread.h */,
+				BFDAFE9A2C2C7E8A006B0AE0 /* ofTimerFps.cpp */,
+				BFDAFE992C2C7E8A006B0AE0 /* ofTimerFps.h */,
 				9957D8EE1BDDDC9B0002D53C /* ofThreadChannel.h */,
 				9957D8EF1BDDDC9B0002D53C /* ofTimer.cpp */,
 				9957D8F01BDDDC9B0002D53C /* ofTimer.h */,
@@ -903,6 +911,7 @@
 		BFF25F6B2B7A8858002E37FF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BFDAFE962C2C7E04006B0AE0 /* brotli.xcframework */,
 				BF16CE772BA32DF2001A9C25 /* fmt.xcframework */,
 				BFF25F782B7A8984002E37FF /* zlib.xcframework */,
 				BFF25F762B7A897A002E37FF /* uriparser.xcframework */,
@@ -1042,6 +1051,7 @@
 				9957D90F1BDDDC9B0002D53C /* ofTexture.cpp in Sources */,
 				9957D92F1BDDDC9B0002D53C /* ofSystemUtils.cpp in Sources */,
 				9957D9071BDDDC9B0002D53C /* ofBufferObject.cpp in Sources */,
+				BFDAFE9B2C2C7E8A006B0AE0 /* ofTimerFps.cpp in Sources */,
 				844639CC1BC3443E00F24926 /* ofxiOSSoundStream.mm in Sources */,
 				844639D91BC3443E00F24926 /* ofxiOSExtras.mm in Sources */,
 				BF47309F2BA3D3A800E6E3C6 /* ofCubeMap.cpp in Sources */,
