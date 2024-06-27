@@ -1,5 +1,8 @@
 #include "ofTimerFps.h"
 
+using namespace std::chrono;
+using namespace std::chrono_literals;
+
 void ofTimerFps::reset() {
    wakeTime = steady_clock::now();
 }
@@ -9,6 +12,7 @@ ofTimerFps::ofTimerFps(){
 };
 
 void ofTimerFps::setFps(int fps) {
+//	interval = std::ratio<1s, fps>;
    interval = duration_cast<microseconds>(1s) / fps;
 }
 

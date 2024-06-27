@@ -7,6 +7,7 @@
 #include "ofVectorMath.h"
 #include "ofAppRunner.h"
 #include "ofLog.h"
+#include "ofMath.h"
 
 //----------------------------------------------------------
 template<class T>

@@ -7,9 +7,6 @@
 #include <iostream>
 #include <thread>
 
-using namespace std::chrono;
-using namespace std::chrono_literals;
-
 class ofTimerFps {
 public:
 	ofTimerFps();
@@ -19,7 +16,7 @@ public:
 
 	using space = std::chrono::duration<long long, std::nano>;
 	space interval;
-	time_point<steady_clock> wakeTime;
-	time_point<steady_clock> lastWakeTime;
+	std::chrono::time_point<std::chrono::steady_clock> wakeTime;
+	std::chrono::time_point<std::chrono::steady_clock> lastWakeTime;
 	
 };

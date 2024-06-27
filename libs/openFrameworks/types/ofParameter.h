@@ -9,8 +9,8 @@
 #include "ofColor.h"
 #include "ofLog.h"
 #include "ofRectangle.h"
-
 #include "ofMathConstants.h"
+#include "ofUtils.h" // ofToString
 
 template <typename ParameterType>
 class ofParameter;

@@ -14,6 +14,7 @@
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
 #include "ofLog.h"
+#include <glm/gtc/constants.hpp>
 
 using std::string;
 

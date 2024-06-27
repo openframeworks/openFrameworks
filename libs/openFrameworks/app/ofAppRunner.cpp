@@ -7,6 +7,8 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
 #include "ofMainLoop.h"
+#include "ofEvents.h" // of::priv
+#include "ofUtils.h" // initUtils
 
 using std::shared_ptr;
 

@@ -15,6 +15,7 @@
 #include "ofxiOSGLKView.h"
 #import "ofxiOSExtras.h"
 #include "ofAppiOSWindow.h"
+#include <glm/gtc/constants.hpp>
 
 @interface ofxiOSGLKViewController() <EAGLKViewDelegate, GLKViewControllerDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;

@@ -3,6 +3,7 @@
 #include "ofEventUtils.h"
 #include "ofFpsCounter.h"
 #include "ofTimerFps.h"
+#include "ofConstants.h" // FS Only
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL

@@ -1,6 +1,7 @@
 
 #include "ofMediaFoundationSoundPlayer.h"
 #include "ofLog.h"
+#include "ofUtils.h" // ofIsStringInString
 
 #include <condition_variable>
 #include <propvarutil.h>
