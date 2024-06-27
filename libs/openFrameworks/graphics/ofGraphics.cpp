@@ -529,6 +529,11 @@ void ofSetLineWidth(float lineWidth) {
 }
 
 //----------------------------------------------------------
+void ofSetPointSize(float pointSize) {
+	ofGetCurrentRenderer()->setPointSize(pointSize);
+}
+
+//----------------------------------------------------------
 void ofSetDepthTest(bool depthTest) {
 	ofGetCurrentRenderer()->setDepthTest(depthTest);
 }

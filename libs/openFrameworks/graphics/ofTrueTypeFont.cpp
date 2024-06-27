@@ -1149,13 +1149,19 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 		if(filled){
 			charOutlines[indexForGlyph(c)].draw(x,y);
 		}else{
+			float cw = charOutlinesContour[indexForGlyph(c)].getStrokeWidth();
+			charOutlinesContour[indexForGlyph(c)].setStrokeWidth( ofGetStyle().lineWidth );
 			charOutlinesContour[indexForGlyph(c)].draw(x,y);
+			charOutlinesContour[indexForGlyph(c)].setStrokeWidth( cw );
 		}
 	}else{
 		if(filled){
 			charOutlinesNonVFlipped[indexForGlyph(c)].draw(x,y);
 		}else{
+			float cw = charOutlinesNonVFlippedContour[indexForGlyph(c)].getStrokeWidth();
+			charOutlinesNonVFlippedContour[indexForGlyph(c)].setStrokeWidth( ofGetStyle().lineWidth );
 			charOutlinesNonVFlippedContour[indexForGlyph(c)].draw(x,y);
+			charOutlinesNonVFlippedContour[indexForGlyph(c)].setStrokeWidth( cw );
 		}
 	}
 }

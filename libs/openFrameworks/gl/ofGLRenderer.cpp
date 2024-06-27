@@ -1203,6 +1203,12 @@ void ofGLRenderer::setLineWidth(float lineWidth) {
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::setPointSize(float pointSize) {
+	currentStyle.pointSize = pointSize;
+	glPointSize(pointSize);
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::setDepthTest(bool depthTest) {
 	if (depthTest) {
 		glEnable(GL_DEPTH_TEST);

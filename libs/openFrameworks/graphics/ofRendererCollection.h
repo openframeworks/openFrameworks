@@ -180,7 +180,7 @@ public:
 	ofFillFlag getFillMode();
 
 	void setLineWidth(float lineWidth);
-
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 
 	void setBlendMode(ofBlendMode blendMode);

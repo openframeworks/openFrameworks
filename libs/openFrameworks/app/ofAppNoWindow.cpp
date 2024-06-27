@@ -147,6 +147,7 @@ private:
 	void setFillMode(ofFillFlag fill){}
 	ofFillFlag getFillMode(){return OF_FILLED;}
 	void setLineWidth(float lineWidth){}
+	void setPointSize(float pointSize) {}
 	void setBlendMode(ofBlendMode blendMode){}
 	void setLineSmoothing(bool smooth){}
 	void setCircleResolution(int res){};
