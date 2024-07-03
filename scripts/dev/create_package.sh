@@ -205,7 +205,14 @@ function createProjectFiles {
             pg_platform="$pkg_platform,vscode"
         fi
         
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+
+        if [ -f "${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator" ]; then
+            echo "projectGenerator exists..."
+            ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+        else
+            echo "projectGenerator does not exist. Continue."
+        fi
+
         
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
