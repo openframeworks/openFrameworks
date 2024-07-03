@@ -82,7 +82,7 @@ if [ "$platform" = "vs_min" ]; then
     libs_abi=_x64
 fi
 
-if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
+if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
     echo usage:
     echo ./create_package.sh platform version
     echo platform:
@@ -538,7 +538,11 @@ function createPackage {
     cp dev/download_libs.sh developer/
     cp dev/download_pg.sh developer/
     cp dev/downloader.sh developer/
-    cp dev/init_submodules.sh developer/ || true
+    if [ -f dev/init_submodules.sh ]; then
+        cp dev/init_submodules.sh developer/
+    else
+        echo "Warning: dev/init_submodules.sh does not exist. Skipping copy."
+    fi
 
 	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ]; then
     	rm -Rf $otherplatforms
