@@ -78,8 +78,10 @@ echoDots(){
 
 if [ "$platform" = "vs_min" ]; then
     platform="vs"
-    min_package=true
+    min_package=1
     libs_abi=_x64
+else
+    min_package=0
 fi
 
 if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
@@ -355,7 +357,7 @@ function createPackage {
         scripts/msys2/download_libs.sh -a $libs_abi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
-        if [ $min_package == true ]; then 
+        if [ $min_package == 1 ]; then 
             scripts/vs/download_latest_libs_x64.sh 
         else
             scripts/vs/download_latest_libs.sh
