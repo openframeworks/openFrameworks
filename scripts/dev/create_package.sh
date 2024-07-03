@@ -491,14 +491,14 @@ function createPackage {
 		rm -Rf ofxUnitTests
 	fi
 	#delete ofxiPhone in non ios
-	if [ "$pkg_platform" != "ios" ] || [ "$pkg_platform" != "macos" ];; then
+	if [ "$pkg_platform" != "ios" ] && [ "$pkg_platform" != "macos" ]; then
 		rm -Rf ofxiPhone
 		rm -Rf ofxiOS
 		rm -Rf ofxUnitTests
 	fi
 
 	#delete ofxMultiTouch in non mobile
-	if [ "$pkg_platform" != "android" ]; then
+	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ] && [ "$pkg_platform" != "macos" ]; then
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
 		rm -Rf ofxUnitTests
