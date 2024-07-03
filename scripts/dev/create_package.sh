@@ -185,11 +185,6 @@ function deleteEclipse {
 function createProjectFiles {
     if [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ] ; then
         mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
-        #cd ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
-        #rm -f ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/libopenFrameworksDebug.a
-        #downloader http://ci.openframeworks.cc/openFrameworks_libs/linux64/libopenFrameworksDebug.a
-
-        #git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
         cd ${main_ofroot}/apps/projectGenerator/commandLine
         echo "Recompiling command line PG"
         if [ -d ~/logs ]; then
@@ -229,7 +224,9 @@ function createProjectFiles {
 
 
 remove_current_platform() {
-    echo "$all_platforms" | sed "s/$1 //"
+    local platforms="$1"
+    local platform_to_remove="$2"
+    echo "$platforms" | sed "s/\b$platform_to_remove\b//g"
 }
 
 function createPackage {
@@ -359,41 +356,44 @@ function createPackage {
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
-        scripts/ios/download_latest_libs.sh
+        scripts/macos/download_latest_libs.sh
       elif [ "$pkg_platform" = "macos" ]; then
         scripts/macos/download_latest_libs.sh
         scripts/emscripten/download_libs.sh -n
     fi
 
-    #create project files for platform
     createProjectFiles $pkg_platform $pkg_ofroot
 
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms=$(remove_current_platform "linux")
+        otherplatforms=$(remove_current_platform "$all_platforms" "linux")
     elif [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms=$(remove_current_platform "emscripten")
-        otherplatforms=$(remove_current_platform "linux64")
+        otherplatforms=$(remove_current_platform "$all_platforms" "emscripten")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "linux64")
     elif [ "$pkg_platform" = "linuxarmv6l" ]; then
-        otherplatforms=$(remove_current_platform "linuxarmv6l")
+        otherplatforms=$(remove_current_platform "$all_platforms" "linuxarmv6l")
     elif [ "$pkg_platform" = "linuxarmv7l" ]; then
-        otherplatforms=$(remove_current_platform "linuxarmv7l")
+        otherplatforms=$(remove_current_platform "$all_platforms" "linuxarmv7l")
     elif [ "$pkg_platform" = "linuxaarch64" ]; then
-        otherplatforms=$(remove_current_platform "linuxaarch64")
+        otherplatforms=$(remove_current_platform "$all_platforms" "linuxaarch64")
     elif [ "$pkg_platform" = "osx" ]; then
-        otherplatforms=$(remove_current_platform "osx")
-        otherplatforms=$(remove_current_platform "emscripten")
+        otherplatforms=$(remove_current_platform "$all_platforms" "osx")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
     elif [ "$pkg_platform" = "msys2" ]; then
-        otherplatforms=$(remove_current_platform "msys2")
+        otherplatforms=$(remove_current_platform "$all_platforms" "msys2")
     elif [ "$pkg_platform" = "vs" ]; then
-        otherplatforms=$(remove_current_platform "vs")
-        otherplatforms=$(remove_current_platform "emscripten")
+        otherplatforms=$(remove_current_platform "$all_platforms" "vs")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
     elif [ "$pkg_platform" = "ios" ]; then
-        otherplatforms=$(remove_current_platform "ios")
+        otherplatforms=$(remove_current_platform "$all_platforms" "ios")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "tvos")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "macos")
     elif [ "$pkg_platform" = "macos" ]; then
-        otherplatforms=$(remove_current_platform "macos")
-        otherplatforms=$(remove_current_platform "emscripten")
+        otherplatforms=$(remove_current_platform "$all_platforms" "macos")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "ios")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "tvos")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
     elif [ "$pkg_platform" = "android" ]; then
-        otherplatforms=$(remove_current_platform "android")
+        otherplatforms=$(remove_current_platform "$all_platforms" "android")
     else
         echo "Unknown platform: $pkg_platform"
         exit 1
@@ -421,12 +421,10 @@ function createPackage {
 
     if [ "$pkg_platform" = "osx" ]; then
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
-        	unzip projectGenerator-osx.zip
-        	mv projectGenerator-osx projectGenerator
-        	rm projectGenerator-osx.zip
+        unzip projectGenerator-osx.zip
+        mv projectGenerator-osx projectGenerator
+        rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
-
-
 	fi
 
     if [ "$pkg_platform" = "ios" ]; then
@@ -443,7 +441,6 @@ function createPackage {
 		npm run build:linux32 > /dev/null
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
 		cd ${pkg_ofroot}
-		# sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
 	fi
 
 	if [ "$pkg_platform" = "linux64" ]; then
@@ -452,7 +449,6 @@ function createPackage {
 		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
-		# sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
 		chmod +x projectGenerator-linux64/projectGenerator
 	fi
 
@@ -466,16 +462,12 @@ function createPackage {
 		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		rm projectGenerator-vs-gui.zip
 		cd ${pkg_ofroot}
-		# sed -i "s/osx/android/g" projectGenerator-windows/resources/app/settings.json
-
-		
 
 		cd ${pkg_ofroot}/apps/projectGenerator/frontend
 		npm install > /dev/null
 		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
-		# sed -i "s/osx/android/g" projectGenerator-linux64/resources/app/settings.json
 	fi
 
 	# linux remove other platform projects from PG source and copy ofxGui
@@ -499,7 +491,7 @@ function createPackage {
 		rm -Rf ofxUnitTests
 	fi
 	#delete ofxiPhone in non ios
-	if [ "$pkg_platform" != "ios" ]; then
+	if [ "$pkg_platform" != "ios" ] || [ "$pkg_platform" != "macos" ];; then
 		rm -Rf ofxiPhone
 		rm -Rf ofxiOS
 		rm -Rf ofxUnitTests
@@ -524,7 +516,6 @@ function createPackage {
 	#android, move paths.default.make to paths.make
 	if [ "$pkg_platform" == "android" ]; then
 	    cd ${pkg_ofroot}
-	    #mv libs/openFrameworksCompiled/project/android/paths.default.make libs/openFrameworksCompiled/project/android/paths.make
 	fi
 
     #delete other platforms OF project files
@@ -535,6 +526,14 @@ function createPackage {
 
     #delete scripts
     cd $pkg_ofroot/scripts
+
+    mkdir -p developer
+    # Copy the specified scripts to the new folder
+    cp dev/download_libs.sh developer/
+    cp dev/download_pg.sh developer/
+    cp dev/downloader.sh developer/
+    cp dev/init_submodules.sh developer/
+
 	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ]; then
     	rm -Rf $otherplatforms
         rm -Rf ci dev apothecary
@@ -567,7 +566,13 @@ function createPackage {
     #delete dev folders
     cd ${pkg_ofroot}/scripts
     rm -Rf dev
-    rm */download_libs.sh
+    # rm */download_libs.sh
+
+    # put the useful dev scripts back
+    mv developer dev
+
+    # make sure any remaining dev scripts are executable
+    find . -type f -name "*.sh" -exec chmod +x {} +
 
 	#delete xcode templates in other platforms
 	cd $pkg_ofroot

@@ -3,7 +3,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 cd $SCRIPT_DIR
 if [ ! -z ${BITS+x} ]; then
-    ../dev/download_libs.sh -p ios -b -a $BITS -n $@
+    ../dev/download_libs.sh -p macos -b -a $BITS -n $@
 else
-    ../dev/download_libs.sh -p ios -b -n $@
+    ../dev/download_libs.sh -p macos -b -n $@
 fi
