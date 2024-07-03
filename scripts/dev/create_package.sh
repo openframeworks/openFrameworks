@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # $1 -> platform: msys2, linux, linux64, vs, osx, ios, all
 # $2 -> version number: 006
 #
@@ -37,7 +37,8 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-SCRIPT_DIR="${BASH_SOURCE%/*}"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/downloader.sh"
 
@@ -474,11 +475,9 @@ function createPackage {
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxaarch64" ] || [ "$pkg_platform" = "linuxarmv7l" ] || [ "$pkg_platform" = "android" ]; then
 	    cd ${pkg_ofroot}
 		mv apps/projectGenerator/commandLine .
-		mv apps/projectGenerator/ofxProjectGenerator . || true
 		rm -rf apps/projectGenerator
 		mkdir apps/projectGenerator
 		mv commandLine apps/projectGenerator/
-		mv ofxProjectGenerator apps/projectGenerator/ || true
 		cd apps/projectGenerator/commandLine
 		deleteCodeblocks
 		deleteVS
@@ -532,7 +531,7 @@ function createPackage {
     cp dev/download_libs.sh developer/
     cp dev/download_pg.sh developer/
     cp dev/downloader.sh developer/
-    cp dev/init_submodules.sh developer/
+    cp dev/init_submodules.sh developer/ || true
 
 	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ]; then
     	rm -Rf $otherplatforms
