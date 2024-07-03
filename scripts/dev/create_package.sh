@@ -78,7 +78,7 @@ echoDots(){
 if [ "$platform" = "vs_min" ]; then
     platform="vs"
     min_package=true
-    libs_abi=x64
+    libs_abi=_x64
 fi
 
 if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
@@ -404,21 +404,12 @@ function createPackage {
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
     if [ "$pkg_platform" = "vs" ] || [ "$pkg_platform" = "msys2" ]; then
-		# cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		# npm install > /dev/null
-		# npm run build:vs > /dev/null
-		# mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
-		# cd ${pkg_ofroot}
-		# rm -rf apps/projectGenerator
-		# cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		# downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip
-		# unzip projectGenerator-vs.zip 2> /dev/null
-		# rm projectGenerator-vs.zip
+		
   
   		# use prepackaged gui
-    		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-    		mkdir projectGenerator
-      		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
+        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
+        mkdir projectGenerator
+        unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		# if [ "$pkg_platform" = "msys2" ]; then
 		# 	sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
 		# else
@@ -440,9 +431,9 @@ function createPackage {
 
     if [ "$pkg_platform" = "ios" ]; then
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
-        	unzip projectGenerator-osx.zip
-        	mv projectGenerator-osx projectGenerator
-        	rm projectGenerator-osx.zip
+        unzip projectGenerator-osx.zip
+        mv projectGenerator-osx projectGenerator
+        rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
 	fi
 
