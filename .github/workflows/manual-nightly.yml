@@ -42,7 +42,9 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.13
       with:
-        key: ${{ matrix.cfg.target }}    
+        key: ${{ matrix.cfg.target }}
+    - name: update submodules
+      run: ./scripts/dev/init_submodules.sh   
     - name: Install dependencies
       run: ./scripts/ci/${{matrix.cfg.target}}/install.sh;
     - name: Download libs
