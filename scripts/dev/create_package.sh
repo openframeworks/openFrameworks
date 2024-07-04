@@ -337,6 +337,7 @@ function createPackage {
 
     #download external dependencies
     cd $pkg_ofroot/
+    echo " Location: {$pkg_ofroot}"
     if [ "$pkg_platform" = "osx" ]; then
         scripts/osx/download_latest_libs.sh
         scripts/emscripten/download_libs.sh -n
@@ -354,7 +355,7 @@ function createPackage {
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         if [ $min_package == 1 ]; then 
-            scripts/vs/download_latest_libs_x64.sh 
+            ./scripts/vs/download_latest_libs_x64.sh
         else
             scripts/vs/download_latest_libs.sh
         fi
@@ -459,21 +460,21 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "android" ]; then
-		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
-		npm run build:vs > /dev/null
-		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
-		cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
+		# cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		# npm install > /dev/null
+		# npm run build:vs > /dev/null
+		# mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
+		# cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
 		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		rm projectGenerator-vs-gui.zip
 		cd ${pkg_ofroot}
 
-		cd ${pkg_ofroot}/apps/projectGenerator/frontend
-		npm install > /dev/null
-		npm run build:linux64 > /dev/null
-		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
-		cd ${pkg_ofroot}
+		# cd ${pkg_ofroot}/apps/projectGenerator/frontend
+		# npm install > /dev/null
+		# npm run build:linux64 > /dev/null
+		# mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
+		# cd ${pkg_ofroot}
 	fi
 
 	# linux remove other platform projects from PG source and copy ofxGui
