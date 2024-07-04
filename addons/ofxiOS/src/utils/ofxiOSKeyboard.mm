@@ -8,6 +8,8 @@
  */
 
 #include "ofxiOSKeyboard.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #include "ofxiOSExtras.h"
 #include "ofAppiOSWindow.h"
 #include "ofAppRunner.h"
@@ -446,3 +448,4 @@ UITextField * ofxiOSKeyboard::getKeyboardTextField() {
 }
 
 @end
+#endif

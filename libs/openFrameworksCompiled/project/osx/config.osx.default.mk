@@ -97,7 +97,45 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.5.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.5.sdk)
+            MAC_OS_SDK=14.5
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.4.sdk)
+            MAC_OS_SDK=14.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.3.sdk)
+            MAC_OS_SDK=14.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.2.sdk)
+            MAC_OS_SDK=14.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.1.sdk)
+            MAC_OS_SDK=14.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.0.sdk)
+            MAC_OS_SDK=14.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.2.sdk)
+            MAC_OS_SDK=13.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.1.sdk)
+            MAC_OS_SDK=13.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.0.sdk)
+            MAC_OS_SDK=13.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.4.sdk)
+            MAC_OS_SDK=12.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.3.sdk)
+            MAC_OS_SDK=12.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.2.sdk)
+            MAC_OS_SDK=12.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.1.sdk)
+            MAC_OS_SDK=12.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.0.sdk)
+            MAC_OS_SDK=12.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.4.sdk)
+            MAC_OS_SDK=11.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.3.sdk)
+            MAC_OS_SDK=11.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.2.sdk)
+            MAC_OS_SDK=11.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.1.sdk)
+            MAC_OS_SDK=11.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.0.sdk)
+            MAC_OS_SDK=11.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
 			MAC_OS_SDK=10.15
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.14.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.14.sdk)
 			MAC_OS_SDK=10.14
@@ -164,10 +202,8 @@ endif
 ################################################################################
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
-
 #PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -lcurl
-
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################
@@ -298,19 +334,24 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
 PLATFORM_FRAMEWORKS += AGL
+PLATFORM_FRAMEWORKS += AppKit
 PLATFORM_FRAMEWORKS += ApplicationServices
+PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += AudioToolbox
-PLATFORM_FRAMEWORKS += CoreAudio
-PLATFORM_FRAMEWORKS += CoreFoundation
-PLATFORM_FRAMEWORKS += CoreServices
-PLATFORM_FRAMEWORKS += OpenGL
-PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
 PLATFORM_FRAMEWORKS += CoreVideo
-PLATFORM_FRAMEWORKS += AVFoundation
+PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreMedia
+PLATFORM_FRAMEWORKS += CoreFoundation
+PLATFORM_FRAMEWORKS += CoreServices
+PLATFORM_FRAMEWORKS += Metal
+PLATFORM_FRAMEWORKS += Foundation
+PLATFORM_FRAMEWORKS += IOKit
+PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
+PLATFORM_FRAMEWORKS += SystemConfiguration
+
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
