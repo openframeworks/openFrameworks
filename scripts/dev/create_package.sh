@@ -354,8 +354,10 @@ function createPackage {
         scripts/msys2/download_libs.sh -a $libs_abi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
-        if [ $min_package == 1 ]; then 
-            ./scripts/vs/download_latest_libs_x64.sh
+        if [ $min_package == 1 ]; then
+            BITS=64
+            scripts/vs/download_latest_libs.sh 
+            unset BITS
         else
             scripts/vs/download_latest_libs.sh
         fi
