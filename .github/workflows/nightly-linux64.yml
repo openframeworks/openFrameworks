@@ -29,7 +29,7 @@ env:
 jobs:
   build-nightly:
     runs-on: ubuntu-24.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    # if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:
