@@ -270,19 +270,32 @@ function createPackage {
 
 	#delete desktop examples in mobile packages
 	if [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
-		rm -Rf 3d
-		rm -Rf communication
-		rm -Rf computer_vision
-		rm -Rf events
-		rm -Rf gl
-		rm -Rf graphics
-		rm -Rf gui
+		rm -Rf computer_vision/kinectExample
+        rm -Rf gl/glInfoExample
+        rm -Rf gl/alphaMaskingShaderExample
+        rm -Rf gl/billboardExample
+        rm -Rf gl/billboardRotationExample
+        rm -Rf gl/multiLightExample
+        rm -Rf gl/multiTextureShaderExample
+        rm -Rf gl/pointsAsTextures
+        rm -Rf gl/gpuParticleSystemExample
+        rm -Rf gl/vboMeshDrawInstancedExample
+        rm -Rf gl/shaderExample
+        rm -Rf gl/computeShaderParticlesExample
+        rm -Rf gl/computeShaderTextureExample
+        rm -Rf gl/pixelBufferExample
+        rm -Rf gl/textureBufferInstancedExample
+        rm -Rf gl/threadedPixelBufferExample
+        rm -Rf gl/transformFeedbackExample
+        rm -Rf utils/dragDropExample
+        rm -Rf utils/fileOpenSaveDialogExample
+        rm -Rf utils/systemSpeakExample
+        rm -Rf utils/fileBufferLoadingCSVExample
+        rm -Rf 3d/modelNoiseExample
+        rm -Rf windowing
 		rm -Rf input_output
-		rm -Rf math
 		rm -Rf shader
 		rm -Rf sound
-		rm -Rf strings
-		rm -Rf templates
 		rm -Rf threads
         rm -Rf windowing
 	fi
@@ -313,9 +326,7 @@ function createPackage {
         rm -Rf utils/fileOpenSaveDialogExample
         rm -Rf utils/systemSpeakExample
         rm -Rf utils/fileBufferLoadingCSVExample
-
         rm -Rf 3d/modelNoiseExample
-
         rm -Rf windowing
     fi
 
@@ -327,7 +338,6 @@ function createPackage {
 
     if [ "$pkg_platform" == "osx" ] || [ "$pkg_platform" == "macos" ]; then
         
-        rm -Rf gles
         rm -Rf gl/computeShaderParticlesExample
         rm -Rf gl/computeShaderTextureExample
     fi
@@ -355,9 +365,7 @@ function createPackage {
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         if [ $min_package == 1 ]; then
-            BITS=64
-            scripts/vs/download_latest_libs.sh 
-            unset BITS
+            scripts/vs/download_latest_libs.sh -a 64
         else
             scripts/vs/download_latest_libs.sh
         fi
@@ -394,11 +402,13 @@ function createPackage {
         otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
     elif [ "$pkg_platform" = "ios" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "ios")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "osx")
         otherplatforms=$(remove_current_platform "$otherplatforms" "tvos")
         otherplatforms=$(remove_current_platform "$otherplatforms" "macos")
     elif [ "$pkg_platform" = "macos" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "macos")
         otherplatforms=$(remove_current_platform "$otherplatforms" "ios")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "osx")
         otherplatforms=$(remove_current_platform "$otherplatforms" "tvos")
         otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
     elif [ "$pkg_platform" = "android" ]; then
@@ -428,18 +438,10 @@ function createPackage {
 		rm -rf apps/projectGenerator
 	fi
 
-    if [ "$pkg_platform" = "osx" ]; then
+    if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "macos" ]; then
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         unzip projectGenerator-osx.zip
-        mv projectGenerator-osx projectGenerator
-        rm projectGenerator-osx.zip
-		rm -rf apps/projectGenerator
-	fi
-
-    if [ "$pkg_platform" = "ios" ]; then
-		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
-        unzip projectGenerator-osx.zip
-        mv projectGenerator-osx projectGenerator
+        mv projectGenerator-osx/projectGenerator.app projectGenerator
         rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
 	fi
@@ -498,7 +500,7 @@ function createPackage {
 		rm -Rf ofxUnitTests
 	fi
 	#delete ofxiPhone in non ios
-	if [ "$pkg_platform" != "ios" ] && [ "$pkg_platform" != "macos" ]; then
+	if [ "$pkg_platform" != "ios" ] && [ "$pkg_platform" != "macos" ] && [ "$pkg_platform" != "osx" ]; then
 		rm -Rf ofxiPhone
 		rm -Rf ofxiOS
 		rm -Rf ofxUnitTests
