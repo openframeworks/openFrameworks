@@ -441,7 +441,7 @@ function createPackage {
     if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "macos" ]; then
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         unzip projectGenerator-osx.zip
-        mv projectGenerator-osx/projectGenerator.app projectGenerator/projectGenerator.app
+        mv projectGenerator-osx/ projectGenerator
         rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
 	fi
