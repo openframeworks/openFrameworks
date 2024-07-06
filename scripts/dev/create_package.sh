@@ -88,7 +88,7 @@ if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != 
     echo usage:
     echo ./create_package.sh platform version
     echo platform:
-    echo msys2, linux, linux64, linuxarmv6l, linuxaarch64, linuxarmv7l, vs, osx, android, ios, all
+    echo msys2, linux, linux64, linuxarmv6l, linuxaarch64, linuxarmv7l, vs, osx, android, ios, macos, all
     exit 1
 fi
 
@@ -441,7 +441,7 @@ function createPackage {
     if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "macos" ]; then
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         unzip projectGenerator-osx.zip
-        mv projectGenerator-osx/projectGenerator.app projectGenerator
+        mv projectGenerator-osx/projectGenerator.app projectGenerator/projectGenerator.app
         rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
 	fi
@@ -574,7 +574,8 @@ function createPackage {
 
     #delete .gitignore
     cd $pkg_ofroot
-    rm -Rf $(find . -name .gitignore -not -path "scripts/templates/*")
+    # rm -Rf $(find . -name .gitignore -not -path "scripts/templates/*")
+    find $pkg_ofroot -type f -name .gitignore -not -path "scripts/templates/*" -exec rm {} +
 
     #delete dev folders
     cd ${pkg_ofroot}/scripts
@@ -598,6 +599,15 @@ function createPackage {
 
     #choose readme
     cd $pkg_ofroot
+
+    rm -Rf .github/
+    rm -Rf .git/
+    rm -Rf .appveyor.yml
+    rm -Rf .travis.yml
+    rm -Rf .gitmodules
+    rm -Rf .gitignore
+    rm -Rf .gitattributes
+
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ] || [ "$platform" = "linuxaarch64" ]; then
         cp docs/linux.md INSTALL.md
     fi
@@ -638,6 +648,7 @@ function createPackage {
         cd $pkg_ofroot/..
         mkdir of_v${pkg_version}_${pkg_platform}${libs_abi}_release
         mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}${libs_abi}_release
+        mv ${pkgfolder}/.* ${pkg_name} 2>/dev/null || true  # add hidden files 
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}${libs_abi}_release.tar.gz of_v${pkg_version}_${pkg_platform}${libs_abi}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_release
     else
@@ -650,6 +661,7 @@ function createPackage {
         cd $pkg_ofroot/..
         mkdir ${pkg_name}
         mv ${pkgfolder}/* ${pkg_name}
+        mv ${pkgfolder}/.* ${pkg_name} 2>/dev/null || true # add hidden files 
         zip --symlinks -r ${pkg_name}.zip ${pkg_name} > /dev/null
         rm -Rf ${pkg_name}
     fi
