@@ -1,11 +1,13 @@
 name: nightly-linux64
-# on:
-#   push:
-#     paths-ignore:
-#       - '**/README.md'
-#   pull_request:
-#     paths-ignore:
-#       - '**/README.md'
+
+
+on:
+  push:
+    paths-ignore:
+      - '**/README.md'
+  pull_request:
+    paths-ignore:
+      - '**/README.md'
 # on: 
 #   workflow_dispatch:
 #     inputs:
@@ -17,9 +19,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-on:
- schedule:
-   - cron: "0 6 * * *"
+# on:
+#  schedule:
+#    - cron: "0 6 * * *"
 
 env:
   ccache: ccache
@@ -27,7 +29,7 @@ env:
 jobs:
   build-nightly:
     runs-on: ubuntu-24.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    # if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:

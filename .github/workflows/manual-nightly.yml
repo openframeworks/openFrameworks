@@ -1,20 +1,19 @@
 name: manual-nightly
 
-on: 
-  workflow_dispatch:
-    inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'nightly'
-# on:
-#   push:
-#     paths-ignore:
-#       - '**/README.md'
-#   pull_request:
-#     paths-ignore:
-#       - '**/README.md'
-
+on:
+  push:
+    paths-ignore:
+      - '**/README.md'
+  pull_request:
+    paths-ignore:
+      - '**/README.md'
+# on: 
+#   workflow_dispatch:
+#     inputs:
+#           release:
+#             description: 'release'     
+#             required: true
+#             default: 'nightly'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -25,7 +24,6 @@ env:
 jobs:
   manual-nightly:
     runs-on: ubuntu-24.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:
@@ -56,21 +54,21 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
-    # - name: Test Artefact zip
-    #   run: |
-    #     tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
-    # - name: Upload binaries as Artefact
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
-    #     path: out/manual-mega_artefact.tar.bz2
-    #     retention-days: 1
-    - name: Update Release
-      uses: IsaacShelton/update-existing-release@v1.3.4
+    - name: Test Artefact zip
+      run: |
+        tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
+    - name: Upload binaries as Artefact
+      uses: actions/upload-artifact@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ github.event.inputs.release }}
-        release: ${{ github.event.inputs.release }}
-        prerelease: false
-        replace: true
-        files: ${{ steps.createpackage.outputs.FILES_OUT }}
+        name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
+        path: out/manual-mega_artefact.tar.bz2
+        retention-days: 1
+    # - name: Update Release
+    #   uses: IsaacShelton/update-existing-release@v1.3.4
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+    #     tag: ${{ github.event.inputs.release }}
+    #     release: ${{ github.event.inputs.release }}
+    #     prerelease: false
+    #     replace: true
+    #     files: ${{ steps.createpackage.outputs.FILES_OUT }}
