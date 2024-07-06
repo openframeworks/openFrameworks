@@ -547,7 +547,7 @@ function createPackage {
         echo "Warning: dev/init_submodules.sh does not exist. Skipping copy."
     fi
 
-	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ]; then
+	if [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ]; then
     	rm -Rf $otherplatforms
         rm -Rf ci dev apothecary
 	else
@@ -648,7 +648,7 @@ function createPackage {
         cd $pkg_ofroot/..
         mkdir of_v${pkg_version}_${pkg_platform}${libs_abi}_release
         mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}${libs_abi}_release
-        mv ${pkgfolder}/.* ${pkg_name} 2>/dev/null || true  # add hidden files 
+        mv ${pkgfolder}/.* of_v${pkg_version}_${pkg_platform}${libs_abi}_release 2>/dev/null || true  # add hidden files 
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}${libs_abi}_release.tar.gz of_v${pkg_version}_${pkg_platform}${libs_abi}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_release
     else
