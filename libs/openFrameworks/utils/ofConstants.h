@@ -50,7 +50,8 @@ enum ofTargetPlatform{
 	/// \brief Compiled to javascript using Emscripten.
 	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN,
-	OF_TARGET_LINUXAARCH64
+	OF_TARGET_LINUXAARCH64,
+    OF_TARGET_MACOS,
 };
 
 
