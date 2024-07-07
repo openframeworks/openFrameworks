@@ -374,8 +374,6 @@
 		BF7E59192BA2054700E5C52E /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
 		BF7E591B2BA2056600E5C52E /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
 		BF7E591D2BA2057900E5C52E /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
-		BF94EDEC2BA58493009EF752 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
-		BF94EDED2BA58494009EF752 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9113B38BE900A75A5D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9213B38BE900A75A5D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -676,8 +674,6 @@
 		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BF94EDED2BA58494009EF752 /* Metal.framework */,
-				BF94EDEC2BA58493009EF752 /* CoreHaptics.framework */,
 				99752D321BF21EEE0026316A /* GameController.framework */,
 				5E2E99DC10ED147800587639 /* MapKit.framework */,
 				901808B8205362D7004A7774 /* GLKit.framework */,
@@ -1294,7 +1290,6 @@
 					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
 					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Debug";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1319,7 +1314,6 @@
 					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
 					"\"$(SRCROOT)/../../../poco/lib/ios\"",
 				);
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Release";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1360,12 +1354,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1405,12 +1397,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",

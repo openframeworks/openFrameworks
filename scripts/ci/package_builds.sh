@@ -34,6 +34,7 @@ $ROOT/scripts/dev/create_package.sh ios $lastversion master
 $ROOT/scripts/dev/create_package.sh macos $lastversion master
 $ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
 $ROOT/scripts/dev/create_package.sh vs $lastversion master
+$ROOT/scripts/dev/create_package.sh vs_min $lastversion master
 
 ls -la
 cd $ROOT
