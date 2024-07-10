@@ -605,7 +605,6 @@ function createPackage {
     rm -Rf .appveyor.yml
     rm -Rf .travis.yml
     rm -Rf .gitmodules
-    rm -Rf .gitignore
     rm -Rf .gitattributes
 
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ] || [ "$platform" = "linuxaarch64" ]; then
