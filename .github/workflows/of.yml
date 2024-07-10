@@ -52,7 +52,9 @@ jobs:
       matrix:
         msystem:
         - mingw64
-        # - ucrt64
+        - ucrt64
+        - clang64
+        # - clangarm64
     defaults:
       run:
         shell: msys2 {0}
@@ -63,11 +65,11 @@ jobs:
       with:
         # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.msystem }}
-    - uses: msys2/setup-msys2@v2
+    - uses: msys2/setup-msys2@v2.23.0
       with:
         cache: true
         release: true
-        update: false
+        update: true
         msystem: ${{matrix.msystem}}
         pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
         install: >-
@@ -83,7 +85,7 @@ jobs:
         # wget
         
     - name: Install dependencies
-      run: ./scripts/ci/msys2/install.sh
+      run: ./scripts/ci/msys2/install.sh --msystem=${{ matrix.msystem }}
 
     - name: Build
       run: ./scripts/ci/msys2/build.sh
@@ -104,7 +106,7 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2.22.0
+      - uses: msys2/setup-msys2@v2.23.0
         with:
           update: true
           install: >-

@@ -195,7 +195,11 @@ fi
 echo " openFrameworks download_libs.sh v$DL_VERSION"
 
 if [ "$PLATFORM" == "msys2" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
+    else    
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
+    fi
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
     PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
