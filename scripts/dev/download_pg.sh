@@ -207,17 +207,17 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 
     if ! command -v rsync &> /dev/null
     then      
-        cp -arX ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+        cp -arX ${OUTPUT}/ ${OUTDIR}/projectGenerator
     else
-        rsync -a ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+        rsync -a ${OUTPUT}/ ${OUTDIR}/projectGenerator
     fi
     rm -rf $OUTPUT
 else
     if ! command -v rsync &> /dev/null
     then      
-        cp -arX $OUTPUT/projectGenerator$EXT $OUTDIR/
+        cp -arX $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
     else
-        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR
+        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
     fi
     rm -rf $OUTPUT/projectGenerator$EXT
 
