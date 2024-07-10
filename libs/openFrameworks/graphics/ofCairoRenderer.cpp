@@ -657,6 +657,12 @@ void ofCairoRenderer::setLineWidth(float lineWidth) {
 	cairo_set_line_width(cr, lineWidth);
 }
 
+//--------------------------------------------
+void ofCairoRenderer::setPointSize(float pointSize) {
+	currentStyle.pointSize = pointSize;
+	// no point size for cairo
+}
+
 //----------------------------------------------------------
 void ofCairoRenderer::setDepthTest(bool depthTest) {
 	// cairo does not do any depth testing
