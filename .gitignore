@@ -38,6 +38,10 @@ examples/**/[Dd]ebug*/
 examples/**/[Rr]elease*/
 examples/**/gcc-debug/
 examples/**/gcc-release/
+examples/**/addons.make
+examples/**/Makefile
+examples/**/config.make
+examples/****/.gitkeep
 tests/**/[Dd]ebug*/
 tests/**/[Rr]elease*/
 tests/**/gcc-debug/
@@ -157,3 +161,4 @@ scripts/templates/vs/.vs/
 libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj/xcshareddata
 scripts/templates/ios/bin
 libs/openFrameworksCompiled/project/tvOS/tvOS+OFLib.xcodeproj/xcshareddata
+scripts/osx/regressionTest
