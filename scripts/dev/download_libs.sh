@@ -100,8 +100,13 @@ while [[ $# -gt 0 ]]; do
         -s|--silent)
         SILENT_ARGS=1
         ;;
+
         -k|--no-ssl)
         NO_SSL=1
+        ;;
+        -m|--msystem)
+        MSYSTEM="$2"
+        shift # past argument
         ;;
         -h|--help)
         printHelp
@@ -160,14 +165,21 @@ EOF
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
-        if [ "$MSYSTEM" == "MINGW64" ]; then
-            ARCH=mingw64
-        elif [ "$MSYSTEM" == "MINGW32" ]; then
-            ARCH=mingw32
-        elif [ "$MSYSTEM" == "UCRT64" ]; then
-            ARCH=ucrt64
-        elif [ "$MSYSTEM" == "CLANG64" ]; then
-            ARCH=clang64
+
+        if [ -n "$MINGW_PACKAGE_PREFIX" ]; then
+            ARCH=$MINGW_PACKAGE_PREFIX
+        else
+            if [ "$MSYSTEM" == "MINGW64" ] || [ "$MSYSTEM" == "mingw64" ]; then
+                ARCH=mingw64
+            elif [ "$MSYSTEM" == "CLANGARM64" ] || [ "$MSYSTEM" == "clangarm64" ]; then
+                ARCH=clangarm64
+            elif [ "$MSYSTEM" == "UCRT64" ]; then
+                ARCH=ucrt64
+            elif [ "$MSYSTEM" == "CLANG64" ]; then
+                ARCH=clang64
+            else
+                ARCH=clang64
+            fi
         fi
     fi
 
