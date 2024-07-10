@@ -39,9 +39,9 @@ examples/**/[Rr]elease*/
 examples/**/gcc-debug/
 examples/**/gcc-release/
 examples/**/addons.make
-examples/**/Makefile
+examples/**/[Mm]akefile
 examples/**/config.make
-examples/****/.gitkeep
+examples/**/.gitkeep
 tests/**/[Dd]ebug*/
 tests/**/[Rr]elease*/
 tests/**/gcc-debug/
