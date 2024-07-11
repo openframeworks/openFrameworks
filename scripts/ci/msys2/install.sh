@@ -38,8 +38,8 @@ while [[ $# > 0 ]] ; do
 done
 
 
-$ROOT/scripts/msys2/install_dependencies.sh $confirm
-$ROOT/scripts/msys2/download_libs.sh --silent $msystem
+$ROOT/scripts/msys2/install_dependencies.sh $confirm --msystem=$msystem
+$ROOT/scripts/msys2/download_libs.sh --silent -a $msystem
 if [[ $MINGW_PACKAGE_PREFIX ]]; then
     pacman -S $confirm $MINGW_PACKAGE_PREFIX-ccache
 fi
