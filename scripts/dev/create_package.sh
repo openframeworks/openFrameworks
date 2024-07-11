@@ -375,6 +375,7 @@ function createPackage {
     elif [ "$pkg_platform" = "ios" ]; then
         scripts/macos/download_latest_libs.sh
       elif [ "$pkg_platform" = "macos" ]; then
+        scripts/osx/download_latest_libs.sh
         scripts/macos/download_latest_libs.sh
         scripts/emscripten/download_libs.sh -n
     fi
