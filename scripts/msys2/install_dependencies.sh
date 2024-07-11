@@ -21,6 +21,10 @@ while [[ $# > 0 ]] ; do
 		confirm="no"
 		continue
 	fi
+	if [ "$arg" == "--confirm" ]; then
+		confirm="yes"
+		continue
+	fi
 	if [ "$arg" == "--help" ]; then
 		usage
 		exit 1
