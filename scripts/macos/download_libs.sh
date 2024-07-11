@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
+cd $SCRIPT_DIR
 if [ ! -z ${BITS+x} ]; then
-    ../dev/local_libs.sh -p vs -b $@ -a $BITS
+    ../dev/download_libs.sh -p macos -a $BITS $@
 else
-    ../dev/local_libs.sh -p vs -b $@
+    ../dev/download_libs.sh -p macos $@
 fi

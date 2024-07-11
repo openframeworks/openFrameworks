@@ -5,9 +5,9 @@
 //  Created by Dan Rosser on 7/3/18.
 //
 
-
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import "ESRenderer.h"
@@ -71,3 +71,5 @@
 - (void)notifyResized;
 
 @end
+
+#endif

@@ -31,7 +31,7 @@ cat << EOF
 EOF
 }
 
-SCRIPT_DIR="${BASH_SOURCE%/*}"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/downloader.sh"
 

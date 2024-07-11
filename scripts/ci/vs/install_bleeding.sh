@@ -14,9 +14,13 @@ mkdir -p ~/projectGenerator
 cd ~/projectGenerator
 
 echo "Downloading projectGenerator from Github Bleeding"
-downloader https://github.com/openframeworks/projectGenerator/releases/download/bleeding/projectGenerator-vs.zip 2> /dev/null
+downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip 2> /dev/null
 unzip projectGenerator-vs.zip 2> /dev/null
 rm projectGenerator-vs.zip
+
+downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
+unzip projectGenerator-vs-gui.zip 2> /dev/null
+rm projectGenerator-vs-gui.zip
 
 cd $OF_ROOT
 PG_OF_PATH=$OF_ROOT ~/projectGenerator/projectGenerator.exe examples/templates/emptyExample

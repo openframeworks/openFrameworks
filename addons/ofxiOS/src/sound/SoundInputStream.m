@@ -15,6 +15,8 @@
 //
 
 #import "SoundInputStream.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && defined(OF_UI_KIT)
 #import <AVFoundation/AVFoundation.h>
 
 typedef struct {
@@ -237,3 +239,4 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 }
 
 @end
+#endif

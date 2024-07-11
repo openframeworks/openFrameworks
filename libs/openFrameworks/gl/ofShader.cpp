@@ -954,10 +954,19 @@ void ofShader::setUniformTexture(const string & name, int textureTarget, GLint t
     }
 }
 
+
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofTexture & tex, int textureLocation) const {
+	if (bLoaded) {
+		ofTextureData texData = tex.getTextureData();
+		setUniformTexture( name, texData, textureLocation);
+	}
+}
+	
+//--------------------------------------------------------------
+void ofShader::setUniformTexture(const string & name, const ofTextureData & texData, int textureLocation) const{
     if (bLoaded) {
-        ofTextureData texData = tex.getTextureData();
+        //ofTextureData texData = tex.getTextureData();
         glActiveTexture(GL_TEXTURE0 + textureLocation);
         if (!ofIsGLProgrammableRenderer()) {
             glEnable(texData.textureTarget);

@@ -28,20 +28,20 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/ 
-
-
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OS_IOS) && defined(OF_UI_KIT)
 #include "ofxiOSExtras.h"
 #include "ofLog.h"
 #include "ofPixels.h"
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-
 #import "ofxiOSAppDelegate.h"
 #import "ofxiOSViewController.h"
 #import "ofxiOSGLKViewController.h"
 #elif TARGET_OS_TV
 #include "ofxtvOSAppDelegate.h"
 #include "ofxtvOSViewController.h"
+#import "ofxtvOSGLKViewController.h"
 #endif
 #include "ofxiOSEAGLView.h"
 #include "ofxiOSGLKView.h"
@@ -195,7 +195,12 @@ ofxtvOSAppDelegate * ofxiOSGetAppDelegate() {
 ofxtvOSViewController * ofxiOSGetViewController() {
     return (ofxtvOSViewController *)[ofxiOSGetAppDelegate() uiViewController];
 }
-
+ofxtvOSGLKViewController * ofxtvOSGetGLKViewController() {
+    if([[ofxiOSGetAppDelegate() uiViewController] isKindOfClass:[ofxtvOSGLKViewController class]] == YES)
+        return (ofxtvOSGLKViewController*)[ofxiOSGetAppDelegate() uiViewController];
+    else
+        return nil;
+}
 #endif
 
 //--------------------------------------------------------------
@@ -618,5 +623,5 @@ void ofxiOSScreenGrab(id delegate) {
     UIImageWriteToSavedPhotosAlbum(imageLossless, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 #endif
-
+#endif
 

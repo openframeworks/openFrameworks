@@ -1,4 +1,6 @@
 #include "ofAppGLFWWindow.h"
+
+#if defined(TARGET_GLFW_WINDOW)
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
 
@@ -1525,58 +1527,60 @@ void ofAppGLFWWindow::makeCurrent() {
 }
 
 #if defined(TARGET_LINUX)
-Display * ofAppGLFWWindow::getX11Display() {
-	return glfwGetX11Display();
-}
-
-Window ofAppGLFWWindow::getX11Window() {
-	return glfwGetX11Window(windowP);
-}
-
-XIC ofAppGLFWWindow::getX11XIC() {
-	return xic;
-}
+    Display * ofAppGLFWWindow::getX11Display() {
+        return glfwGetX11Display();
+    }
+    
+    Window ofAppGLFWWindow::getX11Window() {
+        return glfwGetX11Window(windowP);
+    }
+    
+    XIC ofAppGLFWWindow::getX11XIC() {
+        return xic;
+    }
 #endif
-
+    
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
-//GLXContext ofAppGLFWWindow::getGLXContext() {
-//	return glfwGetGLXContext(windowP);
-//}
+    GLXContext ofAppGLFWWindow::getGLXContext() {
+        return glfwGetGLXContext(windowP);
+    }
 #endif
-
+    
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
-EGLDisplay ofAppGLFWWindow::getEGLDisplay() {
-	return glfwGetEGLDisplay();
-}
-
-EGLContext ofAppGLFWWindow::getEGLContext() {
-	return glfwGetEGLContext(windowP);
-}
-
-EGLSurface ofAppGLFWWindow::getEGLSurface() {
-	return glfwGetEGLSurface(windowP);
-}
+    EGLDisplay ofAppGLFWWindow::getEGLDisplay() {
+        return glfwGetEGLDisplay();
+    }
+    
+    EGLContext ofAppGLFWWindow::getEGLContext() {
+        return glfwGetEGLContext(windowP);
+    }
+    
+    EGLSurface ofAppGLFWWindow::getEGLSurface() {
+        return glfwGetEGLSurface(windowP);
+    }
 #endif
-
+    
 #if defined(TARGET_OSX)
-void * ofAppGLFWWindow::getNSGLContext() {
-	return (__bridge void *)glfwGetNSGLContext(windowP);
-}
-
-void * ofAppGLFWWindow::getCocoaWindow() {
-	return (__bridge void *)glfwGetCocoaWindow(windowP);
-}
+    void * ofAppGLFWWindow::getNSGLContext() {
+        return (__bridge void *)glfwGetNSGLContext(windowP);
+    }
+    
+    void * ofAppGLFWWindow::getCocoaWindow() {
+        return (__bridge void *)glfwGetCocoaWindow(windowP);
+    }
 #endif
-
+    
 #if defined(TARGET_WIN32)
-HGLRC ofAppGLFWWindow::getWGLContext() {
-	return glfwGetWGLContext(windowP);
-}
-
-HWND ofAppGLFWWindow::getWin32Window() {
-	return glfwGetWin32Window(windowP);
-}
-
+    HGLRC ofAppGLFWWindow::getWGLContext() {
+        return glfwGetWGLContext(windowP);
+    }
+    
+    HWND ofAppGLFWWindow::getWin32Window() {
+        return glfwGetWin32Window(windowP);
+    }
+    
+#endif
+    
 #endif
 
 

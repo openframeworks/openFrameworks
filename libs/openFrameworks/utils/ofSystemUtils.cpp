@@ -10,13 +10,15 @@
 #include <mutex>
 
 #ifdef TARGET_OSX
+
 	// ofSystemUtils.cpp is configured to build as
 	// objective-c++ so as able to use Cocoa dialog panels
 	// This is done with this compiler flag
 	//		-x objective-c++
 	// http://www.yakyak.org/viewtopic.php?p=1475838&sid=1e9dcb5c9fd652a6695ac00c5e957822#p1475838
-
+#ifdef __OBJC__
 	#include <Cocoa/Cocoa.h>
+#endif
 	#include "ofAppRunner.h"
 #endif
 
@@ -64,11 +66,14 @@ std::wstring convertNarrowToWide( const std::string& as ){
 #endif
 
 #if defined( TARGET_OSX )
+
 static void restoreAppWindowFocus(){
+#ifdef __OBJC__
 	NSWindow * appWindow = (__bridge NSWindow *)ofGetCocoaWindow();
 	if(appWindow) {
 		[appWindow makeKeyAndOrderFront:nil];
 	}
+#endif
 }
 #endif
 
@@ -277,7 +282,7 @@ void ofSystemAlertDialog(std::string errorMessage){
 		MessageBoxW(nullptr, errorMessageW.c_str(), L"alert", MB_OK);
 	#endif
 
-	#ifdef TARGET_OSX
+    #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 		@autoreleasepool {
 			NSAlert* alertDialog = [[NSAlert alloc] init];
 			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
@@ -339,7 +344,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
 
@@ -506,7 +511,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		NSSavePanel * saveDialog = [NSSavePanel savePanel];
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
@@ -613,7 +618,7 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
 	text = dialogData.text;
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		// create alert dialog
 		NSAlert *alert = [[NSAlert alloc] init];

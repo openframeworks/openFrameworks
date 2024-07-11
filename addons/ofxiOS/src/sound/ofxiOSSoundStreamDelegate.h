@@ -5,7 +5,8 @@
 //
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#ifdef TARGET_OF_IOS
 #import "SoundStream.h"
 #include <functional>
 
@@ -21,3 +22,4 @@ class ofSoundBuffer;
 @end
 
 #define ofxiPhoneSoundStreamDelegate ofxiOSSoundStreamDelegate
+#endif
