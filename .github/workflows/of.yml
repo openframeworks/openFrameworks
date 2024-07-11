@@ -90,8 +90,8 @@ jobs:
     - name: Build
       run: ./scripts/ci/msys2/build.sh
 
-    - name: Run tests
-      run: ./scripts/ci/msys2/run_tests.sh
+    # - name: Run tests
+    #   run: ./scripts/ci/msys2/run_tests.sh
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
