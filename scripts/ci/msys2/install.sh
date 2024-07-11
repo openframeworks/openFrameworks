@@ -15,7 +15,7 @@ function usage {
 }
 
 # Analyse script arguments
-confirm="--confirm"
+confirm="--noconfirm"
 msystem=""
 while [[ $# > 0 ]] ; do
     arg=$1
@@ -41,5 +41,5 @@ done
 $ROOT/scripts/msys2/install_dependencies.sh $confirm
 $ROOT/scripts/msys2/download_libs.sh --silent $msystem
 if [[ $MINGW_PACKAGE_PREFIX ]]; then
-    pacman -S --noconfirm $MINGW_PACKAGE_PREFIX-ccache
+    pacman -S $confirm $MINGW_PACKAGE_PREFIX-ccache
 fi
