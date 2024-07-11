@@ -6,16 +6,20 @@ name: nightly-linux64
 #   pull_request:
 #     paths-ignore:
 #       - '**/README.md'
- on: 
-   workflow_dispatch:
-     inputs:
-           release:
-             description: 'release'     
-             required: true
-             default: 'nightly'
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+#  on: 
+#   workflow_dispatch:
+#      inputs:
+#           release:
+#              description: 'release'     
+#              required: true
+#              default: 'nightly'
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
+
+# on:
+#  schedule:
+#   - cron: "0 6 * * *"
 
 on:
  schedule:
@@ -60,21 +64,12 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
-#    - name: Test Artefact zip
-#      run: |
-#        tar -cjf out/mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
-#    - name: Upload binaries as Artefact
-#      uses: actions/upload-artifact@v4
-#      with:
-#        name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
-#        path: out/mega_artefact.tar.bz2
-#        retention-days: 1
-     - name: Update Release
-       uses: IsaacShelton/update-existing-release@v1.3.4
-       with:
-         token: ${{ secrets.GITHUB_TOKEN }}
-         tag: nightly
-         release: nightly
-         prerelease: false
-         replace: true
-         files: ${{ steps.createpackage.outputs.FILES_OUT }}
+    - name: Update Release
+      uses: IsaacShelton/update-existing-release@v1.3.4
+      with:
+       token: ${{ secrets.GITHUB_TOKEN }}
+       tag: nightly
+       release: nightly
+       prerelease: false
+       replace: true
+       files: ${{ steps.createpackage.outputs.FILES_OUT }}
