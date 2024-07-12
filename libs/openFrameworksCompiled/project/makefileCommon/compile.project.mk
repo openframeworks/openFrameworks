@@ -459,7 +459,7 @@ copyaddonslibs:
 	@if [ -n "$(ADDONS_SHARED_LIBS_SO)" ]; then \
 		echo "Copying shared libraries"; \
 		for lib in $(ADDONS_SHARED_LIBS_SO); do \
-			cp -f $$lib bin/; \
+			cp -fa $$lib bin/; \
 		done \
 	fi
 	@if [ -n "$(ADDONS_SHARED_LIBS_DLL)" ]; then \
@@ -471,7 +471,7 @@ copyaddonslibs:
 	@if [ -n "$(ADDONS_SHARED_LIBS_DYLIB)" ]; then \
 		echo "Copying shared libraries"; \
 		for lib in $(ADDONS_SHARED_LIBS_DYLIB); do \
-			cp -f $$lib bin/; \
+			cp -fa $$lib bin/; \
 		done \
 	fi
 help:
