@@ -6,6 +6,8 @@
 //
 
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import "ofxiOSGLKViewController.h"
@@ -469,4 +471,5 @@
 
 @end
 
+#endif
 #endif

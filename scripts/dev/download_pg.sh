@@ -54,7 +54,7 @@ trapError() {
 
     if [ -e openFrameworksLibs* ]; then
         echo "removing packages"
-    	rm openFrameworksLibs*
+        rm openFrameworksLibs*
     fi
     exit "${code}"
 }
@@ -176,15 +176,27 @@ else
     GUI=""
 fi
 PKG="projectGenerator-${PLATFORM}${GUI}.zip"
+
+
+echo " openFrameworks download_pg.sh"
+
+cd ../../
+mkdir -p libs
+cd libs
+
+mkdir -p download
+cd download
+
+
 download $PKG
 
-echo "Uncompressing Project Generator for $PLATFORM from $PKG"
+echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/$OUTPUT]"
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     unzip -q "$PKG" -d "$OUTPUT"
-    rm $PKG
+    #rm $PKG
 else
     tar xjf "$PKG"
-    rm $PKG
+    #rm $PKG
 fi
 
 if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
@@ -195,26 +207,29 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 
     if ! command -v rsync &> /dev/null
     then      
-        cp -ar ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+        cp -ar ${OUTPUT}/ ${OUTDIR}/projectGenerator
+        cp -ar ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     else
-        rsync -a ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+        rsync -a ${OUTPUT}/ ${OUTDIR}/projectGenerator
+        rsync -a ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     fi
     rm -rf $OUTPUT
+
 else
     if ! command -v rsync &> /dev/null
     then      
-        cp -ar $OUTPUT/projectGenerator$EXT $OUTDIR/ 
+        cp -ar $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
+        cp -ar projectGenerator/projectGenerator.app/Contents/MacOS/projectGenerator projectGenerator
     else
-        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR  
+        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
+        rsync -a projectGenerator/projectGenerator.app/Contents/MacOS/projectGenerator projectGenerator
     fi
     rm -rf $OUTPUT/projectGenerator$EXT
 
 fi
 
 rm -rf $OUTPUT
-rm -rf $PKG
+# rm -rf $PKG
 
-echo "Completed projectGenerator in place"
-
-
-
+echo " ------ "
+echo " openFrameworks download projectGenerator and install complete!"
