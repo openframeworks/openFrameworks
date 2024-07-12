@@ -32,5 +32,8 @@ PROJECTS=(
 )
 
 for PROJECT in "${PROJECTS[@]}"; do
-    "$PG_OF_PATH" -o"$OF_ROOT" -a"$PROJECT"
+	OPTIONS="-o\"$OF_ROOT\" \"$OF_ROOT/$PROJECT\""
+    # Run the project generator executable with the combined options
+    eval "$PG_OF_PATH $OPTIONS"
+    #"$PG_OF_PATH" -o"$OF_ROOT" "$OF_ROOT/$PROJECT"
 done
