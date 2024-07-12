@@ -188,7 +188,7 @@ PLATFORM_CXXFLAGS += $(PLATFORM_CXXVER)
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
+PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs:./ -Wl,--as-needed -Wl,--gc-sections
 
 ifeq ($(OF_USING_STD_FS),1)
 	# gcc 8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't

@@ -207,17 +207,22 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 
     if ! command -v rsync &> /dev/null
     then      
-        cp -arX ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+        cp -ar ${OUTPUT}/ ${OUTDIR}/projectGenerator
+        cp -ar ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     else
-        rsync -a ${OUTPUT}/ ${OUTDIR}/${OUTPUT}
+        rsync -a ${OUTPUT}/ ${OUTDIR}/projectGenerator
+        rsync -a ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     fi
     rm -rf $OUTPUT
+
 else
     if ! command -v rsync &> /dev/null
     then      
-        cp -arX $OUTPUT/projectGenerator$EXT $OUTDIR/
+        cp -ar $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
+        cp -ar projectGenerator/projectGenerator.app/Contents/MacOS/projectGenerator projectGenerator
     else
-        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR
+        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
+        rsync -a projectGenerator/projectGenerator.app/Contents/MacOS/projectGenerator projectGenerator
     fi
     rm -rf $OUTPUT/projectGenerator$EXT
 
