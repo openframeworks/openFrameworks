@@ -376,7 +376,7 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
         then      
             cp -a ${addonslibs[i]}/* ../addons/${addons[i]}/libs/${addonslibs[i]}    
         else
-            rsync -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}/
+            rsync -azp ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}/
         fi
         rm -rf ${addonslibs[i]}
     fi
