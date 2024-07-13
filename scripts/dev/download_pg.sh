@@ -221,10 +221,10 @@ else
     if ! command -v rsync &> /dev/null
     then      
         cp -arX $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
-        cp -arX $OUTPUT/projectGenerator$EXT/projectGenerator.app/Contents/MacOS/projectGenerator ${OUTDIR}/projectGenerator
+        cp -arX $OUTPUT/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
     else
         rsync -avzp $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
-        rsync -avzp $OUTPUT/projectGenerator$EXT/Contents/MacOS/projectGenerator ${OUTDIR}/projectGenerator
+        rsync -avzp $OUTPUT/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
         
     fi
     chmod +x ${OUTDIR}/projectGenerator/projectGenerator
