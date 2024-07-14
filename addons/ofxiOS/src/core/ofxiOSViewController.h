@@ -7,11 +7,14 @@
 
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #import <UIKit/UIKit.h>
-
+#import "EAGLView.h"
+#import "ofxiOSEAGLView.h"
 class ofxiOSApp;
 @class ofxiOSEAGLView;
+@class EAGLViewDelegate;
 
 @interface ofxiOSViewController : UIViewController
 
@@ -30,4 +33,5 @@ class ofxiOSApp;
 
 #define ofxPhoneViewController ofxiOSViewController
 
+#endif
 #endif

@@ -1,4 +1,5 @@
 #include "ofGraphicsCairo.h"
+#if defined(OF_CAIRO)
 #include "ofRendererCollection.h"
 #include "ofCairoRenderer.h"
 
@@ -62,3 +63,4 @@ void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage, bool b3D, ofR
 void ofEndSaveScreenAsSVG(){
 	ofEndSaveScreen();
 }
+#endif

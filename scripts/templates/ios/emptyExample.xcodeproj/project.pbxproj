@@ -60,28 +60,28 @@
 		"1D6058940D05DD3E006BFB54": {
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
+				"GCC_PREFIX_HEADER": "ofxiOS_Prefix.pch",
+				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME": "",
+				"TARGETED_DEVICE_FAMILY": "1,2",
+				"INFOPLIST_FILE": "ofxiOS-Info.plist",
+				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]": "NO",
+				"ALWAYS_SEARCH_USER_PATHS": "NO",
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
 					"src"
 				],
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)"
-				],
-				"GCC_PREFIX_HEADER": "ofxiOS_Prefix.pch",
-				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME": "",
+				"PRODUCT_NAME": "${TARGET_NAME}",
+				"VALID_ARCHS": "$(ARCHS_STANDARD)",
+				"GCC_PRECOMPILE_PREFIX_HEADER": "YES",
 				"FRAMEWORK_SEARCH_PATHS": [
 					"$(inherited)",
 					"$(PROJECT_DIR)"
 				],
-				"VALID_ARCHS": "$(ARCHS_STANDARD)",
-				"GCC_PRECOMPILE_PREFIX_HEADER": "YES",
-				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]": "NO",
 				"ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
-				"INFOPLIST_FILE": "ofxiOS-Info.plist",
-				"TARGETED_DEVICE_FAMILY": "1,2",
-				"PRODUCT_NAME": "${TARGET_NAME}",
-				"ALWAYS_SEARCH_USER_PATHS": "NO"
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)"
+				]
 			},
 			"name": "Debug"
 		},
@@ -292,27 +292,27 @@
 		"1D6058950D05DD3E006BFB54": {
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
 				"OTHER_LDFLAGS": [
 					"$(OF_CORE_LIBS)",
 					"$(OF_CORE_FRAMEWORKS)"
 				],
-				"GCC_PREFIX_HEADER": "ofxiOS_Prefix.pch",
+				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME": "",
+				"TARGETED_DEVICE_FAMILY": "1,2",
+				"INFOPLIST_FILE": "ofxiOS-Info.plist",
+				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]": "NO",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"PRODUCT_NAME": "${TARGET_NAME}",
+				"VALID_ARCHS": "$(ARCHS_STANDARD)",
 				"FRAMEWORK_SEARCH_PATHS": [
 					"$(inherited)",
 					"$(PROJECT_DIR)"
 				],
-				"VALID_ARCHS": "$(ARCHS_STANDARD)",
 				"GCC_PRECOMPILE_PREFIX_HEADER": "YES",
-				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]": "NO",
-				"INFOPLIST_FILE": "ofxiOS-Info.plist",
 				"ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
-				"TARGETED_DEVICE_FAMILY": "1,2",
-				"PRODUCT_NAME": "${TARGET_NAME}",
-				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME": ""
+				"GCC_PREFIX_HEADER": "ofxiOS_Prefix.pch"
 			},
 			"name": "Release"
 		},
@@ -472,10 +472,11 @@
 			"sourceTree": "SOURCE_ROOT"
 		},
 		"BB16F26B0F2B646B00518274": {
+			"path": "../../../addons",
 			"isa": "PBXGroup",
 			"name": "addons",
 			"children": [],
-			"sourceTree": "<group>"
+			"sourceTree": "SOURCE_ROOT"
 		},
 		"E4D8936F11527B74007E1F53": {
 			"isa": "PBXBuildFile",

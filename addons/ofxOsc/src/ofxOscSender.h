@@ -62,6 +62,14 @@ public:
 	bool sendParameter(const ofAbstractParameter & parameter);
 	bool send(const ofAbstractParameter & parameter) { return sendParameter(parameter); };
 
+		/// creates & sends a message with arguments in one swift go
+	template <typename... Args>
+	bool send(std::string address, Args... args) {
+		ofxOscMessage m{address};
+		if (sizeof...(Args)) m.add(args...); // other gets interpreted as OSC::NULL which is probably not expected
+		return send(m);
+	};
+
 	/// \return current host name/ip
 	std::string getHost() const;
 
