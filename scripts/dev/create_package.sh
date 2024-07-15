@@ -103,10 +103,6 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
-if [ "$platform" == "msys2" ] && ! ([ "$libs_abi" == "mingw64" ]); then
-    echo ./create_package.sh : libs_abi must be \'mingw64\' for \'msys2\' platform
-    exit 1
-fi
 
 echo
 echo
@@ -374,7 +370,9 @@ function createPackage {
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
         scripts/macos/download_latest_libs.sh
-      elif [ "$pkg_platform" = "macos" ]; then
+     elif [ "$pkg_platform" = "emscripten" ]; then
+       scripts/emscripten/download_libs.sh -n
+    elif [ "$pkg_platform" = "macos" ]; then
         scripts/osx/download_latest_libs.sh
         scripts/macos/download_latest_libs.sh
         scripts/emscripten/download_libs.sh -n
@@ -412,6 +410,8 @@ function createPackage {
         otherplatforms=$(remove_current_platform "$otherplatforms" "osx")
         otherplatforms=$(remove_current_platform "$otherplatforms" "tvos")
         otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
+    elif [ "$pkg_platform" = "emscripten" ]; then
+        otherplatforms=$(remove_current_platform "$all_platforms" "emscripten")
     elif [ "$pkg_platform" = "android" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "android")
     else
