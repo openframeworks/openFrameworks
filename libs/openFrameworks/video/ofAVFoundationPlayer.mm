@@ -431,18 +431,17 @@ void ofAVFoundationPlayer::initTextureCache() {
      *  which is unecessary in this case because the texture already exists.
      *  so... we can use ofTexture::setUseExternalTextureID() to get around this.
      */
-
+  
 	if (!videoTexture.isAllocated()) {
 		int videoTextureW = getWidth();
 		int videoTextureH = getHeight();
 		videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA);
-
-		ofTextureData & texData = videoTexture.getTextureData();
-		texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
-		texData.tex_u = 1.0f; // assuming this is something to do with the way ios creates the texture cache.
 		videoTexture.setTextureMinMagFilter(GL_LINEAR, GL_LINEAR);
 		videoTexture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-	}
+    }
+    ofTextureData & texData = videoTexture.getTextureData();
+    texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
+    texData.tex_u = 1.0f; // assuming this is something to do with the way ios
 
     CVReturn err;
     unsigned int textureCacheID;

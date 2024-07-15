@@ -30,8 +30,8 @@
 
 
 #pragma once
-
-
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 /****** protocol, delegate, interface, whatever you want to call it ******/
 
 class ofxiOSMapKitListener { 
@@ -45,3 +45,4 @@ public:
 };
 
 #define ofxiPhoneMapKitListener ofxiOSMapKitListener
+#endif
