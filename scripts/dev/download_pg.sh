@@ -210,20 +210,25 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
         cp -ar ${OUTPUT}/ ${OUTDIR}/projectGenerator
         cp -ar ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     else
-        rsync -a ${OUTPUT}/ ${OUTDIR}/projectGenerator
-        rsync -a ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
+        rsync -avzp ${OUTPUT}/ ${OUTDIR}/projectGenerator
+        rsync -avzp ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     fi
+    chmod +x ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
+    chmod +x ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe
     rm -rf $OUTPUT
 
 else
     if ! command -v rsync &> /dev/null
     then      
-        cp -ar $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
-        cp -ar projectGenerator/projectGenerator.app/Contents/MacOS/projectGenerator projectGenerator
+        cp -arX $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
+        cp -arX $OUTPUT/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
     else
-        rsync -a $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
-        rsync -a projectGenerator/projectGenerator.app/Contents/MacOS/projectGenerator projectGenerator
+        rsync -avzp $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
+        rsync -avzp $OUTPUT/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
+        
     fi
+    chmod +x ${OUTDIR}/projectGenerator/projectGenerator
+    chmod +x ${OUTDIR}/projectGenerator/projectGenerator$EXT/Contents/MacOS/projectGenerator
     rm -rf $OUTPUT/projectGenerator$EXT
 
 fi

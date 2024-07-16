@@ -152,7 +152,6 @@ enum ofTargetPlatform{
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
-    #define OF_RTAUDIO_6
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define __WINDOWS_DS__
@@ -208,8 +207,11 @@ enum ofTargetPlatform{
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
-    #define OF_RTAUDIO_6
-    #define OF_NO_FMOD
+    
+	#ifndef OF_NO_FMOD
+		#define OF_NO_FMOD
+	#endif
+
     
 	#include "GL/glew.h"
     #include "OpenGL/OpenGL.h"
@@ -311,7 +313,9 @@ typedef TESSindex ofIndexType;
 
 #if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
 	#undef USE_FMOD // No FMOD lib for ARM64 yet
-	#define OF_NO_FMOD
+	#ifndef OF_NO_FMOD
+		#define OF_NO_FMOD
+	#endif
 	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 

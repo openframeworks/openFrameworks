@@ -67,6 +67,7 @@ jobs:
     #     retention-days: 1
     - name: Update Release
       uses: IsaacShelton/update-existing-release@v1.3.4
+      if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ github.event.inputs.release }}

@@ -12,7 +12,7 @@ msg() {
 
 # MARK: COPY RESOURCES ----------------------------------------------------
 copy_resources() {
-	msg "Copying Resources - Icon and libfmod"
+	msg "Copying Resources - Icon"
 
 	# echo mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 	mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
@@ -24,6 +24,7 @@ copy_resources() {
 	fi
 	# Copy libfmod and change install directory for fmod to run
 	if [ -z "$OF_NO_FMOD" ] ; then
+		msg "Copying Resources - Fmod"
 		echo rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 		rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 	fi
