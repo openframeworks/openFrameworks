@@ -12,7 +12,7 @@ msg() {
 
 # MARK: COPY RESOURCES ----------------------------------------------------
 copy_resources() {
-	msg "Copying Resources - Icon and libfmod"
+	msg "Copying Resources - Icon"
 
 	# echo mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 	mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
@@ -24,6 +24,7 @@ copy_resources() {
 	fi
 	# Copy libfmod and change install directory for fmod to run
 	if [ -z "$OF_NO_FMOD" ] ; then
+		msg "Copying Resources - Fmod"
 		echo rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 		rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 	fi
@@ -77,7 +78,7 @@ code_sign() {
 		FRAMEWORKS_DIR="${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
 		echo "$FRAMEWORKS_DIR"
 		if [ -d "$FRAMEWORKS_DIR" ] ; then
-			FRAMEWORKS=$(find "${FRAMEWORKS_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
+			FRAMEWORKS=$(find "${FRAMEWORKS_DIR}" -depth -type d -name "*.framework" -or -name "*.xcframework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
 			RESULT=$?
 			if [[ $RESULT != 0 ]] ; then
 				exit 1

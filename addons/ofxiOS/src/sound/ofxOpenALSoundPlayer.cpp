@@ -23,6 +23,8 @@
  ************************************************************************/ 
 
 #import "ofxOpenALSoundPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofMath.h"
@@ -638,3 +640,4 @@ void ofxOpenALSoundPlayer::ofxALSoundSetDistanceModel(ALenum model) {
 		alDistanceModel(model);
 }
 
+#endif

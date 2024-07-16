@@ -7,6 +7,17 @@ on:
             description: 'release'     
             required: true
             default: 'nightly'
+# on:
+#   push:
+#     paths-ignore:
+#       - '**/README.md'
+#   pull_request:
+#     paths-ignore:
+#       - '**/README.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   ccache: ccache
@@ -14,6 +25,7 @@ env:
 jobs:
   manual-nightly:
     runs-on: ubuntu-24.04
+    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:
@@ -32,7 +44,9 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.13
       with:
-        key: ${{ matrix.cfg.target }}    
+        key: ${{ matrix.cfg.target }}
+    - name: update submodules
+      run: ./scripts/dev/init_submodules.sh
     - name: Install dependencies
       run: ./scripts/ci/${{matrix.cfg.target}}/install.sh;
     - name: Download libs
@@ -40,8 +54,20 @@ jobs:
     - name: Create Package
       run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
       id: createpackage
+    - name: List output directory
+      run: ls -lah out/
+    # - name: Test Artefact zip
+    #   run: |
+    #     tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
+    # - name: Upload binaries as Artefact
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
+    #     path: out/manual-mega_artefact.tar.bz2
+    #     retention-days: 1
     - name: Update Release
       uses: IsaacShelton/update-existing-release@v1.3.4
+      if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ github.event.inputs.release }}

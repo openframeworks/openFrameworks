@@ -1,4 +1,5 @@
 #include "ofRtAudioSoundStream.h"
+#if defined(OF_RTAUDIO)
 #include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofLog.h"
@@ -80,9 +81,13 @@ std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Ap
 		if(audioTemp.getCurrentApi()!=rtAudioApi && rtAudioApi!=RtAudio::Api::UNSPECIFIED){
 			return deviceList;
 		}
-		auto deviceCount = audioTemp.getDeviceCount();
 		RtAudio::DeviceInfo info;
+#if RTAUDIO_VERSION_MAJOR >= 6
+		for (unsigned int i: audioTemp.getDeviceIds()) {
+#else
+		auto deviceCount = audioTemp.getDeviceCount();
 		for (unsigned int i = 0; i < deviceCount; i++) {
+#endif
 			try {
 				info = audioTemp.getDeviceInfo(i);
 			}
@@ -315,3 +320,4 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 
 	return 0;
 }
+#endif

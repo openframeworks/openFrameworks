@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofRectangle.h"
+#include "ofConstants.h"
+#if defined(OF_CAIRO)
 
 /// \}
 /// \name Screen Saving
@@ -36,4 +38,4 @@ void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage = false, bool 
 /// \sa ofBeginSaveScreenAsSVG()
 void ofEndSaveScreenAsSVG();
 
-/// \}
+#endif

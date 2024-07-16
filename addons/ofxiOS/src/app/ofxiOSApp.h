@@ -8,6 +8,8 @@
  */
 
 #pragma once
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 
 #include "ofBaseApp.h"
 #include "ofxiOSAlerts.h"
@@ -51,3 +53,5 @@ public:
 
 [[deprecated("use ofxiOSApp")]]
 typedef ofxiOSApp ofxiPhoneApp;
+
+#endif
