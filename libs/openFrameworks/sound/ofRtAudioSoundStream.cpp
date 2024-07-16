@@ -1,5 +1,5 @@
-#if defined(OF_RTAUDIO)
 #include "ofRtAudioSoundStream.h"
+#if defined(OF_RTAUDIO)
 #include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofLog.h"
