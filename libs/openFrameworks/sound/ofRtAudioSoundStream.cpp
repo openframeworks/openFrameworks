@@ -82,7 +82,12 @@ std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Ap
 			return deviceList;
 		}
 		RtAudio::DeviceInfo info;
+#if RTAUDIO_VERSION_MAJOR >= 6
 		for (unsigned int i: audioTemp.getDeviceIds()) {
+#else
+		auto deviceCount = audioTemp.getDeviceCount();
+		for (unsigned int i = 0; i < deviceCount; i++) {
+#endif
 			try {
 				info = audioTemp.getDeviceInfo(i);
 			}

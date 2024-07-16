@@ -150,7 +150,6 @@ enum ofTargetPlatform{
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
-    #define OF_RTAUDIO_6
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define __WINDOWS_DS__
@@ -206,7 +205,6 @@ enum ofTargetPlatform{
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
-    #define OF_RTAUDIO_6
     
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
