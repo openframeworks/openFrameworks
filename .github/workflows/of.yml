@@ -235,7 +235,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
-  build-linux64-22.04:
+  build-linux64-2204:
     runs-on: ubuntu-22.04
     strategy:
         matrix:
