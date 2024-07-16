@@ -76,13 +76,6 @@ echoDots(){
     done
 }
 
-if [ "$platform" = "vs_min" ]; then
-    platform="vs"
-    min_package=1
-    libs_abi=_x64
-else
-    min_package=0
-fi
 
 if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
     echo usage:
@@ -103,10 +96,6 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
-if [ "$platform" == "msys2" ] && ! ([ "$libs_abi" == "mingw64" ]); then
-    echo ./create_package.sh : libs_abi must be \'mingw64\' for \'msys2\' platform
-    exit 1
-fi
 
 echo
 echo
@@ -364,17 +353,19 @@ function createPackage {
         scripts/msys2/download_libs.sh -a $libs_abi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
-        if [ $min_package == 1 ]; then
-            scripts/vs/download_latest_libs.sh -a 64
-        else
+        if [ "$libs_abi" = "" ]; then
             scripts/vs/download_latest_libs.sh
+        else
+            scripts/vs/download_latest_libs.sh -a $libs_abi
         fi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
         scripts/macos/download_latest_libs.sh
-      elif [ "$pkg_platform" = "macos" ]; then
+     elif [ "$pkg_platform" = "emscripten" ]; then
+       scripts/emscripten/download_libs.sh -n
+    elif [ "$pkg_platform" = "macos" ]; then
         scripts/osx/download_latest_libs.sh
         scripts/macos/download_latest_libs.sh
         scripts/emscripten/download_libs.sh -n
@@ -412,6 +403,8 @@ function createPackage {
         otherplatforms=$(remove_current_platform "$otherplatforms" "osx")
         otherplatforms=$(remove_current_platform "$otherplatforms" "tvos")
         otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
+    elif [ "$pkg_platform" = "emscripten" ]; then
+        otherplatforms=$(remove_current_platform "$all_platforms" "emscripten")
     elif [ "$pkg_platform" = "android" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "android")
     else
@@ -644,18 +637,23 @@ function createPackage {
 
     #create compressed package
    if [[ "$pkg_platform" =~ ^(linux|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]]; then
+        if [ "$libs_abi" = "" ]; then
+            pkg_name=of_v${pkg_version}_${pkg_platform}_release
+        else
+            pkg_name=of_v${pkg_version}_${pkg_platform}_${libs_abi}_release
+        fi 
         echo "compressing package to of_v${pkg_version}_${pkg_platform}${libs_abi}_release.tar.gz"
         cd $pkg_ofroot/..
-        mkdir of_v${pkg_version}_${pkg_platform}${libs_abi}_release
-        mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}${libs_abi}_release
-        mv ${pkgfolder}/.* of_v${pkg_version}_${pkg_platform}${libs_abi}_release 2>/dev/null || true  # add hidden files 
-        COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}${libs_abi}_release.tar.gz of_v${pkg_version}_${pkg_platform}${libs_abi}_release
-        rm -Rf of_v${pkg_version}_${pkg_platform}${libs_abi}_release
+        mkdir ${pkg_name}
+        mv ${pkgfolder}/* ${pkg_name}
+        mv ${pkgfolder}/.* ${pkg_name} 2>/dev/null || true # add hidden files 
+        COPYFILE_DISABLE=true tar czf ${pkg_name}.tar.gz ${pkg_name}
+        rm -Rf ${pkg_name}
     else
         if [ "$libs_abi" = "" ]; then
             pkg_name=of_v${pkg_version}_${pkg_platform}_release
         else
-            pkg_name=of_v${pkg_version}_${pkg_platform}${libs_abi}_release
+            pkg_name=of_v${pkg_version}_${pkg_platform}_${libs_abi}_release
         fi 
         echo "compressing package to ${pkg_name}.zip"
         cd $pkg_ofroot/..
