@@ -77,9 +77,9 @@ rm -f /var/www/versions/nightly/of_v*_nightly.*
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
 
-#mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc4_nightly.tar.gz
-#mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc5_nightly.tar.gz
-mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_nightly.tar.gz
+#mv /var/www/versions/nightly/of_v${lastversion}_linux64_gcc4_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_gcc4_nightly.tar.gz
+#mv /var/www/versions/nightly/of_v${lastversion}_linux64_gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_gcc5_nightly.tar.gz
+mv /var/www/versions/nightly/of_v${lastversion}_linux64_gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_gcc6_nightly.tar.gz
 #mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_clang64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_clang64_nightly.zip
