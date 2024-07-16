@@ -1,19 +1,19 @@
 name: manual-nightly
 
-# on: 
-#   workflow_dispatch:
-#     inputs:
-#           release:
-#             description: 'release'     
-#             required: true
-#             default: 'nightly'
-on:
-  push:
-    paths-ignore:
-      - '**/README.md'
-  pull_request:
-    paths-ignore:
-      - '**/README.md'
+on: 
+  workflow_dispatch:
+    inputs:
+          release:
+            description: 'release'     
+            required: true
+            default: 'nightly'
+# on:
+#   push:
+#     paths-ignore:
+#       - '**/README.md'
+#   pull_request:
+#     paths-ignore:
+#       - '**/README.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,7 +25,7 @@ env:
 jobs:
   manual-nightly:
     runs-on: ubuntu-24.04
-    # if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
         matrix:
           cfg:
