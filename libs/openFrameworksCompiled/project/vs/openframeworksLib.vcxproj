@@ -83,9 +83,10 @@
       <WarningLevel>Level3</WarningLevel>
       <BrowseInformation>false</BrowseInformation>
       <CompileAs>CompileAsCpp</CompileAs>
-      <LanguageStandard>stdcpp23</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">false</BufferSecurityCheck>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc17</LanguageStandard_C>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>
@@ -109,7 +110,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level1</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp23</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">false</BufferSecurityCheck>
