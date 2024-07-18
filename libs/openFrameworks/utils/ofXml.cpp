@@ -246,7 +246,7 @@ unsigned int ofXml::getUintValue() const{
 }
 
 float ofXml::getFloatValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float f = this->xml.text().as_float();
 	std::setlocale( LC_NUMERIC, loc );
@@ -254,7 +254,7 @@ float ofXml::getFloatValue() const{
 }
 
 double ofXml::getDoubleValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float d = this->xml.text().as_double();
 	std::setlocale( LC_NUMERIC, loc );
@@ -298,7 +298,7 @@ unsigned int ofXml::Attribute::getUintValue() const{
 }
 
 float ofXml::Attribute::getFloatValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float f = this->attr.as_float();
 	std::setlocale( LC_NUMERIC, loc );
@@ -306,7 +306,7 @@ float ofXml::Attribute::getFloatValue() const{
 }
 
 double ofXml::Attribute::getDoubleValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float d = this->attr.as_double();
 	std::setlocale( LC_NUMERIC, loc );
