@@ -527,6 +527,9 @@ function createPackage {
     cd ${pkg_ofroot}/libs/openFrameworksCompiled/project
     rm -Rf $otherplatforms
 
+    cd ${pkg_ofroot}/libs/
+    rm -Rf download
+
     #delete scripts
     cd $pkg_ofroot/scripts
 
