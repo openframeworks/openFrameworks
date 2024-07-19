@@ -112,7 +112,7 @@ public:
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
-//	GLXContext getGLXContext();
+	GLXContext getGLXContext();
 #endif
 
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
