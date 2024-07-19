@@ -48,21 +48,21 @@ class ofxXmlSettings{
 public:
 
 	ofxXmlSettings();
-	ofxXmlSettings(const std::string& xmlFile);
+	ofxXmlSettings(const of::filesystem::path & fileName);
 
 	~ofxXmlSettings();
 
 	void setVerbose(bool _verbose);
 
 	[[deprecated("use load()")]]
-	bool loadFile(const std::string& xmlFile);
+	bool loadFile(const of::filesystem::path & fileName);
 	[[deprecated("use save()")]]
-	bool saveFile(const std::string& xmlFile);
+	bool saveFile(const of::filesystem::path & fileName);
 	[[deprecated("use save()")]]
 	bool saveFile();
 
-	bool load(const std::string & path);
-	bool save(const std::string & path);
+	bool load(const of::filesystem::path & fileName);
+	bool save(const of::filesystem::path & fileName);
 	bool save();
 
 

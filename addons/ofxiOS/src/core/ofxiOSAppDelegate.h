@@ -30,9 +30,10 @@
  * ***********************************************************************/ 
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) 
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <UIKit/UIKit.h>
 
@@ -65,4 +66,4 @@
 #define ofxiPhoneAppDelegate ofxiOSAppDelegate
 
 #endif
-
+#endif

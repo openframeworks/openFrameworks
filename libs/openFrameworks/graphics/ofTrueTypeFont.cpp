@@ -233,8 +233,8 @@ static ofPath makeContoursForCharacter(FT_Face face){
 #include <ApplicationServices/ApplicationServices.h>
 
 //------------------------------------------------------------------
-static string osxFontPathByName(const string& fontname){
-	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
+static string osxFontPathByName(const of::filesystem::path & fileName){
+	CFStringRef targetName = CFStringCreateWithCString(nullptr, fileName.c_str(), kCFStringEncodingUTF8);
 	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
 	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
 	string fontPath = "";
@@ -374,14 +374,15 @@ static string linuxFontPathByName(const string & fontname){
 
 //-----------------------------------------------------------
 // FIXME: it seems first parameter is string because it represents the font name only
-static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face, of::filesystem::path & filename, int index){
+static bool loadFontFace(const string & _fontname, FT_Face & face, 
+						 of::filesystem::path & _filename, int index){
 	auto fontname = _fontname;
-	filename = ofToDataPathFS(_fontname, true);
+	auto filename = ofToDataPath(_filename);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
 		// FIXME: fs::path in input and output
-		filename = linuxFontPathByName(_fontname.string());
+		filename = linuxFontPathByName(_fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
@@ -396,7 +397,7 @@ static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face,
 			fontname = "Menlo Regular";
 		}
 		// FIXME: fs::path in input and output
-		filename = osxFontPathByName(fontname.string());
+		filename = osxFontPathByName(_fontname);
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Arial";
@@ -406,7 +407,7 @@ static bool loadFontFace(const of::filesystem::path & _fontname, FT_Face & face,
 			fontname = "Courier New";
 		}
 		// FIXME: fs::path in input and output
-		filename = winFontPathByName(ofPathToString(fontname));
+		filename = winFontPathByName(_fontname);
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
@@ -465,7 +466,7 @@ bool ofTrueTypeFont::initLibraries(){
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
-	bLoadedOk		= false;
+	bLoadedOk = false;
 	letterSpacing = 1;
 	spaceSize = 1;
 	fontUnitScale = 1;
@@ -730,7 +731,8 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-	if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
+	// FIXME: no need to pass two different parameters for the same variable
+	if(!loadFontFace(ofPathToString(settings.fontName), loadFace, settings.fontName, settings.index)){
 		return false;
 	}
 	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);
@@ -1149,13 +1151,19 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 		if(filled){
 			charOutlines[indexForGlyph(c)].draw(x,y);
 		}else{
+			float cw = charOutlinesContour[indexForGlyph(c)].getStrokeWidth();
+			charOutlinesContour[indexForGlyph(c)].setStrokeWidth( ofGetStyle().lineWidth );
 			charOutlinesContour[indexForGlyph(c)].draw(x,y);
+			charOutlinesContour[indexForGlyph(c)].setStrokeWidth( cw );
 		}
 	}else{
 		if(filled){
 			charOutlinesNonVFlipped[indexForGlyph(c)].draw(x,y);
 		}else{
+			float cw = charOutlinesNonVFlippedContour[indexForGlyph(c)].getStrokeWidth();
+			charOutlinesNonVFlippedContour[indexForGlyph(c)].setStrokeWidth( ofGetStyle().lineWidth );
 			charOutlinesNonVFlippedContour[indexForGlyph(c)].draw(x,y);
+			charOutlinesNonVFlippedContour[indexForGlyph(c)].setStrokeWidth( cw );
 		}
 	}
 }

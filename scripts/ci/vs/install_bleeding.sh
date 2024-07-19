@@ -6,18 +6,34 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 
 unset BITS
 
-${OF_ROOT}/scripts/vs/download_latest_libs.sh -p vs --silent
+cd ${OF_ROOT}
+./scripts/vs/download_latest_libs.sh -p vs --silent
 
-cd ~/
 rm -rf projectGenerator
-mkdir -p ~/projectGenerator
-cd ~/projectGenerator
+mkdir -p projectGenerator
+cd projectGenerator
 
 echo "Downloading projectGenerator from Github Bleeding"
-downloader https://github.com/openframeworks/projectGenerator/releases/download/bleeding/projectGenerator-vs.zip 2> /dev/null
+downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip 2> /dev/null
 unzip projectGenerator-vs.zip 2> /dev/null
 rm projectGenerator-vs.zip
+ls
+cd ../
 
-cd $OF_ROOT
-PG_OF_PATH=$OF_ROOT ~/projectGenerator/projectGenerator.exe examples/templates/emptyExample
-PG_OF_PATH=$OF_ROOT ~/projectGenerator/projectGenerator.exe examples/templates/allAddonsExample
+# downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
+# unzip projectGenerator-vs-gui.zip 2> /dev/null
+# rm projectGenerator-vs-gui.zip
+
+PG_OF_PATH=$OF_ROOT/projectGenerator/projectGenerator.exe
+
+PROJECTS=(
+    "examples/templates/emptyExample"
+    "examples/templates/allAddonsExample"
+)
+
+for PROJECT in "${PROJECTS[@]}"; do
+	OPTIONS="-o\"$OF_ROOT\" \"$OF_ROOT/$PROJECT\""
+    # Run the project generator executable with the combined options
+    eval "$PG_OF_PATH $OPTIONS"
+    #"$PG_OF_PATH" -o"$OF_ROOT" "$OF_ROOT/$PROJECT"
+done

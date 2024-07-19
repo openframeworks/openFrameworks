@@ -6,6 +6,8 @@
 //
 
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import "ofxiOSGLKViewController.h"
@@ -13,6 +15,7 @@
 #include "ofxiOSGLKView.h"
 #import "ofxiOSExtras.h"
 #include "ofAppiOSWindow.h"
+#include <glm/gtc/constants.hpp>
 
 @interface ofxiOSGLKViewController() <EAGLKViewDelegate, GLKViewControllerDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
@@ -469,4 +472,5 @@
 
 @end
 
+#endif
 #endif
