@@ -655,7 +655,7 @@ fs::path ofFile::path() const {
 //------------------------------------------------------------------------------------------------------------
 // FIXME: Deprecate
 string ofFile::getExtension() const {
-	auto dotext = myFile.extension().string();
+	auto dotext { ofPathToString(myFile.extension()) };
 	// FIXME: probably not needed;
 	if(!dotext.empty() && dotext.front()=='.'){
 		return std::string(dotext.begin()+1,dotext.end());
@@ -2026,3 +2026,7 @@ std::string ofPathToString(const fs::path & path) {
 	}
 	return {};
 }
+
+//std::string ofPathExtensionToLowerString(const of::filesystem::path & path) {
+//	return ofToLower(ofPathToString(path));
+//}
