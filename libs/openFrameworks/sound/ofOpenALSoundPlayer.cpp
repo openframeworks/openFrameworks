@@ -5,8 +5,10 @@
 #define GLM_FORCE_CTOR_INIT
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/scalar_common.hpp>
+
 #include "ofLog.h"
 #include "ofEvents.h"
+#include "ofUtils.h"
 
 #if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
 #include <OpenAL/al.h>
@@ -455,7 +457,6 @@ bool ofOpenALSoundPlayer::stream(const fs::path & fileName, std::vector<short> &
 #ifdef OF_USING_MPG123
 	auto ext { ofToLower(ofPathToString(fileName.extension())) };
 	if (ext == ".mp3" || mp3streamf) {
-	// if (fileName.extension() == fs::path{".mp3"} || fileName.extension() == fs::path{".MP3"} || mp3streamf) {
 		if(!mpg123Stream(fileName,buffer,fftAuxBuffer)) return false;
 	} else
 #endif
@@ -473,7 +474,7 @@ bool ofOpenALSoundPlayer::stream(const fs::path & fileName, std::vector<short> &
 	return true;
 }
 
-bool ofOpenALSoundPlayer::readFile(const fs::path& fileName, std::vector<short> & buffer){
+bool ofOpenALSoundPlayer::readFile(const fs::path & fileName, std::vector<short> & buffer){
 #ifdef OF_USING_MPG123
 	auto ext { ofToLower(ofPathToString(fileName.extension())) };
 	if (ext == ".mp3") {
