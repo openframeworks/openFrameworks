@@ -168,6 +168,7 @@ ReleaseABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) $(JOBS) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
+	@$(MAKE) $(JOBS) copyaddonslibs ADDONS_SHARED_LIBS_SO="$(ADDONS_SHARED_LIBS_SO)" ADDONS_SHARED_LIBS_DLL="$(ADDONS_SHARED_LIBS_DLL)" ADDONS_SHARED_LIBS_DYLIB="$(ADDONS_SHARED_LIBS_DYLIB)"
 	@$(MAKE) $(JOBS) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
@@ -175,6 +176,7 @@ DebugABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) $(JOBS) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
+	@$(MAKE) $(JOBS) copyaddonslibs ADDONS_SHARED_LIBS_SO="$(ADDONS_SHARED_LIBS_SO)" ADDONS_SHARED_LIBS_DLL="$(ADDONS_SHARED_LIBS_DLL)" ADDONS_SHARED_LIBS_DYLIB="$(ADDONS_SHARED_LIBS_DYLIB)"
 	@$(MAKE) $(JOBS) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
@@ -453,6 +455,25 @@ copyaddonsdata:
 	@mkdir -p bin/data
 	@cp -rf $(PROJECT_ADDONS_DATA) bin/data/
 
+copyaddonslibs:
+	@if [ -n "$(ADDONS_SHARED_LIBS_SO)" ]; then \
+		echo "Copying shared libraries"; \
+		for lib in $(ADDONS_SHARED_LIBS_SO); do \
+			cp -fa $$lib bin/; \
+		done \
+	fi
+	@if [ -n "$(ADDONS_SHARED_LIBS_DLL)" ]; then \
+		echo "Copying shared libraries"; \
+		for lib in $(ADDONS_SHARED_LIBS_DLL); do \
+			cp -f $$lib bin/; \
+		done \
+	fi
+	@if [ -n "$(ADDONS_SHARED_LIBS_DYLIB)" ]; then \
+		echo "Copying shared libraries"; \
+		for lib in $(ADDONS_SHARED_LIBS_DYLIB); do \
+			cp -fa $$lib bin/; \
+		done \
+	fi
 help:
 	@echo
 	@echo openFrameworks universal makefile

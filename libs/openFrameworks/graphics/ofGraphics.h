@@ -774,6 +774,17 @@ void ofSetCurveResolution(int res);
 /// ~~~~
 void ofSetLineWidth(float lineWidth);
 
+/// \brief Sets the size of the points after mesh.drawVertices() called after.
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofSetPointSize(1);          // set point size to 1
+///     mesh.drawVertices(); 		 // draw small points
+///     ofSetPointSize(10);         // set point size to 10
+///     mesh.drawVertices();  		// draw fat points
+/// }
+/// ~~~~
+void ofSetPointSize(float pointSize);
+
 /// \brief Set depth testing on or off to either sort by z-depth (`true`)
 /// or draw order (`false`).
 void ofSetDepthTest(bool depthTest);
