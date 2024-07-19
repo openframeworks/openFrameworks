@@ -7,6 +7,7 @@
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
+#include <memory>
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 struct __GLXcontextRec;
