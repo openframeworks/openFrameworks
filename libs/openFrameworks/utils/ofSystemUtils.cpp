@@ -382,7 +382,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		
 		// FIXME: check if it is not empty
 		if(!defaultPath.empty()){
-			wcscpy(szDir, converter.from_bytes(ofPathToString(ofToDataPath(defaultPath))).c_str());
+			// wcscpy(szDir, converter.from_bytes(ofPathToString(ofToDataPath(defaultPath))).c_str());
+			wcscpy(szDir, converter.from_bytes(ofToDataPath(defaultPath).c_str()).c_str());
+
 			// wcscpy(szDir, ofToDataPath(defaultPath).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
