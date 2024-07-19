@@ -249,7 +249,7 @@ float ofXml::getFloatValue() const{
 	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float f = this->xml.text().as_float();
-	std::setlocale( LC_NUMERIC, loc );
+	std::setlocale( LC_NUMERIC, loc.c_str() );
 	return f;
 }
 
@@ -301,7 +301,7 @@ float ofXml::Attribute::getFloatValue() const{
 	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float f = this->attr.as_float();
-	std::setlocale( LC_NUMERIC, loc );
+	std::setlocale( LC_NUMERIC, loc.c_str() );
 	return f;
 }
 
@@ -309,7 +309,7 @@ double ofXml::Attribute::getDoubleValue() const{
 	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float d = this->attr.as_double();
-	std::setlocale( LC_NUMERIC, loc );
+	std::setlocale( LC_NUMERIC, loc.c_str() );
 	return d;
 }
 
