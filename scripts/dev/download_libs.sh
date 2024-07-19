@@ -165,21 +165,16 @@ EOF
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
-
-        if [ -n "$MINGW_PACKAGE_PREFIX" ]; then
-            ARCH=$MINGW_PACKAGE_PREFIX
+        if [ "$MSYSTEM" == "MINGW64" ] || [ "$MSYSTEM" == "mingw64" ]; then
+            ARCH=mingw64
+        elif [ "$MSYSTEM" == "CLANGARM64" ] || [ "$MSYSTEM" == "clangarm64" ]; then
+            ARCH=clangarm64
+        elif [ "$MSYSTEM" == "UCRT64" ]; then
+            ARCH=ucrt64
+        elif [ "$MSYSTEM" == "CLANG64" ]; then
+            ARCH=clang64
         else
-            if [ "$MSYSTEM" == "MINGW64" ] || [ "$MSYSTEM" == "mingw64" ]; then
-                ARCH=mingw64
-            elif [ "$MSYSTEM" == "CLANGARM64" ] || [ "$MSYSTEM" == "clangarm64" ]; then
-                ARCH=clangarm64
-            elif [ "$MSYSTEM" == "UCRT64" ]; then
-                ARCH=ucrt64
-            elif [ "$MSYSTEM" == "CLANG64" ]; then
-                ARCH=clang64
-            else
-                ARCH=clang64
-            fi
+            ARCH=clang64
         fi
     fi
 
@@ -376,7 +371,7 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
         then      
             cp -a ${addonslibs[i]}/* ../addons/${addons[i]}/libs/${addonslibs[i]}    
         else
-            rsync -a ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}/
+            rsync -azp ${addonslibs[i]}/ ../addons/${addons[i]}/libs/${addonslibs[i]}/
         fi
         rm -rf ${addonslibs[i]}
     fi

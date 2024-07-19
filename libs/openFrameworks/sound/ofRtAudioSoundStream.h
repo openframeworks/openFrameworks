@@ -1,4 +1,5 @@
 #pragma once
+#include "ofConstants.h"
 #if defined(OF_RTAUDIO)
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"

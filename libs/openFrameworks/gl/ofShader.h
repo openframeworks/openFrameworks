@@ -236,8 +236,8 @@ public:
 
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
-	bool setupShaderFromSource(GLenum type, std::string source, std::string sourceDirectoryPath = "");
-	bool setupShaderFromFile(GLenum type, const of::filesystem::path& filename);
+	bool setupShaderFromSource(GLenum type, std::string source, of::filesystem::path sourceDirectoryPath = "");
+	bool setupShaderFromFile(GLenum type, const of::filesystem::path & filename);
 
 	// links program with all compiled shaders
 	bool linkProgram();
@@ -303,8 +303,8 @@ private:
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-	static std::string parseForIncludes( const std::string& source, const of::filesystem::path& sourceDirectoryPath = "");
-	static std::string parseForIncludes( const std::string& source, std::vector<std::string>& included, int level = 0, const of::filesystem::path& sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string & source, const of::filesystem::path & sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string & source, std::vector<of::filesystem::path> & included, int level = 0, const of::filesystem::path & sourceDirectoryPath = "");
 
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID
