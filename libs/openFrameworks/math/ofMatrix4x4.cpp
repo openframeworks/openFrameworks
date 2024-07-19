@@ -220,7 +220,7 @@ ofQuaternion ofMatrix4x4::getRotate() const
         QZ = tq[3];
     }
 
-    s = sqrt(0.25/tq[j]);
+    s = std::sqrt(0.25f/tq[j]);
     QW *= s;
     QX *= s;
     QY *= s;
@@ -239,10 +239,10 @@ ofQuaternion ofMatrix4x4::getRotate() const
     ofQuaternion q;
 
     // From http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
-    QW = 0.5 * sqrt( osg::maximum( 0.0, 1.0 + _mat[0][0] + _mat[1][1] + _mat[2][2] ) );
-    QX = 0.5 * sqrt( osg::maximum( 0.0, 1.0 + _mat[0][0] - _mat[1][1] - _mat[2][2] ) );
-    QY = 0.5 * sqrt( osg::maximum( 0.0, 1.0 - _mat[0][0] + _mat[1][1] - _mat[2][2] ) );
-    QZ = 0.5 * sqrt( osg::maximum( 0.0, 1.0 - _mat[0][0] - _mat[1][1] + _mat[2][2] ) );
+    QW = 0.5 * std::sqrt( osg::maximum( 0.0, 1.0 + _mat[0][0] + _mat[1][1] + _mat[2][2] ) );
+    QX = 0.5 * std::sqrt( osg::maximum( 0.0, 1.0 + _mat[0][0] - _mat[1][1] - _mat[2][2] ) );
+    QY = 0.5 * std::sqrt( osg::maximum( 0.0, 1.0 - _mat[0][0] + _mat[1][1] - _mat[2][2] ) );
+    QZ = 0.5 * std::sqrt( osg::maximum( 0.0, 1.0 - _mat[0][0] - _mat[1][1] + _mat[2][2] ) );
 
 #if 0
     // Robert Osfield, June 7th 2007, arggg this new implementation produces many many errors, so have to revert to sign(..) orignal below.
@@ -516,7 +516,7 @@ void ofMatrix4x4::makeOrthoNormalOf(const ofMatrix4x4& rhs)
 
     if(!equivalent((double)x_colMag, 1.0) && !equivalent((double)x_colMag, 0.0))
     {
-		x_colMag = sqrt(x_colMag);
+		x_colMag = std::sqrt(x_colMag);
 		_mat[0][0] = rhs._mat[0][0] / x_colMag;
 		_mat[1][0] = rhs._mat[1][0] / x_colMag;
 		_mat[2][0] = rhs._mat[2][0] / x_colMag;
@@ -530,7 +530,7 @@ void ofMatrix4x4::makeOrthoNormalOf(const ofMatrix4x4& rhs)
 
     if(!equivalent((double)y_colMag, 1.0) && !equivalent((double)y_colMag, 0.0))
     {
-		y_colMag = sqrt(y_colMag);
+		y_colMag = std::sqrt(y_colMag);
 		_mat[0][1] = rhs._mat[0][1] / y_colMag;
 		_mat[1][1] = rhs._mat[1][1] / y_colMag;
 		_mat[2][1] = rhs._mat[2][1] / y_colMag;
@@ -544,7 +544,7 @@ void ofMatrix4x4::makeOrthoNormalOf(const ofMatrix4x4& rhs)
 
     if(!equivalent((double)z_colMag, 1.0) && !equivalent((double)z_colMag, 0.0))
     {
-		z_colMag = sqrt(z_colMag);
+		z_colMag = std::sqrt(z_colMag);
 		_mat[0][2] = rhs._mat[0][2] / z_colMag;
 		_mat[1][2] = rhs._mat[1][2] / z_colMag;
 		_mat[2][2] = rhs._mat[2][2] / z_colMag;
@@ -1056,10 +1056,10 @@ void adjoint_transpose(_HMatrix M, _HMatrix MadjT)
 /** Setup u for Household reflection to zero all v components but first **/
 void make_reflector(double *v, double *u)
 {
-    double s = sqrt(vdot(v, v));
+    double s = std::sqrt(vdot(v, v));
     u[0] = v[0]; u[1] = v[1];
     u[2] = v[2] + ((v[2]<0.0) ? -s : s);
-    s = sqrt(2.0/vdot(u, u));
+    s = std::sqrt(2.0/vdot(u, u));
     u[0] = u[0]*s; u[1] = u[1]*s; u[2] = u[2]*s;
 }
 
@@ -1116,10 +1116,10 @@ void do_rank2(_HMatrix M, _HMatrix MadjT, _HMatrix Q)
     make_reflector(v2, v2); reflect_rows(M, v2);
     w = M[0][0]; x = M[0][1]; y = M[1][0]; z = M[1][1];
     if (w*z>x*y) {
-        c = z+w; s = y-x; d = sqrt(c*c+s*s); c = c/d; s = s/d;
+        c = z+w; s = y-x; d = std::sqrt(c*c+s*s); c = c/d; s = s/d;
         Q[0][0] = Q[1][1] = c; Q[0][1] = -(Q[1][0] = s);
     } else {
-        c = z-w; s = y+x; d = sqrt(c*c+s*s); c = c/d; s = s/d;
+        c = z-w; s = y+x; d = std::sqrt(c*c+s*s); c = c/d; s = s/d;
         Q[0][0] = -(Q[1][1] = c); Q[0][1] = Q[1][0] = s;
     }
     Q[0][2] = Q[2][0] = Q[1][2] = Q[2][1] = 0.0; Q[2][2] = 1.0;
@@ -1155,7 +1155,7 @@ ofQuaternion quatFromMatrix(_HMatrix mat)
    tr = mat[X][X] + mat[Y][Y]+ mat[Z][Z];
    if (tr >= 0.0)
    {
-	   s = sqrt(tr + mat[W][W]);
+	   s = std::sqrt(tr + mat[W][W]);
 	   qu.w() = s*0.5;
 	   s = 0.5 / s;
 	   qu.x() = (mat[Z][Y] - mat[Y][Z]) * s;
@@ -1219,7 +1219,7 @@ double polarDecomp( _HMatrix M, _HMatrix Q, _HMatrix S)
 		MadjT_one = norm_one(MadjTk);
 		MadjT_inf = norm_inf(MadjTk);
 
-		gamma = sqrt(sqrt((MadjT_one*MadjT_inf)/(M_one*M_inf))/std::abs(det));
+		gamma = std::sqrt(std::sqrt((MadjT_one*MadjT_inf)/(M_one*M_inf))/std::abs(det));
 		g1 = gamma*0.5;
 		g2 = 0.5/(gamma*det);
 		matrixCopy(Ek,=,Mk,3);
@@ -1392,7 +1392,7 @@ ofQuaternion snuggle(ofQuaternion q, HVect *k)
 		}
 
 		qp = Qt_Mul(q, p);
-		t = sqrt(mag[win]+0.5);
+		t = std::sqrt(mag[win]+0.5);
 		p = Qt_Mul(p, Qt_(0.0,0.0,-qp.z()/t,qp.w()/t));
 		p = Qt_Mul(qtoz, Qt_Conj(p));
 	}

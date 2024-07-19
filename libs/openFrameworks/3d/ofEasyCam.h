@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofCamera.h"
-#include "ofEvents.h"
-#include "ofRectangle.h"
+class ofEventListeners;
+class ofEventArgs;
+class ofRectangle;
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL

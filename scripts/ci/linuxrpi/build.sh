@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+# set -ev
 OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
 export CROSS_COMPILING=1
@@ -33,18 +33,20 @@ export CC="${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-gcc"
 export AR=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ar
 export LD=${TOOLCHAIN_ROOT}/bin/${GCC_PREFIX}-ld
 
-echo "**** Building emptyExample ****"
+echo "##[group]**** Building emptyExample ****"
 cd $OF_ROOT
 cp scripts/templates/linux${PLATFORM_ARCH}/Makefile examples/templates/emptyExample/
 cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
-make Debug -j
+make Debug -j2
+echo "##[endgroup]"
 
 # if [[ "$ALLADDONSEXAMPLE" == 1 ]]; then
-echo "**** Building allAddonsExample ****"
+echo "##[group]**** Building allAddonsExample ****"
 cd $OF_ROOT
 cp scripts/templates/linux${PLATFORM_ARCH}/Makefile examples/templates/allAddonsExample/
 cp scripts/templates/linux${PLATFORM_ARCH}/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
-make Debug -j
+make Debug -j2
+echo "##[endgroup]"
 # fi

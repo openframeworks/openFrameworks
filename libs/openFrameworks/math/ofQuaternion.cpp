@@ -93,7 +93,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 	float fromLen;
 	// normalize only when necessary, epsilon test
 	if ((fromLen2 < 1.0 - 1e-7) || (fromLen2 > 1.0 + 1e-7)) {
-		fromLen = sqrt(fromLen2);
+		fromLen = std::sqrt(fromLen2);
 		sourceVector /= fromLen;
 	} else fromLen = 1.0;
 
@@ -104,7 +104,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		// re-use fromLen for case of mapping 2 vectors of the same length
 		if ((toLen2 > fromLen2 - 1e-7) && (toLen2 < fromLen2 + 1e-7)) {
 			toLen = fromLen;
-		} else toLen = sqrt(toLen2);
+		} else toLen = std::sqrt(toLen2);
 		targetVector /= toLen;
 	}
 
@@ -121,19 +121,19 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		// Then use it as quaternion axis with pi angle
 		// Trick is to realize one value at least is >0.6 for a normalized vector.
 		if (std::abs(sourceVector.x) < 0.6) {
-			const double norm = sqrt(1.0 - sourceVector.x * sourceVector.x);
+			const double norm = std::sqrt(1.0 - sourceVector.x * sourceVector.x);
 			_v.x = 0.0;
 			_v.y = sourceVector.z / norm;
 			_v.z = -sourceVector.y / norm;
 			_v.w = 0.0;
 		} else if (std::abs(sourceVector.y) < 0.6) {
-			const double norm = sqrt(1.0 - sourceVector.y * sourceVector.y);
+			const double norm = std::sqrt(1.0 - sourceVector.y * sourceVector.y);
 			_v.x = -sourceVector.z / norm;
 			_v.y = 0.0;
 			_v.z = sourceVector.x / norm;
 			_v.w = 0.0;
 		} else {
-			const double norm = sqrt(1.0 - sourceVector.z * sourceVector.z);
+			const double norm = std::sqrt(1.0 - sourceVector.z * sourceVector.z);
 			_v.x = sourceVector.y / norm;
 			_v.y = -sourceVector.x / norm;
 			_v.z = 0.0;
@@ -144,7 +144,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 	else {
 		// Find the shortest angle quaternion that transforms normalized vectors
 		// into one other. Formula is still valid when vectors are colinear
-		const double s = sqrt(0.5 * dotProdPlus1);
+		const double s = std::sqrt(0.5 * dotProdPlus1);
 		const ofVec3f tmp = sourceVector.getCrossed(targetVector) / (2.0 * s);
 		_v.x = tmp.x;
 		_v.y = tmp.y;
@@ -217,7 +217,7 @@ void ofQuaternion::getRotate( float& angle, ofVec3f& vec ) const {
 // Won't give very meaningful results if the Quat is not associated
 // with a rotation!
 void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const {
-	float sinhalfangle = sqrt( _v.x * _v.x + _v.y * _v.y + _v.z * _v.z );
+	float sinhalfangle = std::sqrt( _v.x * _v.x + _v.y * _v.y + _v.z * _v.z );
 
 	angle = 2.0 * std::atan2( sinhalfangle, _v.w );
 	if (sinhalfangle) {

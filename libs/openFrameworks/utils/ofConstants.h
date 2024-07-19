@@ -50,7 +50,8 @@ enum ofTargetPlatform{
 	/// \brief Compiled to javascript using Emscripten.
 	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN,
-	OF_TARGET_LINUXAARCH64
+	OF_TARGET_LINUXAARCH64,
+    OF_TARGET_MACOS,
 };
 
 
@@ -99,9 +100,7 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-	// #include <unistd.h>
-
-	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST && !TARGET_OS_VISION
         #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
         #define TARGET_OPENGLES
@@ -109,12 +108,22 @@ enum ofTargetPlatform{
         #define TARGET_OF_IOS
         #define TARGET_OF_TVOS
         #define TARGET_OPENGLES
+        #define TARGET_IMPLEMENTS_URL_LOADER
     #elif TARGET_OS_WATCH
         #define TARGET_OF_IOS
         #define TARGET_OF_WATCHOS
         #define TARGET_OPENGLES
+        #define TARGET_IMPLEMENTS_URL_LOADER
+    #elif TARGET_OS_VISION
+        #define TARGET_OF_IOS
+        #define TARGET_OF_XROS
+    #elif TARGET_OS_MACCATALYST
+        #define TARGET_OF_IOS
+        #define TARGET_OF_MACCATALYST
 	#else
 		#define TARGET_OSX
+        #define TARGET_MAC
+        #define TARGET_OF_MAC
 	#endif
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
@@ -138,6 +147,10 @@ enum ofTargetPlatform{
 #ifdef TARGET_WIN32
 	#define GLEW_STATIC
 	#define GLEW_NO_GLU
+    #define TARGET_GLFW_WINDOW
+    #define OF_CAIRO
+    #define OF_RTAUDIO
+    #define OF_RTAUDIO_6
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define __WINDOWS_DS__
@@ -186,12 +199,18 @@ enum ofTargetPlatform{
 
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_OSX) && !defined(TARGET_OF_IOS)
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
+    #define TARGET_GLFW_WINDOW
+    #define OF_CAIRO
+    #define OF_RTAUDIO
+    #define OF_RTAUDIO_6
+    #define OF_NO_FMOD
+    
 	#include "GL/glew.h"
-	// #include <ApplicationServices/ApplicationServices.h>
+    #include "OpenGL/OpenGL.h"
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
@@ -203,8 +222,6 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_LINUX
-
-	// #include <unistd.h>
 
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
@@ -223,7 +240,9 @@ enum ofTargetPlatform{
 		#include <EGL/egl.h>
 		#include <EGL/eglext.h>
 	#else // desktop linux
-		#include <GL/glew.h> 
+        #define TARGET_GLFW_WINDOW
+        #define OF_RTAUDIO
+		#include <GL/glew.h>
 	#endif
 
 	// for some reason, this isn't defined at compile time,
@@ -233,7 +252,6 @@ enum ofTargetPlatform{
 	//#if defined(__LITTLE_ENDIAN__)
 	#define TARGET_LITTLE_ENDIAN		// intel cpu
 	//#endif
-
 	// some things for serial compilation:
 	#define B14400	14400
 	#define B28800	28800
@@ -244,13 +262,9 @@ enum ofTargetPlatform{
 #ifdef TARGET_OF_IOS
 	#import <OpenGLES/ES1/gl.h>
 	#import <OpenGLES/ES1/glext.h>
-
 	#import <OpenGLES/ES2/gl.h>
 	#import <OpenGLES/ES2/glext.h>
-
-
 	#define TARGET_LITTLE_ENDIAN		// arm cpu
-
 	#if defined(__OBJC__) && !__has_feature(objc_arc)
 		#error "Please enable ARC (Automatic Reference Counting) at the project level"
 	#endif
@@ -259,7 +273,6 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
-	// #include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>

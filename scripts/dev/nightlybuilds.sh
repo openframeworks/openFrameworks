@@ -59,8 +59,10 @@ fi
 #./create_package.sh msys2 $lastversion master mingw32
 ./create_package.sh msys2 $lastversion master mingw64
 ./create_package.sh vs $lastversion master
+./create_package.sh vs_min $lastversion master
 ./create_package.sh ios $lastversion master
 ./create_package.sh osx $lastversion master
+./create_package.sh macos $lastversion master
 ./create_package.sh android $lastversion master
 ./create_package.sh linuxarmv6l $lastversion master
 ./create_package.sh linuxarmv7l $lastversion master
@@ -77,8 +79,10 @@ mv /var/www/versions/nightly/of_v${lastversion}_linux64gcc6_release.tar.gz /var/
 #mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_vs_x64_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_x64_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.tar.gz
+mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.tar.gz
+mv /var/www/versions/nightly/of_v${lastversion}_macos_release.zip /var/www/versions/nightly/of_v${lastversion}_macos_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_android_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_android_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv6l_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linuxarmv7l_nightly.tar.gz

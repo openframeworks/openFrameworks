@@ -5,7 +5,7 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 
 # if APPNAME is not defined, set it to the project dir name
 ifndef APPNAME
-	APPNAME = $(shell basename `pwd`)
+	APPNAME = $(shell basename "`pwd`")
 endif
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.shared.mk
@@ -168,6 +168,7 @@ ReleaseABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) $(JOBS) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
+	@$(MAKE) $(JOBS) copyaddonslibs ADDONS_SHARED_LIBS_SO="$(ADDONS_SHARED_LIBS_SO)" ADDONS_SHARED_LIBS_DLL="$(ADDONS_SHARED_LIBS_DLL)" ADDONS_SHARED_LIBS_DYLIB="$(ADDONS_SHARED_LIBS_DYLIB)"
 	@$(MAKE) $(JOBS) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
@@ -175,6 +176,7 @@ DebugABI: $(TARGET)
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) $(JOBS) copyaddonsdata PROJECT_ADDONS_DATA="$(PROJECT_ADDONS_DATA)"
 endif
+	@$(MAKE) $(JOBS) copyaddonslibs ADDONS_SHARED_LIBS_SO="$(ADDONS_SHARED_LIBS_SO)" ADDONS_SHARED_LIBS_DLL="$(ADDONS_SHARED_LIBS_DLL)" ADDONS_SHARED_LIBS_DYLIB="$(ADDONS_SHARED_LIBS_DYLIB)"
 	@$(MAKE) $(JOBS) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 	@$(PROJECT_AFTER)
 
@@ -301,7 +303,8 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S $(OF_PROJ
 
 
 #Rules to compile the addons sources when the addon path is specified explicitly
-PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
+# PROJECT_ADDONS_OBJ_PATH=$(realpath .)/$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
+PROJECT_ADDONS_OBJ_PATH=./$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/
 $(PROJECT_ADDONS_OBJ_PATH)%.o: %.cpp $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
@@ -403,10 +406,10 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)libs/openFrameworks/%.o: $(OF_ROOT)/libs/openFramew
 
 # Rules to link the project
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_RESOURCES) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TARGET_LIBS) $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags
-	@echo 'Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
+	@echo '🔗 Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
 	@mkdir -p $(@D)
+# $(LD)
 	$(CXX) -o $@ $(OPTIMIZATION_LDFLAGS) $(OF_PROJECT_OBJS) $(OF_PROJECT_RESOURCES) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(LDFLAGS) $(OF_CORE_LIBS)
-
 
 clean:
 	@$(MAKE) CleanDebug
@@ -452,6 +455,25 @@ copyaddonsdata:
 	@mkdir -p bin/data
 	@cp -rf $(PROJECT_ADDONS_DATA) bin/data/
 
+copyaddonslibs:
+	@if [ -n "$(ADDONS_SHARED_LIBS_SO)" ]; then \
+		echo "Copying shared libraries"; \
+		for lib in $(ADDONS_SHARED_LIBS_SO); do \
+			cp -fa $$lib bin/; \
+		done \
+	fi
+	@if [ -n "$(ADDONS_SHARED_LIBS_DLL)" ]; then \
+		echo "Copying shared libraries"; \
+		for lib in $(ADDONS_SHARED_LIBS_DLL); do \
+			cp -f $$lib bin/; \
+		done \
+	fi
+	@if [ -n "$(ADDONS_SHARED_LIBS_DYLIB)" ]; then \
+		echo "Copying shared libraries"; \
+		for lib in $(ADDONS_SHARED_LIBS_DYLIB); do \
+			cp -fa $$lib bin/; \
+		done \
+	fi
 help:
 	@echo
 	@echo openFrameworks universal makefile

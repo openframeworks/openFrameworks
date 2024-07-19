@@ -1,11 +1,6 @@
 #pragma once
 
-//#include "ofVec3f.h"
 class ofMatrix3x3;
-// MARK: ofMatrix4x4 already contains some of commented out includes here.
-//#include "ofVec2f.h"
-//#include "ofVec4f.h"
-//#include "ofMatrix3x3.h"
 #include "ofMatrix4x4.h"
 #include "ofQuaternion.h"
 
