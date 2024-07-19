@@ -275,6 +275,12 @@ ofURLFileLoader::ofURLFileLoader()
 	: impl(new ofxEmscriptenURLFileLoader) { }
 #endif
 
+#ifdef TARGET_OF_TVOS
+#include "ofxtvOSURLFileLoader.h"
+ofURLFileLoader::ofURLFileLoader()
+: impl(new ofxtvOSURLFileLoader) { }
+#endif
+
 ofHttpResponse ofURLFileLoader::get(const string & url) {
 	return impl->get(url);
 }
