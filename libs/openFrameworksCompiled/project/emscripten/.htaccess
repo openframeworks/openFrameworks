@@ -1,0 +1,6 @@
+<IfModule mod_headers.c>
+    Header set Cross-Origin-Embedder-Policy "require-corp"
+    Header set Cross-Origin-Opener-Policy "same-origin"
+</IfModule>
+# apache setting for WebAssembly COOP Requirement
+#  https://docs.apryse.com/documentation/web/faq/wasm-threads/#configuring-your-website
