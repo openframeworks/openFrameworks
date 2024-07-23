@@ -29,6 +29,10 @@
  * ***********************************************************************/ 
 
 #pragma once
+
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && !TARGET_OF_TVOS && !TARGET_OF_WATCHOS && !TARGET_OF_XROS
+
 #include <string>
 
 /****** protocol, delegate, interface, whatever you want to call it ******/
@@ -44,3 +48,5 @@ public:
 };
 
 #define ofxiPhoneAlertsListener ofxiOSAlertsListener
+
+#endif

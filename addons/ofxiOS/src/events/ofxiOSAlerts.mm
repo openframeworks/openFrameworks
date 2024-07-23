@@ -29,6 +29,10 @@
  * ***********************************************************************/ 
 
 #include "ofxiOSAlerts.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && !TARGET_OF_TVOS && !TARGET_OF_WATCHOS && !TARGET_OF_XROS
+
 
 ofxiOSAlertsHandler ofxiOSAlerts;
 
+#endif
