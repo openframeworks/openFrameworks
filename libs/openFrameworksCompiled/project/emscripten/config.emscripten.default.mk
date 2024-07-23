@@ -35,7 +35,7 @@ PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.o
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_DEFINES = __EMSCRIPTEN__ URI_STATIC_BUILD
+PLATFORM_DEFINES = __EMSCRIPTEN__ URI_STATIC_BUILD TARGET_EMSCRIPTEN
 
 ################################################################################
 # PLATFORM REQUIRED ADDON
@@ -63,9 +63,15 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+ifdef EMSCRIPTEN_PTHREADS
+	PLATFORM_PTHREAD = -s USE_PTHREADS=1
+else
+	PLATFORM_PTHREAD = -s USE_PTHREADS=0
+endif
+
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -s USE_PTHREADS=0
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths -s USE_PTHREADS=0
+PLATFORM_CFLAGS = -std=c17 $(PLATFORM_PTHREAD)
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths $(PLATFORM_PTHREAD)
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -93,7 +99,7 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_FREETYPE=1 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -sFULL_ES3=1 -s USE_PTHREADS=0
+PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -s FULL_ES3=1 $(PLATFORM_PTHREAD)
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
@@ -103,9 +109,9 @@ else
 	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
 endif
 
-PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY)
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) -s WASM=1
 
-PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -g3 -s TOTAL_MEMORY=134217728 -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2
+PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -O1 -g -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=134217728 -s WASM=1
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -123,10 +129,17 @@ PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -g3 -s TOTAL_MEMORY=134217728 -s DEMANGLE_
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O1 -g 
+
+ifdef EMSCRIPTEN_MEMORY64
+	PLATFORM_CFLAGS += -s MEMORY64
+	PLATFORM_CXXFLAGS += -s MEMORY64
+	PLATFORM_LDFLAGS += -s MEMORY64
+endif
+
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -170,7 +183,14 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/lib/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/brotli/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/download/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pixman/%
+# PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/lib/%
 
 ################################################################################
 # PLATFORM HEADER SEARCH PATHS
