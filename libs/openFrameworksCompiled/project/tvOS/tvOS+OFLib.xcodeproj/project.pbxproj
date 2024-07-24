@@ -114,15 +114,6 @@
 		BF4730AC2BA3D41700E6E3C6 /* ofAVEngineSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF4730A62BA3D41700E6E3C6 /* ofAVEngineSoundPlayer.mm */; };
 		BF94EE002BA58C08009EF752 /* ofxtvOSURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF94EDFF2BA58C08009EF752 /* ofxtvOSURLFileLoader.cpp */; };
 		BFDAFE9B2C2C7E8A006B0AE0 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFDAFE9A2C2C7E8A006B0AE0 /* ofTimerFps.cpp */; };
-		BFF80A532C50AFEB00784E74 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4B2C50AFEB00784E74 /* zlib.xcframework */; };
-		BFF80A542C50AFEB00784E74 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4C2C50AFEB00784E74 /* FreeImage.xcframework */; };
-		BFF80A552C50AFEB00784E74 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4D2C50AFEB00784E74 /* brotli.xcframework */; };
-		BFF80A562C50AFEB00784E74 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4E2C50AFEB00784E74 /* tess2.xcframework */; };
-		BFF80A572C50AFEB00784E74 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4F2C50AFEB00784E74 /* libpng.xcframework */; };
-		BFF80A582C50AFEB00784E74 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A502C50AFEB00784E74 /* freetype.xcframework */; };
-		BFF80A592C50AFEB00784E74 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A512C50AFEB00784E74 /* uriparser.xcframework */; };
-		BFF80A5A2C50AFEB00784E74 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A522C50AFEB00784E74 /* fmt.xcframework */; };
-		BFF80A5F2C50B6AA00784E74 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A5E2C50B6AA00784E74 /* pugixml.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -397,15 +388,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFF80A5F2C50B6AA00784E74 /* pugixml.xcframework in Frameworks */,
-				BFF80A532C50AFEB00784E74 /* zlib.xcframework in Frameworks */,
-				BFF80A542C50AFEB00784E74 /* FreeImage.xcframework in Frameworks */,
-				BFF80A552C50AFEB00784E74 /* brotli.xcframework in Frameworks */,
-				BFF80A562C50AFEB00784E74 /* tess2.xcframework in Frameworks */,
-				BFF80A572C50AFEB00784E74 /* libpng.xcframework in Frameworks */,
-				BFF80A582C50AFEB00784E74 /* freetype.xcframework in Frameworks */,
-				BFF80A592C50AFEB00784E74 /* uriparser.xcframework in Frameworks */,
-				BFF80A5A2C50AFEB00784E74 /* fmt.xcframework in Frameworks */,
 				901808A720535D54004A7774 /* GLKit.framework in Frameworks */,
 				99752D301BF20A4C0026316A /* GameController.framework in Frameworks */,
 				84463AAF1BC3452400F24926 /* AudioToolbox.framework in Frameworks */,

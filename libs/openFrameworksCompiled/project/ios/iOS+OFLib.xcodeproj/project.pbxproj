@@ -123,17 +123,6 @@
 		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
-		BF4730B12BA4056B00E6E3C6 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF4730B02BA4056B00E6E3C6 /* curl.xcframework */; };
-		BF7E59062BA203BC00E5C52E /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */; };
-		BF7E590C2BA204BC00E5C52E /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
-		BF7E590E2BA204D300E5C52E /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
-		BF7E59142BA2050B00E5C52E /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59132BA2050B00E5C52E /* libpng.xcframework */; };
-		BF7E59182BA2052D00E5C52E /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59172BA2052D00E5C52E /* pugixml.xcframework */; };
-		BF7E591A2BA2054700E5C52E /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59192BA2054700E5C52E /* tess2.xcframework */; };
-		BF7E591C2BA2056600E5C52E /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591B2BA2056600E5C52E /* uriparser.xcframework */; };
-		BF7E591E2BA2057A00E5C52E /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591D2BA2057900E5C52E /* zlib.xcframework */; };
-		BFEC5C012C4FFC3A00728DEC /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */; };
-		BFEC5C032C4FFC5900728DEC /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C022C4FFC5900728DEC /* brotli.xcframework */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -498,25 +487,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF7E591E2BA2057A00E5C52E /* zlib.xcframework in Frameworks */,
 				99752D331BF21EEE0026316A /* GameController.framework in Frameworks */,
 				67D48ED01C10399900F719BC /* CoreMotion.framework in Frameworks */,
 				BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */,
-				BFEC5C032C4FFC5900728DEC /* brotli.xcframework in Frameworks */,
 				BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */,
-				BF7E59142BA2050B00E5C52E /* libpng.xcframework in Frameworks */,
 				BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */,
 				BB24DECD10DA7A3F00E9C588 /* OpenAL.framework in Frameworks */,
-				BFEC5C012C4FFC3A00728DEC /* openssl.xcframework in Frameworks */,
 				901808B9205362D7004A7774 /* GLKit.framework in Frameworks */,
-				BF7E59182BA2052D00E5C52E /* pugixml.xcframework in Frameworks */,
 				BB24DECE10DA7A3F00E9C588 /* Foundation.framework in Frameworks */,
-				BF7E590C2BA204BC00E5C52E /* fmt.xcframework in Frameworks */,
-				BF4730B12BA4056B00E6E3C6 /* curl.xcframework in Frameworks */,
-				BF7E59062BA203BC00E5C52E /* FreeImage.xcframework in Frameworks */,
 				BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */,
-				BF7E591A2BA2054700E5C52E /* tess2.xcframework in Frameworks */,
-				BF7E591C2BA2056600E5C52E /* uriparser.xcframework in Frameworks */,
 				BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */,
 				BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */,
 				5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */,
@@ -524,7 +503,6 @@
 				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
 				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
 				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
-				BF7E590E2BA204D300E5C52E /* freetype.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1195,7 +1173,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env bash";
-			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for tvOS / macOS. Downloading libaries now via scripts/macos/download_latest_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for iOS / macOS. Downloading libaries now via scripts/macos/download_latest_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
 		};
 		BFF80A5C2C50B25B00784E74 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
