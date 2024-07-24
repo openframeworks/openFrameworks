@@ -30,7 +30,7 @@
 
 #pragma once
 #include "ofxiOSConstants.h"
-#if defined(TARGET_OF_IOS) && !TARGET_OF_TVOS && !TARGET_OF_WATCHOS && !TARGET_OF_XROS
+#if defined(TARGET_OF_IOS)
 
 #include <list>
 #include "ofxiOSAlertsListener.h"

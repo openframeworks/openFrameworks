@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=3.2.3
+VERSION=3.2.4
 printDownloaderHelp(){
 cat << EOF
     
@@ -26,7 +26,6 @@ validate_url(){
     fi
 }
 
-#!/bin/bash
 
 CHECK_RESULT=0
 check_remote_vs_local() {
@@ -49,11 +48,34 @@ check_remote_vs_local() {
 
   # Get remote file modification time
   modified=$(curl -L --retry 20 --silent --head "$REMOTE_URL" | awk '/^Last-Modified/{print $0}' | sed 's/^Last-Modified: //')
-  remote_ctime=$(date --date="$modified" +%s)
+
+  if [ -z "$modified" ]; then
+    echo "  Failed to retrieve Last-Modified header from the remote URL. Proceeding with download."
+    CHECK_RESULT=0
+    return
+  fi
+
+  remote_ctime=$(date -j -f "%a, %d %b %Y %H:%M:%S %Z" "$modified" "+%s" 2>/dev/null)
+
+  if [ $? -ne 0 ]; then
+    echo "  Failed to convert remote modification time. Proceeding with download."
+    CHECK_RESULT=0
+    return
+  fi
 
   # Get local file modification time
-  local_ctime=$(stat -c %z "$LOCAL_FILE")
-  local_ctime=$(date --date="$local_ctime" +%s)
+  local_ctime=$(stat -c %z "$LOCAL_FILE" 2>/dev/null)
+
+  local_ctime=$(date -j -f "%a, %d %b %Y %H:%M:%S %Z" "$modified" "+%s" 2>/dev/null)
+
+  if [ $? -ne 0 ]; then
+    echo "  Failed to convert local_ctime modification time. Proceeding with download."
+    CHECK_RESULT=0
+    return
+  fi
+  #local_ctime=$(date --date="$local_ctime" +%s)
+
+  echo "  Failed to convert remote modification time. Proceeding with download."
 
   # Check size
   if [ "$LocalSize" != "$RemoteSize" ]; then
