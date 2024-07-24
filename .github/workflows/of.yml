@@ -116,11 +116,6 @@ jobs:
         shell: msys2 {0}
         run:
           ./scripts/ci/vs/install_bleeding.sh
-
-      - name: Install dependencies
-        shell: msys2 {0}
-        run:
-          ./scripts/ci/vs/install_bleeding.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - name: Build DEBUG emptyExample
@@ -188,8 +183,6 @@ jobs:
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
     - name: Download libs
-      run: ./scripts/${{matrix.cfg.libs}}/download_latest_libs.sh
-    - name: Download libs x2
       run: ./scripts/${{matrix.cfg.libs}}/download_latest_libs.sh
     - name: install
       run: ./scripts/ci/$TARGET/install.sh
@@ -297,9 +290,6 @@ jobs:
 
 
     - name: Download libs
-      run: ./scripts/${{ matrix.cfg.target }}/download_latest_libs.sh
-
-    - name: Download libs 2
       run: ./scripts/${{ matrix.cfg.target }}/download_latest_libs.sh
 
     - name: Build
