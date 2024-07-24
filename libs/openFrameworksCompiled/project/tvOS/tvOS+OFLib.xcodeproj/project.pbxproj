@@ -113,6 +113,15 @@
 		BF4730A02BA3D3A800E6E3C6 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF47309E2BA3D3A800E6E3C6 /* ofShadow.cpp */; };
 		BF4730AC2BA3D41700E6E3C6 /* ofAVEngineSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF4730A62BA3D41700E6E3C6 /* ofAVEngineSoundPlayer.mm */; };
 		BF94EE002BA58C08009EF752 /* ofxtvOSURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF94EDFF2BA58C08009EF752 /* ofxtvOSURLFileLoader.cpp */; };
+		BFB0B40F2C50E03D008FB5A3 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A5E2C50B6AA00784E74 /* pugixml.xcframework */; };
+		BFB0B4102C50E03D008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4D2C50AFEB00784E74 /* brotli.xcframework */; };
+		BFB0B4112C50E03D008FB5A3 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A522C50AFEB00784E74 /* fmt.xcframework */; };
+		BFB0B4122C50E03D008FB5A3 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4C2C50AFEB00784E74 /* FreeImage.xcframework */; };
+		BFB0B4132C50E03D008FB5A3 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A502C50AFEB00784E74 /* freetype.xcframework */; };
+		BFB0B4142C50E03D008FB5A3 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4F2C50AFEB00784E74 /* libpng.xcframework */; };
+		BFB0B4152C50E03D008FB5A3 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4E2C50AFEB00784E74 /* tess2.xcframework */; };
+		BFB0B4162C50E03D008FB5A3 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A512C50AFEB00784E74 /* uriparser.xcframework */; };
+		BFB0B4172C50E03D008FB5A3 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF80A4B2C50AFEB00784E74 /* zlib.xcframework */; };
 		BFDAFE9B2C2C7E8A006B0AE0 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFDAFE9A2C2C7E8A006B0AE0 /* ofTimerFps.cpp */; };
 /* End PBXBuildFile section */
 
@@ -388,6 +397,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFB0B40F2C50E03D008FB5A3 /* pugixml.xcframework in Frameworks */,
+				BFB0B4102C50E03D008FB5A3 /* brotli.xcframework in Frameworks */,
+				BFB0B4112C50E03D008FB5A3 /* fmt.xcframework in Frameworks */,
+				BFB0B4122C50E03D008FB5A3 /* FreeImage.xcframework in Frameworks */,
+				BFB0B4132C50E03D008FB5A3 /* freetype.xcframework in Frameworks */,
+				BFB0B4142C50E03D008FB5A3 /* libpng.xcframework in Frameworks */,
+				BFB0B4152C50E03D008FB5A3 /* tess2.xcframework in Frameworks */,
+				BFB0B4162C50E03D008FB5A3 /* uriparser.xcframework in Frameworks */,
+				BFB0B4172C50E03D008FB5A3 /* zlib.xcframework in Frameworks */,
 				901808A720535D54004A7774 /* GLKit.framework in Frameworks */,
 				99752D301BF20A4C0026316A /* GameController.framework in Frameworks */,
 				84463AAF1BC3452400F24926 /* AudioToolbox.framework in Frameworks */,
