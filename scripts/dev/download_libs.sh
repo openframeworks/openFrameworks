@@ -7,7 +7,8 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.2
+PTHREADS=0
+DL_VERSION=2.3
 
 printHelp(){
 cat << EOF
@@ -99,6 +100,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -s|--silent)
         SILENT_ARGS=1
+        ;;
+
+        -t|--pthreads)
+        PTHREADS=1
         ;;
 
         -k|--no-ssl)
@@ -199,6 +204,17 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
+if [ "$PLATFORM" == "emscripten" ]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        if [[ $ARCH = "64" ]] ; then
+            ARCH="_memory64"
+        fi
+        if [[ $PTHREADS = 1 ]] ; then
+            ARCH="${ARCH}_pthreads"
+        fi
+    fi
+fi
+
 echo " openFrameworks download_libs.sh v$DL_VERSION"
 
 if [ "$PLATFORM" == "msys2" ]; then
@@ -243,6 +259,12 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}x86.tar.bz2"
+    fi
+elif [ "$PLATFORM" == "emscripten" ]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
+    else    
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
