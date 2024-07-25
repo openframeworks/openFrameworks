@@ -70,8 +70,8 @@ else
 endif
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -std=c17 $(PLATFORM_PTHREAD)
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -Wno-warn-absolute-paths $(PLATFORM_PTHREAD) 
+PLATFORM_CFLAGS = -std=c17 -fPIC $(PLATFORM_PTHREAD)
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(PLATFORM_PTHREAD) 
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -99,7 +99,7 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -s FULL_ES3=1 -s USE_GLFW=2 $(PLATFORM_PTHREAD)
+PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -s FULL_ES3=1 -s USE_GLFW=3 $(PLATFORM_PTHREAD)
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
@@ -109,9 +109,9 @@ else
 	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
 endif
 
-PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) -s WASM=1 -s MAIN_MODULE=1 -fPIC
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) -s WASM=2 -s MAIN_MODULE=1 -fPIC
 
-PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -O1 -g -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=134217728 -s WASM=1 -s MAIN_MODULE=1 -fPIC -s VERBOSE=1
+PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -O1 -g -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=134217728 -s WASM=2 -s MAIN_MODULE=1 -fPIC -s VERBOSE=1 -s GL_ASSERTIONS=1
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
