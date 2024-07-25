@@ -105,8 +105,8 @@ PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio
 
 ifdef PROJECT_EMSCRIPTEN_TEMPLATE
 	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
-else
-	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
+# else
+# 	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
 endif
 
 PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) -s WASM=1 -fPIC
