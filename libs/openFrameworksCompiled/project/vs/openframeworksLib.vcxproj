@@ -87,10 +87,21 @@
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">false</BufferSecurityCheck>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc17</LanguageStandard_C>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdc17</LanguageStandard_C>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">stdc17</LanguageStandard_C>
+      <EnableModules Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</EnableModules>
+      <BuildStlModules Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</BuildStlModules>
+      <EnableModules Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">true</EnableModules>
+      <BuildStlModules Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">true</BuildStlModules>
+      <EnableModules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EnableModules>
+      <BuildStlModules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildStlModules>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
+      <UseUnicodeResponseFiles Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</UseUnicodeResponseFiles>
+      <UseUnicodeResponseFiles Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">true</UseUnicodeResponseFiles>
+      <UseUnicodeResponseFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</UseUnicodeResponseFiles>
     </Lib>
     <PreLinkEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\x64\*.dll" (xcopy /Y /E "%%f\lib\vs\x64\*.dll" "$(SolutionDir)dll\x64\"))</Command>
@@ -114,10 +125,19 @@
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">false</BufferSecurityCheck>
+      <EnableModules Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</EnableModules>
+      <BuildStlModules Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</BuildStlModules>
+      <EnableModules Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">true</EnableModules>
+      <BuildStlModules Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">true</BuildStlModules>
+      <EnableModules Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableModules>
+      <BuildStlModules Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildStlModules>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
+      <UseUnicodeResponseFiles Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</UseUnicodeResponseFiles>
+      <UseUnicodeResponseFiles Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">true</UseUnicodeResponseFiles>
+      <UseUnicodeResponseFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</UseUnicodeResponseFiles>
     </Lib>
     <PreLinkEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">for /d %%f in ("$(OF_ROOT)\libs\*") do (if exist "%%f\lib\vs\x64\*.dll" (xcopy /Y /E "%%f\lib\vs\x64\*.dll" "$(SolutionDir)dll\x64\"))</Command>
