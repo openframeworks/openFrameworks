@@ -118,15 +118,16 @@ jobs:
           ./scripts/ci/vs/install_bleeding.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
-      - name: Build DEBUG emptyExample
+      - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
-        run:
+        run: |
           msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-      # - name: Build DEBUG allAddonsExample
-      #   working-directory: ${{env.GITHUB_WORKSPACE}}
-      #   run:
-      #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+      - name: Build DEBUG and RELEASE allAddonsExample
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
