@@ -3,7 +3,7 @@
 #include "ofPolyline.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
-// FIXME: ofConstants targets
+// MARK: ofConstants targets
 #include "ofConstants.h"
 
 template<typename T>
@@ -249,6 +249,10 @@ public:
 	/// \brief Set the stroke width of the line if the ofPath is to be drawn
 	/// not in wireframe.
 	void setStrokeWidth(float width); // default 0
+	
+	/// \brief Set the stroke width of the line if the ofPath is to be drawn
+	/// not in wireframe.
+	void setStrokeWidth(float width) const; // default 0
 
 	/// \brief Set the color of the path. This affects both the line if the
 	/// path is drawn as wireframe and the fill if the path is drawn with

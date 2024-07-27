@@ -4,10 +4,11 @@
 #include "ofAppBaseWindow.h"
 
 #include "ofLog.h"
-#include "ofMath.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
 #include "ofMainLoop.h"
+#include "ofEvents.h" // of::priv
+#include "ofUtils.h" // initUtils
 
 using std::shared_ptr;
 

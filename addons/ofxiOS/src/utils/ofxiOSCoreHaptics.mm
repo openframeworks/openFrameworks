@@ -1,5 +1,7 @@
 // created by artificiel 2023-02-15
 
+#include "ofxiOSConstants.h"
+#if defined(OF_HAPTICS)
 #include "ofxiOSCoreHaptics.h"
 
 bool ofxiOSCoreHaptics::prepare_engine() {
@@ -87,3 +89,5 @@ bool ofxiOSCoreHaptics::sendParameters(float i, float s) {
     }
     return false;
 }
+
+#endif

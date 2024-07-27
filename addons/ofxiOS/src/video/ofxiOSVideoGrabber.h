@@ -1,10 +1,10 @@
 
-
 #pragma once
 
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 #include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
-
 class AVFoundationVideoGrabber;
 
 class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
@@ -77,3 +77,4 @@ protected:
 };
 
 #define ofxiPhoneVideoGrabber ofxiOSVideoGrabber
+#endif

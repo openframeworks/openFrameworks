@@ -22,7 +22,7 @@ on:
 #      - 'examples/**'
 jobs:
   build-web-examples:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         cfg:
@@ -32,9 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run:  docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash
+        run:  docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.50 bash
       - name: Download libs
-        run: ./scripts/$TARGET/download_libs.sh
+        run: ./scripts/dev/download_libs.sh -p emscripten
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/install_web_examples.sh
       - name: Build

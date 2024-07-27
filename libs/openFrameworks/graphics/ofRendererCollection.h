@@ -2,7 +2,7 @@
 
 #include "ofGraphicsBaseTypes.h"
 #include "of3dGraphics.h"
-#include "ofPath.h"
+#include "ofPath.h" // MARK: ofPath path;
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
@@ -180,7 +180,7 @@ public:
 	ofFillFlag getFillMode();
 
 	void setLineWidth(float lineWidth);
-
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 
 	void setBlendMode(ofBlendMode blendMode);

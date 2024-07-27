@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:hapticFeedbackEnabled="true"
+    android:keepScreenOn="true"
+    android:longClickable="false"
+    android:saveEnabled="false"
+    android:soundEffectsEnabled="true"
+    android:visibility="visible"
+    tools:visibility="visible">
+
+    <RelativeLayout
+        android:id="@+id/of_gl_surface_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hapticFeedbackEnabled="true"
+        android:saveEnabled="false"
+        android:visibility="visible"
+        tools:visibility="visible" />
+    <!-- add here other views' layouts -->
+</RelativeLayout>

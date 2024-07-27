@@ -22,7 +22,8 @@ struct ofxOscSenderSettings {
 /// \brief OSC message sender which sends to a specific host & port
 class ofxOscSender {
 public:
-	ofxOscSender(std::string host = "127.0.0.1", int port = 7970, bool silent = false) {
+	ofxOscSender() = default;
+	ofxOscSender(std::string host, int port, bool silent = false) {
 		setup(host, port, silent);
 	}
 	~ofxOscSender();
@@ -60,6 +61,14 @@ public:
 	/// \return true on successfull send
 	bool sendParameter(const ofAbstractParameter & parameter);
 	bool send(const ofAbstractParameter & parameter) { return sendParameter(parameter); };
+
+		/// creates & sends a message with arguments in one swift go
+	template <typename... Args>
+	bool send(std::string address, Args... args) {
+		ofxOscMessage m{address};
+		if (sizeof...(Args)) m.add(args...); // other gets interpreted as OSC::NULL which is probably not expected
+		return send(m);
+	};
 
 	/// \return current host name/ip
 	std::string getHost() const;

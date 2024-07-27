@@ -48,6 +48,7 @@
 #include <cstring> // for memset
 #include <stdexcept>
 #include <vector>
+#include <atomic>
 
 #include "ip/UdpSocket.h" // usually I'd include the module header first
                           // but this is causing conflicts with BCB4 due to
@@ -353,7 +354,7 @@ class SocketReceiveMultiplexer::Implementation{
 	std::vector< std::pair< PacketListener*, UdpSocket* > > socketListeners_;
 	std::vector< AttachedTimerListener > timerListeners_;
 
-	volatile bool break_;
+	std::atomic<bool> break_ { false };
 	HANDLE breakEvent_;
 
 	double GetCurrentTimeMs() const
@@ -418,8 +419,6 @@ public:
 
     void Run()
 	{
-		break_ = false;
-
 		// prepare the window events which we use to wake up on incoming data
 		// we use this instead of select() primarily to support the AsyncBreak() 
 		// mechanism.
@@ -508,6 +507,7 @@ public:
 			unsigned long enableNonblocking = 0;
 			ioctlsocket( i->second->impl_->Socket(), FIONBIO, &enableNonblocking );  // make the socket blocking again
 		}
+		break_ = false;
 	}
 
     void Break()

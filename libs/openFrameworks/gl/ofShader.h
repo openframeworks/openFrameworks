@@ -7,14 +7,17 @@
  make sure to catch and report that error.
  */
 
-// FIXME: ofConstants Targets
+// MARK: ofConstants Targets
 #include "ofConstants.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/fwd.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/fwd.hpp>
+
 #include <unordered_map>
 
 class ofTexture;
+class ofTextureData;
 class ofMatrix3x3;
 class ofParameterGroup;
 class ofBufferObject;
@@ -148,6 +151,7 @@ public:
 	void setUniformTexture(const std::string & name, const ofBaseHasTexture& img, int textureLocation) const;
 	void setUniformTexture(const std::string & name, const ofTexture& img, int textureLocation) const;
 	void setUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation) const;
+	void setUniformTexture(const std::string & name, const ofTextureData& texData, int textureLocation) const;
 
 	// set a single uniform value
 	void setUniform1i(const std::string & name, int v1) const;
@@ -232,8 +236,8 @@ public:
 
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
-	bool setupShaderFromSource(GLenum type, std::string source, std::string sourceDirectoryPath = "");
-	bool setupShaderFromFile(GLenum type, const of::filesystem::path& filename);
+	bool setupShaderFromSource(GLenum type, std::string source, of::filesystem::path sourceDirectoryPath = "");
+	bool setupShaderFromFile(GLenum type, const of::filesystem::path & filename);
 
 	// links program with all compiled shaders
 	bool linkProgram();
@@ -299,8 +303,8 @@ private:
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-	static std::string parseForIncludes( const std::string& source, const of::filesystem::path& sourceDirectoryPath = "");
-	static std::string parseForIncludes( const std::string& source, std::vector<std::string>& included, int level = 0, const of::filesystem::path& sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string & source, const of::filesystem::path & sourceDirectoryPath = "");
+	static std::string parseForIncludes( const std::string & source, std::vector<of::filesystem::path> & included, int level = 0, const of::filesystem::path & sourceDirectoryPath = "");
 
 	void checkAndCreateProgram();
 #ifdef TARGET_ANDROID
