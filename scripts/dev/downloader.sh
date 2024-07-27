@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=3.2.3
+VERSION=3.3.0
 printDownloaderHelp(){
 cat << EOF
     
@@ -26,50 +26,89 @@ validate_url(){
     fi
 }
 
-#!/bin/bash
+convert_bytes_to_mb() {
+  bytes=$1
+  mb=$(echo "scale=2; $bytes / (1024 * 1024)" | bc)
+  echo "${mb}MB"
+}
+
 
 CHECK_RESULT=0
 check_remote_vs_local() {
   LOCAL_FILE="$1"
   REMOTE_URL="$2"
-
+  echo "  [downloader] cURL: [$REMOTE_URL]"
   if [ ! -f "$LOCAL_FILE" ]; then
-    echo "  cURL [check_remote_vs_local] - LOCAL_FILE:[$LOCAL_FILE] not found. Download"
+    echo "  [downloader] No download cache"
+    echo "  [downloader] Proceeding with download. "
     CHECK_RESULT=0
     return
   else
-    echo "  cURL [check_remote_vs_local] - LOCAL_FILE:[$LOCAL_FILE] exists"
+    echo "  [downloader] Found download cache."
+    echo "  [cache] [$LOCAL_FILE]"
   fi
 
-  # Get local file size
-  LocalSize=$(wc -c < "$LOCAL_FILE")
+  LocalSize=$(wc -c < "$LOCAL_FILE" | tr -d '[:space:]')
+  RemoteSize=$(curl -sI -L --retry 20 "$REMOTE_URL" | awk '/content-length/ {print $2}' | tr -d '\r' | tail -n 1)
+  if [ -z "$RemoteSize" ]; then
+    RemoteSize=$(curl -sI -L --retry 20 "$REMOTE_URL" | awk '/Content-Length/ {print $2}' | tr -d '\r' | tail -n 1)
+  fi
 
-  # Get remote file size
-  RemoteSize=$(curl -sI -L --retry 20 "$REMOTE_URL" | awk '/Content-Length/ {print $2}' | tr -d '\r' | tail -n 1)
+  LocalSizeMB=$(convert_bytes_to_mb $LocalSize)
+  RemoteSizeMB=$(convert_bytes_to_mb $RemoteSize)
 
-  # Get remote file modification time
-  modified=$(curl -L --retry 20 --silent --head "$REMOTE_URL" | awk '/^Last-Modified/{print $0}' | sed 's/^Last-Modified: //')
-  remote_ctime=$(date --date="$modified" +%s)
+  echo "  [downloader] Remote size:[${RemoteSizeMB}] | Local size:[${LocalSizeMB}]"
+	modified=$(curl -L --retry 20 --silent --head "$REMOTE_URL" | awk '/^last-modified/{print $0}' | sed 's/^last-modified: //')
+	if [ -z "$modified" ]; then
+		modified=$(curl -L --retry 20 --silent --head "$REMOTE_URL" | awk '/^Last-Modified/{print $0}' | sed 's/^Last-Modified: //')
+		if [ -z "$modified" ]; then
+			echo "  [cURL] failed to retrieve last-modified header from remote ["$REMOTE_URL"] ... Proceeding with download"
+			CHECK_RESULT=0
+			return
+		fi
+	fi
 
-  # Get local file modification time
-  local_ctime=$(stat -c %z "$LOCAL_FILE")
-  local_ctime=$(date --date="$local_ctime" +%s)
-
-  # Check size
-  if [ "$LocalSize" != "$RemoteSize" ]; then
-    echo "  File sizes differ. Run the cURL. LocalSize:[$LocalSize] RemoteSize:[$RemoteSize]"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    remote_ctime=$(date -j -f "%a, %d %b %Y %H:%M:%S %Z" "$modified" "+%s" 2>/dev/null)
+  else
+    remote_ctime=$(date --date="$modified" +%s 2>/dev/null)
+  fi
+  if [ $? -ne 0 ]; then
+    echo "  [downloader] Error in converting Remote modification time [report this openFrameworks devs]."
+    echo "  [downloader] ... Proceeding with download"
     CHECK_RESULT=0
     return
   fi
-
+  # Get local file modification time
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		local_ctime=$(stat -f "%Sm" -t "%a, %d %b %Y %H:%M:%S %Z" "$LOCAL_FILE" 2>/dev/null)
+		local_ctime=$(date -j -f "%a, %d %b %Y %H:%M:%S %Z" "$local_ctime" "+%s" 2>/dev/null)
+	else
+		local_ctime=$(stat -c %y "$LOCAL_FILE" 2>/dev/null)
+		local_ctime=$(date --date="$local_ctime" +%s 2>/dev/null)
+	fi
+  if [ $? -ne 0 ]; then
+    echo "  [downloader] Error in converting Local modification time [report this openFrameworks devs]."
+    echo "  [downloader] ... Proceeding with download"
+    CHECK_RESULT=0
+    return
+  fi
+  if [ "$LocalSize" != "$RemoteSize" ]; then 
+  	echo "  [downloader] Remote size bits:[${RemoteSize}] | Local size bits:[${LocalSize}]"
+    echo "  [downloader] File sizes differ between remote and local file."
+    echo "  [downloader] ... Proceeding with download"
+    CHECK_RESULT=0
+    return
+  fi
   # Check modification time
   if [ "$local_ctime" -lt "$remote_ctime" ]; then
-    echo "  Remote file is newer. Run the cURL. local_ctime[$local_ctime] remote_ctime:[$remote_ctime]"
+  	echo "  [downloader] Remote modification Time:[${remote_ctime}] | Local modification Time:[${local_ctime}]"
+    echo "  [downloader] Remote file is newer."
+    echo "  [downloader] ... Proceeding with download"
     CHECK_RESULT=0
     return
   fi
-
-  echo "  Files are the same. Do not run the cURL."
+  echo "  [downloader] No need to download again. Every bit matters."
   CHECK_RESULT=1
   return
 }
@@ -80,7 +119,7 @@ downloader() {
         printDownloaderHelp
         exit 1
     fi
-    ERROR_MSG=" Downloading failed: No Installed: wget2, curl or wget. Please install (via homebrew, winget, apt-get) and try again. "
+    ERROR_MSG="  [downloader] Failed: No Installed: [wget2], [curl] or [wget]. Please install (via homebrew, winget or apt-get) and try again."
     SILENT=0
     NO_SSL=0
     URLS=()
@@ -104,7 +143,7 @@ downloader() {
                 URLS+=("$1")
             else
                 if [ $1 != "0" ]; then 
-                    echo " Invalid URL: [$1]"
+                    echo "  [downloader] Invalid URL: [$1]"
                 fi
             fi
             shift
@@ -138,7 +177,7 @@ downloader() {
         else
             SSL_ARGS="--no-check-certificate"
         fi
-        echo " [WARNING SSL Validation is Disabled with -k or --no-ssl]"
+        echo "  [downloader] [WARNING SSL Validation is Disabled with -k or --no-ssl]"
     fi
     URLS_TO_DOWNLOAD=""
     for ((i = 0; i < ${#URLS[@]}; i++)); do
@@ -155,8 +194,6 @@ downloader() {
                 if [ $((i + 1)) -lt ${#URLS[@]} ]; then
                     URLS_TO_DOWNLOAD+="-k ";
                 fi
-            else
-                echo "  LOCAL_FILE:[${LOCAL_FILE}] is same as remote - skipping download"
             fi
         else
            URLS_TO_DOWNLOAD+="${URL} "
@@ -164,7 +201,7 @@ downloader() {
     done
     echo
     if [ -z "$URLS_TO_DOWNLOAD" ]; then
-        echo "  No URLS to download, continue"
+        echo "  [downloader] No URLS to download, continue..."
     else
         if [[ "${SILENT}" == 1 ]]; then
             if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then
@@ -182,15 +219,15 @@ downloader() {
             fi;
         else
             if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then 
-                echo " Downloading [wget2] urls:[$URLS_TO_DOWNLOAD]"
+                echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD]"
                 echo
                 wget2 -N -nv --progress=bar -t20 $SSL_ARGS ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
-                echo " Downloading [cURL] urls:[$URLS_TO_DOWNLOAD]"
+                echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD]"
                 echo
                 curl -L --retry 20 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
-                echo " Downloading [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD]"
+                echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD]"
                 echo
                 wget -nv --progress=bar -N -t20 $SSL_ARGS $URLS_TO_DOWNLOAD
             else 

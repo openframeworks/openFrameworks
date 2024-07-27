@@ -61,22 +61,22 @@
 		9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */; };
 		9979E8241A1CCC44007E55D1 /* ofMainLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
 		BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */; };
-		BF5BF8402B737C0A0049DEF6 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */; };
-		BF5BF8422B737C700049DEF6 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8412B737C700049DEF6 /* uriparser.xcframework */; };
-		BF5BF8442B737C7C0049DEF6 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */; };
-		BF5BF8462B737C870049DEF6 /* rtAudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8452B737C870049DEF6 /* rtAudio.xcframework */; };
-		BF5BF8482B737D280049DEF6 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8472B737D280049DEF6 /* pugixml.xcframework */; };
-		BF5BF84A2B737E260049DEF6 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8492B737E260049DEF6 /* cairo.xcframework */; };
-		BF5BF84C2B737E320049DEF6 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */; };
-		BF5BF84E2B737E3B0049DEF6 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84D2B737E3B0049DEF6 /* freetype.xcframework */; };
-		BF5BF8502B737E440049DEF6 /* glew.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84F2B737E440049DEF6 /* glew.xcframework */; };
-		BF5BF8522B737E4E0049DEF6 /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */; };
-		BF5BF8542B737E880049DEF6 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8532B737E880049DEF6 /* libpng.xcframework */; };
-		BF5BF8562B737E930049DEF6 /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8552B737E930049DEF6 /* pixman.xcframework */; };
-		BF6276A22BAD6619008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A12BAD6619008864C1 /* openssl.xcframework */; };
-		BF6276A42BAD6639008864C1 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A32BAD6639008864C1 /* curl.xcframework */; };
 		BF6276A62BAD9900008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276A52BAD9900008864C1 /* ofBaseTypes.h */; };
-		BF7C462E2C097CCE00461163 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7C462D2C097CCE00461163 /* brotli.xcframework */; };
+		BFB0B3F52C50DFE8008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7C462D2C097CCE00461163 /* brotli.xcframework */; };
+		BFB0B3F62C50DFE8008FB5A3 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A32BAD6639008864C1 /* curl.xcframework */; };
+		BFB0B3F72C50DFE8008FB5A3 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A12BAD6619008864C1 /* openssl.xcframework */; };
+		BFB0B3F82C50DFE8008FB5A3 /* pixman.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8552B737E930049DEF6 /* pixman.xcframework */; };
+		BFB0B3F92C50DFE8008FB5A3 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8532B737E880049DEF6 /* libpng.xcframework */; };
+		BFB0B3FA2C50DFE8008FB5A3 /* glfw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */; };
+		BFB0B3FB2C50DFE8008FB5A3 /* glew.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84F2B737E440049DEF6 /* glew.xcframework */; };
+		BFB0B3FC2C50DFE8008FB5A3 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84D2B737E3B0049DEF6 /* freetype.xcframework */; };
+		BFB0B3FD2C50DFE8008FB5A3 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */; };
+		BFB0B3FE2C50DFE8008FB5A3 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8492B737E260049DEF6 /* cairo.xcframework */; };
+		BFB0B3FF2C50DFE8008FB5A3 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8472B737D280049DEF6 /* pugixml.xcframework */; };
+		BFB0B4002C50DFE8008FB5A3 /* rtAudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8452B737C870049DEF6 /* rtAudio.xcframework */; };
+		BFB0B4012C50DFE8008FB5A3 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */; };
+		BFB0B4022C50DFE8008FB5A3 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8412B737C700049DEF6 /* uriparser.xcframework */; };
+		BFB0B4032C50DFE8008FB5A3 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */; };
 		DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
 		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
@@ -372,21 +372,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF5BF8502B737E440049DEF6 /* glew.xcframework in Frameworks */,
-				BF7C462E2C097CCE00461163 /* brotli.xcframework in Frameworks */,
-				BF5BF8542B737E880049DEF6 /* libpng.xcframework in Frameworks */,
-				BF5BF84A2B737E260049DEF6 /* cairo.xcframework in Frameworks */,
-				BF5BF8442B737C7C0049DEF6 /* tess2.xcframework in Frameworks */,
-				BF5BF8402B737C0A0049DEF6 /* zlib.xcframework in Frameworks */,
-				BF5BF84C2B737E320049DEF6 /* FreeImage.xcframework in Frameworks */,
-				BF5BF8462B737C870049DEF6 /* rtAudio.xcframework in Frameworks */,
-				BF5BF8422B737C700049DEF6 /* uriparser.xcframework in Frameworks */,
-				BF6276A22BAD6619008864C1 /* openssl.xcframework in Frameworks */,
-				BF5BF8522B737E4E0049DEF6 /* glfw.xcframework in Frameworks */,
-				BF5BF8482B737D280049DEF6 /* pugixml.xcframework in Frameworks */,
-				BF5BF8562B737E930049DEF6 /* pixman.xcframework in Frameworks */,
-				BF5BF84E2B737E3B0049DEF6 /* freetype.xcframework in Frameworks */,
-				BF6276A42BAD6639008864C1 /* curl.xcframework in Frameworks */,
+				BFB0B3F52C50DFE8008FB5A3 /* brotli.xcframework in Frameworks */,
+				BFB0B3F62C50DFE8008FB5A3 /* curl.xcframework in Frameworks */,
+				BFB0B3F72C50DFE8008FB5A3 /* openssl.xcframework in Frameworks */,
+				BFB0B3F82C50DFE8008FB5A3 /* pixman.xcframework in Frameworks */,
+				BFB0B3F92C50DFE8008FB5A3 /* libpng.xcframework in Frameworks */,
+				BFB0B3FA2C50DFE8008FB5A3 /* glfw.xcframework in Frameworks */,
+				BFB0B3FB2C50DFE8008FB5A3 /* glew.xcframework in Frameworks */,
+				BFB0B3FC2C50DFE8008FB5A3 /* freetype.xcframework in Frameworks */,
+				BFB0B3FD2C50DFE8008FB5A3 /* FreeImage.xcframework in Frameworks */,
+				BFB0B3FE2C50DFE8008FB5A3 /* cairo.xcframework in Frameworks */,
+				BFB0B3FF2C50DFE8008FB5A3 /* pugixml.xcframework in Frameworks */,
+				BFB0B4002C50DFE8008FB5A3 /* rtAudio.xcframework in Frameworks */,
+				BFB0B4012C50DFE8008FB5A3 /* tess2.xcframework in Frameworks */,
+				BFB0B4022C50DFE8008FB5A3 /* uriparser.xcframework in Frameworks */,
+				BFB0B4032C50DFE8008FB5A3 /* zlib.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -809,9 +809,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
 			buildPhases = (
+				BFEF3FA72C50AEC7009B3CD8 /* Run Script */,
 				E4B27C1110CBEB8E00536013 /* Headers */,
 				E4B27C1210CBEB8E00536013 /* Sources */,
 				E4B27C1310CBEB8E00536013 /* Frameworks */,
+				BFF80A5D2C50B2C300784E74 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -850,6 +852,46 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BFEF3FA72C50AEC7009B3CD8 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env bash";
+			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/osx/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_latest_libs.sh\"\n    ${SRCROOT}/../../../../scripts/osx/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+		};
+		BFF80A5D2C50B2C300784E74 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\nTARGET_DIR=\"$SRCROOT/../../lib/osx\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E4B27C1210CBEB8E00536013 /* Sources */ = {
