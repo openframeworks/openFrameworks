@@ -8,7 +8,8 @@
 #pragma once
 
 // MARK: Review later
-//#include "ofConstants.h"
+// FIXME: Tried to remove this one, doesn't work
+#include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 

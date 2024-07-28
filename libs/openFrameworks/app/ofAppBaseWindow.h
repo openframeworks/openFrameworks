@@ -2,7 +2,8 @@
 
 #include "ofWindowSettings.h"
 // MARK: Target
-//#include "ofConstants.h"
+// FIXME: I've tried to remove this one and errored in pollEvents();
+#include "ofConstants.h"
 
 class ofBaseApp;
 class ofBaseRenderer;
