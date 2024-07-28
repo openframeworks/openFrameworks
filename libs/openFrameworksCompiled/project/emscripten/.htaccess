@@ -12,3 +12,5 @@ RemoveType .gz
 AddEncoding x-gzip .gz
 AddType application/wasm .wasm
 AddOutputFilterByType DEFLATE application/wasm
+
+# check content type of WASM using cURL: curl -I https://*.com/index.wasm | grep "content-type"

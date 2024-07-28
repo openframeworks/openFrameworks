@@ -99,7 +99,13 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -s FULL_ES3=1 -s USE_GLFW=3 $(PLATFORM_PTHREAD)
+PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_WEBGPU=1 -s NO_EXIT_RUNTIME=1
+PLATFORM_LDFLAGS += -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -s FULL_ES3=1 
+PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1 -s AUTO_JS_LIBRARIES=1 -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0
+PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
+PLATFORM_LDFLAGS += -lGL -lhtml5
+# PLATFORM_LDFLAGS += -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker"
+# PLATFORM_LDFLAGS += -s USE_GLFW=3 -lglfw
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
