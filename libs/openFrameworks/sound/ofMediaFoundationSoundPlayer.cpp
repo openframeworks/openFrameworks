@@ -1,6 +1,7 @@
 
 #include "ofMediaFoundationSoundPlayer.h"
 #include "ofLog.h"
+#include "ofUtils.h" // ofIsStringInString
 
 #include <condition_variable>
 #include <propvarutil.h>
@@ -189,7 +190,7 @@ ofMediaFoundationSoundPlayer::~ofMediaFoundationSoundPlayer() {
 bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
     unload();
     
-    std::string fileStr = fileName.string();
+    std::string fileStr = ofPathToString(fileName);
     bool bStream = false;
     bStream = bStream || ofIsStringInString(fileStr, "http://");
     bStream = bStream || ofIsStringInString(fileStr, "https://");

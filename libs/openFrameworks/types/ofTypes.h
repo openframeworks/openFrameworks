@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofConstants.h"
 
 //----------------------------------------------------------
 // ofMutex

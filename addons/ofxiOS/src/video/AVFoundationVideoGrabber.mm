@@ -5,7 +5,9 @@
 #include "AVFoundationVideoGrabber.h"
 #include <TargetConditionals.h>
 
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
+#if defined(TARGET_OS_IOS)
 
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
@@ -51,8 +53,17 @@
 }
 
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-	
+    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera,
+        AVCaptureDeviceTypeBuiltInTelephotoCamera,
+        AVCaptureDeviceTypeBuiltInUltraWideCamera,
+        AVCaptureDeviceTypeBuiltInDualCamera,
+        AVCaptureDeviceTypeBuiltInDualWideCamera,
+        AVCaptureDeviceTypeBuiltInTripleCamera,
+        AVCaptureDeviceTypeExternal
+    ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+
+    NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
 	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
@@ -168,21 +179,16 @@
 		// In this example we set a min frame duration of 1/10 seconds so a maximum framerate of 10fps. We say that
 		// we are not able to process more than 10 frames per second.
 		// Called after added to captureSession
-        
-        if(IS_IOS_7_OR_LATER == false) {
-            if(IS_IOS_6_OR_LATER) {
-                #ifdef __IPHONE_6_0
-                AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
-                if ([conn isVideoMinFrameDurationSupported] == YES &&
-                    [conn isVideoMaxFrameDurationSupported] == YES) { // iOS 6+
-                        [conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
-                        [conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
-                }
-                #endif
-            } else { // iOS 5 or earlier
-                [captureOutput setMinFrameDuration:CMTimeMake(1, framerate)];
-            }
+        AVCaptureConnection *connection = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+        NSError *error = nil;
+        if ([device lockForConfiguration:&error]) {
+            device.activeVideoMinFrameDuration = CMTimeMake(1, framerate);
+            device.activeVideoMaxFrameDuration = CMTimeMake(1, framerate);
+            [device unlockForConfiguration];
+        } else {
+            NSLog(@"Error locking device for configuration: %@", error);
         }
+
 		// We start the capture Session
 		[self.captureSession commitConfiguration];		
 		[self.captureSession startRunning];
@@ -244,7 +250,29 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    NSArray<AVCaptureDevice *> *devices;
+    if (@available(iOS 17.0, *)) {
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+            AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera,
+            AVCaptureDeviceTypeBuiltInUltraWideCamera,
+            AVCaptureDeviceTypeBuiltInDualCamera,
+            AVCaptureDeviceTypeBuiltInDualWideCamera,
+            AVCaptureDeviceTypeBuiltInTripleCamera,
+            AVCaptureDeviceTypeExternal
+        ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+        devices = session.devices;
+    } else {
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+            AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera,
+            AVCaptureDeviceTypeBuiltInUltraWideCamera,
+            AVCaptureDeviceTypeBuiltInDualCamera,
+            AVCaptureDeviceTypeBuiltInDualWideCamera,
+            AVCaptureDeviceTypeBuiltInTripleCamera,
+        ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+        devices = session.devices;
+    }
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back([captureDevice.localizedName UTF8String]);
@@ -456,13 +484,13 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 		
 		if(ofGetOrientation() == OF_ORIENTATION_DEFAULT) {
 			transform = CGAffineTransformMakeTranslation(0.0, height);
-			transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>() + glm::pi<float>());
 				
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
 		} else if(ofGetOrientation() == OF_ORIENTATION_180) {
 			transform = CGAffineTransformMakeTranslation(width, 0.0);
-			transform = CGAffineTransformRotate(transform, M_PI / 2.0);
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>());
 			
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
@@ -556,5 +584,5 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
 }
 
 #endif
-
+#endif
 

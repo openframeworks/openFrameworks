@@ -30,7 +30,9 @@ public:
 	float getPan() const;
 	bool isLoaded() const;
 	float getVolume() const;
-	int getDurationMS() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
 	double getDurationSecs() const;
 
 	static float * getSystemSpectrum(int bands);

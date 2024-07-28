@@ -3,7 +3,6 @@
 //To allow for QuickTime video playback install the K-Lite Mega Codec Pack 10.2
 
 #pragma once 
-#include "ofConstants.h"
 #include "ofVideoBaseTypes.h"
 
 template<typename T>

@@ -6,9 +6,7 @@
 #include "ofVectorMath.h"
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
-
-#ifdef OF_VIDEO_CAPTURE_AVF
-
+#include <TargetConditionals.h>
 #import <Accelerate/Accelerate.h>
 
 @interface OSXVideoGrabber ()
@@ -40,13 +38,26 @@
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-			AVCaptureDeviceTypeBuiltInWideAngleCamera,
-			AVCaptureDeviceTypeExternalUnknown,
-		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
-		devices = [session devices];
+        if (@available(macOS 14.0, *)) {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+                AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                AVCaptureDeviceTypeExternal
+            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        } else {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+                discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+                mediaType:AVMediaTypeVideo
+                position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        }
 	} else {
-		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+            mediaType:AVMediaTypeVideo
+            position:AVCaptureDevicePositionUnspecified];
+        devices = [session devices];
+
 	}
 	
 	if([devices count] > 0) {
@@ -119,7 +130,7 @@
 				int numMatch = 0;
 				for(AVFrameRateRange * range in supportedFrameRates){
 
-					if( (floor(range.minFrameRate) <= framerate && ceil(range.maxFrameRate) >= framerate) ){
+					if( (std::floor(range.minFrameRate) <= framerate && std::ceil(range.maxFrameRate) >= framerate) ){
 						ofLogVerbose("ofAvFoundationGrabber") << "found good framerate range, min: " << range.minFrameRate << " max: " << range.maxFrameRate << " for requested fps: " << framerate;
 						desiredRange = range;
 						numMatch++;
@@ -142,7 +153,7 @@
 
 			[device unlockForConfiguration];
 		} else {
-			NSLog(@"OSXVideoGrabber Init Error: %@", error);
+			NSLog(@"ofAVFoundationVideoGrabber Init Error: %@", error);
 		}
 
 		// We setup the input
@@ -189,11 +200,13 @@
 		// Called after added to captureSession
 
 		AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+        #if !defined(TARGET_OF_TVOS)
 		if ([conn isVideoMinFrameDurationSupported] == YES &&
 			[conn isVideoMaxFrameDurationSupported] == YES) {
 				[conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
 				[conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
 		}
+        #endif
 
 		// We start the capture Session
 		[self.captureSession commitConfiguration];
@@ -252,16 +265,26 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-			AVCaptureDeviceTypeBuiltInWideAngleCamera,
-			AVCaptureDeviceTypeExternalUnknown,
-		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
-		devices = [session devices];
+        if (@available(macOS 14.0, *)) {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+                AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                AVCaptureDeviceTypeExternal
+            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        } else {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+                AVCaptureDeviceTypeBuiltInWideAngleCamera
+            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        }
 	} else {
-		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+            mediaType:AVMediaTypeVideo
+            position:AVCaptureDevicePositionUnspecified];
+        devices = [session devices];
 	}
 
 	int i=0;
@@ -536,5 +559,3 @@ bool ofAVFoundationGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 ofPixelFormat ofAVFoundationGrabber::getPixelFormat() const{
 	return pixelFormat;
 }
-
-#endif

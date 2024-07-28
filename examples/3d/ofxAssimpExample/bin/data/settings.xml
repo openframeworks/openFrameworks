@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<panel>
+	<BottomOffsetY>-2.6</BottomOffsetY>
+	<BottomOffsetZ>-15.25</BottomOffsetZ>
+	<Tilt>0</Tilt>
+	<Pan>0</Pan>
+	<CameraOffsetZ>16.3</CameraOffsetZ>
+	<ShadowStrength>0.5</ShadowStrength>
+</panel>

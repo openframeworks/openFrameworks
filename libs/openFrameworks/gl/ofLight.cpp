@@ -9,12 +9,17 @@
 
 #include "ofConstants.h"
 
+#include "ofLight.h"
 #include "of3dUtils.h"
 #include "ofColor.h"
 #include "ofGLBaseTypes.h"
 #include "ofGLUtils.h"
-#include "ofLight.h"
+#include "ofColor.h"
+
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/quaternion.hpp>
+
 #include <map>
 
 using std::vector;

@@ -1,5 +1,6 @@
 #pragma once
 
+// MARK: Review later
 #include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_OPENAL
@@ -8,8 +9,8 @@
 
 typedef unsigned int ALuint;
 
-#include "kiss_fft.h"
-#include "kiss_fftr.h"
+#include <kiss_fft.h>
+#include <kiss_fftr.h>
 #include <sndfile.h>
 
 #ifdef OF_USING_MPG123
@@ -69,6 +70,9 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
         float getVolume() const;
 		bool isPaused() const;
 		bool isLoaded() const;
+	
+		float getDuration() const;
+		unsigned int getDurationMS() const;
 
 		static void initialize();
 		static void close();

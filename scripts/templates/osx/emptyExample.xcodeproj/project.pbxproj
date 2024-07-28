@@ -29,7 +29,7 @@
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\n",
+			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'\n",
 			"name": "Run Script — Compile OF",
 			"files": []
 		},
@@ -78,7 +78,8 @@
 			"productRefGroup": "E4B69B4A0A3A1720003C02F2",
 			"projectDirPath": "",
 			"attributes": {
-				"LastUpgradeCheck": "0600"
+				"LastUpgradeCheck": "1540",
+				"BuildIndependentTargetsInParallel": "YES"
 			},
 			"hasScannedForEncodings": "0",
 			"projectRoot": "",
@@ -101,17 +102,18 @@
 			"fileEncoding": "4"
 		},
 		"19B789C429E5AB4A0082E9B8": {
-			"inputPaths": [],
 			"buildActionMask": "2147483647",
-			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
-			"outputPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
+			"outputPaths": [],
+			"shellPath": "/bin/sh",
+			"inputFileListPaths": [],
+			"showEnvVarsInLog": "0",
+			"isa": "PBXShellScriptBuildPhase",
 			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
-			"outputFileListPaths": [],
 			"files": [],
-			"inputFileListPaths": []
+			"alwaysOutOfDate": "1",
+			"inputPaths": [],
+			"outputFileListPaths": []
 		},
 		"E4B69B4F0A3A1720003C02F2": {
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
@@ -155,7 +157,7 @@
 			"isa": "PBXGroup",
 			"name": "addons",
 			"children": [],
-			"sourceTree": "<group>"
+			"sourceTree": "SOURCE_ROOT"
 		},
 		"E4B69B4A0A3A1720003C02F2": {
 			"isa": "PBXGroup",

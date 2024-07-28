@@ -1,11 +1,13 @@
 #pragma once
-
-#include "cairo.h"
+#include "ofConstants.h"
+#if defined(OF_CAIRO)
+#include <cairo/cairo.h>
 #include "ofGraphicsBaseTypes.h"
+// MARK: Optimization opportunity in ofPath, ofPixels pointer.
 #include "ofPath.h"
+#include "ofPixels.h" // MARK: ofPixels imageBuffer;
 #include "of3dGraphics.h"
 
-#include "ofPixels.h"
 #include <deque>
 #include <stack>
 
@@ -82,6 +84,7 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setLineWidth(float lineWidth);
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
@@ -207,3 +210,4 @@ private:
 	std::deque <ofStyle> styleHistory;
 	ofPath path;
 };
+#endif

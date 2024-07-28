@@ -1,6 +1,7 @@
 #include "ofGLRenderer.h"
 #include "ofGraphics.h"
 #include "ofRendererCollection.h"
+#include "ofRectangle.h"
 
 #ifndef TARGET_WIN32
 	#define CALLBACK
@@ -428,10 +429,10 @@ void ofBackgroundGradient(const ofFloatColor& start, const ofFloatColor& end, of
 		float n = 32; // circular gradient resolution
 		float angleBisector = glm::two_pi<float>() / (n * 2.0);
 		float smallRadius = ofDist(0, 0, w / 2, h / 2);
-		float bigRadius = smallRadius / cos(angleBisector);
+		float bigRadius = smallRadius / std::cos(angleBisector);
 		for (int i = 0; i <= n; i++) {
 			float theta = i * glm::two_pi<float>() / n;
-			gradientMesh.addVertex(glm::vec3(center + glm::vec2(sin(theta), cos(theta)) * bigRadius, 0));
+			gradientMesh.addVertex(glm::vec3(center + glm::vec2(std::sin(theta), std::cos(theta)) * bigRadius, 0));
 			gradientMesh.addColor(end);
 		}
 	} else if (mode == OF_GRADIENT_LINEAR) {
@@ -528,6 +529,11 @@ void ofSetLineWidth(float lineWidth) {
 }
 
 //----------------------------------------------------------
+void ofSetPointSize(float pointSize) {
+	ofGetCurrentRenderer()->setPointSize(pointSize);
+}
+
+//----------------------------------------------------------
 void ofSetDepthTest(bool depthTest) {
 	ofGetCurrentRenderer()->setDepthTest(depthTest);
 }
@@ -598,6 +604,23 @@ void ofSetFloatColor(const ofFloatColor& acolor, float a){
 //----------------------------------------------------------
 void ofSetFloatColor(const ofFloatColor& acolor){
 	ofSetFloatColor( acolor.r, acolor.g, acolor.b, acolor.a);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofColor & acolor) {
+	float limit = ofColor::limit();
+	ofSetFloatColor((float)acolor.r / limit, (float)acolor.g / limit, (float)acolor.b / limit, (float)acolor.a / limit);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofFloatColor & acolor) {
+	ofSetFloatColor(acolor);
+}
+
+//----------------------------------------------------------
+void ofSetColor(const ofShortColor & acolor) {
+	float limit = ofShortColor::limit();
+	ofSetFloatColor((float)acolor.r / limit, (float)acolor.g / limit, (float)acolor.b / limit, (float)acolor.a / limit);
 }
 
 //----------------------------------------------------------

@@ -100,7 +100,6 @@ public:
 	static std::string getShaderDefinesAsString();
 
 	static bool areShadowsSupported();
-
 	ofShadow();
 	~ofShadow();
 
@@ -130,6 +129,7 @@ public:
 	const bool isSingleOmniPass() const;
 	const int getNumShadowDepthPasses() const;
 	void setSingleOmniPass(bool ab);
+  
 	int getDepthMapWidth();
 	int getDepthMapHeight();
 
