@@ -219,7 +219,7 @@ private:
 		ofShader depthCube;
 		ofShader depthCubeMultiPass;
 	};
-	void initShaders(ofGLProgrammableRenderer & renderer) const;
+	void initShaders(ofGLProgrammableRenderer & renderer);
 
 	mutable std::map<ofGLProgrammableRenderer *, std::shared_ptr<Shaders>> shaders;
 };
