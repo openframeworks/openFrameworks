@@ -1,12 +1,14 @@
 #pragma once
 
 // MARK: ofConstants targets
-#include "ofConstants.h"
+//#include "ofConstants.h"
+
+#include <string>
+#include <vector>
 
 class ofBuffer;
 
-
-#ifndef TARGET_WIN32
+#ifndef _WIN32
 	#include <termios.h>
 #endif
 

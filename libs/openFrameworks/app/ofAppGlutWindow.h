@@ -4,7 +4,7 @@
 #include "ofEvents.h"
 #include "ofTypes.h"
 // MARK: Target but optional
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 template <typename T>
 class ofPixels_;

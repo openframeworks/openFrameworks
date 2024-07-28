@@ -1,9 +1,9 @@
 #include "ofAppEGLWindow.h"
 
+#include "ofFileUtils.h"
 #include "ofGraphics.h" // used in runAppViaInfiniteLoop()
 #include "ofAppRunner.h"
 #include "ofUtils.h"
-#include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
 #include "ofVectorMath.h"

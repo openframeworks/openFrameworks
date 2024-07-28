@@ -8,8 +8,10 @@
 #pragma once
 
 #include "ofGraphicsConstants.h"
-// MARK: Targets / Defines
-//#include "ofConstants.h"
+#include <string>
+
+// MARK: Targets / Defines / ofIndexType / GLuint
+#include "ofConstants.h"
 
 class ofShader;
 class ofGLProgrammableRenderer;

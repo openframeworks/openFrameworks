@@ -1,9 +1,10 @@
 #pragma once
 
+// ofTexCompression, ofTexture
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
-#include "ofGraphicsConstants.h"
-#include "ofGLUtils.h"
+//#include "ofGraphicsConstants.h"
+//#include "ofGLUtils.h"
 
 template<typename T>
 class ofPixels_;
