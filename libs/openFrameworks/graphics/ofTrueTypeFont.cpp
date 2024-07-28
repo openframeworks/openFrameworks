@@ -233,22 +233,22 @@ static ofPath makeContoursForCharacter(FT_Face face){
 #include <ApplicationServices/ApplicationServices.h>
 
 //------------------------------------------------------------------
-static string osxFontPathByName(const of::filesystem::path & fileName){
+static of::filesystem::path osxFontPathByName(const of::filesystem::path & fileName) {
 	CFStringRef targetName = CFStringCreateWithCString(nullptr, fileName.c_str(), kCFStringEncodingUTF8);
 	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
 	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
-	string fontPath = "";
+	string fontDir = "";
 
 	if(targetURL) {
 		UInt8 buffer[PATH_MAX];
 		CFURLGetFileSystemRepresentation(targetURL, true, buffer, PATH_MAX);
-		fontPath = string((char *)buffer);
+		fontDir = string((char *)buffer);
 		CFRelease(targetURL);
 	}
 
 	CFRelease(targetName);
 	CFRelease(targetDescriptor);
-
+	of::filesystem::path fontPath = { fontDir + font_file };
 	return fontPath;
 }
 #endif
@@ -256,8 +256,7 @@ static string osxFontPathByName(const of::filesystem::path & fileName){
 #ifdef TARGET_WIN32
 #include <unordered_map>
 // font font face -> file name name mapping
-// FIXME: second -> fs::path
-static std::unordered_map<string, string> fonts_table;
+static std::unordered_map<string, of::filesystem::path> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -304,6 +303,7 @@ void initWindows(){
 	SHGetPathFromIDList(ppidl,&fontsPath);*/
 	string fontsDir = ofGetEnv("windir");
 	fontsDir += "\\Fonts\\";
+	
 	for (DWORD i = 0; i < value_count; ++i)
 	{
 			DWORD name_len = 2048;
@@ -321,7 +321,8 @@ void initWindows(){
 			string font_file = value_data_char;
 			curr_face = curr_face.substr(0, curr_face.find('(') - 1);
 			curr_face = ofToLower(curr_face);
-			fonts_table[curr_face] = fontsDir + font_file;
+			of::filesystem::path fontPath = { fontsDir + font_file };
+			fonts_table[curr_face] = fontPath;
 	}
 
 
@@ -331,14 +332,14 @@ void initWindows(){
 }
 
 
-static string winFontPathByName(const string & fontname){
+static of::filesystem::path winFontPathByName(const string & fontname) {
 	return fonts_table[fontname];
 }
 #endif
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------------
-static string linuxFontPathByName(const string & fontname){
+static of::filesystem::path linuxFontPathByName(const string & fontname) {
 	string filename;
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
@@ -368,7 +369,8 @@ static string linuxFontPathByName(const string & fontname){
 	}
 	FcPatternDestroy(fontMatch);
 	FcPatternDestroy(pattern);
-	return filename;
+	of::filesystem::path fontPath = { filename };
+	return fontPath;
 }
 #endif
 
@@ -377,12 +379,12 @@ static string linuxFontPathByName(const string & fontname){
 static bool loadFontFace(const string & _fontname, FT_Face & face, 
 						 of::filesystem::path & _filename, int index){
 	auto fontname = _fontname;
-	auto filename = ofToDataPath(_filename);
+	auto filename = ofToDataPath(fontname);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
 		// FIXME: fs::path in input and output
-		filename = linuxFontPathByName(_fontname);
+		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
@@ -397,17 +399,17 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 			fontname = "Menlo Regular";
 		}
 		// FIXME: fs::path in input and output
-		filename = osxFontPathByName(_fontname);
+		filename = osxFontPathByName(fontname);
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
-			fontname = "Arial";
+			fontname = "arial";
 		}else if(fontname==OF_TTF_SERIF){
-			fontname = "Times New Roman";
+			fontname = "times new roman";
 		}else if(fontname==OF_TTF_MONO){
-			fontname = "Courier New";
+			fontname = "courier new";
 		}
 		// FIXME: fs::path in input and output
-		filename = winFontPathByName(_fontname);
+		filename = winFontPathByName(fontname);
 #endif
 		if(filename == "" ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
