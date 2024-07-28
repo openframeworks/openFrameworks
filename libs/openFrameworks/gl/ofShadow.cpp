@@ -1135,11 +1135,11 @@ void ofShadow::_updateNumShadows() {
 #include "shaders/shadowDepth.vert"
 #include "shaders/shadowDepthCubeGeom.glsl"
 
-bool ofShadow::setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) const {
+bool ofShadow::setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) {
 	return setupShadowDepthShader( ashader, data->lightType, aShaderMain, isSingleOmniPass() );
 }
 
-bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) const {
+bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) {
 	std::string gversion = "#version 150\n";
 	
 	#ifdef TARGET_OPENGLES
@@ -1196,7 +1196,7 @@ bool ofShadow::setupShadowDepthShader(ofShader& ashader, int aLightType, const s
 	return ashader.linkProgram();
 }
 
-void ofShadow::initShaders(ofGLProgrammableRenderer & renderer) const {
+void ofShadow::initShaders(ofGLProgrammableRenderer & renderer) {
 	auto rendererShaders = shaders.find(&renderer);
 
 	if (rendererShaders == shaders.end()) {
