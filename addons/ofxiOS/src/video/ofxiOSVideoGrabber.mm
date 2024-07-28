@@ -1,3 +1,7 @@
+
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
+
 #include "ofxiOSVideoGrabber.h"
 #include "AVFoundationVideoGrabber.h"
 #include "ofLog.h"
@@ -7,7 +11,6 @@
 using std::shared_ptr;
 using std::vector;
 
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
 	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
@@ -124,4 +127,3 @@ const ofPixels& ofxiOSVideoGrabber::getPixelsRef() const{
 }
 
 #endif
-

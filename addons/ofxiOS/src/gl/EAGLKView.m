@@ -4,11 +4,10 @@
 //
 //  Created by Dan Rosser on 7/3/18.
 //
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #include <TargetConditionals.h>
-
 #import "EAGLKView.h"
-
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
 
@@ -183,3 +182,5 @@
 
 
 @end
+
+#endif

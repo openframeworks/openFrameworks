@@ -10,8 +10,6 @@
 #include <glm/vec2.hpp>
 #include <glm/gtx/transform.hpp>
 
-//#include <typeinfo>
-
 using std::shared_ptr;
 using std::string;
 
@@ -290,7 +288,7 @@ bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType,
 	bool bWasUsingArb = ofGetUsingArbTex();
 	bTex2d ? ofDisableArbTex() : ofEnableArbTex();
 	
-	auto tex = std::make_shared<ofTexture>();
+	auto tex { std::make_shared<ofTexture>() };
 	bool bLoadOk = ofLoadImage(*tex, apath, mirrorY );
 	
 	if( bLoadOk ) {
@@ -810,7 +808,7 @@ const ofShader& ofMaterial::getShadowDepthShader( const ofShadow& ashadow, ofGLP
 	auto shadowShader = mDepthShaders[&renderer]->shaders.find(shadowShaderId);
 	
 	if(shadowShader == mDepthShaders[&renderer]->shaders.end() || !mDepthShaders[&renderer]->shaders[shadowShaderId] ) {
-		auto nDepthShader = std::make_shared<ofShader>();
+		auto nDepthShader { std::make_shared<ofShader>() };
 		
 		auto customUniforms = data.customUniforms;
 		for( auto & custom : mCustomUniforms ){
@@ -963,7 +961,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		
 		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader------------------- ";
 		ofLogVerbose() << fragment2DHeader;
-		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader xxxxxxx ";
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader ";
 
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;

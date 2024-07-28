@@ -774,6 +774,17 @@ void ofSetCurveResolution(int res);
 /// ~~~~
 void ofSetLineWidth(float lineWidth);
 
+/// \brief Sets the size of the points after mesh.drawVertices() called after.
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofSetPointSize(1);          // set point size to 1
+///     mesh.drawVertices(); 		 // draw small points
+///     ofSetPointSize(10);         // set point size to 10
+///     mesh.drawVertices();  		// draw fat points
+/// }
+/// ~~~~
+void ofSetPointSize(float pointSize);
+
 /// \brief Set depth testing on or off to either sort by z-depth (`true`)
 /// or draw order (`false`).
 void ofSetDepthTest(bool depthTest);
@@ -971,6 +982,24 @@ void ofPushMatrix();
 ///
 /// \sa ofPushMatrix()
 void ofPopMatrix();
+
+/// \brief Manages a an ofPush/Pop Matrix cycle with an anonymous scoped object
+///
+struct ofScopedMatrix {
+	ofScopedMatrix() { ofPushMatrix(); }
+	~ofScopedMatrix() { ofPopMatrix(); }
+};
+
+/// \brief Manages a an ofPush/Pop Style cycle with an anonymous scoped object
+///
+struct ofScopedStyle {
+	ofScopedStyle() { ofPushStyle(); }
+	~ofScopedStyle() { ofPopStyle(); }
+};
+
+/// \brief Combines ofScopeMatrix and Style
+///
+struct ofScopedMatrixStyle: public ofScopedMatrix, public ofScopedStyle { };
 
 /// \brief Query the current (oF internal) Transformation Matrix state.
 glm::mat4 ofGetCurrentMatrix(ofMatrixMode matrixMode);

@@ -6,7 +6,7 @@
 #include "ofVectorMath.h"
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
-
+#include <TargetConditionals.h>
 #import <Accelerate/Accelerate.h>
 
 @interface OSXVideoGrabber ()
@@ -38,13 +38,26 @@
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-			AVCaptureDeviceTypeBuiltInWideAngleCamera,
-			AVCaptureDeviceTypeExternalUnknown,
-		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
-		devices = [session devices];
+        if (@available(macOS 14.0, *)) {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+                AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                AVCaptureDeviceTypeExternal
+            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        } else {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+                discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+                mediaType:AVMediaTypeVideo
+                position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        }
 	} else {
-		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+            mediaType:AVMediaTypeVideo
+            position:AVCaptureDevicePositionUnspecified];
+        devices = [session devices];
+
 	}
 	
 	if([devices count] > 0) {
@@ -140,7 +153,7 @@
 
 			[device unlockForConfiguration];
 		} else {
-			NSLog(@"OSXVideoGrabber Init Error: %@", error);
+			NSLog(@"ofAVFoundationVideoGrabber Init Error: %@", error);
 		}
 
 		// We setup the input
@@ -187,11 +200,13 @@
 		// Called after added to captureSession
 
 		AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+        #if !defined(TARGET_OF_TVOS)
 		if ([conn isVideoMinFrameDurationSupported] == YES &&
 			[conn isVideoMaxFrameDurationSupported] == YES) {
 				[conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
 				[conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
 		}
+        #endif
 
 		// We start the capture Session
 		[self.captureSession commitConfiguration];
@@ -250,16 +265,26 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-			AVCaptureDeviceTypeBuiltInWideAngleCamera,
-			AVCaptureDeviceTypeExternalUnknown,
-		] mediaType:nil position:AVCaptureDevicePositionUnspecified];
-		devices = [session devices];
+        if (@available(macOS 14.0, *)) {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+                AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                AVCaptureDeviceTypeExternal
+            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        } else {
+            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
+                AVCaptureDeviceTypeBuiltInWideAngleCamera
+            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+            devices = [session devices];
+        }
 	} else {
-		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+            mediaType:AVMediaTypeVideo
+            position:AVCaptureDevicePositionUnspecified];
+        devices = [session devices];
 	}
 
 	int i=0;

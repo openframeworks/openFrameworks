@@ -8,6 +8,46 @@
 
 #pragma once
 
+#include <TargetConditionals.h>
+// #include <unistd.h>
+#if TARGET_OS_SIMULATOR
+#define TARGET_OF_SIMULATOR
+#endif
+
+#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+    #define TARGET_OF_IOS
+    #define CORE_MOTION
+    #define OF_UI_KIT
+    #define OF_GL_KIT
+    #define OF_OPEN_AL
+    #define OF_CORE_MOTION
+    #define OF_CORE_LOCATION
+    #define OF_MAP_KIT
+    #define OF_HAPTICS
+    #define OF_IOS_AVSOUNDPLAYER
+#elif TARGET_OS_TV
+    #define TARGET_OF_IOS
+    #define TARGET_OF_TVOS
+    #define OF_GL_KIT
+    #define OF_UI_KIT
+    #define OF_IOS_AVSOUNDPLAYER
+#elif TARGET_OS_WATCH
+    #define TARGET_OF_IOS
+    #define TARGET_OF_WATCHOS
+    #define OF_UI_KIT
+#elif defined(TARGET_OS_VISIONOS)
+    #define TARGET_OF_XROS
+    #define TARGET_OF_IOS
+    #define CORE_MOTION
+    #define OF_UI_KIT
+    #define OF_GL_KIT
+    #define OF_CORE_MOTION
+    #define OF_CORE_LOCATION
+#else
+    #define TARGET_OSX
+    #define TARGET_MACOS
+#endif
+
 // iOS Device Types.
 //-------------------------------------------------------------------------------
 enum ofxiOSDeviceType {

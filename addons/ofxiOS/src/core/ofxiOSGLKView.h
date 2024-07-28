@@ -4,10 +4,11 @@
 //
 //  Created by Dan Rosser on 7/3/18.
 //
-
-
 #pragma once
+#include "ofxiOSConstants.h"
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT) && defined(TARGET_OF_IOS)
 #import <UIKit/UIKit.h>
 #import "EAGLKView.h"
 #include <glm/glm.hpp>
@@ -48,3 +49,4 @@ class ofAppiOSWindow;
 @end
 
 #define ofxiPhoneEAGLView ofxiOSEAGLView
+#endif

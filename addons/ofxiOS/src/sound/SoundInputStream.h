@@ -7,9 +7,11 @@
 #pragma once
 
 #import "SoundStream.h"
-
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && defined(OF_UI_KIT)
 @interface SoundInputStream : SoundStream {
 
 }
 
 @end
+#endif
