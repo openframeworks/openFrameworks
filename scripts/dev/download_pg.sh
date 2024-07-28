@@ -14,7 +14,7 @@ cat << EOF
     Options:
 
     -v, --version VERSION       OF version to download the libraries for. Defaults to master
-    -p, --platform PLATFORM     Platorm among: android, emscritpen, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs
+    -p, --platform PLATFORM     Platform among: android, emscripten, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs
                                 If not specified tries to autodetect the platform
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
@@ -103,7 +103,7 @@ if [ "$PLATFORM" == "" ]; then
         PLATFORM="linux"
     elif [ "$OS" == "Darwin" ]; then
         PLATFORM="osx"
-    elif [ "${OS:0:5}" == "MINGW" ]; then
+    elif [[ "$OS" =~ "MINGW" ]] || [[ "$OS" =~ "MSYS" ]]; then
         PLATFORM="msys2"
     else
         PLATFORM="vs"
@@ -114,30 +114,30 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            ARCH=armv7l
+            ARCH=x86_64
         elif [ "$ARCH" == "armv7l" ]; then
             ARCH=armv7l
-        elif [[ "$ARCH" == "armv64" ] ||  "$ARCH" == "aarch64" ]]; then
+        elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
             ARCH=arm64
+        else
+            ARCH=unknown
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
         ARCH=universal
     elif [ "$PLATFORM" == "vs" ]; then
-        if [[ "$ARCH" == "x86_64" ]]; then
-            echo "Processor architecture is x86_64"
+        ARCH=$(uname -m)
+        if [ "$ARCH" == "x86_64" ]; then
             ARCH=64
         elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
-            echo "Processor architecture is ARM64"
             ARCH=arm64
         else
             ARCH=universal
         fi
-    elif [[ "$PLATFORM" == "osx" ] || [ "$PLATFORM" == "macos" ]]; then
-        if [[ "$ARCH" == "x86_64" ]]; then
-            echo "Processor architecture is x86_64"
+    elif [[ "$PLATFORM" == "osx" ]] || [[ "$PLATFORM" == "macos" ]]; then
+        ARCH=$(uname -m)
+        if [ "$ARCH" == "x86_64" ]; then
             ARCH=64
         elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
-            echo "Processor architecture is ARM64"
             ARCH=arm64
         else
             ARCH=universal
@@ -145,12 +145,10 @@ if [ "$ARCH" == "" ]; then
     fi
 fi
 
-
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 OUTDIR=../../
-
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=bleeding
@@ -169,7 +167,6 @@ else
 fi
 PKG="projectGenerator-${PLATFORM}${GUI}.zip"
 
-
 echo " openFrameworks download_pg.sh"
 
 cd ../../
@@ -179,15 +176,13 @@ cd libs
 mkdir -p download
 cd download
 
-
 download $PKG
 
 if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
-        rm -rf "${OUTDIR}/${OUTPUT}"
+    rm -rf "${OUTDIR}/${OUTPUT}"
 fi
 
-
-echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/$OUTPUT]"
+echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/${OUTPUT}]"
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     unzip -q "$PKG" -d "${OUTDIR}/${OUTPUT}"
     #rm $PKG
@@ -199,24 +194,21 @@ else
 fi
 
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-
-    if ! command -v rsync &> /dev/null
-    then      
-        cp -ar ${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
+    if ! command -v rsync &> /dev/null; then      
+        cp -ar "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe" "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
     else
-        rsync -avzp ${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
+        rsync -avzp "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe" "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
     fi
-    chmod +x ${OUTDIR}/${OUTPUT}/projectGeneratorCMD.exe
-    chmod +x ${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe
+    chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCMD.exe"
+    chmod +x "${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe"
 else
-    if ! command -v rsync &> /dev/null
-    then      
-        cp -arX ${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
+    if ! command -v rsync &> /dev/null; then      
+        cp -arX "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
     else
-        rsync -avzp ${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
+        rsync -avzp "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
     fi
-    chmod +x ${OUTDIR}/${OUTPUT}/projectGenerator
-    chmod +x ${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator
+    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
+    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator"
 fi
 
 echo " ------ "
