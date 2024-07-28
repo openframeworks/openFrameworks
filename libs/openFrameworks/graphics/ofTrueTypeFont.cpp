@@ -302,7 +302,7 @@ void initWindows(){
 	char fontsPath[2048];
 	SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
 	SHGetPathFromIDList(ppidl,&fontsPath);*/
-	string fontsDir = getenv ("windir");
+	string fontsDir = ofGetEnv("windir");
 	fontsDir += "\\Fonts\\";
 	for (DWORD i = 0; i < value_count; ++i)
 	{

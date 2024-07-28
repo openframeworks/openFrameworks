@@ -1132,7 +1132,7 @@ std::string ofGetEnv(const std::string & var, const std::string defaultValue) {
 		return defaultValue;
 	}
 #else
-	auto value = getenv(var.c_str());
+	auto value = std::getenv(var.c_str());
 	if (value) {
 		return value;
 	} else {
