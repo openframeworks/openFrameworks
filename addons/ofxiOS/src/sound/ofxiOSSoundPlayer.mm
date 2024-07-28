@@ -5,9 +5,11 @@
 //
 
 #include "ofxiOSSoundPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
+
 #include "ofUtils.h"
 #include "ofLog.h"
-#include "ofxiOSConstants.h"
 #import "AVSoundPlayer.h"
 #if defined(OF_IOS_AVSOUNDPLAYER)
 using std::string;
@@ -183,4 +185,5 @@ unsigned int ofxiOSSoundPlayer::getDurationMS() const {
 void * ofxiOSSoundPlayer::getAVSoundPlayer() {
     return soundPlayer;
 }
+#endif
 #endif

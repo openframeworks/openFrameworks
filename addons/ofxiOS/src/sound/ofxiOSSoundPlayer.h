@@ -8,6 +8,8 @@
 
 #include "ofSoundBaseTypes.h"
 #include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) 
+
 #if defined(OF_IOS_AVSOUNDPLAYER)
 
 class ofxiOSSoundPlayer : public ofBaseSoundPlayer {
@@ -52,4 +54,5 @@ protected:
 
 #define ofxiPhoneSoundPlayer ofxiOSSoundPlayer
 
+#endif
 #endif

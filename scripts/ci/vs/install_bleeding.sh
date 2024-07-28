@@ -5,8 +5,7 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
 
 unset BITS
-
-cd ${OF_ROOT}
+cd "${OF_ROOT}"
 ./scripts/vs/download_latest_libs.sh -p vs --silent
 
 rm -rf projectGenerator
@@ -15,25 +14,39 @@ cd projectGenerator
 
 echo "Downloading projectGenerator from Github Bleeding"
 downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip 2> /dev/null
-unzip projectGenerator-vs.zip 2> /dev/null
-rm projectGenerator-vs.zip
-ls
-cd ../
+unzip -o projectGenerator-vs.zip 2> /dev/null
+#rm projectGenerator-vs.zip
 
-# downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-# unzip projectGenerator-vs-gui.zip 2> /dev/null
-# rm projectGenerator-vs-gui.zip
+#downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
+#unzip projectGenerator-vs-gui.zip 2> /dev/null
+#rm projectGenerator-vs-gui.zip
 
-PG_OF_PATH=$OF_ROOT/projectGenerator/projectGenerator.exe
+cd "${OF_ROOT}"
+
+OFW_ROOT=$(cygpath -w "$PWD")
+PG_OFX_PATH="${OF_ROOT}\\projectGenerator\\projectGenerator.exe"
+PG_OF_PATH="${OF_ROOT}/projectGenerator/projectGenerator.exe"
+
+PGW_OFX_PATH=$(cygpath -w "$PG_OF_PATH")
 
 PROJECTS=(
-    "examples/templates/emptyExample"
-    "examples/templates/allAddonsExample"
+    "examples\\templates\\emptyExample"
+    "examples\\templates\\allAddonsExample"
 )
 
-for PROJECT in "${PROJECTS[@]}"; do
-	OPTIONS="-o\"$OF_ROOT\" \"$OF_ROOT/$PROJECT\""
+ADDONS=(
+    ""
+    "ofxAssimpModelLoader,ofxGui,ofxKinect,ofxNetwork,ofxOpenCv,ofxOsc,ofxSvg,ofxThreadedImageLoader,ofxXmlSettings"
+)
+
+echo "Updating projects with PG at:${PG_OF_PATH}"
+
+for i in "${!PROJECTS[@]}"; do
+    PROJECT=${PROJECTS[i]}
+    ADDON=${ADDONS[i]}
+    OPTIONS="-o\"${OF_ROOT}\" -v -a\"$ADDON\" -p\"vs\"  -t\"\" \"${OF_ROOT}\\${PROJECT}\""
     # Run the project generator executable with the combined options
-    eval "$PG_OF_PATH $OPTIONS"
-    #"$PG_OF_PATH" -o"$OF_ROOT" "$OF_ROOT/$PROJECT"
+    echo "Updating: ${PROJECT} with:${PG_OF_PATH}"
+    #cmd.exe /c "${PG_OF_PATH} ${OPTIONS}"
+    eval "${PG_OF_PATH} ${OPTIONS}"
 done
