@@ -169,7 +169,7 @@ if [ "$PLATFORM" == "vs" ]; then
 else
     EXT=".app"
 fi
-OUTPUT=projectGenerator-$PLATFORM
+OUTPUT=projectGenerator
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     GUI="-gui"
 else
@@ -190,51 +190,39 @@ cd download
 
 download $PKG
 
-echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/$OUTPUT]"
-if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-    unzip -q "$PKG" -d "$OUTPUT"
-    #rm $PKG
-else
-    tar xjf "$PKG"
-    #rm $PKG
-fi
-
 if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
         rm -rf "${OUTDIR}/${OUTPUT}"
 fi
 
+echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/$OUTPUT]"
+if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+    unzip -q "$PKG" -d "${OUTDIR}/${OUTPUT}"
+    #rm $PKG
+else
+    tar xjf "$PKG" -C "${OUTDIR}/${OUTPUT}"
+    #rm $PKG
+fi
+
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 
     if ! command -v rsync &> /dev/null
     then      
-        cp -ar ${OUTPUT}/ ${OUTDIR}/projectGenerator
-        cp -ar ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
+        cp -ar ${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     else
-        rsync -avzp ${OUTPUT}/ ${OUTDIR}/projectGenerator
-        rsync -avzp ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
+        rsync -avzp ${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
     fi
-    chmod +x ${OUTDIR}/projectGenerator/projectGeneratorCMD.exe
-    chmod +x ${OUTDIR}/projectGenerator/resources/app/projectGenerator.exe
-    rm -rf $OUTPUT
-
+    chmod +x ${OUTDIR}/${OUTPUT}/projectGeneratorCMD.exe
+    chmod +x ${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe
 else
     if ! command -v rsync &> /dev/null
     then      
-        cp -arX $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
-        cp -arX $OUTPUT/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
+        cp -arX ${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
     else
-        rsync -avzp $OUTPUT/projectGenerator$EXT $OUTDIR/projectGenerator
-        rsync -avzp $OUTPUT/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
-        
+        rsync -avzp ${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator ${OUTDIR}/projectGenerator
     fi
-    chmod +x ${OUTDIR}/projectGenerator/projectGenerator
-    chmod +x ${OUTDIR}/projectGenerator/projectGenerator$EXT/Contents/MacOS/projectGenerator
-    rm -rf $OUTPUT/projectGenerator$EXT
-
+    chmod +x ${OUTDIR}/${OUTPUT}/projectGenerator
+    chmod +x ${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator
 fi
-
-rm -rf $OUTPUT
-# rm -rf $PKG
 
 echo " ------ "
 echo " openFrameworks download projectGenerator and install complete!"
