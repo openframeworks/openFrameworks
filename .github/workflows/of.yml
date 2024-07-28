@@ -106,12 +106,12 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2.24.0
-        with:
-          update: true
-          install: >-
-            git
-            unzip
+      # - uses: msys2/setup-msys2@v2.24.0
+      #   with:
+      #     update: true
+      #     install: >-
+      #       git
+      #       unzip
       - name: Install dependencies
         shell: msys2 {0}
         run:
