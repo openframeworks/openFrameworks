@@ -276,7 +276,6 @@ void initWindows(){
 	wchar_t value_name[2048];
 	BYTE *value_data;
 
-
 	// get font_file_name -> font_face mapping from the "Fonts" registry key
 
 	l_ret = RegQueryInfoKeyW(key_ft, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &value_count, nullptr, &max_data_len, nullptr, nullptr);
@@ -297,10 +296,6 @@ void initWindows(){
 
 	char value_name_char[2048];
 	char value_data_char[2048];
-	/*char ppidl[2048];
-	char fontsPath[2048];
-	SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
-	SHGetPathFromIDList(ppidl,&fontsPath);*/
 	string fontsDir = ofGetEnv("windir");
 	fontsDir += "\\Fonts\\";
 	
@@ -308,13 +303,11 @@ void initWindows(){
 	{
 			DWORD name_len = 2048;
 			DWORD data_len = max_data_len;
-
 			l_ret = RegEnumValueW(key_ft, i, value_name, &name_len, nullptr, nullptr, value_data, &data_len);
 			if(l_ret != ERROR_SUCCESS){
 				 ofLogError("ofTrueTypeFont") << "initWindows(): couldn't read registry key for font type";
 				 continue;
 			}
-
 			wcstombs(value_name_char,value_name,2048);
 			wcstombs(value_data_char,reinterpret_cast<wchar_t *>(value_data),2048);
 			string curr_face = value_name_char;
@@ -324,10 +317,7 @@ void initWindows(){
 			of::filesystem::path fontPath = { fontsDir + font_file };
 			fonts_table[curr_face] = fontPath;
 	}
-
-
 	HeapFree(GetProcessHeap(), 0, value_data);
-
 	l_ret = RegCloseKey(key_ft);
 }
 
@@ -375,15 +365,14 @@ static of::filesystem::path linuxFontPathByName(const string & fontname) {
 #endif
 
 //-----------------------------------------------------------
-// FIXME: it seems first parameter is string because it represents the font name only
-static bool loadFontFace(const string & _fontname, FT_Face & face, 
+// FIXME: it seems first parameter is string because it represents the font name only / can be
+static bool loadFontFace(const string & _fontname, FT_Face & face,
 						 of::filesystem::path & _filename, int index){
 	auto fontname = _fontname;
 	auto filename = ofToDataPath(fontname);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
-		// FIXME: fs::path in input and output
 		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
@@ -398,7 +387,6 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Menlo Regular";
 		}
-		// FIXME: fs::path in input and output
 		filename = osxFontPathByName(fontname);
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
@@ -408,7 +396,6 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "courier new";
 		}
-		// FIXME: fs::path in input and output
 		filename = winFontPathByName(fontname);
 #endif
 		if(filename == "" ){
