@@ -64,10 +64,10 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
     emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
     emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
 
-//    emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousescrolled_cb);
+    emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousescrolled_cb);
 	
 	// the following locks up the window for some reason.....
-	//emscripten_set_resize_callback(const char *target, void *userData, EM_BOOL useCapture, em_ui_callback_func callback)
+//	emscripten_set_resize_callback(const char *target, void *userData, EM_BOOL useCapture, em_ui_callback_func callback)
 //	emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, &emscripten_window_resized_callback );
 	
 	mStartWindowMode = settings.windowMode;
