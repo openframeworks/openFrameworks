@@ -248,7 +248,7 @@ static of::filesystem::path osxFontPathByName(const of::filesystem::path & fileN
 
 	CFRelease(targetName);
 	CFRelease(targetDescriptor);
-	of::filesystem::path fontPath = { fontDir + font_file };
+	of::filesystem::path fontPath = { fontDir };
 	return fontPath;
 }
 #endif
