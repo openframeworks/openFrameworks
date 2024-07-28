@@ -106,7 +106,6 @@ if [ "$PLATFORM" == "" ]; then
     elif [ "${OS:0:5}" == "MINGW" ]; then
         PLATFORM="msys2"
     else
-        # otherwise we are on windows and will download vs
         PLATFORM="vs"
     fi
 fi
@@ -115,41 +114,34 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
-            if [ $GCC_VERSION -eq 4 ]; then
-                ARCH=64gcc6
-            elif [ $GCC_VERSION -eq 5 ]; then
-                ARCH=64gcc6
-            else
-                ARCH=64gcc6
-            fi
+            ARCH=armv7l
         elif [ "$ARCH" == "armv7l" ]; then
-            # Check for Raspberry Pi
-            if [ -f /opt/vc/include/bcm_host.h ]; then
-                ARCH=armv6l
-            fi
-        elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
-            cat << EOF
-32bit linux is not officially supported anymore but compiling
-the libraries using the build script in apothecary/scripts
-should compile all the dependencies without problem
-EOF
-            exit 1
+            ARCH=armv7l
+        elif [[ "$ARCH" == "armv64" ] ||  "$ARCH" == "aarch64" ]]; then
+            ARCH=arm64
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
-        if [ "$MSYSTEM" == "MINGW64" ]; then
-            ARCH=mingw64
-        elif [ "$MSYSTEM" == "MINGW32" ]; then
-            ARCH=mingw32
-        elif [ "$MSYSTEM" == "UCRT64" ]; then
-            ARCH=ucrt64
-        elif [ "$MSYSTEM" == "CLANG64" ]; then
-            ARCH=clang64
+        ARCH=universal
+    elif [ "$PLATFORM" == "vs" ]; then
+        if [[ "$ARCH" == "x86_64" ]]; then
+            echo "Processor architecture is x86_64"
+            ARCH=64
+        elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
+            echo "Processor architecture is ARM64"
+            ARCH=arm64
+        else
+            ARCH=universal
         fi
-    fi
-
-    if [ "$PLATFORM" == "osx" ]; then
-        ARCH=x86_64
+    elif [[ "$PLATFORM" == "osx" ] || [ "$PLATFORM" == "macos" ]]; then
+        if [[ "$ARCH" == "x86_64" ]]; then
+            echo "Processor architecture is x86_64"
+            ARCH=64
+        elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
+            echo "Processor architecture is ARM64"
+            ARCH=arm64
+        else
+            ARCH=universal
+        fi
     fi
 fi
 
@@ -194,12 +186,15 @@ if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
         rm -rf "${OUTDIR}/${OUTPUT}"
 fi
 
+
 echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/$OUTPUT]"
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     unzip -q "$PKG" -d "${OUTDIR}/${OUTPUT}"
     #rm $PKG
 else
-    tar xjf "$PKG" -C "${OUTDIR}/${OUTPUT}"
+    mkdir -p "${OUTDIR}${OUTPUT}"
+    tar xjf "$PKG" -C "${OUTDIR}${OUTPUT}"
+    mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
     #rm $PKG
 fi
 
