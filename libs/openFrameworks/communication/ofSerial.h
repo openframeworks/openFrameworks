@@ -8,7 +8,7 @@
 
 class ofBuffer;
 
-#ifndef TARGET_WIN32
+#ifndef _WIN32
 	#include <termios.h>
 #endif
 
