@@ -133,7 +133,9 @@ enum ofTargetPlatform{
 	#define TARGET_OPENGLES
 	#define TARGET_LINUX_ARM
 #elif defined(__EMSCRIPTEN__)
+#ifndef TARGET_EMSCRIPTEN
 	#define TARGET_EMSCRIPTEN
+#endif
 	#define TARGET_OPENGLES
 	#define TARGET_PROGRAMMABLE_GL
 	#define TARGET_IMPLEMENTS_URL_LOADER
