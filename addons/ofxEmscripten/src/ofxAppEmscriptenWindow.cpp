@@ -28,43 +28,43 @@ ofxAppEmscriptenWindow::~ofxAppEmscriptenWindow() {
 
 //------------------------------------------------------------
 void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
-    setWindowShape(settings.getWidth(),settings.getHeight());
+	setWindowShape(settings.getWidth(),settings.getHeight());
 	
-    EmscriptenWebGLContextAttributes attrs;
-    emscripten_webgl_init_context_attributes(&attrs);
+	EmscriptenWebGLContextAttributes attrs;
+	emscripten_webgl_init_context_attributes(&attrs);
 
 /// when setting explicitSwapControl to 0 it is emscripten that is in charge of swapping on each render call.
-    attrs.explicitSwapControl = 0;
-    attrs.depth = 1;
-    attrs.stencil = 1;
-    attrs.antialias = 1;
-    attrs.majorVersion = 2;
-    attrs.minorVersion = 0;
-    attrs.alpha = 0;
+	attrs.explicitSwapControl = 0;
+	attrs.depth = 1;
+	attrs.stencil = 1;
+	attrs.antialias = 1;
+	attrs.majorVersion = 2;
+	attrs.minorVersion = 0;
+	attrs.alpha = 0;
 
-    context = emscripten_webgl_create_context("#canvas", &attrs);
-    assert(context);
+	context = emscripten_webgl_create_context("#canvas", &attrs);
+	assert(context);
 	  
-    makeCurrent();
+	makeCurrent();
 
-    _renderer = std::make_shared<ofGLProgrammableRenderer>(this);
-    ((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
+	_renderer = std::make_shared<ofGLProgrammableRenderer>(this);
+	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
-    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &keydown_cb);
+	emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &keydown_cb);
 	emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &keyup_cb);
     
-    emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousedown_cb);
+	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousedown_cb);
 	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mouseup_cb);
 	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousemoved_cb);
 	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mouseenter_cb);
 	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mouseleave_cb);
 
-    emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
+	emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
 	emscripten_set_touchend_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
 	emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
 	emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
 	
-    emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousescrolled_cb);
+	emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousescrolled_cb);
 	
 	// the following locks up the window for some reason.....
 	//emscripten_set_resize_callback(const char *target, void *userData, EM_BOOL useCapture, em_ui_callback_func callback)
