@@ -77,8 +77,12 @@ ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
 endif
 
+ifndef MAC_OS_C_VER
+    MAC_OS_C_VER = -std=c17
+endif
+
 ifndef MAC_OS_CPP_VER
-    MAC_OS_CPP_VER = -std=c++17
+    MAC_OS_CPP_VER = -std=c++23
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
@@ -180,7 +184,9 @@ ifdef MAC_OS_SDK_ROOT
 endif
 
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
+PLATFORM_CFLAGS += $(MAC_OS_C_VER)
 
+PLATFORM_CXXFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 PLATFORM_CXXFLAGS += -x objective-c++
 PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
 
@@ -203,7 +209,7 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 #PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -lcurl
+# PLATFORM_LDFLAGS += -lcurl
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################

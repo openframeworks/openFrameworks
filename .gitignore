@@ -163,3 +163,5 @@ scripts/templates/ios/bin
 libs/openFrameworksCompiled/project/tvOS/tvOS+OFLib.xcodeproj/xcshareddata
 scripts/osx/regressionTest
 examples/**/**/[Cc]onfig.make
+*.key
+*.pem
