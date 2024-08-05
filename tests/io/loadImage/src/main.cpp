@@ -14,19 +14,12 @@ class ofApp: public ofxUnitTestsApp{
 		ofxTest(img.load("https://avatars.githubusercontent.com/u/48240?v=4"), "load from https");
 		
 	}
-
 };
 
 //========================================================================
 int main( ){
 	ofInit();
-	
-	ofGLWindowSettings settings;
-	settings.setSize(1200, 600);
-	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
-
-//	auto window = ofCreateWindow(settings);
-	auto window = std::make_shared<ofAppNoWindow>(); // cant be no window doing GL stuff or bug
+	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN
