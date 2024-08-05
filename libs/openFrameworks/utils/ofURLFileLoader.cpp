@@ -172,7 +172,11 @@ size_t readBody_cb(void * ptr, size_t size, size_t nmemb, void * userdata) {
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
 	curl_slist * headers = nullptr;
-	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, true);
+	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
+	CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
+	curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/8.9.1");
+	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 50L);
+	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
 	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 
