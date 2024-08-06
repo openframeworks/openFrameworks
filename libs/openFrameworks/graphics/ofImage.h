@@ -651,7 +651,7 @@ protected:
     void resizePixels(ofPixels_<PixelType> &pix, int newWidth, int newHeight);
     void unloadTexture();
 
-    ofPixels_<PixelType> pixels;
+	ofPixels_<PixelType> pixels;
     bool bUseTexture;
     ofTexture tex;
 

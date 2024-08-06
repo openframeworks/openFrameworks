@@ -37,7 +37,7 @@
 #include "ofxiOSConstants.h"
 #include "ofEvents.h"
 
-class ofiOSWindowSettings: public ofGLESWindowSettings{
+class ofiOSWindowSettings: public ofWindowSettings{
 public:
 	ofiOSWindowSettings()
 	:enableRetina(true)
@@ -112,40 +112,6 @@ public:
 		}
 	}
 
-	ofiOSWindowSettings(const ofGLESWindowSettings & settings)
-	:ofGLESWindowSettings(settings)
-	,enableRetina(true)
-	,retinaScale(0)
-	,enableDepth(false)
-	,enableAntiAliasing(false)
-	,numOfAntiAliasingSamples(0)
-	,enableHardwareOrientation(false)
-	,enableHardwareOrientationAnimation(false)
-	,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
-	,colorType(ofxiOSRendererColorFormat::RGBA8888)
-	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
-	,enableMultiTouch(false){
-		const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
-		if(iosSettings){
-			enableRetina = iosSettings->enableRetina;
-			retinaScale = iosSettings->retinaScale;
-			enableDepth = iosSettings->enableDepth;
-			enableAntiAliasing = iosSettings->enableAntiAliasing;
-			numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
-			enableHardwareOrientation = iosSettings->enableHardwareOrientation;
-			enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
-			enableSetupScreen = iosSettings->enableSetupScreen;
-			setupOrientation = iosSettings->setupOrientation;
-			windowControllerType = iosSettings->windowControllerType;
-			colorType = iosSettings->colorType;
-			depthType = iosSettings->depthType;
-			stencilType = iosSettings->stencilType;
-			enableMultiTouch = iosSettings->enableMultiTouch;
-		}
-	}
-
 	virtual ~ofiOSWindowSettings(){};
 	
 	bool enableRetina;
@@ -166,7 +132,7 @@ public:
 };
 
 
-class ofAppiOSWindow : public ofAppBaseGLESWindow {
+class ofAppiOSWindow : public ofAppBaseWindow {
 public:
 
 	static ofAppiOSWindow * getInstance();
@@ -181,7 +147,6 @@ public:
 	static void pollEvents(){ }
 	
 	void setup(const ofWindowSettings & _settings);
-	void setup(const ofGLESWindowSettings & _settings);
 	void setup(const ofiOSWindowSettings & _settings);
 	void setup();
 	
@@ -200,9 +165,9 @@ public:
 	virtual void setWindowPosition(int x, int y);
 	virtual void setWindowShape(int w, int h);
 		
-	virtual glm::vec2 getWindowPosition();
-	virtual glm::vec2 getWindowSize();
-	virtual glm::vec2 getScreenSize();
+	virtual glm::ivec2 getWindowPosition();
+	virtual glm::ivec2 getWindowSize();
+	virtual glm::ivec2 getScreenSize();
 	
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 	virtual void setOrientation(ofOrientation orientation);

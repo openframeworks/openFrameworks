@@ -327,6 +327,7 @@ public:
 	ofEvent<ofEventArgs> exit;
 
 	ofEvent<ofResizeEventArgs> windowResized;
+	ofEvent<ofResizeEventArgs> framebufferResized;
 	ofEvent<ofWindowPosEventArgs> windowMoved;
 
 	ofEvent<ofKeyEventArgs> keyPressed;
@@ -400,6 +401,8 @@ public:
 
 	bool notifyExit();
 	bool notifyWindowResized(int width, int height);
+	// FIXME: Todo
+	bool notifyFramebufferResized(int width, int height);
 	bool notifyWindowMoved(int x, int y);
 
 	bool notifyDragEvent(ofDragInfo info);

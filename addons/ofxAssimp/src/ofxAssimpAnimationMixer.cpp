@@ -5,6 +5,7 @@
 
 #include "ofxAssimpAnimationMixer.h"
 #include "ofLog.h"
+#include "ofUtils.h"
 
 using namespace ofx::assimp;
 
