@@ -6,6 +6,7 @@
 #include "ofxAssimpAnimation.h"
 #include "ofAppRunner.h"
 #include "ofMath.h"
+#include "ofUtils.h"
 
 using namespace ofx::assimp;
 
