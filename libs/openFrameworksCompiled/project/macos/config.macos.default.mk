@@ -86,7 +86,7 @@ ifndef MAC_OS_CPP_VER
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
-PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
+PLATFORM_CFLAGS = "" #-stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
 PLATFORM_CFLAGS += -Wall -Werror=return-type
@@ -447,3 +447,4 @@ endif
 	@echo "     "
 	@echo "     make $(RUN_TARGET)"
 	@echo
+	@echo "{ \"build\": \"SUCCESS\", \"app\": \"bin/$(BIN_NAME).app\", \"binary\": \"bin/$(BIN_NAME).app/Contents/MacOS/$(BIN_NAME)\" }"
