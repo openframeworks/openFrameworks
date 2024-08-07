@@ -3,7 +3,9 @@
 ########################################################################
 
 ifeq ($(PLATFORM_OS),Darwin)
-    PLATFORM_OSX := osx
+    PLATFORM_ALTERNATIVE := osx
+else 
+	PLATFORM_ALTERNATIVE := void
 endif
 
 # Variable containing all grep commands to exclude unwanted paths
@@ -51,7 +53,7 @@ endef
 # parses addons libraries, in PARSED_ADDON_LIBS receives full PATHS to addons and libs_exclude
 define parse_addons_libraries
 	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(filter-out $(ADDON_LIBS_EXCLUDE),$(addsuffix /libs/*/lib/$(ABI_LIB_SUBPATH), $1))) \
-	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS += $(filter-out $(ADDON_LIBS_EXCLUDE),$(addsuffix /libs/*/lib/$(PLATFORM_OSX), $1))) \
+	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS += $(filter-out $(ADDON_LIBS_EXCLUDE),$(addsuffix /libs/*/lib/$(PLATFORM_ALTERNATIVE), $1))) \
 	$(eval PARSED_ALL_PLATFORM_LIBS = $(shell $(FIND) $(PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS) -type d 2> /dev/null | $(EXCLUDE_PATHS_GREP))) \
 	$(if $(PARSED_ALL_PLATFORM_LIBS), \
 		$(eval ADDONS_SHARED_LIBS_SO += $(shell $(FIND) $(PARSED_ALL_PLATFORM_LIBS) -name *.so 2> /dev/null | $(EXCLUDE_PATHS_GREP))) \
@@ -121,11 +123,7 @@ define parse_addon
 			$(if $(filter %:,$(unscaped_var_line)), \
 				$(if $(filter common:,$(unscaped_var_line)), \
 					$(eval PROCESS_NEXT=1), \
-					$(if $(filter $(ABI_LIB_SUBPATH):,$(unscaped_var_line)), \
-						$(eval PROCESS_NEXT=1), \
-						$(eval PROCESS_NEXT=0) \
-					) \
-					$(if $(filter $(PLATFORM_OSX):,$(unscaped_var_line)), \
+					$(if $(or $(filter $(ABI_LIB_SUBPATH):,$(unscaped_var_line)), $(filter $(PLATFORM_ALTERNATIVE):,$(unscaped_var_line))), \
 						$(eval PROCESS_NEXT=1), \
 						$(eval PROCESS_NEXT=0) \
 					) \
@@ -134,9 +132,11 @@ define parse_addon
 		) \
 	) \
 	$(if $(strip $(ADDON_INCLUDES)), \
+		$(info ADDON_INCLUDES_EXCLUDE: $(ADDON_INCLUDES_EXCLUDE)) \
 		$(eval ADDON_INCLUDES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_INCLUDES_EXCLUDE)),$(ADDON_INCLUDES))) \
 		$(foreach addon_include, $(strip $(ADDON_INCLUDES_FILTERED)), \
 			$(if $(wildcard $(addon)/$(addon_include)), \
+				$(info Adding include: $(addon)/$(addon_include)) \
 				$(eval TMP_PROJECT_ADDONS_INCLUDES += $(addon)/$(addon_include)) \
 			) \
 			$(if $(wildcard $(addon_include)), \
@@ -161,6 +161,7 @@ define parse_addon
 	$(eval TMP_PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
 	$(eval PROJECT_AFTER += $(ADDON_AFTER)) \
 	$(if $(strip $(ADDON_SOURCES)), \
+		$(info ADDON_SOURCES_EXCLUDE: $(ADDON_SOURCES_EXCLUDE)) \
 		$(eval ADDON_SOURCES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_SOURCES_EXCLUDE)),$(ADDON_SOURCES))) \
 		$(foreach addon_src, $(strip $(ADDON_SOURCES_FILTERED)), \
 			$(if $(filter $(addon)%, $(addon_src)), \
