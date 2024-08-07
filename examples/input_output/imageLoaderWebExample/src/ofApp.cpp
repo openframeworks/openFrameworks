@@ -3,6 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	mouseX = 100;
+	
+	ofSetLogLevel(OF_LOG_VERBOSE);
 	loading=false;
 	ofRegisterURLNotification(this);
 	
