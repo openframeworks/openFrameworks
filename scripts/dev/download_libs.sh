@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.2
+DL_VERSION=2.3
 
 printHelp(){
 cat << EOF
@@ -275,11 +275,10 @@ cd download
 download "${PKGS[@]}"
 
 cd ../ # back to libs
-
+libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     echo " Overwrite - Removing prior libraries for [$PLATFORM]"
-    libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
     for ((i=0;i<${#libs[@]};++i)); do
         if [ -e "${libs[i]}/lib/$PLATFORM" ]; then
             echo "  Removing: [${libs[i]}/lib/$PLATFORM]"
@@ -295,6 +294,26 @@ if [ $OVERWRITE -eq 1 ]; then
         #     echo "  Removing: [${libs[i]}/include]"
         #     rm -rf "${libs[i]}/include"
         # fi
+        
+    done
+fi
+
+if [ "$PLATFORM" == "osx" ]; then
+    echo " "
+    echo " Overwrite - Removing prior libraries for [$PLATFORM]"
+    for ((i=0;i<${#libs[@]};++i)); do
+        xcframework_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/macos-arm64_x86_64"
+        if [ $OVERWRITE -eq 1 ]; then
+            if [ -e "$xcframework_path" ]; then
+                echo "  Removing: [$xcframework_path]"
+                rm -rf "$xcframework_path"
+            fi
+        fi
+        info_plist_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/Info.plist"
+        if [ -e "$info_plist_path" ]; then
+            #echo "  Backing up: [${info_plist_path}] to [${info_plist_path}.bak]"
+            cp "$info_plist_path" "${info_plist_path}.bak"
+        fi
     done
 fi
 
@@ -310,6 +329,17 @@ for PKG in $PKGS; do
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"
 done
+
+if [ "$PLATFORM" == "osx" ]; then
+    echo " "
+    for ((i=0;i<${#libs[@]};++i)); do
+        info_plist_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/Info.plist"
+        if [ -e "${info_plist_path}.bak" ]; then
+            #echo "  Restoring: [${info_plist_path}.bak] to [${info_plist_path}]"
+            mv "${info_plist_path}.bak" "$info_plist_path"
+        fi
+    done
+fi
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     if [ "$PLATFORM" == "osx" ]; then
@@ -342,9 +372,26 @@ else
 fi
 
 echo "   ------ "
+if [ "$PLATFORM" == "osx" ]; then
+    if [ $OVERWRITE -eq 1 ]; then 
+        echo " Overwrite - addon xCFramework: [${addons[i]} - ${addonslibs[i]}]"
+        xcframework_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/macos-arm64_x86_64"
+        if [ -e "$xcframework_path" ]; then
+            echo "  Removing: [$xcframework_path]"
+            rm -rf "$xcframework_path"
+        fi
+    fi
+    info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
+    if [ -e "$info_plist_path" ]; then
+        cp "$info_plist_path" "${info_plist_path}.bak"
+    fi
+fi
+
+
 if [ $OVERWRITE -eq 1 ]; then 
     for ((i=0;i<${#addonslibs[@]};++i)); do
         if [ -e ${addonslibs[i]} ] ; then
+
             echo " Overwrite - addon: [${addons[i]} - ${addonslibs[i]}]"
             if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM ]; then
                 echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM]"
@@ -376,6 +423,18 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
         rm -rf ${addonslibs[i]}
     fi
 done
+
+if [ "$PLATFORM" == "osx" ]; then
+    echo " "
+    for ((i=0;i<${#addonslibs[@]};++i)); do
+        if [ -e ${addonslibs[i]} ] ; then
+            info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
+            if [ -e "${info_plist_path}.bak" ]; then
+                mv "${info_plist_path}.bak" "$info_plist_path"
+            fi
+        fi
+    done
+fi
 
 echo " ------ "
 echo " openFrameworks download_libs and install complete!"
