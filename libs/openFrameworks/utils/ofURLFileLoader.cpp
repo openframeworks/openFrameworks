@@ -274,7 +274,12 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
 	if(request.verbose) {
 		CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
-		curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, {"curl/" + (version->version).c_str()});
+		if (version) {
+			std::string userAgent = std::string("curl/") + version->version;
+			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
+		} else {
+			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/unknown");
+		}
 	}
 #if defined(TARGET_OSX) && !defined(NO_OPENSSL)
 	const std::string caPath = "ssl";
