@@ -272,12 +272,11 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
 	curl_slist * headers = nullptr;
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
-#if defined(CURL_DEBUG)
-	CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
-	curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/8.9.1");
-#endif
-#ifdef TARGET_OSX
-#if !defined(NO_OPENSSL)
+	if(request.verbose) {
+		CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, {"curl/" + (version->version).c_str()});
+	}
+#if defined(TARGET_OSX) && !defined(NO_OPENSSL)
 	const std::string caPath = "ssl";
 	const std::string caFile = "ssl/cacert.pem";
 	if (ofFile::doesFileExist(ofToDataPath(CERTIFICATE_FILE)) && checkValidCertifcate(ofToDataPath(CERTIFICATE_FILE))) {
@@ -289,7 +288,6 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath(caPath, true).c_str());
 	curl_easy_setopt(curl.get(), CURLOPT_CAINFO, ofToDataPath(caFile, true).c_str());
 	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
-#endif
 #else
 	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
 #endif
@@ -456,13 +454,14 @@ ofHttpRequest::ofHttpRequest()
 	, id(nextID++) {
 }
 
-ofHttpRequest::ofHttpRequest(const string & url, const string & name, bool saveTo, bool autoClose)
+ofHttpRequest::ofHttpRequest(const string & url, const string & name, bool saveTo, bool autoClose, bool verbose)
 	: url(url)
 	, name(name)
 	, saveTo(saveTo)
 	, method(GET)
 	, id(nextID++)
-	, close(autoClose) {
+	, close(autoClose)
+	, verbose(verbose){
 }
 
 int ofHttpRequest::getId() const {
