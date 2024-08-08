@@ -125,6 +125,7 @@ void ofURLFileLoaderImpl::stop() {
 	requests.close();
 	responses.close();
 	waitForThread();
+	curl_global_cleanup();
 }
 
 #if !defined(NO_OPENSSL)
