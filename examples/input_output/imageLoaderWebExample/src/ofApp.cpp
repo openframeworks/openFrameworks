@@ -10,6 +10,7 @@ void ofApp::setup(){
 	
 	//to load synchronously
 	img.load("https://openframeworks.cc/about/0.jpg");
+	
 }
 
 //--------------------------------------------------------------
@@ -17,8 +18,9 @@ void ofApp::urlResponse(ofHttpResponse & response){
 	if(response.status==200 && response.request.name == "about"){
 		img.load(response.data);
 		loading=false;
+		ofLogVerbose("ofApp") << "urlResponse success with image";
 	}else{
-		cout << response.status << " " << response.error << " for request " << response.request.name << endl;
+		ofLogError("ofApp") << response.status << " " << response.error << " for request " << response.request.name;
 		if(response.status!=-1) loading=false;
 	}
 }
@@ -59,9 +61,11 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	img.clear();
-	ofLoadURLAsync("https://openframeworks.cc/about/0.jpg","about");
-	loading =true;
+	if(loading == false) {
+		img.clear();
+		ofLoadURLAsync("https://openframeworks.cc/about/0.jpg","about");
+		loading = true;
+	}
 }
 
 //--------------------------------------------------------------
