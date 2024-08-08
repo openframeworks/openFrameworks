@@ -272,7 +272,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
 	curl_slist * headers = nullptr;
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
-#ifdef CURL_DEBUG
+#if defined(CURL_DEBUG)
 	CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
 	curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/8.9.1");
 #endif
@@ -304,6 +304,8 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
 	}
+	if(request.close)
+		headers = curl_slist_append(headers, "Connection: close");
 	if(version->features & CURL_VERSION_BROTLI) {
 		headers = curl_slist_append(headers, "Accept-Encoding: br");
 	}
@@ -454,12 +456,13 @@ ofHttpRequest::ofHttpRequest()
 	, id(nextID++) {
 }
 
-ofHttpRequest::ofHttpRequest(const string & url, const string & name, bool saveTo)
+ofHttpRequest::ofHttpRequest(const string & url, const string & name, bool saveTo, bool autoClose)
 	: url(url)
 	, name(name)
 	, saveTo(saveTo)
 	, method(GET)
-	, id(nextID++) {
+	, id(nextID++)
+	, close(autoClose) {
 }
 
 int ofHttpRequest::getId() const {
