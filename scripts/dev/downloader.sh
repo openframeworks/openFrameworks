@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=3.3.0
+VERSION=3.3.1
 printDownloaderHelp(){
 cat << EOF
     
@@ -31,7 +31,6 @@ convert_bytes_to_mb() {
   mb=$(echo "scale=2; $bytes / (1024 * 1024)" | bc)
   echo "${mb}MB"
 }
-
 
 CHECK_RESULT=0
 check_remote_vs_local() {
@@ -209,7 +208,7 @@ downloader() {
                 wget2 -nv --progress=bar -N -t20 $SSL_ARGS $URLS_TO_DOWNLOAD
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo
-                curl -L --retry 20 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
+                curl -L --retry 20 --retry-delay 4 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo
                 wget -nv -N -t20 ${URLS_TO_DOWNLOAD} 
@@ -225,7 +224,7 @@ downloader() {
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD]"
                 echo
-                curl -L --retry 20 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
+                curl -L --retry 20 --retry-delay 4 --progress-bar $SSL_ARGS ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD]"
                 echo

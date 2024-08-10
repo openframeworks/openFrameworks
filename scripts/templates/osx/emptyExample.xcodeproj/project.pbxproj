@@ -20,6 +20,19 @@
 			"sourceTree": "<group>",
 			"fileEncoding": "4"
 		},
+		"BF26640B2C634C16004360E2": {
+		    "isa": "PBXShellScriptBuildPhase",
+		    "alwaysOutOfDate": "1",
+		    "buildActionMask": "2147483647",
+		    "files": [],
+		    "inputFileListPaths": [],
+		    "inputPaths": [],
+		    "outputFileListPaths": [],
+		    "outputPaths": [],
+		    "runOnlyForDeploymentPostprocessing": "0",
+		    "shellPath": "/usr/bin/env bash",
+		    "shellScript": "#!/usr/bin/env bash\nif [ ! -d \"${OF_PATH}/libs/freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_latest_libs.sh\"\n    ${OF_PATH}/scripts/osx/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n"
+		},
 		"E42962A92163ECCD00A6A9E2": {
 			"alwaysOutOfDate": "1",
 			"inputPaths": [],
@@ -29,7 +42,7 @@
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'\n",
+			"shellScript": "echo \"💾 Compiling openFrameworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'\n",
 			"name": "Run Script — Compile OF",
 			"files": []
 		},
@@ -249,6 +262,7 @@
 			"productName": "myOFApp",
 			"isa": "PBXNativeTarget",
 			"buildPhases": [
+				"BF26640B2C634C16004360E2",
 				"E42962A92163ECCD00A6A9E2",
 				"E4B69B580A3A1756003C02F2",
 				"E4B69B590A3A1756003C02F2",
