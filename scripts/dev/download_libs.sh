@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.3
+DL_VERSION=2.4
 
 printHelp(){
 cat << EOF
@@ -208,10 +208,19 @@ if [ "$PLATFORM" == "msys2" ]; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
     fi
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64_2.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_2.zip"
+    else
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
+      fi
 elif [ "$PLATFORM" == "vs" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
