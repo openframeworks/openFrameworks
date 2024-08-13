@@ -235,22 +235,22 @@
 		9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMainLoop.cpp; sourceTree = "<group>"; };
 		9979E8211A1CCC44007E55D1 /* ofMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMainLoop.h; sourceTree = "<group>"; };
 		BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseApp.cpp; sourceTree = "<group>"; };
-		BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/osx/zlib.xcframework; sourceTree = "<group>"; };
-		BF5BF8412B737C700049DEF6 /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/osx/uriparser.xcframework; sourceTree = "<group>"; };
-		BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/osx/tess2.xcframework; sourceTree = "<group>"; };
-		BF5BF8452B737C870049DEF6 /* rtAudio.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = rtAudio.xcframework; path = ../../../rtAudio/lib/osx/rtAudio.xcframework; sourceTree = "<group>"; };
-		BF5BF8472B737D280049DEF6 /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/osx/pugixml.xcframework; sourceTree = "<group>"; };
-		BF5BF8492B737E260049DEF6 /* cairo.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cairo.xcframework; path = ../../../cairo/lib/osx/cairo.xcframework; sourceTree = "<group>"; };
-		BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/osx/FreeImage.xcframework; sourceTree = "<group>"; };
-		BF5BF84D2B737E3B0049DEF6 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/osx/freetype.xcframework; sourceTree = "<group>"; };
-		BF5BF84F2B737E440049DEF6 /* glew.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glew.xcframework; path = ../../../glew/lib/osx/glew.xcframework; sourceTree = "<group>"; };
-		BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glfw.xcframework; path = ../../../glfw/lib/osx/glfw.xcframework; sourceTree = "<group>"; };
-		BF5BF8532B737E880049DEF6 /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/osx/libpng.xcframework; sourceTree = "<group>"; };
-		BF5BF8552B737E930049DEF6 /* pixman.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pixman.xcframework; path = ../../../pixman/lib/osx/pixman.xcframework; sourceTree = "<group>"; };
-		BF6276A12BAD6619008864C1 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/osx/openssl.xcframework; sourceTree = "<group>"; };
-		BF6276A32BAD6639008864C1 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/osx/curl.xcframework; sourceTree = "<group>"; };
+		BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
+		BF5BF8412B737C700049DEF6 /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
+		BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
+		BF5BF8452B737C870049DEF6 /* rtAudio.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = rtAudio.xcframework; path = ../../../rtAudio/lib/macos/rtAudio.xcframework; sourceTree = "<group>"; };
+		BF5BF8472B737D280049DEF6 /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/macos/pugixml.xcframework; sourceTree = "<group>"; };
+		BF5BF8492B737E260049DEF6 /* cairo.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cairo.xcframework; path = ../../../cairo/lib/macos/cairo.xcframework; sourceTree = "<group>"; };
+		BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
+		BF5BF84D2B737E3B0049DEF6 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
+		BF5BF84F2B737E440049DEF6 /* glew.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glew.xcframework; path = ../../../glew/lib/macos/glew.xcframework; sourceTree = "<group>"; };
+		BF5BF8512B737E4E0049DEF6 /* glfw.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glfw.xcframework; path = ../../../glfw/lib/macos/glfw.xcframework; sourceTree = "<group>"; };
+		BF5BF8532B737E880049DEF6 /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/macos/libpng.xcframework; sourceTree = "<group>"; };
+		BF5BF8552B737E930049DEF6 /* pixman.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pixman.xcframework; path = ../../../pixman/lib/macos/pixman.xcframework; sourceTree = "<group>"; };
+		BF6276A12BAD6619008864C1 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/macos/openssl.xcframework; sourceTree = "<group>"; };
+		BF6276A32BAD6639008864C1 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
 		BF6276A52BAD9900008864C1 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
-		BF7C462D2C097CCE00461163 /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../brotli/lib/osx/brotli.xcframework; sourceTree = "<group>"; };
+		BF7C462D2C097CCE00461163 /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../brotli/lib/macos/brotli.xcframework; sourceTree = "<group>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
@@ -871,7 +871,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env bash";
-			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/osx/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_latest_libs.sh\"\n    ${SRCROOT}/../../../../scripts/osx/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_latest_libs.sh\"\n    ${SRCROOT}/../../../../scripts/osx/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
 		};
 		BFF80A5D2C50B2C300784E74 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -889,7 +889,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\nTARGET_DIR=\"$SRCROOT/../../lib/osx\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n";
+			shellScript = "#!/bin/sh\nTARGET_DIR=\"$SRCROOT/../../lib/macos\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -980,7 +980,7 @@
 		E4B27C1610CBEB8E00536013 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
@@ -995,7 +995,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
-				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
+				OBJROOT = "$(SRCROOT)/../../lib/macos/build/debug/";
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
 			};
@@ -1004,7 +1004,7 @@
 		E4B27C1710CBEB8E00536013 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
@@ -1020,7 +1020,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
-				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release/";
+				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release/";
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
 			};
@@ -1030,9 +1030,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E432815F138AC0470047C5CB /* Debug.xcconfig */;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/debug/";
-				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/debug/";
+				OBJROOT = "$(SRCROOT)/../../lib/macos/build/debug/";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = "";
 			};
@@ -1042,9 +1042,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4328160138AC04A0047C5CB /* Release.xcconfig */;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/release/";
-				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/release/";
+				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = "";
 			};
