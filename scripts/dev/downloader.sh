@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.1.0
+VERSION=4.1.1
 printDownloaderHelp(){
 cat << EOF
     
@@ -46,7 +46,7 @@ check_remote_vs_local() {
   LOCAL_FILE="$1"
   REMOTE_URL="$2"
   USE_WGET2="$3"
-  echo "  [downloader] cURL: [$REMOTE_URL]"
+  echo "  [downloader] check if local == remote: [$REMOTE_URL]"
   if [ ! -f "$LOCAL_FILE" ]; then
     echo "  [downloader] No download cache"
     echo "  [downloader] Proceeding with download. "
@@ -59,24 +59,23 @@ check_remote_vs_local() {
 
   LocalSize=$(wc -c < "$LOCAL_FILE" | tr -d '[:space:]')
 
-  if [[ "$USE_WGET2" == 1 ]]; then
-    REMOTE_CALL="wget2 --spider --max-redirect=${MAX_REDIRECTS} --header='Accept-Encoding: identity' ${EXTRA_ARGS}"
-  else
-  	REMOTE_CALL="curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  ${EXTRA_ARGS} --silent --head"
-	fi
-
-  RemoteSize=$($REMOTE_CALL "$REMOTE_URL" | awk '/content-length/ {print $2}' | tr -d '\r' | tail -n 1)
+  # if [[ "$USE_WGET2" == 1 ]]; then
+  #   REMOTE_CALL="wget2 --spider --max-redirect=${MAX_REDIRECTS} ${EXTRA_ARGS}"
+  # else
+  	REMOTE_CALL=""
+	# fi
+  RemoteSize=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/content-length/ {print $2}' | tr -d '\r' | tail -n 1)
   if [ -z "$RemoteSize" ]; then
-    RemoteSize=$($REMOTE_CALL "$REMOTE_URL" | awk '/Content-Length/ {print $2}' | tr -d '\r' | tail -n 1)
+    RemoteSize=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/Content-Length/ {print $2}' | tr -d '\r' | tail -n 1)
   fi
 
   LocalSizeMB=$(convert_bytes_to_mb $LocalSize)
   RemoteSizeMB=$(convert_bytes_to_mb $RemoteSize)
 
   echo "  [downloader] Remote size:[${RemoteSizeMB}] | Local size:[${LocalSizeMB}]"
-	modified=$($REMOTE_CALL "$REMOTE_URL" | awk '/^last-modified/{print $0}' | sed 's/^last-modified: //')
+	modified=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/^last-modified/{print $0}' | sed 's/^last-modified: //')
 	if [ -z "$modified" ]; then
-		modified=$($REMOTE_CALL "$REMOTE_URL" | awk '/^Last-Modified/{print $0}' | sed 's/^Last-Modified: //')
+		modified=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/^Last-Modified/{print $0}' | sed 's/^Last-Modified: //')
 		if [ -z "$modified" ]; then
 			echo "  [downloader] failed to retrieve last-modified header from remote ["$REMOTE_URL"] ... Proceeding with download"
 			CHECK_RESULT=0
@@ -236,7 +235,7 @@ downloader() {
         CURL_INSTALLED=1
         if [[ "$COMPRESSION" == "1" ]] && [[ $CURL == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then 
             if curl -V | grep -q "brotli"; then
-                EXTRA_ARGS+="--compressed --raw -H 'Accept-Encoding: br'"
+                EXTRA_ARGS+="--compressed "
             else 
                 COMPRESSION=0
             fi
@@ -259,9 +258,6 @@ downloader() {
     fi
 
     # [options]
-    if [[ $VERBOSE == 1 ]]; then
-        EXTRA_ARGS+="--verbose "
-    fi
     if [[ "$COMPRESSION" == "1" ]]; then 
         echo "  [downloader] enabled brotli/zlib losslesss compression response"
     fi
@@ -281,28 +277,34 @@ downloader() {
         URL="${URLS[$i]}"
         FILENAME=$(basename "$URL")
         if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then
-            if [[ "$COMPRESSION" == "1" ]]; then 
-                LOCAL_FILE=$FILENAME
-                REMOTE_URL=$URL
-                check_remote_vs_local "$LOCAL_FILE" "$REMOTE_URL" 1
+            # if [[ "$COMPRESSION" == "1" ]]; then 
+            #     LOCAL_FILE=$FILENAME
+            #     REMOTE_URL=$URL
+            #     check_remote_vs_local "$LOCAL_FILE" "$REMOTE_URL" 1
+            #     if [ $CHECK_RESULT -eq 0 ]; then
+            #         URLS_TO_DOWNLOAD+="${URL} -O ${FILENAME}"
+            #         if [ $((i + 1)) -lt ${#URLS[@]} ]; then
+            #             URLS_TO_DOWNLOAD+=" ";
+            #         fi
+            #     fi
+            # else
+                URLS_TO_DOWNLOAD+="${URL} "
+            # fi
+           
+        elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
+            LOCAL_FILE=$FILENAME
+            REMOTE_URL=$URL
+            if validate_url "$URL"; then
+                check_remote_vs_local "$LOCAL_FILE" "$REMOTE_URL" 0
                 if [ $CHECK_RESULT -eq 0 ]; then
-                    URLS_TO_DOWNLOAD+="${URL} -O ${FILENAME}"
+                    URLS_TO_DOWNLOAD+="${URL} -o ${FILENAME}"
                     if [ $((i + 1)) -lt ${#URLS[@]} ]; then
                         URLS_TO_DOWNLOAD+=" ";
                     fi
                 fi
             else
-                URLS_TO_DOWNLOAD+="${URL} "
-            fi
-           
-        elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
-            LOCAL_FILE=$FILENAME
-            REMOTE_URL=$URL
-            check_remote_vs_local "$LOCAL_FILE" "$REMOTE_URL" 0
-            if [ $CHECK_RESULT -eq 0 ]; then
-                URLS_TO_DOWNLOAD+="-o ${FILENAME} ${URL} "
-                if [ $((i + 1)) -lt ${#URLS[@]} ]; then
-                    URLS_TO_DOWNLOAD+="";
+                if [ $1 != "0" ]; then 
+                    echo "  [downloader] Invalid URL: [$1]"
                 fi
             fi
         else
@@ -311,10 +313,13 @@ downloader() {
     done
     if [[ "$CLOSE_CONNECTION" == "1" ]]; then 
         if [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 ]]; then 
-            EXTRA_ARGS+="--no-keepalive --header 'Connection: close'"
+            EXTRA_ARGS+="--no-keepalive --header 'Connection: close' "
         elif  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]] || [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
             EXTRA_ARGS+=""
         fi
+    fi
+    if [[ $VERBOSE == 1 ]]; then
+        EXTRA_ARGS+="--verbose"
     fi
     echo
     if [ -z "$URLS_TO_DOWNLOAD" ]; then
@@ -341,8 +346,8 @@ downloader() {
                 wget2 -N -nv --progress=bar --force-progress -t${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS]"
-                echo
-                curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --remove-on-error ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                echo " curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}"
+                curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS]"
                 echo
