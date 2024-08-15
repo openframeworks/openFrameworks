@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.1.1
+VERSION=4.1.2
 printDownloaderHelp(){
 cat << EOF
     
@@ -259,7 +259,9 @@ downloader() {
 
     # [options]
     if [[ "$COMPRESSION" == "1" ]]; then 
-        echo "  [downloader] enabled brotli/zlib losslesss compression response"
+      echo "  [downloader] enabled brotli/zlib losslesss compression response"
+    elif [[ "$COMPRESSION" == "0" ]] && [[ $CURL == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then 
+    	EXTRA_ARGS+="-Z "
     fi
     if [[ "$NO_SSL" == "1" ]]; then 
         if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 0 ]]; then
@@ -331,7 +333,7 @@ downloader() {
                 wget2 -N -nv --progress=bar -t${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} $URLS_TO_DOWNLOAD
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo
-                curl -Z -L --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --remove-on-error ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                curl -L --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --remove-on-error ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo
                 wget -nv -N -t${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${URLS_TO_DOWNLOAD} 
@@ -346,8 +348,7 @@ downloader() {
                 wget2 -N -nv --progress=bar --force-progress -t${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS]"
-                echo " curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}"
-                curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                curl -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar ${EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS]"
                 echo
