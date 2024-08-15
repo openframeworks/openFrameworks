@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.1.2
+VERSION=4.1.4
 printDownloaderHelp(){
 cat << EOF
     
@@ -64,25 +64,19 @@ check_remote_vs_local() {
   # else
   	REMOTE_CALL=""
 	# fi
-  RemoteSize=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/content-length/ {print $2}' | tr -d '\r' | tail -n 1)
-  if [ -z "$RemoteSize" ]; then
-    RemoteSize=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/Content-Length/ {print $2}' | tr -d '\r' | tail -n 1)
-  fi
+	headers=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} ${EXTRA_ARGS} --retry-connrefused --silent --head $REMOTE_URL)
+	RemoteSize=$(echo "$headers" | awk '/[cC]ontent-[lL]ength/ {print $2}' | tr -d '\r' | tail -n 1)
+	modified=$(echo "$headers" | awk '/[lL]ast-[mM]odified/ {print $0}' | sed 's/^[lL]ast-[mM]odified: //')
 
   LocalSizeMB=$(convert_bytes_to_mb $LocalSize)
   RemoteSizeMB=$(convert_bytes_to_mb $RemoteSize)
 
   echo "  [downloader] Remote size:[${RemoteSizeMB}] | Local size:[${LocalSizeMB}]"
-	modified=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/^last-modified/{print $0}' | sed 's/^last-modified: //')
 	if [ -z "$modified" ]; then
-		modified=$(curl -L --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused  --silent --head $REMOTE_URL | awk '/^Last-Modified/{print $0}' | sed 's/^Last-Modified: //')
-		if [ -z "$modified" ]; then
 			echo "  [downloader] failed to retrieve last-modified header from remote ["$REMOTE_URL"] ... Proceeding with download"
 			CHECK_RESULT=0
 			return
-		fi
 	fi
-
   if [[ "$OSTYPE" == "darwin"* ]]; then
     remote_ctime=$(date -j -f "%a, %d %b %Y %H:%M:%S %Z" "$modified" "+%s" 2>/dev/null)
   else
@@ -142,7 +136,7 @@ downloader() {
     WGET2=1
     CURL=1
     WGET=1
-    CLOSE_CONNECTION=0
+    CLOSE_CONNECTION=1
     URLS=()
     while [[ $# -gt 0 ]]; do
         key="$1"
@@ -217,7 +211,7 @@ downloader() {
         if [[ "$COMPRESSION" == "1" ]] && [[ $WGET2 == 1 ]]; then
             COMPRESS=0
             if wget2 -V | grep -q "+brotlidec"; then
-                EXTRA_ARGS+=" --compression=br "
+                EXTRA_ARGS+="--compression=br "
                 COMPRESS=1
             fi
             # if wget2 -V | grep -q "+zlib"; then
@@ -228,11 +222,17 @@ downloader() {
         fi
     else
         WGET2_INSTALLED=0
+        WGET2=0
     fi
     
     # [cURL]
     if command -v curl > /dev/null 2>&1; then
         CURL_INSTALLED=1
+        CURL_VERSION=$(curl -V | head -n 1 | awk '{print $2}')
+        CURL_MIN=7.71.0
+        if [ "$(printf '%s\n' "$CURL_MIN" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
+        	EXTRA_ARGS+="--retry-all-errors "
+        fi
         if [[ "$COMPRESSION" == "1" ]] && [[ $CURL == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then 
             if curl -V | grep -q "brotli"; then
                 EXTRA_ARGS+="--compressed "
@@ -242,6 +242,7 @@ downloader() {
         fi
     else
         CURL_INSTALLED=0
+        CURL=0
     fi
     # [wget]
     if command -v wget > /dev/null 2>&1; then
@@ -260,7 +261,7 @@ downloader() {
     # [options]
     if [[ "$COMPRESSION" == "1" ]]; then 
       echo "  [downloader] enabled brotli/zlib losslesss compression response"
-    elif [[ "$COMPRESSION" == "0" ]] && [[ $CURL == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then 
+    elif [[ "$COMPRESSION" == "0" ]] && [[ $CURL == 1 && $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then 
     	EXTRA_ARGS+="-Z "
     fi
     if [[ "$NO_SSL" == "1" ]]; then 
@@ -315,13 +316,13 @@ downloader() {
     done
     if [[ "$CLOSE_CONNECTION" == "1" ]]; then 
         if [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 ]]; then 
-            EXTRA_ARGS+="--no-keepalive --header 'Connection: close' "
+            EXTRA_ARGS+="--no-keepalive"
         elif  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]] || [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
             EXTRA_ARGS+=""
         fi
     fi
     if [[ $VERBOSE == 1 ]]; then
-        EXTRA_ARGS+="--verbose"
+        EXTRA_ARGS+=" --verbose" #-w "\n[%{url_effective}]\n\nDownload Size:[%{size_download}B] in Time total:[%{time_total}s] DL speed:[%{speed_download}B/s] - Time in redirects:[%{time_redirect}s]"
     fi
     echo
     if [ -z "$URLS_TO_DOWNLOAD" ]; then
