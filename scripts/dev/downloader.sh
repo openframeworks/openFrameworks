@@ -162,6 +162,7 @@ downloader() {
     FORWARDED_URLS=()
     FINAL_EXTRA_ARGS=""
     CLOSE_EXTRA_ARGS=""
+    EXTRA_ARGS=""
     while [[ $# -gt 0 ]]; do
         key="$1"
         case $key in
