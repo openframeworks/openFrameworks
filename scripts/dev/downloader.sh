@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.2.3
+VERSION=4.2.4
 printDownloaderHelp(){
 cat << EOF
     
@@ -22,7 +22,7 @@ cat << EOF
     -w, --wget                  using wget (fallback - if system installed), disables wget2/cURL
     -x, --close-connection      close connections ports TCP/HTTP 1.0/1.1/2.0 (default)
     -p, --keep-port-alive       (disabled)
-    
+
 EOF
 }
 
@@ -248,10 +248,14 @@ downloader() {
     if command -v curl > /dev/null 2>&1; then
         CURL_INSTALLED=1
         CURL_VERSION=$(curl -V | head -n 1 | awk '{print $2}')
-        CURL_MIN=7.71.0
-        if [ "$(printf '%s\n' "$CURL_MIN" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
+        if [ "$(printf '%s\n' "7.71.0" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
             if [[ $CURL == 1 && $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 ]]; then 
                 EXTRA_ARGS+="--retry-all-errors "
+            fi
+        fi
+        if [ "$(printf '%s\n' "7.83.0" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
+            if [[ $CURL == 1 && $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 ]]; then 
+                EXTRA_ARGS+="--remove-on-error "
             fi
         fi
         if [[ "$COMPRESSION" == "1" ]] && [[ $CURL == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then 
@@ -367,7 +371,7 @@ downloader() {
                 wget2 -N -nv --progress=bar --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo
-                curl -Z -L --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --header "Connection: close" --progress-bar --remove-on-error ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                curl -Z -L --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --header "Connection: close" --progress-bar ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo
                 wget -nv -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} "${CONNECTION_EXTRA_ARGS[@]}" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
@@ -383,7 +387,7 @@ downloader() {
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
                 echo
-                curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --remove-on-error --progress-bar --header "Connection: close" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --header "Connection: close" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
                 
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
