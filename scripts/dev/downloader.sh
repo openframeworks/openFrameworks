@@ -248,12 +248,14 @@ downloader() {
     if command -v curl > /dev/null 2>&1; then
         CURL_INSTALLED=1
         CURL_VERSION=$(curl -V | head -n 1 | awk '{print $2}')
-        if [ "$(printf '%s\n' "7.71.0" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
+        CURL_MIN=7.71.0
+        if [ "$(printf '%s\n' "$CURL_MIN" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
             if [[ $CURL == 1 && $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 ]]; then 
                 EXTRA_ARGS+="--retry-all-errors "
             fi
         fi
-        if [ "$(printf '%s\n' "7.83.0" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
+        CURL_MIN=7.83.0
+        if [ "$(printf '%s\n' "$CURL_MIN" "$CURL_VERSION" | sort -V | head -n1)" = "$CURL_MIN" ] && [ "$CURL_VERSION" != "$CURL_MIN" ]; then
             if [[ $CURL == 1 && $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 ]]; then 
                 EXTRA_ARGS+="--remove-on-error "
             fi
