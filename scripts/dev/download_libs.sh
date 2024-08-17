@@ -231,7 +231,7 @@ elif [ "$PLATFORM" == "vs" ]; then
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
     fi
-elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos)$ ]]; then
+elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos|macos)$ ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_1.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}_2.tar.bz2 \
