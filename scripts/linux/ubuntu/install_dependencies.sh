@@ -36,7 +36,7 @@ function installPackages {
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
-                    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
+                    echo "if the error persists, please report an issue in github: https://github.com/openframeworks/openFrameworks/issues"
                     exit $exit_code
                 fi
             elif [ $exit_code -eq 0 ]; then
@@ -44,14 +44,14 @@ function installPackages {
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
-                    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
+                    echo "if the error persists, please report an issue in github: https://github.com/openframeworks/openFrameworks/issues"
                     exit $exit_code
                 fi
             else
                 echo "error installing ${pkg}"
                 echo $error
                 echo "this seems an error with your distribution repositories but you can also"
-                echo "report an issue in the openFrameworks github: http://github.com/openframeworks/openFrameworks/issues"
+                echo "report an issue in the openFrameworks github: https://github.com/openframeworks/openFrameworks/issues"
                 exit $exit_code
             fi
         fi
