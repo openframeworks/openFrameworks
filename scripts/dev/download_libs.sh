@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.4
+DL_VERSION=2.5.0
 
 printHelp(){
 cat << EOF
@@ -304,10 +304,10 @@ if [ $OVERWRITE -eq 1 ]; then
                 rm -rf "${libs[i]}/bin"
             fi
         fi
-        # if [ -e "${libs[i]}/include" ]; then
-        #     echo "  Removing: [${libs[i]}/include]"
-        #     rm -rf "${libs[i]}/include"
-        # fi
+        if [ -e "${libs[i]}/include" ]; then
+            echo "  Removing: [${libs[i]}/include]"
+            rm -rf "${libs[i]}/include"
+        fi
         
     done
 fi
@@ -415,10 +415,10 @@ if [ $OVERWRITE -eq 1 ]; then
                 echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/bin]"
                 rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
             fi
-            # if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
-            #     echo "   Remove include: [${addons[i]}/libs/include]"
-            #     rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
-            # fi
+            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
+                echo "   Remove include: [${addons[i]}/libs/include]"
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
+            fi
         fi
     done
     echo "   ------ "
