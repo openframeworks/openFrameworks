@@ -997,7 +997,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env bash";
-			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for tvOS / macOS. Downloading libaries now via scripts/macos/download_latest_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for tvOS / macOS. Downloading libaries now via scripts/macos/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
 		};
 		BFF80A5B2C50B01B00784E74 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

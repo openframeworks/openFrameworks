@@ -184,7 +184,7 @@ jobs:
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
     - name: Download libs
-      run: ./scripts/${{matrix.cfg.libs}}/download_latest_libs.sh
+      run: ./scripts/${{matrix.cfg.libs}}/download_libs.sh
     - name: install
       run: ./scripts/ci/$TARGET/install.sh
     - name: Build
@@ -291,7 +291,7 @@ jobs:
 
 
     - name: Download libs
-      run: ./scripts/${{ matrix.cfg.target }}/download_latest_libs.sh
+      run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
 
     - name: Build
       run:

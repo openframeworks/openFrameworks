@@ -143,7 +143,12 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+            if command -v gcc &> /dev/null
+            then
+                GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+            else
+                GCC_VERSION=6
+            fi
             if [ $GCC_VERSION -eq 4 ]; then
                 ARCH=64gcc6
             elif [ $GCC_VERSION -eq 5 ]; then
