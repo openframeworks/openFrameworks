@@ -31,7 +31,7 @@
 		    "outputPaths": [],
 		    "runOnlyForDeploymentPostprocessing": "0",
 		    "shellPath": "/usr/bin/env bash",
-		    "shellScript": "#!/usr/bin/env bash\nif [ ! -d \"${OF_PATH}/libs/freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_latest_libs.sh\"\n    ${OF_PATH}/scripts/osx/download_latest_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n"
+		    "shellScript": "#!/usr/bin/env bash\nif [ ! -d \"${OF_PATH}/libs/freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${OF_PATH}/scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n"
 		},
 		"E42962A92163ECCD00A6A9E2": {
 			"alwaysOutOfDate": "1",
