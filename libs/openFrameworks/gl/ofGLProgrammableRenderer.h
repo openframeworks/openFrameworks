@@ -405,4 +405,14 @@ private:
     GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 	
 	uint64_t beginDefaultShaderFrame;
+	
+	
+	
+	struct matricesBuffer {
+		glm::mat4 modelMatrix;
+		glm::mat4 viewMatrix;
+		glm::mat4 modelViewMatrix;
+		glm::mat4 modelViewProjectionMatrix;
+	} matrices;
+	ofBufferObject buffer;
 };

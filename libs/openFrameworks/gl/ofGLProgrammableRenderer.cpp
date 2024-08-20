@@ -946,13 +946,86 @@ glm::vec3 ofGLProgrammableRenderer::getCurrentEyePosition() const {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadCurrentMatrix() {
 	if (!currentShader) return;
+
+	static GLuint _matrixBuffer;
+	static GLint  _matrixBlockLocation;
+	static constexpr GLuint _matrixBufferBindingPoint = 0;
+	auto _program = currentShader->getProgram();
+	_matrixBlockLocation       = glGetUniformBlockIndex(_program, "matrices");
+
+	if (!buffer.isAllocated()) {
+		buffer.allocate(sizeof(matrices), GL_DYNAMIC_DRAW);
+		
+
+
+		glGenBuffers(1, &_matrixBuffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, _matrixBuffer);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(matrices), &matrices, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, _matrixBufferBindingPoint, _matrixBuffer);
+	}
 	// uploads the current matrix to the current shader.
 	switch (matrixStack.getCurrentMatrixMode()) {
 	case OF_MATRIX_MODELVIEW:
-		currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
-		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+//			std::cout << "here " << std::endl;
+			
+			
+			matrices = {
+				matrixStack.getModelMatrix(),
+				matrixStack.getViewMatrix(),
+				matrixStack.getModelViewMatrix(),
+				matrixStack.getModelViewProjectionMatrix(),
+			};
+			using std::cout;
+			using std::endl;
+//			cout << "--------------" << endl;
+//			cout << "----- 001" << endl;
+//			cout << matrices.modelMatrix << endl;
+//			cout << "----- 002" << endl;
+//			cout << matrixStack.getModelMatrix() << endl;
+//			buffer.updateData(&matrices);
+			
+
+
+//			glUniformBlockBinding(_program, _matrixBlockLocation, _matrixBufferBindingPoint);
+			
+//			currentShader->printActiveUniformBlocks();
+
+			//			buffer.setData(sizeof(matrices), &matrices, GL_DYNAMIC_DRAW);
+//			currentShader->bindUniformBlock(currentShader->getUniformBlockIndex("matrices"), "matrices");
+			
+			
+			
+//			currentShader->bindUniformBlock(buffer.getId(), "matrices");
+//
+//			buffer.setData(sizeof(matrices), &matrices, GL_DYNAMIC_DRAW);
+//			buffer.bindBase(GL_UNIFORM_BUFFER, currentShader->getUniformBlockIndex("matrices"));
+
+			
+			currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
+			currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
+			currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+			currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+
+			
+
+//			buffer.unbindBase(GL_UNIFORM_BUFFER, currentShader->getUniformBlockIndex("matrices"));
+
+//			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(lights), lights);
+//			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+//			buffer.bindBase(currentShader->getShader(), 1);
+//			currentShader->bindAttribute(buffer.getId(), "matrices");
+//			static const string MODEL_MATRIX_UNIFORM = "modelMatrix";
+//			static const string VIEW_MATRIX_UNIFORM = "viewMatrix";
+//			static const string MODELVIEW_MATRIX_UNIFORM = "modelViewMatrix";
+//			static const string PROJECTION_MATRIX_UNIFORM = "projectionMatrix";
+//			static const string MODELVIEW_PROJECTION_MATRIX_UNIFORM = "modelViewProjectionMatrix";
+//			static const string TEXTURE_MATRIX_UNIFORM = "textureMatrix";
+//			static const string COLOR_UNIFORM = "globalColor";
+//
+//			static const string USE_TEXTURE_UNIFORM = "usingTexture";
+//			static const string USE_COLORS_UNIFORM = "usingColors";
+//			static const string BITMAP_STRING_UNIFORM = "bitmapText";
+			
 		if (currentMaterial) {
 			currentMaterial->uploadMatrices(*currentShader, *this);
 		}

@@ -17,6 +17,17 @@ IN vec4 color;
 IN vec4 normal;
 IN vec2 texcoord;
 
+//layout(std140) uniform matrices {
+////struct modelVars {
+//	mat4 modelViewMatrix;
+//	mat4 modelMatrix;
+//	mat4 viewMatrix;
+//	mat4 projectionMatrix;
+//	mat4 textureMatrix;
+//	mat4 modelViewProjectionMatrix;
+//} ;
+
+
 // these are passed in from OF programmable renderer
 uniform mat4 modelViewMatrix;
 uniform mat4 modelMatrix;
