@@ -340,7 +340,7 @@ function createPackage {
     cd $pkg_ofroot/
     echo " Location: {$pkg_ofroot}"
     if [ "$pkg_platform" = "osx" ]; then
-        scripts/osx/download_latest_libs.sh
+        scripts/osx/download_libs.sh
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$libs_abi
@@ -356,20 +356,20 @@ function createPackage {
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         if [ "$libs_abi" = "" ]; then
-            scripts/vs/download_latest_libs.sh
+            scripts/vs/download_libs.sh
         else
-            scripts/vs/download_latest_libs.sh -a $libs_abi
+            scripts/vs/download_libs.sh -a $libs_abi
         fi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
-        scripts/macos/download_latest_libs.sh
+        scripts/macos/download_libs.sh
      elif [ "$pkg_platform" = "emscripten" ]; then
        scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "macos" ]; then
-        scripts/osx/download_latest_libs.sh
-        scripts/macos/download_latest_libs.sh
+        scripts/osx/download_libs.sh
+        scripts/macos/download_libs.sh
         scripts/emscripten/download_libs.sh -n
     fi
 
