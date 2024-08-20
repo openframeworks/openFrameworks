@@ -198,6 +198,8 @@ function createProjectFiles {
             ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
         else
             echo "projectGenerator does not exist. Continue."
+	    ls ${main_ofroot}/apps/projectGenerator/commandLine/bin/
+	    exit 1
         fi
 
         
