@@ -36,20 +36,21 @@ git submodule update --init --recursive
 git submodule update --recursive --remote
 cd apps/projectGenerator
 git pull origin master
-
 cd $OUTPUT_FOLDER
-
-$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
-$ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
-$ROOT/scripts/dev/create_package.sh linuxaarch64 $lastversion master
+pwd
+if [[ "$(uname -s)" == "Linux" ]]; then
+	$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
+	$ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
+	$ROOT/scripts/dev/create_package.sh linuxaarch64 $lastversion master
+	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
+	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master clang64
+	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master ucrt64
+	$ROOT/scripts/dev/create_package.sh vs $lastversion master
+	$ROOT/scripts/dev/create_package.sh vs $lastversion master 64
+fi
 $ROOT/scripts/dev/create_package.sh osx $lastversion master
 $ROOT/scripts/dev/create_package.sh ios $lastversion master
 # $ROOT/scripts/dev/create_package.sh macos $lastversion master
-$ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
-$ROOT/scripts/dev/create_package.sh msys2 $lastversion master clang64
-$ROOT/scripts/dev/create_package.sh msys2 $lastversion master ucrt64
-$ROOT/scripts/dev/create_package.sh vs $lastversion master
-$ROOT/scripts/dev/create_package.sh vs $lastversion master 64
 
 ls -la
 cd $ROOT
@@ -58,4 +59,6 @@ cd $ROOT
 FILES_OUT=$( (ls -t out/*.zip 2> /dev/null || true) && (ls -t out/*.tar* 2> /dev/null || true) )
 #remove new lines
 FILES_OUT=$(echo $FILES_OUT | tr '\n' ' ')
-echo "FILES_OUT=$FILES_OUT" >> $GITHUB_OUTPUT
+if [ -n "$GITHUB_OUTPUT" ]; then
+	echo "FILES_OUT=$FILES_OUT" >> $GITHUB_OUTPUT
+fi

@@ -26,10 +26,15 @@ done
 
 echo "OF_ROOT: $OF_ROOT"
 echo "OF_SCRIPT_DIR: $OF_SCRIPT_DIR"
+
+if [[ "$(uname -s)" == "Linux" ]]; then
 # Install libunwind
 # echo "Installing libunwind..."
-# sudo apt-get update
-# sudo apt-get install -y libunwind-dev
+sudo apt-get update
+sudo apt-get install -y libunwind-dev
+sudo apt-get install -y npm
+sudo apt-get install -y curl
+fi
 
 # Cache packages
 # echo "Caching packages..."
