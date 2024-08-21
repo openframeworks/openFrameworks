@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.2.6
+VERSION=4.2.7
 printDownloaderHelp(){
 cat << EOF
     
@@ -271,6 +271,12 @@ downloader() {
                 EXTRA_ARGS+="--remove-on-error "
             fi
         fi
+        if curl -v | grep -q 'HTTP2'; then
+            CURL_SUPPORTS_HTTP2=1
+            CLOSE_CONNECTION=0
+        else
+            CURL_SUPPORTS_HTTP2=0
+        fi
         if [[ "$COMPRESSION" == "1" ]] && [[ $CURL == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then 
             if curl -V | grep -q "brotli"; then
                 FINAL_EXTRA_ARGS+="--compressed "
@@ -369,7 +375,6 @@ downloader() {
    
     if [[ $VERBOSE == 1 ]]; then
         EXTRA_ARGS+=" --verbose "
-        #-w "\n[%{url_effective}]\n\nDownload Size:[%{size_download}B] in Time total:[%{time_total}s] DL speed:[%{speed_download}B/s] - Time in redirects:[%{time_redirect}s]"
     fi
     EXTRA_ARGS=$(echo "$EXTRA_ARGS" | sed 's/[[:space:]]*$//')
     FINAL_EXTRA_ARGS=$(echo "$FINAL_EXTRA_ARGS" | sed 's/[[:space:]]*$//')
