@@ -18,7 +18,8 @@ concurrency:
 
 env:
   ccache: ccache
-  
+  GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+
   build-linux64:
     runs-on: ubuntu-24.04
     strategy:
@@ -50,3 +51,11 @@ env:
       run: ./scripts/dev/init_submodules.sh
     - name: Install dependencies
       run: ./scripts/ci/simulate_nightly.sh
+    - name: List output directory
+      run: ls -lah out/
+    - name: Upload all .zip and .tar files as artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: openFrameworks-artifacts-${{ env.TARGET }}-${{ matrix.bundle }}
+        path: out/*.zip,out/*.tar,out/*.tar.bz2,out/*.tar.gz
+        retention-days: 1
