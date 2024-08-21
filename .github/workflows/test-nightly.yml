@@ -63,13 +63,13 @@ jobs:
         FILES=$(ls -1 out/)
         echo "FILES_OUT=${FILES// /\\ }" >> $GITHUB_ENV
 
-    - name: Test Artefact zip
-      run: |
-        tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo "$FILES_OUT" | tr ' ' '\n')
+      - name: Test Artefact zip
+        run: |
+          tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo "$FILES_OUT" | tr ' ' '\n')
 
-    - name: Upload binaries as Artefact
-      uses: actions/upload-artifact@v4
-      with:
-        name: openFrameworks-all-artefact-${{ env.TARGET }}
-        path: out/manual-mega_artefact.tar.bz2
-        retention-days: 1
+      - name: Upload binaries as Artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openFrameworks-all-artefact-${{ env.TARGET }}
+          path: out/manual-mega_artefact.tar.bz2
+          retention-days: 1
