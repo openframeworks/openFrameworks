@@ -606,7 +606,6 @@ function createPackage {
     rm -Rf .gitmodules
     rm -Rf .gitattributes
     
-    find /examples -type f -name "*.dll" -exec rm -f {} +
 
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ] || [ "$platform" = "linuxaarch64" ]; then
         cp docs/linux.md INSTALL.md
@@ -632,6 +631,11 @@ function createPackage {
     rm CONTRIBUTING.md
 
     #copy empty example
+    cd $pkg_ofroot
+
+    cd examples
+    find . -type f -name '*.dll' -delete
+
     cd $pkg_ofroot
     mkdir -p apps/myApps
     if [ "$pkg_platform" = "android" ]; then
