@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.2.4
+VERSION=4.2.5
 printDownloaderHelp(){
 cat << EOF
     
@@ -93,6 +93,7 @@ check_remote_vs_local() {
     if [ -z "$modified" ]; then
             echo "  [downloader] failed to retrieve last-modified header from remote ["$REMOTE_URL"] ... Proceeding with download"
             CHECK_RESULT=0
+            rm -f $LOCAL_FILE
             return
     fi
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -104,6 +105,7 @@ check_remote_vs_local() {
     echo "  [downloader] Error in converting Remote modification time [report this openFrameworks devs]."
     echo "  [downloader] ... Proceeding with download"
     CHECK_RESULT=0
+    rm -f $LOCAL_FILE
     return
   fi
   
@@ -118,6 +120,7 @@ check_remote_vs_local() {
     echo "  [downloader] Error in converting Local modification time [report this openFrameworks devs]."
     echo "  [downloader] ... Proceeding with download"
     CHECK_RESULT=0
+    rm -f $LOCAL_FILE
     return
   fi
   if [ "$LocalSize" != "$RemoteSize" ]; then 
@@ -125,6 +128,7 @@ check_remote_vs_local() {
     echo "  [downloader] File sizes differ between remote and local file."
     echo "  [downloader] ... Proceeding with download"
     CHECK_RESULT=0
+    rm -f $LOCAL_FILE
     return
   fi
   if [ "$local_ctime" -lt "$remote_ctime" ]; then
@@ -132,6 +136,7 @@ check_remote_vs_local() {
     echo "  [downloader] Remote file is newer."
     echo "  [downloader] ... Proceeding with download"
     CHECK_RESULT=0
+    rm -f $LOCAL_FILE
     return
   fi
   echo "  [downloader] No need to download again. Every bit matters."
@@ -225,6 +230,11 @@ downloader() {
             ;;
         esac
     done
+    if [[ "$OSTYPE" == "msys"* || "$OSTYPE" == "cygwin"* || "$OSTYPE" == "win32"* ]]; then
+        echo "Detected Windows OS. Skipping wget2..."
+        WGET2=0
+        WGET2_INSTALLED=0
+    fi
     # [wget2]
     if command -v wget2 > /dev/null 2>&1; then
         WGET2_INSTALLED=1
