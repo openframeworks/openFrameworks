@@ -176,12 +176,12 @@ function createProjectFiles {
         cd ${main_ofroot}/apps/projectGenerator/commandLine
         echo "Recompiling command line PG"
         if [ -d ~/logs ]; then
-            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug > ~/logs/compilePG.log 2>&1 &
+            PROJECT_OPTIMIZATION_CFLAGS_RELEASE="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Release > ~/logs/compilePG.log 2>&1 &
             makePGPID=$!
             echoDots $makePGPID
             wait $makePGPID
         else
-            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug
+            PROJECT_OPTIMIZATION_CFLAGS_RELEASE="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Release
         fi
 
         cd ${pkg_ofroot}
@@ -198,6 +198,8 @@ function createProjectFiles {
             ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
         else
             echo "projectGenerator does not exist. Continue."
+	    ls ${main_ofroot}/apps/projectGenerator/commandLine/bin/
+	    exit 1
         fi
 
         
@@ -338,7 +340,7 @@ function createPackage {
     cd $pkg_ofroot/
     echo " Location: {$pkg_ofroot}"
     if [ "$pkg_platform" = "osx" ]; then
-        scripts/osx/download_latest_libs.sh
+        scripts/osx/download_libs.sh
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$libs_abi
@@ -354,20 +356,20 @@ function createPackage {
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         if [ "$libs_abi" = "" ]; then
-            scripts/vs/download_latest_libs.sh
+            scripts/vs/download_libs.sh
         else
-            scripts/vs/download_latest_libs.sh -a $libs_abi
+            scripts/vs/download_libs.sh -a $libs_abi
         fi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
-        scripts/macos/download_latest_libs.sh
+        scripts/macos/download_libs.sh
      elif [ "$pkg_platform" = "emscripten" ]; then
        scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "macos" ]; then
-        scripts/osx/download_latest_libs.sh
-        scripts/macos/download_latest_libs.sh
+        scripts/osx/download_libs.sh
+        scripts/macos/download_libs.sh
         scripts/emscripten/download_libs.sh -n
     fi
 
