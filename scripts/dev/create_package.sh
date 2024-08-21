@@ -424,7 +424,7 @@ function createPackage {
   		# use prepackaged gui
         downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
         mkdir -p projectGenerator
-        unzip projectGenerator-vs-gui.zip -d "projectGenerator" 2> /dev/null
+        unzip -q projectGenerator-vs-gui.zip -d "projectGenerator" 2> /dev/null
 		# if [ "$pkg_platform" = "msys2" ]; then
 		# 	sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
 		# else
@@ -436,7 +436,7 @@ function createPackage {
 
     if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "macos" ]; then
 	downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
-        unzip projectGenerator-osx.zip
+        unzip -q projectGenerator-osx.zip
         mv projectGenerator-osx/ projectGenerator
         rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
@@ -466,7 +466,7 @@ function createPackage {
 		# mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
 		# cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
+		unzip -q -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		rm projectGenerator-vs-gui.zip
 		cd ${pkg_ofroot}
 

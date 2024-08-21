@@ -67,7 +67,7 @@ $SCRIPT_DIR/package_builds.sh $RELEASE
 
 # List output directory
 echo "Listing output directory..."
-ls -lah out/
+ls -lah $OF_ROOT/out/
 
 # Update Release (assuming you have a script or tool to handle GitHub releases)
 # echo "Updating release..."
