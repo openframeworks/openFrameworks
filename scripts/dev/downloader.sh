@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.2.5
+VERSION=4.2.6
 printDownloaderHelp(){
 cat << EOF
     
@@ -381,13 +381,13 @@ downloader() {
         if [[ "${SILENT}" == 1 ]]; then
             if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then
                 echo
-                wget2 -N -nv --progress=bar --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget2 -N -nv --progress=bar --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --timeout=1500 --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo
                 curl -Z -L --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --header "Connection: close" --progress-bar ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo
-                wget -nv -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} "${CONNECTION_EXTRA_ARGS[@]}" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget -nv -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             else 
                 echo $ERROR_MSG;
                 exit 1;
@@ -396,7 +396,7 @@ downloader() {
             if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then 
                 echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
                 echo
-                wget2 -N -c --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget2 -N -c --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=1500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
                 echo
@@ -421,7 +421,7 @@ downloader() {
         else
             FIRST_URL="${FORWARDED_URLS[0]}"
             echo "  [downloader] Closing the ports yarr url:[$FIRST_URL]"
-                curl -I -L --retry-connrefused --insecure --silent --head --max-time 1 --verbose --retry ${RETRY_MAX} ${CLOSE_EXTRA_ARGS} --no-keepalive --header "Connection: close" --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} ${FIRST_URL}
+                curl -I -L --retry-connrefused --insecure --silent --head --max-time 1 --retry ${RETRY_MAX} ${CLOSE_EXTRA_ARGS} --no-keepalive --header "Connection: close" --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} ${FIRST_URL}
         fi
         fi
     fi
