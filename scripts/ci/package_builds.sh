@@ -1,18 +1,31 @@
 #!/bin/bash
 set -ev
+
 ROOT=${GITHUB_WORKSPACE}
 
-sudo apt-get -y install aptitude
+P_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Check if ROOT is empty
+if [[ -z "$ROOT" ]]; then
+  # Set ROOT to ../../../ if it's empty
+  ROOT="../../"
+fi
 
-#for ubuntu 22.04 we need to install wine32
-#sudo dpkg --add-architecture i386
-sudo apt-get update
-sudo aptitude -y install wine64
+ROOT=$(realpath "$ROOT")
 
+
+if [[ "$(uname -s)" == "Linux" ]]; then
+    sudo apt-get -y install aptitude
+    #for ubuntu 22.04 we need to install wine32
+    #sudo dpkg --add-architecture i386
+    sudo apt-get update
+    sudo aptitude -y install wine64
+fi
+echo "Where is ROOT: $ROOT"
 cd $ROOT
+ls
 
 OUTPUT_FOLDER=$ROOT/out
-mkdir $OUTPUT_FOLDER
+mkdir -p $OUTPUT_FOLDER
 
 lastversion=$(date +%Y%m%d)
 if [ -n "$1" ] && [ "$1" != "nightly" ]; then
