@@ -284,10 +284,10 @@ function createPackage {
         rm -Rf utils/fileBufferLoadingCSVExample
         rm -Rf 3d/modelNoiseExample
         rm -Rf windowing
-		rm -Rf input_output
-		rm -Rf shader
-		rm -Rf sound
-		rm -Rf threads
+	rm -Rf input_output
+	rm -Rf shader
+	rm -Rf sound
+	rm -Rf threads
         rm -Rf windowing
 	fi
 
@@ -297,7 +297,7 @@ function createPackage {
 
 	if [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ] || [ "$pkg_platform" == "linuxaarch64" ]; then
 
-	    rm -Rf gl/glInfoExample
+	rm -Rf gl/glInfoExample
         rm -Rf gl/alphaMaskingShaderExample
         rm -Rf gl/billboardExample
         rm -Rf gl/billboardRotationExample
@@ -423,8 +423,8 @@ function createPackage {
   
   		# use prepackaged gui
         downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-        mkdir projectGenerator
-        unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
+        mkdir -p projectGenerator
+        unzip -q projectGenerator-vs-gui.zip -d "projectGenerator" 2> /dev/null
 		# if [ "$pkg_platform" = "msys2" ]; then
 		# 	sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
 		# else
@@ -435,8 +435,8 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "macos" ]; then
-		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
-        unzip projectGenerator-osx.zip
+	downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
+        unzip -q projectGenerator-osx.zip
         mv projectGenerator-osx/ projectGenerator
         rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
@@ -466,7 +466,7 @@ function createPackage {
 		# mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
 		# cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
+		unzip -q -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		rm projectGenerator-vs-gui.zip
 		cd ${pkg_ofroot}
 
@@ -605,6 +605,7 @@ function createPackage {
     rm -Rf .travis.yml
     rm -Rf .gitmodules
     rm -Rf .gitattributes
+    
 
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ] || [ "$platform" = "linuxaarch64" ]; then
         cp docs/linux.md INSTALL.md
@@ -630,6 +631,11 @@ function createPackage {
     rm CONTRIBUTING.md
 
     #copy empty example
+    cd $pkg_ofroot
+
+    cd examples
+    find . -type f -name '*.dll' -delete
+
     cd $pkg_ofroot
     mkdir -p apps/myApps
     if [ "$pkg_platform" = "android" ]; then
