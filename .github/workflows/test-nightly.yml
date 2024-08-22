@@ -26,6 +26,7 @@ jobs:
           - {target: linux64, libs: 64gcc6}
     env:
       TARGET: ${{ matrix.cfg.target }}
+    
     steps:
       - name: Remove Old lib-unwind
         run: if [ "$TARGET" = "linux64" ]; then
@@ -58,10 +59,10 @@ jobs:
         run: ls -lah out/
 
       - name: Capture output files
-      id: list_files
-      run: |
-        FILES=$(ls -1 out/)
-        echo "FILES_OUT=${FILES// /\\ }" >> $GITHUB_ENV
+        id: list_files
+        run: |
+          FILES=$(ls -1 out/)
+          echo "FILES_OUT=${FILES// /\\ }" >> $GITHUB_ENV
 
       - name: Test Artefact zip
         run: |
