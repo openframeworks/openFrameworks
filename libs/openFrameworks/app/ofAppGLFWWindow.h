@@ -52,8 +52,10 @@ public:
 	bool visible = true;
 	bool iconified = false;
 	bool decorated = true;
+    bool floating = false;
 	bool resizable = true;
 	bool transparent = false;
+    bool transparentInput = false;
 	bool maximized = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;

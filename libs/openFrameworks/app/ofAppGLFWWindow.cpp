@@ -203,6 +203,13 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
 #if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3)
             glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
 #endif
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4)
+            if( settings.transparentInput && settings.transparent && settings.decorated) {
+                ofLogError("ofAppGLFWWindow") << "window is decorated and has transparent input pass through. use floating...";
+            }
+            glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, settings.transparentInput);
+            glfwWindowHint(GLFW_FLOATING, settings.floating);
+#endif
             currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
         } else {
             currentRenderer = std::make_shared<ofGLRenderer>(this);
