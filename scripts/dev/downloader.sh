@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.3.0
+VERSION=4.3.1
 printDownloaderHelp(){
 cat << EOF
     
@@ -84,7 +84,7 @@ check_remote_vs_local() {
   LocalSize=$(wc -c < "$LOCAL_FILE" | tr -d '[:space:]')
   #REMOTE_CALL="wget2 --spider --max-redirect=${MAX_REDIRECTS} ${EXTRA_ARGS}"
   REMOTE_CALL=""
-  headers=$(curl -L -I --verbose --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} ${EXTRA_ARGS} --retry-connrefused --silent --head $REMOTE_URL)
+  headers=$(curl -L -I --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} ${EXTRA_ARGS} --retry-connrefused --silent --head $REMOTE_URL)
   RemoteSize=$(echo "$headers" | awk '/[cC]ontent-[lL]ength/ {print $2}' | tr -d '\r' | tail -n 1)
   modified=$(echo "$headers" | awk '/[lL]ast-[mM]odified/ {print $0}' | sed 's/^[lL]ast-[mM]odified: //')
   LocalSizeMB=$(convert_bytes_to_mb $LocalSize)
@@ -148,7 +148,7 @@ check_remote_vs_local() {
 finalurl() {
     F_URL=$(echo "$@" | sed 's/[[:space:]]*$//')
     # echo "finalurl: [$@] - F_URL:[$F_URL]"
-    curl  -L -I --verbose --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused --silent --location --head --output /dev/null --write-out '%{url_effective}' -- "$F_URL"
+    curl  -L -I --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused --silent --location --head --output /dev/null --write-out '%{url_effective}' -- "$F_URL"
 }
 
 downloader() { 
@@ -428,6 +428,7 @@ downloader() {
             echo "  [downloader] No active connections to close"
         else
             FIRST_URL="${FORWARDED_URLS[0]}"
+            FIRST_URL=$(echo "$FIRST_URL" | sed 's/[[:space:]]*$//')
             echo "  [downloader] Closing the ports yarr url:[$FIRST_URL]"
                 curl -I -L --retry-connrefused --insecure --silent --head --max-time 1 --retry ${RETRY_MAX} ${CLOSE_EXTRA_ARGS} --no-keepalive --header "Connection: close" --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} ${FIRST_URL}
         fi
