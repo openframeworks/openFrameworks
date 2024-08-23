@@ -123,6 +123,7 @@ public:
 
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
+    void setTransparentInput(bool allowPassthrough);
 
 	void enableSetupScreen();
 	void disableSetupScreen();
@@ -200,7 +201,7 @@ private:
 	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
 	static void 	char_cb(GLFWwindow* windowP_, uint32_t key);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
-  static void   position_cb(GLFWwindow* windowP_, int x, int y);
+    static void   position_cb(GLFWwindow* windowP_, int x, int y);
 	static void 	framebuffer_size_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);

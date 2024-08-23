@@ -60,6 +60,7 @@ public:
 
 	virtual void setFullscreen(bool fullscreen){}
 	virtual void toggleFullscreen(){}
+	virtual void setTransparentInput(bool allowPassthrough){}
 
 	virtual void enableSetupScreen(){}
 	virtual void disableSetupScreen(){}

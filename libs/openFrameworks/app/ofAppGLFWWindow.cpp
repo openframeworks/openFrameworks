@@ -1076,6 +1076,15 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     }
     
     //------------------------------------------------------------
+    void ofAppGLFWWindow::setTransparentInput(bool allowPassthrough) {
+		if(settings.transparentInput == allowPassthrough) return;
+        settings.transparentInput = allowPassthrough;
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4)
+        glfwSetWindowAttrib(getGLFWWindow(), GLFW_MOUSE_PASSTHROUGH, settings.transparentInput);
+#endif
+    }
+    
+    //------------------------------------------------------------
     void ofAppGLFWWindow::setOrientation(ofOrientation orientation) {
         this->orientation = orientation;
     }
