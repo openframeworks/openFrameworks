@@ -7,11 +7,9 @@ void ofApp::setup(){
 	int screenW = ofGetScreenWidth();
 	int screenH = ofGetScreenHeight();
 	ofSetWindowPosition(screenW/2-1280/2, screenH/2-720/2);
-	
-	// load our typeface
 	fontRenderer.load(OF_TTF_MONO, 14);
 	lineHeight = fontRenderer.getLineHeight();
-
+	
 	bFullscreen	= 0;
 	ofBackground(0, 0, 0, 0);
 	ofSetWindowTitle("GLFW Transparency"); // should not be shown with floating
@@ -79,6 +77,18 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofSetupScreen();
+	int width = ofGetWidth();
+	int height = ofGetHeight();
+	
+	// Based on @geluso Draw 100 circles https://github.com/geluso
+	for(int i = 0; i < 100; i++) {
+		float speed = 1.74f;
+		float sinX = sin(i + ofGetElapsedTimef() * speed) * 100;
+		float sinAlpha = ofMap(sin(i + ofGetElapsedTimef() * speed),-1, 1, 0, 200);
+		float sinRadius = ofMap(sin(i * ofGetElapsedTimef() * 0.05),-1, 1, 5, 30);
+		ofSetColor(255,0,0,sinAlpha);
+		ofDrawCircle(i * 13, sinX + ofGetWidth()*0.5, sinRadius);
+	}
 
 	ofSetColor(primaryBtnColor);
 	ofDrawCircle(ballPositionX, ballPositionY, 15);
@@ -95,7 +105,10 @@ void ofApp::draw(){
 		ofSetColor(highlightColor);
 		ofSetColor(ofColor(80, 80, 80, 196));
 		ofDrawRectangle(0, 0, screenWidth, 300);
-	
+		ofSetColor(0x000000);
+		ofDrawLine(0, 0, 0, height);
+		ofDrawLine(width, 0, width, height);
+		ofDrawLine(0, height, width, height);
 	}
 	
 	ofSetColor(textColor);
@@ -174,7 +187,7 @@ void ofApp::keyPressed(int key){
 		
 	} else if(key == 'h' || key == 'H'){
 		bAllowPassthrough = !bAllowPassthrough;
-		ofSetWindowTransparencyInput(bAllowPassthrough);
+		ofSetWindowMousePassthrough(bAllowPassthrough);
 		ofLogNotice("ofApp") << "ofSetWindowTransparencyInput:" << bAllowPassthrough;
 		
 	} else if(key == 'l' || key == 'L' ){
@@ -201,13 +214,13 @@ void ofApp::mouseMoved(int x, int y ){
 		if(bAllowPassthrough) {
 			bAllowPassthrough = false;
 			ofLogNotice("ofApp") << "ofSetWindowTransparencyInput:" << bAllowPassthrough;
-			ofSetWindowTransparencyInput(bAllowPassthrough);
+			ofSetWindowMousePassthrough(bAllowPassthrough);
 		}
 	} else {
 		if(!bAllowPassthrough) {
 			bAllowPassthrough = true;
 			ofLogNotice("ofApp") << "ofSetWindowTransparencyInput:" << bAllowPassthrough;
-			ofSetWindowTransparencyInput(bAllowPassthrough);
+			ofSetWindowMousePassthrough(bAllowPassthrough);
 		}
 	}
 }

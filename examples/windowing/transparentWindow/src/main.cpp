@@ -7,7 +7,7 @@ int main( ){
 	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
 	ofGLFWWindowSettings settings;
 	settings.transparent = true;
-	settings.transparentInput = true;
+	settings.mousePassthrough = true;
 	settings.floating = true;
 	settings.decorated = false;
 	settings.windowMode = OF_WINDOW;
