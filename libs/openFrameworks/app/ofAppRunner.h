@@ -102,7 +102,7 @@ void ofEnableSetupScreen();
 void ofDisableSetupScreen();
 void ofSetFullscreen(bool fullscreen);
 void ofToggleFullscreen();
-void ofSetWindowTransparencyInput(bool allowPassthrough);
+void ofSetWindowMousePassthrough(bool allowPassthrough);
 //-------------------------- sync
 void ofSetVerticalSync(bool bSync);
 

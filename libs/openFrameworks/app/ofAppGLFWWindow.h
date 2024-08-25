@@ -55,7 +55,7 @@ public:
     bool floating = false;
 	bool resizable = true;
 	bool transparent = false;
-    bool transparentInput = false;
+    bool mousePassthrough = false;
 	bool maximized = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
@@ -123,7 +123,7 @@ public:
 
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
-    void setTransparentInput(bool allowPassthrough);
+    void setWindowMousePassthrough(bool allowPassthrough);
 
 	void enableSetupScreen();
 	void disableSetupScreen();
