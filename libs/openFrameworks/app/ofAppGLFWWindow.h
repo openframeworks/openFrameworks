@@ -55,7 +55,7 @@ public:
     bool floating = false;
 	bool resizable = true;
 	bool transparent = false;
-    bool mousePassthrough = false;
+    bool mousePassThrough = false;
 	bool maximized = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
