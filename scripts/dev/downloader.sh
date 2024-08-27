@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.2.7
+VERSION=4.3.1
 printDownloaderHelp(){
 cat << EOF
     
@@ -80,6 +80,7 @@ check_remote_vs_local() {
   echo "  [downloader] Found download cache."
   echo "  [cache] [$LOCAL_FILE]"
   fi
+  REMOTE_URL=$(echo "$REMOTE_URL" | sed 's/[[:space:]]*$//')
   LocalSize=$(wc -c < "$LOCAL_FILE" | tr -d '[:space:]')
   #REMOTE_CALL="wget2 --spider --max-redirect=${MAX_REDIRECTS} ${EXTRA_ARGS}"
   REMOTE_CALL=""
@@ -145,7 +146,9 @@ check_remote_vs_local() {
 }
 
 finalurl() {
-    curl --silent --location --head --output /dev/null --write-out '%{url_effective}' -- "$@"
+    F_URL=$(echo "$@" | sed 's/[[:space:]]*$//')
+    # echo "finalurl: [$@] - F_URL:[$F_URL]"
+    curl  -L -I --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused --silent --location --head --output /dev/null --write-out '%{url_effective}' -- "$F_URL"
 }
 
 downloader() { 
@@ -271,7 +274,7 @@ downloader() {
                 EXTRA_ARGS+="--remove-on-error "
             fi
         fi
-        if curl -v | grep -q 'HTTP2'; then
+        if curl -V | grep -q 'HTTP2'; then
             CURL_SUPPORTS_HTTP2=1
             CLOSE_CONNECTION=0
         else
@@ -399,7 +402,7 @@ downloader() {
             fi;
         else
             if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then 
-                echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
+                echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS"
                 echo
                 wget2 -N -c --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=1500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
@@ -408,9 +411,9 @@ downloader() {
                 curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --header "Connection: close" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
                 
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
-                echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
+                echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS]"
                 echo
-                wget -nv --progress=bar -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} --header "Connection: close" ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget -nv --progress=bar -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             else 
                 echo $ERROR_MSG;
                 exit 1;
@@ -425,6 +428,7 @@ downloader() {
             echo "  [downloader] No active connections to close"
         else
             FIRST_URL="${FORWARDED_URLS[0]}"
+            FIRST_URL=$(echo "$FIRST_URL" | sed 's/[[:space:]]*$//')
             echo "  [downloader] Closing the ports yarr url:[$FIRST_URL]"
                 curl -I -L --retry-connrefused --insecure --silent --head --max-time 1 --retry ${RETRY_MAX} ${CLOSE_EXTRA_ARGS} --no-keepalive --header "Connection: close" --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} ${FIRST_URL}
         fi
