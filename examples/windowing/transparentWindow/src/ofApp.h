@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 	
 	public:
 		
@@ -22,17 +22,18 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo) override;
 		void gotMessage(ofMessage msg) override;
 		
-		ofTrueTypeFont 	fontRenderer;
+		ofTrueTypeFont	fontRenderer;
 		
-		bool  	bFullscreen;
-		bool    bAllowPassthrough = true;
+		bool	bFullscreen;
+		bool	bAllowPassThrough = true;
+		bool	bForcePassThrough = false;
 		bool	bDrawGuides = true;
 		bool	bLogVerbose = false;
 		
-		float 	ballPositionX;
-		float 	ballPositionY;
-		float 	ballVelocityX;
-		float 	ballVelocityY;
+		float	ballPositionX;
+		float	ballPositionY;
+		float	ballVelocityX;
+		float	ballVelocityY;
 	
 		const float margin = 20;
 		const float lineSpacing = 30;
@@ -49,3 +50,4 @@ class ofApp : public ofBaseApp{
 		ofColor highlightColor;
 	
 };
+

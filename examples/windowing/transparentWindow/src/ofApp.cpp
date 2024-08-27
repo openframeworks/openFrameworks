@@ -2,8 +2,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	 
-	if(bLogVerbose)
+	if(bLogVerbose){
 		ofSetLogLevel(OF_LOG_VERBOSE);
+	}
 	int screenW = ofGetScreenWidth();
 	int screenH = ofGetScreenHeight();
 	ofSetWindowPosition(screenW/2-1280/2, screenH/2-720/2);
@@ -34,7 +35,7 @@ void ofApp::update(){
 	
 	if(bFullscreen){
 		ofHideCursor();
-	}else{
+	} else{
 		ofShowCursor();
 	}
 
@@ -101,7 +102,7 @@ void ofApp::draw(){
 		ofDrawRectangle(0, screenHeight - 6, screenWidth, 6);
 		ofDrawRectangle(0, 0, 6, screenHeight);
 		ofDrawRectangle(screenWidth - 6, 0, 6, screenHeight);
-		// draw top rect for disabling passthrough example 
+		// draw top rect for disabling passThrough example
 		ofSetColor(highlightColor);
 		ofSetColor(ofColor(80, 80, 80, 196));
 		ofDrawRectangle(0, 0, screenWidth, 300);
@@ -115,7 +116,7 @@ void ofApp::draw(){
 	centerX = ofGetWidth() / 2;
 	centerY = 200;
 	baseY = centerY - 2 * lineSpacing;
-	if (bAllowPassthrough) {
+	if (bAllowPassThrough) {
 		ofSetColor(primaryBtnColor);
 		ofDrawRectangle(40, 10 + 1 * lineSpacing, 550, 200);
 		ofSetColor(textColor);
@@ -133,31 +134,34 @@ void ofApp::draw(){
 	}
 	
 	ofSetColor(primaryBtnColor);
-	if (bAllowPassthrough) {
-	   fontRenderer.drawString("GLFW Mouse passThrough enabled", centerX, 2 * lineSpacing);
+	if (bAllowPassThrough) {
+		fontRenderer.drawString("GLFW Mouse passThrough enabled", centerX, 2 * lineSpacing);
+		if(bForcePassThrough) {
+			fontRenderer.drawString("GLFW Mouse passThrough enabled", centerX, 2 * lineSpacing);
+		}
 	} else {
-	   fontRenderer.drawString("press h to enable GLFW passThrough or mouse below box", centerX, 2 * lineSpacing);
+		fontRenderer.drawString("press h to enable GLFW passThrough or mouse below box", centerX, 2 * lineSpacing);
 	}
 	ofSetColor(secondaryBtnColor);
 	
 	if (!bFullscreen) {
-	   fontRenderer.drawString("press f to enter fullscreen", centerX, baseY);
-	   fontRenderer.drawString("window is normal / floating", centerX, baseY + lineSpacing);
+		 fontRenderer.drawString("press f to enter fullscreen", centerX, baseY);
+		 fontRenderer.drawString("window is normal / floating", centerX, baseY + lineSpacing);
 	} else {
-	   fontRenderer.drawString("press f to exit fullscreen", centerX, baseY);
-	   fontRenderer.drawString("window is fullscreen", centerX, baseY + lineSpacing);
+		 fontRenderer.drawString("press f to exit fullscreen", centerX, baseY);
+		 fontRenderer.drawString("window is fullscreen", centerX, baseY + lineSpacing);
 	}
 
 	if (bDrawGuides) {
-	   fontRenderer.drawString("press g to disable drawing edges", centerX, baseY + 2 * lineSpacing);
+		 fontRenderer.drawString("press g to disable drawing edges", centerX, baseY + 2 * lineSpacing);
 	} else {
-	   fontRenderer.drawString("press g to enable drawing edges", centerX , baseY + 2 * lineSpacing);
+		 fontRenderer.drawString("press g to enable drawing edges", centerX , baseY + 2 * lineSpacing);
 	}
 	
 	if (bLogVerbose) {
-	   fontRenderer.drawString("press L to disable Verbose Log", centerX , baseY + 3 * lineSpacing);
+		 fontRenderer.drawString("press L to disable Verbose Log", centerX , baseY + 3 * lineSpacing);
 	} else {
-	   fontRenderer.drawString("press L to enable Verbose Log", centerX , baseY + 3 * lineSpacing);
+		 fontRenderer.drawString("press L to enable Verbose Log", centerX , baseY + 3 * lineSpacing);
 	}
 	
 	fontRenderer.drawString("window pos ("+ofToString(ofGetWindowPositionX())+", "+ofToString( ofGetWindowPositionY())+")", 20, 30);
@@ -172,7 +176,6 @@ void ofApp::keyPressed(int key){
 		if(!bFullscreen){
 			ofSetWindowShape(1280,720);
 			ofSetFullscreen(false);
-			// figure out how to put the window in the center:
 			int screenW = ofGetScreenWidth();
 			int screenH = ofGetScreenHeight();
 			ofSetWindowPosition(screenW/2-1280/2, screenH/2-720/2);
@@ -186,9 +189,10 @@ void ofApp::keyPressed(int key){
 		ofLogNotice("ofApp") << "bDrawGuides:" << bDrawGuides;
 		
 	} else if(key == 'h' || key == 'H'){
-		bAllowPassthrough = !bAllowPassthrough;
-		ofSetWindowMousePassthrough(bAllowPassthrough);
-		ofLogNotice("ofApp") << "ofSetWindowTransparencyInput:" << bAllowPassthrough;
+		bAllowPassThrough = !bAllowPassThrough;
+		bForcePassThrough = !bForcePassThrough;
+		ofSetWindowMousePassThrough(bAllowPassThrough);
+		ofLogNotice("ofApp") << "ofSetWindowMousePassThrough:" << bAllowPassThrough << " Force:" << bForcePassThrough;
 		
 	} else if(key == 'l' || key == 'L' ){
 		bLogVerbose = !bLogVerbose;
@@ -211,16 +215,16 @@ void ofApp::mouseMoved(int x, int y ){
 	
 	float distance = ofDist(x, y, ballPositionX, ballPositionY);
 	if(distance <= 15 || y < 300) {
-		if(bAllowPassthrough) {
-			bAllowPassthrough = false;
-			ofLogNotice("ofApp") << "ofSetWindowTransparencyInput:" << bAllowPassthrough;
-			ofSetWindowMousePassthrough(bAllowPassthrough);
+		if(bAllowPassThrough && (bForcePassThrough == false || distance <= 15)) {
+			bAllowPassThrough = false;
+			ofLogNotice("ofApp") << "ofSetWindowMousePassThrough:" << bAllowPassThrough;
+			ofSetWindowMousePassThrough(bAllowPassThrough);
 		}
 	} else {
-		if(!bAllowPassthrough) {
-			bAllowPassthrough = true;
-			ofLogNotice("ofApp") << "ofSetWindowTransparencyInput:" << bAllowPassthrough;
-			ofSetWindowMousePassthrough(bAllowPassthrough);
+		if(!bAllowPassThrough) {
+			bAllowPassThrough = true;
+			ofLogNotice("ofApp") << "ofSetWindowMousePassThrough:" << bAllowPassThrough;
+			ofSetWindowMousePassThrough(bAllowPassThrough);
 		}
 	}
 }
@@ -264,3 +268,4 @@ void ofApp::gotMessage(ofMessage msg){
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
+
