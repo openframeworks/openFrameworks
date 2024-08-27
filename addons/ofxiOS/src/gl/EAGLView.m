@@ -102,7 +102,7 @@
         if(rendererVersion == ESRendererVersion_30) {
 			renderer = [[ES3Renderer alloc] initWithDepth:bUseDepth
 													andAA:bUseMSAA
-										   andFSAASamples:msaaSamples
+										   andMSAASamples:msaaSamples
 												andRetina:bUseRetina
                                                 sharegroup:sharegroup];
 			if(!renderer){ // if OpenGLES 3.0 fails to load try OpenGLES 2.0

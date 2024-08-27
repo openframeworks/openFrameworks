@@ -4,6 +4,9 @@
 //
 //  Created by Daniel Rosser on 5/03/2016.
 //
+#pragma once
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import "ESRenderer.h"
 #import "ES2Renderer.h"
 
@@ -25,14 +28,14 @@
 	GLuint fsaaFrameBuffer, fsaaColorRenderBuffer;
 	
 	//settings
-	bool fsaaEnabled;
-	int fsaaSamples;
+	bool msaaEnabled;
+	int msaaSamples;
 	bool depthEnabled;
 	bool retinaEnabled;
 	bool bResize;
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
+- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup;
 - (void)startRender;
 - (void)finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
@@ -44,4 +47,4 @@
 - (NSInteger)getHeight;
 
 @end
-
+#endif

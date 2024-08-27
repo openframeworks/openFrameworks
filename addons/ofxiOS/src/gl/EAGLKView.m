@@ -60,8 +60,12 @@
         
         //------------------------------------------------------
         if(rendererVersion == ESRendererVersion_30) {
-            NSLog(@"OpenGLES 3.0 Renderer not implemented for oF. Defaulting to OpenGLES 2.0");
-            rendererVersion = ESRendererVersion_20;
+            self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3 sharegroup:sharegroup];
+            NSLog(@"Creating OpenGL ES3 Renderer");
+            if(!self.context) {
+                NSLog(@"OpenGL ES3 failed");
+                rendererVersion = ESRendererVersion_20;
+            }
         }
         
         if(rendererVersion == ESRendererVersion_20) {

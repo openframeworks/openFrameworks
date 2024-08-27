@@ -1,19 +1,20 @@
-
-
 #import "ES3Renderer.h"
+#pragma once
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 
 @implementation ES3Renderer
 
 // Create an OpenGL ES 3.0 context
 - (id)init {
-	return [self initWithDepth:false andAA:false andFSAASamples:0 andRetina:false];
+	return [self initWithDepth:false andAA:false andMSAASamples:0 andRetina:false sharegroup:nil];
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina {
+- (id)initWithDepth:(bool)depth andAA:(bool)msaa andMSAASamples:(int)samples andRetina:(bool)retina sharegroup:(EAGLSharegroup*)sharegroup{
 	if((self = [super init])) {
 		depthEnabled = depth;
-		fsaaEnabled = fsaa;
-		fsaaSamples = samples;
+		msaaEnabled = msaa;
+		msaaSamples = samples;
 		retinaEnabled = retina;
 		bResize = false;
 		
@@ -22,19 +23,18 @@
 		
 		if(!context || ![EAGLContext setCurrentContext:context]) {
 			NSLog(@"OpenGL ES3 failed");
-			[self release];
 			return nil;
 		}
 		
 		const GLubyte * extensions = glGetString(GL_EXTENSIONS);
-		if(extensions != NULL && fsaaEnabled) {
+		if(extensions != NULL && msaaEnabled) {
 			if(strstr((const char*)extensions, "GL_APPLE_framebuffer_multisample")) {
-				fsaaEnabled = true;
+				msaaEnabled = true;
 			} else {
-				fsaaEnabled = false;
+				msaaEnabled = false;
 			}
 		} else {
-			fsaaEnabled = false;
+			msaaEnabled = false;
 		}
 	}
 	
@@ -51,7 +51,7 @@
 }
 
 - (void)finishRender {
-	if(fsaaEnabled) {
+	if(msaaEnabled) {
 		if(depthEnabled) {
 			GLenum attachments[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
 			glInvalidateFramebuffer(GL_READ_FRAMEBUFFER_APPLE, 2, attachments);
@@ -77,7 +77,7 @@
 	}
 	[context presentRenderbuffer:GL_RENDERBUFFER];
 	
-	if(fsaaEnabled) {
+	if(msaaEnabled) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fsaaFrameBuffer);
 	}
 }
@@ -99,7 +99,7 @@
 	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
 	
-	if(fsaaEnabled) {
+	if(msaaEnabled) {
 		glGenFramebuffers(1, &fsaaFrameBuffer);
 		glGenRenderbuffers(1, &fsaaColorRenderBuffer);
 	}
@@ -107,10 +107,10 @@
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &backingWidth);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &backingHeight);
 	
-	if(fsaaEnabled) {
+	if(msaaEnabled) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fsaaFrameBuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, fsaaColorRenderBuffer);
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, fsaaSamples, GL_RGB5_A1, backingWidth, backingHeight);
+		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_RGB5_A1, backingWidth, backingHeight);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, fsaaColorRenderBuffer);
 	}
 	
@@ -121,8 +121,8 @@
 		
 		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
 		
-		if(fsaaEnabled) {
-			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, fsaaSamples, GL_DEPTH_COMPONENT16, backingWidth, backingHeight);
+		if(msaaEnabled) {
+			glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_DEPTH_COMPONENT16, backingWidth, backingHeight);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 		} else {
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, backingWidth, backingHeight); // GL DEPTH COMPONENT ON THIS LINE ISNT CORRECT POTENTIALLY
@@ -171,11 +171,8 @@
 	if([EAGLContext currentContext] == context) {
 		[EAGLContext setCurrentContext:nil];
 	}
-	
-	[context release];
-	context = nil;
-	
-	[super dealloc];
+
+    context = nil;
 }
 
 - (NSInteger)getWidth {
@@ -187,3 +184,4 @@
 }
 
 @end
+#endif
