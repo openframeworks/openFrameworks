@@ -90,9 +90,6 @@ void ofApp::draw(){
 		ofSetColor(255,0,0,sinAlpha);
 		ofDrawCircle(i * 13, sinX + ofGetWidth()*0.5, sinRadius);
 	}
-
-	ofSetColor(primaryBtnColor);
-	ofDrawCircle(ballPositionX, ballPositionY, 15);
 	
 	if(bDrawGuides) { // Draw edge of transparent window for clarity
 		int screenWidth = ofGetWidth();
@@ -133,11 +130,11 @@ void ofApp::draw(){
 		fontRenderer.drawString("This happens dynamically via GLFW Attribute", 50, 10 + 4 * lineSpacing);
 	}
 	
-	ofSetColor(primaryBtnColor);
+	ofSetColor(highlightColor);
 	if (bAllowPassThrough) {
 		fontRenderer.drawString("GLFW Mouse passThrough enabled", centerX, 2 * lineSpacing);
 		if(bForcePassThrough) {
-			fontRenderer.drawString("GLFW Mouse passThrough enabled", centerX, 2 * lineSpacing);
+			fontRenderer.drawString("Enabled: Force Mouse passThrough - Click the Blue Circle", centerX, 1 * lineSpacing);
 		}
 	} else {
 		fontRenderer.drawString("press h to enable GLFW passThrough or mouse below box", centerX, 2 * lineSpacing);
@@ -165,6 +162,9 @@ void ofApp::draw(){
 	}
 	
 	fontRenderer.drawString("window pos ("+ofToString(ofGetWindowPositionX())+", "+ofToString( ofGetWindowPositionY())+")", 20, 30);
+	
+	ofSetColor(primaryBtnColor);
+	ofDrawCircle(ballPositionX, ballPositionY, 15);
 }
 
 
@@ -215,6 +215,9 @@ void ofApp::mouseMoved(int x, int y ){
 	
 	float distance = ofDist(x, y, ballPositionX, ballPositionY);
 	if(distance <= 15 || y < 300) {
+		if(bForcePassThrough == true && distance <= 15){
+			bForcePassThrough = false;
+		}
 		if(bAllowPassThrough && (bForcePassThrough == false || distance <= 15)) {
 			bAllowPassThrough = false;
 			ofLogNotice("ofApp") << "ofSetWindowMousePassThrough:" << bAllowPassThrough;

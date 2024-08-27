@@ -123,7 +123,7 @@ public:
 
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
-    void setWindowMousePassthrough(bool allowPassthrough);
+    void setWindowMousePassThrough(bool allowPassThrough);
 
 	void enableSetupScreen();
 	void disableSetupScreen();
