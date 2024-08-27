@@ -274,9 +274,6 @@ enum ofTargetPlatform{
         #warning "Enable ARC at the project level, or if using Objective-C/C++ with manual memory management,"
         #warning "add '-fno-objc-arc' in Build Phases -> Compile Sources -> Compiler Flags."
     #endif
-	#define TARGET_OPENGLES_1_1
-	#define TARGET_OPENGLES_2_0
-	#define TARGET_OPENGLES_3_0
 #endif
 
 #ifdef TARGET_ANDROID
