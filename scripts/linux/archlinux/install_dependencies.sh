@@ -4,45 +4,30 @@ if [ $EUID != 0 ]; then
 	echo "this script must be run as root"
 	echo ""
 	echo "usage:"
-	echo "su -"
-	echo "./install_dependencies.sh"
+	echo "sudo ./install_dependencies.sh"
 	exit $exit_code
    exit 1
 fi
 
-pacman -Sy --needed make pkg-config gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml
+ROOT=$(cd $(dirname $0); pwd -P)
+
+pacman -S --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml rtaudio poco brotli
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
-	echo "error installing packages, there could be an error with your internet connection"
+	echo "error installing packages, there could be an error with your internet connection, or you system might be too out of date (run pacman -Syu before running this script)"
 	exit $exit_code
 fi
 
-echo ""
-echo ""
-echo "NOTE FOR RTAUDIO"
-echo "====================="
-echo "OpenFramworks requires rtaudio. This package is not in the official repositories and has to be installed via aur. https://aur.archlinux.org/packages/rtaudio/ You can do it manually or use an aur helper like yaourt to do it for you."
-echo ""
-read -p "Press any key to continue... " -n1 -s
-
-export LC_ALL=C
-GCC_MAJOR_GT_4=$(expr `gcc -dumpversion | cut -f1 -d.` \> 4)
-if [ $GCC_MAJOR_GT_4 -eq 1 ]; then
-    echo
-    echo
-    echo "It seems you are running gcc 5 or later, due to incomatible ABI with previous versions"
-    echo "we need to recompile poco. This will take a while"
-    read -p "Press any key to continue... " -n1 -s
-    
-	sys_cores=$(getconf _NPROCESSORS_ONLN)
-	if [ $sys_cores -gt 1 ]; then
-		cores=$(($sys_cores-1))
-	else
-		cores=1
-	fi
-	
-    DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    cd ${DIR}/../../apothecary/apothecary
-    ./apothecary -j${cores} update poco
+# Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
+addons_dir="$(readlink -f "$ROOT/../../../addons")"
+$(pkg-config opencv4 --exists)
+exit_code=$?
+if [ $exit_code != 0 ]; then
+	echo "Updating ofxOpenCV to use openCV3"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv4(.*)$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv\2/' "$addons_dir/ofxOpenCv/addon_config.mk"
+else
+	echo "Updating ofxOpenCV to use openCV4"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv\s/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4 /g' "$addons_dir/ofxOpenCv/addon_config.mk"
+	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4/g' "$addons_dir/ofxOpenCv/addon_config.mk"
 fi

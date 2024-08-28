@@ -8,13 +8,53 @@
 
 #pragma once
 
+#include <TargetConditionals.h>
+// #include <unistd.h>
+#if TARGET_OS_SIMULATOR
+#define TARGET_OF_SIMULATOR
+#endif
+
+#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+    #define TARGET_OF_IOS
+    #define CORE_MOTION
+    #define OF_UI_KIT
+    #define OF_GL_KIT
+    #define OF_OPEN_AL
+    #define OF_CORE_MOTION
+    #define OF_CORE_LOCATION
+    #define OF_MAP_KIT
+    #define OF_HAPTICS
+    #define OF_IOS_AVSOUNDPLAYER
+#elif TARGET_OS_TV
+    #define TARGET_OF_IOS
+    #define TARGET_OF_TVOS
+    #define OF_GL_KIT
+    #define OF_UI_KIT
+    #define OF_IOS_AVSOUNDPLAYER
+#elif TARGET_OS_WATCH
+    #define TARGET_OF_IOS
+    #define TARGET_OF_WATCHOS
+    #define OF_UI_KIT
+#elif defined(TARGET_OS_VISIONOS)
+    #define TARGET_OF_XROS
+    #define TARGET_OF_IOS
+    #define CORE_MOTION
+    #define OF_UI_KIT
+    #define OF_GL_KIT
+    #define OF_CORE_MOTION
+    #define OF_CORE_LOCATION
+#else
+    #define TARGET_OSX
+    #define TARGET_MACOS
+#endif
+
 // iOS Device Types.
 //-------------------------------------------------------------------------------
 enum ofxiOSDeviceType {
     OFXIOS_DEVICE_IPHONE = 0,
     OFXIOS_DEVICE_IPODTOUCH,
     OFXIOS_DEVICE_IPAD,
-	OFXIOS_DEVICE_APPLETV,
+    OFXIOS_DEVICE_APPLETV,
     OFXIOS_DEVICE_UNKNOWN
 };
 
@@ -24,9 +64,32 @@ enum ofxiOSDeviceType {
 enum ofxiOSRendererType {
     OFXIOS_RENDERER_ES1 = 1,
     OFXIOS_RENDERER_ES2 = 2,
-    OFXIOS_RENDERER_ES3 = 3
+    OFXIOS_RENDERER_ES3 = 3,
+    OFXIOS_RENDERER_METAL = 4
 };
 
+enum ofxiOSWindowControllerType{
+    CORE_ANIMATION = 1,
+    GL_KIT = 2,
+    METAL_KIT = 3
+};
+
+enum ofxiOSRendererColorFormat{
+    RGBA8888 = 0,
+    RGB565,
+    SRGBA8888,
+};
+
+enum ofxiOSRendererDepthFormat{
+    DEPTH_NONE = 0,
+    DEPTH_16,
+    DEPTH_24,
+};
+
+enum ofxiOSRendererStencilFormat{
+    STENCIL_NONE = 0,
+    STENCIL_8,
+};
 
 // Orientation.
 //-------------------------------------------------------------------------------

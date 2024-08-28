@@ -1,0 +1,434 @@
+
+def getFilesRecursive(path){
+    FileTree tree = fileTree(dir: path)
+    def files = tree.matching({includes ["*.cpp"]}).toList()
+    return files
+}
+
+def getFoldersRecursive(String path){
+    def file = new File(path)
+    def ret = [path]
+    if(!file.exists()) return []
+
+    file.eachDirRecurse() { dir ->
+        ret.add(dir.getAbsolutePath())
+    }
+    return ret
+
+}
+
+
+
+def addonPaths(ofRoot){
+    def file = new File('addons.make')
+    if(!file.exists()) {
+        return []
+    }
+
+    def addonRoot = ofRoot+"addons/"
+
+    def ret = []
+    file.eachLine { line ->
+        def folder = new File(addonRoot+line)
+        if (!folder.exists()) {
+            throw new GradleException("Addon ${line} could not be found at ${folder.absolutePath}")
+        }
+        ret += folder.absolutePath
+    }
+
+    return ret
+}
+
+
+
+def parseAddonConfig(String addon, String param, String abi, defaultVal = []){
+    def ret = defaultVal
+
+    def file = new File(addon+"/addon_config.mk")
+    if(!file.exists()){
+        println addon+"/addon_config.mk not found"
+        return defaultVal
+    }
+
+    def mode = ""
+
+    file.eachLine { line ->
+        def stripLine = line.replaceAll("^\\s*","").replaceAll("\\s*\$","")
+        if(stripLine.startsWith("#") || stripLine.length() == 0){
+            return
+        }
+
+        if(stripLine.endsWith(":")){
+            mode = stripLine.replaceAll(":\$","")
+        }
+
+        if(mode == "common" || mode == "android" || mode == "android/${abi}".toString()){
+            def group = (stripLine =~ /^(\w+)\s*(\+?=)\s*(.+)$/)
+            if(group.hasGroup() && group.size() == 1 && group[0].size() == 4){
+                if(group[0][1] == param) {
+                    def _p = group[0][3].replaceAll("%", "*")
+                    if (group[0][2] == '=') {
+                        ret = [_p]
+                    } else {
+                        ret += _p
+                    }
+                }
+            }
+
+        }
+    }
+
+    return ret
+}
+
+def addonSources(String root, String abi=""){
+
+    def ret = []
+    addonPaths(root).each { String addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_SOURCES",
+                abi,
+                ["src", "libs"]
+        )
+
+        //ret += addon
+        config.each { String path ->
+            ret += addon+'/'+path
+        }
+    }
+    println "\n\n ADDON_SOURCES "+ret+"\n\n"
+
+    return ret
+}
+
+def addonIncludes(String root, String abi=""){
+    def ret = []
+    return ret
+}
+
+def addonSourcesExclude(String root, String abi=""){
+    def ret = []
+    addonPaths(root).each { String addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_SOURCES_EXCLUDE",
+                abi
+        )
+
+        config.each { String path ->
+            // TODO: Currently first part of path is stripped. Doesn't work otherwise
+            ret += path.replaceAll(/^\w+\//,"**/")
+        }
+    }
+
+//    ret += "**/dlib/include/*"
+    println "\n EXCLUDE "+ret+"\n\n"
+    return ret
+}
+
+
+def addonLdFlags(abi, ofRoot){
+    def ret = []
+    addonPaths(ofRoot).each { String addon ->
+        def libs = [];
+        fileTree(dir: addon + "/libs", include: "**/lib/android/" + abi + "/*.a")
+            .each{ lib -> libs += lib.getAbsolutePath(); };
+
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_LIBS",
+                abi,
+                libs
+        )
+
+        config.each { String path ->
+            def f = new File(addon+"/"+path)
+            if(f.exists()) {
+                ret += f.toString();
+            }
+        }
+    }
+    println "\n ADDON_LIBS "+ret+"\n\n"
+    return ret
+}
+
+
+
+def addonCppFlags(abi, ofRoot){
+    def ret = []
+    addonPaths(ofRoot).each { addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_INCLUDES",
+                abi,
+                ["libs","src"]
+        )
+        def excludeConfig = parseAddonConfig(
+                addon,
+                "ADDON_INCLUDES_EXCLUDE",
+                abi
+        )
+
+        config.each { String path ->
+            def flags = []
+            getFoldersRecursive(addon+"/"+path).each{ String folder ->
+                def excluded = false
+                excludeConfig.each { ex ->
+                    def _ex = ex.replaceAll(/\*/,".+")
+                    if(folder ==~ /.*$addon\/$_ex/ ) {
+                        excluded = true
+                    }
+                }
+
+                if(!excluded) {
+                    flags += "-I${folder}".toString()
+                }
+            }
+
+            ret += flags
+        }
+
+
+        def configFlags = parseAddonConfig(addon, "ADDON_CFLAGS", abi);
+        configFlags.each { String flag ->
+            ret += flag
+        }
+
+        /*
+        ret += getFoldersRecursive(addon + "/libs").collect{ folder ->
+            return "-I${folder}".toString()
+        }
+        ret += getFoldersRecursive(addon + "/src").collect{ folder ->
+            return "-I${folder}".toString()
+        }*/
+    }
+    println "\n ADDON_CFLAGS "+ret+"\n\n"
+    return ret
+}
+
+def addonData(ofRoot){
+    def ret = []
+    addonPaths(ofRoot).each { addon ->
+        def configFlags = parseAddonConfig(addon, "ADDON_DATA", "");
+        configFlags.each { String path ->
+            ret += addon + "/" + path
+        }
+    }
+    return ret
+}
+
+def addonJavaDependencies(root,abi=""){
+    def ret = []
+    addonPaths(root).each { String addon ->
+        def config = parseAddonConfig(
+                addon,
+                "ADDON_ANDROID_LIBS",
+                abi
+        )
+
+        config.each { String path ->
+            def f = new File(addon+"/"+path)
+            if(f.exists()) {
+                ret += [[f.toString(), ':'+new File(addon).name]]
+            }
+        }
+    }
+    println "\n JAVA_LIBS "+ret+"\n\n"
+    return ret
+}
+
+def javaDependencies(ofRoot){
+    def ret = []
+    ret += [[ofRoot+'addons/ofxAndroid/ofAndroidLib', ':ofAndroidLib']]
+    ret += [[ofRoot+'libs/openFrameworksCompiled/project/android', ':openFrameworksProject']]
+    return ret
+}
+
+
+def getFlavorName(abi) {
+    switch (abi) {
+        case "armeabi":
+            return "armeabi";
+        case "armeabi-v7a":
+            return "arm7"
+        case "arm64-v8a":
+            return "arm64"
+        default:
+            return abi.replaceAll('-', '_')
+    }
+}
+
+def getAbis(){
+    return ["arm64-v8a", "armeabi-v7a", "x86"]
+}
+
+def ofAppModuleName(){
+    return "OFAndroidApp"
+}
+
+def buildToolchain(){
+    return "clang"
+}
+
+def appSrcDirs(ofRoot){
+    def ret = ['src',
+               ofRoot+"/addons/ofxAndroid/src",
+               ofRoot+"/addons/ofxAccelerometer/src"
+    ]
+
+    ret += addonSources(ofRoot)
+
+    return ret
+}
+
+def srcExcludes(ofRoot){
+    return addonSourcesExclude(ofRoot)
+}
+
+def srcIncludes(ofRoot){
+    return []
+}
+
+
+def coreCppFlags(abi, ofRoot){
+    def ofSource = ofRoot + 'libs/openFrameworks'
+    def libs = ofRoot + 'libs'
+
+    def ret = ["-std=c++14",
+            "-Wall",
+            "-frtti",
+            "-fexceptions",
+            "-nostdlib ",
+            "-fno-short-enums",
+            "-ffunction-sections",
+            "-fdata-sections",
+            "-I${file(ofSource)}".toString(),
+            "-I${file(ofSource+"/3d")}".toString(),
+            "-I${file(ofSource+"/app")}".toString(),
+            "-I${file(ofSource+"/communication")}".toString(),
+            "-I${file(ofSource+"/events")}".toString(),
+            "-I${file(ofSource+"/gl")}".toString(),
+            "-I${file(ofSource+"/graphics")}".toString(),
+            "-I${file(ofSource+"/math")}".toString(),
+            "-I${file(ofSource+"/output")}".toString(),
+            "-I${file(ofSource+"/sound")}".toString(),
+            "-I${file(ofSource+"/types")}".toString(),
+            "-I${file(ofSource+"/utils")}".toString(),
+            "-I${file(ofSource+"/video")}".toString(),
+            "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
+            "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
+            "-I${file(libs+"/FreeImage/include")}".toString(),
+            "-I${file(libs+"/boost/include")}".toString(),
+            "-I${file(libs+"/boost/include/boost")}".toString(),
+            "-I${file(libs+"/cairo/include")}".toString(),
+            "-I${file(libs+"/cairo/include/cairo")}".toString(),
+            "-I${file(libs+"/freetype/include")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2/config")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2/internal")}".toString(),
+            "-I${file(libs+"/freetype/include/freetype2/internal/services")}".toString(),
+            "-I${file(libs+"/glfw/include")}".toString(),
+            "-I${file(libs+"/glfw/include/GLFW")}".toString(),
+            "-I${file(libs+"/openssl/include")}".toString(),
+            "-I${file(libs+"/openssl/include/openssl")}".toString(),
+            "-I${file(libs+"/poco/include")}".toString(),
+            "-I${file(libs+"/tess2/include")}".toString(),
+            "-I${file(libs+"/utf8cpp/include")}".toString(),
+            "-I${file(libs+"/json/include")}".toString(),
+            "-I${file(libs+'/kiss/include')}".toString(),
+            "-I${file(libs+'/glm/include')}".toString(),
+            "-I${file(libs+'/utf8/include')}".toString(),
+            "-I${file(libs+'/uriparser/include')}".toString(),
+            "-I${file(libs+'/curl/include')}".toString(),
+            "-I${file(libs+'/pugixml/include')}".toString(),
+            "-I${file(libs+'/libxml2/include')}".toString(),
+            "-I${file(libs+'/libs/glu/include_android')}".toString()
+
+    ]
+
+    println "\n CPP_FLAGS "+ret+"\n\n"
+
+    return ret;
+}
+
+def addonLdLibs(abi, ofRoot){
+    return []
+}
+
+def addonLdCompilerFlags(abi, ofRoot){
+    return []
+}
+
+def coreLdLibs(abi, ofRoot){
+    return ["atomic","android", "OpenSLES", "z", "GLESv1_CM", "GLESv2", "log"]
+}
+
+
+
+def getPrebuiltLibPaths(abi, ofRoot) {
+    def libs = ofRoot + 'libs'
+
+    def paths = []
+    paths += file(libs+"/FreeImage/lib/android/${abi}/libfreeimage.a").toString()
+    paths += file(libs+"/boost/lib/android/${abi}/libboost_filesystem.a").toString()
+    paths += file(libs+"/boost/lib/android/${abi}/libboost_system.a").toString()
+    paths += file(libs+"/freetype/lib/android/${abi}/libfreetype.a").toString()
+    paths += file(libs+"/tess2/lib/android/${abi}/libtess2.a").toString()
+    paths += file(libs+"/curl/lib/android/${abi}/libcurl.a").toString()
+    paths += file(libs+"/openssl/lib/android/${abi}/libssl.a").toString()
+    paths += file(libs+"/openssl/lib/android/${abi}/libcrypto.a").toString()
+    paths += file(libs+"/pugixml/lib/android/${abi}/libpugixml.a").toString()
+    paths += file(libs+"/uriparser/lib/android/${abi}").toString()
+    return paths
+}
+
+
+def coreLdFlags(abi, ofRoot){
+    def ret =  [
+            '-Wl,--exclude-libs,ALL',
+            '-Wl,--as-needed',
+            '-Wl,--gc-sections'
+    ]
+
+    def prebuilt = getPrebuiltLibPaths(abi, ofRoot)
+    ret.addAll(prebuilt)
+
+    return ret
+}
+
+
+def compilerStl(){
+    return "c++_static"
+}
+
+
+// Export the functions
+ext {
+    ofAppModuleName = this.&ofAppModuleName
+
+    getFlavorName = this.&getFlavorName
+    buildToolchain= this.&buildToolchain
+    getAbis = this.&getAbis
+    compilerStl= this.&compilerStl
+
+    appSrcDirs = this.&appSrcDirs
+    srcExcludes = this.&srcExcludes
+    srcIncludes = this.&srcIncludes
+
+    coreCppFlags = this.&coreCppFlags
+    addonCppFlags = this.&addonCppFlags
+
+    coreLdLibs= this.&coreLdLibs
+    addonLdLibs= this.&addonLdLibs
+
+    coreLdFlags = this.&coreLdFlags
+    addonLdFlags = this.&addonLdFlags
+
+    addonData = this.&addonData
+
+    addonJavaDependencies = this.&addonJavaDependencies
+    javaDependencies = this.&javaDependencies
+
+
+}

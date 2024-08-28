@@ -1,35 +1,45 @@
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.model.library'
 
-android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.1"
-
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
+model {
+    android {
+        compileSdkVersion = 25
+        buildToolsVersion = "25.0.3"
+        defaultConfig.with {
+            minSdkVersion.apiLevel 19
+            targetSdkVersion.apiLevel 25
+            versionCode 1
+            versionName "1.0"
         }
     }
-    // Configure source folders like Eclipse
-    sourceSets {
+    android.sources {
         main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
+            manifest {
+                source {
+                    srcDirs = [ "." ]
+                }
+            }
+            res {
+                source {
+                    srcDirs = [ "res" ]
+                }
+            }
+            assets {
+                source {
+                    srcDirs = [ "assets" ]
+                }
+            }
+            java {
+                source {
+                    srcDirs = [ "src" ]
+                }
+            }
         }
     }
 }
 
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:support-v4:25.+'
 }
 

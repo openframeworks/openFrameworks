@@ -9,6 +9,11 @@
 #include <atomic>
 #include <stddef.h>
 #include <functional>
+#include <deque>
+
+#include <cstddef>
+#include <iostream>
+#include <array>
 
 
 /*! \cond PRIVATE */
@@ -49,9 +54,8 @@ namespace priv{
 		StdFunctionId(uint64_t id)
 		:id(id){}
 	public:
-		StdFunctionId(){
-			id = nextId++;
-		}
+		StdFunctionId()
+		:id(nextId++){}
 
 		virtual ~StdFunctionId();
 
@@ -68,7 +72,7 @@ namespace priv{
 
 	// -------------------------------------
 	inline std::unique_ptr<StdFunctionId> make_function_id(){
-		return std::unique_ptr<StdFunctionId>(new StdFunctionId());
+		return std::make_unique<StdFunctionId>();
 	}
 
 	// -------------------------------------
@@ -201,7 +205,20 @@ namespace priv{
 		struct Data{
 			Mutex mtx;
 			std::vector<std::shared_ptr<Function>> functions;
+			std::atomic<bool> notified_ { false };
 			bool enabled = true;
+			
+			bool didNotify() {
+				if (notified_.load(std::memory_order_relaxed)) {
+					notified_.store(false, std::memory_order_seq_cst);
+					return true;
+				} else {
+					return false;
+				}
+			}
+			void setNotified(bool state) {
+				notified_.store(state, std::memory_order_relaxed);
+			}
 
 			void remove(const BaseFunctionId & id){
 				std::unique_lock<Mutex> lck(mtx);
@@ -241,7 +258,7 @@ namespace priv{
 		};
 
 		std::unique_ptr<EventToken> make_token(const Function & f){
-			return std::unique_ptr<EventToken>(new EventToken(self,*f.id));
+			return std::make_unique<EventToken>(self,*f.id);
 		}
 
 		template<typename TFunction>
@@ -378,8 +395,19 @@ enum ofEventOrder{
 class ofEventListener{
 public:
 	ofEventListener(){}
+	ofEventListener(const ofEventListener &) = delete;
+	ofEventListener(ofEventListener &&) = delete;
+	ofEventListener & operator=(const ofEventListener&) = delete;
+	ofEventListener & operator=(ofEventListener&&) = delete;
+
 	ofEventListener(std::unique_ptr<of::priv::AbstractEventToken> && token)
-	:token(std::move(token)){}
+		:token(std::move(token)){}
+
+	ofEventListener & operator=(std::unique_ptr<of::priv::AbstractEventToken> && token){
+		std::swap(this->token, token);
+		return *this;
+	}
+
 	void unsubscribe(){
 		token.reset();
 	}
@@ -387,6 +415,39 @@ private:
 	std::unique_ptr<of::priv::AbstractEventToken> token;
 };
 
+
+
+// -------------------------------------
+class ofEventListeners{
+public:
+	ofEventListeners(){};
+	ofEventListeners(const ofEventListeners &) = delete;
+	ofEventListeners(ofEventListeners &&) = delete;
+	ofEventListeners & operator=(const ofEventListeners&) = delete;
+	ofEventListeners & operator=(ofEventListeners&&) = delete;
+
+
+	void push(std::unique_ptr<of::priv::AbstractEventToken> && listener){
+		listeners.emplace_back(std::move(listener));
+	}
+
+	[[deprecated("Don't use this method. If you need granular control over each listener, then use individual ofEventListener instances for each.")]]
+	void unsubscribe(std::size_t pos);
+
+	void unsubscribeAll(){
+		listeners.clear();
+	}
+
+	bool empty() const {
+		return listeners.size() == 0 ;
+	}
+private:
+	std::deque<ofEventListener> listeners;
+};
+
+inline void ofEventListeners::unsubscribe(std::size_t pos){
+	listeners[pos].unsubscribe();
+}
 
 // -------------------------------------
 // ofEvent main implementation
@@ -425,7 +486,7 @@ protected:
 
 	template<class TObj, typename TMethod>
 	std::unique_ptr<FunctionId<TObj,TMethod>> make_function_id(TObj * listener, TMethod method){
-		return std::unique_ptr<FunctionId<TObj,TMethod>>(new FunctionId<TObj,TMethod>(listener,method));
+		return std::make_unique<FunctionId<TObj,TMethod>>(listener,method);
 	}
 
 	template<class TObj>
@@ -486,8 +547,8 @@ protected:
 
 public:
 	template<class TObj, typename TMethod>
-	ofEventListener newListener(TObj * listener, TMethod method, int priority = OF_EVENT_ORDER_AFTER_APP){
-		return ofEventListener(addFunction(make_function(listener,method,priority)));
+	std::unique_ptr<of::priv::AbstractEventToken> newListener(TObj * listener, TMethod method, int priority = OF_EVENT_ORDER_AFTER_APP){
+		return addFunction(make_function(listener,method,priority));
 	}
 
 	template<class TObj, typename TMethod>
@@ -501,8 +562,8 @@ public:
 	}
 
 	template<typename TFunction>
-	ofEventListener newListener(TFunction function, int priority = OF_EVENT_ORDER_AFTER_APP) {
-		return ofEventListener(addFunction(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority)));
+	std::unique_ptr<of::priv::AbstractEventToken> newListener(TFunction function, int priority = OF_EVENT_ORDER_AFTER_APP) {
+		return addFunction(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority));
 	}
 
 	template<typename TFunction>
@@ -515,32 +576,31 @@ public:
 		 ofEvent<T,Mutex>::self->remove(*make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority)->id);
 	}
 
-	inline bool notify(const void* sender, T & param){
-		if(ofEvent<T,Mutex>::self->enabled && !ofEvent<T,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<T,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-                if(f->notify(sender,param)){
-					return true;
-                }
+	/// \brief checks the state of the event
+	/// \returns true if the Event's state was notified since the last check
+	bool didNotify() {
+		return ofEvent<T,Mutex>::self->didNotify();
+	}
+	
+	inline bool notify(const void* sender, T & param) {
+		if (ofEvent<T,Mutex>::self->enabled) {
+			ofEvent<T,Mutex>::self->setNotified(true);
+			if (!ofEvent<T,Mutex>::self->functions.empty()) {
+				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
+				auto functions_copy = ofEvent<T,Mutex>::self->functions;
+				lck.unlock();
+				for (auto & f: functions_copy) {
+					if (f->notify(sender,param)) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
 	}
 
 	inline bool notify(T & param){
-		if(ofEvent<T,Mutex>::self->enabled && !ofEvent<T,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<T,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(nullptr,param)){
-					return true;
-				}
-			}
-		}
-		return false;
+		return this->notify(nullptr, param);
 	}
 };
 
@@ -649,8 +709,8 @@ public:
 	}
 
 	template<class TObj, typename TMethod>
-	ofEventListener newListener(TObj * listener, TMethod method, int priority = OF_EVENT_ORDER_AFTER_APP){
-		return ofEventListener(addFunction(make_function(listener,method,priority)));
+	std::unique_ptr<of::priv::AbstractEventToken> newListener(TObj * listener, TMethod method, int priority = OF_EVENT_ORDER_AFTER_APP){
+		return addFunction(make_function(listener,method,priority));
 	}
 
 	template<class TObj, typename TMethod>
@@ -664,8 +724,8 @@ public:
 	}
 
 	template<typename TFunction>
-	ofEventListener newListener(TFunction function, int priority = OF_EVENT_ORDER_AFTER_APP) {
-		return ofEventListener(addFunction(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority)));
+	std::unique_ptr<of::priv::AbstractEventToken> newListener(TFunction function, int priority = OF_EVENT_ORDER_AFTER_APP) {
+		return addFunction(make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function), priority));
 	}
 
 	template<typename TFunction>
@@ -673,14 +733,23 @@ public:
 		 ofEvent<void,Mutex>::self->remove(*make_function(std::function<typename of::priv::callable_traits<TFunction>::function_type>(function),priority)->id);
 	}
 
+	/// \brief checks the state of the event
+	/// \returns true if the Event's state was notified since the last check
+	bool didNotify() {
+		return ofEvent<void,Mutex>::self->didNotify();
+	}
+
 	bool notify(const void* sender){
-		if(ofEvent<void,Mutex>::self->enabled && !ofEvent<void,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<void,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(sender)){
-					return true;
+		if(ofEvent<void,Mutex>::self->enabled) {
+			ofEvent<void,Mutex>::self->setNotified(true);
+			if (!ofEvent<void,Mutex>::self->functions.empty()) {
+				std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
+				auto functions_copy = ofEvent<void,Mutex>::self->functions;
+				lck.unlock();
+				for (auto & f: functions_copy) {
+					if (f->notify(sender)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -688,17 +757,7 @@ public:
 	}
 
 	bool notify(){
-		if(ofEvent<void,Mutex>::self->enabled && !ofEvent<void,Mutex>::self->functions.empty()){
-			std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::self->mtx);
-			auto functions_copy = ofEvent<void,Mutex>::self->functions;
-			lck.unlock();
-			for(auto & f: functions_copy){
-				if(f->notify(nullptr)){
-					return true;
-				}
-			}
-		}
-		return false;
+		return this->notify(nullptr);
 	}
 };
 

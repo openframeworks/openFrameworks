@@ -18,11 +18,15 @@ void ofApp::setup() {
 	
 	// set the vertex data
 	vbo.setVertexData(pos, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	if(ofIsGLProgrammableRenderer()){
-		shader.load("shaderGL3/Billboard");
-	}else{
-		shader.load("shaderGL2/Billboard");
-	}
+	#ifdef TARGET_EMSCRIPTEN
+		shader.load("shaderGLES3/Billboard");
+	#else
+		if(ofIsGLProgrammableRenderer()){
+			shader.load("shaderGL3/Billboard");
+		}else{
+			shader.load("shaderGL2/Billboard");
+		}
+	#endif
 	
 	ofDisableArbTex();
 	texture.load("snow.png");
@@ -42,13 +46,14 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	ofVec2f mouse(ofGetMouseX(), ofGetMouseY());
-	ofVec2f mouseVec(ofGetPreviousMouseX()-ofGetMouseX(), ofGetPreviousMouseY()-ofGetMouseY());
-	mouseVec.limit(10.0);
+	glm::vec2 mouse(ofGetMouseX(), ofGetMouseY());
+	glm::vec2 mouseVec(ofGetPreviousMouseX()-ofGetMouseX(), ofGetPreviousMouseY()-ofGetMouseY());
+	glm::clamp(mouseVec, 0.0f, 10.0f);
+
 	
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
-		ofSeedRandom(i);
-		if(mouse.distance(pos[i]) < ofRandom(100, 200)) {
+		ofSetRandomSeed(i);
+		if(glm::distance(mouse,pos[i]) < ofRandom(100, 200)) {
 			vel[i] -= mouseVec; 
 		}
 		
@@ -60,16 +65,16 @@ void ofApp::update() {
 		if(pos[i].y < 0) pos[i].y = ofGetHeight();
 		if(pos[i].y > ofGetHeight()) pos[i].y = 0;
 		
-		ofVec2f center(ofGetWidth()/2, ofGetHeight()/2);
-		ofVec2f frc = home[i] - pos[i];
-		if(frc.length() > 20.0) {
-			frc.normalize();
+		glm::vec2 center(ofGetWidth()/2, ofGetHeight()/2);
+		glm::vec2 frc = home[i] - pos[i];
+		if(glm::length(frc) > 20.0) {
+			frc = glm::normalize(frc);
 			frc *= 0.84;
 			vel[i] += frc;
 		}
 		
 		// get the 2d heading
-		float angle = (float)atan2(-vel[i].y, vel[i].x) + PI;
+		float angle = std::atan2(-vel[i].y, vel[i].x) + glm::pi<float>();
 		rotations[i] = (angle * -1.0);
 	}
 }

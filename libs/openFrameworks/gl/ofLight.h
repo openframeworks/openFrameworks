@@ -7,15 +7,12 @@
  *
  */
 
-// TODO:
-
-
 #pragma once
 
 #include "ofNode.h"
-#include "ofColor.h"
-#include "of3dGraphics.h"
-#include "ofTypes.h"
+#include "ofShadow.h"
+
+class ofBaseGLRenderer;
 
 enum ofLightType {
 	OF_LIGHT_POINT=0,
@@ -75,6 +72,15 @@ public:
 	ofFloatColor getSpecularColor() const;
 	
 	int getLightID() const;
+	
+	bool shouldRenderShadowDepthPass();
+	int getNumShadowDepthPasses();
+	bool beginShadowDepthPass();
+	bool endShadowDepthPass();
+	bool beginShadowDepthPass( GLenum aPassIndex );
+	bool endShadowDepthPass( GLenum aPassIndex );
+	
+	ofShadow & getShadow() { return shadow; }
 
 	class Data{
 	public:
@@ -106,9 +112,12 @@ public:
 		std::weak_ptr<ofBaseGLRenderer> rendererP;
 	};
 	
+protected:
+	ofShadow shadow;
+	
 private:
 	void customDraw(const ofBaseRenderer * renderer) const;
-	shared_ptr<Data> data;
+	std::shared_ptr<Data> data;
 	// update opengl light 
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 	virtual void onPositionChanged();
@@ -116,4 +125,4 @@ private:
 };
 
 
-vector<weak_ptr<ofLight::Data> > & ofLightsData();
+std::vector<std::weak_ptr<ofLight::Data> > & ofLightsData();

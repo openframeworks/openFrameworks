@@ -1,23 +1,23 @@
 #pragma once
+#include "ofConstants.h"
+#if defined(OF_CAIRO)
+#include <cairo/cairo.h>
+#include "ofGraphicsBaseTypes.h"
+// MARK: Optimization opportunity in ofPath, ofPixels pointer.
+#include "ofPath.h"
+#include "ofPixels.h" // MARK: ofPixels imageBuffer;
+#include "of3dGraphics.h"
 
-
-#include "cairo-features.h"
-#include "cairo-pdf.h"
-#include "cairo-svg.h"
-#include "cairo.h"
 #include <deque>
 #include <stack>
-#include "ofBaseTypes.h"
-#include "ofPath.h"
-#include "of3dGraphics.h"
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:
 	ofCairoRenderer();
 	~ofCairoRenderer();
 
-	static const string TYPE;
-	const string & getType(){ return TYPE; }
+	static const std::string TYPE;
+	const std::string & getType(){ return TYPE; }
 
 	enum Type{
 		PDF,
@@ -25,7 +25,8 @@ public:
 		IMAGE,
 		FROM_FILE_EXTENSION
 	};
-	void setup(string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+
+	void setup(const of::filesystem::path & filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
 	void flush();
@@ -40,7 +41,7 @@ public:
 	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
     void draw(const ofNode& node) const;
-	void draw(const vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const;
+	void draw(const std::vector<glm::vec3> & vertexData, ofPrimitiveMode drawMode) const;
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -83,6 +84,7 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setLineWidth(float lineWidth);
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
@@ -113,20 +115,20 @@ public:
 	void setupScreen();
 
 	// color options
-	void setColor(int r, int g, int b); // 0-255
-	void setColor(int r, int g, int b, int a); // 0-255
-	void setColor(const ofColor & color);
-	void setColor(const ofColor & color, int _a);
-	void setColor(int gray); // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b); // 0-1
+	void setColor(float r, float g, float b, float a); // 0-1
+	void setColor(const ofFloatColor & color);
+	void setColor(const ofFloatColor & color, float _a);
+	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	void setBackgroundColor(const ofColor & c);
-	ofColor getBackgroundColor();
-	void background(const ofColor & c);
+	void setBackgroundColor(const ofFloatColor & c);
+	ofFloatColor getBackgroundColor();
+	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, int _a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	void setBackgroundAuto(bool bManual);		// default is true
 	bool getBackgroundAuto();
@@ -151,8 +153,8 @@ public:
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
 	void drawCircle(float x, float y, float z, float radius) const;
 	void drawEllipse(float x, float y, float z, float width, float height) const;
-	void drawString(string text, float x, float y, float z) const;
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
+	void drawString(std::string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const;
 
 	// cairo specifics
 	cairo_t * getCairoContext();
@@ -172,12 +174,12 @@ private:
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 	void draw(const ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
-	mutable deque<glm::vec3> curvePoints;
+	mutable std::deque<glm::vec3> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
 
-	stack<cairo_matrix_t> matrixStack;
+	std::stack<cairo_matrix_t> matrixStack;
 
 	Type type;
 	int page;
@@ -185,25 +187,27 @@ private:
 
 	// 3d transformation
 	bool b3D;
+	of3dGraphics graphics3d;
+
 	glm::mat4 projection;
 	glm::mat4 modelView;
 	ofRectangle viewportRect, originalViewport;
 
-	stack<glm::mat4> projectionStack;
-	stack<glm::mat4> modelViewStack;
-	stack<ofRectangle> viewportStack;
+	std::stack<glm::mat4> projectionStack;
+	std::stack<glm::mat4> modelViewStack;
+	std::stack<ofRectangle> viewportStack;
 	
 	ofMatrixMode currentMatrixMode;
 
-	vector<glm::vec3> sphereVerts;
-	vector<glm::vec3> spherePoints;
+	std::vector<glm::vec3> sphereVerts;
+	std::vector<glm::vec3> spherePoints;
 
-	string filename;
+	of::filesystem::path filename;
 	ofBuffer streamBuffer;
 	ofPixels imageBuffer;
 
 	ofStyle currentStyle;
-	deque <ofStyle> styleHistory;
-	of3dGraphics graphics3d;
+	std::deque <ofStyle> styleHistory;
 	ofPath path;
 };
+#endif

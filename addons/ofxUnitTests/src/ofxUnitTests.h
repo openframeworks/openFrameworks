@@ -10,6 +10,7 @@
 #include "ofLog.h"
 #include "ofBaseApp.h"
 #include "ofAppRunner.h"
+#include "ofURLFileLoader.h"
 #include <string>
 
 class ofColorsLoggerChannel: public ofBaseLoggerChannel{
@@ -53,18 +54,6 @@ public:
         }else{
             stdOut += str.str();
         }
-    }
-
-    void log(ofLogLevel level, const std::string & module, const char* format, ...){
-        va_list args;
-        va_start(args, format);
-        log(level, module, format, args);
-        va_end(args);
-    }
-
-    void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-        auto msg = ofVAArgsToString(format,args);
-        log(level, module, msg);
     }
 
     std::string getStdOut(){
@@ -111,18 +100,6 @@ public:
 		}
         stdOut += "[" + ofGetLogLevelName(level) + "]\t\t" + msg + "\n";
 		ofSystem("appveyor AddMessage \"" + msg + "\" -Category " + category(level));
-	}
-
-	void log(ofLogLevel level, const std::string & module, const char* format, ...){
-		va_list args;
-		va_start(args, format);
-		log(level, module, format, args);
-		va_end(args);
-	}
-
-	void log(ofLogLevel level, const std::string & module, const char* format, va_list args){
-		auto msg = ofVAArgsToString(format,args);
-		log(level, module, msg);
 	}
 };
 
@@ -182,8 +159,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_eq(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -205,8 +182,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_gt(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -228,8 +205,8 @@ protected:
 		}else{
 			ofLogError() << testName << " failed " << msg;
 			ofLogError() << "test_lt(" << v1 << ", " << v2 << ")";
-			ofLogError() << "value1: " << v1 << " is " << t1;
-			ofLogError() << "value2: " << v2 << " is " << t2;
+			ofLogError() << "value1: " << v1 << " is " << ofToString(t1);
+			ofLogError() << "value2: " << v2 << " is " << ofToString(t2);
 			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 			return false;
@@ -251,9 +228,9 @@ private:
         const std::string APPVEYOR_API_URL = "APPVEYOR_API_URL";
         if(ofGetEnv(APPVEYOR_API_URL)!=""){
             //ofSystem("appveyor AddTest -Name " + projectName.string() + " -Framework ofxUnitTests -FileName " + exeName.string() + " -Outcome " + (passed?"Passed":"Failed") + " -Duration " + ofToString(now-then));
-            auto projectDir = std::filesystem::canonical(std::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
+            auto projectDir = of::filesystem::canonical(of::filesystem::path(ofFilePath::getCurrentExeDir()) / "..");
             auto projectName = projectDir.stem();
-            auto exeName = std::filesystem::path(ofFilePath::getCurrentExePath()).filename();
+            auto exeName = of::filesystem::path(ofFilePath::getCurrentExePath()).filename();
             auto stdOut = logger->getStdOut();
             ofStringReplace(stdOut, "\\", "\\\\");
             ofStringReplace(stdOut, "\"", "\\\"");
@@ -282,9 +259,9 @@ private:
             if(res.status<200 || res.status>=300){
                 ofLogError() << "sending to " << req.url;
                 ofLogError() << res.status << ", " << res.error;
-                cout << res.data.getText() << endl;
+                std::cout << res.data.getText() << std::endl;
                 ofLogError() << "for body:";
-                cout << req.body << endl;
+                std::cout << req.body << std::endl;
                 return false;
             }else{
                 ofLogNotice() << "Test results sent correctly";
@@ -299,10 +276,10 @@ private:
 	int numTestsTotal = 0;
 	int numTestsPassed = 0;
 	int numTestsFailed = 0;
-    std::shared_ptr<ofColorsLoggerChannel> logger{new ofColorsLoggerChannel};
+    std::shared_ptr<ofColorsLoggerChannel> logger = std::make_shared<ofColorsLoggerChannel>();
 };
 
-#define test(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)
-#define test_eq(x,y, ...) this->do_test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_gt(x,y, ...) this->do_test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
-#define test_lt(x,y, ...) this->do_test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTest(x, ...) this->do_test(x,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTestEq(x,y, ...) this->do_test_eq(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTestGt(x,y, ...) this->do_test_gt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)
+#define ofxTestLt(x,y, ...) this->do_test_lt(x,y,# x,# y,__VA_ARGS__,__FILE__,__LINE__)

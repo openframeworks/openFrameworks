@@ -1,5 +1,9 @@
 #include "ofDirectShowPlayer.h"
+#include "ofPixels.h" // MARK: pixels, srcBuffer
 
+#ifdef _MSC_VER
+#pragma comment(lib,"Strmiids.lib")
+#endif
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -7,9 +11,10 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
 #include <dshow.h>
+#ifdef _MSC_VER
 #pragma include_alias( "dxtrans.h", "qedit.h" )
+#endif
 #define __IDxtCompositor_INTERFACE_DEFINED__
 #define __IDxtAlphaSetter_INTERFACE_DEFINED__
 #define __IDxtJpeg_INTERFACE_DEFINED__
@@ -402,7 +407,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         HRESULT hr = pSample->GetPointer(&ptrBuffer);
 
         if(hr == S_OK){
-            long latestBufferLength = pSample->GetActualDataLength();
+            std::size_t latestBufferLength = pSample->GetActualDataLength();
             if(latestBufferLength == pixels.getTotalBytes() ){
                 EnterCriticalSection(&critSection);
 				pSample->AddRef();
@@ -414,7 +419,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 
                 LeaveCriticalSection(&critSection);
             }else{
-                printf("ERROR: SampleCB() - buffer sizes do not match %d %d\n", latestBufferLength, pixels.getTotalBytes());
+                ofLogError() << "SampleCB() - buffer sizes do not match "<< latestBufferLength << " " << pixels.getTotalBytes();
             }
         }
 
@@ -426,7 +431,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         return E_NOTIMPL;
     }
 
-    bool loadMovie(string path, ofPixelFormat format){
+    bool loadMovie(of::filesystem::path path, ofPixelFormat format){
         tearDown();
 		this->pixelFormat = format;
 
@@ -529,7 +534,8 @@ class DirectShowVideo : public ISampleGrabberCB{
         }
 
         //printf("step 6\n"); 
-        std::wstring filePathW = std::wstring(path.begin(), path.end());
+        std::string pathString = path.string();
+        std::wstring filePathW = std::wstring(pathString.begin(), pathString.end());
 
         //this is the easier way to connect the graph, but we have to remove the video window manually
         hr = m_pGraph->RenderFile(filePathW.c_str(), NULL);
@@ -614,11 +620,16 @@ class DirectShowVideo : public ISampleGrabberCB{
             IPin* pinOut = 0;
 
             hr = m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
-            if (FAILED(hr)){
-                printf("failed to find the video renderer\n");
-                tearDown();
-                return false;
-            }
+
+			if (FAILED(hr)) {
+				//newer graphs use Video Mixing Renderer 9
+				hr = m_pGraph->FindFilterByName(L"Video Mixing Renderer 9", &m_pVideoRenderer);
+				if (FAILED(hr)) {
+					printf("failed to find the video renderer\n");
+					tearDown();
+					return false;
+				}
+			}
 
             //we disconnect the video renderer window by finding the output pin of the sample grabber
             hr = m_pGrabberF->FindPin(L"Out", &pinOut);
@@ -699,8 +710,6 @@ class DirectShowVideo : public ISampleGrabberCB{
             long ptrParam1 = 0;
             long ptrParam2 = 0;
 #endif
-            long timeoutMs = 2000;
-
             if( curMovieFrame != frameCount ){
                 bFrameNew = true;
             }else{
@@ -812,15 +821,15 @@ class DirectShowVideo : public ISampleGrabberCB{
 
 	bool needsRBSwap(ofPixelFormat srcFormat, ofPixelFormat dstFormat) {
 		return
-			(srcFormat == OF_PIXELS_BGR || srcFormat == OF_PIXELS_BGRA) && (dstFormat == OF_PIXELS_RGB || dstFormat == OF_PIXELS_RGBA) ||
-			(srcFormat == OF_PIXELS_RGB || srcFormat == OF_PIXELS_RGBA) && (dstFormat == OF_PIXELS_BGR || dstFormat == OF_PIXELS_BGRA);
+			((srcFormat == OF_PIXELS_BGR || srcFormat == OF_PIXELS_BGRA) && (dstFormat == OF_PIXELS_RGB || dstFormat == OF_PIXELS_RGBA)) ||
+			((srcFormat == OF_PIXELS_RGB || srcFormat == OF_PIXELS_RGBA) && (dstFormat == OF_PIXELS_BGR || dstFormat == OF_PIXELS_BGRA));
 	}
 
     void processPixels(ofPixels & src, ofPixels & dst){
 		auto format = src.getPixelFormat();
 
-        if(needsRBSwap(src.getPixelFormat(), dst.getPixelFormat())){
-			if (src.getPixelFormat() == OF_PIXELS_BGR) {
+        if(needsRBSwap(format, dst.getPixelFormat())){
+			if (format == OF_PIXELS_BGR) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGB);
 				auto dstLine = dst.getLines().begin();
 				auto srcLine = --src.getLines().end();
@@ -836,7 +845,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 					}
 				}
 			}
-			else if (src.getPixelFormat() == OF_PIXELS_BGRA) {
+			else if (format == OF_PIXELS_BGRA) {
 				dst.allocate(src.getWidth(), src.getHeight(), OF_PIXELS_RGBA);
 				auto dstLine = dst.getLines().begin();
 				auto srcLine = --src.getLines().end();
@@ -1006,20 +1015,40 @@ class DirectShowVideo : public ISampleGrabberCB{
 			bNewPixels = false;
 			LeaveCriticalSection(&critSection);
 			BYTE * ptrBuffer = NULL;
-			HRESULT hr = middleSample->GetPointer(&ptrBuffer);
-			ofPixels srcBuffer;
-			switch (pixelFormat) {
-			case OF_PIXELS_RGB:
-			case OF_PIXELS_BGR:
-				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGR);
-				break;
-			case OF_PIXELS_RGBA:
-			case OF_PIXELS_BGRA:
-				srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
-				break;
-			}
+			if( middleSample->GetPointer(&ptrBuffer) == S_OK) {
+                ofPixels srcBuffer;
+                switch (pixelFormat) {
+                case OF_PIXELS_RGB:
+                case OF_PIXELS_BGR:
+                    srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGR);
+                    break;
+                case OF_PIXELS_RGBA:
+                case OF_PIXELS_BGRA:
+                    srcBuffer.setFromExternalPixels(ptrBuffer, width, height, OF_PIXELS_BGRA);
+                    break;
+                case OF_PIXELS_GRAY:
+                case OF_PIXELS_GRAY_ALPHA:
+                case OF_PIXELS_RGB565:
+                case OF_PIXELS_NV12:
+                case OF_PIXELS_NV21:
+                case OF_PIXELS_YV12:
+                case OF_PIXELS_I420:
+                case OF_PIXELS_YUY2:
+                case OF_PIXELS_UYVY:
+                case OF_PIXELS_Y:
+                case OF_PIXELS_U:
+                case OF_PIXELS_V:
+                case OF_PIXELS_UV:
+                case OF_PIXELS_VU:
+                case OF_PIXELS_NUM_FORMATS:
+                case OF_PIXELS_UNKNOWN:
+                case OF_PIXELS_NATIVE:
+                default:
+                    break;
+                }
 
-            processPixels(srcBuffer, pixels);
+                processPixels(srcBuffer, pixels);
+            }
         }
 		return pixels;
     }
@@ -1098,7 +1127,8 @@ class DirectShowVideo : public ISampleGrabberCB{
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-ofDirectShowPlayer::ofDirectShowPlayer() {
+ofDirectShowPlayer::ofDirectShowPlayer()
+:pixelFormat(OF_PIXELS_RGB){
 
 }
 
@@ -1118,14 +1148,15 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-bool ofDirectShowPlayer::load(string path){
-    path = ofToDataPath(path); 
+// FIXME: fs::path
+bool ofDirectShowPlayer::load(std::string stringPath){
+    auto path = ofToDataPath(of::filesystem::path(stringPath));
 
     close();
     player.reset(new DirectShowVideo());
     bool loadOk = player->loadMovie(path, pixelFormat);
     if( !loadOk ){
-        ofLogError("ofDirectShowPlayer") << " Cannot load video of this file type.  Make sure you have codecs installed on your system.  OF recommends the free K-Lite Codec pack. " << endl;
+        ofLogError("ofDirectShowPlayer") << " Cannot load video of this file type.  Make sure you have codecs installed on your system.  OF recommends the free K-Lite Codec pack. ";
     }
     return loadOk;
 }
@@ -1260,7 +1291,7 @@ void ofDirectShowPlayer::setLoopState(ofLoopType state){
         else if( state == OF_LOOP_NORMAL ){
             player->setLoop(true);
         }else{
-            ofLogError("ofDirectShowPlayer") << " cannot set loop of type palindrome " << endl;
+            ofLogError("ofDirectShowPlayer") << " cannot set loop of type palindrome ";
         }
     }
 }

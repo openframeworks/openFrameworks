@@ -29,14 +29,20 @@
  * ***********************************************************************/ 
 
 #include "ofxiOSMapKit.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
+
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
+#include "ofLog.h"
+#include "glm/common.hpp"
 
 ofxiOSMapKit::ofxiOSMapKit() {
+    mapKitDelegate = nil;
 	mapView = nil;
 }
 
@@ -60,7 +66,6 @@ void ofxiOSMapKit::close() {
 		ofLogVerbose("ofxiOSMapKit") << "close(): releasing MKMapView";
         mapView.delegate = nil;
         [mapView removeFromSuperview];
-        [mapView release];
         mapView = nil;
     }
 }
@@ -202,8 +207,8 @@ ofRectangle ofxiOSMapKit::getScreenRectForRegionWithMeters(double latitude, doub
 
 CLLocationCoordinate2D ofxiOSMapKit::makeCLLocation(double latitude, double longitude) {
 	CLLocationCoordinate2D center = { 
-		CLAMP(latitude, -MAX_LATITUDE, MAX_LATITUDE),
-		CLAMP(longitude, -MAX_LONGITUDE, MAX_LONGITUDE)		
+		glm::clamp(latitude, -MAX_LATITUDE, MAX_LATITUDE),
+		glm::clamp(longitude, -MAX_LONGITUDE, MAX_LONGITUDE)
 	};
 	return center;
 }
@@ -218,7 +223,8 @@ void ofxiOSMapKit::addListener(ofxiOSMapKitListener* o) {
     if(isOpen()) {
         ofLogVerbose("ofxiOSMapKit") << "addListener(): adding ofxiOSMapKitDelegate";
         if(mapView.delegate == nil) {
-            mapView.delegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+            mapKitDelegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+            mapView.delegate = mapKitDelegate;
         }
         listeners.push_back(o);
     }
@@ -259,11 +265,12 @@ void ofxiOSMapKit::didFinishLoadingMap() {
 }
 
 
-void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
+void ofxiOSMapKit::errorLoadingMap(std::string errorDescription) {
 	for(std::list<ofxiOSMapKitListener*>::iterator it=listeners.begin(); it!=listeners.end(); ++it) {
 		ofxiOSMapKitListener* o = *it;
 		o->errorLoadingMap(errorDescription);
 	}
 }
 
+#endif
 #endif

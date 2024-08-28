@@ -15,7 +15,18 @@ void ofApp::setup(){
 	lAudio = new float[256];
 	rAudio = new float[256];
 
-	soundStream.setup(this,2,2, sampleRate,256, 4);
+//     Ask for permission to record audio,
+//     not needed if no in channels used
+	ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_RECORD_AUDIO);
+
+	ofSoundStreamSettings settings;
+	settings.setOutListener(this);
+	settings.setInListener(this);
+	settings.numOutputChannels = 2;
+	settings.numInputChannels = 2;
+	settings.numBuffers = 4;
+	settings.bufferSize = 256;
+	soundStream.setup(settings);
 }
 
 //--------------------------------------------------------------
@@ -77,7 +88,7 @@ void ofApp::touchMoved(int x, int y, int id){
 	float height = (float)ofGetHeight();
 	float heightPct = ((height-y) / height);
 	targetFrequency = 2000.0f * heightPct;
-	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
+	phaseAdderTarget = (targetFrequency / (float) sampleRate) * glm::two_pi<float>();
 }
 
 //--------------------------------------------------------------
@@ -136,38 +147,38 @@ void ofApp::cancelPressed(){
 }
 
 
-void ofApp::audioRequested(float * output,int bufferSize,int nChannels){
+void ofApp::audioOut(ofSoundBuffer & buffer){
 	//pan = 0.5f;
 	float leftScale = 1 - pan;
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
-	// keep phase in the range of 0-TWO_PI like this:
-	while (phase > TWO_PI){
-		phase -= TWO_PI;
+	// keep phase in the range of 0-glm::two_pi<float>() like this:
+	while (phase > glm::two_pi<float>()){
+		phase -= glm::two_pi<float>();
 	}
 
 	if ( bNoise == true){
 		// ---------------------- noise --------------
-		for (int i = 0; i < bufferSize; i++){
-			lAudio[i] = output[i*nChannels    ] = ofRandomf() * volume * leftScale;
-			rAudio[i] = output[i*nChannels + 1] = ofRandomf() * volume * rightScale;
+		for (int i = 0; i < buffer.getNumFrames(); i++){
+			lAudio[i] = buffer.getSample(i, 0) = ofRandomf() * volume * leftScale;
+			rAudio[i] = buffer.getSample(i, 1) = ofRandomf() * volume * rightScale;
 		}
 	} else {
 
-		for (int i = 0; i < bufferSize; i++){
+		for (int i = 0; i < buffer.getNumFrames(); i++){
 			phaseAdder = 0.6f * phaseAdder + 0.4f * phaseAdderTarget;
 			phase += phaseAdder;
 			float sample = sin(phase);
-			lAudio[i%256] = output[i*nChannels    ] = sample * volume * leftScale;
-			output[i*nChannels + 1] = sample * volume * rightScale;
+			lAudio[i%256] = buffer.getSample(i, 0) = sample * volume * leftScale;
+			buffer.getSample(i, 1) = sample * volume * rightScale;
 		}
 	}
 }
 
-void ofApp::audioReceived(float * input,int bufferSize,int nChannels){
-	for (int i = 0; i < bufferSize; i++){
-		rAudio[i%256] = input[i*nChannels ] + input[i*nChannels +1] ;
+void ofApp::audioIn(ofSoundBuffer & buffer){
+	for (int i = 0; i < buffer.getNumFrames(); i++){
+		rAudio[i%256] = buffer.getSample(i, 0) + buffer.getSample(i, 1) ;
 	}
 
 }

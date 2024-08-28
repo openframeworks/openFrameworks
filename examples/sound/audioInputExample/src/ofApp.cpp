@@ -42,8 +42,12 @@ void ofApp::setup(){
 
 	settings.setInListener(this);
 	settings.sampleRate = 44100;
-	settings.numOutputChannels = 0;
-	settings.numInputChannels = 2;
+	#ifdef TARGET_EMSCRIPTEN
+		settings.numOutputChannels = 2;
+	#else
+		settings.numOutputChannels = 0;
+	#endif
+	settings.numInputChannels = 1;
 	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
 
@@ -162,7 +166,7 @@ void ofApp::audioIn(ofSoundBuffer & input){
 	int numCounted = 0;	
 
 	//lets go through each sample and calculate the root mean square which is a rough way to calculate volume	
-	for (int i = 0; i < input.getNumFrames(); i++){
+	for (size_t i = 0; i < input.getNumFrames(); i++){
 		left[i]		= input[i*2]*0.5;
 		right[i]	= input[i*2+1]*0.5;
 

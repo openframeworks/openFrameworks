@@ -45,8 +45,8 @@ void Swarm::init(int _nParticles, float positionDispersion, float velocityDisper
 	// SETUP ARRAYS
 	///////////////////////////////////////////
 	//
-	positions = new ofVec3f[nParticles];
-	velocities = new ofVec3f[nParticles];
+	positions = new glm::vec3[nParticles];
+	velocities = new glm::vec3[nParticles];
 	colors = new ofColor[nParticles];
 	//
 	///////////////////////////////////////////
@@ -55,8 +55,6 @@ void Swarm::init(int _nParticles, float positionDispersion, float velocityDisper
 	///////////////////////////////////////////
 	// INITIALISE VALUES
 	///////////////////////////////////////////
-	//
-	ofSeedRandom();
 	//
 	for (int i=0; i< nParticles; i++)
 	{
@@ -114,7 +112,7 @@ void Swarm::customDraw()
 	ofSetColor(255, 255, 255);
 	ofDrawSphere(positions[0], 2.0);
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL);
-	ofDrawBitmapString(" light", (ofPoint)positions[0]);
+	ofDrawBitmapString(" light", (glm::vec3)positions[0]);
 	ofPopStyle();
 }
 

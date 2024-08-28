@@ -23,14 +23,23 @@ class ofApp : public ofBaseApp {
 		void addPoint(float x, float y, float z);
 		
 		// vector to store all values
-		vector <ofVec3f> points;
-		vector <ofVec3f> sizes;
-		
+		vector <glm::vec3> points;
+		vector <glm::vec3> sizes;
+		vector<ofFloatColor> colors;
+
 		ofVbo vbo;
+		ofMesh mesh;
+		bool bUseShader = true;
 		ofShader shader;
 		ofEasyCam camera;
 		
 		float camDist;
+		bool bUseColors = false;
+
+		float pointSize = 10.0f;
+		bool bSmoothing = false;
 		
-		ofTexture texture;
+		ofTexture texture, logoTexture;
+		int texIndex = 1;
+	
 };

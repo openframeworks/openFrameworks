@@ -1,8 +1,9 @@
 #include "ofTessellator.h"
+#include <tesselator.h>
+#include "ofPolyline.h"
+#include "ofMesh.h"
 
-
-
-
+using std::vector;
 
 //-------------- polygons ----------------------------------
 //

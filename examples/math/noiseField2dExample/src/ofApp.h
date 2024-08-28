@@ -20,9 +20,9 @@ class ofApp : public ofBaseApp {
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofVec2f getField(ofVec2f position);
+		glm::vec2 getField(const glm::vec2& position);
 		
-		vector<ofVec2f> points;
+		vector<glm::vec2> points;
 		ofMesh cloud;
 		float t;
 		float width, height;

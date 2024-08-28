@@ -3,9 +3,10 @@
 #include <jni.h>
 
 #include "ofConstants.h"
-#include "ofBaseSoundStream.h"
+#include "ofSoundBaseTypes.h"
 #include "ofxAndroidCircBuffer.h"
 #include "ofSoundBuffer.h"
+#include "ofEvents.h"
 
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
@@ -45,8 +46,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 	private:
 		long unsigned long	tickCount;
 		// pointers to OF audio callback classes
-		ofBaseSoundInput *  soundInputPtr;
-		ofBaseSoundOutput * soundOutputPtr;
+		ofSoundStreamSettings settings;
 		
 		ofxAndroidCircBuffer<float> input_buffer;
 
@@ -55,7 +55,6 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		// 32-bits float buffers used by OF audio callbacks
 		ofSoundBuffer in_float_buffer, out_float_buffer;
 		//
-		int  requestedBufferSize;
 		int  totalOutRequestedBufferSize;
 		int  totalInRequestedBufferSize;
 

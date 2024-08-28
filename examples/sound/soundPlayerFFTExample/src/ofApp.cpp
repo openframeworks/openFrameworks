@@ -9,21 +9,6 @@ void ofApp::setup(){
 	ow.load("sounds/ow.mp3");
 	dog.load("sounds/dog.mp3");
 	rooster.load("sounds/rooster.mp3");
-	
-	// we will bounce a circle using these variables:
-	px = 300;
-	py = 300;
-	vx = 0;
-	vy = 0;	
-
-	// the fft needs to be smoothed out, so we create an array of floats
-	// for that purpose:
-	fftSmoothed = new float[8192];
-	for (int i = 0; i < 8192; i++){
-		fftSmoothed[i] = 0;
-	}
-	
-	nBandsToGet = 128;
 }
 
 

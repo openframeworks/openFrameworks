@@ -7,8 +7,13 @@ void ofApp::setup(){
 	total = 24;
 	images.resize(total*2);
 	for(int i = 0; i < total; ++i) {
+#ifndef TARGET_EMSCRIPTEN
 		loader.loadFromDisk(images[i*2], "of" + ofToString(i) + ".png");
 		loader.loadFromURL(images[i*2+1], "http://www.openframeworks.cc/images/of_inverted.png");
+#else
+		loader.loadFromDisk(images[i*2], "of" + ofToString(i) + ".png");
+		loader.loadFromDisk(images[i*2+1], "of" + ofToString(i) + ".png");
+#endif
 	}
 }
 
@@ -37,6 +42,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
+	ofStopURLLoader();
 	loader.stopThread();
 }
 

@@ -14,15 +14,15 @@ MorseCodePlayer::MorseCodePlayer(){
 }
 
 void MorseCodePlayer::setup(){
-	dotPlayer.loadSound("dot.wav", false);
-	dashPlayer.loadSound("dash.wav", false);
+	dotPlayer.load("dot.wav", false);
+	dashPlayer.load("dash.wav", false);
 	//ofLogVerbose("dotPlayer duration: " + ofToString(dotPlayer.length/dotPlayer.internalFreq));
 	//ofLogVerbose("dashPlayer duration: " + ofToString(dashPlayer.length/dashPlayer.internalFreq));
 	isReady = true;
 }
 
 void MorseCodePlayer::update(){
-	if (!dotPlayer.getIsPlaying() && !dashPlayer.getIsPlaying()) {
+	if (!dotPlayer.isPlaying() && !dashPlayer.isPlaying()) {
 		if (codes.size()>0){
 			
 			currentCode = codes[0];

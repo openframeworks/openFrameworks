@@ -1,12 +1,12 @@
 #pragma once
-#include "ofBaseTypes.h"
+
+#include "ofGraphicsBaseTypes.h"
 #include "ofPolyline.h"
-#include <stack>
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
 #include "ofMatrixStack.h"
 #include "ofPath.h"
-#include <set>
+#include "ofGLBaseTypes.h"
 
 class ofShapeTessellation;
 class ofFbo;
@@ -17,8 +17,8 @@ public:
 	ofGLRenderer(const ofAppBaseWindow * window);
 	~ofGLRenderer(){}
 
-    static const string TYPE;
-    const string & getType(){ return TYPE; }
+	static const std::string TYPE;
+	const std::string & getType(){ return TYPE; }
 
     void setup();
 
@@ -111,6 +111,7 @@ public:
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 	void setLineSmoothing(bool smooth);
 	void setBlendMode(ofBlendMode blendMode);
@@ -120,22 +121,22 @@ public:
 	void disableAntiAliasing();
 
 	// color options
-	void setColor(int r, int g, int b); // 0-255
-	void setColor(int r, int g, int b, int a); // 0-255
-	void setColor(const ofColor & color);
-	void setColor(const ofColor & color, int _a);
-	void setColor(int gray); // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b); // 0-1
+	void setColor(float r, float g, float b, float a); // 0-1
+	void setColor(const ofFloatColor & color);
+	void setColor(const ofFloatColor & color, float _a);
+	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	void setBitmapTextMode(ofDrawBitmapMode mode);
 
 	// bg color
-	ofColor getBackgroundColor();
-	void setBackgroundColor(const ofColor & c);
-	void background(const ofColor & c);
+	ofFloatColor getBackgroundColor();
+	void setBackgroundColor(const ofFloatColor & c);
+	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, int _a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	void setBackgroundAuto(bool bManual);		// default is true
 	bool getBackgroundAuto();
@@ -159,8 +160,8 @@ public:
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
 	void drawCircle(float x, float y, float z, float radius) const;
 	void drawEllipse(float x, float y, float z, float width, float height) const;
-	void drawString(string text, float x, float y, float z) const;
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
+	void drawString(std::string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const;
 
 
 	// gl specifics
@@ -176,7 +177,7 @@ public:
 	void disableSeparateSpecularLight();
 	bool getLightingEnabled();
 	void setSmoothLighting(bool b);
-	void setGlobalAmbientColor(const ofColor& c);
+	void setGlobalAmbientColor(const ofFloatColor& c);
 
 	// lighting per light
 	void enableLight(int lightIndex);
@@ -193,16 +194,20 @@ public:
 
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofBaseMaterial & material);
+	void bind(const ofShadow & shadow); // does nothing, only programmable renderer supported
+	void bind(const ofShadow & shadow, GLenum aCubeFace);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseVideoDraws & video);
 	void unbind(const ofBaseMaterial & material);
+	void unbind(const ofShadow & shadow); // does nothing, only programmable renderer supported
+	void unbind(const ofShadow & shadow, GLenum aCubeFace);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofCamera & camera);
 
-    void begin(const ofFbo & fbo, ofFboBeginMode mode);
+    void begin(const ofFbo & fbo, ofFboMode mode);
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
@@ -226,28 +231,28 @@ private:
 
 	bool bBackgroundAuto;
 
-	mutable vector<glm::vec3> linePoints;
-	mutable vector<glm::vec3> rectPoints;
-	mutable vector<glm::vec3> triPoints;
-	mutable vector<glm::vec3> circlePoints;
+	mutable std::vector<glm::vec3> linePoints;
+	mutable std::vector<glm::vec3> rectPoints;
+	mutable std::vector<glm::vec3> triPoints;
+	mutable std::vector<glm::vec3> circlePoints;
 	ofPolyline circlePolyline;
 
 	ofMatrixStack matrixStack;
 	bool normalsEnabled;
 	bool lightingEnabled;
         bool materialBound;
-	set<int> textureLocationsEnabled;
+	std::set<int> textureLocationsEnabled;
 
 	int alphaMaskTextureTarget;
 
 	ofStyle currentStyle;
-	deque <ofStyle> styleHistory;
+	std::deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofBitmapFont bitmapFont;
 	ofPath path;
 	const ofAppBaseWindow * window;
 
-	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
+	std::deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
 	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 

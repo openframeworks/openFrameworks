@@ -7,7 +7,7 @@ void ofApp::setup() {
 	camWidth = 640;
 	camHeight = 480;
 
-	cam.setup(640, 480);
+	cam.setup(camWidth, camHeight);
 	cvImgColor.allocate(camWidth, camHeight);
 	cvImgGrayscale.allocate(camWidth, camHeight);
 
@@ -33,8 +33,7 @@ void ofApp::update() {
 		closestPoints.clear();
 		closestIndices.clear();
 
-		ofPoint target;
-		target.set(mouseX, mouseY);
+		glm::vec3 target (mouseX, mouseY,0);
 
 		for(unsigned int i = 0; i < contourFinder.blobs.size(); i++) {
 			ofPolyline cur;
@@ -61,21 +60,21 @@ void drawWithNormals(const ofPolyline& polyline) {
 	for(int i=0; i< (int) polyline.size(); i++ ) {
 		bool repeatNext = i == (int)polyline.size() - 1;
 
-		const ofPoint& cur = polyline[i];
-		const ofPoint& next = repeatNext ? polyline[0] : polyline[i + 1];
+		const glm::vec3& cur = polyline[i];
+		const glm::vec3& next = repeatNext ? polyline[0] : polyline[i + 1];
 
-		float angle = atan2f(next.y - cur.y, next.x - cur.x) * RAD_TO_DEG;
-		float distance = cur.distance(next);
+		float angle = ofRadToDeg(atan2f(next.y - cur.y, next.x - cur.x));
+		float distance = glm::distance(cur, next);
 
 		if(repeatNext) {
 			ofSetColor(255, 0, 255);
 		}
-		glPushMatrix();
-		glTranslatef(cur.x, cur.y, 0);
+		ofPushMatrix();
+		ofTranslate(cur.x, cur.y, 0);
 		ofRotateDeg(angle);
 		ofDrawLine(0, 0, 0, distance);
 		ofDrawLine(0, 0, distance, 0);
-		glPopMatrix();
+		ofPopMatrix();
 	}
 }
 
@@ -102,9 +101,9 @@ void ofApp::draw() {
 		ofDrawRectangle(boundingBoxes[i]);
 
 		ofSetColor(255, 0, 0);
-		ofDrawLine(closestPoints[i], ofPoint(mouseX, mouseY));
+		ofDrawLine(closestPoints[i], glm::vec3(mouseX, mouseY,0));
 		ofSetColor(0, 0, 255);
-		ofDrawLine(resampled[i][closestIndices[i]], ofPoint(mouseX, mouseY));
+		ofDrawLine(resampled[i][closestIndices[i]], glm::vec3(mouseX, mouseY,0));
 	}
 
 	ofSetColor(255, 0, 0);

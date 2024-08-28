@@ -103,6 +103,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 			}
 			mediaPlayer.setDataSource(fileName);
 			mediaPlayer.prepare();
+			bIsLoaded = true;
 			//setVolume(volume);
 			this.fileName = fileName;
 		} catch (Exception e) {
@@ -157,8 +158,8 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		// see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
 		float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
-		float cosAngle = FloatMath.cos(angle);
-		float sinAngle = FloatMath.sin(angle);
+		float cosAngle = (float) Math.cos(angle);
+		float sinAngle = (float) Math.sin(angle);
 		leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
 		rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
 		if(mediaPlayer!=null)mediaPlayer.setVolume(leftVolume, rightVolume);

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "ofxBaseGui.h"
+#include "ofVboMesh.h"
 
 template<typename Type>
 class ofxInputField : public ofxBaseGui{
@@ -57,7 +58,12 @@ public:
 	ofAbstractParameter & getParameter();
 
 protected:
-	static ofxInputField createInsideSlider();
+	enum Inside{
+		InsideSlider,
+	};
+	void ofxSlider(Inside){
+		insideSlider = true;
+	}
 	virtual void render();
 	ofParameter<Type> value;
 	bool bGuiActive=false, bMousePressed=false, bMouseOver=false;
@@ -98,9 +104,9 @@ protected:
 	std::vector<ofFloatColor> originalColors;
 
 	ofEvent<void> leftFocus;
-	std::vector<ofEventListener> listeners;
+	ofEventListeners listeners;
 };
 
 typedef ofxInputField<float> ofxFloatField;
 typedef ofxInputField<int> ofxIntField;
-typedef ofxInputField<string> ofxTextField;
+typedef ofxInputField<std::string> ofxTextField;

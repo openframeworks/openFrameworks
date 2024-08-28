@@ -21,8 +21,11 @@
  THE SOFTWARE.
  
  ************************************************************************/ 
+#include "ofConstants.h"
 
+#include "ofxiOSConstants.h"
 
+#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 #ifndef OFX_OPEN_AL_SOUND_PLAYER_H
 #define OFX_OPEN_AL_SOUND_PLAYER_H
 
@@ -38,8 +41,9 @@
 
 
 #include "SoundEngine.h"
-#include "ofBaseSoundPlayer.h"
+#include "ofSoundBaseTypes.h"
 #include "ofTypes.h"
+#include "glm/vec3.hpp"
 
 //globals
 
@@ -61,7 +65,7 @@ public:
 	ofxOpenALSoundPlayer();
 	~ofxOpenALSoundPlayer();
 	
-	bool	load(std::filesystem::path fileName, bool stream=false);
+	bool	load(const of::filesystem::path& fileName, bool stream=false);
 	void	unload();
 
 	void	play();
@@ -87,6 +91,9 @@ public:
 	float	getPan() const;
 
 	bool    isLoaded() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
 	
 	// IPHONE EXTRA FUNCTIONS
 	static void	vibrate();
@@ -124,7 +131,7 @@ protected: //internal
 	
 	bool    prime();
 	void	updateInternalsForNewPrime();
-	bool	loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce);
+	bool	loadBackgroundMusic(std::string fileName, bool queue, bool loadAtOnce);
 	void	unloadAllBackgroundMusic();
 	void	startBackgroundMusic();
 	void	stopBackgroundMusic(bool stopNow);
@@ -134,7 +141,8 @@ protected: //internal
 	ALuint  myPrimedId;
 	bool	stopped; 	
 	bool	iAmAnMp3;
-	vector <multiPlaySource *> retainedBuffers;
+	std::vector <multiPlaySource *> retainedBuffers;
 };
 
+#endif
 #endif

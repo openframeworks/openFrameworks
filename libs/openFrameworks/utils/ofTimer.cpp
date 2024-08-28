@@ -28,7 +28,7 @@ void ofTimer::setPeriodicEvent(uint64_t nanoseconds){
 }
 
 void ofTimer::waitNext(){
-#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
+#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY))
 	timespec remainder = {0,0};
 	timespec wakeTime = nextWakeTime.getAsTimespec();
 	clock_nanosleep(CLOCK_MONOTONIC,TIMER_ABSTIME,&wakeTime,&remainder);
@@ -36,11 +36,11 @@ void ofTimer::waitNext(){
 	WaitForSingleObject(hTimer, INFINITE);
 #else
 	auto now = ofGetCurrentTime();
-	auto waitNanos = nextWakeTime - now;
-	if(waitNanos > std::chrono::nanoseconds(0)){
+	if(now < nextWakeTime){
+		auto waitNanos = nextWakeTime - now;
 		timespec waittime = (ofTime() + waitNanos).getAsTimespec();
-		timespec remainder;
-		nanosleep(&waittime,&remainder);
+		timespec remainder = {0,0};
+		nanosleep(&waittime, &remainder);
 	}
 #endif
 	calculateNextPeriod();

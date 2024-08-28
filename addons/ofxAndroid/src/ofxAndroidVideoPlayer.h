@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "ofBaseTypes.h"
+#include "ofVideoBaseTypes.h"
 #include "ofPixels.h"
 #include "ofEvents.h"
 #include "ofTexture.h"
@@ -20,7 +20,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		ofxAndroidVideoPlayer();
 		virtual ~ofxAndroidVideoPlayer();
 
-		bool load(string fileName);
+		bool load(std::string fileName);
 		void close(); // empty!
 		void update();
 

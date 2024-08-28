@@ -1,6 +1,7 @@
 {
     "version": 1,
     "kind": "project",
+    "supportedProjectTypes": [ "Qbs.QbsProject" ],
     "id": "R.OF Application",
     "category": "I.openFrameworks",
     "trDescription": "Creates an empty openFrameworks application using Qbs to build.",
@@ -8,6 +9,7 @@
     "trDisplayCategory": "openFrameworks",
     "icon": "of.png",
     "enabled": "%{JS: [ %{Plugins} ].indexOf('QbsProjectManager') >= 0 }",
+    "featuresRequired": [  ],
 
     "options":
     [
@@ -104,6 +106,24 @@
             ]
         },
         {
+            "trDisplayName": "Console windows",
+            "trShortTitle": "Console",
+            "typeId": "Fields",
+            "data" :
+            [
+                {
+                    "name": "ConsoleWindow",
+                    "trDisplayName": "Create a console window when application start",
+                    "type": "CheckBox",
+                    "data": {
+                        "checkedValue": "true",
+                        "uncheckedValue": "false",
+                        "checked": "false"
+                    }
+                }
+            ]
+        },
+        {
             "trDisplayName": "Addons",
             "trShortTitle": "Addons",
             "typeId": "Fields",
@@ -132,123 +152,120 @@
                     "name": "ofx3DModelLoader",
                     "trDisplayName": "ofx3DModelLoader",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
-                },                
+                },
 			    {
                     "name": "ofxAssimpModelLoader",
                     "trDisplayName": "ofxAssimpModelLoader",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxGui",
                     "trDisplayName": "ofxGui",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxKinect",
                     "trDisplayName": "ofxKinect",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxNetwork",
                     "trDisplayName": "ofxNetwork",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxOpenCv",
                     "trDisplayName": "ofxOpenCv",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxOsc",
                     "trDisplayName": "ofxOsc",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxSvg",
                     "trDisplayName": "ofxSvg",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxThreadedImageLoader",
                     "trDisplayName": "ofxThreadedImageLoader",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
-                    }
-                },
-			    {
-                    "name": "ofxTween",
-                    "trDisplayName": "ofxTween",
-                    "type": "CheckBox",
-                    "data": { 
-                        "checkedValue": "1",
-                        "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxVectorGraphics",
                     "trDisplayName": "ofxVectorGraphics",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 },
 			    {
                     "name": "ofxXmlSettings",
                     "trDisplayName": "ofxXmlSettings",
                     "type": "CheckBox",
-                    "data": { 
+                    "data": {
                         "checkedValue": "1",
                         "uncheckedValue": "0",
-                        "checked": "false" 
+                        "checked": "false"
                     }
                 }
             ]
+        },
+        {
+            "trDisplayName": "Kit Selection",
+            "trShortTitle": "Kits",
+            "typeId": "Kits",
+            "enabled": "%{JS: ! %{IsSubproject}}",
+            "data": { "projectFilePath": "%{ProjectFile}" }
         },
         {
             "trDisplayName": "Project Management",

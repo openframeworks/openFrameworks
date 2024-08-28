@@ -37,17 +37,18 @@
 #pragma once
 
 #include "ofMain.h"
-
-#ifndef TARGET_OF_TVOS
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && !TARGET_OF_TVOS && !TARGET_OF_WATCHOS && !TARGET_OF_XROS
 
 #include "ofAppiOSWindow.h"
 #include "ofxiOSConstants.h"
 #include "ofxiOSExtensions.h"
 #include "ofxiOSAppDelegate.h"
 #include "ofxiOSViewController.h"
+#include "ofxiOSGLKViewController.h"
+#include "ofxiOSGLKView.h"
 #include "ofxiOSEAGLView.h"
 #include "ofxiOSApp.h"
 #include "ofxiOSExtras.h"
-#include "ofxAccelerometer.h"
 
 #endif

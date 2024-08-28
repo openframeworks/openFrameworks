@@ -7,12 +7,10 @@ void ofApp::setup(){
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	// this makes the camera directly return grayscale image, faster!
 	grabber.setPixelFormat(OF_PIXELS_MONO);
-	grabber.setup(320,240);
-	gray.allocate(grabber.getWidth(),grabber.getHeight());
-	bg.allocate(grabber.getWidth(),grabber.getHeight());
-	//diff.allocate(grabber.getWidth(),grabber.getHeight());
-	//contourFinder.allocate(grabber.getWidth(),grabber.getHeight());
-	one_second_time = ofGetSystemTime();
+	grabber.setup(1280, 720);
+	gray.allocate((int) grabber.getWidth(), (int) grabber.getHeight());
+	bg.allocate((int) grabber.getWidth(), (int) grabber.getHeight());
+	one_second_time =0;
 	camera_fps = 0;
 	frames_one_sec = 0;
 	captureBg = true;
@@ -23,41 +21,40 @@ void ofApp::update(){
 	grabber.update();
 	if(grabber.isFrameNew()){
 		frames_one_sec++;
-		if( ofGetSystemTime() - one_second_time >= 1000){
+		if(ofGetElapsedTimef() - one_second_time >= 1.0){
 			camera_fps = frames_one_sec;
 			frames_one_sec = 0;
-			one_second_time = ofGetSystemTime();
+			one_second_time = ofGetElapsedTimef();
 		}
-		gray.setFromPixels(grabber.getPixels(),grabber.getWidth(),grabber.getHeight());
+		gray.setFromPixels(grabber.getPixels());
 		if(captureBg){
 			bg = gray;
 			captureBg = false;
 		}
 
-		//gray.absDiff(bg);
 		gray.threshold(80);
-		contourFinder.findContours(gray,10,grabber.getWidth()*grabber.getHeight()/3,10,true,true);
+		contourFinder.findContours(gray,grabber.getWidth()*grabber.getHeight()/20,grabber.getWidth()*grabber.getHeight()/3,10,true,true);
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	ofSetHexColor(0xFFFFFF);
-	gray.draw(5,5);
-	contourFinder.draw(5,5);
-	ofSetColor(0x000000);
-	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),330,10);
-	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),330,30);
+	ofSetColor(255, 255, 255);
+	gray.draw(0,0, 1920, 1080);
+	contourFinder.draw(0,0, 1920, 1080);
+	ofSetColor(255, 0, 255);
+	ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate()),100,10);
+	ofDrawBitmapString("camera fps: " + ofToString(camera_fps),100,30);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
-	
+void ofApp::keyPressed  (int key){
+
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------

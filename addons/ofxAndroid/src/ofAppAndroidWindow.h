@@ -11,7 +11,34 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 #include "ofTypes.h"
-#include "ofBaseTypes.h"
+
+class ofxAndroidWindowSettings : public ofGLESWindowSettings
+{
+public:
+	ofxAndroidWindowSettings()
+	: preserveContextOnPause( true ){}
+	
+	ofxAndroidWindowSettings( const ofGLESWindowSettings & settings )
+	: ofGLESWindowSettings( settings ), preserveContextOnPause( true ) {
+		const ofxAndroidWindowSettings * androidSettings = dynamic_cast<const ofxAndroidWindowSettings*>(&settings);
+        if(androidSettings){
+			preserveContextOnPause = androidSettings->preserveContextOnPause;
+		}
+	}
+	
+	/**
+		This corresponds to GLSurfaceView.setPreserveEGLContextOnPause.
+		If this is false, all opengl resources (textures, shaders, ...) will be destroyed when the App is minimized (Activity::onStop).
+		I would suggest to have this set to 'true' when releasing the App, but try to run it with this set to 'false'
+			from time to time to make sure that opengl resources reloading works properly.
+		Use events ofxAndroidEventsClass::unloadGL and ofxAndroidEventsClass::loadGL to track when the opengl context is lost.
+	*/
+	void setPreserveContextOnPause(bool preserve){
+		preserveContextOnPause = preserve;
+	}
+	
+	bool preserveContextOnPause;
+};
 
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
@@ -27,6 +54,7 @@ public:
 
     using ofAppBaseWindow::setup;
 	void setup(const ofGLESWindowSettings & settings);
+	void setup(const ofxAndroidWindowSettings & settings);
 	void update();
 	void draw();
 
@@ -45,7 +73,7 @@ public:
 
 	bool	doesHWOrientation(){return true;}
 
-	void	setWindowTitle(string title){}
+	void	setWindowTitle(std::string title){}
 
 	ofWindowMode	getWindowMode() {return OF_WINDOW;}
 
@@ -59,13 +87,15 @@ public:
 	ofOrientation	getOrientation();
 
 	ofCoreEvents & events();
-	shared_ptr<ofBaseRenderer> & renderer();
+	std::shared_ptr<ofBaseRenderer> & renderer();
 
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
 
+	int 	getGlesVersion();
+
 private:
 	ofCoreEvents coreEvents;
-	shared_ptr<ofBaseRenderer> currentRenderer;
+	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int glesVersion;
 };

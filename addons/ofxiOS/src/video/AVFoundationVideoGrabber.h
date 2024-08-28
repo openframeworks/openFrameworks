@@ -4,15 +4,17 @@
 
 #pragma once
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
+#if defined(TARGET_OS_IOS)
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
-#include "ofBaseTypes.h"
 #include "ofTexture.h"
+#include "ofVideoBaseTypes.h"
 
 class AVFoundationVideoGrabber;
 
@@ -25,7 +27,7 @@ class AVFoundationVideoGrabber;
 	int height;
 	
 	BOOL bInitCalled;
-	int deviceID;
+	unsigned long deviceID;
 
 	AVFoundationVideoGrabber * grabberPtr;
 }
@@ -34,7 +36,7 @@ class AVFoundationVideoGrabber;
 -(void)startCapture;
 -(void)stopCapture;
 -(void)lockExposureAndFocus;
--(vector <string>)listDevices;
+-(std::vector <std::string>)listDevices;
 -(void)setDevice:(int)_device;
 -(void)eraseGrabberPtr;
 
@@ -59,7 +61,7 @@ class AVFoundationVideoGrabber{
 	
 		bool isFrameNew();
 		
-		vector <ofVideoDevice> listDevices();
+		std::vector <ofVideoDevice> listDevices();
 		void setDevice(int deviceID);
 		bool setPixelFormat(ofPixelFormat PixelFormat);
 		ofPixelFormat getPixelFormat();
@@ -95,6 +97,4 @@ class AVFoundationVideoGrabber{
 };
 
 #endif
-
-
-
+#endif

@@ -29,6 +29,11 @@ THE SOFTWARE.
 
 #include "CreEPS.hpp"
 
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <time.h>
+
 namespace ns_creeps
 {
 
@@ -58,13 +63,6 @@ namespace ns_creeps
 	#MAJORVERSIOM "." #MINORVERSION
 #define  CREEPS_VERSION_STR \
 	CREATE_VERSION_STRING(CREEPS_MAJOR_VERSION, CREEPS_MINOR_VERSION)
-
-/*********************************************************/
-
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
 
 /*********************************************************
  * The attribute classes for CreEPS

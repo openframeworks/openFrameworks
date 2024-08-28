@@ -21,11 +21,11 @@ class ofxCvBlob {
         float               area;
         float               length;
         ofRectangle         boundingRect;
-        ofPoint             centroid;
+        ofDefaultVec3       centroid;
         bool                hole;
 
-        vector <ofPoint>    pts;    // the contour of the blob
-        int                 nPts;   // number of pts;
+        std::vector<ofDefaultVec3> pts;    // the contour of the blob
+        int                        nPts;   // number of pts;
 
         //----------------------------------------
         ofxCvBlob() {

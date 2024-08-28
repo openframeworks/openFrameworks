@@ -133,7 +133,7 @@ void ofApp::keyPressed(int key){
 			typeStr.clear();
 			bFirst = false;
 		}
-		ofAppendUTF8(typeStr,key);
+		ofUTF8Append(typeStr,key);
 	}
 }
 

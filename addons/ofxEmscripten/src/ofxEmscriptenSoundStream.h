@@ -7,8 +7,7 @@
 
 #pragma once
 
-#include "ofBaseSoundStream.h"
-#include "ofSoundStream.h"
+#include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
 
 class ofxEmscriptenSoundStream: public ofBaseSoundStream {
@@ -38,7 +37,6 @@ private:
 	static void audio_cb(int bufferSize, int inputChannels, int outputChannels, void * userData);
 	void audioCB(int bufferSize, int inputChannels, int outputChannels);
 	int context;
-	int stream;
 	unsigned long long tickCount;
 	ofSoundStreamSettings settings;
 	ofSoundBuffer inbuffer;

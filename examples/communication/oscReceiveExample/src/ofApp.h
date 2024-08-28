@@ -3,11 +3,15 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 
-// listen on port 12345
+// listening port
 #define PORT 12345
+
+// max number of strings to display
 #define NUM_MSG_STRINGS 20
 
-class ofApp : public ofBaseApp {
+// demonstrates receiving and processing OSC messages with an ofxOscReceiver,
+// use in conjunction with the oscSenderExample
+class ofApp : public ofBaseApp{
 	public:
 
 		void setup();
@@ -29,13 +33,14 @@ class ofApp : public ofBaseApp {
 		ofTrueTypeFont font;
 		ofxOscReceiver receiver;
 
-		int current_msg_string;
-		string msg_strings[NUM_MSG_STRINGS];
+		int currentMsgString;
+		string msgStrings[NUM_MSG_STRINGS];
 		float timers[NUM_MSG_STRINGS];
 
-		float mouseXf, mouseYf;
-		int mouseButtonInt;
-		string mouseButtonState;
+		float mouseXf = 0;
+		float mouseYf = 0;
+		int mouseButtonInt = 0;
+		string mouseButtonState = "";
 
 		ofImage receivedImage;
 };

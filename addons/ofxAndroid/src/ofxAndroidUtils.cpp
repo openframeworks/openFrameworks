@@ -1,5 +1,7 @@
 
+
 #include "ofxAndroidUtils.h"
+
 #ifndef __clang__
 // fix for undefined symbols from ndk r8c
 extern "C" {
@@ -13,6 +15,8 @@ int atexit (void (*func)(void)){
 }
 #endif
 #include "ofLog.h"
+
+using namespace std;
 
 bool ofxAndroidIsOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
@@ -154,6 +158,98 @@ void ofxAndroidDismissProgressBox(int id){
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,dismissProgressBox,id);
+}
+
+string ofxAndroidGetPermissioString(ofxAndroidPermission permission){
+    switch(permission){
+        case OFX_ANDROID_PERMISSION_READ_CALENDAR:
+            return "android.permission.READ_CALENDAR";
+        case OFX_ANDROID_PERMISSION_WRITE_CALENDAR:
+            return "android.permission.WRITE_CALENDAR";
+        case OFX_ANDROID_PERMISSION_CAMERA:
+            return "android.permission.CAMERA";
+        case OFX_ANDROID_PERMISSION_READ_CONTACTS:
+            return "android.permission.READ_CONTACTS";
+        case OFX_ANDROID_PERMISSION_WRITE_CONTACTS:
+            return "android.permission.WRITE_CONTACTS";
+        case OFX_ANDROID_PERMISSION_GET_ACCOUNTS:
+            return "android.permission.GET_ACCOUNTS";
+        case OFX_ANDROID_PERMISSION_ACCESS_FINE_LOCATION:
+            return "android.permission.ACCESS_FINE_LOCATION";
+        case OFX_ANDROID_PERMISSION_ACCESS_COARSE_LOCATION:
+            return "android.permission.ACCESS_COARSE_LOCATION";
+        case OFX_ANDROID_PERMISSION_RECORD_AUDIO:
+            return "android.permission.RECORD_AUDIO";
+        case OFX_ANDROID_PERMISSION_READ_PHONE_STATE:
+            return "android.permission.READ_PHONE_STATE";
+        case OFX_ANDROID_PERMISSION_CALL_PHONE:
+            return "android.permission.CALL_PHONE";
+        case OFX_ANDROID_PERMISSION_READ_CALL_LOG:
+            return "android.permission.READ_CALL_LOG";
+        case OFX_ANDROID_PERMISSION_WRITE_CALL_LOG:
+            return "android.permission.WRITE_CALL_LOG";
+        case OFX_ANDROID_PERMISSION_ADD_VOICEMAIL:
+            return "android.permission.ADD_VOICEMAIL";
+        case OFX_ANDROID_PERMISSION_USE_SIP:
+            return "android.permission.USE_SIP";
+        case OFX_ANDROID_PERMISSION_PROCESS_OUTGOING_CALLS:
+            return "android.permission.PROCESS_OUTGOING_CALLS";
+        case OFX_ANDROID_PERMISSION_BODY_SENSORS:
+            return "android.permission.BODY_SENSORS";
+        case OFX_ANDROID_PERMISSION_SEND_SMS:
+            return "android.permission.SEND_SMS";
+        case OFX_ANDROID_PERMISSION_RECEIVE_SMS:
+            return "android.permission.RECEIVE_SMS";
+        case OFX_ANDROID_PERMISSION_READ_SMS:
+            return "android.permission.READ_SMS";
+        case OFX_ANDROID_PERMISSION_RECEIVE_WAP_PUSH:
+            return "android.permission.RECEIVE_WAP_PUSH";
+        case OFX_ANDROID_PERMISSION_RECEIVE_MMS:
+            return "android.permission.RECEIVE_MMS";
+        case OFX_ANDROID_PERMISSION_READ_EXTERNAL_STORAGE:
+            return "android.permission.READ_EXTERNAL_STORAGE";
+        case OFX_ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE:
+            return "android.permission.WRITE_EXTERNAL_STORAGE";
+    }
+}
+
+void ofxAndroidRequestPermission(ofxAndroidPermission permission){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidRequestPermission(): couldn't find OFAndroid java class";
+		return;
+	}
+
+	jmethodID requestPermission = ofGetJNIEnv()->GetStaticMethodID(javaClass,"requestPermission","(Ljava/lang/String;)V");
+	if(!requestPermission){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidRequestPermission(): couldn't find OFAndroid requestPermission method";
+		return;
+	}
+    string stringPermission = ofxAndroidGetPermissioString(permission);
+	jstring jMsg = ofGetJNIEnv()->NewStringUTF(stringPermission.c_str());
+
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,requestPermission,jMsg);
+}
+
+
+bool ofxAndroidCheckPermission(ofxAndroidPermission permission){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckPermission(): couldn't find OFAndroid java class";
+		return false;
+	}
+
+	jmethodID checkPermission = ofGetJNIEnv()->GetStaticMethodID(javaClass,"checkPermission","(Ljava/lang/String;)Z");
+	if(!checkPermission){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckPermission(): couldn't find OFAndroid requestPermission method";
+		return false;
+	}
+	string stringPermission = ofxAndroidGetPermissioString(permission);
+	jstring jMsg = ofGetJNIEnv()->NewStringUTF(stringPermission.c_str());
+
+    return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,checkPermission,jMsg);
 }
 
 

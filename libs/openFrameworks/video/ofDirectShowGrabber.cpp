@@ -86,6 +86,7 @@ bool ofDirectShowGrabber::setup(int w, int h){
 	#endif
 	//---------------------------------
 
+	return false;
 }
 
 //---------------------------------------------------------------------------
@@ -105,9 +106,9 @@ ofPixelFormat ofDirectShowGrabber::getPixelFormat() const {
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofDirectShowGrabber::listDevices() const {
+std::vector<ofVideoDevice> ofDirectShowGrabber::listDevices() const {
     
-    vector <ofVideoDevice> devices; 
+    std::vector <ofVideoDevice> devices; 
 	
     //---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
@@ -116,9 +117,9 @@ vector<ofVideoDevice> ofDirectShowGrabber::listDevices() const {
         VI.listDevices();
         ofLogNotice() << "---";
         
-		vector <string> devList = VI.getDeviceList(); 
+		std::vector <std::string> devList = VI.getDeviceList(); 
         
-        for(int i = 0; i < devList.size(); i++){
+        for(std::size_t i = 0; i < devList.size(); i++){
             ofVideoDevice vd; 
             vd.deviceName = devList[i]; 
             vd.id = i;  
@@ -181,12 +182,12 @@ void ofDirectShowGrabber::update(){
 							// start of calculating
 							// for linear interpolation
 
-							int xbase = (int)floor(posx);
-							int xhigh = (int)ceil(posx);
+							int xbase = (int)std::floor(posx);
+							int xhigh = (int)std::ceil(posx);
 							float pctx = (posx - xbase);
 
-							int ybase = (int)floor(posy);
-							int yhigh = (int)ceil(posy);
+							int ybase = (int)std::floor(posy);
+							int yhigh = (int)std::ceil(posy);
 							float pcty = (posy - ybase);
 							*/
 

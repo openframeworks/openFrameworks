@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="libs">
@@ -78,9 +78,6 @@
     <ClInclude Include="..\..\..\openFrameworks\types\ofTypes.h">
       <Filter>libs\openFrameworks\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h">
-      <Filter>libs\openFrameworks\types</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\types\ofColor.h">
       <Filter>libs\openFrameworks\types</Filter>
     </ClInclude>
@@ -148,6 +145,9 @@
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\gl\ofLight.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofShadow.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\gl\ofMaterial.h">
@@ -222,13 +222,10 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundPlayer.h">
-      <Filter>libs\openFrameworks\sound</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.h">
-      <Filter>libs\openFrameworks\sound</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofMediaFoundationSoundPlayer.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h">
@@ -258,13 +255,25 @@
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofCubeMap.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofCubeMapShaders.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFpsCounter.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofTimer.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofTimerFps.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofMediaFoundationPlayer.h">
       <Filter>libs\openFrameworks\video</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\app\ofMainLoop.h">
@@ -283,6 +292,48 @@
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\openFrameworks\utils\ofJson.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofGLBaseTypes.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsBaseTypes.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsConstants.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\math\ofMathConstants.h">
+      <Filter>libs\openFrameworks\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundBaseTypes.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\video\ofVideoBaseTypes.h">
+      <Filter>libs\openFrameworks\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.h">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofMaterialBaseTypes.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundBuffer.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundUtils.h">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h">
+      <Filter>libs\openFrameworks\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofSingleton.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofRandomDistributions.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofRandomEngine.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -356,6 +407,9 @@
     <ClCompile Include="..\..\..\openFrameworks\gl\ofLight.cpp">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofShadow.cpp">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\gl\ofMaterial.cpp">
       <Filter>libs\openFrameworks\gl</Filter>
     </ClCompile>
@@ -416,6 +470,9 @@
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofMediaFoundationSoundPlayer.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
@@ -461,16 +518,22 @@
     <ClCompile Include="..\..\..\openFrameworks\utils\ofTimer.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofTimerFps.cpp">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp">
       <Filter>libs\openFrameworks\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofCubeMap.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.cpp">
       <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBuffer.cpp">
-      <Filter>libs\openFrameworks\sound</Filter>
+    <ClCompile Include="..\..\..\openFrameworks\video\ofMediaFoundationPlayer.cpp">
+      <Filter>libs\openFrameworks\video</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp">
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBuffer.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp">
@@ -478,6 +541,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsBaseTypes.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBaseTypes.cpp">
+      <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\app\ofBaseApp.cpp">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\graphics\ofGraphicsCairo.cpp">
+      <Filter>libs\openFrameworks\graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

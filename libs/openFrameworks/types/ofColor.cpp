@@ -1,5 +1,4 @@
 #include "ofColor.h"
-#include "ofConstants.h"
 
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray(limit() / 2, limit() / 2, limit() / 2);
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white(limit(), limit(), limit());
@@ -37,7 +36,7 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::dark
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkKhaki(0.741176*limit(),0.717647*limit(),0.419608*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkMagenta(0.545098*limit(),0*limit(),0.545098*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkOliveGreen(0.333333*limit(),0.419608*limit(),0.184314*limit());
-template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkorange(1*limit(),0.54902*limit(),0*limit());
+template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkOrange(1*limit(),0.54902*limit(),0*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkOrchid(0.6*limit(),0.196078*limit(),0.8*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkRed(0.545098*limit(),0*limit(),0*limit());
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::darkSalmon(0.913725*limit(),0.588235*limit(),0.478431*limit());
@@ -153,19 +152,19 @@ template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::yell
 
 template<typename A, typename B>
 A clampedSubtract(const A& a, const B& b) {
-	return CLAMP((float) a - (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a - (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a + (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedDivide(const A& a, const B& b) {
-	return CLAMP((float) a / (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a / (float) b, 0.f, ofColor_<A>::limit());
 }
 template<typename A, typename B>
 A clampedMultiply(const A& a, const B& b) {
-	return CLAMP((float) a * (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a * (float) b, 0.f, ofColor_<A>::limit());
 }
 
 template<typename PixelType>
@@ -239,10 +238,10 @@ void ofColor_<PixelType>::set(const ofColor_<PixelType>& color){
 
 template<typename PixelType>
 ofColor_<PixelType>& ofColor_<PixelType>::clamp(){
-	r = CLAMP(r, 0.0f, limit());
-	g = CLAMP(g, 0.0f, limit());
-	b = CLAMP(b, 0.0f, limit());
-	a = CLAMP(a, 0.0f, limit());
+	r = glm::clamp(float(r), 0.0f, limit());
+	g = glm::clamp(float(g), 0.0f, limit());
+	b = glm::clamp(float(b), 0.0f, limit());
+	a = glm::clamp(float(a), 0.0f, limit());
 	return *this;
 }
 
@@ -346,7 +345,7 @@ float ofColor_<PixelType>::getBrightness() const {
 
 template<typename PixelType>
 float ofColor_<PixelType>::getLightness() const {
-	return (r + g + b) / 3.f;
+	return r / 3. + g / 3. + b / 3.;
 }
 
 template<typename PixelType>
@@ -397,7 +396,7 @@ void ofColor_<PixelType>::setHue(float hue) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHueAngle(float angle) {
-	setHue(angle / 360. * limit());
+	setHue(angle / 360.0f * limit());
 }
 
 template<typename PixelType>
@@ -418,8 +417,8 @@ void ofColor_<PixelType>::setBrightness(float brightness) {
 
 template<typename PixelType>
 void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, float alpha) {
-	saturation = ofClamp(saturation, 0, limit());
-	brightness = ofClamp(brightness, 0, limit());
+	saturation = glm::clamp(saturation, 0.f, limit());
+	brightness = glm::clamp(brightness, 0.f, limit());
 	if(brightness == 0) { // black
 		set(0);
 	} else if(saturation == 0) { // grays
@@ -427,7 +426,7 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 	} else {
 		float hueSix = hue * 6.f / limit();
 		float saturationNorm = saturation / limit();
-		int hueSixCategory = (int) floorf(hueSix);
+		int hueSixCategory = (int)std::floor( hueSix );
 		float hueSixRemainder = hueSix - hueSixCategory;
 		PixelType pv = (PixelType) ((1.f - saturationNorm) * brightness);
 		PixelType qv = (PixelType) ((1.f - saturationNorm * hueSixRemainder) * brightness);

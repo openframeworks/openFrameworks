@@ -29,9 +29,12 @@ class ofApp : public ofBaseApp{
 		
 		int radius;
 		
-		ofPoint center;
+		glm::vec3 center;
 		
-		ofPoint point;
+		glm::vec3 point;
 		
 		ofPath angleArc;
+	
+		void checkMouse(float x, float y);
+	
 };

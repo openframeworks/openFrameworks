@@ -7,22 +7,27 @@
 
 #pragma once
 
-#include "ofMain.h"
+#include "ofTexture.h"
+#include <assimp/material.h>
 
 class ofxAssimpTexture {
 
 public:
-    
-    ofxAssimpTexture();
-    ofxAssimpTexture(ofTexture texture, string texturePath);
 
-    ofTexture & getTextureRef();
-    string getTexturePath();
-    bool hasTexture();
-    
+	void setup(const ofTexture & texture, const of::filesystem::path & texturePath, bool bTexRepeat = true);
+
+	ofTexture & getTextureRef();
+	of::filesystem::path getTexturePath();
+	bool hasTexture();
+
+	void setTextureType(aiTextureType aTexType);
+	aiTextureType getTextureType() const;
+	std::string getTextureTypeAsString() const;
+
 private:
-    
-    ofTexture texture;
-    string texturePath;
-    
+
+	ofTexture texture;
+	of::filesystem::path texturePath;
+	aiTextureType textureType;
+	std::string mTexTypeStr;
 };

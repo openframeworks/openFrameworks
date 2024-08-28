@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && defined(OF_UI_KIT)
+
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioToolbox.h>
 
@@ -30,7 +33,6 @@ typedef enum {
 @end
 
 @interface SoundStream : NSObject {
-    id<SoundStreamDelegate> delegate;
     SoundStreamType streamType;
     NSInteger numOfChannels;
     NSInteger sampleRate;
@@ -40,7 +42,7 @@ typedef enum {
     BOOL bInterruptedWhileRunning;
 }
 
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, strong) id<SoundStreamDelegate> delegate;
 @property (readonly) SoundStreamType streamType;
 @property (readonly) NSInteger numOfChannels;
 @property (readonly) NSInteger sampleRate;
@@ -49,9 +51,9 @@ typedef enum {
 @property (readonly) AudioUnit audioUnit;
 @property (assign) BOOL bInterruptedWhileRunning;
 
-- (id)initWithNumOfChannels:(NSInteger)numOfChannels
-             withSampleRate:(NSInteger)sampleRate
-             withBufferSize:(NSInteger)bufferSize;
+- (instancetype)initWithNumOfChannels:(NSInteger)numOfChannels
+                       withSampleRate:(NSInteger)sampleRate
+                       withBufferSize:(NSInteger)bufferSize;
 
 - (void)start;
 - (void)stop;
@@ -64,3 +66,4 @@ typedef enum {
 + (BOOL)shouldUseAudioSessionNotifications;
 
 @end
+#endif

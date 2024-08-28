@@ -1,6 +1,6 @@
+#include "ofGraphicsConstants.h"
 #include "ofPixels.h"
-#include "ofMath.h"
-#include <algorithm>
+#include "ofColor.h"
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
@@ -52,6 +52,76 @@ size_t ofPixels_<PixelType>::pixelBitsFromPixelFormat(ofPixelFormat format){
 			return 0;
 	}
 
+}
+
+template<>
+std::string ofToString(const ofPixelFormat & p) {
+	switch (p){
+		case OF_PIXELS_GRAY:
+			return "OF_PIXELS_GRAY";
+		break;
+		case OF_PIXELS_GRAY_ALPHA:
+			return "OF_PIXELS_GRAY_ALPHA";
+		break;
+		case OF_PIXELS_RGB:
+			return "OF_PIXELS_RGB";
+		break;
+		case OF_PIXELS_BGR:
+			return "OF_PIXELS_BGR";
+		break;
+		case OF_PIXELS_RGBA:
+			return "OF_PIXELS_RGBA";
+		break;
+		case OF_PIXELS_BGRA:
+			return "OF_PIXELS_BGRA";
+		break;
+		case OF_PIXELS_RGB565:
+			return "OF_PIXELS_RGB565";
+		break;
+		case OF_PIXELS_NV12:
+			return "OF_PIXELS_NV12";
+		break;
+		case OF_PIXELS_NV21:
+			return "OF_PIXELS_NV21";
+		break;
+		case OF_PIXELS_YV12:
+			return "OF_PIXELS_YV12";
+		break;
+		case OF_PIXELS_I420:
+			return "OF_PIXELS_I420";
+		break;
+		case OF_PIXELS_YUY2:
+			return "OF_PIXELS_YUY2";
+		break;
+		case OF_PIXELS_UYVY:
+			return "OF_PIXELS_UYVY";
+		break;
+		case OF_PIXELS_Y:
+			return "OF_PIXELS_Y";
+		break;
+		case OF_PIXELS_U:
+			return "OF_PIXELS_U";
+		break;
+		case OF_PIXELS_V:
+			return "OF_PIXELS_V";
+		break;
+		case OF_PIXELS_UV:
+			return "OF_PIXELS_UV";
+		break;
+		case OF_PIXELS_VU:
+			return "OF_PIXELS_VU";
+		break;
+		case OF_PIXELS_NUM_FORMATS:
+			return "OF_PIXELS_NUM_FORMATS";
+		break;
+		case OF_PIXELS_UNKNOWN:
+			return "OF_PIXELS_UNKNOWN";
+		break;
+		case OF_PIXELS_NATIVE:
+			return "OF_PIXELS_NATIVE";
+		break;
+	}
+	return "OF_PIXELS_UNKNOWN";
 }
 
 template<typename PixelType>
@@ -140,7 +210,7 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	}
 }
 
-string ofToString(ofPixelFormat pixelFormat){
+std::string ofToString(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
 			return "RGB";
@@ -326,7 +396,7 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w
 	width= w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat) / sizeof(PixelType);
+	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat);
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -460,7 +530,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize / sizeof(PixelType);
+	pixelsSize = newSize;
 
 	pixels = new PixelType[pixelsSize];
 	bAllocated = true;
@@ -801,7 +871,7 @@ size_t ofPixels_<PixelType>::getNumPlanes() const{
 
 template<typename PixelType>
 ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(size_t planeIdx){
-	planeIdx = ofClamp(planeIdx,0,getNumPlanes());
+	planeIdx = glm::clamp(planeIdx, size_t(0), getNumPlanes());
 	ofPixels_<PixelType> plane;
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
@@ -871,7 +941,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(size_t planeIdx){
 		case OF_PIXELS_UNKNOWN:
 			break;
 	}
-	return std::move(plane);
+	return plane;
 }
 
 template<typename PixelType>
@@ -931,12 +1001,12 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(size_t channel) const{
 	if(channels==0) return channelPixels;
 
 	channelPixels.allocate(width,height,1);
-	channel = ofClamp(channel,0,channels-1);
+	channel = glm::clamp(channel, size_t(0), channels-1);
 	iterator channelPixel = channelPixels.begin();
 	for(auto p: getConstPixelsIter()){
 		*channelPixel++ = p[channel];
 	}
-	return std::move(channelPixels);
+	return channelPixels;
 }
 
 template<typename PixelType>
@@ -944,7 +1014,7 @@ void ofPixels_<PixelType>::setChannel(size_t channel, const ofPixels_<PixelType>
 	size_t channels = channelsFromPixelFormat(pixelFormat);
 	if(channels==0) return;
 
-	channel = ofClamp(channel,0,channels-1);
+	channel = glm::clamp(channel, size_t(0), channels-1);
 	const_iterator channelPixel = channelPixels.begin();
 	for(auto p: getPixelsIter()){
 		p[channel] = *channelPixel++;
@@ -973,8 +1043,8 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, size_t x, size_t 
 			return;
 		}
 
-		_width = ofClamp(_width,1,getWidth());
-		_height = ofClamp(_height,1,getHeight());
+		_width = glm::clamp(_width, size_t(1), getWidth());
+		_height = glm::clamp(_height, size_t(1), getHeight());
 
 		if ((toPix.width != _width) || (toPix.height != _height) || (toPix.pixelFormat != pixelFormat)){
 			toPix.allocate(_width, _height, pixelFormat);
@@ -1253,6 +1323,9 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
 	a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
 	a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
 
+	if (std::is_floating_point<PixelType>::value) {
+		return std::min(1.0f, std::max(out, 0.0f));
+	}
 	return std::min(static_cast<size_t>(255), std::max(static_cast<size_t>(out), static_cast<size_t>(0)));
 }
 
@@ -1286,8 +1359,8 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 				float srcx = 0.5;
 				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
-					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
-					for (size_t k=0; k<bytesPerPixel; k++){
+					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * channelsFromPixelFormat(pixelFormat);
+					for (size_t k=0; k< channelsFromPixelFormat(pixelFormat); k++){
 						dstPixels[dstIndex] = pixels[pixelIndex];
 						dstIndex++;
 						pixelIndex++;
@@ -1316,19 +1389,19 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			size_t patchIndex;
 			float patch[16];
 
-			size_t srcRowBytes = srcWidth*bytesPerPixel;
+			size_t srcRowBytes = srcWidth*channelsFromPixelFormat(pixelFormat);
 			size_t loIndex = (srcRowBytes)+1;
-			size_t hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
+			size_t hiIndex = (srcWidth*srcHeight*channelsFromPixelFormat(pixelFormat))-(srcRowBytes)-1;
 
 			for (size_t dsty=0; dsty<dstHeight; dsty++){
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
 
-					size_t   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
+					size_t   dstIndex0 = (dsty*dstWidth + dstx) * channelsFromPixelFormat(pixelFormat);
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
 					size_t   srcx = static_cast<size_t>(std::min(srcWidth-1, static_cast<size_t>(srcxf)));
 					size_t   srcy = static_cast<size_t>(std::min(srcHeight-1, static_cast<size_t>(srcyf)));
-					size_t   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
+					size_t   srcIndex0 = (srcy*srcWidth + srcx) * channelsFromPixelFormat(pixelFormat);
 
 					px1 = srcxf - srcx;
 					py1 = srcyf - srcy;
@@ -1337,14 +1410,14 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 					py2 = py1 * py1;
 					py3 = py2 * py1;
 
-					for (size_t k=0; k<bytesPerPixel; k++){
+					for (size_t k=0; k<channelsFromPixelFormat(pixelFormat); k++){
 						size_t   dstIndex = dstIndex0+k;
 						size_t   srcIndex = srcIndex0+k;
 
 						for (size_t dy=0; dy<4; dy++) {
 							patchRow = srcIndex + ((dy-1)*srcRowBytes);
 							for (size_t dx=0; dx<4; dx++) {
-								patchIndex = patchRow + (dx-1)*bytesPerPixel;
+								patchIndex = patchRow + (dx-1)*channelsFromPixelFormat(pixelFormat);
 								if ((patchIndex >= loIndex) && (patchIndex < hiIndex)) {
 									srcColor = pixels[patchIndex];
 								}
@@ -1388,7 +1461,7 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, size_t xTo, size
 
 template<typename A, typename B>
 inline A clampedAdd(const A& a, const B& b) {
-	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+	return glm::clamp((float) a + (float) b, 0.f, ofColor_<A>::limit());
 }
 
 

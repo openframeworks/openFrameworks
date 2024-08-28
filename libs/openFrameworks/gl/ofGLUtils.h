@@ -5,67 +5,69 @@
  *      Author: arturo
  */
 
-#ifndef OFGLUTILS_H_
-#define OFGLUTILS_H_
+#pragma once
 
-#include "ofConstants.h"
-#include "ofTypes.h"
-#include "ofPixels.h"
+#include "ofGraphicsConstants.h"
+// MARK: Targets / Defines
+//#include "ofConstants.h"
 
 class ofShader;
 class ofGLProgrammableRenderer;
 class ofBaseGLRenderer;
 class ofTexture;
 
-enum ofPrimitiveMode{
-	OF_PRIMITIVE_TRIANGLES,
-	OF_PRIMITIVE_TRIANGLE_STRIP,
-	OF_PRIMITIVE_TRIANGLE_FAN,
-	OF_PRIMITIVE_LINES,
-	OF_PRIMITIVE_LINE_STRIP,
-	OF_PRIMITIVE_LINE_LOOP,
-	OF_PRIMITIVE_POINTS,
-#ifndef TARGET_OPENGLES
-    OF_PRIMITIVE_LINES_ADJACENCY,
-    OF_PRIMITIVE_LINE_STRIP_ADJACENCY,
-    OF_PRIMITIVE_TRIANGLES_ADJACENCY,
-    OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY,
-    OF_PRIMITIVE_PATCHES
-#endif
-};
+template<typename T>
+class ofPixels_;
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels & ofPixelsRef;
 
-enum ofPolyRenderMode{
-	OF_MESH_POINTS,
-	OF_MESH_WIREFRAME,
-	OF_MESH_FILL
-};
+enum ofImageType: short;
+enum ofPixelFormat: short;
 
-int ofGetGlInternalFormat(const ofPixels& pix);
-int ofGetGlInternalFormat(const ofShortPixels& pix);
-int ofGetGlInternalFormat(const ofFloatPixels& pix);
+int ofGetGLInternalFormat(const ofPixels & pixels);
+int ofGetGLInternalFormat(const ofShortPixels & pixels);
+int ofGetGLInternalFormat(const ofFloatPixels & pixels);
+
+[[deprecated("Use ofGetGLInternalFormat()")]]
+int ofGetGlInternalFormat(const ofPixels & pixels);
+[[deprecated("Use ofGetGLInternalFormat()")]]
+int ofGetGlInternalFormat(const ofShortPixels & pixels);
+[[deprecated("Use ofGetGLInternalFormat()")]]
+int ofGetGlInternalFormat(const ofFloatPixels & pixels);
 
 //---------------------------------
 // this is helpful for debugging ofTexture
-string ofGetGlInternalFormatName(int glInternalFormat);
-int ofGetGLFormatFromInternal(int glInternalFormat);
+
+std::string ofGetGLInternalFormatName(int glInternalFormat);
+int ofGetGLFormatFromInternal(int gInternalFormat);
+int ofGetGLTypeFromInternal(int glInternalFormat);
+
+[[deprecated("Use ofGetGLInternalFormatName()")]]
+std::string ofGetGlInternalFormatName(int glInternalFormat);
+[[deprecated("Use ofGetGLTypeFromInternal()")]]
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
-shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
+std::shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
+int ofGetGLType(const ofPixels & pixels);
+int ofGetGLType(const ofShortPixels & pixels);
+int ofGetGLType(const ofFloatPixels & pixels);
 
+[[deprecated("Use ofGetGLType()")]]
 int ofGetGlType(const ofPixels & pixels);
+[[deprecated("Use ofGetGLType()")]]
 int ofGetGlType(const ofShortPixels & pixels);
+[[deprecated("Use ofGetGLType()")]]
 int ofGetGlType(const ofFloatPixels & pixels);
 
 ofImageType ofGetImageTypeFromGLType(int glType);
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode m);
-
 ofPolyRenderMode ofGetOFPolyMode(GLuint m);
 
-
 GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode);
-
 ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode);
 
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat);
@@ -75,18 +77,33 @@ int ofGetNumChannelsFromGLFormat(int glFormat);
 void ofSetPixelStoreiAlignment(GLenum pname, int w, int bpc, int numChannels);
 void ofSetPixelStoreiAlignment(GLenum panme, int stride);
 
-vector<string> ofGLSupportedExtensions();
-bool ofGLCheckExtension(string searchName);
+std::vector<std::string> ofGLSupportedExtensions();
+bool ofGLCheckExtension(std::string searchName);
 bool ofGLSupportsNPOTTextures();
 
 bool ofIsGLProgrammableRenderer();
+
+template<class T>
+[[deprecated("Use ofGetGLFormat()")]]
+int ofGetGlFormat(const ofPixels_<T> & pixels);
 
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {
 	return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
 }
 
-string ofGLSLVersionFromGL(int major, int minor);
+
+template<class T>
+int ofGetGLFormat(const ofPixels_<T> & pixels) {
+    return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
+}
+
+std::string ofGLSLVersionFromGL(int major, int minor);
+std::string ofGLSLVersionFromGL();
+std::string ofGLSLGetDefaultHeader();
+#ifdef TARGET_OPENGLES
+int ofGLESVersionFromGL();
+#endif
 
 #ifndef TARGET_OPENGLES
 void ofEnableGLDebugLog();
@@ -142,8 +159,17 @@ void ofDisableGLDebugLog();
 	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
 	#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
 	#ifdef GL_DEPTH_COMPONENT32_OES
-        #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
+		#ifndef GL_DEPTH_COMPONENT32
+			#define GL_DEPTH_COMPONENT32					GL_DEPTH_COMPONENT32_OES
+		#endif
     #endif
+	
+	#ifndef GL_RGBA32F
+		#ifdef GL_RGBA32F_EXT
+			#define GL_RGBA32F								GL_RGBA32F_EXT
+		#endif
+	#endif
+
     #ifdef TARGET_OPENGLES
         #ifndef GL_UNSIGNED_INT
             #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES
@@ -151,7 +177,16 @@ void ofDisableGLDebugLog();
         #ifndef GL_HALF_FLOAT
             #define GL_HALF_FLOAT                           GL_HALF_FLOAT_OES
         #endif
+	#ifndef GL_TEXTURE_CUBE_MAP
+		#ifdef GL_TEXTURE_CUBE_MAP_OES
+            #define GL_TEXTURE_CUBE_MAP               		GL_TEXTURE_CUBE_MAP_OES
+		#endif
+	#endif
     #endif
-#endif
 
-#endif /* OFGLUTILS_H_ */
+	#ifndef glTexStorage2D
+		#ifdef glTexStorage2DEXT
+			#define glTexStorage2D							glTexStorage2DEXT
+		#endif
+	#endif
+#endif

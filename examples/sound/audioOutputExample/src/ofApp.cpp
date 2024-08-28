@@ -142,10 +142,10 @@ void ofApp::draw(){
 void ofApp::keyPressed  (int key){
 	if (key == '-' || key == '_' ){
 		volume -= 0.05;
-		volume = MAX(volume, 0);
+		volume = std::max(volume, 0.f);
 	} else if (key == '+' || key == '=' ){
 		volume += 0.05;
-		volume = MIN(volume, 1);
+		volume = std::min(volume, 1.f);
 	}
 	
 	if( key == 's' ){
@@ -170,7 +170,7 @@ void ofApp::mouseMoved(int x, int y ){
 	float height = (float)ofGetHeight();
 	float heightPct = ((height-y) / height);
 	targetFrequency = 2000.0f * heightPct;
-	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
+	phaseAdderTarget = (targetFrequency / (float) sampleRate) * glm::two_pi<float>();
 }
 
 //--------------------------------------------------------------
@@ -212,20 +212,20 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
-	// keep phase in the range of 0-TWO_PI like this:
-	while (phase > TWO_PI){
-		phase -= TWO_PI;
+	// keep phase in the range of 0-glm::two_pi<float>() like this:
+	while (phase > glm::two_pi<float>()){
+		phase -= glm::two_pi<float>();
 	}
 
 	if ( bNoise == true){
 		// ---------------------- noise --------------
-		for (int i = 0; i < buffer.getNumFrames(); i++){
+		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = ofRandom(0, 1) * volume * leftScale;
 			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = ofRandom(0, 1) * volume * rightScale;
 		}
 	} else {
 		phaseAdder = 0.95f * phaseAdder + 0.05f * phaseAdderTarget;
-		for (int i = 0; i < buffer.getNumFrames(); i++){
+		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			phase += phaseAdder;
 			float sample = sin(phase);
 			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = sample * volume * leftScale;

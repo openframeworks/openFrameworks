@@ -1,3 +1,1 @@
-ofxAndroid
-ofxAccelerometer
 ofxGui

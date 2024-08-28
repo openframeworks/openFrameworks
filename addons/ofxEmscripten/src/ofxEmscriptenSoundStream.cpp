@@ -8,13 +8,14 @@
 #include "ofxEmscriptenSoundStream.h"
 #include "html5audio.h"
 #include "ofBaseApp.h"
-#include "ofBaseTypes.h"
+#include "ofLog.h"
+
+using namespace std;
 
 int ofxEmscriptenAudioContext();
 
 ofxEmscriptenSoundStream::ofxEmscriptenSoundStream()
 :context(ofxEmscriptenAudioContext())
-,stream(-1)
 ,tickCount(0)
 {
 
@@ -25,7 +26,7 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 }
 
 std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice::Api api) const{
-	ofLogWarning() << "ofSoundStream::getDeviceList() not supported in emscripten";
+	html5audio_list_devices();
 	return vector<ofSoundDevice>();
 }
 
@@ -33,7 +34,7 @@ bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	inbuffer.allocate(settings.bufferSize, settings.numInputChannels);
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
 	this->settings = settings;
-	stream = html5audio_stream_create(context,settings.bufferSize,settings.numInputChannels,settings.numOutputChannels,inbuffer.getBuffer().data(),outbuffer.getBuffer().data(),&audio_cb,this);
+	html5audio_stream_create(settings.bufferSize,settings.numInputChannels,settings.numOutputChannels,inbuffer.getBuffer().data(),outbuffer.getBuffer().data(),&audio_cb,this);
 	return true;
 }
 
@@ -45,7 +46,6 @@ void ofxEmscriptenSoundStream::setOutput(ofBaseSoundOutput* soundOutput) {
 	this->settings.setOutListener(soundOutput);
 }
 
-
 ofSoundDevice ofxEmscriptenSoundStream::getInDevice() const{
 	return ofSoundDevice();
 }
@@ -55,16 +55,15 @@ ofSoundDevice ofxEmscriptenSoundStream::getOutDevice() const{
 }
 
 void ofxEmscriptenSoundStream::start() {
-
+	html5audio_context_start();
 }
 
 void ofxEmscriptenSoundStream::stop() {
-
+	html5audio_context_stop();
 }
 
 void ofxEmscriptenSoundStream::close() {
-	stream = -1;
-	html5audio_stream_free(stream);
+	html5audio_stream_free();
 }
 
 uint64_t ofxEmscriptenSoundStream::getTickCount() const{
@@ -80,7 +79,7 @@ int ofxEmscriptenSoundStream::getNumOutputChannels() const{
 }
 
 int ofxEmscriptenSoundStream::getSampleRate() const{
-	return html5audio_context_samplerate(context);
+	return html5audio_context_samplerate();
 }
 
 int ofxEmscriptenSoundStream::getBufferSize() const{

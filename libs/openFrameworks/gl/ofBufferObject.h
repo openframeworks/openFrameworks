@@ -1,8 +1,10 @@
 #pragma once
 
+// MARK: Targets plus GL/ headers
 #include "ofConstants.h"
-#include "ofTypes.h"
-#include "ofPixels.h"
+
+template<typename T>
+class ofPixels_;
 
 class ofBufferObject {
 public:
@@ -20,7 +22,7 @@ public:
 	void allocate(GLsizeiptr bytes, const void * data, GLenum usage);
 
 	template<typename T>
-	void allocate(const vector<T> & data, GLenum usage){
+	void allocate(const std::vector<T> & data, GLenum usage){
 		allocate(data.size()*sizeof(T),&data[0],usage);
 	}
 
@@ -38,7 +40,7 @@ public:
 	/// binds the passed target to buffer 0
 	void unbind(GLenum target) const;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	/// glBindBufferBase: https://www.opengl.org/sdk/docs/man4/html/glBindBufferBase.xhtml
 	void bindBase(GLenum target,GLuint index) const;
 
@@ -70,7 +72,7 @@ public:
 	/// typed version of setData, same functionality but guesses the size from the size
 	/// of the passed vector and size of the type
 	template<typename T>
-	void setData(const vector<T> & data, GLenum usage){
+	void setData(const std::vector<T> & data, GLenum usage){
 		setData(data.size()*sizeof(T),&data[0],usage);
 	}
 
@@ -82,14 +84,14 @@ public:
 	/// typed version of updateData, same functionality but guesses the size from the size
 	/// of the passed vector and size of the type
 	template<typename T>
-	void updateData(GLintptr offset, const vector<T> & data){
+	void updateData(GLintptr offset, const std::vector<T> & data){
 		updateData(offset,data.size()*sizeof(T),&data[0]);
 	}
 
     /// typed version of updateData, same functionality but guesses the size from the size
     /// of the passed vector and size of the type
     template<typename T>
-    void updateData(const vector<T> & data){
+    void updateData(const std::vector<T> & data){
         updateData(0,data.size()*sizeof(T),&data[0]);
     }
 
@@ -142,6 +144,7 @@ private:
 		GLsizeiptr size;
 		GLenum lastTarget;
 		bool isBound;
+		bool isDSA;
 	};
-	shared_ptr<Data> data;
+	std::shared_ptr<Data> data;
 };

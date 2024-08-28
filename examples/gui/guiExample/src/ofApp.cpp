@@ -11,7 +11,7 @@ void ofApp::setup(){
 	gui.setup(); // most of the time you don't need a name
 	gui.add(filled.setup("fill", true));
 	gui.add(radius.setup("radius", 140, 10, 300));
-	gui.add(center.setup("center", ofVec2f(ofGetWidth()*.5, ofGetHeight()*.5), ofVec2f(0, 0), ofVec2f(ofGetWidth(), ofGetHeight())));
+	gui.add(center.setup("center", {ofGetWidth()*.5, ofGetHeight()*.5}, {0, 0}, {ofGetWidth(), ofGetHeight()}));
 	gui.add(color.setup("color", ofColor(100, 100, 140), ofColor(0, 0), ofColor(255, 255)));
 	gui.add(circleResolution.setup("circle res", 5, 3, 90));
 	gui.add(twoCircles.setup("two circles"));
@@ -45,8 +45,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::white, ofColor::gray);
-    
+	ofBackgroundGradient(ofColor::white, ofColor::gray);
+	
 	if(filled){
 		ofFill();
 	}else{
@@ -58,7 +58,7 @@ void ofApp::draw(){
 		ofDrawCircle(center->x-radius*.5, center->y, radius );
 		ofDrawCircle(center->x+radius*.5, center->y, radius );
 	}else{
-		ofDrawCircle((ofVec2f)center, radius );
+		ofDrawCircle(center, radius );
 	}
 	
 	// auto draw?
@@ -121,7 +121,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    screenSize = ofToString(w) + "x" + ofToString(h);
+	screenSize = ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

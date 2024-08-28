@@ -9,19 +9,17 @@
  */
 
 #pragma once
-#include "ofConstants.h"
+
+// MARK: Optimization possible if moving functionality to cpp files in operators, forward declarator in ofVec3f
 #include "ofVec3f.h"
 #include "ofVec4f.h"
-#include <cmath>
 
 #if (_MSC_VER)       
 // make microsoft visual studio complain less about double / float conversion.
 #pragma warning(disable : 4244)
 #endif
 
-
 class ofMatrix4x4;
-
 
 class ofQuaternion {
 public:
@@ -44,8 +42,8 @@ public:
     // rotation order is axis3,axis2,axis1
     inline ofQuaternion(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3);
     
-	inline ofQuaternion(const glm::quat & q);
-	inline operator glm::quat() const;
+	ofQuaternion(const glm::quat & q);
+	operator glm::quat() const;
 
     /// \}
     
@@ -180,8 +178,8 @@ public:
     inline const ofQuaternion operator -(const ofQuaternion& rhs) const;    ///< Binary subtraction
     inline const ofQuaternion operator -() const;                           ///< returns the negative of the quaternion. calls operator -() on the Vec4
     
-    friend ostream& operator<<(ostream& os, const ofQuaternion &q);
-    friend istream& operator>>(istream& is, ofQuaternion &q);
+    friend std::ostream& operator<<(std::ostream& os, const ofQuaternion &q);
+    friend std::istream& operator>>(std::istream& is, ofQuaternion &q);
     
     /// \}
 };
@@ -219,14 +217,6 @@ ofQuaternion::ofQuaternion(float angle, const ofVec3f& axis) {
 //----------------------------------------
 ofQuaternion::ofQuaternion(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3) {
     makeRotate(angle1, axis1, angle2, axis2, angle3, axis3);
-}
-
-//----------------------------------------
-ofQuaternion::ofQuaternion(const glm::quat & q):_v(q.x, q.y, q.z, q.w){}
-
-//----------------------------------------
-ofQuaternion::operator glm::quat() const{
-	return glm::quat(_v.w, glm::vec3(_v.x, _v.y, _v.z));
 }
 
 //----------------------------------------
@@ -466,7 +456,7 @@ const ofQuaternion ofQuaternion::operator -() const {
 
 //----------------------------------------
 float ofQuaternion::length() const {
-    return sqrt(_v.x*_v.x + _v.y*_v.y + _v.z*_v.z + _v.w*_v.w);
+    return std::sqrt(_v.x*_v.x + _v.y*_v.y + _v.z*_v.z + _v.w*_v.w);
 }
 
 
@@ -503,7 +493,7 @@ ofVec3f ofQuaternion::operator*(const ofVec3f& v) const {
 
 void ofQuaternion::normalize(){
 	float len = _v.w*_v.w + _v.x*_v.x + _v.y*_v.y + _v.z*_v.z;
-	float factor = 1.0f / sqrt(len);
+	float factor = 1.0f / std::sqrt(len);
 	_v.x *= factor;
 	_v.y *= factor;
 	_v.z *= factor;

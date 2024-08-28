@@ -42,6 +42,7 @@ void ofApp::update(){
 
 		if( deltaTime > 5000 ){
 			tcpClient.setup("127.0.0.1", 11999);
+			tcpClient.setMessageDelimiter("\n");
 			connectTime = ofGetElapsedTimeMillis();
 		}
 
@@ -69,18 +70,17 @@ void ofApp::draw(){
 
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(ofKeyEventArgs & key){
 	// you can only type if you're connected
 	// we accumulate 1 line of text and send every typed character
 	// on the next character after a breakline we clear the buffer
 	if(tcpClient.isConnected()){
-		if(key == OF_KEY_RETURN) key = '\n';
-		if(key == OF_KEY_BACKSPACE || key == OF_KEY_DEL){
-			if( !msgTx.empty()){
+		if(key.key == OF_KEY_BACKSPACE || key.key == OF_KEY_DEL){
+			if( !msgTx.empty() ){
 				msgTx = msgTx.substr(0, msgTx.size()-1);
 			}
-		}else{
-			msgTx += (char) key;
+		}else if (key.codepoint != 0){
+			ofUTF8Append(msgTx, key.codepoint);
 		}
 		tcpClient.send(msgTx);
 		if (!msgTx.empty() && msgTx.back() == '\n') {

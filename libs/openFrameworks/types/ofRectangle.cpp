@@ -1,7 +1,10 @@
-#include <cfloat>
 #include "ofRectangle.h"
+#include "ofLog.h"
 #include "ofVectorMath.h"
+#include "ofMath.h"
 
+using std::ostream;
+using std::istream;
 //----------------------------------------------------------
 ofRectangle::ofRectangle() : x(position.x), y(position.y) {
     set(0,0,0,0);
@@ -50,7 +53,7 @@ void ofRectangle::set(float px, float py, float w, float h) {
 
 //----------------------------------------------------------
 void ofRectangle::set(const glm::vec3& p, float w, float h) {
-	set(p.xy(),w,h);
+	set(glm::vec2(p), w, h);
 }
 
 //----------------------------------------------------------
@@ -65,17 +68,17 @@ void ofRectangle::set(const ofRectangle& rect){
 
 //----------------------------------------------------------
 void ofRectangle::set(const glm::vec3& p0, const glm::vec3& p1) {
-	set(p0.xy(), p1.xy());
+	set(glm::vec2(p0), glm::vec2(p1));
 }
 
 //----------------------------------------------------------
 void ofRectangle::set(const glm::vec2& p0, const glm::vec2& p1) {
 	float x0,y0,x1,y1;
 
-	x0 = MIN(p0.x, p1.x);
-	x1 = MAX(p0.x, p1.x);
-	y0 = MIN(p0.y, p1.y);
-	y1 = MAX(p0.y, p1.y);
+	x0 = std::min(p0.x, p1.x);
+	x1 = std::max(p0.x, p1.x);
+	y0 = std::min(p0.y, p1.y);
+	y1 = std::max(p0.y, p1.y);
 
 	float w = x1 - x0;
 	float h = y1 - y0;
@@ -128,7 +131,7 @@ void ofRectangle::setFromCenter(float px, float py, float w, float h) {
 
 //----------------------------------------------------------
 void ofRectangle::setFromCenter(const glm::vec3& p, float w, float h) {
-	setFromCenter(p.xy(),w,h);
+	setFromCenter(glm::vec2(p),w,h);
 }
 
 //----------------------------------------------------------
@@ -144,7 +147,7 @@ void ofRectangle::translate(float dx, float dy) {
 
 //----------------------------------------------------------
 void ofRectangle::translate(const glm::vec3& dp) {
-	translate(dp.xy());
+	translate(glm::vec2(dp));
 }
 
 //----------------------------------------------------------
@@ -177,7 +180,7 @@ void ofRectangle::scale(float sX, float sY) {
 
 //----------------------------------------------------------
 void ofRectangle::scale(const glm::vec3& s) {
-	scale(s.xy());
+	scale(glm::vec2(s));
 }
 
 //----------------------------------------------------------
@@ -207,7 +210,7 @@ void ofRectangle::scaleFromCenter(float sX, float sY) {
 
 //----------------------------------------------------------
 void ofRectangle::scaleFromCenter(const glm::vec3& s) {
-	scaleFromCenter(s.xy());
+	scaleFromCenter(glm::vec2(s));
 }
 
 //----------------------------------------------------------
@@ -283,13 +286,13 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
 
     if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING ||
        aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-        if(fabs(sw) >= FLT_EPSILON || fabs(sh) >= FLT_EPSILON) {
-            float wRatio = fabs(tw) / fabs(sw);
-            float hRatio = fabs(th) / fabs(sh);
+        if(std::abs(sw) >= std::numeric_limits<float>::epsilon() || std::abs(sh) >= FLT_EPSILON) {
+            float wRatio = std::abs(tw) / std::abs(sw);
+            float hRatio = std::abs(th) / std::abs(sh);
             if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
-                scale(MAX(wRatio,hRatio));
+				scale(std::max(wRatio,hRatio));
             } else if(aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-                scale(MIN(wRatio,hRatio));
+				scale(std::min(wRatio,hRatio));
             }
         } else {
             ofLogWarning("ofRectangle") << "scaleTo(): no scaling applied to avoid divide by zero, rectangle has 0 width and/or height: " << sw << "x" << sh;
@@ -389,7 +392,7 @@ void ofRectangle::alignTo(const glm::vec3& targetPoint,
 						  ofAlignHorz thisHorzAnchor,
 						  ofAlignVert thisVertAnchor) {
 
-	alignTo(targetPoint.xy(), thisHorzAnchor, thisVertAnchor);
+	alignTo(glm::vec2(targetPoint), thisHorzAnchor, thisVertAnchor);
 }
 
 //----------------------------------------------------------
@@ -431,7 +434,7 @@ bool ofRectangle::inside(float px, float py) const {
 
 //----------------------------------------------------------
 bool ofRectangle::inside(const glm::vec3& p) const {
-	return inside(p.xy());
+	return inside(glm::vec2(p));
 }
 
 //----------------------------------------------------------
@@ -449,7 +452,7 @@ bool ofRectangle::inside(const ofRectangle& rect) const {
 //----------------------------------------------------------
 bool ofRectangle::inside(const glm::vec3& p0, const glm::vec3& p1) const {
     // check to see if a line segment is inside the rectangle
-	return inside(p0.xy(), p1.xy());
+	return inside(glm::vec2(p0), glm::vec2(p1));
 }
 
 //----------------------------------------------------------
@@ -466,7 +469,7 @@ bool ofRectangle::intersects(const ofRectangle& rect) const {
 
 //----------------------------------------------------------
 bool ofRectangle::intersects(const glm::vec3& p0, const glm::vec3& p1) const {
-	return intersects(p0.xy(), p1.xy());
+	return intersects(glm::vec2(p0), glm::vec2(p1));
 }
 
 //----------------------------------------------------------
@@ -474,10 +477,10 @@ bool ofRectangle::intersects(const glm::vec2& p0, const glm::vec2& p1) const {
 	// check for a line intersection
 	glm::vec2 p;
 
-	auto topLeft     = getTopLeft().xy();
-	auto topRight    = getTopRight().xy();
-	auto bottomRight = getBottomRight().xy();
-	auto bottomLeft  = getBottomLeft().xy();
+	glm::vec2 topLeft(getTopLeft());
+	glm::vec2 topRight(getTopRight());
+	glm::vec2 bottomRight(getBottomRight());
+	glm::vec2 bottomLeft(getBottomLeft());
 
 	return inside(p0) || // check end inside
 		   inside(p1) || // check end inside
@@ -494,15 +497,15 @@ void ofRectangle::growToInclude(float px, float py) {
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const glm::vec3& p) {
-	growToInclude(p.xy());
+	growToInclude(glm::vec2(p));
 }
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const glm::vec2& p) {
-	float x0 = MIN(getMinX(),p.x);
-	float x1 = MAX(getMaxX(),p.x);
-	float y0 = MIN(getMinY(),p.y);
-	float y1 = MAX(getMaxY(),p.y);
+	float x0 = std::min(getMinX(),p.x);
+	float x1 = std::max(getMaxX(),p.x);
+	float y0 = std::min(getMinY(),p.y);
+	float y1 = std::max(getMaxY(),p.y);
 	float w = x1 - x0;
 	float h = y1 - y0;
 	set(x0,y0,w,h);
@@ -510,10 +513,10 @@ void ofRectangle::growToInclude(const glm::vec2& p) {
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const ofRectangle& rect) {
-    float x0 = MIN(getMinX(),rect.getMinX());
-    float x1 = MAX(getMaxX(),rect.getMaxX());
-    float y0 = MIN(getMinY(),rect.getMinY());
-    float y1 = MAX(getMaxY(),rect.getMaxY());
+	float x0 = std::min(getMinX(),rect.getMinX());
+	float x1 = std::max(getMaxX(),rect.getMaxX());
+	float y0 = std::min(getMinY(),rect.getMinY());
+	float y1 = std::max(getMaxY(),rect.getMaxY());
     float w = x1 - x0;
     float h = y1 - y0;
     set(x0,y0,w,h);
@@ -521,7 +524,7 @@ void ofRectangle::growToInclude(const ofRectangle& rect) {
 
 //----------------------------------------------------------
 void ofRectangle::growToInclude(const glm::vec3& p0, const glm::vec3& p1) {
-	growToInclude(p0.xy(), p1.xy());
+	growToInclude(glm::vec2(p0), glm::vec2(p1));
 }
 
 //----------------------------------------------------------
@@ -533,14 +536,14 @@ void ofRectangle::growToInclude(const glm::vec2& p0, const glm::vec2& p1) {
 //----------------------------------------------------------
 ofRectangle ofRectangle::getIntersection(const ofRectangle& rect) const {
 
-    float x0 = MAX(getMinX(),rect.getMinX());
-    float x1 = MIN(getMaxX(),rect.getMaxX());
+	float x0 = std::max(getMinX(),rect.getMinX());
+	float x1 = std::min(getMaxX(),rect.getMaxX());
 
     float w = x1 - x0;
     if(w < 0.0f) return ofRectangle(0,0,0,0); // short circuit if needed
 
-    float y0 = MAX(getMinY(),rect.getMinY());
-    float y1 = MIN(getMaxY(),rect.getMaxY());
+	float y0 = std::max(getMinY(),rect.getMinY());
+	float y1 = std::min(getMaxY(),rect.getMaxY());
 
     float h = y1 - y0;
     if(h < 0.0f) return ofRectangle(0,0,0,0);  // short circuit if needed
@@ -586,17 +589,17 @@ bool ofRectangle::isStandardized() const {
 
 //----------------------------------------------------------
 float ofRectangle::getArea() const {
-    return fabs(width) * fabs(height);
+    return std::abs(width) * std::abs(height);
 }
 
 //----------------------------------------------------------
 float ofRectangle::getPerimeter() const {
-    return 2.0f * fabs(width) + 2.0f * fabs(height);
+    return 2.0f * std::abs(width) + 2.0f * std::abs(height);
 }
 
 //----------------------------------------------------------
 float ofRectangle::getAspectRatio() const {
-    return fabs(width) / fabs(height);
+    return std::abs(width) / std::abs(height);
 }
 
 //----------------------------------------------------------
@@ -616,22 +619,22 @@ glm::vec3 ofRectangle::getMax() const {
 
 //----------------------------------------------------------
 float ofRectangle::getMinX() const {
-    return MIN(x, x + width);  // - width
+	return std::min(x, x + width);  // - width
 }
 
 //----------------------------------------------------------
 float ofRectangle::getMaxX() const {
-    return MAX(x, x + width);  // - width
+	return std::max(x, x + width);  // - width
 }
 
 //----------------------------------------------------------
 float ofRectangle::getMinY() const{
-    return MIN(y, y + height);  // - height
+	return std::min(y, y + height);  // - height
 }
 
 //----------------------------------------------------------
 float ofRectangle::getMaxY() const {
-    return MAX(y, y + height);  // - height
+	return std::max(y, y + height);  // - height
 }
 
 //----------------------------------------------------------
@@ -790,7 +793,7 @@ ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
 
 //----------------------------------------------------------
 ofRectangle ofRectangle::operator + (const glm::vec3 & point){
-	return operator+(point.xy());
+	return operator+(glm::vec2(point));
 }
 
 //----------------------------------------------------------
@@ -803,7 +806,7 @@ ofRectangle ofRectangle::operator + (const glm::vec2 & point){
 
 //----------------------------------------------------------
 ofRectangle ofRectangle::operator - (const glm::vec3 & point){
-	return operator-(point.xy());
+	return operator-(glm::vec2(point));
 }
 
 //----------------------------------------------------------

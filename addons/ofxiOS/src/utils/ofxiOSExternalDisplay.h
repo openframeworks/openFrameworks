@@ -28,7 +28,7 @@ public:
     static void alertExternalDisplayChanged();
     
     //-------------------------------------------------------
-    static vector<ofxiOSExternalDisplayMode> getExternalDisplayModes();
+    static std::vector<ofxiOSExternalDisplayMode> getExternalDisplayModes();
     static bool displayOnExternalScreen(ofxiOSExternalDisplayMode externalDisplayMode);
     static bool displayOnExternalScreenWithPreferredDisplayMode();
     static bool displayOnDeviceScreen();

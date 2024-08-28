@@ -1,5 +1,8 @@
 #include "ofXml.h"
 #include "ofUtils.h"
+#include <clocale>
+
+using std::string;
 
 ofXml::ofXml()
 :doc(new pugi::xml_document){
@@ -12,13 +15,15 @@ ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml
 
 }
 
-bool ofXml::load(const std::filesystem::path & file){
+bool ofXml::load(const of::filesystem::path & file){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
-	if(auxDoc->load_file(ofToDataPath(file).c_str())){
+	auto res = auxDoc->load_file(ofToDataPath(file).c_str());
+	if( res ){
 		doc = auxDoc;
 		xml = doc->root();
 		return true;
 	}else{
+		ofLogWarning("ofXml") << "Cannot load file " << file << ": " << res.description();
 		return false;
 	}
 }
@@ -28,8 +33,12 @@ bool ofXml::load(const ofBuffer & buffer){
 }
 
 bool ofXml::parse(const std::string & xmlStr){
-	auto auxDoc = std::make_shared<pugi::xml_document>();
-	if(auxDoc->load(xmlStr.c_str())){
+	auto auxDoc { std::make_shared<pugi::xml_document>() };
+    #if ( defined(PUGIXML_VERSION) && PUGIXML_VERSION >= 150 )
+        if(auxDoc->load_string(xmlStr.c_str())){
+    #else
+        if(auxDoc->load(xmlStr.c_str())){
+    #endif
 		doc = auxDoc;
 		xml = doc->root();
 		return true;
@@ -38,9 +47,12 @@ bool ofXml::parse(const std::string & xmlStr){
 	}
 }
 
-bool ofXml::save(const std::filesystem::path & file) const{
+bool ofXml::save(const of::filesystem::path & file) const{
 	if(xml == doc->root()){
-		return doc->save_file(ofToDataPath(file).c_str());
+		auto res = doc->save_file(ofToDataPath(file).c_str());
+		ofLogVerbose("ofXml")<<"save: "<< res;
+		ofLogVerbose("ofXml")<<this->toString();
+		return res;
 	}else{
 		pugi::xml_document doc;
 		if(doc.append_copy(xml.root())){
@@ -50,8 +62,13 @@ bool ofXml::save(const std::filesystem::path & file) const{
 	return false;
 }
 
+void ofXml::clear(){
+	doc.reset(new pugi::xml_document);
+	xml = doc->root();
+}
+
 std::string ofXml::toString(const std::string & indent) const{
-	ostringstream stream;
+	std::ostringstream stream;
 	if(xml == doc->root()){
 		doc->print(stream, indent.c_str());
 	}else{
@@ -89,6 +106,10 @@ ofXml ofXml::appendChild(ofXml && xml){
 ofXml ofXml::prependChild(ofXml && xml){
 	return ofXml(doc, this->xml.prepend_move(xml.xml));
 }
+
+bool ofXml::removeChild(ofXml && node){
+	return xml.remove_child(node.xml);
+}
 #endif
 
 ofXml ofXml::appendChild(const std::string & name){
@@ -109,6 +130,10 @@ ofXml ofXml::insertChildBefore(const std::string & name, const ofXml & before){
 
 bool ofXml::removeChild(const std::string & name){
 	return xml.remove_child(name.c_str());
+}
+
+bool ofXml::removeChild(const ofXml & node){
+	return xml.remove_child(node.xml);
 }
 
 ofXml ofXml::getNextSibling() const{
@@ -135,13 +160,16 @@ ofXml ofXml::getLastChild() const{
 	return ofXml(doc, this->xml.last_child());
 }
 
+ofXml ofXml::getParent() const {
+	return ofXml(doc, this->xml.parent());
+}
 
 ofXml::Attribute ofXml::getAttribute(const std::string & name) const{
 	return this->xml.attribute(name.c_str());
 }
 
-ofXml::Range<ofXmlIterator<pugi::xml_attribute_iterator>> ofXml::getAttributes() const{
-	return ofXml::Range<ofXmlIterator<pugi::xml_attribute_iterator>>(doc, this->xml.attributes());
+ofXml::Range<ofXmlAttributeIterator> ofXml::getAttributes() const{
+	return ofXml::Range<ofXmlAttributeIterator>(doc, this->xml.attributes());
 }
 
 ofXml::Attribute ofXml::getFirstAttribute() const{
@@ -153,22 +181,33 @@ ofXml::Attribute ofXml::getLastAttribute() const{
 }
 
 ofXml::Attribute ofXml::appendAttribute(const std::string & name){
-	if(xml==doc->document_element()){
-		xml = doc->append_child(pugi::node_element);
-	}
 	return this->xml.append_attribute(name.c_str());
 }
 
 ofXml::Attribute ofXml::prependAttribute(const std::string & name){
-	if(xml==doc->document_element()){
-		xml = doc->append_child(pugi::node_element);
-	}
 	return this->xml.prepend_attribute(name.c_str());
+}
+
+bool ofXml::removeAttribute(const std::string & name){
+	auto attr = getAttribute(name);
+	if(attr){
+		return xml.remove_attribute(attr.attr);
+	}else{
+		return false;
+	}
+}
+
+bool ofXml::removeAttribute(const ofXml::Attribute & attr){
+	return xml.remove_attribute(attr.attr);
+}
+
+bool ofXml::removeAttribute(ofXml::Attribute && attr){
+	return xml.remove_attribute(attr.attr);
 }
 
 ofXml ofXml::findFirst(const std::string & path) const{
 	try{
-		return ofXml(doc, this->xml.select_single_node(path.c_str()).node());
+		return ofXml(doc, this->xml.select_node(path.c_str()).node());
 	}catch(pugi::xpath_exception & e){
 		return ofXml();
 	}
@@ -207,11 +246,19 @@ unsigned int ofXml::getUintValue() const{
 }
 
 float ofXml::getFloatValue() const{
-	return this->xml.text().as_float();
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
+	std::setlocale( LC_NUMERIC, "C" );
+	float f = this->xml.text().as_float();
+	std::setlocale( LC_NUMERIC, loc.c_str() );
+	return f;
 }
 
 double ofXml::getDoubleValue() const{
-	return this->xml.text().as_double();
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
+	std::setlocale( LC_NUMERIC, "C" );
+	float d = this->xml.text().as_double();
+	std::setlocale( LC_NUMERIC, loc.c_str() );
+	return d;
 }
 
 bool ofXml::getBoolValue() const{
@@ -238,6 +285,10 @@ void ofXml::Attribute::setName(const std::string & name){
 	this->attr.set_name(name.c_str());
 }
 
+std::string ofXml::Attribute::getName() const{
+	return this->attr.name();
+}
+
 int ofXml::Attribute::getIntValue() const{
 	return this->attr.as_int();
 }
@@ -247,11 +298,19 @@ unsigned int ofXml::Attribute::getUintValue() const{
 }
 
 float ofXml::Attribute::getFloatValue() const{
-	return this->attr.as_float();
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
+	std::setlocale( LC_NUMERIC, "C" );
+	float f = this->attr.as_float();
+	std::setlocale( LC_NUMERIC, loc.c_str() );
+	return f;
 }
 
 double ofXml::Attribute::getDoubleValue() const{
-	return this->attr.as_double();
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
+	std::setlocale( LC_NUMERIC, "C" );
+	float d = this->attr.as_double();
+	std::setlocale( LC_NUMERIC, loc.c_str() );
+	return d;
 }
 
 bool ofXml::Attribute::getBoolValue() const{

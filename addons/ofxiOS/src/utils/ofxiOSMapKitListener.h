@@ -30,8 +30,8 @@
 
 
 #pragma once
-
-
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 /****** protocol, delegate, interface, whatever you want to call it ******/
 
 class ofxiOSMapKitListener { 
@@ -41,7 +41,8 @@ public:
 	virtual void regionDidChange(bool animated) {}
 	virtual void willStartLoadingMap() {}
 	virtual void didFinishLoadingMap() {}
-	virtual void errorLoadingMap(string errorDescription) {}
+	virtual void errorLoadingMap(std::string errorDescription) {}
 };
 
 #define ofxiPhoneMapKitListener ofxiOSMapKitListener
+#endif

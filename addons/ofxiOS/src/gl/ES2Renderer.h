@@ -2,6 +2,8 @@
 #pragma once
 
 #import "ESRenderer.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
@@ -16,17 +18,21 @@
 
     // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view
     GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
-	GLuint fsaaFrameBuffer, fsaaColorRenderBuffer;
+    GLuint msaaFrameBuffer, msaaColorRenderBuffer;
 
-	//settings
-	bool fsaaEnabled;
-	int fsaaSamples;
-	bool depthEnabled;
-	bool retinaEnabled;
+    //settings
+    bool msaaEnabled;
+    int msaaSamples;
+    bool depthEnabled;
+    bool retinaEnabled;
     bool bResize;
 }
 
-- (id)initWithDepth:(bool)depth andAA:(bool)fsaa andFSAASamples:(int)samples andRetina:(bool)retina;
+- (instancetype)initWithDepth:(bool)depth
+                        andAA:(bool)msaa
+               andMSAASamples:(int)samples
+                    andRetina:(bool)retina
+                   sharegroup:(EAGLSharegroup*)sharegroup;
 - (void)startRender;
 - (void)finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
@@ -38,4 +44,4 @@
 - (NSInteger)getHeight;
 
 @end
-
+#endif

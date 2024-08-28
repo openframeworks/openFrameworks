@@ -6,10 +6,10 @@ import qbs.TextFile
 import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
 
 Project{
-    property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
+    property string of_root: '%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}'
 
     ofApp {
-        name: { return FileInfo.baseName(path) }
+        name: { return FileInfo.baseName(sourceDirectory) }
 
         files: [
             'src/main.cpp',
@@ -32,6 +32,11 @@ Project{
         of.defines: []          // defines are passed as -D to the compiler
                                 // and can be checked with #ifdef or #if in the code
         of.frameworks: []       // osx only, additional frameworks to link with the project
+        of.staticLibraries: []  // static libraries
+        of.dynamicLibraries: [] // dynamic libraries
+        
+        // create a console window when the application start
+        consoleApplication: %{ConsoleWindow}
 
         // other flags can be set through the cpp module: http://doc.qt.io/qbs/cpp-module.html
         // eg: this will enable ccache when compiling
@@ -57,7 +62,9 @@ Project{
                                 // will compile OF only once for all your projects
                                 // otherwise compiled per project with qbs
 
-    property bool useXml2: false // enables / disables the new ofXml api
+    property bool precompileOfMain: false  // precompile ofMain.h
+                                           // faster to recompile when including ofMain.h
+                                           // but might use a lot of space per project
 
     references: [FileInfo.joinPaths(of_root, "/libs/openFrameworksCompiled/project/qtcreator/openFrameworks.qbs")]
 }

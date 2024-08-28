@@ -1,60 +1,140 @@
+def ofRoot(){ return '../../../' }
+
+// Load common functions
+apply from: ofRoot()+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
+
 buildscript {
+    apply from: "../../../libs/openFrameworksCompiled/project/android/ndk-verify.gradle"
+
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.3.1'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        // Using the gradle-experimental version that supports c++
+        classpath 'com.android.tools.build:gradle-experimental:0.9.3'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        maven{ url "https://maven.google.com" }
     }
 }
 
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
 
-android {
-    compileSdkVersion 22
-    buildToolsVersion "21.1.1"
+model {
+    android {
+        // openFrameworks currently only supports compiling against SDK 19 or nweer
+        compileSdkVersion = 25
+        buildToolsVersion = "25.0.3"
 
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 22
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
+        defaultConfig.with {
+            minSdkVersion.apiLevel    = 19
+            targetSdkVersion.apiLevel = 25
+            versionCode     =  1
+            versionName     = "1.0"
         }
     }
 
-    // Configure source folders like Eclipse
-    sourceSets {
+    android.ndk {
+        moduleName = ofAppModuleName()
+        toolchain  = buildToolchain()
+        stl        = compilerStl()
+        platformVersion = "21"
+    }
+
+    android.sources {
         main {
-            manifest.srcFile 'AndroidManifest.xml'
-            jni.srcDirs = []
-            java.srcDirs = ['srcJava']
-            resources.srcDirs = ['srcJava']
-            aidl.srcDirs = ['srcJava']
-            renderscript.srcDirs = ['srcJava']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-            jniLibs.srcDirs = ['libs']
+            jni {
+                source {
+                    srcDirs= appSrcDirs(ofRoot())
+
+                    includes = srcIncludes(ofRoot())
+                    excludes = srcExcludes(ofRoot())
+                }
+
+                // Link to openFrameworks
+                dependencies {
+                    project ":openFrameworksProject"  linkage "static"
+                }
+            }
+
+            manifest {
+                source {
+                    srcDirs = [ "." ]
+                }
+            }
+            res {
+                source {
+                    srcDirs = [ "res" ]
+                }
+            }
+            java {
+                source {
+                    srcDirs = [ "srcJava" ]
+                }
+            }
+            aidl {
+                source{
+                    srcDirs = ['srcJava']
+                }
+            }
+            renderscript{
+                source{
+                    srcDirs = ['srcJava']
+                }
+            }
+            jniLibs {
+                source {
+                    srcDirs = ['libs']
+                }
+            }
+            assets {
+                source {
+                    srcDirs = ['bin/data'] + addonData(ofRoot())
+                }
+            }
+        }
+    }
+
+    android.lintOptions {
+        abortOnError  = false
+    }
+
+    android.buildTypes {
+        release {
+            minifyEnabled = false
+        }
+    }
+
+    // Setup the different types of flavors (arm / x86),
+    // and add linker flags based on that
+    android.productFlavors {
+        getAbis().each { abi ->
+            create(getFlavorName(abi)) {
+                ndk {
+                    abiFilters.add(abi)
+
+                    cppFlags.addAll(coreCppFlags(abi, ofRoot()))
+                    cppFlags.addAll(addonCppFlags(abi, ofRoot()))
+
+                    ldLibs.addAll(coreLdLibs(abi, ofRoot()))
+                    ldLibs.addAll(addonLdLibs(abi, ofRoot()))
+
+                    ldFlags.addAll(coreLdFlags(abi, ofRoot()))
+                    ldFlags.addAll(addonLdFlags(abi, ofRoot()))
+                }
+            }
         }
     }
 }
+
 
 dependencies {
-    compile project(':ofAndroidLib')
+    addonJavaDependencies(ofRoot()).each { dep ->
+        compile(project(path: dep[1] ))
+    }
+    compile project(path: ':ofAndroidLib')
 }
-
-clean.dependsOn(":openFrameworksProject:clean")
-
-assembleDebug.dependsOn(":openFrameworksProject:compileDebugOF")
-
-assembleRelease.dependsOn(":openFrameworksProject:compileReleaseOF")

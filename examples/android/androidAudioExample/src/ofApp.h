@@ -32,8 +32,8 @@ class ofApp : public ofxAndroidApp{
 		void okPressed();
 		void cancelPressed();
 
-		void audioRequested(float * output,int bufferSize,int nChannels);
-		void audioReceived(float * input,int bufferSize,int nChannels);
+		void audioOut(ofSoundBuffer & buffer);
+		void audioIn(ofSoundBuffer & buffer);
 
 		float 	pan;
 		int		sampleRate;

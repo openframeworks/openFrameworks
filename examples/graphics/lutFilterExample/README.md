@@ -9,7 +9,7 @@ This openFrameworks Example is designed to demonstrate how to create LUT filters
 In this example, pay attention to the following code:
 
 * ```void loadLUT(string path)``` 
-* ```void applyLUT(ofPixelsRef pix)``` uses ```ofVec3f``` and ```imgageName.setColor(x, y, color)``` to alter the color of every pixel of the image
+* ```void applyLUT(ofPixelsRef pix)``` uses ```glm::vec3``` and ```imgageName.setColor(x, y, color)``` to alter the color of every pixel of the image
 
 
 ### Expected Behavior

@@ -1,11 +1,16 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofColor.h"
 #include "ofPolyline.h"
-#include "ofBaseTypes.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
+// MARK: ofConstants targets
+#include "ofConstants.h"
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_<float> ofFloatColor;
+typedef ofColor_<unsigned short> ofShortColor;
 
 /// \class
 
@@ -17,17 +22,17 @@
 /// easily represents multiple child lines or shapes as either ofSubPath or
 /// ofPolyline instances. By default ofPath uses ofSubPath instances. Closing
 /// the path automatically creates a new path:
-/// 
+///
 /// ~~~~{.cpp}
 /// for( int i = 0; i < 5; i++) {
 ///     // create a new ofSubPath
-///     path.arc( i * 50 + 20, i * 50 + 20, i * 40 + 10, i * 40 + 10, 0, 360); 
+///     path.arc( i * 50 + 20, i * 50 + 20, i * 40 + 10, i * 40 + 10, 0, 360);
 ///     path.close();
 /// }
 /// ~~~~
-/// 
+///
 /// To use ofPolyline instances, simply set the mode to POLYLINES
-/// 
+///
 /// ~~~~{.cpp}
 /// path.setMode(POLYLINES);
 /// ~~~~
@@ -46,9 +51,9 @@ public:
 	/// instance. All points added after a call to ofSubPath will be done in
 	/// the newly created subpath. Calling close() automatically calls create
 	/// newSubPath(), ensuring that the closed path doesn't have new points
-	/// added to it.	
+	/// added to it.
 	void newSubPath();
-	
+
 	/// \brief Close the current subpath and create a new subpath, either an
 	/// ofPolyline or ofSubPath by calling newSubPath(), ensuring that the
 	/// closed path doesn't have new points added to it.
@@ -59,16 +64,16 @@ public:
 	/// \{
 
 	/// \brief Draw a straight line from the current drawing position to the
-	/// location indicated by p.	
+	/// location indicated by p.
 	void lineTo(const glm::vec3 & p);
 	void lineTo(const glm::vec2 & p);
-	
+
 	/// \brief Draw a straight line from the current drawing position to the
 	/// location indicated by x,y.
 	void lineTo(float x, float y);
 
 	/// \brief Draw a straight line from the current drawing position to the
-	/// location indicated by x,y,z.	
+	/// location indicated by x,y,z.
 	void lineTo(float x, float y, float z);
 
 
@@ -80,7 +85,7 @@ public:
 
 	/// \brief Move the drawing position to x,y.z. This means that a subsequent
 	/// calls to, for instance, lineTo() or curveTo() will connect the
-	/// location x,y,z to the new location.	
+	/// location x,y,z to the new location.
 	void moveTo(float x, float y, float z=0);
 
 	/// \brief Draws a curve to p from the current drawing position
@@ -96,7 +101,7 @@ public:
 	/// \brief Create a cubic bezier line from the current drawing point with the 2
 	/// control points indicated by glm::vec3 `cp1` and `cp2`, that ends at glm::vec3
 	/// to.
-	/// 
+	///
 	/// ~~~~{.cpp}
 	/// line.addVertex(glm::vec3(200, 400));
 	/// line.bezierTo(100, 100, 800, 100, 700, 400);
@@ -105,12 +110,12 @@ public:
 	/// The control points are shown in red.
 	void bezierTo(const glm::vec3 & cp1, const glm::vec3 & cp2, const glm::vec3 & p);
 	void bezierTo(const glm::vec2 & cp1, const glm::vec2 & cp2, const glm::vec2 & p);
-	
+
 	/// \brief Create a cubic bezier line from the current drawing point with the 2
 	/// control points indicated by the coordinates cx1, cy1 and cx2, cy2,
 	/// that ends at the coordinates x, y.
 	void bezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y);
-	
+
 	/// \brief Create a cubic bezier line in 3D space from the current drawing point
 	/// with the 2 control points indicated by the coordinates cx1, cy1, cz1
 	/// and cx2, cy2, cz2, that ends at the coordinates x, y, z.
@@ -119,16 +124,16 @@ public:
 	/// \brief Create a quadratic bezier line in 3D space from the current drawing
 	/// point with the beginning indicated by the coordinates cx1, cy1, cz1,
 	/// the control point at cx2, cy2, cz2, and that ends at the coordinates
-	/// x, y, z.	
+	/// x, y, z.
 	/// ![Curves](graphics/curves.jpg)
 	void quadBezierTo(const glm::vec3 & cp1, const glm::vec3 & cp2, const glm::vec3 & p);
 	void quadBezierTo(const glm::vec2 & cp1, const glm::vec2 & cp2, const glm::vec2 & p);
-	
+
 	/// \brief Creates a quadratic bezier line in 2D space from the current drawing
 	/// point with the beginning indicated by the point p1, the control point
 	/// at p2, and that ends at the point p3.
 	void quadBezierTo(float cx1, float cy1, float cx2, float cy2, float x, float y);
-	
+
 	/// \brief Creates a quadratic bezier line in 3D space from the current drawing
 	/// point with the beginning indicated by the coordinates cx1, cy1, the
 	/// control point at cx2, cy2, and that ends at the coordinates x, y.
@@ -137,25 +142,25 @@ public:
 	/// \brief Create an arc at centre, which has the radiusX, radiusY, and begins at
 	/// angleBegin and ends at angleEnd. To draw a circle with a radius of 50 pixels
 	/// at 100, 100:
-	/// 
+	///
 	/// \note angleBegin needs to be larger than angleEnd, i.e. 0,180 is ok,
 	/// while 180,0 is not.
 	void arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise);
 	void arc(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd);
 	void arc(const glm::vec2 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise);
-	
+
 	/// \brief Create an arc at x,y, which has the radiusX, radiusY, and begins at
 	/// angleBegin and ends at angleEnd. To draws a shape with a radius of 200 pixels
 	/// at 300, 300:
-	/// 
+	///
 	/// ~~~~{.cpp}
 	/// path.moveTo(300, 300);
 	/// path.arc( 300, 300, 200, 200, 0, 271); // note 271, not 270 for precision
 	/// ~~~~
-	/// 
+	///
 	/// ![ofPath arc](graphics/ofPath_arc.jpg)
-	/// 
+	///
 	/// \note angleBegin needs to be larger than angleEnd, i.e. 0, 180 is ok,
 	/// while 180,0 is not.
 	void arc(float x, float y, float radiusX, float radiusY, float angleBegin, float angleEnd);
@@ -220,7 +225,7 @@ public:
 	/// isn't convex, i.e. that has points which are concave, going inwards,
 	/// need to be tessellated into triangles so that OpenGL can render them.
 	/// If you're using filled shapes with your ofPath this is done
-	/// automatically for you. 
+	/// automatically for you.
 	///
 	/// The possible options you can pass in are:
 	///
@@ -233,40 +238,44 @@ public:
 
 	/// \brief Get the poly winding mode currently in use.
 	ofPolyWindingMode getWindingMode() const;
-	
+
 	/// \}
 	/// \name Drawing Mode
 	/// \{
 
 	/// \brief Set whether the path should be drawn as wireframes or filled.
 	void setFilled(bool hasFill); // default true
-	
+
 	/// \brief Set the stroke width of the line if the ofPath is to be drawn
 	/// not in wireframe.
 	void setStrokeWidth(float width); // default 0
 	
+	/// \brief Set the stroke width of the line if the ofPath is to be drawn
+	/// not in wireframe.
+	void setStrokeWidth(float width) const; // default 0
+
 	/// \brief Set the color of the path. This affects both the line if the
 	/// path is drawn as wireframe and the fill if the path is drawn with
 	/// fill. All subpaths are affected.
-	void setColor( const ofColor& color );
-	
+	void setColor( const ofFloatColor& color );
+
 	/// \brief Set the color of the path. This affects both the line if the path is
 	/// drawn as wireframe and the fill if the path is drawn with fill. All
 	/// subpaths are affected.
 	void setHexColor( int hex );
-	
+
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
-	void setFillColor(const ofColor & color);
-	
+	void setFillColor(const ofFloatColor & color);
+
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
 	void setFillHexColor( int hex );
-	
+
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
-	void setStrokeColor(const ofColor & color);
-	
+	void setStrokeColor(const ofFloatColor & color);
+
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
 	void setStrokeHexColor( int hex );
@@ -275,12 +284,12 @@ public:
 	///
 	/// The default value is `true`
 	bool isFilled() const;
-	
-	/// \brief Get the ofColor fill of the ofPath
-	ofColor getFillColor() const;
 
-	/// \brief Get the stroke color of the ofPath
-	ofColor getStrokeColor() const;
+	/// \brief Get the ofFloatColor fill of the ofPath
+	ofFloatColor getFillColor() const;
+
+	/// \brief Get the stroke ofFloatColor of the ofPath
+	ofFloatColor getStrokeColor() const;
 
 	/// \brief Get the stroke width of the ofPath
 	///
@@ -292,11 +301,13 @@ public:
 	void setCurveResolution(int curveResolution);
 	int getCurveResolution() const;
 
-    void setCircleResolution(int circleResolution);
-    int getCircleResolution() const;
-    
-	OF_DEPRECATED_MSG("Use setCircleResolution instead.", void setArcResolution(int res));
-    OF_DEPRECATED_MSG("Use getCircleResolution instead.", int getArcResolution() const);
+	void setCircleResolution(int circleResolution);
+	int getCircleResolution() const;
+
+	[[deprecated("Use setCircleResolution")]]
+	void setArcResolution(int res);
+	[[deprecated("Use getCircleResolution")]]
+	int getArcResolution() const;
 
 	void setUseShapeColor(bool useColor);
 	bool getUseShapeColor() const;
@@ -316,7 +327,7 @@ public:
 	/// \{
 
 	/// \brief Get an ofPolyline representing the outline of the ofPath.
-	const vector<ofPolyline> & getOutline() const;
+	const std::vector<ofPolyline> & getOutline() const;
 
 	void tessellate();
 
@@ -325,10 +336,19 @@ public:
 	void simplify(float tolerance=0.3f);
 
 	void translate(const glm::vec3 & p);
-	void rotate(float az, const glm::vec3& axis );
+
+	void rotateDeg(float degrees, const glm::vec3& axis);
+	void rotateRad(float radians, const glm::vec3& axis);
+	[[deprecated("Use Deg/Rad versions.")]]
+	void rotate(float degrees, const glm::vec3& axis );
+
 	void translate(const glm::vec2 & p);
-	void rotate(float az, const glm::vec2& axis );
-	
+
+	void rotateDeg(float degrees, const glm::vec2& axis);
+	void rotateRad(float radians, const glm::vec2& axis);
+	[[deprecated("Use Deg/Rad versions.")]]
+	void rotate(float degrees, const glm::vec2& axis );
+
 	/// \brief Change the size of either the ofPolyline or ofSubPath instances that
 	/// the ofPath contains. These changes are non-reversible, so for instance
 	/// scaling by 0,0 zeros out all data.
@@ -346,12 +366,12 @@ public:
 	};
 
 	void setMode(Mode mode);
-	Mode getMode();
+	Mode getMode() const;
 
 	/// \}
 	/// \name Path Commands
 	/// \{
-	
+
 	struct Command{
 		enum Type{
 			moveTo,
@@ -383,11 +403,11 @@ public:
 		float radiusX, radiusY, angleBegin, angleEnd;
 	};
 
-	vector<Command> & getCommands();
-	const vector<Command> & getCommands() const;
+	std::vector<Command> & getCommands();
+	const std::vector<Command> & getCommands() const;
 
 	/// \}
-	
+
 private:
 
 	ofPolyline & lastPolyline();
@@ -400,24 +420,23 @@ private:
 
 	// path description
 	//vector<ofSubPath>		paths;
-	vector<Command> 	commands;
+	std::vector<Command> 	commands;
 	ofPolyWindingMode 	windingMode;
-	ofColor 			fillColor;
-	ofColor				strokeColor;
+	ofFloatColor 		fillColor;
+	ofFloatColor		strokeColor;
 	float				strokeWidth;
 	bool				bFill;
 	bool				bUseShapeColor;
 
 	// polyline / tessellation
-	vector<ofPolyline>  polylines;
-	vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
+	std::vector<ofPolyline>  polylines;
+	std::vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
 
 #ifdef TARGET_OPENGLES
 	ofMesh				cachedTessellation;
 #else
 	ofVboMesh			cachedTessellation;
 #endif
-	bool				cachedTessellationValid;
 #if defined(TARGET_EMSCRIPTEN)
 	static ofTessellator tessellator;
 #elif HAS_TLS
@@ -434,5 +453,3 @@ private:
 
 	Mode				mode;
 };
-
-

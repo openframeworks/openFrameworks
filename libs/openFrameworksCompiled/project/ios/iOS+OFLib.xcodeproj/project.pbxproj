@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */; };
+		035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */; };
 		15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0515C55AC900727FF2 /* EAGLView.m */; };
 		15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0615C55AC900727FF2 /* ES1Renderer.m */; };
 		15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0715C55AC900727FF2 /* ES2Renderer.m */; };
@@ -24,9 +26,7 @@
 		15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */; };
 		15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */; };
 		15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */; };
-		15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */; };
 		15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */; };
-		15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */; };
 		15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */; };
 		15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */; };
 		15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */; };
@@ -49,12 +49,16 @@
 		1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */; };
 		1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */; };
 		1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */; };
+		2E49891A292C98000096EC56 /* ofCubeMapShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498917292C98000096EC56 /* ofCubeMapShaders.h */; };
+		2E49891B292C98000096EC56 /* ofCubeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498918292C98000096EC56 /* ofCubeMap.h */; };
+		2E49891C292C98000096EC56 /* ofCubeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E498919292C98000096EC56 /* ofCubeMap.cpp */; };
+		2E6E258328F73C2C00EC8E22 /* ofShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6E258128F73C2C00EC8E22 /* ofShadow.h */; };
+		2E6E258428F73C2C00EC8E22 /* ofShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6E258228F73C2C00EC8E22 /* ofShadow.cpp */; };
 		53DA338A12DF8F4500C622CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338912DF8F4500C622CE /* AVFoundation.framework */; };
 		53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338D12DF8F5000C622CE /* CoreAudio.framework */; };
 		53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338F12DF8F5000C622CE /* CoreMedia.framework */; };
 		53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA339112DF8F5000C622CE /* CoreVideo.framework */; };
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
-		6678E97519FEB2DF00C00581 /* ofBaseSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */; };
 		6678E97619FEB2DF00C00581 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */; };
 		6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */; };
 		6678E97819FEB2DF00C00581 /* ofSoundUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E97419FEB2DF00C00581 /* ofSoundUtils.h */; };
@@ -88,7 +92,22 @@
 		67D48ED01C10399900F719BC /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67D48ECF1C10399900F719BC /* CoreMotion.framework */; };
 		67D48ED31C103BAE00F719BC /* ofxiOSCoreMotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */; };
 		67D48ED41C103BAE00F719BC /* ofxiOSCoreMotion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */; };
+		69433CC31FE45BAC004D5B73 /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 69433CC21FE45BAC004D5B73 /* ofBaseApp.cpp */; };
+		69433CC51FE45BB7004D5B73 /* ofGLBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 69433CC41FE45BB7004D5B73 /* ofGLBaseTypes.h */; };
+		69433CCA1FE45BCD004D5B73 /* ofGraphicsBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 69433CC61FE45BCD004D5B73 /* ofGraphicsBaseTypes.cpp */; };
+		69433CCB1FE45BCD004D5B73 /* ofGraphicsBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 69433CC71FE45BCD004D5B73 /* ofGraphicsBaseTypes.h */; };
+		69433CCC1FE45BCD004D5B73 /* ofGraphicsConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 69433CC81FE45BCD004D5B73 /* ofGraphicsConstants.h */; };
+		69433CD01FE45BF2004D5B73 /* ofSoundBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 69433CCE1FE45BF2004D5B73 /* ofSoundBaseTypes.cpp */; };
+		69433CD11FE45BF2004D5B73 /* ofSoundBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 69433CCF1FE45BF2004D5B73 /* ofSoundBaseTypes.h */; };
+		69433CD31FE45E41004D5B73 /* ofMathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 69433CD21FE45E41004D5B73 /* ofMathConstants.h */; };
 		860B024D17A96D840032B827 /* ofxiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 860B024C17A96D840032B827 /* ofxiOS.h */; };
+		90080014204EDA1300DC786A /* ofxiOSGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */; };
+		90080016204EDA4B00DC786A /* ofxiOSGLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */; };
+		90080019204EDB5500DC786A /* ofxiOSGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 90080017204EDB5500DC786A /* ofxiOSGLKView.h */; };
+		9008001A204EDB5500DC786A /* ofxiOSGLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90080018204EDB5500DC786A /* ofxiOSGLKView.mm */; };
+		9008001D204EDC0F00DC786A /* EAGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9008001B204EDC0E00DC786A /* EAGLKView.m */; };
+		9008001E204EDC0F00DC786A /* EAGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9008001C204EDC0F00DC786A /* EAGLKView.h */; };
+		901808B9205362D7004A7774 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 901808B8205362D7004A7774 /* GLKit.framework */; };
 		9252B7F11CDA2A6100A8032B /* ofxiOSEventAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9252B7EF1CDA2A6100A8032B /* ofxiOSEventAdapter.h */; };
 		9252B7F21CDA2A6100A8032B /* ofxiOSEventAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9252B7F01CDA2A6100A8032B /* ofxiOSEventAdapter.mm */; };
 		9957D8701BDDCD440002D53C /* ofEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9957D86F1BDDCD440002D53C /* ofEvent.h */; };
@@ -104,6 +123,19 @@
 		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
+		BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */; };
+		BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */; };
+		BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C022C4FFC5900728DEC /* brotli.xcframework */; };
+		BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */; };
+		BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF4730B02BA4056B00E6E3C6 /* curl.xcframework */; };
+		BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591D2BA2057900E5C52E /* zlib.xcframework */; };
+		BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591B2BA2056600E5C52E /* uriparser.xcframework */; };
+		BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59192BA2054700E5C52E /* tess2.xcframework */; };
+		BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59172BA2052D00E5C52E /* pugixml.xcframework */; };
+		BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59132BA2050B00E5C52E /* libpng.xcframework */; };
+		BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
+		BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
+		BFB0B40E2C50E019008FB5A3 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -176,14 +208,11 @@
 		E4F76E71176CB27200798745 /* ofVec4f.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DCD176CB27200798745 /* ofVec4f.h */; };
 		E4F76E72176CB27200798745 /* ofVectorMath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DCE176CB27200798745 /* ofVectorMath.h */; };
 		E4F76E73176CB27200798745 /* ofMain.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DCF176CB27200798745 /* ofMain.h */; };
-		E4F76E75176CB27200798745 /* ofBaseSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DD2176CB27200798745 /* ofBaseSoundPlayer.h */; };
-		E4F76E77176CB27200798745 /* ofBaseSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */; };
 		E4F76E80176CB27200798745 /* ofSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */; };
 		E4F76E81176CB27200798745 /* ofSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DDE176CB27200798745 /* ofSoundPlayer.h */; };
 		E4F76E82176CB27200798745 /* ofSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DDF176CB27200798745 /* ofSoundStream.cpp */; };
 		E4F76E83176CB27200798745 /* ofSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DE0176CB27200798745 /* ofSoundStream.h */; };
 		E4F76E84176CB27200798745 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DE2176CB27200798745 /* ofBaseTypes.cpp */; };
-		E4F76E85176CB27200798745 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DE3176CB27200798745 /* ofBaseTypes.h */; };
 		E4F76E86176CB27200798745 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DE4176CB27200798745 /* ofColor.cpp */; };
 		E4F76E87176CB27200798745 /* ofColor.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DE5176CB27200798745 /* ofColor.h */; };
 		E4F76E88176CB27200798745 /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DE6176CB27200798745 /* ofParameter.cpp */; };
@@ -214,9 +243,13 @@
 		E4F76EB6176CB27200798745 /* ofVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76E16176CB27200798745 /* ofVideoGrabber.h */; };
 		E4F76EB7176CB27200798745 /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76E17176CB27200798745 /* ofVideoPlayer.cpp */; };
 		E4F76EB8176CB27200798745 /* ofVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76E18176CB27200798745 /* ofVideoPlayer.h */; };
+		E999E70E299D53FC00649F18 /* ofxiOSCoreHaptics.h in Headers */ = {isa = PBXBuildFile; fileRef = E999E70C299D53FC00649F18 /* ofxiOSCoreHaptics.h */; };
+		E999E70F299D53FC00649F18 /* ofxiOSCoreHaptics.mm in Sources */ = {isa = PBXBuildFile; fileRef = E999E70D299D53FC00649F18 /* ofxiOSCoreHaptics.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
+		035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
 		15594F0515C55AC900727FF2 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		15594F0615C55AC900727FF2 /* ES1Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES1Renderer.m; sourceTree = "<group>"; };
 		15594F0715C55AC900727FF2 /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
@@ -234,9 +267,7 @@
 		15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAppDelegate.h; sourceTree = "<group>"; };
 		15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSViewController.h; sourceTree = "<group>"; };
 		15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
-		15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
-		15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
 		15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAlerts.mm; sourceTree = "<group>"; };
 		15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlerts.h; sourceTree = "<group>"; };
 		15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlertsListener.h; sourceTree = "<group>"; };
@@ -263,6 +294,11 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2E498917292C98000096EC56 /* ofCubeMapShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCubeMapShaders.h; sourceTree = "<group>"; };
+		2E498918292C98000096EC56 /* ofCubeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofCubeMap.h; sourceTree = "<group>"; };
+		2E498919292C98000096EC56 /* ofCubeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCubeMap.cpp; sourceTree = "<group>"; };
+		2E6E258128F73C2C00EC8E22 /* ofShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofShadow.h; sourceTree = "<group>"; };
+		2E6E258228F73C2C00EC8E22 /* ofShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofShadow.cpp; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53DA338912DF8F4500C622CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		53DA338D12DF8F5000C622CE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -270,7 +306,6 @@
 		53DA339112DF8F5000C622CE /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
 		6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
 		6678E97419FEB2DF00C00581 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
@@ -305,7 +340,24 @@
 		67D48ECF1C10399900F719BC /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreMotion.h; sourceTree = "<group>"; };
 		67D48ED21C103BAE00F719BC /* ofxiOSCoreMotion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreMotion.mm; sourceTree = "<group>"; };
+		69433CC21FE45BAC004D5B73 /* ofBaseApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseApp.cpp; sourceTree = "<group>"; };
+		69433CC41FE45BB7004D5B73 /* ofGLBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGLBaseTypes.h; sourceTree = "<group>"; };
+		69433CC61FE45BCD004D5B73 /* ofGraphicsBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGraphicsBaseTypes.cpp; sourceTree = "<group>"; };
+		69433CC71FE45BCD004D5B73 /* ofGraphicsBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphicsBaseTypes.h; sourceTree = "<group>"; };
+		69433CC81FE45BCD004D5B73 /* ofGraphicsConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphicsConstants.h; sourceTree = "<group>"; };
+		69433CC91FE45BCD004D5B73 /* ofPolyline.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ofPolyline.inl; sourceTree = "<group>"; };
+		69433CCD1FE45BD9004D5B73 /* ofMesh.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ofMesh.inl; sourceTree = "<group>"; };
+		69433CCE1FE45BF2004D5B73 /* ofSoundBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBaseTypes.cpp; sourceTree = "<group>"; };
+		69433CCF1FE45BF2004D5B73 /* ofSoundBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBaseTypes.h; sourceTree = "<group>"; };
+		69433CD21FE45E41004D5B73 /* ofMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMathConstants.h; sourceTree = "<group>"; };
 		860B024C17A96D840032B827 /* ofxiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS.h; sourceTree = "<group>"; };
+		90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSGLKViewController.mm; sourceTree = "<group>"; };
+		90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOSGLKViewController.h; sourceTree = "<group>"; };
+		90080017204EDB5500DC786A /* ofxiOSGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSGLKView.h; sourceTree = "<group>"; };
+		90080018204EDB5500DC786A /* ofxiOSGLKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSGLKView.mm; sourceTree = "<group>"; };
+		9008001B204EDC0E00DC786A /* EAGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLKView.m; sourceTree = "<group>"; };
+		9008001C204EDC0F00DC786A /* EAGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLKView.h; sourceTree = "<group>"; };
+		901808B8205362D7004A7774 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		9252B7EF1CDA2A6100A8032B /* ofxiOSEventAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSEventAdapter.h; sourceTree = "<group>"; };
 		9252B7F01CDA2A6100A8032B /* ofxiOSEventAdapter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSEventAdapter.mm; sourceTree = "<group>"; };
 		9957D86F1BDDCD440002D53C /* ofEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvent.h; sourceTree = "<group>"; };
@@ -317,6 +369,19 @@
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiOS_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
+		BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
+		BF4730B02BA4056B00E6E3C6 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
+		BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
+		BF7E590B2BA204BC00E5C52E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
+		BF7E590D2BA204D300E5C52E /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
+		BF7E59132BA2050B00E5C52E /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/macos/libpng.xcframework; sourceTree = "<group>"; };
+		BF7E59172BA2052D00E5C52E /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/macos/pugixml.xcframework; sourceTree = "<group>"; };
+		BF7E59192BA2054700E5C52E /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
+		BF7E591B2BA2056600E5C52E /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
+		BF7E591D2BA2057900E5C52E /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
+		BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/macos/openssl.xcframework; sourceTree = "<group>"; };
+		BFEC5C022C4FFC5900728DEC /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../brotli/lib/macos/brotli.xcframework; sourceTree = "<group>"; };
 		E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9113B38BE900A75A5D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9213B38BE900A75A5D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -393,14 +458,11 @@
 		E4F76DCD176CB27200798745 /* ofVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVec4f.h; sourceTree = "<group>"; };
 		E4F76DCE176CB27200798745 /* ofVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVectorMath.h; sourceTree = "<group>"; };
 		E4F76DCF176CB27200798745 /* ofMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMain.h; sourceTree = "<group>"; };
-		E4F76DD2176CB27200798745 /* ofBaseSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundPlayer.h; sourceTree = "<group>"; };
-		E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseSoundStream.h; sourceTree = "<group>"; };
 		E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundPlayer.cpp; sourceTree = "<group>"; };
 		E4F76DDE176CB27200798745 /* ofSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundPlayer.h; sourceTree = "<group>"; };
 		E4F76DDF176CB27200798745 /* ofSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundStream.cpp; sourceTree = "<group>"; };
 		E4F76DE0176CB27200798745 /* ofSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundStream.h; sourceTree = "<group>"; };
 		E4F76DE2176CB27200798745 /* ofBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseTypes.cpp; sourceTree = "<group>"; };
-		E4F76DE3176CB27200798745 /* ofBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBaseTypes.h; sourceTree = "<group>"; };
 		E4F76DE4176CB27200798745 /* ofColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofColor.cpp; sourceTree = "<group>"; };
 		E4F76DE5176CB27200798745 /* ofColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofColor.h; sourceTree = "<group>"; };
 		E4F76DE6176CB27200798745 /* ofParameter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofParameter.cpp; sourceTree = "<group>"; };
@@ -431,6 +493,8 @@
 		E4F76E16176CB27200798745 /* ofVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoGrabber.h; sourceTree = "<group>"; };
 		E4F76E17176CB27200798745 /* ofVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofVideoPlayer.cpp; sourceTree = "<group>"; };
 		E4F76E18176CB27200798745 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoPlayer.h; sourceTree = "<group>"; };
+		E999E70C299D53FC00649F18 /* ofxiOSCoreHaptics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreHaptics.h; sourceTree = "<group>"; };
+		E999E70D299D53FC00649F18 /* ofxiOSCoreHaptics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreHaptics.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -444,6 +508,7 @@
 				BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */,
 				BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */,
 				BB24DECD10DA7A3F00E9C588 /* OpenAL.framework in Frameworks */,
+				901808B9205362D7004A7774 /* GLKit.framework in Frameworks */,
 				BB24DECE10DA7A3F00E9C588 /* Foundation.framework in Frameworks */,
 				BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */,
 				BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */,
@@ -453,6 +518,17 @@
 				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
 				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
 				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
+				BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */,
+				BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */,
+				BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */,
+				BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */,
+				BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */,
+				BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */,
+				BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */,
+				BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */,
+				BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */,
+				BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */,
+				BFB0B40E2C50E019008FB5A3 /* FreeImage.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,13 +558,17 @@
 		15594F0015C55A5700727FF2 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */,
+				BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */,
+				9008001C204EDC0F00DC786A /* EAGLKView.h */,
+				9008001B204EDC0E00DC786A /* EAGLKView.m */,
 				15594F0815C55AC900727FF2 /* EAGLView.h */,
 				15594F0515C55AC900727FF2 /* EAGLView.m */,
-				15594F0B15C55AC900727FF2 /* ESRenderer.h */,
 				15594F0915C55AC900727FF2 /* ES1Renderer.h */,
 				15594F0615C55AC900727FF2 /* ES1Renderer.m */,
 				15594F0A15C55AC900727FF2 /* ES2Renderer.h */,
 				15594F0715C55AC900727FF2 /* ES2Renderer.m */,
+				15594F0B15C55AC900727FF2 /* ESRenderer.h */,
 			);
 			path = gl;
 			sourceTree = "<group>";
@@ -521,6 +601,8 @@
 		15594F0215C55A5700727FF2 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				E999E70C299D53FC00649F18 /* ofxiOSCoreHaptics.h */,
+				E999E70D299D53FC00649F18 /* ofxiOSCoreHaptics.mm */,
 				15594FB615C56D1E00727FF2 /* ofxiOSCoreLocation.h */,
 				15594FAF15C56D1E00727FF2 /* ofxiOSCoreLocation.mm */,
 				67D48ED11C103BAE00F719BC /* ofxiOSCoreMotion.h */,
@@ -547,8 +629,6 @@
 		15594F0315C55A5700727FF2 /* video */ = {
 			isa = PBXGroup;
 			children = (
-				15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */,
-				15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */,
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
 				1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */,
@@ -564,10 +644,14 @@
 			children = (
 				15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */,
 				15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */,
-				15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */,
-				15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */,
 				15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */,
 				15594F8B15C56A8A00727FF2 /* ofxiOSEAGLView.mm */,
+				90080017204EDB5500DC786A /* ofxiOSGLKView.h */,
+				90080018204EDB5500DC786A /* ofxiOSGLKView.mm */,
+				90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */,
+				90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */,
+				15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */,
+				15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -584,25 +668,27 @@
 			isa = PBXGroup;
 			children = (
 				E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */,
+				E41D3E9313B38BE900A75A5D /* Shared.xcconfig */,
 				E41D3E9113B38BE900A75A5D /* Debug.xcconfig */,
 				E41D3E9213B38BE900A75A5D /* Release.xcconfig */,
-				E41D3E9313B38BE900A75A5D /* Shared.xcconfig */,
 				BB16F26B0F2B646B00518274 /* addons */,
 				E4F76D69176CB27200798745 /* openFrameworks */,
 				BB16E9930F2B1E5900518274 /* libs */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				E9F39181299E892200280B58 /* Frameworks */,
 			);
 			indentWidth = 4;
 			name = CustomTemplate;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				99752D321BF21EEE0026316A /* GameController.framework */,
 				5E2E99DC10ED147800587639 /* MapKit.framework */,
+				901808B8205362D7004A7774 /* GLKit.framework */,
 				BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */,
 				BB16EBD80F2B2AB500518274 /* QuartzCore.framework */,
 				BB16EBD10F2B2A9500518274 /* OpenGLES.framework */,
@@ -693,6 +779,7 @@
 		E4F76D6E176CB27200798745 /* 3d */ = {
 			isa = PBXGroup;
 			children = (
+				69433CCD1FE45BD9004D5B73 /* ofMesh.inl */,
 				E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */,
 				E4F76D70176CB27200798745 /* of3dPrimitives.h */,
 				E4F76D71176CB27200798745 /* of3dUtils.cpp */,
@@ -711,6 +798,7 @@
 		E4F76D7B176CB27200798745 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				69433CC21FE45BAC004D5B73 /* ofBaseApp.cpp */,
 				E4F76D7C176CB27200798745 /* ofAppBaseWindow.h */,
 				E4F76D85176CB27200798745 /* ofAppRunner.cpp */,
 				E4F76D86176CB27200798745 /* ofAppRunner.h */,
@@ -743,8 +831,12 @@
 		E4F76D92176CB27200798745 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				69433CC41FE45BB7004D5B73 /* ofGLBaseTypes.h */,
 				67833F8819F8996300DBE7AA /* ofBufferObject.cpp */,
 				67833F8919F8996300DBE7AA /* ofBufferObject.h */,
+				2E498919292C98000096EC56 /* ofCubeMap.cpp */,
+				2E498918292C98000096EC56 /* ofCubeMap.h */,
+				2E498917292C98000096EC56 /* ofCubeMapShaders.h */,
 				E4F76D93176CB27200798745 /* ofFbo.cpp */,
 				E4F76D94176CB27200798745 /* ofFbo.h */,
 				E4F76D95176CB27200798745 /* ofGLProgrammableRenderer.cpp */,
@@ -755,6 +847,8 @@
 				E4F76D9A176CB27200798745 /* ofGLUtils.h */,
 				E4F76D9B176CB27200798745 /* ofLight.cpp */,
 				E4F76D9C176CB27200798745 /* ofLight.h */,
+				2E6E258228F73C2C00EC8E22 /* ofShadow.cpp */,
+				2E6E258128F73C2C00EC8E22 /* ofShadow.h */,
 				E4F76D9D176CB27200798745 /* ofMaterial.cpp */,
 				E4F76D9E176CB27200798745 /* ofMaterial.h */,
 				E4F76D9F176CB27200798745 /* ofShader.cpp */,
@@ -772,6 +866,10 @@
 		E4F76DA9176CB27200798745 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				69433CC61FE45BCD004D5B73 /* ofGraphicsBaseTypes.cpp */,
+				69433CC71FE45BCD004D5B73 /* ofGraphicsBaseTypes.h */,
+				69433CC81FE45BCD004D5B73 /* ofGraphicsConstants.h */,
+				69433CC91FE45BCD004D5B73 /* ofPolyline.inl */,
 				E4F76DAA176CB27200798745 /* of3dGraphics.cpp */,
 				E4F76DAB176CB27200798745 /* of3dGraphics.h */,
 				E4F76DAC176CB27200798745 /* ofBitmapFont.cpp */,
@@ -798,6 +896,7 @@
 		E4F76DC0176CB27200798745 /* math */ = {
 			isa = PBXGroup;
 			children = (
+				69433CD21FE45E41004D5B73 /* ofMathConstants.h */,
 				E4F76DC1176CB27200798745 /* ofMath.cpp */,
 				E4F76DC2176CB27200798745 /* ofMath.h */,
 				E4F76DC3176CB27200798745 /* ofMatrix3x3.cpp */,
@@ -819,9 +918,8 @@
 		E4F76DD0176CB27200798745 /* sound */ = {
 			isa = PBXGroup;
 			children = (
-				E4F76DD2176CB27200798745 /* ofBaseSoundPlayer.h */,
-				6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */,
-				E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */,
+				69433CCE1FE45BF2004D5B73 /* ofSoundBaseTypes.cpp */,
+				69433CCF1FE45BF2004D5B73 /* ofSoundBaseTypes.h */,
 				6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */,
 				6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */,
 				E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */,
@@ -837,7 +935,6 @@
 			isa = PBXGroup;
 			children = (
 				E4F76DE2176CB27200798745 /* ofBaseTypes.cpp */,
-				E4F76DE3176CB27200798745 /* ofBaseTypes.h */,
 				E4F76DE4176CB27200798745 /* ofColor.cpp */,
 				E4F76DE5176CB27200798745 /* ofColor.h */,
 				E4F76DE6176CB27200798745 /* ofParameter.cpp */,
@@ -872,6 +969,8 @@
 				67833F8019F8990D00DBE7AA /* ofThreadChannel.h */,
 				67833F8119F8990D00DBE7AA /* ofTimer.cpp */,
 				67833F8219F8990D00DBE7AA /* ofTimer.h */,
+				035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */,
+				0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */,
 				E4F76DFC176CB27200798745 /* ofURLFileLoader.cpp */,
 				E4F76DFD176CB27200798745 /* ofURLFileLoader.h */,
 				E4F76DFE176CB27200798745 /* ofUtils.cpp */,
@@ -893,6 +992,24 @@
 			path = video;
 			sourceTree = "<group>";
 		};
+		E9F39181299E892200280B58 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BFEC5C022C4FFC5900728DEC /* brotli.xcframework */,
+				BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */,
+				BF4730B02BA4056B00E6E3C6 /* curl.xcframework */,
+				BF7E591D2BA2057900E5C52E /* zlib.xcframework */,
+				BF7E591B2BA2056600E5C52E /* uriparser.xcframework */,
+				BF7E59192BA2054700E5C52E /* tess2.xcframework */,
+				BF7E59172BA2052D00E5C52E /* pugixml.xcframework */,
+				BF7E59132BA2050B00E5C52E /* libpng.xcframework */,
+				BF7E590D2BA204D300E5C52E /* freetype.xcframework */,
+				BF7E590B2BA204BC00E5C52E /* fmt.xcframework */,
+				BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -900,14 +1017,17 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E49891B292C98000096EC56 /* ofCubeMap.h in Headers */,
 				E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */,
 				E4F76E1C176CB27200798745 /* of3dUtils.h in Headers */,
+				E999E70E299D53FC00649F18 /* ofxiOSCoreHaptics.h in Headers */,
 				E4F76E1E176CB27200798745 /* ofCamera.h in Headers */,
 				E4F76E20176CB27200798745 /* ofEasyCam.h in Headers */,
 				E4F76E22176CB27200798745 /* ofMesh.h in Headers */,
 				E4F76E24176CB27200798745 /* ofNode.h in Headers */,
 				67833F8419F8990D00DBE7AA /* ofFpsCounter.h in Headers */,
 				E4F76E25176CB27200798745 /* ofAppBaseWindow.h in Headers */,
+				90080019204EDB5500DC786A /* ofxiOSGLKView.h in Headers */,
 				E4F76E2F176CB27200798745 /* ofAppRunner.h in Headers */,
 				E4F76E30176CB27200798745 /* ofBaseApp.h in Headers */,
 				E4F76E37176CB27200798745 /* ofEvents.h in Headers */,
@@ -916,6 +1036,7 @@
 				E4F76E3A176CB27200798745 /* ofFbo.h in Headers */,
 				E4F76E3C176CB27200798745 /* ofGLProgrammableRenderer.h in Headers */,
 				E4F76E3E176CB27200798745 /* ofGLRenderer.h in Headers */,
+				69433CD31FE45E41004D5B73 /* ofMathConstants.h in Headers */,
 				E4F76E40176CB27200798745 /* ofGLUtils.h in Headers */,
 				E4F76E42176CB27200798745 /* ofLight.h in Headers */,
 				E4F76E44176CB27200798745 /* ofMaterial.h in Headers */,
@@ -930,6 +1051,7 @@
 				E4F76E58176CB27200798745 /* ofImage.h in Headers */,
 				E4F76E5A176CB27200798745 /* ofPath.h in Headers */,
 				E4F76E5C176CB27200798745 /* ofPixels.h in Headers */,
+				69433CCB1FE45BCD004D5B73 /* ofGraphicsBaseTypes.h in Headers */,
 				E4F76E5E176CB27200798745 /* ofPolyline.h in Headers */,
 				E4F76E60176CB27200798745 /* ofRendererCollection.h in Headers */,
 				E4F76E62176CB27200798745 /* ofTessellator.h in Headers */,
@@ -937,19 +1059,19 @@
 				E4F76E66176CB27200798745 /* ofMath.h in Headers */,
 				E4F76E68176CB27200798745 /* ofMatrix3x3.h in Headers */,
 				E4F76E6A176CB27200798745 /* ofMatrix4x4.h in Headers */,
+				69433CC51FE45BB7004D5B73 /* ofGLBaseTypes.h in Headers */,
 				E4F76E6C176CB27200798745 /* ofQuaternion.h in Headers */,
+				69433CCC1FE45BCD004D5B73 /* ofGraphicsConstants.h in Headers */,
 				E4F76E6E176CB27200798745 /* ofVec2f.h in Headers */,
 				9979E8291A1CDBD4007E55D1 /* ofMainLoop.h in Headers */,
 				E4F76E6F176CB27200798745 /* ofVec3f.h in Headers */,
 				E4F76E71176CB27200798745 /* ofVec4f.h in Headers */,
 				E4F76E72176CB27200798745 /* ofVectorMath.h in Headers */,
+				9008001E204EDC0F00DC786A /* EAGLKView.h in Headers */,
 				67833F8519F8990D00DBE7AA /* ofThreadChannel.h in Headers */,
 				E4F76E73176CB27200798745 /* ofMain.h in Headers */,
-				E4F76E75176CB27200798745 /* ofBaseSoundPlayer.h in Headers */,
-				E4F76E77176CB27200798745 /* ofBaseSoundStream.h in Headers */,
 				E4F76E81176CB27200798745 /* ofSoundPlayer.h in Headers */,
 				E4F76E83176CB27200798745 /* ofSoundStream.h in Headers */,
-				E4F76E85176CB27200798745 /* ofBaseTypes.h in Headers */,
 				9957D8701BDDCD440002D53C /* ofEvent.h in Headers */,
 				E4F76E87176CB27200798745 /* ofColor.h in Headers */,
 				E4F76E89176CB27200798745 /* ofParameter.h in Headers */,
@@ -967,6 +1089,7 @@
 				E4F76E9A176CB27200798745 /* ofSystemUtils.h in Headers */,
 				E4F76E9C176CB27200798745 /* ofThread.h in Headers */,
 				E4F76E9E176CB27200798745 /* ofURLFileLoader.h in Headers */,
+				2E49891A292C98000096EC56 /* ofCubeMapShaders.h in Headers */,
 				E4F76EA0176CB27200798745 /* ofUtils.h in Headers */,
 				E4F76EB6176CB27200798745 /* ofVideoGrabber.h in Headers */,
 				67833F8B19F8996300DBE7AA /* ofBufferObject.h in Headers */,
@@ -980,9 +1103,10 @@
 				15594F9415C56A8A00727FF2 /* ofxiOSEAGLView.h in Headers */,
 				15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */,
 				15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */,
+				035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */,
 				6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */,
+				2E6E258328F73C2C00EC8E22 /* ofShadow.h in Headers */,
 				15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */,
-				15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */,
 				15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */,
 				15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */,
 				15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */,
@@ -991,11 +1115,14 @@
 				15594FC815C56D1E00727FF2 /* ofxiOSImagePicker.h in Headers */,
 				15594FC915C56D1E00727FF2 /* ofxiOSKeyboard.h in Headers */,
 				15594FCA15C56D1E00727FF2 /* ofxiOSMapKit.h in Headers */,
+				69433CD11FE45BF2004D5B73 /* ofSoundBaseTypes.h in Headers */,
 				15594FCB15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h in Headers */,
+				90080016204EDA4B00DC786A /* ofxiOSGLKViewController.h in Headers */,
 				15594FCC15C56D1E00727FF2 /* ofxiOSMapKitListener.h in Headers */,
 				1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */,
 				1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */,
 				678C3D23176F04F800D1CC68 /* ofxiOSSoundStream.h in Headers */,
+				BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */,
 				678C3D25176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h in Headers */,
 				678C3D27176F04F800D1CC68 /* SoundInputStream.h in Headers */,
 				678C3D29176F04F800D1CC68 /* SoundOutputStream.h in Headers */,
@@ -1013,19 +1140,21 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */ = {
+		BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */;
+			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */;
 			buildPhases = (
+				BFF80A492C50AF3300784E74 /* ShellScript */,
 				BB24DE5D10DA7A3F00E9C588 /* Headers */,
 				BB24DEB110DA7A3F00E9C588 /* Sources */,
 				BB24DEC910DA7A3F00E9C588 /* Frameworks */,
+				BFF80A5C2C50B25B00784E74 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "iPhone+OF Static Library";
+			name = "iOS+OF Static Library";
 			productName = "Static Library";
 			productReference = BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1036,26 +1165,64 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1530;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				en,
+				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */,
+				BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BFF80A492C50AF3300784E74 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env bash";
+			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for iOS / macOS. Downloading libaries now via scripts/macos/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+		};
+		BFF80A5C2C50B25B00784E74 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env bash";
+			shellScript = "#!/usr/bin/env bash\nTARGET_DIR=\"$SRCROOT/../../lib/ios/\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for [$TARGET_DIR]\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for [$TARGET_DIR]\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BB24DEB110DA7A3F00E9C588 /* Sources */ = {
@@ -1063,6 +1230,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */,
+				2E6E258428F73C2C00EC8E22 /* ofShadow.cpp in Sources */,
+				BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */,
 				E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */,
 				E4F76E1D176CB27200798745 /* ofCamera.cpp in Sources */,
 				E4F76E1F176CB27200798745 /* ofEasyCam.cpp in Sources */,
@@ -1078,7 +1247,9 @@
 				E4F76E43176CB27200798745 /* ofMaterial.cpp in Sources */,
 				E4F76E45176CB27200798745 /* ofShader.cpp in Sources */,
 				E4F76E49176CB27200798745 /* ofTexture.cpp in Sources */,
+				E999E70F299D53FC00649F18 /* ofxiOSCoreHaptics.mm in Sources */,
 				E4F76E4B176CB27200798745 /* ofVbo.cpp in Sources */,
+				90080014204EDA1300DC786A /* ofxiOSGLKViewController.mm in Sources */,
 				E4F76E4D176CB27200798745 /* ofVboMesh.cpp in Sources */,
 				E4F76E4F176CB27200798745 /* of3dGraphics.cpp in Sources */,
 				E4F76E51176CB27200798745 /* ofBitmapFont.cpp in Sources */,
@@ -1095,8 +1266,9 @@
 				E4F76E69176CB27200798745 /* ofMatrix4x4.cpp in Sources */,
 				E4F76E6B176CB27200798745 /* ofQuaternion.cpp in Sources */,
 				E4F76E6D176CB27200798745 /* ofVec2f.cpp in Sources */,
-				6678E97519FEB2DF00C00581 /* ofBaseSoundStream.cpp in Sources */,
 				E4F76E70176CB27200798745 /* ofVec4f.cpp in Sources */,
+				2E49891C292C98000096EC56 /* ofCubeMap.cpp in Sources */,
+				69433CD01FE45BF2004D5B73 /* ofSoundBaseTypes.cpp in Sources */,
 				E4F76E80176CB27200798745 /* ofSoundPlayer.cpp in Sources */,
 				E4F76E82176CB27200798745 /* ofSoundStream.cpp in Sources */,
 				E4F76E84176CB27200798745 /* ofBaseTypes.cpp in Sources */,
@@ -1122,9 +1294,10 @@
 				15594F8115C5697C00727FF2 /* ofAppiOSWindow.mm in Sources */,
 				15594F9115C56A8A00727FF2 /* ofxiOSEAGLView.mm in Sources */,
 				15594F9215C56A8A00727FF2 /* ofxiOSAppDelegate.mm in Sources */,
+				69433CCA1FE45BCD004D5B73 /* ofGraphicsBaseTypes.cpp in Sources */,
 				15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */,
+				9008001D204EDC0F00DC786A /* EAGLKView.m in Sources */,
 				15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */,
-				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */,
 				15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */,
 				15594FBE15C56D1E00727FF2 /* ofxiOSCoreLocation.mm in Sources */,
 				15594FBF15C56D1E00727FF2 /* ofxiOSExternalDisplay.mm in Sources */,
@@ -1132,7 +1305,9 @@
 				15594FC115C56D1E00727FF2 /* ofxiOSImagePicker.mm in Sources */,
 				15594FC215C56D1E00727FF2 /* ofxiOSKeyboard.mm in Sources */,
 				15594FC315C56D1E00727FF2 /* ofxiOSMapKit.mm in Sources */,
+				035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */,
 				15594FC415C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm in Sources */,
+				69433CC31FE45BAC004D5B73 /* ofBaseApp.cpp in Sources */,
 				67833F8A19F8996300DBE7AA /* ofBufferObject.cpp in Sources */,
 				1594366415CF5F420087B684 /* ofxiOSVideoGrabber.mm in Sources */,
 				1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */,
@@ -1146,6 +1321,7 @@
 				67509ABC17979781003A3A29 /* ofXml.cpp in Sources */,
 				66EA462B17A6D396009BB12A /* ofxOpenALSoundPlayer.cpp in Sources */,
 				67D48ED41C103BAE00F719BC /* ofxiOSCoreMotion.mm in Sources */,
+				9008001A204EDB5500DC786A /* ofxiOSGLKView.mm in Sources */,
 				66EA462D17A6D396009BB12A /* SoundEngine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1156,17 +1332,15 @@
 		BB24DED310DA7A3F00E9C588 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
@@ -1177,6 +1351,7 @@
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Debug";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
@@ -1186,13 +1361,12 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
@@ -1203,6 +1377,7 @@
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Release";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1212,16 +1387,38 @@
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1234,16 +1431,37 @@
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1254,7 +1472,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */ = {
+		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB24DED310DA7A3F00E9C588 /* Debug */,

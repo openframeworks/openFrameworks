@@ -13,6 +13,7 @@ public:
 	std::string address;
 	int port;
 	bool blocking = false;
+	bool reuse = false;
 
 	std::string messageDelimiter = "[/TCP]";
 

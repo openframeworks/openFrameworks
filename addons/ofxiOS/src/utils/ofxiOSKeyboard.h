@@ -7,7 +7,8 @@
  */
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #import <UIKit/UIKit.h>
 #include "ofConstants.h"
 
@@ -23,7 +24,7 @@
 	int						_yOriginal;
 	int						fieldLength;
 }
-- (id) init: (int)x y:(int)y width:(int)w height:(int)h;
+- (instancetype) init:(int)x y:(int)y width:(int)w height:(int)h;
 - (void) showText;
 - (void) hideText;
 - (const char *) getText;
@@ -60,15 +61,16 @@ public:
 	void setFontSize(int ptSize);
 	void setFontColor(int r, int g, int b, int a);
 	void setBgColor(int r, int g, int b, int a);
-	void setText(string _text);
-	void setPlaceholder(string _text);
+	void setText(std::string _text);
+	void setPlaceholder(std::string _text);
 	void openKeyboard();
 	void updateOrientation();
 	void makeSecure();
 	void setMaxChars(int max);
 	
-	string getText();
-    OF_DEPRECATED_MSG("Use getText() instead.", string getLabelText());
+	std::string getText();
+    [[deprecated("Use getText()")]]
+	std::string getLabelText();
 	bool isKeyboardShowing();
 	
     UITextField * getKeyboardTextField();
@@ -80,4 +82,4 @@ protected:
 };
 
 #define ofxiPhoneKeyboard ofxiOSKeyboard
-
+#endif

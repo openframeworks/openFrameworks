@@ -7,6 +7,6 @@ if "%BUILDER%"=="VS" (
   
 if "%BUILDER%"=="MSYS2" (    
      for /D %%e in (addons\%APPVEYOR_PROJECT_NAME%\example*) do (
-         %MSYS2_PATH%\usr\bin\bash -lc "make -C addons/%APPVEYOR_PROJECT_NAME%/%%~ne Debug"
+         %MSYS2_PATH%\usr\bin\bash -lc "make -j -C addons/%APPVEYOR_PROJECT_NAME%/%%~ne Debug"
      )
 )

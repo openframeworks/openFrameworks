@@ -1,8 +1,12 @@
 #include "ofRtAudioSoundStream.h"
-#include "ofMath.h"
+#if defined(OF_RTAUDIO)
 #include "ofUtils.h"
 #include "ofAppRunner.h"
-#include "RtAudio.h"
+#include "ofLog.h"
+#include <RtAudio.h>
+
+using std::vector;
+using std::shared_ptr;
 
 //------------------------------------------------------------------------------
 RtAudio::Api toRtAudio(ofSoundDevice::Api api){
@@ -77,9 +81,13 @@ std::vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(ofSoundDevice::Ap
 		if(audioTemp.getCurrentApi()!=rtAudioApi && rtAudioApi!=RtAudio::Api::UNSPECIFIED){
 			return deviceList;
 		}
-		auto deviceCount = audioTemp.getDeviceCount();
 		RtAudio::DeviceInfo info;
+#if RTAUDIO_VERSION_MAJOR >= 6
+		for (unsigned int i: audioTemp.getDeviceIds()) {
+#else
+		auto deviceCount = audioTemp.getDeviceCount();
 		for (unsigned int i = 0; i < deviceCount; i++) {
+#endif
 			try {
 				info = audioTemp.getDeviceInfo(i);
 			}
@@ -280,8 +288,8 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// you need to cut in the middle. if the simpleApp
 	// doesn't produce audio, we pass silence instead of duplex...
 
-	auto nInputChannels = rtStreamPtr->getNumInputChannels();
-	auto nOutputChannels = rtStreamPtr->getNumOutputChannels();
+	size_t nInputChannels  = rtStreamPtr->getNumInputChannels();
+	size_t nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
 	if (nInputChannels > 0) {
 		if (rtStreamPtr->settings.inCallback) {
@@ -312,3 +320,4 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 
 	return 0;
 }
+#endif

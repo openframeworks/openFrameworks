@@ -1,6 +1,7 @@
 #include "ofFileUtils.h"
 #include "ofUtils.h"
 #include "ofxUnitTests.h"
+#include "ofMath.h"
 
 class ofApp: public ofxUnitTestsApp{
 	void run(){
@@ -13,14 +14,14 @@ class ofApp: public ofxUnitTestsApp{
 			ofLogNotice() << "-------------------";
 			ofLogNotice() << "constructor allocator";
 			ofBuffer buffer(src.data(), src.size());
-			test_eq(buffer.size(), src.size(), "constructor does correct allocation");
-			test(buffer.end() == buffer.begin() + src.size(), "correct boundaries");
+			ofxTestEq(buffer.size(), src.size(), "constructor does correct allocation");
+			ofxTest(buffer.end() == buffer.begin() + src.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = src.begin();
 			for(auto & c: buffer){
 				bufferEqual &= c == *srcIt++;
 			}
-			test(bufferEqual, "data is correct");
+			ofxTest(bufferEqual, "data is correct");
 		}
 
 		{
@@ -29,15 +30,15 @@ class ofApp: public ofxUnitTestsApp{
 			std::string text("This is a text test");
 			ofBuffer buffer;
 			buffer.set(text);
-			test_eq(buffer.size(), text.size(), "constructor does correct allocation");
-			test(buffer.end() == buffer.begin() + text.size(), "correct boundaries");
+			ofxTestEq(buffer.size(), text.size(), "constructor does correct allocation");
+			ofxTest(buffer.end() == buffer.begin() + text.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = text.begin();
 			for(auto & c: buffer){
 				bufferEqual &= c == *srcIt++;
 			}
-			test(bufferEqual, "data is correct");
-			test_eq(text, buffer.getText(), "getText");
+			ofxTest(bufferEqual, "data is correct");
+			ofxTestEq(text, buffer.getText(), "getText");
 		}
 
 		{
@@ -45,14 +46,14 @@ class ofApp: public ofxUnitTestsApp{
 			ofLogNotice() << "set allocator";
 			ofBuffer buffer;
 			buffer.set(src.data(), src.size());
-			test_eq(buffer.size(), src.size(), "set does correct allocation");
-			test(buffer.end() == buffer.begin() + src.size(), "correct boundaries");
+			ofxTestEq(buffer.size(), src.size(), "set does correct allocation");
+			ofxTest(buffer.end() == buffer.begin() + src.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = src.begin();
 			for(auto & c: buffer){
 				bufferEqual &= c == *srcIt++;
 			}
-			test(bufferEqual, "data is correct");
+			ofxTest(bufferEqual, "data is correct");
 		}
 
 		{
@@ -61,15 +62,15 @@ class ofApp: public ofxUnitTestsApp{
 			std::string text("This is a text test");
 			ofBuffer buffer;
 			buffer.set(text);
-			test_eq(buffer.size(), text.size(), "text set does correct allocation");
-			test(buffer.end() == buffer.begin() + text.size(), "correct boundaries");
+			ofxTestEq(buffer.size(), text.size(), "text set does correct allocation");
+			ofxTest(buffer.end() == buffer.begin() + text.size(), "correct boundaries");
 			bool bufferEqual = true;
 			auto srcIt = text.begin();
 			for(auto & c: buffer){
 				bufferEqual &= c == *srcIt++;
 			}
-			test(bufferEqual, "data is correct");
-			test_eq(text, buffer.getText(), "getText");
+			ofxTest(bufferEqual, "data is correct");
+			ofxTestEq(text, buffer.getText(), "getText");
 		}
 
 		{
@@ -78,14 +79,14 @@ class ofApp: public ofxUnitTestsApp{
 			ofBuffer buffer;
 			auto bufferSize = 2048;
 			buffer.allocate(bufferSize);
-			test_eq(buffer.size(), bufferSize, "allocate does correct allocation");
-			test(buffer.end() == buffer.begin() + bufferSize, "correct boundaries");
+			ofxTestEq(buffer.size(), bufferSize, "allocate does correct allocation");
+			ofxTest(buffer.end() == buffer.begin() + bufferSize, "correct boundaries");
 			bool bufferEqual = true;
 			buffer.setall(5);
 			for(auto & c: buffer){
 				bufferEqual &= c == 5;
 			}
-			test(bufferEqual, "data is correct");
+			ofxTest(bufferEqual, "data is correct");
 		}
 
 		{
@@ -96,8 +97,8 @@ class ofApp: public ofxUnitTestsApp{
 			for(int i=0;i<5;i++){
 				buffer.append(text);
 			}
-			test_eq(buffer.size(), text.size() * 5, "text append does correct allocation");
-			test(buffer.end() == buffer.begin() + text.size() * 5, "correct boundaries");
+			ofxTestEq(buffer.size(), text.size() * 5, "text append does correct allocation");
+			ofxTest(buffer.end() == buffer.begin() + text.size() * 5, "correct boundaries");
 			bool bufferEqual = true;
 			auto bufferIt = buffer.begin();
 			for(int i=0;i<5;i++){
@@ -105,8 +106,8 @@ class ofApp: public ofxUnitTestsApp{
 					bufferEqual &= c == *bufferIt++;
 				}
 			}
-			test(bufferEqual, "data is correct");
-			test_eq(text+text+text+text+text, buffer.getText(), "getText");
+			ofxTest(bufferEqual, "data is correct");
+			ofxTestEq(text+text+text+text+text, buffer.getText(), "getText");
 		}
 
 		{
@@ -116,8 +117,8 @@ class ofApp: public ofxUnitTestsApp{
 			for(int i=0;i<5;i++){
 				buffer.append(src.data(), src.size());
 			}
-			test_eq(buffer.size(), src.size() * 5, "text append does correct allocation");
-			test(buffer.end() == buffer.begin() + src.size() * 5, "correct boundaries");
+			ofxTestEq(buffer.size(), src.size() * 5, "text append does correct allocation");
+			ofxTest(buffer.end() == buffer.begin() + src.size() * 5, "correct boundaries");
 			bool bufferEqual = true;
 			auto bufferIt = buffer.begin();
 			for(int i=0;i<5;i++){
@@ -125,17 +126,17 @@ class ofApp: public ofxUnitTestsApp{
 					bufferEqual &= c == *bufferIt++;
 				}
 			}
-			test(bufferEqual, "data is correct");
+			ofxTest(bufferEqual, "data is correct");
 		}
 
 		{
 			ofLogNotice() << "-------------------";
 			ofLogNotice() << "append raw data";
 			ofBuffer buffer;
-			test_eq((uint64_t)buffer.getData(),(uint64_t)nullptr,"unallocated buffer getData");
-			test(buffer.begin() == buffer.end(),"unallocated buffer begin");
+			ofxTestEq((uint64_t)buffer.getData(),(uint64_t)nullptr,"unallocated buffer getData");
+			ofxTest(buffer.begin() == buffer.end(),"unallocated buffer begin");
 			buffer.set(src.data(), src.size());
-			test(buffer.getData() == &*buffer.begin(),"getData == begin");
+			ofxTest(buffer.getData() == &*buffer.begin(),"getData == begin");
 		}
 
 		{
@@ -171,8 +172,8 @@ class ofApp: public ofxUnitTestsApp{
 				allLinesEqual &= line == *linesIt++;
 				++numLines;
 			}
-			test(allLinesEqual, "all lines are correct");
-			test_eq(numLines,lines.size(),"lines iterator correct numLines");
+			ofxTest(allLinesEqual, "all lines are correct");
+			ofxTestEq(numLines,lines.size(),"lines iterator correct numLines");
 		}
 
 		{
@@ -208,8 +209,8 @@ class ofApp: public ofxUnitTestsApp{
 				allLinesEqual &= rline == *linesIt++;
 				++numLines;
 			}
-			test(allLinesEqual, "all lines are correct");
-			test_eq(numLines,lines.size(),"lines iterator correct numLines");
+			ofxTest(allLinesEqual, "all lines are correct");
+			ofxTestEq(numLines,lines.size(),"lines iterator correct numLines");
 		}
 	}
 };

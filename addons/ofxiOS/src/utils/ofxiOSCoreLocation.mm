@@ -18,7 +18,8 @@
  */
 
 #include "ofxiOSCoreLocation.h"
-
+#include "ofxiOSConstants.h"
+#if defined(OF_CORE_LOCATION)
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
@@ -33,7 +34,6 @@ ofxiOSCoreLocation::ofxiOSCoreLocation()
 //--------------------------------------------------------------
 ofxiOSCoreLocation::~ofxiOSCoreLocation()
 {
-	[coreLoc release];
 }
 
 //--------------------------------------------------------------
@@ -158,7 +158,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 @synthesize lat, lng, hAccuracy, alt, vAccuracy, distMoved, x, y, z, magneticHeading, trueHeading, headingAccuracy;
 
 //--------------------------------------------------------------
-- (id) init
+- (instancetype) init
 {
 	if(self = [super init])
 	{		
@@ -188,9 +188,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 //--------------------------------------------------------------
 - (void)dealloc 
 { 
-	[locationManager release];
-	
-	[super dealloc];
+    locationManager = nil;
 }
 
 //--------------------------------------------------------------
@@ -298,7 +296,7 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 - (void)locationManager:(CLLocationManager *)manager
 	   didFailWithError:(NSError *)error //thx apple
 {
-	NSMutableString *errorString = [[[NSMutableString alloc] init] autorelease];
+	NSMutableString *errorString = [[NSMutableString alloc] init];
 	
 	if ([error domain] == kCLErrorDomain) {
 		
@@ -344,4 +342,5 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 
 @end
 
+#endif
 #endif

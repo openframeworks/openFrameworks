@@ -4,7 +4,7 @@
 
 //========================================================================
 int main( ){
-	ofAppEGLWindow::Settings settings;
+	ofAppEGLWindowSettings settings;
 
 	settings.eglWindowOpacity = 127;
 	settings.frameBufferAttributes[EGL_DEPTH_SIZE]   = 0; // 0 bits for depth

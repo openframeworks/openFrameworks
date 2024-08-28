@@ -11,6 +11,38 @@
 #include "ofConstants.h"
 #include "ofEvent.h"
 
+
+
+enum ofxAndroidPermission{
+	OFX_ANDROID_PERMISSION_READ_CALENDAR = 0,
+	OFX_ANDROID_PERMISSION_WRITE_CALENDAR,
+	OFX_ANDROID_PERMISSION_CAMERA,
+	OFX_ANDROID_PERMISSION_READ_CONTACTS,
+	OFX_ANDROID_PERMISSION_WRITE_CONTACTS,
+	OFX_ANDROID_PERMISSION_GET_ACCOUNTS,
+	OFX_ANDROID_PERMISSION_ACCESS_FINE_LOCATION,
+	OFX_ANDROID_PERMISSION_ACCESS_COARSE_LOCATION,
+	OFX_ANDROID_PERMISSION_RECORD_AUDIO,
+	OFX_ANDROID_PERMISSION_READ_PHONE_STATE,
+	OFX_ANDROID_PERMISSION_CALL_PHONE,
+	OFX_ANDROID_PERMISSION_READ_CALL_LOG,
+	OFX_ANDROID_PERMISSION_WRITE_CALL_LOG,
+	OFX_ANDROID_PERMISSION_ADD_VOICEMAIL,
+	OFX_ANDROID_PERMISSION_USE_SIP,
+	OFX_ANDROID_PERMISSION_PROCESS_OUTGOING_CALLS,
+	OFX_ANDROID_PERMISSION_BODY_SENSORS,
+	OFX_ANDROID_PERMISSION_SEND_SMS,
+	OFX_ANDROID_PERMISSION_RECEIVE_SMS,
+	OFX_ANDROID_PERMISSION_READ_SMS,
+	OFX_ANDROID_PERMISSION_RECEIVE_WAP_PUSH,
+	OFX_ANDROID_PERMISSION_RECEIVE_MMS,
+	OFX_ANDROID_PERMISSION_READ_EXTERNAL_STORAGE,
+	OFX_ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE
+};
+
+enum ofOrientation: short;
+
+
 JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();
@@ -59,16 +91,17 @@ bool ofxJavaCallBoolMethod(jobject object, jclass classID, std::string methodNam
 bool ofxJavaCallBoolMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...);
 bool ofxJavaCallBoolMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...);
 
-void ofxAndroidAlertBox(string msg);
-int ofxAndroidProgressBox(string msg);
+void ofxAndroidPauseApp();
+void ofxAndroidAlertBox(std::string msg);
+int ofxAndroidProgressBox(std::string msg);
 void ofxAndroidDismissProgressBox(int id);
-void ofxAndroidOkCancelBox(string msg);
-void ofxAndroidYesNoBox(string msg);
-void ofxAndroidAlertTextBox(string question, string text);
-string ofxAndroidGetTextBoxResult();
-bool ofxAndroidAlertListBox(string title, const vector<string> & list);
+void ofxAndroidOkCancelBox(std::string msg);
+void ofxAndroidYesNoBox(std::string msg);
+void ofxAndroidAlertTextBox(std::string question, std::string text);
+std::string ofxAndroidGetTextBoxResult();
+bool ofxAndroidAlertListBox(std::string title, const std::vector<std::string> & list);
 
-void ofxAndroidToast(string msg);
+void ofxAndroidToast(std::string msg);
 
 void ofxAndroidLockScreenSleep();
 void ofxAndroidUnlockScreenSleep();
@@ -76,14 +109,16 @@ void ofxAndroidUnlockScreenSleep();
 bool ofxAndroidIsOnline();
 bool ofxAndroidIsWifiOnline();
 bool ofxAndroidIsMobileOnline();
+void ofxAndroidRequestPermission(ofxAndroidPermission permission);
+bool ofxAndroidCheckPermission(ofxAndroidPermission permission);
 
-string ofxAndroidGetStringRes(string id);
+std::string ofxAndroidGetStringRes(std::string id);
 
-string ofxAndroidRandomUUID();
+std::string ofxAndroidRandomUUID();
 
 void ofxAndroidMonitorNetworkState();
 
-void ofxAndroidLaunchBrowser(string url);
+void ofxAndroidLaunchBrowser(std::string url);
 
 void ofxAndroidNotifyLoadPercent(float percent);
 
@@ -92,7 +127,7 @@ bool ofxAndroidCheckSDCardMounted();
 void ofxAndroidEnableMulticast();
 void ofxAndroidDisableMulticast();
 
-void ofxAndroidSetViewItemChecked(string item_name, bool checked);
+void ofxAndroidSetViewItemChecked(std::string item_name, bool checked);
 
 enum ofxAndroidSwipeDir{
 	OFX_ANDROID_SWIPE_UP    = 1,
@@ -146,10 +181,27 @@ public:
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
 	ofEvent<ofOrientation> deviceOrientationChanged;
-	ofEvent<void> pause;
+	
+	/**
+		The names start, stop, resume and pause correspond to Android Activity class lifecycle callbacks.
+		They are described in Android lifecycle guide (https://developer.android.com/guide/components/activities/activity-lifecycle).
+		TLDR:
+			Start and Stop events inform about app going to background and foreground.
+			Resume and Pause events inform about window focus being lost and restored while the app is still in foreground (window is at least partialy visible).
+	*/
+	ofEvent<void> start;
+	ofEvent<void> stop;
 	ofEvent<void> resume;
+	ofEvent<void> pause;
+	
+	/**
+		GL is loaded when app starts.
+		When unloadGL is called, the original opengl context is already lost (but new, fresh context might be already active).
+		Events unloadGL and reloadGL are called alternately.
+	*/
 	ofEvent<void> unloadGL;
 	ofEvent<void> reloadGL;
+	
 	ofEvent<ofxAndroidSwipeEventArgs> swipe;
 	ofEvent<ofxAndroidScaleEventArgs> scale;
 	ofEvent<ofxAndroidScaleEventArgs> scaleBegin;

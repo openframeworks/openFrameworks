@@ -6,7 +6,9 @@
 
 #pragma once
 
-#include "ofBaseSoundStream.h"
+#include "ofxiOSConstants.h"
+#ifdef TARGET_OF_IOS
+#include "ofSoundBaseTypes.h"
 #include "ofSoundStream.h"
 
 class ofxiOSSoundStream : public ofBaseSoundStream {
@@ -58,3 +60,4 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
 };
 
 #define ofxiPhoneSoundStream ofxiOSSoundStream
+#endif

@@ -1,6 +1,6 @@
 # About fileOpenSaveDialogExample
 
-![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](fileOpenSaveDialog.png)
+![Screenshot of Example, stored as exampleName/screenshot.png (or .gif or .jpg)](fileOpenSaveDialogExample.png)
 
 
 ### Learning Objectives
@@ -10,7 +10,7 @@ This example demonstrates how to use the file dialog to select and save files fr
 In the code, pay attention to: 
 
 * Use of ```ofSystemLoadDialog``` to invoke the system level file dialog
-* Use of ```ofFileDialogResult``` to store the result of the invokation
+* Use of ```ofFileDialogResult``` to store the result of the invocation
 * Use of ```ofFileDialogResult.getPath()``` to retrieve the path to the file selected
 * Determing the file extension using ```file.getExtension()```
 * Saving the file using ```ofSystemSaveDialog()```

@@ -5,10 +5,11 @@
  *      Author: arturo
  */
 
-#ifndef OFSOUNDBUFFER_H_
-#define OFSOUNDBUFFER_H_
+#pragma once
 
-#include "ofConstants.h"
+#include <cstdint> // MARK: uint64_t msys2 only complain about this one it seems.
+#include <vector>
+#include <string>
 
 
 /*! 
@@ -144,11 +145,11 @@ public:
 
 	void copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
 
-	void copyFrom(const vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate);
+	void copyFrom(const std::vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate);
 	
-	void copyFrom(const vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate);
+	void copyFrom(const std::vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate);
 
-	void toShortPCM(vector<short> & dst) const;
+	void toShortPCM(std::vector<short> & dst) const;
 	void toShortPCM(short * dst) const;
 
 	/// resize outBuffer to outNumFrames with outNumChannels, and then copy outNumFrames of data from us to outBuffer.
@@ -213,15 +214,15 @@ public:
 	void set(float value);
 	
 	/// return the underlying buffer. careful!
-	vector<float> & getBuffer();
-	const vector<float> & getBuffer() const;
+	std::vector<float> & getBuffer();
+	const std::vector<float> & getBuffer() const;
 
 protected:
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
 	bool checkSizeAndChannelsConsistency(const std::string& function="" );
 
-	vector<float> buffer;
+	std::vector<float> buffer;
 	std::size_t channels;
 	unsigned int samplerate;
 
@@ -232,5 +233,3 @@ protected:
 namespace std{
 	void swap(ofSoundBuffer & src, ofSoundBuffer & dst);
 }
-
-#endif /* OFSOUNDBUFFER_H_ */

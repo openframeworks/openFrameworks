@@ -22,7 +22,7 @@ class ofApp : public ofBaseApp {
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofVec3f cameraRotation;
+		glm::vec3 cameraRotation;
 		float zoom, zoomTarget;
 		
 		// billboard particles
@@ -32,7 +32,7 @@ class ofApp : public ofBaseApp {
 		ofImage texture;
 		
 		ofVboMesh billboards;
-		ofVec3f billboardVels[NUM_BILLBOARDS];
+		glm::vec3 billboardVels[NUM_BILLBOARDS];
 };
 
 

@@ -1,20 +1,24 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofUtils.h"
-#include "ofColor.h"
-#include "ofMath.h"
 #include "ofLog.h"
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_<float> ofFloatColor;
+typedef ofColor_<unsigned short> ofShortColor;
+
 #include <limits>
 
 
 /// \file
 /// ofPixels is an object for working with blocks of pixels, those pixels can
 /// be copied from an image that you've loaded, something that you've drawn
-/// using ofGraphics, or a ofVideoGrabber instance. 
+/// using ofGraphics, or a ofVideoGrabber instance.
 ///
 /// You can create an image from pixels, using on ofPixels object like so:
-/// 
+///
 /// ~~~~{.cpp}
 /// ofPixels p;
 /// ofLoadImage(p, "pathToImage.jpg");
@@ -23,7 +27,7 @@
 /// ofPixels represents pixels data on the CPU as opposed to an ofTexture
 /// which represents pixel data on the GPU. They can easily be made inter-
 /// operational though:
-/// 
+///
 /// ~~~~{.cpp}
 /// ofTexture tex;
 /// // do some stuff with tex
@@ -42,7 +46,7 @@
 /// 	i++;
 /// }
 /// ~~~~
-/// 
+///
 /// You can think of the ofPixels as the CPU side representation of pixel data
 /// that can be sent to the GPU as an ofTexture object. To draw pixels, you
 /// need to put them into an ofTexture and to manipulate an ofTextures pixel
@@ -55,6 +59,109 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
+
+/// \brief Used to represent the available pixel formats.
+///
+/// \sa ofPixels
+enum ofPixelFormat: short{
+	/// \brief A single-channel pixel, typically used for greyscale images.
+	///
+	/// This has 1 channel and a type-dependent number of bits per-pixel.
+	OF_PIXELS_GRAY = 0,
+	/// \brief A single-channel pixel with an alpha channel.
+	///
+	/// This has 2 channels and a type-dependent number of bits per-pixel.
+	OF_PIXELS_GRAY_ALPHA = 1,
+
+	/// \brief An RGB pixel with no alpha channel.
+	///
+	/// This has 3 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#BI_RGB
+	OF_PIXELS_RGB=2,
+	/// \brief A pixel used for color data with a blue/green/red channel order.
+	///
+	/// This has 3 channels and a type-dependent number of bits per-pixel.
+	OF_PIXELS_BGR=3,
+	/// \brief An RGBA pixel. This is typically used for color with transparency.
+	///
+	/// This has 4 channels and a type-dependent number of bits per-pixel.
+	///
+	/// \sa http://www.fourcc.org/rgb.php#RGBA
+	OF_PIXELS_RGBA=4,
+	/// \brief A pixel used for color/transparency with a blue/green/red/alpha channel order.
+	///
+	/// This has 4 channels and a type-dependent number of bits per-pixel.
+	OF_PIXELS_BGRA=5,
+
+	// \brief A 16-bit color pixel with 5-bit red and blue channels and a 6-bit green channel.
+	OF_PIXELS_RGB565=6,
+
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved U/V plane.
+	///
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved U/V plane containing 8-bit 2x2 subsampled color difference
+	/// samples.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#NV12
+	OF_PIXELS_NV12=7,
+	/// \brief A 12-bit YUV 4:2:0 pixel with an interleaved V/U plane.
+	///
+	/// YUV 4:2:0 image with a plane of 8-bit Y samples followed by an
+	/// interleaved V/U plane containing 8-bit 2x2 subsampled chroma samples.
+	/// The same as NV12 except the interleave order of U and V is reversed.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#NV21
+	OF_PIXELS_NV21=8,
+	/// \brief A 12-bit YUV NxM Y plane followed by (N/2)x(M/2) V and U planes.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#YV12
+	OF_PIXELS_YV12=9,
+	/// \brief A 12-bit YUV format similar to ::OF_PIXELS_YV12, but with U & V reversed.
+	///
+	/// Note that IYUV and I420 appear to be identical.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#IYUV
+	OF_PIXELS_I420=10,
+	/// \brief A 16-bit YUV 4:2:2 format.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#YUY2
+	OF_PIXELS_YUY2=11,
+	/// \brief A 16-bit YUV 4:2:2 format.
+	///
+	/// \sa http://www.fourcc.org/yuv.php#UYVY
+	OF_PIXELS_UYVY=12,
+
+	/// \brief A single channel pixel, typically used for the luma component of YUV.
+	OF_PIXELS_Y,
+	/// \brief A single channel pixel, typically used (with V) for the chroma component of YUV.
+	OF_PIXELS_U,
+	/// \brief A single channel pixel, typically used (with U) for the chroma component of YUV.
+	OF_PIXELS_V,
+	/// \brief A two channel pixel, with U first, representing both chroma components of YUV.
+	OF_PIXELS_UV,
+	/// \brief A two channel pixel, with V first, representing both chroma components of YUV.
+	OF_PIXELS_VU,
+
+	/// \brief This is a placeholder to indicate the last valid enum.
+	OF_PIXELS_NUM_FORMATS,
+
+	/// \brief This indicates an unknown pixel type.
+	OF_PIXELS_UNKNOWN=-1,
+	/// \brief This indicates an unknown, native pixel type.
+	OF_PIXELS_NATIVE=-2
+};
+
+#define OF_PIXELS_MONO OF_PIXELS_GRAY
+#define OF_PIXELS_R OF_PIXELS_GRAY
+#define OF_PIXELS_RG OF_PIXELS_GRAY_ALPHA
+
+template<typename T>
+std::string ofToString(const T & v);
+template<>
+std::string ofToString(const ofPixelFormat & pixelType);
+
+enum ofImageType: short;
 
 /// \brief A class representing a collection of pixels.
 template <typename PixelType>
@@ -77,7 +184,7 @@ public:
 	/// \param h Height of pixel array
 	/// \param channels Number of channels per pixel
 	void allocate(size_t w, size_t h, size_t channels);
-	
+
 	/// \brief Allocates space for pixel data
 	///
 	/// The pixelFormat can be one of the following:
@@ -86,7 +193,7 @@ public:
 	///     OF_PIXELS_RGBA
 	///     OF_PIXELS_BGRA
 	///     OF_PIXELS_MONO
-	/// 
+	///
 	/// \param w Width of pixel array
 	/// \param h Height of pixel array
 	/// \param pixelFormat ofPixelFormat defining number of channels per pixel
@@ -99,7 +206,7 @@ public:
 	///     OF_IMAGE_GRAYSCALE
 	///     OF_IMAGE_COLOR
 	///     OF_IMAGE_COLOR_ALPHA
-	/// 
+	///
 	/// \param w Width of pixel array
 	/// \param h Height of pixel array
 	/// \param imageType ofImageType defining number of channels per pixel
@@ -111,8 +218,8 @@ public:
 	/// the memory needed, but it's sometimes good to check.
 	bool isAllocated() const;
 
-	/// \brief Clear all the data from the ofPixels objects. 
-	/// After calling this you'll need to allocate() 
+	/// \brief Clear all the data from the ofPixels objects.
+	/// After calling this you'll need to allocate()
 	/// the ofPixels object again to use it.
 	void clear();
 
@@ -121,7 +228,7 @@ public:
 
 	template<typename SrcType>
 	ofPixels_<PixelType>& operator=(const ofPixels_<SrcType> & mom);
-	
+
 	/// \}
 	/// \name Set Pixel Data
 	/// \{
@@ -137,21 +244,21 @@ public:
 	void setFromAlignedPixels(const PixelType * newPixels, size_t width, size_t height, ofPixelFormat pixelFormat, size_t stride);
 	/// \brief used to copy i420 pixels from gstreamer when (width % 4) != 0
 	void setFromAlignedPixels(const PixelType * newPixels, size_t width, size_t height, ofPixelFormat pixelFormat, std::vector<size_t> strides);
-	
+
 	void swap(ofPixels_<PixelType> & pix);
 
 	/// \}
 	/// \name Modify Existing Data
 	/// \{
 
-	/// \brief Crop the pixels to a new width and height. 
+	/// \brief Crop the pixels to a new width and height.
 	///
 	/// As a word of caution this reallocates memory and can be a bit
 	/// expensive if done a lot.
 	void crop(size_t x, size_t y, size_t width, size_t height);
-	
+
 	/// \brief Crop the pixels into the ofPixels reference passed in by `toPix.
-	/// at the `x` and `y` and width the new width and height. 
+	/// at the `x` and `y` and width the new width and height.
 	///
 	/// As a word of caution this reallocates memory and can be a bit
 	/// expensive if done a lot.
@@ -161,30 +268,30 @@ public:
 	void rotate90(int nClockwiseRotations);
 	void rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations) const;
 	void mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal) const;
-	
+
 	/// \brief Mirror the pixels across the vertical and/or horizontal axis.
 	/// \param vertically Set to true to mirror vertically
 	/// \param horizontal Set to true to mirror horizontal
 	void mirror(bool vertically, bool horizontal);
-	
-	/// \brief Resize the ofPixels instance to the dstHeight and dstWidth. 
-	///
-	/// The options for the interpolation methods are as follows:
-	/// 
-	///     OF_INTERPOLATE_NEAREST_NEIGHBOR
-	///     OF_INTERPOLATE_BILINEAR		
-	///     OF_INTERPOLATE_BICUBIC		
-	bool resize(size_t dstWidth, size_t dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);	
 
-	/// \brief Resize the ofPixels instance to the size of the ofPixels object passed in dst. 
+	/// \brief Resize the ofPixels instance to the dstHeight and dstWidth.
 	///
 	/// The options for the interpolation methods are as follows:
-	/// 
+	///
 	///     OF_INTERPOLATE_NEAREST_NEIGHBOR
-	///     OF_INTERPOLATE_BILINEAR		
-	///     OF_INTERPOLATE_BICUBIC		
+	///     OF_INTERPOLATE_BILINEAR
+	///     OF_INTERPOLATE_BICUBIC
+	bool resize(size_t dstWidth, size_t dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);
+
+	/// \brief Resize the ofPixels instance to the size of the ofPixels object passed in dst.
+	///
+	/// The options for the interpolation methods are as follows:
+	///
+	///     OF_INTERPOLATE_NEAREST_NEIGHBOR
+	///     OF_INTERPOLATE_BILINEAR
+	///     OF_INTERPOLATE_BICUBIC
 	bool resizeTo(ofPixels_<PixelType> & dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR) const;
-	
+
 	/// \brief Paste the ofPixels object into another ofPixels object at the
 	/// specified index, copying data from the ofPixels that the method is
 	/// being called on to the ofPixels object at `&dst`. If the data being
@@ -206,8 +313,12 @@ public:
 	/// \returns A raw pointer to the pixel data.
 	PixelType * getData();
 	const PixelType * getData() const;
-	OF_DEPRECATED_MSG("Use getData instead",PixelType * getPixels());
-	OF_DEPRECATED_MSG("Use getData instead",const PixelType * getPixels() const);
+
+	[[deprecated("Use getData")]]
+	PixelType * getPixels();
+
+	[[deprecated("Use getData")]]
+	const PixelType * getPixels() const;
 
 	/// \brief Get the pixel index at a x,y position
 	///
@@ -217,13 +328,13 @@ public:
 	/// pix.setPixel(ind, yellow);
 	/// ~~~~
 	size_t getPixelIndex(size_t x, size_t y) const;
-	
+
 	/// \brief Get the color at a x,y position
 	ofColor_<PixelType> getColor(size_t x, size_t y) const;
 
 	/// \brief Get the color at a specific index
 	ofColor_<PixelType> getColor(size_t index) const;
-	
+
 	/// \brief Set the color of the pixel at the x,y location
 	void setColor(size_t x, size_t y, const ofColor_<PixelType>& color);
 
@@ -245,7 +356,7 @@ public:
 
 	/// \brief Get the width of the pixel array.
 	size_t getWidth() const;
-	
+
 	/// \brief Get the height of the pixel array.
 	size_t getHeight() const;
 
@@ -257,12 +368,12 @@ public:
 	/// If you have RGB pixel data, this will return 24, if you have RGBA,
 	/// you'll have 32, if you have grayscale, this will return 8.
 	size_t getBitsPerPixel() const;
-	
+
 	/// \brief Get how large each channel of a pixel is
 	///
 	/// ofPixels objects that store pixel data as unsigned char are smaller
-	/// than  ofPixels objects that store pixel data as floats.	
-	/// 
+	/// than  ofPixels objects that store pixel data as floats.
+	///
 	/// \note This returns bytes, not bits, so you should see ofPixels<float>
 	/// return 4 and ofPixels<unsigned char> return 1.
 	size_t getBytesPerChannel() const;
@@ -270,15 +381,15 @@ public:
 	/// \brief Get how large each channel of a pixels is.
 	///
 	/// ofPixels objects that store pixel data as `unsigned char` are smaller
-	/// than ofPixels objects that store pixel data as 'float`.	
-	/// 
+	/// than ofPixels objects that store pixel data as 'float`.
+	///
 	/// \note This returns bits, not bytes, so you should see ofPixels<float>
 	/// return 32 and ofPixels<unsigned char> return 8.
 	size_t getBitsPerChannel() const;
 	size_t getBytesStride() const;
-	
+
 	/// \brief Get the number of channels that the ofPixels object contains.
-	/// RGB is 3 channels, RGBA is 4, and grayscale is 1.	
+	/// RGB is 3 channels, RGBA is 4, and grayscale is 1.
 	size_t getNumChannels() const;
 
 	size_t getTotalBytes() const;
@@ -286,13 +397,13 @@ public:
 	size_t getNumPlanes() const;
 
 	ofPixels_<PixelType> getPlane(size_t plane);
-	
+
 	/// \brief Get all values of one channel
 	///
 	/// For instance, the Red pixel values, from the
 	/// ofPixels object, this gives you a grayscale representation of the
 	/// specific channel
-	/// 
+	///
 	/// ~~~~{.cpp}
 	///     // Get red pixels
 	/// 	ofPixels rpix = pix.getChannel(0);
@@ -302,19 +413,19 @@ public:
 	/// 	ofPixels bpix = pix.getChannel(2);
 	/// ~~~~
 	ofPixels_<PixelType> getChannel(size_t channel) const;
-	
+
 	ofPixelFormat getPixelFormat() const;
 
 	/// \brief Get the number of values that the ofPixels object
 	/// contains, so an RGB data 400x400 would be 480,000, whereas RGBA data
 	/// of the same dimensions would be 640,000.
 	size_t size() const;
-	
+
 	/// \brief Get the type of the image
 	/// \returns One of the following types: `OF_IMAGE_GRAYSCALE`,
 	/// `OF_IMAGE_COLOR`, `OF_IMAGE_COLOR_ALPHA`
 	ofImageType getImageType() const;
-	
+
 	/// \}
 	/// \name Setters
 	/// \{
@@ -323,7 +434,7 @@ public:
 	/// Red pixel values, from an ofPixels object assumed to be a grayscale
 	/// representation of the data that should go into that one channel.
 	void setChannel(size_t channel, const ofPixels_<PixelType> channelPixels);
-	
+
 	/// \brief Changes the image type for the ofPixels object
 	///
 	/// \param imageType Can be one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
@@ -352,10 +463,10 @@ public:
 	const_reverse_iterator rend() const;
 
 	/// \}
-	
+
     /// \cond INTERNAL
 
-    struct ConstPixel: public std::iterator<std::forward_iterator_tag,ConstPixel>{
+    struct ConstPixel{
         ConstPixel(const PixelType * pixel, size_t bytesPerPixel, ofPixelFormat pixelFormat);
         const ConstPixel& operator*() const;
         const ConstPixel* operator->() const;
@@ -370,6 +481,13 @@ public:
         size_t getComponentsPerPixel() const;
         ofPixelFormat getPixelFormat() const;
         ofColor_<PixelType> getColor() const;
+		
+		using value_type = ConstPixel;
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
+
 
     private:
         const PixelType * pixel;
@@ -377,7 +495,7 @@ public:
         ofPixelFormat pixelFormat;
     };
 
-	struct Pixel: public std::iterator<std::forward_iterator_tag,Pixel>{
+	struct Pixel {
 		Pixel(PixelType * pixel, size_t bytesPerPixel, ofPixelFormat pixelFormat);
         const Pixel& operator*() const;
         const Pixel* operator->() const;
@@ -397,6 +515,12 @@ public:
 		size_t getComponentsPerPixel() const;
 		ofPixelFormat getPixelFormat() const;
 		ofColor_<PixelType> getColor() const;
+		
+		using value_type = Pixel;
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 	private:
 		PixelType * pixel;
@@ -416,7 +540,7 @@ public:
 		ofPixelFormat pixelFormat;
 	};
 
-	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
+	struct Line {
 		Line(PixelType * _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat);
         const Line& operator*() const;
         const Line* operator->() const;
@@ -441,6 +565,12 @@ public:
 		Pixel getPixel(size_t pixel);
 		Pixels getPixels();
         Pixels getPixels(size_t first, size_t numPixels);
+		
+		using value_type = Line;
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 	private:
 		PixelType * _begin;
@@ -457,7 +587,7 @@ public:
         Line begin();
 
         Line end();
-        
+
 
 	private:
         PixelType * _begin;
@@ -480,7 +610,7 @@ public:
 		ofPixelFormat pixelFormat;
 	};
 
-	struct ConstLine: public std::iterator<std::forward_iterator_tag,Line>{
+	struct ConstLine {
 		ConstLine(const PixelType * _begin, size_t stride, size_t componentsPerPixel, size_t lineNum, ofPixelFormat pixelFormat);
 		const ConstLine& operator*() const;
 		const ConstLine* operator->() const;
@@ -497,6 +627,12 @@ public:
         ConstPixel getPixel(size_t pixel) const;
 		ConstPixels getPixels() const;
 		ConstPixels getPixels(size_t first, size_t numPixels) const;
+		
+		using value_type = ConstLine;
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const value_type*;
+		using reference = const value_type&;
 
 	private:
 		const PixelType * _begin;
@@ -541,7 +677,7 @@ private:
 
 	template<typename SrcType>
 	void copyFrom( const ofPixels_<SrcType>& mom );
-	
+
 	PixelType * pixels = nullptr;
 	size_t 	width = 0;
 	size_t 	height = 0;
@@ -597,14 +733,14 @@ void ofPixels_<PixelType>::copyFrom(const ofPixels_<SrcType> & mom){
 	if(mom.isAllocated()){
 		allocate(mom.getWidth(),mom.getHeight(),mom.getNumChannels());
 
-		const float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : numeric_limits<SrcType>::max() );
-		const float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : numeric_limits<PixelType>::max() );
+		const float srcMax = ( (sizeof(SrcType) == sizeof(float) ) ? 1.f : std::numeric_limits<SrcType>::max() );
+		const float dstMax = ( (sizeof(PixelType) == sizeof(float) ) ? 1.f : std::numeric_limits<PixelType>::max() );
 		const float factor = dstMax / srcMax;
 
 		if(sizeof(SrcType) == sizeof(float)) {
 			// coming from float we need a special case to clamp the values
 			for(size_t i = 0; i < mom.size(); i++){
-				pixels[i] = CLAMP(mom[i], 0, 1) * factor;
+				pixels[i] = ofClamp(mom[i], 0, 1) * factor;
 			}
 		} else{
 			// everything else is a straight scaling
@@ -990,7 +1126,7 @@ template<typename PixelType>
 inline ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels(){
 	ofPixels_<PixelType> pixels;
 	pixels.setFromExternalPixels(_begin,stride/componentsPerPixel,1,pixelFormat);
-	return std::move(pixels);
+	return pixels;
 }
 
 //----------------------------------------------------------------------
@@ -998,7 +1134,7 @@ template<typename PixelType>
 inline const ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels() const{
 	ofPixels_<PixelType> pixels;
 	pixels.setFromExternalPixels(_begin,stride/componentsPerPixel,1,pixelFormat);
-	return std::move(pixels);
+	return pixels;
 }
 
 //----------------------------------------------------------------------

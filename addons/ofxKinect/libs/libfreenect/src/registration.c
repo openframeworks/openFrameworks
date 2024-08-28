@@ -101,7 +101,7 @@ static inline void unpack_8_pixels(uint8_t *raw, uint16_t *frame)
 }
 
 // apply registration data to a single packed frame
-FN_INTERNAL int freenect_apply_registration(freenect_device* dev, uint8_t* input_packed, uint16_t* output_mm)
+FN_INTERNAL int freenect_apply_registration(freenect_device* dev, uint8_t* input, uint16_t* output_mm, bool unpacked)
 {
 	freenect_registration* reg = &(dev->registration);
 	// set output buffer to zero using pointer-sized memory access (~ 30-40% faster than memset)
@@ -116,15 +116,22 @@ FN_INTERNAL int freenect_apply_registration(freenect_device* dev, uint8_t* input
 	for (y = 0; y < DEPTH_Y_RES; y++) {
 		for (x = 0; x < DEPTH_X_RES; x++) {
 
-			// get 8 pixels from the packed frame
-			if (source_index == 8) {
-				unpack_8_pixels( input_packed, unpack );
-				source_index = 0;
-				input_packed += 11;
-			}
+                        uint16_t metric_depth;
 
-			// get the value at the current depth pixel, convert to millimeters
-			uint16_t metric_depth = reg->raw_to_mm_shift[ unpack[source_index++] ];
+                        if (unpacked) {
+                                uint32_t buf_index = y * DEPTH_X_RES + x;
+                                metric_depth = reg->raw_to_mm_shift[((uint16_t *)input)[buf_index]];
+                        } else {
+                                // get 8 pixels from the packed frame
+                                if (source_index == 8) {
+                                        unpack_8_pixels( input, unpack );
+                                        source_index = 0;
+                                        input += 11;
+                                }
+
+                                // get the value at the current depth pixel, convert to millimeters
+                                metric_depth = reg->raw_to_mm_shift[ unpack[source_index++] ];
+                        }
 
 			// so long as the current pixel has a depth value
 			if (metric_depth == DEPTH_NO_MM_VALUE) continue;
@@ -185,6 +192,22 @@ FN_INTERNAL int freenect_apply_depth_to_mm(freenect_device* dev, uint8_t* input_
 			// get the value at the current depth pixel, convert to millimeters
 			uint16_t metric_depth = reg->raw_to_mm_shift[ unpack[source_index++] ];
 			output_mm[y * DEPTH_X_RES + x] = metric_depth < DEPTH_MAX_METRIC_VALUE ? metric_depth : DEPTH_MAX_METRIC_VALUE;
+		}
+	}
+	return 0;
+}
+
+// Same as freenect_apply_depth_to_mm, but don't need to unpack 11 bit depth values
+FN_INTERNAL int freenect_apply_depth_unpacked_to_mm(freenect_device* dev, uint16_t* input, uint16_t* output_mm)
+{
+	freenect_registration* reg = &(dev->registration);
+	uint32_t x,y;
+	for (y = 0; y < DEPTH_Y_RES; y++) {
+		for (x = 0; x < DEPTH_X_RES; x++) {
+			// get the value at the current depth pixel, convert to millimeters
+			uint32_t buf_index = y * DEPTH_X_RES + x;
+			uint16_t metric_depth = reg->raw_to_mm_shift[input[buf_index]];
+			output_mm[buf_index] = metric_depth < DEPTH_MAX_METRIC_VALUE ? metric_depth : DEPTH_MAX_METRIC_VALUE;
 		}
 	}
 	return 0;

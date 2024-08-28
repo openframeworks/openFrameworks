@@ -22,11 +22,11 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 		
-    
-        ofBlendMode blendMode;
-        ofImage rainbow;
+	
+		ofBlendMode blendMode;
+		ofImage rainbow;
 		ofTrueTypeFont 	vagRounded;
-        string eventString;
-        string timeString;
+		string eventString;
+		string timeString;
 };
 

@@ -150,7 +150,7 @@ ofxVectorGraphics::ofxVectorGraphics(){
 }
 
 //----------------------------------------------------------			
-void ofxVectorGraphics::beginEPS(string fileName, int x, int y, int w, int h){
+void ofxVectorGraphics::beginEPS(std::string fileName, int x, int y, int w, int h){
 	creeps.newFile(ofToDataPath(fileName).c_str(), x, y, x+w, y+h);
 	bRecord = true;
 	
@@ -307,28 +307,27 @@ void ofxVectorGraphics::arc(float x, float y, float radius, float offsetAngleDeg
 		float	angle = DEG_TO_RAD * offsetAngleDegrees;
 			
 		float	xpos, ypos;
-
-		if(!bFill){
-	
-			glBegin(GL_LINE_STRIP);
-				for(int i = 0; i < arcResolution; i++){
-					xpos	= cos(angle) * radius;
-					ypos	= sin(angle) * radius; 
-					glVertex2f(x + xpos, y + ypos);						
-					angle += step;
-				}
-			glEnd();
+		ofMesh mesh;
 		
-		}else{
-			glBegin(GL_TRIANGLE_STRIP);
+		if(!bFill){		
+    			mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
 				for(int i = 0; i < arcResolution; i++){
 					xpos	= cos(angle) * radius;
 					ypos	= sin(angle) * radius; 
-					glVertex2f(x + xpos, y + ypos);						
-					glVertex2f(x, y);														
+					mesh.addVertex(ofVec3f(x + xpos, y + ypos, 0));						
 					angle += step;
 				}
-			glEnd();
+			mesh.draw();
+		}else{
+    			mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+				for(int i = 0; i < arcResolution; i++){
+					xpos	= cos(angle) * radius;
+					ypos	= sin(angle) * radius; 
+					mesh.addVertex(ofVec3f(x + xpos, y + ypos, 0));						
+					mesh.addVertex(ofVec3f(x, y,0));														
+					angle += step;
+				}
+			mesh.draw();
 		}
 	}
 	if(bRecord){

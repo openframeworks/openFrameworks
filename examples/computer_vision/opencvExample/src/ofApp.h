@@ -26,19 +26,19 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-        #ifdef _USE_LIVE_VIDEO
+		#ifdef _USE_LIVE_VIDEO
 		  ofVideoGrabber 		vidGrabber;
 		#else
 		  ofVideoPlayer 		vidPlayer;
 		#endif
 
-        ofxCvColorImage			colorImg;
+		ofxCvColorImage			colorImg;
 
-        ofxCvGrayscaleImage 	grayImage;
+		ofxCvGrayscaleImage 	grayImage;
 		ofxCvGrayscaleImage 	grayBg;
 		ofxCvGrayscaleImage 	grayDiff;
 
-        ofxCvContourFinder 	contourFinder;
+		ofxCvContourFinder 	contourFinder;
 
 		int 				threshold;
 		bool				bLearnBakground;

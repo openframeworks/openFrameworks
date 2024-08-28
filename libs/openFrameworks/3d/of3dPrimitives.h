@@ -1,10 +1,11 @@
 #pragma once
 
-#include "ofVboMesh.h"
-#include "ofRectangle.h"
+#include "ofMesh.h"
 #include "ofNode.h"
-#include "ofTexture.h"
-#include <map>
+
+class ofTexture;
+class ofVboMesh;
+class ofRectangle;
 
 /// \brief A class representing a 3d primitive.
 class of3dPrimitive : public ofNode {
@@ -21,7 +22,7 @@ public:
     // does not store texture. Creates tex coords from texture, if texture is
     // non-arb, then it will create normalized tex coords //
     // defaults to index 0
-    void mapTexCoordsFromTexture( ofTexture& inTexture );
+    void mapTexCoordsFromTexture( const ofTexture& inTexture );
 
 
     ofMesh* getMeshPtr();
@@ -58,6 +59,7 @@ public:
 
     void setUseVbo(bool useVbo);
     bool isUsingVbo() const;
+    ofBoundingBox getBoundingBox() const;
 protected:
 
     // useful when creating a new model, since it uses normalized tex coords //
@@ -65,10 +67,10 @@ protected:
 
 	glm::vec4 texCoords;
     bool usingVbo;
-    shared_ptr<ofMesh>  mesh;
+    std::shared_ptr<ofMesh>  mesh;
     mutable ofMesh normalsMesh;
 
-    vector<ofIndexType> getIndices( int startIndex, int endIndex ) const;
+    std::vector<ofIndexType> getIndices( int startIndex, int endIndex ) const;
 
 };
 
@@ -195,7 +197,7 @@ protected:
 /// 
 /// ~~~~
 /// 
-/// The sphere can look a little weird if you don't do ofEnabledDepthTesting() 
+/// The sphere can look a little weird if you don't do ofEnableDepthTest() 
 /// and ofDisableAlphaBlending().
 /// 
 
@@ -337,11 +339,11 @@ public:
     void setCylinderColor( ofColor color );
     void setBottomCapColor( ofColor color );
 
-    vector<ofIndexType> getTopCapIndices() const;
+    std::vector<ofIndexType> getTopCapIndices() const;
     ofMesh getTopCapMesh() const;
-    vector<ofIndexType> getCylinderIndices() const;
+    std::vector<ofIndexType> getCylinderIndices() const;
     ofMesh getCylinderMesh() const;
-    vector<ofIndexType> getBottomCapIndices() const;
+    std::vector<ofIndexType> getBottomCapIndices() const;
     ofMesh getBottomCapMesh() const;
 
     int getResolutionRadius() const;
@@ -357,7 +359,6 @@ protected:
     float height;
     bool bCapped;
     int strides[3][2];
-    int vertices[3][2];
 	glm::vec3 resolution;
 };
 
@@ -380,7 +381,7 @@ protected:
 ///     cone.rotate(spinX, 1.0, 0.0, 0.0);
 ///     cone.rotate(spinY, 0, 1.0, 0.0);
 /// 
-///     // get all the faces from the cpme, handy when you want to copy
+///     // get all the faces from the cone, handy when you want to copy
 ///     // individual vertices or tweak them a little ;)
 ///     vector<ofMeshFace> triangles = cone.getMesh().getUniqueFaces();
 /// 
@@ -428,13 +429,13 @@ public:
     void setCapColor( ofColor color );
 
     /// \return a vector of the indices of vertices that make up the cone (as opposed to the cap indices).
-    vector<ofIndexType> getConeIndices() const;
+    std::vector<ofIndexType> getConeIndices() const;
 
     /// \return This returns an ofMesh made up of the cone (as opposed to the cap).
     ofMesh getConeMesh() const;
 
     /// \return a vector of the indices of vertices that make up the cap (as opposed to the cone indices).
-    vector<ofIndexType> getCapIndices() const;
+    std::vector<ofIndexType> getCapIndices() const;
 
     /// \return an ofMesh made up of the cap (as opposed to the cone).
     ofMesh getCapMesh() const;
@@ -461,7 +462,6 @@ protected:
 	glm::vec3 resolution;
 
     int strides[2][2];
-    int vertices[2][2];
 };
 
 
@@ -534,7 +534,7 @@ public:
 
     void resizeToTexture( ofTexture& inTexture );
 
-    vector<ofIndexType> getSideIndices( int sideIndex ) const;
+    std::vector<ofIndexType> getSideIndices( int sideIndex ) const;
     ofMesh getSideMesh( int sideIndex ) const;
 
     void setResolution( int res ); // same resolution for all sides //
@@ -560,6 +560,4 @@ protected:
 	glm::vec3 resolution;
     // indices strides for faces //
     int strides[6][2];
-    int vertices[6][2];
-
 };

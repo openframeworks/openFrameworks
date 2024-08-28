@@ -31,7 +31,7 @@ public:
 
 	ofParameter<float> radius;
 	ofParameter<ofColor> color;
-	ofParameter<ofVec2f> center;
+	ofParameter<glm::vec2> center;
 	ofParameter<int> circleResolution;
 	ofParameter<bool> filled;
 	ofxButton twoCircles;

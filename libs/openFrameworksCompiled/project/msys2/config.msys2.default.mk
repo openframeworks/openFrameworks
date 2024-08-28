@@ -25,29 +25,26 @@
 #   core source code.
 ##########################################################################################
 
-PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug
-PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
-PLATFORM_RUN_COMMAND =
-#ifneq (,$(findstring MINMGW64_NT,$(PLATFORM_OS)))
-MSYS2_ROOT = /mingw32
-PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
+#MINGW_PREFIX ?= /mingw32
+MINGW_PREFIX ?= /mingw64
+PLATFORM_CFLAGS += -std=gnu++17 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
-PLATFORM_LDFLAGS += -lpthread
-#ifeq ($(PLATFORM_ARCH),x86_64)
-CC = $(MSYS2_ROOT)/bin/gcc
-CXX = $(MSYS2_ROOT)/bin/g++
-FIND = /usr/bin/find
-PLATFORM_AR = $(MSYS2_ROOT)/bin/ar
-PLATFORM_LD = $(MSYS2_ROOT)/bin/ld
-PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
-#endif
-#endif
+
+CC = $(MINGW_PREFIX)/bin/gcc
+CXX = $(MINGW_PREFIX)/bin/g++
+
+FIND ?= /usr/bin/find
+PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
+#PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+PLATFORM_LD = /usr/bin/lld
+PLATFORM_RESOURCE_COMPILER = $(MINGW_PREFIX)/bin/windres
+PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkgconf
 
 
 PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug.exe
 PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME).exe
-PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME)
-PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME)
+PLATFORM_PROJECT_RELEASE_TARGET = bin/$(PLATFORM_PROJECT_RELEASE_BIN_NAME)
+PLATFORM_PROJECT_DEBUG_TARGET = bin/$(PLATFORM_PROJECT_DEBUG_BIN_NAME)
 PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 
 ##########################################################################################
@@ -64,9 +61,19 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
+PLATFORM_DEFINES = OF_VIDEO_PLAYER_DIRECTSHOW
+
 ifeq ($(OF_USE_POCO),1)
-	PLATFORM_DEFINES = POCO_STATIC
+	PLATFORM_DEFINES += POCO_STATIC
 endif
+
+# Define the sound player to use : OpenAL is the default.
+# Uncomment next line to use FMOD sound player
+#PLATFORM_DEFINES += OF_SOUND_PLAYER_FMOD
+ifeq ($(shell pkg-config libmpg123 --exists; echo $$?),0)
+	PLATFORM_DEFINES += OF_USING_MPG123
+endif
+
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -102,10 +109,10 @@ PLATFORM_CFLAGS += -Wall
 PLATFORM_CFLAGS += -fexceptions
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
-ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
-	PLATFORM_CFLAGS += -march=native
-	PLATFORM_CFLAGS += -mtune=native
-endif
+#ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
+#	PLATFORM_CFLAGS += -march=native
+#	PLATFORM_CFLAGS += -mtune=native
+#endif
 
 
 ################################################################################
@@ -118,6 +125,17 @@ endif
 
 
 #PLATFORM_LDFLAGS += -arch i386
+PLATFORM_LDFLAGS += -lpthread
+
+
+ifeq ($(findstring MINGW64,$(MSYSTEM)),MINGW64)
+	PLATFORM_LDFLAGS += -Wl,--disable-dynamicbase,--disable-high-entropy-va,--default-image-base-low
+endif
+
+ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
+	PLATFORM_LDFLAGS += -lstdc++fs
+endif
+
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -133,7 +151,7 @@ endif
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
@@ -152,16 +170,13 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
-
 # core sources
 
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 #PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofMediaFoundationSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
@@ -172,10 +187,17 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glm/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/json/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pugixml/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtaudio/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/uriparser/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/utf8/%
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glm/%
 
 
 ##########################################################################################
@@ -189,6 +211,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
 ##########################################################################################
 
 # PLATFORM_HEADER_SEARCH_PATHS =
+#PLATFORM_HEADER_SEARCH_PATHS += $(MINGW_PREFIX)/include/utf8cpp
 
 ##########################################################################################
 # PLATFORM LIBRARIES
@@ -210,8 +233,13 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
 
 PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
-PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
+PLATFORM_LIBRARIES += freeimage
+# PLATFORM_LIBRARIES += boost_filesystem-mt boost_system-mt
+PLATFORM_LIBRARIES += mf mfplat mfuuid mfreadwrite
+# PLATFORM_LIBRARIES += glfw3
+
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
+#PLATFORM_LIBRARIES += mf mfplat mfuuid d3d11 #xaudio2
 
 #static libraries (fully qualified paths)
 #PLATFORM_STATIC_LIBRARIES += somestaticlib
@@ -220,10 +248,20 @@ PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+PLATFORM_PKG_CONFIG_LIBRARIES += liburiparser
+PLATFORM_PKG_CONFIG_LIBRARIES += nlohmann_json
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
+PLATFORM_PKG_CONFIG_LIBRARIES += pugixml
+PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
+ifeq ($(findstring OF_USING_MPG123, $(PLATFORM_DEFINES)),OF_USING_MPG123)
+	PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+	PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
 
 # shared libraries
 PLATFORM_SHARED_LIBRARIES =
@@ -274,66 +312,26 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CC=
 
+################################################################################
+# PLATFORM ICON
+#    If not set by the project by PROJECT_(RELEASE|DEBUG)_ICON, use OF defaults
+################################################################################
+PLATFORM_RELEASE_ICON = $(OF_PLATFORM_MAKEFILES)/icon.ico
+PLATFORM_DEBUG_ICON = $(OF_PLATFORM_MAKEFILES)/icon-debug.ico
+
 copy_dlls:
 	@echo "     copying dlls to bin"
-	@cp $(MSYS2_ROOT)/bin/libwinpthread-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libgcc_s_dw2-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libstdc++-6.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libboost_filesystem-mt.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libboost_system-mt.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libbz2-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libcairo-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/LIBEAY32.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libfreeimage-3.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libfreetype-6.dll bin/
-	@cp $(MSYS2_ROOT)/bin/glew32.dll bin/
-	@cp $(MSYS2_ROOT)/bin/SSLEAY32.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libfontconfig-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpixman-1-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpng16-16.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libHalf-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libharfbuzz-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libexpat-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libiconv-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIex-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIlmImf-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libImath-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libglib-2.0-0.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libIlmThread-2_2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/liblcms2-2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libintl-8.dll bin/
-	@cp $(MSYS2_ROOT)/bin/liblzma-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libminizip-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjpeg-8.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjpegxr.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjxrglue.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopenjp2-7.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libraw*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libtiff-5.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libwebp*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libjasper-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_calib3d*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_core*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_features2d*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_flann*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgcodecs*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_imgproc*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_ml*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_objdetect*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_photo*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_video*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libopencv_videoio*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libpcre-1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libPoco*.dll bin/
-	@cp $(MSYS2_ROOT)/bin/tbb.dll bin/
-	@cp $(MSYS2_ROOT)/bin/zlib1.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libassimp.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libgraphite2.dll bin/
-	@cp $(MSYS2_ROOT)/bin/libgomp-1.dll bin/
+
+	@ntldd --recursive $(wildcard bin/$(APPNAME)*.exe) | sed -e 's:\\:/:g' | grep -F "$(MINGW_PREFIX)" | cut -d">" -f2 |cut -d" " -f2 >dlllist
+
+	@while read -r dll; do \
+		test -e "$$dll" && cp "$$dll" ./bin; \
+    done <dlllist
+	@echo "     `wc -l <dlllist` dlls copied"
+	@rm dlllist
 
 afterplatform: $(TARGET_NAME)
-	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
+	-cp ${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION} bin/ ; true
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

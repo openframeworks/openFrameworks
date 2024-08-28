@@ -27,7 +27,7 @@ class ofApp : public ofBaseApp{
 		bool capture;
 		bool bFill;
 
-		vector <ofPoint> pts;
+		vector <glm::vec3> pts;
 
 
 };

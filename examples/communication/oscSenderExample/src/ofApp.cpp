@@ -2,12 +2,15 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetWindowTitle("oscSenderExample");
+	ofSetFrameRate(60); // run at 60 fps
+	ofSetVerticalSync(true);
+
 	// open an outgoing connection to HOST:PORT
 	sender.setup(HOST, PORT);
+
+	// preload image to send into a buffer
 	imgAsBuffer = ofBufferFromFile("of-logo.png", true);
-
-	ofSetWindowTitle("osc sender");
-
 }
 
 //--------------------------------------------------------------
@@ -23,15 +26,16 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofBackgroundGradient(255, 100);
 
-	if(img.getWidth() > 0){
+	// draw image if it's loaded
+	if(img.isAllocated()){
 		ofSetColor(255);
-		img.draw(ofGetWidth()/2-img.getWidth()/2,
-			ofGetHeight()/2-img.getHeight()/2);
+		img.draw(ofGetWidth()/2 - img.getWidth()/2,
+				 ofGetHeight()/2 - img.getHeight()/2);
 	}
 
 	// display instructions
-	string buf = "sending osc messages to : " + string(HOST);
-	buf += " : " + ofToString(PORT);
+	string buf = "sending osc messages to: " + string(HOST);
+	buf += " " + ofToString(PORT);
 	buf += "\npress A to send osc message [/test 1 3.5 hello <time>]\n";
 	buf += "press I to send a (small) image as a osc blob to [/image]";
 	ofDrawBitmapStringHighlight(buf, 10, 20);
@@ -39,6 +43,8 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+
+	// send a test message
 	if(key == 'a' || key == 'A'){
 		ofxOscMessage m;
 		m.setAddress("/test");
@@ -49,16 +55,21 @@ void ofApp::keyPressed(int key){
 		sender.sendMessage(m, false);
 	}
 
-	//send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
+	// send an image
+	// note: the size of the image depends greatly on your network buffer sizes,
+	// if an image is too big the message won't come through and you may need
+	// to break it up into multiple blobs
+	if(key == 'i' || key == 'I'){
 
-	if( key == 'i' || key == 'I'){
+		// load image from buffer
 		img.load(imgAsBuffer);
 
+		// send as a binary blob
 		ofxOscMessage m;
 		m.setAddress("/image");
 		m.addBlobArg(imgAsBuffer);
 		sender.sendMessage(m);
-		cout << "ofApp:: sending image with size: " << imgAsBuffer.size() << endl;
+		ofLog() << "sending image with size: " << imgAsBuffer.size();
 	}
 }
 
@@ -119,4 +130,3 @@ void ofApp::gotMessage(ofMessage msg){
 void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
-

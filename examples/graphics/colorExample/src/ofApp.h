@@ -22,8 +22,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 
-        // member variables to store the current mouse X and Y position 
-        // as a percentage of the width/height of the screen
-        float mouseXPercent, mouseYPercent;
+		// member variables to store the current mouse X and Y position 
+		// as a percentage of the width/height of the screen
+		float mouseXPercent, mouseYPercent;
 };
 	

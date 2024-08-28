@@ -8,8 +8,8 @@
 //  with 'simple harmonic motion'
 class swarm : public ofNode {
 	struct particle {
-		ofVec3f position;
-		ofVec3f velocity;
+		glm::vec3 position;
+		glm::vec3 velocity;
 		ofColor color;
 	};
 

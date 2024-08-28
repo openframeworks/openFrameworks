@@ -23,7 +23,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofSetColor(color);
-	ofDrawCircle(ofGetWidth()*0.5,ofGetWidth()*0.5,radius);
+	ofDrawCircle(ofGetWidth()*0.5,ofGetHeight()*0.5,radius);
 	ofSetColor(0);
 	ofDrawBitmapString(ofGetFrameRate(),20,20);
 }

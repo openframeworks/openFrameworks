@@ -139,6 +139,7 @@ static inline int32_t fn_le32s(int32_t s)
 #define PID_NUI_CAMERA 0x02ae
 #define PID_NUI_MOTOR 0x02b0
 #define PID_K4W_CAMERA 0x02bf
+#define PID_KV2_CAMERA 0x02d9 // This identifies the Kinect v2 (XBox One). Use https://github.com/OpenKinect/libfreenect2 instead.
 
 // For K4W: first pid is what it starts out as,
 // second is how it appears with lastest firmware from SDK,

@@ -175,16 +175,20 @@ public:
 	const ofFloatPixels & getDistancePixels() const;
 
 	/// get the video (ir or rgb) texture
-	ofTexture& getTexture();
-	const ofTexture& getTexture() const;
-	OF_DEPRECATED_MSG("Use getTexture() instead", ofTexture& getTextureReference());
-	OF_DEPRECATED_MSG("Use getTexture() instead", const ofTexture& getTextureReference() const);
+	ofTexture & getTexture();
+	const ofTexture & getTexture() const;
+	[[deprecated("Use getTexture()")]]
+	ofTexture & getTextureReference();
+	[[deprecated("Use getTexture()")]]
+	const ofTexture & getTextureReference() const;
 
 	/// get the grayscale depth texture
-	ofTexture& getDepthTexture();
-	const ofTexture& getDepthTexture() const;
-	OF_DEPRECATED_MSG("Use getDepthTexture() instead", ofTexture& getDepthTextureReference());
-	OF_DEPRECATED_MSG("Use getDepthTexture() instead", const ofTexture& getDepthTextureReference() const);
+	ofTexture & getDepthTexture();
+	const ofTexture & getDepthTexture() const;
+	[[deprecated("Use getDepthTexture()")]]
+	ofTexture & getDepthTextureReference();
+	[[deprecated("Use getDepthTexture()")]]
+	const ofTexture & getDepthTextureReference() const;
 
 /// \section Grayscale Depth Value
 
@@ -479,11 +483,11 @@ public:
 
 	/// get the deviceList id from an index
 	/// returns -1 if not found
-    int getDeviceId(int index);
+        int getDeviceId(unsigned int index);
 
 	/// get the deviceList id from a serial
 	/// returns -1 if not found
-    int getDeviceId(string serial);
+        int getDeviceId(string serial);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);

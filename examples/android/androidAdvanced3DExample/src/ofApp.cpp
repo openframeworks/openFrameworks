@@ -252,7 +252,6 @@ void ofApp::drawScene(int iCameraDraw){
 		//transformed into a frustum in
 		//world space.
 		
-		ofMatrix4x4 inverseCameraMatrix;
 		
 		//the camera's matricies are dependant on
 		//the aspect ratio of the viewport
@@ -260,7 +259,7 @@ void ofApp::drawScene(int iCameraDraw){
 		//the same as fullscreen
 		//
 		//watch the aspect ratio of preview camera
-		inverseCameraMatrix.makeInvertOf(camEasyCam.getModelViewProjectionMatrix( (iMainCamera == 0 ? viewMain : viewGrid[0]) ));
+		glm::mat4 inverseCameraMatrix = glm::inverse(camEasyCam.getModelViewProjectionMatrix( (iMainCamera == 0 ? viewMain : viewGrid[0]) ));
 		
 		// By default, we can say
 		//	'we are drawing in world space'
@@ -277,7 +276,7 @@ void ofApp::drawScene(int iCameraDraw){
 		//	transformation.
 		//
 		ofPushMatrix();
-		glMultMatrixf(inverseCameraMatrix.getPtr());
+		ofMultMatrix(inverseCameraMatrix);
 		
 		
 		ofSetColor(255, 100, 100);
@@ -371,8 +370,8 @@ void ofApp::updateMouseRay()
 {
 	
 	//define ray in screen space
-	ray[0] = ofVec3f(ofGetMouseX(), ofGetMouseY(), -1);
-	ray[1] = ofVec3f(ofGetMouseX(), ofGetMouseY(), 1);
+	ray[0] = glm::vec3(ofGetMouseX(), ofGetMouseY(), -1);
+	ray[1] = glm::vec3(ofGetMouseX(), ofGetMouseY(), 1);
 	
 	//transform ray into world space
 	ray[0] = cameras[iMainCamera]->screenToWorld(ray[0], viewMain);

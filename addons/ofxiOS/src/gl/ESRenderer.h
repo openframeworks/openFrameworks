@@ -7,9 +7,9 @@
 //
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import <QuartzCore/QuartzCore.h>
-
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLDrawable.h>
 
@@ -21,12 +21,13 @@ typedef enum {
 
 @protocol ESRenderer <NSObject>
 
-- (void) startRender;
-- (void) finishRender;
+- (void)startRender;
+- (void)finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
-- (EAGLContext*) context;
+- (EAGLContext*)context;
 
 - (NSInteger)getWidth;
 - (NSInteger)getHeight;
 
 @end
+#endif

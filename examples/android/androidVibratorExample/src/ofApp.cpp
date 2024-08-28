@@ -54,7 +54,7 @@ void ofApp::touchDown(int x, int y, int id){
 void ofApp::touchMoved(int x, int y, int id){
 	bool found=false;
 	for(int i=0;i<areas.size();i++){
-		if(areas[i].inside(ofVec2f(x,y))){
+		if(areas[i].inside(x,y)){
 			found=true;
 			break;
 		}

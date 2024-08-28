@@ -4,12 +4,12 @@
 void ofApp::setup(){
 	ofBackground(50,50,50);
 
-    enabled=false;
+	enabled=false;
 
 	// add the newFloat method to listen for eventsAddon newFloatEvent
 	ofAddListener(evObject.newFloatEvent,this,&ofApp::newFloat);
 
-	// add the newFloat method to listen for eventsAddon newFloatEvent
+	// add the newInt method to listen for eventsAddon newIntEvent
 	ofAddListener(evObject.newIntEvent,this,&ofApp::newInt);
 }
 
@@ -58,12 +58,12 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    if(enabled)
-        evObject.disable();
-    else
-        evObject.enable();
+	if(enabled)
+		evObject.disable();
+	else
+		evObject.enable();
 
-    enabled=!enabled;
+	enabled=!enabled;
 
 }
 

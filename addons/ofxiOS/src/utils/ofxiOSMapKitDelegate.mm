@@ -27,16 +27,19 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/
-
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+
+#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSMapKit.h"
+#include "ofLog.h"
 
 @implementation ofxiOSMapKitDelegate
 
--(id)initWithMapKit:(ofxiOSMapKit*)mk {
+-(instancetype)initWithMapKit:(ofxiOSMapKit*)mk {
 	if(self = [super init]) {
 		mapKit = mk;
 		ofLogVerbose("ofxiOSMapKitDelegate") << "initWithMapKit";
@@ -46,7 +49,6 @@
 
 -(void)dealloc {
 	ofLogVerbose("ofxiOSMapKitDelegate") << "dealloc";
-	[super dealloc];
 }
 
 
@@ -68,7 +70,7 @@
 
 - (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error {
 	ofLogVerbose("ofxiOSMapKitDelegate") << "mapViewDidFailLoadingMap";
-	string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
+	std::string s = error != nil ? [[error localizedDescription] UTF8String] : "unknown error";
 	mapKit->errorLoadingMap(s);
 }
 
@@ -76,4 +78,5 @@
 
 @end
 
+#endif
 #endif

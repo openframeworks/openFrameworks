@@ -5,7 +5,8 @@
 //
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#ifdef TARGET_OF_IOS
 #import "SoundStream.h"
 #include <functional>
 
@@ -13,11 +14,12 @@ class ofSoundBuffer;
 
 @interface ofxiOSSoundStreamDelegate : NSObject <SoundStreamDelegate>
 
-- (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)input;
-- (id)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)output;
+- (instancetype)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)input;
+- (instancetype)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)output;
 - (void)setInput:(std::function<void(ofSoundBuffer &)>)input;
 - (void)setOutput:(std::function<void(ofSoundBuffer &)>)output;
 
 @end
 
 #define ofxiPhoneSoundStreamDelegate ofxiOSSoundStreamDelegate
+#endif

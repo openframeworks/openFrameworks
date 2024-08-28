@@ -10,6 +10,8 @@
 #include "ofLog.h"
 #include <jni.h>
 
+using namespace std;
+
 ofxAndroidVibrator::ofxAndroidVibrator() {
 	// TODO Auto-generated constructor stub
 

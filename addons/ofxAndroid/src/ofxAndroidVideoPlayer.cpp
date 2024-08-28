@@ -8,7 +8,9 @@
 #include "ofxAndroidVideoPlayer.h"
 #include "ofxAndroidUtils.h"
 #include "ofLog.h"
+#include "ofMatrix4x4.h"
 
+using namespace std;
 
 //---------------------------------------------------------------------------
 void ofxAndroidVideoPlayer::reloadTexture(){

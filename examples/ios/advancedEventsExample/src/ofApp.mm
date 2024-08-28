@@ -4,7 +4,7 @@
 void ofApp::setup(){	
 	ofBackground(50, 50, 50);
 	
-    enabled = false;
+	enabled = false;
 	
 	// add the newFloat method to listen for eventsAddon newFloatEvent
 	ofAddListener(evObject.newFloatEvent, this, &ofApp::newFloat);
@@ -44,12 +44,12 @@ void ofApp::newInt(int & i){
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
 	if(enabled){
-        evObject.disable();
-    }else{
-        evObject.enable();
-    }
+		evObject.disable();
+	}else{
+		evObject.enable();
+	}
 	
-    enabled = !enabled;
+	enabled = !enabled;
 }
 
 //--------------------------------------------------------------
@@ -74,20 +74,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & args){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }

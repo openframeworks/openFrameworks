@@ -1,8 +1,96 @@
 #include "ofVideoGrabber.h"
-#include "ofUtils.h"
-#include "ofBaseTypes.h"
-#include "ofConstants.h"
+#include "ofVideoBaseTypes.h"
+#include "ofGLUtils.h"
 #include "ofAppRunner.h"
+#include "ofPixels.h"
+#include "ofConstants.h"
+
+// ------------------------------------------------ capture
+// check if any video capture system is already defined from the compiler
+#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
+	#ifdef TARGET_LINUX
+		#define OF_VIDEO_CAPTURE_GSTREAMER
+
+	#elif defined(TARGET_OSX)
+		#define OF_VIDEO_CAPTURE_AVF
+
+	#elif defined (TARGET_WIN32)
+		// comment out this following line, if you'd like to use the
+		// quicktime capture interface on windows
+		// if not, we default to videoInput library for
+		// direct show capture...
+
+		#define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
+
+		#ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
+			#define OF_VIDEO_CAPTURE_DIRECTSHOW
+		#else
+			#define OF_VIDEO_CAPTURE_QUICKTIME
+		#endif
+
+	#elif defined(TARGET_ANDROID)
+
+		#define OF_VIDEO_CAPTURE_ANDROID
+
+	#elif defined(TARGET_EMSCRIPTEN)
+
+		#define OF_VIDEO_CAPTURE_EMSCRIPTEN
+
+	#elif defined(TARGET_OF_IOS)
+
+		#define OF_VIDEO_CAPTURE_IOS
+
+	#endif
+#endif
+
+
+
+#ifdef TARGET_OF_OSX
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+#ifdef OF_VIDEO_CAPTURE_IOS
+	#include "ofxiOSVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxiOSVideoGrabber
+#endif
+
+// #ifdef OF_VIDEO_CAPTURE_QUICKTIME
+// 	#include "ofQuickTimeGrabber.h"
+// 	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber
+// #endif
+
+// #ifdef OF_VIDEO_CAPTURE_QTKIT
+// 	#include "ofQTKitGrabber.h"
+// 	#define OF_VID_GRABBER_TYPE ofQTKitGrabber
+// #endif
+
+#ifdef OF_VIDEO_CAPTURE_AVF
+	#include "ofAVFoundationGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofAVFoundationGrabber
+#endif
+
+#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
+	#include "ofDirectShowGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofDirectShowGrabber
+#endif
+
+#ifdef OF_VIDEO_CAPTURE_GSTREAMER
+	#include "ofGstVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofGstVideoGrabber
+#endif
+
+#ifdef OF_VIDEO_CAPTURE_ANDROID
+	#include "ofxAndroidVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
+#endif
+
+#ifdef OF_VIDEO_CAPTURE_EMSCRIPTEN
+	#include "ofxEmscriptenVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxEmscriptenVideoGrabber
+#endif
+
+using std::shared_ptr;
+using std::vector;
 
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
@@ -19,13 +107,13 @@ ofVideoGrabber::~ofVideoGrabber(){
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber){
-	grabber = newGrabber;
+	grabber = std::move(newGrabber);
 }
 
 //--------------------------------------------------------------------
 shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
 	if(!grabber){
-		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 	return grabber;
 }
@@ -42,7 +130,7 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 #endif
 
 	if(!grabber){
-		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 
 	bUseTexture = setUseTexture;
@@ -61,7 +149,7 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 
 	if( grabber->isInitialized() && bUseTexture ){
 		if(!grabber->getTexturePtr()){
-			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
 				tex[i].allocate(plane);
@@ -110,7 +198,7 @@ ofPixelFormat ofVideoGrabber::getPixelFormat() const{
 vector<ofVideoDevice> ofVideoGrabber::listDevices() const{
 	if(!grabber){
 		ofVideoGrabber * mutThis = const_cast<ofVideoGrabber*>(this);
-		mutThis->setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		mutThis->setGrabber(std::make_shared<OF_VID_GRABBER_TYPE>());
 	}
 	return grabber->listDevices();
 }
@@ -220,10 +308,10 @@ void ofVideoGrabber::update(){
 	if(grabber){
 		grabber->update();
 		if( bUseTexture && !grabber->getTexturePtr() && grabber->isFrameNew() ){
-			if(int(tex.size())!=grabber->getPixels().getNumPlanes()){
+			if(tex.size()!=grabber->getPixels().getNumPlanes()){
 				tex.resize(grabber->getPixels().getNumPlanes());
 			}
-			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+			for(std::size_t i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glInternalFormat != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 				if(bDiffPixFormat || !tex[i].isAllocated() ){
