@@ -11,7 +11,7 @@ int main() {
 	settings.numOfAntiAliasingSamples = 0; // number of samples used for anti-aliasing.
 	settings.enableHardwareOrientation = false; // enables native view orientation.
 	settings.enableHardwareOrientationAnimation = false; // enables native orientation changes to be animated.
-	settings.glesVersion = OFXIOS_RENDERER_ES2; // type of renderer to use, ES1, ES2, ES3
+	settings.glesVersion = OFXIOS_RENDERER_ES3; // type of renderer to use, ES1, ES2, ES3
 	settings.windowControllerType = ofxiOSWindowControllerType::GL_KIT; // Window Controller Type
 	settings.colorType = ofxiOSRendererColorFormat::RGBA8888; // color format used default RGBA8888
 	settings.depthType = ofxiOSRendererDepthFormat::DEPTH_NONE; // depth format (16/24) if depth enabled

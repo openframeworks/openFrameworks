@@ -1550,6 +1550,9 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
             case GLFW_KEY_KP_EQUAL:
                 key = codepoint = '=';
                 break;
+            case GLFW_KEY_SPACE:
+                key = codepoint = OF_KEY_SPACE;
+                break;
             default:
                 codepoint = keycodeToUnicode(instance, scancode, mods);
                 key = codepoint;

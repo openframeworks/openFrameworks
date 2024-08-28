@@ -91,18 +91,18 @@ private:
 	static void updateCanvas(int x, int y);
 	// static int getUniqueId();
 	static void display_cb();
-	static EM_BOOL keydown_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
-	static EM_BOOL keyup_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
+	static EM_BOOL keydown_cb(int eventType, const EmscriptenKeyboardEvent * keyEvent, void * userData);
+	static EM_BOOL keyup_cb(int eventType, const EmscriptenKeyboardEvent * keyEvent, void * userData);
 	
-	static EM_BOOL mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static EM_BOOL mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static EM_BOOL mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static EM_BOOL mouseenter_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static EM_BOOL mouseleave_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
+	static EM_BOOL mousedown_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mouseup_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mousemoved_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mouseenter_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mouseleave_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
 	
-	static EM_BOOL touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
+	static EM_BOOL touch_cb(int eventType, const EmscriptenTouchEvent * touchEvent, void * userData);
 	
-	static EM_BOOL mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData);
+	static EM_BOOL mousescrolled_cb(int eventType, const EmscriptenWheelEvent * wheelEvent, void * userData);
 		
 	static EM_BOOL emscripten_game_window_resized_callback(int eventType, const void *reserved, void *userData);
 

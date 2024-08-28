@@ -59,6 +59,7 @@ public:
 
     void setUseVbo(bool useVbo);
     bool isUsingVbo() const;
+    ofBoundingBox getBoundingBox() const;
 protected:
 
     // useful when creating a new model, since it uses normalized tex coords //

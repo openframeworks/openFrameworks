@@ -28,43 +28,43 @@ ofxAppEmscriptenWindow::~ofxAppEmscriptenWindow() {
 
 //------------------------------------------------------------
 void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
-    setWindowShape(settings.getWidth(),settings.getHeight());
+	setWindowShape(settings.getWidth(),settings.getHeight());
 	
-    EmscriptenWebGLContextAttributes attrs;
-    emscripten_webgl_init_context_attributes(&attrs);
+	EmscriptenWebGLContextAttributes attrs;
+	emscripten_webgl_init_context_attributes(&attrs);
 
 /// when setting explicitSwapControl to 0 it is emscripten that is in charge of swapping on each render call.
-    attrs.explicitSwapControl = 0;
-    attrs.depth = 1;
-    attrs.stencil = 1;
-    attrs.antialias = 1;
-    attrs.majorVersion = 2;
-    attrs.minorVersion = 0;
-    attrs.alpha = 0;
+	attrs.explicitSwapControl = 0;
+	attrs.depth = 1;
+	attrs.stencil = 1;
+	attrs.antialias = 1;
+	attrs.majorVersion = 2;
+	attrs.minorVersion = 0;
+	attrs.alpha = 0;
 
-    context = emscripten_webgl_create_context("#canvas", &attrs);
-    assert(context);
+	context = emscripten_webgl_create_context("#canvas", &attrs);
+	assert(context);
 	  
-    makeCurrent();
+	makeCurrent();
 
-    _renderer = std::make_shared<ofGLProgrammableRenderer>(this);
-    ((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
+	_renderer = std::make_shared<ofGLProgrammableRenderer>(this);
+	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
-    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keydown_cb);
-    emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keyup_cb);
-    
-    emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousedown_cb);
-    emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseup_cb);
-    emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousemoved_cb);
-    emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseenter_cb);
-    emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseleave_cb);
+  emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keydown_cb);
+  emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keyup_cb);
 
-    emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
-    emscripten_set_touchend_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
-    emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
-    emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
-	
-    emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousescrolled_cb);
+  emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousedown_cb);
+  emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseup_cb);
+  emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousemoved_cb);
+  emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseenter_cb);
+  emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseleave_cb);
+
+  emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+  emscripten_set_touchend_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+  emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+  emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+
+  emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousescrolled_cb);
 	
 	// the following locks up the window for some reason.....
 //	emscripten_set_resize_callback(const char *target, void *userData, EM_BOOL useCapture, em_ui_callback_func callback)
@@ -163,7 +163,7 @@ void ofxAppEmscriptenWindow::display_cb(){
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData){
+EM_BOOL ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEvent * keyEvent, void * userData){
 	int key = keyEvent->key[0];
 	std::string id = keyEvent->key;
 	if(key == 0){
@@ -345,9 +345,9 @@ EM_BOOL ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboard
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
-	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
+EM_BOOL ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData){
+	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
+	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -362,9 +362,9 @@ EM_BOOL ofxAppEmscriptenWindow::rescale(int* x, int* y) {
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
-	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
+EM_BOOL ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData){
+	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
+	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -376,9 +376,9 @@ EM_BOOL ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseE
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
-	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
+EM_BOOL ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData){
+	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
+	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -396,15 +396,15 @@ EM_BOOL ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMou
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData){
+EM_BOOL ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWheelEvent * wheelEvent, void * userData){
 	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseY(), wheelEvent->deltaX / 100, wheelEvent->deltaY / 100);
 	return true;
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::mouseenter_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
-	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
+EM_BOOL ofxAppEmscriptenWindow::mouseenter_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData){
+	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
+	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -414,9 +414,9 @@ EM_BOOL ofxAppEmscriptenWindow::mouseenter_cb(int eventType, const EmscriptenMou
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
-	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
+EM_BOOL ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData){
+	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
+	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -426,9 +426,9 @@ EM_BOOL ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMou
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent* e, void* userData) {
-	double boundingX = EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
-	double boundingY = EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
+EM_BOOL ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent * e, void * userData){
+	float boundingX = EM_ASM_INT(return canvas.getBoundingClientRect().left);
+	float boundingY = EM_ASM_INT(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
 	double cssWidth, cssHeight;

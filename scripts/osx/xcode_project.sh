@@ -25,8 +25,8 @@ copy_resources() {
 	# Copy libfmod and change install directory for fmod to run
 	if [ -z "$OF_NO_FMOD" ] ; then
 		msg "Copying Resources - Fmod"
-		echo rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
-		rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
+		echo rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/macos/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
+		rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/macos/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 	fi
 	# Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage 
 	# install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";

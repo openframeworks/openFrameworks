@@ -41,6 +41,9 @@
 /*/*/*.pro
 /*/*/*.pro.user
 
+# projectGenerator
+/*/*/*/backups/
+
 #########################
 # operating system
 #########################

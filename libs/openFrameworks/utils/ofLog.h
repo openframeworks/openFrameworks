@@ -504,11 +504,12 @@ class ofLog{
 		/// \tparam T the data type to be streamed.
 		/// \param value the data to be streamed.
 		/// \returns A reference to itself.
-		template <class T> 
-		ofLog& operator<<(const T& value){
+		template <class T>
+		ofLog & operator<<(const T & value) {
 			message << value << getPadding();
 			return *this;
 		}
+
 	
 		/// \brief Define flexible stream operator.
 		///
