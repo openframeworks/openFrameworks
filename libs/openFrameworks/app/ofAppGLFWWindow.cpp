@@ -58,12 +58,12 @@ ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(new ofCoreEvents){
 }
 
 ofAppGLFWWindow::~ofAppGLFWWindow() {
-	cout << "ofAppGLFWWindow::~ofAppGLFWWindow() " << settings.windowName << endl;
+//	cout << "ofAppGLFWWindow::~ofAppGLFWWindow() " << settings.windowName << endl;
 	close();
 }
 
 void ofAppGLFWWindow::close() {
-	cout << "ofAppGLFWWindow::close! " << settings.windowName << endl;
+//	cout << "ofAppGLFWWindow::close! " << settings.windowName << endl;
 
 	if (windowP) {
 		glfwSetMouseButtonCallback( windowP, nullptr );
@@ -195,7 +195,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	bool displayOK = false;
 	if (settings.fullscreenDisplays.size()) {
 		for (auto & d : settings.fullscreenDisplays) {
-			cout << "GLFWWindow fullscreenDisplays " << d << " : " << allMonitors.rects.size() << endl;
+			cout << "GLFWWindow fullscreenDisplays " << d << " : monitors.size=" << allMonitors.rects.size() << endl;
 			if (d < allMonitors.rects.size()) {
 //				cout << "glfw ok opening " << endl;
 				displayOK = true;
