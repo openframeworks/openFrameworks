@@ -26,7 +26,7 @@
 /// ~~~~~
 ///
 /// \param max The maximum value of the random number.
-float ofRandom(float max = 1);
+float ofRandom(float max = 1.0f);
 
 /// \brief Get a uniform random number between two values.
 ///
