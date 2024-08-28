@@ -34,7 +34,7 @@ Each of these categories contains examples primarily built to showcase an elemen
 
 A storehouse of interesting, whimsical, and utilitarian approaches to drawing things on screen in your openFrameworks application. Examples here range from drawing simple shapes, rendering text with fonts, and setting color and blending modes.
 
-### [Input / Output](input-output/)
+### [Input / Output](input_output/)
 
 Learn how to load files, data, and settings into your applications. Furthermore, learn how to take that fun interaction you made and export it in an interesting way.
 

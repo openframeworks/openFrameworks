@@ -5,15 +5,19 @@
  *      Author: arturo
  */
 
-#include "ofConstants.h"
 #include "ofMatrixStack.h"
 #include "ofAppBaseWindow.h"
-#include "glm/mat4x4.hpp"
-#include "glm/gtx/transform.hpp"
 #include "ofGraphicsBaseTypes.h"
 #include "ofLog.h"
 
-using namespace std;
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/mat4x4.hpp>
+#include <glm/gtx/transform.hpp>
+
+using std::swap;
+using std::make_pair;
+using std::pair;
 
 ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
@@ -24,6 +28,16 @@ ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 ,currentMatrixMode(OF_MATRIX_MODELVIEW)
 ,currentMatrix(&modelViewMatrix)
 ,flipRenderSurfaceMatrix(true)
+,modelMatrix(1)
+,viewMatrix(1)
+,viewInverse(1)
+,modelViewMatrix(1)
+,projectionMatrix(1)
+,textureMatrix(1)
+,modelViewProjectionMatrix(1)
+,orientedProjectionMatrix(1)
+,orientationMatrix(1)
+,orientationMatrixInverse(1)
 {
 
 }
@@ -312,7 +326,7 @@ void ofMatrixStack::clearStacks(){
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ){
-		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra modelview matrices on the stack, did you forget to pop somewhere?";
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << " extra modelview matrices on the stack, did you forget to pop somewhere?";
 	}
 	
 	tmpCounter = 0;
@@ -321,7 +335,7 @@ void ofMatrixStack::clearStacks(){
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ){
-		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra projection matrices on the stack, did you forget to pop somewhere?";
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << " extra projection matrices on the stack, did you forget to pop somewhere?";
 	}
 
 	tmpCounter = 0;
@@ -330,7 +344,7 @@ void ofMatrixStack::clearStacks(){
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ){
-		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra texture matrices on the stack, did you forget to pop somewhere?";
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << " extra texture matrices on the stack, did you forget to pop somewhere?";
 	}
 
 	tmpCounter = 0;
@@ -339,7 +353,7 @@ void ofMatrixStack::clearStacks(){
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ){
-		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra viewports on the stack, did you forget to popView() somewhere?";
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << " extra viewports on the stack, did you forget to popView() somewhere?";
 	}
 
 	tmpCounter = 0;
@@ -348,7 +362,7 @@ void ofMatrixStack::clearStacks(){
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ){
-		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra orientations on the stack, did you forget to popView() somewhere?";
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << " extra orientations on the stack, did you forget to popView() somewhere?";
 	}
 
 	tmpCounter = 0;
@@ -357,7 +371,7 @@ void ofMatrixStack::clearStacks(){
 		tmpCounter++;
 	}
 	if (tmpCounter > 0 ){
-		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra view matrices on the stack, did you forget to popView() somewhere?";
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << " extra view matrices on the stack, did you forget to popView() somewhere?";
 	}
 }
 

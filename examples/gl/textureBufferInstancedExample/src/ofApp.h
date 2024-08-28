@@ -8,6 +8,8 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+	
+		void renderScene(bool bShadowPass);
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -23,8 +25,13 @@ class ofApp : public ofBaseApp{
 		
 		ofTexture tex;
 		ofBufferObject buffer;
-		vector<ofMatrix4x4> matrices;
+		vector<glm::mat4> matrices;
 		ofVboMesh mesh;
 		ofShader shader;
 		ofEasyCam camera;
+	
+	ofLight light;
+	ofShader mDepthShader;
+	ofMaterial matFloor;
+	
 };

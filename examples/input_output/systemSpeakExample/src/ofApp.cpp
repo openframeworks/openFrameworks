@@ -25,7 +25,7 @@ void ofApp::threadedFunction() {
 
 		// call the system command say
 		#ifdef TARGET_OSX
-			string cmd = "say -v " + words[step] + " "; // create the command
+			string cmd = "say " + words[step] + " "; // create the command
 		#endif
 		#ifdef TARGET_WIN32
 			string cmd = "data\\SayStatic.exe " + words[step];        // create the command
@@ -34,10 +34,10 @@ void ofApp::threadedFunction() {
 			string cmd = "echo " + words[step] + "|espeak";           // create the command
 		#endif
 
-                // print command and execute it
-                cout << cmd << endl;
-                ofSystem(cmd.c_str());
-                  
+				// print command and execute it
+				cout << cmd << endl;
+				ofSystem(cmd.c_str());
+
 		// step to the next word
 		step ++;
 		step %= words.size();

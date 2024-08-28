@@ -3,11 +3,11 @@
 # lists of source files, search paths, libraries, etc.
 #
 ifndef OF_ROOT
-	OF_ROOT= $(realpath ../../..)
+	OF_ROOT= ../../..
 endif
 
 ifndef PROJECT_ROOT
-	PROJECT_ROOT= $(realpath .)
+	PROJECT_ROOT= .
 endif
 
 
@@ -20,16 +20,32 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 #    used during project compilation)
 ################################################################################
 
+EXCLUDE_PATHS_GREP =  grep -v "/tvos-arm64" | \
+											grep -v "/tvos-arm64_x86_64-simulator" | \
+											grep -v "/ios-arm64" | \
+											grep -v "/ios-arm64_x86_64-simulator" | \
+											grep -v "/ios-arm64_x86_64-maccatalyst" | \
+											grep -v "/xros-arm64" | \
+											grep -v "/xros-arm64_x86_64-simulator" | \
+											grep -v "/watchos-arm64_32_armv7k" | \
+											grep -v "/watchos-arm64_i386-simulator" | \
+											grep -v "/\.[^\.]"
+
 # construct the full paths of the core's platform specific static libs
 ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)
 
 # create a list of all core platform libraries
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBS_PATHS = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+ALL_OF_CORE_LIBS_PATHS = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | $(EXCLUDE_PATHS_GREP))
+
+ifdef MAKEFILE_DEBUG
+$(info ---ALL_OF_CORE_LIBS_PATHS---)
+$(foreach v, $(ALL_OF_CORE_LIBS_PATHS),$(info $(v)))
+endif
 
 # create a list of all core lib directories that have libsorder.make
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | $(EXCLUDE_PATHS_GREP))
 
 # create a list of all of the core libs that require ordering
 OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
@@ -43,7 +59,7 @@ OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER)
 # 2> /dev/null consumes file not found errors from find searches
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # TODO: create a varaible for core specific static lib suffix
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a -o -name *.bc 2> /dev/null | grep -v "/\.[^\.]" )
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a -o -name *.bc 2> /dev/null  | $(EXCLUDE_PATHS_GREP))
 # create a list of all static lib files for the libs that need order
 # NOTE. this is the most unintuitive line of make script magic in here
 # How does it work?
@@ -59,6 +75,11 @@ OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_
 #    sed '/^$/d' removes all empty lines
 #    (to escape $ in make, you must use $$)
 OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
+
+ifdef MAKEFILE_DEBUG
+	$(info ---OF_CORE_LIBS_PLATFORM_LIBS_STATICS---)
+	$(foreach v, $(OF_CORE_LIBS_PLATFORM_LIBS_STATICS),$(info $(v)))
+endif
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ifeq ($(PLATFORM_OS),Linux)
@@ -92,18 +113,18 @@ OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-	$(info =============================configure.core.flags.make========================)
-	$(info ---OF_CORE_LIBS_LDFLAGS---)
-	$(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
+    $(info =============================configure.core.flags.make========================)
+    $(info ---OF_CORE_LIBS_LDFLAGS---)
+    $(foreach v, $(OF_CORE_LIBS_LDFLAGS),$(info $(v)))
 
-	$(info ---OF_CORE_LIBS---)
-	$(foreach v, $(OF_CORE_LIBS),$(info $(v)))
+    $(info ---OF_CORE_LIBS---)
+    $(foreach v, $(OF_CORE_LIBS),$(info $(v)))
 endif
 
 ################################# ADDONS ######################################
 
 ifdef MAKEFILE_DEBUG
-	$(info ===================ADDONS================)
+    $(info ===================ADDONS================)
 endif
 
 # check to make sure OF_ROOT is defined
@@ -194,9 +215,9 @@ ifdef B_PROCESS_ADDONS
 	PROJECT_ADDONS = $(filter-out $(INVALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
 	ifdef MAKEFILE_DEBUG
-		$(info ---PROJECT_ADDONS---)
-		$(foreach v, $(PROJECT_ADDONS),$(info $(v)))
-		$(info --------------------)
+        $(info ---PROJECT_ADDONS---)
+        $(foreach v, $(PROJECT_ADDONS),$(info $(v)))
+        $(info --------------------)
 	endif
 
 	############################################################################
@@ -274,11 +295,11 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build/%
 # create a list of all dirs in the project root that might be valid project
 # source directories
 ALL_OF_PROJECT_SOURCE_PATHS = $(shell $(FIND) $(PROJECT_ROOT)/src \
-														   -type d \
-														   -not -path "./bin/*" \
-														   -not -path "./obj/*" \
-														   -not -path "./*.xcodeproj/*" \
-														   -not -path "*/\.*")
+															-type d \
+															-not -path "./bin/*" \
+															-not -path "./obj/*" \
+															-not -path "./*.xcodeproj/*" \
+															-not -path "*/\.*")
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(shell $(FIND) $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
@@ -288,11 +309,11 @@ endif
 OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_SOURCE_PATHS---)
-	$(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
+    $(info ---OF_PROJECT_SOURCE_PATHS---)
+    $(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
 
-	$(info ---OF_PROJECT_EXCLUSIONS---)
-	$(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
+    $(info ---OF_PROJECT_EXCLUSIONS---)
+    $(foreach v, $(OF_PROJECT_EXCLUSIONS),$(info $(v)))
 endif
 
 # find all sources inside the project's source directory (recursively)
@@ -307,8 +328,8 @@ OF_PROJECT_INCLUDES_CFLAGS := $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCL
 OF_ADDON_INCLUDES_CFLAGS += $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES)))
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_INCLUDES_CFLAGS---)
-	$(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
+    $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
+    $(foreach v, $(OF_PROJECT_INCLUDES_CFLAGS),$(info $(v)))
 endif
 
 ################################################################################
@@ -370,11 +391,11 @@ OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
 
 ################################################################################
 ifdef MAKEFILE_DEBUG
-	$(info ===================compile.project.make=============================)
+    $(info ===================compile.project.make=============================)
 endif
 
 ifdef PROJECT_CXX
-	CXX ?= $(PROJECT_CXX)
+	CXX = $(PROJECT_CXX)
 endif
 
 ifdef PLATFORM_CXX
@@ -382,11 +403,25 @@ ifdef PLATFORM_CXX
 endif
 
 ifdef PROJECT_CC
-	CC ?= $(PROJECT_CC)
+	CC = $(PROJECT_CC)
 endif
 
 ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
+endif
+
+ifdef ${ccache} 
+$(info 💿 Using CCACHE -- config.project.mk )
+	CXX := ${ccache} $(CXX)
+	CC := ${ccache} $(CXX)
+endif	
+
+ifdef PROJECT_RESOURCE_COMPILER
+    RESOURCE_COMPILER ?= $(PROJECT_RESOURCE_COMPILER)
+endif
+
+ifdef PLATFORM_RESOURCE_COMPILER
+    RESOURCE_COMPILER ?= $(PLATFORM_RESOURCE_COMPILER)
 endif
 
 # TODO: what is this for?
@@ -452,6 +487,24 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
 	else
 		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)
 	endif
+
+    # Executable Icon
+    #################
+    # if defined, use the project debug icon.
+    # if no debug icon defined for the project, use the project release icon
+    # if no icon defined for the project, use the OF default debug icon defined for the platform
+    # leave ICON empty for default system icon
+    ifdef PROJECT_DEBUG_ICON
+        ICON = $(PROJECT_DEBUG_ICON)
+    else
+        ifdef PROJECT_RELEASE_ICON
+            ICON = $(PROJECT_RELEASE_ICON)
+        else
+            ifdef PLATFORM_DEBUG_ICON
+                ICON = $(PLATFORM_DEBUG_ICON)
+            endif
+        endif
+    endif
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -472,6 +525,19 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
 	else
 		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)
 	endif
+
+    # Executable Icon
+    #################
+    # if defined, use the project release icon.
+    # if no icon defined for the project, use the OF default release icon defined for the platform
+    # leave ICON empty for default system icon
+    ifdef PROJECT_RELEASE_ICON
+        ICON = $(PROJECT_RELEASE_ICON)
+    else
+        ifdef PLATFORM_RELEASE_ICON
+            ICON = $(PLATFORM_RELEASE_ICON)
+        endif
+    endif
 endif
 
 
@@ -487,12 +553,12 @@ endif
 # define the subdirectory for our target name
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_SOURCE_FILES---)
-	$(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
+    $(info ---OF_PROJECT_SOURCE_FILES---)
+    $(foreach v, $(OF_PROJECT_SOURCE_FILES),$(info $(v)))
 endif
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_DEPENDENCY_FILES---)
-	$(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif
 
 
@@ -502,6 +568,11 @@ OBJS_WITHOUT_EXTERNAL = $(subst $(strip $(PROJECT_EXTERNAL_SOURCE_PATHS)),,$(OBJ
 OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(OBJS_WITHOUT_EXTERNAL))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
+# Compiled resources (icon, ...) - msys2 only?
+OF_PROJECT_RESOURCES =
+ifeq ($(findstring msys2,$(PLATFORM_LIB_SUBPATH)),msys2)
+    OF_PROJECT_RESOURCES += $(addprefix $(OF_PROJECT_OBJ_OUTPUT_PATH), $(notdir $(patsubst %.ico, %.res, $(ICON))))
+endif
 
 OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
@@ -509,6 +580,6 @@ OF_PROJECT_DEPENDENCY_FILES = $(OF_PROJECT_DEPS) $(OF_PROJECT_ADDONS_DEPS)
 
 
 ifdef MAKEFILE_DEBUG
-	$(info ---OF_PROJECT_DEPENDENCY_FILES---)
-	$(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
+    $(info ---OF_PROJECT_DEPENDENCY_FILES---)
+    $(foreach v, $(OF_PROJECT_DEPENDENCY_FILES),$(info $(v)))
 endif

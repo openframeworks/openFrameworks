@@ -21,11 +21,11 @@ class ofApp : public ofBaseApp {
 		void gotMessage(ofMessage msg);
 
 		// helper functions
-		void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c);
-		void addFace(ofMesh& mesh, ofVec3f a, ofVec3f b, ofVec3f c, ofVec3f d);
-		void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c);
-		void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d);
-		ofVec3f getVertexFromImg(ofImage& img, int x, int y);
+		void addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c);
+		void addFace(ofMesh& mesh, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const glm::vec3& d);
+		void addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c);
+		void addTexCoords(ofMesh& mesh, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d);
+		glm::vec3 getVertexFromImg(ofImage& img, int x, int y);
 		
 		ofEasyCam cam;
 		ofMesh mesh;

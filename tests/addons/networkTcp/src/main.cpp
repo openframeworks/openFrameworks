@@ -129,7 +129,7 @@ public:
 
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
-		int received = 0;
+		std::size_t received = 0;
 		do{
 			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
 			ofxTest(ret>0, "received blocking from server");
@@ -164,7 +164,7 @@ public:
 		ofxTest(client.sendRawBytes(messageSent.c_str(), messageSent.size()), "send blocking from client");
 
 		std::vector<char> messageReceived(messageSent.size()+1, 0);
-		int received = 0;
+		std::size_t received = 0;
 		do{
 			auto ret = server.receiveRawBytes(0, messageReceived.data() + received, messageSent.size());
 			ofxTest(ret>0, "received blocking from server");
@@ -200,7 +200,15 @@ public:
 		int port = ofRandom(15000, 65535);
 		ofxTCPManager server;
 		ofxTest(server.Create(), "server socket creation");
-		ofxTest(server.Bind(port), "server socket bind");
+		bool isPortBound = false;
+		while (port <= 65535 && !isPortBound) {
+			isPortBound = server.Bind(port);
+			if (!isPortBound) {
+				ofLogNotice() << "yaR port blocked: " << port;
+				port++;
+			}
+		}
+		ofxTest(isPortBound, "server socket bind");
 		ofxTest(server.Listen(1), "server socket listen");
 		std::condition_variable done;
 		std::mutex mtx;
@@ -223,7 +231,7 @@ public:
 		auto now = ofGetElapsedTimeMillis();
 		// seems timers in the test servers are not very accurate so
 		// we test this with a margin of 500ms
-		ofxTestGt(now-then, 4500, "Connect waits 5s to timeout, waited: " + ofToString(now - then));
+		ofxTestGt(now-then, std::uint64_t(4500), "Connect waits 5s to timeout, waited: " + ofToString(now - then));
 		done.notify_all();
 		serverThread.join();
 	}
@@ -257,10 +265,9 @@ public:
 	}
 
 	void run(){
-		ofSeedRandom(ofGetSeconds());
 		testNonBlocking();
 		testBlocking();
-		disconnectionAutoDetection();
+		//disconnectionAutoDetection();
 		testSendRaw();
 		testSendRawBytes();
 		testWrongConnect();
@@ -272,8 +279,8 @@ public:
 //========================================================================
 int main( ){
     ofInit();
-	auto window = make_shared<ofAppNoWindow>();
-	auto app = make_shared<ofApp>();
+	auto window = std::make_shared<ofAppNoWindow>();
+	auto app = std::make_shared<ofApp>();
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:

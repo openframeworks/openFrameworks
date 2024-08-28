@@ -6,7 +6,8 @@
 //
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
@@ -35,18 +36,16 @@
 @end
 
 //---------------------------------------------------------- video player.
-@interface AVFoundationVideoPlayer : NSObject {
-    id<AVFoundationVideoPlayerDelegate> delegate;
-}
+@interface AVFoundationVideoPlayer : NSObject
 
-@property (nonatomic, assign) id delegate;
-@property (nonatomic, retain) UIView * playerView;
-@property (nonatomic, retain) AVPlayer * player;
-@property (nonatomic, retain) AVPlayerItem * playerItem;
-@property (nonatomic, retain) AVAsset * asset;
-@property (nonatomic, retain) AVAssetReader * assetReader;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
+@property (nonatomic, weak) id<AVFoundationVideoPlayerDelegate> delegate;
+@property (nonatomic, strong) UIView * playerView;
+@property (nonatomic, strong) AVPlayer * player;
+@property (nonatomic, strong) AVPlayerItem * playerItem;
+@property (nonatomic, strong) AVAsset * asset;
+@property (nonatomic, strong) AVAssetReader * assetReader;
+@property (nonatomic, strong) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
+@property (nonatomic, strong) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
 
 - (BOOL)loadWithFile:(NSString*)file;
 - (BOOL)loadWithPath:(NSString*)path;
@@ -106,3 +105,4 @@
 - (void)setWillBeUpdatedExternally:(BOOL)value;
 
 @end
+#endif

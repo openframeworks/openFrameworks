@@ -29,6 +29,8 @@
  * ***********************************************************************/ 
 
 #include "ofxiOSMapKit.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
@@ -40,6 +42,7 @@
 #include "glm/common.hpp"
 
 ofxiOSMapKit::ofxiOSMapKit() {
+    mapKitDelegate = nil;
 	mapView = nil;
 }
 
@@ -63,7 +66,6 @@ void ofxiOSMapKit::close() {
 		ofLogVerbose("ofxiOSMapKit") << "close(): releasing MKMapView";
         mapView.delegate = nil;
         [mapView removeFromSuperview];
-        [mapView release];
         mapView = nil;
     }
 }
@@ -221,7 +223,8 @@ void ofxiOSMapKit::addListener(ofxiOSMapKitListener* o) {
     if(isOpen()) {
         ofLogVerbose("ofxiOSMapKit") << "addListener(): adding ofxiOSMapKitDelegate";
         if(mapView.delegate == nil) {
-            mapView.delegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+            mapKitDelegate = [[ofxiOSMapKitDelegate alloc] initWithMapKit:this];
+            mapView.delegate = mapKitDelegate;
         }
         listeners.push_back(o);
     }
@@ -269,4 +272,5 @@ void ofxiOSMapKit::errorLoadingMap(std::string errorDescription) {
 	}
 }
 
+#endif
 #endif

@@ -47,7 +47,7 @@ FREENECTAPI int freenect_init(freenect_context **ctx, freenect_usb_context *usb_
 
 	memset(*ctx, 0, sizeof(freenect_context));
 
-	(*ctx)->log_level = LL_WARNING;
+	(*ctx)->log_level = LL_NOTICE;
 	(*ctx)->enabled_subdevices = (freenect_device_flags)(FREENECT_DEVICE_MOTOR | FREENECT_DEVICE_CAMERA);
 	res = fnusb_init(&(*ctx)->usb, usb_ctx);
 	if (res < 0) {
@@ -101,12 +101,12 @@ FREENECTAPI int freenect_process_events_timeout(freenect_context *ctx, struct ti
 
 FREENECTAPI int freenect_num_devices(freenect_context *ctx)
 {
-	return fnusb_num_devices(&ctx->usb);
+	return fnusb_num_devices(ctx);
 }
 
 FREENECTAPI int freenect_list_device_attributes(freenect_context *ctx, struct freenect_device_attributes **attribute_list)
 {
-	return fnusb_list_device_attributes(&ctx->usb, attribute_list);
+	return fnusb_list_device_attributes(ctx, attribute_list);
 }
 
 FREENECTAPI void freenect_free_device_attributes(struct freenect_device_attributes *attribute_list)
@@ -185,7 +185,7 @@ FREENECTAPI int freenect_open_device_by_camera_serial(freenect_context *ctx, fre
 	// freenect_open_device with that index.
 	struct freenect_device_attributes* attrlist;
 	struct freenect_device_attributes* item;
-	int count = fnusb_list_device_attributes(&ctx->usb, &attrlist);
+	int count = fnusb_list_device_attributes(ctx, &attrlist);
 	if (count < 0) {
 		FN_ERROR("freenect_open_device_by_camera_serial: Couldn't enumerate serial numbers\n");
 		return count;

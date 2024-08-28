@@ -1,6 +1,10 @@
 #!/bin/bash
 set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+if [[ "$GITHUB_ACTIONS" = true ]]; then
+    ROOT=$GITHUB_WORKSPACE
+fi
+
 export ANDROID_NDK_HOME=$(cd ~/$NDK_DIR && pwd)
 
 if [ -z ${GRADLE_TARGET+x} ]; then

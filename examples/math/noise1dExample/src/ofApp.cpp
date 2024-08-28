@@ -191,7 +191,7 @@ void ofApp::renderRadialSignedNoiseDemo (){
 
 		// From the 'i' iterator, use ofMap to compute both
 		// an angle (around a circle) and an alpha value.
-		float angle   = ofMap(i, 0,nSignedNoiseData-1, 0,-TWO_PI) - HALF_PI;
+		float angle   = ofMap(i, 0,nSignedNoiseData-1, 0,-glm::two_pi<float>()) - glm::half_pi<float>();
 		float alph    = ofMap(i, 0,nSignedNoiseData-1, 1,0     );
 		wigglyMeshLine.addColor(ofFloatColor(0,0,255, alph));
 
@@ -200,9 +200,9 @@ void ofApp::renderRadialSignedNoiseDemo (){
 		wigglyRadius +=  radialNoiseDemoR * signedNoiseData[i];
 
 		// Good old-fashioned trigonometry: y = cos(t), x = sin(t)
-		px = wigglyRadius * cos( angle );
-		py = wigglyRadius * sin( angle );
-        wigglyMeshLine.addVertex({px,py,0});
+		px = wigglyRadius * std::cos( angle );
+		py = wigglyRadius * std::sin( angle );
+		wigglyMeshLine.addVertex({px,py,0});
 	}
 
 	// draw the "mesh" (line)
@@ -223,7 +223,7 @@ void ofApp::renderLinearSignedNoiseDemo(){
 	// Draw the stored noise history as a straightforward timeline.
 	ofPushMatrix();
 
-	float drawWiggleWidth = radialNoiseDemoR*TWO_PI;
+	float drawWiggleWidth = radialNoiseDemoR*glm::two_pi<float>();
 	ofTranslate (radialNoiseDemoX + radialNoiseDemoR - drawWiggleWidth, radialNoiseDemoY-radialNoiseDemoR,0);
 	ofEnableAlphaBlending();
 	ofEnableSmoothing();
@@ -242,7 +242,7 @@ void ofApp::renderLinearSignedNoiseDemo(){
 		// an angle (around a circle) and an alpha value.
 		float px = ofMap(i, 0,nSignedNoiseData-1, drawWiggleWidth,0);
 		float py = 0 - radialNoiseDemoR * signedNoiseData[i];
-        wigglyPolyLine.addVertex({px,py,0}  );
+		wigglyPolyLine.addVertex({px,py,0}  );
 	}
 
 	// draw the line

@@ -1,20 +1,13 @@
 
 #include "ofxCvContourFinder.h"
 
-
-
 //--------------------------------------------------------------------------------
 static bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
-	
 	// use opencv to calc size, then sort based on size
 	float areaa = cvContourArea(a, CV_WHOLE_SEQ);
 	float areab = cvContourArea(b, CV_WHOLE_SEQ);
-	
 	return (areaa > areab);
 }
-
-
-
 
 //--------------------------------------------------------------------------------
 ofxCvContourFinder::ofxCvContourFinder() {
@@ -201,7 +194,7 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) const {
 
 
 //----------------------------------------------------------
-void ofxCvContourFinder::draw(const ofPoint & point) const{
+void ofxCvContourFinder::draw(const glm::vec2 & point) const{
 	draw(point.x, point.y);
 }
 
@@ -218,7 +211,7 @@ void ofxCvContourFinder::setAnchorPercent( float xPct, float yPct ){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvContourFinder::setAnchorPoint( int x, int y ){
+void ofxCvContourFinder::setAnchorPoint( float x, float y ){
     anchor.x = x;
     anchor.y = y;
     bAnchorIsPct = false;

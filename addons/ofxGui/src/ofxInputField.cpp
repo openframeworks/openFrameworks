@@ -7,10 +7,9 @@
 //
 
 #include "ofxInputField.h"
-
 #include "ofGraphics.h"
 
-using namespace std;
+using std::string;
 
 namespace{
 	template<typename Type>
@@ -419,11 +418,15 @@ bool ofxInputField<Type>::mouseReleased(ofMouseEventArgs &){
 //-----------------------------------------------------------
 template<typename Type>
 bool ofxInputField<Type>::mouseScrolled(ofMouseEventArgs & mouse){
+	if(!isGuiDrawing() || insideSlider){
+		//when insideSlider it is the slider object who is in charge of handling the scrolling
+		return false;
+	}
 	if(b.inside(mouse)){
 		if(!bGuiActive){
-			if(mouse.y>0 || mouse.y<0){
+			if(mouse.scrollY>0 || mouse.scrollY<0){
 				double range = getRange(value.getMin(), value.getMax(), b.width);
-				Type newValue = value + ofMap(mouse.y,-1,1,-range, range);
+				Type newValue = value + ofMap(mouse.scrollY,-1,1,-range, range);
 				newValue = ofClamp(newValue,value.getMin(),value.getMax());
 				value = newValue;
 			}
@@ -642,20 +645,21 @@ void ofxInputField<Type>::generateDraw(){
 	}
 
 	auto inputWidth = getTextBoundingBox(input,0,0).width;
-	auto label = getTextBoundingBox(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	auto value = getTextBoundingBox(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4);
+	auto yPos = getTextVCenteredInRect(b);
+	auto label = getTextBoundingBox(getName(), b.x + textPadding, yPos);
+	auto value = getTextBoundingBox(input, b.x + b.width - textPadding - inputWidth, yPos);
 	overlappingLabel = label.getMaxX() > value.x;
 
 	textMesh.clear();
 	if(!bGuiActive || showLabelWhileEditing){
 		if(!overlappingLabel || (!bMouseOver && !bGuiActive)){
-			textMesh.append(getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4) );
+			textMesh.append(getTextMesh(getName(), b.x + textPadding, yPos) );
 		}
 		if((!bGuiActive && (bMouseOver || !overlappingLabel)) || bGuiActive){
-			textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, b.y + b.height / 2 + 4));
+			textMesh.append(getTextMesh(input, b.x + b.width - textPadding - inputWidth, yPos));
 		}
 	}else{
-		textMesh.append(getTextMesh(input, b.x + textPadding, b.y + b.height / 2 + 4));
+		textMesh.append(getTextMesh(input, b.x + textPadding, yPos));
 	}
 	textMesh.getColors().assign(textMesh.getVertices().size(), thisTextColor);
 }
@@ -800,4 +804,8 @@ template class ofxInputField<uint64_t>;
 template class ofxInputField<float>;
 template class ofxInputField<double>;
 template class ofxInputField<std::string>;
-template class ofxInputField<typename std::conditional<std::is_same<uint32_t, size_t>::value || std::is_same<uint64_t, size_t>::value, bool, size_t>::type>;
+
+//for some reason osx errors if this isn't defined
+#if defined TARGET_OSX || defined TARGET_EMSCRIPTEN
+	template class ofxInputField<typename std::conditional<std::is_same<uint32_t, size_t>::value || std::is_same<uint64_t, size_t>::value, bool, size_t>::type>;
+#endif

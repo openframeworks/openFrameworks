@@ -6,7 +6,7 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
-using namespace std;
+using std::string;
 
 //--------------------------------------------------------------------------------
 bool ofxUDPManager::m_bWinsockInit= false;
@@ -48,7 +48,7 @@ bool ofxUDPManager::Close()
 		if(close(m_hSocket) == SOCKET_ERROR)
 	#endif
 	{
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return(false);
 	}
 	m_hSocket= INVALID_SOCKET;
@@ -112,7 +112,7 @@ bool ofxUDPManager::Create()
 		#endif
 	}
 	bool ret = m_hSocket !=	INVALID_SOCKET;
-	if(!ret) ofxNetworkCheckError();
+	if(!ret) ofxNetworkLogLastError();
 	return ret;
 }
 
@@ -171,7 +171,7 @@ bool ofxUDPManager::SetNonBlocking(bool useNonBlocking)
 	#endif
 
 	bool ret=(retVal >= 0);
-	if(!ret) ofxNetworkCheckError();
+	if(!ret) ofxNetworkLogLastError();
 	return ret;
 }
 
@@ -183,7 +183,7 @@ bool ofxUDPManager::Bind(unsigned short usPort)
 	//Port MUST	be in Network Byte Order
 	saServer.sin_port =	htons(usPort);
 	int ret = ::bind(m_hSocket,(struct sockaddr*)&saServer,sizeof(struct sockaddr));
-	if(ret == SOCKET_ERROR) ofxNetworkCheckError();
+	if(ret == SOCKET_ERROR) ofxNetworkLogLastError();
 
 	return (ret == 0);
 }
@@ -205,7 +205,7 @@ bool ofxUDPManager::BindMcast(char *pMcast, unsigned short usPort)
 
 	if (setsockopt(m_hSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char FAR*) &mreq, sizeof (mreq)) == SOCKET_ERROR)
 	{
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return false;
 	}
 
@@ -249,7 +249,7 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	{
 #ifdef _DEBUG
 		ofLogError("ofxUDPManager") << "ConnectMcast(): couldn't bind to " << usPort;
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 #endif
 		return false;
 	}
@@ -259,7 +259,7 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	{
 #ifdef _DEBUG
 		ofLogWarning("ofxUDPManager") << "ConnectMcast(): couldn't set TTL; continuing anyway"; 
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 #endif
 	}
 
@@ -267,7 +267,7 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	{
 #ifdef _DEBUG
 		ofLogError("ofxUDPManager") << " ConnectMcast(): couldn't connect to socket";
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 #endif
 		return false;
 	}
@@ -292,7 +292,7 @@ int	ofxUDPManager::Send(const char* pBuff,	const int iSize)
 	}
 
 	int ret = sendto(m_hSocket, (char*)pBuff,	iSize, 0, (sockaddr *)&saClient, sizeof(sockaddr));
-	if(ret==-1) ofxNetworkCheckError();
+	if(ret==-1) ofxNetworkLogLastError();
 	return ret;
 	//	return(send(m_hSocket, pBuff, iSize, 0));
 }
@@ -309,7 +309,6 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 	auto timeleftSecs = m_dwTimeoutSend;
 	auto timeleftMicros = 0;
 	int total= 0;
-	int bytesleft = iSize;
 	int ret=-1;
 
 	while (total < iSize) {
@@ -324,7 +323,6 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 			return SOCKET_ERROR;
 		}
 		total += ret;
-		bytesleft -=ret;
 		if (m_dwTimeoutSend	!= NO_TIMEOUT){
 			auto now = ofGetElapsedTimeMicros();
 			auto diff = now - timestamp;
@@ -372,7 +370,7 @@ int	ofxUDPManager::PeekReceive()
 	{
 		//assert( Result == SOCKET_ERROR );
 		//	report error
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return SOCKET_ERROR;
 	}
 
@@ -420,9 +418,9 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 		canGetRemoteAddress = false;
 
 		//	if the network error is WOULDBLOCK, then return 0 instead of SOCKET_ERROR as it's not really a problem, just no data.
-		int SocketError = ofxNetworkCheckError();
-		if ( SocketError == OFXNETWORK_ERROR(WOULDBLOCK) )
-			return 0;
+		int err = ofxNetworkGetLastError();
+		if( err == OFXNETWORK_ERROR(WOULDBLOCK) ) return 0;
+		ofxNetworkLogError( err, __FILE__, __LINE__-2);
 	}
 
 	return ret;
@@ -491,7 +489,7 @@ int	ofxUDPManager::GetMaxMsgSize()
 	#endif
 
 	int ret = getsockopt(m_hSocket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char*)&sizeBuffer, &size);
-	if(ret==-1) ofxNetworkCheckError();
+	if(ret==-1) ofxNetworkLogLastError();
 	return sizeBuffer;
 }
 
@@ -509,7 +507,7 @@ int	ofxUDPManager::GetReceiveBufferSize()
 	#endif
 
 	int ret = getsockopt(m_hSocket, SOL_SOCKET, SO_RCVBUF, (char*)&sizeBuffer, &size);
-	if(ret==-1) ofxNetworkCheckError();
+	if(ret==-1) ofxNetworkLogLastError();
 	return sizeBuffer;
 }
 
@@ -521,7 +519,7 @@ bool ofxUDPManager::SetReceiveBufferSize(int sizeInByte)
 	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_RCVBUF, (char*)&sizeInByte, sizeof(sizeInByte)) == 0){
 		return true;
 	}else{
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return false;
 	}
 }
@@ -540,7 +538,7 @@ int	ofxUDPManager::GetSendBufferSize()
 	#endif
 
 	int ret = getsockopt(m_hSocket, SOL_SOCKET, SO_SNDBUF, (char*)&sizeBuffer, &size);
-	if(ret==-1) ofxNetworkCheckError();
+	if(ret==-1) ofxNetworkLogLastError();
 
 	return sizeBuffer;
 }
@@ -553,7 +551,7 @@ bool ofxUDPManager::SetSendBufferSize(int sizeInByte)
 	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_SNDBUF, (char*)&sizeInByte, sizeof(sizeInByte)) == 0){
 		return true;
 	}else{
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return false;
 	}
 }
@@ -570,7 +568,7 @@ bool ofxUDPManager::SetReuseAddress(bool allowReuse)
 	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&on, sizeof(on)) ==	0){
 		return true;
 	}else{
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return false;
 	}
 }
@@ -585,7 +583,7 @@ bool ofxUDPManager::SetEnableBroadcast(bool enableBroadcast)
 	if ( setsockopt(m_hSocket, SOL_SOCKET, SO_BROADCAST, (char*)&on, sizeof(on)) ==	0){
 		return true;
 	}else{
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return false;
 	}
 }
@@ -608,7 +606,7 @@ int ofxUDPManager::GetTTL()
 #ifdef _DEBUG
 		ofLogError("ofxUDPManager") << "GetTTL(): getsockopt failed";
 #endif
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return -1;
 	}
 
@@ -626,7 +624,7 @@ bool ofxUDPManager::SetTTL(int nTTL)
 #ifdef _DEBUG
 		ofLogError("ofxUDPManager") << "SetTTL(): setsockopt failed";
 #endif
-		ofxNetworkCheckError();
+		ofxNetworkLogLastError();
 		return false;
 	}
 

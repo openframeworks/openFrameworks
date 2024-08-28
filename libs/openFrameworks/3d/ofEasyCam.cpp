@@ -1,11 +1,11 @@
 #include "ofEasyCam.h"
-#include "ofMath.h"
 #include "ofUtils.h"
 #include "ofGraphicsBaseTypes.h"
-#include <limits>
-#include "glm/gtx/vector_angle.hpp"
 
-using namespace std;
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/vector_angle.hpp>
+#include <limits>
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
@@ -20,8 +20,8 @@ ofEasyCam::ofEasyCam(){
 	sensitivityTranslate = {1,1,1};
 	sensitivityRot = {1,1,1};
 
+    addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
 	addInteraction(TRANSFORM_ROTATE, OF_MOUSE_BUTTON_LEFT);
-	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
 	addInteraction(TRANSFORM_TRANSLATE_Z, OF_MOUSE_BUTTON_RIGHT);
 	addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_MIDDLE);
 	
@@ -69,7 +69,10 @@ void ofEasyCam::reset(){
 
 	rot = {0,0,0};
 	translate = {0,0,0};
-
+    
+    if(bAutoDistance){
+        bDistanceSet = false;
+    }
 	bApplyInertia = false;
 	currentTransformType = TRANSFORM_NONE;
 }
@@ -293,16 +296,16 @@ void ofEasyCam::updateTranslation(){
 		if(getOrtho()){
 			//In ortho mode moving along the z axis has no effect besides clipping.
 			// Instead, scale is applied to achieve the effect of getting near or far from the target.
-			glm::vec3 mousePre ;
+			glm::vec3 mousePre;
 			bool bDoScale = (currentTransformType == TRANSFORM_SCALE || currentTransformType == TRANSFORM_TRANSLATE_Z);
 			if (bDoScale) {
-				mousePre = screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0));
+				mousePre = screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0), viewport);
 			}
 			move(glm::vec3(lastPressAxisX * translate.x) + (lastPressAxisY * translate.y));
 			if (bDoScale) {
 				setScale(getScale() + translate.z);
 				// this move call is to keep the scaling centered below the mouse.
-				move(mousePre - screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0)));
+				move(mousePre - screenToWorld(glm::vec3((bIsScrolling?mouseAtScroll:lastPressMouse),0), viewport));
 			}
 		}else{
 			move(glm::vec3(lastPressAxisX * translate.x) + (lastPressAxisY * translate.y) + (lastPressAxisZ * translate.z));
@@ -374,7 +377,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 		currentTransformType = TRANSFORM_NONE;
 		if (events) {
 			for (const auto& i: interactions) {
-				if (i.mouseButton == mouse.button && ((i.key == -1) ^ events->getKeyPressed(i.key))) {
+                if (i.mouseButton == mouse.button && ((i.key == -1) || events->getKeyPressed(i.key)) ) {
 					currentTransformType = i.transformType;
 					break;
 				}
@@ -506,4 +509,10 @@ bool ofEasyCam:: hasInteraction(TransformType type, int mouseButton, int key){
 //----------------------------------------
 void ofEasyCam::removeAllInteractions(){
 	interactions.clear();
+}
+//----------------------------------------
+void ofEasyCam::onPositionChanged(){
+	if(!bDistanceSet && bAutoDistance){
+		bDistanceSet = true;
+	}
 }

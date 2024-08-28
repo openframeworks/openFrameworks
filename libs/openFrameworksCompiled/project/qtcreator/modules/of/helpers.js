@@ -11,28 +11,14 @@ function findCommand(){
     }
 
     // else msys2, search unix find command
-    var where = new Process();
-    where.exec("where.exe", ['find'], true);
-    if(where.exitCode()!==0){
-        console.info("PATH: " + where.getEnv("PATH"));
-        throw("error: There is a problem to detect the 'find' command:\n" + where.readStdOut() + "\n" + where.readStdErr());
+    var cygpath = new Process();
+
+    if( cygpath.exec("cygpath", ['-lw','/usr/bin/find'])== -1 ){
+        throw("error: Could not detect 'find' command. May be there is a problem in the MSYS2 installation.\n"+
+        "Please check that <MSYS2 dir>\\usr\\bin is in your PATH or in your Kit PATH configuration\n"+
+        "current PATH = " + cygpath.getEnv("PATH"));
     }
-
-
-    while(true){
-        var line = where.readLine();
-        if(line!=="" && line!==undefined){
-            var findPos = line.indexOf("usr\\bin\\find.exe");
-            if (findPos > -1){
-                return line;
-            }
-        }else{
-            break;
-        }
-    }
-
-    console.info("PATH: " + where.getEnv("PATH"));
-    throw("Couldn't find gnu find, you probably need to set a correct path as explained in the openFrameworks setup guide: http://openframeworks.cc/setup/msys2/");
+    return cygpath.readLine();
 }
 
 function windowsToUnix(path){
@@ -46,44 +32,35 @@ function getSystemPath(){
 }
 
 function msys2root(){
-    var msys2 = "";
-	var systemPath = Environment.getEnv("PATH");
-	if(systemPath === undefined){
-        console.error("PATH is not defined")
-        return msys2;
-	}
-	
-	var where = new Process();
-    where.exec("where.exe", ['find']); 
-    if(where.exitCode()!==0){
-        throw("error: There is a problem to detect the 'find' command.");
+    var proc = new Process();
+
+    // Get the MSYS installation root by using the long-name + windows options (-lw) of cygpath 
+    if( proc.exec("cygpath", ['-lw','/'])== -1 ){
+        throw("error: there is a problem in the MSYS2 installation.\n"+
+        "Please check that <MSYS2 dir>\\usr\\bin is in your PATH or in your Kit PATH configuration\n"+
+        "current PATH = " + proc.getEnv("PATH"));
     }
 
+    msys2 = proc.readLine();
 
-    while(true){
-        var line = where.readLine();
-        if(line!=="" && line!==undefined){
-            var findPos = line.indexOf("usr\\bin\\find.exe");
-            if (findPos > -1){
-                msys2 = line.slice(0,findPos);
-                break;
-            }
-        }else{
-            break;
+    msystem = proc.getEnv("MSYSTEM");
+    if( msystem!= "MINGW32" && msystem!="MINGW64" ){
+        throw("error: MSYSTEM environment variable is not set or set to in incorrect value.\n"+
+        "MSYSTEM should be set to MINGW32 or MINGW64(experimental)"+
+        "current MSYSTEM = " + msystem);
+    }
+
+    if( proc.exec("which",['gcc'])==0){ // found an installation of gcc, let's check if it's the correct one
+        var gccinstall = proc.readLine();
+        var prefix = "";
+        if( msystem == "MINGW32" ) prefix = "mingw32";
+        if( msystem == "MINGW64" ) prefix = "mingw64";
+        
+        if( gccinstall!= "/"+prefix+"/bin/gcc" ){
+            throw("error: cannot find gcc at /"+prefix+"/bin/gcc.\n"+
+            "Please check that "+msys2+prefix+"\\bin is in your PATH or in your Kit PATH configuration\n"+
+            "and that the install_dependencies.sh script has been run.");
         }
-    }
-
-	
-    //console.error("PATH=>"+systemPath);
-    msys2 = FileInfo.fromWindowsSeparators(msys2);
-    var usrBin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "usr/bin"));
-    var mingw32Bin = FileInfo.toWindowsSeparators(FileInfo.joinPaths(msys2, "mingw32/bin"));
-    var usrPos = systemPath.indexOf(usrBin);
-    var mingw32Pos = systemPath.indexOf(mingw32Bin);
-	
-    if( (usrPos === -1) || (mingw32Pos === -1) || (mingw32Pos > usrPos) ){
-        console.error("PATH="+systemPath);
-		throw("error : your PATH is incorrect. Please make sure that {MSYS2ROOT}\\mingw32\\bin;{MSYS2ROOT}\\usr\\bin is at the beginning of your PATH");
     }
 	
 	return msys2;

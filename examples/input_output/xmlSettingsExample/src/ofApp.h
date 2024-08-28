@@ -31,7 +31,7 @@ class ofApp : public ofBaseApp{
 		string xmlStructure;
 		string message;
 
-		ofPoint dragPts[NUM_PTS];
+		glm::vec2 dragPts[NUM_PTS];
 
 		int pointCount;
 		int lineCount;

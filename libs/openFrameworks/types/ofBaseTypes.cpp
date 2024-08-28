@@ -1,15 +1,8 @@
-#include "ofUtils.h"
-#include "ofGLUtils.h"
+#include "ofBaseTypes.h"
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"
 #include "ofSoundBuffer.h"
 #include "ofMesh.h"
-#include "ofVideoPlayer.h"
-#include "ofSoundBaseTypes.h"
-#include "ofVideoBaseTypes.h"
-#include "ofGraphicsBaseTypes.h"
-
-using namespace std;
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -54,7 +47,7 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
 }
 
-void ofBaseVideoPlayer::loadAsync(string name){
+void ofBaseVideoPlayer::loadAsync(std::string name){
 	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
 	load(name);
 }
@@ -172,7 +165,7 @@ void ofBaseRenderer::drawPlane(float x, float y, float z, float width, float hei
 	get3dGraphics().drawPlane(x,y,z,width,height);
 }
 
-void ofBaseRenderer::drawPlane(glm::vec3& position, float width, float height) const{
+void ofBaseRenderer::drawPlane(const glm::vec3& position, float width, float height) const{
 	get3dGraphics().drawPlane(position,width,height);
 }
 
@@ -334,6 +327,10 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
+}
+
+bool ofBaseMaterial::isBound() const {
+	return mBound;
 }
 
 

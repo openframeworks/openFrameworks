@@ -39,7 +39,7 @@ bool ofxTCPServer::setup(const ofxTCPSettings &settings){
 		ofLogError("ofxTCPServer") << "setup(): couldn't create server";
 		return false;
 	}
-	if( !TCPServer.Bind(settings.port) ){
+	if( !TCPServer.Bind(settings.port, settings.reuse) ){
 		ofLogError("ofxTCPServer") << "setup(): couldn't bind to port " << settings.port;
 		return false;
 	}

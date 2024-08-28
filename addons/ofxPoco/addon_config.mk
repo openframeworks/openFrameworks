@@ -65,25 +65,23 @@ common:
 	ADDON_SOURCES_EXCLUDE = libs/poco/include/%
 
 linux:
-	ADDON_LIBS = libs/poco/lib/linux/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/linux/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/linux/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/linux/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/linux/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/linux/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/linux/libPocoFoundation.a
-	ADDON_LDFLAGS = -lcrypto
+    ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
 linux64:
-	ADDON_LIBS = libs/poco/lib/linux64/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/linux64/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/linux64/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/linux64/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/linux64/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/linux64/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/linux64/libPocoFoundation.a
-	ADDON_LDFLAGS = -lcrypto
+    ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
 linuxarmv6l:

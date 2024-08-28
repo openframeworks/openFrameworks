@@ -25,14 +25,20 @@ public class OFAndroidLifeCycleHelper
 {
 	private static final String TAG = OFAndroidLifeCycleHelper.class.getSimpleName();
 	private static boolean appInitFlag = false;
-	private static boolean resumed;
+	private static boolean started;
 
 	public static void appInit(Activity activity)
 	{
 		if(appInitFlag)
 			return;
 		appInitFlag = true;
+		
+		copyAssetsToDataPath(activity);
+		
+		OFAndroid.init();
+	}
 
+	private static void copyAssetsToDataPath(Activity activity) {
 		OFAndroid.packageName = activity.getPackageName();
 
 		Log.i(TAG,"starting resources extractor");
@@ -114,8 +120,6 @@ public class OFAndroidLifeCycleHelper
 		} catch (Exception e) {
 			Log.e(TAG,"error retrieving app name",e);
 		}
-		OFAndroid.init();
-
 	}
 
 	private static void copyAssetFolder(AssetManager am, String src, String dest) throws IOException {
@@ -177,42 +181,32 @@ public class OFAndroidLifeCycleHelper
 	{
 		OFAndroid.onCreate();
 		OFAndroid.onUnpackingResourcesDone();
+		
+		OFAndroid.runOnMainThread(new Runnable() {
+		   @Override
+		   public void run() {
+				OFAndroid.enableTouchEvents();
+				OFAndroid.enableOrientationChangeEvents();
+			}
+		});
+	}
+	
+	public static void onResume(){
+		OFAndroid.onResume();
+	}
+	
+	public static void onPause(){
+		OFAndroid.onPause();
 	}
 	
 	public static void onStart(){
 		Log.i(TAG,"onStart");
-		OFAndroid.runOnMainThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				OFAndroid.enableTouchEvents();
-				OFAndroid.enableOrientationChangeEvents();
-			}
-		});
-	}
-	
-	public static void onRestart(){
-		Log.i(TAG,"onRestart");
-		OFAndroid.runOnMainThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				OFAndroid.enableTouchEvents();
-				OFAndroid.enableOrientationChangeEvents();
-			}
-		});
-		OFAndroid.onRestart();
-        /*if(OFAndroidSoundStream.isInitialized() && OFAndroidSoundStream.wasStarted())
-        	OFAndroidSoundStream.getInstance().start();*/
-	}
-	
-	public static void onResume(){
+		
 		final OFGLSurfaceView glView = OFAndroidLifeCycle.getGLView();
-		if(resumed) return;
-		Log.i(TAG,"onResume");
-		resumed = true;
+		if(started) return;
+		started = true;
+		
 		OFAndroid.runOnMainThread(new Runnable() {
-			
 			@Override
 			public void run() {
 				OFAndroid.enableTouchEvents();
@@ -228,7 +222,7 @@ public class OFAndroidLifeCycleHelper
 		
         if(glView.isSetup()){
         	Log.i(TAG,"resume view and native");
-        	OFAndroid.onResume();
+        	OFAndroid.onStart();
         }
         
         if(OFAndroid.getOrientation()!=-1) OFAndroid.setScreenOrientation(OFAndroid.getOrientation());
@@ -236,10 +230,10 @@ public class OFAndroidLifeCycleHelper
 		OFAndroid.registerNetworkStateReceiver();
 	}
 	
-	public static void onPause(){
-		Log.i(TAG,"onPause");
+	public static void onStop(){
+		Log.i(TAG,"onStop");
+		
 		OFAndroid.runOnMainThread(new Runnable() {
-			
 			@Override
 			public void run() {
 				OFAndroid.disableTouchEvents();
@@ -253,17 +247,15 @@ public class OFAndroidLifeCycleHelper
 			}
 		});
 		
-		OFAndroid.onPause();
+		OFAndroid.onStop();
 		OFAndroid.unregisterNetworkStateReceiver();
 
 		OFAndroid.sleepLocked=false;
-		resumed = false;
+		started = false;
 	}
 
-	public static void onStop(){
-		resumed = false;
-		Log.i(TAG,"onStop");
-		
+	public static void onDestroy(){
+		started = false;		
 		OFAndroid.runOnMainThread(new Runnable() {
 			
 			@Override
@@ -282,10 +274,7 @@ public class OFAndroidLifeCycleHelper
 		OFAndroid.unregisterNetworkStateReceiver();
 		
 		OFAndroid.sleepLocked=false;
-	}
-	
-	public static void onDestroy(){
-		Log.i(TAG,"onDestroy");
+		
 		OFAndroid.onDestroy();
 		OFAndroidWindow.exit();
 	}

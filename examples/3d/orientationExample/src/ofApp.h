@@ -7,7 +7,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y);
@@ -19,10 +19,10 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
-		ofVec3f previous, current;
+
+		glm::vec3 previous, current;
 		ofEasyCam easyCam;
-		
-		deque<ofVec3f> pathVertices;
+
+		deque<glm::vec3> pathVertices;
 		ofMesh pathLines;
 };

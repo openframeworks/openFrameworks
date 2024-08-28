@@ -43,7 +43,7 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. Wi
 - If your connected device is not recognized by Android Studio, restart adb
   with `adb kill-server && adb start-server`.
 
-- If, when syncronizing a project for the first time, clicking on the console
+- If, when synchronizing a project for the first time, clicking on the console
   messages does not solve the problem regarding a missing dependency of the
   android API (like for example Android API 22), open the sdk from the console,
    select the missing API and install it.

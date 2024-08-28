@@ -181,10 +181,27 @@ public:
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
 	ofEvent<ofOrientation> deviceOrientationChanged;
-	ofEvent<void> pause;
+	
+	/**
+		The names start, stop, resume and pause correspond to Android Activity class lifecycle callbacks.
+		They are described in Android lifecycle guide (https://developer.android.com/guide/components/activities/activity-lifecycle).
+		TLDR:
+			Start and Stop events inform about app going to background and foreground.
+			Resume and Pause events inform about window focus being lost and restored while the app is still in foreground (window is at least partialy visible).
+	*/
+	ofEvent<void> start;
+	ofEvent<void> stop;
 	ofEvent<void> resume;
+	ofEvent<void> pause;
+	
+	/**
+		GL is loaded when app starts.
+		When unloadGL is called, the original opengl context is already lost (but new, fresh context might be already active).
+		Events unloadGL and reloadGL are called alternately.
+	*/
 	ofEvent<void> unloadGL;
 	ofEvent<void> reloadGL;
+	
 	ofEvent<ofxAndroidSwipeEventArgs> swipe;
 	ofEvent<ofxAndroidScaleEventArgs> scale;
 	ofEvent<ofxAndroidScaleEventArgs> scaleBegin;

@@ -7,9 +7,9 @@
 //
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import <QuartzCore/QuartzCore.h>
-
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLDrawable.h>
 
@@ -30,3 +30,4 @@ typedef enum {
 - (NSInteger)getHeight;
 
 @end
+#endif

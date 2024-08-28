@@ -34,8 +34,8 @@ protected:
 	float		timeLastUpdate;
 	
 	//objects
-	ofVec3f		*positions;
-	ofVec3f		*velocities;
+	glm::vec3		*positions;
+	glm::vec3		*velocities;
 	ofColor		*colors;	
 	
 };

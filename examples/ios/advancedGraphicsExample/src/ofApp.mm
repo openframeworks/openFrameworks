@@ -51,7 +51,7 @@ void ofApp::draw(){
 
 		//Lets get a unique height for our 'wave'
 		//using sine
-		float height = sin(counter + k);
+		float height = std::sin(counter + k);
 
 		//sine produces -1 to 1 values
 		//lets add 1 to make sure the height
@@ -79,7 +79,7 @@ void ofApp::draw(){
 	k = 0;
 	for(int i = 0; i < ofGetWidth(); i+= 50)
 	{
-		ofDrawRectangle(i+5, ofGetHeight(), 50, -50 * (sin(1.4 * counter - k) + 1.0));
+		ofDrawRectangle(i+5, ofGetHeight(), 50, -50 * (std::sin(1.4 * counter - k) + 1.0));
 		k += 0.4;
 	}
 
@@ -88,7 +88,7 @@ void ofApp::draw(){
 
 	if(ofGetWidth() > 480){ // then we are running retina
 		ofScale(2, 2, 0);
-    }
+	}
 
 	//---------------------------
 	// a bunch of lines
@@ -189,7 +189,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -201,26 +201,26 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
 void ofApp::touchMoved(ofTouchEventArgs & touch){
 	
 	if( touch.id ==  0){
-        //update spinPct by the distance the mouse
-        //moved in x and y. We use abs so it always
-        //spins in the same direction
+		//update spinPct by the distance the mouse
+		//moved in x and y. We use abs so it always
+		//spins in the same direction
 
-        // we use the "bFirstMouseMove" flag so that we calculate only
-        // after we have the first prevMY and prevMX stored;
+		// we use the "bFirstMouseMove" flag so that we calculate only
+		// after we have the first prevMY and prevMX stored;
 
-        if (bFirstMouseMove == false){
-            spinPct += (float)fabs(touch.y - prevMY) * 0.03;
-            spinPct += (float)fabs(touch.x - prevMX) * 0.03;
-        }else{
-            bFirstMouseMove = false;
-            //turn the flag off
-        }
+		if (bFirstMouseMove == false){
+			spinPct += (float)fabs(touch.y - prevMY) * 0.03;
+			spinPct += (float)fabs(touch.x - prevMX) * 0.03;
+		}else{
+			bFirstMouseMove = false;
+			//turn the flag off
+		}
 
-        //store the x and y
-        //so we can get the prev value
-        //next time the mouse is moved
-        prevMY = touch.y;
-        prevMX = touch.x;
+		//store the x and y
+		//so we can get the prev value
+		//next time the mouse is moved
+		prevMY = touch.y;
+		prevMX = touch.x;
 	}
 }
 
@@ -241,20 +241,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }

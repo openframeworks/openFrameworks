@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "glm/fwd.hpp"
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/vec3.hpp>
 
 /// \brief Draws x,y,z axes representing the current reference frame.
 ///
@@ -54,15 +55,15 @@ void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labe
 ///
 /// ~~~~{.cpp}
 ///     ofSetColor(0,0,0);
-///     ofVec3f arrowTailPoint (0,0,0);
-///     ofVec3f arrowHeadPoint (100, 150,0);
+///     glm::vec3 arrowTailPoint (0,0,0);
+///     glm::vec3 arrowHeadPoint (100, 150,0);
 ///     ofDrawArrow(arrowTailPoint, arrowHeadPoint, 20.0);
 /// ~~~~
 ///
-/// \param start The start point (tail) of the arrow, expressed as an ofVec3f.
-/// \param end The end point (head) of the arrow, expressed as an ofVec3f. 
+/// \param start The start point (tail) of the arrow, expressed as an glm::vec3.
+/// \param end The end point (head) of the arrow, expressed as an glm::vec3. 
 /// \param headSize The size of the arrowhead. 
-void ofDrawArrow(const glm::vec3& start, const glm::vec3& end, float headSize = 0.05f);
+void ofDrawArrow(const glm::vec3 & start, const glm::vec3 & end, float headSize = 0.05f);
 
 /// \brief This function renders a set of 3 axis-aligned circular bands, centered at the origin.
 ///

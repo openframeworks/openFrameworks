@@ -88,8 +88,16 @@ public class OFAndroidLifeCycle
 			if(!(m_currentState.equals(State.init)||m_currentState.equals(State.destroy)))
 				isLegal = false;
 			break;
+		case start:
+			if(!(m_currentState.equals(State.create)||m_currentState.equals(State.stop)))
+				isLegal = false;
+			break;
+		case stop:
+			if(!(m_currentState.equals(State.start)||m_currentState.equals(State.pause)))
+				isLegal = false;
+			break;
 		case resume:
-			if(!(m_currentState.equals(State.create)||m_currentState.equals(State.pause)))
+			if(!(m_currentState.equals(State.pause)||m_currentState.equals(State.start)))
 				isLegal = false;
 			break;
 		case pause:
@@ -97,7 +105,7 @@ public class OFAndroidLifeCycle
 				isLegal = false;
 			break;
 		case destroy:
-			if(!(m_currentState.equals(State.pause)||m_currentState.equals(State.create)))
+			if(!(m_currentState.equals(State.stop)||m_currentState.equals(State.create)))
 				isLegal = false;
 			break;
 		case exit:
@@ -133,8 +141,9 @@ public class OFAndroidLifeCycle
                         {
                             throw new IllegalStateException("Illegal next state! when current state " + m_currentState.toString() + " next state: " + next.toString());
                         }
-
+                        
                         m_currentState = next;
+                        
                         switch (next) {
                             case init:
                                 OFAndroidLifeCycleHelper.appInit(m_activity);
@@ -143,12 +152,17 @@ public class OFAndroidLifeCycle
                             case create:
                                 OFAndroidLifeCycleHelper.onCreate();
                                 break;
-                            case resume:
-                                OFAndroidLifeCycleHelper.onResume();
-                                glResumed();
+                            case start:
+                                OFAndroidLifeCycleHelper.onStart();
+                                break;
+                            case stop:
+                                OFAndroidLifeCycleHelper.onStop();
                                 break;
                             case pause:
                                 OFAndroidLifeCycleHelper.onPause();
+                                break;
+                            case resume:
+                                OFAndroidLifeCycleHelper.onResume();
                                 break;
                             case destroy:
                                 OFAndroidLifeCycleHelper.onDestroy();
@@ -199,16 +213,6 @@ public class OFAndroidLifeCycle
 			});
     }
 	
-	private static void glResumed(){
-		m_activity.runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				mGLView.setVisibility(View.VISIBLE);
-			}
-		});
-	}
-	
 	static OFActivity getActivity(){
 		return OFAndroidLifeCycle.m_activity;
 	}
@@ -249,7 +253,6 @@ public class OFAndroidLifeCycle
 			return m_isInit.get();
 		}
 	}
-
 	
 	public static void init()
 	{
@@ -264,61 +267,64 @@ public class OFAndroidLifeCycle
 	static String TAG = "OF";
 		
 	public static void glCreate()
-	{	
+	{
 		Log.d(TAG, "glCreate");
-		
 		if(m_countActivities == 0)
 			pushState(State.create);
 		m_countActivities++;
 	}
 	
-	public static void glCreateSurface()
+	public static void glCreateSurface( boolean preserveContextOnPause )
 	{
 		if(mGLView == null)
 		{
 			Log.d(TAG, "Create surface");
 			mGLView = new OFGLSurfaceView(m_activity);
 			
-			glResume( getActivity().getSurfaceContainer() );
+			ViewGroup glContainer = getActivity().getSurfaceContainer();
+			OFGLSurfaceView glView = getGLView();
+			if( preserveContextOnPause )
+				glView.setPreserveEGLContextOnPause( true );
+			ViewGroup parent = (ViewGroup)glView.getParent();
+			if( parent == null )
+				glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		}
+	}
+	
+	public static void glStart()
+	{
+		Log.d(TAG, "glStart");
+		OFGLSurfaceView glView = getGLView();
+		if( glView != null )
+			glView.onResume();
+		
+		pushState(State.start);
+	}
+	
+	public static void glStop()
+	{
+		Log.d(TAG, "glStop");
+		OFGLSurfaceView glView = getGLView();
+		if( glView != null )
+			glView.onPause();
+		
+		pushState(State.stop);
+	}
+	
+	public static void glRestart()
+	{
 	}
 	
 	public static void glResume(ViewGroup glContainer)
 	{
 		Log.d(TAG, "glResume");
-		
-		OFGLSurfaceView glView = getGLView();
-		if( glView != null )
-		{
-			glView.setVisibility(View.INVISIBLE);
-				
-			glContainer.addView(glView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			Log.d(TAG, "addView surface");
-			
-			glView.onResume();
-			
-			pushState(State.resume);
-		}
+		pushState(State.resume);
 	}
 	
 	public static void glPause()
 	{
 		Log.d(TAG, "glPause");
-		
-		OFGLSurfaceView glView = getGLView();
-		if( glView != null )
-		{
-			glView.onPause();
-			
-			ViewGroup parent = (ViewGroup)glView.getParent();
-			
-			if(parent != null){
-				Log.d(TAG, "remove surface");
-				parent.removeView(glView);
-			}
-			
-			pushState(State.pause);
-		}
+		pushState(State.pause);
 	}
 	
 	public static void glDestroy()
@@ -338,6 +344,6 @@ public class OFAndroidLifeCycle
 	
 	public enum State 
 	{
-		init, create, resume, pause, destroy, exit;
+		init, create, start, stop, destroy, exit, pause, resume;
 	}
 }

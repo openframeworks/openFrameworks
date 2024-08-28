@@ -86,11 +86,11 @@ void ofApp::keyPressed  (int key){
 	// the key of s toggles antialiasing
 	if (key == 's'){
 		bSmooth = !bSmooth;
-        if (bSmooth){
-            ofEnableAntiAliasing(); 
-        }else{
-            ofDisableAntiAliasing(); 
-        }
+		if (bSmooth){
+			ofEnableAntiAliasing(); 
+		}else{
+			ofDisableAntiAliasing(); 
+		}
 	}
 }
 

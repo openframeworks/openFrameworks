@@ -15,13 +15,14 @@ import android.view.SurfaceHolder;
 
 class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 	
-    public OFEGLConfigChooser(int r, int g, int b, int a, int depth, int stencil) {
+    public OFEGLConfigChooser(int r, int g, int b, int a, int depth, int stencil, int samples) {
         mRedSize = r;
         mGreenSize = g;
         mBlueSize = b;
         mAlphaSize = a;
         mDepthSize = depth;
         mStencilSize = stencil;
+        mSampleSize = samples;
     }
     
     public static void setGLESVersion(int version){
@@ -42,39 +43,110 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     private static boolean DEBUG = false;
     private static int EGL_OPENGL_ES_BIT = 1;
     private static int GLES_VERSION = 1;
-    private static int[] s_configAttribs2 =
+    private static int[] s_configAttribsMSAA =
     {
-        EGL10.EGL_RED_SIZE, 4,
-        EGL10.EGL_GREEN_SIZE, 4,
-        EGL10.EGL_BLUE_SIZE, 4,
-        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-        EGL10.EGL_NONE
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_DEPTH_SIZE, 16,
+            // Requires that setEGLContextClientVersion(2) is called on the view.
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_SAMPLE_BUFFERS, 1 /* true */,
+            EGL10.EGL_SAMPLES, 4,
+            EGL10.EGL_NONE
     };
+
+    private static final int EGL_COVERAGE_BUFFERS_NV = 0x30E0;
+    private static final int EGL_COVERAGE_SAMPLES_NV = 0x30E1;
+    private static int[] s_configAttribsMSAAFallBack = {
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_DEPTH_SIZE, 16,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL_COVERAGE_BUFFERS_NV, 1 /* true */,
+            EGL_COVERAGE_SAMPLES_NV, 2,  // always 5 in practice on tegra 2
+            EGL10.EGL_NONE
+    };
+    private static int[] s_configAttribsDefault = {
+            EGL10.EGL_RED_SIZE, 5,
+            EGL10.EGL_GREEN_SIZE, 6,
+            EGL10.EGL_BLUE_SIZE, 5,
+            EGL10.EGL_DEPTH_SIZE, 16,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_NONE
+    };
+
+    private static int[] s_configAttribsDefaultES = {
+            EGL10.EGL_RED_SIZE, 5,
+            EGL10.EGL_GREEN_SIZE, 6,
+            EGL10.EGL_BLUE_SIZE, 5,
+//            EGL10.EGL_DEPTH_SIZE, 16,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT /* EGL_OPENGL_ES2_BIT */,
+            EGL10.EGL_NONE
+    };
+
 
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
 
         /* Get the number of minimally matching EGL configurations
          */
         int[] num_config = new int[1];
-        egl.eglChooseConfig(display, s_configAttribs2, null, 0, num_config);
+        EGLConfig[] configs = null;
 
-        int numConfigs = num_config[0];
-
-        if (numConfigs <= 0) {
-            throw new IllegalArgumentException("No configs match configSpec");
+        if (!egl.eglChooseConfig(display, s_configAttribsMSAA, null, 0,
+                num_config)) {
+            Log.w("OF", String.format("eglChooseConfig MSAA failed"));
         }
-
+        int numConfigs = num_config[0];
+        if (numConfigs <= 0) {
+            if (!egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, null, 0,
+                    num_config)) {
+                Log.w("OF", String.format("eglChooseConfig MSAA Fallback failed"));
+            }
+            numConfigs = num_config[0];
+            if (numConfigs <= 0) {
+                if (!egl.eglChooseConfig(display, s_configAttribsDefault, null, 0,
+                        num_config)) {
+                    Log.w("OF", String.format("eglChooseConfig Default failed"));
+                }
+                numConfigs = num_config[0];
+                if (numConfigs <= 0) {
+                    if (!egl.eglChooseConfig(display, s_configAttribsDefaultES, null, 0,
+                            num_config)) {
+                        Log.w("OF", String.format("s_configAttribsDefaultES Default failed"));
+                    }
+                    numConfigs = num_config[0];
+                    if (numConfigs <= 0) {
+                        throw new IllegalArgumentException("No configs match configSpec");
+                    }
+                } else {
+                    configs = new EGLConfig[numConfigs];
+                    egl.eglChooseConfig(display, s_configAttribsDefault, configs, numConfigs, num_config);
+                }
+            } else {
+                configs = new EGLConfig[numConfigs];
+                egl.eglChooseConfig(display, s_configAttribsMSAAFallBack, configs, numConfigs, num_config);
+            }
+        } else {
+            configs = new EGLConfig[numConfigs];
+            egl.eglChooseConfig(display, s_configAttribsMSAA, configs, numConfigs, num_config);
+        }
         /* Allocate then read the array of minimally matching EGL configs
          */
-        EGLConfig[] configs = new EGLConfig[numConfigs];
-        egl.eglChooseConfig(display, s_configAttribs2, configs, numConfigs, num_config);
+
 
         if (DEBUG) {
              printConfigs(egl, display, configs);
         }
         /* Now return the "best" one
          */
-        return chooseConfig(egl, display, configs);
+        EGLConfig finalConfig =  chooseConfig(egl, display, configs);
+        if (DEBUG) {
+            printConfig(egl, display, finalConfig);
+        }
+        return finalConfig;
+
     }
 
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
@@ -98,6 +170,21 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
                         EGL10.EGL_BLUE_SIZE, 0);
             int a = findConfigAttrib(egl, display, config,
                     EGL10.EGL_ALPHA_SIZE, 0);
+
+            int sb = findConfigAttrib(egl, display, config,
+                    EGL10.EGL_SAMPLE_BUFFERS, 1);
+            int samples = findConfigAttrib(egl, display, config,
+                    EGL10.EGL_SAMPLES, 0);
+
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == mSampleSize) {
+                Log.w("OF", String.format("Enabled MSAAx%d", mSampleSize));
+                return config;
+            }
+
+            if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize && samples == 2 && mSampleSize > 2) {
+                Log.w("OF", String.format("Enabled MSAAx%d ", mSampleSize));
+                return config;
+            }
 
             if (r == mRedSize && g == mGreenSize && b == mBlueSize && a == mAlphaSize)
                 return config;
@@ -216,6 +303,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     protected int mAlphaSize;
     protected int mDepthSize;
     protected int mStencilSize;
+    protected int mSampleSize;
     private int[] mValue = new int[1];
 }
 
@@ -227,7 +315,7 @@ class OFGLSurfaceView extends GLSurfaceView{
         	setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
         }
         getHolder().setFormat( PixelFormat.OPAQUE );
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0, 4);
         setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
     }
@@ -240,16 +328,22 @@ class OFGLSurfaceView extends GLSurfaceView{
         	setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
         }
         getHolder().setFormat( PixelFormat.OPAQUE );
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0, 4);
         setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
     }
+
+// NOTE - The following has been removed because it is not a good way to determine that the opengl context was destroyed with its resources.
+//        The Android SurfaceView source code is a bit confusing  - there are many times when some kind of surface is beign destroyed (eg. during window resize),
+//            so it is not that surprising, that not every surfaceDestoyed callback means what we might think it means.
+//        We don't need this callback that much anyways, the renderer does not call render callbacks when gl context is invalid, so the OFAndroidWindow.onSurfaceCreated callback should be enought for us to make things work.
 
     @Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
     	super.surfaceDestroyed(holder);
 		OFAndroid.onSurfaceDestroyed();
 	}
+
     
     boolean isSetup(){
     	return mRenderer.isSetup();
@@ -268,10 +362,19 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 	@Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		Log.i("OF","onSurfaceCreated");
+		// notify that old surface was destroyed
+		if(this.has_surface) {
+			OFAndroid.onSurfaceDestroyed();
+			this.has_surface = false;
+		}
+		
+		// notify that new surface was created
+		this.has_surface = true;
 		OFAndroid.onSurfaceCreated();
 		Activity activity = OFAndroidLifeCycle.getActivity();
 		if(OFActivity.class.isInstance(activity))
 			((OFActivity)activity).onGLSurfaceCreated();
+		
 		return;
     }
 	
@@ -320,4 +423,5 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 
     private static boolean setup;
     private int w,h;
+    private boolean has_surface = false;
 }

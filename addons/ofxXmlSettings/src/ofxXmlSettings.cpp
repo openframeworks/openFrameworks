@@ -4,6 +4,9 @@
 #include <string>
 #include <iostream>
 
+using std::string;
+using std::vector;
+
 // this increases the accuracy of ofToString() when saving floating point values
 // but in the process of setting it also causes very small values to be ignored.
 const float floatPrecision = 9;
@@ -11,29 +14,23 @@ const float floatPrecision = 9;
 //----------------------------------------
 // a pretty useful tokenization system:
 static vector<string> tokenize(const string & str, const string & delim);
-static vector<string> tokenize(const string & str, const string & delim)
-{
-  vector<string> tokens;
+static vector<string> tokenize(const string & str, const string & delim) {
+	vector<string> tokens;
 
-  size_t p0 = 0, p1 = string::npos;
-  while(p0 != string::npos)
-  {
-    p1 = str.find_first_of(delim, p0);
-    if(p1 != p0)
-    {
-      string token = str.substr(p0, p1 - p0);
-      tokens.push_back(token);
-    }
-    p0 = str.find_first_not_of(delim, p1);
-  }
-  return tokens;
+	size_t p0 = 0, p1 = string::npos;
+	while(p0 != string::npos) {
+		p1 = str.find_first_of(delim, p0);
+		if(p1 != p0) {
+			string token = str.substr(p0, p1 - p0);
+			tokens.push_back(token);
+		}
+		p0 = str.find_first_not_of(delim, p1);
+	}
+	return tokens;
 }
-//----------------------------------------
 
 //----------------------------------------
-ofxXmlSettings::ofxXmlSettings():
-    storedHandle(NULL)
-{
+ofxXmlSettings::ofxXmlSettings(): storedHandle(NULL) {
 	level			= 0;
 	//we do this so that we have a valid handle
 	//without the need for loadFile
@@ -41,14 +38,13 @@ ofxXmlSettings::ofxXmlSettings():
 }
 
 //----------------------------------------
-ofxXmlSettings::ofxXmlSettings(const string& xmlFile):
-    storedHandle(NULL)
-{
+ofxXmlSettings::ofxXmlSettings(const of::filesystem::path & fileName):
+	storedHandle(NULL) {
 	level			= 0;
 	//we do this so that we have a valid handle
 	//without the need for loadFile
 	storedHandle   = TiXmlHandle(&doc);
-	loadFile(xmlFile);
+	load(fileName);
 }
 
 //---------------------------------------------------------
@@ -72,17 +68,15 @@ void ofxXmlSettings::clear(){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::loadFile(const string& xmlFile){
-
-	string fullXmlFile = ofToDataPath(xmlFile);
-
+bool ofxXmlSettings::load(const of::filesystem::path & fileName){
+	auto fullXmlFile = ofPathToString(ofToDataPath(fileName));
 	bool loadOkay = doc.LoadFile(fullXmlFile);
 
 	//theo removed bool check as it would
 	//return false if the file exists but was
 	//empty
 
-    //our push pop level should be set to 0!
+	//our push pop level should be set to 0!
 	level = 0;
 
 	storedHandle = TiXmlHandle(&doc);
@@ -90,25 +84,24 @@ bool ofxXmlSettings::loadFile(const string& xmlFile){
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::saveFile(const string& xmlFile){
-
-	string fullXmlFile = ofToDataPath(xmlFile);
+bool ofxXmlSettings::save(const of::filesystem::path & fileName){
+	auto fullXmlFile = ofPathToString(ofToDataPath(fileName));
 	return doc.SaveFile(fullXmlFile);
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::saveFile(){
+bool ofxXmlSettings::save(){
 	return doc.SaveFile();
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::load(const string & path){
-	return loadFile(path);
+bool ofxXmlSettings::loadFile(const of::filesystem::path & path){
+	return load(path);
 }
 
 //---------------------------------------------------------
-bool ofxXmlSettings::save(const string & path){
-	return saveFile(path);
+bool ofxXmlSettings::saveFile(const of::filesystem::path & path){
+	return save(path);
 }
 
 //---------------------------------------------------------
@@ -154,7 +147,7 @@ void ofxXmlSettings::removeTag(const string& tag, int which){
 
 //---------------------------------------------------------
 int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which) const{
-    TiXmlHandle valHandle(NULL);
+	TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return ofToInt(valHandle.ToText()->Value());
 	}
@@ -163,7 +156,7 @@ int ofxXmlSettings::getValue(const string& tag, int defaultValue, int which) con
 
 //---------------------------------------------------------
 double ofxXmlSettings::getValue(const string& tag, double defaultValue, int which) const{
-    TiXmlHandle valHandle(NULL);
+	TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return ofToDouble(valHandle.ToText()->Value());
 	}
@@ -172,7 +165,7 @@ double ofxXmlSettings::getValue(const string& tag, double defaultValue, int whic
 
 //---------------------------------------------------------
 string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, int which) const{
-    TiXmlHandle valHandle(NULL);
+	TiXmlHandle valHandle(NULL);
 	if (readTag(tag, valHandle, which)){
 		return valHandle.ToText()->ValueStr();
 	}
@@ -192,7 +185,7 @@ bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int whi
 
 	// once we've walked, let's get that value...
 	valHandle = tagHandle.Child( 0 );
-    return (valHandle.ToText() != NULL);
+	return (valHandle.ToText() != NULL);
 }
 
 
@@ -201,8 +194,8 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 
 	int pos = tag.find(":");
 
-    // Either find the tag specified, or the first tag if colon-seperated.
-    string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
+	// Either find the tag specified, or the first tag if colon-seperated.
+	string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
 
 	//we only allow to push one tag at a time.
 	TiXmlHandle isRealHandle = storedHandle.ChildElement(tagToFind, which);
@@ -212,7 +205,7 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 		level++;
 		return true;
 	}else{
-        ofLogError("ofxXmlSettings") << "pushTag(): tag \"" << tag << "\" not found";
+		ofLogError("ofxXmlSettings") << "pushTag(): tag \"" << tag << "\" not found";
 	}
 
 	return false;
@@ -281,8 +274,8 @@ int ofxXmlSettings::getNumTags(const string&  tag) const{
 
 	int pos = tag.find(":");
 
-    // Either find the tag specified, or the first tag if colon-seperated.
-    string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
+	// Either find the tag specified, or the first tag if colon-seperated.
+	string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
 
 	//grab the handle from the level we are at
 	//normally this is the doc but could be a pushed node
@@ -309,10 +302,10 @@ int ofxXmlSettings::writeTag(const string&  tag, const string& valueStr, int whi
 	vector<string> tokens = tokenize(tag,":");
 
 	// allocate on the stack
-    vector<TiXmlElement> elements;
-    elements.reserve(tokens.size());
+	vector<TiXmlElement> elements;
+	elements.reserve(tokens.size());
 	for(int x=0;x<(int)tokens.size();x++)
-        elements.push_back(tokens.at(x));
+		elements.push_back(tokens.at(x));
 
 
 	TiXmlText Value(valueStr);
@@ -473,7 +466,7 @@ void ofxXmlSettings::removeAttribute(const string& tag, const string& attribute,
 //---------------------------------------------------------
 void ofxXmlSettings::clearTagAttributes(const string& tag, int which){
 	vector<string> names;
-    getAttributeNames( tag, names, which );
+	getAttributeNames( tag, names, which );
 	for (vector<string>::iterator i = names.begin(); i != names.end(); i++)
 		removeAttribute(tag, *i, which);
 }
@@ -550,21 +543,21 @@ bool ofxXmlSettings::getAttributeNames(const string& tag, vector<string>& outNam
 
 //---------------------------------------------------------
 int ofxXmlSettings::getAttribute(const string& tag, const string& attribute, int defaultValue, int which) const{
-    int value = defaultValue;
+	int value = defaultValue;
 	readIntAttribute(tag, attribute, value, which);
 	return value;
 }
 
 //---------------------------------------------------------
 double ofxXmlSettings::getAttribute(const string& tag, const string& attribute, double defaultValue, int which) const{
-    double value = defaultValue;
+	double value = defaultValue;
 	readDoubleAttribute(tag, attribute, value, which);
 	return value;
 }
 
 //---------------------------------------------------------
 string ofxXmlSettings::getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which) const{
-    string value = defaultValue;
+	string value = defaultValue;
 	readStringAttribute(tag, attribute, value, which);
 	return value;
 }
@@ -601,41 +594,41 @@ TiXmlElement* ofxXmlSettings::getElementForAttribute(const string& tag, int whic
 		else
 			tagHandle = tagHandle.FirstChildElement(tokens.at(x));
 	}
-    return tagHandle.ToElement();
+	return tagHandle.ToElement();
 }
 
 //---------------------------------------------------------
 bool ofxXmlSettings::readIntAttribute(const string& tag, const string& attribute, int& outValue, int which) const{
 
-    TiXmlElement* elem = getElementForAttribute(tag, which);
-    if (elem)
-        return (elem->QueryIntAttribute(attribute, &outValue) == TIXML_SUCCESS);
-    return false;
+	TiXmlElement* elem = getElementForAttribute(tag, which);
+	if (elem)
+		return (elem->QueryIntAttribute(attribute, &outValue) == TIXML_SUCCESS);
+	return false;
 }
 
 //---------------------------------------------------------
 bool ofxXmlSettings::readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which) const{
 
-    TiXmlElement* elem = getElementForAttribute(tag, which);
-    if (elem)
-        return (elem->QueryDoubleAttribute(attribute, &outValue) == TIXML_SUCCESS);
-    return false;
+	TiXmlElement* elem = getElementForAttribute(tag, which);
+	if (elem)
+		return (elem->QueryDoubleAttribute(attribute, &outValue) == TIXML_SUCCESS);
+	return false;
 }
 
 //---------------------------------------------------------
 bool ofxXmlSettings::readStringAttribute(const string& tag, const string& attribute, string& outValue, int which) const{
 
-    TiXmlElement* elem = getElementForAttribute(tag, which);
-    if (elem)
-    {
-        const string* value = elem->Attribute(attribute);
-        if (value)
-        {
-            outValue = *value;
-            return true;
-        }
-    }
-    return false;
+	TiXmlElement* elem = getElementForAttribute(tag, which);
+	if (elem)
+	{
+		const string* value = elem->Attribute(attribute);
+		if (value)
+		{
+			outValue = *value;
+			return true;
+		}
+	}
+	return false;
 }
 
 //---------------------------------------------------------
@@ -654,7 +647,7 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
 		TiXmlElement* elem = tagHandle.ToElement();
 		elem->SetAttribute(attribute, valueString);
 
-        // Do we really need this?  We could just ignore this and remove the 'addAttribute' functions...
+		// Do we really need this?  We could just ignore this and remove the 'addAttribute' functions...
 		// Now, just get the ID.
 		int numSameTags;
 		TiXmlElement* child = ( storedHandle.FirstChildElement( tokens.at(0) ) ).ToElement();
@@ -669,11 +662,11 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
 //---------------------------------------------------------
 bool ofxXmlSettings::loadFromBuffer( string buffer )
 {
-    int size = buffer.size();
-    bool loadOkay = doc.ReadFromMemory( buffer.c_str(), size);//, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING);
-    storedHandle = TiXmlHandle(&doc);
-    level = 0;
-    return loadOkay;
+	int size = buffer.size();
+	bool loadOkay = doc.ReadFromMemory( buffer.c_str(), size);//, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING);
+	storedHandle = TiXmlHandle(&doc);
+	level = 0;
+	return loadOkay;
 }
 
 //---------------------------------------------------------

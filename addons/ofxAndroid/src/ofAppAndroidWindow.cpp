@@ -21,7 +21,7 @@
 #include "ofGLRenderer.h"
 using namespace std;
 
-static bool paused=true;
+static bool stopped=true;
 static bool surfaceDestroyed=false;
 
 
@@ -120,13 +120,18 @@ bool ofAppAndroidWindow::isSurfaceDestroyed() {
 	return surfaceDestroyed;
 }
 
-void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
+void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings)
+{
+	setup( (const ofxAndroidWindowSettings &)settings );
+}
+
+void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	glesVersion = settings.glesVersion;
 	ofLogError() << "setup gles" << glesVersion;
 	if(glesVersion<2){
-		currentRenderer = make_shared<ofGLRenderer>(this);
+		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}else{
-		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
+		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}
 
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
@@ -136,13 +141,13 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
 		return;
 	}
 
-	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(I)V");
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(IZ)V");
 	if(!method){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid setupGL method";
 		return;
 	}
 
-	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
 }
 
 void ofAppAndroidWindow::update(){
@@ -261,7 +266,7 @@ Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jst
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
 	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
-    ofSetDataPathRoot(string(mfile)+"/");
+    ofSetDataPathRoot({ string(mfile)+"/" });
     env->ReleaseStringUTFChars(data_dir, mfile);
 }
 
@@ -281,23 +286,29 @@ Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jobject  thiz ){
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
-	paused = true;
-	ofNotifyEvent(ofxAndroidEvents().pause);
+Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jobject  thiz ){
+	ofLogVerbose("ofAppAndroidWindow") << "onStart";
+	stopped = false;
+	ofNotifyEvent(ofxAndroidEvents().start);
+}
+
+void
+Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
+	ofLogVerbose("ofAppAndroidWindow") << "onStop";
+	ofNotifyEvent( ofxAndroidEvents().stop );
+	stopped = true;
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
-	if(paused){
-		ofNotifyEvent(ofxAndroidEvents().resume);
-		paused = false;
-	}
+	ofNotifyEvent(ofxAndroidEvents().resume);
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
-
+Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
+	ofLogVerbose("ofAppAndroidWindow") << "onPause";
+	ofNotifyEvent(ofxAndroidEvents().pause);
 }
 
 
@@ -346,7 +357,7 @@ void
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
 	ofLogVerbose("ofAppAndroidWindow") << "setup " << w << "x" << h;
-	paused = false;
+	stopped = false;
     sWindowWidth  = w;
     sWindowHeight = h;
 	window->renderer()->startRender();
@@ -378,7 +389,7 @@ void
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
 
-	if(paused || surfaceDestroyed) return;
+	if(stopped || surfaceDestroyed) return;
 
 	if(!threadedTouchEvents){
 		mtx.lock();

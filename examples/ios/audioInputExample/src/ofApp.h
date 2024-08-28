@@ -11,27 +11,28 @@ public:
 	void update();
 	void draw();
 	
-    void exit();
-    
-    void touchDown(ofTouchEventArgs & touch);
-    void touchMoved(ofTouchEventArgs & touch);
-    void touchUp(ofTouchEventArgs & touch);
-    void touchDoubleTap(ofTouchEventArgs & touch);
-    void touchCancelled(ofTouchEventArgs & touch);
+	void exit();
 	
-    void lostFocus();
-    void gotFocus();
-    void gotMemoryWarning();
-    void deviceOrientationChanged(int newOrientation);
+	void touchDown(ofTouchEventArgs & touch);
+	void touchMoved(ofTouchEventArgs & touch);
+	void touchUp(ofTouchEventArgs & touch);
+	void touchDoubleTap(ofTouchEventArgs & touch);
+	void touchCancelled(ofTouchEventArgs & touch);
+	
+	void lostFocus();
+	void gotFocus();
+	void gotMemoryWarning();
+	void deviceOrientationChanged(int newOrientation);
 
-	void audioIn(float * input, int bufferSize, int nChannels);
+	void audioIn(ofSoundBuffer & input);
 
-	int	initialBufferSize;
-	int	sampleRate;
+	int	bufferSize = 512;
 	int	drawCounter;
-    int bufferCounter;
-	float * buffer;
+	int bufferCounter;
+	float buffer[512] = { 0 };
 	
-    ofSoundPlayer sound;
+	ofSoundPlayer sound;
+	ofSoundStream soundStream;
+
 };
 

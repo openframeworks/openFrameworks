@@ -24,11 +24,10 @@
  */
 #pragma once
 
-#include <list>
-#include <map>
-#include "ofConstants.h"
 #include "ofEvents.h"
 #include "ofSerial.h"
+#include <list>
+#include <map>
 
  /* Version numbers for the protocol.  The protocol is still changing, so these
  * version numbers are important.  This number can be queried so that host
@@ -789,7 +788,7 @@ private:
 
 	int _numSteppers;
 
-	int _numEncoders;
+	// int _numEncoders;
 
 	int _encoderID;
 

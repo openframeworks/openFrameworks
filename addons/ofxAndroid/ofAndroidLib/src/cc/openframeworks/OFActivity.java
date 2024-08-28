@@ -52,10 +52,10 @@ public abstract class OFActivity extends Activity{
 	}
 
 
+	private boolean create_first = true;
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
-		// TODO Auto-generated method stub
 		super.onCreate(arg0);
 		OFAndroidLifeCycle.setActivity(this);
 		OFAndroidLifeCycle.init();
@@ -66,16 +66,33 @@ public abstract class OFActivity extends Activity{
 	}
 	
 	@Override
+	protected void onStart() {
+		super.onStart();
+		OFAndroidLifeCycle.glStart();
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		OFAndroidLifeCycle.glStop();
+	}
+	
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		OFAndroidLifeCycle.glRestart();
+	}
+	
+	@Override
 	protected void onResume() {
+		super.onResume();
 		OFAndroidLifeCycle.setActivity(this);
 		OFAndroidLifeCycle.glResume(mOFGlSurfaceContainer);
-		super.onResume();
 	}
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
-		OFAndroidLifeCycle.glPause();
 		super.onPause();
+		OFAndroidLifeCycle.glPause();
 	}
 	@Override
 	protected void onDestroy() {

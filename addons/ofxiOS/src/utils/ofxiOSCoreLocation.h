@@ -9,6 +9,8 @@
 #pragma once
 
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_CORE_LOCATION)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <CoreLocation/CoreLocation.h>
@@ -49,7 +51,7 @@
 @property (nonatomic, readonly) double trueHeading;
 @property (nonatomic, readonly) double headingAccuracy;
 
-- (id) init;
+- (instancetype) init;
 - (void) dealloc;
 
 - (bool) startHeading;
@@ -110,5 +112,6 @@ class ofxiOSCoreLocation
 
 #define ofxiPhoneCoreLocation ofxiOSCoreLocation
 
+#endif
 #endif
 

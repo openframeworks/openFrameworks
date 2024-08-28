@@ -4,10 +4,11 @@
 //
 //  Created by Dan Rosser on 7/3/18.
 //
-
-
 #pragma once
+#include "ofxiOSConstants.h"
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT) && defined(TARGET_OF_IOS)
 #import <UIKit/UIKit.h>
 #import "EAGLKView.h"
 #include <glm/glm.hpp>
@@ -18,7 +19,7 @@ class ofAppiOSWindow;
 @interface ofxiOSGLKView : EAGLKView {
 
 @protected
-    NSMutableDictionary * activeTouches;
+    NSMutableDictionary<NSValue *, NSNumber *> * activeTouches;
     glm::vec2 * screenSize;   // because glm::vec2 is forward declared,
     glm::vec2 * windowSize;   // these values have to be pointers.
     glm::vec2 * windowPos;
@@ -30,11 +31,11 @@ class ofAppiOSWindow;
 
 + (ofxiOSGLKView *) getInstance;
 
-- (id)initWithFrame:(CGRect)frame
-             andApp:(ofxiOSApp *)app;
-- (id)initWithFrame:(CGRect)frame
-             andApp:(ofxiOSApp *)app
-         sharegroup:(EAGLSharegroup *)sharegroup;
+- (instancetype)initWithFrame:(CGRect)frame
+                       andApp:(ofxiOSApp *)app;
+- (instancetype)initWithFrame:(CGRect)frame
+                       andApp:(ofxiOSApp *)app
+                   sharegroup:(EAGLSharegroup *)sharegroup;
 - (void)setup;
 - (void)update;
 - (void)draw;
@@ -48,3 +49,4 @@ class ofAppiOSWindow;
 @end
 
 #define ofxiPhoneEAGLView ofxiOSEAGLView
+#endif

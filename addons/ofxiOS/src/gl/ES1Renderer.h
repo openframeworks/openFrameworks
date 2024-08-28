@@ -1,6 +1,7 @@
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import "ESRenderer.h"
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
@@ -26,11 +27,11 @@
     bool bResize;
 }
 
-- (id)initWithDepth:(bool)depth
-              andAA:(bool)msaa
-     andMSAASamples:(int)samples
-          andRetina:(bool)retina
-         sharegroup:(EAGLSharegroup*)sharegroup;
+- (instancetype)initWithDepth:(bool)depth
+                        andAA:(bool)msaa
+               andMSAASamples:(int)samples
+                    andRetina:(bool)retina
+                   sharegroup:(EAGLSharegroup*)sharegroup;
 - (void)startRender;
 - (void)finishRender;
 - (void)destroyFramebuffer;
@@ -42,3 +43,4 @@
 - (NSInteger)getHeight;
 
 @end
+#endif

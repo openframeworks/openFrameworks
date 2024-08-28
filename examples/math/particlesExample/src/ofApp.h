@@ -27,7 +27,7 @@ class ofApp : public ofBaseApp{
 		string currentModeStr; 
 
 		vector <demoParticle> p;
-		vector <ofPoint> attractPoints;
-		vector <ofPoint> attractPointsWithMovement;
+		vector <glm::vec3> attractPoints;
+		vector <glm::vec3> attractPointsWithMovement;
 		
 };

@@ -28,6 +28,7 @@ export GCCVER=7.1.1
 # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
 # the "proper" way does not work currently:
 export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0"
+export USE_PI_LEGACY=0
 
 echo "**** Building OF core ****"
 cd $OF_ROOT
@@ -36,18 +37,18 @@ sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_D
 cd $PROJECTS
 
 
-make Debug PLATFORM_VARIANT=raspberry2
+make -j Debug PLATFORM_VARIANT=raspberry2 -j
 
 echo "**** Building emptyExample ****"
 cd $OF_ROOT/scripts/templates/linuxarmv7l
-make Debug PLATFORM_VARIANT=raspberry2
+make -j Debug PLATFORM_VARIANT=raspberry2 -j
 
 echo "**** Building allAddonsExample ****"
 #cd $OF_ROOT
 #cp scripts/templates/linuxarmv7l/Makefile examples/addons/allAddonsExample/
 #cp scripts/templates/linuxarmv7l/config.make examples/addons/allAddonsExample/
 #cd examples/addons/allAddonsExample/
-#make Debug PLATFORM_VARIANT=raspberry2
+#make -j Debug PLATFORM_VARIANT=raspberry2
 
 git checkout $PROJECTS/makefileCommon/config.linux.common.mk
 git checkout $PROJECTS/linuxarmv7l/config.linuxarmv7l.default.mk

@@ -1,846 +1,310 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>archiveVersion</key>
-	<string>1</string>
-	<key>classes</key>
-	<dict/>
-	<key>objectVersion</key>
-	<string>46</string>
-	<key>objects</key>
-	<dict>
-		<key>6948EE371B920CB800B5AC1A</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>local_addons</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8466F1851C04CA0E00918B1C</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>12</string>
-			<key>files</key>
-			<array/>
-			<key>inputPaths</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>outputPaths</key>
-			<array/>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>echo "$GCC_PREPROCESSOR_DEFINITIONS";
-APPSTORE=`expr "$GCC_PREPROCESSOR_DEFINITIONS" : ".*APPSTORE=\([0-9]*\)"`
-if [ -z "$APPSTORE" ] ; then
-echo "Note: Not copying bin/data to App Package or doing App Code signing. Use AppStore target for AppStore distribution";
-else
-# Copy bin/data into App/Resources
-rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
-
-# ---- Code Sign App Package ----
-
-# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
-
-# Verify that $CODE_SIGN_IDENTITY is set
-if [ -z "${CODE_SIGN_IDENTITY}" ] ; then
-echo "CODE_SIGN_IDENTITY needs to be set for framework code-signing"
-exit 0
-fi
-
-if [ -z "${CODE_SIGN_ENTITLEMENTS}" ] ; then
-echo "CODE_SIGN_ENTITLEMENTS needs to be set for framework code-signing!"
-
-if [ "${CONFIGURATION}" = "Release" ] ; then
-exit 1
-else
-# Code-signing is optional for non-release builds.
-exit 0
-fi
-fi
-
-ITEMS=""
-
-FRAMEWORKS_DIR="${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-echo "$FRAMEWORKS_DIR"
-if [ -d "$FRAMEWORKS_DIR" ] ; then
-FRAMEWORKS=$(find "${FRAMEWORKS_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
-RESULT=$?
-if [[ $RESULT != 0 ]] ; then
-exit 1
-fi
-
-ITEMS="${FRAMEWORKS}"
-fi
-
-LOGINITEMS_DIR="${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Library/LoginItems/"
-if [ -d "$LOGINITEMS_DIR" ] ; then
-LOGINITEMS=$(find "${LOGINITEMS_DIR}" -depth -type d -name "*.app")
-RESULT=$?
-if [[ $RESULT != 0 ]] ; then
-exit 1
-fi
-
-ITEMS="${ITEMS}"$'\n'"${LOGINITEMS}"
-fi
-
-# Prefer the expanded name, if available.
-CODE_SIGN_IDENTITY_FOR_ITEMS="${EXPANDED_CODE_SIGN_IDENTITY_NAME}"
-if [ "${CODE_SIGN_IDENTITY_FOR_ITEMS}" = "" ] ; then
-# Fall back to old behavior.
-CODE_SIGN_IDENTITY_FOR_ITEMS="${CODE_SIGN_IDENTITY}"
-fi
-
-echo "Identity:"
-echo "${CODE_SIGN_IDENTITY_FOR_ITEMS}"
-
-echo "Entitlements:"
-echo "${CODE_SIGN_ENTITLEMENTS}"
-
-echo "Found:"
-echo "${ITEMS}"
-
-# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.
-SAVED_IFS=$IFS
-IFS=$(echo -en "\n\b")
-
-# Loop through all items.
-for ITEM in $ITEMS;
-do
-echo "Signing '${ITEM}'"
-codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
-RESULT=$?
-if [[ $RESULT != 0 ]] ; then
-echo "Failed to sign '${ITEM}'."
-IFS=$SAVED_IFS
-exit 1
-fi
-done
-
-# Restore $IFS.
-IFS=$SAVED_IFS
-
-fi
-</string>
-		</dict>
-		<key>99FA3DBB1C7456C400CFA0EE</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E4EB6923138AFD0F00A09F29</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>CONFIGURATION_BUILD_DIR</key>
-				<string>$(SRCROOT)/bin/</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>YES</string>
-				<key>DEAD_CODE_STRIPPING</key>
-				<string>YES</string>
-				<key>GCC_AUTO_VECTORIZATION</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SSE3_EXTENSIONS</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS</key>
-				<string>YES</string>
-				<key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>3</string>
-				<key>GCC_PREPROCESSOR_DEFINITIONS[arch=*]</key>
-				<string>DISTRIBUTION=1</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_UNROLL_LOOPS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
-				<string>NO</string>
-				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VALUE</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>NO</string>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.9</string>
-				<key>OTHER_CPLUSPLUSFLAGS</key>
-				<array>
-					<string>-D__MACOSX_CORE__</string>
-					<string>-mtune=native</string>
-				</array>
-				<key>SDKROOT</key>
-				<string>macosx</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>AppStore</string>
-		</dict>
-		<key>99FA3DBC1C7456C400CFA0EE</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E4EB6923138AFD0F00A09F29</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>YES</string>
-				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-				</array>
-				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-				<string>YES</string>
-				<key>GCC_MODEL_TUNING</key>
-				<string>NONE</string>
-				<key>GCC_PREPROCESSOR_DEFINITIONS[arch=*]</key>
-				<string>APPSTORE=1</string>
-				<key>ICON</key>
-				<string>$(ICON_NAME_RELEASE)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
-				<key>INFOPLIST_FILE</key>
-				<string>openFrameworks-Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>/Applications</string>
-				<key>LIBRARY_SEARCH_PATHS</key>
-				<string>$(inherited)</string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>app</string>
-				<key>baseConfigurationReference</key>
-				<string>E4EB6923138AFD0F00A09F29</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>AppStore</string>
-		</dict>
-		<key>BB4B014C10F69532006C3DED</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>addons</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E4328143138ABC890047C5CB</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.pb-project</string>
-			<key>name</key>
-			<string>openFrameworksLib.xcodeproj</string>
-			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4328144138ABC890047C5CB</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E4328148138ABC890047C5CB</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E4328147138ABC890047C5CB</key>
-		<dict>
-			<key>containerPortal</key>
-			<string>E4328143138ABC890047C5CB</string>
-			<key>isa</key>
-			<string>PBXContainerItemProxy</string>
-			<key>proxyType</key>
-			<string>2</string>
-			<key>remoteGlobalIDString</key>
-			<string>E4B27C1510CBEB8E00536013</string>
-			<key>remoteInfo</key>
-			<string>openFrameworks</string>
-		</dict>
-		<key>E4328148138ABC890047C5CB</key>
-		<dict>
-			<key>fileType</key>
-			<string>archive.ar</string>
-			<key>isa</key>
-			<string>PBXReferenceProxy</string>
-			<key>path</key>
-			<string>openFrameworksDebug.a</string>
-			<key>remoteRef</key>
-			<string>E4328147138ABC890047C5CB</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>E4328149138ABC9F0047C5CB</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E4328148138ABC890047C5CB</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E4B69B4A0A3A1720003C02F2</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E4B6FCAD0C3E899E008CF71C</string>
-				<string>E4EB6923138AFD0F00A09F29</string>
-				<string>E4B69E1C0A3A1BDC003C02F2</string>
-				<string>E4EEC9E9138DF44700A80321</string>
-				<string>BB4B014C10F69532006C3DED</string>
-				<string>6948EE371B920CB800B5AC1A</string>
-				<string>E4B69B5B0A3A1756003C02F2</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E4B69B4C0A3A1720003C02F2</key>
-		<dict>
-			<key>attributes</key>
-			<dict>
-				<key>LastUpgradeCheck</key>
-				<string>0600</string>
-			</dict>
-			<key>buildConfigurationList</key>
-			<string>E4B69B4D0A3A1720003C02F2</string>
-			<key>compatibilityVersion</key>
-			<string>Xcode 3.2</string>
-			<key>developmentRegion</key>
-			<string>English</string>
-			<key>hasScannedForEncodings</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>English</string>
-				<string>Japanese</string>
-				<string>French</string>
-				<string>German</string>
-			</array>
-			<key>mainGroup</key>
-			<string>E4B69B4A0A3A1720003C02F2</string>
-			<key>productRefGroup</key>
-			<string>E4B69B4A0A3A1720003C02F2</string>
-			<key>projectDirPath</key>
-			<string></string>
-			<key>projectReferences</key>
-			<array>
-				<dict>
-					<key>ProductGroup</key>
-					<string>E4328144138ABC890047C5CB</string>
-					<key>ProjectRef</key>
-					<string>E4328143138ABC890047C5CB</string>
-				</dict>
-			</array>
-			<key>projectRoot</key>
-			<string></string>
-			<key>targets</key>
-			<array>
-				<string>E4B69B5A0A3A1756003C02F2</string>
-			</array>
-		</dict>
-		<key>E4B69B4D0A3A1720003C02F2</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>E4B69B4E0A3A1720003C02F2</string>
-				<string>E4B69B4F0A3A1720003C02F2</string>
-				<string>99FA3DBB1C7456C400CFA0EE</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>E4B69B4E0A3A1720003C02F2</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E4EB6923138AFD0F00A09F29</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>CONFIGURATION_BUILD_DIR</key>
-				<string>$(SRCROOT)/bin/</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>DEAD_CODE_STRIPPING</key>
-				<string>YES</string>
-				<key>GCC_AUTO_VECTORIZATION</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SSE3_EXTENSIONS</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS</key>
-				<string>YES</string>
-				<key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>0</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
-				<string>NO</string>
-				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VALUE</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>NO</string>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.9</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>
-				<key>OTHER_CPLUSPLUSFLAGS</key>
-				<array>
-					<string>-D__MACOSX_CORE__</string>
-					<string>-mtune=native</string>
-				</array>
-				<key>SDKROOT</key>
-				<string>macosx</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>E4B69B4F0A3A1720003C02F2</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E4EB6923138AFD0F00A09F29</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>CONFIGURATION_BUILD_DIR</key>
-				<string>$(SRCROOT)/bin/</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>YES</string>
-				<key>DEAD_CODE_STRIPPING</key>
-				<string>YES</string>
-				<key>GCC_AUTO_VECTORIZATION</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SSE3_EXTENSIONS</key>
-				<string>YES</string>
-				<key>GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS</key>
-				<string>YES</string>
-				<key>GCC_INLINES_ARE_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>3</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_UNROLL_LOOPS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
-				<string>NO</string>
-				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VALUE</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>NO</string>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.9</string>
-				<key>OTHER_CPLUSPLUSFLAGS</key>
-				<array>
-					<string>-D__MACOSX_CORE__</string>
-					<string>-mtune=native</string>
-				</array>
-				<key>SDKROOT</key>
-				<string>macosx</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>E4B69B580A3A1756003C02F2</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>E4B69E200A3A1BDC003C02F2</string>
-				<string>E4B69E210A3A1BDC003C02F2</string>
-			</array>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>E4B69B590A3A1756003C02F2</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>E4328149138ABC9F0047C5CB</string>
-			</array>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>E4B69B5A0A3A1756003C02F2</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>E4B69B5F0A3A1757003C02F2</string>
-			<key>buildPhases</key>
-			<array>
-				<string>E4B69B580A3A1756003C02F2</string>
-				<string>E4B69B590A3A1756003C02F2</string>
-				<string>E4B6FFFD0C3F9AB9008CF71C</string>
-				<string>E4C2427710CC5ABF004149E2</string>
-				<string>8466F1851C04CA0E00918B1C</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array>
-				<string>E4EEB9AC138B136A00A80321</string>
-			</array>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>emptyExample</string>
-			<key>productName</key>
-			<string>myOFApp</string>
-			<key>productReference</key>
-			<string>E4B69B5B0A3A1756003C02F2</string>
-			<key>productType</key>
-			<string>com.apple.product-type.application</string>
-		</dict>
-		<key>E4B69B5B0A3A1756003C02F2</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.application</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>emptyExampleDebug.app</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>E4B69B5F0A3A1757003C02F2</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>E4B69B600A3A1757003C02F2</string>
-				<string>E4B69B610A3A1757003C02F2</string>
-				<string>99FA3DBC1C7456C400CFA0EE</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>E4B69B600A3A1757003C02F2</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E4EB6923138AFD0F00A09F29</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-				</array>
-				<key>GCC_DYNAMIC_NO_PIC</key>
-				<string>NO</string>
-				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-				<string>YES</string>
-				<key>GCC_MODEL_TUNING</key>
-				<string>NONE</string>
-				<key>ICON</key>
-				<string>$(ICON_NAME_DEBUG)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
-				<key>INFOPLIST_FILE</key>
-				<string>openFrameworks-Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>/Applications</string>
-				<key>LIBRARY_SEARCH_PATHS</key>
-				<string>$(inherited)</string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)Debug</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>app</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>E4B69B610A3A1757003C02F2</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E4EB6923138AFD0F00A09F29</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>YES</string>
-				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-				</array>
-				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-				<string>YES</string>
-				<key>GCC_MODEL_TUNING</key>
-				<string>NONE</string>
-				<key>ICON</key>
-				<string>$(ICON_NAME_RELEASE)</string>
-				<key>ICON_FILE</key>
-				<string>$(ICON_FILE_PATH)$(ICON)</string>
-				<key>INFOPLIST_FILE</key>
-				<string>openFrameworks-Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>/Applications</string>
-				<key>LIBRARY_SEARCH_PATHS</key>
-				<string>$(inherited)</string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>app</string>
-				<key>baseConfigurationReference</key>
-				<string>E4EB6923138AFD0F00A09F29</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>E4B69E1C0A3A1BDC003C02F2</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E4B69E1D0A3A1BDC003C02F2</string>
-				<string>E4B69E1E0A3A1BDC003C02F2</string>
-				<string>E4B69E1F0A3A1BDC003C02F2</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>src</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4B69E1D0A3A1BDC003C02F2</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.cpp.cpp</string>
-			<key>name</key>
-			<string>main.cpp</string>
-			<key>path</key>
-			<string>src/main.cpp</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4B69E1E0A3A1BDC003C02F2</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>sourcecode.cpp.cpp</string>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>name</key>
-			<string>ofApp.cpp</string>
-			<key>path</key>
-			<string>src/ofApp.cpp</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4B69E1F0A3A1BDC003C02F2</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ofApp.h</string>
-			<key>path</key>
-			<string>src/ofApp.h</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4B69E200A3A1BDC003C02F2</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E4B69E1D0A3A1BDC003C02F2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E4B69E210A3A1BDC003C02F2</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E4B69E1E0A3A1BDC003C02F2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E4B6FCAD0C3E899E008CF71C</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
-			<key>path</key>
-			<string>openFrameworks-Info.plist</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E4B6FFFD0C3F9AB9008CF71C</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>inputPaths</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>outputPaths</key>
-			<array/>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
-# Copy default icon file into App/Resources
-rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
-# Copy libfmod and change install directory for fmod to run
-rsync -aved "$OF_PATH/libs/fmodex/lib/osx/libfmodex.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
-install_name_tool -change @executable_path/libfmodex.dylib @executable_path/../Frameworks/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
-
-echo "$GCC_PREPROCESSOR_DEFINITIONS";
-</string>
-		</dict>
-		<key>E4C2427710CC5ABF004149E2</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>dstPath</key>
-			<string></string>
-			<key>dstSubfolderSpec</key>
-			<string>10</string>
-			<key>files</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXCopyFilesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>E4EB691F138AFCF100A09F29</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>CoreOF.xcconfig</string>
-			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4EB6923138AFD0F00A09F29</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>Project.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E4EEB9AB138B136A00A80321</key>
-		<dict>
-			<key>containerPortal</key>
-			<string>E4328143138ABC890047C5CB</string>
-			<key>isa</key>
-			<string>PBXContainerItemProxy</string>
-			<key>proxyType</key>
-			<string>1</string>
-			<key>remoteGlobalIDString</key>
-			<string>E4B27C1410CBEB8E00536013</string>
-			<key>remoteInfo</key>
-			<string>openFrameworks</string>
-		</dict>
-		<key>E4EEB9AC138B136A00A80321</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXTargetDependency</string>
-			<key>name</key>
-			<string>openFrameworks</string>
-			<key>targetProxy</key>
-			<string>E4EEB9AB138B136A00A80321</string>
-		</dict>
-		<key>E4EEC9E9138DF44700A80321</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E4EB691F138AFCF100A09F29</string>
-				<string>E4328143138ABC890047C5CB</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>openFrameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-	</dict>
-	<key>rootObject</key>
-	<string>E4B69B4C0A3A1720003C02F2</string>
-</dict>
-</plist>
+{
+	"classes": {},
+	"objectVersion": "54",
+	"archiveVersion": "1",
+	"objects": {
+		"E4B69E1C0A3A1BDC003C02F2": {
+			"path": "src",
+			"isa": "PBXGroup",
+			"children": [
+				"E4B69E1D0A3A1BDC003C02F2",
+				"E4B69E1E0A3A1BDC003C02F2",
+				"E4B69E1F0A3A1BDC003C02F2"
+			],
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E4EB6923138AFD0F00A09F29": {
+			"path": "Project.xcconfig",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.xcconfig",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF26640B2C634C16004360E2": {
+		    "isa": "PBXShellScriptBuildPhase",
+		    "alwaysOutOfDate": "1",
+		    "buildActionMask": "2147483647",
+		    "files": [],
+		    "inputFileListPaths": [],
+		    "inputPaths": [],
+		    "outputFileListPaths": [],
+		    "outputPaths": [],
+		    "runOnlyForDeploymentPostprocessing": "0",
+		    "shellPath": "/usr/bin/env bash",
+		    "shellScript": "#!/usr/bin/env bash\nif [ ! -d \"${OF_PATH}/libs/freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${OF_PATH}/scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n"
+		},
+		"E42962A92163ECCD00A6A9E2": {
+			"alwaysOutOfDate": "1",
+			"inputPaths": [],
+			"buildActionMask": "2147483647",
+			"shellPath": "/bin/sh",
+			"showEnvVarsInLog": "0",
+			"outputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellScript": "echo \"💾 Compiling openFrameworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'\n",
+			"name": "Run Script — Compile OF",
+			"files": []
+		},
+		"E4C2427710CC5ABF004149E2": {
+			"isa": "PBXCopyFilesBuildPhase",
+			"buildActionMask": "2147483647",
+			"dstPath": "",
+			"dstSubfolderSpec": "10",
+			"files": [],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4A5B60F29BAAAE400C2D356": {
+			"isa": "PBXCopyFilesBuildPhase",
+			"buildActionMask": "2147483647",
+			"dstPath": "",
+			"dstSubfolderSpec": "6",
+			"files": [],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"191EF70929D778A400F35F26": {
+			"path": "../../../libs/openFrameworks",
+			"isa": "PBXFileReference",
+			"name": "openFrameworks",
+			"lastKnownFileType": "folder",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"191CD6FA2847E21E0085CBB6": {
+			"path": "of.entitlements",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.plist.entitlements",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69B4C0A3A1720003C02F2": {
+			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
+			"targets": [
+				"E4B69B5A0A3A1756003C02F2"
+			],
+			"developmentRegion": "en",
+			"knownRegions": [
+				"en",
+				"Base"
+			],
+			"isa": "PBXProject",
+			"compatibilityVersion": "Xcode 3.2",
+			"productRefGroup": "E4B69B4A0A3A1720003C02F2",
+			"projectDirPath": "",
+			"attributes": {
+				"LastUpgradeCheck": "1540",
+				"BuildIndependentTargetsInParallel": "YES"
+			},
+			"hasScannedForEncodings": "0",
+			"projectRoot": "",
+			"mainGroup": "E4B69B4A0A3A1720003C02F2"
+		},
+		"E4B69E1E0A3A1BDC003C02F2": {
+			"path": "src/ofApp.cpp",
+			"isa": "PBXFileReference",
+			"fileEncoding": "4",
+			"name": "ofApp.cpp",
+			"sourceTree": "SOURCE_ROOT",
+			"explicitFileType": "sourcecode.cpp.cpp"
+		},
+		"E4B69E1D0A3A1BDC003C02F2": {
+			"path": "src/main.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"name": "main.cpp",
+			"sourceTree": "SOURCE_ROOT",
+			"fileEncoding": "4"
+		},
+		"19B789C429E5AB4A0082E9B8": {
+			"buildActionMask": "2147483647",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"outputPaths": [],
+			"shellPath": "/bin/sh",
+			"inputFileListPaths": [],
+			"showEnvVarsInLog": "0",
+			"isa": "PBXShellScriptBuildPhase",
+			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
+			"files": [],
+			"alwaysOutOfDate": "1",
+			"inputPaths": [],
+			"outputFileListPaths": []
+		},
+		"E4B69B4F0A3A1720003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
+				"GCC_UNROLL_LOOPS": "YES",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"GCC_OPTIMIZATION_LEVEL": "3",
+				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
+				"COPY_PHASE_STRIP": "YES"
+			},
+			"name": "Release"
+		},
+		"E4B69B610A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "YES",
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF)"
+				],
+				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
+			},
+			"name": "Release"
+		},
+		"BB4B014C10F69532006C3DED": {
+			"path": "../../../addons",
+			"isa": "PBXGroup",
+			"name": "addons",
+			"children": [],
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E4B69B4A0A3A1720003C02F2": {
+			"isa": "PBXGroup",
+			"sourceTree": "<group>",
+			"children": [
+				"191CD6FA2847E21E0085CBB6",
+				"E4B6FCAD0C3E899E008CF71C",
+				"E4EB6923138AFD0F00A09F29",
+				"E4B69E1C0A3A1BDC003C02F2",
+				"191EF70929D778A400F35F26",
+				"BB4B014C10F69532006C3DED",
+				"E4B69B5B0A3A1756003C02F2"
+			]
+		},
+		"E4B69B580A3A1756003C02F2": {
+			"isa": "PBXSourcesBuildPhase",
+			"buildActionMask": "2147483647",
+			"files": [
+				"E4B69E200A3A1BDC003C02F2",
+				"E4B69E210A3A1BDC003C02F2"
+			],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4B69B4E0A3A1720003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
+				"COPY_PHASE_STRIP": "NO",
+				"GCC_OPTIMIZATION_LEVEL": "0",
+				"ENABLE_TESTABILITY": "YES",
+				"GCC_WARN_UNUSED_VARIABLE": "NO"
+			},
+			"name": "Debug"
+		},
+		"E4B69B600A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"GCC_DYNAMIC_NO_PIC": "NO",
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "NO",
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF_DEBUG)"
+				],
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
+			},
+			"name": "Debug"
+		},
+		"E4B69B590A3A1756003C02F2": {
+			"isa": "PBXFrameworksBuildPhase",
+			"buildActionMask": "2147483647",
+			"files": [],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4B69B4D0A3A1720003C02F2": {
+			"isa": "XCConfigurationList",
+			"defaultConfigurationIsVisible": "0",
+			"defaultConfigurationName": "Release",
+			"buildConfigurations": [
+				"E4B69B4E0A3A1720003C02F2",
+				"E4B69B4F0A3A1720003C02F2"
+			]
+		},
+		"E4B69E200A3A1BDC003C02F2": {
+			"isa": "PBXBuildFile",
+			"fileRef": "E4B69E1D0A3A1BDC003C02F2"
+		},
+		"E4B69E210A3A1BDC003C02F2": {
+			"isa": "PBXBuildFile",
+			"fileRef": "E4B69E1E0A3A1BDC003C02F2"
+		},
+		"E4B69B5A0A3A1756003C02F2": {
+			"buildConfigurationList": "E4B69B5F0A3A1757003C02F2",
+			"productReference": "E4B69B5B0A3A1756003C02F2",
+			"productType": "com.apple.product-type.application",
+			"productName": "myOFApp",
+			"isa": "PBXNativeTarget",
+			"buildPhases": [
+				"BF26640B2C634C16004360E2",
+				"E42962A92163ECCD00A6A9E2",
+				"E4B69B580A3A1756003C02F2",
+				"E4B69B590A3A1756003C02F2",
+				"E4C2427710CC5ABF004149E2",
+				"E4A5B60F29BAAAE400C2D356",
+				"19B789C429E5AB4A0082E9B8"
+			],
+			"dependencies": [],
+			"name": "emptyExample",
+			"buildRules": []
+		},
+		"E4B6FCAD0C3E899E008CF71C": {
+			"path": "openFrameworks-Info.plist",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.plist.xml",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69B5F0A3A1757003C02F2": {
+			"isa": "XCConfigurationList",
+			"defaultConfigurationIsVisible": "0",
+			"defaultConfigurationName": "Release",
+			"buildConfigurations": [
+				"E4B69B600A3A1757003C02F2",
+				"E4B69B610A3A1757003C02F2"
+			]
+		},
+		"E4B69B5B0A3A1756003C02F2": {
+			"path": "emptyExampleDebug.app",
+			"isa": "PBXFileReference",
+			"includeInIndex": "0",
+			"explicitFileType": "wrapper.application",
+			"sourceTree": "BUILT_PRODUCTS_DIR"
+		},
+		"E4B69E1F0A3A1BDC003C02F2": {
+			"path": "src/ofApp.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"name": "ofApp.h",
+			"sourceTree": "SOURCE_ROOT",
+			"fileEncoding": "4"
+		}
+	},
+	"rootObject": "E4B69B4C0A3A1720003C02F2"
+}

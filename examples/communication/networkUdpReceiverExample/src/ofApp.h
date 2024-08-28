@@ -27,6 +27,6 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont  mono;
 		ofTrueTypeFont  monosm;
 
-		vector<ofPoint> stroke;
+		vector<glm::vec3> stroke;
 };
 

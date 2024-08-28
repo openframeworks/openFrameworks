@@ -1,14 +1,13 @@
 #pragma once
+
 #include "ofGLBaseTypes.h"
-#include "ofPolyline.h"
 #include "ofShader.h"
-#include "ofMatrixStack.h"
-#include "ofVboMesh.h"
 #include "of3dGraphics.h"
+// MARK: Optimization pointers in next four objects
+#include "ofMatrixStack.h"
+#include "ofPolyline.h"
 #include "ofBitmapFont.h"
 #include "ofPath.h"
-#include "ofMaterial.h"
-
 
 class ofShapeTessellation;
 class ofFbo;
@@ -110,6 +109,9 @@ public:
 	glm::mat4 getCurrentOrientationMatrix() const;
 	glm::mat4 getCurrentViewMatrix() const;
 	glm::mat4 getCurrentNormalMatrix() const;
+	glm::mat4 getCurrentModelMatrix() const;
+	
+	glm::vec3 getCurrentEyePosition() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -122,6 +124,7 @@ public:
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 	void setLineSmoothing(bool smooth);
 	void setBlendMode(ofBlendMode blendMode);
@@ -129,31 +132,41 @@ public:
 	void disablePointSprites();
 	void enableAntiAliasing();
 	void disableAntiAliasing();
+	
+	/// \brief Enable size attenuation for line widths. Width changes based on distance from camera.
+	void enableLineSizeAttenuation();
+	/// \brief Disable size attenuation for line widths. Consistent width based on pixels in screen space (default).
+	void disableLineSizeAttenuation();
+	/// \brief Enable OF's line shaders for rendering lines of varying widths, set by ofSetLineWidth( width ); (default).
+	void enableLinesShaders();
+	/// \brief Disable OF's line shaders to enable openGL rendering. Does not support varying line widths.
+	void disableLinesShaders();
+	bool areLinesShadersEnabled() const;
     
 	// color options
-	void setColor(int r, int g, int b); // 0-255
-	void setColor(int r, int g, int b, int a); // 0-255
-	void setColor(const ofColor & color);
-	void setColor(const ofColor & color, int _a);
-	void setColor(int gray); // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b); // 0-1
+	void setColor(float r, float g, float b, float a); // 0-1
+	void setColor(const ofFloatColor & color);
+	void setColor(const ofFloatColor & color, float _a);
+	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	void setBitmapTextMode(ofDrawBitmapMode mode);
     
 	// bg color
-	ofColor getBackgroundColor();
-	void setBackgroundColor(const ofColor & c);
-	void background(const ofColor & c);
+	ofFloatColor getBackgroundColor();
+	void setBackgroundColor(const ofFloatColor & c);
+	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, int _a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	bool getBackgroundAuto();
 	void setBackgroundAuto(bool bManual);		// default is true
     
 	void clear();
-	void clear(float r, float g, float b, float a=0);
-	void clear(float brightness, float a=0);
+	void clear(float r, float g, float b, float a=0.f);
+	void clear(float brightness, float a=0.f);
 	void clearAlpha();
     
     
@@ -176,11 +189,15 @@ public:
 	const ofShader & getCurrentShader() const;
 
 	void bind(const ofBaseMaterial & material);
+	void bind(const ofShadow & shadow);
+	void bind(const ofShadow & shadow, GLenum aCubeFace);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseMaterial & material);
+	void unbind(const ofShadow & shadow);
+	void unbind(const ofShadow & shadow, GLenum aCubeFace);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofBaseVideoDraws & video);
@@ -211,7 +228,7 @@ public:
     void enableSeparateSpecularLight(){}
     void disableSeparateSpecularLight(){}
 	void setSmoothLighting(bool b){}
-	void setGlobalAmbientColor(const ofColor& c){}
+	void setGlobalAmbientColor(const ofFloatColor& c){}
     void enableLight(int lightIndex);
     void disableLight(int lightIndex);
 	void setLightSpotlightCutOff(int lightIndex, float spotCutOff){}
@@ -239,11 +256,51 @@ private:
 
 
 	ofPolyline circlePolyline;
-	mutable ofMesh circleMesh;
+	ofPolyline circleOutlinePolyline;
+	mutable ofMesh circleMesh, circleOutlineMesh;
 	mutable ofMesh triangleMesh;
 	mutable ofMesh rectMesh;
 	mutable ofMesh lineMesh;
 	mutable ofVbo meshVbo;
+	mutable ofMesh polylineMesh;
+
+	// when adding more draw modes, POINTS, LINES, etc.
+	// store in a structure so we don't have to create a lot of variables
+	// this structure if based on the one from ofMaterial
+	class ShaderCollection {
+	public:
+		void bindAttribute( GLuint location, const std::string & name );
+		void bindDefaults();
+		void linkPrograms();
+		void setupAllVertexShaders(const std::string &aShaderSrc);
+
+		ofShader texRectColor;
+		ofShader texRectNoColor;
+		ofShader tex2DColor;
+		ofShader tex2DNoColor;
+		ofShader noTexColor;
+		ofShader noTexNoColor;
+	};
+	
+	// useful for lines //
+	class LinesBundle {
+	public:
+		void setMeshDataToVbo();
+		std::vector<glm::vec4> lineMeshNextVerts;
+		std::vector<glm::vec4> lineMeshPrevVerts;
+		ofVbo vbo;
+		ofMesh mesh;
+		int vertAttribPrev = 4;
+		int vertAttribNext = 5;
+	};
+
+	struct TextureUniform {
+		ofTextureData texData;
+		// nh: not going to store a texture since we don't want to retain the texture here
+		// ofTexture texture;
+		int textureLocation;
+		std::string uniformName;
+	};
 
 	void uploadCurrentMatrix();
 
@@ -252,12 +309,20 @@ private:
 	void endSmoothing();
 
 	void beginDefaultShader();
+	std::shared_ptr<ShaderCollection>& getShaderCollectionForMode(GLuint drawMode);
 	void uploadMatrices();
 	void setDefaultUniforms();
 
-	void setAttributes(bool vertices, bool color, bool tex, bool normals);
+	// adding a drawMode variable that will switch shaders based on GL_TRIANGLES, GL_POINTS or GL_LINES
+	void setAttributes(bool vertices, bool color, bool tex, bool normals, GLuint drawMode);
+//	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
-
+	
+	
+	// LINES
+	void configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices);
+	void configureLinesBundleFromMesh(LinesBundle& aLinesBundle, GLuint drawMode, const ofMesh& amesh);
+	
     
 	ofMatrixStack matrixStack;
 
@@ -267,6 +332,7 @@ private:
 	const ofShader * currentShader;
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled, bitmapStringEnabled;
+	bool pointSpritesEnabled;
 	bool usingCustomShader, settingDefaultShader, usingVideoShader;
 	int currentTextureTarget;
 
@@ -275,6 +341,11 @@ private:
 
 	const ofBaseMaterial * currentMaterial;
 	int alphaMaskTextureTarget;
+	
+	const ofShadow* currentShadow;
+	bool bIsShadowDepthPass;
+	GLenum shadowCubeFace;
+	bool bCustomShadowShader = false;
 
 	ofStyle currentStyle;
 	std::deque <ofStyle> styleHistory;
@@ -282,13 +353,23 @@ private:
 	ofBitmapFont bitmapFont;
 	ofPath path;
 	const ofAppBaseWindow * window;
+	
+	mutable GLuint mDrawMode = GL_TRIANGLES;
+	std::unordered_map<GLuint, LinesBundle> mLinesBundleMap;
+	mutable bool mBRenderingLines = false;
+	mutable bool mBLineSizeAttenutation = false; // screen space
+	mutable bool mBEnableLinesShaders = true;
 
-	ofShader defaultTexRectColor;
-	ofShader defaultTexRectNoColor;
-	ofShader defaultTex2DColor;
-	ofShader defaultTex2DNoColor;
-	ofShader defaultNoTexColor;
-	ofShader defaultNoTexNoColor;
+	//	the index GL_TRIANGLES store everything that is not GL_POINTS or GL_LINES, GL_LINE_STRIP
+	std::unordered_map<GLuint, std::shared_ptr<ShaderCollection> > mDefaultShadersMap;
+	std::vector<TextureUniform> mUniformsTex;
+
+	//	ofShader defaultTexRectColor;
+	//	ofShader defaultTexRectNoColor;
+	//	ofShader defaultTex2DColor;
+	//	ofShader defaultTex2DNoColor;
+	//	ofShader defaultNoTexColor;
+	//	ofShader defaultNoTexNoColor;
 	ofShader defaultUniqueShader;
 #ifdef TARGET_ANDROID
 	ofShader defaultOESTexColor;
@@ -308,6 +389,8 @@ private:
 	ofShader shaderNV12Rect;
 	ofShader shaderNV21Rect;
 	ofShader shaderPlanarYUVRect;
+	
+	glm::vec3 currentEyePos;
 
 	//void setDefaultFramebufferId(const GLuint& fboId_); ///< windowing systems might use this to set the default framebuffer for this renderer.
 

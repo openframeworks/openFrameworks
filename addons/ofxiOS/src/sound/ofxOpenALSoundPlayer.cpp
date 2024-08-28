@@ -23,11 +23,16 @@
  ************************************************************************/ 
 
 #import "ofxOpenALSoundPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofMath.h"
 
-using namespace std;
+using std::vector;
+using std::cerr;
+using std::endl;
+using std::string;
 
 namespace{
 	bool SoundEngineInitialized = false;
@@ -90,7 +95,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::load(const std::filesystem::path& filePath, bool stream) {
+bool ofxOpenALSoundPlayer::load(const of::filesystem::path& filePath, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();
@@ -141,6 +146,7 @@ void ofxOpenALSoundPlayer::unload() {
 		else
 			SoundEngine_UnloadEffect(myId);
 	}
+	length = 0;
 }
 
 //--------------------------------------------------------------
@@ -366,6 +372,16 @@ bool ofxOpenALSoundPlayer::isLoaded()  const{
 }
 
 //--------------------------------------------------------------
+float ofxOpenALSoundPlayer::getDuration() const {
+	return (float)length / 1000.0f;
+}
+
+//--------------------------------------------------------------
+unsigned int ofxOpenALSoundPlayer::getDurationMS() const {
+	return length;
+}
+
+//--------------------------------------------------------------
 
 
 //static calls ---------------------------------------------------------------------------------------------------------------
@@ -479,7 +495,6 @@ bool ofxOpenALSoundPlayer::prime() {
 }
 
 //--------------------------------------------------------------
-
 bool ofxOpenALSoundPlayer::loadBackgroundMusic(string fileName, bool queue, bool loadAtOnce) {
 	myId = 0;
 	
@@ -625,3 +640,4 @@ void ofxOpenALSoundPlayer::ofxALSoundSetDistanceModel(ALenum model) {
 		alDistanceModel(model);
 }
 
+#endif

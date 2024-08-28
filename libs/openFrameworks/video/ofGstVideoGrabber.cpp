@@ -58,7 +58,8 @@ extern "C" {
 
 #endif
 
-using namespace std;
+using std::string;
+using std::vector;
 
 static void get_video_devices (ofGstCamData & cam_data)
 {
@@ -161,8 +162,14 @@ static void get_video_devices (ofGstCamData & cam_data)
 			ofLogNotice("ofGstVideoGrabber") << "driver: " << v2cap.driver << ", version: " << v2cap.version;
 			/* g_print ("Bus info: %s\n", v2cap.bus_info); */ /* Doesn't seem anything useful */
 			ofLogNotice("ofGstVideoGrabber","Capabilities: 0x%08X", v2cap.capabilities);
-			if (!(cap & V4L2_CAP_VIDEO_CAPTURE)){
-				ofLogNotice() << "device " << dev_node << " seems to not have the capture capability, (radio tuner?)";
+			/* Only consider this device, if
+			 * 1. it has 'Video Capture' capability and
+			 * 2. if it also has the 'Device Capabilities' then the actual device has
+			 *    the 'Video Capture' capability too */
+			if (!(cap & V4L2_CAP_VIDEO_CAPTURE)
+			    || (cap & V4L2_CAP_DEVICE_CAPS && !(v2cap.device_caps & V4L2_CAP_VIDEO_CAPTURE))){
+				ofLogNotice() << "device " << dev_node
+				    << " seems to not have the capture capability, (radio tuner/metadata device?)";
 				ofLogNotice() << "removing it from device list";
 				close (fd);
 				continue;
@@ -260,8 +267,8 @@ static void find_framerate (ofGstVideoFormat &format, int desired_framerate = -1
 		float diff = 9999;
 		for(unsigned i=0; i<format.framerates.size(); i++){
 			framerate = (float)format.framerates[i].numerator / (float)format.framerates[i].denominator;
-			if( fabs((float)desired_framerate - framerate) < diff){
-				diff = fabs((float)desired_framerate - framerate );
+			if( std::abs((float)desired_framerate - framerate) < diff){
+				diff = std::abs((float)desired_framerate - framerate );
 				framerate_numerator   = format.framerates[i].numerator;
 				framerate_denominator = format.framerates[i].denominator;
 			}
@@ -345,7 +352,7 @@ static void add_video_format (ofGstDevice &webcam_device,
 				ofLog(OF_LOG_VERBOSE,"already added, skipping\n");
 			}
 		}else{
-			if(fabs(new_framerate - desired_framerate) < fabs(curr_framerate - desired_framerate) ){
+			if(std::abs(new_framerate - desired_framerate) < std::abs(curr_framerate - desired_framerate) ){
 				ofLog(OF_LOG_VERBOSE,"more similar framerate replacing existing format\n");
 				webcam_device.video_formats[i] = video_format;
 #ifdef PREFER_NON_COMPRESSED
@@ -414,7 +421,7 @@ static void add_video_format (ofGstDevice &webcam_device,
 
 			}
 		}else{
-			if(fabs(new_framerate - desired_framerate) < fabs(curr_framerate - desired_framerate) ){
+			if(std::abs(new_framerate - desired_framerate) < std::abs(curr_framerate - desired_framerate) ){
 				ofLogVerbose("ofGstVideoGrabber") << "add_video_format(): more similar framerate replacing existing format";
 				webcam_device.video_formats[i] = video_format;
 			}else{
@@ -688,7 +695,7 @@ ofGstVideoFormat & ofGstVideoGrabber::selectFormat(int w, int h, int desired_fra
 			mostSimilarFormat = i;
 			break;
 		}
-		int diff = abs(camData.webcam_devices[deviceID].video_formats[i].width + camData.webcam_devices[deviceID].video_formats[i].height - w - h);
+		int diff = std::abs(camData.webcam_devices[deviceID].video_formats[i].width + camData.webcam_devices[deviceID].video_formats[i].height - w - h);
 		if(diff<minDiff){
 			minDiff = diff;
 			mostSimilarFormat = i;
@@ -748,11 +755,16 @@ bool ofGstVideoGrabber::setup(int w, int h){
 	videoUtils.setCopyPixels(true);
 #endif
 	if(internalPixelFormat!=OF_PIXELS_NATIVE){
-		string decodebin, scale;
-		if(format.mimetype == "video/x-bayer"){
+		//string decodebin, scale;
+		string decodebin = "";
+		string scale = "";
+		if (format.mimetype == "image/jpeg") {
+			decodebin = "! jpegdec ";
+		}
+		if (format.mimetype == "video/x-bayer") {
 			decodebin = "! bayer2rgb ";
 		}else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN){
-			decodebin = "! decodebin ";
+			decodebin += "! decodebin ";
 		}
 
 		if(format.format_name!=ofGstVideoUtils::getGstFormatName(internalPixelFormat)){
@@ -828,7 +840,7 @@ bool ofGstVideoGrabber::isFrameNew() const {
 }
 
 
-ofPixels& ofGstVideoGrabber::getPixels(){
+ofPixels & ofGstVideoGrabber::getPixels(){
 	return videoUtils.getPixels();
 }
 

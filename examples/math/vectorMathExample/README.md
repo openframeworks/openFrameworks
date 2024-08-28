@@ -9,7 +9,7 @@ This openFrameworks Example is designed to demonstrate
 
 In this example, pay attention to the following code: 
 
-*  ```ofVec3f	pts[MAX_N_PTS]```, declares a vector named 'pts' that cannot hold more than ```MAX_N_PTS``` which is defined at the top of the header file with ```#define MAX_N_PTS```
+*  ```glm::vec3	pts[MAX_N_PTS]```, declares a vector named 'pts' that cannot hold more than ```MAX_N_PTS``` which is defined at the top of the header file with ```#define MAX_N_PTS```
 *  ```ofBeginShape()```, called to start drawing a new shape. 
 *  ```ofBeginShape()``` is followed by a list of vertex points, ```ofVertex(pts[i].x, pts[i].y)``` and ends with a call to ```ofEndShape()```
 *  ```pts[nPts].x = x``` &  ```pts[nPts].y = y``` sets a specific value position nPts in the vector 

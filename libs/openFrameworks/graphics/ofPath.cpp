@@ -1,6 +1,7 @@
 #include "ofPath.h"
+#include "ofColor.h"
 
-using namespace std;
+using std::vector;
 
 #if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
@@ -17,6 +18,12 @@ ofPath::Command::Command(Type type)
 ofPath::Command::Command(Type type , const glm::vec3 & p)
 :type(type)
 ,to(p)
+,cp1(glm::vec3(0))
+,cp2(glm::vec3(0))
+,radiusX(0)
+,radiusY(0)
+,angleBegin(0)
+,angleEnd(0)
 {}
 
 //----------------------------------------------------------
@@ -25,6 +32,10 @@ ofPath::Command::Command(Type type , const glm::vec3 & p, const glm::vec3 & cp1,
 ,to(p)
 ,cp1(cp1)
 ,cp2(cp2)
+,radiusX(0)
+,radiusY(0)
+,angleBegin(0)
+,angleEnd(0)
 {
 }
 
@@ -32,6 +43,8 @@ ofPath::Command::Command(Type type , const glm::vec3 & p, const glm::vec3 & cp1,
 ofPath::Command::Command(Type type , const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd)
 :type(type)
 ,to(centre)
+,cp1(glm::vec3(0))
+,cp2(glm::vec3(0))
 ,radiusX(radiusX)
 ,radiusY(radiusY)
 ,angleBegin(angleBegin)
@@ -212,6 +225,11 @@ void ofPath::arc(const glm::vec2 & centre, float radiusX, float radiusY, float a
 //----------------------------------------------------------
 void ofPath::arc(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==COMMANDS){
+		//addCommand adds a moveTo if one hasn't been set, but in this case it is adding a moveTo to the center of the arc and not the beginning of the arc
+		if(commands.empty() || commands.back().type==Command::close){
+			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
+			commands.push_back(Command(Command::moveTo,start));
+		}
 		addCommand(Command(Command::arc,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
 		lastPolyline().arc(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
@@ -237,6 +255,10 @@ void ofPath::arc(float x, float y, float z, float radiusX, float radiusY, float 
 //----------------------------------------------------------
 void ofPath::arcNegative(const glm::vec3 & centre, float radiusX, float radiusY, float angleBegin, float angleEnd){
 	if(mode==COMMANDS){
+		if(commands.empty() || commands.back().type==Command::close){
+			glm::vec3 start = centre + glm::vec3( glm::cos( glm::radians(angleBegin) ) * radiusX, glm::sin( glm::radians(angleBegin) ) * radiusY, 0.0f );
+			commands.push_back(Command(Command::moveTo,start));
+		}
 		addCommand(Command(Command::arcNegative,centre,radiusX,radiusY,angleBegin,angleEnd));
 	}else{
 		lastPolyline().arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd,circleResolution);
@@ -429,17 +451,17 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 	}
 
 	// keep radii in check
-	float maxRadius = MIN(w / 2.0f, h / 2.0f);
-	topLeftRadius        = MIN(topLeftRadius,     maxRadius);
-	topRightRadius       = MIN(topRightRadius,    maxRadius);
-	bottomRightRadius    = MIN(bottomRightRadius, maxRadius);
-	bottomLeftRadius     = MIN(bottomLeftRadius,  maxRadius);
+	float maxRadius = std::min(w / 2.0f, h / 2.0f);
+	topLeftRadius        = std::min(topLeftRadius,     maxRadius);
+	topRightRadius       = std::min(topRightRadius,    maxRadius);
+	bottomRightRadius    = std::min(bottomRightRadius, maxRadius);
+	bottomLeftRadius     = std::min(bottomLeftRadius,  maxRadius);
 
 	// if all radii are ~= 0.0f, then render as a normal rectangle
-	if((fabs(topLeftRadius)     < FLT_EPSILON) &&
-	   (fabs(topRightRadius)    < FLT_EPSILON) &&
-	   (fabs(bottomRightRadius) < FLT_EPSILON) &&
-	   (fabs(bottomLeftRadius)  < FLT_EPSILON)) {
+	if((std::abs(topLeftRadius)     < std::numeric_limits<float>::epsilon()) &&
+	   (std::abs(topRightRadius)    < std::numeric_limits<float>::epsilon()) &&
+	   (std::abs(bottomRightRadius) < std::numeric_limits<float>::epsilon()) &&
+	   (std::abs(bottomLeftRadius)  < std::numeric_limits<float>::epsilon())) {
 
 		// rect mode respect happens in ofRect
 		rectangle(x, y, z, w, h);
@@ -453,7 +475,7 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 		moveTo(left + topLeftRadius, top, z);
 
 		// top right
-		if(fabs(topRightRadius) >= FLT_EPSILON) {
+		if(std::abs(topRightRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(right - topRightRadius, top + topRightRadius, z, topRightRadius, topRightRadius, 270, 360);
 		} else {
 			lineTo(right, top, z);
@@ -461,21 +483,21 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 
 		lineTo(right, bottom - bottomRightRadius);
 		// bottom right
-		if(fabs(bottomRightRadius) >= FLT_EPSILON) {
+		if(std::abs(bottomRightRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(right - bottomRightRadius, bottom - bottomRightRadius, z, bottomRightRadius, bottomRightRadius, 0, 90);
 		}
 
 		lineTo(left + bottomLeftRadius, bottom, z);
 
 		// bottom left
-		if(fabs(bottomLeftRadius) >= FLT_EPSILON) {
+		if(std::abs(bottomLeftRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(left + bottomLeftRadius, bottom - bottomLeftRadius, z, bottomLeftRadius, bottomLeftRadius, 90, 180);
 		}
 
 		lineTo(left, top + topLeftRadius, z);
 
 		// top left
-		if(fabs(topLeftRadius) >= FLT_EPSILON) {
+		if(std::abs(topLeftRadius) >= std::numeric_limits<float>::epsilon()) {
 			arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
 		}
 		close();
@@ -515,6 +537,12 @@ void ofPath::setStrokeWidth(float width){
 }
 
 //----------------------------------------------------------
+void ofPath::setStrokeWidth(float width) const {
+	ofPath * mutThis = const_cast<ofPath *>(this);
+	mutThis->strokeWidth = width;
+}
+
+//----------------------------------------------------------
 ofPolyline & ofPath::lastPolyline(){
 	if(polylines.empty() || polylines.back().isClosed()){
 		polylines.push_back(ofPolyline());
@@ -551,12 +579,12 @@ bool ofPath::isFilled() const{
 }
 
 //----------------------------------------------------------
-ofColor ofPath::getFillColor() const{
+ofFloatColor ofPath::getFillColor() const{
 	return fillColor;
 }
 
 //----------------------------------------------------------
-ofColor ofPath::getStrokeColor() const{
+ofFloatColor ofPath::getStrokeColor() const{
 	return strokeColor;
 }
 
@@ -676,7 +704,7 @@ void ofPath::setMode(Mode _mode){
 }
 
 //----------------------------------------------------------
-ofPath::Mode ofPath::getMode(){
+ofPath::Mode ofPath::getMode() const {
 	return mode;
 }
 
@@ -721,7 +749,7 @@ bool ofPath::getUseShapeColor() const {
 }
 
 //----------------------------------------------------------
-void ofPath::setColor( const ofColor& color ) {
+void ofPath::setColor( const ofFloatColor& color ) {
 	setFillColor( color );
 	setStrokeColor( color );
 }
@@ -732,7 +760,7 @@ void ofPath::setHexColor( int hex ) {
 }
 
 //----------------------------------------------------------
-void ofPath::setFillColor(const ofColor & color){
+void ofPath::setFillColor(const ofFloatColor & color){
 	setUseShapeColor(true);
 	fillColor = color;
 }
@@ -743,7 +771,7 @@ void ofPath::setFillHexColor( int hex ) {
 }
 
 //----------------------------------------------------------
-void ofPath::setStrokeColor(const ofColor & color){
+void ofPath::setStrokeColor(const ofFloatColor & color){
 	setUseShapeColor(true);
 	strokeColor = color;
 }
@@ -789,7 +817,7 @@ void ofPath::translate(const glm::vec2 & p){
 //----------------------------------------------------------
 
 void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
-    auto radians = ofDegToRad(degrees);
+    auto radians = glm::radians(degrees);
     if(mode==COMMANDS){
         for(int j=0;j<(int)commands.size();j++){
             commands[j].to = glm::rotate(commands[j].to, radians, axis);
@@ -814,7 +842,7 @@ void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
 
 //----------------------------------------------------------
 void ofPath::rotateRad(float radians, const glm::vec3& axis ){
-    rotateDeg(ofRadToDeg(radians), axis);
+    rotateDeg(glm::degrees(radians), axis);
 }
 
 //----------------------------------------------------------

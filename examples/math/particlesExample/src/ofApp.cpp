@@ -19,7 +19,7 @@ void ofApp::resetParticles(){
 	//these are the attraction points used in the forth demo 
 	attractPoints.clear();
 	for(int i = 0; i < 4; i++){
-		attractPoints.push_back( ofPoint( ofMap(i, 0, 4, 100, ofGetWidth()-100) , ofRandom(100, ofGetHeight()-100) ) );
+		attractPoints.push_back( glm::vec3( ofMap(i, 0, 4, 100, ofGetWidth()-100) , ofRandom(100, ofGetHeight()-100) , 0) );
 	}
 	
 	attractPointsWithMovement = attractPoints;
@@ -47,7 +47,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
+	ofBackgroundGradient(ofColor(60,60,60), ofColor(10,10,10));
 
 	for(unsigned int i = 0; i < p.size(); i++){
 		p[i].draw();

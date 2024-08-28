@@ -1,6 +1,7 @@
 #include "ofxLabel.h"
 #include "ofGraphics.h"
-using namespace std;
+
+using std::string;
 
 ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
 	setup(_label,width,height);
@@ -47,7 +48,7 @@ void ofxLabel::generateDraw(){
         name.resize(max);
     } 
     
-    textMesh = getTextMesh(name, b.x + textPadding, b.y + b.height / 2 + 4);
+    textMesh = getTextMesh(name, b.x + textPadding, getTextVCenteredInRect(b));
 }
 
 void ofxLabel::render() {

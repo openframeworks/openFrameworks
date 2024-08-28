@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(255,255,255);
-    ofDisableAntiAliasing();
+	ofDisableAntiAliasing();
 
 	//-----------
 	//the string is printed at the top of the app
@@ -76,7 +76,7 @@ void ofApp::setup(){
 					//which tag out of multiple tags you are refering to.
 					int x = XML.getValue("PT:X", 0, i);
 					int y = XML.getValue("PT:Y", 0, i);
-					dragPts[i].set(x, y);
+					dragPts[i] = {x, y};
 					pointCount++;
 				}
 			}
@@ -112,7 +112,7 @@ void ofApp::draw(){
 	}
 	ofEndShape(false);
 
-    ofFill();
+	ofFill();
 
 	//--------
 	//we make a black area on the left
@@ -220,7 +220,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 	//------------
 	//we also record the x y points into an array - so we can draw it
 	if(pointCount < NUM_PTS -1){
-		dragPts[pointCount].set(x, y);
+		dragPts[pointCount]= {x, y};
 		pointCount++;
 	}
 
@@ -228,10 +228,10 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    
-    //reset so we don't store extra tags
-    XML.clear();
-    
+	
+	//reset so we don't store extra tags
+	XML.clear();
+	
 	//we can also add tags with the same name.
 	//here we are just adding an empty tag
 	//and when the user drags their mouse

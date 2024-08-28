@@ -6,7 +6,7 @@ import qbs.TextFile
 import "%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}/libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
 
 Project{
-    property string of_root: %{JS: %{CorrectInitialOFPath}?'\'../../..\'':'\'%{OFPath}\''}
+    property string of_root: '%{JS: %{CorrectInitialOFPath}?'../../..':'%{OFPath}'}'
 
     ofApp {
         name: { return FileInfo.baseName(sourceDirectory) }

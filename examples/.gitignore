@@ -15,6 +15,7 @@
 /*/*/openFrameworks-Info.plist
 /*/*/ofxiOS-Info.plist
 /*/*/ofxiOS_Prefix.pch
+/*/*/of.entitlements
 /*/*/*/*/Default*.png
 /*/*/*/*/Icon*.png
 
@@ -39,6 +40,9 @@
 /*/*/*.qbs.user
 /*/*/*.pro
 /*/*/*.pro.user
+
+# projectGenerator
+/*/*/*/backups/
 
 #########################
 # operating system

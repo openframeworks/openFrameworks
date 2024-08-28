@@ -18,7 +18,7 @@ model {
         }
 
         ndk {
-            platformVersion = "19"
+            platformVersion = "21"
             moduleName "openFrameworksLib"
             toolchain  = buildToolchain()
             stl        = compilerStl()
@@ -31,9 +31,7 @@ model {
                         srcDirs = [
                                 ofSource
                         ]
-                        excludes = ["**/ofQtUtils.cpp",
-                                    "**/ofQuickTimeGrabber.cpp",
-                                    "**/ofQuickTimePlayer.cpp",
+                        excludes = ["**/ofGraphicsCairo.cpp",
                                     "**/ofDirectShowGrabber.cpp",
                                     "**/ofDirectShowPlayer.cpp",
                                     "**/ofGstUtils.cpp",
@@ -48,7 +46,7 @@ model {
                                     "**/ofRtAudioSoundStream.cpp",
                                     "**/glew/**/*",
                                     "**/videoInput/**/*",
-                                    "**/fmodex/**/*",
+                                    "**/fmod/**/*",
                                     "**/kiss/**/*",
                                     "**/assimp/**/*",
                                     "**/portaudio/**/*",

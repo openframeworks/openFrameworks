@@ -2,13 +2,12 @@
 #include "ofPolyline.h"
 #endif
 
-#include "ofConstants.h"
 #include "ofRectangle.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofVectorMath.h"
 #include "ofAppRunner.h"
-#include "ofMath.h"
 #include "ofLog.h"
+#include "ofMath.h"
 
 //----------------------------------------------------------
 template<class T>
@@ -90,6 +89,19 @@ void ofPolyline_<T>::insertVertex(const T &p, int index) {
 template<class T>
 void ofPolyline_<T>::insertVertex(float x, float y, float z, int index) {
 	insertVertex(T(x, y, z), index);
+}
+
+
+//----------------------------------------------------------
+template<class T>
+void ofPolyline_<T>::removeVertex(int index) {
+	if(index >= points.size()){
+		ofLogError("ofPolyline") << "removeVertex(): ignoring out of range index " << index << ", number of vertices is" << points.size();
+	}else{
+		curveVertices.clear();
+		points.erase(points.begin()+index);
+		flagHasChanged();
+	}
 }
 
 
@@ -177,10 +189,10 @@ void ofPolyline_<T>::setCircleResolution(int res){
 		circlePoints.resize(res);
         
 		float angle = 0.0f;
-		const float angleAdder = M_TWO_PI / (float)res;
+		const float angleAdder = glm::two_pi<float>() / (float)res;
 		for (int i = 0; i < res; i++){
-			circlePoints[i].x = cos(angle);
-			circlePoints[i].y = sin(angle);
+			circlePoints[i].x = std::cos(angle);
+			circlePoints[i].y = std::sin(angle);
 			circlePoints[i].z = 0.0f;
 			angle += angleAdder;
 		}
@@ -194,7 +206,7 @@ template<class T>
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
 float ofPolyline_<T>::wrapAngle(float angleRadians) {
-	return ofWrap(angleRadians, 0.0f, TWO_PI);
+	return ofWrap(angleRadians, 0.0f, glm::two_pi<float>());
 }
 
 //----------------------------------------------------------
@@ -324,28 +336,28 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
     const float epsilon = 0.0001f;
     
     const size_t nCirclePoints = circlePoints.size();
-    float segmentArcSize  = M_TWO_PI / (float)nCirclePoints;
+    float segmentArcSize  = glm::two_pi<float>() / (float)nCirclePoints;
     
-    // convert angles to radians and wrap them into the range 0-M_TWO_PI and
-    float angleBeginRad = wrapAngle(ofDegToRad(angleBegin));
-    float angleEndRad =   wrapAngle(ofDegToRad(angleEnd));
+    // convert angles to radians and wrap them into the range 0 - glm::two_pi<float>() and
+    float angleBeginRad = wrapAngle(glm::radians(angleBegin));
+    float angleEndRad =   wrapAngle(glm::radians(angleEnd));
     
-    while(angleBeginRad >= angleEndRad) angleEndRad += M_TWO_PI;
+    while(angleBeginRad >= angleEndRad) angleEndRad += glm::two_pi<float>();
     
     // determine the directional angle delta
     float d = clockwise ? angleEndRad - angleBeginRad : angleBeginRad - angleEndRad;
     // find the shortest angle delta, clockwise delta direction yeilds POSITIVE values
-    float deltaAngle = atan2(sin(d),cos(d));
+    float deltaAngle = std::atan2(std::sin(d),std::cos(d));
     
     // establish the remaining angle that we have to work through
     float remainingAngle = deltaAngle;
     
     // if the delta angle is in the CCW direction OR the start and stop angles are
     // effectively the same adjust the remaining angle to be a be a full rotation
-    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
+    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += glm::two_pi<float>();
     
 	T radii(radiusX, radiusY, 0.f);
-	T point;
+	T point(0);
     
     int currentLUTIndex = 0;
     bool isFirstPoint = true; // special case for the first point
@@ -358,14 +370,14 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
             //
             // get the EXACT first point requested (for points that
             // don't fall precisely on a LUT entry)
-			point = T(cos(angleBeginRad), sin(angleBeginRad), 0.f);
+			point = T(std::cos(angleBeginRad), std::sin(angleBeginRad), 0.f);
             // set up the get any in between points from the LUT
-            float ratio = angleBeginRad / M_TWO_PI * (float)nCirclePoints;
-            currentLUTIndex = clockwise ? (int)ceil(ratio) : (int)floor(ratio);
+            float ratio = angleBeginRad / glm::two_pi<float>() * (float)nCirclePoints;
+            currentLUTIndex = clockwise ? (int)std::ceil(ratio) : (int)std::floor(ratio);
             float lutAngleAtIndex = currentLUTIndex * segmentArcSize;
             // the angle between the beginning angle and the next angle in the LUT table
             float d = clockwise ? (lutAngleAtIndex - angleBeginRad) : (angleBeginRad - lutAngleAtIndex);
-            float firstPointDelta = atan2(sin(d),cos(d)); // negative is in the clockwise direction
+            float firstPointDelta = std::atan2(std::sin(d),std::cos(d)); // negative is in the clockwise direction
             
             // if the are "equal", get the next one CCW
             if(std::abs(firstPointDelta) < epsilon) {
@@ -403,7 +415,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
         // if the next LUT point moves us past the end angle then
         // add a a point a the exact end angle and call it finished
         if(remainingAngle < epsilon) {
-			point = T(cos(angleEndRad), sin(angleEndRad), 0.f);
+			point = T(std::cos(angleEndRad), std::sin(angleEndRad), 0.f);
             point = point * radii + center;
             points.push_back(point);
             remainingAngle = 0; // call it finished, the next while loop test will fail
@@ -474,7 +486,7 @@ ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingSha
 	for(int i = 0; i < n; i++) {
 		float sum = 1; // center weight
 		for(int j = 1; j < smoothingSize; j++) {
-			T cur;
+			T cur(0);
 			int leftPosition = i - j;
 			int rightPosition = i + j;
 			if(leftPosition < 0 && bClosed) {
@@ -505,12 +517,15 @@ ofPolyline_<T> ofPolyline_<T>::getResampledBySpacing(float spacing) const {
     if(spacing==0 || size() == 0) return *this;
 	ofPolyline_ poly;
     float totalLength = getPerimeter();
-    for(float f=0; f<totalLength; f += spacing) {
+    float f=0;
+    for(f=0; f<=totalLength; f += spacing) {
         poly.lineTo(getPointAtLength(f));
     }
     
     if(!isClosed()) {
-        if(poly.size() > 0) poly.points.back() = points.back();
+        if( f != totalLength ){
+            poly.lineTo(points.back());
+        }
         poly.setClosed(false);
     } else {
         poly.setClosed(true);
@@ -557,7 +572,7 @@ inline T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 	if(normalizedPosition != nullptr) {
 		*normalizedPosition = u;
 	}
-	return glm::lerp(toGlm(p1), toGlm(p2), u);
+	return glm::mix(toGlm(p1), toGlm(p2), u);
 }
 
 //----------------------------------------------------------
@@ -575,7 +590,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 	}
 	
 	float distance = 0;
-	T nearestPoint;
+	T nearestPoint(0);
 	unsigned int nearest = 0;
 	float normalizedPosition = 0;
 	unsigned int lastPosition = polyline.size() - 1;
@@ -631,9 +646,9 @@ bool ofPolyline_<T>::inside(float x, float y, const ofPolyline_ & polyline){
 	p1 = polyline[0];
 	for (i=1;i<=N;i++) {
 		p2 = polyline[i % N];
-		if (y > MIN(p1.y,p2.y)) {
-            if (y <= MAX(p1.y,p2.y)) {
-                if (x <= MAX(p1.x,p2.x)) {
+		if (y > std::min(p1.y,p2.y)) {
+            if (y <= std::max(p1.y,p2.y)) {
+                if (x <= std::max(p1.x,p2.x)) {
                     if (p1.y != p2.y) {
                         xinters = (y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
                         if (p1.x == p2.x || x <= xinters)
@@ -803,7 +818,7 @@ void ofPolyline_<T>::translate(const glm::vec2 &p){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec3& axis){
-    rotateRad(ofDegToRad(degrees), axis);
+    rotateRad(glm::radians(degrees), axis);
 }
 
 //--------------------------------------------------
@@ -824,7 +839,7 @@ void ofPolyline_<T>::rotate(float degrees, const glm::vec3 &axis){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec2& axis){
-    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+    rotateRad(glm::radians(degrees), glm::vec3(axis, 0.0));
 }
 
 //--------------------------------------------------
@@ -836,7 +851,7 @@ void ofPolyline_<T>::rotateRad(float radians, const glm::vec2& axis){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotate(float degrees, const glm::vec2 &axis){
-    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+    rotateRad(glm::radians(degrees), glm::vec3(axis, 0.0));
 }
 
 //--------------------------------------------------
@@ -879,7 +894,7 @@ float ofPolyline_<T>::getIndexAtLength(float length) const {
     
     int lastPointIndex = isClosed() ? points.size() : points.size()-1;
     
-    int i1 = ofClamp(floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
+    int i1 = ofClamp(std::floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
     int leftLimit = 0;
     int rightLimit = lastPointIndex;
     
@@ -955,7 +970,7 @@ T ofPolyline_<T>::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
 	T leftPoint(points[i1]);
 	T rightPoint(points[i2]);
-	return glm::lerp(toGlm(leftPoint), toGlm(rightPoint), t);
+	return glm::mix(toGlm(leftPoint), toGlm(rightPoint), t);
 }
 
 
@@ -977,7 +992,7 @@ template<class T>
 float ofPolyline_<T>::getDegreesAtIndex(int index) const {
 	if(points.size() < 2) return 0;
 	updateCache();
-	return ofRadToDeg(angles[getWrappedIndex(index)]);
+	return glm::degrees(angles[getWrappedIndex(index)]);
 }
 
 //--------------------------------------------------
@@ -987,7 +1002,7 @@ float ofPolyline_<T>::getDegreesAtIndexInterpolated(float findex) const {
 	int i1, i2;
 	float t;
 	getInterpolationParams(findex, i1, i2, t);
-	return ofRadToDeg(ofLerp(getDegreesAtIndex(i1), getDegreesAtIndex(i2), t));
+	return glm::degrees(ofLerp(getDegreesAtIndex(i1), getDegreesAtIndex(i2), t));
 }
 
 
@@ -1024,7 +1039,7 @@ T ofPolyline_<T>::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
+	return glm::mix(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1042,7 +1057,7 @@ T ofPolyline_<T>::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
+	return glm::mix(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
 }
 
 //--------------------------------------------------
@@ -1060,7 +1075,7 @@ T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::lerp(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
+	return glm::mix(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
 }
 
 
@@ -1112,7 +1127,7 @@ int ofPolyline_<T>::getWrappedIndex(int index) const {
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::getInterpolationParams(float findex, int &i1, int &i2, float &t) const {
-    i1 = floor(findex);
+    i1 = std::floor(findex);
     t = findex - i1;
     i1 = getWrappedIndex(i1);
     i2 = getWrappedIndex(i1 + 1);
@@ -1140,7 +1155,7 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
         area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
         area *= 0.5;
         
-        if(fabsf(area) < FLT_EPSILON) {
+        if(fabsf(area) < std::numeric_limits<float>::epsilon()) {
             centroid2D = getBoundingBox().getCenter();
         } else {
             // centroid

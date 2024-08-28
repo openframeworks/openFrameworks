@@ -5,14 +5,15 @@
  *      Author: arturo
  */
 
-#ifndef OFMATRIXSTACK_H_
-#define OFMATRIXSTACK_H_
+#pragma once
 
-#include <stack>
-#include "ofConstants.h"
+// ofRectangle currentViewport only
 #include "ofRectangle.h"
-#include "glm/mat4x4.hpp"
 #include "ofGraphicsConstants.h"
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/mat4x4.hpp>
+#include <stack>
 
 class ofBaseDraws;
 class ofAppBaseWindow;
@@ -85,6 +86,8 @@ private:
 
     ofMatrixMode currentMatrixMode;
 
+	glm::mat4 * currentMatrix;
+	bool flipRenderSurfaceMatrix;
 	glm::mat4 modelMatrix;
 	glm::mat4 viewMatrix;
 	glm::mat4 viewInverse;
@@ -96,15 +99,12 @@ private:
 	glm::mat4 orientationMatrix;
 	glm::mat4 orientationMatrixInverse;
 
-	glm::mat4 * currentMatrix;
-
 	std::stack <ofRectangle> viewportHistory;
 	std::stack <glm::mat4> viewMatrixStack;
 	std::stack <glm::mat4> modelViewMatrixStack;
 	std::stack <glm::mat4> projectionMatrixStack;
 	std::stack <glm::mat4> textureMatrixStack;
 	std::stack <std::pair<ofOrientation,bool> > orientationStack;
-	bool flipRenderSurfaceMatrix;
 
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;
@@ -112,5 +112,3 @@ private:
 	inline void updatedRelatedMatrices();
 
 };
-
-#endif /* OFMATRIXSTACK_H_ */

@@ -1,0 +1,92 @@
+{
+
+	"version": "2.0.0",
+	"shell":{
+		"task": true
+	},
+	"windows" : {
+		"options": {
+			"shell": {
+				"executable": "C:\\msys64\\msys2_shell.cmd",
+				"args": [
+					"-defterm",
+					"-mingw64",
+					"-no-start",
+					"-here",
+					"-shell bash -c"
+				]
+			}
+		}
+	},
+	"problemMatcher": {
+		"owner": "cpp",
+		"fileLocation": ["relative", "${workspaceFolder}"],
+		"pattern": {
+			"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+			"file": 1,
+			"line": 2,
+			"column": 3,
+			"severity": 4,
+			"message": 5
+		}
+	},
+
+	"group": {
+		"kind": "build",
+	},
+
+	"presentation": {
+		"reveal": "always",
+		"panel": "shared"
+	},
+
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Build RELEASE",
+			"command": "make -j -s 2>&1"
+			// "windows" : {
+			// 	"command" : "msbuild"
+			// }
+		},
+		{
+			"type": "shell",
+			"label": "Run RELEASE",
+			"command": "make RunRelease >&1",
+			"windows" : {
+				"command" : "bin/*.exe"
+			}
+		},
+		{
+			"label": "Build and Run Release",
+			"dependsOn": ["Build RELEASE", "Run RELEASE"],
+			"dependsOrder": "sequence",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Build DEBUG",
+			"command": "make Debug -j -s 2>&1 || exit 1"
+		},
+
+		{
+			"type": "shell",
+			"label": "Clean DEBUG",
+			"command": "make CleanDebug"
+		},
+
+		{
+			"type": "shell",
+			"label": "Clean RELEASE",
+			"command": "make CleanRelease"
+		},
+		{
+			"type": "shell",
+			"label": "Clean ALL",
+			"command": "make clean"
+		}
+	]
+}

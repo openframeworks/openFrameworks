@@ -1,14 +1,15 @@
 #pragma once
-
-
-#include "cairo.h"
+#include "ofConstants.h"
+#if defined(OF_CAIRO)
+#include <cairo/cairo.h>
+#include "ofGraphicsBaseTypes.h"
+// MARK: Optimization opportunity in ofPath, ofPixels pointer.
+#include "ofPath.h"
+#include "ofPixels.h" // MARK: ofPixels imageBuffer;
+#include "of3dGraphics.h"
 
 #include <deque>
 #include <stack>
-#include "ofGraphicsBaseTypes.h"
-#include "ofPath.h"
-#include "of3dGraphics.h"
-#include "ofPixels.h"
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:
@@ -24,7 +25,8 @@ public:
 		IMAGE,
 		FROM_FILE_EXTENSION
 	};
-	void setup(std::string filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+
+	void setup(const of::filesystem::path & filename, Type type=ofCairoRenderer::FROM_FILE_EXTENSION, bool multiPage=true, bool b3D=false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
 	void flush();
@@ -82,6 +84,7 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setLineWidth(float lineWidth);
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
@@ -112,20 +115,20 @@ public:
 	void setupScreen();
 
 	// color options
-	void setColor(int r, int g, int b); // 0-255
-	void setColor(int r, int g, int b, int a); // 0-255
-	void setColor(const ofColor & color);
-	void setColor(const ofColor & color, int _a);
-	void setColor(int gray); // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b); // 0-1
+	void setColor(float r, float g, float b, float a); // 0-1
+	void setColor(const ofFloatColor & color);
+	void setColor(const ofFloatColor & color, float _a);
+	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	void setBackgroundColor(const ofColor & c);
-	ofColor getBackgroundColor();
-	void background(const ofColor & c);
+	void setBackgroundColor(const ofFloatColor & c);
+	ofFloatColor getBackgroundColor();
+	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, int _a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	void setBackgroundAuto(bool bManual);		// default is true
 	bool getBackgroundAuto();
@@ -184,6 +187,8 @@ private:
 
 	// 3d transformation
 	bool b3D;
+	of3dGraphics graphics3d;
+
 	glm::mat4 projection;
 	glm::mat4 modelView;
 	ofRectangle viewportRect, originalViewport;
@@ -197,12 +202,12 @@ private:
 	std::vector<glm::vec3> sphereVerts;
 	std::vector<glm::vec3> spherePoints;
 
-	std::string filename;
+	of::filesystem::path filename;
 	ofBuffer streamBuffer;
 	ofPixels imageBuffer;
 
 	ofStyle currentStyle;
 	std::deque <ofStyle> styleHistory;
-	of3dGraphics graphics3d;
 	ofPath path;
 };
+#endif

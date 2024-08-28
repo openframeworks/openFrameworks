@@ -1,8 +1,7 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "pugixml.hpp"
 #include "ofParameter.h"
+#include <pugixml.hpp>
 
 template<typename It>
 class ofXmlIterator;
@@ -100,10 +99,11 @@ public:
 
 	ofXml();
 
-	bool load(const std::filesystem::path & file);
+	bool load(const of::filesystem::path & file);
 	bool load(const ofBuffer & buffer);
 	bool parse(const std::string & xmlStr);
-	bool save(const std::filesystem::path & file) const;
+	bool save(const of::filesystem::path & file) const;
+	void clear();
 	std::string toString(const std::string & indent = "\t") const;
 
 	ofXml getChild(const std::string & name) const;
@@ -134,6 +134,8 @@ public:
 
 	ofXml getFirstChild() const;
 	ofXml getLastChild() const;
+	
+	ofXml getParent() const;
 
 
 	Attribute getAttribute(const std::string & name) const;
@@ -247,24 +249,40 @@ public:
 	}
 
 	const ofXmlIterator& operator++(){
-		this->xml = xml.getNextSibling();
+		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
+			this->xml = xml.getNextSibling( xml.getName() );
+		}else{
+			this->xml = xml.getNextSibling();
+		}
 		return *this;
 	}
 
 	ofXmlIterator operator++(int){
 		auto now = xml;
-		this->xml = xml.getNextSibling();
+		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
+			this->xml = xml.getNextSibling( xml.getName() );
+		}else{
+			this->xml = xml.getNextSibling();
+		}
 		return now;
 	}
 
 	const ofXmlIterator& operator--(){
-		this->xml = xml.getPreviousSibling();
+		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
+			this->xml = xml.getPreviousSibling( xml.getName() );
+		}else{
+			this->xml = xml.getPreviousSibling();
+		}
 		return *this;
 	}
 
 	ofXmlIterator operator--(int){
 		auto now = xml;
-		this->xml = xml.getPreviousSibling();
+		if( std::is_same<Base, pugi::xml_named_node_iterator>::value ){
+			this->xml = xml.getPreviousSibling( xml.getName() );
+		}else{
+			this->xml = xml.getPreviousSibling();
+		}
 		return now;
 	}
 	typedef It Base;

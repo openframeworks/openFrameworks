@@ -46,10 +46,14 @@
 
 #include "ofArduino.h"
 #include "ofUtils.h"
-#include "ofMath.h"
 #include "ofLog.h"
+#include <climits>
 
-using namespace std;
+using std::vector;
+using std::string;
+using std::list;
+using std::pair;
+
 
  // TODO thread it?
  // TODO throw event or exception if the serial port goes down...
@@ -555,10 +559,7 @@ bool ofArduino::isAttached() {
 // ------------------------------ private functions
 
 void ofArduino::processData(unsigned char inputData) {
-
-	char msg[100];
-	sprintf(msg, "Received Byte: %i", inputData);
-	//Logger::get("Application").information(msg);
+	ofLog() << "Received Byte: " << inputData;
 
 	// we have command data
 	if (_waitForData > 0 && inputData < 128) {
@@ -950,7 +951,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		it = data.begin();
 		it++;    // skip the first byte, which is the string command
 		int pin = *it++;
-		Firmata_Pin_Modes mode;
+		Firmata_Pin_Modes mode{Firmata_Pin_Modes::MODE_INPUT};
 		switch (*it++) {
 		case ARD_INPUT:
 			mode = Firmata_Pin_Modes::MODE_INPUT;
@@ -986,14 +987,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			mode = Firmata_Pin_Modes::MODE_ENCODER;
 			break;
 		}
-//		int val;
-		int shift = 0;
-		while (it != data.end()) {
-//			val = *it << shift;
-			it++;
-			shift += 7;
-		} //clear whatever is left
-		//int pinVal[2] = { pin, val }; //I think this was supposed to be the return value
+
 		pair<int, Firmata_Pin_Modes> reply(pin, mode);
 		ofNotifyEvent(EPinStateResponseReceived, reply, this);
 	}
@@ -1047,7 +1041,7 @@ void ofArduino::sendDigitalPortReporting(int port, int mode) {
 
 void ofArduino::sendDigitalPinReporting(int pin, int mode) {
 
-	int port = floor(pin / 8);
+	int port = std::floor(pin / 8);
 	if (mode == ARD_OFF || mode == ARD_ON) {
 		_digitalPinReporting[pin] = mode;
 		sendDigitalPortReporting(port, mode);
@@ -1247,8 +1241,8 @@ void ofArduino::sendStepperMove(int stepperID, int direction, int numSteps, int 
 
 		// the stepper interface expects decimal expressed an an integer
 		if (acceleration != 0 && deceleration != 0) {
-			int accel = floor(acceleration * 100);
-			int decel = floor(deceleration * 100);
+			int accel = std::floor(acceleration * 100);
+			int decel = std::floor(deceleration * 100);
 
 			sendByte(START_SYSEX);
 			sendByte(STEPPER_DATA);
@@ -1470,7 +1464,7 @@ void  ofArduino::sendOneWireSearch(char type, int pin) {
 }
 
 void  ofArduino::sendOneWireRead(int pin, vector<unsigned char> devices, int numBytesToRead) {
-	int correlationId = floor(ofRandomuf() * 255);
+	int correlationId = std::floor(ofRandomuf() * 255);
 	vector<unsigned char> b;
 	sendOneWireRequest(pin, ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, b);
 }
@@ -1490,7 +1484,7 @@ void  ofArduino::sendOneWireDelay(int pin, unsigned int delay) {
 };
 
 void  ofArduino::sendOneWireWriteAndRead(int pin, vector<unsigned char> devices, vector<unsigned char> data, int numBytesToRead) {
-	int correlationId = floor(ofRandomuf() * 255);
+	int correlationId = std::floor(ofRandomuf() * 255);
 	sendOneWireRequest(pin, ONEWIRE_WRITE_REQUEST_BIT | ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, data);
 }
 

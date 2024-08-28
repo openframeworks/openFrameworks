@@ -30,9 +30,10 @@
 
 #pragma once
 
-#include <string>
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 
-using namespace std;
+#include <string>
 
 /****** protocol, delegate, interface, whatever you want to call it ******/
 class ofxiOSAlertsListener {
@@ -47,3 +48,5 @@ public:
 };
 
 #define ofxiPhoneAlertsListener ofxiOSAlertsListener
+
+#endif

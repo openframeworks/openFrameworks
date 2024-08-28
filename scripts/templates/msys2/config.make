@@ -19,6 +19,17 @@
 # PROJECT_ROOT = .
 
 ################################################################################
+# PROJECT ICON
+#   This is the icon to be displayed for the application on Windows platform.
+#   You can set an icon for the release version and for the debug version of
+#   your application.
+#   If the debug icon is not defined, the release icon will be used.
+#   If none is set, the OF default icons (debug or release) will be used.
+#################################################################################
+# PROJECT_RELEASE_ICON = bin/app.ico
+# PROJECT_DEBUG_ICON = bin/app-debug.ico
+
+################################################################################
 # PROJECT SPECIFIC CHECKS
 #   This is a project defined section to create internal makefile flags to 
 #   conditionally enable or disable the addition of various features within 

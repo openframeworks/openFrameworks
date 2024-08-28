@@ -10,7 +10,7 @@ This is helpful if you want to have a shape follow the correct direction of a li
 
 The example creates a blue line using a mesh created from a deque of stored points. Those stored points are created using a noise function in `update()`
 
-The points are then passed to the `rotateToNormal(ofVec3f normal)` function that effects the rotation of the white ofDrawBox and ensures that it stays aligned to the front of the path of the blue line. There are multiple ways to do this, and this is just one example of working with normals in 3D space.
+The points are then passed to the `rotateToNormal(glm::vec3 normal)` function that effects the rotation of the white ofDrawBox and ensures that it stays aligned to the front of the path of the blue line. There are multiple ways to do this, and this is just one example of working with normals in 3D space.
 
 [Wikipedia on normals](https://en.wikipedia.org/wiki/Normal_(geometry)
 

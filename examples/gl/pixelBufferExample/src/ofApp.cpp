@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include "ofConstants.h"
 
 // this example will probably only work in real time in release mode
 
@@ -10,15 +9,27 @@ void ofApp::setup(){
 	pixelBufferFront.allocate(ofGetWidth()*ofGetHeight()*3,GL_DYNAMIC_READ);
 	box.set(400);
 	box.setResolution(1);
-	box.setPosition(ofVec3f(ofGetWidth()*0.5, ofGetHeight()*0.5));
+	box.setPosition({ofGetWidth()*0.5, ofGetHeight()*0.5, 0});
 	record = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	box.setOrientation(ofQuaternion(45, ofVec3f(1,0,0),
-			45,ofVec3f(0,0,1),
-			ofGetElapsedTimef()*10,	ofVec3f(0,1,0)));
+
+	// Set the angles of rotation on each axis.
+	float xAngleRad = ofDegToRad(45.0);
+	float yAngleRad = ofDegToRad(ofGetElapsedTimef() * 10);
+	float zAngleRad = ofDegToRad(45.0);
+
+	// Construct a quaternion.
+	glm::quat quat(1,0,0,0);
+
+	quat *= glm::angleAxis(xAngleRad, glm::vec3(1, 0, 0));
+	quat *= glm::angleAxis(yAngleRad, glm::vec3(0, 1, 0));
+	quat *= glm::angleAxis(zAngleRad, glm::vec3(0, 0, 1));
+
+	// Set the orientation of the box based on the construxcted quaternion.
+	box.setOrientation(quat);
 
 	ofEnableDepthTest();
 	fbo.begin();

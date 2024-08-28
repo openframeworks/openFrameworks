@@ -1,0 +1,142 @@
+{
+	"env": {
+		"OF_ROOT": "${workspaceFolder}/../../..",
+		"OF_LIBS_ROOT": "${OF_ROOT}/libs",
+		"OF_INCLUDE": ["${OF_LIBS_ROOT}/openFrameworks/**"],
+		"OF_LIBS_INCLUDE": [
+			"${OF_LIBS_ROOT}/boost/include",
+			"${OF_LIBS_ROOT}/cairo/include/cairo",
+			"${OF_LIBS_ROOT}/curl/include",
+			"${OF_LIBS_ROOT}/fmod/include",
+			"${OF_LIBS_ROOT}/FreeImage/include",
+			"${OF_LIBS_ROOT}/freetype/include",
+			"${OF_LIBS_ROOT}/glew/include",
+			"${OF_LIBS_ROOT}/glfw/include",
+			"${OF_LIBS_ROOT}/glm/include",
+			"${OF_LIBS_ROOT}/json/include",
+			"${OF_LIBS_ROOT}/pugixml/include",
+			"${OF_LIBS_ROOT}/rtAudio/include",
+			"${OF_LIBS_ROOT}/tess2/include",
+			"${OF_LIBS_ROOT}/uriparser/include",
+			"${OF_LIBS_ROOT}/utf8/include"
+		],
+		"PROJECT_ADDON_INCLUDES": [
+			
+		],
+		"PROJECT_EXTRA_INCLUDES": [
+			
+		]
+	},
+	"configurations": [
+		{
+			"name": "Mac",
+			"includePath": [
+				"/usr/local/include",
+				"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/",
+				"${OF_INCLUDE}",
+				"${OF_LIBS_INCLUDE}",
+				"${workspaceFolder}/src/**",
+				"${PROJECT_ADDON_INCLUDES}",
+				"${PROJECT_EXTRA_INCLUDES}"
+			],
+			"browse": {
+				"limitSymbolsToIncludedHeaders": true,
+				"databaseFilename": "${workspaceRoot}/.vscode/browse.db",
+				"path": [
+					"/usr/local/include",
+					"/System/Library/Frameworks",
+					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/",
+					"${workspaceFolder}/src/**",
+					"${OF_INCLUDE}",
+					"${OF_LIBS_INCLUDE}",
+					"${PROJECT_ADDON_INCLUDES}",
+					"${PROJECT_EXTRA_INCLUDES}"
+				]
+			},
+			"configurationProvider": "ms-vscode.makefile-tools",
+			"mergeConfigurations": true,
+			"intelliSenseMode": "${default}",
+			"macFrameworkPath": [
+				"/System/Library/Frameworks",
+				"/Library/Frameworks"
+			],
+			"compilerPath": "/usr/bin/gcc",
+			"cStandard": "c17",
+			"cppStandard": "c++17"
+		},
+		{
+			"name": "Linux",
+			"includePath": [
+				"/usr/include",
+				"/usr/local/include",
+				"/usr/include/c++/*",
+				"/usr/lib/gcc/x86_64-linux-gnu/*",
+				"/usr/lib/x86_64-linux-gnu/glib-2.0/include",
+				"/usr/lib/x86_64-linux-gnu/gstreamer-1.0/include",
+				"/usr/local/include",
+				"/usr/include/x86_64-linux-gnu",
+				"${OF_INCLUDE}",
+				"${OF_LIBS_INCLUDE}",
+				"${workspaceRoot}/../../../libs/kiss/include",
+				"/usr/include/x86_64-linux-gnu/c++/*",
+				"/usr/include/pulse",
+				"/usr/include/cairo",
+				"/usr/include/gstreamer-1.0",
+				"/usr/include/glib-2.0",
+				"${workspaceRoot}",
+				"${workspaceFolder}/src/**",
+				"${PROJECT_ADDON_INCLUDES}",
+				"${PROJECT_EXTRA_INCLUDES}"
+			],
+			"browse": {
+				"limitSymbolsToIncludedHeaders": true,
+				"databaseFilename": "",
+				"path": [
+					"/usr/local/include",
+					"/usr/include",
+					"${workspaceFolder}/src/**",
+					"${OF_INCLUDE}",
+					"${OF_LIBS_INCLUDE}",
+					"${PROJECT_ADDON_INCLUDES}",
+					"${PROJECT_EXTRA_INCLUDES}"
+				]
+			},
+			"intelliSenseMode": "${default}",
+			"configurationProvider": "ms-vscode.makefile-tools",
+			"mergeConfigurations": true,
+			"compilerPath": "/usr/bin/gcc",
+			"cStandard": "c17",
+			"cppStandard": "c++17"
+		},
+		{
+			"name": "Win32",
+			"includePath": [
+				"C:/msys64/mingw64/include/c++/**",
+				"C:/msys64/mingw64/i686-w64-mingw64/include",
+				"${OF_INCLUDE}",
+				"${OF_LIBS_INCLUDE}",
+				"${workspaceFolder}/src/**",
+				"${PROJECT_ADDON_INCLUDES}",
+				"${PROJECT_EXTRA_INCLUDES}"
+			],
+			"browse": {
+				"limitSymbolsToIncludedHeaders": true,
+				"databaseFilename": "",
+				"path": [
+					"${workspaceFolder}/src/**",
+					"${OF_INCLUDE}",
+					"${OF_LIBS_INCLUDE}",
+					"${PROJECT_ADDON_INCLUDES}",
+					"${PROJECT_EXTRA_INCLUDES}"
+				]
+			},
+			"intelliSenseMode": "clang-x64",
+			"compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+			"configurationProvider": "ms-vscode.makefile-tools",
+			"mergeConfigurations": true,
+			"cStandard": "c17",
+			"cppStandard": "c++17"
+		}
+	],
+	"version": 4
+}

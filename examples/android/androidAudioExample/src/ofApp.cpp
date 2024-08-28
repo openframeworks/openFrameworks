@@ -17,15 +17,15 @@ void ofApp::setup(){
 
 //     Ask for permission to record audio,
 //     not needed if no in channels used
-    ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_RECORD_AUDIO);
+	ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_RECORD_AUDIO);
 
-    ofSoundStreamSettings settings;
-    settings.setOutListener(this);
-    settings.setInListener(this);
-    settings.numOutputChannels = 2;
-    settings.numInputChannels = 2;
-    settings.numBuffers = 4;
-    settings.bufferSize = 256;
+	ofSoundStreamSettings settings;
+	settings.setOutListener(this);
+	settings.setInListener(this);
+	settings.numOutputChannels = 2;
+	settings.numInputChannels = 2;
+	settings.numBuffers = 4;
+	settings.bufferSize = 256;
 	soundStream.setup(settings);
 }
 
@@ -88,7 +88,7 @@ void ofApp::touchMoved(int x, int y, int id){
 	float height = (float)ofGetHeight();
 	float heightPct = ((height-y) / height);
 	targetFrequency = 2000.0f * heightPct;
-	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
+	phaseAdderTarget = (targetFrequency / (float) sampleRate) * glm::two_pi<float>();
 }
 
 //--------------------------------------------------------------
@@ -153,9 +153,9 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
-	// keep phase in the range of 0-TWO_PI like this:
-	while (phase > TWO_PI){
-		phase -= TWO_PI;
+	// keep phase in the range of 0-glm::two_pi<float>() like this:
+	while (phase > glm::two_pi<float>()){
+		phase -= glm::two_pi<float>();
 	}
 
 	if ( bNoise == true){
@@ -171,7 +171,7 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 			phase += phaseAdder;
 			float sample = sin(phase);
 			lAudio[i%256] = buffer.getSample(i, 0) = sample * volume * leftScale;
-            buffer.getSample(i, 1) = sample * volume * rightScale;
+			buffer.getSample(i, 1) = sample * volume * rightScale;
 		}
 	}
 }

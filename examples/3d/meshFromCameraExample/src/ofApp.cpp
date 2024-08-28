@@ -19,18 +19,17 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofBackground(66,66,66);
 	
+	int width = 320;
+	int height = 240;
+
 	//initialize the video grabber
 	vidGrabber.setVerbose(true);
-	vidGrabber.setup(320,240);
-
-	//store the width and height for convenience
-	int width = vidGrabber.getWidth();
-	int height = vidGrabber.getHeight();
+	vidGrabber.setup(width,height);
 	
 	//add one vertex to the mesh for each pixel
 	for (int y = 0; y < height; y++){
 		for (int x = 0; x<width; x++){
-			mainMesh.addVertex(ofPoint(x,y,0));	// mesh index = x + y*width
+			mainMesh.addVertex(glm::vec3(x,y,0));	// mesh index = x + y*width
 												// this replicates the pixel array within the camera bitmap...
 			mainMesh.addColor(ofFloatColor(0,0,0));  // placeholder for colour data, we'll get this from the camera
 		}
@@ -50,7 +49,6 @@ void ofApp::setup(){
 	
 	//this is an annoying thing that is used to flip the camera
 	cam.setScale(1,-1,1);
-	
 	
 	//this determines how much we push the meshes out
 	extrusionAmount = 300.0;
@@ -72,7 +70,7 @@ void ofApp::update(){
 			
 			//now we get the vertex aat this position
 			//we extrude the mesh based on it's brightness
-			ofVec3f tmpVec = mainMesh.getVertex(i);
+			glm::vec3 tmpVec = mainMesh.getVertex(i);
 			tmpVec.z = sampleColor.getBrightness() * extrusionAmount;
 			mainMesh.setVertex(i, tmpVec);
 
@@ -81,14 +79,14 @@ void ofApp::update(){
 	}
 	
 	//let's move the camera when you move the mouse
-	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 360);
+	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), -90, 90);
 
 	
 	//move the camera around the mesh
-	ofVec3f camDirection(0,0,1);
-	ofVec3f centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
-	ofVec3f camDirectionRotated = camDirection.getRotated(rotateAmount, ofVec3f(1,0,0));
-	ofVec3f camPosition = centre + camDirectionRotated * extrusionAmount;
+	glm::vec3 camDirection(0,0,1);
+	glm::vec3 centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
+	glm::vec3 camDirectionRotated = glm::rotate(camDirection, ofDegToRad(rotateAmount), glm::vec3(1,0,0));
+	glm::vec3 camPosition = centre + camDirectionRotated * extrusionAmount;
 	
 	cam.setPosition(camPosition);
 	cam.lookAt(centre);

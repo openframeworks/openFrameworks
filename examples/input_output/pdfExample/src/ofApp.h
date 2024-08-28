@@ -26,7 +26,7 @@ class ofApp : public ofBaseApp{
 		
 		vector <ofRectangle> dropZoneRects;
 		vector <ofImage> images;
-		vector <ofPoint> boxTrail;
+		vector <glm::vec3> boxTrail;
 		
 		ofTrueTypeFont font;
 		

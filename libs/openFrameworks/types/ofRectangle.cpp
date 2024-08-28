@@ -1,10 +1,10 @@
 #include "ofRectangle.h"
-#include "ofMath.h"
 #include "ofLog.h"
 #include "ofVectorMath.h"
+#include "ofMath.h"
 
-using namespace std;
-
+using std::ostream;
+using std::istream;
 //----------------------------------------------------------
 ofRectangle::ofRectangle() : x(position.x), y(position.y) {
     set(0,0,0,0);
@@ -286,9 +286,9 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
 
     if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING ||
        aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-        if(fabs(sw) >= FLT_EPSILON || fabs(sh) >= FLT_EPSILON) {
-            float wRatio = fabs(tw) / fabs(sw);
-            float hRatio = fabs(th) / fabs(sh);
+        if(std::abs(sw) >= std::numeric_limits<float>::epsilon() || std::abs(sh) >= FLT_EPSILON) {
+            float wRatio = std::abs(tw) / std::abs(sw);
+            float hRatio = std::abs(th) / std::abs(sh);
             if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
 				scale(std::max(wRatio,hRatio));
             } else if(aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
@@ -589,17 +589,17 @@ bool ofRectangle::isStandardized() const {
 
 //----------------------------------------------------------
 float ofRectangle::getArea() const {
-    return fabs(width) * fabs(height);
+    return std::abs(width) * std::abs(height);
 }
 
 //----------------------------------------------------------
 float ofRectangle::getPerimeter() const {
-    return 2.0f * fabs(width) + 2.0f * fabs(height);
+    return 2.0f * std::abs(width) + 2.0f * std::abs(height);
 }
 
 //----------------------------------------------------------
 float ofRectangle::getAspectRatio() const {
-    return fabs(width) / fabs(height);
+    return std::abs(width) / std::abs(height);
 }
 
 //----------------------------------------------------------

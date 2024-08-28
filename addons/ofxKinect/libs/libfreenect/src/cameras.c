@@ -397,7 +397,7 @@ static void depth_process(freenect_device *dev, uint8_t *pkt, int len)
 			convert_packed11_to_16bit(dev->depth.raw_buf, (uint16_t*)dev->depth.proc_buf, 640*480);
 			break;
 		case FREENECT_DEPTH_REGISTERED:
-			freenect_apply_registration(dev, dev->depth.raw_buf, (uint16_t*)dev->depth.proc_buf );
+			freenect_apply_registration(dev, dev->depth.raw_buf, (uint16_t*)dev->depth.proc_buf, false);
 			break;
 		case FREENECT_DEPTH_MM:
 			freenect_apply_depth_to_mm(dev, dev->depth.raw_buf, (uint16_t*)dev->depth.proc_buf );

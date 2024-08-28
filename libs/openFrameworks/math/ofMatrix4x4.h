@@ -10,12 +10,12 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include "ofVec4f.h"
 #include "ofQuaternion.h"
-#include <cmath>
-#include "glm/mat4x4.hpp"
-#include "ofMathConstants.h"
+
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/mat4x4.hpp>
 
 class ofVec3f;
 
@@ -333,7 +333,7 @@ public:
 
 	/// \brief returns a copy of row i
 	ofVec3f getRowAsVec3f(std::size_t i) const {
-		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
+		return { _mat[i][0], _mat[i][1], _mat[i][2] };
 	}
 	
 	/// \brief returns a copy of row i
@@ -720,14 +720,14 @@ inline void ofMatrix4x4::makeOrtho2DMatrix(double left,   double right,
 }
 
 inline ofVec3f ofMatrix4x4::getTranslation() const {
-	return ofVec3f(_mat[3][0], _mat[3][1], _mat[3][2]);
+	return { _mat[3][0], _mat[3][1], _mat[3][2] };
 }
 
 inline ofVec3f ofMatrix4x4::getScale() const {
 	ofVec3f x_vec(_mat[0][0], _mat[1][0], _mat[2][0]);
 	ofVec3f y_vec(_mat[0][1], _mat[1][1], _mat[2][1]);
 	ofVec3f z_vec(_mat[0][2], _mat[1][2], _mat[2][2]);
-	return ofVec3f(x_vec.length(), y_vec.length(), z_vec.length());
+	return { x_vec.length(), y_vec.length(), z_vec.length() };
 }
 
 //static utility methods
@@ -842,50 +842,50 @@ inline ofMatrix4x4 ofMatrix4x4::newLookAtMatrix(const ofVec3f& eye, const ofVec3
 
 inline ofVec3f ofMatrix4x4::postMult( const ofVec3f& v ) const {
 	float d = 1.0f / (_mat[3][0] * v.x + _mat[3][1] * v.y + _mat[3][2] * v.z + _mat[3][3]) ;
-	return ofVec3f( (_mat[0][0]*v.x + _mat[0][1]*v.y + _mat[0][2]*v.z + _mat[0][3])*d,
-	                 (_mat[1][0]*v.x + _mat[1][1]*v.y + _mat[1][2]*v.z + _mat[1][3])*d,
-	                 (_mat[2][0]*v.x + _mat[2][1]*v.y + _mat[2][2]*v.z + _mat[2][3])*d) ;
+	return { (_mat[0][0]*v.x + _mat[0][1]*v.y + _mat[0][2]*v.z + _mat[0][3])*d,
+		(_mat[1][0]*v.x + _mat[1][1]*v.y + _mat[1][2]*v.z + _mat[1][3])*d,
+		(_mat[2][0]*v.x + _mat[2][1]*v.y + _mat[2][2]*v.z + _mat[2][3])*d };
 }
 
 inline ofVec3f ofMatrix4x4::preMult( const ofVec3f& v ) const {
 	float d = 1.0f / (_mat[0][3] * v.x + _mat[1][3] * v.y + _mat[2][3] * v.z + _mat[3][3]) ;
-	return ofVec3f( (_mat[0][0]*v.x + _mat[1][0]*v.y + _mat[2][0]*v.z + _mat[3][0])*d,
-	                 (_mat[0][1]*v.x + _mat[1][1]*v.y + _mat[2][1]*v.z + _mat[3][1])*d,
-	                 (_mat[0][2]*v.x + _mat[1][2]*v.y + _mat[2][2]*v.z + _mat[3][2])*d);
+	return { (_mat[0][0]*v.x + _mat[1][0]*v.y + _mat[2][0]*v.z + _mat[3][0])*d,
+		(_mat[0][1]*v.x + _mat[1][1]*v.y + _mat[2][1]*v.z + _mat[3][1])*d,
+		(_mat[0][2]*v.x + _mat[1][2]*v.y + _mat[2][2]*v.z + _mat[3][2])*d };
 }
 
 /// \brief post-multiplies the vector by the matrix (i.e. returns M mult v).
 /// The vector is implicitly treated as a column-matrix
 inline ofVec4f ofMatrix4x4::postMult( const ofVec4f& v ) const {
-	return ofVec4f( (_mat[0][0]*v.x + _mat[0][1]*v.y + _mat[0][2]*v.z + _mat[0][3]*v.w),
-	                 (_mat[1][0]*v.x + _mat[1][1]*v.y + _mat[1][2]*v.z + _mat[1][3]*v.w),
-	                 (_mat[2][0]*v.x + _mat[2][1]*v.y + _mat[2][2]*v.z + _mat[2][3]*v.w),
-	                 (_mat[3][0]*v.x + _mat[3][1]*v.y + _mat[3][2]*v.z + _mat[3][3]*v.w)) ;
+	return { (_mat[0][0]*v.x + _mat[0][1]*v.y + _mat[0][2]*v.z + _mat[0][3]*v.w),
+		(_mat[1][0]*v.x + _mat[1][1]*v.y + _mat[1][2]*v.z + _mat[1][3]*v.w),
+		(_mat[2][0]*v.x + _mat[2][1]*v.y + _mat[2][2]*v.z + _mat[2][3]*v.w),
+		(_mat[3][0]*v.x + _mat[3][1]*v.y + _mat[3][2]*v.z + _mat[3][3]*v.w) };
 }
 
 /// \brief pre-multiplies the vector by the matrix (i.e. returns v mult M)
 /// The vector is implicitly treated as a row-matrix
 inline ofVec4f ofMatrix4x4::preMult( const ofVec4f& v ) const {
-	return ofVec4f( (_mat[0][0]*v.x + _mat[1][0]*v.y + _mat[2][0]*v.z + _mat[3][0]*v.w),
-	                 (_mat[0][1]*v.x + _mat[1][1]*v.y + _mat[2][1]*v.z + _mat[3][1]*v.w),
-	                 (_mat[0][2]*v.x + _mat[1][2]*v.y + _mat[2][2]*v.z + _mat[3][2]*v.w),
-	                 (_mat[0][3]*v.x + _mat[1][3]*v.y + _mat[2][3]*v.z + _mat[3][3]*v.w));
+	return { (_mat[0][0]*v.x + _mat[1][0]*v.y + _mat[2][0]*v.z + _mat[3][0]*v.w),
+		(_mat[0][1]*v.x + _mat[1][1]*v.y + _mat[2][1]*v.z + _mat[3][1]*v.w),
+		(_mat[0][2]*v.x + _mat[1][2]*v.y + _mat[2][2]*v.z + _mat[3][2]*v.w),
+		(_mat[0][3]*v.x + _mat[1][3]*v.y + _mat[2][3]*v.z + _mat[3][3]*v.w) };
 }
 
 /// \brief performs a pre-multiplication transformation on the vector using only the
 /// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofVec3f& v, const ofMatrix4x4& m) {
-	return ofVec3f( (m._mat[0][0]*v.x + m._mat[1][0]*v.y + m._mat[2][0]*v.z),
-	                 (m._mat[0][1]*v.x + m._mat[1][1]*v.y + m._mat[2][1]*v.z),
-	                 (m._mat[0][2]*v.x + m._mat[1][2]*v.y + m._mat[2][2]*v.z));
+	return { (m._mat[0][0]*v.x + m._mat[1][0]*v.y + m._mat[2][0]*v.z),
+		(m._mat[0][1]*v.x + m._mat[1][1]*v.y + m._mat[2][1]*v.z),
+		(m._mat[0][2]*v.x + m._mat[1][2]*v.y + m._mat[2][2]*v.z) };
 }
 
 /// \brief performs a post-multiplication transformation on the vector using only the
 /// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofMatrix4x4& m, const ofVec3f& v) {
-	return ofVec3f( (m._mat[0][0]*v.x + m._mat[0][1]*v.y + m._mat[0][2]*v.z),
-	                 (m._mat[1][0]*v.x + m._mat[1][1]*v.y + m._mat[1][2]*v.z),
-	                 (m._mat[2][0]*v.x + m._mat[2][1]*v.y + m._mat[2][2]*v.z) ) ;
+	return { (m._mat[0][0]*v.x + m._mat[0][1]*v.y + m._mat[0][2]*v.z),
+		(m._mat[1][0]*v.x + m._mat[1][1]*v.y + m._mat[1][2]*v.z),
+		(m._mat[2][0]*v.x + m._mat[2][1]*v.y + m._mat[2][2]*v.z) } ;
 }
 
 /// \brief translates this matrix by treating the ofVec3f like a translation matrix,
@@ -985,7 +985,7 @@ inline void ofMatrix4x4::rotate(float angle, float x, float y, float z){
 
 /// \brief Rotates this Matrix by the provided angle (in Radians) around an axis defined by the three values
 inline void ofMatrix4x4::rotateRad(float angle, float x, float y, float z){
-	postMultRotate(angle*static_cast<float>(RAD_TO_DEG),x,y,z);
+	postMultRotate(glm::degrees(angle),x,y,z);
 }
 
 /// \brief Translates this matrix by the provided amount
@@ -1014,7 +1014,7 @@ inline void ofMatrix4x4::glRotate(float angle, float x, float y, float z){
 }
 
 inline void ofMatrix4x4::glRotateRad(float angle, float x, float y, float z){
-	preMultRotate(ofQuaternion(angle*static_cast<float>(RAD_TO_DEG),ofVec3f(x,y,z)));
+	preMultRotate(ofQuaternion(glm::degrees(angle),ofVec3f(x,y,z)));
 }
 
 inline void ofMatrix4x4::glRotate(const ofQuaternion& q){

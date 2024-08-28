@@ -22,6 +22,6 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 			
 		vector <ofImage> draggedImages;
-		ofPoint dragPt;
+		glm::vec2 dragPt;
 	
 };

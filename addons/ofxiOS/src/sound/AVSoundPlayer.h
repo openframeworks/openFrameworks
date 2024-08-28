@@ -6,6 +6,9 @@
 
 #pragma once
 
+#include "ofxiOSConstants.h"
+#if defined(OF_IOS_AVSOUNDPLAYER)
+
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -16,13 +19,11 @@
 - (void)soundPlayerError:(NSError *)error;
 @end
 
-@interface AVSoundPlayer : NSObject <AVAudioPlayerDelegate> {
-    id<AVSoundPlayerDelegate> delegate;
-}
+@interface AVSoundPlayer : NSObject <AVAudioPlayerDelegate> 
 
-@property(nonatomic, assign) id delegate;
-@property(nonatomic, retain) AVAudioPlayer * player;
-@property(nonatomic, retain) NSTimer * timer;
+@property(nonatomic, weak) id<AVSoundPlayerDelegate> delegate;
+@property(nonatomic, strong) AVAudioPlayer * player;
+@property(nonatomic, strong) NSTimer * timer;
 
 - (BOOL)loadWithFile:(NSString*)file;
 - (BOOL)loadWithPath:(NSString*)path;
@@ -57,4 +58,8 @@
 - (void)positionMs:(int)value;
 - (int)positionMs;
 
+// total duration in seconds of player's audio
+- (float)duration;
+
 @end
+#endif
