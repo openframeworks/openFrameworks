@@ -31,9 +31,10 @@ public:
 	int getID();
 
 	/// HTTP request type
-	enum Method {
-		GET, ///< request data from a specified resource (via url)
-		POST ///< submit data to be processed to a specified resource (via url)
+	enum Method{
+		GET, //< request data from a specified resource (via url)
+		POST, //< submit data to be processed to a specified resource (via url)
+		PUT
 	} method;
 
 private:

@@ -1601,6 +1601,10 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 						pushKeyEvent = true;
 						keyEvent.key = OF_KEY_BACKSPACE;
 						break;
+					case KEY_SPACE:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_SPACE;
+						break;
 					case KEY_DELETE:
 						pushKeyEvent = true;
 						keyEvent.key = OF_KEY_DEL;

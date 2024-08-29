@@ -123,6 +123,8 @@
 		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
+		BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */; };
+		BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */; };
 		BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C022C4FFC5900728DEC /* brotli.xcframework */; };
 		BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */; };
 		BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF4730B02BA4056B00E6E3C6 /* curl.xcframework */; };
@@ -367,6 +369,8 @@
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiOS_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
+		BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
 		BF4730B02BA4056B00E6E3C6 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
 		BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BF7E590B2BA204BC00E5C52E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
@@ -554,6 +558,8 @@
 		15594F0015C55A5700727FF2 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */,
+				BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */,
 				9008001C204EDC0F00DC786A /* EAGLKView.h */,
 				9008001B204EDC0E00DC786A /* EAGLKView.m */,
 				15594F0815C55AC900727FF2 /* EAGLView.h */,
@@ -1116,6 +1122,7 @@
 				1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */,
 				1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */,
 				678C3D23176F04F800D1CC68 /* ofxiOSSoundStream.h in Headers */,
+				BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */,
 				678C3D25176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h in Headers */,
 				678C3D27176F04F800D1CC68 /* SoundInputStream.h in Headers */,
 				678C3D29176F04F800D1CC68 /* SoundOutputStream.h in Headers */,
@@ -1224,6 +1231,7 @@
 			files = (
 				E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */,
 				2E6E258428F73C2C00EC8E22 /* ofShadow.cpp in Sources */,
+				BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */,
 				E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */,
 				E4F76E1D176CB27200798745 /* ofCamera.cpp in Sources */,
 				E4F76E1F176CB27200798745 /* ofEasyCam.cpp in Sources */,
