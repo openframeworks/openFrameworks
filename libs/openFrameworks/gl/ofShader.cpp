@@ -726,6 +726,7 @@ bool ofShader::linkProgram() {
             for (GLint i = 0; i < numUniformBlocks; i++) {
                 glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data());
                 string name(uniformBlockName.begin(), uniformBlockName.begin() + length);
+				std::cout << "WOW name " << name << std::endl;
                 uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
             }
         }
@@ -1018,6 +1019,15 @@ void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4)
     }
 }
 
+//--------------------------------------------------------------
+void ofShader::setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) {
+	if (!bufferObjectsCache[name].isAllocated()) {
+		bufferObjectsCache[name].allocate(dataSize, GL_STATIC_DRAW);
+	}
+	bufferObjectsCache[name].updateData(dataSize, data);
+	bufferObjectsCache[name].bindBase(GL_UNIFORM_BUFFER, getUniformBlockIndex(name));
+}
+	
 //--------------------------------------------------------------
 void ofShader::setUniform1f(const string & name, float v1) const {
     if (bLoaded) {

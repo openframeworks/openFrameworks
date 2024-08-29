@@ -413,6 +413,8 @@ private:
 		glm::mat4 viewMatrix;
 		glm::mat4 modelViewMatrix;
 		glm::mat4 modelViewProjectionMatrix;
+		glm::mat4 projectionMatrix;
+		glm::mat4 textureMatrix;
 	} matrices;
 	ofBufferObject buffer;
 };

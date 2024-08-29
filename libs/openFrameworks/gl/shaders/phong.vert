@@ -21,6 +21,8 @@ IN vec2 texcoord;
 //	mat4 viewMatrix;
 //	mat4 modelViewMatrix;
 //	mat4 modelViewProjectionMatrix;
+//	mat4 projectionMatrix;
+//	mat4 textureMatrix;
 //};
 
 // these are passed in from OF programmable renderer
@@ -28,9 +30,9 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 modelViewProjectionMatrix;
-
 uniform mat4 projectionMatrix;
 uniform mat4 textureMatrix;
+
 uniform mat4 normalMatrix;
 
 uniform vec2 mat_texcoord_scale;
