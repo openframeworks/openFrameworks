@@ -726,7 +726,6 @@ bool ofShader::linkProgram() {
             for (GLint i = 0; i < numUniformBlocks; i++) {
                 glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data());
                 string name(uniformBlockName.begin(), uniformBlockName.begin() + length);
-				std::cout << "WOW name " << name << std::endl;
                 uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
             }
         }
