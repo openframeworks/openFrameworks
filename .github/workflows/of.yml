@@ -30,23 +30,23 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-<<<<<<< HEAD
+
       - uses: actions/checkout@v4
       - name: Docker Step
         run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.73 bash"
-      - name: Determine Release
-        id: vars
-        shell: bash
-        run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-            echo "RELEASE=nightly" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
-            echo "RELEASE=latest" >> $GITHUB_ENV
-          else
-            echo "RELEASE=latest" >> $GITHUB_ENV
-          fi
+      # - name: Determine Release
+      #   id: vars
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+      #       echo "RELEASE=nightly" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     else
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     fi
       - name: Download libs
         run: ./scripts/$TARGET/download_libs.sh -t $RELEASE
       - name: Install dependencies
