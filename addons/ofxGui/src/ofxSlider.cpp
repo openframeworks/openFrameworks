@@ -219,7 +219,7 @@ void ofxSlider<Type>::generateDraw(){
 	bg.setFillColor(thisBackgroundColor);
 	bg.setExtents(b);
 
-	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
+	float valAsPct = ofClamp(value.getPctScaled(),0,1);
 	bar.setFillColor(thisFillColor);
 	bar.setExtents(b.x+1, b.y+1, valAsPct, b.height-2);
 
@@ -314,7 +314,7 @@ bool ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
 		}
 	}
 	if( bGuiActive ){
-		value = ofMap(mx, b.x, b.x + b.width, value.getMin(), value.getMax(), true);
+		value.setPctScaled(ofMap(mx, b.x, b.x + b.width, 0, 1, true));
 		return true;
 	}
 	return false;
