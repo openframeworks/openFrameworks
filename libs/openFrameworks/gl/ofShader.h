@@ -161,7 +161,7 @@ public:
 
 	
 	// Dmtr testing
-	void setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize);
+	void setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) const;
 	
 	void setUniform1f(const std::string & name, float v1) const;
 	void setUniform2f(const std::string & name, float v1, float v2) const;
@@ -283,7 +283,12 @@ private:
 
 	std::unordered_map<GLenum, Shader> shaders;
 
-	std::unordered_map<std::string, ofBufferObject> bufferObjectsCache;
+//	std::unordered_map<std::string, ofBufferObject> bufferObjectsCache;
+//	const std::unordered_map<std::string, ofBufferObject> & getBufferObjectsCache() const {
+//		return bufferObjectsCache;
+//	}
+	std::unordered_map<std::string, std::unique_ptr<ofBufferObject>> bufferObjectsCache;
+	
 	std::unordered_map<std::string, GLint> uniformsCache;
 	mutable std::unordered_map<std::string, GLint> attributesBindingsCache;
 

@@ -726,7 +726,8 @@ bool ofShader::linkProgram() {
             for (GLint i = 0; i < numUniformBlocks; i++) {
                 glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data());
                 string name(uniformBlockName.begin(), uniformBlockName.begin() + length);
-				std::cout << "WOW name " << name << std::endl;
+//				std::cout << "WOW name " << name << std::endl;
+				bufferObjectsCache[name] = std::make_unique<ofBufferObject>();
                 uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
             }
         }
@@ -1020,12 +1021,20 @@ void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4)
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) {
-	if (!bufferObjectsCache[name].isAllocated()) {
-		bufferObjectsCache[name].allocate(dataSize, GL_STATIC_DRAW);
+void ofShader::setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) const {
+	if (bufferObjectsCache.find(name) != bufferObjectsCache.end()) {
+		if (!bufferObjectsCache.at(name)->isAllocated()) {
+			bufferObjectsCache.at(name)->allocate(dataSize, GL_STATIC_DRAW);
+		}
+		bufferObjectsCache.at(name)->updateData(dataSize, data);
+		bufferObjectsCache.at(name)->bindBase(GL_UNIFORM_BUFFER, getUniformBlockIndex(name));
+	} else {
+//		bufferObjectsCache.at(name) = std::make_unique<ofBufferObject>();
+//		for (const auto & b : bufferObjectsCache) {
+//			std::cout << b.first << std::endl;
+//		}
+//		std::cout << "setUniformBufferObject don't exist " << name << std::endl;
 	}
-	bufferObjectsCache[name].updateData(dataSize, data);
-	bufferObjectsCache[name].bindBase(GL_UNIFORM_BUFFER, getUniformBlockIndex(name));
 }
 	
 //--------------------------------------------------------------

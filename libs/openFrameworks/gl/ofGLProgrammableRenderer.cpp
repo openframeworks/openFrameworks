@@ -947,38 +947,13 @@ glm::vec3 ofGLProgrammableRenderer::getCurrentEyePosition() const {
 void ofGLProgrammableRenderer::uploadCurrentMatrix() {
 	if (!currentShader) return;
 
-	
 	using std::cout;
 	using std::endl;
-	
-//	if (!buffer.isAllocated()) 
-//	{
-//		unsigned int uniformBlockIndex = glGetUniformBlockIndex(currentShader->getProgram(), "matrices");
-//		glUniformBlockBinding(currentShader->getProgram(), uniformBlockIndex, 0);
-//		buffer.bind(GL_UNIFORM_BUFFER);
-//		buffer.unbind(GL_UNIFORM_BUFFER);
-//		buffer.allocate(sizeof(matrices), GL_STATIC_DRAW);
-//		buffer.setData(sizeof(matrices), &matrices, GL_STATIC_DRAW);
-//		buffer.bindRange(GL_UNIFORM_BUFFER, 0, 0, 1 * sizeof(matrices) );
-//	}
 	
 	// uploads the current matrix to the current shader.
 	switch (matrixStack.getCurrentMatrixMode()) {
 	case OF_MATRIX_MODELVIEW:
 //			std::cout << "here " << std::endl;
-			
-
-	
-//			matrices = {
-//				matrixStack.getModelMatrix(),
-//				matrixStack.getViewMatrix(),
-//				matrixStack.getModelViewMatrix(),
-//				matrixStack.getModelViewProjectionMatrix(),
-//				matrixStack.getProjectionMatrix(),
-//				matrixStack.getTextureMatrix(),
-//			};
-			
-
 
 			currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
 			currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
@@ -1011,10 +986,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix() {
 //		matrixStack.getTextureMatrix(),
 //	};
 //	
-//	
-//	buffer.setData(sizeof(matrices), &matrices, GL_STATIC_DRAW);
-//	buffer.bindRange(GL_UNIFORM_BUFFER, 0, 0, 1 * sizeof(matrices) );
-
+//	currentShader->setUniformBufferObject("matrices", &matrices, sizeof(matrices));
 }
 
 //----------------------------------------------------------
@@ -1878,20 +1850,8 @@ void ofGLProgrammableRenderer::uploadMatrices() {
 //		matrixStack.getProjectionMatrix(),
 //		matrixStack.getTextureMatrix(),
 //	};
-//	
-//	if (!buffer.isAllocated()) {
-//		unsigned int uniformBlockIndex = glGetUniformBlockIndex(currentShader->getProgram(), "matrices");
-//		glUniformBlockBinding(currentShader->getProgram(), uniformBlockIndex, 0);
-//		buffer.bind(GL_UNIFORM_BUFFER);
-//		buffer.unbind(GL_UNIFORM_BUFFER);
-//		buffer.allocate(sizeof(matrices), GL_STATIC_DRAW);
-//		buffer.setData(sizeof(matrices), &matrices, GL_STATIC_DRAW);
-//		buffer.bindRange(GL_UNIFORM_BUFFER, 0, 0, 1 * sizeof(matrices) );
-//	}
-//
-//	buffer.setData(sizeof(matrices), &matrices, GL_STATIC_DRAW);
-//	buffer.bindRange(GL_UNIFORM_BUFFER, 0, 0, 1 * sizeof(matrices) );
-
+//	currentShader->setUniformBufferObject("matrices", &matrices, sizeof(matrices));
+	
 	
 	currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
 	currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
@@ -2377,6 +2337,18 @@ static const string defaultVertexShader = vertex_shader_header + STRINGIFY(
 	uniform mat4 modelViewMatrix;
 	uniform mat4 textureMatrix;
 	uniform mat4 modelViewProjectionMatrix;
+																		   
+	layout(std140) uniform testeDimitrao {
+	   mat4 testando;
+	};
+//   layout(std140) uniform matrices {
+//	   mat4 modelMatrix;
+//	   mat4 viewMatrix;
+//	   mat4 modelViewMatrix;
+//	   mat4 modelViewProjectionMatrix;
+//	   mat4 projectionMatrix;
+//	   mat4 textureMatrix;
+//   };
 
 	IN vec4  position;
 	IN vec2  texcoord;

@@ -16,6 +16,7 @@ IN vec4 normal;
 IN vec2 texcoord;
 
 
+
 //layout(std140) uniform matrices {
 //	mat4 modelMatrix;
 //	mat4 viewMatrix;
@@ -26,12 +27,12 @@ IN vec2 texcoord;
 //};
 
 // these are passed in from OF programmable renderer
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 modelViewMatrix;
-uniform mat4 modelViewProjectionMatrix;
-uniform mat4 projectionMatrix;
-uniform mat4 textureMatrix;
+//uniform mat4 modelMatrix;
+//uniform mat4 viewMatrix;
+//uniform mat4 modelViewMatrix;
+//uniform mat4 modelViewProjectionMatrix;
+//uniform mat4 projectionMatrix;
+//uniform mat4 textureMatrix;
 
 uniform mat4 normalMatrix;
 
