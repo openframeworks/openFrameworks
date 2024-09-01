@@ -190,7 +190,7 @@ else
     mkdir -p "${OUTDIR}${OUTPUT}"
     tar xjf "$PKG" -C "${OUTDIR}${OUTPUT}"
     mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
-    #rm $PKG
+    rm -rf "${OUTDIR}/${OUTPUT}/projectGenerator-osx/"
 fi
 
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then

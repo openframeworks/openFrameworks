@@ -44,6 +44,7 @@ enum ofKey{
 
 	OF_KEY_BACKSPACE =	8,
 	OF_KEY_DEL		 =	127,
+    OF_KEY_SPACE     = 32,
 
 
 	// For legacy reasons we are mixing up control keys

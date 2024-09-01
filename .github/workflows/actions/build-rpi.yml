@@ -42,7 +42,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         key: ${{ matrix.cfg.libs }}
 
