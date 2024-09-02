@@ -1034,7 +1034,7 @@ void ofSaveScreen(const of::filesystem::path & filename) {
 }
 
 //--------------------------------------------------
-void ofSaveViewport(const  of::filesystem::path & filename) {
+void ofSaveViewport(const of::filesystem::path & filename) {
 	// because ofSaveScreen doesn't related to viewports
 	/*ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();

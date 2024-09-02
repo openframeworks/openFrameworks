@@ -121,7 +121,7 @@ bool ofSoundPlayer::load(const of::filesystem::path& fileName, bool stream){
 }
 
 //--------------------------------------------------------------------
-bool ofSoundPlayer::loadSound(std::string fileName, bool stream){
+bool ofSoundPlayer::loadSound(const of::filesystem::path & fileName, bool stream){
 	return load(fileName,stream);
 }
 
