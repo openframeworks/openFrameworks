@@ -35,16 +35,18 @@ namespace {
 	#if defined TARGET_OSX
 		try {
 			return fs::canonical(ofFilePath::getCurrentExeDir() / "../../../data/");
-		} catch(...) {
+		} catch(fs::filesystem_error & e) {
+			ofLogWarning("ofFileUtils") << "defaultDataPath 1 " << e.what();
 			return ofFilePath::getCurrentExeDir() / "../../../data/";
 		}
 	#elif defined TARGET_ANDROID
 		return string("sdcard/");
 	#else
 		try {
-            return fs::canonical(ofFilePath::getCurrentExeDir() / "data/").make_preferred();
-        } catch(...) {
-			return (ofFilePath::getCurrentExeDir() / "data/");
+            return fs::canonical(ofFilePath::getCurrentExeDir() / "data").make_preferred();
+        } catch(fs::filesystem_error & e) {
+			ofLogWarning("ofFileUtils") << "defaultDataPath 2 " << e.what();
+			return (ofFilePath::getCurrentExeDir() / "data");
 		}
 	#endif
 	}
@@ -59,7 +61,11 @@ namespace {
 	fs::path & dataPathRoot() {
 		static auto * dataPathRoot = new fs::path(defaultDataPath());
 		// This is the most important change in the way OF handles paths.
-		fs::current_path(*dataPathRoot);
+		try {
+			fs::current_path(*dataPathRoot);
+		} catch(fs::filesystem_error & e) {
+			ofLogError("ofFileUtils") << "dataPathRoot " << e.what();
+		}
 		return *dataPathRoot;
 	}
 }
@@ -1223,7 +1229,8 @@ std::string ofDirectory::path() const {
 fs::path ofDirectory::getAbsolutePath() const {
 	try {
 		return fs::canonical(fs::absolute(myDir));
-	} catch(...) {
+	} catch(fs::filesystem_error & e) {
+		ofLogWarning("ofFileUtils") << "ofDirectory::getAbsolutePath " << e.what();
 		return fs::absolute(myDir);
 	}
 }
@@ -1845,7 +1852,8 @@ fs::path ofFilePath::getAbsolutePath(const fs::path & path, bool bRelativeToData
 	}else{
 		try{
 			return fs::canonical(fs::absolute(path));
-		}catch(...){
+		} catch(fs::filesystem_error & e) {
+			ofLogWarning("ofFileUtils") << "getAbsolutePath " << e.what();
 			return fs::absolute(path);
 		}
 	}
@@ -1889,7 +1897,8 @@ fs::path ofFilePath::getCurrentExePath(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-		vector<wchar_t> executablePath(MAX_PATH);
+//		vector<wchar_t> executablePath(MAX_PATH);
+		wchar_t executablePath[MAX_PATH];
 		DWORD result = ::GetModuleFileNameW(
 			nullptr,
 			executablePath,
@@ -1897,9 +1906,10 @@ fs::path ofFilePath::getCurrentExePath(){
 		);
 		if (result == 0) {
 			// Error
-			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
+			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameW failed";
 		} else {
-			return { executablePath.begin(), executablePath.begin() + result };
+//			return { executablePath.begin(), executablePath.begin() + result };
+			return { executablePath };
 		}
 	
 	#endif
@@ -1909,7 +1919,7 @@ fs::path ofFilePath::getCurrentExePath(){
 
 //------------------------------------------------------------------------------------------------------------
 fs::path ofFilePath::getCurrentExeDir(){
-	return ofFilePath::getCurrentExePath().parent_path() / "";
+	return ofFilePath::getCurrentExePath().parent_path();
 }
 
 
@@ -1949,7 +1959,8 @@ bool ofRestoreWorkingDirectoryToDefault(){
 	try{
 		fs::current_path(defaultWorkingDirectory());
 		return true;
-	}catch(...){
+	} catch(fs::filesystem_error & e) {
+		ofLogWarning("ofFileUtils") << "ofRestoreWorkingDirectoryToDefault " << e.what();
 		return false;
 	}
 }

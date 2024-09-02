@@ -15,7 +15,7 @@ class ofApp: public ofxUnitTestsApp {
 
 		std::string str { "/string" };
 		ofxOscMessage m_str {str};
-		ofxTest(m_str.getAddress() ==  "/string","ofxOscMessage{std::string");
+		ofxTest(m_str.getAddress() ==  "/string","ofxOscMessage{std::string}");
 
 		std::string & strref = str;
 		ofxOscMessage m_strref {strref};
