@@ -6,6 +6,9 @@
 
 #pragma once
 
+#include "ofxiOSConstants.h"
+#if defined(OF_IOS_AVSOUNDPLAYER)
+
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -59,3 +62,4 @@
 - (float)duration;
 
 @end
+#endif

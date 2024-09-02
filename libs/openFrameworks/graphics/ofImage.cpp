@@ -200,17 +200,19 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	ofInitFreeImage();
 
 	auto uriStr = ofPathToString(_fileName);
+	auto fileNameString = ofPathToString(_fileName);
 	UriUriA uri;
 	UriParserStateA state;
 	state.uri = &uri;
+	auto uriChar = uriStr.c_str();
 
-	if(uriParseUriA(&state, uriStr.c_str())!=URI_SUCCESS){
-		const int bytesNeeded = 8 + 3 * strlen(uriStr.c_str()) + 1;
+	if(uriParseUriA(&state, uriChar)!=URI_SUCCESS){
+		const int bytesNeeded = 8 + 3 * strlen(uriChar) + 1;
 		std::vector<char> absUri(bytesNeeded);
 	#ifdef TARGET_WIN32
-		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
+		uriWindowsFilenameToUriStringA(uriChar, absUri.data());
 	#else
-		uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
+		uriUnixFilenameToUriStringA(uriChar, absUri.data());
 	#endif
 		if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
 			ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
@@ -225,22 +227,22 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		return ofLoadImage(pix, ofLoadURL(ofPathToString(_fileName)).data);
 	}
 
-	auto fileName = ofToDataPathFS(_fileName, true);
+	
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
-	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);
+	fif = FreeImage_GetFileTypeU(_fileName.c_str(), 0);
 #else
-	fif = FreeImage_GetFileType(fileName.c_str(), 0);
+	fif = FreeImage_GetFileType(_fileName.c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
 		// or guess via filename
 #ifdef OF_OS_WINDOWS
-		fif = FreeImage_GetFIFFromFilenameU(_fileName.extension().c_str());
+		fif = FreeImage_GetFIFFromFilenameU(_fileName.c_str());
 #else
-		fif = FreeImage_GetFIFFromFilename(_fileName.extension().c_str());
+		fif = FreeImage_GetFIFFromFilename(_fileName.c_str());
 #endif
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
@@ -248,6 +250,8 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		if(fif == FIF_JPEG) {
 			option = getJpegOptionFromImageLoadSetting(settings);
 		}
+		auto fileName = ofToDataPath(_fileName);
+
 #ifdef OF_OS_WINDOWS
 		bmp = FreeImage_LoadU(fif, fileName.c_str(), option | settings.freeImageFlags);
 #else
@@ -414,7 +418,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPathFS(_fileName);
+	auto fileName = ofToDataPath(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
 	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);
@@ -533,7 +537,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 	ofInitFreeImage();
 
 	if (_pix.isAllocated() == false){
-		ofLogError("ofImage","saveImage(): couldn't save to ofBuffer, pixels are not allocated");
+		ofLogError("ofImage") << "saveImage(): couldn't save to ofBuffer, pixels are not allocated";
 		return false;
 	}
 

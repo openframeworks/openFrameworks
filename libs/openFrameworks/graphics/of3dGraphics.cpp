@@ -22,7 +22,7 @@ enum of3dPrimitiveType {
 
 of3dGraphics::of3dGraphics(ofBaseRenderer * renderer)
 :renderer(renderer)
-,plane(1.0f, 1.0f, 6, 4)
+,plane(1.0f, 1.0f, 2, 2)
 ,sphere(1.0f, 20)
 ,icoSphere(1.0f, 2)
 ,box(1.f, 1.f, 1.f, 1, 1, 1)

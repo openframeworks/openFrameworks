@@ -7,7 +7,8 @@
  */
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #import <UIKit/UIKit.h>
 #include "ofConstants.h"
 
@@ -81,4 +82,4 @@ protected:
 };
 
 #define ofxiPhoneKeyboard ofxiOSKeyboard
-
+#endif

@@ -56,6 +56,7 @@
 #include <cstring> // for memset
 #include <stdexcept>
 #include <vector>
+#include <atomic>
 
 #include "ip/PacketListener.h"
 #include "ip/TimerListener.h"

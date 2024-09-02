@@ -96,19 +96,11 @@ bool ofxOscReceiver::start() {
 		}
 	});
 
-	// detach thread so we don't have to wait on it before creating a new socket
-	// or on destruction, the custom deleter for the socket unique_ptr already
-	// does the right thing
-	
-#ifndef OSC_NO_DETACH
-	listenThread.detach();
-#endif
 	return true;
 }
 
 //--------------------------------------------------------------
 void ofxOscReceiver::stop() {
-#ifdef OSC_NO_DETACH
 	if (listenSocket) {
 		listenSocket->AsynchronousBreak();
 	} else {
@@ -120,7 +112,6 @@ void ofxOscReceiver::stop() {
 	} else {
 		listenThread.join();
 	}
-#endif
 	listenSocket.reset();
 }
 

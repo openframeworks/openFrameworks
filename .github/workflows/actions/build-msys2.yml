@@ -34,7 +34,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.msystem }}
@@ -44,10 +44,11 @@ jobs:
         release: true
         update: false
         msystem: ${{matrix.msystem}}
-        pacboy: gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+        pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
         install: >-
           unzip
           make
+        # lld
         # gcc:p gdb:p zlib:p poco:p pkgconf:p harfbuzz:p ntldd-git:p 
         # boost:p tools:p
         # install: >-
