@@ -536,7 +536,7 @@ class DirectShowVideo : public ISampleGrabberCB{
         //printf("step 6\n"); 
 
         //this is the easier way to connect the graph, but we have to remove the video window manually
-        hr = m_pGraph->RenderFile(pathString.c_str(), NULL);
+        hr = m_pGraph->RenderFile(path.c_str(), NULL);
 
         //this is the more manual way to do it - its a pain though because the audio won't be connected by default
         /*hr = m_pGraph->AddSourceFilter(filePathW.c_str(), L"Source", &m_pSourceFile); 
