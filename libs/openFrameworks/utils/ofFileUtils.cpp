@@ -1889,10 +1889,7 @@ fs::path ofFilePath::getCurrentExePath(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-<<<<<<< HEAD
 
-=======
->>>>>>> master
 		wchar_t filename[MAX_PATH];
 		DWORD result = ::GetModuleFileName(
 			nullptr,    // retrieve path of current process .EXE
@@ -1901,7 +1898,6 @@ fs::path ofFilePath::getCurrentExePath(){
 		);
 		if (result == 0) {
 			// Error
-<<<<<<< HEAD
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
 		} else {
 			return { executablePath.begin(), executablePath.begin() + result };
@@ -1914,11 +1910,6 @@ fs::path ofFilePath::getCurrentExePath(){
 		// }else{
 		// 	return { executablePath.begin(), executablePath.begin() + result };
 		// }
-=======
-			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileName failed";
-		}
-		return filename;
->>>>>>> master
 	#endif
 	return {};
 }
