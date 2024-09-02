@@ -40,7 +40,7 @@ public:
 	/// binds the passed target to buffer 0
 	void unbind(GLenum target) const;
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+//#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	/// glBindBufferBase: https://www.opengl.org/sdk/docs/man4/html/glBindBufferBase.xhtml
 	void bindBase(GLenum target,GLuint index) const;
 
@@ -52,7 +52,7 @@ public:
 
 	/// binds the given target and index to 0
 	void unbindRange(GLenum target,GLuint index) const;
-#endif
+//#endif
 
 	/// returns the id of the buffer if it's allocated or 0 otherwise
 	GLuint getId() const;
