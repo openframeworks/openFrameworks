@@ -195,14 +195,14 @@ public:
 	// set attributes that vary per vertex (look up the location before glBegin)
 	GLint getAttributeLocation(const std::string & name) const;
 
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
 #ifdef GLEW_ARB_uniform_buffer_object
 	GLint getUniformBlockIndex(const std::string & name) const;
 	GLint getUniformBlockBinding(const std::string & name) const;
 	void bindUniformBlock(GLuint bindind, const std::string & name) const;
 	void printActiveUniformBlocks() const;
 #endif
-#endif
+//#endif
 
 #ifndef TARGET_OPENGLES
 	void setAttribute1s(GLint location, short v1) const;
