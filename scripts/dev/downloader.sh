@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.3.1
+VERSION=4.3.2
 printDownloaderHelp(){
 cat << EOF
     
@@ -233,11 +233,11 @@ downloader() {
             ;;
         esac
     done
-    if [[ "$OSTYPE" == "msys"* || "$OSTYPE" == "cygwin"* || "$OSTYPE" == "win32"* ]]; then
-        echo "Detected Windows OS. Skipping wget2..."
-        WGET2=0
-        WGET2_INSTALLED=0
-    fi
+    # if [[ "$OSTYPE" == "msys"* || "$OSTYPE" == "cygwin"* || "$OSTYPE" == "win32"* ]]; then
+    #     echo "Detected Windows OS. Skipping wget2..."
+    #     WGET2=0
+    #     WGET2_INSTALLED=0
+    # fi
     # [wget2]
     if command -v wget2 > /dev/null 2>&1; then
         WGET2_INSTALLED=1
@@ -388,8 +388,8 @@ downloader() {
     else
         if [[ "${SILENT}" == 1 ]]; then
             if  [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then
-                echo
-                wget2 -N -nv --progress=bar --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --timeout=1500 --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                echo ""
+                wget2 -N -nv --no-tcp-fastopen --progress=bar --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --timeout=1500 --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo
                 curl -Z -L --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --header "Connection: close" --progress-bar ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
@@ -403,8 +403,8 @@ downloader() {
         else
             if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then 
                 echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS"
-                echo
-                wget2 -N -c --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=1500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                echo ""
+                wget2 -N -c --no-tcp-fastopen --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=1500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
                 echo
