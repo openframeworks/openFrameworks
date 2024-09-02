@@ -1893,7 +1893,7 @@ fs::path ofFilePath::getCurrentExePath(){
 		DWORD result = ::GetModuleFileNameW(
 			nullptr,
 			executablePath,
-			_countof(executablePath)
+			static_cast<DWORD>(MAX_PATH)
 		);
 		if (result == 0) {
 			// Error
