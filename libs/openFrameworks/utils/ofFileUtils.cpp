@@ -64,7 +64,7 @@ namespace {
 		try {
 			fs::current_path(*dataPathRoot);
 		} catch(fs::filesystem_error & e) {
-			ofLogError("ofFileUtils") << "dataPathRoot " << e.what();
+			ofLogError("ofFileUtils") << "dataPathRoot\n" << e.what();
 		}
 		return *dataPathRoot;
 	}
@@ -1866,8 +1866,8 @@ bool ofFilePath::isAbsolute(const fs::path& path){
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: Deprecate
-string ofFilePath::getCurrentWorkingDirectory(){
-	return ofPathToString(fs::current_path());
+fs::path ofFilePath::getCurrentWorkingDirectory(){
+	return fs::current_path();
 }
 
 //------------------------------------------------------------------------------------------------------------

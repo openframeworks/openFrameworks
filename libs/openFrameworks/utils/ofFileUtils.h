@@ -413,7 +413,7 @@ public:
 	/// \warning This location *may* change if you or a library calls the cd()
 	/// std C function.
 	/// \returns current working directory
-	static std::string getCurrentWorkingDirectory();
+	static of::filesystem::path getCurrentWorkingDirectory();
 
 	/// Create a single path by joining path1 & path2 using a slash,
 	/// ie. "/hello/world" + "foo/bar" -> "/hello/world/foo/bar".

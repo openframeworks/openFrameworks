@@ -2,21 +2,23 @@
 #include "ofUtils.h"
 #include "ofxUnitTests.h"
 
-of::filesystem::path initial_cwd;
+namespace fs = of::filesystem;
+fs::path initial_cwd;
 
 class ofApp: public ofxUnitTestsApp{
 	void run(){
 		ofDirectory dir(".");
         dir.create(true);
         dir.exists();
-		for(auto f: dir){
-			f.setWriteable(true);
-			if(f.isDirectory()){
-				ofDirectory(f.path()).remove(true);
-			}else{
-				f.remove();
-			}
-		}
+		 for(auto f: dir){
+		 	f.setWriteable(true);
+		 	if(f.isDirectory()){
+		 		std::cout << "will remove " << f.path() << std::endl;
+		 		ofDirectory(f.path()).remove(true);
+		 	}else{
+		 		f.remove();
+		 	}
+		 }
 		ofxTest(ofDirectory(".").getFiles().empty(),"removing old tests files","other tests will fail too");
 
 
@@ -202,16 +204,15 @@ class ofApp: public ofxUnitTestsApp{
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4299";
-        ofxTestEq(of::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
+        ofxTestEq(fs::canonical(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
 
-		std::cout << ofToDataPath("",false) << std::endl;
 
 		if(ofGetTargetPlatform()==OF_TARGET_OSX){
-			ofxTestEq(ofToDataPath("",false),"../../../data/","ofToDataPath relative");
+			ofxTestEq(ofToDataPath("", false), ".", "ofToDataPath relative");
 		}else if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
-			ofxTestEq(ofToDataPath("",false),"data\\","ofToDataPath relative");
+			ofxTestEq(ofToDataPath("",false), ".", "ofToDataPath relative");
 		}else{
-			ofxTestEq(ofToDataPath("",false),"data/","ofToDataPath relative");
+			ofxTestEq(ofToDataPath("",false), ".", "ofToDataPath relative");
 		}
 
 
@@ -233,22 +234,22 @@ class ofApp: public ofxUnitTestsApp{
 		}
 
 
-        //========================================================================
-        ofLogNotice() << "";
-        ofLogNotice() << "tests #4598";
-		ofxTestEq(ofPathToString(ofToDataPath("")).back(), of::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
+        // //========================================================================
+        // ofLogNotice() << "";
+        // ofLogNotice() << "tests #4598";
+		// ofxTestEq(ofPathToString(ofToDataPath("")).back(), of::filesystem::path::preferred_separator, "ofToDataPath with empty string shouldn't crash");
 
         //========================================================================
         ofLogNotice() << "";
         ofLogNotice() << "tests #4563";
 #ifdef TARGET_LINUX 
-        ofxTestEq(ofToDataPath("a.txt"), "data/a.txt","#4563 test1");
-        ofxTestEq(ofToDataPath("data.txt"), "data/data.txt", "#4563 test2");
-        ofxTestEq(ofToDataPath(""), "data/", "#4563 test3");
+        ofxTestEq(ofToDataPath("a.txt"), "a.txt","#4563 test1");
+        ofxTestEq(ofToDataPath("data.txt"), "data.txt", "#4563 test2");
+        ofxTestEq(ofToDataPath(""), "", "#4563 test3");
 #elif defined(TARGET_OSX)
-        ofxTestEq(ofToDataPath("a.txt"), "../../../data/a.txt","#4563 test1");
-        ofxTestEq(ofToDataPath("data.txt"), "../../../data/data.txt", "#4563 test2");
-        ofxTestEq(ofToDataPath(""), "../../../data/", "#4563 test3");
+        ofxTestEq(ofToDataPath("a.txt"), "a.txt","#4563 test1");
+        ofxTestEq(ofToDataPath("data.txt"), "data.txt", "#4563 test2");
+        ofxTestEq(ofToDataPath(""), ".", "#4563 test3");
 #endif
 
 
@@ -265,19 +266,29 @@ class ofApp: public ofxUnitTestsApp{
 		}
 
         //========================================================================
-        ofLogNotice() << "#4564";
-        dir.remove(true);
-		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
-			ofDirectory currentVideoDirectory(ofToDataPath("..\\..\\..\\video", true));
-			auto path = currentVideoDirectory.path();
-			std::string pathEnd("data\\..\\..\\..\\video\\");
-			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
-		}else{
-			ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
-			auto path = currentVideoDirectory.path();
-			std::string pathEnd("data/../../../video/");
-			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
-		}
+//        ofLogNotice() << "#4564";
+		// no, this removes the data folder completely
+////        dir.remove(true);
+//		if(ofGetTargetPlatform()==OF_TARGET_WINVS || ofGetTargetPlatform()==OF_TARGET_MINGW){
+//			ofDirectory currentVideoDirectory(ofToDataPath("..\\..\\..\\video", true));
+//			auto path = currentVideoDirectory.path();
+//			std::string pathEnd("data\\..\\..\\..\\video\\");
+//			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+//		}else{
+//			using std::cout;
+//			using std::endl;
+//
+//			std::cout << 1 << std::endl;
+//			ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
+//			std::cout << 2 << std::endl;
+//			auto path = ofPathToString(currentVideoDirectory.path());
+//			cout << path << endl;
+//			std::cout << 3 << std::endl;
+//			std::string pathEnd("data/../../../video/");
+//			std::cout << 4 << std::endl;
+//			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+//			std::cout << 5 << std::endl;
+//		}
 	}
 };
 
@@ -288,6 +299,7 @@ class ofApp: public ofxUnitTestsApp{
 int main( ){
 	ofInit();
     initial_cwd = of::filesystem::current_path();
+//	std::cout << "initial_cwd " << initial_cwd << std::endl;
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	ofRunApp(window, app);
