@@ -1,16 +1,9 @@
 #pragma once
 
-//#include "ofVec2f.h"
-#include "ofVec3f.h"
-//#include "ofVec4f.h"
 class ofMatrix3x3;
-//#include "ofMatrix3x3.h"
-// MARK: ofMatrix4x4 already contains some of commented out includes here.
 #include "ofMatrix4x4.h"
 #include "ofQuaternion.h"
 
-//#include "ofMathConstants.h"
-//#include "ofConstants.h"
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec2.hpp>
@@ -18,11 +11,6 @@ class ofMatrix3x3;
 #include <glm/vec4.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
-//#include <glm/geometric.hpp>
-//#include <glm/common.hpp>
-//#include <glm/trigonometric.hpp>
-//#include <glm/exponential.hpp>
-//#include <glm/vector_relational.hpp>
 
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>

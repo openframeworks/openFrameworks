@@ -6,7 +6,8 @@
 //
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
@@ -104,3 +105,4 @@
 - (void)setWillBeUpdatedExternally:(BOOL)value;
 
 @end
+#endif

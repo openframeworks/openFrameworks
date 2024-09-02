@@ -10,11 +10,10 @@
 #define ofxtvOS_h
 
 #include "ofMain.h"
-
+#include "ofxiOSConstants.h"
 #ifdef TARGET_OF_TVOS
 
 #include "ofAppiOSWindow.h"
-#include "ofxiOSConstants.h"
 #include "ofxiOSExtensions.h"
 #include "ofxtvOSAppDelegate.h"
 #include "ofxtvOSViewController.h"

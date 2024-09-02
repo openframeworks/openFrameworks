@@ -146,8 +146,9 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 
 class BstrURL {
 public:
-    BstrURL(std::string aurl) {
-        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+    BstrURL(const of::filesystem::path & aurl) {
+//        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+		std::wstring ws { aurl.wstring() };
         assert(!ws.empty());
         _bstrStr = SysAllocStringLen(ws.data(), ws.size());
     }
@@ -678,7 +679,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     bStream = bStream || ofIsStringInString(name, "rtsp://");
     bStream = bStream || ofIsStringInString(name, "rtmp://");
 
-    std::string absPath = name;
+    of::filesystem::path absPath = name;
 
     if (!bStream) {
         if (ofFile::doesFileExist(absPath)) {
@@ -1084,11 +1085,17 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::setVolume(float volume) {
-    if (m_spMediaEngine) {
-        ofMediaFoundationUtils::CallAsyncBlocking(
-            [&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); 
-        });
-    }
+	if (m_spMediaEngine) {
+		double cvolume = ofClamp(volume, 0.0f, 1.0f);
+		HRESULT hr = m_spMediaEngine->SetVolume(cvolume);
+		if (hr != S_OK) {
+			ofLogVerbose("ofMediaFoundationPlayer :: setVolume : Unable to set volume to ") << volume << ".";
+		}
+		//ofMediaFoundationUtils::CallAsyncBlocking(
+		//[&] {m_spMediaEngine->SetVolume(static_cast<double>(volume));
+		//[&] {m_spMediaEngine->SetVolume(cvolume);
+		//});
+	}
 }
 
 //----------------------------------------------

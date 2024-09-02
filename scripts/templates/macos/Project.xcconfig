@@ -3,7 +3,7 @@
 OF_PATH = ../../..
 
 //THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
-#include "../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig"
+#include "../../../libs/openFrameworksCompiled/project/macos/CoreOF.xcconfig"
 
 //UNCOMMENT BELOW TO ENABLE C++ 17 and std::filesystem
 CLANG_CXX_LANGUAGE_STANDARD = c++17
@@ -42,7 +42,11 @@ CURRENT_PROJECT_VERSION = 1
 // default oF app icon
 ICON_NAME = of.icns
 ICON_NAME[config=Debug] = of_debug.icns
+<<<<<<< HEAD
 ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
+=======
+ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/macos/$(ICON_NAME)
+>>>>>>> master
 
 // custom app icon, placed in main project folder
 //ICON_NAME = MyApp.icns
@@ -57,11 +61,14 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 // ex. change ICON_FILE_PATH = bin/data/ -> ICON_FILE = bin/data/$(ICON_NAME) &
 // in a custom openFrameworks-Info.plist, set CFBundleIconFile to ICON_NAME
 
+<<<<<<< HEAD
+=======
 //FOR AV ENGINE SOUND PLAYER UNCOMMENT TWO LINES BELOW
 //OF_NO_FMOD=1
 //USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
 GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
 
+>>>>>>> master
 //APPSTORE, uncomment next lines to bundle data folder and code sign
 //OF_CODESIGN = 1
 //OF_BUNDLE_DATA_FOLDER = 1
@@ -74,9 +81,23 @@ GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
 //OF_CORE_LIBS = $(inherited) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM)
 //OF_CORE_HEADERS = $(inherited) $(HEADER_BOOST)
 
+<<<<<<< HEAD
+HIGH_RESOLUTION_CAPABLE = NO
+
 // Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
 #include? "App.xcconfig"
 
+//FOR AV ENGINE SOUND PLAYER UNCOMMENT THREE LINES BELOW
+//OF_NO_FMOD=1
+//USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
+//LIB_FMOD=""
+GCC_PREPROCESSOR_DEFINITIONS=$(inherited) $(USER_PREPROCESSOR_DEFINITIONS)
+
+=======
+// Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
+#include? "App.xcconfig"
+
+>>>>>>> master
 OTHER_CFLAGS = $(OF_CORE_CFLAGS)
 OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)

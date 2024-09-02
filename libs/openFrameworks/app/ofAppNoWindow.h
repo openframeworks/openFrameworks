@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
+#include "ofEvents.h"
 
 class ofBaseApp;
 class ofBaseRenderer;

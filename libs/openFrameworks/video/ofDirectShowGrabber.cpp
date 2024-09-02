@@ -182,12 +182,12 @@ void ofDirectShowGrabber::update(){
 							// start of calculating
 							// for linear interpolation
 
-							int xbase = (int)floor(posx);
-							int xhigh = (int)ceil(posx);
+							int xbase = (int)std::floor(posx);
+							int xhigh = (int)std::ceil(posx);
 							float pctx = (posx - xbase);
 
-							int ybase = (int)floor(posy);
-							int yhigh = (int)ceil(posy);
+							int ybase = (int)std::floor(posy);
+							int yhigh = (int)std::ceil(posy);
 							float pcty = (posy - ybase);
 							*/
 

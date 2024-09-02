@@ -1,0 +1,56 @@
+name: build-macos
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ccache: ccache
+
+jobs:
+  build-macos:
+    runs-on: macos-14
+    strategy:
+        matrix:
+          cfg:
+          - {target: macos, opt: "xcode"}
+          - {target: macos, opt: "makefiles"}
+    steps:
+    - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.14
+      with:
+        # key: ${{ matrix.os }}-${{ matrix.type }}
+        key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
+        # key: ${{ matrix.msystem }}
+
+    - name: Download libs
+      # continue-on-error: true
+      run: ./scripts/${{ matrix.cfg.target }}/download_latest_libs.sh
+    # this step is not needed here because the script is empty
+    # - name: install
+    # run: ./scripts/ci/$TARGET/install.sh
+
+    - name: Build
+      run:
+        if [ ${{ matrix.cfg.opt }} = "xcode" ]; then
+          scripts/ci/${{ matrix.cfg.target }}/build.sh ${{ matrix.cfg.opt }};
+        else
+          scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
+        fi
+      env:
+        DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"

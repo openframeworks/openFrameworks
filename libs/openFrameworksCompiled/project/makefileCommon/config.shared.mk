@@ -19,7 +19,7 @@
 
 
 SHELL ?= /bin/sh
-OF_ROOT ?=  $(realpath ../../..)
+OF_ROOT ?= ../../..
 PLATFORM_VARIANT ?= default
 
 # ifeq ($(CC),$(EMSCRIPTEN)/emcc)
@@ -112,7 +112,7 @@ ifndef PLATFORM_LIB_SUBPATH
 		PLATFORM_LIB_SUBPATH=android
 		SHARED_LIB_EXTENSION=so
 	else ifeq ($(PLATFORM_OS),Darwin)
-		PLATFORM_LIB_SUBPATH=osx
+		PLATFORM_LIB_SUBPATH=macos
 		SHARED_LIB_EXTENSION=dylib
 	else ifeq ($(PLATFORM_OS),emscripten)
 		PLATFORM_LIB_SUBPATH=emscripten
