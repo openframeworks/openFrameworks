@@ -6,17 +6,15 @@ trap 'for f in ~/Library/Logs/DiagnosticReports/*; do cat $f; done' 11
 
 echo "##[group]**** Building emptyExample ****"
 cd $ROOT
-cp scripts/templates/osx/Makefile examples/templates/emptyExample/
-cp scripts/templates/osx/config.make examples/templates/emptyExample/
 cd examples/templates/emptyExample/
+cp ../../../scripts/templates/macos/{Makefile,config.make} .
 make -j2 Debug
 echo "##[endgroup]"
 
 echo "##[group]**** Building allAddonsExample ****"
 cd $ROOT
-cp scripts/templates/osx/Makefile examples/templates/allAddonsExample/
-cp scripts/templates/osx/config.make examples/templates/allAddonsExample/
 cd examples/templates/allAddonsExample/
+cp ../../../scripts/templates/macos/{Makefile,config.make} .
 make -j2 Debug
 echo "##[endgroup]"
 
@@ -28,8 +26,9 @@ for group in *; do
         for test in $group/*; do
             if [ -d $test ]; then
                 cd $test
-                cp ../../../scripts/templates/osx/Makefile .
-                cp ../../../scripts/templates/osx/config.make .
+                cp ../../../scripts/templates/macos/{Makefile,config.make} .
+                # cp ../../../scripts/templates/osx/Makefile .
+                # cp ../../../scripts/templates/osx/config.make .
                 make -j2 Debug
                 make RunDebug
 				errorcode=$?
