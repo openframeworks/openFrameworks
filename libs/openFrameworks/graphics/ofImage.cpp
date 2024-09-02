@@ -797,7 +797,7 @@ bool ofImage_<PixelType>::load(const of::filesystem::path & fileName, const ofIm
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const std::string& fileName){
+bool ofImage_<PixelType>::loadImage(const of::filesystem::path & fileName){
 	return load(fileName);
 }
 
@@ -838,7 +838,7 @@ bool ofImage_<PixelType>::save(ofBuffer & buffer, ofImageFormat imageFormat, ofI
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(const std::string& fileName, ofImageQualityType qualityLevel) const {
+void ofImage_<PixelType>::saveImage(const of::filesystem::path & fileName, ofImageQualityType qualityLevel) const {
 	save(fileName, qualityLevel);
 }
 
