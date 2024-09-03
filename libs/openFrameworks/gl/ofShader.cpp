@@ -713,7 +713,7 @@ bool ofShader::linkProgram() {
             }
         }
 
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
     #ifdef GLEW_ARB_uniform_buffer_object
         if (GLEW_ARB_uniform_buffer_object) {
             // Pre-cache all active uniforms blocks
@@ -732,7 +732,7 @@ bool ofShader::linkProgram() {
             }
         }
     #endif
-#endif
+//#endif
 
 #ifdef TARGET_ANDROID
         ofAddListener(ofxAndroidEvents().unloadGL, this, &ofShader::unloadGL);
@@ -768,11 +768,11 @@ void ofShader::reloadGL() {
     auto bindings = attributesBindingsCache;
     shaders.clear();
     uniformsCache.clear();
-    #ifndef TARGET_OPENGLES
+    //#ifndef TARGET_OPENGLES
         #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
     uniformBlocksCache.clear();
         #endif
-    #endif
+    //#endif
     attributesBindingsCache.clear();
     for (auto & shader : source) {
         auto source = shader.second.source;
@@ -823,11 +823,11 @@ void ofShader::unload() {
 
         shaders.clear();
         uniformsCache.clear();
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
     #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
         uniformBlocksCache.clear();
     #endif
-#endif
+//#endif
         attributesBindingsCache.clear();
 #ifdef TARGET_ANDROID
         ofRemoveListener(ofxAndroidEvents().reloadGL, this, &ofShader::reloadGL);
