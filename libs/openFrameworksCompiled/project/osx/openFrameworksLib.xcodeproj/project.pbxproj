@@ -1035,7 +1035,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/debug/";
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/debug/";
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "";
 			};
 			name = Debug;
@@ -1047,7 +1047,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/release/";
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release";
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "";
 			};
 			name = Release;
