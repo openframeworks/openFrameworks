@@ -1330,8 +1330,8 @@ GLint ofShader::getUniformLocation(const string & name) const {
     }
 }
 
-#ifndef TARGET_OPENGLES
-    #ifdef GLEW_ARB_uniform_buffer_object
+//#ifndef TARGET_OPENGLES
+//    #ifdef GLEW_ARB_uniform_buffer_object
 //--------------------------------------------------------------
 GLint ofShader::getUniformBlockIndex(const string & name) const {
     if (!bLoaded) return -1;
@@ -1412,8 +1412,8 @@ void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
         }
     }
 }
-    #endif
-#endif
+//    #endif
+//#endif
 
 //--------------------------------------------------------------
 void ofShader::printActiveUniforms() const {
