@@ -50,7 +50,8 @@ enum ofTargetPlatform{
 	/// \brief Compiled to javascript using Emscripten.
 	/// \sa https://github.com/kripken/emscripten
 	OF_TARGET_EMSCRIPTEN,
-	OF_TARGET_LINUXAARCH64
+	OF_TARGET_LINUXAARCH64,
+    OF_TARGET_MACOS,
 };
 
 
@@ -99,23 +100,30 @@ enum ofTargetPlatform{
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
-	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
+	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST && !TARGET_OS_VISION
         #define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
         #define TARGET_OPENGLES
-        #include <unistd.h>
     #elif TARGET_OS_TV
         #define TARGET_OF_IOS
         #define TARGET_OF_TVOS
         #define TARGET_OPENGLES
-        #include <unistd.h>
+        #define TARGET_IMPLEMENTS_URL_LOADER
     #elif TARGET_OS_WATCH
         #define TARGET_OF_IOS
         #define TARGET_OF_WATCHOS
         #define TARGET_OPENGLES
-        #include <unistd.h>
+        #define TARGET_IMPLEMENTS_URL_LOADER
+    #elif TARGET_OS_VISION
+        #define TARGET_OF_IOS
+        #define TARGET_OF_XROS
+    #elif TARGET_OS_MACCATALYST
+        #define TARGET_OF_IOS
+        #define TARGET_OF_MACCATALYST
 	#else
 		#define TARGET_OSX
+        #define TARGET_MAC
+        #define TARGET_OF_MAC
 	#endif
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
@@ -139,6 +147,9 @@ enum ofTargetPlatform{
 #ifdef TARGET_WIN32
 	#define GLEW_STATIC
 	#define GLEW_NO_GLU
+    #define TARGET_GLFW_WINDOW
+    #define OF_CAIRO
+    #define OF_RTAUDIO
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define __WINDOWS_DS__
@@ -187,13 +198,21 @@ enum ofTargetPlatform{
 
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_OSX) && !defined(TARGET_OF_IOS)
 	#ifndef __MACOSX_CORE__
 		#define __MACOSX_CORE__
 	#endif
-	#include <unistd.h>
+    #define TARGET_GLFW_WINDOW
+    #define OF_CAIRO
+    #define OF_RTAUDIO
+    
+	#ifndef OF_NO_FMOD
+		#define OF_NO_FMOD
+	#endif
+
+    
 	#include "GL/glew.h"
-	#include <ApplicationServices/ApplicationServices.h>
+    #include "OpenGL/OpenGL.h"
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
@@ -206,26 +225,26 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_LINUX
 
-	#include <unistd.h>
-
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
-			#include "bcm_host.h"
+			#include <bcm_host.h>
 			// rpi firmware headers define countof
 			// which messes up other libraries like glm
 			#undef countof
 		#endif
 
-		#include "GLES/gl.h"
-		#include "GLES/glext.h"
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
+		#include <GLES/gl.h>
+		#include <GLES/glext.h>
+		#include <GLES2/gl2.h>
+		#include <GLES2/gl2ext.h>
 
 		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
+		#include <EGL/egl.h>
+		#include <EGL/eglext.h>
 	#else // desktop linux
-		#include <GL/glew.h> 
+        #define TARGET_GLFW_WINDOW
+        #define OF_RTAUDIO
+		#include <GL/glew.h>
 	#endif
 
 	// for some reason, this isn't defined at compile time,
@@ -235,7 +254,6 @@ enum ofTargetPlatform{
 	//#if defined(__LITTLE_ENDIAN__)
 	#define TARGET_LITTLE_ENDIAN		// intel cpu
 	//#endif
-
 	// some things for serial compilation:
 	#define B14400	14400
 	#define B28800	28800
@@ -244,24 +262,22 @@ enum ofTargetPlatform{
 
 
 #ifdef TARGET_OF_IOS
-	#import <OpenGLES/ES1/gl.h>
-	#import <OpenGLES/ES1/glext.h>
-
-	#import <OpenGLES/ES2/gl.h>
-	#import <OpenGLES/ES2/glext.h>
-
-
-	#define TARGET_LITTLE_ENDIAN		// arm cpu
-
-	#if defined(__OBJC__) && !__has_feature(objc_arc)
-		#error "Please enable ARC (Automatic Reference Counting) at the project level"
-	#endif
-
+    #import <OpenGLES/ES1/gl.h>
+    #import <OpenGLES/ES1/glext.h>
+    #import <OpenGLES/ES2/gl.h>
+    #import <OpenGLES/ES2/glext.h>
+	#import <OpenGLES/ES3/gl.h>
+	#import <OpenGLES/ES3/glext.h>
+    #define TARGET_LITTLE_ENDIAN    // arm cpu
+    #if defined(__OBJC__) && !__has_feature(objc_arc)
+        #warning "ARC (Automatic Reference Counting) is not enabled."
+        #warning "Enable ARC at the project level, or if using Objective-C/C++ with manual memory management,"
+        #warning "add '-fno-objc-arc' in Build Phases -> Compile Sources -> Compiler Flags."
+    #endif
 #endif
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
-	#include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
@@ -287,7 +303,7 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#include "tesselator.h"
+#include <tesselator.h>
 typedef TESSindex ofIndexType;
 
 
@@ -296,97 +312,12 @@ typedef TESSindex ofIndexType;
 
 
 
-//------------------------------------------------ capture
-// check if any video capture system is already defined from the compiler
-#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
-	#ifdef TARGET_LINUX
-
-		#define OF_VIDEO_CAPTURE_GSTREAMER
-
-	#elif defined(TARGET_OSX)
-		//on 10.6 and below we can use the old grabber
-		#ifndef MAC_OS_X_VERSION_10_7
-			#define OF_VIDEO_CAPTURE_QUICKTIME
-		//if we are below 10.12 or targeting below 10.12 we use QTKit
-		#elif !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
-			#define OF_VIDEO_CAPTURE_QTKIT
-		#else
-			#define OF_VIDEO_CAPTURE_AVF
-        #endif
-
-	#elif defined (TARGET_WIN32)
-
-		// comment out this following line, if you'd like to use the
-		// quicktime capture interface on windows
-		// if not, we default to videoInput library for
-		// direct show capture...
-
-		#define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-
-		#ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-			#define OF_VIDEO_CAPTURE_DIRECTSHOW
-		#else
-			#define OF_VIDEO_CAPTURE_QUICKTIME
-		#endif
-
-	#elif defined(TARGET_ANDROID)
-
-		#define OF_VIDEO_CAPTURE_ANDROID
-
-	#elif defined(TARGET_EMSCRIPTEN)
-
-		#define OF_VIDEO_CAPTURE_EMSCRIPTEN
-
-	#elif defined(TARGET_OF_IOS)
-
-		#define OF_VIDEO_CAPTURE_IOS
-
+#if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
+	#undef USE_FMOD // No FMOD lib for ARM64 yet
+	#ifndef OF_NO_FMOD
+		#define OF_NO_FMOD
 	#endif
-#endif
-
-//------------------------------------------------  video player
-// check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
-    #ifdef TARGET_LINUX
-        #define OF_VIDEO_PLAYER_GSTREAMER
-    #elif defined(TARGET_ANDROID)
-        #define OF_VIDEO_PLAYER_ANDROID
-    #elif defined(TARGET_OF_IOS)
-        #define OF_VIDEO_PLAYER_IOS
-	#elif defined(TARGET_WIN32)
-            #ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
-	        #define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
-            #else
-	        #define OF_VIDEO_PLAYER_DIRECTSHOW
-            #endif
-    #elif defined(TARGET_OSX)
-        //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
-        #ifndef MAC_OS_X_VERSION_10_7
-            #define OF_VIDEO_PLAYER_QUICKTIME
-        #elif !defined(MAC_OS_X_VERSION_10_8)
-            #define OF_VIDEO_PLAYER_QTKIT
-        #else
-            #define OF_VIDEO_PLAYER_AVFOUNDATION
-        #endif
-    #elif defined(TARGET_EMSCRIPTEN)
-        #define OF_VIDEO_PLAYER_EMSCRIPTEN
-    #else
-        #define OF_VIDEO_PLAYER_QUICKTIME
-    #endif
-#endif
-
-//------------------------------------------------ soundstream
-// check if any soundstream api is defined from the compiler
-#if !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID) && !defined(OF_SOUNDSTREAM_IOS) && !defined(OF_SOUNDSTREAM_EMSCRIPTEN)
-	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
-		#define OF_SOUNDSTREAM_RTAUDIO
-	#elif defined(TARGET_ANDROID)
-		#define OF_SOUNDSTREAM_ANDROID
-	#elif defined(TARGET_OF_IOS)
-		#define OF_SOUNDSTREAM_IOS
-	#elif defined(TARGET_EMSCRIPTEN)
-		#define OF_SOUNDSTREAM_EMSCRIPTEN
-	#endif
+	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 
 //------------------------------------------------ soundplayer
@@ -434,34 +365,38 @@ typedef TESSindex ofIndexType;
 
 // If you are building with c++17 or newer std filesystem will be enabled by default
 #if __cplusplus >= 201500
-    #define OF_HAS_CPP17 1
+// #pragma message ( "__cplusplus >= 201500 " )
+    #define OF_HAS_CPP17
     #if __cplusplus < 201703L
-        #define OF_USE_EXPERIMENTAL_FS 1
+		// #pragma message ( "__cplusplus < 201703L" )
+        #define OF_USE_EXPERIMENTAL_FS
     #endif
 #else
-    #define OF_HAS_CPP17 0
+    #undef OF_HAS_CPP17
 #endif
 
 
 #ifndef OF_USING_STD_FS
-	#if OF_HAS_CPP17
-		#define OF_USING_STD_FS 1
+	#if defined(OF_HAS_CPP17)
+		#define OF_USING_STD_FS
 	#else
-		// Set to 1 to force std filesystem instead of boost's
-		#define OF_USING_STD_FS 0
+		#undef OF_USING_STD_FS
 	#endif
 #endif
 
 // Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
 // This may be okay but we need to test for the way C++17 is including the filesystem
 
-#if  OF_USING_STD_FS && !defined(OF_USE_EXPERIMENTAL_FS)
+#if defined(OF_USING_STD_FS) && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_filesystem)
-        #define OF_USE_EXPERIMENTAL_FS 0
+		// #pragma message ( "ok __cpp_lib_filesystem" )
+        #undef OF_USE_EXPERIMENTAL_FS
     #elif defined(__cpp_lib_experimental_filesystem)
-        #define OF_USE_EXPERIMENTAL_FS 1
+		// #pragma message ( "ok __cpp_lib_experimental_filesystem" )
+        #define OF_USE_EXPERIMENTAL_FS
     #elif !defined(__has_include)
-        #define OF_USE_EXPERIMENTAL_FS 1
+		// #pragma message ( "not __has_include so we add OF_USE_EXPERIMENTAL_FS? seems wrong" )
+        #define OF_USE_EXPERIMENTAL_FS
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
         #ifdef _MSC_VER
@@ -473,53 +408,44 @@ typedef TESSindex ofIndexType;
                 // Check for enabled C++17 support
                 #if defined(_HAS_CXX17) && _HAS_CXX17
                 // We're using C++17, so let's use the normal version
-                    #define OF_USE_EXPERIMENTAL_FS 0
+                    #undef OF_USE_EXPERIMENTAL_FS
                 #endif
             #endif
 
             // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
             #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
-                #define OF_USE_EXPERIMENTAL_FS 1
+                #define OF_USE_EXPERIMENTAL_FS
             #endif
 
         // Not on Visual Studio. Let's use the normal version
         #else // #ifdef _MSC_VER
-            #define OF_USE_EXPERIMENTAL_FS 0
+            #undef OF_USE_EXPERIMENTAL_FS
         #endif
     #else
-        #define OF_USE_EXPERIMENTAL_FS 0
+        #undef OF_USE_EXPERIMENTAL_FS
     #endif
 #endif
 
-#if OF_USING_STD_FS
-    #if OF_USE_EXPERIMENTAL_FS
+
+#if defined(OF_USING_STD_FS)
+    #if defined(OF_USE_EXPERIMENTAL_FS)
         // C++17 experimental fs support
         #include <experimental/filesystem>
         
-        #if OF_HAS_CPP17
-            namespace std {
-                namespace experimental{
-                    namespace filesystem {
-                        using path = v1::path;
-                    }
-                }
-            }
-        #else
-            namespace std {
-                namespace experimental{
-                    namespace filesystem {
-                        using path = v1::__cxx11::path;
-                    }
-                }
-            }
-        #endif
-        
+		namespace std {
+			namespace experimental{
+				namespace filesystem {
+					using path = v1::path;
+				}
+			}
+		}
+
 		namespace of {
 			namespace filesystem = std::experimental::filesystem;
 		}
     #else
 		#include <filesystem>
-		#if OF_HAS_CPP17
+		#if defined(OF_HAS_CPP17)
 			// Regular C++17 fs support
 			namespace of {
 				namespace filesystem = std::filesystem;

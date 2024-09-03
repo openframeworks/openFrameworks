@@ -4,9 +4,11 @@
 #include "ofShader.h"
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/fwd.hpp"
-#include "glm/vec2.hpp"
-#include <map>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/fwd.hpp>
+#include <glm/vec2.hpp>
+
+#include <unordered_map>
 
 enum ofMaterialTextureType : short {
 	OF_MATERIAL_TEXTURE_NONE = 0,
@@ -180,7 +182,7 @@ public:
 
 	/// \brief is this material pbr. Setting PBR functions or textures will automatically set the material to pbr.\nCan also be set calling setPBR(bool);
 	/// \return is the material pbr.
-	const bool isPBR() const { return data.isPbr; }
+	bool isPBR() const { return data.isPbr; }
 	/// \brief enable or disable PBR for this material. Default is disabled.
 	void setPBR(bool ab);
 

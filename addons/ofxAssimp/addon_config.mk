@@ -104,11 +104,12 @@ android/x86:
 
 ios:
 	ADDON_LIBS=
-	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/ios/assimp.a
+	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/macos/assimp.xcframework/ios-arm64/assimp.a
+	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/macos/assimp.xcframework/ios-arm64_x86_64-simulator/assimp.a
 	
 osx:
 	ADDON_LIBS=
-	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/osx/assimp.a
+	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/osx/assimp.xcframework/macos-arm64_x86_64/assimp.a
 	
 emscripten:
 	ADDON_LIBS=

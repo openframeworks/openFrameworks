@@ -2,7 +2,6 @@
 #ifdef OF_SOUND_PLAYER_FMOD
 
 #include "ofUtils.h"
-#include "ofMath.h"
 #include "ofLog.h"
 
 
@@ -177,7 +176,7 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream){
+bool ofFmodSoundPlayer::load(const of::filesystem::path & _fileName, bool stream){
 
 	auto fileName = ofToDataPath(_fileName);
 
@@ -206,7 +205,7 @@ bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream)
 	int fmodFlags =  FMOD_DEFAULT;
 	if(stream)fmodFlags =  FMOD_DEFAULT | FMOD_CREATESTREAM;
 
-    result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, nullptr, &sound);
+    result = FMOD_System_CreateSound(sys, ofPathToString(fileName).c_str(),  fmodFlags, nullptr, &sound);
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;

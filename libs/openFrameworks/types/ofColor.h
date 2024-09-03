@@ -1,8 +1,8 @@
 #pragma once
 
 #define GLM_FORCE_CTOR_INIT
-#include "glm/gtx/wrap.hpp"
-#include <typeinfo>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/wrap.hpp>
 #include <iostream>
 #include <limits>
 
@@ -162,7 +162,13 @@ public:
                 float saturation,
                 float brightness,
                 float alpha = limit());
-
+	void setHsb(glm::vec3 hsb) {
+		setHsb(hsb.x, hsb.y, hsb.z);
+	}
+	void setNormalizedHsb(glm::vec3 hsb) {
+		hsb *= limit();
+		setHsb(hsb.x, hsb.y, hsb.z);
+	}
     /// \}
 
     /// \name Modifiers
@@ -303,6 +309,22 @@ public:
     /// \param brightness A reference to the brightness to fill. Will be in the
     ///     range of 0 - limit().
     void getHsb(float& hue, float& saturation, float& brightness) const;
+	
+	/// \brief Extract the hue, saturation and brightness (HSB) from this color.
+	///
+	/// \returns the 3 color-native values in a glm::vec3
+	glm::vec3 getHsb() const {
+		float h, s, b;
+		getHsb(h,s,b);
+		return { h, s, b };
+	}
+
+	/// \brief Extract the hue, saturation and brightness (HSB) from this color.
+	///
+	/// \returns the 3 values normalized 0-1 in a glm::vec3
+	glm::vec3 getNormalizedHsb() const {
+		return getHsb()/limit();
+	}
 
     /// \brief Get the maximum value of a color component.
     ///

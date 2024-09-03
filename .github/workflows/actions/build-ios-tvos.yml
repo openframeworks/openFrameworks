@@ -1,0 +1,48 @@
+name: build-ios-tvos
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ccache: ccache
+
+jobs:
+  build-ios-tvos:
+    runs-on: macos-13
+    strategy:
+        matrix:
+          cfg:
+          - {target: ios, libs: macos}
+          - {target: tvos, libs: macos}
+    env:
+     TARGET: ${{matrix.cfg.target}}
+    steps:
+    - uses: actions/checkout@v4
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.14
+      with:
+        key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
+    - name: Download libs
+      run: ./scripts/macos/download_latest_libs.sh
+    - name: install
+      run: ./scripts/ci/$TARGET/install.sh
+    - name: Build
+      run: ./scripts/ci/$TARGET/build.sh;
+
+      env:
+        DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"

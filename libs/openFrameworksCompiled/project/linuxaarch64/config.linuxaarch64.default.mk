@@ -38,7 +38,6 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS += -lstdc++fs
 PLATFORM_LDFLAGS += -no-pie
 # PLATFORM_LDFLAGS += -nostartfiles
 
@@ -98,11 +97,6 @@ ifeq ($(CROSS_COMPILING),1)
 ifdef MAKEFILE_DEBUG
     $(info detected cross compiling $(CROSS_COMPILING))
 endif
-	ifdef TOOLCHAIN_ROOT
-		#You have specified TOOLCHAIN_ROOT with an environment variable
-	else
-		TOOLCHAIN_ROOT = /opt/cross/bin
-	endif
 
 	ifdef GCC_PREFIX
 		#You have specified GCC_PREFIX with an environment variable
@@ -110,28 +104,28 @@ endif
 		GCC_PREFIX = aarch64-linux-gnu
 	endif
 
-	PLATFORM_CXX = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-g++
-	PLATFORM_CC = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-gcc
-	PLATFORM_AR = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-ar
-	PLATFORM_LD = $(TOOLCHAIN_ROOT)/bin/$(GCC_PREFIX)-ld
+	PLATFORM_CXX = /usr/bin/$(GCC_PREFIX)-g++
+	PLATFORM_CC = /usr/bin/$(GCC_PREFIX)-gcc
+	PLATFORM_AR = /usr/bin/$(GCC_PREFIX)-ar
+	PLATFORM_LD = /usr/bin/$(GCC_PREFIX)-ld
 
 	SYSROOT=$(RPI_ROOT)
 
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
 
-	PLATFORM_HEADER_SEARCH_PATHS += $(SYSROOT)/usr/include/c++
-	PLATFORM_HEADER_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)/include
-
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(SYSROOT)/lib/$(GCC_PREFIX)
-	PLATFORM_LIBRARY_SEARCH_PATHS += $(TOOLCHAIN_ROOT)/lib/gcc/$(GCC_PREFIX)/$(GCC_VERSION)
+	PLATFORM_LIBRARY_SEARCH_PATHS += /usr/lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += /lib/$(GCC_PREFIX)
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/blas
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/lapack
 
 	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/lib/$(GCC_PREFIX)
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/opt/vc/lib
-	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pulseaudio
+	PLATFORM_LDFLAGS += -lblas -llapack
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/lib/$(GCC_PREFIX)
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=/usr/lib/$(GCC_PREFIX)/pulseaudio
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/lapack
+	PLATFORM_LDFLAGS += -Xlinker -rpath-link=$(RPI_ROOT)/usr/lib/$(GCC_PREFIX)/blas
 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif

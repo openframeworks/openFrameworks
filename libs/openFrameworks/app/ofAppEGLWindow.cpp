@@ -22,9 +22,9 @@
 #include <unistd.h> // read close
 #include <linux/joystick.h>
 
-#include "linux/kd.h"	// keyboard stuff...
-#include "termios.h"
-#include "sys/ioctl.h"
+#include <linux/kd.h>	// keyboard stuff...
+#include <termios.h>
+#include <sys/ioctl.h>
 
 #include <string.h> // strlen
 
@@ -409,10 +409,10 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	// X11 check
 	// char * pDisplay;
-	// pDisplay = getenv ("DISPLAY");
+	// pDisplay = ofGetEnv("DISPLAY");
 	// bool bIsX11Available = (pDisplay != NULL);
 
-	bool bIsX11Available = getenv("DISPLAY") != NULL;
+	bool bIsX11Available = ofGetEnv("DISPLAY") != NULL;
 
 	if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
 		if(bIsX11Available) {
@@ -1616,6 +1616,10 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					case KEY_BACKSPACE:
 						pushKeyEvent = true;
 						keyEvent.key = OF_KEY_BACKSPACE;
+						break;
+					case KEY_SPACE:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_SPACE;
 						break;
 					case KEY_DELETE:
 						pushKeyEvent = true;

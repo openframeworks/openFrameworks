@@ -1,7 +1,8 @@
 
 
 #import "ES1Renderer.h"
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 @implementation ES1Renderer
 
 // Create an OpenGL ES 1.1 context
@@ -188,3 +189,4 @@
 }
 
 @end
+#endif

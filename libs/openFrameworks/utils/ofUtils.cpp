@@ -7,13 +7,16 @@
 #include "ofImage.h"
 #include "ofLog.h"
 #include "ofMainLoop.h"
-#include "ofMath.h"
 #include "ofPixels.h"
 
 #include "uriparser/Uri.h"
 #include <chrono>
 #include <locale>
 #include <numeric>
+
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif
 
 #ifdef TARGET_WIN32 // For ofLaunchBrowser.
 	#include <shellapi.h>
@@ -42,7 +45,7 @@
 #endif
 
 #ifdef TARGET_OF_IOS
-	#include "ofxiOSExtras.h"
+//	#include "ofxiOSExtras.h"
 #endif
 
 #ifdef TARGET_ANDROID
@@ -972,7 +975,7 @@ void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target
 #endif
 
 #ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(uriStr.value());
+//		ofxiOSLaunchBrowser(uriStr.value());
 #endif
 
 #ifdef TARGET_ANDROID
@@ -1129,7 +1132,7 @@ std::string ofGetEnv(const std::string & var, const std::string defaultValue) {
 		return defaultValue;
 	}
 #else
-	auto value = getenv(var.c_str());
+	auto value = std::getenv(var.c_str());
 	if (value) {
 		return value;
 	} else {

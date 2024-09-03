@@ -1,15 +1,18 @@
 #pragma once
 
 #include "ofGraphicsBaseTypes.h"
-// MARK: Targets, some can be moved to cpp
+// MARK: Targets, some can be moved to cpp, GLEW also
 #include "ofConstants.h"
-#include "glm/mat4x4.hpp"
+
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/mat4x4.hpp>
+#include "ofGLUtils.h"
 
 class ofRectangle;
 
 template<typename T>
 class ofPixels_;
-
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;
 typedef ofPixels_<float> ofFloatPixels;
@@ -173,9 +176,14 @@ public:
 #ifndef TARGET_OPENGLES
 		glInternalFormat = GL_RGB8;
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-#else
-		glInternalFormat = GL_RGB;
-		textureTarget = GL_TEXTURE_2D;
+#elif defined(TARGET_OPENGLES)
+		if(ofGLESVersionFromGL() >= 300) {
+			glInternalFormat = GL_RGB16F;
+			textureTarget = GL_TEXTURE_2D;
+		} else {
+			glInternalFormat = GL_RGB;
+			textureTarget = GL_TEXTURE_2D;
+		}
 #endif
 
 		tex_t = 0;
@@ -945,6 +953,7 @@ class ofTexture : public ofBaseDraws {
 	/// \internal
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.
+
 
 protected:
 

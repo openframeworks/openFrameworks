@@ -169,7 +169,7 @@ FN_INTERNAL int upload_firmware(fnusb_dev* dev, char * filename) {
 				if (!home)
 					continue;
 				int homelen = strlen(home);
-				char* dotfolder = "/.libfreenect";
+				char dotfolder[14] = "/.libfreenect";
 				int locallen = strlen(dotfolder);
 				fwfile = (char*)malloc(homelen + locallen + filenamelen + 1);
 				strcpy(fwfile, home);

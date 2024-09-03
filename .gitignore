@@ -38,6 +38,10 @@ examples/**/[Dd]ebug*/
 examples/**/[Rr]elease*/
 examples/**/gcc-debug/
 examples/**/gcc-release/
+examples/**/addons.make
+examples/**/[Mm]akefile
+examples/**/config.make
+examples/**/.gitkeep
 tests/**/[Dd]ebug*/
 tests/**/[Rr]elease*/
 tests/**/gcc-debug/
@@ -55,7 +59,19 @@ tests/**/gcc-release/
 # IDE
 #########################
 
+# VSCode
+*.code-workspace
+.vscode
+
 # XCode
+examples/**/*.entitlements
+examples/**/*.xcconfig
+examples/**/*.plist
+examples/**/*.yml
+tests/**/*.entitlements
+tests/**/*.xcconfig
+tests/**/*.plist
+tests/**/*.yml
 *.pbxuser
 *.perspective
 *.perspectivev3
@@ -135,3 +151,17 @@ Desktop.ini
 /apps*/
 projectGenerator*/
 .cxx/
+
+examples/**/Makefile
+examples/**/config.make
+
+libs/openFrameworksCompiled/project/vs/.vs/
+scripts/templates/vs/.vs/
+**/.vs/
+libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj/xcshareddata
+scripts/templates/ios/bin
+libs/openFrameworksCompiled/project/tvOS/tvOS+OFLib.xcodeproj/xcshareddata
+scripts/osx/regressionTest
+examples/**/**/[Cc]onfig.make
+*.key
+*.pem

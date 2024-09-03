@@ -187,7 +187,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
 	  fd_set fd;
 	  FD_ZERO(&fd);
 	  FD_SET(m_hSocket, &fd);
-	  timeval tv= {(time_t)m_dwTimeoutAccept, 0};
+	  timeval tv= {static_cast<long>(m_dwTimeoutAccept), 0};
 	  if(select(0, &fd, NULL, NULL, &tv) == 0) {
 		  ofxNetworkLogLastError();
 		  return(false);

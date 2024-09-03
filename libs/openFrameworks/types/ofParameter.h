@@ -6,9 +6,11 @@
 // FIXME: crossed references. ofPoint adds ofVec3f which adds ofVec2f and ofVec4f
 #include "ofPoint.h"
 
-#include "ofRectangle.h"
-#include "ofLog.h"
 #include "ofColor.h"
+#include "ofLog.h"
+#include "ofRectangle.h"
+#include "ofMathConstants.h"
+#include "ofUtils.h" // ofToString
 
 template <typename ParameterType>
 class ofParameter;
@@ -31,6 +33,8 @@ public:
 	virtual std::string type() const;
 	virtual std::string getEscapedName() const;
 	virtual std::string valueType() const = 0;
+
+	virtual bool isInit() const = 0;
 
 	virtual void setParent(ofParameterGroup & _parent) = 0;
 	std::vector<std::string> getGroupHierarchyNames() const;
@@ -177,6 +181,13 @@ public:
 	ofParameter<ofFloatColor> & getFloatColor(std::size_t pos);
 	ofParameter<ofRectangle> & getRectangle(std::size_t pos);
 	ofParameterGroup & getGroup(std::size_t pos);
+
+	bool isInit() const {
+		for (std::size_t i = 0; i < size(); i++) {
+			if (!get(i).isInit()) return false;
+		}
+		return true;
+	}
 
 	const ofAbstractParameter & get(const std::string & name) const;
 	const ofAbstractParameter & get(std::size_t pos) const;
@@ -505,6 +516,7 @@ public:
 	ParameterType getMax() const;
 
 	ParameterType getInit() const;
+
 	void reInit();
 
 	/// \brief queries the parameter's event about its notification state
@@ -578,6 +590,7 @@ public:
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
 	void setInit(const ParameterType & init);
+	bool isInit() const;
 
 	void setSerializable(bool serializable);
 	std::shared_ptr<ofAbstractParameter> newReference() const;
@@ -823,6 +836,11 @@ ParameterType ofParameter<ParameterType>::getInit() const {
 }
 
 template <typename ParameterType>
+bool ofParameter<ParameterType>::isInit() const {
+	return obj->value == obj->init;
+}
+
+template <typename ParameterType>
 void ofParameter<ParameterType>::reInit() {
 	setMethod(obj->init);
 }
@@ -1012,6 +1030,8 @@ public:
 	ofParameter();
 	ofParameter(const std::string & name);
 
+	bool isInit() const { return false; }
+
 	ofParameter<void> & set(const std::string & name);
 
 	void setName(const std::string & name);
@@ -1186,6 +1206,7 @@ protected:
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
 	void setInit(const ParameterType & init);
+	bool isInit() const;
 
 	void fromString(const std::string & str);
 
@@ -1470,6 +1491,15 @@ inline void ofReadOnlyParameter<ParameterType, Friend>::setMax(const ParameterTy
 template <typename ParameterType, typename Friend>
 inline void ofReadOnlyParameter<ParameterType, Friend>::setInit(const ParameterType & init) {
 	parameter.setInit(init);
+}
+
+template <typename ParameterType, typename Friend>
+inline bool ofReadOnlyParameter<ParameterType, Friend>::isInit() const {
+	// not sure what the expected behaviour for isInit() would be for ReadOnlyParameter
+	// as-is, it fails with : No member named 'value' in 'ofParameter<std::string>'
+	// returning true while informaing with a log msg seems sane
+	ofLogVerbose("ofReadOnlyParameter::isInit()") << "isInit() called on ofReadOnlyParameter, where it always returns true";
+	return true;
 }
 
 template <typename ParameterType, typename Friend>
