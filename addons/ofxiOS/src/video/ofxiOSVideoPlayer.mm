@@ -1,4 +1,6 @@
 #include "ofxiOSVideoPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 #include "ofxiOSExtras.h"
 #include "ofxiOSEAGLView.h"
 #import "AVFoundationVideoPlayer.h"
@@ -6,6 +8,7 @@
 #include "ofMath.h"
 
 using std::string;
+
 
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
@@ -54,19 +57,11 @@ bool ofxiOSVideoPlayer::load(string name) {
     
     if(bTextureCacheSupported == true && bTextureCacheEnabled == true) {
         if(_videoTextureCache == NULL) {
-#ifdef __IPHONE_6_0
             CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
                                                         NULL,
                                                         ofxiOSGetGLView().context,
                                                         NULL,
                                                         &_videoTextureCache);
-#else
-            CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                                        NULL,
-                                                        (__bridge void *)ofxiOSGetGLView().context,
-                                                        NULL,
-                                                        &_videoTextureCache);
-#endif
             if(err) {
                 ofLogWarning("ofxiOSVideoPlayer::load()") << "Error at CVOpenGLESTextureCacheCreate " << err;
             }
@@ -609,4 +604,4 @@ const ofPixels & ofxiOSVideoPlayer::getPixelsRef() const {
 ofTexture * ofxiOSVideoPlayer::getTexture() {
     return getTexturePtr();
 }
-
+#endif

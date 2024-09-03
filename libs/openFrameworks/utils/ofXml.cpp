@@ -16,8 +16,8 @@ ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml
 }
 
 bool ofXml::load(const of::filesystem::path & file){
-	auto auxDoc { std::make_shared<pugi::xml_document>() };
-	auto res = auxDoc->load_file(ofToDataPathFS(file).c_str());
+	auto auxDoc = std::make_shared<pugi::xml_document>();
+	auto res = auxDoc->load_file(ofToDataPath(file).c_str());
 	if( res ){
 		doc = auxDoc;
 		xml = doc->root();
@@ -49,14 +49,14 @@ bool ofXml::parse(const std::string & xmlStr){
 
 bool ofXml::save(const of::filesystem::path & file) const{
 	if(xml == doc->root()){
-		auto res = doc->save_file(ofToDataPathFS(file).c_str());
+		auto res = doc->save_file(ofToDataPath(file).c_str());
 		ofLogVerbose("ofXml")<<"save: "<< res;
 		ofLogVerbose("ofXml")<<this->toString();
 		return res;
 	}else{
 		pugi::xml_document doc;
 		if(doc.append_copy(xml.root())){
-			return doc.save_file(ofToDataPathFS(file).c_str());
+			return doc.save_file(ofToDataPath(file).c_str());
 		}
 	}
 	return false;
@@ -246,18 +246,18 @@ unsigned int ofXml::getUintValue() const{
 }
 
 float ofXml::getFloatValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float f = this->xml.text().as_float();
-	std::setlocale( LC_NUMERIC, loc );
+	std::setlocale( LC_NUMERIC, loc.c_str() );
 	return f;
 }
 
 double ofXml::getDoubleValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float d = this->xml.text().as_double();
-	std::setlocale( LC_NUMERIC, loc );
+	std::setlocale( LC_NUMERIC, loc.c_str() );
 	return d;
 }
 
@@ -298,18 +298,18 @@ unsigned int ofXml::Attribute::getUintValue() const{
 }
 
 float ofXml::Attribute::getFloatValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float f = this->attr.as_float();
-	std::setlocale( LC_NUMERIC, loc );
+	std::setlocale( LC_NUMERIC, loc.c_str() );
 	return f;
 }
 
 double ofXml::Attribute::getDoubleValue() const{
-	auto loc = std::setlocale( LC_NUMERIC, NULL );
+	std::string loc = std::setlocale( LC_NUMERIC, nullptr );
 	std::setlocale( LC_NUMERIC, "C" );
 	float d = this->attr.as_double();
-	std::setlocale( LC_NUMERIC, loc );
+	std::setlocale( LC_NUMERIC, loc.c_str() );
 	return d;
 }
 

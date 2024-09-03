@@ -537,6 +537,12 @@ void ofPath::setStrokeWidth(float width){
 }
 
 //----------------------------------------------------------
+void ofPath::setStrokeWidth(float width) const {
+	ofPath * mutThis = const_cast<ofPath *>(this);
+	mutThis->strokeWidth = width;
+}
+
+//----------------------------------------------------------
 ofPolyline & ofPath::lastPolyline(){
 	if(polylines.empty() || polylines.back().isClosed()){
 		polylines.push_back(ofPolyline());

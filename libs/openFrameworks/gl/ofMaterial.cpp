@@ -10,8 +10,6 @@
 #include <glm/vec2.hpp>
 #include <glm/gtx/transform.hpp>
 
-//#include <typeinfo>
-
 using std::shared_ptr;
 using std::string;
 
@@ -963,7 +961,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		
 		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader------------------- ";
 		ofLogVerbose() << fragment2DHeader;
-		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader xxxxxxx ";
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader ";
 
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;

@@ -36,7 +36,7 @@ function installPackages {
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
-                    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
+                    echo "if the error persists, please report an issue in github: https://github.com/openframeworks/openFrameworks/issues"
                     exit $exit_code
                 fi
             elif [ $exit_code -eq 0 ]; then
@@ -44,14 +44,14 @@ function installPackages {
                 exit_code=$?
                 if [ $exit_code != 0 ]; then
                     echo "error installing ${pkg}, there could be an error with your internet connection"
-                    echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
+                    echo "if the error persists, please report an issue in github: https://github.com/openframeworks/openFrameworks/issues"
                     exit $exit_code
                 fi
             else
                 echo "error installing ${pkg}"
                 echo $error
                 echo "this seems an error with your distribution repositories but you can also"
-                echo "report an issue in the openFrameworks github: http://github.com/openframeworks/openFrameworks/issues"
+                echo "report an issue in the openFrameworks github: https://github.com/openframeworks/openFrameworks/issues"
                 exit $exit_code
             fi
         fi
@@ -192,7 +192,7 @@ else
 fi
 
 
-PACKAGES="make curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev libassimp-dev librtaudio-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev"
+PACKAGES="make libssl3 libcurl4 brotli libcurl4-openssl-dev libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev libassimp-dev librtaudio-dev libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev libpugixml-dev libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev"
 # libgconf-2-4 libboost-filesystem${BOOST_VER}-dev
 
 echo "installing OF dependencies"
@@ -221,7 +221,7 @@ fi
 
 
 apt-get -y -qq install ${PACKAGES}
-# installPackages ${PACKAGES}
+installPackages ${PACKAGES}
 
 if [[ $MAJOR_VERSION -lt 18 ]]; then
     cp $ROOT/../extra/poco_config.mk $ROOT/../../../addons/ofxPoco/addon_config.mk

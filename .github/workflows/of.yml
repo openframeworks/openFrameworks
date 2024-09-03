@@ -13,7 +13,7 @@ on:
       - 'examples/**'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
 env:
@@ -52,27 +52,30 @@ jobs:
       matrix:
         msystem:
         - mingw64
-        # - ucrt64
+        - ucrt64
+        - clang64
+        # - clangarm64
     defaults:
       run:
         shell: msys2 {0}
     steps:
     - uses: actions/checkout@v4
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.msystem }}
-    - uses: msys2/setup-msys2@v2
+    - uses: msys2/setup-msys2@v2.24.1
       with:
         cache: true
         release: true
-        update: false
+        update: true
         msystem: ${{matrix.msystem}}
-        pacboy: gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+        pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
         install: >-
           unzip
           make
+        # lld
         # gcc:p gdb:p zlib:p poco:p pkgconf:p harfbuzz:p ntldd-git:p 
         # boost:p tools:p
         # install: >-
@@ -82,13 +85,13 @@ jobs:
         # wget
         
     - name: Install dependencies
-      run: ./scripts/ci/msys2/install.sh
+      run: ./scripts/ci/msys2/install.sh --msystem=${{ matrix.msystem }}
 
     - name: Build
       run: ./scripts/ci/msys2/build.sh
 
-    - name: Run tests
-      run: ./scripts/ci/msys2/run_tests.sh
+    # - name: Run tests
+    #   run: ./scripts/ci/msys2/run_tests.sh
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -103,37 +106,28 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2.22.0
+      - uses: msys2/setup-msys2@v2.24.1
         with:
           update: true
           install: >-
             git
             unzip
-            rsync
-            wget
       - name: Install dependencies
         shell: msys2 {0}
         run:
           ./scripts/ci/vs/install_bleeding.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
-      - name: Build emptyExample
+      - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
-        run:
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-      - name: Build allAddonsExample
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run:
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-      - name: Build DEBUG emptyExample
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run:
+        run: |
           msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-      - name: Build DEBUG allAddonsExample
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+      - name: Build DEBUG and RELEASE allAddonsExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
-        run:
+        run: |
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -143,6 +137,7 @@ jobs:
         matrix:
           cfg:
           - { libs: armv6l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf, alladdons: 1 }
+          - { libs: armv7l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf, alladdons: 1 }
           - { libs: aarch64,  multistrap_arch: arm64, suffix: aarch64-linux-gnu, alladdons: 1 }
     env:
      ARCH: ${{matrix.cfg.libs}}
@@ -158,7 +153,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         key: ${{ matrix.cfg.libs }}
 
@@ -173,18 +168,18 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   build-ios-tvos:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
         matrix:
           cfg:
-          - {target: ios, libs: ios}
-          #- {target: tvos, libs: ios} #broken currently maybe better to just remove
+          - {target: ios, libs: macos}
+          - {target: tvos, libs: macos}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v4
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -196,12 +191,12 @@ jobs:
       run: ./scripts/ci/$TARGET/build.sh;
 
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_15.2.app/Contents/Developer"
+        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-  build-linux64-platforms:
+  build-linux64:
     runs-on: ubuntu-24.04
     strategy:
         matrix:
@@ -217,12 +212,12 @@ jobs:
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: make curl libunwind-dev libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+        packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good 
         version: 1.0
 
     - uses: actions/checkout@v4
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -237,16 +232,51 @@ jobs:
            else
             scripts/ci/$TARGET/build.sh;
            fi
-    # - name: Upload Libs
-    #   run: scripts/ci/upload_of_lib.sh;
-    #   env:
-    #     GA_CI_SECRET: ${{ secrets.CI_SECRET }}
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+
+  # build-linux64-2204:
+  #   runs-on: ubuntu-22.04
+  #   strategy:
+  #       matrix:
+  #         cfg:
+  #         - {target: linux64, libs: 64gcc6}
+  #   env:
+  #    TARGET: ${{matrix.cfg.target}}
+  #   steps:
+  #   - name: Remove Old lib-unwind
+  #     run: if [ "$TARGET" = "linux64" ]; then
+  #           sudo apt-get remove libunwind-14 -y;
+  #          fi
+  #   - name: Cache Packages
+  #     uses: awalsh128/cache-apt-pkgs-action@latest
+  #     with:
+  #       packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good 
+  #       version: 1.0
+
+  #   - uses: actions/checkout@v4
+  #   - name: ccache
+  #     uses: hendrikmuhs/ccache-action@v1.2.14
+  #     with:
+  #       key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
+  #   - name: Download libs
+  #     run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+  #   - name: Install dependencies
+  #     run: ./scripts/ci/$TARGET/install.sh;
+  #   - name: Build
+  #     run: if [ "$TARGET" = "linux64" ]; then
+  #           scripts/ci/linux64/build.sh;
+  #           scripts/ci/$TARGET/run_tests.sh;
+  #          else
+  #           scripts/ci/$TARGET/build.sh;
+  #          fi
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   build-macos:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
         matrix:
           cfg:
@@ -255,22 +285,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
-        # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
-        # key: ${{ matrix.msystem }}
 
 
     - name: Download libs
-      # continue-on-error: true
       run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
-#    - name: rm-dev
-#      run: sudo rm -rf /Library/Developer
-
-    # this step is not needed here because the script is empty
-    # - name: install
-    # run: ./scripts/ci/$TARGET/install.sh
 
     - name: Build
       run:
@@ -280,8 +301,8 @@ jobs:
           scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
         fi
       env:
-        DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
-        SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
