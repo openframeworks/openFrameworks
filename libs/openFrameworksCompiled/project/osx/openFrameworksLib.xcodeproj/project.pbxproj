@@ -831,17 +831,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1530;
+				LastUpgradeCheck = 1540;
 			};
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				en,
 			);
 			mainGroup = E4B69B4A0A3A1720003C02F2;
 			productRefGroup = E4B69B4A0A3A1720003C02F2;
@@ -872,6 +869,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env bash";
 			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 		BFF80A5D2C50B2C300784E74 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -980,7 +978,6 @@
 		E4B27C1610CBEB8E00536013 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
@@ -1005,7 +1002,6 @@
 		E4B27C1710CBEB8E00536013 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = "";
@@ -1032,11 +1028,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E432815F138AC0470047C5CB /* Debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/debug/";
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/debug/";
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = "";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1044,11 +1043,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4328160138AC04A0047C5CB /* Release.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/release/";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release";
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = "";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
