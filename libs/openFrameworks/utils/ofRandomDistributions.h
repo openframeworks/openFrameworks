@@ -606,7 +606,7 @@ constexpr auto gaussian(Args &&... args) -> decltype(normal<T>(std::forward<Args
 
 /// \brief alias for of::random::bernoulli
 template <class T = bool, typename... Args>
-constexpr auto yes(Args &&... args) -> decltype(bernoulli<T>(std::forward<Args>(args)...)) {
+constexpr auto sometimes(Args &&... args) -> decltype(bernoulli<T>(std::forward<Args>(args)...)) {
 	return bernoulli<T>(std::forward<Args>(args)...);
 }
 
@@ -763,10 +763,10 @@ template <class T>
 T ofRandomBernoulli(T prob) { return of::random::bernoulli<T>(prob); }
 
 template <class T, typename... Args>
-T ofRandomYes(Args &&... args) { return of::random::yes<T>(std::forward<Args>(args)...); }
+T ofRandomSometimes(Args &&... args) { return of::random::sometimes<T>(std::forward<Args>(args)...); }
 
 template <class T>
-T ofRandomYes(T prob) { return of::random::yes<T>(prob); }
+T ofRandomSometimes(T prob) { return of::random::sometimes<T>(prob); }
 
 template <class T, typename... Args>
 T ofRandomPoisson(Args &&... args) { return of::random::poisson<T>(std::forward<Args>(args)...); }
