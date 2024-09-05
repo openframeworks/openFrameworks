@@ -12,9 +12,6 @@
 
 using std::shared_ptr;
 
-
-
-
 #if !defined(TARGET_NODISPLAY)
 	#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
 	#include "ofAppGLFWWindow.h"
@@ -33,7 +30,7 @@ using std::shared_ptr;
 #endif
 
 #ifdef TARGET_LINUX
-#include "ofGstUtils.h"
+	#include "ofGstUtils.h"
 #endif
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
@@ -67,9 +64,6 @@ namespace{
             signal(SIGHUP,  nullptr);
             signal(SIGABRT, nullptr);
 
-//            if(mainLoop()){
-//                mainLoop()->shouldClose(signum);
-//            }
 			if(ofCore.mainLoop){
 				ofCore.mainLoop->shouldClose(signum);
 			}
@@ -91,12 +85,7 @@ void ofCloseFreeImage();
 
 
 void ofInit(){
-	
 	ofCore.init();
-	ofCore.shutdownFunctions.emplace_back(ofURLFileLoaderShutdown);
-	ofCore.shutdownFunctions.emplace_back(ofTrueTypeShutdown);
-	ofCore.shutdownFunctions.emplace_back(ofCloseFreeImage);
-
 	ofCore.shutdownFunctions = {
 		ofURLFileLoaderShutdown,
 		ofTrueTypeShutdown,
@@ -104,32 +93,21 @@ void ofInit(){
 		// not even needed. empty function
 		of::priv::endutils,
 #ifndef TARGET_NO_SOUND
-	ofSoundShutdown,
+		ofSoundShutdown,
 #endif
 
 #if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
-	closeQuicktime,
+		closeQuicktime,
 #endif
 
 #ifdef TARGET_LINUX
-	ofGstUtils::quitGstMainLoop,
+		ofGstUtils::quitGstMainLoop,
 #endif
 	};
 
-	std::cout << "ofInit, shutdown functions size = " << ofCore.shutdownFunctions.size() << std::endl;
+//	std::cout << "ofInit, shutdown functions size = " << ofCore.shutdownFunctions.size() << std::endl;
+//
 
-
-
-
-
-	
-	
-//	std::cout << "ofInit !!!" << std::endl;
-//	if(initialized()) return;
-//	initialized() = true;
-//	exiting() = false;
-	
-//	std::cout << "ofInit() " << std::endl;
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
 #else

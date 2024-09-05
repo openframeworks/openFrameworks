@@ -13,7 +13,7 @@ using std::vector;
 
 static ofVboMesh gradientMesh;
 
-void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer, bool setDefaults) {
+void ofSetCurrentRenderer(const shared_ptr<ofBaseRenderer> & renderer, bool setDefaults) {
 	if (setDefaults) {
 		ofStyle style = ofGetCurrentRenderer()->getStyle();
 		renderer->setupGraphicDefaults();

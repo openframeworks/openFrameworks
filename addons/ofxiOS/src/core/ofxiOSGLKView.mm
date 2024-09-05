@@ -83,23 +83,23 @@ static ofxiOSGLKView * _instanceRef = nil;
 }
 
 - (void)setup {
-    if(window.get() == NULL) {
+    if(window.get() == nullptr) {
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
         return;
     }
     
     if(app.get() != ofGetAppPtr()) { // check if already running.
         
-        ofSetMainLoop(shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
+        ofSetMainLoop(shared_ptr<ofMainLoop>(nullptr)); // destroy old main loop.
         auto mainLoop = std::make_shared<ofMainLoop>(); // make new main loop.
         ofSetMainLoop(mainLoop);
         
         ofiOSWindowSettings windowSettings = window->getSettings();
-        window = NULL;
+        window = nullptr;
 
         window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
 
-        ofRunApp(app);
+        ofRunApp(app, window);
     }
     
     if(window->isProgrammableRenderer() == true) {

@@ -10,8 +10,6 @@ class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
 
-
-
 static struct ofCoreInternal {
 public:
 	ofCoreInternal() {};
@@ -33,8 +31,7 @@ public:
 		// any other deinitialization
 		mainLoop->exit();
 
-		// TODO: add shutdown functions here.
-		// vector of pointer to functions
+		// all shutdown functions called
 		for (const auto & func : shutdownFunctions) {
 			func();
 		}
@@ -155,7 +152,7 @@ void ofToggleFullscreen();
 void ofSetVerticalSync(bool bSync);
 
 ofCoreEvents & ofEvents();
-void ofSetCurrentRenderer(std::shared_ptr<ofBaseRenderer> renderer, bool setDefaults = false);
+void ofSetCurrentRenderer(const std::shared_ptr<ofBaseRenderer> & renderer, bool setDefaults = false);
 std::shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
 void ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
