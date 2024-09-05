@@ -39,8 +39,8 @@ void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode) {
 	ofSetupOpenGL(window, w, h, screenMode);
 }
 
-int ofRunApp(std::shared_ptr<ofBaseApp> && OFSA);
-int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
+//int ofRunApp(std::shared_ptr<ofBaseApp> && OFSA);
+//int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
 void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
 int ofRunMainLoop();
 
@@ -143,3 +143,40 @@ void * ofGetCocoaWindow();
 HGLRC ofGetWGLContext();
 HWND ofGetWin32Window();
 #endif
+
+
+
+static struct ofCoreInternal {
+public:
+	ofCoreInternal() {};
+	~ofCoreInternal() {};
+	
+	// ofAppRunner
+	bool initialized = false;
+	bool exiting = false;
+	ofCoreEvents noopEvents;
+	std::shared_ptr<ofMainLoop> mainLoop { std::make_shared<ofMainLoop>() };
+	
+	// ofFileUtils
+	
+	void exit() {
+		if(!initialized) return;
+		
+		// controlled destruction of the mainLoop before
+		// any other deinitialization
+		mainLoop->exit();
+
+		// TODO: add shutdown functions here.
+		// vector of pointer to functions
+
+		initialized = false;
+		exiting = true;
+	}
+	
+	void init() {
+		if (initialized) return;
+		initialized  = true;
+		exiting = false;
+	}
+	
+} ofCore;

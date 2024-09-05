@@ -52,7 +52,9 @@ std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings
 	return window;
 }
 
-void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app){
+void ofMainLoop::run(
+			const std::shared_ptr<ofAppBaseWindow> & window,
+			const std::shared_ptr<ofBaseApp> & app) {
 	mainApp = app;
 //	windowsApps[window] = app;
 	if(app){

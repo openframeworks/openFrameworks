@@ -12,6 +12,9 @@
 
 using std::shared_ptr;
 
+
+
+
 #if !defined(TARGET_NODISPLAY)
 	#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
 	#include "ofAppGLFWWindow.h"
@@ -43,29 +46,9 @@ using std::shared_ptr;
 #endif
 
 
+
 //--------------------------------------
 namespace{
-
-    shared_ptr<ofMainLoop> & mainLoop(){
-        static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
-        return *mainLoop;
-    }
-
-    bool & initialized(){
-        static bool * initialized = new bool(false);
-        return *initialized;
-    }
-
-	bool & exiting(){
-		static bool * exiting = new bool(false);
-		return *exiting;
-	}
-
-	ofCoreEvents & noopEvents(){
-		static auto * noopEvents = new ofCoreEvents();
-		return *noopEvents;
-	}
-
     #if defined(TARGET_LINUX) || defined(TARGET_OSX)
         #include <signal.h>
         #include <string.h>
@@ -84,9 +67,12 @@ namespace{
             signal(SIGHUP,  nullptr);
             signal(SIGABRT, nullptr);
 
-            if(mainLoop()){
-                mainLoop()->shouldClose(signum);
-            }
+//            if(mainLoop()){
+//                mainLoop()->shouldClose(signum);
+//            }
+			if(ofCore.mainLoop){
+				ofCore.mainLoop->shouldClose(signum);
+			}
         }
     #endif
 }
@@ -105,10 +91,16 @@ void ofCloseFreeImage();
 
 
 void ofInit(){
+	
+	ofCore.init();
+	
+	
+	
+	
 //	std::cout << "ofInit !!!" << std::endl;
-	if(initialized()) return;
-	initialized() = true;
-	exiting() = false;
+//	if(initialized()) return;
+//	initialized() = true;
+//	exiting() = false;
 	
 //	std::cout << "ofInit() " << std::endl;
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
@@ -162,45 +154,53 @@ void ofInit(){
     setlocale(LC_ALL,"");
     ofLogWarning("ofInit") << "MSYS2 has limited support for UTF-8. using "<< std::string( setlocale(LC_ALL,NULL) );
 #endif
+	return;
+
 }
 
 //--------------------------------------
+// TODO: const &
 shared_ptr<ofMainLoop> ofGetMainLoop(){
-	return mainLoop();
+	return ofCore.mainLoop;
 }
 
 //--------------------------------------
 void ofSetMainLoop(const shared_ptr<ofMainLoop> & newMainLoop) {
-	mainLoop() = newMainLoop;
+	ofCore.mainLoop = newMainLoop;
 }
 
 //--------------------------------------
-int ofRunApp(ofBaseApp * OFSA){
-	mainLoop()->run(shared_ptr<ofBaseApp>(OFSA));
-	auto ret = ofRunMainLoop();
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-	ofExitCallback();
-#endif
-	return ret;
-}
+//int ofRunApp(ofBaseApp * OFSA){
+//	ofCore.mainLoop->run(shared_ptr<ofBaseApp>(OFSA));
+//	auto ret = ofRunMainLoop();
+//#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+//	ofExitCallback();
+//#endif
+//	return ret;
+//}
+//
+////--------------------------------------
+//int ofRunApp(shared_ptr<ofBaseApp> && app){
+//	ofCore.mainLoop->run(std::move(app));
+//	auto ret = ofRunMainLoop();
+//#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+//	ofExitCallback();
+//#endif
+//	return ret;
+//}
 
-//--------------------------------------
-int ofRunApp(shared_ptr<ofBaseApp> && app){
-	mainLoop()->run(std::move(app));
-	auto ret = ofRunMainLoop();
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-	ofExitCallback();
-#endif
-	return ret;
-}
+////--------------------------------------
+//void ofRunApp(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
+//	ofCore.mainLoop->run(window, std::move(app));
+//}
 
-//--------------------------------------
-void ofRunApp(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
-	mainLoop()->run(window, std::move(app));
+void ofRunApp(
+			  const shared_ptr<ofAppBaseWindow> & window, const shared_ptr<ofBaseApp> & app){
+	ofCore.mainLoop->run(window, app);
 }
 
 int ofRunMainLoop(){
-	auto ret = mainLoop()->loop();
+	auto ret = ofCore.mainLoop->loop();
 	return ret;
 }
 
@@ -221,7 +221,7 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 	ofInit();
-	return mainLoop()->createWindow(settings);
+	return ofCore.mainLoop->createWindow(settings);
 }
 
 //-----------------------	gets called when the app exits
@@ -229,11 +229,9 @@ shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 //							at the end of the application
 
 void ofExitCallback(){
-	if(!initialized()) return;
+	
+	ofCore.exit();
 
-	// controlled destruction of the mainLoop before
-	// any other deinitialization
-	mainLoop()->exit();
 
 	// everything should be destroyed here, except for
 	// static objects
@@ -279,39 +277,38 @@ void ofExitCallback(){
 	// events
 	of::priv::endutils();
 
-	initialized() = false;
-	exiting() = true;
+
 }
 
 //--------------------------------------
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
-	auto window = mainLoop()->getCurrentWindow();
+	auto window = ofCore.mainLoop->getCurrentWindow();
 	if(window){
 		return window->events();
 	}else{
-		if(!exiting()){
+		if(!ofCore.exiting){
 			ofLogError("ofEvents") << "Trying to call ofEvents() before a window has been setup";
 			ofLogError("ofEvents") << "We'll return a void events instance to avoid crashes but somethings might not work";
 			ofLogError("ofEvents") << "Set a breakpoint in " << __FILE__ << " line " << __LINE__ << " to check where is the wrong call";
 		}
-		return noopEvents();
+		return ofCore.noopEvents;
 	}
 }
 
 //--------------------------------------
 void ofSetEscapeQuitsApp(bool bQuitOnEsc){
-	mainLoop()->setEscapeQuitsLoop(bQuitOnEsc);
+	ofCore.mainLoop->setEscapeQuitsLoop(bQuitOnEsc);
 }
 
 //--------------------------------------
 shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
-	return mainLoop()->getCurrentWindow()->renderer();
+	return ofCore.mainLoop->getCurrentWindow()->renderer();
 }
 
 //--------------------------------------
 ofBaseApp * ofGetAppPtr(){
-	return mainLoop()->getCurrentApp().get();
+	return ofCore.mainLoop->getCurrentApp().get();
 }
 
 //--------------------------------------
@@ -325,33 +322,33 @@ bool ofIsCurrentThreadTheMainThread() {
 
 //--------------------------------------
 ofAppBaseWindow * ofGetWindowPtr(){
-	return mainLoop()->getCurrentWindow().get();
+	return ofCore.mainLoop->getCurrentWindow().get();
 }
 
 //--------------------------------------
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow() {
-	return mainLoop()->getCurrentWindow();
+	return ofCore.mainLoop->getCurrentWindow();
 }
 
 //--------------------------------------
 void ofExit(int status){
-	mainLoop()->shouldClose(status);
+	ofCore.mainLoop->shouldClose(status);
 }
 
 //--------------------------------------
 void ofHideCursor(){
-	mainLoop()->getCurrentWindow()->hideCursor();
+	ofCore.mainLoop->getCurrentWindow()->hideCursor();
 }
 
 //--------------------------------------
 void ofShowCursor(){
-	mainLoop()->getCurrentWindow()->showCursor();
+	ofCore.mainLoop->getCurrentWindow()->showCursor();
 }
 
 //--------------------------------------
 // FIXME: this is not standard with the other window modes.
 void ofSetOrientation(ofOrientation orientation, bool vFlip){
-	mainLoop()->getCurrentWindow()->setOrientation(orientation);
+	ofCore.mainLoop->getCurrentWindow()->setOrientation(orientation);
 	// TODO: every window should set orientation on it's renderer
 	if(ofGetCurrentRenderer()){
 		ofGetCurrentRenderer()->setOrientation(orientation,vFlip);
@@ -360,92 +357,92 @@ void ofSetOrientation(ofOrientation orientation, bool vFlip){
 
 //--------------------------------------
 ofOrientation ofGetOrientation(){
-	return mainLoop()->getCurrentWindow()->getOrientation();
+	return ofCore.mainLoop->getCurrentWindow()->getOrientation();
 }
 
 //--------------------------------------
 void ofSetWindowPosition(int x, int y){
-	mainLoop()->getCurrentWindow()->setWindowPosition(x,y);
+	ofCore.mainLoop->getCurrentWindow()->setWindowPosition(x,y);
 }
 
 //--------------------------------------
 void ofSetWindowShape(int width, int height){
-	mainLoop()->getCurrentWindow()->setWindowShape(width, height);
+	ofCore.mainLoop->getCurrentWindow()->setWindowShape(width, height);
 }
 
 //--------------------------------------
 void ofSetWindowRect(const ofRectangle & rect) {
-	mainLoop()->getCurrentWindow()->setWindowRect(rect);
+	ofCore.mainLoop->getCurrentWindow()->setWindowRect(rect);
 }
 
 //--------------------------------------
 glm::ivec2 ofGetWindowPosition() {
-	return mainLoop()->getCurrentWindow()->getWindowPosition();
+	return ofCore.mainLoop->getCurrentWindow()->getWindowPosition();
 }
 
 //--------------------------------------
 int ofGetWindowPositionX(){
-	return (int)mainLoop()->getCurrentWindow()->getWindowPosition().x;
+	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowPosition().x;
 }
 
 //--------------------------------------
 int ofGetWindowPositionY(){
-	return (int)mainLoop()->getCurrentWindow()->getWindowPosition().y;
+	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowPosition().y;
 }
 
 //--------------------------------------
 int ofGetScreenWidth(){
-	return mainLoop()->getCurrentWindow()->getScreenSize().x;
+	return ofCore.mainLoop->getCurrentWindow()->getScreenSize().x;
 }
 
 //--------------------------------------
 int ofGetScreenHeight(){
-	return mainLoop()->getCurrentWindow()->getScreenSize().y;
+	return ofCore.mainLoop->getCurrentWindow()->getScreenSize().y;
 }
 
 //--------------------------------------
 glm::ivec2 ofGetScreenSize() {
-	return mainLoop()->getCurrentWindow()->getScreenSize();
+	return ofCore.mainLoop->getCurrentWindow()->getScreenSize();
 }
 
 //--------------------------------------------------
 int ofGetWidth(){
-	return (int)mainLoop()->getCurrentWindow()->getWidth();
+	return (int)ofCore.mainLoop->getCurrentWindow()->getWidth();
 }
 
 //--------------------------------------------------
 int ofGetHeight(){
-	return (int)mainLoop()->getCurrentWindow()->getHeight();
+	return (int)ofCore.mainLoop->getCurrentWindow()->getHeight();
 }
 
 //--------------------------------------------------
 int ofGetWindowWidth(){
-	return (int)mainLoop()->getCurrentWindow()->getWindowSize().x;
+	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowSize().x;
 }
 //--------------------------------------------------
 int ofGetWindowHeight(){
-	return (int)mainLoop()->getCurrentWindow()->getWindowSize().y;
+	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowSize().y;
 }
 
 //--------------------------------------------------
 std::string ofGetClipboardString(){
-	return mainLoop()->getCurrentWindow()->getClipboardString();
+	return ofCore.mainLoop->getCurrentWindow()->getClipboardString();
 }
 
 //--------------------------------------------------
 void ofSetClipboardString(const std::string & str){
-	mainLoop()->getCurrentWindow()->setClipboardString(str);
+	ofCore.mainLoop->getCurrentWindow()->setClipboardString(str);
 }
 
 //--------------------------------------------------
 bool ofDoesHWOrientation(){
-	return mainLoop()->getCurrentWindow()->doesHWOrientation();
+	return ofCore.mainLoop->getCurrentWindow()->doesHWOrientation();
 }
 
 //--------------------------------------------------
 glm::ivec2 ofGetWindowSize() {
 	//this can't return glm::vec2(ofGetWidth(), ofGetHeight()) as width and height change based on orientation.
-	return mainLoop()->getCurrentWindow()->getWindowSize();
+	return ofCore.mainLoop->getCurrentWindow()->getWindowSize();
 }
 
 //--------------------------------------------------
@@ -466,85 +463,85 @@ ofRectangle	ofGetWindowRect() {
 
 //--------------------------------------
 void ofSetWindowTitle(std::string title){
-	mainLoop()->getCurrentWindow()->setWindowTitle(title);
+	ofCore.mainLoop->getCurrentWindow()->setWindowTitle(title);
 }
 
 //----------------------------------------------------------
 void ofEnableSetupScreen(){
-	mainLoop()->getCurrentWindow()->enableSetupScreen();
+	ofCore.mainLoop->getCurrentWindow()->enableSetupScreen();
 }
 
 //----------------------------------------------------------
 void ofDisableSetupScreen(){
-	mainLoop()->getCurrentWindow()->disableSetupScreen();
+	ofCore.mainLoop->getCurrentWindow()->disableSetupScreen();
 }
 
 //--------------------------------------
 void ofToggleFullscreen(){
-	mainLoop()->getCurrentWindow()->toggleFullscreen();
+	ofCore.mainLoop->getCurrentWindow()->toggleFullscreen();
 }
 
 //--------------------------------------
 void ofSetFullscreen(bool fullscreen){
-	mainLoop()->getCurrentWindow()->setFullscreen(fullscreen);
+	ofCore.mainLoop->getCurrentWindow()->setFullscreen(fullscreen);
 }
 
 //--------------------------------------
 int ofGetWindowMode(){
-	return mainLoop()->getCurrentWindow()->getWindowMode();
+	return ofCore.mainLoop->getCurrentWindow()->getWindowMode();
 }
 
 //--------------------------------------
 void ofSetVerticalSync(bool bSync){
-	mainLoop()->getCurrentWindow()->setVerticalSync(bSync);
+	ofCore.mainLoop->getCurrentWindow()->setVerticalSync(bSync);
 }
 
 //-------------------------- native window handles
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 Display* ofGetX11Display(){
-	return mainLoop()->getCurrentWindow()->getX11Display();
+	return ofCore.mainLoop->getCurrentWindow()->getX11Display();
 }
 
 Window  ofGetX11Window(){
-	return mainLoop()->getCurrentWindow()->getX11Window();
+	return ofCore.mainLoop->getCurrentWindow()->getX11Window();
 }
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 GLXContext ofGetGLXContext(){
-	return mainLoop()->getCurrentWindow()->getGLXContext();
+	return ofCore.mainLoop->getCurrentWindow()->getGLXContext();
 }
 #endif
 
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
 EGLDisplay ofGetEGLDisplay(){
-	return mainLoop()->getCurrentWindow()->getEGLDisplay();
+	return ofCore.mainLoop->getCurrentWindow()->getEGLDisplay();
 }
 
 EGLContext ofGetEGLContext(){
-	return mainLoop()->getCurrentWindow()->getEGLContext();
+	return ofCore.mainLoop->getCurrentWindow()->getEGLContext();
 }
 EGLSurface ofGetEGLSurface(){
-	return mainLoop()->getCurrentWindow()->getEGLSurface();
+	return ofCore.mainLoop->getCurrentWindow()->getEGLSurface();
 }
 #endif
 
 #if defined(TARGET_OSX)
 void * ofGetNSGLContext(){
-	return mainLoop()->getCurrentWindow()->getNSGLContext();
+	return ofCore.mainLoop->getCurrentWindow()->getNSGLContext();
 }
 
 void * ofGetCocoaWindow(){
-	return mainLoop()->getCurrentWindow()->getCocoaWindow();
+	return ofCore.mainLoop->getCurrentWindow()->getCocoaWindow();
 }
 #endif
 
 #if defined(TARGET_WIN32)
 HGLRC ofGetWGLContext(){
-	return mainLoop()->getCurrentWindow()->getWGLContext();
+	return ofCore.mainLoop->getCurrentWindow()->getWGLContext();
 }
 
 HWND ofGetWin32Window(){
-	return mainLoop()->getCurrentWindow()->getWin32Window();
+	return ofCore.mainLoop->getCurrentWindow()->getWin32Window();
 }
 #endif
