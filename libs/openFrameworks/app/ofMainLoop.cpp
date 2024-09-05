@@ -128,16 +128,8 @@ int ofMainLoop::loop(){
 
 void ofMainLoop::loopOnce(){
 	if(bShouldClose) return;
-	
-//	std::cout << "ofMainLoop::loopOnce()" << std::endl;
+
 	auto i = windows.begin();
-	
-//	currentWindow = (*i);
-//	// here, not looping all windows
-//	i->get()->makeCurrent();
-//	i->get()->update();
-//	i->get()->draw();
-	
 	for ( ; i != windows.end(); ) {
 		if (i->get()->getWindowShouldClose()) {
 			i = windows.erase(i);
@@ -151,35 +143,6 @@ void ofMainLoop::loopOnce(){
 		}
 	}
 	
-
-
-	
-//	for(auto i = windows.begin(); !windows.empty() && i != windows.end();){
-//		if(i->get()->getWindowShouldClose()){
-////			const auto & window = i->first;
-//			i->get()->close();
-//			windows.erase(i++);
-//		} else {
-//			currentWindow = i;
-//			i->makeCurrent();
-//			i->update();
-//			i->draw();
-//			i++; ///< continue to next window
-//		}
-//	}
-//	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
-//		if(i->first->getWindowShouldClose()){
-//			const auto & window = i->first;
-//			window->close();
-//			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
-//		}else{
-//			currentWindow = i->first;
-//			i->first->makeCurrent();
-//			i->first->update();
-//			i->first->draw();
-//			i++; ///< continue to next window
-//		}
-//	}
 	loopEvent.notify(this);
 }
 
@@ -193,17 +156,9 @@ void ofMainLoop::exit(){
 	exitEvent.notify(this);
 
 	for (auto window : windows) {
-//	for(auto i: windowsApps){
-//		std::shared_ptr<ofAppBaseWindow> window = i.first;
-//		std::shared_ptr<ofBaseApp> app = i.second;
-//		if(app == nullptr) {
-//			continue;
-//		}
-
 		if(window == nullptr) {
 			continue;
 		}
-
 
 		ofEventArgs args;
 		ofNotifyEvent(window->events().exit, args, this);
@@ -280,12 +235,6 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 			break;
 		}
 	}
-//	for(auto i: windowsApps){
-//		if(i.first.get() == window){
-//			currentWindow = i.first;
-//			break;
-//		}
-//	}
 }
 
 std::shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){

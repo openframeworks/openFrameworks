@@ -53,13 +53,16 @@ public:
 	std::thread::id get_thread_id() { return thread_id; };
 	
 	// Testing
+	// FIXME: const & ?
 	std::vector <std::shared_ptr<ofAppBaseWindow> > getWindows() { return windows; }
 
 	void ofBeginWindow(int n);
 	void ofEndWindow();
 
 	
-	
+public:
+	std::weak_ptr<ofAppBaseWindow> currentWindow;
+
 private:
 	std::thread::id thread_id { std::this_thread::get_id() };
 
@@ -70,7 +73,6 @@ private:
 	std::shared_ptr<ofBaseApp> mainApp;
 	
 	bool bShouldClose;
-	std::weak_ptr<ofAppBaseWindow> currentWindow;
 	int status;
 	bool allowMultiWindow;
 	std::function<void()> windowLoop;

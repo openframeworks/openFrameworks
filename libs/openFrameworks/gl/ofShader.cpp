@@ -715,7 +715,7 @@ bool ofShader::linkProgram() {
 
 //#ifndef TARGET_OPENGLES
     #ifdef GLEW_ARB_uniform_buffer_object
-        if (GLEW_ARB_uniform_buffer_object) {
+//        if (GLEW_ARB_uniform_buffer_object) {
             // Pre-cache all active uniforms blocks
             GLint numUniformBlocks = 0;
             glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -730,7 +730,7 @@ bool ofShader::linkProgram() {
 				bufferObjectsCache[name] = std::make_unique<ofBufferObject>();
                 uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
             }
-        }
+//        }
     #endif
 //#endif
 
@@ -1336,39 +1336,46 @@ GLint ofShader::getUniformLocation(const string & name) const {
 GLint ofShader::getUniformBlockIndex(const string & name) const {
     if (!bLoaded) return -1;
 
-    if (GLEW_ARB_uniform_buffer_object) {
+//    if (GLEW_ARB_uniform_buffer_object) {
+#ifdef GLEW_ARB_uniform_buffer_object
         auto it = uniformBlocksCache.find(name);
         if (it == uniformBlocksCache.end()) {
             return -1;
         } else {
             return it->second;
         }
-    } else {
+#else
+		//    } else {
         ofLogError("ofShader::getUniformBlockIndex") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
         return -1;
-    }
+//    }
+#endif
 }
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformBlockBinding(const string & name) const {
     if (!bLoaded) return -1;
 
-    if (GLEW_ARB_uniform_buffer_object) {
+#ifdef GLEW_ARB_uniform_buffer_object
+//    if (GLEW_ARB_uniform_buffer_object) {
         GLint index = getUniformBlockIndex(name);
         if (index == -1) return -1;
 
         GLint blockBinding;
         glGetActiveUniformBlockiv(program, index, GL_UNIFORM_BLOCK_BINDING, &blockBinding);
         return blockBinding;
-    } else {
+#else
+//} else {
         ofLogError("ofShader::getUniformBlockBinding") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
         return -1;
-    }
+//    }
+#endif
 }
 
 //--------------------------------------------------------------
 void ofShader::printActiveUniformBlocks() const {
-    if (GLEW_ARB_uniform_buffer_object) {
+#ifdef GLEW_ARB_uniform_buffer_object
+//    if (GLEW_ARB_uniform_buffer_object) {
         GLint numUniformBlocks = 0;
         glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
         ofLogNotice("ofShader") << numUniformBlocks << " uniform blocks";
@@ -1395,22 +1402,27 @@ void ofShader::printActiveUniformBlocks() const {
             line.str("");
         }
         delete[] uniformBlockName;
-    } else {
+#else
+//} else {
         ofLogError("ofShader::printActiveUniformBlocks") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
-    }
+#endif
+//}
 }
 
 void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
     if (bLoaded) {
-        if (GLEW_ARB_uniform_buffer_object) {
+#ifdef GLEW_ARB_uniform_buffer_object
+//        if (GLEW_ARB_uniform_buffer_object) {
             GLint index = getUniformBlockIndex(name);
             if (index != -1) {
                 glUniformBlockBinding(program, index, binding);
             }
-        } else {
+#else
+//	} else {
             ofLogError("ofShader::bindUniformBlock") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
         }
-    }
+//    }
+#endif
 }
 //    #endif
 //#endif
