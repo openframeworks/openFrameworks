@@ -35,7 +35,7 @@ public:
 
 	void run(const std::shared_ptr<ofAppBaseWindow> & window, const std::shared_ptr<ofBaseApp> & app);
 //	std::shared_ptr<ofBaseApp> && app);
-	void run(std::shared_ptr<ofBaseApp> && app);
+	void run(const std::shared_ptr<ofBaseApp> & app);
 	int loop();
 	void loopOnce();
 	void pollEvents();
