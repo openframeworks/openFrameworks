@@ -1410,7 +1410,9 @@ void ofShader::printActiveUniformBlocks() const {
 }
 
 void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
-    if (bLoaded) {
+	if (!bLoaded) return;
+
+
 #ifdef GLEW_ARB_uniform_buffer_object
 //        if (GLEW_ARB_uniform_buffer_object) {
             GLint index = getUniformBlockIndex(name);
@@ -1420,9 +1422,9 @@ void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
 #else
 //	} else {
             ofLogError("ofShader::bindUniformBlock") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
-        }
 //    }
 #endif
+	
 }
 //    #endif
 //#endif
