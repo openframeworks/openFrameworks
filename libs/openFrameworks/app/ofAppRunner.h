@@ -10,6 +10,51 @@ class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
 
+
+
+static struct ofCoreInternal {
+public:
+	ofCoreInternal() {};
+	~ofCoreInternal() {};
+	
+	std::vector <std::function<void()>> shutdownFunctions;
+	// ofAppRunner
+	bool initialized = false;
+	bool exiting = false;
+	ofCoreEvents noopEvents;
+	std::shared_ptr<ofMainLoop> mainLoop { std::make_shared<ofMainLoop>() };
+	
+	// ofFileUtils
+	
+	void exit() {
+		if(!initialized) return;
+		
+		// controlled destruction of the mainLoop before
+		// any other deinitialization
+		mainLoop->exit();
+
+		// TODO: add shutdown functions here.
+		// vector of pointer to functions
+		for (const auto & func : shutdownFunctions) {
+			func();
+		}
+
+		initialized = false;
+		exiting = true;
+	}
+	
+	void init() {
+		if (initialized) return;
+		initialized  = true;
+		exiting = false;
+	}
+	
+} ofCore;
+
+
+
+
+
 void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode); // sets up the opengl context!
 std::shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings); // sets up the opengl context!
@@ -22,7 +67,7 @@ void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWi
 	ofWindowSettings settings;
 	settings.setSize(w, h);
 	settings.windowMode = screenMode;
-	ofGetMainLoop()->addWindow(windowPtr);
+	ofCore.mainLoop->addWindow(windowPtr);
 	windowPtr->setup(settings);
 }
 
@@ -41,7 +86,8 @@ void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode) {
 
 //int ofRunApp(std::shared_ptr<ofBaseApp> && OFSA);
 //int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
-void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
+void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window,
+			  const std::shared_ptr<ofBaseApp> & app);
 int ofRunMainLoop();
 
 ofBaseApp * ofGetAppPtr();
@@ -145,38 +191,3 @@ HWND ofGetWin32Window();
 #endif
 
 
-
-static struct ofCoreInternal {
-public:
-	ofCoreInternal() {};
-	~ofCoreInternal() {};
-	
-	// ofAppRunner
-	bool initialized = false;
-	bool exiting = false;
-	ofCoreEvents noopEvents;
-	std::shared_ptr<ofMainLoop> mainLoop { std::make_shared<ofMainLoop>() };
-	
-	// ofFileUtils
-	
-	void exit() {
-		if(!initialized) return;
-		
-		// controlled destruction of the mainLoop before
-		// any other deinitialization
-		mainLoop->exit();
-
-		// TODO: add shutdown functions here.
-		// vector of pointer to functions
-
-		initialized = false;
-		exiting = true;
-	}
-	
-	void init() {
-		if (initialized) return;
-		initialized  = true;
-		exiting = false;
-	}
-	
-} ofCore;

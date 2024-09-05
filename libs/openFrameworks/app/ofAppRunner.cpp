@@ -26,7 +26,7 @@ using std::shared_ptr;
 		auto settings = windowPtr->getSettings();
 		settings.setSize(w,h);
 		settings.windowMode = screenMode;
-		ofGetMainLoop()->addWindow(windowPtr);
+		ofCore.mainLoop->addWindow(windowPtr);
 		windowPtr->setup(settings);
 	}
 	#endif
@@ -93,8 +93,35 @@ void ofCloseFreeImage();
 void ofInit(){
 	
 	ofCore.init();
-	
-	
+	ofCore.shutdownFunctions.emplace_back(ofURLFileLoaderShutdown);
+	ofCore.shutdownFunctions.emplace_back(ofTrueTypeShutdown);
+	ofCore.shutdownFunctions.emplace_back(ofCloseFreeImage);
+
+	ofCore.shutdownFunctions = {
+		ofURLFileLoaderShutdown,
+		ofTrueTypeShutdown,
+		ofCloseFreeImage,
+		// not even needed. empty function
+		of::priv::endutils,
+#ifndef TARGET_NO_SOUND
+	ofSoundShutdown,
+#endif
+
+#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
+	closeQuicktime,
+#endif
+
+#ifdef TARGET_LINUX
+	ofGstUtils::quitGstMainLoop,
+#endif
+	};
+
+	std::cout << "ofInit, shutdown functions size = " << ofCore.shutdownFunctions.size() << std::endl;
+
+
+
+
+
 	
 	
 //	std::cout << "ofInit !!!" << std::endl;
@@ -195,7 +222,8 @@ void ofSetMainLoop(const shared_ptr<ofMainLoop> & newMainLoop) {
 //}
 
 void ofRunApp(
-			  const shared_ptr<ofAppBaseWindow> & window, const shared_ptr<ofBaseApp> & app){
+			  const shared_ptr<ofAppBaseWindow> & window, 
+			  const shared_ptr<ofBaseApp> & app){
 	ofCore.mainLoop->run(window, app);
 }
 
@@ -219,71 +247,24 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 	ofCreateWindow(settings);
 }
 
+
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 	ofInit();
 	return ofCore.mainLoop->createWindow(settings);
 }
 
-//-----------------------	gets called when the app exits
-//							currently looking at who to turn off
-//							at the end of the application
 
 void ofExitCallback(){
-	
 	ofCore.exit();
-
-
-	// everything should be destroyed here, except for
-	// static objects
-
-
-	// finish every library and subsystem
-	ofURLFileLoaderShutdown();
-
-	#ifndef TARGET_NO_SOUND
-		//------------------------
-		// try to close engine if needed:
-		ofSoundShutdown();
-		//------------------------
-	#endif
-
-	// try to close quicktime, for non-linux systems:
-	#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
-	closeQuicktime();
-	#endif
-
-
-	//------------------------
-	// try to close freeImage:
-	ofCloseFreeImage();
-
-
-	#ifdef WIN32_HIGH_RES_TIMING
-		timeEndPeriod(1);
-	#endif
-
-	//------------------------
-	// try to close gstreamer
-	#ifdef TARGET_LINUX
-		ofGstUtils::quitGstMainLoop();
-	#endif
-
-	//------------------------
-	// try to close font libraries
-	ofTrueTypeShutdown();
-
-	// static deinitialization happens after this finishes
-	// every object should have ended by now and won't receive any
-	// events
-	of::priv::endutils();
-
-
+#ifdef WIN32_HIGH_RES_TIMING
+	timeEndPeriod(1);
+#endif
 }
 
 //--------------------------------------
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
-	auto window = ofCore.mainLoop->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if(window){
 		return window->events();
 	}else{
@@ -313,7 +294,7 @@ ofBaseApp * ofGetAppPtr(){
 
 //--------------------------------------
 std::thread::id ofGetMainThreadId() {
-	return ofGetMainLoop()->get_thread_id() ;
+	return ofCore.mainLoop->get_thread_id() ;
 }
 
 bool ofIsCurrentThreadTheMainThread() {

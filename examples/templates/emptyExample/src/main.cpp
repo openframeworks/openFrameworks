@@ -10,8 +10,8 @@ int main( ){
 	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
 	auto window = ofCreateWindow(settings);
-
-	ofRunApp(window, std::make_shared<ofApp>());
+	auto app = std::make_shared<ofApp>();
+	ofRunApp(window, app);
 	ofRunMainLoop();
 
 }
