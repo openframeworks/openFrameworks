@@ -99,7 +99,7 @@ static ofxiOSGLKView * _instanceRef = nil;
 
         window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
 
-        ofRunApp(app, window);
+        ofRunApp(app);
     }
     
     if(window->isProgrammableRenderer() == true) {

@@ -81,7 +81,7 @@ void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode) {
 	ofSetupOpenGL(window, w, h, screenMode);
 }
 
-//int ofRunApp(std::shared_ptr<ofBaseApp> && OFSA);
+int ofRunApp(const std::shared_ptr<ofBaseApp> & OFSA);
 //int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
 void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window,
 			  const std::shared_ptr<ofBaseApp> & app);

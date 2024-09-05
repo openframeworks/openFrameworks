@@ -104,12 +104,12 @@ void ofMainLoop::run(
 	}
 }
 
-void ofMainLoop::run(std::shared_ptr<ofBaseApp> && app){
+void ofMainLoop::run(const std::shared_ptr<ofBaseApp> & app){
 //	if(!windowsApps.empty()){
 //		run(windowsApps.begin()->first, std::move(app));
 //	}
 	if(!windows.empty()){
-		run(windows[0], std::move(app));
+		run(windows[0], app);
 	}
 }
 

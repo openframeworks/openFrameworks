@@ -185,14 +185,14 @@ void ofSetMainLoop(const shared_ptr<ofMainLoop> & newMainLoop) {
 //}
 //
 ////--------------------------------------
-//int ofRunApp(shared_ptr<ofBaseApp> && app){
-//	ofCore.mainLoop->run(std::move(app));
-//	auto ret = ofRunMainLoop();
-//#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-//	ofExitCallback();
-//#endif
-//	return ret;
-//}
+int ofRunApp(const shared_ptr<ofBaseApp> & app){
+	ofCore.mainLoop->run(app);
+	auto ret = ofRunMainLoop();
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+	ofExitCallback();
+#endif
+	return ret;
+}
 
 ////--------------------------------------
 //void ofRunApp(const shared_ptr<ofAppBaseWindow> & window, shared_ptr<ofBaseApp> && app){
@@ -202,6 +202,7 @@ void ofSetMainLoop(const shared_ptr<ofMainLoop> & newMainLoop) {
 void ofRunApp(
 			  const shared_ptr<ofAppBaseWindow> & window, 
 			  const shared_ptr<ofBaseApp> & app){
+	ofInit();
 	ofCore.mainLoop->run(window, app);
 }
 
@@ -227,7 +228,6 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 
 
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
-	ofInit();
 	return ofCore.mainLoop->createWindow(settings);
 }
 
