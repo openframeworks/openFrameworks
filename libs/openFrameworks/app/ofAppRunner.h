@@ -20,6 +20,7 @@ public:
 	bool initialized = false;
 	bool exiting = false;
 	ofCoreEvents noopEvents;
+	// ofMainLoop mainLoop;
 	std::shared_ptr<ofMainLoop> mainLoop { std::make_shared<ofMainLoop>() };
 	
 	// ofFileUtils
@@ -29,7 +30,8 @@ public:
 		
 		// controlled destruction of the mainLoop before
 		// any other deinitialization
-		mainLoop->exit();
+		// mainLoop->exit();
+//		mainLoop.exit();
 
 		// all shutdown functions called
 		for (const auto & func : shutdownFunctions) {
@@ -64,7 +66,7 @@ void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWi
 	ofWindowSettings settings;
 	settings.setSize(w, h);
 	settings.windowMode = screenMode;
-	ofCore.mainLoop->addWindow(windowPtr);
+//	ofCore.mainLoop.addWindow(windowPtr);
 	windowPtr->setup(settings);
 }
 
