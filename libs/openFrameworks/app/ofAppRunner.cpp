@@ -241,7 +241,7 @@ void ofExitCallback(){
 //--------------------------------------
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
-	auto window { ofCore.mainLoop->getCurrentWindow() };
+	auto window { ofCore.getCurrentWindow() };
 	if(window){
 		return window->events();
 	}else{
@@ -261,7 +261,7 @@ void ofSetEscapeQuitsApp(bool bQuitOnEsc){
 
 //--------------------------------------
 shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
-	return ofCore.mainLoop->getCurrentWindow()->renderer();
+	return ofCore.getCurrentWindow()->renderer();
 }
 
 //--------------------------------------
@@ -280,12 +280,12 @@ bool ofIsCurrentThreadTheMainThread() {
 
 //--------------------------------------
 ofAppBaseWindow * ofGetWindowPtr(){
-	return ofCore.mainLoop->getCurrentWindow().get();
+	return ofCore.getCurrentWindow().get();
 }
 
 //--------------------------------------
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow() {
-	return ofCore.mainLoop->getCurrentWindow();
+	return ofCore.getCurrentWindow();
 }
 
 //--------------------------------------
@@ -295,18 +295,18 @@ void ofExit(int status){
 
 //--------------------------------------
 void ofHideCursor(){
-	ofCore.mainLoop->getCurrentWindow()->hideCursor();
+	ofCore.getCurrentWindow()->hideCursor();
 }
 
 //--------------------------------------
 void ofShowCursor(){
-	ofCore.mainLoop->getCurrentWindow()->showCursor();
+	ofCore.getCurrentWindow()->showCursor();
 }
 
 //--------------------------------------
 // FIXME: this is not standard with the other window modes.
 void ofSetOrientation(ofOrientation orientation, bool vFlip){
-	ofCore.mainLoop->getCurrentWindow()->setOrientation(orientation);
+	ofCore.getCurrentWindow()->setOrientation(orientation);
 	// TODO: every window should set orientation on it's renderer
 	if(ofGetCurrentRenderer()){
 		ofGetCurrentRenderer()->setOrientation(orientation,vFlip);
@@ -315,92 +315,92 @@ void ofSetOrientation(ofOrientation orientation, bool vFlip){
 
 //--------------------------------------
 ofOrientation ofGetOrientation(){
-	return ofCore.mainLoop->getCurrentWindow()->getOrientation();
+	return ofCore.getCurrentWindow()->getOrientation();
 }
 
 //--------------------------------------
 void ofSetWindowPosition(int x, int y){
-	ofCore.mainLoop->getCurrentWindow()->setWindowPosition(x,y);
+	ofCore.getCurrentWindow()->setWindowPosition(x,y);
 }
 
 //--------------------------------------
 void ofSetWindowShape(int width, int height){
-	ofCore.mainLoop->getCurrentWindow()->setWindowShape(width, height);
+	ofCore.getCurrentWindow()->setWindowShape(width, height);
 }
 
 //--------------------------------------
 void ofSetWindowRect(const ofRectangle & rect) {
-	ofCore.mainLoop->getCurrentWindow()->setWindowRect(rect);
+	ofCore.getCurrentWindow()->setWindowRect(rect);
 }
 
 //--------------------------------------
 glm::ivec2 ofGetWindowPosition() {
-	return ofCore.mainLoop->getCurrentWindow()->getWindowPosition();
+	return ofCore.getCurrentWindow()->getWindowPosition();
 }
 
 //--------------------------------------
 int ofGetWindowPositionX(){
-	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowPosition().x;
+	return (int)ofCore.getCurrentWindow()->getWindowPosition().x;
 }
 
 //--------------------------------------
 int ofGetWindowPositionY(){
-	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowPosition().y;
+	return (int)ofCore.getCurrentWindow()->getWindowPosition().y;
 }
 
 //--------------------------------------
 int ofGetScreenWidth(){
-	return ofCore.mainLoop->getCurrentWindow()->getScreenSize().x;
+	return ofCore.getCurrentWindow()->getScreenSize().x;
 }
 
 //--------------------------------------
 int ofGetScreenHeight(){
-	return ofCore.mainLoop->getCurrentWindow()->getScreenSize().y;
+	return ofCore.getCurrentWindow()->getScreenSize().y;
 }
 
 //--------------------------------------
 glm::ivec2 ofGetScreenSize() {
-	return ofCore.mainLoop->getCurrentWindow()->getScreenSize();
+	return ofCore.getCurrentWindow()->getScreenSize();
 }
 
 //--------------------------------------------------
 int ofGetWidth(){
-	return (int)ofCore.mainLoop->getCurrentWindow()->getWidth();
+	return (int)ofCore.getCurrentWindow()->getWidth();
 }
 
 //--------------------------------------------------
 int ofGetHeight(){
-	return (int)ofCore.mainLoop->getCurrentWindow()->getHeight();
+	return (int)ofCore.getCurrentWindow()->getHeight();
 }
 
 //--------------------------------------------------
 int ofGetWindowWidth(){
-	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowSize().x;
+	return (int)ofCore.getCurrentWindow()->getWindowSize().x;
 }
 //--------------------------------------------------
 int ofGetWindowHeight(){
-	return (int)ofCore.mainLoop->getCurrentWindow()->getWindowSize().y;
+	return (int)ofCore.getCurrentWindow()->getWindowSize().y;
 }
 
 //--------------------------------------------------
 std::string ofGetClipboardString(){
-	return ofCore.mainLoop->getCurrentWindow()->getClipboardString();
+	return ofCore.getCurrentWindow()->getClipboardString();
 }
 
 //--------------------------------------------------
 void ofSetClipboardString(const std::string & str){
-	ofCore.mainLoop->getCurrentWindow()->setClipboardString(str);
+	ofCore.getCurrentWindow()->setClipboardString(str);
 }
 
 //--------------------------------------------------
 bool ofDoesHWOrientation(){
-	return ofCore.mainLoop->getCurrentWindow()->doesHWOrientation();
+	return ofCore.getCurrentWindow()->doesHWOrientation();
 }
 
 //--------------------------------------------------
 glm::ivec2 ofGetWindowSize() {
 	//this can't return glm::vec2(ofGetWidth(), ofGetHeight()) as width and height change based on orientation.
-	return ofCore.mainLoop->getCurrentWindow()->getWindowSize();
+	return ofCore.getCurrentWindow()->getWindowSize();
 }
 
 //--------------------------------------------------
@@ -421,85 +421,85 @@ ofRectangle	ofGetWindowRect() {
 
 //--------------------------------------
 void ofSetWindowTitle(std::string title){
-	ofCore.mainLoop->getCurrentWindow()->setWindowTitle(title);
+	ofCore.getCurrentWindow()->setWindowTitle(title);
 }
 
 //----------------------------------------------------------
 void ofEnableSetupScreen(){
-	ofCore.mainLoop->getCurrentWindow()->enableSetupScreen();
+	ofCore.getCurrentWindow()->enableSetupScreen();
 }
 
 //----------------------------------------------------------
 void ofDisableSetupScreen(){
-	ofCore.mainLoop->getCurrentWindow()->disableSetupScreen();
+	ofCore.getCurrentWindow()->disableSetupScreen();
 }
 
 //--------------------------------------
 void ofToggleFullscreen(){
-	ofCore.mainLoop->getCurrentWindow()->toggleFullscreen();
+	ofCore.getCurrentWindow()->toggleFullscreen();
 }
 
 //--------------------------------------
 void ofSetFullscreen(bool fullscreen){
-	ofCore.mainLoop->getCurrentWindow()->setFullscreen(fullscreen);
+	ofCore.getCurrentWindow()->setFullscreen(fullscreen);
 }
 
 //--------------------------------------
 int ofGetWindowMode(){
-	return ofCore.mainLoop->getCurrentWindow()->getWindowMode();
+	return ofCore.getCurrentWindow()->getWindowMode();
 }
 
 //--------------------------------------
 void ofSetVerticalSync(bool bSync){
-	ofCore.mainLoop->getCurrentWindow()->setVerticalSync(bSync);
+	ofCore.getCurrentWindow()->setVerticalSync(bSync);
 }
 
 //-------------------------- native window handles
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 Display* ofGetX11Display(){
-	return ofCore.mainLoop->getCurrentWindow()->getX11Display();
+	return ofCore.getCurrentWindow()->getX11Display();
 }
 
 Window  ofGetX11Window(){
-	return ofCore.mainLoop->getCurrentWindow()->getX11Window();
+	return ofCore.getCurrentWindow()->getX11Window();
 }
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 GLXContext ofGetGLXContext(){
-	return ofCore.mainLoop->getCurrentWindow()->getGLXContext();
+	return ofCore.getCurrentWindow()->getGLXContext();
 }
 #endif
 
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
 EGLDisplay ofGetEGLDisplay(){
-	return ofCore.mainLoop->getCurrentWindow()->getEGLDisplay();
+	return ofCore.getCurrentWindow()->getEGLDisplay();
 }
 
 EGLContext ofGetEGLContext(){
-	return ofCore.mainLoop->getCurrentWindow()->getEGLContext();
+	return ofCore.getCurrentWindow()->getEGLContext();
 }
 EGLSurface ofGetEGLSurface(){
-	return ofCore.mainLoop->getCurrentWindow()->getEGLSurface();
+	return ofCore.getCurrentWindow()->getEGLSurface();
 }
 #endif
 
 #if defined(TARGET_OSX)
 void * ofGetNSGLContext(){
-	return ofCore.mainLoop->getCurrentWindow()->getNSGLContext();
+	return ofCore.getCurrentWindow()->getNSGLContext();
 }
 
 void * ofGetCocoaWindow(){
-	return ofCore.mainLoop->getCurrentWindow()->getCocoaWindow();
+	return ofCore.getCurrentWindow()->getCocoaWindow();
 }
 #endif
 
 #if defined(TARGET_WIN32)
 HGLRC ofGetWGLContext(){
-	return ofCore.mainLoop->getCurrentWindow()->getWGLContext();
+	return ofCore.getCurrentWindow()->getWGLContext();
 }
 
 HWND ofGetWin32Window(){
-	return ofCore.mainLoop->getCurrentWindow()->getWin32Window();
+	return ofCore.getCurrentWindow()->getWin32Window();
 }
 #endif
