@@ -105,9 +105,6 @@ void ofMainLoop::run(
 }
 
 void ofMainLoop::run(const std::shared_ptr<ofBaseApp> & app){
-//	if(!windowsApps.empty()){
-//		run(windowsApps.begin()->first, std::move(app));
-//	}
 	if(!windows.empty()){
 		run(windows[0], app);
 	}
@@ -115,7 +112,6 @@ void ofMainLoop::run(const std::shared_ptr<ofBaseApp> & app){
 
 int ofMainLoop::loop(){
 	if(!windowLoop){
-//		while(!bShouldClose && !windowsApps.empty()){
 		while(!bShouldClose && !windows.empty()){
 			loopOnce();
 			pollEvents();

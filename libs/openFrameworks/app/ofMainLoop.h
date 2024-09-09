@@ -52,8 +52,6 @@ public:
 	
 	std::thread::id get_thread_id() { return thread_id; };
 	
-	// Testing
-	// FIXME: const & ?
 	std::vector <std::shared_ptr<ofAppBaseWindow> > getWindows() { return windows; }
 
 	void ofBeginWindow(int n);
@@ -67,8 +65,6 @@ private:
 	std::thread::id thread_id { std::this_thread::get_id() };
 
 	void keyPressed(ofKeyEventArgs & key);
-//	std::unordered_map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
-	
 	std::vector <std::shared_ptr<ofAppBaseWindow> > windows;
 	std::shared_ptr<ofBaseApp> mainApp;
 	

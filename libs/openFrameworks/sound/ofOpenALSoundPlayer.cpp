@@ -7,6 +7,7 @@
 #include <glm/ext/scalar_common.hpp>
 #include "ofLog.h"
 #include "ofEvents.h"
+#include "<set>"
 
 #if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
 #include <OpenAL/al.h>
