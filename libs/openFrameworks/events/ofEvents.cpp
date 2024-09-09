@@ -7,7 +7,7 @@ static ofEventArgs voidEventArgs;
 
 //--------------------------------------
 void ofSetFrameRate(int targetRate) {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		window->events().setFrameRate(targetRate);
 	} else {
@@ -17,7 +17,7 @@ void ofSetFrameRate(int targetRate) {
 
 //--------------------------------------
 float ofGetFrameRate() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getFrameRate();
 	} else {
@@ -26,7 +26,7 @@ float ofGetFrameRate() {
 }
 
 bool ofGetTargetFrameRateEnabled() {
-	if (auto window = ofGetMainLoop()->getCurrentWindow()) {
+	if (auto window = ofCore.mainLoop->getCurrentWindow()) {
 		return window->events().getTargetFrameRateEnabled();
 	}
 	return false;
@@ -34,7 +34,7 @@ bool ofGetTargetFrameRateEnabled() {
 
 //--------------------------------------
 float ofGetTargetFrameRate() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getTargetFrameRate();
 	} else {
@@ -44,7 +44,7 @@ float ofGetTargetFrameRate() {
 
 //--------------------------------------
 double ofGetLastFrameTime() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getLastFrameTime();
 	} else {
@@ -54,7 +54,7 @@ double ofGetLastFrameTime() {
 
 //--------------------------------------
 uint64_t ofGetFrameNum() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getFrameNum();
 	} else {
@@ -64,7 +64,7 @@ uint64_t ofGetFrameNum() {
 
 //--------------------------------------
 bool ofGetMousePressed(int button) { //by default any button
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getMousePressed(button);
 	} else {
@@ -74,7 +74,7 @@ bool ofGetMousePressed(int button) { //by default any button
 
 //--------------------------------------
 bool ofGetKeyPressed(int key) {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getKeyPressed(key);
 	} else {
@@ -84,7 +84,7 @@ bool ofGetKeyPressed(int key) {
 
 //--------------------------------------
 int ofGetMouseX() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getMouseX();
 	} else {
@@ -94,7 +94,7 @@ int ofGetMouseX() {
 
 //--------------------------------------
 int ofGetMouseY() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getMouseY();
 	} else {
@@ -104,7 +104,7 @@ int ofGetMouseY() {
 
 //--------------------------------------
 int ofGetPreviousMouseX() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getPreviousMouseX();
 	} else {
@@ -114,7 +114,7 @@ int ofGetPreviousMouseX() {
 
 //--------------------------------------
 int ofGetPreviousMouseY() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getPreviousMouseY();
 	} else {

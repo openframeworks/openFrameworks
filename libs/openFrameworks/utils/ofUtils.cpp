@@ -247,8 +247,8 @@ uint64_t ofGetFixedStepForFps(double fps) {
 }
 
 ofTimeMode ofGetTimeMode() {
-	if (auto mainLoop = ofGetMainLoop()) {
-		if (auto window = mainLoop->getCurrentWindow()) {
+	if (ofCore.mainLoop) {
+		if (auto window = ofCore.mainLoop->getCurrentWindow()) {
 			return window->events().getTimeMode();
 		}
 	}
@@ -257,12 +257,11 @@ ofTimeMode ofGetTimeMode() {
 
 //--------------------------------------
 void ofSetTimeModeSystem() {
-	auto mainLoop = ofGetMainLoop();
-	if (!mainLoop) {
+	if (!ofCore.mainLoop) {
 		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
 		return;
 	}
-	auto window = mainLoop->getCurrentWindow();
+	auto window = ofCore.mainLoop->getCurrentWindow();
 	if (!window) {
 		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
 		return;
@@ -273,28 +272,26 @@ void ofSetTimeModeSystem() {
 
 //--------------------------------------
 void ofSetTimeModeFixedRate(uint64_t stepNanos) {
-	auto mainLoop = ofGetMainLoop();
-	if (!mainLoop) {
+	if (!ofCore.mainLoop) {
 		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
 		return;
 	}
-	auto window = mainLoop->getCurrentWindow();
+	auto window = ofCore.mainLoop->getCurrentWindow();
 	if (!window) {
 		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
 		return;
 	}
 	window->events().setTimeModeFixedRate(stepNanos);
-	of::priv::getClock().setTimeModeFixedRate(stepNanos, *mainLoop);
+	of::priv::getClock().setTimeModeFixedRate(stepNanos, *ofCore.mainLoop);
 }
 
 //--------------------------------------
 void ofSetTimeModeFiltered(float alpha) {
-	auto mainLoop = ofGetMainLoop();
-	if (!mainLoop) {
+	if (!ofCore.mainLoop) {
 		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
 		return;
 	}
-	auto window = mainLoop->getCurrentWindow();
+	auto window = ofCore.mainLoop->getCurrentWindow();
 	if (!window) {
 		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
 		return;
