@@ -112,9 +112,9 @@ ofShader::ofShader(const ofShader & mom)
     , shaders(mom.shaders)
     , uniformsCache(mom.uniformsCache)
     , attributesBindingsCache(mom.attributesBindingsCache)
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
     , uniformBlocksCache(mom.uniformBlocksCache)
-#endif
+//#endif
 {
     if (mom.bLoaded) {
         retainProgram(program);
