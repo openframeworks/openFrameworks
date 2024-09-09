@@ -74,7 +74,7 @@ bool ofGetMousePressed(int button) { //by default any button
 
 //--------------------------------------
 bool ofGetKeyPressed(int key) {
-	auto window = ofGetCurrentWindow();
+	auto window { ofGetCurrentWindow() };
 //	auto window = ofCore.getCurrentWindow();
 
 	if (window) {
@@ -89,7 +89,9 @@ bool ofGetKeyPressed(int key) {
 
 //--------------------------------------
 int ofGetMouseX() {
-	auto window { ofCore.mainLoop->getCurrentWindow() };
+	auto window { ofGetCurrentWindow() };
+
+//	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getMouseX();
 	} else {
@@ -99,7 +101,8 @@ int ofGetMouseX() {
 
 //--------------------------------------
 int ofGetMouseY() {
-	auto window { ofCore.getCurrentWindow() };
+//	auto window { ofCore.getCurrentWindow() };
+	auto window { ofGetCurrentWindow() };
 	if (window) {
 		return window->events().getMouseY();
 	} else {

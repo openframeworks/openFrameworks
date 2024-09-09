@@ -174,14 +174,14 @@ void ofSetMainLoop(const shared_ptr<ofMainLoop> & newMainLoop) {
 }
 
 //--------------------------------------
-//int ofRunApp(ofBaseApp * OFSA){
-//	ofCore.mainLoop->run(shared_ptr<ofBaseApp>(OFSA));
-//	auto ret = ofRunMainLoop();
-//#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-//	ofExitCallback();
-//#endif
-//	return ret;
-//}
+int ofRunApp(ofBaseApp * OFSA){
+	ofCore.mainLoop->run(shared_ptr<ofBaseApp>(OFSA));
+	auto ret = ofRunMainLoop();
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+	ofExitCallback();
+#endif
+	return ret;
+}
 //
 ////--------------------------------------
 int ofRunApp(const shared_ptr<ofBaseApp> & app){
@@ -280,7 +280,7 @@ bool ofIsCurrentThreadTheMainThread() {
 
 //--------------------------------------
 ofAppBaseWindow * ofGetWindowPtr(){
-	return ofCore.getCurrentWindow().get();
+	return ofGetCurrentWindow().get();
 }
 
 //--------------------------------------

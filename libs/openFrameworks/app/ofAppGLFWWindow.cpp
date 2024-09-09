@@ -41,7 +41,7 @@ using std::cout;
 using std::endl;
 
 //-------------------------------------------------------
-ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(new ofCoreEvents){
+ofAppGLFWWindow::ofAppGLFWWindow() : coreEvents(std::make_unique<ofCoreEvents>()){
 	bEnableSetupScreen = true;
 	buttonInUse = 0;
 	buttonPressed = false;

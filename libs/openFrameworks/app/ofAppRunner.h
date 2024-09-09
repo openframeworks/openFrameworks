@@ -54,16 +54,10 @@ public:
 		exiting = false;
 	}
 	
-//std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow() {
-
-//	std::shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
-//		return currentWindow.lock();
-//	}
-		
-		std::shared_ptr<ofAppBaseWindow> getCurrentWindow(){
-		if (mainLoop) {
-			return mainLoop->getCurrentWindow();
-//			return mainLoop->currentWindow.lock();
+	std::shared_ptr<ofAppBaseWindow> getCurrentWindow(){
+//		if (mainLoop) //mainLoop is always present. is it?
+		{
+			return mainLoop->currentWindow.lock();
 		}
 		cout << "getCurrentWindow ofCore nullptr name=" << name << endl;
 		return nullptr;
@@ -105,7 +99,8 @@ void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode) {
 }
 
 int ofRunApp(const std::shared_ptr<ofBaseApp> & OFSA);
-//int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
+
+int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
 void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window,
 			  const std::shared_ptr<ofBaseApp> & app);
 int ofRunMainLoop();
