@@ -54,9 +54,16 @@ public:
 		exiting = false;
 	}
 	
-	std::shared_ptr<ofAppBaseWindow> getCurrentWindow(){
+//std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow() {
+
+//	std::shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
+//		return currentWindow.lock();
+//	}
+		
+		std::shared_ptr<ofAppBaseWindow> getCurrentWindow(){
 		if (mainLoop) {
-			return mainLoop->currentWindow.lock();
+			return mainLoop->getCurrentWindow();
+//			return mainLoop->currentWindow.lock();
 		}
 		cout << "getCurrentWindow ofCore nullptr name=" << name << endl;
 		return nullptr;
