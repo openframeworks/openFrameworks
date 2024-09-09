@@ -89,7 +89,7 @@ bool ofGetKeyPressed(int key) {
 
 //--------------------------------------
 int ofGetMouseX() {
-	auto window { ofCore.getCurrentWindow() };
+	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getMouseX();
 	} else {

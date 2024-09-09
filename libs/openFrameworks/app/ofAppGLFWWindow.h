@@ -156,8 +156,8 @@ private:
 	XIC xic;
 #endif
 
-	ofCoreEvents coreEvents;
-//	std::unique_ptr<ofCoreEvents> coreEvents;
+//	ofCoreEvents coreEvents;
+	std::unique_ptr<ofCoreEvents> coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 
 	ofWindowMode targetWindowMode;

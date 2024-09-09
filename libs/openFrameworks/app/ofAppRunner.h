@@ -25,7 +25,7 @@ public:
 	bool initialized = false;
 	bool exiting = false;
 	ofCoreEvents noopEvents;
-	// ofMainLoop mainLoop;
+//	ofMainLoop mainLoop;
 	std::shared_ptr<ofMainLoop> mainLoop { std::make_shared<ofMainLoop>() };
 	
 	// ofFileUtils
