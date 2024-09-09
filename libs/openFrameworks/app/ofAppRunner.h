@@ -10,10 +10,15 @@ class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
 
+using std::cout;
+using std::endl;
+
 static struct ofCoreInternal {
 public:
 	ofCoreInternal() {};
 	~ofCoreInternal() {};
+	
+	std::string name = "virgem";
 	
 	std::vector <std::function<void()>> shutdownFunctions;
 	// ofAppRunner
@@ -43,6 +48,7 @@ public:
 	}
 	
 	void init() {
+		name = "inicializado";
 		if (initialized) return;
 		initialized  = true;
 		exiting = false;
@@ -52,6 +58,7 @@ public:
 		if (mainLoop) {
 			return mainLoop->currentWindow.lock();
 		}
+		cout << "getCurrentWindow ofCore nullptr name=" << name << endl;
 		return nullptr;
 	}
 	

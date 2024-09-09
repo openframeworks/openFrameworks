@@ -76,8 +76,11 @@ bool ofGetMousePressed(int button) { //by default any button
 bool ofGetKeyPressed(int key) {
 	auto window { ofCore.getCurrentWindow() };
 	if (window) {
+		std::cout << "ofGetKeyPressed in window: " << window->name << std::endl;
 		return window->events().getKeyPressed(key);
 	} else {
+		std::cout << "ofGetKeyPressed null window, ofCore name=" << ofCore.name << ", " << &ofCore << std::endl;
+
 		return false;
 	}
 }
@@ -337,6 +340,12 @@ bool ofCoreEvents::notifyKeyReleased(int key, int keycode, int scancode, uint32_
 
 //------------------------------------------
 bool ofCoreEvents::notifyKeyEvent(ofKeyEventArgs & e) {
+	
+	using std::cout;
+	using std::endl;
+
+	cout << "ofCoreEvents::notifyKeyEvent " << e.key << endl;
+
 	bool attended = false;
 	modifiers = e.modifiers;
 	switch (e.type) {
@@ -365,7 +374,10 @@ bool ofCoreEvents::notifyKeyEvent(ofKeyEventArgs & e) {
 			attended = ofNotifyEvent(keyPressed, keyEventArgs);
 		}
 
+		// FIXME: mover este e o erase pra dentro do else
 		pressedKeys.insert(e.key);
+			cout << "pressedKeys size" << pressedKeys.size() << endl;
+
 		if (!attended) {
 			return ofNotifyEvent(keyPressed, e);
 		} else {
@@ -397,12 +409,16 @@ bool ofCoreEvents::notifyKeyEvent(ofKeyEventArgs & e) {
 		}
 
 		pressedKeys.erase(e.key);
+			cout << "pressedKeys size" << pressedKeys.size() << endl;
+
 		if (!attended) {
 			return ofNotifyEvent(keyReleased, e);
 		} else {
 			return attended;
 		}
 	}
+	
+
 	return false;
 }
 

@@ -114,4 +114,6 @@ public:
 //private:
 	ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 	ofWindowMode windowMode = OF_WINDOW;
+	
+	std::string name { "virgem" };
 };

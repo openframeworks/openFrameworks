@@ -7,6 +7,8 @@
 #include "ofMesh.h"
 #include "ofRectangle.h"
 #include <unordered_map>
+// FIXME: unordered_set
+#include <set>
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
@@ -19,7 +21,7 @@ static bool	bUsingArbTex		= true;
 static bool bUsingNormalizedTexCoords = false;
 static bool bUseCustomMinMagFilters = false;
 
-using std::set;
+//using std::set;
 
 //---------------------------------
 void ofEnableTextureEdgeHack(){
@@ -164,8 +166,8 @@ static void release(GLuint id){
 }
 
 #ifdef TARGET_ANDROID
-static set<ofTexture*> & allTextures(){
-	static set<ofTexture*> * allTextures = new set<ofTexture*>;
+static std::set<ofTexture*> & allTextures(){
+	static std::set<ofTexture*> * allTextures = new std::set<ofTexture*>;
 	return *allTextures;
 }
 

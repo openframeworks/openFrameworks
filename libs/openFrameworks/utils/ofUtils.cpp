@@ -248,7 +248,7 @@ uint64_t ofGetFixedStepForFps(double fps) {
 
 ofTimeMode ofGetTimeMode() {
 	if (ofCore.mainLoop) {
-		if (auto window = ofCore.getCurrentWindow()) {
+		if (auto window { ofCore.getCurrentWindow() }) {
 			return window->events().getTimeMode();
 		}
 	}
@@ -261,7 +261,7 @@ void ofSetTimeModeSystem() {
 		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
 		return;
 	}
-	auto window = ofCore.getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (!window) {
 		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
 		return;
@@ -276,7 +276,7 @@ void ofSetTimeModeFixedRate(uint64_t stepNanos) {
 		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
 		return;
 	}
-	auto window = ofCore.getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (!window) {
 		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
 		return;
@@ -291,7 +291,7 @@ void ofSetTimeModeFiltered(float alpha) {
 		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
 		return;
 	}
-	auto window = ofCore.getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (!window) {
 		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
 		return;
