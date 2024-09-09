@@ -48,6 +48,13 @@ public:
 		exiting = false;
 	}
 	
+	std::shared_ptr<ofAppBaseWindow> getCurrentWindow(){
+		if (mainLoop) {
+			return mainLoop->currentWindow.lock();
+		}
+		return nullptr;
+	}
+	
 } ofCore;
 
 

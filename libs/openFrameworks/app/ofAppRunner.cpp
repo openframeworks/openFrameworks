@@ -164,7 +164,6 @@ void ofInit(){
 }
 
 //--------------------------------------
-// TODO: const &
 shared_ptr<ofMainLoop> ofGetMainLoop(){
 	return ofCore.mainLoop;
 }
