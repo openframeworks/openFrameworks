@@ -1030,7 +1030,7 @@ void ofSaveScreen(const of::filesystem::path & fileName) {
    screen.save(filename);*/
 	ofPixels pixels;
 	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(pixels, fileName);
+	ofSaveImage(pixels, filename);
 }
 
 //--------------------------------------------------
@@ -1044,7 +1044,7 @@ void ofSaveViewport(const of::filesystem::path & fileName) {
 
 	ofPixels pixels;
 	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(fileName, filename);
+	ofSaveImage(pixels, fileName);
 }
 
 //--------------------------------------------------
