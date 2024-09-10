@@ -613,7 +613,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::loadFont(string filename, int fontSize, bool bAntiAliased, bool bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::loadFont(const of::filesystem::path & filename, int fontSize, bool bAntiAliased, bool bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	return load(filename, fontSize, bAntiAliased, bFullCharacterSet, makeContours, simplifyAmt, dpi);
 }
 
@@ -689,7 +689,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(const of::filesystem::path & filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;

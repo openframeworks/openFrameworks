@@ -409,7 +409,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
 #ifdef TARGET_LINUX
     //------------------------------------------------------------
-    void ofAppGLFWWindow::setWindowIcon(const std::string & path) {
+    void ofAppGLFWWindow::setWindowIcon(const of::filesystem::path & path) {
         ofPixels iconPixels;
         ofLoadImage(iconPixels, path);
         setWindowIcon(iconPixels);

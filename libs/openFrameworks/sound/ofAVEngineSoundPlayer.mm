@@ -1018,7 +1018,7 @@ bool ofAVEngineSoundPlayer::load(const of::filesystem::path& fileName, bool stre
         unload();
     }
 
-    string filePath = ofToDataPath(fileName);
+    auto filePath = ofToDataPath(fileName);
     @autoreleasepool {
         soundPlayer = [[AVEnginePlayer alloc] init];
     }
