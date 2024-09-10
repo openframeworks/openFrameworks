@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofConstants.h" // fs::path
 #include <string>
 
 /// \class ofFileDialogResult
