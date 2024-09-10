@@ -688,7 +688,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(const of::filesystem::path & filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;

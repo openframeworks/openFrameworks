@@ -534,9 +534,12 @@ class DirectShowVideo : public ISampleGrabberCB{
         }
 
         //printf("step 6\n"); 
+<<<<<<< HEAD
 		// no need, fs::path will implicitly convert to wchar internally
 //        std::string pathString = path.string();
 //        std::wstring filePathW = std::wstring(pathString.begin(), pathString.end());
+=======
+>>>>>>> master
 
         //this is the easier way to connect the graph, but we have to remove the video window manually
         hr = m_pGraph->RenderFile(path.c_str(), NULL);

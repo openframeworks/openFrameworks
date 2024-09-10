@@ -166,7 +166,7 @@ public:
 	Window getX11Window();
 	XIC getX11XIC();
 
-	void setWindowIcon(const std::string & path);
+	void setWindowIcon(const of::filesystem::path & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 

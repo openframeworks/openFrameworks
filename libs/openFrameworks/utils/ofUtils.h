@@ -1235,7 +1235,11 @@ std::string ofGetVersionPreRelease();
 /// The output file type will be deduced from the given file name.
 ///
 /// \param filename The image output file.
+<<<<<<< HEAD
 void ofSaveScreen(const of::filesystem::path & fileName);
+=======
+void ofSaveScreen(const of::filesystem::path & filename);
+>>>>>>> master
 
 /// \brief Saves the current frame as a PNG image.
 ///
