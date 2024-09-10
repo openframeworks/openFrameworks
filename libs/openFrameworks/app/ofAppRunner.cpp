@@ -285,7 +285,8 @@ ofAppBaseWindow * ofGetWindowPtr(){
 
 //--------------------------------------
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow() {
-	return ofCore.getCurrentWindow();
+//	return ofCore.getCurrentWindow();
+	return ofCore.mainLoop->getCurrentWindow();
 }
 
 //--------------------------------------
