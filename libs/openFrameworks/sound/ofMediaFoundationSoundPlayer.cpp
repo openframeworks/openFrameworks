@@ -187,7 +187,7 @@ ofMediaFoundationSoundPlayer::~ofMediaFoundationSoundPlayer() {
 }
 
 //--------------------
-bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
+bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path & fileName, bool stream) {
     unload();
     
     std::string fileStr = ofPathToString(fileName);
@@ -197,13 +197,11 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     bStream = bStream || ofIsStringInString(fileStr, "rtsp://");
     bStream = bStream || ofIsStringInString(fileStr, "rtmp://");
 
-    of::filesystem::path absPath{ fileStr };
-
     if (!bStream) {
-        if (ofFile::doesFileExist(absPath)) {
-            absPath = ofFilePath::getAbsolutePath(absPath, true);
+        if (ofFile::doesFileExist(fileName)) {
+			fileName = ofFilePath::getAbsolutePath(fileName, true);
         } else {
-            ofLogError("ofMediaFoundationSoundPlayer") << " file does not exist! " << absPath;
+            ofLogError("ofMediaFoundationSoundPlayer") << " file does not exist! " << fileName;
             return false;
         }
     }
@@ -223,7 +221,7 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     }
 
 
-    LPCWSTR path = absPath.c_str();
+    LPCWSTR path = fileName;
     
 
     hr = MFCreateSourceReaderFromURL(
@@ -232,12 +230,12 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
         mSrcReader.GetAddressOf());
 
     if (hr != S_OK) {
-        ofLogError("ofMediaFoundationSoundPlayer::load") << " unable to load from: " << absPath;
+        ofLogError("ofMediaFoundationSoundPlayer::load") << " unable to load from: " << fileName;
         unload();
         return false;
     }
 
-    ofLogVerbose("ofMediaFoundationSoundPlayer::load") << " created the source reader " << absPath;
+    ofLogVerbose("ofMediaFoundationSoundPlayer::load") << " created the source reader " << fileName;
     // Select only the audio stream
     hr = mSrcReader->SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS, false);
     if (hr == S_OK) {

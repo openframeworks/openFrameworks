@@ -1050,7 +1050,7 @@ void ofSaveViewport(const string & filename) {
 //--------------------------------------------------
 int saveImageCounter = 0;
 void ofSaveFrame(bool bUseViewport) {
-	string fileName = ofToString(saveImageCounter) + ".png";
+	of::filesystem::path fileName = ofToString(saveImageCounter) + ".png";
 	if (bUseViewport) {
 		ofSaveViewport(fileName);
 	} else {
