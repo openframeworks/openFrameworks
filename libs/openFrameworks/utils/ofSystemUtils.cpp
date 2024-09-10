@@ -491,7 +491,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 
 
-	if( results.filePath.length() > 0 ){
+	if( !results.filePath.empty() ){
 		results.bSuccess = true;
 		results.fileName = ofFilePath::getFileName(results.filePath);
 	}
@@ -572,7 +572,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
 
-	if( results.filePath.length() > 0 ){
+	if( !results.filePath.empty() ){
 		results.bSuccess = true;
 		results.fileName = ofFilePath::getFileName(results.filePath);
 	}
