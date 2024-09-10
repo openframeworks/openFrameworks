@@ -330,7 +330,7 @@ static of::filesystem::path winFontPathByName(const string & fontname) {
 #ifdef TARGET_LINUX
 //------------------------------------------------------------------
 static of::filesystem::path linuxFontPathByName(const string & fontname) {
-	string filename;
+	of::filesystem::path fontPath;
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
 	if(!ret){
@@ -346,20 +346,19 @@ static of::filesystem::path linuxFontPathByName(const string & fontname) {
 		ofLogError() << "linuxFontPathByName(): couldn't match font file or system font with name \"" << fontname << "\"";
 		FcPatternDestroy(fontMatch);
 		FcPatternDestroy(pattern);
-		return "";
+		return {};
 	}
 	FcChar8	*file;
 	if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
-		filename = (const char*)file;
+		fontPath = (const char*)file;
 	}else{
 		ofLogError() << "linuxFontPathByName(): couldn't find font match for \"" << fontname << "\"";
 		FcPatternDestroy(fontMatch);
 		FcPatternDestroy(pattern);
-		return "";
+		return {};
 	}
 	FcPatternDestroy(fontMatch);
 	FcPatternDestroy(pattern);
-	of::filesystem::path fontPath = { filename };
 	return fontPath;
 }
 #endif
