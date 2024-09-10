@@ -207,6 +207,7 @@ public:
 	/// \param name The name of the video resource to load.
 	/// \return True if the video was loaded successfully.
 	/// \sa loadAsync()
+	// FIXME: FS
 	virtual bool load(std::string name) = 0;
 	/// \brief Asynchronously load a video resource by name.
 	///

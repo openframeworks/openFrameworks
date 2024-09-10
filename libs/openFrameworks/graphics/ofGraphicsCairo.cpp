@@ -27,7 +27,7 @@ static void ofEndSaveScreen(){
 
 }
 
-static void ofBeginSaveScreen(std::string filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle outputsize){
+static void ofBeginSaveScreen(const of::filesystem::path & filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle outputsize){
 	if( bScreenShotStarted ) ofEndSaveScreen();
 	
 	storedRenderer = ofGetCurrentRenderer();
@@ -45,7 +45,7 @@ static void ofBeginSaveScreen(std::string filename, ofCairoRenderer::Type type, 
 }
 
 //-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsPDF(std::string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
+void ofBeginSaveScreenAsPDF(const of::filesystem::path & filename, bool bMultipage, bool b3D, ofRectangle outputsize){
 	ofBeginSaveScreen(filename, ofCairoRenderer::PDF, bMultipage, b3D, outputsize);
 }
 
@@ -55,7 +55,7 @@ void ofEndSaveScreenAsPDF(){
 }
 
 //-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
+void ofBeginSaveScreenAsSVG(const of::filesystem::path & filename, bool bMultipage, bool b3D, ofRectangle outputsize){
 	ofBeginSaveScreen(filename, ofCairoRenderer::SVG, bMultipage, b3D, outputsize);
 }
 
