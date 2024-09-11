@@ -12,30 +12,38 @@ fi
 
 ROOT=$(realpath "$ROOT")
 
-
+echo "##[group]apt update"
 if [[ "$(uname -s)" == "Linux" ]]; then
-    sudo apt-get -y install aptitude
     #for ubuntu 22.04 we need to install wine32
     #sudo dpkg --add-architecture i386
     sudo apt-get update
-    sudo aptitude -y install wine64
+    sudo aptitude -y install wine64 aptitude
 fi
+echo "##[endgroup]"
+
+echo "##[group]ls"
 echo "Where is ROOT: $ROOT"
 cd $ROOT
 ls
+
 
 OUTPUT_FOLDER=$ROOT/out
 mkdir -p $OUTPUT_FOLDER
 
 lastversion=$(date +%Y%m%d)
 if [ -n "$1" ] && [ "$1" != "nightly" ]; then
-    lastversion=$1
+	lastversion=$1
 fi
+echo "##[endgroup]"
 
+echo "##[group]submodule update and pull"
 git submodule update --init --recursive
 git submodule update --recursive --remote
 cd apps/projectGenerator
 git pull origin master
+echo "##[endgroup]"
+
+echo "##[group]create package"
 cd $OUTPUT_FOLDER
 pwd
 if [[ "$(uname -s)" == "Linux" ]]; then
@@ -50,6 +58,8 @@ if [[ "$(uname -s)" == "Linux" ]]; then
 fi
 $ROOT/scripts/dev/create_package.sh osx $lastversion master
 $ROOT/scripts/dev/create_package.sh ios $lastversion master
+echo "##[endgroup]"
+
 # $ROOT/scripts/dev/create_package.sh macos $lastversion master
 
 ls -la
