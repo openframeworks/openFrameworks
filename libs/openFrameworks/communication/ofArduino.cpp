@@ -1517,7 +1517,9 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 
 	if (correlationId) {
 		bytes[10] = correlationId & 0xFF;
-		bytes[11] = (correlationId >> 8) & 0xFF;
+		// Doesn't make sense. uint8_t >> 8 will always be zero.
+		// bytes[11] = (correlationId >> 8) & 0xFF;
+		bytes[11] = 0;
 	}
 
 	if (delay > 0) {
