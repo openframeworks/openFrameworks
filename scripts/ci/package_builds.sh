@@ -14,10 +14,11 @@ ROOT=$(realpath "$ROOT")
 
 echo "##[group]apt update"
 if [[ "$(uname -s)" == "Linux" ]]; then
+    sudo apt-get -y install aptitude
     #for ubuntu 22.04 we need to install wine32
     #sudo dpkg --add-architecture i386
     sudo apt-get update
-    sudo aptitude -y install wine64 aptitude
+    sudo aptitude -y install wine64
 fi
 echo "##[endgroup]"
 
