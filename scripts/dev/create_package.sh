@@ -195,7 +195,12 @@ function createProjectFiles {
 
         if [ -f "${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator" ]; then
             echo "projectGenerator exists..."
-            ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+            
+            echo "##[group]PG building example projects"
+            # ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+            ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples
+            echo "##[endgroup]"
+
         else
             echo "projectGenerator does not exist. Continue."
 	    ls ${main_ofroot}/apps/projectGenerator/commandLine/bin/
