@@ -1023,18 +1023,18 @@ std::string ofGetVersionPreRelease() {
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
-void ofSaveScreen(const string & filename) {
+void ofSaveScreen(const of::filesystem::path & fileName) {
 	/*ofImage screen;
    screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
    screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
    screen.save(filename);*/
 	ofPixels pixels;
 	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(pixels, filename);
+	ofSaveImage(pixels, fileName);
 }
 
 //--------------------------------------------------
-void ofSaveViewport(const string & filename) {
+void ofSaveViewport(const of::filesystem::path & fileName) {
 	// because ofSaveScreen doesn't related to viewports
 	/*ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();
@@ -1044,13 +1044,13 @@ void ofSaveViewport(const string & filename) {
 
 	ofPixels pixels;
 	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(pixels, filename);
+	ofSaveImage(pixels, fileName);
 }
 
 //--------------------------------------------------
 int saveImageCounter = 0;
 void ofSaveFrame(bool bUseViewport) {
-	string fileName = ofToString(saveImageCounter) + ".png";
+	of::filesystem::path fileName = ofToString(saveImageCounter) + ".png";
 	if (bUseViewport) {
 		ofSaveViewport(fileName);
 	} else {
