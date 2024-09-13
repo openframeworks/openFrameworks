@@ -1017,7 +1017,7 @@ public:
 	std::size_t listDir();
 
 	/// \returns the current path
-	std::string getOriginalDirectory() const;
+	of::filesystem::path getOriginalDirectory() const;
 
 	/// Get the filename at a given position in the directory contents
 	/// list, ie. "duck.jpg".
@@ -1028,7 +1028,7 @@ public:
 	/// listed directory contents.
 	/// \param position array index in the directory contents list
 	/// \returns file or directory name
-	std::string getName(std::size_t position) const;
+	of::filesystem::path getName(std::size_t position) const;
 
 	/// Get the full path of the file or directory at a given position in
 	/// the directory contents list.
@@ -1039,7 +1039,7 @@ public:
 	/// listed directory contents.
 	/// \param position array index in the directory contents list
 	/// \returns file or directory name including the current path
-	std::string getPath(std::size_t position) const;
+	of::filesystem::path getPath(std::size_t position) const;
 
 	/// Open an ofFile instance using the path a given position in the
 	/// directory contents list.

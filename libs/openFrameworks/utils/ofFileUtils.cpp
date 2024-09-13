@@ -1123,7 +1123,7 @@ bool ofFile::doesFileExist(const fs::path & _path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return !path.empty() && of::filesystem::exists(path);
+	return !path.empty() && fs::exists(path);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1380,9 +1380,9 @@ std::size_t ofDirectory::listDir(){
 		return 0;
 	}
 
-	of::filesystem::directory_iterator end_iter;
-	if ( of::filesystem::exists(myDir) && of::filesystem::is_directory(myDir)){
-		for( of::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
+	fs::directory_iterator end_iter;
+	if ( fs::exists(myDir) && fs::is_directory(myDir)){
+		for( fs::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
 			files.emplace_back(dir_iter->path());
 		}
 	}else{
@@ -1393,7 +1393,7 @@ std::size_t ofDirectory::listDir(){
 
 	// FIXME:
 //	if(!showHidden){
-//		ofRemove(files, [](of::filesystem::path & file){
+//		ofRemove(files, [](fs::path & file){
 //			return file.isHidden();
 //		});
 //	}
@@ -1409,25 +1409,25 @@ std::size_t ofDirectory::listDir(){
 		for(int i = 0; i < (int)size(); i++){
 			ofLogVerbose() << "\t" << getName(i);
 		}
-		ofLogVerbose() << "listed " << size() << " files in \"" << originalDirectory << "\"";
+		ofLogVerbose() << "listed " << size() << " files in " << originalDirectory;
 	}
 
 	return size();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getOriginalDirectory() const {
-	return ofPathToString(originalDirectory);
+fs::path ofDirectory::getOriginalDirectory() const {
+	return originalDirectory;
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getName(std::size_t position) const{
-	return files.at(position).string();
+fs::path ofDirectory::getName(std::size_t position) const{
+	return files.at(position);
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getPath(std::size_t position) const{
-	return ofPathToString(originalDirectory / getName(position));
+fs::path ofDirectory::getPath(std::size_t position) const{
+	return originalDirectory / getName(position);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1442,7 +1442,7 @@ ofFile ofDirectory::operator[](std::size_t position) const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-const vector<of::filesystem::path> & ofDirectory::getFiles() const{
+const vector<fs::path> & ofDirectory::getFiles() const{
 	if(files.empty() && !myDir.empty()){
 		const_cast<ofDirectory*>(this)->listDir();
 	}
@@ -1461,47 +1461,13 @@ void ofDirectory::reset(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-static bool natural(const ofFile& a, const ofFile& b) {
-	string aname = a.getBaseName(), bname = b.getBaseName();
-	int aint = ofToInt(aname), bint = ofToInt(bname);
-	if(ofToString(aint) == aname && ofToString(bint) == bname) {
-		return aint < bint;
-	} else {
-		return a < b;
-	}
-}
-
-
-//------------------------------------------------------------------------------------------------------------
-struct StringSort{
-    fs::path path;
-    string basename;
-    int nameInt;
-    string stringInt;
-};
-
-//------------------------------------------------------------------------------------------------------------
-static bool naturalStr(const StringSort& a, const StringSort& b) {
-    if(a.stringInt == a.basename && b.stringInt == b.basename) {
-        return a.nameInt < b.nameInt;
-    } else {
-        return a.path < b.path;
-    }
-}
-
-//------------------------------------------------------------------------------------------------------------
-static bool byDate(const ofFile& a, const ofFile& b) {
-	auto ta = fs::last_write_time(a);
-	auto tb = fs::last_write_time(b);
-	return ta < tb;
-}
-
-//------------------------------------------------------------------------------------------------------------
 void ofDirectory::sortByDate() {
 	if (files.empty() && !myDir.empty()) {
 		listDir();
 	}
-	ofSort(files, byDate);
+	std::sort(files.begin(), files.end(), [](const fs::path & a, const fs::path & b) {
+		return fs::last_write_time(a); < fs::last_write_time(b);
+	});
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1510,7 +1476,6 @@ void ofDirectory::sort(const SortMode & mode){
 		listDir();
 	}
 	std::sort(files.begin(), files.end());
-//	ofSort(files, natural);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1642,22 +1607,22 @@ bool ofDirectory::operator>=(const ofDirectory & dir) const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<of::filesystem::path>::const_iterator ofDirectory::begin() const{
+vector<fs::path>::const_iterator ofDirectory::begin() const{
 	return files.begin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<of::filesystem::path>::const_iterator ofDirectory::end() const{
+vector<fs::path>::const_iterator ofDirectory::end() const{
 	return files.end();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<of::filesystem::path>::const_reverse_iterator ofDirectory::rbegin() const{
+vector<fs::path>::const_reverse_iterator ofDirectory::rbegin() const{
 	return files.rbegin();
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<of::filesystem::path>::const_reverse_iterator ofDirectory::rend() const{
+vector<fs::path>::const_reverse_iterator ofDirectory::rend() const{
 	return files.rend();
 }
 
