@@ -1,6 +1,7 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofPixels.h"
+#include "ofFileUtils.h"
 
 #include <FreeImage.h>
 
@@ -364,7 +365,8 @@ bool ofLoadImage(ofTexture & tex, const of::filesystem::path & path, const ofIma
 //----------------------------------------------------------------
 bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, bool bFlipInY, const ofImageLoadSettings &settings){
 	bool loaded = false;
-	std::string ext = ofToLower(path.extension().string());
+	auto ext = ofGetExtensionLower(path);
+
 	bool hdr = (ext == ".hdr" || ext == ".exr");
 	if( hdr ) {
 		ofFloatPixels pixels;
