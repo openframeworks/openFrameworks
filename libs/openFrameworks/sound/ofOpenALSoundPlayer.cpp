@@ -498,7 +498,11 @@ bool ofOpenALSoundPlayer::readFile(const fs::path & fileName, std::vector<short>
 }
 
 //------------------------------------------------------------
+<<<<<<< HEAD
 bool ofOpenALSoundPlayer::load(const fs::path& _fileName, bool is_stream){
+=======
+bool ofOpenALSoundPlayer::load(const of::filesystem::path & _fileName, bool is_stream){
+>>>>>>> master
 
 	auto fileName = ofToDataPath(_fileName);
 

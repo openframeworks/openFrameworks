@@ -176,12 +176,12 @@ function createProjectFiles {
         cd ${main_ofroot}/apps/projectGenerator/commandLine
         echo "Recompiling command line PG"
         if [ -d ~/logs ]; then
-            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug > ~/logs/compilePG.log 2>&1 &
+            PROJECT_OPTIMIZATION_CFLAGS_RELEASE="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Release > ~/logs/compilePG.log 2>&1 &
             makePGPID=$!
             echoDots $makePGPID
             wait $makePGPID
         else
-            PROJECT_OPTIMIZATION_CFLAGS_DEBUG="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Debug
+            PROJECT_OPTIMIZATION_CFLAGS_RELEASE="-O0 -g0" CXXFLAGS=-ftrack-macro-expansion=0 make Release
         fi
 
         cd ${pkg_ofroot}
@@ -195,9 +195,16 @@ function createProjectFiles {
 
         if [ -f "${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator" ]; then
             echo "projectGenerator exists..."
-            ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+            
+            echo "##[group]PG building example projects"
+            # ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples > /dev/null
+            ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${pg_platform} -o$pkg_ofroot $pkg_ofroot/examples
+            echo "##[endgroup]"
+
         else
             echo "projectGenerator does not exist. Continue."
+	    ls ${main_ofroot}/apps/projectGenerator/commandLine/bin/
+	    exit 1
         fi
 
         
@@ -282,10 +289,10 @@ function createPackage {
         rm -Rf utils/fileBufferLoadingCSVExample
         rm -Rf 3d/modelNoiseExample
         rm -Rf windowing
-		rm -Rf input_output
-		rm -Rf shader
-		rm -Rf sound
-		rm -Rf threads
+	rm -Rf input_output
+	rm -Rf shader
+	rm -Rf sound
+	rm -Rf threads
         rm -Rf windowing
 	fi
 
@@ -295,7 +302,7 @@ function createPackage {
 
 	if [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ] || [ "$pkg_platform" == "linuxaarch64" ]; then
 
-	    rm -Rf gl/glInfoExample
+	rm -Rf gl/glInfoExample
         rm -Rf gl/alphaMaskingShaderExample
         rm -Rf gl/billboardExample
         rm -Rf gl/billboardRotationExample
@@ -338,7 +345,7 @@ function createPackage {
     cd $pkg_ofroot/
     echo " Location: {$pkg_ofroot}"
     if [ "$pkg_platform" = "osx" ]; then
-        scripts/osx/download_latest_libs.sh
+        scripts/osx/download_libs.sh
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$libs_abi
@@ -354,20 +361,20 @@ function createPackage {
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "vs" ]; then
         if [ "$libs_abi" = "" ]; then
-            scripts/vs/download_latest_libs.sh
+            scripts/vs/download_libs.sh
         else
-            scripts/vs/download_latest_libs.sh -a $libs_abi
+            scripts/vs/download_libs.sh -a $libs_abi
         fi
         scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "android" ]; then
         scripts/android/download_libs.sh
     elif [ "$pkg_platform" = "ios" ]; then
-        scripts/macos/download_latest_libs.sh
+        scripts/macos/download_libs.sh
      elif [ "$pkg_platform" = "emscripten" ]; then
        scripts/emscripten/download_libs.sh -n
     elif [ "$pkg_platform" = "macos" ]; then
-        scripts/osx/download_latest_libs.sh
-        scripts/macos/download_latest_libs.sh
+        scripts/osx/download_libs.sh
+        scripts/macos/download_libs.sh
         scripts/emscripten/download_libs.sh -n
     fi
 
@@ -421,8 +428,8 @@ function createPackage {
   
   		# use prepackaged gui
         downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-        mkdir projectGenerator
-        unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
+        mkdir -p projectGenerator
+        unzip -q projectGenerator-vs-gui.zip -d "projectGenerator" 2> /dev/null
 		# if [ "$pkg_platform" = "msys2" ]; then
 		# 	sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
 		# else
@@ -433,8 +440,8 @@ function createPackage {
 	fi
 
     if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "macos" ]; then
-		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
-        unzip projectGenerator-osx.zip
+	downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
+        unzip -q projectGenerator-osx.zip
         mv projectGenerator-osx/ projectGenerator
         rm projectGenerator-osx.zip
 		rm -rf apps/projectGenerator
@@ -464,7 +471,7 @@ function createPackage {
 		# mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
 		# cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
 		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
-		unzip -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
+		unzip -q -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		rm projectGenerator-vs-gui.zip
 		cd ${pkg_ofroot}
 
@@ -603,6 +610,7 @@ function createPackage {
     rm -Rf .travis.yml
     rm -Rf .gitmodules
     rm -Rf .gitattributes
+    
 
     if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ] || [ "$platform" = "linuxaarch64" ]; then
         cp docs/linux.md INSTALL.md
@@ -628,6 +636,11 @@ function createPackage {
     rm CONTRIBUTING.md
 
     #copy empty example
+    cd $pkg_ofroot
+
+    cd examples
+    find . -type f -name '*.dll' -delete
+
     cd $pkg_ofroot
     mkdir -p apps/myApps
     if [ "$pkg_platform" = "android" ]; then

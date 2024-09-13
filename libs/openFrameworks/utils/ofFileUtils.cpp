@@ -1860,15 +1860,19 @@ fs::path ofFilePath::getCurrentExePath(){
 		}
 		return path;
 	#elif defined(TARGET_WIN32)
-		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+		wchar_t filename[MAX_PATH];
+		DWORD result = ::GetModuleFileName(
+			nullptr,    // retrieve path of current process .EXE
+			filename,
+			_countof(filename)
+		);
 		if (result == 0) {
-			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
-		} else {
-			return string(executablePath.begin(), executablePath.begin() + result);
+			// Error
+			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileName failed";
 		}
+		return filename;
 	#endif
-	return "";
+	return {};
 }
 
 
@@ -2027,6 +2031,12 @@ std::string ofPathToString(const fs::path & path) {
 	return {};
 }
 
-//std::string ofPathExtensionToLowerString(const of::filesystem::path & path) {
-//	return ofToLower(ofPathToString(path));
-//}
+//--------------------------------------------------
+// Function used internally in OF core. API can change later
+std::string ofGetExtensionLower(const fs::path & path) {
+	auto ext = path.extension().generic_string();
+	std::transform(ext.begin(), ext.end(), ext.begin(),
+		[](unsigned char c){ return std::tolower(c); });
+
+	return ext;
+}

@@ -168,8 +168,8 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomPoisson<int>(2.5)") << ofRandomPoisson<long long>(5.5);
 		ofLogNotice("ofRandomPoisson<glm::vec2>(2.5)") << ofRandomPoisson<glm::vec2>(5.5);
 		ofLogNotice("ofRandomPoisson<glm::vec2>({2.5, 10})") << ofRandomPoisson<glm::vec2>({ 5.5, 10 });
-		ofLogNotice("ofRandomPoisson<glm::vec3>(2.5, 10, 0.1") << ofRandomPoisson<glm::vec3>(5.5);
-		ofLogNotice("ofRandomPoisson<glm::vec3>({2.5, 10, 0.1}") << ofRandomPoisson<glm::vec3>({ 5.5, 10, 0.1 });
+		ofLogNotice("ofRandomPoisson<glm::vec3>(2.5, 10, 3") << ofRandomPoisson<glm::vec3>(5.5);
+		ofLogNotice("ofRandomPoisson<glm::vec3>({2.5, 10, 3}") << ofRandomPoisson<glm::vec3>({ 5.5, 10, 0.1 });
 
 		// bernoulli requires 1 arg (no defaults), and return type is bool
 		// again, glm usage case is cast to float
@@ -187,17 +187,17 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomBernoulli<bool>(.5)") << ofRandomBernoulli<bool>(.5);
 		ofLogNotice("ofRandomBernoulli(.5)") << ofRandomBernoulli(.5);
 
-		ofLogNotice("yes aka bernoulli<glm::vec3>(.33)") << yes<glm::vec3>(.33);
-		ofLogNotice("yes aka bernoulli<glm::vec2>(.5)") << yes<glm::vec2>(.5);
-		ofLogNotice("yes aka bernoulli<float>(.5)") << yes<float>(.5);
-		ofLogNotice("yes aka bernoulli<bool>(.5)") << yes<bool>(.5);
-		ofLogNotice("yes aka bernoulli(.5)") << yes(.5);
+		ofLogNotice("sometimes aka bernoulli<glm::vec3>(.33)") << sometimes<glm::vec3>(.33);
+		ofLogNotice("sometimes aka bernoulli<glm::vec2>(.5)") << sometimes<glm::vec2>(.5);
+		ofLogNotice("sometimes aka bernoulli<float>(.5)") << sometimes<float>(.5);
+		ofLogNotice("sometimes aka bernoulli<bool>(.5)") << sometimes<bool>(.5);
+		ofLogNotice("sometimes aka bernoulli(.5)") << sometimes(.5);
 
-		ofLogNotice("ofRandomYes aka bernoulli<glm::vec3>(.33)") << ofRandomYes<glm::vec3>(.33);
-		ofLogNotice("ofRandomYes aka bernoulli<glm::vec2>(.5)") << ofRandomYes<glm::vec2>(.5);
-		ofLogNotice("ofRandomYes aka bernoulli<float>(.5)") << ofRandomYes<float>(.5);
-		ofLogNotice("ofRandomYes aka bernoulli<bool>(.5)") << ofRandomYes<bool>(.5);
-		ofLogNotice("ofRandomYes aka bernoulli(.5)") << ofRandomYes(.5);
+		ofLogNotice("ofRandomSometimes aka bernoulli<glm::vec3>(.33)") << ofRandomSometimes<glm::vec3>(.33);
+		ofLogNotice("ofRandomSometimes aka bernoulli<glm::vec2>(.5)") << ofRandomSometimes<glm::vec2>(.5);
+		ofLogNotice("ofRandomSometimes aka bernoulli<float>(.5)") << ofRandomSometimes<float>(.5);
+		ofLogNotice("ofRandomSometimes aka bernoulli<bool>(.5)") << ofRandomSometimes<bool>(.5);
+		ofLogNotice("ofRandomSometimes aka bernoulli(.5)") << ofRandomSometimes(.5);
 
 		// lognormal requires 2 args (no defaults)
 

@@ -26,7 +26,8 @@ public:
 	
 	ofAVFoundationPlayer();
 	~ofAVFoundationPlayer();
-	   
+	
+	//FIXME: FS
 	bool load(std::string name);
 	void loadAsync(std::string name);
 	void close();

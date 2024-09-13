@@ -123,15 +123,19 @@
 		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
-		BF4730B12BA4056B00E6E3C6 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF4730B02BA4056B00E6E3C6 /* curl.xcframework */; };
-		BF7E59062BA203BC00E5C52E /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */; };
-		BF7E590C2BA204BC00E5C52E /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
-		BF7E590E2BA204D300E5C52E /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
-		BF7E59142BA2050B00E5C52E /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59132BA2050B00E5C52E /* libpng.xcframework */; };
-		BF7E59182BA2052D00E5C52E /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59172BA2052D00E5C52E /* pugixml.xcframework */; };
-		BF7E591A2BA2054700E5C52E /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59192BA2054700E5C52E /* tess2.xcframework */; };
-		BF7E591C2BA2056600E5C52E /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591B2BA2056600E5C52E /* uriparser.xcframework */; };
-		BF7E591E2BA2057A00E5C52E /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591D2BA2057900E5C52E /* zlib.xcframework */; };
+		BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */; };
+		BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */; };
+		BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C022C4FFC5900728DEC /* brotli.xcframework */; };
+		BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */; };
+		BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF4730B02BA4056B00E6E3C6 /* curl.xcframework */; };
+		BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591D2BA2057900E5C52E /* zlib.xcframework */; };
+		BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591B2BA2056600E5C52E /* uriparser.xcframework */; };
+		BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59192BA2054700E5C52E /* tess2.xcframework */; };
+		BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59172BA2052D00E5C52E /* pugixml.xcframework */; };
+		BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59132BA2050B00E5C52E /* libpng.xcframework */; };
+		BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
+		BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
+		BFB0B40E2C50E019008FB5A3 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -365,6 +369,8 @@
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiOS_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
+		BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
 		BF4730B02BA4056B00E6E3C6 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
 		BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BF7E590B2BA204BC00E5C52E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
@@ -374,6 +380,8 @@
 		BF7E59192BA2054700E5C52E /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
 		BF7E591B2BA2056600E5C52E /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
 		BF7E591D2BA2057900E5C52E /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
+		BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/macos/openssl.xcframework; sourceTree = "<group>"; };
+		BFEC5C022C4FFC5900728DEC /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../brotli/lib/macos/brotli.xcframework; sourceTree = "<group>"; };
 		E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9113B38BE900A75A5D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9213B38BE900A75A5D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -494,23 +502,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF7E591E2BA2057A00E5C52E /* zlib.xcframework in Frameworks */,
 				99752D331BF21EEE0026316A /* GameController.framework in Frameworks */,
 				67D48ED01C10399900F719BC /* CoreMotion.framework in Frameworks */,
 				BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */,
 				BB24DECB10DA7A3F00E9C588 /* OpenGLES.framework in Frameworks */,
-				BF7E59142BA2050B00E5C52E /* libpng.xcframework in Frameworks */,
 				BB24DECC10DA7A3F00E9C588 /* UIKit.framework in Frameworks */,
 				BB24DECD10DA7A3F00E9C588 /* OpenAL.framework in Frameworks */,
 				901808B9205362D7004A7774 /* GLKit.framework in Frameworks */,
-				BF7E59182BA2052D00E5C52E /* pugixml.xcframework in Frameworks */,
 				BB24DECE10DA7A3F00E9C588 /* Foundation.framework in Frameworks */,
-				BF7E590C2BA204BC00E5C52E /* fmt.xcframework in Frameworks */,
-				BF4730B12BA4056B00E6E3C6 /* curl.xcframework in Frameworks */,
-				BF7E59062BA203BC00E5C52E /* FreeImage.xcframework in Frameworks */,
 				BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */,
-				BF7E591A2BA2054700E5C52E /* tess2.xcframework in Frameworks */,
-				BF7E591C2BA2056600E5C52E /* uriparser.xcframework in Frameworks */,
 				BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */,
 				BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */,
 				5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */,
@@ -518,7 +518,17 @@
 				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
 				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
 				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
-				BF7E590E2BA204D300E5C52E /* freetype.xcframework in Frameworks */,
+				BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */,
+				BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */,
+				BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */,
+				BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */,
+				BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */,
+				BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */,
+				BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */,
+				BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */,
+				BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */,
+				BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */,
+				BFB0B40E2C50E019008FB5A3 /* FreeImage.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -548,6 +558,8 @@
 		15594F0015C55A5700727FF2 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */,
+				BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */,
 				9008001C204EDC0F00DC786A /* EAGLKView.h */,
 				9008001B204EDC0E00DC786A /* EAGLKView.m */,
 				15594F0815C55AC900727FF2 /* EAGLView.h */,
@@ -669,7 +681,7 @@
 			name = CustomTemplate;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
 			isa = PBXGroup;
@@ -983,6 +995,8 @@
 		E9F39181299E892200280B58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BFEC5C022C4FFC5900728DEC /* brotli.xcframework */,
+				BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */,
 				BF4730B02BA4056B00E6E3C6 /* curl.xcframework */,
 				BF7E591D2BA2057900E5C52E /* zlib.xcframework */,
 				BF7E591B2BA2056600E5C52E /* uriparser.xcframework */,
@@ -1108,6 +1122,7 @@
 				1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */,
 				1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */,
 				678C3D23176F04F800D1CC68 /* ofxiOSSoundStream.h in Headers */,
+				BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */,
 				678C3D25176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h in Headers */,
 				678C3D27176F04F800D1CC68 /* SoundInputStream.h in Headers */,
 				678C3D29176F04F800D1CC68 /* SoundOutputStream.h in Headers */,
@@ -1129,9 +1144,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */;
 			buildPhases = (
+				BFF80A492C50AF3300784E74 /* ShellScript */,
 				BB24DE5D10DA7A3F00E9C588 /* Headers */,
 				BB24DEB110DA7A3F00E9C588 /* Sources */,
 				BB24DEC910DA7A3F00E9C588 /* Frameworks */,
+				BFF80A5C2C50B25B00784E74 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1168,6 +1185,45 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		BFF80A492C50AF3300784E74 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env bash";
+			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for iOS / macOS. Downloading libaries now via scripts/macos/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+		};
+		BFF80A5C2C50B25B00784E74 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env bash";
+			shellScript = "#!/usr/bin/env bash\nTARGET_DIR=\"$SRCROOT/../../lib/ios/\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for [$TARGET_DIR]\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for [$TARGET_DIR]\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		BB24DEB110DA7A3F00E9C588 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1175,6 +1231,7 @@
 			files = (
 				E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */,
 				2E6E258428F73C2C00EC8E22 /* ofShadow.cpp in Sources */,
+				BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */,
 				E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */,
 				E4F76E1D176CB27200798745 /* ofCamera.cpp in Sources */,
 				E4F76E1F176CB27200798745 /* ofEasyCam.cpp in Sources */,
@@ -1277,6 +1334,7 @@
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1293,6 +1351,7 @@
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Debug";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
@@ -1303,6 +1362,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
@@ -1317,6 +1377,7 @@
 				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Release";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1346,7 +1407,7 @@
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
@@ -1389,7 +1450,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;

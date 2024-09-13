@@ -409,7 +409,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
 #ifdef TARGET_LINUX
     //------------------------------------------------------------
-    void ofAppGLFWWindow::setWindowIcon(const std::string & path) {
+    void ofAppGLFWWindow::setWindowIcon(const of::filesystem::path & path) {
         ofPixels iconPixels;
         ofLoadImage(iconPixels, path);
         setWindowIcon(iconPixels);
@@ -1549,6 +1549,9 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
                 break;
             case GLFW_KEY_KP_EQUAL:
                 key = codepoint = '=';
+                break;
+            case GLFW_KEY_SPACE:
+                key = codepoint = OF_KEY_SPACE;
                 break;
             default:
                 codepoint = keycodeToUnicode(instance, scancode, mods);

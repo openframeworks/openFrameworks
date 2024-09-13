@@ -262,15 +262,18 @@ enum ofTargetPlatform{
 
 
 #ifdef TARGET_OF_IOS
-	#import <OpenGLES/ES1/gl.h>
-	#import <OpenGLES/ES1/glext.h>
-	#import <OpenGLES/ES2/gl.h>
-	#import <OpenGLES/ES2/glext.h>
-	#define TARGET_LITTLE_ENDIAN		// arm cpu
-	#if defined(__OBJC__) && !__has_feature(objc_arc)
-		#error "Please enable ARC (Automatic Reference Counting) at the project level"
-	#endif
-
+    #import <OpenGLES/ES1/gl.h>
+    #import <OpenGLES/ES1/glext.h>
+    #import <OpenGLES/ES2/gl.h>
+    #import <OpenGLES/ES2/glext.h>
+	#import <OpenGLES/ES3/gl.h>
+	#import <OpenGLES/ES3/glext.h>
+    #define TARGET_LITTLE_ENDIAN    // arm cpu
+    #if defined(__OBJC__) && !__has_feature(objc_arc)
+        #warning "ARC (Automatic Reference Counting) is not enabled."
+        #warning "Enable ARC at the project level, or if using Objective-C/C++ with manual memory management,"
+        #warning "add '-fno-objc-arc' in Build Phases -> Compile Sources -> Compiler Flags."
+    #endif
 #endif
 
 #ifdef TARGET_ANDROID
