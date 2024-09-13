@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofWindowSettings.h"
+// MARK: Target
+#include "ofConstants.h"
 
 class ofBaseApp;
 class ofBaseRenderer;

@@ -1,4 +1,6 @@
 #include "ofxiOSVideoPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 #include "ofxiOSExtras.h"
 #include "ofxiOSEAGLView.h"
 #import "AVFoundationVideoPlayer.h"
@@ -6,6 +8,7 @@
 #include "ofMath.h"
 
 using std::string;
+
 
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
@@ -41,7 +44,7 @@ void ofxiOSVideoPlayer::disableTextureCache() {
 bool ofxiOSVideoPlayer::load(string name) {
 	
     if(!videoPlayer) {
-        videoPlayer = (__bridge void *)[[AVFoundationVideoPlayer alloc] init];
+        videoPlayer = (__bridge_retained void *)[[AVFoundationVideoPlayer alloc] init];
         [(__bridge AVFoundationVideoPlayer *)videoPlayer setWillBeUpdatedExternally:YES];
     }
     
@@ -54,19 +57,11 @@ bool ofxiOSVideoPlayer::load(string name) {
     
     if(bTextureCacheSupported == true && bTextureCacheEnabled == true) {
         if(_videoTextureCache == NULL) {
-#ifdef __IPHONE_6_0
             CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
                                                         NULL,
                                                         ofxiOSGetGLView().context,
                                                         NULL,
                                                         &_videoTextureCache);
-#else
-            CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                                        NULL,
-                                                        (__bridge void *)ofxiOSGetGLView().context,
-                                                        NULL,
-                                                        &_videoTextureCache);
-#endif
             if(err) {
                 ofLogWarning("ofxiOSVideoPlayer::load()") << "Error at CVOpenGLESTextureCacheCreate " << err;
             }
@@ -86,6 +81,7 @@ void ofxiOSVideoPlayer::close() {
 		
         ((__bridge AVFoundationVideoPlayer *)videoPlayer).delegate = nil;
         
+        __autoreleasing AVFoundationVideoPlayer *player = (__bridge_transfer AVFoundationVideoPlayer *)videoPlayer;
         if(bTextureCacheSupported == true) {
             killTextureCache();
         }
@@ -608,4 +604,4 @@ const ofPixels & ofxiOSVideoPlayer::getPixelsRef() const {
 ofTexture * ofxiOSVideoPlayer::getTexture() {
     return getTexturePtr();
 }
-
+#endif

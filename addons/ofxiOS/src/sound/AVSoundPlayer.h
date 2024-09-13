@@ -6,6 +6,9 @@
 
 #pragma once
 
+#include "ofxiOSConstants.h"
+#if defined(OF_IOS_AVSOUNDPLAYER)
+
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -55,4 +58,8 @@
 - (void)positionMs:(int)value;
 - (int)positionMs;
 
+// total duration in seconds of player's audio
+- (float)duration;
+
 @end
+#endif

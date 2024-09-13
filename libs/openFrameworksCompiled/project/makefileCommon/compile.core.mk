@@ -2,7 +2,7 @@
 
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info ===================compile.core.make================================)
+$(info ===================compile.core.make================================)
 endif
 
 ifdef PROJECT_CXX
@@ -13,6 +13,7 @@ ifdef PLATFORM_CXX
 	CXX ?= $(PLATFORM_CXX)
 endif
 
+
 ifdef PROJECT_CC
 	CC ?= $(PROJECT_CC)
 endif
@@ -20,6 +21,14 @@ endif
 ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
+
+# ifdef PROJECT_LD
+# 	LD ?= $(PROJECT_LD)
+# endif
+
+# ifdef PLATFORM_LD
+# 	LD = $(PLATFORM_LD)
+# endif
 
 ifdef PROJECT_AR
 	AR ?= $(PROJECT_AR)
@@ -29,11 +38,23 @@ ifdef PLATFORM_AR
 	AR ?= $(PLATFORM_AR)
 endif
 
+
 ifdef PLATFORM_ARFLAGS
 	ARFLAGS = $(PLATFORM_ARFLAGS)
 else
 	ARFLAGS = -cr
 endif
+
+ifdef ${ccache}
+$(info 💿 Using CCACHE - compile.core.mk )
+	CXX := ${ccache} $(CXX)
+	CC := ${ccache} $(CXX)
+endif
+
+$(info 💾 CXX = $(CXX))
+$(info 💾 CC = $(CC))
+# $(info 💾 LD = $(LD))
+
 
 ################################################################################
 # CFLAGS
@@ -181,14 +202,14 @@ OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUTPUT_PATH),$(patsubst $(OF_ROOT)
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info ========================= compile.core.make flags ========================)
-    $(info OF_CORE_OBJ_OUTPUT_PATH=$(OF_CORE_OBJ_OUTPUT_PATH))
+$(info ========================= compile.core.make flags ========================)
+$(info OF_CORE_OBJ_OUTPUT_PATH=$(OF_CORE_OBJ_OUTPUT_PATH))
 
-    $(info ---OF_CORE_DEPENDENCY_FILES---)
-    $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
+$(info ---OF_CORE_DEPENDENCY_FILES---)
+$(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
 
-    $(info ---OF_CORE_OBJ_FILES---)
-    $(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
+$(info ---OF_CORE_OBJ_FILES---)
+$(foreach v, $(OF_CORE_OBJ_FILES),$(info $(v)))
 endif
 
 

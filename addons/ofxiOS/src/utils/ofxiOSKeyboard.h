@@ -7,7 +7,8 @@
  */
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
 #import <UIKit/UIKit.h>
 #include "ofConstants.h"
 
@@ -68,7 +69,8 @@ public:
 	void setMaxChars(int max);
 	
 	std::string getText();
-    OF_DEPRECATED_MSG("Use getText() instead.", std::string getLabelText());
+    [[deprecated("Use getText()")]]
+	std::string getLabelText();
 	bool isKeyboardShowing();
 	
     UITextField * getKeyboardTextField();
@@ -80,4 +82,4 @@ protected:
 };
 
 #define ofxiPhoneKeyboard ofxiOSKeyboard
-
+#endif

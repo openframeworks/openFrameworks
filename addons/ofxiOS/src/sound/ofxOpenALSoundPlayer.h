@@ -21,8 +21,11 @@
  THE SOFTWARE.
  
  ************************************************************************/ 
+#include "ofConstants.h"
 
+#include "ofxiOSConstants.h"
 
+#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 #ifndef OFX_OPEN_AL_SOUND_PLAYER_H
 #define OFX_OPEN_AL_SOUND_PLAYER_H
 
@@ -89,6 +92,9 @@ public:
 
 	bool    isLoaded() const;
 	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
+	
 	// IPHONE EXTRA FUNCTIONS
 	static void	vibrate();
 	
@@ -138,4 +144,5 @@ protected: //internal
 	std::vector <multiPlaySource *> retainedBuffers;
 };
 
+#endif
 #endif

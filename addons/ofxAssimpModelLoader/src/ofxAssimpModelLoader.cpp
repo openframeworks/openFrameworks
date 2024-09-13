@@ -2,8 +2,11 @@
 #include "ofxAssimpUtils.h"
 #include "ofLight.h"
 #include "ofImage.h"
+#include "ofPixels.h"
 #include "ofGraphics.h"
 #include "ofConstants.h"
+#include "ofMatrix4x4.h"
+#include "ofUtils.h" // ofGetElapsedTimef
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
@@ -24,12 +27,12 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 
 
 // DEPRECATED
-bool ofxAssimpModelLoader::load(string modelName, bool optimize){
+bool ofxAssimpModelLoader::load(const of::filesystem::path & fileName, bool optimize){
 	int optimizeFlags = OPTIMIZE_DEFAULT;
 	if( optimize ){
 		optimizeFlags = OPTIMIZE_HIGH;
 	}
-	return load(modelName, optimizeFlags);
+	return load(fileName, optimizeFlags);
 }
 
 // DEPRECATED
@@ -42,8 +45,8 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 }
 
 // DEPRECATED
-bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
-	return load(modelName, optimize);
+bool ofxAssimpModelLoader::loadModel(const of::filesystem::path & fileName, bool optimize){
+	return load(fileName, optimize);
 }
 
 // DEPRECATED
@@ -52,16 +55,14 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 }
 
 //------------------------------------------
-bool ofxAssimpModelLoader::load(string modelName, int assimpOptimizeFlags){
-
-	file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -Ed
-	if(!file.exists()) {
-		ofLogVerbose("ofxAssimpModelLoader") << "load(): model does not exist: \"" << modelName << "\"";
+bool ofxAssimpModelLoader::load(const of::filesystem::path & fileName, int assimpOptimizeFlags){
+	file = ofToDataPath(fileName);
+	if (!of::filesystem::exists(file)) {
+		ofLogVerbose("ofxAssimpModelLoader") << "load(): model does not exist: " << fileName ;
 		return false;
 	}
-
-	ofLogVerbose("ofxAssimpModelLoader") << "load(): loading \"" << file.getFileName()
-	<< "\" from \"" << file.getEnclosingDirectory() << "\"";
+		
+	ofLogVerbose("ofxAssimpModelLoader") << "load(): loading " << fileName;
 
 	if(scene.get() != nullptr){
 		clear();
@@ -80,8 +81,7 @@ bool ofxAssimpModelLoader::load(string modelName, int assimpOptimizeFlags){
 	//	}
 
 	// loads scene from file
-	std::string path = file.getAbsolutePath();
-	const aiScene * scenePtr = importer.ReadFile(path.c_str(), flags);
+	const aiScene * scenePtr = importer.ReadFile(ofPathToString(file), flags);
 
 	//this is funky but the scenePtr is managed by assimp and so we can't put it in our shared_ptr without disabling the deleter with: [](const aiScene*){}
 	scene = shared_ptr<const aiScene>(scenePtr,[](const aiScene*){});
@@ -215,9 +215,9 @@ void ofxAssimpModelLoader::calculateDimensions(){
 
 	// optional normalized scaling
 	normalizedScale = scene_max.x-scene_min.x;
-	normalizedScale = MAX(scene_max.y - scene_min.y,normalizedScale);
-	normalizedScale = MAX(scene_max.z - scene_min.z,normalizedScale);
-	if (abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
+	normalizedScale = std::max(double(scene_max.y - scene_min.y), normalizedScale);
+	normalizedScale = std::max(double(scene_max.z - scene_min.z), normalizedScale);
+	if (std::abs(normalizedScale) < std::numeric_limits<float>::epsilon()){
 		ofLogWarning("ofxAssimpModelLoader") << "Error calculating normalized scale of scene" << std::endl;
 		normalizedScale = 1.0;
 	} else {
@@ -320,7 +320,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &tcolor)){
 			auto col = aiColorToOfColor(tcolor);
-			meshHelper.material.setAmbientColor(aiColorToOfColor(tcolor));
+			meshHelper.material.setAmbientColor(col);
 		}
 
 		if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
@@ -372,6 +372,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 				bool bWrap = (texMapMode[0]==aiTextureMapMode_Wrap);
 
 				std::string texPathStr = texPath.C_Str();
+				
 
 				//deal with Blender putting "//" in front of local file paths
 				if( texPathStr.size() > 2 && texPathStr.substr(0, 2) == "//" ){
@@ -388,7 +389,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 				auto ogPath = texPathStr;
 				bool bHasEmbeddedTexture = false;
 
-				auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
+				auto modelFolder { file.parent_path() };
+				// auto modelFolder = ofFilePath::getEnclosingDirectory( file.path() );
 				auto relTexPath = ofFilePath::getEnclosingDirectory(texPathStr,false);
 				auto realPath = modelFolder / of::filesystem::path{ texPathStr };
 				
@@ -400,8 +402,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 						bHasEmbeddedTexture = true;
 						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource() texture " << realPath.filename() << " is embedded ";
 					}else{
-						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""
-						<< file.getFileName() + "\" in \"" << realPath.string() << "\"";
+						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: "
+						<< file << " in \"" << realPath.string() << "\"";
 					}
 				}
 #endif
@@ -418,8 +420,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 					assimpTexture.setTextureType((aiTextureType)d);
 					meshHelper.addTexture(assimpTexture);
 
-					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: \""
-					<< file.getFileName() + "\" from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
+					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture already loaded: "
+					<< file << " from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture.getTextureTypeAsString() ;
 				} else {
 
 					shared_ptr<ofTexture> texture = std::make_shared<ofTexture>();
@@ -462,8 +464,8 @@ void ofxAssimpModelLoader::loadGLResources(){
 
 						ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): texture " << tmpTex.getTextureTypeAsString() << " loaded, dimensions: " << texture->getWidth() << "x" << texture->getHeight();
 					}else{
-						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: \""
-						<< file.getFileName() + "\" from \"" << realPath.string() << "\"";
+						ofLogError("ofxAssimpModelLoader") << "loadGLResource(): couldn't load texture: "
+						<< file << " from \"" << realPath.string() << "\"";
 					}
 				}
 			}
@@ -747,6 +749,12 @@ void ofxAssimpModelLoader::setPositionForAllAnimations(float position) {
 	}
 }
 
+void ofxAssimpModelLoader::setSpeedForAllAnimations(float speed) {
+	for (auto & a : animations) {
+		a.setSpeed(speed);
+	}
+}
+
 // DEPRECATED.
 void ofxAssimpModelLoader::setAnimation(int animationIndex) {
 	if(!hasAnimations()) {
@@ -823,25 +831,25 @@ void ofxAssimpModelLoader::getBoundingBoxForNode(const ofxAssimpMeshHelper & mes
 			auto vertex = mesh.mesh->mVertices[i];
 			auto tmp = mesh.matrix * glm::vec4(vertex.x,vertex.y,vertex.z,1.0f);
 
-			min->x = MIN(min->x,tmp.x);
-			min->y = MIN(min->y,tmp.y);
-			min->z = MIN(min->z,tmp.z);
+			min->x = std::min(min->x,tmp.x);
+			min->y = std::min(min->y,tmp.y);
+			min->z = std::min(min->z,tmp.z);
 
-			max->x = MAX(max->x,tmp.x);
-			max->y = MAX(max->y,tmp.y);
-			max->z = MAX(max->z,tmp.z);
+			max->x = std::max(max->x,tmp.x);
+			max->y = std::max(max->y,tmp.y);
+			max->z = std::max(max->z,tmp.z);
 		}
 	} else {
 		for (auto & animPos: mesh.animatedPos){
 			auto tmp = mesh.matrix * glm::vec4(animPos.x,animPos.y,animPos.z,1.0f);
 
-			min->x = MIN(min->x,tmp.x);
-			min->y = MIN(min->y,tmp.y);
-			min->z = MIN(min->z,tmp.z);
+			min->x = std::min(min->x,tmp.x);
+			min->y = std::min(min->y,tmp.y);
+			min->z = std::min(min->z,tmp.z);
 
-			max->x = MAX(max->x,tmp.x);
-			max->y = MAX(max->y,tmp.y);
-			max->z = MAX(max->z,tmp.z);
+			max->x = std::max(max->x,tmp.x);
+			max->y = std::max(max->y,tmp.y);
+			max->z = std::max(max->z,tmp.z);
 		}
 	}
 }

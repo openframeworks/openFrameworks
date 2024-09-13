@@ -1,8 +1,9 @@
 #include "ofQuaternion.h"
 #include "ofMatrix4x4.h"
-#include "ofMath.h"
-#include "ofMathConstants.h"
-#include "glm/gtc/quaternion.hpp"
+
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/quaternion.hpp>
 
 //----------------------------------------
 ofQuaternion::ofQuaternion(const glm::quat & q):_v(q.x, q.y, q.z, q.w){}
@@ -24,8 +25,9 @@ void ofQuaternion::get(ofMatrix4x4& matrix) const {
 /// Set the elements of the Quat to represent a rotation of angle
 /// (degrees) around the axis (x,y,z)
 void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
-	angle = ofDegToRad(angle);
+	angle = glm::radians(angle);
 	
+	// FIXME: why not using std::numeric_limits<float>::epsilon() ?
 	const float epsilon = 0.0000001f;
 
 	float length = sqrtf( x * x + y * y + z * z );
@@ -91,7 +93,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 	float fromLen;
 	// normalize only when necessary, epsilon test
 	if ((fromLen2 < 1.0 - 1e-7) || (fromLen2 > 1.0 + 1e-7)) {
-		fromLen = sqrt(fromLen2);
+		fromLen = std::sqrt(fromLen2);
 		sourceVector /= fromLen;
 	} else fromLen = 1.0;
 
@@ -102,7 +104,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		// re-use fromLen for case of mapping 2 vectors of the same length
 		if ((toLen2 > fromLen2 - 1e-7) && (toLen2 < fromLen2 + 1e-7)) {
 			toLen = fromLen;
-		} else toLen = sqrt(toLen2);
+		} else toLen = std::sqrt(toLen2);
 		targetVector /= toLen;
 	}
 
@@ -118,20 +120,20 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 		// in a plane with maximum vector coordinates.
 		// Then use it as quaternion axis with pi angle
 		// Trick is to realize one value at least is >0.6 for a normalized vector.
-		if (fabs(sourceVector.x) < 0.6) {
-			const double norm = sqrt(1.0 - sourceVector.x * sourceVector.x);
+		if (std::abs(sourceVector.x) < 0.6) {
+			const double norm = std::sqrt(1.0 - sourceVector.x * sourceVector.x);
 			_v.x = 0.0;
 			_v.y = sourceVector.z / norm;
 			_v.z = -sourceVector.y / norm;
 			_v.w = 0.0;
-		} else if (fabs(sourceVector.y) < 0.6) {
-			const double norm = sqrt(1.0 - sourceVector.y * sourceVector.y);
+		} else if (std::abs(sourceVector.y) < 0.6) {
+			const double norm = std::sqrt(1.0 - sourceVector.y * sourceVector.y);
 			_v.x = -sourceVector.z / norm;
 			_v.y = 0.0;
 			_v.z = sourceVector.x / norm;
 			_v.w = 0.0;
 		} else {
-			const double norm = sqrt(1.0 - sourceVector.z * sourceVector.z);
+			const double norm = std::sqrt(1.0 - sourceVector.z * sourceVector.z);
 			_v.x = sourceVector.y / norm;
 			_v.y = -sourceVector.x / norm;
 			_v.z = 0.0;
@@ -142,7 +144,7 @@ void ofQuaternion::makeRotate( const ofVec3f& from, const ofVec3f& to ) {
 	else {
 		// Find the shortest angle quaternion that transforms normalized vectors
 		// into one other. Formula is still valid when vectors are colinear
-		const double s = sqrt(0.5 * dotProdPlus1);
+		const double s = std::sqrt(0.5 * dotProdPlus1);
 		const ofVec3f tmp = sourceVector.getCrossed(targetVector) / (2.0 * s);
 		_v.x = tmp.x;
 		_v.y = tmp.y;
@@ -166,22 +168,22 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 	// dot product vec1*vec2
 	float cosangle = from.dot(to) / (length1 * length2);
 
-	if ( fabs(cosangle - 1) < epsilon ) {
-		//osg::notify(osg::INFO)<<"*** Quat::makeRotate(from,to) with near co-linear vectors, epsilon= "<<fabs(cosangle-1)<<std::endl;
+	if ( std::abs(cosangle - 1) < epsilon ) {
+		//osg::notify(osg::INFO)<<"*** Quat::makeRotate(from,to) with near co-linear vectors, epsilon= "<<std::abs(cosangle-1)<<std::endl;
 
 		// cosangle is close to 1, so the vectors are close to being coincident
 		// Need to generate an angle of zero with any vector we like
 		// We'll choose (1,0,0)
 		makeRotate( 0.0, 0.0, 0.0, 1.0 );
 	} else
-		if ( fabs(cosangle + 1.0) < epsilon ) {
+		if ( std::abs(cosangle + 1.0) < epsilon ) {
 			// vectors are close to being opposite, so will need to find a
 			// vector orthongonal to from to rotate about.
 			ofVec3f tmp;
-			if (fabs(from.x) < fabs(from.y))
-				if (fabs(from.x) < fabs(from.z)) tmp.set(1.0, 0.0, 0.0); // use x axis.
+			if (std::abs(from.x) < std::abs(from.y))
+				if (std::abs(from.x) < std::abs(from.z)) tmp.set(1.0, 0.0, 0.0); // use x axis.
 				else tmp.set(0.0, 0.0, 1.0);
-			else if (fabs(from.y) < fabs(from.z)) tmp.set(0.0, 1.0, 0.0);
+			else if (std::abs(from.y) < std::abs(from.z)) tmp.set(0.0, 1.0, 0.0);
 			else tmp.set(0.0, 0.0, 1.0);
 
 			ofVec3f fromd(from.x, from.y, from.z);
@@ -199,7 +201,7 @@ void ofQuaternion::makeRotate_original( const ofVec3f& from, const ofVec3f& to )
 			// This is the usual situation - take a cross-product of vec1 and vec2
 			// and that is the axis around which to rotate.
 			ofVec3f axis(from.getCrossed(to));
-			float angle = acos( cosangle );
+			float angle = std::acos( cosangle );
 			makeRotate( angle, axis );
 		}
 }
@@ -215,9 +217,9 @@ void ofQuaternion::getRotate( float& angle, ofVec3f& vec ) const {
 // Won't give very meaningful results if the Quat is not associated
 // with a rotation!
 void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const {
-	float sinhalfangle = sqrt( _v.x * _v.x + _v.y * _v.y + _v.z * _v.z );
+	float sinhalfangle = std::sqrt( _v.x * _v.x + _v.y * _v.y + _v.z * _v.z );
 
-	angle = 2.0 * atan2( sinhalfangle, _v.w );
+	angle = 2.0 * std::atan2( sinhalfangle, _v.w );
 	if (sinhalfangle) {
 		x = _v.x / sinhalfangle;
 		y = _v.y / sinhalfangle;
@@ -228,7 +230,7 @@ void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const
 		z = 1.0;
 	}
 	
-	angle = ofRadToDeg(angle);
+	angle = glm::degrees(angle);
 }
 
 
@@ -238,6 +240,8 @@ void ofQuaternion::getRotate( float& angle, float& x, float& y, float& z ) const
 /// See also
 /// http://www.gamasutra.com/features/programming/19980703/quaternions_01.htm
 void ofQuaternion::slerp( float t, const ofQuaternion& from, const ofQuaternion& to ) {
+	
+	// FIXME: std::numeric_limits<double>::epsilon()
 	const double epsilon = 0.00001;
 	double omega, cosomega, sinomega, scale_from, scale_to ;
 
@@ -252,11 +256,11 @@ void ofQuaternion::slerp( float t, const ofQuaternion& from, const ofQuaternion&
 	}
 
 	if ( (1.0 - cosomega) > epsilon ) {
-		omega = acos(cosomega) ; // 0 <= omega <= Pi (see man acos)
-		sinomega = sin(omega) ;  // this sinomega should always be +ve so
-		// could try sinomega=sqrt(1-cosomega*cosomega) to avoid a sin()?
-		scale_from = sin((1.0 - t) * omega) / sinomega ;
-		scale_to = sin(t * omega) / sinomega ;
+		omega = std::acos(cosomega) ; // 0 <= omega <= Pi (see man acos)
+		sinomega = std::sin(omega) ;  // this sinomega should always be +ve so
+		// could try sinomega=sqrt(1-cosomega*cosomega) to avoid a std::sin()?
+		scale_from = std::sin((1.0 - t) * omega) / sinomega ;
+		scale_to = std::sin(t * omega) / sinomega ;
 	} else {
 		/* --------------------------------------------------
 		The ends of the vectors are very close
@@ -280,23 +284,26 @@ ofVec3f ofQuaternion::getEuler() const {
 	float attitude;
 	float bank;
 	if (test > 0.499) { // singularity at north pole
-		heading = 2 * atan2(x(), w());
-		attitude = PI/2;
+		heading = 2.0f * std::atan2(x(), w());
+		attitude = glm::half_pi<float>();
 		bank = 0;
 	} else if (test < -0.499) { // singularity at south pole
-		heading = -2 * atan2(x(), w());
-		attitude = - PI/2;
+		heading = -2.0f * std::atan2(x(), w());
+		attitude = - glm::half_pi<float>();
 		bank = 0;
 	} else {
 		float sqx = x() * x();
 		float sqy = y() * y();
 		float sqz = z() * z();
-		heading = atan2(2.0f * y() * w() - 2.0f * x() * z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
-		attitude = asin(2*test);
-		bank = atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
+		heading = std::atan2(2.0f * y() * w() - 2.0f * x() * z(), 1.0f - 2.0f*sqy - 2.0f*sqz);
+		attitude = std::asin(2.0f*test);
+		bank = std::atan2(2.0f*x() * w() - 2.0f * y() * z(), 1.0f - 2.0f*sqx - 2.0f*sqz);
 	}
 	
-	return ofVec3f(ofRadToDeg(bank), ofRadToDeg(heading), ofRadToDeg(attitude));
+//	return ofVec3f(ofRadToDeg(bank), ofRadToDeg(heading), ofRadToDeg(attitude));
+	// FIXME: OK - Optimization opportunity by using glm::degrees in all vector at the same time
+	// But returning glm::vec3
+	return glm::degrees(glm::vec3 { bank, heading, attitude });
 }
 
 #define QX  _v.x

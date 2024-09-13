@@ -1,10 +1,16 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofColor.h"
 #include "ofPolyline.h"
 #include "ofVboMesh.h"
 #include "ofTessellator.h"
+// MARK: ofConstants targets
+#include "ofConstants.h"
+
+template<typename T>
+class ofColor_;
+typedef ofColor_<unsigned char> ofColor;
+typedef ofColor_<float> ofFloatColor;
+typedef ofColor_<unsigned short> ofShortColor;
 
 /// \class
 
@@ -243,11 +249,15 @@ public:
 	/// \brief Set the stroke width of the line if the ofPath is to be drawn
 	/// not in wireframe.
 	void setStrokeWidth(float width); // default 0
+	
+	/// \brief Set the stroke width of the line if the ofPath is to be drawn
+	/// not in wireframe.
+	void setStrokeWidth(float width) const; // default 0
 
 	/// \brief Set the color of the path. This affects both the line if the
 	/// path is drawn as wireframe and the fill if the path is drawn with
 	/// fill. All subpaths are affected.
-	void setColor( const ofColor& color );
+	void setColor( const ofFloatColor& color );
 
 	/// \brief Set the color of the path. This affects both the line if the path is
 	/// drawn as wireframe and the fill if the path is drawn with fill. All
@@ -256,7 +266,7 @@ public:
 
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
-	void setFillColor(const ofColor & color);
+	void setFillColor(const ofFloatColor & color);
 
 	/// \brief Set the fill color of the path. This has no affect if the path is
 	/// drawn as wireframe.
@@ -264,7 +274,7 @@ public:
 
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
-	void setStrokeColor(const ofColor & color);
+	void setStrokeColor(const ofFloatColor & color);
 
 	/// \brief Set the stroke color of the path. This has no affect if the path
 	/// is drawn filled.
@@ -275,11 +285,11 @@ public:
 	/// The default value is `true`
 	bool isFilled() const;
 
-	/// \brief Get the ofColor fill of the ofPath
-	ofColor getFillColor() const;
+	/// \brief Get the ofFloatColor fill of the ofPath
+	ofFloatColor getFillColor() const;
 
-	/// \brief Get the stroke color of the ofPath
-	ofColor getStrokeColor() const;
+	/// \brief Get the stroke ofFloatColor of the ofPath
+	ofFloatColor getStrokeColor() const;
 
 	/// \brief Get the stroke width of the ofPath
 	///
@@ -294,8 +304,10 @@ public:
 	void setCircleResolution(int circleResolution);
 	int getCircleResolution() const;
 
-	OF_DEPRECATED_MSG("Use setCircleResolution instead.", void setArcResolution(int res));
-	OF_DEPRECATED_MSG("Use getCircleResolution instead.", int getArcResolution() const);
+	[[deprecated("Use setCircleResolution")]]
+	void setArcResolution(int res);
+	[[deprecated("Use getCircleResolution")]]
+	int getArcResolution() const;
 
 	void setUseShapeColor(bool useColor);
 	bool getUseShapeColor() const;
@@ -327,13 +339,15 @@ public:
 
 	void rotateDeg(float degrees, const glm::vec3& axis);
 	void rotateRad(float radians, const glm::vec3& axis);
-	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec3& axis ));
+	[[deprecated("Use Deg/Rad versions.")]]
+	void rotate(float degrees, const glm::vec3& axis );
 
 	void translate(const glm::vec2 & p);
 
 	void rotateDeg(float degrees, const glm::vec2& axis);
 	void rotateRad(float radians, const glm::vec2& axis);
-	OF_DEPRECATED_MSG("Use Deg/Rad versions.", void rotate(float degrees, const glm::vec2& axis ));
+	[[deprecated("Use Deg/Rad versions.")]]
+	void rotate(float degrees, const glm::vec2& axis );
 
 	/// \brief Change the size of either the ofPolyline or ofSubPath instances that
 	/// the ofPath contains. These changes are non-reversible, so for instance
@@ -408,8 +422,8 @@ private:
 	//vector<ofSubPath>		paths;
 	std::vector<Command> 	commands;
 	ofPolyWindingMode 	windingMode;
-	ofColor 			fillColor;
-	ofColor				strokeColor;
+	ofFloatColor 		fillColor;
+	ofFloatColor		strokeColor;
 	float				strokeWidth;
 	bool				bFill;
 	bool				bUseShapeColor;

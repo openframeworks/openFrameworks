@@ -3,11 +3,11 @@
 # lists of source files, search paths, libraries, etc.
 #
 ifndef OF_ROOT
-	OF_ROOT= $(realpath ../../..)
+	OF_ROOT= ../../..
 endif
 
 ifndef PROJECT_ROOT
-	PROJECT_ROOT= $(realpath .)
+	PROJECT_ROOT= .
 endif
 
 
@@ -20,16 +20,32 @@ OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefile
 #    used during project compilation)
 ################################################################################
 
+EXCLUDE_PATHS_GREP =  grep -v "/tvos-arm64" | \
+											grep -v "/tvos-arm64_x86_64-simulator" | \
+											grep -v "/ios-arm64" | \
+											grep -v "/ios-arm64_x86_64-simulator" | \
+											grep -v "/ios-arm64_x86_64-maccatalyst" | \
+											grep -v "/xros-arm64" | \
+											grep -v "/xros-arm64_x86_64-simulator" | \
+											grep -v "/watchos-arm64_32_armv7k" | \
+											grep -v "/watchos-arm64_i386-simulator" | \
+											grep -v "/\.[^\.]"
+
 # construct the full paths of the core's platform specific static libs
 ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)
 
 # create a list of all core platform libraries
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBS_PATHS = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+ALL_OF_CORE_LIBS_PATHS = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | $(EXCLUDE_PATHS_GREP))
+
+ifdef MAKEFILE_DEBUG
+$(info ---ALL_OF_CORE_LIBS_PATHS---)
+$(foreach v, $(ALL_OF_CORE_LIBS_PATHS),$(info $(v)))
+endif
 
 # create a list of all core lib directories that have libsorder.make
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]" )
+ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | $(EXCLUDE_PATHS_GREP))
 
 # create a list of all of the core libs that require ordering
 OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
@@ -43,7 +59,7 @@ OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER)
 # 2> /dev/null consumes file not found errors from find searches
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # TODO: create a varaible for core specific static lib suffix
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a -o -name *.bc 2> /dev/null | grep -v "/\.[^\.]" )
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a -o -name *.bc 2> /dev/null  | $(EXCLUDE_PATHS_GREP))
 # create a list of all static lib files for the libs that need order
 # NOTE. this is the most unintuitive line of make script magic in here
 # How does it work?
@@ -59,6 +75,11 @@ OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_
 #    sed '/^$/d' removes all empty lines
 #    (to escape $ in make, you must use $$)
 OF_CORE_LIBS_PLATFORM_LIBS_STATICS += $(foreach v,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES),$(foreach vv,$(shell cat $(v) 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d'),$(addprefix $(subst libsorder.make,,$(v)),$(vv))))
+
+ifdef MAKEFILE_DEBUG
+	$(info ---OF_CORE_LIBS_PLATFORM_LIBS_STATICS---)
+	$(foreach v, $(OF_CORE_LIBS_PLATFORM_LIBS_STATICS),$(info $(v)))
+endif
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ifeq ($(PLATFORM_OS),Linux)
@@ -388,6 +409,12 @@ endif
 ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
+
+ifdef ${ccache} 
+$(info 💿 Using CCACHE -- config.project.mk )
+	CXX := ${ccache} $(CXX)
+	CC := ${ccache} $(CXX)
+endif	
 
 ifdef PROJECT_RESOURCE_COMPILER
     RESOURCE_COMPILER ?= $(PROJECT_RESOURCE_COMPILER)

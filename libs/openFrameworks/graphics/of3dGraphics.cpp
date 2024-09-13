@@ -22,7 +22,7 @@ enum of3dPrimitiveType {
 
 of3dGraphics::of3dGraphics(ofBaseRenderer * renderer)
 :renderer(renderer)
-,plane(1.0f, 1.0f, 6, 4)
+,plane(1.0f, 1.0f, 2, 2)
 ,sphere(1.0f, 20)
 ,icoSphere(1.0f, 2)
 ,box(1.f, 1.f, 1.f, 1, 1, 1)
@@ -382,16 +382,16 @@ void of3dGraphics::drawAxis(float size) const{
 //--------------------------------------------------------------
 void of3dGraphics::drawGrid(float stepSize, size_t numberOfSteps, bool labels, bool x, bool y, bool z) const{
 
-	ofColor c;
-	ofColor prevColor = renderer->getStyle().color;
+	ofFloatColor c;
+	ofFloatColor prevColor = renderer->getStyle().color;
 
 	if (x) {
-		c.setHsb(0.0f, 200.0f, 255.0f);
+		c.setHsb(0.0f, 200.0f/255.f, 1.f);
 		renderer->setColor(c);
 		drawGridPlane(stepSize, numberOfSteps, labels);
 	}
 	if (y) {
-		c.setHsb(255.0f / 3.0f, 200.0f, 255.0f);
+		c.setHsb((255.0f / 3.0f)/255.f, 200.0f/255.f, 1.f);
 		renderer->setColor(c);
 		glm::mat4 m = glm::rotate(glm::mat4(1.0), glm::half_pi<float>(), glm::vec3(0,0,-1));
 		renderer->pushMatrix();
@@ -400,7 +400,7 @@ void of3dGraphics::drawGrid(float stepSize, size_t numberOfSteps, bool labels, b
 		renderer->popMatrix();
 	}
 	if (z) {
-		c.setHsb(255.0f * 2.0f / 3.0f, 200.0f, 255.0f);
+		c.setHsb((255.0f * 2.0f / 3.0f)/255.f, 200.0f/255.f, 1.f);
 		renderer->setColor(c);
 		glm::mat4 m = glm::rotate(glm::mat4(1.0), glm::half_pi<float>(), glm::vec3(0,1,0));
 		renderer->pushMatrix();
@@ -411,7 +411,7 @@ void of3dGraphics::drawGrid(float stepSize, size_t numberOfSteps, bool labels, b
 
 	if (labels) {
 		ofDrawBitmapMode mode = renderer->getStyle().drawBitmapMode;
-		renderer->setColor(255, 255, 255);
+		renderer->setColor(1.f, 1.f, 1.f);
 		float labelPos = stepSize * (numberOfSteps + 0.5);
 		renderer->setBitmapTextMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 		renderer->drawString("x", labelPos, 0, 0);
@@ -455,10 +455,10 @@ void of3dGraphics::drawGridPlane(float stepSize, size_t numberOfSteps, bool labe
 
 	if (labels) {
 		//draw numbers on axes
-		ofColor prevColor = renderer->getStyle().color;
+		ofFloatColor prevColor = renderer->getStyle().color;
 		ofDrawBitmapMode mode = renderer->getStyle().drawBitmapMode;
 
-		renderer->setColor(255, 255, 255);
+		renderer->setColor(1.f, 1.f, 1.f);
 		renderer->setBitmapTextMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 
 		renderer->drawString(ofToString(0), 0, 0, 0);
@@ -508,8 +508,8 @@ void of3dGraphics::drawRotationAxes(float radius, float stripWidth, int circleRe
 	axisZMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 
 	for (int j = 0; j<=circleRes; j++) {
-		float x = cos(TWO_PI * j/circleRes);
-		float y = sin(TWO_PI * j/circleRes);
+		float x = std::cos(glm::two_pi<float>() * j/circleRes);
+		float y = std::sin(glm::two_pi<float>() * j/circleRes);
 		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
 		axisXMesh.addVertex({-stripWidth, x*radius, y*radius});
 		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));

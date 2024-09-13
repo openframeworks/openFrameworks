@@ -3,34 +3,34 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
+// FIXME: ofConstants Targets
+#include "ofConstants.h"
+
 #include <condition_variable>
 #include <mutex>
 
-#ifdef TARGET_WIN32
-#include <winuser.h>
-#include <commdlg.h>
-#define _WIN32_DCOM
-
-#include <windows.h>
-#include <shlobj.h>
-#include <tchar.h>
-#include <stdio.h>
-
-
-#endif
-
 #ifdef TARGET_OSX
+
 	// ofSystemUtils.cpp is configured to build as
 	// objective-c++ so as able to use Cocoa dialog panels
 	// This is done with this compiler flag
 	//		-x objective-c++
 	// http://www.yakyak.org/viewtopic.php?p=1475838&sid=1e9dcb5c9fd652a6695ac00c5e957822#p1475838
-
+#ifdef __OBJC__
 	#include <Cocoa/Cocoa.h>
+#endif
 	#include "ofAppRunner.h"
 #endif
 
 #ifdef TARGET_WIN32
+
+#define _WIN32_DCOM
+#include <winuser.h>
+#include <commdlg.h>
+#include <windows.h>
+#include <shlobj.h>
+#include <tchar.h>
+#include <stdio.h>
 #include <locale>
 #include <sstream>
 #include <string>
@@ -66,11 +66,14 @@ std::wstring convertNarrowToWide( const std::string& as ){
 #endif
 
 #if defined( TARGET_OSX )
+
 static void restoreAppWindowFocus(){
+#ifdef __OBJC__
 	NSWindow * appWindow = (__bridge NSWindow *)ofGetCocoaWindow();
 	if(appWindow) {
 		[appWindow makeKeyAndOrderFront:nil];
 	}
+#endif
 }
 #endif
 
@@ -274,20 +277,12 @@ std::string ofFileDialogResult::getPath(){
 void ofSystemAlertDialog(std::string errorMessage){
 	#ifdef TARGET_WIN32
 		// we need to convert error message to a wide char message.
-		// first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
-		int length = strlen(errorMessage.c_str());
-		wchar_t * widearray = new wchar_t[length+1];
-		memset(widearray, 0, sizeof(wchar_t)*(length+1));
-		// then, call mbstowcs:
-		// http://www.cplusplus.com/reference/clibrary/cstdlib/mbstowcs/
-		mbstowcs(widearray, errorMessage.c_str(), length);
+		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
 		// launch the alert:
-		MessageBoxW(nullptr, widearray, L"alert", MB_OK);
-		// clear the allocated memory:
-		delete widearray;
+		MessageBoxW(nullptr, errorMessageW.c_str(), L"alert", MB_OK);
 	#endif
 
-	#ifdef TARGET_OSX
+    #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 		@autoreleasepool {
 			NSAlert* alertDialog = [[NSAlert alloc] init];
 			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
@@ -331,7 +326,7 @@ static int CALLBACK loadDialogBrowseCallback(
     std::string defaultPath = *(std::string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+		wcscpy(wideCharacterBuffer, ofToDataPath(defaultPath).c_str());
         SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
     }
 
@@ -349,7 +344,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
 
@@ -390,8 +385,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-	std::wstring windowTitleW;
-	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
+	std::wstring windowTitleW{windowTitle.begin(), windowTitle.end()};
 
 	if (bFolderSelection == false){
 
@@ -412,7 +406,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szDir,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szDir, ofToDataPath(defaultPath).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
 
@@ -435,7 +429,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 		else {
 			//this should throw an error on failure unless its just the user canceling out
-			DWORD err = CommDlgExtendedError();
+			//DWORD err = CommDlgExtendedError();
 		}
 
 	} else {
@@ -465,7 +459,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.lParam           =   (LPARAM) &defaultPath;
 		bi.lpszTitle        =   windowTitleW.c_str();
 
-		if(pidl = SHBrowseForFolderW(&bi)){
+		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
 			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
 				results.filePath = convertWideToNarrow(wideCharacterBuffer);
@@ -517,7 +511,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		NSSavePanel * saveDialog = [NSSavePanel savePanel];
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
@@ -624,7 +618,7 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
 	text = dialogData.text;
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		// create alert dialog
 		NSAlert *alert = [[NSAlert alloc] init];
