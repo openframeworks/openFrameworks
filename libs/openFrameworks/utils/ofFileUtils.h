@@ -1017,7 +1017,7 @@ public:
 	std::size_t listDir();
 
 	/// \returns the current path
-	std::string getOriginalDirectory() const;
+	of::filesystem::path getOriginalDirectory() const;
 
 	/// Get the filename at a given position in the directory contents
 	/// list, ie. "duck.jpg".
@@ -1028,7 +1028,7 @@ public:
 	/// listed directory contents.
 	/// \param position array index in the directory contents list
 	/// \returns file or directory name
-	std::string getName(std::size_t position) const;
+	of::filesystem::path getName(std::size_t position) const;
 
 	/// Get the full path of the file or directory at a given position in
 	/// the directory contents list.
@@ -1039,7 +1039,7 @@ public:
 	/// listed directory contents.
 	/// \param position array index in the directory contents list
 	/// \returns file or directory name including the current path
-	std::string getPath(std::size_t position) const;
+	of::filesystem::path getPath(std::size_t position) const;
 
 	/// Open an ofFile instance using the path a given position in the
 	/// directory contents list.
@@ -1063,7 +1063,7 @@ public:
 	/// Directory contents are automatically listed.
 	///
 	/// \returns vector of files in the directory
-	const std::vector<ofFile> & getFiles() const;
+	const std::vector<of::filesystem::path> & getFiles() const;
 
 	/// Access directory contents via th array operator.
 	///
@@ -1186,15 +1186,15 @@ public:
 	/// \returns true if the path was removed successfully
 	static bool removeDirectory(const of::filesystem::path & path, bool deleteIfNotEmpty, bool bRelativeToData = true);
 
-	std::vector<ofFile>::const_iterator begin() const;
-	std::vector<ofFile>::const_iterator end() const;
-	std::vector<ofFile>::const_reverse_iterator rbegin() const;
-	std::vector<ofFile>::const_reverse_iterator rend() const;
+	std::vector<of::filesystem::path>::const_iterator begin() const;
+	std::vector<of::filesystem::path>::const_iterator end() const;
+	std::vector<of::filesystem::path>::const_reverse_iterator rbegin() const;
+	std::vector<of::filesystem::path>::const_reverse_iterator rend() const;
 
 	of::filesystem::path myDir;
 	of::filesystem::path originalDirectory;
 	std::vector<std::string> extensions;
-	std::vector<ofFile> files;
+	std::vector<of::filesystem::path> files;
 	bool showHidden;
 };
 
