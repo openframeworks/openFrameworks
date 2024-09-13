@@ -655,7 +655,7 @@ fs::path ofFile::path() const {
 //------------------------------------------------------------------------------------------------------------
 // FIXME: Deprecate
 string ofFile::getExtension() const {
-	auto dotext { ofPathToString(myFile.extension()) };
+	auto dotext = myFile.extension().string();
 	// FIXME: probably not needed;
 	if(!dotext.empty() && dotext.front()=='.'){
 		return std::string(dotext.begin()+1,dotext.end());
@@ -1773,7 +1773,7 @@ fs::path ofFilePath::getPathForDirectory(const fs::path & path){
 // FIXME: - re-avail
 string ofFilePath::removeTrailingSlash(const fs::path & _path){
 	auto path = ofPathToString(_path);
-	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
+	if(!path.empty() && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
 	return path;
