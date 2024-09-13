@@ -5,7 +5,7 @@
 
 /// \class ofFileDialogResult
 /// \brief file dialog box selection or save result
-class ofFileDialogResult {
+class ofFileDialogResult{
 public:
 	ofFileDialogResult();
 
