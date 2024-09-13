@@ -232,9 +232,6 @@ void resetLocale(std::locale locale){
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
-	filePath = "";
-	fileName = "";
-	bSuccess = false;
 }
 
 //------------------------------------------------------------------------------
