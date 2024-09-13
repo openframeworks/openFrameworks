@@ -48,37 +48,37 @@ void ofOpenALSoundUpdate(){
 // from http://devmaster.net/posts/2893/openal-lesson-6-advanced-loading-and-error-handles
 static std::string getALErrorString(ALenum error) {
 	switch(error) {
-        case AL_NO_ERROR:
-            return "AL_NO_ERROR";
-        case AL_INVALID_NAME:
-            return "AL_INVALID_NAME";
-        case AL_INVALID_ENUM:
-            return "AL_INVALID_ENUM";
-        case AL_INVALID_VALUE:
-            return "AL_INVALID_VALUE";
-        case AL_INVALID_OPERATION:
-            return "AL_INVALID_OPERATION";
-        case AL_OUT_OF_MEMORY:
-            return "AL_OUT_OF_MEMORY";
-    };
+		case AL_NO_ERROR:
+			return "AL_NO_ERROR";
+		case AL_INVALID_NAME:
+			return "AL_INVALID_NAME";
+		case AL_INVALID_ENUM:
+			return "AL_INVALID_ENUM";
+		case AL_INVALID_VALUE:
+			return "AL_INVALID_VALUE";
+		case AL_INVALID_OPERATION:
+			return "AL_INVALID_OPERATION";
+		case AL_OUT_OF_MEMORY:
+			return "AL_OUT_OF_MEMORY";
+	};
 	return "UNKWOWN_ERROR";
 }
 
 static std::string getALCErrorString(ALCenum  error) {
 	switch(error) {
-        case ALC_NO_ERROR:
-            return "ALC_NO_ERROR";
-        case ALC_INVALID_DEVICE:
-            return "ALC_INVALID_DEVICE";
-        case ALC_INVALID_CONTEXT:
-            return "ALC_INVALID_CONTEXT";
-        case ALC_INVALID_ENUM:
-            return "ALC_INVALID_ENUM";
-        case ALC_INVALID_VALUE:
-            return "ALC_INVALID_VALUE";
-        case ALC_OUT_OF_MEMORY:
-            return "ALC_OUT_OF_MEMORY";
-    };
+		case ALC_NO_ERROR:
+			return "ALC_NO_ERROR";
+		case ALC_INVALID_DEVICE:
+			return "ALC_INVALID_DEVICE";
+		case ALC_INVALID_CONTEXT:
+			return "ALC_INVALID_CONTEXT";
+		case ALC_INVALID_ENUM:
+			return "ALC_INVALID_ENUM";
+		case ALC_INVALID_VALUE:
+			return "ALC_INVALID_VALUE";
+		case ALC_OUT_OF_MEMORY:
+			return "ALC_OUT_OF_MEMORY";
+	};
 	return "UNKWOWN_ERROR";
 }
 
@@ -180,14 +180,14 @@ void ofOpenALSoundPlayer::initialize(){
 		// Create OpenAL context and make it current. If fails, close the OpenAL device that was just opened.
 		alContext = alcCreateContext( alDevice, nullptr );
 		if( !alContext ){
-			ALCenum err = alcGetError( alDevice ); 
+			ALCenum err = alcGetError( alDevice );
 			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not create OpenAL context: "<< getALCErrorString( err );
 			close();
 			return;
 		}
 
 		if( alcMakeContextCurrent( alContext )==ALC_FALSE ){
-			ALCenum err = alcGetError( alDevice ); 
+			ALCenum err = alcGetError( alDevice );
 			ofLogError("ofOpenALSoundPlayer") << "initialize(): couldn't not make current the create OpenAL context: "<< getALCErrorString( err );
 			close();
 			return;
@@ -567,8 +567,8 @@ bool ofOpenALSoundPlayer::load(const fs::path& _fileName, bool is_stream){
 
 		alSourcef (sources[0], AL_PITCH,    1.0f);
 		alSourcef (sources[0], AL_GAIN,     1.0f);
-	    alSourcef (sources[0], AL_ROLLOFF_FACTOR,  0.0);
-	    alSourcei (sources[0], AL_SOURCE_RELATIVE, AL_TRUE);
+		alSourcef (sources[0], AL_ROLLOFF_FACTOR,  0.0);
+		alSourcei (sources[0], AL_SOURCE_RELATIVE, AL_TRUE);
 	}else{
 		std::vector<std::vector<short> > multibuffer;
 		multibuffer.resize(channels);
@@ -724,7 +724,7 @@ void ofOpenALSoundPlayer::update(ofEventArgs & args){
 
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::unload(){
-	
+
 	stop();
 	ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 
@@ -822,7 +822,7 @@ void ofOpenALSoundPlayer::setPositionMS(int ms){
 	}else
 #endif
 	if(streamf){
-        stream_samples_read = sf_seek(streamf,float(ms)/1000.f*samplerate,SEEK_SET) * channels;
+		stream_samples_read = sf_seek(streamf,float(ms)/1000.f*samplerate,SEEK_SET) * channels;
 	}else{
 		for(int i=0;i<(int)channels;i++){
 			alSourcef(sources[sources.size()-channels+i],AL_SEC_OFFSET,float(ms)/1000.f);
@@ -864,13 +864,13 @@ void ofOpenALSoundPlayer::setPan(float p){
 		float pos[3] = {p,0,0};
 		alSourcefv(sources[sources.size()-1],AL_POSITION,pos);
 	}else{
-        // calculates left/right volumes from pan-value (constant panning law)
-        // see: Curtis Roads: Computer Music Tutorial p 460
+		// calculates left/right volumes from pan-value (constant panning law)
+		// see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
-		
-        float angle = p * glm::quarter_pi<float>(); // in radians from -45. to +45.
-        float cosAngle = std::cos(angle);
-        float sinAngle = std::sin(angle);
+
+		float angle = p * glm::quarter_pi<float>(); // in radians from -45. to +45.
+		float cosAngle = std::cos(angle);
+		float sinAngle = std::sin(angle);
 
 		float leftVol  = (cosAngle - sinAngle) * glm::one_over_root_two<float>(); //// multiplied by 1/sqrt(2)
 		float rightVol = (cosAngle + sinAngle) * glm::one_over_root_two<float>(); // multiplied by 1/sqrt(2)
@@ -966,8 +966,8 @@ void ofOpenALSoundPlayer::play(){
 				float pos[3] = {1,0,0};
 				alSourcefv(sources[sources.size()-channels+i],AL_POSITION,pos);
 			}
-		    alSourcef (sources[sources.size()-channels+i], AL_ROLLOFF_FACTOR,  0.0);
-		    alSourcei (sources[sources.size()-channels+i], AL_SOURCE_RELATIVE, AL_TRUE);
+			alSourcef (sources[sources.size()-channels+i], AL_ROLLOFF_FACTOR,  0.0);
+			alSourcei (sources[sources.size()-channels+i], AL_SOURCE_RELATIVE, AL_TRUE);
 		}
 
 		err = alGetError();
