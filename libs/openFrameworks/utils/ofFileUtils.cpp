@@ -2030,3 +2030,13 @@ std::string ofPathToString(const fs::path & path) {
 	}
 	return {};
 }
+
+//--------------------------------------------------
+// Function used internally in OF core. API can change later
+std::string ofGetExtensionLower(const fs::path & path) {
+	auto ext = path.extension().generic_string();
+	std::transform(ext.begin(), ext.end(), ext.begin(),
+		[](unsigned char c){ return std::tolower(c); });
+
+	return ext;
+}
