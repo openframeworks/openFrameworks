@@ -1457,47 +1457,8 @@ void ofDirectory::reset(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-static bool natural(const ofFile& a, const ofFile& b) {
-	string aname = a.getBaseName(), bname = b.getBaseName();
-	int aint = ofToInt(aname), bint = ofToInt(bname);
-	if(ofToString(aint) == aname && ofToString(bint) == bname) {
-		return aint < bint;
-	} else {
-		return a < b;
-	}
-}
-
-
-//------------------------------------------------------------------------------------------------------------
-struct StringSort{
-    fs::path path;
-    string basename;
-    int nameInt;
-    string stringInt;
-};
-
-//------------------------------------------------------------------------------------------------------------
-static bool naturalStr(const StringSort& a, const StringSort& b) {
-    if(a.stringInt == a.basename && b.stringInt == b.basename) {
-        return a.nameInt < b.nameInt;
-    } else {
-        return a.path < b.path;
-    }
-}
-
-//------------------------------------------------------------------------------------------------------------
-static bool byDate(const ofFile& a, const ofFile& b) {
-	auto ta = fs::last_write_time(a);
-	auto tb = fs::last_write_time(b);
-	return ta < tb;
-}
-
-//------------------------------------------------------------------------------------------------------------
 void ofDirectory::sortByDate() {
-	if (files.empty() && !myDir.empty()) {
-		listDir();
-	}
-	ofSort(files, byDate);
+	sort(SORT_BY_DATE);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1506,43 +1467,28 @@ void ofDirectory::sort(const SortMode & mode){
 		listDir();
 	}
 
-    if( mode == ofDirectory::SORT_NATURAL ){
-        vector <StringSort> sort;
-        sort.reserve(files.size());
-
-        for( auto & f : files ){
-            StringSort ss;
-            ss.path = f.path();
-            ss.basename = f.getBaseName();
-            ss.nameInt = ofToInt(ss.basename);
-            ss.stringInt = ofToString(ss.nameInt);
-            sort.push_back(ss);
-        }
-        
-        ofSort(sort, naturalStr);
-        files.clear();
-        files.reserve(sort.size());
-        for( auto & s : sort ){
-            files.emplace_back( s.path , ofFile::Reference);
-        }
+    if(mode == ofDirectory::SORT_NATURAL){
+		std::sort(files.begin(), files.end(), [](const ofFile & a, const ofFile & b) {
+			string aname { a.getBaseName() };
+			string bname { b.getBaseName() };
+			int aint = ofToInt(aname);
+			int bint = ofToInt(bname);
+			if(ofToString(aint) == aname && ofToString(bint) == bname) {
+				return aint < bint;
+			} else {
+				return a < b;
+			}
+		});
     }
     else if(mode == ofDirectory::SORT_FAST){
-        std::vector <string> sort;
-        sort.reserve(files.size());
-        
-        for( auto & f : files ){
-            string ss = f.getFileName();
-            sort.push_back(ss);
-        }
-
-        std::sort(sort.begin(), sort.end());
-        files.clear();
-        files.reserve(sort.size());
-        for( auto & s : sort ){
-            files.emplace_back( myDir / fs::path(s), ofFile::Reference);
-        }
-    }else if(mode == ofDirectory::SORT_BY_DATE){
-        sortByDate();
+		std::sort(files.begin(), files.end(), [](const ofFile & a, const ofFile & b) {
+			return a.getFileName() < b.getFileName();
+		});
+    }
+	else if(mode == ofDirectory::SORT_BY_DATE){
+		std::sort(files.begin(), files.end(), [](const ofFile & a, const ofFile & b) {
+			return fs::last_write_time(a.path()) < fs::last_write_time(b.path());
+		});
     }
 }
 
