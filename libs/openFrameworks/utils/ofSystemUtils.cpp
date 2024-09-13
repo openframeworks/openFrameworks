@@ -257,18 +257,15 @@ void resetLocale(std::locale locale){
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
-	filePath = "";
-	fileName = "";
-	bSuccess = false;
 }
 
 //------------------------------------------------------------------------------
-std::string ofFileDialogResult::getName(){
+of::filesystem::path ofFileDialogResult::getName(){
 	return fileName;
 }
 
 //------------------------------------------------------------------------------
-std::string ofFileDialogResult::getPath(){
+of::filesystem::path ofFileDialogResult::getPath(){
 	return filePath;
 }
 
@@ -337,7 +334,7 @@ static int CALLBACK loadDialogBrowseCallback(
 //---------------------------------------------------------------------
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelection, std::string defaultPath){
+ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelection, of::filesystem::path defaultPath){
 
 	ofFileDialogResult results;
 
@@ -494,7 +491,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 
 
-	if( results.filePath.length() > 0 ){
+	if( !results.filePath.empty() ){
 		results.bSuccess = true;
 		results.fileName = ofFilePath::getFileName(results.filePath);
 	}
@@ -575,7 +572,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
 
-	if( results.filePath.length() > 0 ){
+	if( !results.filePath.empty() ){
 		results.bSuccess = true;
 		results.fileName = ofFilePath::getFileName(results.filePath);
 	}
