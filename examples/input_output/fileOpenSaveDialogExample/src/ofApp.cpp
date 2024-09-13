@@ -61,7 +61,7 @@ void ofApp::keyReleased(int key){
 		}
 		
 		//
-		ofFileDialogResult saveFileResult = ofSystemSaveDialog(ofGetTimestampString() + "." + ofToLower(originalFileExtension), "Save your file");
+		ofFileDialogResult saveFileResult = ofSystemSaveDialog(ofGetTimestampString() + "." + originalFileExtension, "Save your file");
 		if (saveFileResult.bSuccess){
 			processedImages[0].save(saveFileResult.filePath);
 		}
@@ -89,13 +89,13 @@ void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult){
 		loadedImages.clear();
 		
 		ofLogVerbose("The file exists - now checking the type via file extension");
-		string fileExtension = ofToUpper(file.getExtension());
-		
+		auto extension = ofGetExtensionLower(file.path());
+
 		//We only want images
-		if (fileExtension == "JPG" || fileExtension == "PNG") {
+		if (extension == ".jpg" || extension == ".png") {
 			
 			//Save the file extension to use when we save out
-			originalFileExtension = fileExtension;
+			originalFileExtension = extension;
 			
 			//Load the selected image
 			ofImage image;
