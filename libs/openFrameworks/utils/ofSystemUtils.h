@@ -1,10 +1,14 @@
 #pragma once
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "ofConstants.h"
 =======
 #include "ofConstants.h" // fs::path
 >>>>>>> c98c50ad7 (ofFileDialogResult using fs::path (#8119))
+=======
+#include "ofConstants.h" // fs::path
+>>>>>>> master
 #include <string>
 
 /// \class ofFileDialogResult
@@ -21,6 +25,7 @@ public:
 	of::filesystem::path getPath();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	of::filesystem::path filePath; ///< full path to selected file or directory
 	of::filesystem::path fileName; ///< selected file or directory name
 	bool bSuccess; ///< true if the dialog action was successful, aka file select not cancel
@@ -29,6 +34,11 @@ public:
 	of::filesystem::path fileName { "" }; ///< selected file or directory name
 	bool bSuccess = false; ///< true if the dialog action was successful, aka file select not cancel
 >>>>>>> c98c50ad7 (ofFileDialogResult using fs::path (#8119))
+=======
+	of::filesystem::path filePath { "" }; ///< full path to selected file or directory
+	of::filesystem::path fileName { "" }; ///< selected file or directory name
+	bool bSuccess = false; ///< true if the dialog action was successful, aka file select not cancel
+>>>>>>> master
 };
 
 /// \brief show an error message in an alert dialog box
