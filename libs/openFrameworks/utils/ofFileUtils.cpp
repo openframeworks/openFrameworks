@@ -1466,7 +1466,7 @@ void ofDirectory::sortByDate() {
 		listDir();
 	}
 	std::sort(files.begin(), files.end(), [](const fs::path & a, const fs::path & b) {
-		return fs::last_write_time(a); < fs::last_write_time(b);
+		return fs::last_write_time(a) < fs::last_write_time(b);
 	});
 }
 

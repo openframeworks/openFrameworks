@@ -1194,7 +1194,7 @@ public:
 	of::filesystem::path myDir;
 	of::filesystem::path originalDirectory;
 	std::vector<std::string> extensions;
-	std::vector<ofFile> files;
+	std::vector<of::filesystem::path> files;
 	bool showHidden;
 };
 
