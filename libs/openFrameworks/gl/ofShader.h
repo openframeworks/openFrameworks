@@ -292,9 +292,9 @@ private:
 	std::unordered_map<std::string, GLint> uniformsCache;
 	mutable std::unordered_map<std::string, GLint> attributesBindingsCache;
 
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
 	std::unordered_map<std::string, GLint> uniformBlocksCache;
-#endif
+//#endif
 
 	bool setupShaderFromSource(Source && source);
 	ofShader::Source sourceFromFile(GLenum type, const of::filesystem::path& filename);
