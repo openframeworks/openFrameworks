@@ -1092,7 +1092,8 @@ public:
 	typedef enum {
 		SORT_FAST,
 		SORT_NATURAL,
-		SORT_BY_DATE
+		SORT_BY_DATE,
+		SORT_ALPHABETICAL
 	} SortMode;
 
 	/// Sort the directory contents list alphabetically.

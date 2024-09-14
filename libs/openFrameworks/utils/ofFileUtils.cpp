@@ -1490,6 +1490,11 @@ void ofDirectory::sort(const SortMode & mode){
 			return fs::last_write_time(a.path()) < fs::last_write_time(b.path());
 		});
     }
+	else if (mode == ofDirectory::SORT_ALPHABETICAL){
+		std::sort(files.begin(), files.end(), [](const ofFile & a, const ofFile & b) {
+			return ofToLower(a.getFileName()) < ofToLower(b.getFileName());
+		});
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
