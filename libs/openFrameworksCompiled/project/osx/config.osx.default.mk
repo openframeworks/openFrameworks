@@ -82,7 +82,7 @@ ifndef MAC_OS_C_VER
 endif
 
 ifndef MAC_OS_CPP_VER
-    MAC_OS_CPP_VER = -std=c++23
+    MAC_OS_CPP_VER = -std=c++2b
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx

@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.3
+DL_VERSION=2.5.0
 
 printHelp(){
 cat << EOF
@@ -143,7 +143,12 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+            if command -v gcc &> /dev/null
+            then
+                GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+            else
+                GCC_VERSION=6
+            fi
             if [ $GCC_VERSION -eq 4 ]; then
                 ARCH=64gcc6
             elif [ $GCC_VERSION -eq 5 ]; then
@@ -208,10 +213,19 @@ if [ "$PLATFORM" == "msys2" ]; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
     fi
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64_2.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_1.zip \
+              openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_2.zip"
+    else
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
+      fi
 elif [ "$PLATFORM" == "vs" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
@@ -222,7 +236,7 @@ elif [ "$PLATFORM" == "vs" ]; then
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
     fi
-elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos)$ ]]; then
+elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos|macos)$ ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_1.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}_2.tar.bz2 \
@@ -290,10 +304,10 @@ if [ $OVERWRITE -eq 1 ]; then
                 rm -rf "${libs[i]}/bin"
             fi
         fi
-        # if [ -e "${libs[i]}/include" ]; then
-        #     echo "  Removing: [${libs[i]}/include]"
-        #     rm -rf "${libs[i]}/include"
-        # fi
+        if [ -e "${libs[i]}/include" ]; then
+            echo "  Removing: [${libs[i]}/include]"
+            rm -rf "${libs[i]}/include"
+        fi
         
     done
 fi
@@ -401,10 +415,10 @@ if [ $OVERWRITE -eq 1 ]; then
                 echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/bin]"
                 rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
             fi
-            # if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
-            #     echo "   Remove include: [${addons[i]}/libs/include]"
-            #     rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
-            # fi
+            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
+                echo "   Remove include: [${addons[i]}/libs/include]"
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
+            fi
         fi
     done
     echo "   ------ "

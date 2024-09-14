@@ -1246,6 +1246,7 @@ void ofSetDataPathRoot(const of::filesystem::path & root);
 
 std::string ofPathToString(const of::filesystem::path & path);
 
+std::string ofGetExtensionLower(const of::filesystem::path & path);
 
 /*! \cond PRIVATE */
 namespace of {

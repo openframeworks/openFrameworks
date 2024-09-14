@@ -1773,7 +1773,7 @@ fs::path ofFilePath::getPathForDirectory(const fs::path & path){
 // FIXME: - re-avail
 string ofFilePath::removeTrailingSlash(const fs::path & _path){
 	auto path = ofPathToString(_path);
-	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
+	if(!path.empty() && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
 	return path;
@@ -2029,4 +2029,14 @@ std::string ofPathToString(const fs::path & path) {
 		ofLogError("ofFileUtils") << "ofPathToString: error converting fs::path to string " << e.what();
 	}
 	return {};
+}
+
+//--------------------------------------------------
+// Function used internally in OF core. API can change later
+std::string ofGetExtensionLower(const fs::path & path) {
+	auto ext = path.extension().generic_string();
+	std::transform(ext.begin(), ext.end(), ext.begin(),
+		[](unsigned char c){ return std::tolower(c); });
+
+	return ext;
 }

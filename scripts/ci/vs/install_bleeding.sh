@@ -6,7 +6,7 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 
 unset BITS
 cd "${OF_ROOT}"
-./scripts/vs/download_latest_libs.sh -p vs --silent
+./scripts/vs/download_libs.sh -p vs --silent
 
 rm -rf projectGenerator
 mkdir -p projectGenerator

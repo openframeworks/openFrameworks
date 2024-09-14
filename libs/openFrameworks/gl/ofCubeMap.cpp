@@ -14,6 +14,7 @@
 #include "ofCubeMapShaders.h"
 #include "ofFbo.h"
 #include "ofTexture.h"
+#include "ofFileUtils.h"
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
@@ -311,7 +312,7 @@ bool ofCubeMap::load( ofCubeMapSettings aSettings ) {
 	
 	clear();
 	
-	std::string ext = ofToLower(aSettings.filePath.extension().string());
+	auto ext = ofGetExtensionLower(aSettings.filePath);
 	bool hdr = (ext == ".hdr" || ext == ".exr");
 	
 	if( hdr && !doesSupportHdr() ) {

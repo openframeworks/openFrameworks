@@ -125,6 +125,7 @@ void ofURLFileLoaderImpl::stop() {
 	requests.close();
 	responses.close();
 	waitForThread();
+	curl_global_cleanup();
 }
 
 #if !defined(NO_OPENSSL)
@@ -270,47 +271,55 @@ size_t readBody_cb(void * ptr, size_t size, size_t nmemb, void * userdata) {
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
 	curl_slist * headers = nullptr;
-#ifdef CURL_DEBUG
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
-	CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
-	curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/8.9.1");
-#endif
-#ifdef TARGET_OSX
-#if !defined(NO_OPENSSL)
-	const std::string caPath = "ssl";
-	const std::string caFile = "ssl/cacert.pem";
-	if (ofFile::doesFileExist(ofToDataPath(CERTIFICATE_FILE)) && checkValidCertifcate(ofToDataPath(CERTIFICATE_FILE))) {
-		ofLogVerbose("ofURLFileLoader") << "SSL valid certificate found";
-	} else {
-		ofLogVerbose("ofURLFileLoader") << "SSL certificate not found - generating";
-		createSSLCertificate();
+	if(request.verbose) {
+		CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
+		if (version) {
+			std::string userAgent = std::string("curl/") + version->version;
+			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
+		} else {
+			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/unknown");
+		}
 	}
-	curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath(caPath, true).c_str());
-	curl_easy_setopt(curl.get(), CURLOPT_CAINFO, ofToDataPath(caFile, true).c_str());
-	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
-#endif
+	if(version->features & CURL_VERSION_SSL) {
+#if defined(TARGET_OSX) && !defined(NO_OPENSSL)
+		const std::string caPath = "ssl";
+		const std::string caFile = "ssl/cacert.pem";
+		if (ofFile::doesFileExist(ofToDataPath(CERTIFICATE_FILE)) && checkValidCertifcate(ofToDataPath(CERTIFICATE_FILE))) {
+			ofLogVerbose("ofURLFileLoader") << "SSL valid certificate found";
+		} else {
+			ofLogVerbose("ofURLFileLoader") << "SSL certificate not found - generating";
+			createSSLCertificate();
+		}
+		curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath(caPath, true).c_str());
+		curl_easy_setopt(curl.get(), CURLOPT_CAINFO, ofToDataPath(caFile, true).c_str());
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
 #else
-	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
 #endif
-	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 50L);
-	curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
+		curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 50L);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
+	}
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
-
-	// always follow redirections
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
 
-	// Set content type and any other header
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
+	}
+	if(request.close)
+		headers = curl_slist_append(headers, "Connection: close");
+	if(version->features & CURL_VERSION_BROTLI) {
+		headers = curl_slist_append(headers, "Accept-Encoding: br");
+	}
+	if(version->features & CURL_VERSION_LIBZ) {
+		headers = curl_slist_append(headers, "Accept-Encoding: gzip");
 	}
 	for (map<string, string>::const_iterator it = request.headers.cbegin(); it != request.headers.cend(); it++) {
 		headers = curl_slist_append(headers, (it->first + ": " + it->second).c_str());
 	}
 
 	curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
-
 	std::string body = request.body;
-
 	// set body if there's any
 	if (request.body != "") {
 		//		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L); // Tis does PUT instead of POST
@@ -329,8 +338,18 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	if (request.method == ofHttpRequest::GET) {
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1);
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_PUT, 0);
+	}
+	else if (request.method == ofHttpRequest::PUT) {
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1);
+		curl_easy_setopt(curl.get(), CURLOPT_PUT, 1);
+		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
+	}
+	else if (request.method == ofHttpRequest::POST) {
 	} else {
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 1);
+		curl_easy_setopt(curl.get(), CURLOPT_PUT, 0);
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
 	}
 
@@ -450,12 +469,14 @@ ofHttpRequest::ofHttpRequest()
 	, id(nextID++) {
 }
 
-ofHttpRequest::ofHttpRequest(const string & url, const string & name, bool saveTo)
+ofHttpRequest::ofHttpRequest(const string & url, const string & name, bool saveTo, bool autoClose, bool verbose)
 	: url(url)
 	, name(name)
 	, saveTo(saveTo)
 	, method(GET)
-	, id(nextID++) {
+	, id(nextID++)
+	, close(autoClose)
+	, verbose(verbose){
 }
 
 int ofHttpRequest::getId() const {

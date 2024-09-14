@@ -90,9 +90,6 @@ msys2:
 	ADDON_LIBS_EXCLUDE = libs/assimp
 	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
 
-osx:
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/include/%
-
 android/armeabi-v7a:
 	ADDON_LIBS=
 	ADDON_LIBS+=libs/assimp/lib/android/armeabi-v7a/libassimp.a
@@ -109,8 +106,9 @@ ios:
 	ADDON_LIBS=libs/assimp/lib/macos/assimp.xcframework/ios-arm64_x86_64-simulator/assimp.a
 	
 osx:
+	ADDON_INCLUDES_EXCLUDE = libs/assimp/include/%
 	ADDON_LIBS=
-	ADDON_LIBS=libs/assimp/lib/osx/assimp.xcframework/macos-arm64_x86_64/assimp.a
+	ADDON_LIBS=libs/assimp/lib/macos/assimp.xcframework/macos-arm64_x86_64/assimp.a
 	
 emscripten:
 	ADDON_LIBS=
