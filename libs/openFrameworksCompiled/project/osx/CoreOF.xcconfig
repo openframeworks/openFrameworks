@@ -26,10 +26,10 @@ HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 
 //------- Libraries
-LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworks.a"
-LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworksDebug.a"
+LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
+LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a"
 
-LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/macos/libfmod.dylib"
+LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/osx/libfmod.dylib"
 
 //LIB_GLFW = "$(OF_PATH)/libs/glfw/lib/osx/glfw3.a"
 //LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
