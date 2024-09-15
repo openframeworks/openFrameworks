@@ -297,12 +297,20 @@ public:
 	int height;
 };
 
-class ofWindowPosEventArgs : public ofEventArgs, public glm::vec2 {
+class ofWindowPosEventArgs : public ofEventArgs, public glm::ivec2 {
 public:
 	ofWindowPosEventArgs() { }
 
 	ofWindowPosEventArgs(int x, int y)
-		: glm::vec2(x, y) { }
+		: glm::ivec2(x, y) { }
+};
+
+// FIXME: update with the correct parameters
+class ofMonitorsEventArgs : public ofEventArgs {
+public:
+	ofMonitorsEventArgs(){}
+	
+	ofMonitorsEventArgs(int number) {}
 };
 
 class ofMessage : public ofEventArgs {
@@ -330,6 +338,7 @@ public:
 	ofEvent<ofResizeEventArgs> windowResized;
 	ofEvent<ofResizeEventArgs> framebufferResized;
 	ofEvent<ofWindowPosEventArgs> windowMoved;
+	ofEvent<ofMonitorsEventArgs> monitorsChanged;
 
 	ofEvent<ofKeyEventArgs> keyPressed;
 	ofEvent<ofKeyEventArgs> keyReleased;
@@ -405,6 +414,7 @@ public:
 	// FIXME: Todo
 	bool notifyFramebufferResized(int width, int height);
 	bool notifyWindowMoved(int x, int y);
+	bool notifyMonitorsEvent(ofMonitorsEventArgs & monitorsEvent);
 
 	bool notifyDragEvent(ofDragInfo info);
 
