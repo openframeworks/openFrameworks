@@ -9,7 +9,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec2.hpp>
 
-#include <set>
+//#include <set>
+#include <unordered_set>
 
 //-------------------------- mouse/key query
 bool ofGetMousePressed(int button = -1); //by default any button
@@ -328,6 +329,7 @@ public:
 	ofEvent<ofEventArgs> exit;
 
 	ofEvent<ofResizeEventArgs> windowResized;
+	ofEvent<ofResizeEventArgs> framebufferResized;
 	ofEvent<ofWindowPosEventArgs> windowMoved;
 
 	ofEvent<ofKeyEventArgs> keyPressed;
@@ -401,6 +403,8 @@ public:
 
 	bool notifyExit();
 	bool notifyWindowResized(int width, int height);
+	// FIXME: Todo
+	bool notifyFramebufferResized(int width, int height);
 	bool notifyWindowMoved(int x, int y);
 
 	bool notifyDragEvent(ofDragInfo info);
@@ -415,8 +419,8 @@ private:
 	int currentMouseX, currentMouseY;
 	int previousMouseX, previousMouseY;
 	bool bPreMouseNotSet;
-	std::set<int> pressedMouseButtons;
-	std::set<int> pressedKeys;
+	std::unordered_set<int> pressedMouseButtons;
+	std::unordered_set<int> pressedKeys;
 	int modifiers = 0;
 
 	enum TimeMode {

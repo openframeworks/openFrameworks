@@ -7,6 +7,8 @@
 #include "ofMesh.h"
 #include "ofRectangle.h"
 #include <unordered_map>
+// FIXME: unordered_set
+#include <set>
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
@@ -19,7 +21,7 @@ static bool	bUsingArbTex		= true;
 static bool bUsingNormalizedTexCoords = false;
 static bool bUseCustomMinMagFilters = false;
 
-using std::set;
+//using std::set;
 
 //---------------------------------
 void ofEnableTextureEdgeHack(){
@@ -164,8 +166,8 @@ static void release(GLuint id){
 }
 
 #ifdef TARGET_ANDROID
-static set<ofTexture*> & allTextures(){
-	static set<ofTexture*> * allTextures = new set<ofTexture*>;
+static std::set<ofTexture*> & allTextures(){
+	static std::set<ofTexture*> * allTextures = new std::set<ofTexture*>;
 	return *allTextures;
 }
 
@@ -1140,8 +1142,8 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	// to constantly add a 2 pixel border on all uploaded images
 	// is insane..
 
-	GLfloat offsetw = 0.0f;
-	GLfloat offseth = 0.0f;
+	GLfloat offsetw { 0.0f };
+	GLfloat offseth { 0.0f };
 
 	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
@@ -1149,13 +1151,13 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	}
 	// -------------------------------------------------
 
-	auto topLeft = getCoordFromPoint(sx, sy);
-	auto bottomRight = getCoordFromPoint(sx + sw, sy + sh);
+	auto topLeft { getCoordFromPoint(sx, sy) };
+	auto bottomRight { getCoordFromPoint(sx + sw, sy + sh) };
 
-	GLfloat tx0 = topLeft.x + offsetw;
-	GLfloat ty0 = topLeft.y + offseth;
-	GLfloat tx1 = bottomRight.x - offsetw;
-	GLfloat ty1 = bottomRight.y - offseth;
+	GLfloat tx0 { topLeft.x + offsetw };
+	GLfloat ty0 { topLeft.y + offseth };
+	GLfloat tx1 { bottomRight.x - offsetw };
+	GLfloat ty1 { bottomRight.y - offseth };
 
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	quad.getVertices().resize(4);

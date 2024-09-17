@@ -19,6 +19,10 @@ using std::swap;
 using std::make_pair;
 using std::pair;
 
+// TEMPORARY
+using std::cout;
+using std::endl;
+
 ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)
@@ -118,7 +122,7 @@ int ofMatrixStack::getRenderSurfaceWidth() const{
 	if(currentRenderSurface){
 		return currentRenderSurface->getWidth();
 	}else if(currentWindow){
-		return currentWindow->getWindowSize().x;
+		return currentWindow->getFramebufferSize().x;
 	}else{
 		return 0;
 	}
@@ -128,9 +132,22 @@ int ofMatrixStack::getRenderSurfaceHeight() const{
 	if(currentRenderSurface){
 		return currentRenderSurface->getHeight();
 	}else if(currentWindow){
-		return currentWindow->getWindowSize().y;
+		return currentWindow->getFramebufferSize().y;
 	}else{
 		return 0;
+	}
+}
+
+glm::ivec2 ofMatrixStack::getRenderSurfaceSize() const {
+	if (currentRenderSurface) {
+		return currentRenderSurface->getSize();
+	} else if (currentWindow) {
+		// FIXME: FramebufferSize
+		// return currentWindow->getWindowSize();
+		return currentWindow->getFramebufferSize();
+		
+	} else {
+		return {};
 	}
 }
 
@@ -153,14 +170,19 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 		swap(x,y);
 	}
 
+	auto xy = getRenderSurfaceSize();
+
 	if(width < 0 || height < 0){
-		width = getRenderSurfaceWidth();
-		height = getRenderSurfaceHeight();
+		width = xy.x;
+		height = xy.y;
+//		width = getRenderSurfaceWidth();
+//		height = getRenderSurfaceHeight();
 		vflip = isVFlipped();
 	}
 
 	if (vflip){
-		y = getRenderSurfaceHeight() - (y + height);
+//		y = getRenderSurfaceHeight() - (y + height);
+		y = xy.y - (y + height);
 	}
 
 	currentViewport.set(x,y,width,height);
@@ -183,13 +205,14 @@ ofRectangle ofMatrixStack::getNativeViewport() const{
 	return currentViewport;
 }
 
-ofRectangle ofMatrixStack::getFullSurfaceViewport() const{
-	if(currentRenderSurface){
-		return ofRectangle(0,0,currentRenderSurface->getWidth(),currentRenderSurface->getHeight());
-	}else if(currentWindow){
-		return ofRectangle(0,0,currentWindow->getWidth(),currentWindow->getHeight());
-	}else{
-		return ofRectangle();
+ofRectangle ofMatrixStack::getFullSurfaceViewport() const {
+	if (currentRenderSurface) {
+		return { 0.0f, 0.0f, currentRenderSurface->getWidth(),currentRenderSurface->getHeight() };
+	} else if (currentWindow) {
+		// FIXME: ofRectangle accepting int as parameter.
+		return { 0, 0, (float)currentWindow->getWidth(), (float)currentWindow->getHeight() };
+	} else {
+		return {}; //ofRectangle();
 	}
 }
 

@@ -123,6 +123,7 @@ private:
 	void setupGraphicDefaults(){};
 	void setupScreen(){};
 
+	// FIXME: this is not standard with the other window modes.
 	void setOrientation(ofOrientation, bool){}
 	bool isVFlipped() const{return true;}
 	glm::mat4 getCurrentMatrix(ofMatrixMode) const{return glm::mat4(1.0);};
@@ -285,18 +286,18 @@ void ofAppNoWindow::exitApp(){
 }
 
 //----------------------------------------------------------
-glm::vec2 ofAppNoWindow::getWindowPosition(){
+glm::ivec2 ofAppNoWindow::getWindowPosition(){
 	return {0.f, 0.f};
 }
 
 //----------------------------------------------------------
-glm::vec2 ofAppNoWindow::getWindowSize(){
+glm::ivec2 ofAppNoWindow::getWindowSize(){
 	return {width, height};
 }
 
 //----------------------------------------------------------
-glm::vec2 ofAppNoWindow::getScreenSize(){
-	return {width, height};
+glm::ivec2 ofAppNoWindow::getScreenSize(){
+	return { width, height };
 }
 
 

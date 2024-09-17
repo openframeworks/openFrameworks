@@ -9,6 +9,8 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include <array>
+// FIXME: unordered_set
+#include <set>
 
 class ofBaseRenderer;
 

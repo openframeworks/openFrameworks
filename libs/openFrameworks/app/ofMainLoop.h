@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofEvents.h"
-#include <unordered_map>
+//#include <unordered_map>
 
 class ofBaseApp;
 class ofAppBaseWindow;
@@ -24,15 +24,18 @@ public:
 			windowPollEvents = Window::pollEvents;
 		}
 		if(!allowMultiWindow){
-			windowsApps.clear();
+			windows.clear();
+//			windowsApps.clear();
 		}
-		windowsApps[window] = std::shared_ptr<ofBaseApp>();
+		windows.emplace_back(window);
+//		windowsApps[window] = std::shared_ptr<ofBaseApp>();
 		currentWindow = window;
 		ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
 	}
 
-	void run(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
-	void run(std::shared_ptr<ofBaseApp> && app);
+	void run(const std::shared_ptr<ofAppBaseWindow> & window, const std::shared_ptr<ofBaseApp> & app);
+//	std::shared_ptr<ofBaseApp> && app);
+	void run(const std::shared_ptr<ofBaseApp> & app);
 	int loop();
 	void loopOnce();
 	void pollEvents();
@@ -48,17 +51,29 @@ public:
 	ofEvent<void> loopEvent;
 	
 	std::thread::id get_thread_id() { return thread_id; };
+	
+	std::vector <std::shared_ptr<ofAppBaseWindow> > getWindows() { return windows; }
+
+	void ofBeginWindow(int n);
+	void ofEndWindow();
+
+	
+public:
+	std::weak_ptr<ofAppBaseWindow> currentWindow;
 
 private:
 	std::thread::id thread_id { std::this_thread::get_id() };
 
 	void keyPressed(ofKeyEventArgs & key);
-	std::unordered_map<std::shared_ptr<ofAppBaseWindow>, std::shared_ptr<ofBaseApp> > windowsApps;
+	std::vector <std::shared_ptr<ofAppBaseWindow> > windows;
+	std::shared_ptr<ofBaseApp> mainApp;
+	
 	bool bShouldClose;
-	std::weak_ptr<ofAppBaseWindow> currentWindow;
 	int status;
 	bool allowMultiWindow;
 	std::function<void()> windowLoop;
 	std::function<void()> windowPollEvents;
 	bool escapeQuits;
+	
+
 };
