@@ -501,6 +501,14 @@ public:
 	ofParameter();
 	ofParameter(const ofParameter<ParameterType> & v);
 	ofParameter(const ParameterType & v);
+	
+	template <
+	typename Arg,
+	typename = std::enable_if_t<(std::is_convertible_v<Arg, ParameterType> and
+								 !((std::is_same_v<ParameterType,bool>) and !(std::is_arithmetic_v<Arg>)))>
+	>
+	ofParameter(const Arg & v);
+	
 	ofParameter(const std::string & name, const ParameterType & v);
 	ofParameter(const std::string & name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
@@ -677,7 +685,8 @@ ofParameter<ParameterType>::ofParameter(const ofParameter<ParameterType> & v)
 	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
 
 template <typename ParameterType>
-ofParameter<ParameterType>::ofParameter(const ParameterType & v)
+template <typename Arg, typename>
+ofParameter<ParameterType>::ofParameter(const Arg & v)
 	: obj(std::make_shared<Value>(v))
 	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
 
