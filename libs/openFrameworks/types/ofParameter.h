@@ -8,8 +8,8 @@
 
 #include "ofColor.h"
 #include "ofLog.h"
-#include "ofRectangle.h"
 #include "ofMathConstants.h"
+#include "ofRectangle.h"
 #include "ofUtils.h" // ofToString
 
 template <typename ParameterType>
@@ -501,14 +501,13 @@ public:
 	ofParameter();
 	ofParameter(const ofParameter<ParameterType> & v);
 	ofParameter(const ParameterType & v);
-	
+
 	template <
-	typename Arg,
-	typename = std::enable_if_t<(std::is_convertible_v<Arg, ParameterType> and
-								 !((std::is_same_v<ParameterType,bool>) and !(std::is_arithmetic_v<Arg>)))>
-	>
+		typename Arg,
+		typename = std::enable_if_t<(std::is_convertible_v<Arg, ParameterType>  and
+									 !((std::is_same_v<ParameterType, bool>)and!(std::is_arithmetic_v<Arg>)))>>
 	ofParameter(const Arg & v);
-	
+
 	ofParameter(const std::string & name, const ParameterType & v);
 	ofParameter(const std::string & name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
