@@ -9,6 +9,7 @@ static const string fragmentShader = R"(
 #if HAS_COLOR
     IN vec4 v_color;
 #endif
+	uniform mat4 viewMatrix;
 
 
     struct lightData
@@ -48,24 +49,10 @@ static const string fragmentShader = R"(
     uniform vec4 global_ambient;
 
     // these are passed in from OF programmable renderer
-
-//layout(std140) uniform matrices {
-//	mat4 modelMatrix;
-//	mat4 viewMatrix;
-//	mat4 modelViewMatrix;
-//	mat4 modelViewProjectionMatrix;
-//	mat4 projectionMatrix;
-//	mat4 textureMatrix;
-//};
-
-	uniform mat4 viewMatrix;
-	uniform mat4 modelViewMatrix;
-	uniform mat4 modelViewProjectionMatrix;
-	
-	uniform mat4 textureMatrix;
+    uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
-//
-
+    uniform mat4 textureMatrix;
+    uniform mat4 modelViewProjectionMatrix;
 
 #if defined(MAX_LIGHTS) && MAX_LIGHTS
     uniform lightData lights[MAX_LIGHTS];

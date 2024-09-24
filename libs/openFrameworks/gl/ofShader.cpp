@@ -715,7 +715,7 @@ bool ofShader::linkProgram() {
 
 //#ifndef TARGET_OPENGLES
     #ifdef GLEW_ARB_uniform_buffer_object
-//        if (GLEW_ARB_uniform_buffer_object) {
+       if (GLEW_ARB_uniform_buffer_object) {
             // Pre-cache all active uniforms blocks
             GLint numUniformBlocks = 0;
             glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -730,7 +730,7 @@ bool ofShader::linkProgram() {
 				bufferObjectsCache[name] = std::make_unique<ofBufferObject>();
                 uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
             }
-//        }
+       }
     #endif
 //#endif
 
