@@ -36,7 +36,6 @@ sources = files(
   'libs/openFrameworks/3d/ofNode.cpp',
   'libs/openFrameworks/app/ofAppEGLWindow.cpp',
   'libs/openFrameworks/app/ofAppGLFWWindow.cpp',
-  'libs/openFrameworks/app/ofAppGlutWindow.cpp',
   'libs/openFrameworks/app/ofAppNoWindow.cpp',
   'libs/openFrameworks/app/ofAppRunner.cpp',
   'libs/openFrameworks/app/ofBaseApp.cpp',
@@ -95,6 +94,7 @@ sources = files(
   'libs/openFrameworks/utils/ofSystemUtils.cpp',
   'libs/openFrameworks/utils/ofThread.cpp',
   'libs/openFrameworks/utils/ofTimer.cpp',
+  'libs/openFrameworks/utils/ofTimerFps.cpp',
   'libs/openFrameworks/utils/ofURLFileLoader.cpp',
   'libs/openFrameworks/utils/ofUtils.cpp',
   'libs/openFrameworks/utils/ofXml.cpp',
@@ -118,7 +118,6 @@ install_headers(
   'libs/openFrameworks/app/ofAppBaseWindow.h',
   'libs/openFrameworks/app/ofAppEGLWindow.h',
   'libs/openFrameworks/app/ofAppGLFWWindow.h',
-  'libs/openFrameworks/app/ofAppGlutWindow.h',
   'libs/openFrameworks/app/ofAppNoWindow.h',
   'libs/openFrameworks/app/ofAppRunner.h',
   'libs/openFrameworks/app/ofBaseApp.h',
@@ -182,7 +181,6 @@ install_headers(
   'libs/openFrameworks/sound/ofSoundUtils.h',
   'libs/openFrameworks/types/ofBaseTypes.h',
   'libs/openFrameworks/types/ofColor.h',
-  'libs/openFrameworks/types/ofParameterGroup.h',
   'libs/openFrameworks/types/ofParameter.h',
   'libs/openFrameworks/types/ofPoint.h',
   'libs/openFrameworks/types/ofRectangle.h',
@@ -196,9 +194,11 @@ install_headers(
   'libs/openFrameworks/utils/ofNoise.h',
   'libs/openFrameworks/utils/ofRandomDistributions.h',
   'libs/openFrameworks/utils/ofRandomEngine.h',
+  'libs/openFrameworks/utils/ofSingleton.h',
   'libs/openFrameworks/utils/ofSystemUtils.h',
   'libs/openFrameworks/utils/ofThreadChannel.h',
   'libs/openFrameworks/utils/ofThread.h',
+  'libs/openFrameworks/utils/ofTimerFps.h',
   'libs/openFrameworks/utils/ofTimer.h',
   'libs/openFrameworks/utils/ofURLFileLoader.h',
   'libs/openFrameworks/utils/ofUtils.h',
@@ -218,8 +218,6 @@ install_headers(
   subdir: 'openframeworks'
 )
 
-add_project_arguments('-D GLM_ENABLE_EXPERIMENTAL', language: 'cpp')
-
 compiler = meson.get_compiler('cpp')
 
 deps = [
@@ -238,6 +236,7 @@ deps = [
   dependency('gstreamer-plugins-base-1.0'),
   dependency('gstreamer-video-1.0'),
   dependency('kissfft-float'),
+  dependency('libcrypto'),
   dependency('libcurl'),
   dependency('libmpg123'),
   dependency('libtess2'),
