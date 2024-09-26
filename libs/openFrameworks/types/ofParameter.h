@@ -498,17 +498,46 @@ typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, Pa
 template <typename ParameterType>
 class ofParameter : public ofAbstractParameter {
 public:
+	
+	/// \brief constructs a default ofParameter of type ParameterType
+	/// \tparam ParameterType the type of the Value held by the ofParameter
 	ofParameter();
-	ofParameter(const ofParameter<ParameterType> & v);
-	ofParameter(const ParameterType & v);
 
+	/// \brief constructs an ofParameter of type ParameterType as an alias of the Value of another ofParameter
+	/// \tparam ParameterType the type of the value held by the ofParameter
+	/// \param v the ofParameter to link to it's value
+	ofParameter(const ofParameter<ParameterType> & v);
+
+	/// \brief constructs an ofParameter of type ParameterType initialized to value of same-type v
+	/// \tparam ParameterType the type of the value held by the ofParameter
+	/// \param v the value to initialize to
+	ofParameter(const ParameterType & v);
+	
+	/// \brief constructs an ofParameter of type ParameterType initialized to value of v
+	/// where v is convertible to ParameterType, with an exception for bool which can cause
+	/// unexpected behavious (as string and char arrays are convertible to bool)
+	/// \tparam ParameterType the type of the value held by the ofParameter
+	/// \tparam Arg a type convertible to ParameterType
+	/// \param v the value to initialize to
 	template <
 		typename Arg,
 		typename = std::enable_if_t<(std::is_convertible_v<Arg, ParameterType>  and
 									 !((std::is_same_v<ParameterType, bool>)and!(std::is_arithmetic_v<Arg>)))>>
 	ofParameter(const Arg & v);
 
+	/// \brief constructs a named ofParameter of type ParameterType initialized to value of v
+	/// \tparam ParameterType the type of the value held by the ofParameter
+	/// \param name name of the parameter
+	/// \param v the value to initialize to
 	ofParameter(const std::string & name, const ParameterType & v);
+
+	/// \brief constructs a named ofParameter of type ParameterType initialized to value of v,
+	/// with non-enforced constraints on the range of possible values
+	/// \tparam ParameterType the type of the value held by the ofParameter
+	/// \param name name of the parameter
+	/// \param v the value to initialize to
+	/// \param min the minimum value to be held
+	/// \param max the maximum value to be held
 	ofParameter(const std::string & name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
 	const ParameterType & get() const;
