@@ -225,7 +225,7 @@ deps = [
   dependency('cairo'),
   dependency('egl'),
   dependency('fontconfig'),
-  dependency('freeglut'),
+  dependency('freeglut', 'glut'),
   dependency('freetype2'),
   dependency('glew'),
   dependency('glfw3'),
