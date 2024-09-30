@@ -99,9 +99,9 @@ public:
 
     static void setDurationHackEnabled(bool ab);
 
-    bool                load(std::string name) override;
-    void				loadAsync(std::string name) override;
-    void                close() override;
+    bool load(const of::filesystem::path & fileName) override;
+    void loadAsync(const of::filesystem::path & fileName) override;
+    void close() override;
 
     bool                isInitialized() const override;
 
