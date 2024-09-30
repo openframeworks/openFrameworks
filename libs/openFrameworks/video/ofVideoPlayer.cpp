@@ -200,7 +200,7 @@ bool ofVideoPlayer::loadMovie(const of::filesystem::path & fileName){
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath() const{
+of::filesystem::path ofVideoPlayer::getMoviePath() const {
     return moviePath;	
 }
 
