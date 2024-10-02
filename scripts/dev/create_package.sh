@@ -347,9 +347,6 @@ function createPackage {
     if [ "$pkg_platform" = "osx" ]; then
         scripts/osx/download_libs.sh
         scripts/emscripten/download_libs.sh -n
-		# temp fix for now remove signing from frameworks 
-		codesign --remove-signature libs/*/lib/macos/*.xcframework
-		codesign --remove-signature addons/*/libs/*/lib/macos/*.xcframework
     elif [ "$pkg_platform" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$libs_abi
         scripts/emscripten/download_libs.sh -n
@@ -379,9 +376,6 @@ function createPackage {
         scripts/osx/download_libs.sh
         scripts/macos/download_libs.sh
         scripts/emscripten/download_libs.sh -n
-		# temp fix for now remove signing from frameworks 
-		codesign --remove-signature libs/*/lib/macos/*.xcframework
-		codesign --remove-signature addons/*/libs/*/lib/macos/*.xcframework
     fi
 
     createProjectFiles $pkg_platform $pkg_ofroot
