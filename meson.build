@@ -219,6 +219,7 @@ install_headers(
 )
 
 compiler = meson.get_compiler('cpp')
+cmake   = import('cmake')
 
 deps = [
   dependency('boost'),
@@ -246,12 +247,27 @@ deps = [
   dependency('pugixml'),
   dependency('rtaudio'),
   dependency('sndfile'),
-  dependency('uriparser'),
   dependency('utf8cpp'),
   dependency('x11-xcb'),
   dependency('xcursor'),
   compiler.find_library('freeimage', has_headers: ['FreeImage.h']),
 ]
+
+# We need to treat this dependency independently 
+# because if it's not installed in the host system,
+# we will use the .wrap file in the subprojects file AND 
+# need to change a define in the cmake subproject
+uriparser_dep = dependency('uriparser', required: false)
+if not uriparser_dep.found()
+  # disable the "URIPARSER_BUILD_DOCS" define that is default enabled in the subproject
+  # which pulls Doxygen dependency uselessly
+  uripaser_opts = cmake.subproject_options()
+  uripaser_opts.add_cmake_defines({'URIPARSER_BUILD_DOCS': false, 'URIPARSER_BUILD_TESTS': false})
+  uripaser_proj = cmake.subproject('uriparser', options: uripaser_opts)
+  uriparser_dep = uripaser_proj.dependency('uriparser')
+endif
+
+deps += [uriparser_dep]
 
 lib = library('openFrameworks',
   sources,
