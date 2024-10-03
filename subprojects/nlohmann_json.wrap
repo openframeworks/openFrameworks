@@ -1,0 +1,11 @@
+[wrap-file]
+directory = nlohmann_json-3.11.3
+lead_directory_missing = true
+source_url = https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip
+source_filename = nlohmann_json-3.11.3.zip
+source_hash = a22461d13119ac5c78f205d3df1db13403e58ce1bb1794edc9313677313f4a9d
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/nlohmann_json_3.11.3-1/nlohmann_json-3.11.3.zip
+wrapdb_version = 3.11.3-1
+
+[provide]
+nlohmann_json = nlohmann_json_dep

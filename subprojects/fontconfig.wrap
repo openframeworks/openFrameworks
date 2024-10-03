@@ -1,0 +1,10 @@
+[wrap-file]
+directory = fontconfig-2.15.0
+source_url = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.15.0.tar.xz
+source_filename = fontconfig-2.15.0.tar.xz
+source_hash = 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/fontconfig_2.15.0-1/fontconfig-2.15.0.tar.xz
+wrapdb_version = 2.15.0-1
+
+[provide]
+fontconfig = fontconfig_dep
