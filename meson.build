@@ -34,7 +34,6 @@ sources = files(
   'libs/openFrameworks/3d/ofCamera.cpp',
   'libs/openFrameworks/3d/ofEasyCam.cpp',
   'libs/openFrameworks/3d/ofNode.cpp',
-  'libs/openFrameworks/app/ofAppEGLWindow.cpp',
   'libs/openFrameworks/app/ofAppGLFWWindow.cpp',
   'libs/openFrameworks/app/ofAppNoWindow.cpp',
   'libs/openFrameworks/app/ofAppRunner.cpp',
@@ -100,9 +99,6 @@ sources = files(
   'libs/openFrameworks/utils/ofXml.cpp',
   'libs/openFrameworks/video/ofDirectShowGrabber.cpp',
   'libs/openFrameworks/video/ofDirectShowPlayer.cpp',
-  'libs/openFrameworks/video/ofGstUtils.cpp',
-  'libs/openFrameworks/video/ofGstVideoGrabber.cpp',
-  'libs/openFrameworks/video/ofGstVideoPlayer.cpp',
   'libs/openFrameworks/video/ofMediaFoundationPlayer.cpp',
   'libs/openFrameworks/video/ofVideoGrabber.cpp',
   'libs/openFrameworks/video/ofVideoPlayer.cpp',
@@ -116,7 +112,6 @@ install_headers(
   'libs/openFrameworks/3d/ofMesh.h',
   'libs/openFrameworks/3d/ofNode.h',
   'libs/openFrameworks/app/ofAppBaseWindow.h',
-  'libs/openFrameworks/app/ofAppEGLWindow.h',
   'libs/openFrameworks/app/ofAppGLFWWindow.h',
   'libs/openFrameworks/app/ofAppNoWindow.h',
   'libs/openFrameworks/app/ofAppRunner.h',
@@ -208,9 +203,6 @@ install_headers(
   'libs/openFrameworks/video/ofAVFoundationVideoPlayer.h',
   'libs/openFrameworks/video/ofDirectShowGrabber.h',
   'libs/openFrameworks/video/ofDirectShowPlayer.h',
-  'libs/openFrameworks/video/ofGstUtils.h',
-  'libs/openFrameworks/video/ofGstVideoGrabber.h',
-  'libs/openFrameworks/video/ofGstVideoPlayer.h',
   'libs/openFrameworks/video/ofMediaFoundationPlayer.h',
   'libs/openFrameworks/video/ofVideoBaseTypes.h',
   'libs/openFrameworks/video/ofVideoGrabber.h',
@@ -224,34 +216,56 @@ cmake   = import('cmake')
 deps = [
   dependency('boost'),
   dependency('cairo'),
-  dependency('egl'),
   dependency('fontconfig'),
   dependency('freeglut', 'glut'),
   dependency('freetype2'),
   dependency('glew'),
   dependency('glfw3'),
   dependency('glm'),
-  dependency('gstreamer-1.0'),
-  dependency('gstreamer-app-1.0'),
-  dependency('gstreamer-plugins-bad-1.0'),
-  dependency('gstreamer-plugins-base-1.0'),
-  dependency('gstreamer-video-1.0'),
   dependency('kissfft-float'),
   dependency('libcrypto'),
   dependency('libcurl'),
   dependency('libmpg123'),
   dependency('libtess2'),
-  dependency('libudev'),
   dependency('nlohmann_json'),
   dependency('openal'),
   dependency('pugixml'),
   dependency('rtaudio'),
   dependency('sndfile'),
   dependency('utf8cpp'),
-  dependency('x11-xcb'),
-  dependency('xcursor'),
   compiler.find_library('freeimage', has_headers: ['FreeImage.h']),
 ]
+
+if host_machine.system() == 'linux'
+
+  deps += [
+    dependency('egl'),
+    dependency('gstreamer-1.0'),
+    dependency('gstreamer-app-1.0'),
+    dependency('gstreamer-plugins-bad-1.0'),
+    dependency('gstreamer-plugins-base-1.0'),
+    dependency('gstreamer-video-1.0'),
+    dependency('libudev'),
+    dependency('x11-xcb'),
+    dependency('xcursor'),
+  ]
+
+  sources += files(
+    'libs/openFrameworks/app/ofAppEGLWindow.cpp',
+    'libs/openFrameworks/video/ofGstUtils.cpp',
+    'libs/openFrameworks/video/ofGstVideoGrabber.cpp',
+    'libs/openFrameworks/video/ofGstVideoPlayer.cpp',
+  )
+
+  install_headers(
+    'libs/openFrameworks/app/ofAppEGLWindow.h',
+    'libs/openFrameworks/video/ofGstUtils.h',
+    'libs/openFrameworks/video/ofGstVideoGrabber.h',
+    'libs/openFrameworks/video/ofGstVideoPlayer.h',
+    subdir: 'openframeworks'
+  )
+
+endif
 
 # We need to treat this dependency independently 
 # because if it's not installed in the host system,
