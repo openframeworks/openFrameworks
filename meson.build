@@ -222,7 +222,6 @@ deps = [
   dependency('glew'),
   dependency('glfw3'),
   dependency('glm'),
-  dependency('kissfft-float'),
   dependency('libcrypto'),
   dependency('libcurl'),
   dependency('libmpg123'),
@@ -282,6 +281,17 @@ if not uriparser_dep.found()
 endif
 
 deps += [uriparser_dep]
+
+# Same: need to disable tests to not pull FFTW
+kissfft_dep = dependency('kissfft-float', required: false)
+if not kissfft_dep.found()
+  kissfft_opts = cmake.subproject_options()
+  kissfft_opts.add_cmake_defines({'KISSFFT_TEST': false})
+  kissfft_proj = cmake.subproject('kissfft', options: kissfft_opts)
+  kissfft_dep = kissfft_proj.dependency('kissfft')
+endif
+
+deps += [kissfft_dep]
 
 lib = library('openFrameworks',
   sources,
