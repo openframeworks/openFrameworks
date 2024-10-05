@@ -1,0 +1,8 @@
+[wrap-git]
+url = https://github.com/danoli3/FreeImage.git
+revision = 3.19.7
+depth = 1
+method = cmake
+
+[provide]
+freeimage = FreeImage_dep

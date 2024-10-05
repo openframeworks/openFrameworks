@@ -210,7 +210,6 @@ install_headers(
   subdir: 'openframeworks'
 )
 
-compiler = meson.get_compiler('cpp')
 cmake   = import('cmake')
 
 deps = [
@@ -232,7 +231,6 @@ deps = [
   dependency('rtaudio'),
   dependency('sndfile'),
   dependency('utf8cpp'),
-  compiler.find_library('freeimage', has_headers: ['FreeImage.h']),
 ]
 
 if host_machine.system() == 'linux'
@@ -292,6 +290,22 @@ if not kissfft_dep.found()
 endif
 
 deps += [kissfft_dep]
+
+# FreeImage is a special snowflake: no pkg-config / cmake / etc.. file is installed by it
+# so we need to use the compiler to find it
+compiler = meson.get_compiler('cpp')
+freeimage_dep = compiler.find_library('freeimage', has_headers: ['FreeImage.h'], required: false)
+if not freeimage_dep.found()
+  freeimage_opts = cmake.subproject_options()
+  # doesn't compile with the define bellow
+  # freeimage_opts.add_cmake_defines({'BUILD_SHARED_LIBS': true}) 
+  # We need -fPIC to link against the produced static library
+  freeimage_opts.add_cmake_defines({'CMAKE_POSITION_INDEPENDENT_CODE': true})
+  freeimage_proj = cmake.subproject('freeimage', options: freeimage_opts)
+  freeimage_dep = freeimage_proj.dependency('FreeImage')
+endif
+
+deps += [freeimage_dep]
 
 lib = library('openFrameworks',
   sources,
