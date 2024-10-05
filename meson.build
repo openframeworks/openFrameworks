@@ -198,9 +198,6 @@ install_headers(
   'libs/openFrameworks/utils/ofURLFileLoader.h',
   'libs/openFrameworks/utils/ofUtils.h',
   'libs/openFrameworks/utils/ofXml.h',
-  'libs/openFrameworks/video/ofAVFoundationGrabber.h',
-  'libs/openFrameworks/video/ofAVFoundationPlayer.h',
-  'libs/openFrameworks/video/ofAVFoundationVideoPlayer.h',
   'libs/openFrameworks/video/ofDirectShowGrabber.h',
   'libs/openFrameworks/video/ofDirectShowPlayer.h',
   'libs/openFrameworks/video/ofMediaFoundationPlayer.h',
@@ -262,11 +259,46 @@ if host_machine.system() == 'linux'
     subdir: 'openframeworks'
   )
 
+elif host_machine.system() == 'darwin'
+
+  deps += [
+    dependency('Cocoa'),
+    dependency('AppKit'),
+    dependency('Foundation'),
+    dependency('AVKit'),
+    dependency('GLKit'),
+    dependency('AVFoundation'),
+    dependency('opengl'),
+    dependency('coremedia'),
+    dependency('corevideo'),
+    dependency('accelerate')
+  ]
+  add_languages('objcpp', native: false)
+  add_languages('objc', native: false)
+  add_project_arguments(['-ObjC++', '-fobjc-arc'], language: ['cpp', 'objcpp', 'objc'])
+
+  sources += files(
+    'libs/openFrameworks/sound/ofAVEngineSoundPlayer.mm',
+    'libs/openFrameworks/video/ofAVFoundationGrabber.mm',
+    'libs/openFrameworks/video/ofAVFoundationPlayer.mm',
+    'libs/openFrameworks/video/ofAVFoundationVideoPlayer.m',
+  )
+
+  install_headers(
+    'libs/openFrameworks/sound/ofAVEngineSoundPlayer.h',
+    'libs/openFrameworks/video/ofAVFoundationGrabber.h',
+    'libs/openFrameworks/video/ofAVFoundationPlayer.h',
+    'libs/openFrameworks/video/ofAVFoundationGrabber.h',
+    'libs/openFrameworks/video/ofAVFoundationPlayer.h',
+    'libs/openFrameworks/video/ofAVFoundationVideoPlayer.h',
+    subdir: 'openframeworks'
+  )
+
 endif
 
-# We need to treat this dependency independently 
+# We need to treat this dependency independently
 # because if it's not installed in the host system,
-# we will use the .wrap file in the subprojects file AND 
+# we will use the .wrap file in the subprojects file AND
 # need to change a define in the cmake subproject
 uriparser_dep = dependency('uriparser', required: false)
 if not uriparser_dep.found()
@@ -298,7 +330,7 @@ freeimage_dep = compiler.find_library('freeimage', has_headers: ['FreeImage.h'],
 if not freeimage_dep.found()
   freeimage_opts = cmake.subproject_options()
   # doesn't compile with the define bellow
-  # freeimage_opts.add_cmake_defines({'BUILD_SHARED_LIBS': true}) 
+  # freeimage_opts.add_cmake_defines({'BUILD_SHARED_LIBS': true})
   # We need -fPIC to link against the produced static library
   freeimage_opts.add_cmake_defines({'CMAKE_POSITION_INDEPENDENT_CODE': true})
   freeimage_proj = cmake.subproject('freeimage', options: freeimage_opts)
@@ -311,7 +343,8 @@ lib = library('openFrameworks',
   sources,
   include_directories: inc,
   dependencies: deps,
-  install: true)
+  install: true,
+)
 
 openframeworks_dep = declare_dependency(link_with: lib, include_directories: inc, dependencies: deps)
 
