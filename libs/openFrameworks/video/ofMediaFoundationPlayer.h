@@ -159,7 +159,7 @@ public:
     ofEvent<MF_MEDIA_ENGINE_ERR> MFErrorEvent;
 
 protected:
-    bool _load(std::string name, bool abAsync);
+    bool _load(const of::filesystem::path & fileName, bool abAsync);
     void OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) override;
 
     class MEDXDeviceManager {
