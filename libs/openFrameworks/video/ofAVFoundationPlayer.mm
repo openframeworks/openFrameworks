@@ -62,7 +62,6 @@ bool ofAVFoundationPlayer::load(const of::filesystem::path & fileName) {
 }
 
 //--------------------------------------------------------------
-// FIXME: fs::path
 bool ofAVFoundationPlayer::loadPlayer(const of::filesystem::path & fileName, bool bAsync) {
 	if( ofGetUsingArbTex() == false ){
         killTextureCache();
@@ -74,7 +73,7 @@ bool ofAVFoundationPlayer::loadPlayer(const of::filesystem::path & fileName, boo
 
 	BOOL bStream = NO;
 
-    string fileNameStr { ofPathToString(fileName) };
+    std::string fileNameStr { ofPathToString(fileName) };
 	bStream = bStream || (ofIsStringInString(fileNameStr, "http://"));
 	bStream = bStream || (ofIsStringInString(fileNameStr, "https://"));
 	bStream = bStream || (ofIsStringInString(fileNameStr, "rtsp://"));
