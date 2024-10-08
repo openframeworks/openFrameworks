@@ -1,7 +1,8 @@
-[wrap-git]
-url = https://github.com/danoli3/FreeImage.git
-revision = 3.19.7
-depth = 1
+[wrap-file]
+directory = FreeImage-3.19.9
+source_url = https://github.com/danoli3/FreeImage/archive/refs/tags/3.19.9.zip
+source_filename = FreeImage-3.19.9.zip
+source_hash = 5bf3f5d85224f045c110dc2b4dc7d22c3d33a9ee6e2771b17fb06b3e5f462141
 method = cmake
 
 [provide]
