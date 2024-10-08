@@ -1,16 +1,5 @@
 project('openFrameworks', 'cpp',
-version : '0.12.0',
-default_options : [
-  'cpp_std=c++20',
-  'buildtype=release',
-  'optimization=3',
-  'default_library=shared',
-  # 'prefer_static=true',
-  'b_ndebug=if-release',
-  'c_args=-pipe',
-  'cpp_args=-pipe',
-  # 'warning_level=3'
-]
+  version : '0.12.0'
 )
 
 inc = include_directories(
