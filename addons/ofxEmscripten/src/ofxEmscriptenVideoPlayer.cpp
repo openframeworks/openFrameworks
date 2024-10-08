@@ -28,11 +28,12 @@ ofxEmscriptenVideoPlayer::~ofxEmscriptenVideoPlayer() {
 	html5video_player_delete(player_id);
 }
 
-bool ofxEmscriptenVideoPlayer::load(string name){
+bool ofxEmscriptenVideoPlayer::load(const of::filesystem::path & fileName){
+	std::string name = ofPathToString(fileName);
 	if (name.substr(0, 7) == "http://" || name.substr(0, 8) == "https://"){
-		html5video_player_load_url(player_id, name.c_str());
+		html5video_player_load_url(player_id, fileName.c_str());
 	} else{
-		html5video_player_load(player_id, ofToDataPath(name).c_str());
+		html5video_player_load(player_id, ofToDataPath(fileName).c_str());
 	}
 	return true;
 }

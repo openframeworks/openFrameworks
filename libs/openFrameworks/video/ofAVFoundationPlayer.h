@@ -27,9 +27,8 @@ public:
 	ofAVFoundationPlayer();
 	~ofAVFoundationPlayer();
 	
-	//FIXME: FS
-	bool load(std::string name);
-	void loadAsync(std::string name);
+	bool load(const of::filesystem::path & fileName) override;
+	void loadAsync(const of::filesystem::path & fileName) override;
 	void close();
 	void update();
 
@@ -88,7 +87,7 @@ public:
 #endif
 	
 	[[deprecated("use load()")]]
-	bool loadMovie(std::string name);
+	bool loadMovie(const of::filesystem::path & fileName);
 	[[deprecated("use getPixels()")]]
 	ofPixels & getPixelsRef();
 	[[deprecated("use getPixels()")]]
@@ -98,7 +97,7 @@ public:
 	
 protected:
 	
-	bool loadPlayer(std::string name, bool bAsync);
+	bool loadPlayer(const of::filesystem::path & fileName, bool bAsync);
 	void disposePlayer();
 	bool isReady() const;
 
