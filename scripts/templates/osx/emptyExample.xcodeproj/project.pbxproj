@@ -132,6 +132,7 @@
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
+				"ONLY_ACTIVE_ARCH" : "YES",
 				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
 				"GCC_UNROLL_LOOPS": "YES",
 				"HEADER_SEARCH_PATHS": [
@@ -148,6 +149,7 @@
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
+				"ONLY_ACTIVE_ARCH" : "YES",				
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
 					"src"

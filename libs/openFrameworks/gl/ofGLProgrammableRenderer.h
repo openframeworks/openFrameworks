@@ -403,4 +403,18 @@ private:
 	std::deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
     GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
+	
+	uint64_t beginDefaultShaderFrame;
+	
+	
+	
+	struct matricesBuffer {
+		glm::mat4 modelMatrix;
+		glm::mat4 viewMatrix;
+		glm::mat4 modelViewMatrix;
+		glm::mat4 modelViewProjectionMatrix;
+		glm::mat4 projectionMatrix;
+		glm::mat4 textureMatrix;
+	} matrices;
+	ofBufferObject buffer;
 };
