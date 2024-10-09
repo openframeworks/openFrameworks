@@ -1,0 +1,14 @@
+[wrap-file]
+directory = freeglut-3.4.0
+source_url = http://downloads.sourceforge.net/freeglut/3.4.0/freeglut-3.4.0.tar.gz
+source_filename = freeglut-3.4.0.tar.gz
+source_hash = 3c0bcb915d9b180a97edaebd011b7a1de54583a838644dcd42bb0ea0c6f3eaec
+patch_filename = freeglut_3.4.0-2_patch.zip
+patch_url = https://wrapdb.mesonbuild.com/v2/freeglut_3.4.0-2/get_patch
+patch_hash = fd3264ab2eafb8a1c711fc2b309e9c85e6a2bde0178d9c1e5f5785091a6b01bf
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/freeglut_3.4.0-2/freeglut-3.4.0.tar.gz
+wrapdb_version = 3.4.0-2
+
+[provide]
+freeglut = freeglut_dep
+glut = freeglut_dep

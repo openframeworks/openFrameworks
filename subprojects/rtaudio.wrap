@@ -1,0 +1,10 @@
+[wrap-file]
+directory = rtaudio-6.0.1
+source_url = http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-6.0.1.tar.gz
+source_filename = rtaudio-6.0.1.tar.gz
+source_hash = 42d29cc2b5fa378ba3a978faeb1885a0075acf0fecb5ee50f0d76f6c7d8ab28c
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/rtaudio_6.0.1-1/rtaudio-6.0.1.tar.gz
+wrapdb_version = 6.0.1-1
+
+[provide]
+dependency_names = rtaudio

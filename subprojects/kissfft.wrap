@@ -1,0 +1,8 @@
+[wrap-git]
+url = https://github.com/mborgerding/kissfft.git
+revision = 131.1.0
+depth = 1
+method = cmake
+
+[provide]
+kissfft-float = kissfft_dep

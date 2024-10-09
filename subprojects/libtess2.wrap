@@ -1,0 +1,13 @@
+[wrap-git]
+url = https://github.com/memononen/libtess2.git
+revision = v1.0.2
+depth = 1
+
+# Loads "overrides" (aka move files from that folder to the cloned one) from packagefiles/libtess2
+# this is to "meson-ize" the project
+# There are many meson-ized projects in here https://mesonbuild.com/Wrapdb-projects.html
+# more information on how to use them here https://mesonbuild.com/Wrap-dependency-system-manual.html
+patch_directory = libtess2
+
+[provide]
+dependency_names = libtess2_dep

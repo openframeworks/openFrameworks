@@ -1,3 +1,4 @@
+#ifdef _WIN32
 
 #include "ofMediaFoundationSoundPlayer.h"
 #include "ofLog.h"
@@ -168,7 +169,7 @@ void ofMediaFoundationSoundPlayer::sCloseAudioSystems() {
     sNumInstances--;
     if (sNumInstances <= 0) {
         ofLogVerbose("ofMediaFoundationSoundPlayer") << " closing XAudio2.";
-        sCloseXAudio2(); 
+        sCloseXAudio2();
     }
     ofMediaFoundationUtils::CloseMediaFoundation();
     if (sNumInstances < 0) {
@@ -189,7 +190,7 @@ ofMediaFoundationSoundPlayer::~ofMediaFoundationSoundPlayer() {
 //--------------------
 bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path & fileName, bool stream) {
     unload();
-    
+
 	auto filePath = fileName;
     std::string fileStr = ofPathToString(fileName);
     bool bStream = false;
@@ -223,7 +224,7 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path & fileName, b
 
 
     LPCWSTR path = filePath.c_str();
-    
+
 
     hr = MFCreateSourceReaderFromURL(
         path,
@@ -255,14 +256,14 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path & fileName, b
     hr = mSrcReader->GetNativeMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, &nativeType);
 
     auto nativeTypePtr = std::unique_ptr<IMFMediaType, MyComDeleterFunctor>(nativeType);
-    // get a wave format 
+    // get a wave format
     hr = MFCreateWaveFormatExFromMFMediaType(nativeType, &nativeFormat, &formatSize);
-    
+
     mNumChannels = nativeFormat->nChannels;
     mSampleRate = nativeFormat->nSamplesPerSec;
 
     CoTaskMemFree(nativeFormat);
-    
+
 
     ComPtr<IMFMediaType> mediaType;
     hr = MFCreateMediaType(mediaType.GetAddressOf());
@@ -335,7 +336,7 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path & fileName, b
     }
 
     ofLogVerbose("ofMediaFoundationSoundPlayer::load") << "made it all the way to the end.";
-    
+
     if (!mBStreaming) {
         mSrcReader.Reset();
         mSrcReader = nullptr;
@@ -343,11 +344,11 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path & fileName, b
 
     {
 
-        // create stream context for listening to voice 
+        // create stream context for listening to voice
         mVoiceContext = std::make_shared<StreamingVoiceContext>();
         // Create the source voice
         IXAudio2SourceVoice* pSourceVoice = nullptr;
-        // setting max freq ratio to 3, though it may need to be higher to play at a 
+        // setting max freq ratio to 3, though it may need to be higher to play at a
         // faster pitch
         if (mBStreaming) {
             hr = sXAudio2->CreateSourceVoice(
@@ -430,7 +431,7 @@ void ofMediaFoundationSoundPlayer::unload() {
     mTotalNumFrames = 0;
     mNumSamplesAlreadyPlayed = 0;
     mBRequestNewReaderSample = false;
-    
+
     LeaveCriticalSection(&m_critSec);
 };
 
@@ -467,7 +468,7 @@ void ofMediaFoundationSoundPlayer::update(ofEventArgs& args) {
                                 } else {
                                     bRequestStop = true;
                                     // we need to request stop outside of the scope of the lock
-                                    // since stop() also locks to set vars 
+                                    // since stop() also locks to set vars
                                 }
                             }
                         }
@@ -497,7 +498,7 @@ void ofMediaFoundationSoundPlayer::update(ofEventArgs& args) {
                 if (!xstate.BuffersQueued && mExtraVoices.size() < 1) {
                     // we have reached the end //
                     if (mBLoop) {
-                        // set isPlaying to false, so that it will create a new instance 
+                        // set isPlaying to false, so that it will create a new instance
                         // for mVoice and not an Extra Voice
                         mPosPct = 0.0f;
                         mBIsPlaying = false;
@@ -530,7 +531,7 @@ void ofMediaFoundationSoundPlayer::play() {
         return;
     }
 
-    // don't want a ton of loops going on here 
+    // don't want a ton of loops going on here
     if (mBLoop) {
         stop();
     }
@@ -539,7 +540,7 @@ void ofMediaFoundationSoundPlayer::play() {
     }
 
     if (mBStreaming) {
-        // just in case, multiplay is not supported for streams 
+        // just in case, multiplay is not supported for streams
         _clearExtraVoices();
     }
 
@@ -583,7 +584,7 @@ void ofMediaFoundationSoundPlayer::play() {
         XAUDIO2_BUFFER buffer = {};
         buffer.pAudioData = mBuffer.data();
         // tell the source voice not to expect any data after this buffer
-        buffer.Flags = XAUDIO2_END_OF_STREAM;  
+        buffer.Flags = XAUDIO2_END_OF_STREAM;
         buffer.AudioBytes = mBuffer.size();
 
         hr = pSourceVoice->SubmitSourceBuffer(&buffer);
@@ -605,7 +606,7 @@ void ofMediaFoundationSoundPlayer::play() {
             buffer.AudioBytes = mBuffer.size();
 
             mVoice->SubmitSourceBuffer(&buffer);
-           
+
         }
 
         mVoice->SetVolume(mVolume);
@@ -711,7 +712,7 @@ void ofMediaFoundationSoundPlayer::setPaused(bool bP) {
 //--------------------
 void ofMediaFoundationSoundPlayer::setLoop(bool bLp) {
     if (bLp) {
-        // we don't want a lot of looping iterations 
+        // we don't want a lot of looping iterations
         _clearExtraVoices();
     }
     mBLoop = bLp;
@@ -740,7 +741,7 @@ void ofMediaFoundationSoundPlayer::setPosition(float pct) {
             ofLogWarning("ofMediaFoundationSoundPlayer::setPosition") << " unable to seek.";
             return;
         }
-        
+
         // ok we need to kill buffers and resubmit a buffer
         if (mVoice) {
             std::ignore = mVoice->Stop();
@@ -785,7 +786,7 @@ void ofMediaFoundationSoundPlayer::setPositionMS(int ms) {
 };
 
 //--------------------
-float ofMediaFoundationSoundPlayer::getPosition() const { 
+float ofMediaFoundationSoundPlayer::getPosition() const {
 	return mPosPct;
 };
 
@@ -880,7 +881,7 @@ void ofMediaFoundationSoundPlayer::OnSourceReaderEvent(HRESULT hrStatus, DWORD d
         }
 
         hr = mediaBuffer->Unlock();
-        
+
         if (mVoice && mVoiceContext) {
             XAUDIO2_VOICE_STATE state;
 
@@ -909,7 +910,7 @@ void ofMediaFoundationSoundPlayer::OnSourceReaderEvent(HRESULT hrStatus, DWORD d
             std::unique_lock<std::mutex> lk(mSrcReaderMutex);
             mBRequestNewReaderSample = true;
         }
-        
+
     }
 }
 
@@ -953,7 +954,7 @@ void ofMediaFoundationSoundPlayer::_setPan(IXAudio2SourceVoice* avoice, float ap
     float outputMatrix[8];
     for (int i = 0; i < 8; i++) outputMatrix[i] = 0;
 
-    // pan of -1.0 indicates all left speaker, 
+    // pan of -1.0 indicates all left speaker,
 // 1.0 is all right speaker, 0.0 is split between left and right
     float left = 0.5f - apan / 2;
     float right = 0.5f + apan / 2;
@@ -990,7 +991,7 @@ void ofMediaFoundationSoundPlayer::_setPan(IXAudio2SourceVoice* avoice, float ap
 
     // Assuming pVoice sends to pMasteringVoice
 
-    // TODO: Cache this 
+    // TODO: Cache this
     XAUDIO2_VOICE_DETAILS MasterVoiceDetails;
     sXAudioMasteringVoice->GetVoiceDetails(&MasterVoiceDetails);
 
@@ -1019,7 +1020,7 @@ bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
         HRESULT hr = areader->ReadSample(
             MF_SOURCE_READER_FIRST_AUDIO_STREAM,
             0,                              // Flags.
-            &streamIndex,                   // Receives the actual stream index. 
+            &streamIndex,                   // Receives the actual stream index.
             &flags,                         // Receives status flags.
             &llAudioTimeStamp,              // Receives the time stamp.
             &audioSample                    // Receives the sample or NULL.
@@ -1049,14 +1050,14 @@ bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
             if (hr != S_OK) {
                 continue;
             }
-            
+
             size_t numFramesRead = uint64_t(sampleBufferLength) / (bytes64 * numChannels64);
             ofLogVerbose("ofMediaFoundationSoundPlayer::_readToBuffer") << "sampleBufferLength : " << sampleBufferLength << " num frames: " << numFramesRead << std::endl;
             totalFrames += numFramesRead;
             std::vector<BYTE> tempBuffer;
             tempBuffer.resize(sampleBufferLength, 0);
             memcpy_s(tempBuffer.data(), sampleBufferLength, audioData, sampleBufferLength);
-            // add into the main buffer? 
+            // add into the main buffer?
             mBuffer.insert(mBuffer.end(), tempBuffer.begin(), tempBuffer.end());
 
             hr = mediaBuffer->Unlock();
@@ -1073,3 +1074,5 @@ bool ofMediaFoundationSoundPlayer::_readToBuffer(IMFSourceReader* areader) {
     ofLogVerbose("ofMediaFoundationSoundPlayer::_readToBuffer") << "Total frames read: " << (totalFrames) << " mTotalNumFrames: " << mTotalNumFrames << " dur millis: " << durMillis << " dur seconds: " << durSeconds << std::endl;
     return mBuffer.size() > 0;
 }
+
+#endif

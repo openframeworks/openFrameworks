@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include "ofDirectShowPlayer.h"
 #include "ofPixels.h" // MARK: pixels, srcBuffer
 
@@ -7,7 +9,7 @@
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
-// DirectShow includes and helper methods 
+// DirectShow includes and helper methods
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -31,210 +33,210 @@ MIDL_INTERFACE("0579154A-2B53-4994-B0D0-E773148EFF85")
 ISampleGrabberCB : public IUnknown
 {
   public:
-    virtual HRESULT STDMETHODCALLTYPE SampleCB( 
+    virtual HRESULT STDMETHODCALLTYPE SampleCB(
         double SampleTime,
         IMediaSample *pSample) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE BufferCB( 
+
+    virtual HRESULT STDMETHODCALLTYPE BufferCB(
         double SampleTime,
         BYTE *pBuffer,
         long BufferLen) = 0;
-    
+
 };
 
 MIDL_INTERFACE("6B652FFF-11FE-4fce-92AD-0266B5D7C78F")
 ISampleGrabber : public IUnknown
 {
   public:
-    virtual HRESULT STDMETHODCALLTYPE SetOneShot( 
+    virtual HRESULT STDMETHODCALLTYPE SetOneShot(
         BOOL OneShot) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE SetMediaType( 
+
+    virtual HRESULT STDMETHODCALLTYPE SetMediaType(
         const AM_MEDIA_TYPE *pType) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE GetConnectedMediaType( 
+
+    virtual HRESULT STDMETHODCALLTYPE GetConnectedMediaType(
         AM_MEDIA_TYPE *pType) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE SetBufferSamples( 
+
+    virtual HRESULT STDMETHODCALLTYPE SetBufferSamples(
         BOOL BufferThem) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentBuffer( 
+
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentBuffer(
         /* [out][in] */ long *pBufferSize,
         /* [out] */ long *pBuffer) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentSample( 
+
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(
         /* [retval][out] */ IMediaSample **ppSample) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE SetCallback( 
+
+    virtual HRESULT STDMETHODCALLTYPE SetCallback(
         ISampleGrabberCB *pCallback,
         long WhichMethodToCallback) = 0;
-    
+
 };
 EXTERN_C const CLSID CLSID_SampleGrabber;
 EXTERN_C const IID IID_ISampleGrabber;
 EXTERN_C const CLSID CLSID_NullRenderer;
 
-// GetUnconnectedPin   
-//    Finds an unconnected pin on a filter in the desired direction   
-HRESULT GetUnconnectedPin(   
-                          IBaseFilter *pFilter,   // Pointer to the filter.   
-                          PIN_DIRECTION PinDir,   // Direction of the pin to find.   
-                          IPin **ppPin)           // Receives a pointer to the pin.   
-{   
-    *ppPin = 0;   
-    IEnumPins *pEnum = 0;   
-    IPin *pPin = 0;   
-    HRESULT hr = pFilter->EnumPins(&pEnum);   
-    if (FAILED(hr))   
-    {   
-        return hr;   
-    }   
-    while (pEnum->Next(1, &pPin, NULL) == S_OK)   
-    {   
-        PIN_DIRECTION ThisPinDir;   
-        pPin->QueryDirection(&ThisPinDir);   
-        if (ThisPinDir == PinDir)   
-        {   
-            IPin *pTmp = 0;   
-            hr = pPin->ConnectedTo(&pTmp);   
-            if (SUCCEEDED(hr))  // Already connected, not the pin we want.   
-            {   
-                pTmp->Release();   
-            }   
-            else  // Unconnected, this is the pin we want.   
-            {   
-                pEnum->Release();   
-                *ppPin = pPin;   
-                return S_OK;   
-            }   
-        }   
-        pPin->Release();   
-    }   
-    pEnum->Release();   
-    // Did not find a matching pin.   
-    return E_FAIL;   
-}   
- 
-// Disconnect any connections to the filter.   
-HRESULT DisconnectPins(IBaseFilter *pFilter)   
-{   
-    IEnumPins *pEnum = 0;   
-    IPin *pPin = 0;   
-    HRESULT hr = pFilter->EnumPins(&pEnum);   
-    if (FAILED(hr))   
-    {   
-        return hr;   
-    }   
- 
-    while (pEnum->Next(1, &pPin, NULL) == S_OK)   
-    {   
-        pPin->Disconnect();   
-        pPin->Release();   
-    }   
-    pEnum->Release();   
- 
-    // Did not find a matching pin.   
-    return S_OK;   
-}   
- 
-// ConnectFilters   
-//    Connects a pin of an upstream filter to the pDest downstream filter   
-HRESULT ConnectFilters(   
-                       IGraphBuilder *pGraph, // Filter Graph Manager.   
-                       IPin *pOut,            // Output pin on the upstream filter.   
-                       IBaseFilter *pDest)    // Downstream filter.   
-{   
-    if ((pGraph == NULL) || (pOut == NULL) || (pDest == NULL))   
-    {   
-        return E_POINTER;   
-    }   
-#ifdef debug   
-    PIN_DIRECTION PinDir;   
-    pOut->QueryDirection(&PinDir);   
-    _ASSERTE(PinDir == PINDIR_OUTPUT);   
-#endif   
- 
-    // Find an input pin on the downstream filter.   
-    IPin *pIn = 0;   
-    HRESULT hr = GetUnconnectedPin(pDest, PINDIR_INPUT, &pIn);   
-    if (FAILED(hr))   
-    {   
-        return hr;   
-    }   
-    // Try to connect them.   
-    hr = pGraph->Connect(pOut, pIn);   
-    pIn->Release();   
-    return hr;   
-}   
- 
- 
- 
-// ConnectFilters   
-//    Connects two filters   
-HRESULT ConnectFilters(   
-                       IGraphBuilder *pGraph,    
-                       IBaseFilter *pSrc,    
-                       IBaseFilter *pDest)   
-{   
-    if ((pGraph == NULL) || (pSrc == NULL) || (pDest == NULL))   
-    {   
-        return E_POINTER;   
-    }   
- 
-    // Find an output pin on the first filter.   
-    IPin *pOut = 0;   
-    HRESULT hr = GetUnconnectedPin(pSrc, PINDIR_OUTPUT, &pOut);   
-    if (FAILED(hr))    
-    {   
-        return hr;   
-    }   
-    hr = ConnectFilters(pGraph, pOut, pDest);   
-    pOut->Release();   
-    return hr;   
-}   
- 
-// LocalFreeMediaType   
-//    Free the format buffer in the media type   
-void LocalFreeMediaType(AM_MEDIA_TYPE& mt)   
-{   
-    if (mt.cbFormat != 0)   
-    {   
-        CoTaskMemFree((PVOID)mt.pbFormat);   
-        mt.cbFormat = 0;   
-        mt.pbFormat = NULL;   
-    }   
-    if (mt.pUnk != NULL)   
-    {   
-        // Unecessary because pUnk should not be used, but safest.   
-        mt.pUnk->Release();   
-        mt.pUnk = NULL;   
-    }   
-}   
- 
-// LocalDeleteMediaType   
-//    Free the format buffer in the media type,    
-//    then delete the MediaType ptr itself   
-void LocalDeleteMediaType(AM_MEDIA_TYPE *pmt)   
-{   
-    if (pmt != NULL)   
-    {   
-        LocalFreeMediaType(*pmt); // See FreeMediaType for the implementation.   
-        CoTaskMemFree(pmt);   
-    }   
+// GetUnconnectedPin
+//    Finds an unconnected pin on a filter in the desired direction
+HRESULT GetUnconnectedPin(
+                          IBaseFilter *pFilter,   // Pointer to the filter.
+                          PIN_DIRECTION PinDir,   // Direction of the pin to find.
+                          IPin **ppPin)           // Receives a pointer to the pin.
+{
+    *ppPin = 0;
+    IEnumPins *pEnum = 0;
+    IPin *pPin = 0;
+    HRESULT hr = pFilter->EnumPins(&pEnum);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    while (pEnum->Next(1, &pPin, NULL) == S_OK)
+    {
+        PIN_DIRECTION ThisPinDir;
+        pPin->QueryDirection(&ThisPinDir);
+        if (ThisPinDir == PinDir)
+        {
+            IPin *pTmp = 0;
+            hr = pPin->ConnectedTo(&pTmp);
+            if (SUCCEEDED(hr))  // Already connected, not the pin we want.
+            {
+                pTmp->Release();
+            }
+            else  // Unconnected, this is the pin we want.
+            {
+                pEnum->Release();
+                *ppPin = pPin;
+                return S_OK;
+            }
+        }
+        pPin->Release();
+    }
+    pEnum->Release();
+    // Did not find a matching pin.
+    return E_FAIL;
+}
+
+// Disconnect any connections to the filter.
+HRESULT DisconnectPins(IBaseFilter *pFilter)
+{
+    IEnumPins *pEnum = 0;
+    IPin *pPin = 0;
+    HRESULT hr = pFilter->EnumPins(&pEnum);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    while (pEnum->Next(1, &pPin, NULL) == S_OK)
+    {
+        pPin->Disconnect();
+        pPin->Release();
+    }
+    pEnum->Release();
+
+    // Did not find a matching pin.
+    return S_OK;
+}
+
+// ConnectFilters
+//    Connects a pin of an upstream filter to the pDest downstream filter
+HRESULT ConnectFilters(
+                       IGraphBuilder *pGraph, // Filter Graph Manager.
+                       IPin *pOut,            // Output pin on the upstream filter.
+                       IBaseFilter *pDest)    // Downstream filter.
+{
+    if ((pGraph == NULL) || (pOut == NULL) || (pDest == NULL))
+    {
+        return E_POINTER;
+    }
+#ifdef debug
+    PIN_DIRECTION PinDir;
+    pOut->QueryDirection(&PinDir);
+    _ASSERTE(PinDir == PINDIR_OUTPUT);
+#endif
+
+    // Find an input pin on the downstream filter.
+    IPin *pIn = 0;
+    HRESULT hr = GetUnconnectedPin(pDest, PINDIR_INPUT, &pIn);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    // Try to connect them.
+    hr = pGraph->Connect(pOut, pIn);
+    pIn->Release();
+    return hr;
 }
 
 
-HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath) 
+
+// ConnectFilters
+//    Connects two filters
+HRESULT ConnectFilters(
+                       IGraphBuilder *pGraph,
+                       IBaseFilter *pSrc,
+                       IBaseFilter *pDest)
 {
-    const WCHAR wszStreamName[] = L"ActiveMovieGraph"; 
+    if ((pGraph == NULL) || (pSrc == NULL) || (pDest == NULL))
+    {
+        return E_POINTER;
+    }
+
+    // Find an output pin on the first filter.
+    IPin *pOut = 0;
+    HRESULT hr = GetUnconnectedPin(pSrc, PINDIR_OUTPUT, &pOut);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    hr = ConnectFilters(pGraph, pOut, pDest);
+    pOut->Release();
+    return hr;
+}
+
+// LocalFreeMediaType
+//    Free the format buffer in the media type
+void LocalFreeMediaType(AM_MEDIA_TYPE& mt)
+{
+    if (mt.cbFormat != 0)
+    {
+        CoTaskMemFree((PVOID)mt.pbFormat);
+        mt.cbFormat = 0;
+        mt.pbFormat = NULL;
+    }
+    if (mt.pUnk != NULL)
+    {
+        // Unecessary because pUnk should not be used, but safest.
+        mt.pUnk->Release();
+        mt.pUnk = NULL;
+    }
+}
+
+// LocalDeleteMediaType
+//    Free the format buffer in the media type,
+//    then delete the MediaType ptr itself
+void LocalDeleteMediaType(AM_MEDIA_TYPE *pmt)
+{
+    if (pmt != NULL)
+    {
+        LocalFreeMediaType(*pmt); // See FreeMediaType for the implementation.
+        CoTaskMemFree(pmt);
+    }
+}
+
+
+HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath)
+{
+    const WCHAR wszStreamName[] = L"ActiveMovieGraph";
     HRESULT hr;
-    
+
     IStorage *pStorage = NULL;
     hr = StgCreateDocfile(
         wszPath,
         STGM_CREATE | STGM_TRANSACTED | STGM_READWRITE | STGM_SHARE_EXCLUSIVE,
         0, &pStorage);
-    if(FAILED(hr)) 
+    if(FAILED(hr))
     {
         return hr;
     }
@@ -244,9 +246,9 @@ HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath)
         wszStreamName,
         STGM_WRITE | STGM_CREATE | STGM_SHARE_EXCLUSIVE,
         0, 0, &pStream);
-    if (FAILED(hr)) 
+    if (FAILED(hr))
     {
-        pStorage->Release();    
+        pStorage->Release();
         return hr;
     }
 
@@ -255,7 +257,7 @@ HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath)
     hr = pPersist->Save(pStream, TRUE);
     pStream->Release();
     pPersist->Release();
-    if (SUCCEEDED(hr)) 
+    if (SUCCEEDED(hr))
     {
         hr = pStorage->Commit(STGC_DEFAULT);
     }
@@ -307,12 +309,12 @@ class DirectShowVideo : public ISampleGrabberCB{
         tearDown();
 		middleSample.reset();
 		backSample.reset();
-        releaseCom(); 
+        releaseCom();
         DeleteCriticalSection(&critSection);
     }
 
     void tearDown(){
-        //printf("tearDown\n"); 
+        //printf("tearDown\n");
 
         if(m_pControl){
             m_pControl->Release();
@@ -347,17 +349,17 @@ class DirectShowVideo : public ISampleGrabberCB{
         if( m_pPosition ){
             m_pPosition->Release();
         }
-        clearValues(); 
+        clearValues();
     }
 
     void clearValues(){
         hr = 0;
 
         m_pGraph = NULL;
-        m_pControl = NULL; 
-        m_pEvent = NULL; 
-        m_pSeek = NULL; 
-        m_pAudio = NULL; 
+        m_pControl = NULL;
+        m_pEvent = NULL;
+        m_pSeek = NULL;
+        m_pAudio = NULL;
         m_pGrabber = NULL;
         m_pGrabberF = NULL;
         m_pBasicVideo = NULL;
@@ -365,26 +367,26 @@ class DirectShowVideo : public ISampleGrabberCB{
         m_pSourceFile = NULL;
         m_pPosition = NULL;
 
-        timeNow = 0; 
-        lPositionInSecs = 0; 
-        lDurationInNanoSecs = 0; 
-        lTotalDuration = 0; 
-        rtNew = 0; 
-        lPosition = 0; 
+        timeNow = 0;
+        lPositionInSecs = 0;
+        lDurationInNanoSecs = 0;
+        lTotalDuration = 0;
+        rtNew = 0;
+        lPosition = 0;
         lvolume = -1000;
-        evCode = 0; 
-        width = height = 0; 
-        bVideoOpened = false;    
+        evCode = 0;
+        width = height = 0;
+        bVideoOpened = false;
         bLoop = true;
         bPaused = false;
         bPlaying = false;
-        bEndReached = false; 
+        bEndReached = false;
         bNewPixels = false;
         bFrameNew = false;
-        curMovieFrame = -1; 
+        curMovieFrame = -1;
         frameCount = -1;
 
-        movieRate = 1.0; 
+        movieRate = 1.0;
         averageTimePerFrame = 1.0/30.0;
     }
 
@@ -403,7 +405,7 @@ class DirectShowVideo : public ISampleGrabberCB{
     //------------------------------------------------
     STDMETHODIMP SampleCB(double Time, IMediaSample *pSample){
 
-        BYTE * ptrBuffer = NULL; 
+        BYTE * ptrBuffer = NULL;
         HRESULT hr = pSample->GetPointer(&ptrBuffer);
 
         if(hr == S_OK){
@@ -437,71 +439,71 @@ class DirectShowVideo : public ISampleGrabberCB{
 
     // Create the Filter Graph Manager and query for interfaces.
 
-        //printf("step 1\n"); 
+        //printf("step 1\n");
         hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void **)&m_pGraph);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
-        //printf("step 2\n"); 
+        //printf("step 2\n");
         hr = m_pGraph->QueryInterface(IID_IMediaSeeking, (void**)&m_pSeek);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
         hr = m_pGraph->QueryInterface(IID_IMediaPosition, (LPVOID *)&m_pPosition);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
         hr = m_pGraph->QueryInterface(IID_IBasicAudio,(void**)&m_pAudio);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
         // Use IGraphBuilder::QueryInterface (inherited from IUnknown) to get the IMediaControl interface.
-        //printf("step 4\n"); 
+        //printf("step 4\n");
         hr = m_pGraph->QueryInterface(IID_IMediaControl, (void **)&m_pControl);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
-        }  
-    
+        }
+
         // And get the Media Event interface, too.
-        //printf("step 5\n"); 
+        //printf("step 5\n");
         hr = m_pGraph->QueryInterface(IID_IMediaEvent, (void **)&m_pEvent);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
-        } 
+        }
 
         //SAMPLE GRABBER (ALLOWS US TO GRAB THE BUFFER)//
         // Create the Sample Grabber.
         hr = CoCreateInstance(CLSID_SampleGrabber, NULL, CLSCTX_INPROC_SERVER,IID_IBaseFilter, (void**)&m_pGrabberF);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
-        } 
+        }
 
         hr = m_pGraph->AddFilter(m_pGrabberF, L"Sample Grabber");
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
         hr = m_pGrabberF->QueryInterface(IID_ISampleGrabber, (void**)&m_pGrabber);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
         hr = m_pGrabber->SetCallback(this, 0);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
@@ -526,48 +528,48 @@ class DirectShowVideo : public ISampleGrabberCB{
 		}
 
         mt.formattype   = FORMAT_VideoInfo;
-        //printf("step 5.5\n"); 
+        //printf("step 5.5\n");
         hr = m_pGrabber->SetMediaType(&mt);
         if (FAILED(hr)){
-            tearDown(); 
+            tearDown();
             return false;
         }
 
-        //printf("step 6\n"); 
+        //printf("step 6\n");
 
         //this is the easier way to connect the graph, but we have to remove the video window manually
         hr = m_pGraph->RenderFile(path.c_str(), NULL);
 
         //this is the more manual way to do it - its a pain though because the audio won't be connected by default
-        /*hr = m_pGraph->AddSourceFilter(filePathW.c_str(), L"Source", &m_pSourceFile); 
+        /*hr = m_pGraph->AddSourceFilter(filePathW.c_str(), L"Source", &m_pSourceFile);
         if (FAILED(hr)){
             printf("unable to AddSourceFilter\n");
-            tearDown(); 
+            tearDown();
             return false;
         }*/
         //hr = ConnectFilters(m_pGraph, m_pSourceFile, m_pGrabberF);
         //if (FAILED(hr)){
         //  printf("unable to ConnectFilters(m_pGraph, m_pSourceFile, m_pGrabberF)\n");
-        //  tearDown(); 
+        //  tearDown();
         //  return false;
         //}
 
-        //printf("step 7\n"); 
+        //printf("step 7\n");
         if (SUCCEEDED(hr)){
 
             //Set Params - One Shot should be false unless you want to capture just one buffer
             hr = m_pGrabber->SetOneShot(FALSE);
             if (FAILED(hr)){
                 printf("unable to set one shot\n");
-                tearDown(); 
+                tearDown();
                 return false;
             }
-            
+
             //apparently setting to TRUE causes a small memory leak
             hr = m_pGrabber->SetBufferSamples(FALSE);
             if (FAILED(hr)){
                 printf("unable to set buffer samples\n");
-                tearDown(); 
+                tearDown();
                 return false;
             }
 
@@ -576,31 +578,31 @@ class DirectShowVideo : public ISampleGrabberCB{
             hr = CoCreateInstance(CLSID_NullRenderer, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)(&m_pNullRenderer));
             if (FAILED(hr)){
                 printf("null renderer error\n");
-                tearDown(); 
+                tearDown();
                 return false;
-            }       
+            }
 
             hr = m_pGraph->AddFilter(m_pNullRenderer, L"Render");
             if (FAILED(hr)){
                 printf("unable to add null renderer\n");
-                tearDown(); 
+                tearDown();
                 return false;
             }
-            
+
             //hr = ConnectFilters(m_pGraph, m_pGrabberF, m_pNullRenderer);
             //if (FAILED(hr)){
             //  printf("unable to ConnectFilters(m_pGraph, m_pGrabberF, m_pNullRenderer)\n");
-            //  tearDown(); 
+            //  tearDown();
             //  return false;
             //}
-    
+
             AM_MEDIA_TYPE mt;
             ZeroMemory(&mt,sizeof(AM_MEDIA_TYPE));
-			
+
             hr = m_pGrabber->GetConnectedMediaType(&mt);
             if (FAILED(hr)){
                 printf("unable to call GetConnectedMediaType\n");
-                tearDown(); 
+                tearDown();
                 return false;
             }
 
@@ -610,7 +612,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             averageTimePerFrame = infoheader->AvgTimePerFrame / 10000000.0;
 			pixels.allocate(width, height, pixelFormat);
 
-            //printf("video dimensions are %i %i\n", width, height); 
+            //printf("video dimensions are %i %i\n", width, height);
 
             //we need to manually change the output from the renderer window to the null renderer
             IBaseFilter * m_pVideoRenderer;
@@ -648,7 +650,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 
             //we have to remove it as well otherwise the graph builder will reconnect it
             hr = m_pGraph->RemoveFilter(m_pVideoRenderer);
-            if (FAILED(hr)){            
+            if (FAILED(hr)){
                 printf("failed to remove the default renderer\n");
                 tearDown();
                 return false;
@@ -658,24 +660,24 @@ class DirectShowVideo : public ISampleGrabberCB{
 
             //now connect the null renderer to the grabber output, if we don't do this not frames will be captured
             hr = m_pNullRenderer->FindPin(L"In", &pinIn);
-            if (FAILED(hr)){            
+            if (FAILED(hr)){
                 printf("failed to find the input pin of the null renderer\n");
                 tearDown();
                 return false;
             }
 
             hr = pinOut->Connect(pinIn, NULL);
-            if (FAILED(hr)){            
+            if (FAILED(hr)){
                 printf("failed to connect the null renderer\n");
                 tearDown();
                 return false;
             }
 
-            //printf("step 8\n"); 
+            //printf("step 8\n");
             // Run the graph.
-        
+
             //SaveGraphFile(m_pGraph, L"test2.grf");
-            hr = m_pControl->Run(); 
+            hr = m_pControl->Run();
             //SaveGraphFile(m_pGraph, L"test3.grf");
 
             // Now pause the graph.
@@ -685,16 +687,16 @@ class DirectShowVideo : public ISampleGrabberCB{
             if( FAILED(hr) || width == 0 || height == 0 ){
                 tearDown();
                 printf("Error occured while playing or pausing or opening the file\n");
-                return false; 
+                return false;
             }
         }else{
             tearDown();
             printf("Error occured while playing or pausing or opening the file\n");
-            return false; 
+            return false;
         }
 
         bVideoOpened = true;
-        return true; 
+        return true;
     }
 
     void update(){
@@ -711,7 +713,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             if( curMovieFrame != frameCount ){
                 bFrameNew = true;
             }else{
-                bFrameNew = false; 
+                bFrameNew = false;
             }
             curMovieFrame = frameCount;
 
@@ -721,10 +723,10 @@ class DirectShowVideo : public ISampleGrabberCB{
                         //printf("Restarting!\n");
                         setPosition(0.0);
                     }else{
-                        bEndReached = true; 
+                        bEndReached = true;
                         //printf("movie end reached!\n");
                         stop();
-                        updatePlayState(); 
+                        updatePlayState();
                     }
                 }
                 //printf("Event code: %#04x\n Params: %d, %d\n", eventCode, ptrParam1, ptrParam2);
@@ -739,9 +741,9 @@ class DirectShowVideo : public ISampleGrabberCB{
 
     //volume has to be log corrected/converted
     void setVolume(float volPct){
-        if( isLoaded() ){   
+        if( isLoaded() ){
             if( volPct < 0 ) volPct = 0.0;
-            if( volPct > 1 ) volPct = 1.0; 
+            if( volPct > 1 ) volPct = 1.0;
 
             long vol = log10(volPct) * 4000.0;
             if(vol < -8000){
@@ -785,25 +787,25 @@ class DirectShowVideo : public ISampleGrabberCB{
 
     void setPosition(float pct){
         if( bVideoOpened ){
-            if( pct < 0.0 ) pct = 0.0; 
-            if( pct > 1.0 ) pct = 1.0; 
-            
+            if( pct < 0.0 ) pct = 0.0;
+            if( pct > 1.0 ) pct = 1.0;
+
             long long lDurationInNanoSecs = 0;
             m_pSeek->GetDuration(&lDurationInNanoSecs);
 
-            rtNew = ((float)lDurationInNanoSecs * pct);             
+            rtNew = ((float)lDurationInNanoSecs * pct);
             hr = m_pSeek->SetPositions(&rtNew, AM_SEEKING_AbsolutePositioning,NULL,AM_SEEKING_NoPositioning);
         }
     }
 
     float getPosition(){
         if( bVideoOpened ){
-            float timeDur = getDurationInSeconds(); 
+            float timeDur = getDurationInSeconds();
             if( timeDur > 0.0 ){
-                return getCurrentTimeInSeconds() / timeDur; 
+                return getCurrentTimeInSeconds() / timeDur;
             }
         }
-        return 0.0; 
+        return 0.0;
     }
 
     void setSpeed(float speed){
@@ -866,8 +868,8 @@ class DirectShowVideo : public ISampleGrabberCB{
 
     void play(){
         if( bVideoOpened ){
-            m_pControl->Run(); 
-            bEndReached = false; 
+            m_pControl->Run();
+            bEndReached = false;
             updatePlayState();
         }
     }
@@ -875,7 +877,7 @@ class DirectShowVideo : public ISampleGrabberCB{
     void stop(){
         if( bVideoOpened ){
             if( isPlaying() ){
-                setPosition(0.0); 
+                setPosition(0.0);
             }
             m_pControl->Stop();
             updatePlayState();
@@ -885,13 +887,13 @@ class DirectShowVideo : public ISampleGrabberCB{
     void setPaused(bool bPaused){
         if( bVideoOpened ){
             if( bPaused ){
-                m_pControl->Pause(); 
+                m_pControl->Pause();
             }else{
-                m_pControl->Run(); 
+                m_pControl->Run();
             }
             updatePlayState();
         }
-        
+
     }
 
     void updatePlayState(){
@@ -900,7 +902,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             hr = m_pControl->GetState(4000, (OAFilterState*)&fs);
             if(hr==S_OK){
                 if( fs == State_Running ){
-                    bPlaying = true; 
+                    bPlaying = true;
                     bPaused = false;
                 }
                 else if( fs == State_Paused ){
@@ -923,11 +925,11 @@ class DirectShowVideo : public ISampleGrabberCB{
     }
 
     bool isLooping(){
-        return bLoop; 
+        return bLoop;
     }
 
     void setLoop(bool loop){
-        bLoop = loop; 
+        bLoop = loop;
     }
 
     bool isMovieDone(){
@@ -950,9 +952,9 @@ class DirectShowVideo : public ISampleGrabberCB{
         //we have to do it like this as the frame based approach is not very accurate
         if( bVideoOpened && ( isPlaying() || isPaused() ) ){
             int curFrame = getCurrentFrameNo();
-            float curFrameF = curFrame; 
+            float curFrameF = curFrame;
             for(int i = 1; i < 20; i++){
-                setAproximateFrameF( curFrameF + 0.3 * (float)i );  
+                setAproximateFrameF( curFrameF + 0.3 * (float)i );
                 if( getCurrentFrameNo() >= curFrame + 1 ){
                     break;
                 }
@@ -964,9 +966,9 @@ class DirectShowVideo : public ISampleGrabberCB{
         //we have to do it like this as the frame based approach is not very accurate
         if( bVideoOpened && ( isPlaying() || isPaused() ) ){
             int curFrame = getCurrentFrameNo();
-            float curFrameF = curFrame; 
+            float curFrameF = curFrame;
             for(int i = 1; i < 20; i++){
-                setAproximateFrameF( curFrameF - 0.3 * (float)i );  
+                setAproximateFrameF( curFrameF - 0.3 * (float)i );
                 if( getCurrentFrameNo() <= curFrame + 1 ){
                     break;
                 }
@@ -977,31 +979,31 @@ class DirectShowVideo : public ISampleGrabberCB{
     void setAproximateFrameF(float frameF){
         if( bVideoOpened ){
             float pct = frameF / (float)getAproximateNoFrames();
-            if( pct > 1.0 ) pct = 1.0; 
-            if( pct < 0.0 ) pct = 0.0; 
-            setPosition(pct); 
+            if( pct > 1.0 ) pct = 1.0;
+            if( pct < 0.0 ) pct = 0.0;
+            setPosition(pct);
         }
     }
 
     void setAproximateFrame(int frame){
         if( bVideoOpened ){
             float pct = (float)frame / (float)getAproximateNoFrames();
-            if( pct > 1.0 ) pct = 1.0; 
-            if( pct < 0.0 ) pct = 0.0; 
-            setPosition(pct); 
+            if( pct > 1.0 ) pct = 1.0;
+            if( pct < 0.0 ) pct = 0.0;
+            setPosition(pct);
         }
     }
 
     int getCurrentFrameNo(){
         if( bVideoOpened ){
-            return getPosition() * (float) getAproximateNoFrames(); 
+            return getPosition() * (float) getAproximateNoFrames();
         }
-        return 0; 
+        return 0;
     }
 
     int getAproximateNoFrames(){
         if( bVideoOpened && averageTimePerFrame > 0.0 ){
-            return getDurationInSeconds() / averageTimePerFrame; 
+            return getDurationInSeconds() / averageTimePerFrame;
         }
         return 0;
     }
@@ -1053,11 +1055,11 @@ class DirectShowVideo : public ISampleGrabberCB{
 
     //this is the non-callback approach
     //void getPixels(unsigned char * dstBuffer){
-    //      
+    //
     //  if(bVideoOpened && isFrameNew()){
-    //      long bufferSize = videoSize; 
+    //      long bufferSize = videoSize;
     //      HRESULT hr = m_pGrabber->GetCurrentBuffer(&bufferSize, (long *)rawBuffer);
-    //      
+    //
     //      if(hr==S_OK){
     //          if (videoSize == bufferSize){
     //              processPixels(rawBuffer, dstBuffer, width, height, true, true);
@@ -1077,11 +1079,11 @@ class DirectShowVideo : public ISampleGrabberCB{
     IMediaControl *m_pControl;  // Media Control interface
     IMediaEvent   *m_pEvent;        // Media Event interface
     IMediaSeeking *m_pSeek;     // Media Seeking interface
-    IMediaPosition * m_pPosition; 
-    IBasicAudio   *m_pAudio;        // Audio Settings interface 
+    IMediaPosition * m_pPosition;
+    IBasicAudio   *m_pAudio;        // Audio Settings interface
     ISampleGrabber * m_pGrabber;
     IBaseFilter * m_pSourceFile;
-    IBaseFilter * m_pGrabberF; 
+    IBaseFilter * m_pGrabberF;
     IBasicVideo * m_pBasicVideo;
     IBaseFilter * m_pNullRenderer;
 
@@ -1089,21 +1091,21 @@ class DirectShowVideo : public ISampleGrabberCB{
     LONGLONG lPositionInSecs;       // Time in  seconds
     LONGLONG lDurationInNanoSecs;       // Duration in nanoseconds
     LONGLONG lTotalDuration;        // Total duration
-    REFERENCE_TIME rtNew;               // Reference time of movie 
+    REFERENCE_TIME rtNew;               // Reference time of movie
     long lPosition;                 // Desired position of movie used in FF & REW
-    long lvolume;                   // The volume level in 1/100ths dB Valid values range from -10,000 (silence) to 0 (full volume), 0 = 0 dB -10000 = -100 dB 
+    long lvolume;                   // The volume level in 1/100ths dB Valid values range from -10,000 (silence) to 0 (full volume), 0 = 0 dB -10000 = -100 dB
     long evCode;                    // event variable, used to in file to complete wait.
 
     long width, height;
 
-    double averageTimePerFrame; 
+    double averageTimePerFrame;
 
     bool bFrameNew;
     bool bNewPixels;
     bool bVideoOpened;
-    bool bPlaying; 
+    bool bPlaying;
     bool bPaused;
-    bool bLoop; 
+    bool bLoop;
     bool bEndReached;
     double movieRate;
     int curMovieFrame;
@@ -1121,7 +1123,7 @@ class DirectShowVideo : public ISampleGrabberCB{
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-// OF SPECIFIC IMPLEMENTATION BELOW 
+// OF SPECIFIC IMPLEMENTATION BELOW
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1142,7 +1144,7 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	}
 
 	player = std::move(other.player);
-	pixelFormat = std::move(other.pixelFormat); 
+	pixelFormat = std::move(other.pixelFormat);
 	return *this;
 }
 
@@ -1178,10 +1180,10 @@ void ofDirectShowPlayer::stop(){
     if( player && player->isLoaded() ){
         player->stop();
     }
-}       
-    
+}
+
 bool ofDirectShowPlayer::isFrameNew() const{
-    return ( player && player->isFrameNew() ); 
+    return ( player && player->isFrameNew() );
 }
 
 const ofPixels & ofDirectShowPlayer::getPixels() const{
@@ -1196,7 +1198,7 @@ float ofDirectShowPlayer::getWidth() const{
     if( player && player->isLoaded() ){
         return player->getWidth();
     }
-    return 0.0; 
+    return 0.0;
 }
 
 float ofDirectShowPlayer::getHeight() const{
@@ -1205,18 +1207,18 @@ float ofDirectShowPlayer::getHeight() const{
     }
     return 0.0;
 }
-    
+
 bool ofDirectShowPlayer::isPaused() const{
-    return ( player && player->isPaused() ); 
+    return ( player && player->isPaused() );
 }
 
 bool ofDirectShowPlayer::isLoaded() const{
-    return ( player && player->isLoaded() ); 
+    return ( player && player->isLoaded() );
 }
 
 bool ofDirectShowPlayer::isPlaying() const{
-    return ( player && player->isPlaying() ); 
-}   
+    return ( player && player->isPlaying() );
+}
 
 bool ofDirectShowPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	switch (pixelFormat) {
@@ -1232,9 +1234,9 @@ bool ofDirectShowPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 ofPixelFormat ofDirectShowPlayer::getPixelFormat() const{
-    return this->pixelFormat; 
+    return this->pixelFormat;
 }
-        
+
 //should implement!
 float ofDirectShowPlayer::getPosition() const{
     if( player && player->isLoaded() ){
@@ -1247,7 +1249,7 @@ float ofDirectShowPlayer::getSpeed() const{
     if( player && player->isLoaded() ){
         return player->getSpeed();
     }
-    return 0.0; 
+    return 0.0;
 }
 
 float ofDirectShowPlayer::getDuration() const{
@@ -1259,9 +1261,9 @@ float ofDirectShowPlayer::getDuration() const{
 
 
 bool ofDirectShowPlayer::getIsMovieDone() const{
-    return ( player && player->isMovieDone() ); 
+    return ( player && player->isMovieDone() );
 }
-    
+
 void ofDirectShowPlayer::setPaused(bool bPause){
     if( player && player->isLoaded() ){
         player->setPaused(bPause);
@@ -1295,22 +1297,22 @@ void ofDirectShowPlayer::setLoopState(ofLoopType state){
 
 void ofDirectShowPlayer::setSpeed(float speed){
     if( player && player->isLoaded() ){
-        player->setSpeed(speed); 
+        player->setSpeed(speed);
     }
 }
-    
+
 int ofDirectShowPlayer::getCurrentFrame() const{
     if( player && player->isLoaded() ){
         return player->getCurrentFrameNo();
     }
-    return 0; 
+    return 0;
 }
 
 int ofDirectShowPlayer::getTotalNumFrames() const{
     if( player && player->isLoaded() ){
         return player->getAproximateNoFrames();
     }
-    return 0; 
+    return 0;
 }
 
 ofLoopType ofDirectShowPlayer::getLoopState() const{
@@ -1318,20 +1320,20 @@ ofLoopType ofDirectShowPlayer::getLoopState() const{
         if( player->isLooping() ){
             return OF_LOOP_NORMAL;
         }
-        
+
     }
-    return OF_LOOP_NONE; 
+    return OF_LOOP_NONE;
 }
 
 void ofDirectShowPlayer::setFrame(int frame){
     if( player && player->isLoaded() ){
-        frame = ofClamp(frame, 0, getTotalNumFrames()); 
+        frame = ofClamp(frame, 0, getTotalNumFrames());
         return player->setAproximateFrame(frame);
     }
 }  // frame 0 = first frame...
-    
+
 void ofDirectShowPlayer::firstFrame(){
-    setPosition(0.0); 
+    setPosition(0.0);
 }
 
 void ofDirectShowPlayer::nextFrame(){
@@ -1345,3 +1347,5 @@ void ofDirectShowPlayer::previousFrame(){
         player->preFrame();
     }
 }
+
+#endif
