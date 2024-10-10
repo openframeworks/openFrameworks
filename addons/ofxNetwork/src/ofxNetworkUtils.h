@@ -8,8 +8,6 @@
 #pragma once
 
 #include <cerrno>
-#include "ofConstants.h"
-
 
 #ifdef TARGET_WIN32
 #include <WinSock2.h>
@@ -18,6 +16,10 @@
 #else
 #define OFXNETWORK_ERROR(name)	E ## name
 #endif
+
+// WinSock2.h has to be included before windows.h
+#include "ofConstants.h"
+
 
 /**
  * @brief Log the latest network error and where it happened (file and line)

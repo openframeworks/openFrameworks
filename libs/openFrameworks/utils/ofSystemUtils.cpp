@@ -27,7 +27,6 @@
 #define _WIN32_DCOM
 #include <winuser.h>
 #include <commdlg.h>
-#include <windows.h>
 #include <shlobj.h>
 #include <tchar.h>
 #include <stdio.h>
