@@ -96,7 +96,8 @@ ofVideoPlayer::ofVideoPlayer() {
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer(const of::filesystem::path & fileName) : ofVideoPlayer() {
-	load(fileName);
+	// FIXME: Convert internally everything to FS
+	load(ofPathToString(fileName));
 }
 
 //---------------------------------------------------------------------------
@@ -151,16 +152,16 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::load(const of::filesystem::path & fileName){
+bool ofVideoPlayer::load(string name){
 	if( !player ){
 		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	bool bOk = player->load(fileName);
+	bool bOk = player->load(name);
 
 	if( bOk){
-        moviePath = fileName;
+        moviePath = name;
         if(bUseTexture){
         	if(player->getTexturePtr()==nullptr){
 				if(tex.empty()) {
@@ -184,23 +185,23 @@ bool ofVideoPlayer::load(const of::filesystem::path & fileName){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::loadAsync(const of::filesystem::path & fileName){
+void ofVideoPlayer::loadAsync(string name){
 	if( !player ){
 		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	player->loadAsync(fileName);
-	moviePath = fileName;
+	player->loadAsync(name);
+	moviePath = name;
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::loadMovie(const of::filesystem::path & fileName){
-	return load(fileName);
+bool ofVideoPlayer::loadMovie(string name){
+	return load(name);
 }
 
 //---------------------------------------------------------------------------
-of::filesystem::path ofVideoPlayer::getMoviePath() const {
+string ofVideoPlayer::getMoviePath() const{
     return moviePath;	
 }
 

@@ -52,31 +52,31 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 }
 
 //--------------------------------------------------------------
-void ofAVFoundationPlayer::loadAsync(const of::filesystem::path & fileName){
-    loadPlayer(fileName, true);
+void ofAVFoundationPlayer::loadAsync(std::string name){
+    loadPlayer(name, true);
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::load(const of::filesystem::path & fileName) {
-    return loadPlayer(fileName, false);
+bool ofAVFoundationPlayer::load(std::string name) {
+    return loadPlayer(name, false);
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::loadPlayer(const of::filesystem::path & fileName, bool bAsync) {
+// FIXME: fs::path
+bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
 	if( ofGetUsingArbTex() == false ){
         killTextureCache();
 		bUseTextureCache = false;
     }
 
-	NSString * videoPath = [NSString stringWithUTF8String:fileName.c_str()];
-	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(fileName).c_str()];
+	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
+	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
 
 	BOOL bStream = NO;
 
-    std::string fileNameStr { ofPathToString(fileName) };
-	bStream = bStream || (ofIsStringInString(fileNameStr, "http://"));
-	bStream = bStream || (ofIsStringInString(fileNameStr, "https://"));
-	bStream = bStream || (ofIsStringInString(fileNameStr, "rtsp://"));
+	bStream = bStream || (ofIsStringInString(name, "http://"));
+	bStream = bStream || (ofIsStringInString(name, "https://"));
+	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
 
 	NSURL * url = nil;
 	if(bStream == YES) {
@@ -762,8 +762,8 @@ void * ofAVFoundationPlayer::getAVFoundationVideoPlayer() {
 #endif
 
 //-------------------------------------------------------------- DEPRECATED.
-bool ofAVFoundationPlayer::loadMovie(const of::filesystem::path & fileName) {
-    return load(fileName);
+bool ofAVFoundationPlayer::loadMovie(std::string name) {
+    return load(name);
 }
 
 ofPixels & ofAVFoundationPlayer::getPixelsRef() {

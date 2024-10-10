@@ -1146,8 +1146,9 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-bool ofDirectShowPlayer::load(const of::filesystem::path & fileName){
-    auto path = ofToDataPath(fileName);
+// FIXME: fs::path
+bool ofDirectShowPlayer::load(std::string stringPath){
+    auto path = ofToDataPath(of::filesystem::path(stringPath));
 
     close();
     player.reset(new DirectShowVideo());

@@ -15,7 +15,7 @@ public:
 	void enableTextureCache();
 	void disableTextureCache();
 	
-	bool load(const of::filesystem::path & fileName);
+	bool load(std::string name);
 	void close();
 	void update();
 	
@@ -62,7 +62,7 @@ public:
 	void * getAVFoundationVideoPlayer();
 	
 	[[deprecated("use load()")]]
-	bool loadMovie(const of::filesystem::path & fileName);
+	bool loadMovie(std::string name);
 	[[deprecated("use getPixels()")]]
 	ofPixels & getPixelsRef();
 	[[deprecated("use getPixels()")]]
