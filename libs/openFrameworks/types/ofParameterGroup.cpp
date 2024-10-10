@@ -18,7 +18,7 @@ ofParameterGroup::ofParameterGroup()
 }
 
 void ofParameterGroup::add(ofAbstractParameter & parameter){
-	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+	auto param = parameter.getSharedPtr();
 	const std::string name = param->getEscapedName();
 	if(obj->parametersIndex.find(name) != obj->parametersIndex.end()){
 		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
@@ -486,6 +486,10 @@ const void* ofParameterGroup::getInternalObject() const{
 }
 
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
+	return getSharedPtr();
+}
+
+shared_ptr<ofAbstractParameter> ofParameterGroup::getSharedPtr() const{
 	return std::make_shared<ofParameterGroup>(*this);
 }
 
