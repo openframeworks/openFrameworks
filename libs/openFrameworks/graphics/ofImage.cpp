@@ -210,11 +210,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	if(uriParseUriA(&state, uriChar)!=URI_SUCCESS){
 		const int bytesNeeded = 8 + 3 * strlen(uriChar) + 1;
 		std::vector<char> absUri(bytesNeeded);
-	#ifdef TARGET_WIN32
-		uriWindowsFilenameToUriStringA(uriChar, absUri.data());
-	#else
-		uriUnixFilenameToUriStringA(uriChar, absUri.data());
-	#endif
+#ifdef OF_OS_WINDOWS
+		uriWindowsFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#else
+		uriUnixFilenameToUriStringA(uriStr.c_str(), absUri.data());
+#endif
 		if(uriParseUriA(&state, absUri.data())!=URI_SUCCESS){
 			ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri " << _fileName;
 			uriFreeUriMembersA(&uri);
@@ -239,7 +239,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	fif = FreeImage_GetFileType(_fileName.c_str(), 0);
 #endif
 	if(fif == FIF_UNKNOWN) {
-		// or guess via filename
+		// or guess via file extension
 #ifdef OF_OS_WINDOWS
 		fif = FreeImage_GetFIFFromFilenameU(_fileName.c_str());
 #else
@@ -599,7 +599,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, ofBuffer & buffer, ofIm
 		but can also be retrieved by FreeImage_AcquireMemory that retrieves both the
 		length of the buffer, and the buffer memory address.
 		*/
-		#ifdef TARGET_WIN32
+		#ifdef OF_OS_WINDOWS
 		   DWORD size_in_bytes = 0;
 		#else
 		   std::uint32_t size_in_bytes = 0;
