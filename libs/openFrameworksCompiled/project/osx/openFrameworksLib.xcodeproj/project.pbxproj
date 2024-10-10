@@ -872,6 +872,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env bash";
 			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 		BFF80A5D2C50B2C300784E74 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -890,6 +891,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/sh\nTARGET_DIR=\"$SRCROOT/../../lib/macos\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
