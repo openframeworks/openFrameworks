@@ -9,10 +9,10 @@ public:
 	ofVideoPlayer();
 	ofVideoPlayer(const of::filesystem::path & fileName);
 
-	bool load(const of::filesystem::path & fileName);
-	void loadAsync(const of::filesystem::path & fileName);
+	bool load(std::string name);
+	void loadAsync(std::string name);
 	[[deprecated("Use load")]]
-	bool loadMovie(const of::filesystem::path & fileName);
+	bool loadMovie(std::string name);
 
 
 	/// \brief Get the path to the loaded video file.
@@ -20,7 +20,7 @@ public:
 	/// If no video file is loaded this returns an empty string.
 	///
 	/// \returns A path to the loaded video or an empty string if not loaded.
-	of::filesystem::path				getMoviePath() const;
+	std::string				getMoviePath() const;
 
 	bool				setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat		getPixelFormat() const;
@@ -186,5 +186,5 @@ private:
 	/// \brief The internal pixel format.
 	mutable ofPixelFormat internalPixelFormat;
 	/// \brief The stored path to the video's path.
-	of::filesystem::path moviePath;
+	std::string moviePath;
 };

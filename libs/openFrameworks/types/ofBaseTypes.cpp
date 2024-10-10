@@ -47,9 +47,9 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
 }
 
-void ofBaseVideoPlayer::loadAsync(const of::filesystem::path & fileName){
+void ofBaseVideoPlayer::loadAsync(std::string name){
 	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
-	load(fileName);
+	load(name);
 }
 
 //---------------------------------------------------------------------------
