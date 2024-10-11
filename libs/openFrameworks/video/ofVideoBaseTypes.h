@@ -225,7 +225,7 @@ public:
 	/// \sa isLoaded()
 	virtual void loadAsync(const of::filesystem::path & fileName);
 	virtual bool loadAsync(std::string name) {
-		return loadAsync(of::filesystem::path(name));
+		loadAsync(of::filesystem::path(name));
 	}
 	/// \brief Play the video from the current playhead position.
 	///
