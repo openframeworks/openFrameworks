@@ -6,13 +6,26 @@
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoDraws {
 public:
+//	using ofBaseVideoPlayer::ofBaseVideoPlayer;
 	ofVideoPlayer();
 	ofVideoPlayer(const of::filesystem::path & fileName);
 
 	bool load(const of::filesystem::path & fileName);
 	void loadAsync(const of::filesystem::path & fileName);
+//	bool load(std::string name) {
+//		return true;
+////		return load(of::filesystem::path(name));
+//	}
+//	void loadAsync(std::string name) {
+//		return loadAsync(of::filesystem::path(name));
+//	}
+
 	[[deprecated("Use load")]]
 	bool loadMovie(const of::filesystem::path & fileName);
+//	[[deprecated("Use load")]]
+//	bool loadMovie(std::string name) {
+//		return loadMovie(of::filesystem::path(name));
+//	}
 
 
 	/// \brief Get the path to the loaded video file.

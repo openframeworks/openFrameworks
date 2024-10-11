@@ -209,6 +209,10 @@ public:
 	/// \sa loadAsync()
 
 	virtual bool load(const of::filesystem::path & fileName) = 0;
+	virtual bool load(std::string name) {
+		return load(of::filesystem::path(name));
+	}
+
 	/// \brief Asynchronously load a video resource by name.
 	///
 	/// The list of supported video types and sources (e.g. rtsp:// sources) is
