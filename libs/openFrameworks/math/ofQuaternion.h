@@ -100,8 +100,9 @@ public:
     inline float length() const;
     
     /// \brief Length of the quaternion = vec . vec
-    inline float length2() const;
-    
+	inline float lengthSquared() const;
+	[[deprecated("use lengthSquare")]] inline float length2() const { return lengthSquared(); };
+	
     /// \brief Conjugate
     inline ofQuaternion conj() const;
     
@@ -459,12 +460,10 @@ float ofQuaternion::length() const {
     return std::sqrt(_v.x*_v.x + _v.y*_v.y + _v.z*_v.z + _v.w*_v.w);
 }
 
-
 //----------------------------------------
-float ofQuaternion::length2() const {
-    return _v.x*_v.x + _v.y*_v.y + _v.z*_v.z + _v.w*_v.w;
+float ofQuaternion::lengthSquared() const {
+	return _v.x*_v.x + _v.y*_v.y + _v.z*_v.z + _v.w*_v.w;
 }
-
 
 //----------------------------------------
 ofQuaternion ofQuaternion::conj() const {
@@ -474,7 +473,7 @@ ofQuaternion ofQuaternion::conj() const {
 
 //----------------------------------------
 const ofQuaternion ofQuaternion::inverse() const {
-    return conj() / length2();
+    return conj() / lengthSquared();
 }
 
 
