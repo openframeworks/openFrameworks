@@ -224,7 +224,9 @@ public:
 	/// \param name The name of the video resource to load.
 	/// \sa isLoaded()
 	virtual void loadAsync(const of::filesystem::path & fileName);
-
+	virtual bool loadAsync(std::string name) {
+		return loadAsync(of::filesystem::path(name));
+	}
 	/// \brief Play the video from the current playhead position.
 	///
 	/// \sa getPosition()
