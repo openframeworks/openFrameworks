@@ -52,14 +52,9 @@ void ofxButton::generateDraw(){
 	bg.rectangle(b);
 
 	fg.clear();
-	if(value){
-		fg.setFilled(true);
-		fg.setFillColor(thisFillColor);
-	}else{
-		fg.setFilled(false);
-		fg.setStrokeWidth(1);
-		fg.setStrokeColor(thisFillColor);
-	}
+	fg.setFilled(false);
+	fg.setStrokeWidth(1);
+	fg.setStrokeColor(thisFillColor);
 	fg.rectRounded(b.getPosition()+checkboxRect.getTopLeft()+glm::vec2{1,1},checkboxRect.width-2,checkboxRect.height-2, 5);
 
 	cross.clear();
