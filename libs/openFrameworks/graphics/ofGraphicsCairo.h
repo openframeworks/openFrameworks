@@ -24,7 +24,7 @@
 /// ~~~~
 /// \sa End drawing with ofEndSaveScreenAsPDF()
 ///
-void ofBeginSaveScreenAsPDF(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsPDF(const of::filesystem::path & fileName, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 
 /// \brief Terminates draw to PDF through ofCairoRenderer and outputs the file.
 /// \sa ofBeginSaveScreenAsPDF()
@@ -32,7 +32,7 @@ void ofEndSaveScreenAsPDF();
 
 /// \brief Begin rendering to a SVG file.
 /// \sa ofEndSaveScreenAsSVG(), ofBeginSaveScreenAsPDF()
-void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
+void ofBeginSaveScreenAsSVG(const of::filesystem::path & fileName, bool bMultipage = false, bool b3D = false, ofRectangle outputsize = ofRectangle(0,0,0,0));
 
 /// \brief Terminates draw to SVG and outputs the file.
 /// \sa ofBeginSaveScreenAsSVG()

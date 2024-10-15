@@ -441,6 +441,9 @@
 				BFF80A4A2C50AFEB00784E74 /* Frameworks */,
 			);
 			sourceTree = "<group>";
+			indentWidth = 4;
+			tabWidth = 4;
+			usesTabs = 1;
 		};
 		8446395D1BC343E000F24926 /* Products */ = {
 			isa = PBXGroup;
