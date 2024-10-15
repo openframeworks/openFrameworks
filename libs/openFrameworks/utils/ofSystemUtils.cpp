@@ -260,12 +260,12 @@ ofFileDialogResult::ofFileDialogResult(){
 }
 
 //------------------------------------------------------------------------------
-of::filesystem::path ofFileDialogResult::getName(){
+std::string ofFileDialogResult::getName(){
 	return fileName;
 }
 
 //------------------------------------------------------------------------------
-of::filesystem::path ofFileDialogResult::getPath(){
+std::string ofFileDialogResult::getPath(){
 	return filePath;
 }
 
@@ -334,7 +334,7 @@ static int CALLBACK loadDialogBrowseCallback(
 //---------------------------------------------------------------------
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelection, of::filesystem::path defaultPath){
+ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelection, std::string defaultPath){
 
 	ofFileDialogResult results;
 
