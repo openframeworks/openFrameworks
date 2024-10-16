@@ -257,18 +257,15 @@ void resetLocale(std::locale locale){
 
 //------------------------------------------------------------------------------
 ofFileDialogResult::ofFileDialogResult(){
-	filePath = "";
-	fileName = "";
-	bSuccess = false;
 }
 
 //------------------------------------------------------------------------------
-std::string ofFileDialogResult::getName(){
+of::filesystem::path ofFileDialogResult::getName(){
 	return fileName;
 }
 
 //------------------------------------------------------------------------------
-std::string ofFileDialogResult::getPath(){
+of::filesystem::path ofFileDialogResult::getPath(){
 	return filePath;
 }
 
@@ -326,7 +323,7 @@ static int CALLBACK loadDialogBrowseCallback(
     std::string defaultPath = *(std::string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+		wcscpy(wideCharacterBuffer, ofToDataPath(defaultPath).c_str());
         SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
     }
 
@@ -337,7 +334,7 @@ static int CALLBACK loadDialogBrowseCallback(
 //---------------------------------------------------------------------
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelection, std::string defaultPath){
+ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelection, of::filesystem::path defaultPath){
 
 	ofFileDialogResult results;
 
@@ -406,7 +403,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy(szDir,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szDir, ofToDataPath(defaultPath).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
 
@@ -494,7 +491,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 
 
-	if( results.filePath.length() > 0 ){
+	if( !results.filePath.empty() ){
 		results.bSuccess = true;
 		results.fileName = ofFilePath::getFileName(results.filePath);
 	}
@@ -575,7 +572,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
 
-	if( results.filePath.length() > 0 ){
+	if( !results.filePath.empty() ){
 		results.bSuccess = true;
 		results.fileName = ofFilePath::getFileName(results.filePath);
 	}

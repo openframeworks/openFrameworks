@@ -206,6 +206,9 @@
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
+			indentWidth = 4;
+			tabWidth = 4;
+			usesTabs = 1;
 		};
 		9998920A1BF4D40400DCECB0 /* mediaAssets */ = {
 			isa = PBXGroup;
