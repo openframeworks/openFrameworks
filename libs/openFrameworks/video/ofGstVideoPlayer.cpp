@@ -187,13 +187,14 @@ bool ofGstVideoPlayer::createPipeline(std::string name){
 #endif
 }
 
-void ofGstVideoPlayer::loadAsync(std::string name){
+void ofGstVideoPlayer::loadAsync(const of::filesystem::path & fileName){
 	bAsyncLoad = true;
-	load(name);
+	load(fileName);
 }
 
 // FIXME: fs::path
-bool ofGstVideoPlayer::load(std::string name){
+bool ofGstVideoPlayer::load(const of::filesystem::path & fileName){
+	std::string name { ofPathToString(fileName) };
 	if( name.find( "file://",0 ) != std::string::npos){
 		bIsStream = bAsyncLoad;
 	}else if( name.find( "://",0 ) == std::string::npos){
@@ -217,7 +218,7 @@ bool ofGstVideoPlayer::load(std::string name){
 		internalPixelFormat = OF_PIXELS_NATIVE;
 		bIsAllocated = false;
 		videoUtils.reallocateOnNextFrame();
-		g_object_set(G_OBJECT(videoUtils.getPipeline()), "uri", name.c_str(), (void*)NULL);
+		g_object_set(G_OBJECT(videoUtils.getPipeline()), "uri", fileName.c_str(), (void*)NULL);
 		gst_element_set_state (videoUtils.getPipeline(), GST_STATE_PAUSED);
 		if(!bIsStream){
 			gst_element_get_state (videoUtils.getPipeline(), NULL, NULL, -1);
@@ -227,7 +228,7 @@ bool ofGstVideoPlayer::load(std::string name){
 		}
 	}else{
 		ofGstUtils::startGstMainLoop();
-		return createPipeline(name) &&
+		return createPipeline(fileName) &&
 				videoUtils.startPipeline() &&
 				(bIsStream || allocate());
 	}
