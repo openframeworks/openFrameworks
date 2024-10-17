@@ -49,7 +49,7 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
 //---------------------------------------------------------------------------
 bool ofBaseVideoPlayer::load(const of::filesystem::path & fileName){
-	return load(fileName.string());
+	return load(ofPathToString(fileName));
 }
 
 //---------------------------------------------------------------------------
@@ -60,7 +60,7 @@ bool ofBaseVideoPlayer::load(const std::string & fileName){
 
 //---------------------------------------------------------------------------
 void ofBaseVideoPlayer::loadAsync(const of::filesystem::path & fileName){
-	loadAsync(fileName.string());
+	loadAsync(ofPathToString(fileName));
 }
 
 //---------------------------------------------------------------------------
