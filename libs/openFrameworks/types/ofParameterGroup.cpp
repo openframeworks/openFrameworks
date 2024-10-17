@@ -480,11 +480,11 @@ const void * ofParameterGroup::getInternalObject() const {
 	return obj.get();
 }
 
-shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
+std::shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
 	return getSharedPtr();
 }
 
-shared_ptr<ofAbstractParameter> ofParameterGroup::getSharedPtr() const{
+std::shared_ptr<ofAbstractParameter> ofParameterGroup::getSharedPtr() const{
 	return std::make_shared<ofParameterGroup>(*this);
 }
 
