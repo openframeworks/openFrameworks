@@ -99,6 +99,7 @@ enum ofTargetPlatform{
 	#endif
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+
     #include <TargetConditionals.h>
 	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST && !TARGET_OS_VISION
         #define TARGET_OF_IPHONE
@@ -125,6 +126,7 @@ enum ofTargetPlatform{
         #define TARGET_MAC
         #define TARGET_OF_MAC
 	#endif
+	#include <unistd.h>
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
@@ -348,6 +350,8 @@ typedef TESSindex ofIndexType;
 
 #endif
 
+
+// Move to ofPath
 //------------------------------------------------ thread local storage
 // clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug

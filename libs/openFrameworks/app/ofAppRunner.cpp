@@ -105,10 +105,12 @@ void ofCloseFreeImage();
 
 
 void ofInit(){
+//	std::cout << "ofInit !!!" << std::endl;
 	if(initialized()) return;
 	initialized() = true;
 	exiting() = false;
-
+	
+//	std::cout << "ofInit() " << std::endl;
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
 #else
@@ -204,11 +206,10 @@ int ofRunMainLoop(){
 
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
+	ofWindowSettings settings;
 #ifdef TARGET_OPENGLES
-	ofGLESWindowSettings settings;
 	settings.glesVersion = 1;
 #else
-	ofGLWindowSettings settings;
 	settings.glVersionMajor = 2;
 	settings.glVersionMinor = 1;
 #endif
@@ -348,6 +349,7 @@ void ofShowCursor(){
 }
 
 //--------------------------------------
+// FIXME: this is not standard with the other window modes.
 void ofSetOrientation(ofOrientation orientation, bool vFlip){
 	mainLoop()->getCurrentWindow()->setOrientation(orientation);
 	// TODO: every window should set orientation on it's renderer
@@ -372,6 +374,16 @@ void ofSetWindowShape(int width, int height){
 }
 
 //--------------------------------------
+void ofSetWindowRect(const ofRectangle & rect) {
+	mainLoop()->getCurrentWindow()->setWindowRect(rect);
+}
+
+//--------------------------------------
+glm::ivec2 ofGetWindowPosition() {
+	return mainLoop()->getCurrentWindow()->getWindowPosition();
+}
+
+//--------------------------------------
 int ofGetWindowPositionX(){
 	return (int)mainLoop()->getCurrentWindow()->getWindowPosition().x;
 }
@@ -383,18 +395,24 @@ int ofGetWindowPositionY(){
 
 //--------------------------------------
 int ofGetScreenWidth(){
-	return (int)mainLoop()->getCurrentWindow()->getScreenSize().x;
+	return mainLoop()->getCurrentWindow()->getScreenSize().x;
 }
 
 //--------------------------------------
 int ofGetScreenHeight(){
-	return (int)mainLoop()->getCurrentWindow()->getScreenSize().y;
+	return mainLoop()->getCurrentWindow()->getScreenSize().y;
+}
+
+//--------------------------------------
+glm::ivec2 ofGetScreenSize() {
+	return mainLoop()->getCurrentWindow()->getScreenSize();
 }
 
 //--------------------------------------------------
 int ofGetWidth(){
 	return (int)mainLoop()->getCurrentWindow()->getWidth();
 }
+
 //--------------------------------------------------
 int ofGetHeight(){
 	return (int)mainLoop()->getCurrentWindow()->getHeight();
@@ -425,7 +443,7 @@ bool ofDoesHWOrientation(){
 }
 
 //--------------------------------------------------
-glm::vec2 ofGetWindowSize() {
+glm::ivec2 ofGetWindowSize() {
 	//this can't return glm::vec2(ofGetWidth(), ofGetHeight()) as width and height change based on orientation.
 	return mainLoop()->getCurrentWindow()->getWindowSize();
 }
@@ -441,6 +459,7 @@ float ofRandomHeight() {
 }
 
 //--------------------------------------------------
+// FIXME: This is wrong. doesn't consider window offset.
 ofRectangle	ofGetWindowRect() {
 	return ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 }
