@@ -10,6 +10,65 @@ class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
 
+using std::cout;
+using std::endl;
+
+static struct ofCoreInternal {
+public:
+	ofCoreInternal() {};
+	~ofCoreInternal() {};
+	
+	std::string name = "virgem";
+	
+	std::vector <std::function<void()>> shutdownFunctions;
+	// ofAppRunner
+	bool initialized = false;
+	bool exiting = false;
+	ofCoreEvents noopEvents;
+//	ofMainLoop mainLoop;
+	std::shared_ptr<ofMainLoop> mainLoop { std::make_shared<ofMainLoop>() };
+	
+	// ofFileUtils
+	
+	void exit() {
+		if(!initialized) return;
+		
+		// controlled destruction of the mainLoop before
+		// any other deinitialization
+		// mainLoop->exit();
+//		mainLoop.exit();
+
+		// all shutdown functions called
+		for (const auto & func : shutdownFunctions) {
+			func();
+		}
+
+		initialized = false;
+		exiting = true;
+	}
+	
+	void init() {
+		name = "inicializado";
+		if (initialized) return;
+		initialized  = true;
+		exiting = false;
+	}
+	
+	std::shared_ptr<ofAppBaseWindow> getCurrentWindow(){
+//		if (mainLoop) //mainLoop is always present. is it?
+		{
+			return mainLoop->currentWindow.lock();
+		}
+		cout << "getCurrentWindow ofCore nullptr name=" << name << endl;
+		return nullptr;
+	}
+	
+} ofCore;
+
+
+
+
+
 void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode); // sets up the opengl context!
 std::shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings); // sets up the opengl context!
@@ -22,7 +81,7 @@ void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWi
 	ofWindowSettings settings;
 	settings.setSize(w, h);
 	settings.windowMode = screenMode;
-	ofGetMainLoop()->addWindow(windowPtr);
+//	ofCore.mainLoop.addWindow(windowPtr);
 	windowPtr->setup(settings);
 }
 
@@ -39,9 +98,11 @@ void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode) {
 	ofSetupOpenGL(window, w, h, screenMode);
 }
 
-int ofRunApp(std::shared_ptr<ofBaseApp> && OFSA);
+int ofRunApp(const std::shared_ptr<ofBaseApp> & OFSA);
+
 int ofRunApp(ofBaseApp * OFSA = nullptr); // will be deprecated
-void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window, std::shared_ptr<ofBaseApp> && app);
+void ofRunApp(const std::shared_ptr<ofAppBaseWindow> & window,
+			  const std::shared_ptr<ofBaseApp> & app);
 int ofRunMainLoop();
 
 ofBaseApp * ofGetAppPtr();
@@ -71,14 +132,16 @@ ofOrientation ofGetOrientation();
 void ofHideCursor();
 void ofShowCursor();
 //-------------------------- window / screen
+glm::ivec2 ofGetWindowPosition();
 int ofGetWindowPositionX();
 int ofGetWindowPositionY();
 int ofGetScreenWidth();
 int ofGetScreenHeight();
+glm::ivec2 ofGetScreenSize();
 int ofGetWindowMode();
-int ofGetWidth(); // ofGetWidth is correct for orientation
+int ofGetWidth();
 int ofGetHeight();
-int ofGetWindowWidth(); // ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
+int ofGetWindowWidth();
 int ofGetWindowHeight();
 
 std::string ofGetClipboardString();
@@ -90,13 +153,14 @@ float ofRandomWidth();
 /// \returns a random number between 0 and the height of the window.
 float ofRandomHeight();
 bool ofDoesHWOrientation();
-glm::vec2 ofGetWindowSize();
+glm::ivec2 ofGetWindowSize();
 ofRectangle ofGetWindowRect();
 ofAppBaseWindow * ofGetWindowPtr();
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow();
 
 void ofSetWindowPosition(int x, int y);
 void ofSetWindowShape(int width, int height);
+void ofSetWindowRect(const ofRectangle & rect);
 void ofSetWindowTitle(std::string title);
 void ofEnableSetupScreen();
 void ofDisableSetupScreen();
@@ -106,7 +170,7 @@ void ofToggleFullscreen();
 void ofSetVerticalSync(bool bSync);
 
 ofCoreEvents & ofEvents();
-void ofSetCurrentRenderer(std::shared_ptr<ofBaseRenderer> renderer, bool setDefaults = false);
+void ofSetCurrentRenderer(const std::shared_ptr<ofBaseRenderer> & renderer, bool setDefaults = false);
 std::shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
 void ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
@@ -140,3 +204,5 @@ void * ofGetCocoaWindow();
 HGLRC ofGetWGLContext();
 HWND ofGetWin32Window();
 #endif
+
+

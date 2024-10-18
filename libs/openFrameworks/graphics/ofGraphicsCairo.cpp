@@ -18,7 +18,7 @@ static void ofEndSaveScreen(){
 			cairoScreenshot.reset();
 		}
 		if( storedRenderer ){
-			ofSetCurrentRenderer(storedRenderer,true);
+			ofSetCurrentRenderer(storedRenderer, true);
 			storedRenderer.reset();
 		}
 

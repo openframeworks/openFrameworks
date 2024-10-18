@@ -7,7 +7,7 @@ static ofEventArgs voidEventArgs;
 
 //--------------------------------------
 void ofSetFrameRate(int targetRate) {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		window->events().setFrameRate(targetRate);
 	} else {
@@ -17,7 +17,7 @@ void ofSetFrameRate(int targetRate) {
 
 //--------------------------------------
 float ofGetFrameRate() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		return window->events().getFrameRate();
 	} else {
@@ -26,7 +26,7 @@ float ofGetFrameRate() {
 }
 
 bool ofGetTargetFrameRateEnabled() {
-	if (auto window = ofGetMainLoop()->getCurrentWindow()) {
+	if (auto window = ofCore.getCurrentWindow()) {
 		return window->events().getTargetFrameRateEnabled();
 	}
 	return false;
@@ -34,7 +34,7 @@ bool ofGetTargetFrameRateEnabled() {
 
 //--------------------------------------
 float ofGetTargetFrameRate() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		return window->events().getTargetFrameRate();
 	} else {
@@ -44,7 +44,7 @@ float ofGetTargetFrameRate() {
 
 //--------------------------------------
 double ofGetLastFrameTime() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		return window->events().getLastFrameTime();
 	} else {
@@ -54,7 +54,7 @@ double ofGetLastFrameTime() {
 
 //--------------------------------------
 uint64_t ofGetFrameNum() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		return window->events().getFrameNum();
 	} else {
@@ -64,7 +64,7 @@ uint64_t ofGetFrameNum() {
 
 //--------------------------------------
 bool ofGetMousePressed(int button) { //by default any button
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		return window->events().getMousePressed(button);
 	} else {
@@ -74,17 +74,24 @@ bool ofGetMousePressed(int button) { //by default any button
 
 //--------------------------------------
 bool ofGetKeyPressed(int key) {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofGetCurrentWindow() };
+//	auto window = ofCore.getCurrentWindow();
+
 	if (window) {
+//		std::cout << "ofGetKeyPressed in window: " << window->name << std::endl;
 		return window->events().getKeyPressed(key);
 	} else {
+		std::cout << "ofGetKeyPressed null window, ofCore name=" << ofCore.name << ", ofCore pointer=" << &ofCore << std::endl;
+
 		return false;
 	}
 }
 
 //--------------------------------------
 int ofGetMouseX() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofGetCurrentWindow() };
+
+//	auto window { ofCore.mainLoop->getCurrentWindow() };
 	if (window) {
 		return window->events().getMouseX();
 	} else {
@@ -94,7 +101,8 @@ int ofGetMouseX() {
 
 //--------------------------------------
 int ofGetMouseY() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+//	auto window { ofCore.getCurrentWindow() };
+	auto window { ofGetCurrentWindow() };
 	if (window) {
 		return window->events().getMouseY();
 	} else {
@@ -104,7 +112,7 @@ int ofGetMouseY() {
 
 //--------------------------------------
 int ofGetPreviousMouseX() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		return window->events().getPreviousMouseX();
 	} else {
@@ -114,7 +122,7 @@ int ofGetPreviousMouseX() {
 
 //--------------------------------------
 int ofGetPreviousMouseY() {
-	auto window = ofGetMainLoop()->getCurrentWindow();
+	auto window { ofCore.getCurrentWindow() };
 	if (window) {
 		return window->events().getPreviousMouseY();
 	} else {
@@ -226,6 +234,7 @@ bool ofCoreEvents::getTargetFrameRateEnabled() const {
 //--------------------------------------
 float ofCoreEvents::getFrameRate() const {
 	return fps.getFps();
+//	return fps2.getFps();
 }
 
 //--------------------------------------
@@ -336,6 +345,10 @@ bool ofCoreEvents::notifyKeyReleased(int key, int keycode, int scancode, uint32_
 
 //------------------------------------------
 bool ofCoreEvents::notifyKeyEvent(ofKeyEventArgs & e) {
+	
+	using std::cout;
+	using std::endl;
+
 	bool attended = false;
 	modifiers = e.modifiers;
 	switch (e.type) {
@@ -364,7 +377,13 @@ bool ofCoreEvents::notifyKeyEvent(ofKeyEventArgs & e) {
 			attended = ofNotifyEvent(keyPressed, keyEventArgs);
 		}
 
-		pressedKeys.insert(e.key);
+		
+		// OK - FIXME: mover este e o erase pra dentro do else
+		else {
+			pressedKeys.insert(e.key);
+		}
+
+
 		if (!attended) {
 			return ofNotifyEvent(keyPressed, e);
 		} else {
@@ -394,14 +413,18 @@ bool ofCoreEvents::notifyKeyEvent(ofKeyEventArgs & e) {
 			keyEventArgs.key = OF_KEY_SUPER;
 			attended = ofNotifyEvent(keyReleased, keyEventArgs);
 		}
+		else {
+			pressedKeys.erase(e.key);
+		}
 
-		pressedKeys.erase(e.key);
 		if (!attended) {
 			return ofNotifyEvent(keyReleased, e);
 		} else {
 			return attended;
 		}
 	}
+	
+
 	return false;
 }
 
@@ -602,6 +625,12 @@ bool ofCoreEvents::notifyExit() {
 bool ofCoreEvents::notifyWindowResized(int width, int height) {
 	ofResizeEventArgs resizeEventArgs(width, height);
 	return ofNotifyEvent(windowResized, resizeEventArgs);
+}
+
+//------------------------------------------
+bool ofCoreEvents::notifyFramebufferResized(int width, int height) {
+	ofResizeEventArgs resizeEventArgs(width, height);
+	return ofNotifyEvent(framebufferResized, resizeEventArgs);
 }
 
 //------------------------------------------
