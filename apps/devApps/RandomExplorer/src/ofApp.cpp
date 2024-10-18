@@ -30,7 +30,7 @@ void ofApp::setup() {
 
 	colorize();
 
-	auto y = panel_.getPosition().y + panel_.getHeight() + 120;
+	auto y = panel_.getPosition().y + panel_.getHeight() + 110;
 
 	dists_["core"]->panel_.setPosition(10, y);
 	dists_["special"]->panel_.setPosition(10 + col_w_, y);
