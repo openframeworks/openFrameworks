@@ -435,7 +435,6 @@ typedef TESSindex ofIndexType;
     #if defined(OF_USE_EXPERIMENTAL_FS)
         // C++17 experimental fs support
         #include <experimental/filesystem>
-        
 		namespace std {
 			namespace experimental{
 				namespace filesystem {
@@ -449,16 +448,9 @@ typedef TESSindex ofIndexType;
 		}
     #else
 		#include <filesystem>
-		#if defined(OF_HAS_CPP17)
-			// Regular C++17 fs support
-			namespace of {
-				namespace filesystem = std::filesystem;
-			}
-		#else
-			namespace of {
-				namespace filesystem = std::filesystem;
-			}
-		#endif
+		namespace of {
+			namespace filesystem = std::filesystem;
+		}
     #endif
 #else //not OF_USING_STD_FS
     // No experimental or c++17 filesytem support use boost
