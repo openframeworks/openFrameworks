@@ -368,7 +368,7 @@ static of::filesystem::path linuxFontPathByName(const string & fontname) {
 static bool loadFontFace(const string & _fontname, FT_Face & face,
 						 of::filesystem::path & _filename, int index){
 	auto fontname = _fontname;
-	auto filename = ofToDataPath(fontname);
+	auto filename = ofToDataPathFS(fontname);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
