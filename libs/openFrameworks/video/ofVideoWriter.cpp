@@ -1,12 +1,7 @@
 #include "ofVideoWriter.h"
-#include "ofAppRunner.h"
-#include "ofGLUtils.h"
-#include "ofPixels.h"
-#include <algorithm>
 
-#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
-	#include "ofAVFoundationWriter.h"
-	#define OF_VID_WRITER_TYPE ofAVFoundationWriter
+#ifdef __OBJC__
+	#include "ofAVFoundationVideoWriter.h"
 #endif
 
 //---------------------------------------------------------------------------
@@ -15,11 +10,17 @@ ofVideoWriter::ofVideoWriter() {
 
 //---------------------------------------------------------------------------
 ofVideoWriter::ofVideoWriter(const of::filesystem::path & fileName) {
-	setup(fileName);
+	// FIXME: Begin or setup?
+	begin(fileName);
 }
 
 //---------------------------------------------------------------------------
-void ofVideoWriter::setup(const of::filesystem::path & _fileName) {
+void ofVideoWriter::setFbo(ofFbo & _f) {
+	_fbo = _f;
+	// save video file here
+}
+//---------------------------------------------------------------------------
+void ofVideoWriter::begin(const of::filesystem::path & _fileName) {
 	fileName = _fileName;
 	// open video file here
 }
@@ -29,6 +30,6 @@ void ofVideoWriter::addFrame() {
 }
 
 //---------------------------------------------------------------------------
-void ofVideoWriter::finish() {
+void ofVideoWriter::end() {
 	// save video file here
 }
