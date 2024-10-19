@@ -328,22 +328,22 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 #include "ofTexture.h"
 static const float widthTex = 8.0f/256.0f;
 static const float heightTex = 14.0f/256.0f;
-ofPixels ofBitmapFont::pixels;
+ofPixels ofBitmapFont::pixelsBitmapFont;
 
 using std::numeric_limits;
 using std::string;
 
 void ofBitmapFont::init(){
-	if(pixels.isAllocated()) return;
-	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
-	pixels.set(0);
+	if(pixelsBitmapFont.isAllocated()) return;
+	pixelsBitmapFont.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
+	pixelsBitmapFont.set(0);
 	for (size_t i = 0; i < 256; i++) {
 		const unsigned char * face = bmpChar_8x13_Map[i];
 		for (size_t j = 1; j < 15; j++){
 			for (size_t k = 0; k < 8; k++){
 				if ( ((face[15-j] << k) & (128)) > 0 ){
-					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
-					pixels[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
+					pixelsBitmapFont[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+					pixelsBitmapFont[(((i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
 				}
 			}
 		}
@@ -471,7 +471,7 @@ void ofBitmapFont::unloadTexture(){
 const ofTexture & ofBitmapFont::getTexture() const{
 	if(!texture.isAllocated()){
 		ofBitmapFont::init();
-		texture.allocate(pixels,false);
+		texture.allocate(pixelsBitmapFont,false);
 		texture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
 	}
 	return texture;
