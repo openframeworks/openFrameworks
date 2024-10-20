@@ -411,8 +411,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
 
-		if (windowTitle != "") {
-			wcscpy(wideWindowTitle, windowTitleW.c_str());
+		if (!empty(windowTitle)) {
+			// wcscpy(wideWindowTitle, windowTitleW.c_str());
+			wcscpy(wideWindowTitle, converter.from_bytes(windowTitle).c_str());
 		} else {
 			wcscpy(wideWindowTitle, L"Select Directory");
 		}
@@ -428,7 +429,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
-		bi.lpszTitle        =   windowTitleW.c_str();
+		// bi.lpszTitle        =   windowTitleW.c_str();
+		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str()
 
 		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
