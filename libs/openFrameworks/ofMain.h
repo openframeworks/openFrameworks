@@ -18,6 +18,10 @@
 #include "ofJson.h"
 #include "ofXml.h"
 
+#ifdef TARGET_WIN32
+#include <iso646.h>
+#endif
+
 //--------------------------
 // types
 #include "ofColor.h"
