@@ -31,6 +31,7 @@
 		    "outputPaths": [],
 		    "runOnlyForDeploymentPostprocessing": "0",
 		    "shellPath": "/usr/bin/env bash",
+			"showEnvVarsInLog": "0",
 		    "shellScript": "#!/usr/bin/env bash\nif [ ! -d \"${OF_PATH}/libs/freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${OF_PATH}/scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n"
 		},
 		"E42962A92163ECCD00A6A9E2": {
@@ -42,7 +43,7 @@
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"💾 Compiling openFrameworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'\n",
+			"shellScript": "$OF_CORE_BUILD_COMMAND\n",
 			"name": "Run Script — Compile OF",
 			"files": []
 		},
@@ -119,8 +120,8 @@
 			"runOnlyForDeploymentPostprocessing": "0",
 			"outputPaths": [],
 			"shellPath": "/bin/sh",
-			"inputFileListPaths": [],
 			"showEnvVarsInLog": "0",
+			"inputFileListPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
 			"files": [],
