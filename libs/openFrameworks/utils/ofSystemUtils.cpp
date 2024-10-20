@@ -356,7 +356,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	std::wstring windowTitleW = converter.from_bytes(windowTitle);
+	// std::wstring windowTitleW = converter.from_bytes(windowTitle);
 
 	if (bFolderSelection == false){
 
@@ -391,7 +391,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
-		ofn.lpstrTitle = windowTitleW.c_str();
+		// ofn.lpstrTitle = windowTitleW.c_str();
+		ofn.lpstrTitle = converter.from_bytes(windowTitle).c_str();
+		
 
 		if(GetOpenFileName(&ofn)) {
 			results.filePath = szFileName;
