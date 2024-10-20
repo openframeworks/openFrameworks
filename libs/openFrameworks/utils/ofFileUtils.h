@@ -1225,7 +1225,6 @@ void ofDisableDataPath();
 
 of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute = false);
 
-
 /// \brief Reset the working directory to the platform default.
 ///
 /// The default working directory is where the application was started from
