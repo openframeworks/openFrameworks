@@ -58,8 +58,8 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/macos/$(ICON_NAME)
 // in a custom openFrameworks-Info.plist, set CFBundleIconFile to ICON_NAME
 
 //FOR AV ENGINE SOUND PLAYER UNCOMMENT TWO LINES BELOW
-//OF_NO_FMOD=1
-//USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
+OF_NO_FMOD=1
+USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
 GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
 
 //APPSTORE, uncomment next lines to bundle data folder and code sign
