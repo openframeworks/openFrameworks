@@ -357,7 +357,6 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	// std::wstring windowTitleW = converter.from_bytes(windowTitle);
 
 	if (bFolderSelection == false){
 
@@ -368,26 +367,21 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
 
-		//the file name and path
 		wchar_t szFileName[MAX_PATH];
 		memset(szFileName, 0, sizeof(szFileName));
 
-		//the dir, if specified
-		wchar_t szDir[MAX_PATH];
+//		wcscpy(szFileName, ofToDataPath(defaultPath).c_str());
 
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
-		
-		// FIXME: check if it is not empty
-		if(!defaultPath.empty()){
-//			wcscpy(szDir, converter.from_bytes(ofPathToString(ofToDataPath(defaultPath))).c_str());
-//			std::wcout << szDir << std::endl;
-			
-			// wcscpy(szDir, converter.from_bytes(ofToDataPath(defaultPath).c_str()).c_str());
+		memset(szTitle, 0, sizeof(szTitle));
 
-			// wcscpy(szDir, ofToDataPath(defaultPath).c_str());
-//			ofn.lpstrInitialDir = szDir;
-			ofn.lpstrInitialDir = ofToDataPath(defaultPath).c_str();
+		wcscpy(szTitle, converter.from_bytes(windowTitle).c_str());
+
+		if(!defaultPath.empty()){
+			wchar_t szDir[MAX_PATH];
+			wcscpy(szDir, ofToDataPath(defaultPath).c_str());
+			ofn.lpstrInitialDir = szDir;
 		}
 
 		ofn.lpstrFilter = L"All\0";
@@ -395,9 +389,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
-		// ofn.lpstrTitle = windowTitleW.c_str();
-		ofn.lpstrTitle = converter.from_bytes(windowTitle).c_str();
-		
+		ofn.lpstrTitle = szTitle;
 
 		if(GetOpenFileName(&ofn)) {
 			results.filePath = szFileName;
@@ -411,19 +403,13 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		BROWSEINFOW      bi;
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wchar_t			wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
 
-//		if (!empty(windowTitle)) {
-//			wcscpy(wideWindowTitle, converter.from_bytes(windowTitle).c_str());
-//		} else {
-//			wcscpy(wideWindowTitle, L"Select Directory");
-//		}
-		
 		if (windowTitle.empty()) {
 			windowTitle = "Select Directory";
 		}
+		wchar_t			wideWindowTitle[MAX_PATH];
 		wcscpy(wideWindowTitle, converter.from_bytes(windowTitle).c_str());
 
 		
