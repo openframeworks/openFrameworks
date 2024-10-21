@@ -438,9 +438,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //			char16_t pathResult[MAX_PATH];
 
 			if(SHGetPathFromIDListW(pidl, pathResult)){
-//				try {
-					results.filePath = pathResult;
-//				} catch(
+				std::cout << "will assign" << std::endl;
+				results.filePath = pathResult;
+				std::cout << "ok" << std::endl;
 			}
 			lpMalloc->Free(pidl);
 		}
