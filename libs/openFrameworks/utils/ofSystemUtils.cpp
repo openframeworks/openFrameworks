@@ -410,7 +410,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	} else {
 
 		BROWSEINFOW      bi;
-//		wchar_t         wideCharacterBuffer[MAX_PATH];
+		wchar_t         wideCharacterBuffer[MAX_PATH];
 //		wchar_t			wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
@@ -433,7 +433,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.hwndOwner        =   nullptr;
 		bi.pidlRoot         =   nullptr;
 		if (!defaultPath.empty()) {
-			bi.pszDisplayName   =   defaultPath.wstring().c_str();
+			wideCharacterBuffer = defaultPath.c_str();
+			bi.pszDisplayName   = wideCharacterBuffer;
 		}
 		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
@@ -444,8 +445,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
-			if(SHGetPathFromIDListW(pidl, bi.pszDisplayName)){
-				results.filePath = bi.pszDisplayName;
+			if(SHGetPathFromIDListW(pidl, wideCharacterBuffer)){
+				results.filePath = wideCharacterBuffer;
 			}
 			lpMalloc->Free(pidl);
 		}
