@@ -393,6 +393,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		if(GetOpenFileName(&ofn)) {
 			results.filePath = szFileName;
+			std::cout << results.filePath << std::endl;
 		}
 		else {
 			//this should throw an error on failure unless its just the user canceling out
