@@ -421,7 +421,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //			wcscpy(wideWindowTitle, L"Select Directory");
 //		}
 		
-		if (empty(windowTitle)) {
+		if (windowTitle.empty()) {
 			windowTitle = "Select Directory";
 		}
 		
