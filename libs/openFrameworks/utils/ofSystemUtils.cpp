@@ -395,7 +395,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //			std::cout << "outPath " << outPath << std::endl;
 			// https://github.com/ePi5131/aulut/blob/137491c49400a590a55b85dd12faf046305f5b91/aulut/aulut.cpp#L165
 			std::cout << "oww" << std::endl;
-			std::cout << filename << std::endl;
+			std::wcout << filename << std::endl;
 			try {
 				results.filePath = filename;
 			} catch (const std::system_error & e) {
