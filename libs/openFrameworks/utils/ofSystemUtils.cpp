@@ -428,7 +428,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.lpszTitle        =   wideWindowTitle;
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
-//		bi.lParam           =   (LPARAM) &defaultPath;
+		bi.lParam           =   (LPARAM) &defaultPath;
 		bi.lpszTitle        =   wideWindowTitle;
 
 		if( (pidl = SHBrowseForFolderW(&bi)) ){
