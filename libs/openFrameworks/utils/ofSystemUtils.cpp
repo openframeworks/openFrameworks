@@ -433,7 +433,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.hwndOwner        =   nullptr;
 		bi.pidlRoot         =   nullptr;
 		if (!defaultPath.empty()) {
-			wideCharacterBuffer = defaultPath.c_str();
+			wcscpy(wideCharacterBuffer, defaultPath.c_str());
 			bi.pszDisplayName   = wideCharacterBuffer;
 		}
 		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
