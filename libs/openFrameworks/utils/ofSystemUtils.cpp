@@ -248,10 +248,11 @@ of::filesystem::path ofFileDialogResult::getPath(){
 //------------------------------------------------------------------------------
 void ofSystemAlertDialog(std::string errorMessage){
 	#ifdef TARGET_WIN32
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		// we need to convert error message to a wide char message.
-		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
+//		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
 		// launch the alert:
-		MessageBoxW(nullptr, errorMessageW.c_str(), L"alert", MB_OK);
+		MessageBoxW(nullptr, converter.from_bytes(errorMessage).c_str(), L"alert", MB_OK);
 	#endif
 
     #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
