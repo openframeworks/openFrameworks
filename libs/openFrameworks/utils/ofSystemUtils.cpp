@@ -434,8 +434,13 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
-			if(SHGetPathFromIDListW(pidl, wideCharacterBuffer)){
-				results.filePath = wideCharacterBuffer;
+			wchar_t pathResult[MAX_PATH];
+//			char16_t pathResult[MAX_PATH];
+
+			if(SHGetPathFromIDListW(pidl, pathResult)){
+				try {
+					results.filePath = pathResult;
+				} catch(
 			}
 			lpMalloc->Free(pidl);
 		}
@@ -621,7 +626,8 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
     // we need to convert error message to a wide char message.
     // first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
 
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+//	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>> converter;
 
 	
 	WNDCLASSEX wc;
