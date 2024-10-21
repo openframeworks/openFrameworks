@@ -433,7 +433,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.hwndOwner        =   nullptr;
 		bi.pidlRoot         =   nullptr;
 		if (!defaultPath.empty()) {
-			bi.pszDisplayName   =   defaultPath.c_str();
+			bi.pszDisplayName   =   defaultPath.wstring().c_str();
 		}
 		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
