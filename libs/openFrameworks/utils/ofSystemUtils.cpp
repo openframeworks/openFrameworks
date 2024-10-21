@@ -381,6 +381,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		// FIXME: check if it is not empty
 		if(!defaultPath.empty()){
 			wcscpy(szDir, converter.from_bytes(ofPathToString(ofToDataPath(defaultPath))).c_str());
+			
+			std::wcout << szDir << std::endl;
+			
 			// wcscpy(szDir, converter.from_bytes(ofToDataPath(defaultPath).c_str()).c_str());
 
 			// wcscpy(szDir, ofToDataPath(defaultPath).c_str());
@@ -407,17 +410,21 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	} else {
 
 		BROWSEINFOW      bi;
-		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wchar_t			wideWindowTitle[MAX_PATH];
+//		wchar_t         wideCharacterBuffer[MAX_PATH];
+//		wchar_t			wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
 
-		if (!empty(windowTitle)) {
-			// wcscpy(wideWindowTitle, windowTitleW.c_str());
-			wcscpy(wideWindowTitle, converter.from_bytes(windowTitle).c_str());
-		} else {
-			wcscpy(wideWindowTitle, L"Select Directory");
+//		if (!empty(windowTitle)) {
+//			wcscpy(wideWindowTitle, converter.from_bytes(windowTitle).c_str());
+//		} else {
+//			wcscpy(wideWindowTitle, L"Select Directory");
+//		}
+		
+		if (empty(windowTitle)) {
+			windowTitle = L"Select Directory";
 		}
+		
 
 		// Get a pointer to the shell memory allocator
 		if(SHGetMalloc(&lpMalloc) != S_OK){
@@ -425,8 +432,10 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 		bi.hwndOwner        =   nullptr;
 		bi.pidlRoot         =   nullptr;
-		bi.pszDisplayName   =   wideCharacterBuffer;
-		bi.lpszTitle        =   wideWindowTitle;
+		if (!empty(defaultPath)) {
+			bi.pszDisplayName   =   converter.from_bytes(defaultPath).c_str();
+		}
+		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
@@ -435,8 +444,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
-			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
-				results.filePath = wideCharacterBuffer;
+			if(SHGetPathFromIDListW(pidl, bi.pszDisplayName)){
+				results.filePath = bi.pszDisplayName;
 			}
 			lpMalloc->Free(pidl);
 		}
