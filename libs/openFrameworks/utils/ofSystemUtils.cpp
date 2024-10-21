@@ -360,15 +360,14 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 	if (bFolderSelection == false){
 
-        OPENFILENAME ofn;
-
-		ZeroMemory(&ofn, sizeof(ofn));
+		OPENFILENAMEW ofn = { };
 		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
 
-		wchar_t szFileName[MAX_PATH];
-		memset(szFileName, 0, sizeof(szFileName));
+		std::wstring filename(MAX_PATH, L'\0');
+//		wchar_t szFileName[MAX_PATH];
+//		memset(szFileName, 0, sizeof(szFileName));
 
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
@@ -383,7 +382,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 
 		ofn.lpstrFilter = L"All\0";
-		ofn.lpstrFile = szFileName;
+		ofn.lpstrFile =  &filename[0];
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
@@ -391,10 +390,10 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		if(GetOpenFileNameW(&ofn)) {
 //			std::cout << *szFileName << endl;
-			std::wstring fn = szFileName;
+//			std::wstring fn = szFileName;
 //			of::filesystem::path outPath { szFileName };
 //			std::cout << "outPath " << outPath << std::endl;
-			results.filePath = fn;
+			results.filePath = filename;
 //			std::cout << results.filePath << std::endl;
 		}
 		else {
@@ -518,8 +517,8 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 
 
 	wchar_t fileName[MAX_PATH] = L"";
-	OPENFILENAMEW ofn;
-    memset(&ofn, 0, sizeof(OPENFILENAME));
+	OPENFILENAMEW ofn = { };
+//    memset(&ofn, 0, sizeof(OPENFILENAME));
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
 	ofn.hwndOwner = hwnd;
