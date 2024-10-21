@@ -248,6 +248,7 @@ of::filesystem::path ofFileDialogResult::getPath(){
 //------------------------------------------------------------------------------
 void ofSystemAlertDialog(std::string errorMessage){
 	#ifdef TARGET_WIN32
+		// FIXME: Consider MultiByteToWideChar() and WideCharToMultiByte() / ConvertWideToUtf8
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		// we need to convert error message to a wide char message.
 //		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
@@ -388,6 +389,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.lpstrDefExt = 0;
 		ofn.lpstrTitle = szTitle;
 
+		// FIXME: issue 1 here
 		if(GetOpenFileNameW(&ofn)) {
 //			std::cout << *szFileName << endl;
 //			std::wstring fn = szFileName;
@@ -402,7 +404,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 			try {
 				std::cout << 3 << std::endl;
-				results.filePath = filename;
+//				results.filePath = filename;
+				results.filePath = ConvertWideToUtf8(filename);
 				std::cout << 4 << std::endl;
 
 			} catch (const std::system_error & e) {
