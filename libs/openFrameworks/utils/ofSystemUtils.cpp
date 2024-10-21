@@ -394,10 +394,17 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //			of::filesystem::path outPath { szFileName };
 //			std::cout << "outPath " << outPath << std::endl;
 			// https://github.com/ePi5131/aulut/blob/137491c49400a590a55b85dd12faf046305f5b91/aulut/aulut.cpp#L165
-			std::cout << "oww" << std::endl;
+			std::cout << 0 << std::endl;
 			std::wcout << filename << std::endl;
+			std::cout << 1 << std::endl;
+			std::wstring name = filename;
+			std::cout << 2 << std::endl;
+
 			try {
+				std::cout << 3 << std::endl;
 				results.filePath = filename;
+				std::cout << 4 << std::endl;
+
 			} catch (const std::system_error & e) {
 				std::cerr << e.what() << std::endl;
 			}
