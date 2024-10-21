@@ -405,7 +405,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 			try {
 				std::cout << 3 << std::endl;
 //				results.filePath = filename;
-				results.filePath = ConvertWideToUtf8(filename);
+//				results.filePath = ConvertWideToUtf8(filename);
+				results.filePath = name;
 				std::cout << 4 << std::endl;
 
 			} catch (const std::system_error & e) {
