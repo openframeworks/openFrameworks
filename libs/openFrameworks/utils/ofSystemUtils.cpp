@@ -370,8 +370,6 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		wchar_t szFileName[MAX_PATH];
 		memset(szFileName, 0, sizeof(szFileName));
 
-//		wcscpy(szFileName, ofToDataPath(defaultPath).c_str());
-
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		memset(szTitle, 0, sizeof(szTitle));
@@ -392,11 +390,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.lpstrTitle = szTitle;
 
 		if(GetOpenFileNameW(&ofn)) {
-			try {
-				results.filePath = szFileName;
-			} catch {
-				std::cout << "error in results.filePath = szFileName" << std::endl;
-			}
+			of::filesystem::path outPath { szFileName };
+			std::cout << "outPath " << outPath << std::endl;
+			results.filePath = outPath;
 			std::cout << results.filePath << std::endl;
 		}
 		else {
