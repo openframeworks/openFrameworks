@@ -360,19 +360,19 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 	if (bFolderSelection == false){
 
-		OPENFILENAMEW ofn = { };
-		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
-		ofn.hwndOwner = hwnd;
-
 		std::wstring filename(MAX_PATH, L'\0');
 //		wchar_t szFileName[MAX_PATH];
 //		memset(szFileName, 0, sizeof(szFileName));
 
+		OPENFILENAMEW ofn = { };
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = hwnd;
+
+
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
 		memset(szTitle, 0, sizeof(szTitle));
-
 		wcscpy(szTitle, converter.from_bytes(windowTitle).c_str());
 
 		if(!defaultPath.empty()){
@@ -393,6 +393,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //			std::wstring fn = szFileName;
 //			of::filesystem::path outPath { szFileName };
 //			std::cout << "outPath " << outPath << std::endl;
+			// https://github.com/ePi5131/aulut/blob/137491c49400a590a55b85dd12faf046305f5b91/aulut/aulut.cpp#L165
 			std::cout << "oww" << std::endl;
 			std::cout << filename << std::endl;
 			results.filePath = filename;
@@ -508,9 +509,6 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 		}
 	}
 #endif
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
 
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   windoze
@@ -518,31 +516,34 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 #ifdef TARGET_WIN32
 
 
-	wchar_t fileName[MAX_PATH] = L"";
-	OPENFILENAMEW ofn = { };
-	ofn.lStructSize = sizeof(ofn);
+//	wchar_t pathBuffer[MAX_PATH] = L"";
+	wchar_t pathBuffer[MAX_PATH] = { 0 };
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
-	ofn.hwndOwner = hwnd;
-	ofn.hInstance = GetModuleHandle(0);
-	ofn.nMaxFileTitle = 31;
-	ofn.lpstrFile = fileName;
-	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrFilter = L"All Files (*.*)\0*.*\0";
-	ofn.lpstrDefExt = L"";	// we could do .rxml here?
-	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
-	ofn.lpstrTitle = L"Select Output File";
+
+	OPENFILENAMEW ofn = {
+		.lStructSize = sizeof(ofn);
+		.hwndOwner = hwnd;
+		.hInstance = GetModuleHandle(0);
+		.nMaxFileTitle = 31;
+		.lpstrFile = pathBuffer;
+		.nMaxFile = MAX_PATH + 1;
+		.lpstrFilter = L"All Files (*.*)\0*.*\0";
+		.lpstrDefExt = L"";	// we could do .rxml here?
+		.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
+		.lpstrTitle = L"Select Output File";
+	};
 
 	if (GetSaveFileNameW(&ofn)){
-		std::wstring fn { fileName };
-		results.filePath = fn;
+		if (wcsnlen_s(pathBuffer, std::size(pathBuffer)) > 0) {
+			std::wstring fn = pathBuffer;
+			results.filePath = fn;
+		} else {
+			std::cout << "wrong wcsnlen_s size" << std::endl;
+		}
 //		results.filePath = fileName;
 	}
 
 #endif
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
-
 
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   linux
