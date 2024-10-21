@@ -533,7 +533,9 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	ofn.lpstrTitle = L"Select Output File";
 
 	if (GetSaveFileNameW(&ofn)){
-		results.filePath = fileName;
+		std::wstring fn { fileName };
+		results.filePath = fn;
+//		results.filePath = fileName;
 	}
 
 #endif
