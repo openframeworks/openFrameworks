@@ -411,7 +411,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		BROWSEINFOW      bi;
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-//		wchar_t			wideWindowTitle[MAX_PATH];
+		wchar_t			wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
 
@@ -424,6 +424,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		if (windowTitle.empty()) {
 			windowTitle = "Select Directory";
 		}
+		wcscpy(wideWindowTitle, converter.from_bytes(windowTitle).c_str());
+
+		
 		
 
 		// Get a pointer to the shell memory allocator
@@ -440,8 +443,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
-		// bi.lpszTitle        =   windowTitleW.c_str();
-		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
+//		bi.lpszTitle        =   windowTitleW.c_str();
+		bi.lpszTitle        =   wideWindowTitle;
+//		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
 
 		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
