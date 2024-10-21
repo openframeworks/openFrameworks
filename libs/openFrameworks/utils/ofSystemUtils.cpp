@@ -35,33 +35,8 @@
 #include <sstream>
 #include <string>
 
-std::string convertWideToNarrow( const wchar_t *s, char dfault = '?',
-                      const std::locale& loc = std::locale() )
-{
-  std::ostringstream stm;
-
-  while( *s != L'\0' ) {
-    stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
-  }
-  return stm.str();
-}
-
-std::wstring convertNarrowToWide( const std::string& as ){
-    // deal with trivial case of empty string
-    if( as.empty() )    return std::wstring();
-
-    // determine required length of new string
-    size_t reqLength = ::MultiByteToWideChar( CP_UTF8, 0, as.c_str(), (int)as.length(), 0, 0 );
-
-    // construct new string of required length
-    std::wstring ret( reqLength, L'\0' );
-
-    // convert old string to new string
-    ::MultiByteToWideChar( CP_UTF8, 0, as.c_str(), (int)as.length(), &ret[0], (int)ret.length() );
-
-    // return new string ( compiler should optimize this away )
-    return ret;
-}
+#include <codecvt>
+#include <iostream>
 
 #endif
 
@@ -273,10 +248,12 @@ of::filesystem::path ofFileDialogResult::getPath(){
 //------------------------------------------------------------------------------
 void ofSystemAlertDialog(std::string errorMessage){
 	#ifdef TARGET_WIN32
+		// FIXME: Consider MultiByteToWideChar() and WideCharToMultiByte() / ConvertWideToUtf8
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		// we need to convert error message to a wide char message.
-		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
+//		std::wstring errorMessageW{errorMessage.begin(),errorMessage.end()};
 		// launch the alert:
-		MessageBoxW(nullptr, errorMessageW.c_str(), L"alert", MB_OK);
+		MessageBoxW(nullptr, converter.from_bytes(errorMessage).c_str(), L"alert", MB_OK);
 	#endif
 
     #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
@@ -320,11 +297,9 @@ static int CALLBACK loadDialogBrowseCallback(
   LPARAM lParam,
   LPARAM lpData
 ){
-    std::string defaultPath = *(std::string*)lpData;
-    if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
-		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wcscpy(wideCharacterBuffer, ofToDataPath(defaultPath).c_str());
-        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
+    std::wstring defaultPath { *(std::wstring*)lpData };
+    if(!defaultPath.empty() && uMsg==BFFM_INITIALIZED) {
+        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPath(defaultPath).c_str());
     }
 
 	return 0;
@@ -382,66 +357,85 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-	std::wstring windowTitleW{windowTitle.begin(), windowTitle.end()};
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
 	if (bFolderSelection == false){
 
-        OPENFILENAME ofn;
-
-		ZeroMemory(&ofn, sizeof(ofn));
-		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
+		std::wstring filename(MAX_PATH, L'\0');
+//		wchar_t szFileName[MAX_PATH];
+//		memset(szFileName, 0, sizeof(szFileName));
+
+		OPENFILENAMEW ofn = { };
+		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = hwnd;
 
-		//the file name and path
-		wchar_t szFileName[MAX_PATH];
-		memset(szFileName, 0, sizeof(szFileName));
-
-		//the dir, if specified
-		wchar_t szDir[MAX_PATH];
 
 		//the title if specified
 		wchar_t szTitle[MAX_PATH];
-		if(defaultPath!=""){
+		memset(szTitle, 0, sizeof(szTitle));
+		wcscpy(szTitle, converter.from_bytes(windowTitle).c_str());
+
+		if(!defaultPath.empty()){
+			wchar_t szDir[MAX_PATH];
 			wcscpy(szDir, ofToDataPath(defaultPath).c_str());
 			ofn.lpstrInitialDir = szDir;
 		}
 
-		if (windowTitle != "") {
-			wcscpy(szTitle, convertNarrowToWide(windowTitle).c_str());
-			ofn.lpstrTitle = szTitle;
-		} else {
-			ofn.lpstrTitle = nullptr;
-		}
-
 		ofn.lpstrFilter = L"All\0";
-		ofn.lpstrFile = szFileName;
-		ofn.nMaxFile = MAX_PATH;
+		ofn.lpstrFile =  &filename[0];
+		ofn.nMaxFile = MAX_PATH + 1;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
-		ofn.lpstrTitle = windowTitleW.c_str();
+		ofn.lpstrTitle = szTitle;
 
-		if(GetOpenFileName(&ofn)) {
-			results.filePath = convertWideToNarrow(szFileName);
+		// FIXME: issue 1 here
+		if(GetOpenFileNameW(&ofn)) {
+//			std::cout << *szFileName << endl;
+//			std::wstring fn = szFileName;
+//			of::filesystem::path outPath { szFileName };
+//			std::cout << "outPath " << outPath << std::endl;
+			// https://github.com/ePi5131/aulut/blob/137491c49400a590a55b85dd12faf046305f5b91/aulut/aulut.cpp#L165
+			std::cout << 0 << std::endl;
+			std::wcout << filename << std::endl;
+			std::cout << 1 << std::endl;
+			std::wstring name = filename;
+			std::cout << 2 << std::endl;
+
+			try {
+				std::cout << 3 << std::endl;
+//				results.filePath = filename;
+//				results.filePath = ConvertWideToUtf8(filename);
+				results.filePath = name;
+				std::cout << 4 << std::endl;
+
+			} catch (const std::system_error & e) {
+				std::cerr << e.what() << std::endl;
+			}
+//			std::cout << results.filePath << std::endl;
 		}
 		else {
+			std::cout << "error" << std::endl;
+
 			//this should throw an error on failure unless its just the user canceling out
 			//DWORD err = CommDlgExtendedError();
 		}
 
 	} else {
 
-		BROWSEINFOW      bi;
+		BROWSEINFOW     bi;
 		wchar_t         wideCharacterBuffer[MAX_PATH];
-		wchar_t			wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
 
-		if (windowTitle != "") {
-			wcscpy(wideWindowTitle, convertNarrowToWide(windowTitle).c_str());
-		} else {
-			wcscpy(wideWindowTitle, L"Select Directory");
+		if (windowTitle.empty()) {
+			windowTitle = "Select Directory";
 		}
+		wchar_t			wideWindowTitle[MAX_PATH];
+		wcscpy(wideWindowTitle, converter.from_bytes(windowTitle).c_str());
+
+		
+		
 
 		// Get a pointer to the shell memory allocator
 		if(SHGetMalloc(&lpMalloc) != S_OK){
@@ -449,17 +443,23 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 		bi.hwndOwner        =   nullptr;
 		bi.pidlRoot         =   nullptr;
-		bi.pszDisplayName   =   wideCharacterBuffer;
+		if (!defaultPath.empty()) {
+			wcscpy(wideCharacterBuffer, defaultPath.c_str());
+			bi.pszDisplayName   = wideCharacterBuffer;
+		}
 		bi.lpszTitle        =   wideWindowTitle;
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
-		bi.lpszTitle        =   windowTitleW.c_str();
+		bi.lpszTitle        =   wideWindowTitle;
 
 		if( (pidl = SHBrowseForFolderW(&bi)) ){
 			// Copy the path directory to the buffer
-			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
-				results.filePath = convertWideToNarrow(wideCharacterBuffer);
+			wchar_t pathResult[MAX_PATH];
+//			char16_t pathResult[MAX_PATH];
+
+			if(SHGetPathFromIDListW(pidl, pathResult)){
+				results.filePath = pathResult;
 			}
 			lpMalloc->Free(pidl);
 		}
@@ -493,7 +493,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 	if( !results.filePath.empty() ){
 		results.bSuccess = true;
-		results.fileName = ofFilePath::getFileName(results.filePath);
+		results.fileName = results.filePath.filename();
 	}
 
 	return results;
@@ -524,9 +524,6 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 		}
 	}
 #endif
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
 
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   windoze
@@ -534,30 +531,35 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 #ifdef TARGET_WIN32
 
 
-	wchar_t fileName[MAX_PATH] = L"";
-	OPENFILENAMEW ofn;
-    memset(&ofn, 0, sizeof(OPENFILENAME));
-	ofn.lStructSize = sizeof(OPENFILENAME);
+//	wchar_t pathBuffer[MAX_PATH] = L"";
+	wchar_t pathBuffer[MAX_PATH] = { 0 };
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
+
+	OPENFILENAMEW ofn = { } ;
+	
+	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hwnd;
 	ofn.hInstance = GetModuleHandle(0);
 	ofn.nMaxFileTitle = 31;
-	ofn.lpstrFile = fileName;
-	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFile = pathBuffer;
+	ofn.nMaxFile = MAX_PATH + 1;
 	ofn.lpstrFilter = L"All Files (*.*)\0*.*\0";
 	ofn.lpstrDefExt = L"";	// we could do .rxml here?
 	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 	ofn.lpstrTitle = L"Select Output File";
 
+
 	if (GetSaveFileNameW(&ofn)){
-		results.filePath = convertWideToNarrow(fileName);
+		if (wcsnlen_s(pathBuffer, std::size(pathBuffer)) > 0) {
+			std::wstring fn = pathBuffer;
+			results.filePath = fn;
+		} else {
+			std::cout << "wrong wcsnlen_s size" << std::endl;
+		}
+//		results.filePath = fileName;
 	}
 
 #endif
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------
-
 
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   linux
@@ -574,7 +576,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 
 	if( !results.filePath.empty() ){
 		results.bSuccess = true;
-		results.fileName = ofFilePath::getFileName(results.filePath);
+		results.fileName = results.filePath.filename();
 	}
 
 	return results;
@@ -645,6 +647,10 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
     // we need to convert error message to a wide char message.
     // first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
 
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+//	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+
+	
 	WNDCLASSEX wc;
 	MSG Msg;
 
@@ -679,7 +685,7 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
 
 		HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
 			g_szClassName,
-			convertNarrowToWide(question).c_str(),
+			converter.from_bytes(question).c_str(),
 			WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
 			CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
 			WindowFromDC(wglGetCurrentDC()), nullptr, GetModuleHandle(0),nullptr);
@@ -694,9 +700,13 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
 		}
 
 		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
-		HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT\0", convertNarrowToWide(text).c_str(),
+	
+		
+
+		HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT\0",  converter.from_bytes(text).c_str(),
 			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 			10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(nullptr), nullptr);
+
 
 
 		HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, L"BUTTON\0", L"OK\0",
