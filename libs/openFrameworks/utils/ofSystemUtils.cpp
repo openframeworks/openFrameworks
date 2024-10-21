@@ -520,8 +520,7 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 
 	wchar_t fileName[MAX_PATH] = L"";
 	OPENFILENAMEW ofn = { };
-//    memset(&ofn, 0, sizeof(OPENFILENAME));
-	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.lStructSize = sizeof(ofn);
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
 	ofn.hwndOwner = hwnd;
 	ofn.hInstance = GetModuleHandle(0);
