@@ -2,8 +2,13 @@
 #define OF_RANDOM_DISTRIBUTIONS_H_
 
 #include "ofRandomEngine.h"
-#include <iostream>
 #include "ofColor.h"
+#include <iostream>
+
+#ifdef TARGET_WIN32
+#include <iso646.h>
+#endif
+
 
 // https://gist.github.com/imneme/540829265469e673d045
 // https://github.com/effolkronium/random/tree/master
