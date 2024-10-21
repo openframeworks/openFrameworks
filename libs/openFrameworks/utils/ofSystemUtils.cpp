@@ -432,7 +432,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 		bi.hwndOwner        =   nullptr;
 		bi.pidlRoot         =   nullptr;
-		if (!empty(defaultPath)) {
+		if (!defaultPath.empty()) {
 			bi.pszDisplayName   =   converter.from_bytes(defaultPath.c_str()).c_str();
 		}
 		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
