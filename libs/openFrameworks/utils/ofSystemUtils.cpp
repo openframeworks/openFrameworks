@@ -391,11 +391,17 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.lpstrDefExt = 0;
 		ofn.lpstrTitle = szTitle;
 
-		if(GetOpenFileName(&ofn)) {
-			results.filePath = szFileName;
+		if(GetOpenFileNameW(&ofn)) {
+			try {
+				results.filePath = szFileName;
+			} catch {
+				std::cout << "error in results.filePath = szFileName" << std::endl;
+			}
 			std::cout << results.filePath << std::endl;
 		}
 		else {
+			std::cout << "error" << std::endl;
+
 			//this should throw an error on failure unless its just the user canceling out
 			//DWORD err = CommDlgExtendedError();
 		}
