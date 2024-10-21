@@ -38,7 +38,7 @@ ofMainLoop::ofMainLoop()
 }
 
 ofMainLoop::~ofMainLoop() {
-	exit();
+
 }
 
 std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
@@ -128,6 +128,7 @@ int ofMainLoop::loop(){
 	}else{
 		windowLoop();
 	}
+	exit();	
 	return status;
 }
 
