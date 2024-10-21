@@ -393,6 +393,8 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //			std::wstring fn = szFileName;
 //			of::filesystem::path outPath { szFileName };
 //			std::cout << "outPath " << outPath << std::endl;
+			std::cout << "oww" << std::endl;
+			std::cout << filename << std::endl;
 			results.filePath = filename;
 //			std::cout << results.filePath << std::endl;
 		}
