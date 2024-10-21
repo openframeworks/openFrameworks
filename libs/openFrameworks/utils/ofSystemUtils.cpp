@@ -383,7 +383,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile =  &filename[0];
-		ofn.nMaxFile = MAX_PATH;
+		ofn.nMaxFile = MAX_PATH + 1;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
 		ofn.lpstrTitle = szTitle;
@@ -396,7 +396,11 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 			// https://github.com/ePi5131/aulut/blob/137491c49400a590a55b85dd12faf046305f5b91/aulut/aulut.cpp#L165
 			std::cout << "oww" << std::endl;
 			std::cout << filename << std::endl;
-			results.filePath = filename;
+			try {
+				results.filePath = filename;
+			} catch (const std::system_error & e) {
+				std::cerr << e.what() << std::endl;
+			}
 //			std::cout << results.filePath << std::endl;
 		}
 		else {
