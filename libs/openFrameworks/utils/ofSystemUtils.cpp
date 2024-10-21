@@ -380,14 +380,14 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		
 		// FIXME: check if it is not empty
 		if(!defaultPath.empty()){
-			wcscpy(szDir, converter.from_bytes(ofPathToString(ofToDataPath(defaultPath))).c_str());
-			
-			std::wcout << szDir << std::endl;
+//			wcscpy(szDir, converter.from_bytes(ofPathToString(ofToDataPath(defaultPath))).c_str());
+//			std::wcout << szDir << std::endl;
 			
 			// wcscpy(szDir, converter.from_bytes(ofToDataPath(defaultPath).c_str()).c_str());
 
 			// wcscpy(szDir, ofToDataPath(defaultPath).c_str());
-			ofn.lpstrInitialDir = szDir;
+//			ofn.lpstrInitialDir = szDir;
+			ofn.lpstrInitialDir = ofToDataPath(defaultPath).c_str();
 		}
 
 		ofn.lpstrFilter = L"All\0";
@@ -433,7 +433,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		bi.hwndOwner        =   nullptr;
 		bi.pidlRoot         =   nullptr;
 		if (!defaultPath.empty()) {
-			bi.pszDisplayName   =   converter.from_bytes(defaultPath.c_str()).c_str();
+			bi.pszDisplayName   =   defaultPath.c_str();
 		}
 		bi.lpszTitle        =   converter.from_bytes(windowTitle).c_str();
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
