@@ -422,7 +422,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //		}
 		
 		if (empty(windowTitle)) {
-			windowTitle = L"Select Directory";
+			windowTitle = "Select Directory";
 		}
 		
 
