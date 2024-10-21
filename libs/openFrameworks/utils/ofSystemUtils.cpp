@@ -390,10 +390,12 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		ofn.lpstrTitle = szTitle;
 
 		if(GetOpenFileNameW(&ofn)) {
-			of::filesystem::path outPath { szFileName };
-			std::cout << "outPath " << outPath << std::endl;
-			results.filePath = outPath;
-			std::cout << results.filePath << std::endl;
+//			std::cout << *szFileName << endl;
+			std::wstring fn = szFileName;
+//			of::filesystem::path outPath { szFileName };
+//			std::cout << "outPath " << outPath << std::endl;
+			results.filePath = fn;
+//			std::cout << results.filePath << std::endl;
 		}
 		else {
 			std::cout << "error" << std::endl;
@@ -440,9 +442,7 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 //			char16_t pathResult[MAX_PATH];
 
 			if(SHGetPathFromIDListW(pidl, pathResult)){
-				std::cout << "will assign" << std::endl;
 				results.filePath = pathResult;
-				std::cout << "ok" << std::endl;
 			}
 			lpMalloc->Free(pidl);
 		}
