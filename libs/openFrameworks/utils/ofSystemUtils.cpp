@@ -626,8 +626,8 @@ std::string ofSystemTextBoxDialog(std::string question, std::string text){
     // we need to convert error message to a wide char message.
     // first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
 
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 //	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>> converter;
 
 	
 	WNDCLASSEX wc;
