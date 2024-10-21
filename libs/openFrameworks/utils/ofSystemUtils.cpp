@@ -524,18 +524,19 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 	wchar_t pathBuffer[MAX_PATH] = { 0 };
 	HWND hwnd = WindowFromDC(wglGetCurrentDC());
 
-	OPENFILENAMEW ofn = {
-		.lStructSize = sizeof(ofn);
-		.hwndOwner = hwnd;
-		.hInstance = GetModuleHandle(0);
-		.nMaxFileTitle = 31;
-		.lpstrFile = pathBuffer;
-		.nMaxFile = MAX_PATH + 1;
-		.lpstrFilter = L"All Files (*.*)\0*.*\0";
-		.lpstrDefExt = L"";	// we could do .rxml here?
-		.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
-		.lpstrTitle = L"Select Output File";
-	};
+	OPENFILENAMEW ofn = { } ;
+	
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hwnd;
+	ofn.hInstance = GetModuleHandle(0);
+	ofn.nMaxFileTitle = 31;
+	ofn.lpstrFile = pathBuffer;
+	ofn.nMaxFile = MAX_PATH + 1;
+	ofn.lpstrFilter = L"All Files (*.*)\0*.*\0";
+	ofn.lpstrDefExt = L"";	// we could do .rxml here?
+	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
+	ofn.lpstrTitle = L"Select Output File";
+
 
 	if (GetSaveFileNameW(&ofn)){
 		if (wcsnlen_s(pathBuffer, std::size(pathBuffer)) > 0) {
