@@ -20,6 +20,8 @@ class ofxAppEmscriptenWindow: public ofAppBaseGLESWindow {
 public:
 	ofxAppEmscriptenWindow();
 	~ofxAppEmscriptenWindow();
+	
+	
 
 	static bool allowsMultiWindow(){ return false; }
 	static bool doesLoop(){ return true; }
@@ -71,6 +73,8 @@ public:
 	ofCoreEvents & events();
 	std::shared_ptr<ofBaseRenderer> & renderer();
 	
+	EM_BOOL useCapture = 1;
+	
 	void update();
 	void draw();
 
@@ -81,7 +85,10 @@ public:
 	bool bIsSetup = false;
 private:
 	static ofxAppEmscriptenWindow * instance;
+	
 
+	static EM_BOOL rescale(int* x, int* y);
+	static void updateCanvas(int x, int y);
 	// static int getUniqueId();
 	static void display_cb();
 	static EM_BOOL keydown_cb(int eventType, const EmscriptenKeyboardEvent * keyEvent, void * userData);
