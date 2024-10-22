@@ -1,0 +1,8 @@
+[wrap-git]
+url = https://github.com/uriparser/uriparser.git
+revision = uriparser-0.9.8
+depth = 1
+method = cmake
+
+[provide]
+uriparser = uriparser_dep
