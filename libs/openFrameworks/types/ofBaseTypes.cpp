@@ -53,7 +53,7 @@ bool ofBaseVideoPlayer::load(const of::filesystem::path & fileName){
 }
 
 //---------------------------------------------------------------------------
-bool ofBaseVideoPlayer::load(const std::string & fileName){
+bool ofBaseVideoPlayer::load(std::string fileName){
 	ofLogError("ofBaseVideoPlayer") << " One of the two load functions need to be implemented ";
 	return false;
 }
@@ -64,7 +64,7 @@ void ofBaseVideoPlayer::loadAsync(const of::filesystem::path & fileName){
 }
 
 //---------------------------------------------------------------------------
-void ofBaseVideoPlayer::loadAsync(const std::string & fileName){
+void ofBaseVideoPlayer::loadAsync(std::string fileName){
 	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
 	load(fileName);
 }
