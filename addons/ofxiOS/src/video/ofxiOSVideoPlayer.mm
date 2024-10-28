@@ -3,6 +3,7 @@
 #if defined(TARGET_OF_IOS)
 #include "ofxiOSExtras.h"
 #include "ofxiOSEAGLView.h"
+#import "ofxiOSGLKView.h"
 #import "AVFoundationVideoPlayer.h"
 #include "ofGLUtils.h"
 #include "ofMath.h"
@@ -22,7 +23,7 @@ ofxiOSVideoPlayer::ofxiOSVideoPlayer() {
     bUpdatePixels = false;
     bUpdateTexture = false;
     bTextureCacheSupported = (&CVOpenGLESTextureCacheCreate != NULL);
-    bTextureCacheEnabled = true;
+    bTextureCacheEnabled = false;
 }
 
 //----------------------------------------
@@ -59,7 +60,7 @@ bool ofxiOSVideoPlayer::load(const of::filesystem::path & fileName) {
         if(_videoTextureCache == NULL) {
             CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
                                                         NULL,
-                                                        ofxiOSGetGLView().context,
+                                                        isUsingGLKView() ? [[ofxiOSGLKView getInstance] context] : ofxiOSGetGLView().context,
                                                         NULL,
                                                         &_videoTextureCache);
             if(err) {

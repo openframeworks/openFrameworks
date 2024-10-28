@@ -156,6 +156,12 @@ ofxiOSGLKView * ofxiOSGetGLKView() {
     return [ofxiOSGLKView getInstance];
 }
 
+bool isUsingGLKView() {
+    if([[ofxiOSGetAppDelegate() uiViewController] isKindOfClass:[ofxiOSGLKViewController class]] == YES) return true;
+    else
+        return false;
+}
+
 //--------------------------------------------------------------
 UIView * ofxiOSGetGLParentView() {
     return ofxiOSGetGLView().superview;
