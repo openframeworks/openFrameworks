@@ -60,6 +60,7 @@ public:
 	operator const std::string() const { return path_.string(); }
 	operator std::string() { return path_.string(); }
 	operator std::wstring() const { return path_.wstring(); }
+	operator const char*() const { return path_.c_str(); }
 	
 	std::string generic_string() const { return path_.generic_string(); }
 	std::string generic_string() { return path_.generic_string(); }
