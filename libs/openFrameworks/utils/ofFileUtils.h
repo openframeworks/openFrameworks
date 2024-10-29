@@ -766,6 +766,10 @@ public:
 	/// \return output stream
 	std::filebuf * getFileBuffer() const;
 
+	operator std::filesystem::path() {
+		return myFile;
+	}
+
 	operator of::filesystem::path() {
 		return myFile;
 	}
@@ -1143,6 +1147,10 @@ public:
 	bool operator<=(const ofDirectory & dir) const;
 	bool operator>(const ofDirectory & dir) const;
 	bool operator>=(const ofDirectory & dir) const;
+
+	operator std::filesystem::path() {
+		return myDir;
+	}
 
 	operator of::filesystem::path() {
 		return myDir;
