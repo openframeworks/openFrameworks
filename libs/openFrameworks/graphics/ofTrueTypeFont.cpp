@@ -397,7 +397,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 		}
 		filename = winFontPathByName(fontname);
 #endif
-		if(filename == "" ){
+		if(filename.empty() ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
 			return false;
 		}
