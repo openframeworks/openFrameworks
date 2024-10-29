@@ -1500,8 +1500,8 @@ static bool naturalStr(const StringSort& a, const StringSort& b) {
 
 //------------------------------------------------------------------------------------------------------------
 static bool byDate(const ofFile& a, const ofFile& b) {
-	auto ta = fs::last_write_time(a);
-	auto tb = fs::last_write_time(b);
+	auto ta = fs::last_write_time(a.getAbsolutePath());
+	auto tb = fs::last_write_time(b.getAbsolutePath());
 	return ta < tb;
 }
 
@@ -1552,7 +1552,7 @@ void ofDirectory::sort(const SortMode & mode){
         files.clear();
         files.reserve(sort.size());
         for( auto & s : sort ){
-            files.emplace_back( myDir / fs::path(s), ofFile::Reference);
+            files.emplace_back( myDir / of::filesystem::path(s), ofFile::Reference);
         }
     }else if(mode == ofDirectory::SORT_BY_DATE){
         sortByDate();
@@ -2052,7 +2052,7 @@ fs::path ofToDataPathFS(const fs::path & path, bool makeAbsolute){
 }
 
 //--------------------------------------------------
-std::string ofToDataPath(const fs::path & path, bool makeAbsolute){
+of::filesystem::path ofToDataPath(const fs::path & path, bool makeAbsolute){
 	return ofPathToString(ofToDataPathFS(path, makeAbsolute));
 }
 

@@ -443,10 +443,7 @@ typedef TESSindex ofIndexType;
 			namespace filesystem = std::experimental::filesystem;
 		}
     #else
-		#include <filesystem>
-		namespace of {
-			namespace filesystem = std::filesystem;
-		}
+		#include "ofFilesystemPath.h"
     #endif
 #else //not OF_USING_STD_FS
     // No experimental or c++17 filesytem support use boost

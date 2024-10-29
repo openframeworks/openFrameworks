@@ -1,0 +1,163 @@
+#include <filesystem>
+#include <string>
+#include <iostream>
+#include <utility>  
+
+namespace of {
+namespace filesystem {
+
+using std_path = std::filesystem::path;
+
+using std::filesystem::absolute;
+using std::filesystem::canonical;
+using std::filesystem::copy;
+using std::filesystem::copy_file;
+using std::filesystem::copy_options;
+using std::filesystem::create_directories;
+using std::filesystem::current_path;
+using std::filesystem::exists;
+using std::filesystem::file_size;
+using std::filesystem::file_time_type;
+using std::filesystem::filesystem_error;
+using std::filesystem::is_block_file;
+using std::filesystem::is_character_file;
+using std::filesystem::is_directory;
+using std::filesystem::is_empty;
+using std::filesystem::is_regular_file;
+using std::filesystem::is_symlink;
+using std::filesystem::last_write_time;
+using std::filesystem::create_directory;
+using std::filesystem::permissions;
+using std::filesystem::perms;
+using std::filesystem::perm_options;
+using std::filesystem::remove;
+using std::filesystem::remove_all;
+using std::filesystem::rename;
+using std::filesystem::relative;
+using std::filesystem::status;
+using std::filesystem::space;
+using std::filesystem::temp_directory_path;
+using std::filesystem::weakly_canonical;
+using std::filesystem::directory_iterator;
+using std::filesystem::recursive_directory_iterator;
+
+class path {
+private:
+	std_path path_; // simple composition
+	
+public:
+	path() = default;
+	path(const std_path& p) : path_(p) {}
+	path(std_path&& p) noexcept : path_(std::move(p)) {}
+	path(const std::string& s) : path_(s) {}
+	path(const char* s) : path_(s) {}
+	path(const path& other) = default;
+	path& operator=(const path& other) = default;
+	path(path&& other) noexcept = default;
+	path& operator=(path&& other) noexcept = default;
+	
+	operator std_path() const { return path_; }
+	operator const std::string() const { return path_.string(); }
+	operator std::string() { return path_.string(); }
+	operator std::wstring() const { return path_.wstring(); }
+	
+	std::string generic_string() const { return path_.generic_string(); }
+	std::string generic_string() { return path_.generic_string(); }
+	std::string string() const { return path_.string(); }
+	std::wstring wstring() const { return path_.wstring(); }
+	std::string native() const { return path_.native(); }
+	const char* c_str() const { return path_.c_str(); }
+	const std_path& native_path() const { return path_; }
+	
+	path replace_extension(path ext = path()) { return path_.replace_extension(ext); }
+	
+	bool empty() const noexcept { return path_.empty(); }
+	bool is_absolute() const { return path_.is_absolute(); }
+	bool is_relative() const { return path_.is_relative(); }
+	bool exists() const { return std::filesystem::exists(path_); }
+	bool is_directory() const { return std::filesystem::is_directory(path_); }
+	bool is_regular_file() const { return std::filesystem::is_regular_file(path_); }
+	bool is_symlink() const { return std::filesystem::is_symlink(path_); }
+	bool is_block_file() const { return std::filesystem::is_block_file(path_); }
+	bool is_character_file() const { return std::filesystem::is_character_file(path_); }
+	bool is_empty() const { return std::filesystem::is_empty(path_); }
+	std::uintmax_t file_size() const { return std::filesystem::file_size(path_); }
+	file_time_type last_write_time() const { return std::filesystem::last_write_time(path_); }
+	
+	path absolute() const {
+		return path(std::filesystem::absolute(path_));
+	}
+	
+	path canonical() const {
+		return path(std::filesystem::canonical(path_));
+	}
+	
+	std::filesystem::perms get_permissions() const {
+		return status(path_).permissions(); // Use status() to get permissions
+	}
+	
+	bool operator==(const path& other) const noexcept { return path_ == other.path_; }
+	bool operator!=(const path& other) const noexcept { return path_ != other.path_; }
+	bool operator<(const path& other) const noexcept { return path_ < other.path_; }
+	bool operator<=(const path& other) const noexcept { return path_ <= other.path_; }
+	bool operator>(const path& other) const noexcept { return path_ > other.path_; }
+	bool operator>=(const path& other) const noexcept { return path_ >= other.path_; }
+	
+	of::filesystem::path& operator/=(const path& p) {
+		path_ /= p.path_;
+		return *this;
+	}
+	
+	template <typename LHS>
+	const friend of::filesystem::path operator/(const LHS& lhs, const path& rhs) {
+		return path(lhs / rhs.path_);
+	}
+	
+	template <typename RHS>
+	const friend of::filesystem::path operator/(const path& lhs, const RHS& rhs) {
+		return path(lhs.path_ / rhs);
+	}
+	
+	const friend of::filesystem::path operator/(const path& lhs, const path& rhs) {
+		return path(lhs.path_ / rhs.path_);
+	}
+	
+	template <typename LHS>
+	const friend of::filesystem::path operator+=(const LHS& lhs, const path& rhs) {
+		return path(lhs + rhs.path_.string());
+	}
+	
+	template <typename RHS>
+	const friend of::filesystem::path operator+=(const path& lhs, const RHS& rhs) {
+		return path(lhs.path_.string() + rhs);
+	}
+	
+	
+	template <typename LHS>
+	const friend of::filesystem::path operator+(const LHS& lhs, const path& rhs) {
+		return path(lhs + rhs.path_.string());
+	}
+	
+	template <typename RHS>
+	const friend of::filesystem::path operator+(const path& lhs, const RHS& rhs) {
+		return path(lhs.path_.string() + rhs);
+	}
+	
+	path make_preferred() { return path(path_.make_preferred()); }
+	path root_path() const { return path(path_.root_path()); }
+	path parent_path() const { return path(path_.parent_path()); }
+	path filename() const { return path(path_.filename()); }
+	path stem() const { return path(path_.stem()); }
+	path extension() const { return path(path_.extension()); }
+	bool has_extension() const { return path_.has_extension(); }
+	bool has_filename() const { return path_.has_filename(); }
+	bool operator!() const noexcept { return empty(); }
+	std::size_t hash() const noexcept { return std::hash<std::filesystem::path>()(path_); }
+	
+	friend std::ostream& operator<<(std::ostream& os, const path& p) {
+		return os << p.string();
+	}
+};
+
+}  // namespace filesystem
+}  // namespace of
