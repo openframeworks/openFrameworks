@@ -120,9 +120,8 @@ public:
 	}
 	
 	bool operator==(const path& other) const noexcept { return path_ == other.path_; }
-	bool operator==(const char * other) const noexcept { return path_ == other; }
-	bool operator==(const wchar_t * other) const noexcept { return path_ == other; }
-
+	bool operator==(const std::filesystem::path::value_type* other) const noexcept { return path_.c_str() == other; }
+	
 	bool operator!=(const path& other) const noexcept { return path_ != other.path_; }
 	bool operator<(const path& other) const noexcept { return path_ < other.path_; }
 	bool operator<=(const path& other) const noexcept { return path_ <= other.path_; }
