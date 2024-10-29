@@ -49,7 +49,7 @@ bool ofxiOSVideoPlayer::load(const of::filesystem::path & fileName) {
         [(AVFoundationVideoPlayer *)videoPlayer setWillBeUpdatedExternally:YES];
     }
     
-    NSString * videoPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+    NSString * videoPath = [NSString stringWithUTF8String:ofToDataPath(fileName).c_str()];
     [(AVFoundationVideoPlayer*)videoPlayer loadWithPath:videoPath];
     
     bResetPixels = true;
