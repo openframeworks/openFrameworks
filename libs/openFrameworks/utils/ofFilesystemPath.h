@@ -45,6 +45,12 @@ class path {
 private:
 	std_path path_; // simple composition
 	
+	std::string wstring_to_string(const std::wstring& wstr) {
+		 std::string narrow_str(wstr.begin(), wstr.end());
+		 return narrow_str; // This works for ASCII, not UTF-16 or UTF-32
+	}
+	
+	
 public:
 	path() = default;
 	path(const std_path& p) : path_(p) {}
@@ -61,10 +67,9 @@ public:
 	operator std::string() { return path_.string(); }
 	operator std::wstring() const { return path_.wstring(); }
 	
+	operator const std::filesystem::path::value_type*() const { return path_.native().c_str(); }
 #if defined(TARGET_WIN32)
-	operator const wchar_t*() const { return path_.wstring().c_str(); }
-#else
-	operator const char*() const { return path_.c_str(); }
+	operator const char*() const { return wstring_to_string(path_.wstring()).c_str(); }
 #endif
 	
 	std::string generic_string() const { return path_.generic_string(); }
