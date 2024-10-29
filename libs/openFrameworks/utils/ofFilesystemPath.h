@@ -84,7 +84,13 @@ public:
 	std::string string() const { return path_.string(); }
 	std::wstring wstring() const { return path_.wstring(); }
 	auto native() const { return path_.native(); }
+	
+#if defined(TARGET_WIN32)
+	const char* c_str() const { return to_narrow_cstr(); }
+#else
 	const char* c_str() const { return path_.c_str(); }
+#endif
+
 	const std_path& native_path() const { return path_; }
 	
 	path replace_extension(path ext = path()) { return path_.replace_extension(ext); }
