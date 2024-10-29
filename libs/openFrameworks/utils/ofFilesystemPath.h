@@ -44,12 +44,19 @@ using std::filesystem::recursive_directory_iterator;
 class path {
 private:
 	std_path path_; // simple composition
-	
-	std::string wstring_to_string(const std::wstring& wstr) {
-		 std::string narrow_str(wstr.begin(), wstr.end());
-		 return narrow_str; // This works for ASCII, not UTF-16 or UTF-32
+	mutable std::string cached_narrow_str_;
+
+	const char* to_narrow_cstr() const {
+		std::mbstate_t state = std::mbstate_t();
+		size_t size_needed = std::wcstombs(nullptr, wstring().c_str(), 0) + 1;
+		if (size_needed == static_cast<size_t>(-1)) {
+			throw std::runtime_error("Conversion error from wstring to string");
+		}
+		cached_narrow_str_.resize(size_needed);
+		std::wcstombs(&cached_narrow_str_[0], wstring().c_str(), size_needed);
+		return cached_narrow_str_.c_str();
 	}
-	
+
 	
 public:
 	path() = default;
@@ -69,7 +76,7 @@ public:
 	
 	operator const std::filesystem::path::value_type*() const { return path_.native().c_str(); }
 #if defined(TARGET_WIN32)
-	operator const char*() const { return wstring_to_string(path_.wstring()).c_str(); }
+	operator const char*() const { return to_narrow_cstr(); }
 #endif
 	
 	std::string generic_string() const { return path_.generic_string(); }
