@@ -60,7 +60,12 @@ public:
 	operator const std::string() const { return path_.string(); }
 	operator std::string() { return path_.string(); }
 	operator std::wstring() const { return path_.wstring(); }
+	
+#if defined(TARGET_WIN32)
+	operator const wchar_t*() const { return path_.wstring().c_str(); }
+#else
 	operator const char*() const { return path_.c_str(); }
+#endif
 	
 	std::string generic_string() const { return path_.generic_string(); }
 	std::string generic_string() { return path_.generic_string(); }
