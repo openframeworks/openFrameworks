@@ -65,7 +65,7 @@ public:
 	std::string generic_string() { return path_.generic_string(); }
 	std::string string() const { return path_.string(); }
 	std::wstring wstring() const { return path_.wstring(); }
-	std::string native() const { return path_.native(); }
+	auto native() const { return path_.native(); }
 	const char* c_str() const { return path_.c_str(); }
 	const std_path& native_path() const { return path_; }
 	
