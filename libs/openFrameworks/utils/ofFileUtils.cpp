@@ -1974,7 +1974,8 @@ fs::path ofToDataPathFS(const fs::path & path, bool makeAbsolute){
 
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
-	if (defaultWorkingDirectory() != fs::current_path()) {
+	// .native workaround for operator != confusion in of::filesystem::path
+	if (defaultWorkingDirectory().native() != fs::current_path().native()) {
 		// change our cwd back to where it was on app load
 		bool ret = ofRestoreWorkingDirectoryToDefault();
 		if(!ret){
