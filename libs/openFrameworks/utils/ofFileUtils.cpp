@@ -2053,7 +2053,7 @@ fs::path ofToDataPathFS(const fs::path & path, bool makeAbsolute){
 
 //--------------------------------------------------
 of::filesystem::path ofToDataPath(const fs::path & path, bool makeAbsolute){
-	return ofPathToString(ofToDataPathFS(path, makeAbsolute));
+	return ofToDataPathFS(path, makeAbsolute);
 }
 
 //--------------------------------------------------
