@@ -123,6 +123,8 @@ public:
 	bool operator==(const std::filesystem::path::value_type* other) const noexcept { return path_.c_str() == other; }
 	
 	bool operator!=(const path& other) const noexcept { return path_ != other.path_; }
+	bool operator!=(const std::filesystem::path::value_type* other) const noexcept { return path_.c_str() != other; }
+	
 	bool operator<(const path& other) const noexcept { return path_ < other.path_; }
 	bool operator<=(const path& other) const noexcept { return path_ <= other.path_; }
 	bool operator>(const path& other) const noexcept { return path_ > other.path_; }
