@@ -1788,20 +1788,29 @@ of::filesystem::path ofFilePath::getPathForDirectoryFS(const of::filesystem::pat
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: Deprecate this seems over complicated and not useful anymore, using filesystem
-string ofFilePath::getPathForDirectory(const of::filesystem::path & path){
+of::filesystem::path ofFilePath::getPathForDirectory(const of::filesystem::path & path){
 	return ofPathToString(ofFilePath::getPathForDirectoryFS(path));
 }
 
 
 //------------------------------------------------------------------------------------------------------------
 // FIXME: - re-avail
-of::filesystem::path ofFilePath::removeTrailingSlash(const of::filesystem::path & _path){
+// implementation differs between string and path — keep string->string version around?
+std::string ofFilePath::removeTrailingSlash(const std::string & _path){
 	auto path = ofPathToString(_path);
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
 	return path;
 }
+
+of::filesystem::path ofFilePath::removeTrailingSlash(of::filesystem::path & path){
+	if (path.has_filename() == false) {
+		path.remove_filename();
+	}
+	return path;
+}
+
 
 
 //------------------------------------------------------------------------------------------------------------

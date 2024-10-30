@@ -135,6 +135,8 @@ public:
 		return path(lhs.path_.string() + rhs);
 	}
 	
+	path remove_filename() { return path_.remove_filename(); }
+	
 	path make_preferred() { return path(path_.make_preferred()); }
 	path root_path() const { return path(path_.root_path()); }
 	path parent_path() const { return path(path_.parent_path()); }

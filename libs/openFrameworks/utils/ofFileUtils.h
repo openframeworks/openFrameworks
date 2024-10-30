@@ -326,7 +326,8 @@ public:
 	///
 	/// \param path directory path
 	/// \returns path minus trailing slash
-	static of::filesystem::path removeTrailingSlash(const of::filesystem::path & path);
+	static std::string removeTrailingSlash(const std::string & _path);
+	static of::filesystem::path removeTrailingSlash(of::filesystem::path & path);
 
 	/// Cleaned up a directory path by adding a trailing slash if needed.
 	///
@@ -335,7 +336,7 @@ public:
 	///
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
-	static std::string getPathForDirectory(const of::filesystem::path & path);
+	static of::filesystem::path getPathForDirectory(const of::filesystem::path & path);
 	static of::filesystem::path getPathForDirectoryFS(const of::filesystem::path & path);
 
 	/// Get the absolute, full path for a given path,
