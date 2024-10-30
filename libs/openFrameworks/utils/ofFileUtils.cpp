@@ -1974,7 +1974,8 @@ void ofSetDataPathRoot(const of::filesystem::path& newRoot){
 }
 
 //--------------------------------------------------
-of::filesystem::path ofToDataPathFS(of::filesystem::path & path, bool makeAbsolute){
+of::filesystem::path ofToDataPathFS(const of::filesystem::path & in_path, bool makeAbsolute){
+	of::filesystem::path path {in_path} ; // don't propagate constness
 	if (makeAbsolute && path.is_absolute()) {
 		return path;
 	}
@@ -2066,7 +2067,7 @@ of::filesystem::path ofToDataPathFS(of::filesystem::path & path, bool makeAbsolu
 }
 
 //--------------------------------------------------
-of::filesystem::path ofToDataPath(of::filesystem::path & path, bool makeAbsolute){
+of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool makeAbsolute){
 	return ofToDataPathFS(path, makeAbsolute);
 }
 
