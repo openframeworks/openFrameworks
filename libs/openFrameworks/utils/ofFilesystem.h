@@ -144,7 +144,6 @@ public:
 	bool has_extension() const { return path_.has_extension(); }
 	bool has_filename() const { return path_.has_filename(); }
 	bool operator!() const noexcept { return empty(); }
-	std::size_t hash() const noexcept { return std::hash<std::filesystem::path>()(path_); }
 	
 	friend std::ostream& operator<<(std::ostream& os, const path& p) {
 		return os << p.string();
