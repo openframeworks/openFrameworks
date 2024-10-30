@@ -57,7 +57,7 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 //------------------------------------------
 bool ofxAssimpModelLoader::load(const of::filesystem::path & fileName, int assimpOptimizeFlags){
 	file = ofToDataPath(fileName);
-	if (!of::filesystem::exists(file)) {
+	if (!std::filesystem::exists(file)) {
 		ofLogVerbose("ofxAssimpModelLoader") << "load(): model does not exist: " << fileName ;
 		return false;
 	}
