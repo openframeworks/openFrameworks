@@ -36,7 +36,6 @@ public:
 	path& operator=(path&& other) noexcept = default;
 	
 	operator std::filesystem::path() const { return path_; }
-	operator const std::string() const { return path_.string(); } // should try catch on win
 	operator std::string() { return path_.string(); } // should try catch on win
 	operator const std::filesystem::path::value_type*() const { return path_.native().c_str(); }
 	
