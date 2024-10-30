@@ -36,10 +36,10 @@ public:
 	operator std::filesystem::path() const { return path_; }
 	operator const std::string() const { return path_.string(); }
 	operator std::string() { return path_.string(); }
-	operator std::wstring() const { return path_.wstring(); }
 	
 	operator const std::filesystem::path::value_type*() const { return path_.native().c_str(); }
 #if defined(TARGET_WIN32)
+	operator std::wstring() const { return path_.wstring(); }
 	operator const char*() const { return to_narrow_cstr(); }
 #endif
 	
