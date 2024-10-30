@@ -370,7 +370,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 	auto fontname = _fontname;
 	auto filename = ofToDataPathFS(fontname);
 	int fontID = index;
-	if(!of::filesystem::exists(filename)){
+	if(!std::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
 		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)

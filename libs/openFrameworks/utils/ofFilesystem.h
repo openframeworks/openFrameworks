@@ -6,44 +6,9 @@
 namespace of {
 namespace filesystem {
 
-using std_path = std::filesystem::path;
-
-using std::filesystem::absolute;
-using std::filesystem::canonical;
-using std::filesystem::copy;
-using std::filesystem::copy_file;
-using std::filesystem::copy_options;
-using std::filesystem::create_directories;
-using std::filesystem::current_path;
-using std::filesystem::exists;
-using std::filesystem::file_size;
-using std::filesystem::file_time_type;
-using std::filesystem::filesystem_error;
-using std::filesystem::is_block_file;
-using std::filesystem::is_character_file;
-using std::filesystem::is_directory;
-using std::filesystem::is_empty;
-using std::filesystem::is_regular_file;
-using std::filesystem::is_symlink;
-using std::filesystem::last_write_time;
-using std::filesystem::create_directory;
-using std::filesystem::permissions;
-using std::filesystem::perms;
-using std::filesystem::perm_options;
-using std::filesystem::remove;
-using std::filesystem::remove_all;
-using std::filesystem::rename;
-using std::filesystem::relative;
-using std::filesystem::status;
-using std::filesystem::space;
-using std::filesystem::temp_directory_path;
-using std::filesystem::weakly_canonical;
-using std::filesystem::directory_iterator;
-using std::filesystem::recursive_directory_iterator;
-
 class path {
 private:
-	std_path path_; // simple composition
+	std::filesystem::path path_; // simple composition
 	mutable std::string cached_narrow_str_;
 
 	const char* to_narrow_cstr() const {
@@ -57,11 +22,10 @@ private:
 		return cached_narrow_str_.c_str();
 	}
 
-	
 public:
 	path() = default;
-	path(const std_path& p) : path_(p) {}
-	path(std_path&& p) noexcept : path_(std::move(p)) {}
+	path(const std::filesystem::path& p) : path_(p) {}
+	path(std::filesystem::path&& p) noexcept : path_(std::move(p)) {}
 	path(const std::string& s) : path_(s) {}
 	path(const char* s) : path_(s) {}
 	path(const path& other) = default;
@@ -69,7 +33,7 @@ public:
 	path(path&& other) noexcept = default;
 	path& operator=(path&& other) noexcept = default;
 	
-	operator std_path() const { return path_; }
+	operator std::filesystem::path() const { return path_; }
 	operator const std::string() const { return path_.string(); }
 	operator std::string() { return path_.string(); }
 	operator std::wstring() const { return path_.wstring(); }
@@ -87,7 +51,7 @@ public:
 	
 	const auto c_str() const { return path_.c_str(); } 
 
-	const std_path& native_path() const { return path_; }
+	const std::filesystem::path& native_path() const { return path_; }
 	
 	path replace_extension(path ext = path()) { return path_.replace_extension(ext); }
 	
@@ -105,7 +69,7 @@ public:
 	bool is_character_file() const { return std::filesystem::is_character_file(path_); }
 	bool is_empty() const { return std::filesystem::is_empty(path_); }
 	std::uintmax_t file_size() const { return std::filesystem::file_size(path_); }
-	file_time_type last_write_time() const { return std::filesystem::last_write_time(path_); }
+	std::filesystem::file_time_type last_write_time() const { return std::filesystem::last_write_time(path_); }
 	
 	path absolute() const {
 		return path(std::filesystem::absolute(path_));
