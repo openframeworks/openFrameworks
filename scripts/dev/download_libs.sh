@@ -4,6 +4,7 @@ VER=master
 PLATFORM=""
 ARCH=""
 OVERWRITE=1
+LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
@@ -112,7 +113,6 @@ while [[ $# -gt 0 ]]; do
         -s|--silent)
         SILENT_ARGS=1
         ;;
-
         -k|--no-ssl)
         NO_SSL=1
         ;;
@@ -122,7 +122,9 @@ while [[ $# -gt 0 ]]; do
         ;;
         -t|--tag)
         TAG="$2"
-        shift # past argument
+        ;;
+        -l|--legacy)
+        LEGACY=1
         ;;
         -h|--help)
         printHelp
@@ -236,13 +238,18 @@ if [ "$PLATFORM" == "msys2" ]; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
     fi
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
-    if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_arm64_1.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_arm64_2.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_1.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_2.zip"
+    if [[ $BLEEDING_EDGE = 1 ]]; then
+        if [[ $LEGACY == 1 ]]; then
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
+        else
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_2.zip"
+        fi
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
