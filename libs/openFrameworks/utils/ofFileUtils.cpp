@@ -1789,7 +1789,7 @@ of::filesystem::path ofFilePath::getPathForDirectoryFS(const of::filesystem::pat
 //------------------------------------------------------------------------------------------------------------
 // FIXME: Deprecate this seems over complicated and not useful anymore, using filesystem
 of::filesystem::path ofFilePath::getPathForDirectory(const of::filesystem::path & path){
-	return ofPathToString(ofFilePath::getPathForDirectoryFS(path));
+	return ofFilePath::getPathForDirectoryFS(path);
 }
 
 
