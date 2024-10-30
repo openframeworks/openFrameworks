@@ -46,8 +46,7 @@ public:
 	std::wstring wstring() const { return path_.wstring(); }
 #endif
 	
-	std::string generic_string() const { return path_.generic_string(); }
-	std::string generic_string() { return path_.generic_string(); }
+	auto generic_string() const { return path_.generic_string(); }
 	auto string() const { return path_.string(); }
 	auto native() const { return path_.native(); }
 	
