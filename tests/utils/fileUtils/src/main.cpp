@@ -268,12 +268,12 @@ class ofApp: public ofxUnitTestsApp{
 			ofDirectory currentVideoDirectory(ofToDataPath("..\\..\\..\\video", true));
 			auto path = currentVideoDirectory.path();
 			std::string pathEnd("data\\..\\..\\..\\video\\");
-			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+			ofxTestEq(path.native().substr(path.size()-pathEnd.size()), pathEnd, "#4564");
 		}else{
 			ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
 			auto path = currentVideoDirectory.path();
 			std::string pathEnd("data/../../../video/");
-			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+			ofxTestEq(path.native().substr(path.size()-pathEnd.size()), pathEnd, "#4564");
 		}
 	}
 };
