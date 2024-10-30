@@ -9,8 +9,9 @@ namespace filesystem {
 class path {
 private:
 	std::filesystem::path path_; // simple composition
+	
+#if defined(TARGET_WIN32)
 	mutable std::string cached_narrow_str_;
-
 	const char* to_narrow_cstr() const {
 		std::mbstate_t state = std::mbstate_t();
 		size_t size_needed = std::wcstombs(nullptr, wstring().c_str(), 0) + 1;
@@ -21,6 +22,7 @@ private:
 		std::wcstombs(&cached_narrow_str_[0], wstring().c_str(), size_needed);
 		return cached_narrow_str_.c_str();
 	}
+#endif
 
 public:
 	path() = default;
@@ -34,18 +36,18 @@ public:
 	path& operator=(path&& other) noexcept = default;
 	
 	operator std::filesystem::path() const { return path_; }
-	operator const std::string() const { return path_.string(); }
-	operator std::string() { return path_.string(); }
-	
+	operator const std::string() const { return path_.string(); } // should try catch on win
+	operator std::string() { return path_.string(); } // should try catch on win
 	operator const std::filesystem::path::value_type*() const { return path_.native().c_str(); }
+	
 #if defined(TARGET_WIN32)
 	operator std::wstring() const { return path_.wstring(); }
-	operator const char*() const { return to_narrow_cstr(); }
+	operator const char*() const { return to_narrow_cstr(); } // should try catch on win
+	std::wstring wstring() const { return path_.wstring(); }
 #endif
 	
 	std::string generic_string() const { return path_.generic_string(); }
 	std::string generic_string() { return path_.generic_string(); }
-	std::wstring wstring() const { return path_.wstring(); }
 	auto string() const { return path_.string(); }
 	auto native() const { return path_.native(); }
 	
