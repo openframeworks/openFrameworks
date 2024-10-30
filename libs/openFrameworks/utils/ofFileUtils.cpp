@@ -1866,7 +1866,7 @@ of::filesystem::path ofFilePath::getAbsolutePath(const of::filesystem::path& pat
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFilePath::isAbsolute(const of::filesystem::path& path){
-	return std::filesystem::path(path).is_absolute();
+	return path.is_absolute();
 }
 
 //------------------------------------------------------------------------------------------------------------
