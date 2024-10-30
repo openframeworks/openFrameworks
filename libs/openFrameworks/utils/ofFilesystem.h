@@ -57,7 +57,7 @@ public:
 
 	const std::filesystem::path& native_path() const { return path_; }
 	
-	path replace_extension(const path & ext = of::filesystem::path()) { return path_.replace_extension(std::filesystem::path(ext)); }
+	path replace_extension(const path & ext = std::filesystem::path()) { return path(path_.replace_extension(ext)); }
 	
 	inline static auto preferred_separator = std::filesystem::path::preferred_separator;
 	
