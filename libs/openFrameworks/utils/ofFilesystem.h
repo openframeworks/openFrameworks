@@ -36,25 +36,28 @@ public:
 	path& operator=(path&& other) noexcept = default;
 	
 	operator std::filesystem::path() const { return path_; }
-	operator std::filesystem::path::string_type() const { return path_.string(); } // should try catch on win
-	operator const std::filesystem::path::value_type*() const { return path_.c_str(); }
+	explicit operator const std::filesystem::path::value_type*() const { return path_.c_str(); }
 	
 #if defined(TARGET_WIN32)
 	operator std::wstring() const { return path_.wstring(); }
 	operator const char*() const { return to_narrow_cstr(); } // should try catch on win
-	std::wstring wstring() const { return path_.wstring(); }
+	operator std::string const { return path_.string(); } // should try catch on win
+	explicit operator const std::string const { return path_.string(); } // should try catch on win
+#else
+	operator std::filesystem::path::string_type() const { return path_.string(); }
+	explicit operator const std::filesystem::path::string_type() const { return path_.string(); } 
 #endif
 	
+	auto wstring() const { return path_.wstring(); }
 	auto generic_string() const { return path_.generic_string(); }
 	auto string() const { return path_.string(); }
 	auto native() const { return path_.native(); }
-	
 	auto u8string() const { return path_.u8string(); }
 	const auto c_str() const { return path_.c_str(); } 
 
 	const std::filesystem::path& native_path() const { return path_; }
 	
-	path replace_extension(path ext = path()) { return path_.replace_extension(ext); }
+	path replace_extension(const path & ext = of::filesystem::path()) { return path_.replace_extension(std::filesystem::path(ext)); }
 	
 	inline static auto preferred_separator = std::filesystem::path::preferred_separator;
 	
