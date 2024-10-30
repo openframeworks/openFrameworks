@@ -42,7 +42,7 @@ public:
 	operator std::wstring() const { return path_.wstring(); }
 	operator const char*() const { return to_narrow_cstr(); } // should try catch on win
 	operator std::string() const { return path_.string(); } // should try catch on win
-	explicit operator const std::string const { return path_.string(); } // should try catch on win
+	explicit operator const std::string() const { return path_.string(); } // should try catch on win
 #else
 	operator std::filesystem::path::string_type() const { return path_.string(); }
 	explicit operator const std::filesystem::path::string_type() const { return path_.string(); } 
