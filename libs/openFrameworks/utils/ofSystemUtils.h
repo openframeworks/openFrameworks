@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofConstants.h" // fs::path
 #include <string>
 
 /// \class ofFileDialogResult
@@ -15,9 +16,9 @@ public:
 	/// \return the full path of the selected file or directory, if set
 	std::string getPath();
 
-	std::string filePath; ///< full path to selected file or directory
-	std::string fileName; ///< selected file or directory name
-	bool bSuccess; ///< true if the dialog action was successful, aka file select not cancel
+	std::string filePath = ""; ///< full path to selected file or directory
+	std::string fileName = ""; ///< selected file or directory name
+	bool bSuccess = false; ///< true if the dialog action was successful, aka file select not cancel
 };
 
 /// \brief show an error message in an alert dialog box

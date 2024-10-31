@@ -47,16 +47,16 @@ void ofApp::update(){
 	for (const auto & tester: testers_) {
 		for (size_t i=0; i<10; i++) {
 #if defined(USE_EXPLICIT_FUNCTION)
-		ofxOscMessage m;
-		m.setAddress("/test");
-		m.addIntArg(std::int32_t(i));
-		m.addIntArg(port_);
-		m.addIntArg(i);
-		tester->sender_->sendMessage(m);
+			ofxOscMessage m;
+			m.setAddress("/test");
+			m.addIntArg(std::int32_t(i));
+			m.addIntArg(port_);
+			m.addIntArg(i);
+			tester->sender_->sendMessage(m);
 #else
-		ofxOscMessage m{"/test"};
-		m.add(i);
-		tester->sender_->sendMessage(m.add(port_).add(i));
+			ofxOscMessage m{"/test"};
+			m.add(i);
+			tester->sender_->sendMessage(m.add(port_).add(i));
 #endif
 			msgs_out_++;
 		}
@@ -93,8 +93,14 @@ void ofApp::draw() {
 void ofApp::keyPressed(int key){
 	if (key=='1' ) mode_ = DYNA;
 	if (key=='2' ) mode_ = STOP;
-	if (key=='3' ) mode_ = STABLE;
-	msgs_ = 0;
-	msgs_out_ = 0;
+	if (key=='3' ) {
+		mode_ = STABLE;
+		for (const auto & tester: testers_) {
+			if (!tester->receiver_->isListening()) {
+				tester->receiver_->start();
+			}
+		}
+	}
+	reset_stats();
 }
 

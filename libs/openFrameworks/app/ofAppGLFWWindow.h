@@ -6,6 +6,7 @@
 // MARK: Target
 #include "ofConstants.h"
 
+#if defined(TARGET_GLFW_WINDOW)
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef struct _XIM * XIM;
 typedef struct _XIC * XIC;
@@ -51,8 +52,10 @@ public:
 	bool visible = true;
 	bool iconified = false;
 	bool decorated = true;
+    bool floating = false;
 	bool resizable = true;
 	bool transparent = false;
+    bool mousePassThrough = false;
 	bool maximized = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
@@ -120,6 +123,7 @@ public:
 
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
+    void setWindowMousePassThrough(bool allowPassThrough);
 
 	void enableSetupScreen();
 	void disableSetupScreen();
@@ -165,7 +169,7 @@ public:
 	Window getX11Window();
 	XIC getX11XIC();
 
-	void setWindowIcon(const std::string & path);
+	void setWindowIcon(const of::filesystem::path & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
@@ -197,7 +201,7 @@ private:
 	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
 	static void 	char_cb(GLFWwindow* windowP_, uint32_t key);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
-  static void   position_cb(GLFWwindow* windowP_, int x, int y);
+    static void   position_cb(GLFWwindow* windowP_, int x, int y);
 	static void 	framebuffer_size_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
@@ -250,4 +254,4 @@ private:
 #endif // TARGET_WIN32
 };
 
-//#endif
+#endif

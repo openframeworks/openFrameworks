@@ -10,6 +10,7 @@
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 
 #include "ofUtils.h"
+#include "ofMath.h"
 #include "ofLog.h"
 #include "ofEvents.h"
 
@@ -366,9 +367,13 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 }
 
 - (void) handleMediaServicesReset:(NSNotification *)notification {
-#ifndef TARGET_OSX
 
-    NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    
+    NSUInteger interruptionType;
+    UInt8 reasonValue;
+#ifndef TARGET_OSX
+    interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+#endif
     
         NSLog(@"Media services have been reset!");
        NSLog(@"Re-wiring connections and starting once again");
@@ -390,17 +395,17 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     
     
     [self startEngine];
-#endif
+
 }
 
 - (void) handleRouteChange:(NSNotification *)notification {
-#ifndef TARGET_OSX
 
-    NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
-    
-    UInt8 reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
-    
+    NSUInteger interruptionType;
+    UInt8 reasonValue = 0;
+
 #ifndef TARGET_OSX
+    interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
         AVAudioSessionRouteDescription *routeDescription = [notification.userInfo valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
 #endif
     
@@ -435,15 +440,13 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         NSLog(@"Previous route:\n");
         NSLog(@"%@", routeDescription);
 #endif
-#endif
 }
 
 - (void) handleInterruption:(NSNotification *)notification {
-#ifndef TARGET_OSX
 
+#ifndef TARGET_OSX
     NSUInteger interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
 
-    
     NSLog(@"AVEnginePlayer::handleInterruption: notification:%@ %@ interruptionType: %lu", notification.name, notification.description, (unsigned long)interruptionType);
        
 
@@ -455,6 +458,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         [self startEngine];
     }
 #endif
+
 }
 
 - (void)beginInterruption {
@@ -1010,12 +1014,12 @@ ofAVEngineSoundPlayer::~ofAVEngineSoundPlayer() {
     unload();
 }
 
-bool ofAVEngineSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
+bool ofAVEngineSoundPlayer::load(const of::filesystem::path & fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }
 
-    string filePath = ofToDataPath(fileName);
+    auto filePath = ofToDataPath(fileName);
     @autoreleasepool {
         soundPlayer = [[AVEnginePlayer alloc] init];
     }

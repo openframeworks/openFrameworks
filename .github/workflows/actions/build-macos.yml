@@ -22,28 +22,24 @@ env:
 
 jobs:
   build-macos:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
         matrix:
           cfg:
-          - {target: osx, opt: "xcode"}
-          - {target: osx, opt: "makefiles"}
+          - {target: macos, opt: "xcode"}
+          - {target: macos, opt: "makefiles"}
     steps:
     - uses: actions/checkout@v4
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.13
+      uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
         # key: ${{ matrix.msystem }}
 
-
     - name: Download libs
       # continue-on-error: true
-      run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh
-#    - name: rm-dev
-#      run: sudo rm -rf /Library/Developer
-
+      run: ./scripts/${{ matrix.cfg.target }}/download_latest_libs.sh
     # this step is not needed here because the script is empty
     # - name: install
     # run: ./scripts/ci/$TARGET/install.sh

@@ -29,6 +29,8 @@
  * ***********************************************************************/ 
 
 #include "ofxiOSMapKit.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
@@ -270,4 +272,5 @@ void ofxiOSMapKit::errorLoadingMap(std::string errorDescription) {
 	}
 }
 
+#endif
 #endif

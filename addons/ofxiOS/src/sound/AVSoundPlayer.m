@@ -4,9 +4,10 @@
 //  http://julapy.com/blog
 //
 
+#include "ofxiOSConstants.h"
+#if defined(OF_IOS_AVSOUNDPLAYER)
 #import "AVSoundPlayer.h"
 #include <TargetConditionals.h>
-
 @interface AVSoundPlayer() {
     BOOL bMultiPlay;
 }
@@ -270,3 +271,4 @@
 }
 
 @end
+#endif

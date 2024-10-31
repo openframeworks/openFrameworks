@@ -21,9 +21,17 @@ while [[ $# > 0 ]] ; do
 		confirm="no"
 		continue
 	fi
+	if [ "$arg" == "--confirm" ]; then
+		confirm="yes"
+		continue
+	fi
 	if [ "$arg" == "--help" ]; then
 		usage
 		exit 1
+	fi
+	if [[ "$arg" == "--msystem="* ]]; then
+		msystem="${arg#*=}"
+		continue
 	fi
 	echo Invalid argument : $arg
 	usage
@@ -35,12 +43,19 @@ done
 msyspackages="unzip make"
 
 # List of MINGW packages to be installed (without prefix)
-mingwPackages="gcc assimp cairo curl freeglut FreeImage \
-	glew glfw glm \
+mingwPackages="assimp cairo curl FreeImage \
+	glew glfw glm fmt zlib brotli libpng \
 	harfbuzz libsndfile libusb libxml2 mpg123 \
 	nlohmann-json openal opencv \
 	pkgconf pugixml rtaudio \
 	uriparser utf8cpp "
+if [[ "$msystem" == "clang64" ]] || [[ "$msystem" == "clangarm64" ]] ; then
+    mingwPackages="clang $mingwPackages"
+elif [[ "$msystem" == "ucrt64" ]]; then
+    mingwPackages="gcc $mingwPackages"
+elif [[ "$msystem" == "mingw64" ]]; then
+    mingwPackages="gcc $mingwPackages"
+fi
 # gdb zlib ntldd-git
 # boost poco tools
 # Build the full list of packages adding prefix to MINGW packages

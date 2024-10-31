@@ -1,6 +1,8 @@
-#include <cairo-features.h>
-#include <cairo-pdf.h>
-#include <cairo-svg.h>
+#include "ofConstants.h"
+#if defined(OF_CAIRO)
+#include <cairo/cairo-features.h>
+#include <cairo/cairo-pdf.h>
+#include <cairo/cairo-svg.h>
 #include "ofCairoRenderer.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
@@ -46,10 +48,10 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 	streamBuffer.clear();
 
 	if (type == FROM_FILE_EXTENSION) {
-		auto ext = filename.extension();
-		if (ext == of::filesystem::path { ".svg" } || ext == of::filesystem::path { ".SVG" }) {
+		auto ext = ofGetExtensionLower(filename);
+		if (ext == ".svg") {
 			type = SVG;
-		} else if (ext == of::filesystem::path { ".pdf" } || ext == of::filesystem::path { ".PDF" }) {
+		} else if (ext == ".pdf") {
 			type = PDF;
 		} else { // default to image
 			type = IMAGE;
@@ -72,14 +74,15 @@ void ofCairoRenderer::setup(const of::filesystem::path & _filename, Type _type, 
 		if (filename.empty()) {
 			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function, this, outputsize.width, outputsize.height);
 		} else {
-			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(), outputsize.width, outputsize.height);
+			// it is necessary to convert to string since the function doesn't support wide char.
+			surface = cairo_pdf_surface_create(ofPathToString(ofToDataPath(filename)).c_str(), outputsize.width, outputsize.height);
 		}
 		break;
 	case SVG:
 		if (filename.empty()) {
 			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function, this, outputsize.width, outputsize.height);
 		} else {
-			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(), outputsize.width, outputsize.height);
+			surface = cairo_svg_surface_create(ofPathToString(ofToDataPath(filename)).c_str(), outputsize.width, outputsize.height);
 		}
 		break;
 	case IMAGE:
@@ -653,6 +656,12 @@ void ofCairoRenderer::setLineWidth(float lineWidth) {
 		path.setStrokeWidth(lineWidth);
 	}
 	cairo_set_line_width(cr, lineWidth);
+}
+
+//--------------------------------------------
+void ofCairoRenderer::setPointSize(float pointSize) {
+	currentStyle.pointSize = pointSize;
+	// no point size for cairo
 }
 
 //----------------------------------------------------------
@@ -1387,3 +1396,4 @@ const of3dGraphics & ofCairoRenderer::get3dGraphics() const {
 of3dGraphics & ofCairoRenderer::get3dGraphics() {
 	return graphics3d;
 }
+#endif
