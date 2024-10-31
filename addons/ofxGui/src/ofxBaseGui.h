@@ -12,8 +12,8 @@ class ofxBaseGui {
 		virtual ~ofxBaseGui();
 		void draw();
 
-		void saveToFile(const std::string& filename);
-		void loadFromFile(const std::string& filename);
+		void saveToFile(const of::filesystem::path & filename);
+		void loadFromFile(const of::filesystem::path & filename);
 
 		template<class T>
 		void saveTo(T & serializer){

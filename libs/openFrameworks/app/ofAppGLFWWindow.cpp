@@ -203,6 +203,13 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
 #if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3)
             glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
 #endif
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4)
+            if( settings.mousePassThrough && settings.transparent && settings.decorated) {
+                ofLogError("ofAppGLFWWindow") << "window is decorated and has transparent input pass through. use floating...";
+            }
+            glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, settings.mousePassThrough);
+            glfwWindowHint(GLFW_FLOATING, settings.floating);
+#endif
             currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
         } else {
             currentRenderer = std::make_shared<ofGLRenderer>(this);
@@ -409,7 +416,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
 #ifdef TARGET_LINUX
     //------------------------------------------------------------
-    void ofAppGLFWWindow::setWindowIcon(const std::string & path) {
+    void ofAppGLFWWindow::setWindowIcon(const of::filesystem::path & path) {
         ofPixels iconPixels;
         ofLoadImage(iconPixels, path);
         setWindowIcon(iconPixels);
@@ -1069,6 +1076,15 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     }
     
     //------------------------------------------------------------
+    void ofAppGLFWWindow::setWindowMousePassThrough(bool allowPassThrough) {
+		if(settings.mousePassThrough == allowPassThrough) return;
+        settings.mousePassThrough = allowPassThrough;
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4)
+        glfwSetWindowAttrib(getGLFWWindow(), GLFW_MOUSE_PASSTHROUGH, settings.mousePassThrough);
+#endif
+    }
+    
+    //------------------------------------------------------------
     void ofAppGLFWWindow::setOrientation(ofOrientation orientation) {
         this->orientation = orientation;
     }
@@ -1549,6 +1565,9 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
                 break;
             case GLFW_KEY_KP_EQUAL:
                 key = codepoint = '=';
+                break;
+            case GLFW_KEY_SPACE:
+                key = codepoint = OF_KEY_SPACE;
                 break;
             default:
                 codepoint = keycodeToUnicode(instance, scancode, mods);

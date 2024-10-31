@@ -658,19 +658,20 @@ std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPla
 }
 
 //----------------------------------------------
-bool ofMediaFoundationPlayer::load(std::string name) {
-    return _load(name, false);
+bool ofMediaFoundationPlayer::load(const of::filesystem::path & fileName) {
+    return _load(fileName, false);
 }
 
 //----------------------------------------------
-void ofMediaFoundationPlayer::loadAsync(std::string name) {
-    _load(name, true);
+void ofMediaFoundationPlayer::loadAsync(const of::filesystem::path & fileName) {
+    _load(fileName, true);
 }
 
 //----------------------------------------------
-bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
+bool ofMediaFoundationPlayer::_load(const of::filesystem::path & fileName, bool abAsync) {
     close();
 
+    std::string name = ofPathToString(fileName);
     mBLoadAsync = abAsync;
 
     bool bStream = false;
@@ -679,7 +680,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     bStream = bStream || ofIsStringInString(name, "rtsp://");
     bStream = bStream || ofIsStringInString(name, "rtmp://");
 
-    of::filesystem::path absPath = name;
+    of::filesystem::path absPath = fileName;
 
     if (!bStream) {
         if (ofFile::doesFileExist(absPath)) {

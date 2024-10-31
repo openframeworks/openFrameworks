@@ -43,6 +43,7 @@ class ofThread {
 public:
 	/// \brief Create an ofThread.
 	ofThread();
+	virtual ~ofThread() { }
 
 	/// \brief Check the running status of the thread.
 	/// \returns true iff the thread is currently running.
@@ -300,6 +301,7 @@ private:
 
 class ofThread {
 public:
+	virtual ~ofThread() { }
 	void lock() { }
 	void unlock() { }
 	void startThread() { }
