@@ -1,6 +1,7 @@
 
 #include "ofMediaFoundationSoundPlayer.h"
 #include "ofLog.h"
+#include "ofUtils.h" // ofIsStringInString
 
 #include <condition_variable>
 #include <propvarutil.h>
@@ -186,9 +187,10 @@ ofMediaFoundationSoundPlayer::~ofMediaFoundationSoundPlayer() {
 }
 
 //--------------------
-bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
+bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path & fileName, bool stream) {
     unload();
     
+	auto filePath = fileName;
     std::string fileStr = ofPathToString(fileName);
     bool bStream = false;
     bStream = bStream || ofIsStringInString(fileStr, "http://");
@@ -196,13 +198,11 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     bStream = bStream || ofIsStringInString(fileStr, "rtsp://");
     bStream = bStream || ofIsStringInString(fileStr, "rtmp://");
 
-    of::filesystem::path absPath{ fileStr };
-
     if (!bStream) {
-        if (ofFile::doesFileExist(absPath)) {
-            absPath = ofFilePath::getAbsolutePath(absPath, true);
+        if (ofFile::doesFileExist(filePath)) {
+			filePath = ofFilePath::getAbsolutePath(filePath, true);
         } else {
-            ofLogError("ofMediaFoundationSoundPlayer") << " file does not exist! " << absPath;
+            ofLogError("ofMediaFoundationSoundPlayer") << " file does not exist! " << filePath;
             return false;
         }
     }
@@ -222,7 +222,7 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
     }
 
 
-    LPCWSTR path = absPath.c_str();
+    LPCWSTR path = filePath.c_str();
     
 
     hr = MFCreateSourceReaderFromURL(
@@ -231,12 +231,12 @@ bool ofMediaFoundationSoundPlayer::load(const of::filesystem::path& fileName, bo
         mSrcReader.GetAddressOf());
 
     if (hr != S_OK) {
-        ofLogError("ofMediaFoundationSoundPlayer::load") << " unable to load from: " << absPath;
+        ofLogError("ofMediaFoundationSoundPlayer::load") << " unable to load from: " << filePath;
         unload();
         return false;
     }
 
-    ofLogVerbose("ofMediaFoundationSoundPlayer::load") << " created the source reader " << absPath;
+    ofLogVerbose("ofMediaFoundationSoundPlayer::load") << " created the source reader " << filePath;
     // Select only the audio stream
     hr = mSrcReader->SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS, false);
     if (hr == S_OK) {

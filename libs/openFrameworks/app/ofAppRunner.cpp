@@ -7,6 +7,8 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
 #include "ofMainLoop.h"
+#include "ofEvents.h" // of::priv
+#include "ofUtils.h" // initUtils
 
 using std::shared_ptr;
 
@@ -461,6 +463,11 @@ void ofDisableSetupScreen(){
 //--------------------------------------
 void ofToggleFullscreen(){
 	mainLoop()->getCurrentWindow()->toggleFullscreen();
+}
+
+//--------------------------------------
+void ofSetWindowMousePassThrough(bool allowPassThrough){
+	mainLoop()->getCurrentWindow()->setWindowMousePassthrough(allowPassThrough);
 }
 
 //--------------------------------------

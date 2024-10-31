@@ -87,11 +87,16 @@ using std::vector;
 using std::string;
 
 //---------------------------------------------------------------------------
-ofVideoPlayer::ofVideoPlayer (){
-	bUseTexture			= true;
-	playerTex			= nullptr;
+ofVideoPlayer::ofVideoPlayer() {
+	bUseTexture = true;
+	playerTex = nullptr;
 	internalPixelFormat = OF_PIXELS_RGB;
 	tex.resize(1);
+}
+
+//---------------------------------------------------------------------------
+ofVideoPlayer::ofVideoPlayer(const of::filesystem::path & fileName) : ofVideoPlayer() {
+	load(fileName);
 }
 
 //---------------------------------------------------------------------------
@@ -146,16 +151,16 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::load(string name){
+bool ofVideoPlayer::load(const of::filesystem::path & fileName){
 	if( !player ){
 		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	bool bOk = player->load(name);
+	bool bOk = player->load(fileName);
 
 	if( bOk){
-        moviePath = name;
+        moviePath = fileName;
         if(bUseTexture){
         	if(player->getTexturePtr()==nullptr){
 				if(tex.empty()) {
@@ -179,23 +184,23 @@ bool ofVideoPlayer::load(string name){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::loadAsync(string name){
+void ofVideoPlayer::loadAsync(const of::filesystem::path & fileName){
 	if( !player ){
 		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	player->loadAsync(name);
-	moviePath = name;
+	player->loadAsync(fileName);
+	moviePath = fileName;
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::loadMovie(string name){
-	return load(name);
+bool ofVideoPlayer::loadMovie(const of::filesystem::path & fileName){
+	return load(fileName);
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath() const{
+of::filesystem::path ofVideoPlayer::getMoviePath() const {
     return moviePath;	
 }
 

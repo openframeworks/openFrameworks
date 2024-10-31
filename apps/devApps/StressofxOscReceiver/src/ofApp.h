@@ -16,6 +16,7 @@ class ofApp : public ofBaseApp{
 		STABLE
 	};
 	
+	
 	Mode mode_ { DYNA };
 	long msgs_ { 0 };
 	long msgs_out_ { 0 };
@@ -28,6 +29,10 @@ class ofApp : public ofBaseApp{
 	
 	std::array<std::shared_ptr<Tester>, 10> testers_;
 	
+	auto reset_stats() {
+		msgs_ = 0;
+		msgs_out_ = 0;
+	}
 	
 public:
 	void setup() override;

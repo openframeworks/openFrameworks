@@ -1,5 +1,6 @@
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OS_IOS)
 #include "ofVideoBaseTypes.h"
 #include "ofTexture.h"
 #include "ofPixels.h"
@@ -14,7 +15,7 @@ public:
 	void enableTextureCache();
 	void disableTextureCache();
 	
-	bool load(std::string name);
+	bool load(const of::filesystem::path & fileName);
 	void close();
 	void update();
 	
@@ -61,7 +62,7 @@ public:
 	void * getAVFoundationVideoPlayer();
 	
 	[[deprecated("use load()")]]
-	bool loadMovie(std::string name);
+	bool loadMovie(const of::filesystem::path & fileName);
 	[[deprecated("use getPixels()")]]
 	ofPixels & getPixelsRef();
 	[[deprecated("use getPixels()")]]
@@ -86,4 +87,4 @@ protected:
 };
 
 #define ofxiPhoneVideoPlayer ofxiOSVideoPlayer
-
+#endif
