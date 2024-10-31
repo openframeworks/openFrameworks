@@ -200,7 +200,15 @@ public:
 		int port = ofRandom(15000, 65535);
 		ofxTCPManager server;
 		ofxTest(server.Create(), "server socket creation");
-		ofxTest(server.Bind(port), "server socket bind");
+		bool isPortBound = false;
+		while (port <= 65535 && !isPortBound) {
+			isPortBound = server.Bind(port);
+			if (!isPortBound) {
+				ofLogNotice() << "yaR port blocked: " << port;
+				port++;
+			}
+		}
+		ofxTest(isPortBound, "server socket bind");
 		ofxTest(server.Listen(1), "server socket listen");
 		std::condition_variable done;
 		std::mutex mtx;

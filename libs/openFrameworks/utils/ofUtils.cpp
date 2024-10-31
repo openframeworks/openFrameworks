@@ -45,7 +45,7 @@
 #endif
 
 #ifdef TARGET_OF_IOS
-	#include "ofxiOSExtras.h"
+//	#include "ofxiOSExtras.h"
 #endif
 
 #ifdef TARGET_ANDROID
@@ -975,7 +975,7 @@ void ofLaunchBrowser(const string & url, bool uriEncodeQuery, std::string target
 #endif
 
 #ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(uriStr.value());
+//		ofxiOSLaunchBrowser(uriStr.value());
 #endif
 
 #ifdef TARGET_ANDROID
@@ -1023,18 +1023,18 @@ std::string ofGetVersionPreRelease() {
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
-void ofSaveScreen(const string & filename) {
+void ofSaveScreen(const of::filesystem::path & fileName) {
 	/*ofImage screen;
    screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
    screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
    screen.save(filename);*/
 	ofPixels pixels;
 	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(pixels, filename);
+	ofSaveImage(pixels, fileName);
 }
 
 //--------------------------------------------------
-void ofSaveViewport(const string & filename) {
+void ofSaveViewport(const of::filesystem::path & fileName) {
 	// because ofSaveScreen doesn't related to viewports
 	/*ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();
@@ -1044,13 +1044,13 @@ void ofSaveViewport(const string & filename) {
 
 	ofPixels pixels;
 	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(pixels, filename);
+	ofSaveImage(pixels, fileName);
 }
 
 //--------------------------------------------------
 int saveImageCounter = 0;
 void ofSaveFrame(bool bUseViewport) {
-	string fileName = ofToString(saveImageCounter) + ".png";
+	of::filesystem::path fileName = ofToString(saveImageCounter) + ".png";
 	if (bUseViewport) {
 		ofSaveViewport(fileName);
 	} else {
@@ -1132,7 +1132,7 @@ std::string ofGetEnv(const std::string & var, const std::string defaultValue) {
 		return defaultValue;
 	}
 #else
-	auto value = getenv(var.c_str());
+	auto value = std::getenv(var.c_str());
 	if (value) {
 		return value;
 	} else {

@@ -44,6 +44,11 @@ enum ofFboMode : short;
 enum ofLoopType : short;
 enum ofOrientation : short;
 
+struct ofBoundingBox{
+    glm::vec3 min = glm::vec3(0,0,0);
+    glm::vec3 max = glm::vec3(0,0,0);
+};
+
 /// \brief Contains general information about the style of ofGraphics
 /// elements such as color, line width and others.
 class ofStyle {
@@ -57,6 +62,7 @@ public:
 		sphereResolution = 20;
 		curveResolution = 20;
 		lineWidth = 1.0;
+		pointSize = 1.0;
 		polyMode = OF_POLY_WINDING_ODD;
 		rectMode = OF_RECTMODE_CORNER;
 #ifdef TARGET_OPENGLES
@@ -126,6 +132,9 @@ public:
 	/// \brief The width of rendered lines.
 	/// \warning This is not currently implemented in modern OF renderers.
 	float lineWidth;
+
+	/// \brief The size of rendered points.
+	float pointSize;
 
 	//bool depthTest; removed since it'll break old projects setting depth test through glEnable
 };
@@ -834,6 +843,11 @@ public:
 	///
 	/// \param lineWidth The line width to request this renderer to use.
 	virtual void setLineWidth(float lineWidth) = 0;
+	
+	/// \brief Set the point size this renderer should use when drawing points.
+	///
+	/// \param pointSize The points size to request this renderer to use.
+	virtual void setPointSize(float pointSize) = 0;
 
 	/// \brief Enable/disable depth testing with this renderer.
 	///

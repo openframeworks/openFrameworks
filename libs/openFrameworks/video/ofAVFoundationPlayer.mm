@@ -52,31 +52,31 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 }
 
 //--------------------------------------------------------------
-void ofAVFoundationPlayer::loadAsync(std::string name){
-    loadPlayer(name, true);
+void ofAVFoundationPlayer::loadAsync(const of::filesystem::path & fileName){
+    loadPlayer(fileName, true);
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::load(std::string name) {
-    return loadPlayer(name, false);
+bool ofAVFoundationPlayer::load(const of::filesystem::path & fileName) {
+    return loadPlayer(fileName, false);
 }
 
 //--------------------------------------------------------------
-// FIXME: fs::path
-bool ofAVFoundationPlayer::loadPlayer(std::string name, bool bAsync) {
+bool ofAVFoundationPlayer::loadPlayer(const of::filesystem::path & fileName, bool bAsync) {
 	if( ofGetUsingArbTex() == false ){
         killTextureCache();
 		bUseTextureCache = false;
     }
 
-	NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPathFS(name).c_str()];
+	NSString * videoPath = [NSString stringWithUTF8String:fileName.c_str()];
+	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(fileName).c_str()];
 
 	BOOL bStream = NO;
 
-	bStream = bStream || (ofIsStringInString(name, "http://"));
-	bStream = bStream || (ofIsStringInString(name, "https://"));
-	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
+    std::string fileNameStr { ofPathToString(fileName) };
+	bStream = bStream || (ofIsStringInString(fileNameStr, "http://"));
+	bStream = bStream || (ofIsStringInString(fileNameStr, "https://"));
+	bStream = bStream || (ofIsStringInString(fileNameStr, "rtsp://"));
 
 	NSURL * url = nil;
 	if(bStream == YES) {
@@ -431,18 +431,17 @@ void ofAVFoundationPlayer::initTextureCache() {
      *  which is unecessary in this case because the texture already exists.
      *  so... we can use ofTexture::setUseExternalTextureID() to get around this.
      */
-
+  
 	if (!videoTexture.isAllocated()) {
 		int videoTextureW = getWidth();
 		int videoTextureH = getHeight();
 		videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA);
-
-		ofTextureData & texData = videoTexture.getTextureData();
-		texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
-		texData.tex_u = 1.0f; // assuming this is something to do with the way ios creates the texture cache.
 		videoTexture.setTextureMinMagFilter(GL_LINEAR, GL_LINEAR);
 		videoTexture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-	}
+    }
+    ofTextureData & texData = videoTexture.getTextureData();
+    texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
+    texData.tex_u = 1.0f; // assuming this is something to do with the way ios
 
     CVReturn err;
     unsigned int textureCacheID;
@@ -763,8 +762,8 @@ void * ofAVFoundationPlayer::getAVFoundationVideoPlayer() {
 #endif
 
 //-------------------------------------------------------------- DEPRECATED.
-bool ofAVFoundationPlayer::loadMovie(std::string name) {
-    return load(name);
+bool ofAVFoundationPlayer::loadMovie(const of::filesystem::path & fileName) {
+    return load(fileName);
 }
 
 ofPixels & ofAVFoundationPlayer::getPixelsRef() {

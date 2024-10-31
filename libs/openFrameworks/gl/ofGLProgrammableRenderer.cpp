@@ -111,6 +111,8 @@ void ofGLProgrammableRenderer::finishRender() {
 	}
 	matrixStack.clearStacks();
 	framebufferIdStack.clear();
+	mDrawMode = GL_TRIANGLES;
+	mUniformsTex.clear();
 }
 
 //----------------------------------------------------------
@@ -153,7 +155,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 	}
 
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals);
+	// const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals);
 
 	GLenum drawMode;
 	switch (renderType) {
@@ -170,6 +172,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 		break;
 	}
+	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals, drawMode);
 
 	if (vertexData.getNumIndices()) {
 		glDrawElements(drawMode, vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
@@ -177,13 +180,45 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
 #else
-
-	#ifndef TARGET_OPENGLES
-	meshVbo.setMesh(vertexData, GL_STREAM_DRAW, useColors, useTextures, useNormals);
+	
+	ofVbo* vboToRender = nullptr;
+	bool tGoingToRenderLines = false;
+#ifndef TARGET_OPENGLES
+//	meshVbo.setMesh(vertexData, GL_STREAM_DRAW, useColors, useTextures, useNormals);
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	GLenum drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-	#else
-	meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
+	// if the render type is different than the primitive mode
+	// ie. mesh mode is triangles but we called mesh.drawVertices() which uses GL_POINT for the render type
+	// however, we need GL_POINTS for rendering point sprites
+	if (pointSpritesEnabled && !usingCustomShader && !uniqueShader) {
+		if (renderType == OF_MESH_POINTS) {
+			drawMode = GL_POINTS;
+		}
+	}
+	
+	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
+	if( usingCustomShader || usingCustomShader || currentMaterial) {
+		bConfigureForLinesShader = false;
+	}
+	
+	if( bConfigureForLinesShader ) {
+		mDrawMode = drawMode;
+		tGoingToRenderLines = true;
+		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
+		if( drawMode == GL_LINES ) {
+			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINES], drawMode, vertexData);
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINES].vbo;
+		} else {
+			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINE_STRIP], drawMode, vertexData);
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINE_STRIP].vbo;
+		}
+	} else {
+		meshVbo.setMesh(vertexData, GL_STREAM_DRAW, useColors, useTextures, useNormals);
+		vboToRender = &meshVbo;
+	}
+
+#else
+//	meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
 	GLenum drawMode;
 	switch (renderType) {
 	case OF_MESH_POINTS:
@@ -199,11 +234,50 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 		break;
 	}
-	#endif
-	if (meshVbo.getUsingIndices()) {
-		drawElements(meshVbo, drawMode, meshVbo.getNumIndices());
+	
+	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
+	if( usingCustomShader || usingCustomShader || currentMaterial) {
+		bConfigureForLinesShader = false;
+	}
+	
+	if(bConfigureForLinesShader) {
+		mDrawMode = drawMode;
+		tGoingToRenderLines = true;
+		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
+		if( drawMode == GL_LINES ) {
+			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINES], drawMode, vertexData);
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINES].vbo;
+		} else {
+			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINE_STRIP], drawMode, vertexData);
+			vboToRender = &mutThis->mLinesBundleMap[GL_LINE_STRIP].vbo;
+		}
 	} else {
-		draw(meshVbo, drawMode, 0, vertexData.getNumVertices());
+		meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
+		vboToRender = &meshVbo;
+	}
+	
+	#endif
+	
+	if( vboToRender != nullptr ) {
+		if( tGoingToRenderLines ) {
+			// Setting a bool here so that the setAttributes function does not try to switch the shaders because
+			// we are going to draw the mesh as triangles and we need the lines shader
+			// we are rendering lines, and the meshes we constructed are made of triangles
+			mBRenderingLines = true;
+			if( renderType == OF_MESH_FILL ) {
+				drawMode = GL_TRIANGLES;
+			}
+		}
+		
+		if (vboToRender->getUsingIndices()) {
+			drawElements(*vboToRender, drawMode, vboToRender->getNumIndices());
+		} else {
+			draw(*vboToRender, drawMode, 0, vboToRender->getNumVertices());
+		}
+		
+		if( tGoingToRenderLines ) {
+			mBRenderingLines = false;
+		}
 	}
 
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
@@ -230,31 +304,54 @@ void ofGLProgrammableRenderer::draw(const ofVboMesh & mesh, ofPolyRenderMode ren
 void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const {
 	if (mesh.getNumVertices() == 0) return;
 	GLuint mode = ofGetGLPrimitiveMode(mesh.getMode());
+	// nh: if the render type is different than the primitive mode
+	// ie. mesh mode is triangles but we called mesh.drawVertices() which uses GL_POINT for the render type
+	// however, we need GL_POINTS for rendering point sprites
+	if (pointSpritesEnabled) {
+		if (renderType == OF_MESH_POINTS) {
+			mode = GL_POINTS;
+		}
+	}
 #if !defined( TARGET_OPENGLES ) || defined(TARGET_EMSCRIPTEN)
 	#if !defined(TARGET_EMSCRIPTEN)
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-	#endif
-	if (mesh.getNumIndices() && renderType != OF_MESH_POINTS) {
-		if (primCount <= 1) {
-			drawElements(mesh.getVbo(), mode, mesh.getNumIndices());
+	#else
+	// nh: glPolygonMode is not supported via emscripten,
+	// we can not render wire frames with vbos.
+	// this is not the best solution, but does provide some information
+	// and does not render as solid when wireframe mode is requested.
+	if (renderType == OF_MESH_WIREFRAME) {
+		if (mesh.getNumIndices()) {
+			drawElements(mesh.getVbo(), GL_LINES, mesh.getNumIndices());
 		} else {
-			drawElementsInstanced(mesh.getVbo(), mode, mesh.getNumIndices(), primCount);
+			draw(mesh.getVbo(), GL_LINES, 0, mesh.getNumVertices());
 		}
 	} else {
-		if (primCount <= 1) {
-			draw(mesh.getVbo(), mode, 0, mesh.getNumVertices());
+	#endif
+		if (mesh.getNumIndices() && renderType != OF_MESH_POINTS) {
+			if (primCount <= 1) {
+				drawElements(mesh.getVbo(), mode, mesh.getNumIndices());
+			} else {
+				drawElementsInstanced(mesh.getVbo(), mode, mesh.getNumIndices(), primCount);
+			}
 		} else {
-			drawInstanced(mesh.getVbo(), mode, 0, mesh.getNumVertices(), primCount);
+			if (primCount <= 1) {
+				draw(mesh.getVbo(), mode, 0, mesh.getNumVertices());
+			} else {
+				drawInstanced(mesh.getVbo(), mode, 0, mesh.getNumVertices(), primCount);
+			}
 		}
-	}
-
+	#if defined(TARGET_EMSCRIPTEN)
+	} // close the if for checking for wireframe
+	#endif
+	
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
 	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
 	// after we're finished drawing, following the principle of least surprise.
 	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
 	// of its state on the client side...
 	#if !defined(TARGET_EMSCRIPTEN)
-	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ? GL_FILL : GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ? GL_FILL : GL_LINE);
 	#endif
 #else
 	if (renderType == OF_MESH_POINTS) {
@@ -299,24 +396,60 @@ void ofGLProgrammableRenderer::draw(const ofNode & node) const {
 void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	if (poly.getVertices().empty()) return;
 
-		// use smoothness, if requested:
-		//if (bSmoothHinted) startSmoothing();
+	// use smoothness, if requested:
+	//if (bSmoothHinted) startSmoothing();
 
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
 
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false);
+	// const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false);
 
 	GLenum drawMode = poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP;
+	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false, drawMode);
 
 	glDrawArrays(drawMode, 0, poly.size());
 
 #else
-
-	meshVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
-	meshVbo.draw(poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP, 0, poly.size());
+	
+//	polylineMesh.clear();
+//	polylineMesh.addVertices(poly.getVertices());
+	
+	
+	polylineMesh.getVertices() = poly.getVertices();
+	// check if it is closed and the last point is the same as the first
+	if( poly.isClosed() ) {
+		if(polylineMesh.getNumVertices() > 1 && polylineMesh.getVertices().front() == polylineMesh.getVertices().back() ) {
+			polylineMesh.getVertices().pop_back();
+		}
+	}
+	
+	if( currentTextureTarget != OF_NO_TEXTURE ) {
+		// TODO: Should we be able to set tex coords on polylines somehow??
+		polylineMesh.getTexCoords().resize( polylineMesh.getNumVertices(), glm::vec2(0.f, 0.f));
+		auto& tcs = polylineMesh.getTexCoords();
+		int numtxs = (int)polylineMesh.getNumVertices();
+		float numTxsF = (float)numtxs - 1.f;
+		if( numTxsF > 0.0f ) {
+			for( int ix = 0; ix < numtxs; ix++ ) {
+				tcs[ix].x = (float)ix / numTxsF;
+			}
+		}
+		polylineMesh.enableTextures();
+	} else {
+		polylineMesh.disableTextures();
+	}
+	
+	polylineMesh.setMode( poly.isClosed() ? OF_PRIMITIVE_LINE_LOOP : OF_PRIMITIVE_LINE_STRIP );
+//	draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
+	draw(polylineMesh, OF_MESH_FILL, false, false, false);
+	
+	
+//	meshVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
+//	meshVbo.draw(poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP, 0, poly.size());
+//	meshPolylineVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
+//	meshPolylineVbo.draw(poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP, 0, poly.size());
 
 #endif
 	// use smoothness, if requested:
@@ -356,7 +489,7 @@ void ofGLProgrammableRenderer::draw(const ofPath & shape) const {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const {
 	if (image.isUsingTexture()) {
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false);
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false, GL_TRIANGLES);
 		const ofTexture & tex = image.getTexture();
 		if (tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer *>(this)->bind(tex, 0);
@@ -371,7 +504,7 @@ void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, flo
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const {
 	if (image.isUsingTexture()) {
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false);
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false, GL_TRIANGLES);
 		const ofTexture & tex = image.getTexture();
 		if (tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer *>(this)->bind(tex, 0);
@@ -386,7 +519,7 @@ void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const {
 	if (image.isUsingTexture()) {
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false);
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false, GL_TRIANGLES);
 		const ofTexture & tex = image.getTexture();
 		if (tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer *>(this)->bind(tex, 0);
@@ -400,7 +533,7 @@ void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofTexture & tex, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const {
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false);
+	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, true, false, GL_TRIANGLES);
 	if (tex.isAllocated()) {
 		const_cast<ofGLProgrammableRenderer *>(this)->bind(tex, 0);
 		draw(tex.getMeshForSubsection(x, y, z, w, h, sx, sy, sw, sh, isVFlipped(), currentStyle.rectMode), OF_MESH_FILL, false, true, false);
@@ -422,9 +555,9 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const {
-	if (vbo.getUsingVerts()) {
+	if (vbo.getUsingVerts()) {	
 		vbo.bind();
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals());
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
 		glDrawArrays(drawMode, first, total);
 		vbo.unbind();
 	}
@@ -434,7 +567,7 @@ void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int firs
 void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const {
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals());
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
 #ifdef TARGET_OPENGLES
 		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
 #else
@@ -448,7 +581,7 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const {
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals());
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
 #ifdef TARGET_OPENGLES
 		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
 		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
@@ -466,7 +599,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode,
 void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const {
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals());
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN) // TODO: Check against OPENGL_ES Version
 		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
 		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
@@ -666,6 +799,19 @@ void ofGLProgrammableRenderer::setCircleResolution(int res) {
 		circlePolyline.arc(0, 0, 0, 1, 1, 0, 360, res);
 		circleMesh.getVertices() = circlePolyline.getVertices();
 		path.setCircleResolution(res);
+		
+		// for the outline polyline, we need a closed loop
+		// so we make another line that is closed, excluding the same start and end points
+		circleOutlinePolyline.clear();
+		for( int i = 0; i < res; i++ ) {
+			float ta = ((float)i / (float)res) * glm::two_pi<float>();
+			circleOutlinePolyline.addVertex(glm::vec3(cosf(ta),sinf(ta), 0.0f));
+		}
+//		circleOutlinePolyline.setClosed(true);
+		
+		circleOutlineMesh.getVertices() = circleOutlinePolyline.getVertices();
+		
+		
 	}
 	currentStyle.circleResolution = res;
 }
@@ -1013,6 +1159,12 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth) {
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::setPointSize(float pointSize) {
+	// will use a shader to render the points at different sizes
+	currentStyle.pointSize = pointSize;
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::setDepthTest(bool depthTest) {
 	if (depthTest) {
 		glEnable(GL_DEPTH_TEST);
@@ -1100,12 +1252,13 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode) {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites() {
+	pointSpritesEnabled = true;
 #ifdef TARGET_OPENGLES
-	#ifndef TARGET_PROGRAMMABLE_GL
+#ifndef TARGET_PROGRAMMABLE_GL
 	glEnable(GL_POINT_SPRITE_OES);
-	#endif
+#endif
 #else
-	glEnable(GL_PROGRAM_POINT_SIZE);
+		glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 }
 
@@ -1118,6 +1271,7 @@ void ofGLProgrammableRenderer::disablePointSprites() {
 #else
 	glDisable(GL_PROGRAM_POINT_SIZE);
 #endif
+	pointSpritesEnabled = false;
 }
 
 //----------------------------------------------------------
@@ -1135,6 +1289,30 @@ void ofGLProgrammableRenderer::disableAntiAliasing() {
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::enableLineSizeAttenuation() {
+	mBLineSizeAttenutation = true;
+}
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableLineSizeAttenuation() {
+	mBLineSizeAttenutation = false;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::enableLinesShaders() {
+	mBEnableLinesShaders = true;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableLinesShaders() {
+	mBEnableLinesShaders = false;
+}
+
+//----------------------------------------------------------
+bool ofGLProgrammableRenderer::areLinesShadersEnabled() const {
+	return mBEnableLinesShaders;
+}
+
+//----------------------------------------------------------
 const ofShader & ofGLProgrammableRenderer::getCurrentShader() const {
 	return *currentShader;
 }
@@ -1149,10 +1327,12 @@ void ofGLProgrammableRenderer::setAlphaBitmapText(bool bitmapText) {
 	}
 }
 
+//----------------------------------------------------------
 ofStyle ofGLProgrammableRenderer::getStyle() const {
 	return currentStyle;
 }
 
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::pushStyle() {
 	styleHistory.push_back(currentStyle);
 	//if we are over the max number of styles we have set, then delete the oldest styles.
@@ -1173,7 +1353,7 @@ void ofGLProgrammableRenderer::popStyle() {
 void ofGLProgrammableRenderer::setStyle(const ofStyle & style) {
 
 	//color
-	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+	setColor(style.color.r, style.color.g, style.color.b, style.color.a);
 
 	//bg color
 	setBackgroundColor(style.bgColor);
@@ -1185,6 +1365,8 @@ void ofGLProgrammableRenderer::setStyle(const ofStyle & style) {
 
 	//line width - finally!
 	setLineWidth(style.lineWidth);
+	
+	setPointSize(style.pointSize);
 
 	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
 
@@ -1220,13 +1402,36 @@ void ofGLProgrammableRenderer::setCurveResolution(int resolution) {
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex, bool normals) {
+void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex, bool normals, GLuint drawMode) {
 	bool wasColorsEnabled = colorsEnabled;
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget != OF_NO_TEXTURE);
+	GLuint prevDrawMode = mDrawMode;
 
 	texCoordsEnabled = tex;
 	colorsEnabled = color;
 	normalsEnabled = normals;
+		
+	// nh: we set a variable (mBRenderingLines) before calling set attributes() to disable
+	// the setting of the draw mode. When rendering lines, the requested mode may be GL_LINES
+	// but we use a shader with GL_TRIANGLES to create a mesh to render the lines of varying widths.
+	if( !mBRenderingLines ) {
+		mDrawMode = drawMode;
+	}
+	
+	if( mDrawMode == GL_LINE_LOOP ) {
+		// this uses the same line resources as GL_LINE_STRIP
+		mDrawMode = GL_LINE_STRIP;
+	}
+	// if we are not using the lines shader, set the draw mode back to triangles
+	// mDrawMode is used to switch the shaders in the beginDefaultShader function
+	if( !areLinesShadersEnabled() ) {
+		mDrawMode = GL_TRIANGLES;
+	}
+	
+	// prevent a shader switch if we don't need it.
+	if( mDrawMode != GL_TRIANGLES && mDrawMode != GL_POINTS && mDrawMode != GL_LINES && mDrawMode != GL_LINE_STRIP ) {
+		mDrawMode = GL_TRIANGLES;
+	}
 
 	if (!uniqueShader || currentMaterial) {
 		beginDefaultShader();
@@ -1239,18 +1444,69 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	if (wasColorsEnabled != color) {
 		if (currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM, color);
 	}
+
+	// if we switch the draw mode, lets set the textures 
+	if( prevDrawMode != mDrawMode ) {
+		if (currentTextureTarget != OF_NO_TEXTURE && currentShader ) {
+			// set all of the texture uniforms
+			// setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const {
+			for (auto &texUniform : mUniformsTex ) {
+				currentShader->setUniformTexture(texUniform.uniformName, texUniform.texData, texUniform.textureLocation);
+			}
+
+			if (pointSpritesEnabled && mDrawMode == GL_POINTS && !usingCustomShader && !uniqueShader && !currentMaterial && mUniformsTex.size() > 0) {
+				auto &texUniform = mUniformsTex[0];
+				#if !defined(TARGET_OPENGLES)
+				if (currentTextureTarget == GL_TEXTURE_RECTANGLE_ARB) {
+					// set the size of the texture, since gl_PointCoord is normalized
+					currentShader->setUniform2f("src_tex_unit0_dims", texUniform.texData.width, texUniform.texData.height);
+				}
+				#endif
+				if (currentTextureTarget == GL_TEXTURE_2D) {
+					currentShader->setUniform2f("src_tex_unit0_dims", texUniform.texData.width, texUniform.texData.height);
+				}
+			}
+		}
+	}
+	
+	if (!usingCustomShader && currentShader && !uniqueShader && !currentMaterial) {
+		if (mDrawMode == GL_POINTS && pointSpritesEnabled) {
+			currentShader->setUniform1f("pointSize", currentStyle.pointSize );
+			currentShader->setUniform1f("smoothing", currentStyle.smoothing ? 1.0f : 0.0f );
+		} else if( mDrawMode == GL_LINES || mDrawMode == GL_LINE_STRIP || mDrawMode == GL_LINE_LOOP || mBRenderingLines ) {
+			auto viewRect = getCurrentViewport();
+			glm::vec4 viewRect4(viewRect.x, viewRect.y, viewRect.getWidth(), viewRect.getHeight() );
+			currentShader->setUniform4f("viewRect", viewRect4);
+			currentShader->setUniform1f("uLineWidth", currentStyle.lineWidth);
+			currentShader->setUniform1f("uUsePerspective", mBLineSizeAttenutation ? 1.0f : 0.0f);
+		}
+	}
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enableTextureTarget(const ofTexture & tex, int textureLocation) {
-	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget != OF_NO_TEXTURE);
+	bool bUseTexture = texCoordsEnabled;
+	if (mDrawMode == GL_POINTS) {
+		// if we are drawing points, we don't need tex coords
+		if (currentTextureTarget != OF_NO_TEXTURE) {
+			bUseTexture = true;
+		}
+	}
+	bool wasUsingTexture = bUseTexture & (currentTextureTarget != OF_NO_TEXTURE);
+	// bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget != OF_NO_TEXTURE);
 	currentTextureTarget = tex.texData.textureTarget;
+
+	TextureUniform texUniform;
+	texUniform.texData = tex.getTextureData();
+	texUniform.uniformName = "src_tex_unit" + ofToString(textureLocation);
+	texUniform.textureLocation = textureLocation;
+	mUniformsTex.push_back(texUniform);
 
 	if (!uniqueShader || currentMaterial) {
 		beginDefaultShader();
 	}
 
-	bool usingTexture = texCoordsEnabled & (currentTextureTarget != OF_NO_TEXTURE);
+	bool usingTexture = bUseTexture & (currentTextureTarget != OF_NO_TEXTURE);
 	if (wasUsingTexture != usingTexture) {
 		if (currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM, usingTexture);
 	}
@@ -1264,6 +1520,7 @@ void ofGLProgrammableRenderer::enableTextureTarget(const ofTexture & tex, int te
 void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget, int textureLocation) {
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget != OF_NO_TEXTURE);
 	currentTextureTarget = OF_NO_TEXTURE;
+	mUniformsTex.clear();
 
 	if (!uniqueShader || currentMaterial) {
 		beginDefaultShader();
@@ -1602,7 +1859,16 @@ void ofGLProgrammableRenderer::beginDefaultShader() {
 
 	const ofShader * nextShader = nullptr;
 
-	if (!uniqueShader || currentMaterial || currentShadow) {
+	bool bUseTexture = texCoordsEnabled;
+	if( mDrawMode == GL_POINTS ){
+		// if we are drawing points, we don't need tex coords and would like to use the texture
+		if (currentTextureTarget != OF_NO_TEXTURE ) {
+			bUseTexture = true;
+		}
+	}
+
+	if (!uniqueShader || currentMaterial || currentShadow)
+	{
 		if (currentShadow) {
 			if (currentMaterial && currentMaterial->hasDepthShader()) {
 				nextShader = &currentMaterial->getShadowDepthShader(*currentShadow, *this);
@@ -1614,18 +1880,24 @@ void ofGLProgrammableRenderer::beginDefaultShader() {
 		} else if (bitmapStringEnabled) {
 			nextShader = &bitmapStringShader;
 
-		} else if (colorsEnabled && texCoordsEnabled) {
-			switch (currentTextureTarget) {
+		} else if (colorsEnabled && bUseTexture) {
+			auto &shaderCollection = getShaderCollectionForMode(mDrawMode);
+			
+			switch (currentTextureTarget)
+			{
 #ifndef TARGET_OPENGLES
 			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultTexRectColor;
+				nextShader = &shaderCollection->texRectColor;
+				// nextShader = &defaultTexRectColor;
 				break;
 #endif
 			case GL_TEXTURE_2D:
-				nextShader = &defaultTex2DColor;
+				nextShader = &shaderCollection->tex2DColor;
+				// nextShader = &defaultTex2DColor;
 				break;
 			case OF_NO_TEXTURE:
-				nextShader = &defaultNoTexColor;
+				nextShader = &shaderCollection->noTexColor;
+				// nextShader = &defaultNoTexColor;
 				break;
 #ifdef TARGET_ANDROID
 			case GL_TEXTURE_EXTERNAL_OES:
@@ -1633,22 +1905,25 @@ void ofGLProgrammableRenderer::beginDefaultShader() {
 				break;
 #endif
 			}
-
 		} else if (colorsEnabled) {
-			nextShader = &defaultNoTexColor;
-
-		} else if (texCoordsEnabled) {
+			nextShader = &getShaderCollectionForMode(mDrawMode)->noTexColor;
+			// nextShader = &defaultNoTexColor;
+		} else if (bUseTexture) {
+			auto &shaderCollection = getShaderCollectionForMode(mDrawMode);
 			switch (currentTextureTarget) {
 #ifndef TARGET_OPENGLES
 			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultTexRectNoColor;
+				nextShader = &shaderCollection->texRectNoColor;
+				// nextShader = &defaultTexRectNoColor;
 				break;
 #endif
 			case GL_TEXTURE_2D:
-				nextShader = &defaultTex2DNoColor;
+				nextShader = &shaderCollection->tex2DNoColor;
+				// nextShader = &defaultTex2DNoColor;
 				break;
 			case OF_NO_TEXTURE:
-				nextShader = &defaultNoTexNoColor;
+				nextShader = &shaderCollection->noTexNoColor;
+				// nextShader = &defaultNoTexNoColor;
 				break;
 #ifdef TARGET_ANDROID
 			case GL_TEXTURE_EXTERNAL_OES:
@@ -1656,11 +1931,10 @@ void ofGLProgrammableRenderer::beginDefaultShader() {
 				break;
 #endif
 			}
-
 		} else {
-			nextShader = &defaultNoTexNoColor;
+			nextShader = &getShaderCollectionForMode(mDrawMode)->noTexNoColor;
+			// nextShader = &defaultNoTexNoColor;
 		}
-
 	} else {
 		nextShader = &defaultUniqueShader;
 	}
@@ -1672,6 +1946,18 @@ void ofGLProgrammableRenderer::beginDefaultShader() {
 			settingDefaultShader = false;
 		}
 	}
+}
+
+//----------------------------------------------------------
+std::shared_ptr<ofGLProgrammableRenderer::ShaderCollection>& ofGLProgrammableRenderer::getShaderCollectionForMode(GLuint drawMode) {
+	if( drawMode == GL_POINTS ) {
+		return mDefaultShadersMap[GL_POINTS];
+	} else if( drawMode == GL_LINES ) {
+		return mDefaultShadersMap[GL_LINES];
+	} else if( drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP ) {
+		return mDefaultShadersMap[GL_LINE_STRIP];
+	}
+	return mDefaultShadersMap[GL_TRIANGLES];
 }
 
 //----------------------------------------------------------
@@ -1734,16 +2020,29 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawCircle(float x, float y, float z, float radius) const {
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
-	const auto & circleCache = circlePolyline.getVertices();
-	for (int i = 0; i < (int)circleCache.size(); i++) {
-		circleMesh.getVertices()[i] = { radius * circleCache[i].x + x, radius * circleCache[i].y + y, z };
-	}
-
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
-
-	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	draw(circleMesh, OF_MESH_FILL, false, false, false);
+		
+	if( !currentStyle.bFill ) {
+		// nh: We use the circleOutlineMesh to render a closed polyline
+		// since the lines mesh creation and shader depends on it.
+		const auto & circleCache = circleOutlinePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleOutlineMesh.getVertices()[i] = { radius * circleCache[i].x + x, radius * circleCache[i].y + y, z };
+		}
+		circleOutlineMesh.setMode(OF_PRIMITIVE_LINE_LOOP);
+		draw(circleOutlineMesh, OF_MESH_FILL, false, false, false);
+	} else {
+		const auto & circleCache = circlePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleMesh.getVertices()[i] = { radius * circleCache[i].x + x, radius * circleCache[i].y + y, z };
+		}
+		circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+		draw(circleMesh, OF_MESH_FILL, false, false, false);
+	}
+	
+//	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+//	draw(circleMesh, OF_MESH_FILL, false, false, false);
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1754,16 +2053,34 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
 	float radiusX = width * 0.5;
 	float radiusY = height * 0.5;
-	const auto & circleCache = circlePolyline.getVertices();
-	for (int i = 0; i < (int)circleCache.size(); i++) {
-		circleMesh.getVertices()[i] = { radiusX * circlePolyline[i].x + x, radiusY * circlePolyline[i].y + y, z };
-	}
+//	const auto & circleCache = circlePolyline.getVertices();
+//	for (int i = 0; i < (int)circleCache.size(); i++) {
+//		circleMesh.getVertices()[i] = { radiusX * circlePolyline[i].x + x, radiusY * circlePolyline[i].y + y, z };
+//	}
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
+	
+	if( !currentStyle.bFill ) {
+		// nh: We use the circleOutlineMesh to render a closed polyline
+		// since the lines mesh creation and shader depends on it.
+		const auto & circleCache = circleOutlinePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleOutlineMesh.getVertices()[i] = { radiusX * circleCache[i].x + x, radiusY * circleCache[i].y + y, z };
+		}
+		circleOutlineMesh.setMode(OF_PRIMITIVE_LINE_LOOP);
+		draw(circleOutlineMesh, OF_MESH_FILL, false, false, false);
+	} else {
+		const auto & circleCache = circlePolyline.getVertices();
+		for (int i = 0; i < (int)circleCache.size(); i++) {
+			circleMesh.getVertices()[i] = { radiusX * circleCache[i].x + x, radiusY * circleCache[i].y + y, z };
+		}
+		circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+		draw(circleMesh, OF_MESH_FILL, false, false, false);
+	}
 
-	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	draw(circleMesh, OF_MESH_FILL, false, false, false);
+//	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+//	draw(circleMesh, OF_MESH_FILL, false, false, false);
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1993,6 +2310,303 @@ static const string defaultVertexShader = vertex_shader_header + STRINGIFY(
 		gl_Position = modelViewProjectionMatrix * position;
 	}
 );
+
+
+// ----------------------------------------------------------------------
+static const std::string defaultPointsVertexShader = vertex_shader_header +
+STRINGIFY(
+		  uniform mat4 projectionMatrix;
+		  uniform mat4 modelViewMatrix;
+		  uniform mat4 textureMatrix;
+		  uniform mat4 modelViewProjectionMatrix;
+		  
+		  uniform float pointSize;
+		  
+		  IN vec4  position;
+		  IN vec2  texcoord;
+		  IN vec4  color;
+		  IN vec3  normal;
+		  
+		  OUT vec4 colorVarying;
+		  
+		  void main()
+		  {
+			  gl_PointSize = pointSize;
+			  colorVarying = color;
+			  gl_Position = modelViewProjectionMatrix * position;
+		  }
+);
+
+// ----------------------------------------------------------------------
+static const std::string defaultLinesVertexShader = vertex_shader_header +
+STRINGIFY(
+		  uniform mat4 projectionMatrix;\n
+		  uniform mat4 modelViewMatrix;\n
+		  uniform mat4 textureMatrix;\n
+		  uniform mat4 modelViewProjectionMatrix;\n
+		  
+		  uniform vec4 viewRect;\n
+		  uniform float uLineWidth;\n
+		  uniform float uUsePerspective;\n
+		  
+		  IN vec4 position;
+		  IN vec2 texcoord;
+		  IN vec4 color;
+		  IN vec3 normal;
+		  IN vec4 nextVertex;
+		  
+		  OUT vec4 colorVarying;
+		  OUT vec2 texCoordVarying;
+		  
+		  void main() {
+			  colorVarying = color;
+			  float pushDir = nextVertex.w;
+			  texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y, 0.0,1.0)).xy;
+			  
+			  // clip space
+			  vec4 cClipPos = modelViewProjectionMatrix * vec4(position.xyz, 1.0);
+			  vec4 nClipPos = modelViewProjectionMatrix * vec4(nextVertex.xyz, 1.0);
+			  
+			  vec2 cNdcPos = (cClipPos.xy / cClipPos.w);
+			  vec2 nNdcPos = (nClipPos.xy / nClipPos.w);
+			  /*
+			  * convert to screen space based on
+			  * https://stackoverflow.com/questions/3484260/opengl-line-width
+			   */
+			  cNdcPos = (cNdcPos + 1.0) * (0.5 * viewRect.zw);
+			  nNdcPos = (nNdcPos + 1.0) * (0.5 * viewRect.zw);
+			  
+			  float thickness = uLineWidth * 0.5;
+			 
+			  
+			  vec2 dir = normalize(cNdcPos - nNdcPos);
+			  dir = vec2(-dir.y, dir.x);
+			  dir = dir * thickness * pushDir;
+			  
+			  vec4 posScreen = cClipPos;
+			  posScreen.xy = cNdcPos;
+			  posScreen.xy += dir;
+			  posScreen.xy = posScreen.xy / viewRect.zw * 2.0 - 1.0;
+			  posScreen.xy *= posScreen.w;
+			  
+			  // perspective
+			  float vaspect = viewRect.w / viewRect.z;
+			  dir.x *= vaspect;
+			  vec4 posPersp = cClipPos;
+			  posPersp.xy += dir;
+			  
+			  gl_Position = mix( posScreen, posPersp, uUsePerspective );
+		  }
+);
+
+// ----------------------------------------------------------------------
+static const std::string defaultLineStripVertexShader = vertex_shader_header +
+STRINGIFY(
+		  uniform mat4 projectionMatrix;\n
+		  uniform mat4 modelViewMatrix;\n
+		  uniform mat4 textureMatrix;
+		  uniform mat4 modelViewProjectionMatrix;
+		  
+		  uniform vec4 viewRect;
+		  uniform float uLineWidth;
+		  uniform float uUsePerspective;
+		  
+		  IN vec4 position;
+		  IN vec2 texcoord;
+		  IN vec4 color;
+		  IN vec3 normal;
+		  IN vec4 prevVertex;
+		  IN vec4 nextVertex;
+		  
+		  OUT vec4 colorVarying;
+		  OUT vec2 texCoordVarying;
+		  
+		  float mapClamp( float value, float inMin, float inMax, float outMin, float outMax ) {
+			  float outVal = ( (value - inMin ) / ( inMax - inMin ) * ( outMax - outMin ) ) + outMin;
+			  if(outMax < outMin){
+				  if( outVal < outMax ) outVal = outMax;
+				  else if( outVal > outMin )outVal = outMin;
+			  }else{
+				  if( outVal > outMax ) outVal = outMax;
+				  else if( outVal < outMin ) outVal = outMin;
+			  }
+			  return outVal;
+		  }
+		  
+		  void main() {
+			  colorVarying = color;
+			  texCoordVarying = (textureMatrix*vec4(texcoord.x, texcoord.y, 0.0,1.0)).xy;
+			  
+			  float thickness = uLineWidth;// * 0.5;
+			  float pushDir = nextVertex.w;
+			  float pushDirY = -prevVertex.w;
+			  
+			  // 	// clip space
+			  vec4 pClipPos = modelViewProjectionMatrix * vec4(prevVertex.xyz, 1.0);
+			  vec4 cClipPos = modelViewProjectionMatrix * vec4(position.xyz, 1.0);
+			  vec4 nClipPos = modelViewProjectionMatrix * vec4(nextVertex.xyz, 1.0);
+			  
+			  vec2 pNdcPos = (pClipPos.xy / pClipPos.w);
+			  vec2 cNdcPos = (cClipPos.xy / cClipPos.w);
+			  vec2 nNdcPos = (nClipPos.xy / nClipPos.w);
+			  
+			  // // convert to screen space
+			  pNdcPos = (pNdcPos + 1.0) * (0.5 * viewRect.zw);
+			  cNdcPos = (cNdcPos + 1.0) * (0.5 * viewRect.zw);
+			  nNdcPos = (nNdcPos + 1.0) * (0.5 * viewRect.zw);
+			  
+			  vec2 dir = vec2(1.0, 0.0);
+			  if( position.xyz == nextVertex.xyz ) {
+				  // this is the last point ( on a non-closed line )
+				  dir = normalize( cNdcPos - pNdcPos );
+				  dir = vec2(-dir.y, dir.x);
+				  dir = dir * pushDir;
+			  } else if( position.xyz == prevVertex.xyz ) {
+				  // this is the first point ( on a non-closed line )
+				  dir = normalize( nNdcPos - cNdcPos );
+				  dir = vec2(-dir.y, dir.x);
+				  dir = dir * pushDir;
+			  } else {
+				  vec2 pdir = normalize( cNdcPos-pNdcPos );
+				  vec2 ndir = normalize( nNdcPos-cNdcPos );
+				  vec2 tangent = normalize(pdir+ndir);
+				  
+				  // Miter code based on
+				  // https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html
+				  // by Matt Stobbs
+				  
+				  vec2 miter = vec2(-tangent.y, tangent.x);
+				  vec2 normalA = vec2(-pdir.y, pdir.x);
+				  dir = miter;
+				  float miterLength = 1.0 / clamp(abs(dot(miter, normalA)), 0.01, 2.0);
+				  thickness = miterLength * thickness;
+				  
+				  vec2 point = normalize(pdir-ndir);
+				  float dmp = dot(miter, point);
+				  
+//				  float miterTooLongMix = clamp(step( 2.0, miterLength) * sign(pushDir * dmp), 0.0, 1.0);
+				  float miterTooLongMix = clamp(step( 2.0, miterLength), 0.0, 1.0);
+				  float pstr = mapClamp( miterLength, 2.0, 3.0, 0.0, 1.0 );
+				  float thicknessL = mix( miterLength * uLineWidth, uLineWidth, pstr );
+				  
+				  dir = mix( dir * pushDir, (pushDir * pushDirY) * normalA, pstr * miterTooLongMix );
+				  thickness = mix( clamp(miterLength, 0.0, 3.0) * uLineWidth, thicknessL, miterTooLongMix );
+			  }
+			  			  
+			  dir = dir * (thickness * 0.5 );
+			  			  
+			  // we calculate both the screen pos and perspective to avoid an if statement
+			  vec4 posScreen = cClipPos;
+			  posScreen.xy = cNdcPos;
+			  posScreen.xy += dir;// * 0.5;
+			  posScreen.xy = posScreen.xy / viewRect.zw * 2.0 - 1.0;
+			  posScreen.xy *= posScreen.w;
+			  
+			  // perspective
+			  vec4 posPersp = cClipPos;
+			  float vaspect = viewRect.w / viewRect.z;
+			  dir.x *= vaspect;
+			  posPersp.xy += (dir);
+			  
+			  gl_Position = mix( posScreen, posPersp, uUsePerspective );
+		  }
+		  );
+
+
+
+// ----------------------------------------------------------------------
+static const string defaultFragmentShaderPoints =
+R"(
+#if defined(OF_USING_TEXTURE_2D)
+		  uniform sampler2D src_tex_unit0;
+#endif
+#if defined(OF_USING_TEXTURE_RECT)
+		  uniform sampler2DRect src_tex_unit0;
+#endif
+#if defined(OF_USING_TEXTURE_2D) || defined(OF_USING_TEXTURE_RECT)
+		uniform vec2 src_tex_unit0_dims;
+	#if !defined(OF_USING_TEXTURE)
+		#define OF_USING_TEXTURE 1
+	#endif
+#endif
+		uniform float smoothing;
+
+		  uniform vec4 globalColor;
+		  uniform float usingTexture;
+			uniform float usingColors;
+		  
+			IN vec4 colorVarying;
+		  void main(){
+
+			vec2 centerPt = gl_PointCoord - vec2(0.5, 0.5);
+			float dist_sq = dot( centerPt, centerPt );
+
+			vec2 st = gl_PointCoord;
+			
+			#if defined(OF_USING_TEXTURE_RECT)
+				st.x = gl_PointCoord.x * src_tex_unit0_dims.x;
+				st.y = gl_PointCoord.y * src_tex_unit0_dims.y;
+
+				// unfortunately textureSize is not supported for sampler2DRect on older versions of GLSL
+				// ivec2 texRectSize = textureSize(src_tex_unit0, 0);
+				// st = vec2(gl_PointCoord.x * float(texRectSize.x), gl_PointCoord.y * float(texRectSize.y) );
+			#endif
+
+#if defined(OF_USING_TEXTURE) && defined(OF_USING_VERTEX_COLORS)
+			  FRAG_COLOR = TEXTURE(src_tex_unit0, st) * colorVarying;
+#elif defined(OF_USING_TEXTURE)
+			  FRAG_COLOR = TEXTURE(src_tex_unit0, st) * globalColor;
+#elif defined(OF_USING_VERTEX_COLORS)
+			  FRAG_COLOR = colorVarying;
+#else
+			  FRAG_COLOR = globalColor;
+#endif
+			// fwidth is not availabe on some opengl es
+	#ifndef TARGET_OPENGLES
+			//smoothing with fwidth based on
+			// https://rubendv.be/posts/fwidth/
+			float delta = fwidth( dist_sq );
+//			//float delta = abs(dFdx(dist_sq)) + abs(dFdy(dist_sq));
+			FRAG_COLOR.a *= clamp( (1.0-smoothing) + 1.0-(smoothstep( 0.25-delta, 0.25, dist_sq )), 0.0, 1.0);
+	#endif
+		  }
+)";
+
+// ----------------------------------------------------------------------
+static const string defaultFragmentShaderLines =
+R"(
+#if defined(OF_USING_TEXTURE_2D)
+	uniform sampler2D src_tex_unit0;
+#endif
+#if defined(OF_USING_TEXTURE_RECT)
+	uniform sampler2DRect src_tex_unit0;
+#endif
+#if defined(OF_USING_TEXTURE_2D) || defined(OF_USING_TEXTURE_RECT)
+ #if !defined(OF_USING_TEXTURE)
+  #define OF_USING_TEXTURE 1
+ #endif
+#endif
+
+	uniform vec4 globalColor;
+	uniform float usingTexture;
+   uniform float usingColors;
+
+	IN vec2 texCoordVarying;
+   IN vec4 colorVarying;
+
+	void main(){
+		#if defined(OF_USING_TEXTURE) && defined(OF_USING_VERTEX_COLORS)
+			 FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * colorVarying;
+		#elif defined(OF_USING_TEXTURE)
+			 FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+		#elif defined(OF_USING_VERTEX_COLORS)
+			 FRAG_COLOR = colorVarying;
+		#else
+			 FRAG_COLOR = globalColor;
+		#endif
+	}
+
+)";
 
 // ----------------------------------------------------------------------
 
@@ -2474,6 +3088,70 @@ string ofGLProgrammableRenderer::defaultFragmentShaderHeader(GLenum textureTarge
 	return defaultShaderHeader(fragment_shader_header, textureTarget, major, minor);
 }
 
+// ----------------------------------------------------------------------
+void ofGLProgrammableRenderer::ShaderCollection::bindAttribute( GLuint location, const std::string & name ) {
+#if !defined( TARGET_OPENGLES )
+	texRectColor.bindAttribute( location, name);
+	texRectNoColor.bindAttribute( location, name);
+#endif
+	tex2DColor.bindAttribute( location, name);
+	noTexColor.bindAttribute( location, name);
+	tex2DNoColor.bindAttribute( location, name);
+	noTexNoColor.bindAttribute( location, name);
+}
+
+// ----------------------------------------------------------------------
+void ofGLProgrammableRenderer::ShaderCollection::bindDefaults() {
+#if !defined( TARGET_OPENGLES )
+	texRectColor.bindDefaults();
+	texRectNoColor.bindDefaults();
+#endif
+	tex2DColor.bindDefaults();
+	noTexColor.bindDefaults();
+	tex2DNoColor.bindDefaults();
+	noTexNoColor.bindDefaults();
+};
+
+// ----------------------------------------------------------------------
+void ofGLProgrammableRenderer::ShaderCollection::linkPrograms() {
+#if !defined( TARGET_OPENGLES )
+	texRectColor.linkProgram();
+	texRectNoColor.linkProgram();
+#endif
+	tex2DColor.linkProgram();
+	noTexColor.linkProgram();
+	tex2DNoColor.linkProgram();
+	noTexNoColor.linkProgram();
+};
+
+// ----------------------------------------------------------------------
+void ofGLProgrammableRenderer::ShaderCollection::setupAllVertexShaders(const std::string& aShaderSrc) {
+#ifndef TARGET_OPENGLES
+	texRectColor.setupShaderFromSource(GL_VERTEX_SHADER, aShaderSrc);
+	texRectNoColor.setupShaderFromSource(GL_VERTEX_SHADER, aShaderSrc);
+#endif
+	tex2DColor.setupShaderFromSource(GL_VERTEX_SHADER, aShaderSrc);
+	tex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER, aShaderSrc);
+	noTexColor.setupShaderFromSource(GL_VERTEX_SHADER, aShaderSrc);
+	noTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER, aShaderSrc);
+};
+
+// ----------------------------------------------------------------------
+void ofGLProgrammableRenderer::LinesBundle::setMeshDataToVbo() {
+	if( mesh.getNumVertices() > 0 ) {
+		// void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
+		vbo.setMesh( mesh, GL_DYNAMIC_DRAW, mesh.hasColors() && mesh.usingColors(), mesh.hasTexCoords() && mesh.usingTextures(), mesh.hasNormals() && mesh.usingNormals() );
+		
+		if( lineMeshPrevVerts.size() > 0 ) {
+			vbo.setAttributeData(vertAttribPrev, &lineMeshPrevVerts[0].x, 4, mesh.getNumVertices(), GL_DYNAMIC_DRAW);
+		}
+		if( lineMeshNextVerts.size() > 0 ) {
+			vbo.setAttributeData(vertAttribNext, &lineMeshNextVerts[0].x, 4, mesh.getNumVertices(), GL_DYNAMIC_DRAW);
+		}
+	}
+}
+
+// ----------------------------------------------------------------------
 void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 	glGetError();
 #ifdef TARGET_OPENGLES
@@ -2495,6 +3173,21 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 #else
 	uniqueShader = false;
 #endif
+	mDefaultShadersMap.clear();
+	
+	mLinesBundleMap.clear();
+	if( mLinesBundleMap.count(GL_LINES) < 1 ) {
+		mLinesBundleMap[GL_LINES] = LinesBundle();
+		mLinesBundleMap[GL_LINES].mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+		// we will only be using the next vertex attribute for GL_LINES
+		mLinesBundleMap[GL_LINES].vertAttribNext = 4;//ofShader::TEXCOORD_ATTRIBUTE+1;
+	}
+	if (mLinesBundleMap.count(GL_LINE_STRIP) < 1) {
+		mLinesBundleMap[GL_LINE_STRIP] = LinesBundle();
+		mLinesBundleMap[GL_LINE_STRIP].mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+		mLinesBundleMap[GL_LINE_STRIP].vertAttribPrev = 4;//ofShader::TEXCOORD_ATTRIBUTE+1;
+		mLinesBundleMap[GL_LINE_STRIP].vertAttribNext = 5;//ofShader::TEXCOORD_ATTRIBUTE+2;
+	}
 
 	if (uniqueShader) {
 		defaultUniqueShader.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(uniqueVertexShader, major, minor));
@@ -2503,51 +3196,69 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 		defaultUniqueShader.linkProgram();
 		beginDefaultShader();
 	} else {
+		
+		mDefaultShadersMap[GL_TRIANGLES] = std::make_shared<ShaderCollection>();
+		mDefaultShadersMap[GL_POINTS] = std::make_shared<ShaderCollection>();
+		mDefaultShadersMap[GL_LINES] = std::make_shared<ShaderCollection>();
+		mDefaultShadersMap[GL_LINE_STRIP] = std::make_shared<ShaderCollection>();
+		
+		
+		mDefaultShadersMap[GL_TRIANGLES]->setupAllVertexShaders(shaderSource(defaultVertexShader, major, minor));
+		
 #ifndef TARGET_OPENGLES
-		defaultTexRectColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
-		defaultTexRectNoColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
+//		defaultTexRectColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
+//		defaultTexRectNoColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
 		alphaMaskRectShader.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
 #endif
-		defaultTex2DColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
-		defaultNoTexColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
-		defaultTex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
-		defaultNoTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
+//		defaultTex2DColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
+//		defaultNoTexColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
+//		defaultTex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
+//		defaultNoTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
 		alphaMask2DShader.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
 
 #ifndef TARGET_OPENGLES
-		defaultTexRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTexRectColor, major, minor));
-		defaultTexRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTexRectNoColor, major, minor));
+		mDefaultShadersMap[GL_TRIANGLES]->texRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTexRectColor, major, minor));
+		mDefaultShadersMap[GL_TRIANGLES]->texRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTexRectNoColor, major, minor));
+//		defaultTexRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTexRectColor, major, minor));
+//		defaultTexRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTexRectNoColor, major, minor));
 		alphaMaskRectShader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(alphaMaskFragmentShaderTexRectNoColor, major, minor));
 #endif
-		defaultTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTex2DColor, major, minor));
-		defaultNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderNoTexColor, major, minor));
-		defaultTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTex2DNoColor, major, minor));
-		defaultNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderNoTexNoColor, major, minor));
+		mDefaultShadersMap[GL_TRIANGLES]->tex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTex2DColor, major, minor));
+		mDefaultShadersMap[GL_TRIANGLES]->noTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderNoTexColor, major, minor));
+		mDefaultShadersMap[GL_TRIANGLES]->tex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTex2DNoColor, major, minor));
+		mDefaultShadersMap[GL_TRIANGLES]->noTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderNoTexNoColor, major, minor));
+//		defaultTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTex2DColor, major, minor));
+//		defaultNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderNoTexColor, major, minor));
+//		defaultTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderTex2DNoColor, major, minor));
+//		defaultNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(defaultFragmentShaderNoTexNoColor, major, minor));
 		alphaMask2DShader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(alphaMaskFragmentShaderTex2DNoColor, major, minor));
 
 		bitmapStringShader.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(bitmapStringVertexShader, major, minor));
 		bitmapStringShader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(bitmapStringFragmentShader, major, minor));
 
 #ifndef TARGET_OPENGLES
-		defaultTexRectColor.bindDefaults();
-		defaultTexRectNoColor.bindDefaults();
+//		defaultTexRectColor.bindDefaults();
+//		defaultTexRectNoColor.bindDefaults();
 		alphaMaskRectShader.bindDefaults();
 #endif
-		defaultTex2DColor.bindDefaults();
-		defaultNoTexColor.bindDefaults();
-		defaultTex2DNoColor.bindDefaults();
-		defaultNoTexNoColor.bindDefaults();
+//		defaultTex2DColor.bindDefaults();
+//		defaultNoTexColor.bindDefaults();
+//		defaultTex2DNoColor.bindDefaults();
+//		defaultNoTexNoColor.bindDefaults();
 		alphaMask2DShader.bindDefaults();
+		
+		mDefaultShadersMap[GL_TRIANGLES]->bindDefaults();
+		mDefaultShadersMap[GL_TRIANGLES]->linkPrograms();
 
 #ifndef TARGET_OPENGLES
-		defaultTexRectColor.linkProgram();
-		defaultTexRectNoColor.linkProgram();
+//		defaultTexRectColor.linkProgram();
+//		defaultTexRectNoColor.linkProgram();
 		alphaMaskRectShader.linkProgram();
 #endif
-		defaultTex2DColor.linkProgram();
-		defaultNoTexColor.linkProgram();
-		defaultTex2DNoColor.linkProgram();
-		defaultNoTexNoColor.linkProgram();
+//		defaultTex2DColor.linkProgram();
+//		defaultNoTexColor.linkProgram();
+//		defaultTex2DNoColor.linkProgram();
+//		defaultNoTexNoColor.linkProgram();
 		alphaMask2DShader.linkProgram();
 
 		bitmapStringShader.bindDefaults();
@@ -2565,6 +3276,101 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 		defaultOESTexColor.linkProgram();
 		defaultOESTexNoColor.linkProgram();
 #endif
+		
+		
+		// now lets start setting up the points shaders
+		mDefaultShadersMap[GL_POINTS]->setupAllVertexShaders(shaderSource(defaultPointsVertexShader, major, minor));
+		
+		// ok, now lets setup the lines shaders //
+		mDefaultShadersMap[GL_LINES]->setupAllVertexShaders(shaderSource(defaultLinesVertexShader, major, minor));
+		
+		// ok, now lets setup the line strip shaders //
+		mDefaultShadersMap[GL_LINE_STRIP]->setupAllVertexShaders(shaderSource(defaultLineStripVertexShader, major, minor));
+		
+		// defaultFragmentShaderLines
+		
+		string alt_frag_header = fragment_shader_header;
+		string defines = "#define OF_USING_TEXTURE_RECT 1\n#define OF_USING_VERTEX_COLORS 1\n";
+		std::string header_w_defines = alt_frag_header + defines;
+#ifndef TARGET_OPENGLES
+		mDefaultShadersMap[GL_POINTS]->texRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		  shaderSource(header_w_defines + defaultFragmentShaderPoints, major, minor));
+		mDefaultShadersMap[GL_LINES]->texRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		mDefaultShadersMap[GL_LINE_STRIP]->texRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		
+		defines = "#define OF_USING_TEXTURE_RECT 1\n";
+		header_w_defines = alt_frag_header + defines;
+		mDefaultShadersMap[GL_POINTS]->texRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		  shaderSource(header_w_defines + defaultFragmentShaderPoints, major, minor));
+		mDefaultShadersMap[GL_LINES]->texRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																			shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		mDefaultShadersMap[GL_LINE_STRIP]->texRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		   shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+#endif
+		
+		defines = "#define OF_USING_TEXTURE_2D 1\n#define OF_USING_VERTEX_COLORS 1\n";
+		header_w_defines = alt_frag_header + defines;
+		mDefaultShadersMap[GL_POINTS]->tex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+													  shaderSource(header_w_defines + defaultFragmentShaderPoints, major, minor));
+		mDefaultShadersMap[GL_LINES]->tex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		mDefaultShadersMap[GL_LINE_STRIP]->tex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																	   shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		
+		defines = "#define OF_USING_TEXTURE_2D 1\n";
+		header_w_defines = alt_frag_header + defines;
+		mDefaultShadersMap[GL_POINTS]->tex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+														shaderSource(header_w_defines + defaultFragmentShaderPoints, major, minor));
+		mDefaultShadersMap[GL_LINES]->tex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		mDefaultShadersMap[GL_LINE_STRIP]->tex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		 shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+
+		defines = "#define OF_USING_VERTEX_COLORS 1\n";
+		header_w_defines = alt_frag_header + defines;
+		mDefaultShadersMap[GL_POINTS]->noTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+													  shaderSource(header_w_defines + defaultFragmentShaderPoints, major, minor));
+		mDefaultShadersMap[GL_LINES]->noTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		mDefaultShadersMap[GL_LINE_STRIP]->noTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																	   shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+
+		defines = "";
+		header_w_defines = alt_frag_header + defines;
+		mDefaultShadersMap[GL_POINTS]->noTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+														shaderSource(header_w_defines + defaultFragmentShaderPoints, major, minor));
+		mDefaultShadersMap[GL_LINES]->noTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		mDefaultShadersMap[GL_LINE_STRIP]->noTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
+																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
+		
+		mDefaultShadersMap[GL_POINTS]->bindDefaults();
+		mDefaultShadersMap[GL_POINTS]->linkPrograms();
+		
+		
+		mDefaultShadersMap[GL_LINES]->bindDefaults();
+		// now lets bind the vertex attribute for the next vertex
+		mDefaultShadersMap[GL_LINES]->bindAttribute( mLinesBundleMap[GL_LINES].vertAttribNext, "nextVertex" );
+		mDefaultShadersMap[GL_LINES]->linkPrograms();
+		
+		
+		mDefaultShadersMap[GL_LINE_STRIP]->bindDefaults();
+		// now lets bind the vertex attribute for the previous and next vertex
+		mDefaultShadersMap[GL_LINE_STRIP]->bindAttribute( mLinesBundleMap[GL_LINE_STRIP].vertAttribPrev, "prevVertex" );
+		mDefaultShadersMap[GL_LINE_STRIP]->bindAttribute( mLinesBundleMap[GL_LINE_STRIP].vertAttribNext, "nextVertex" );
+		mDefaultShadersMap[GL_LINE_STRIP]->linkPrograms();
+		
+//		defaultPointsTex2DColor.bindDefaults();
+//		defaultPointsTex2DNoColor.bindDefaults();
+//		defaultPointsNoTexColor.bindDefaults();
+//		defaultPointsNoTexNoColor.bindDefaults();
+//		
+//		defaultPointsTex2DColor.linkProgram();
+//		defaultPointsTex2DNoColor.linkProgram();
+//		defaultPointsNoTexColor.linkProgram();
+//		defaultPointsNoTexNoColor.linkProgram();
 	}
 
 	setupGraphicDefaults();
@@ -2823,10 +3629,343 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 #endif
 }
 
+//----------------------------------------------------------
 const of3dGraphics & ofGLProgrammableRenderer::get3dGraphics() const {
 	return graphics3d;
 }
 
+//----------------------------------------------------------
 of3dGraphics & ofGLProgrammableRenderer::get3dGraphics() {
 	return graphics3d;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::configureMeshToMatchWithNewVertsAndIndices(const ofMesh& aSrcMesh, ofMesh& aDstMesh, std::size_t aTargetNumVertices, std::size_t aTargetNumIndices) {
+	bool bUseColors     = aSrcMesh.hasColors() && aSrcMesh.usingColors() && (aSrcMesh.getNumColors() == aSrcMesh.getNumVertices());
+	bool bUseNormals    = aSrcMesh.hasNormals() && aSrcMesh.usingNormals() && (aSrcMesh.getNumNormals() == aSrcMesh.getNumVertices());
+	bool bUseTexCoords  = aSrcMesh.hasTexCoords() && aSrcMesh.usingTextures() && (aSrcMesh.getNumTexCoords() == aSrcMesh.getNumVertices());
+	
+	if (aDstMesh.getNumVertices() != aTargetNumVertices) {
+		aDstMesh.getVertices().assign(aTargetNumVertices, glm::vec3(0.f, 0.f, 0.f));
+	}
+	
+	if( aDstMesh.getNumIndices() != aTargetNumIndices ) {
+		aDstMesh.getIndices().assign(aTargetNumIndices, 0);
+	}
+	aDstMesh.enableIndices();
+	
+	if (bUseColors) {
+		if (aDstMesh.getNumColors() != aTargetNumVertices) {
+			aDstMesh.getColors().assign(aTargetNumVertices, ofFloatColor(1.f));
+		}
+		aDstMesh.enableColors();
+	} else {
+		aDstMesh.disableColors();
+	}
+	if (bUseNormals) {
+		if (aDstMesh.getNumNormals() != aTargetNumVertices) {
+			aDstMesh.getNormals().assign(aTargetNumVertices, glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+		aDstMesh.enableNormals();
+	} else {
+		aDstMesh.disableNormals();
+	}
+	if (bUseTexCoords) {
+		if (aDstMesh.getNumTexCoords() != aTargetNumVertices) {
+			aDstMesh.getTexCoords().assign(aTargetNumVertices, glm::vec2(0.0f, 0.0f));
+		}
+		aDstMesh.enableTextures();
+	} else {
+		aDstMesh.disableTextures();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesBundle, GLuint drawMode, const ofMesh& amesh) {
+	auto& polyMesh = aLinesBundle.mesh;
+	auto& nextVerts = aLinesBundle.lineMeshNextVerts;
+	auto& prevVerts = aLinesBundle.lineMeshPrevVerts;
+	
+	bool bClosed = (drawMode == GL_LINE_LOOP) && amesh.getNumVertices() > 2;
+	bool srcHasIndices = amesh.getNumIndices() > 0 && amesh.usingIndices();
+	std::size_t srcNumVs = srcHasIndices ? amesh.getNumIndices() : amesh.getNumVertices();
+	
+	std::size_t targetNumPs = (bClosed ? srcNumVs + 1 : srcNumVs);
+	std::size_t numIndicesA = (targetNumPs - 1) * 6 + (targetNumPs) * 6;
+	
+	std::size_t numVertsPer = 4;
+	
+	if( drawMode == GL_LINES ) {
+		numVertsPer = 2;
+		std::size_t targetNumLines = srcNumVs / 2;
+		numIndicesA = targetNumLines * 6;
+	}
+	std::size_t targetNumVs = targetNumPs * numVertsPer;
+	
+	
+	configureMeshToMatchWithNewVertsAndIndices(amesh, polyMesh, targetNumVs, numIndicesA );
+	
+	if( drawMode != GL_LINES ) {
+		if( prevVerts.size() != targetNumVs ) {
+			prevVerts.assign(targetNumVs, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		}
+	}
+	if (nextVerts.size() != targetNumVs ) {
+		nextVerts.assign(targetNumVs, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	}
+	
+	bool bUseColors = amesh.hasColors() && amesh.usingColors() && (amesh.getNumColors() == amesh.getNumVertices());
+	bool bUseNormals = amesh.hasNormals() && amesh.usingNormals() && (amesh.getNumNormals() == amesh.getNumVertices());
+	bool bUseTexCoords = amesh.hasTexCoords() && amesh.usingTextures() && (amesh.getNumTexCoords() == amesh.getNumVertices());
+	
+	
+	const auto *srcVerts = amesh.getVerticesPointer();
+	const auto *srcIndices = amesh.getIndexPointer();
+	const auto *srcColors = amesh.getColorsPointer();
+	const auto *srcNormals = amesh.getNormalsPointer();
+	const auto *srcTexCoords = amesh.getTexCoordsPointer();
+	std::size_t numPs = srcHasIndices ? amesh.getNumIndices() : amesh.getNumVertices();
+	
+	auto &pmVerts = polyMesh.getVertices();
+	auto &pmIndices = polyMesh.getIndices();
+	auto *pmColors = polyMesh.getColorsPointer();
+	auto *pmNormals = polyMesh.getNormalsPointer();
+	auto *pmTexCoords = polyMesh.getTexCoordsPointer();
+	
+	float texU = 1.0;
+	if( currentTextureTarget != OF_NO_TEXTURE ) {
+		if( mUniformsTex.size() > 0 ) {
+			texU = mUniformsTex[0].texData.tex_u;
+		}
+	}
+	
+	
+	glm::vec3 EPSILON_VEC3 = glm::vec3(0.00005f);
+	
+	
+	if( drawMode == GL_LINES ) {
+		std::size_t cindex1 = 0;
+		std::size_t cindex2 = 0;
+		std::size_t lineIndex = 0;
+		
+		std::size_t pmIndex = 0;
+		std::size_t kindex = 0;
+		std::size_t newIndex = 0;
+		
+		std::size_t k = 0;
+		
+		for (size_t i = 0; i < targetNumPs; i += 2) {
+			cindex1 = (i % numPs);
+			cindex2 = (i + 1) % numPs;
+			
+			lineIndex = i / 2;
+			
+			if (srcHasIndices) {
+				// get the verts from the indices
+				cindex1 = srcIndices[cindex1];
+				cindex2 = srcIndices[cindex2];
+			}
+			
+			pmIndex = i * 2;
+			
+			// duplicate the vertices //
+			for(k = 0; k < 4; k++ ) {
+				kindex = cindex2;
+				if (k < 2) {
+					kindex = cindex1;
+				}
+				pmVerts[pmIndex + k] = srcVerts[kindex];
+				
+				if (bUseColors) {
+					pmColors[pmIndex + k] = srcColors[kindex];
+				}
+				if (bUseNormals) {
+					pmNormals[pmIndex + k] = srcNormals[kindex];
+				}
+				if (bUseTexCoords) {
+//					pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
+					if( k == 1 || k == 2 ) {
+						// move the tex y coord down
+						pmTexCoords[pmIndex + k] = glm::vec2(srcTexCoords[kindex].x, texU);
+					} else {
+						pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
+					}
+				}
+			}
+			
+			nextVerts[pmIndex + 0] = glm::vec4(srcVerts[cindex2], -1.0f);
+			nextVerts[pmIndex + 1] = glm::vec4(srcVerts[cindex2], 1.0f);
+			
+			nextVerts[pmIndex + 2] = glm::vec4(srcVerts[cindex1], 1.0f);
+			nextVerts[pmIndex + 3] = glm::vec4(srcVerts[cindex1], -1.0f);
+			
+			newIndex = lineIndex * 6;
+			pmIndices[newIndex + 0] = pmIndex + 0;
+			pmIndices[newIndex + 1] = pmIndex + 2;
+			pmIndices[newIndex + 2] = pmIndex + 1;
+			
+			pmIndices[newIndex + 3] = pmIndex + 1;
+			pmIndices[newIndex + 4] = pmIndex + 2;
+			pmIndices[newIndex + 5] = pmIndex + 3;
+		}
+		
+		aLinesBundle.setMeshDataToVbo();
+	} else {
+		std::size_t nindex, pindex, cindex;
+		glm::vec4 nvert;
+		glm::vec4 pvert;
+		std::size_t pmIndex = 0;
+		std::size_t kindex = 0;
+		std::size_t k = 0;
+		std::size_t newIndex = 0;
+		std::size_t nextIndex = 0;
+		
+		// if we have vertices lying on top of each other,
+		// lets create some way to store valid ones
+		// might not be the best approach, but easier / faster than removing the vertices from the src mesh
+		glm::vec3 cachedPrevVert = {0.f, 0.f, 0.f};
+		glm::vec3 cachedNextVert = {0.f, 0.f, 0.f};
+		
+		for (size_t i = 0; i < targetNumPs; i++) {
+			cindex = (i % numPs);
+			nindex = (i + 1) % numPs;
+			pindex = (i - 1) % numPs;
+			
+			if (i == 0) {
+				if (bClosed) {
+					cindex = 0;
+					pindex = numPs - 1;
+					nindex = 1;
+				} else {
+					pindex = 0;
+				}
+			} else if (i >= numPs - 1) {
+				if (!bClosed) {
+					nindex = numPs - 1;
+				}
+			}
+			
+			if (srcHasIndices) {
+				// get the verts from the indices
+				cindex = srcIndices[cindex];
+				nindex = srcIndices[nindex];
+				pindex = srcIndices[pindex];
+			}
+			
+			if( i == 0 ) {
+				// just in case, lets init the cached verts to use
+				cachedPrevVert = srcVerts[cindex];
+				cachedNextVert = srcVerts[cindex];
+			}
+			
+			// duplicate the vertices //
+			pmIndex = i * numVertsPer;
+			
+			pvert = glm::vec4(srcVerts[pindex], 1.0f);
+			nvert = glm::vec4(srcVerts[nindex], 1.0f);
+			
+			if( glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[pindex]), EPSILON_VEC3 ))) {
+				if( i != 0 || (i == 0 && bClosed )) {
+					// loop through and find a good next vert //
+					for( int pi = i-2; pi >= 0; pi-- ) {
+						pindex = (pi) % numPs;
+						if (srcHasIndices) {
+							pindex = srcIndices[pindex];
+						}
+						if( !glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[pindex]), EPSILON_VEC3 ) )) {
+							pvert = glm::vec4(srcVerts[pindex], 1.f);
+							break;
+						}
+					}
+				} else {
+					pvert = glm::vec4(cachedPrevVert, 1.0f);
+				}
+			} else {
+				cachedPrevVert = srcVerts[pindex];
+			}
+			
+			
+			
+			if(glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[nindex]), EPSILON_VEC3 )) ) {
+//				nvert = glm::vec4(cachedNextVert, 1.f);
+				if( i != targetNumPs - 1 || (i == targetNumPs - 1 && bClosed) ) {
+					// loop through and find a good next vert //
+					for( int ni = i+2; ni < targetNumPs; ni++ ) {
+						nindex = (ni) % numPs;
+						if (srcHasIndices) {
+							nindex = srcIndices[nindex];
+						}
+						if( !glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[nindex]), EPSILON_VEC3 ) )) {
+							nvert = glm::vec4(srcVerts[nindex], 1.f);
+							break;
+						}
+					}
+				} else {
+					nvert = glm::vec4(cachedNextVert, 1.f);
+				}
+			} else {
+				cachedNextVert = srcVerts[nindex];
+			}
+			
+			for(k = 0; k < numVertsPer; k++) {
+				pmVerts[pmIndex + k] = srcVerts[cindex];
+				nextVerts[pmIndex + k] = nvert;
+				prevVerts[pmIndex + k] = pvert;
+				if (k % 2 == 0 || k == 0) {
+					nextVerts[pmIndex + k].w = -1.0f;
+				} else {
+					nextVerts[pmIndex + k].w = 1.0f;
+				}
+				kindex = cindex;
+				prevVerts[pmIndex + k].w = 1.0;
+				if (k < 2) {
+					prevVerts[pmIndex + k].w = -1.0;
+				}
+				
+				if (bUseColors) {
+					pmColors[pmIndex + k] = srcColors[kindex];
+				}
+				if (bUseNormals) {
+					pmNormals[pmIndex + k] = srcNormals[kindex];
+				}
+				if (bUseTexCoords) {
+					if (k % 2 == 0 || k == 0) {
+						// should be in relation to the top of the image
+						pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
+					} else {
+						// lets go down to the bottom of the texture 
+						pmTexCoords[pmIndex + k] = glm::vec2(srcTexCoords[kindex].x, texU);
+					}
+//					pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
+				}
+			}
+			
+			newIndex = i * 2 * 6;
+			pmIndices[newIndex + 0] = pmIndex + 0;
+			pmIndices[newIndex + 1] = pmIndex + 2;
+			pmIndices[newIndex + 2] = pmIndex + 1;
+			
+			pmIndices[newIndex + 3] = pmIndex + 1;
+			pmIndices[newIndex + 4] = pmIndex + 2;
+			pmIndices[newIndex + 5] = pmIndex + 3;
+			
+			nextIndex = (i+1);
+			if( bClosed && i > targetNumPs -1 ) {
+				nextIndex = 0;
+			}
+			
+			if( nextIndex < targetNumPs) {
+				std::size_t nextPmIndex = (nextIndex) * numVertsPer;
+				pmIndices[newIndex + 6] = pmIndex + 2;
+				pmIndices[newIndex + 7] = nextPmIndex + 0;
+				pmIndices[newIndex + 8] = pmIndex + 3;
+				
+				pmIndices[newIndex + 9] = pmIndex + 3;
+				pmIndices[newIndex + 10] = nextPmIndex + 0;
+				pmIndices[newIndex + 11] = nextPmIndex + 1;
+			}
+		}
+		
+		aLinesBundle.setMeshDataToVbo();
+	}
 }
