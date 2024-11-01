@@ -28,18 +28,18 @@
 @synthesize _fbo;
 //@synthesize pixels;
 
-- (void)dealloc {
-	[_adaptor release];
-	[_writerInput release];
-	[_writer release];
-	[super dealloc];
-}
+//- (void)dealloc {
+//	[_adaptor release];
+//	[_writerInput release];
+//	[_writer release];
+//	[super dealloc];
+//}
 
 
 - (void) initPath:(NSString*)path
 {
 	// FIXME: remove
-	self = [super init];
+//	self = [super init];
 	self.path = path;
 	
 	[[NSFileManager defaultManager] removeItemAtPath:self.path error:nil];
@@ -47,9 +47,9 @@
 	
 	NSLog(@"url %@", url);
 
-	_writer = [[AVAssetWriter assetWriterWithURL:url
+	_writer = [AVAssetWriter assetWriterWithURL:url
 			fileType:AVFileTypeQuickTimeMovie //AVFileTypeAppleM4V
-			error:nil] retain];
+			error:nil];
 	
 
 //	NSLog(@"dimensions x %d, y %d", dimensions.x, dimensions.y);
@@ -76,14 +76,14 @@
 	//int local_bytesPerRow = self.frameSize.width * 4;
 	int local_bytesPerRow = dimensions.x * 4;
 
-	NSDictionary *pixelBufferOptions = [[[NSDictionary alloc] initWithObjectsAndKeys:
+	NSDictionary *pixelBufferOptions = [[NSDictionary alloc] initWithObjectsAndKeys:
 		[NSNumber numberWithInt:kCVPixelFormatType_32BGRA],  kCVPixelBufferPixelFormatTypeKey, //BGRA is SERIOUSLY BLOODY QUICK!
 		 //kCFBooleanTrue, kCVPixelBufferCGImageCompatibilityKey,
 		kCFBooleanTrue, kCVPixelBufferCGBitmapContextCompatibilityKey,
 		[NSNumber numberWithInt:local_bytesPerRow], kCVPixelBufferBytesPerRowAlignmentKey,
 		[NSNumber numberWithInt:dimensions.x], kCVPixelBufferWidthKey,
 		[NSNumber numberWithInt:dimensions.y], kCVPixelBufferHeightKey,
-		 nil] autorelease];
+		 nil];
 	
 	_adaptor = [[AVAssetWriterInputPixelBufferAdaptor alloc] initWithAssetWriterInput:_writerInput sourcePixelBufferAttributes:pixelBufferOptions];
 	
@@ -166,8 +166,6 @@
 //		NSLog(@"Write Ended");
 	}];
 
-	[_writerInput release];
-	[_writer release];
 }
 
 - (void) finishWithCompletionHandler:(void (^)(void))handler {
@@ -187,8 +185,6 @@
 	
 	[_writer finishWritingWithCompletionHandler: handler];
 //	NSLog(@"Write Ended");
-	[_writerInput release];
-	[_writer release];
 }
 
 
