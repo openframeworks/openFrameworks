@@ -1,4 +1,5 @@
 #import "ofAVFoundationVideoWriter.h"
+//#import "ofEvents.h"
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
@@ -9,6 +10,7 @@
 	CMTime frameTime;
 	AVAssetWriter *_writer;
 	
+	// FIXME: mais profundidade de cores
 //	ofPixels_<float> pixels;
 	ofPixels pixels;
 //	ofFbo * fbo;
@@ -22,30 +24,31 @@
 
 @implementation ofAVFoundationVideoWriter
 
-//@synthesize writer;
 @synthesize path;
 @synthesize dimensions;
 @synthesize _fbo;
-//@synthesize pixels;
-
-//- (void)dealloc {
-//	[_adaptor release];
-//	[_writerInput release];
-//	[_writer release];
-//	[super dealloc];
-//}
-
 
 - (void) initPath:(NSString*)path
 {
 	// FIXME: remove
 //	self = [super init];
 	self.path = path;
+
 	
 	[[NSFileManager defaultManager] removeItemAtPath:self.path error:nil];
-	NSURL* url = [NSURL fileURLWithPath:self.path];
 	
-	NSLog(@"url %@", url);
+	std::cout << "owww" << std::endl;
+//	std::cout << ofCoreEvents::getTargetFrameRate() << std::endl;
+	
+	
+	NSURL* url = [NSURL fileURLWithPath:self.path];
+//	NSURL* url = [NSURL URLWithString:self.path];
+	
+//	NSLog(@"url:: %@", url);
+//	NSLog(@"mainBundle:: %@", [NSBundle mainBundle]);
+	
+//	NSString *myFile=[[NSBundle mainBundle] pathForResource:@"../data" ofType:@"jpg"];
+//	NSLog(@"url::: %@", myFile);
 
 	_writer = [AVAssetWriter assetWriterWithURL:url
 			fileType:AVFileTypeQuickTimeMovie //AVFileTypeAppleM4V

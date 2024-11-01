@@ -1,7 +1,6 @@
 #include "ofVideoWriter.h"
 #include "ofGraphics.h"
 
-
 /*
  Tirar mais ideias daqui:
  http://codefromabove.com/2015/01/av-foundation-saving-a-sequence-of-raw-rgb-frames-to-a-movie/
@@ -9,12 +8,14 @@
  testar melhores color depth
  kCVPixelFormatType_32BGRA
  
- */
+*/
 
 using std::cout;
 using std::endl;
 //---------------------------------------------------------------------------
 ofVideoWriter::ofVideoWriter() {
+	
+	videoWriter = [[ofAVFoundationVideoWriter alloc] init];
 	
 	std::string vert;
 	std::string frag;
@@ -73,40 +74,55 @@ void main (void) {
 	shader.linkProgram();
 }
 
-//---------------------------------------------------------------------------
-ofVideoWriter::ofVideoWriter(const of::filesystem::path & _fileName) {
-	// FIXME: Begin or setup?
-	begin(_fileName);
-}
+//ofVideoWriter::ofVideoWriter(const of::filesystem::path & _fileName) {
+//	setOutputFilename(_fileName);
+//}
 
-//---------------------------------------------------------------------------
 void ofVideoWriter::setFbo(ofFbo * _f) {
-	cout << "ofVideoWriter::setFbo " << endl;
+	cout << "ofVideoWriter::setFbo " << _f->getWidth() << " : " << _f->getHeight() << endl;
 	_fbo = _f;
 	
 	fboShader.allocate(_fbo->getWidth(), _fbo->getHeight(), GL_RGBA16F);
 	fboShader.begin();
 	ofClear(0, 255);
 	fboShader.end();
-}
-//---------------------------------------------------------------------------
-void ofVideoWriter::begin(const of::filesystem::path & _fileName) {
-	cout << "ofVideoWriter::begin" << endl;
-
-	fileName = ofToDataPath(_fileName);
 	
-	videoWriter = [[ofAVFoundationVideoWriter alloc] init];
-	
+	// FIXME: remover dimensions deixar apenas o FBO.
 	glm::ivec2 dimensions { _fbo->getWidth(), _fbo->getHeight() };
 	videoWriter.dimensions = dimensions;
-	[videoWriter initPath:[NSString stringWithUTF8String:fileName.c_str()]];
+}
+
+void ofVideoWriter::setOutputFilename(const of::filesystem::path & _fileName) {
+	fileName = ofToDataPath(_fileName);
+	useCustomName = true;
+}
+
+void ofVideoWriter::begin() {
+//	cout << "ofVideoWriter::begin" << endl;
+
+	if (!useCustomName) {
+		std::string uniqueName {
+			ofPathToString(ofFilePath::getCurrentExePath().filename()) +
+			"_" +
+			ofToString(ofGetYear()) +
+			ofToString(ofGetMonth(), 2, '0') +
+			ofToString(ofGetDay(), 2, '0') + "-" +
+			ofToString(ofGetHours(), 2, '0') +
+			ofToString(ofGetMinutes(), 2, '0') +
+			ofToString(ofGetSeconds(), 2, '0') + ".mov"
+		};
+		
+		fileName = uniqueName;
+		fileName = ofToDataPath(fileName);
+	}
 	
-	isBegin = true;
+	[videoWriter initPath:[NSString stringWithUTF8String:fileName.c_str()]];
+	isRecording = true;
 }
 
 //---------------------------------------------------------------------------
 void ofVideoWriter::addFrame() {
-	if (isBegin && _fbo != nullptr) {
+	if (isRecording && _fbo != nullptr) {
 		if (videoWriter != nullptr) {
 //			videoWriter._fbo = _fbo;
 			videoWriter._fbo = &fboShader;
@@ -124,9 +140,26 @@ void ofVideoWriter::addFrame() {
 //---------------------------------------------------------------------------
 void ofVideoWriter::end() {
 	cout << "ofVideoWriter::end" << endl;
-	isBegin = false;
-
-	{
+	if (isRecording) {
 		[videoWriter stopRecording];
+	} else {
+		cout << "ofVideoWriter::end() : not recording " << endl;
 	}
+	isRecording = false;
+	
+	if (autoOpen) {
+		std::string command { "open " + ofPathToString(fileName)  };
+		cout << "autoOpen command = " << command << endl;
+		ofSystem(command);
+	}
+}
+
+
+void ofVideoWriter::toggleRecording() {
+	if (isRecording) {
+		end();
+	} else {
+		begin();
+	}
+//	isRecording ^= 1;
 }
