@@ -168,7 +168,7 @@ A clampedMultiply(const A& a, const B& b) {
 }
 
 template<typename PixelType>
-ofColor_<PixelType>::ofColor_(float _r, float _g, float _b, float _a):
+ofColor_<PixelType>::ofColor_(PixelType _r, PixelType _g, PixelType _b, PixelType _a):
     r(_r),
     g(_g),
     b(_b),
