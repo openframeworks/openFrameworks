@@ -1,205 +1,195 @@
-//  AVCaptureManager.m
-//  SlowMotionVideoRecorder
-//  https://github.com/shu223/SlowMotionVideoRecorder
-//
-//  Created by shuichi on 12/17/13.
-//  Copyright (c) 2013 Shuichi Tsutsumi. All rights reserved.
-//
+#import "ofAVFoundationVideoWriter.h"
 
-#import "AVCaptureManager.h"
+#import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-
-@interface AVCaptureManager ()
-<AVCaptureFileOutputRecordingDelegate>
-{
-	CMTime defaultVideoMaxFrameDuration;
+@interface ofAVFoundationVideoWriter () {
+	BOOL _isWaitingForInputReady;
+	dispatch_semaphore_t _writeSemaphore;
+	CMTime frameTime;
+	AVAssetWriter *_writer;
+	
+//	ofPixels_<float> pixels;
+	ofPixels pixels;
+//	ofFbo * fbo;
 }
-@property (nonatomic, strong) AVCaptureSession *captureSession;
-@property (nonatomic, strong) AVCaptureMovieFileOutput *fileOutput;
-@property (nonatomic, strong) AVCaptureDeviceFormat *defaultFormat;
-@property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
+//@property (nonatomic, strong) AVAssetWriterInput *writerInput;
+//@property (nonatomic, strong) AVAssetWriterInputPixelBufferAdaptor *adaptor;
+@property (strong) AVAssetWriterInput *writerInput;
+@property (strong) AVAssetWriterInputPixelBufferAdaptor *adaptor;
+
 @end
 
+@implementation ofAVFoundationVideoWriter
 
-@implementation AVCaptureManager
+//@synthesize writer;
+@synthesize path;
+@synthesize dimensions;
+@synthesize _fbo;
+//@synthesize pixels;
 
-- (id)initWithPreviewView:(UIView *)previewView {
-	
-	self = [super init];
-	
-	if (self) {
-		
-		NSError *error;
-		
-		self.captureSession = [[AVCaptureSession alloc] init];
-		self.captureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
-		
-		AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-		AVCaptureDeviceInput *videoIn = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
-		
-		if (error) {
-			NSLog(@"Video input creation failed");
-			return nil;
-		}
-		
-		if (![self.captureSession canAddInput:videoIn]) {
-			NSLog(@"Video input add-to-session failed");
-			return nil;
-		}
-		[self.captureSession addInput:videoIn];
-		
-		
-		// save the default format
-		self.defaultFormat = videoDevice.activeFormat;
-		defaultVideoMaxFrameDuration = videoDevice.activeVideoMaxFrameDuration;
-		
-		
-		AVCaptureDevice *audioDevice= [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-		AVCaptureDeviceInput *audioIn = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
-		[self.captureSession addInput:audioIn];
-		
-		self.fileOutput = [[AVCaptureMovieFileOutput alloc] init];
-		[self.captureSession addOutput:self.fileOutput];
-		
-		
-		self.previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession];
-		self.previewLayer.frame = previewView.bounds;
-		self.previewLayer.contentsGravity = kCAGravityResizeAspectFill;
-		self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-		[previewView.layer insertSublayer:self.previewLayer atIndex:0];
-		
-		[self.captureSession startRunning];
-	}
-	return self;
+- (void)dealloc {
+	[_adaptor release];
+	[_writerInput release];
+	[_writer release];
+	[super dealloc];
 }
 
 
-
-// =============================================================================
-#pragma mark - Public
-
-- (void)toggleContentsGravity {
+- (void) initPath:(NSString*)path
+{
+	// FIXME: remove
+	self = [super init];
+	self.path = path;
 	
-	if ([self.previewLayer.videoGravity isEqualToString:AVLayerVideoGravityResizeAspectFill]) {
+	[[NSFileManager defaultManager] removeItemAtPath:self.path error:nil];
+	NSURL* url = [NSURL fileURLWithPath:self.path];
 	
-		self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+	NSLog(@"url %@", url);
+
+	_writer = [[AVAssetWriter assetWriterWithURL:url
+			fileType:AVFileTypeQuickTimeMovie //AVFileTypeAppleM4V
+			error:nil] retain];
+	
+
+//	NSLog(@"dimensions x %d, y %d", dimensions.x, dimensions.y);
+
+	NSDictionary* settings = @{
+//		AVVideoCodecKey: AVVideoCodecTypeH264,
+		AVVideoCodecKey: AVVideoCodecTypeAppleProRes422HQ,
+		AVVideoWidthKey: @(dimensions.x),
+		AVVideoHeightKey: @(dimensions.y),
+//		AVVideoCompressionPropertiesKey: @{
+//			AVVideoAverageBitRateKey: @(1200000),
+//			AVVideoMaxKeyFrameIntervalKey: @(150),
+//			AVVideoProfileLevelKey: AVVideoProfileLevelH264BaselineAutoLevel,
+//			AVVideoAllowFrameReorderingKey: @NO,
+//			AVVideoExpectedSourceFrameRateKey: @(24),
+//			//AVVideoH264EntropyModeKey: AVVideoH264EntropyModeCAVLC,
+//			//AVVideoAverageNonDroppableFrameRateKey: @(30)
+//		}
+	};
+	_writerInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:settings];
+
+	_writerInput.expectsMediaDataInRealTime = YES;
+	
+	//int local_bytesPerRow = self.frameSize.width * 4;
+	int local_bytesPerRow = dimensions.x * 4;
+
+	NSDictionary *pixelBufferOptions = [[[NSDictionary alloc] initWithObjectsAndKeys:
+		[NSNumber numberWithInt:kCVPixelFormatType_32BGRA],  kCVPixelBufferPixelFormatTypeKey, //BGRA is SERIOUSLY BLOODY QUICK!
+		 //kCFBooleanTrue, kCVPixelBufferCGImageCompatibilityKey,
+		kCFBooleanTrue, kCVPixelBufferCGBitmapContextCompatibilityKey,
+		[NSNumber numberWithInt:local_bytesPerRow], kCVPixelBufferBytesPerRowAlignmentKey,
+		[NSNumber numberWithInt:dimensions.x], kCVPixelBufferWidthKey,
+		[NSNumber numberWithInt:dimensions.y], kCVPixelBufferHeightKey,
+		 nil] autorelease];
+	
+	_adaptor = [[AVAssetWriterInputPixelBufferAdaptor alloc] initWithAssetWriterInput:_writerInput sourcePixelBufferAttributes:pixelBufferOptions];
+	
+	if ([_writer canAddInput:_writerInput]) {
+		[_writer addInput:_writerInput];
+//		NSLog(@"Writer addinput");
+	}
+
+	[_writer startWriting];
+	frameTime = CMTimeMake(0, 24);
+	[_writer startSessionAtSourceTime:frameTime];
+}
+
+- (BOOL) addFrame {
+	_fbo->getTexture().readToPixels(pixels);
+	
+//		NSMutableData nsData = (NSMutableData*)(pixels.getData());
+	CVPixelBufferRef pixelBuffer;
+	
+//	CFDataRef bufferData = CFDataCreate(NULL, pixels.getData(), pixels.getTotalBytes());
+
+	CVReturn result = CVPixelBufferCreateWithBytes(NULL,
+							 pixels.getWidth(),
+							 pixels.getHeight(),
+							 kCVPixelFormatType_32BGRA,
+//									 k32ARGBPixelFormat,
+							 (void*)(pixels.getData()),
+							 pixels.getBytesStride(),
+							 NULL,
+							 0,
+							 NULL,
+							 &pixelBuffer);
+	
+	if (result == kCVReturnSuccess) {
+	} else {
+		return NO;
+	}
+//	CVPixelBufferLockBaseAddress( pixelBuffer, 0 );
+
+	if ( !_writerInput.isReadyForMoreMediaData ) {
+		return NO;
+//		_isWaitingForInputReady = YES;
+//		dispatch_semaphore_wait(_writeSemaphore, DISPATCH_TIME_FOREVER);
+	}
+
+	
+	BOOL ok = [_adaptor appendPixelBuffer:pixelBuffer withPresentationTime:frameTime];
+	if (ok) {
+		frameTime.value++;
 	}
 	else {
-		self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+		NSLog(@"Not OK");
 	}
+
+	return ok;
+
+//		CVBufferRelease(pixelBuffer);
+//		CVPixelBufferRelease(pixelBuffer);
+//		CFRelease(pixelBuffer);
+	
+//		NSLog(@"z %zu", pixels.getWidth() * 4);
+//		NSLog(@"z %zu", pixels.getBytesStride());
+//				NSLog(@"w %zu", CVPixelBufferGetWidth( pixelBuffer ));
+//				NSLog(@"h %zu", CVPixelBufferGetHeight( pixelBuffer ));
+//				NSLog(@"br %zu", CVPixelBufferGetBytesPerRow( pixelBuffer ));
+//				NSLog(@"bd %zu", CVPixelBufferGetDataSize( pixelBuffer ));
+//				NSLog(@"xxx %zu", pixels.getTotalBytes());
 }
 
-- (void)resetFormat {
-
-	BOOL isRunning = self.captureSession.isRunning;
-	
-	if (isRunning) {
-		[self.captureSession stopRunning];
-	}
-
-	AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-	[videoDevice lockForConfiguration:nil];
-	videoDevice.activeFormat = self.defaultFormat;
-	videoDevice.activeVideoMaxFrameDuration = defaultVideoMaxFrameDuration;
-	[videoDevice unlockForConfiguration];
-
-	if (isRunning) {
-		[self.captureSession startRunning];
-	}
-}
-
-- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS
-{
-	BOOL isRunning = self.captureSession.isRunning;
-	
-	if (isRunning)  [self.captureSession stopRunning];
-	
-	AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-	AVCaptureDeviceFormat *selectedFormat = nil;
-	int32_t maxWidth = 0;
-	AVFrameRateRange *frameRateRange = nil;
-
-	for (AVCaptureDeviceFormat *format in [videoDevice formats]) {
-		
-		for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
-			
-			CMFormatDescriptionRef desc = format.formatDescription;
-			CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
-			int32_t width = dimensions.width;
-
-			if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width >= maxWidth) {
-				
-				selectedFormat = format;
-				frameRateRange = range;
-				maxWidth = width;
-			}
-		}
-	}
-	
-	if (selectedFormat) {
-		
-		if ([videoDevice lockForConfiguration:nil]) {
-			
-			NSLog(@"selected format:%@", selectedFormat);
-			videoDevice.activeFormat = selectedFormat;
-			videoDevice.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
-			videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
-			[videoDevice unlockForConfiguration];
-		}
-	}
-	
-	if (isRunning) [self.captureSession startRunning];
-}
-
-//---------------------------------------------------------- load / unload.
-- (void)startRecording:(NSString*)file {
-//	NSArray * fileSplit = [file componentsSeparatedByString:@"."];
-//	NSURL * fileURL = [[NSBundle mainBundle] URLForResource:[fileSplit objectAtIndex:0]
-//											  withExtension:[fileSplit objectAtIndex:1]];
-	
-	NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"yyyy-MM-dd-HH-mm-ss"];
-	NSString* dateTimePrefix = [formatter stringFromDate:[NSDate date]];
-	
-	int fileNamePostfix = 0;
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *documentsDirectory = [paths objectAtIndex:0];
-	NSString *filePath = nil;
-	do
-		filePath =[NSString stringWithFormat:@"/%@/%@-%i.mp4", documentsDirectory, dateTimePrefix, fileNamePostfix++];
-	while ([[NSFileManager defaultManager] fileExistsAtPath:filePath]);
-	
-	NSURL *fileURL = [NSURL URLWithString:[@"file://" stringByAppendingString:filePath]];
-	[self.fileOutput startRecordingToOutputFileURL:fileURL recordingDelegate:self];
-}
 
 - (void)stopRecording {
-
-	[self.fileOutput stopRecording];
-}
-
-
-// =============================================================================
-#pragma mark - AVCaptureFileOutputRecordingDelegate
-
-- (void)                 captureOutput:(AVCaptureFileOutput *)captureOutput
-	didStartRecordingToOutputFileAtURL:(NSURL *)fileURL
-					   fromConnections:(NSArray *)connections
-{
-	_isRecording = YES;
-}
-
-- (void)                 captureOutput:(AVCaptureFileOutput *)captureOutput
-   didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
-					   fromConnections:(NSArray *)connections error:(NSError *)error
-{
-//    [self saveRecordedFile:outputFileURL];
-	_isRecording = NO;
-	
-	if ([self.delegate respondsToSelector:@selector(didFinishRecordingToOutputFileAtURL:error:)]) {
-		[self.delegate didFinishRecordingToOutputFileAtURL:outputFileURL error:error];
+	if ( _writer.status == AVAssetWriterStatusWriting ) {
+		[_writerInput markAsFinished];
 	}
+
+	frameTime.value++;
+	[_writer endSessionAtSourceTime:frameTime];
+
+	[_writer finishWritingWithCompletionHandler:^{
+//		NSLog(@"Write Ended");
+	}];
+
+	[_writerInput release];
+	[_writer release];
 }
+
+- (void) finishWithCompletionHandler:(void (^)(void))handler {
+	NSLog(@"finishWithCompletionHandler");
+
+	if( _writer.status == AVAssetWriterStatusWriting) {
+		[_writerInput markAsFinished];
+	}
+
+	if (_writer.status == AVAssetWriterStatusCompleted || _writer.status == AVAssetWriterStatusCancelled || _writer.status == AVAssetWriterStatusUnknown)
+	{
+		if (handler) {
+			handler();
+		}
+		return;
+	}
+	
+	[_writer finishWritingWithCompletionHandler: handler];
+//	NSLog(@"Write Ended");
+	[_writerInput release];
+	[_writer release];
+}
+
 
 @end

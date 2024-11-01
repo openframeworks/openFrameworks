@@ -1,34 +1,29 @@
-//
-//  AVCaptureManager.h
-//  SlowMotionVideoRecorder
-//  https://github.com/shu223/SlowMotionVideoRecorder
-//
-//  Created by shuichi on 12/17/13.
-//  Copyright (c) 2013 Shuichi Tsutsumi. All rights reserved.
-//
+#import <glm/vec2.hpp>
+#import "ofPixels.h"
+#import "ofFbo.h"
 
 #import <Foundation/Foundation.h>
+#import "AVFoundation/AVAssetWriter.h"
+#import "AVFoundation/AVAssetWriterInput.h"
+#import "AVFoundation/AVMediaFormat.h"
+#import "AVFoundation/AVVideoSettings.h"
 
+//@class AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor, NSString;
 
-@protocol AVCaptureManagerDelegate <NSObject>
-- (void)didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
-									  error:(NSError *)error;
-@end
+@interface ofAVFoundationVideoWriter : NSObject
 
+//@property (nonatomic, strong) AVAssetWriter *writer;
 
-@interface AVCaptureManager : NSObject
+@property (nonatomic, assign) NSString* path;
+@property (nonatomic, assign) glm::ivec2 dimensions;
+//@property (nonatomic, assign) ofPixels_<float> pixels;
+//@property (nonatomic, assign) ofPixels pixels;
+@property (nonatomic, assign) ofFbo* _fbo;
 
-@property (nonatomic, assign) id<AVCaptureManagerDelegate> delegate;
-@property (nonatomic, readonly) BOOL isRecording;
-
-- (id)initWithPreviewView:(UIView *)previewView;
-- (void)toggleContentsGravity;
-- (void)resetFormat;
-- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
-- (void)startRecording:(NSString*)file;
+- (void)initPath:(NSString*)path;
+- (BOOL)addFrame;
+- (void)finishWithCompletionHandler:(void (^)(void))handler;
 - (void)stopRecording;
 
-//- (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync;
-
-
 @end
+
