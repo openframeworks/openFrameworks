@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		03395BC42CD4777900C07534 /* ofVideoWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 03395BC22CD4777900C07534 /* ofVideoWriter.h */; };
 		03395BC52CD4777900C07534 /* ofAVFoundationVideoWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 03395BC02CD4777900C07534 /* ofAVFoundationVideoWriter.h */; };
-		03395BC62CD4777900C07534 /* ofVideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03395BC32CD4777900C07534 /* ofVideoWriter.cpp */; };
 		03395BC72CD4777900C07534 /* ofAVFoundationVideoWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 03395BC12CD4777900C07534 /* ofAVFoundationVideoWriter.mm */; };
+		03395BCB2CD47C0C00C07534 /* ofVideoWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 03395BCA2CD47C0C00C07534 /* ofVideoWriter.mm */; };
 		0353245D2BEFEC7B00B50A35 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0353245B2BEFEC7A00B50A35 /* ofTimerFps.h */; };
 		0353245E2BEFEC7B00B50A35 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0353245C2BEFEC7B00B50A35 /* ofTimerFps.cpp */; };
 		19662F2E2834A44400B622ED /* ofGraphicsCairo.h in Headers */ = {isa = PBXBuildFile; fileRef = 19662F2C2834A44400B622ED /* ofGraphicsCairo.h */; };
@@ -186,7 +186,7 @@
 		03395BC02CD4777900C07534 /* ofAVFoundationVideoWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationVideoWriter.h; sourceTree = "<group>"; };
 		03395BC12CD4777900C07534 /* ofAVFoundationVideoWriter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVFoundationVideoWriter.mm; sourceTree = "<group>"; };
 		03395BC22CD4777900C07534 /* ofVideoWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofVideoWriter.h; sourceTree = "<group>"; };
-		03395BC32CD4777900C07534 /* ofVideoWriter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = ofVideoWriter.cpp; sourceTree = "<group>"; };
+		03395BCA2CD47C0C00C07534 /* ofVideoWriter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ofVideoWriter.mm; sourceTree = "<group>"; };
 		0353245B2BEFEC7A00B50A35 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
 		0353245C2BEFEC7B00B50A35 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
 		19662F2C2834A44400B622ED /* ofGraphicsCairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphicsCairo.h; sourceTree = "<group>"; };
@@ -546,7 +546,7 @@
 				03395BC02CD4777900C07534 /* ofAVFoundationVideoWriter.h */,
 				03395BC12CD4777900C07534 /* ofAVFoundationVideoWriter.mm */,
 				03395BC22CD4777900C07534 /* ofVideoWriter.h */,
-				03395BC32CD4777900C07534 /* ofVideoWriter.cpp */,
+				03395BCA2CD47C0C00C07534 /* ofVideoWriter.mm */,
 			);
 			name = video;
 			path = ../../../openFrameworks/video;
@@ -944,7 +944,6 @@
 				2E498914292C96340096EC56 /* ofCubeMap.cpp in Sources */,
 				E4F3BAF412F4C745002D19BB /* ofLog.cpp in Sources */,
 				BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */,
-				03395BC62CD4777900C07534 /* ofVideoWriter.cpp in Sources */,
 				03395BC72CD4777900C07534 /* ofAVFoundationVideoWriter.mm in Sources */,
 				9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */,
 				E4F3BAF712F4C745002D19BB /* ofSystemUtils.cpp in Sources */,
@@ -976,6 +975,7 @@
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
 				DAC22D3F16E7A4AF0020226D /* ofParameter.cpp in Sources */,
+				03395BCB2CD47C0C00C07534 /* ofVideoWriter.mm in Sources */,
 				DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */,
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,
 				22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */,
