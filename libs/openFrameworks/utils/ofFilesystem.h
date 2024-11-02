@@ -81,16 +81,19 @@ public:
 		return path(path_.lexically_normal());
 	}
 
-	path lexically_relative(const path& base) const {
-		return path(path_.lexically_relative(base.native_path()));
+	template <typename... Args>
+	path lexically_relative(Args&&... args) const {
+		return path(path_.lexically_relative(std::forward<Args>(args)...));
 	}
 	
-	path absolute() const {
-		return path(std::filesystem::absolute(path_));
+	template <typename... Args>
+	path absolute(Args&&... args) const {
+		return path(std::filesystem::absolute(path_, std::forward<Args>(args)...));
 	}
 	
-	path canonical() const {
-		return path(std::filesystem::canonical(path_));
+	template <typename... Args>
+	path canonical(Args&&... args) const {
+		return path(std::filesystem::canonical(path_, std::forward<Args>(args)...));
 	}
 	
 	std::filesystem::perms get_permissions() const {
@@ -127,16 +130,11 @@ public:
 		return path(lhs.path_ / rhs.path_);
 	}
 	
-	template <typename LHS>
-	const friend of::filesystem::path operator+=(const LHS& lhs, const path& rhs) {
-		return path(lhs + rhs.path_.string());
+	template <typename T>
+	of::filesystem::path& operator+=(const T& rhs) {
+		path_ += rhs;
+		return *this;
 	}
-	
-	template <typename RHS>
-	const friend of::filesystem::path operator+=(const path& lhs, const RHS& rhs) {
-		return path(lhs.path_.string() + rhs);
-	}
-	
 	
 	template <typename LHS>
 	const friend of::filesystem::path operator+(const LHS& lhs, const path& rhs) {
