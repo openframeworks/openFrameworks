@@ -116,6 +116,11 @@ public:
 		return *this;
 	}
 	
+	path& make_preferred() {
+		path_.make_preferred();
+		return *this;
+	}
+	
 	template <typename LHS>
 	const friend of::filesystem::path operator/(const LHS& lhs, const path& rhs) {
 		return path(lhs / rhs.path_);
@@ -148,7 +153,6 @@ public:
 	
 	path remove_filename() { return path_.remove_filename(); }
 	
-	path make_preferred() { return path(path_.make_preferred()); }
 	path root_path() const { return path(path_.root_path()); }
 	path parent_path() const { return path(path_.parent_path()); }
 	path filename() const { return path(path_.filename()); }
