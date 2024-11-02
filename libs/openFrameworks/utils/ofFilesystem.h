@@ -62,8 +62,6 @@ public:
 
 	const std::filesystem::path& native_path() const { return path_; }
 	
-	path replace_extension(const path & ext = std::filesystem::path()) { return path(path_.replace_extension(ext)); }
-	
 	static constexpr auto preferred_separator = std::filesystem::path::preferred_separator;
 	
 	bool empty() const noexcept { return path_.empty(); }
@@ -107,6 +105,10 @@ public:
 	template <typename T> bool operator>(T&& other) const noexcept { return path_ > std::forward<T>(other); }
 	template <typename T> bool operator>=(T&& other) const noexcept { return path_ >= std::forward<T>(other); }
 
+	path& replace_extension(const path & ext = std::filesystem::path()) {  path_.replace_extension(ext);
+		return *this;
+	}
+	
 	path& operator/=(path&& p) noexcept {
 		path_ /= std::move(p.path_);
 		return *this;
