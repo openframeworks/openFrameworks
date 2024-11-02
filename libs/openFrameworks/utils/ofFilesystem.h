@@ -29,6 +29,7 @@ private:
 #endif
 
 public:
+	// MARK: construction
 	path() = default;
 	path(const std::filesystem::path& p) : path_(p) {}
 	path(std::filesystem::path&& p) noexcept : path_(std::move(p)) {}
@@ -42,6 +43,8 @@ public:
 	operator std::filesystem::path() const { return path_; }
 	explicit operator const std::filesystem::path::value_type*() const { return path_.c_str(); }
 	
+	// MARK: string conversions
+
 #if defined(TARGET_WIN32)
 	operator std::wstring() const { return path_.wstring(); }
 	operator const char*() const { return to_narrow_cstr(); } // should try catch on win
@@ -52,7 +55,6 @@ public:
 	explicit operator const std::filesystem::path::string_type() const { return path_.string(); } 
 #endif
 	
-	// string conversions
 	auto wstring() const { return path_.wstring(); }
 	auto generic_string() const { return path_.generic_string(); }
 	auto string() const { return path_.string(); }
@@ -70,7 +72,7 @@ public:
 	bool is_absolute() const { return path_.is_absolute(); }
 	bool is_relative() const { return path_.is_relative(); }
 	
-	// std::filesystem forwards
+	// MARK: std::filesystem forwards
 	bool exists() const { return std::filesystem::exists(path_); }
 	bool is_directory() const { return std::filesystem::is_directory(path_); }
 	bool is_regular_file() const { return std::filesystem::is_regular_file(path_); }
@@ -82,6 +84,7 @@ public:
 	std::filesystem::file_time_type last_write_time() const { return std::filesystem::last_write_time(path_); }
 	auto get_permissions() const { return std::filesystem::status(path_).permissions(); }
 
+	// MARK: path type
 	path lexically_normal() const {
 		return path(path_.lexically_normal());
 	}
@@ -100,7 +103,9 @@ public:
 	path canonical(Args&&... args) const {
 		return path(std::filesystem::canonical(path_, std::forward<Args>(args)...));
 	}
-		
+
+	// MARK: comparison
+	// TODO: C++20: spaceship simplification
 	template <typename T> bool operator==(T&& other) const noexcept { return path_ == std::forward<T>(other); }
 	template <typename T> bool operator!=(T&& other) const noexcept { return path_ != std::forward<T>(other); }
 	template <typename T> bool operator<(T&& other) const noexcept { return path_ < std::forward<T>(other); }
@@ -109,7 +114,7 @@ public:
 	template <typename T> bool operator>=(T&& other) const noexcept { return path_ >= std::forward<T>(other); }
 	bool operator!() const noexcept { return empty(); }
 
-	// path transformation (return *this)
+	// MARK: path transformation (return *this)
 	path& replace_extension(const path & ext = std::filesystem::path()) {  path_.replace_extension(ext);
 		return *this;
 	}
@@ -135,6 +140,7 @@ public:
 		return *this;
 	}
 	
+	// MARK: other operators
 	template <typename LHS>
 	const friend of::filesystem::path operator/(const LHS& lhs, const path& rhs) {
 		return path(lhs / rhs.path_);
@@ -159,15 +165,17 @@ public:
 		return path(lhs.path_.string() + rhs);
 	}
 		
+	// MARK: other sub paths
 	path root_path() const { return path(path_.root_path()); }
 	path parent_path() const { return path(path_.parent_path()); }
 	path filename() const { return path(path_.filename()); }
 	path stem() const { return path(path_.stem()); }
+
+	// MARK: file info
 	auto extension() const { return path(path_.extension()); }
 	bool has_extension() const { return path_.has_extension(); }
 	bool has_filename() const { return path_.has_filename(); }
 
-	
 	friend std::ostream& operator<<(std::ostream& os, const path& p) {
 		return os << p.string();
 	}
