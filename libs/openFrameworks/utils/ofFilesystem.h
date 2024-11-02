@@ -75,6 +75,14 @@ public:
 	std::uintmax_t file_size() const { return std::filesystem::file_size(path_); }
 	std::filesystem::file_time_type last_write_time() const { return std::filesystem::last_write_time(path_); }
 	
+	path lexically_normal() const {
+		return path(path_.lexically_normal());
+	}
+
+	path lexically_relative(const path& base) const {
+		return path(path_.lexically_relative(base.native_path()));
+	}
+	
 	path absolute() const {
 		return path(std::filesystem::absolute(path_));
 	}
