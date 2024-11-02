@@ -6,20 +6,13 @@
 
 /*
  
- FIXME: mais profundidade de cores / ofPixels_<float> pixels;
- mudar stopRecording para finishWithCompletionHandler
+ FIXME: better color depth / ofPixels_<float> pixels / kCVPixelFormatType_64BGRA
+ FIXME: mudar stopRecording para finishWithCompletionHandler
+ FIXME: Color profiles, ex: AVCaptureColorSpace.HLG_BT2020
  
- Color profiles, ex: AVCaptureColorSpace.HLG_BT2020
- //Reduzir escala do fbo na hora de gravar
- //fazer shader pra corrigir a cor
- 
- 
- Tirar mais ideias daqui:
+ Tirar mais ideias daqui: semaphore
  http://codefromabove.com/2015/01/av-foundation-saving-a-sequence-of-raw-rgb-frames-to-a-movie/
- 
- testar melhores color depth
- kCVPixelFormatType_32BGRA
- 
+ https://github.com/dsward2/macSVG/blob/c9d1b4e30a06769f5109f025e9960fbd1f56ef2c/macSVG/SVG%20Functions/SVGtoVideoConverter.m#L144
 */
 
 #import "ofVideoWriterAVFoundation.h"
