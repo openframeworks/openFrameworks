@@ -1,20 +1,12 @@
+//
+//  ofVideoWriterAVFoundation.m
+//  Created by Dimitre Lima / Dmtr.org on 31/10/24.
+//
+
 #include "ofVideoWriter.h"
 #include "ofGraphics.h"
-
-/*
- 
- TODO:
- Color profiles
- Reduzir escala do fbo na hora de gravar
- AVCaptureColorSpace.HLG_BT2020
- 
- Tirar mais ideias daqui:
- http://codefromabove.com/2015/01/av-foundation-saving-a-sequence-of-raw-rgb-frames-to-a-movie/
- fazer shader pra corrigir a cor
- testar melhores color depth
- kCVPixelFormatType_32BGRA
- 
-*/
+#include "ofFileUtils.h"
+#include "ofUtils.h"
 
 using std::cout;
 using std::endl;
@@ -83,8 +75,12 @@ void ofVideoWriter::setFbo(ofFbo * _f) {
 	_fbo = _f;
 }
 
-void ofVideoWriter::setFps(int f) {
+void ofVideoWriter::setFps(int32_t f) {
 	fps = f;
+}
+
+void ofVideoWriter::setScale(float s) {
+	scale = s;
 }
 
 void ofVideoWriter::setOutputFilename(const of::filesystem::path & _fileName) {
@@ -96,13 +92,15 @@ void ofVideoWriter::begin() {
 	if (_fbo == nullptr) {
 		return;
 	}
-	
 	videoWriter.fps = fps;
 
-	fboShader.allocate(_fbo->getWidth(), _fbo->getHeight(), GL_RGBA16F);
+//	fboShader.allocate(_fbo->getWidth(), _fbo->getHeight(), GL_RGBA16F);
+	fboShader.allocate(_fbo->getWidth() * scale, _fbo->getHeight() * scale, GL_RGBA16F);
 	fboShader.begin();
 	ofClear(0, 255);
 	fboShader.end();
+	
+//	cout << fboShader.getWidth() << " : " << fboShader.getHeight() << endl;
 	
 	if (!useCustomName) {
 		std::string uniqueName {
@@ -133,7 +131,7 @@ void ofVideoWriter::addFrame() {
 		fboShader.begin();
 		ofClear(0, 0);
 		shader.begin();
-		_fbo->draw(0, 0);
+		_fbo->draw(0, 0, fboShader.getWidth(), fboShader.getHeight());
 		shader.end();
 		fboShader.end();
 		[videoWriter addFrame];

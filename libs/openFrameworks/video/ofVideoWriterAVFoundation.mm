@@ -1,41 +1,56 @@
+//
+//  ofVideoWriterAVFoundation.m
+//  Created by Dimitre Lima / Dmtr.org on 31/10/24.
+//	Copyright Dmtr.org 2024
+//
+
+/*
+ 
+ FIXME: mais profundidade de cores / ofPixels_<float> pixels;
+ mudar stopRecording para finishWithCompletionHandler
+ 
+ Color profiles, ex: AVCaptureColorSpace.HLG_BT2020
+ //Reduzir escala do fbo na hora de gravar
+ //fazer shader pra corrigir a cor
+ 
+ 
+ Tirar mais ideias daqui:
+ http://codefromabove.com/2015/01/av-foundation-saving-a-sequence-of-raw-rgb-frames-to-a-movie/
+ 
+ testar melhores color depth
+ kCVPixelFormatType_32BGRA
+ 
+*/
+
 #import "ofVideoWriterAVFoundation.h"
-//#import "ofEvents.h"
+#import "ofPixels.h"
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
 @interface ofVideoWriterAVFoundation () {
-	BOOL _isWaitingForInputReady;
-	dispatch_semaphore_t _writeSemaphore;
 	CMTime frameTime;
 	AVAssetWriter *_writer;
-	
-	// FIXME: mais profundidade de cores
-//	ofPixels_<float> pixels;
 	ofPixels pixels;
-//	ofFbo * fbo;
+	
+	BOOL _isWaitingForInputReady;
+	dispatch_semaphore_t _writeSemaphore;
 }
-//@property (nonatomic, strong) AVAssetWriterInput *writerInput;
-//@property (nonatomic, strong) AVAssetWriterInputPixelBufferAdaptor *adaptor;
+
 @property (strong) AVAssetWriterInput *writerInput;
 @property (strong) AVAssetWriterInputPixelBufferAdaptor *adaptor;
-
 @end
 
 @implementation ofVideoWriterAVFoundation
 
-//@synthesize dimensions;
 @synthesize path;
 @synthesize fps;
 @synthesize _fbo;
 
-// MARK: initPath
 - (void) initPath:(NSString*)path {
 	if (_fbo == nullptr) {
 		return;
 	}
-//	NSLog(@"initPath %@", path);
-
 	//	self = [super init];
 	self.path = path;
 
@@ -47,15 +62,17 @@
 			fileType:AVFileTypeQuickTimeMovie //AVFileTypeAppleM4V
 			error:nil];
 	
-//	NSLog(@"dimensions x %d, y %d", dimensions.x, dimensions.y);
-
 	NSDictionary* settings = @{
 //		AVVideoCodecKey: AVVideoCodecTypeH264,
 		AVVideoCodecKey: AVVideoCodecTypeHEVC,
 //		AVVideoCodecKey: AVVideoCodecTypeAppleProRes422HQ,
 		AVVideoWidthKey: @(_fbo->getWidth()),
 		AVVideoHeightKey: @(_fbo->getHeight()),
-//		AVVideoCompressionPropertiesKey: @{
+		AVVideoCompressionPropertiesKey: @{
+			AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2,
+			AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2,
+			AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2,
+			
 //			AVVideoExpectedSourceFrameRateKey: @(fps),
 //			AVVideoAverageBitRateKey: @(1200000),
 //			AVVideoMaxKeyFrameIntervalKey: @(150),
@@ -63,20 +80,16 @@
 //			AVVideoAllowFrameReorderingKey: @NO,
 //			//AVVideoH264EntropyModeKey: AVVideoH264EntropyModeCAVLC,
 //			//AVVideoAverageNonDroppableFrameRateKey: @(30)
-//		}
+		}
 	};
 	_writerInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:settings];
 
 	_writerInput.expectsMediaDataInRealTime = YES;
-	
-	//int local_bytesPerRow = self.frameSize.width * 4;
-	
-//	int local_bytesPerRow = _fbo->getWidth()* 4;
 	_fbo->getTexture().readToPixels(pixels);
 	int local_bytesPerRow = pixels.getBytesStride();
 
 	NSDictionary *pixelBufferOptions = [[NSDictionary alloc] initWithObjectsAndKeys:
-		[NSNumber numberWithInt:kCVPixelFormatType_32BGRA],  kCVPixelBufferPixelFormatTypeKey, //BGRA is SERIOUSLY BLOODY QUICK!
+		[NSNumber numberWithInt:kCVPixelFormatType_32BGRA],  kCVPixelBufferPixelFormatTypeKey,
 		 //kCFBooleanTrue, kCVPixelBufferCGImageCompatibilityKey,
 		kCFBooleanTrue, kCVPixelBufferCGBitmapContextCompatibilityKey,
 		[NSNumber numberWithInt:local_bytesPerRow], kCVPixelBufferBytesPerRowAlignmentKey,
@@ -88,29 +101,22 @@
 	
 	if ([_writer canAddInput:_writerInput]) {
 		[_writer addInput:_writerInput];
-//		NSLog(@"Writer addinput");
 	}
 
 	[_writer startWriting];
 	frameTime = CMTimeMake(0, fps);
-	
-//	NSLog(@"FPS: %d", fps);
-//	NSLog(@"frameTime: %@", frameTime);
 	[_writer startSessionAtSourceTime:frameTime];
 }
 
+
 - (BOOL) addFrame {
-	
 	@autoreleasepool {
 		_fbo->getTexture().readToPixels(pixels);
-		//NSMutableData nsData = (NSMutableData*)(pixels.getData());
 		CVPixelBufferRef pixelBuffer;
-		
-		//FDataRef bufferData = CFDataCreate(NULL, pixels.getData(), pixels.getTotalBytes());
 		CVReturn result = CVPixelBufferCreateWithBytes(NULL,
 							 pixels.getWidth(),
 							 pixels.getHeight(),
-							 kCVPixelFormatType_32BGRA, //k32ARGBPixelFormat
+							 kCVPixelFormatType_32BGRA,
 							 (void*)(pixels.getData()),
 							 pixels.getBytesStride(),
 							 NULL,
@@ -128,7 +134,6 @@
 	//		_isWaitingForInputReady = YES;
 	//		dispatch_semaphore_wait(_writeSemaphore, DISPATCH_TIME_FOREVER);
 		}
-
 		
 		BOOL ok = [_adaptor appendPixelBuffer:pixelBuffer withPresentationTime:frameTime];
 		if (ok) {
@@ -137,21 +142,8 @@
 		else {
 			NSLog(@"Not OK");
 		}
-
 		return ok;
 	}
-
-//		CVBufferRelease(pixelBuffer);
-//		CVPixelBufferRelease(pixelBuffer);
-//		CFRelease(pixelBuffer);
-	
-//		NSLog(@"z %zu", pixels.getWidth() * 4);
-//		NSLog(@"z %zu", pixels.getBytesStride());
-//				NSLog(@"w %zu", CVPixelBufferGetWidth( pixelBuffer ));
-//				NSLog(@"h %zu", CVPixelBufferGetHeight( pixelBuffer ));
-//				NSLog(@"br %zu", CVPixelBufferGetBytesPerRow( pixelBuffer ));
-//				NSLog(@"bd %zu", CVPixelBufferGetDataSize( pixelBuffer ));
-//				NSLog(@"xxx %zu", pixels.getTotalBytes());
 }
 
 
@@ -164,10 +156,10 @@
 	[_writer endSessionAtSourceTime:frameTime];
 
 	[_writer finishWritingWithCompletionHandler:^{
-//		NSLog(@"Write Ended");
 	}];
 
 }
+
 
 - (void) finishWithCompletionHandler:(void (^)(void))handler {
 	NSLog(@"finishWithCompletionHandler");
@@ -185,7 +177,6 @@
 	}
 	
 	[_writer finishWritingWithCompletionHandler: handler];
-//	NSLog(@"Write Ended");
 }
 
 

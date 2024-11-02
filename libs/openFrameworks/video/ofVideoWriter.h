@@ -1,3 +1,8 @@
+//
+//  ofVideoWriterAVFoundation.m
+//  Created by Dimitre Lima / Dmtr.org on 31/10/24.
+//
+
 #pragma once
 
 #include "ofTexture.h"
@@ -14,17 +19,18 @@ class ofVideoWriter {
 public:
 	ofVideoWriter();
 	void setOutputFilename(const of::filesystem::path & _fileName);
-	void setFps(int _fps);
+	void setFps(int32_t _fps);
 	void begin();
 	void addFrame();
 	void end();
 	void toggleRecording();
 	void setFbo(ofFbo * _f);
+	void setScale(float s);
 	
-//	bool autoOpen = false;
 	bool autoOpen = true;
 	
 private:
+	float scale = 1.0f;
 	ofFbo * _fbo = nullptr;
 	ofFbo fboShader;
 	ofShader shader;
