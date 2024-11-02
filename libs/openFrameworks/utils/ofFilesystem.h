@@ -53,7 +53,9 @@ public:
 	auto string() const { return path_.string(); }
 	auto native() const { return path_.native(); }
 	auto u8string() const { return path_.u8string(); }
-	const auto c_str() const { return path_.c_str(); } 
+	auto u16string() const { return path_.u16string(); }
+	auto u32string() const { return path_.u32string(); }
+	const auto c_str() const { return path_.c_str(); }
 
 	const std::filesystem::path& native_path() const { return path_; }
 	
