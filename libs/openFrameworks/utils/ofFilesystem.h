@@ -108,8 +108,8 @@ public:
 	template <typename T> bool operator>(T&& other) const noexcept { return path_ > std::forward<T>(other); }
 	template <typename T> bool operator>=(T&& other) const noexcept { return path_ >= std::forward<T>(other); }
 
-	path& operator/=(const path& p) {
-		path_ /= p.path_;
+	path& operator/=(path&& p) noexcept {
+		path_ /= std::move(p.path_);
 		return *this;
 	}
 	
