@@ -10,7 +10,7 @@
 
 //@class AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor, NSString;
 
-@interface ofAVFoundationVideoWriter : NSObject
+@interface ofVideoWriterAVFoundation : NSObject
 
 //@property (nonatomic, strong) AVAssetWriter *writer;
 

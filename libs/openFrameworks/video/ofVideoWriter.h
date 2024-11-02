@@ -6,7 +6,7 @@
 #include "ofShader.h"
 #include "ofConstants.h"
 #ifdef __OBJC__
-	#include "ofAVFoundationVideoWriter.h"
+	#include "ofVideoWriterAVFoundation.h"
 #endif
 
 //---------------------------------------------
@@ -35,7 +35,7 @@ private:
 	int32_t fps = 30;
 	
 #ifdef __OBJC__
-	ofAVFoundationVideoWriter * videoWriter;
+	ofVideoWriterAVFoundation * videoWriter;
 #else
 	void * videoWriter;
 #endif

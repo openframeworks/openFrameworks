@@ -1,10 +1,10 @@
-#import "ofAVFoundationVideoWriter.h"
+#import "ofVideoWriterAVFoundation.h"
 //#import "ofEvents.h"
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface ofAVFoundationVideoWriter () {
+@interface ofVideoWriterAVFoundation () {
 	BOOL _isWaitingForInputReady;
 	dispatch_semaphore_t _writeSemaphore;
 	CMTime frameTime;
@@ -22,7 +22,7 @@
 
 @end
 
-@implementation ofAVFoundationVideoWriter
+@implementation ofVideoWriterAVFoundation
 
 //@synthesize dimensions;
 @synthesize path;

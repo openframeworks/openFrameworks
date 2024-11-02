@@ -2,6 +2,12 @@
 #include "ofGraphics.h"
 
 /*
+ 
+ TODO:
+ Color profiles
+ Reduzir escala do fbo na hora de gravar
+ AVCaptureColorSpace.HLG_BT2020
+ 
  Tirar mais ideias daqui:
  http://codefromabove.com/2015/01/av-foundation-saving-a-sequence-of-raw-rgb-frames-to-a-movie/
  fazer shader pra corrigir a cor
@@ -14,7 +20,7 @@ using std::cout;
 using std::endl;
 //---------------------------------------------------------------------------
 ofVideoWriter::ofVideoWriter() {
-	videoWriter = [[ofAVFoundationVideoWriter alloc] init];
+	videoWriter = [[ofVideoWriterAVFoundation alloc] init];
 	
 	std::string vert;
 	std::string frag;
