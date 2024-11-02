@@ -8,6 +8,7 @@ namespace glm {
 
 #include <glm/vec4.hpp>
 #include <iostream>
+#include <cmath> //sqrt
 
 class ofVec2f;
 class ofVec3f;
