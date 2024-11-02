@@ -14,7 +14,6 @@ using std::cout;
 using std::endl;
 //---------------------------------------------------------------------------
 ofVideoWriter::ofVideoWriter() {
-	
 	videoWriter = [[ofAVFoundationVideoWriter alloc] init];
 	
 	std::string vert;
@@ -74,22 +73,12 @@ void main (void) {
 	shader.linkProgram();
 }
 
-//ofVideoWriter::ofVideoWriter(const of::filesystem::path & _fileName) {
-//	setOutputFilename(_fileName);
-//}
-
 void ofVideoWriter::setFbo(ofFbo * _f) {
-	cout << "ofVideoWriter::setFbo " << _f->getWidth() << " : " << _f->getHeight() << endl;
 	_fbo = _f;
-	
-	fboShader.allocate(_fbo->getWidth(), _fbo->getHeight(), GL_RGBA16F);
-	fboShader.begin();
-	ofClear(0, 255);
-	fboShader.end();
-	
-	// FIXME: remover dimensions deixar apenas o FBO.
-	glm::ivec2 dimensions { _fbo->getWidth(), _fbo->getHeight() };
-	videoWriter.dimensions = dimensions;
+}
+
+void ofVideoWriter::setFps(int f) {
+	fps = f;
 }
 
 void ofVideoWriter::setOutputFilename(const of::filesystem::path & _fileName) {
@@ -98,8 +87,17 @@ void ofVideoWriter::setOutputFilename(const of::filesystem::path & _fileName) {
 }
 
 void ofVideoWriter::begin() {
-//	cout << "ofVideoWriter::begin" << endl;
+	if (_fbo == nullptr) {
+		return;
+	}
+	
+	videoWriter.fps = fps;
 
+	fboShader.allocate(_fbo->getWidth(), _fbo->getHeight(), GL_RGBA16F);
+	fboShader.begin();
+	ofClear(0, 255);
+	fboShader.end();
+	
 	if (!useCustomName) {
 		std::string uniqueName {
 			ofPathToString(ofFilePath::getCurrentExePath().filename()) +
@@ -116,30 +114,28 @@ void ofVideoWriter::begin() {
 		fileName = ofToDataPath(fileName);
 	}
 	
+//	cout << "ofVideoWriter::begin " << fileName<< endl;
+	
+	videoWriter._fbo = &fboShader;
 	[videoWriter initPath:[NSString stringWithUTF8String:fileName.c_str()]];
 	isRecording = true;
 }
 
 //---------------------------------------------------------------------------
 void ofVideoWriter::addFrame() {
-	if (isRecording && _fbo != nullptr) {
-		if (videoWriter != nullptr) {
-//			videoWriter._fbo = _fbo;
-			videoWriter._fbo = &fboShader;
-			fboShader.begin();
-			ofClear(0, 0);
-			shader.begin();
-			_fbo->draw(0, 0);
-			shader.end();
-			fboShader.end();
-			[videoWriter addFrame];
-		}
+	if (isRecording) {
+		fboShader.begin();
+		ofClear(0, 0);
+		shader.begin();
+		_fbo->draw(0, 0);
+		shader.end();
+		fboShader.end();
+		[videoWriter addFrame];
 	}
 }
 
 //---------------------------------------------------------------------------
 void ofVideoWriter::end() {
-	cout << "ofVideoWriter::end" << endl;
 	if (isRecording) {
 		[videoWriter stopRecording];
 	} else {
@@ -149,7 +145,8 @@ void ofVideoWriter::end() {
 	
 	if (autoOpen) {
 		std::string command { "open " + ofPathToString(fileName)  };
-		cout << "autoOpen command = " << command << endl;
+//		cout << "autoOpen command = " << command << endl;
+//		cout << "ofVideoWriter::end " << fileName << endl;
 		ofSystem(command);
 	}
 }

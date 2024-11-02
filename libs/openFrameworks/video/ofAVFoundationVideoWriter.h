@@ -15,10 +15,10 @@
 //@property (nonatomic, strong) AVAssetWriter *writer;
 
 @property (nonatomic, assign) NSString* path;
-@property (nonatomic, assign) glm::ivec2 dimensions;
+//@property (nonatomic, assign) glm::ivec2 dimensions;
 //@property (nonatomic, assign) ofPixels_<float> pixels;
-//@property (nonatomic, assign) ofPixels pixels;
-@property (nonatomic, assign) ofFbo* _fbo;
+@property (nonatomic, assign) int fps;
+@property (nonatomic, assign) ofFbo * _fbo;
 
 - (void)initPath:(NSString*)path;
 - (BOOL)addFrame;

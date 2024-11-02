@@ -13,8 +13,8 @@
 class ofVideoWriter {
 public:
 	ofVideoWriter();
-//	ofVideoWriter(const of::filesystem::path & _fileName);
 	void setOutputFilename(const of::filesystem::path & _fileName);
+	void setFps(int _fps);
 	void begin();
 	void addFrame();
 	void end();
@@ -23,6 +23,8 @@ public:
 	
 //	bool autoOpen = false;
 	bool autoOpen = true;
+	
+private:
 	ofFbo * _fbo = nullptr;
 	ofFbo fboShader;
 	ofShader shader;
@@ -30,7 +32,7 @@ public:
 	of::filesystem::path fileName;
 	bool isRecording = false;
 	bool useCustomName = false;
-
+	int32_t fps = 30;
 	
 #ifdef __OBJC__
 	ofAVFoundationVideoWriter * videoWriter;
