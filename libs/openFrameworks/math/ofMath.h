@@ -1,10 +1,6 @@
 #pragma once
 
-//#define GLM_FORCE_CTOR_INIT
-//#define GLM_ENABLE_EXPERIMENTAL
-//#include <glm/fwd.hpp>
 #include <glm/gtc/constants.hpp>
-
 #include <glm/detail/qualifier.hpp>
 namespace glm {
 	typedef vec<2, float, defaultp>		vec2;
@@ -12,9 +8,7 @@ namespace glm {
 	typedef vec<4, float, defaultp>		vec4;
 }
 
-
 #include <cstdlib>
-//#include <cmath>
 #include <algorithm>
 
 /// \file

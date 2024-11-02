@@ -30,7 +30,7 @@
 //--------------------------
 // math
 #include "ofMath.h"
-#include "ofVectorMath.h"
+//#include "ofVectorMath.h"
 
 //--------------------------
 // communication

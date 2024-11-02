@@ -13,8 +13,6 @@
 #include "ofVec4f.h"
 #include "ofQuaternion.h"
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
 
 class ofVec3f;

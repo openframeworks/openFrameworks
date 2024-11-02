@@ -4,6 +4,7 @@ class ofMatrix3x3;
 #include "ofMatrix4x4.h"
 #include "ofQuaternion.h"
 
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec2.hpp>

@@ -1,16 +1,13 @@
 #pragma once
 
-//#include <glm/detail/qualifier.hpp>
-//namespace glm {
-//	typedef vec<4, float, defaultp>		vec4;
-//}
-
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+}
 
 #include <glm/vec4.hpp>
-
-//#include <glm/fwd.hpp>
 #include <iostream>
-//#include <cmath>
 
 class ofVec2f;
 class ofVec3f;
