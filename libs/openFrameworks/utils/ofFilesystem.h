@@ -1,3 +1,6 @@
+#ifndef OF_FILESYSTEM_PATH_H
+#define OF_FILESYSTEM_PATH_H
+
 #include <filesystem>
 #include <string>
 #include <iostream>
@@ -163,3 +166,5 @@ public:
 
 }  // namespace filesystem
 }  // namespace of
+
+#endif // OF_FILESYSTEM_PATH_H
