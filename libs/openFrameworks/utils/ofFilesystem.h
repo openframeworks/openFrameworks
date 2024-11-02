@@ -79,7 +79,8 @@ public:
 	bool is_empty() const { return std::filesystem::is_empty(path_); }
 	std::uintmax_t file_size() const { return std::filesystem::file_size(path_); }
 	std::filesystem::file_time_type last_write_time() const { return std::filesystem::last_write_time(path_); }
-	
+	auto get_permissions() const { return std::filesystem::status(path_).permissions(); }
+
 	path lexically_normal() const {
 		return path(path_.lexically_normal());
 	}
@@ -98,9 +99,7 @@ public:
 	path canonical(Args&&... args) const {
 		return path(std::filesystem::canonical(path_, std::forward<Args>(args)...));
 	}
-	
-	std::filesystem::perms get_permissions() const { return status(path_).permissions(); }
-	
+		
 	template <typename T> bool operator==(T&& other) const noexcept { return path_ == std::forward<T>(other); }
 	template <typename T> bool operator!=(T&& other) const noexcept { return path_ != std::forward<T>(other); }
 	template <typename T> bool operator<(T&& other) const noexcept { return path_ < std::forward<T>(other); }
