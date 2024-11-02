@@ -61,7 +61,7 @@ public:
 	
 	path replace_extension(const path & ext = std::filesystem::path()) { return path(path_.replace_extension(ext)); }
 	
-	inline static auto preferred_separator = std::filesystem::path::preferred_separator;
+	static constexpr auto preferred_separator = std::filesystem::path::preferred_separator;
 	
 	bool empty() const noexcept { return path_.empty(); }
 	bool is_absolute() const { return path_.is_absolute(); }
